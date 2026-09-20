@@ -18,7 +18,7 @@ Follow your review task's plan step by step; open the first step with the gather
 `.claude/orchestration/v2.py step {TASK} 1 result diff log` and whatever the step names. Judge the work against its
 brief (the deliverable, the acceptance, the decided statements) and the principles (reuse and extension of what exists, never duplication; native definitions normative;
 each notion's contract established once and consumed, not re-proved; no conflation of notions the library keeps
-apart). {{held}}
+apart).
 
 **One complete verdict.** List every blocking finding at once, each resting on the brief or on a principle, each
 precise enough to fix without asking (where, what, why it blocks). What does not block is never a rejection: it is a
@@ -38,6 +38,8 @@ Record it: `.claude/orchestration/v2.py verdict {ID} accept|reject --file .build
 turn. Production for you: the verdict.
 
 {{production}}
+
+{{checks}}
 
 {{consult}}
 

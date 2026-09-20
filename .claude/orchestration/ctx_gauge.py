@@ -126,8 +126,10 @@ def add_context(event, text):
 
 # How each role ends its piece of work: what its window's end asks of it, and what its Stop hook asks for.
 ENDS = {
-    "planner": "write HANDOFF.md as the planner's state, the events you have not handled under `## Now`, and your "
-               "notes for the knowledge base, and end the episode (`.claude/orchestration/v2.py planned --notes FILE`)",
+    "planner": "write HANDOFF.md as the planner's state, the events you have not handled under `## Now`, and the "
+               "notes the knowledge base is to hold — everything you have settled since you began, aggregated, with "
+               "what has since been answered or superseded left out — and end "
+               "(`.claude/orchestration/v2.py planned --notes FILE`); the next planner starts from what you leave",
     "task-designer": "put the tasks you have briefed into the graph in form, each build or fix with its review task, "
                      "and record them (`.claude/orchestration/v2.py briefed {task} NEW...`); what you could not brief "
                      "goes to the planner (`v2.py ask --to planner`)",
@@ -155,8 +157,10 @@ def may_end(role, rec):
     session never waits otherwise (the owner, 2026-09-19: with nothing productive left it parks, and another worker
     produces); another session may also end its turn while a question of its own is open or a background job of its
     own runs (the answer, or the job's completion, runs its turn)."""
-    if role == "kb" or rec.get("owner") or rec.get("state") in ("done", "parked", "lost"):
-        return True  # an episode the owner opened waits for the owner's words between turns
+    if role in ("kb", "planner") or rec.get("owner") or rec.get("state") in ("done", "parked", "lost"):
+        return True  # the planner's turn ends when it has handled what it was given: the next event wakes it, and its
+        # mail is taken above, so there is nothing left when this is reached. An episode the owner opened waits for
+        # the owner's words between turns.
     if role in v2.PRODUCING:
         return False  # a producing session never waits holding the producing slot: it goes on, or it parks (v2.py park)
     if v2.running_jobs(rec["name"]):

@@ -36,7 +36,9 @@ while :; do
     any=1
     [ "$(age "$STATE/$who-base.used")" -gt "$idle_max" ] && continue
     [ "$(wc -l < "$STATE/$who-base.miss" 2>/dev/null || echo 0)" -ge 2 ] && continue
-    [ "$(age "$STATE/$who-base.hit")" -ge "$every" ] && "$HERE/base.sh" "$who" warm >> "$STATE/warm.log" 2>&1
+    # base.sh writes the verdict to warm.log itself, so that a ping run by hand is recorded there too; only what
+    # fails before it reaches that line is redirected
+    [ "$(age "$STATE/$who-base.hit")" -ge "$every" ] && "$HERE/base.sh" "$who" warm >/dev/null 2>> "$STATE/warm.log"
   done
   [ "$any" = 0 ] && ! active && break
   sleep "${ORCH_DAEMON_EVERY:-60}"

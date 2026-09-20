@@ -9,8 +9,10 @@ efficiency fix it waited for). A session whose cache has expired is never woken 
   knowledge base   kb-N: a fork of the planner's base that never works; its context is what has been integrated
                    into it (HANDOFF.md, the owner's words, the notes of every planning episode). Sealed between
                    integrations; questions to it are answered by forks of it.
-  planner          plan-N: a planning episode, a fork of the knowledge base on a batch of events; it orders the
-                   graph, decides, writes its notes for the knowledge base, and ends.
+  planner          plan-N: one long-lived fork of the knowledge base. Every event reaches it as it happens, as its
+                   own message; it orders the graph and decides, and ends only when its window forces it to, writing
+                   then the notes the knowledge base is to hold — what it has settled, aggregated, with what has
+                   since been answered or superseded left out. Between events it is sealed and held warm.
   producing        design-ID, investigate-ID, implement-ID, fix-ID: one at a time, by the task's kind.
   supporting       brief-ID (a task designer), review-ID (a reviewer): one at a time, beside the producing one.
   quick fix        the task's own session resumed (or a fixer) after a failed check or a rejected review, once.
@@ -31,15 +33,18 @@ Commands of the sessions (the caller is known from CLAUDE_CODE_SESSION_ID):
   v2.py queue ID...              the planner: the order in which tasks are to be done
   v2.py after ID TASK            the planner: the parked task ID continues when TASK has landed (`none`: now)
   v2.py drop ID                  the planner: stop whatever works on task ID
-  v2.py planned --notes FILE     the planner: the episode ends; its notes go to the knowledge base
+  v2.py planned --notes FILE     the planner: its work ends (its window is full); its notes go to the knowledge base
 Harness:
-  v2.py start | stop | status | graph | who ROLE | dispatch | talk | ping NAME
+  v2.py start [--fresh] | stop | status | graph | who ROLE | dispatch | talk | ping NAME
+      --fresh: leave the knowledge base behind (the next is built from HANDOFF.md, the ledger and the owner's words)
+      and charge the first planner with taking stock before it queues anything
 """
 import contextlib
 import fcntl
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -72,7 +77,11 @@ PLANNER_SECTIONS = ("Graph", "Decisions", "Delivered", "Open", "Now")
 BASES = ("max", "xhigh", "high")  # the planner's base (max), the middle base (xhigh), the implementation base (high)
 FALLBACK = {"xhigh": ("max",), "high": ("max",)}  # until the base topic builds them, their roles fork the present base
 ROLES = {
-    "kb": dict(origin="max", settings="planner-settings.json", prefix="kb", statements=True, graph=False),
+    # The knowledge base is off the shared task list (worker-settings.json is planner-settings.json without it, and
+    # nothing else): it may not edit the graph, it has no use for its state, and every session forked from it would
+    # carry whatever was injected into it — the sealed kb-1 of 2026-09-20 holds three such injections, about 800
+    # tokens, in the prefix that every planner and every consultation reads.
+    "kb": dict(origin="max", settings="worker-settings.json", prefix="kb", statements=True, graph=False),
     "planner": dict(origin="kb", settings="planner-settings.json", prefix="plan", statements=True, graph=True),
     "designer": dict(origin="xhigh", settings="worker-settings.json", prefix="design", statements=False, graph=False),
     "task-designer": dict(origin="xhigh", settings="planner-settings.json", prefix="brief", statements=True, graph=True),
@@ -84,6 +93,9 @@ ROLES = {
 }
 PRODUCER = {"design": "designer", "investigate": "investigator", "build": "implementer", "fix": "fixer"}
 PRODUCING, SUPPORTING = set(PRODUCER.values()), {"task-designer", "reviewer"}
+GRAPH_SETTINGS = "planner-settings.json"  # the one settings file that joins the shared task list (the graph):
+# every session started with it sees the others' edits to it, injected into its context. Only the roles that edit
+# the graph are given it; every other session's task list is its own, named by its own session.
 LIVE = ("starting", "working", "waiting")  # a session in one of these holds its slot
 
 JOB_STALE = int(os.environ.get("ORCH_JOB_STALE", 7200))  # a background job whose output stands still this long is dead
@@ -98,8 +110,15 @@ TIDY_EVERY = int(os.environ.get("ORCH_TIDY_EVERY", 3600))  # how often state not
 WOKEN_KEEP = int(os.environ.get("ORCH_WOKEN_KEEP", 86400))  # a wake mark, for attach.sh to read
 BRIEF_BACKLOG = int(os.environ.get("ORCH_BRIEF_BACKLOG", 6))  # open build and fix tasks past which no brief is detailed:
 # a brief task is the graph's multiplier (one turned into 26 tasks on 2026-09-20), and the supporting slot detailing work while the builders are blocked makes the queue diverge from what they can consume (the owner, 2026-09-20)
-WORKERS_MAX = int(os.environ.get("ORCH_WORKERS", 1))  # sessions working at once, over every slot: the owner's
-# choice of 2026-09-20, to spend the usage window at a rate that outlasts it
+WORKERS_MAX = int(os.environ.get("ORCH_WORKERS", 2))  # sessions working at once, over the producing, supporting
+# and consultation slots: the owner's choice of 2026-09-20. At 1 a finished task waited to be reviewed and a question
+# to the knowledge base waited for a gap in production, which is where the serialization actually hurt. It is not what
+# limits production: `produce` takes one producing session whatever this says, and past two the machine's two Isabelle
+# runs bind (three reached 59 of 60 GiB). The default is written here so that it holds whatever environment starts the
+# daemon.
+PLANNER_LOG = "PLANNING_LOG.md"  # what was done and how: the planner's log, appended as work lands. No base holds
+# it and nothing reads it to plan from, so it may grow; HANDOFF.md stays the state because the log has somewhere else
+# to be (the owner, 2026-09-20).
 CONSULT_MAX = int(os.environ.get("ORCH_CONSULT_MAX", 4))  # consultations at once: each a fork, answering one question
 FIX_ROUNDS = int(os.environ.get("ORCH_FIX_ROUNDS", 8))
 # Between two productions a session takes at most ROUNDS requests and reads at most READ_TOKENS tokens; the same failure
@@ -118,11 +137,10 @@ WARM_MAX = int(os.environ.get("ORCH_WARM_MAX", 3300))
 PING_AGE = int(os.environ.get("ORCH_PING_AGE", 2700))
 HOLD_PARK = int(os.environ.get("ORCH_HOLD_PARK", 3 * 3600))  # the owner's choice: a waiting implementer, 3 hours
 HOLD_MAX = int(os.environ.get("ORCH_HOLD_MAX", 3 * 3600))  # an author held for consultation, at most
-EPISODE_GAP = int(os.environ.get("ORCH_EPISODE_GAP", 900))  # events arriving within this are batched into one
-URGENT_GAP = int(os.environ.get("ORCH_URGENT_GAP", 300))  # and this is the floor when nothing can be produced
-# 23 of the 48 sessions of 2026-09-20 were planning episodes, each a fork of the knowledge base at about 510K:
-# the bypass fired on single events while the queue stood blocked, which is most of the time (the owner)
-KB_MARGIN = 50_000  # a fresh knowledge base loading within this of its limit asks for condensing and a base rebuild  # events arriving within this are batched into one episode
+# Nothing between an event and the planner: no gap, no batch. 23 of the 48 sessions of 2026-09-20 were planning
+# episodes, each a fork of the knowledge base at about 510K, because an episode was a session; one planner that lives
+# across its events costs one such fork for all of them, and reads each as it stands (the owner, 2026-09-20).
+KB_MARGIN = 50_000  # a fresh knowledge base loading within this of its limit asks for condensing and a base rebuild
 # The window: the largest request the API has accepted (an implementer's, 972,479 tokens); the notice to end the
 # piece of work comes at SOFT, the end mark at HARD (ctx_gauge.py).
 CEILING = int(os.environ.get("ORCH_CEILING", 972_000))
@@ -260,8 +278,8 @@ def post(name, sender, text):
         f.write(json.dumps({"from": sender, "text": text, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}) + "\n")
 
 
-def take_mail(name):
-    """The unread messages for a session, as one text, and the mailbox emptied; "" when there are none."""
+def unread(name):
+    """The unread messages for a session, the mailbox emptied; [] when there are none."""
     try:
         with open(mailbox(name), "r+") as f:
             fcntl.flock(f, fcntl.LOCK_EX)
@@ -269,8 +287,33 @@ def take_mail(name):
             f.seek(0)
             f.truncate()
     except (OSError, ValueError):
-        return ""
-    return "\n\n".join(f"Message from {m['from']} ({m['at']}):\n{m['text']}" for m in lines)
+        return []
+    return lines
+
+
+def mail_text(messages):
+    return "\n\n".join(f"Message from {m['from']} ({m['at']}):\n{m['text']}" for m in messages)
+
+
+def take_mail(name):
+    """The unread messages for a session, as one text, and the mailbox emptied; "" when there are none."""
+    return mail_text(unread(name))
+
+
+def keep_mail(name, messages):
+    """Put messages back, each with its own sender, before whatever arrived meanwhile. A resume that failed read none
+    of them, and they used to go back as one message from the harness with their senders buried inside it: the next
+    read then said the harness had said what a reviewer or the planner had."""
+    if not messages:
+        return
+    os.makedirs(os.path.join(STATE, "mail"), exist_ok=True)
+    with open(mailbox(name), "a+") as f:
+        fcntl.flock(f, fcntl.LOCK_EX)
+        f.seek(0)
+        rest = [l for l in f.read().splitlines() if l.strip()]
+        f.seek(0)
+        f.truncate()
+        f.write("".join(json.dumps(m) + "\n" for m in messages) + "".join(l + "\n" for l in rest))
 
 
 def has_mail(name):
@@ -290,21 +333,40 @@ def deliver(name, sender, text):
         log(f"ATTENTION mail to {name} reached nobody ({s.get('state')}): {text[:160]}")
         return
     post(name, sender, text)
-    if s.get("state") not in ("working", "waiting"):
+    if s.get("state") not in ("working", "waiting", "idle"):
         return
     r = row(name)
     if r and (r["activity"] == "busy" or running_jobs(name)):
         return
-    mail = take_mail(name)
-    if mail and not resume(name, mail):
-        post(name, "the harness", mail)  # kept for when it runs again
+    messages = unread(name)
+    if messages and not resume(name, mail_text(messages)):
+        keep_mail(name, messages)  # kept for when it runs again, each with its own sender
 
 
 # ---------------------------------------------------------------- sessions
 
-def claude(*args, cwd=None):
+NO_LAUNCH = "no-launch"  # while state/no-launch exists nothing starts a session: not the dispatch, not a base
+# build, not a layer refresh, not a keep-warm ping. Stopping, removing and listing still work. It is the owner's
+# switch for the time between "the machinery is ready" and "begin", and it exists because starting a session by
+# accident costs a cold write of a whole base (2026-09-20).
+
+
+def held_back():
+    """The reason nothing may start, or ""."""
+    path = os.path.join(STATE, NO_LAUNCH)
+    try:
+        return open(path).read().strip() or "state/no-launch is set"
+    except OSError:
+        return ""
+
+
+def claude(*args, cwd=None, warm_ping=False):
     """The CLI, bounded: it starts and stops background sessions, and a call that never returns would hold the
-    watchdog — and with it the dispatch and the pings — for ever."""
+    watchdog — and with it the dispatch and the pings — for ever. It starts no work while the hold is on; a
+    keep-warm ping is not work — it keeps what exists alive rather than spending anything — and goes through."""
+    if "--bg" in args and not warm_ping and held_back():
+        log(f"a session was not started: {held_back()}")
+        return subprocess.CompletedProcess(args, 1, "", f"held back: {held_back()}")
     env = {k: v for k, v in os.environ.items() if k not in INHERITED}
     try:
         return subprocess.run(["claude", *args], capture_output=True, text=True, cwd=cwd or PROJECT, env=env,
@@ -319,11 +381,33 @@ def row(name):
     return dict(zip(("kind", "id", "activity", "sid", "state"), out)) if len(out) >= 4 else None
 
 
+def layer_record(who):
+    """The recorded frontier layer of a base, or None. A layer whose stable base has been rebuilt under it is an
+    orphan: it is a fork of a session that is gone, so nothing may fork it and it is not one."""
+    try:
+        layer = json.load(open(os.path.join(STATE, f"{who}-layer.json")))
+        base = json.load(open(os.path.join(STATE, f"{who}-base.json")))
+    except (OSError, ValueError):
+        return None
+    return layer if layer.get("base") == base.get("sessionId") else None
+
+
+def base_file(who):
+    """What a role of this base forks: its frontier layer when one is recorded, the stable base otherwise. A fork of
+    the layer reads the whole prefix under it, the stable base included, from cache — measured on 2026-09-20: a fork
+    of the sealed knowledge base (a layer over `max` in all but name) read 538,051 of its 538,044 tokens and wrote 62
+    — so the layer is what everything forks and what is pinged."""
+    if layer_record(who):
+        return os.path.join(STATE, f"{who}-layer.json")
+    return os.path.join(STATE, f"{who}-base.json")
+
+
 def base_record(who):
-    """(name, record) of a sealed base, falling back to the present base while the base topic has not built it."""
+    """(name, record) of a sealed base or its layer, falling back to the present base while the base topic has not
+    built it."""
     for name in (who,) + FALLBACK.get(who, ()):
         try:
-            b = json.load(open(os.path.join(STATE, f"{name}-base.json")))
+            b = json.load(open(base_file(name)))
             return name, {"sid": b["sessionId"], "model": b["model"], "effort": b["effort"]}
         except (OSError, ValueError, KeyError):
             continue
@@ -358,12 +442,23 @@ def hit(name):
 
 
 def hit_chain(name):
-    """A session's request reads its own prefix, and so its origin's: each is hit, down to the base."""
+    """A session's request reads its own prefix, and so its origin's: each is hit, down to the base. A session that
+    forked the layer standing before a refresh reads that one, not the one that replaced it, so it marks nothing for
+    the base: otherwise the new layer would look warm while nothing had read it, and the first fork of it would pay a
+    cold write of its whole size."""
     seen = set()
     while name and name not in seen:
         seen.add(name)
+        rec = peek()["sessions"].get(name) or {}
+        origin = rec.get("origin")
+        if name in BASES or origin in BASES:
+            who = name if name in BASES else origin
+            current = (base_record(who)[1] or {}).get("sid")
+            if name not in BASES and rec.get("origin_sid") and rec["origin_sid"] != current:
+                hit(name)  # its own entry, and nothing of the base: what it reads is no longer what is forked
+                return
         hit(name)
-        name = None if name in BASES else (peek()["sessions"].get(name) or {}).get("origin")
+        name = None if name in BASES else origin
 
 
 def hit_age(name):
@@ -378,13 +473,22 @@ def warm(name):
     return hit_age(name) < WARM_MAX
 
 
-def stale(who, tree=None):
+def stale(who, tree=None, since=None):
     """The line naming the held files of that base that changed since it was loaded (manifest.py), in the tree the
-    session works in — a task with a tree of its own is told what changed in its own."""
-    env = dict(os.environ, ORCH_TREE=tree) if tree else os.environ
-    out = subprocess.run([os.path.join(HERE, "manifest.py"), "changed", who], capture_output=True, text=True,
-                         env=env).stdout
+    session works in — a task with a tree of its own is told what changed in its own. `since` is the session the
+    reader actually forked: after a layer refresh that is not the layer standing now, and measuring against the
+    wrong load would leave out the files that moved before it, which are the frontier theories being worked on."""
+    env = dict(os.environ, ORCH_TREE=tree) if tree else dict(os.environ)
+    env.pop("ORCH_LOAD_LIST", None)  # this base names its own list; an inherited one would answer about another
+    args = ["changed", who] + (["--since-layer", since] if since else [])
+    out = subprocess.run([os.path.join(HERE, "manifest.py"), *args], capture_output=True, text=True, env=env).stdout
     return out.strip() or "no held file has changed since the load"
+
+
+def stale_of(name, who, tree=None):
+    """What has changed since the load this session actually holds — measured against the layer it forked, not the
+    one standing now."""
+    return stale(who, tree, (peek()["sessions"].get(name) or {}).get("origin_sid"))
 
 
 def fork(org, name, settings, prompt, cwd=None):
@@ -428,8 +532,9 @@ def launch(role, key, prompt_of, **fields):
     settings = fields.pop("settings", None) or spec["settings"] or org.get("settings")
     with state() as st:
         name = fresh_name(st, spec["prefix"], key)
-        st["sessions"][name] = dict(name=name, role=role, origin=who, model=org["model"], effort=org["effort"],
-                                    settings=settings, state="starting", starting=time.time(), **fields)
+        st["sessions"][name] = dict(name=name, role=role, origin=who, origin_sid=org["sid"], model=org["model"],
+                                    effort=org["effort"], settings=settings, state="starting", starting=time.time(),
+                                    **fields)
     hit_chain(who)
     tree = worktree(key) if TREES and role in PRODUCING and str(key).isdigit() and not in_main_tree(key) else None
     if tree:
@@ -458,20 +563,27 @@ def resume(name, text):
     if r and running_jobs(name):  # stopping it would kill its jobs: their completion runs its turn, and the mail with it
         post(name, "the harness", text)
         with state() as st:
-            if st["sessions"][name]["state"] in ("done", "parked", "waiting"):
+            if st["sessions"][name]["state"] in ("done", "parked", "waiting", "idle"):
                 st["sessions"][name]["state"] = "working"
         log(f"{name} has running jobs: its message waits as mail")
         return True
-    with open(os.path.join(STATE, f"{name}.woken"), "a") as f:
-        f.write(time.strftime("%Y-%m-%dT%H:%M:%S ") + text.split("\n", 1)[0][:100] + "\n")
     if r:
         claude("stop", r["id"])
         time.sleep(PAUSE)
-    claude("--bg", "--resume", s["sid"], HARNESS + text, cwd=tree_of(s))
+    started = claude("--bg", "--resume", s["sid"], HARNESS + text, cwd=tree_of(s))
+    if started.returncode != 0:
+        # Said, not assumed: every caller reads this to decide whether the message it carried still has to be kept
+        # (the mail is taken out of the box before the resume), and a session reported resumed that never ran holds
+        # its state as working while nothing does it.
+        log(f"ATTENTION {name} was not resumed ({(started.stderr or started.stdout).strip()[:120]}): "
+            f"{text.split(chr(10), 1)[0][:80]}")
+        return False
+    with open(os.path.join(STATE, f"{name}.woken"), "a") as f:
+        f.write(time.strftime("%Y-%m-%dT%H:%M:%S ") + text.split("\n", 1)[0][:100] + "\n")
     with state() as st:
         rec = st["sessions"][name]
         rec["sealed"] = False
-        if rec["state"] in ("done", "parked", "waiting"):
+        if rec["state"] in ("done", "parked", "waiting", "idle"):
             rec["state"] = "working"
     hit(name)
     log(f"resumed {name}")
@@ -651,10 +763,12 @@ def exclusive_holder():
 
 
 def working(st):
-    """The sessions doing work now, over every slot: producing, supporting, a quick fix, the planning episode and the
-    consultations. The knowledge base is not one of them; a parked session is not working and does not count."""
+    """The sessions doing work now, over every slot: producing, supporting, a quick fix and the consultations. Neither
+    the knowledge base nor the planner is one of them — they are the deliberative half, one session each, and gating
+    them behind the rate would make the planner answer an event only when a producer happened to stop (the owner,
+    2026-09-20: the planner works problem by problem and stays responsive). A parked session is not working either."""
     return [n for n, s in st["sessions"].items()
-            if s.get("state") in LIVE and s.get("role") != "kb" and not s.get("released")]
+            if s.get("state") in LIVE and s.get("role") not in ("kb", "planner") and not s.get("released")]
 
 
 def at_capacity(st):
@@ -680,7 +794,8 @@ def slot(st, roles, fix=False):
 # it, the import reaching it, its row, its entry) and a part taken out refuses every task's check, not only its own.
 # While such work stands, the tree is that task's (tree_writer) and another session drafts under .build/tasks/ID/.
 
-EXEMPT = (".build/", ".claude/", "HANDOFF.md")  # never an owned change: drafts, the harness's files, the planner's state
+EXEMPT = (".build/", ".claude/", "HANDOFF.md", PLANNER_LOG)  # never an owned change: drafts, the harness's files,
+# the planner's state and the planner's log
 
 
 def exempt(path):
@@ -945,6 +1060,59 @@ def tree_trouble(tree=None):
     return out
 
 
+def base_lineage():
+    """Every directory the accepted base stands on, the base itself first. Nothing may remove one of these: they are
+    what a check reuses, and a check whose parent is gone rebuilds from nothing."""
+    out, cur = [], None
+    try:
+        cur = json.load(open(ACTIVE_CONTEXT))["directory"]
+    except (OSError, ValueError, KeyError):
+        return out
+    while cur and os.path.exists(os.path.join(cur, "accepted-context.json")) and cur not in out:
+        out.append(cur)
+        cur = json.load(open(os.path.join(cur, "accepted-context.json"))).get("parent")
+    return out
+
+
+def base_at_risk():
+    """Whether the accepted base stands inside a task's own directory — where the task that owns it, a re-plan or a
+    sweep of run output would take it away with everything that chains from it. Found on 2026-09-20: the base stood
+    in .build/tasks/7/check2/proof, because an advancing check was run with its output there."""
+    lineage = base_lineage()
+    at = BUILD.rstrip(os.sep) + os.sep  # BUILD is already .build/tasks
+    return [p for p in lineage if p.startswith(at)]
+
+
+def base_would_stand_in_a_task(check):
+    """The paths of a task's own directory that a base-advancing check names. Such a check writes the whole
+    repository's base, and everything checked after it chains from it: under `.build/tasks/{ID}/` the base goes with
+    that task when it is dropped, re-planned or its run output swept. Found on 2026-09-20, when task 7's final check
+    left the base standing in .build/tasks/7/check2/proof (`base_at_risk`); the rule is in protocols/_production.md."""
+    if not ADVANCES.search(check):
+        return []
+    try:
+        words = shlex.split(check)
+    except ValueError:
+        words = check.split()
+    root = BUILD.rstrip(os.sep) + os.sep
+    named = []
+    for word in words:
+        path = word.split("=", 1)[-1]
+        if not path or path.startswith("-"):
+            continue
+        full = os.path.normpath(path if os.path.isabs(path) else os.path.join(PROJECT, path))
+        if (full + os.sep).startswith(root):
+            named.append(word)
+    return named
+
+
+BASE_IN_A_TASK = (
+    "a check that advances the base writes the whole repository's base, and every check after it chains from it. "
+    "Under a task's own directory it goes with that task when the task is dropped, re-planned or its run output "
+    "swept: {named}. Give it an --output under .build/ directly (.build/check-<date><letter>), as the repository's "
+    "own checks do.")
+
+
 def tree_checked(who, what, tree=None):
     """Say at once when the tree has been left in a state every check refuses, naming what did it."""
     trouble = tree_trouble(tree)
@@ -1141,6 +1309,17 @@ def deps_done(tid):
                 log(f"task {tid} waits for task {d}, which is not in the task list")
         elif blocker.get("status") != "completed":
             done = False
+            # A task dropped or given back stays pending in the list, so a dependent waits on it with nothing to
+            # complete it and nothing saying so — the same shape as a blocker that is not there at all, which was
+            # named on 2026-09-20 while this was not.
+            if (peek()["tasks"].get(d) or {}).get("stage") == "planner" \
+                    and (age_of(f"blocker-{tid}-{d}") or LOST_BLOCKER + 1) > LOST_BLOCKER:
+                open(os.path.join(STATE, f"blocker-{tid}-{d}"), "w").write(str(time.time()))
+                with state() as st:
+                    event(st, "the harness", f"Task {tid} waits for task {d}, which came back to you and has not been "
+                          f"re-planned: nothing will complete it as it stands, so {tid} waits. Re-plan {d}, or "
+                          f"re-point {tid}'s blocker.")
+                log(f"task {tid} waits for task {d}, which is with the planner")
     return done
 
 
@@ -1225,7 +1404,7 @@ def room_of(kind):
     who = ROLES[PRODUCER.get(kind) or {"brief": "task-designer", "review": "reviewer"}[kind]]["origin"]
     try:
         who = base_record(who)[0] or "max"
-        context = json.load(open(os.path.join(STATE, f"{who}-base.json")))["context"]
+        context = json.load(open(base_file(who)))["context"]  # a layer's context is the whole of it, its base included
     except (OSError, ValueError, KeyError, TypeError):
         context = 560_000  # the present base, measured 2026-09-19
     return max(0, SOFT - context - PROTOCOL_ROOM)
@@ -1324,6 +1503,24 @@ def owner_words():
             "owner ledger, and ask the owner whether anything was said since.\n")
 
 
+HANDOFF_MAX = int(os.environ.get("ORCH_HANDOFF_MAX", 60_000))  # tokens. A state may hold a great deal — the knowledge
+# base carries it beside a 472K base and stays far inside its limit, and a designer reads it whole in a gather, which
+# is free of the read limits. This is not a budget but the point past which it is a log and not a state, and the log
+# has its own file. Measured 2026-09-20: 6.5K chars after the v1 reset, 81K twelve hours later, with two
+# condensations of 2.6K against 80K added — nothing measured it, so nothing pushed the other way.
+
+
+def handoff_size():
+    """(tokens, the section that is largest, its tokens) of HANDOFF.md as it stands."""
+    path = os.path.join(PROJECT, "HANDOFF.md")
+    try:
+        text = open(path, errors="ignore").read()
+    except OSError:
+        return 0, "", 0
+    parts = sorted(((part(text, s) or "", s) for s in PLANNER_SECTIONS), key=lambda x: -len(x[0]))
+    return len(text) // 3, parts[0][1], len(parts[0][0]) // 3
+
+
 def handoff_parts():
     """HANDOFF.md's `## Now` and `## Open` as they are: what the last episode left unhandled and the open questions."""
     path = os.path.join(PROJECT, "HANDOFF.md")
@@ -1369,7 +1566,7 @@ def kb_build():
 
     def prompt(name):
         # HANDOFF.md holds what outlasts a knowledge base; the notes told only its predecessor what changed
-        return render("kb", NAME=name, STALE=stale(base_record("max")[0] or "max"))
+        return render("kb", NAME=name, STALE=stale_of(name, base_record("max")[0] or "max"))
     name = launch("kb", key, prompt, kb_state="building", previous=previous)
     if name:
         with state() as st:
@@ -1527,7 +1724,8 @@ def start_producer(tid):
     base = base_record(ROLES[role]["origin"])[0] or "max"
     tree = os.path.join(PROJECT, TREE_DIR, tid) if TREES and not in_main_tree(tid) else None
     name = launch(role, tid, lambda name: render(role, NAME=name, ID=tid, KIND=kind, SUBJECT=task.get("subject", ""),
-                                                 BRIEF=brief.strip(), STALE=stale(base, tree), WHAT=PLANNED_FIX), task=tid)
+                                                 BRIEF=brief.strip(), STALE=stale_of(name, base, tree), WHAT=PLANNED_FIX,
+                                                 TREE=tree_text(tid, tree)), task=tid)
     with state() as st:
         t = task_state(st, tid)
         if name:
@@ -1631,6 +1829,25 @@ def worktree_of(tid):
     return path if os.path.exists(path) else PROJECT
 
 
+def tree_text(tid, tree=None):
+    """Where the session works, said as it is. Until 2026-09-20 every role was told it had a worktree of its own: the
+    planner, the task designer, the reviewer and the consultations have none, and a producing task whose work already
+    stands in the one tree keeps working there. A session that believes it has a tree it has not writes into a path
+    that is not there."""
+    if tree or os.path.isdir(os.path.join(PROJECT, TREE_DIR, str(tid))):
+        return (f"**Your working tree is your task's own.** You are started in it (`{TREE_DIR}/{tid}`, a git worktree "
+                f"on the branch `task/{tid}`), it is a whole checkout, and `.build` in it is the one `.build`: your "
+                "drafts, the checks' output and their lineage are where they have always been. Install into it, check "
+                "in it, and nothing you write there is seen by another task. The finalizer commits on your branch and "
+                "brings it into the branch that is pushed, where your lines meet the lines other tasks wrote "
+                "meanwhile — cleanly where they stand apart, and with a named conflict where two tasks wrote in the "
+                "same place. HANDOFF.md is the planner's in your tree as in any other.")
+    return ("**You work in the repository's one working tree**, not a tree of your own: your task's work already "
+            "stands there, and another task's uncommitted work may stand beside it. A check reads the whole tree, so "
+            "a failure in it may be another task's — say so rather than repairing what is not yours. Install into it, "
+            "check in it, and the finalizer commits from it. HANDOFF.md is the planner's here as everywhere.")
+
+
 def tree_of(rec):
     """The working tree of the session this record is of: its task's, or the one tree."""
     return worktree_of((rec or {}).get("task")) if (rec or {}).get("task") else PROJECT
@@ -1725,10 +1942,9 @@ def produce():
                 mark_tree_wait(t["session"], holder)
             else:
                 text += take_up(tid)  # a shelf from before 2026-09-20, if one is still there; otherwise nothing
-            mail = take_mail(t["session"]) if has_mail(t["session"]) else ""
-            if not resume(t["session"], text + (f"\n\n{mail}" if mail else "")):
-                if mail:
-                    post(t["session"], "the harness", mail)  # kept: a resume that failed read none of it
+            messages = unread(t["session"]) if has_mail(t["session"]) else []
+            if not resume(t["session"], text + (f"\n\n{mail_text(messages)}" if messages else "")):
+                keep_mail(t["session"], messages)  # kept: a resume that failed read none of it
                 with state() as w:
                     w["tasks"][tid]["stage"] = "planner"
                     event(w, "the harness", f"{t['session']}, parked on task {tid}, went cold before its wait was over: "
@@ -1767,7 +1983,7 @@ def start_review(rid, tid):
         REVIEW=(review.get("description") or "").strip() if own else "(no review task was briefed: judge the task "
         "against its brief, step by step, then against the principles)",
         BRIEF=(task.get("description") or "").strip(), SESSION=t.get("session", "-"),
-        STALE=stale(base_record("xhigh")[0] or "max"),
+        STALE=stale_of(name, base_record("xhigh")[0] or "max"),
         BEFORE=f"A previous review rejected it; its findings are in .build/tasks/{rid}/review.md. Judge those findings "
                "and whatever the fix broke; add nothing else." if r.get("verdict") == "reject" else ""),
         task=rid, reviews=tid)
@@ -1784,7 +2000,7 @@ def start_brief(tid):
     name = launch("task-designer", tid, lambda name: render(
         "task-designer", NAME=name, ID=tid, SUBJECT=task.get("subject", ""), BRIEF=(task.get("description") or "").strip(),
         WHY=(task.get("metadata") or {}).get("why", "-"), GRAPH=graph_text(), LIST=LIST,
-        STALE=stale(base_record("xhigh")[0] or "max")), task=tid)
+        STALE=stale_of(name, base_record("xhigh")[0] or "max")), task=tid)
     with state() as w:
         if name:
             w["tasks"][tid].update(stage="running", session=name, role="task-designer")
@@ -1818,6 +2034,22 @@ def age_of(name):
         return time.time() - os.path.getmtime(os.path.join(STATE, name))
     except OSError:
         return None
+
+
+def startable(st=None):
+    """The queued tasks that could start now: ready, and with every blocker completed. It is the width of the graph
+    as the planner has drawn it — what a park can hand the producing slot to. Pure: it never says anything to anyone
+    (deps_done does, hourly, which is why the status does not use it)."""
+    st = st or peek()
+    tasks = {t["id"]: t for t in all_tasks()}
+    out = []
+    for tid in st["queue"]:
+        if (st["tasks"].get(tid) or {}).get("stage") != "ready":
+            continue
+        blockers = (tasks.get(tid) or {}).get("blockedBy") or []
+        if all((tasks.get(b) or {}).get("status") == "completed" for b in blockers):
+            out.append(tid)
+    return out
 
 
 def build_backlog(st=None):
@@ -1885,7 +2117,7 @@ def quick_fix():
             task = read_task(tid) or {}
             name = launch("fixer", tid, lambda name: render(
                 "fixer", NAME=name, ID=tid, BRIEF=(task.get("description") or "").strip(), WHAT=text,
-                STALE=stale(base_record("high")[0] or "max")), task=tid, fix={"since": time.time()})
+                STALE=stale_of(name, base_record("high")[0] or "max"), TREE=tree_text(tid)), task=tid, fix={"since": time.time()})
         with state() as w:
             w["tasks"][tid]["fixing"] = name
             if name:
@@ -1924,34 +2156,63 @@ def consult():
         origin = peek()["kb"] if target == "kb" else target
         name = launch("consultant", qid, lambda name: render(
             "consultant", NAME=name, ID=qid, QID=qid, ASKER=q["from"], TARGET=origin, QUESTION=q["text"], NOTE=note,
-            STALE=stale(consulted_base(origin))),
+            STALE=stale_of(name, consulted_base(origin))),
             origin=origin, qid=qid)
         with state() as w:
             w["asks"][qid].update(state="open", session=name) if name else None
         live += bool(name)
 
 
-def plan():
-    """A planning episode, a fork of the knowledge base on the events gathered since the last one; urgent (no gap)
-    when nothing can be produced without it."""
-    st = peek()
-    if slot(st, {"planner"}) or not st["events"] or not kb_ready() or st["notes"]:
-        return  # an episode starts from a knowledge base that holds every earlier episode's notes
-    if at_capacity(st):
-        return  # one session works at a time (WORKERS_MAX): the episode runs in the gap between them
-    ready = any((st["tasks"].get(tid) or {}).get("stage") == "ready" for tid in st["queue"])
-    urgent = not slot(st, PRODUCING) and not ready
-    if time.time() - st.get("plan_ended", 0) < (URGENT_GAP if urgent else EPISODE_GAP):
+def planner_live(st):
+    """The planner that is alive: starting, working on what it has been given, waiting on an answer, or between events
+    and still warm. One that has written its notes and ended, or that was lost, is not."""
+    for name, s in st["sessions"].items():
+        if s.get("role") != "planner" or s.get("released"):
+            continue
+        if s.get("state") in LIVE:
+            return name
+        if s.get("state") == "idle" and warm(name):
+            return name
+    return None
+
+
+def wake_planner(name):
+    """Give the planner what has arrived. A turn that is running reads it through its hooks at its next tool call;
+    one between events is resumed with it at once."""
+    r = row(name)
+    if r and (r["activity"] == "busy" or running_jobs(name)):
         return
-    if not urgent and time.time() - max(time.mktime(time.strptime(e["at"], "%Y-%m-%dT%H:%M:%S")) for e in st["events"]) < 30:
-        return  # let a burst of events arrive together
+    messages = unread(name)
+    if messages and not resume(name, mail_text(messages)):
+        keep_mail(name, messages)  # kept for when it runs again, each with its own sender
+
+
+def plan():
+    """The planner. One session lives across many events and ends only when its window forces it to (then its notes,
+    what it has settled with the superseded left out, are integrated into the knowledge base and the next one forks
+    from it). Every event reaches it as it happens and as its own message: nothing is gathered into a batch, so it
+    works problem by problem and sees each as it stands (the owner, 2026-09-20)."""
+    st = peek()
+    if not st["events"]:
+        return
+    name = planner_live(st)
+    if name:
+        with state() as w:
+            events, w["events"] = w["events"], []
+            w["sessions"][name]["events"] = (w["sessions"][name].get("events") or []) + events
+        for e in events:  # one message each: two events are two problems, not one batch
+            post(name, e["from"], e["text"])
+        wake_planner(name)
+        return
+    if not kb_ready() or st["notes"]:
+        return  # the next planner starts from a knowledge base that holds the last one's notes
     with state() as w:
         events, w["events"] = w["events"], []
         n = count(w, "plan")
     name = launch("planner", str(n), lambda name: render(
         "planner", NAME=name, ID="plan", EVENTS=events_text(events), HANDOFF=handoff_parts(), GRAPH=graph_text(), QUEUE=" ".join(peek()["queue"]) or "(empty)",
         STATUS=status_text(), LIST=LIST, OWNER="", FIRST=first_episode(),
-        STALE=stale(base_record("max")[0] or "max")), events=events)
+        STALE=stale_of(name, base_record("max")[0] or "max")), events=events)
     if not name:
         with state() as w:
             w["events"] = events + w["events"]
@@ -1993,6 +2254,61 @@ def fix_deadlock():
         log(f"dropped the blockers {', '.join(circle)} of task {fix}: they waited on task {tid}, which waits for it")
 
 
+STANDSTILL_EVERY = int(os.environ.get("ORCH_STANDSTILL_EVERY", 1800))  # how often a standstill is named again
+
+
+def standstill():
+    """Nothing is working, nothing has happened, and only the planner can move the graph — but the planner is woken by
+    events, and there are none. The orchestration stood still three times this way on 2026-09-20 (01:34–03:35,
+    04:49–07:24, 07:24–09:38: six and a half hours), two sessions parked for a wait that never ended, their
+    three-hour hold the only escape; nothing said so but health.py, to nobody. It is named to the planner instead,
+    with what stands and what each thing waits for, and named again while it lasts."""
+    st = peek()
+    if working(st):
+        with contextlib.suppress(OSError):
+            os.remove(os.path.join(STATE, "standstill"))
+        return
+    if st["events"] or st["notes"] or st.get("kb_building") or not kb_ready():
+        return  # something is on its way to the planner, or the knowledge base is not ready to fork
+    name = planner_live(st)
+    if name and (st["sessions"].get(name) or {}).get("state") != "idle":
+        return  # the planner is deliberating: that is not a standstill
+    if isabelle_runs() or exclusive_holder():
+        return  # a run is going, and what waits for it will go on when it ends
+    if any((t or {}).get("stage") in FINISHING for t in st["tasks"].values()):
+        return  # a finalization is in flight
+    if (age_of("standstill") or STANDSTILL_EVERY + 1) < STANDSTILL_EVERY:
+        return
+    open(os.path.join(STATE, "standstill"), "w").write(str(time.time()))
+    stands = []
+    for tid, t in sorted(st["tasks"].items()):
+        p = t.get("parked") or {}
+        if t.get("stage") == "parked":
+            mins = int((time.time() - (p.get("since") or time.time())) // 60)
+            stands.append(f"task {tid} has been parked {mins} min for "
+                          + {"run": "its own run", "tree": "the working tree", "fix": f"task {p.get('after')}",
+                             "answer": "the answer to its question"}.get(p.get("for"), p.get("for") or "something"))
+        elif t.get("stage") == "planner":
+            stands.append(f"task {tid} is yours: it came back and has not been re-planned")
+    for tid in st["queue"]:
+        t = st["tasks"].get(tid) or {}
+        if t.get("stage") != "ready":
+            continue
+        open_blockers = [b for b in ((read_task(tid) or {}).get("blockedBy") or [])
+                         if (read_task(b) or {}).get("status") != "completed"]
+        if open_blockers:
+            stands.append(f"task {tid} is ready but waits on {', '.join(open_blockers)}")
+    backlog = build_backlog(st)
+    with state() as w:
+        event(w, "the harness", "Nothing is working and nothing in the queue can start: only you can move this. "
+              + ("What stands: " + "; ".join(stands) + ". " if stands else "Nothing is parked and nothing is blocked. ")
+              + (f"{len(backlog)} build and fix tasks are open" if backlog else "No build or fix task is open")
+              + f", and the queue is {' '.join(st['queue']) or 'empty'}. Queue what can be done, take back a wait that "
+              "cannot end (`v2.py after ID none`), or re-plan what came back to you. You are told again in "
+              f"{STANDSTILL_EVERY // 60} minutes while this lasts.")
+    log("standstill: nothing is working and nothing can start; the planner is told")
+
+
 def tidied():
     """State that outlives what it was about: a wake mark once its session is long gone, and the frozen sources of a
     base no base names any more. Every one of the day's stalls was state nobody removed, and these are the harmless
@@ -2021,6 +2337,28 @@ def tidied():
         elif sweep_packs and name.startswith("base-pack-") and os.path.isdir(path) and path not in packs:
             shutil.rmtree(path, ignore_errors=True)
             gone.append(name)
+    # A mailbox outlives its session. An empty one of a session that reads nothing ever again is litter; a box with
+    # something in it was already said to have reached nobody (deliver, lost), and is kept while that session is still
+    # in the state, so that what it holds can still be read. One whose session the archive has taken away goes.
+    sessions = peek()["sessions"]
+    # a layer's snapshot is kept while any session still holds that layer, and while it is the one being forked
+    holding = {s.get("origin_sid") for s in sessions.values()
+               if s.get("state") in LIVE + ("parked", "idle") and not s.get("released")}
+    holding |= {(layer_record(who) or {}).get("sessionId") for who in BASES}
+    for name in os.listdir(STATE):
+        if name.startswith("layer-") and name.endswith("-manifest.json") and name[6:-14] not in holding:
+            with contextlib.suppress(OSError):
+                os.remove(os.path.join(STATE, name))
+            gone.append(name)
+    for name in os.listdir(os.path.join(STATE, "mail")) if os.path.isdir(os.path.join(STATE, "mail")) else []:
+        if not name.endswith(".jsonl"):
+            continue
+        path, who = os.path.join(STATE, "mail", name), name[:-len(".jsonl")]
+        s = sessions.get(who)
+        if s is None or (os.path.getsize(path) == 0 and (s.get("released") or s.get("state") in ("done", "lost"))):
+            with contextlib.suppress(OSError):
+                os.remove(path)
+            gone.append("mail/" + name)
     if gone:
         log(f"tidied {len(gone)} piece(s) of state nothing names any more: {', '.join(sorted(gone)[:6])}"
             + (", …" if len(gone) > 6 else ""))
@@ -2033,7 +2371,7 @@ def dispatch_once():
         return
     for part in (tree_care, check_isolation, parking_care, fix_deadlock, efficiency_care, kb_care, produce, support,
                  quick_fix, tidied,
-                 consult, plan):
+                 consult, standstill, plan):  # standstill before plan: what it says reaches the planner in this pass
         try:  # one part that fails does not hold up the others; it is logged, and tried again at the next dispatch
             part()
         except Exception as e:  # noqa: BLE001
@@ -2503,6 +2841,9 @@ def cmd_finalize(tid, args):
     if outside:
         return ("refused: the finalizer commits files of the repository's working tree, not ignored, not under .build/ or "
                 f".claude/, relative to the project: {', '.join(outside)}")
+    standing = base_would_stand_in_a_task(check or "")
+    if standing:
+        return "refused: " + BASE_IN_A_TASK.format(named=", ".join(standing))
     if not check or not files or not message or bad or not os.path.exists(os.path.join(PROJECT, message)):
         return ("refused: v2.py finalize ID --check CMD --files PATH... --message FILE, every file existing (or a deletion "
                 "of a tracked one)"
@@ -2557,7 +2898,16 @@ def cmd_result(tid):
         background("finalize.py", "check", tid)  # its end dispatches
     else:
         kick()
-    return "recorded. End your turn now."
+    # A session that ends with a question of its own open reads nothing ever again: six of nineteen answers on
+    # 2026-09-20 came to a session that had gone, and each had to be carried by the planner instead. It is told where
+    # its answer will go, so that what it assumed is in its result rather than only in its head.
+    open_asks = [q for q, a in peek()["asks"].items()
+                 if a["from"] == (c or {}).get("name") and a["state"] != "answered"]
+    return "recorded. End your turn now." + (
+        f" Your question{'s' if len(open_asks) > 1 else ''} {', '.join(open_asks)} "
+        f"{'are' if len(open_asks) > 1 else 'is'} still open: you will not read the answer, which goes to "
+        f".build/tasks/{tid}/answers/ and to the planner. Say in your result what you assumed instead of it."
+        if open_asks else "")
 
 
 def cmd_briefed(bid, new):
@@ -2774,13 +3124,16 @@ def cmd_drop(tid):
     with state() as w:
         w["tasks"].setdefault(tid, {})["stage"] = "planner"
         w["queue"] = [t for t in w["queue"] if t != tid]
-    return "dropped " + (", ".join(names) or "nothing") + aside
+    waiting = [x["id"] for x in all_tasks() if tid in (x.get("blockedBy") or []) and x.get("status") != "completed"]
+    return ("dropped " + (", ".join(names) or "nothing") + aside
+            + (f". Task {tid} stays in the list and is still the blocker of {', '.join(waiting)}, which wait on it "
+               "until you re-plan it or re-point them." if waiting else ""))
 
 
 def cmd_planned(notes):
     c = caller()
     if c and c["role"] != "planner":
-        return "refused: ending a planning episode is the planner's"
+        return "refused: ending the planner's work is the planner's"
     text = open(os.path.join(PROJECT, notes), errors="ignore").read().strip() if notes and os.path.exists(
         os.path.join(PROJECT, notes)) else ""
     handoff = os.path.join(PROJECT, "HANDOFF.md")
@@ -2792,23 +3145,115 @@ def cmd_planned(notes):
     with state() as st:
         st["notes"].append(f"From {(c or {}).get('name', 'the owner')}:\n{text}")
         st["plan_ended"] = time.time()
-        if c:
-            st["sessions"][c["name"]].update(state="done", ended=time.time())
+        if c:  # its events go with it: by ending it says it has handled them
+            st["sessions"][c["name"]].update(state="done", ended=time.time(), events=[])
     kick()
-    return "planned. End your turn now."
+    return "planned. End your turn now; the knowledge base takes up your notes and the next planner starts from them."
 
 
 # ---------------------------------------------------------------- commands of the harness
 
-def cmd_start():
+FRESH_CHARGE = (
+    "This run begins on a knowledge base built fresh: it holds HANDOFF.md, the owner ledger and the owner's words, "
+    "and nothing that any planner before you accumulated. The graph you inherit was built under a harness that has "
+    "since changed, and some of it exists only because of faults that are now fixed. Before you queue anything, take "
+    "stock, and make that your first piece of work:\n"
+    "- **What has been produced.** Read what the finished tasks delivered and what stands uncommitted in the working "
+    "tree, and write it into HANDOFF.md at the level later work needs. Work that is done but not yet integrated is "
+    "the first thing to carry; a task whose deliverable already stands is completed, not repeated. What was done and "
+    "how — the course it took, what was abandoned, what it cost — goes to PLANNING_LOG.md, which is new and empty: "
+    "HANDOFF.md is what you need to act now, the log is everything true that you no longer need to act on.\n"
+    "- **What the graph no longer needs.** Drop what is superseded, what a fault made necessary, and what the work "
+    "already answers (`v2.py drop ID`, and take the task out of the list). Say why in your notes: a task dropped "
+    "without a reason comes back.\n"
+    "- **What the structure should now be.** The harness has changed under you and the protocols carry what bears on "
+    "planning: you live across your events and see each as it happens; two sessions work at once, so a review runs "
+    "beside a producer; a task that parks hands the producing slot to anything independent that is ready; and your "
+    "status line says how many tasks could start at all. The graph you inherit is a chain — re-plan it as work that "
+    "can run beside itself wherever the work truly admits it, and not one step further than that.\n"
+    "Only then queue. Nothing of this is a task for anyone else: it is yours, and it is what you do first.")
+
+
+def layerless():
+    """The bases whose list is split but which have no layer to fork. The stable part alone is a reference without
+    the direction — no frontier, no tools, no plan, no reasoning inventory, no owner's words — so a role that forked
+    it would be missing everything that steers it. An orphaned layer counts as none (layer_record)."""
+    import manifest
+    out = []
+    for who in BASES:
+        if not os.path.exists(os.path.join(STATE, f"{who}-base.json")):
+            continue
+        try:
+            split = manifest.has_layer(os.path.join(HERE, manifest.LISTS[who]))
+        except (OSError, KeyError):
+            continue
+        if not split or layer_record(who):
+            continue
+        # a base built before the list was split holds the layer's files already: what it holds is the question,
+        # not what the list says now
+        was = os.environ.get("ORCH_LOAD_LIST")
+        os.environ["ORCH_LOAD_LIST"] = os.path.join(HERE, manifest.LISTS[who])
+        try:
+            below = {p for _, p in manifest.held_files("layer")}
+        except OSError:
+            below = set()
+        finally:
+            os.environ.pop("ORCH_LOAD_LIST", None) if was is None else os.environ.update(ORCH_LOAD_LIST=was)
+        if not below:
+            continue  # a layer part that matches no file here is not a layer anyone is missing
+        try:
+            held = set(json.load(open(os.path.join(STATE, f"{who}-manifest.json")))["files"])
+        except (OSError, ValueError, KeyError):
+            out.append(who)  # nothing says what it holds: treat it as the reference alone
+            continue
+        if not (below & held):
+            out.append(who)
+    return out
+
+
+def cmd_start(fresh=False):
+    if held_back():
+        return (f"refused: nothing starts a session while the hold is on ({held_back()}). "
+                f"Take it off when you mean to begin: rm {os.path.join(STATE, NO_LAUNCH)}")
+    short = layerless()
+    if short:
+        return ("refused: the list of " + ", ".join(short) + " is split into a stable reference and a frontier layer, "
+                "and only the reference is built. Its roles would fork a base with no frontier, no tools, no plan and "
+                "none of the owner's words — everything that steers them is in the layer. Build it first ("
+                + "; ".join(f"base.sh {w} layer" for w in short) + "), or, to run that base whole instead, take the "
+                "`# === layer ===` line out of its load list and build it again: the mark is the decision.")
+    if fresh:
+        st = peek()
+        if st["active"]:
+            return ("refused: --fresh begins a run, it does not rejoin one — it leaves the knowledge base and the "
+                    "planner behind, which under a run in progress would take the context of whatever is deliberating "
+                    "with them. The orchestration is active" + (f" and {', '.join(working(st))} are working" if
+                    working(st) else "") + "; stop.sh first.")
+        for name, s in list(st["sessions"].items()):  # the planner that lives would not fork the new base
+            if s.get("role") == "planner" and not s.get("released") and s.get("state") not in ("done", "lost"):
+                release(name)
+                log(f"released {name}: the run begins on a knowledge base built fresh")
+        old_kb = st["kb"]
+        with state() as w:
+            w["kb"], w["kb_building"] = None, None
+            w["notes"] = []  # they were for the knowledge base that is being left behind
+        if old_kb:
+            release(old_kb)
+        log(f"the knowledge base {old_kb or '(none)'} is left behind; the next one loads HANDOFF.md, the ledger and "
+            "the owner's words, and nothing else")
     with state() as st:
         st["active"] = True
         first = not st["kb"] and not st.get("kb_building")
-        if first and not st.get("plan_ended"):
+        if fresh:
+            event(st, "the owner", FRESH_CHARGE)
+        elif first and not st.get("plan_ended"):
             event(st, "the harness", "The orchestration starts, and there is no task graph yet: build it (the first "
                   "episode's part of this message says from what).")
         for i in st.pop("interrupted", []):
             event(st, "the harness", i)
+    for who in BASES:  # a run starts on a current frontier: every layer is refreshed before anything forks it
+        if os.path.exists(os.path.join(STATE, f"{who}-layer.json")):
+            open(os.path.join(STATE, f"{who}-layer.refresh"), "w").write(str(time.time()))
     dispatch()
     st = peek()
     return f"active; knowledge base {st['kb'] or st.get('kb_building') or 'not started (see state/v2.log)'}"
@@ -2859,29 +3304,39 @@ def cmd_stop():
 
 
 def cmd_talk():
-    """A planning episode for the owner to speak to (talk.sh attaches to it), launched under the dispatch's lock so that
-    the two never start two episodes."""
+    """The planner, ready for the owner to speak to it (talk.sh attaches to it): the one that lives, woken if it was
+    between events, or a new one. Under the dispatch's lock, so that the two never start two planners."""
     with open(os.path.join(STATE, "dispatch.lock"), "w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         return talk()
 
 
+OWNER_HERE = ("The owner is here and will speak to you (talk.sh). Their words are recorded verbatim in the owner "
+              "ledger; act on them in the graph, the order and the decisions, and carry them into HANDOFF.md and "
+              "your notes. Wait for them between turns; when they have gone you are told, and go on with your events.")
+
+
 def talk():
     st = peek()
-    s = slot(st, {"planner"})
-    if s:
-        return s["name"]
+    name = planner_live(st)
+    if name:  # it lives: the owner joins it, with everything it holds
+        with state() as w:
+            w["sessions"][name]["owner"] = True
+        if peek()["sessions"][name]["state"] == "idle":
+            wake_planner(name) if has_mail(name) else resume(name, OWNER_HERE)
+        return name
     if not kb_ready() or st["notes"]:
-        return ""  # the knowledge base is not ready, or has not yet integrated the last episode's notes
+        return ""  # the knowledge base is not ready, or has not yet integrated the last planner's notes
     with state() as w:
         events, w["events"] = w["events"], []
         n = count(w, "plan")
     name = launch("planner", str(n), lambda name: render(
         "planner", NAME=name, ID="plan", EVENTS=events_text(events), HANDOFF=handoff_parts(), GRAPH=graph_text(), QUEUE=" ".join(peek()["queue"]) or "(empty)",
-        STATUS=status_text(), LIST=LIST, OWNER="The owner opened this episode to speak with you: wait for the owner's "
+        STATUS=status_text(), LIST=LIST, OWNER="The owner started you to speak with you: wait for the owner's "
         "words (the harness records them verbatim in the owner ledger), act on them in the graph, the order and the "
-        "decisions, carry them into HANDOFF.md and your notes, and end the episode (`v2.py planned`) only when the "
-        "owner is done.", FIRST=first_episode(), STALE=stale(base_record("max")[0] or "max")), events=events, owner=True)
+        "decisions, and carry them into HANDOFF.md and your notes. Wait for them between turns; when they have gone "
+        "you are told, and go on with your events.",
+        FIRST=first_episode(), STALE=stale_of(name, base_record("max")[0] or "max")), events=events, owner=True)
     if not name:
         with state() as w:
             w["events"] = events + w["events"]
@@ -2896,6 +3351,8 @@ def cmd_who(role):
         s = slot(st, PRODUCING, fix=True)
     elif role == "kb":
         s = st["sessions"].get(st.get("kb_building") or st["kb"] or "")
+    elif role == "planner":  # it is in no slot between its events, and it is still the one to attach to
+        s = st["sessions"].get(planner_live(st) or "")
     else:
         s = slot(st, roles or set())
     return s["name"] if s and s.get("sid") else ""
@@ -2910,11 +3367,26 @@ def cmd_status():
                               ("supporting", SUPPORTING, False), ("quick fix", PRODUCING, True),
                               ("consultation", {"consultant"}, False)):
         s = slot(st, roles, fix)
+        if not s and label == "planner":  # it lives between its events, sealed and warm, not in any slot
+            s = st["sessions"].get(planner_live(st) or "")
         out.append(f"{label}: " + (f"{s['name']}" + (f" on {s['task']}" if s.get("task") else "") + f" ({s['state']})"
                                    if s else "-"))
     out.append("queue: " + (" ".join(f"{t}:{(st['tasks'].get(t) or {}).get('stage', '?')}" for t in st["queue"]) or "-"))
     busy = working(st)
     out.append(f"working: {len(busy)} of at most {WORKERS_MAX}" + (f" ({', '.join(busy)})" if busy else ""))
+    size, biggest, its = handoff_size()
+    over = (f" — over it; `## {biggest}` is {its // 1000}K of that. It is your state, not your log: what was done and "
+            f"how goes to {PLANNER_LOG}, which no base holds and nothing reads to plan from. A decision about the "
+            "development itself is an entry of DECISIONS.md and here a reference; a decision of yours about the work "
+            "— what is built next, in what order, what a task must respect — belongs to the task it governs, in its "
+            "brief and its `why`. Neither is restated here, and DECISIONS.md never takes planning, scheduling or "
+            "anything else operational.")
+    out.append(f"HANDOFF.md: {size // 1000}K tokens of at most {HANDOFF_MAX // 1000}K"
+               + (over if size > HANDOFF_MAX else ""))
+    ready = startable(st)
+    out.append(f"startable now: {' '.join(ready) if ready else 'none'}"
+               + ("" if len(ready) > 1 else " — nothing else can start while what runs is parked or checking; only a "
+                  "wider graph changes that"))
     backlog = build_backlog(st)
     out.append(f"build backlog: {len(backlog)} open build and fix tasks of at most {BRIEF_BACKLOG}"
                + ("; no brief is detailed until the builders have taken some" if len(backlog) >= BRIEF_BACKLOG else ""))
@@ -2926,7 +3398,7 @@ def cmd_status():
     if waiting:
         out.append("finishing: " + ", ".join(f"{tid}:{st['tasks'][tid]['stage']}" for tid in waiting))
     if st["events"]:
-        out.append(f"events for the next episode: {len(st['events'])}")
+        out.append(f"events not yet with the planner: {len(st['events'])}")
     undelivered = [f"{q} ({a['from']} had ended; {a.get('written')})" for q, a in st["asks"].items()
                    if a.get("delivered") is False]
     if undelivered:
@@ -2946,7 +3418,8 @@ def ping(name):
     claude("--bg", "--resume", s["sid"], "--fork-session", *open(os.path.join(HERE, "session-flags")).read().split(),
            "--model", s["model"], "--effort", s["effort"], "--permission-mode", "auto",
            "--settings", os.path.join(HERE, s["settings"]), "-n", n,
-           f"Keep-warm ping {int(time.time())}. Use no tools. Reply with the single word WARM and end your turn.")
+           f"Keep-warm ping {int(time.time())}. Use no tools. Reply with the single word WARM and end your turn.",
+           warm_ping=True)
     r = None
     for _ in range(90):
         r = row(n)
@@ -3037,7 +3510,7 @@ def main():
     elif c == "planned":
         print(cmd_planned(opt("--notes")))
     elif c == "start":
-        print(cmd_start())
+        print(cmd_start(fresh="--fresh" in rest))
     elif c == "stop":
         print(cmd_stop())
     elif c == "talk":

@@ -131,7 +131,13 @@ those copies. Keep temporary storage bounded throughout the work, including
 after failed runs; do not accumulate obsolete files under `/tmp`.
 
 Record what a batch settles once, where it is read by topic: its decisions, with
-their reasons, evidence and limits, as an entry of [DECISIONS.md](DECISIONS.md);
+their reasons, evidence and limits, as an entry of [DECISIONS.md](DECISIONS.md).
+Those are decisions of the development itself — a notion, its semantics, what a
+proof establishes. What the machinery or a run needs is not one of them: a tool's
+default, a command's cost, a limit of this machine belong where the machinery is
+written, or are reported as a performance problem. DECISIONS.md is loaded whole,
+as an index, by every base, so an operational entry is carried by every role and
+serves none of them.
 what a theory offers for reuse, in that theory's row of
 [THEORY_MAP.md](THEORY_MAP.md); the evidence also in the commit message; what
 remains open in the task graph. [native_control_plan.md](native_control_plan.md)

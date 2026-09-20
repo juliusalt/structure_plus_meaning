@@ -5,11 +5,10 @@
 # by name, the reasoning inventory, the plan, and last the owner's words and the operating rules. The knowledge base's
 # own load (HANDOFF.md, the ledger, the owner's new words) follows it. Measured by a real pack: 532K with the plan and
 # REASONING_REUSE.md as they are, about 474K once they are condensed (notes/bases-design.md, section 10). In the
-# layered design (section 8) the tiers up to the central ideas are the stable reference and the rest moves into the
-# knowledge base's own load. HANDOFF.md, owner-ledger.md and state/owner-directions-new.md are never held here.
+# In the layered design (section 8) the tiers up to the central ideas are the stable reference and the rest is the
+# frontier layer, refreshed on its own: the generated indexes, the reasoning inventory, the plan and the owner's
+# words are what change, and they changed by 66,526 tokens on 2026-09-20 while the reference moved by nothing. HANDOFF.md, owner-ledger.md and state/owner-directions-new.md are never held here.
 # Comments are curation notes; they never reach the loaded text.
-# pinned: what exists — every theory source name, in ROOT order (generated from current source files; grep the map or source for content)
-.claude/orchestration/state/held/theory-names.md
 # every other founding theory, as definitions (generated: commentary, definitions, locales and the names of what is proved; one per notion of the library's vocabulary, in import order)
 theories/RRA_Data_Views.thy
 theories/RRA_Environment.thy
@@ -293,6 +292,10 @@ theories/RRA_Indexed_Artifact_Lookup.thy
 # pinned idea: base causes and programs
 theories/Factor_Base_Cause.thy
 theories/Factor_Base_Programs.thy
+# === layer === the frontier layer below: refreshed on its own (base.sh max layer) when what it holds has changed; the reference above is the owner's to rebuild.
+# the reference moved by nothing in twelve hours while these moved by 66,526 tokens.
+# pinned: what exists — every theory source name, in ROOT order (generated from current source files; grep the map or source for content)
+.claude/orchestration/state/held/theory-names.md
 # pinned: the decisions, as an index (generated at pack time: DECISIONS.md's headings and first sentences)
 .claude/orchestration/state/held/decisions-index.md
 # pinned: the accumulated reasoning that further generalization must reuse

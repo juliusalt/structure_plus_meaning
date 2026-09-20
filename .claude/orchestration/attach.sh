@@ -4,7 +4,7 @@
 # `consultant` a consultation, `kb` the knowledge base while it loads or integrates. When the attached session is
 # stopped (its piece of work ended, a wake) or ends otherwise, wait for the session then holding the role and attach
 # to it. Leaving the session view on purpose while the session still holds the role ends this, and so does stop.sh.
-# start.sh ends by running this for the planner; talk.sh opens an episode for the owner and runs it.
+# start.sh ends by running this for the planner; talk.sh joins the planner for the owner and runs it.
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd); STATE="${ORCH_STATE_DIR:-$HERE/state}"
 role=${1:-planner}

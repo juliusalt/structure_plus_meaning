@@ -1,10 +1,10 @@
-# The knowledge base, its planning episodes, and one session per piece of work
+# The knowledge base, its planner, and one session per piece of work
 
 `native_control_plan.md` is carried out by sessions that each do one self-contained piece of work (the design and
 its reasons: `notes/orchestration-v2-plan.md`). Every piece of work is a fork: of a sealed base, of the knowledge base,
 or of a sealed session that is consulted. A resume only continues the same piece of work. A session whose cache has
 expired is never woken or forked. No model supervises: a daemon runs the watchdog and the dispatch once a minute,
-keeps the bases warm, and the watchdog keeps warm what may still be consulted. The owner speaks to a planning episode
+keeps the bases warm, and the watchdog keeps warm what may still be consulted. The owner speaks to the planner
 (`talk.sh`) or to any session directly. Until 2026-09-19 a single rotating implementer did everything (v1); why it
 was replaced is measured in `notes/efficiency-baseline.md`.
 
@@ -13,8 +13,9 @@ was replaced is measured in `notes/efficiency-baseline.md`.
     .claude/orchestration/base.sh WHO build     # WHO is max, xhigh or high: freeze its load list into a verified pack and load it
     .claude/orchestration/base.sh WHO status    # until the load has ended its turn (the measured context)
     .claude/orchestration/base.sh WHO seal      # check every chunk arrived, snapshot the frozen sources, stop it, record it
-    .claude/orchestration/start.sh              # make the orchestration active (the knowledge base first), follow the planning episodes here
-    .claude/orchestration/talk.sh               # speak to the planner: an episode opened for the owner
+    .claude/orchestration/start.sh              # make the orchestration active (the knowledge base first), follow the planner here
+    .claude/orchestration/start.sh --fresh      # the same, on a knowledge base built anew, the first planner charged to take stock
+    .claude/orchestration/talk.sh               # speak to the planner, which lives across its events
     .claude/orchestration/attach.sh [ROLE]      # open and follow a role: planner, producer, support, fix, consultant, kb
     .claude/orchestration/stop.sh               # stop everything: daemon, every session, the runs they left behind
     .claude/orchestration/health.py             # one screen; lines that need someone start with ATTENTION
@@ -22,19 +23,19 @@ was replaced is measured in `notes/efficiency-baseline.md`.
     .claude/orchestration/efficiency.py         # how each session spent its window and what it produced, by role
 
 `start.sh` refuses without a sealed base. `stop.sh` makes the orchestration inactive; what it interrupted is an event
-for the next planning episode, and `start.sh` resumes with the sealed knowledge base. A wake writes
+for the planner, and `start.sh` resumes with the sealed knowledge base. A wake writes
 `state/<name>.woken` before it stops a session, so that `attach.sh` tells a wake from leaving the view on purpose.
 What you type to any orchestrated session is recorded verbatim and dated in `owner-ledger.md` by its
-UserPromptSubmit hook, and (but in a planning episode) becomes an event for the next planning episode; what is yours to
-decide a planning episode decides provisionally, records there as an open question with its basis, and the work
+UserPromptSubmit hook, and (but in the planner itself) becomes an event that reaches the planner at once; what is
+yours to decide the planner decides provisionally, records there as an open question with its basis, and the work
 continues (see "The owner's directions").
 
 ## Roles
 
 | Role | Session | Does | Forks, effort |
 |---|---|---|---|
-| knowledge base | `kb-N` | holds what the development knows beyond the library: HANDOFF.md, the owner's words, every episode's notes; never works | the planner's base (`max`), max |
-| planner | `plan-N` | an episode on a batch of events: the graph, the order, the high-level decisions, verdicts on designs and investigations, notes for the knowledge base | the knowledge base, max |
+| knowledge base | `kb-N` | holds what the development knows beyond the library: HANDOFF.md, the owner's words, every planner's notes; never works | the planner's base (`max`), max |
+| planner | `plan-N` | one long-lived session: every event as it happens, the graph, the order, the high-level decisions, verdicts on designs and investigations, and at the end of its window the notes for the knowledge base | the knowledge base, max |
 | designer | `design-ID` | a conceptual decision, written into the plan or DECISIONS.md | the knowledge base, max |
 | task designer | `brief-ID` | a brief task: the planner's plan of a detailing, carried out as build and fix tasks, each with its review tasks | the middle base (`xhigh`), xhigh |
 | investigator | `investigate-ID` | measures and finds out; findings written | the middle base, xhigh |
@@ -47,48 +48,82 @@ A fork runs at its origin's effort: an effort change invalidates the messages ca
 caching, invalidation hierarchy), so choosing a task's effort is choosing what its session forks. Until the base topic
 builds `xhigh` and `high`, their roles fork the present base at max. Each role's first message is its protocol
 (`protocols/<role>.md`, with the shared parts `protocols/_*.md`): its name, its piece of work, the held files changed
-since the load, and the rules it works under. The base's system prompt describes the v1 implementer; every protocol
+since the load, and the rules it works under. A role is given only the parts that hold for it: `_tree.md` and
+`_checks.md` go to the sessions that write the working tree and run checks, and not to the planner, the task designer
+or a consultation, which have neither a tree nor a check — until 2026-09-20 every role was told it had a git worktree
+of its own, which four of them never have, and `{TREE}` now says where the session really works, its own tree or the
+one it shares. The base's system prompt describes the v1 implementer; every protocol
 names what of it does not apply, and the hooks behave exactly as the protocols say.
+
+**Standstill.** Nothing works, nothing in the queue can start, and nothing has happened: only the planner can move
+the graph, and nothing wakes it, because it is woken by events. The dispatch names it to the planner instead — what is
+parked and for what, what is ready but blocked, what came back and has not been re-planned — and names it again every
+`ORCH_STANDSTILL_EVERY` (30 min) while it lasts. On 2026-09-20 the orchestration stood still three times this way, six
+and a half hours in all, and only `health.py` said so, to nobody.
 
 **Slots** (`v2.dispatch`, run after every change and once a minute): one producing session (designer, investigator,
 implementer or fixer, by the task's kind); beside it one supporting session, a task designer or a reviewer, not both
 (the owner's decision), the brief first when nothing is ready to produce, the review first otherwise; one quick fix;
-consultations side by side (up to `ORCH_CONSULT_MAX`, 4: each a fork answering one question, the owner's decision); one
-planning episode, started when events have gathered (a burst is batched) or at once when nothing could be produced
-without it, and only once the knowledge base has integrated the last episode's notes. A producing session never waits
+consultations side by side (up to `ORCH_CONSULT_MAX`, 4: each a fork answering one question, the owner's decision).
+The planner is outside all of this: it is one session, not a worker, so the rate never holds an event back from it.
+`ORCH_WORKERS` (2) caps the sum of the producing, supporting and consultation slots — a quick fix starts whatever it
+says. It is not what limits production: one producing session runs whatever it is set to, and past two the machine's
+two Isabelle runs bind. At 1 a finished task waited to be reviewed and a question to the knowledge base waited for a
+gap in production, which is what 2 buys back (the owner, 2026-09-20).
+A producing session never waits
 holding its slot (the owner, 2026-09-19): with nothing productive left it parks (`v2.py park run|fix|tree|answer`) and
 the slot goes to the next task; when what it waits for has come and the slot and the working tree are free, it is
 resumed, its context intact, before anything new starts.
 
 **The knowledge base** loads HANDOFF.md, the owner ledger and `state/owner-directions-new.md` (the collector runs
-before every build), replies INTEGRATED and is sealed. It is resumed only to integrate an episode's notes
+before every build), replies INTEGRATED and is sealed. It is resumed only to integrate a planner's notes
 (`state/<kb>-notes.md` keeps them), one at a time, and sealed again; nothing forks it meanwhile. Every question to it
 is answered by a fork, so questions never grow it. Its limit is set by its forks' room, not its own window: a fork
-starts with its whole context, so it is rebuilt from its base before it leaves a planning episode less than 150K or a
+starts with its whole context, so it is rebuilt from its base before it leaves a planner less than 150K or a
 consultation less than 60K before the notice (907K, so at 757K), or when it has gone cold. A rebuilt knowledge base
 loads HANDOFF.md, not the notes: whatever must outlast one goes there, condensed (a settled decision written where it
-belongs and referenced). A designer forks the middle base, which holds the working frontier a design needs, opening
+belongs and referenced). HANDOFF.md is the state a planner needs to act now, bounded by `ORCH_HANDOFF_MAX` (60K
+tokens) because every knowledge base holds it and every designer reads it whole; what was done and how goes to
+`PLANNING_LOG.md`, which no base holds, nothing reads to plan from, and nothing bounds. `v2.py status` tells the
+planner what its state weighs and which section carries it, so the pressure runs both ways: it grew from 6.5K
+characters to 81K in a day when nothing measured it. `start.sh --fresh` leaves the one that stands behind on purpose — the planner that lives
+goes with it, so the next forks the new one — and charges the first planner to take stock before it queues anything:
+what has been produced and is not yet carried, what the graph no longer needs and why, and what its structure should
+be under the harness as it now is. What the old knowledge base held and HANDOFF.md does not is lost to that, which
+is the point of writing HANDOFF.md as the state and not as a log. A designer forks the middle base, which holds the working frontier a design needs, opening
 its first gather with HANDOFF.md and the ledger: the most recent details are not the most important, and HANDOFF.md
 holds what persists. When even a fresh knowledge
-base loads within 50K of its limit, the next episode is asked to condense HANDOFF.md, and `health.py` says a base
+base loads within 50K of its limit, the planner is asked to condense HANDOFF.md, and `health.py` says a base
 rebuild is due: that is the owner's (base.sh), and takes in what the documents now hold.
 
-**Planning episodes** receive the events in their first message (results, verdicts, escalations, failures, questions,
-what a stop interrupted), read statements only, and end with `v2.py planned --notes FILE`: HANDOFF.md in the form of
-the planner's state (`## Graph`, `## Decisions`, `## Delivered`, `## Open`, `## Now`), the notes going to the
-knowledge base. Their deliberation ends with them; what they decided persists in the task list, HANDOFF.md, the
-decision register and the knowledge base. A lost episode's events go to the next.
+**The planner** is one session that lives across its events. Each event (a result, a verdict, an escalation, a
+failure, a question, what a stop interrupted, the owner's words) reaches it as its own message as it happens: nothing
+is gathered into a batch and nothing waits for a gap in production, so it works problem by problem and what it learned
+from one event is still its own when the next arrives (the owner, 2026-09-20). Its turn ends when it has handled what
+it was given; it is then sealed, held warm and woken by the next event. It ends once, when its window is full: then it
+writes HANDOFF.md in the form of the planner's state (`## Graph`, `## Decisions`, `## Delivered`, `## Open`, `## Now`)
+and, with `v2.py planned --notes FILE`, the notes the knowledge base is to hold — what it has settled, aggregated,
+with what has since been answered or superseded left out — and the next planner forks from a knowledge base that holds
+them. Its deliberation ends with it; what it decided persists in the task list, HANDOFF.md, the decision register and
+the knowledge base. What a lost planner was given and had not handled goes to the next.
+
+The planner and the task designer prefer tasks that can run beside each other, where the work admits it: a
+dependency is written only where it is real (a task's inputs are another's artifacts, or its brief rests on a
+decision another takes), never for order or tidiness, and never at the cost of splitting reasoning that belongs
+together or letting two tasks establish the same notion. `v2.py status` says which tasks could start now — the width
+of the graph as it was drawn; at one, nothing can take the producing slot while the task holding it is parked or
+checking, which is how 2026-09-20 stood still for six and a half hours.
 
 ## Tasks and briefs
 
 The graph is the Claude Code task list `orchestration-graph` (`CLAUDE_CODE_TASK_LIST_ID` in `planner-settings.json`),
-edited by the planning episodes and the task designers and by nobody else (the guard refuses TaskCreate and TaskUpdate
+edited by the planner and the task designers and by nobody else (the guard refuses TaskCreate and TaskUpdate
 to the other roles that carry that setting). `v2.py queue ID...` is the order. `v2.py` marks a task in progress with
 its session when it starts, and completed when it is done, under Claude Code's own lock on the task file
 (proper-lockfile's `<file>.lock` directory, stale after 10 s, read from Claude Code 2.1.273).
 
 Every piece of work beyond a question is a task of the graph with a brief in form, planned by the same machinery
-(`protocols/_brief.md`); only consultations and planning episodes, which are small and driven by events, are not. The
+(`protocols/_brief.md`); only consultations and the planner, which are driven by events, are not. The
 kinds: design, investigate, build, fix (the producing slot), brief and review (the supporting slot). The planner
 writes the design and investigation tasks and the brief tasks, a brief task being the plan of a detailing; its task
 designer writes the build and fix tasks and, for each, its review tasks, whose plans are the reviews' courses
@@ -112,7 +147,7 @@ re-plans the task.
 
 The guards (`work_meter.py`, PreToolUse) refuse; they do not remind; they hold for every working role. Production is a
 change to the role's own deliverable (the implementer's theories and code, the designer's decision, the investigator's
-findings, the task designer's briefs and graph edits, the reviewer's verdict, the episode's HANDOFF.md, notes and graph
+findings, the task designer's briefs and graph edits, the reviewer's verdict, the planner's HANDOFF.md, notes and graph
 edits, a consultation's reply) that adds or changes content: in a theory a command added or changed, comments and
 layout aside, or 40 words of commentary; in a document 40 words added or rewritten; in code 5 lines (as multisets:
 moved or deleted words do not count). Between two productions a session takes at most 3 requests and reads at most 20K
@@ -143,7 +178,7 @@ leaves unfinished (parked, back to the planner, lost, dropped, interrupted) has 
 `.build/tasks/ID/shelf/` once its session has stopped, and the producing session is told; they come back, merged (`git
 merge-file`) onto what has landed since, when the parked task is woken or a task continuing it runs `v2.py unshelve
 ID`, only while no finalization is in flight. A task's commit takes HANDOFF.md as it stands, as every commit before v2
-did; HANDOFF.md is written by planning episodes only. At most two Isabelle runs go at once (three have filled the machine's 60 GiB); a final check that advances the
+did; HANDOFF.md is written by the planner only. At most two Isabelle runs go at once (three have filled the machine's 60 GiB); a final check that advances the
 base heap (`--advance-base`, `adopt`) waits until none runs and holds the machine (`state/isabelle-exclusive`), and
 every other check is refused meanwhile. A session is never stopped (sealed, or resumed) while a background job of its
 own runs: its mail waits for the job's completion, which runs its turn, and `v2.py result`, after which it is stopped,
@@ -166,7 +201,7 @@ it is resumed to record a partial result.
 
 `v2.py ask --to kb|planner|designer|task-designer|reviewer "..."` routes by the asker's task: the author of the design
 it builds on (the designer of a task it is blocked by), the task designer that briefed it, the reviewer that judged it,
-the knowledge base, or the next planning episode. A question to a warm, sealed author is answered by a fork of it
+the knowledge base, or the planner. A question to a warm, sealed author is answered by a fork of it
 (`ask-qN`), several side by side; to an author whose cache has expired, by a fork of the knowledge base with the author's
 written work as input. The answer (`v2.py reply QID TEXT [--decision]`) goes to the asker's mailbox; an answer that
 decides something new becomes an event for the planner and a note for the knowledge base. The asker continues with
@@ -177,8 +212,10 @@ gone cold, or unanswered for 3 hours, its task goes back to the planner).
 
 Mail (`state/mail/<name>.jsonl`) reaches a busy session at its next tool call (the gauge adds it to the context) or
 when its turn would end (the Stop hook continues the turn with it); a waiting session is resumed with it while warm.
-Everything the harness says to a session begins with `[harness]` or `Message from`, and is never collected as the
-owner's words.
+A resume that fails carries nothing, so the messages go back into the box each with its own sender, before whatever
+arrived meanwhile. A box whose session is no longer in the state, or an empty one of a session that reads nothing ever
+again, is swept. Everything the harness says to a session begins with `[harness]` or `Message from`, and is never
+collected as the owner's words.
 
 ## Warmth
 
@@ -188,7 +225,7 @@ those of every fork of it, down its origins to the base. A sealed session is war
 (`v2.py ping`, as `base.sh warm`: about 0.1 of its context per hour, against about 2.0 for one cold resume): the
 knowledge base always; a task's session while its task is checked, reviewed, fixed or committed; its reviewer while a
 re-review may come; a parked session, and one waiting on its question, for 3 hours; a task designer or a designer while tasks it briefed or designed are
-open, for at most 3 hours. Everything else is released. Planning episodes keep a task that may consult an author close
+open, for at most 3 hours. Everything else is released. The planner keeps a task that may consult an author close
 after that author's task.
 
 ## Finishing a task
@@ -205,11 +242,12 @@ judges only the listed findings and what the fix broke. A second failure or reje
 ## The watchdog
 
 `watchdog.py`, once a minute while the orchestration is active: a session gone three runs in a row is lost and its piece
-of work goes back (a producing session's task to the planner, a review or brief to be started again, an episode's
-events to the next, a question to be asked again, the knowledge base rebuilt); an idle session with mail is resumed
-with it; after a usage-limit stop it is resumed once the limit has reset; one at the end of its window is lost; one
-whose piece of work has ended, or that waits, is sealed; one whose turn ended without either is resumed after five
-minutes. Then the held sessions are pinged or released, parked ones past their hold resumed, a fix past its budget
+of work goes back (a producing session's task to the planner, a review or brief to be started again, what a planner
+had not handled to the next one, a question to be asked again, the knowledge base rebuilt); an idle session with mail
+is resumed with it; after a usage-limit stop it is resumed once the limit has reset; one at the end of its window is
+lost; one whose piece of work has ended, or that waits, is sealed; the planner, whose turn ends with the events it was
+given, is sealed between them and held warm, and lost if it goes cold there; one whose turn ended without any of that
+is resumed after five minutes. Then the held sessions are pinged or released, parked ones past their hold resumed, a fix past its budget
 given to the planner, and a finalizer given up when its process has ended without reporting or has outlived its wait
 for Isabelle and its check (it and its check's process group are then ended); a late report is then only an event.
 Each part, and each part of the dispatch, runs on its own: one that fails is logged and holds up nothing else. What nothing refers to any more (sessions released a
@@ -219,12 +257,16 @@ hook reads stays small. The watchdog's care and the dispatch run under one lock.
 
 ## Hooks
 
-`planner-settings.json` (the knowledge base, its forks, the task designers) and `worker-settings.json` (the others)
-wire the same scripts, which act by role (`v2.role_of`, from `state/v2.json`): PreToolUse `work_meter.py guard`;
+`planner-settings.json` (the planner and the task designers) and `worker-settings.json` (every other session) wire
+the same scripts; they differ in one thing only, `CLAUDE_CODE_TASK_LIST_ID`, which puts a session on the shared task
+list that is the graph. Every session on it sees the others' edits to it injected into its context, so only the two
+roles that edit the graph are given it — the knowledge base was on it until 2026-09-20, could not edit it, and
+passed what was injected on to every session forked from it. Every other session's task list is its own, named by
+its own session, and the bases have none. Both wire the same scripts, which act by role (`v2.role_of`, from `state/v2.json`): PreToolUse `work_meter.py guard`;
 PostToolUse `ctx_gauge.py gauge` (mail, the notice near the window's end at 907K and the end mark at 942K, below the
 972K the API has accepted, the session's reading and production, the warmth marks); Stop `ctx_gauge.py stop` (a
-session ends its turn only when its piece of work has ended, while it waits, or, for the knowledge base and an episode
-the owner speaks to, always); PreCompact `ctx_gauge.py tripwire`; SessionStart sleeps ten seconds, which holds a
+session ends its turn only when its piece of work has ended, while it waits, or, for the knowledge base, the planner
+between its events and a session the owner speaks to, always); PreCompact `ctx_gauge.py tripwire`; SessionStart sleeps ten seconds, which holds a
 fork's first request until its tools have loaded.
 
 ## How the base is loaded
@@ -272,14 +314,14 @@ Claude Code's login.
 
 ## The owner's directions
 
-**How to give them.** Speak to the planner for anything about what is done, in which order and why: `talk.sh` opens a
-planning episode for you (or joins the one running), a fork of the knowledge base; it waits for your words, acts on
+**How to give them.** Speak to the planner for anything about what is done, in which order and why: `talk.sh` joins
+the planner that lives (or opens one, a fork of the knowledge base); it waits for your words, acts on
 them in the graph, the order and the decisions, writes them into HANDOFF.md and its notes, and ends when you are done;
-the knowledge base integrates its notes, so every later episode, and every knowledge base rebuilt from HANDOFF.md,
+the knowledge base integrates its notes, so every later planner, and every knowledge base rebuilt from HANDOFF.md,
 holds them. Speak to a working session (`attach.sh producer|support|fix|consultant`) for its own piece of work: a
 correction to what an implementer is writing, a concern for a reviewer. It acts within its task, and what you said
-reaches the next planning episode as an event, so that anything beyond the task is planned. The answer to an open
-question of the ledger goes to a planning episode like any direction. Whatever you type is recorded, verbatim and
+reaches the planner as an event at once, so that anything beyond the task is planned. The answer to an open
+question of the ledger goes to the planner like any direction. Whatever you type is recorded, verbatim and
 dated, with the session and task it went to, in `owner-ledger.md` (ctx_gauge.py owner, the UserPromptSubmit hook of
 every orchestrated session: the harness's own words, launch prompts and notifications are never taken for yours).
 Directions meant to hold for every session, always, go into what the bases load (the owner's words and the operating
@@ -367,7 +409,7 @@ estimate of 699K, and Fable tokenized the same material to within a thousand tok
 
 | File | Role |
 |---|---|
-| `start.sh`, `stop.sh`, `talk.sh`, `attach.sh` | start or rejoin; stop every session; speak to a planning episode; open and follow a role |
+| `start.sh`, `stop.sh`, `talk.sh`, `attach.sh` | start or rejoin; stop every session; speak to the planner; open and follow a role |
 | `v2.py` | the state, the roles and slots, forks, resumes, sealing and warmth, the knowledge base, the dispatch, and every command of the sessions and the harness |
 | `protocols/` | each role's first message (`<role>.md`) and the shared parts (`_*.md`) |
 | `planner-settings.json`, `worker-settings.json` | the hooks, and the task list of the roles that carry it |

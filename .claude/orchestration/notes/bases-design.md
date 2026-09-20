@@ -398,3 +398,198 @@ session's working directory (five `cwd=PROJECT` sites), the guard's path rules (
 `v2.PROJECT`), the finalizer committing on a task's branch and merging, and where `.build` lives for a session whose
 theories are elsewhere. That is the part that changes what every running session may do, and the day's lesson is not
 to change it under a live run.
+
+---
+
+## 13. The layered bases, built (2026-09-20, the owner: enable it for xhigh)
+
+**The warmth assumption is measured and holds.** Section 8 assumed every request of a fork of the layer reads a
+prefix containing the stable base, so the stable base needs no pings of its own; the handoff listed it as unverified.
+The sealed knowledge base is a layer over `max` in all but name, so forking it measures exactly this. A fork of kb-1
+(538,044 tokens over max's 472,310), made from the project root, read **538,051 from cache and wrote 62** — the whole
+prefix, the stable base included. Pinging the layer therefore keeps everything under it alive, and one ping serves
+both. Note for whoever repeats it: a fork started from another working directory shares no prefix at all (the first
+attempt, launched from `.claude/orchestration`, read 11,374 and wrote 526,874) — `base.sh` cds to the project first,
+and anything measuring by hand must too.
+
+**Measured split** (real packs, 2026-09-20): xhigh stable 310,066 tokens over 271 files in 7 chunks, xhigh layer
+214,637 over 89 files in 6 chunks. Section 8 predicted 316K and 223K.
+
+**Built** (nothing built or sealed live; the owner says when):
+- `# === layer ===` in `base-load-xhigh.txt` and `base-load-high.txt`, above the working frontier: below it the
+  frontier, the tools, the decision index, the reasoning inventory, the plan and the owner's words; above it the
+  stable reference. `base-load-max.txt` is not split — A's layer is the knowledge base itself.
+- `manifest.py`: `has_layer`, `held_files(part)` and `ORCH_BASE_PART`; `changed` reads both snapshots, since a fork
+  holds both parts; `stale-share` is what the refresh rule reads. A layer's estimate counts no fresh session
+  (`base_pack.SESSION_TOKENS` is 0 for it), because it is loaded by a fork that already carries one.
+- `base.sh WHO build` packs only the stable part of a split list; `base.sh WHO layer` re-measures the frontier, packs
+  what stands below the mark, forks the sealed stable base (no `--append-system-prompt-file`: a fork inherits the
+  prompt, and any difference would cost the whole base a cold write), loads it, verifies it with `check-load`, seals
+  it and records `state/WHO-layer.json`, stopping the layer it replaces. `drop` takes both.
+- `v2.base_file`/`base_record`: every role of a base forks its layer when one is recorded, and `room_of` reads the
+  layer's context, which is the whole of it.
+- `watchdog.layers()`: refreshed at the start of a run and when `stale-share` reaches `ORCH_LAYER_STALE` (20%);
+  `health.py` reports each layer's size, when it was sealed and its stale share.
+- `select_base_load.py --frontier WHO`: the tier re-measured from the sessions of the roles that fork that base
+  (`v2.ROLES[role]["origin"] == WHO`), not from the v1 implementers.
+
+**The frontier does not shrink on thin evidence.** Measured today: the xhigh roles' sessions qualify **1** theory
+(they read statements through gathers, not whole theories), the high roles' **6**. A tier rebuilt from that alone
+would have collapsed from 40 to 1. So the measurement promotes what it found and the previous frontier fills the
+rest in its own order: the tier keeps its size and changes only where there is evidence. Today's dry runs: xhigh 40
+(1 measured, 39 carried; 1 new, 1 dropped), high 40 (6 measured, 34 carried; 5 new, 5 dropped).
+
+**`high` holds the frontier too**, at statements where xhigh holds it at definitions, and it is the one that moves:
+the work of an implementer or fixer *is* in those theories, while the xhigh roles read them. Section 8's own replay
+said the same — a median of 4K of C's held files change per commit against 3K of B's, 7 refreshes against 6 in 15.5
+hours. Its list is marked and its layer builds by the same command; whether to turn it on is the owner's.
+
+**Found while doing it.** `base.sh` honoured an inherited `ORCH_LOAD_LIST`, so a caller carrying one would have had
+another base's content packed into the base it asked for — and the warm daemon was carrying max's. The base named on
+the command line now wins; `BASE_LOAD_LIST` is the deliberate override. The daemon must be restarted from a clean
+environment before any base is built.
+
+## 14. The edges of a layered base (2026-09-20, the owner: test the edge cases)
+
+Seven of them, six defects. All fixed and tested (`test_layer.py`, `test_base_warm.py`, `test_watchdog.py`).
+
+1. **The ping went to the wrong session.** `base.sh WHO warm` pinged the stable base, so the layer — what every role
+   actually forks — would have gone cold while the base under it stayed warm, and the first fork after that would
+   have paid a cold write of the layer's whole 525K. The ping now goes to the layer when one is recorded; a fork of
+   it reads the base under it anyway, so one ping still serves both.
+2. **An old layer's session kept the new one looking warm.** Warmth is marked per base name and a session's origin
+   is recorded as that name, so a worker still running on the layer it forked refreshed the mark that now stands for
+   the layer that replaced it — the new layer could go cold with the harness believing it warm, and again the first
+   fork would pay 525K. Each session now records the session it actually forked (`origin_sid`), and `hit_chain`
+   marks the base only for a session whose origin is still what is forked.
+3. **A session was told what changed since a load it never had.** `manifest.py changed` read the layer standing now,
+   so a session forked before a refresh was measured against a snapshot it does not hold, and the files that moved
+   before that refresh — the frontier theories being worked on — were left out of its stale list. Each layer's
+   snapshot is now kept under its own session (`state/layer-<sid>-manifest.json`), `manifest.py changed WHO
+   --since-layer SID` measures against it, and every role's first message is rendered with the session's own
+   (`v2.stale_of`). A session whose snapshot has been swept falls back to the one standing rather than saying
+   nothing.
+4. **A refresh could race a fork of the layer it replaced.** It stopped *and removed* the old layer; a fork launched
+   from it meanwhile would have found nothing. It is now stopped and not removed — a sealed session is exactly what a
+   base is — and its snapshot is kept while any session still holds it (`tidied` sweeps the rest).
+5. **Two refreshes could run at once.** The guard was the watchdog's ping marker, which expires in 600 s, while a
+   refresh may take 900. `base.sh` now holds `state/WHO-layer.building` for the length of the build and gives it up
+   on exit; the watchdog and `health.py` read it.
+6. **An orphaned layer.** Once the owner rebuilds the stable base, the layer over it is a fork of a session that is
+   gone. `v2.layer_record` and `base.sh` both refuse it — the roles fork the stable base instead — and `health.py`
+   says so and asks for it to be built again.
+7. **A worker on the old layer is otherwise unaffected**: a fork is a copy, so stopping the layer it came from does
+   not touch it, and its own requests keep its own entry alive. That one needed no change, only the test.
+
+Found while testing: `base.sh` compared the layer's recorded base with the stable base's id one line *before*
+`field()` was defined, so both sides came back empty and every layer passed as current. The test caught it.
+
+## 15. The levels, measured (2026-09-20, the owner: does high need more than statements?)
+
+**The names invert the order.** `statements` is the richest level, not the leanest: every command verbatim with each
+proof replaced by one comment. `definitions` is the same with each lemma and theorem reduced to its name in place
+(77% of statements, measured over three frontier theories); `signatures` is the same again with each definition
+reduced to its name and type (57%).
+
+So the implementation base already holds the frontier at the **richest** level, and more of it than the middle base:
+
+| | founding theories | working frontier |
+|---|---|---|
+| max (planner, knowledge base) | definitions, 272,568 | — |
+| xhigh (designer, task designer, investigator, reviewer) | signatures, 200,926 | **definitions**, 117,057 |
+| high (implementer, fixer) | signatures, 200,926 | **statements**, 162,211 |
+
+An implementer therefore sees every definition and every lemma statement of the 40 frontier theories, and only the
+proofs are gone. Raising xhigh's frontier to statements would add 45,154 tokens to a base already at 519K with the
+plan and the reasoning inventory on it, which the implementation base does not carry.
+
+**Where an implementer is actually thin** is the 226 founding theories, held at signatures by both worker bases: a
+definition's name and type, a lemma's name, no bodies and no statements. Raising them to definitions costs +71,642,
+to statements +355,351 (impossible). The design's answer is the frontier: what a session keeps reaching for is
+promoted into the frontier tier at statements at the next layer refresh. That is a stronger argument for turning the
+layer on for `high` than for changing any level.
+
+**Found while checking it.** The re-measure only counted file *paths* in a tool call, but a gather and `show.py` name
+facts (`Theory.fact`, or a bare `foo_def`) — which is the reading the protocols prescribe. So the reading style of
+the roles that read statements by name was invisible to the measurement, which is why the xhigh roles measured one
+theory and the implementers, who open whole files, six. Counting a fact name for its theory (`FACT_THEORY`, built
+from the theory sources) raises it to 4 and 13, and 3 and 6 of those are new to the frontier.
+
+## 16. The planner's base is layered too (2026-09-20, the owner)
+
+The owner, on `REASONING_REUSE.md` being stale: it *should* change as material is added, if the machinery is
+working. That is the whole argument, and it holds for more than one file. Measured over the six days to 2026-09-20:
+`REASONING_REUSE.md` 57 commits, `native_control_plan.md` 32, `DECISIONS.md` seven — all of today, 646K to 723K
+characters in twelve hours. Against that, over the twelve hours since the `max` base was sealed:
+
+| tier | tokens | moved |
+|---|---:|---:|
+| the 226 founding theories, as definitions | 272,568 | **0** |
+| the 13 central-idea tiers | 127,859 | **0** |
+| the generated indexes, the reasoning inventory, the plan, the owner's voice | 126,415 | 66,526 |
+
+So the material designed to grow was sitting in the part that can only be refreshed by rebuilding 474K, while the two
+thirds that never moves was rebuilt with it each time. `max` is split now, as section 8 said A should be:
+
+- **stable, about 400K**: the founding theories at definitions and the central ideas. It moved by nothing.
+- **layer, about 144K**: `state/held/theory-names.md`, the decision index, `REASONING_REUSE.md`,
+  `native_control_plan.md` and the owner's voice and operating rules.
+
+`# pinned: what exists` (the theory-name index) moved down next to the other generated index, so that the reference
+holds nothing that is regenerated: it is what makes the stable part move by nothing at all rather than whenever a
+theory is added. The order within the layer is unchanged — reference, then direction, the owner's words last.
+
+Two things this turned up, both fixed before any build:
+
+- **A layer need not hold a frontier.** `base.sh WHO layer` re-measures the frontier first, and
+  `select_base_load --frontier max` returned failure because the planner's list has no such tier — which would have
+  aborted every refresh of `max`'s layer. Nothing to re-measure is not a failure.
+- **`layerless()` read the manifest before asking whether the layer held anything**, so a list whose layer part
+  matches no file was reported as a base missing its layer. It asks in the right order now.
+
+The three splits as they now measure (files, then loaded tokens):
+
+| | stable | layer |
+|---|---|---|
+| max | 270 files, ~472K | 36 files, ~147K |
+| xhigh | 271 files, ~419K | 89 files, ~263K |
+| high | 271 files, ~487K | 80 files, ~209K |
+
+## 17. The review before the build (2026-09-20)
+
+**The sizes I had quoted were the wrong measure.** `manifest.py size` estimates from the raw digest text and ignores
+the pack's compression; it runs about a third high. Packed, and scaled by each base's own measured estimator bias
+(from what its whole pack actually sealed at):
+
+| base | stable | layer | both, expected | sealed whole |
+|---|---:|---:|---:|---:|
+| max | 361,864 | 112,720 | **472,786** | 472,310 |
+| xhigh | 293,229 | 229,088 | **496,685** | 498,607 |
+| high | 293,229 | 240,953 | **518,207** | 510,838 |
+
+Each split base lands within a few thousand tokens of the whole base it replaces, so splitting costs nothing. A fork
+has 434K / 410K / 388K of room before its notice, and a refresh writes 112K / 218K / 234K instead of rebuilding.
+
+**The division was wrong in two of the three, and the review found it by measurement.** Against the sealed manifests,
+`xhigh`'s stable part moved by 17,846 tokens (`theory-names.md`) and `high`'s by 86,160 (`theory-map-index.md`):
+each had a *generated* index in its reference, exactly the flaw already fixed in `max`. Both moved below the mark.
+Now every stable part moves by **nothing**, and xhigh's and high's are the same 328,785 tokens of source, as they
+should be — the same founding theories at signatures and the same central ideas.
+
+**The ordering holds**: reference then direction, the owner's words last in the loaded text of all three. Within each
+layer: what exists, then the frontier and the tools where there are any, then the decisions, the reasoning, the plan,
+and the owner's voice. `high` carries no plan and no reasoning inventory, by design C″.
+
+**One fragility, mine, fixed**: the layer mark was a five-line comment block, and `manifest.held_files` reads every
+comment line as a tier header — so a file listed straight after the mark would have taken a nonsense tier and with it
+the wrong digest level. The mark is one line now. (The lists' own header blocks are read the same loose way; that is
+older and harmless, since no file follows them before a real tier.)
+
+**Contents**: 306 / 360 / 351 files, no duplicate, nothing missing, nothing held that is always read fresh
+(HANDOFF.md, PLANNING_LOG.md, THEORY_MAP.md, the ledger), and every theory at its intended level — 226 founding at
+definitions for max and signatures for the others, 44 central ideas at statements, 40 frontier at definitions for
+xhigh and statements for high.
+
+**Builds**: all six packs verify; each bootstrap names exactly the chunk count its pack has (8/4, 6/7, 6/7); the
+largest chunk is 108,296 bytes against the 128,000 a Bash result shows whole. `seal` writes `<who>-manifest.json`
+for a stable base and `layer` writes `<who>-layer-manifest.json` and a copy under the layer's own session.

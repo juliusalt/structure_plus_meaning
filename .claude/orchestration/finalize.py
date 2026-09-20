@@ -106,6 +106,14 @@ def checked_run(tid):
         v2.tree_checked("the harness", f"task {tid}'s check was about to run", v2.worktree_of(tid))
         v2.checked(tid, False, tail, ran=False)
         return 1
+    standing = v2.base_would_stand_in_a_task(spec["check"])
+    if standing:  # a job recorded before the rule, or around it: the base must not come to stand in a task's tree
+        tail = "This check was not run: " + v2.BASE_IN_A_TASK.format(named=", ".join(standing))
+        open(os.path.join(d, "finalize.log"), "w").write(tail + "\n")
+        outcome(tid, ok=False, seconds=0)
+        v2.log(f"check of task {tid}: not run, it would leave the base in the task's own directory")
+        v2.checked(tid, False, tail, ran=False)
+        return 1
     exclusive = bool(v2.ADVANCES.search(spec["check"]))
     wait_for_isabelle(tid, exclusive)
     try:

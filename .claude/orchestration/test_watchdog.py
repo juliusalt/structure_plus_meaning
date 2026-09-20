@@ -6,11 +6,13 @@ from pathlib import Path
 import sys
 import time
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import fakes  # noqa: E402
 from fakes import BRIEF, PLANNER_STATE, assistant  # noqa: E402
 import v2  # noqa: E402
+import watchdog  # noqa: E402
 
 
 def hour_text(epoch):
@@ -115,6 +117,51 @@ class WatchdogTests(unittest.TestCase):
         self.assertTrue(self.s("brief-4")["sealed"])
         self.assertEqual(self.s("brief-4")["state"], "waiting")  # held warm for its answer
 
+    def test_the_planner_between_its_events_is_sealed_held_and_never_released(self):
+        # it lives across its events: a turn that ends means it has handled them, and the next event wakes it
+        self.w.session("plan-1", "planner", "p1", status="idle", settings="planner-settings.json", origin="kb-1",
+                       events=[{"at": "2026-09-20T10:00:00", "from": "x", "text": "handled"}])
+        self.w.session("implement-9", "implementer", "w9", task="9")  # something works: this is no standstill
+        self.said("p1")
+        self.run_watchdog()
+        self.assertEqual(self.s("plan-1")["state"], "idle")
+        self.assertTrue(self.s("plan-1")["sealed"])
+        self.assertEqual(self.s("plan-1")["events"], [])  # by ending its turn it says it has handled them
+        self.assertIn("id-p1", [c["args"][1] for c in self.w.calls("stop")])
+        self.w.set_rows([r for r in self.w.rows() if r["name"] != "plan-1"])
+        self.w.hit("plan-1", age=v2.PING_AGE + 60)
+        self.run_watchdog(ORCH_PING_WAIT=0)
+        self.assertFalse(self.s("plan-1").get("released"))  # never released while it lives
+        self.assertTrue((self.w.state / "ping-plan-1").exists())  # pinged before its cache expires
+
+    def test_a_standstill_is_named_to_the_planner_because_only_it_can_move_the_graph(self):
+        # the orchestration stood still three times on 2026-09-20 (six and a half hours), and only health.py said so
+        self.w.session("plan-1", "planner", "p1", state="idle", live=False, settings="planner-settings.json")
+        self.w.task("4", subject="The blocked one")
+        self.w.set_st(queue=["4"], tasks={"4": {"stage": "parked", "kind": "build", "session": "implement-4",
+                                                "parked": {"for": "fix", "after": "9", "since": time.time() - 7200}}})
+        self.run_watchdog()
+        told = " ".join(c["args"][-1] for c in self.w.calls("--bg") if "--resume" in c["args"])
+        self.assertIn("Nothing is working and nothing in the queue can start", told)
+        self.assertIn("task 4 has been parked 120 min for task 9", told)
+        self.assertTrue((self.w.state / "standstill").exists())
+        # said once, not at every run of the watchdog
+        before = len(self.w.calls("--bg"))
+        self.run_watchdog()
+        self.assertEqual(len(self.w.calls("--bg")), before)
+
+    def test_a_planner_that_goes_cold_between_its_events_is_lost_and_gives_them_back(self):
+        self.w.session("plan-1", "planner", "p1", state="idle", live=False, settings="planner-settings.json",
+                       events=[{"at": "2026-09-20T10:00:00", "from": "x", "text": "not handled"}])
+        self.w.hit("plan-1", age=v2.WARM_MAX + 60)
+        self.run_watchdog()
+        self.assertTrue(self.s("plan-1").get("released"))
+        # what it was given and had not handled goes back, and the dispatch that follows starts the next planner on it
+        started = [c["args"][-1] for c in self.w.calls("--bg")
+                   if "-n" in c["args"] and c["args"][c["args"].index("-n") + 1].startswith("plan-")]
+        self.assertEqual(len(started), 1)
+        self.assertIn("not handled", started[0])
+
     def test_a_session_waiting_on_its_answer_is_held_warm_and_given_back_when_it_went_cold(self):
         self.w.session("implement-4", "implementer", "w4", task="4", state="parked", live=False)
         self.w.set_st(asks={"q1": {"from": "implement-4", "state": "open", "text": "q", "asked": time.time(),
@@ -135,8 +182,13 @@ class WatchdogTests(unittest.TestCase):
         self.said("w4")
         (self.w.state / "mail").mkdir(exist_ok=True)
         (self.w.state / "mail" / "implement-4.jsonl").write_text(json.dumps({"from": "kb", "text": "the answer", "at": "t"}) + "\n")
+        (self.w.state / "mail" / "implement-4.jsonl").write_text(
+            json.dumps({"from": "kb", "text": "the answer", "at": "t"}) + "\n"
+            + json.dumps({"from": "plan-1", "text": "and the order", "at": "t"}) + "\n")
         self.run_watchdog()
-        self.assertIn("the answer", json.dumps(self.w.mail("implement-4")))
+        kept = self.w.mail("implement-4")
+        self.assertEqual([(m["from"], m["text"]) for m in kept],  # each with its own sender, not merged into one
+                         [("kb", "the answer"), ("plan-1", "and the order")])
         self.assertEqual(self.s("implement-4")["state"], "lost")
 
     def test_a_session_with_running_jobs_is_neither_sealed_nor_resumed(self):
@@ -200,6 +252,48 @@ class WatchdogTests(unittest.TestCase):
         self.assertEqual(len(self.resumed("w4")), 1)
 
     # ------------------------------------------------------------ held sessions
+
+    def layer(self, who="xhigh"):
+        (self.w.state / f"{who}-layer.json").write_text(json.dumps(
+            {"sessionId": f"{who}-layer-sid", "model": "claude-opus-5[1m]", "effort": who, "context": 525_000,
+             "sealed": "2026-09-20T10:00:00"}))
+
+    def run_layers(self, share):
+        """watchdog.layers() in this world, with the refresh itself intercepted: it would otherwise run base.sh
+        against the real repository, re-measure the real frontier and load a real layer."""
+        with patch.object(watchdog, "STATE", str(self.w.state)), patch.object(v2, "STATE", str(self.w.state)), \
+                patch.object(watchdog, "stale_share", lambda who: share), \
+                patch.object(watchdog.subprocess, "Popen") as popen:
+            watchdog.layers()
+            return [c.args[0] for c in popen.call_args_list]
+
+    def test_a_layer_is_refreshed_when_what_it_holds_has_moved_and_not_before(self):
+        # the rule of notes/bases-design.md section 8: 20% of the layer's tokens changed, about every 2.5 to 3 hours
+        self.layer()
+        self.assertEqual(self.run_layers(0.05), [])  # little has moved: the layer stands
+        (self.w.state / "xhigh-layer.looked").unlink()
+        (launched,) = self.run_layers(0.31)
+        self.assertEqual(launched[1:], [str(Path(watchdog.HERE) / "base.sh"), "xhigh", "layer"])
+        self.assertIn("31% of what it holds has changed", (self.w.state / "v2.log").read_text())
+
+    def test_a_layer_is_refreshed_at_the_start_of_a_run_whatever_has_changed(self):
+        self.layer()
+        (self.w.state / "xhigh-layer.refresh").write_text("1")
+        self.assertEqual(len(self.run_layers(0.0)), 1)
+        self.assertFalse((self.w.state / "xhigh-layer.refresh").exists())  # asked once, not at every run
+        self.assertIn("at the start of the run", (self.w.state / "v2.log").read_text())
+
+    def test_a_base_with_no_layer_is_left_alone(self):
+        self.assertEqual(self.run_layers(0.9), [])
+
+    def test_only_one_refresh_of_a_layer_runs_at_a_time(self):
+        # a refresh can take longer than the watchdog's own ping window, so the lock is base.sh's own and lasts as
+        # long as the build does; two at once would fork the stable base twice and race over the same records
+        self.layer()
+        (self.w.state / "xhigh-layer.building").write_text("12345")
+        self.assertEqual(self.run_layers(0.9), [])
+        (self.w.state / "xhigh-layer.building").unlink()
+        self.assertEqual(len(self.run_layers(0.9)), 1)
 
     def test_the_knowledge_base_is_pinged_before_its_cache_expires(self):
         self.w.hit("kb-1", age=v2.PING_AGE + 60)

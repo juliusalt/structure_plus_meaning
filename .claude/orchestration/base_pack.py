@@ -94,7 +94,9 @@ BOOTSTRAP_PREFIX = "Load the reference library; do no development work."
 # wrapper and the model's turn between batches at max effort.
 PACKED_RATIO = {".thy": 2.30, ".md": 3.80, ".txt": 3.80, ".py": 2.42}
 INDEX_RATIO = 2.30  # the theory-name index: capitalised names tokenize like theory text
-SESSION_TOKENS = 15_000
+# A layer is loaded by a fork of the sealed stable base, so it pays for no fresh session: its forks carry the stable
+# base's lean session already (notes/bases-design.md section 8).
+SESSION_TOKENS = 0 if os.environ.get("ORCH_BASE_PART") == "layer" else 15_000
 CALL_TOKENS = 190
 # Tokens of the loaded form relative to the plain bundle, for the files it rewrites (measured the same day).
 SELECTED_FACTOR = {".thy": 0.877, "index": 0.670}

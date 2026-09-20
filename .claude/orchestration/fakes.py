@@ -3,7 +3,7 @@ a session listing and records every call. No Claude session is launched and noth
 
 Scripts run in it through World.run, with the environment every part reads: ORCH_PROJECT, ORCH_STATE_DIR, HOME (the
 task lists and transcripts under it), ORCH_PAUSE=0 and ORCH_CACHE_CHECK=0 (no waits, no background cache check),
-ORCH_SYNC=1 (a command's dispatch runs before it returns) and ORCH_EPISODE_GAP=0.
+ORCH_SYNC=1 (a command's dispatch runs before it returns).
 """
 import json
 import os
@@ -128,7 +128,6 @@ class World:
                         ORCH_ISABELLE_RUNS="0",  # no run of this machine is this world's
                         ORCH_WORKERS="8",  # the slots' own capacity; the owner's rate is a setting, tested apart
                         ORCH_TREES="0",  # the one tree unless a test says otherwise
-                        ORCH_EPISODE_GAP="0", ORCH_URGENT_GAP="0",
                         ORCH_ACTIVE_CONTEXT=str(self.state / "active-context.json"),
                        
                         ORCH_PAUSE="0", ORCH_CACHE_CHECK="0", ORCH_SYNC="1",

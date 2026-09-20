@@ -1,6 +1,6 @@
-## The first episode: a new task graph
+## The first planner: a new task graph
 
-This is the orchestration's first planning episode, and there is no task graph yet: you build it. Until 2026-09-19 the
+You are the orchestration's first planner, and there is no task graph yet: you build it. Until 2026-09-19 the
 development was carried by single implementers working from a handoff; the orchestration takes it over from here.
 
 Build it from:

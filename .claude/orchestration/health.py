@@ -5,6 +5,7 @@ ATTENTION."""
 import calendar
 import json
 import os
+import subprocess
 import sys
 import time
 
@@ -90,6 +91,48 @@ def bases_and_trees():
         print(("ATTENTION " if n >= 2 else "")
               + f"base {who}: {'warm' if ' OK' in last[-1] else 'was COLD and was rewritten'} at {at[11:19]}"
               + (f", {n} miss(es); two stop its pings" if n else ""))
+    for who in v2.BASES:
+        path = os.path.join(v2.STATE, f"{who}-layer.json")
+        if not os.path.exists(path):
+            continue
+        try:
+            rec = json.load(open(path))
+        except (OSError, ValueError):
+            continue
+        share = 0.0
+        try:
+            out = subprocess.run([sys.executable, os.path.join(v2.HERE, "manifest.py"), "stale-share", who],
+                                 capture_output=True, text=True, timeout=120,
+                                 env={k: v for k, v in os.environ.items() if k != "ORCH_LOAD_LIST"}).stdout
+            share = float(out.strip() or 0)
+        except (ValueError, OSError, subprocess.SubprocessError):
+            pass
+        if not v2.layer_record(who):
+            print(f"ATTENTION layer {who}: it is a fork of the stable base {str(rec.get('base'))[:8]}, which has been "
+                  "rebuilt under it — nothing forks it and nothing pings it; build it again (base.sh "
+                  f"{who} layer)")
+            continue
+        due = share >= float(os.environ.get("ORCH_LAYER_STALE", 0.20))
+        building = os.path.exists(os.path.join(v2.STATE, f"{who}-layer.building"))
+        print(("ATTENTION " if due and not building else "")
+              + f"layer {who}: {rec.get('context', 0) // 1000}K, sealed {rec.get('sealed', '?')[11:19]}, "
+              + f"{share:.0%} of what it holds has changed"
+              + (" — it is being built again" if building else " — it is refreshed" if due else ""))
+    hold = v2.held_back()
+    if hold:
+        print(f"ATTENTION nothing starts a session: the hold is on ({hold}). Keep-warm pings still go. "
+              f"Take it off when you mean to begin: rm {os.path.join(v2.STATE, v2.NO_LAUNCH)}")
+    size, biggest, its = v2.handoff_size()
+    if size > v2.HANDOFF_MAX:
+        print(f"ATTENTION HANDOFF.md is {size // 1000}K tokens of at most {v2.HANDOFF_MAX // 1000}K, `## {biggest}` "
+              f"{its // 1000}K of it: every knowledge base holds it and every designer reads it whole. The planner "
+              f"is told in its status; what was done and how belongs in {v2.PLANNER_LOG}, DECISIONS.md takes what "
+              "the development decides, and a planning decision belongs to the task it governs.")
+    risk = v2.base_at_risk()
+    if risk:
+        print("ATTENTION the accepted base stands in a task's own directory: "
+              + ", ".join(os.path.relpath(x, v2.PROJECT) for x in risk)
+              + " — dropping that task, re-planning it or sweeping its run output would take the base with it")
     trees = v2.trees_standing()
     if trees:
         print("trees: " + ", ".join(f"task {x['task']} ({x['changed']} changed, {x['commits']} commit(s))"
@@ -134,6 +177,8 @@ def main():
                               ("supporting", v2.SUPPORTING, False), ("quick fix", v2.PRODUCING, True),
                               ("consultation", {"consultant"}, False)):
         s = v2.slot(st, roles, fix)
+        if not s and label == "planner":  # it is in no slot between its events, and it is alive there
+            s = st["sessions"].get(v2.planner_live(st) or "")
         print(session(label, s, now) if s else f"{label}: -")
     stages = [f"{tid}:{(st['tasks'].get(tid) or {}).get('stage', '?')}" for tid in st["queue"]]
     print("queue: " + (" ".join(stages) or "empty"))

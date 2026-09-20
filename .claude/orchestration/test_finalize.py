@@ -55,6 +55,16 @@ class FinalizeTests(unittest.TestCase):
         (review,) = [c["args"] for c in self.w.calls("--bg") if "review-3" in c["args"]]
         self.assertIn("You are review-3, a reviewer", review[-1])
 
+    def test_a_recorded_check_that_would_take_the_base_into_the_task_s_tree_is_not_run(self):
+        # jobs recorded before the rule still name their own directory; none of them runs, and the round is not spent
+        self.spec("python3 -B tools/incremental_check.py check --advance-base --output .build/tasks/3/final-check")
+        code, _, err = self.w.run("finalize.py", "check", "3")
+        self.assertEqual(code, 1, err)
+        self.assertFalse(self.outcome()["ok"])
+        self.assertEqual(self.outcome()["seconds"], 0)
+        self.assertIn(".build/tasks/3/final-check", (self.w.project / ".build/tasks/3/finalize.log").read_text())
+        self.assertNotIn("final-check", os.listdir(self.w.project / ".build/tasks/3"))
+
     def py(self, code):
         """Run v2 code in this world; its printed output."""
         r = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n{code}"],

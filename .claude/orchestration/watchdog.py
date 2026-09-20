@@ -6,11 +6,12 @@
              to be asked again, the knowledge base to be rebuilt). An idle session with mail is resumed with it; one
              stopped by the usage limit is resumed once the limit has reset; one at the end of its window is stopped
              and its piece of work goes back; one whose piece of work has ended, or that waits, is sealed (stopped:
-             it can be resumed or forked while warm); one whose turn ended without any of that (an API error, a lost
-             turn) is resumed to continue after IDLE_MAX seconds.
+             it can be resumed or forked while warm); the planner, which lives across its events, is sealed between
+             them and held warm; one whose turn ended without any of that (an API error, a lost turn) is resumed to
+             continue after IDLE_MAX seconds.
   held       a sealed session something may still consult or continue is pinged before its cache expires (v2.ping):
-             the knowledge base always; a task's session while its task is being checked, reviewed, fixed or
-             committed; its reviewer while a re-review may come; a waiting (parked) session for v2.HOLD_PARK seconds,
+             the knowledge base and the planner always; a task's session while its task is being checked, reviewed,
+             fixed or committed; its reviewer while a re-review may come; a waiting (parked) session for v2.HOLD_PARK seconds,
              after which it is resumed to record a partial result; a task designer or a designer while tasks it
              briefed or designed are open, for at most v2.HOLD_MAX seconds. Anything else is released.
   finishing  a quick fix past its budget and a grace is stopped, the task given to the planner; a check or commit whose
@@ -19,6 +20,7 @@
              consultation, a planning episode.
 Nothing is done while state/stopped exists or the orchestration is inactive. Every action is one line in state/v2.log.
 """
+import contextlib
 import datetime
 import json
 import os
@@ -142,7 +144,10 @@ def lost(name, why):
                 t["stage"] = "ready"
         elif role == "planner":
             st["events"] = (s.get("events") or []) + st["events"]
-            v2.event(st, "the harness", f"The planning episode {name} {why} before it ended; its events are given again.")
+            v2.event(st, "the harness", f"The planner {name} {why} before it wrote its notes, so the knowledge base "
+                     "holds nothing of what it settled and HANDOFF.md is all that carries over. What it was given and "
+                     "had not handled is below; read HANDOFF.md as the state, and say in your own notes what that "
+                     "costs if anything is missing from it.")
         elif role == "consultant" and s.get("qid") in st["asks"]:
             st["asks"][s["qid"]]["state"] = "queued"
         elif role == "kb" and st.get("kb_building") == name:
@@ -179,9 +184,9 @@ def care(name, s):
         return  # v2.kb_care seals it when it has replied INTEGRATED
     model, said, at = last_reply(s["sid"])
     if s["state"] in v2.LIVE and v2.has_mail(name) and not v2.running_jobs(name):
-        mail = v2.take_mail(name)
-        if mail and not v2.resume(name, mail):
-            v2.post(name, "the harness", mail)  # kept; a session gone cold cannot take it
+        messages = v2.unread(name)
+        if messages and not v2.resume(name, v2.mail_text(messages)):
+            v2.keep_mail(name, messages)  # kept, each with its own sender; a session gone cold cannot take it
             if not v2.warm(name):
                 lost(name, "went cold before its mail reached it")
         return
@@ -195,8 +200,12 @@ def care(name, s):
     if v2.running_jobs(name):
         return  # stopping it would kill its jobs: their completion runs its turn
     if s.get("owner") and at and time.time() - at > OWNER_IDLE and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
-        v2.resume(name, "The owner has been silent for half an hour: record every direction they gave in the ledger, "
-                        "write HANDOFF.md and your notes, and end the episode (`v2.py planned --notes FILE`).")
+        # the owner has gone; the planner is not ended by that — it goes back to its events with what it was told
+        with v2.state() as st:
+            st["sessions"][name]["owner"] = False
+        v2.resume(name, "The owner has been silent for half an hour and has gone. Record every direction they gave in "
+                        "the ledger, carry it into HANDOFF.md, the graph and the order, and then go on with your "
+                        "events as before; end your turn when you have.")
         return
     waiting = s["role"] not in v2.PRODUCING and any(
         q["from"] == name and q["state"] != "answered" for q in v2.peek()["asks"].values())
@@ -208,6 +217,16 @@ def care(name, s):
         return
     if s.get("owner"):
         return  # it waits for the owner
+    if s["role"] == "planner" and s["state"] == "working":
+        # The planner lives across its events. Its turn ends when it has handled what it was given (ctx_gauge.may_end
+        # lets it, after its mail is taken); it is then sealed and held warm, and the next event wakes it. The events
+        # it was given are cleared here because by that contract they are handled; what it is given and does not
+        # handle is given again only if it is lost mid-turn.
+        with v2.state() as st:
+            st["sessions"][name].update(state="idle", events=[])
+        v2.seal(name)
+        v2.log(f"{name} has handled what it was given and waits for the next event")
+        return
     if at and time.time() - at > IDLE_MAX and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
         if not v2.resume(name, "Your turn ended before your piece of work did. Continue; your turn ends when it has "
                                "ended, or while you wait on a question of your own."):
@@ -222,6 +241,8 @@ def held(st, name, s):
         return None
     if name == st["kb"]:
         return "the knowledge base"
+    if s["role"] == "planner" and s["state"] == "idle":
+        return "the planner, between events"  # one planner lives across them; the next event wakes it
     tasks = st["tasks"]
     t = tasks.get(s.get("task") or "") or {}
     ended = s.get("ended") or s.get("started") or 0
@@ -270,6 +291,12 @@ def holds():
             continue
         if s["state"] in ("parked", "waiting") and not v2.warm(name):
             lost(name, "went cold while it waited")
+            continue
+        if s["state"] == "idle" and not v2.warm(name):
+            # a planner whose cache is gone can no longer be resumed (v2.resume refuses a cold session), so an event
+            # delivered to it would sit in its box and nothing would ever open it. It is lost here instead: what it
+            # was given and had not handled goes back, and the next one forks from the knowledge base.
+            lost(name, "went cold between its events")
             continue
         since = (((st["tasks"].get(s.get("task")) or {}).get("parked") or {}).get("since") if s["state"] == "parked" else
                  min((q["asked"] for q in st["asks"].values() if q["from"] == name and q["state"] != "answered"),
@@ -343,6 +370,46 @@ def finishing():
                 lost(name, "outgrew its quick fix's budget")
 
 
+LAYER_STALE = float(os.environ.get("ORCH_LAYER_STALE", 0.20))
+LAYER_EVERY = int(os.environ.get("ORCH_LAYER_EVERY", 900))  # how often the share is looked at
+
+
+def layers():
+    """Refresh a base's frontier layer when what it holds has moved. The rule of notes/bases-design.md section 8: at
+    the start of a run, and when the held files changed since the layer loaded reach ORCH_LAYER_STALE of its tokens —
+    replaying the 30 commits of 2026-09-19 that came to 6 refreshes for the middle base and 7 for the implementation
+    one in 15.5 hours, about every 2.5 to 3 hours of continuous work. The stable reference under it is the owner's to
+    rebuild and is never touched here."""
+    for who in v2.BASES:
+        if not os.path.exists(os.path.join(STATE, f"{who}-layer.json")):
+            continue
+        asked = os.path.exists(os.path.join(STATE, f"{who}-layer.refresh"))
+        if not asked and (age(f"{who}-layer.looked") or LAYER_EVERY + 1) < LAYER_EVERY:
+            continue
+        if os.path.exists(os.path.join(STATE, f"{who}-layer.building")):
+            continue  # one refresh of a layer at a time; base.sh holds this while it builds and gives it up at the end
+        open(os.path.join(STATE, f"{who}-layer.looked"), "w").write(str(time.time()))
+        share = 1.0 if asked else stale_share(who)
+        if share < LAYER_STALE:
+            continue
+        with contextlib.suppress(OSError):
+            os.remove(os.path.join(STATE, f"{who}-layer.refresh"))
+        v2.log(f"the {who} layer is refreshed: {share:.0%} of what it holds has changed since it loaded"
+               if not asked else f"the {who} layer is refreshed at the start of the run")
+        subprocess.Popen(["sh", os.path.join(HERE, "base.sh"), who, "layer"], cwd=v2.PROJECT,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+
+
+def stale_share(who):
+    try:
+        out = subprocess.run([sys.executable, os.path.join(HERE, "manifest.py"), "stale-share", who],
+                             capture_output=True, text=True, timeout=120,
+                             env={k: v for k, v in os.environ.items() if k != "ORCH_LOAD_LIST"}).stdout
+        return float(out.strip() or 0)
+    except (ValueError, OSError, subprocess.SubprocessError):
+        return 0.0
+
+
 def watch():
     """The care of every live session, the finalizations, what is held warm, the archive: each part on its own, so that
     one that fails (logged) holds up nothing else."""
@@ -350,7 +417,7 @@ def watch():
         if (s["state"] in v2.LIVE and not (s["state"] == "waiting" and s.get("sealed"))) or (
                 s["role"] == "kb" and not s.get("sealed") and not s.get("released")):
             contained(f"care of {name}", care, name, s)
-    for part in (finishing, holds, v2.archive):
+    for part in (finishing, holds, layers, v2.archive):
         contained(part.__name__, part)
 
 

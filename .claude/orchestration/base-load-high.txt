@@ -1,14 +1,12 @@
 # DRAFT (2026-09-19, revised after the owner's answers): the implementation base's load list (`high`, high:
 # implementer, fixer): design C″ of notes/bases-design.md, not in use; the owner builds the base. No plan and no
 # reasoning inventory: a build or fix brief states what of them it rests on (protocols/_brief.md). Ordered from
-# reference to direction: what each theory holds (the theory map's index, without the theories held below), the
-# founding theories as signatures, the central ideas' statements, the working frontier's statements, the check
-# workflow's tools, and last the owner's words and the operating rules. Measured by a real pack: about 536K (482K with
+# reference to direction: the founding theories as signatures and the central ideas' statements, then — below the
+# layer mark — what each theory holds (the theory map's index, without the theories held below), the working
+# frontier's statements, the check workflow's tools, and last the owner's words and the operating rules. Measured by a real pack: about 536K (482K with
 # the founding theories at the outline level, which is not built: section 7). In the layered design (section 8) the
 # tiers up to the central ideas are the stable reference and the rest is the frontier layer. Comments are curation
 # notes; they never reach the loaded text.
-# pinned: what each theory holds (generated at pack time: the first clause of its THEORY_MAP.md row, the theories this list holds left out)
-.claude/orchestration/state/held/theory-map-index.md
 # every other founding theory, as signatures (generated: commentary, each definition by its name and type, locales and the names of what is proved; one per notion of the library's vocabulary, in import order)
 theories/RRA_Data_Views.thy
 theories/RRA_Environment.thy
@@ -292,47 +290,50 @@ theories/RRA_Indexed_Artifact_Lookup.thy
 # pinned idea: base causes and programs
 theories/Factor_Base_Cause.thy
 theories/Factor_Base_Programs.thy
-# the working frontier (the 40 theories v1 implementers consulted most in 24 sessions; re-measure from the implementers' sessions at build time), as statements
-theories/Development_Requests.thy
-theories/Development_Successor.thy
-theories/Development_Machinery.thy
-theories/Keyed_Native_Evaluation.thy
-theories/Development_Native_Readiness.thy
-theories/Factor_Workflow_Stage.thy
-theories/Factor_Demanded_Program_Calls.thy
-theories/Development_Native_Selection.thy
-theories/Factor_Development_Cases.thy
-theories/Development_Seed_Loop.thy
-theories/Natural_Binary_Digits.thy
-theories/Native_Collection_Programs.thy
-theories/Development_Constant_Problems.thy
-theories/Development_Refinement_Repair.thy
-theories/Factor_Development_Conditions.thy
-theories/Native_Development_Machinery.thy
-theories/Development_Certified_Generations.thy
-theories/Native_Execution_Refinements.thy
-theories/Isabelle_State_Difference.thy
-theories/Isabelle_Terms.thy
-theories/Factor_Finite_Ground_Source.thy
-theories/Filtered_Native_Questions.thy
-theories/Development_Refinement_Verification.thy
-theories/Factor_Development_Criterion_Sources.thy
-theories/Development_Policy.thy
-theories/Factor_Finite_Data_Syntax.thy
-theories/Factor_Workflow_Execution_Sharing.thy
-theories/Isabelle_Entities.thy
-theories/Factor_Native_Generation.thy
-theories/Finite_Presented_Coordinates.thy
-theories/Development_Decomposition.thy
-theories/Finite_Binary_Values.thy
-theories/Isabelle_Entity_Export.thy
-theories/Development_Constant_Verification.thy
-theories/Factor_Formation_Once_Readings.thy
-theories/Factor_Indexed_Readings.thy
-theories/Development_Definition_Verification.thy
-theories/Factor_Executable_Schemas.thy
-theories/Development_Admitted_Publication.thy
-theories/Development_Refinement_Contracts.thy
+# === layer === the frontier layer below: refreshed on its own (base.sh high layer) when what it holds has changed; the reference above is the owner's to rebuild.
+# pinned: what each theory holds (generated at pack time: the first clause of its THEORY_MAP.md row, the theories this list holds left out)
+.claude/orchestration/state/held/theory-map-index.md
+# the working frontier (40 theories for the fixer, implementer sessions, re-measured 2026-09-20 from 7 of them: 13 by what they consulted, 27 carried), as statements
+theories/Development_Loci.thy  # 3 sessions, 12K pulled
+theories/Native_Execution_Refinements.thy  # 4 sessions, 0K pulled
+theories/Isabelle_Code_Equations.thy  # 1 sessions, 2K pulled
+theories/Isabelle_Local_Names.thy  # 1 sessions, 5K pulled
+theories/Development_Problems.thy  # 1 sessions, 7K pulled
+theories/Isabelle_State_Difference.thy  # 1 sessions, 4K pulled
+theories/Isabelle_Renaming.thy  # 1 sessions, 6K pulled
+theories/Native_Path_Stores.thy  # 1 sessions, 7K pulled
+theories/Development_Native_Selection.thy  # 1 sessions, 7K pulled
+theories/Isabelle_Entities.thy  # 1 sessions, 4K pulled
+theories/Isabelle_Terms.thy  # 1 sessions, 1K pulled
+theories/Development_Constant_Verification.thy  # 1 sessions, 1K pulled
+theories/Development_Constant_Problems.thy  # 1 sessions, 2K pulled
+theories/Development_Requests.thy  # carried from the frontier before this refresh
+theories/Development_Successor.thy  # carried from the frontier before this refresh
+theories/Development_Machinery.thy  # carried from the frontier before this refresh
+theories/Keyed_Native_Evaluation.thy  # carried from the frontier before this refresh
+theories/Development_Native_Readiness.thy  # carried from the frontier before this refresh
+theories/Factor_Workflow_Stage.thy  # carried from the frontier before this refresh
+theories/Factor_Demanded_Program_Calls.thy  # carried from the frontier before this refresh
+theories/Factor_Development_Cases.thy  # carried from the frontier before this refresh
+theories/Development_Seed_Loop.thy  # carried from the frontier before this refresh
+theories/Natural_Binary_Digits.thy  # carried from the frontier before this refresh
+theories/Native_Collection_Programs.thy  # carried from the frontier before this refresh
+theories/Development_Refinement_Repair.thy  # carried from the frontier before this refresh
+theories/Factor_Development_Conditions.thy  # carried from the frontier before this refresh
+theories/Native_Development_Machinery.thy  # carried from the frontier before this refresh
+theories/Development_Certified_Generations.thy  # carried from the frontier before this refresh
+theories/Factor_Finite_Ground_Source.thy  # carried from the frontier before this refresh
+theories/Filtered_Native_Questions.thy  # carried from the frontier before this refresh
+theories/Development_Refinement_Verification.thy  # carried from the frontier before this refresh
+theories/Factor_Development_Criterion_Sources.thy  # carried from the frontier before this refresh
+theories/Development_Policy.thy  # carried from the frontier before this refresh
+theories/Factor_Finite_Data_Syntax.thy  # carried from the frontier before this refresh
+theories/Factor_Workflow_Execution_Sharing.thy  # carried from the frontier before this refresh
+theories/Factor_Native_Generation.thy  # carried from the frontier before this refresh
+theories/Finite_Presented_Coordinates.thy  # carried from the frontier before this refresh
+theories/Development_Decomposition.thy  # carried from the frontier before this refresh
+theories/Finite_Binary_Values.thy  # carried from the frontier before this refresh
+theories/Isabelle_Entity_Export.thy  # carried from the frontier before this refresh
 # the check and measurement workflow's tools (docstrings, signatures, arguments)
 tools/probe_theories.py
 tools/incremental_check.py

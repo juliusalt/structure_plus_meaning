@@ -92,8 +92,14 @@ class GaugeTests(unittest.TestCase):
         for path in ("hits/plan-1", "hits/kb-1", "max-base.hit"):
             self.assertGreater((self.w.state / path).stat().st_mtime, old + 100, path)
 
+    def test_the_planner_s_turn_ends_when_it_has_handled_what_it_was_given(self):
+        # it lives across its events: its turn ends with the last of them, it is sealed warm, and the next wakes it
+        self.assertIsNone(self.stop("p1"))
+        self.post("plan-1", "Task 4 is committed.")
+        self.assertIn("Task 4 is committed.", self.stop("p1"))  # mail first: what is unread continues the turn
+        self.assertIsNone(self.stop("p1"))
+
     def test_a_session_ends_its_turn_only_when_its_piece_of_work_has_ended_or_it_waits(self):
-        self.assertIn("v2.py planned", self.stop("p1"))
         self.assertIn("v2.py result 4", self.stop("w4"))
         self.assertIn("v2.py verdict 3", self.stop("r3"))
         self.w.set_st(asks={"q1": {"from": "implement-4", "state": "open", "text": "q", "asked": time.time()},
@@ -108,12 +114,12 @@ class GaugeTests(unittest.TestCase):
         self.w.set_st(asks={})
         self.assertIsNotNone(self.stop("r3"))
         self.assertIsNone(self.stop("r3", running))  # another session may wait for its own job
-        for name, sid in (("plan-1", "p1"), ("implement-4", "w4"), ("review-3", "r3")):
+        for name, sid in (("implement-4", "w4"), ("review-3", "r3")):
             self.set_session(name, state="done")
             self.assertIsNone(self.stop(sid))
         self.assertIsNone(self.stop("k2"))  # the knowledge base, always
         self.set_session("plan-1", state="working", owner=True)
-        self.assertIsNone(self.stop("p1"))  # an episode the owner speaks to waits for the owner
+        self.assertIsNone(self.stop("p1"))  # a planner the owner speaks to waits for the owner
 
     def test_mail_waiting_continues_the_turn(self):
         self.set_session("plan-1", state="done")

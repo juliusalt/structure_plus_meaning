@@ -487,7 +487,9 @@ def session_guard(hook, rec):
                     "the knowledge base or the planner (`v2.py ask`).")
     if tool == "TaskOutput":
         return deny("Waiting is refused: a background job's completion notifies you; continue with the task meanwhile.")
-    if tool in ("TaskCreate", "TaskUpdate") and rec.get("settings") == "planner-settings.json" \
+    # planner-settings.json is what puts a session on the shared graph (CLAUDE_CODE_TASK_LIST_ID); every other
+    # session's task list is its own, and a worker is told to make its plan there.
+    if tool in ("TaskCreate", "TaskUpdate") and rec.get("settings") == v2.GRAPH_SETTINGS \
             and not v2.ROLES.get(rec.get("role"), {}).get("graph"):
         return deny("The task graph is the planner's and the task designer's: propose a task to the planner instead "
                     "(`v2.py ask --to planner`), or name it in your result.")
@@ -605,9 +607,10 @@ def write_guard(tool, inp, command, rec, cwd):
     """HANDOFF.md is the planner's; while another task's finalization is in flight, it holds the working tree: every
     other session writes only under .build/ (and the harness's own files), and is told when the tree is free."""
     targets = write_targets(tool, inp, command, cwd)
-    handoffs = {os.path.join(v2.PROJECT, "HANDOFF.md"), os.path.join(v2.tree_of(rec), "HANDOFF.md")}
-    if rec.get("role") != "planner" and handoffs & set(targets):
-        return deny("HANDOFF.md is the planner's state: what you did goes into your result, which reaches the planner.")
+    theirs = {os.path.join(d, f) for d in (v2.PROJECT, v2.tree_of(rec)) for f in ("HANDOFF.md", v2.PLANNER_LOG)}
+    if rec.get("role") != "planner" and theirs & set(targets):
+        return deny(f"HANDOFF.md is the planner's state and {v2.PLANNER_LOG} is its log: what you did goes into your "
+                    "result, which reaches the planner.")
     st = v2.peek()
     locked = v2.locked_files(st, rec)
     for t in targets:  # the files of a finalization in flight are its own until it is committed

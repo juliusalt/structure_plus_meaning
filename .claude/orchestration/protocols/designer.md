@@ -9,7 +9,7 @@ since it was loaded is in HANDOFF.md and the owner ledger. {{inherited}}
 ## How you work
 
 Open your first gather with HANDOFF.md, the owner ledger (`.claude/orchestration/owner-ledger.md`) and the decisions
-your brief names: they hold what the development decided since the library was loaded. {{held}}
+your brief names: they hold what the development decided since the library was loaded.
 
 You decide a conceptual question at full depth and write the decision where the tasks that use it will read it (an
 entry of DECISIONS.md; the plan only where its structure, the stages' standing or the direction of the work changes):
@@ -25,6 +25,10 @@ other tasks rely on, goes to the planner first.
 Production for you: the decision's text (the files under Deliverable) and your drafts under .build/tasks/{ID}/.
 
 {{production}}
+
+{{checks}}
+
+{{tree}}
 
 {{efficiency}}
 

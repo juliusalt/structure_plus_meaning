@@ -25,8 +25,10 @@ base_pack.SELECTED; sizes here use base_pack's measured ratios and that form's m
 is ORCH_BASE_TARGET (530,000, everything included; manifest.TARGET) less the lean session a base starts from
 and one tool call per chunk.
 
-usage: select_base_load.py [--dry-run | --refresh-index]
+usage: select_base_load.py [--dry-run | --refresh-index | --frontier WHO]
 --refresh-index updates only the generated indexes (refresh_indexes), without selecting or removing load-list entries.
+--frontier WHO rewrites only the working-frontier tier of that base's list (max, xhigh, high), measured from the
+sessions of the roles that fork it; that tier is what its layer holds, and base.sh runs this at every layer refresh.
 """
 import glob
 import json
@@ -51,7 +53,8 @@ MIN_SESSIONS = 2
 MIN_SHARE = 0.10
 CHUNK_FILL = CHUNK_BYTES * 0.9  # chunks break at line ends, so they average a little under their bound
 FIXED_TOKENS = 0  # the lean session measured by base_pack already includes the role prompt and the load's turns
-NEVER = {"HANDOFF.md", ".claude/orchestration/owner-ledger.md", "THEORY_MAP.md"}  # always read fresh, never held
+NEVER = {"HANDOFF.md", "PLANNING_LOG.md", ".claude/orchestration/owner-ledger.md", "THEORY_MAP.md"}
+# always read fresh or not at all, never held: the planner's state, the planner's log, the ledger, the theory map
 
 
 def tokens(path, level="statements"):
@@ -89,7 +92,26 @@ def implementer_sessions():
     return out
 
 
+def fact_theories():
+    """Which theory each bare fact name belongs to, so that a gather naming a fact counts for its theory."""
+    out = {}
+    for path in sorted(glob.glob(os.path.join(PROJECT, "theories", "*.thy"))):
+        rel = os.path.relpath(path, PROJECT)
+        try:
+            text = open(path, errors="ignore").read()
+        except OSError:
+            continue
+        for name in re.findall(r"^\s*(?:lemma|theorem|corollary|proposition|definition|fun|primrec|abbreviation)\s+([A-Za-z_][\w']*)\s*[:\[]", text, re.M):
+            out.setdefault(name, rel)
+    return out
+
+
+FACT_THEORY = {}
+
+
 def measure(files):
+    if not FACT_THEORY:
+        FACT_THEORY.update(fact_theories())
     use = {}
     for f in files:
         calls = {}
@@ -120,6 +142,18 @@ def measure(files):
                             if os.path.isfile(os.path.join(PROJECT, cand)):
                                 found.add(cand)
                                 break
+                    # A gather and show.py name facts, not files (`Theory.fact`, or a bare fact name): that is the
+                    # reading the protocols prescribe, and counting only paths made it invisible — which is why the
+                    # xhigh roles, who read statements by name, measured one theory on 2026-09-20 and the
+                    # implementers, who open whole files, measured six.
+                    for theory in set(re.findall(r"(?<![\w/.-])([A-Z][A-Za-z0-9_]*)\.[a-z_][\w'.]*", text)):
+                        rel = f"theories/{theory}.thy"
+                        if os.path.isfile(os.path.join(PROJECT, rel)):
+                            found.add(rel)
+                    for name in set(re.findall(r"(?<![\w/.-])([A-Za-z_][\w']*)_(?:def|simps|induct|cases|iff|intro|elim|dest)\b", text)):
+                        rel = FACT_THEORY.get(name)
+                        if rel:
+                            found.add(rel)
                     calls[c.get("id")] = found
                 elif c.get("type") == "tool_result":
                     found = calls.get(c.get("tool_use_id")) or ()
@@ -198,7 +232,99 @@ def refresh_indexes():
     return count
 
 
+FRONTIER_N = int(os.environ.get("ORCH_FRONTIER_N", 40))
+FRONTIER_HEAD = "# the working frontier"
+
+
+def forking_roles(who):
+    """The roles that fork this base, from v2's own table: xhigh is the designer, task designer, investigator and
+    reviewer; high the implementer and the fixer."""
+    import v2
+    return {role for role, spec in v2.ROLES.items() if spec.get("origin") == who}
+
+
+def sessions_of(roles, limit=SESSIONS):
+    """The transcripts of the most recent sessions of those roles, newest first, taken from the orchestration's own
+    record of which session held which role. Until it has one, the v1 implementers stand in, as they did for the
+    lists as first written."""
+    try:
+        import v2
+        recorded = sorted((s for s in v2.peek()["sessions"].values() if s.get("role") in roles and s.get("sid")),
+                          key=lambda s: s.get("started") or 0, reverse=True)
+    except Exception:  # noqa: BLE001 — a missing or unreadable state must not stop a refresh
+        recorded = []
+    out = [f"{TRANSCRIPTS}/{s['sid']}.jsonl" for s in recorded]
+    out = [f for f in out if os.path.exists(f)][:limit]
+    return out or implementer_sessions()
+
+
+def frontier(who, dry_run=False):
+    """Rewrite the working-frontier tier of a base's list from what the roles that fork it actually consulted. The
+    frontier is what the layer holds and what goes stale; the tiers above it are the stable reference and are not
+    touched here."""
+    path = os.path.join(HERE, manifest.LISTS[who])
+    text = open(path).read()
+    head = re.search(rf"^{re.escape(FRONTIER_HEAD)}.*$", text, re.M)
+    if not head:
+        # not every layer holds a frontier: the planner's holds the generated indexes and the direction, which are
+        # regenerated at pack time. Nothing to re-measure is not a failure, and a refresh must not stop on it.
+        print(f"the {who} list has no working-frontier tier: nothing to re-measure")
+        return 0
+    after = text[head.end():]
+    following = re.search(r"^# ", after, re.M)
+    end = head.end() + (following.start() if following else len(after))
+    level = next((lv for lv in ("signatures", "definitions") if f"as {lv}" in head.group(0)), "statements")
+    was = [ln.split("  #")[0].strip() for ln in after[:following.start() if following else len(after)].splitlines()]
+    was = [ln for ln in was if ln and not ln.startswith("#")]
+    roles = forking_roles(who)
+    files = sessions_of(roles)
+    use = measure(files)
+    elsewhere = {ln for ln in (l.split("  #")[0].strip() for l in text.splitlines())
+                 if ln and not ln.startswith("#")} - set(was)
+    cands = []
+    for rel, (ss, pulled) in use.items():
+        full = os.path.join(PROJECT, rel)
+        if not rel.startswith("theories/") or rel in elsewhere or rel in NEVER or not os.path.isfile(full):
+            continue
+        if pulled < MIN_SHARE * os.path.getsize(full):
+            continue
+        density = (pulled / max(1, len(files))) / max(1, os.path.getsize(full))
+        cands.append((len(ss), density, rel, pulled))
+    cands.sort(key=lambda x: (x[0] < MIN_SESSIONS, -x[1]))
+    measured = [(rel, f"{n} sessions, {pulled // 1000}K pulled") for n, _, rel, pulled in cands[:FRONTIER_N]]
+    # What the roles that fork this base have read is thin evidence early in a run — the xhigh roles read statements
+    # through gathers, not whole theories — and a tier rebuilt from it alone would collapse (1 of 40 on 2026-09-20).
+    # So the measurement promotes what it found and the previous frontier fills the rest, in its own order: the tier
+    # keeps its size, and it changes only where there is evidence to change it.
+    lines, seen = list(measured), {rel for rel, _ in measured}
+    for rel in was:
+        if len(lines) >= FRONTIER_N:
+            break
+        if rel not in seen and os.path.isfile(os.path.join(PROJECT, rel)):
+            lines.append((rel, "carried from the frontier before this refresh"))
+            seen.add(rel)
+    if not lines:
+        print(f"the {who} frontier is left as it is: nothing measured and nothing to carry")
+        return 0
+    block = [f"{FRONTIER_HEAD} ({len(lines)} theories for the {', '.join(sorted(roles))} sessions, re-measured "
+             f"{time.strftime('%Y-%m-%d')} from {len(files)} of them: {len(measured)} by what they consulted, "
+             f"{len(lines) - len(measured)} carried), as {level}"]
+    block += [f"{rel}  # {note}" for rel, note in lines]
+    kept = [rel for rel, _ in lines]
+    print(f"{who} frontier: {len(lines)} theories ({len(measured)} measured from {len(files)} sessions of "
+          f"{', '.join(sorted(roles))}, {len(lines) - len(measured)} carried); "
+          f"{len(set(kept) - set(was))} new, {len(set(was) - set(kept))} dropped")
+    if dry_run:
+        return 0
+    open(path, "w").write(text[:head.start()] + "\n".join(block) + "\n" + text[end:])
+    print(f"{os.path.basename(path)}: the frontier tier rewritten")
+    return 0
+
+
 def main():
+    if "--frontier" in sys.argv:
+        who = sys.argv[sys.argv.index("--frontier") + 1]
+        return frontier(who, "--dry-run" in sys.argv)
     count = refresh_indexes()
     print(f"theory-names.md: {count} names")
     if "--refresh-index" in sys.argv:
@@ -274,4 +400,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main() or 0)

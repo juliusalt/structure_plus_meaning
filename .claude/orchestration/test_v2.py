@@ -3,6 +3,7 @@ episodes, the producing and supporting sessions, consultations and the finalizer
 `claude` (fakes.py)."""
 import json
 import subprocess
+import tempfile
 import os
 from pathlib import Path
 import sys
@@ -93,12 +94,16 @@ class FormTests(unittest.TestCase):
         values = dict(NAME="x-1", ID="7", KIND="build", SUBJECT="S", BRIEF="B", STALE="st", WHAT="w", SESSION="s",
                       BEFORE="", NODE="n", WHY="y", GRAPH="g", LIST="l", QID="q1", ASKER="a", TARGET="kb-1",
                       QUESTION="q", NOTE="", EVENTS="e", QUEUE="7", STATUS="s", OWNER="", HANDOFF="h", ORIGIN_NOTE="",
-                      TASK="6", REVIEW="r", FIRST="")
+                      TASK="6", REVIEW="r", FIRST="", TREE="t")
         import re
-        for role in v2.ROLES:
-            text = v2.render(role, **values)
-            self.assertTrue(text.startswith("You are x-1, "), role)
-            self.assertEqual(re.findall(r"\{[A-Z_]+\}|\{\{[\w-]+\}\}", text), [], role)
+        with tempfile.TemporaryDirectory() as temp, patch.object(v2, "STATE", temp):
+            # in its own state: render logs what it could not fill, and this test wrote that into the live log
+            for role in v2.ROLES:
+                text = v2.render(role, **values)
+                self.assertTrue(text.startswith("You are x-1, "), role)
+                self.assertEqual(re.findall(r"\{[A-Z_]+\}|\{\{[\w-]+\}\}", text), [], role)
+            log = Path(temp) / "v2.log"
+            self.assertEqual(log.read_text() if log.exists() else "", "")  # nothing was left out
 
 
 class InProcessTests(unittest.TestCase):
@@ -191,8 +196,12 @@ class Flow(unittest.TestCase):
         return self.w.st()["sessions"][name]
 
     def heard(self):
-        """What the planner has been told: the events waiting for an episode, and those given to episodes."""
-        return " ".join(e["text"] for e in self.w.st()["events"]) + " " + " ".join(a[-1] for a in self.forks("plan-"))
+        """What the planner has been told: the events not yet with it, those a new planner was started on, and those
+        delivered to the one that lives (its mailbox, and the resume that carried them)."""
+        mail = " ".join(m["text"] for n in self.w.st()["sessions"] if n.startswith("plan-") for m in self.w.mail(n))
+        resumed = " ".join(c["args"][-1] for c in self.w.calls("--bg") if "--resume" in c["args"] and "-n" not in c["args"])
+        return (" ".join(e["text"] for e in self.w.st()["events"]) + " "
+                + " ".join(a[-1] for a in self.forks("plan-")) + " " + mail + " " + resumed)
 
     def t(self, tid):
         return self.w.st()["tasks"].get(tid, {})
@@ -212,7 +221,9 @@ class StartTests(Flow):
         self.assertEqual(self.w.v2("start"), "active; knowledge base kb-1")
         (fork,) = self.forks("kb-")
         self.assertEqual(fork[fork.index("--resume") + 1], "base-sid")
-        self.assertTrue(fork[fork.index("--settings") + 1].endswith("planner-settings.json"))
+        # not the shared graph's settings: the knowledge base may not edit the graph, and whatever were injected
+        # into it would be carried by every session forked from it
+        self.assertTrue(fork[fork.index("--settings") + 1].endswith("worker-settings.json"))
         self.assertIn("You are kb-1, the knowledge base", fork[-1])
         self.assertTrue((self.w.state / "owner-directions-new.md").exists())
         self.w.v2("dispatch")
@@ -223,8 +234,8 @@ class StartTests(Flow):
         self.assertEqual((st["kb"], self.s("kb-1")["kb_state"]), ("kb-1", "sealed"))
         (plan,) = self.forks("plan-")
         self.assertEqual(plan[plan.index("--resume") + 1], self.s("kb-1")["sid"])
-        self.assertIn("You are plan-1, a planning episode", plan[-1])
-        self.assertIn("## The first episode: a new task graph", plan[-1])
+        self.assertIn("You are plan-1, the planner", plan[-1])
+        self.assertIn("## The first planner: a new task graph", plan[-1])
         self.assertIn("they do not bind it", plan[-1])  # the history and the handoff inform the graph
         self.assertIn("uncommitted changes that no task owns yet: none", plan[-1])
         self.assertNotIn("{UNOWNED}", plan[-1])
@@ -232,6 +243,41 @@ class StartTests(Flow):
         self.w.task("1")  # once a graph exists, later episodes are ordinary
         self.w.set_st(events=[{"at": "2026-09-19T00:00:00", "from": "x", "text": "e"}], plan_ended=1.0)
         self.assertEqual(v2_first(self.w), "")
+
+
+    def test_a_fresh_start_leaves_the_knowledge_base_behind_and_charges_the_first_planner(self):
+        # the graph a run inherits was drawn under a harness that has changed, and some of it exists only because of
+        # faults since fixed: the planner takes stock before it queues anything (the owner, 2026-09-20)
+        self.w.base()
+        self.w.kb()
+        self.w.session("plan-9", "planner", "p9", state="idle", live=False, settings="planner-settings.json",
+                       origin="kb-1")
+        self.w.write("HANDOFF.md", PLANNER_STATE)
+        self.w.task("1")
+        self.w.set_st(notes=["what the last knowledge base had not taken up"])
+        # it begins a run, it never rejoins one: under a run in progress it would take the context of whatever is
+        # deliberating with the knowledge base and the planner it leaves behind
+        refused = self.w.v2("start", "--fresh")
+        self.assertIn("refused", refused)
+        self.assertIn("stop.sh first", refused)
+        self.assertIsNone(self.s("kb-1").get("released"))
+        self.w.set_st(active=False)
+        self.assertIn("active; knowledge base", self.w.v2("start", "--fresh"))
+        self.assertTrue(self.s("kb-1").get("released"))     # the one that stood is left behind
+        self.assertTrue(self.s("plan-9").get("released"))   # and so is the planner that would not fork the new one
+        st = self.w.st()
+        self.assertEqual(st["notes"], [])                   # they were for the base being left behind
+        (kb,) = self.forks("kb-")                           # a new one is built at once
+        self.assertIn("Read now, together, what the library does not hold: HANDOFF.md", kb[-1])
+        self.assertNotIn("notes.md", kb[-1])
+        self.assertEqual(self.forks("plan-"), [])           # nothing plans until it holds the knowledge
+        self.w.reply(self.s("kb-2")["sid"], "INTEGRATED")
+        self.w.v2("dispatch")
+        (plan,) = self.forks("plan-")
+        self.assertEqual(plan[plan.index("--resume") + 1], self.s("kb-2")["sid"])
+        for said in ("take stock", "What has been produced", "What the graph no longer needs",
+                     "What the structure should now be", "Only then queue"):
+            self.assertIn(said, plan[-1])
 
 
 def v2_first(world):
@@ -244,10 +290,10 @@ def v2_first(world):
 PASSED = {
     "kb": {"NAME", "STALE"},
     "planner": {"NAME", "ID", "EVENTS", "HANDOFF", "GRAPH", "QUEUE", "STATUS", "LIST", "OWNER", "FIRST", "STALE"},
-    "designer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT"},
-    "implementer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT"},
-    "investigator": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT"},
-    "fixer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT"},
+    "designer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
+    "implementer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
+    "investigator": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
+    "fixer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
     "task-designer": {"NAME", "ID", "SUBJECT", "BRIEF", "WHY", "GRAPH", "LIST", "STALE"},
     "reviewer": {"NAME", "ID", "TASK", "SUBJECT", "REVIEW", "BRIEF", "SESSION", "STALE", "BEFORE"},
     "consultant": {"NAME", "ID", "QID", "ASKER", "TARGET", "QUESTION", "NOTE", "STALE"},
@@ -257,6 +303,78 @@ PASSED = {role: names | {"ROUNDS", "READ", "CIRCLING", "FIX_MINUTES", "FIX_ROUND
 
 
 class PlanningTests(Flow):
+    def event(self, text, sender="the harness"):
+        st = self.w.st()
+        self.w.set_st(events=st["events"] + [{"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": sender, "text": text}])
+
+    def test_one_planner_lives_across_its_events_and_each_reaches_it_as_its_own_message(self):
+        # 23 of the 48 sessions of 2026-09-20 were planning episodes, each a fork of the knowledge base at about
+        # 510K, because an episode was a session and events were batched into it (the owner: one planner, immediately)
+        self.event("Task 1 is committed.")
+        self.w.v2("dispatch")
+        (first,) = self.forks("plan-")
+        self.assertIn("Task 1 is committed.", first[-1])
+        self.event("Task 2 failed its check.")
+        self.event("A question q3 for you.")
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("plan-")), 1)  # no second session: the one that lives is given them
+        self.assertEqual(self.w.st()["events"], [])
+        self.assertEqual([m["text"] for m in self.w.mail("plan-1")],  # two messages, not one batch
+                         ["Task 2 failed its check.", "A question q3 for you."])
+        self.assertEqual([e["text"] for e in self.s("plan-1")["events"]],  # all it was given, for a give-back
+                         ["Task 1 is committed.", "Task 2 failed its check.", "A question q3 for you."])
+        # its turn is running, so its hooks give it the mail; between events it is resumed with what has come
+        self.w.set_status("plan-1", "idle")
+        st = self.w.st()
+        st["sessions"]["plan-1"]["state"] = "idle"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.event("Task 5 is yours again.")
+        self.w.v2("dispatch")
+        (resumed,) = self.resumes(self.s("plan-1")["sid"])
+        for text in ("Task 2 failed its check.", "A question q3 for you.", "Task 5 is yours again."):
+            self.assertIn(text, resumed[-1])
+        self.assertEqual(resumed[-1].count("Message from"), 3)
+        self.assertEqual(self.s("plan-1")["state"], "working")
+        self.assertEqual(self.w.mail("plan-1"), [])
+
+    def test_an_event_reaches_the_planner_while_a_producer_works(self):
+        # the planner is not a worker: gating it behind the rate would make it answer only in a producer's gaps
+        self.w.session("implement-9", "implementer", "w9", task="9")
+        self.w.v2("dispatch", env={"ORCH_WORKERS": "1"})
+        self.event("Task 9 asks something of you.")
+        self.w.v2("dispatch", env={"ORCH_WORKERS": "1"})
+        (plan,) = self.forks("plan-")
+        self.assertIn("Task 9 asks something of you.", plan[-1])
+
+    def test_the_next_planner_starts_only_from_a_knowledge_base_that_holds_the_last_one_s_notes(self):
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json", origin="kb-1")
+        self.w.write("HANDOFF.md", PLANNER_STATE)
+        self.w.write(".build/plans/plan-1/notes.md", "Decided: readiness is a path.")
+        self.assertIn("planned", self.as_("plan-1", "planned", "--notes", ".build/plans/plan-1/notes.md"))
+        self.event("Task 4 is committed.")
+        self.w.v2("dispatch")
+        self.assertEqual(self.forks("plan-"), [])  # its notes are not in the knowledge base yet
+        self.assertEqual(len(self.w.st()["events"]), 1)
+        self.w.reply("kbsid", "INTEGRATED")
+        self.w.v2("dispatch")
+        (second,) = self.forks("plan-")
+        self.assertIn("Task 4 is committed.", second[-1])
+
+    def test_the_owner_joins_the_planner_that_lives_rather_than_opening_another(self):
+        self.event("Task 1 is committed.")
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("plan-")), 1)
+        self.w.set_status("plan-1", "idle")
+        st = self.w.st()
+        st["sessions"]["plan-1"]["state"] = "idle"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.assertEqual(self.w.v2("talk"), "plan-1")
+        self.assertEqual(len(self.forks("plan-")), 1)  # no second planner: the owner joins the one that holds it all
+        self.assertTrue(self.s("plan-1")["owner"])
+        self.assertEqual(self.w.v2("who", "planner"), "plan-1")  # attach.sh finds it between its events
+        (resumed,) = self.resumes(self.s("plan-1")["sid"])
+        self.assertIn("The owner is here", resumed[-1])
+
     def test_an_episode_queues_ends_with_notes_and_the_knowledge_base_integrates_them(self):
         self.w.task("1")
         self.w.task("2", description=BRIEF_TASK, subject="Reach")
@@ -275,7 +393,7 @@ class PlanningTests(Flow):
         self.w.write(".build/plans/plan-1/notes.md", "Decided: readiness is a path.")
         self.assertIn("not in the form of the planner's state", self.as_("plan-1", "planned", "--notes", ".build/plans/plan-1/notes.md"))
         self.w.write("HANDOFF.md", PLANNER_STATE)
-        self.assertEqual(self.as_("plan-1", "planned", "--notes", ".build/plans/plan-1/notes.md"), "planned. End your turn now.")
+        self.assertIn("planned", self.as_("plan-1", "planned", "--notes", ".build/plans/plan-1/notes.md"))
         self.assertEqual(self.s("plan-1")["state"], "done")
         (integration,) = self.resumes("kbsid")
         self.assertTrue(integration[3].startswith("[harness] Integrate these notes"))
@@ -308,6 +426,120 @@ class PlanningTests(Flow):
         self.assertIn("Nothing failed: this task is a fix the planner planned", fixer[-1])
         self.assertNotIn("{WHAT}", fixer[-1])
         self.assertNotRegex(fixer[-1], r"\{[A-Z][A-Z_]{2,}\}")
+
+    def test_a_session_is_told_where_it_works_and_only_when_it_works_there(self):
+        # every role was told "your working tree is your task's own (.build/trees/{ID})": the planner, the task
+        # designer, the reviewer and the consultations have no tree, and a task whose work already stands in the one
+        # tree keeps working there (2026-09-20)
+        for role in ("planner", "task-designer", "reviewer", "consultant", "kb"):
+            text = open(Path(v2.PROTOCOLS) / f"{role}.md").read()
+            self.assertNotIn("{{tree}}", text, f"the {role} has no working tree of its own")
+        # a task with no tree of its own is told it works in the one tree (the prompt of one that has its own is
+        # asserted where the tree is made: test_a_producing_session_is_started_in_its_task_s_own_tree)
+        self.assertIn("**You work in the repository's one working tree**", self.py_tree("5"))
+        self.assertNotIn(".build/trees", self.py_tree("5"))
+
+    def py_tree(self, tid):
+        code = (f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; print(v2.tree_text({tid!r}), end='')")
+        return subprocess.run([sys.executable, "-c", code], env=self.w.env, capture_output=True, text=True).stdout
+
+    def test_every_role_of_a_base_forks_its_layer_when_one_is_recorded(self):
+        # the layer is the stable base with the current frontier on it; a fork of it reads the whole prefix under it
+        # from cache (measured 2026-09-20: 538,051 of 538,044 tokens, 62 written)
+        self.w.base("xhigh", sid="xhigh-sid")
+        st = self.w.st()
+        st["sessions"]["xhigh-base"] = {}  # not a session record; the base record is the file
+        (self.w.state / "xhigh-base.json").write_text(json.dumps(
+            {"sessionId": "xhigh-sid", "model": "claude-opus-5[1m]", "effort": "xhigh", "context": 310_000}))
+        self.assertEqual(self.py("print(v2.base_record('xhigh')[1]['sid'])"), "xhigh-sid")
+        (self.w.state / "xhigh-layer.json").write_text(json.dumps(
+            {"sessionId": "xhigh-layer-sid", "model": "claude-opus-5[1m]", "effort": "xhigh", "context": 525_000,
+             "base": "xhigh-sid"}))
+        self.assertEqual(self.py("print(v2.base_record('xhigh')[1]['sid'])"), "xhigh-layer-sid")
+        # and the room a task is given is what the layer leaves, not what the stable base alone would
+        self.assertEqual(self.py("print(v2.room_of('design'))"), str(v2.SOFT - 525_000 - v2.PROTOCOL_ROOM))
+
+    def py(self, code):
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n{code}"],
+                             env=self.w.env, capture_output=True, text=True)
+        return out.stdout.strip()
+
+    def test_only_the_roles_that_edit_the_graph_are_on_the_shared_task_list(self):
+        # one settings file carries CLAUDE_CODE_TASK_LIST_ID, and every session started with it sees the others'
+        # edits to that list injected into its context. The knowledge base was on it, could not edit it, and passed
+        # what was injected to every session forked from it (2026-09-20).
+        listed = json.loads((Path(v2.HERE) / v2.GRAPH_SETTINGS).read_text()).get("env", {})
+        self.assertIn("CLAUDE_CODE_TASK_LIST_ID", listed, "the graph settings no longer name a shared list")
+        for role, spec in v2.ROLES.items():
+            if spec.get("settings") is None:
+                continue  # a consultation takes its origin's, and so is on the list only if what it forks is
+            self.assertEqual(spec["settings"] == v2.GRAPH_SETTINGS, bool(spec.get("graph")),
+                             f"{role} is on the shared graph but may not edit it, or the other way round")
+        other = json.loads((Path(v2.HERE) / "worker-settings.json").read_text())
+        self.assertNotIn("CLAUDE_CODE_TASK_LIST_ID", other.get("env", {}))
+        graph = json.loads((Path(v2.HERE) / v2.GRAPH_SETTINGS).read_text())
+        graph.pop("env")
+        self.assertEqual(graph, other, "the two settings files differ in more than the shared list")
+
+    def test_the_planner_is_told_when_its_state_has_become_a_log(self):
+        # HANDOFF.md went from 6.5K characters to 81K in a day, and the two condensations in it came to 2.6K against
+        # 80K added: nothing measured it, so nothing pushed the other way (2026-09-20)
+        self.w.write("HANDOFF.md", "# H\n\n## Graph\ng\n\n## Decisions\n" + ("a settled decision, restated. " * 8000)
+                     + "\n\n## Delivered\n-\n\n## Open\n-\n\n## Now\nw\n")
+        said = self.w.v2("status")
+        self.assertRegex(said, r"HANDOFF\.md: \d+K tokens of at most 60K")
+        self.assertIn("over it; `## Decisions`", said)
+        self.assertIn("your state, not your log", said)
+        # it says where each thing goes: the log to its own file, the development's decisions to DECISIONS.md,
+        # and a planning decision to the task it governs
+        self.assertIn(f"how goes to {v2.PLANNER_LOG}", said)
+        self.assertIn("never takes planning, scheduling or anything else operational", said)
+        self.assertIn("belongs to the task it governs", said)
+        self.w.write("HANDOFF.md", PLANNER_STATE)
+        said = self.w.v2("status")
+        self.assertIn("HANDOFF.md: 0K tokens of at most 60K", said)
+        self.assertNotIn("over it", said)
+
+    def test_the_log_is_the_planner_s_and_no_base_holds_it(self):
+        import select_base_load
+        self.assertIn(v2.PLANNER_LOG, select_base_load.NEVER)   # never held, so it may grow
+        self.assertIn(v2.PLANNER_LOG, v2.EXEMPT)                # and it is never a task's change in the tree
+        for who in ("max", "xhigh", "high"):
+            self.assertNotIn(v2.PLANNER_LOG, (Path(v2.HERE) / f"base-load-{who}.txt").read_text())
+
+    def test_the_hold_stops_anything_from_starting_a_session(self):
+        # starting one by accident costs a cold write of a whole base; the hold is the owner's switch for the time
+        # between the machinery being ready and the run beginning (2026-09-20)
+        (self.w.state / v2.NO_LAUNCH).write_text("while the bases are built")
+        self.assertIn("refused", self.w.v2("start"))
+        self.assertIn("while the bases are built", self.w.v2("start"))
+        self.w.set_st(events=[{"at": "2026-09-20T10:00:00", "from": "x", "text": "e"}])
+        self.w.v2("dispatch")
+        self.assertEqual(self.forks(), [])          # nothing was forked at all
+        self.assertIn("a session was not started", (self.w.state / "v2.log").read_text())
+        (self.w.state / v2.NO_LAUNCH).unlink()
+        self.w.v2("dispatch")
+        self.assertTrue(self.forks("plan-"))        # and off it goes once the hold is lifted
+
+    def test_a_keep_warm_ping_is_not_work_and_goes_through_the_hold(self):
+        (self.w.state / v2.NO_LAUNCH).write_text("held")
+        self.w.session("brief-4", "task-designer", "b4", task="4", live=False, settings="planner-settings.json")
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "v2.ping('brief-4')"], env=dict(self.w.env, ORCH_PING_WAIT="0"),
+                             capture_output=True, text=True)
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertTrue([c for c in self.w.calls("--bg") if "warm-brief-4" in c["args"]])
+
+    def test_no_shared_part_is_said_twice_in_one_message(self):
+        # _inherited.md and _held.md held the same sentence, and every role but the consultant included both: the
+        # same line, with the same value, twice in one first message (2026-09-20)
+        import re as _re
+        parts = {f.name: f.read_text().strip() for f in Path(v2.PROTOCOLS).glob("_*.md")}
+        same = [(a, b) for a in parts for b in parts if a < b and parts[a] == parts[b]]
+        self.assertEqual(same, [], "two shared parts hold the same text")
+        for role in v2.ROLES:
+            named = _re.findall(r"\{\{([\w-]+)\}\}", (Path(v2.PROTOCOLS) / f"{role}.md").read_text())
+            self.assertEqual(sorted(named), sorted(set(named)), f"{role} includes a part twice")
 
     def test_no_role_s_first_message_carries_a_placeholder_of_its_own_protocol(self):
         # a protocol's shared parts name {STALE} and the fixer's names {WHAT}: a render that does not pass them sent
@@ -349,6 +581,13 @@ class PlanningTests(Flow):
         self.assertIsNone(self.w.st()["tasks"]["1"].get("efficiency_fix"))
 
     def test_state_that_nothing_names_any_more_is_swept(self):
+        self.w.session("design-2", "designer", "d2", state="done", live=False)
+        self.w.session("design-3", "designer", "d3", state="lost", live=False)
+        self.w.session("implement-1", "implementer", "i1", task="1")
+        (self.w.state / "mail").mkdir(exist_ok=True)
+        for who, text in (("gone-4", ""), ("design-2", ""), ("design-3", '{"from": "x", "text": "y", "at": "t"}\n'),
+                          ("implement-1", "")):
+            (self.w.state / "mail" / f"{who}.jsonl").write_text(text)
         (self.w.state / "old-session.woken").write_text("x")
         os.utime(self.w.state / "old-session.woken", (time.time() - 200_000, time.time() - 200_000))
         (self.w.state / "fresh.woken").write_text("x")
@@ -365,6 +604,10 @@ class PlanningTests(Flow):
         self.assertIn("old-session.woken", gone)
         self.assertNotIn("fresh.woken", gone)              # a wake attach.sh may still read
         self.assertTrue((self.w.state / "fresh.woken").exists())
+        self.assertIn("mail/gone-4.jsonl", gone)           # no session of that name is in the state any more
+        self.assertIn("mail/design-2.jsonl", gone)         # its session reads nothing ever again, and it is empty
+        self.assertNotIn("mail/design-3.jsonl", gone)      # said to have reached nobody, and kept to be read
+        self.assertNotIn("mail/implement-1.jsonl", gone)   # its session is still working
 
     def test_the_planner_cannot_name_a_fix_that_waits_on_the_task_it_fixes(self):
         self.w.task("1", subject="The waiting task")
@@ -385,7 +628,7 @@ class PlanningTests(Flow):
         self.assertIn("condense HANDOFF.md", self.heard())
         self.assertIn("a base rebuild is due (the owner's)", (self.w.state / "v2.log").read_text())
 
-    def test_events_start_an_episode_and_a_lost_one_gives_them_back(self):
+    def test_events_start_a_planner_and_a_lost_one_gives_them_back(self):
         self.w.set_st(events=[{"at": time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime(time.time() - 60)),
                                "from": "review-3", "text": "Task 3 accepted."}])
         self.w.v2("dispatch")
@@ -395,9 +638,10 @@ class PlanningTests(Flow):
         self.w.set_rows([r for r in self.w.rows() if r["name"] != "plan-1"])
         for _ in range(3):
             self.w.run("watchdog.py")
-        again = self.forks("plan-")[1]  # the next episode is given them again
+        again = self.forks("plan-")[1]  # the next planner is given them again
         self.assertIn("Task 3 accepted.", again[-1])
-        self.assertIn("The planning episode plan-1 is gone before it ended", again[-1])
+        self.assertIn("The planner plan-1 is gone before it wrote its notes", again[-1])
+        self.assertIn("HANDOFF.md is all that carries over", again[-1])
 
     def test_a_designer_forks_the_middle_base_and_gathers_the_handoff(self):
         self.w.base("xhigh", sid="xhigh-sid")
@@ -430,6 +674,31 @@ class TaskTests(Flow):
     def verdict(self, name, v, findings=""):
         self.w.write(".build/tasks/1/review.md", VERDICT.format(v=v, f=findings))
         return self.as_(name, "verdict", "1", v, "--file", ".build/tasks/1/review.md")
+
+    def test_a_session_that_ends_with_its_question_open_is_told_where_the_answer_goes(self):
+        # six of nineteen answers on 2026-09-20 came to a session that had ended, and the planner carried each
+        self.assertIn("asked as q1", self.as_(self.impl, "ask", "--to", "planner", "Which of the two?"))
+        said = self.finish()
+        self.assertIn("your question q1 is still open", said.lower())
+        self.assertIn(".build/tasks/1/answers/", said)
+        self.assertIn("what you assumed", said)
+
+    def test_a_check_that_would_leave_the_base_in_the_task_s_own_directory_is_refused(self):
+        # task 7's final check was given --output .build/tasks/7/final-check on 2026-09-20, and the repository's base
+        # came to stand there: dropping that task or sweeping its run output would have taken it
+        self.w.write("theories/Ready.thy", "theory Ready imports Main begin end\n")
+        self.w.write(".build/tasks/1/commit.md", "Add readiness\n\nValidation: checked.\n")
+        refusal = self.as_(self.impl, "finalize", "1", "--check",
+                           "python3 -B tools/incremental_check.py check --advance-base --output .build/tasks/1/final",
+                           "--files", "theories/Ready.thy", "--message", ".build/tasks/1/commit.md")
+        self.assertIn("refused", refusal)
+        self.assertIn(".build/tasks/1/final", refusal)
+        self.assertFalse((self.w.project / ".build/tasks/1/finalize.json").exists())
+        # the same check under .build/ directly is the one the repository's own checks use
+        self.assertIn("prepared", self.as_(self.impl, "finalize", "1", "--check",
+                                           "python3 -B tools/incremental_check.py check --advance-base "
+                                           "--output .build/check-20260920z",
+                                           "--files", "theories/Ready.thy", "--message", ".build/tasks/1/commit.md"))
 
     def test_one_finalization_at_a_time_and_a_withdrawn_task_is_announced(self):
         self.w.write(".build/tasks/9/finalize.json", json.dumps({"check": "true", "files": ["theories/X.thy"], "message": "m"}))
@@ -513,6 +782,10 @@ class TaskTests(Flow):
         self.assertTrue((tree / ".build").is_symlink())  # one .build, so drafts and checks are where they were
         self.assertEqual(os.path.realpath(tree / ".build"), os.path.realpath(self.w.project / ".build"))
         self.assertIn(".build", (self.w.project / ".git/info/exclude").read_text())  # the link is never committed
+        (impl,) = [c["args"] for c in self.w.calls("--bg") if "-n" in c["args"]
+                   and c["args"][c["args"].index("-n") + 1] == "implement-5"]
+        self.assertIn("Your working tree is your task's own", impl[-1])  # and it is told so, because it is true
+        self.assertIn(".build/trees/5", impl[-1])
         self.assertEqual(self.w.st()["sessions"]["implement-5"]["tree"], ".build/trees/5")
         (call,) = [c for c in self.w.calls() if "--fork-session" in c["args"] and "implement-5" in c["args"]]
         self.assertEqual(call["cwd"], str(tree))  # and it is forked there, so it works there
@@ -760,6 +1033,9 @@ class TaskTests(Flow):
         self.assertIn("is committed as", ev)
         self.assertIn("The readiness theory is in place. Follow-ups proposed: Measure the reach.", ev)
         self.assertTrue(self.s(self.impl)["released"] and self.s("review-1")["released"])
+        # every event of the whole cycle reached one planner (heard() above), and only one was ever forked for them:
+        # 28 of the 59 sessions of 2026-09-20 were planning episodes, one per batch of events
+        self.assertEqual(len(self.forks("plan-")), 1)
 
     def test_a_second_rejection_and_a_second_failed_check_go_to_the_planner(self):
         self.finish()
@@ -894,11 +1170,16 @@ class ConsultationTests(Flow):
                       self.w.v2("ask", "--to", "kb", "And this?", env=self.w.as_session(ask["sid"])))
         self.assertIn("refused: questions are asked", self.w.v2("ask", "--to", "kb", "Mine?"))  # the owner: talk.sh
 
-    def test_a_question_to_the_planner_waits_for_the_next_episode(self):
+    def test_a_question_to_the_planner_reaches_it_at_once(self):
+        # questions waited for an episode: 4 to 13 minutes on 2026-09-20, and 84 for two of them, by when their
+        # sessions had ended and the answer had to be carried
+        self.w.session("plan-3", "planner", "p3", state="idle", live=False, settings="planner-settings.json",
+                       origin="kb-1")
         self.w.v2("ask", "--to", "planner", "Split the task?", env=self.w.as_session("i1"))
-        self.assertIn("Question q1", self.heard())
+        self.assertEqual(self.w.st()["events"], [])  # nothing waits: it went straight to the planner
+        self.assertIn("Question q1", self.resumes("p3")[-1][-1])
+        self.assertEqual(self.forks("plan-"), [])  # and no second planner was forked for it
         self.w.set_status("implement-1", "idle")
-        self.w.session("plan-3", "planner", "p3", settings="planner-settings.json", origin="kb-1")
         self.assertEqual(self.w.v2("reply", "q1", "No.", env=self.w.as_session("p3")), "answered")
         self.assertIn("Answer to your question q1", self.resumes("i1")[-1][3])
 
@@ -918,6 +1199,18 @@ class SupportTests(Flow):
         self.assertEqual(self.forks("review-"), [])
         self.w.v2("dispatch")
         self.assertEqual(len(self.forks("brief-")), 1)  # one at a time
+
+    def test_a_base_standing_in_a_task_s_directory_is_named(self):
+        # the accepted base stood in .build/tasks/7/check2/proof on 2026-09-20, because an advancing check was run
+        # with its output there: dropping that task or sweeping its run output would have taken the base with it
+        proof = self.w.project / ".build/tasks/7/check2/proof"
+        proof.mkdir(parents=True)
+        (proof / "accepted-context.json").write_text(json.dumps({"parent": None}))
+        (self.w.state / "active-context.json").write_text(json.dumps({"directory": str(proof)}))
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(len(v2.base_lineage()), len(v2.base_at_risk()))"],
+                             env=self.w.env, capture_output=True, text=True).stdout
+        self.assertEqual(out.strip(), "1 1")
 
     def test_a_cli_call_that_never_returns_does_not_hold_the_harness(self):
         # the watchdog runs the dispatch and the pings; a claude call that never returned would hold all of it,
@@ -951,6 +1244,25 @@ class SupportTests(Flow):
         self.assertIn("did not finish integrating", self.heard())
         self.assertTrue(self.forks("kb-"))  # and a new one is built
 
+    def test_the_status_says_which_tasks_could_start_now(self):
+        # the width of the graph as the planner drew it: with one, nothing can take the producing slot while the task
+        # holding it is parked or checking, which is how 2026-09-20 stood still for six and a half hours
+        self.w.task("4", subject="Done already", status="completed")
+        self.w.task("5", subject="Waits on a task still open", blockedBy=["6"])
+        self.w.task("6", subject="Still open")
+        self.w.task("7", subject="Waits on one that is done", blockedBy=["4"])
+        self.w.set_st(queue=["5", "6", "7"],
+                      tasks={"5": {"stage": "ready"}, "6": {"stage": "running"}, "7": {"stage": "ready"}})
+        st = self.w.st()
+        self.w.set_st(tasks=dict(st["tasks"]))
+        import subprocess as sp
+        out = sp.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                      "print(' '.join(v2.startable()))"], env=self.w.env, capture_output=True, text=True).stdout
+        self.assertEqual(out.strip(), "7")  # 5 waits on an open task, 6 is already running
+        said = self.w.v2("status")
+        self.assertIn("startable now: 7", said)
+        self.assertIn("only a wider graph changes that", said)
+
     def test_a_blocker_that_is_not_in_the_task_list_is_named(self):
         # task 6 waited on task 18, which had been dropped; nothing said so and the planner had to find it
         self.w.task("3", subject="Waiting on a task that is gone", blockedBy=["99"])
@@ -958,6 +1270,20 @@ class SupportTests(Flow):
                               "print(v2.deps_done('3'))"], env=self.w.env, capture_output=True, text=True).stdout
         self.assertEqual(out.strip(), "False")
         self.assertIn("which is not in the task list", json.dumps(self.w.st()["events"]))
+
+    def test_a_blocker_that_came_back_to_the_planner_is_named_too(self):
+        # `v2.py drop` leaves the task pending in the list, so a dependent waited on it with nothing to complete it
+        self.w.task("4", subject="The dropped one")
+        self.w.task("5", subject="Waiting on it", blockedBy=["4"])
+        self.w.set_st(tasks={"4": {"stage": "planner"}})
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.deps_done('5'))"], env=self.w.env, capture_output=True, text=True).stdout
+        self.assertEqual(out.strip(), "False")
+        self.assertIn("came back to you and has not been re-planned", json.dumps(self.w.st()["events"]))
+        # and the planner is told at once what a drop leaves waiting
+        self.w.session("plan-1", "planner", "p1", state="working")
+        self.w.set_st(tasks={"4": {"stage": "running"}})
+        self.assertIn("still the blocker of 5", self.as_("plan-1", "drop", "4"))
 
     def test_mail_is_kept_when_the_resume_that_would_carry_it_fails(self):
         # produce() took the mail into the text of a resume and discarded it when the resume failed; the watchdog's
@@ -1244,3 +1570,67 @@ class HarnessTests(Flow):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WalkTests(Flow):
+    """The whole run walked once, on the defaults it will start with: a fresh knowledge base, one long-lived planner
+    fed its events as they happen, two sessions working at once, and a task carried from queue to commit."""
+
+    def setUp(self):
+        self.w = fakes.World()
+        self.w.base()
+        self.remote = self.w.repository()
+        self.w.write("HANDOFF.md", PLANNER_STATE)
+        self.w.write("theories/Base.thy", "theory Base imports Main begin\nend\n")
+        self.w.set_st(active=False)
+
+    def test_the_run_walks_from_a_fresh_start_to_a_commit_through_one_planner(self):
+        # 1. a fresh start: no knowledge base yet, so one is built and nothing plans until it holds the knowledge
+        self.assertIn("active", self.w.v2("start", "--fresh"))
+        (kb,) = self.forks("kb-")
+        self.assertIn("You are kb-1, the knowledge base", kb[-1])
+        self.assertEqual(self.forks("plan-"), [])
+        self.assertEqual(len(self.w.st()["events"]), 1)          # the charge waits for it
+
+        # 2. it holds the knowledge: the planner forks it, and the charge is in its first message
+        self.w.reply(self.s("kb-1")["sid"], "INTEGRATED")
+        self.w.v2("dispatch")
+        (plan,) = self.forks("plan-")
+        self.assertEqual(plan[plan.index("--resume") + 1], self.s("kb-1")["sid"])
+        self.assertIn("take stock", plan[-1])
+        self.assertIn("PLANNING_LOG.md", plan[-1])
+
+        # 3. it queues a build task and a brief task; at two, both slots take one
+        self.w.task("1")
+        self.w.task("2", description=BRIEF_TASK, subject="Reach")
+        self.assertEqual(self.as_("plan-1", "queue", "1", "2"), "queued")
+        (impl,) = self.forks("implement-")
+        (brief,) = self.forks("brief-")
+        self.assertIn("Deliverable: `theories/Ready.thy`", impl[-1])
+        self.assertIn("You work in the repository's one working tree", impl[-1])  # true: no tree of its own here
+        self.assertEqual(len(v2.working(self.w.st())), 2)        # a producer and a supporter, side by side
+
+        # 4. the task finishes, is checked, reviewed and committed
+        self.w.write("theories/Ready.thy", "theory Ready imports Main begin end\n")
+        self.w.write(".build/tasks/1/commit.md", "Add readiness\n\nValidation: checked.\n")
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="done"))
+        self.assertIn("prepared", self.as_("implement-1", "finalize", "1", "--check", "true", "--files",
+                                           "theories/Ready.thy", "--message", ".build/tasks/1/commit.md"))
+        self.assertIn("recorded", self.as_("implement-1", "result", "1"))
+        self.assertEqual(self.t("1")["stage"], "reviewing")
+        # the supporting slot holds one: the review waits for the task designer to finish, whatever the rate
+        self.assertEqual(self.forks("review-"), [])
+        self.w.set_st(sessions={k: (v | {"state": "done"} if k == "brief-2" else v)
+                                for k, v in self.w.st()["sessions"].items()})
+        self.w.v2("dispatch")
+        (review,) = self.forks("review-")
+        self.assertIn("produced by implement-1", review[-1])
+        self.w.write(".build/tasks/1/review.md", VERDICT.format(v="accept", f=""))
+        self.assertIn("accepted", self.as_("review-1", "verdict", "1", "accept", "--file", ".build/tasks/1/review.md"))
+        self.assertEqual(self.t("1")["stage"], "done")
+        self.assertEqual(self.w.git("log", "-1", "--format=%s"), "Add readiness\n")
+
+        # 5. every event of the whole walk reached the one planner, and no second was ever forked
+        self.assertEqual(len(self.forks("plan-")), 1)
+        self.assertIn("is committed as", self.heard())
+        self.assertNotIn("lost", (self.w.state / "v2.log").read_text())

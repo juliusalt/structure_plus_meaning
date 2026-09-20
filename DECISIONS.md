@@ -9956,4 +9956,165 @@ reported, and every field but `failed`, `produced` and `elapsed_seconds` keeps i
 machine's run budget is untouched: `ISABELLE_RUN_LIMIT` stands with its reason, and the sum across
 tools remains the harness's.
 
+**Corrected by "A replay's unproduced judgment is neither a differing word nor a failed build"
+below:** the group this entry names `failed` is named `unproduced` from that entry on, because a
+row's own `status` already uses `failed` for another notion — the judgment the harness made that a
+build failed. Everything stated here of the group holds of it under the new name; a summary retained
+before that change keeps the old one.
+
+Recorded 2026-09-20, commit `91979be0`.
+
+## A replay's unproduced judgment is neither a differing word nor a failed build
+
+Nothing of the entry above failed: its acceptance reproduced exactly. These are the two gaps its own
+report named, both in the group it introduced, and this entry closes them because every acceptance
+from here on — twelve builds and their reviews still ahead — pays for them.
+
+The group could not be reached by the commonest way a run produces no judgment. A harness run that
+outlives its limit raises `subprocess.TimeoutExpired`, and raised inside the pool that replays the
+answers it aborted the whole replay and left no `replay.json` at all: one bad run cost sixteen
+answers and about five minutes of an acceptance, and reported neither the group nor anything else.
+The run of one answer is now returned rather than raised — `run_harness` reports the seconds it took,
+whether its answer.json exists, and what it left, naming the limit a timed-out run outlived because
+raising it is the reader's remedy — so a run that leaves no judgment costs its own answer alone and
+the summary is still written.
+
+The group's name was the word a row's own `status` field already uses for a different notion. It is
+now `unproduced`, which is its decider `produced`: the answers whose run left no judgment, so that
+nothing was compared and they are neither a reconstruction nor a re-evaluation. `differing` keeps
+meaning only a word that was compared and differed, and `status` keeps meaning the judgment the
+harness made. The retained `failed-proof` record is what parts the two: its status is `failed`, its
+run produced that judgment, and its words were compared and reconstructed, so it is not unproduced.
+This is the same third application of the library's rule that an empty result and a failed one are
+kept apart (`Finite_Prepared_Results`, the store absence of `Native_Path_Stores`) that the entry
+above began, carried through to the name and to the failure the name is for.
+
+The classification is established by a test rather than by reading the code. The two comprehensions
+that decided the groups inside `main` are one named function over the results, `answer_groups`, and
+`tools/test_replay_development_answers.py` exercises produced and unproduced crossed with
+reconstructed, differing and adopted — including the `failed-proof` case that parts the two notions,
+and a run that outlives its limit and a harness that cannot start, both returning rather than
+raising. It runs among the tool tests that every acceptance already runs, and needs no Isabelle.
+
+### Evidence and limits
+
+The documented command on the sixteen retained answers, run alone: sixteen replayed, fifteen
+reconstructed, the adopted `indexed-data-walk` reported as the published state's unchanged answer,
+nothing differing and nothing unproduced. The repository check accepted with every recipe word equal.
+
+The classification was parted on real rows before those counts were taken. Run while the working tree
+held another task's theory undeclared in ROOT, every one of the sixteen harness runs failed and the
+replay completed and wrote its summary all the same: the two native records `unproduced`, their run
+having left no answer at all, and the thirteen framed ones `differing`, a judgment of their own having
+been produced and its word compared. Nothing was constructed for that; it is what a broken tree does.
+
+The unproduced group is still not exercised by the retained records, every harness run leaving its
+answer; what the test exercises is the classification and the returning of a failed run, which is the
+one condition under which the replay synthesizes a status of its own. The records are now replayed
+longest-first by the seconds their own record kept, which is the scheduling the entry above measured
+at about 30 s of a 284 s run — but no retained record keeps its seconds: the harness retains the
+boundary of a judgment, not its cost, so the order is the records' own until it does and that gain is
+not obtained here. Retaining the run's seconds in the record is left as a follow-up; it is a change to
+the answer harness, not to the replay. Nothing else of the tool's behaviour changes: the same records
+are replayed, judged and compared on the same fields, and every field but the group's name keeps its
+own.
+
+Recorded 2026-09-20, commit `…`.
+
+## A demand is settled over the positions of its calls
+
+The entry "A native definition over a state re-verifies its context in every call" decided two
+refinements of the line that measured a native definition over a whole state at 171.8 s against
+0.99 s in HOL. The first, the calls a stage's requests demand, is recorded and left the machinery's
+reach at 44.6 s (closure 0.784 s, evaluation 43.812 s). This is the second, and it supplies the
+measurement that entry left to the next: what the reach costs once the rounds no longer compare
+terms, and with it the observation on which the third refinement, the store search taking its store
+before its key, was made conditional.
+
+Settling a demand asks, for every premise of every rule of its table, whether that premise is
+settled already, and asks that again in every round. Asked through a key, each question compares
+whole terms, so a demand of n calls whose table mentions m premise occurrences pays m key
+comparisons per round — and the reach of a state carries the state's whole table in the argument of
+every one of its calls, so a comparison is not cheap.
+
+| Earlier proposal or state | Correction |
+| --- | --- |
+| The rounds ask membership of the settled calls through the calls' keys, so every round compares terms. | The demand's keys are found once: its ordered key listing gives every demanded call a position, the rule table is renamed by that map, and the rounds compare positions. |
+| A renaming would have to be justified for the closure itself. | `finite_inference_result_renaming` already states it: the closure of the renamed table is the image of the original closure under an injective map. Its formedness premise holds of every program rule table (`finite_program_rule_table_formed`, from `finite_program_rule_functional`), so nothing of the closure's semantics is restated. |
+| A position map is only defined on the demand, and the renaming asks for an injective map of the whole type. | `positioned_call` sends a demanded call to `(i,None)` and every other call to `(0,Some (key q))`; it is injective wherever the key is, and under the guard every call the table mentions is demanded, so the rounds see positions only. |
+| The refinement is collected at the export boundary, as the batch before it was. | It cannot be: `Native_Execution_Refinements` collects refinements of constants declared before it, and the constants this one refines are declared after it -- an import there closes the cycle `Native_Execution_Refinements -> Positioned_Native_Evaluation -> Keyed_Native_Evaluation -> Factor_Workflow_Execution_Sharing -> Native_Execution_Refinements`. It is attached instead where the keyed equations it retires are already collected: the two theories that import `Keyed_Native_Evaluation` (`Factor_Source_Execution_Sharing`, `Native_Workflow_Execution_Base`) import this theory, which imports that one, so every consumer of the equations it replaces reaches it. |
+| The certificate path would be positioned with the rest. | It is not: `keyed_program_proofs` retains every round's state with the applications enabled there, and the renaming states the closure, not a correspondence of the rounds. The generation, the reference and the evidence evaluations take the positioned evaluation; the certificate path keeps the keyed history. |
+
+### Evidence and limits
+
+`positioned_program_evaluation_exact` proves the refinement equal to `finite_program_evaluation` on
+its whole declared domain, so `finite_program_evaluation` and everything above it keep their
+meanings; what changes is how the closure is computed. The three code equations it installs
+(`finite_native_generation`, `workflow_stage_reference`, `workflow_stage_evidence`) retire the keyed
+ones they replace.
+
+The measurement was taken with the machine claimed and the hold held for the whole run, on a probe
+that loaded (its completion marker certifies its proofs), with no profiler in the run, each side
+evaluated once and the two returned answers compared directly and found equal. On the machinery's
+state (table 37835 nodes, 3397 demanded calls) the evaluation falls from 33.012 s keyed to 3.559 s
+positioned, both answering 3396 calls; with the closure's 0.793 s the machinery's reach is 4.35 s.
+On the seeded state (4447 nodes, 595 calls) it falls from 0.373 s to 0.060 s, both answering 594;
+with the closure's 0.014 s the seed's reach is 0.074 s.
+
+The same run measures the keyed evaluation, recorded at 43.812 s when this line's first refinement
+landed, at 33.012 s, so the claimed machine is about 1.33 times the speed of the one that recorded
+that baseline. Both forms, because only the second compares with what is recorded: the machinery's
+reach is 4.35 s on the machine claimed here and about 5.8 s scaled to the baseline machine, against
+a bound of five seconds; the seed's is 0.074 s against 0.2 on either. What does not depend on the
+machine is the ratio inside the one run: 9.3 at the machinery's scale, 6.2 at the seed's. That is
+what the two refinements of this line bought together: 44.6 s to about 5.
+
+Word equality cannot certify the attachment: out of scope at the exports the words would be
+unchanged and the refinement dead. So the attachment is verified in the source graph itself, in
+0.27 s and with no Isabelle run: `check.source_checks()` is clean at 1800 declared names,
+`investigate.source_graph` builds (no cycle), and the export theories of both development recipes,
+`Native_Development_Seed` and `Native_Development_Machinery`, reach `Positioned_Native_Evaluation`,
+as do `Native_Workflow_Execution`, `Native_Development_Execution`, `Native_Development_Steering` and
+`Native_Source_Development`. A probe on the base heap cannot see either fault: it loads the theory
+against the heap's copy of the boundary theory, not the tree's.
+
+The check accepted with the base advanced: 1800 theories, 1737 reused and 63 rebuilt; phases
+base-and-impact 0.26 s, proof 139.36 s, export 4.17 s, recipes and host tests 163.4 s, 315.61 s in
+all. All 53 recipes are accepted, so every recipe's word equals its retained word, which is what a
+refinement must leave unchanged; the host tests ran 201 and 35. The replay reconstructed every
+judged answer: 16 replayed, 15 reconstructed, one adopted, none differing, none unproduced, 291.9 s.
+
+The two recipes whose exports consume the refined equations: native-development-seed 163.4 s against
+159.7 s, native-development-machinery 47.54 s against 46.79 s -- unchanged within a few per cent, and
+slightly up rather than down. That is not a surprise and it is worth stating: what those recipes
+spend their time on is the certificate path, which this refinement deliberately leaves keyed, while
+what it refines is the settling of a demand without its rounds retained. The reach of a state falls
+by 9.3; a recipe built of certificates does not. The proof phase's seconds are not this batch's
+alone either: a new theory cannot be isolated by parking, so the check ran with four other batches'
+changes in the tree. The recipe seconds are this batch's.
+
+**The planner's decisions on what this measurement decided.** The store search's second notion --
+its store taken before its key -- is **not taken**: the reach is inside its bound, the change is not
+a refinement (it would change the readiness and reach programs and the recorded words of the recipes
+that present them, and would owe an entry with the reason and a second notion factored for it), and
+the gain it could buy is bounded above by a fraction of a second on a number already inside. It is
+reopened only if a later measurement of one judgment shows comparisons of keys dominating. The
+attribution of what remains after the renaming is **not run** now either: review 6's finding, that
+`finite_interface_fits` scans the interface table with `fBex` for every instantiated premise of every
+clause of every demanded call, stands as the named candidate for a next refinement, and its
+attribution is owed at the point of a measured need rather than speculatively. Both are the
+planner's, recorded here with their reasons so that they are not reopened without a measurement.
+
+**Open.** The bound the line was given -- the machinery's reach within five seconds, the seed's
+within 0.2 -- is met: 4.35 s claimed, about 5.8 s scaled to the baseline machine, and 0.074 s.
+Nothing was retuned to it; the acceptance is the contract above and word equality, and the bound is
+a target the planner decides against. What the measurement leaves is the honest limit of this line:
+a reach is affordable, but one judgment of the verdict is about four reaches, so about 17 s, and a
+stage of 224 answer states is still of the order of 3,900 s against 22.4 s for the HOL stage. That
+is what the incremental assessment of an edited state is for, and it is not yet a task. The
+certificate path is still keyed: a positioned labelled history needs a correspondence of the rounds,
+which the library does not state, and is a candidate of its own. That this refinement and this bound
+were chosen at all was decided outside the loop, in the entry named above and in this task's brief,
+and is a residual.
+
 Recorded 2026-09-20, commit `…`.

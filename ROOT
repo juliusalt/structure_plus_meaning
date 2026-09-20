@@ -1606,6 +1606,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Workflow_Execution_Sharing
     Keyed_Finite_Sets
     Keyed_Native_Evaluation
+    Positioned_Native_Evaluation
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
     Complete_Term_References
@@ -1716,6 +1717,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Isabelle_Acceptance
     Isabelle_Entity_Export
     Development_Problems
+    Development_Loci
     Development_Native_Readiness
     Native_Table_Reach
     Isabelle_Native_Reach
@@ -1801,3 +1803,4 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Native_Control_Union_Observation_Execution
     Optional_View_Refinement
     Native_Control_Acceptance_Profile
+    Development_State_Rows

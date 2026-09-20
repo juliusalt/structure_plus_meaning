@@ -70,6 +70,9 @@ CASES = [
      "owner_types", "a ledger that cannot be read"),
     ("v2.py", '    if not os.path.exists(path):\n        return ""\n    try:\n        return open(path).read().strip()',
      '    try:\n        return open(path).read().strip()', "hold_whose_file", "a hold that fails closed"),
+    ("v2.py", '    except KeyError:\n        return []      # it never started',
+     '    except (KeyError, OSError):\n        return []      # it never started',
+     "transcript_that_cannot_be_read", "a transcript that cannot be read"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

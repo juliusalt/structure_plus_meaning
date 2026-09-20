@@ -367,8 +367,9 @@ def rounds_since(transcript, since, tool_use=None):
             f.seek(max(0, size - 4_000_000))
             lines = f.read().decode(errors="ignore").splitlines()
     except OSError as e:
-        v2.log(f"ATTENTION a transcript could not be read, so nothing is counted since the last production "
-               f"({transcript}): {e!r}")
+        # said once in a while: this runs on every guarded tool call, and a cause that stands would fill the log
+        v2.say_once("rounds-unreadable", f"ATTENTION a transcript could not be read, so nothing is counted since the "
+                    f"last production ({transcript}): {e!r}")
         return 0
     ids, current = set(), False
     for line in lines:

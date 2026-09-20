@@ -730,7 +730,13 @@ def running_jobs(name):
         with open(path, "rb") as f:
             f.seek(max(0, size - 4_000_000))
             text = f.read().decode(errors="ignore")
-    except (OSError, KeyError):
+    except KeyError:
+        return []      # it never started: it has no session to have jobs
+    except OSError as e:
+        # [] is "no job of its own runs", and the harness seals or resumes a session on that, which kills whatever
+        # it started. Nothing said so when the transcript could not be read at all (2026-09-21).
+        say_once(f"jobs-unreadable-{name}", f"ATTENTION the transcript of {name} could not be read ({e!r}); its "
+                 "background jobs read as none, and sealing or resuming it would kill any that run")
         return []
     started = dict.fromkeys(re.findall(r"running in background with ID: (\w+)", text))
     out = {j: m.rstrip(".,;)") for j, m in  # the transcript is JSON: the path ends at a quote, a brace or the sentence
@@ -1422,9 +1428,8 @@ def read_task(tid):
                 return None
             trouble = e
             time.sleep(0.05)
-    if (age_of("task-unreadable") or GUARD_QUIET + 1) > GUARD_QUIET:
-        open(os.path.join(STATE, "task-unreadable"), "w").write(str(time.time()))
-        log(f"ATTENTION task {tid} is in the list and could not be read ({trouble!r}); it reads as not being there")
+    say_once("task-unreadable",
+             f"ATTENTION task {tid} is in the list and could not be read ({trouble!r}); it reads as not being there")
     return None
 
 
@@ -2246,6 +2251,17 @@ def age_of(name):
         return time.time() - os.path.getmtime(os.path.join(STATE, name))
     except OSError:
         return None
+
+
+def say_once(mark, text, every=None):
+    """Log what would otherwise be said on every call — a failure that repeats while its cause stands — at most once
+    every GUARD_QUIET. The alternative is a log nobody can read, which is the same as saying nothing."""
+    every = GUARD_QUIET if every is None else every
+    age = age_of(mark)
+    if age is None or age > every:
+        with contextlib.suppress(OSError):
+            open(os.path.join(STATE, mark), "w").write(str(time.time()))
+        log(text)
 
 
 def startable(st=None):

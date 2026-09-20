@@ -527,6 +527,26 @@ class PlanningTests(Flow):
                              env=self.w.env, capture_output=True, text=True).stdout.strip()
         self.assertEqual(out, "5")
 
+    def test_a_transcript_that_cannot_be_read_does_not_read_as_no_jobs_in_silence(self):
+        # [] is "no job of its own runs", and the harness seals or resumes a session on that, which kills whatever
+        # it started. A session that never started has no transcript and no jobs, which is not the same thing.
+        self.w.session("implement-4", "implementer", "w4", task="4")
+        (self.w.transcripts / "w4.jsonl").mkdir()          # there, and no read of it can succeed
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                              "import v2; print(v2.running_jobs('implement-4'))"],
+                             env=self.w.env, capture_output=True, text=True)
+        self.assertEqual((out.returncode, out.stdout.strip()), (0, "[]"), out.stderr)
+        self.assertIn("the transcript of implement-4 could not be read", (self.w.state / "v2.log").read_text())
+        before = (self.w.state / "v2.log").read_text().count("could not be read")
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                        "import v2; v2.running_jobs('implement-4')"], env=self.w.env, capture_output=True, text=True)
+        self.assertEqual((self.w.state / "v2.log").read_text().count("could not be read"), before)  # not every call
+        self.w.session("implement-5", "implementer", None, task="5")
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                              "import v2; print(v2.running_jobs('implement-5'))"],
+                             env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(out.stdout.strip(), "[]", out.stderr)   # never started: no transcript, and nothing is said
+
     def test_a_hold_whose_file_cannot_be_read_still_holds(self):
         # a hold is a switch that must fail closed: the file being there is what holds, and reading it is only how
         # the reason is told. Both read any failure as "no such file" and so as "nothing is held" (2026-09-21).

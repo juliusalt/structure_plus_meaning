@@ -1782,7 +1782,13 @@ def parking_care():
             log(f"the run task {tid} parked for has ended" + (f";{aside}" if aside else ""))
 
 
-TREES = os.environ.get("ORCH_TREES", "1") == "1"  # a worktree per producing task (ORCH_TREES=0 for the one tree)
+# A worktree per producing task is OFF until the harness can see a session that works in one. A session started with
+# its cwd in a worktree is listed under that cwd and its transcript lands in a project directory of its own, so
+# session_row.py does not find it and v2.TRANSCRIPTS does not hold it: on 2026-09-20 fix-49 and implement-46.3 both
+# started, ran, and were invisible — their starts were called unconfirmed, their records released, and the harness
+# would have launched a replacement every ten minutes while they worked on. Everything that reads a transcript
+# (running_jobs, context_of, last_reply, the gauge, the meter, session_fork_check) resolves it through PROJECT.
+TREES = os.environ.get("ORCH_TREES", "0") == "1"  # ORCH_TREES=1 for a worktree per producing task
 TREE_DIR = ".build/trees"
 
 

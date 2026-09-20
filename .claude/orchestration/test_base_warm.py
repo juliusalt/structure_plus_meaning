@@ -14,6 +14,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 
 HERE = Path(__file__).resolve().parent
@@ -130,3 +131,57 @@ class WarmVerdictTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DaemonPidTests(WarmVerdictTests):
+    """`warm.pid` is how both `warm_daemon.sh --ensure` and health.py decide a daemon runs. A daemon that dies
+    without clearing it leaves a number the system hands to something else, and then --ensure starts nothing while
+    health says "daemon: alive": the keep-warm pings stop for good and the report says they do not."""
+
+    def ensure(self):
+        """Run `warm_daemon.sh --ensure` with a `setsid` that records instead of starting anything."""
+        started = Path(self.temp.name) / "started"
+        fake = Path(self.env["PATH"].split(os.pathsep)[0]) / "setsid"
+        fake.write_text(f"#!/bin/sh\necho started >> {started}\n")
+        fake.chmod(0o755)
+        out = subprocess.run(["sh", str(HERE / "warm_daemon.sh"), "--ensure"], env=self.env,
+                             capture_output=True, text=True, timeout=60)
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        for _ in range(50):     # it detaches and returns at once: the start lands after it
+            if started.exists():
+                return True
+            time.sleep(0.1)
+        return False
+
+    def alive(self):
+        out = subprocess.run(
+            [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(HERE)!r}); "
+             "import health; print(health.daemon_alive())"],
+            env=dict(self.env, ORCH_PROJECT=self.temp.name), capture_output=True, text=True, timeout=60)
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        return out.stdout.strip()
+
+    def stub(self):
+        """A live process whose command line names the daemon, as the daemon's own does."""
+        path = Path(self.temp.name) / "warm_daemon_stub.sh"
+        path.write_text("#!/bin/sh\nsleep 30\n")
+        p = subprocess.Popen(["sh", str(path)])
+        self.addCleanup(p.wait)
+        self.addCleanup(p.kill)
+        return p.pid
+
+    def test_a_pid_that_is_not_the_daemon_is_not_a_running_daemon(self):
+        (self.state / "warm.pid").write_text(str(os.getpid()))  # alive, and not the daemon
+        self.assertTrue(self.ensure())
+        self.assertEqual(self.alive(), "False")
+
+    def test_the_daemon_itself_is_left_alone_and_reported_alive(self):
+        (self.state / "warm.pid").write_text(str(self.stub()))
+        self.assertFalse(self.ensure())     # nothing is started beside it
+        self.assertEqual(self.alive(), "True")
+
+    def test_no_pid_file_and_a_pid_that_is_gone_both_mean_no_daemon(self):
+        self.assertEqual(self.alive(), "False")
+        self.assertTrue(self.ensure())
+        (self.state / "warm.pid").write_text("999999999")
+        self.assertEqual(self.alive(), "False")

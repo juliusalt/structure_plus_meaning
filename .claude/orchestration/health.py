@@ -37,6 +37,23 @@ def recent(name, seconds, pick=None):
     return out
 
 
+CACHE_LIFE = 3700   # an hour of prompt cache, with a minute's slack: past this nothing is left of an entry
+
+
+def daemon_alive():
+    """Whether the keep-warm daemon runs: its pid, and that the process holding that pid is the daemon. A pid file a
+    dead daemon left behind names whatever took the number since, and `warm_daemon.sh --ensure` reads it the same
+    way — so one stale number would have said "daemon: alive" for ever while nothing pinged (2026-09-21). A cmdline
+    that cannot be read counts as alive: nothing here calls a live daemon dead."""
+    pid = read("warm.pid")
+    if not pid or not os.path.exists(f"/proc/{pid}"):
+        return False
+    try:
+        return "warm_daemon" in open(f"/proc/{pid}/cmdline").read()
+    except OSError:
+        return True
+
+
 def minutes(seconds):
     return f"{int(seconds) // 60} min"
 
@@ -94,8 +111,17 @@ def bases_and_trees():
         # `base.sh WHO warm` forks the layer when there is one — what the roles fork is what must stay warm, and a
         # fork of a layer reads the stable base under it — so saying "base" of that ping named the wrong thing.
         what = f"layer {who} (with the base under it)" if v2.layer_record(who) else f"base {who}"
+        # how long ago, and whether anything is left of it: "warm at 21:59:00" read at 01:17 says warm, and the entry
+        # it names died at 22:59. A stopped run is read hours later, and this is the line that says what a restart
+        # would find (2026-09-21).
+        try:
+            old = time.time() - time.mktime(time.strptime(at, "%Y-%m-%dT%H:%M:%S"))
+        except ValueError:
+            old = None
         print(("ATTENTION " if n >= 2 else "")
               + f"{what}: {'warm' if ' OK' in last[-1] else 'was COLD and was rewritten'} at {at[11:19]}"
+              + (f" ({minutes(old)} ago" + ("; its cache entry has expired since" if old > CACHE_LIFE else "") + ")"
+                 if old is not None else "")
               + (f", {n} miss(es); two stop its pings" if n else ""))
     for who in v2.BASES:
         path = os.path.join(v2.STATE, f"{who}-layer.json")
@@ -120,10 +146,15 @@ def bases_and_trees():
             continue
         due = share >= float(os.environ.get("ORCH_LAYER_STALE", 0.20))
         building = os.path.exists(os.path.join(v2.STATE, f"{who}-layer.building"))
+        # the watchdog is the only thing that refreshes a layer, and it does nothing while the run is stopped or its
+        # daemon is down: "— it is refreshed" said then names something nobody will do (2026-09-21)
+        tended = daemon_alive() and not read("stopped")
         print(("ATTENTION " if due and not building else "")
               + f"layer {who}: {rec.get('context', 0) // 1000}K, sealed {rec.get('sealed', '?')[11:19]}, "
               + f"{share:.0%} of what it holds has changed"
-              + (" — it is being built again" if building else " — it is refreshed" if due else ""))
+              + (" — it is being built again" if building else "" if not due
+                 else " — it is refreshed" if tended
+                 else f" — it is due to be built again, and nothing runs to do it (start.sh, or base.sh {who} layer)"))
     graph = v2.graph_held()
     if graph:
         print(f"the graph is held: {graph}; the planner's `v2.py queue` releases it")
@@ -199,11 +230,10 @@ def main():
         print("the orchestration is inactive; start.sh starts it")
         standing(st, now)
         return
-    pid = read("warm.pid")
     trouble = v2.tree_trouble()
     print(("ATTENTION the working tree refuses every check: " + "; ".join(trouble[:3])) if trouble
           else "working tree: consistent (every theory declared, every declaration present, no dangling import)")
-    print("daemon: alive" if pid and os.path.exists(f"/proc/{pid}") else "ATTENTION daemon is not running: start.sh starts it")
+    print("daemon: alive" if daemon_alive() else "ATTENTION daemon is not running: start.sh starts it")
     kb = st["sessions"].get(st["kb"] or "")
     if st.get("kb_building"):
         print(session("knowledge base (loading)", st["sessions"][st["kb_building"]], now))
@@ -240,7 +270,7 @@ def main():
         if os.path.exists(os.path.join(S, f"{who}-base.json")):
             a = w.age(f"{who}-base.hit")
             print(f"base {who}: " + ("never hit" if a is None else f"last hit {minutes(a)} ago"
-                                      + (" — its cache entry has expired" if a > 3700 else "")))
+                                      + (" — its cache entry has expired" if a > CACHE_LIFE else "")))
     for line in recent("warm.log", 3600, "MISS"):
         print("ATTENTION keep-warm miss: " + line[:170])
     for line in recent("v2.log", 3600)[-12:]:

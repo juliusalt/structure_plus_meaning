@@ -13,7 +13,11 @@
 HERE=$(cd "$(dirname "$0")" && pwd); STATE="${ORCH_STATE_DIR:-$HERE/state}"; mkdir -p "$STATE"
 if [ "${1:-}" = "--ensure" ]; then
   p=$(cat "$STATE/warm.pid" 2>/dev/null)
-  if [ -n "$p" ] && kill -0 "$p" 2>/dev/null; then exit 0; fi
+  # the number alone can belong to whatever took that pid after a daemon died without clearing the file, and then
+  # nothing ever starts one again while health.py reports it alive: the process must name the daemon too. A cmdline
+  # that cannot be read counts as alive, so a second daemon is never started by mistake (2026-09-21).
+  if [ -n "$p" ] && kill -0 "$p" 2>/dev/null \
+     && { [ ! -r "/proc/$p/cmdline" ] || tr '\0' ' ' < "/proc/$p/cmdline" | grep -q warm_daemon; }; then exit 0; fi
   # a simple background command with every stream redirected: nothing of the caller's stays open
   setsid nohup "$HERE/warm_daemon.sh" >/dev/null 2>&1 </dev/null &
   exit 0

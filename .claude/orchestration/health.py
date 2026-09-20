@@ -186,6 +186,19 @@ def standing(st, now):
     placed and the reviews left orphaned were visible nowhere while it stood still (2026-09-21)."""
     stages = [f"{tid}:{(st['tasks'].get(tid) or {}).get('stage', '?')}" for tid in st["queue"]]
     print("queue: " + (" ".join(stages) or "empty"))
+    # a path is the task's until its finalizer commits it, which takes it out of the map. So a changed path owned by
+    # a task the planner has completed is work the graph calls done and the repository does not have: on 2026-09-21
+    # every uncommitted path in the tree was one, of tasks 22, 46, 48 and 50, and it was named nowhere.
+    changed = set(v2.changed_paths())
+    with v2.owners(write=False) as owners:
+        stranded = {p: t for p, t in owners.items()
+                    if p in changed and (v2.read_task(t) or {}).get("status") == "completed"}
+    if stranded:
+        print("ATTENTION uncommitted changes whose task is completed: "
+              + ", ".join(f"{p} (task {t})" for p, t in sorted(stranded.items())[:6])
+              + (f", and {len(stranded) - 6} more" if len(stranded) > 6 else "")
+              + " — the graph calls that work done and the repository does not hold it: it is committed by the task "
+                "that continues it, or discarded")
     with_planner = set(v2.with_the_planner(st))
     for tid, t in st["tasks"].items():
         if t.get("stage") == "parked":

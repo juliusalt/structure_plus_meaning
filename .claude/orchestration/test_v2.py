@@ -2322,6 +2322,24 @@ class HealthTests(Flow):
         self.addCleanup(p.kill)
         return p.pid
 
+    def test_work_the_graph_calls_done_that_the_repository_does_not_hold(self):
+        # a path is its task's until the finalizer commits it, which takes it out of the map. On 2026-09-21 every
+        # uncommitted path in the working tree belonged to a task the planner had completed — four tasks' work the
+        # graph called done and the repository did not have — and nothing named it anywhere.
+        self.w.repository()
+        self.w.task("4")
+        self.w.write("theories/Ready.thy", "theory Ready imports Main begin end\n")
+        self.own("4", "theories/Ready.thy")
+        self.assertNotIn("whose task is completed", self.health())   # while the task is open it is simply its work
+        self.w.task("4", status="completed")
+        self.assertIn("ATTENTION uncommitted changes whose task is completed: theories/Ready.thy (task 4)",
+                      self.health())
+
+    def own(self, tid, *paths):
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              f"v2.own({tid!r}, {list(paths)!r})"], env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(out.returncode, 0, out.stderr)
+
     def test_a_stale_layer_says_whether_anything_will_build_it_again(self):
         # "— it is refreshed" names the watchdog, which does nothing while the run is stopped or its daemon is down:
         # said then, it names something nobody will do (2026-09-21)

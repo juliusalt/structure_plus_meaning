@@ -91,6 +91,7 @@ SPEC_ERRORS = int(os.environ.get("ORCH_SPEC_ERRORS", 2))  # tries at a check com
 FIX_MINUTES = int(os.environ.get("ORCH_FIX_MINUTES", 15))
 KB_INTEGRATE_MAX = int(os.environ.get("ORCH_KB_INTEGRATE_MAX", 1200))  # a knowledge base that never
 # replies INTEGRATED would hold every episode and every consultation for ever
+CLAUDE_MAX = int(os.environ.get("ORCH_CLAUDE_MAX", 180))  # a CLI call that never returns
 KB_BUILD_MAX = int(os.environ.get("ORCH_KB_BUILD_MAX", 3600))  # a load that never replies, likewise
 LOST_BLOCKER = 3600  # how often a task waiting for a blocker that is not there is named
 TIDY_EVERY = int(os.environ.get("ORCH_TIDY_EVERY", 3600))  # how often state nothing names is swept
@@ -302,8 +303,15 @@ def deliver(name, sender, text):
 # ---------------------------------------------------------------- sessions
 
 def claude(*args, cwd=None):
+    """The CLI, bounded: it starts and stops background sessions, and a call that never returns would hold the
+    watchdog — and with it the dispatch and the pings — for ever."""
     env = {k: v for k, v in os.environ.items() if k not in INHERITED}
-    return subprocess.run(["claude", *args], capture_output=True, text=True, cwd=cwd or PROJECT, env=env)
+    try:
+        return subprocess.run(["claude", *args], capture_output=True, text=True, cwd=cwd or PROJECT, env=env,
+                              timeout=CLAUDE_MAX)
+    except subprocess.TimeoutExpired:
+        log(f"ATTENTION `claude {' '.join(str(a) for a in args[:2])}` did not return within {CLAUDE_MAX}s")
+        return subprocess.CompletedProcess(args, 124, "", "timed out")
 
 
 def row(name):

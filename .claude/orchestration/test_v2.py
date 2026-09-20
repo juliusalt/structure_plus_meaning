@@ -919,6 +919,18 @@ class SupportTests(Flow):
         self.w.v2("dispatch")
         self.assertEqual(len(self.forks("brief-")), 1)  # one at a time
 
+    def test_a_cli_call_that_never_returns_does_not_hold_the_harness(self):
+        # the watchdog runs the dispatch and the pings; a claude call that never returned would hold all of it,
+        # with the daemon still alive and health.py still saying so
+        slow = self.w.root / "bin" / "claude"
+        slow.write_text("#!/bin/sh\nsleep 30\n")
+        slow.chmod(0o755)
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "r = v2.claude('agents', '--json'); print(r.returncode)"],
+                             env=dict(self.w.env, ORCH_CLAUDE_MAX="1"), capture_output=True, text=True, timeout=30)
+        self.assertEqual(out.stdout.strip(), "124")
+        self.assertIn("did not return within 1s", (self.w.state / "v2.log").read_text())
+
     def test_a_knowledge_base_that_never_finishes_loading_is_given_up(self):
         self.w.session("kb-2", "kb", "k2", kb_state="building", state="working",
                        started=time.time() - 4000, settings="planner-settings.json")

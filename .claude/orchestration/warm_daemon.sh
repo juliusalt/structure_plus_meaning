@@ -26,7 +26,10 @@ every=${ORCH_WARM_EVERY:-2400}; idle_max=${ORCH_WARM_IDLE_MAX:-43200}
 age() { [ -e "$1" ] && echo $(( $(date +%s) - $(stat -c %Y "$1") )) || echo 999999999; }
 active() { python3 -c 'import json, sys; sys.exit(0 if json.load(open(sys.argv[1])).get("active") else 1)' "$STATE/v2.json" 2>/dev/null; }
 while :; do
-  "$HERE/watchdog.py" >/dev/null 2>&1
+  # bounded: a watchdog that hangs (a claude or git call that never returns) would stop the dispatch and the pings
+  # with the daemon still alive, and health.py would say "daemon: alive" while nothing happened
+  timeout "${ORCH_WATCHDOG_MAX:-600}" "$HERE/watchdog.py" >/dev/null 2>&1 \
+    || [ $? -ne 124 ] || echo "$(date +%Y-%m-%dT%H:%M:%S) ATTENTION the watchdog did not finish within ${ORCH_WATCHDOG_MAX:-600}s and was ended" >> "$STATE/v2.log"
   any=0
   for who in max xhigh high; do
     [ -e "$STATE/$who-base.json" ] || continue

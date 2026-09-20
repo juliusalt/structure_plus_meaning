@@ -919,6 +919,20 @@ class SupportTests(Flow):
         self.w.v2("dispatch")
         self.assertEqual(len(self.forks("brief-")), 1)  # one at a time
 
+    def test_mail_is_kept_when_the_resume_that_would_carry_it_fails(self):
+        # produce() took the mail into the text of a resume and discarded it when the resume failed; the watchdog's
+        # own path kept it, this one did not (2026-09-20)
+        self.w.session("implement-3", "implementer", "i3", task="3", state="parked")
+        self.w.hit("implement-3", age=v2.WARM_MAX + 60)  # cold: the resume will fail
+        self.w.task("3", subject="A parked build")
+        self.w.set_st(queue=["3"], tasks={"3": {"stage": "parked", "kind": "build", "session": "implement-3",
+                                                "parked": {"since": time.time(), "for": "tree", "holder": None}}})
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.post('implement-3', 'the planner', 'the answer it waited for')"],
+                       env=self.w.env, check=True)
+        self.w.v2("dispatch")
+        self.assertIn("the answer it waited for", json.dumps(self.w.mail("implement-3")))
+
     def test_an_answer_to_a_parked_session_is_not_called_lost(self):
         # parked is alive: the session reads its mail when it is resumed, and four answers were declared lost to
         # sessions that were only waiting for the working tree (2026-09-20)

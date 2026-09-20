@@ -19,7 +19,9 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from digest import held_text  # noqa: E402
-PROJECT = os.path.dirname(os.path.dirname(HERE))
+# the tree the answer is about: a task with a worktree of its own must be told what changed in ITS tree,
+# not in the one the harness runs in (2026-09-20)
+PROJECT = os.environ.get("ORCH_TREE") or os.environ.get("ORCH_PROJECT") or os.path.dirname(os.path.dirname(HERE))
 STATE = os.environ.get("ORCH_STATE_DIR") or os.path.join(HERE, "state")
 WHO = sys.argv[2] if len(sys.argv) > 2 else "max"
 MANIFEST = os.path.join(STATE, f"{WHO}-manifest.json")

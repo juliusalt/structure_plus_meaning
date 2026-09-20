@@ -366,9 +366,12 @@ def warm(name):
     return hit_age(name) < WARM_MAX
 
 
-def stale(who):
-    """The line naming the held files of that base that changed since it was loaded (manifest.py)."""
-    out = subprocess.run([os.path.join(HERE, "manifest.py"), "changed", who], capture_output=True, text=True).stdout
+def stale(who, tree=None):
+    """The line naming the held files of that base that changed since it was loaded (manifest.py), in the tree the
+    session works in — a task with a tree of its own is told what changed in its own."""
+    env = dict(os.environ, ORCH_TREE=tree) if tree else os.environ
+    out = subprocess.run([os.path.join(HERE, "manifest.py"), "changed", who], capture_output=True, text=True,
+                         env=env).stdout
     return out.strip() or "no held file has changed since the load"
 
 
@@ -1468,8 +1471,9 @@ def start_producer(tid):
     json.dump({"task": tid, "deliverables": deliverables(brief), "drafts": f".build/tasks/{tid}/", "inputs": inputs(brief)},
               open(os.path.join(BUILD, tid, "brief.json"), "w"))
     base = base_record(ROLES[role]["origin"])[0] or "max"
+    tree = os.path.join(PROJECT, TREE_DIR, tid) if TREES and not in_main_tree(tid) else None
     name = launch(role, tid, lambda name: render(role, NAME=name, ID=tid, KIND=kind, SUBJECT=task.get("subject", ""),
-                                                 BRIEF=brief.strip(), STALE=stale(base), WHAT=PLANNED_FIX), task=tid)
+                                                 BRIEF=brief.strip(), STALE=stale(base, tree), WHAT=PLANNED_FIX), task=tid)
     with state() as st:
         t = task_state(st, tid)
         if name:
@@ -1667,7 +1671,10 @@ def produce():
                 mark_tree_wait(t["session"], holder)
             else:
                 text += take_up(tid)  # a shelf from before 2026-09-20, if one is still there; otherwise nothing
-            if not resume(t["session"], text + ("\n\n" + take_mail(t["session"]) if has_mail(t["session"]) else "")):
+            mail = take_mail(t["session"]) if has_mail(t["session"]) else ""
+            if not resume(t["session"], text + (f"\n\n{mail}" if mail else "")):
+                if mail:
+                    post(t["session"], "the harness", mail)  # kept: a resume that failed read none of it
                 with state() as w:
                     w["tasks"][tid]["stage"] = "planner"
                     event(w, "the harness", f"{t['session']}, parked on task {tid}, went cold before its wait was over: "

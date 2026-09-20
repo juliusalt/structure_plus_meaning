@@ -353,7 +353,8 @@ PASSED = {
     "consultant": {"NAME", "ID", "QID", "ASKER", "TARGET", "QUESTION", "NOTE", "STALE"},
 }
 PASSED = {role: names | {"ROUNDS", "READ", "CIRCLING", "FIX_MINUTES", "FIX_ROUNDS", "HOLD_HOURS", "ROOM_DESIGN",
-                         "ROOM_TASK", "BRIEF_BACKLOG"} for role, names in PASSED.items()}  # render's own defaults
+                         "ROOM_TASK", "BRIEF_BACKLOG", "GRAPH_DEPTH", "DEPTH", "WIDTH", "SLOTS"}
+          for role, names in PASSED.items()}  # render's own defaults
 
 
 class PlanningTests(Flow):
@@ -1594,73 +1595,113 @@ class SupportTests(Flow):
         self.assertEqual(self.forks("implement-4") + self.forks("brief-4"), [])
         self.assertIn("Task 4 is queued but its brief is not in form", self.heard())
 
-    def test_a_brief_task_records_its_tasks_every_build_with_a_review_task(self):
+    def propose(self, bid, sid, entries):
+        d = self.w.project / ".build/tasks" / bid
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "proposal.json").write_text(json.dumps(entries))
+        return self.w.v2("propose", bid, f".build/tasks/{bid}/proposal.json", env=self.w.as_session(sid))
+
+    def test_a_proposal_names_a_review_task_for_every_build(self):
         self.w.set_st(queue=["2", "7"])
         self.w.v2("dispatch")
         (fork,) = self.forks("brief-")
         self.assertIn("## Your brief task", fork[-1])
         self.assertIn("reach is a closure", fork[-1])
         sid = self.s("brief-2")["sid"]
-        self.w.task("5", description=BRIEF)
-        refused = self.w.v2("briefed", "2", "5", env=self.w.as_session(sid))
-        self.assertIn("task 5 is a build task without a review task", refused)
-        self.w.task("6", description=REVIEW_TASK.format(task="5"))
-        self.assertEqual(self.w.v2("briefed", "2", "5", "6", env=self.w.as_session(sid)), "briefed. End your turn now.")
+        build = {"key": "b", "subject": "A build", "why": "-", "blockedBy": [], "description": BRIEF}
+        refused = self.propose("2", sid, [build])
+        self.assertIn("task b is a build task without a review task", refused)
+        self.assertEqual(self.t("2").get("stage"), "running")   # nothing recorded, nothing in the graph
+        ok = self.propose("2", sid, [build, {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["b"],
+                                             "description": REVIEW_TASK.format(task="b")}])
+        self.assertIn("proposed 2 task(s)", ok)
+
+
+    def test_the_designer_proposes_and_only_the_planner_writes_the_graph(self):
+        # the task designer held graph rights and wrote straight into the task list, which IS the graph. It proposes
+        # now, and the planner decides: the designer never re-authors its text and the planner never re-types it
+        # (the owner, 2026-09-20)
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        self.assertFalse(v2.ROLES["task-designer"].get("graph"))
+        proposal = [{"key": "rows", "subject": "The state's own rows", "why": "the verdict reads them",
+                     "blockedBy": [], "description": BRIEF},
+                    {"key": "rows-review", "subject": "Review the rows", "why": "-",
+                     "blockedBy": ["rows"], "description": REVIEW_TASK.format(task="rows")}]
+        (self.w.project / ".build/tasks/2").mkdir(parents=True, exist_ok=True)
+        (self.w.project / ".build/tasks/2/proposal.json").write_text(json.dumps(proposal))
+        said = self.w.v2("propose", "2", ".build/tasks/2/proposal.json", env=self.w.as_session(sid))
+        self.assertIn("proposed 2 task(s); the planner places them", said)
+        self.assertEqual(self.t("2")["stage"], "proposed")
+        self.assertIn("proposes 2 task(s) and where to place them", self.heard())
+        self.assertIn("the graph is yours alone to edit", self.heard())
+        self.assertEqual([f for f in os.listdir(self.w.tasks) if "own rows" in (self.w.tasks / f).read_text()], [])
+        # the planner places them, and the harness writes them as proposed
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        placed = self.as_("plan-1", "accept", "2")
+        self.assertIn("placed rows as", placed)
+        made = {json.loads((self.w.tasks / f).read_text())["subject"]: json.loads((self.w.tasks / f).read_text())
+                for f in os.listdir(self.w.tasks) if f.endswith(".json")}
+        rows, review = made["The state's own rows"], made["Review the rows"]
+        self.assertEqual(review["blockedBy"], [rows["id"]])   # local keys resolved to the ids it allocated
+        self.assertEqual(rows["metadata"]["kind"], "build")
         st = self.w.st()
-        self.assertEqual(st["queue"], ["2", "5", "6", "7"])
-        self.assertEqual((st["tasks"]["5"]["review_tasks"], st["tasks"]["6"]["reviews"]), (["6"], "5"))
+        self.assertEqual(st["tasks"][review["id"]]["reviews"], rows["id"])
+        self.assertEqual(st["queue"][:3], ["2", rows["id"], review["id"]])
         self.assertEqual((st["tasks"]["2"]["stage"], self.w.read_task("2")["status"]), ("done", "completed"))
-        self.assertEqual(st["tasks"]["5"]["briefed_by"], "brief-2")
 
-
-    def test_a_brief_begun_under_the_depth_limit_adds_what_its_work_needs(self):
-        # the check is taken once, when the brief starts: one begun under the limit is not halted half-drawn, and a
-        # review task waiting on the build it reviews is inside the group, never "the end of the chain"
-        self.w.set_st(queue=["2", "7"])
-        self.w.v2("dispatch")
-        sid = self.s("brief-2")["sid"]
-        self.assertLess(self.t("2")["depth_at_start"], v2.GRAPH_DEPTH)
-        self.w.task("5", description=BRIEF)
-        self.w.task("6", description=REVIEW_TASK.format(task="5"), blockedBy=["5"])
-        self.assertEqual(self.w.v2("briefed", "2", "5", "6", env=self.w.as_session(sid)), "briefed. End your turn now.")
-
-    def test_a_brief_begun_past_the_depth_limit_may_add_at_the_start_and_not_at_the_end(self):
-        # the graph of 2026-09-20 was 20 deep and one task wide for 14 levels, and briefs kept hanging more off its
-        # end. Past the limit a brief may still add work that runs first — that is what widens it — and is returned
-        # to the planner, not refused, if it adds to the end: what it wrote stands and the planner decides.
-        self.w.set_st(queue=["2", "7"])
-        self.w.v2("dispatch")
-        sid = self.s("brief-2")["sid"]
-        st = self.w.st()
-        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1   # as if the chain were already too long
-        (self.w.state / "v2.json").write_text(json.dumps(st))
-        # at the start: waits on nothing open, so it widens the graph — admitted
-        self.w.task("5", description=BRIEF)
-        self.w.task("6", description=REVIEW_TASK.format(task="5"), blockedBy=["5"])
-        self.assertEqual(self.w.v2("briefed", "2", "5", "6", env=self.w.as_session(sid)), "briefed. End your turn now.")
-
-    def test_a_brief_that_hangs_work_off_the_end_of_a_long_chain_goes_back_to_the_planner(self):
+    def test_a_proposal_that_needs_further_goals_past_the_limit_never_reaches_the_graph(self):
+        # the rejection used to come after the designer had written every task into the list; it comes before now,
+        # and what it wrote is a file, not a graph to unpick
         self.w.set_st(queue=["2", "7"])
         self.w.v2("dispatch")
         sid = self.s("brief-2")["sid"]
         st = self.w.st()
         st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
         (self.w.state / "v2.json").write_text(json.dumps(st))
-        self.w.task("7", description=BRIEF, subject="already in the graph")   # and nothing waits on what 5 becomes
-        self.w.task("5", description=BRIEF, blockedBy=["7"])       # 7 was already there and is not finished
-        self.w.task("6", description=REVIEW_TASK.format(task="5"), blockedBy=["5"])
-        said = self.w.v2("briefed", "2", "5", "6", env=self.w.as_session(sid))
-        # rejected outright, and the planner resolves it: the detailing is not asked to contort itself to fit the
-        # bound, because a brief bent to satisfy the harness is worse than one that waits (the owner, 2026-09-20)
+        self.w.task("7", description=BRIEF, subject="already in the graph")
+        proposal = [{"key": "a", "subject": "Hung past the frontier", "why": "-", "blockedBy": ["7"],
+                     "description": BRIEF},
+                    {"key": "a-review", "subject": "Its review", "why": "-", "blockedBy": ["a"],
+                     "description": REVIEW_TASK.format(task="a")}]
+        (self.w.project / ".build/tasks/2").mkdir(parents=True, exist_ok=True)
+        (self.w.project / ".build/tasks/2/proposal.json").write_text(json.dumps(proposal))
+        said = self.w.v2("propose", "2", ".build/tasks/2/proposal.json", env=self.w.as_session(sid))
         self.assertIn("refused, and the planner has it", said)
-        self.assertIn("5 are further goals, not further detail", said)   # 6 waits on 5, inside the group
-        self.assertIn("Detail spliced into the graph is admitted at any depth", said)
-        self.assertIn("do not re-shape the detailing to fit it", said)
+        self.assertIn("a are further goals, not further detail", said)
+        self.assertIn("Nothing you wrote is lost", said)
         self.assertEqual(self.t("2")["stage"], "planner")
-        self.assertNotIn("5", self.w.st()["queue"])                # nothing it wrote is queued
-        self.assertIn("Brief task 2 is yours to resolve", self.heard())
-        self.assertIn("Detail spliced into the graph is admitted at any depth", self.heard())
-        self.assertIn("the detailing is not wrong for needing it", self.heard())
+        self.assertEqual([f for f in os.listdir(self.w.tasks) if "Hung past" in (self.w.tasks / f).read_text()], [])
+
+    def test_a_proposal_begun_under_the_depth_limit_may_place_work_anywhere(self):
+        # the depth is taken once, when the brief starts: one begun under the limit places what its work needs,
+        # without limit, rather than being halted half-drawn
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        self.assertLess(self.t("2")["depth_at_start"], v2.GRAPH_DEPTH)
+        self.w.task("7", description=BRIEF, subject="already in the graph")
+        said = self.propose("2", sid, [
+            {"key": "a", "subject": "A further goal", "why": "-", "blockedBy": ["7"], "description": BRIEF},
+            {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
+             "description": REVIEW_TASK.format(task="a")}])
+        self.assertIn("proposed 2 task(s)", said)
+
+    def test_a_proposal_past_the_limit_may_still_place_detail_and_work_that_runs_first(self):
+        # past the limit a brief may still splice detail in and add work that runs first — that is what widens the
+        # graph — and only a further goal hung past its frontier is refused
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        st = self.w.st()
+        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        said = self.propose("2", sid, [
+            {"key": "a", "subject": "Runs at once", "why": "-", "blockedBy": [], "description": BRIEF},
+            {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
+             "description": REVIEW_TASK.format(task="a")}])
+        self.assertIn("proposed 2 task(s)", said)
 
     def test_detail_spliced_into_the_graph_is_not_a_further_goal(self):
         # adding more detail to a task graph is fine; adding further goals is not (the owner, 2026-09-20). Detail is

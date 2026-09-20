@@ -56,8 +56,9 @@ and the brief tasks: the plan of a detailing, which a task designer carries out 
 and a review task for each. A brief task's Deliverable names the tasks it is to brief; its plan is the course of the
 detailing (which tasks, in which order, depending on what, what each must respect), and a part of the graph too big
 for one task designer is several brief tasks. Queue no brief while the builders already have a full queue: the
-harness detains a brief task while {BRIEF_BACKLOG} or more build and fix tasks are open (its status line says so), because one
-brief becomes many tasks and a single producing slot consumes them one at a time. Detail what will be built next, not
+harness detains a brief task while there is already as much build and fix work that can start as there are slots to
+take it (its status line says so), because one brief becomes many tasks and a single producing slot consumes them
+one at a time — and a brief is admitted again when the slots have taken what can start. Detail what will be built next, not
 everything that will be built. Form each task so that the reasoning it needs is in it and its inputs
 are artifacts, never a predecessor's reasoning; a conceptual decision is a design task whose deliverable is the
 decision written as an entry of DECISIONS.md (the plan changes only with its structure, the stages' standing or the

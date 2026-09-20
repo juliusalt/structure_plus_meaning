@@ -515,8 +515,9 @@ def session_guard(hook, rec):
     # session's task list is its own, and a worker is told to make its plan there.
     if tool in ("TaskCreate", "TaskUpdate") and rec.get("settings") == v2.GRAPH_SETTINGS \
             and not v2.ROLES.get(rec.get("role"), {}).get("graph"):
-        return deny("The task graph is the planner's and the task designer's: propose a task to the planner instead "
-                    "(`v2.py ask --to planner`), or name it in your result.")
+        return deny("The task graph is the planner's alone to edit. A task designer proposes its tasks and where to "
+                    "place them (`v2.py propose ID FILE`) and the planner places them; any other role proposes a "
+                    "task to the planner (`v2.py ask --to planner`) or names it in its result.")
     c = (inp.get("command") or "") if tool == "Bash" else ""
     if c and WAIT.search(c):
         return deny("Waiting is refused (sleep, wait loops, tail -f): a background job's completion notifies you. "

@@ -28,7 +28,8 @@ Commands of the sessions (the caller is known from CLAUDE_CODE_SESSION_ID):
                                  the run ends, the fix lands, the working tree is free or the answer comes
   v2.py finalize ID --check CMD --files PATH... --message FILE   hand over the final check and the commit
   v2.py result ID                record the result written to .build/tasks/ID/result.md
-  v2.py briefed ID [NEW...]      the task designer: the briefs are in the task list, in form
+  v2.py propose ID FILE          the task designer: its tasks and where to place them (JSON); the planner places them
+  v2.py accept ID                the planner: write a brief's proposed tasks into the graph, as proposed
   v2.py verdict ID accept|reject --file FILE   the reviewer (or the planner, for design and investigation)
   v2.py queue ID...              the planner: the order in which tasks are to be done
   v2.py after ID TASK            the planner: the parked task ID continues when TASK has landed (`none`: now)
@@ -85,7 +86,9 @@ ROLES = {
     "kb": dict(origin="max", settings="worker-settings.json", prefix="kb", statements=True, graph=False),
     "planner": dict(origin="kb", settings="planner-settings.json", prefix="plan", statements=True, graph=True),
     "designer": dict(origin="xhigh", settings="worker-settings.json", prefix="design", statements=False, graph=False),
-    "task-designer": dict(origin="xhigh", settings="planner-settings.json", prefix="brief", statements=True, graph=True),
+    # It proposes tasks and their placement; the planner decides and the harness writes them. It does not edit the
+    # graph, so it is off the shared task list with every other role that does not (the owner, 2026-09-20).
+    "task-designer": dict(origin="xhigh", settings="worker-settings.json", prefix="brief", statements=True),
     "investigator": dict(origin="xhigh", settings="worker-settings.json", prefix="investigate", statements=False, graph=False),
     "reviewer": dict(origin="xhigh", settings="worker-settings.json", prefix="review", statements=False, graph=False),
     "implementer": dict(origin="high", settings="worker-settings.json", prefix="implement", statements=False, graph=False),
@@ -110,14 +113,14 @@ LOST_BLOCKER = 3600  # how often a task waiting for a blocker that is not there 
 TREE_TOLD = 900  # how often the same trouble in the same tree is put to the planner again
 TIDY_EVERY = int(os.environ.get("ORCH_TIDY_EVERY", 3600))  # how often state nothing names is swept
 WOKEN_KEEP = int(os.environ.get("ORCH_WOKEN_KEEP", 86400))  # a wake mark, for attach.sh to read
-BRIEF_BACKLOG = int(os.environ.get("ORCH_BRIEF_BACKLOG", 60))  # a ceiling on open build and fix tasks: the blow-up
-# guard alone. It was 6 and counted what EXISTS, so 17 open tasks detained every brief while only 5 of them could
-# start — and a brief is what widens a graph. What a brief is admitted by is now the width (GRAPH_WIDTH), and what it
-# may add is bounded by the depth (GRAPH_DEPTH). The count stays only to stop an unbounded graph.
+BRIEF_BACKLOG = int(os.environ.get("ORCH_BRIEF_BACKLOG", 0))  # 0: no ceiling on the number of open build and fix
+# tasks (the owner, 2026-09-20). It was 6 and counted what EXISTS, so 17 open tasks detained every brief while only 5
+# of them could start — and a brief is what widens a graph. The count says nothing worth acting on: what a brief is
+# admitted by is the width (GRAPH_WIDTH), and what it may add is bounded by the depth (GRAPH_DEPTH).
 GRAPH_WIDTH = int(os.environ.get("ORCH_GRAPH_WIDTH", 0))  # 0: the slots. A brief is detailed while the build and fix
 # work that can START is below this — the graph is starving concurrency and a brief is what widens it — and detained
 # once there is already as much independent work as there are slots to take it (the owner, 2026-09-20).
-GRAPH_DEPTH = int(os.environ.get("ORCH_GRAPH_DEPTH", 6))  # the longest chain of open tasks past which a brief may add
+GRAPH_DEPTH = int(os.environ.get("ORCH_GRAPH_DEPTH", 10))  # the longest chain of open tasks past which a brief may add
 # only at the START of the scheduling chain. Taken once, when the brief starts: a brief that begins under the limit
 # adds what its work needs, without limit, rather than being halted half-drawn. One begun above it may still add work
 # that runs first — a correction, a prerequisite, anything that widens — and is returned to the planner if it hangs
@@ -1525,7 +1528,8 @@ def render(role, **values):
     for _ in range(2):
         text = re.sub(r"\{\{([\w-]+)\}\}", lambda m: open(os.path.join(PROTOCOLS, f"_{m.group(1)}.md")).read().strip(), text)
     values = dict(ROUNDS=str(ROUNDS), READ=str(READ_TOKENS // 1000), CIRCLING=str(CIRCLING), FIX_MINUTES=str(FIX_MINUTES),
-                  BRIEF_BACKLOG=str(BRIEF_BACKLOG),
+                  BRIEF_BACKLOG=str(BRIEF_BACKLOG), GRAPH_DEPTH=str(GRAPH_DEPTH), DEPTH=str(graph_shape()[1]),
+                  WIDTH=str(graph_shape(("build", "fix"))[0]), SLOTS=str(GRAPH_WIDTH or WORKERS_MAX),
                   FIX_ROUNDS=str(FIX_ROUNDS), HOLD_HOURS=str(HOLD_PARK // 3600), ROOM_DESIGN=str(room_of("design") // 1000),
                   ROOM_TASK=str(room_of("build") // 1000), **values)
     missing = [k for k in dict.fromkeys(re.findall(r"\{([A-Z][A-Z_]{2,})\}", text)) if k not in values]
@@ -2181,7 +2185,7 @@ def support():
     room = GRAPH_WIDTH or WORKERS_MAX
     why = (f"{width} build and fix tasks can start and there are {room} slots to take them" if width >= room else
            f"{len(backlog)} build and fix tasks are open, past the ceiling of {BRIEF_BACKLOG}"
-           if len(backlog) >= BRIEF_BACKLOG else "")
+           if BRIEF_BACKLOG and len(backlog) >= BRIEF_BACKLOG else "")
     if briefs and why:
         if age_of("brief-held") is None or age_of("brief-held") > 900:
             open(os.path.join(STATE, "brief-held"), "w").write(str(time.time()))
@@ -3196,54 +3200,153 @@ def returned_for_depth(bid, new, at_end, depth):
             "your turn.")
 
 
-def cmd_briefed(bid, new):
-    """The task designer of brief task bid has put its tasks into the graph: each in form, every build or fix with a
-    review task naming it; they are queued after the brief task, which is done."""
+def create_task(subject, description, metadata, blocked_by):
+    """Write a task into the graph. The harness does this on the planner's word: the task designer proposes and does
+    not edit the list (the owner, 2026-09-20)."""
+    d = os.path.join(TASKS, LIST)
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, ".alloc.lock"), "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        used = {int(f[:-5]) for f in os.listdir(d) if f[:-5].isdigit() and f.endswith(".json")}
+        tid = str(max(used, default=0) + 1)
+        json.dump({"id": tid, "subject": subject, "description": description, "status": "pending",
+                   "metadata": metadata, "blocks": [], "blockedBy": list(blocked_by)},
+                  open(task_path(tid) + ".tmp", "w"), indent=2)
+        os.replace(task_path(tid) + ".tmp", task_path(tid))
+    return tid
+
+
+def proposal_problems(entries):
+    """What is wrong with a proposal, in the terms `briefed` used to check after the fact."""
+    out, keys = [], [e.get("key") for e in entries]
+    if not entries:
+        return ["the proposal names no task"]
+    for k in {k for k in keys if keys.count(k) > 1}:
+        out.append(f"two tasks share the key {k!r}")
+    for e in entries:
+        key = e.get("key") or "(no key)"
+        if not e.get("key"):
+            out.append("a task has no `key` (its name inside this proposal, for the others to wait on)")
+        if not (e.get("subject") or "").strip():
+            out.append(f"task {key}: no subject")
+        out += [f"task {key}: {p}" for p in brief_problems(e.get("description", ""))]
+    kinds = {e.get("key"): brief_kind(e.get("description", "")) for e in entries}
+    reviews = {e.get("key"): reviewed(e.get("description", "")) for e in entries if kinds.get(e.get("key")) == "review"}
+    for key, k in kinds.items():
+        if k in ("build", "fix") and key not in reviews.values():
+            out.append(f"task {key} is a {k} task without a review task (kind review, `Reviews:` naming its key)")
+    for r, subject in reviews.items():
+        if subject not in keys and not read_task(subject or ""):
+            out.append(f"review task {r} reviews {subject!r}, which is neither a task of this proposal nor in the list")
+    known = set(keys)
+    for e in entries:
+        for b in e.get("blockedBy") or []:
+            if b not in known and not read_task(b):
+                out.append(f"task {e.get('key')} waits on {b!r}, which is neither a task of this proposal nor in the list")
+    return out
+
+
+def cmd_propose(bid, path):
+    """The task designer's tasks and where it would place them. It does not write them: the planner decides and the
+    harness writes them (cmd_accept). What it proposes is judged here for form and for placement, so that a brief
+    that cannot be placed is said to be unplaceable once, with its work kept, rather than written and refused."""
     c = caller()
     if c and (c["role"] != "task-designer" or c.get("task") != bid):
-        return f"refused: brief task {bid} is recorded by its task designer"
-    problems, briefs = [], {}
-    for t in new:
-        task = read_task(t)
-        if not task:
-            problems.append(f"task {t} is not in the task list")
-            continue
-        briefs[t] = task.get("description", "")
-        problems += [f"task {t}: {p}" for p in brief_problems(briefs[t])]
-    if not new:
-        problems.append("name the tasks you briefed: `v2.py briefed ID NEW...`")
-    reviews = {t: reviewed(b) for t, b in briefs.items() if brief_kind(b) == "review"}
-    for t, b in briefs.items():
-        if brief_kind(b) in ("build", "fix") and t not in reviews.values():
-            problems.append(f"task {t} is a {brief_kind(b)} task without a review task (kind review, `Reviews:` naming it)")
-    for r, t in reviews.items():
-        if t not in briefs and not read_task(t):
-            problems.append(f"review task {r} reviews {t}, which is not in the task list")
+        return f"refused: brief task {bid} is proposed by its task designer"
+    try:
+        entries = json.load(open(os.path.join(PROJECT, path)))
+        assert isinstance(entries, list)
+    except (OSError, ValueError, AssertionError) as e:
+        return f"refused: {path} is not a list of tasks in JSON ({e!r})"
+    problems = proposal_problems(entries)
     if problems:
-        return "refused: the briefs are not in form:\n- " + "\n- ".join(problems)
-    at_end = further_goals(bid, new)
+        return "refused: the proposal is not in form:\n- " + "\n- ".join(problems)
+    goals = proposed_further_goals(entries)
     depth = (peek()["tasks"].get(bid) or {}).get("depth_at_start")
-    if at_end and depth is not None and depth >= GRAPH_DEPTH:
-        return returned_for_depth(bid, new, at_end, depth)
-    by = (c or {}).get("name")
+    if goals and depth is not None and depth >= GRAPH_DEPTH:
+        return refuse_proposal(bid, entries, goals, depth)
+    with state() as w:
+        w["tasks"].setdefault(bid, {}).update(stage="proposed", proposal=path, proposed=len(entries))
+        event(w, "the harness", f"Brief task {bid} proposes {len(entries)} task(s) and where to place them: "
+              + "; ".join(f"{e['key']} ({brief_kind(e.get('description',''))}) after "
+                          + (", ".join(e.get("blockedBy") or []) or "nothing") for e in entries)
+              + f". The file is {path}. They are not in the graph: you place them "
+              "(`v2.py accept " + bid + "`, which writes them as proposed and queues them after this brief), or say "
+              "what to change first — the graph is yours alone to edit.")
+    kick()
+    return (f"proposed {len(entries)} task(s); the planner places them. Record your result (`v2.py result {bid}`) "
+            "with what you briefed and why each waits on what it does, and end your turn.")
+
+
+def proposed_further_goals(entries):
+    """Of a proposal's tasks, those that would be further goals: waiting on open work already in the graph, with
+    nothing already there waiting on them (further_goals, read over the proposal before it is written)."""
+    keys = {e.get("key") for e in entries}
+    tasks = {t["id"]: t for t in all_tasks()}
+    is_open = lambda b: b in tasks and tasks[b].get("status") != "completed"
+    # a proposed task is fed when an existing open task waits on it — which it can only do through a key the
+    # proposal re-points onto, so the proposal says so with `feeds`
+    fed = {f for e in entries for f in (e.get("feeds") or [])}
+    return sorted(e["key"] for e in entries
+                  if e["key"] not in fed
+                  and any(b not in keys and is_open(b) for b in (e.get("blockedBy") or [])))
+
+
+def refuse_proposal(bid, entries, goals, depth):
+    with state() as w:
+        w["tasks"].setdefault(bid, {})["stage"] = "planner"
+        event(w, "the harness", f"Brief task {bid} is yours to resolve. Its detailing needs {', '.join(goals)} to be "
+              f"further goals — waiting on work already in the graph that nothing already there waits on — and the "
+              f"chain was {depth} deep when the brief started (at most {GRAPH_DEPTH}). Detail spliced into the graph "
+              "is admitted at any depth; work hung past its frontier is not, and the detailing is not wrong for "
+              f"needing it. Its proposal stands in .build/tasks/{bid}/ and nothing is in the graph: place what "
+              "belongs, shorten what these wait on, or let the work go.")
+    log(f"brief {bid} proposed {len(goals)} further goal(s) on a chain {depth} deep: refused, the planner has it")
+    kick()
+    return (f"refused, and the planner has it: {', '.join(goals)} are further goals, not further detail, and the "
+            f"chain was {depth} deep when this brief started (at most {GRAPH_DEPTH}). Nothing you wrote is lost — "
+            "the proposal stands. Do not re-shape the detailing to fit the graph; record your result "
+            f"(`v2.py result {bid}`) saying what the work needs and why, and end your turn.")
+
+
+def cmd_accept(bid):
+    """The planner writes a brief's proposed tasks into the graph, as proposed."""
+    refused = planner_only("placing a brief's tasks")
+    if refused:
+        return refused
+    rec = peek()["tasks"].get(bid) or {}
+    if rec.get("stage") != "proposed" or not rec.get("proposal"):
+        return f"refused: brief task {bid} has no proposal waiting"
+    entries = json.load(open(os.path.join(PROJECT, rec["proposal"])))
+    ids, order = {}, []
+    for e in entries:  # written first without their edges, so a task may wait on one later in the list
+        ids[e["key"]] = create_task(e["subject"], e["description"],
+                                    {"kind": brief_kind(e.get("description", "")), "why": e.get("why", "")}, [])
+        order.append(ids[e["key"]])
+    for e in entries:
+        update_task(ids[e["key"]], blockedBy=[ids.get(b, b) for b in (e.get("blockedBy") or [])])
+        for f in e.get("feeds") or []:  # existing work re-pointed onto the new: what makes it detail, not a goal
+            if read_task(f):
+                update_task(f, blockedBy=[ids[e["key"]]] + [b for b in (read_task(f).get("blockedBy") or [])
+                                                            if b != bid])
+    by = rec.get("session")
     with state() as st:
-        for t, b in briefs.items():
-            st["tasks"].setdefault(t, {}).update(stage="ready", kind=brief_kind(b), briefed_by=by, briefing=by,
-                                                 queued_at=time.time(), brief_task=bid)
-        for r, t in reviews.items():
-            st["tasks"][r]["reviews"] = t
-            rt = st["tasks"].setdefault(t, {}).setdefault("review_tasks", [])
-            if r not in rt:
-                rt.append(r)
+        for e in entries:
+            tid = ids[e["key"]]
+            st["tasks"].setdefault(tid, {}).update(stage="ready", kind=brief_kind(e.get("description", "")),
+                                                   briefed_by=by, briefing=by, queued_at=time.time(), brief_task=bid)
+        for e in entries:
+            r = reviewed(e.get("description", "")) if brief_kind(e.get("description", "")) == "review" else None
+            if r:
+                st["tasks"][ids[e["key"]]]["reviews"] = ids.get(r, r)
+                st["tasks"].setdefault(ids.get(r, r), {}).setdefault("review_tasks", []).append(ids[e["key"]])
         q = st["queue"]
         at = q.index(bid) + 1 if bid in q else len(q)
-        st["queue"] = q[:at] + [t for t in new if t not in q] + q[at:]
-        st["tasks"].setdefault(bid, {})["stage"] = "done"
-        if c:
-            st["sessions"][c["name"]].update(state="done", ended=time.time())
+        st["queue"] = q[:at] + order + q[at:]
+        st["tasks"][bid]["stage"] = "done"
     update_task(bid, status="completed")
     kick()
-    return "briefed. End your turn now."
+    return "placed " + ", ".join(f"{e['key']} as {ids[e['key']]}" for e in entries)
 
 
 def cmd_verdict(rid, verdict, path):
@@ -3738,8 +3841,9 @@ def cmd_status():
     width, depth, _ = graph_shape(("build", "fix"))
     room = GRAPH_WIDTH or WORKERS_MAX
     out.append(f"graph: {width} build and fix tasks can start, {room} slots to take them; the chain is {depth} deep "
-               f"(at most {GRAPH_DEPTH} before a brief may add only at its start); {len(backlog)} open of at most "
-               f"{BRIEF_BACKLOG}"
+               f"(at most {GRAPH_DEPTH} before a brief may add only detail and work that runs first); "
+               f"{len(backlog)} open"
+               + (f" of at most {BRIEF_BACKLOG}" if BRIEF_BACKLOG else ", no ceiling")
                + ("; no brief is detailed while there is already as much independent work as there are slots — one "
                   "is admitted again when the slots have taken what can start, and a brief is what widens a graph "
                   "rather than what drains it" if width >= room else "")
@@ -3852,8 +3956,6 @@ def main():
         print(cmd_finalize(rest[0], rest[1:]))
     elif c == "result" and len(rest) == 1:
         print(cmd_result(rest[0]))
-    elif c == "briefed" and rest:
-        print(cmd_briefed(rest[0], rest[1:]))
     elif c == "verdict" and len(rest) >= 2:
         f = opt("--file")
         print(cmd_verdict(rest[0], rest[1], f))
@@ -3861,6 +3963,10 @@ def main():
         print(cmd_queue(rest))
     elif c == "after" and len(rest) == 2:
         print(cmd_after(rest[0], rest[1]))
+    elif c == "propose" and len(rest) == 2:
+        print(cmd_propose(rest[0], rest[1]))
+    elif c == "accept" and len(rest) == 1:
+        print(cmd_accept(rest[0]))
     elif c == "blockers" and len(rest) >= 2:
         print(cmd_blockers(rest[0], rest[1:]))
     elif c == "drop" and len(rest) == 1:

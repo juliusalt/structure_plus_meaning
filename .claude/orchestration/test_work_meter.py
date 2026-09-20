@@ -263,12 +263,14 @@ class WorkerGuardTests(Guarded):
 
 
 class RoleTests(Guarded):
-    def test_the_graph_is_edited_only_by_the_planner_and_the_task_designer(self):
+    def test_the_graph_is_edited_only_by_the_planner(self):
+        # the task designer held graph rights and wrote straight into the task list, which IS the graph. It proposes
+        # now and the planner places (the owner, 2026-09-20), so it is refused here like every other role.
         self.w.session("design-2", "designer", "s1", task="2", settings="planner-settings.json")
         self.assertIn("The task graph is the planner's", self.guard("TaskCreate", {"subject": "x"}))
         self.w.set_st(sessions={})
         self.w.session("brief-2", "task-designer", "s1", task="2", settings="planner-settings.json")
-        self.assertIsNone(self.guard("TaskUpdate", {"taskId": "2"}))
+        self.assertIn("propose", self.guard("TaskUpdate", {"taskId": "2"}))
         self.w.set_st(sessions={})
         self.w.session("implement-2", "implementer", "s1", task="2")  # its own session task list
         self.assertIsNone(self.guard("TaskCreate", {"subject": "step 1"}))

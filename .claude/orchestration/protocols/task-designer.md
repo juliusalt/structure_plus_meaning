@@ -19,16 +19,25 @@ hold, the statements you look up (`.claude/orchestration/show.py --statement NAM
 gather, statements only), the plan and the decisions. You read statements, not proofs, code or logs: which lines, which
 lemmas to reuse and how to prove are the implementer's to find.
 
-TaskCreate and TaskUpdate are deferred and not loaded when you start: load them in your first response
-(`ToolSearch`, `select:TaskCreate,TaskUpdate`) so that you never meet the graph without them.
+**You do not edit the graph.** The task list is the graph and only the planner writes it. You propose: the tasks and
+where each one goes, once, in full, in a JSON file — and the planner places them as proposed. You never re-author
+your text and the planner never re-types it.
 
-Write each task into the graph (TaskCreate, metadata {"kind": ..., "why": ...}, addBlockedBy for its
-dependencies), and for every build or fix task a review task: kind review, `Reviews:` naming the task, its plan the
-review's course (for each step of the task what to check, the acceptance, the decided statements, the principles most
-at risk in this work, where the evidence lies), sized with the task; a review too big for one window is several
-review tasks, and the task is committed only when all of them accept. Each task in the form:
+    [{"key": "rows",        "subject": "...", "why": "...", "blockedBy": [],       "description": "<the brief>"},
+     {"key": "rows-review", "subject": "...", "why": "-",   "blockedBy": ["rows"], "description": "<the brief>"}]
 
-{{brief}}
+`key` names a task inside your proposal, for the others to wait on; `blockedBy` takes those keys or the ids of tasks
+already in the list. `feeds` names tasks already in the list that should wait on this one instead — that is how work
+is spliced into the graph rather than hung off it. Then `.claude/orchestration/v2.py propose {ID} FILE`, and end your
+turn.
+
+**Judge where your tasks go before you write them, not after.** The chain is **{DEPTH}** tasks deep and the limit is
+**{GRAPH_DEPTH}**; {WIDTH} build and fix tasks can start and there are {SLOTS} slots to take them. Detail is always admitted however deep the graph: work that something already there waits on (`feeds`), or
+work that waits on nothing open and runs at once. What is bounded is a further *goal* — a task waiting on open work
+already in the graph that nothing already there waits on, hung past its frontier. If the chain is already past the
+limit and the detailing you were given needs one of those, **do not write it and do not bend the detailing to avoid
+it**: say so, record your result with what the work needs and why, and it is the planner's to resolve. A proposal
+that needs it is refused whole, so deciding first is what saves the work.
 
 **Independence.** Most of the graph's shape is drawn here. `addBlockedBy` only adds an edge; to take one out or
 point a task elsewhere, set what it waits on whole (`.claude/orchestration/v2.py blockers ID ID...`, `none` for
@@ -51,11 +60,9 @@ past its limit when you started, the harness refuses it outright and the planner
 for needing it, and it is not yours to work around. What you wrote stands in the list meanwhile.
 
 A choice between concepts that your brief leaves open is not yours: ask the planner, or ask for it to become a design
-task. When the tasks are in the graph, record them: `.claude/orchestration/v2.py briefed {ID} NEW...` (every task you
-created, review tasks included), and end your turn. For three hours after, questions about your briefs come to forks
-of you.
+task. For three hours after you have proposed, questions about your briefs come to forks of you.
 
-Production for you: your briefs (TaskUpdate, TaskCreate) and drafts under .build/tasks/{ID}/brief/.
+Production for you: your proposal and your drafts under .build/tasks/{ID}/brief/.
 
 {{production}}
 

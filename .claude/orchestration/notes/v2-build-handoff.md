@@ -937,3 +937,41 @@ the graph", so it no longer makes a task read as a further goal.
 wait on. Under this rule that is a further goal and would be refused today. It was a real finding (the seam), and by
 the owner's rule it is exactly the case to refuse outright and let the planner resolve. Worth watching that the
 refusal reads as a finding handed over and not as a fault.
+
+## 2026-09-20 22:35 — the designer proposes, the planner writes
+
+The owner: *"the brief should first consider where its generated tasks will be added and then reject further work if
+it thinks that they will be added illegally. In general we should make it so that only planner can actually edit the
+task graph while the task designer proposes the tasks and how to place them and the planner then decides. The limit
+on depth should be 10 and the limit on the total should be unlimited."*
+
+**`GRAPH_DEPTH` 6 → 10. `BRIEF_BACKLOG` → 0, meaning no ceiling** on the number of open tasks; the width against the
+slots is the whole admission rule now, and the status says `17 open, no ceiling`.
+
+**The task designer no longer edits the graph.** It held `graph=True` and wrote straight into the Claude Code task
+list, which *is* the graph. It is now off that flag and off the shared task list with every other role that cannot
+edit it (the invariant test holds). `work_meter`'s refusal names the new route.
+
+- **`v2.py propose ID FILE`** — the designer writes each task once, in full, as JSON: a local `key`, the subject, the
+  brief text, `why`, `blockedBy` (local keys or existing ids), and `feeds` — existing tasks that should wait on this
+  one instead, which is how work is **spliced into** the graph rather than hung off it. The harness checks form
+  (every build or fix with its review, every reference resolving) and placement, records it, and tells the planner
+  what is proposed and where.
+- **`v2.py accept ID`** — the planner places them. The harness allocates the ids, resolves local keys to them, wires
+  `feeds`, sets the review relations, and queues them after the brief task. The designer never re-authors its text
+  and the planner never re-types it.
+- `cmd_briefed` is gone: with the designer unable to create a task, it was unreachable.
+
+**The judgement moved before the writing.** The designer's message now carries `{DEPTH}`, `{GRAPH_DEPTH}`, `{WIDTH}`
+and `{SLOTS}`, and its protocol says: detail is always admitted however deep the graph; what is bounded is a further
+goal; if the chain is past the limit and your detailing needs one, **do not write it and do not bend the detailing to
+avoid it** — say so and record your result, and it is the planner's to resolve. A proposal that needs one is refused
+whole, so deciding first is what saves the work. The refusal remains as the backstop, and now costs a file rather
+than a graph to unpick.
+
+**264 tests pass.** The tests that drove `briefed` now drive the proposal; the two that only restated the depth cases
+were dropped for the two that exercise the new path end to end.
+
+**Unverified live.** Nothing has proposed or been placed. The first brief to run is the test of all of it: that its
+message carries the numbers, that it judges placement before writing, that `accept` produces a graph the planner
+recognises as what it asked for, and that the ids the harness allocates do not collide with Claude Code's own.

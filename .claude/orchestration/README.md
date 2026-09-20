@@ -127,7 +127,7 @@ Every piece of work beyond a question is a task of the graph with a brief in for
 kinds: design, investigate, build, fix (the producing slot), brief and review (the supporting slot). The planner
 writes the design and investigation tasks and the brief tasks, a brief task being the plan of a detailing; its task
 designer writes the build and fix tasks and, for each, its review tasks, whose plans are the reviews' courses
-(`v2.py briefed BRIEFID NEW...` refuses a build or fix without one, and queues the new tasks after the brief task).
+(`v2.py propose BRIEFID FILE` refuses a build or fix without one). The task designer does not edit the graph: the task list is the graph and the planner alone writes it, so the designer proposes its tasks and where each goes, once and in full, and `v2.py accept BRIEFID` writes them as proposed and queues them after the brief task. A proposal whose tasks would be further goals past the depth limit is refused before anything is written, and the planner resolves it.
 A task is committed only when all its review tasks accept; a build or fix nobody briefed a review for gets one the
 harness plans from its brief. A task not in form is not taken up, and the planner is told why.
 

@@ -887,8 +887,15 @@ def exempt(path):
     return path.startswith(EXEMPT) or "__pycache__/" in path or path.endswith(".pyc")
 
 
-def git_out(*args, binary=False, tree=None):
+def git_out(*args, binary=False, tree=None, quiet=False):
+    """Git's output, or None when it failed. A failure is said unless the caller reads it as an answer (`quiet`):
+    changed_paths turns None into "no paths", which reads as a clean tree, and from there tree_writer finds no
+    owner and leave() tells a task nothing about the work it is leaving. A wrong answer nobody records is the
+    shape that cost this run its day."""
     r = subprocess.run(["git", "-C", tree or PROJECT, *args], capture_output=True, text=not binary)
+    if r.returncode and not quiet:
+        err = (r.stderr if isinstance(r.stderr, str) else r.stderr.decode(errors="ignore")).strip()[-160:]
+        log(f"ATTENTION git {' '.join(str(a) for a in args[:3])} failed in {tree or PROJECT}: {err}")
     return r.stdout if r.returncode == 0 else None
 
 
@@ -3214,7 +3221,7 @@ def cmd_finalize(tid, args):
         elif a == "--files":
             while args and not args[0].startswith("--"):
                 files.append(args.pop(0))
-    bad = [f for f in files if not os.path.lexists(os.path.join(PROJECT, f)) and git_out("ls-files", "--error-unmatch", "--", f) is None]
+    bad = [f for f in files if not os.path.lexists(os.path.join(PROJECT, f)) and git_out("ls-files", "--error-unmatch", "--", f, quiet=True) is None]
     outside = [f for f in files if os.path.isabs(f) or os.path.normpath(f).startswith("..") or exempt(os.path.normpath(f))
                or subprocess.run(["git", "-C", PROJECT, "check-ignore", "-q", "--", f]).returncode == 0]
     if outside:

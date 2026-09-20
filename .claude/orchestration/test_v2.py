@@ -456,6 +456,16 @@ class PlanningTests(Flow):
         # would have held the width at the slots for ever and detained every brief (2026-09-20)
         self.assertEqual(out[2], "(2, 3, 5)")
 
+    def test_a_git_failure_is_recorded_rather_than_read_as_nothing(self):
+        # git_out turns a failure into None, and changed_paths turns None into "no paths", which reads as a clean
+        # tree: from there tree_writer finds no owner and leave() tells a task nothing about the work it leaves
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.git_out('no-such-command')); print(v2.git_out('no-such-command', quiet=True))"],
+                             env=self.w.env, capture_output=True, text=True).stdout.split()
+        self.assertEqual(out, ["None", "None"])
+        said = (self.w.state / "v2.log").read_text()
+        self.assertEqual(said.count("git no-such-command failed"), 1)   # said once: the quiet one is an answer
+
     def test_startable_agrees_with_what_the_dispatch_would_actually_start(self):
         # a report that names a task produce() would refuse is a message that lies: the stage is the harness's
         # bookkeeping and the list is the graph, and between the planner completing a task and the next dispatch

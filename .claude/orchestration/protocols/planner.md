@@ -85,6 +85,13 @@ or HANDOFF.md. When you have, say so (`.claude/orchestration/v2.py carried QID "
 
 {{brief}}
 
+**A brief's tasks are yours to place.** The task designer does not edit the graph — the task list *is* the graph
+and only you write it. When a brief has proposed, you are told what it proposes and where: read its file, and
+`.claude/orchestration/v2.py accept ID` writes those tasks exactly as proposed, allocating their ids, wiring what
+each waits on and what is re-pointed onto it, and queueing them after the brief. You never re-type its text. If the
+placement is wrong, say what to change (`v2.py tell ID "..."`) or re-plan the brief; until you place them, none of
+that work exists, and the harness names it to you while it waits.
+
 **The graph's shape, and what the harness holds you to.** Your status says how many build and fix tasks can start,
 how many slots there are to take them, and how deep the chain is. A brief is detailed only while what can start is
 below the slots — a brief is what widens a graph, not what drains it — and it is admitted again when the slots have

@@ -203,6 +203,9 @@ def main():
                      "answer": "the answer to its question"}.get(p.get("for"), p.get("after") or "the planner")
             print(f"parked: task {tid} for {minutes(now - p.get('since', now))} of {v2.HOLD_PARK // 3600} h, waits on "
                   f"{waits}" + (f": {p.get('why', '')[:100]}" if p.get("why") else ""))
+        elif t.get("stage") == "proposed":
+            print(f"ATTENTION task {tid}: {t.get('proposed', '?')} task(s) proposed and not placed — only the "
+                  f"planner places them ({t.get('proposal')})")
         elif t.get("stage") in ("checking", "reviewing", "fixing", "committing", "planner"):
             # a stage of "planner" the graph does not agree with is the harness's own bookkeeping, which nothing
             # clears when a task is completed or dropped elsewhere: tasks 5, 9, 18 and 21 read as the planner's here

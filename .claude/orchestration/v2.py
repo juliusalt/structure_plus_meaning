@@ -2122,7 +2122,7 @@ def kind_of(task):
     return (task.get("metadata") or {}).get("kind") or field(task.get("description", ""), "Kind")
 
 
-def graph_shape(kinds=None):
+def graph_shape(kinds=None, skip=()):
     """(width, depth, open) of the task graph as it is drawn, over the tasks that are not completed.
 
     width  — how many of them have every blocker completed: the work that could run at all, which is what
@@ -2151,7 +2151,11 @@ def graph_shape(kinds=None):
         seen[tid] = 1 + max([chain(b, path + (tid,)) for b in blocked.get(tid, ())], default=0)
         return seen[tid]
 
-    return (sum(1 for k in open_ if not blocked[k]),
+    # `skip` leaves a task out of the WIDTH while still walking it for the depth: a task that came back to the
+    # planner has every blocker done and so counted as concurrency, though no slot can take it. Two of those would
+    # have held the width at the slots for ever and detained every brief, with only the planner able to move them
+    # and nothing saying so (2026-09-20).
+    return (sum(1 for k in open_ if not blocked[k] and k not in skip),
             max([chain(k) for k in open_], default=0),
             len(open_))
 
@@ -2181,7 +2185,7 @@ def support():
             briefs.append(tid)
         ready = ready or (t.get("stage") == "ready" and t.get("kind") in PRODUCING_KINDS and deps_done(tid))
     backlog = build_backlog()
-    width, depth, _ = graph_shape(("build", "fix"))
+    width, depth, _ = graph_shape(("build", "fix"), skip=with_the_planner(st))
     room = GRAPH_WIDTH or WORKERS_MAX
     why = (f"{width} build and fix tasks can start and there are {room} slots to take them" if width >= room else
            f"{len(backlog)} build and fix tasks are open, past the ceiling of {BRIEF_BACKLOG}"
@@ -2452,6 +2456,33 @@ def returned_tasks():
 GRAPH_HELD_EVERY = int(os.environ.get("ORCH_GRAPH_HELD_EVERY", 1800))  # how often a held graph is named again
 
 
+def proposals_waiting():
+    """A brief that has proposed sits at stage "proposed" until the planner places it. Nothing else moves it: it is
+    not in FINISHING, no slot takes it, and its session has ended. Named to the planner while it stands, on the same
+    period as a task that came back — otherwise the work waits on a word that may never come, which is the shape
+    that cost the run of 2026-09-20 three times over."""
+    for tid, t in sorted(peek()["tasks"].items()):
+        mark = os.path.join(STATE, f"proposed-{tid}")
+        if (t or {}).get("stage") != "proposed":
+            with contextlib.suppress(OSError):
+                os.remove(mark)
+            continue
+        try:
+            since = time.time() - float(open(mark).read())
+        except (OSError, ValueError):
+            open(mark, "w").write(str(time.time()))
+            continue
+        if since < RETURNED_AFTER or (age_of(f"proposed-{tid}") or 0) < RETURNED_AFTER:
+            continue
+        os.utime(mark, None)
+        with state() as w:
+            event(w, "the harness", f"Brief task {tid} proposed {t.get('proposed', '?')} task(s) "
+                  f"{int(since // 60)} minutes ago and they are still not in the graph. Nothing else places them — "
+                  f"the graph is yours alone: read {t.get('proposal')} and place them (`v2.py accept {tid}`), or "
+                  "say what to change and leave them where they are. Until you do, none of that work exists.")
+        log(f"brief {tid} has waited {int(since // 60)} min to be placed")
+
+
 def held_graph():
     """While the graph is held nothing of it runs and only the planner can lift it, so it is named to the planner as
     its own event and named again while it lasts. Not left to standstill(), which answers a different question and is
@@ -2599,7 +2630,7 @@ def dispatch_once():
         return
     for part in (tree_care, check_isolation, parking_care, fix_deadlock, efficiency_care, kb_care, produce, support,
                  quick_fix, tidied,
-                 consult, returned_tasks, held_graph, standstill, plan):  # before plan: what they say reaches it now
+                 consult, returned_tasks, proposals_waiting, held_graph, standstill, plan):  # before plan: what they say reaches it now
         try:  # one part that fails does not hold up the others; it is logged, and tried again at the next dispatch
             part()
         except Exception as e:  # noqa: BLE001
@@ -3138,66 +3169,38 @@ def cmd_result(tid):
         if open_asks else "")
 
 
-def further_goals(bid, new):
-    """Of the tasks a brief wrote, those that are further GOALS rather than further detail.
+def further_goals(group):
+    """Of a group of tasks — proposed or already written — those that would be further GOALS rather than detail.
 
-    Detail is work spliced into the graph: something that was already there waits on it, so the graph is expressed
-    more finely without reaching past where it already ended. Inserting into the middle of a chain is detail and is
-    admitted whatever the depth — a brief exists to make planned work concrete, and a detailing bent to keep a chain
-    short is worse than a long one (the owner, 2026-09-20).
+    `group` is {name: {"blockedBy": [...], "feeds": [...]}}, where a name is a proposal's local key or a task id, and
+    `feeds` names tasks already in the graph that are to wait on this one instead.
 
-    A further goal is work hung past the frontier: it waits on open work that was already there, and nothing that
-    was already there waits on it. That is the graph growing outward rather than growing finer, and it is what the
-    depth bounds.
+    Detail is work the graph waits on: something already there waits on it, directly or through the group, so the
+    plan is expressed more finely without reaching past where it already ended. Inserting into the middle of a chain
+    is detail and is admitted whatever the depth — a brief exists to make planned work concrete, and a detailing bent
+    to keep a chain short is worse than a long one (the owner, 2026-09-20).
 
-    A task waiting only on the brief's own tasks, or on the brief task itself, is inside the group: that is how a
-    review task waits on the build it reviews, and how a brief's first task waits on the brief. The group is read
-    whole, so a task deep inside it still counts as detail when a pre-existing task waits on the group at all."""
+    A further goal waits on open work already in the graph and nothing already there waits on it: the graph growing
+    outward rather than finer. That is what GRAPH_DEPTH bounds.
+
+    Being fed is closed under the group's own edges: if an existing task will wait on X and X waits on Y inside the
+    group, Y is fed too. That is how a review task waits on the build it reviews, and why the group is read whole.
+    One function serves the proposal and anything already written, so the rule cannot be two rules that differ."""
     tasks = {t["id"]: t for t in all_tasks()}
-    group = set(new) | {bid}
     is_open = lambda b: b in tasks and tasks[b].get("status") != "completed"
-    # every task of the group that something already in the graph waits on, through the group
-    fed, edge = set(), [x for x in tasks.values()
-                        if x["id"] not in group and x.get("status") != "completed"]
-    seen = set()
-    stack = [b for x in edge for b in (x.get("blockedBy") or []) if b in group]
-    while stack:
-        tid = stack.pop()
-        if tid in seen:
-            continue
-        seen.add(tid)
-        fed.add(tid)
-        stack += [b for b in ((tasks.get(tid) or {}).get("blockedBy") or []) if b in group]
-    return sorted(t for t in new
-                  if t not in fed
-                  and any(b not in group and is_open(b) for b in ((tasks.get(t) or {}).get("blockedBy") or [])))
-
-
-def returned_for_depth(bid, new, at_end, depth):
-    """The detailing this brief needed is not admissible while the chain stands where it does, and that is not the
-    task designer's to work around: it is rejected outright and the planner resolves it. A brief is not asked to
-    contort its work to fit a bound — a detailing bent to satisfy the harness is worse than one that waits — so
-    nothing here suggests re-shaping. What it wrote stands in the list, unqueued; the planner keeps what belongs,
-    points the rest elsewhere (`v2.py blockers`) or abandons it (the owner, 2026-09-20)."""
-    with state() as w:
-        w["tasks"].setdefault(bid, {})["stage"] = "planner"
-        event(w, "the harness", f"Brief task {bid} is yours to resolve. Its detailing needs {', '.join(at_end)} to "
-              f"to be further goals — they wait on work already in the graph and nothing already there waits on "
-              f"them — and the chain was {depth} tasks deep when the brief started (at most {GRAPH_DEPTH}). Detail "
-              "spliced into the graph is admitted at any depth; work hung past its frontier is not, and the "
-              "detailing is not wrong for needing it. So the graph is what has to give. Its tasks stand in the list "
-              f"({', '.join(new)}) and none is queued: keep what belongs, point what can run first at the start "
-              "(`v2.py blockers ID ...`, `none` for nothing), abandon what the graph no longer needs, or shorten the "
-              "chain these wait on. Nothing runs until you queue it.")
-    log(f"brief {bid} needs {len(at_end)} task(s) on the end of a chain {depth} deep: refused, and the planner has it")
-    kick()
-    return (f"refused, and the planner has it: {', '.join(at_end)} are further goals, not further detail — they "
-            "wait on work already in the graph and nothing already there waits on them — and the chain was "
-            f"{depth} deep when this brief started (at most {GRAPH_DEPTH}). Detail spliced into the graph is "
-            "admitted at any depth; this reaches past its frontier. That is the graph's problem and not your "
-            "brief's — do not re-shape the detailing to fit it, and do not split what belongs together. What you wrote stands in the list. Record your result (`v2.py result " + bid + "`) "
-            "with what you briefed and why each task waits on what it does, so the planner can resolve it, and end "
-            "your turn.")
+    # `feeds` on a member names the existing tasks that will wait on IT, so the member is the one fed — not the
+    # task it names. Written the other way round first, which made every splice read as a further goal.
+    fed = {n for n, e in group.items() if e.get("feeds")} | {
+        b for x in tasks.values() if x["id"] not in group and x.get("status") != "completed"
+        for b in (x.get("blockedBy") or []) if b in group}           # already: existing work waits on us
+    stack = list(fed)
+    while stack:                                                      # and closed under the group's own edges
+        for b in (group.get(stack.pop()) or {}).get("blockedBy") or []:
+            if b in group and b not in fed:
+                fed.add(b)
+                stack.append(b)
+    return sorted(n for n, e in group.items()
+                  if n not in fed and any(b not in group and is_open(b) for b in (e.get("blockedBy") or [])))
 
 
 def create_task(subject, description, metadata, blocked_by):
@@ -3217,7 +3220,7 @@ def create_task(subject, description, metadata, blocked_by):
 
 
 def proposal_problems(entries):
-    """What is wrong with a proposal, in the terms `briefed` used to check after the fact."""
+    """What is wrong with a proposal: its form, and every reference it makes."""
     out, keys = [], [e.get("key") for e in entries]
     if not entries:
         return ["the proposal names no task"]
@@ -3227,6 +3230,9 @@ def proposal_problems(entries):
         key = e.get("key") or "(no key)"
         if not e.get("key"):
             out.append("a task has no `key` (its name inside this proposal, for the others to wait on)")
+        elif read_task(e["key"]):
+            out.append(f"task {key}: its key is the id of a task already in the list, so nothing could tell which "
+                       "one a blockedBy means — give it a name of its own")
         if not (e.get("subject") or "").strip():
             out.append(f"task {key}: no subject")
         out += [f"task {key}: {p}" for p in brief_problems(e.get("description", ""))]
@@ -3243,6 +3249,16 @@ def proposal_problems(entries):
         for b in e.get("blockedBy") or []:
             if b not in known and not read_task(b):
                 out.append(f"task {e.get('key')} waits on {b!r}, which is neither a task of this proposal nor in the list")
+        # `feeds` is what makes a task detail rather than a further goal, so it is checked rather than taken on
+        # trust: an unchecked one would exempt a task from the depth rule and then silently not be wired.
+        for f in e.get("feeds") or []:
+            task = read_task(f)
+            if f in known:
+                out.append(f"task {e.get('key')} feeds {f!r}, which is a task of this proposal: say blockedBy for that")
+            elif not task:
+                out.append(f"task {e.get('key')} feeds {f!r}, which is not in the task list")
+            elif task.get("status") == "completed":
+                out.append(f"task {e.get('key')} feeds {f!r}, which is completed: nothing waits on it any more")
     return out
 
 
@@ -3261,7 +3277,7 @@ def cmd_propose(bid, path):
     problems = proposal_problems(entries)
     if problems:
         return "refused: the proposal is not in form:\n- " + "\n- ".join(problems)
-    goals = proposed_further_goals(entries)
+    goals = further_goals({e["key"]: e for e in entries})
     depth = (peek()["tasks"].get(bid) or {}).get("depth_at_start")
     if goals and depth is not None and depth >= GRAPH_DEPTH:
         return refuse_proposal(bid, entries, goals, depth)
@@ -3276,20 +3292,6 @@ def cmd_propose(bid, path):
     kick()
     return (f"proposed {len(entries)} task(s); the planner places them. Record your result (`v2.py result {bid}`) "
             "with what you briefed and why each waits on what it does, and end your turn.")
-
-
-def proposed_further_goals(entries):
-    """Of a proposal's tasks, those that would be further goals: waiting on open work already in the graph, with
-    nothing already there waiting on them (further_goals, read over the proposal before it is written)."""
-    keys = {e.get("key") for e in entries}
-    tasks = {t["id"]: t for t in all_tasks()}
-    is_open = lambda b: b in tasks and tasks[b].get("status") != "completed"
-    # a proposed task is fed when an existing open task waits on it — which it can only do through a key the
-    # proposal re-points onto, so the proposal says so with `feeds`
-    fed = {f for e in entries for f in (e.get("feeds") or [])}
-    return sorted(e["key"] for e in entries
-                  if e["key"] not in fed
-                  and any(b not in keys and is_open(b) for b in (e.get("blockedBy") or [])))
 
 
 def refuse_proposal(bid, entries, goals, depth):
@@ -3317,7 +3319,15 @@ def cmd_accept(bid):
     rec = peek()["tasks"].get(bid) or {}
     if rec.get("stage") != "proposed" or not rec.get("proposal"):
         return f"refused: brief task {bid} has no proposal waiting"
-    entries = json.load(open(os.path.join(PROJECT, rec["proposal"])))
+    try:
+        entries = json.load(open(os.path.join(PROJECT, rec["proposal"])))
+        assert isinstance(entries, list) and entries
+    except (OSError, ValueError, AssertionError) as e:
+        return f"refused: {rec['proposal']} cannot be read as a proposal ({e!r}); ask its task designer, or drop it"
+    problems = proposal_problems(entries)  # the graph may have moved since it proposed
+    if problems:
+        return ("refused: the proposal no longer fits the graph:\n- " + "\n- ".join(problems)
+                + f"\nTell the task designer (`v2.py tell {bid} ...`) or re-plan the brief.")
     ids, order = {}, []
     for e in entries:  # written first without their edges, so a task may wait on one later in the list
         ids[e["key"]] = create_task(e["subject"], e["description"],
@@ -3838,7 +3848,7 @@ def cmd_status():
                + ("" if len(ready) > 1 else " — nothing else can start while what runs is parked or checking; only a "
                   "wider graph changes that"))
     backlog = build_backlog(st)
-    width, depth, _ = graph_shape(("build", "fix"))
+    width, depth, _ = graph_shape(("build", "fix"), skip=with_the_planner(st))
     room = GRAPH_WIDTH or WORKERS_MAX
     out.append(f"graph: {width} build and fix tasks can start, {room} slots to take them; the chain is {depth} deep "
                f"(at most {GRAPH_DEPTH} before a brief may add only detail and work that runs first); "

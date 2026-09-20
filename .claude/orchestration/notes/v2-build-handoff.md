@@ -975,3 +975,44 @@ were dropped for the two that exercise the new path end to end.
 **Unverified live.** Nothing has proposed or been placed. The first brief to run is the test of all of it: that its
 message carries the numbers, that it judges placement before writing, that `accept` produces a graph the planner
 recognises as what it asked for, and that the ids the harness allocates do not collide with Claude Code's own.
+
+## 2026-09-20 23:00 — auditing what was just built, and what it was hiding
+
+The owner asked for coherence and adequacy of the machinery of the last hours. Eight faults, all in work written
+today, several of them the same classes this file has been recording all day.
+
+**1. The owner's rule was implemented twice and the weaker copy was in force.** `further_goals` walked the real
+graph transitively; `proposed_further_goals` took the designer's `feeds` on trust and did not close over the group's
+own edges. `cmd_propose` called the second. The first was dead — and `test_detail_spliced_into_the_graph_is_not_a_
+further_goal` covered the dead one and passed. A green test proving nothing about live behaviour, which is exactly
+the fault of the morning's matcher. One `further_goals(group)` now serves the proposal and anything written, and the
+test drives it through `propose` instead of calling the predicate.
+
+**2. `feeds` was the whole of what made a task detail, and was unchecked.** A `feeds` naming a task that does not
+exist exempted the task from the depth rule and then silently did not wire. Now checked for existence, for being
+open, and for not naming a task of the same proposal.
+
+**3. `feeds` was wired backwards.** `feeds` on a member names the existing tasks that will wait on **it**, so the
+member is the one fed — I had seeded the fed set with the task it names, which made every splice read as a further
+goal. The rule the owner asked for did not work at all, and only driving `propose` in the test found it.
+
+**4. A deadlock in the width.** `graph_shape` counted a task with every blocker completed whatever its stage, so a
+task that came back to the planner counted as concurrency though no slot can take it. Two of those hold the width at
+the slots for ever, detaining every brief, with only the planner able to move them. `skip` now leaves them out of the
+width while still walking them for the depth; the live figure fell from 5 to 3.
+
+**5. A proposal nobody placed was chased by nothing.** Stage `proposed` is not in FINISHING, no slot takes it, its
+session has ended. `proposals_waiting()` names it to the planner every `RETURNED_AFTER`, and `health.py` shows it.
+
+**6. `cmd_accept` trusted the file and the graph.** It now refuses a proposal it cannot read and re-checks form
+against the graph as it stands, which may have moved since the brief proposed.
+
+**7. A proposal key could shadow a task id**, so nothing could say which one a `blockedBy` meant. Refused.
+
+**8. The planner was never told how to place a proposal.** The event named `v2.py accept`; its protocol did not.
+It does now, with what `accept` does and what to do if the placement is wrong.
+
+And one self-inflicted: a range delete meant to remove the duplicate rule took `create_task` and `proposal_problems`
+with it. `import v2` still succeeded — they are only resolved at call time — and the suite caught it.
+
+**267 tests pass.**

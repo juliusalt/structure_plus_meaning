@@ -1703,23 +1703,73 @@ class SupportTests(Flow):
              "description": REVIEW_TASK.format(task="a")}])
         self.assertIn("proposed 2 task(s)", said)
 
-    def test_detail_spliced_into_the_graph_is_not_a_further_goal(self):
-        # adding more detail to a task graph is fine; adding further goals is not (the owner, 2026-09-20). Detail is
-        # work something already there waits on — the graph expressed more finely, not reaching past where it ended.
-        self.w.task("40", subject="already there")
-        self.w.task("41", subject="already there too", blockedBy=["42"])   # re-pointed onto the new work
-        self.w.task("42", subject="spliced between 40 and 41", blockedBy=["40"])
-        self.w.task("43", subject="its review", blockedBy=["42"])
-        self.w.task("44", subject="runs now")
-        self.w.task("45", subject="hung past the frontier", blockedBy=["41"])
-        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
-                              "print(v2.further_goals('b', ['42','43'])); "
-                              "print(v2.further_goals('b', ['44'])); "
-                              "print(v2.further_goals('b', ['45']))"],
-                             env=self.w.env, capture_output=True, text=True).stdout.split("\n")
-        self.assertEqual(out[0], "[]")        # the middle: 41 waits on it, so it is detail whatever the depth
-        self.assertEqual(out[1], "[]")        # the start: runs now
-        self.assertEqual(out[2], "['45']")    # the end: nothing already there waits on it — a further goal
+    def test_detail_spliced_into_the_graph_is_admitted_past_the_depth_limit(self):
+        # adding more detail to a task graph is fine; adding further goals is not (the owner, 2026-09-20). Driven
+        # through propose, not through the predicate: the rule was once written twice and the weaker copy was the
+        # one in force, with a green test covering the dead one.
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        st = self.w.st()
+        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.task("7", description=BRIEF, subject="already in the graph")
+        self.w.task("8", description=BRIEF, subject="already there, and will wait on the new work")
+        spliced = [{"key": "a", "subject": "Spliced in", "why": "-", "blockedBy": ["7"], "feeds": ["8"],
+                    "description": BRIEF},
+                   {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
+                    "description": REVIEW_TASK.format(task="a")}]
+        self.assertIn("proposed 2 task(s)", self.propose("2", sid, spliced))   # detail: 8 will wait on it
+        hung = [dict(e) for e in spliced]
+        hung[0].pop("feeds")                                                   # the same work, waited on by nothing
+        self.assertIn("refused, and the planner has it", self.propose("2", sid, hung))
+
+    def test_accept_wires_feeds_so_the_existing_task_waits_on_the_new_work(self):
+        # `feeds` is what splices work in rather than hanging it off the end, so it must actually be wired: a task
+        # that claims it and is not wired would have dodged the depth rule and changed nothing
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        self.w.task("7", description=BRIEF, subject="already in the graph")
+        self.w.task("8", description=BRIEF, subject="waits on the new work", blockedBy=["2"])
+        self.propose("2", sid, [
+            {"key": "a", "subject": "Spliced in", "why": "-", "blockedBy": ["7"], "feeds": ["8"], "description": BRIEF},
+            {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
+             "description": REVIEW_TASK.format(task="a")}])
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.as_("plan-1", "accept", "2")
+        made = {json.loads((self.w.tasks / f).read_text())["subject"]: json.loads((self.w.tasks / f).read_text())
+                for f in os.listdir(self.w.tasks) if f.endswith(".json")}
+        new_id = made["Spliced in"]["id"]
+        self.assertEqual(made["Spliced in"]["blockedBy"], ["7"])
+        self.assertEqual(self.w.read_task("8")["blockedBy"], [new_id])   # 8 waits on it, and no longer on the brief
+        self.assertEqual(made["Its review"]["blockedBy"], [new_id])
+
+    def test_a_proposal_key_may_not_shadow_a_task_id(self):
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        self.w.task("7", description=BRIEF, subject="already in the graph")
+        said = self.propose("2", sid, [{"key": "7", "subject": "Shadows 7", "why": "-", "blockedBy": [],
+                                        "description": BRIEF}])
+        self.assertIn("its key is the id of a task already in the list", said)
+
+    def test_a_proposal_cannot_dodge_the_rule_by_feeding_a_task_that_is_not_there(self):
+        # `feeds` is the whole of what makes a task detail, so it is checked rather than taken on trust: an
+        # unchecked one would exempt the task from the depth rule and then silently not be wired
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        st = self.w.st()
+        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.task("7", description=BRIEF, subject="already in the graph")
+        said = self.propose("2", sid, [
+            {"key": "a", "subject": "Pretends to be spliced", "why": "-", "blockedBy": ["7"],
+             "feeds": ["999"], "description": BRIEF},
+            {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
+             "description": REVIEW_TASK.format(task="a")}])
+        self.assertIn("feeds '999', which is not in the task list", said)
 
     def test_a_brief_is_admitted_when_the_graph_is_narrow_however_many_tasks_exist(self):
         # seven open build tasks in one chain: the old rule detained every brief at six open, while only ONE of them

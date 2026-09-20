@@ -451,6 +451,19 @@ class PlanningTests(Flow):
         # cut it at task 3, the review, and call a chain of 3 a chain of 1
         self.assertEqual(out[1], "(3, 3, 4)")
 
+    def test_startable_agrees_with_what_the_dispatch_would_actually_start(self):
+        # a report that names a task produce() would refuse is a message that lies: the stage is the harness's
+        # bookkeeping and the list is the graph, and between the planner completing a task and the next dispatch
+        # healing its stage, startable would have named it
+        self.w.task("4", description=BRIEF, subject="Finished", status="completed")
+        self.w.task("5", description=BRIEF, subject="Really ready")
+        self.w.set_st(queue=["4", "5"], tasks={"4": {"stage": "ready", "kind": "build"},
+                                               "5": {"stage": "ready", "kind": "build"}})
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(' '.join(v2.startable()))"],
+                             env=self.w.env, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(out, "5")
+
     def test_a_queued_task_that_is_not_in_the_list_is_no_longer_startable(self):
         # the planner's first message of 2026-09-20 said "startable now: 21 14"; task 21 had been dropped and was
         # not in the list at all. startable() read its blockers off a record that was not there, so an empty list of

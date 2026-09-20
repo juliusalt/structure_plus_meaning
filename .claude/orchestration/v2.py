@@ -78,7 +78,10 @@ def _one_tree(here):
 
 
 PROJECT = os.environ.get("ORCH_PROJECT") or _one_tree(HERE)
-# STATE follows the one tree too, not this copy's directory, for the same reason.
+# STATE follows the one tree too, not this copy's directory, for the same reason. The shell scripts still take
+# `$HERE/state`, which is the same path in every case but one: a copy of the harness inside a linked worktree, which
+# nothing runs them from — the daemon and the owner run the main copy. Left as it is rather than teaching five
+# scripts to resolve a worktree, which would be more machinery than the fault is worth.
 STATE = os.environ.get("ORCH_STATE_DIR") or os.path.join(PROJECT, ".claude", "orchestration", "state")
 TRANSCRIPTS = os.environ.get("ORCH_TRANSCRIPTS") or os.path.expanduser(
     "~/.claude/projects/" + PROJECT.replace("/", "-").replace("_", "-"))
@@ -2182,10 +2185,12 @@ def startable(st=None):
     for tid in st["queue"]:
         if (st["tasks"].get(tid) or {}).get("stage") != "ready":
             continue
-        if tid not in tasks:
+        if tid not in tasks or tasks[tid].get("status") == "completed":
             continue  # deleted from the list while the queue kept it: with no record it has no blockers either, so
             # it read as startable for ever. On 2026-09-20 the planner's first message said "startable now: 21 14"
-            # and task 21 had been dropped and was not in the list at all — one of the two was a phantom.
+            # and task 21 had been dropped and was not in the list at all — one of the two was a phantom. And one
+            # the planner has completed is not startable either: produce() refuses it, so the report must agree with
+            # what the dispatch would do, rather than name it until task_state next heals the stage.
         blockers = (tasks.get(tid) or {}).get("blockedBy") or []
         if all((tasks.get(b) or {}).get("status") == "completed" for b in blockers):
             out.append(tid)

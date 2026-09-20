@@ -219,6 +219,20 @@ DEFAULTS = {"active": False, "kb": None, "counters": {}, "sessions": {}, "tasks"
             "notes": [], "asks": {}}
 
 
+def kept_json(path, what):
+    """A JSON file the harness keeps, or {} when there is none. A file that IS there and cannot be read is never read
+    as an empty one: every caller here writes what it read back, so emptiness would go over the truth — the state's
+    sessions, tasks and queue, or the working tree's ownership. The dispatch logs the failure and moves on, the
+    hooks fail open, and nothing overwrites a file nobody has understood (2026-09-21)."""
+    try:
+        return json.load(open(path))
+    except FileNotFoundError:
+        return {}
+    except (OSError, ValueError) as e:
+        raise RuntimeError(f"{what} ({path}) is there and cannot be read: {e!r}. Nothing writes over it; move it "
+                           "aside only when you know what it should hold.") from e
+
+
 @contextlib.contextmanager
 def state():
     """The orchestration's state, read and written under one lock."""
@@ -226,10 +240,7 @@ def state():
     with open(os.path.join(STATE, "v2.lock"), "w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         path = os.path.join(STATE, "v2.json")
-        try:
-            st = json.load(open(path))
-        except (OSError, ValueError):
-            st = {}
+        st = kept_json(path, "the orchestration's state")
         for key, empty in DEFAULTS.items():
             st.setdefault(key, json.loads(json.dumps(empty)))
         yield st
@@ -240,10 +251,7 @@ def state():
 
 def peek():
     """The state without taking the lock (hooks read it on every tool call)."""
-    try:
-        st = json.load(open(os.path.join(STATE, "v2.json")))
-    except (OSError, ValueError):
-        st = {}
+    st = kept_json(os.path.join(STATE, "v2.json"), "the orchestration's state")
     for key, empty in DEFAULTS.items():
         st.setdefault(key, json.loads(json.dumps(empty)))
     return st
@@ -951,10 +959,7 @@ def owners(write=True):
     path = os.path.join(STATE, "tree-owners.json")
     with open(path + ".lock", "w") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX if write else fcntl.LOCK_SH)
-        try:
-            data = json.load(open(path))
-        except (OSError, ValueError):
-            data = {}
+        data = kept_json(path, "the working tree's ownership")
         yield data
         if write:
             json.dump(data, open(path + ".tmp", "w"), indent=0)

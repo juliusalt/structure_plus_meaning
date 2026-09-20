@@ -527,6 +527,28 @@ class PlanningTests(Flow):
                              env=self.w.env, capture_output=True, text=True).stdout.strip()
         self.assertEqual(out, "5")
 
+    def test_a_state_or_an_ownership_map_that_cannot_be_read_is_never_written_over(self):
+        # every caller writes back what it read, so reading an unreadable file as an empty one writes that emptiness
+        # over the truth: the sessions, the tasks and the queue, or which task owns each change in the working tree
+        for name, what in (("v2.json", "the orchestration's state"), ("tree-owners.json", "the working tree's")):
+            (self.w.state / name).write_text("{ this is not json")
+            out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                  "import v2, contextlib\n"
+                                  "with contextlib.suppress(SystemExit):\n"
+                                  "    v2.peek()\n"
+                                  "    list(v2.owners(write=True).__enter__() for _ in [0])"],
+                                 env=self.w.env, capture_output=True, text=True)
+            self.assertNotEqual(out.returncode, 0, out.stdout)
+            self.assertIn("is there and cannot be read", out.stderr)
+            self.assertIn(what, out.stderr)
+            self.assertEqual((self.w.state / name).read_text(), "{ this is not json")  # untouched
+            (self.w.state / name).unlink()
+        # the watchdog says so rather than standing still in silence, and the dispatch writes nothing
+        (self.w.state / "v2.json").write_text("{ this is not json")
+        self.w.run("watchdog.py")
+        self.assertIn("cannot be read", (self.w.state / "v2.log").read_text())
+        self.assertEqual((self.w.state / "v2.json").read_text(), "{ this is not json")
+
     def test_a_task_that_cannot_be_read_is_not_read_as_one_that_is_not_there(self):
         # None means "the planner took it out" everywhere: startable skips it, with_the_planner leaves it alone and
         # reconcile_stages names it to the planner as a conflict. A file that is there and unreadable must not turn

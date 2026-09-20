@@ -3443,16 +3443,24 @@ def cmd_accept(bid):
         return ("refused: the proposal no longer fits the graph:\n- " + "\n- ".join(problems)
                 + f"\nTell the task designer (`v2.py tell {bid} ...`) or re-plan the brief.")
     ids, order = {}, []
-    for e in entries:  # written first without their edges, so a task may wait on one later in the list
-        ids[e["key"]] = create_task(e["subject"], e["description"],
-                                    {"kind": brief_kind(e.get("description", "")), "why": e.get("why", "")}, [])
-        order.append(ids[e["key"]])
-    for e in entries:
-        update_task(ids[e["key"]], blockedBy=[ids.get(b, b) for b in (e.get("blockedBy") or [])])
-        for f in e.get("feeds") or []:  # existing work re-pointed onto the new: what makes it detail, not a goal
-            if read_task(f):
-                update_task(f, blockedBy=[ids[e["key"]]] + [b for b in (read_task(f).get("blockedBy") or [])
-                                                            if b != bid])
+    try:  # all of it or none: a half-placed proposal leaves tasks with no edges, and placing it again would write
+        for e in entries:  # every one of them a second time. Written first without their edges, so a task may wait
+            ids[e["key"]] = create_task(e["subject"], e["description"],  # on one later in the list.
+                                        {"kind": brief_kind(e.get("description", "")), "why": e.get("why", "")}, [])
+            order.append(ids[e["key"]])
+        for e in entries:
+            update_task(ids[e["key"]], blockedBy=[ids.get(b, b) for b in (e.get("blockedBy") or [])])
+            for f in e.get("feeds") or []:  # existing work re-pointed onto the new: detail, not a further goal
+                if read_task(f):
+                    update_task(f, blockedBy=[ids[e["key"]]] + [b for b in (read_task(f).get("blockedBy") or [])
+                                                                if b != bid])
+    except Exception as err:  # noqa: BLE001
+        for tid in order:
+            with contextlib.suppress(OSError):
+                os.remove(task_path(tid))
+        log(f"placing the proposal of task {bid} failed and was taken back: {err!r}")
+        return (f"refused: the proposal could not be placed ({err!r}); the {len(order)} task(s) written before it "
+                "failed are taken back, so nothing is half in the graph. The proposal stands where it is.")
     by = rec.get("session")
     with state() as st:
         for e in entries:

@@ -1794,6 +1794,33 @@ class SupportTests(Flow):
         self.assertEqual(st["queue"][:3], ["2", rows["id"], review["id"]])
         self.assertEqual((st["tasks"]["2"]["stage"], self.w.read_task("2")["status"]), ("done", "completed"))
 
+    def test_placing_a_proposal_is_all_of_it_or_none(self):
+        # tasks are written before their edges, so a failure part way would leave tasks with no edges, and placing it
+        # again would write every one of them a second time. The failure is injected: allocation is sound enough
+        # that a collision cannot be contrived, and this is the path a full disk or a lost permission takes.
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        self.propose("2", sid, [
+            {"key": "a", "subject": "First", "why": "-", "blockedBy": [], "description": BRIEF},
+            {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
+             "description": REVIEW_TASK.format(task="a")}])
+        before = {f for f in os.listdir(self.w.tasks) if f.endswith(".json")}
+        said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n"
+                               "done = []\n"
+                               "real = v2.create_task\n"
+                               "def failing(*a, **k):\n"
+                               "    if done: raise RuntimeError('no room')\n"
+                               "    done.append(1)\n"
+                               "    return real(*a, **k)\n"
+                               "v2.create_task = failing\n"
+                               "print(v2.cmd_accept('2'))"],
+                              env=self.w.env, capture_output=True, text=True).stdout
+        self.assertIn("taken back", said)
+        self.assertIn("no room", said)
+        self.assertEqual({f for f in os.listdir(self.w.tasks) if f.endswith(".json")}, before)  # nothing left behind
+        self.assertEqual(self.t("2")["stage"], "proposed")   # and the proposal still stands
+
     def test_a_proposal_that_needs_further_goals_past_the_limit_never_reaches_the_graph(self):
         # the rejection used to come after the designer had written every task into the list; it comes before now,
         # and what it wrote is a file, not a graph to unpick

@@ -919,6 +919,26 @@ class SupportTests(Flow):
         self.w.v2("dispatch")
         self.assertEqual(len(self.forks("brief-")), 1)  # one at a time
 
+    def test_a_knowledge_base_that_never_finishes_loading_is_given_up(self):
+        self.w.session("kb-2", "kb", "k2", kb_state="building", state="working",
+                       started=time.time() - 4000, settings="planner-settings.json")
+        self.w.set_st(kb_building="kb-2")
+        self.w.v2("dispatch")
+        self.assertIn("has been loading", (self.w.state / "v2.log").read_text())
+        self.assertIsNone(self.w.st()["kb_building"])
+        self.assertEqual(self.s("kb-2")["state"], "lost")
+
+    def test_a_knowledge_base_that_never_finishes_integrating_is_given_up(self):
+        # while it integrates, no episode and no consultation can fork it; nothing bounded that wait
+        self.w.set_st(sessions={**self.w.st()["sessions"],
+                                "kb-1": {**self.w.st()["sessions"]["kb-1"], "kb_state": "integrating",
+                                         "integrating_since": time.time() - 3000}})
+        self.w.v2("dispatch")
+        self.assertIn("has been integrating", (self.w.state / "v2.log").read_text())
+        self.assertEqual(self.s("kb-1")["state"], "lost")
+        self.assertIn("did not finish integrating", self.heard())
+        self.assertTrue(self.forks("kb-"))  # and a new one is built
+
     def test_a_blocker_that_is_not_in_the_task_list_is_named(self):
         # task 6 waited on task 18, which had been dropped; nothing said so and the planner had to find it
         self.w.task("3", subject="Waiting on a task that is gone", blockedBy=["99"])

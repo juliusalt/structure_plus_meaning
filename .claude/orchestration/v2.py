@@ -89,6 +89,9 @@ LIVE = ("starting", "working", "waiting")  # a session in one of these holds its
 JOB_STALE = int(os.environ.get("ORCH_JOB_STALE", 7200))  # a background job whose output stands still this long is dead
 SPEC_ERRORS = int(os.environ.get("ORCH_SPEC_ERRORS", 2))  # tries at a check command that is not runnable
 FIX_MINUTES = int(os.environ.get("ORCH_FIX_MINUTES", 15))
+KB_INTEGRATE_MAX = int(os.environ.get("ORCH_KB_INTEGRATE_MAX", 1200))  # a knowledge base that never
+# replies INTEGRATED would hold every episode and every consultation for ever
+KB_BUILD_MAX = int(os.environ.get("ORCH_KB_BUILD_MAX", 3600))  # a load that never replies, likewise
 LOST_BLOCKER = 3600  # how often a task waiting for a blocker that is not there is named
 TIDY_EVERY = int(os.environ.get("ORCH_TIDY_EVERY", 3600))  # how often state nothing names is swept
 WOKEN_KEEP = int(os.environ.get("ORCH_WOKEN_KEEP", 86400))  # a wake mark, for attach.sh to read
@@ -1377,6 +1380,18 @@ def kb_care():
             with state() as w:
                 w["kb_building"] = None
             return
+        if s.get("sid") and not integrated(s, s.get("started", 0)) \
+                and time.time() - (s.get("started") or time.time()) > KB_BUILD_MAX:
+            # the same shape as the integration: a build that never replies holds every episode behind it, because
+            # no second build starts while one is recorded (2026-09-20)
+            log(f"ATTENTION the knowledge base {building} has been loading for "
+                f"{int(time.time() - s['started']) // 60} minutes and has not replied; it is given up")
+            with state() as w:
+                w["sessions"][building]["state"] = "lost"
+                w["kb_building"] = None
+                event(w, "the harness", f"The knowledge base {building} did not finish loading within "
+                      f"{KB_BUILD_MAX // 60} minutes and is given up; another is built in its place.")
+            return
         if s.get("sid") and integrated(s, s.get("started", 0)):
             seal(building)
             ctx = context_of(s["sid"])
@@ -1405,6 +1420,20 @@ def kb_care():
         kb_build()
         return
     if rec.get("kb_state") == "integrating":
+        waited = time.time() - (rec.get("integrating_since") or time.time())
+        if not integrated(rec, rec.get("integrating_since", 0)) and waited > KB_INTEGRATE_MAX:
+            # nothing else bounded this: a knowledge base that never says INTEGRATED stays integrating, and while it
+            # does no planning episode and no consultation can fork it — the deliberative half stops for good, and
+            # nothing says so (2026-09-20, found before it happened)
+            log(f"ATTENTION {kb} has been integrating for {int(waited) // 60} minutes and has not replied; its notes "
+                f"are in state/{kb}-notes.md and a new knowledge base is built from HANDOFF.md")
+            with state() as w:
+                w["sessions"][kb]["state"] = "lost"
+                event(w, "the harness", f"The knowledge base {kb} did not finish integrating within "
+                      f"{KB_INTEGRATE_MAX // 60} minutes. Its notes stand in state/{kb}-notes.md; a new one is built "
+                      "from HANDOFF.md, so anything those notes hold that HANDOFF.md does not is lost to it.")
+            kb_build()
+            return
         if integrated(rec, rec.get("integrating_since", 0)):
             seal(kb)
             ctx = context_of(rec["sid"])

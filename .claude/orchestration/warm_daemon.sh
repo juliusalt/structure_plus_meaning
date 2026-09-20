@@ -19,7 +19,10 @@ if [ "${1:-}" = "--ensure" ]; then
   exit 0
 fi
 echo $$ > "$STATE/warm.pid"
-every=${ORCH_WARM_EVERY:-3000}; idle_max=${ORCH_WARM_IDLE_MAX:-43200}
+# 2400 against a cache entry's 3300 s: fifteen minutes of margin. At 3000 the margin was five, and the max and high
+# bases both fell through it on 2026-09-20 while the orchestration was stopped — a miss costs a whole cold write
+# (461K and 511K), and two misses in a row stop a base's pings for good.
+every=${ORCH_WARM_EVERY:-2400}; idle_max=${ORCH_WARM_IDLE_MAX:-43200}
 age() { [ -e "$1" ] && echo $(( $(date +%s) - $(stat -c %Y "$1") )) || echo 999999999; }
 active() { python3 -c 'import json, sys; sys.exit(0 if json.load(open(sys.argv[1])).get("active") else 1)' "$STATE/v2.json" 2>/dev/null; }
 while :; do

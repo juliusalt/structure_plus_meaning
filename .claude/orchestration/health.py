@@ -75,11 +75,33 @@ def session(label, s, now):
     return line
 
 
+def bases_and_trees():
+    """What is true whether or not the orchestration runs: whether each base was warm when it was last pinged (the
+    mark is touched on a miss too, so it says only that it was pinged), and what stands in each task's own tree."""
+    log = os.path.join(v2.STATE, "warm.log")
+    lines = open(log).read().splitlines() if os.path.exists(log) else []
+    for who in v2.BASES:
+        last = [l for l in lines if f"warm {who}:" in l and (" OK" in l or "MISS" in l)]
+        if not last:
+            continue
+        at = last[-1].split()[0]
+        misses = os.path.join(v2.STATE, f"{who}-base.miss")
+        n = len(open(misses).read().split()) if os.path.exists(misses) else 0
+        print(("ATTENTION " if n >= 2 else "")
+              + f"base {who}: {'warm' if ' OK' in last[-1] else 'was COLD and was rewritten'} at {at[11:19]}"
+              + (f", {n} miss(es); two stop its pings" if n else ""))
+    trees = v2.trees_standing()
+    if trees:
+        print("trees: " + ", ".join(f"task {x['task']} ({x['changed']} changed, {x['commits']} commit(s))"
+                                    for x in trees))
+
+
 def main():
     now = time.time()
     print(time.strftime("health at %Y-%m-%d %H:%M:%S"))
     mem = {k: int(v.split()[0]) // 1024 for k, v in (ln.split(":") for ln in open("/proc/meminfo")) if k in ("MemTotal", "MemAvailable")}
     print(f"memory: {mem['MemAvailable'] // 1024} GiB available of {mem['MemTotal'] // 1024}")
+    bases_and_trees()
     if read("stopped"):
         print(f"stopped by stop.sh at {read('stopped')}; start.sh resumes")
         return

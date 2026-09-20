@@ -22,7 +22,8 @@ args = sys.argv[1:]
 agents, registry = os.path.join(root, "agents.json"), os.path.join(root, "sessions.json")
 load = lambda p: json.load(open(p)) if os.path.exists(p) else []
 with open(os.path.join(root, "calls.jsonl"), "a") as f:
-    f.write(json.dumps({"args": args, "env": sorted(k for k in os.environ if k.startswith(("CLAUDE", "AI_AGENT")))}) + "\n")
+    f.write(json.dumps({"args": args, "cwd": os.getcwd(),
+                        "env": sorted(k for k in os.environ if k.startswith(("CLAUDE", "AI_AGENT")))}) + "\n")
 rows = load(agents)
 if args[:2] == ["agents", "--json"]:
     print(json.dumps(rows))
@@ -126,6 +127,7 @@ class World:
                         FAKE_ROOT=str(self.root), ORCH_PROJECT=str(self.project), ORCH_STATE_DIR=str(self.state),
                         ORCH_ISABELLE_RUNS="0",  # no run of this machine is this world's
                         ORCH_WORKERS="8",  # the slots' own capacity; the owner's rate is a setting, tested apart
+                        ORCH_TREES="0",  # the one tree unless a test says otherwise
                         ORCH_EPISODE_GAP="0", ORCH_URGENT_GAP="0",
                         ORCH_ACTIVE_CONTEXT=str(self.state / "active-context.json"),
                        

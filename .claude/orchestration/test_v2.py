@@ -466,6 +466,37 @@ class TaskTests(Flow):
         self.assertIn("task 1 holds the machine", said)
         self.assertIn("mine", said)
 
+    def test_a_producing_session_is_started_in_its_task_s_own_tree(self):
+        # task 1 is already running in this fixture; task 5 is the one that starts with trees on
+        self.w.task("5", description=BRIEF, subject="Another build")
+        self.w.set_st(queue=["5"], tasks={"1": {"stage": "done"},
+                                          "5": {"stage": "ready", "kind": "build", "queued_at": time.time()}},
+                      sessions={k: (v | {"state": "done"} if k == self.impl else v)
+                                for k, v in self.w.st()["sessions"].items()})
+        self.w.v2("dispatch", env=dict(self.w.env, ORCH_TREES="1"))
+        tree = self.w.project / ".build/trees/5"
+        self.assertTrue((tree / "ROOT").exists() or (tree / "README").exists())  # a checkout of its own
+        self.assertTrue((tree / ".build").is_symlink())  # one .build, so drafts and checks are where they were
+        self.assertEqual(os.path.realpath(tree / ".build"), os.path.realpath(self.w.project / ".build"))
+        self.assertIn(".build", (self.w.project / ".git/info/exclude").read_text())  # the link is never committed
+        self.assertEqual(self.w.st()["sessions"]["implement-5"]["tree"], ".build/trees/5")
+        (call,) = [c for c in self.w.calls() if "--fork-session" in c["args"] and "implement-5" in c["args"]]
+        self.assertEqual(call["cwd"], str(tree))  # and it is forked there, so it works there
+
+    def test_a_task_whose_work_already_stands_in_the_one_tree_keeps_working_there(self):
+        # a tree of its own would be a checkout of HEAD without what it has installed
+        self.w.write("theories/Standing.thy", "theory Standing imports Main begin end\n")
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.own('5', ['theories/Standing.thy'])"], env=self.w.env, check=True)
+        self.w.task("5", description=BRIEF, subject="A build with work already installed")
+        self.w.set_st(queue=["5"], tasks={"1": {"stage": "done"},
+                                          "5": {"stage": "ready", "kind": "build", "queued_at": time.time()}},
+                      sessions={k: (v | {"state": "done"} if k == self.impl else v)
+                                for k, v in self.w.st()["sessions"].items()})
+        self.w.v2("dispatch", env=dict(self.w.env, ORCH_TREES="1"))
+        self.assertFalse((self.w.project / ".build/trees/5").exists())
+        self.assertIsNone(self.w.st()["sessions"]["implement-5"].get("tree"))
+
     def test_two_tasks_hold_their_own_trees_and_git_merges_their_lines(self):
         # what a worktree per task buys, and what it does not. A ROOT line, a DECISIONS entry and a THEORY_MAP row
         # are lines: git merges them where they stand apart, and says so where they stand together — against the old

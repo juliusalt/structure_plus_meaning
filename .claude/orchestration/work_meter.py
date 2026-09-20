@@ -120,8 +120,9 @@ def body(path, cwd=None):
     if not p or p.startswith("-"):
         return False
     full = os.path.normpath(p if os.path.isabs(p) else os.path.join(cwd or v2.PROJECT, p))
-    rel = os.path.relpath(full, v2.PROJECT)
-    return bool(BODY.search(rel)) or rel == "." or full == v2.PROJECT
+    tree = cwd if cwd and os.path.exists(os.path.join(cwd, "ROOT")) else v2.PROJECT
+    rel = os.path.relpath(full, tree)
+    return bool(BODY.search(rel)) or rel == "." or full in (tree, v2.PROJECT)
 
 
 def segments(command):
@@ -589,7 +590,8 @@ def write_guard(tool, inp, command, rec, cwd):
     """HANDOFF.md is the planner's; while another task's finalization is in flight, it holds the working tree: every
     other session writes only under .build/ (and the harness's own files), and is told when the tree is free."""
     targets = write_targets(tool, inp, command, cwd)
-    if rec.get("role") != "planner" and os.path.join(v2.PROJECT, "HANDOFF.md") in targets:
+    handoffs = {os.path.join(v2.PROJECT, "HANDOFF.md"), os.path.join(v2.tree_of(rec), "HANDOFF.md")}
+    if rec.get("role") != "planner" and handoffs & set(targets):
         return deny("HANDOFF.md is the planner's state: what you did goes into your result, which reaches the planner.")
     st = v2.peek()
     locked = v2.locked_files(st, rec)

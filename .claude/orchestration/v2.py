@@ -275,9 +275,14 @@ def has_mail(name):
 
 def deliver(name, sender, text):
     """Mail a session; one whose turn has ended while it still works on its piece of work (waiting on a question) is
-    resumed with the mail when its cache is warm. A busy session receives its mail through its hooks."""
-    post(name, sender, text)
+    resumed with the mail when its cache is warm. A busy session receives its mail through its hooks. A session that
+    is done, lost or released reads nothing ever again, and mail to it is said to have reached nobody rather than
+    left in a box no one opens."""
     s = peek()["sessions"].get(name) or {}
+    if s.get("state") in ("done", "lost") or s.get("released"):
+        log(f"ATTENTION mail to {name} reached nobody ({s.get('state')}): {text[:160]}")
+        return
+    post(name, sender, text)
     if s.get("state") not in ("working", "waiting"):
         return
     r = row(name)
@@ -290,9 +295,9 @@ def deliver(name, sender, text):
 
 # ---------------------------------------------------------------- sessions
 
-def claude(*args):
+def claude(*args, cwd=None):
     env = {k: v for k, v in os.environ.items() if k not in INHERITED}
-    return subprocess.run(["claude", *args], capture_output=True, text=True, cwd=PROJECT, env=env)
+    return subprocess.run(["claude", *args], capture_output=True, text=True, cwd=cwd or PROJECT, env=env)
 
 
 def row(name):
@@ -365,13 +370,13 @@ def stale(who):
     return out.strip() or "no held file has changed since the load"
 
 
-def fork(org, name, settings, prompt):
+def fork(org, name, settings, prompt, cwd=None):
     """A session-level fork, with the lean tool set every fork must share and its origin's model and effort; its row
     or None."""
     claude("--bg", "--resume", org["sid"], "--fork-session",
            *open(os.path.join(HERE, "session-flags")).read().split(), "--model", org["model"],
            "--effort", org["effort"], "--permission-mode", "auto", "--autocompact", "1M",
-           "--settings", os.path.join(HERE, settings), "-n", name, prompt)
+           "--settings", os.path.join(HERE, settings), "-n", name, prompt, cwd=cwd)
     for _ in range(15):
         r = row(name)
         if r:
@@ -409,7 +414,11 @@ def launch(role, key, prompt_of, **fields):
         st["sessions"][name] = dict(name=name, role=role, origin=who, model=org["model"], effort=org["effort"],
                                     settings=settings, state="starting", starting=time.time(), **fields)
     hit_chain(who)
-    r = fork(org, name, settings, prompt_of(name))
+    tree = worktree(key) if TREES and role in PRODUCING and str(key).isdigit() and not in_main_tree(key) else None
+    if tree:
+        with state() as st:
+            st["sessions"][name]["tree"] = os.path.relpath(tree, PROJECT)
+    r = fork(org, name, settings, prompt_of(name), cwd=tree)
     with state() as st:
         s = st["sessions"][name]
         if not r:
@@ -441,7 +450,7 @@ def resume(name, text):
     if r:
         claude("stop", r["id"])
         time.sleep(PAUSE)
-    claude("--bg", "--resume", s["sid"], HARNESS + text)
+    claude("--bg", "--resume", s["sid"], HARNESS + text, cwd=tree_of(s))
     with state() as st:
         rec = st["sessions"][name]
         rec["sealed"] = False
@@ -661,14 +670,14 @@ def exempt(path):
     return path.startswith(EXEMPT) or "__pycache__/" in path or path.endswith(".pyc")
 
 
-def git_out(*args, binary=False):
-    r = subprocess.run(["git", "-C", PROJECT, *args], capture_output=True, text=not binary)
+def git_out(*args, binary=False, tree=None):
+    r = subprocess.run(["git", "-C", tree or PROJECT, *args], capture_output=True, text=not binary)
     return r.stdout if r.returncode == 0 else None
 
 
-def changed_paths():
+def changed_paths(tree=None):
     """Every path of the working tree that differs from HEAD (modified, added, deleted, untracked), exempt ones left out."""
-    out = git_out("status", "--porcelain=v1", "-z", "--untracked-files=all") or ""
+    out = git_out("status", "--porcelain=v1", "-z", "--untracked-files=all", tree=tree) or ""
     fields, paths, i = out.split("\0"), [], 0
     while i < len(fields):
         entry = fields[i]
@@ -859,32 +868,32 @@ IMPORTS = re.compile(r"\bimports\b(.*?)\bbegin\b", re.S)  # the header, one line
 MARKERS = re.compile(r"^(?:<{7}|>{7}|={7})(?:\s|$)", re.M)
 
 
-def _read(name):
+def _read(name, tree=None):
     try:
-        return open(os.path.join(PROJECT, name), errors="ignore").read()
+        return open(os.path.join(tree or PROJECT, name), errors="ignore").read()
     except OSError:
         return ""
 
 
-def tree_trouble():
+def tree_trouble(tree=None):
     """What is wrong with the working tree as a whole, in the terms the checks refuse on. Each of these refuses every
     task's check and not only the one whose change caused it, so each is the orchestration's to notice rather than a
     task's to discover: a theory present and undeclared, a line declaring a theory that is not there, an import of a
     theory that is neither present nor in the history, and the markers of a merge that did not resolve."""
-    out = []
+    out, tree = [], tree or PROJECT
     try:
-        root = open(os.path.join(PROJECT, "ROOT")).read()
-        present = {f[:-4] for f in os.listdir(os.path.join(PROJECT, "theories")) if f.endswith(".thy")}
+        root = open(os.path.join(tree, "ROOT")).read()
+        present = {f[:-4] for f in os.listdir(os.path.join(tree, "theories")) if f.endswith(".thy")}
     except OSError:
         return []  # no ROOT or no theories/: not a tree these terms are about, and nothing to say of it
     declared = THEORY_LINE.findall(root)
     listed = set(declared)
     for name in sorted({n for n in declared if declared.count(n) > 1}):
         out.append(f"ROOT declares {name} {declared.count(name)} times")
-    headings = re.findall(r"^## (.+?)\s*$", _read("DECISIONS.md"), re.M)
+    headings = re.findall(r"^## (.+?)\s*$", _read("DECISIONS.md", tree), re.M)
     for head in sorted({h for h in headings if headings.count(h) > 1}):
         out.append(f"DECISIONS.md holds the entry \"{head}\" {headings.count(head)} times")
-    rows = [r for r in re.findall(r"^\| ([A-Za-z_][\w]*) \|", _read("THEORY_MAP.md"), re.M) if r != "Theory"]
+    rows = [r for r in re.findall(r"^\| ([A-Za-z_][\w]*) \|", _read("THEORY_MAP.md", tree), re.M) if r != "Theory"]
     for row in sorted({r for r in rows if rows.count(r) > 1}):
         out.append(f"THEORY_MAP.md holds the row of {row} {rows.count(row)} times")
     for name in sorted(present - listed):
@@ -896,7 +905,7 @@ def tree_trouble():
     known = {n.rsplit("/", 1)[-1] for n in known}
     for name in sorted(present):
         try:
-            text = open(os.path.join(PROJECT, "theories", name + ".thy"), errors="ignore").read(4000)
+            text = open(os.path.join(tree, "theories", name + ".thy"), errors="ignore").read(4000)
         except OSError:
             continue
         m = IMPORTS.search(text)
@@ -905,8 +914,8 @@ def tree_trouble():
             if "." in imported or imported in known or imported == "Main":
                 continue
             out.append(f"theories/{name}.thy imports {imported}, which is neither in the tree nor in the history")
-    for path in changed_paths():
-        full = os.path.join(PROJECT, path)
+    for path in changed_paths(tree):
+        full = os.path.join(tree, path)
         if not os.path.isfile(full) or os.path.getsize(full) > 8_000_000:
             continue
         try:
@@ -917,9 +926,9 @@ def tree_trouble():
     return out
 
 
-def tree_checked(who, what):
+def tree_checked(who, what, tree=None):
     """Say at once when the tree has been left in a state every check refuses, naming what did it."""
-    trouble = tree_trouble()
+    trouble = tree_trouble(tree)
     if trouble:
         log(f"ATTENTION the working tree is inconsistent after {what} ({who}): " + "; ".join(trouble[:4]))
         with state() as st:
@@ -1515,8 +1524,17 @@ def parking_care():
             log(f"the run task {tid} parked for has ended" + (f";{aside}" if aside else ""))
 
 
-TREES = os.environ.get("ORCH_TREES") == "1"  # a worktree per producing task, off until its rewiring lands
+TREES = os.environ.get("ORCH_TREES", "1") == "1"  # a worktree per producing task (ORCH_TREES=0 for the one tree)
 TREE_DIR = ".build/trees"
+
+
+def in_main_tree(tid):
+    """Whether this task's work already stands in the one tree. Such a task keeps working there: a tree of its own
+    would be a checkout of HEAD without what it has installed, and carrying the work over would be the harness moving
+    a change again. A task that starts fresh gets its own tree."""
+    with owners() as o:
+        mine = {p for p, t in o.items() if t == str(tid)}
+    return bool(mine & set(changed_paths()))
 
 
 def worktree(tid):
@@ -1534,6 +1552,15 @@ def worktree(tid):
     if r.returncode:
         log(f"could not make a working tree for task {tid}: {(r.stdout + r.stderr).strip()[-200:]}")
         return None
+    common = (git_out("rev-parse", "--git-common-dir") or ".git").strip()  # relative to the project, as git prints it
+    exclude = os.path.join(common if os.path.isabs(common) else os.path.join(PROJECT, common), "info", "exclude")
+    os.makedirs(os.path.dirname(exclude), exist_ok=True)  # `.build/` in .gitignore matches a directory, and the link
+    if ".build" not in (open(exclude).read() if os.path.exists(exclude) else ""):  # below is a file: it would be
+        with open(exclude, "a") as f:                                              # committed, and merging it would
+            f.write("\n# the one .build, linked into every task's tree\n.build\n")  # replace the real directory
+    link = os.path.join(path, ".build")
+    if not os.path.exists(link):
+        os.symlink(os.path.join(PROJECT, ".build"), link)  # one .build: drafts, check outputs and their lineage
     log(f"task {tid} has its own working tree at {TREE_DIR}/{tid} (branch task/{tid})")
     return path
 
@@ -1541,7 +1568,12 @@ def worktree(tid):
 def worktree_of(tid):
     """The task's own working tree if it has one, else the one tree."""
     path = os.path.join(PROJECT, TREE_DIR, str(tid))
-    return path if TREES and os.path.exists(path) else PROJECT
+    return path if os.path.exists(path) else PROJECT
+
+
+def tree_of(rec):
+    """The working tree of the session this record is of: its task's, or the one tree."""
+    return worktree_of((rec or {}).get("task")) if (rec or {}).get("task") else PROJECT
 
 
 def worktree_gone(tid):
@@ -1552,6 +1584,30 @@ def worktree_gone(tid):
     subprocess.run(["git", "-C", PROJECT, "worktree", "remove", "--force", path], capture_output=True, text=True)
     subprocess.run(["git", "-C", PROJECT, "branch", "-D", f"task/{tid}"], capture_output=True, text=True)
     log(f"the working tree of task {tid} is taken away")
+
+
+def trees_standing():
+    """The task trees that are still there, and what stands in each. A tree is taken away when its work has landed
+    (committed and merged); one whose task was dropped or lost keeps its work — that is where the planner re-plans
+    from — so it is named rather than removed, and an empty one is taken away at once."""
+    root = os.path.join(PROJECT, TREE_DIR)
+    out = []
+    for tid in sorted(os.listdir(root)) if os.path.isdir(root) else []:
+        tree = os.path.join(root, tid)
+        changed = [p for p in (git_out("status", "--porcelain", tree=tree) or "").splitlines() if p.strip()]
+        ahead = len([l for l in (git_out("log", "--format=%h", f"main..task/{tid}") or "").splitlines() if l])
+        out.append({"task": tid, "changed": len(changed), "commits": ahead})
+    return out
+
+
+def trees_tidied():
+    """Take away every tree that holds nothing: no uncommitted change and no commit of its own."""
+    gone = []
+    for x in trees_standing():
+        if not x["changed"] and not x["commits"] and (peek()["tasks"].get(x["task"]) or {}).get("stage") != "running":
+            worktree_gone(x["task"])
+            gone.append(x["task"])
+    return gone
 
 
 def merged(tid):
@@ -1565,7 +1621,7 @@ def merged(tid):
         ["git", "-C", PROJECT, "diff", "--name-only", "--diff-filter=U"], capture_output=True,
         text=True).stdout or "").splitlines()]
     subprocess.run(["git", "-C", PROJECT, "merge", "--abort"], capture_output=True, text=True)
-    log(f"the work of task {tid} does not merge: {', '.join(conflicts) or (r.stdout + r.stderr).strip()[-120:]}")
+    log(f"the work of task {tid} does not merge: {', '.join(conflicts) or (r.stdout + r.stderr).strip()[-300:]}")
     return conflicts or ["(the merge failed without naming a file)"]
 
 

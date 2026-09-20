@@ -34,19 +34,20 @@ NOT_RUN = re.compile(r"Traceback \(most recent call last\)|^usage:|unrecognized 
 GIT_ENV = dict(os.environ, GIT_TERMINAL_PROMPT="0")  # never a credentials prompt
 
 
-def git(*args, timeout=120):
-    """A git command; a failure (or its timeout) is a result with a return code, never an exception."""
+def git(*args, timeout=120, tree=None):
+    """A git command in a tree (the task's own where it has one); a failure or its timeout is a result with a return
+    code, never an exception."""
     try:
-        return subprocess.run(["git", "-C", v2.PROJECT, *args], capture_output=True, text=True, timeout=timeout,
+        return subprocess.run(["git", "-C", tree or v2.PROJECT, *args], capture_output=True, text=True, timeout=timeout,
                               env=GIT_ENV)
     except (subprocess.TimeoutExpired, OSError) as e:
         return subprocess.CompletedProcess(args, 124, "", f"git {' '.join(args[:2])}: {e}")
 
 
-def git_retrying(*args):
+def git_retrying(*args, tree=None):
     """A git command that changes the index, tried again while another git process holds its lock."""
     for _ in range(10):
-        r = git(*args)
+        r = git(*args, tree=tree)
         if r.returncode == 0 or "index.lock" not in r.stderr:
             return r
         time.sleep(2)
@@ -96,13 +97,13 @@ def check(tid):
 def checked_run(tid):
     d = os.path.join(v2.BUILD, tid)
     spec = json.load(open(os.path.join(d, "finalize.json")))
-    trouble = v2.tree_trouble()
+    trouble = v2.tree_trouble(v2.worktree_of(tid))
     if trouble:  # every check refuses on this, whatever the task did: spend none of it, and cost the task no round
         tail = "The working tree refuses every check as it stands, whatever this task did:\n- " + "\n- ".join(trouble)
         open(os.path.join(d, "finalize.log"), "w").write(tail + "\n")
         outcome(tid, ok=False, seconds=0)
         v2.log(f"check of task {tid}: not run, the working tree is inconsistent")
-        v2.tree_checked("the harness", f"task {tid}'s check was about to run")
+        v2.tree_checked("the harness", f"task {tid}'s check was about to run", v2.worktree_of(tid))
         v2.checked(tid, False, tail, ran=False)
         return 1
     exclusive = bool(v2.ADVANCES.search(spec["check"]))
@@ -120,7 +121,7 @@ def checked_run(tid):
 def run_check(tid, d, spec):
     started = time.time()
     with open(os.path.join(d, "finalize.log"), "w") as out:
-        run = subprocess.Popen(spec["check"], shell=True, cwd=v2.PROJECT, stdout=out, stderr=subprocess.STDOUT,
+        run = subprocess.Popen(spec["check"], shell=True, cwd=v2.worktree_of(tid), stdout=out, stderr=subprocess.STDOUT,
                                start_new_session=True)
         with open(os.path.join(d, "finalizer.pid"), "a") as f:
             f.write(f"\n{run.pid}")  # the check's own process group, for the watchdog to end with the finalizer
@@ -161,15 +162,16 @@ def entry_heading(lines, i):
     return next((lines[j].strip() for j in range(i, -1, -1) if lines[j].startswith("## ")), "")
 
 
-def fill_pending_commit(files):
+def fill_pending_commit(files, tree=None):
     """An entry closes with ``Recorded <date>, commit `…`.`` and no session can fill that hash before its own commit
     exists, so the commit that makes it records which entry it left open (record_pending_commit) and the next commit
     touching the file closes it. The hash is never guessed from the file's history: `git blame` follows the line's
     text, and a line restored to wording an earlier commit used is attributed to that commit, which once closed an
     entry with a commit carrying none of what it records (2026-09-20)."""
-    path, mark = os.path.join(v2.PROJECT, "DECISIONS.md"), os.path.join(v2.STATE, PENDING)
+    path, mark = os.path.join(tree, "DECISIONS.md"), os.path.join(v2.STATE, PENDING)
     if "DECISIONS.md" not in files:
         return []
+    tree = tree or v2.PROJECT
     try:
         pending = json.load(open(mark))
     except (OSError, ValueError):
@@ -190,13 +192,13 @@ def fill_pending_commit(files):
     return []
 
 
-def record_pending_commit(files, ref):
+def record_pending_commit(files, ref, tree=None):
     """This commit carries an entry that still ends in `…`: the next commit touching the file closes it with this
     hash, which is the commit that carries what the entry records."""
     if "DECISIONS.md" not in files or not ref:
         return
     try:
-        lines = open(os.path.join(v2.PROJECT, "DECISIONS.md"), errors="ignore").read().splitlines()
+        lines = open(os.path.join(tree or v2.PROJECT, "DECISIONS.md"), errors="ignore").read().splitlines()
     except OSError:
         return
     open_at = [i for i, line in enumerate(lines) if "commit `…`" in line]
@@ -233,11 +235,14 @@ def commit(tid):
 
 
 def committed_run(tid):
-    """The task's files, and the planner's state as it stands (HANDOFF.md, committed with every task as before)."""
+    """The task's files, and the planner's state as it stands (HANDOFF.md, committed with every task as before). Where
+    the task has a tree of its own the commit is made there, on its own branch, and brought into the branch that is
+    pushed by a merge — which meets the other tasks' lines line by line instead of file by file."""
     d = os.path.join(v2.BUILD, tid)
     spec = json.load(open(os.path.join(d, "finalize.json")))
-    files = list(spec["files"])
-    theirs, waited = foreign(tid, files), 0
+    tree, files = v2.worktree_of(tid), list(spec["files"])
+    own_tree = tree != v2.PROJECT
+    theirs, waited = ({} if own_tree else foreign(tid, files)), 0
     while theirs and waited < v2.COMMIT_WAIT:  # its files were free while this task was reviewed: an append may be
         if waited == 0:                        # in flight, and it lands in seconds — a commit waits rather than fails
             v2.log(f"the commit of task {tid} waits for {', '.join(f'{f} (task {x})' for f, x in theirs.items())}")
@@ -248,35 +253,48 @@ def committed_run(tid):
         return refuse(tid, "the commit would carry another task's uncommitted work: "
                       + ", ".join(f"{f} (task {t})" for f, t in theirs.items())
                       + ". That task installs and commits its own change; this one commits the rest.")
-    fill_pending_commit(files)
-    git_retrying("add", "--", *files)
-    staged = git("diff", "--cached", "--", *files).stdout
+    fill_pending_commit(files, tree)
+    git_retrying("add", "--", *files, tree=tree)
+    staged = git("diff", "--cached", "--", *files, tree=tree).stdout
     added = "\n".join(l for l in staged.splitlines() if l.startswith("+"))
     braced = dict.fromkeys(BRACED.findall(added))
     if braced:
         v2.log(f"task {tid}'s change writes {', '.join(braced)}; taken as its own words, not as a draft's stand-in")
     left = dict.fromkeys(PLACEHOLDER.findall(added))
     if left:
-        git_retrying("reset", "-q", "--", *files)
+        git_retrying("reset", "-q", "--", *files, tree=tree)
         return refuse(tid, f"the change still carries the placeholder(s) {', '.join(left)}: what they stand for was "
                       "never filled in, and a commit would put them in the history.")
-    if git("diff", "--cached", "--quiet", "--", *files).returncode == 1:  # the task's own change comes with the state
-        files += [p for p in ("HANDOFF.md",) if p not in files and git("status", "--porcelain", "--", p).stdout.strip()]
-        git_retrying("add", "--", *files)
-    c = git_retrying("commit", "-F", os.path.join(v2.PROJECT, spec["message"]), "--", *files)
-    ref = git("rev-parse", "--short", "HEAD").stdout.strip() if c.returncode == 0 else None
+    if git("diff", "--cached", "--quiet", "--", *files, tree=tree).returncode == 1:  # the task's own change comes
+        files += [p for p in ("HANDOFF.md",) if p not in files          # with the planner's state, as before
+                  and git("status", "--porcelain", "--", p, tree=tree).stdout.strip()]
+        git_retrying("add", "--", *files, tree=tree)
+    c = git_retrying("commit", "-F", os.path.join(v2.PROJECT, spec["message"]), "--", *files, tree=tree)
+    ref = git("rev-parse", "--short", "HEAD", tree=tree).stdout.strip() if c.returncode == 0 else None
+    conflicts = None
+    if ref and own_tree:  # its branch meets what landed meanwhile, line by line
+        conflicts = v2.merged(tid)
+        if conflicts:
+            outcome(tid, commit=None, commit_error=f"merge conflict: {', '.join(conflicts)}")
+            v2.log(f"the work of task {tid} is committed on its branch but does not merge: {', '.join(conflicts)}")
+            v2.committed(tid, None, f"its commit stands on branch task/{tid} and does not merge into main: "
+                         f"{', '.join(conflicts)} were written in the same place by another task. Its work is whole "
+                         f"and nothing is lost; someone must say which lines stand.")
+            return 1
+        ref = git("rev-parse", "--short", "HEAD").stdout.strip()
     if ref:
         with v2.owners() as o:  # committed: no longer anyone's uncommitted change
             for f in files:
                 o.pop(os.path.normpath(f), None)
-    if ref:
-        record_pending_commit(files, ref)
+        record_pending_commit(files, ref, v2.PROJECT)
     error = None if c.returncode == 0 else (c.stdout + c.stderr).strip()[-400:]
     p = git("push", "origin", "HEAD", timeout=180) if ref else None
     pushed = bool(p and p.returncode == 0)
     outcome(tid, commit=ref, commit_error=error, pushed=pushed)
     if ref:
         v2.tree_checked(f"task {tid}", "its commit")
+        if own_tree:
+            v2.worktree_gone(tid)
     v2.log(f"commit of task {tid}: " + (ref or f"failed: {error}") + ("" if pushed or not ref else " (the push failed)"))
     v2.committed(tid, ref and ref + ("" if pushed else " (the push failed)"), error)
     return 0 if ref else 1

@@ -21,7 +21,14 @@ tree`); a final job is handed over only while the tree is the session's own. No 
 resets anything: the finalizer commits. A finalization holds the files it will commit while its check runs, while a
 quick fix repairs them, and while it commits — not while it is reviewed: a review reads what was checked and writes
 nothing, so that window is when an append to a shared record (DECISIONS.md, THEORY_MAP.md, ROOT) lands. If yours is
-refused, you are told when the file is free. A task that leaves unfinished (parked, partial, lost) leaves its
+refused, you are told when the file is free. **Your working tree is your task's own.** You are started in it (`.build/trees/{ID}`, a git worktree on the branch
+`task/{ID}`), it is a whole checkout, and `.build` in it is the one `.build`: your drafts, the checks' output and
+their lineage are where they have always been. Install into it, check in it, and nothing you write there is seen by
+another task. The finalizer commits on your branch and brings it into the branch that is pushed, where your lines
+meet the lines other tasks wrote meanwhile — cleanly where they stand apart, and with a named conflict where two
+tasks wrote in the same place. HANDOFF.md is the planner's in your tree as in any other.
+
+A task that leaves unfinished (parked, partial, lost) leaves its
 installed work **in the working tree, whole** — the harness moves none of it. A change here is a set of parts (a
 theory, the ROOT line declaring it, the import reaching it, its row, its entry) and a part taken out refuses every
 task's check, not only its own. While such work stands, the tree is that task's: draft under

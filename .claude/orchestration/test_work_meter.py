@@ -516,6 +516,18 @@ class HookWiringTests(unittest.TestCase):
                                 f"{tool} never reaches the guard in {settings}: the matcher is {matcher!r}, so the "
                                 f"guard's refusals and records for it simply do not happen")
 
+    def test_both_settings_files_wire_the_same_hooks_to_the_same_scripts(self):
+        # the guard is one of five hooks, and the others are what deliver mail, hold a turn, catch a compaction and
+        # record the owner's words. One missing from one file is that role's turn control simply gone, in silence
+        wiring = []
+        for settings in ("planner-settings.json", "worker-settings.json"):
+            hooks = json.load(open(HERE / settings))["hooks"]
+            wiring.append({event: sorted(h["hooks"][0]["command"].split("/orchestration/")[-1] + f" [{h.get('matcher')}]"
+                                         for h in entries) for event, entries in hooks.items()})
+        self.assertEqual(wiring[0], wiring[1], "the planner's settings and the workers' have drifted apart")
+        for event in ("PreToolUse", "PostToolUse", "Stop", "PreCompact", "UserPromptSubmit"):
+            self.assertIn(event, wiring[0], f"{event} is wired in neither settings file")
+
     def test_the_guarded_tools_are_the_ones_the_guard_itself_names(self):
         # a tool given a branch in kind() or in session_guard() and left out of GUARDED_TOOLS would be left out of
         # the matcher too, and nothing above would notice

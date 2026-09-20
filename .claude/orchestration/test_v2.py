@@ -950,6 +950,37 @@ class PlanningTests(Flow):
                 continue
             self.assertIn(cmd, cli, f"a message names `v2.py {cmd}`, which is not a command")
 
+    def test_no_message_or_protocol_names_an_option_its_command_does_not_read(self):
+        # the other half of the `briefed` fault: a command that stays and an option that is renamed leaves every
+        # instruction naming it refused at the moment it is followed
+        import re as _re
+        here = Path(v2.HERE)
+        src = open(here / "v2.py").read()
+        bodies = {}
+        for m in _re.finditer(r"\ndef (\w+)\(", src):
+            nxt = src.find("\ndef ", m.start() + 1)
+            bodies[m.group(1)] = src[m.start():nxt if nxt != -1 else len(src)]
+        opts = {}
+        for b in _re.split(r'\n    (?:el)?if c == "', bodies["main"])[1:]:
+            name, body = b[:b.index('"')], b
+            for fn in _re.findall(r"(cmd_\w+)\(", b):   # a command parses its own options inside cmd_X too
+                body += bodies.get(fn, "")
+            opts[name] = set(_re.findall(r'"(--[a-z-]+)"', body))
+        files = [here / f for f in ("v2.py", "work_meter.py", "ctx_gauge.py", "finalize.py")]
+        files += sorted(Path(v2.PROTOCOLS).glob("*.md"))
+        for f in files:
+            text = f.read_text()
+            # a protocol writes one command over several lines; in the sources only a single line is a command
+            spans = (_re.findall(r"`([^`]*v2\.py[^`]*)`", text.replace("\n", " ")) if f.suffix == ".md"
+                     else _re.findall(r"`([^`\n]*v2\.py[^`\n]*)`", text))
+            for span in spans:
+                m = _re.search(r"v2\.py\s+([a-z-]+)", span)
+                if not m:
+                    continue
+                for o in _re.findall(r"(--[a-z-]+)", span):
+                    self.assertIn(o, opts.get(m.group(1), set()),
+                                  f"{f.name} names `v2.py {m.group(1)} {o}`, which it does not read")
+
     def test_every_command_a_protocol_names_exists_and_its_role_may_run_it(self):
         # protocols are what the agents act on, so a command renamed or withdrawn leaves them following an
         # instruction that refuses: `briefed` outlived its command, and the task designer was told to run

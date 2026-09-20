@@ -453,21 +453,27 @@ GRAPH_HELD = "graph-held"  # while state/graph-held exists no task session start
 # not held — taking stock is exactly what the hold is for — and the planner's own order (v2.py queue) lifts it.
 
 
+def why_held(path, name):
+    """The reason in a hold's file, or "" when there is no such file. A hold is a switch that must fail closed: the
+    file being there is what holds, and reading it is only how the reason is told. Both read any failure as "no such
+    file" and so as "nothing is held", which would have let the owner's own switch open under a permission or an I/O
+    error (2026-09-21)."""
+    if not os.path.exists(path):
+        return ""
+    try:
+        return open(path).read().strip() or f"state/{name} is set"
+    except OSError as e:
+        return f"state/{name} is set and its reason could not be read ({e!r})"
+
+
 def graph_held():
     """The reason no task of the graph may start, or ""."""
-    try:
-        return open(os.path.join(STATE, GRAPH_HELD)).read().strip() or "state/graph-held is set"
-    except OSError:
-        return ""
+    return why_held(os.path.join(STATE, GRAPH_HELD), GRAPH_HELD)
 
 
 def held_back():
     """The reason nothing may start, or ""."""
-    path = os.path.join(STATE, NO_LAUNCH)
-    try:
-        return open(path).read().strip() or "state/no-launch is set"
-    except OSError:
-        return ""
+    return why_held(os.path.join(STATE, NO_LAUNCH), NO_LAUNCH)
 
 
 def claude(*args, cwd=None, warm_ping=False):

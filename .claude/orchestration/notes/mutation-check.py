@@ -68,6 +68,8 @@ CASES = [
      "never_written_over", "a kept file that cannot be read"),
     ("v2.py", '        except OSError as e:\n            # a ledger that is there and cannot be read was replaced by a fresh header and this one entry: every\n            # direction the owner had ever given, gone, under the lock that was meant to protect them. The words are\n            # kept in the log instead and the file is left alone (2026-09-21).\n            log(f"ATTENTION the owner ledger could not be read ({e!r}) and is left untouched. What was said, in "\n                f"full:\\n{entry}")\n', '        except OSError:\n            s = "# Owner ledger"\n',
      "owner_types", "a ledger that cannot be read"),
+    ("v2.py", '    if not os.path.exists(path):\n        return ""\n    try:\n        return open(path).read().strip()',
+     '    try:\n        return open(path).read().strip()', "hold_whose_file", "a hold that fails closed"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

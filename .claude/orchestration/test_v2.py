@@ -527,6 +527,21 @@ class PlanningTests(Flow):
                              env=self.w.env, capture_output=True, text=True).stdout.strip()
         self.assertEqual(out, "5")
 
+    def test_a_hold_whose_file_cannot_be_read_still_holds(self):
+        # a hold is a switch that must fail closed: the file being there is what holds, and reading it is only how
+        # the reason is told. Both read any failure as "no such file" and so as "nothing is held" (2026-09-21).
+        for name, reason in ((v2.NO_LAUNCH, "held_back"), (v2.GRAPH_HELD, "graph_held")):
+            (self.w.state / name).mkdir()          # there, and no read of it can succeed
+            out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                  f"import v2; print(v2.{reason}())"], env=self.w.env, capture_output=True, text=True)
+            self.assertEqual(out.returncode, 0, out.stderr)
+            self.assertIn(f"state/{name} is set", out.stdout)
+            self.assertIn("could not be read", out.stdout)
+            (self.w.state / name).rmdir()
+            out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                  f"import v2; print(repr(v2.{reason}()))"], env=self.w.env, capture_output=True, text=True)
+            self.assertEqual(out.stdout.strip(), "''")   # and no file is no hold, as before
+
     def test_a_state_or_an_ownership_map_that_cannot_be_read_is_never_written_over(self):
         # every caller writes back what it read, so reading an unreadable file as an empty one writes that emptiness
         # over the truth: the sessions, the tasks and the queue, or which task owns each change in the working tree

@@ -1170,3 +1170,47 @@ Stopped, daemon down, `no-launch` set. `.build/trees/46` and `/49` are gone and 
 back in the one tree, owned by task 49 — which therefore **holds the working tree while being with the planner**, so
 the first producing session after a restart parks until the planner deals with it. It is named after thirty minutes.
 Task 52 stands `unformed`; 23 and 47 are the orphaned reviews.
+
+## 2026-09-21 01:00 — what the stop found, and how it was found
+
+Continuing with the run stopped. Beyond the worktree root cause above:
+
+**Silent wrong answers.** Twenty-four handlers return an empty value on error; twenty are honest, because an absent
+file means nothing. Four were not, and each reads as "nothing to do":
+
+- `git_out` returned `None` on failure and `changed_paths` turned that into "no paths" — a clean tree, from which
+  `tree_writer` finds no owner and `leave()` tells a task nothing about the work it is leaving. One git error away.
+- **`work_meter`'s guard catches every exception and lets the call through**, which is right, and did it in silence,
+  which is not: a crashing guard is every read limit, every refusal and the write guard switched off with nothing to
+  show for it — the PreToolUse matcher's fault in another form. Said now, at most once every `ORCH_GUARD_QUIET`,
+  because it runs on every tool call of every session.
+- `rounds_since` returned 0 when a transcript could not be read, so nothing counted and the limits never bit.
+- `stale_share` returned 0.0 when the measurement failed, so a wholly stale layer reads as 0% and is never
+  refreshed.
+
+**Dead code.** Three functions were defined and named nowhere — the fault that had the detail-versus-goal rule
+written twice with the dead copy under test. `trees_tidied` sweeps a worktree holding nothing and was never called
+from the sweep it was written for. `path_like` was written to keep prose out of the write targets and never wired:
+wiring it drops `ROOT` and every file not yet made, so it is removed and `write_targets` says where the protection
+actually lives. `kb_context` named nothing. No function in the harness is now defined and never named, and no
+constant either.
+
+**The mutation check.** Every repair of today was verified by hand as it was written, but a later edit can make a
+test pass for the wrong reason. Twenty-one mutations, one per repair, each run against the test meant to catch it:
+three were missed. One was the harness's own `-k` filter. Two were real — nothing tested that `v2.py blockers`
+refuses a role without graph rights, and `graph_shape`'s `skip`, the fix for the width deadlock, had no test at all.
+A fourth exposed a branch nothing could reach: the orphaned-review condition read both the stage and the list, and
+`reconcile_stages` runs first and guarantees the stage. All twenty-one are caught now, in one run, with the working
+tree clean afterwards.
+
+**The methods that kept working**, for whoever comes next:
+
+1. *Do the pair that must agree, agree?* `worktree_of` and `tree_text` both decided whether a task has its own tree,
+   from the directory alone; repairing one left them contradicting each other. `startable` named what `produce`
+   would refuse. `task_state` and `reconcile_stages` hold one rule at two scopes.
+2. *What would a restart actually do?* Asking it of the live graph found the two orphaned reviews, which no stage,
+   no blocker and no standstill would ever have named.
+3. *Break it and see whether a test notices.* Three of today's repairs were not held by anything.
+4. *Is this code reached at all?* Twice today the answer was no, and both times a green test covered it.
+
+**283 tests pass.**

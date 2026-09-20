@@ -24,17 +24,22 @@ where each one goes, once, in full, in a JSON file — and the planner places th
 your text and the planner never re-types it.
 
     [{"key": "rows",        "subject": "...", "why": "...", "blockedBy": [],       "description": "<the brief>"},
-     {"key": "rows-review", "subject": "...", "why": "-",   "blockedBy": ["rows"], "description": "<the brief>"}]
+     {"key": "rows-review", "subject": "...", "why": "-",   "blockedBy": ["rows"], "description": "<the brief>"},
+     {"key": "locus",       "subject": "...", "why": "...", "blockedBy": ["24"],   "description": "<the brief>",
+      "feeds": ["25"]}]
 
 `key` names a task inside your proposal, for the others to wait on; `blockedBy` takes those keys or the ids of tasks
 already in the list. `feeds` names tasks already in the list that should wait on this one instead — that is how work
-is spliced into the graph rather than hung off it. Write it to `.build/tasks/{ID}/brief/proposal.json`, which is
-where your production is counted, then `.claude/orchestration/v2.py propose {ID} .build/tasks/{ID}/brief/proposal.json`,
-and end your turn.
+is spliced into the graph rather than hung off it. Above, `locus` waits on task 24, which is already in the
+graph, and task 25 — also already there — is re-pointed to wait on `locus` instead: that is a splice, and it is
+what makes the work detail rather than a further goal. Write the proposal to
+`.build/tasks/{ID}/brief/proposal.json`, which is where your production is counted, then
+`.claude/orchestration/v2.py propose {ID} .build/tasks/{ID}/brief/proposal.json`, and end your turn.
 
 **Judge where your tasks go before you write them, not after.** The chain is **{DEPTH}** tasks deep and the limit is
-**{GRAPH_DEPTH}**; {WIDTH} build and fix tasks can start and there are {SLOTS} slots to take them. Detail is always admitted however deep the graph: work that something already there waits on (`feeds`), or
-work that waits on nothing open and runs at once. What is bounded is a further *goal* — a task waiting on open work
+**{GRAPH_DEPTH}**; {WIDTH} build and fix tasks can start and there are {SLOTS} slots to take them. Detail is always
+admitted however deep the graph: work that something already there waits on (`feeds`), or work that waits on
+nothing open and runs at once. What is bounded is a further *goal* — a task waiting on open work
 already in the graph that nothing already there waits on, hung past its frontier. If the chain is already past the
 limit and the detailing you were given needs one of those, **do not write it and do not bend the detailing to avoid
 it**: say so, record your result with what the work needs and why, and it is the planner's to resolve. A proposal

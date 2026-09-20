@@ -588,9 +588,6 @@ def session_guard(hook, rec):
     return None
 
 
-EXTENSIONS = {"md", "thy", "py", "json", "jsonl", "sh", "txt", "out", "log", "diff", "patch", "yaml", "yml", "toml",
-              "cfg", "csv", "tsv", "pyc", "lock", "ML", "tex", "html", "svg", "png"}
-
 
 def write_targets(tool, inp, command, cwd):
     """The files a command writes: an Edit's or Write's file, the targets of its redirections and file commands, and

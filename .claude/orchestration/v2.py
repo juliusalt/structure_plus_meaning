@@ -32,6 +32,7 @@ Commands of the sessions (the caller is known from CLAUDE_CODE_SESSION_ID):
   v2.py verdict ID accept|reject --file FILE   the reviewer (or the planner, for design and investigation)
   v2.py queue ID...              the planner: the order in which tasks are to be done
   v2.py after ID TASK            the planner: the parked task ID continues when TASK has landed (`none`: now)
+  v2.py blockers ID ID...|none   the planner or task designer: what task ID waits on, set whole (TaskUpdate only adds)
   v2.py drop ID                  the planner: stop whatever works on task ID
   v2.py planned --notes FILE     the planner: its work ends (its window is full); its notes go to the knowledge base
 Harness:
@@ -1337,8 +1338,8 @@ def deps_done(tid):
                 open(os.path.join(STATE, f"blocker-{tid}-{d}"), "w").write(str(time.time()))
                 with state() as st:
                     event(st, "the harness", f"Task {tid} waits for task {d}, which is not in the task list — "
-                          f"dropped, or never written. Nothing will complete it, so {tid} waits for ever: re-point "
-                          "its blocker or drop it too.")
+                          f"dropped, or never written. Nothing will complete it, so {tid} waits for ever: set what it "
+                          f"waits on (`v2.py blockers {tid} ...`, or `none`), or drop it too.")
                 log(f"task {tid} waits for task {d}, which is not in the task list")
         elif blocker.get("status") != "completed":
             done = False
@@ -1350,8 +1351,8 @@ def deps_done(tid):
                 open(os.path.join(STATE, f"blocker-{tid}-{d}"), "w").write(str(time.time()))
                 with state() as st:
                     event(st, "the harness", f"Task {tid} waits for task {d}, which came back to you and has not been "
-                          f"re-planned: nothing will complete it as it stands, so {tid} waits. Re-plan {d}, or "
-                          f"re-point {tid}'s blocker.")
+                          f"re-planned: nothing will complete it as it stands, so {tid} waits. Re-plan {d}, or set "
+                          f"what {tid} waits on (`v2.py blockers {tid} ...`, or `none`).")
                 log(f"task {tid} waits for task {d}, which is with the planner")
     return done
 
@@ -2312,6 +2313,12 @@ STANDSTILL_EVERY = int(os.environ.get("ORCH_STANDSTILL_EVERY", 1800))  # how oft
 RETURNED_AFTER = int(os.environ.get("ORCH_RETURNED_AFTER", 1800))  # how long a task may stand with the planner unnamed
 
 
+def _owned_by(tid):
+    """(path, task) of the working-tree changes a task owns, as the guard recorded them."""
+    with owners() as o:
+        return sorted((p, t) for p, t in o.items() if t == str(tid) and p in set(changed_paths()))
+
+
 def with_the_planner(st):
     """The tasks that really are the planner's to move: stage "planner" (given back, ended partial, failed its check)
     and still pending in the graph. The stage is the harness's own bookkeeping and is never cleared when the task is
@@ -2339,6 +2346,16 @@ def returned_tasks():
     orchestration having nothing to do."""
     st = peek()
     mine = set(with_the_planner(st))
+    # The planner may complete a task in the list, and the harness's own stage never follows: on 2026-09-20 tasks 5,
+    # 9 and 18 read as the planner's long after they were committed. Only `completed` is healed here — a task that is
+    # not in the list at all may be one a fixture or a session has yet to write, and the readers already leave it out.
+    stale = [tid for tid, x in st["tasks"].items() if (x or {}).get("stage") == "planner"
+             and (read_task(tid) or {}).get("status") == "completed"]
+    if stale:
+        with state() as w:
+            for tid in stale:
+                w["tasks"][tid]["stage"] = "done"
+        log("the stage of " + ", ".join(sorted(stale)) + " followed the task list: they are completed")
     for tid, t in sorted(st["tasks"].items()):
         mark = os.path.join(STATE, f"returned-{tid}")
         if tid not in mine:
@@ -2353,11 +2370,24 @@ def returned_tasks():
         if since < RETURNED_AFTER or (age_of(f"returned-{tid}") or 0) < RETURNED_AFTER:
             continue
         os.utime(mark, None)
+        # A task that came back may also be the one whose installed work stands in the working tree, and then it
+        # holds the tree: every other producing session is refused it and parks, and nothing will let it go, because
+        # nothing moves a task that is with the planner. That is the blocker-not-in-the-list shape over the tree, and
+        # it is said here rather than left to a standstill to show it once everything has parked.
+        holds_tree = tree_writer(st) == tid
+        waiting = sorted(n for n, s in st["sessions"].items() if s.get("tree_wait") == tid and not s.get("released"))
         with state() as w:
             event(w, "the harness", f"Task {tid} has stood with you for {int(since // 60)} minutes: it came back and "
                   "has not been re-planned, and nothing else moves it. Re-plan it, split it over what exists, or "
-                  "drop it (`v2.py drop`) — while it stands, anything that waits on it waits for ever.")
-        log(f"task {tid} has stood with the planner for {int(since // 60)} min")
+                  "drop it (`v2.py drop`) — while it stands, anything that waits on it waits for ever."
+                  + (" It also holds the **working tree**: its installed work stands there ("
+                     + ", ".join(p for p, x in _owned_by(tid)) + "), so every other producing task is refused the "
+                     "tree and parks for a task that cannot complete"
+                     + (f" — {', '.join(waiting)} already waits" if waiting else "")
+                     + ". Re-planning it, or a task that finalizes its work, is what frees the tree."
+                     if holds_tree else ""))
+        log(f"task {tid} has stood with the planner for {int(since // 60)} min"
+            + ("; it holds the working tree" if holds_tree else ""))
 
 
 GRAPH_HELD_EVERY = int(os.environ.get("ORCH_GRAPH_HELD_EVERY", 1800))  # how often a held graph is named again
@@ -2442,8 +2472,8 @@ def standstill():
               + f", and the queue is {' '.join(st['queue']) or 'empty'}. "
               + ("The graph is held and that is why none of it starts (" + graph_held() + "): your order "
                  "(`v2.py queue ID ...`) is what releases it. " if graph_held() else
-                 "Queue what can be done, take back a wait that cannot end (`v2.py after ID none`), or re-plan what "
-                 "came back to you. ")
+                 "Queue what can be done, take back a wait that cannot end (`v2.py blockers ID none` for a graph "
+                 "blocker, `v2.py after ID none` for a task waiting on its fix), or re-plan what came back to you. ")
               + f"You are told again in {STANDSTILL_EVERY // 60} minutes while this lasts.")
     log("standstill: nothing is working and nothing can start; the planner is told")
 
@@ -3203,6 +3233,43 @@ def planner_only(what):
     return f"refused: {what} is the planner's" if c and c["role"] != "planner" else None
 
 
+def cmd_blockers(tid, ids):
+    """The graph's edges are the planner's (and the task designer's, for the tasks it briefs) to set, not only to add.
+
+    Claude Code's TaskUpdate offers addBlockedBy and no way back, so until 2026-09-20 a dependency once written could
+    not be taken out: the graph was append-only by accident and nothing anywhere said so, while cmd_drop, deps_done
+    and the standstill each told the planner to "re-point" a blocker — and the standstill named `v2.py after ID
+    none`, which is the efficiency-fix relation and not this one. A planner charged to re-plan an inherited chain as
+    work that can run side by side could add edges and delete whole tasks, but could not move one; deleting and
+    recreating, which it could do, loses the task's id and its history. That is not a boundary anyone chose."""
+    c = caller()
+    if c and not ROLES.get(c["role"], {}).get("graph"):
+        return "refused: the graph's edges are the planner's and the task designer's"
+    if not read_task(tid):
+        return f"refused: task {tid} is not in the task list"
+    want = [] if ids == ["none"] else list(dict.fromkeys(ids))
+    tasks = {t["id"]: dict(t) for t in all_tasks()}
+    missing = [b for b in want if b not in tasks]
+    if missing:
+        return f"refused: no task {', '.join(missing)} in the list"
+    if tid in want:
+        return f"refused: task {tid} cannot wait on itself"
+    tasks[tid]["blockedBy"] = want
+    circle = [b for b in want if waits_on(tasks, b, tid)]
+    if circle:
+        return (f"refused: task {', '.join(circle)} already waits on {tid}, through the graph, so this would close a "
+                "cycle in which neither could ever start")
+    had = read_task(tid).get("blockedBy") or []
+    update_task(tid, blockedBy=want)
+    kick()
+    gone, new = [b for b in had if b not in want], [b for b in want if b not in had]
+    log(f"task {tid} waits on {' '.join(want) or 'nothing'} (was {' '.join(had) or 'nothing'})")
+    return (f"task {tid} waits on {', '.join(want) or 'nothing'}"
+            + (f"; taken out: {', '.join(gone)}" if gone else "")
+            + (f"; added: {', '.join(new)}" if new else "")
+            + ("" if want else ". It is startable as soon as it is queued."))
+
+
 def cmd_after(tid, other):
     """The planner names the task that fixes a task's performance problem: a parked task continues when it has landed;
     a task still working is told then (efficiency_care), and waits on it if it comes to wait."""
@@ -3269,9 +3336,11 @@ def cmd_drop(tid):
         w["tasks"].setdefault(tid, {})["stage"] = "planner"
         w["queue"] = [t for t in w["queue"] if t != tid]
     waiting = [x["id"] for x in all_tasks() if tid in (x.get("blockedBy") or []) and x.get("status") != "completed"]
-    return ("dropped " + (", ".join(names) or "nothing") + aside
+    return (f"task {tid} is dropped: it leaves the queue and comes back to you to re-plan, split or take out of the "
+            "list. " + ("Stopped: " + ", ".join(names) + "." if names else "Nothing was working on it.") + aside
             + (f". Task {tid} stays in the list and is still the blocker of {', '.join(waiting)}, which wait on it "
-               "until you re-plan it or re-point them." if waiting else ""))
+               f"until you re-plan it, or point them elsewhere (`v2.py blockers ID ...`, `none` for no blocker)."
+               if waiting else ""))
 
 
 def cmd_planned(notes):
@@ -3662,6 +3731,8 @@ def main():
         print(cmd_queue(rest))
     elif c == "after" and len(rest) == 2:
         print(cmd_after(rest[0], rest[1]))
+    elif c == "blockers" and len(rest) >= 2:
+        print(cmd_blockers(rest[0], rest[1:]))
     elif c == "drop" and len(rest) == 1:
         print(cmd_drop(rest[0]))
     elif c == "planned":

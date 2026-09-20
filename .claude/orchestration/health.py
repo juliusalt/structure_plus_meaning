@@ -194,6 +194,7 @@ def main():
     if not v2.slot(st, v2.PRODUCING) and not any((st["tasks"].get(t) or {}).get("stage") in ("ready", "brief")
                                                   for t in st["queue"]):
         print("ATTENTION nothing is producing and nothing is ready or to be briefed: the planner queues the next tasks")
+    with_planner = set(v2.with_the_planner(st))
     for tid, t in st["tasks"].items():
         if t.get("stage") == "parked":
             p = t.get("parked") or {}
@@ -203,8 +204,14 @@ def main():
             print(f"parked: task {tid} for {minutes(now - p.get('since', now))} of {v2.HOLD_PARK // 3600} h, waits on "
                   f"{waits}" + (f": {p.get('why', '')[:100]}" if p.get("why") else ""))
         elif t.get("stage") in ("checking", "reviewing", "fixing", "committing", "planner"):
+            # a stage of "planner" the graph does not agree with is the harness's own bookkeeping, which nothing
+            # clears when a task is completed or dropped elsewhere: tasks 5, 9, 18 and 21 read as the planner's here
+            # long after three were committed and the fourth dropped (2026-09-20)
+            stale = t["stage"] == "planner" and tid not in with_planner
             print(f"task {tid}: {t['stage']}" + (f" (checks failed {t['checks_failed']})" if t.get("checks_failed") else "")
-                  + (f" (rejected {t['rejections']})" if t.get("rejections") else ""))
+                  + (f" (rejected {t['rejections']})" if t.get("rejections") else "")
+                  + (" — stale, and nothing is told of it: the list says "
+                     + ((v2.read_task(tid) or {}).get("status") or "it is not there at all") if stale else ""))
     for qid, q in st["asks"].items():
         if q["state"] != "answered":
             print(("ATTENTION " if now - q["asked"] > 1800 else "") + f"question {qid} from {q['from']} to {q['target']}, "

@@ -19,6 +19,9 @@ hold, the statements you look up (`.claude/orchestration/show.py --statement NAM
 gather, statements only), the plan and the decisions. You read statements, not proofs, code or logs: which lines, which
 lemmas to reuse and how to prove are the implementer's to find.
 
+TaskCreate and TaskUpdate are deferred and not loaded when you start: load them in your first response
+(`ToolSearch`, `select:TaskCreate,TaskUpdate`) so that you never meet the graph without them.
+
 Write each task into the graph (TaskCreate, metadata {"kind": ..., "why": ...}, addBlockedBy for its
 dependencies), and for every build or fix task a review task: kind review, `Reviews:` naming the task, its plan the
 review's course (for each step of the task what to check, the acceptance, the decided statements, the principles most
@@ -27,8 +30,10 @@ review tasks, and the task is committed only when all of them accept. Each task 
 
 {{brief}}
 
-**Independence.** Most of the graph's shape is drawn here. Every `addBlockedBy` you write is a session that cannot
-start, so write one only where it is real: the task's inputs are another's artifacts, or its brief rests on a
+**Independence.** Most of the graph's shape is drawn here. `addBlockedBy` only adds an edge; to take one out or
+point a task elsewhere, set what it waits on whole (`.claude/orchestration/v2.py blockers ID ID...`, `none` for
+nothing), so a shape you get wrong is corrected rather than left. Every `addBlockedBy` you write is a session that
+cannot start, so write one only where it is real: the task's inputs are another's artifacts, or its brief rests on a
 decision another takes. The order of your brief's plan is not a dependency; neither is tidiness. Where the steps
 touch different notions, or the same notion at different loci, make them tasks that can run side by side and say in
 each `why` what it does not wait for. Never buy that at the cost of the work: do not split a piece of reasoning that

@@ -43,8 +43,15 @@ the plan, DECISIONS.md, REASONING_REUSE.md, the ledger, `git log`. Proof text, c
 to you. Read only what a decision needs: every token you read ends with you, while what you write persists. Your
 production is what persists: your graph edits (TaskCreate, TaskUpdate), HANDOFF.md and your notes.
 
+**Your graph tools are not loaded when you start.** TaskCreate and TaskUpdate are deferred: load them in your
+first response with `ToolSearch` (`select:TaskCreate,TaskUpdate`), together with whatever else you will need, so that
+you never meet the graph without them.
+
 **Tasks.** TaskCreate with the brief as its description and metadata {"kind": ..., "why": ...}; TaskUpdate with
-addBlockedBy for its dependencies. You write the design and investigation tasks, whose plans rest on your reasoning,
+addBlockedBy for its dependencies. TaskUpdate only *adds* an edge: to take one out, or to point a task somewhere
+else, set what it waits on whole — `.claude/orchestration/v2.py blockers ID ID...` (`none` for nothing). The graph is
+yours to shape, not only to grow: re-point a chain into work that can run side by side rather than deleting and
+recreating tasks, which loses their ids and their history. You write the design and investigation tasks, whose plans rest on your reasoning,
 and the brief tasks: the plan of a detailing, which a task designer carries out by writing the build and fix tasks
 and a review task for each. A brief task's Deliverable names the tasks it is to brief; its plan is the course of the
 detailing (which tasks, in which order, depending on what, what each must respect), and a part of the graph too big

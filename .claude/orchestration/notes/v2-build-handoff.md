@@ -767,3 +767,66 @@ Four places now carry it, and they say the same thing:
 
 **251 tests pass.** The reminder's test checks all three: silent at the start (the charge has said it), silent at the
 next dispatch, said again once it has stood that long, and stopped when the hold goes.
+
+---
+
+# 2026-09-20 21:30 — the graph was append-only by accident, and four messages told the planner otherwise
+
+The second live run was stopped after ten minutes. It had hit a wall, and the wall was not in the work.
+
+## What plan-30 met
+
+At 21:15:49 it said *"I need to know whether a blocker can be removed, since TaskUpdate only adds"*, grepped `v2.py`,
+was refused the body by its own read guard, and concluded *"The edges stand — a planner cannot remove a blocker with
+the tools it has. I'll record that and work with it."* It was right:
+
+- Claude Code's `TaskUpdate` offers `addBlockedBy`/`addBlocks` and no way back;
+- `v2.py` exposed `queue`, `after`, `drop` — none of which touches a blocker;
+- `update_task(tid, blockedBy=…)` existed and `fix_deadlock()` used it, with no route to it for the planner.
+
+**No rationale for this was written anywhere** — not in the protocols, the README or the plan. It was not a boundary
+anyone chose; it was the shape of the tool's API. And the planner already had the *more* destructive power:
+`graph=True` lets it delete a task outright, so withholding the lesser one only pushed it toward deleting and
+recreating, which loses a task's id and its history.
+
+The cost was the whole point of the fresh start. The charge says *re-plan the inherited chain as work that can run
+side by side*; the graph is **20 levels deep and one task wide for 14 of them**. It could not move one edge.
+
+**Four messages told it to do what it could not**: `cmd_drop` ("re-point them"), `deps_done` twice ("re-point its
+blocker"), and `standstill` — which named `v2.py after ID none`, the efficiency-fix relation, so a planner following
+that advice would have changed nothing and been told nothing.
+
+## What was done
+
+- **`v2.py blockers ID ID…|none`** sets what a task waits on, whole, for the planner and the task designer (both
+  hold `graph`). It refuses a task not in the list, a blocker not in the list, a self-wait, and a cycle — naming the
+  task that already waits on this one — and says what it took out and what it added.
+- The four messages now name it, and the standstill distinguishes a graph blocker from a task waiting on its fix.
+- **`protocols/planner.md` and `protocols/task-designer.md` state the contract**: `addBlockedBy` only adds; set the
+  whole list to take one out; the graph is yours to shape, not only to grow.
+
+## Three more from the same ten minutes
+
+- **`dropped nothing`** was what `cmd_drop` said when the drop had worked. It reported the *sessions* it stopped, and
+  with none live that read as a refusal, followed by a sentence describing everything it had just done. It now says
+  what became of the task first, and whether anything was working on it.
+- **The graph tools are deferred.** `TaskCreate` and `TaskUpdate` are not loaded when a session starts; the planner
+  spent a call on `ToolSearch` to reach the instrument its whole role turns on, and learned the add-only limit by
+  reading the schema it fetched. Both protocols now tell it to load them in its first response.
+- **A stage of `planner` that the list does not agree with now heals.** The planner completes a task in the list and
+  the harness's own stage never follows, which is why tasks 5, 9 and 18 read as the planner's long after they were
+  committed. `returned_tasks()` sets those to `done` each dispatch. Only `completed` is healed: a task with no record
+  at all may be one a session has yet to write, and the readers already leave it out.
+
+## Also this session
+
+`returned_tasks()` now says when the task that came back **holds the working tree** — naming the paths and the
+sessions already waiting. plan-30 dropped task 46 while `theories/Development_State_Rows.thy` stood in the tree, so
+`tree_writer` still returned 46: every other producing task would have been refused the tree and parked for a task
+nothing moves. That is the blocker-not-in-the-list shape over the tree, and nothing said it.
+
+**256 tests pass.** The monitoring audit (`audit.py`, in the job's scratch) checks the harness's claims against the
+graph rather than trusting them: every message *sent* to the planner, "task N is yours" against the list, "startable
+now" against each task's blockers, tree claims against the tree actually named, queue phantoms, stage/list
+disagreement, sessions running under a hold, unread mail, and the guard's refusals. It found nothing false in this
+run.

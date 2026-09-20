@@ -375,6 +375,78 @@ class PlanningTests(Flow):
         self.w.v2("dispatch")
         self.assertEqual(self.forks("implement-21"), [])  # nothing is started for a task with no record
 
+    def test_the_planner_sets_what_a_task_waits_on_and_not_only_adds(self):
+        # Claude Code's TaskUpdate offers addBlockedBy and no way back, so until 2026-09-20 a dependency once written
+        # could not be taken out: the planner could add edges and delete whole tasks but not move one, while three
+        # harness messages told it to "re-point" a blocker. Nothing anywhere had chosen that.
+        for tid in ("1", "2", "3"):
+            self.w.task(tid, subject=f"Task {tid}")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.as_("plan-1", "blockers", "3", "1", "2")
+        self.assertEqual(self.w.read_task("3")["blockedBy"], ["1", "2"])
+        said = self.as_("plan-1", "blockers", "3", "2")
+        self.assertEqual(self.w.read_task("3")["blockedBy"], ["2"])
+        self.assertIn("taken out: 1", said)
+        said = self.as_("plan-1", "blockers", "3", "none")
+        self.assertEqual(self.w.read_task("3")["blockedBy"], [])
+        self.assertIn("startable as soon as it is queued", said)
+
+    def test_setting_what_a_task_waits_on_refuses_a_cycle_and_a_task_that_is_not_there(self):
+        for tid in ("1", "2"):
+            self.w.task(tid, subject=f"Task {tid}")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.as_("plan-1", "blockers", "2", "1")
+        self.assertIn("would close a cycle", self.as_("plan-1", "blockers", "1", "2"))
+        self.assertEqual(self.w.read_task("1")["blockedBy"], [])
+        self.assertIn("cannot wait on itself", self.as_("plan-1", "blockers", "1", "1"))
+        self.assertIn("no task 9 in the list", self.as_("plan-1", "blockers", "1", "9"))
+        self.assertIn("refused: task 7 is not in the task list", self.as_("plan-1", "blockers", "7", "1"))
+
+    def test_a_stage_of_planner_follows_the_list_when_the_task_is_completed(self):
+        # the planner completes a task in the list and the harness's own stage never follows: tasks 5, 9 and 18 read
+        # as the planner's long after they were committed, and the standstill named all three to it (2026-09-20)
+        self.w.task("4", subject="Finished in the list", status="completed")
+        self.w.task("5", subject="Really back")
+        self.w.set_st(tasks={"4": {"stage": "planner"}, "5": {"stage": "planner"}})
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("4")["stage"], "done")
+        self.assertEqual(self.t("5")["stage"], "planner")  # genuinely with the planner: untouched
+
+    def test_a_drop_says_what_it_did_even_when_nothing_was_working(self):
+        # "dropped nothing" was what it said when the drop had worked and no session was live (2026-09-20)
+        self.w.task("4", subject="To drop")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.w.set_st(queue=["4"], tasks={"4": {"stage": "ready", "kind": "build"}})
+        said = self.as_("plan-1", "drop", "4")
+        self.assertIn("task 4 is dropped", said)
+        self.assertIn("Nothing was working on it", said)
+        self.assertNotIn("dropped nothing", said)
+        self.assertEqual(self.w.st()["queue"], [])
+
+    def test_a_returned_task_that_holds_the_working_tree_says_so(self):
+        # a task that came back may be the one whose installed work stands in the tree, and then it holds the tree:
+        # every other producing session is refused it and parks for a task nothing will complete — the
+        # blocker-not-in-the-list shape over the tree. On 2026-09-20 the planner dropped task 46 while its theory
+        # stood in the tree and the harness said nothing of it.
+        self.w.repository()  # changed_paths() asks git what differs from HEAD
+        self.w.task("4", subject="Came back holding the tree")
+        self.w.session("implement-9", "implementer", "w9", task="9", tree_wait="4")
+        self.w.write("theories/Held.thy", "theory Held imports Main begin end\n")
+        (self.w.state / "tree-owners.json").write_text(json.dumps({"theories/Held.thy": "4"}))
+        self.w.set_st(tasks={"4": {"stage": "planner", "kind": "build"},
+                             "9": {"stage": "running", "kind": "build", "session": "implement-9"}})
+        self.w.v2("dispatch")
+        mark = self.w.state / "returned-4"
+        old = time.time() - v2.RETURNED_AFTER - 60
+        mark.write_text(str(old))
+        os.utime(mark, (old, old))
+        self.w.v2("dispatch")
+        told = self.heard()
+        self.assertIn("It also holds the **working tree**", told)
+        self.assertIn("theories/Held.thy", told)
+        self.assertIn("implement-9 already waits", told)
+        self.assertIn("parks for a task that cannot complete", told)
+
     def test_a_task_that_came_back_is_named_on_its_own_and_not_only_in_a_standstill(self):
         # tasks 5, 9, 18 and 21 stood with the planner for hours. The only thing that said so was standstill(),
         # which is suppressed while anything works and while the planner deliberates, so the notice reached the

@@ -1,0 +1,59 @@
+"""Break one repair at a time and see whether the test meant to catch it does.
+
+Not part of the harness and nothing runs it automatically: it is the check that found, on 2026-09-21, that
+two of the day's repairs were held by nothing and that a third had a branch nothing could reach. Run it from
+.claude/orchestration after changing any of the repairs it names, and add a case for every new one. It always
+restores the file it broke, in a finally.
+"""
+import shutil, subprocess, sys, os
+ORCH = "/home/julius/structure_and_semantics/.claude/orchestration"
+os.chdir(ORCH)
+CASES = [
+    ("v2.py", 'and k not in skip)', 'and True)', "graphs_shape", "graph_shape's skip"),
+    ("v2.py", 'if os.path.isfile(dotgit):', 'if False:', "copy_of_the_harness_in_a_worktree", "_one_tree"),
+    ("v2.py", 'if tid not in tasks or tasks[tid].get("status") == "completed":',
+     'if tid not in tasks:', "startable_agrees", "startable's completed check"),
+    ("v2.py", 'n = max(high, max(used, default=0)) + 1', 'n = max(used, default=0) + 1',
+     "high_water_mark", "allocation above the mark"),
+    ("v2.py", 'or stage == "unformed" or orphan', 'or orphan', "not_in_form_is_named_again", "the unformed notice"),
+    ("ctx_gauge.py", 'v2.py propose {task}', 'v2.py briefed {task}', "no_message_names_a_command", "the command-name test"),
+    ("worker-settings.json", '"Write|Edit|MultiEdit|NotebookEdit|Read', '"Read', "guarded_tool_reach", "the guard's matcher"),
+    ("work_meter.py", 'ISABELLE_SYMBOL.sub(" ", ', '(lambda s: s)(', "isabelle_cartouche", "the cartouche strip"),
+    ("watchdog.py", 'v2.wake_planner(name)  # cold', 'None  # cold', "sealed_planners_box", "planner_mail"),
+    ("v2.py", 'holds_tree = tree_writer(st) == tid', 'holds_tree = False', "holds_the_working_tree", "the tree notice"),
+    ("v2.py", 'fed = {n for n, e in group.items() if e.get("feeds")}', 'fed = set()',
+     "spliced_into_the_graph", "the feeds seed"),
+    ("v2.py", 'if briefs and why:', 'if False:', "as_much_independent_work", "the width detention"),
+    ("v2.py", 'if goals and depth is not None and depth > GRAPH_DEPTH:', 'if False:',
+     "never_reaches_the_graph", "the depth refusal"),
+    ("v2.py", 'if c and not ROLES.get(c["role"], {}).get("graph"):', 'if False:', "sets_what_a_task_waits_on",
+     "blockers' permission"),
+    ("v2.py", 'w["tasks"][tid]["stage"] = "done"\n        log("the stage of "',
+     'pass\n        log("the stage of "', "follows_the_list", "reconcile_stages"),
+    ("ctx_gauge.py", '.get("stage") not in ("running", "fixing", None)', ' and False', "taken_on_may_end", "may_end"),
+    ("v2.py", 'if not TREES:\n        return PROJECT', 'if False:\n        return PROJECT',
+     "left_behind_does_not_capture", "worktree_of's guard"),
+    ("v2.py", 'if tree or (TREES and os.path.isdir', 'if tree or (True and os.path.isdir',
+     "not_told_it_has_a_tree", "tree_text's guard"),
+    ("v2.py", 'for tid in order:\n            with contextlib.suppress(OSError):', 'for tid in []:\n            with contextlib.suppress(OSError):',
+     "all_of_it_or_none", "accept's rollback"),
+    ("v2.py", '(peek()["tasks"].get(t.get("reviews") or "") or {}).get("stage") == "done")',
+     'False)', "subject_has_finished", "the orphaned review"),
+    ("v2.py", 'fresh_sweep(st)  # a charge', 'None  # a charge', "drops_the_events_it_supersedes", "fresh_sweep"),
+]
+bad = []
+for fname, old, new, k, label in CASES:
+    src = open(fname).read()
+    if src.count(old) != 1:
+        bad.append(f"{label}: anchor not unique ({src.count(old)})"); continue
+    shutil.copy(fname, fname + ".bak")
+    try:
+        open(fname, "w").write(src.replace(old, new))
+        r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-k", k] + [f for f in os.listdir(".") if f.startswith("test_") and f.endswith(".py")], capture_output=True, text=True)
+        caught = "failed" in r.stdout.splitlines()[-1] if r.stdout.strip() else False
+        print(f"  {'CAUGHT ' if caught else 'MISSED '} {label}")
+        if not caught: bad.append(f"{label}: the mutation was not caught")
+    finally:
+        shutil.move(fname + ".bak", fname)
+print()
+print("\n".join("  ! " + b for b in bad) or "  every mutation was caught")

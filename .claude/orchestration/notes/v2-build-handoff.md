@@ -1251,3 +1251,69 @@ sealed. The graph is **not** held — plan-31 queued before it was stopped, so a
 is falsy, so a marker written in the same instant reads as never written and the notice repeats. The probability is
 effectively nil and touching nine call sites to chase it is more risk than the fault; `tree_checked` uses the
 explicit form and the rest do not, which is the one inconsistency knowingly left in place.
+
+## 2026-09-21, after the stop: what a second sweep found
+
+The run is still stopped and `no-launch` still set; nothing here started a session. The method was the one that had
+been productive: take a pair that must agree and check that it does, ask what a restart would actually do, break a
+repair and see whether a test notices, and read every statement the harness makes as a claim that can be false.
+
+**What the owner reads.** `health.py` returned after "stopped at …", so the queue, the parked tasks, the proposals
+nobody placed and the reviews left orphaned — the state a restart meets — were visible nowhere while the run stood
+still. That block is `standing()` now and prints for a stopped and an inactive run too. Reading it found three
+statements of its own that could not be checked: "layer max: warm at 21:59:00" read at 01:17 (it says how long ago
+and that the entry has expired since), "— it is refreshed" of a stale layer (the watchdog does nothing while the run
+is stopped or its daemon is down, so it names what will do it, or that nothing will), and "daemon: alive", which
+rested on the pid alone — a daemon that dies without clearing `warm.pid` leaves a number the system hands to
+something else, and `warm_daemon.sh --ensure` read it the same way, so one stale number would have stopped the
+keep-warm pings for good while the report called them alive.
+
+**Figures and rules that did not match.** The width counted every open build or fix task whose blockers were done,
+including work already in flight and work only the planner can move: it told the planner "1 build and fix tasks can
+start" of task 52, whose brief is not in form and which nothing can start at all. The rule the planner and the task
+designer are given — "a brief is admitted again when the slots have taken what can start" — could not be satisfied
+under that count, because the figure only fell when a task *finished*. The suite passed either way: no test made a
+slot take work and then read the figure. One does now.
+
+**Messages that were true of an older design.** `planner.md` said a refused proposal comes back "its tasks left
+standing and unqueued" and `task-designer.md` that "what you wrote stands in the list" — both from before
+propose/accept, when the designer wrote tasks itself. The held-graph notice said "Two things end it, and only you
+can do either" and then that one of the two does not end it. The README's roles table said a designer forks the
+knowledge base at max while `ROLES` has it fork the middle base — its own prose two pages down said the middle base.
+
+**Turns that could not end.** The Stop hook told every blocked session that its turn ends "while you wait on a
+question of your own"; for a producing session `may_end` frees the turn for a park and for nothing else, so a
+session that asked its question and tried to end was blocked with no move it believed in. The watchdog's message to
+a stalled session carried the same sentence. Both are role-aware now, and a turn blocked twelve times in a row
+without an end in between is named in the log — the hard mark is the backstop, a whole window of requests away, and
+a session that calls no tool between turns never reaches it at all.
+
+**Refusals at the moment the way out was needed.** `OWN` matched only `.claude/orchestration/v2.py`, while the
+protocols give `v2.py park run` as well: the short form counted as reading, so `park`, `ask` and `result` were
+refused once a session's budget was spent — the three commands that end a turn, refused while the Stop hook was
+telling it to run them. It is the command position that decides now, so a mention in `grep v2.py HANDOFF.md` still
+reads. `session-flags` gives every session WebFetch and WebSearch and neither was in the guard's matcher: a read
+that never reached the meter cost nothing against the budget every other read is held to.
+
+**Silence where there was a fault.** `read_task` turned any `OSError` into "the task is not in the list", which
+every caller reads as the planner having taken it out — including the conflict notice added the same day. `state()`
+and `owners()` turned any read failure into `{}` and wrote it back, which would have replaced the sessions, tasks
+and queue, or the working tree's ownership, with emptiness under the lock meant to protect them. A file that is not
+there is still `{}`; one that is there and cannot be read raises, and nothing writes over it. A resume that fails
+puts a session's mail back in its box and nothing tries again: eight boxes stood unread from 2026-09-20, two of them
+the planner's corrections to fix-48 about the order of the working tree, and `release()` now names what is left.
+
+**Work the graph calls done that the repository does not hold.** A path belongs to the task that wrote it until its
+finalizer commits it. Every uncommitted path in the working tree belongs to a task the planner completed — the
+theories of 22 and 46, the tools of 48 and 50 — and nothing named it. health.py says it.
+
+**What was checked and found sound.** Seven older repairs (own_task's refusal, the placeholder and foreign-work
+refusals in the finalizer, HANDOFF.md's owner, a blocker not in the list, both parks) were each broken in turn
+against the whole suite: every one was caught. No function and no constant in any harness file is unreferenced; no
+state key is written and never read. The 34 mutation cases in `notes/mutation-check.py` all fail their tests.
+
+**Left alone, knowingly.** `session-flags` gives every session the Agent tool, which `session_guard` denies outright:
+the flags are part of the cached prefix, so taking it out costs a rebuild of every base, and the denial is correct
+and told. `.build` holds 26G, 18 check directories of it; the repository retires temporary storage through
+`tools/retire_temporary_storage.py`, which is the owner's and declaration-driven, and 1TB is free. The nine
+`(age_of(mark) or N + 1) > N` call sites stand as before.

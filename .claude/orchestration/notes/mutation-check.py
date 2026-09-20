@@ -64,7 +64,7 @@ CASES = [
      "cannot_be_read_is_not_read", "a task file that cannot be read"),
     ("health.py", 'if p in changed and (v2.read_task(t) or {}).get("status") == "completed"}',
      'if False}', "graph_calls_done", "work the repository does not hold"),
-    ("v2.py", 'raise RuntimeError(f"{what} ({path}) is there and cannot be read', 'return {} or RuntimeError(f"x',
+    ("v2.py", '        raise RuntimeError(f"{what} ({path}) is there and cannot be read: {e!r}. Nothing writes over it; move it "\n                           "aside only when you know what it should hold.") from e', '        return {}',
      "never_written_over", "a kept file that cannot be read"),
 ]
 bad = []

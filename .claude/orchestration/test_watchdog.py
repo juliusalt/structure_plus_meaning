@@ -282,6 +282,14 @@ class WatchdogTests(unittest.TestCase):
         self.said("w4", f"You've hit your limit · resets {hour_text(time.time() + 7200)}", ago=60, model="<synthetic>")
         self.run_watchdog()
         self.assertEqual(self.resumed("w4"), [])
+        # mail for it waits with it: resuming to hand mail over spends the resume on a turn that hits the limit
+        # again, while unread() has already emptied the box — it would be read by nobody (2026-09-21)
+        (self.w.state / "mail").mkdir(exist_ok=True)
+        (self.w.state / "mail" / "implement-4.jsonl").write_text(
+            json.dumps({"from": "plan-1", "text": "the order changed", "at": "t"}) + "\n")
+        self.run_watchdog()
+        self.assertEqual(self.resumed("w4"), [])
+        self.assertEqual([m["text"] for m in self.w.mail("implement-4")], ["the order changed"])
         said = time.time() - 3 * 3600
         self.said("w4", f"You've hit your limit · resets {hour_text(said + 3600)}", ago=3 * 3600, model="<synthetic>")
         self.w.hit("implement-4")

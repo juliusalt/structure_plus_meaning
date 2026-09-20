@@ -73,6 +73,9 @@ CASES = [
     ("v2.py", '    except KeyError:\n        return []      # it never started',
      '    except (KeyError, OSError):\n        return []      # it never started',
      "transcript_that_cannot_be_read", "a transcript that cannot be read"),
+    ("watchdog.py", '    if model == "<synthetic>" and re.search(r"hit your .*limit", said, re.I):\n        if time.time()',
+     '    if False and re.search(r"hit your .*limit", said, re.I):\n        if time.time()',
+     "usage_limit", "the limit before the mail"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

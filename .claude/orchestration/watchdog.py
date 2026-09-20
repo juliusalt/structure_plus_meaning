@@ -183,16 +183,19 @@ def care(name, s):
     if s["role"] == "kb":
         return  # v2.kb_care seals it when it has replied INTEGRATED
     model, said, at = last_reply(s["sid"])
+    # the limit first: a session stopped by it is not idle by choice, and resuming it to hand over mail spends the
+    # resume on a turn that hits the limit again while unread() has already emptied its box — the mail would be
+    # read by nobody. It stays there, and the gauge hands it over at the session's first tool call after the reset.
+    if model == "<synthetic>" and re.search(r"hit your .*limit", said, re.I):
+        if time.time() >= reset_epoch(said, at) + 90 and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
+            v2.resume(name, "You were stopped by the account's usage limit, which has now reset. Continue.")
+        return
     if s["state"] in v2.LIVE and v2.has_mail(name) and not v2.running_jobs(name):
         messages = v2.unread(name)
         if messages and not v2.resume(name, v2.mail_text(messages)):
             v2.keep_mail(name, messages)  # kept, each with its own sender; a session gone cold cannot take it
             if not v2.warm(name):
                 lost(name, "went cold before its mail reached it")
-        return
-    if model == "<synthetic>" and re.search(r"hit your .*limit", said, re.I):
-        if time.time() >= reset_epoch(said, at) + 90 and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
-            v2.resume(name, "You were stopped by the account's usage limit, which has now reset. Continue.")
         return
     if hard(s) and s["state"] in v2.LIVE:
         lost(name, "reached the end of its window")

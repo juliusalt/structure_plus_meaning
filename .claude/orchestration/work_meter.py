@@ -106,7 +106,7 @@ READS = re.compile(r"^\s*(?:cd\s+[^;&|]+&&\s*)?(?:sed\s+-n|cat|head|tail|grep|rg
                    r"|git\s+(?:show|log|diff|status|grep|blame)|(?:python3?\s+)?\S*show\.py)\b")
 CHECK = re.compile(r"probe_theories\.py|incremental_check\.py|isabelle\s+(?:build|ML_process|process)|tools/build\.py")
 WAIT = re.compile(r"\bsleep\s+(?:[2-9]|\d{2,}|\d+[smh])|\btail\s+-[a-zA-Z]*f\b|\bwatch\s|\b(?:until|while)\b[^;]*;\s*do\b[^;]*\bsleep\b")
-OWN = re.compile(r"\.claude/orchestration/v2\.py\b")
+RUNNERS = ("python", "python3", "sh", "bash", "env")
 # What the planner does not read: theory and code bodies, logs, and under .build anything but the tasks' documents.
 BODY = re.compile(r"\.(?:thy|ML|sml|py|sh|log|out|output)$|(?:^|/)(?:theories|tools)(?:/|$)|(?:^|/)\.build(?:/|$)(?!tasks/[^/]+/[^/]+\.md$)")
 CONTENT = {"cat", "sed", "head", "tail", "grep", "egrep", "fgrep", "rg", "awk", "nl", "less", "more", "bat", "diff",
@@ -133,6 +133,19 @@ def body(path, cwd=None):
     tree = cwd if cwd and os.path.exists(os.path.join(cwd, "ROOT")) else v2.PROJECT
     rel = os.path.relpath(full, tree)
     return bool(BODY.search(rel)) or rel == "." or full in (tree, v2.PROJECT)
+
+
+def own_command(command):
+    """Whether the command runs the harness's own v2.py, however the session writes the path: it is free of the
+    reading limits. The protocols give both `.claude/orchestration/v2.py result 4` and `v2.py park run`, and only
+    the first was recognised — so a session that wrote the short form had the one command that ends its turn
+    counted as reading, and refused once its budget was spent (2026-09-21). It is the command being run and not a
+    word in one: `grep v2.py HANDOFF.md` reads."""
+    for words in segments(shell_syntax(command)):
+        head = [os.path.basename(w.strip("'\"`")) for w in words[:2]]
+        if head[:1] == ["v2.py"] or (head[:1] and head[0] in RUNNERS and head[1:] == ["v2.py"]):
+            return True
+    return False
 
 
 def segments(command):
@@ -330,7 +343,7 @@ def kind(tool, inp):
         return "own"
     if tool == "Bash":
         c = inp.get("command") or ""
-        if OWN.search(c):
+        if own_command(c):
             return "own"
         if CHECK.search(c):
             return "check"

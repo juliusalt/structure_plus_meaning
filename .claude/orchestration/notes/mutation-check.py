@@ -58,6 +58,8 @@ CASES = [
      "the producing session's own stop reason"),
     ("ctx_gauge.py", '\n        blocked_again(session, rec, role)', '\n        None',
      "cannot_end_at_all", "the blocked-turn count"),
+    ("work_meter.py", 'if head[:1] == ["v2.py"] or (head[:1] and head[0] in RUNNERS and head[1:] == ["v2.py"]):',
+     'if ".claude/orchestration/v2.py" in command:', "rounds_since_production", "v2.py written short"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

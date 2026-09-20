@@ -60,6 +60,8 @@ CASES = [
      "cannot_end_at_all", "the blocked-turn count"),
     ("work_meter.py", 'if head[:1] == ["v2.py"] or (head[:1] and head[0] in RUNNERS and head[1:] == ["v2.py"]):',
      'if ".claude/orchestration/v2.py" in command:', "rounds_since_production", "v2.py written short"),
+    ("v2.py", 'if isinstance(e, OSError) and not os.path.exists(task_path(tid)):', 'if isinstance(e, OSError):',
+     "cannot_be_read_is_not_read", "a task file that cannot be read"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

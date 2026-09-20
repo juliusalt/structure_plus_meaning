@@ -177,6 +177,8 @@ START_MAX = 120  # a start claimed this long ago that has no session yet is aban
 RETRY = int(os.environ.get("ORCH_START_RETRY", 600))  # an unconfirmed start is tried again after this
 # The prompt cache lives an hour past its last hit (promptCacheTtl 1h): a session is warm while its last hit is younger
 # than WARM_MAX; a held session is pinged when its last hit is PING_AGE old.
+# How often a failure that would repeat on every call is said: the guard's, and a task file that cannot be read.
+GUARD_QUIET = int(os.environ.get("ORCH_GUARD_QUIET", 600))
 WARM_MAX = int(os.environ.get("ORCH_WARM_MAX", 3300))
 PING_AGE = int(os.environ.get("ORCH_PING_AGE", 2700))
 HOLD_PARK = int(os.environ.get("ORCH_HOLD_PARK", 3 * 3600))  # the owner's choice: a waiting implementer, 3 hours
@@ -1387,13 +1389,23 @@ def task_lock(tid):
 
 
 def read_task(tid):
+    """A task of the graph, or None when it is not in the list.
+
+    None is read everywhere as "the planner took it out": startable skips it, with_the_planner leaves it alone and
+    reconcile_stages names it to the planner as a conflict. So a file that is there and cannot be read must not
+    come back as one that is not there — it is tried again, and said, rather than turned into a statement about
+    the graph that is false (2026-09-21)."""
     for _ in range(3):  # a read can meet a write in progress
         try:
             return json.load(open(task_path(tid)))
-        except ValueError:
+        except (ValueError, OSError) as e:
+            if isinstance(e, OSError) and not os.path.exists(task_path(tid)):
+                return None
+            trouble = e
             time.sleep(0.05)
-        except OSError:
-            return None
+    if (age_of("task-unreadable") or GUARD_QUIET + 1) > GUARD_QUIET:
+        open(os.path.join(STATE, "task-unreadable"), "w").write(str(time.time()))
+        log(f"ATTENTION task {tid} is in the list and could not be read ({trouble!r}); it reads as not being there")
     return None
 
 

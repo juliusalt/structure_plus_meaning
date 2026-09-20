@@ -526,6 +526,24 @@ class PlanningTests(Flow):
                              env=self.w.env, capture_output=True, text=True).stdout.strip()
         self.assertEqual(out, "5")
 
+    def test_a_task_that_cannot_be_read_is_not_read_as_one_that_is_not_there(self):
+        # None means "the planner took it out" everywhere: startable skips it, with_the_planner leaves it alone and
+        # reconcile_stages names it to the planner as a conflict. A file that is there and unreadable must not turn
+        # into that statement in silence.
+        self.w.task("4")
+        os.rename(self.w.tasks / "4.json", self.w.tasks / "4.json.away")
+        (self.w.tasks / "4.json").mkdir()            # there, and no read of it can succeed
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.read_task('4'))"], env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(out.stdout.strip(), "None", out.stderr)
+        self.assertIn("task 4 is in the list and could not be read", (self.w.state / "v2.log").read_text())
+        (self.w.tasks / "4.json").rmdir()
+        os.rename(self.w.tasks / "4.json.away", self.w.tasks / "4.json")
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print((v2.read_task('4') or {}).get('id'), v2.read_task('77'))"],
+                             env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(out.stdout.strip(), "4 None", out.stderr)   # and one that is not there is still None
+
     def test_a_queued_task_that_is_not_in_the_list_is_no_longer_startable(self):
         # the planner's first message of 2026-09-20 said "startable now: 21 14"; task 21 had been dropped and was
         # not in the list at all. startable() read its blockers off a record that was not there, so an empty list of

@@ -1110,8 +1110,12 @@ def tree_trouble(tree=None):
     try:
         root = open(os.path.join(tree, "ROOT")).read()
         present = {f[:-4] for f in os.listdir(os.path.join(tree, "theories")) if f.endswith(".thy")}
-    except OSError:
+    except FileNotFoundError:
         return []  # no ROOT or no theories/: not a tree these terms are about, and nothing to say of it
+    except OSError as e:
+        # anything else — a permission, an I/O error — is not "this tree is fine", which is what [] is read as
+        log(f"ATTENTION the tree at {tree} could not be read, so nothing is said of it: {e!r}")
+        return []
     declared = THEORY_LINE.findall(root)
     listed = set(declared)
     for name in sorted({n for n in declared if declared.count(n) > 1}):

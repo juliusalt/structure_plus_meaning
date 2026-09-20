@@ -422,7 +422,10 @@ def stale_share(who):
                              capture_output=True, text=True, timeout=120,
                              env={k: v for k, v in os.environ.items() if k != "ORCH_LOAD_LIST"}).stdout
         return float(out.strip() or 0)
-    except (ValueError, OSError, subprocess.SubprocessError):
+    except (ValueError, OSError, subprocess.SubprocessError) as e:
+        # 0.0 reads as "nothing has changed", so the layer is never refreshed and health.py says 0% of a layer that
+        # may be wholly stale: the failure is said rather than shown as a measurement
+        v2.log(f"ATTENTION the stale share of the {who} layer could not be measured ({e!r}); it reads as 0%")
         return 0.0
 
 

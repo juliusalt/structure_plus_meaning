@@ -488,6 +488,22 @@ class HookWiringTests(unittest.TestCase):
         self.assertEqual(len(wired), 1, f"{settings} wires work_meter.py guard {len(wired)} times, not once")
         return wired[0]
 
+    def test_a_guard_that_fails_says_so_rather_than_letting_the_call_through_in_silence(self):
+        # it lets the call through by design; doing it silently is every limit and every refusal switched off with
+        # nothing to show for it, which is the PreToolUse matcher's fault in another form (2026-09-20)
+        w = fakes.World()
+        try:
+            w.session("implement-4", "implementer", "s1", task="4")
+            code, out, err = w.run("work_meter.py", "guard", stdin="not json at all")
+            self.assertEqual((code, out.strip()), (0, ""))      # the call goes through
+            self.assertIn("the guard failed and let the call through",
+                          (w.state / "v2.log").read_text())     # and it is said
+            before = (w.state / "v2.log").read_text().count("the guard failed")
+            w.run("work_meter.py", "guard", stdin="still not json")
+            self.assertEqual((w.state / "v2.log").read_text().count("the guard failed"), before)  # not every call
+        finally:
+            w.close()
+
     def test_the_settings_let_every_guarded_tool_reach_the_guard(self):
         for settings in ("planner-settings.json", "worker-settings.json"):
             matcher = self.matcher(settings)

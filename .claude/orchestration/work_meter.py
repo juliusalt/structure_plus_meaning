@@ -31,6 +31,7 @@ context); a Read only when the same lines were read with Read before, since Edit
 Read of it. A quick fix has its own budget: FIX_MINUTES minutes and FIX_ROUNDS rounds from its start.
 """
 import collections
+import contextlib
 import hashlib
 import shlex
 import json
@@ -53,6 +54,7 @@ READ_LINES = 2_000  # what a Read without a limit shows at most
 CHARS_PER_TOKEN = 2.5
 CODE = (".py", ".sh", ".ML", ".sml", ".js")
 COMMENTARY = {"text", "text_raw", "chapter", "section", "subsection", "subsubsection", "paragraph", "subparagraph"}
+GUARD_QUIET = int(os.environ.get("ORCH_GUARD_QUIET", 600))  # how often a failing guard is said
 SED = re.compile(r"""^sed\s+-n\s+(['"]?)(\d+),(\d+)p\1\s+(\S+)$""")
 CAT = re.compile(r"^cat\s+(\S+)$")
 HEAD = re.compile(r"^head\s+(?:-n\s*|-)(\d+)\s+(\S+)$")
@@ -349,7 +351,9 @@ def rounds_since(transcript, since, tool_use=None):
         with open(transcript, "rb") as f:
             f.seek(max(0, size - 4_000_000))
             lines = f.read().decode(errors="ignore").splitlines()
-    except OSError:
+    except OSError as e:
+        v2.log(f"ATTENTION a transcript could not be read, so nothing is counted since the last production "
+               f"({transcript}): {e!r}")
         return 0
     ids, current = set(), False
     for line in lines:
@@ -742,7 +746,15 @@ def main():
         return 2
     try:
         decision = guard(json.load(sys.stdin))
-    except Exception:  # a guard that fails lets the call through rather than block the work
+    except Exception as e:  # noqa: BLE001
+        # A guard that fails lets the call through rather than block the work — but silently, it is every limit and
+        # every refusal switched off with nothing to show for it, which is the fault of the PreToolUse matcher in
+        # another form. It is said, at most once a GUARD_QUIET, because this runs on every tool call of every
+        # session and a crashing guard would otherwise flood the log it is meant to be read in.
+        if (v2.age_of("guard-failed") or GUARD_QUIET + 1) > GUARD_QUIET:
+            with contextlib.suppress(OSError):
+                open(os.path.join(v2.STATE, "guard-failed"), "w").write(str(time.time()))
+            v2.log(f"ATTENTION the guard failed and let the call through: {e!r}")
         return 0
     if decision:
         print(json.dumps(decision))

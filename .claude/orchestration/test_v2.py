@@ -444,12 +444,17 @@ class PlanningTests(Flow):
         self.w.task("5", subject="done", status="completed", metadata={"kind": "build"})
         self.w.task("6", subject="after a finished one", metadata={"kind": "build"}, blockedBy=["5"])
         out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
-                              "print(v2.graph_shape()); print(v2.graph_shape(('build','fix')))"],
+                              "print(v2.graph_shape()); print(v2.graph_shape(('build','fix'))); "
+                              "print(v2.graph_shape(skip=['1']))"],
                              env=self.w.env, capture_output=True, text=True).stdout.split("\n")
         self.assertEqual(out[0], "(3, 3, 5)")   # 1, 2 and 6 can run; 4 waits two deep; 5 is done and counts for none
         # the chain is walked over every task and counted over the kinds asked for: filtering the walk by kind would
         # cut it at task 3, the review, and call a chain of 3 a chain of 1
         self.assertEqual(out[1], "(3, 3, 4)")
+        # `skip` leaves a task out of the WIDTH and still walks it for the depth: a task that came back to the
+        # planner has every blocker done and counted as concurrency though no slot can take it, and two of those
+        # would have held the width at the slots for ever and detained every brief (2026-09-20)
+        self.assertEqual(out[2], "(2, 3, 5)")
 
     def test_startable_agrees_with_what_the_dispatch_would_actually_start(self):
         # a report that names a task produce() would refuse is a message that lies: the stage is the harness's
@@ -493,6 +498,10 @@ class PlanningTests(Flow):
         said = self.as_("plan-1", "blockers", "3", "none")
         self.assertEqual(self.w.read_task("3")["blockedBy"], [])
         self.assertIn("startable as soon as it is queued", said)
+        # and it is the planner's: the task designer proposes its shape and does not set it
+        self.w.session("brief-9", "task-designer", "b9", task="9", settings="worker-settings.json")
+        self.assertIn("the graph's edges are the planner's", self.as_("brief-9", "blockers", "3", "1"))
+        self.assertEqual(self.w.read_task("3")["blockedBy"], [])
 
     def test_setting_what_a_task_waits_on_refuses_a_cycle_and_a_task_that_is_not_there(self):
         for tid in ("1", "2"):
@@ -580,7 +589,9 @@ class PlanningTests(Flow):
         self.w.task("5", subject="Its review")
         self.w.task("6", subject="A review still waiting")
         self.w.task("7", subject="Its subject, not yet finished")
-        self.w.set_st(queue=["5", "6"], tasks={"4": {"stage": "done", "kind": "build"},
+        # the list alone says 4 is finished; its harness stage still reads `ready`, which is the case the second
+        # half of the condition is there for
+        self.w.set_st(queue=["5", "6"], tasks={"4": {"stage": "ready", "kind": "build"},
                                                "5": {"stage": "ready", "kind": "review", "reviews": "4"},
                                                "6": {"stage": "ready", "kind": "review", "reviews": "7"},
                                                "7": {"stage": "ready", "kind": "build"}})

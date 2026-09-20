@@ -2540,9 +2540,10 @@ def returned_tasks():
         # offers one whose subject is `reviewing`. Tasks 23 and 47 stood `ready` in the queue that way, reviews of
         # 22 and 46, which the planner completed on taking stock — nothing would ever take them and nothing said so,
         # since a ready task with no open blocker is not in the standstill either (2026-09-20).
+        # only the stage: reconcile_stages runs first in the dispatch and has already set a completed task's stage
+        # to "done", so reading the list here as well was a second branch nothing could reach
         orphan = (stage == "ready" and t.get("kind") == "review"
-                  and ((peek()["tasks"].get(t.get("reviews") or "") or {}).get("stage") == "done"
-                       or (read_task(t.get("reviews") or "") or {}).get("status") == "completed"))
+                  and (peek()["tasks"].get(t.get("reviews") or "") or {}).get("stage") == "done")
         owed = tid in mine or (stage == "proposed" and t.get("proposal")) or stage == "unformed" or orphan
         if not owed:
             with contextlib.suppress(OSError):

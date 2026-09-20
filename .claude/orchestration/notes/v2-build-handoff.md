@@ -1052,3 +1052,56 @@ premise.
 
 **267 tests pass.** Still unexercised: `propose` → `accept`. Briefs are detained (width 3, 2 slots), so the first one
 may not run for a while, and the id-allocation question stands until it does.
+
+---
+
+# 2026-09-20 22:50 — the loop that could not be stopped, and its root
+
+The owner: *"It was looping not allowed to be stopped."* The session wrote the whole account itself, in
+`.build/trees/49/.build/tasks/49/obstruction.md`, and it is one fault with three faces.
+
+## What happened
+
+`fix-49.2` was started on task 49 and **captured into `.build/trees/49`** — a worktree left behind by the aborted
+first run of the day. `worktree_of()` read the directory alone and never consulted `TREES`, so with worktrees turned
+off a stale directory still took the session. `tree_text`, which does consult `TREES`, told it in the same message
+that it worked in the one tree.
+
+**A worktree is a checkout of the repository, so it carries its own `.claude/orchestration` — and `state/` is
+gitignored.** The session therefore ran a *parallel harness against a parallel state*: `.build/trees/49/.claude/
+orchestration/state/v2.json` exists, holds task 49 with its own `stage`, `spec_errors` and `fix_text`, and has no
+sessions at all. Everything it did — `finalize`, `result`, its commit message — went there.
+
+The real harness saw none of it. No `result of task 49` line was ever logged. The watchdog found the session
+unlisted (`session_row` matches by cwd) and declared it gone, handing task 49 back to the planner while the session
+was alive and working.
+
+And it could not end. `v2.py result 49` answered *"recorded. End your turn now."*; the Stop hook blocked the turn,
+because `may_end` returns False for a producing role unless the session record says otherwise — and the record
+saying so was in the other state. `ask`, `escalate` and `park` each refuse a session the harness treats as closed.
+It recorded its result twice, at 22:41 and 22:47, and was blocked each time.
+
+**The two notices telling the planner "the working tree is inconsistent" came from the same root**: `finalize.py`
+reads `tree_trouble(worktree_of(tid))`, so it inspected `.build/trees/46`, which lacks the untracked theories. It
+also **runs the check and makes the commit** in `worktree_of(tid)` — so a task would have been checked and committed
+from a stale branch. I had patched that message to name its tree; the cause was one function below.
+
+## Fixed
+
+- **`worktree_of` respects `TREES`.** A tree left on disk cannot capture its task while worktrees are off.
+- **`_one_tree()` resolves `PROJECT` and `STATE` to the main worktree** even when the harness copy sits inside a
+  linked one — a worktree's `.git` is a file naming the real one, so it costs a stat, not a git call. A captured
+  session now acts on the one state whatever else goes wrong.
+- **`may_end` takes the task's stage as a second witness**: once the harness has taken the work on (checking,
+  reviewing, committing, done, planner) the session may end, so the way out does not rest on one piece of
+  bookkeeping.
+
+Three tests, each checked against the unrepaired code. **273 pass.**
+
+## And a false alarm I should own
+
+I stopped the run believing the dispatch could start a task the planner had completed. It cannot: `task_state()`
+already sets a queued task's stage to `done` from the list before `produce()` reads it, and an unqueued task is never
+read at all. I proved it by running the unrepaired code — the completed task was not dispatched. What my change does
+add is real but smaller: `reconcile_stages` covers *unqueued* tasks, which is why 48 and 50 showed stale in the
+audit, and it names a completed task that is still running, which `task_state` does not.

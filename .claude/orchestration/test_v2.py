@@ -245,6 +245,39 @@ class StartTests(Flow):
         self.assertEqual(v2_first(self.w), "")
 
 
+    def test_a_copy_of_the_harness_in_a_worktree_acts_on_the_one_state(self):
+        # a worktree is a checkout of the repository, so it carries its own .claude/orchestration, and state/ is
+        # gitignored: v2.py run from there made a second, empty v2.json and acted on it. fix-49.2 recorded its
+        # finalize, its result and its whole account into that parallel state; the real harness saw none of it,
+        # declared the session gone and handed its task back to the planner (2026-09-20).
+        self.w.repository()
+        wt = self.w.project / ".build/trees/9"
+        self.w.git("worktree", "add", "-q", "-B", "task/9", str(wt), "HEAD")
+        here = wt / ".claude/orchestration"
+        here.mkdir(parents=True, exist_ok=True)
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              f"print(v2._one_tree({str(here)!r}))"],
+                             env=self.w.env, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(out, str(self.w.project))   # the one tree, not the worktree it sits in
+        self.assertTrue((wt / ".git").is_file())     # which is how it is told apart, without a git call
+
+    def test_a_tree_left_behind_does_not_capture_its_task_while_trees_are_off(self):
+        # worktree_of read the directory alone, so a tree left by an earlier run captured its task for ever after
+        # ORCH_TREES was turned off: fix-49.2's cwd was .build/trees/49, the tree the planner had declared
+        # discarded, while tree_text told it in the same message that it worked in the one tree. finalize.py runs
+        # the check and makes the commit there too, and tree_trouble read it — which is where the two notices saying
+        # "the working tree is inconsistent" came from (2026-09-20).
+        (self.w.project / ".build/trees/9").mkdir(parents=True, exist_ok=True)
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.worktree_of('9')); print(v2.tree_of({'task': '9'}))"],
+                             env=dict(self.w.env, ORCH_TREES="0"), capture_output=True, text=True).stdout.split("\n")
+        self.assertEqual(out[0], str(self.w.project))   # the one tree, whatever is left on disk
+        self.assertEqual(out[1], str(self.w.project))
+        on = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                             "print(v2.worktree_of('9'))"],
+                            env=dict(self.w.env, ORCH_TREES="1"), capture_output=True, text=True).stdout.strip()
+        self.assertTrue(on.endswith(".build/trees/9"))  # and with trees on it is the task's own
+
     def test_a_fresh_start_drops_the_events_it_supersedes(self):
         # an unhandled event is carried for ever, and two classes go false while they wait. plan-31 was given two
         # fresh charges, for two different runs, and two notices saying the working tree was inconsistent — of a
@@ -441,15 +474,36 @@ class PlanningTests(Flow):
         self.assertIn("no task 9 in the list", self.as_("plan-1", "blockers", "1", "9"))
         self.assertIn("refused: task 7 is not in the task list", self.as_("plan-1", "blockers", "7", "1"))
 
-    def test_a_stage_of_planner_follows_the_list_when_the_task_is_completed(self):
-        # the planner completes a task in the list and the harness's own stage never follows: tasks 5, 9 and 18 read
-        # as the planner's long after they were committed, and the standstill named all three to it (2026-09-20)
-        self.w.task("4", subject="Finished in the list", status="completed")
+    def test_a_stage_follows_the_list_when_the_task_is_completed(self):
+        # the planner completes a task in the list and the harness's own stage never followed: 5, 9 and 18 read as
+        # the planner's long after they were committed, and 48 and 50 stood at `ready` while the list called them
+        # done — one queue ordering away from a session started on finished work (2026-09-20)
+        self.w.task("4", subject="Finished, and the harness had it with the planner", status="completed")
         self.w.task("5", subject="Really back")
-        self.w.set_st(tasks={"4": {"stage": "planner"}, "5": {"stage": "planner"}})
+        self.w.task("6", subject="Finished, and the harness had it ready", status="completed")
+        self.w.set_st(tasks={"4": {"stage": "planner"}, "5": {"stage": "planner"},
+                             "6": {"stage": "ready", "kind": "build"}})
         self.w.v2("dispatch")
         self.assertEqual(self.t("4")["stage"], "done")
+        self.assertEqual(self.t("6")["stage"], "done")
         self.assertEqual(self.t("5")["stage"], "planner")  # genuinely with the planner: untouched
+
+    def test_nothing_the_list_calls_finished_is_dispatched(self):
+        # the reconciliation runs first, but the guard stands on its own: the stage is the harness's bookkeeping and
+        # the list is the graph, so a task the planner has completed is not started whatever the stage says
+        self.w.task("4", description=BRIEF, subject="Finished", status="completed")
+        self.w.set_st(queue=["4"], tasks={"4": {"stage": "ready", "kind": "build"}})
+        self.w.v2("dispatch")
+        self.assertEqual(self.forks("implement-"), [])
+        self.assertEqual(self.t("4")["stage"], "done")
+
+    def test_a_live_session_on_finished_work_is_a_conflict_the_planner_is_told_of(self):
+        # not bookkeeping to tidy: one of the two is wrong and only the planner can say which
+        self.w.task("4", description=BRIEF, subject="Finished while it ran", status="completed")
+        self.w.set_st(tasks={"4": {"stage": "running", "kind": "build", "session": "implement-4"}})
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("4")["stage"], "running")  # untouched
+        self.assertIn("completed in the task list and the harness has it running", self.heard())
 
     def test_a_drop_says_what_it_did_even_when_nothing_was_working(self):
         # "dropped nothing" was what it said when the drop had worked and no session was live (2026-09-20)

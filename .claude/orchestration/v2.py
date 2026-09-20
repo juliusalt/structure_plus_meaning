@@ -53,8 +53,33 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-PROJECT = os.environ.get("ORCH_PROJECT") or os.path.dirname(os.path.dirname(HERE))
-STATE = os.environ.get("ORCH_STATE_DIR") or os.path.join(HERE, "state")
+
+
+def _one_tree(here):
+    """The repository's one working tree, even when this copy of the harness sits inside a linked git worktree.
+
+    A worktree is a checkout of the repository, so it carries its own `.claude/orchestration` — and `state/` is
+    gitignored, so v2.py run from there makes a second, empty v2.json and acts on that. On 2026-09-20 fix-49.2 was
+    captured into `.build/trees/49` and recorded its finalize, its result and its whole account into that parallel
+    state: the real harness never saw any of it, declared the session gone, handed its task back to the planner, and
+    the session sat blocked by the worktree's own copy of the stop hook with no way to end its turn. A worktree's
+    `.git` is a file naming the real one, which is how this is told apart without spending a git call per tool."""
+    project = os.path.dirname(os.path.dirname(here))
+    dotgit = os.path.join(project, ".git")
+    try:
+        if os.path.isfile(dotgit):  # "gitdir: /…/<main>/.git/worktrees/<name>"
+            gitdir = open(dotgit).read().split(":", 1)[1].strip()
+            main = os.path.dirname(os.path.dirname(os.path.dirname(gitdir)))
+            if os.path.isdir(os.path.join(main, ".git")):
+                return main
+    except (OSError, IndexError):
+        pass
+    return project
+
+
+PROJECT = os.environ.get("ORCH_PROJECT") or _one_tree(HERE)
+# STATE follows the one tree too, not this copy's directory, for the same reason.
+STATE = os.environ.get("ORCH_STATE_DIR") or os.path.join(PROJECT, ".claude", "orchestration", "state")
 TRANSCRIPTS = os.environ.get("ORCH_TRANSCRIPTS") or os.path.expanduser(
     "~/.claude/projects/" + PROJECT.replace("/", "-").replace("_", "-"))
 LIST = os.environ.get("ORCH_TASK_LIST", "orchestration-graph")
@@ -1907,7 +1932,20 @@ def worktree(tid):
 
 
 def worktree_of(tid):
-    """The task's own working tree if it has one, else the one tree."""
+    """The task's own working tree if it has one and trees are on, else the one tree.
+
+    It read the directory alone, so a tree left behind by an earlier run captured its task for ever after
+    ORCH_TREES was turned off. On 2026-09-20 that put fix-49.2's cwd in `.build/trees/49` — the tree the planner had
+    declared discarded — while tree_text, which does consult TREES, told it in the same message that it worked in
+    the one tree. A session in a worktree is invisible to the harness (session_row matches by cwd, and the
+    transcripts resolve through PROJECT), which is why trees were turned off at all.
+
+    Everything downstream followed it: finalize.py runs the check and makes the commit in this tree, so a task would
+    have been checked and committed from a stale branch; and tree_trouble read it, which is where the two notices
+    telling the planner that "the working tree is inconsistent" came from — the shared tree was consistent
+    throughout and .build/trees/46 was not."""
+    if not TREES:
+        return PROJECT
     path = os.path.join(PROJECT, TREE_DIR, str(tid))
     return path if os.path.exists(path) else PROJECT
 
@@ -2037,9 +2075,11 @@ def produce():
             return
     failed = st.get("start_failed") or {}
     for tid in st["queue"]:
-        if read_task(tid) is None:
-            continue  # in the queue with no record in the list: nothing to brief a session from, and deps_done()
-            # reads no blockers off a task that is not there, so it would start for ever (2026-09-20: task 21)
+        task = read_task(tid)
+        if task is None or task.get("status") == "completed":
+            continue  # no record in the list: nothing to brief a session from, and deps_done() reads no blockers off
+            # a task that is not there, so it would start for ever. Completed: the planner has said the work is done
+            # and the stage is only the harness's own bookkeeping (2026-09-20: tasks 21, 48 and 50).
         with state() as w:
             t = dict(task_state(w, tid))
         if t.get("stage") != "ready" or t.get("kind") not in PRODUCING_KINDS or not deps_done(tid):
@@ -2209,9 +2249,10 @@ def support():
     for tid in st["queue"]:
         with state() as w:
             t = dict(task_state(w, tid))
-        if t.get("stage") == "ready" and t.get("kind") == "brief" and deps_done(tid):
+        live = (read_task(tid) or {}).get("status") not in (None, "completed")  # the list, not the stage, says
+        if live and t.get("stage") == "ready" and t.get("kind") == "brief" and deps_done(tid):
             briefs.append(tid)
-        ready = ready or (t.get("stage") == "ready" and t.get("kind") in PRODUCING_KINDS and deps_done(tid))
+        ready = ready or (live and t.get("stage") == "ready" and t.get("kind") in PRODUCING_KINDS and deps_done(tid))
     backlog = build_backlog()
     width, depth, _ = graph_shape(("build", "fix"), skip=with_the_planner(st))
     room = GRAPH_WIDTH or WORKERS_MAX
@@ -2427,6 +2468,39 @@ def with_the_planner(st):
     return out
 
 
+NOT_STARTED = ("ready", "planner", "unformed", None)  # stages from which a session has yet to be started
+
+
+def reconcile_stages():
+    """The task list is the graph and the planner writes it; the harness's stage is its own bookkeeping, and nothing
+    made it follow. A task the planner completes keeps whatever stage it had: on 2026-09-20 tasks 5, 9 and 18 read as
+    the planner's long after they were committed, and 48 and 50 stood at `ready` while the list called them done —
+    one queue ordering away from the dispatch starting a session on work that was finished. It runs before anything
+    dispatches, because produce() reads the stage and the reconciliation must have happened first.
+
+    A completed task that is *running* or finalizing is not healed but named: a live session on finished work is a
+    conflict the planner has to resolve, not bookkeeping to tidy."""
+    st = peek()
+    heal = [tid for tid, x in st["tasks"].items() if (x or {}).get("stage") in NOT_STARTED
+            and (read_task(tid) or {}).get("status") == "completed"]
+    if heal:
+        with state() as w:
+            for tid in heal:
+                w["tasks"][tid]["stage"] = "done"
+        log("the stage of " + ", ".join(sorted(heal)) + " followed the task list: they are completed")
+    for tid, x in sorted(st["tasks"].items()):
+        if (x or {}).get("stage") in NOT_STARTED + ("done",) or (read_task(tid) or {}).get("status") != "completed":
+            continue
+        if (age_of(f"finished-{tid}") or LOST_BLOCKER + 1) > LOST_BLOCKER:
+            open(os.path.join(STATE, f"finished-{tid}"), "w").write(str(time.time()))
+            with state() as w:
+                event(w, "the harness", f"Task {tid} is completed in the task list and the harness has it "
+                      f"{x.get('stage')}, with {x.get('session') or 'a session'} on it. One of the two is wrong: "
+                      "stop the work (`v2.py drop " + tid + "`) if it is done, or set the task back to pending if it "
+                      "is not.")
+            log(f"task {tid} is completed in the list and {x.get('stage')} in the harness")
+
+
 def returned_tasks():
     """A task given back to the planner (stage "planner") is moved by nothing else: no session takes it and no queue
     reaches it. Until 2026-09-20 the only thing that said so was standstill(), which is suppressed while anything
@@ -2437,16 +2511,6 @@ def returned_tasks():
     orchestration having nothing to do."""
     st = peek()
     mine = set(with_the_planner(st))
-    # The planner may complete a task in the list, and the harness's own stage never follows: on 2026-09-20 tasks 5,
-    # 9 and 18 read as the planner's long after they were committed. Only `completed` is healed here — a task that is
-    # not in the list at all may be one a fixture or a session has yet to write, and the readers already leave it out.
-    stale = [tid for tid, x in st["tasks"].items() if (x or {}).get("stage") == "planner"
-             and (read_task(tid) or {}).get("status") == "completed"]
-    if stale:
-        with state() as w:
-            for tid in stale:
-                w["tasks"][tid]["stage"] = "done"
-        log("the stage of " + ", ".join(sorted(stale)) + " followed the task list: they are completed")
     for tid, t in sorted(st["tasks"].items()):
         mark = os.path.join(STATE, f"returned-{tid}")
         if tid not in mine:
@@ -2656,7 +2720,7 @@ def dispatch_once():
     st = peek()
     if not st["active"] or os.path.exists(os.path.join(STATE, "stopped")):
         return
-    for part in (tree_care, check_isolation, parking_care, fix_deadlock, efficiency_care, kb_care, produce, support,
+    for part in (reconcile_stages, tree_care, check_isolation, parking_care, fix_deadlock, efficiency_care, kb_care, produce, support,
                  quick_fix, tidied,
                  consult, returned_tasks, proposals_waiting, held_graph, standstill, plan):  # before plan: what they say reaches it now
         try:  # one part that fails does not hold up the others; it is logged, and tried again at the next dispatch

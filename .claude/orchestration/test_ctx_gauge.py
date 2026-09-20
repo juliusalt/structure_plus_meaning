@@ -57,6 +57,17 @@ class GaugeTests(unittest.TestCase):
         with open(self.w.state / "mail" / f"{name}.jsonl", "a") as f:
             f.write(json.dumps({"from": "the planner", "text": text, "at": "t"}) + "\n")
 
+    def test_a_producing_session_whose_work_was_taken_on_may_end_its_turn(self):
+        # `v2.py result` answers "End your turn now" and this hook blocked it, while ask, escalate and park each
+        # refuse a session the harness treats as closed: fix-49.2 sat in that loop on 2026-09-20, recording its
+        # result twice, because the record saying it was done had gone into a worktree's parallel state. The task's
+        # stage is the second witness, so the way out does not rest on one piece of bookkeeping.
+        self.w.set_st(tasks={"4": {"stage": "running", "session": "implement-4"}})
+        self.assertIn("Your turn ends only when your piece of work has ended", self.stop("w4"))
+        for stage in ("checking", "reviewing", "committing", "done", "planner"):
+            self.w.set_st(tasks={"4": {"stage": stage, "session": "implement-4"}})
+            self.assertIsNone(self.stop("w4"), f"still blocked at stage {stage}")
+
     def test_the_notice_comes_once_near_the_end_by_role_and_the_hard_mark_after(self):
         self.assertNotIn("near the end", self.gauge("p1", ctx_gauge.SOFT - 5000))
         text = self.gauge("p1", ctx_gauge.SOFT + 1000)

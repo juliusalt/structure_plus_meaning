@@ -162,7 +162,13 @@ def may_end(role, rec):
         # mail is taken above, so there is nothing left when this is reached. An episode the owner opened waits for
         # the owner's words between turns.
     if role in v2.PRODUCING:
-        return False  # a producing session never waits holding the producing slot: it goes on, or it parks (v2.py park)
+        # A producing session never waits holding the slot: it goes on, or it parks. But once its work has been
+        # taken on by the harness there is nothing left to produce, and if the session record has not been updated
+        # to say so there is no way out at all — `v2.py result` answers "End your turn now", this hook blocks it,
+        # and ask, escalate and park each refuse a session the harness treats as closed. fix-49.2 sat in that loop
+        # on 2026-09-20, recording its result twice, because its result had gone into a worktree's parallel state.
+        # The task's stage is the second witness, so the way out does not rest on one piece of bookkeeping.
+        return (v2.peek()["tasks"].get(rec.get("task") or "") or {}).get("stage") not in ("running", "fixing", None)
     if v2.running_jobs(rec["name"]):
         return True  # it waits for its own background job: the job's completion runs its turn
     return any(q["from"] == rec["name"] and q["state"] != "answered" for q in v2.peek()["asks"].values())

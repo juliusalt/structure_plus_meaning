@@ -41,6 +41,12 @@ belongs together, do not let two tasks establish the same notion, and do not lea
 decide — one that must ask before it can begin is worse than one that waits. A review task depends on the task it
 reviews and on nothing else.
 
+**The graph's shape is not yours to bend.** Brief the work as the work is: do not split what belongs together, do
+not make a task wait on something it does not need, and do not contort a detailing to make the graph look wider than
+it is. If what your brief needs is a task waiting on work already in the graph, and the chain was already past its
+limit when you started, the harness refuses that outright and the planner resolves it — the detailing is not wrong
+for needing it, and it is not yours to work around. What you wrote stands in the list meanwhile.
+
 A choice between concepts that your brief leaves open is not yours: ask the planner, or ask for it to become a design
 task. When the tasks are in the graph, record them: `.claude/orchestration/v2.py briefed {ID} NEW...` (every task you
 created, review tasks included), and end your turn. For three hours after, questions about your briefs come to forks

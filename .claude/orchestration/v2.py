@@ -110,8 +110,19 @@ LOST_BLOCKER = 3600  # how often a task waiting for a blocker that is not there 
 TREE_TOLD = 900  # how often the same trouble in the same tree is put to the planner again
 TIDY_EVERY = int(os.environ.get("ORCH_TIDY_EVERY", 3600))  # how often state nothing names is swept
 WOKEN_KEEP = int(os.environ.get("ORCH_WOKEN_KEEP", 86400))  # a wake mark, for attach.sh to read
-BRIEF_BACKLOG = int(os.environ.get("ORCH_BRIEF_BACKLOG", 6))  # open build and fix tasks past which no brief is detailed:
-# a brief task is the graph's multiplier (one turned into 26 tasks on 2026-09-20), and the supporting slot detailing work while the builders are blocked makes the queue diverge from what they can consume (the owner, 2026-09-20)
+BRIEF_BACKLOG = int(os.environ.get("ORCH_BRIEF_BACKLOG", 60))  # a ceiling on open build and fix tasks: the blow-up
+# guard alone. It was 6 and counted what EXISTS, so 17 open tasks detained every brief while only 5 of them could
+# start — and a brief is what widens a graph. What a brief is admitted by is now the width (GRAPH_WIDTH), and what it
+# may add is bounded by the depth (GRAPH_DEPTH). The count stays only to stop an unbounded graph.
+GRAPH_WIDTH = int(os.environ.get("ORCH_GRAPH_WIDTH", 0))  # 0: the slots. A brief is detailed while the build and fix
+# work that can START is below this — the graph is starving concurrency and a brief is what widens it — and detained
+# once there is already as much independent work as there are slots to take it (the owner, 2026-09-20).
+GRAPH_DEPTH = int(os.environ.get("ORCH_GRAPH_DEPTH", 6))  # the longest chain of open tasks past which a brief may add
+# only at the START of the scheduling chain. Taken once, when the brief starts: a brief that begins under the limit
+# adds what its work needs, without limit, rather than being halted half-drawn. One begun above it may still add work
+# that runs first — a correction, a prerequisite, anything that widens — and is returned to the planner if it hangs
+# more work off the end instead. The planner itself is informed and never refused: a graph it has understood to be
+# wrong is its to fix (the owner, 2026-09-20).
 WORKERS_MAX = int(os.environ.get("ORCH_WORKERS", 2))  # sessions working at once, over the producing, supporting
 # and consultation slots: the owner's choice of 2026-09-20. At 1 a finished task waited to be reviewed and a question
 # to the knowledge base waited for a gap in production, which is where the serialization actually hurt. It is not what
@@ -2046,9 +2057,10 @@ def start_brief(tid):
         "task-designer", NAME=name, ID=tid, SUBJECT=task.get("subject", ""), BRIEF=(task.get("description") or "").strip(),
         WHY=(task.get("metadata") or {}).get("why", "-"), GRAPH=graph_text(), LIST=LIST,
         STALE=stale_of(name, base_record("xhigh")[0] or "max")), task=tid)
+    depth = graph_shape()[1]  # taken once: a brief that begins under the limit is not halted half-drawn
     with state() as w:
         if name:
-            w["tasks"][tid].update(stage="running", session=name, role="task-designer")
+            w["tasks"][tid].update(stage="running", session=name, role="task-designer", depth_at_start=depth)
     if name:
         update_task(tid, status="in_progress", owner=name)
     return name
@@ -2101,6 +2113,45 @@ def startable(st=None):
     return out
 
 
+def kind_of(task):
+    """A task's kind, from its metadata or its brief."""
+    return (task.get("metadata") or {}).get("kind") or field(task.get("description", ""), "Kind")
+
+
+def graph_shape(kinds=None):
+    """(width, depth, open) of the task graph as it is drawn, over the tasks that are not completed.
+
+    width  — how many of them have every blocker completed: the work that could run at all, which is what
+             concurrency is made of. Not startable(), which also asks whether a task is queued and in form.
+    depth  — the longest chain of open tasks: how many turns of the producing slot the last of them waits for.
+
+    The two say what a count of open tasks cannot. On 2026-09-20 the graph held 33 open tasks, 17 of them build or
+    fix, and every brief was detained because 17 >= 6 — while its width was 8 and only 5 of those 17 could start at
+    all, and its depth was 20, one task wide for 14 of those levels. Counting what exists detains the very work that
+    would have widened it; counting what can run says the opposite, and says it for the right reason."""
+    tasks = {t["id"]: t for t in all_tasks()}
+    # The chain is walked over every open task and only counted over the kinds asked for: a build task waits on the
+    # review of the build before it, so filtering the walk by kind cuts the chain at every review and reports a
+    # depth of 3 for one that is 20 long.
+    every = {k: v for k, v in tasks.items() if v.get("status") != "completed"}
+    blocked = {k: [b for b in (v.get("blockedBy") or []) if (tasks.get(b) or {}).get("status") != "completed"]
+               for k, v in every.items()}
+    open_ = {k: v for k, v in every.items() if kinds is None or kind_of(v) in kinds}
+    seen = {}
+
+    def chain(tid, path=()):  # a cycle cannot lengthen a chain, and the graph is not trusted to be free of them
+        if tid in seen:
+            return seen[tid]
+        if tid in path or (tasks.get(tid) or {}).get("status") == "completed":
+            return 0
+        seen[tid] = 1 + max([chain(b, path + (tid,)) for b in blocked.get(tid, ())], default=0)
+        return seen[tid]
+
+    return (sum(1 for k in open_ if not blocked[k]),
+            max([chain(k) for k in open_], default=0),
+            len(open_))
+
+
 def build_backlog(st=None):
     """The build and fix tasks that are not completed: what the one producing slot has still to do."""
     return [x["id"] for x in all_tasks() if x.get("status") != "completed"
@@ -2126,11 +2177,15 @@ def support():
             briefs.append(tid)
         ready = ready or (t.get("stage") == "ready" and t.get("kind") in PRODUCING_KINDS and deps_done(tid))
     backlog = build_backlog()
-    if briefs and len(backlog) >= BRIEF_BACKLOG:
-        if age_of(f"brief-held") is None or age_of("brief-held") > 900:
+    width, depth, _ = graph_shape(("build", "fix"))
+    room = GRAPH_WIDTH or WORKERS_MAX
+    why = (f"{width} build and fix tasks can start and there are {room} slots to take them" if width >= room else
+           f"{len(backlog)} build and fix tasks are open, past the ceiling of {BRIEF_BACKLOG}"
+           if len(backlog) >= BRIEF_BACKLOG else "")
+    if briefs and why:
+        if age_of("brief-held") is None or age_of("brief-held") > 900:
             open(os.path.join(STATE, "brief-held"), "w").write(str(time.time()))
-            log(f"no brief is detailed while {len(backlog)} build and fix tasks are open (at most {BRIEF_BACKLOG}): "
-                f"{', '.join(briefs)} wait for the builders")
+            log(f"no brief is detailed while {why}: {', '.join(briefs)} wait")
         briefs = []
     if briefs and (not ready or not reviews):
         start_brief(briefs[0])
@@ -3079,6 +3134,43 @@ def cmd_result(tid):
         if open_asks else "")
 
 
+def added_to_the_end(bid, new):
+    """Of the tasks a brief wrote, those that hang off the END of the scheduling chain: ones waiting on a task that
+    was already there and is not finished. A task waiting only on the brief's own new tasks is not one of them — it
+    is inside the group, which is how a review task waits on the build it reviews — and a task waiting on nothing
+    open is at the start, and is what widens the graph."""
+    tasks = {t["id"]: t for t in all_tasks()}
+    fresh = set(new) | {bid}
+    return sorted(t for t in new
+                  if any(b not in fresh and (tasks.get(b) or {}).get("status") != "completed"
+                         for b in ((tasks.get(t) or {}).get("blockedBy") or [])))
+
+
+def returned_for_depth(bid, new, at_end, depth):
+    """The detailing this brief needed is not admissible while the chain stands where it does, and that is not the
+    task designer's to work around: it is rejected outright and the planner resolves it. A brief is not asked to
+    contort its work to fit a bound — a detailing bent to satisfy the harness is worse than one that waits — so
+    nothing here suggests re-shaping. What it wrote stands in the list, unqueued; the planner keeps what belongs,
+    points the rest elsewhere (`v2.py blockers`) or abandons it (the owner, 2026-09-20)."""
+    with state() as w:
+        w["tasks"].setdefault(bid, {})["stage"] = "planner"
+        event(w, "the harness", f"Brief task {bid} is yours to resolve. Its detailing needs {', '.join(at_end)} to "
+              f"wait on work that was already in the graph, and the chain was {depth} tasks deep when the brief "
+              f"started (at most {GRAPH_DEPTH}): more work hung off that end is refused, and the detailing is not "
+              "wrong for needing it. So the graph is what has to give. Its tasks stand in the list "
+              f"({', '.join(new)}) and none is queued: keep what belongs, point what can run first at the start "
+              "(`v2.py blockers ID ...`, `none` for nothing), abandon what the graph no longer needs, or shorten the "
+              "chain these wait on. Nothing runs until you queue it.")
+    log(f"brief {bid} needs {len(at_end)} task(s) on the end of a chain {depth} deep: refused, and the planner has it")
+    kick()
+    return (f"refused, and the planner has it: this detailing needs {', '.join(at_end)} to wait on work already in "
+            f"the graph, and the chain was {depth} deep when this brief started (at most {GRAPH_DEPTH}). That is the "
+            "graph's problem and not your brief's — do not re-shape the detailing to fit it, and do not split what "
+            "belongs together. What you wrote stands in the list. Record your result (`v2.py result " + bid + "`) "
+            "with what you briefed and why each task waits on what it does, so the planner can resolve it, and end "
+            "your turn.")
+
+
 def cmd_briefed(bid, new):
     """The task designer of brief task bid has put its tasks into the graph: each in form, every build or fix with a
     review task naming it; they are queued after the brief task, which is done."""
@@ -3104,6 +3196,10 @@ def cmd_briefed(bid, new):
             problems.append(f"review task {r} reviews {t}, which is not in the task list")
     if problems:
         return "refused: the briefs are not in form:\n- " + "\n- ".join(problems)
+    at_end = added_to_the_end(bid, new)
+    depth = (peek()["tasks"].get(bid) or {}).get("depth_at_start")
+    if at_end and depth is not None and depth >= GRAPH_DEPTH:
+        return returned_for_depth(bid, new, at_end, depth)
     by = (c or {}).get("name")
     with state() as st:
         for t, b in briefs.items():
@@ -3614,8 +3710,16 @@ def cmd_status():
                + ("" if len(ready) > 1 else " — nothing else can start while what runs is parked or checking; only a "
                   "wider graph changes that"))
     backlog = build_backlog(st)
-    out.append(f"build backlog: {len(backlog)} open build and fix tasks of at most {BRIEF_BACKLOG}"
-               + ("; no brief is detailed until the builders have taken some" if len(backlog) >= BRIEF_BACKLOG else ""))
+    width, depth, _ = graph_shape(("build", "fix"))
+    room = GRAPH_WIDTH or WORKERS_MAX
+    out.append(f"graph: {width} build and fix tasks can start, {room} slots to take them; the chain is {depth} deep "
+               f"(at most {GRAPH_DEPTH} before a brief may add only at its start); {len(backlog)} open of at most "
+               f"{BRIEF_BACKLOG}"
+               + ("; no brief is detailed while there is already as much independent work as there are slots — one "
+                  "is admitted again when the slots have taken what can start, and a brief is what widens a graph "
+                  "rather than what drains it" if width >= room else "")
+               + ("; a brief that starts now may add work that runs first and not more work hung off the end, and is "
+                  "returned to you if it does" if depth >= GRAPH_DEPTH else ""))
     parked = [f"{tid} ({int(time.time() - t['parked']['since']) // 60} min, after {t['parked'].get('after') or '?'})"
               for tid, t in st["tasks"].items() if t.get("stage") == "parked"]
     if parked:

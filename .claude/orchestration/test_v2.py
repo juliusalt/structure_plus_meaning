@@ -361,6 +361,23 @@ class PlanningTests(Flow):
         st = self.w.st()
         self.w.set_st(events=st["events"] + [{"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": sender, "text": text}])
 
+    def test_the_graphs_shape_is_what_can_run_and_how_long_the_chain_is(self):
+        # a count of open tasks says neither: on 2026-09-20 the graph held 17 open build and fix tasks, which
+        # detained every brief, while only 5 of them could start at all and the chain was 19 deep
+        self.w.task("1", subject="free", metadata={"kind": "build"})
+        self.w.task("2", subject="free too", metadata={"kind": "build"})
+        self.w.task("3", subject="reviews 1", metadata={"kind": "review"}, blockedBy=["1"])
+        self.w.task("4", subject="after the review", metadata={"kind": "build"}, blockedBy=["3"])
+        self.w.task("5", subject="done", status="completed", metadata={"kind": "build"})
+        self.w.task("6", subject="after a finished one", metadata={"kind": "build"}, blockedBy=["5"])
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.graph_shape()); print(v2.graph_shape(('build','fix')))"],
+                             env=self.w.env, capture_output=True, text=True).stdout.split("\n")
+        self.assertEqual(out[0], "(3, 3, 5)")   # 1, 2 and 6 can run; 4 waits two deep; 5 is done and counts for none
+        # the chain is walked over every task and counted over the kinds asked for: filtering the walk by kind would
+        # cut it at task 3, the review, and call a chain of 3 a chain of 1
+        self.assertEqual(out[1], "(3, 3, 4)")
+
     def test_a_queued_task_that_is_not_in_the_list_is_no_longer_startable(self):
         # the planner's first message of 2026-09-20 said "startable now: 21 14"; task 21 had been dropped and was
         # not in the list at all. startable() read its blockers off a record that was not there, so an empty list of
@@ -1541,25 +1558,27 @@ class SupportTests(Flow):
         self.w.v2("dispatch", env=dict(self.w.env, ORCH_WORKERS="1"))
         self.assertEqual(len(self.forks("review-") + self.forks("brief-")), 1)  # one, and only one
 
-    def test_no_brief_is_detailed_while_the_builders_have_a_full_queue(self):
-        # one brief task turned into 26 tasks while a single producing slot finished one build in a day; the graph's
-        # multiplier is capped at what the builders can consume (the owner, 2026-09-20)
-        for i in range(v2.BRIEF_BACKLOG):
+    def test_no_brief_is_detailed_while_the_slots_already_have_independent_work(self):
+        # one brief task turned into 26 tasks while a single producing slot finished one build in a day. The cap was
+        # on tasks that EXIST, which detained every brief while only 5 of 17 could start (2026-09-20): it is on the
+        # work that can START, because a brief is what widens a graph rather than what drains it (the owner).
+        for i in range(3):
             self.w.task(f"5{i}", description=BRIEF, subject=f"A build {i}")
+        self.w.task("1", blockedBy=["50"])  # the fixture's own build task, out of the width
         self.w.set_st(queue=["2"], tasks={"1": {"stage": "reviewing", "kind": "build", "session": "implement-1"}})
-        self.w.v2("dispatch")
-        self.assertEqual(self.forks("brief-"), [])  # nothing is detailed
+        self.w.v2("dispatch", env={"ORCH_GRAPH_WIDTH": "3"})
+        self.assertEqual(self.forks("brief-"), [])  # nothing is detailed: 3 can start and there are 3 slots
         log = (self.w.state / "v2.log").read_text()
-        self.assertIn("no brief is detailed while", log)
-        self.assertIn(f"(at most {v2.BRIEF_BACKLOG}): 2 wait for the builders", log)
-        self.assertIn(f"open build and fix tasks of at most {v2.BRIEF_BACKLOG}", self.w.v2("status"))
-        self.assertIn("no brief is detailed until the builders have taken some", self.w.v2("status"))
-        # as the builders take them, briefing resumes (with the review it did instead out of the way)
+        self.assertIn("no brief is detailed while 3 build and fix tasks can start and there are 3 slots", log)
+        status = self.w.v2("status", env={"ORCH_GRAPH_WIDTH": "3"})
+        self.assertIn("3 build and fix tasks can start, 3 slots to take them", status)
+        self.assertIn("one is admitted again when the slots have taken what can start", status)
+        # as the slots take them, briefing resumes (with the review it did instead out of the way)
         for i in range(2):
             self.w.task(f"5{i}", description=BRIEF, subject=f"A build {i}", status="completed")
         self.w.set_st(tasks={"1": {"stage": "done"}},
                       sessions={k: v for k, v in self.w.st()["sessions"].items() if not k.startswith("review-")})
-        self.w.v2("dispatch")
+        self.w.v2("dispatch", env={"ORCH_GRAPH_WIDTH": "3"})
         self.assertEqual(len(self.forks("brief-")), 1)
 
     def test_the_review_first_when_something_is_ready(self):
@@ -1592,6 +1611,78 @@ class SupportTests(Flow):
         self.assertEqual((st["tasks"]["5"]["review_tasks"], st["tasks"]["6"]["reviews"]), (["6"], "5"))
         self.assertEqual((st["tasks"]["2"]["stage"], self.w.read_task("2")["status"]), ("done", "completed"))
         self.assertEqual(st["tasks"]["5"]["briefed_by"], "brief-2")
+
+
+    def test_a_brief_begun_under_the_depth_limit_adds_what_its_work_needs(self):
+        # the check is taken once, when the brief starts: one begun under the limit is not halted half-drawn, and a
+        # review task waiting on the build it reviews is inside the group, never "the end of the chain"
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        self.assertLess(self.t("2")["depth_at_start"], v2.GRAPH_DEPTH)
+        self.w.task("5", description=BRIEF)
+        self.w.task("6", description=REVIEW_TASK.format(task="5"), blockedBy=["5"])
+        self.assertEqual(self.w.v2("briefed", "2", "5", "6", env=self.w.as_session(sid)), "briefed. End your turn now.")
+
+    def test_a_brief_begun_past_the_depth_limit_may_add_at_the_start_and_not_at_the_end(self):
+        # the graph of 2026-09-20 was 20 deep and one task wide for 14 levels, and briefs kept hanging more off its
+        # end. Past the limit a brief may still add work that runs first — that is what widens it — and is returned
+        # to the planner, not refused, if it adds to the end: what it wrote stands and the planner decides.
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        st = self.w.st()
+        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1   # as if the chain were already too long
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        # at the start: waits on nothing open, so it widens the graph — admitted
+        self.w.task("5", description=BRIEF)
+        self.w.task("6", description=REVIEW_TASK.format(task="5"), blockedBy=["5"])
+        self.assertEqual(self.w.v2("briefed", "2", "5", "6", env=self.w.as_session(sid)), "briefed. End your turn now.")
+
+    def test_a_brief_that_hangs_work_off_the_end_of_a_long_chain_goes_back_to_the_planner(self):
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        st = self.w.st()
+        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.task("5", description=BRIEF, blockedBy=["7"])       # 7 was already there and is not finished
+        self.w.task("6", description=REVIEW_TASK.format(task="5"), blockedBy=["5"])
+        said = self.w.v2("briefed", "2", "5", "6", env=self.w.as_session(sid))
+        # rejected outright, and the planner resolves it: the detailing is not asked to contort itself to fit the
+        # bound, because a brief bent to satisfy the harness is worse than one that waits (the owner, 2026-09-20)
+        self.assertIn("refused, and the planner has it", said)
+        self.assertIn("needs 5 to wait on work already in the graph", said)   # 6 waits on 5, inside the group
+        self.assertIn("do not re-shape the detailing to fit it", said)
+        self.assertEqual(self.t("2")["stage"], "planner")
+        self.assertNotIn("5", self.w.st()["queue"])                # nothing it wrote is queued
+        self.assertIn("Brief task 2 is yours to resolve", self.heard())
+        self.assertIn("the detailing is not wrong for needing it", self.heard())
+
+    def test_a_brief_is_admitted_when_the_graph_is_narrow_however_many_tasks_exist(self):
+        # seven open build tasks in one chain: the old rule detained every brief at six open, while only ONE of them
+        # could start — and a brief is what widens a graph, so the count suppressed the cure (2026-09-20)
+        ids = [str(n) for n in range(20, 27)]
+        for i, tid in enumerate(ids):
+            self.w.task(tid, description=BRIEF, metadata={"kind": "build"},
+                        blockedBy=[ids[i - 1]] if i else [])
+        self.w.task("1", blockedBy=["20"])   # the fixture's own build task, put in the chain so the width is ours
+        self.w.set_st(queue=["2"], tasks={**{tid: {"stage": "ready", "kind": "build"} for tid in ids},
+                                          "2": {"stage": "ready", "kind": "brief"}})
+        self.w.v2("dispatch", env={"ORCH_GRAPH_WIDTH": "2"})
+        self.assertEqual(len(self.forks("brief-")), 1)   # width is 1 of 2: the graph needs widening, not draining
+
+    def test_a_brief_is_detained_once_there_is_as_much_independent_work_as_slots(self):
+        for tid in ("20", "21"):                          # two that can start at once, and two slots
+            self.w.task(tid, description=BRIEF, metadata={"kind": "build"})
+        self.w.task("1", blockedBy=["20"])   # the fixture's own build task, out of the width
+        self.w.set_st(queue=["2"], tasks={"20": {"stage": "ready", "kind": "build"},
+                                          "21": {"stage": "ready", "kind": "build"},
+                                          "2": {"stage": "ready", "kind": "brief"}})
+        self.w.v2("dispatch", env={"ORCH_GRAPH_WIDTH": "2"})
+        self.assertEqual(self.forks("brief-"), [])
+        log = (self.w.state / "v2.log").read_text()
+        self.assertIn("2 build and fix tasks can start and there are 2 slots", log)  # said in shape, not in a count
 
 
 class ReviewTaskTests(Flow):

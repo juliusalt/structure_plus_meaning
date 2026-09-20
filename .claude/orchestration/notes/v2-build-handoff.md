@@ -830,3 +830,78 @@ graph rather than trusting them: every message *sent* to the planner, "task N is
 now" against each task's blockers, tree claims against the tree actually named, queue phantoms, stage/list
 disagreement, sessions running under a hold, unread mail, and the guard's refusals. It found nothing false in this
 run.
+
+---
+
+# 2026-09-20 21:55 — the graph is admitted by its shape, not by a count
+
+The owner, on why plan-30 created work that could never start: *"It added brief tasks which will never get executed
+as we added a limit to the number of tasks … that is clearly flawed also because one brief can make 10s of tasks
+which clearly are likely to be linearly dependent which would kill concurrency."*
+
+## What the old limit did
+
+`BRIEF_BACKLOG = 6` counted open build and fix tasks. Measured on the graph as it stood:
+
+| | |
+|---|---:|
+| open tasks | 33 |
+| width (every blocker completed — what can run) | 8 |
+| depth (longest open chain) | 20 |
+| build/fix open | 17 |
+| build/fix that could **start** | 5 |
+| slots | 2 |
+
+Seventeen tasks that *exist* detained every brief while **five** could run, and the chain was 20 long and one task
+wide for 14 of its levels. A brief is what *widens* a graph, so counting what exists suppressed the cure and measured
+the symptom. The planner was given the number (`16 open of at most 6`) and it told it nothing it could act on:
+"finish 11 more" is not an action when those eleven are a chain.
+
+## The rule now, as the owner set it
+
+**`graph_shape()`** gives width, depth and the count, over open tasks. The chain is walked over *every* open task and
+counted over the kinds asked for — filtering the walk by kind cuts it at every review task and calls a chain of 19 a
+chain of 3.
+
+- **A brief is admitted while what can start is below the slots** (`GRAPH_WIDTH`, 0 = the slots), and detained once
+  there is already as much independent work as there are slots to take it. `BRIEF_BACKLOG` survives only as a plain
+  ceiling (60) against unbounded growth.
+- **Depth has no maximum for work added at the start** of the scheduling chain — a task waiting on nothing open,
+  which is what widens the graph.
+- **Adding to the end is unlimited for a brief that began under `GRAPH_DEPTH`** (6). The depth is taken once, in
+  `start_brief`, so a brief is never halted half-drawn.
+- **A brief that began above it may not add to the end at all.** A task waiting only on the brief's own new tasks is
+  *inside the group*, not the end — which is how a review task waits on the build it reviews.
+- **The planner is never refused.** It may add work that runs first and re-point any edge whenever it judges what it
+  planned before to be wrong.
+
+## Rejected outright, and the planner resolves
+
+The owner: *"The key is not to ask it to do what it does not want to do, but rather if what it needs to do is illegal
+to reject it outright and ask the planner to resolve it."*
+
+So the task designer is **not** told to re-shape. A detailing bent to satisfy the harness is worse than one that
+waits, and the brief is not wrong for needing the work it needs — the graph is what has to give. `cmd_briefed`
+refuses, says so plainly (*"do not re-shape the detailing to fit it, and do not split what belongs together"*), and
+hands it to the planner with its tasks left standing in the list, unqueued. `protocols/task-designer.md` says the
+same before it starts: brief the work as the work is.
+
+The status carries the whole shape, so the planner reads the rule rather than a number:
+
+    graph: 5 build and fix tasks can start, 2 slots to take them; the chain is 19 deep (at most 6 before a brief may
+    add only at its start); 17 open of at most 60; no brief is detailed while there is already as much independent
+    work as there are slots — one is admitted again when the slots have taken what can start, and a brief is what
+    widens a graph rather than what drains it; a brief that starts now may add work that runs first and not more
+    work hung off the end, and is returned to you if it does
+
+**262 tests pass**, the three new rules checked against the unrepaired code. The old detention test now expresses the
+new rule rather than the count.
+
+## Watch on the next run
+
+- A width rule admits briefs for ever if the graph is permanently narrow; the ceiling is what stops that, and 60 is a
+  guess.
+- `GRAPH_DEPTH = 6` is the number the owner had already chosen for the backlog. The live chain is 19, so every brief
+  that starts now is in the add-at-the-start-only case — which is the intent, and worth seeing happen once.
+- A brief rejected this way costs a whole task-designer session. That is accepted: the alternative is a contorted
+  detailing.

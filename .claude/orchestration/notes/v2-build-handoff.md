@@ -76,3 +76,67 @@ Building now: the three bases (packed 470K, 519K, 524K), then seal, `start.sh`, 
 the ones measured from the v1 implementers.
 
 The owner, 2026-09-20, while the first tasks ran: do not build the layered bases now. The three bases stay whole; the xhigh and high frontiers are the ones measured from the v1 implementers, and refreshing them is a base rebuild, which is the owner's.
+
+---
+
+# Handoff, 2026-09-20 16:15 — the day the machinery was fixed, and what is left
+
+## Where it stands
+
+The orchestration is **stopped** (`v2.py stop`: inactive, every session sealed, nothing running). `start.sh` resumes
+it. The daemon is up and pings only the bases. All three bases were refreshed by hand at 16:09–16:10 and answered
+**OK** (99% reads); their miss counters are cleared. The working tree is consistent (`v2.tree_trouble()` → none).
+Everything of the harness is committed and pushed (`20f8ca98`, `173a025d`, `75fc63bf`, `b4a86baa`, `584ae4fc`,
+`cfc90eab`, `cc6087c6`, `c55eea9a`, `0ab7b7c8`); **188 tests pass** (`python3 -m pytest -q test_*.py` here).
+
+The tasks' own work is **uncommitted in the main tree** and whole: tasks 7, 22, 46, 48, 50. Task 7's batch is
+complete and wants only its acceptance check. 35 tasks are open, 15 of 50 done. Four commits of content landed today
+(`9bb1dd7a`, `6227819a`, `2edcabd3`, `91979be0`).
+
+## What changed, in one line each
+
+- **Nothing is taken out of the working tree.** `shelve`, `base_holds` and the ROOT-line surgery are gone; a task
+  that stops leaves its change whole. This closed the family that caused every blocking failure of the day.
+- **A tree invariant** (`v2.tree_trouble`) states what the checks refuse on — undeclared theory, declaration with no
+  theory, dangling import, merge markers, duplicates, a base advanced with a theory the tree lacks — reported where
+  it breaks, read by the finalizer before it spends a check, and shown by `health.py`.
+- **A worktree per producing task** (`ORCH_TREES=1`, on). Measured: a check inside one reused all 1,797 theories in
+  172.88 s. `.build` is linked; the link is excluded in `.git/info/exclude`. Index files merge by union
+  (`.gitattributes`), and what union gets wrong the invariant reports. A task whose work already stands in the one
+  tree keeps working there.
+- **Rate**: `ORCH_WORKERS=1` (every slot), episodes batched at 900 s with a 300 s floor, briefs held at a backlog of
+  six, base pings every 40 min against a 55-min entry.
+- Smaller: a stopped or stale background job no longer holds a session for ever; a check that cannot run costs no
+  round; a commit refuses another task's file or a draft's stand-in and closes the entry before it; an exclusive
+  claim names what holds it; a timing run takes the machine (`v2.py measuring`); an answer to an ended session is
+  written where the work reads it and `v2.py carried` clears it; `v2.py after … none` takes a dependency back;
+  mail survives a failed resume and is named when it reaches nobody; `manifest.py changed` answers about the
+  session's own tree; a blocker that is not in the task list is named.
+
+## What to do first
+
+1. `start.sh`. Watch `health.py` — it now states each base's last verdict, the trees standing, the build backlog and
+   any answer that reached nobody.
+2. The five tasks with work in the tree resume **in the one tree** (by design). Only new tasks get worktrees. When
+   they have landed, every producing task will have its own tree.
+3. Task 7 needs its acceptance check and nothing else.
+
+## What is not done
+
+- **`ORCH_WORKERS=1` gates every slot**, so while one session produces, no review, no episode and no consultation
+  starts. Not a stall — they run when it parks or ends — but a finished task waits to be reviewed. `ORCH_WORKERS=2`
+  restores a supporting session without undoing the episode batching.
+- **The worktree path has never run live.** It is tested (three tests) and measured, but no real task has worked in
+  one. Watch the first: its fork's cwd, its check, its commit-on-branch, and its merge.
+- **Union merges can resurrect a line one side deleted** — the invariant reports it, nothing prevents it.
+- **`.woken`, `state/base-pack-*`** are swept hourly; `state/mail/*.jsonl` of dead sessions are not.
+- A finalization holds its files while it checks, fixes and commits, and not while it is reviewed; an append in
+  flight at commit time is waited for (10 min) and only then refused.
+
+## How the search was done, and what is unsearched
+
+By failure *class*, not by incident: predicates wrong at their edges (a parked session counted as ended; `.hit`
+meaning "pinged" not "warm"); state that outlives its subject (markers, claims, shelves, mailboxes, worktrees);
+messages that lie; operations with no undo; things with no timeout or the wrong one. Unsearched: the guard's read
+limits and batching rules, the knowledge base's growth and condensation, the review protocol itself, and anything
+that only shows under real concurrency (`ORCH_WORKERS>1`), which nothing has exercised since the rate was set to one.

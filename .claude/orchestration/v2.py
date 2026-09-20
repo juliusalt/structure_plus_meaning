@@ -1555,7 +1555,12 @@ def deliverables_of(rec):
             b = {"deliverables": []}
         return {"deliverables": b.get("deliverables", []), "drafts": f".build/tasks/{tid}/", "task_tools": False}
     if role == "task-designer":
-        return {"deliverables": [], "drafts": f".build/tasks/{tid}/brief/", "task_tools": True}
+        # It proposes and no longer edits the graph, so TaskCreate and TaskUpdate are not its production — they are
+        # refused to it. Its proposal and its drafts under brief/ are, which is why the protocol names the proposal's
+        # path inside that directory: otherwise the one thing it produces would not count and its reads would be cut
+        # off after three requests with nothing able to restart the count (2026-09-20).
+        return {"deliverables": [f".build/tasks/{tid}/brief/proposal.json"],
+                "drafts": f".build/tasks/{tid}/brief/", "task_tools": False}
     if role == "reviewer":
         return {"deliverables": [f".build/tasks/{tid}/review.md"], "drafts": "", "task_tools": False}
     if role == "planner":

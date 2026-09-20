@@ -291,9 +291,13 @@ class RoleTests(Guarded):
         def record(tool, inp):
             return self.w.hook("ctx_gauge.py", "gauge", self.hook(tool, inp, {"stdout": ""}))[1]
         meter = lambda: json.loads((self.w.state / "work-s1.json").read_text())
+        # the task designer proposes and no longer edits the graph, so the task tools are not its production: its
+        # proposal, written where the protocol names it, is (2026-09-20)
         self.w.session("brief-2", "task-designer", "s1", task="2", settings="planner-settings.json")
         record("Bash", {"command": "true"})
-        record("TaskUpdate", {"taskId": "2", "description": "..."})
+        self.w.write(".build/tasks/2/brief/proposal.json", '[{"key": "a", "subject": "s", "description": "'
+                     + "word " * 45 + '"}]')
+        record("Write", {"file_path": ".build/tasks/2/brief/proposal.json"})
         self.assertEqual(meter()["productions"], 1)
         (self.w.state / "work-s1.json").unlink()
         self.w.set_st(sessions={})

@@ -176,10 +176,10 @@ def fill_pending_commit(files, tree=None):
     touching the file closes it. The hash is never guessed from the file's history: `git blame` follows the line's
     text, and a line restored to wording an earlier commit used is attributed to that commit, which once closed an
     entry with a commit carrying none of what it records (2026-09-20)."""
-    path, mark = os.path.join(tree, "DECISIONS.md"), os.path.join(v2.STATE, PENDING)
     if "DECISIONS.md" not in files:
         return []
-    tree = tree or v2.PROJECT
+    tree = tree or v2.PROJECT  # defaulted before it is joined: `path` was built from it one line too early
+    path, mark = os.path.join(tree, "DECISIONS.md"), os.path.join(v2.STATE, PENDING)
     try:
         pending = json.load(open(mark))
     except (OSError, ValueError):

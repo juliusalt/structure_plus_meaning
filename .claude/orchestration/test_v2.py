@@ -78,7 +78,12 @@ class FormTests(unittest.TestCase):
     def test_what_each_role_produces_and_reads(self):
         with patch.object(v2, "BUILD", "/nonexistent"):
             self.assertEqual(v2.deliverables_of({"role": "reviewer", "task": "4"})["deliverables"], [".build/tasks/4/review.md"])
-            self.assertTrue(v2.deliverables_of({"role": "task-designer", "task": "4"})["task_tools"])
+            # it proposes and no longer edits the graph: the task tools are refused to it, so its production is
+            # its proposal and its drafts under brief/ (2026-09-20)
+            self.assertFalse(v2.deliverables_of({"role": "task-designer", "task": "4"})["task_tools"])
+            self.assertEqual(v2.deliverables_of({"role": "task-designer", "task": "4"}),
+                             {"deliverables": [".build/tasks/4/brief/proposal.json"],
+                              "drafts": ".build/tasks/4/brief/", "task_tools": False})
             self.assertEqual(v2.deliverables_of({"role": "planner", "name": "plan-2"})["drafts"], ".build/plans/plan-2/")
             self.assertEqual(v2.deliverables_of({"role": "implementer", "task": "4"})["drafts"], ".build/tasks/4/")
         for role, statements in (("planner", True), ("task-designer", True), ("kb", True), ("implementer", False),

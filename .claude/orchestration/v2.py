@@ -2532,7 +2532,14 @@ def returned_tasks():
         # Three conditions, one period and one marker: a task nothing but the planner can clear. `unformed` was told
         # once, when task_state first read its brief, and then never again — the standstill does not list it either,
         # so a task whose brief is not in form simply never ran and nothing said so a second time (2026-09-20).
-        owed = tid in mine or (stage == "proposed" and t.get("proposal")) or stage == "unformed"
+        # A review task whose subject has finished without being reviewed can never start: pending_reviews only
+        # offers one whose subject is `reviewing`. Tasks 23 and 47 stood `ready` in the queue that way, reviews of
+        # 22 and 46, which the planner completed on taking stock — nothing would ever take them and nothing said so,
+        # since a ready task with no open blocker is not in the standstill either (2026-09-20).
+        orphan = (stage == "ready" and t.get("kind") == "review"
+                  and ((peek()["tasks"].get(t.get("reviews") or "") or {}).get("stage") == "done"
+                       or (read_task(t.get("reviews") or "") or {}).get("status") == "completed"))
+        owed = tid in mine or (stage == "proposed" and t.get("proposal")) or stage == "unformed" or orphan
         if not owed:
             with contextlib.suppress(OSError):
                 os.remove(mark)  # cleared: the next time it comes back is counted afresh
@@ -2545,6 +2552,14 @@ def returned_tasks():
         if since < RETURNED_AFTER or (age_of(f"returned-{tid}") or 0) < RETURNED_AFTER:
             continue
         os.utime(mark, None)
+        if orphan:
+            with state() as w:
+                event(w, "the harness", f"Review task {tid} has stood {int(since // 60)} minutes with nothing able "
+                      f"to start it: it reviews task {t.get('reviews')}, which is finished, and a review is only "
+                      "ever started for a task that is in review. Drop it, or set its subject back if the work "
+                      "still wants judging.")
+            log(f"review task {tid} cannot start: task {t.get('reviews')} is finished")
+            continue
         if stage == "unformed":
             with state() as w:
                 event(w, "the harness", f"Task {tid} has stood {int(since // 60)} minutes with its brief not in "

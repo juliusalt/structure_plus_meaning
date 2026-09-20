@@ -545,6 +545,32 @@ class PlanningTests(Flow):
         self.assertIn("implement-9 already waits", told)
         self.assertIn("parks for a task that cannot complete", told)
 
+    def test_a_review_whose_subject_has_finished_is_named_as_unable_to_start(self):
+        # pending_reviews only offers a review whose subject is `reviewing`, so one whose subject finished without
+        # being reviewed can never start. Tasks 23 and 47 stood `ready` in the queue that way, reviews of 22 and 46,
+        # which the planner completed on taking stock — and a ready task with no open blocker is not in the
+        # standstill either, so nothing said so (2026-09-20).
+        self.w.task("4", subject="Finished without a review", status="completed")
+        self.w.task("5", subject="Its review")
+        self.w.task("6", subject="A review still waiting")
+        self.w.task("7", subject="Its subject, not yet finished")
+        self.w.set_st(queue=["5", "6"], tasks={"4": {"stage": "done", "kind": "build"},
+                                               "5": {"stage": "ready", "kind": "review", "reviews": "4"},
+                                               "6": {"stage": "ready", "kind": "review", "reviews": "7"},
+                                               "7": {"stage": "ready", "kind": "build"}})
+        self.w.v2("dispatch")
+        for tid in ("5", "6"):
+            mark = self.w.state / f"returned-{tid}"
+            if mark.exists():
+                old_at = time.time() - v2.RETURNED_AFTER - 60
+                mark.write_text(str(old_at))
+                os.utime(mark, (old_at, old_at))
+        self.w.v2("dispatch")
+        told = self.heard()
+        self.assertIn("Review task 5 has stood", told)
+        self.assertIn("which is finished, and a review is only ever started for a task that is in review", told)
+        self.assertNotIn("Review task 6 has stood", told)   # its subject has not finished: it simply waits
+
     def test_a_brief_not_in_form_is_named_again_and_not_only_once(self):
         # task_state said it once, when it first read the brief, and never again; the standstill does not list an
         # unformed task either, so one simply never ran and nothing said so a second time (2026-09-20)

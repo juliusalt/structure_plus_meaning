@@ -1105,3 +1105,64 @@ already sets a queued task's stage to `done` from the list before `produce()` re
 read at all. I proved it by running the unrepaired code — the completed task was not dispatched. What my change does
 add is real but smaller: `reconcile_stages` covers *unqueued* tasks, which is why 48 and 50 showed stale in the
 audit, and it names a completed task that is still running, which `task_state` does not.
+
+---
+
+# 2026-09-21 00:30 — the loop's root, and a day's worth of what it was hiding
+
+Working through every facet with the run stopped. What follows is what was found, in the order it was found.
+
+## The loop the owner saw
+
+`fix-49.2` was captured into `.build/trees/49` because `worktree_of()` read the directory alone and never consulted
+`TREES`. A worktree carries its own `.claude/orchestration`, and `state/` is gitignored, so it ran **a parallel
+harness against a parallel state**. The real harness saw nothing of its finalize or its result, declared it gone,
+handed task 49 back to the planner — and it sat blocked by the worktree's own stop hook, recording its result twice
+and never able to end. Its own `obstruction.md` records the loop. The same root produced the two false "the working
+tree is inconsistent" notices, and would have made `finalize.py` **check and commit from a stale branch**.
+
+Three repairs: `worktree_of` respects `TREES`; `_one_tree()` resolves `PROJECT` and `STATE` to the main worktree even
+from a copy inside a linked one; `may_end` takes the task's stage as a second witness so the way out never rests on
+one piece of bookkeeping.
+
+## What else was wrong
+
+- **The task designer could not produce at all.** Taking its graph rights away left its production defined as
+  TaskCreate/TaskUpdate, which are refused to it, and a proposal is JSON, which `PRODUCED` excludes. It would have
+  been cut off after three requests with its proposal unwritten. Its deliverable is the proposal, named.
+- **`ctx_gauge`'s end-of-window instruction told it to run `v2.py briefed`**, gone — at the one moment a session
+  cannot afford a refusal. A test now asserts no message anywhere names a command that is not one.
+- **`task-designer.md` told it to run `v2.py blockers`**, which its own lost graph rights refuse. A test asserts a
+  role without graph rights is never told to run a graph command.
+- **Task ids were allocated above the files and not above `.highwatermark`**, which Claude Code allocates from — the
+  mark stood at 51 with task 52 written, so the next id would have been handed out twice and a task overwritten.
+- **`cmd_accept` was not atomic**: a failure part way left tasks with no edges, and placing again would write every
+  one a second time. It takes back what it wrote.
+- **A brief whose form is wrong was told once and never again**, and the standstill does not list an unformed task.
+- **A review whose subject finished without being reviewed can never start** — `pending_reviews` only offers one
+  whose subject is `reviewing`. Tasks 23 and 47 stand exactly so in the live graph, reviews of 22 and 46 which the
+  planner completed on taking stock, and a ready task with no open blocker is not in the standstill either.
+- `fill_pending_commit` joined `tree` into a path one line before defaulting it.
+- The two false tree notices were still being delivered to every new planner; `fresh_sweep` drops a superseded
+  charge and a tree-trouble notice whose tree is clean.
+
+The three conditions only the planner can clear — a task given back, a proposal not placed, a brief not in form —
+became one notice on one period, and the orphaned review is the fourth.
+
+## Searched and found sound
+
+`state()` is an exclusive flock around read-modify-write, writing nothing on an exception. The knowledge base bounds
+its load, its integration, its growth and a rebase, and puts its notes back when a resume fails. The finalizer waits
+for another task's append and then refuses rather than carrying it. propose → accept was driven against a sandboxed
+copy of the real 29-task graph: refusal for a further goal, admission when spliced, ids above the mark, local keys
+resolved, `feeds` wired. The whole-run walk now carries a brief through propose and accept.
+
+**279 tests pass.** The one dispatch fault the run was stopped for does not exist: `task_state` already healed a
+queued task's stage before `produce()` read it, proven by running the unrepaired code.
+
+## Where the state stands
+
+Stopped, daemon down, `no-launch` set. `.build/trees/46` and `/49` are gone and fix-49.2's stranded deliverable is
+back in the one tree, owned by task 49 — which therefore **holds the working tree while being with the planner**, so
+the first producing session after a restart parks until the planner deals with it. It is named after thirty minutes.
+Task 52 stands `unformed`; 23 and 47 are the orphaned reviews.

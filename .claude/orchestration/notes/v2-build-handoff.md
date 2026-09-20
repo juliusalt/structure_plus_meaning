@@ -1214,3 +1214,40 @@ tree clean afterwards.
 4. *Is this code reached at all?* Twice today the answer was no, and both times a green test covered it.
 
 **283 tests pass.**
+
+## 2026-09-21 01:30 — where it stands, and what a restart meets
+
+**285 tests pass.** Everything of the harness is committed and pushed.
+
+Found after the section above, all by asking whether two readings of one thing agree:
+
+- **The status, the roles' messages and the depth rule read three different figures.** The status showed the build
+  and fix depth (10) while `start_brief` records and `cmd_propose` compares the *whole* graph's (11), so the planner
+  was told a brief could still add a further goal while the rule would have refused it; and the task designer was
+  told a width of 2 against the status's 1, its message not skipping what no slot can take. `graph_figures()` is the
+  one definition now, and a test pins the agreement rather than the figures.
+- **The depth limit refused at its own value.** `depth >= GRAPH_DEPTH` against "at most 10" everywhere in words, and
+  the owner's rule is *above* the limit. The live chain stands at 10 for build and fix and 11 whole, so this was
+  about to matter.
+- **`startable` named the two orphaned reviews**, which `pending_reviews` will never offer: the figure the planner
+  reads as its graph's width was wider than anything would take.
+
+**The state a restart meets.** Stopped, daemon down, `no-launch` set, `state/stopped` written, nothing live. `kb-5`
+sealed. The graph is **not** held — plan-31 queued before it was stopped, so a restart runs the graph it accepted.
+
+    width 1, depth 11, limit 10, slots 2 | queue 29 | startable 14, 10, 13 (the three brief tasks)
+
+- **Task 49 holds the working tree and is with the planner.** Its deliverable — `native_control_plan.md`, the work
+  fix-49.2 did in the stale worktree — stands in the one tree, owned by it. Until the planner re-plans or finalizes
+  it, the first producing session is refused the tree and parks. It is named after thirty minutes, with the paths
+  and whoever waits.
+- **Task 52 stands `unformed`**, and 23 and 47 are the orphaned reviews. All three are named on the same period.
+- A brief would be admitted (width 1 of 2 slots) and, at depth 11 against a limit of 10, may add detail and work
+  that runs first but not a further goal. That is the first live exercise of `propose` → `accept`, which has run
+  only in the fake world and against a sandboxed copy of the real graph.
+- The max layer is 22% stale and the xhigh 12%: both refresh on the first watchdog pass.
+
+**A latent idiom, left alone deliberately.** Nine places read `(age_of(mark) or N + 1) > N`. An age of exactly `0.0`
+is falsy, so a marker written in the same instant reads as never written and the notice repeats. The probability is
+effectively nil and touching nine call sites to chase it is more risk than the fault; `tree_checked` uses the
+explicit form and the rest do not, which is the one inconsistency knowingly left in place.

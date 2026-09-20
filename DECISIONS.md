@@ -9281,7 +9281,7 @@ This entry reached the repository early, in commit `47dcda77`, which carries non
 `ROOT` entry, import or row it records; the finalizer no longer carries another task's uncommitted
 file, and the line below is closed with the commit that does carry them.
 
-Recorded 2026-09-20, commit `47dcda77`.
+Recorded 2026-09-20, commit `6227819a`.
 
 ## A refinement applies a notion; an index is one
 
@@ -9479,3 +9479,448 @@ that decides it remains an observation under the cost criterion of Q2. This entr
 outside the loop and is a residual.
 
 Recorded 2026-09-20, commit `524a3ab3`.
+
+## The development notions are structure; a kind is a family and an identity is a path
+
+The decomposition's schema matches on problems and the verdict, request construction and native
+answers read problems, requests, answers and packets. Both build lines ahead therefore range over
+these notions, and neither defines their presentation. Today they are HOL datatypes presented as
+trees of pairs with octet tags — the defect the owner named on 2026-09-19 — except where the
+readiness work already made keys and tables structure. This entry fixes the presentation before
+either build, on the principle #3 used for the state's rows: a kind is the family that holds a
+row, never a datum the row carries, and what no decision reads is carried inert and named.
+
+### The audit
+
+The criterion is settled ("A program's payload literals are the octets it reads"): a program's
+payload literals are exactly the octets it reads as structure, and every other octet is inert to
+it. It applies to programs. A presentation whose tags no program reads is not yet a use of octets
+as structure; it becomes one the moment a decision reads the tag, which is what the two builds
+ahead would do. So the audit has two parts: what the existing native definitions state, and what
+the existing presentations carry that a planned decision would have to read.
+
+**What the existing native definitions state.** Every native definition of a development notion
+that exists today states one payload literal, the empty payload, and no other.
+
+| Program | Payload literals | Read as structure |
+|---|---|---|
+| `Development_Native_Readiness.finite_native_readiness` (7 sites) | `[]` in `readiness_answered_rule` (an answered row's status), `[]` twice in `readiness_ready_rule` (an open row's status) | the empty payload alone: it ends a list, is an answered row's status, one bit's shape and the empty store |
+| `Native_Table_Reach.finite_native_reach` (4 sites) | `[]` in `reach_root_rule` | the same |
+| `Native_Collection_Programs` (member, every, some, keyed search) | `[]` in `native_every_nil` | the same |
+| `Native_Path_Stores` (store search) | `[]` (the empty store, a bit's shape) | the same |
+| `Development_Native_Selection`'s candidates | `[]` only: keys are `finite_path` (bits as shapes), statuses are leaf against pair-of-leaves, decompositions are pair-chains, the table is `finite_store` over `path_store` | the same |
+| `Factor_Finite_Development_Questions.finite_scope_program` under `development_selection_question` | the payload literals of the candidates it states, which are `[]` | the same |
+
+So the readiness line is clear: keys are paths of bits, tables are path stores, a status is a
+shape, and problems are compared only for equality through variables that occur twice. That is
+the pattern this entry extends, not a pattern it replaces.
+
+One existing native definition does read octets as structure, and it is not on the readiness line.
+`Filtered_Native_Questions.filtered_development_question` — the question by which every *contract*
+decision is made (`Development_Constant_Problems.development_constant_question`, and through it
+the seed's and the machinery's contract packets) — states its candidates as
+`finite_development_index n`, which is the binary presentation of a natural as **one payload of its
+digits** (`Finite_Binary_Values.finite_binary_natural_value`). The scope program states each
+candidate as an exact term pattern, so those digits are payload literals of the scope program and
+are, by the criterion, read as structure. The same datum has both presentations in the library
+already: `development_readiness_key` writes the same digits as a `finite_path`, a list of shapes.
+The packed form was chosen for size (`Finite_Binary_Values`: "It changes the presentation, not the
+path, the number or any reading"), which is exactly the owner's trap — a non-structural efficiency
+applied without being presented as an idea. Two things are wrong with it and only one of them is
+the octets: a candidate is also *a position in the list of subjects*, so the question is nominal by
+position as well.
+
+**The locus this entry assigns settles both.** A subject of a contract question is an entity of the
+constant's scope, which is a row of the state; the candidate that presents it is therefore that
+row's locus — the key #3's assignment already gives it, under the entity family's prefix — and not
+an index into a list. The position disappears with the payload, and the question comes to state
+paths of shapes, as the selection question already does. That is what task 14 takes from here; the
+rest its own brief decides. No build ahead of it may introduce a new use of the packed index.
+
+**What the existing presentations carry.** No native definition takes a problem, a request, an
+answer or a packet as its argument today, so their tags are at present inert carriage. Each row
+below names the tag, and the decision that would have to read it — which is why it cannot stay a
+tag.
+
+| Presentation | Octet literals it carries | The decision that would read it |
+|---|---|---|
+| `Development_Problems.development_origin_data` | six tags `[0]`–`[5]` | selection policy: an origin decides whether a problem is a residual to be discharged (Q2, and `development_residual_problems`) |
+| `development_authority_data` | three tags `[0]`–`[2]` | selection and admission: whether a problem is owner-level, which decides who may revise it (owner authority order); Q2's third criterion, whether a derived subproblem inherits its parent's authority |
+| `development_contract_data` | five tags `[0]`–`[4]` | the decomposition's schema (a refinement decomposes one way, a definition another) and the verdict of a kind (which readings are replaceable and which demanded) |
+| `problem_subject` through `isabelle_positions_data` | a payload of digits per position | request construction (support and least context from the constants the subject mentions) and the decomposition (the constants the answer needs) |
+| `Development_Requests.development_request_data` | the problem's tags, plus `isabelle_term_data`'s six term and three type tags and `isabelle_entity_data`'s six | the verdict reads the request's support and context; the decomposition reads its problem |
+| `Development_Native_Answers.development_native_answer_data` | `isabelle_entity_data`'s six tags; names as payloads of characters | the verdict reads which entities were removed and added, and of what kind |
+| `Development_Request_Packets` | none: the packet is not native content at all, but an ML rendering of the request into JSON through `Code_Evaluation.dynamic_value_strict` | every executor; stage 3's gate asks an executor to be confined to its packet |
+
+Two of these are already answered elsewhere and are consumed here, not re-decided. #3 settled the
+state's rows: a kind is the family that holds a row, so `isabelle_entity_data`'s six tags become
+six families and a statement is carried inert as its local presentation, invariant by
+`isabelle_local_entities_renamed`. `isabelle_term_data`'s tags stay, inside that inert statement,
+because no decision reads inside a statement (#3's line: reading which constant a term is an
+equation of is presentation, whose fidelity Isabelle verifies; the decision is native). What
+remains for this entry is the development notions' own tags: origin, authority, contract kind,
+subject, and the request, answer and packet built over them.
+
+### One notion: a row at a locus
+
+Problem, request, answer, issue and incumbent are not four or five notions to present side by
+side. They are one: **a row at a locus of the development's published state**. The library
+already says so in every place but its presentations. A locus is where at most one selection
+stands; publication is a transaction against the published state; the incumbent of a problem, the
+issue of its request and its admitted answer are already three generations recorded at loci
+(`development_problem_locus`, `development_issue_locus`, `development_incumbent_key`,
+`development_answer_key`). What was missing is that those loci are terms built by pairing a tag
+with a contract, so nothing native can find a row by its locus, and the roles are told apart by
+an octet (`development_issue_locus` prefixes `Finite_Payload [1]`).
+
+So the notion is: **a locus is a path, and a row is what the development's store holds at it.**
+Three consequences follow at once, and they are the whole design.
+
+**A locus is a path, and the store is a path store.** `Native_Path_Stores` already presents a
+path as a list of bits and a bit as a shape — the empty payload for one direction, a pair of
+empty payloads for the other — with `native_store_search_program` proving that a search holds
+exactly at a path the store holds a value at (`native_store_search_program.exact`), under the
+single-valuedness that *is* "at most one per locus" (`path_store_lookup`). Finding the row at a
+locus is therefore not a new operation: it is the search readiness and reach already use, and
+its cost is one call per bit. No notion is added; the locus becomes an instance of the key
+readiness's tables are already built on ("Keys and tables are structure").
+
+**A kind and a role are prefixes of the locus, which is to say families.** #3 settled that a kind
+is the family that holds a row, never a datum it carries. A family realized in a path store is a
+subtree, and its prefix names it: descending the prefix lands in the family. So the five contract
+kinds become five prefixes and the tag `development_contract_data` carries disappears; the roles
+— problem, issue, request, answer, incumbent — become five more, and `development_issue_locus`'s
+`[1]` disappears with them. A definition that must behave differently by kind is then applied to
+a family, which is #3's "the refinement and definition verdicts stay instances of one definition
+at their family selections", realized: selecting a family is descending a prefix.
+
+**What remains of a locus, under those prefixes, is the constant the row is about.** Its key is
+the one the state already assigns to that constant under #3, whose two presentations share one
+key assignment and whose injectivity is the lemma #3 names. The development invents no second
+assignment. A problem, its issue, its request and its answer about one constant therefore stand
+at *one* locus under four role prefixes, which is what a locus is for and what today's
+presentation cannot say: today a problem's locus is its whole contract with its local names, so
+the problem and its request have no common coordinate at all.
+
+A locus so composed is partial, and stays so: a problem whose subject is not exactly one constant
+has no locus. That is not new — `development_machinery_request_of` already returns nothing for a
+subject that is not a singleton, `development_without_subject` already retains a subjectless
+problem, and the decomposition's `development_request_context_least` is proved about a
+one-constant request. The retention is extended to a non-singleton subject and named, rather than
+a locus being invented for it.
+
+### The problem
+
+A problem is the row the problem role holds at a locus. Its locus carries its kind and its
+subject; its body carries what the loop's decisions read of it, and nothing else.
+
+| Field | Today | As structure | Read by |
+|---|---|---|---|
+| subject | `nat fset` through `isabelle_positions_data`, a payload of digits per position | it *is* the locus; nothing in the body | request construction (support and least context), the decomposition |
+| contract kind | one of five octet tags | the kind prefix of the locus | the decomposition's schema, the verdict of a kind |
+| contract term | `isabelle_term_data`, six term and three type tags | carried inert beside the row, as #3 carries a statement | **no decision of the loop**; Isabelle reads it when the answer is installed, and request construction reads the *state's* scope of the subject rather than the term |
+| origin | one of six octet tags | an optional citation of the locus it came from, absent for a residual | selection policy (which problems are residuals), Q2's third criterion |
+| authority | one of three octet tags | an optional citation of the owner record that granted it, absent for a generated problem | selection and admission (who may revise it) |
+
+Flatly, then: of a problem, the incidence carries its locus (a path of bit shapes under two
+family prefixes), the family it stands in, the shape of each citation family and the citations in
+it. The payload carries the empty octet, which is every shape the incidence is made of, and the
+contract term with its names, which is inert. Nothing else is a payload, and every distinction a
+decision draws is drawn by descending incidence.
+
+**Origin is what the problem came from, not a name for it.** The six origins are six different
+things a problem arrives from: a demand comes from a parent problem, a repair from a refused
+answer, a direction from an owner record, an obligation from an obligation record, an
+incompleteness from the row whose reading was incomplete, and a residual from nothing inside the
+process — which is exactly what makes it a residual that justifies nothing. Cited, the six are
+told apart by the family of the locus cited, which is a prefix a search descends; there is
+nothing left to tag. "Which problems are residuals" (`development_residual_problems`) becomes the
+shape test "the origin cites nothing", and Q2's question whether a derived subproblem inherits
+its parent's authority becomes answerable by following the citation rather than by comparing
+bytes.
+
+**Authority is the owner record that granted it.** The owner authority order says the owner's
+choices carry owner authority and everything generated is below them. Presented as a tag, a
+problem claims owner authority by carrying a byte; presented as a citation, it must cite a row of
+the state that the owner put there, and a problem citing nothing is generated. That is the same
+statement with the forgery removed, and it is what the plan's completion evidence asks to be
+checkable ("Every admitted element carries its authority"). `Development_Truth` has no structural
+counterpart here and none is invented for it: truth is what positive meaning determines about an
+*answer*, not a stamp a problem carries, and the loop assigns only `Development_Owner` and
+`Development_Generated`. It is named as a value for whatever assigns it to give a counterpart to,
+or to retire.
+
+**An optional citation is the store's own optional value**, reused and not redefined: absent is
+the empty payload, present is a pair of the empty payload and the locus, which is
+`store_option_term` exactly. An absence is therefore a positive shape a rule matches, not a
+failure to find something — the library's rule that an empty result and a failed one are kept
+apart, honoured by construction rather than by a further check.
+
+### The request, the answer, the issue — and the packet, which is not one of them
+
+The request, the answer and the issue are rows of the same notion, at the same locus, under their
+own role prefixes. Only their bodies differ, and each body is either #3's rows or a family of
+citations; none of them needs a new presentation notion.
+
+**The request** holds its support and its context. Support is the constants the answer may use,
+so it is a family of citations of the state's constants — their loci under #3, which the request
+descends nothing to obtain. Context is the least closed part of the state the answer is judged
+against, so it is a family of citations of the state's rows. **The request does not carry its
+problem**: the problem is the row the problem role holds at the same locus, and the library's own
+distinction — a contract does not store what its request's context already holds — applies a
+fortiori to a coordinate both rows share. It does not carry its subject either, which is the
+locus. What is left in the body is two families of citations and nothing else.
+
+This is the brief's requirement that *a request named by its problem's locus is a structural fact
+rather than a naming convention*, and it comes out as one. Today `development_named_request`
+takes a name, looks its position up in the state's table (`isabelle_name_position`), filters the
+request list by subject and takes the singleton (`list_singleton_option`) — three steps, the
+first of which reads a string the executor supplied. As a located row it is one step: the request
+at a locus is the value the request family holds there, by `native_store_search_program.exact`,
+and "the single request of that subject" is `path_store_lookup`'s functionality under
+single-valuedness, which is the locus's own "at most one". An answer therefore cannot name a
+request; it stands at a locus or it stands nowhere.
+
+**The answer** holds the entities it removes and the entities it adds. Those are #3's rows, whose
+kinds are families and whose statements are inert, so the answer's body is two families of rows
+and the answer adds no presentation of its own. Its names travel with it as a published payload
+carries its names, inert, read only by presentation and installation — which
+`Development_Native_Answers` already says and which this entry only confirms, since no decision
+of the verdict reads a name (#3: a row's key is its identity, and `isabelle_state_embedding`
+never appears in the decision).
+
+**The issue** holds what the issuing read: the family of decompositions that applied, empty when
+none did, which is what makes the problem a leaf. It is already an `fset` of `fset`s
+(`development_library_reading`); as a row it is a family of premise loci. Re-evaluation
+(`development_reevaluations`) compares that reading, so it is read as structure and stays so.
+
+**The packet is not a row and not a notion.** It is the *presentation* of a request to an
+executor, and by the presentation-class discipline any member of the class serves: an executor
+reads the request, and what it reads it from is implementation. That is why the packet needs no
+tag and no structure of its own, and why the present one — an ML rendering through
+`Code_Evaluation.dynamic_value_strict` into JSON — is not a defect of the notions but a transport
+that has not yet been built. What the packet must contain follows from the request being citing
+rather than carrying: an executor cannot descend the state's store, so the packet is the request
+row *together with the rows its citations reach*. The copy belongs there, in the presentation,
+and not in the notion — which is the whole point of the split, and the reason the request may
+cite where the packet must carry.
+
+Transport itself — packets and answers travelling as the complete data of their artifacts, with
+the word inert carriage read only by the artifact's reader — is **not settled here**. It stays the
+octet direction's task 6, with its subject fixed by this entry: it is a transport task with a
+reader contract (the reading is the inverse of the presentation), not a design task, because the
+notion it transports is decided here and the packet has ceased to be a notion of its own.
+
+### What changes, and what is consumed unchanged
+
+Almost nothing of what exists is restated. The programs that decide are over *rows keyed by
+paths*, and this entry only says which paths; every contract that takes the key as a parameter
+takes the new one.
+
+**Consumed unchanged.** `Development_Native_Selection.readiness_presents` takes the key
+assignment as a parameter and asks of it only `inj_on key (set ps)`; the locus instantiates it, so
+`development_readiness_presents` and `native_development_ready` are consumed at a different
+instance and not one line of them is restated. Not one rule of `finite_native_readiness` changes
+either: `native_settled_exact`, `native_ready_exact` and `native_readiness_condition_exact` are
+over rows and know nothing of what a row is about. `Native_Path_Stores` supplies the locus's
+search and its uniqueness whole — `native_store_search_program.exact`, `path_store_lookup`,
+`path_term_injective` — and `Native_Collection_Programs`' `every`, `some` and keyed search supply
+the families. `Native_Table_Reach.native_reached_exact` and `Isabelle_Native_Reach` are untouched:
+they range over the *state's* rows, whose keys are #3's business, not this entry's.
+`Factor_Positive_Parametricity`'s criterion is consumed as settled and not re-derived. #3's
+verdict contract, and `development_constant_verdict_contract` under it, are consumed: this entry
+changes the presentation of problems and requests, not of the state's rows a verdict reads.
+The engine line's refinements — #5's code equation for `finite_program_applications` with its
+contract, and #7's evaluation over the positions of the demanded calls — are indifferent to what
+an argument presents and are preserved exactly; they are what (v) is measured against.
+
+`Development_Problems`' datatypes are **not changed**, and `development_ready`,
+`development_settled` and `development_ready_independent` remain the specification the native
+definition is proved against. What changes is the presentation relation, which now carries the
+premise that the problems it presents have distinct loci — the same premise
+`readiness_presents` already carries as `inj_on key`, and the same discipline #3 uses when it puts
+distinct names on the presentation rather than on the verdict. "At most one per locus" is thereby
+a condition the state must meet, not a fact a decision must check.
+
+**Restated: four contracts, each in a shape the library already proves.** The locus's composition
+and its injectivity on located problems, in the shape of `development_readiness_key_injective` but
+over the state's own key assignment rather than a position in a list. A presentation relation for
+development rows, in the shape of #3's `state_presents` and readiness's `readiness_presents`. The
+request at a locus, replacing `development_named_request`'s three steps by the store search's
+functionality. And injectivity of the new presentations, replacing
+`development_problem_data_injective`, `development_request_data_injective` and
+`development_native_answer_data`'s — the same lemma shapes over families and chains instead of
+tags, and admissible in the same presentation class, which asks injectivity and nothing else.
+
+**Retired:** `development_origin_data`, `development_authority_data`,
+`development_contract_data`'s tag, `development_issue_locus`'s `Finite_Payload [1]`,
+`development_problem_locus` as a contract-with-names, and `development_named_request`'s lookup of
+a name in the state's table. The recipe words of every report carrying a problem, a request or an
+answer change and are re-established once, as the presented-report batch already did; that is the
+change's whole check cost beyond the proofs.
+
+### What the presentation costs
+
+These definitions take a whole state as their argument, and the measured cause is that every call
+re-verifies the table it carries: on the machinery's reach, 3,397 calls each carrying 37,835
+nodes, with 43 percent of the time in structural equality of terms and 41 percent in their
+formation. Both are proportional to the carried term's node count, so the presentation's size
+*is* the cost, and the question is a real one.
+
+The table's nodes are its keys. On the machinery's reach, 217 rows and 1,561 mentions are 1,778
+key occurrences; at a key of eight bits — a path of eight shapes, about twenty-one nodes — that is
+about 37,000, which is the measured 37,835. So a table costs its key length, and nothing else it
+carries matters beside that.
+
+A development locus is a role prefix (five roles, three bits), a kind prefix (five kinds, three
+bits) and the subject constant's key (about eight bits on the machinery's 217 constants):
+fourteen bits against readiness's present eight, so **about 1.75 times the key, and therefore
+about 1.75 times a table that is its keys**. The growth is bounded and known: a locus grows with
+the logarithm of the state's atoms, while what it replaces — a contract term with its local names
+— grows with the statement. On the seeded state, whose ten code equations are 181 nodes and whose
+largest item is 48, today's locus is comparable in size to the new one and not comparable in kind.
+
+Against that, three things get smaller and one gets cheap.
+
+- A problem's body loses its subject entirely — it is the locus — and one tag; a request's body
+  loses its problem and its subject as well. Both are small: a few nodes.
+- The cone readiness carries per candidate is unaffected. It is a restriction of the table to the
+  answered rows a candidate's settlement reads, and a restriction of a store is a store; only its
+  keys lengthen. Nothing here makes a call carry more of the development than it reads, which is
+  #3's rule that a field is passed only the part it reads.
+- `development_data_target` quotes a locus into the artifact of every generation the loop records
+  — the incumbent, the issue and the answer of every problem. Today that artifact is the contract
+  term with its local names; it becomes a path of about thirty-seven nodes. The plan already
+  records a certified cause holding its payload twice as a cost on the loop's path, so this is a
+  saving on exactly that path. It is named to be measured, not claimed.
+- Finding a row by its locus stops being a comparison of whole terms and becomes a descent of
+  fourteen bits, one call per bit, comparing shapes only (`Native_Path_Stores`: "a search makes as
+  many calls as its path has bits"). That is the 43 percent the profile spends on structural
+  equality, removed where a decision only needs to identify a row rather than read it.
+
+So the honest answer: **the argument grows, by about three quarters on the part of it that costs,
+and the growth buys the ability to find a row instead of comparing it.** It does not by itself
+bring any measured figure down, and no figure here is claimed. What it does is leave the engine's
+bound untouched — the second refinement's target of the machinery's reach within five seconds, at
+which one verdict judgment is of the order of twenty seconds — and put the development's own rows
+on the same footing as the state's, so that the engine line's refinements apply to them without a
+second account.
+
+**What this means for the decomposition's build, correcting design-2.** The decomposition entry
+left its build's affordability to the engine, as every notion of the Q7 order has had to: a native
+definition whose argument is a whole state pays 171.8 seconds on the machinery's reach, and the
+second refinement's bound is five. The decomposition's schema does not have that argument. It
+matches on problems and on the development library, and neither is a state; a state enters only
+where a request is constructed or an answer judged, which is the verdict's line and not the
+schema's. So the decomposition's cost is the key length alone — the same roughly 1.75 times as
+readiness's, on a table that is its keys — and its build waits on the engine's measurement in the
+queue's order only, not as a condition. Its first step confirms that the argument is what this
+says; if it turns out to be a whole state after all, that is a question to raise and not a cost to
+absorb.
+
+One consequence belongs to the planner rather than to this entry. A decision that cites rather
+than carries is the same move the engine's measurement points at from the other side: today every
+candidate of a question carries the rows it refers to, and a citing row refers to them by a locus
+the callee can descend. Whether a decision may be given the store and a locus instead of a copy is
+an engine question with the engine's evidence, and this entry only makes it askable.
+
+### What the tasks built on this must respect
+
+A locus is a path and nothing else; a row is what the development's store holds at it, and at most
+one row stands at a locus, which is a premise of the presentation and never a check in a decision.
+A kind is the family that holds a row and a role is the family that holds it, both realized as
+prefixes of the locus, so no program compares a kind or a role and no octet distinguishes a
+refinement problem from a definition problem, or a request from the answer to it. Origin and
+authority are families of citations — a problem's origin is its predecessors, and a problem citing
+no owner record is generated; neither is ever a tag, and neither is read as an absence that a
+decision must fail to find. A contract term, an entity's statement and a name stay inert and no
+program reads inside them. A request cites where a packet carries, and the packet is a
+presentation, not a notion: nothing may give a packet a field of its own.
+
+The notions grow by demand, on the principle #3 used for the state's rows and the provisional
+answer standing to Q5: this entry presents the four notions the two builds ahead read — the
+problem, the request, the answer and the issue — and no more. The reading of Q5 this follows is
+the provisional one in the ledger, that the record grows by demand one level of the frontier at a
+time, with its demand sharpened for presentations: **a notion is presented structurally when a
+decision reads it, not when a definition mentions it.** The two demands are not the same and are
+not conflated here. Q5's is about which constants get residual problems and follows what a
+definition mentions; this one is about which notions get a structural presentation and follows
+what a decision reads, which is the narrower of the two — of the loop's fourteen notions, four are
+read by the builds ahead and are presented here. A notion no decision yet reads keeps its present
+presentation until one does, and is then presented here rather than tagged where it stands. If the
+owner answers Q5 the other way, this reading is unaffected: a wider residual record would add
+problems, not decisions, and a notion still waits for a decision that reads it.
+
+### Open
+
+Three residuals and one finding.
+
+`Development_Truth` has no structural counterpart and none was invented: truth is what positive
+meaning determines about an answer, not a stamp a problem carries, and the loop assigns only
+`Development_Owner` and `Development_Generated`. Whatever would assign it must give it a
+counterpart or it is retired.
+
+A problem whose subject is not exactly one constant has no locus and is retained, extending what
+`development_without_subject` and `development_machinery_request_of` already do. No problem of the
+loop has such a subject; if one arises its locus is a design question and not a thing to invent.
+
+The audit's one read of octets as structure — `filtered_development_question` stating each
+candidate as `finite_development_index`, through which every contract decision of the seed and of
+the machinery is made — is taken up as task 14, queued directly after this entry and before the
+two builds, so that they state candidates the new way from the start. What that task takes from
+here is the locus assigned in the audit. Its own brief decides the rest: that the digits are read
+as structure, the index-as-inert reading failing because the scope program's clauses distinguish
+candidates by their digits; that the change is not a refinement, since the recorded words change;
+and that if the locus costs measurably the answer is the index notion of "A refinement applies a
+notion; an index is one" applied, not the payload kept.
+
+This design was made outside the loop and is a residual.
+
+Recorded 2026-09-20, commit `…`.
+
+## An acceptance step's cost is within the machine's limit as its command is written
+
+`tools/replay_development_answers.py` replays every retained answer, and each replayed answer runs
+the answer harness, which runs an Isabelle build: the worker count is the number of Isabelle runs
+the replay holds at once. Its default was four, while this machine takes at most two at once. The
+documented acceptance command, `python3 -B tools/replay_development_answers.py --output DIR`, named
+by the brief of every task whose acceptance replays the retained answers, therefore broke the limit
+every time it was used as written. implement-5 measured what that costs: launched with the default
+beside one other run, five Isabelle runs stood at once, three filled the machine's memory, the
+harness refused every further command until one ended, and the replay's work was lost and had to be
+redone with `--workers 2`.
+
+The default is now the limit: `ISABELLE_RUN_LIMIT = 2`, named once and used as the default of
+`--workers`, so the command as written holds two runs, not four. The flag still overrides it, in
+both directions: one beside another run, more only on a machine known to be free.
+
+The decision behind this is that a brief may not repair such a hazard by naming a flag. An
+acceptance step is run as its brief writes it; a cost that only a remembered flag keeps within the
+machine's limit is a cost nobody is holding. So the default carries it, and the hazard is visible
+where it is incurred: the replay reports the number of Isabelle runs it will hold before it begins,
+and warns on the error stream when a supplied `--workers` exceeds the limit. A `--workers` above the
+limit is warned about, not refused: the limit is the harness's property, not the tool's, and a tool
+that cannot read the budget should not refuse a session that can.
+
+### Evidence and limits
+
+The change is four hunks in one file: the constant, the flag's default and help, the reported run
+count, and the paragraph of the module docstring that `--help` prints. Nothing else of the tool's
+behaviour changes — the same records are replayed, compared on the same fields, reported in the same
+JSON on the standard stream and with the same exit code; the added lines go to the error stream. Its
+evidence is the documented command run as written on the retained answers, reporting the same
+outcome and verdict word for every retained answer as the retained replay.
+
+The constant is a written-down reading of the machine's limit, not a reading of the harness's budget.
+The harness has no budget to read: its interface to a session has no such query, and the limit
+reaches sessions as a rule in prose. The planner decided (2026-09-20) that no mechanism for one is to
+be built now — when the harness, the adoption tool and the checks get their notions in the native
+state, the limit becomes a datum of that account, and a mechanism written now would be superseded.
+Naming it once is what that decision asks for: if a budget is later exposed, one named constant reads
+it and one line changes. The constant states where its number comes from — heavy Isabelle runs share
+one machine of 60 GiB and the harness refuses a third — so a changed machine has one place to change
+and the reason does not go missing with the number, and it is named as one fact about the machine,
+for another tool that spawns Isabelle to import rather than restate. No document names `--workers`
+for this command, so no document was corrected.
+
+Recorded 2026-09-20, commit `9bb1dd7a`.

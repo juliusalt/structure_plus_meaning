@@ -2272,13 +2272,19 @@ def graph_shape(kinds=None, skip=()):
 def graph_figures(st=None):
     """(width, depth) as the rule uses them, so the status, the roles' messages and the check cannot differ.
 
-    The width is the build and fix work a slot could take — a task that came back to the planner has every blocker
-    done and no slot can take it. The depth is the WHOLE graph's longest chain, because that is what start_brief
-    records and what cmd_propose compares against GRAPH_DEPTH: showing the build-and-fix depth instead said 10 to
-    the planner while the rule was applying 11, and the task designer was told a width of 2 against the status's 1
-    (2026-09-21)."""
+    The width is the build and fix work a slot could take **now**: every blocker done, and no session on it and
+    none needed to put it right. A task that came back to the planner, one whose brief is not in form, and one a
+    session already has are all counted out — none of the three is work a slot can take. Counting work in flight
+    told the planner "1 build and fix tasks can start" of task 52, whose brief is not in form and which nothing can
+    start at all, and made the rule it is given — "a brief is admitted again when the slots have taken what can
+    start" — one nothing could satisfy: the figure only fell when the work finished (2026-09-21).
+
+    The depth is the WHOLE graph's longest chain, because that is what start_brief records and what cmd_propose
+    compares against GRAPH_DEPTH: showing the build-and-fix depth instead said 10 to the planner while the rule was
+    applying 11, and the task designer was told a width of 2 against the status's 1 (2026-09-21)."""
     st = st or peek()
-    return graph_shape(("build", "fix"), skip=with_the_planner(st))[0], graph_shape()[1]
+    taken = {tid for tid, t in st["tasks"].items() if (t or {}).get("stage") not in ("ready", None)}
+    return graph_shape(("build", "fix"), skip=taken)[0], graph_shape()[1]
 
 
 def build_backlog(st=None):

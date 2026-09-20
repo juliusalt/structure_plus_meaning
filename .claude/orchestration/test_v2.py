@@ -2105,6 +2105,24 @@ class SupportTests(Flow):
         self.w.v2("dispatch", env={"ORCH_GRAPH_WIDTH": "2"})
         self.assertEqual(len(self.forks("brief-")), 1)   # width is 1 of 2: the graph needs widening, not draining
 
+    def test_a_brief_is_admitted_again_once_a_slot_has_taken_the_work(self):
+        # what the planner is told: "a brief is admitted again when the slots have taken what can start". The width
+        # counted work in flight, so the figure fell only when a task *finished*, and the rule as given was one
+        # nothing could satisfy (2026-09-21).
+        for tid in ("20", "21"):                          # two that can start at once, and two slots
+            self.w.task(tid, description=BRIEF, metadata={"kind": "build"})
+        self.w.task("1", blockedBy=["20"])   # the fixture's own build task, out of the width
+        self.w.set_st(queue=["2"], tasks={"20": {"stage": "ready", "kind": "build"},
+                                          "21": {"stage": "ready", "kind": "build"},
+                                          "2": {"stage": "ready", "kind": "brief"}})
+        self.w.v2("dispatch", env={"ORCH_GRAPH_WIDTH": "2"})
+        self.assertEqual(self.forks("brief-"), [])        # 2 can start, 2 slots
+        self.w.set_st(tasks={"20": {"stage": "running", "kind": "build", "session": "implement-20"}})
+        self.assertIn("1 build and fix tasks can start, 2 slots to take them",
+                      self.w.v2("status", env={"ORCH_GRAPH_WIDTH": "2"}))
+        self.w.v2("dispatch", env={"ORCH_GRAPH_WIDTH": "2"})
+        self.assertEqual(len(self.forks("brief-")), 1)    # one is taken: the graph is widened again
+
     def test_a_brief_is_detained_once_there_is_as_much_independent_work_as_slots(self):
         for tid in ("20", "21"):                          # two that can start at once, and two slots
             self.w.task(tid, description=BRIEF, metadata={"kind": "build"})

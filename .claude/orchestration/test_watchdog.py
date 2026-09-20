@@ -226,7 +226,7 @@ class WatchdogTests(unittest.TestCase):
         self.assertEqual(self.s("implement-4")["state"], "lost")
         self.assertEqual(self.w.st()["tasks"]["4"]["stage"], "planner")  # the producing slot is free again
 
-    def test_mail_that_cannot_be_delivered_is_kept(self):
+    def test_mail_that_cannot_be_delivered_is_kept_and_named_when_the_session_goes(self):
         self.w.session("implement-4", "implementer", "w4", task="4", status="idle", warm=False)
         self.w.hit("implement-4", age=v2.WARM_MAX + 60)
         self.said("w4")
@@ -236,9 +236,17 @@ class WatchdogTests(unittest.TestCase):
             json.dumps({"from": "kb", "text": "the answer", "at": "t"}) + "\n"
             + json.dumps({"from": "plan-1", "text": "and the order", "at": "t"}) + "\n")
         self.run_watchdog()
-        kept = self.w.mail("implement-4")
-        self.assertEqual([(m["from"], m["text"]) for m in kept],  # each with its own sender, not merged into one
-                         [("kb", "the answer"), ("plan-1", "and the order")])
+        # the resume failed, so the mail went back in the box (each with its own sender, not merged into one) — and
+        # the session was lost and released in the same pass, so it is named rather than left where no one opens it
+        self.assertEqual(self.w.mail("implement-4"), [])
+        said = self.heard()
+        self.assertIn("2 message(s) to implement-4 (implementer on task 4) were never read: from kb, plan-1", said)
+        self.assertIn("2 message(s) to implement-4 from kb, plan-1 were never read: it is released",
+                      (self.w.state / "v2.log").read_text())
+        self.assertIn("Message from kb", said)
+        self.assertIn("the answer", said)
+        self.assertIn("Message from plan-1", said)
+        self.assertIn("and the order", said)
         self.assertEqual(self.s("implement-4")["state"], "lost")
 
     def test_a_session_with_running_jobs_is_neither_sealed_nor_resumed(self):

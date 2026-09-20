@@ -739,8 +739,23 @@ def forget(sid):
 
 
 def release(name):
-    """A session nothing refers to any more: stopped, its listing removed, its guard state forgotten."""
+    """A session nothing refers to any more: stopped, its listing removed, its guard state forgotten.
+
+    What is still in its box was written to a session that was alive and was never read: a resume that failed puts
+    the messages back (hand_mail), and from then on nothing tries again. Eight boxes stood that way on 2026-09-20,
+    two of them the planner's corrections to fix-48 about the order of the working tree, and nothing said so to
+    anybody. deliver() already names mail that arrives after the end; this names mail the end arrives after."""
     s = peek()["sessions"].get(name) or {}
+    left = unread(name)
+    if left:
+        senders = ", ".join(dict.fromkeys(m["from"] for m in left))
+        log(f"ATTENTION {len(left)} message(s) to {name} from {senders} were never read: it is released")
+        with state() as w:
+            event(w, "the harness", f"{len(left)} message(s) to {name} ({s.get('role')}"
+                  + (f" on task {s['task']}" if s.get("task") else "") + f") were never read: from {senders}, and the "
+                  "session is released. A resume that fails puts mail back in the box and nothing tries again. If "
+                  "what they say still bears on the work, put it where the next session on it will read it — its "
+                  "brief, or `v2.py tell`:\n\n" + mail_text(left)[:1500])
     r = row(name)
     if r:
         claude("stop", r["id"])

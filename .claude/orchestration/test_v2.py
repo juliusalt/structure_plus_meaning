@@ -474,6 +474,13 @@ class PlanningTests(Flow):
         self.w.task("5", description=BRIEF, subject="Really ready")
         self.w.set_st(queue=["4", "5"], tasks={"4": {"stage": "ready", "kind": "build"},
                                                "5": {"stage": "ready", "kind": "build"}})
+        # and a review whose subject finished without being reviewed: pending_reviews will never offer it, so
+        # naming it said the graph was wider than anything would take
+        self.w.task("6", description=BRIEF, subject="An orphaned review")
+        # 4's stage is `done` as reconcile_stages leaves it, which runs first in every dispatch
+        self.w.set_st(queue=["4", "5", "6"], tasks={"4": {"stage": "done", "kind": "build"},
+                                                    "5": {"stage": "ready", "kind": "build"},
+                                                    "6": {"stage": "ready", "kind": "review", "reviews": "4"}})
         out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
                               "print(' '.join(v2.startable()))"],
                              env=self.w.env, capture_output=True, text=True).stdout.strip()

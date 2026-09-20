@@ -2202,6 +2202,10 @@ def startable(st=None):
             # and task 21 had been dropped and was not in the list at all — one of the two was a phantom. And one
             # the planner has completed is not startable either: produce() refuses it, so the report must agree with
             # what the dispatch would do, rather than name it until task_state next heals the stage.
+        t = st["tasks"].get(tid) or {}
+        if t.get("kind") == "review" and (st["tasks"].get(t.get("reviews") or "") or {}).get("stage") == "done":
+            continue  # its subject finished without being reviewed, so pending_reviews will never offer it: naming
+            # it here said the graph was wider than anything would take, which is what this figure is read for
         blockers = (tasks.get(tid) or {}).get("blockedBy") or []
         if all((tasks.get(b) or {}).get("status") == "completed" for b in blockers):
             out.append(tid)

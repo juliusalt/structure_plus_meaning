@@ -133,6 +133,21 @@ class InProcessTests(unittest.TestCase):
         self.assertLess(mail.index("Message from implement-3"), mail.index("Message from the finalizer"))
         self.assertFalse(v2.has_mail("plan-1"))
 
+    def test_the_tree_s_owner_is_read_with_one_git_call_not_one_per_path(self):
+        # changed_paths() sat inside the comprehension's condition, so tree_writer ran a git subprocess per owned
+        # path — ten of them a call — and the write guard reaches it on every Write and Edit a session makes
+        # (2026-09-21: 21.4 ms a call, 2.3 after)
+        calls = []
+        real = v2.changed_paths
+        with patch.object(v2, "changed_paths", lambda *a, **k: calls.append(1) or ["a.thy", "b.thy", "c.thy"]):
+            with v2.owners() as o:
+                o.update({"a.thy": "1", "b.thy": "2", "c.thy": "3"})
+            v2.tree_writer({"tasks": {}})
+            self.assertEqual(len(calls), 1)
+            calls.clear()
+            v2._owned_by("1")
+            self.assertEqual(len(calls), 1)
+
     def test_roles_are_found_by_session(self):
         self.world.session("plan-1", "planner", "p")
         self.world.session("implement-2", "implementer", "w", task="2")

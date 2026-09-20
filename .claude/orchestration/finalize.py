@@ -220,7 +220,7 @@ def record_pending_commit(files, ref, tree=None):
 def foreign(tid, files):
     """The files of this commit that another unfinished task wrote last: its work would be committed under this task's
     message (2026-09-20: task 3's commit carried task 5's half-written entry, placeholders and all)."""
-    with v2.owners() as o:
+    with v2.owners(write=False) as o:
         marked = {f: o.get(os.path.normpath(f)) for f in files}
     return {f: t for f, t in marked.items() if t and t != tid
             and (v2.read_task(t) or {}).get("status") not in ("completed", None)}

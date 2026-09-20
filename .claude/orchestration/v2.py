@@ -924,19 +924,24 @@ def changed_paths(tree=None):
 
 
 @contextlib.contextmanager
-def owners():
-    """{path: task} of the changes in the working tree, read and written under a lock."""
+def owners(write=True):
+    """{path: task} of the changes in the working tree, under a lock; written back unless `write` is False.
+
+    Every reader rewrote it: six of the seven callers only look, and the write guard reaches tree_writer on every
+    Write and Edit a session makes, so each of those took an exclusive lock and rewrote the file to change nothing
+    — 21 ms a call, and two sessions looking at once serialized on it."""
     os.makedirs(STATE, exist_ok=True)
     path = os.path.join(STATE, "tree-owners.json")
     with open(path + ".lock", "w") as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX)
+        fcntl.flock(lock, fcntl.LOCK_EX if write else fcntl.LOCK_SH)
         try:
             data = json.load(open(path))
         except (OSError, ValueError):
             data = {}
         yield data
-        json.dump(data, open(path + ".tmp", "w"), indent=0)
-        os.replace(path + ".tmp", path)
+        if write:
+            json.dump(data, open(path + ".tmp", "w"), indent=0)
+            os.replace(path + ".tmp", path)
 
 
 def own(task, paths):
@@ -1030,7 +1035,7 @@ def check_isolation():
     checking = next((tid for tid, t in st["tasks"].items() if t.get("stage") == "checking"), None)
     if not checking:
         return
-    with owners() as o:
+    with owners(write=False) as o:
         changed = {p: o.get(p) for p in changed_paths()}
     for tid, t in st["tasks"].items():
         if tid == checking or t.get("stage") not in ("running", "fixing") or tid not in changed.values():
@@ -1288,7 +1293,7 @@ def _leave(tid, why):
     now: while a task's installed work stands, the tree is that task's (tree_writer, tree_holder) and another session
     starts, drafts under its own .build/tasks/ID/ and installs when the tree is free; a task that cannot come back
     leaves its work for the planner to re-plan over, which is what it does with it anyway."""
-    with owners() as o:
+    with owners(write=False) as o:
         mine = [p for p, t in o.items() if t == tid]
     paths = [p for p in changed_paths() if p in mine]
     if not paths:
@@ -1662,7 +1667,7 @@ def first_episode():
     has ended; "" afterwards."""
     if peek().get("plan_ended") or all_tasks():
         return ""
-    with owners() as o:
+    with owners(write=False) as o:
         unowned = [p for p in changed_paths() if p not in o]
     listed = ", ".join(f"`{p}`" for p in unowned[:40]) + (f", and {len(unowned) - 40} more" if len(unowned) > 40 else "")
     return open(os.path.join(PROTOCOLS, "_first.md")).read().strip().replace("{UNOWNED}", listed or "none")
@@ -1923,7 +1928,7 @@ def in_main_tree(tid):
     """Whether this task's work already stands in the one tree. Such a task keeps working there: a tree of its own
     would be a checkout of HEAD without what it has installed, and carrying the work over would be the harness moving
     a change again. A task that starts fresh gets its own tree."""
-    with owners() as o:
+    with owners(write=False) as o:
         mine = {p for p, t in o.items() if t == str(tid)}
     return bool(mine & set(changed_paths()))
 
@@ -2057,8 +2062,9 @@ def tree_writer(st):
     a task's work out (leave), the tree holds one task's uncommitted change at a time: a second would stand beside it
     and no check could say whose failure it was. Designs, briefs, reviews and consultations do not write the tree and
     are not bound by this."""
-    with owners() as o:
-        owned = {p: tid for p, tid in o.items() if p in set(changed_paths())}
+    changed = set(changed_paths())  # once: inside the comprehension it ran a git subprocess per owned path, and
+    with owners(write=False) as o:   # the write guard reaches this on every Write and Edit a session makes
+        owned = {p: tid for p, tid in o.items() if p in changed}
     for tid in owned.values():
         if (st["tasks"].get(tid) or {}).get("stage") not in ("done", None) and (read_task(tid) or {}).get(
                 "status") != "completed":
@@ -2489,8 +2495,9 @@ RETURNED_AFTER = int(os.environ.get("ORCH_RETURNED_AFTER", 1800))  # how long a 
 
 def _owned_by(tid):
     """(path, task) of the working-tree changes a task owns, as the guard recorded them."""
-    with owners() as o:
-        return sorted((p, t) for p, t in o.items() if t == str(tid) and p in set(changed_paths()))
+    changed = set(changed_paths())  # once, for the same reason
+    with owners(write=False) as o:
+        return sorted((p, t) for p, t in o.items() if t == str(tid) and p in changed)
 
 
 def with_the_planner(st):

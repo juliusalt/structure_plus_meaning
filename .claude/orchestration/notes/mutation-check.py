@@ -53,6 +53,11 @@ CASES = [
      "not_the_daemon", "--ensure by name"),
     ("health.py", 'tended = daemon_alive() and not read("stopped")', 'tended = True',
      "stale_layer", "who refreshes a stale layer"),
+    ("ctx_gauge.py", 'if role in v2.PRODUCING:\n            # a producing session holds the slot',
+     'if False:\n            # a producing session holds the slot', "whose_work_was_taken_on",
+     "the producing session's own stop reason"),
+    ("ctx_gauge.py", '\n        blocked_again(session, rec, role)', '\n        None',
+     "cannot_end_at_all", "the blocked-turn count"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

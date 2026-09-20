@@ -26,6 +26,7 @@ a smaller max_tokens, but not below 3,000, and its own compaction of a 1M window
 growth of one request seen in 2,164 requests of impl-8 to impl-25 is 35K (p99 24K), over four requests 53K at p99;
 the notice leaves room for a request not yet recorded and the handoff, the hard mark for one ordinary step.
 """
+import contextlib
 import json
 import os
 import sys
@@ -120,6 +121,30 @@ def raise_mark(session, what, tokens, why):
         open(mark(session, what), "w").write(f"{tokens} {why} {time.strftime('%Y-%m-%dT%H:%M:%S')}\n")
 
 
+BLOCK_LOOP = int(os.environ.get("ORCH_BLOCK_LOOP", 12))  # blocks in a row that say the turn cannot end at all
+
+
+def blocked_again(session, rec, role):
+    """Count the turns this session was told to continue, one after another, and say so once they say a loop.
+
+    A session whose Stop hook blocks it and whose way out is refused turns for ever: fix-49.2 did on 2026-09-20,
+    and the only thing that ended it was the owner watching. The window's hard mark is the backstop (the watchdog
+    loses a session that reaches it), but that is a whole window of requests away, and a session that calls no tool
+    between its turns never reaches it at all. Nothing said anything while it went round."""
+    path = mark(session, "blocks")
+    os.makedirs(os.path.join(STATE, "flags"), exist_ok=True)
+    try:
+        n = int(open(path).read().strip() or 0) + 1
+    except (OSError, ValueError):
+        n = 1
+    open(path, "w").write(str(n))
+    if n >= BLOCK_LOOP and n % BLOCK_LOOP == 0:
+        v2.log(f"ATTENTION {rec.get('name')} ({role}"
+               + (f" on task {rec['task']}" if rec.get("task") else "")
+               + f") has been told to continue {n} turns in a row: its turn cannot end. What it must do to end is "
+               "refused, or it cannot do it; `v2.py drop` its task, or stop it")
+
+
 def add_context(event, text):
     print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": text}}))
 
@@ -212,10 +237,23 @@ def main():
             print(json.dumps({"decision": "block", "reason": mail}))
             return 0
         if may_end(role, rec):
+            with contextlib.suppress(OSError):
+                os.remove(mark(session, "blocks"))
             return 0
-        reason = (f"Your turn ends only when your piece of work has ended or while you wait on a question of your own. "
-                  f"Continue: produce the next part of your deliverable; bring what is not yours to decide to its author "
-                  f"or the planner (`v2.py ask`); when you are finished, {end_of(role, rec)}.")
+        blocked_again(session, rec, role)
+        if role in v2.PRODUCING:
+            # a producing session holds the slot, so it never simply waits: may_end frees its turn for a park and for
+            # nothing else, while this said it was also freed by a question of its own — which for this role it is
+            # not, and a session that took the sentence at its word had no way out of the turn (2026-09-21)
+            reason = ("Your turn ends with your result recorded, or once you have parked: you hold the producing "
+                      "slot and never wait in a turn. Continue: produce the next part of your deliverable; ask what "
+                      "is not yours to decide (`v2.py ask`) and park for the answer (`v2.py park answer`); park for "
+                      "your own run while it finishes (`v2.py park run`), for the working tree (`v2.py park tree`) "
+                      f"or for the fix you wait on (`v2.py park fix`); when you are finished, {end_of(role, rec)}.")
+        else:
+            reason = (f"Your turn ends only when your piece of work has ended or while you wait on a question of your "
+                      f"own. Continue: produce the next part of your deliverable; bring what is not yours to decide to "
+                      f"its author or the planner (`v2.py ask`); when you are finished, {end_of(role, rec)}.")
         if os.path.exists(mark(session, "soft")):
             reason = notice(role, rec, 0).split(". ", 1)[1]
         print(json.dumps({"decision": "block", "reason": reason}))

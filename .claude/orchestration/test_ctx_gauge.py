@@ -63,10 +63,35 @@ class GaugeTests(unittest.TestCase):
         # result twice, because the record saying it was done had gone into a worktree's parallel state. The task's
         # stage is the second witness, so the way out does not rest on one piece of bookkeeping.
         self.w.set_st(tasks={"4": {"stage": "running", "session": "implement-4"}})
-        self.assertIn("Your turn ends only when your piece of work has ended", self.stop("w4"))
+        said = self.stop("w4")
+        # what it is told is what may_end applies to it: a park, and not a question of its own
+        self.assertIn("Your turn ends with your result recorded, or once you have parked", said)
+        self.assertIn("v2.py park run", said)
+        self.assertNotIn("or while you wait on a question of your own", said)
         for stage in ("checking", "reviewing", "committing", "done", "planner"):
             self.w.set_st(tasks={"4": {"stage": stage, "session": "implement-4"}})
             self.assertIsNone(self.stop("w4"), f"still blocked at stage {stage}")
+        # a supporting session is told the rule that holds for it: its turn does end while its question is open
+        said = self.stop("r3")
+        self.assertIn("or while you wait on a question of your own", said)
+        self.assertIn("v2.py verdict 3 accept|reject", said)
+
+    def test_a_turn_that_cannot_end_at_all_is_named_once_it_says_a_loop(self):
+        # fix-49.2 turned for as long as the owner let it on 2026-09-20: its Stop hook blocked it and every way out
+        # was refused. The hard mark is the backstop, a whole window of requests away, and a session that calls no
+        # tool between its turns never reaches it. Nothing said anything while it went round.
+        self.w.set_st(tasks={"4": {"stage": "running", "session": "implement-4"}})
+        for _ in range(ctx_gauge.BLOCK_LOOP - 1):
+            self.assertIsNotNone(self.stop("w4"))
+        log = self.w.state / "v2.log"
+        self.assertNotIn("turns in a row", log.read_text() if log.exists() else "")  # not for an ordinary block
+        self.assertIsNotNone(self.stop("w4"))
+        self.assertIn(f"implement-4 (implementer on task 4) has been told to continue {ctx_gauge.BLOCK_LOOP} turns "
+                      "in a row: its turn cannot end", (self.w.state / "v2.log").read_text())
+        # a turn that does end clears the count: the next block starts again from one
+        self.w.set_st(tasks={"4": {"stage": "done", "session": "implement-4"}})
+        self.assertIsNone(self.stop("w4"))
+        self.assertFalse((self.w.state / "flags" / "w4.blocks").exists())
 
     def test_the_notice_comes_once_near_the_end_by_role_and_the_hard_mark_after(self):
         self.assertNotIn("near the end", self.gauge("p1", ctx_gauge.SOFT - 5000))

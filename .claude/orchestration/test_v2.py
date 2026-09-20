@@ -1901,6 +1901,23 @@ class SupportTests(Flow):
         self.assertEqual({f for f in os.listdir(self.w.tasks) if f.endswith(".json")}, before)  # nothing left behind
         self.assertEqual(self.t("2")["stage"], "proposed")   # and the proposal still stands
 
+    def test_the_depth_limit_admits_its_own_value_and_refuses_above_it(self):
+        # every message says "at most GRAPH_DEPTH" and the rule is that a further goal is refused when the depth is
+        # *above* the limit; the code refused at the limit itself, and the live chain stood at exactly 10
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        self.w.task("7", description=BRIEF, subject="already in the graph")
+        goal = [{"key": "a", "subject": "A further goal", "why": "-", "blockedBy": ["7"], "description": BRIEF},
+                {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
+                 "description": REVIEW_TASK.format(task="a")}]
+        for depth, expected in ((v2.GRAPH_DEPTH, "proposed 2 task(s)"),
+                                (v2.GRAPH_DEPTH + 1, "refused, and the planner has it")):
+            st = self.w.st()
+            st["tasks"]["2"].update(stage="running", depth_at_start=depth)
+            (self.w.state / "v2.json").write_text(json.dumps(st))
+            self.assertIn(expected, self.propose("2", sid, goal), f"at depth {depth}")
+
     def test_a_proposal_that_needs_further_goals_past_the_limit_never_reaches_the_graph(self):
         # the rejection used to come after the designer had written every task into the list; it comes before now,
         # and what it wrote is a file, not a graph to unpick

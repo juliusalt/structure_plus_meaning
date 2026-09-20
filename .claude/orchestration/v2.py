@@ -3428,7 +3428,9 @@ def cmd_propose(bid, path):
         return "refused: the proposal is not in form:\n- " + "\n- ".join(problems)
     goals = further_goals({e["key"]: e for e in entries})
     depth = (peek()["tasks"].get(bid) or {}).get("depth_at_start")
-    if goals and depth is not None and depth >= GRAPH_DEPTH:
+    # above the limit, not at it: every message says "at most GRAPH_DEPTH", and the owner's rule is that a brief may
+    # not add a further goal when the depth is *above* the limit. The live chain stood at exactly 10 (2026-09-21).
+    if goals and depth is not None and depth > GRAPH_DEPTH:
         return refuse_proposal(bid, entries, goals, depth)
     with state() as w:
         w["tasks"].setdefault(bid, {}).update(stage="proposed", proposal=path, proposed=len(entries))
@@ -4017,7 +4019,7 @@ def cmd_status():
                   "rather than what drains it" if width >= room else "")
                + ("; a brief that starts now may add detail at any depth — work spliced in, that something "
                   "already there waits on — but not further goals hung past the graph's frontier, which are refused "
-                  "and come to you" if depth >= GRAPH_DEPTH else ""))
+                  "and come to you" if depth > GRAPH_DEPTH else ""))
     parked = [f"{tid} ({int(time.time() - t['parked']['since']) // 60} min, after {t['parked'].get('after') or '?'})"
               for tid, t in st["tasks"].items() if t.get("stage") == "parked"]
     if parked:

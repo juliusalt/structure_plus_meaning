@@ -133,6 +133,27 @@ complete and wants only its acceptance check. 35 tasks are open, 15 of 50 done. 
 - A finalization holds its files while it checks, fixes and commits, and not while it is reviewed; an append in
   flight at commit time is waited for (10 min) and only then refused.
 
+## Found after the handoff was first written (16:15–16:40)
+
+Four more, by the same method — asking where a shape lives rather than waiting to meet it. All fixed, all tested
+(190 pass), all pushed (`0ab7b7c8`, `b95a7453`).
+
+- **A blocker that is not in the task list blocks its dependents for ever.** `deps_done` waits for
+  `status == "completed"`, and a dropped or never-written task never has one. Task 6 waited on the dropped task 18
+  that way today. Now named to the planner, hourly, while it stands; the task still waits, because whether that work
+  was done elsewhere is the planner's to say.
+- **One finalization at a time is no longer needed** when tasks hold their own trees — that rule existed because a
+  second check would see the first's uncommitted files. A base-advancing check still runs alone, by its own claim.
+- **A knowledge base that never replies INTEGRATED stayed integrating for ever**, and while it does, no planning
+  episode and no consultation can fork it: the deliberative half stops, silently and permanently. Bounded at twenty
+  minutes, then given up with an ATTENTION line and an event, and another built. Its notes stand in
+  `state/<kb>-notes.md`, and what they hold that HANDOFF.md does not is lost to the next one.
+- **A knowledge base that never finishes loading** is the same shape — no second load starts while one is recorded.
+  Bounded at an hour.
+
+The first and the last two are the shape that cost the day: something waits on a word that may never come, and
+nothing bounds the wait. If you look for one more thing, look for that.
+
 ## How the search was done, and what is unsearched
 
 By failure *class*, not by incident: predicates wrong at their edges (a parked session counted as ended; `.hit`

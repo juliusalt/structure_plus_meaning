@@ -2255,6 +2255,67 @@ class GrowthTests(Flow):
         self.assertEqual(len((self.w.state / "v2-archive.jsonl").read_text().splitlines()), 2)
 
 
+class HealthTests(Flow):
+    """health.py is the owner's one window. A stopped run is read hours later and is where every restart begins."""
+
+    def health(self, **env):
+        out = subprocess.run([sys.executable, str(fakes.HERE / "health.py")], env=dict(self.w.env, **env),
+                             capture_output=True, text=True, timeout=120)
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        return out.stdout
+
+    def daemon_like(self):
+        """A live process whose command line names the daemon, as the daemon's own does."""
+        path = self.w.root / "warm_daemon_stub.sh"
+        path.write_text("#!/bin/sh\nsleep 30\n")
+        p = subprocess.Popen(["sh", str(path)])
+        self.addCleanup(p.wait)
+        self.addCleanup(p.kill)
+        return p.pid
+
+    def test_a_stale_layer_says_whether_anything_will_build_it_again(self):
+        # "— it is refreshed" names the watchdog, which does nothing while the run is stopped or its daemon is down:
+        # said then, it names something nobody will do (2026-09-21)
+        (self.w.state / "max-layer.json").write_text(json.dumps(
+            {"sessionId": "max-layer-1", "base": "base-sid", "context": 500_000, "sealed": "2026-09-21T00:00:00"}))
+        self.assertIn("it is due to be built again, and nothing runs to do it (start.sh, or base.sh max layer)",
+                      self.health(ORCH_LAYER_STALE="0"))
+        (self.w.state / "warm.pid").write_text(str(self.daemon_like()))
+        self.assertIn("— it is refreshed", self.health(ORCH_LAYER_STALE="0"))
+        (self.w.state / "stopped").write_text("2026-09-21T01:00:00")   # a daemon of a stopped run refreshes nothing
+        self.assertIn("nothing runs to do it", self.health(ORCH_LAYER_STALE="0"))
+
+    def test_a_stopped_run_still_shows_what_a_restart_meets(self):
+        # it returned after "stopped at ...", so the queue, the tasks nothing can move and the questions — the state
+        # a restart actually meets — were visible nowhere while the run stood still (2026-09-21)
+        self.w.task("1")
+        self.w.task("4", description=REVIEW_TASK.format(task="1"), subject="An orphaned review")
+        self.w.set_st(queue=["1", "4"], active=False,
+                      tasks={"1": {"stage": "parked", "kind": "build", "session": "implement-1",
+                                   "parked": {"for": "tree", "since": time.time(), "holder": "9"}},
+                             "4": {"stage": "proposed", "kind": "brief", "proposed": 3,
+                                   "proposal": ".build/tasks/4/brief/proposal.json"}},
+                      asks={"q1": {"from": "implement-1", "state": "open", "text": "Which of the two?",
+                                   "asked": time.time(), "target": "planner"}})
+        (self.w.state / "stopped").write_text("2026-09-21T01:00:00")
+        said = self.health()
+        self.assertIn("stopped at 2026-09-21T01:00:00; start.sh resumes", said)
+        self.assertIn("queue: 1:parked 4:proposed", said)
+        self.assertIn("parked: task 1", said)
+        self.assertIn("ATTENTION task 4: 3 task(s) proposed and not placed", said)
+        self.assertIn("question q1 from implement-1 to planner", said)
+
+    def test_an_inactive_run_shows_it_too_and_a_running_one_is_unchanged(self):
+        self.w.task("1")
+        self.w.set_st(queue=["1"], active=False, tasks={"1": {"stage": "ready", "kind": "build"}})
+        self.assertIn("queue: 1:ready", self.health())
+        self.w.set_st(active=True)
+        said = self.health()
+        self.assertIn("queue: 1:ready", said)
+        self.assertIn("working tree:", said)      # the live lines are still only the live run's
+        self.assertIn("knowledge base: kb-1", said)
+
+
 class HarnessTests(Flow):
     def test_stop_seals_every_session_and_start_tells_the_next_episode_what_was_interrupted(self):
         self.w.task("1")

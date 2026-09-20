@@ -40,6 +40,19 @@ CASES = [
     ("v2.py", '(peek()["tasks"].get(t.get("reviews") or "") or {}).get("stage") == "done")',
      'False)', "subject_has_finished", "the orphaned review"),
     ("v2.py", 'fresh_sweep(st)  # a charge', 'None  # a charge', "drops_the_events_it_supersedes", "fresh_sweep"),
+    ("health.py", 'standing(st, now)\n        return\n    if not st["active"]:', 'return\n    if not st["active"]:',
+     "restart_meets", "the stopped run's standing state"),
+    ("v2.py", 'taken = {tid for tid, t in st["tasks"].items() if (t or {}).get("stage") not in ("ready", None)}',
+     'taken = set()', "admitted_again_once_a_slot", "the width's taken set"),
+    ("v2.py", '    left = unread(name)', '    left = []', "cannot_be_delivered", "the unread-mail notice"),
+    ("v2.py", 'if task is not None and task.get("status") != "completed":',
+     'if task is None or task.get("status") != "completed":', "taken_out_of_the_list", "the task gone from the list"),
+    ("health.py", 'return "warm_daemon" in open(f"/proc/{pid}/cmdline").read()', 'return True',
+     "not_the_daemon", "daemon_alive by name"),
+    ("warm_daemon.sh", 'tr \'\\0\' \' \' < "/proc/$p/cmdline" | grep -q warm_daemon', 'true',
+     "not_the_daemon", "--ensure by name"),
+    ("health.py", 'tended = daemon_alive() and not read("stopped")', 'tended = True',
+     "stale_layer", "who refreshes a stale layer"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

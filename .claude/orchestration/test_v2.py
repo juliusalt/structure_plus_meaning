@@ -466,6 +466,48 @@ class TaskTests(Flow):
         self.assertIn("task 1 holds the machine", said)
         self.assertIn("mine", said)
 
+    def test_two_tasks_hold_their_own_trees_and_git_merges_their_lines(self):
+        # what a worktree per task buys, and what it does not. A ROOT line, a DECISIONS entry and a THEORY_MAP row
+        # are lines: git merges them where they stand apart, and says so where they stand together — against the old
+        # harness, which moved whole files and deleted the lines of tasks that were still working (2026-09-20)
+        run = lambda code: subprocess.run(
+            [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n{code}"],
+            env=self.w.env, capture_output=True, text=True).stdout
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Later\n")
+        self.w.git("add", "ROOT")
+        self.w.git("commit", "-q", "-m", "the session")
+
+        def install(tid, name, after):
+            path = run(f'print(v2.worktree({tid!r}))').strip()
+            root = Path(path, "ROOT")
+            root.write_text(root.read_text().replace(f"    {after}\n", f"    {after}\n    {name}\n"))
+            Path(path, "theories").mkdir(exist_ok=True)
+            Path(path, "theories", name + ".thy").write_text(f"theory {name} imports Main begin end\n")
+            self.w.git("add", "-A", cwd=path)
+            self.w.git("commit", "-q", "-m", f"task {tid}", cwd=path)
+            return path
+
+        # all three branch from one commit, as concurrent tasks do
+        install("1", "Mine", "Base")
+        install("2", "Theirs", "Later")  # a line of its own, in its own place
+        install("3", "Same", "Base")     # and one written where task 1 wrote
+        self.assertIsNone(eval(run('print(repr(v2.merged("1")))').strip()))
+        self.assertIsNone(eval(run('print(repr(v2.merged("2")))').strip()))
+        root = (self.w.project / "ROOT").read_text()
+        self.assertIn("    Mine\n", root)
+        self.assertIn("    Theirs\n", root)  # both lines, in one file, the harness moving nothing
+        self.assertTrue((self.w.project / "theories/Mine.thy").exists())
+        self.assertTrue((self.w.project / "theories/Theirs.thy").exists())
+
+        # and two lines written at the same place do not merge: git says which file, and nothing is lost
+        self.assertEqual(eval(run('print(repr(v2.merged("3")))').strip()), ["ROOT"])
+        self.assertIn("    Mine\n", (self.w.project / "ROOT").read_text())  # the merge is undone, not resolved
+        self.assertNotIn("<<<<<<<", (self.w.project / "ROOT").read_text())
+        self.assertIn("Same", self.w.git("show", "task/3:ROOT"))  # and the task's own line stands on its branch
+        for tid in ("1", "2", "3"):
+            run(f'v2.worktree_gone({tid!r})')
+        self.assertFalse(Path(self.w.project, ".build/trees/1").exists())
+
     def test_a_task_that_stops_leaves_its_change_whole(self):
         # a change here is a set of parts — a theory, the ROOT line that declares it, the import that reaches it —
         # and the harness used to move the parts separately: a theory went while its declaration stayed, a

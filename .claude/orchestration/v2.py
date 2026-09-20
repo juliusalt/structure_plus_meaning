@@ -1493,6 +1493,60 @@ def parking_care():
             log(f"the run task {tid} parked for has ended" + (f";{aside}" if aside else ""))
 
 
+TREES = os.environ.get("ORCH_TREES") == "1"  # a worktree per producing task, off until its rewiring lands
+TREE_DIR = ".build/trees"
+
+
+def worktree(tid):
+    """The working tree of a task, made if it is not there: a git worktree on the branch task/<tid>, from HEAD.
+    Measured on 2026-09-20: a check inside one reused all 1,797 theories of the base in 172.88 s, so the heaps are
+    bound to their session names and not to a path, and two tasks can hold their own trees. What that buys is the
+    merge: a ROOT line, a DECISIONS entry and a THEORY_MAP row are lines, and git merges lines — which is the
+    granularity every failure of that day lacked."""
+    path = os.path.join(PROJECT, TREE_DIR, tid)
+    if os.path.isdir(os.path.join(path, ".git")) or os.path.isfile(os.path.join(path, ".git")):
+        return path
+    os.makedirs(os.path.join(PROJECT, TREE_DIR), exist_ok=True)
+    r = subprocess.run(["git", "-C", PROJECT, "worktree", "add", "-B", f"task/{tid}", path, "HEAD"],
+                       capture_output=True, text=True)
+    if r.returncode:
+        log(f"could not make a working tree for task {tid}: {(r.stdout + r.stderr).strip()[-200:]}")
+        return None
+    log(f"task {tid} has its own working tree at {TREE_DIR}/{tid} (branch task/{tid})")
+    return path
+
+
+def worktree_of(tid):
+    """The task's own working tree if it has one, else the one tree."""
+    path = os.path.join(PROJECT, TREE_DIR, str(tid))
+    return path if TREES and os.path.exists(path) else PROJECT
+
+
+def worktree_gone(tid):
+    """Take a task's working tree away once its work has landed; its branch goes with it."""
+    path = os.path.join(PROJECT, TREE_DIR, str(tid))
+    if not os.path.exists(path):
+        return
+    subprocess.run(["git", "-C", PROJECT, "worktree", "remove", "--force", path], capture_output=True, text=True)
+    subprocess.run(["git", "-C", PROJECT, "branch", "-D", f"task/{tid}"], capture_output=True, text=True)
+    log(f"the working tree of task {tid} is taken away")
+
+
+def merged(tid):
+    """Bring a task's branch into the one that is pushed. Its lines meet the lines that landed meanwhile, and git
+    says which did not meet: a conflict is reported, never resolved behind the tasks."""
+    r = subprocess.run(["git", "-C", PROJECT, "merge", "--no-ff", "-m", f"Take up the work of task {tid}",
+                        f"task/{tid}"], capture_output=True, text=True)
+    if r.returncode == 0:
+        return None
+    conflicts = [l.split("\t")[-1] for l in (subprocess.run(
+        ["git", "-C", PROJECT, "diff", "--name-only", "--diff-filter=U"], capture_output=True,
+        text=True).stdout or "").splitlines()]
+    subprocess.run(["git", "-C", PROJECT, "merge", "--abort"], capture_output=True, text=True)
+    log(f"the work of task {tid} does not merge: {', '.join(conflicts) or (r.stdout + r.stderr).strip()[-120:]}")
+    return conflicts or ["(the merge failed without naming a file)"]
+
+
 def tree_writer(st):
     """The unfinished task whose installed work stands in the working tree, or None. Since the harness no longer takes
     a task's work out (leave), the tree holds one task's uncommitted change at a time: a second would stand beside it

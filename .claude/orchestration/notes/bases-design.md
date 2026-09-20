@@ -381,7 +381,20 @@ follow — "a copy at another path rebuilds and deletes the heap" — is a rule 
 carries `.build` with it carries the same names, and Isabelle keeps one heap per name, so the copy overwrites the
 original's. A fresh worktree has no `.build` (it is ignored), generates new names, and collides with nothing.
 
-So a worktree per producing task is open, and it would replace the shelf with `git merge` — line-level, which is the
-granularity every failure of 2026-09-20 lacked (ROOT lines, DECISIONS entries, THEORY_MAP rows). What stays global
-and must stay exclusive: the heap directory, `/tmp/structural-active-context.json`, and the base advance itself.
-Not built: it is an architecture, and the day's lesson is not to change one under a live run.
+So a worktree per producing task is open, and it would replace the shelf with `git merge`. What that buys, and what
+it does not, is measured too (`test_two_tasks_hold_their_own_trees_and_git_merges_their_lines`): three tasks branching
+from one commit, each installing a theory and a ROOT line. Lines written in different places merge cleanly and both
+stand in one file, the harness moving nothing. **Lines written at the same place do not merge**: git names the file,
+the merge is undone rather than resolved, and each task's line still stands on its own branch. That is a conflict a
+task or the planner resolves, where the old harness silently deleted the line of whoever was still working — but it
+is not free, and a brief that has two tasks appending at the same anchor will meet it.
+
+What stays global and must stay exclusive: the heap directory, `/tmp/structural-active-context.json`, and the base
+advance itself.
+
+Built and off (`ORCH_TREES=1`, 2026-09-20): `worktree(tid)`, `worktree_of(tid)`, `worktree_gone(tid)` and
+`merged(tid)` — the lifecycle and the merge, with their test. Not built: the rewiring that would use them — a
+session's working directory (five `cwd=PROJECT` sites), the guard's path rules (seventeen references to
+`v2.PROJECT`), the finalizer committing on a task's branch and merging, and where `.build` lives for a session whose
+theories are elsewhere. That is the part that changes what every running session may do, and the day's lesson is not
+to change it under a live run.

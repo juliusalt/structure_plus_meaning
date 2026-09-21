@@ -3945,8 +3945,8 @@ FRESH_CHARGE = (
     "and your order (`v2.py queue ID …`) is what lifts it. Dropping alone does not, and neither does re-planning. "
     "Nothing waits on a timer, so take the time this needs; you are reminded while the hold stands.\n"
     "- **What the structure should now be.** The harness has changed under you and the protocols carry what bears on "
-    "planning: you live across your events and see each as it happens; two sessions work at once, so a review runs "
-    "beside a producer; a task that parks hands the producing slot to anything independent that is ready; and your "
+    "planning: you live across your events and see each as it happens; the rate is what the owner set and your "
+    "status line says it, so a review or a brief runs beside a producer; a task that parks hands the producing slot to anything independent that is ready; and your "
     "status line says how many tasks could start at all. The graph you inherit is a chain — re-plan it as work that "
     "can run beside itself wherever the work truly admits it, and not one step further than that.\n"
     "Only then queue. Nothing of this is a task for anyone else: it is yours, and it is what you do first.")

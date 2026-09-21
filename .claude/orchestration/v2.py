@@ -3249,7 +3249,12 @@ def cmd_carried(qid, text=""):
             return f"refused: no question {qid}"
         if q.get("delivered") is not False:
             return f"refused: the answer to {qid} reached its asker; nothing is loose"
-        q.update(delivered=True, carried=text.strip() or "carried where the work reads it")
+        if not text.strip():
+            # where it was carried is the whole point of saying so: the answer stops being listed, and without it
+            # nothing records what became of what it decided
+            return (f"refused: v2.py carried {qid} \"where\" — say where what the answer decides now stands (the "
+                    "Planner's line of a task, HANDOFF.md), because that is what stops it being loose.")
+        q.update(delivered=True, carried=text.strip())
     log(f"the answer to {qid} is carried: {text.strip()[:120] or '-'}")
     return f"{qid} is no longer loose"
 

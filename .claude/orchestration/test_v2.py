@@ -2123,6 +2123,8 @@ class SupportTests(Flow):
         self.assertIn("The answer to q1 reached nobody", self.heard())
         self.assertIn("answers that reached nobody: q1", self.w.v2("status"))
         # and it stops being loose when the planner has put what it decides where the work reads it
+        self.assertIn("say where what the answer decides now stands",
+                      self.w.v2("carried", "q1", env=self.w.as_session("p3")))
         self.assertIn("no longer loose", self.w.v2("carried", "q1", "into task 3's Planner's line",
                                                    env=self.w.as_session("p3")))
         self.assertNotIn("reached nobody", self.w.v2("status"))

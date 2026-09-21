@@ -58,42 +58,6 @@ fun entity_kind_of :: "isabelle_entity \<Rightarrow> entity_kind" where
 lemma entity_kind_of_renamed [simp]: "entity_kind_of (isabelle_entity_rename f e)=entity_kind_of e"
   by (cases e) simp_all
 
-subsection \<open>A root carries the names it uses, as an entity does\<close>
-
-text \<open>
-  A root is a term of the state, not an entity, and it is presented by the same notion: the value
-  with the names it uses, its positions replaced by their positions in that list. The law of the
-  notion is not proved again here; it is consumed from \<open>isabelle_local_entities_renamed\<close> at a
-  one-entity list, whose entity is a proof device and appears in no relation below.
-\<close>
-
-definition isabelle_local_root :: "String.literal list \<Rightarrow> isabelle_term \<Rightarrow> String.literal list\<times>isabelle_term" where
-  "isabelle_local_root names t=(isabelle_local_names names (isabelle_term_positions t),
-    isabelle_term_rename (isabelle_local_embedding names (isabelle_term_positions t)) t)"
-
-lemma isabelle_local_root_entities:
-  "isabelle_local_entities names [Isabelle_Definition t]=
-    (fst (isabelle_local_root names t),[Isabelle_Definition (snd (isabelle_local_root names t))])"
-  by (simp add: isabelle_local_entities_def isabelle_local_root_def isabelle_entity_positions_def Let_def)
-
-theorem isabelle_local_root_renamed:
-  assumes corr: "isabelle_table_correspondence f names names'"
-    and inside: "\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> i<length names"
-  shows "isabelle_local_root names' (isabelle_term_rename f t)=isabelle_local_root names t"
-proof -
-  have positions: "\<forall>e\<in>set [Isabelle_Definition t]. \<forall>i\<in>set (isabelle_entity_positions e). i<length names"
-    using inside by (simp add: isabelle_entity_positions_def)
-  have "isabelle_local_entities names' (map (isabelle_entity_rename f) [Isabelle_Definition t])=
-      isabelle_local_entities names [Isabelle_Definition t]"
-    by (rule isabelle_local_entities_renamed[OF corr positions])
-  then have "(fst (isabelle_local_root names' (isabelle_term_rename f t)),
-      [Isabelle_Definition (snd (isabelle_local_root names' (isabelle_term_rename f t)))])=
-    (fst (isabelle_local_root names t),[Isabelle_Definition (snd (isabelle_local_root names t))])"
-    by (simp only: list.map isabelle_entity_rename.simps isabelle_local_root_entities)
-  then show ?thesis
-    by (cases "isabelle_local_root names' (isabelle_term_rename f t)";
-        cases "isabelle_local_root names t") simp
-qed
 
 subsection \<open>The carriers: atoms, rows and families\<close>
 
@@ -468,7 +432,7 @@ proof -
 qed
 
 text \<open>
-  The second: the assessment's unknown positions are vacuous. A reference of a presented state is a
+  A further consequence: the assessment's unknown positions are vacuous. A reference of a presented state is a
   citation of one of its atoms, and the atoms are the positions of its table, so no presented state
   has a position its table does not hold. Its owner is the presentation too.
 \<close>

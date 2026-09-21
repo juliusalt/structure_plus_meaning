@@ -1088,6 +1088,22 @@ class PlanningTests(Flow):
                 self.assertTrue(_re.search(rf"\b{origin}\b", cell),
                                 f"README says {role} forks '{cell}'; ROLES makes it a fork of {origin}")
 
+    def test_no_message_gives_the_graph_to_a_role_that_has_it_not(self):
+        # the task designer stopped writing the graph on 2026-09-21 and began proposing it, and `blockers` went on
+        # refusing every other role by naming it as one that may — the refusal named the role it was refusing, and
+        # the usage banner said so too
+        import re as _re
+        here = Path(v2.HERE)
+        src = "".join(open(here / f).read() for f in ("v2.py", "work_meter.py", "ctx_gauge.py"))
+        src += "".join(p.read_text() for p in sorted(Path(v2.PROTOCOLS).glob("*.md")))
+        for role, spec in v2.ROLES.items():
+            if spec.get("graph"):
+                continue
+            for line in src.splitlines():
+                if "v2.py blockers" in line or "v2.py queue" in line or "v2.py accept" in line:
+                    self.assertNotIn(f"{role.replace('-', ' ')}: ", line.lower(),
+                                     f"a message gives {role} a command only the graph's role may run: {line.strip()}")
+
     def test_no_message_or_protocol_names_an_option_its_command_does_not_read(self):
         # the other half of the `briefed` fault: a command that stays and an option that is renamed leaves every
         # instruction naming it refused at the moment it is followed

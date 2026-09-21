@@ -33,7 +33,7 @@ Commands of the sessions (the caller is known from CLAUDE_CODE_SESSION_ID):
   v2.py verdict ID accept|reject --file FILE   the reviewer (or the planner, for design and investigation)
   v2.py queue ID...              the planner: the order in which tasks are to be done
   v2.py after ID TASK            the planner: the parked task ID continues when TASK has landed (`none`: now)
-  v2.py blockers ID ID...|none   the planner or task designer: what task ID waits on, set whole (TaskUpdate only adds)
+  v2.py blockers ID ID...|none   the planner: what task ID waits on, set whole (TaskUpdate only adds)
   v2.py drop ID                  the planner: stop whatever works on task ID
   v2.py planned --notes FILE     the planner: its work ends (its window is full); its notes go to the knowledge base
 Harness:

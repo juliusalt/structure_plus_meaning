@@ -2443,8 +2443,9 @@ orchestration in the project memory; commit only at the owner's word; the base r
   "filesystem": {"allowWrite": ["/tmp", "<project>/.claude/orchestration/state", "<project>/.build/outputs",
   "<project>/.build/tasks", "/home/julius/.claude/tasks/orchestration-graph"]},
   "network": {"allowedDomains": ["github.com"]}}}` — no excluded commands.
-- **Nothing is committed** since `87f827f4`: all of 2026-09-21's harness work and this session's. Local main is two
-  commits ahead of origin (`7d78caf0`, `87f827f4`, not pushed). **458 tests pass.** The 12 mutation cases this session
+- **Committed and pushed at the owner's word** (18:40): all of 2026-09-21's harness work and this session's, as
+  `1cf9e739` ("Bound what sessions read and write, and run the harness inside the sandbox"; `.claude/orchestration/`
+  and DEVELOPMENT_WORKFLOW.md only), with `7d78caf0` and `87f827f4`; origin's main is `1cf9e739`. **458 tests pass.** The 12 mutation cases this session
   added are caught; **the full mutation check has not run since this session's changes.**
 - **Untracked zero-byte paths** in `git status` — `.bashrc`, `.zshrc`, `.profile`, `.gitconfig`, `.gitmodules`,
   `.mcp.json`, `.idea`, `.vscode`, `.ripgreprc`, `.claude/hooks`, `.claude/agents`, `.claude/skills` and others, and
@@ -2494,7 +2495,7 @@ orchestration in the project memory; commit only at the owner's word; the base r
    comes before the ten-second start hook ends), then `claude stop` and `claude rm` of that fork's id only, and no
    computed `rm` under `~/.claude` at all. One probe at a time, nothing in parallel, no retry before the cause of a
    failure is known (the owner, today). Then max and xhigh the same way.
-3. **Commit and push**, at the word the owner gave before the loss ("rebuild the bases, commit and push, and start the
+3. **Commit and push** — done for everything up to `1cf9e739` (above); what follows it is committed the same way, at the word the owner gave before the loss ("rebuild the bases, commit and push, and start the
    run with `--fresh`"): only the harness — `.claude/orchestration/`, its untracked new files included (`check_errors.py`,
    `commit_gate.py`, `cut.py`, `lines.py`, `notes/worklist-2026-09-21.md`, `test_change.py`, `test_check_errors.py`),
    and `DEVELOPMENT_WORKFLOW.md` (its harness corrections). HANDOFF.md, PLANNING_LOG.md, native_control_plan.md,

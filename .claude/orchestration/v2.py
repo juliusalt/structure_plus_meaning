@@ -3582,7 +3582,7 @@ def cmd_accept(bid):
     if problems:
         return ("refused: the proposal no longer fits the graph:\n- " + "\n- ".join(problems)
                 + f"\nTell the task designer (`v2.py tell {bid} ...`) or re-plan the brief.")
-    ids, order = {}, []
+    ids, order, repointed = {}, [], {}
     try:  # all of it or none: a half-placed proposal leaves tasks with no edges, and placing it again would write
         for e in entries:  # every one of them a second time. Written first without their edges, so a task may wait
             ids[e["key"]] = create_task(e["subject"], e["description"],  # on one later in the list.
@@ -3591,10 +3591,17 @@ def cmd_accept(bid):
         for e in entries:
             update_task(ids[e["key"]], blockedBy=[ids.get(b, b) for b in (e.get("blockedBy") or [])])
             for f in e.get("feeds") or []:  # existing work re-pointed onto the new: detail, not a further goal
-                if read_task(f):
-                    update_task(f, blockedBy=[ids[e["key"]]] + [b for b in (read_task(f).get("blockedBy") or [])
+                before = read_task(f)
+                if before:
+                    # what it waited on before, kept so that a failure after this can put it back: the tasks would
+                    # be taken back and an existing one left waiting on an id that no longer exists (2026-09-21)
+                    repointed.setdefault(f, list(before.get("blockedBy") or []))
+                    update_task(f, blockedBy=[ids[e["key"]]] + [b for b in (before.get("blockedBy") or [])
                                                                 if b != bid])
     except Exception as err:  # noqa: BLE001
+        for f, waited_on in repointed.items():
+            with contextlib.suppress(Exception):
+                update_task(f, blockedBy=waited_on)
         for tid in order:
             with contextlib.suppress(OSError):
                 os.remove(task_path(tid))

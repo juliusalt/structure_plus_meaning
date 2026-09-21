@@ -2185,6 +2185,24 @@ class SupportTests(Flow):
         self.assertIn("no room", said)
         self.assertEqual({f for f in os.listdir(self.w.tasks) if f.endswith(".json")}, before)  # nothing left behind
         self.assertEqual(self.t("2")["stage"], "proposed")   # and the proposal still stands
+        # a splice re-points work already in the graph, and a failure after that left an existing task waiting on
+        # an id that had just been taken back: what it waited on before is put back with everything else
+        self.w.task("8", subject="Already there", blockedBy=["7"])
+        self.propose("2", sid, [
+            {"key": "a", "subject": "First", "why": "-", "blockedBy": [], "description": BRIEF, "feeds": ["8"]},
+            {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
+             "description": REVIEW_TASK.format(task="a")}])
+        said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n"
+                               "real = v2.update_task\n"
+                               "def failing(tid, **k):\n"
+                               "    if k.get('blockedBy') and tid == '8': real(tid, **k); raise RuntimeError('no room')\n"
+                               "    return real(tid, **k)\n"
+                               "v2.update_task = failing\n"
+                               "print(v2.cmd_accept('2'))"],
+                              env=self.w.env, capture_output=True, text=True).stdout
+        self.assertIn("taken back", said)
+        self.assertEqual(self.w.read_task("8")["blockedBy"], ["7"])     # as it waited before
+        self.assertEqual({f for f in os.listdir(self.w.tasks) if f.endswith(".json")}, before | {"8.json"})
 
     def test_the_depth_limit_admits_its_own_value_and_refuses_above_it(self):
         # every message says "at most GRAPH_DEPTH" and the rule is that a further goal is refused when the depth is

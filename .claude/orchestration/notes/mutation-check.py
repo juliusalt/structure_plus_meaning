@@ -80,6 +80,9 @@ CASES = [
      "own_launch_prompt", "a fork measured as itself"),
     ("v2.py", 'if t.get("stage") in ("planner", "unformed") or reopened:', 'if t.get("stage") in ("planner", "unformed"):',
      "puts_back_to_pending", "a task the planner re-opens"),
+    ("v2.py", '        for f, waited_on in repointed.items():\n            with contextlib.suppress(Exception):\n'
+     '                update_task(f, blockedBy=waited_on)\n', '',
+     "all_of_it_or_none", "a splice put back when a placement fails"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

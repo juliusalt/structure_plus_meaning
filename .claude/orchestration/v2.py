@@ -644,6 +644,17 @@ def launch(role, key, prompt_of, **fields):
     """Fork a session for a piece of work: claim it in the state, fork its origin (never a cold session), confirm it.
     prompt_of(name) gives its first message. Its name, or None."""
     spec = ROLES[role]
+    # A start that is not confirmed is tried again at the next dispatch, which is every minute: on 2026-09-20 two
+    # sessions were started and invisible, and the harness would have started a replacement for each over and over.
+    # produce() holds the producing slot to RETRY that way and says so to the planner; every other role — the
+    # planner itself, the knowledge base, a review, a brief, a consultation — had nothing, and each of those starts
+    # is a fork of a loaded base. The floor is here, where every one of them passes (2026-09-21).
+    # by what is being started, not by what it would be called: the planner's and the knowledge base's key is a
+    # counter that rises with every attempt, so keying on it would make every retry a new thing and no backoff
+    mark = f"start-failed-{role}-{key if role not in ('planner', 'kb') else 'one'}"
+    age = age_of(mark)
+    if age is not None and age < RETRY:
+        return None
     origin = fields.pop("origin", None) or spec["origin"]
     who, org = origin_of(origin)
     if not org:
@@ -669,9 +680,13 @@ def launch(role, key, prompt_of, **fields):
         if not r:
             s["state"] = "lost"
             log(f"start of {name} not confirmed")
+            if not held_back() and not os.path.exists(os.path.join(STATE, "stopped")):
+                open(os.path.join(STATE, mark), "w").write(str(time.time()))  # not the hold's doing: back off
             return None
         s.update(sid=r["sid"], id=r["id"], state="working", started=time.time())
     hit(name)
+    with contextlib.suppress(OSError):
+        os.remove(os.path.join(STATE, mark))
     log(f"started {name} ({role}, from {who})")
     return name
 

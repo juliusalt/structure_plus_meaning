@@ -610,6 +610,24 @@ class PlanningTests(Flow):
         self.as_("plan-1", "queue", "4", "5", "4")
         self.assertEqual(self.w.st()["queue"], ["4", "5"])   # as `blockers` reads its own ids
 
+    def test_a_start_that_is_not_confirmed_is_not_tried_again_every_minute(self):
+        # the dispatch runs every minute and every start is a fork of a loaded base. produce() held the producing
+        # slot to RETRY and said so; the planner, the knowledge base, a review, a brief and a consultation had
+        # nothing — on 2026-09-20 two sessions were started and invisible, and a replacement for each would have
+        # been started over and over (2026-09-21)
+        (self.w.root / "fail-start").write_text("x")   # every start fails: none is ever confirmed
+        self.event("Something for the planner")
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("plan-")), 1)
+        self.assertIn("start of plan-1 not confirmed", (self.w.state / "v2.log").read_text())
+        self.w.v2("dispatch")
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("plan-")), 1)        # not once a minute
+        self.assertEqual(self.w.st()["events"][0]["text"], "Something for the planner")   # and they are kept
+        os.utime(self.w.state / "start-failed-planner-one", (time.time() - v2.RETRY - 60,) * 2)
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("plan-")), 2)        # and tried again when the time has passed
+
     def test_the_owner_joins_the_planner_that_lives_rather_than_opening_another(self):
         # talk.sh's whole first step: the planner that lives is joined with everything it holds, woken if it was
         # between its events, and only when none lives is one opened (a fork of the knowledge base)

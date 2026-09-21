@@ -100,6 +100,8 @@ CASES = [
      "harness_s_own_scripts", "the harness's own scripts run by a session"),
     ("watchdog.py", 'if r["activity"] not in ("busy", "idle"):', 'if False:',
      "supervisor_no_longer_runs", "a session listed but not run"),
+    ("v2.py", '    age = age_of(mark)\n    if age is not None and age < RETRY:\n        return None\n', '',
+     "not_confirmed_is_not_tried", "the backoff after a start nobody confirmed"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

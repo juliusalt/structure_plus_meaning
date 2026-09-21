@@ -459,7 +459,11 @@ class SharingTests(Guarded):
             reason = self.guard(tool, inp, tool_use="t-new")
             self.assertIsNotNone(reason, f"{tool} {inp} reached the harness")
             self.assertIn("the owner's", reason)
-        # its own state is the harness's to write, through its commands, and a draft is its own
+        # its state and its switches too: removing state/no-launch would start the run again from inside it
+        for command in (f"rm {self.w.state}/no-launch", f"echo x > {self.w.state}/graph-held"):
+            self.assertIn("the owner's", self.guard("Bash", {"command": command}, tool_use="t-new"))
+        # the harness writes its own state through its commands, which never reach this guard, and a draft is its own
+        self.assertIsNone(self.guard("Bash", {"command": ".claude/orchestration/v2.py queue 4"}, tool_use="t-new"))
         self.assertIsNone(self.guard("Write", {"file_path": str(self.w.project / ".build/tasks/2/draft.md")},
                                      tool_use="t-new"))
 

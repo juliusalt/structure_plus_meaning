@@ -649,11 +649,15 @@ def write_guard(tool, inp, command, rec, cwd):
                     "for a task designer, which proposes and does not write.")
     # the harness is the owner's, and nothing in it is a task's deliverable: a session that edited it would change
     # the rules it is working under, and `.claude/` is exempt from the tree's ownership, so nothing would record it
-    harness = os.path.join(v2.HERE, "")
-    if any(t.startswith(harness) and not t.startswith(os.path.join(v2.STATE, "")) for t in targets):
-        return deny("The orchestration's own files are the owner's: a session does the work of its task and does not "
-                    "change the harness it runs under. What you found in it goes into your result, or to the planner "
-                    "(`v2.py ask --to planner`, or `v2.py escalate --efficiency` for a cost).")
+    # its state included: `state/no-launch`, `state/graph-held` and `state/stopped` are the owner's switches, and a
+    # session that removed one would start the run again from inside it. The harness writes its own state through
+    # its commands, which are `own` and never reach this guard.
+    harness = [os.path.join(d, "") for d in (v2.HERE, v2.STATE)]  # the state stands elsewhere when ORCH_STATE_DIR says
+    if any(t.startswith(h) for t in targets for h in harness):
+        return deny("The orchestration's own files are the owner's, its state and its switches included: a session "
+                    "does the work of its task and does not change the harness it runs under. What you found in it "
+                    "goes into your result, or to the planner (`v2.py ask --to planner`, or `v2.py escalate "
+                    "--efficiency` for a cost).")
     theirs = {os.path.join(d, f) for d in (v2.PROJECT, v2.tree_of(rec)) for f in ("HANDOFF.md", v2.PLANNER_LOG)}
     if rec.get("role") != "planner" and theirs & set(targets):
         return deny(f"HANDOFF.md is the planner's state and {v2.PLANNER_LOG} is its log: what you did goes into your "

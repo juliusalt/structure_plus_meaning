@@ -1461,3 +1461,22 @@ unread mail once, between them; the stopped guard leaves the keep-warm ping alon
 
 `archive()` was the one action that takes things out of the state and said nothing: "every action is a line in
 state/v2.log" is the claim, and a day later a session the owner remembered was simply gone. It names what it took.
+
+### Where it stands at the end of 2026-09-21
+
+Nothing has been started since the owner's stop: the run is inactive, `state/stopped` is written, `no-launch` holds,
+and the daemon is down. 322 tests and 51 mutations, all green, and the four flows (a task from queue to commit, a
+failing check to its quick fix, a rejection to a second rejection, and `--fresh` against a graph shaped like this
+one) leave no ATTENTION in their logs.
+
+    width 0, depth 11, limit 10, slots 2 | queue 29 | startable 14, 10, 13 (the briefs) | 13 build and fix open
+
+What a restart meets, in the order it will meet it: `kb-5` is cold, so a knowledge base is built anew (the first
+cost); the graph is *not* held, so the queue the last planner gave stands, and with no build or fix able to start, a
+task designer is what begins — brief 14. Task 49 is with the planner and holds the working tree (its deliverable,
+`native_control_plan.md`, stands there); 52's brief is not in form; 23 and 47 are reviews of tasks already finished.
+All four are named to the planner half an hour in, and the first planner sees them in the graph at once. Tasks 21
+and 51 are records of tasks the planner took out of the list: inert, read by nothing, and named for what they are in
+health.py. Every uncommitted path in the tree belongs to a task the planner completed — work the graph calls done
+that the repository does not hold, which health.py now says and which is the owner's or the planner's to resolve.
+The max layer is 22% stale and refreshes on the first watchdog pass; xhigh is at 12%, high at 0%.

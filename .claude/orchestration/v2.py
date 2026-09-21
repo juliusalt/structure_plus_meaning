@@ -3709,7 +3709,7 @@ def cmd_queue(ids):
             reopened = t.get("stage") == "done" and (read_task(tid) or {}).get("status") not in ("completed", None)
             if t.get("stage") in ("planner", "unformed") or reopened:  # re-planned: its stage is read afresh
                 st["tasks"][tid] = {k: v for k, v in t.items() if k in ("briefed_by", "briefing", "review_tasks", "reviews")}
-        order = list(ids)
+        order = list(dict.fromkeys(ids))   # an id named twice is one place in the order, as `blockers` reads its own
         kept = [tid for tid in st["queue"] if tid not in order and (st["tasks"].get(tid) or {}).get("queued_at", 0) > since
                 and (st["tasks"].get(tid) or {}).get("stage") != "done"]
         for tid in kept:
@@ -3736,7 +3736,9 @@ def planner_only(what):
 
 
 def cmd_blockers(tid, ids):
-    """The graph's edges are the planner's (and the task designer's, for the tasks it briefs) to set, not only to add.
+    """The graph's edges are the planner's to set, not only to add (the task designer had them too until it stopped
+    writing the graph and began proposing it: it says in its proposal what each task waits on, and `accept` writes
+    those edges).
 
     Claude Code's TaskUpdate offers addBlockedBy and no way back, so until 2026-09-20 a dependency once written could
     not be taken out: the graph was append-only by accident and nothing anywhere said so, while cmd_drop, deps_done
@@ -3746,7 +3748,8 @@ def cmd_blockers(tid, ids):
     recreating, which it could do, loses the task's id and its history. That is not a boundary anyone chose."""
     c = caller()
     if c and not ROLES.get(c["role"], {}).get("graph"):
-        return "refused: the graph's edges are the planner's and the task designer's"
+        return ("refused: the graph's edges are the planner's alone. A task designer says in its proposal what each "
+                "task waits on (`v2.py propose`), and any other role names what it has found in its result.")
     if not read_task(tid):
         return f"refused: task {tid} is not in the task list"
     want = [] if ids == ["none"] else list(dict.fromkeys(ids))

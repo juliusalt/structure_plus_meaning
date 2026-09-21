@@ -603,6 +603,13 @@ class PlanningTests(Flow):
                              env=self.w.env, capture_output=True, text=True)
         self.assertEqual(out.stdout.strip(), "4 None", out.stderr)   # and one that is not there is still None
 
+    def test_an_id_named_twice_in_the_order_is_one_place_in_the_queue(self):
+        self.w.task("4")
+        self.w.task("5")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.as_("plan-1", "queue", "4", "5", "4")
+        self.assertEqual(self.w.st()["queue"], ["4", "5"])   # as `blockers` reads its own ids
+
     def test_the_owner_joins_the_planner_that_lives_rather_than_opening_another(self):
         # talk.sh's whole first step: the planner that lives is joined with everything it holds, woken if it was
         # between its events, and only when none lives is one opened (a fork of the knowledge base)
@@ -667,7 +674,9 @@ class PlanningTests(Flow):
         self.assertIn("startable as soon as it is queued", said)
         # and it is the planner's: the task designer proposes its shape and does not set it
         self.w.session("brief-9", "task-designer", "b9", task="9", settings="worker-settings.json")
-        self.assertIn("the graph's edges are the planner's", self.as_("brief-9", "blockers", "3", "1"))
+        said = self.as_("brief-9", "blockers", "3", "1")
+        self.assertIn("the graph's edges are the planner's alone", said)
+        self.assertIn("v2.py propose", said)        # and what the designer does instead
         self.assertEqual(self.w.read_task("3")["blockedBy"], [])
 
     def test_setting_what_a_task_waits_on_refuses_a_cycle_and_a_task_that_is_not_there(self):

@@ -242,9 +242,56 @@ text \<open>
   order nothing: native readiness descends a store along a key and compares nothing else.
 \<close>
 
+text \<open>
+  The key is one assignment over any type of subject: the first-occurrence key of a value in a list is the
+  path of the binary digits of the position of its first occurrence there, and a value the list does not
+  hold is keyed by the list's length. It identifies a member of the list and orders nothing. Readiness keys
+  problems by it; a state's entities are keyed by it in the state's own entity list.
+\<close>
+
+definition first_occurrence_key :: "'a list \<Rightarrow> 'a \<Rightarrow> bool list" where
+  "first_occurrence_key xs x=natural_binary_digits
+    (case value_reference_index x xs of None \<Rightarrow> length xs | Some i \<Rightarrow> i)"
+
+lemma first_occurrence_key_at:
+  assumes "x\<in>set xs"
+  obtains i where "value_reference_index x xs=Some i" "i<length xs" "xs!i=x"
+    "first_occurrence_key xs x=natural_binary_digits i"
+proof -
+  obtain i where index: "value_reference_index x xs=Some i"
+    using assms value_reference_index_absent[of x xs] by (cases "value_reference_index x xs") auto
+  show thesis using that[OF index] value_reference_index_read[OF index]
+    by (simp add: first_occurrence_key_def index)
+qed
+
+lemma first_occurrence_key_injective:
+  assumes x: "x\<in>set xs" and y: "y\<in>set xs"
+    and same: "first_occurrence_key xs x=first_occurrence_key xs y"
+  shows "x=y"
+proof -
+  obtain i where "xs!i=x" "first_occurrence_key xs x=natural_binary_digits i"
+    by (rule first_occurrence_key_at[OF x])
+  moreover obtain j where "xs!j=y" "first_occurrence_key xs y=natural_binary_digits j"
+    by (rule first_occurrence_key_at[OF y])
+  ultimately show ?thesis using same by simp
+qed
+
+lemma first_occurrence_key_inj_on: "inj_on (first_occurrence_key xs) (set xs)"
+  by (rule inj_onI) (rule first_occurrence_key_injective)
+
+text \<open>
+  The executable key of a state's entities is the first-occurrence key of an entity in the state's own
+  entity list; it is injective on those entities, which is all a keyed question asks of its key.
+\<close>
+
+definition development_entity_key :: "isabelle_context \<Rightarrow> isabelle_entity \<Rightarrow> bool list" where
+  "development_entity_key C=first_occurrence_key (snd C)"
+
+lemma development_entity_key_injective: "inj_on (development_entity_key C) (set (snd C))"
+  by (simp only: development_entity_key_def first_occurrence_key_inj_on)
+
 definition development_readiness_key :: "development_problem list \<Rightarrow> development_problem \<Rightarrow> bool list" where
-  "development_readiness_key ps p=natural_binary_digits
-    (case value_reference_index p ps of None \<Rightarrow> length ps | Some i \<Rightarrow> i)"
+  "development_readiness_key ps p=first_occurrence_key ps p"
 
 fun finite_data_list_elements :: "finite_factor_term \<Rightarrow> finite_factor_term list" where
   "finite_data_list_elements (Finite_Pair t r)=t#finite_data_list_elements r"
@@ -301,24 +348,13 @@ lemma development_readiness_key_at:
   assumes "p\<in>set ps"
   obtains i where "value_reference_index p ps=Some i" "i<length ps" "ps!i=p"
     "development_readiness_key ps p=natural_binary_digits i"
-proof -
-  obtain i where index: "value_reference_index p ps=Some i"
-    using assms value_reference_index_absent[of p ps] by (cases "value_reference_index p ps") auto
-  show thesis using that[OF index] value_reference_index_read[OF index]
-    by (simp add: development_readiness_key_def index)
-qed
+  by (rule first_occurrence_key_at[OF assms]) (rule that; simp add: development_readiness_key_def)
 
 lemma development_readiness_key_injective:
   assumes p: "p\<in>set ps" and q: "q\<in>set ps"
     and same: "development_readiness_key ps p=development_readiness_key ps q"
   shows "p=q"
-proof -
-  obtain i where "ps!i=p" "development_readiness_key ps p=natural_binary_digits i"
-    by (rule development_readiness_key_at[OF p])
-  moreover obtain j where "ps!j=q" "development_readiness_key ps q=natural_binary_digits j"
-    by (rule development_readiness_key_at[OF q])
-  ultimately show ?thesis using same by simp
-qed
+  using first_occurrence_key_injective[OF p q] same by (simp add: development_readiness_key_def)
 
 lemma development_readiness_decompositions_sets:
   "set (map set (development_readiness_decompositions D ps p))=

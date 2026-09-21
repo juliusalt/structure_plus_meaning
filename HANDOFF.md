@@ -6,19 +6,19 @@ development itself is an entry of `DECISIONS.md` and here a reference; what a ta
 
 ## Graph
 
-Two lines, with the question's candidates, the decomposition and the index notion beside them, behind five pieces of
-written work that land first. The owner's two
+Two lines, with the question's candidates, the decomposition and the index notion beside them, and two fixes of
+the checking itself (#79, #80) beside everything. The owner's two
 directions of 2026-09-19 — structure is explicit and octets are inert; native definitions are normative — order them,
 through the Q7 order in the ledger.
 
-**Landing first.** Under the harness of 2026-09-21 a build or fix is complete when it has landed: its check passes, its
-review accepts it, the finalizer commits it, and only then does the harness complete it and its reviews. Five pieces of
-work stand written and uncommitted in the one tree. The development locus (#22, reviewed by #23) and the check's named
-refusals (#50, reviewed by the harness) are in their landing. The verdict's state rows (#46) landed as `7b4bb54f` after
-one fix round; its re-review's two small corrections (its map row, a sentence at line 471) ride with #78. Two a session finishes: the replay's outcome classification (#48 — its acceptance
-replay was never run, because the tree was inconsistent when it was written; it also carries the ignore line and the
-untracking of `tools/__pycache__/build.cpython-314.pyc`) and the plan's two standing sections (#49 — written; its
-hand-over never landed because its session could not end its turn).
+**Landing.** Under the harness of 2026-09-21 a build or fix is complete when it has landed: its check passes, its
+review accepts it, the finalizer commits it, and only then does the harness complete it and its reviews. Every piece of
+work written before that harness has landed.
+
+**The checking itself (#80).** The recipes' cost (#80): the seed recipe per presentation, refined at its dominant cause with every word equal; the tool files each
+recipe's execution boundary holds; the facts of the owner's question on the base (Q10); and the marked correction of
+DECISIONS.md line 10070 (q28). Every landing check re-executes all 33 recipes while the base lags the commits since it
+(#49's check: 181.94 s of recipes for a change to the plan alone).
 
 **The rows line (#24–#31).** Task 9 found the development notions to be one notion, a row at a locus of the
 development's published state, and task 16 briefed its four contracts: the locus (#22), the presentation relation
@@ -28,7 +28,9 @@ the one task of the line whose check cannot accept by word equality. #26 and #28
 every reader of the six retired items (`.build/tasks/30/readers.md`, accepted), which brings #30 within a build's room;
 from its findings #30 also gives the machinery state a new root in place of `development_problem_locus`, retires
 `development_local_contract` with the contract-with-names, and re-records the retained answer records its switch
-changes.
+changes. The answer family is withdrawn from #24's relation (q29): an added row has an identity only in the answer
+state, and reading an answer's edit is #38's reduction of an edit; the answer's row, presenter and switch are a
+follow-up after #38 (Open 20).
 
 **The verdict line (#32–#45).** Task 3 designed the verdict of a kind as a native definition over the state's rows and
 task 11 briefed it: the state rows (#46), the request's subject and support as keys (#32), statements and malformed
@@ -52,7 +54,7 @@ constant's two entities at one locus (q21). #54 depends on nothing; #56 feeds #3
 
 **The decomposition (#58–#66, briefed by #10).** Task 2's design built: the repair's output recorded as rows of the
 development library (#58) and the schema's soundness as an obligation reduction (#60), both needing nothing; the schema
-as a native program over problem rows (#62, after #60 and #24); the library generated at the loop's problems and passed
+as a native program over problem rows (#62, after #60, #24 and #66, whose entry corrects #62's and #64's briefs before either starts); the library generated at the loop's problems and passed
 to the issue, so that a decomposed problem is refused issue (#64, after #62, #58 and #30, whose words it re-records
 over). #66 designs the decomposition's record and its application to the loop's problems, beside the builds; the build
 that applies a decomposition to the loop is briefed from its entry. I judge #66 myself, as every design, so the review
@@ -70,22 +72,18 @@ the builds over unchecked to one group check, which per-build landing does not a
 includes their reviews; each review runs when its build is in review. The deepest chain is 10 (#45 after #44, #42,
 #38/#40, #36, #34, #32, #26/#28, #24, #22); nothing is hung after #44 or #45 until a chain is shortened. Two builds are
 ready together at three points — #26 and #28 after #24; #30 and #32 after both; #38 and #40 after #36 — and #54, #56,
-#58, #60, #62, #64, #66 and #68–#76 are work beside them.
+#58, #60, #62, #64, #66, #68–#76, #79 and #80 are work beside them.
 
-**Order** (`23 47 48 49 24 25 26 27 28 29 32 33 54 55 56 57 30 31 34 35 36 37 38 39 40 41 42 43 44 45 58 59 60 61 62 63
-64 65 66 68 69 70 71 72 73 74 75 76 77`). The reviews of the landing builds first, then the two finishing fixes; then the chain that decides the
-run's length — #24, #26/#28, #32 — ahead of the work beside it (#54, #56, #30), so that when both are ready the chain
-takes the producing slot and the rest fills the time it waits on a landing; the verdict line after; the decomposition's
-tasks after that, the three that need nothing (#58, #60, #66) filling what is idle meanwhile; the index notion's last.
+**Order** (`54 55 60 61 58 59 68 69 66 24 25 79 26 27 28 29 32 33 80 56 57 30 31 34 35 36 37 38 39 40 41 42 43 44 45
+62 63 64 65 70 71 72 73 74 75 76 77`). The tasks already begun first, so that none runs out its hold waiting (Q8); then
+the probe's bound, small and used by every build; then the chain that decides the run's length — #26/#28, #32 — ahead
+of the work beside it, so that when both are ready the chain takes a slot and the rest fills the time it waits on a
+landing; the recipes' cost before #56 and #30, whose landings re-execute the seed recipe; the verdict line; the
+decomposition's builds; the index notion's last.
 
 ## Decisions
 
 Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
-
-**HEAD declares Development_Loci and Development_State_Rows**, whose files stand uncommitted until #22 and #46 land:
-task 7's commit (`44738c20`) took `ROOT`, `THEORY_MAP.md` and `DECISIONS.md` whole, with #46's and #22's `ROOT` entries
-and map rows and #48's entry. The harness makes no tree of a task's own until HEAD is consistent, so until then a
-producing task works in the one tree.
 
 **New native definitions of development notions are built over the four new contracts (#22–#28), never over the
 tagged presentations, and they need not wait for the retirement (#30)** (2026-09-21: #32 and every verdict task through
@@ -153,6 +151,12 @@ judgment's path.
 - **A design entry is not rewritten when the implementation narrows what it predicted**: the sentence stays and gains a
   marked correction naming the entry that states the fact.
 - **A host-transport fix carries no review task of its own**; the harness reviews it.
+- **A probe is an inner loop, not a gate**: when the machine is full and only a task's probe remains, it hands over, and
+  the landing check's proof phase — run before any recipe — verifies the same and fails in seconds on a wrong proof
+  (q26, 2026-09-21). The result says the probe was not run and why.
+- **A probe is bounded at 60 s** (`--timeout 60`, the default since #79) unless its session holds the machine for
+  a measurement; refused for a full machine, a session parks for it (`v2.py park machine`) and is resumed when a run of
+  its kind may start (the owner, 2026-09-21 22:31: up to 8 probes and 2 heavy runs at once).
 - **No task rests on reasoning not yet written.**
 
 ## Delivered
@@ -163,7 +167,7 @@ judgment's path.
   acceptance is positive and needs no absence; a refinement applies a notion, and an index of a carrier by a key is one;
   the development notions are one notion, a row at a locus, found by the store search.
 - **Builds #5, #7**, committed `6227819a` and `44738c20`: constructed applications, and `Positioned_Native_Evaluation`
-  with `positioned_program_evaluation_exact` — the engine line, the machinery's reach from 44.6 s to 4.35 s; the
+  with `positioned_program_evaluation_exact` — the engine line, the machinery's reach from 171.8 s to 44.6 s (#5) and 4.35 s (#7); the
   certificate path left keyed and unretired.
 - **Fixes #12/#17, #19, #20, #15**, committed `9bb1dd7a`, `6227819a`, `91979be0`, `2edcabd3`: `ISABELLE_RUN_LIMIT` named
   once, the replay deciding per answer whether a run produced a judgment, and two entries installed.
@@ -178,11 +182,44 @@ judgment's path.
   reader), unknown positions, distinct roots (`state_presents_distinct_roots`, owned by the exporter); names in
   `.build/tasks/46/result.md`. Its follow-ups: the two `kinds_present` instances belong where the verdict's kind
   arguments are taken, and a root row cites its head constant only.
-- **Written, landing** (see Graph): #22 `theories/Development_Loci.thy` (379 lines; the names the tasks after it consume
-  in `.build/tasks/22/names.md`); #50 the check's named refusals, 14 cases in
-  `tools/test_check_refusals.py`; #48 `tools/replay_development_answers.py` with ten tests (no retained record holds
-  `elapsed_seconds`, so the longest-first ordering is inert until the answer harness retains its run's cost); #49 the
-  plan's two sections.
+- **#22** `theories/Development_Loci.thy`, committed `612ee5a9` after one fix round: the development locus, a path of
+  role, kind and the subject constant's key under `inj_on key S`, partial where a problem has no single subject
+  constant (`development_subject_constant` through `finite_singleton_option`), its only octet the empty payload
+  (`development_locus_payload_octets`, stated with `finite_term_payloads`); the names its consumers take in
+  `.build/tasks/22/names.md`. Its reviews' follow-ups sit where they bite: the key is a name-table position and never
+  `development_readiness_key`, and `development_machinery_request_of` takes `development_subject_constant` (#30); every
+  program that reads loci is audited with `finite_system_payloads` (#42 for the verdict, #62 for the decomposition); its
+  map row's imports cell (#78).
+- **#48** `tools/replay_development_answers.py` and its eleven tests, committed `3aaddd96` after one fix round: a run that
+  produced no judgment is `unproduced`, apart from a word compared and differing, with `status: None`; a timeout costs its
+  own answer alone. Acceptance, the replay alone under a measuring hold: 16 replayed, 15 reconstructed, adopted
+  `indexed-data-walk`, nothing differing, nothing unproduced, 260.1 s against task 20's 283.6 s. The entry at HEAD
+  stands. `.gitignore` already ignored the compiled object; its tracked copy's removal waits on the owner (Q9).
+- **#78** `Isabelle_Local_Names`, committed `93e45ed6`: `isabelle_local_entities_compared` and
+  `isabelle_local_root_compared`, the comparison of local presentations across two states whose tables differ (needing
+  only `distinct names'`), for #38; `isabelle_local_root` moved there from `Development_State_Rows`; #46's line-471 text
+  and the three map rows corrected. The general local presentation over positioned values was weighed and declined as
+  larger; it is stated when a third kind of positioned value takes a local presentation.
+- **#50** the check's named refusals, committed `955b34bb` after one fix round: every refusal before a build names what
+  it found (`tools/check.py`, `tools/incremental_check.py`, `tools/execution_support.py`, `tools/probe_theories.py`),
+  no condition changed, 14 cases in `tools/test_check_refusals.py`; its landing check 193.23 s, tool tests 202.
+- **#49** the plan's standing and direction sections, current with the engine line and the three designs, committed
+  `1634d456` after one fix round; 44.6 s stated as what the first refinement left (q28).
+- **#79** `tools/probe_theories.py`, committed `1e7ed068`: `--timeout` defaults to 60; a timed-out probe reports
+  `timed_out`, `last_command` (the log's last non-empty line) and an error naming the limit, the command and the log.
+- **#54** `Filtered_Native_Questions`, committed `ff37efef` after one fix round: the native question over paths of its
+  subjects' keys beside the index form, the key a parameter under `inj_on`; `first_occurrence_key`, of which readiness's
+  key is an instance, and `development_entity_key`, the executable key of a state's entities. Its review's follow-ups
+  on the switch ride with #56 (the keys' move beneath both theories, the program-level payload statement, the 256
+  bound of `[i]`); the rest are Open 21.
+- **#60** `theories/Development_Decomposition_Soundness.thy`, committed `ffe12b46`: T stated once over the demanded
+  reading and chosen by the contract's kind; the general schema one relation (`development_decomposition_application`,
+  any number of constants and intermediates), sound once (`development_decomposition_sound`); B and C one-line
+  specializations. Its review: task 2's entry to amend and the multi-constant and degenerate cases went to #66 (told);
+  three duplications and the progress condition ride with #62's correction.
+- **#58** `theories/Development_Repair_Rows.thy`, committed `b3b185bc` after one fix round: the repair's output recorded
+  as rows of the development library. Its rows' coordinates do not move with the successor's correspondence (see Now,
+  #64).
 
 ## Open
 
@@ -201,6 +238,13 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q8, answered by the owner 2026-09-21 21:43**: the planner's queue orders parked tasks too. A parked task resumes,
   when its wait is over, in the queue's order (a hold ending within 45 minutes first, unnamed tasks last); so every
   in-progress task is named in the queue, a quick fix's parked task included.
+- **Q9** the tracked `tools/__pycache__/build.cpython-314.pyc` (asked 2026-09-21): ignored by `.gitignore`, removed from the
+  tree by #48, but the finalizer refuses to commit the removal of an ignored path. Provisional: it stands removed and
+  uncommitted, and no task is made of it; the step is the finalizer's or the owner's.
+- **Q10** who advances the proof base (asked 2026-09-21 by plan-33): every landing check re-executes all 33 recipes
+  while the base lags the commits since it. Provisional: no task advances the shared base; #80 brings where an advanced
+  base would live and what it would save, and the base is advanced on committed HEAD once that is known and the one
+  tree holds no uncommitted work.
 
 Not yet planned, in the order they are expected to be planned:
 
@@ -240,34 +284,60 @@ Not yet planned, in the order they are expected to be planned:
     rooted state satisfying the carried conditions has a presentation, so the verdict's contract is conditional on
     `state_presents`. It carries the answer reader's refusal of a duplicated name (the verdict entry's Open). Before the
     loop evaluates the native verdict on a real answer.
-15. **The seed recipe's cost** (review 47's fifth follow-up, and #46's re-review): checks that reuse every theory still
-    re-execute every recipe — `native-development-seed` 156 to 248 s on the critical path (its report once executed in
-    9.2 s), `native-development-machinery` 93.0 s — most likely because #50's uncommitted tool changes alter every
-    recipe's execution boundary. If it persists once #50 has landed, it is a fix task; the seed recipe's own seconds are
-    attributed when a check that re-executes it is on the critical path.
+19. **One pre-flight command for the standing last step** (#50's review): `source_checks()` and `source_graph(...)` as one
+    command, which would also expose `source_checks` passing while `source_graph` refuses. Small; tools.
 16. **Whether `keyed_agree` (#46) is an instance of the index notion or of the bijective relations** (review 47's
     second follow-up): for the index group once #68 has landed.
+18. **`isabelle_name_position_member` belongs beside `isabelle_name_position`'s laws** in `Isabelle_State_Difference`
+    (#78's review): two older proofs there (`isabelle_local_embedding_renamed`, `isabelle_state_embedding_back`) write
+    its pattern inline, and `isabelle_state_embedding_named` serves every proof that unfolds `isabelle_state_embedding_def`
+    at a found name. With the next edit of that theory.
+17. **The replay's timeout stops only the direct child** (#48's review): `tools/build.py`'s `run_session` is the existing
+    whole-tree stop, to extend and reuse in `run_harness`. Small; plan it when a harness run next outlives its limit,
+    or sooner if orphaned Isabelle runs are found holding the machine.
+20. **The answer family of the development rows** (q29, withdrawn from #24): the answer's row, its body as the edit
+    over the request state's rows (removed rows cited in the request state, added rows in the answer state) read
+    through #38's reduction of an edit, its presenter, and the switch of `Development_Native_Answers`' tagged
+    presenter. After #38.
+21. **The index form's retirement** (#54's review): restate the faceted question and its five users as instances of
+    `keyed_faceted_question` and retire `filtered_development_question`'s index form entirely. After #56.
+22. **The probe's last command** (#79's review): the log's last non-empty line; if a timeout shows a line that does not
+    locate the stalled command, recognise Isabelle's own position report. At that need.
+23. **`development_definition_sockets` can reuse the singleton reading** (#58's review). With the next edit of its
+    theory.
 
 ## Now
 
-- **The graph was taken stock of and released on 2026-09-21** (plan-32): #52 dropped and deleted, superseded by the
-  per-task landing, its residue given to #48; #24 and #32 re-pointed onto builds, #32 off #30; #30's discovery split off
-  as #53; the stale dependency sentence corrected in #32–#44 and the order in #14; #48 and #49 re-briefed to finish.
-- **The run is serial until #22 lands** (#46 landed at 21:42). HEAD declares `Development_Loci` without its file, so no
-  task gets a tree of its own and every task works in the one tree, each finalization holding it while the others park.
-  #22 leads the order; every build not yet started waits on #22 and #46 (#24, #56, #62, #70, #72, #78, set 2026-09-21), so
-  that it starts in a tree of its own. Parked tasks resume in the queue's order (Q8): #22, then #50, whose landing ends
-  the re-execution of every recipe at every check, then #48 and #49, then the in-progress fillers #54, #60, #58 and #68.
-- **Owed to the owner**: #48's replay numbers against task 20's 283.6 s; each landing check's phases and per-recipe
-  comparison.
-- **Owed before #62 and #64 start: correct their briefs from #66's entry once it is accepted** (q25). A decomposition's
+- **The one tree** holds the written work of #54, #58, #60, #66 and #68, parked; each resumes in the queue's order (Q8)
+  when the tree frees. A task that starts now gets a tree of its own.
+- **For the owner**: `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap
+  (#22's re-review); #50's review suggests the finalizer append its check's summary to the task's report, since a result
+  is recorded before the finalizer's check runs; #49's re-review, that the finalizer's commit message quotes the
+  hand-over's run rather than the re-run it commits on; #79's review, that the harness's probe guard still requires
+  `--timeout` to be named and cites the old 1200 s default, as does the memory note on probing; and the finalizer
+  commits whole files, so the shared files of the one tree (`THEORY_MAP.md`, `ROOT`) couple landings: #24's commit was
+  refused at 23:02 for carrying #54's unreviewed rows, and committing a task's own hunks would remove the coupling.
+- **#24 is re-planned to land.** Its work is accepted; its first commit was refused for #54's unreviewed map rows, its
+  second for a duplicated `Development_Loci` row in the merge with main. Its session resolves the row and hands over;
+  #26, #28 and #62 wait on it.
+- **Owed to the owner**: each landing check's phases and per-recipe comparison (#48's replay numbers were reported).
+- **Owed before #62 and #64 start: correct their briefs from #66's entry once it is accepted** (q25; #62 waits on #66: rewrite both before #66's verdict). A decomposition's
   child at an occupied locus is the problem standing there — at a parent with a locus the part child *is* the parent —
   so an application there acts through the parent's D row and its later request and contributes no library row headed
   by its parent. #62's "meaning equal to #60's relation" and #64's "the repair rows are the native instance-C
   applications" cannot hold as equalities; the entry states what they become. #66 also adds a sixth role
   (`Development_Decomposition_Role`, prefix [T,F,T]) through the follow-up build, extending #24's relation there; the
   reviews of #22 and #24 are not reopened. #58 was told its repair row, without a part child, is right and not an
-  application of #60's relation.
+  application of #60's relation. #62's corrected brief also audits its program with `finite_system_payloads` (#22's
+  review: every program reading loci). #64's corrected brief also carries #58's review: the repair rows' coordinates do
+  not move with the successor's correspondence, so the settlement corollary is vacuous for most repairs; the correction
+  decides whether their transport through #78's comparison is #64's or a follow-up. #62's corrected brief also carries
+  #60's review: an application requires progress (a nonempty I or more than one subject constant, as #66's entry
+  states), and the theory's three duplications go (`list_all2_left_member`, an instance of
+  `Bootstrap_Relations.list_all2_members`; `list_all2_some_the`, of `list_all2_function_restricted`;
+  `development_statement_constants`, the mention reading of `development_constant_mentions` without its filter).
+  The prerequisite rows of D for an application (each part after the definition children) belong with the build that
+  applies a decomposition to the loop.
 - **If #54 reports a changed word** because factoring `development_readiness_key` changes a definition the machinery
   state presents as an entity (the mechanism of #53's first finding): allow it, with the words and the definition named
   in its result — reuse outranks word stability, and #56 and #30 re-record over it.

@@ -139,4 +139,206 @@ proof -
   then show ?thesis by (simp only: there)
 qed
 
+subsection \<open>A root carries the names it uses, as an entity does\<close>
+
+text \<open>
+  A root is a term of a state, not an entity, and it is presented by the same notion: the value
+  with the names it uses, its positions replaced by their positions in that list. The law of the
+  notion is not proved again for it; it is consumed from \<open>isabelle_local_entities_renamed\<close> at a
+  one-entity list, whose entity is a proof device and appears in no relation.
+\<close>
+
+definition isabelle_local_root :: "String.literal list \<Rightarrow> isabelle_term \<Rightarrow> String.literal list\<times>isabelle_term" where
+  "isabelle_local_root names t=(isabelle_local_names names (isabelle_term_positions t),
+    isabelle_term_rename (isabelle_local_embedding names (isabelle_term_positions t)) t)"
+
+lemma isabelle_local_root_entities:
+  "isabelle_local_entities names [Isabelle_Definition t]=
+    (fst (isabelle_local_root names t),[Isabelle_Definition (snd (isabelle_local_root names t))])"
+  by (simp add: isabelle_local_entities_def isabelle_local_root_def isabelle_entity_positions_def Let_def)
+
+theorem isabelle_local_root_renamed:
+  assumes corr: "isabelle_table_correspondence f names names'"
+    and inside: "\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> i<length names"
+  shows "isabelle_local_root names' (isabelle_term_rename f t)=isabelle_local_root names t"
+proof -
+  have positions: "\<forall>e\<in>set [Isabelle_Definition t]. \<forall>i\<in>set (isabelle_entity_positions e). i<length names"
+    using inside by (simp add: isabelle_entity_positions_def)
+  have "isabelle_local_entities names' (map (isabelle_entity_rename f) [Isabelle_Definition t])=
+      isabelle_local_entities names [Isabelle_Definition t]"
+    by (rule isabelle_local_entities_renamed[OF corr positions])
+  then have "(fst (isabelle_local_root names' (isabelle_term_rename f t)),
+      [Isabelle_Definition (snd (isabelle_local_root names' (isabelle_term_rename f t)))])=
+    (fst (isabelle_local_root names t),[Isabelle_Definition (snd (isabelle_local_root names t))])"
+    by (simp only: list.map isabelle_entity_rename.simps isabelle_local_root_entities)
+  then show ?thesis
+    by (cases "isabelle_local_root names' (isabelle_term_rename f t)";
+        cases "isabelle_local_root names t") simp
+qed
+
+subsection \<open>Local presentations compared across two states\<close>
+
+text \<open>
+  Two states whose tables differ are not related by a correspondence when one drops or adds names,
+  so the invariance above does not compare their values. The comparison they need is stated here,
+  once: the local presentation of a value of one state equals that of a value of the other exactly
+  when the second is the first moved by the embedding of the one table into the other. It holds for
+  any positions in range of their tables; only the second table must be free of repeated names, as
+  the way back from a local list into it requires. Its root analogue follows through the one-entity
+  wrapper.
+\<close>
+
+lemma isabelle_local_names_in_range:
+  assumes inside: "\<forall>i\<in>set ps. i<length names"
+  shows "isabelle_local_names names ps=remdups (map ((!) names) ps)"
+proof -
+  have "List.map_filter (isabelle_name_at names) ps=map ((!) names) ps"
+    using inside by (induction ps) (simp_all add: List.map_filter_simps isabelle_name_at_def)
+  then show ?thesis by (simp add: isabelle_local_names_def)
+qed
+
+lemma isabelle_state_embedding_named:
+  assumes named: "isabelle_name_at names i=Some n" and found: "isabelle_name_position L n=Some k"
+  shows "isabelle_state_embedding names L i=k"
+  using named found by (simp add: isabelle_state_embedding_def)
+
+lemma isabelle_name_position_member:
+  assumes "n\<in>set L"
+  obtains k where "isabelle_name_position L n=Some k" "k<length L" "L!k=n"
+  using assms isabelle_name_position_none[of L n] isabelle_name_position_some[of L n]
+  by (cases "isabelle_name_position L n") auto
+
+theorem isabelle_local_entities_compared:
+  assumes distinct: "distinct names'"
+    and inside: "\<forall>i\<in>set (isabelle_entity_positions e). i<length names"
+    and inside': "\<forall>j\<in>set (isabelle_entity_positions g). j<length names'"
+  shows "isabelle_local_entities names [e]=isabelle_local_entities names' [g] \<longleftrightarrow>
+    isabelle_entity_rename (isabelle_state_embedding names names') e=g"
+proof -
+  let ?ps="isabelle_entity_positions e" and ?qs="isabelle_entity_positions g"
+  let ?L="isabelle_local_names names ?ps" and ?M="isabelle_local_names names' ?qs"
+  let ?f="isabelle_state_embedding names names'"
+  have L: "set ?L=(!) names ` set ?ps" using inside by (simp add: isabelle_local_names_in_range)
+  have M: "set ?M=(!) names' ` set ?qs" using inside' by (simp add: isabelle_local_names_in_range)
+  have unfolded: "isabelle_local_entities names [e]=isabelle_local_entities names' [g] \<longleftrightarrow>
+      ?L=?M \<and> isabelle_entity_rename (isabelle_state_embedding names ?L) e=
+        isabelle_entity_rename (isabelle_state_embedding names' ?M) g"
+    by (simp add: isabelle_local_entities_def isabelle_local_embedding_def Let_def)
+  have named: "isabelle_name_at names i=Some (names!i)" if "i\<in>set ?ps" for i
+    using that inside by (simp add: isabelle_name_at_def)
+  show ?thesis
+  proof
+    assume equal: "isabelle_local_entities names [e]=isabelle_local_entities names' [g]"
+    have both: "?L=?M \<and> isabelle_entity_rename (isabelle_state_embedding names ?L) e=
+        isabelle_entity_rename (isabelle_state_embedding names' ?M) g"
+      by (rule iffD1[OF unfolded equal])
+    then have same: "?L=?M" by (rule conjunct1)
+    from both have moved: "isabelle_entity_rename (isabelle_state_embedding names ?L) e=
+        isabelle_entity_rename (isabelle_state_embedding names' ?M) g" by (rule conjunct2)
+    have returned: "isabelle_entity_rename (isabelle_state_embedding ?M names')
+        (isabelle_entity_rename (isabelle_state_embedding names' ?M) g)=g"
+    proof -
+      have "isabelle_entity_rename (isabelle_state_embedding ?M names' \<circ> isabelle_state_embedding names' ?M) g=
+          isabelle_entity_rename id g"
+      proof (rule isabelle_entity_rename_cong)
+        fix j assume position: "j\<in>set ?qs"
+        then have "j<length names'" "names'!j\<in>set ?M" using inside' M by auto
+        then show "(isabelle_state_embedding ?M names' \<circ> isabelle_state_embedding names' ?M) j=id j"
+          by (simp add: isabelle_state_embedding_back[OF distinct])
+      qed
+      then show ?thesis by (simp only: isabelle_entity_rename_compose isabelle_entity_rename_id)
+    qed
+    have forth: "isabelle_entity_rename (isabelle_state_embedding ?M names')
+        (isabelle_entity_rename (isabelle_state_embedding names ?L) e)=isabelle_entity_rename ?f e"
+    proof -
+      have "isabelle_entity_rename (isabelle_state_embedding ?M names' \<circ> isabelle_state_embedding names ?L) e=
+          isabelle_entity_rename ?f e"
+      proof (rule isabelle_entity_rename_cong)
+        fix i assume position: "i\<in>set ?ps"
+        have inL: "names!i\<in>set ?L" using position L by auto
+        then have "names!i\<in>set names'" using same M inside' by auto
+        then obtain p where p: "isabelle_name_position names' (names!i)=Some p"
+          by (rule isabelle_name_position_member)
+        obtain k where k: "isabelle_name_position ?L (names!i)=Some k" "k<length ?L" "?L!k=names!i"
+          using inL by (rule isabelle_name_position_member)
+        have "isabelle_name_at ?M k=Some (names!i)" using k same by (simp add: isabelle_name_at_def)
+        then have "isabelle_state_embedding ?M names' k=p" using p by (rule isabelle_state_embedding_named)
+        moreover have "isabelle_state_embedding names ?L i=k"
+          using named[OF position] k(1) by (rule isabelle_state_embedding_named)
+        moreover have "?f i=p" using named[OF position] p by (rule isabelle_state_embedding_named)
+        ultimately show "(isabelle_state_embedding ?M names' \<circ> isabelle_state_embedding names ?L) i=?f i"
+          by simp
+      qed
+      then show ?thesis by (simp only: isabelle_entity_rename_compose)
+    qed
+    show "isabelle_entity_rename ?f e=g" using forth moved returned by simp
+  next
+    assume renamed: "isabelle_entity_rename ?f e=g"
+    have positions: "?qs=map ?f ?ps"
+      unfolding renamed[symmetric] by (rule isabelle_entity_rename_positions)
+    have present: "names'!(?f i)=names!i" if position: "i\<in>set ?ps" for i
+    proof -
+      have below: "?f i<length names'" using position positions inside' by auto
+      have "names!i\<in>set names'"
+      proof (rule ccontr)
+        assume "names!i\<notin>set names'"
+        then have "?f i=length names'+i"
+          using named[OF position] by (intro isabelle_state_embedding_unshared) simp
+        then show False using below by simp
+      qed
+      then have "isabelle_name_at names' (?f i)=Some (names!i)"
+        by (rule isabelle_state_embedding_shared[OF named[OF position]])
+      then show ?thesis using below by (simp add: isabelle_name_at_def)
+    qed
+    have "map ((!) names') ?qs=map ((!) names) ?ps"
+      unfolding positions by (simp add: present)
+    then have same: "?M=?L" using inside inside' by (simp add: isabelle_local_names_in_range)
+    have "isabelle_entity_rename (isabelle_state_embedding names' ?L \<circ> ?f) e=
+        isabelle_entity_rename (isabelle_state_embedding names ?L) e"
+    proof (rule isabelle_entity_rename_cong)
+      fix i assume position: "i\<in>set ?ps"
+      have "names!i\<in>set ?L" using position L by auto
+      then obtain k where k: "isabelle_name_position ?L (names!i)=Some k"
+        by (rule isabelle_name_position_member)
+      have below: "?f i<length names'" using position positions inside' by auto
+      have "isabelle_name_at names' (?f i)=Some (names!i)"
+        using below present[OF position] by (simp add: isabelle_name_at_def)
+      then have "isabelle_state_embedding names' ?L (?f i)=k" using k by (rule isabelle_state_embedding_named)
+      moreover have "isabelle_state_embedding names ?L i=k" using named[OF position] k by (rule isabelle_state_embedding_named)
+      ultimately show "(isabelle_state_embedding names' ?L \<circ> ?f) i=isabelle_state_embedding names ?L i" by simp
+    qed
+    moreover have "isabelle_entity_rename (isabelle_state_embedding names' ?M) g=
+        isabelle_entity_rename (isabelle_state_embedding names' ?L \<circ> ?f) e"
+    proof -
+      have "isabelle_entity_rename (isabelle_state_embedding names' ?M) g=
+          isabelle_entity_rename (isabelle_state_embedding names' ?L) g" by (simp only: same)
+      also have "\<dots>=isabelle_entity_rename (isabelle_state_embedding names' ?L \<circ> ?f) e"
+        unfolding renamed[symmetric] by (rule isabelle_entity_rename_compose)
+      finally show ?thesis .
+    qed
+    ultimately have "isabelle_entity_rename (isabelle_state_embedding names' ?M) g=
+        isabelle_entity_rename (isabelle_state_embedding names ?L) e" by (simp only:)
+    then show "isabelle_local_entities names [e]=isabelle_local_entities names' [g]"
+      using unfolded same by simp
+  qed
+qed
+
+theorem isabelle_local_root_compared:
+  assumes distinct: "distinct names'"
+    and inside: "\<forall>i\<in>set (isabelle_term_positions t). i<length names"
+    and inside': "\<forall>j\<in>set (isabelle_term_positions u). j<length names'"
+  shows "isabelle_local_root names t=isabelle_local_root names' u \<longleftrightarrow>
+    isabelle_term_rename (isabelle_state_embedding names names') t=u"
+proof -
+  have "isabelle_local_root names t=isabelle_local_root names' u \<longleftrightarrow>
+      isabelle_local_entities names [Isabelle_Definition t]=isabelle_local_entities names' [Isabelle_Definition u]"
+    by (simp add: isabelle_local_root_entities prod_eq_iff)
+  also have "\<dots> \<longleftrightarrow> isabelle_entity_rename (isabelle_state_embedding names names') (Isabelle_Definition t)=
+      Isabelle_Definition u"
+    by (rule isabelle_local_entities_compared[OF distinct])
+      (use inside inside' in \<open>simp_all add: isabelle_entity_positions_def\<close>)
+  also have "\<dots> \<longleftrightarrow> isabelle_term_rename (isabelle_state_embedding names names') t=u" by simp
+  finally show ?thesis .
+qed
+
 end

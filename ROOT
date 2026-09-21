@@ -834,6 +834,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Inference_Abstraction
     Factor_Library_Coverage
     Factor_Reader_Library_Coverage
+    Carrier_Indexes
     Finite_Functional_Enumeration
     Finite_Singleton_Selection
     Factor_Library_Compilation
@@ -1738,7 +1739,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Native_Development_Seed
     Development_Policy
     Development_Decomposition
+    Development_Decomposition_Soundness
     Development_Successor
+    Development_Repair_Rows
     RRA_Finite_Transactions
     RRA_Formed_Snapshot_Transactions
     Development_Publication

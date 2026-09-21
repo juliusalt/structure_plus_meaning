@@ -37,24 +37,30 @@ def source_graph(project: Path, overlays: list[Path], roots: list[str]) -> tuple
     for directory in overlays:
         require(directory.is_dir(), f"Missing overlay directory: {directory}")
         inventory.update({p.stem: p for p in directory.glob("*.thy")})
-    sources, parents, active = {}, {}, set()
+    sources, parents, active, chain = {}, {}, set(), []
 
-    def visit(name: str) -> None:
+    def visit(name: str, importer: str = "") -> None:
+        # chain is the path the traversal is on, so a refusal names the importer that demanded
+        # name, and a cycle the whole chain that closes it, without a second traversal.
         if name in active:
-            raise ValueError(f"Cyclic theory import: {name}")
+            cycle = chain[chain.index(name):] + [name]
+            raise ValueError(f"Cyclic theory import: {name}; " + " imports ".join(cycle) + ".")
         if name in sources:
             return
         if name not in inventory:
+            demanded = f", imported by {importer}" if importer else ""
             require(name in {"Main", "HOL", "Pure"} or name.startswith(("HOL.", "HOL-Library.")),
-                    f"Missing local theory: {name}")
+                    f"Missing local theory: {name}{demanded}")
             return
         active.add(name)
+        chain.append(name)
         path = inventory[name].resolve()
         data = path.read_bytes()
         imported = theory_imports(data.decode("utf-8"), name)
         for parent in imported:
-            visit(parent)
+            visit(parent, name)
         active.remove(name)
+        chain.pop()
         parents[name] = imported
         sources[name] = {"path": str(path), "sha256": digest(data), "text": data.decode("utf-8")}
 

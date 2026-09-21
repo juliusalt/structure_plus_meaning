@@ -603,6 +603,22 @@ class PlanningTests(Flow):
                              env=self.w.env, capture_output=True, text=True)
         self.assertEqual(out.stdout.strip(), "4 None", out.stderr)   # and one that is not there is still None
 
+    def test_the_owner_joins_the_planner_that_lives_rather_than_opening_another(self):
+        # talk.sh's whole first step: the planner that lives is joined with everything it holds, woken if it was
+        # between its events, and only when none lives is one opened (a fork of the knowledge base)
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json", state="idle")
+        self.w.hit("plan-1")
+        self.assertEqual(self.w.v2("talk"), "plan-1")
+        self.assertTrue(self.s("plan-1")["owner"])
+        (resume,) = [c["args"] for c in self.w.calls("--bg") if "--resume" in c["args"] and "-n" not in c["args"]]
+        self.assertIn("The owner is here and will speak to you", resume[-1])
+        self.assertEqual(self.forks("plan-"), [])          # none was opened
+        # one that has ended is not joined: the next is a fork of the knowledge base
+        self.w.set_st(sessions={**self.w.st()["sessions"], "plan-1": {**self.s("plan-1"), "released": True}})
+        self.assertEqual(self.w.v2("talk"), "plan-2")
+        self.assertEqual(len(self.forks("plan-")), 1)
+        self.assertIn("The owner started you to speak with you", self.forks("plan-")[0][-1])
+
     def test_a_task_the_planner_puts_back_to_pending_and_queues_runs_again(self):
         # `done` is terminal bookkeeping that task_state never re-reads, so that a task accepted by its review is
         # not started a second time in the window before the planner completes it in the list. A task the planner
@@ -1319,6 +1335,15 @@ class TaskTests(Flow):
         meter.write_text(json.dumps(m))
         self.assertIn("Step 2 of task 1", self.as_(self.impl, "step", "1", "2", "theories/Base.thy"))
         self.assertIn("you work on task 1, not 9", self.as_(self.impl, "step", "9", "1", "x"))
+        # a finished task's own artifacts are sources too, and a fixer or a reviewer opens its step with them
+        m["productions"] = 2
+        meter.write_text(json.dumps(m))
+        self.finish()
+        out = self.as_(self.impl, "step", "1", "3", "result", "log", "diff")
+        self.assertIn("== result\nStatus: done", out)
+        self.assertIn("== log", out)
+        self.assertIn("== diff\n", out)
+        self.assertIn("theories/Ready.thy", out)        # the new file's own text, which no diff of HEAD shows
 
     def test_a_result_is_refused_while_the_sessions_own_jobs_run(self):
         self.w.transcript(self.s(self.impl)["sid"], [{"type": "user", "message": {"content": [{"type": "tool_result",

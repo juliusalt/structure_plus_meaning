@@ -450,6 +450,21 @@ class SharingTests(Guarded):
     def test_handoff_is_the_planners(self):
         self.assertIn("HANDOFF.md is the planner's state", self.guard("Write", {"file_path": "HANDOFF.md"}))
 
+    def test_the_harness_s_own_scripts_are_not_a_session_s_to_run(self):
+        # `finalize.py commit ID` would put a task's work in the history with no check and no verdict, and health.py
+        # would read it the whole state: a session's interface is v2.py, and show.py for reading (2026-09-21)
+        for command in ("python3 .claude/orchestration/finalize.py commit 1",
+                        "python3 .claude/orchestration/health.py",
+                        "sh .claude/orchestration/base.sh max warm",
+                        ".claude/orchestration/watchdog.py"):
+            reason = self.guard("Bash", {"command": command}, tool_use="t-new")
+            self.assertIsNotNone(reason, f"{command} was allowed")
+            self.assertIn("the harness's own to run", reason)
+        for command in (".claude/orchestration/v2.py result 1", ".claude/orchestration/show.py --statement ready",
+                        "python3 tools/probe_theories.py Ready", "grep -rn finalize.py .build/tasks/1/"):
+            self.assertNotIn("the harness's own to run",
+                             self.guard("Bash", {"command": command}, tool_use="t-new") or "")
+
     def test_a_session_starts_no_session_and_waits_through_nothing(self):
         # the Agent tool is refused, and `claude --bg` is the same thing by another door: a session outside every
         # slot, every limit and every record the harness keeps. Monitor is waiting, and reading through its events.

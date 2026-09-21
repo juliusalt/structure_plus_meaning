@@ -96,6 +96,8 @@ CASES = [
      "starts_no_session", "a session starting a session"),
     ("work_meter.py", 'if tool in ("TaskOutput", "Monitor"):', 'if tool in ("TaskOutput",):',
      "starts_no_session", "Monitor refused as waiting"),
+    ("work_meter.py", '    for words in segments(shell_syntax(c)):\n        for w in words[:2]:\n            name = os.path.basename(w.strip("\'\\"`"))\n            if name.endswith((".py", ".sh")) and name not in ("v2.py", "show.py") and os.path.exists(\n                    os.path.join(v2.HERE, name)):\n                return deny(f"{name} is the harness\'s own to run: the orchestration runs it at the moment it "\n                            "belongs. Your commands are `v2.py` — step, ask, escalate, park, finalize, result, and "\n                            "what your role\'s protocol names — and `show.py` for reading.")\n', '',
+     "harness_s_own_scripts", "the harness's own scripts run by a session"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

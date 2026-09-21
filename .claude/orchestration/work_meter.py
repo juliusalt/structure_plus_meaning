@@ -540,6 +540,17 @@ def session_guard(hook, rec):
                     "place them (`v2.py propose ID FILE`) and the planner places them; any other role proposes a "
                     "task to the planner (`v2.py ask --to planner`) or names it in its result.")
     c = (inp.get("command") or "") if tool == "Bash" else ""
+    # the harness's own scripts are not a session's to run: `finalize.py commit ID` would put a task's work in the
+    # history with no check and no verdict, and health.py would read it the whole state. Its interface is v2.py,
+    # and show.py for reading (2026-09-21).
+    for words in segments(shell_syntax(c)):
+        for w in words[:2]:
+            name = os.path.basename(w.strip("'\"`"))
+            if name.endswith((".py", ".sh")) and name not in ("v2.py", "show.py") and os.path.exists(
+                    os.path.join(v2.HERE, name)):
+                return deny(f"{name} is the harness's own to run: the orchestration runs it at the moment it "
+                            "belongs. Your commands are `v2.py` — step, ask, escalate, park, finalize, result, and "
+                            "what your role's protocol names — and `show.py` for reading.")
     if c and any(os.path.basename(w.strip("'\"`")) == "claude" for words in segments(shell_syntax(c)) for w in words[:1]):
         # the Agent tool is refused above, and `claude --bg` is the same thing by another door: a session outside
         # every slot, every limit and every record the harness keeps (2026-09-21)

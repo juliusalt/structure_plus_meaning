@@ -363,7 +363,12 @@ Not yet planned, in the order they are expected to be planned:
   hand-over's run rather than the re-run it commits on; #79's review, that the harness's probe guard still requires
   `--timeout` to be named and cites the old 1200 s default, as does the memory note on probing; and the finalizer
   commits whole files, so the shared files of the one tree (`THEORY_MAP.md`, `ROOT`) couple landings: #24's commit was
-  refused at 23:02 for carrying #54's unreviewed rows, and committing a task's own hunks would remove the coupling.
+  refused at 23:02 for carrying #54's unreviewed rows, and committing a task's own hunks would remove the coupling; and
+  the harness kept the deleted review task 67 in #66's `review_tasks`, so the planner's verdict on #66 counted as one
+  review of two and #66 waited until the same verdict was recorded against 67 (00:33); and the sessions' sandbox cannot
+  write the repository's `.build/` root, so #82 puts the advanced base under `.build/tasks/base-advance/` (q31).
+- **The active base, once #82 has advanced it, lives in `.build/tasks/base-advance/`**: never remove it while the
+  pointer `/tmp/structural-active-context.json` names it.
 - **Tasks working in the one tree install their theories only at hand-over** (q30, 2026-09-22), so that their
   uncommitted `ROOT` and `THEORY_MAP.md` lines do not hold other tasks' landings meanwhile (a landing waits for them
   within its commit's budget, then comes back marked, and `v2.py queue ID` makes its commit again with no session);

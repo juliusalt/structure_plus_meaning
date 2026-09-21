@@ -836,6 +836,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Reader_Library_Coverage
     Carrier_Indexes
     Finite_Functional_Enumeration
+    Functional_Enumeration_Indexes
     Finite_Singleton_Selection
     Factor_Library_Compilation
     Factor_Inference_Reader_Compilation
@@ -1271,6 +1272,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Indexed_Artifact_Lookup
     Required_Cause_Execution
     Binary_Nested_Stores
+    Binary_Store_Indexes
     Binary_Store_Entries
     Environment_Update_Execution
     Finite_Optional_Images
@@ -1619,6 +1621,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Filtered_Keyed_Products
     RRA_Linked_Record_Candidates
     Ordered_Member_Trees
+    Member_Tree_Indexes
     Ordered_Finite_Rows
     Finite_Investigation_Basis_Sharing
     Factor_Invariant_Evaluation_Sharing

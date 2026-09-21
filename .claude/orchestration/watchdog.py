@@ -118,11 +118,8 @@ def hard(s):
 
 def lost(name, why):
     """A session that can no longer continue: its piece of work goes back, by its role."""
-    if v2.has_mail(name):  # nothing will open its box again: said, and kept where it is
-        box = os.path.join(v2.STATE, "mail", f"{name}.jsonl")
-        held = open(box, errors="ignore").read() if os.path.exists(box) else ""
-        v2.log(f"ATTENTION mail to {name} reached nobody ({why}); it is kept in state/mail/{name}.jsonl: "
-               f"{held[:200]}")
+    # what is in its box is named by v2.release below, which this ends with: it said so here as well, and said the
+    # box was kept, which release had just emptied (2026-09-21)
     with v2.state() as st:
         s = st["sessions"][name]
         s["state"], tid = "lost", s.get("task")

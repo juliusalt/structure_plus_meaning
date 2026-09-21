@@ -239,6 +239,8 @@ class WatchdogTests(unittest.TestCase):
         # the resume failed, so the mail went back in the box (each with its own sender, not merged into one) — and
         # the session was lost and released in the same pass, so it is named rather than left where no one opens it
         self.assertEqual(self.w.mail("implement-4"), [])
+        # said once, by the one place that empties the box: the loss said it too, and said the box was kept
+        self.assertEqual((self.w.state / "v2.log").read_text().count("never read"), 1)
         said = self.heard()
         self.assertIn("2 message(s) to implement-4 (implementer on task 4) were never read: from kb, plan-1", said)
         self.assertIn("2 message(s) to implement-4 from kb, plan-1 were never read: it is released",

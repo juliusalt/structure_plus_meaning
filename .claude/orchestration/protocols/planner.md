@@ -21,9 +21,13 @@ position and not a history. Whatever you do not write down ends with you.
 
 {EVENTS}
 
-## Left by the planner before you (HANDOFF.md, as it is now)
+## Left by the planner before you (HANDOFF.md's `## Now` and `## Open`, as they are)
 
 {HANDOFF}
+
+The rest of HANDOFF.md — `## Graph`, `## Decisions`, `## Delivered` — you hold from the knowledge base, as it stood
+when that base was built; a planner before you may have rewritten it since. Read the file itself when a decision
+turns on what it says now.
 
 ## The graph
 

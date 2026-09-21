@@ -10117,4 +10117,4 @@ which the library does not state, and is a candidate of its own. That this refin
 were chosen at all was decided outside the loop, in the entry named above and in this task's brief,
 and is a residual.
 
-Recorded 2026-09-20, commit `…`.
+Recorded 2026-09-20, commit `44738c20`.

@@ -12,10 +12,10 @@ directions of 2026-09-19 — structure is explicit and octets are inert; native 
 through the Q7 order in the ledger.
 
 **Landing first.** Under the harness of 2026-09-21 a build or fix is complete when it has landed: its check passes, its
-review accepts it, the finalizer commits it, and only then does the harness complete it and its reviews. Five pieces of
-work stand written and uncommitted in the one tree. The development locus (#22, reviewed by #23) and the check's named
-refusals (#50, reviewed by the harness) are in their landing. The verdict's state rows (#46) landed as `7b4bb54f` after
-one fix round; its re-review's two small corrections (its map row, a sentence at line 471) ride with #78. Two a session finishes: the replay's outcome classification (#48 — its acceptance
+review accepts it, the finalizer commits it, and only then does the harness complete it and its reviews. Of the five
+pieces of work that stood written and uncommitted at the start, the verdict's state rows (#46, `7b4bb54f`) and the
+development locus (#22, `612ee5a9`) have landed after a fix round each, and their re-reviews' small corrections ride
+with #78. The check's named refusals (#50, reviewed by the harness) is in its landing. Two a session finishes: the replay's outcome classification (#48 — its acceptance
 replay was never run, because the tree was inconsistent when it was written; it also carries the ignore line and the
 untracking of `tools/__pycache__/build.cpython-314.pyc`) and the plan's two standing sections (#49 — written; its
 hand-over never landed because its session could not end its turn).
@@ -153,6 +153,9 @@ judgment's path.
 - **A design entry is not rewritten when the implementation narrows what it predicted**: the sentence stays and gains a
   marked correction naming the entry that states the fact.
 - **A host-transport fix carries no review task of its own**; the harness reviews it.
+- **A probe is an inner loop, not a gate**: when the machine is full and only a task's probe remains, it hands over, and
+  the landing check's proof phase — run before any recipe — verifies the same and fails in seconds on a wrong proof
+  (q26, 2026-09-21). The result says the probe was not run and why.
 - **No task rests on reasoning not yet written.**
 
 ## Delivered
@@ -178,8 +181,15 @@ judgment's path.
   reader), unknown positions, distinct roots (`state_presents_distinct_roots`, owned by the exporter); names in
   `.build/tasks/46/result.md`. Its follow-ups: the two `kinds_present` instances belong where the verdict's kind
   arguments are taken, and a root row cites its head constant only.
-- **Written, landing** (see Graph): #22 `theories/Development_Loci.thy` (379 lines; the names the tasks after it consume
-  in `.build/tasks/22/names.md`); #50 the check's named refusals, 14 cases in
+- **#22** `theories/Development_Loci.thy`, committed `612ee5a9` after one fix round: the development locus, a path of
+  role, kind and the subject constant's key under `inj_on key S`, partial where a problem has no single subject
+  constant (`development_subject_constant` through `finite_singleton_option`), its only octet the empty payload
+  (`development_locus_payload_octets`, stated with `finite_term_payloads`); the names its consumers take in
+  `.build/tasks/22/names.md`. Its reviews' follow-ups sit where they bite: the key is a name-table position and never
+  `development_readiness_key`, and `development_machinery_request_of` takes `development_subject_constant` (#30); every
+  program that reads loci is audited with `finite_system_payloads` (#42 for the verdict, #62 for the decomposition); its
+  map row's imports cell (#78).
+- **Written, landing** (see Graph): #50 the check's named refusals, 14 cases in
   `tools/test_check_refusals.py`; #48 `tools/replay_development_answers.py` with ten tests (no retained record holds
   `elapsed_seconds`, so the longest-first ordering is inert until the answer harness retains its run's cost); #49 the
   plan's two sections.
@@ -253,11 +263,12 @@ Not yet planned, in the order they are expected to be planned:
 - **The graph was taken stock of and released on 2026-09-21** (plan-32): #52 dropped and deleted, superseded by the
   per-task landing, its residue given to #48; #24 and #32 re-pointed onto builds, #32 off #30; #30's discovery split off
   as #53; the stale dependency sentence corrected in #32–#44 and the order in #14; #48 and #49 re-briefed to finish.
-- **The run is serial until #22 lands** (#46 landed at 21:42). HEAD declares `Development_Loci` without its file, so no
-  task gets a tree of its own and every task works in the one tree, each finalization holding it while the others park.
-  #22 leads the order; every build not yet started waits on #22 and #46 (#24, #56, #62, #70, #72, #78, set 2026-09-21), so
-  that it starts in a tree of its own. Parked tasks resume in the queue's order (Q8): #22, then #50, whose landing ends
-  the re-execution of every recipe at every check, then #48 and #49, then the in-progress fillers #54, #60, #58 and #68.
+- **HEAD is consistent again** (#46 landed 21:42, #22 at 21:48): a producing task that starts now gets a tree of its
+  own. Those that started in the one tree (#48, #49, #50, #54, #58, #60, #66, #68) stay there until they land, resuming
+  in the queue's order (Q8): #50 first, whose landing ends the re-execution of every recipe at every check, then #48 and
+  #49, then the fillers.
+- **For the owner**: `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap
+  (#22's re-review).
 - **Owed to the owner**: #48's replay numbers against task 20's 283.6 s; each landing check's phases and per-recipe
   comparison.
 - **Owed before #62 and #64 start: correct their briefs from #66's entry once it is accepted** (q25). A decomposition's
@@ -267,7 +278,8 @@ Not yet planned, in the order they are expected to be planned:
   applications" cannot hold as equalities; the entry states what they become. #66 also adds a sixth role
   (`Development_Decomposition_Role`, prefix [T,F,T]) through the follow-up build, extending #24's relation there; the
   reviews of #22 and #24 are not reopened. #58 was told its repair row, without a part child, is right and not an
-  application of #60's relation.
+  application of #60's relation. #62's corrected brief also audits its program with `finite_system_payloads` (#22's
+  review: every program reading loci).
 - **If #54 reports a changed word** because factoring `development_readiness_key` changes a definition the machinery
   state presents as an entity (the mechanism of #53's first finding): allow it, with the words and the definition named
   in its result — reuse outranks word stability, and #56 and #30 re-record over it.

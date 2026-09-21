@@ -27,14 +27,20 @@ the judgment word and summary are compared with the record, as the verdict word 
 An answer whose judgment could not be produced is reported apart from one whose word differs. A run
 produces a judgment when the harness leaves its answer, whatever that answer says: a refusal and a
 failed build are judgments the harness made, and their words are compared like any other. A run that
-left no answer at all, because its Isabelle build never ran or died, produced nothing to compare, so it
-is neither a reconstruction nor a re-evaluation: it is reported as `failed`, with the error the run left,
-and `differing` holds only words that were compared and differed. A planner reads a differing word as a
-re-evaluation of that answer and a failed run as a fault of this run alone.
+left no answer at all, because its Isabelle build never ran, died or outlived its limit, produced
+nothing to compare, so it is neither a reconstruction nor a re-evaluation: it is reported as
+`unproduced`, with the error the run left, and `differing` holds only words that were compared and
+differed. A planner reads a differing word as a re-evaluation of that answer and an unproduced
+judgment as a fault of this run alone. A row's own `status` is a third notion, the judgment the
+harness made: the retained `failed-proof` record parts them, being a `failed` status that is
+reconstructed and not unproduced.
 
 The run's elapsed wall seconds are reported beside the run count on the error stream and in the summary,
 so that the observed cost of a replay is readable where its counts are; each answer's own seconds are in
 its row of the summary.
+
+The records are replayed longest-first by the seconds their own record kept, so that a long answer is
+not left to start last; a record that kept none is replayed last, and none keeps its seconds today.
 
 Every replayed answer runs the answer harness, and each of those runs an Isabelle build, so the worker
 count is the number of Isabelle runs the replay holds at once. This machine takes at most two at once,
@@ -64,20 +70,46 @@ RECORDS = ROOT / 'validation' / 'development-answers'
 ISABELLE_RUN_LIMIT = 2
 
 
+def run_harness(command, directory, timeout):
+    """Run one answer's harness and report what it left, raising nothing at its caller.
+
+    A run that outlives its limit, or never starts, leaves no judgment to compare. Raised through
+    the pool that replays the answers, such a failure would abort every other answer's run and
+    leave no summary at all, so it is returned here as this run's error and costs its own answer
+    alone. The limit the run outlived is named in that error, because raising it is the reader's
+    remedy. The elapsed seconds are the run's, failed or not.
+    """
+    started = time.monotonic()
+    try:
+        completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=timeout)
+        left = completed.stdout[-2000:] + completed.stderr[-2000:]
+    except subprocess.TimeoutExpired as expired:
+        # What a stopped run wrote comes back as bytes whatever `text` says, and as None when it wrote nothing.
+        written = [stream.decode(errors='replace') if isinstance(stream, bytes) else (stream or '')
+                   for stream in (expired.stdout, expired.stderr)]
+        left = f'the harness run outlived its {expired.timeout}s limit and was stopped\n' \
+               + written[0][-2000:] + written[1][-2000:]
+    except (subprocess.SubprocessError, OSError) as failure:
+        left = f'the harness run left no judgment: {type(failure).__name__}: {failure}'
+    return round(time.monotonic() - started, 1), (directory / 'run' / 'answer.json').is_file(), left
+
+
+def unproduced_observation(left):
+    """The row of a run that left no judgment: no harness status, since the harness made none, and its error."""
+    return {'status': None, 'error': left}
+
+
 def replay_native(record_path, record, output, timeout, rerecord=False):
     directory = output / record_path.stem
     directory.mkdir(parents=True)
     answer = directory / 'answer.json'
     answer.write_text(json.dumps(record['answer'], indent=1) + '\n')
-    started = time.monotonic()
-    completed = subprocess.run([sys.executable, '-B', str(ROOT / 'tools' / 'native_answers.py'), 'judge',
-                                '--answer', str(answer), '--output', str(directory / 'run'), '--timeout', str(timeout),
-                                '--retain', str(directory / 'retained.json')],
-                               cwd=ROOT, capture_output=True, text=True, timeout=timeout + 300)
-    elapsed = round(time.monotonic() - started, 1)
-    produced = (directory / 'run' / 'answer.json').is_file()
+    elapsed, produced, left = run_harness(
+        [sys.executable, '-B', str(ROOT / 'tools' / 'native_answers.py'), 'judge',
+         '--answer', str(answer), '--output', str(directory / 'run'), '--timeout', str(timeout),
+         '--retain', str(directory / 'retained.json')], directory, timeout + 300)
     observed = json.loads((directory / 'run' / 'answer.json').read_text()) if produced \
-        else {'status': 'failed', 'error': completed.stdout[-2000:] + completed.stderr[-2000:]}
+        else unproduced_observation(left)
     same = produced and observed['status'] == record['status'] and all(observed.get(k) == record.get(k)
                                                                       for k in ('judgment_word', 'summary'))
     if rerecord and not same and produced and observed['status'] == record['status'] == 'judged':
@@ -100,16 +132,13 @@ def replay(record_path, output, timeout, rerecord=False):
     directory.mkdir(parents=True)
     answer = directory / 'answer.json'
     answer.write_text(json.dumps(record['answer'], indent=1) + '\n')
-    started = time.monotonic()
-    completed = subprocess.run([sys.executable, '-B', str(ROOT / 'tools' / 'development_answer.py'), 'answer',
-                                '--answer', str(answer), '--output', str(directory / 'run'), '--timeout', str(timeout),
-                                '--retain', str(directory / 'retained.json')],
-                               cwd=ROOT, capture_output=True, text=True, timeout=timeout + 300)
-    elapsed = round(time.monotonic() - started, 1)
-    produced = (directory / 'run' / 'answer.json').is_file()
+    elapsed, produced, left = run_harness(
+        [sys.executable, '-B', str(ROOT / 'tools' / 'development_answer.py'), 'answer',
+         '--answer', str(answer), '--output', str(directory / 'run'), '--timeout', str(timeout),
+         '--retain', str(directory / 'retained.json')], directory, timeout + 300)
     observed = json.loads((directory / 'run' / 'answer.json').read_text()) if produced \
-        else {'status': 'failed', 'error': completed.stdout[-2000:] + completed.stderr[-2000:]}
-    same_status = observed['status'] == record['status']
+        else unproduced_observation(left)
+    same_status = produced and observed['status'] == record['status']
     same_word = all(observed.get(word) == record.get(word) for word in ('verdict_word', 'publication_word', 'refusal', 'error'))
     if rerecord and produced and same_status and not same_word and observed['status'] in ('judged', 'refused') and not adopted:
         retained = json.loads((directory / 'retained.json').read_text())
@@ -123,6 +152,44 @@ def replay(record_path, output, timeout, rerecord=False):
                               'error': observed.get('error'), 'expected_error': record.get('error'),
                               'adopted': adopted, 'produced': produced, 'elapsed_seconds': elapsed,
                               'reconstructed': produced and same_status and same_word and not adopted}
+
+
+def retained_seconds(record_path):
+    """The seconds a record kept of the run that judged it, and none as none rather than as short."""
+    try:
+        return float(json.loads(record_path.read_text()).get('elapsed_seconds') or 0.0)
+    except (OSError, ValueError, TypeError):
+        return 0.0
+
+
+def replay_order(records):
+    """The records longest-first, by the seconds their own retained record kept.
+
+    Every replayed answer holds an Isabelle build of its own, so a replay lasts until its longest
+    answer ends, and starting the longest answers first is what lets the shorter ones fill the
+    workers behind them. A record that kept no seconds is placed last, its length being unknown
+    rather than short, and the sort is stable, so records of equal seconds keep the order they
+    came in. No retained record keeps its seconds today, the harness retaining the boundary of a
+    judgment and not its cost, so this order is the records' own until one does.
+    """
+    return sorted(records, key=retained_seconds, reverse=True)
+
+
+def answer_groups(results):
+    """The groups a replay's answers fall into, each named for the notion that parts it from the rest.
+
+    `unproduced` holds the answers whose run left no judgment, which is exactly the decider
+    `produced` of their rows: nothing was compared, so they are neither a reconstruction nor a
+    re-evaluation. `differing` holds only words that were compared and differed, which a planner
+    reads as a re-evaluation of that answer. An adopted answer is judged as the published state's
+    own and is compared as neither. A row's own `status` is a third notion, the judgment the
+    harness made, and is not this classification: an answer whose status is `failed` was judged,
+    and is unproduced only when this run left no judgment at all.
+    """
+    return {'adopted': sorted(name for name, row in results.items() if row['adopted']),
+            'differing': sorted(name for name, row in results.items()
+                                if row['produced'] and not row['reconstructed'] and not row['adopted']),
+            'unproduced': sorted(name for name, row in results.items() if not row['produced'])}
 
 
 def main():
@@ -145,27 +212,22 @@ def main():
     output = args.output.resolve()
     assert not output.exists(), 'Use a fresh replay directory.'
     output.mkdir(parents=True)
-    records = sorted(RECORDS.glob('*.json'))
+    records = replay_order(sorted(RECORDS.glob('*.json')))
     started = time.monotonic()
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
         results = dict(pool.map(lambda path: replay(path, output, args.timeout, args.rerecord), records))
     elapsed = round(time.monotonic() - started, 1)
-    # A run that left no answer produced no judgment, so no word was compared: it is reported apart
-    # from the answers whose compared word differs, which are the re-evaluations for the process.
-    failed = sorted(n for n, r in results.items() if not r['produced'])
-    differing = sorted(n for n, r in results.items() if r['produced'] and not r['reconstructed'] and not r['adopted'])
+    groups = answer_groups(results)
     report = {'replayed': len(results), 'reconstructed': sum(r['reconstructed'] for r in results.values()),
-              'adopted': sorted(n for n, r in results.items() if r['adopted']), 'differing': differing,
-              'failed': failed, 'elapsed_seconds': elapsed, 'answers': results}
+              **groups, 'elapsed_seconds': elapsed, 'answers': results}
     (output / 'replay.json').write_text(json.dumps(report, indent=1, sort_keys=True) + '\n')
     if not args.keep:
         for name in results:
             shutil.rmtree(output / name, ignore_errors=True)
     print(f'replay held {args.workers} Isabelle run(s) at once and took {elapsed}s', file=sys.stderr)
     print(json.dumps({'replayed': report['replayed'], 'reconstructed': report['reconstructed'],
-                      'adopted': report['adopted'], 'differing': differing, 'failed': failed,
-                      'elapsed_seconds': elapsed}))
-    return 0 if not differing and not failed else 1
+                      **groups, 'elapsed_seconds': elapsed}))
+    return 0 if not groups['differing'] and not groups['unproduced'] else 1
 
 
 if __name__ == '__main__':

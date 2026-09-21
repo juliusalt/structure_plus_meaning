@@ -110,4 +110,158 @@ text \<open>Each reference recovers the complete supplied value. Later insertion
   Sequences compose over appended values, a table built from distinct values
   stays distinct, and in such a table every returned index is the first one.\<close>
 
+section \<open>A reference sequence is computed segment by segment\<close>
+
+text \<open>
+  The table a sequence leaves is the supplied table extended by each value it does not yet hold,
+  in the order of first occurrence, and every index is the one its value has in that final table
+  when the supplied table is distinct. Hence the references of disjoint segments of a sequence can
+  be computed each against an empty table, and only the segments' own distinct values are then
+  referenced against the supplied table: the indices and the table are exactly those of the one
+  sequential run. The segments are independent of each other, so they can be computed in parallel.
+\<close>
+
+definition value_reference_add :: "'a \<Rightarrow> 'a list \<Rightarrow> 'a list" where
+  "value_reference_add x T=(if x\<in>set T then T else T@[x])"
+
+lemma value_reference_index_member: "value_reference_index x T\<noteq>None \<longleftrightarrow> x\<in>set T"
+  using value_reference_index_absent[of x T] by simp
+
+lemma value_reference_step_table: "snd (value_reference_step x T)=value_reference_add x T"
+proof (cases "value_reference_index x T")
+  case None
+  then have "x\<notin>set T" using value_reference_index_absent[of x T] by simp
+  then show ?thesis using None by (simp add: value_reference_step_def value_reference_add_def)
+next
+  case (Some i)
+  then have "x\<in>set T" using value_reference_index_member[of x T] by simp
+  then show ?thesis using Some by (simp add: value_reference_step_def value_reference_add_def)
+qed
+
+lemma value_reference_sequence_table:
+  "snd (value_reference_sequence xs T)=fold value_reference_add xs T"
+  by (induction xs arbitrary: T) (simp_all add: case_prod_unfold Let_def value_reference_step_table)
+
+lemma value_reference_sequence_length: "length (fst (value_reference_sequence xs T))=length xs"
+  by (induction xs arbitrary: T) (simp_all add: case_prod_unfold Let_def)
+
+lemma value_reference_sequence_indices:
+  assumes distinct: "distinct T"
+  shows "fst (value_reference_sequence xs T)=
+    map (\<lambda>y. the (value_reference_index y (snd (value_reference_sequence xs T)))) xs"
+proof -
+  let ?U="snd (value_reference_sequence xs T)"
+  let ?I="fst (value_reference_sequence xs T)"
+  have reads: "map (value_reference_read ?U) ?I=map Some xs" by (rule value_reference_sequence_exact)
+  have len: "length ?I=length xs" by (rule value_reference_sequence_length)
+  have kept: "distinct ?U" by (rule value_reference_sequence_distinct[OF distinct])
+  show ?thesis
+  proof (rule nth_equalityI)
+    show "length ?I=length (map (\<lambda>y. the (value_reference_index y ?U)) xs)" using len by simp
+  next
+    fix k assume k: "k<length ?I"
+    have "value_reference_read ?U (?I!k)=Some (xs!k)"
+      using arg_cong[OF reads, of "\<lambda>ys. ys!k"] k len by simp
+    then have "value_reference_index (xs!k) ?U=Some (?I!k)" by (rule value_reference_index_distinct_read[OF kept])
+    then show "?I!k=map (\<lambda>y. the (value_reference_index y ?U)) xs!k" using k len by simp
+  qed
+qed
+
+lemma value_reference_add_set: "set (value_reference_add x T)=insert x (set T)"
+  by (auto simp: value_reference_add_def)
+
+lemma value_reference_fold_set: "set (fold value_reference_add xs T)=set xs\<union>set T"
+  by (induction xs arbitrary: T) (auto simp: value_reference_add_set)
+
+lemma value_reference_fold_first:
+  "fold value_reference_add (fold value_reference_add xs []) T=fold value_reference_add xs T"
+proof (induction xs rule: rev_induct)
+  case Nil
+  then show ?case by simp
+next
+  case (snoc x xs)
+  let ?D="fold value_reference_add xs []"
+  have members: "set ?D=set xs" using value_reference_fold_set[of xs "[]"] by simp
+  show ?case
+  proof (cases "x\<in>set ?D")
+    case True
+    have inside: "x\<in>set (fold value_reference_add xs T)" using True members value_reference_fold_set[of xs T] by auto
+    have local_step: "fold value_reference_add (xs@[x]) []=?D" using True by (simp add: value_reference_add_def)
+    have whole_step: "fold value_reference_add (xs@[x]) T=fold value_reference_add xs T"
+      using inside by (simp add: value_reference_add_def)
+    show ?thesis by (simp only: local_step whole_step snoc.IH)
+  next
+    case False
+    have local_step: "value_reference_add x ?D=?D@[x]" using False by (simp add: value_reference_add_def)
+    show ?thesis using snoc.IH by (simp add: local_step)
+  qed
+qed
+
+theorem value_reference_sequence_segment:
+  assumes distinct: "distinct T"
+  and local_run: "value_reference_sequence xs []=(L,D)" and merged_run: "value_reference_sequence D T=(G,U)"
+  shows "value_reference_sequence xs T=(map (nth G) L,U)"
+proof -
+  have D_table: "D=fold value_reference_add xs []"
+    using value_reference_sequence_table[of xs "[]"] local_run by simp
+  have U_table: "U=fold value_reference_add xs T"
+    using value_reference_sequence_table[of D T] merged_run D_table value_reference_fold_first by simp
+  have whole: "snd (value_reference_sequence xs T)=U" using value_reference_sequence_table[of xs T] U_table by simp
+  have L_indices: "L=map (\<lambda>y. the (value_reference_index y D)) xs"
+    using value_reference_sequence_indices[of "[]" xs] local_run by simp
+  have G_indices: "G=map (\<lambda>y. the (value_reference_index y U)) D"
+    using value_reference_sequence_indices[OF distinct, of D] merged_run by simp
+  have I_indices: "fst (value_reference_sequence xs T)=map (\<lambda>y. the (value_reference_index y U)) xs"
+    using value_reference_sequence_indices[OF distinct, of xs] whole by simp
+  have members: "set xs=set D" using D_table value_reference_fold_set[of xs "[]"] by simp
+  have at: "G!the (value_reference_index y D)=the (value_reference_index y U)" if y: "y\<in>set xs" for y
+  proof -
+    obtain i where found: "value_reference_index y D=Some i"
+      using y members value_reference_index_member[of y D] by auto
+    have i: "i<length D" "D!i=y" using value_reference_index_read[OF found] by simp_all
+    show ?thesis using found i G_indices by simp
+  qed
+  have indices: "map (nth G) L=map (\<lambda>y. the (value_reference_index y U)) xs"
+    unfolding L_indices map_map comp_def by (rule map_cong) (simp_all add: at)
+  show ?thesis using I_indices whole indices by (simp add: prod_eq_iff)
+qed
+
+fun value_reference_merged :: "(nat list\<times>'a list) list \<Rightarrow> nat list \<Rightarrow> nat list" where
+  "value_reference_merged [] G=[]"
+| "value_reference_merged ((L,D)#ls) G=map (nth (take (length D) G)) L@value_reference_merged ls (drop (length D) G)"
+
+theorem value_reference_sequence_concat:
+  assumes distinct: "distinct T"
+  shows "value_reference_sequence (concat cs) T=(let locals=map (\<lambda>c. value_reference_sequence c []) cs;
+    (G,U)=value_reference_sequence (concat (map snd locals)) T in (value_reference_merged locals G,U))"
+  using distinct
+proof (induction cs arbitrary: T)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons c cs)
+  obtain L D where local_run: "value_reference_sequence c []=(L,D)" by (cases "value_reference_sequence c []")
+  obtain G1 U1 where first: "value_reference_sequence D (T::'a list)=(G1,U1)"
+    by (cases "value_reference_sequence D T")
+  obtain G' V where rest: "value_reference_sequence (concat (map snd (map (\<lambda>c. value_reference_sequence c []) cs))) U1=(G',V)"
+    by (cases "value_reference_sequence (concat (map snd (map (\<lambda>c. value_reference_sequence c []) cs))) U1")
+  have kept: "distinct U1" using value_reference_sequence_distinct[OF Cons.prems, of D] first by simp
+  have head: "value_reference_sequence c T=(map (nth G1) L,U1)"
+    by (rule value_reference_sequence_segment[OF Cons.prems local_run first])
+  have tail: "value_reference_sequence (concat cs) U1=(value_reference_merged (map (\<lambda>c. value_reference_sequence c []) cs) G',V)"
+    using Cons.IH[OF kept] rest by (simp add: Let_def)
+  have lengths: "length D=length G1" using value_reference_sequence_length[of D T] first by simp
+  have whole: "value_reference_sequence (D@concat (map snd (map (\<lambda>c. value_reference_sequence c []) cs))) T=(G1@G',V)"
+    using first rest by (simp add: value_reference_sequence_append)
+  show ?case using head tail whole local_run
+    by (simp add: value_reference_sequence_append lengths Let_def)
+qed
+
+fun value_reference_chunks :: "nat \<Rightarrow> 'a list \<Rightarrow> 'a list list" where
+  "value_reference_chunks n []=[]"
+| "value_reference_chunks n (x#xs)=(x#take (n-1) xs)#value_reference_chunks n (drop (n-1) xs)"
+
+lemma value_reference_chunks_concat: "concat (value_reference_chunks n xs)=xs"
+  by (induction n xs rule: value_reference_chunks.induct) simp_all
+
 end

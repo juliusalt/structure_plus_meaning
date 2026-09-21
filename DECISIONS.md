@@ -10069,6 +10069,13 @@ a bound of five seconds; the seed's is 0.074 s against 0.2 on either. What does 
 machine is the ratio inside the one run: 9.3 at the machinery's scale, 6.2 at the seed's. That is
 what the two refinements of this line bought together: 44.6 s to about 5.
 
+*Correction (task 80, q28).* The sentence above narrows what the record states. 44.6 s is what this
+line's first refinement left, as the entries "A formed call's applications are constructed, not
+verified again" (at line 9277) and "A demand is settled over the positions of its calls" (this entry,
+at lines 10028-10029) state; not a reach before both refinements. And the second took the machinery's
+reach to 4.35 s on the machine the measurement claimed, about 5.8 s scaled to the baseline machine,
+as this entry states just above (lines 10064-10069). "About 5" reads the two forms together.
+
 Word equality cannot certify the attachment: out of scope at the exports the words would be
 unchanged and the refinement dead. So the attachment is verified in the source graph itself, in
 0.27 s and with no Isabelle run: `check.source_checks()` is clean at 1800 declared names,
@@ -10118,3 +10125,32 @@ were chosen at all was decided outside the loop, in the entry named above and in
 and is a residual.
 
 Recorded 2026-09-20, commit `44738c20`.
+
+## A reference sequence is computed segment by segment
+
+The seed recipe's cost is one of its twelve presentations, the publication report (174-248 s in the
+landing checks since `955b34bb`, the others 12-38 s each), and within it, measured under a machine hold
+(task 80, `.build/tasks/seed-recipe-cost/attribution.md`), the word of the presented report: 79 s of
+153, of which 68 s is the first-occurrence reference run over 3,946 target occurrences of only 63
+distinct artifacts, one after another, each lookup of a value already held ending in a complete
+comparison of two equal keys. The recording of the generations and transactions is 58-61 s; the 21
+judgments, already prepared once, 9.8 s.
+
+What the refinement applies is a property of the reference notion, stated once in
+`Complete_Value_References`: the table a sequence leaves is the supplied table extended, in first
+occurrence, by the values it lacks (`value_reference_sequence_table`), and against a distinct table
+every index is its value's index in the final table (`value_reference_sequence_indices`). So the
+references of a concatenation of segments are each segment's references against an empty table,
+mapped through the references of the segments' distinct values against the supplied table
+(`value_reference_sequence_segment`, `value_reference_sequence_concat`, `value_reference_merged`). The
+segments are independent, so they are computed in parallel. `Indexed_Term_Words` proves the word's
+code equation over it (`finite_term_shared_word_segmented_code`, from the equation it replaces): about
+eight segments of the keys, each by the existing keyed run, then one keyed run over their distinct keys.
+No index notion is added; the keyed run and its key are those of the entry "A refinement applies a
+notion; an index is one". The word is unchanged by construction, so no recipe word changes.
+
+Limits: the full comparison of equal keys per occurrence is still paid, now shared among the threads;
+a report that repeats few large artifacts many times still costs that work. The recording stage is not
+refined here. Evidence: the recipe alone under a machine hold, with its own runner, took 140.8 s before
+and 96.5 s after (the publication presentation 140.8 s and 96.4 s, the eleven others 6.1-7.0 s), both
+receipts accepted with their reports equal.

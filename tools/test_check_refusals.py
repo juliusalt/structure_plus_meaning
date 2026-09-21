@@ -11,9 +11,12 @@ from pathlib import Path
 import tempfile
 import unittest
 
+import sys
+
 import check
 import execution_support
 import incremental_check
+import probe_theories
 
 
 def write_project(root: Path, declared: list, files: dict) -> Path:
@@ -29,6 +32,36 @@ def write_project(root: Path, declared: list, files: dict) -> Path:
 
 def theory(name: str, body: str = '') -> str:
     return 'theory ' + name + '\n  imports Pure\nbegin\n' + body + 'end\n'
+
+
+class ProbeTimeout(unittest.TestCase):
+    """A probe is bounded without naming its limit, and a timed-out one names where it stood."""
+
+    def test_default_timeout_is_sixty_seconds(self):
+        self.assertEqual(probe_theories.DEFAULT_TIMEOUT, 60)
+
+    def test_timed_out_run_names_its_last_command_and_log(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            log = Path(scratch) / 'probe.log'
+            stand_in = [sys.executable, '-u', '-c',
+                        "print('### theory Candidate'); print('have stuck: \"P\"'); print(); "
+                        "import time; time.sleep(30)"]
+            run = probe_theories.run_logged(stand_in, log, 1)
+            self.assertTrue(run['timed_out'])
+            self.assertEqual(run['exit'], 'timeout')
+            self.assertEqual(run['last_command'], 'have stuck: "P"')
+            self.assertTrue(run['errors'])
+            self.assertIn('have stuck: "P"', run['errors'][-1])
+            self.assertIn(str(log), run['errors'][-1])
+
+    def test_completed_run_is_not_a_timeout(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            log = Path(scratch) / 'probe.log'
+            run = probe_theories.run_logged([sys.executable, '-c', "print('done')"], log, 30)
+            self.assertFalse(run['timed_out'])
+            self.assertEqual(run['exit'], 0)
+            self.assertIsNone(run['last_command'])
+            self.assertEqual(run['errors'], [])
 
 
 class SourceCheckRefusals(unittest.TestCase):

@@ -72,6 +72,37 @@ def prepare(work, context, present, loaded, substitutions, prelude):
     return directory, imports
 
 
+DEFAULT_TIMEOUT = 60
+
+
+def last_command(text):
+    """The command a streamed log last reached: its last non-empty line, or None for an empty log."""
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    return lines[-1] if lines else None
+
+
+def run_logged(command, log, timeout, env=None):
+    """Run the probe's process with its output streamed to log; report its exit, the log and a timeout.
+
+A run past its timeout is stopped with its whole process tree. It is reported as timed out, never as a
+run with no error: its errors name the timeout, the command the log last reached and the log's path."""
+    with log.open('w') as stream:
+        try:
+            returncode = build.run_session(command, env=env, stdout=stream,
+                                           stderr=subprocess.STDOUT, timeout=timeout)
+        except subprocess.TimeoutExpired:
+            returncode = 'timeout'
+    text = log.read_text()
+    timed_out = returncode == 'timeout'
+    reached = last_command(text) if timed_out else None
+    errors = [line for line in text.splitlines() if line.startswith('***')][:40]
+    if timed_out:
+        errors.append('The probe timed out after %s s while processing: %s (log %s)'
+                      % (timeout, reached if reached is not None else 'nothing, its log is empty', log))
+    return {'exit': returncode, 'text': text, 'timed_out': timed_out, 'last_command': reached,
+            'errors': errors}
+
+
 def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, timeout, candidates=()):
     context = proof_contexts.load_parent(base, None, *proof_contexts.new_lineage())
     assert context['sources'], 'The base ' + str(base) + ' carries no accepted sources.'
@@ -92,20 +123,15 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
     directories = [argument for directory in context['directories'] for argument in ('-d', directory)]
     command = ['isabelle', 'ML_process', *directories, '-l', context['session'], *options, '-f', str(script)]
     started = time.monotonic()
-    with log.open('w') as stream:
-        try:
-            returncode = build.run_session(command, env=incremental_check.ENV, stdout=stream,
-                                           stderr=subprocess.STDOUT, timeout=timeout)
-        except subprocess.TimeoutExpired:
-            returncode = 'timeout'
-
-    text = log.read_text()
+    run = run_logged(command, log, timeout, env=incremental_check.ENV)
+    text = run['text']
     return {'base': str(base), 'session': context['session'], 'seconds': round(time.monotonic() - started, 1),
-            'exit': returncode, 'loaded': marker in text, 'order': order,
+            'exit': run['exit'], 'loaded': marker in text and not run['timed_out'], 'order': order,
+            'timed_out': run['timed_out'], 'last_command': run['last_command'],
             'parallel_proofs': parallel_proofs,
             'substituted': substitutions, 'prelude': sorted(prelude),
             'from_heap_despite_change': sorted(set(differing) - loaded - set(substitutions)),
-            'errors': [line for line in text.splitlines() if line.startswith('***')][:40], 'log': str(log)}
+            'errors': run['errors'], 'log': str(log)}
 
 
 def main():
@@ -121,7 +147,8 @@ def main():
                         help='Resolve imports of a changed base theory to a prelude instead of the heap.')
     parser.add_argument('--parallel-proofs', type=int,
                         help='Override Isabelle parallel_proofs; 0 attributes elapsed time to one failing proof.')
-    parser.add_argument('--timeout', type=int, default=1200)
+    parser.add_argument('--timeout', type=int, default=DEFAULT_TIMEOUT,
+                        help='Seconds before the probe is stopped; a longer limit is a measurement.')
     parser.add_argument('--candidates', type=Path, action='append', default=[],
                         help='Directory of candidate theories kept outside theories/; a candidate overrides '
                              'the workspace theory of its name.')

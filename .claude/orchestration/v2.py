@@ -2168,7 +2168,7 @@ def produce():
     if slot(st, PRODUCING):
         return
     if at_capacity(st):
-        return  # one session works at a time (WORKERS_MAX)
+        return  # at most WORKERS_MAX sessions work at a time (the owner's rate)
     for tid, t in sorted(st["tasks"].items(), key=lambda kv: (kv[1].get("parked") or {}).get("since", 0)):
         p = t.get("parked") or {}
         if t.get("stage") == "parked" and parked_ready(st, tid, p):  # before any new task, the longest parked first
@@ -2400,7 +2400,7 @@ def support():
     if slot(st, SUPPORTING):
         return
     if at_capacity(st):
-        return  # one session works at a time (WORKERS_MAX)
+        return  # at most WORKERS_MAX sessions work at a time (the owner's rate)
     reviews = pending_reviews(st)
     briefs, ready = [], False
     for tid in st["queue"]:
@@ -2481,7 +2481,7 @@ def consult():
     forked now (the knowledge base integrating) waits without holding up the others."""
     st = peek()
     if at_capacity(st):
-        return  # one session works at a time (WORKERS_MAX); a question waits for the gap
+        return  # at most WORKERS_MAX sessions work at a time (the owner's rate); a question waits for the gap
     live = sum(1 for s in st["sessions"].values() if s["role"] == "consultant" and s["state"] in LIVE)
     for qid, q in sorted(st["asks"].items(), key=lambda kv: kv[1]["asked"]):
         if live >= CONSULT_MAX:

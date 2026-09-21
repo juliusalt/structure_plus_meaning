@@ -24,7 +24,11 @@ import calendar
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT = os.path.dirname(os.path.dirname(HERE))
 SESSIONS = os.path.expanduser("~/.claude/projects/" + PROJECT.replace("/", "-").replace("_", "-"))
-SKIP = re.compile(r"^\s*(\[Request interrupted[^\]]*\]|continue|/compact|/clear)\s*$", re.I)
+# what the owner typed that is not a direction: the interruption marks and the slash commands, and a single short
+# word — a stray keystroke or a shell command typed into the wrong window ("a" and "ls" both reached a knowledge
+# base as directions on 2026-09-20). Out of the session it was typed in, such a word decides nothing.
+SKIP = re.compile(r"^\s*(\[Request interrupted[^\]]*\]|continue|/compact|/clear|\w{1,3}|ls\s+[-\w./]*|pwd|clear|exit)\s*$",
+                  re.I)
 WRAPPED = ("<task-notification>", "<system-reminder>", "<local-command", "<command-message>", "[SYSTEM NOTIFICATION")
 PEER = ("<cross-session-message", "[Cross-session")
 # A base's load: a fork carries its base's conversation as the first part of its own transcript.

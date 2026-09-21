@@ -74,6 +74,8 @@ class NewDirectionsTests(unittest.TestCase):
             {"aaaa1111-dev": fork("impl-9", PACKED,
                                   claude_tool("cat .claude/orchestration/owner-ledger.md"),
                                   claude_user("2026-09-19T08:01:00Z", "Keep admission and selection apart."),
+                                  claude_user("2026-09-19T08:01:30Z", "ls"),   # a shell word typed in the wrong
+                                  claude_user("2026-09-19T08:01:40Z", "a"),    # window, and a stray keystroke
                                   claude_tool("cat .claude/orchestration/state/v2.json"),
                                   claude_queued("2026-09-19T08:02:00Z", "A locus is not a payload."),
                                   claude_queued("2026-09-19T08:03:00Z", "a notification", kind="task")),
@@ -108,6 +110,8 @@ class NewDirectionsTests(unittest.TestCase):
             self.assertIn("> " + present, text)
         self.assertLess(text.index("admission and selection"), text.index("not a payload"))
         self.assertLess(text.index("not a payload"), text.index("existing index notion"))
+        self.assertNotIn("> ls", text)      # not a direction: out of its session it decides nothing
+        self.assertNotIn("> a\n", text)
         for absent in ("already curated", "You are impl-9", "Load the reference library", "a notification", "implement-3",
                        "plan-1", "Stop hook", "Your turn", "usage limit", "[harness]", "the answer", "Make the base smaller", "out of the ledger",
                        "sole agent", "Shave the loaded"):

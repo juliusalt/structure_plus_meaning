@@ -1419,3 +1419,19 @@ backstop is there. Left as it is, knowingly.
 the owner looks, and the notice fires in every legitimate dispatch-without-a-daemon — which is what the fake world
 is, and the walk that asserts a clean run leaves no ATTENTION caught it at once. The test was right and the notice
 was noise.
+
+### Against the CLI, and what reaches the knowledge base
+
+**The listing the harness reads.** Claude Code is still 2.1.273, the version everything here was verified against,
+and `claude agents --json` gives `status` (busy or idle) only while the supervisor holds a session. A row carrying
+only the coarser `state` — `blocked`, a process it no longer runs — stays in the listing; one such row stands there
+now, left by another project. The watchdog counted any row as seen, and `gone` is consulted only when there is no
+row at all, so a session in that state would have held its slot for ever with nothing said. It is given the same
+three checks and then lost. (`session_row.py` already read status-or-state, so nothing else in the listing's shape
+had drifted.)
+
+**What every knowledge base loads.** `extract_owner_directions.py --new` collects the owner's typed words since the
+curated ones, and leaves out the sessions that work on the orchestration itself — which is why nothing said in this
+session reaches it. Two of the eight it would have loaded were "a" and "ls": a stray keystroke and a shell command
+typed into the wrong window. Out of the session it was typed in, a single short word decides nothing; the
+interruption marks and the slash commands were already left out, and these join them.

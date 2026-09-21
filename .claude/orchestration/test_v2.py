@@ -1145,6 +1145,20 @@ class PlanningTests(Flow):
                 self.assertTrue(_re.search(rf"\b{origin}\b", cell),
                                 f"README says {role} forks '{cell}'; ROLES makes it a fork of {origin}")
 
+    def test_every_harness_file_a_message_names_is_there(self):
+        # a message that names a file of the harness is an instruction: `v2.py`, `show.py`, `base.sh max layer`,
+        # `state/owner-directions-new.md`. A rename would leave every one of them pointing at nothing
+        import re as _re
+        here = Path(v2.HERE)
+        text = "".join(open(here / f).read() for f in ("v2.py", "work_meter.py", "ctx_gauge.py", "finalize.py",
+                                                      "watchdog.py", "health.py"))
+        text += "".join(p.read_text() for p in sorted(Path(v2.PROTOCOLS).glob("*.md")))
+        named = {m.rstrip(".,;)`'\"") for m in _re.findall(r"\.claude/orchestration/([\w./-]+)", text)}
+        for name in sorted(named):
+            if name.startswith("state/"):
+                continue          # written as the run goes; owner-directions-new.md is made before every base
+            self.assertTrue((here / name).exists(), f"a message names .claude/orchestration/{name}, which is not there")
+
     def test_no_message_gives_the_graph_to_a_role_that_has_it_not(self):
         # the task designer stopped writing the graph on 2026-09-21 and began proposing it, and `blockers` went on
         # refusing every other role by naming it as one that may — the refusal named the role it was refusing, and

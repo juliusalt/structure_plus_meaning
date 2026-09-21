@@ -3760,6 +3760,12 @@ def cmd_queue(ids):
     c = caller()
     if c and c["role"] != "planner":
         return "refused: the queue is the planner's"
+    missing = [tid for tid in ids if not in_list(tid)]
+    if missing:
+        # the order is set whole, so a typo in it took the tasks that are really there out of the queue and said
+        # only "not in the task list: 99" afterwards. `blockers` refuses the same mistake; this does now too.
+        return (f"refused: no task {', '.join(repr(m) for m in missing)} in the list, and the order is set whole — "
+                "queueing it would take the tasks that are there out. Name the order again with what is in the list.")
     if not ids:
         # `v2.py queue` with nothing after it emptied the queue and answered "queued": the order is what the planner
         # names, and naming nothing is a typo, not an instruction to stop the run (2026-09-21, found by running it)
@@ -3792,10 +3798,8 @@ def cmd_queue(ids):
             os.remove(os.path.join(STATE, GRAPH_HELD))
         log("the graph is released: the planner has queued")
         kick()
-    missing = [tid for tid in ids if not read_task(tid)]
     kick()
-    return "queued" + (f"; kept, briefed since this episode began: {', '.join(kept)}" if kept else "") + (
-        f"; not in the task list: {', '.join(missing)}" if missing else "")
+    return "queued" + (f"; kept, briefed since this episode began: {', '.join(kept)}" if kept else "")
 
 
 def planner_only(what):

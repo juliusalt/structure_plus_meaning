@@ -628,6 +628,11 @@ class PlanningTests(Flow):
         said = self.as_("plan-1", "queue")
         self.assertIn("would empty the queue", said)
         self.assertEqual(self.w.st()["queue"], ["4"])
+        # and an order naming a task that is not there does not take the ones that are out of the queue
+        said = self.as_("plan-1", "queue", "4", "99")
+        self.assertIn("no task '99' in the list", said)
+        self.assertIn("set whole", said)
+        self.assertEqual(self.w.st()["queue"], ["4"])
 
     def test_an_id_named_twice_in_the_order_is_one_place_in_the_queue(self):
         self.w.task("4")

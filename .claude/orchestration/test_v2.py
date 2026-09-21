@@ -619,6 +619,16 @@ class PlanningTests(Flow):
         (self.w.tasks / "4.json").rmdir()
         os.rename(self.w.tasks / "4.json.away", self.w.tasks / "4.json")
 
+    def test_an_order_that_names_nothing_is_refused_rather_than_emptying_the_queue(self):
+        # `v2.py queue` with nothing after it emptied the queue and answered "queued" (2026-09-21, found by running
+        # it against the live state): the order is what the planner names, and naming nothing is a typo
+        self.w.task("4")
+        self.w.set_st(queue=["4"])
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        said = self.as_("plan-1", "queue")
+        self.assertIn("would empty the queue", said)
+        self.assertEqual(self.w.st()["queue"], ["4"])
+
     def test_an_id_named_twice_in_the_order_is_one_place_in_the_queue(self):
         self.w.task("4")
         self.w.task("5")

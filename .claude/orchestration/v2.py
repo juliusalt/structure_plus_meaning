@@ -3755,6 +3755,11 @@ def cmd_queue(ids):
     c = caller()
     if c and c["role"] != "planner":
         return "refused: the queue is the planner's"
+    if not ids:
+        # `v2.py queue` with nothing after it emptied the queue and answered "queued": the order is what the planner
+        # names, and naming nothing is a typo, not an instruction to stop the run (2026-09-21, found by running it)
+        return ("refused: v2.py queue ID ID... — the order is the tasks in the order they are to be done. Naming "
+                "none would empty the queue, which is not an order; `v2.py drop ID` takes one task out.")
     since = (c or {}).get("started") or time.time()
     with state() as st:
         for tid in ids:

@@ -247,6 +247,12 @@ judgment's path.
 - **#58** `theories/Development_Repair_Rows.thy`, committed `b3b185bc` after one fix round: the repair's output recorded
   as rows of the development library. Its rows' coordinates do not move with the successor's correspondence (see Now,
   #64).
+- **#26** `theories/Development_Located_Rows.thy`, committed `4948e9d1` after one fix round: the request at a locus as
+  one search over the development's store (`development_request_at`, `development_request_problem_locus`), through
+  task 24's lookup (`development_row_lookup_at`); what its reviews left is the rows' fix.
+- **#72** `theories/Native_Path_Store_Indexes.thy`, committed `202a2276` after one fix round: the index notion's native
+  instance at the path store; its map row states both ways a use obtains it. Its check, 18.95 s with all 52 recipes
+  unchanged, shows that a landing adding a theory re-executes no recipe since #81.
 
 ## Open
 
@@ -314,8 +320,7 @@ Not yet planned, in the order they are expected to be planned:
     loop evaluates the native verdict on a real answer.
 19. **One pre-flight command for the standing last step** (#50's review): `source_checks()` and `source_graph(...)` as one
     command, which would also expose `source_checks` passing while `source_graph` refuses. Small; tools.
-16. **Whether `keyed_agree` (#46) is an instance of the index notion or of the bijective relations** (review 47's
-    second follow-up): for the index group once #68 has landed.
+
 18. **`isabelle_name_position_member` belongs beside `isabelle_name_position`'s laws** in `Isabelle_State_Difference`
     (#78's review): two older proofs there (`isabelle_local_embedding_renamed`, `isabelle_state_embedding_back`) write
     its pattern inline, and `isabelle_state_embedding_named` serves every proof that unfolds `isabelle_state_embedding_def`
@@ -351,9 +356,9 @@ Not yet planned, in the order they are expected to be planned:
 30. **What a present citation of a development row cites** (#24's review): an owner record, or the parent problem's
     locus for a demand; `development_rows_present` does not yet require it. With the build that applies a
     decomposition (Open 26), which poses children with origins.
-31. **`Development_Rows`' small slips** (#24's review): `readiness_presents_rekey` belongs in
-    `Development_Native_Selection`; `the` in `development_located_at`; the heading "The four bodies" stands over three.
-    With the next edit of that theory.
+31. **`Development_Rows`' slips the rows' fix leaves** (#24's review): `readiness_presents_rekey` belongs in
+    `Development_Native_Selection`, after #56 moves the keys beneath it; the `the` in `development_located_at` stays
+    while the verdict's tasks consume it.
 32. **The receipts' form** (#81's review; problems.txt condition 3): a retain rewrites whole single-line files (158
     files, 5.47 MB, an 11 MB diff for a few changed fields), and the receipts record worktree paths that dangle once a
     task is cleaned. Keep what a check changes apart from the stable boundary, or present receipts one field per line;
@@ -362,10 +367,10 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
-- **In flight (plan-34, 01:15)**: #83 running, before #30; #76 startable, the only one; #26 committing, and #32's brief
-  now ties the rows' keys (#24's review); #72 checking; #56 parked for the machine and told (q32) to take its timing
-  unheld, as a ratio of alternating samples in one run; #62 parked; #80 accepted and parked — if its commit comes back
-  marked, `v2.py queue 80` makes it with no session.
+- **In flight (plan-34, 01:25)**: #83 and #76 running; #32 (the verdict chain's head, its brief tying the rows' keys)
+  and #74 ready for the next slots; the rows' fix waits on #83 and feeds #30; #56 parked for the machine (its q32
+  timing taken unheld, as a ratio); #62 parked, told of the rows' fix; #80 accepted and parked — if its commit comes
+  back marked, `v2.py queue 80` makes it with no session.
 - **For the owner**: `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap
   (#22's re-review); #50's review suggests the finalizer append its check's summary to the task's report, since a result
   is recorded before the finalizer's check runs; #49's re-review, that the finalizer's commit message quotes the

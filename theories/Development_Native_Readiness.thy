@@ -622,18 +622,18 @@ lemma decode_finite_readiness_row_value: "decode_finite_term \<circ> finite_read
   by (rule ext) (simp add: finite_readiness_row_value_def readiness_row_value_def)
 
 definition finite_readiness_row :: "bool list \<Rightarrow> bool \<Rightarrow> bool list list list \<Rightarrow> finite_factor_term" where
-  "finite_readiness_row k a hs=Finite_Pair (finite_path k) (finite_readiness_value a hs)"
+  "finite_readiness_row k a hs=finite_store_row finite_readiness_row_value (k,(a,hs))"
 
 lemma decode_finite_readiness_row:
   "decode_finite_term (finite_readiness_row k a hs)=Pair_Term (path_term k) (readiness_value a hs)"
-  by (simp add: finite_readiness_row_def)
+  by (simp add: finite_readiness_row_def finite_store_row_def finite_readiness_row_value_def)
 
 definition finite_readiness_table :: "readiness_table \<Rightarrow> finite_factor_term" where
-  "finite_readiness_table T=finite_store finite_readiness_row_value (path_store T)"
+  "finite_readiness_table T=finite_listing_store finite_readiness_row_value T"
 
 lemma decode_finite_readiness_table:
   "decode_finite_term (finite_readiness_table T)=readiness_table_term T"
-  by (simp add: finite_readiness_table_def readiness_table_term_def decode_finite_store
+  by (simp add: finite_readiness_table_def finite_listing_store_def readiness_table_term_def decode_finite_store
     decode_finite_readiness_row_value)
 
 section \<open>Native readiness is a condition of its own\<close>

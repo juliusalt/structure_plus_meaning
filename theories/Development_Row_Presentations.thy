@@ -19,49 +19,6 @@ text \<open>
   (@{const finite_readiness_table}).
 \<close>
 
-section \<open>The two generic presentations of the path store are injective\<close>
-
-lemma finite_store_option_injective [intro]:
-  assumes injective: "inj f"
-  shows "inj (finite_store_option f)"
-proof (rule injI)
-  fix x y assume "finite_store_option f x=finite_store_option f y"
-  then show "x=y" using injective by (cases x; cases y) (auto simp: finite_store_option_def dest: injD)
-qed
-
-lemma finite_store_injective [intro]:
-  assumes injective: "inj f"
-  shows "inj (finite_store f)"
-proof (rule injI)
-  fix S T show "finite_store f S=finite_store f T \<Longrightarrow> S=T"
-  proof (induction S arbitrary: T)
-    case Empty_Store
-    then show ?case by (cases T) simp_all
-  next
-    case (Store_Node v l r)
-    from Store_Node.prems obtain v' l' r' where T: "T=Store_Node v' l' r'"
-      and head: "finite_store_option f v=finite_store_option f v'"
-      and left: "finite_store f l=finite_store f l'" and right: "finite_store f r=finite_store f r'"
-      by (cases T) simp_all
-    have "v=v'" by (rule injD[OF finite_store_option_injective[OF injective] head])
-    moreover have "l=l'" by (rule Store_Node.IH(1)[OF left])
-    moreover have "r=r'" by (rule Store_Node.IH(2)[OF right])
-    ultimately show ?case by (simp add: T)
-  qed
-qed
-
-lemma finite_path_formed [simp]: "finite_term_formed (finite_path bs)"
-  by (induction bs) (simp_all add: finite_path_def finite_bit_def octets_formed_def)
-
-lemma finite_store_option_formed:
-  assumes "\<And>x. finite_term_formed (f x)"
-  shows "finite_term_formed (finite_store_option f v)"
-  using assms by (cases v) (simp_all add: finite_store_option_def octets_formed_def)
-
-lemma finite_store_formed:
-  assumes "\<And>x. finite_term_formed (f x)"
-  shows "finite_term_formed (finite_store f T)"
-  by (induction T) (simp_all add: octets_formed_def finite_store_option_formed[OF assms])
 
 section \<open>A citation and a family of citations\<close>
 
@@ -108,11 +65,27 @@ definition development_request_body_data :: "development_request_row \<Rightarro
 definition development_issue_body_data :: "development_issue_row \<Rightarrow> finite_factor_term" where
   "development_issue_body_data=finite_sequence_presentation development_citations_data"
 
+text \<open>
+  The contract term is carried inert, and its presentation need be injective only on the terms carried,
+  as the relation asks of it (@{text development_rows_inert_injective}).
+\<close>
+
 lemma development_problem_body_data_injective [intro]:
-  assumes "inj inert"
-  shows "inj (development_problem_body_data inert)"
-  unfolding development_problem_body_data_def
-  by (intro finite_pair_presentation_injective development_citation_data_injective assms)
+  assumes "inj_on inert A"
+  shows "inj_on (development_problem_body_data inert) {b. snd (snd b)\<in>A}"
+proof (rule inj_onI)
+  fix b c assume b: "b\<in>{b. snd (snd b)\<in>A}" and c: "c\<in>{b. snd (snd b)\<in>A}"
+    and same: "development_problem_body_data inert b=development_problem_body_data inert c"
+  obtain x1 x2 x3 where B: "b=(x1,x2,x3)" by (cases b) auto
+  obtain y1 y2 y3 where C: "c=(y1,y2,y3)" by (cases c) auto
+  have e: "development_citation_data x1=development_citation_data y1 \<and>
+      development_citation_data x2=development_citation_data y2 \<and> inert x3=inert y3"
+    using same by (simp add: B C development_problem_body_data_def)
+  have "x1=y1" by (rule injD[OF development_citation_data_injective]) (use e in simp)
+  moreover have "x2=y2" by (rule injD[OF development_citation_data_injective]) (use e in simp)
+  moreover have "x3=y3" by (rule inj_onD[OF assms]) (use e b c B C in simp)+
+  ultimately show "b=c" by (simp add: B C)
+qed
 
 lemma development_request_body_data_injective [intro]: "inj development_request_body_data"
   unfolding development_request_body_data_def
@@ -154,58 +127,20 @@ lemma decode_development_issue_body_data:
 
 section \<open>A row is its locus with its body, and a table is the store of its rows\<close>
 
-definition development_row_data ::
-    "('v \<Rightarrow> finite_factor_term) \<Rightarrow> bool list\<times>'v \<Rightarrow> finite_factor_term" where
-  "development_row_data body=finite_pair_presentation finite_path body"
-
-definition development_table_data ::
-    "('v \<Rightarrow> finite_factor_term) \<Rightarrow> (bool list\<times>'v) list \<Rightarrow> finite_factor_term" where
-  "development_table_data body rows=finite_store body (path_store rows)"
-
-lemma development_row_data_injective [intro]:
-  assumes "inj body"
-  shows "inj (development_row_data body)"
-  unfolding development_row_data_def by (intro finite_pair_presentation_injective finite_path_injective assms)
-
-lemma development_row_data_formed:
-  assumes "finite_term_formed (body v)"
-  shows "finite_term_formed (development_row_data body (l,v))"
-  using assms by (simp add: development_row_data_def)
-
-lemma development_table_data_formed:
-  assumes "\<And>v. finite_term_formed (body v)"
-  shows "finite_term_formed (development_table_data body rows)"
-  unfolding development_table_data_def by (rule finite_store_formed[OF assms])
-
 text \<open>
-  A table presents the rows it holds, not the order they were listed in: two single-valued listings, which
-  is the locus's own "at most one row", with equal presentations hold the same rows.
+  A development row and a development table are the store's row and listing presentations with the
+  presentation of the body: their injectivity, formation and decoding are the store's
+  (@{thm [source] finite_store_row_injective}, @{thm [source] finite_listing_store_exact},
+  @{thm [source] finite_listing_store_formed}, @{thm [source] decode_finite_listing_store}). Over
+  single-valued listings, the locus's own "at most one row", a table presents exactly the rows it holds.
 \<close>
 
-theorem development_table_data_injective:
-  assumes body: "inj body" and sv: "single_valued (set rows)" and sv': "single_valued (set rows')"
-    and same: "development_table_data body rows=development_table_data body rows'"
-  shows "set rows=set rows'"
-proof -
-  have T: "path_store rows=path_store rows'"
-    using injD[OF finite_store_injective[OF body]] same by (simp add: development_table_data_def)
-  have pairs: "(q,v)\<in>set rows \<longleftrightarrow> (q,v)\<in>set rows'" for q v
-  proof -
-    have "(q,v)\<in>set rows \<longleftrightarrow> store_lookup (path_store rows) q=Some v"
-      by (rule path_store_lookup[OF sv, symmetric])
-    also have "\<dots> \<longleftrightarrow> store_lookup (path_store rows') q=Some v" by (simp only: T)
-    also have "\<dots> \<longleftrightarrow> (q,v)\<in>set rows'" by (rule path_store_lookup[OF sv'])
-    finally show ?thesis .
-  qed
-  show ?thesis by (rule set_eqI) (metis pairs surj_pair)
-qed
+abbreviation development_row_data ::
+    "('v \<Rightarrow> finite_factor_term) \<Rightarrow> bool list\<times>'v \<Rightarrow> finite_factor_term" where
+  "development_row_data \<equiv> finite_store_row"
 
-lemma decode_development_row_data:
-  "decode_finite_term (development_row_data body (l,v))=Pair_Term (path_term l) (decode_finite_term (body v))"
-  by (simp add: development_row_data_def)
-
-lemma decode_development_table_data:
-  "decode_finite_term (development_table_data body rows)=store_term (decode_finite_term \<circ> body) (path_store rows)"
-  by (simp add: development_table_data_def decode_finite_store)
+abbreviation development_table_data ::
+    "('v \<Rightarrow> finite_factor_term) \<Rightarrow> (bool list\<times>'v) list \<Rightarrow> finite_factor_term" where
+  "development_table_data \<equiv> finite_listing_store"
 
 end

@@ -1594,6 +1594,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Development_Criterion_Sources
     Native_Collection_Programs
     Native_Path_Stores
+    Native_Path_Store_Indexes
     Factor_Finite_Development_Questions
     Factor_Source_Development_Admission
     Factor_Source_Development_Cases

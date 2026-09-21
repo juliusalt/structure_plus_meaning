@@ -75,12 +75,11 @@ includes their reviews; each review runs when its build is in review. The deepes
 ready together at three points — #26 and #28 after #24; #30 and #32 after both; #38 and #40 after #36 — and #54, #56,
 #58, #60, #62, #64, #66, #68–#76, #79 and #80 are work beside them.
 
-**Order** (`54 55 60 61 58 59 68 69 66 24 25 79 26 27 28 29 32 33 80 56 57 30 31 34 35 36 37 38 39 40 41 42 43 44 45
-62 63 64 65 70 71 72 73 74 75 76 77`). The tasks already begun first, so that none runs out its hold waiting (Q8); then
-the probe's bound, small and used by every build; then the chain that decides the run's length — #26/#28, #32 — ahead
-of the work beside it, so that when both are ready the chain takes a slot and the rest fills the time it waits on a
-landing; the recipes' cost before #56 and #30, whose landings re-execute the seed recipe; the verdict line; the
-decomposition's builds; the index notion's last.
+**Order** (`80 56 57 26 27 83 70 71 72 73 62 63 32 33 30 31 34 35 36 37 38 39 40 41 42 43 44 45 64 65 74 75 76 77`).
+The tasks already begun first, so that none runs out its hold waiting; the chain that decides the run's length (#26,
+then #32) ahead of the work beside it; #83 before #30, which switches the uses to its presenter; the index instances
+and #62 as they are in flight; the verdict line; #64 after #30; the index re-citations last. A task that comes back to
+the planner moves again only when it is queued.
 
 ## Decisions
 
@@ -141,7 +140,8 @@ judgment's path.
 - **Checks are written relative** (`python3 -B tools/incremental_check.py check --output …`); the finalizer runs a check
   where the task works, its own tree or the one tree. A brief naming the repository by its absolute path is not in form,
   and neither is a Deliverable that names a directory.
-- **A run whose result is a timing claims the machine** (`v2.py measuring`) and the report says it did; a number measured
+- **A run whose result is a timing claims the machine** (`v2.py measuring`), a claim the harness queues until the machine is empty, no other
+  task's run starting meanwhile (the owner, 2026-09-22), and the report says it did; a number measured
   beside another run is not evidence. A run re-measuring a quantity recorded elsewhere states the scale factor it
   measured and gives its absolutes in both forms.
 - **A numeric expectation in an acceptance, written before the work chose its cases, is an estimate and not a target.**
@@ -223,9 +223,18 @@ judgment's path.
   carrier's one thing more `native_carrier_index`; the three laws theorems; entry "The index notion is a checked theory,
   and its carriers interpret it". The briefs of #70–#76 name the stronger form; #76 also chooses how the positioned
   demand relates keys to positions.
+- **#70** `Member_Tree_Indexes`, `Binary_Store_Indexes`, `Functional_Enumeration_Indexes`, committed `b1dc9193`: the
+  host carriers as `carrier_index` instances, each discharged from its carrier's own statements; no carrier changed;
+  `Finite_Ordered_Representatives` rightly left out (a least-key selection fails obligation 2). Its review's follow-ups
+  ride with #76 (the RBT partial-map instance for `demand_positions`, the duplicated keyed member statement, the map
+  rows' order, `Keyed_Finite_Sets` entering `Native_Execution_Refinements`' closure).
 - **#81** the verified receipts retained from an accepted check of `a275a84e`, committed `cf24195e` (158 files):
   its landing check's recipe phase 6.06 s against 175.03 s, all 52 recipes reused; total 127.79 s, the proof phase
   (116.42 s, 71 theories rebuilt over the lagging base) now dominating.
+- **#28** `theories/Development_Row_Presentations.thy`, committed `5fb24cbf`: citations, families, bodies, rows and
+  tables composed from the generic presentations and the path store's, the only payload the empty one; injectivity
+  stated. Its review's placement and single-presenter follow-ups are a fix before #30; its listing follow-ups ride with
+  #30's brief.
 - **#24** `theories/Development_Rows.thy`, committed `dbcb28d3` after three hand-overs (a map row carrying #54's
   unreviewed rows, then a duplicated `Development_Loci` row): `development_rows_present`, in `readiness_presents`'
   shape, over problems, requests and issues; the answer family withdrawn (q29, Open 20).
@@ -253,16 +262,14 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q5** how far the native residual record reaches. Task 9 answered its own side: a notion is presented structurally
   when a *decision reads* it, not when a definition mentions it.
 - **Q7** the order of work under the direction that native definitions are normative. It orders this whole graph.
-- **Q8, answered by the owner 2026-09-21 21:43**: the planner's queue orders parked tasks too. A parked task resumes,
-  when its wait is over, in the queue's order (a hold ending within 45 minutes first, unnamed tasks last); so every
-  in-progress task is named in the queue, a quick fix's parked task included.
+
 - **Q9** the tracked `tools/__pycache__/build.cpython-314.pyc` (asked 2026-09-21): ignored by `.gitignore`, removed from the
   tree by #48, but the finalizer refuses to commit the removal of an ignored path. Provisional: it stands removed and
   uncommitted, and no task is made of it; the step is the finalizer's or the owner's.
-- **Q10** who advances the proof base (asked 2026-09-21 by plan-33). #80's facts: a check's proof directory holds its
-  own sources, and the active pointer is global. Since #81 the proof phase (113-116 s) is the whole check. Provisional:
-  a task advances it once now (the base-advance investigation, first in the queue), under the recorded procedure's
-  condition; the owner decides who advances it afterwards.
+- **Q10** who advances the proof base (asked 2026-09-21 by plan-33). Provisional choice carried out: #82 advanced it
+  once to `b1328831` (00:53), and a landing check fell to 19.18 s (proof 7.63 s for its own change, recipes 6.15 s).
+  The owner decides who advances it afterwards; until then the planner places an advance when the rebuilt set grows
+  large again.
 - **Q11** who retains verified receipts (asked 2026-09-22 by plan-33): every landing check re-executes all recipes
   until they are retained. Provisional: #81 retains them once; the planner places another after a landing that changes
   many recipes' boundaries.
@@ -355,8 +362,10 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
-- **The one tree** holds the written work of #54, #58, #60, #66 and #68, parked; each resumes in the queue's order (Q8)
-  when the tree frees. A task that starts now gets a tree of its own.
+- **In flight (plan-34, 01:15)**: #83 running, before #30; #76 startable, the only one; #26 committing, and #32's brief
+  now ties the rows' keys (#24's review); #72 checking; #56 parked for the machine and told (q32) to take its timing
+  unheld, as a ratio of alternating samples in one run; #62 parked; #80 accepted and parked — if its commit comes back
+  marked, `v2.py queue 80` makes it with no session.
 - **For the owner**: `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap
   (#22's re-review); #50's review suggests the finalizer append its check's summary to the task's report, since a result
   is recorded before the finalizer's check runs; #49's re-review, that the finalizer's commit message quotes the
@@ -367,19 +376,18 @@ Not yet planned, in the order they are expected to be planned:
   the harness kept the deleted review task 67 in #66's `review_tasks`, so the planner's verdict on #66 counted as one
   review of two and #66 waited until the same verdict was recorded against 67 (00:33); and the sessions' sandbox cannot
   write the repository's `.build/` root, so #82 puts the advanced base under `.build/tasks/base-advance/` (q31).
-- **The active base, once #82 has advanced it, lives in `.build/tasks/base-advance/`**: never remove it while the
-  pointer `/tmp/structural-active-context.json` names it.
+- **The active base is `.build/tasks/base-advance/base-20260922a/proof`** (#82), a child of `.build/complete-20260921a`:
+  never remove either while the pointer `/tmp/structural-active-context.json` names it. Both heaps live in
+  `/tmp/structural-isabelle`, so a reboot loses the base (Open 11).
+- **The harness no longer puts a task in the one tree for naming a shared file** (`ROOT`, `THEORY_MAP.md`,
+  `DECISIONS.md`, `HANDOFF.md`, `PLANNING_LOG.md`) while another task's edit of one stands uncommitted (the owner,
+  01:15); #56, #62 and #72 were put there so and stay until they land. A landing commits the planner's `HANDOFF.md`
+  with the task's work, so HANDOFF is committed as it stands at every landing.
 - **Tasks working in the one tree install their theories only at hand-over** (q30, 2026-09-22), so that their
   uncommitted `ROOT` and `THEORY_MAP.md` lines do not hold other tasks' landings meanwhile (a landing waits for them
   within its commit's budget, then comes back marked, and `v2.py queue ID` makes its commit again with no session);
   drafts are probed on the base heap with `--prelude`/`--substitute`.
 
-- **#24's landing is checked only on its branch** (`005e291d`, without main's `ff37efef`…`a275a84e`, which change
-  `Development_Native_Selection`, `Filtered_Native_Questions` and `Isabelle_Local_Names` in `Development_Rows`' closure;
-  its review measured the risk as low). The first check on main after `dbcb28d3` covers the combination; a refusal in
-  `Development_Rows`' closure there belongs to #24.
-- **Owed before #32 starts**: #24's review asks that the rows' `ekey` be tied to `development_entity_key C` (#54) and
-  `key` to #3's atom key where the rows are instantiated for the verdict; #32's brief takes it when #26 and #28 land.
 - **Owed to the owner**: each landing check's phases and per-recipe comparison (#48's replay numbers were reported).
 - **For the build that applies a decomposition (Open 26)**, what #62's and #64's corrected briefs took (q25). A decomposition's
   child at an occupied locus is the problem standing there — at a parent with a locus the part child *is* the parent —
@@ -398,9 +406,7 @@ Not yet planned, in the order they are expected to be planned:
   `development_statement_constants`, the mention reading of `development_constant_mentions` without its filter).
   The prerequisite rows of D for an application (each part after the definition children) belong with the build that
   applies a decomposition to the loop.
-- **If #54 reports a changed word** because factoring `development_readiness_key` changes a definition the machinery
-  state presents as an entity (the mechanism of #53's first finding): allow it, with the words and the definition named
-  in its result — reuse outranks word stability, and #56 and #30 re-record over it.
+
 - **The standing refusals, so they are not re-derived**: the retirement of `Development_Truth`, kept and presented
   partially; an observation naming problems with a non-singleton subject (today it names the empty set); re-opening
   #16's key-assignment parameter; the attribution run and the interface index as tasks; teaching the check to refuse an

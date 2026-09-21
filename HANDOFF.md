@@ -14,10 +14,8 @@ through the Q7 order in the ledger.
 **Landing first.** Under the harness of 2026-09-21 a build or fix is complete when it has landed: its check passes, its
 review accepts it, the finalizer commits it, and only then does the harness complete it and its reviews. Five pieces of
 work stand written and uncommitted in the one tree. The development locus (#22, reviewed by #23) and the check's named
-refusals (#50, reviewed by the harness) are in their landing. The verdict's state rows (#46) passed its check; its review
-(#47) returned three findings, and the fix round installed them but ended with one proof step failing and its repair
-known but not installed — so #46, re-planned to install the repair, reword its evidence and hand over, is first in the
-order: until it lands, every check read from the one tree refuses on that theory. Two a session finishes: the replay's outcome classification (#48 — its acceptance
+refusals (#50, reviewed by the harness) are in their landing. The verdict's state rows (#46) landed as `7b4bb54f` after
+one fix round; its re-review's two small corrections (its map row, a sentence at line 471) ride with #78. Two a session finishes: the replay's outcome classification (#48 — its acceptance
 replay was never run, because the tree was inconsistent when it was written; it also carries the ignore line and the
 untracking of `tools/__pycache__/build.cpython-314.pyc`) and the plan's two standing sections (#49 — written; its
 hand-over never landed because its session could not end its turn).
@@ -175,10 +173,13 @@ judgment's path.
 - **Reviews #6, #8**: #6 accepted #5 with three phrase-level repairs; #8 accepted #7.
 - **Investigation #53**, accepted: `.build/tasks/30/readers.md`, every reader of the six items #30 retires, with the
   recipe executions each reaches and the scripts that reproduce it (`.build/tasks/53/`).
+- **#46** `theories/Development_State_Rows.thy`, committed `7b4bb54f` after one fix round: the verdict's state rows and
+  their presentation, three carried conditions with their consequences derived — distinct names (owned by the answer's
+  reader), unknown positions, distinct roots (`state_presents_distinct_roots`, owned by the exporter); names in
+  `.build/tasks/46/result.md`. Its follow-ups: the two `kinds_present` instances belong where the verdict's kind
+  arguments are taken, and a root row cites its head constant only.
 - **Written, landing** (see Graph): #22 `theories/Development_Loci.thy` (379 lines; the names the tasks after it consume
-  in `.build/tasks/22/names.md`); #46 `theories/Development_State_Rows.thy` (943 lines; names in
-  `.build/tasks/46/result.md`; its follow-ups — the two `kinds_present` instances belong where the verdict's kind
-  arguments are taken, and a root row cites its head constant only); #50 the check's named refusals, 14 cases in
+  in `.build/tasks/22/names.md`); #50 the check's named refusals, 14 cases in
   `tools/test_check_refusals.py`; #48 `tools/replay_development_answers.py` with ten tests (no retained record holds
   `elapsed_seconds`, so the longest-first ordering is inert until the answer harness retains its run's cost); #49 the
   plan's two sections.
@@ -197,9 +198,9 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q5** how far the native residual record reaches. Task 9 answered its own side: a notion is presented structurally
   when a *decision reads* it, not when a definition mentions it.
 - **Q7** the order of work under the direction that native definitions are normative. It orders this whole graph.
-- **Q8** the order in which parked tasks resume (asked 2026-09-21): the harness resumes longest-parked first, so after
-  #46 lands, 48, 49, 58 and 60 take the one tree before #22's fix. Provisional: #46 and #22 lead the queue and every
-  unstarted build waits on both. Bites until #22 has landed.
+- **Q8, answered by the owner 2026-09-21 21:43**: the planner's queue orders parked tasks too. A parked task resumes,
+  when its wait is over, in the queue's order (a hold ending within 45 minutes first, unnamed tasks last); so every
+  in-progress task is named in the queue, a quick fix's parked task included.
 
 Not yet planned, in the order they are expected to be planned:
 
@@ -239,11 +240,11 @@ Not yet planned, in the order they are expected to be planned:
     rooted state satisfying the carried conditions has a presentation, so the verdict's contract is conditional on
     `state_presents`. It carries the answer reader's refusal of a duplicated name (the verdict entry's Open). Before the
     loop evaluates the native verdict on a real answer.
-15. **The seed recipe's cost** (review 47's fifth follow-up): #46's check reused every theory and still spent 248.36 s of
-    254.8 s re-executing recipes — `native-development-seed` 248.35 s on the critical path (its report once executed in
+15. **The seed recipe's cost** (review 47's fifth follow-up, and #46's re-review): checks that reuse every theory still
+    re-execute every recipe — `native-development-seed` 156 to 248 s on the critical path (its report once executed in
     9.2 s), `native-development-machinery` 93.0 s — most likely because #50's uncommitted tool changes alter every
-    recipe's execution boundary, which ends when #50 lands. Attribute the seed recipe's 248 s when a check that
-    re-executes it is on the critical path.
+    recipe's execution boundary. If it persists once #50 has landed, it is a fix task; the seed recipe's own seconds are
+    attributed when a check that re-executes it is on the critical path.
 16. **Whether `keyed_agree` (#46) is an instance of the index notion or of the bijective relations** (review 47's
     second follow-up): for the index group once #68 has landed.
 
@@ -252,12 +253,11 @@ Not yet planned, in the order they are expected to be planned:
 - **The graph was taken stock of and released on 2026-09-21** (plan-32): #52 dropped and deleted, superseded by the
   per-task landing, its residue given to #48; #24 and #32 re-pointed onto builds, #32 off #30; #30's discovery split off
   as #53; the stale dependency sentence corrected in #32–#44 and the order in #14; #48 and #49 re-briefed to finish.
-- **The run is serial until #46 and #22 land.** HEAD declares their two theories without their files, so no task gets a
-  tree of its own and every task works in the one tree, each finalization holding it while the others park. #46 then #22
-  lead the order; every build not yet started waits on both (#24, #56, #62, #70, #72, #78 set so on 2026-09-21), so that
-  it starts in a tree of its own after them instead of joining the one-tree queue. The harness resumes parked tasks
-  longest-parked first — 48, 49, 58 and 60 before fix-22 — which the queue cannot reorder; the owner was asked (Q8) to
-  have parked tasks resumed in the planner's order.
+- **The run is serial until #22 lands** (#46 landed at 21:42). HEAD declares `Development_Loci` without its file, so no
+  task gets a tree of its own and every task works in the one tree, each finalization holding it while the others park.
+  #22 leads the order; every build not yet started waits on #22 and #46 (#24, #56, #62, #70, #72, #78, set 2026-09-21), so
+  that it starts in a tree of its own. Parked tasks resume in the queue's order (Q8): #22, then #50, whose landing ends
+  the re-execution of every recipe at every check, then #48 and #49, then the in-progress fillers #54, #60, #58 and #68.
 - **Owed to the owner**: #48's replay numbers against task 20's 283.6 s; each landing check's phases and per-recipe
   comparison.
 - **Owed before #62 and #64 start: correct their briefs from #66's entry once it is accepted** (q25). A decomposition's

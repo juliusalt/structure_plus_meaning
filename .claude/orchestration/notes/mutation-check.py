@@ -83,6 +83,8 @@ CASES = [
     ("v2.py", '        for f, waited_on in repointed.items():\n            with contextlib.suppress(Exception):\n'
      '                update_task(f, blockedBy=waited_on)\n', '',
      "all_of_it_or_none", "a splice put back when a placement fails"),
+    ("v2.py", 'judge = stage == "reviewing" and t.get("kind") not in ("build", "fix")', 'judge = False',
+     "waiting_for_the_planner_s_verdict", "a design waiting for a verdict"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

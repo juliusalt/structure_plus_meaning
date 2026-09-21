@@ -803,6 +803,29 @@ class PlanningTests(Flow):
         self.assertIn("has stood", self.heard())
         self.assertIn("with its brief not in form", self.heard())
 
+    def test_a_design_waiting_for_the_planner_s_verdict_is_named_again(self):
+        # pending_reviews starts a reviewer only for a build or a fix, so a finished design or investigation waits
+        # for a verdict only the planner can give. It was said once, in the event when it finished (2026-09-21).
+        self.w.task("4", subject="A design that is finished", description=BRIEF.replace("Kind: build", "Kind: design"))
+        self.w.set_st(tasks={"4": {"stage": "reviewing", "kind": "design", "session": "design-4"}})
+        self.w.v2("dispatch")
+        self.assertNotIn("for your verdict", self.heard())     # not at once: it may be judged in a moment
+        mark = self.w.state / "returned-4"
+        old_at = time.time() - v2.RETURNED_AFTER - 60
+        mark.write_text(str(old_at))
+        os.utime(mark, (old_at, old_at))
+        self.w.v2("dispatch")
+        said = self.heard()
+        self.assertIn("has waited", said)
+        self.assertIn("for your verdict", said)
+        self.assertIn("v2.py verdict 4 accept|reject", said)
+        # and a build in review is the harness's to start a reviewer for, not the planner's to judge
+        self.w.set_st(tasks={"4": {"stage": "reviewing", "kind": "build", "session": "implement-4"}})
+        os.utime(mark, (old_at, old_at))
+        before = said.count("for your verdict")
+        self.w.v2("dispatch")
+        self.assertEqual(self.heard().count("for your verdict"), before)
+
     def test_a_task_that_came_back_is_named_on_its_own_and_not_only_in_a_standstill(self):
         # tasks 5, 9, 18 and 21 stood with the planner for hours. The only thing that said so was standstill(),
         # which is suppressed while anything works and while the planner deliberates, so the notice reached the

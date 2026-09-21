@@ -2661,7 +2661,11 @@ def returned_tasks():
         # to "done", so reading the list here as well was a second branch nothing could reach
         orphan = (stage == "ready" and t.get("kind") == "review"
                   and (peek()["tasks"].get(t.get("reviews") or "") or {}).get("stage") == "done")
-        owed = tid in mine or (stage == "proposed" and t.get("proposal")) or stage == "unformed" or orphan
+        # a design or an investigation is judged by the planner itself: pending_reviews offers no reviewer for a
+        # kind that is not build or fix, so a finished one waits for a verdict nothing else can give. It was said
+        # once, in the event when it finished, and nothing said it again (2026-09-21).
+        judge = stage == "reviewing" and t.get("kind") not in ("build", "fix")
+        owed = tid in mine or (stage == "proposed" and t.get("proposal")) or stage == "unformed" or orphan or judge
         if not owed:
             with contextlib.suppress(OSError):
                 os.remove(mark)  # cleared: the next time it comes back is counted afresh
@@ -2681,6 +2685,15 @@ def returned_tasks():
                       "ever started for a task that is in review. Drop it, or set its subject back if the work "
                       "still wants judging.")
             log(f"review task {tid} cannot start: task {t.get('reviews')} is finished")
+            continue
+        if judge:
+            with state() as w:
+                event(w, "the harness", f"Task {tid} ({t.get('kind') or 'a design'}) has waited {int(since // 60)} "
+                      "minutes for your verdict: a design and an investigation are judged by you, and no reviewer is "
+                      f"ever started for one. Read its result (.build/tasks/{tid}/result.md) and record the verdict "
+                      f"(`v2.py verdict {tid} accept|reject --file .build/tasks/{tid}/verdict.md`), with `## Summary` "
+                      "and, for a rejection, `## Findings`.")
+            log(f"task {tid} has waited {int(since // 60)} min for the planner's verdict")
             continue
         if stage == "unformed":
             with state() as w:

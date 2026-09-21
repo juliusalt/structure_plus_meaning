@@ -1155,6 +1155,19 @@ class PlanningTests(Flow):
                                  f"protocols/{f}: {role} does not edit the graph and is told to run "
                                  f"{', '.join(sorted(named & graph_only))}")
 
+    def test_every_role_that_writes_a_brief_is_given_the_brief_s_form(self):
+        # the task designer's whole production is briefs, and its protocol never stated their form: it had one
+        # example, its own brief task, while `propose` refuses a proposal whole when one description is out of
+        # form — a refusal that costs a task designer's session (2026-09-21)
+        import re as _re
+        for role in ("planner", "task-designer"):
+            text = open(Path(v2.PROTOCOLS) / f"{role}.md").read()
+            for _ in range(2):
+                text = _re.sub(r"\{\{([\w-]+)\}\}",
+                               lambda m: open(Path(v2.PROTOCOLS) / f"_{m.group(1)}.md").read(), text)
+            for f in v2.BRIEF_FIELDS:
+                self.assertIn(f"{f}:", text, f"the {role} writes briefs and its protocol never names `{f}:`")
+
     def test_no_role_s_first_message_carries_a_placeholder_of_its_own_protocol(self):
         # a protocol's shared parts name {STALE} and the fixer's names {WHAT}: a render that does not pass them sent
         # the literal to the session (2026-09-20: every planned fix, and every planning episode)

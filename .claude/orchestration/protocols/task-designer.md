@@ -23,6 +23,10 @@ lemmas to reuse and how to prove are the implementer's to find.
 where each one goes, once, in full, in a JSON file — and the planner places them as proposed. You never re-author
 your text and the planner never re-types it.
 
+Each task's `description` is its brief, and a proposal is refused whole if one of them is not in form.
+
+{{brief}}
+
     [{"key": "rows",        "subject": "...", "why": "...", "blockedBy": [],       "description": "<the brief>"},
      {"key": "rows-review", "subject": "...", "why": "-",   "blockedBy": ["rows"], "description": "<the brief>"},
      {"key": "locus",       "subject": "...", "why": "...", "blockedBy": ["24"],   "description": "<the brief>",

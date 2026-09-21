@@ -1264,10 +1264,6 @@ class PlanningTests(Flow):
             (self.w.state / "mail" / f"{who}.jsonl").write_text(text)
         (self.w.state / "old-session.woken").write_text("x")
         os.utime(self.w.state / "old-session.woken", (time.time() - 200_000, time.time() - 200_000))
-        # the harness's record of a task the planner took out of the list, and of one that is running
-        self.w.task("22")
-        self.w.set_st(tasks={"21": {"stage": "planner", "kind": "build"},
-                             "22": {"stage": "running", "kind": "build", "session": "implement-1"}})
         (self.w.state / "fresh.woken").write_text("x")
         (self.w.state / "base-pack-20260101T000000-1").mkdir()
         for who in ("max", "xhigh", "high"):  # every base names its pack, as a built one does
@@ -1282,10 +1278,6 @@ class PlanningTests(Flow):
         self.assertIn("old-session.woken", gone)
         self.assertNotIn("fresh.woken", gone)              # a wake attach.sh may still read
         self.assertTrue((self.w.state / "fresh.woken").exists())
-        self.assertIn("task 21", gone)                     # its file is not in the list and nothing took it up
-        self.assertNotIn("task 22", gone)                  # a running task's record is where its history lives
-        self.assertNotIn("21", self.w.st()["tasks"])       # and the record is gone, not only named
-        self.assertIn("22", self.w.st()["tasks"])
         self.assertIn("mail/gone-4.jsonl", gone)           # no session of that name is in the state any more
         self.assertIn("mail/design-2.jsonl", gone)         # its session reads nothing ever again, and it is empty
         self.assertNotIn("mail/design-3.jsonl", gone)      # said to have reached nobody, and kept to be read

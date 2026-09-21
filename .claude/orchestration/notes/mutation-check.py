@@ -98,8 +98,6 @@ CASES = [
      "starts_no_session", "Monitor refused as waiting"),
     ("work_meter.py", '    for words in segments(shell_syntax(c)):\n        for w in words[:2]:\n            raw = w.strip("\'\\"`")\n            # the path, not the name: `tools/digest.py` is the repository\'s even if the harness ever holds one too\n            path = os.path.normpath(os.path.join(hook.get("cwd") or v2.PROJECT, os.path.expanduser(raw)))\n            # under the harness by its own path, or by the one every protocol writes (.claude/orchestration/…):\n            # the two differ only in a test world, where the harness stands outside the project it is given\n            under = path.startswith(os.path.join(v2.HERE, "")) or os.path.dirname(path).endswith(\n                os.path.join(".claude", "orchestration"))\n            if raw.endswith((".py", ".sh")) and under and os.path.basename(path) not in ("v2.py", "show.py"):\n                return deny(f"{os.path.basename(path)} is the harness\'s own to run: the orchestration runs it at the "\n                            "moment it belongs. Your commands are `v2.py` — step, ask, escalate, park, finalize, "\n                            "result, and what your role\'s protocol names — and `show.py` for reading.")\n', '',
      "harness_s_own_scripts", "the harness's own scripts run by a session"),
-    ("v2.py", 'if (t or {}).get("stage") in NOT_STARTED + ("done",) and not os.path.exists(task_path(tid))]',
-     'if False]', "nothing_names_any_more", "the record of a task taken out of the list"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

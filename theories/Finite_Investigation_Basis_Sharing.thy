@@ -91,7 +91,7 @@ lemma investigation_basis_ordered_code [code]:
        map (\<lambda>(c,d). let T=ordered_member_tree (the (map_of profiles d)) in
          (c,d,filter (\<lambda>x. RBT.lookup T x=None) (the (map_of listed c)))) (investigation_pairs candidates)))"
   by (simp only: investigation_basis_shared_profiles Let_def ordered_remdups_exact
-    ordered_investigation_select_exact ordered_member_tree_none not_not fset_of_list.rep_eq)
+    ordered_investigation_select_exact member_tree_absent not_not fset_of_list.rep_eq)
 
 section \<open>Loss rows are ordered against each observation pair once\<close>
 
@@ -168,7 +168,7 @@ lemma investigation_repairs_ordered_code [code]:
        ordered_investigation_select loss_rows (finite_observation_conflicts C compare F table),
        ordered_investigation_select loss_rows (finite_available_observation_repairs C compare U F table),
        ordered_investigation_select (investigation_pairs candidates) (finite_unrepairable_comparisons C compare U table)))"
-  by (simp only: investigation_repairs_def Let_def ordered_member_tree_listed
+  by (simp only: investigation_repairs_def Let_def listed_member_lookup
     ordered_investigation_select_exact investigation_select_loss_order)
 
 declare investigation_retain_def[code del]
@@ -178,7 +178,7 @@ lemma investigation_retain_ordered_code [code]:
     R=ordered_member_tree (fset_of_list relation) in
     ordered_investigation_select selected (finite_sound_observation_facets (fset_of_list candidates)
       (\<lambda>c d. RBT.lookup R (c,d)\<noteq>None) (fset_of_list facets) (fset_of_list observations)))"
-  by (simp only: investigation_retain_def Let_def ordered_member_tree_listed ordered_investigation_select_exact)
+  by (simp only: investigation_retain_def Let_def listed_member_lookup ordered_investigation_select_exact)
 
 text \<open>
   The deduplicated observation rows, every candidate profile and every loss

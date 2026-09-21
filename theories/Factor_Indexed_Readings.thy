@@ -1,6 +1,6 @@
 theory Factor_Indexed_Readings
   imports Factor_Formation_Once_Definitions Factor_Demanded_Package_Readings
-    Development_Answer_0ccf746fe2cf
+    Development_Answer_0ccf746fe2cf Binary_Store_Indexes Member_Tree_Indexes
 begin
 
 section \<open>An artifact is asked through its reading\<close>
@@ -38,6 +38,62 @@ lemma scanned_artifact_reading_fields:
   "reading_size (scanned_artifact_reading C)=fcard (finite_carrier (finite_structure C))"
   by (simp_all add: scanned_artifact_reading_def)
 
+text \<open>
+  The indexes the reading is answered through are instances of the index notion
+  (@{text Carrier_Indexes}), not four arguments of their own. The incidence, the functional bindings and
+  the counted values of an artifact are each a list of address-headed rows, and one instance serves the
+  three: the relation store of the rows read through the address path, which distinguishes by
+  @{thm [source] address_binary_path_injective}. The carrier is the member tree's instance. No product
+  carrier is needed, since the fields are asked separately.
+\<close>
+
+lemma address_rows_carrier_index:
+  "carrier_index (\<lambda>xs q v. (q,v)\<in>set xs) (\<lambda>_. True) UNIV address_binary_path
+    (\<lambda>xs. relation_store (map (map_prod address_binary_path id) xs)) (\<lambda>T k v. v |\<in>| relation_store_lookup T k)"
+proof (rule carrier_index_through_key[OF relation_store_carrier_index])
+  show "inj_on address_binary_path UNIV" by (rule inj_onI) simp
+qed (force simp: image_iff)+
+
+interpretation address_rows_index:
+  carrier_index "\<lambda>xs q v. (q,v)\<in>set xs" "\<lambda>_. True" UNIV address_binary_path
+    "\<lambda>xs. relation_store (map (map_prod address_binary_path id) xs)" "\<lambda>T k v. v |\<in>| relation_store_lookup T k"
+  by (rule address_rows_carrier_index)
+
+lemma address_rows_member:
+  "v |\<in>| relation_store_lookup (relation_store (map (map_prod address_binary_path id) xs)) (address_binary_path a) \<longleftrightarrow>
+    (a,v)\<in>set xs"
+  using address_rows_index.query_search[where c=xs and q=a and v=v] by simp
+
+lemma reading_heads_indexed:
+  "relation_store_lookup (relation_store (map (map_prod address_binary_path id)
+      (sorted_list_of_fset (finite_incidence S)))) (address_binary_path a)=finite_headed_incidence S a"
+proof (rule fset_eqI)
+  fix z :: "local_address\<times>local_address"
+  have "z |\<in>| finite_headed_incidence S a \<longleftrightarrow> (a,z) |\<in>| finite_incidence S"
+    by (cases z) (simp add: finite_headed_incidence_correct decode_finite_structure_def)
+  then show "z |\<in>| relation_store_lookup (relation_store (map (map_prod address_binary_path id)
+      (sorted_list_of_fset (finite_incidence S)))) (address_binary_path a) \<longleftrightarrow> z |\<in>| finite_headed_incidence S a"
+    by (simp only: address_rows_member sorted_list_of_fset_simps)
+qed
+
+lemma reading_values_indexed:
+  "relation_store_lookup (relation_store (map (map_prod address_binary_path id)
+      (sorted_list_of_fset (finite_bindings (finite_data C))))) (address_binary_path a)=finite_payload_values C a"
+  by (rule fset_eqI) (simp only: address_rows_member sorted_list_of_fset_simps finite_payload_values_member)
+
+lemma reading_counted_indexed:
+  "relation_store_lookup (relation_store (map (map_prod address_binary_path id)
+      (sorted_list_of_multiset (finite_bag (finite_data C))))) (address_binary_path a)\<noteq>{||} \<longleftrightarrow>
+    filter_mset (\<lambda>(b,v). b=a) (finite_bag (finite_data C))\<noteq>{#}"
+proof -
+  have "relation_store_lookup (relation_store (map (map_prod address_binary_path id)
+      (sorted_list_of_multiset (finite_bag (finite_data C))))) (address_binary_path a)\<noteq>{||} \<longleftrightarrow>
+    (\<exists>v. (a,v) \<in># finite_bag (finite_data C))"
+    by (simp only: fset_eq_iff fempty_iff address_rows_member set_sorted_list_of_multiset simp_thms)
+      blast
+  then show ?thesis by (simp only: counted_slice_empty not_not)
+qed
+
 definition indexed_artifact_reading :: "finite_exact_artifact \<Rightarrow> artifact_reading" where
   "indexed_artifact_reading C=(let
     H=relation_store (map (map_prod address_binary_path id) (sorted_list_of_fset (finite_incidence (finite_structure C))));
@@ -56,7 +112,7 @@ proof -
     by (simp add: sorted_list_of_fset.rep_eq fcard.rep_eq)
   show ?thesis
     by (simp add: indexed_artifact_reading_def scanned_artifact_reading_def Let_def fun_eq_iff
-      indexed_heads_exact indexed_values_exact indexed_counted_exact ordered_member_tree_exact ordered_member_tree_some size)
+      reading_heads_indexed reading_values_indexed reading_counted_indexed member_tree_lookup member_tree_found size)
 qed
 
 lemma indexed_artifact_reading_function: "indexed_artifact_reading=scanned_artifact_reading"

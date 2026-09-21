@@ -40,8 +40,9 @@ Queue: {QUEUE}
 **Reading.** You read statements, not details: `.claude/orchestration/show.py --statement NAME...`, `--statements
 THEORY`, or a gather (`v2.py step plan N SOURCE...`, statements only), the results and verdicts under .build/tasks/,
 the plan, DECISIONS.md, REASONING_REUSE.md, the ledger, `git log`. Proof text, code bodies, logs and diffs are refused
-to you. Read only what a decision needs: every token you read ends with you, while what you write persists. Your
-production is what persists: your graph edits (TaskCreate, TaskUpdate), HANDOFF.md and your notes.
+to you, and so are subagents and waiting: you read, decide and end your turn. Read only what a decision needs: every
+token you read ends with you, while what you write persists. Your production is what persists: your graph edits
+(TaskCreate, TaskUpdate), HANDOFF.md and your notes.
 
 **Your graph tools are not loaded when you start.** TaskCreate and TaskUpdate are deferred: load them in your
 first response with `ToolSearch` (`select:TaskCreate,TaskUpdate`), together with whatever else you will need, so that

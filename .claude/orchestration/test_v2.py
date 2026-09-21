@@ -1155,6 +1155,28 @@ class PlanningTests(Flow):
                                  f"protocols/{f}: {role} does not edit the graph and is told to run "
                                  f"{', '.join(sorted(named & graph_only))}")
 
+    def test_every_form_the_harness_checks_is_in_the_protocol_of_who_must_write_it(self):
+        # a form checked and never stated is a refusal a session cannot foresee, and for a proposal it costs the
+        # whole session: the task designer's protocol never named a brief's fields (2026-09-21)
+        def rendered(role):
+            import re as _re
+            text = open(Path(v2.PROTOCOLS) / f"{role}.md").read()
+            for _ in range(2):
+                text = _re.sub(r"\{\{([\w-]+)\}\}",
+                               lambda m: open(Path(v2.PROTOCOLS) / f"_{m.group(1)}.md").read(), text)
+            return text
+        for role in v2.PRODUCING:
+            text = rendered(role)
+            self.assertIn("Status:", text)
+            for s in v2.RESULT_SECTIONS:
+                self.assertIn(s, text, f"the {role} records a result and its protocol never names `## {s}`")
+        review = rendered("reviewer")
+        for s in ("## Summary", "## Findings"):
+            self.assertIn(s, review, f"a verdict is checked for `{s}` and the reviewer is never told")
+        plan = rendered("planner")
+        for s in v2.PLANNER_SECTIONS:
+            self.assertIn(f"## {s}", plan, f"HANDOFF.md is checked for `## {s}` and the planner is never told")
+
     def test_every_role_that_writes_a_brief_is_given_the_brief_s_form(self):
         # the task designer's whole production is briefs, and its protocol never stated their form: it had one
         # example, its own brief task, while `propose` refuses a proposal whole when one description is out of

@@ -1115,9 +1115,9 @@ def check_isolation():
             if name in w["sessions"]:
                 w["sessions"][name]["state"] = "parked"
         if name:
-            deliver(name, "the harness", f"Task {checking}'s check is running and sees the working tree, so your changes "
-                    f"left it and your task is parked.{aside} End your turn; you are resumed, your context intact, when "
-                    "the check's task has landed and the producing slot is free.")
+            deliver(name, "the harness", f"Task {checking}'s check is running and sees the working tree, so your task "
+                    f"is parked and writes nothing meanwhile.{aside} End your turn; you are resumed, your context "
+                    "intact, when the check's task has landed and the producing slot is free.")
         log(f"parked {tid} while task {checking}'s check runs")
 
 

@@ -1739,7 +1739,11 @@ class TaskTests(Flow):
         self.w.v2("dispatch")
         self.assertEqual(self.t("1")["stage"], "parked")  # the check sees the tree: no one else writes meanwhile
         self.assertTrue((self.w.project / "theories/Other.thy").exists())  # and its work stays there, whole
-        self.assertIn("check is running and sees the working tree", json.dumps(self.w.mail(self.impl)))
+        said = json.dumps(self.w.mail(self.impl))
+        self.assertIn("check is running and sees the working tree", said)
+        # and it says what becomes of its changes: nothing is taken out of the tree, which is why they stay whole
+        self.assertIn("parked and writes nothing meanwhile", said)
+        self.assertNotIn("left it", said)
         st = self.w.st()
         st["tasks"]["9"]["stage"] = "reviewing"
         (self.w.state / "v2.json").write_text(json.dumps(st))

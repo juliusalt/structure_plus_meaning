@@ -450,6 +450,19 @@ class SharingTests(Guarded):
     def test_handoff_is_the_planners(self):
         self.assertIn("HANDOFF.md is the planner's state", self.guard("Write", {"file_path": "HANDOFF.md"}))
 
+    def test_the_harness_s_own_files_are_not_a_session_s_to_change(self):
+        # `.claude/` is exempt from the tree's ownership, so a session that edited the harness would change the
+        # rules it runs under and nothing would record it (2026-09-21)
+        for tool, inp in (("Edit", {"file_path": str(fakes.HERE / "v2.py")}),
+                          ("Write", {"file_path": str(fakes.HERE / "protocols/implementer.md")}),
+                          ("Bash", {"command": f"sed -i s/a/b/ {fakes.HERE}/work_meter.py"})):
+            reason = self.guard(tool, inp, tool_use="t-new")
+            self.assertIsNotNone(reason, f"{tool} {inp} reached the harness")
+            self.assertIn("the owner's", reason)
+        # its own state is the harness's to write, through its commands, and a draft is its own
+        self.assertIsNone(self.guard("Write", {"file_path": str(self.w.project / ".build/tasks/2/draft.md")},
+                                     tool_use="t-new"))
+
     def test_a_task_file_is_written_by_no_session_at_all(self):
         # "the task graph is the planner's alone to edit" was held over TaskCreate and TaskUpdate, and the list is a
         # directory of JSON files a Write or a redirection reaches as easily — past Claude Code's lock on the task

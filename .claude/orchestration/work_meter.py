@@ -647,6 +647,13 @@ def write_guard(tool, inp, command, rec, cwd):
                     "lock on the task and allocate its id — TaskCreate and TaskUpdate for the planner, "
                     "`v2.py blockers` for an edge, `v2.py accept` for a brief's proposed tasks, and `v2.py propose` "
                     "for a task designer, which proposes and does not write.")
+    # the harness is the owner's, and nothing in it is a task's deliverable: a session that edited it would change
+    # the rules it is working under, and `.claude/` is exempt from the tree's ownership, so nothing would record it
+    harness = os.path.join(v2.HERE, "")
+    if any(t.startswith(harness) and not t.startswith(os.path.join(v2.STATE, "")) for t in targets):
+        return deny("The orchestration's own files are the owner's: a session does the work of its task and does not "
+                    "change the harness it runs under. What you found in it goes into your result, or to the planner "
+                    "(`v2.py ask --to planner`, or `v2.py escalate --efficiency` for a cost).")
     theirs = {os.path.join(d, f) for d in (v2.PROJECT, v2.tree_of(rec)) for f in ("HANDOFF.md", v2.PLANNER_LOG)}
     if rec.get("role") != "planner" and theirs & set(targets):
         return deny(f"HANDOFF.md is the planner's state and {v2.PLANNER_LOG} is its log: what you did goes into your "

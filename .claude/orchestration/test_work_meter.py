@@ -450,6 +450,16 @@ class SharingTests(Guarded):
     def test_handoff_is_the_planners(self):
         self.assertIn("HANDOFF.md is the planner's state", self.guard("Write", {"file_path": "HANDOFF.md"}))
 
+    def test_a_session_starts_no_session_and_waits_through_nothing(self):
+        # the Agent tool is refused, and `claude --bg` is the same thing by another door: a session outside every
+        # slot, every limit and every record the harness keeps. Monitor is waiting, and reading through its events.
+        said = self.guard("Bash", {"command": "claude --bg -n mine 'do the work'"}, tool_use="t-new")
+        self.assertIn("A session starts no session", said)
+        self.assertIn("Waiting is refused", self.guard("Monitor", {"command": "tail -f x.log"}, tool_use="t-new"))
+        # a path that merely names it is not one: the harness's own commands live under .claude
+        self.assertIsNone(self.guard("Bash", {"command": ".claude/orchestration/v2.py status"}, tool_use="t-new"))
+        self.assertIsNone(self.guard("Bash", {"command": "grep -rn claude .build/tasks/2/notes.md"}, tool_use="t-new"))
+
     def test_the_harness_s_own_files_are_not_a_session_s_to_change(self):
         # `.claude/` is exempt from the tree's ownership, so a session that edited the harness would change the
         # rules it runs under and nothing would record it (2026-09-21)

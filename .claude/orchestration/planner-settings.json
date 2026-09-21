@@ -6,7 +6,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Read|Bash|Grep|Glob|WebFetch|WebSearch|Agent|TaskOutput|TaskCreate|TaskUpdate",
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit|Monitor|Read|Bash|Grep|Glob|WebFetch|WebSearch|Agent|TaskOutput|TaskCreate|TaskUpdate",
         "hooks": [
           {
             "type": "command",

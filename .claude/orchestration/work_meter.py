@@ -324,6 +324,7 @@ def covered(ranges, first, last):
 # naming a path that had changed. The tests call the guard directly, which is past the matcher, so only
 # test_the_settings_let_every_guarded_tool_reach_the_guard sees this.
 GUARDED_TOOLS = ("Write", "Edit", "MultiEdit", "NotebookEdit",   # the write guard, and who owns a change of the tree
+                 "Monitor",                                      # waiting, and reading a file through its events
                  "Read", "Grep", "Glob", "WebFetch", "WebSearch",  # what is already in the session's context, and
                  # what is read from outside it: session-flags gives both, and a read the meter never saw was a read
                  # that cost nothing against the budget every other read is held to (2026-09-21)
@@ -529,7 +530,7 @@ def session_guard(hook, rec):
     if tool == "Agent":
         return deny("A session starts no subagents: it does its piece of work itself; a question goes to its author, "
                     "the knowledge base or the planner (`v2.py ask`).")
-    if tool == "TaskOutput":
+    if tool in ("TaskOutput", "Monitor"):
         return deny("Waiting is refused: a background job's completion notifies you; continue with the task meanwhile.")
     # planner-settings.json is what puts a session on the shared graph (CLAUDE_CODE_TASK_LIST_ID); every other
     # session's task list is its own, and a worker is told to make its plan there.
@@ -539,6 +540,12 @@ def session_guard(hook, rec):
                     "place them (`v2.py propose ID FILE`) and the planner places them; any other role proposes a "
                     "task to the planner (`v2.py ask --to planner`) or names it in its result.")
     c = (inp.get("command") or "") if tool == "Bash" else ""
+    if c and any(os.path.basename(w.strip("'\"`")) == "claude" for words in segments(shell_syntax(c)) for w in words[:1]):
+        # the Agent tool is refused above, and `claude --bg` is the same thing by another door: a session outside
+        # every slot, every limit and every record the harness keeps (2026-09-21)
+        return deny("A session starts no session: the harness starts them, in its slots and on its record. Do your "
+                    "piece of work yourself, and take a question to its author, the knowledge base or the planner "
+                    "(`v2.py ask`).")
     if c and WAIT.search(c):
         return deny("Waiting is refused (sleep, wait loops, tail -f): a background job's completion notifies you. "
                     "Continue with what follows or with an independent part of the task.")

@@ -89,8 +89,12 @@ CASES = [
      "start_then_stop_then_start_again", "nothing starts while the run is stopped"),
     ("work_meter.py", 'if any(t.startswith(graph) for t in targets):', 'if False:',
      "written_by_no_session", "a task file written by hand"),
-    ("work_meter.py", 'if any(t.startswith(harness) and not t.startswith(os.path.join(v2.STATE, "")) for t in targets):',
-     'if False:', "harness_s_own_files", "the harness edited by a session"),
+    ("work_meter.py", 'if any(t.startswith(h) for t in targets for h in harness):', 'if False:',
+     "harness_s_own_files", "the harness edited by a session"),
+    ("work_meter.py", '    if c and any(os.path.basename(w.strip("\'\\"`")) == "claude" for words in segments(shell_syntax(c)) for w in words[:1]):', '    if False:',
+     "starts_no_session", "a session starting a session"),
+    ("work_meter.py", 'if tool in ("TaskOutput", "Monitor"):', 'if tool in ("TaskOutput",):',
+     "starts_no_session", "Monitor refused as waiting"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

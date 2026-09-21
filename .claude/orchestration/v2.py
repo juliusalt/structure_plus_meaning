@@ -2876,6 +2876,17 @@ def tidied():
             with contextlib.suppress(OSError):
                 os.remove(path)
             gone.append("mail/" + name)
+    # The harness's own record of a task whose file is not in the list at all, and which nothing has taken up: the
+    # planner takes tasks out (21 and 51 on 2026-09-20), and the entry it leaves is read by nothing — every reader
+    # asks the list first — but stands in the report for ever. Only when the file is truly absent, and only for a
+    # stage no session is on: an entry is the only place a task's history lives while it runs.
+    stale = [tid for tid, t in peek()["tasks"].items()
+             if (t or {}).get("stage") in NOT_STARTED + ("done",) and not os.path.exists(task_path(tid))]
+    if stale:
+        with state() as w:
+            for tid in stale:
+                w["tasks"].pop(tid, None)
+        gone += [f"task {tid}" for tid in stale]
     if gone:
         log(f"tidied {len(gone)} piece(s) of state nothing names any more: {', '.join(sorted(gone)[:6])}"
             + (", …" if len(gone) > 6 else ""))

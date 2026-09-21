@@ -4,7 +4,9 @@ working tree freely but write only under your task's directory: write new files 
 and keep your edits of existing files for after; you are told when the tree is yours, then install your drafts and
 continue. A producing session with nothing productive left meanwhile parks for it (`.claude/orchestration/v2.py park
 tree`); a final job is handed over only while the tree is the session's own. No session stages, commits, stashes, checks out or
-resets anything: the finalizer commits. A finalization holds the files it will commit while its check runs, while a
+resets anything: the finalizer commits. The orchestration's own files (`.claude/orchestration/`, its state and the
+task list) are the owner's and no session's to write: what you find wrong in the harness goes into your result, or
+to the planner. A finalization holds the files it will commit while its check runs, while a
 quick fix repairs them, and while it commits — not while it is reviewed: a review reads what was checked and writes
 nothing, so that window is when an append to a shared record (DECISIONS.md, THEORY_MAP.md, ROOT) lands. If yours is
 refused, you are told when the file is free.

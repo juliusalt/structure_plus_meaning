@@ -1739,6 +1739,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Policy
     Development_Decomposition
     Development_Successor
+    Development_Repair_Rows
     RRA_Finite_Transactions
     RRA_Formed_Snapshot_Transactions
     Development_Publication

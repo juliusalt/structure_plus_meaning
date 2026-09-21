@@ -15,9 +15,7 @@ through the Q7 order in the ledger.
 review accepts it, the finalizer commits it, and only then does the harness complete it and its reviews. Every piece of
 work written before that harness has landed.
 
-**The checking itself (#79, #80).** The owner's proposal of 2026-09-21 22:31 (#79): a probe bounded at 60 s by
-default, and a timed-out probe naming the command it was processing instead of an empty error list. The recipes' cost
-(#80): the seed recipe per presentation, refined at its dominant cause with every word equal; the tool files each
+**The checking itself (#80).** The recipes' cost (#80): the seed recipe per presentation, refined at its dominant cause with every word equal; the tool files each
 recipe's execution boundary holds; the facts of the owner's question on the base (Q10); and the marked correction of
 DECISIONS.md line 10070 (q28). Every landing check re-executes all 33 recipes while the base lags the commits since it
 (#49's check: 181.94 s of recipes for a change to the plan alone).
@@ -156,7 +154,7 @@ judgment's path.
 - **A probe is an inner loop, not a gate**: when the machine is full and only a task's probe remains, it hands over, and
   the landing check's proof phase — run before any recipe — verifies the same and fails in seconds on a wrong proof
   (q26, 2026-09-21). The result says the probe was not run and why.
-- **A probe is bounded at 60 s** (`--timeout 60`, the default once #79 lands) unless its session holds the machine for
+- **A probe is bounded at 60 s** (`--timeout 60`, the default since #79) unless its session holds the machine for
   a measurement; refused for a full machine, a session parks for it (`v2.py park machine`) and is resumed when a run of
   its kind may start (the owner, 2026-09-21 22:31: up to 8 probes and 2 heavy runs at once).
 - **No task rests on reasoning not yet written.**
@@ -207,6 +205,13 @@ judgment's path.
   no condition changed, 14 cases in `tools/test_check_refusals.py`; its landing check 193.23 s, tool tests 202.
 - **#49** the plan's standing and direction sections, current with the engine line and the three designs, committed
   `1634d456` after one fix round; 44.6 s stated as what the first refinement left (q28).
+- **#79** `tools/probe_theories.py`, committed `1e7ed068`: `--timeout` defaults to 60; a timed-out probe reports
+  `timed_out`, `last_command` (the log's last non-empty line) and an error naming the limit, the command and the log.
+- **#54** `Filtered_Native_Questions`, committed `ff37efef` after one fix round: the native question over paths of its
+  subjects' keys beside the index form, the key a parameter under `inj_on`; `first_occurrence_key`, of which readiness's
+  key is an instance, and `development_entity_key`, the executable key of a state's entities. Its review's follow-ups
+  on the switch ride with #56 (the keys' move beneath both theories, the program-level payload statement, the 256
+  bound of `[i]`); the rest are Open 21.
 
 ## Open
 
@@ -286,6 +291,10 @@ Not yet planned, in the order they are expected to be planned:
     over the request state's rows (removed rows cited in the request state, added rows in the answer state) read
     through #38's reduction of an edit, its presenter, and the switch of `Development_Native_Answers`' tagged
     presenter. After #38.
+21. **The index form's retirement** (#54's review): restate the faceted question and its five users as instances of
+    `keyed_faceted_question` and retire `filtered_development_question`'s index form entirely. After #56.
+22. **The probe's last command** (#79's review): the log's last non-empty line; if a timeout shows a line that does not
+    locate the stalled command, recognise Isabelle's own position report. At that need.
 
 ## Now
 
@@ -294,7 +303,12 @@ Not yet planned, in the order they are expected to be planned:
 - **For the owner**: `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap
   (#22's re-review); #50's review suggests the finalizer append its check's summary to the task's report, since a result
   is recorded before the finalizer's check runs; #49's re-review, that the finalizer's commit message quotes the
-  hand-over's run rather than the re-run it commits on.
+  hand-over's run rather than the re-run it commits on; #79's review, that the harness's probe guard still requires
+  `--timeout` to be named and cites the old 1200 s default, as does the memory note on probing; and the finalizer
+  commits whole files, so the shared files of the one tree (`THEORY_MAP.md`, `ROOT`) couple landings: #24's commit was
+  refused at 23:02 for carrying #54's unreviewed rows, and committing a task's own hunks would remove the coupling.
+- **#24 was re-planned to hand over again** after #54's landing (its work accepted, its first commit refused); #26, #28
+  and #62 wait on it.
 - **Owed to the owner**: each landing check's phases and per-recipe comparison (#48's replay numbers were reported).
 - **Owed before #62 and #64 start: correct their briefs from #66's entry once it is accepted** (q25; #62 waits on #66: rewrite both before #66's verdict). A decomposition's
   child at an occupied locus is the problem standing there — at a parent with a locus the part child *is* the parent —

@@ -77,6 +77,20 @@ class WatchdogTests(unittest.TestCase):
 
     # ------------------------------------------------------------ live sessions
 
+    def test_a_session_the_supervisor_no_longer_runs_is_lost_though_it_is_still_listed(self):
+        # the listing gives `status` (busy or idle) while the supervisor holds the session; a row with only the
+        # coarser `state` is one whose process it no longer runs, and it stays listed. It counted as seen, so the
+        # gone count never reached its limit and the session held its slot for ever (2026-09-21).
+        self.w.session("implement-4", "implementer", "w4", task="4")
+        self.w.set_st(tasks={"4": {"stage": "running", "session": "implement-4"}})
+        self.w.set_rows([dict(r, status=None, state="blocked") for r in self.w.rows()])
+        for _ in range(watchdog.GONE_CHECKS - 1):
+            self.run_watchdog()
+            self.assertEqual(self.s("implement-4")["state"], "working")
+        self.run_watchdog()
+        self.assertEqual((self.s("implement-4")["state"], self.w.st()["tasks"]["4"]["stage"]), ("lost", "planner"))
+        self.assertIn("is listed as blocked and no turn of it runs", (self.w.state / "v2.log").read_text())
+
     def test_a_lost_producing_session_gives_its_task_to_the_planner(self):
         self.w.session("implement-4", "implementer", "w4", task="4", live=False)
         self.w.set_st(tasks={"4": {"stage": "running", "session": "implement-4"}})

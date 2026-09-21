@@ -174,6 +174,14 @@ def care(name, s):
             with v2.state() as st:
                 st["sessions"][name]["sealed"] = True
         return
+    # the listing gives `status` (busy or idle) while the supervisor holds the session; a row carrying only the
+    # coarser `state` — `blocked`, a process it no longer runs — stays listed, and counting it as seen kept the
+    # gone count from ever reaching GONE_CHECKS: a session in that state would hold its slot for ever with nothing
+    # said, since `gone` is only consulted when there is no row at all (2026-09-21)
+    if r["activity"] not in ("busy", "idle"):
+        if s["state"] in v2.LIVE and gone(name):
+            lost(name, f"is listed as {r['activity']} and no turn of it runs")
+        return
     seen(name)
     if r["activity"] != "idle":
         return

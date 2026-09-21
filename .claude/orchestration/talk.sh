@@ -18,7 +18,9 @@ until name=$("$HERE/v2.py" talk) && [ -n "$name" ]; do  # the knowledge base may
     echo "take it off when you mean to begin: rm $STATE/no-launch"
     exit 1
   fi
-  i=$((i + 1)); [ "$i" -gt 90 ] && { echo "no planner could start: the knowledge base is not ready (see health.py)"; exit 1; }
+  i=$((i + 1)); [ "$i" -gt 90 ] && { echo "no planner could start in three minutes: the knowledge base may still be"
+    echo "loading or integrating, or a start that was not confirmed is being waited out. health.py says which, and"
+    echo "state/v2.log has the last word on it."; exit 1; }
   [ "$i" = 1 ] && echo "waiting for the knowledge base (it integrates the last planner's notes, or loads)"
   sleep 2
 done

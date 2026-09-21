@@ -130,6 +130,20 @@ class FinalizeTests(unittest.TestCase):
         self.w.run("finalize.py", "check", "3")
         self.assertEqual(self.stage(), "planner")  # a command that stays unrunnable is the planner's
 
+    def test_a_check_is_not_run_at_all_while_the_working_tree_refuses_every_check(self):
+        # a change is a set of parts, and a part taken out refuses every task's check and not only its own. Running
+        # it anyway spends the check and costs the task a round for something it did not do (2026-09-20).
+        self.spec("true")
+        self.w.write("ROOT", 'session Development = HOL +\n  theories\n    Ready\n    Missing\n')
+        self.assertEqual(self.w.run("finalize.py", "check", "3")[0], 1)
+        self.assertEqual(self.stage(), "fixing")
+        self.assertEqual(self.outcome()["seconds"], 0)                    # it never ran
+        self.assertIn("not run, the working tree is inconsistent", (self.w.state / "v2.log").read_text())
+        tail = (self.w.project / ".build/tasks/3/finalize.log").read_text()
+        self.assertIn("The working tree refuses every check as it stands, whatever this task did", tail)
+        self.assertIn("Missing", tail)
+        self.assertIn("whatever this task did", self.w.st()["tasks"]["3"]["fix_text"])
+
     def test_a_failing_check_gets_one_quick_fix_then_goes_to_the_planner(self):
         self.spec("echo '*** Failed to finish proof'; exit 1")
         self.assertEqual(self.w.run("finalize.py", "check", "3")[0], 1)

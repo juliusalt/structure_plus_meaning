@@ -1594,6 +1594,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Development_Criterion_Sources
     Native_Collection_Programs
     Native_Path_Stores
+    Native_Path_Store_Indexes
     Factor_Finite_Development_Questions
     Factor_Source_Development_Admission
     Factor_Source_Development_Cases
@@ -1725,6 +1726,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Native_Readiness
     Native_Table_Reach
     Isabelle_Native_Reach
+    Development_Entity_Keys
     Development_Native_Selection
     Filtered_Native_Questions
     Development_Constant_Problems
@@ -1811,4 +1813,5 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Native_Control_Acceptance_Profile
     Development_State_Rows
     Development_Rows
+    Development_Located_Rows
     Development_Row_Presentations

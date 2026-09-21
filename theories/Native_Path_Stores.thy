@@ -458,4 +458,258 @@ text \<open>
   every use of a path store states it.
 \<close>
 
+section \<open>The presentations of the path store\<close>
+
+text \<open>
+  A path and a store are presented by their executable terms; each presentation is injective whenever
+  the presentation of the values it holds is, and formed whenever those are.
+\<close>
+
+lemma finite_store_option_injective [intro]:
+  assumes injective: "inj f"
+  shows "inj (finite_store_option f)"
+proof (rule injI)
+  fix x y assume "finite_store_option f x=finite_store_option f y"
+  then show "x=y" using injective by (cases x; cases y) (auto simp: finite_store_option_def dest: injD)
+qed
+
+lemma finite_store_injective [intro]:
+  assumes injective: "inj f"
+  shows "inj (finite_store f)"
+proof (rule injI)
+  fix S T show "finite_store f S=finite_store f T \<Longrightarrow> S=T"
+  proof (induction S arbitrary: T)
+    case Empty_Store
+    then show ?case by (cases T) simp_all
+  next
+    case (Store_Node v l r)
+    from Store_Node.prems obtain v' l' r' where T: "T=Store_Node v' l' r'"
+      and head: "finite_store_option f v=finite_store_option f v'"
+      and left: "finite_store f l=finite_store f l'" and right: "finite_store f r=finite_store f r'"
+      by (cases T) simp_all
+    have "v=v'" by (rule injD[OF finite_store_option_injective[OF injective] head])
+    moreover have "l=l'" by (rule Store_Node.IH(1)[OF left])
+    moreover have "r=r'" by (rule Store_Node.IH(2)[OF right])
+    ultimately show ?case by (simp add: T)
+  qed
+qed
+
+lemma finite_path_formed [simp]: "finite_term_formed (finite_path bs)"
+  by (induction bs) (simp_all add: finite_path_def finite_bit_def octets_formed_def)
+
+lemma finite_store_option_formed:
+  assumes "\<And>x. finite_term_formed (f x)"
+  shows "finite_term_formed (finite_store_option f v)"
+  using assms by (cases v) (simp_all add: finite_store_option_def octets_formed_def)
+
+lemma finite_store_formed:
+  assumes "\<And>x. finite_term_formed (f x)"
+  shows "finite_term_formed (finite_store f T)"
+  by (induction T) (simp_all add: octets_formed_def finite_store_option_formed[OF assms])
+
+text \<open>
+  Two stores with equal presentations hold, at every path where the one holds a value, a value of the
+  other with the same presentation: this is what the presentation of a store identifies when the
+  presentation of its values is injective only on the values it holds.
+\<close>
+
+lemma finite_store_lookup_agree:
+  assumes "finite_store f S=finite_store f T" "store_lookup S q=Some v"
+  shows "\<exists>w. store_lookup T q=Some w \<and> f w=f v"
+  using assms
+proof (induction q arbitrary: S T)
+  case Nil
+  from Nil.prems(2) obtain l r where S: "S=Store_Node (Some v) l r" by (cases S) simp_all
+  from Nil.prems(1) S obtain v1 l' r' where T: "T=Store_Node v1 l' r'"
+    and H: "finite_store_option f (Some v)=finite_store_option f v1"
+    by (cases T) simp_all
+  show ?case using H T by (cases v1) (simp_all add: finite_store_option_def)
+next
+  case (Cons b bs)
+  from Cons.prems(2) obtain v0 l r where S: "S=Store_Node v0 l r" by (cases S; cases b) simp_all
+  from Cons.prems(1) S obtain v1 l' r' where T: "T=Store_Node v1 l' r'"
+    and L: "finite_store f l=finite_store f l'" and R: "finite_store f r=finite_store f r'"
+    by (cases T) simp_all
+  show ?case
+  proof (cases b)
+    case True
+    have "store_lookup r bs=Some v" using Cons.prems(2) S True by simp
+    from Cons.IH[OF R this] show ?thesis using T True by simp
+  next
+    case False
+    have "store_lookup l bs=Some v" using Cons.prems(2) S False by simp
+    from Cons.IH[OF L this] show ?thesis using T False by simp
+  qed
+qed
+
+section \<open>A canonical store is determined by its lookups\<close>
+
+lemma store_canonical_none:
+  assumes "store_canonical T" "\<And>q. store_lookup T q=None"
+  shows "T=Empty_Store"
+  using assms
+proof (induction T)
+  case Empty_Store
+  then show ?case by simp
+next
+  case (Store_Node v l r)
+  have v: "v=None" using Store_Node.prems(2)[of "[]"] by simp
+  have l: "l=Empty_Store"
+  proof (rule Store_Node.IH(1))
+    show "store_canonical l" using Store_Node.prems(1) by simp
+    show "store_lookup l q=None" for q using Store_Node.prems(2)[of "False#q"] by simp
+  qed
+  have r: "r=Empty_Store"
+  proof (rule Store_Node.IH(2))
+    show "store_canonical r" using Store_Node.prems(1) by simp
+    show "store_lookup r q=None" for q using Store_Node.prems(2)[of "True#q"] by simp
+  qed
+  show ?case using Store_Node.prems(1) v l r by simp
+qed
+
+theorem store_canonical_lookup_eq:
+  assumes "store_canonical S" "store_canonical T" "\<And>q. store_lookup S q=store_lookup T q"
+  shows "S=T"
+  using assms
+proof (induction S arbitrary: T)
+  case Empty_Store
+  have "store_lookup T q=None" for q using Empty_Store.prems(3)[of q] by simp
+  from store_canonical_none[OF Empty_Store.prems(2) this] show ?case by simp
+next
+  case (Store_Node v l r)
+  note prems=Store_Node.prems and IH=Store_Node.IH
+  show ?case
+  proof (cases T)
+    case Empty_Store
+    have "store_lookup (Store_Node v l r) q=None" for q using prems(3)[of q] Empty_Store by simp
+    from store_canonical_none[OF prems(1) this] show ?thesis by simp
+  next
+    case (Store_Node v' l' r')
+    have v: "v=v'" using prems(3)[of "[]"] Store_Node by simp
+    have l: "l=l'"
+    proof (rule IH(1))
+      show "store_canonical l" using prems(1) by simp
+      show "store_canonical l'" using prems(2) Store_Node by simp
+      show "store_lookup l q=store_lookup l' q" for q using prems(3)[of "False#q"] Store_Node by simp
+    qed
+    have r: "r=r'"
+    proof (rule IH(2))
+      show "store_canonical r" using prems(1) by simp
+      show "store_canonical r'" using prems(2) Store_Node by simp
+      show "store_lookup r q=store_lookup r' q" for q using prems(3)[of "True#q"] Store_Node by simp
+    qed
+    show ?thesis using Store_Node v l r by simp
+  qed
+qed
+
+lemma path_store_fold_canonical:
+  "store_canonical T \<Longrightarrow> store_canonical (fold (\<lambda>(k,v) T. store_update T k (Some v)) rows T)"
+  by (induction rows arbitrary: T) (auto simp: split_beta intro: store_update_canonical)
+
+lemma path_store_canonical: "store_canonical (path_store rows)"
+  unfolding path_store_def by (rule path_store_fold_canonical) simp
+
+text \<open>
+  The store of a single-valued listing is a function of the rows it holds: two such listings of one set
+  of rows, in whatever order and with whatever repetitions, build the same store.
+\<close>
+
+theorem path_store_rows:
+  assumes sv: "single_valued (set rows)" and sv': "single_valued (set rows')" and same: "set rows=set rows'"
+  shows "path_store rows=path_store rows'"
+proof (rule store_canonical_lookup_eq[OF path_store_canonical path_store_canonical])
+  fix q
+  have some: "store_lookup (path_store rows) q=Some v \<longleftrightarrow> store_lookup (path_store rows') q=Some v" for v
+    using path_store_lookup[OF sv] path_store_lookup[OF sv'] same by simp
+  show "store_lookup (path_store rows) q=store_lookup (path_store rows') q"
+  proof (cases "store_lookup (path_store rows) q")
+    case None
+    then show ?thesis using some by (cases "store_lookup (path_store rows') q") auto
+  next
+    case (Some v)
+    then show ?thesis using some[of v] by simp
+  qed
+qed
+
+section \<open>A row is its path with its value, and a table is the store of its rows\<close>
+
+text \<open>
+  A row of a table is presented as the pair of its path and its value, and a table, given as a listing
+  of its rows, as the store of that listing. The readiness line and the development's rows are instances,
+  each with the presentation of its own values.
+\<close>
+
+definition finite_store_row ::
+    "('v \<Rightarrow> finite_factor_term) \<Rightarrow> bool list\<times>'v \<Rightarrow> finite_factor_term" where
+  "finite_store_row val=finite_pair_presentation finite_path val"
+
+definition finite_listing_store ::
+    "('v \<Rightarrow> finite_factor_term) \<Rightarrow> (bool list\<times>'v) list \<Rightarrow> finite_factor_term" where
+  "finite_listing_store val rows=finite_store val (path_store rows)"
+
+lemma finite_store_row_injective [intro]:
+  assumes "inj val"
+  shows "inj (finite_store_row val)"
+  unfolding finite_store_row_def by (intro finite_pair_presentation_injective finite_path_injective assms)
+
+lemma finite_store_row_formed:
+  assumes "finite_term_formed (val v)"
+  shows "finite_term_formed (finite_store_row val (l,v))"
+  using assms by (simp add: finite_store_row_def)
+
+lemma finite_listing_store_formed:
+  assumes "\<And>v. finite_term_formed (val v)"
+  shows "finite_term_formed (finite_listing_store val rows)"
+  unfolding finite_listing_store_def by (rule finite_store_formed[OF assms])
+
+lemma decode_finite_store_row:
+  "decode_finite_term (finite_store_row val (l,v))=Pair_Term (path_term l) (decode_finite_term (val v))"
+  by (simp add: finite_store_row_def)
+
+lemma decode_finite_listing_store:
+  "decode_finite_term (finite_listing_store val rows)=store_term (decode_finite_term \<circ> val) (path_store rows)"
+  by (simp add: finite_listing_store_def decode_finite_store)
+
+text \<open>
+  A table presents the rows it holds and nothing of the order they were listed in: over single-valued
+  listings, whose values are presented injectively on the values they hold, equal presentations hold
+  the same rows, and listings of the same rows have equal presentations.
+\<close>
+
+theorem finite_listing_store_identifies:
+  assumes presented: "inj_on val (snd ` set rows \<union> snd ` set rows')"
+    and sv: "single_valued (set rows)" and sv': "single_valued (set rows')"
+    and same: "finite_listing_store val rows=finite_listing_store val rows'"
+  shows "set rows=set rows'"
+proof -
+  have into: "(q,v)\<in>set ys" if xv: "(q,v)\<in>set xs"
+      and eq: "finite_listing_store val xs=finite_listing_store val ys"
+      and svx: "single_valued (set xs)" and inj: "inj_on val (snd ` set xs \<union> snd ` set ys)" for xs ys q v
+  proof -
+    have "store_lookup (path_store xs) q=Some v" using path_store_lookup[OF svx] xv by simp
+    from finite_store_lookup_agree[OF eq[unfolded finite_listing_store_def] this]
+    obtain w where w: "store_lookup (path_store ys) q=Some w" "val w=val v" by blast
+    have wy: "(q,w)\<in>set ys" by (rule path_store_found[OF w(1)])
+    have wA: "w\<in>snd ` set xs \<union> snd ` set ys" using wy by force
+    have vA: "v\<in>snd ` set xs \<union> snd ` set ys" using xv by force
+    have "w=v" by (rule inj_onD[OF inj w(2) wA vA])
+    with wy show ?thesis by simp
+  qed
+  have presented': "inj_on val (snd ` set rows' \<union> snd ` set rows)" using presented by (simp add: Un_commute)
+  show ?thesis
+  proof (rule set_eqI)
+    fix x
+    show "x\<in>set rows \<longleftrightarrow> x\<in>set rows'"
+      using into[OF _ same sv presented, where q="fst x" and v="snd x"]
+        into[OF _ same[symmetric] sv' presented', where q="fst x" and v="snd x"] by (metis prod.collapse)
+  qed
+qed
+
+theorem finite_listing_store_exact:
+  assumes presented: "inj_on val (snd ` set rows \<union> snd ` set rows')"
+    and sv: "single_valued (set rows)" and sv': "single_valued (set rows')"
+  shows "finite_listing_store val rows=finite_listing_store val rows' \<longleftrightarrow> set rows=set rows'"
+  using finite_listing_store_identifies[OF presented sv sv'] path_store_rows[OF sv sv']
+  by (auto simp: finite_listing_store_def)
+
 end

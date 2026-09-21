@@ -10525,3 +10525,76 @@ presentation; and where the build waits, which is the planner's.
 - This design was made outside the loop and is a residual.
 
 Recorded 2026-09-21 (task 66's decision; a design, no theory changes).
+
+## The contract question states its candidates as entity keys
+
+Every contract decision of the seed and of the machinery is the native question
+`development_constant_question` over the entities of one constant's scope. Until now it was
+`filtered_development_question`, whose candidates are `finite_development_index` of the scope positions, the
+payload of the binary digits of a position, one octet per digit (position 0 the empty payload); these payloads are
+distinct from the clause coordinates `[i]` discussed under "Candidate counts". The
+scope program's clauses and the facet's ground clauses told candidates apart by those octets, so the loop read
+octets as structure, against "Structure is explicit; octets are inert". It is now
+`keyed_development_question (development_entity_key C)` (task 54): each candidate is the path of shapes of its
+entity's key in the state, the binary digits of the entity's first occurrence in the state's own entity list
+`snd C`. One key names one entity in every question on one state, so a constant's definition and its code
+equation, the two candidates of every seeded contract question, are never named alike, and task 22's loci
+never put them at one locus.
+
+**Contracts, restated against their own statements.** `development_constant_admission` now obtains, for an
+accepted candidate, an entity of the constant's scope whose key path it is and which the reading demands;
+`development_constant_admitted_at` reads the same at a named entity; `development_constant_admitted_statement`
+obtains that entity and its statement, one of `development_statements`. The key is injective on the scope
+because the scope is part of the state (`development_constant_key_injective`), which is all
+`keyed_faceted_admission` asks; nothing decides by a key's value. No theorem outside the theory consumed the
+old index statements (`Development_Machinery` names the statement theorem in its text only).
+
+**The installed programs' payloads.** `keyed_scope_program_payloads` and `keyed_facet_program_payloads` state,
+through `finite_system_payloads_exact`, that the scope program and each facet's ground program state no
+payload but those of the guard source and the empty payload: the question reads no octet it adds.
+`finite_add_view_payloads` and `finite_variable_view_payloads` are the general steps, for any view whose
+interface is a variable and whose clauses state only the empty payload.
+
+**The keys moved beneath both theories.** `first_occurrence_key` and `development_entity_key` moved unchanged
+from `Development_Native_Selection` to `Development_Entity_Keys`, which both import, so the contract question
+does not import the readiness theory.
+
+**Candidate counts.** Every seeded contract question has 2 candidates; the machinery's 65 questions have 1, 2,
+6 or 7. The clause coordinates `[i]` stay formed octets below 256 candidates; none comes near.
+
+**Why the words changed.** This is not a refinement: the candidates are stated inside every contract packet's
+question (its scope source and facet source), its report and its admission, so the report words of the two
+recipes that present contract packets change: the loop report of `native-development-seed`
+(`development_seed_loop_value`, whose first field is `development_seed_contract_packets`) and the loop report of
+`native-development-machinery` (`development_machinery_loop_value`, first field
+`development_machinery_contract_packets`). The check confirmed it: of the seed recipe's twelve report words and
+the machinery recipe's five, exactly `presentation-loop` differs in each (seed `52d09217…` → `318775a5…`,
+machinery `5f60bcfd…` → `d939bf12…`), and those two are re-recorded. The move of the keys changes no word: it
+moves definitions, not values. The class of the change is the store-search reordering's (a statement's presentation changed), not the
+engine line's refinements.
+
+**Cost.** Measured unheld (the planner, answering task 56's q32: the evidence is the ratio of alternating
+samples in one run), with no other Poly/ML process at the run's start or end: per question, five alternating
+samples of the index form and the keyed form, each the mean of ten executions of the question's native packet,
+on four seed questions and thirteen machinery questions covering every candidate count. The keyed packet costs
+2.1–2.4 times the index packet at 2 candidates on the seed (index 6.9–7.4 ms, keyed 14.5–16.5 ms), 2.4–2.7 times
+at 1 candidate and 2.4–3.0 times at 2 on the machinery, and 3.6–3.8 times at 6 and 7 candidates (index 10–11 ms,
+keyed 37–42 ms); within a question the spread of the ratio (its largest minus its smallest sample) is at most
+0.5 (machinery constant 74: 2.30–2.80). The ratio grows with the candidate count: the key is now the entity's
+position in the whole entity list `snd C`, not its position in the scope, so a candidate's path is ten to twelve
+shapes where its index payload was at most three octets (scope positions are below 7), and every key is found
+by a first-occurrence search through the whole entity list. The per-question lines are
+`.build/tasks/56/measure3/result.txt` (run log `.build/tasks/56/mprobe3/probe.log`). A separate earlier run,
+also unheld (`measure2/Measure_Keyed_Packets.thy`, log `.build/tasks/56/mprobe/probe.log`), timed the whole packet
+lists under the `Parallel.map` of `development_contract_packets`, two alternating samples each: wall time about
+0.04 s keyed against 0.02 s index for the ten seed questions, 0.28 s against 0.11 s for the machinery's 65;
+being parallel, these lie below the sums of the per-question times. Whether the index notion of "A refinement
+applies a notion; an index is one" is instantiated for the key is the planner's, from these numbers.
+
+**What remains.** The index form (`filtered_development_question` and its admitted-subject readers) stays in
+place, unchanged with its words: seventeen theories outside the loop's path use it — the faceted question and
+its users, the native-control reviews and choices. No keyed counterpart of `filtered_development_unsatisfied_facet`
+is added, no consumer on the loop's path reading an unsatisfied contract facet. Restating the faceted question
+as `keyed_faceted_question`, retiring the index form, and the steering's method identifiers are later tasks.
+
+Recorded 2026-09-22 (task 56).

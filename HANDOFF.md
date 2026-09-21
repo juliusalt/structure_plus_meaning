@@ -247,6 +247,16 @@ judgment's path.
 - **#58** `theories/Development_Repair_Rows.thy`, committed `b3b185bc` after one fix round: the repair's output recorded
   as rows of the development library. Its rows' coordinates do not move with the successor's correspondence (see Now,
   #64).
+- **#26** `theories/Development_Located_Rows.thy`, committed `4948e9d1` after one fix round: the request at a locus as
+  one search over the development's store (`development_request_at`, `development_request_problem_locus`), through
+  task 24's lookup (`development_row_lookup_at`); what its reviews left is the rows' fix.
+- **#72** `theories/Native_Path_Store_Indexes.thy`, committed `202a2276` after one fix round: the index notion's native
+  instance at the path store; its map row states both ways a use obtains it. Its check, 18.95 s with all 52 recipes
+  unchanged, shows that a landing adding a theory re-executes no recipe since #81.
+- **#83** `Native_Path_Stores` and the two presentations' theories, committed `62fea93a`: the five store lemmas moved to
+  the store; one row presenter (`finite_store_row`) and one store-of-a-listing presenter (`finite_listing_store`) with
+  injectivity as identification; the converse proved (`path_store_rows`, `finite_listing_store_exact`), so a table's
+  word is a function of its rows and #30 chooses no listing for tables. Its review's follow-ups went to #84, #74 and #30.
 
 ## Open
 
@@ -288,7 +298,7 @@ Not yet planned, in the order they are expected to be planned:
    first question is what the native content of a proof answer is, which is where Q1 bites.
 5. The refusal that an absent certified generation cannot tell from an unavailable input — the fourth application of the
    rule that an empty result and a failed one are kept apart, citing #20's entry.
-6. The four code equations task 4 names that state no notion, plus `ffilter_singleton`; after #13.
+
 7. A persistent native published state for the refinement layer: without one, an adoption records the transaction of
    its judgment rather than one against a history.
 8. The octet direction's task 6, transport.
@@ -314,8 +324,7 @@ Not yet planned, in the order they are expected to be planned:
     loop evaluates the native verdict on a real answer.
 19. **One pre-flight command for the standing last step** (#50's review): `source_checks()` and `source_graph(...)` as one
     command, which would also expose `source_checks` passing while `source_graph` refuses. Small; tools.
-16. **Whether `keyed_agree` (#46) is an instance of the index notion or of the bijective relations** (review 47's
-    second follow-up): for the index group once #68 has landed.
+
 18. **`isabelle_name_position_member` belongs beside `isabelle_name_position`'s laws** in `Isabelle_State_Difference`
     (#78's review): two older proofs there (`isabelle_local_embedding_renamed`, `isabelle_state_embedding_back`) write
     its pattern inline, and `isabelle_state_embedding_named` serves every proof that unfolds `isabelle_state_embedding_def`
@@ -342,8 +351,11 @@ Not yet planned, in the order they are expected to be planned:
     role, #24's fifth body, `Development_Decomposition_Record`, the posing step factored once, the issue reading the
     library less recorded choices, the decomposition generation; the repair rows' transport through a successor's
     correspondence (#58's review). It consumes #22, #24, #60, #62, #64 and #30's path loci; after #64.
-27. **The seed recipe's remaining cost** (#80): its recording stage `development_seed_publication_from` (58–60 s held)
-    and the publication word's remaining 38 s. When #81's receipts make the recipe re-execute only at loop landings.
+27. **The seed recipe's remaining cost** (#80's Remains): the recording's transactions re-check each proposed
+    generation's formation although the recording constructor's contract states it formed, and the word's remaining
+    28–33 s. After #80's second round the recipe took 92.7 s alone (unheld), and it bounds every landing check that
+    touches the development line (185.1 s of #83's 316.9 s check). Briefed from #85's entry, applying its notion. The
+    next longest recipe is `native-development-machinery` (48.3 s in #80's `check-final3`).
 28. **Every recipe's execution boundary holds `tools/build.py` and `tools/execution_support.py`** (#80): narrowing the
     boundaries to what can change a word is a task of its own, if a tools change is again seen to re-execute everything.
 29. **The map's "Reuse (...)" citations** (#66): #60's row cites a DECISIONS.md heading; if such citations are meant to
@@ -351,9 +363,9 @@ Not yet planned, in the order they are expected to be planned:
 30. **What a present citation of a development row cites** (#24's review): an owner record, or the parent problem's
     locus for a demand; `development_rows_present` does not yet require it. With the build that applies a
     decomposition (Open 26), which poses children with origins.
-31. **`Development_Rows`' small slips** (#24's review): `readiness_presents_rekey` belongs in
-    `Development_Native_Selection`; `the` in `development_located_at`; the heading "The four bodies" stands over three.
-    With the next edit of that theory.
+31. **`Development_Rows`' slips the rows' fix leaves** (#24's review): `readiness_presents_rekey` belongs in
+    `Development_Native_Selection`, after #56 moves the keys beneath it; the `the` in `development_located_at` stays
+    while the verdict's tasks consume it.
 32. **The receipts' form** (#81's review; problems.txt condition 3): a retain rewrites whole single-line files (158
     files, 5.47 MB, an 11 MB diff for a few changed fields), and the receipts record worktree paths that dangle once a
     task is cleaned. Keep what a check changes apart from the stable boundary, or present receipts one field per line;
@@ -362,10 +374,11 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
-- **In flight (plan-34, 01:15)**: #83 running, before #30; #76 startable, the only one; #26 committing, and #32's brief
-  now ties the rows' keys (#24's review); #72 checking; #56 parked for the machine and told (q32) to take its timing
-  unheld, as a ratio of alternating samples in one run; #62 parked; #80 accepted and parked — if its commit comes back
-  marked, `v2.py queue 80` makes it with no session.
+- **In flight (plan-34, 02:10)**: #74, #76 and #84 working (#84 the rows' fix, which #30 waits on; #84 and #74 took
+  #72's and #83's reviews); #32 ready at the verdict chain's head; #86 (the second base advance) waits on #76; #80
+  re-planned for a third round after its re-review rejected the second (the downstream copy of an existing formation
+  split, the recipe's held before/after, unheld figures marked), and #85 (the formation-once design) waits on it; #56
+  parked for the machine (its q32 timing taken unheld, as a ratio); #62 parked, told of #84.
 - **For the owner**: `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap
   (#22's re-review); #50's review suggests the finalizer append its check's summary to the task's report, since a result
   is recorded before the finalizer's check runs; #49's re-review, that the finalizer's commit message quotes the
@@ -375,7 +388,8 @@ Not yet planned, in the order they are expected to be planned:
   refused at 23:02 for carrying #54's unreviewed rows, and committing a task's own hunks would remove the coupling; and
   the harness kept the deleted review task 67 in #66's `review_tasks`, so the planner's verdict on #66 counted as one
   review of two and #66 waited until the same verdict was recorded against 67 (00:33); and the sessions' sandbox cannot
-  write the repository's `.build/` root, so #82 puts the advanced base under `.build/tasks/base-advance/` (q31).
+  write the repository's `.build/` root, so #82 puts the advanced base under `.build/tasks/base-advance/` (q31); and a `=== write` in `v2.py change` replaces an earlier round's deliverable
+  without notice (task 80's second round lost its first round's held attribution table so).
 - **The active base is `.build/tasks/base-advance/base-20260922a/proof`** (#82), a child of `.build/complete-20260921a`:
   never remove either while the pointer `/tmp/structural-active-context.json` names it. Both heaps live in
   `/tmp/structural-isabelle`, so a reboot loses the base (Open 11).

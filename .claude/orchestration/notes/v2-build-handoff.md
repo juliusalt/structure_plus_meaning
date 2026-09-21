@@ -1480,3 +1480,11 @@ and 51 are records of tasks the planner took out of the list: inert, read by not
 health.py. Every uncommitted path in the tree belongs to a task the planner completed — work the graph calls done
 that the repository does not hold, which health.py now says and which is the owner's or the planner's to resolve.
 The max layer is 22% stale and refreshes on the first watchdog pass; xhigh is at 12%, high at 0%.
+
+**The first rehearsal of propose → accept at the live shape.** The path had run only in the fake world. Against a
+copy of the graph and the state as they stand — eleven deep against a limit of ten — a proposal whose task waits on
+open work that nothing waits on was refused whole, with the reason, the depth it started at and the proposal left
+standing where the designer wrote it; a proposal that splices (`feeds`) was admitted, and `accept` wrote both tasks,
+re-pointed the existing task onto the new one and queued them after the brief. The chain went from eleven to twelve,
+which is what a splice does and what the rule admits. Nothing of the live graph was touched: the copy was made in a
+temporary HOME with a temporary state and project.

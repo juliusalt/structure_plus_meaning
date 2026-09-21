@@ -2460,6 +2460,29 @@ class HealthTests(Flow):
                               f"v2.own({tid!r}, {list(paths)!r})"], env=self.w.env, capture_output=True, text=True)
         self.assertEqual(out.returncode, 0, out.stderr)
 
+    def test_the_line_on_each_live_session_is_what_the_owner_reads_during_a_run(self):
+        # health's per-session line is most of what the owner reads while a run goes, and no test entered it: a
+        # measurement through the subprocesses the tests run showed the whole function unreached (2026-09-21)
+        self.w.task("1")
+        self.w.session("implement-1", "implementer", "w1", task="1")
+        self.w.transcript("w1", [fakes.assistant("m1", fakes.iso(time.time() - 1500), [{"type": "text", "text": "ok"}],
+                                                 usage={"input_tokens": 2, "cache_read_input_tokens": 300_000,
+                                                        "cache_creation_input_tokens": 1000, "output_tokens": 9})])
+        self.w.set_status("implement-1", "idle")
+        (self.w.state / f"work-w1.json").write_text(json.dumps(
+            {"production_at": v2.iso(time.time() - 600), "read_tokens": 12_000, "productions": 3, "step": 2}))
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json", state="idle", live=False)
+        self.w.session("review-9", "reviewer", None, task="9", state="starting", live=False,
+                       starting=time.time() - v2.START_MAX - 60)
+        self.w.set_st(queue=["1"], tasks={"1": {"stage": "running", "session": "implement-1"}})
+        said = self.health()
+        self.assertIn("producing: implement-1 on task 1, idle, context 301K, last reply 25 min ago; open it with: "
+                      "claude attach id-w1", said)
+        self.assertIn("ATTENTION producing: implement-1", said)          # idle for over twenty minutes
+        self.assertIn("last production 10 min ago, 12K read since, 3 productions, in step 2", said)
+        self.assertIn("planner: plan-1 waits for its next event, sealed and held warm", said)
+        self.assertIn("ATTENTION supporting: review-9 starting for", said)
+
     def test_a_stale_layer_says_whether_anything_will_build_it_again(self):
         # "— it is refreshed" names the watchdog, which does nothing while the run is stopped or its daemon is down:
         # said then, it names something nobody will do (2026-09-21)

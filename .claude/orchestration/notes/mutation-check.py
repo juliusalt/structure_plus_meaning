@@ -85,6 +85,8 @@ CASES = [
      "all_of_it_or_none", "a splice put back when a placement fails"),
     ("v2.py", 'judge = stage == "reviewing" and t.get("kind") not in ("build", "fix")', 'judge = False',
      "waiting_for_the_planner_s_verdict", "a design waiting for a verdict"),
+    ("v2.py", 'stopped = os.path.exists(os.path.join(STATE, "stopped")) and', 'stopped = False and',
+     "start_then_stop_then_start_again", "nothing starts while the run is stopped"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

@@ -9,6 +9,10 @@ i=0
 until name=$("$HERE/v2.py" talk) && [ -n "$name" ]; do  # the knowledge base may be integrating the last notes
   # a planner that lives is joined whatever the hold; only opening one is held, and waiting three minutes to be told
   # the knowledge base is not ready would be false then (2026-09-21)
+  if [ -e "$STATE/stopped" ]; then
+    echo "the orchestration is stopped ($(cat "$STATE/stopped")); start.sh starts it again"
+    exit 1
+  fi
   if [ -e "$STATE/no-launch" ]; then
     echo "nothing starts a session while the hold is on, and no planner lives to join: $(cat "$STATE/no-launch")"
     echo "take it off when you mean to begin: rm $STATE/no-launch"

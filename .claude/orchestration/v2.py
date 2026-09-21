@@ -478,11 +478,18 @@ def held_back():
 
 def claude(*args, cwd=None, warm_ping=False):
     """The CLI, bounded: it starts and stops background sessions, and a call that never returns would hold the
-    watchdog — and with it the dispatch and the pings — for ever. It starts no work while the hold is on; a
-    keep-warm ping is not work — it keeps what exists alive rather than spending anything — and goes through."""
-    if "--bg" in args and not warm_ping and held_back():
-        log(f"a session was not started: {held_back()}")
-        return subprocess.CompletedProcess(args, 1, "", f"held back: {held_back()}")
+    watchdog — and with it the dispatch and the pings — for ever. It starts no work while the hold is on, and none
+    while the run is stopped; a keep-warm ping is not work — it keeps what exists alive rather than spending
+    anything — and goes through both.
+
+    The dispatch reads state/stopped and does nothing, but `v2.py talk` does not go through the dispatch: run while
+    everything was stopped it would have forked the knowledge base for a planner, which is the run beginning again
+    by another door (2026-09-21). start.sh takes the marker off before it starts anything."""
+    stopped = os.path.exists(os.path.join(STATE, "stopped")) and "the run is stopped (state/stopped); start.sh resumes it"
+    why = held_back() or stopped
+    if "--bg" in args and not warm_ping and why:
+        log(f"a session was not started: {why}")
+        return subprocess.CompletedProcess(args, 1, "", f"held back: {why}")
     env = {k: v for k, v in os.environ.items() if k not in INHERITED}
     try:
         return subprocess.run(["claude", *args], capture_output=True, text=True, cwd=cwd or PROJECT, env=env,

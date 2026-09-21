@@ -64,6 +64,14 @@ class StartStopTests(unittest.TestCase):
         self.assertFalse(os.path.exists(f"/proc/{pid}"))
         self.assertFalse(self.w.st()["active"])
         self.assertTrue((self.w.state / "stopped").exists())
+        # and nothing starts one again by another door: `v2.py talk` does not go through the dispatch, and would
+        # have forked the knowledge base for a planner while everything was stopped (2026-09-21)
+        self.assertEqual(self.w.v2("talk"), "")     # no planner to join, and none opened
+        self.assertEqual([s["state"] for n, s in self.w.st()["sessions"].items() if n.startswith("plan-")
+                          and s["state"] not in ("done", "lost")], [])
+        self.assertIn("the run is stopped", (self.w.state / "v2.log").read_text())
+        _, said, _ = self.w.run("talk.sh")
+        self.assertIn("the orchestration is stopped", said)
         code, out, _ = self.w.run("start.sh", "--no-attach")
         self.assertIn("active; knowledge base kb-1", out)  # the sealed knowledge base is kept
         self.assertFalse((self.w.state / "stopped").exists())

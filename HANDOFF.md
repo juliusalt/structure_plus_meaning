@@ -212,6 +212,9 @@ judgment's path.
   key is an instance, and `development_entity_key`, the executable key of a state's entities. Its review's follow-ups
   on the switch ride with #56 (the keys' move beneath both theories, the program-level payload statement, the 256
   bound of `[i]`); the rest are Open 21.
+- **#58** `theories/Development_Repair_Rows.thy`, committed `b3b185bc` after one fix round: the repair's output recorded
+  as rows of the development library. Its rows' coordinates do not move with the successor's correspondence (see Now,
+  #64).
 
 ## Open
 
@@ -295,6 +298,8 @@ Not yet planned, in the order they are expected to be planned:
     `keyed_faceted_question` and retire `filtered_development_question`'s index form entirely. After #56.
 22. **The probe's last command** (#79's review): the log's last non-empty line; if a timeout shows a line that does not
     locate the stalled command, recognise Isabelle's own position report. At that need.
+23. **`development_definition_sockets` can reuse the singleton reading** (#58's review). With the next edit of its
+    theory.
 
 ## Now
 
@@ -307,8 +312,9 @@ Not yet planned, in the order they are expected to be planned:
   `--timeout` to be named and cites the old 1200 s default, as does the memory note on probing; and the finalizer
   commits whole files, so the shared files of the one tree (`THEORY_MAP.md`, `ROOT`) couple landings: #24's commit was
   refused at 23:02 for carrying #54's unreviewed rows, and committing a task's own hunks would remove the coupling.
-- **#24 was re-planned to hand over again** after #54's landing (its work accepted, its first commit refused); #26, #28
-  and #62 wait on it.
+- **#24 is re-planned to land.** Its work is accepted; its first commit was refused for #54's unreviewed map rows, its
+  second for a duplicated `Development_Loci` row in the merge with main. Its session resolves the row and hands over;
+  #26, #28 and #62 wait on it.
 - **Owed to the owner**: each landing check's phases and per-recipe comparison (#48's replay numbers were reported).
 - **Owed before #62 and #64 start: correct their briefs from #66's entry once it is accepted** (q25; #62 waits on #66: rewrite both before #66's verdict). A decomposition's
   child at an occupied locus is the problem standing there — at a parent with a locus the part child *is* the parent —
@@ -318,7 +324,9 @@ Not yet planned, in the order they are expected to be planned:
   (`Development_Decomposition_Role`, prefix [T,F,T]) through the follow-up build, extending #24's relation there; the
   reviews of #22 and #24 are not reopened. #58 was told its repair row, without a part child, is right and not an
   application of #60's relation. #62's corrected brief also audits its program with `finite_system_payloads` (#22's
-  review: every program reading loci).
+  review: every program reading loci). #64's corrected brief also carries #58's review: the repair rows' coordinates do
+  not move with the successor's correspondence, so the settlement corollary is vacuous for most repairs; the correction
+  decides whether their transport through #78's comparison is #64's or a follow-up.
 - **If #54 reports a changed word** because factoring `development_readiness_key` changes a definition the machinery
   state presents as an entity (the mechanism of #53's first finding): allow it, with the words and the definition named
   in its result — reuse outranks word stability, and #56 and #30 re-record over it.

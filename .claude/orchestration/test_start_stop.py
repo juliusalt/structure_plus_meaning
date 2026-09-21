@@ -33,6 +33,64 @@ class StartStopTests(unittest.TestCase):
         except (OSError, ValueError):
             return None
 
+    @staticmethod
+    def children(pid):
+        """The command names of a process's children."""
+        names = []
+        for c in filter(str.isdigit, os.listdir("/proc")):
+            try:
+                with open(f"/proc/{c}/stat") as f:
+                    comm, rest = f.read().rsplit(") ", 1)
+            except OSError:
+                continue  # gone meanwhile
+            if pid and rest.split()[1] == str(pid):
+                names.append(comm.split(" (", 1)[1])
+        return names
+
+    def test_a_request_from_inside_the_sandbox_wakes_the_sleeping_daemon_within_seconds(self):
+        # a session asks the supervisor for what it cannot do in the sandbox (v2.want); the daemon's minute of sleep
+        # ends when one is waiting, so a released session is stopped in seconds, not at the next minute (2026-09-21)
+        self.w.env["ORCH_DAEMON_EVERY"] = "60"
+        self.w.base()
+        code, _, err = self.w.run("start.sh", "--no-attach")
+        self.assertEqual(code, 0, err)
+        for _ in range(100):  # its first pass done, it sleeps
+            if "sleep" in self.children(self.daemon()):
+                break
+            time.sleep(0.1)
+        self.assertIn("sleep", self.children(self.daemon()))
+        wanted = self.w.state / "wanted" / "dispatch.json"
+        wanted.parent.mkdir(exist_ok=True)
+        wanted.write_text('{"run": ["v2.py", "dispatch"], "by": "a session"}')
+        for _ in range(100):
+            if not wanted.exists():
+                break
+            time.sleep(0.1)
+        self.assertFalse(wanted.exists())
+
+    def test_health_run_inside_the_sandbox_reads_the_daemon_by_its_heartbeat(self):
+        # only a command's own processes are visible there, and the pid of the live daemon read as dead (2026-09-21)
+        self.w.env["ORCH_BEAT_EVERY"] = "1"
+        self.w.base()
+        self.assertEqual(self.w.run("start.sh", "--no-attach")[0], 0)
+        beat = self.w.state / "warm.beat"
+        for _ in range(50):
+            if beat.exists():
+                break
+            time.sleep(0.1)
+        inside = {"ORCH_CONTROL": "0"}
+        pid = self.daemon()
+        (self.w.state / "warm.pid").write_text(str(2 ** 22 + 1))  # its process out of sight, as it is inside
+        try:
+            self.assertIn("daemon: alive", self.w.run("health.py", env=inside)[1])
+        finally:
+            (self.w.state / "warm.pid").write_text(str(pid))
+        os.kill(pid, signal.SIGTERM)  # it dies while the run is active
+        time.sleep(2.5)  # the heartbeat ends with the daemon, within its beat
+        old = time.time() - 600
+        os.utime(beat, (old, old))
+        self.assertIn("ATTENTION daemon is not running", self.w.run("health.py", env=inside)[1])
+
     def test_start_then_stop_then_start_again(self):
         code, out, _ = self.w.run("start.sh", "--no-attach")
         self.assertEqual(code, 3)
@@ -76,6 +134,31 @@ class StartStopTests(unittest.TestCase):
         self.assertIn("active; knowledge base kb-1", out)  # the sealed knowledge base is kept
         self.assertFalse((self.w.state / "stopped").exists())
         self.w.run("stop.sh")
+
+    def test_a_stop_that_keeps_the_warmth_daemon_stops_every_role_and_nothing_else(self):
+        self.w.base()
+        code, out, err = self.w.run("start.sh", "--no-attach")
+        self.assertEqual(code, 0, err)
+        for _ in range(50):
+            if self.daemon():
+                break
+            time.sleep(0.1)
+        pid = self.daemon()
+        self.assertIsNotNone(pid)
+        code, out, err = self.w.run("stop.sh", "--keep-warm")
+        self.assertEqual(code, 0, err)
+        self.assertIn("daemon kept", out)
+        self.assertNotIn("daemon stopped", out)
+        self.assertFalse(self.w.st()["active"])
+        self.assertTrue((self.w.state / "stopped").exists())
+        self.assertEqual([n for n, s in self.w.st()["sessions"].items() if s["state"] not in ("done", "lost")], [])
+        time.sleep(2.5)  # two of the daemon's shortened rounds: it lives, and its watchdog starts nothing
+        self.assertEqual(self.daemon(), pid)
+        self.assertFalse(self.w.st()["active"])
+        self.assertEqual([n for n, s in self.w.st()["sessions"].items() if s["state"] not in ("done", "lost")], [])
+        code, _, err = self.w.run("stop.sh", "--keep-warmth")
+        self.assertEqual(code, 2)
+        self.assertIn("usage: stop.sh [--keep-warm]", err)
 
 
 if __name__ == "__main__":

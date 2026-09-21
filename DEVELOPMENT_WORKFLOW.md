@@ -135,10 +135,10 @@ their reasons, evidence and limits, as an entry of [DECISIONS.md](DECISIONS.md).
 Those are decisions of the development itself — a notion, its semantics, what a
 proof establishes. What the machinery or a run needs is not one of them: a tool's
 default, a command's cost, a limit of this machine belong where the machinery is
-written, or are reported as a performance problem. DECISIONS.md is loaded whole,
-as an index, by every base, so an operational entry is carried by every role and
-serves none of them.
-what a theory offers for reuse, in that theory's row of
+written, or are reported as a performance problem. The planner's and the middle
+bases hold every entry of DECISIONS.md by its heading and first sentence, so an
+operational entry is carried by every role that forks them and serves none of
+them. Record what a theory offers for reuse in that theory's row of
 [THEORY_MAP.md](THEORY_MAP.md); the evidence also in the commit message; what
 remains open in the task graph. [native_control_plan.md](native_control_plan.md)
 changes only with its structure, the stages' standing or the direction of the

@@ -23,6 +23,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import work_meter  # noqa: E402
+from ctx_gauge import CHARS_PER_TOKEN  # noqa: E402  what the gauge estimates a session's context with
 
 PROJECT = os.environ.get("ORCH_PROJECT") or os.path.dirname(os.path.dirname(HERE))
 TRANSCRIPTS = os.environ.get("ORCH_TRANSCRIPTS") or os.path.expanduser(
@@ -91,7 +92,7 @@ def session(path):
                 if isinstance(c, dict) and c.get("type") == "tool_result" and c.get("tool_use_id") in calls:
                     k, f = calls[c["tool_use_id"]]
                     body = json.dumps(c.get("content") or "")
-                    t = len(body) / work_meter.CHARS_PER_TOKEN
+                    t = len(body) / CHARS_PER_TOKEN
                     results[k] += t
                     if REFUSED.search(body):
                         refused += 1
@@ -150,7 +151,8 @@ def commits(rows):
 
 def main():
     lowest = int(sys.argv[sys.argv.index("--from") + 1]) if "--from" in sys.argv else 8
-    rows = [r for r in map(session, glob.glob(TRANSCRIPTS + "/*.jsonl")) if r]
+    rows = [r for r in map(session, (f for d in work_meter.v2.transcript_dirs(TRANSCRIPTS)
+                                     for f in glob.glob(d + "/*.jsonl"))) if r]  # a task tree's sessions too
     rows = [r for r in rows if r["role"] != "impl" or int(r["name"].split("-")[1]) >= lowest]
     rows.sort(key=lambda r: (ROLES.index(r["role"]), r["start"]))
     commits(rows)

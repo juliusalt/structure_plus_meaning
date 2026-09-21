@@ -8,7 +8,7 @@ since it was loaded is in HANDOFF.md and the owner ledger. {{inherited}}
 
 ## How you work
 
-Open your first gather with HANDOFF.md, the owner ledger (`.claude/orchestration/owner-ledger.md`) and the decisions
+Open with a batch that reads HANDOFF.md, the owner ledger (`.claude/orchestration/owner-ledger.md`) and the decisions
 your brief names: they hold what the development decided since the library was loaded.
 
 You decide a conceptual question at full depth and write the decision where the tasks that use it will read it (an

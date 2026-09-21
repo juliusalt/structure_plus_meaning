@@ -14,6 +14,7 @@ import tempfile
 import time
 
 HERE = Path(__file__).resolve().parent
+LEAN = " ".join((HERE / "session-flags").read_text().split())  # what every base and fork is started with
 
 FAKE = r'''#!/usr/bin/env python3
 import json, os, subprocess, sys
@@ -50,8 +51,10 @@ elif "--bg" in args:
     else:
         sid = args[args.index("--resume") + 1]
         rec = next(r for r in known if r["sessionId"] == sid)
+    # listed under the directory it was started in, as Claude Code lists it: listing every session under the project
+    # made a session started in a task's tree look found while the real listing hid it (2026-09-20)
     rows = [r for r in rows if r["name"] != rec["name"]] + [dict(rec, kind="background", status="busy", state="working",
-                                                                   cwd=os.environ["ORCH_PROJECT"])]
+                                                                   cwd=os.getcwd())]
     json.dump(rows, open(agents, "w"))
 else:
     sys.exit("unexpected: " + " ".join(args))
@@ -108,6 +111,12 @@ nothing
 """
 
 PLANNER_STATE = "# Planner state\n\n## Graph\ng\n\n## Decisions\nd\n\n## Delivered\n-\n\n## Open\n-\n\n## Now\nwaiting\n"
+
+
+def change(*writes):
+    """The command a session changes files with: each write a path (a line written) or (path, text)."""
+    blocks = "".join(f"=== write {w}\nchanged\n" if isinstance(w, str) else f"=== write {w[0]}\n{w[1]}" for w in writes)
+    return ".claude/orchestration/v2.py change <<'EOF'\n" + blocks + "EOF"
 
 
 class World:
@@ -173,9 +182,11 @@ class World:
 
     # ------------------------------------------------------------ state and fixtures
 
-    def base(self, who="max", sid="base-sid"):
+    def base(self, who="max", sid="base-sid", flags=None):
+        """A sealed base, started with the flags session-flags gives (or others: `flags`), as base.sh records one."""
         (self.state / f"{who}-base.json").write_text(json.dumps(
-            {"sessionId": sid, "model": "claude-opus-5[1m]", "effort": "max", "name": f"{who}-base"}))
+            {"sessionId": sid, "model": "claude-opus-5[1m]", "effort": "max", "name": f"{who}-base",
+             "flags": LEAN if flags is None else flags}))
 
     def task(self, tid, description=BRIEF, subject="Readiness of calls", **fields):
         self.tasks.mkdir(parents=True, exist_ok=True)
@@ -209,7 +220,7 @@ class World:
                  "state": "working", "cwd": str(self.project)}])
         rec = dict(dict(name=name, role=role, sid=sid, id=f"id-{sid}", state=state, model="claude-opus-5[1m]",
                         effort="max", settings="worker-settings.json", origin="max", started=time.time(),
-                        sealed=not live), **fields)
+                        sealed=not live, flags=LEAN), **fields)
         st = self.st() or {}
         sessions = st.get("sessions", {})
         sessions[name] = rec

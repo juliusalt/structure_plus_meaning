@@ -644,7 +644,7 @@ def bootstrap(directory, meta):
     command = shlex.join([sys.executable, str(HERE / "base_pack.py"), "emit", str(directory)]) + " PART"
     return (BOOTSTRAP_PREFIX + " For PART=1 through " + str(len(meta["chunks"])) + ", run the command below "
             "once with that integer replacing PART, each part as its own Bash call; independent calls may go "
-            "together in one response. Do not use Read, combine parts, summarize, edit, or run any other command. "
+            "together in one response. Do not combine parts, summarize, edit, or run any other command. "
             "Every result must contain matching BEGIN and END lines; run a part again if its result is incomplete. "
             "When every part has arrived complete, reply with exactly LOADED " + meta["id"] + " and end your "
             "turn.\n\n" + command + "\n")

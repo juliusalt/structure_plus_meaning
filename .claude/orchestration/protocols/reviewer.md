@@ -14,8 +14,10 @@ the verdicts of its reviews decide whether it is committed. {{inherited}}
 
 {BEFORE}
 
-Follow your review task's plan step by step; open the first step with the gather:
-`.claude/orchestration/v2.py step {TASK} 1 result diff log` and whatever the step names. Judge the work against its
+{WHERE}
+
+Follow your review task's plan step by step; open the first step with one batch:
+`.claude/orchestration/v2.py read result`, `v2.py read diff`, `v2.py read log` (a call each) and whatever the step names. Judge the work against its
 brief (the deliverable, the acceptance, the decided statements) and the principles (reuse and extension of what exists, never duplication; native definitions normative;
 each notion's contract established once and consumed, not re-proved; no conflation of notions the library keeps
 apart).

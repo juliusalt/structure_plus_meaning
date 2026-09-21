@@ -44,7 +44,16 @@ def daemon_alive():
     """Whether the keep-warm daemon runs: its pid, and that the process holding that pid is the daemon. A pid file a
     dead daemon left behind names whatever took the number since, and `warm_daemon.sh --ensure` reads it the same
     way — so one stale number would have said "daemon: alive" for ever while nothing pinged (2026-09-21). A cmdline
-    that cannot be read counts as alive: nothing here calls a live daemon dead."""
+    that cannot be read counts as alive: nothing here calls a live daemon dead.
+
+    Inside Claude Code's sandbox, where the owner's session and every other runs this, only the command's own
+    processes are visible, and the pid of the live daemon read as dead: there its heartbeat (warm_daemon.sh) says it."""
+    if not v2.control():
+        try:
+            beat = time.time() - os.path.getmtime(os.path.join(S, "warm.beat"))
+        except OSError:
+            return False
+        return beat <= 3 * int(os.environ.get("ORCH_BEAT_EVERY", 5)) + 5
     pid = read("warm.pid")
     if not pid or not os.path.exists(f"/proc/{pid}"):
         return False
@@ -69,7 +78,7 @@ def session(label, s, now):
                 f"{minutes(v2.hit_age(s['name']))} ago")                                           # what idle means
     if not r:
         return f"ATTENTION {label}: {s['name']} is not listed (the watchdog acts after {w.GONE_CHECKS} minutes)"
-    ctx = ctx_gauge.context_tokens(f"{v2.TRANSCRIPTS}/{s['sid']}.jsonl")
+    ctx = ctx_gauge.context_tokens(v2.transcript(s["sid"]))
     model, text, said = w.last_reply(s["sid"])
     idle = now - said if said else 0
     line = (f"{label}: {s['name']}" + (f" on task {s['task']}" if s.get("task") else "") + f", {r['activity']}, "
@@ -88,8 +97,7 @@ def session(label, s, now):
         at = wst.get("production_at")
         if at:
             line += (f"\n  last production {minutes(now - calendar.timegm(time.strptime(at[:19], '%Y-%m-%dT%H:%M:%S')))} "
-                     f"ago, {wst.get('read_tokens', 0) // 1000}K read since, {wst.get('productions', 0)} productions"
-                     + (f", in step {wst['step']}" if wst.get("step") is not None else "")
+                     f"ago, {wst.get('productions', 0)} productions, a reserve of {wst.get('reserve', '?')} reads"
                      + (f"; the same check failure {wst['repeats']} times" if wst.get("repeats") else ""))
     except (OSError, ValueError):
         pass
@@ -173,6 +181,11 @@ def bases_and_trees():
         print("ATTENTION the accepted base stands in a task's own directory: "
               + ", ".join(os.path.relpath(x, v2.PROJECT) for x in risk)
               + " — dropping that task, re-planning it or sweeping its run output would take the base with it")
+    if v2.TREES and os.path.exists(os.path.join(v2.STATE, "no-tree")):
+        print("ATTENTION no task gets a tree of its own: " + open(os.path.join(v2.STATE, "no-tree")).read()
+              + " — every task works in the one tree meanwhile, where one task's unfinished work holds every other out")
+    elif not v2.TREES:
+        print("trees: off (ORCH_TREES=0) — every task works in the one tree")
     trees = v2.trees_standing()
     if trees:
         print("trees: " + ", ".join(f"task {x['task']} ({x['changed']} changed, {x['commits']} commit(s))"

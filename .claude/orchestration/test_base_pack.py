@@ -386,7 +386,9 @@ else:
 """)
             fake.chmod(0o755)
             state = root / "state"
-            env = dict(os.environ, PATH=str(binary) + os.pathsep + os.environ["PATH"],
+            # the fake claude stands in for the real one, so what the real one could do here (v2.py control: not
+            # from inside Claude Code's sandbox) is not this test's subject
+            env = dict(os.environ, PATH=str(binary) + os.pathsep + os.environ["PATH"], ORCH_CONTROL="1",
                        ORCH_STATE_DIR=str(state), BASE_PACK_DIR=str(directory),
                        BASE_NAME="packed-test", PACK_TEST_AGENT=str(root / "agent.json"),
                        PACK_TEST_ARGS=str(root / "args.json"))
@@ -402,10 +404,12 @@ else:
             self.assertFalse((state / "max-base.json").exists())
             (state / "max-base.json").write_text(json.dumps(record))
             before = (root / "args.json").read_text()
+            self.assertEqual(record["flags"], " ".join((p.HERE / "session-flags").read_text().split()))  # its tools
+            # the pack is the one loader: `extend` read a file with the Read tool, which no base has (2026-09-21)
             extension = subprocess.run(["sh", str(p.HERE / "base.sh"), "max", "extend", str(fake)],
                                        env=env, capture_output=True, text=True, timeout=5)
-            self.assertEqual(extension.returncode, 3)
-            self.assertIn("frozen", extension.stdout)
+            self.assertEqual(extension.returncode, 2)
+            self.assertIn("usage", extension.stderr)
             self.assertEqual((root / "args.json").read_text(), before)
 
 

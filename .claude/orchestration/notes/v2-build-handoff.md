@@ -1,5 +1,8 @@
 # Handoff: orchestration v2 (sessions de86de45, f4318413 and 212840df, 2026-09-19)
 
+> The sections run in time order; **the latest handoff is the last section** ("Handoff, 2026-09-21 ~18:30"). Start
+> there.
+
 Read this, then `notes/orchestration-v2-plan.md` (the design with every owner decision, in order, at its end), then
 `README.md` (how it works now). The owner's standing rules for this work: nothing about the orchestration goes into
 the project memory (notes go in `notes/`); nothing said in orchestrator sessions goes into the owner ledger
@@ -1496,3 +1499,1020 @@ line, which had printed it minutes before; the command now refuses. `carried` ha
 with no text it recorded "carried where the work reads it", losing the one thing the record exists for. The lesson
 beside the repair: probe a command's argument handling in a throwaway world, never against the state a run stands
 on. Every other command takes its arguments by count and prints the usage without them.
+
+---
+
+# 2026-09-21 — trees of their own, working again
+
+The owner, on task 49 holding the working tree while it was with the planner: *"make worktrees work again so this
+never happens"*, and nothing committed until told. The run is still stopped, `no-launch` holds, nothing was started.
+
+## Why they had been off, and what each fault was
+
+Trees were withdrawn after their first live run (2026-09-20). Three faults, each now repaired where it arises:
+
+- **A session in a tree was invisible.** `claude agents` lists it under the tree's cwd, and Claude Code keeps its
+  transcript under the tree's own directory (`-home-…--build-trees-46`, beside the project's). `session_row.py` matched
+  the project's cwd alone and every reader of a transcript looked in the project's directory alone, so fix-49 and
+  implement-46.3 ran unseen. `session_row.py` now accepts a cwd under `.build/trees/`, and `v2.transcript(sid)` /
+  `v2.transcript_dirs()` serve running_jobs, context_of, the watchdog, health, the frontier refresh, the fork check,
+  efficiency and the owner's words. **The fake `claude` listed every session under the project**, which is how the
+  first worktree test passed while the real listing hid the session: it now lists a session where it was started.
+- **A tree carried its own harness.** `_one_tree` had put the state right; the code was still the tree's copy — HEAD
+  as of the tree's making, never an uncommitted change — reached by the hooks (`$CLAUDE_PROJECT_DIR` is the tree) and
+  by the relative commands. `_one_harness` re-executes any harness script run from a tree's copy as the one tree's
+  script, with its arguments and its unread stdin. A tree is not made from a HEAD whose copy lacks it.
+- **A tree from an inconsistent HEAD refused every check.** A new tree is checked with `tree_trouble` before anyone is
+  put in it, and taken away if it fails; the task then works in the one tree, told why, and the planner is told once
+  per reason (`state/no-tree`, in the status and in health).
+
+## Where a task works, decided once
+
+`task_tree(tid)` → (tree, why), and the message is written from the same answer (`tree_text(tid, tree, why)` reads
+nothing else — the text and the start parted twice on 2026-09-20). One tree when the task's own installed work stands
+there, or when its brief names a path that stands uncommitted there (`in_main_tree`: task 52, whose whole work is
+committing four batches installed in the one tree). A task whose blockers' work — through the tasks between — has not
+landed waits for it (`landing_wait`, in `deps_done`, `startable` and the width alike), so nothing starts from a HEAD
+that lacks what it stands on. `launch(tree=…)` records the tree; `tree_of(rec)` is that record, so a session is resumed
+where it was started.
+
+## What a tree changes for the rest
+
+The one tree's holds reach nobody in a tree (`tree_holder`, `finalizing`, `check_isolation` — `finalizing` used to
+hold a one-tree task behind a tree's check, and a tree task behind nothing only if both were apart). The write guard
+refuses a tree session's write into the repository's own directory (the absolute paths the library holds point there;
+such a write would make its task own the one tree again) and any session's write into another task's tree. `v2.py
+finalize` finds the files in the task's tree and refuses a check that names the one tree's path — **the planner's
+HANDOFF.md working rule pins a check to the one tree by an absolute script path**, which from a tree checks the one
+tree and passes on work it never saw. The gather reads the tree the task's work stands in; a reviewer of work in a
+tree is started in that tree (`{WHERE}` in its protocol). `_tree.md` keeps only what holds in any tree; the one tree's
+rules (one owner, drafts, `park tree`) are said only to a session in the one tree. An empty tree is kept while its task
+is under way (a parked session is resumed in it). `ORCH_TREES` now defaults to 1.
+
+Measured, not assumed: a fork started in a tree read its whole base from cache (implement-46.3: 523,284 read, 6,106
+written), and `incremental_check.py` resolves its paths, so a check in a tree records the one `.build` behind the link.
+
+**337 tests and 73 mutations**, all green; every new repair was broken in turn and its test failed.
+
+## What a restart meets
+
+Nothing is committed, so HEAD's harness copy does not hand over: **no tree is made until the harness is committed**,
+and every task works in the one tree with the reason said. Once committed, HEAD is still inconsistent — it declares
+`Development_Loci` and `Development_State_Rows`, whose files stand untracked — so trees wait for #52 to land them.
+#52 and #49 work in the one tree in any case (their briefs and their work are there), and #49's hold on it is the
+planner's to end (finalize it or fold it into #52). After #52, every new producing task gets its own tree.
+
+Not done: the planner's HANDOFF.md rule on absolute check paths is the planner's file; the next planner reads the
+trees line in its status and `v2.py finalize`'s refusal names the rule, but nothing has told it yet. A merged result is
+not re-checked as a whole after two trees land beside each other (only `tree_trouble` runs on it); a semantic clash
+between two branches that merge cleanly as lines is caught by the next check, not at the merge.
+
+## 2026-09-21, later — HEAD never made worse, landings checked together, and the absolute-path rule retired
+
+The owner asked for three things: that a HEAD from which no sound tree can be made should never happen at all; that
+a merged result be checked as a whole; and that the planner's rule pinning a check to the one tree by an absolute path
+be resolved. Nothing committed.
+
+**The gate.** `v2.new_trouble(tree, target="index", base="HEAD")`: `tree_trouble` of what a commit would make HEAD —
+the staged index or a commit, read from git through a private index into a temporary directory (`trouble_of`, 0.3 s
+for three snapshots on this repository) — less the trouble `base` already has. The finalizer refuses a commit that
+adds any (both paths), and `commit_gate.py` is git's `pre-commit` and `pre-merge-commit` hook, **installed** as links
+in `.git/hooks` (provisional; remove the two links to undo), so the owner's and Codex's commits meet the same
+function. A fault of the gate lets a commit through and says so. The rule is "no new trouble", not "no trouble", so
+while HEAD still declares Development_Loci and Development_State_Rows every commit that adds nothing goes through;
+once HEAD is sound it stays sound. `commit_gate.py` was written without its executable bit first, and git skips such a
+hook in silence: the test that commits through the hook caught it.
+
+**The landing.** Every commit and landing holds `state/landing.lock`. A task in its own tree: commit on its branch
+(gated), bring main into the branch (`finalize.land`); when that brought anything, the combination is gated against
+main and then checked as a whole — `v2.LANDING_CHECK`, the repository's check, in the task's tree, output
+`.build/tasks/ID/landing-N`, waiting for Isabelle like any check and inside the watchdog's budget — before
+`merged()` moves main. A failed combination is `v2.landing_failed`: a failed check, so the task's quick fix, in the
+tree that now holds both; a second goes to the planner. main is read again before the merge, so a commit made outside
+the finalizer meanwhile is brought in and checked too. When nothing landed meanwhile, nothing is checked again. Cost:
+one repository check per landing that meets new work (about 170–330 s), which one tree never paid and never needed.
+A refinement left for later: bringing main in *before* the pre-review check would usually make that one check do.
+
+**The rule.** `v2.one_tree_paths(text, mine)` is the one predicate: paths named by the repository's absolute path
+outside `.build/`. `brief_problems` now refuses a brief that names any (the brief form in `_brief.md` says so), and
+`v2.py finalize` refuses such a check for a task in its own tree. Of the open briefs only #52 names one. The next
+planner is told, by an event in the queue, which three things in HANDOFF.md no longer hold and why #52 is not in form.
+
+**345 tests and 82 mutations**, all green.
+
+## 2026-09-21, later still — review before commit, the planner's graph edits, what a proposal tells it
+
+The owner: review comes before commit and is to be forced; the whole tree machinery reviewed for coherence and
+adequacy; nothing added at the end of a chain deeper than 10, by the planner as by a brief, and the planner not to try;
+and a proposal to reach the planner as what it needs to decide, not everything. Nothing committed.
+
+**The Isabelle base.** The machine rebooted at 09:24 and `/tmp/structural-isabelle` (the heaps and the active-context
+pointer) went with it: every check would have refused "Accepted heap/database missing". Re-established the way it was
+on 2026-09-19 — a complete source proof of all 1800 theories (`tools/prove_context.py`, `.build/complete-20260921a`,
+13:07), `incremental_check.py adopt`, and a confirming check (`.build/check-20260921a`: all 1800 reused, every recipe
+accepted, 201 tool and 35 kernel tests, 150 s) — from the one tree as it stands, the four uncommitted batches
+included, as the lost base was. The heaps still live in /tmp: that is a `tools/` change and a task.
+
+**Review before commit.** The planner had decided that a build commits and is reviewed after (HANDOFF.md "Why builds
+no longer wait on reviews"), completed 22, 46, 48 and 50 in the list with their work uncommitted and unreviewed, and
+planned #52 to commit all four with their reviews to run beside the next build — which could never start, since a
+review starts only for a task in review. Now: the planner cannot complete a build, fix or review by TaskUpdate
+(`work_meter.graph_edit_refusal`); the finalizer refuses a commit carrying work no review has accepted, the task's own
+or another's (`finalize.unreviewed_work`, `v2.review_accepted`); and a build or fix the list calls completed whose work
+has not landed is taken back at the step it is owed (`v2.reopen_unlanded`, first in `reconcile_stages`): its check
+when it has a final job and no accepted review, its commit when its review accepted it, the planner otherwise. A check
+run again gets a fresh `--output` (`finalize.fresh_output`), since the tool refuses one that exists and 22's and 50's
+do — otherwise each would have cost a fixer session to rename a directory. At the next start 22, 46 and 50 go through
+check, review (#23, #47, and the harness's own for 50) and commit; 48, partial and without a final job, goes to the
+planner.
+
+**A fault found on the way.** `cmd_result` set a brief with no final job to `reviewing`, which is no stage of a brief,
+and `accept` reads `proposed`: every proposal whose designer then recorded its result — which it is told to — became
+unplaceable, and its reminder silent. Both proposal tests went from propose straight to accept. A brief now keeps its
+stage through its result, and one that ends without proposing goes to the planner.
+
+**The depth rule, for the planner too.** `v2.goal_refusal(tid, blocked_by, waiters)` — the brief's `further_goals`,
+with the graph's depth — is applied to the planner's TaskUpdate (`addBlockedBy`, and `addBlocks`, which can hang the
+other task) and to `v2.py blockers`. A task that already waits on open work is being re-shaped, not added, and stays
+the planner's to move. The planner protocol says the rule first and the refusal is the backstop; the status says
+when the chain is above the limit. Measured on the graph's longest chain, as the brief's rule was built: whether the
+owner means that, or the chain the new task would extend, is asked.
+
+**What a proposal tells the planner.** It was told keys and edges and to read the proposal file — every task's full
+brief, into the one context that lives across the run. `v2.proposal_text` gives each task's kind, subject, size and
+why, what it waits on and is spliced before, whether it runs first, is detail, sits inside the brief or is a further
+goal, and the chain's depth before and after (`graph_shape(tasks=…)` measures the graph the proposal would make).
+`v2.py proposal ID KEY` prints one brief when a decision turns on it.
+
+**The tree review.** Walking a tree task from queue to landing, drop and restart, three faults: a session could edit
+its tree's copy of the harness, whose hooks it runs (now refused like the main copy); `git worktree add -B` would
+reset a branch holding commits a failed landing left (now named, and no tree made); and a landing could merge into
+main's working files under a running check of a task in the one tree (such checks now hold the landing lock shared,
+landings exclusive). The finalizer's reports — which dispatch — are made after it lets main go, not while holding it:
+in the test world, where a dispatch runs inline, the first version deadlocked on its own lock.
+
+## 2026-09-21, the owner's answers — per-chain depth, repair of the whole graph, every command batchable
+
+**Per chain.** "Add to the end of a task chain if it is above 10" is per chain (the owner). `chain_depths(tasks)` is
+the longest open chain ending at each task; `past_the_limit(group, after)` names the tasks of a group that are not
+spliced in, not reviews, and would hang after a chain deeper than GRAPH_DEPTH — measured on the graph as the change
+would leave it (`graph_after` for a proposal), so a brief's own tasks count and a splice made by re-pointing in the
+same edit counts as detail. One rule for the brief (`cmd_propose`, and `accept` re-checks), the planner's TaskUpdate,
+`v2.py blockers` and `v2.py edit`. `depth_at_start` is gone: the graph's longest chain at a brief's start refused a
+goal at the end of a chain of one while another was eleven deep. The status names the tasks past the limit and the
+graph text gives each task its chain.
+
+**Repair.** The planner protocol now says that what it planned before does not bind it: rewrite, re-point, take a
+dependency out, delete — and deleting wrong work gives back the room it took. None of it is refused for depth (tested
+at every door). A deletion leaving something waiting on the deleted task is refused whole.
+
+**Batching.** Every command takes groups separated by a bare `--` (`run_command` is one command's single form;
+`main` splits); `drop`, `accept`, `proposal`, `tell ID... TEXT` take several ids. `v2.py edit FILE` is the planner's
+batched graph edit (create, rewrite, blockers, delete, queue), judged whole by `graph_edit_problems` and written by
+`apply_graph_edit`, which keeps every file it touches and puts it back on a failure; `accept` is rebuilt on it. The
+gather reads `task:ID` and `proposal:ID[:KEY]`. `_production.md` tells every session to batch what it does, several
+writes or edits in one Bash call included. Claude Code's own TaskCreate/TaskUpdate still take one change a call; the
+edit is the batched door.
+
+**Found on the way.** A review task the planner wrote itself was never linked to what it reviews — only `accept`
+wrote the relation — so the harness would have planned its own review and the planner's stood ready for ever.
+`link_reviews` links every review task from its `Reviews:` line at each dispatch.
+
+**Walked end to end** in the fake world, each leaving no ATTENTION: a task in its own tree from queue to landing on
+work that landed beside it (forked and seen in its tree, checked and reviewed there, main brought in and checked
+with it, merged, pushed, tree gone); and a build completed without landing, taken back through its check and its own
+review task to its commit.
+
+**What the mutation check found in this round's own work.** Four of its misses were real: the review-linking test
+passed by another route (`v2.py edit` links reviews itself, so the dispatch's call was never exercised; the test now
+writes the review task as TaskCreate would and dispatches); the `feeds` seed in `spliced` had become redundant once
+the rule read the edited graph, and redundant code cannot be held by a test (removed, with `further_goals`, the second
+reading of detail — `spliced(group, after)` is the only one); a case I wrote put a NUL byte into v2.py, so the import
+broke and pytest reported errors, which the check read as a miss (the check now says BROKEN for that); and the check
+itself was unreliable: Python's bytecode cache is keyed by a source file's modified second and size, the check rewrites
+the same files several times a second, and a mutation caught alone read as missed in the full run. It now runs with no
+bytecode and clears the cache before each case. Five cases named code this round replaced and were re-anchored or
+removed.
+
+**And one more of the same family.** The planner's reading budget is restored by production, and its production was
+TaskCreate and TaskUpdate: the harness's own graph commands — `edit`, `blockers`, `queue`, `drop`, `accept` — are
+harness commands and counted as nothing, so the batched path spent the budget a change a call would have given back.
+`work_meter.graph_edited` counts them, unless every answer of the call is a refusal.
+
+**A correction.** I reported that `cp`, `mv`, `rm`, `mkdir` and the like were classified as reading and went past
+the write guard. They were not: `WRITE_SHELL` already matched them at the head of a command, on a second line of the
+pattern I had not read. The check I added to `kind()` duplicated it and is taken out; the pattern now takes its list
+from `FILE_WRITERS`, the one `write_targets` uses, so the two cannot drift.
+
+
+## 2026-09-21, reading in batches and bytes, in two tiers
+
+The owner: a batch — one request — is one read, since that is the point of batching; a batch reads at most 30K bytes
+and each read in it at most 3K, so that a large chunk is read deliberately in pieces rather than taken whole by
+accident; three reads a production, then a reserve of ten that each production gives one back to; and above all that
+it counts right, since a session starved of reading works blind. I got the rule wrong twice on the way — counting each
+call, then capping the number of reads in a batch — and the owner corrected both: what is bounded is bytes.
+
+**What the review of the existing limit found, and what was done.** Rounds were every request since the last
+production — a gather, a question, a park, a write too small to be production, a refused read — so they now count
+batches that read (`reading_requests`, from the transcript, a refused call excluded by the id the guard remembers). A
+session in its own tree was never credited for what it wrote there: production was measured on the deliverables joined
+to the one tree, so after three reads it was refused everything, its step's gather included (`brief_of` gives the
+session's tree). The gauge swallowed a failure of the meter's record without a word (now said). The meter's state had no
+lock, and parallel calls wrote over each other (`meter()`). A planned input named with its lines never matched its read.
+A reserve written under a larger setting was used as it stood (`reserve_of` clamps it). What a call showed was measured
+as its JSON (newlines twice), and only calls classed as reads were charged tokens (`shown_bytes`, every reading call).
+The harness's own reading commands (`v2.py proposal`, `graph`, `status`, `who`) counted as nothing and were never cut:
+`v2.py proposal` printed every brief asked for at once. They are reads now.
+
+**How the bounds are held.** A read's size is known before it runs only for a file's lines; those over 3K are refused
+with the lines that fit named. The rest are rewritten through `cut.py` with a PreToolUse `updatedInput` — documented in
+this Claude Code (2.1.273) as a PreToolUse output, checked against the tool's schema, and under auto mode a hook's allow
+still goes to the classifier, so the rewritten command is judged as any is. **This has not run live** (the hold is on):
+the meter says ATTENTION the first time a cut read comes back longer than a read shows, which is the one line to watch.
+A batch's bytes are added from what each read showed (`st["batches"]`, by the request's message id, found in the
+transcript: a request's calls are written as they are made and run as each is complete, measured in this session's
+own transcript), and its further reads are refused once it has read 30K; the read that crosses still runs, so a batch
+overshoots by at most one read. A call the guard cannot place in the transcript within `BATCH_WAIT` is taken for a
+batch of its own: it refuses nothing it cannot place. A gather cuts each source at 3K, itself at 30K (`GATHER_CHARS`
+is `BATCH_BYTES`), and counts as one read, never refused. A check's output is not cut — a check is a run — and it is
+charged tokens up to `SHOWN` (30,000, the owner's figure), which is what spends the first tier's 20K now.
+
+**A correction.** I reported that `cp`, `mv`, `rm`, `mkdir` were classed as reading and passed the write guard; the
+second line of `WRITE_SHELL` already made them writes. My duplicate is gone and the pattern takes `FILE_WRITERS`.
+
+---
+
+# Handoff, 2026-09-21 ~13:00 — where this session stops
+
+Stopped at the owner's word, mid-change. **Nothing is committed** (the owner: commit nothing before told). The run is
+stopped, `state/no-launch` holds, the keep-warm daemon is down, nothing was started. **398 of 400 tests pass**; the two
+failures are the half-finished change below, not a regression elsewhere.
+
+## Done in this session (all tested; mutation check 133/133 at its last full run, before the unfinished change)
+
+In order, each section above has the detail:
+1. Worktrees working again (listing, transcripts, one harness via `_one_harness`, sound trees only, where a task works,
+   landing waits, holds, write guard, finalize, gather, reviewer in the tree).
+2. HEAD never made worse (`new_trouble`: finalizer, and git's `pre-commit`/`pre-merge-commit` hooks **installed** as
+   links in `.git/hooks` to `commit_gate.py` — remove the two links to undo), landings serialized and re-checked.
+3. Review before commit forced (`graph_edit_refusal`, `unreviewed_work`, `reopen_unlanded` — 22, 46, 50 go back
+   through check, review, commit at the next dispatch; 48 to the planner).
+4. Per-chain depth for briefs and the planner; repair of the whole graph never refused; `v2.py edit FILE` (batched,
+   all-or-nothing, `accept` built on it); every command batchable (`--` groups); gather reads `task:`/`proposal:`;
+   `link_reviews`; a brief's result no longer makes its proposal unplaceable; the planner told what placing needs.
+5. The Isabelle base re-established after the 09:24 reboot (`.build/complete-20260921a`, adopted, confirmed by
+   `.build/check-20260921a`). Its heaps are still in /tmp: a `tools/` change and a task.
+6. Reading: a batch (one request, or one gather) is one read; a batch reads at most 30K bytes (`BATCH_BYTES`), each read
+   in it at most 3K (`READ_BYTES`: a known-size file read over it refused with the lines that fit; an unknown-size read
+   cut by `cut.py` through the guard's PreToolUse `updatedInput` — **unverified live**, the meter says ATTENTION if a cut
+   did not take); two tiers (3 reads or 20K tokens per production, then a reserve of 10, one back per production);
+   the faults of the old limit fixed (tree sessions never credited, every request counted, refused reads charged, no
+   lock, silent record failures, and the rest listed above). `SHOWN` is 30,000 again (the owner's figure).
+7. The next planner has one event waiting (the planning changes and the base); `notes/worklist-2026-09-21.md` is the
+   owner-requested work list, all checked.
+
+## Unfinished then, finished since (see the next section): reads of lines already in context are filtered, not refused
+
+The owner: when a read overlaps what is already in context, filter it and give the rest with a note of what was left
+out, rather than refuse it. Written, **not yet tested or mutation-checked**:
+- `lines.py FILE A-B[,C-D] NOTE` prints the missing parts of a file, each headed by its lines, and the note.
+- `work_meter`: `in_context`, `gaps`, `spans`, `filtered`. In `session_guard`, a read of a file's lines (the
+  `requested()` forms) now: all in context → refused as "nothing new to show" (costs nothing); partly → rewritten
+  (`updatedInput`) to the missing lines — a Bash read through `lines.py`, a Read to the first missing span with a note
+  naming the other missing spans — after the size bound is applied to the missing part only; the rewrite is returned
+  only after the batch and tier checks pass, and what it shows is kept in `st["pending"]` by tool-use id so that
+  `_record` records exactly those lines as read and adds a Read's note. `stretch_ends` clears `pending`.
+- **To finish:** (a) the two failing tests expect the old wording and refusal: `WorkerGuardTests.
+  test_a_read_of_lines_in_context_is_refused_until_the_file_changes` (now: partial overlap is rewritten, full overlap
+  says "all in your context already") and `ReadTiersTests.test_a_refused_read_takes_nothing_from_either_tier` (its
+  assertion text "already in your context" → "all in your context already"); (b) new tests: a partial overlap's
+  rewritten command, run, shows only the missing lines with the note; a Read's offset/limit rewrite and its note; the
+  recorded ranges after a filtered read; a changed file is not filtered; a Read is not filtered by lines only a Bash
+  read showed; (c) mutation cases for each; (d) `covered()` is now named nowhere — remove it (the harness keeps no
+  unreferenced function); (e) the protocol (`_production.md`, last sentence of "Production and reading") still says a
+  re-read is refused — say it is filtered.
+- **A fault found and not yet fixed, the same family:** the gather records every file range it was asked for as read
+  (`cmd_step`'s `shown`), even where its per-source 3K cut (`one_read`) or its 30K cut dropped lines. With filtering,
+  those never-shown lines would be treated as in context and left out of later reads — information starving. The fix
+  planned: the gather bounds its file sources itself (as `fitting` does), filters what is in context there too, records
+  exactly what it printed, and cuts the whole at a source boundary, naming the sources it did not show; and it saves the
+  meter under `work_meter.meter()` (it uses `load`/`save` without the lock today).
+
+## Questions the owner has open
+
+- The gather: its cut is now the batch bound, 30K (it was 120K). Kept, or separate?
+- A check's direct output (an Isabelle run printed into the session) is not cut to 3K — it is a run, not a read — and
+  the meter counts at most 30K bytes of it. Since each read is now at most 3K (about 1.2K tokens), three reads can never
+  spend the 20K-token budget: only such check output can. Should check output be cut too (keeping its end, where the
+  error is), and is the 20K-token budget still wanted?
+- The owner also asked how a gather differs from a normal read. As built: a gather is one call that reads many named
+  sources, including ones that are not files (facts by name, a task's diff, result or log, task briefs, proposals); it
+  opens a step and only after the previous step produced; it counts as one read and is never refused by the tiers; and
+  for the planner's roles it serves statements only. A batch of normal reads is also one read, but may be refused past
+  the tiers, and reads files and command output only. Unanswered in chat: whether the two should become one.
+
+---
+
+# 2026-09-21, afternoon — reads of lines in context filtered, finished
+
+The owner, repeating the request the last session stopped in: why refuse a read that overlaps what is in context —
+filter what is in context, give the rest, and say what was filtered. Nothing committed; the run stays stopped.
+
+**The guard.** A read of a file's lines (`Read`, `sed -n`, `cat`, `head`, `tail`) is compared with what the session
+holds of the file unchanged (`in_context`, `gaps`). Nothing of it held: it runs as it is. Part of it: it is rewritten
+before it runs (`filtered`, PreToolUse `updatedInput`) — a command through `lines.py FILE NAME SPANS NOTE`, which
+prints each missing span headed by its lines and ends with the note of what it left out; a Read narrowed to the first
+missing span, its note (and the spans still missing) given after it by the gauge. All of it: the answer is the note
+alone, "[lines A-B of F are already in your context (read at T, unchanged since) and are left out]", and the call does
+not run and counts as no read. That last is a hook's deny only because a hook cannot answer a call without running it;
+its text is the filtered result, not a refusal. The 3K bound applies to the missing part only. A Read is filtered only
+once a Read has shown the file (Edit accepts a file only after a Read of it). What a filtered read showed is recorded
+from the guard's own account (`st["pending"]`, by tool-use id), and only if the call ran; `saw()` is the one place a
+range is recorded (the gauge, the filtered read and the gather), and it starts afresh when the file has changed.
+`covered()` is gone; the README and `_production.md` say filtered.
+
+**The gather, the fault the last session found.** It recorded every range it was asked for, including lines its 3K and
+30K cuts dropped; with filtering those lines would have been left out of every later read and never shown. Now a file
+source is read by `file_read`: what is in context left out and said, at most READ_BYTES of the file's own lines
+(measured as the guard measures a read of a file, not with the numbering), where it stopped said with the range to
+name next, and exactly the printed lines recorded. A source already shown by an earlier source of the same gather is
+filtered too. The 30K bound takes whole sources and names those it did not show; it cut through the middle of one
+before. The meter is written under its lock (`work_meter.meter`). The old one-read cut (`one_read`) stays for the
+sources that are not files (facts, diff, result, log, briefs, proposals), which are not recorded as in context.
+
+**Found on the way: the second question put to the owner rested on an error.** It said three reads could never spend
+the first tier's 20K tokens, since a read shows at most 3K. A read is a batch, and a batch shows up to 30K bytes, about
+12K tokens (CHARS_PER_TOKEN 2.5): two full batches end the first tier. The 20K-token bound bites on reads as built.
+
+
+**406 tests and 150 mutations**, all green (17 new cases: each piece of the filter, the gather's filtering, recording,
+whole-source cut and lock, and three older anchors the change had moved). Nothing is committed.
+
+**Open with the owner.** (1) Whether a check's output printed into the session — a run, not a read, so not cut to 3K,
+and counted only up to SHOWN (30K bytes) against the batch and the tokens — should be cut like a read, keeping its end.
+(2) Whether the gather and a batch of reads should become one; as built they now share the byte bounds, the filtering
+and the recording, and differ in what they can read, when they are allowed, and how they treat what is too large.
+(3) The gather's size: 30K, the batch bound, since the morning (it was 120K).
+
+---
+
+# 2026-09-21, later — the gather a read, the tokens gone, every output bounded
+
+The owner: the gather is redundant, and should be a read like any other (the only difference being that it is the
+first); the token bound is irrelevant now — delete it; and the byte bound applies to everything, outputs and checks
+too, with a way to read on. Nothing committed; the run stays stopped.
+
+**The gather is `v2.py read SOURCE...`.** Its sources — files, facts by name, the task's `diff`/`result`/`log` (a
+reviewer's: the task it reviews), `task:ID`, `proposal:ID[:KEY]`, each by its lines — are every session's, any time.
+It is kind "read" (`V2_READS`), counted and refused as any read, and one call shows at most READ_BYTES: the first
+source bounded, later ones whole or named as having had no room. Its file sources are filtered and recorded as
+before (`file_read`, measured as printed). Gone: `cmd_step`, the step's state (`step`, `step_at`,
+`step_productions`), "not produced yet", `is_gather`, `GATHER_CHARS`. Nothing was lost: the gather opened only after
+a production, which restarts the tiers, so the first read after one is always allowed, and a batch is one read. A
+consultant was told to gather, and `own_task` refused it every time (it has no task): that fault goes with it.
+
+**The tokens are gone:** `READ_TOKENS`, `read_tokens`, `tier1_until`, `SHOWN`, the meter's `CHARS_PER_TOKEN`, and the
+planned inputs (`inputs_read`, `brief_of`'s inputs), which only ever exempted tokens. `tiers(n)` is ROUNDS then the
+reserve. efficiency.py's report takes its ratio from ctx_gauge (the context estimate, which stays).
+
+**Every output bounded.** `bounded` sends every foreground command through `cut.py` — reads, scripts, checks,
+writes, the harness's own — except a known-size read of a file's lines (measured before), `v2.py read` (bounded
+itself) and a background command (it writes a file). The wrapper, `{ ( CMD\n) 2>&1; printf '\n\036%s\n' "$?"; } |
+cut.py BYTES head|tail DIR`, carries the command's status out (a pipeline's status is the last command's, and a
+failing check must read as failing; the subshell keeps an `exit`'s status too), tried under bash and zsh. A longer
+output is kept whole in `.build/outputs/SESSION/N.txt` (the newest 50; a session's go when it is archived, and the
+planner roles may read there), and the cut says where and gives the `sed -n` range to read on. A check shows its end,
+where it says how it ended, and the circling rule reads its failure from the whole kept file (`KEPT`), not from the
+end it showed. Whatever reads the call after it ran takes the wrapper off first (`unwrapped`), so a cut `v2.py ask`
+is not counted as a read nor a cut write as other. Still approximate: Grep's bound is in lines, and Glob, WebFetch
+and WebSearch cannot be cut by a hook at all (only an MCP tool's output can be replaced after it ran).
+
+
+**405 tests; 159 mutations, every one caught** — 158 in the full run, and the one it missed ("a cut call recorded as
+made") exposed a test that passed for the wrong reason: it fed the rewritten command back through the guard, which
+refuses running `cut.py` directly, so the call was never counted either way. In a session the transcript holds the
+call as made and only the hook after it may see it rewritten; the test now does exactly that, and catches the
+mutation (checked alone). Nothing is committed.
+
+**Open with the owner.** Grep, Glob, WebFetch and WebSearch are bounded approximately or not at all (a hook can only
+rewrite a call's input, and only an MCP tool's output after it ran): refuse them in favour of their Bash forms, or
+accept it.
+
+---
+
+# 2026-09-21, later — Grep, Glob, WebFetch and WebSearch out of every base
+
+The owner: remove them from the bases completely and refuse them if they are tried; list the tools the sessions still
+have, for review. And a question: is the consultant not gone — is the planner not the consultant now?
+
+**The consultant**, as the code stands: `v2.py ask --to kb|designer|task-designer|reviewer` queues a question, and
+`consult()` forks the asked session while its cache is warm (the knowledge base otherwise) as `ask-qN`, which answers
+once (`v2.py reply`) and ends; `--to planner` is an event to the planner itself. In the state, all 20 questions ever
+asked went to the planner, and no consultation has ever run. Whether to take the role out and route every question to
+the planner is asked of the owner; nothing changed.
+
+**The tools.** `session-flags` is now `--tools Bash Read Edit Write Agent ToolSearch TaskOutput TaskStop Monitor
+TaskCreate TaskUpdate --strict-mcp-config --disable-slash-commands`. `work_meter.guard` refuses the four
+(`REMOVED_TOOLS`) to every role, the knowledge base included, before anything else; they stay in the matcher so the
+refusal reaches them. The Grep-only paths went with them: the planner roles' narrowed search, the line bound
+(`GREP_LINES`), `DOCUMENTS`. Measured over the 71 transcripts in the state: Bash 1,799, TaskUpdate 191, Edit 178, Write
+108, TaskCreate 105, ToolSearch 42, Read 4, Grep 4, TaskStop 2 — Glob, WebFetch, WebSearch, Agent, TaskOutput and
+Monitor never. Claude Code adds EndConversation itself (deferred, in every transcript's list), outside `--tools`.
+
+**The bases must be built again before anything starts.** The tools are the first thing in every prefix, so a fork
+started with other flags than its origin writes the whole of it again (about 530K tokens a base). A base and a started
+session now record the flags they were started with (`base.sh` build and layer, `v2.launch`), and nothing forks, pings
+or layers over one started with others (`v2.other_tools` in `launch` and `ping`, `base.sh`'s `lean_as` in warm and
+layer), with an ATTENTION saying to build it again. Every base standing now predates the record, so all three are
+refused until rebuilt (`base.sh WHO build`, then `seal`, and their layers); the knowledge base follows the max base
+by itself (`rebased`). Nothing was rebuilt: the run is stopped, and a rebuild is the owner's.
+
+**409 tests and 165 mutations**, all green (seven new cases: the refusal, the fork and ping checks, the recorded flags
+and `base.sh`'s ping; the Grep line bound's case went with the code). Nothing is committed.
+
+---
+
+# 2026-09-21, evening — the plan B1 to B5: one command for changing files, checks that stop, four tools
+
+The owner's decisions: D1 leave the consultant for now; D2 tell a session to batch when it makes a single change; D3
+checks stop at their first failure; then B1 to B5 only — no base rebuild or seal, no commit, no restart.
+
+**B1, probes** (small sessions outside the harness; their files and transcripts removed after). Tool deferral is
+ToolSearch's doing: with it in `--tools`, Opus 5 got TaskCreate, TaskUpdate, TaskStop, TaskOutput, Monitor and
+EndConversation as names to load first; without it every tool loads at the start and EndConversation is not there at
+all — no setting needed (`ENABLE_TOOL_SEARCH` changed nothing on Haiku or Opus). A PreToolUse `updatedInput` rewrite
+is what runs under auto mode — the cut (a 2,000-line output cut at 3K, kept whole, and the model read on from the kept
+file), the stop-at-first-error runner inside it (stopped at its first error, not its 30 s sleep), and `v2.py change`
+(wrote `\<forall>` and `$HOME` as given). **The hook after the call is given the rewritten input**, so unwrapping it
+before counting is required, not a precaution. A heredoc write through Bash passes auto mode.
+
+**B2, `v2.py change`.** `=== write PATH` (the whole file) and `=== replace PATH` / `=== replace-all PATH` with
+SEARCH/REPLACE blocks, in a quoted heredoc of the same call; applied in order in memory, written all or none, refused
+change by change (with where a missing SEARCH's first line stands); a call of one change is told to batch (D2).
+`v2.change_blocks` is read by the command and by the guard alike, so `write_targets` is exact and the write guard,
+ownership and production see every file. The guard refuses the call in any other form (unquoted, fed from a file,
+with other commands), and every other content write — a redirection into a file, `tee`, `sed -i`, `perl -i`, a
+script that writes — whatever the command's kind, a check's `> log` included; where it writes is judged before how,
+so a harness file or HANDOFF.md gets its own refusal first. Moving, copying and removing stand. Found by its test: the
+put-back on a failed write removed the temporary file and restored the original in one `suppress`, so the restore was
+skipped whenever the temporary was already in place — fixed.
+
+**D3, checks stop at their first error.** Not in the repository's tools: `tools/build.py`'s `run_session` is where
+they run Isabelle, and it is in the execution closure of all 52 recipes — changing it would have had every recipe
+executed again at the next check (a first version there was written, measured and taken back; `tools/` stands as it
+did). `first_error.py` runs the check as its own session, passes its output through, and watches it and the logs the
+check writes (`--work` for a probe, `--output` for a check), and at the first `***` line ends the whole tree
+(descendants from /proc, as `build.stop_process` does) and says so. The guard runs every session check through it,
+foreground inside the cut and background alone. Measured on the runs on disk: no accepted check's 276 logs holds a
+`***` line (no false stop), 2 of the 9 probe logs do (real failures, whose first line carries the file and line the
+circling rule reads), and walking a 67K-file check directory takes 15 ms. The finalizer's check is not a session's and
+runs to its end. Also fixed on the way: a heredoc naming a check's tool made its command a check (`CHECK` reads the
+command without heredoc bodies now).
+
+**B3, the tools.** `session-flags`: `--tools Bash TaskCreate TaskUpdate TaskStop`. `REMOVED_TOOLS` maps every other
+tool to where its work goes, refused to every role; the matcher names them all. Taken out because only Read, Edit
+and Write served them: Read's narrowing and notes, `tool_read`, Edit/Write targets, the gauge's writer and Read
+cases, the planner guard's Read, and — since a base no longer has Read — `base.sh build-files` and `extend`,
+`base-bootstrap.txt`, `manifest.py list` and its folding. `kind` and `requested` keep their Read/Edit/Write cases:
+efficiency.py reads old transcripts with them. TaskStop is the session's own (it had been counted as a read).
+
+**B5.** `_production.md` (tools, the change command and its form), `_checks.md` (a check stops at its first error),
+planner.md (the ToolSearch paragraph gone), README. **431 tests and 192 mutations**, every one caught.
+
+**Needed before any restart (the owner's):** every base rebuilt (`base.sh WHO build`, `seal`, and layers), since the
+tool list changed; nothing forks a base with other tools meanwhile. Nothing committed.
+
+## Later the same evening — a command that went wrong is fixed, not written again
+
+The owner: each command a session makes is to be kept, and it is to be told to fix the problems with the previous
+command rather than write everything again, which is counterproductive. Measured first on the 71 transcripts: of
+1,799 commands 146 failed (8%), and 40 were followed within three calls by a near-copy of themselves — 88K characters
+written again, 15 of them over 1K, the largest 12K; and with every file's change now a command, a refused batch would
+be written again whole too. (Reading what was sent before costs nothing new — it is in the prompt cache; what the
+rewriting spends is output.)
+
+**Every command kept.** The guard keeps each Bash command a session makes, refused ones included, numbered, as
+`.build/outputs/SESSION/commands/N.sh` (`keep_command`, `kept_command`), gone with the session's outputs when it is
+archived. **`v2.py again [N] <<'EOF'`** sends only the correction — SEARCH/REPLACE blocks on command N's text (N left
+out: the last; no block: as it was) — which the guard applies with the change command's own rule (`v2.replace_one`:
+once, or all for replace-all; every block judged and each failure said, nothing run), keeps as the next command, and
+guards and runs as if it had been typed: the planner's statements rule, the write guard, the form of writes, the
+cut, the check runner — all see the fixed command, which runs by `updatedInput`. It is counted as what it runs
+(`st["resolved"]` by call id, read by `is_read` and `_record`; the hook after a call is given the rewritten command,
+as the probe showed, and the id resolves it either way). **Told how:** a refusal whose remedy is the command itself —
+a write's form, a read too large, a tree session's path into the one tree (`deny(..., fixable=True)`, the mark taken
+off before Claude Code sees it) — ends with the command's number and the `again` form; a waiting, budget or
+already-in-context refusal does not, since fixing the command is not the remedy. A command that ends failing is told
+the same by the cut (`cut.py … N`), except a check, whose fault is in what it checks. A refused `v2.py change` exits
+failing, so it is told too. `v2.py again` outside a session says the guard carries it out.
+
+## And later — checks run to their end with every error listed; what a session keeps goes when it ends
+
+The owner, on the cost I named: why stop at the first error — better to wait for the full run, give the session all
+the errors, and have it deal with them at once rather than one by one. And: everything now saved — reads, outputs,
+commands — deleted once no longer needed. D3's stop is taken back.
+
+**A check runs to its end and ends by listing every error it reported** (`check_errors.py`, which replaces
+`first_error.py`). It passes the check's output through; when the check has ended it gathers Isabelle's messages
+from that output and from the logs the check wrote meanwhile (a probe's under `--work`, a check's under `--output`),
+one line each — `THEORY:LINE: first line` — and prints them last, so the end a check's cut shows holds them, headed
+by: fix them all, and what the same cause breaks elsewhere, before the next check. A message is a run of `***` lines
+ending at its `At command "…" (line N of "…")`, and that line's place is where it stands (its first may name an ML
+file: on the real probe logs `drule.ML:308` became `Positioned_Native_Evaluation.thy:158`); two messages side by side
+part where a line of its own names a place. One error in the output and a log is one; another run's log is not read;
+a list longer than 2.2K shows what fits and is kept whole in the session's outputs (`errors-N.txt`, the newest 10). The
+check's own status stands. `_checks.md` and the README say so.
+
+**What a session keeps goes when it is released** (`v2.release`): its outputs directory — cut outputs, kept commands,
+error lists — and, through `forget`, its meter (the reads it holds, its counts), now with the meter's lock, which had
+been left behind. While it lives: the newest 50 outputs (cut.py), the newest 50 commands (`KEPT_COMMANDS`), the newest
+10 lists. The archive a day later no longer does it. In the live state now: two meters, both of sessions not released,
+and no lock yet.
+
+## A pass over what the restrictions leave undoable (the owner, 2026-09-21)
+
+The owner: before proceeding, a broad pass to find where the orchestrator is too restrictive — work that must be done
+and could not be — with the native controller's errors as the example; every restriction to be coherent, forcing
+nothing unwanted and allowing all that is wanted. Every restriction was read against the work each role must do.
+
+**Repaired** (each tested, each with its mutation case):
+- **The owner's questions.** planner.md told the planner to write the owner's questions into the owner ledger, which
+  is the harness's file and refused to every session by the write guard. `v2.py ledger TEXT` (the planner's) appends
+  `**QN (asked DATE by NAME)** — TEXT` under "Open questions to the owner", numbered on, under the ledger's lock.
+- **Native and other failures in a check.** `check_errors.py` listed Isabelle's messages alone: a native controller's
+  error, a recipe's exception, a host test's failure reached the session only by reading logs one by one. For a check
+  that failed it now lists each part its output names as failed (a JSON row with `"status": "failed"`, as the
+  incremental check prints a recipe) with the failure that part's log ends on, the check's summary error, and each log
+  written meanwhile that ends on a failure (an exception after its traceback, a panic, an `error:` line). Measured: none
+  of the 276 logs of this morning's accepted check ends on such a line.
+- **The quick fix's view of a failed acceptance check.** The finalizer gave it the last 30 lines of `finalize.log`; its
+  check now runs through the same runner (`work_meter.gathering`, long lists in the task's `run-errors/`), so those lines
+  hold every error.
+- **A failed command's output.** The cut showed a long output's beginning; a failed one shows its end, where a command
+  says what went wrong, and quotes the failure line when it stood before that end — found by its test: a program's
+  output is buffered in a pipe and its error is not, so the traceback came first.
+- **A program's output had nowhere to go.** Every content write but `v2.py change` was refused, so generated data could
+  only be pasted through the change command. Any command may write under `.build/` (`scratch`: not a task's tree —
+  whose `.build` is the one behind a link — and not `.build/outputs/`, the harness's records); the repository's own
+  files change by `v2.py change` alone, and where it writes is still judged first.
+- **Own drafts.** The planner and the task designer could not read back what they wrote under `.build/` — a refused
+  graph edit or proposal they must correct. `own_dirs`: their drafts and their own kept outputs and commands.
+- **A long fact** could not be read by its lines though the cut said to: `v2.py read Theory.name:A-B`.
+- **git's reading forms** (`stash list/show`, `worktree list`, `tag`/`tag -l`, `notes show`) were refused with its
+  writing forms.
+- **Shell syntax**: a comparison in `$(( ))` or `[[ ]]` read as a redirection and was refused; `&> file` was not seen.
+- **A search that found nothing** (grep, diff, cmp, test: status 1 is an answer) is not told it failed.
+
+**Left as they are, knowingly:** a script a session writes and then runs is not read by the guard (a class that was
+always there; the finalizer and the commit gate stand behind it); the knowledge base's reading is neither cut nor
+metered, as it loads what it is to hold; a consultation forked from a released session finds none of that session's
+kept outputs; `v2.py graph` and `status` are cut at 3K like any read, so a large graph costs the planner more than one.
+
+---
+
+# Handoff, 2026-09-21 evening — where this session stops
+
+Stopped at the owner's word, in the middle of the last request (below). **Nothing is committed** (standing rule:
+commit nothing before told). The run is stopped, `state/stopped` and `state/no-launch` stand, the daemon is down,
+nothing was started. **No base was rebuilt or sealed** (the owner's instruction). Git's index is clean (nothing
+staged; twice this session a `git rm --cached` of an untracked file staged nothing, and once a tracked one was
+staged and immediately put back — do not use `git rm` here).
+
+## What this session did, in order (each section above has the detail)
+
+1. Reads of lines already in context are filtered, not refused (`lines.py`, `in_context`/`gaps`/`filtered`/`saw`).
+2. The gather is gone; `v2.py read SOURCE...` reads any source as an ordinary read (facts by name, `Theory.name:A-B`,
+   the task's diff/result/log — a reviewer's: the task it reviews — `task:ID`, `proposal:ID[:KEY]`, files).
+3. The token budget is gone; the tiers are 3 reads a production, then a reserve of 10.
+4. Every command's output is cut to a read's bytes (`cut.py` through the guard's `updatedInput`), kept whole under
+   `.build/outputs/SESSION/N.txt`; a check or a failed command shows its end, and a failure said before the end is
+   quoted. Verified live by probes outside the harness.
+5. Tools: sessions have Bash, TaskCreate, TaskUpdate, TaskStop only (`session-flags`); every other tool is refused
+   with its pointer (`REMOVED_TOOLS`). Deferral was ToolSearch's doing; without it everything loads at start.
+6. Bases and started sessions record their flags; nothing forks, pings or layers over one started with others
+   (`v2.other_tools`, `base.sh lean_as`). **Every current base predates this and is refused until rebuilt.**
+7. `v2.py change` is the one way to change repository files (blocks in a quoted heredoc, all or none, loud); content
+   writes any other way are refused except under `.build/` (`scratch`); a single-change call is told to batch.
+8. Every command is kept numbered; `v2.py again N` sends only the correction; fixable refusals and failed commands say
+   how.
+9. A check runs to its end and ends by listing every error (`check_errors.py`): Isabelle's messages placed by their
+   `At command` line, and for a failed check native/recipe/tool failures from its output and logs; the finalizer's
+   acceptance check runs through it too. (Stop-at-first-error was built and taken back at the owner's word.)
+10. What a session keeps (outputs, commands, error lists, its meter and the meter's lock) goes at release.
+11. The audit of what the restrictions left undoable, and its ten repairs (`v2.py ledger` for the owner's questions,
+    own drafts readable to statements roles, git's reading forms, shell comparisons and `&>`, a search's answer).
+12. B1 probes' findings are in the evening section above.
+
+Last full verified state before the final request: **448 tests pass**; the mutation check's last complete run was
+210/211 (the miss was fixed by a new test); the run over the audit's 228 cases was stopped part way when the final
+request came (its file restored from `.bak`), so **the mutation check has to be run again in full**.
+
+## The final request, unfinished
+
+The owner: review the bases and layers so that no currently incorrect information is in them; review every role's
+prompt for adequacy and coherence; read the orchestrator's README fully and make it consistent with the orchestrator
+and adequate; and raise the limits to 5K a read and 50K a batch.
+
+**Done:**
+- The limits: `v2.READ_BYTES` 5,000 and `BATCH_BYTES` 50,000; `check_errors.ROOM` follows (`ORCH_READ_BYTES` − 800);
+  the texts that named 3K now take the figure from the constant; one test that hard-coded 3000 fixed. **The suite
+  has not been run on this state** (stopped at the owner's word before its result).
+- The memory file `native-speedup-batch-state.md` named the active Isabelle base as `.build/check-20260918k/proof`;
+  corrected to `.build/complete-20260921a` (named by `/tmp/structural-active-context.json`).
+- Every entry of the three load lists exists (280, 334, 325 entries; none missing).
+
+**Findings not yet acted on — the next agent does these:**
+
+*The bases* (they are what every fork starts with; the corrections reach them only by the rebuild, which the owner
+runs). What is wrong there now is harness mechanics, not the library:
+1. `library-prompt.md` (every base's system prompt): line 7 "your gathers" → what it reads; lines 37–41 "each step
+   opens with one gather of everything it reads" → one batch; the owner section (lines 78–80) says the session writes
+   the provisional choice and question into the ledger — now the planner does it with `v2.py ledger` and every other
+   session brings it to the planner (`v2.py ask --to planner`) or its result; the harness section should say, briefly:
+   the tools are Bash, TaskCreate, TaskUpdate, TaskStop; files change by `v2.py change`; reads are bounded; a check
+   ends with every error listed; **the owner's rules held in the base were written for sessions working alone with
+   the owner, and some of their mechanics are the harness's here** — the finalizer commits and pushes, waiting is
+   refused (a completion notifies, a producing session parks), and what a rule says to report or record goes into
+   the result or to the planner; and the start-of-work reading AGENTS.md and DEVELOPMENT_WORKFLOW.md ask for is this
+   load (the base holds DEVELOPMENT_WORKFLOW.md; compaction is blocked).
+2. The memory files the bases hold ("the owner's voice and the operating rules") that clash in mechanics for harness
+   sessions — correct for the owner's own sessions, so leave them and let item 1 interpret them:
+   `commit-push-at-milestones` and `large-batches-parallel-work` (commit and push; a background waiter),
+   `batched-callbacks` (waiting loops, refused to sessions), `proceed-provisionally-then-ask` (record in HANDOFF.md
+   and the ledger — the planner's), `report-check-comparisons` (report in chat).
+3. The load lists' curation comments say "HANDOFF.md and gathers carry what is new" (never loaded; wording only).
+4. AGENTS.md, DEVELOPMENT_WORKFLOW.md, problems.txt, owner-directions.md, codex-owner-directions.md were read: nothing
+   in them is wrong about the harness now (the re-read-after-compaction rule is met by the load; see item 1).
+5. HANDOFF.md (the knowledge base's load, the planner's file): its absolute-check-path rule (line 136) no longer
+   holds; an event already queued for the next planner says so. Not the harness worker's to edit.
+
+*The role prompts* (read in full; they agree with the rules as they stand, with these exceptions):
+6. `_production.md` describes the cut twice (in "Production and reading" and at the end of "Steps, and reading any
+   source"): merge into the first — beginning shown, or the end for a check or a failed command.
+7. `_first.md` (used only when there is no graph) still names T3 installed and T4–T10 queued, the state of
+   2026-09-19: make it timeless.
+8. `v2.FRESH_CHARGE` (the fresh start's charge to the first planner) calls PLANNING_LOG.md "new and empty" (it has
+   931 lines) and asserts "the graph you inherit is a chain": correct both.
+
+*The README* (read in full, lines 1–627), inconsistent with the orchestrator in:
+9. line 30–31: the planner records the owner's open questions by hand → `v2.py ledger`.
+10. line 55–56: "the base's system prompt describes the v1 implementer" — it does not (it is `library-prompt.md`,
+    every role's): say what it is.
+11. line 143: "about 327K on the present 560K base" → the room now: about 364K for a build or fix, 383K for the rest
+    (`v2.room_of`).
+12. lines 160–175 and 180: 30K/3K → 50K/5K; "the first 3K of its output (a check: the last…)" → also a failed
+    command's end, with an earlier failure quoted; "a session's go when it is archived" → when it is released.
+13. lines 228–235: "its changes are set aside (`parking_care`)" and the shelf paragraph describe what stopped on
+    2026-09-20 — nothing is set aside now; the parked task's work stays in the tree until it commits;
+    `v2.py unshelve` serves only a shelf made before then.
+14. line 250: "a list longer than about 2K" → about 4K.
+15. lines 258–277: the audit paragraph stands between the check rules and the sentence on waiting and filtering that
+    belongs with them — move it after them.
+16. lines 285–287: the change paragraph must say a command's output may be written under `.build/`.
+17. lines 297–298: "`v2.py read` filters its files the same way…" sits at the end of the `again` paragraph; it
+    belongs after the filtering sentence.
+18. line 577: `base.sh extend` (a 2026-09-18 verification) — gone since 2026-09-21; say so.
+19. lines 624–627: "v2 has not run live" — it ran live on 2026-09-20 and 2026-09-21; say what ran live and what has
+    not yet (`v2.py read`/`change`/`again`, the cut, the filtered reads, `check_errors`, the four-tool set — all
+    tested, the rewrites probed outside the harness, none run by a harness session).
+20. The Parts table lacks `cut.py`, `lines.py`, `check_errors.py`, `commit_gate.py`.
+
+## What the next agent should do
+
+1. Read this note from "# 2026-09-21, later — the gather a read" on, and the work list (`notes/worklist-2026-09-21.md`).
+2. Run the full suite on the limit change (never run since it was made); fix what fails at its cause.
+3. Carry out findings 1, 3, 6–20 above (2, 4 and 5 need nothing of the harness). Keep each change tested where code
+   changes (FRESH_CHARGE has tests that read it; the protocols are rendered by tests).
+4. Run the full suite, then the full mutation check (`python3 -B notes/mutation-check.py` in this directory, about
+   20 minutes; never edit code while it runs — it rewrites files and restores them from `.bak`; if it is stopped,
+   move any `*.bak` back over its file).
+5. Report to the owner, then wait for the word on: rebuilding the three bases and their layers (required before any
+   restart — every current base is refused for its tools), committing, and restarting the run.
+
+---
+
+# 2026-09-21, night — the final request finished: bases, prompts and README brought up to date
+
+The session after the handoff above carried out its findings 1, 3 and 6–20 (2, 4 and 5 needed nothing of the
+harness). Nothing is committed, no base was rebuilt, the run stays stopped with the hold on.
+
+**The limits first.** The suite on the 5K/50K change, never run before: **448 passed**. Nothing needed fixing.
+
+**The bases** (reach them only through the rebuild, which is the owner's):
+- `library-prompt.md`: "the planner" for "a planning episode"; "what you read" for "your gathers"; each step opens
+  with "one batch"; the owner's words reach the planner at once (not "the next planning episode"); a provisional
+  choice is made and the work goes on, the question reaching the owner through the planner, which puts it in the
+  ledger (`v2.py ledger`; no session writes it by hand). The harness section now names the four tools, `v2.py read`
+  and `v2.py change`, bounded reads and outputs, and a check listing every error; and a new paragraph says the owner's
+  rules held in the base were written for sessions working alone with the owner — their substance holds, their
+  mechanics are the harness's: the finalizer commits and pushes, nothing waits (a completion arrives; a producing
+  session parks, any other ends its turn), what a rule says to report or record goes to the result or the planner,
+  and the start-of-work reading of DEVELOPMENT_WORKFLOW.md is this load, with no compaction. The memory files stand
+  as they are. Only `base.sh`'s build passes the prompt (`--append-system-prompt-file`); forks inherit it, so the
+  rebuild carries it and nothing else needs to.
+- `base-load-max.txt`: the six curation comments say "the sessions' own reads" for "gathers" (never loaded).
+
+**The role prompts.** `_production.md` describes the cut once, in "Production and reading": the beginning, or the end
+for a check or a failed command, with a failure said before that end quoted. `_first.md` is timeless: whatever
+carried the development before left its state in HANDOFF.md; no T3 or T4–T10; the parts of one uncommitted change
+(theory, ROOT line, import, row) belong together to the task that continues it. `v2.FRESH_CHARGE`: PLANNING_LOG.md is
+appended to after what earlier planners left, dated (it has 931 lines); "where the graph you inherit runs as a
+chain, each task waiting on the one before, re-plan it…" instead of asserting that it is one.
+
+**The README** (findings 9–20, and two found on the way):
+- the planner's open questions go to the ledger by `v2.py ledger`;
+- the system prompt is `library-prompt.md`, every role's, and says which mechanics of the owner's rules the harness
+  carries out (no longer "describes the v1 implementer");
+- found on the way: "until the base topic builds xhigh and high, their roles fork the present base at max" — all three
+  are built since 2026-09-20; a role whose base is not built falls back to max (`v2.FALLBACK`);
+- a brief's room: `v2.room_of`, about 364K for build and fix, 383K for the rest, on the bases of 2026-09-20;
+- 50K/5K; the cut's end for a check or a failed command, an earlier failure quoted; a session's outputs go at release;
+  `Theory.name:A-B` among `v2.py read`'s line forms;
+- the one tree: its owners include the unfinished task whose installed work stands in it (`tree_writer`) — found on
+  the way, the paragraph named only the finalization and the producer; the parked task's changes stay in the tree
+  (`parking_care`); nothing makes a shelf since 2026-09-20, why (a change is a set of parts), and `unshelve` serves
+  only an older one;
+- the error list's bound: about 4K (`check_errors.ROOM`);
+- order: waiting and subagents refused joins the check paragraph; the filtering sentence and `v2.py read`'s filtering
+  follow the `v2.py read` paragraph; the audit paragraph after the change and `again` paragraphs;
+- changing files: any command may write under `.build/` (`work_meter.scratch`), not into `.build/trees/` or
+  `.build/outputs/`; where a command writes is judged before how;
+- `base.sh extend`: gone with the Read tool (2026-09-21);
+- a new section "What has run live, and what not yet": v2 ran live on 2026-09-20 only (71 sessions, 00:15–22:36, the
+  last runs on the layered bases); verified there, from `state/v2.log`: the task-list variable leaves a fork's cache hit
+  intact (`plan-29`: `cache_read=485372`), sealed sessions other than a base resumed, the layers' pings. Not yet run by
+  a harness session: `v2.py read`/`change`/`again`/`ledger`, the cut, filtered reads, `check_errors.py`, the four-tool
+  set. The handoff above said "2026-09-20 and 2026-09-21": the log has no session started on 2026-09-21;
+- the Parts table: `cut.py`, `lines.py`, `check_errors.py`, `commit_gate.py`.
+
+## The owner asked again: review the bases and layers, and every role's prompt — a second, own pass
+
+Everything a rebuild would freeze was read against the repository as it stands (the theories aside: they are
+digests of Isabelle-checked sources and carry no harness claim).
+
+*Held by the bases and layers, corrected:*
+- `DEVELOPMENT_WORKFLOW.md` (every base): "DECISIONS.md is loaded whole, as an index, by every base" — the `high`
+  base holds no decisions index; now "the planner's and the middle bases hold every entry by its heading and first
+  sentence". The same paragraph left "what a theory offers for reuse…" as a fragment starting in lower case since
+  `c1843ab1` inserted a passage before it; now a sentence. Both came from an orchestration commit, so the harness's to
+  correct.
+- Memory (every base): `native-speedup-batch-state` named `NATIVE_SPEEDUP_HANDOFF.md`, which does not exist — the
+  paused candidates are `native_mechanism_speedup.md`'s remaining work — and gave "stage 1: seed…; stage 2: one
+  refinement" as the next work, which the plan is long past; it now points to the plan's own status and direction.
+  `proof-search-over-quantified-facts` said "~1,675 theories" (1,800 now). The other memory files' paths, options
+  and remotes were checked and hold (`/tmp/structural-isabelle` holds `Complete_20260921a`; `--advance-base`,
+  `adopt --proof`, `--parallel-proofs`, `--prelude`, `--substitute`; `origin`).
+- The load prompt of every base and layer (`base_pack.bootstrap`): "Do not use Read, …" — no base has Read.
+- Checked and right: the pack's legend and tier headings; `native_control_plan.md`'s status section against the
+  commits since (its last result, `44738c20`, and the two untracked theories as "building"); AGENTS.md; problems.txt
+  and the owner's directions (the owner's words). `base-settings.json` wires no guard, so the 5K cut never reaches a
+  base's 120K chunks.
+- The load lists' headers said "DRAFT … not in use" (comments only); max's had "In the / In the".
+
+*Held by the knowledge base, and the next planner's first message:* the event waiting for the next planner (it
+survives `--fresh`: `fresh_sweep` keeps it) said in its item 7 that `step` takes several ids and "a gather reads a
+task's brief"; both are gone — now `read` and `v2.py read`. Changed under the state lock, logged. HANDOFF.md itself
+is the planner's; the event is what corrects it.
+
+*The role prompts, rendered as sent (every role, every part):*
+- `investigator.md` did not say that the planner judges an investigation (the finishing part says "a reviewer judges
+  the work"); the designer's did. Now both.
+- `planner.md` ended with the workers' owner part — "bring to the planner what reaches beyond it (`v2.py ask --to
+  planner`)", to the planner. It now has its own: the owner's words to another session reach it as an event, and it
+  acts on them in the graph, the order, the decisions and HANDOFF.md. Also said twice there and now once: the brief's
+  admission (under Tasks and again under the graph's shape) and the log (`The log.` and `It is a state and not a log`).
+- `task-designer.md` said the depth rule and "detail is always admitted" twice; the second paragraph keeps only what
+  it adds. It told the task designer to "record your result" when a detailing needs a task past the limit, but gives it
+  no result form, and `cmd_result` refuses one not in form: it now names the file, the status and the four parts and
+  the command. Its JSON example has a lead-in.
+- `_checks.md`: "the run keeps going, keeps its changes in the working tree" — the changes are the session's; the
+  paragraph is rewritten with nothing else changed.
+- Checked and coherent: TaskCreate/TaskUpdate for workers (their own lists; refused only on the graph's settings);
+  production counted from the files a session writes, however written (`check_production`), so drafts by heredoc
+  count; the knowledge base's three files fit the 128K output bound unread by the cut.
+
+## Verified, and the owner's word: rebuild, commit, push, start fresh
+
+**448 tests pass on every change above; the full mutation check caught all 228 of its cases**, and every file was
+restored (no `.bak`). The owner then said: rebuild the bases, commit and push, and start the run with `--fresh`; and
+asked for a command that stops the orchestrator but keeps the warmth daemon.
+
+**`stop.sh --keep-warm`.** `stop.sh` always killed the daemon, so on 2026-09-20 the same stop was done by hand
+(`v2.py stop`, `state/stopped` written). The flag does everything `stop.sh` does — `state/stopped` first, every role
+stopped, the orphaned tool runs ended — and leaves the daemon, whose watchdog returns at once while `state/stopped`
+stands and whose pings keep the sealed bases and layers warm. Tested (the daemon's pid lives through two rounds, the
+run stays inactive, nothing is restarted, a wrong flag is refused) with a mutation case, caught. README's Use lists it.
+
+**Is the inconsistent worktree resolved?** Not in HEAD: its ROOT declares `Development_Loci` and
+`Development_State_Rows` (committed with task 7, `44738c20`) and holds neither file; they stand untracked in the one
+tree, which is consistent. The harness is safe against it (a tree is checked before a session is put in it; tasks work
+in the one tree meanwhile with the reason; the commit gate refuses making HEAD worse). It is resolved when 22 and 46
+land. Under `--fresh`, `reopen_unlanded` runs in `reconcile_stages`, which the hold does not gate, so their checks (and
+50's) start at the first dispatch; their reviews (23, 47) are `support()`, which the hold gates, so they wait for the
+planner's order.
+
+---
+
+# 2026-09-21 ~16:42 — every transcript and memory file of the project deleted during a probe's cleanup
+
+**What was lost.** Everything under `~/.claude/projects/-home-julius-structure-and-semantics/`: every session
+transcript (the runs of 2026-09-20, the planners, the knowledge bases, the earlier orchestrator sessions, the six base
+and layer sessions just built) and every memory file. Only the live session's own transcript remained, written afresh
+from that point. The repository is intact. Timeshift here snapshots `@` only (its config's `"include_btrfs_home:"`
+key, with the colon inside the name, is not a key Timeshift reads), so nothing of it can be recovered.
+
+**Restored.** The 26 memory files and MEMORY.md, from the full reading of them earlier in the same session: their
+bodies verbatim (with the two corrections of that day), their frontmatter (never read, since the reading stripped it)
+rebuilt from MEMORY.md's lines. The transcripts are gone for good; what efficiency.py, health.py and the frontier
+measurement read from them starts from nothing.
+
+**When, and what ran then.** The memory directory was emptied at 16:42:34, while three throwaway forks of the new
+layers, started in parallel to ask which tools they had, were being removed (`claude stop ID; claude rm ID`, then
+`rm -rf` of the probe's own transcript path, guarded against an empty id). They were removed during their ten-second
+SessionStart hook, before their first request, because the wait loop took the listing's first `idle` for their end.
+The project and job directories were last changed at 16:46:48, by `claude rm` of a later probe. Before that, a first
+probe had been started from `.claude/orchestration` under zsh, which passed `session-flags` as one word: it did not
+resume the base at all and was given Claude Code's whole default tool list. **The deleting command is not
+identified.** `base.sh warm` and the harness's release of sessions use the same `claude stop`/`claude rm` pattern.
+
+**The state it leaves.** The six new base and layer records stand, but their transcripts are gone, so nothing can
+fork them: all six must be built again. `state/no-launch` is back, with the reason. The keep-warm daemon started by
+`seal` still runs (the owner is to stop it: `kill` was refused to the session); its watchdog is inert while
+`state/stopped` stands, but its pings of the three layers would fork sessions that no longer exist and remove them
+the same way. Nothing is committed, pushed or started.
+
+**Before anything launches again:** reproduce the deletion in a throwaway project with dummy transcripts — one
+background fork, removed the same way during its start hook — and repair it where it arises; then build the high base
+alone and test on it, one probe at a time; only then max and xhigh, the commit and push, and `start.sh --fresh`.
+
+**The cause, found (the same evening).** Not Claude Code: the session's own first probe command. It was run from
+`.claude/orchestration` under zsh and ended `claude stop "$2"; claude rm "$2"; rm -rf
+~/.claude/projects/-home-julius-structure-and-semantics/$4 "$f"`, with no guard on `$4`. Started from that directory
+the probe's session was not the project's, so `session_row.py` found no row, `set --` left `$4` empty, and the `rm -rf`
+took the whole transcripts directory. The session's own transcript was recreated with its first entry at 16:41:21,
+the end of that command, and `~/.claude/projects` was last changed then; the three parallel probes came after it.
+Reproduced the other way in a throwaway git project with `bgIsolation: none` and the ten-second start hook: a fork
+stopped and removed after its answer, and one stopped and removed two seconds after launch, during its start hook,
+deleted nothing (`claude rm` leaves transcripts alone). The harness's deletions were read: the one `rm -rf` under the
+transcripts directory, `base.sh warm`'s, is guarded by `[ -n "${4:-}" ]` and runs under `sh -u`; every other
+deletion is inside `state/` or the outputs directory and skips an empty id. So the harness is not implicated, and the
+probe forks after 16:41:21 resumed sessions whose transcripts were already gone — which is also why none of them
+forked the base and layer they named. The rebuild procedure itself (build, status, seal, layer) worked; it only has
+to be run again.
+
+# 2026-09-21 evening — the sandbox, and the harness made to work inside it
+
+**Turned on by the owner** after the transcript loss: `.claude/settings.local.json` has `sandbox.enabled`, no
+unsandboxed commands, writes allowed to `/tmp` (heaps, Isabelle's temp prefix, the active-base pointer, which is
+replaced by rename and so needs its directory), `state/`, `.build/outputs`, `.build/tasks` and
+`~/.claude/tasks/orchestration-graph`, and the network to `github.com`. Every session reads that file, in a task's tree
+too (a worktree reads the main checkout's). Tested: those paths writable; `~/.cache`, `~/.claude/jobs` and the
+transcripts refused; a throwaway Isabelle session builds in 2 s; `git ls-remote origin` answers. Not yet seen: a
+session in a tree writing `state/` through the explicit entries (this session's own `.` covers it, so it proved
+nothing there); the first live tree session shows it.
+
+**No excluded commands.** An exclusion is matched on the command's text: tested with a stand-in script at
+`.build/sbxprobe/.claude/orchestration/v2.py`, it ran outside (670 processes visible against 5 inside), and so did
+`...v2.py probe; ps -e` chained after it. The owner took the exclusion out.
+
+**The harness change.** Inside the sandbox nothing can start, stop or remove a session. `v2.control()` says whether
+this process can (`~/.claude/jobs` writable; `ORCH_CONTROL` states it); without it `release` asks the supervisor
+(`state/wanted/`) instead of recording a session released that it could not stop (it did: its `claude stop` failed
+unseen), `background` and so `kick` ask instead of running a dispatch or a finalizer inside, `dispatch` does not run,
+`hand_mail` leaves mail to the watchdog, `claude()` refuses `--bg`/`stop`/`rm`, and `start`, `stop`, `talk`, `ping`,
+`start.sh`, `stop.sh`, `base.sh build|build-packed|layer|seal|warm` and `warm_daemon.sh` refuse with "run it from
+your own terminal". The dispatch carries out requests first (`carry_out_wanted`, each taken by rename, done once);
+the daemon's minute of sleep ends when one waits. `v2.py start` makes `.build/outputs`, `.build/tasks` and
+`state/wanted` (the sandbox opens only paths that exist). Tests: `SandboxTests` (4), one in-process, one daemon test in
+test_start_stop; seven mutation cases, all caught. `test_base_pack`'s build-packed test keeps the real HOME with a fake `claude`, so it now states
+`ORCH_CONTROL=1`: what the real one could do is not its subject. So: start.sh, stop.sh and the base rebuild are the owner's, from
+their own terminal.
+
+**What else the sandbox changes, looked for before anything runs (same evening).** Measured inside it:
+- *Each command is its own process namespace*: 5 processes visible against 3,094 on the machine (`/proc/loadavg`). A
+  PID recorded outside means nothing inside, and a run started by one command is invisible to the next. **Broken by
+  it:** `v2.py measuring` (producing sessions): `exclusive_claim()` finds a finalizer's PID absent and *deletes its
+  claim*, and `isabelle_runs()` counts 0, so a measurement is granted beside running checks — the two heavy runs the
+  claim exists to keep apart. `health.py` run from a session calls the live daemon dead. The hook's check gate
+  (`work_meter.session_guard`) counts the same way and is right only if hooks run outside the sandbox, which the docs
+  imply and do not state: confirm on the first live session.
+- *Every allowed path is its own mount*: a rename between two of them fails with EXDEV (tested: project root → state/,
+  $TMPDIR → state/, .build/outputs → .build/tasks, state/ → /tmp); within one works. No current code renames across;
+  every temp file is made beside its target. A trap for new code.
+- *An allowed path that does not exist when a command starts cannot be created from inside*: `.build/outputs` was
+  missing; `v2.py start` now makes it.
+- Fine: file locks hold across sandboxes (flock tested between two commands); CLAUDE_CODE_SESSION_ID passes, so
+  `caller()` works; NO_PROXY covers localhost; sessions' git is read-only (the guard refuses the rest); a check in a
+  tree writes only the tree and /tmp; the base-advancing check is the finalizer's, outside; writing through a tree's
+  `.build` link resolves to the real, allowed path; `running_jobs` reads transcripts, which is allowed.
+- Traps: `tools/investigate.py` and `tools/build.py` default their heap store to $TMPDIR, which is /tmp/claude-1000
+  inside — a bare run builds a second store. With /tmp writable, a session can still delete the heap store or move the
+  active-base pointer (as before the sandbox); narrowing /tmp needs the pointer moved into /tmp/structural-isabelle.
+- **Fixed the same evening.** Inside the sandbox `v2.py measuring` asks the supervisor (`want(measure=…)`), which
+  decides with every run in sight (`measure_claim`) and answers by message; `exclusive_claim()` leaves standing a
+  claim whose process it cannot see; the daemon keeps a heartbeat (`state/warm.beat`, a ticker that ends with it)
+  and `health.py` reads that inside. `protocols/_tree.md` says the answer comes as a message. Tests: one in
+  SandboxTests, one in-process, one in test_start_stop; five more mutation cases, all caught.
+
+---
+
+# Handoff, 2026-09-21 ~18:30 — where this session stops
+
+Read this section, then the two just above it ("~16:42 — every transcript and memory file … deleted" and "evening —
+the sandbox"), then README's "The sandbox". The standing rules at the top of this note hold: nothing about the
+orchestration in the project memory; commit only at the owner's word; the base rebuild is the owner's.
+
+## Where it stands
+
+- **The run is stopped**: `state/stopped` and `state/no-launch` stand (the hold's text says why). No session runs. The
+  old daemon (`state/warm.pid`: 713125) is most likely dead — `state/warm.log` has nothing after 16:46:48, and it would
+  have pinged by 17:20 — but nothing inside the sandbox can see a process to confirm it: the owner does
+  (`kill 713125`).
+- **No base can be used.** This session built, sealed and layered all three (max 477,804, xhigh 503,141, high 521,553
+  tokens; `state/{max,xhigh,high}-{base,layer}.json`), and their transcripts went at 16:41:21, so nothing can fork
+  them. `base.sh WHO drop` comes before each build (a build refuses while a record stands).
+- **Every transcript before 16:41:21 is gone for good** (Timeshift snapshots `@` only). `efficiency.py`, `health.py`'s
+  history and the frontier measure start from nothing; no earlier session can be read or resumed.
+- **Memory**: the 26 files rewritten from this session's reading of them (bodies verbatim; frontmatter rebuilt from
+  MEMORY.md, types this session's own classification), and two new: `guard-deletions-by-variable`,
+  `sandbox-no-exclusions`. Every load list takes `memory/*.md`, so the next builds carry the new two.
+- **The sandbox** is the owner's `.claude/settings.local.json`: auto mode refuses the session editing it as
+  self-modification, and the sandbox refuses Bash writing it. As saved:
+  `{"sandbox": {"enabled": true, "autoAllowBashIfSandboxed": false, "allowUnsandboxedCommands": false,
+  "filesystem": {"allowWrite": ["/tmp", "<project>/.claude/orchestration/state", "<project>/.build/outputs",
+  "<project>/.build/tasks", "/home/julius/.claude/tasks/orchestration-graph"]},
+  "network": {"allowedDomains": ["github.com"]}}}` — no excluded commands.
+- **Nothing is committed** since `87f827f4`: all of 2026-09-21's harness work and this session's. Local main is two
+  commits ahead of origin (`7d78caf0`, `87f827f4`, not pushed). **458 tests pass.** The 12 mutation cases this session
+  added are caught; **the full mutation check has not run since this session's changes.**
+- **Untracked zero-byte paths** in `git status` — `.bashrc`, `.zshrc`, `.profile`, `.gitconfig`, `.gitmodules`,
+  `.mcp.json`, `.idea`, `.vscode`, `.ripgreprc`, `.claude/hooks`, `.claude/agents`, `.claude/skills` and others, and
+  `.claude/.claude/`, `.claude/orchestration/.claude/`: inside the sandbox they are `/dev/null` mounted over paths it
+  protects (character devices dated at boot, 09:24:50), and git sees their mount points. **Never `git add -A`**; do not
+  delete them from inside (they are mounts). Whether empty files stay on disk outside the sandbox is not checked.
+
+## What this session did (each section above has the detail)
+
+1. Built, sealed and layered the three bases — then lost them with the transcripts.
+2. Deleted every transcript and memory file of the project, by its own probe's `rm -rf …/projects/<project>/$4` with
+   `$4` empty. Reproduced the other way in a throwaway project: `claude stop` and `claude rm` delete no transcript, even
+   of a fork removed during its start hook. Memory restored.
+3. With the owner, turned on Claude Code's sandbox and found what the project needs; tested an excluded command as a
+   hole (matched on text; any file at the path, and anything chained after it, ran outside), which the owner removed.
+4. Made the harness work inside it: `control()`, requests to the supervisor (`want`, `state/wanted/`,
+   `carry_out_wanted` first in the dispatch), and inside the sandbox `release`, `background`, `kick`, `dispatch`,
+   `hand_mail` and `claude()` ask or leave the work to the supervisor; `start`, `stop`, `talk`, `ping`, `start.sh`,
+   `stop.sh`, `base.sh build|build-packed|layer|seal|warm` and `warm_daemon.sh` refuse; the daemon wakes within seconds
+   of a request; `v2.py start` makes the allowed paths that must exist.
+5. Looked for what else the sandbox changes (process namespace per command, a mount per allowed path — the findings
+   above) and fixed what it broke: `measuring` is decided by the supervisor and answered by message
+   (`protocols/_tree.md` says so), a claim whose process cannot be seen stands, and `health.py` reads the daemon's
+   heartbeat (`state/warm.beat`).
+
+## What the next agent does, in order
+
+1. **The full mutation check**: `python3 -B notes/mutation-check.py` in `.claude/orchestration` (about 20 minutes).
+   Nothing else may run meanwhile — it rewrites harness files and restores them from `.bak`; if it is stopped, move any
+   `*.bak` back over its file. A miss is fixed with a test.
+2. **The rebuild, by the owner from their own terminal** (nothing inside the sandbox can start a session, this agent
+   included). One base at a time, high first:
+
+       kill 713125 2>/dev/null; rm -f .claude/orchestration/state/warm.pid
+       rm .claude/orchestration/state/no-launch
+       .claude/orchestration/base.sh high drop
+       .claude/orchestration/base.sh high build
+       .claude/orchestration/base.sh high status     # until the load has ended its turn
+       .claude/orchestration/base.sh high seal
+       .claude/orchestration/base.sh high layer
+
+   Then verify the high layer before the others: `base.sh high warm` writes a line to `state/warm.log` with its
+   cache_read (about the layer's context) and cache_write (a few hundred at most). The owner also wants to see which
+   tools a fork of the layer has. That probe is the owner's to run: give them a script — bash, `set -u`, run from the
+   project root, `claude --bg --resume <layer sid> --fork-session $(cat .claude/orchestration/session-flags) …` with
+   the layer's model and effort, waiting for the reply in the fork's own transcript (not the listing's `idle`, which
+   comes before the ten-second start hook ends), then `claude stop` and `claude rm` of that fork's id only, and no
+   computed `rm` under `~/.claude` at all. One probe at a time, nothing in parallel, no retry before the cause of a
+   failure is known (the owner, today). Then max and xhigh the same way.
+3. **Commit and push**, at the word the owner gave before the loss ("rebuild the bases, commit and push, and start the
+   run with `--fresh`"): only the harness — `.claude/orchestration/`, its untracked new files included (`check_errors.py`,
+   `commit_gate.py`, `cut.py`, `lines.py`, `notes/worklist-2026-09-21.md`, `test_change.py`, `test_check_errors.py`),
+   and `DEVELOPMENT_WORKFLOW.md` (its harness corrections). HANDOFF.md, PLANNING_LOG.md, native_control_plan.md,
+   `tools/` and `theories/` are content or not this work's: ask the owner. Style: `git log -3`, no attribution lines.
+   `git commit` has not been tried inside the sandbox (`.git/config` and `.git/hooks` are read-only there); do not use
+   `git push -u`, which writes the config. `git push origin main` reaches github.com (gh's token is a file).
+4. **The owner starts the run**: `.claude/orchestration/start.sh --fresh`, from their terminal.
+5. **On the first live sessions, confirm what could not be tested from here**: that hooks run outside the sandbox (the
+   check gate, `work_meter.session_guard`, counts Isabelle runs and claims: with one check running, another session's
+   check is refused naming it); that a session in a tree writes `state/` and `.build/tasks` through the explicit entries
+   (its `v2.py` calls succeed, `state/v2.log` shows them); that `state/wanted/` empties within seconds of a request; and
+   that `health.py` from the owner's session says "daemon: alive".
+
+## Open for the owner
+
+- Narrowing `/tmp`: any session can delete the heap store or move the active-base pointer; narrowing needs the pointer
+  moved into `/tmp/structural-isabelle` (four places).
+- `tools/investigate.py` and `tools/build.py` default their heap store to `$TMPDIR`, which is `/tmp/claude-1000` inside
+  the sandbox: a bare run builds a second store.
+- Whether the two new memory files belong in the bases: they are rules for any session's shell, not notes about the
+  orchestration, but every base loads them.

@@ -24,6 +24,14 @@ import calendar
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT = os.path.dirname(os.path.dirname(HERE))
 SESSIONS = os.path.expanduser("~/.claude/projects/" + PROJECT.replace("/", "-").replace("_", "-"))
+
+
+def claude_transcripts():
+    """The project's Claude transcripts and its task trees' (v2.transcript_dirs): the owner may speak to a session
+    that works in a tree of its own."""
+    sys.path.insert(0, HERE)
+    import v2
+    return [f for d in v2.transcript_dirs(SESSIONS) for f in glob.glob(d + "/*.jsonl")]
 # what the owner typed that is not a direction: the interruption marks and the slash commands, and a single short
 # word — a stray keystroke or a shell command typed into the wrong window ("a" and "ls" both reached a knowledge
 # base as directions on 2026-09-20). Out of the session it was typed in, such a word decides nothing.
@@ -168,7 +176,7 @@ def uncurated():
     since = json.loads(Path(HERE, "owner-directions-selection.json").read_text())["reviewed_through"]
     since_epoch = calendar.timegm(time.strptime(since[:19], "%Y-%m-%dT%H:%M:%S"))
     rows, seen, goals = [], set(), set()
-    sources = [("Claude", f) for f in glob.glob(SESSIONS + "/*.jsonl") if os.path.getmtime(f) > since_epoch]
+    sources = [("Claude", f) for f in claude_transcripts() if os.path.getmtime(f) > since_epoch]
     sources += [("Codex", f) for f in glob.glob(CODEX_SESSIONS + "/*/*/*/rollout-*.jsonl")
                 if os.path.getmtime(f) > since_epoch]
     for kind, f in sources:
@@ -241,7 +249,7 @@ def main():
         print(f"{len(selection['sections'])} curated topics; source excerpts verified; {len(result.encode())} bytes")
         return
     out, goals, count = [], set(), 0
-    for f in sorted(glob.glob(SESSIONS + "/*.jsonl"), key=os.path.getmtime):
+    for f in sorted(claude_transcripts(), key=os.path.getmtime):
         rows = []
         for line in open(f, errors="ignore"):
             if '"type":"user"' not in line:

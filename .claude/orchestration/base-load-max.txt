@@ -1,10 +1,10 @@
-# DRAFT (2026-09-19, revised after the owner's answers): the load list of the planner's and the knowledge base's
-# base (`max`, max): design A″ of notes/bases-design.md with the founding theories at definitions (the owner's
-# choice), not in use; the owner builds the base. Ordered from reference to direction, since the most recent tokens
+# The load list of the planner's and the knowledge base's base (`max`, max; written 2026-09-19, revised after the
+# owner's answers, built from 2026-09-20): design A″ of notes/bases-design.md with the founding theories at
+# definitions (the owner's choice); the owner builds the base. Ordered from reference to direction, since the most recent tokens
 # weigh most: what exists, the founding theories as definitions and the central ideas' statements; then the decisions
 # by name, the reasoning inventory, the plan, and last the owner's words and the operating rules. The knowledge base's
 # own load (HANDOFF.md, the ledger, the owner's new words) follows it. Measured by a real pack: 532K with the plan and
-# REASONING_REUSE.md as they are, about 474K once they are condensed (notes/bases-design.md, section 10). In the
+# REASONING_REUSE.md as they are, about 474K once they are condensed (notes/bases-design.md, section 10).
 # In the layered design (section 8) the tiers up to the central ideas are the stable reference and the rest is the
 # frontier layer, refreshed on its own: the generated indexes, the reasoning inventory, the plan and the owner's
 # words are what change, and they changed by 66,526 tokens on 2026-09-20 while the reference moved by nothing. HANDOFF.md, owner-ledger.md and state/owner-directions-new.md are never held here.
@@ -310,12 +310,12 @@ AGENTS.md
 DEVELOPMENT_WORKFLOW.md
 problems.txt
 # optional (never loaded; move a line into a pinned tier to hold it)
-theories/Development_Answer_0ccf746fe2cf.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
-theories/Development_Publication.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
-theories/Development_Seed_Publication.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
-theories/Factor_Demanded_Package_Readings.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
-theories/Finite_Demanded_Closures.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
-theories/RRA_Finite_Transactions.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and gathers carry what is new
+theories/Development_Answer_0ccf746fe2cf.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
+theories/Development_Publication.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
+theories/Development_Seed_Publication.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
+theories/Factor_Demanded_Package_Readings.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
+theories/Finite_Demanded_Closures.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
+theories/RRA_Finite_Transactions.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
 theories/Native_Development_Seed.thy  # the implementers' measured working frontier from here, for the implementation base
 tools/probe_theories.py  # 7 sessions, 116K pulled, ~1K tokens
 theories/Ordered_Finite_Rows.thy  # 2 sessions, 14K pulled, ~1K tokens

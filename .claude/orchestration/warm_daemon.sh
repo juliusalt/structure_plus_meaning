@@ -11,6 +11,7 @@
 # orchestration is active (state/v2.json) or a base is sealed.
 #   warm_daemon.sh --ensure   start it, fully detached, unless it is already running (returns at once)
 HERE=$(cd "$(dirname "$0")" && pwd); STATE="${ORCH_STATE_DIR:-$HERE/state}"; mkdir -p "$STATE"
+"$HERE/v2.py" control || exit 3  # started inside Claude Code's sandbox it could start and stop nothing
 if [ "${1:-}" = "--ensure" ]; then
   p=$(cat "$STATE/warm.pid" 2>/dev/null)
   # the number alone can belong to whatever took that pid after a daemon died without clearing the file, and then
@@ -23,6 +24,10 @@ if [ "${1:-}" = "--ensure" ]; then
   exit 0
 fi
 echo $$ > "$STATE/warm.pid"
+# A heartbeat for what cannot see this process: inside Claude Code's sandbox only a command's own processes are
+# visible, and health.py run from a session read the live daemon as dead (2026-09-21). It ends with the daemon, and
+# does not wait on a watchdog pass, which may take ten minutes.
+( while kill -0 $$ 2>/dev/null; do touch "$STATE/warm.beat"; sleep "${ORCH_BEAT_EVERY:-5}"; done ) >/dev/null 2>&1 &
 # 2400 against a cache entry's 3300 s: fifteen minutes of margin. At 3000 the margin was five, and the max and high
 # bases both fell through it on 2026-09-20 while the orchestration was stopped — a miss costs a whole cold write
 # (461K and 511K), and two misses in a row stop a base's pings for good.
@@ -45,6 +50,14 @@ while :; do
     [ "$(age "$STATE/$who-base.hit")" -ge "$every" ] && "$HERE/base.sh" "$who" warm >/dev/null 2>> "$STATE/warm.log"
   done
   [ "$any" = 0 ] && ! active && break
-  sleep "${ORCH_DAEMON_EVERY:-60}"
+  # A request from inside the sandbox (state/wanted/, v2.want: a session released, a dispatch, a final check) is
+  # carried out within seconds rather than at the next minute. Only while the run is active and not stopped: then the
+  # watchdog returns before the dispatch that takes requests, and they wait for the next start.
+  left=${ORCH_DAEMON_EVERY:-60}
+  while [ "$left" -gt 0 ]; do
+    step=2; [ "$left" -lt 2 ] && step=$left
+    sleep "$step"; left=$((left - step))
+    ls "$STATE/wanted" 2>/dev/null | grep -q '\.json$' && [ ! -e "$STATE/stopped" ] && active && break
+  done
 done
 rm -f "$STATE/warm.pid"

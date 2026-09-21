@@ -30,6 +30,6 @@ Production for you: your findings (the files under Deliverable) and your drafts 
 
 {{owner}}
 
-{{finishing}}
+{{finishing}} The planner judges an investigation, not a reviewer.
 
 {{result}}

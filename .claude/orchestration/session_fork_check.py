@@ -14,9 +14,17 @@ import sys
 PROJECT = os.path.expanduser("~/.claude/projects/" + os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))).replace("/", "-").replace("_", "-"))
 
 
+def transcript(session):
+    """The session's transcript: the project's, or its task tree's when it was started in one (v2.transcript_dirs)."""
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import v2
+    return next((p for d in v2.transcript_dirs(PROJECT) for p in [f"{d}/{session}.jsonl"] if os.path.exists(p)),
+                f"{PROJECT}/{session}.jsonl")
+
+
 def requests(session):
     out = []
-    for line in open(f"{PROJECT}/{session}.jsonl", errors="ignore"):
+    for line in open(transcript(session), errors="ignore"):
         if '"usage"' not in line:
             continue
         try:

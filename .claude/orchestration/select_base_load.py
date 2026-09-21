@@ -93,7 +93,7 @@ def implementer_sessions():
 
 
 def fact_theories():
-    """Which theory each bare fact name belongs to, so that a gather naming a fact counts for its theory."""
+    """Which theory each bare fact name belongs to, so that a read naming a fact counts for its theory."""
     out = {}
     for path in sorted(glob.glob(os.path.join(PROJECT, "theories", "*.thy"))):
         rel = os.path.relpath(path, PROJECT)
@@ -142,7 +142,7 @@ def measure(files):
                             if os.path.isfile(os.path.join(PROJECT, cand)):
                                 found.add(cand)
                                 break
-                    # A gather and show.py name facts, not files (`Theory.fact`, or a bare fact name): that is the
+                    # `v2.py read` (a gather, before 2026-09-21) and show.py name facts, not files (`Theory.fact`, or a bare fact name): that is the
                     # reading the protocols prescribe, and counting only paths made it invisible — which is why the
                     # xhigh roles, who read statements by name, measured one theory on 2026-09-20 and the
                     # implementers, who open whole files, measured six.
@@ -253,7 +253,7 @@ def sessions_of(roles, limit=SESSIONS):
                           key=lambda s: s.get("started") or 0, reverse=True)
     except Exception:  # noqa: BLE001 — a missing or unreadable state must not stop a refresh
         recorded = []
-    out = [f"{TRANSCRIPTS}/{s['sid']}.jsonl" for s in recorded]
+    out = [v2.transcript(s["sid"]) for s in recorded]  # a session in a task's tree keeps its transcript there
     out = [f for f in out if os.path.exists(f)][:limit]
     return out or implementer_sessions()
 

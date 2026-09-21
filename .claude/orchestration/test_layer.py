@@ -108,7 +108,7 @@ class TransitionTests(unittest.TestCase):
     def record_layer(self, sid, base="xhigh-sid"):
         (self.w.state / "xhigh-layer.json").write_text(json.dumps(
             {"sessionId": sid, "model": "claude-opus-5[1m]", "effort": "xhigh", "context": 525_000, "base": base,
-             "sealed": "2026-09-20T10:00:00"}))
+             "sealed": "2026-09-20T10:00:00", "flags": fakes.LEAN}))
 
     def py(self, code):
         out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(HERE)!r}); import v2\n{code}"],
@@ -277,5 +277,5 @@ class StartGuardTests(unittest.TestCase):
 
     def test_a_base_with_a_layer_recorded_needs_none(self):
         (self.w.state / "xhigh-layer.json").write_text(json.dumps(
-            {"sessionId": "l", "model": "m", "effort": "xhigh", "context": 1, "base": "xhigh-sid"}))
+            {"sessionId": "l", "model": "m", "effort": "xhigh", "context": 1, "base": "xhigh-sid", "flags": fakes.LEAN}))
         self.assertEqual(self.layerless({str(self.w.project / "ref.md"): "d"}), "")

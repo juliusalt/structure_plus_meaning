@@ -11,11 +11,8 @@
 #                               session, chunk by chunk through Bash (returns at once); BASE_PACK_DIR can name an
 #                               already frozen pack. build-packed is the same command.
 #   base.sh WHO pack            prepare and verify a pack without launching a session
-#   base.sh WHO build-files     the older loader: the session reads every listed file with the Read tool
 #   base.sh WHO status          one line: load state, measured context against the expected size
 #   base.sh WHO seal            when the load has finished: verify its size, snapshot the held files, stop it, record it
-#   base.sh WHO extend <file>   have a file-loaded base read one more file (the prefix grows, the cache stays valid);
-#                               seal again after. A packed base is rebuilt instead.
 #   base.sh WHO warm            hit the base's cache entry with a throwaway fork, verify the hit, delete the fork
 #                                    (each ping's text is unique, so the longest cached prefix it can match is the base itself)
 #   base.sh WHO layer           refresh the frontier layer of a split list (a `# === layer ===` line): re-measure the
@@ -33,7 +30,7 @@ case "$who" in
   max)   name=${BASE_NAME:-max-base};   effort=${BASE_EFFORT:-max};   list=base-load-max.txt ;;
   xhigh) name=${BASE_NAME:-xhigh-base}; effort=${BASE_EFFORT:-xhigh}; list=base-load-xhigh.txt ;;
   high)  name=${BASE_NAME:-high-base};  effort=${BASE_EFFORT:-high};  list=base-load-high.txt ;;
-  *) echo "usage: base.sh max|xhigh|high pack|build|build-files|status|seal|extend <file>|layer|warm|drop" >&2; exit 2 ;;
+  *) echo "usage: base.sh max|xhigh|high pack|build|status|seal|layer|warm|drop" >&2; exit 2 ;;
 esac
 model=${BASE_MODEL:-claude-opus-5[1m]}
 role="$HERE/library-prompt.md"  # one role-neutral system prompt for every base; each fork's first message says its role
@@ -44,6 +41,9 @@ export ORCH_LOAD_LIST="${BASE_LOAD_LIST:-$HERE/$list}"
 # The base and every session forked from it start with exactly these tools and no connectors or skills list:
 # the prefix must be identical for a fork to read the base from cache. The same file is read by v2.py (fork).
 LEAN=$(cat "$HERE/session-flags")
+# A base records the flags it was started with, and nothing forks one started with others: every fork of it would
+# write its whole prefix again (the tools come first in it). A record from before 2026-09-21 has none: rebuild it.
+lean_as() { [ "$(field "$1" flags)" = "$(echo $LEAN)" ]; }
 rec="$STATE/$who-base.json"; building="$STATE/$who-base-building.json"; SESSIONS="$HOME/.claude/projects/$(echo "$PROJECT" | tr '/_' '--')"
 layer="$STATE/$who-layer.json"
 # the list of the base asked for, named outright: manifest reads ORCH_LOAD_LIST, and without it falls back to max's
@@ -73,33 +73,36 @@ prepare_pack() {
   echo "packed base: $packed"
 }
 
+# Starting, stopping and removing sessions cannot be done from inside Claude Code's sandbox (v2.py control): these
+# are run from the owner's own terminal, or by the daemon, which runs outside it.
+case "$cmd" in
+  build|build-packed|layer|seal|warm) "$HERE/v2.py" control || exit 3 ;;
+esac
 # Nothing here starts a session while the hold is on; packing and reporting still do, since they start none.
 case "$cmd" in
-  build|build-packed|build-files|layer|extend)
+  build|build-packed|layer)
     [ -e "$STATE/no-launch" ] && { echo "refused: $cmd starts a session and the hold is on ($(cat "$STATE/no-launch" 2>/dev/null)). Take it off when you mean to begin: rm $STATE/no-launch" >&2; exit 3; } ;;
 esac
 case "$cmd" in
   pack) prepare_pack ;;
-  build|build-packed|build-files)
+  build|build-packed)
     [ -e "$rec" ] && { echo "refused: a $who base is recorded; run base.sh $who drop first"; exit 3; }
     [ -n "$("$HERE/session_row.py" "$name")" ] && { echo "refused: a session named $name is already live"; exit 3; }
     packed=""
     [ "$split" = 1 ] && export ORCH_BASE_PART=stable  # the rest is the layer, built by `base.sh WHO layer`
-    if [ "$cmd" != build-files ]; then
-      prepare_pack || exit $?
-      bootstrap=$(python3 "$HERE/base_pack.py" bootstrap "$packed") || exit $?
-    else
-      bootstrap=$(sed "s/{WHO}/$who/g" "${BASE_BOOTSTRAP_FILE:-$HERE/base-bootstrap.txt}")
-    fi
+    # packed and loaded through Bash: the older loader read every file with the Read tool, which no base has had since
+    # the owner took it out (2026-09-21), and `extend` went with it
+    prepare_pack || exit $?
+    bootstrap=$(python3 "$HERE/base_pack.py" bootstrap "$packed") || exit $?
     claude --bg $LEAN --model "$model" --effort "$effort" --permission-mode auto --autocompact "${BASE_AUTOCOMPACT:-1M}" \
       --settings "$HERE/base-settings.json" --append-system-prompt-file "${BASE_PROMPT_FILE:-$role}" \
       -n "$name" "$bootstrap" >/dev/null 2>&1
     sleep 2; set -- $("$HERE/session_row.py" "$name")
     [ -n "${4:-}" ] || { echo "start of $name not confirmed"; exit 4; }
-    python3 - "$building" "$4" "$model" "$effort" "$name" "$packed" <<'PY'
+    python3 - "$building" "$4" "$model" "$effort" "$name" "$packed" "$(echo $LEAN)" <<'PY'
 import json, sys
-path, sid, model, effort, name, packed = sys.argv[1:]
-record = dict(sessionId=sid, model=model, effort=effort, name=name)
+path, sid, model, effort, name, packed, flags = sys.argv[1:]
+record = dict(sessionId=sid, model=model, effort=effort, name=name, flags=flags)
 if packed:
     record["pack"] = packed
 json.dump(record, open(path, "w"))
@@ -121,16 +124,11 @@ PY
     case "${3:-}" in done|idle) ;; "") echo "refused: $name is not live"; exit 3 ;; *) echo "refused: $name is still ${3}"; exit 3 ;; esac
     ctx=$("$HERE/ctx_gauge.py" measure "$SESSIONS/$sid.jsonl")
     packed=$(field "$building" pack)
-    if [ -n "$packed" ]; then
-      python3 "$HERE/base_pack.py" check-load "$packed" "$SESSIONS/$sid.jsonl" || exit 3
-      # The manifest must describe the frozen sources the model received, even
-      # if the working files changed while it was loading.
-      python3 "$HERE/base_pack.py" snapshot "$packed" "$STATE/$who-manifest.json" || exit 3
-    else
-      want=$(( $(expected) * 850 ))
-      [ "$ctx" -ge "$want" ] || { echo "refused: context $ctx is below 85% of the expected load ($want tokens): the load is incomplete; look with claude attach $2"; exit 3; }
-      "$HERE/manifest.py" snapshot "$who" >/dev/null
-    fi
+    [ -n "$packed" ] || { echo "refused: $name was not loaded from a pack, which is the one loader there is"; exit 3; }
+    python3 "$HERE/base_pack.py" check-load "$packed" "$SESSIONS/$sid.jsonl" || exit 3
+    # The manifest must describe the frozen sources the model received, even
+    # if the working files changed while it was loading.
+    python3 "$HERE/base_pack.py" snapshot "$packed" "$STATE/$who-manifest.json" || exit 3
     claude stop "$2" >/dev/null 2>&1
     python3 - "$building" "$rec" "$ctx" <<'PY'
 import json, sys, time
@@ -141,20 +139,12 @@ PY
     target=${ORCH_BASE_TARGET:-530000}  # manifest.TARGET
     [ "$ctx" -gt $(( target * 103 / 100 )) ] && echo "note: measured $ctx is over the $target target; trim $list before the next build"
     echo "sealed $who base $sid at $ctx tokens (target $target); its forks have about $(( (${ORCH_WINDOW:-1000000} - ctx) / 1000 ))K of room; keep-warm daemon running" ;;
-  extend)
-    file=${3:?usage: base.sh $who extend <file>}; [ -e "$rec" ] || { echo "no sealed $who base"; exit 1; }
-    [ -z "$(field "$rec" pack)" ] || { echo "refused: a packed base has a frozen, verified load; add the file to the load list and build a new pack"; exit 3; }
-    [ -f "$file" ] || { echo "no such file: $file"; exit 1; }
-    # no flags: a sealed background session resumed with flags starts a copy; resumed bare, it continues itself
-    claude --bg --resume "$(field "$rec" sessionId)" \
-      "You are being loaded as the base again: read $file in full with the Read tool (all of its parts together if it is large), then reply LOADED and end your turn. Do nothing else." >/dev/null 2>&1
-    sleep 3
-    mv "$rec" "$building"; echo "extending the $who base with $file; check with base.sh $who status, then base.sh $who seal" ;;
   warm)
     [ -e "$rec" ] || { echo "no sealed $who base" >&2; exit 1; }
     # what the roles fork is what must stay warm: the layer when there is one, and a fork of it reads the whole
     # prefix under it, so the stable base stays warm with it (measured 2026-09-20: 538,051 of 538,044 tokens read)
     forked="$rec"; [ -e "$layer" ] && forked="$layer"
+    lean_as "$forked" || { echo "refused: the $who base was started with other tools than session-flags gives now, so a ping would write its whole prefix again: build it again (base.sh $who build, then seal)" >&2; exit 3; }
     sid=$(field "$forked" sessionId); n="warm-$who"
     claude --bg --resume "$sid" --fork-session $LEAN --model "$(field "$forked" model)" --effort "$(field "$forked" effort)" \
       --permission-mode auto --settings "$HERE/base-settings.json" -n "$n" \
@@ -174,6 +164,7 @@ PY
   layer)
     [ "$split" = 1 ] || { echo "the $who list is not split by a layer line: there is no layer to refresh" >&2; exit 1; }
     [ -e "$rec" ] || { echo "no sealed $who base to layer over (base.sh $who build, then seal)" >&2; exit 1; }
+    lean_as "$rec" || { echo "refused: the $who base was started with other tools than session-flags gives now, so a layer over it would write its whole prefix again: build it again (base.sh $who build, then seal)" >&2; exit 3; }
     export ORCH_BASE_PART=layer
     lock="$STATE/$who-layer.building"
     if [ -e "$lock" ] && [ "$(( $(date +%s) - $(stat -c %Y "$lock") ))" -lt "${LAYER_LOCK:-2400}" ]; then
@@ -207,11 +198,11 @@ PY
     # that holds the layer before this one is told what changed since the load it actually has, not since this one
     ctx=$("$HERE/ctx_gauge.py" measure "$SESSIONS/$lsid.jsonl")
     claude stop "$lid" >/dev/null 2>&1
-    python3 - "$layer" "$lsid" "$(field "$rec" model)" "$(field "$rec" effort)" "$n" "$packed" "$ctx" "$(field "$rec" sessionId)" <<'LAYERREC'
+    python3 - "$layer" "$lsid" "$(field "$rec" model)" "$(field "$rec" effort)" "$n" "$packed" "$ctx" "$(field "$rec" sessionId)" "$(echo $LEAN)" <<'LAYERREC'
 import json, sys, time
-path, sid, model, effort, name, packed, ctx, base_sid = sys.argv[1:]
+path, sid, model, effort, name, packed, ctx, base_sid, flags = sys.argv[1:]
 json.dump(dict(sessionId=sid, model=model, effort=effort, name=name, pack=packed, context=int(ctx),
-               base=base_sid, sealed=time.strftime("%Y-%m-%dT%H:%M:%S")), open(path, "w"))
+               base=base_sid, sealed=time.strftime("%Y-%m-%dT%H:%M:%S"), flags=flags), open(path, "w"))
 LAYERREC
     # the layer this replaces is stopped, never removed: a fork launched from it while this ran must still find it,
     # and a sealed session is exactly what a base is
@@ -219,5 +210,5 @@ LAYERREC
     touch "$STATE/$who-base.hit" "$STATE/$who-base.used"; rm -f "$STATE/$who-base.miss"; daemon
     echo "sealed the $who layer $lsid at $ctx tokens; its forks have about $(( (${ORCH_WINDOW:-1000000} - ctx) / 1000 ))K of room" ;;
   drop) rm -f "$rec" "$building" "$layer" "$STATE/$who-manifest.json" "$STATE/$who-layer-manifest.json" "$STATE/$who-base.hit" "$STATE/$who-base.used" "$STATE/$who-base.miss"; echo "$who base and layer forgotten; live sessions start plain" ;;
-  *) echo "usage: base.sh max pack|build|build-files|status|seal|extend <file>|layer|warm|drop" >&2; exit 2 ;;
+  *) echo "usage: base.sh max pack|build|status|seal|layer|warm|drop" >&2; exit 2 ;;
 esac

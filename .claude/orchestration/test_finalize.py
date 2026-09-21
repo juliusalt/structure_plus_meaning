@@ -84,7 +84,7 @@ class FinalizeTests(unittest.TestCase):
 
     def test_a_commit_waits_for_another_git_process_holding_the_index(self):
         self.spec("true")
-        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3"}})
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"}})
         lock = self.w.project / ".git/index.lock"
         lock.write_text("")
         release = subprocess.Popen(["sh", "-c", f"sleep 3; rm -f {lock}"])
@@ -93,6 +93,41 @@ class FinalizeTests(unittest.TestCase):
         self.assertEqual(code, 0, err)
         self.assertEqual(self.stage(), "done")
         self.assertEqual(self.w.git("log", "-1", "--format=%s"), "Add the readiness theory\n")
+
+    def test_a_check_run_again_writes_to_a_fresh_output(self):
+        # the check tool refuses an output directory that exists, to keep its evidence, so a check run again — after
+        # a quick fix, or for a task taken back to be checked before its review — never ran as written (2026-09-21:
+        # tasks 22 and 50 named .build/check-task22 and .build/check-50, both there)
+        (self.w.project / ".build/out").mkdir(parents=True)
+        self.spec('python3 -c "import os, sys; os.mkdir(sys.argv[2])" --output .build/out')
+        code, _, err = self.w.run("finalize.py", "check", "3")
+        self.assertEqual(code, 0, err)
+        self.assertTrue((self.w.project / ".build/out-2").is_dir())
+        self.assertIn("holds an earlier run's evidence", (self.w.state / "v2.log").read_text())
+
+    def test_nothing_is_committed_before_its_review_accepts_it(self):
+        # the owner, 2026-09-21: review before commit, never after. Task 52 was to commit four tasks' work in one
+        # commit with their reviews to follow, and the finalizer took whatever a task named
+        self.spec("true")
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3"}})
+        self.assertEqual(self.w.run("finalize.py", "commit", "3")[0], 1)  # its own review never accepted it
+        self.assertIn("committed after its review has accepted it", self.outcome()["commit_error"])
+        self.w.write("tools/theirs.py", "print('task 5')\n")
+        self.py('v2.own("5", ["tools/theirs.py"])')
+        self.w.task("5", subject="another task", status="completed")
+        self.w.write(".build/tasks/3/finalize.json", json.dumps(
+            {"check": "true", "files": ["theories/Ready.thy", "tools/theirs.py"], "message": ".build/tasks/3/commit.md"}))
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3",
+                                   "verdict": "accept"}, "5": {"stage": "done"}})
+        self.assertEqual(self.w.run("finalize.py", "commit", "3")[0], 1)  # nor another's, completed or not
+        self.assertIn("tools/theirs.py (task 5)", self.outcome()["commit_error"])
+        self.assertEqual(self.w.git("log", "-1", "--format=%s"), "start\n")
+        self.assertEqual(self.w.read_task("5")["status"], "in_progress")  # and task 5 was taken back: see below
+        self.w.task("5", subject="another task", status="completed")
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3",
+                                   "verdict": "accept"}, "5": {"stage": "done", "review_tasks": ["6"]},
+                             "6": {"verdict": "accept"}})
+        self.assertEqual(self.w.run("finalize.py", "commit", "3")[0], 0)  # once both are reviewed, it lands
 
     def test_a_task_that_leaves_leaves_its_work_in_the_tree(self):
         # the harness took a task's changes out so the next check saw one task's work alone, and moved the parts of
@@ -158,7 +193,7 @@ class FinalizeTests(unittest.TestCase):
     def test_an_accepted_task_is_committed_with_its_named_files_and_pushed(self):
         self.spec("true")
         self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3",
-                                   "summary": "Readiness is in."}})
+                                   "summary": "Readiness is in.", "verdict": "accept"}})
         code, _, err = self.w.run("finalize.py", "commit", "3")
         self.assertEqual(code, 0, err)
         o = self.outcome()
@@ -178,7 +213,7 @@ class FinalizeTests(unittest.TestCase):
         self.w.write("theories/Ready.thy", "")
         self.w.git("add", "theories/Ready.thy")
         self.w.git("commit", "-q", "-m", "already")
-        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3"}})
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"}})
         self.assertEqual(self.w.run("finalize.py", "commit", "3")[0], 1)
         self.assertEqual(self.stage(), "planner")
         self.assertIn("its commit failed", self.heard())
@@ -186,7 +221,7 @@ class FinalizeTests(unittest.TestCase):
     def test_a_commit_carrying_a_placeholder_is_refused_and_goes_to_the_planner(self):
         self.spec("true")
         self.w.write("theories/Ready.thy", "theory Ready imports Main begin\n(* CHECK_NUMBERS *)\nend\n")
-        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3"}})
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"}})
         self.assertEqual(self.w.run("finalize.py", "commit", "3")[0], 1)
         self.assertEqual(self.w.git("log", "--format=%s"), "start\n")  # nothing committed
         self.assertEqual(self.w.git("diff", "--cached", "--name-only"), "")  # and nothing left staged
@@ -198,7 +233,7 @@ class FinalizeTests(unittest.TestCase):
         self.spec("true")
         self.w.write("theories/Ready.thy", "theory Ready imports Main begin\n"
                      "(* prints f'at most {ISABELLE_RUN_LIMIT} runs', and quotes the harness's {WHAT} *)\nend\n")
-        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3"}})
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"}})
         self.assertEqual(self.w.run("finalize.py", "commit", "3")[0], 0)
         self.assertEqual(self.w.git("log", "-1", "--format=%s"), "Add the readiness theory\n")
         self.assertIn("taken as its own words", (self.w.state / "v2.log").read_text())
@@ -209,7 +244,7 @@ class FinalizeTests(unittest.TestCase):
             {"check": "true", "files": ["theories/Ready.thy", "THEORY_MAP.md"],
              "message": ".build/tasks/3/commit.md"}))
         self.w.task("4")
-        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3"},
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"},
                              "4": {"stage": "running"}})
         (self.w.state / "tree-owners.json").write_text(json.dumps({"THEORY_MAP.md": "4"}))
         # it waits for an append in flight to land, and refuses only when it does not
@@ -223,7 +258,7 @@ class FinalizeTests(unittest.TestCase):
         self.w.write("DECISIONS.md", entry)
         self.w.write(".build/tasks/3/finalize.json", json.dumps(
             {"check": "true", "files": ["DECISIONS.md"], "message": ".build/tasks/3/commit.md"}))
-        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3"}})
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"}})
         self.assertEqual(self.w.run("finalize.py", "commit", "3")[0], 0)
         mine = self.w.git("rev-parse", "--short", "HEAD").strip()
         # its own hash does not exist while it is being made: the commit records what it left open
@@ -238,7 +273,8 @@ class FinalizeTests(unittest.TestCase):
         self.w.write(".build/tasks/4/finalize.json", json.dumps(
             {"check": "true", "files": ["DECISIONS.md"], "message": ".build/tasks/4/commit.md"}))
         self.w.session("implement-4", "implementer", "k4", task="4", state="done", live=False)
-        self.w.set_st(tasks={"4": {"stage": "committing", "role": "implementer", "session": "implement-4"}})
+        self.w.set_st(tasks={"4": {"stage": "committing", "role": "implementer", "session": "implement-4",
+                                   "verdict": "accept"}})
         self.assertEqual(self.w.run("finalize.py", "commit", "4")[0], 0)
         text = (self.w.project / "DECISIONS.md").read_text()
         self.assertIn(f"Recorded 2026-09-20, commit `{mine}`.", text)
@@ -280,6 +316,145 @@ class FinalizeTests(unittest.TestCase):
         self.assertLess(time.time() - started, 4)
         self.assertEqual(subprocess.run(["pgrep", "-f", "^sleep 5$"], capture_output=True).stdout, b"")
         self.assertIn("did not finish within 1 s", (self.w.project / ".build/tasks/3/finalize.log").read_text())
+
+
+class LandingTests(unittest.TestCase):
+    """Main never moves into a state worse than it was, and never by work checked against a main that has moved on:
+    HEAD went inconsistent on 2026-09-20 through a commit that took ROOT whole, and a task in its own tree was
+    checked on its branch, never together with what landed beside it."""
+
+    tearDown, outcome, stage, heard = (FinalizeTests.tearDown, FinalizeTests.outcome, FinalizeTests.stage,
+                                       FinalizeTests.heard)
+
+    def setUp(self):
+        FinalizeTests.setUp(self)
+        (self.w.project / "theories/Ready.thy").unlink()  # the fixture's installed file: here it is written per test
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n")
+        self.w.write("theories/Base.thy", "theory Base imports Main begin end\n")
+        self.w.write(".gitattributes", "ROOT merge=union\n")  # as the repository merges its index files
+        self.w.git("add", "ROOT", "theories/Base.thy", ".gitattributes")
+        self.w.git("commit", "-q", "-m", "the base theory")
+        self.w.git("push", "-q", "origin", "main")
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"}})
+
+    def commit(self, files, env=None):
+        self.w.write(".build/tasks/3/finalize.json", json.dumps(
+            {"check": "true", "files": files, "message": ".build/tasks/3/commit.md"}))
+        return self.w.run("finalize.py", "commit", "3", env=env)
+
+    def test_a_commit_that_would_leave_head_inconsistent_is_refused(self):
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Ready\n")
+        self.w.write("theories/Ready.thy", "theory Ready imports Base begin end\n")
+        head = self.w.git("rev-parse", "HEAD")
+        self.assertEqual(self.commit(["ROOT"])[0], 1)  # the declaration without the theory it declares
+        self.assertEqual(self.w.git("rev-parse", "HEAD"), head)
+        self.assertIn("would leave HEAD inconsistent", self.outcome()["commit_error"])
+        self.assertIn("ROOT declares Ready, which is not in theories/", self.heard())
+        self.assertEqual(self.w.git("diff", "--cached", "--name-only"), "")  # and nothing is left staged
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"}})
+        self.assertEqual(self.commit(["ROOT", "theories/Ready.thy"])[0], 0)  # with it, it lands
+        self.assertEqual(self.stage(), "done")
+
+    def test_a_commit_is_not_refused_for_trouble_head_already_has(self):
+        # what HEAD already holds is not this commit's to repair: it may not add to it, and nothing more
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Ghost\n")
+        self.w.git("commit", "-q", "--no-verify", "-am", "declare a theory that is not there")
+        self.w.write("theories/Ready.thy", "theory Ready imports Base begin end\n")
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Ghost\n    Ready\n")
+        self.assertEqual(self.commit(["ROOT", "theories/Ready.thy"])[0], 0)
+
+    def tree(self):
+        self.env = dict(ORCH_TREES="1")
+        path = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               "print(v2.worktree('3'))"], env=dict(self.w.env, **self.env), capture_output=True,
+                              text=True).stdout.strip()
+        tree = Path(path)
+        (tree / "theories/Ready.thy").write_text("theory Ready imports Base begin end\n")
+        (tree / "ROOT").write_text("session S = HOL +\n  theories\n    Base\n    Ready\n")
+        return tree
+
+    def land_beside(self):
+        """Another task lands while task 3 is reviewed: its theory and its ROOT line, in main."""
+        self.w.write("theories/Other.thy", "theory Other imports Base begin end\n")
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Other\n")
+        self.w.git("add", "ROOT", "theories/Other.thy")
+        self.w.git("commit", "-q", "-m", "another task's work")
+
+    def test_a_task_in_its_tree_is_checked_with_what_landed_before_it_lands(self):
+        tree = self.tree()
+        self.land_beside()
+        both = "sh -c 'test -f theories/Other.thy && test -f theories/Ready.thy && mkdir -p {output}'"
+        code, _, err = self.commit(["ROOT", "theories/Ready.thy"], env=dict(self.env, ORCH_LANDING_CHECK=both))
+        self.assertEqual(code, 0, err)
+        self.assertTrue((self.w.project / ".build/tasks/3/landing-1").is_dir())  # checked where both stood
+        self.assertEqual(self.stage(), "done")
+        root = (self.w.project / "ROOT").read_text()
+        self.assertIn("    Other\n", root)
+        self.assertIn("    Ready\n", root)
+        self.assertTrue(self.outcome()["landing_check"])
+        self.assertFalse(tree.exists())  # landed: its tree is taken away
+
+    def test_work_that_does_not_stand_with_what_landed_goes_back_to_be_fixed(self):
+        tree = self.tree()
+        self.land_beside()
+        head = self.w.git("rev-parse", "HEAD")
+        code, _, err = self.commit(["ROOT", "theories/Ready.thy"], env=dict(self.env, ORCH_LANDING_CHECK="false"))
+        self.assertEqual(code, 1, err)
+        self.assertEqual(self.w.git("rev-parse", "HEAD"), head)  # main did not move
+        self.assertEqual(self.stage(), "fixing")  # a failed check: the task's quick fix
+        self.assertIn("does not stand with what landed", self.w.st()["tasks"]["3"]["fix_text"])
+        self.assertTrue((tree / "theories/Other.thy").exists())  # the tree holds both, where the fix is checked
+
+    def test_nothing_is_checked_again_when_nothing_landed_meanwhile(self):
+        self.tree()
+        code, _, err = self.commit(["ROOT", "theories/Ready.thy"], env=dict(self.env, ORCH_LANDING_CHECK="false"))
+        self.assertEqual(code, 0, err)  # its check saw exactly what lands
+        self.assertEqual(self.stage(), "done")
+        self.assertNotIn("landing_check", self.outcome())
+
+    def test_main_moves_by_one_landing_at_a_time(self):
+        # a landing's re-check must still be true when it lands: nothing else moves main in between
+        import fcntl
+        self.w.write("theories/Ready.thy", "theory Ready imports Base begin end\n")
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Ready\n")
+        with open(self.w.state / "landing.lock", "a") as held:
+            fcntl.flock(held, fcntl.LOCK_EX)
+            code, _, _ = self.commit(["ROOT", "theories/Ready.thy"], env={"ORCH_ISABELLE_WAIT": "1"})
+        self.assertEqual(code, 1)
+        self.assertIn("other landings held main", self.outcome()["commit_error"])
+        self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"}})
+        self.assertEqual(self.commit(["ROOT", "theories/Ready.thy"])[0], 0)  # and once it is free, it lands
+
+    def test_main_does_not_move_under_a_check_of_the_one_tree(self):
+        # a landing merges into main's working files, which a check of a task in the one tree is reading
+        import fcntl
+        self.w.set_st(tasks={"3": {"stage": "checking", "role": "implementer", "session": "implement-3"}})
+        self.w.write(".build/tasks/3/finalize.json", json.dumps(
+            {"check": "true", "files": ["theories/Base.thy"], "message": ".build/tasks/3/commit.md"}))
+        with open(self.w.state / "landing.lock", "a") as held:
+            fcntl.flock(held, fcntl.LOCK_EX)  # a landing in progress
+            code, _, _ = self.w.run("finalize.py", "check", "3", env={"ORCH_ISABELLE_WAIT": "1"})
+        self.assertEqual(code, 1)
+        self.assertIn("landings held main", (self.w.project / ".build/tasks/3/finalize.log").read_text())
+        with open(self.w.state / "landing.lock", "a") as held:
+            fcntl.flock(held, fcntl.LOCK_SH)  # another check of the one tree: they run beside each other
+            self.w.set_st(tasks={"3": {"stage": "checking", "role": "implementer", "session": "implement-3"}})
+            self.assertEqual(self.w.run("finalize.py", "check", "3", env={"ORCH_ISABELLE_WAIT": "1"})[0], 0)
+
+    def test_a_manual_commit_is_held_to_the_same_rule(self):
+        # the owner's commits and a Codex session's go past the finalizer: the hook holds them to the same function
+        for hook in ("pre-commit", "pre-merge-commit"):
+            os.symlink(fakes.HERE / "commit_gate.py", self.w.project / ".git/hooks" / hook)
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Ready\n")
+        self.w.git("add", "ROOT")
+        refused = subprocess.run(["git", "-C", str(self.w.project), "commit", "-q", "-m", "declare Ready"],
+                                 env=self.w.env, capture_output=True, text=True)
+        self.assertNotEqual(refused.returncode, 0)
+        self.assertIn("ROOT declares Ready, which is not in theories/", refused.stderr)
+        self.w.write("theories/Ready.thy", "theory Ready imports Base begin end\n")
+        self.w.git("add", "theories/Ready.thy")
+        subprocess.run(["git", "-C", str(self.w.project), "commit", "-q", "-m", "declare Ready with its theory"],
+                       env=self.w.env, check=True)  # passes, and raises if it did not
 
 
 if __name__ == "__main__":

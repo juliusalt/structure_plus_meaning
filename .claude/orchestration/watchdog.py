@@ -48,7 +48,7 @@ OWNER_IDLE = int(os.environ.get("ORCH_OWNER_IDLE", 1800))  # an episode the owne
 
 def last_reply(sid):
     """(model, text, epoch) of the last assistant entry, read from the transcript's tail."""
-    path = f"{v2.TRANSCRIPTS}/{sid}.jsonl"
+    path = v2.transcript(sid)
     try:
         size = os.path.getsize(path)
         with open(path, "rb") as f:

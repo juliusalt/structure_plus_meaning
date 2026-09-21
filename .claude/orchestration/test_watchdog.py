@@ -347,7 +347,7 @@ class WatchdogTests(unittest.TestCase):
     def layer(self, who="xhigh"):
         (self.w.state / f"{who}-layer.json").write_text(json.dumps(
             {"sessionId": f"{who}-layer-sid", "model": "claude-opus-5[1m]", "effort": who, "context": 525_000,
-             "sealed": "2026-09-20T10:00:00"}))
+             "sealed": "2026-09-20T10:00:00", "flags": fakes.LEAN}))
 
     def run_layers(self, share):
         """watchdog.layers() in this world, with the refresh itself intercepted: it would otherwise run base.sh

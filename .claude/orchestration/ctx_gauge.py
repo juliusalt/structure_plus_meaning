@@ -42,10 +42,8 @@ CEILING, SOFT, HARD = v2.CEILING, v2.SOFT, v2.HARD
 # Characters of recorded JSON per token: theory text runs 2.4 bytes a token before JSON escaping lengthens it,
 # prose about 4, so the count errs high rather than low.
 CHARS_PER_TOKEN = 2.5
-# What a tool's response adds to the next request: the tools that write files answer with a line (what they wrote is
-# the calling request's own output), a Read is shown whole, and other output is shown up to 30,000 characters
-# (Claude Code's bashOutputMaxChars), beyond which a preview stands for it.
-WRITERS = ("Write", "Edit", "MultiEdit", "NotebookEdit")
+# What a tool's response adds to the next request: its output, up to 30,000 characters (Claude Code's
+# bashOutputMaxChars), beyond which a preview stands for it — though every command's is cut to a read's bytes now.
 SHOWN_CHARS = 30_000
 
 
@@ -96,10 +94,7 @@ def context_tokens(transcript):
 
 
 def response_chars(tool, response):
-    if tool in WRITERS:
-        return 0
-    size = len(json.dumps(response or ""))
-    return size if tool == "Read" else min(size, SHOWN_CHARS)
+    return min(len(json.dumps(response or "")), SHOWN_CHARS)
 
 
 def next_request_tokens(transcript, tool, response):
@@ -274,7 +269,11 @@ def main():
     if role != "kb":
         try:
             note = work_meter.record(hook, rec)
-        except Exception:  # the meter never stops the gauge
+        except Exception as e:  # noqa: BLE001  the meter never stops the gauge — but it is said
+            # a record that fails is a production never counted: the session's reads run out and nothing restarts
+            # them, which is working blind with nothing to say why (2026-09-21). Said, at most once a while.
+            v2.say_once(f"record-failed-{session}", f"ATTENTION the work meter could not record a call of "
+                        f"{rec.get('name')} ({e!r}): its production and its reads may not be counted")
             note = None
         if note:
             parts.append(note)

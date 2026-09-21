@@ -2,6 +2,7 @@
 episodes, the producing and supporting sessions, consultations and the finalizer, run in a throwaway world with a fake
 `claude` (fakes.py)."""
 import json
+import re
 import subprocess
 import tempfile
 import os
@@ -99,7 +100,7 @@ class FormTests(unittest.TestCase):
         values = dict(NAME="x-1", ID="7", KIND="build", SUBJECT="S", BRIEF="B", STALE="st", WHAT="w", SESSION="s",
                       BEFORE="", NODE="n", WHY="y", GRAPH="g", LIST="l", QID="q1", ASKER="a", TARGET="kb-1",
                       QUESTION="q", NOTE="", EVENTS="e", QUEUE="7", STATUS="s", OWNER="", HANDOFF="h", ORIGIN_NOTE="",
-                      TASK="6", REVIEW="r", FIRST="", TREE="t")
+                      TASK="6", REVIEW="r", FIRST="", TREE="t", WHERE="")
         import re
         with tempfile.TemporaryDirectory() as temp, patch.object(v2, "STATE", temp):
             # in its own state: render logs what it could not fill, and this test wrote that into the live log
@@ -109,6 +110,20 @@ class FormTests(unittest.TestCase):
                 self.assertEqual(re.findall(r"\{[A-Z_]+\}|\{\{[\w-]+\}\}", text), [], role)
             log = Path(temp) / "v2.log"
             self.assertEqual(log.read_text() if log.exists() else "", "")  # nothing was left out
+
+
+class AbsolutePathTests(unittest.TestCase):
+    def test_a_brief_naming_the_repository_by_its_absolute_path_is_not_in_form(self):
+        # the planner's working rule since 2026-09-20 pinned a check to the one tree by an absolute script path: from
+        # a task's own tree that checks the one tree and passes on work it never saw. Relative is right everywhere,
+        # since the finalizer runs a check where the task works; the one .build may be named as it is
+        pinned = BRIEF.replace("Acceptance: `true`",
+                               f"Acceptance: `python3 -B {v2.PROJECT}/tools/incremental_check.py check`")
+        self.assertTrue(any("by its absolute path" in p and "tools/incremental_check.py" in p
+                            for p in v2.brief_problems(pinned)))
+        relative = BRIEF.replace("Acceptance: `true`", "Acceptance: `python3 -B tools/incremental_check.py check "
+                                 f"--base {v2.PROJECT}/.build/check-a/proof`")
+        self.assertEqual(v2.brief_problems(relative), [])
 
 
 class InProcessTests(unittest.TestCase):
@@ -147,6 +162,36 @@ class InProcessTests(unittest.TestCase):
             calls.clear()
             v2._owned_by("1")
             self.assertEqual(len(calls), 1)
+
+    def test_inside_the_sandbox_a_background_run_is_asked_of_the_supervisor_and_no_session_is_touched(self):
+        wanted, ran = str(self.world.state / "wanted"), []
+        # nothing may really start here: v2's PROJECT in this process is the real one
+        with patch.object(v2, "WANTED", wanted), patch.dict(os.environ, {"ORCH_CONTROL": "0", "ORCH_SYNC": ""}), \
+                patch("subprocess.Popen") as popen, patch("subprocess.run") as run:
+            v2.background("finalize.py", "commit", "7")  # a final commit asked by a reviewer's verdict
+            v2.kick()
+            self.assertEqual(v2.claude("stop", "id-1").returncode, 1)
+            self.assertEqual(v2.claude("--bg", "--resume", "s1", "go").returncode, 1)
+            popen.assert_not_called()
+            run.assert_not_called()
+        self.assertEqual(len(os.listdir(wanted)), 2)
+        with patch.object(v2, "WANTED", wanted), patch.dict(os.environ, {"ORCH_CONTROL": "1"}), \
+                patch.object(v2, "background", lambda *a: ran.append(a)):
+            v2.carry_out_wanted()
+            v2.carry_out_wanted()  # each request once
+        self.assertEqual(ran, [("finalize.py", "commit", "7")])  # the dispatch asked for is the one carrying this out
+        self.assertEqual(os.listdir(wanted), [])
+
+    def test_inside_the_sandbox_a_claim_whose_process_cannot_be_seen_stands(self):
+        # a pid no process has here: outside it is gone and the claim falls; inside it may be a process outside
+        claim = self.world.state / "isabelle-exclusive"
+        claim.write_text(json.dumps({"task": "7", "why": "its final check", "pid": 2 ** 22 + 1, "at": 0}))
+        with patch.dict(os.environ, {"ORCH_CONTROL": "0"}):
+            self.assertEqual(v2.exclusive_claim()["task"], "7")
+        self.assertTrue(claim.exists())
+        with patch.dict(os.environ, {"ORCH_CONTROL": "1"}):
+            self.assertIsNone(v2.exclusive_claim())
+        self.assertFalse(claim.exists())
 
     def test_roles_are_found_by_session(self):
         self.world.session("plan-1", "planner", "p")
@@ -234,6 +279,23 @@ class StartTests(Flow):
     def setUp(self):
         self.w = fakes.World()
 
+    def test_nothing_forks_or_pings_what_was_started_with_other_tools(self):
+        # a fork reads its origin's prefix from cache only with the same tools, which come first in it: a base or a
+        # session started with others would be written again whole by every fork (the owner took four tools out of
+        # session-flags on 2026-09-21, and every base stood built with them)
+        self.w.base(flags=fakes.LEAN + " --tools-were-other")
+        self.w.write("HANDOFF.md", "# Handoff\n\n## Work order\nT3\n")
+        self.assertIn("not started", self.w.v2("start"))
+        self.assertEqual(self.forks("kb-"), [])
+        said = (self.w.state / "v2.log").read_text()
+        self.assertIn("ATTENTION no kb started: max was started with other tools than session-flags gives now", said)
+        self.assertIn("build it again (base.sh max build, then seal)", said)
+        self.w.base()                                           # built again, with the tools there are now
+        self.assertIn("active; knowledge base kb-", self.w.v2("start"))
+        self.assertEqual(self.w.st()["sessions"][self.w.st()["kb_building"]]["flags"], fakes.LEAN)  # and recorded
+        self.w.session("plan-old", "planner", "po", state="idle", flags="--tools Grep")
+        self.assertIn("not pinged (started with other tools", self.w.v2("ping", "plan-old"))
+
     def test_the_first_start_builds_the_knowledge_base_then_a_planning_episode_takes_up_the_handoff(self):
         self.assertIn("not started", self.w.v2("start"))  # no base yet
         self.w.base()
@@ -281,18 +343,23 @@ class StartTests(Flow):
         self.assertEqual(out, str(self.w.project))   # the one tree, not the worktree it sits in
         self.assertTrue((wt / ".git").is_file())     # which is how it is told apart, without a git call
 
-    def test_a_session_is_not_told_it_has_a_tree_that_trees_being_off_denies_it(self):
+    def test_a_session_is_told_the_tree_it_is_started_in_and_nothing_else(self):
         # tree_text keyed off the directory alone, exactly as worktree_of did: with trees off and a tree left on
-        # disk it would say "you are started in it" while worktree_of starts the session in the one tree
+        # disk it said "you are started in it" while worktree_of started the session in the one tree. It now reads
+        # nothing but the tree it is given — the one task_tree decided and launch starts the session in — so a
+        # directory on disk, trees on or off, cannot make it say another
         (self.w.project / ".build/trees/9").mkdir(parents=True, exist_ok=True)
-        said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
-                               "print(v2.tree_text('9'))"],
-                              env=dict(self.w.env, ORCH_TREES="0"), capture_output=True, text=True).stdout
-        self.assertIn("You work in the repository's one working tree", said)
-        on = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
-                             "print(v2.tree_text('9'))"],
-                            env=dict(self.w.env, ORCH_TREES="1"), capture_output=True, text=True).stdout
-        self.assertIn("Your working tree is your task's own", on)
+        for trees in ("0", "1"):
+            said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                   "import v2; print(v2.tree_text('9')); print('=='); "
+                                   "print(v2.tree_text('9', v2.os.path.join(v2.PROJECT, '.build/trees/9')))"],
+                                  env=dict(self.w.env, ORCH_TREES=trees), capture_output=True, text=True).stdout
+            one, own = said.split("==")
+            self.assertIn("You work in the repository's one working tree", one)
+            self.assertIn("park tree", one)  # the one tree's rules go with the one tree
+            self.assertIn("Your working tree is your task's own", own)
+            self.assertIn(".build/trees/9", own)
+            self.assertNotIn("park tree", own)  # and not to a session no other task can hold out
 
     def test_a_tree_left_behind_does_not_capture_its_task_while_trees_are_off(self):
         # worktree_of read the directory alone, so a tree left by an earlier run captured its task for ever after
@@ -436,10 +503,10 @@ PASSED = {
     "investigator": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
     "fixer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
     "task-designer": {"NAME", "ID", "SUBJECT", "BRIEF", "WHY", "GRAPH", "LIST", "STALE"},
-    "reviewer": {"NAME", "ID", "TASK", "SUBJECT", "REVIEW", "BRIEF", "SESSION", "STALE", "BEFORE"},
+    "reviewer": {"NAME", "ID", "TASK", "SUBJECT", "REVIEW", "BRIEF", "SESSION", "STALE", "BEFORE", "WHERE"},
     "consultant": {"NAME", "ID", "QID", "ASKER", "TARGET", "QUESTION", "NOTE", "STALE"},
 }
-PASSED = {role: names | {"ROUNDS", "READ", "CIRCLING", "FIX_MINUTES", "FIX_ROUNDS", "HOLD_HOURS", "ROOM_DESIGN",
+PASSED = {role: names | {"ROUNDS", "READ", "RESERVE", "BATCH", "READ_BYTES", "CIRCLING", "FIX_MINUTES", "FIX_ROUNDS", "HOLD_HOURS", "ROOM_DESIGN",
                          "ROOM_TASK", "BRIEF_BACKLOG", "GRAPH_DEPTH", "DEPTH", "WIDTH", "SLOTS", "CONSULT_HOURS",
                          "ISABELLE_MAX"}
           for role, names in PASSED.items()}  # render's own defaults
@@ -466,11 +533,11 @@ class PlanningTests(Flow):
                              env=self.w.env, capture_output=True, text=True).stdout
         width, depth = out.splitlines()[0].split()
         self.assertEqual((width, depth), ("1", "3"))          # 4 is skipped; the chain 3 -> 2 -> 1 is the whole one
-        self.assertIn(f"The chain is **{depth}** tasks deep", out)
+        self.assertIn(f"the longest is **{depth}**", out)
         self.assertIn(f"{width} build and fix tasks can start", out)
         said = self.w.v2("status")
         self.assertIn(f"{width} build and fix tasks can start", said)
-        self.assertIn(f"the chain is {depth} deep", said)
+        self.assertIn(f"the longest chain is {depth} deep", said)
 
     def test_the_graphs_shape_is_what_can_run_and_how_long_the_chain_is(self):
         # a count of open tasks says neither: on 2026-09-20 the graph held 17 open build and fix tasks, which
@@ -1042,7 +1109,7 @@ class PlanningTests(Flow):
         self.assertEqual(self.py("print(v2.base_record('xhigh')[1]['sid'])"), "xhigh-sid")
         (self.w.state / "xhigh-layer.json").write_text(json.dumps(
             {"sessionId": "xhigh-layer-sid", "model": "claude-opus-5[1m]", "effort": "xhigh", "context": 525_000,
-             "base": "xhigh-sid"}))
+             "base": "xhigh-sid", "flags": fakes.LEAN}))
         self.assertEqual(self.py("print(v2.base_record('xhigh')[1]['sid'])"), "xhigh-layer-sid")
         # and the room a task is given is what the layer leaves, not what the stable base alone would
         self.assertEqual(self.py("print(v2.room_of('design'))"), str(v2.SOFT - 525_000 - v2.PROTOCOL_ROOM))
@@ -1201,7 +1268,7 @@ class PlanningTests(Flow):
             nxt = src.find("\ndef ", m.start() + 1)
             bodies[m.group(1)] = src[m.start():nxt if nxt != -1 else len(src)]
         opts = {}
-        for b in _re.split(r'\n    (?:el)?if c == "', bodies["main"])[1:]:
+        for b in _re.split(r'\n    (?:el)?if c == "', bodies["run_command"])[1:]:  # the one command, as its single form
             name, body = b[:b.index('"')], b
             for fn in _re.findall(r"(cmd_\w+)\(", b):   # a command parses its own options inside cmd_X too
                 body += bodies.get(fn, "")
@@ -1388,7 +1455,7 @@ class PlanningTests(Flow):
         (design,) = self.forks("design-")
         self.assertEqual(design[design.index("--resume") + 1], "xhigh-sid")
         self.assertTrue(design[design.index("--settings") + 1].endswith("worker-settings.json"))
-        self.assertIn("Open your first gather with HANDOFF.md", design[-1])
+        self.assertIn("Open with a batch that reads HANDOFF.md", design[-1])
 
 class TaskTests(Flow):
     def setUp(self):
@@ -1471,27 +1538,22 @@ class TaskTests(Flow):
         self.assertIn("prepared", self.as_(self.impl, "finalize", "1", "--check", "true", "--files", "theories/Ready.thy",
                                            "--message", ".build/tasks/1/commit.md"))
 
-    def test_the_gather_prints_every_source_at_once_and_the_next_opens_after_production(self):
-        out = self.as_(self.impl, "step", "1", "1", "theories/Base.thy:2-2", "Base.base")
+    def test_a_read_prints_every_source_it_names_at_any_time(self):
+        out = self.as_(self.impl, "read", "theories/Base.thy:2-2", "Base.base")
         self.assertIn("== theories/Base.thy:2-2\n     2\tdefinition base", out)
         self.assertIn("== Base.base\n== theories/Base.thy:2", out)
-        self.assertIn("step 1 has not produced yet", self.as_(self.impl, "step", "1", "2", "theories/Base.thy"))
         meter = self.w.state / f"work-{self.s(self.impl)['sid']}.json"
-        m = json.loads(meter.read_text())
-        self.assertEqual(m["reads"][str(self.w.project / "theories/Base.thy")]["ranges"], [[2, 2]])
-        m["productions"] = 1
-        meter.write_text(json.dumps(m))
-        self.assertIn("Step 2 of task 1", self.as_(self.impl, "step", "1", "2", "theories/Base.thy"))
-        self.assertIn("you work on task 1, not 9", self.as_(self.impl, "step", "9", "1", "x"))
-        # a finished task's own artifacts are sources too, and a fixer or a reviewer opens its step with them
-        m["productions"] = 2
-        meter.write_text(json.dumps(m))
+        self.assertEqual(json.loads(meter.read_text())["reads"][str(self.w.project / "theories/Base.thy")]["ranges"],
+                         [[2, 2]])
+        # no step to open and none to produce first: a read like any other (the gather's rule went, 2026-09-21)
+        self.assertIn("     1\ttheory Base", self.as_(self.impl, "read", "theories/Base.thy"))
+        # a finished task's own artifacts are sources too, and a fixer or a reviewer reads them
         self.finish()
-        out = self.as_(self.impl, "step", "1", "3", "result", "log", "diff")
-        self.assertIn("== result\nStatus: done", out)
-        self.assertIn("== log", out)
-        self.assertIn("== diff\n", out)
-        self.assertIn("theories/Ready.thy", out)        # the new file's own text, which no diff of HEAD shows
+        self.assertIn("== result\nStatus: done", self.as_(self.impl, "read", "result"))
+        self.assertIn("== log", self.as_(self.impl, "read", "log"))
+        diff = self.as_(self.impl, "read", "diff")
+        self.assertIn("== diff\n", diff)
+        self.assertIn("theories/Ready.thy", diff)        # the new file's own text, which no diff of HEAD shows
 
     def test_a_result_is_refused_while_the_sessions_own_jobs_run(self):
         self.w.transcript(self.s(self.impl)["sid"], [{"type": "user", "message": {"content": [{"type": "tool_result",
@@ -1535,7 +1597,10 @@ class TaskTests(Flow):
         self.assertIn("mine", said)
 
     def test_a_producing_session_is_started_in_its_task_s_own_tree(self):
-        # task 1 is already running in this fixture; task 5 is the one that starts with trees on
+        # task 1 is already running in this fixture; task 5 is the one that starts with trees on, on a HEAD that
+        # holds what its brief names (a tree is made from HEAD)
+        self.w.git("add", "theories/Base.thy")
+        self.w.git("commit", "-q", "-m", "the base theory")
         self.w.task("5", description=BRIEF, subject="Another build")
         self.w.set_st(queue=["5"], tasks={"1": {"stage": "done"},
                                           "5": {"stage": "ready", "kind": "build", "queued_at": time.time()}},
@@ -1742,8 +1807,8 @@ class TaskTests(Flow):
         self.assertEqual(len(self.forks("implement-2")), 1)  # the slot went to another worker
         self.assertTrue((self.w.project / "theories/Ready.thy").exists())  # the run still reads the task's changes
         refusal = self.w.run("work_meter.py", "guard", stdin=json.dumps({
-            "session_id": self.s("implement-2")["sid"], "tool_name": "Edit", "tool_input": {"file_path": str(
-                self.w.project / "ROOT")}, "cwd": str(self.w.project), "hook_event_name": "PreToolUse"}))[1]
+            "session_id": self.s("implement-2")["sid"], "tool_name": "Bash", "tool_input": {"command": fakes.change(
+                "ROOT")}, "cwd": str(self.w.project), "hook_event_name": "PreToolUse"}))[1]
         self.assertIn("Task 1 holds the working tree (parked for its run, which reads its changes)", refusal)
         job(done=True)
         self.w.v2("dispatch")
@@ -1801,7 +1866,7 @@ class TaskTests(Flow):
     def test_a_statements_reader_gathers_statements(self):
         self.w.session("brief-5", "task-designer", "b5", task="5", settings="planner-settings.json")
         self.w.write("theories/Proof.thy", 'theory Proof imports Main begin\nlemma l: "True"\n  by simp\nend\n')
-        out = self.w.v2("step", "5", "1", "theories/Proof.thy", "tools/x.py", "diff", env=self.w.as_session("b5"))
+        out = self.w.v2("read", "theories/Proof.thy", "tools/x.py", "diff", env=self.w.as_session("b5"))
         self.assertIn("proof", out)
         self.assertNotIn("by simp", out)
         self.assertIn("(refused: the statements of your task are your reading", out)
@@ -1847,9 +1912,13 @@ class TaskTests(Flow):
         self.assertIn("rejected again after its fix round", self.heard())
 
     def test_a_failed_check_gets_one_quick_fix(self):
-        self.finish(check="echo '*** Failed to finish proof'; exit 1")
+        self.finish(check="echo '*** Failed to finish proof (line 12 of \"/p/Ready.thy\"):'; "
+                          "echo '*** Undefined fact (line 20 of \"/p/Ready.thy\")'; exit 1")
         self.assertEqual(self.t("1")["stage"], "fixing")
-        self.assertIn("Failed to finish proof", self.resumes(self.s(self.impl)["sid"])[-1][3])
+        told = self.resumes(self.s(self.impl)["sid"])[-1][3]
+        self.assertIn("- Ready.thy:12: Failed to finish proof", told)  # every error it reported, with where it stands
+        self.assertIn("- Ready.thy:20: Undefined fact", told)
+        self.assertIn("Fix them all", told)
         self.finish(check="exit 1")
         self.assertEqual(self.t("1")["stage"], "planner")
         self.assertIn("failed its check again", self.heard())
@@ -2217,6 +2286,23 @@ class SupportTests(Flow):
         self.assertIn("proposed 2 task(s)", ok)
 
 
+    def test_a_brief_that_records_its_result_after_proposing_is_still_placed(self):
+        # the designer is told to propose and then to record its result, and the result moved a brief with no final
+        # job to `reviewing`: no longer `proposed`, so `accept` refused it and nothing reminded the planner of it.
+        # The tests went from propose straight to accept, past the one step that broke it (2026-09-21)
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        self.assertIn("proposed 2 task(s)", self.propose("2", sid, [
+            {"key": "b", "subject": "A build", "why": "-", "blockedBy": [], "description": BRIEF},
+            {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["b"],
+             "description": REVIEW_TASK.format(task="b")}]))
+        self.w.write(".build/tasks/2/result.md", RESULT.format(status="done"))
+        self.assertIn("recorded", self.w.v2("result", "2", env=self.w.as_session(sid)))
+        self.assertEqual(self.t("2")["stage"], "proposed")  # still waiting to be placed
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.assertIn("placed b as", self.as_("plan-1", "accept", "2"))
+
     def test_a_new_task_is_allocated_above_claude_codes_own_high_water_mark(self):
         # Claude Code allocates ids from `.highwatermark` beside the task files. Taking one above the files alone
         # hands back an id it is about to use again, and the task written here would be overwritten: on 2026-09-20
@@ -2308,69 +2394,72 @@ class SupportTests(Flow):
         self.assertEqual(self.w.read_task("8")["blockedBy"], ["7"])     # as it waited before
         self.assertEqual({f for f in os.listdir(self.w.tasks) if f.endswith(".json")}, before | {"8.json"})
 
-    def test_the_depth_limit_admits_its_own_value_and_refuses_above_it(self):
-        # every message says "at most GRAPH_DEPTH" and the rule is that a further goal is refused when the depth is
-        # *above* the limit; the code refused at the limit itself, and the live chain stood at exactly 10
+    def chain(self, n, first=100):
+        """A chain of n open tasks already in the graph, first <- first+1 <- ...: its last one ends a chain n deep."""
+        for i in range(first, first + n):
+            self.w.task(str(i), description=BRIEF, subject=f"chain {i}", blockedBy=[str(i - 1)] if i > first else [])
+        return str(first + n - 1)
+
+    def goal(self, after, key="a"):
+        return [{"key": key, "subject": "A further goal", "why": "-", "blockedBy": [after], "description": BRIEF},
+                {"key": key + "-r", "subject": "Its review", "why": "-", "blockedBy": [key],
+                 "description": REVIEW_TASK.format(task=key)}]
+
+    def brief(self):
         self.w.set_st(queue=["2", "7"])
         self.w.v2("dispatch")
-        sid = self.s("brief-2")["sid"]
+        return self.s("brief-2")["sid"]
+
+    def test_the_depth_limit_admits_its_own_value_and_refuses_above_it(self):
+        # per chain, and above the limit, not at it (the owner, 2026-09-21): a task may end a chain of exactly
+        # GRAPH_DEPTH, and may not hang after one deeper
+        sid = self.brief()
+        ten = self.chain(v2.GRAPH_DEPTH)
+        self.assertIn("proposed 2 task(s)", self.propose("2", sid, self.goal(ten)))
+        eleven = self.chain(v2.GRAPH_DEPTH + 1, first=200)
+        self.w.set_st(tasks={**self.w.st()["tasks"], "2": {**self.t("2"), "stage": "running"}})
+        self.assertIn("refused, and the planner has it", self.propose("2", sid, self.goal(eleven)))
+
+    def test_a_goal_at_the_end_of_a_short_chain_is_admitted_while_another_chain_is_deep(self):
+        # the whole graph's longest chain was the measure until 2026-09-21: a goal at the end of a chain of one was
+        # refused because another chain elsewhere was eleven deep
+        sid = self.brief()
+        self.chain(v2.GRAPH_DEPTH + 1)
         self.w.task("7", description=BRIEF, subject="already in the graph")
-        goal = [{"key": "a", "subject": "A further goal", "why": "-", "blockedBy": ["7"], "description": BRIEF},
-                {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
-                 "description": REVIEW_TASK.format(task="a")}]
-        for depth, expected in ((v2.GRAPH_DEPTH, "proposed 2 task(s)"),
-                                (v2.GRAPH_DEPTH + 1, "refused, and the planner has it")):
-            st = self.w.st()
-            st["tasks"]["2"].update(stage="running", depth_at_start=depth)
-            (self.w.state / "v2.json").write_text(json.dumps(st))
-            self.assertIn(expected, self.propose("2", sid, goal), f"at depth {depth}")
+        self.assertIn("proposed 2 task(s)", self.propose("2", sid, self.goal("7")))
 
     def test_a_proposal_that_needs_further_goals_past_the_limit_never_reaches_the_graph(self):
         # the rejection used to come after the designer had written every task into the list; it comes before now,
         # and what it wrote is a file, not a graph to unpick
-        self.w.set_st(queue=["2", "7"])
-        self.w.v2("dispatch")
-        sid = self.s("brief-2")["sid"]
-        st = self.w.st()
-        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
-        (self.w.state / "v2.json").write_text(json.dumps(st))
-        self.w.task("7", description=BRIEF, subject="already in the graph")
-        proposal = [{"key": "a", "subject": "Hung past the frontier", "why": "-", "blockedBy": ["7"],
-                     "description": BRIEF},
-                    {"key": "a-review", "subject": "Its review", "why": "-", "blockedBy": ["a"],
-                     "description": REVIEW_TASK.format(task="a")}]
-        (self.w.project / ".build/tasks/2").mkdir(parents=True, exist_ok=True)
-        (self.w.project / ".build/tasks/2/proposal.json").write_text(json.dumps(proposal))
-        said = self.w.v2("propose", "2", ".build/tasks/2/proposal.json", env=self.w.as_session(sid))
+        sid = self.brief()
+        deep = self.chain(v2.GRAPH_DEPTH + 1)
+        said = self.propose("2", sid, [dict(self.goal(deep)[0], subject="Hung past the frontier"),
+                                       self.goal(deep)[1]])
         self.assertIn("refused, and the planner has it", said)
-        self.assertIn("a is a further goal, not further detail", said)
+        self.assertIn(f"a (after a chain {v2.GRAPH_DEPTH + 1} deep)", said)
         self.assertIn("Nothing you wrote is lost", said)
         self.assertEqual(self.t("2")["stage"], "planner")
         self.assertEqual([f for f in os.listdir(self.w.tasks) if "Hung past" in (self.w.tasks / f).read_text()], [])
 
-    def test_a_proposal_begun_under_the_depth_limit_may_place_work_anywhere(self):
-        # the depth is taken once, when the brief starts: one begun under the limit places what its work needs,
-        # without limit, rather than being halted half-drawn
-        self.w.set_st(queue=["2", "7"])
-        self.w.v2("dispatch")
-        sid = self.s("brief-2")["sid"]
-        self.assertLess(self.t("2")["depth_at_start"], v2.GRAPH_DEPTH)
-        self.w.task("7", description=BRIEF, subject="already in the graph")
-        said = self.propose("2", sid, [
-            {"key": "a", "subject": "A further goal", "why": "-", "blockedBy": ["7"], "description": BRIEF},
-            {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
-             "description": REVIEW_TASK.format(task="a")}])
-        self.assertIn("proposed 2 task(s)", said)
+    def test_a_brief_cannot_grow_a_chain_of_its_own_past_the_limit(self):
+        # its own tasks count: a -> b -> c after a chain of nine makes chains of 10, 11 and 12, and c would hang
+        # after a chain of 11. Reviews are exempt: every build has one, and it waits on the build it judges
+        sid = self.brief()
+        nine = self.chain(v2.GRAPH_DEPTH - 1)
+        tail = (self.goal(nine, "a") + [dict(e, blockedBy=[x if x != nine else "a" for x in e["blockedBy"]])
+                                         for e in self.goal(nine, "b")])
+        self.assertIn("proposed 4 task(s)", self.propose("2", sid, tail))  # a at 10, b at 11: b ends a chain of 10
+        self.w.set_st(tasks={**self.w.st()["tasks"], "2": {**self.t("2"), "stage": "running"}})
+        tail += [dict(e, blockedBy=[x if x != nine else "b" for x in e["blockedBy"]]) for e in self.goal(nine, "c")]
+        said = self.propose("2", sid, tail)
+        self.assertIn("refused, and the planner has it", said)
+        self.assertIn(f"c (after a chain {v2.GRAPH_DEPTH + 1} deep)", said)
 
     def test_a_proposal_past_the_limit_may_still_place_detail_and_work_that_runs_first(self):
         # past the limit a brief may still splice detail in and add work that runs first — that is what widens the
-        # graph — and only a further goal hung past its frontier is refused
-        self.w.set_st(queue=["2", "7"])
-        self.w.v2("dispatch")
-        sid = self.s("brief-2")["sid"]
-        st = self.w.st()
-        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
-        (self.w.state / "v2.json").write_text(json.dumps(st))
+        # graph — and only a task hung after a chain past the limit is refused
+        sid = self.brief()
+        self.chain(v2.GRAPH_DEPTH + 1)
         said = self.propose("2", sid, [
             {"key": "a", "subject": "Runs at once", "why": "-", "blockedBy": [], "description": BRIEF},
             {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
@@ -2381,19 +2470,12 @@ class SupportTests(Flow):
         # adding more detail to a task graph is fine; adding further goals is not (the owner, 2026-09-20). Driven
         # through propose, not through the predicate: the rule was once written twice and the weaker copy was the
         # one in force, with a green test covering the dead one.
-        self.w.set_st(queue=["2", "7"])
-        self.w.v2("dispatch")
-        sid = self.s("brief-2")["sid"]
-        st = self.w.st()
-        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
-        (self.w.state / "v2.json").write_text(json.dumps(st))
-        self.w.task("7", description=BRIEF, subject="already in the graph")
+        sid = self.brief()
+        deep = self.chain(v2.GRAPH_DEPTH + 1)
         self.w.task("8", description=BRIEF, subject="already there, and will wait on the new work")
-        spliced = [{"key": "a", "subject": "Spliced in", "why": "-", "blockedBy": ["7"], "feeds": ["8"],
-                    "description": BRIEF},
-                   {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["a"],
-                    "description": REVIEW_TASK.format(task="a")}]
+        spliced = [dict(self.goal(deep)[0], subject="Spliced in", feeds=["8"]), self.goal(deep)[1]]
         self.assertIn("proposed 2 task(s)", self.propose("2", sid, spliced))   # detail: 8 will wait on it
+        self.w.set_st(tasks={**self.w.st()["tasks"], "2": {**self.t("2"), "stage": "running"}})
         hung = [dict(e) for e in spliced]
         hung[0].pop("feeds")                                                   # the same work, waited on by nothing
         self.assertIn("refused, and the planner has it", self.propose("2", sid, hung))
@@ -2431,12 +2513,7 @@ class SupportTests(Flow):
     def test_a_proposal_cannot_dodge_the_rule_by_feeding_a_task_that_is_not_there(self):
         # `feeds` is the whole of what makes a task detail, so it is checked rather than taken on trust: an
         # unchecked one would exempt the task from the depth rule and then silently not be wired
-        self.w.set_st(queue=["2", "7"])
-        self.w.v2("dispatch")
-        sid = self.s("brief-2")["sid"]
-        st = self.w.st()
-        st["tasks"]["2"]["depth_at_start"] = v2.GRAPH_DEPTH + 1
-        (self.w.state / "v2.json").write_text(json.dumps(st))
+        sid = self.brief()
         self.w.task("7", description=BRIEF, subject="already in the graph")
         said = self.propose("2", sid, [
             {"key": "a", "subject": "Pretends to be spliced", "why": "-", "blockedBy": ["7"],
@@ -2516,7 +2593,7 @@ class ReviewTaskTests(Flow):
         (first,) = self.forks("review-")
         self.assertIn("review task 6 of task 5", first[-1])
         self.assertIn("check the definition against the decided closure", first[-1])
-        self.assertIn("v2.py step 5 1 result diff log", first[-1])
+        self.assertIn("v2.py read result`, `v2.py read diff`, `v2.py read log`", first[-1])
         self.assertIn("its other reviews are pending", self.verdict("6", "accept"))
         self.assertEqual(self.t("5")["stage"], "reviewing")
         self.assertEqual(len(self.forks("review-")), 2)  # the second review starts when the slot is free
@@ -2612,6 +2689,555 @@ class GrowthTests(Flow):
         self.assertIn("review-1", said)
 
 
+class TreeTests(Flow):
+    """A producing task per tree (ORCH_TREES=1), each fault of their first live run (2026-09-20) where it arises: a
+    session in a tree was unlisted and its transcript unread, a tree ran its own copy of the harness, and a tree from a
+    HEAD lacking what the one tree held refused every check. And what a tree is for: no task's unfinished work in the
+    one tree holds a task out of its own (2026-09-21: task 49, given back to the planner, held every producing task)."""
+
+    def setUp(self):
+        super().setUp()
+        self.w.repository()
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n")
+        self.w.write("theories/Base.thy", "theory Base imports Main begin end\n")
+        self.w.git("add", "ROOT", "theories/Base.thy")
+        self.w.git("commit", "-q", "-m", "the base theory")
+        self.env = dict(self.w.env, ORCH_TREES="1")
+
+    def run_v2(self, code, env=None):
+        return subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n"
+                               + code], env=env or self.env, capture_output=True, text=True).stdout.strip()
+
+    def start(self, tid, description=BRIEF, queue=None, **fields):
+        self.w.task(tid, description=description, subject=f"Task {tid}", **fields)
+        self.w.set_st(queue=queue or [tid], tasks={**self.w.st().get("tasks", {}),
+                                                   tid: {"stage": "ready", "kind": "build", "queued_at": time.time()}})
+        self.w.v2("dispatch", env=self.env)
+        return self.w.st()["sessions"].get(f"implement-{tid}")
+
+    def first_message(self, name):
+        (args,) = [a for a in self.forks(name) if a[a.index("-n") + 1] == name]
+        return args[-1]
+
+    def test_a_session_started_in_its_tree_is_seen_there_and_resumed_there(self):
+        s = self.start("5")
+        tree = self.w.project / ".build/trees/5"
+        (row,) = [r for r in self.w.rows() if r["name"] == "implement-5"]
+        self.assertEqual(row["cwd"], str(tree))  # listed where it was started, as Claude Code lists it
+        self.assertEqual(s["state"], "working")  # and found there: its start is confirmed, not called lost
+        self.assertEqual(s["sid"], row["sessionId"])
+        self.assertEqual(s["tree"], ".build/trees/5")
+        self.w.set_rows([])
+        self.w.set_st(sessions={**self.w.st()["sessions"], "implement-5": dict(s, state="done", sealed=True)})
+        self.w.hit("implement-5")
+        self.assertEqual(self.run_v2('print(v2.resume("implement-5", "go on"))'), "True")
+        self.assertEqual([c["cwd"] for c in self.w.calls("--bg") if "go on" in c["args"][-1]][-1], str(tree))
+
+    def test_a_session_in_a_tree_is_read_from_its_tree_s_transcript(self):
+        # Claude Code keeps it under the tree's own directory: read under the project's, running_jobs said "no job"
+        # and the session was sealed or resumed with its jobs killed, and its context read as nothing
+        s = self.start("5")
+        d = Path(str(self.w.transcripts) + "--build-trees-5")
+        d.mkdir(parents=True)
+        (d / f"{s['sid']}.jsonl").write_text(json.dumps(
+            {"type": "user", "message": {"content": "Command running in background with ID: j1. Output is being "
+                                                    "written to: /nonexistent/j1.output"}}) + "\n")
+        self.assertEqual(self.run_v2(f'print(v2.transcript({s["sid"]!r}))'), str(d / f"{s['sid']}.jsonl"))
+        self.assertEqual(self.run_v2('print(v2.running_jobs("implement-5"))'), "['j1']")
+
+    def test_a_copy_of_the_harness_in_a_tree_hands_every_call_to_the_one_harness(self):
+        # a tree checks out HEAD, harness included: its hooks name $CLAUDE_PROJECT_DIR, which is the tree, and its
+        # commands name .claude/orchestration/v2.py relative to where the session stands. _one_tree put the state
+        # right and not the code, so two versions of the rules acted on one state
+        here = self.w.project / ".claude/orchestration"
+        here.mkdir(parents=True)
+        (here / "v2.py").write_text((fakes.HERE / "v2.py").read_text())
+        (here / "probe.py").write_text("import os, sys\nsys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))\n"
+                                       "import v2\nprint(v2.HERE)\nprint(sys.argv[1:], sys.stdin.read())\n")
+        self.w.git("add", ".claude")
+        self.w.git("commit", "-q", "-m", "a harness")
+        tree = self.w.project / ".build/trees/9"
+        self.w.git("worktree", "add", "-q", "-B", "task/9", str(tree), "HEAD")
+        env = {k: v for k, v in self.env.items() if k not in ("ORCH_PROJECT", "ORCH_STATE_DIR")}
+        run = lambda extra: subprocess.run([sys.executable, str(tree / ".claude/orchestration/probe.py"), "guard"],
+                                           input="the hook's input", env=dict(env, **extra), capture_output=True,
+                                           text=True, cwd=tree).stdout.splitlines()
+        out = run({})
+        self.assertEqual(out[0], str(here))  # the one tree's copy ran, not the tree's
+        self.assertEqual(out[1], "['guard'] the hook's input")  # with its arguments, and the stdin nothing had read
+        self.assertEqual(run({"ORCH_ONE_HARNESS": "1"})[0], str(tree / ".claude/orchestration"))  # once, not twice
+
+    def test_a_tree_from_a_head_that_refuses_every_check_is_not_handed_out(self):
+        # HEAD declares a theory whose file stands untracked in the one tree, as 44738c20 declared task 22's and
+        # 46's: a tree made from it refuses every check in 0.2 s, which is what cost task 46 its tree on 2026-09-20
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Loci\n")
+        self.w.git("add", "ROOT")
+        self.w.git("commit", "-q", "-m", "declare a theory whose file is not committed")
+        self.w.write("theories/Loci.thy", "theory Loci imports Main begin end\n")
+        s = self.start("5")
+        self.assertFalse((self.w.project / ".build/trees/5").exists())  # made, found wanting, taken away
+        self.assertIsNone(s.get("tree"))
+        self.assertEqual([c["cwd"] for c in self.w.calls("--bg") if "implement-5" in c["args"]][-1],
+                         str(self.w.project))
+        said = self.first_message("implement-5")
+        self.assertIn("You work in the repository's one working tree", said)  # told where it is, and why
+        self.assertIn("ROOT declares Loci", said)
+        self.assertIn("ROOT declares Loci", self.heard())
+        self.assertIn("NO TREE IS MADE NOW", self.w.v2("status", env=self.env))
+        self.assertIn("ATTENTION no task gets a tree of its own", self.w.run("health.py", env=self.env)[1])
+
+    def test_a_tree_whose_harness_would_not_hand_over_is_not_handed_out(self):
+        (self.w.project / ".claude/orchestration").mkdir(parents=True)
+        self.w.write(".claude/orchestration/v2.py", "# the harness as it stood before a tree handed its calls over\n")
+        self.w.git("add", ".claude")
+        self.w.git("commit", "-q", "-m", "an older harness")
+        self.assertIsNone(self.start("5").get("tree"))
+        self.assertIn("does not hand its calls to the one harness", self.first_message("implement-5"))
+
+    def test_a_task_whose_brief_names_what_stands_uncommitted_works_where_it_stands(self):
+        # task 52's whole work is committing four batches installed in the one tree: in a tree of its own, made from
+        # HEAD, it would have found none of them
+        self.w.write("theories/Base.thy", "theory Base imports Main begin\ndefinition b where \"b = True\"\nend\n")
+        s = self.start("5")  # BRIEF names theories/Base.thy among its inputs
+        self.assertIsNone(s.get("tree"))
+        self.assertFalse((self.w.project / ".build/trees/5").exists())
+        self.assertIn("your brief names theories/Base.thy", self.first_message("implement-5"))
+
+    def test_a_task_waits_for_the_work_it_stands_on_to_land(self):
+        # tasks 22 and 46 were completed in the graph with their theories uncommitted: a task after them, started
+        # from HEAD in a tree of its own, would have built on nothing. It waits, through the tasks between, and is
+        # named to the planner; the width and the startable list agree with the dispatch
+        self.w.write("theories/Loci.thy", "theory Loci imports Main begin end\n")
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n    Loci\n")
+        self.run_v2("v2.own('4', ['theories/Loci.thy', 'ROOT'])")
+        self.w.task("4", subject="the locus", status="completed")
+        self.w.task("5", subject="its review", status="completed", blockedBy=["4"])
+        self.assertIsNone(self.start("6", blockedBy=["5"]))
+        self.assertRegex(self.heard(), r"the work of task 4 has not landed \((ROOT, theories/Loci\.thy|"
+                                       r"theories/Loci\.thy, ROOT)\)")
+        self.assertNotIn("6", self.run_v2("print(v2.startable())"))
+        self.w.git("add", "theories/Loci.thy", "ROOT")
+        self.w.git("commit", "-q", "-m", "the locus lands")
+        self.w.v2("dispatch", env=self.env)
+        self.assertEqual(self.w.st()["sessions"]["implement-6"]["tree"], ".build/trees/6")
+
+    def test_the_one_tree_s_holds_do_not_reach_a_task_in_its_own_tree(self):
+        # the incident: task 49's document stood uncommitted in the one tree while it was with the planner, so
+        # tree_writer named it, and every producing task was refused the tree and parked
+        self.start("5")
+        self.w.write("notes.md", "a document of task 3's\n")
+        self.run_v2("v2.own('3', ['notes.md'])")
+        self.w.task("3", subject="a document")
+        self.w.write(".build/tasks/7/finalize.json", json.dumps({"check": "true", "files": ["x"], "message": "m"}))
+        self.w.write(".build/tasks/5/finalize.json", json.dumps({"check": "true", "files": ["y"], "message": "m"}))
+        self.w.set_st(tasks={**self.w.st()["tasks"], "3": {"stage": "planner"}, "7": {"stage": "checking"}})
+        held = self.run_v2("st = v2.peek(); print(v2.tree_holder(st, {'task': '5'}), v2.finalizing(st, {'task': '5'}),"
+                           " v2.tree_holder(st, {'task': '8'}), v2.finalizing(st, {'task': '8'}))")
+        self.assertEqual(held, "None None 7 7")  # nothing holds the tree's task; the one tree's tasks still wait
+        self.w.set_st(tasks={**self.w.st()["tasks"], "7": {"stage": "done"}, "5": {"stage": "checking"}})
+        self.assertEqual(self.run_v2("st = v2.peek(); print(v2.tree_holder(st, {'task': '8'}), "
+                                     "v2.finalizing(st, {'task': '8'}))"), "3 None")  # its check holds nobody else
+        self.w.write("theories/Eight.thy", "theory Eight imports Base begin end\n")
+        self.run_v2("v2.own('8', ['theories/Eight.thy'])")
+        self.w.set_st(tasks={**self.w.st()["tasks"], "8": {"stage": "running"}})
+        self.run_v2("v2.check_isolation()")
+        self.assertEqual(self.t("8")["stage"], "running")  # nor parks a task of the one tree while it runs
+
+    def test_a_task_in_its_tree_hands_over_its_tree_s_files_and_a_check_of_its_tree(self):
+        s = self.start("5")
+        tree = self.w.project / ".build/trees/5"
+        (tree / "theories/Ready.thy").write_text("theory Ready imports Base begin end\n")
+        self.w.write(".build/tasks/5/commit.md", "Add readiness\n\nValidation: checked.\n")
+        finalize = lambda check: self.w.v2("finalize", "5", "--check", check, "--files", "theories/Ready.thy",
+                                           "--message", ".build/tasks/5/commit.md",
+                                           env=dict(self.env, **self.w.as_session(s["sid"])))
+        # the planner's rule pins a check to the one tree by an absolute path: from a tree that checks the one tree
+        refused = finalize(f"python3 -B {self.w.project}/tools/incremental_check.py check")
+        self.assertIn("refused: task 5 works in its own tree", refused)
+        self.assertIn(f"{self.w.project}/tools/incremental_check.py", refused)
+        self.assertIn("prepared", finalize(f"python3 -B tools/incremental_check.py check --base "
+                                           f"{self.w.project}/.build/check-a/proof"))  # the one .build is shared
+
+    def test_a_branch_holding_unmerged_work_is_not_reset_by_a_new_tree(self):
+        # `git worktree add -B` resets a branch that is there: a tree taken away after its landing met a conflict
+        # leaves commits only its branch holds
+        self.w.git("branch", "task/5")
+        self.w.git("checkout", "-q", "task/5")
+        self.w.write("theories/Kept.thy", "theory Kept imports Main begin end\n")
+        self.w.git("add", "theories/Kept.thy")
+        self.w.git("commit", "-q", "-m", "work only the branch holds")
+        self.w.git("checkout", "-q", "main")
+        s = self.start("5")
+        self.assertIsNone(s.get("tree"))
+        self.assertIn("holds 1 commit(s) that are not in main", self.first_message("implement-5"))
+        self.assertIn("Kept.thy", self.w.git("show", "--stat", "task/5"))  # and the branch still holds them
+
+    def test_an_empty_tree_stays_while_its_task_is_under_way(self):
+        # a session parked before it wrote anything is resumed in its tree, told it is its own
+        self.start("5")
+        tree = self.w.project / ".build/trees/5"
+        self.w.set_st(tasks={**self.w.st()["tasks"], "5": {"stage": "parked"}})
+        self.run_v2("v2.trees_tidied()")
+        self.assertTrue(tree.exists())
+        self.w.set_st(tasks={**self.w.st()["tasks"], "5": {"stage": "planner"}})  # given back: the next start makes one
+        self.run_v2("v2.trees_tidied()")
+        self.assertFalse(tree.exists())
+
+    def test_a_read_and_the_reviewer_see_the_tree_the_work_stands_in(self):
+        s = self.start("5")
+        tree = self.w.project / ".build/trees/5"
+        (tree / "theories/Ready.thy").write_text("theory Ready imports Base begin (* in the tree *) end\n")
+        shown = self.w.v2("read", "theories/Ready.thy", env=dict(self.env, **self.w.as_session(s["sid"])))
+        self.assertIn("in the tree", shown)  # the one tree has no Ready.thy at all
+        self.run_v2("v2.start_review('5', '5')")
+        (call,) = [c for c in self.w.calls("--bg") if "review-5" in c["args"]]
+        self.assertEqual(call["cwd"], str(tree))  # started where the work it judges stands
+        self.assertIn("The work stands in its task's own tree, `.build/trees/5`", call["args"][-1])
+        self.assertEqual(self.w.st()["sessions"]["review-5"]["tree"], ".build/trees/5")
+
+
+class ReviewBeforeCommitTests(Flow):
+    """Review comes before commit, never after (the owner, 2026-09-21). The planner completed tasks 22, 46, 48 and 50
+    on taking stock with their work uncommitted and unreviewed, and planned one task to commit all four."""
+
+    def setUp(self):
+        super().setUp()
+        self.w.repository()
+        self.w.write("theories/Loci.thy", "theory Loci imports Main begin end\n")
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.own('22', ['theories/Loci.thy'])"], env=self.w.env, check=True)
+        self.w.task("22", subject="the locus", status="completed")
+        self.w.task("23", description=REVIEW_TASK.format(task="22"), subject="its review", blockedBy=["22"])
+        self.w.set_st(tasks={"22": {"stage": "done", "review_tasks": ["23"]}, "23": {"stage": "ready",
+                                                                                    "reviews": "22"}})
+
+    def test_a_build_completed_without_landing_is_taken_back_to_its_check(self):
+        self.w.write(".build/tasks/22/finalize.json", json.dumps(
+            {"check": "true", "files": ["theories/Loci.thy"], "message": ".build/tasks/22/commit.md"}))
+        self.w.write(".build/tasks/22/commit.md", "Add the locus\n\nValidation: checked.\n")
+        self.w.v2("dispatch")
+        self.assertEqual(self.w.read_task("22")["status"], "in_progress")  # not complete: it has not landed
+        self.assertIn("its work never landed", self.heard())
+        # its check ran and passed, so it is in review, and its own review task is what reviews it
+        self.assertEqual(self.t("22")["stage"], "reviewing")
+        self.assertTrue(self.forks("review-23"))
+
+    def test_one_with_no_final_job_goes_to_the_planner(self):
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("22")["stage"], "planner")
+        self.assertEqual(self.w.read_task("22")["status"], "in_progress")
+        self.assertIn("it has no final job, so it is yours to have finished", self.heard())
+
+
+class PlannerDepthTests(Flow):
+    def setUp(self):
+        super().setUp()
+        for i in range(1, 12):  # eleven deep
+            self.w.task(str(i), blockedBy=[str(i - 1)] if i > 1 else [])
+        self.w.task("20")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+
+    def test_blockers_hangs_no_further_goal_past_the_limit(self):
+        refused = self.as_("plan-1", "blockers", "20", "11")
+        self.assertIn("refused: task 20 would be added at the end of a chain already 11 deep", refused)
+        self.assertEqual(self.w.read_task("20")["blockedBy"], [])
+        self.assertIn("task 11 waits on nothing", self.as_("plan-1", "blockers", "11", "none"))  # repair is not refused
+        self.assertIn("task 11 waits on 10", self.as_("plan-1", "blockers", "11", "10"))  # and put back: re-shaping
+        # spliced in: task 6 already waits on open work, so it is re-shaped, and it now waits on 20 as well
+        self.assertIn("task 6 waits on 5, 20", self.as_("plan-1", "blockers", "6", "5", "20"))
+        self.assertIn("task 20 waits on 3", self.as_("plan-1", "blockers", "20", "3"))  # detail: 6 waits on it
+        status = self.w.v2("status")
+        self.assertIn("the longest chain is 11 deep; nothing is added at the end of a chain deeper than 10", status)
+        self.assertIn("past the limit now: 11 at 11", status)
+        self.assertIn("chain 11, past 10: nothing is hung after it", self.w.v2("graph"))
+
+
+class ProposalReadingTests(Flow):
+    def test_the_planner_is_told_what_placing_needs_and_not_the_briefs(self):
+        # the planner was told to read the whole proposal file: every brief of every proposal, written for the
+        # sessions that do the work, into the one context that lives across the run (2026-09-21)
+        self.w.task("2", description=BRIEF_TASK, subject="Brief the reach")
+        self.w.task("7", subject="later work", blockedBy=["2"])
+        self.w.set_st(queue=["2", "7"])
+        self.w.v2("dispatch")
+        sid = self.s("brief-2")["sid"]
+        d = self.w.project / ".build/tasks/2"
+        d.mkdir(parents=True, exist_ok=True)
+        (d / "proposal.json").write_text(json.dumps([
+            {"key": "b", "subject": "Build the reach", "why": "the verdict reads it", "blockedBy": [],
+             "feeds": ["7"], "description": BRIEF},
+            {"key": "r", "subject": "Review the reach", "why": "-", "blockedBy": ["b"],
+             "description": REVIEW_TASK.format(task="b")}]))
+        self.assertIn("proposed 2", self.w.v2("propose", "2", ".build/tasks/2/proposal.json",
+                                              env=self.w.as_session(sid)))
+        told = self.heard()
+        self.assertIn('- b: build, "Build the reach", about 120K — detail, spliced in', told)
+        self.assertIn("spliced before 7 (later work)", told)
+        self.assertIn("Why: the verdict reads it", told)
+        self.assertIn("- r: review", told)
+        self.assertIn("The longest chain goes from", told)
+        self.assertNotIn("define readiness over paths", told)  # a brief's plan is the session's reading
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.assertIn("define readiness over paths", self.as_("plan-1", "proposal", "2", "b"))  # read on demand
+
+
+class GraphEditTests(Flow):
+    """The planner's edit of the whole graph in one call (the owner, 2026-09-21): tasks made, rewritten and deleted,
+    dependencies set or taken out, the order — judged whole and written all or nothing, with repair never refused and
+    nothing added after a chain past the limit."""
+
+    def setUp(self):
+        super().setUp()
+        for i in range(1, 12):  # a chain eleven deep: 1 <- 2 <- ... <- 11
+            self.w.task(str(i), subject=f"chain {i}", blockedBy=[str(i - 1)] if i > 1 else [])
+        self.w.task("20", subject="alone")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+
+    def edit(self, ops, who="plan-1"):
+        (self.w.project / ".build/plans").mkdir(parents=True, exist_ok=True)
+        (self.w.project / ".build/plans/edit.json").write_text(json.dumps(ops))
+        return self.as_(who, "edit", ".build/plans/edit.json")
+
+    def ids(self):
+        return sorted(f[:-5] for f in os.listdir(self.w.tasks) if f.endswith(".json"))
+
+    def test_an_edit_makes_splices_rewrites_and_queues_in_one_call(self):
+        said = self.edit([
+            {"create": "k", "subject": "New work", "description": BRIEF, "why": "needed", "blockedBy": ["20"]},
+            {"create": "s", "subject": "Spliced", "description": BRIEF, "blockedBy": ["5"], "feeds": ["6"]},
+            {"rewrite": "20", "subject": "alone, corrected"},
+            {"blockers": "7", "set": ["6", "k"]},
+            {"queue": ["k", "20"]}])
+        self.assertIn("edited: k is task 21, s is task 22", said)
+        self.assertEqual(self.w.read_task("21")["blockedBy"], ["20"])
+        self.assertEqual(self.w.read_task("6")["blockedBy"], ["22", "5"])     # 6 now waits on the splice
+        self.assertEqual(self.w.read_task("7")["blockedBy"], ["6", "21"])     # keys resolved to the ids made
+        self.assertEqual(self.w.read_task("20")["subject"], "alone, corrected")
+        self.assertEqual(self.w.st()["queue"], ["21", "20"])
+
+    def test_an_edit_that_would_leave_something_waiting_on_a_deleted_task_writes_nothing(self):
+        before = self.ids()
+        said = self.edit([{"create": "k", "subject": "x", "description": BRIEF}, {"delete": "5"}])
+        self.assertIn("refused, and nothing is written", said)
+        self.assertIn("task 6 would still wait on 5, which this edit deletes", said)
+        self.assertEqual(self.ids(), before)
+        said = self.edit([{"delete": "5"}, {"blockers": "6", "set": ["4"]}])   # re-pointed in the same edit
+        self.assertIn("deleted 5", said)
+        self.assertNotIn("5", self.ids())
+        self.assertEqual(self.w.read_task("6")["blockedBy"], ["4"])
+        self.assertEqual(self.t("5")["stage"], "deleted")
+
+    def test_repair_is_never_refused_and_frees_the_room_it_took(self):
+        # a goal after the chain of eleven is refused; deleting the task found wrong at its end, in the same edit,
+        # makes the chain ten deep, and the goal is admitted — what was planned before does not bind the planner
+        goal = {"create": "g", "subject": "A goal", "description": BRIEF, "blockedBy": ["11"]}
+        self.assertIn("would be added at the end of a chain already 11 deep", self.edit([goal]))
+        said = self.edit([{"delete": "11"}, dict(goal, blockedBy=["10"])])
+        self.assertIn("g is task 21", said)
+        self.assertIn("deleted 11", said)
+
+    def test_a_splice_made_by_re_pointing_in_the_same_edit_is_detail(self):
+        # g after task 11 ends a chain of 12 unless something already there waits on it: re-pointing 12 onto it in
+        # the same edit is that splice, read on the graph as the edit leaves it
+        self.w.task("12", subject="chain 12", blockedBy=["11"])
+        hung = {"create": "g", "subject": "Spliced", "description": BRIEF, "blockedBy": ["11"]}
+        self.assertIn("would be added at the end of a chain already 11 deep", self.edit([hung]))
+        self.assertIn("g is task 21", self.edit([hung, {"blockers": "12", "set": ["g"]}]))
+        self.assertEqual(self.w.read_task("12")["blockedBy"], ["21"])
+
+    def test_a_goal_at_the_end_of_a_short_chain_is_admitted_beside_a_deep_one(self):
+        self.assertIn("g is task 21", self.edit([{"create": "g", "subject": "A goal", "description": BRIEF,
+                                                   "blockedBy": ["20"]}]))
+
+    def test_an_edit_refuses_a_cycle_a_brief_out_of_form_and_a_role_without_the_graph(self):
+        self.assertIn("a cycle nothing could ever start", self.edit([{"blockers": "1", "set": ["11"]}]))
+        self.assertIn("task k: the brief has no", self.edit([{"create": "k", "subject": "x", "description": "no"}]))
+        self.w.session("implement-9", "implementer", "i9", task="9")
+        self.assertIn("refused", self.edit([{"delete": "20"}], who="implement-9"))
+        self.assertIn("20", self.ids())
+
+    def test_a_failure_part_way_takes_back_everything_the_edit_wrote(self):
+        (self.w.project / ".build/plans").mkdir(parents=True, exist_ok=True)
+        (self.w.project / ".build/plans/edit.json").write_text(json.dumps([
+            {"create": "k", "subject": "New", "description": BRIEF, "blockedBy": ["20"]},
+            {"blockers": "6", "set": ["20"]}, {"delete": "5"}]))
+        before = {i: self.w.read_task(i) for i in self.ids()}
+        said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n"
+                               "real = v2.os.remove\n"
+                               "def failing(p):\n"
+                               "    if p.endswith('/5.json'): raise OSError('no room')\n"
+                               "    return real(p)\n"
+                               "v2.os.remove = failing\n"
+                               "print(v2.cmd_edit('.build/plans/edit.json'))"],
+                              env=dict(self.w.env, **self.w.as_session("p1")), capture_output=True, text=True).stdout
+        self.assertIn("what it had written is taken back", said)
+        self.assertEqual({i: self.w.read_task(i) for i in self.ids()}, before)  # every task as it was, none made
+
+    def test_a_review_task_the_planner_writes_is_linked_to_what_it_reviews(self):
+        # only `accept` wrote the relation, so a review task the planner wrote itself never ran: the harness planned
+        # a review of its own and the planner's stood ready for ever
+        self.w.task("21", subject="Review 20", description=REVIEW_TASK.format(task="20"))  # as TaskCreate writes it
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("21")["reviews"], "20")
+        self.assertEqual(self.t("20")["review_tasks"], ["21"])
+        said = self.edit([{"create": "r", "subject": "Review 7", "description": REVIEW_TASK.format(task="7")}])
+        self.assertEqual(self.t("7")["review_tasks"], [said.split("r is task ")[1].split(";")[0].split()[0]])
+
+
+class BatchTests(Flow):
+    """Every command batchable (the owner, 2026-09-21): reading is limited so that it is batched, and a command that
+    took one thing a call rationed what a session could learn or do."""
+
+    def setUp(self):
+        super().setUp()
+        for i in ("5", "6", "7"):
+            self.w.task(i, subject=f"task {i}")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+
+    def test_groups_separated_by_a_bare_double_dash_are_each_carried_out(self):
+        said = self.as_("plan-1", "blockers", "6", "5", "--", "7", "6", "--", "7", "99")
+        self.assertIn("task 6 waits on 5", said)
+        self.assertIn("task 7 waits on 6", said)
+        self.assertIn("refused: no task 99 in the list", said)             # one group refused, the others done
+        self.assertEqual(self.w.read_task("7")["blockedBy"], ["6"])
+        self.assertEqual(said.count("\n"), 2)                              # three answers, one each
+
+    def test_several_ids_directly(self):
+        said = self.as_("plan-1", "drop", "5", "6")
+        self.assertIn("task 5 is dropped", said)
+        self.assertIn("task 6 is dropped", said)
+        told = self.as_("plan-1", "tell", "5", "7", "the order changed")
+        self.assertEqual(told.count("\n"), 1)
+
+    def test_every_source_is_a_read_readable_by_its_lines(self):
+        # a read shows at most READ_BYTES, so a longer source is cut, with how to read on — and every kind of source
+        # can be named by its lines, or what is cut could not be read at all (the owner, 2026-09-21)
+        self.w.write("NOTES.md", "".join(f"line {i} " + "w" * 40 + "\n" for i in range(1, 400)))  # about 19K
+        self.w.task("8", subject="a long brief", description=BRIEF + "".join(f"more {i}\n" for i in range(1, 600)))
+        whole = self.as_("plan-1", "read", "NOTES.md")
+        self.assertIn("[this source stops here", whole)
+        self.assertLessEqual(len(whole.encode()), v2.READ_BYTES + 700)
+        ranged = self.as_("plan-1", "read", "NOTES.md:200-202")
+        self.assertIn("line 201 ", ranged)
+        self.assertNotIn("[this source stops here", ranged)
+        brief = self.as_("plan-1", "read", "task:8")
+        self.assertIn("[this source stops here", brief)
+        self.assertIn("task:ID:A-B", brief)                        # how to read the rest of it
+        self.assertIn("     3\t", self.as_("plan-1", "read", "task:8:3-4"))  # and by its lines it is read
+
+    def test_a_result_a_log_and_a_diff_are_the_readers_own_task_s(self):
+        self.w.session("implement-5", "implementer", "i5", task="5")
+        self.w.write(".build/tasks/5/result.md", "".join(f"result line {i}\n" for i in range(1, 500)))
+        shown = self.as_("implement-5", "read", "result:250-251")
+        self.assertIn("   250\tresult line 250", shown)
+        self.assertNotIn("result line 252", shown)
+        self.assertIn("you work on no task, so there is no result of yours", self.as_("plan-1", "read", "result"))
+        self.w.session("review-5", "reviewer", "r5", task="9", reviews="5")
+        self.assertIn("   250\tresult line 250", self.as_("review-5", "read", "result:250-251"))  # what it reviews
+
+    def test_one_read_shows_at_most_a_read_and_names_what_it_had_no_room_for(self):
+        self.w.write("NOTES.md", "".join(f"n {i} " + "w" * 60 + "\n" for i in range(1, 2000)))
+        sources = [f"NOTES.md:{1 + 10 * i}-{10 * (i + 1)}" for i in range(10)]  # ten sources of about 700 bytes
+        shown = self.as_("plan-1", "read", *sources)
+        self.assertLessEqual(len(shown.encode()), v2.READ_BYTES + 500)
+        # whole sources only past the first, and what is not shown is named and not recorded as read
+        unshown = shown.split("there was no room for ")[1].split(" — ")[0].split()
+        self.assertEqual(unshown, sources[len(sources) - len(unshown):])
+        shown_to = 10 * (len(sources) - len(unshown))
+        self.assertIn(f"{shown_to:6}\tn ", shown)                                 # the last source shown, to its end
+        ranges = json.loads((self.w.state / "work-p1.json").read_text())["reads"][str(self.w.project / "NOTES.md")]["ranges"]
+        import work_meter
+        self.assertEqual(work_meter.gaps(ranges, 1, shown_to), [])
+        self.assertEqual(work_meter.gaps(ranges, shown_to + 1, 100), [(shown_to + 1, 100)])
+
+    def test_a_read_leaves_out_what_is_in_context_and_records_only_what_it_printed(self):
+        # the gather recorded every range it was asked for, lines its cuts dropped included: with reads filtered, those
+        # lines would have been left out of every later read and never shown at all (2026-09-21)
+        self.w.write("NOTES.md", "".join(f"line {i} " + "w" * 40 + "\n" for i in range(1, 400)))  # about 19K
+        meter = self.w.state / "work-p1.json"
+        whole = self.as_("plan-1", "read", "NOTES.md")
+        last = int(re.findall(r"^\s+(\d+)\t", whole, re.M)[-1])
+        self.assertIn(f"[this source stops here, at line {last + 1}", whole)
+        self.assertIn(f"`NOTES.md:{last + 1}-399`", whole)
+        size = lambda n: sum(len(f"{i:6}\tline {i} " + "w" * 40 + "\n") for i in range(1, n + 1))  # noqa: E731
+        self.assertLessEqual(size(last), v2.READ_BYTES)  # what it shows, numbered, is a read's bytes at most
+        self.assertGreater(size(last + 1), v2.READ_BYTES)
+        self.assertEqual(json.loads(meter.read_text())["reads"][str(self.w.project / "NOTES.md")]["ranges"], [[1, last]])
+        again = self.as_("plan-1", "read", "NOTES.md:3-5", "NOTES.md:3-6")
+        self.assertIn("[lines 3-5 of NOTES.md are already in your context", again)
+        self.assertNotIn("\t", again.split("== NOTES.md:3-6")[0])
+        shown = self.as_("plan-1", "read", f"NOTES.md:{last - 1}-{last + 2}", f"NOTES.md:{last + 2}-{last + 3}")
+        self.assertIn(f"[lines {last - 1}-{last} of NOTES.md are already in your context", shown)
+        self.assertIn(f"{last + 1:6}\tline {last + 1} ", shown)  # the lines the cut dropped are read as new
+        self.assertIn(f"{last + 2:6}\tline {last + 2} ", shown)
+        self.assertNotIn(f"{last:6}\tline {last} ", shown)
+        self.assertIn(f"[lines {last + 2} of NOTES.md are already in your context", shown)  # shown by the source before
+
+    def test_a_read_writes_the_meter_under_its_lock(self):
+        import fcntl
+        self.w.write("NOTES.md", "a note\n")
+        with open(self.w.state / "work-p1.json.lock", "a") as held:
+            fcntl.flock(held, fcntl.LOCK_EX)
+            p = subprocess.Popen([sys.executable, str(fakes.HERE / "v2.py"), "read", "NOTES.md"],
+                                 stdout=subprocess.PIPE, text=True, cwd=self.w.project,
+                                 env=dict(self.w.env, **self.w.as_session("p1")))
+            time.sleep(1.0)
+            self.assertIsNone(p.poll())  # it waits for the lock rather than write over a hook's record
+        self.assertIn("a note", p.communicate(timeout=30)[0])
+
+    def test_a_fact_is_read_by_its_lines(self):
+        # the cut of a long source says to name the rest by its lines, and a fact had no such form
+        self.w.write("theories/Base.thy", "theory Base imports Main begin\ndefinition base where \"base = True\"\nend\n")
+        whole = self.as_("plan-1", "read", "Base.base")
+        lines = self.as_("plan-1", "read", "Base.base:2-2")
+        self.assertIn("     2\t", lines)
+        self.assertNotIn("     1\t", lines)
+        self.assertIn(whole.split("\n")[2].strip()[:20], lines)
+
+    def test_a_read_takes_task_briefs_and_proposals(self):
+        self.w.set_st(tasks={"2": {"stage": "proposed", "proposal": ".build/tasks/2/proposal.json"}})
+        (self.w.project / ".build/tasks/2").mkdir(parents=True, exist_ok=True)
+        (self.w.project / ".build/tasks/2/proposal.json").write_text(json.dumps([
+            {"key": "b", "subject": "Build it", "why": "-", "blockedBy": ["5"], "description": BRIEF},
+            {"key": "r", "subject": "Review it", "why": "-", "blockedBy": ["b"],
+             "description": REVIEW_TASK.format(task="b")}]))
+        shown = self.as_("plan-1", "read", "task:5", "task:6")
+        self.assertIn("== task:5", shown)
+        self.assertIn("task 6", shown)
+        self.assertIn("- b: build", self.as_("plan-1", "read", "proposal:2"))                  # what placing needs
+        self.assertIn("define readiness over paths", self.as_("plan-1", "read", "proposal:2:b"))  # and b's brief
+        both = self.as_("plan-1", "proposal", "2", "b", "r")
+        self.assertIn("== b: Build it", both)
+        self.assertIn("== r: Review it", both)
+
+
+class LedgerTests(Flow):
+    """The planner is told to put the owner's questions in the owner ledger, which is the harness's file and no
+    session's to write by hand: `v2.py ledger` puts them there (found 2026-09-21)."""
+
+    def setUp(self):
+        super().setUp()
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.w.session("implement-2", "implementer", "i2", task="2")
+        (self.w.root / "owner-ledger.md").write_text("# Owner ledger\n\n## Owner directions\n\nd\n\n"
+                                                     "## Open questions to the owner\n\n**Q7 (asked x)** — old\n\n")
+
+    def test_the_planner_puts_a_question_to_the_owner_numbered_under_the_open_questions(self):
+        said = self.as_("plan-1", "ledger", "Whether X; working under Y, because Z.")
+        self.assertIn("recorded as Q8", said)
+        text = (self.w.root / "owner-ledger.md").read_text()
+        self.assertTrue(text.rstrip().endswith("**Q8 (asked " + time.strftime("%Y-%m-%d") + " by plan-1)** — Whether X; "
+                                               "working under Y, because Z."))
+        self.assertIn("refused: a question in the owner ledger is the planner's", self.as_("implement-2", "ledger", "x"))
+        self.assertEqual(text, (self.w.root / "owner-ledger.md").read_text())
+
+    def test_a_question_goes_before_a_section_that_follows(self):
+        (self.w.root / "owner-ledger.md").write_text("## Open questions to the owner\n\n**Q1** — a\n\n## Later\n\nz\n")
+        self.as_("plan-1", "ledger", "b")
+        text = (self.w.root / "owner-ledger.md").read_text()
+        self.assertLess(text.index("**Q2"), text.index("## Later"))
+
+
 class HealthTests(Flow):
     """health.py is the owner's one window. A stopped run is read hours later and is where every restart begins."""
 
@@ -2658,7 +3284,7 @@ class HealthTests(Flow):
                                                         "cache_creation_input_tokens": 1000, "output_tokens": 9})])
         self.w.set_status("implement-1", "idle")
         (self.w.state / f"work-w1.json").write_text(json.dumps(
-            {"production_at": v2.iso(time.time() - 600), "read_tokens": 12_000, "productions": 3, "step": 2}))
+            {"production_at": v2.iso(time.time() - 600), "productions": 3, "reserve": 7}))
         self.w.session("plan-1", "planner", "p1", settings="planner-settings.json", state="idle", live=False)
         self.w.session("review-9", "reviewer", None, task="9", state="starting", live=False,
                        starting=time.time() - v2.START_MAX - 60)
@@ -2667,7 +3293,7 @@ class HealthTests(Flow):
         self.assertIn("producing: implement-1 on task 1, idle, context 301K, last reply 25 min ago; open it with: "
                       "claude attach id-w1", said)
         self.assertIn("ATTENTION producing: implement-1", said)          # idle for over twenty minutes
-        self.assertIn("last production 10 min ago, 12K read since, 3 productions, in step 2", said)
+        self.assertIn("last production 10 min ago, 3 productions, a reserve of 7 reads", said)
         self.assertIn("planner: plan-1 waits for its next event, sealed and held warm", said)
         self.assertIn("ATTENTION supporting: review-9 starting for", said)
 
@@ -2675,7 +3301,8 @@ class HealthTests(Flow):
         # "— it is refreshed" names the watchdog, which does nothing while the run is stopped or its daemon is down:
         # said then, it names something nobody will do (2026-09-21)
         (self.w.state / "max-layer.json").write_text(json.dumps(
-            {"sessionId": "max-layer-1", "base": "base-sid", "context": 500_000, "sealed": "2026-09-21T00:00:00"}))
+            {"sessionId": "max-layer-1", "base": "base-sid", "context": 500_000, "sealed": "2026-09-21T00:00:00",
+             "flags": fakes.LEAN}))
         self.assertIn("it is due to be built again, and nothing runs to do it (start.sh, or base.sh max layer)",
                       self.health(ORCH_LAYER_STALE="0"))
         (self.w.state / "warm.pid").write_text(str(self.daemon_like()))
@@ -2776,6 +3403,100 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class SandboxTests(Flow):
+    """Every session runs its commands in Claude Code's sandbox, where nothing can start, stop or remove a session
+    (~/.claude/jobs is not writable there); ORCH_CONTROL=0 is that. What a command there needs of the kind is asked of
+    the supervisor, which runs outside it (2026-09-21)."""
+
+    INSIDE = {"ORCH_CONTROL": "0"}
+
+    def inside(self, name, *args):
+        return self.w.v2(*args, env=dict(self.w.as_session(self.s(name)["sid"]), **self.INSIDE))
+
+    def wanted(self):
+        d = self.w.state / "wanted"
+        return [json.loads(p.read_text()) for p in sorted(d.glob("*.json"))] if d.exists() else []
+
+    def running(self):
+        self.w.task("1")
+        self.w.set_st(queue=["1"])
+        self.w.v2("dispatch")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        return self.s("implement-1")
+
+    def test_a_drop_inside_asks_the_supervisor_to_stop_the_session_and_records_nothing_it_did_not_do(self):
+        # release() recorded the session released while its `claude stop` had failed unseen: it would have run on,
+        # on a dropped task, watched by nothing
+        self.running()
+        stops = len(self.w.calls("stop")) + len(self.w.calls("rm"))
+        self.assertIn("The supervisor stops: implement-1", self.inside("plan-1", "drop", "1"))
+        self.assertEqual(len(self.w.calls("stop")) + len(self.w.calls("rm")), stops)
+        self.assertFalse(self.s("implement-1").get("released"))
+        self.assertEqual([r.get("release") for r in self.wanted()], ["implement-1"])
+        self.assertEqual(self.w.st()["queue"], [])  # the task is given back at once all the same
+        self.w.v2("dispatch")  # the supervisor
+        self.assertTrue(self.s("implement-1")["released"])
+        self.assertEqual(len(self.w.calls("stop")) + len(self.w.calls("rm")), stops + 2)
+        self.assertEqual(self.wanted(), [])
+
+    def test_a_message_inside_waits_in_its_box_and_the_watchdog_hands_it_over(self):
+        sid = self.running()["sid"]
+        self.w.set_status("implement-1", "idle")
+        logged = len((self.w.state / "v2.log").read_text())
+        self.assertEqual(self.inside("plan-1", "tell", "1", "Keep the old statement."), "told implement-1")
+        self.assertEqual(self.resumes(sid), [])
+        self.assertIn("Keep the old statement", json.dumps(self.w.mail("implement-1")))
+        # not tried and failed, which says ATTENTION: left to the watchdog
+        self.assertNotIn("ATTENTION", (self.w.state / "v2.log").read_text()[logged:])
+        self.w.run("watchdog.py")
+        self.assertIn("Keep the old statement", self.resumes(sid)[-1][-1])
+
+    def test_nothing_dispatches_inside_and_the_supervisor_does_what_was_asked_once(self):
+        self.w.task("1")
+        self.w.set_st(queue=["1"])
+        self.w.v2("dispatch", env=self.INSIDE)
+        self.w.v2("dispatch", env=self.INSIDE)
+        self.assertEqual(self.forks("implement-"), [])
+        self.assertEqual([r["run"] for r in self.wanted()], [["v2.py", "dispatch"]])  # asked twice, one request
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("implement-")), 1)
+        self.assertEqual(self.wanted(), [])
+
+    def test_a_measurement_inside_is_decided_by_the_supervisor_beside_a_final_check_it_cannot_see(self):
+        # inside, no other process is visible: the finalizer holding the machine read as gone, its claim was deleted
+        # and the machine taken beside the final check; and Isabelle runs counted none
+        self.running()
+        claim = self.w.state / "isabelle-exclusive"
+        finalizer = subprocess.Popen(["sleep", "60"])
+        try:
+            claim.write_text(json.dumps({"task": "7", "why": "its final check advances the base heap",
+                                         "pid": finalizer.pid, "at": time.time()}))
+            self.assertIn("asked of the supervisor", self.inside("implement-1", "measuring", "my timing"))
+            self.assertEqual(json.loads(claim.read_text())["task"], "7")  # still standing
+            self.w.v2("dispatch")  # the supervisor, which sees the finalizer
+            self.assertIn("task 7 holds the machine", json.dumps(self.w.mail("implement-1")))
+            self.assertEqual(json.loads(claim.read_text())["task"], "7")
+        finally:
+            finalizer.kill()
+            finalizer.wait()
+        self.inside("implement-1", "measuring", "my timing")
+        self.w.v2("dispatch")  # the finalizer has ended: its claim falls, and the machine is the measurement's
+        self.assertIn("the machine is yours", json.dumps(self.w.mail("implement-1")))
+        self.assertEqual(json.loads(claim.read_text())["task"], "1")
+        self.assertEqual(self.wanted(), [])
+
+    def test_the_owner_s_commands_refuse_inside_and_change_nothing(self):
+        before = self.w.st()
+        for script, args in (("v2.py", ["start"]), ("v2.py", ["stop"]), ("v2.py", ["talk"]), ("v2.py", ["ping", "kb-1"]),
+                             ("v2.py", ["control"]), ("start.sh", []), ("stop.sh", []), ("base.sh", ["max", "warm"])):
+            code, out, _ = self.w.run(script, *args, env=self.INSIDE)
+            self.assertEqual((code, "run it from your own terminal" in out), (3, True), (script, args))
+        self.assertEqual(self.w.st(), before)
+        self.assertFalse((self.w.state / "stopped").exists())
+        self.assertEqual(self.w.calls("--bg"), [])
+        self.assertEqual(self.w.run("v2.py", "control")[0], 0)  # outside it
+
+
 class WalkTests(Flow):
     """The whole run walked once, on the defaults it will start with: a fresh knowledge base, one long-lived planner
     fed its events as they happen, two sessions working at once, and a task carried from queue to commit."""
@@ -2787,6 +3508,75 @@ class WalkTests(Flow):
         self.w.write("HANDOFF.md", PLANNER_STATE)
         self.w.write("theories/Base.thy", "theory Base imports Main begin\nend\n")
         self.w.set_st(active=False)
+
+    def attention(self):
+        log = self.w.state / "v2.log"
+        return [l for l in (log.read_text() if log.exists() else "").splitlines() if "ATTENTION" in l]
+
+    def test_a_task_in_its_own_tree_walks_to_a_landing_on_work_that_landed_beside_it(self):
+        # the whole path of a tree task, on the machinery of 2026-09-21: forked in its tree and seen there, checked
+        # there, reviewed there, committed on its branch, what landed meanwhile brought in and checked with it, and
+        # only then main moved — and nothing along the way said ATTENTION
+        self.w.git("add", "theories/Base.thy")
+        self.w.git("commit", "-q", "-m", "the base theory")
+        self.w.git("push", "-q", "origin", "main")
+        self.w.kb()
+        self.w.set_st(active=True)
+        both = "sh -c 'test -f theories/Ready.thy && test -f theories/Other.thy && mkdir -p {output}'"
+        self.w.env.update(ORCH_TREES="1", ORCH_LANDING_CHECK=both)
+        self.w.task("1")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.assertEqual(self.as_("plan-1", "queue", "1"), "queued")
+        tree = self.w.project / ".build/trees/1"
+        impl = self.s("implement-1")
+        self.assertEqual((impl["state"], impl["tree"]), ("working", ".build/trees/1"))  # started there, and seen
+        (tree / "theories/Ready.thy").write_text("theory Ready imports Base begin end\n")
+        self.w.write(".build/tasks/1/commit.md", "Add readiness\n\nValidation: checked.\n")
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="done"))
+        self.assertIn("prepared", self.as_("implement-1", "finalize", "1", "--check", "test -f theories/Ready.thy",
+                                           "--files", "theories/Ready.thy", "--message", ".build/tasks/1/commit.md"))
+        self.assertIn("recorded", self.as_("implement-1", "result", "1"))
+        self.assertEqual(self.t("1")["stage"], "reviewing")  # its check ran in its tree
+        (call,) = [c for c in self.w.calls("--bg") if "review-1" in c["args"]]
+        self.assertEqual(call["cwd"], str(tree))  # the reviewer judges where the work stands
+        # meanwhile another task's work lands in main
+        self.w.write("theories/Other.thy", "theory Other imports Base begin end\n")
+        self.w.git("add", "theories/Other.thy")
+        self.w.git("commit", "-q", "-m", "another task's work")
+        self.w.write(".build/tasks/1/review.md", VERDICT.format(v="accept", f=""))
+        self.assertIn("accepted", self.as_("review-1", "verdict", "1", "accept", "--file", ".build/tasks/1/review.md"))
+        self.assertEqual(self.t("1")["stage"], "done")
+        self.assertEqual(self.w.read_task("1")["status"], "completed")
+        self.assertTrue((self.w.project / "theories/Ready.thy").exists())  # landed in main, with what was there
+        self.assertTrue((self.w.project / ".build/tasks/1/landing-1").is_dir())  # checked together first
+        self.assertFalse(tree.exists())
+        self.assertIn("Take up the work of task 1", self.w.git("log", "-1", "main", cwd=self.remote))  # pushed
+        self.assertEqual(self.attention(), [])
+
+    def test_a_build_completed_without_landing_walks_back_through_its_review_to_its_commit(self):
+        # the planner completed task 22 with its theory uncommitted and unreviewed: it is taken back, checked,
+        # reviewed by its own review task, and committed by itself — review before commit
+        self.w.kb()
+        self.w.set_st(active=True)
+        self.w.write("theories/Loci.thy", "theory Loci imports Main begin end\n")
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.own('22', ['theories/Loci.thy'])"], env=self.w.env, check=True)
+        self.w.task("22", subject="the locus", status="completed")
+        self.w.task("23", description=REVIEW_TASK.format(task="22"), subject="its review", blockedBy=["22"])
+        self.w.write(".build/tasks/22/finalize.json", json.dumps(
+            {"check": "true", "files": ["theories/Loci.thy"], "message": ".build/tasks/22/commit.md"}))
+        self.w.write(".build/tasks/22/commit.md", "Add the locus\n\nValidation: checked.\n")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.as_("plan-1", "queue", "23")
+        self.assertEqual(self.t("22")["stage"], "reviewing")  # taken back, checked, now in review
+        self.assertEqual(self.t("23")["reviews"], "22")
+        self.w.write(".build/tasks/23/review.md", VERDICT.format(v="accept", f=""))
+        self.assertIn("accepted", self.as_("review-23", "verdict", "23", "accept", "--file",
+                                           ".build/tasks/23/review.md"))
+        self.assertEqual(self.w.read_task("22")["status"], "completed")  # landed, and only now complete
+        self.assertEqual(self.w.read_task("23")["status"], "completed")
+        self.assertEqual(self.w.git("log", "-1", "--format=%s"), "Add the locus\n")
+        self.assertEqual(self.attention(), [])
 
     def test_the_run_walks_from_a_fresh_start_to_a_commit_through_one_planner(self):
         # 1. a fresh start: no knowledge base yet, so one is built and nothing plans until it holds the knowledge

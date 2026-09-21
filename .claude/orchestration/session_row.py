@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Print `<kind> <id-or-pid> <activity> <session-id> <state>` for the live session of this project with the given name; nothing if none.
+"""Print `<kind> <id-or-pid> <activity> <session-id> <state>` for the live session of this project (or of one of its
+task trees) with the given name; nothing if none.
 
 `activity` is the listing's live field (`busy` or `idle`: whether a turn is running); `state` is the
 supervisor's coarser label (`working`, `done`, `blocked`), which can stay `working` long after a turn ended.
@@ -18,8 +19,18 @@ try:
 except (ValueError, OSError, subprocess.SubprocessError):
     print("unknown - listing-failed")
     sys.exit(2)
+# A session started in a task's own tree (.build/trees/ID) is listed under that tree: matched on the project alone it
+# was not found, and on 2026-09-20 two such sessions ran unseen while the harness called their starts unconfirmed.
+TREES = os.path.join(os.path.realpath(PROJECT), ".build", "trees", "")
+
+
+def ours(cwd):
+    cwd = os.path.realpath(cwd or "")
+    return cwd == os.path.realpath(PROJECT) or (cwd + os.sep).startswith(TREES)
+
+
 for r in rows:
-    if r.get("name") == sys.argv[1] and os.path.realpath(r.get("cwd", "")) == os.path.realpath(PROJECT):
+    if r.get("name") == sys.argv[1] and ours(r.get("cwd")):
         print(r.get("kind", "?"), r.get("id") or r.get("pid"), r.get("status") or r.get("state") or "?",
               r.get("sessionId", "?"), r.get("state") or "-")
         break

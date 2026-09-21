@@ -20,6 +20,7 @@ import unittest
 HERE = Path(__file__).resolve().parent
 PROJECT = HERE.parent.parent
 TRANSCRIPTS = str(PROJECT).replace("/", "-").replace("_", "-")  # as session_fork_check.py and base.sh name it
+LEAN = " ".join((HERE / "session-flags").read_text().split())  # the flags the base was built with, as base.sh records
 
 FAKE = """#!/usr/bin/env python3
 import json, os, sys
@@ -51,7 +52,7 @@ class WarmVerdictTests(unittest.TestCase):
         (binary / "claude").write_text(FAKE)
         (binary / "claude").chmod(0o755)
         (self.state / "max-base.json").write_text(json.dumps(
-            {"sessionId": "warm-test-base", "model": "claude-opus-5", "effort": "max", "name": "max-base"}))
+            {"sessionId": "warm-test-base", "model": "claude-opus-5", "effort": "max", "name": "max-base", "flags": LEAN}))
         # the base's last request, and a fork that read it: 500K of the base's 500K context, so the verdict is OK
         base = assistant("base-1", 0, 0, 500000)
         (sessions / "warm-test-base.jsonl").write_text(json.dumps(base) + "\n")
@@ -91,7 +92,7 @@ class WarmVerdictTests(unittest.TestCase):
     def layer(self, sid="warm-test-layer", base="warm-test-base"):
         (self.state / "max-layer.json").write_text(json.dumps(
             {"sessionId": sid, "model": "claude-opus-5", "effort": "max", "name": "max-layer-1",
-             "context": 525_000, "base": base, "sealed": "2026-09-20T10:00:00"}))
+             "context": 525_000, "base": base, "sealed": "2026-09-20T10:00:00", "flags": LEAN}))
 
     def test_a_ping_run_by_hand_is_recorded_where_health_reads_it(self):
         printed = self.warm()
@@ -107,6 +108,20 @@ class WarmVerdictTests(unittest.TestCase):
             capture_output=True, text=True, timeout=60)
         self.assertEqual(health.returncode, 0, health.stdout + health.stderr)
         self.assertIn("base max: warm at", health.stdout)
+
+    def test_a_base_started_with_other_tools_is_not_pinged(self):
+        # every fork reads its origin from cache only with the same tools; a ping of a base started with others (all
+        # three, when the owner took four tools out on 2026-09-21) would write its whole prefix again, each time
+        rec = json.loads((self.state / "max-base.json").read_text())
+        (self.state / "max-base.json").write_text(json.dumps(dict(rec, flags=LEAN.replace(" Bash", " Bash Grep"))))
+        out = subprocess.run(["sh", str(HERE / "base.sh"), "max", "warm"], env=self.env, capture_output=True, text=True,
+                             timeout=60)
+        self.assertEqual(out.returncode, 3)
+        self.assertIn("started with other tools than session-flags gives now", out.stderr)
+        self.assertEqual(self.resumed(), [])  # nothing forked
+        (self.state / "max-base.json").write_text(json.dumps({k: v for k, v in rec.items() if k != "flags"}))
+        self.assertEqual(subprocess.run(["sh", str(HERE / "base.sh"), "max", "warm"], env=self.env, capture_output=True,
+                                        timeout=60).returncode, 3)  # nor one recorded before the flags were
 
     def test_the_ping_goes_to_the_layer_the_roles_fork_not_the_base_under_it(self):
         # a layer left cold costs its whole size on the next fork; a fork of it reads the base under it anyway

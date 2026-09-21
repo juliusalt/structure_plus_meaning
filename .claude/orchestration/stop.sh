@@ -3,10 +3,25 @@
 # planner, the producing worker and the kept ones; the orchestration becomes inactive, and the next planner is told
 # what was interrupted), then the check and build processes they left running. The sealed bases and all state stay;
 # start.sh resumes.
+#   stop.sh --keep-warm   the same, but the daemon stays: with state/stopped written first its watchdog does
+#                         nothing, and it goes on keeping the sealed bases and their layers warm (the owner's
+#                         "only leave the warmth daemon", 2026-09-20, done by hand then)
+KEEP_WARM=
+for a in "$@"; do
+  case "$a" in
+    --keep-warm) KEEP_WARM=1 ;;
+    *) echo "usage: stop.sh [--keep-warm]" >&2; exit 2 ;;
+  esac
+done
 HERE=$(cd "$(dirname "$0")" && pwd); PROJECT=${ORCH_PROJECT:-$(cd "$HERE/../.." && pwd)}; STATE="${ORCH_STATE_DIR:-$HERE/state}"
 mkdir -p "$STATE"
+"$HERE/v2.py" control || exit 3  # inside Claude Code's sandbox neither the daemon nor a session can be stopped
 date +%Y-%m-%dT%H:%M:%S > "$STATE/stopped"
-p=$(cat "$STATE/warm.pid" 2>/dev/null); [ -n "$p" ] && kill "$p" 2>/dev/null; rm -f "$STATE/warm.pid"; echo "daemon stopped"
+if [ -n "$KEEP_WARM" ]; then
+  echo "daemon kept: it only keeps the bases warm while state/stopped stands"
+else
+  p=$(cat "$STATE/warm.pid" 2>/dev/null); [ -n "$p" ] && kill "$p" 2>/dev/null; rm -f "$STATE/warm.pid"; echo "daemon stopped"
+fi
 "$HERE/v2.py" stop
 echo "HANDOFF.md was last written $(date -r "$PROJECT/HANDOFF.md" +%H:%M:%S 2>/dev/null || echo never)"
 sleep "${ORCH_PAUSE:-2}"

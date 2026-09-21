@@ -17,6 +17,7 @@ for a in "$@"; do
 done
 HERE=$(cd "$(dirname "$0")" && pwd); PROJECT=${ORCH_PROJECT:-$(cd "$HERE/../.." && pwd)}; STATE="${ORCH_STATE_DIR:-$HERE/state}"
 cd "$PROJECT" || exit 1; mkdir -p "$STATE"
+"$HERE/v2.py" control || exit 3  # the supervisor it starts must run outside Claude Code's sandbox
 [ -e "$STATE/max-base.json" ] || { echo "refused: no sealed base (base.sh max build, status, seal): every session is a fork of it"; exit 3; }
 rm -f "$STATE/stopped"
 "$HERE/v2.py" start $FRESH

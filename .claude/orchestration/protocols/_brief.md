@@ -6,7 +6,9 @@ window; a piece of work beyond one window is several tasks, with their dependenc
     Deliverable: what it produces: files in backticks (not directories) for design, investigate, build and fix; the
       tasks it briefs for brief; the verdict for review
     Reviews: the task it reviews (a review task only)
-    Acceptance: the check that accepts it
+    Acceptance: the check that accepts it, its paths relative to the repository (the finalizer runs it where the
+      task works: its own tree, or the one tree); a brief that names the repository's own directory by its absolute
+      path is not in form
     Inputs: the sources it rests on, by name (theories, facts, documents), and the decisions with where they are written
     Decided: what is decided and must be respected
     Plan:
@@ -20,9 +22,9 @@ window; a piece of work beyond one window is several tasks, with their dependenc
       {ROOM_DESIGN}K for a design, investigation, brief or review task, about {ROOM_TASK}K for a build or fix task; a
       task beyond its room is refused and split
 
-A step is a unit its session gathers for at once (`v2.py step`) and then writes. The plan is malleable: the session
+A step is a unit its session reads for at once (one batch) and then writes. The plan is malleable: the session
 follows it while it holds, changes it when the work shows a better course, and says what it changed and why.
 
 A build or fix task is written for the implementation base, which holds neither native_control_plan.md nor
 REASONING_REUSE.md: what of them the task rests on is stated under Decided, or named under Inputs as the section its
-first gather reads. A task that needs more of them than that is a design task, not a build task.
+first reads take. A task that needs more of them than that is a design task, not a build task.

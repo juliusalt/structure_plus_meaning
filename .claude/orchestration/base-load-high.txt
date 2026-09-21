@@ -1,5 +1,5 @@
-# DRAFT (2026-09-19, revised after the owner's answers): the implementation base's load list (`high`, high:
-# implementer, fixer): design C″ of notes/bases-design.md, not in use; the owner builds the base. No plan and no
+# The implementation base's load list (`high`, high: implementer, fixer; written 2026-09-19, revised after the
+# owner's answers, built from 2026-09-20): design C″ of notes/bases-design.md; the owner builds the base. No plan and no
 # reasoning inventory: a build or fix brief states what of them it rests on (protocols/_brief.md). Ordered from
 # reference to direction: the founding theories as signatures and the central ideas' statements, then — below the
 # layer mark — what each theory holds (the theory map's index, without the theories held below), the working
@@ -293,20 +293,20 @@ theories/Factor_Base_Programs.thy
 # === layer === the frontier layer below: refreshed on its own (base.sh high layer) when what it holds has changed; the reference above is the owner's to rebuild.
 # pinned: what each theory holds (generated at pack time: the first clause of its THEORY_MAP.md row, the theories this list holds left out)
 .claude/orchestration/state/held/theory-map-index.md
-# the working frontier (40 theories for the fixer, implementer sessions, re-measured 2026-09-20 from 7 of them: 13 by what they consulted, 27 carried), as statements
-theories/Development_Loci.thy  # 3 sessions, 12K pulled
-theories/Native_Execution_Refinements.thy  # 4 sessions, 0K pulled
-theories/Isabelle_Code_Equations.thy  # 1 sessions, 2K pulled
-theories/Isabelle_Local_Names.thy  # 1 sessions, 5K pulled
+# the working frontier (40 theories for the fixer, implementer sessions, re-measured 2026-09-21 from 7 of them: 5 by what they consulted, 35 carried), as statements
+theories/Development_Loci.thy  # 4 sessions, 13K pulled
+theories/Native_Execution_Refinements.thy  # 2 sessions, 0K pulled
 theories/Development_Problems.thy  # 1 sessions, 7K pulled
-theories/Isabelle_State_Difference.thy  # 1 sessions, 4K pulled
-theories/Isabelle_Renaming.thy  # 1 sessions, 6K pulled
 theories/Native_Path_Stores.thy  # 1 sessions, 7K pulled
 theories/Development_Native_Selection.thy  # 1 sessions, 7K pulled
-theories/Isabelle_Entities.thy  # 1 sessions, 4K pulled
-theories/Isabelle_Terms.thy  # 1 sessions, 1K pulled
-theories/Development_Constant_Verification.thy  # 1 sessions, 1K pulled
-theories/Development_Constant_Problems.thy  # 1 sessions, 2K pulled
+theories/Isabelle_Code_Equations.thy  # carried from the frontier before this refresh
+theories/Isabelle_Local_Names.thy  # carried from the frontier before this refresh
+theories/Isabelle_State_Difference.thy  # carried from the frontier before this refresh
+theories/Isabelle_Renaming.thy  # carried from the frontier before this refresh
+theories/Isabelle_Entities.thy  # carried from the frontier before this refresh
+theories/Isabelle_Terms.thy  # carried from the frontier before this refresh
+theories/Development_Constant_Verification.thy  # carried from the frontier before this refresh
+theories/Development_Constant_Problems.thy  # carried from the frontier before this refresh
 theories/Development_Requests.thy  # carried from the frontier before this refresh
 theories/Development_Successor.thy  # carried from the frontier before this refresh
 theories/Development_Machinery.thy  # carried from the frontier before this refresh

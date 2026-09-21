@@ -836,7 +836,7 @@ revision is a candidate contract trace and implementation plan; its unrepresente
 requirements remain explicit. O-73 is open, O-85 remains partial, and genesis has
 not occurred.
 
-## Where the stages stand (2026-09-19)
+## Where the stages stand (2026-09-20)
 
 Each batch's decisions, with their evidence and their limits at the time, are entries of
 [DECISIONS.md](DECISIONS.md), from "Consolidated overnight checkpoint" (2026-09-18) on; this section says what they
@@ -845,10 +845,11 @@ amount to for the stages and what they leave open.
 **Stage 1.** The native development state is seeded from the ten roots of the three paused refinement candidates (a
 residual choice) and read from the one accepted definition; every seeded problem has a computed structural contract
 and dependencies; the seed recipe runs with its report boundaries; the renaming controls expose the state's actual
-name dependence; acceptance consumes its local contract; Pure's constants are read as base constants. Open: the
-provenance of the checked build and the locality of a theory change; which sessions form the fixed base (a list of
-the exporter's) and the state's name table, neither with a native account; the first loop's policy beyond readiness
-(owner question Q2).
+name dependence; acceptance consumes its local contract; Pure's constants are read as base constants. The state's own
+entity rows now have a structural presentation, the first step of building the verdict of a kind ("The verdict of a
+kind is a native definition over a state's rows"), and that is where the state's dependence on its name table is met. Open: the provenance of the checked build and the locality of a theory change; which sessions form the
+fixed base (a list of the exporter's) and the state's name table, neither with a native account; the first loop's
+policy beyond readiness (owner question Q2).
 
 **Stage 2.** Selection is the native evaluation of native readiness, a native definition whose keys are paths and
 whose tables are path stores; issuing carries leaf readings; requests carry their support and least context; packets
@@ -859,7 +860,15 @@ admitted concurrently, and absence readings are re-evaluated; the loop's decisio
 loop's notions are native residual problems, the record reaching their constituents by demand (owner question Q5);
 definition problems are requested and judged; answers are native content, judged natively; the reach of a state is a
 native definition. One real answer, the indexed data walk, was adopted through a host tool and is consumed where
-recorded causes are read back. Open:
+recorded causes are read back. The engine's cost for a native definition over a whole state is closed by two
+refinements — a formed call's applications are constructed rather than verified again ("A formed call's applications
+are constructed, not verified again"), and a demand is settled over the positions of its calls ("A demand is settled
+over the positions of its calls"): the first left the machinery's reach at 44.6 s, and the second took it to 4.35 s
+on the machine the measurement claimed, about 5.8 s scaled to the machine that recorded the baseline, against a
+bound of five seconds ("A native definition over a state re-verifies its context in every call"); the seed's reach
+is 0.074 s against 0.2. The verdict of a kind is designed as a native definition over a state's rows and is building. A problem's
+decomposition is designed — a row of the development library that is an obligation reduction, presented as one Factor
+schema application ("A problem is decomposed through the constants its answer needs") — and is not built. Open:
 - the rule that admits is the constructor's acceptance guard (owner question Q1); an absent certified generation does
   not tell a refused payload from an unavailable input;
 - an answer's predecessors are its incumbent only; the refinement layer has no persistent native published state, so
@@ -868,31 +877,38 @@ recorded causes are read back. Open:
 - installation of an admitted native answer as Isabelle material is the next request class, and admission and
   publication still consume the Isabelle-judged verdict; a refinement of many constants sharing new helpers cannot
   pass the answer frame, which states one equation;
-- the library holds no decomposition rule, so decompositions have no generation (the repair is the only computed
-  decomposition); a selected residual cannot be answered before stage 4 encodes the requirements it must meet;
-- real development consumed through the loop at acceptable observed cost (condition 5a): the cost of native
-  definitions over whole states is the current problem (every call re-verifies the context it carries), and reading
-  an installed ground program back, a certified cause holding its payload twice, and a type read at every occurrence
-  remain costs on the loop's path.
+- the designed decomposition is not built, so the loop still has no decomposition and every problem is still a leaf
+  (the repair is the only computed decomposition); a selected residual cannot be answered before stage 4 encodes the
+  requirements it must meet;
+- real development consumed through the loop at acceptable observed cost (condition 5a): the limit the engine's
+  refinements leave is the stage. One judgment of the verdict is about four reaches, so a stage of 224 answer states
+  remains of the order of 3,900 s against 22.4 s for the HOL stage: the loop judges one answer natively and still
+  cannot run a verification stage natively, which is what the incremental assessment of an edited state is for.
+  Reading an installed ground program back, a certified cause holding its payload twice, and a type read at every
+  occurrence remain costs on the loop's path.
 
 **Stage 3.** A deterministic executor answers from its packet alone with the same admission as a replay, and an answer
 is confined to its declared parts. Open: the packet does not yet state the declared form; an agent confined to its
 packet (owner question Q4); a method defined by a later theory that runs ML, and an evaluation oracle, have no account.
 
 **Stages 4 and 5.** Not begun, beyond the machinery's own notions posed as residual problems; tool residuals (the
-harness, the adoption tool, the checks) have no notion in the state.
+harness, the adoption tool, the checks) have no notion in the state. Three instances of such a residual are now in
+hand for the account that is to supply them properly: what moves the active proof base and when; the machine's
+Isabelle run limit, a constant in one tool that every other tool spawning Isabelle should take from one place; and
+the commit message's evidence paragraph, a third hand-written copy of what the DECISIONS.md entry and the
+THEORY_MAP.md row already record.
 
-## The direction of the work (2026-09-19)
+## The direction of the work (2026-09-20)
 
 Two directions of the owner of 2026-09-19, quoted under [Owner directions](#owner-directions), set the work since the
 seed: structure is explicit and octets are inert, and native definitions are normative, Isabelle verifying them. The
-first gave six tasks and an order; the second reordered them (owner question Q7). Where that order stands: readiness is
-a native definition and the selection question evaluates it; the reach of a state is a native definition; the engine's
-cost for a native definition over a whole state is being removed at its cause before the verdict of a kind is designed
-as a native definition (the task graph, HANDOFF.md).
+first gave six tasks and an order; the second reordered them (owner question Q7). Where that order stands: readiness
+is done — it is a native definition and the selection question evaluates it; the verdict of a kind is designed and
+building; request construction is next; then problems whose subjects are native definitions, then the translation of
+native content into Isabelle for verification (the task graph, HANDOFF.md).
 
-The six tasks of the first direction, as recorded then ("the previous section" in them is the DECISIONS.md entry
-"Answers are native content, judged natively"):
+The six tasks of the first direction, as recorded then, each with where it now stands ("the previous section" in them
+is the DECISIONS.md entry "Answers are native content, judged natively"):
 
 Tasks, each a problem for the process (recorded here and in HANDOFF.md until the native record holds them):
 
@@ -903,7 +919,9 @@ Tasks, each a problem for the process (recorded here and in HANDOFF.md until the
    (`positive_meaning_target_map`); the same argument over payload values makes the payload literals of a
    program exactly the octets it reads as structure, while comparing two payloads for equality stays inert.
    Generalizing that theorem from targets to payloads gives both the audit and the admission condition that
-   refuses a decision reading octets as structure.
+   refuses a decision reading octets as structure. Done: the criterion is settled, and it is that a program's
+   payload literals are exactly the octets it reads as structure ("A program's payload literals are the octets
+   it reads").
 2. **Structural Isabelle states.** Constants, type constructors and variables are atoms; an occurrence cites
    its atom (the existing citation grammar) instead of carrying a table position; a bound variable cites its
    binder (the binder scopes of `Factor_Patterns`); a name is an inert payload of its atom, read only by
@@ -911,18 +929,29 @@ Tasks, each a problem for the process (recorded here and in HANDOFF.md until the
    definitions, specifications, code equations, roots), not tags; the base constants the readers need
    (`Pure.eq`, `HOL.eq`, `HOL.Trueprop`) are cited from the fixed base's structure instead of recognised by
    name. Readers with exact contracts connect the structural state to the present datatypes, so every
-   established theorem transfers while the datatypes are retired use by use.
+   established theorem transfers while the datatypes are retired use by use. Folded by demand into the design of
+   the verdict of a kind and into the first step of building it; the standalone theory stays uninstalled.
 3. **Structural development notions.** Problems (subject by citation, contract, origin and authority as
    roles), requests, verdicts, answers and packets are presented the same way; an answer's edit is a
-   structure over the request state's atoms, not a list of positions in its own name list.
+   structure over the request state's atoms, not a list of positions in its own name list. Designed and being
+   built: problem, request, answer, issue and incumbent are one notion, a row at a locus of the development's
+   published state, the locus a path of which the kind and the role are prefixes, and origin and authority
+   families of citations ("The development notions are structure; a kind is a family and an identity is a
+   path").
 4. **Decisions as native programs.** Readiness, the verdict of a kind and the selection conditions become
    Factor definitions over the structural state, each with its local contract proved once, so a native
-   question evaluates the condition instead of admitting a reflected table of its results.
+   question evaluates the condition instead of admitting a reflected table of its results. Under way: readiness
+   is native and the selection question evaluates it, the reach of a state is native, the verdict of a kind is
+   designed and building, and request construction is next.
 5. **Efficiency as structure.** An index of a relation by a structural key, the demanded traversal, keyed
    sets and the other refinements are presented as notions of the state with their contracts and applied as
-   refinements, so the implementation's efficiency is itself structural and reusable.
+   refinements, so the implementation's efficiency is itself structural and reusable. Designed: a refinement
+   applies a notion, and an index of a carrier by a key is such a notion, with one contract, three laws and
+   four obligations ("A refinement applies a notion; an index is one"); its theory is not yet built.
 6. **Transport.** Packets and answers travel as the complete data of their artifacts; the word stays
-   inert carriage, and nothing reads structure from it except the artifact's reader.
+   inert carriage, and nothing reads structure from it except the artifact's reader. Not begun, and no longer a
+   design: a packet is the presentation of a request row rather than a notion of its own, so what transport
+   needs is a reader contract, the reading being the inverse of the presentation.
 
 Order, provisionally (a residual until the process derives it): 1 and 2 first, since every other task reads
 the Isabelle state; then 3 with the native answers of the previous section re-presented over it; 4 and 5

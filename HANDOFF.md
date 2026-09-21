@@ -15,9 +15,8 @@ through the Q7 order in the ledger.
 review accepts it, the finalizer commits it, and only then does the harness complete it and its reviews. Of the five
 pieces of work that stood written and uncommitted at the start, the verdict's state rows (#46, `7b4bb54f`) and the
 development locus (#22, `612ee5a9`) have landed after a fix round each, and their re-reviews' small corrections ride
-with #78. The replay's outcome classification (#48, `3aaddd96`) landed after a fix round. The check's named refusals
-(#50, reviewed by the harness) is in its landing, and the plan's two sections (#49) wait on the one tree for their
-hand-over. Two a session finishes: the replay's outcome classification (#48 — its acceptance
+with #78; the replay's outcome classification (#48, `3aaddd96`) and the check's named refusals (#50, `955b34bb`) landed
+after a fix round each. What remains is the plan's two sections (#49), whose only step left is the hand-over. Two a session finishes: the replay's outcome classification (#48 — its acceptance
 replay was never run, because the tree was inconsistent when it was written; it also carries the ignore line and the
 untracking of `tools/__pycache__/build.cpython-314.pyc`) and the plan's two standing sections (#49 — written; its
 hand-over never landed because its session could not end its turn).
@@ -196,10 +195,15 @@ judgment's path.
   own answer alone. Acceptance, the replay alone under a measuring hold: 16 replayed, 15 reconstructed, adopted
   `indexed-data-walk`, nothing differing, nothing unproduced, 260.1 s against task 20's 283.6 s. The entry at HEAD
   stands. `.gitignore` already ignored the compiled object; its tracked copy's removal waits on the owner (Q9).
-- **Written, landing** (see Graph): #50 the check's named refusals, 14 cases in
-  `tools/test_check_refusals.py`; #48 `tools/replay_development_answers.py` with ten tests (no retained record holds
-  `elapsed_seconds`, so the longest-first ordering is inert until the answer harness retains its run's cost); #49 the
-  plan's two sections.
+- **#78** `Isabelle_Local_Names`, committed `93e45ed6`: `isabelle_local_entities_compared` and
+  `isabelle_local_root_compared`, the comparison of local presentations across two states whose tables differ (needing
+  only `distinct names'`), for #38; `isabelle_local_root` moved there from `Development_State_Rows`; #46's line-471 text
+  and the three map rows corrected. The general local presentation over positioned values was weighed and declined as
+  larger; it is stated when a third kind of positioned value takes a local presentation.
+- **#50** the check's named refusals, committed `955b34bb` after one fix round: every refusal before a build names what
+  it found (`tools/check.py`, `tools/incremental_check.py`, `tools/execution_support.py`, `tools/probe_theories.py`),
+  no condition changed, 14 cases in `tools/test_check_refusals.py`; its landing check 193.23 s, tool tests 202.
+- **Written, landing**: #49 the plan's two sections (its hand-over only).
 
 ## Open
 
@@ -260,13 +264,19 @@ Not yet planned, in the order they are expected to be planned:
     rooted state satisfying the carried conditions has a presentation, so the verdict's contract is conditional on
     `state_presents`. It carries the answer reader's refusal of a duplicated name (the verdict entry's Open). Before the
     loop evaluates the native verdict on a real answer.
-15. **The seed recipe's cost** (review 47's fifth follow-up, and #46's re-review): checks that reuse every theory still
-    re-execute every recipe — `native-development-seed` 156 to 248 s on the critical path (its report once executed in
-    9.2 s), `native-development-machinery` 93.0 s — most likely because #50's uncommitted tool changes alter every
-    recipe's execution boundary. If it persists once #50 has landed, it is a fix task; the seed recipe's own seconds are
-    attributed when a check that re-executes it is on the critical path.
+15. **The recipes' cost at every landing** (reviews of #46, #48, #78 and #50): every check has re-executed all 33
+    recipes, even for a change to host tools alone, and `native-development-seed` takes most of it — 174.46 s of #50's
+    193.23 s check, 241.73 s in #78's, against 141.3 s in its retained verified receipt and 9.2 s on 2026-09-18. #50 has
+    now landed, so the trigger is met: **a performance task is owed** (see Now) — attribute the seed recipe per
+    presentation and fix it, and measure which recipes' execution boundaries hold the tool files.
+19. **One pre-flight command for the standing last step** (#50's review): `source_checks()` and `source_graph(...)` as one
+    command, which would also expose `source_checks` passing while `source_graph` refuses. Small; tools.
 16. **Whether `keyed_agree` (#46) is an instance of the index notion or of the bijective relations** (review 47's
     second follow-up): for the index group once #68 has landed.
+18. **`isabelle_name_position_member` belongs beside `isabelle_name_position`'s laws** in `Isabelle_State_Difference`
+    (#78's review): two older proofs there (`isabelle_local_embedding_renamed`, `isabelle_state_embedding_back`) write
+    its pattern inline, and `isabelle_state_embedding_named` serves every proof that unfolds `isabelle_state_embedding_def`
+    at a found name. With the next edit of that theory.
 17. **The replay's timeout stops only the direct child** (#48's review): `tools/build.py`'s `run_session` is the existing
     whole-tree stop, to extend and reuse in `run_harness`. Small; plan it when a harness run next outlives its limit,
     or sooner if orphaned Isabelle runs are found holding the machine.
@@ -282,7 +292,12 @@ Not yet planned, in the order they are expected to be planned:
   #49, then the fillers.
 - **For the owner**: `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap
   (#22's re-review); and `v2.py park machine` answers "a run may start now" while the probe launched right after it is
-  refused for "2 Isabelle runs are going on this machine", four times in a row (implement-24, q27, 22:15).
+  refused for "2 Isabelle runs are going on this machine", four times in a row (implement-24, q27, 22:15); and #50's
+  review suggests the finalizer append its check's summary to the task's report, since a result is recorded before the
+  finalizer's check runs.
+- **Not yet handled when plan-32's window closed (2026-09-21 22:24)**: the performance task Open 15 now owes (create it,
+  ordered before the builds whose landings re-execute the seed recipe: #54, #56, #30, #58, #60); and #62's and #64's
+  brief corrections, owed when #66's entry is accepted.
 - **Owed to the owner**: each landing check's phases and per-recipe comparison (#48's replay numbers were reported).
 - **Owed before #62 and #64 start: correct their briefs from #66's entry once it is accepted** (q25). A decomposition's
   child at an occupied locus is the problem standing there — at a parent with a locus the part child *is* the parent —

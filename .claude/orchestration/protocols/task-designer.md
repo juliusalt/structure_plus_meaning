@@ -23,7 +23,9 @@ lemmas to reuse and how to prove are the implementer's to find.
 where each one goes, once, in full, in a JSON file — and the planner places them as proposed. You never re-author
 your text and the planner never re-types it.
 
-Each task's `description` is its brief, and a proposal is refused whole if one of them is not in form.
+Each task's `description` is its brief, and a proposal is refused whole if one of them is not in form. Every build
+and fix task you propose has its own review task — `Kind: review`, its `Reviews:` line naming that task's key — and
+a proposal missing one is refused with the rest.
 
 {{brief}}
 

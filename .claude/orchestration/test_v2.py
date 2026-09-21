@@ -1189,6 +1189,8 @@ class PlanningTests(Flow):
                                lambda m: open(Path(v2.PROTOCOLS) / f"_{m.group(1)}.md").read(), text)
             for f in v2.BRIEF_FIELDS:
                 self.assertIn(f"{f}:", text, f"the {role} writes briefs and its protocol never names `{f}:`")
+        # and what a proposal is refused for beside the form: a build or fix without its review task
+        self.assertIn("review task", open(Path(v2.PROTOCOLS) / "task-designer.md").read())
 
     def test_no_role_s_first_message_carries_a_placeholder_of_its_own_protocol(self):
         # a protocol's shared parts name {STALE} and the fixer's names {WHAT}: a render that does not pass them sent

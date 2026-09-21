@@ -635,8 +635,18 @@ def write_targets(tool, inp, command, cwd):
 
 def write_guard(tool, inp, command, rec, cwd):
     """HANDOFF.md is the planner's; while another task's finalization is in flight, it holds the working tree: every
-    other session writes only under .build/ (and the harness's own files), and is told when the tree is free."""
+    other session writes only under .build/ (and the harness's own files), and is told when the tree is free.
+
+    A task file is written by no session at all. "The task graph is the planner's alone to edit" was held over
+    TaskCreate and TaskUpdate, and the list is a directory of JSON files a Write or a redirection reaches as easily
+    — past the lock Claude Code keeps on a task and past the id allocation, and for every role (2026-09-21)."""
     targets = write_targets(tool, inp, command, cwd)
+    graph = os.path.join(v2.TASKS, v2.LIST) + os.sep
+    if any(t.startswith(graph) for t in targets):
+        return deny("A task file is not written by hand: the graph's own tools write it, and they take Claude Code's "
+                    "lock on the task and allocate its id — TaskCreate and TaskUpdate for the planner, "
+                    "`v2.py blockers` for an edge, `v2.py accept` for a brief's proposed tasks, and `v2.py propose` "
+                    "for a task designer, which proposes and does not write.")
     theirs = {os.path.join(d, f) for d in (v2.PROJECT, v2.tree_of(rec)) for f in ("HANDOFF.md", v2.PLANNER_LOG)}
     if rec.get("role") != "planner" and theirs & set(targets):
         return deny(f"HANDOFF.md is the planner's state and {v2.PLANNER_LOG} is its log: what you did goes into your "

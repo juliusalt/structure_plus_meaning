@@ -87,6 +87,8 @@ CASES = [
      "waiting_for_the_planner_s_verdict", "a design waiting for a verdict"),
     ("v2.py", 'stopped = os.path.exists(os.path.join(STATE, "stopped")) and', 'stopped = False and',
      "start_then_stop_then_start_again", "nothing starts while the run is stopped"),
+    ("work_meter.py", 'if any(t.startswith(graph) for t in targets):', 'if False:',
+     "written_by_no_session", "a task file written by hand"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

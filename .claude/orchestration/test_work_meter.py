@@ -450,6 +450,21 @@ class SharingTests(Guarded):
     def test_handoff_is_the_planners(self):
         self.assertIn("HANDOFF.md is the planner's state", self.guard("Write", {"file_path": "HANDOFF.md"}))
 
+    def test_a_task_file_is_written_by_no_session_at_all(self):
+        # "the task graph is the planner's alone to edit" was held over TaskCreate and TaskUpdate, and the list is a
+        # directory of JSON files a Write or a redirection reaches as easily — past Claude Code's lock on the task
+        # and past the id allocation (2026-09-21)
+        graph = self.w.tasks
+        for tool, inp in (("Write", {"file_path": str(graph / "99.json")}),
+                          ("Edit", {"file_path": str(graph / "4.json")}),
+                          ("Bash", {"command": f"echo '{{}}' > {graph}/99.json"}),
+                          ("Bash", {"command": f"rm {graph}/4.json"})):
+            reason = self.guard(tool, inp, tool_use="t-new")
+            self.assertIsNotNone(reason, f"{tool} {inp} reached the graph")
+            self.assertIn("A task file is not written by hand", reason)
+        self.assertIsNone(self.guard("Write", {"file_path": str(self.w.project / ".build/tasks/2/x.md")},
+                                     tool_use="t-new"))
+
     def test_no_check_beside_a_measurement_either(self):
         # a run whose result is a timing holds the machine the same way a base-advancing check does
         (self.w.state / "isabelle-exclusive").write_text(json.dumps(

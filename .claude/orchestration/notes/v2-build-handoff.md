@@ -1317,3 +1317,46 @@ the flags are part of the cached prefix, so taking it out costs a rebuild of eve
 and told. `.build` holds 26G, 18 check directories of it; the repository retires temporary storage through
 `tools/retire_temporary_storage.py`, which is the owner's and declaration-driven, and 1TB is free. The nine
 `(age_of(mark) or N + 1) > N` call sites stand as before.
+
+### The same sweep, continued
+
+**Files the harness keeps, read as empty when they could not be read.** `state()` and `owners()` each turned any
+read failure into `{}` and wrote it back under the lock that was meant to protect them — the sessions, the tasks and
+the queue, or which task owns every change in the working tree. The owner ledger did the same with a fresh header:
+every direction the owner has ever given, replaced by the one entry being written. A file that is not there is still
+empty, which is how a run begins; one that is there and cannot be read now raises, or is left alone with its words
+kept in the log. The two holds (`no-launch`, `graph-held`) had the mirror fault: they read a failure as "no such
+file" and so as "nothing is held", which is the one thing the owner's own switch exists to prevent.
+
+**Turns and budgets.** `OWN` matched only the long form of the harness's own commands, so a session that wrote
+`v2.py park run` had `park`, `ask` and `result` counted as reading and refused once its budget was spent — the three
+commands that end a turn, refused while the Stop hook told it to run them. The Stop hook and the watchdog both told
+a producing session its turn ends "while you wait on a question of your own", which `may_end` frees only for the
+supporting roles. A turn blocked twelve times in a row is now named in the log.
+
+**What a run leaves.** A resume that fails puts a session's mail back in its box and nothing tries again: eight
+boxes stood unread from 2026-09-20. `release()` names what is left, once, where the box is emptied. A session
+stopped by the account's usage limit keeps its mail rather than spending its resume on a turn that hits the limit
+again. Every uncommitted path in the working tree belongs to a task the planner completed — work the graph calls
+done that the repository does not hold — which health.py now says.
+
+**The queue as the planner's word.** `done` is terminal bookkeeping that `task_state` never re-reads, so that a task
+its review accepted is not started twice in the window before the planner completes it in the list. A task the
+planner puts back to pending and then names in its order is one it means to run, and nothing would ever start it:
+`v2.py queue` reads such a task afresh, and only when the list no longer calls it completed.
+
+**Measured rather than guessed.** A coverage run that follows the subprocesses the tests actually run (they are
+nearly all subprocesses: a plain run reads 30%, this one 84%, `v2.py` 89%) named three live paths no test entered —
+a gather over a finished task's artifacts, `talk.sh`'s join of a live planner, and health's line on each live
+session — and the finalizer's refusal to run a check while the tree refuses every check. All four are held now. What
+else it names is the shelf machinery, inert since 2026-09-20, and error branches of the base tools.
+
+    COVERAGE_PROCESS_START=<rc> PYTHONPATH=<dir with sitecustomize calling coverage.process_startup()> \
+      python3 -m coverage run --rcfile=<rc> -m pytest -q test_*.py && python3 -m coverage combine --rcfile=<rc>
+
+**Reading the record.** Running a whole task from queue to commit in the fake world, and a failing check to its
+quick fix, and a rejection to a second rejection, and `--fresh` against a graph shaped like the live one, and then
+reading the log and every message as the owner would: the loop is coherent, and it caught one notice crying wolf
+(a transcript not yet written read as one that could not be read) and one that contradicted another (a lost
+session's mail said to be kept where the release had just emptied it). A walk that goes right now asserts that its
+log carries no ATTENTION at all.

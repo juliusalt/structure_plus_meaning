@@ -2495,7 +2495,7 @@ orchestration in the project memory; commit only at the owner's word; the base r
    comes before the ten-second start hook ends), then `claude stop` and `claude rm` of that fork's id only, and no
    computed `rm` under `~/.claude` at all. One probe at a time, nothing in parallel, no retry before the cause of a
    failure is known (the owner, today). Then max and xhigh the same way.
-3. **Commit and push** — done for everything up to `1cf9e739` (above); what follows it is committed the same way, at the word the owner gave before the loss ("rebuild the bases, commit and push, and start the
+3. **Commit and push** — done for everything up to `1cf9e739` (above), and the handoff's own update as `9a4f17dd`. **Then the owner said: do not push anything else** (2026-09-21, ~18:45): nothing is pushed, and nothing committed, without the owner's word for it. What follows is how it was done, at the word the owner gave before the loss ("rebuild the bases, commit and push, and start the
    run with `--fresh`"): only the harness — `.claude/orchestration/`, its untracked new files included (`check_errors.py`,
    `commit_gate.py`, `cut.py`, `lines.py`, `notes/worklist-2026-09-21.md`, `test_change.py`, `test_check_errors.py`),
    and `DEVELOPMENT_WORKFLOW.md` (its harness corrections). HANDOFF.md, PLANNING_LOG.md, native_control_plan.md,
@@ -2517,3 +2517,87 @@ orchestration in the project memory; commit only at the owner's word; the base r
   the sandbox: a bare run builds a second store.
 - Whether the two new memory files belong in the bases: they are rules for any session's shell, not notes about the
   orchestration, but every base loads them.
+
+---
+
+# 2026-09-21 ~19:40 — before the rebuild: forks missed their base; the tool set pinned
+
+The owner asked, before building, to make sure the bases' and layers' tools are what they should be. Five probes
+(`.build/probe-sandbox-tools.sh`, `probe-sandbox-cache.sh`, `probe-flags-cache.sh`, `probe-growthbook-cache.sh`,
+`probe-multirequest-cache.sh`, with `.build/probe_transcript.py`; logs beside them), run by the owner from their
+terminal, one session at a time, each copying base.sh's and v2.py's launch lines:
+
+- **The tool list varied between identical launches.** A base's `prompt_snapshot` attachment records the tools and the
+  system prompt actually sent: five bases with the same flags were sent 5, 4, 5, 4, 5 tools — EndConversation (and a
+  system-prompt paragraph on it) or not. It is gated by a GrowthBook flag (`END_CONVERSATION_GB_FLAG` in the binary),
+  fetched at a session's start in time or not. A fork that drew otherwise than its base read none of it from cache
+  (read 0, or only the system prompt's static opening). `--disallowedTools EndConversation` did not take it out.
+- **`DISABLE_GROWTHBOOK=1` pins it**: four bases in a row were sent the same 4 tools. Still one hour of cache
+  (`ephemeral_1h_input_tokens`), still "Opus 5 (1M context)"; background starts, forks, sandboxed Bash in auto mode and
+  the SessionStart hook all worked.
+- **With the tools pinned, forks of a base shaped like a real one read it whole**: a base that ran three Bash commands
+  before replying (four requests, each reading all before it) was read 14,152 of 14,154 by each of three forks — the
+  first in the project with base-settings (how the layer and the warm ping fork), one in a tree with worker-settings,
+  one with planner-settings — the sandbox on. So the sandbox is not the cause; a control with it off (its sessions had
+  no `sandbox_instructions` attachment; they still called themselves sandboxed) missed the same way.
+- **Unexplained, and outside what the harness forks**: forks of a base that made only one request missed its first
+  message even with the tools pinned (they read the tools and system prompt, 9.3K of 13.8K), while later forks sometimes
+  read an entry the first fork had written. Everything the harness forks — bases, layers, the knowledge base, sealed
+  sessions consulted — has made many requests.
+- The session listing says `busy` from a fork's start to its reply, never `idle` before its first request: base.sh
+  layer and warm wait correctly.
+
+**The fix**: `"DISABLE_GROWTHBOOK": "1"` in the env of base-settings.json, worker-settings.json and planner-settings.json
+(background sessions take no environment but their settings'). A FormTests test holds it in all three and holds the
+roles to those three files; a mutation case (removing it from worker-settings.json) is caught. README says why.
+Flag-gated behaviour runs at Claude Code's built-in defaults in harness sessions. Not committed.
+
+**On the rebuild**: `base.sh high layer` is the high base's first fork. Its cache read is the first confirmation on a
+real base; it is not logged by base.sh, so read the layer's first request in its transcript
+(`session_fork_check.py <layer sid> <base sid>`). A real base's load also shows whether the server gives these
+sessions more than 200K of context (the model attachment says 1M either way).
+
+**Inside the sandbox `claude agents` shows only part of the listing.** At the rebuild `base.sh high build` (the owner's
+terminal) refused: "a session named high-base is already live". From inside the sandbox `claude agents --json` listed
+two sessions and no high-base; `~/.claude/jobs/*/state.json` held `add75d4d` "high-base" **running** (today's 16:38
+base, its transcript deleted at 16:41 — `seal`'s stop did not show in its record), `32f9c132` "high-base" done and
+`d8d698d0` "max-layer-163828" done. Most likely the sandbox's block on Unix sockets keeps the CLI from the background
+daemon, and it falls back to a partial view. So anything run inside the sandbox that reads the listing
+(`session_row.py`: sessions' `v2.py` commands, the owner's session) may miss live sessions; the supervisor, outside,
+sees them all. The three are to be removed from the owner's terminal (`claude stop ID; claude rm ID`) before the build.
+
+**Confirmed on the real high base (19:33).** `8956b113` (272,609 loaded) and its layer `5e77c3b9` (524,838) were both
+sent the same 4 tools and no EndConversation in the system prompt (their `prompt_snapshot`s); the layer — the base's
+first fork — read 272,607 of 272,609 from cache on its first request. More than 200K loaded: the 1M context holds with
+the flags off. Meanwhile `seal` had started the keep-warm daemon, which pinged the max layer record `d8d698d0` (its
+transcript recreated at 17:52 with only 33 records, a context of 10,058) and missed, writing 46,026 for nothing; the
+max and xhigh records were dropped (`base.sh WHO drop`, which starts nothing and runs inside the sandbox) so that no
+further ping goes to them before they are rebuilt.
+
+**Max (19:37–19:49).** The base `3fc4a466` (346,336, 4 tools) and its layer `f6f803b6` (481,129, 4 tools; read the
+base 346,334 of 346,336 on its first request). `base.sh max layer` refused to record the layer: all four chunks had
+arrived and the layer replied its 64-character pack id with one character wrong (`…52a4a4ec…` for `…52a4e4ec…`).
+Loading it again would have written 135K, so, at the owner's word: `check-load` accepts the id with one slipped
+character once every chunk has arrived (`base_pack.acknowledges`; the chunks are what is checked exactly), and
+`base.sh WHO layer --adopt NAME PACK` records a layer session that loaded and was not recorded — the same steps as a
+new layer's, now one function `seal_layer`, and only a fork of the recorded base (`session_fork_check.py --is-fork`).
+Tests: the slip (one accepted, two refused, an acknowledgement before the chunks refused) and an end-to-end adoption
+against a fake `claude` (a non-fork refused, the fork recorded and stopped, nothing loaded); three mutation cases,
+caught; 461 tests pass. The owner adopted the max layer (`max-layer-193733`, sealed 19:49:18). Not committed.
+
+**Xhigh (19:51), and all three built.** The base `41c05529` (272,714) and its layer `7c3c2e87` (506,488), both sent
+the same 4 tools; the layer read the base 272,712 of 272,714. So: high `8956b113`/`5e77c3b9`, max `3fc4a466`/`f6f803b6`,
+xhigh `41c05529`/`7c3c2e87`, every one with the flags session-flags gives, every layer reading its base at 99%. The
+daemon runs (heartbeat fresh) and pings only these; `state/stopped` stands and `state/no-launch` is gone. Left: the full
+mutation check (not run whole since today's changes), the commit at the owner's word, and `start.sh --fresh` from the
+owner's terminal.
+
+**The full mutation check, then the stable bases' warmth (~20:05).** All 245 cases caught (312 s; every file
+restored). The daemon pings only layers (`base.sh warm` forks the layer when there is one); whether reading a layer's
+entry keeps the stable base's own shorter entry alive — needed by every layer refresh, a fork of the base — was assumed
+in the code and never measured, and today's probes suggest an entry exists only where a request ended. At the owner's
+choice it is measured rather than paid for: `seal_layer` runs `session_fork_check.py` on each new layer against its
+base and writes `layer WHO: OK|MISS …` to warm.log (and prints it); `health.py` names such a miss as a layer that wrote
+its base cold, not as a keep-warm miss. A test in each place, two mutation cases caught. If refreshes miss, the choice
+is a ping of each stable base besides its layer. Not committed. The load lists high and xhigh were rewritten by the
+owner's layer builds (`select_base_load.py --frontier`), as every layer build does.

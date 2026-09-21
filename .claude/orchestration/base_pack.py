@@ -650,6 +650,16 @@ def bootstrap(directory, meta):
             "turn.\n\n" + command + "\n")
 
 
+def acknowledges(text, pack_id):
+    """The load's final reply, `LOADED <pack id>`: the id as given, or with one character slipped in the copying. The
+    chunks are what is checked exactly; this says only that the session read to the end. On 2026-09-21 the max layer
+    loaded all four of its chunks and wrote one character of its 64-character id wrong, and the complete layer was
+    refused."""
+    words = text.strip().split()
+    return (len(words) == 2 and words[0] == "LOADED" and len(words[1]) == len(pack_id)
+            and sum(a != b for a, b in zip(words[1], pack_id)) <= 1)
+
+
 def check_load(directory, transcript):
     meta = verify(directory)
     # Claude Code stores a Bash result without its trailing newline, so the envelope is matched without it.
@@ -671,7 +681,7 @@ def check_load(directory, transcript):
                     if value in body:
                         found.add(number)
             if record.get("type") == "assistant" and block.get("type") == "text":
-                if block.get("text", "").strip() == "LOADED " + meta["id"] and len(found) == len(expected):
+                if acknowledges(block.get("text", ""), meta["id"]) and len(found) == len(expected):
                     completion = True
     if len(found) != len(expected) or not completion:
         raise ValueError(f"incomplete load: {len(found)}/{len(expected)} complete chunks; final acknowledgement={completion}")

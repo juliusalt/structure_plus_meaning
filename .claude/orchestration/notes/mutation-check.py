@@ -490,6 +490,22 @@ CASES = [
      "reads_the_daemon_by_its_heartbeat", "health reads the heartbeat inside the sandbox"),
     ("warm_daemon.sh", 'do touch "$STATE/warm.beat";', 'do :;', "reads_the_daemon_by_its_heartbeat",
      "the daemon's heartbeat"),
+    # the tool set (2026-09-21): a feature flag sent some sessions a fifth tool, and a fork that drew otherwise than
+    # its base read none of it from cache
+    ("worker-settings.json", '  "env": {\n    "DISABLE_GROWTHBOOK": "1"\n  },\n', '',
+     "feature_flags_off", "the feature flags off in every session"),
+    # a complete layer refused for a slip in its reply (2026-09-21), and adopted rather than loaded again
+    ("base_pack.py", "and sum(a != b for a, b in zip(words[1], pack_id)) <= 1)",
+     "and sum(a != b for a, b in zip(words[1], pack_id)) <= 0)", "slip_in_the_echoed_id", "a slip in the echoed id"),
+    ("base.sh", '|| { echo "refused: $n is not a fork of the $who base; nothing is recorded" >&2; exit 3; }', '|| true',
+     "adopted_without_a_second_load", "layer --adopt records only a fork of the base"),
+    ("session_fork_check.py", "    if not base_reqs or missing:", "    if not base_reqs:",
+     "adopted_without_a_second_load", "--is-fork asks for every request of the base"),
+    # every sealed layer says whether it read its base: only the layer is pinged (2026-09-21)
+    ("base.sh", '  echo "$(date +%Y-%m-%dT%H:%M:%S) layer $who: $read" >> "$STATE/warm.log"\n', '',
+     "adopted_without_a_second_load", "a sealed layer records its read of the base"),
+    ("health.py", 'if " layer " in line else', 'if False else',
+     "did_not_read_its_base_is_named", "health names a layer's cold read"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

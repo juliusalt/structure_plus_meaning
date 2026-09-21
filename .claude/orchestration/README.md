@@ -429,7 +429,16 @@ under it. The layer is refreshed when the files it holds have changed by `ORCH_L
 when `state/<who>-layer.refresh` asks; a refresh re-measures the working frontier from the sessions of the roles
 that fork that base, writes 112K to 234K instead of rebuilding 473K to 518K, and leaves the reference untouched. The
 layer it replaces is stopped but not removed, and its snapshot is kept while any session still holds it, so a session
-forked before a refresh is told what changed against the load it actually has.
+forked before a refresh is told what changed against the load it actually has. Only the layer is pinged; whether that
+keeps the stable base's own entry warm for the next refresh (itself a fork of the base) has not been measured, so each
+sealed layer records in `state/warm.log` whether it read its base from cache (`layer WHO: OK|MISS …`), and `health.py`
+names a miss there as a layer that wrote its base cold.
+
+A load is complete when every chunk has arrived whole in the session's tool results and the session then replies
+`LOADED <pack id>`; the id may carry one slipped character, since the chunks are what is checked exactly (on
+2026-09-21 the max layer loaded all four chunks and mistyped its 64-character id, and was refused). A layer session
+that loaded and was not recorded is recorded as it stands with `base.sh WHO layer --adopt NAME PACK` — the same
+checks, and only a fork of the recorded base — instead of being loaded again.
 
 ## How the base is loaded
 
@@ -454,8 +463,14 @@ Glob, WebFetch and WebSearch show what no hook can bound (a hook rewrites a call
 MCP tool's result after); Read, Edit and Write were one file a call where Bash and `v2.py change` take many; Agent,
 TaskOutput and Monitor were always refused and never used; and ToolSearch is what made Claude Code defer tools at
 all — with it in the list, TaskCreate, TaskUpdate, TaskStop and the rest were names to load first (a request over the
-whole context each time, 42 of them), and without it every tool loads at the start (measured on Opus 5, 2026-09-21;
-EndConversation, which Claude Code added deferred, goes with it). `base.sh` (build, warm) and `v2.py` (fork) pass it; the flags must be identical for a fork to read the base
+whole context each time, 42 of them), and without it every tool loads at the start (measured on Opus 5, 2026-09-21).
+Every settings file a session starts with (`base-settings.json`, `worker-settings.json`, `planner-settings.json`) sets
+`DISABLE_GROWTHBOOK=1`: EndConversation comes behind a GrowthBook feature flag that one session's start fetches in time
+and another's not, so bases and forks started with the same flags were sent four tools or five, and a fork that drew
+otherwise than its base read none of it from cache. With the flags off every session is sent the same four and forks
+read their base whole (five probes, 2026-09-21: `.build/probe-*.sh`; `--disallowedTools` did not take the tool out;
+the sandbox was not the cause). Flag-gated behaviour runs at Claude Code's built-in defaults in these sessions.
+`base.sh` (build, warm) and `v2.py` (fork) pass the flags; the flags must be identical for a fork to read the base
 from cache, so a base and a started session record the flags they were started with, and nothing forks, pings or
 layers over one started with others (`v2.other_tools`, `base.sh`'s `lean_as`): each such fork would write the whole
 prefix again. A change to `session-flags` therefore means building every base again (`base.sh WHO build`, `seal`);

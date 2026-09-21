@@ -298,7 +298,9 @@ def main():
             print(f"base {who}: " + ("never hit" if a is None else f"last hit {minutes(a)} ago"
                                       + (" — its cache entry has expired" if a > CACHE_LIFE else "")))
     for line in recent("warm.log", 3600, "MISS"):
-        print("ATTENTION keep-warm miss: " + line[:170])
+        # a layer's seal says whether it read its stable base (base.sh seal_layer); a ping says whether the layer is warm
+        print("ATTENTION " + ("a layer did not read its base from cache: " if " layer " in line else "keep-warm miss: ")
+              + line[:170])
     for line in recent("v2.log", 3600)[-12:]:
         print("log: " + line[:220])
 

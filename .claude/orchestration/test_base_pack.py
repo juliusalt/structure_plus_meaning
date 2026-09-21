@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
@@ -301,6 +302,35 @@ class PackingTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 p.check_load(directory, transcript)
 
+    def test_a_slip_in_the_echoed_id_does_not_refuse_a_complete_load(self):
+        # the max layer of 2026-09-21 loaded all four of its chunks and replied its 64-character id with one character
+        # wrong: the chunks are what is checked exactly, the reply only that the session read to the end
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            directory = self.make_pack(root)
+            meta = p.load(directory)
+            loaded = [{"type": "user", "message": {"content": [{"type": "tool_result", "content": p.envelope(meta, i, t)}]}}
+                      for i, t in enumerate(p.checked_chunks(directory, meta), 1)]
+            transcript = root / "session.jsonl"
+
+            def reply(text):
+                return {"type": "assistant", "message": {"content": [{"type": "text", "text": text}]}}
+
+            def slipped(pack_id, *at):
+                return "".join(("0" if c != "0" else "1") if k in at else c for k, c in enumerate(pack_id))
+
+            def complete(records):
+                transcript.write_text("".join(json.dumps(r) + "\n" for r in records))
+                try:
+                    return bool(p.check_load(directory, transcript))
+                except ValueError:
+                    return False
+
+            self.assertTrue(complete(loaded + [reply("LOADED " + slipped(meta["id"], 12))]))
+            self.assertFalse(complete(loaded + [reply("LOADED " + slipped(meta["id"], 12, 13))]))  # two: not a slip
+            self.assertFalse(complete([reply("LOADED " + meta["id"])] + loaded))  # said before the chunks arrived
+            self.assertFalse(complete(loaded + [reply("LOADED")]))
+
     def test_altered_chunk_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
             directory = self.make_pack(Path(temp))
@@ -363,6 +393,80 @@ class PackingTests(unittest.TestCase):
                     patch.object(p.urllib.request, "urlopen", side_effect=AssertionError("must not call")):
                 with self.assertRaisesRegex(ValueError, "ANTHROPIC_API_KEY"):
                     p.count(directory, "test-model")
+
+    def test_a_layer_that_loaded_but_was_not_recorded_is_adopted_without_a_second_load(self):
+        # the max layer of 2026-09-21 was complete and refused for a slip in its reply; loading it again would have
+        # written 135K. `layer --adopt` records it through the same steps as a new layer's, and only a fork of the base.
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            directory = self.make_pack(root)
+            meta = p.load(directory)
+            home, state, binary = root / "home", root / "state", root / "bin"
+            project = p.HERE.parent.parent
+            sessions = home / ".claude/projects" / str(project).replace("/", "-").replace("_", "-")
+            for d in (sessions, state, binary):
+                d.mkdir(parents=True)
+            flags = " ".join((p.HERE / "session-flags").read_text().split())
+            (state / "max-base.json").write_text(json.dumps(
+                {"sessionId": "base-sid", "model": "claude-opus-5[1m]", "effort": "max", "name": "max-base",
+                 "flags": flags}))
+
+            def request(rid, read, write, text="."):
+                return {"type": "assistant", "message": {"id": rid, "content": [{"type": "text", "text": text}],
+                        "usage": {"input_tokens": 2, "cache_read_input_tokens": read,
+                                  "cache_creation_input_tokens": write}}}
+
+            def write(sid, records):
+                (sessions / f"{sid}.jsonl").write_text("".join(json.dumps(r) + "\n" for r in records))
+
+            base = [request("req-base", 0, 1000)]
+            loaded = [{"type": "user", "message": {"content": [{"type": "tool_result", "content": p.envelope(meta, i, t)}]}}
+                      for i, t in enumerate(p.checked_chunks(directory, meta), 1)]
+            slipped = meta["id"][:12] + ("0" if meta["id"][12] != "0" else "1") + meta["id"][13:]
+            write("base-sid", base)
+            write("layer-sid", base + loaded + [request("req-layer", 1000, 300, "LOADED " + slipped)])
+            write("other-sid", loaded + [request("req-other", 0, 1300, "LOADED " + meta["id"])])  # not a fork of it
+            fake = binary / "claude"
+            fake.write_text("""#!/usr/bin/env python3
+import json, os, sys
+open(os.environ['ADOPT_TEST_LOG'], 'a').write(' '.join(sys.argv[1:]) + '\\n')
+if sys.argv[1:] == ['agents', '--json']:
+    print(json.dumps([dict(name=n, id=i, sessionId=s, kind='background', status='idle', state='done',
+                           cwd=os.environ['ADOPT_TEST_PROJECT'])
+                      for n, i, s in (('max-layer-1', 'abcd1234', 'layer-sid'), ('max-other-1', 'ef567890', 'other-sid'))]))
+""")
+            fake.chmod(0o755)
+            calls = root / "calls.log"
+            env = {k: v for k, v in os.environ.items() if not k.startswith(("ORCH_", "CLAUDE"))}
+            env.update(HOME=str(home), PATH=str(binary) + os.pathsep + os.environ["PATH"], ORCH_CONTROL="1",
+                       ORCH_STATE_DIR=str(state), ADOPT_TEST_LOG=str(calls), ADOPT_TEST_PROJECT=str(project))
+
+            def adopt(name):
+                return subprocess.run(["sh", str(p.HERE / "base.sh"), "max", "layer", "--adopt", name, str(directory)],
+                                      env=env, capture_output=True, text=True, timeout=60)
+            try:
+                refused = adopt("max-other-1")
+                self.assertEqual(refused.returncode, 3, refused.stdout + refused.stderr)
+                self.assertIn("is not a fork of the max base", refused.stderr)
+                self.assertFalse((state / "max-layer.json").exists())
+                done = adopt("max-layer-1")
+                self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+                record = json.loads((state / "max-layer.json").read_text())
+                self.assertEqual((record["sessionId"], record["base"], record["pack"], record["context"], record["flags"]),
+                                 ("layer-sid", "base-sid", str(directory), 1302, flags))
+                said = calls.read_text()
+                self.assertIn("stop abcd1234", said)  # sealed, as a new layer is
+                self.assertNotIn("--bg", said)         # and nothing was loaded again
+                # and every sealed layer says whether it read its base from cache: only the layer is pinged
+                self.assertIn("layer max: OK   session fork layer-si of base base-sid", (state / "warm.log").read_text())
+                self.assertIn("its read of the base: OK", done.stdout)
+            finally:
+                for _ in range(30):  # seal_layer starts the keep-warm daemon, which outlives the command
+                    if (state / "warm.pid").exists():
+                        with contextlib.suppress(OSError, ValueError):
+                            os.kill(int((state / "warm.pid").read_text()), 15)
+                        break
+                    time.sleep(0.1)
 
     def test_build_packed_launches_the_frozen_pack_with_isolated_state(self):
         with tempfile.TemporaryDirectory() as temp:

@@ -20,6 +20,8 @@
 #                               verify it, seal it and record it. Every role of that base then forks the layer, which
 #                               reads the whole prefix under it from cache (measured 2026-09-20: 99% of 538K). It
 #                               blocks until sealed; repeatable, and the layer it replaces is stopped.
+#   base.sh WHO layer --adopt NAME PACK   record a layer session that loaded completely but was not recorded (its
+#                               checks refused it, or it was stopped first): the same checks, no second load
 #   base.sh WHO drop            forget the base and its layer; the roles that fork it start from the planner's base instead
 # BASE_LOAD_LIST overrides the list this base is built from; nothing inherited from the caller does.
 set -u
@@ -30,7 +32,7 @@ case "$who" in
   max)   name=${BASE_NAME:-max-base};   effort=${BASE_EFFORT:-max};   list=base-load-max.txt ;;
   xhigh) name=${BASE_NAME:-xhigh-base}; effort=${BASE_EFFORT:-xhigh}; list=base-load-xhigh.txt ;;
   high)  name=${BASE_NAME:-high-base};  effort=${BASE_EFFORT:-high};  list=base-load-high.txt ;;
-  *) echo "usage: base.sh max|xhigh|high pack|build|status|seal|layer|warm|drop" >&2; exit 2 ;;
+  *) echo "usage: base.sh max|xhigh|high pack|build|status|seal|layer [--adopt NAME PACK]|warm|drop" >&2; exit 2 ;;
 esac
 model=${BASE_MODEL:-claude-opus-5[1m]}
 role="$HERE/library-prompt.md"  # one role-neutral system prompt for every base; each fork's first message says its role
@@ -71,6 +73,34 @@ prepare_pack() {
     python3 "$HERE/base_pack.py" build --output "$packed" || return $?
   fi
   echo "packed base: $packed"
+}
+# What makes a loaded layer the one every role forks ($packed, $n, $lsid, $lid, $old_row): its load checked complete,
+# its held files snapshotted, its context measured, the session stopped and recorded, the layer it replaces stopped.
+# `layer` and `layer --adopt` both end here.
+seal_layer() {
+  python3 "$HERE/base_pack.py" check-load "$packed" "$SESSIONS/$lsid.jsonl" || { echo "the $who layer is incomplete; it is not recorded (look with claude attach $lid)" >&2; exit 3; }
+  python3 "$HERE/base_pack.py" snapshot "$packed" "$STATE/$who-layer-manifest.json" || exit 3
+  cp "$STATE/$who-layer-manifest.json" "$STATE/layer-$lsid-manifest.json"  # kept under its session's name: a session
+  # that holds the layer before this one is told what changed since the load it actually has, not since this one
+  ctx=$("$HERE/ctx_gauge.py" measure "$SESSIONS/$lsid.jsonl")
+  # Whether the layer read its stable base from cache or wrote it anew. Only the layer is pinged (warm), and whether a
+  # read of the layer keeps the base's own, shorter entry alive for the next refresh was never measured: each layer
+  # says, in warm.log, where health.py reads it (2026-09-21).
+  read=$("$HERE/session_fork_check.py" "$lsid" "$(field "$rec" sessionId)" 2>&1 | head -1)
+  echo "$(date +%Y-%m-%dT%H:%M:%S) layer $who: $read" >> "$STATE/warm.log"
+  claude stop "$lid" >/dev/null 2>&1
+  python3 - "$layer" "$lsid" "$(field "$rec" model)" "$(field "$rec" effort)" "$n" "$packed" "$ctx" "$(field "$rec" sessionId)" "$(echo $LEAN)" <<'LAYERREC'
+import json, sys, time
+path, sid, model, effort, name, packed, ctx, base_sid, flags = sys.argv[1:]
+json.dump(dict(sessionId=sid, model=model, effort=effort, name=name, pack=packed, context=int(ctx),
+               base=base_sid, sealed=time.strftime("%Y-%m-%dT%H:%M:%S"), flags=flags), open(path, "w"))
+LAYERREC
+  # the layer this replaces is stopped, never removed: a fork launched from it while this ran must still find it,
+  # and a sealed session is exactly what a base is
+  if [ -n "$old_row" ]; then set -- $old_row; claude stop "$2" >/dev/null 2>&1; fi
+  touch "$STATE/$who-base.hit" "$STATE/$who-base.used"; rm -f "$STATE/$who-base.miss"; daemon
+  echo "sealed the $who layer $lsid at $ctx tokens; its forks have about $(( (${ORCH_WINDOW:-1000000} - ctx) / 1000 ))K of room"
+  echo "its read of the base: $read"
 }
 
 # Starting, stopping and removing sessions cannot be done from inside Claude Code's sandbox (v2.py control): these
@@ -172,43 +202,44 @@ PY
     fi
     echo $$ > "$lock"
     trap 'rm -f "$lock"' EXIT INT TERM
-    # the frontier is what the layer holds, so it is re-measured here, from the sessions of the roles that fork it
-    python3 "$HERE/select_base_load.py" --frontier "$who" || exit $?
-    prepare_pack || exit $?
-    bootstrap=$(python3 "$HERE/base_pack.py" bootstrap "$packed") || exit $?
-    old_row=$("$HERE/session_row.py" "$(field "$layer" name)")
-    n="$who-layer-$(date +%H%M%S)"
-    # a fork of the sealed stable base, with no --append-system-prompt-file: a fork inherits the prompt, and any
-    # difference in the prefix would cost the whole base a cold write
-    claude --bg --resume "$(field "$rec" sessionId)" --fork-session $LEAN --model "$(field "$rec" model)" \
-      --effort "$(field "$rec" effort)" --permission-mode auto --autocompact "${BASE_AUTOCOMPACT:-1M}" \
-      --settings "$HERE/base-settings.json" -n "$n" "$bootstrap" >/dev/null 2>&1
-    i=0
-    while [ $i -lt "${LAYER_WAIT:-450}" ]; do
+    if [ "${3:-}" = "--adopt" ]; then
+      # A layer session that loaded completely and was not recorded is recorded as it stands, not loaded again: on
+      # 2026-09-21 the max layer's four chunks all arrived and one character of the id it replied was wrong, and
+      # loading it again would have written 135K. The same checks as a new layer's: a complete load (seal_layer), and
+      # a fork of this base.
+      n=${4:-}; packed=${5:-}
+      [ -n "$n" ] && [ -n "$packed" ] || { echo "usage: base.sh $who layer --adopt SESSION-NAME PACK-DIR" >&2; exit 2; }
+      case "$packed" in /*) ;; *) packed="$PROJECT/$packed" ;; esac
       set -- $("$HERE/session_row.py" "$n")
-      case "${3:-}" in done|idle) break ;; esac
-      i=$((i + 1)); sleep 2
-    done
-    set -- $("$HERE/session_row.py" "$n")
-    [ -n "${4:-}" ] || { echo "the $who layer did not load: no session $n" >&2; exit 4; }
-    lsid=$4; lid=$2
-    python3 "$HERE/base_pack.py" check-load "$packed" "$SESSIONS/$lsid.jsonl" || { echo "the $who layer is incomplete; it is not recorded (look with claude attach $lid)" >&2; exit 3; }
-    python3 "$HERE/base_pack.py" snapshot "$packed" "$STATE/$who-layer-manifest.json" || exit 3
-    cp "$STATE/$who-layer-manifest.json" "$STATE/layer-$lsid-manifest.json"  # kept under its session's name: a session
-    # that holds the layer before this one is told what changed since the load it actually has, not since this one
-    ctx=$("$HERE/ctx_gauge.py" measure "$SESSIONS/$lsid.jsonl")
-    claude stop "$lid" >/dev/null 2>&1
-    python3 - "$layer" "$lsid" "$(field "$rec" model)" "$(field "$rec" effort)" "$n" "$packed" "$ctx" "$(field "$rec" sessionId)" "$(echo $LEAN)" <<'LAYERREC'
-import json, sys, time
-path, sid, model, effort, name, packed, ctx, base_sid, flags = sys.argv[1:]
-json.dump(dict(sessionId=sid, model=model, effort=effort, name=name, pack=packed, context=int(ctx),
-               base=base_sid, sealed=time.strftime("%Y-%m-%dT%H:%M:%S"), flags=flags), open(path, "w"))
-LAYERREC
-    # the layer this replaces is stopped, never removed: a fork launched from it while this ran must still find it,
-    # and a sealed session is exactly what a base is
-    if [ -n "$old_row" ]; then set -- $old_row; claude stop "$2" >/dev/null 2>&1; fi
-    touch "$STATE/$who-base.hit" "$STATE/$who-base.used"; rm -f "$STATE/$who-base.miss"; daemon
-    echo "sealed the $who layer $lsid at $ctx tokens; its forks have about $(( (${ORCH_WINDOW:-1000000} - ctx) / 1000 ))K of room" ;;
+      [ -n "${4:-}" ] || { echo "refused: no session named $n is listed" >&2; exit 4; }
+      lsid=$4; lid=$2
+      "$HERE/session_fork_check.py" --is-fork "$lsid" "$(field "$rec" sessionId)" >&2 \
+        || { echo "refused: $n is not a fork of the $who base; nothing is recorded" >&2; exit 3; }
+      old_row=$("$HERE/session_row.py" "$(field "$layer" name)")
+      case "$old_row" in *" $lid "*) old_row="" ;; esac  # the layer it replaces is not the one adopted
+    else
+      # the frontier is what the layer holds, so it is re-measured here, from the sessions of the roles that fork it
+      python3 "$HERE/select_base_load.py" --frontier "$who" || exit $?
+      prepare_pack || exit $?
+      bootstrap=$(python3 "$HERE/base_pack.py" bootstrap "$packed") || exit $?
+      old_row=$("$HERE/session_row.py" "$(field "$layer" name)")
+      n="$who-layer-$(date +%H%M%S)"
+      # a fork of the sealed stable base, with no --append-system-prompt-file: a fork inherits the prompt, and any
+      # difference in the prefix would cost the whole base a cold write
+      claude --bg --resume "$(field "$rec" sessionId)" --fork-session $LEAN --model "$(field "$rec" model)" \
+        --effort "$(field "$rec" effort)" --permission-mode auto --autocompact "${BASE_AUTOCOMPACT:-1M}" \
+        --settings "$HERE/base-settings.json" -n "$n" "$bootstrap" >/dev/null 2>&1
+      i=0
+      while [ $i -lt "${LAYER_WAIT:-450}" ]; do
+        set -- $("$HERE/session_row.py" "$n")
+        case "${3:-}" in done|idle) break ;; esac
+        i=$((i + 1)); sleep 2
+      done
+      set -- $("$HERE/session_row.py" "$n")
+      [ -n "${4:-}" ] || { echo "the $who layer did not load: no session $n" >&2; exit 4; }
+      lsid=$4; lid=$2
+    fi
+    seal_layer ;;
   drop) rm -f "$rec" "$building" "$layer" "$STATE/$who-manifest.json" "$STATE/$who-layer-manifest.json" "$STATE/$who-base.hit" "$STATE/$who-base.used" "$STATE/$who-base.miss"; echo "$who base and layer forgotten; live sessions start plain" ;;
-  *) echo "usage: base.sh max pack|build|status|seal|layer|warm|drop" >&2; exit 2 ;;
+  *) echo "usage: base.sh max pack|build|status|seal|layer [--adopt NAME PACK]|warm|drop" >&2; exit 2 ;;
 esac

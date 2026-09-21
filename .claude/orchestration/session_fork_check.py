@@ -2,6 +2,7 @@
 """Report whether a session forked from a base (`--resume BASE --fork-session`) read the base's prompt cache.
 
 usage: session_fork_check.py <fork-session-id> <base-session-id>
+       session_fork_check.py --is-fork <fork-session-id> <base-session-id>   exit 0 when it is a fork of that base
 
 The fork's transcript begins with a copy of the base's conversation. Its first own request should be a
 cache read about as large as the base's final context, with a cache write about as large as the first
@@ -41,7 +42,22 @@ def requests(session):
     return out
 
 
+def is_fork(fork, base):
+    """Whether the session is a fork of the base: its transcript holds every request of the base's (a fork's begins
+    with a copy of its origin's conversation, ids and all). `base.sh layer --adopt` records nothing else."""
+    base_reqs = requests(base)
+    held = {r[0] for r in requests(fork)}
+    missing = [r for r in base_reqs if r[0] not in held]
+    if not base_reqs or missing:
+        print(f"{fork[:8]} is not a fork of {base[:8]}: "
+              + ("the base has no recorded requests" if not base_reqs else f"{len(missing)} of its requests are not in it"))
+        return 1
+    return 0
+
+
 def main():
+    if sys.argv[1] == "--is-fork":
+        return is_fork(sys.argv[2], sys.argv[3])
     fork, base = sys.argv[1], sys.argv[2]
     base_reqs = requests(base)
     if not base_reqs:

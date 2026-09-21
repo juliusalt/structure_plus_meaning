@@ -1,5 +1,8 @@
 {
   "promptCacheTtl": "1h",
+  "env": {
+    "DISABLE_GROWTHBOOK": "1"
+  },
   "hooks": {
     "PreToolUse": [
       {

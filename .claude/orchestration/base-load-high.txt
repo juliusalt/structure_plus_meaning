@@ -293,12 +293,12 @@ theories/Factor_Base_Programs.thy
 # === layer === the frontier layer below: refreshed on its own (base.sh high layer) when what it holds has changed; the reference above is the owner's to rebuild.
 # pinned: what each theory holds (generated at pack time: the first clause of its THEORY_MAP.md row, the theories this list holds left out)
 .claude/orchestration/state/held/theory-map-index.md
-# the working frontier (40 theories for the fixer, implementer sessions, re-measured 2026-09-21 from 7 of them: 5 by what they consulted, 35 carried), as statements
-theories/Development_Loci.thy  # 4 sessions, 13K pulled
-theories/Native_Execution_Refinements.thy  # 2 sessions, 0K pulled
-theories/Development_Problems.thy  # 1 sessions, 7K pulled
-theories/Native_Path_Stores.thy  # 1 sessions, 7K pulled
-theories/Development_Native_Selection.thy  # 1 sessions, 7K pulled
+# the working frontier (40 theories for the fixer, implementer sessions, re-measured 2026-09-21 from 7 of them: 0 by what they consulted, 40 carried), as statements
+theories/Development_Loci.thy  # carried from the frontier before this refresh
+theories/Native_Execution_Refinements.thy  # carried from the frontier before this refresh
+theories/Development_Problems.thy  # carried from the frontier before this refresh
+theories/Native_Path_Stores.thy  # carried from the frontier before this refresh
+theories/Development_Native_Selection.thy  # carried from the frontier before this refresh
 theories/Isabelle_Code_Equations.thy  # carried from the frontier before this refresh
 theories/Isabelle_Local_Names.thy  # carried from the frontier before this refresh
 theories/Isabelle_State_Difference.thy  # carried from the frontier before this refresh

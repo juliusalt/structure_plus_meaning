@@ -294,12 +294,12 @@ theories/Factor_Base_Programs.thy
 # === layer === the frontier layer below: refreshed on its own (base.sh xhigh layer) when what it holds has changed; the reference above is the owner's to rebuild.
 # pinned: what exists — every theory source name, in ROOT order (generated from current source files; grep the map or source for content)
 .claude/orchestration/state/held/theory-names.md
-# the working frontier (40 theories for the designer, investigator, reviewer, task-designer sessions, re-measured 2026-09-21 from 7 of them: 5 by what they consulted, 35 carried), as definitions
-theories/Inference_Embeddings.thy  # 2 sessions, 31K pulled
-theories/Positioned_Native_Evaluation.thy  # 2 sessions, 41K pulled
-theories/Finite_Inference_Development.thy  # 2 sessions, 24K pulled
-theories/Keyed_Native_Evaluation.thy  # 2 sessions, 26K pulled
-theories/Factor_Finite_Program_Evaluation.thy  # 1 sessions, 1K pulled
+# the working frontier (40 theories for the designer, investigator, reviewer, task-designer sessions, re-measured 2026-09-21 from 7 of them: 0 by what they consulted, 40 carried), as definitions
+theories/Inference_Embeddings.thy  # carried from the frontier before this refresh
+theories/Positioned_Native_Evaluation.thy  # carried from the frontier before this refresh
+theories/Finite_Inference_Development.thy  # carried from the frontier before this refresh
+theories/Keyed_Native_Evaluation.thy  # carried from the frontier before this refresh
+theories/Factor_Finite_Program_Evaluation.thy  # carried from the frontier before this refresh
 theories/Development_Requests.thy  # carried from the frontier before this refresh
 theories/Development_Successor.thy  # carried from the frontier before this refresh
 theories/Development_Machinery.thy  # carried from the frontier before this refresh

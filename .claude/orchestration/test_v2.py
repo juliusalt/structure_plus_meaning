@@ -24,6 +24,17 @@ VERDICT = "Verdict: {v}\n## Summary\nThe readiness theory is in place.\n## Findi
 
 
 class FormTests(unittest.TestCase):
+    def test_every_session_starts_with_the_feature_flags_off(self):
+        # EndConversation comes behind a GrowthBook flag that one session's start fetches in time and another's not:
+        # bases and forks started with the same flags were sent four tools or five, and a fork that drew otherwise
+        # than its base read none of it from cache (five probes, 2026-09-21; --disallowedTools did not take the tool
+        # out). With the flags off every session is sent the same tools, and forks read their base whole.
+        files = {"base-settings.json"} | {r["settings"] for r in v2.ROLES.values() if r.get("settings")}
+        self.assertEqual(files, {"base-settings.json", "worker-settings.json", "planner-settings.json"})
+        for settings in sorted(files):
+            env = json.load(open(HERE / settings)).get("env") or {}
+            self.assertEqual(env.get("DISABLE_GROWTHBOOK"), "1", settings)
+
     def test_a_brief_in_form_passes_and_its_fields_are_read_whole(self):
         self.assertEqual(v2.brief_problems(BRIEF), [])
         self.assertEqual(v2.brief_kind(BRIEF), "build")
@@ -1133,7 +1144,7 @@ class PlanningTests(Flow):
         other = json.loads((Path(v2.HERE) / "worker-settings.json").read_text())
         self.assertNotIn("CLAUDE_CODE_TASK_LIST_ID", other.get("env", {}))
         graph = json.loads((Path(v2.HERE) / v2.GRAPH_SETTINGS).read_text())
-        graph.pop("env")
+        graph["env"].pop("CLAUDE_CODE_TASK_LIST_ID")  # the rest of the env (the flags off) is every session's
         self.assertEqual(graph, other, "the two settings files differ in more than the shared list")
 
     def test_the_planner_is_told_when_its_state_has_become_a_log(self):
@@ -3255,6 +3266,17 @@ class HealthTests(Flow):
         self.addCleanup(p.wait)
         self.addCleanup(p.kill)
         return p.pid
+
+    def test_a_layer_that_did_not_read_its_base_is_named_as_such_not_as_a_ping(self):
+        # each sealed layer says in warm.log whether it read its stable base (base.sh seal_layer), since only the
+        # layer is pinged; a miss there is a cold write of the base, not a keep-warm ping that missed (2026-09-21)
+        at = time.strftime("%Y-%m-%dT%H:%M:%S")
+        (self.w.state / "warm.log").write_text(
+            f"{at} layer high: MISS session fork aaaa of base bbbb: first own request cache_read=0\n"
+            f"{at} warm max: MISS session fork cccc of base dddd: first own request cache_read=0\n")
+        said = self.health()
+        self.assertIn("ATTENTION a layer did not read its base from cache: " + at + " layer high: MISS", said)
+        self.assertIn("ATTENTION keep-warm miss: " + at + " warm max: MISS", said)
 
     def test_work_the_graph_calls_done_that_the_repository_does_not_hold(self):
         # a path is its task's until the finalizer commits it, which takes it out of the map. On 2026-09-21 every

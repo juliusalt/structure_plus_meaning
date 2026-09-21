@@ -15,10 +15,11 @@ through the Q7 order in the ledger.
 review accepts it, the finalizer commits it, and only then does the harness complete it and its reviews. Every piece of
 work written before that harness has landed.
 
-**The checking itself (#80).** The recipes' cost (#80): the seed recipe per presentation, refined at its dominant cause with every word equal; the tool files each
-recipe's execution boundary holds; the facts of the owner's question on the base (Q10); and the marked correction of
-DECISIONS.md line 10070 (q28). Every landing check re-executes all 33 recipes while the base lags the commits since it
-(#49's check: 181.94 s of recipes for a change to the plan alone).
+**The checking itself (#80, #81).** #80 attributed the seed recipe (140.8 s alone, 96.5 s after its refinement of the
+publication word's reference run, every word equal) and found why every landing check re-executes all recipes: every
+verified receipt differs from HEAD on `tools/execution_support.py` since `955b34bb`. #81 retains the receipts once,
+first in the queue (Q11 asks who retains them afterwards); advancing the base saves only about 25 s (Q10). #80's commit
+waits for #66's `DECISIONS.md` entry to be committed.
 
 **The rows line (#24–#31).** Task 9 found the development notions to be one notion, a row at a locus of the
 development's published state, and task 16 briefed its four contracts: the locus (#22), the presentation relation
@@ -56,9 +57,9 @@ constant's two entities at one locus (q21). #54 depends on nothing; #56 feeds #3
 development library (#58) and the schema's soundness as an obligation reduction (#60), both needing nothing; the schema
 as a native program over problem rows (#62, after #60, #24 and #66, whose entry corrects #62's and #64's briefs before either starts); the library generated at the loop's problems and passed
 to the issue, so that a decomposed problem is refused issue (#64, after #62, #58 and #30, whose words it re-records
-over). #66 designs the decomposition's record and its application to the loop's problems, beside the builds; the build
-that applies a decomposition to the loop is briefed from its entry. I judge #66 myself, as every design, so the review
-task its brief proposed was deleted. A problem whose subject is several constants has no native row yet (Open 13).
+over). #66's entry, accepted 2026-09-22, records a decomposition at its problem's locus under a sixth role
+and gives the correspondence #62's and #64's corrected briefs take; the build that applies a decomposition to the loop
+is Open 26. A problem whose subject is several constants has no native row yet (Open 13).
 
 **The index notion (#68–#77, briefed by #13).** Task 4's notion stated once and checked (#68, needing nothing); the
 host carriers' and the native path store's interpretations in theories of their own (#70, #72, after #68), so that no
@@ -217,6 +218,23 @@ judgment's path.
   any number of constants and intermediates), sound once (`development_decomposition_sound`); B and C one-line
   specializations. Its review: task 2's entry to amend and the multi-constant and degenerate cases went to #66 (told);
   three duplications and the progress condition ride with #62's correction.
+- **#68** `theories/Carrier_Indexes.thy`, committed `a275a84e`: the index notion as the locale `carrier_index`,
+  obligation (2) `represents` stated at every key (stronger than briefed), (4) `updated_carrier_index`, the native
+  carrier's one thing more `native_carrier_index`; the three laws theorems; entry "The index notion is a checked theory,
+  and its carriers interpret it". The briefs of #70–#76 name the stronger form; #76 also chooses how the positioned
+  demand relates keys to positions.
+- **#81** the verified receipts retained from an accepted check of `a275a84e`, committed `cf24195e` (158 files):
+  its landing check's recipe phase 6.06 s against 175.03 s, all 52 recipes reused; total 127.79 s, the proof phase
+  (116.42 s, 71 theories rebuilt over the lagging base) now dominating.
+- **#24** `theories/Development_Rows.thy`, committed `dbcb28d3` after three hand-overs (a map row carrying #54's
+  unreviewed rows, then a duplicated `Development_Loci` row): `development_rows_present`, in `readiness_presents`'
+  shape, over problems, requests and issues; the answer family withdrawn (q29, Open 20).
+- **#66** (design, accepted 2026-09-22): DECISIONS.md "A decomposition that applied is a row at its problem's locus",
+  and task 2's entry amended (T the contract's predicate; C's intermediates the introduced constants; a multi-constant
+  problem only decomposed; an application requires progress; section "Decomposition soundness — 2026-09-21").
+- **#80** (accepted; its commit waits for #66's): `Complete_Value_References` and `Indexed_Term_Words` compute a
+  reference sequence segment by segment (entry "A reference sequence is computed segment by segment"), the seed recipe
+  140.8 s to 96.5 s alone; attribution `.build/tasks/seed-recipe-cost/attribution.md`; the q28 correction.
 - **#58** `theories/Development_Repair_Rows.thy`, committed `b3b185bc` after one fix round: the repair's output recorded
   as rows of the development library. Its rows' coordinates do not move with the successor's correspondence (see Now,
   #64).
@@ -241,10 +259,13 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q9** the tracked `tools/__pycache__/build.cpython-314.pyc` (asked 2026-09-21): ignored by `.gitignore`, removed from the
   tree by #48, but the finalizer refuses to commit the removal of an ignored path. Provisional: it stands removed and
   uncommitted, and no task is made of it; the step is the finalizer's or the owner's.
-- **Q10** who advances the proof base (asked 2026-09-21 by plan-33): every landing check re-executes all 33 recipes
-  while the base lags the commits since it. Provisional: no task advances the shared base; #80 brings where an advanced
-  base would live and what it would save, and the base is advanced on committed HEAD once that is known and the one
-  tree holds no uncommitted work.
+- **Q10** who advances the proof base (asked 2026-09-21 by plan-33). #80's facts: a check's proof directory holds its
+  own sources, and the active pointer is global. Since #81 the proof phase (113-116 s) is the whole check. Provisional:
+  a task advances it once now (the base-advance investigation, first in the queue), under the recorded procedure's
+  condition; the owner decides who advances it afterwards.
+- **Q11** who retains verified receipts (asked 2026-09-22 by plan-33): every landing check re-executes all recipes
+  until they are retained. Provisional: #81 retains them once; the planner places another after a landing that changes
+  many recipes' boundaries.
 
 Not yet planned, in the order they are expected to be planned:
 
@@ -305,6 +326,32 @@ Not yet planned, in the order they are expected to be planned:
     locate the stalled command, recognise Isabelle's own position report. At that need.
 23. **`development_definition_sockets` can reuse the singleton reading** (#58's review). With the next edit of its
     theory.
+24. **The index notion's query domain** (#68's review): queries are one fixed set `Q` for all carriers; a carrier whose
+    key distinguishes only on its own members needs `Q` to depend on the carrier. When such a carrier appears.
+25. **The index entry's two slips** (#68's review): it lists `native_store_search_program.exact` among host member
+    equations (the host's is `path_store_lookup`; `exact` is the site's shape); its map row repeats the entry's list.
+    With the next edit of that entry or row.
+26. **The build that applies a decomposition to the loop** (#66's entry, its last section and follow-up 1): the sixth
+    role, #24's fifth body, `Development_Decomposition_Record`, the posing step factored once, the issue reading the
+    library less recorded choices, the decomposition generation; the repair rows' transport through a successor's
+    correspondence (#58's review). It consumes #22, #24, #60, #62, #64 and #30's path loci; after #64.
+27. **The seed recipe's remaining cost** (#80): its recording stage `development_seed_publication_from` (58–60 s held)
+    and the publication word's remaining 38 s. When #81's receipts make the recipe re-execute only at loop landings.
+28. **Every recipe's execution boundary holds `tools/build.py` and `tools/execution_support.py`** (#80): narrowing the
+    boundaries to what can change a word is a task of its own, if a tools change is again seen to re-execute everything.
+29. **The map's "Reuse (...)" citations** (#66): #60's row cites a DECISIONS.md heading; if such citations are meant to
+    resolve in REASONING_REUSE.md, the row is corrected with its next edit.
+30. **What a present citation of a development row cites** (#24's review): an owner record, or the parent problem's
+    locus for a demand; `development_rows_present` does not yet require it. With the build that applies a
+    decomposition (Open 26), which poses children with origins.
+31. **`Development_Rows`' small slips** (#24's review): `readiness_presents_rekey` belongs in
+    `Development_Native_Selection`; `the` in `development_located_at`; the heading "The four bodies" stands over three.
+    With the next edit of that theory.
+32. **The receipts' form** (#81's review; problems.txt condition 3): a retain rewrites whole single-line files (158
+    files, 5.47 MB, an 11 MB diff for a few changed fields), and the receipts record worktree paths that dangle once a
+    task is cleaned. Keep what a check changes apart from the stable boundary, or present receipts one field per line;
+    record tools repository-relative and the check by commit identity. A tools task, when a retain next follows a
+    shared tool's change or Q11 is answered.
 
 ## Now
 
@@ -317,11 +364,19 @@ Not yet planned, in the order they are expected to be planned:
   `--timeout` to be named and cites the old 1200 s default, as does the memory note on probing; and the finalizer
   commits whole files, so the shared files of the one tree (`THEORY_MAP.md`, `ROOT`) couple landings: #24's commit was
   refused at 23:02 for carrying #54's unreviewed rows, and committing a task's own hunks would remove the coupling.
-- **#24 is re-planned to land.** Its work is accepted; its first commit was refused for #54's unreviewed map rows, its
-  second for a duplicated `Development_Loci` row in the merge with main. Its session resolves the row and hands over;
-  #26, #28 and #62 wait on it.
+- **Tasks working in the one tree install their theories only at hand-over** (q30, 2026-09-22), so that their
+  uncommitted `ROOT` and `THEORY_MAP.md` lines do not hold other tasks' landings meanwhile (a landing waits for them
+  within its commit's budget, then comes back marked, and `v2.py queue ID` makes its commit again with no session);
+  drafts are probed on the base heap with `--prelude`/`--substitute`.
+
+- **#24's landing is checked only on its branch** (`005e291d`, without main's `ff37efef`…`a275a84e`, which change
+  `Development_Native_Selection`, `Filtered_Native_Questions` and `Isabelle_Local_Names` in `Development_Rows`' closure;
+  its review measured the risk as low). The first check on main after `dbcb28d3` covers the combination; a refusal in
+  `Development_Rows`' closure there belongs to #24.
+- **Owed before #32 starts**: #24's review asks that the rows' `ekey` be tied to `development_entity_key C` (#54) and
+  `key` to #3's atom key where the rows are instantiated for the verdict; #32's brief takes it when #26 and #28 land.
 - **Owed to the owner**: each landing check's phases and per-recipe comparison (#48's replay numbers were reported).
-- **Owed before #62 and #64 start: correct their briefs from #66's entry once it is accepted** (q25; #62 waits on #66: rewrite both before #66's verdict). A decomposition's
+- **For the build that applies a decomposition (Open 26)**, what #62's and #64's corrected briefs took (q25). A decomposition's
   child at an occupied locus is the problem standing there — at a parent with a locus the part child *is* the parent —
   so an application there acts through the parent's D row and its later request and contributes no library row headed
   by its parent. #62's "meaning equal to #60's relation" and #64's "the repair rows are the native instance-C

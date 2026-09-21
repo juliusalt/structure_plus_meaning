@@ -1488,3 +1488,11 @@ standing where the designer wrote it; a proposal that splices (`feeds`) was admi
 re-pointed the existing task onto the new one and queued them after the brief. The chain went from eleven to twelve,
 which is what a splice does and what the rule admits. Nothing of the live graph was touched: the copy was made in a
 temporary HOME with a temporary state and project.
+
+**An empty order is not an order.** Running each command with no arguments to see how it answers a bad call —
+against the live state, which was the mistake — showed that `v2.py queue` with nothing after it set the queue to
+the empty list and answered "queued". The run's queue of 29 tasks went, and was put back exactly from the status
+line, which had printed it minutes before; the command now refuses. `carried` had the same shape in a smaller way:
+with no text it recorded "carried where the work reads it", losing the one thing the record exists for. The lesson
+beside the repair: probe a command's argument handling in a throwaway world, never against the state a run stands
+on. Every other command takes its arguments by count and prints the usage without them.

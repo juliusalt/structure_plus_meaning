@@ -104,6 +104,12 @@ CASES = [
      "not_confirmed_is_not_tried", "the backoff after a start nobody confirmed"),
     ("v2.py", '        if task is None and in_list(tid):\n            continue  # there and unreadable', '        if False:\n            continue  # there and unreadable',
      "not_said_to_be_out_of_the_list", "an unreadable file called a missing task"),
+    ("v2.py", 'if c and c["role"] != "planner" and q.get("session") != c["name"]:', 'if False:',
+     "planner_tells_a_working_session", "who may answer a question"),
+    ("v2.py", 'if not c or c["role"] not in PRODUCING or not c.get("task"):', 'if not c or not c.get("task"):',
+     "timing_run_takes_the_machine", "who may claim the machine"),
+    ("v2.py", 'missing = [tid for tid in ids if not in_list(tid)]\n    if missing:', 'missing = []\n    if missing:',
+     "names_nothing_is_refused", "an order naming a task that is not there"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

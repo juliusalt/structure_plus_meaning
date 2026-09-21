@@ -1510,6 +1510,11 @@ class TaskTests(Flow):
         # check advancing the base heap (the owner, 2026-09-20)
         said = self.as_(self.impl, "measuring", "the machinery's evaluation against its bound")
         self.assertIn("the machine is yours", said)
+        # and only a producing session claims it: a task designer has a task too and measures nothing, so its claim
+        # would hold the machine against every check for the grace it is given (2026-09-21)
+        self.w.session("brief-9", "task-designer", "b9", task="9")
+        self.assertIn("a producing session working on a task claims the machine",
+                      self.as_("brief-9", "measuring", "nothing of mine"))
         claim = json.loads((self.w.state / "isabelle-exclusive").read_text())
         self.assertEqual((claim["task"], claim["session"]), ("1", self.impl))
         self.assertIn("machinery's evaluation", claim["why"])
@@ -1965,6 +1970,13 @@ class ConsultationTests(Flow):
         self.assertIn("refused: questions are asked by the sessions working on a task",
                       self.w.v2("ask", "--to", "kb", "And this?", env=self.w.as_session(ask["sid"])))
         self.assertIn("refused: questions are asked", self.w.v2("ask", "--to", "kb", "Mine?"))  # the owner: talk.sh
+        # and a question is answered by the consultation started for it, or by the planner: any session could answer
+        # any question, and its answer reached the asker as the harness's own (2026-09-21)
+        self.assertIn("is answered by the consultation started for it",
+                      self.w.v2("reply", "q1", "Because.", env=self.w.as_session("i1")))
+        self.assertEqual(self.w.st()["asks"]["q1"]["state"], "open")
+        self.assertEqual(self.w.v2("reply", "q1", "Because.", env=self.w.as_session(ask["sid"])),
+                         "answered; end your turn")
 
     def test_a_question_to_the_planner_reaches_it_at_once(self):
         # questions waited for an episode: 4 to 13 minutes on 2026-09-20, and 84 for two of them, by when their

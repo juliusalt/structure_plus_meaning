@@ -3194,6 +3194,13 @@ def cmd_reply(qid, text, decision=False):
         q = st["asks"].get(qid)
         if not q:
             return f"refused: no question {qid}"
+        if c and c["role"] != "planner" and q.get("session") != c["name"]:
+            # every question is answered by the consultation forked for it, or by the planner when it was asked of
+            # the planner. Any session could answer any question, and its answer would reach the asker as the
+            # harness's own — a session's word put where another's work reads it (2026-09-21).
+            return (f"refused: {qid} is answered by the consultation started for it, or by the planner when it was "
+                    "asked of the planner. What you know that bears on it goes to its asker through the planner "
+                    "(`v2.py ask --to planner`), or into your result.")
         q.update(state="answered", answered=time.time(), answer=text)
         if decision:
             event(st, (c or {}).get("name", "the owner"), f"The answer to {qid} ({q['from']}: {q['text'][:200]}) decides "
@@ -3292,8 +3299,10 @@ def cmd_measuring(text=""):
     it exceeds the memory, and the harness gave that hold only to a check advancing the base heap (the owner,
     2026-09-20). Claimed before the run is launched; it stands while the run does, and falls of itself after."""
     c = caller()
-    if not c or not c.get("task"):
-        return "refused: a session working on a task claims the machine for its measurement"
+    if not c or c["role"] not in PRODUCING or not c.get("task"):
+        # the roles that run: a task designer has a task too, and reads statements rather than measuring anything,
+        # so its claim would hold the machine against every check for the grace it is given (2026-09-21)
+        return "refused: a producing session working on a task claims the machine for its measurement"
     holder = exclusive_claim()
     if holder and holder["task"] != c["task"]:
         return (f"refused: task {holder['task']} holds the machine ({holder['why']}). Measure when it has let go; "

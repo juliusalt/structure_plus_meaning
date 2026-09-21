@@ -10019,7 +10019,7 @@ the answer harness, not to the replay. Nothing else of the tool's behaviour chan
 are replayed, judged and compared on the same fields, and every field but the group's name keeps its
 own.
 
-Recorded 2026-09-20, commit `…`.
+Recorded 2026-09-20, commit `3aaddd96`.
 
 ## A demand is settled over the positions of its calls
 
@@ -10118,3 +10118,97 @@ were chosen at all was decided outside the loop, in the entry named above and in
 and is a residual.
 
 Recorded 2026-09-20, commit `44738c20`.
+
+## The index notion is a checked theory, and its carriers interpret it
+
+The owner's direction of 2026-09-19: "even implementation should be structural with the non-structural
+efficiency as a structurally presented idea that can be applied". "A refinement applies a notion; an
+index is one" stated the index of a carrier by a key in prose; four carriers prove its laws separately
+and five uses re-make its argument. `Carrier_Indexes` states it as a checked theory, and the carriers and
+uses of this group interpret or cite it.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| "Until such a theory exists, a use instantiates the notion by citing this entry and the carrier theory it takes, and proves the four obligations for its key." | The theory exists: a use interprets `carrier_index` (or an extension) and cites its theorems. It proves obligations (1) and (2) as the locale's assumptions, (4) where it updates, and (3) as its own equations from the locale's facts; the laws are theorems it obtains, not arguments it repeats. |
+| The notion's laws are quoted from the theories that prove them for their own carriers. | They are theorems of the locale, derived from (1) and (2): law 2 is `query_search` with `query_fibre`, law 3 is `content_determines_search`, and law 1 is the locale's signature, which orders nothing but the key's type. |
+
+### The notion checked
+
+**`carrier_index holds formed Q key build search`.** Each constituent of the entry became a parameter:
+
+- the *carrier* is a type `'c` whose content is a relation `holds c q v` from queries to values. This one
+  shape covers the carriers without weakening any of them: a finite set is the relation of its members to
+  one value (`ordered_member_tree`), a single-valued store a partial map (`path_store`), a relation store
+  any relation (`relation_store`), a demand the relation of its members to their positions
+  (`demand_positions`);
+- a *formation condition* `formed` is the premise under which the contract is claimed —
+  single-valuedness for `path_store_lookup`, functionality for `finite_relation_option_correct`, nothing
+  for `relation_store_member` — and no search assumes it, which is law 3's "never assumed by lookup";
+- the *key* maps queries into any type `'k`, and obligation (1) is `inj_on key Q` on the queries the
+  contract is claimed for; a left inverse is a sufficient condition, proved once
+  (`distinguishes_by_left_inverse`);
+- the *index* is `build c`, searched by a relation `search i k v`. Obligation (2) is the one member
+  equation, stated at every key: `formed c ⟹ search (build c) k v ⟷ (∃q∈Q. key q=k ∧ holds c q v)`.
+  Stating it at every key rather than only at a query's key is the shape the carriers already prove
+  (`ordered_member_tree_exact`, `demand_positions_member`, `native_store_search_program.exact`), the others
+  reach it by rewriting with their key the identity, and it is what law 3 needs to hold at every key and
+  not only at keys of queries (`unkeyed_search`).
+
+Obligation (3) is not an assumption: a use proves one equation per operation it needs from these facts.
+The search is a relation rather than a function returning a set, so that a partial map (`store_lookup T k
+= Some v`), a membership (`RBT.lookup M k ≠ None`) and a bucket (`v |∈| relation_store_lookup T k`) are
+each one rewriting of it.
+
+**`updated_carrier_index`** extends it with obligation (4): `update i k u` changes the fibre at `k` by a
+stated `change u (search i k)` and keeps every other key (`updated`). The replacement law
+`store_lookup_update` (the change replaces the fibre by the optional value), the insertion laws
+`relation_store_lookup_insert` and `nested_relation_lookup_insert` (the change adds one value) and an
+`RBT.insert` into a member tree, which `keyed_fold_insert` folds (the change makes the one value found),
+are all its instances. Its theorems are `update_at`, `update_preserves_else` — "an update preserves
+everything else" — and `update_represents`: an update applied to the index of a carrier is the index of
+the carrier changed the same way at that query.
+
+**`native_carrier_index`** extends it with the native carrier's one thing more, abstract over the
+program: a site holding at a context, a key term and a presented index exactly when the context is
+formed, the key term presents a key, the host search finds a value there and a checker holds of it — for
+every key term and every index (`site_exact`), with the presentation of keys injective. This is the shape
+of `native_store_search_program.exact`; `index_search_sound`, its one-directional form without a premise
+on values, is the shape of `.sound`, and a carrier that proves only soundness interprets that alone. Its
+theorems are `site_query` (at a presented query's key the site is the carrier's fibre and the checker)
+and `site_refuses_unpresented`.
+
+`carrier_index_through_key` states once the argument `keyed_member_lookup` makes over
+`ordered_member_tree`: an index of the key image searched by the keys themselves is an index of the
+carrier read through a key that distinguishes.
+
+The theory imports `Main` only, so every carrier's instance theory can import it, and carries no simp,
+intro or code attribute: an instance's facts reach every theory above the uses that import it, and a
+rule there would change proofs this group leaves unchanged. It states nothing about cost.
+
+### Instances in theories of their own
+
+A carrier's instance stands in a theory of its own that imports `Carrier_Indexes` and the carrier, so no
+carrier gains an import and no carrier's dependents rebuild for it. The later builds of this group
+instantiate the host carriers (`Ordered_Member_Trees`, `Keyed_Finite_Sets` through
+`carrier_index_through_key`, `Binary_Path_Stores`, `Binary_Relation_Stores`, `Binary_Nested_Stores`,
+`Finite_Functional_Enumeration`) and `Native_Path_Stores` (`native_carrier_index`), re-cite the uses the
+earlier entry names (`RRA_Indexed_Artifact_Lookup`, `Factor_Indexed_Readings`, the question's comparison
+through `ordered_member_tree_listed`, the candidate's path-store table, `Keyed_Demanded_Sites`,
+`Keyed_Native_Evaluation`) and the evaluation over the positions of the demanded calls
+(`Positioned_Native_Evaluation`, whose carrier is the demand and whose key is the position).
+
+The criterion by which a further theory is re-cited or left a consumer: a theory whose proofs re-make an
+obligation — prove a key injective, a member equation or an update law for its own index — instantiates
+the notion and is re-cited; a theory whose proofs consume a carrier's contract is a consumer and is left
+as it is.
+
+### Evidence and limits
+
+`Carrier_Indexes` loads on the accepted base with every proof checked in place, and the repository check
+accepts it. Each carrier's statement was compared with the locale's assumptions when it was written: each
+instantiates them by at most a rewriting, with no premise added and none dropped. That comparison is not
+yet a proof: the instances and re-citations land in their own builds, and a departure one of them finds —
+a carrier that cannot instantiate a statement without weakening it — comes to the planner, since the
+notion would then be two. This entry was written outside the loop and is a residual.
+
+Recorded 2026-09-21.

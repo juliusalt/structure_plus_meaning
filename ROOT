@@ -834,6 +834,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Inference_Abstraction
     Factor_Library_Coverage
     Factor_Reader_Library_Coverage
+    Carrier_Indexes
     Finite_Functional_Enumeration
     Finite_Singleton_Selection
     Factor_Library_Compilation

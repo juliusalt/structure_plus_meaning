@@ -212,6 +212,11 @@ judgment's path.
   key is an instance, and `development_entity_key`, the executable key of a state's entities. Its review's follow-ups
   on the switch ride with #56 (the keys' move beneath both theories, the program-level payload statement, the 256
   bound of `[i]`); the rest are Open 21.
+- **#60** `theories/Development_Decomposition_Soundness.thy`, committed `ffe12b46`: T stated once over the demanded
+  reading and chosen by the contract's kind; the general schema one relation (`development_decomposition_application`,
+  any number of constants and intermediates), sound once (`development_decomposition_sound`); B and C one-line
+  specializations. Its review: task 2's entry to amend and the multi-constant and degenerate cases went to #66 (told);
+  three duplications and the progress condition ride with #62's correction.
 - **#58** `theories/Development_Repair_Rows.thy`, committed `b3b185bc` after one fix round: the repair's output recorded
   as rows of the development library. Its rows' coordinates do not move with the successor's correspondence (see Now,
   #64).
@@ -326,7 +331,13 @@ Not yet planned, in the order they are expected to be planned:
   application of #60's relation. #62's corrected brief also audits its program with `finite_system_payloads` (#22's
   review: every program reading loci). #64's corrected brief also carries #58's review: the repair rows' coordinates do
   not move with the successor's correspondence, so the settlement corollary is vacuous for most repairs; the correction
-  decides whether their transport through #78's comparison is #64's or a follow-up.
+  decides whether their transport through #78's comparison is #64's or a follow-up. #62's corrected brief also carries
+  #60's review: an application requires progress (a nonempty I or more than one subject constant, as #66's entry
+  states), and the theory's three duplications go (`list_all2_left_member`, an instance of
+  `Bootstrap_Relations.list_all2_members`; `list_all2_some_the`, of `list_all2_function_restricted`;
+  `development_statement_constants`, the mention reading of `development_constant_mentions` without its filter).
+  The prerequisite rows of D for an application (each part after the definition children) belong with the build that
+  applies a decomposition to the loop.
 - **If #54 reports a changed word** because factoring `development_readiness_key` changes a definition the machinery
   state presents as an entity (the mechanism of #53's first finding): allow it, with the words and the definition named
   in its result — reuse outranks word stability, and #56 and #30 re-record over it.

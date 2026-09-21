@@ -1360,3 +1360,36 @@ reading the log and every message as the owner would: the loop is coherent, and 
 (a transcript not yet written read as one that could not be read) and one that contradicted another (a lost
 session's mail said to be kept where the release had just emptied it). A walk that goes right now asserts that its
 log carries no ATTENTION at all.
+
+### What the sweep found last
+
+**Promises kept only in part.** Placing a proposal is "all of it or none", and the tasks it wrote were taken back on
+a failure — but not the edges it had already moved: a splice re-points work already in the graph onto the new task,
+so an existing task was left waiting on an id that had just been deleted. It is put back now.
+
+**What waits on the planner.** `returned_tasks` named four kinds of task only the planner can move; a fifth was
+missing — a finished design or investigation waiting for the planner's own verdict, which no reviewer is ever
+started for. It was said once, in the event when the work finished, and never again.
+
+**What a role is held to and never told.** The task designer's whole production is briefs and its protocol never
+stated a brief's form, nor that every build and fix needs its own review task: both are enforced by `propose`, which
+refuses a proposal whole, and a refused proposal costs a session. `_checks.md` says subagents and waiting are
+refused and only the roles that run checks are given it, so the planner and the task designer — the two with the
+most reason to reach for a subagent, and both holding the tool — were never told. Every form the harness checks is
+now asserted to stand in the protocol of whoever writes it.
+
+**Stale by a day.** `v2.py blockers` refused every role without graph rights by naming the task designer as one that
+has them, which it stopped having when it began proposing rather than writing; the usage banner offered it the same
+command. A test now holds every message and protocol to `ROLES`.
+
+**Thresholds read against each other.** The finalizer may wait an hour for the machine and run for an hour, and the
+watchdog gives it 130 minutes; the soft mark is below the hard one and both below what the API has accepted; the
+daemon pings at 2400 s against a 3300 s entry; `FIX_MINUTES` and the grace the watchdog allows agree. Nothing was
+found out of order here.
+
+**Left as it is, with reasons.** `unshelve`, `root_lines_back` and `cmd_unshelve` serve shelves made before
+2026-09-20; every shelf under .build/tasks/*/shelf/ is already restored (`manifest.restored.json`), so the branches
+are inert rather than wrong. `exclusive_claim` returns "no claim" when its file cannot be read at all: failing
+closed there would stop every check for ever, and a corrupt file is cleared by the liveness rule already. A
+producing session's start is not made under the state lock (the launch takes seconds, and every hook would block on
+it); the window between reading a task's stage and starting its session is the one race the design accepts.

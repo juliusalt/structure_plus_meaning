@@ -1472,7 +1472,7 @@ class TaskTests(Flow):
         self.assertIn("your runs bq1 are going on: park for them", self.as_(self.impl, "park", "fix"))
         self.assertTrue(self.as_(self.impl, "escalate", "--efficiency", "slow").startswith("reported"))  # it continues
         out = self.as_(self.impl, "park", "run")
-        self.assertIn("parked: end your turn now; another worker produces meanwhile", out)
+        self.assertIn("parked: end your turn now; the producing slot is free for another worker meanwhile", out)
         self.assertEqual(self.t("1")["parked"]["for"], "run")
         self.assertEqual(self.w.v2("status").split("producing: ")[1].split("\n")[0], "-")  # the slot is free
 
@@ -1844,7 +1844,7 @@ class TaskTests(Flow):
         self.w.session("plan-2", "planner", "p2", settings="planner-settings.json", origin="kb-1")
         self.assertIn("TASK 1 WAITS FOR TASK 3", self.as_("plan-2", "after", "1", "3"))
         out = self.as_(self.impl, "park", "fix", "nothing else is left, and the fix is sooner than the run")
-        self.assertTrue(out.startswith("parked: end your turn now; another worker produces meanwhile"))
+        self.assertTrue(out.startswith("parked: end your turn now; the producing slot is free for another worker meanwhile"))
         self.assertEqual((self.t("1")["stage"], self.s(self.impl)["state"]), ("parked", "parked"))
         self.assertEqual(self.t("1")["parked"]["after"], "3")  # the fix the planner named
         self.w.v2("dispatch")

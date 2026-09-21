@@ -3166,7 +3166,7 @@ def cmd_ask(to, text):
     who = {"kb": "the knowledge base"}.get(q["target"], q["target"])
     if c and c["role"] in PRODUCING:
         return (f"asked as {qid} ({who}); continue with what does not depend on the answer; when nothing productive is "
-                "left, park for it (`v2.py park answer`): another worker produces meanwhile")
+                "left, park for it (`v2.py park answer`): the producing slot is free for another worker meanwhile")
     return (f"asked as {qid} ({who}); continue with what does not depend on the answer, and end your turn only when "
             "nothing is left: the answer wakes you")
 
@@ -3279,7 +3279,7 @@ def cmd_escalate(text):
     kick()
     return ("reported: continue with whatever does not depend on the fix, the slow run going on meanwhile. When nothing "
             "productive is left, park (`v2.py park run` for your run, or `v2.py park fix` if the fix will come sooner "
-            "than the run ends): another worker produces meanwhile.")
+            "than the run ends): the producing slot is free for another worker meanwhile.")
 
 
 def cmd_measuring(text=""):
@@ -3340,8 +3340,9 @@ def cmd_park(kind, text=""):
     kick()
     what = {"run": "your run has ended", "fix": "the fix has landed", "tree": f"task {holder} has let the working tree go",
             "answer": "the answer has come"}[kind]
-    return (f"parked: end your turn now; another worker produces meanwhile. You are resumed here, your context intact, "
-            f"when {what} and the producing slot is free; if not within {HOLD_PARK // 3600} hours, you are woken to record "
+    return (f"parked: end your turn now; the producing slot is free for another worker meanwhile. You are resumed "
+            f"here, your context intact, when {what} and the slot is free; if not within {HOLD_PARK // 3600} hours, "
+            "you are woken to record "
             "a partial result." + (f"{aside}" if aside else "")
             + (" Your run keeps going; its completion does not resume you by itself." if kind == "run" else ""))
 

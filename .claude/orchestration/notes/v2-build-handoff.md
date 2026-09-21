@@ -1448,3 +1448,16 @@ Left as it is: `v2.ping` waits up to ninety turns for its throwaway fork to go i
 in principle spend the watchdog's whole 600 s budget. The daemon kills a watchdog that overruns and says so in the
 log, and every ping seen in the live run returned in seconds; shortening the wait would weaken the verdict the ping
 records, which is what makes a missed cache entry visible at all.
+
+### The day's repairs read against each other
+
+A repair can make a neighbour lie. `read_task` telling an unreadable file from a missing one was one of the day's
+own fixes, and the statements built on its `None` had not moved with it: the conflict notice would have told the
+planner a task was "not in the task list at all", a dependent would have been told its blocker was dropped,
+`v2.py blockers` would have refused, and a whole proposal would have been refused — each of them for an I/O fault.
+Where the statement is made, `in_list()` decides now. The other pairs were read and agree: `release` and `lost` name
+unread mail once, between them; the stopped guard leaves the keep-warm ping alone; the new start backoff and
+`produce`'s own say the same ten minutes; the width and the brief rule are one figure.
+
+`archive()` was the one action that takes things out of the state and said nothing: "every action is a line in
+state/v2.log" is the claim, and a day later a session the owner remembered was simply gone. It names what it took.

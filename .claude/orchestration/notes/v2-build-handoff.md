@@ -1393,3 +1393,29 @@ are inert rather than wrong. `exclusive_claim` returns "no claim" when its file 
 closed there would stop every check for ever, and a corrupt file is cleared by the liveness rule already. A
 producing session's start is not made under the state lock (the launch takes seconds, and every hook would block on
 it); the window between reading a task's stage and starting its session is the one race the design accepts.
+
+### Every door round an invariant
+
+The harness states its rules in the messages it sends; each was read as a promise and asked what else reaches it.
+
+- "Stop everything" was the dispatch's rule, and `v2.py talk` does not go through the dispatch: run while everything
+  was stopped it would have forked the knowledge base for a planner, with the daemon down and nothing to carry it.
+  Every background start reads the marker now; a keep-warm ping still goes, and start.sh takes it off first.
+- "The task graph is the planner's alone to edit" was held over TaskCreate and TaskUpdate, and the list is a
+  directory of JSON files a Write, an Edit or a redirection reaches as easily — past Claude Code's lock on the task
+  and past the id allocation.
+- `.claude/` is exempt from the working tree's ownership, so a session that edited v2.py, a protocol or the owner's
+  own switches (`state/no-launch`, `state/graph-held`, `state/stopped`) would have changed the rules it runs under,
+  and nothing would have recorded it.
+- "A session starts no subagents" was held over the Agent tool, and `claude --bg` is the same thing by another door:
+  a session outside every slot, every limit and every record. And Monitor was outside the matcher altogether — it
+  is waiting, and a command under it reads a file through its events, unmetered.
+
+`GIT_MUTATE` still misses a list-form `subprocess.run(["git", "commit", …])`: tightening it means matching words
+that `shell_syntax` drops to keep prose out, and the finalizer refuses a commit that finds nothing to commit, so the
+backstop is there. Left as it is, knowingly.
+
+**Tried and backed out.** A line in the dispatch when the keep-warm daemon is gone: health.py already says it where
+the owner looks, and the notice fires in every legitimate dispatch-without-a-daemon — which is what the fake world
+is, and the walk that asserts a clean run leaves no ATTENTION caught it at once. The test was right and the notice
+was noise.

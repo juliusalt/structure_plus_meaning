@@ -845,6 +845,9 @@ def archive():
         if out:
             with open(os.path.join(STATE, "v2-archive.jsonl"), "a") as f:
                 f.write("".join(json.dumps(x) + "\n" for x in out))
+    if out:  # every action of the harness is a line in the log, and this one takes things out of the state
+        log(f"archived {len(out)} piece(s) of state a day old that nothing refers to: "
+            + ", ".join(sorted(x["session"]["name"] if "session" in x else x["ask"]["qid"] for x in out)[:8]))
     return len(out)
 
 

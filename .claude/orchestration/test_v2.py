@@ -2559,6 +2559,10 @@ class GrowthTests(Flow):
         self.assertIn("implement-2", st["sessions"])  # its task is still open
         self.assertEqual(st["asks"], {})
         self.assertEqual(len((self.w.state / "v2-archive.jsonl").read_text().splitlines()), 2)
+        said = (self.w.state / "v2.log").read_text()   # every action of the harness is a line in the log
+        self.assertIn("archived 2 piece(s) of state", said)
+        self.assertIn("q1", said)
+        self.assertIn("review-1", said)
 
 
 class HealthTests(Flow):

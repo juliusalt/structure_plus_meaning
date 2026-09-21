@@ -15,7 +15,9 @@ through the Q7 order in the ledger.
 review accepts it, the finalizer commits it, and only then does the harness complete it and its reviews. Of the five
 pieces of work that stood written and uncommitted at the start, the verdict's state rows (#46, `7b4bb54f`) and the
 development locus (#22, `612ee5a9`) have landed after a fix round each, and their re-reviews' small corrections ride
-with #78. The check's named refusals (#50, reviewed by the harness) is in its landing. Two a session finishes: the replay's outcome classification (#48 — its acceptance
+with #78. The replay's outcome classification (#48, `3aaddd96`) landed after a fix round. The check's named refusals
+(#50, reviewed by the harness) is in its landing, and the plan's two sections (#49) wait on the one tree for their
+hand-over. Two a session finishes: the replay's outcome classification (#48 — its acceptance
 replay was never run, because the tree was inconsistent when it was written; it also carries the ignore line and the
 untracking of `tools/__pycache__/build.cpython-314.pyc`) and the plan's two standing sections (#49 — written; its
 hand-over never landed because its session could not end its turn).
@@ -189,6 +191,11 @@ judgment's path.
   `development_readiness_key`, and `development_machinery_request_of` takes `development_subject_constant` (#30); every
   program that reads loci is audited with `finite_system_payloads` (#42 for the verdict, #62 for the decomposition); its
   map row's imports cell (#78).
+- **#48** `tools/replay_development_answers.py` and its eleven tests, committed `3aaddd96` after one fix round: a run that
+  produced no judgment is `unproduced`, apart from a word compared and differing, with `status: None`; a timeout costs its
+  own answer alone. Acceptance, the replay alone under a measuring hold: 16 replayed, 15 reconstructed, adopted
+  `indexed-data-walk`, nothing differing, nothing unproduced, 260.1 s against task 20's 283.6 s. The entry at HEAD
+  stands. `.gitignore` already ignored the compiled object; its tracked copy's removal waits on the owner (Q9).
 - **Written, landing** (see Graph): #50 the check's named refusals, 14 cases in
   `tools/test_check_refusals.py`; #48 `tools/replay_development_answers.py` with ten tests (no retained record holds
   `elapsed_seconds`, so the longest-first ordering is inert until the answer harness retains its run's cost); #49 the
@@ -211,6 +218,9 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q8, answered by the owner 2026-09-21 21:43**: the planner's queue orders parked tasks too. A parked task resumes,
   when its wait is over, in the queue's order (a hold ending within 45 minutes first, unnamed tasks last); so every
   in-progress task is named in the queue, a quick fix's parked task included.
+- **Q9** the tracked `tools/__pycache__/build.cpython-314.pyc` (asked 2026-09-21): ignored by `.gitignore`, removed from the
+  tree by #48, but the finalizer refuses to commit the removal of an ignored path. Provisional: it stands removed and
+  uncommitted, and no task is made of it; the step is the finalizer's or the owner's.
 
 Not yet planned, in the order they are expected to be planned:
 
@@ -257,6 +267,9 @@ Not yet planned, in the order they are expected to be planned:
     attributed when a check that re-executes it is on the critical path.
 16. **Whether `keyed_agree` (#46) is an instance of the index notion or of the bijective relations** (review 47's
     second follow-up): for the index group once #68 has landed.
+17. **The replay's timeout stops only the direct child** (#48's review): `tools/build.py`'s `run_session` is the existing
+    whole-tree stop, to extend and reuse in `run_harness`. Small; plan it when a harness run next outlives its limit,
+    or sooner if orphaned Isabelle runs are found holding the machine.
 
 ## Now
 
@@ -268,9 +281,9 @@ Not yet planned, in the order they are expected to be planned:
   in the queue's order (Q8): #50 first, whose landing ends the re-execution of every recipe at every check, then #48 and
   #49, then the fillers.
 - **For the owner**: `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap
-  (#22's re-review).
-- **Owed to the owner**: #48's replay numbers against task 20's 283.6 s; each landing check's phases and per-recipe
-  comparison.
+  (#22's re-review); and `v2.py park machine` answers "a run may start now" while the probe launched right after it is
+  refused for "2 Isabelle runs are going on this machine", four times in a row (implement-24, q27, 22:15).
+- **Owed to the owner**: each landing check's phases and per-recipe comparison (#48's replay numbers were reported).
 - **Owed before #62 and #64 start: correct their briefs from #66's entry once it is accepted** (q25). A decomposition's
   child at an occupied locus is the problem standing there — at a parent with a locus the part child *is* the parent —
   so an application there acts through the parent's D row and its later request and contributes no library row headed

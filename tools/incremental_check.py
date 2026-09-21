@@ -54,6 +54,40 @@ def session_declaration(project):
     return proof_contexts.session_declaration(project)
 
 
+# A refusal made before anything is built names, in the text a session reads, what it found and where.
+def stale_output_refusal(output) -> str:
+    return 'Use a fresh output directory: ' + str(output) + ' already exists.'
+
+
+def source_check_refusal(structure) -> str:
+    return '\n  '.join(('The sources refuse this check:', *structure['refusals']))
+
+
+def declaration_refusal(base, project, stored) -> str:
+    return ('The project session declaration changed; a complete check is required.\n'
+            '  ROOT now declares: ' + json.dumps(project) + '\n'
+            '  the base ' + str(base) + ' was built with: ' + json.dumps(stored))
+
+
+def stored_heap_refusal(base) -> str:
+    return 'The base must store the heap that supplies its import contexts; ' + str(base) + ' stores none.'
+
+
+def active_context_refusal(path, directory, receipt) -> str:
+    return ('The active context ' + str(path) + ' selects ' + str(directory) + ', whose receipt '
+            + str(receipt) + ' no longer has the digest recorded there.')
+
+
+def repeated_recipe_refusal(names) -> str:
+    repeated = sorted({name for name in names if names.count(name) > 1})
+    return 'Two reconstruction scripts declare one recipe name: ' + ', '.join(repeated) + '.'
+
+
+def unknown_recipe_refusal(selected, known) -> str:
+    return ('Unknown recipe name: ' + ', '.join(sorted(set(selected) - set(known)))
+            + '; this project declares ' + ', '.join(sorted(known)) + '.')
+
+
 ACTIVE_CONTEXT = Path('/tmp/structural-active-context.json')
 
 
@@ -63,8 +97,9 @@ def heap_identity(session):
 
 def activate_context(directory, lineage=None):
     context = proof_contexts.load_parent(directory, None, *(lineage or proof_contexts.new_lineage()))
-    assert context['project_declaration'] == session_declaration(ROOT)
-    assert context['stored_heap'], 'Only a context with a stored heap can be the base of later checks.'
+    assert context['project_declaration'] == session_declaration(ROOT), \
+        declaration_refusal(directory, session_declaration(ROOT), context['project_declaration'])
+    assert context['stored_heap'], stored_heap_refusal(directory)
     temporary = ACTIVE_CONTEXT.with_suffix('.new.json')
     write_json(temporary, {'directory': str(Path(directory).resolve()),
                            'receipt_sha256': investigate.file_hash(Path(context['receipt']))})
@@ -78,7 +113,8 @@ def selected_base(explicit, lineage=None):
     if ACTIVE_CONTEXT.is_file():
         selected = json.loads(ACTIVE_CONTEXT.read_text())
         context = proof_contexts.load_parent(selected['directory'], None, *(lineage or proof_contexts.new_lineage()))
-        assert investigate.file_hash(Path(context['receipt'])) == selected['receipt_sha256']
+        assert investigate.file_hash(Path(context['receipt'])) == selected['receipt_sha256'], \
+            active_context_refusal(ACTIVE_CONTEXT, selected['directory'], context['receipt'])
         return Path(selected['directory'])
     return Path('/tmp/structural-accepted')
 
@@ -92,7 +128,8 @@ def recipes():
             theory, filename = recipe.export.split(':')
             rows.append({'script': script.name, 'name': recipe.name, 'roots': list(recipe.roots),
                          'theory': theory, 'filename': filename})
-    assert len({row['name'] for row in rows}) == len(rows)
+    assert len({row['name'] for row in rows}) == len(rows), \
+        repeated_recipe_refusal([row['name'] for row in rows])
     return rows
 
 
@@ -219,7 +256,7 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
     lineage = lineage or proof_contexts.new_lineage()
     base = base.resolve()
     output = output.resolve()
-    assert not output.exists(), 'Use a fresh output directory.'
+    assert not output.exists(), stale_output_refusal(output)
     output.mkdir(parents=True)
     summary = {'status': 'failed', 'base': str(base), 'phases': {}}
     phases = summary['phases']
@@ -235,12 +272,14 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
         parent = proof_contexts.load_parent(base, None, *lineage)
         session, base_sources, base_inputs = parent['session'], parent['sources'], parent['inputs']
         assert session_declaration(ROOT) == parent['project_declaration'], \
-            'The project session declaration changed; a complete check is required.'
-        assert parent['stored_heap'], 'The base must store the heap that supplies its import contexts.'
+            declaration_refusal(base, session_declaration(ROOT), parent['project_declaration'])
+        assert parent['stored_heap'], stored_heap_refusal(base)
         summary['advance_base'] = advance_base
         structure = check.source_checks()
         summary['source_checks'] = structure
-        assert not any(structure[k] for k in ('missing_theory_files', 'unlisted_theories', 'proof_escape_matches'))
+        if structure['refusals']:
+            summary['source_check_refusals'] = structure['refusals']
+        assert not structure['refusals'], source_check_refusal(structure)
         names = theory_names(ROOT)
         sources, parents = investigate.source_graph(ROOT, [], names)
         reused, rebuilt = proved_code.proved_context_partition(sources, parents, base_sources)
@@ -268,8 +307,10 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
         begin = time.monotonic()
         version = subprocess.run(['isabelle', 'version'], capture_output=True, text=True, check=True,
                                  env=ENV).stdout.strip()
-        rows = [row for row in recipes() if not selected or row['name'] in selected]
-        assert not selected or {row['name'] for row in rows} == set(selected), 'Unknown recipe name.'
+        declared = recipes()
+        rows = [row for row in declared if not selected or row['name'] in selected]
+        assert not selected or {row['name'] for row in rows} == set(selected), \
+            unknown_recipe_refusal(selected, [row['name'] for row in declared])
 
         modules = {}
 

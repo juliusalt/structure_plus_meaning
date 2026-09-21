@@ -74,7 +74,7 @@ def prepare(work, context, present, loaded, substitutions, prelude):
 
 def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, timeout, candidates=()):
     context = proof_contexts.load_parent(base, None, *proof_contexts.new_lineage())
-    assert context['sources'], 'The base carries no accepted sources.'
+    assert context['sources'], 'The base ' + str(base) + ' carries no accepted sources.'
     present = workspace_theories(candidates)
     differing = changed(context['sources'], present)
     new = {name for name, accepted in differing.items() if accepted is None}
@@ -131,7 +131,9 @@ def main():
     args.work.mkdir(parents=True, exist_ok=True)
     substitutions = dict(pair.split('=', 1) for pair in args.substitute)
     prelude = {path.stem: path.resolve() for path in args.prelude}
-    assert set(substitutions.values()) <= set(prelude), 'A substitution names no supplied prelude.'
+    absent = sorted(name for name in substitutions.values() if name not in prelude)
+    assert not absent, ('A substitution names no supplied prelude: ' + ', '.join(absent)
+                        + '; the supplied preludes are ' + (', '.join(sorted(prelude)) or 'none') + '.')
     summary = probe(incremental_check.selected_base(args.base).resolve(), args.work.resolve(), args.theory,
                     args.load, substitutions, prelude, args.parallel_proofs, args.timeout,
                     [directory.resolve() for directory in args.candidates])

@@ -13,16 +13,35 @@ import build
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def source_checks() -> dict:
-    names = set(re.findall(r"^    ([A-Za-z_][A-Za-z_0-9]*)\s*$", (ROOT / "ROOT").read_text(), re.M))
-    files = {path.stem: path for path in (ROOT / "theories").glob("*.thy")}
+def theory_declarations(root: Path) -> dict:
+    """Each theory ROOT declares, with the line that declares it."""
+    text = (root / "ROOT").read_text()
+    return {match[1]: text.count("\n", 0, match.start()) + 1
+            for match in re.finditer(r"^    ([A-Za-z_][A-Za-z_0-9]*)\s*$", text, re.M)}
+
+
+def source_checks(root: Path = ROOT) -> dict:
+    """The structural source checks, with a refusal line naming every item that fails one.
+
+    A session reads the refusals to decide, so each one names what was found and where it is:
+    an undeclared theory by its path, a declared theory whose file is absent by name and by the
+    ROOT line that declares it, an escaped proof by file, line and the escaping text.
+    """
+    declarations = theory_declarations(root)
+    files = {path.stem: path for path in (root / "theories").glob("*.thy")}
     escapes = []
     for path in sorted(files.values()):
         for number, line in enumerate(path.read_text().splitlines(), 1):
             if re.search(r"\b(sorry|oops|axiomatization)\b", line):
-                escapes.append({"file": str(path.relative_to(ROOT)), "line": number, "text": line.strip()})
-    return {"theory_count": len(files), "missing_theory_files": sorted(names - files.keys()),
-            "unlisted_theories": sorted(files.keys() - names), "proof_escape_matches": escapes}
+                escapes.append({"file": str(path.relative_to(root)), "line": number, "text": line.strip()})
+    missing = sorted(declarations.keys() - files.keys())
+    unlisted = sorted(files.keys() - declarations.keys())
+    refusals = [f"ROOT line {declarations[name]} declares {name}, but theories/{name}.thy is absent"
+                for name in missing]
+    refusals += [f"theories/{name}.thy is not declared in ROOT" for name in unlisted]
+    refusals += [f"{escape['file']}:{escape['line']} escapes its proof: {escape['text']}" for escape in escapes]
+    return {"theory_count": len(files), "missing_theory_files": missing, "unlisted_theories": unlisted,
+            "proof_escape_matches": escapes, "refusals": refusals}
 
 
 def run_check(args) -> int:
@@ -48,7 +67,8 @@ def run_check(args) -> int:
         code = receipt["exit_code"]
         if receipt["status"] != "accepted" and code == 0:
             code = 1
-        if any(report[key] for key in ("missing_theory_files", "unlisted_theories", "proof_escape_matches")):
+        if report["refusals"]:
+            errors += "\n".join(("", "Source checks refused:", *report["refusals"]))
             code = code or 1
         report.update(status="accepted" if code == 0 else receipt["status"] if receipt["status"] == "interrupted" else "failed",
                       exit_code=code)

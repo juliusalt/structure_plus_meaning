@@ -8936,7 +8936,7 @@ generation records, and what the answer frame must become. It changes no theory.
 
 | Earlier proposal or state | Correction |
 |---|---|
-| Decomposition needs a notion of its own — a decision, a task or a verifier. | It needs none. A decomposition is an **obligation reduction of a problem's contract to its subproblems' contracts**, presented as a row of the development library. Fix `T p` = "the state states, for `problem_subject p`, the statements the kind of `problem_contract p` demands, and the verdict of that kind accepts it against the state `p` was posed in"; the verdict is already stated once over the reading and the kind (`development_constant_verdict`), so `T` is too. A row `(p,H) |∈| L` is a decomposition exactly when `obligation_reduction {p} T T (λ_. fset H)` holds, and `obligation_reduction_discharge` is then the law that composes verified subresults into the parent's result. Nothing is added to `Development_Decomposition`: the row type, the composition law `development_composition_settles`, the leaf reading `development_leaf_reading` and the refusal `development_broad_refused` are already there, and `L` is empty only because nothing constructs a row. |
+| Decomposition needs a notion of its own — a decision, a task or a verifier. | It needs none. A decomposition is an **obligation reduction of a problem's contract to its subproblems' contracts**, presented as a row of the development library. Fix `T p` = "the state states, for `problem_subject p`, the statements the kind of `problem_contract p` demands, and the verdict of that kind accepts it against the state `p` was posed in"; the verdict is already stated once over the reading and the kind (`development_constant_verdict`), so `T` is too. A row `(p,H) |∈| L` is a decomposition exactly when `obligation_reduction {p} T T (λ_. fset H)` holds, and `obligation_reduction_discharge` is then the law that composes verified subresults into the parent's result. Nothing is added to `Development_Decomposition`: the row type, the composition law `development_composition_settles`, the leaf reading `development_leaf_reading` and the refusal `development_broad_refused` are already there, and `L` is empty only because nothing constructs a row. *Corrected 2026-09-21 ("Decomposition soundness — 2026-09-21", at the end of this entry): `T` is the contract's predicate, `development_problem_stated`, not the verdict against the state `p` was posed in, which no decomposition with intermediates can reduce (`development_refinement_verdict_refuses_definitions`); the verdict meets `T` at one-constant problems (`development_constant_verdict_states`).* |
 | The library's rows are settlement claims; their soundness is not stated. | Soundness is `inference_sound T (finite_inference_rules (development_answered_rules D answered \|∪\| L))`, and `inference_closure_sound` then gives that **every problem the composed settlement settles has its contract established** — `development_composed_settled` is already that closure. It has two sources, one predicate: a prerequisite row of `D` fires only once its own head is answered, so its soundness is the accepted verdict's contract (`development_constant_verdict_contract`); a library row of `L` claims its head, so its soundness is the schema's own proof. `inference_supplies_reduction` is the bridge, turning the sound family and a row into the per-row reduction, so the two are one fact stated once. |
 | A decomposition of a decomposition needs its own composition law, and a tree of them needs another. | Neither. Nesting is `obligation_reduction_compose`, whose `obligation_substitution` qualifies every grandchild by its parent's socket, so equal subproblems at different sockets stay distinct (`substitution_keeps_equal_conditions_separate`) — depth is composition of reductions, and occurrences never merge. A subproblem already answered is discharged as `K` by `obligation_reduction_residual`, and `reduced_requirement_complete` settles the parent when no occurrence remains, so an answered subproblem is not answered again. The whole tree of a root problem discharges by `schema_graph_development_complete`: the graph is the tree of applications, the known calls the admitted answers, and the residual the unanswered leaves, which `schema_graph_residual_keeps_assertion_origins` keeps with their sockets. |
 | A row of the library is a table an author writes for a problem. | A row is an **application of a schema**, and the schema is a Factor schema over the native presentation of problems: its conclusion is the parent's problem row as a pattern, its premise sockets are the subproblems as patterns, and its material premises are the structural conditions it reads off the state. Generating the rows of `L` at the actual problems is the existing generation (`finite_generated_schema_applications`), and it is a native question over the problems as readiness and selection are — the library is a native program, `L` the set of its applications. A written row is the reasoning done twice at the second problem, against the repository's first-use rule; `Factor_Learned_Schemas.schema_scheme_rule_sound` is how a decomposition performed once becomes a schema, retaining its assertion and material sockets. |
@@ -8952,7 +8952,10 @@ the state extended by those intermediates and with them in its support. The mate
 off the state: the parent's support, the intermediates, and the partition of the support among
 them. The schema names its intermediates; it never invents them, and the two admissible sources
 are the state (a constant on its frontier, or one the parent's statements mention that the support
-excludes) and a refusal (the excess and introduced constants the repair already computes).
+excludes) and a refusal (the excess and introduced constants the repair already computes). *Corrected 2026-09-21 (at the
+end of this entry, and "A decomposition that applied is a row at its problem's locus"): an application requires
+progress, a nonempty set of intermediates or more than one subject constant; at a parent with one subject constant
+the part child is the parent itself.*
 
 The ordering is carried by `D`, not by `L`. Each refinement child has the definition children as
 **prerequisites**, because a refinement using an intermediate cannot be issued before the state
@@ -8976,7 +8979,9 @@ and the remainder `S_2`. B is A with `n = 1` and `m = 1`, the intermediate chose
 support. The partition is a computed observation of the state, not a threshold.
 
 **Instance C — the repair.** The intermediates are the constants a refused answer introduced and
-the excess of its support, and the parent is issued again over the extended state. A is the general
+the excess of its support, and the parent is issued again over the extended state. *Corrected 2026-09-21: the intermediates are the constants the
+refused answer introduced (`development_repair_intermediates`); the excess of its support extends the re-issued
+request's support (`development_extended_request`) and is not an intermediate.* A is the general
 schema; B and C are its instances, and C is the one the loop already computes.
 
 **Not designed here.** A **proof problem**'s contract is a term, and it decomposes by the term's own
@@ -8996,14 +9001,19 @@ its payload, cites only direct predecessors, and its cause is a certified call o
   decomposition per problem: a second row for the same problem meets the first at that locus and
   the admission transaction refuses it, which is how `development_ambiguous` — a problem with more
   than one decomposition — is resolved as an explicit distinction rather than by joining premises.
+  *Corrected 2026-09-21 by "A decomposition that applied is a row at its problem's locus": the decomposition locus
+  is a sixth role of the parent's locus, not a fourth tagged kind; several applications read at once are one row with
+  no choice, recorded rather than refused, and the transaction refuses only a later, different reading.*
 - **Payload**: the row — the parent's locus, the sockets with the loci of the subproblems, the
   schema applied with its bindings, and the material observations the application read (the
-  support, the intermediates, the partition).
+  support, the intermediates, the partition). *Corrected there: the sockets are read off the intermediates and the
+  parent's locus, not stored.*
 - **Cause**: the certified policy call, as every other decision's is, consuming
   `development_policy_admits_member`.
 - **Predecessors**: the selection that admitted the parent problem, and, for instance C, the
-  refusal the application was derived from. Not the parent's incumbent: the selection already cites
-  it, and only direct edges are recorded.
+  refusal the application was derived from. *Corrected there: a refusal is not a generation; the edge is the
+  refused request's issue, which cites the selection, so the selection is then no direct predecessor.* Not the
+  parent's incumbent: the selection already cites it, and only direct edges are recorded.
 
 The generation records that the row **is an application of an admitted schema**; it does not record
 that the composition is sound. Soundness is a property of the schema, proved once when the schema
@@ -9078,6 +9088,39 @@ intermediates is not designed: the schemas here read theirs off the state or off
 of this design, like the earlier ones, was made outside the loop and is a residual.
 
 Recorded 2026-09-20 (task 2's decision; a design, no theory changes).
+
+### Decomposition soundness — 2026-09-21
+
+Task 60 built the schema and its soundness (`Development_Decomposition_Soundness`), and its review found three places
+where this entry must be corrected; the sentences above are kept, marked where they are corrected.
+
+- **`T` is the contract's predicate.** `development_problem_stated`: every subject constant has a statement of its
+  contract's kind in the judged state, closed under declaration, over the demanded reading as the verdict is. The
+  verdict against the state a problem was posed in refuses every added kernel definition
+  (`development_refinement_verdict_refuses_definitions`), so no decomposition with intermediates reduces it, and it is
+  not `T` (the planner confirmed it, q24). An accepted verdict of either kind establishes `T` for the one constant of
+  its problem (`development_constant_verdict_states`); support and the unchanged rest are the request's conditions, and
+  a decomposition gives its children their own requests.
+- **A problem whose subject is several constants is never issued as a leaf; it is only decomposed.** The verdict's
+  statements field asks for a demanded statement about some constant of the subject (the third conclusion of
+  `development_constant_verdict_contract`), `T` for one about every constant. The two agree on a one-constant subject,
+  which is the only subject a request is constructed for (`development_refinement_request`,
+  `development_definition_request` and `development_machinery_request_of` are per constant) and the only one with a
+  locus. Checking the field per subject constant would widen the verdict, its native design and its words for a case
+  that has no request, and would issue a broad problem where the owner asks for depth — the one-equation limit of the
+  answer frame already says a refinement of several constants never reaches an executor. Such a problem always has an
+  application: with no intermediates, its split into one part per subject constant. Its locus and record are not
+  designed.
+- **An application requires progress**: a nonempty set of intermediates, or more than one subject constant. The
+  relation admits the degenerate application, no intermediates at a one-constant subject, whose only child is its part
+  child, the parent itself: it poses nothing and orders nothing, and, read by the issue, it would refuse every
+  one-constant problem its issue, since it applies at every one. The library's applications are the relation's
+  applications with progress; task 62's schema carries the condition, and task 60's soundness is untouched, since the
+  condition only removes applications.
+- **Instance C's intermediates are the constants the refused answer introduced** (`development_repair_intermediates`);
+  the excess of its support extends the re-issued request's support (`development_extended_request`).
+
+Amended 2026-09-21 (task 66, from task 60's review).
 
 ## The verdict of a kind is a native definition over a state's rows
 
@@ -10212,3 +10255,273 @@ a carrier that cannot instantiate a statement without weakening it — comes to 
 notion would then be two. This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-21.
+
+## A decomposition that applied is a row at its problem's locus
+
+The decomposition's builds stop at the issue: the repair's output is read from the history as rows headed by the
+repaired problem (task 58), the general schema is an obligation reduction proved sound once (task 60,
+`development_decomposition_application`, `development_decomposition_sound`), the schema is to be a native program over
+problem rows (task 62), and the library it generates is passed to the issue, so that a problem an application
+decomposes is refused issue (task 64). Nothing adds an application's children to the loop's problems, and nothing
+records that an application applied. Two committed designs placed that record differently: "A problem is decomposed
+through the constants its answer needs" gave it a decision locus of its own, a fourth kind beside the problem, issue
+and selection loci; "The development notions are structure; a kind is a family and an identity is a path" put "the
+family of decompositions that applied" in the issue row's body; and the roles `Development_Loci` gives (task 22) have
+no decomposition role. This entry settles the record, the application and what the build that applies a
+decomposition must respect. It was written against a finding the two earlier entries did not meet: **under the
+locus of design-9, the part child of a parent that has a locus is the parent.**
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A decomposition stands at a decision locus of its own, a fourth kind beside the problem, issue and selection loci, extending `development_decision_loci_distinct`. | That was written while a locus kind was the constructor of a tagged presentation (`development_issue_locus` prefixes `Finite_Payload [1]`). Read by design-9's rule — a kind or a role is a family and a prefix of the locus — a decision about one problem stands at that problem's locus under a role prefix, as the issue does. The decomposition locus is a sixth role, `Development_Decomposition_Role`, prefix `[True,False,True]`; the two placements are one. No fourth octet tag is added. |
+| The issue row's body holds the family of decompositions that applied, empty when none did. | That family is one reading, `development_library_reading`, and it stands where the decision it led to stands: empty, at the issue (the absence a leaf rests on, which `development_reevaluations` compares); not empty, at the decomposition row. An issue is written only for a leaf, so every recorded issue's reading is empty (`development_loop_decisions_made`). |
+| The decomposition's payload holds the parent's locus and the sockets with the loci of the subproblems. | The parent's locus is the row's own locus. The children's loci are a reading: an application at a parent is determined by its intermediates (`development_decomposition_application_functional`), and its children stand at the definition-kind loci of the intermediates and the parent-kind loci of the parent's subject constants. The payload holds the intermediates and the material the application read, not the sockets. |
+| Each refinement child has the definition children as prerequisites, and the parent is decomposed into its children. | At a parent with a locus the part child is of the parent's kind and constant, so it stands at the parent's own locus: it is the parent. The application poses the definition children, makes them prerequisites in the parent's own row of `D`, and fixes the request the parent is issued with afterwards. It is never a rule of composed settlement: at loci its head is among its sockets, an unsupported cycle. |
+| A second row for the same problem meets the first and the admission transaction refuses it, which is how `development_ambiguous` is resolved. | Several applications read at once are one reading with several members, recorded as one row with no choice: ambiguity is recorded, not refused. A later, different reading meets the standing row: its admission conflicts, and supersession is a re-evaluation's replacement. |
+
+### Where the record stands
+
+**At the parent's locus under a sixth role, `Development_Decomposition_Role`, prefix `[True,False,True]`** — the first
+three-bit prefix `Development_Loci` leaves unused (problem `[F,F,F]`, issue `[T,F,F]`, request `[F,T,F]`, answer
+`[T,T,F]`, incumbent `[F,F,T]`). The rule is design-9's: an application is a decision about one problem, a decision
+about one problem stands at that problem's locus under the prefix of the family that holds it, and the family is its
+role. Distinctness from every other row about the same constant, and from every row about another, is
+`development_locus_role_determines` with `development_locus_injective`; nothing is proved again for it, and
+`development_decision_loci_distinct`, which states distinctness of tagged loci, is not extended.
+
+The alternatives, each rejected:
+
+- **The issue row's body.** An issue is written for a leaf (`development_issuable` requires `development_leaf`), so a
+  problem an application applied to is issued, if at all, only after the application's prerequisites have settled —
+  at least one readiness round after the application. The record those prerequisites came from must stand before any
+  issue does. And the issue and the application are two decisions, to send a request and to pose subproblems; one row
+  for both would conflate them, and superseding either would supersede the other.
+- **The problem row's body.** Task 24 fixed it: two optional citations and an inert contract term, nothing else. A
+  problem is posed before it is decomposed and outlives its decompositions; a re-evaluated decomposition would
+  supersede the problem.
+- **The children's origin citations alone.** They carry neither the intermediates nor the material the application
+  read, and no single locus would hold at most one decision per problem.
+- **The selection's payload.** A selection is one per development and admits the parent before any application is
+  read at it.
+
+**Cost, accepted by the planner (q25).** Task 22's `development_role` gains the constructor and
+`development_role_path` one equation; `development_role_path_length` and `development_role_path_injective` gain one
+case; every locus lemma quantifies over roles and stands, and every existing locus keeps its path, so no recorded word
+presenting a locus changes. Task 24's relation gains a fifth body, the decomposition row's, with its recovery lemma
+extended. Both changes are made by the build that applies a decomposition, which is the first decision that reads the
+row — design-9's rule that a notion is presented when a decision reads it. The reviews of tasks 22 and 24 are not
+reopened: the role set and the relation grow in that build, whose review checks the extension.
+
+### The row: the reading and the choice
+
+The row at a parent's decomposition locus holds two things, both structure:
+
+- **The reading**: the family of the applications that applied at the parent when it was read. Each member is
+  identified by its intermediates, a family of citations of the state's constants — an application at a parent is
+  determined by them (`development_decomposition_application_functional`) — and carries the material it read: for a
+  split (instance B), the part of the parent's support each intermediate carries (`development_support_partition`);
+  for an application derived from a refusal (instance C), nothing beyond its intermediates, the constants the refused
+  answer introduced (the excess of its support goes into the re-issued request, not into the intermediates). The
+  material is recorded because it is what the decision rested on, and re-evaluation compares it.
+- **The choice**: an optional citation of one member, the store's own optional value (`store_option_term`), absent
+  when none is chosen.
+
+Applied is the choice present; ambiguous is the choice absent. A reading of one member is recorded with that member
+chosen, since the loop applies the only application there is and no policy decides anything; the choice records the
+decision and the reading what it rested on, two facts even where they coincide. An empty reading is never recorded
+here: that is a leaf, and its record is the issue. No tag tells applied from ambiguous; the presence of the choice
+does, a shape a rule matches.
+
+### The children become problems at their loci
+
+The children of an application at parent `p` with intermediates `I` are task 60's: the definition problem of each
+`h ∈ I` (`development_intermediate_problem`), at the definition-kind locus of `h`, and one problem of `p`'s kind for
+each constant of `p`'s subject (`development_part_problem`). A parent that has a locus has one subject constant `c`,
+and that part child is of `p`'s kind and of `c`: **it stands at `p`'s own locus.** An application requires progress
+(the amendment "Decomposition soundness — 2026-09-21" of the decomposition entry): at a parent with a locus that is a
+nonempty `I`, and the degenerate application, whose only child is the parent, is no application of the library.
+
+**A child at a locus where a problem stands is the problem standing there.** Nothing is posed at that locus, and the
+standing row keeps its own origin and authority: a derived relation neither overwrites them nor inherits them — the
+provisional answer to Q2's third criterion, read in both directions. This covers the part child at a parent with a
+locus, and equally a definition child whose problem an earlier application or the residual record already posed.
+
+**A child at a locus nothing holds is posed there.** Its origin cites the parent's problem locus — design-9's origin
+family "a demand comes from a parent problem". It cites the problem, not the decomposition row: the parent stays
+current, while a decomposition may be re-evaluated and replaced, and a citation of its locus would then reach a
+decision that did not pose the child; which application posed a child is its history, not its origin. Its authority
+cites no owner record. Its contract is the constant as the state the application was read in declares it, with the
+child's kind. That is what `development_intermediate_problem` and `development_part_problem` already compute; their
+`Development_Demand` and `Development_Generated` are the tagged forms of these two citations.
+
+**Prerequisite rows.** Each posed child has its own row in `D`, even without premises: an answered problem settles
+only through a row headed by it (`development_answered_rules`; task 58's finding). A child's premises are the loop's
+problems its demanded statements mention (`development_constant_premises` over the application's state), empty for a
+definition child whose definition mentions none. The definition children are premises of each part child; at a parent
+with a locus the part child is the parent, so **the parent's own row is extended by every definition child**, cited
+or posed. It is extended within its one row, never by a second: a second row counts as a second decomposition
+(`development_ambiguous` counts rows) and would let the parent, once answered, settle through its old row without the
+definitions (`development_settled` fires any one row). The extended row must stay functional
+(`finite_premise_functional`), else it never fires (`finite_inference_enabled`); keyed by constant, as
+`development_constant_premises` keys a premise and task 58 keys a definition child, one constant at two sockets (a
+refinement premise and the definition child of the same constant) would break it, and the build keys such a row by
+the child's locus or refuses the application. Readiness then schedules as the decomposition entry said: the
+definition children first, the parent once they are answered, each round an independent group
+(`development_ready_independent`).
+
+**An application at a parent with a locus is never a rule of composed settlement.** With its part socket, its head is
+among its sockets at loci, an unsupported cycle (`Inference_Closure`): the head never settles through it. Without its
+part socket it would settle an unanswered parent from its definition children alone, which task 60's predicate does
+not license. So it acts on the loop only through the issue and through `D`. While it is not recorded, the issue reads
+it and refuses its parent as a broad request — the refusal task 64 builds, for which the row with its part socket is
+exactly right: it makes the parent no leaf and never fires. Once recorded, it has been applied: the library the issue
+reads at the parent is the applications at it less the recorded choice, empty when nothing else applies, and the
+parent is issued once ready, not refused for ever. A library row that composes — headed by a parent, fired by
+children other than the parent — arises only from a parent whose subject is several constants, whose part children
+are distinct problems at their own loci; that parent is never issued, only decomposed, has no locus, and its record
+is not designed here.
+
+**The request.** The parent's request after the application is the one the application determines: for an
+application derived from a refusal, `development_extended_request` with the excess, which the repair already builds;
+for a split, the parent's support less what the intermediates carry, together with the intermediates. The issue of
+such a request cites the decomposition generation as a direct predecessor, since its support was read from it.
+
+### How task 60's relation corresponds
+
+In task 60's relation the part child differs from its parent only by origin and authority, which the locus does not
+read. The correspondence at a parent `p` with a locus and subject `{c}`:
+
+- `development_decomposition_application C p I H` holds exactly when `H` is the definition children of `I`, each at
+  its socket, together with one part socket carrying the part child — and the part child stands at `p`'s locus. **The
+  native schema presents the application less its part child**: the pair of the parent and its intermediates, whose
+  definition children are read off `I`, and whose part child is the head. Its premises are the material it reads —
+  the parent's row and the intermediates' citations of the state — not the children's rows, which the application
+  poses and which therefore do not stand before it. Its contract (task 62) is equality, at every parent that has a
+  locus and on every store presenting the development's rows, between the native applications and task 60's
+  applications with progress read through this correspondence: the native schema holds of `p` with `I` exactly when
+  `I` is not empty and some `H` makes `development_decomposition_application C p I H` hold at the presented state.
+  Parents without a locus are not presented; that partiality is a premise of the contract, never a total map onto
+  them.
+- Soundness is not weakened. `development_decomposition_reduction` holds at `p`, and there it is trivial as a
+  composition: task 60's predicate reads only a problem's subject and the kind of its contract
+  (`development_problem_stated`), the extended state keeps every position of the state it extends
+  (`isabelle_state_embedding_prefix`), so the predicate at the part child is the predicate at `p`. The application at
+  a parent with a locus claims no composition; it orders. The generation records that its member is an application of
+  the admitted schema; the soundness of library rows in composed settlement is exercised only at parents without a
+  locus.
+- Task 58's repair row, headed by the repaired problem with the definition problems as its sockets, is this image of
+  instance C's application: the application less its part child. It is not an application of task 60's relation and
+  is not stated as one. As a library row it is sound only because its head is answered: composed settlement from it
+  alone would settle an unanswered parent. The build that applies a decomposition reads it as the record of the
+  repair's application — reading, choice and prerequisite rows — not as a library row headed by its parent.
+
+### The history and the generation
+
+**History.** A record `Development_Decomposition_Record` holds the parent, the reading and the choice — the evidence,
+as `Development_Repair_Record` holds a repair. A successor step appends it, adds the posed children to the loop's
+problems with their rows, extends the parent's row, and answers nothing. For an application derived from a refusal
+the repair record already holds the evidence, and no second record is appended: the reading is read from it, as task
+58 reads its row. The repair already poses definition children (`development_repaired_successor` adds them and their
+empty rows); the build factors the posing once — the children, their rows, the parent's extended row — and the
+repaired successor instantiates it, rather than a second copy standing beside it. There the parent's row gains the
+definition problems the same step answers, which changes no readiness and no settlement.
+
+**Generation**, by the pattern of "The loop's decisions are admitted generations":
+
+- **Locus**: the parent's decomposition locus, `development_locus key Development_Decomposition_Role
+  (problem_contract p) c`, presented as a path.
+- **Payload**: the row — the reading and the choice.
+- **Cause**: the certified call of the policy listing that payload, through `development_payload_generation_with` with
+  `development_payload_judgment` — its fourth use after the family, the selection and the issue — certified as they are
+  (`development_payload_generation_certified`), consuming `development_policy_admits_member`. Nothing is proved again.
+- **Direct predecessors**: the selection generation that admitted the parent, since an application is read at a
+  selected problem as an issue is; for an application derived from a refusal, instead the issue generation of the
+  refused request, which cites that selection — the refusal itself is not a generation, only evidence in the history.
+  Not the parent's incumbent, for the reason the decomposition entry gave. Only direct edges are recorded.
+
+**A second application at the same problem meets the first** at its decomposition locus. An equal reading admits
+nothing: the row is current, and the successor applies a reading only where no row stands. A different reading —
+the library or the state changed what applies — means the recorded decision's reading no longer holds: it is a
+re-evaluation problem, and `development_reevaluations`, which compares issue readings, is extended to decomposition
+readings. The different reading is not admitted over the standing row: its admission transaction expects absence and
+conflicts, retaining the complete observation, with no successor (`admitting_a_selected_locus_conflicts`, carried
+through `finite_transact_exact` as `development_publication_admitted` carries admission). Supersession, when the
+re-evaluation decides it, is the replacement transaction expecting the standing generation (`RRA_Replacement`). The
+children the first application posed keep standing; whether one no longer needed is superseded is the re-evaluation's
+question.
+
+### An ambiguous problem
+
+An ambiguous problem's record is the row at its decomposition locus whose reading has several members and whose
+choice is absent. It is admitted like any decision — the same locus, payload shape, cause and predecessors — because
+recording the ambiguity and not choosing is the decision the loop made, Q2's provisional answer to its first
+criterion. The problem is neither issued (the library the issue reads at it is its applications less a recorded
+choice, and with no choice that is all of them, so `development_leaf` refuses it, as `development_broad_refused` does
+today) nor decomposed (no child is posed and no row of `D` changes).
+
+It is recorded as a problem of its own: the row stands at a locus of its own, distinct from the parent's problem
+locus; it cites the parent through its locus and no owner record; and its open decision is the choice, answered by
+replacing the row with one whose choice is present. That answer is a policy decision (stage 4) or the owner's (Q2);
+nothing chooses by a name, a position or the order of the family. The development's contract kinds have none for
+choosing among decompositions, so the row is that problem's record meanwhile. A re-evaluation that finds one member
+left supersedes the ambiguity with the applied row.
+
+### What the build that applies a decomposition changes, and must respect
+
+It changes:
+
+- `Development_Loci`: the sixth constructor and its prefix, with the two role lemmas' new case.
+- Task 24's relation: the decomposition row's body, a fifth body, with the recovery lemma extended.
+- `development_record`: `Development_Decomposition_Record`; `development_record_parts` and `development_record_data`
+  extend and `development_record_data_injective` is proved again. The seed's verification presents a sequence of
+  records (`Development_Seed_Verification`, `development_record_data finite_development_context_value`): the extension
+  should present every existing record as before, by giving the new record a shape of its own, so that word stays
+  equal; a word that changes is re-recorded once, with an entry.
+- The loop: the successor step above, with the repaired successor instantiating its posing; the issue receives the
+  library less the recorded choices (`development_loop_issue_leaf` consumed); `development_loop_decisions` and
+  `development_loop_decisions_made` extend to the application decisions (every recorded application's parent was
+  selected and ready, and its reading is the library reading at it, not empty). A word that presents a repaired
+  loop's `D` changes by the definition problems its parent's row gains, and is accounted for if one does.
+- The decision generation: a decomposition generation through `development_payload_generation_with`, with its
+  certified theorem in the shape of `development_issue_generation_certified`.
+- `development_reevaluations`: decomposition readings.
+- Recorded words of the seed and the machinery: equal, unless an application applies at one of their problems. Task
+  64 reports which problems that is; for each, the selection, issue, verification and publication words change — its
+  request is not issued in that round, and its application is published — and the entry accounts for them by naming
+  the problems.
+
+It must respect:
+
+- A locus is a path; at most one row stands at a locus, a premise and never a check; no program compares a role, a
+  kind or an octet; applied and ambiguous differ by the presence of an optional citation, not by a tag.
+- Soundness is the schema's (task 60), consumed; the generation records that its member is an application of the
+  admitted schema, not that it is sound.
+- An application requires progress: at a parent with a locus, a nonempty set of intermediates.
+- A child at an occupied locus is the problem there; no origin or authority is overwritten or inherited.
+- The ordering is carried by `D`; an application at a parent with a locus is read by the issue while unrecorded and
+  never fires in composed settlement, with or without its part socket; no row of it without the part socket is given
+  to composed settlement.
+- Q2's provisional choices: no threshold, no choice among several, no inherited authority.
+- The one-equation limit of the answer frame stays: a parent's request after its application is a request of one
+  constant.
+- Reuse: `development_payload_generation_with`, `development_intermediate_problem`, `development_part_problem`,
+  `development_extended_request`, and one posing step shared with the repaired successor.
+- Only direct predecessor edges are recorded.
+
+Left to its brief: the socket key where a row would stop being functional; the shape that keeps existing records'
+presentation; and where the build waits, which is the planner's.
+
+### Open
+
+- A parent whose subject is several constants is never issued, only decomposed (the amendment of the decomposition
+  entry); it has no locus and no row, and its library row, its record and the locus it would need are not designed.
+- The selection has no role in task 22's family; its path form is not designed, and the decomposition generation's
+  edge to the selection uses whatever locus the selection has.
+- The ambiguity's problem has no contract kind; giving it one is stage 4's, with Q2.
+- A split's request is not constructed: its support is the parent's less what the intermediates carry, with the
+  intermediates, but the least context of the parent's constant still holds its incumbent's statements, which mention
+  what the intermediates were to carry. Request construction decides whether a split narrows anything.
+- Whether a child no longer needed is withdrawn when its application is superseded.
+- This design was made outside the loop and is a residual.
+
+Recorded 2026-09-21 (task 66's decision; a design, no theory changes).

@@ -460,8 +460,11 @@ class SharingTests(Guarded):
             reason = self.guard("Bash", {"command": command}, tool_use="t-new")
             self.assertIsNotNone(reason, f"{command} was allowed")
             self.assertIn("the harness's own to run", reason)
+        self.assertIn("the harness's own to run",                      # by its own path as well as by that one
+                      self.guard("Bash", {"command": f"python3 {fakes.HERE}/finalize.py check 1"}, tool_use="t-new"))
         for command in (".claude/orchestration/v2.py result 1", ".claude/orchestration/show.py --statement ready",
-                        "python3 tools/probe_theories.py Ready", "grep -rn finalize.py .build/tasks/1/"):
+                        "python3 tools/probe_theories.py Ready", "grep -rn finalize.py .build/tasks/1/",
+                        "python3 tools/digest.py x"):   # the repository's own, whatever the harness holds beside it
             self.assertNotIn("the harness's own to run",
                              self.guard("Bash", {"command": command}, tool_use="t-new") or "")
 

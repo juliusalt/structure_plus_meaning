@@ -102,6 +102,8 @@ CASES = [
      "supervisor_no_longer_runs", "a session listed but not run"),
     ("v2.py", '    age = age_of(mark)\n    if age is not None and age < RETRY:\n        return None\n', '',
      "not_confirmed_is_not_tried", "the backoff after a start nobody confirmed"),
+    ("v2.py", '        if task is None and in_list(tid):\n            continue  # there and unreadable', '        if False:\n            continue  # there and unreadable',
+     "not_said_to_be_out_of_the_list", "an unreadable file called a missing task"),
 ]
 bad = []
 for fname, old, new, k, label in CASES:

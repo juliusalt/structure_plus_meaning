@@ -603,6 +603,22 @@ class PlanningTests(Flow):
                              env=self.w.env, capture_output=True, text=True)
         self.assertEqual(out.stdout.strip(), "4 None", out.stderr)   # and one that is not there is still None
 
+    def test_a_task_that_cannot_be_read_is_not_said_to_be_out_of_the_list(self):
+        # every statement of the form "task N is not in the list" is about the planner having taken it out, and
+        # None from read_task means an unreadable file as well: the notices would have said it of an I/O fault,
+        # and a proposal would have been refused for it (2026-09-21)
+        self.w.task("4", description=BRIEF, subject="Running, and its file unreadable")
+        self.w.session("implement-4", "implementer", "w4", task="4")
+        self.w.set_st(queue=["4"], tasks={"4": {"stage": "running", "kind": "build", "session": "implement-4"}})
+        os.rename(self.w.tasks / "4.json", self.w.tasks / "4.json.away")
+        (self.w.tasks / "4.json").mkdir()
+        self.w.v2("dispatch")
+        said = self.heard() + (self.w.state / "v2.log").read_text()
+        self.assertIn("could not be read", said)                       # said for what it is
+        self.assertNotIn("not in the task list at all", said)          # and not as the planner having taken it out
+        (self.w.tasks / "4.json").rmdir()
+        os.rename(self.w.tasks / "4.json.away", self.w.tasks / "4.json")
+
     def test_an_id_named_twice_in_the_order_is_one_place_in_the_queue(self):
         self.w.task("4")
         self.w.task("5")

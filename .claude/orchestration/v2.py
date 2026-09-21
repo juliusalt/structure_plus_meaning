@@ -1455,6 +1455,14 @@ def read_task(tid):
     return None
 
 
+def in_list(tid):
+    """Whether the task's file is there at all. read_task returns None for a file that cannot be read as well as for
+    one that is not there, and every statement of the form "task N is not in the list" is about the second: an I/O
+    fault is not the planner having taken a task out, and saying so would put a false statement of the graph in
+    front of the planner, or refuse a proposal for it (2026-09-21)."""
+    return os.path.exists(task_path(tid))
+
+
 def update_task(tid, **fields):
     with task_lock(tid):
         t = read_task(tid)
@@ -1500,13 +1508,14 @@ def deps_done(tid):
         blocker = read_task(d)
         if blocker is None:  # dropped, or never written: nothing will ever complete it
             done = False
-            if (age_of(f"blocker-{tid}-{d}") or LOST_BLOCKER + 1) > LOST_BLOCKER:
-                open(os.path.join(STATE, f"blocker-{tid}-{d}"), "w").write(str(time.time()))
-                with state() as st:
-                    event(st, "the harness", f"Task {tid} waits for task {d}, which is not in the task list — "
-                          f"dropped, or never written. Nothing will complete it, so {tid} waits for ever: set what it "
-                          f"waits on (`v2.py blockers {tid} ...`, or `none`), or drop it too.")
-                log(f"task {tid} waits for task {d}, which is not in the task list")
+            if not in_list(d):  # and not merely a file that could not be read, which read_task has said
+                if (age_of(f"blocker-{tid}-{d}") or LOST_BLOCKER + 1) > LOST_BLOCKER:
+                    open(os.path.join(STATE, f"blocker-{tid}-{d}"), "w").write(str(time.time()))
+                    with state() as st:
+                        event(st, "the harness", f"Task {tid} waits for task {d}, which is not in the task list — "
+                              f"dropped, or never written. Nothing will complete it, so {tid} waits for ever: set "
+                              f"what it waits on (`v2.py blockers {tid} ...`, or `none`), or drop it too.")
+                    log(f"task {tid} waits for task {d}, which is not in the task list")
         elif blocker.get("status") != "completed":
             done = False
             # A task dropped or given back stays pending in the list, so a dependent waits on it with nothing to
@@ -2637,6 +2646,8 @@ def reconcile_stages():
         if (x or {}).get("stage") in NOT_STARTED + ("done",):
             continue
         task = read_task(tid)
+        if task is None and in_list(tid):
+            continue  # there and unreadable: read_task has said so, and it is not a task taken out of the list
         # A task taken out of the list is the same conflict as one completed in it: the harness is working on what the
         # graph no longer has. Only "completed" was read here, and the planner does take tasks out — 21 and 51 were
         # gone from the list while the state still held them (2026-09-21). Their stage is the planner's, so they fall
@@ -3529,12 +3540,12 @@ def proposal_problems(entries):
         if k in ("build", "fix") and key not in reviews.values():
             out.append(f"task {key} is a {k} task without a review task (kind review, `Reviews:` naming its key)")
     for r, subject in reviews.items():
-        if subject not in keys and not read_task(subject or ""):
+        if subject not in keys and not in_list(subject or ""):
             out.append(f"review task {r} reviews {subject!r}, which is neither a task of this proposal nor in the list")
     known = set(keys)
     for e in entries:
         for b in e.get("blockedBy") or []:
-            if b not in known and not read_task(b):
+            if b not in known and not in_list(b):
                 out.append(f"task {e.get('key')} waits on {b!r}, which is neither a task of this proposal nor in the list")
         # `feeds` is what makes a task detail rather than a further goal, so it is checked rather than taken on
         # trust: an unchecked one would exempt a task from the depth rule and then silently not be wired.
@@ -3542,7 +3553,7 @@ def proposal_problems(entries):
             task = read_task(f)
             if f in known:
                 out.append(f"task {e.get('key')} feeds {f!r}, which is a task of this proposal: say blockedBy for that")
-            elif not task:
+            elif not in_list(f):
                 out.append(f"task {e.get('key')} feeds {f!r}, which is not in the task list")
             elif task.get("status") == "completed":
                 out.append(f"task {e.get('key')} feeds {f!r}, which is completed: nothing waits on it any more")
@@ -3792,7 +3803,7 @@ def cmd_blockers(tid, ids):
     if c and not ROLES.get(c["role"], {}).get("graph"):
         return ("refused: the graph's edges are the planner's alone. A task designer says in its proposal what each "
                 "task waits on (`v2.py propose`), and any other role names what it has found in its result.")
-    if not read_task(tid):
+    if not in_list(tid):
         return f"refused: task {tid} is not in the task list"
     want = [] if ids == ["none"] else list(dict.fromkeys(ids))
     tasks = {t["id"]: dict(t) for t in all_tasks()}

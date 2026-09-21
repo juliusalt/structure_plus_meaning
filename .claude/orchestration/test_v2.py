@@ -2314,7 +2314,7 @@ class SupportTests(Flow):
         (self.w.project / ".build/tasks/2/proposal.json").write_text(json.dumps(proposal))
         said = self.w.v2("propose", "2", ".build/tasks/2/proposal.json", env=self.w.as_session(sid))
         self.assertIn("refused, and the planner has it", said)
-        self.assertIn("a are further goals, not further detail", said)
+        self.assertIn("a is a further goal, not further detail", said)
         self.assertIn("Nothing you wrote is lost", said)
         self.assertEqual(self.t("2")["stage"], "planner")
         self.assertEqual([f for f in os.listdir(self.w.tasks) if "Hung past" in (self.w.tasks / f).read_text()], [])

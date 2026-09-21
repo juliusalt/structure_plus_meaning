@@ -3609,7 +3609,8 @@ def refuse_proposal(bid, entries, goals, depth):
               "belongs, shorten what these wait on, or let the work go.")
     log(f"brief {bid} proposed {len(goals)} further goal(s) on a chain {depth} deep: refused, the planner has it")
     kick()
-    return (f"refused, and the planner has it: {', '.join(goals)} are further goals, not further detail, and the "
+    is_are = "is a further goal" if len(goals) == 1 else "are further goals"
+    return (f"refused, and the planner has it: {', '.join(goals)} {is_are}, not further detail, and the "
             f"chain was {depth} deep when this brief started (at most {GRAPH_DEPTH}). Nothing you wrote is lost — "
             "the proposal stands. Do not re-shape the detailing to fit the graph; record your result "
             f"(`v2.py result {bid}`) saying what the work needs and why, and end your turn.")

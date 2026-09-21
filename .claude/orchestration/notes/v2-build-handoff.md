@@ -1435,3 +1435,16 @@ curated ones, and leaves out the sessions that work on the orchestration itself 
 session reaches it. Two of the eight it would have loaded were "a" and "ls": a stray keystroke and a shell command
 typed into the wrong window. Out of the session it was typed in, a single short word decides nothing; the
 interruption marks and the slash commands were already left out, and these join them.
+
+**What a repeating failure costs.** The dispatch runs every minute and every start is a fork of a loaded base — the
+most expensive thing the harness does. `produce()` held the producing slot to ten minutes after a start nobody
+confirmed and said so to the planner; every other role had nothing, so a planner, a knowledge base, a review, a
+brief or a consultation that could not be confirmed would have been forked again every minute. The floor is in
+`launch()` now, keyed by what is being started rather than by what it would be called (the planner's and the
+knowledge base's key is a counter that rises with each attempt), and the hold and a stop do not arm it: they refuse
+a start on purpose.
+
+Left as it is: `v2.ping` waits up to ninety turns for its throwaway fork to go idle, and several held sessions could
+in principle spend the watchdog's whole 600 s budget. The daemon kills a watchdog that overruns and says so in the
+log, and every ping seen in the live run returned in seconds; shortening the wait would weaken the verdict the ping
+records, which is what makes a missed cache entry visible at all.

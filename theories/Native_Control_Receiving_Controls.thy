@@ -18,7 +18,7 @@ definition receiving_scope_question where
     faceted_native_question programs facets optional_view_observation)"
 
 definition receiving_scope_choice where
-  "receiving_scope_choice scope report = native_admitted_choice (fst scope)
+  "receiving_scope_choice scope report = keyed_admitted_choice (first_occurrence_key (fst scope)) (fst scope)
     (receiving_scope_question scope) report"
 
 lemma receiving_original_scope:

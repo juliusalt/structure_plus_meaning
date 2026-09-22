@@ -108,17 +108,25 @@ definition judgment_artifact_candidates where
     Canonical_Artifact_Only,Complete_Artifact_Body]"
 
 definition judgment_artifact_question where
-  "judgment_artifact_question subjects=filtered_development_question judgment_artifact_candidates
+  "judgment_artifact_question subjects=keyed_development_question
+    (first_occurrence_key judgment_artifact_candidates) judgment_artifact_candidates
     (\<lambda>a. judgment_artifact_observation a subjects)"
 
 theorem judgment_artifact_admission:
   assumes question: "judgment_artifact_question subjects=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  shows "i<length judgment_artifact_candidates \<and>
-    judgment_artifact_agreement (judgment_artifact_candidates!i) subjects"
-  using filtered_development_admission[OF question[unfolded judgment_artifact_question_def] admission selected]
-  by (simp only: judgment_artifact_observation_exact)
+    and selected: "x\<in>set accepted"
+  obtains a where "a\<in>set judgment_artifact_candidates"
+    "x=finite_path (first_occurrence_key judgment_artifact_candidates a)"
+    "judgment_artifact_agreement a subjects"
+proof -
+  obtain a where member: "a\<in>set judgment_artifact_candidates"
+    and path: "x=finite_path (first_occurrence_key judgment_artifact_candidates a)"
+    and observed: "judgment_artifact_observation a subjects"
+    by (rule keyed_development_admission[OF question[unfolded judgment_artifact_question_def]
+      admission selected])
+  show thesis by (rule that[OF member path observed[unfolded judgment_artifact_observation_exact]])
+qed
 
 definition judgment_artifact_probe where
   "judgment_artifact_probe ignored=(finite_term_syntax

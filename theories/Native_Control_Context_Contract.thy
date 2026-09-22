@@ -1,5 +1,5 @@
 theory Native_Control_Context_Contract
-  imports Isabelle_Acceptance Factor_Steered_Development
+  imports Isabelle_Acceptance Factor_Steered_Development Development_Entity_Keys Filtered_Native_Questions
 begin
 
 section \<open>A reused input must preserve every distinction its consumer requires\<close>
@@ -61,34 +61,21 @@ lemma entity_acceptance_ignores_table:
 definition context_input_projections where
   "context_input_projections=[Entity_Input,Context_Input]"
 
-definition context_input_values where
-  "context_input_values=map finite_development_index [0..<length context_input_projections]"
-
-definition context_input_facet where
-  "context_input_facet C D=map finite_development_index
-    (filter (\<lambda>i. context_input_observation (context_input_projections!i) C D)
-      [0..<length context_input_projections])"
-
-lemma context_input_facet_exact:
-  assumes "i<length context_input_projections"
-  shows "finite_development_index i\<in>set (context_input_facet C D) \<longleftrightarrow>
-    context_input_condition (context_input_projections!i) C D"
-  using assms by (auto simp: context_input_facet_def context_input_observation_exact)
-
 definition context_input_question where
-  "context_input_question C D=finite_development_question context_input_values [context_input_facet C D]"
+  "context_input_question C D=keyed_development_question (first_occurrence_key context_input_projections)
+    context_input_projections (\<lambda>p. context_input_observation p C D)"
 
 theorem context_input_admission_original_condition:
   assumes question: "context_input_question C D=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and chosen: "finite_development_index i\<in>set accepted"
-    and index: "i<length context_input_projections"
-  shows "context_input_condition (context_input_projections!i) C D"
+    and chosen: "finite_path (first_occurrence_key context_input_projections p)\<in>set accepted"
+    and member: "p\<in>set context_input_projections"
+  shows "context_input_condition p C D"
 proof -
-  have member: "finite_development_index i\<in>set (context_input_facet C D)"
-    by (rule finite_development_original_conditions[OF
-      question[unfolded context_input_question_def] admission chosen]) simp
-  show ?thesis using member by (simp only: context_input_facet_exact[OF index])
+  have "context_input_observation p C D"
+    by (rule keyed_faceted_admission_at[OF first_occurrence_key_inj_on
+      question[unfolded context_input_question_def keyed_development_question_def] admission chosen member]) simp
+  then show ?thesis by (simp only: context_input_observation_exact)
 qed
 
 definition context_input_questions where

@@ -2,32 +2,18 @@ theory Faceted_Native_Questions
   imports Native_Control_Admitted_Selection
 begin
 
-definition faceted_native_question where
-  "faceted_native_question subjects facets observe = finite_development_question
-    (map finite_development_index [0..<length subjects])
-    (map (\<lambda>f. filtered_development_indices subjects (\<lambda>s. observe s f)) facets)"
+text \<open>
+  A faceted question of actual subjects is the keyed question at the first-occurrence key of its own
+  subject list: each candidate is the path of the binary digits of a subject's first position there, a
+  path of shapes that no clause reads as octets. The name carries no contract of its own; its users take
+  the keyed question's contracts and consumers (@{thm [source] keyed_faceted_admission_at},
+  @{thm [source] keyed_admitted_choice_condition}) with the key's injectivity on the subjects
+  (@{thm [source] first_occurrence_key_inj_on}). Equal subjects at two positions have one key, as they
+  are one subject.
+\<close>
 
-theorem faceted_native_admission:
-  assumes question: "faceted_native_question subjects facets observe = Some Q"
-    and admission: "native_development_admission Q report = Some accepted"
-    and selected: "finite_development_index i \<in> set accepted"
-    and facet: "f \<in> set facets"
-  shows "i < length subjects \<and> observe (subjects!i) f"
-proof -
-  have "finite_development_index i \<in>
-      set (filtered_development_indices subjects (\<lambda>s. observe s f))"
-    by (rule finite_development_original_conditions[OF
-      question[unfolded faceted_native_question_def] admission selected])
-      (use facet in auto)
-  then show ?thesis by (simp only: filtered_development_indices_exact)
-qed
-
-theorem faceted_native_choice:
-  assumes chosen: "native_admitted_choice subjects
-    (faceted_native_question subjects facets observe) report = Some subject"
-    and facet: "f \<in> set facets"
-  shows "observe subject f"
-  by (rule native_admitted_choice_fields[OF chosen])
-    (use faceted_native_admission[OF _ _ _ facet] in blast)
+abbreviation faceted_native_question where
+  "faceted_native_question subjects facets observe \<equiv>
+    keyed_faceted_question (first_occurrence_key subjects) subjects facets observe"
 
 end

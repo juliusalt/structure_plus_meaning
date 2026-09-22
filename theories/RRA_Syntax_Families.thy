@@ -82,90 +82,12 @@ lemma root: "[] \<in> rra_carrier (object_structure framed)"
 
 end
 
-section \<open>Partitions of all copied child positions\<close>
-
-definition syntax_forest_positions :: "local_address set list \<Rightarrow> local_address set" where
-  "syntax_forest_positions As = (\<Union>i<length As. syntax_branch i ` (As!i))"
-
-lemma syntax_forest_position_member:
-  "a \<in> syntax_forest_positions As \<longleftrightarrow>
-    (\<exists>i<length As. \<exists>b\<in>As!i. a=syntax_branch i b)"
-  by (auto simp: syntax_forest_positions_def)
-
-lemma syntax_forest_positions_list:
-  "\<Union>(set (map (\<lambda>i. syntax_branch i ` (As!i)) [0..<length As])) = syntax_forest_positions As"
-  by (auto simp: syntax_forest_positions_def)
-
-lemma syntax_forest_three_positions:
-  "syntax_forest_positions [A,B,C] =
-    image (syntax_branch 0) A \<union> image (syntax_branch 1) B \<union> image (syntax_branch 2) C"
-  by (auto simp: syntax_forest_positions_def less_Suc_eq numeral_2_eq_2)
-
-lemma syntax_forest_positions_bound:
-  assumes len: "length As=length Rs"
-    and bounds: "\<forall>i<length Rs. As!i \<subseteq> rra_carrier (object_structure (Rs!i))"
-  shows "syntax_forest_positions As \<subseteq> rra_carrier (object_structure (syntax_forest Rs))"
-proof
-  fix a assume member: "a \<in> syntax_forest_positions As"
-  obtain i b where index: "i < length Rs" "b \<in> As!i" "a=syntax_branch i b"
-    using member len by (auto simp: syntax_forest_position_member)
-  have inside: "b \<in> rra_carrier (object_structure (Rs!i))" using bounds index(1,2) by blast
-  show "a \<in> rra_carrier (object_structure (syntax_forest Rs))"
-    using syntax_forest_child_inside[OF index(1) inside] index(3) by simp
-qed
-
-lemma syntax_forest_positions_disjoint:
-  assumes len: "length As=length Bs" and separate: "\<forall>i<length As. As!i \<inter> Bs!i = {}"
-  shows "syntax_forest_positions As \<inter> syntax_forest_positions Bs = {}"
-proof (rule equals0I)
-  fix a assume member: "a \<in> syntax_forest_positions As \<inter> syntax_forest_positions Bs"
-  obtain i b where left: "i < length As" "b \<in> As!i" "a=syntax_branch i b"
-    using member by (auto simp: syntax_forest_position_member)
-  obtain j c where right: "j < length As" "c \<in> Bs!j" "a=syntax_branch j c"
-    using member len by (auto simp: syntax_forest_position_member)
-  show False
-  proof (cases "i=j")
-    case True
-    have same: "b=c" using syntax_branch_injective[of i] left(3) right(3) True
-      by (auto simp: inj_def)
-    show False using separate left right True same by blast
-  next
-    case False
-    have disjoint: "range (syntax_branch i) \<inter> range (syntax_branch j) = {}"
-      by (rule syntax_branch_disjoint[OF False])
-    show False using disjoint left(3) right(3) by blast
-  qed
-qed
-
-lemma syntax_forest_carrier_partition:
-  assumes alen: "length As=length Rs" and blen: "length Bs=length Rs"
-    and cover: "\<forall>i<length Rs. rra_carrier (object_structure (Rs!i)) = As!i \<union> Bs!i"
-  shows "rra_carrier (object_structure (syntax_forest Rs)) =
-    syntax_forest_positions As \<union> syntax_forest_positions Bs"
-proof
-  show "rra_carrier (object_structure (syntax_forest Rs)) \<subseteq>
-    syntax_forest_positions As \<union> syntax_forest_positions Bs"
-  proof
-    fix a assume member: "a \<in> rra_carrier (object_structure (syntax_forest Rs))"
-    obtain i b where index: "i < length Rs" "b \<in> rra_carrier (object_structure (Rs!i))" "a=syntax_branch i b"
-      using syntax_forest_atom_origin[OF member] by blast
-    have inside: "b \<in> As!i \<union> Bs!i" using cover index(1,2) by blast
-    show "a \<in> syntax_forest_positions As \<union> syntax_forest_positions Bs"
-      using index(1,3) inside alen blen by (auto simp: syntax_forest_position_member)
-  qed
-  have left: "syntax_forest_positions As \<subseteq> rra_carrier (object_structure (syntax_forest Rs))"
-    by (rule syntax_forest_positions_bound[OF alen]) (use cover in blast)
-  have right: "syntax_forest_positions Bs \<subseteq> rra_carrier (object_structure (syntax_forest Rs))"
-    by (rule syntax_forest_positions_bound[OF blen]) (use cover in blast)
-  show "syntax_forest_positions As \<union> syntax_forest_positions Bs \<subseteq>
-    rra_carrier (object_structure (syntax_forest Rs))" using left right by blast
-qed
-
 text \<open>
   Each child receives a private structural copy. The family header contains one
   socket per list position and adds no other carrier positions. The list chooses
   a construction layout; the resulting family is read through its complete
-  incidence graph, whose sockets distinguish occurrences.
+  incidence graph, whose sockets distinguish occurrences. The positions of the
+  copied children, and their partitions, are the forest's (RRA_Syntax_Forests).
 \<close>
 
 end

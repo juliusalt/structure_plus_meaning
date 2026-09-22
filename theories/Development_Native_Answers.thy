@@ -1,5 +1,6 @@
 theory Development_Native_Answers
   imports Development_Definition_Verification Isabelle_Local_Names Isabelle_Readers Finite_Term_Word_Readers
+    Development_State_Rows
     "HOL-Library.Parallel"
 begin
 
@@ -22,17 +23,49 @@ definition development_native_answer_data :: "development_native_answer \<Righta
     (finite_pair_presentation (finite_sequence_presentation isabelle_entity_data)
       (finite_sequence_presentation isabelle_entity_data))"
 
-definition development_native_answer_read :: "finite_factor_term \<Rightarrow> development_native_answer option" where
-  "development_native_answer_read=finite_pair_read isabelle_names_read
+definition development_native_answer_presented_read :: "finite_factor_term \<Rightarrow> development_native_answer option" where
+  "development_native_answer_presented_read=finite_pair_read isabelle_names_read
     (finite_pair_read (finite_sequence_read isabelle_entity_read) (finite_sequence_read isabelle_entity_read))"
 
-theorem development_native_answer_reads:
-  "finite_reads development_native_answer_read development_native_answer_data"
-  unfolding development_native_answer_read_def development_native_answer_data_def
+lemma development_native_answer_presented_reads:
+  "finite_reads development_native_answer_presented_read development_native_answer_data"
+  unfolding development_native_answer_presented_read_def development_native_answer_data_def
   by (intro finite_pair_reads finite_sequence_reads isabelle_names_reads isabelle_entity_reads)
 
 lemma development_native_answer_data_injective [intro]: "inj development_native_answer_data"
-  by (rule finite_reads_injective[OF development_native_answer_reads])
+  by (rule finite_reads_injective[OF development_native_answer_presented_reads])
+
+text \<open>
+  An answer is formed when its names are distinct and every position its removed and added entities use
+  is a position of those names. Only then is the answer state it makes a state whose table is free of
+  repeated names and holds every position the state uses (\<open>development_native_answer_state_presentable\<close>),
+  which a presented state carries (\<open>state_presents_distinct_names\<close>, \<open>state_presents_unknown_positions\<close>).
+  The reader of an answer is the source of an answer state, so it refuses every presented answer that is
+  not formed: a refusal is no answer, never an answer repaired, deduplicated or renamed.
+\<close>
+
+definition development_native_answer_formed :: "development_native_answer \<Rightarrow> bool" where
+  "development_native_answer_formed A \<longleftrightarrow> (case A of (ns,removed,added) \<Rightarrow> distinct ns \<and>
+    list_all (\<lambda>e. list_all (\<lambda>i. i<length ns) (isabelle_entity_positions e)) (removed@added))"
+
+lemma development_native_answer_formed_exact:
+  "development_native_answer_formed (ns,removed,added) \<longleftrightarrow> distinct ns \<and>
+    (\<forall>e\<in>set (removed@added). \<forall>i\<in>set (isabelle_entity_positions e). i<length ns)"
+  by (simp add: development_native_answer_formed_def list_all_iff)
+
+definition development_native_answer_read :: "finite_factor_term \<Rightarrow> development_native_answer option" where
+  "development_native_answer_read t=Option.bind (development_native_answer_presented_read t)
+    (\<lambda>A. if development_native_answer_formed A then Some A else None)"
+
+theorem development_native_answer_reads:
+  "development_native_answer_read t=Some A \<longleftrightarrow>
+    t=development_native_answer_data A \<and> development_native_answer_formed A"
+proof -
+  have "development_native_answer_read t=Some A \<longleftrightarrow>
+      development_native_answer_presented_read t=Some A \<and> development_native_answer_formed A"
+    by (cases "development_native_answer_presented_read t") (auto simp: development_native_answer_read_def)
+  then show ?thesis by (simp only: finite_readsD[OF development_native_answer_presented_reads])
+qed
 
 section \<open>An answer arrives as the word of its presentation\<close>
 
@@ -74,14 +107,15 @@ definition development_native_answer_bits_read :: "bool list \<Rightarrow> devel
   "development_native_answer_bits_read bits=Option.bind (finite_padded_term_read bits) development_native_answer_read"
 
 theorem development_native_answer_bits_read_exact:
-  "development_native_answer_bits_read bits=Some A \<longleftrightarrow>
+  "development_native_answer_bits_read bits=Some A \<longleftrightarrow> development_native_answer_formed A \<and>
     (\<exists>k. bits=finite_term_shared_word (development_native_answer_data A)@True#replicate k False)"
   by (auto simp: development_native_answer_bits_read_def bind_eq_Some_conv finite_padded_term_read_exact
-    finite_readsD[OF development_native_answer_reads])
+    development_native_answer_reads)
 
 corollary development_native_answer_word_read:
-  "development_native_answer_bits_read (development_native_answer_word A)=Some A"
-  using development_native_answer_bits_read_exact[of "development_native_answer_word A" A]
+  assumes formed: "development_native_answer_formed A"
+  shows "development_native_answer_bits_read (development_native_answer_word A)=Some A"
+  using development_native_answer_bits_read_exact[of "development_native_answer_word A" A] formed
   by (auto simp: development_native_answer_word_def intro: exI[of _ 0])
 
 section \<open>The answer state is the request state with the answer applied\<close>
@@ -106,10 +140,115 @@ lemma development_native_answer_state_fields:
   "fst (snd (development_native_answer_state S (ns,removed,added)))=isabelle_appended_names (fst (snd S)) ns"
   by (simp_all add: development_native_answer_state_def Let_def)
 
+section \<open>A formed answer keeps a state presentable\<close>
+
+text \<open>
+  A presented state carries three conditions: its names are distinct, every position it uses is a
+  position of its table, and its roots are distinct as local presentations. The answer state of a formed
+  answer keeps all three: the names it appends are distinct and new, every position of an added entity
+  is moved to the position of its name in the appended table, and the roots are the request state's,
+  whose local presentations the appended table does not change, so their distinctness is preserved,
+  not established again.
+\<close>
+
+lemma map_filter_agree:
+  "(\<And>x. x\<in>set xs \<Longrightarrow> f x=g x) \<Longrightarrow> List.map_filter f xs=List.map_filter g xs"
+proof (induction xs)
+  case Nil
+  then show ?case by (simp add: List.map_filter_simps)
+next
+  case (Cons x xs)
+  have head: "f x=g x" by (rule Cons.prems) simp
+  have tail: "List.map_filter f xs=List.map_filter g xs" by (rule Cons.IH) (rule Cons.prems, simp)
+  show ?case by (simp only: List.map_filter_simps head tail)
+qed
+
+lemma isabelle_local_root_agree:
+  assumes agree: "\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i"
+  shows "isabelle_local_root names' t=isabelle_local_root names t"
+proof -
+  let ?ps="isabelle_term_positions t"
+  have local_names: "isabelle_local_names names' ?ps=isabelle_local_names names ?ps"
+    unfolding isabelle_local_names_def by (simp only: map_filter_agree[of ?ps, OF agree])
+  have embedding: "isabelle_local_embedding names' ?ps i=isabelle_local_embedding names ?ps i"
+    if used: "i\<in>set ?ps" for i
+    unfolding isabelle_local_embedding_def isabelle_state_embedding_def local_names agree[OF used] ..
+  have "isabelle_term_rename (isabelle_local_embedding names' ?ps) t=
+      isabelle_term_rename (isabelle_local_embedding names ?ps) t"
+    by (rule isabelle_term_rename_cong) (rule embedding)
+  then show ?thesis by (simp only: isabelle_local_root_def local_names)
+qed
+
+theorem development_native_answer_state_presentable:
+  assumes formed: "development_native_answer_formed A"
+    and distinct: "distinct (fst (snd S))"
+    and inside: "state_positions S\<subseteq>{..<length (fst (snd S))}"
+    and roots: "distinct (map (isabelle_local_root (fst (snd S))) (fst S))"
+  shows "distinct (fst (snd (development_native_answer_state S A)))"
+    and "state_positions (development_native_answer_state S A)\<subseteq>{..<length (fst (snd (development_native_answer_state S A)))}"
+    and "distinct (map (isabelle_local_root (fst (snd (development_native_answer_state S A))))
+      (fst (development_native_answer_state S A)))"
+proof -
+  obtain ns removed added where A: "A=(ns,removed,added)" by (cases A) auto
+  let ?names="fst (snd S)"
+  let ?N="isabelle_appended_names ?names ns"
+  let ?g="isabelle_state_embedding ns ?N"
+  have ns: "distinct ns" and used: "\<And>e i. e\<in>set (removed@added) \<Longrightarrow> i\<in>set (isabelle_entity_positions e) \<Longrightarrow> i<length ns"
+    using formed by (auto simp: A development_native_answer_formed_exact)
+  have state: "development_native_answer_state S A=(fst S,(?N,filter (\<lambda>e. e\<notin>set (map (isabelle_entity_rename ?g) removed))
+      (snd (snd S))@map (isabelle_entity_rename ?g) added))"
+    by (simp add: A development_native_answer_state_def Let_def)
+  have longer: "length ?names\<le>length ?N" by (simp add: isabelle_appended_names_def)
+  have prefix: "isabelle_name_at ?N i=isabelle_name_at ?names i" if bound: "i<length ?names" for i
+    using bound by (simp add: isabelle_appended_names_def isabelle_name_at_def nth_append)
+  show "distinct (fst (snd (development_native_answer_state S A)))"
+    using distinct ns by (auto simp: state isabelle_appended_names_def)
+  have moved: "?g i<length ?N" if bound: "i<length ns" for i
+  proof -
+    have named: "isabelle_name_at ns i=Some (ns!i)" using bound by (simp add: isabelle_name_at_def)
+    have shared: "ns!i\<in>set ?N" using nth_mem[OF bound] by (auto simp: isabelle_appended_names_def)
+    have "isabelle_name_at ?N (?g i)=Some (ns!i)" by (rule isabelle_state_embedding_shared[OF named shared])
+    then show ?thesis by (simp add: isabelle_name_at_def split: if_splits)
+  qed
+  have old: "i<length ?N" if member: "e\<in>set (snd (snd S))" and position: "i\<in>set (isabelle_entity_positions e)" for e i
+  proof -
+    have "i\<in>state_positions S" using member position by (auto simp: state_positions_def)
+    then show ?thesis using inside longer by auto
+  qed
+  have new: "i<length ?N" if member: "a\<in>set added" and position: "i\<in>set (isabelle_entity_positions (isabelle_entity_rename ?g a))" for a i
+  proof -
+    obtain j where j: "j\<in>set (isabelle_entity_positions a)" "i=?g j"
+      using position by (auto simp: isabelle_entity_rename_positions)
+    have "j<length ns" by (rule used) (use member j in auto)
+    then show ?thesis using moved j by simp
+  qed
+  have root: "i<length ?N" if member: "t\<in>set (fst S)" and position: "i\<in>set (isabelle_term_positions t)" for t i
+  proof -
+    have "i\<in>state_positions S" using member position by (auto simp: state_positions_def)
+    then show ?thesis using inside longer by auto
+  qed
+  show "state_positions (development_native_answer_state S A)\<subseteq>{..<length (fst (snd (development_native_answer_state S A)))}"
+    unfolding state state_positions_def by (auto intro: old new root)
+  have same_roots: "map (isabelle_local_root ?N) (fst S)=map (isabelle_local_root ?names) (fst S)"
+  proof (rule map_cong[OF refl])
+    fix t assume member: "t\<in>set (fst S)"
+    show "isabelle_local_root ?N t=isabelle_local_root ?names t"
+    proof (rule isabelle_local_root_agree)
+      fix i assume position: "i\<in>set (isabelle_term_positions t)"
+      have "i\<in>state_positions S" using member position by (auto simp: state_positions_def)
+      then show "isabelle_name_at ?N i=isabelle_name_at ?names i" using inside by (intro prefix) auto
+    qed
+  qed
+  show "distinct (map (isabelle_local_root (fst (snd (development_native_answer_state S A))))
+      (fst (development_native_answer_state S A)))"
+    using roots by (simp only: state fst_conv snd_conv same_roots)
+qed
+
 text \<open>
   An edit of a state whose positions its table holds is presented as an answer with the names it
   uses (\<open>development_native_answer_of\<close>), the local presentation a published payload has, and
-  applying that answer performs exactly the edit.
+  applying that answer performs exactly the edit. An edit whose positions the table holds is presented as
+  a formed answer (\<open>development_native_answer_of_formed\<close>), so the reader reads it.
 \<close>
 
 definition development_native_answer_of ::
@@ -117,6 +256,42 @@ definition development_native_answer_of ::
   "development_native_answer_of names removed added=(let ps=concat (map isabelle_entity_positions (removed@added));
     g=isabelle_local_embedding names ps in
     (isabelle_local_names names ps,map (isabelle_entity_rename g) removed,map (isabelle_entity_rename g) added))"
+
+theorem development_native_answer_of_formed:
+  assumes known: "\<And>e i. e\<in>set (removed@added) \<Longrightarrow> i\<in>set (isabelle_entity_positions e) \<Longrightarrow> i<length names"
+  shows "development_native_answer_formed (development_native_answer_of names removed added)"
+proof -
+  let ?ps="concat (map isabelle_entity_positions (removed@added))"
+  let ?L="isabelle_local_names names ?ps"
+  let ?h="isabelle_local_embedding names ?ps"
+  have moved: "?h i<length ?L" if member: "i\<in>set ?ps" and bound: "i<length names" for i
+  proof -
+    have named: "isabelle_name_at names i=Some (names!i)" using bound by (simp add: isabelle_name_at_def)
+    have shared: "names!i\<in>set ?L"
+      using member named by (auto simp: isabelle_local_names_def map_filter_member)
+    have "isabelle_name_at ?L (?h i)=Some (names!i)"
+      unfolding isabelle_local_embedding_def by (rule isabelle_state_embedding_shared[OF named shared])
+    then show ?thesis by (simp add: isabelle_name_at_def split: if_splits)
+  qed
+  have positions: "j<length ?L" if member: "e\<in>set (removed@added)"
+    and position: "j\<in>set (isabelle_entity_positions (isabelle_entity_rename ?h e))" for e j
+  proof -
+    obtain i where i: "i\<in>set (isabelle_entity_positions e)" "j=?h i"
+      using position by (auto simp: isabelle_entity_rename_positions)
+    have "i\<in>set ?ps" using member i by auto
+    then show ?thesis using moved known[OF member i(1)] i by simp
+  qed
+  show ?thesis
+    unfolding development_native_answer_of_def Let_def development_native_answer_formed_exact
+  proof (intro conjI ballI)
+    show "distinct ?L" by (simp add: isabelle_local_names_def)
+    fix e' j
+    assume e': "e'\<in>set (map (isabelle_entity_rename ?h) removed@map (isabelle_entity_rename ?h) added)"
+      and j: "j\<in>set (isabelle_entity_positions e')"
+    obtain e where e: "e\<in>set (removed@added)" "e'=isabelle_entity_rename ?h e" using e' by auto
+    show "j<length ?L" using positions[OF e(1)] j e(2) by simp
+  qed
+qed
 
 theorem development_native_answer_of_state:
   assumes distinct: "distinct (fst (snd S))"
@@ -179,16 +354,17 @@ definition development_native_judgment ::
     (development_native_answer_bits_read bits)"
 
 theorem development_native_judgment_exact:
-  "development_native_judgment verdict S r bits=Some (A,v) \<longleftrightarrow>
+  "development_native_judgment verdict S r bits=Some (A,v) \<longleftrightarrow> development_native_answer_formed A \<and>
     (\<exists>k. bits=finite_term_shared_word (development_native_answer_data A)@True#replicate k False) \<and>
     v=verdict S r (development_native_answer_state S A)"
   unfolding development_native_judgment_def map_option_eq_Some development_native_answer_bits_read_exact
   by (simp only: prod.inject) blast
 
 corollary development_native_judgment_word:
-  "development_native_judgment verdict S r (development_native_answer_word A)=
+  assumes formed: "development_native_answer_formed A"
+  shows "development_native_judgment verdict S r (development_native_answer_word A)=
     Some (A,verdict S r (development_native_answer_state S A))"
-  by (simp add: development_native_judgment_def development_native_answer_word_read)
+  by (simp add: development_native_judgment_def development_native_answer_word_read[OF formed])
 
 section \<open>The restating answer\<close>
 

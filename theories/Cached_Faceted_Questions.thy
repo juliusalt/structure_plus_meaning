@@ -25,9 +25,9 @@ theorem prepared_faceted_question_exact:
   by (simp only: prepared_faceted_question_def prepared_faceted_observation_exact[abs_def])
 
 theorem prepared_faceted_choice_exact:
-  "native_admitted_choice subjects
+  "keyed_admitted_choice (first_occurrence_key subjects) subjects
     (prepared_faceted_question observe (prepare_faceted_observations scope language observe) subjects facets) report =
-    native_admitted_choice subjects (faceted_native_question subjects facets observe) report"
+    keyed_admitted_choice (first_occurrence_key subjects) subjects (faceted_native_question subjects facets observe) report"
   by (simp only: prepared_faceted_question_exact)
 
 text \<open>All cache rows are computed by the actual observation operation.

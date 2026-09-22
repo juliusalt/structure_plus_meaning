@@ -53,17 +53,23 @@ definition judgment_bridge_candidates where
   "judgment_bridge_candidates=[Context_Only,Proposition_Only,Context_And_Proposition]"
 
 definition judgment_bridge_question where
-  "judgment_bridge_question ignored=filtered_development_question judgment_bridge_candidates
+  "judgment_bridge_question ignored=keyed_development_question
+    (first_occurrence_key judgment_bridge_candidates) judgment_bridge_candidates
     (\<lambda>b. judgment_bridge_observation b syntax_judgment_cases)"
 
 theorem judgment_bridge_admission:
   assumes question: "judgment_bridge_question ()=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  shows "i<length judgment_bridge_candidates \<and>
-    judgment_bridge_condition (judgment_bridge_candidates!i) syntax_judgment_cases"
-  using filtered_development_admission[OF question[unfolded judgment_bridge_question_def] admission selected]
-  by (simp only: judgment_bridge_observation_exact)
+    and selected: "finite_path (first_occurrence_key judgment_bridge_candidates b)\<in>set accepted"
+    and member: "b\<in>set judgment_bridge_candidates"
+  shows "judgment_bridge_condition b syntax_judgment_cases"
+proof -
+  have "judgment_bridge_observation b syntax_judgment_cases"
+    by (rule keyed_faceted_admission_at[OF first_occurrence_key_inj_on
+      question[unfolded judgment_bridge_question_def keyed_development_question_def]
+      admission selected member]) simp
+  then show ?thesis by (simp only: judgment_bridge_observation_exact)
+qed
 
 section \<open>The receiving program and its local meaning are fixed by those subjects\<close>
 
@@ -94,22 +100,24 @@ qed
 theorem admitted_bridge_native_meaning:
   assumes question: "judgment_bridge_question ()=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
+    and selected: "finite_path (first_occurrence_key judgment_bridge_candidates b)\<in>set accepted"
+    and member: "b\<in>set judgment_bridge_candidates"
   shows "decode_finite_call_term (judgment_bridge_call (C,syntax_proposition m))\<in>
-    positive_meaning (decode_finite_system (judgment_bridge_program (judgment_bridge_candidates!i)))
+    positive_meaning (decode_finite_system (judgment_bridge_program b))
     \<longleftrightarrow> C=syntax_checked_rooted_context \<and> syntax_join_refinement m"
-  using judgment_bridge_admission[OF question admission selected]
-    judgment_bridge_program_meaning[of "judgment_bridge_candidates!i" "(C,syntax_proposition m)"]
+  using judgment_bridge_admission[OF question admission selected member]
+    judgment_bridge_program_meaning[of b "(C,syntax_proposition m)"]
   by (simp only: syntax_judgment_at_proposition; blast)
 
 theorem admitted_bridge_known_calls:
   assumes question: "judgment_bridge_question ()=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
+    and selected: "finite_path (first_occurrence_key judgment_bridge_candidates b)\<in>set accepted"
+    and member: "b\<in>set judgment_bridge_candidates"
     and established: "X\<subseteq>{s. syntax_judgment_truth s}"
   shows "(decode_finite_call_term o judgment_bridge_call) ` X\<subseteq>
-    positive_meaning (decode_finite_system (judgment_bridge_program (judgment_bridge_candidates!i)))"
-  using judgment_bridge_program_meaning[OF conjunct2[OF judgment_bridge_admission[OF question admission selected]]]
+    positive_meaning (decode_finite_system (judgment_bridge_program b))"
+  using judgment_bridge_program_meaning[OF judgment_bridge_admission[OF question admission selected member]]
     established by auto
 
 definition judgment_bridge_demands where
@@ -127,7 +135,8 @@ definition judgment_bridge_receive where
     | Some Q \<Rightarrow> (case native_development_admission Q report of None \<Rightarrow> None
       | Some accepted \<Rightarrow> Some (map (\<lambda>i. (i,
           judgment_bridge_evaluation (judgment_bridge_candidates!i)))
-        (filter (\<lambda>i. finite_development_index i\<in>set accepted)
+        (filter (\<lambda>i. finite_path (first_occurrence_key judgment_bridge_candidates
+            (judgment_bridge_candidates!i))\<in>set accepted)
           [0..<length judgment_bridge_candidates]))))"
 
 theorem judgment_bridge_receive_fields:
@@ -135,7 +144,8 @@ theorem judgment_bridge_receive_fields:
     and row: "(i,Some A)\<in>set rows"
   obtains Q accepted where "judgment_bridge_question ()=Some Q"
     "native_development_admission Q report=Some accepted"
-    "finite_development_index i\<in>set accepted"
+    "i<length judgment_bridge_candidates"
+    "finite_path (first_occurrence_key judgment_bridge_candidates (judgment_bridge_candidates!i))\<in>set accepted"
     "judgment_bridge_evaluation (judgment_bridge_candidates!i)=Some A"
   using result row by (auto simp: judgment_bridge_receive_def split: option.splits)
 
@@ -148,12 +158,15 @@ proof (rule judgment_bridge_receive_fields[OF result row])
   fix Q accepted
   assume question: "judgment_bridge_question ()=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
+    and inside: "i<length judgment_bridge_candidates"
+    and selected: "finite_path (first_occurrence_key judgment_bridge_candidates
+      (judgment_bridge_candidates!i))\<in>set accepted"
     and evaluated: "judgment_bridge_evaluation (judgment_bridge_candidates!i)=Some A"
   have meaning: "decode_finite_call_term (judgment_bridge_call s)\<in>
       positive_meaning (decode_finite_system (judgment_bridge_program (judgment_bridge_candidates!i)))
       \<longleftrightarrow> syntax_judgment_truth s"
-    by (rule judgment_bridge_program_meaning[OF conjunct2[OF judgment_bridge_admission[OF question admission selected]]])
+    by (rule judgment_bridge_program_meaning[OF judgment_bridge_admission[OF question admission selected
+      nth_mem[OF inside]]])
   have demand: "judgment_bridge_call s |\<in>| judgment_bridge_demands"
     using scope by (auto simp: judgment_bridge_demands_def fset_of_list_elem)
   show ?thesis
@@ -170,7 +183,8 @@ proof (rule judgment_bridge_receive_fields[OF result row])
   fix Q accepted
   assume "judgment_bridge_question ()=Some Q"
     "native_development_admission Q report=Some accepted"
-    "finite_development_index i\<in>set accepted"
+    "i<length judgment_bridge_candidates"
+    "finite_path (first_occurrence_key judgment_bridge_candidates (judgment_bridge_candidates!i))\<in>set accepted"
     and evaluated: "judgment_bridge_evaluation (judgment_bridge_candidates!i)=Some A"
   show ?thesis using finite_program_evaluation_exact(2)[OF evaluated[unfolded judgment_bridge_evaluation_def]] by auto
 qed

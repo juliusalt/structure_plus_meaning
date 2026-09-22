@@ -12098,7 +12098,10 @@ rule's conclusion and premise set back from its value.
   `native_rearranging_program` (its `exact` is the law's at one rule and one premise; `at` from that and the two pattern
   facts), `native_member_program.exact`, `native_every_program.relation_equation` (its step rule has two premises),
   `native_some_program.exact`, `native_keyed_search_program.exact`. What the law does not replace stays: each
-  program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's `supported_clause`], the inversion of one rule application supported in an arbitrary relation, which least-fixed-point
+  program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's
+  `supported_clause`; corrected 2026-09-22, task 275: the four `unfold` corollaries are gone and their composition
+  is stated once as the law's `read_clause`, which a use cites with the program's own `unfold_rule`], the inversion
+  of one rule application supported in an arbitrary relation, which least-fixed-point
   arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
   the law's single step does not carry.
 - The two pattern facts now stand in `Factor_Rule_Instances` beside `evaluate_pattern_cong` and
@@ -12121,7 +12124,11 @@ the analogue of `reader_projection_rule`, formation over the rule's variables, c
 `unfold` is a corollary citing it and `unfold_rule` without re-deriving the conclusion; `holds_rule`, the elimination
 at the positive meaning returning the native rule itself, through which `exact`'s forward direction no longer
 re-encodes and decodes the clause. The four `unfold` lemmas stay, their statements unchanged, as their uses in
-Development_Native_Readiness and Native_Table_Reach cite them.
+Development_Native_Readiness and Native_Table_Reach cite them [corrected 2026-09-22, task 275: they are gone; the
+composition they were is the law's `read_clause` (a reading of every rule of the family at a clause's evaluated
+conclusion is a reading of the clause), which the three uses — readiness's some and every cases and the reach's some
+case — cite with the program's `unfold_rule`, and the clauses of a one-rule, one-premise site are read by
+`native_rearranging_program.supported`].
 
 Re-cited (task 235): the value rule's contract is stated once beside `native_value_rule` in Development_Located_Rows
 (`native_value_program`, its `exact`: the site holds of `Pair_Term x y` exactly when `x` is formed and `x=y`), and

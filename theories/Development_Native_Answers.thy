@@ -151,34 +151,6 @@ text \<open>
   not established again.
 \<close>
 
-lemma map_filter_agree:
-  "(\<And>x. x\<in>set xs \<Longrightarrow> f x=g x) \<Longrightarrow> List.map_filter f xs=List.map_filter g xs"
-proof (induction xs)
-  case Nil
-  then show ?case by (simp add: List.map_filter_simps)
-next
-  case (Cons x xs)
-  have head: "f x=g x" by (rule Cons.prems) simp
-  have tail: "List.map_filter f xs=List.map_filter g xs" by (rule Cons.IH) (rule Cons.prems, simp)
-  show ?case by (simp only: List.map_filter_simps head tail)
-qed
-
-lemma isabelle_local_root_agree:
-  assumes agree: "\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i"
-  shows "isabelle_local_root names' t=isabelle_local_root names t"
-proof -
-  let ?ps="isabelle_term_positions t"
-  have local_names: "isabelle_local_names names' ?ps=isabelle_local_names names ?ps"
-    unfolding isabelle_local_names_def by (simp only: map_filter_agree[of ?ps, OF agree])
-  have embedding: "isabelle_local_embedding names' ?ps i=isabelle_local_embedding names ?ps i"
-    if used: "i\<in>set ?ps" for i
-    unfolding isabelle_local_embedding_def isabelle_state_embedding_def local_names agree[OF used] ..
-  have "isabelle_term_rename (isabelle_local_embedding names' ?ps) t=
-      isabelle_term_rename (isabelle_local_embedding names ?ps) t"
-    by (rule isabelle_term_rename_cong) (rule embedding)
-  then show ?thesis by (simp only: isabelle_local_root_def local_names)
-qed
-
 theorem development_native_answer_state_presentable:
   assumes formed: "development_native_answer_formed A"
     and distinct: "distinct (fst (snd S))"

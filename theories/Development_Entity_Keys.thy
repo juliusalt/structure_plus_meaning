@@ -42,6 +42,14 @@ qed
 lemma first_occurrence_key_inj_on: "inj_on (first_occurrence_key xs) (set xs)"
   by (rule inj_onI) (rule first_occurrence_key_injective)
 
+text \<open>A first occurrence in a prefix stays where it was, so keys continue when a list is extended.\<close>
+
+lemma first_occurrence_key_append:
+  assumes member: "x\<in>set xs"
+  shows "first_occurrence_key (xs@ys) x=first_occurrence_key xs x"
+  using member value_reference_index_absent[of x xs]
+  by (cases "value_reference_index x xs") (simp_all add: first_occurrence_key_def value_reference_index_append_member[OF member])
+
 text \<open>
   The executable key of a state's entities is the first-occurrence key of an entity in the state's own
   entity list; it is injective on those entities, which is all a keyed question asks of its key, and one

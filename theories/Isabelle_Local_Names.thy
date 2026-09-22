@@ -341,4 +341,88 @@ proof -
   finally show ?thesis .
 qed
 
+subsection \<open>Two tables that agree on the names a value uses give it one local presentation\<close>
+
+text \<open>
+  A value's local names and local embedding read only the names at the positions it uses, so two tables
+  that agree there give it the same local names and the same embedding at those positions. The local
+  presentations of entities and of roots are its instances; neither establishes the agreement again.
+  The equation reading of a statement likewise reads only the names at the positions it uses; it is
+  proved by its own recursion and stated beside them.
+\<close>
+
+lemma map_filter_agree:
+  "(\<And>x. x\<in>set xs \<Longrightarrow> f x=g x) \<Longrightarrow> List.map_filter f xs=List.map_filter g xs"
+proof (induction xs)
+  case Nil
+  then show ?case by (simp add: List.map_filter_simps)
+next
+  case (Cons x xs)
+  have head: "f x=g x" by (rule Cons.prems) simp
+  have tail: "List.map_filter f xs=List.map_filter g xs" by (rule Cons.IH) (rule Cons.prems, simp)
+  show ?case by (simp only: List.map_filter_simps head tail)
+qed
+
+lemma isabelle_local_names_agree:
+  assumes agree: "\<And>i. i\<in>set ps \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i"
+  shows "isabelle_local_names names' ps=isabelle_local_names names ps"
+    and "\<And>i. i\<in>set ps \<Longrightarrow> isabelle_local_embedding names' ps i=isabelle_local_embedding names ps i"
+proof -
+  show local_names: "isabelle_local_names names' ps=isabelle_local_names names ps"
+    unfolding isabelle_local_names_def by (simp only: map_filter_agree[of ps, OF agree])
+  show "isabelle_local_embedding names' ps i=isabelle_local_embedding names ps i" if used: "i\<in>set ps" for i
+    unfolding isabelle_local_embedding_def isabelle_state_embedding_def local_names agree[OF used] ..
+qed
+
+lemma isabelle_local_entities_agree:
+  assumes agree: "\<And>i. i\<in>set (concat (map isabelle_entity_positions es)) \<Longrightarrow>
+      isabelle_name_at names' i=isabelle_name_at names i"
+  shows "isabelle_local_entities names' es=isabelle_local_entities names es"
+proof -
+  note same=isabelle_local_names_agree[OF agree]
+  have "map (isabelle_entity_rename (isabelle_local_embedding names' (concat (map isabelle_entity_positions es)))) es=
+      map (isabelle_entity_rename (isabelle_local_embedding names (concat (map isabelle_entity_positions es)))) es"
+  proof (rule map_cong[OF refl])
+    fix e assume e: "e\<in>set es"
+    show "isabelle_entity_rename (isabelle_local_embedding names' (concat (map isabelle_entity_positions es))) e=
+        isabelle_entity_rename (isabelle_local_embedding names (concat (map isabelle_entity_positions es))) e"
+      by (rule isabelle_entity_rename_cong) (rule same(2), use e in auto)
+  qed
+  then show ?thesis by (simp only: isabelle_local_entities_def Let_def same(1))
+qed
+
+lemma isabelle_local_root_agree:
+  assumes agree: "\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i"
+  shows "isabelle_local_root names' t=isabelle_local_root names t"
+proof -
+  note same=isabelle_local_names_agree[OF agree]
+  have "isabelle_term_rename (isabelle_local_embedding names' (isabelle_term_positions t)) t=
+      isabelle_term_rename (isabelle_local_embedding names (isabelle_term_positions t)) t"
+    by (rule isabelle_term_rename_cong) (rule same(2))
+  then show ?thesis by (simp only: isabelle_local_root_def same(1))
+qed
+
+lemma isabelle_equation_left_agree:
+  assumes "\<And>i. i\<in>set (isabelle_term_positions p) \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i"
+  shows "isabelle_equation_left names' p=isabelle_equation_left names p"
+  using assms
+proof (induction names p rule: isabelle_equation_left.induct)
+  case (1 names c T p)
+  have head: "isabelle_name_at names' c=isabelle_name_at names c" by (rule "1.prems") simp
+  show ?case
+  proof (cases "isabelle_name_at names c=Some isabelle_judgment_name")
+    case True
+    have "isabelle_equation_left names' p=isabelle_equation_left names p"
+      using True "1.prems" by (intro "1.IH") auto
+    then show ?thesis using True head by simp
+  next
+    case False
+    then show ?thesis using head by simp
+  qed
+next
+  case (2 names c T l r)
+  have head: "isabelle_name_at names' c=isabelle_name_at names c" by (rule "2.prems") simp
+  then show ?case by simp
+qed simp_all
+
 end

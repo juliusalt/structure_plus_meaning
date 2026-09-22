@@ -177,7 +177,7 @@ class ExecutionBoundaryTests(unittest.TestCase):
         (output / 'incremental.json').write_text(json.dumps({
             'status': 'accepted', 'base': str(context), 'base_receipt_sha256': 'base', 'base_theories': 1,
             'accepted_proof_context': str(context), 'theories': 1, 'reused_theories': 1, 'rebuilt_theories': [],
-            'phases': {}, 'seconds': 1.0, 'source_checks': {},
+            'phases': {}, 'seconds': 1.0, 'source_checks': {}, 'checked_content_sha256': 'content',
             'recipes': {'family': {'status': 'reused', 'exit_code': 0, 'seconds': 0.0}},
             'host_tests': {'tools': {'exit_code': 0, 'ran': 1, 'skipped': 0}}}))
         with patch.object(checker, 'recipes', return_value=[{'name': 'family'}]), \
@@ -190,6 +190,92 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertEqual(json.loads((target / 'family-sources.json').read_text()), self.manifest)
         inventory = json.loads((target / 'current-verified.json').read_text())
         self.assertEqual((inventory['reused_recipes'], inventory['executed_recipes']), (1, 0))
+
+    def test_checked_content_names_every_theory_and_no_path(self):
+        manifests, inputs = {'family': self.manifest}, {'ROOT': 'root'}
+        def graph(tree, other):
+            return {'Family_Execution': {'path': f'/{tree}/theories/Family_Execution.thy', 'sha256': 'f'},
+                    'Outside_Every_Manifest': {'path': f'/{tree}/theories/Outside_Every_Manifest.thy',
+                                               'sha256': other}}
+        self.assertEqual(checker.checked_content(graph('tree-a', '1'), manifests, inputs),
+                         checker.checked_content(graph('tree-b', '1'), manifests, inputs))
+        self.assertNotEqual(checker.checked_content(graph('tree-a', '1'), manifests, inputs),
+                            checker.checked_content(graph('tree-a', '2'), manifests, inputs))
+
+    def retain_executed(self, check, project, words, names=('family', 'other')):
+        """Retain a check whose recipes executed in its own output and named project, returning the receipts."""
+        boundary = checker.execution_boundary(self.row, self.manifest, self.proof)
+        output = self.root / check
+        recipes = {}
+        for name in names:
+            directory = output / 'recipes' / name
+            directory.mkdir(parents=True)
+            reports = {'presentation': {'records': 1, 'tags': {'PRESENTED_REPORT_WORD': 1},
+                                        'sha256': words.get(name, 'word')}}
+            (directory / 'reconstruction.json').write_text(json.dumps({
+                'status': 'accepted', 'recipe': name, 'reports_equal': True, 'report_boundaries': reports,
+                'source_project': str(project), 'sources_rebuilt': False, 'recipe_inputs_unchanged': True,
+                'recipe_inputs': {str(project / 'tools/check_family.py'): 'sha'},
+                'steps': [{'name': 'presentation', 'command': ['python3', str(project / 'tools/check_family.py'),
+                                                               str(directory)],
+                           'exit_code': 0, 'seconds': 1.5, 'log': str(directory / 'presentation.log')}]}))
+            recipes[name] = {'status': 'accepted', 'exit_code': 0, 'seconds': 1.5,
+                             'receipt': str(directory / 'reconstruction.json')}
+        (output / 'boundaries.json').write_text(json.dumps({name: boundary for name in names}))
+        (output / 'manifests.json').write_text(json.dumps({name: self.manifest for name in names}))
+        (output / 'incremental.json').write_text(json.dumps({
+            'status': 'accepted', 'base': str(output), 'base_receipt_sha256': 'base', 'base_theories': 1,
+            'accepted_proof_context': str(output), 'proof': str(output / 'proof/result.json'),
+            'theories': 1, 'reused_theories': 1, 'rebuilt_theories': [], 'phases': {'proof': 1.0},
+            'seconds': 1.0, 'source_checks': {}, 'recipes': recipes, 'checked_content_sha256': 'content',
+            'host_tests': {'tools': {'exit_code': 0, 'ran': 1, 'skipped': 0}}}))
+        with patch.object(checker, 'recipes', return_value=[{'name': name} for name in names]), \
+                patch('builtins.print'):
+            checker.retain(output)
+        return {path.name: path.read_text() for path in sorted((self.root / 'validation').rglob('*.json'))
+                if not path.name.endswith('-reports.json')}
+
+    def test_retained_receipts_name_no_execution_directory_or_worktree(self):
+        written = self.retain_executed('check', self.root / 'worktree-a', {})
+        runtime = str(self.runtime)
+        for name, text in written.items():
+            self.assertNotIn(str(self.root / 'check'), text, name)
+            self.assertNotIn('worktree-a', text, name)
+            self.assertEqual({line for line in text.splitlines() if str(self.root) in line},
+                             {line for line in text.splitlines() if runtime in line}, name)
+        verified = json.loads(written['family-verified.json'])
+        self.assertEqual(verified['steps'], [{'name': 'presentation', 'exit_code': 0, 'seconds': 1.5}])
+        self.assertTrue(checker.reusable_execution(
+            verified, checker.execution_boundary(self.row, self.manifest, self.proof)))
+
+    def test_retains_of_the_same_content_in_two_trees_are_byte_identical(self):
+        first = self.retain_executed('check-a', self.root / 'tree-a', {})
+        second = self.retain_executed('check-b', self.root / 'tree-b', {})
+        self.assertEqual(first, second)
+        self.assertTrue(all(text.count('\n') > 1 for text in first.values()))
+
+    def test_a_changed_recipe_rewrites_only_its_changed_lines(self):
+        first = self.retain_executed('check-a', self.root / 'tree', {})
+        second = self.retain_executed('check-b', self.root / 'tree', {'family': 'changed word'})
+        changed = {name for name in first if first[name] != second[name]}
+        self.assertEqual(changed, {'family-verified.json', 'current-verified.json'})
+        before, after = first['family-verified.json'].splitlines(), second['family-verified.json'].splitlines()
+        self.assertEqual(len(before), len(after))
+        self.assertEqual([b for b, a in zip(before, after) if a != b], ['   "sha256": "word",'])
+
+    def test_stale_receipt_is_refused_in_either_form(self):
+        boundary = checker.execution_boundary(self.row, self.manifest, self.proof)
+        old = {'status': 'accepted', 'reports_equal': True, 'execution_boundary': boundary,
+               'source_project': '/somewhere', 'recipe_inputs': {'/somewhere/tools/x.py': 'sha'},
+               'steps': [{'name': 's', 'command': ['/somewhere'], 'log': '/somewhere/log', 'seconds': 2.0}]}
+        new = json.loads(json.dumps(checker.receipt_boundary(old), indent=1, sort_keys=True))
+        self.assertTrue(checker.reusable_execution(old, boundary))
+        self.assertTrue(checker.reusable_execution(new, boundary))
+        self.export.write_text('structure Family = struct val changed = 1 end\n')
+        self.write_proof()
+        stale = checker.execution_boundary(self.row, self.manifest, self.proof)
+        self.assertFalse(checker.reusable_execution(old, stale))
+        self.assertFalse(checker.reusable_execution(new, stale))
 
 
 if __name__ == '__main__':

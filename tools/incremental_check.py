@@ -10,11 +10,24 @@ A changed manifest whose exported module, subject contracts, execution tools, fi
 reports and native runtime all equal an accepted execution's boundary reuses that execution.
 The original fixed base is used only when no newer context has been selected. Neither reuse nor
 adoption rebuilds a parent heap, and a partial recipe check cannot replace the complete inventory.
+
+The retained receipts (`retain`) record each recipe's boundary and the words its execution produced, and
+nothing else: its source manifest (`-sources.json`), its verification (`-verified.json`: status, report
+words, the execution boundary reuse compares, each step's name, exit code and seconds) and its
+materialization (`-materialization.json`), with `current-verified.json` and `incremental-check.json` for the
+whole check. A receipt names no execution directory, worktree or check output: those dangle once a tree or
+its executions are removed and nothing reads them. The check is named by `checked_content_sha256`, computed
+by the check itself: the digest of every theory of its source graph by name and source digest (no path),
+every recipe manifest and the validation inputs, so it is equal for the same content in any tree and
+differs whenever any checked theory differs. Every receipt is
+written one field per line with sorted keys, so a retain's diff is the lines of the fields it changes and
+a second retain of the same check changes none. Reuse reads the earlier compact form as well.
 """
 from __future__ import annotations
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor
+import hashlib
 import importlib
 import json
 import os
@@ -36,7 +49,7 @@ import prove_context
 import proof_contexts
 import proved_code
 import reconstruction_sources
-from evidence_io import write_json
+from evidence_io import publish_text, write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / 'tools'
@@ -267,6 +280,40 @@ def reusable_execution(verified, boundary):
             and verified.get('execution_boundary') == boundary)
 
 
+# Receipt fields that name an execution directory or a worktree, and digests of files a check keeps in its
+# own output; nothing reads them, and they dangle once the tree or the check's output is removed.
+RECEIPT_PATH_FIELDS = ('source_project', 'recipe_inputs')
+RECEIPT_STEP_FIELDS = ('name', 'exit_code', 'seconds')
+CHECK_LOCAL_DIGESTS = ('proof_receipt_sha256', 'proof_context_receipt_sha256')
+
+
+def receipt_boundary(receipt):
+    """The retained receipt: every field reuse, ordering and report comparison read, and no path of a run."""
+    kept = {key: value for key, value in receipt.items() if key not in RECEIPT_PATH_FIELDS}
+    if 'steps' in kept:
+        kept['steps'] = [{key: step[key] for key in RECEIPT_STEP_FIELDS if key in step} for step in kept['steps']]
+    for field in ('complete_review', 'execution_reuse'):
+        if isinstance(kept.get(field), dict):
+            kept[field] = {key: value for key, value in kept[field].items() if key not in CHECK_LOCAL_DIGESTS}
+    return kept
+
+
+def write_receipt(path, value):
+    """Write a retained receipt one field per line with sorted keys, publishing it only after success."""
+    path = Path(path)
+    text = json.dumps(value, indent=1, sort_keys=True, allow_nan=False) + '\n'
+    if not (path.is_file() and path.read_text() == text):
+        publish_text(path, text)
+
+
+def checked_content(sources, manifests, validation_inputs):
+    """The digest of what a check checked: every theory by name and source digest (never its path), every
+    recipe manifest and the validation inputs; equal for the same content in any tree."""
+    text = json.dumps({'theories': {name: source['sha256'] for name, source in sources.items()},
+                       'manifests': manifests, 'validation_inputs': validation_inputs}, sort_keys=True)
+    return hashlib.sha256(text.encode()).hexdigest()
+
+
 def verify_manifest_inputs(manifests):
     """Check each distinct input once, including tools and fixtures of unchanged recipes."""
     files = {}
@@ -416,6 +463,8 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
         phase('recipes_and_host_tests', begin)
         summary['recipes'] = {row['name']: results.get(row['name'], {'status': 'unchanged'}) for row in rows}
         write_json(output / 'manifests.json', {row['name']: row['manifest'] for row in rows})
+        summary['checked_content_sha256'] = checked_content(
+            sources, {row['name']: row['manifest'] for row in rows}, summary['validation_inputs'])
         failed = sorted(name for name, result in results.items() if result['status'] not in ('accepted', 'reused'))
         summary['failed_recipes'] = failed
         assert not failed, 'Failed recipes: ' + ', '.join(failed)
@@ -446,7 +495,11 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
 
 
 def retain(output, host_tests=None):
-    """Record an accepted check: executed recipes receive their current manifests and receipts."""
+    """Record an accepted check: executed recipes receive their current manifests and receipts.
+
+    Every receipt is rewritten in the retained form (`receipt_boundary`, `write_receipt`), so the first retain
+    converts receipts of the earlier form; a receipt whose content is unchanged is not written again.
+    """
     output = output.resolve()
     summary = json.loads((output / 'incremental.json').read_text())
     assert summary['status'] == 'accepted'
@@ -468,58 +521,47 @@ def retain(output, host_tests=None):
                for p, sha in boundary['runtime'].items()), 'Native runtime changed after validation.'
     target = ROOT / 'validation/reconstruction'
     base = Path(summary['base'])
-    proof = summary.get('proof')
-    context_receipt = Path(summary['accepted_proof_context']) / proof_contexts.CONTEXT_FILE
     entries = []
     for name, result in sorted(summary['recipes'].items()):
         sources_path = target / (name + '-sources.json')
         verified_path = target / (name + '-verified.json')
         if result['status'] == 'unchanged':
             assert json.loads(sources_path.read_text()) == manifests[name]
-            previous = json.loads(verified_path.read_text())
-            records = sum(b['records'] for b in previous['report_boundaries'].values())
+            receipt = json.loads(verified_path.read_text())
         elif result['status'] == 'reused':
-            previous = json.loads(verified_path.read_text())
-            assert reusable_execution(previous, boundaries[name]), 'The retained execution no longer applies.'
-            write_json(sources_path, manifests[name])
-            records = sum(b['records'] for b in previous['report_boundaries'].values())
-            previous.update(
-                complete_recipe_source_manifest=sources_path.name,
-                source_manifest_sha256=investigate.file_hash(sources_path),
-                execution_reuse={'base_receipt_sha256': summary['base_receipt_sha256'],
-                                 'proof_receipt_sha256': investigate.file_hash(Path(proof)) if proof else None,
-                                 'proof_context_receipt_sha256': investigate.file_hash(context_receipt),
-                                 'export_module_sha256': boundaries[name]['export']['module_sha256'],
-                                 'boundary': 'The current accepted proof context exported an identical module and '
-                                             'subject contracts; execution tools, fixtures, expected reports and '
-                                             'native runtime are unchanged. The accepted execution determines '
-                                             'these complete report boundaries without being repeated.'})
-            write_json(verified_path, previous)
+            receipt = json.loads(verified_path.read_text())
+            assert reusable_execution(receipt, boundaries[name]), 'The retained execution no longer applies.'
+            receipt['execution_reuse'] = {
+                'base_receipt_sha256': summary['base_receipt_sha256'],
+                'export_module_sha256': boundaries[name]['export']['module_sha256'],
+                'boundary': 'The current accepted proof context exported an identical module and '
+                            'subject contracts; execution tools, fixtures, expected reports and '
+                            'native runtime are unchanged. The accepted execution determines '
+                            'these complete report boundaries without being repeated.'}
         else:
             assert result['status'] == 'accepted'
             receipt = json.loads(Path(result['receipt']).read_text())
             assert receipt['status'] == 'accepted' and receipt['reports_equal'] is True
-            write_json(sources_path, manifests[name])
             records = sum(b['records'] for b in receipt['report_boundaries'].values())
             receipt.update(
-                complete_recipe_source_manifest=sources_path.name,
-                source_manifest_sha256=investigate.file_hash(sources_path),
                 execution_boundary=boundaries[name],
                 complete_review={'status': 'accepted', 'records': records, 'reports_equal': True,
                                  'base_receipt_sha256': summary['base_receipt_sha256'],
-                                 'proof_receipt_sha256': investigate.file_hash(Path(proof)) if proof else None,
                                  'seconds': result['seconds']},
                 retention='The accepted base proof and the incremental proof of every changed theory and '
                           'dependent supplied the exported module; every complete report boundary equals its '
                           'retained original. Generated result bulk is not a repository input.')
-            write_json(verified_path, receipt)
-        if result['status'] != 'unchanged':
-            write_json(target / (name + '-materialization.json'), {
-                'recipe_source_manifest': sources_path.name,
-                'recipe_source_manifest_sha256': investigate.file_hash(sources_path),
-                'recipe_files': len(manifests[name]['files']),
-                'boundary': 'Validated against an accepted proof base and an incremental proof of its changed '
-                            'theories; no separate source-only copy was materialized.'})
+        records = sum(b['records'] for b in receipt['report_boundaries'].values())
+        write_receipt(sources_path, manifests[name])
+        receipt.update(complete_recipe_source_manifest=sources_path.name,
+                       source_manifest_sha256=investigate.file_hash(sources_path))
+        write_receipt(verified_path, receipt_boundary(receipt))
+        write_receipt(target / (name + '-materialization.json'), {
+            'recipe_source_manifest': sources_path.name,
+            'recipe_source_manifest_sha256': investigate.file_hash(sources_path),
+            'recipe_files': len(manifests[name]['files']),
+            'boundary': 'Validated against an accepted proof base and an incremental proof of its changed '
+                        'theories; no separate source-only copy was materialized.'})
         files = manifests[name]['files']
         entries.append({'recipe': name, 'reports': records, 'source_files': len(files),
                         'theories': sum(f.endswith('.thy') for f in files),
@@ -534,8 +576,9 @@ def retain(output, host_tests=None):
     base_theories = summary.get('base_theories')
     if base_theories is None:
         base_theories = len(proof_contexts.load_parent(base)['sources'])
-    write_json(ROOT / 'validation/reconstruction/current-verified.json', {
-        'status': 'accepted', 'host_tests': host_tests,
+    content = summary['checked_content_sha256']
+    write_receipt(ROOT / 'validation/reconstruction/current-verified.json', {
+        'status': 'accepted', 'host_tests': host_tests, 'checked_content_sha256': content,
         'base_theories': base_theories, 'workspace_theories': summary['theories'],
         'incremental_proof_theories': len(summary['rebuilt_theories']),
         'base_receipt_sha256': summary['base_receipt_sha256'],
@@ -544,10 +587,10 @@ def retain(output, host_tests=None):
         'reused_recipes': sum(r['status'] == 'reused' for r in summary['recipes'].values()),
         'unchanged_recipes': sum(r['status'] == 'unchanged' for r in summary['recipes'].values()),
         'phase_seconds': summary['phases'], 'total_seconds': summary['seconds']})
-    write_json(ROOT / 'validation/incremental-check.json', {
+    write_receipt(ROOT / 'validation/incremental-check.json', {
         key: summary[key] for key in ('status', 'base_receipt_sha256', 'theories', 'reused_theories',
                                       'rebuilt_theories', 'phases', 'seconds', 'source_checks', 'host_tests')}
-        | {'validation_inputs': summary.get('validation_inputs', {}),
+        | {'validation_inputs': summary.get('validation_inputs', {}), 'checked_content_sha256': content,
            'recipes': {n: {k: v for k, v in r.items() if k != 'receipt'} for n, r in summary['recipes'].items()}})
     print(json.dumps({'retained': len(entries), 'reports': sum(e['reports'] for e in entries)}))
     return 0
@@ -573,7 +616,9 @@ def main():
     adopt = commands.add_parser('adopt', help='Reuse a successful immutable proof context without rebuilding it.')
     adopt.add_argument('--proof', type=Path, required=True)
     adopt.add_argument('--source-project', type=Path, default=ROOT)
-    keep = commands.add_parser('retain', help='Record the evidence of an accepted check.')
+    keep = commands.add_parser('retain', help='Record the evidence of an accepted check: each recipe\'s boundary '
+                               'and report words, one field per line with sorted keys, naming no execution '
+                               'directory or worktree (see the module documentation).')
     keep.add_argument('--output', type=Path, required=True)
     keep.add_argument('--host-tests', type=json.loads, help='Optional cross-check of recorded test counts.')
     args = parser.parse_args()

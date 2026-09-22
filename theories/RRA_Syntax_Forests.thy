@@ -1,5 +1,5 @@
 theory RRA_Syntax_Forests
-  imports RRA_Syntax_Construction
+  imports RRA_Syntax_Construction RRA_Placed_Forests
 begin
 
 section \<open>Disjoint copies of complete private syntax scopes\<close>
@@ -127,22 +127,34 @@ declare syntax_branch.simps [simp del]
 
 section \<open>The forest is its children placed at their branches\<close>
 
+text \<open>
+  The syntax forest is the placed forest (@{text RRA_Placed_Forests}) at the family of the syntax
+  branches, whose placements never meet (@{thm [source] syntax_branch_disjoint}); its positions are
+  the placed positions at the same family. Formation and child reads are the notion's, discharged by
+  the branch's contracts; what is stated here of the branch alone (its top prefix, the absent empty
+  and other prefixes) is read through the placed forest's carrier member.
+\<close>
+
 definition syntax_forest_positions :: "local_address set list \<Rightarrow> local_address set" where
+  "syntax_forest_positions As = placed_positions syntax_branch As"
+
+lemma syntax_forest_positions_eq:
   "syntax_forest_positions As = (\<Union>i<length As. syntax_branch i ` (As!i))"
+  by (simp add: syntax_forest_positions_def placed_positions_def)
 
 lemma syntax_forest_position_member:
   "a \<in> syntax_forest_positions As \<longleftrightarrow>
     (\<exists>i<length As. \<exists>b\<in>As!i. a=syntax_branch i b)"
-  by (auto simp: syntax_forest_positions_def)
+  by (simp add: syntax_forest_positions_def placed_positions_member)
 
 lemma syntax_forest_positions_list:
   "\<Union>(set (map (\<lambda>i. syntax_branch i ` (As!i)) [0..<length As])) = syntax_forest_positions As"
-  by (auto simp: syntax_forest_positions_def)
+  by (auto simp: syntax_forest_positions_eq)
 
 lemma syntax_forest_three_positions:
   "syntax_forest_positions [A,B,C] =
     image (syntax_branch 0) A \<union> image (syntax_branch 1) B \<union> image (syntax_branch 2) C"
-  by (auto simp: syntax_forest_positions_def less_Suc_eq numeral_2_eq_2)
+  by (auto simp: syntax_forest_positions_eq less_Suc_eq numeral_2_eq_2)
 
 lemma syntax_forest_positions_disjoint:
   assumes len: "length As=length Bs" and separate: "\<forall>i<length As. As!i \<inter> Bs!i = {}"
@@ -175,20 +187,15 @@ text \<open>
 \<close>
 
 definition syntax_forest :: "exact_artifact list \<Rightarrow> exact_artifact" where
-  "syntax_forest Rs =
-    \<lparr>object_structure =
-      \<lparr>rra_carrier = syntax_forest_positions (map (\<lambda>R. rra_carrier (object_structure R)) Rs),
-       rra_incidence = (\<Union>i<length Rs. rra_incidence (push_structure (syntax_branch i) (object_structure (Rs!i))))\<rparr>,
-     object_data = \<lparr>bag_count = (\<lambda>_. 0),
-       functional_bindings = (\<Union>i<length Rs. (\<lambda>(a,v). (syntax_branch i a,v)) ` functional_bindings (object_data (Rs!i)))\<rparr>\<rparr>"
+  "syntax_forest Rs = placed_forest syntax_branch Rs"
 
 lemma syntax_forest_Nil: "syntax_forest [] = empty_artifact"
-  by (simp add: syntax_forest_def syntax_forest_positions_def empty_artifact_def empty_basis_def)
+  by (simp add: syntax_forest_def)
 
 lemma syntax_forest_carrier_member:
   "a \<in> rra_carrier (object_structure (syntax_forest Rs)) \<longleftrightarrow>
     (\<exists>i<length Rs. \<exists>b\<in>rra_carrier (object_structure (Rs!i)). a=syntax_branch i b)"
-  by (simp add: syntax_forest_def syntax_forest_position_member cong: conj_cong)
+  by (simp only: syntax_forest_def placed_forest_carrier_member)
 
 lemma syntax_forest_pushed:
   "rra_carrier (object_structure (syntax_forest Rs)) =
@@ -197,7 +204,8 @@ lemma syntax_forest_pushed:
     (\<Union>i<length Rs. rra_incidence (object_structure (push_object (syntax_branch i) (Rs!i))))"
   "functional_bindings (object_data (syntax_forest Rs)) =
     (\<Union>i<length Rs. functional_bindings (object_data (push_object (syntax_branch i) (Rs!i))))"
-  by (simp_all add: syntax_forest_def syntax_forest_positions_def push_object_def push_basis_def cong: SUP_cong_simp)
+  by (simp_all add: syntax_forest_def placed_forest_def placed_positions_def push_object_def push_basis_def
+      cong: SUP_cong_simp)
 
 lemma syntax_forest_pieces_separate:
   assumes "a \<in> rra_carrier (object_structure (push_object (syntax_branch i) R))"
@@ -220,114 +228,17 @@ lemma syntax_forest_no_counts [simp]: "bag_count (object_data (syntax_forest Rs)
 lemma syntax_forest_formed:
   assumes formed: "\<forall>R\<in>set Rs. exact_formed R"
   shows "exact_formed (syntax_forest Rs)"
-proof -
-  let ?P = "\<lambda>i. push_object (syntax_branch i) (Rs!i)"
-  let ?U = "rra_carrier (object_structure (syntax_forest Rs))"
-  let ?F = "functional_bindings (object_data (syntax_forest Rs))"
-  have piece: "exact_formed (?P i)" if index: "i < length Rs" for i
-  proof -
-    have child: "exact_formed (Rs!i)" using formed nth_mem[OF index] by blast
-    show ?thesis by (rule syntax_forest_piece_formed[OF child])
-  qed
-  have piece_rra: "rra_formed (object_structure (?P i))" if "i < length Rs" for i
-    using piece[OF that] unfolding exact_formed_def object_formed_def by blast
-  have piece_basis: "basis_formed (rra_carrier (object_structure (?P i))) (object_data (?P i))"
-    if "i < length Rs" for i
-    using piece[OF that] unfolding exact_formed_def object_formed_def by blast
-  have piece_addresses: "\<forall>a\<in>rra_carrier (object_structure (?P i)). octets_formed a" if "i < length Rs" for i
-    using piece[OF that] unfolding exact_formed_def by blast
-  have piece_values: "\<forall>v\<in>basis_values (object_data (?P i)). octets_formed v" if "i < length Rs" for i
-    using piece[OF that] unfolding exact_formed_def by blast
-  have finite_carrier: "finite ?U"
-    unfolding syntax_forest_pushed
-  proof (rule finite_UN_I[OF finite_lessThan])
-    fix i assume "i \<in> {..<length Rs}"
-    then have "i < length Rs" by (simp only: lessThan_iff)
-    then show "finite (rra_carrier (object_structure (?P i)))" using piece_rra unfolding rra_formed_def by blast
-  qed
-  have finite_incidence: "finite (rra_incidence (object_structure (syntax_forest Rs)))"
-    unfolding syntax_forest_pushed
-  proof (rule finite_UN_I[OF finite_lessThan])
-    fix i assume "i \<in> {..<length Rs}"
-    then have "i < length Rs" by (simp only: lessThan_iff)
-    then show "finite (rra_incidence (object_structure (?P i)))" using piece_rra unfolding rra_formed_def by blast
-  qed
-  have endpoints: "\<forall>r p x. (r,p,x) \<in> rra_incidence (object_structure (syntax_forest Rs)) \<longrightarrow>
-      r \<in> ?U \<and> p \<in> ?U \<and> x \<in> ?U"
-  proof (intro allI impI)
-    fix r p x assume "(r,p,x) \<in> rra_incidence (object_structure (syntax_forest Rs))"
-    then obtain i where i: "i < length Rs" "(r,p,x) \<in> rra_incidence (object_structure (?P i))"
-      unfolding syntax_forest_pushed by blast
-    have "r \<in> rra_carrier (object_structure (?P i)) \<and> p \<in> rra_carrier (object_structure (?P i)) \<and>
-        x \<in> rra_carrier (object_structure (?P i))"
-      using piece_rra[OF i(1)] i(2) unfolding rra_formed_def by blast
-    then show "r \<in> ?U \<and> p \<in> ?U \<and> x \<in> ?U" using i(1) unfolding syntax_forest_pushed by blast
-  qed
-  have no_bag: "bag_support (object_data (syntax_forest Rs)) = {}"
-    by (simp add: bag_support_def)
-  have finite_bindings: "finite ?F"
-    unfolding syntax_forest_pushed
-  proof (rule finite_UN_I[OF finite_lessThan])
-    fix i assume "i \<in> {..<length Rs}"
-    then have "i < length Rs" by (simp only: lessThan_iff)
-    then show "finite (functional_bindings (object_data (?P i)))"
-      using piece_basis unfolding basis_formed_def by blast
-  qed
-  have origin: "\<exists>i<length Rs. (a,v) \<in> functional_bindings (object_data (?P i)) \<and>
-      a \<in> rra_carrier (object_structure (?P i))" if entry: "(a,v) \<in> ?F" for a v
-  proof -
-    have "(a,v) \<in> (\<Union>i<length Rs. functional_bindings (object_data (?P i)))"
-      using entry by (simp only: syntax_forest_pushed)
-    then obtain i where member: "i \<in> {..<length Rs}" "(a,v) \<in> functional_bindings (object_data (?P i))"
-      by (rule UN_E)
-    have index: "i < length Rs" using member(1) by (simp only: lessThan_iff)
-    have "a \<in> rra_carrier (object_structure (?P i))"
-      by (rule functional_attachment_in_carrier[OF piece_basis[OF index] member(2)])
-    then show ?thesis using index member(2) by blast
-  qed
-  have single: "single_valued ?F"
-    unfolding single_valued_def
-  proof (intro allI impI)
-    fix a v w assume first: "(a,v) \<in> ?F" and second: "(a,w) \<in> ?F"
-    obtain i where i: "i < length Rs" "(a,v) \<in> functional_bindings (object_data (?P i))"
-      "a \<in> rra_carrier (object_structure (?P i))" using origin[OF first] by blast
-    obtain j where j: "j < length Rs" "(a,w) \<in> functional_bindings (object_data (?P j))"
-      "a \<in> rra_carrier (object_structure (?P j))" using origin[OF second] by blast
-    have same: "i = j" by (rule syntax_forest_pieces_separate[OF i(3) j(3)])
-    have sv: "single_valued (functional_bindings (object_data (?P i)))"
-      using piece_basis[OF i(1)] unfolding basis_formed_def by blast
-    show "v = w" by (rule single_valued_outputs[OF sv i(2)]) (use j(2) same in simp)
-  qed
-  have bindings_inside: "?F \<subseteq> ?U \<times> UNIV"
-  proof
-    fix z assume entry: "z \<in> ?F"
-    obtain a v where z: "z=(a,v)" by (cases z)
-    obtain i where i: "i < length Rs" "a \<in> rra_carrier (object_structure (?P i))"
-      using origin[of a v] entry z by blast
-    have "a \<in> ?U" using i unfolding syntax_forest_pushed by blast
-    then show "z \<in> ?U \<times> UNIV" using z by simp
-  qed
-  have addresses: "\<forall>a\<in>?U. octets_formed a"
-  proof
-    fix a assume "a \<in> ?U"
-    then obtain i where i: "i < length Rs" "a \<in> rra_carrier (object_structure (?P i))"
-      unfolding syntax_forest_pushed by blast
-    show "octets_formed a" using piece_addresses[OF i(1)] i(2) by blast
-  qed
-  have payloads: "\<forall>v\<in>basis_values (object_data (syntax_forest Rs)). octets_formed v"
-  proof
-    fix v assume "v \<in> basis_values (object_data (syntax_forest Rs))"
-    then obtain a where entry: "(a,v) \<in> ?F" using no_bag by (auto simp: basis_values_def)
-    obtain i where i: "i < length Rs" "(a,v) \<in> functional_bindings (object_data (?P i))"
-      using origin[OF entry] by blast
-    have "v \<in> basis_values (object_data (?P i))" using i(2) by (force simp: basis_values_def)
-    then show "octets_formed v" using piece_values[OF i(1)] by blast
-  qed
-  have incidence_formed: "rra_formed (object_structure (syntax_forest Rs))"
-    unfolding rra_formed_def using finite_carrier finite_incidence endpoints by blast
-  have basis: "basis_formed ?U (object_data (syntax_forest Rs))"
-    unfolding basis_formed_def using no_bag finite_bindings single bindings_inside by simp
-  show ?thesis unfolding exact_formed_def object_formed_def using incidence_formed basis addresses payloads by blast
+  unfolding syntax_forest_def
+proof (rule placed_forest_formed[OF formed])
+  fix i assume index: "i < length Rs"
+  have child: "exact_formed (Rs!i)" using formed nth_mem[OF index] by blast
+  show "finite_addressing (rra_carrier (object_structure (Rs!i))) (syntax_branch i)"
+    by (rule syntax_branch_addressing[OF child])
+next
+  fix i j a b
+  assume "i < length Rs" "j < length Rs" "i \<noteq> j" "a \<in> rra_carrier (object_structure (Rs!i))"
+    "b \<in> rra_carrier (object_structure (Rs!j))" "syntax_branch i a = syntax_branch j b"
+  then show "silent_at (Rs!i) a \<and> silent_at (Rs!j) b" by simp
 qed
 
 lemma syntax_forest_empty_absent [simp]:
@@ -374,91 +285,9 @@ lemma syntax_forest_child_reads:
   shows "object_reads_agree (push_object (syntax_branch i) (Rs!i)) (syntax_forest Rs)
     (syntax_branch i ` rra_carrier (object_structure (Rs!i)))"
 proof -
-  let ?P = "\<lambda>j. push_object (syntax_branch j) (Rs!j)"
-  let ?I = "syntax_branch i ` rra_carrier (object_structure (Rs!i))"
-  have piece_formed: "object_formed (?P j)" if "j < length Rs" for j
-  proof -
-    have "exact_formed (Rs!j)" using formed nth_mem[OF that] by blast
-    then show ?thesis using syntax_forest_piece_formed[of "Rs!j" j] unfolding exact_formed_def by blast
-  qed
-  have carrier: "rra_carrier (object_structure (?P i)) = ?I" by (simp add: push_object_def)
-  have inside: "?I \<subseteq> rra_carrier (object_structure (syntax_forest Rs))"
-    using syntax_forest_child_inside[OF index] by blast
-  have headed: "\<forall>a\<in>?I. headed_incidence (object_structure (?P i)) a =
-      headed_incidence (object_structure (syntax_forest Rs)) a"
-  proof
-    fix a assume a: "a \<in> ?I"
-    show "headed_incidence (object_structure (?P i)) a = headed_incidence (object_structure (syntax_forest Rs)) a"
-    proof
-      show "headed_incidence (object_structure (?P i)) a \<subseteq> headed_incidence (object_structure (syntax_forest Rs)) a"
-      proof (rule subrelI)
-        fix p x assume "(p,x) \<in> headed_incidence (object_structure (?P i)) a"
-        then have inc: "(a,p,x) \<in> rra_incidence (object_structure (?P i))" by simp
-        have "(a,p,x) \<in> (\<Union>j<length Rs. rra_incidence (object_structure (?P j)))"
-          by (rule UN_I[where B="\<lambda>j. rra_incidence (object_structure (?P j))", OF _ inc])
-            (simp only: lessThan_iff index)
-        then show "(p,x) \<in> headed_incidence (object_structure (syntax_forest Rs)) a"
-          by (simp only: headed_incidence_member syntax_forest_pushed)
-      qed
-      show "headed_incidence (object_structure (syntax_forest Rs)) a \<subseteq> headed_incidence (object_structure (?P i)) a"
-      proof (rule subrelI)
-        fix p x assume "(p,x) \<in> headed_incidence (object_structure (syntax_forest Rs)) a"
-        then have "(a,p,x) \<in> (\<Union>j<length Rs. rra_incidence (object_structure (?P j)))"
-          by (simp only: headed_incidence_member syntax_forest_pushed)
-        then obtain j where j0: "j \<in> {..<length Rs}" "(a,p,x) \<in> rra_incidence (object_structure (?P j))"
-          by (rule UN_E)
-        have j: "j < length Rs" "(a,p,x) \<in> rra_incidence (object_structure (?P j))"
-          using j0 by (simp_all only: lessThan_iff)
-        have "a \<in> rra_carrier (object_structure (?P j))"
-          using piece_formed[OF j(1)] j(2) unfolding object_formed_def rra_formed_def by blast
-        moreover have "a \<in> rra_carrier (object_structure (?P i))" using a carrier by simp
-        ultimately have "j = i" by (rule syntax_forest_pieces_separate)
-        then show "(p,x) \<in> headed_incidence (object_structure (?P i)) a" using j(2) by simp
-      qed
-    qed
-  qed
-  have zero: "bag_count (object_data (?P i)) = (\<lambda>_. 0)"
-  proof -
-    have child: "bag_count (object_data (Rs!i)) = (\<lambda>_. 0)" using counts nth_mem[OF index] by blast
-    show ?thesis
-      by (simp add: push_object_def push_basis_def pushed_count_def child fun_eq_iff split: prod.split)
-  qed
-  have data: "restrict_basis ?I (object_data (?P i)) = restrict_basis ?I (object_data (syntax_forest Rs))"
-  proof (rule basis_identity[THEN iffD2], rule conjI)
-    show "bag_count (restrict_basis ?I (object_data (?P i))) =
-      bag_count (restrict_basis ?I (object_data (syntax_forest Rs)))"
-    proof -
-      have same: "bag_count (object_data (?P i)) = bag_count (object_data (syntax_forest Rs))"
-        using zero by simp
-      show ?thesis by (simp only: restrict_basis_def same) simp
-    qed
-    show "functional_bindings (restrict_basis ?I (object_data (?P i))) =
-      functional_bindings (restrict_basis ?I (object_data (syntax_forest Rs)))"
-    proof (simp only: functional_bindings_restrict, rule set_eqI, rule iffI)
-      fix av assume "av \<in> {av \<in> functional_bindings (object_data (?P i)). fst av \<in> ?I}"
-      then have entry: "av \<in> functional_bindings (object_data (?P i))" and key: "fst av \<in> ?I" by simp_all
-      have "av \<in> (\<Union>j<length Rs. functional_bindings (object_data (?P j)))"
-        by (rule UN_I[where B="\<lambda>j. functional_bindings (object_data (?P j))", OF _ entry])
-          (simp only: lessThan_iff index)
-      then show "av \<in> {av \<in> functional_bindings (object_data (syntax_forest Rs)). fst av \<in> ?I}"
-        using key by (simp only: syntax_forest_pushed mem_Collect_eq simp_thms)
-    next
-      fix av assume member: "av \<in> {av \<in> functional_bindings (object_data (syntax_forest Rs)). fst av \<in> ?I}"
-      have key: "fst av \<in> ?I" using member by simp
-      have "av \<in> (\<Union>j<length Rs. functional_bindings (object_data (?P j)))"
-        using member by (simp only: syntax_forest_pushed mem_Collect_eq)
-      then obtain j where j0: "j \<in> {..<length Rs}" "av \<in> functional_bindings (object_data (?P j))"
-        by (rule UN_E)
-      have j: "j < length Rs" "av \<in> functional_bindings (object_data (?P j))" using j0 by (simp_all only: lessThan_iff)
-      have "fst av \<in> rra_carrier (object_structure (?P j))"
-        using piece_formed[OF j(1)] functional_attachment_in_carrier[of _ "object_data (?P j)" "fst av" "snd av"] j(2)
-        by (simp add: object_formed_def)
-      moreover have "fst av \<in> rra_carrier (object_structure (?P i))" using key carrier by simp
-      ultimately have "j = i" by (rule syntax_forest_pieces_separate)
-      then show "av \<in> {av \<in> functional_bindings (object_data (?P i)). fst av \<in> ?I}" using j(2) key by simp
-    qed
-  qed
-  show ?thesis using carrier inside headed data by (simp add: object_reads_agree_def)
+  have zero: "bag_count (object_data (Rs!i)) = (\<lambda>_. 0)" using counts nth_mem[OF index] by blast
+  show ?thesis unfolding syntax_forest_def
+    by (rule placed_forest_reads[OF index syntax_branch_injective zero subset_refl]) simp
 qed
 
 lemma syntax_forest_positions_bound:

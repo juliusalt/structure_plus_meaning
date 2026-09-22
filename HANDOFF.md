@@ -56,7 +56,9 @@ is a row at its problem's locus, under a sixth role — and the native schema (#
 decides only I≠[] at a presented parent, reading the parent's row through `Development_Located_Rows`, and
 `development_state_poses` is a premise only of `native_decomposition_reduction`, with a marked correction to #66's entry
 (q35). #94 makes the state reading native through #34's traversal, `native_decomposition_reduction` then resting on the
-native application; #64 (the library at the loop's problems, so that a decomposed problem is refused issue) waits on
+native application; a definition's declaration it reads through #36's declaration store, existence positively and
+uniqueness as #36's carried condition, so it continues when #36 lands (q37, `v2.py after 94 36`). #64 (the library at
+the loop's problems, so that a decomposed problem is refused issue) waits on
 #94, #58 and #30, and its brief takes #94's contract when #94 lands. The build that applies a decomposition is Open 26.
 
 **The index notion (#76, #74, #96, #86).** The notion (#68) and its host and native instances (#70, #72) have landed.
@@ -64,7 +66,7 @@ native application; #64 (the library at the loop's problems, so that a decompose
 (`demand_positions_lookup` proved from `RBT.lookup_bulkload`; its third round kept it as a decision against its brief);
 its brief is now that finding alone — re-proved from the instance or deleted, a reason to keep it asked of the planner
 first — queued for a fourth round;
-#74 (the stores' and native tables' six uses, 359 theories) is working in the one tree; #96 briefs, after #74,
+#74 (the stores' and native tables' six uses) has landed (`37a97cad`); #96 briefs, now that #74 has landed,
 what both reviews leave — arguments made twice, to be stated once in `Carrier_Indexes`, and fourteen theories still
 citing raw carrier facts. #86 advances the proof base now — #36's probes failed at load on the lagging base — and #105
 advances it again once #76 and #74 have landed (Q10).
@@ -201,7 +203,7 @@ judgment's path.
 - **The decomposition** #60 `Development_Decomposition_Soundness` (`ffe12b46`), #58 `Development_Repair_Rows`
   (`b3b185bc`) and #62 `Development_Native_Decomposition` (`b535ef8f`).
 - **The index notion** #68 `Carrier_Indexes` (`a275a84e`), #70 the host instances (`b1dc9193`), #72
-  `Native_Path_Store_Indexes` (`202a2276`).
+  `Native_Path_Store_Indexes` (`202a2276`), #74 the stores' and native tables' six uses re-cited (`37a97cad`).
 - **The checking and tools** #12/#17, #19, #20, #15 (`9bb1dd7a`, `6227819a`, `91979be0`, `2edcabd3`); #48 the replay's
   `unproduced` (`3aaddd96`); #50 the check's named refusals (`955b34bb`); #79 the probe's 60 s default (`1e7ed068`);
   #81 the receipts retained (`cf24195e`); #82 the base advanced to `b1328831`; #80 the seed recipe's formation split,
@@ -336,10 +338,14 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
-- **In flight (plan-35, 05:12)**: #74 working in the one tree; #36 working, its probes waiting on #86, the base advance
-  made to run now (`v2.py after 36 86`); #76's fourth round and #97 in review. Startable: the presenter #101 (placed from #99: #101 and its review #102 before #40; the answer reader's
-  refusal of a duplicated name, #103 and its review #104, after #30, which edits `Development_Native_Answers`); #106,
-  request construction's first build (placed from #100 with #108–#114); #94; #85.
+- **In flight (plan-35, 05:32)**: #86 advancing the base to HEAD; #36 working, its probes waiting on #86 (`v2.py after
+  36 86`); #94 working, to continue on #36's declaration store when #36 lands (`v2.py after 94 36`, q37); #101 building
+  the presenter (its review #102; the answer reader's refusal #103 and its review #104 come after #30); #76's fourth
+  round in review; #97 re-queued for a round that only merges and makes `THEORY_MAP.md` hold the `Native_Path_Stores`
+  row once (its accepted commit, merged with #74's landing, held it twice). Startable: #106, request construction's
+  first build; #96, the index consolidation's brief; #85. #74's check executed all 52 recipes though its export
+  boundaries were unchanged (recipe phase 114 s): the receipts are stale against HEAD, and #86's check retains them when
+  it executes recipes (Q11).
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).
@@ -347,7 +353,8 @@ Not yet planned, in the order they are expected to be planned:
     the hand-over's run rather than the re-run it commits on (#49's re-review); it commits whole files, so the one tree's
     shared files couple landings, where committing a task's own hunks would not; and entries appended at the end of
     `DECISIONS.md` conflict when two tasks record at once — #80's commit failed twice so — which a `union` merge driver,
-    or bringing main in as a fixed step before every landing, would end (#80's review).
+    or bringing main in as a fixed step before every landing, would end (#80's review); and two landings that edited one
+    `THEORY_MAP.md` row merge into a doubled row that a session round must repair (#97's commit, 05:23).
   - A task parked for a landing kept in the one tree the shared-file lines it installed at hand-over, which kept out the
     landing it waited for (#62 and #84, 03:00); taking them out left its theory undeclared, refusing every one-tree
     check (03:10). The harness could release a parked task's installed work, or refuse such a park.

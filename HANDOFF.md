@@ -555,6 +555,11 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#247** `e8d2158c`: `native_rule_law` completed — its introduction at any support relation, the conclusion from
   `supported_clause`, `holds_rule` returning the rule. Follow-ups: the documentation corrections and the inductions to
   #235; `holds_clause` and the `unfold` corollaries to Open 79.
+- **#253** `946765ca`: the external review's P1 verified present on HEAD (`.build/tasks/253/report.md`): a file of an
+  answer's expected name, never read by Isabelle, made the harness judge the request state against itself and report
+  the answer accepted and published; every path through `adopted()`, every record resting on it, and the four
+  connections a sound adoption test needs. Its reproduction is kept as tests in `tools/test_development_answer.py`,
+  two expected failures and a control. The design of adoption's evidence is #258.
 - **#254** `e2af9414`: the external review's P2 verified present on HEAD and wider (`.build/tasks/254/report.md`),
   its reproduction kept as tests in the adoption tool's test module, the unhandled exits expected failures. The fix is
   #255; a leftover theory reading as adopted joins P1.

@@ -1,6 +1,6 @@
 {
  "base_receipt_sha256": "c365c3e3e9cf737a49c6a859bb3039624176e03c72dae95b5b2a94a7de458a70",
- "checked_content_sha256": "2d50de467a96e8faae43f3393bbf701b0f7b4548d4c41b4d7890d0ed7c6a7cf6",
+ "checked_content_sha256": "2725bf38535b0cb065ff93b894c34459e978481e0e08a8d718f6288f4db240b9",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,13 +22,56 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.41,
-  "execution_impact": 0.0,
-  "export": 0.0,
-  "recipe_impact": 0.49,
-  "recipes_and_host_tests": 11.23
+  "base_and_impact": 0.44,
+  "execution_impact": 0.06,
+  "export": 8.23,
+  "proof": 93.16,
+  "recipe_impact": 0.47,
+  "recipes_and_host_tests": 10.81
  },
- "rebuilt_theories": [],
+ "rebuilt_theories": [
+  "Development_Admitted_Publication",
+  "Development_Certified_Generations",
+  "Development_Constant_Verification",
+  "Development_Decision_Generations",
+  "Development_Decomposition_Soundness",
+  "Development_Definition_Verification",
+  "Development_Edited_Local",
+  "Development_Edited_Undeclared",
+  "Development_Located_Rows",
+  "Development_Machinery",
+  "Development_Native_Answers",
+  "Development_Native_Decomposition",
+  "Development_Native_Readiness",
+  "Development_Native_Selection",
+  "Development_Publication",
+  "Development_Refinement_Repair",
+  "Development_Refinement_Verification",
+  "Development_Repair_Rows",
+  "Development_Request_Keys",
+  "Development_Request_Packets",
+  "Development_Request_Scope",
+  "Development_Requests",
+  "Development_Row_Data",
+  "Development_Row_Presentations",
+  "Development_Rows",
+  "Development_Seed_Loop",
+  "Development_Seed_Publication",
+  "Development_Seed_Verification",
+  "Development_State_Edit",
+  "Development_State_Presenter",
+  "Development_State_Rows",
+  "Development_Subject_Index",
+  "Development_Successor",
+  "Development_Verdict_Difference",
+  "Development_Verdict_Mentions",
+  "Development_Verdict_Statements",
+  "Development_Verdict_Unreached",
+  "Isabelle_Native_Reach",
+  "Native_Development_Machinery",
+  "Native_Development_Seed",
+  "Native_Table_Reach"
+ ],
  "recipes": {
   "allocated-environments": {
    "status": "unchanged"
@@ -127,10 +170,14 @@
    "status": "unchanged"
   },
   "native-development-machinery": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development-seed": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -187,8 +234,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1830,
- "seconds": 15.45,
+ "reused_theories": 1789,
+ "seconds": 129.6,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

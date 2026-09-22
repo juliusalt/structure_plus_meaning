@@ -4,16 +4,6 @@ begin
 
 section \<open>Records whose fields are complete families of citations\<close>
 
-lemma syntax_branch_eq_iff:
-  "syntax_branch i a=syntax_branch j b\<longleftrightarrow>i=j \<and> a=b"
-proof (cases "i=j")
-  case True then show ?thesis using syntax_branch_injective[of i] by (auto simp: inj_def)
-next
-  case False
-  have disjoint: "range (syntax_branch i)\<inter>range (syntax_branch j)={}"
-    by (rule syntax_branch_disjoint[OF False])
-  show ?thesis using disjoint False by blast
-qed
 
 definition collection_members :: "nat \<Rightarrow> (local_address\<times>local_address) set" where
   "collection_members n=image (\<lambda>i. (family_ports n!i,syntax_branch i [])) {..<n}"

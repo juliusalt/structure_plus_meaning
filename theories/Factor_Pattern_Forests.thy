@@ -24,21 +24,6 @@ lemma syntax_branch_not_binder [simp]: "syntax_branch i a \<notin> binder_addres
 lemma syntax_branch_not_binder_cons [simp]: "syntax_branch i a \<noteq> 6#b" "6#b \<noteq> syntax_branch i a"
   using syntax_branch_top_prefix[of i a] by auto
 
-lemma syntax_branch_eq_iff: "syntax_branch i a = syntax_branch j b \<longleftrightarrow> i = j \<and> a = b"
-proof
-  assume same: "syntax_branch i a = syntax_branch j b"
-  have ij: "i = j"
-  proof (rule ccontr)
-    assume "i \<noteq> j"
-    then have disjoint: "range (syntax_branch i) \<inter> range (syntax_branch j) = {}" by (rule syntax_branch_disjoint)
-    have "syntax_branch i a \<in> range (syntax_branch j)" using same by simp
-    then have "syntax_branch i a \<in> range (syntax_branch i) \<inter> range (syntax_branch j)" by simp
-    then show False using disjoint by blast
-  qed
-  have "syntax_branch i a = syntax_branch i b" using same ij by simp
-  then have "a = b" by (rule injD[OF syntax_branch_injective])
-  then show "i = j \<and> a = b" using ij by simp
-qed simp
 
 lemma bound_branch_binder: "a \<in> binder_addresses \<Longrightarrow> bound_branch i a = a"
   by (simp add: bound_branch_def)

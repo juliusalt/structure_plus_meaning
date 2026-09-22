@@ -1,1 +1,6 @@
-{"recipe_source_manifest":"builtin-investigations-sources.json","recipe_source_manifest_sha256":"947e9bd32914f553ccd1171e01fd99e41e90040589aeca7dfb543d61dd6c0ef0","recipe_files":732,"boundary":"Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized."}
+{
+ "boundary": "Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized.",
+ "recipe_files": 732,
+ "recipe_source_manifest": "builtin-investigations-sources.json",
+ "recipe_source_manifest_sha256": "bb2f2a9defba8749bed858abbe3f9078402112244514551d0fc905f9d6c7775a"
+}

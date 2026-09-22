@@ -1,1 +1,6 @@
-{"recipe_source_manifest":"digit-allocation-sources.json","recipe_source_manifest_sha256":"d3d0c7370e7a225d21e4394c8623edeada16c806635206fb942559165c517393","recipe_files":912,"boundary":"Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized."}
+{
+ "boundary": "Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized.",
+ "recipe_files": 912,
+ "recipe_source_manifest": "digit-allocation-sources.json",
+ "recipe_source_manifest_sha256": "d2806d5758fd9411b27bb573187f3cf04099acf3c5cc304c26246f413ffe27ee"
+}

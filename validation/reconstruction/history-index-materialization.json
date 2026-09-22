@@ -1,1 +1,6 @@
-{"recipe_source_manifest":"history-index-sources.json","recipe_source_manifest_sha256":"704d40883d305d57fcee02a845f3c66f1920033be3fef416bf92c397eaaf4567","recipe_files":868,"boundary":"Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized."}
+{
+ "boundary": "Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized.",
+ "recipe_files": 868,
+ "recipe_source_manifest": "history-index-sources.json",
+ "recipe_source_manifest_sha256": "d68b9374d25e5550007253cc11c27bc9224e11427464ba1fd4ac21ea7952f953"
+}

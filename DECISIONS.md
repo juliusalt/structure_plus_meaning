@@ -10621,6 +10621,15 @@ read. The correspondence at a parent `p` with a locus and subject `{c}`:
   state's rows natively (the Definition family and the parent's kind family of `Development_State_Rows`, with
   `state_presents` replacing `development_state_poses`) once the per-family traversal is stated, and restores the
   equality above.*
+- *Corrected 2026-09-22 (task 94): the equality above is restored, stated by
+  `Development_Native_Decomposition.native_decomposition_applies`. The argument carries the Definition family and the
+  families of the parent's kind of `Development_State_Rows` and task 36's declaration store; each citation is read
+  positively, by task 34's traversal (a row has the key among its subjects) and task 36's store (a row declares it):
+  one every-program premise of each reading over the intermediates, one of each at the parent's constant, whose key
+  the parent's locus holds. The premises are `development_rows_present` and `state_presents` with one key, and the
+  store's single-valuedness (`declarations_single_valued`, owned by the exporter), which makes a found declaration
+  the one declaration `development_stated_constant` reads (`development_stated_native`); `development_state_poses` is
+  gone. `native_decomposition_reduction` rests on the native application.*
 - Soundness is not weakened. `development_decomposition_reduction` holds at `p`, and there it is trivial as a
   composition: task 60's predicate reads only a problem's subject and the kind of its contract
   (`development_problem_stated`), the extended state keeps every position of the state it extends

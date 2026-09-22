@@ -24,8 +24,9 @@ excess and undeclared (#36, `bb560b6a`, `Development_Verdict_Mentions`: the ment
 generic over the row reading, the guarded traversal over any selection and predicate, `excess` over any selection and
 support family, the declaration store by constant key), and roots with the permitted difference (#38, `a6716b8a`,
 `Development_Verdict_Difference`: the search of a presented state's rows by row key, the reduction of an edit
-`edit_reduced`, owned by the answer reader). In review: unreached (#40: the reach table as a reusable presentation,
-and the one held measurement of a judgment, `.build/tasks/40/measurement.txt`). Then the entry rule, its contract and two instances
+`edit_reduced`, owned by the answer reader), and unreached (#40, `67b9b698`: over the native reach,
+`native_unreached_exact`, the reach table `state_reach_table`; the held measurement of a judgment in
+`.build/tasks/40/measurement.txt`). Then the entry rule, its contract and two instances
 (#42, after #106); store absence and the witnesses (#44), last, so that no positive field reaches an absence. #36's
 guard decided a row's subject by path inequality, a comparison notion the entry excludes: design #138 (`10f3ec9d`) reads
 the rows about a subject through a subject index total over the state's atoms, an instance of the index notion with no
@@ -47,7 +48,7 @@ values — after #106, #108, #110 and #97; and #114, the held measurement of one
 
 **The incremental assessment (#171).** Open 1, planned from #40's held measurement: one seeded judgment 0.30 s
 positioned (unreached 51%), the machinery's unreached 0.87 s of closure and 3.90 s positioned, the presenter's families
-0.105 s; a stage of 224 answer states about 4,500 s against 22.4 s in HOL. Design #171, after #40 and #139, decides what
+0.105 s; a stage of 224 answer states about 4,500 s against 22.4 s in HOL. Design #171, after #139, measures the machinery's whole judgment held (#40's follow-up 1) and decides what
 of a request state's assessment a stage reuses and how each field follows from the answer's edit (#38's
 `edit_reduced`), over the positions #161 keeps. No engine refinement precedes it (q54): a stage's cost is its count of
 whole judgments, which it removes. Its builds are briefed from its entry.
@@ -102,9 +103,10 @@ clauses, and `family_ports` and `fresh_addresses` share the unary pattern. #136'
 uncompiled schema coordinates, `unary_address` retired (q47, q49); #142's builds are placed: the contracts in four parts with
 every word equal (#147 and #149 side by side, then #151 and #153), the layout with the one word change (#155, after
 them and #90), the base reset to one level with its receipts retained (#157, after #145 too, which writes the same
-receipts), the held measurement on the last base without the layout and the first with it (#159), each with its review. #90 switches the 20 overnight native-control theories; the overnight boundary, which no check runs
-and which lags its sources since `d0b70ea2` and `5c26b791` (q33, as #90 read it), is not re-recorded by it (q53,
-Open 55). #92 retires `filtered_development_question`'s index form after #90 and #30; q33's facts are named in its
+receipts), the held measurement on the last base without the layout and the first with it (#159), each with its review. #90 (`7379cfc7`) switched the 20 overnight native-control theories to the keyed question; the overnight
+boundary, which no check runs and which lags its sources since `d0b70ea2`, `5c26b791` and `7379cfc7`, is recorded as
+historical at `aa946a22` by #172 (Open 55, q53). #92 retires `filtered_development_question`'s index form after #167,
+stating `keyed_development_admission_at` once for its four users (#90's follow-up 3); q33's facts are named in its
 inputs. Observation's read-back of an installed program (Open 46) waits on the
 layout's measurement.
 
@@ -121,14 +123,13 @@ Open 27.
 includes their reviews. The deepest chains are 10, the layout's and #135's line made one by the serialized word
 changes: #149, #151, #153, the layout #155, the base reset #157, then #161, #165, #167, #169 and its review #170, or
 #92 and #93 after #167. Nothing is added after #170 or #93; detail spliced into that chain is. Then #114 (after #112,
-#110, #108, #139), 5, and #45 (after #44, #42, #40/#139), 4. Beside them: #163 (no word, at once); the design #171
-after #40 and #139; #143; #144, then #145; #139; #94, then #64 (after #161 too); #128; #132, then #130; #90, which
-#155 waits on.
+#110, #108, #139), 5, and #45 (after #44, #42, #139), 4. Beside them: #163 (no word, at once); the design #171
+after #139; #143; #144, then #145; #139; #94, then #64 (after #161 too); #128; #132, then #130; the overnight boundary #172.
 
-**Order** (`94 128 129 144 139 140 40 41 143 90 91 103 104 132 133 171 147 148 149 150 151 152 153 154 108 109 42 43 145 146 155 156 157 158 161 162 163 164 44 45 110 111 112 113 114 165 166 167 168 169 170 159 160 130 131 64 65 92 93`).
+**Order** (`94 128 129 144 139 140 143 103 104 132 133 171 172 147 148 149 150 151 152 153 154 108 109 42 43 145 146 155 156 157 158 161 162 163 164 44 45 110 111 112 113 114 165 166 167 168 169 170 159 160 130 131 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43), so the landings in flight come first:
-#94's, #128's held pair with its review, #144 after the two, #139, #40, the replay #143, #90, #103 and #132. Then the
-design #171, which can change the work after it; the layout's contracts, which head the 10-deep chain and take one slot
+#94's, #128's held pair with its review, #144 after the two, #139, the replay #143, #103 and #132. Then the
+design #171, which can change the work after it, and the small fix #172; the layout's contracts, which head the 10-deep chain and take one slot
 at a time, before the verdict's and request construction's heads (#108, #42), so that the other slot serves those; the
 receipts' form, the layout's word change, its base reset and #161; #163, whose slack lasts until #161 lands; the rest
 of the verdict and request chains; #135's later builds; then #159, #130, #64 and #92. A parked task whose hold nears
@@ -224,6 +225,11 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   measurement; refused for a full machine, a session parks for it (`v2.py park machine`) and is resumed when a run of
   its kind may start (the owner, 2026-09-21 22:31: up to 8 probes and 2 heavy runs at once).
 - **No task rests on reasoning not yet written.**
+- **Receipts land alone or delivered** (the owner, 2026-09-22 11:00): the finalizer refuses the receipts `retain`
+  writes (`validation/incremental-check.json`, `validation/reconstruction/`) in a task's files unless they are
+  committed alone (a retention) or its brief delivers them, and puts back what a tree holds of them uncommitted; a
+  brief whose work re-records a recipe's reports or converts receipts names them under `validation/reconstruction/` in
+  its Deliverable.
 
 ## Delivered
 
@@ -331,6 +337,19 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   repeated variable (`native_value_rule`); the reduction of an edit `edit_reduced R R' D A`, owned by the answer reader
   (`edit_reduced_lists`), and `shared_keys_correspondence`, the key correspondence under `keys_shared`. Its two
   questions go to #42's brief as marked corrections of the verdict entry.
+- **#40** committed `67b9b698`: `unreached` as a native definition composing the reach (`native_unreached_exact`,
+  `native_unreached_assessment`, the fourth member of `isabelle_context_assessment`), the reach consumed at its own
+  sites, the reach table `state_reach_table` with its row lemma, acceptance positive; the held measurement
+  (`.build/tasks/40/measurement.txt`): one seeded judgment 0.30 s positioned (about four bare reaches), the machinery's
+  unreached 0.87 s of closure and 3.90 s positioned (240 s keyed, 7 times the bare reach). Its follow-ups: the
+  machinery's whole judgment to #171, the `[code_unfold]` declarations to #42, Open 56–58, the probe's summary to the
+  owner.
+- **#90** committed `7379cfc7`: the 20 overnight native-control theories on the keyed question — every question
+  `keyed_development_question`/`keyed_faceted_question` at `first_occurrence_key` of its own list, every choice
+  `keyed_admitted_choice`, task 54's contracts consumed by name; `faceted_native_question` an abbreviation; the
+  overnight words not re-recorded (q53); `finite_development_index`'s remaining readers are
+  `Factor_Source_Development_Subjects` and `Native_Source_Development`. Its follow-ups: the boundary to #172, the
+  one-facet admission to #92, Open 59–60, the doubled landing check to the owner.
 
 ## Open
 
@@ -509,21 +528,44 @@ Not yet planned, in the order they are expected to be planned:
     pass per address; a code equation, optional.
 54. **Task 124's entry names design 136's entry** where it names design task 136 ("The native package reader reads
     each definition once"). With that entry's next edit.
-55. **The overnight boundary** (`tools/reconstruct_overnight.py`, `validation/overnight-20260918/`; q33, q53): no
-    check runs it — a consolidated build of every integration root (16 threads, 1200 s), an export and three native
-    replays whose sources replay has timed out — and it lags its sources since `d0b70ea2` and `5c26b791`; #90's
-    switch changes the words of its certificate, material and source reports. Either a recipe of the check, so that a
-    refinement's word equality covers the overnight theories (its sources replay's cost attributed first), or its
-    boundary recorded as historical at the commit it reproduces. Planned from #90's result, after its landing.
+55. **The overnight boundary** (`tools/reconstruct_overnight.py`, `validation/overnight-20260918/`; q33, q53) —
+    recorded as historical at `aa946a22` by #172. A live recipe, so that a refinement's word equality covers the
+    overnight theories, waits for a measured need: it is a consolidated build of every integration root, an export
+    and three native replays (the sources replay timed out), beyond a check's budget, and its reports are off the
+    loop's path.
+56. **The certificate path's keyed cost on the verdict** (#40's follow-up 2): the unreached field's keyed evaluation
+    takes 240 s on the machinery, 7 times the bare reach; any admission of the verdict through `keyed_program_proofs`
+    pays it, and a positioned labelled history (the Decisions' "Not taken") is its prerequisite. Planned when the
+    native verdict is first admitted through certificates, after #42.
+57. **Facts placed downstream of their notions** (#40's follow-up 3): `table_reached_simulation` into
+    `Native_Table_Reach`; `isabelle_entity_reach_pairs_member`, `isabelle_reach_pairs_member`,
+    `isabelle_reach_predecessors_member`, `isabelle_reach_heads_member` and `isabelle_reach_constants_member` into
+    `Isabelle_Native_Reach`, with their map row; `entity_kinds`, `state_families` and `state_families_range` into
+    `Development_State_Rows` (`state_families_rows` then over `state_families R`). With the next edit of each owner.
+58. **The reach table's construction** (#40's follow-up 6): `state_reach_predecessors` per atom reads every
+    mentioning row, O(atoms × rows), with a row for every name-table atom; if request construction builds the table
+    per request, the refinement is an inverted index of mentions built once (a relation store keyed by mentioned key,
+    an index-notion instance). At #114's measurement.
+59. **The judgment bridge's rows carry a candidate position** (#90's follow-up 2): `judgment_bridge_receive` filters
+    `[0..<length judgment_bridge_candidates]` by each position's key path, and its field lemmas state `i<length …` and
+    `judgment_bridge_candidates!i`; the rows can carry the subject through `keyed_admitted_subjects`, stated at the
+    subject as the admissions are, and the positional traversal goes (reaching `admitted_judgment_artifacts` and
+    `judgment_bridge_install_summary`). With or after #92.
+60. **Stale overnight map rows** (#90's follow-ups): `Native_Control_Judgment_Review`,
+    `Native_Control_Refinement_Composition` and `Native_Control_Judgment_Source` name contracts now stated at a
+    subject; `absent_native_choice` now states `keyed_admitted_choice`. With the next edit of each.
 
 ## Now
 
 - **In flight (plan-42, 11:05)**: #94's quick fix (q52) hands over again with main's `validation/` files; #128 owes its
-  held pair and hand-over; #139, #40, #90, #103 and #132 are with their reviews or finalizers, each told to bring main
+  held pair and hand-over; #139, #103 and #132 are with their reviews or finalizers, each told to bring main
   in before hand-over; #143 replays #30's two unproduced records (parked); #144 advances and retains after #94 and
   #128, #145 converts the receipts after it; #147 and #149, the layout's first contracts, build side by side; #171
-  designs the incremental assessment after #40 and #139. #42's brief carries #106's review, #38's reduction and
-  questions, and the `[code_unfold]` declaration (q54); #112's carries #106's review.
+  designs the incremental assessment after #139, measuring the machinery's whole judgment first. #42's brief carries
+  #106's review, #38's reduction and questions, and the `[code_unfold]` declarations #40 needed (q54); #112's carries
+  #106's review. #155's, #157's, #92's and #64's briefs name the receipts and reports they deliver under
+  `validation/reconstruction/` (the owner, 11:00). #172 records the overnight boundary as historical, beside
+  everything.
 - **Owed to briefs when their inputs land**: #110's brief takes #139's derived `declarations_single_valued` in place
   of the carried condition; #64's brief takes #161's identity lemma in place of a transport (#135's entry, q48) and
   #94's contract; #171's builds are briefed from its entry.
@@ -552,16 +594,13 @@ Not yet planned, in the order they are expected to be planned:
     the planner, and queueing it starts a new round (#76, 03:20).
   - The harness kept the deleted review task 67 in #66's `review_tasks`, so #66 waited until the same verdict was
     recorded against 67.
-  - A planner's `tell` is refused while a re-queued task's session is not yet attached, so the answer to a failed
-    commit reaches its quick fix only as a reply to its question (#94, 10:05). The finalizer's landing check accepted
+  - The finalizer's landing check accepted
     #94's tree while it held stale copies of main's `validation/` files, and the commit then failed at the merge: a
     trial merge of every file a task changes, before its check, finds that in seconds (#97's rows written twice are
     the same gap). `bring-main` then refuses the conflicted branch, and refuses again once those files are rewritten
     (uncommitted changes in their paths), so a quick fix resolves a failed merge only through the files it hands over
     (#94, q52).
-  - The sessions' sandbox cannot write the repository's `.build/` root (q31; briefs named `.build/check-*`). A
-    command after `v2.py change` in the same call still stops on zsh's read-only `status` (plan-41, 10:00: the change
-    written, the command after it not run), although the harness of 09:43 lets a change share a call.
+  - The sessions' sandbox cannot write the repository's `.build/` root (q31; briefs named `.build/check-*`).
   - The probe guard still requires `--timeout` to be named and cites the old 1200 s default, as does the memory note on
     probing (#79's review).
   - A `=== write` in `v2.py change` replaces an earlier round's deliverable without notice (#80's second round), and a
@@ -577,7 +616,13 @@ Not yet planned, in the order they are expected to be planned:
   - The planner cannot read a design's entry before it lands: `v2.py read` and a plain read of
     `.build/trees/ID/DECISIONS.md` are refused, so a design's verdict rests on its result and commit message (#85).
   - A re-review writes over the first review's `review.md`, so the follow-ups it says still stand are in no file when
-    the build lands (#118).
+    the build lands (#118); #38's first review's follow-ups were lost so (11:00).
+  - A probe's summary is not kept beside its log (#40's first probe kept only `probe.log` and `probe.ML`, so
+    `parallel_proofs: 0` rests on the cpu/elapsed ratio): the probe tool's summary should be kept, as `mrun.out` was
+    (#40's review).
+  - The finalizer ran two landing checks on one tree with identical inputs (#90: 311.5 s and 330.0 s, the same 155
+    theories rebuilt); reusing an accepted check on unchanged inputs would save about five and a half minutes a
+    landing (#90's review).
 - **The active base is `.build/tasks/base-advance/base-20260922d/proof`** (#119, `c6f5551f`, HEAD `609ffee6`; the lineage five
   levels, 0.33 s to verify; #119 removed `base-20260922c`'s executions, and its receipts name `base-20260922d/recipes`
   and, for the 30 it reused, `.build/tasks/receipts-1/retain-check`, long removed and read by nothing), over

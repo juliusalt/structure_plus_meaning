@@ -1828,4 +1828,5 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Request_Scope
     Development_Verdict_Unreached
     Development_Verdict_Difference
+    Development_Row_Data
     Development_Row_Presentations

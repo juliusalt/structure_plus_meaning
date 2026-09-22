@@ -46,6 +46,20 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done (with where), `[-]` decided ag
 10. [ ] Tests, mutation cases, suite, deploy, handoff note, commit.
 11. [~] Then: every role's sessions for read/write batching and information delivery; every protocol and prompt.
 
+## What it is worth, at 2026-09-22's volume (435M input-equivalent, 94 landings)
+
+- Smaller worker bases: high 601,541 → ~530K, xhigh 542,564 → ~457K; the base-prefix reads were 169M (high roles)
+  and 75M (xhigh roles): about **20M + 12M a day**, with the budgets now holding what the roles used.
+- The reviewer's first read in its first message: about **5.4M a day** (a request of 109), and each review a turn
+  sooner on the landing path.
+- Layers refreshed by carried cost instead of about hourly: at ~700K (high) and ~540K (xhigh) a refresh, roughly
+  **4–5M a day**; xhigh's forks told only what changed after its delta.
+- Deltas built at 4K moved: about **1–2M a day**.
+- An accepted task left in review committed by rule: the orphans of the day cost **~5M** in pings alone, and held
+  the head of the planner's order for eight hours.
+Together about 45–50M a day, some 11%, before the quality gains: frontier theories used by 17.6% of forks where the
+held ones averaged 13.3%, xhigh's frontier from 40 to 55 theories in use, and no reference the roles never used.
+
 ## For the owner: build, seal and start
 
 The lists are ready (high and xhigh name a new stable reference; max's is unchanged but its entry is cold). One command

@@ -12043,7 +12043,7 @@ every premise `(k,(d,q))` of `ps` has `d` holding of `f`'s evaluation of `q`; `s
 needs no side condition on the premises' variables: a premise that holds is formed, so `f` is formed at every
 variable a premise reads (`evaluate_pattern_variables_formed`). Only `native_rearranging_program.at`, an iff at every
 evaluation, needs the premise's variables among the conclusion's, and keeps that assumption. Its proof is the one
-place the `holds_cases`/`native_step` argument is made [corrected by task 247: the law's argument is
+place the `holds_cases`/`native_step` argument is made [corrected 2026-09-22, task 247's review: the law's argument is
 `ordinary_schema_rule_valuation`/`native_step`]; it reads nothing of the patterns' shape, so literal leaves,
 repeated variables, no premise and several premises are instances alike. `finite_native_rule_eq_iff` reads a native
 rule's conclusion and premise set back from its value.
@@ -12052,7 +12052,7 @@ rule's conclusion and premise set back from its value.
   `native_rearranging_program` (its `exact` is the law's at one rule and one premise; `at` from that and the two pattern
   facts), `native_member_program.exact`, `native_every_program.relation_equation` (its step rule has two premises),
   `native_some_program.exact`, `native_keyed_search_program.exact`. What the law does not replace stays: each
-  program's `unfold` [corrected by task 247: each `unfold` is a corollary of the law's `supported_clause`], the inversion of one rule application supported in an arbitrary relation, which least-fixed-point
+  program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's `supported_clause`], the inversion of one rule application supported in an arbitrary relation, which least-fixed-point
   arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
   the law's single step does not carry.
 - The two pattern facts now stand in `Factor_Rule_Instances` beside `evaluate_pattern_cong` and

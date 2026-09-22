@@ -218,6 +218,65 @@ lemma development_seed_publication_prepared [code]:
   by (simp only: development_seed_publication_def development_seed_publication_from_known
     parallel_computed_function_exact Let_def)
 
+section \<open>A snapshot's formation is read once for all its publications\<close>
+
+text \<open>
+  Every row publishes over the same published incumbents, and so does the sequential publication of the
+  whole round: publishing over a snapshot checks its formation. The publisher of the incumbents is the
+  publication over their snapshot applied to the snapshot alone, whose code equation
+  (\<open>finite_locus_publications_code\<close>) reads the formation once, where the publisher is made; every row and
+  the round's own publication use that publisher. The report is unchanged.
+\<close>
+
+definition development_seed_publication_row_with ::
+    "((finite_generation option\<times>finite_generation option) list \<Rightarrow> finite_transaction_result option list) \<Rightarrow>
+    development_constructor \<Rightarrow> development_payload_judge \<Rightarrow> development_seed_incumbent list \<Rightarrow>
+    development_problem list \<Rightarrow> development_request\<times>(nat\<times>development_problem) fset fset \<Rightarrow>
+    development_seed_publication_row" where
+  "development_seed_publication_row_with publish construct judge xs selected issue=(case issue of (r,reading) \<Rightarrow>
+     let I=map_option (\<lambda>(B,u,G). G) (development_seed_incumbent_of xs r);
+       issued=development_seed_issue_using construct judge xs selected r reading;
+       Q=map_option (\<lambda>(B,rows,Q). Q) issued;
+       G=development_seed_answer_using construct judge development_seed_state r issued;
+       H=development_seed_answer_using construct judge development_seed_renamed r issued
+     in (Q,G,H,publish [(None,Q),(I,G),(I,H)],
+       map_option generation_payload G=map_option generation_payload H))"
+
+lemma development_seed_publication_row_published:
+  "development_seed_publication_row construct judge xs selected S0=
+    development_seed_publication_row_with (\<lambda>ps. case S0 of None \<Rightarrow> [] | Some S \<Rightarrow> finite_locus_publications S ps)
+      construct judge xs selected"
+proof (rule ext)
+  fix issue
+  show "development_seed_publication_row construct judge xs selected S0 issue=
+    development_seed_publication_row_with (\<lambda>ps. case S0 of None \<Rightarrow> [] | Some S \<Rightarrow> finite_locus_publications S ps)
+      construct judge xs selected issue"
+    by (cases issue) (simp only: development_seed_publication_row_def development_seed_publication_row_with_def
+      prod.case Let_def)
+qed
+
+lemma development_seed_publication_from_published [code]:
+  "development_seed_publication_from construct judge decisions=(let
+     xs=development_seed_incumbents_with judge development_seed_problems;
+     S0=development_seed_snapshot xs;
+     publish=(case S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> finite_locus_publications S) in
+     case decisions of None \<Rightarrow> (S0,None,[],[])
+     | Some (selected,issues) \<Rightarrow> (let
+         Sel=map_option (\<lambda>(B,u,G). G) (development_selection_generation_with judge (fst (snd development_seed_state))
+           selected (finite_enumerated_environment [] []) []);
+         rows=Parallel.map (development_seed_publication_row_with publish construct judge xs selected) issues;
+         incumbents=map (\<lambda>(r,reading). map_option (\<lambda>(B,u,G). G) (development_seed_incumbent_of xs r)) issues in
+       (S0,Sel,rows,publish ((None,Sel)#map (\<lambda>(Q,G,H,results,equal). (None,Q)) rows@
+             map (\<lambda>(I,(Q,G,H,results,equal)). (I,G)) (zip incumbents rows)))))"
+proof -
+  have publish: "(case S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> finite_locus_publications S)=
+      (\<lambda>ps. case S0 of None \<Rightarrow> [] | Some S \<Rightarrow> finite_locus_publications S ps)" for S0 :: "finite_snapshot option"
+    by (cases S0) simp_all
+  show ?thesis
+    by (simp only: development_seed_publication_from_def development_seed_publication_row_published
+      publish Let_def)
+qed
+
 section \<open>The report is presented through the presentations of its notions\<close>
 
 definition development_seed_publication_data :: "development_seed_publication \<Rightarrow> finite_factor_term" where

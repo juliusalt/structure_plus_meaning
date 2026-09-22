@@ -10247,3 +10247,47 @@ a carrier that cannot instantiate a statement without weakening it — comes to 
 notion would then be two. This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-21.
+
+## A snapshot's formation is read once for all the publications over it
+
+The seed recipe sets the recipe phase of every landing check (the recipes run in parallel and it is
+the longest), and within it one presentation, `development_seed_publication_value`, is the recipe:
+144.5 s in the base's check, 181.9 s in #49's, 241.7 s in #78's, against about 15 s for each of the
+other eleven. Attributed stage by stage under a machine hold on #78's export
+(`.build/tasks/seed-recipe-cost/attribution.md`), its seconds were the word fold (99 s, almost all
+of it the sequential first-occurrence reference run over 3,946 target occurrences of 63 artifacts,
+which `a436a40e` has since segmented, "A reference sequence is computed segment by segment") and
+the publication of the round (67 s). Exploratory runs beside other work, which show the split and not
+absolute cost, divided the round: per row about 0.5 s for the issue, up to 2 s for each answer and
+6–15 s for its three publications, of which 3.5–3.8 s was checking the formation of the published
+incumbents' snapshot. Every row and the round's own publication checked that one snapshot again:
+eleven times.
+
+The refinement reads it once, by extending the refinement that already states the publication over
+a formed snapshot: `finite_locus_publications_code` (`RRA_Formed_Snapshot_Transactions`) is now
+stated for the snapshot alone, `finite_locus_publications S = (if finite_snapshot_formed S then
+finite_locus_publications_formed S else map (λq. None))`, from the same two lemmas
+(`finite_locus_publications_formed_exact`, `finite_locus_publications_unformed`), so that every
+client's partial application checks the formation once, where it is made.
+`development_seed_publication_row_with` is the row over a given publisher,
+`development_seed_publication_row_published` proves the original row is it over the original
+publication, and the code equation `development_seed_publication_from_published` binds the publisher
+to `finite_locus_publications S` once for every row and the round. The report, and so every word, is
+unchanged: the equations are proved, not asserted. No new notion, and no second copy of the case split.
+
+### Evidence and limits
+
+The repository check accepts it (`.build/tasks/80/check-t80d`) with every proof, tool test and
+recipe word equal. Under one machine hold, back to back, the seed recipe run alone went from
+105.50 s (the tree at `77192fee`, before the refinement) to 93.04 s, all of it in the publication
+presentation (105.45 → 92.99 s), the eleven other presentations within run spread
+(`attribution.md` §4.2). A harness computing the publication presentation alone under a hold showed
+101.1 → 80.6 s, but its before export predates `77192fee`, so it does not measure the refinement
+alone. What remains of the
+publication's cost is the transactions' own formation and comparisons: each proposed generation's
+formation is checked with all its predecessors again, although every generation published here was
+just recorded by a constructor whose contract states it formed; carrying that fact into the
+transaction is a further refinement with its own proof, brought to the planner. This entry was written
+outside the loop and is a residual.
+
+Recorded 2026-09-22.

@@ -12119,6 +12119,15 @@ readiness (`readiness_settled` and `readiness_answered` cases) take `supported_c
 least-closure inductions stay: the law is one rule application, and the invariant over the least fixed point is not
 carried by it. `conjoined_calls_program` stays as it stands. No rule value changed, so no recorded word changes.
 
+The level a use cites (the planner's decision on task 259's review, carried out by task 272): a use cites the most
+specific contract that states what it needs, an instance's contract (a rearranging program's `exact` or `at`, a
+family's `exact`) where one states it, and the raw law (`exact`, `holds_rule`, `step_at`) only where none does;
+identifying a rule with its instance at the use would make in place the argument the instance makes once.
+`native_ready_exact` and `native_settled_complete` cite `readiness_ready_family.exact`/`.at` and
+`readiness_answered_family.at`; the invariant's `readiness_settled` and `readiness_answered` cases, over an arbitrary
+support relation where no rearranging contract speaks, take rule, conclusion and support from the law's
+`supported_clause`. Readiness's four pattern abbreviations are `abbreviation (input)`, terms unchanged.
+
 ## The overnight native-control questions state their candidates as keys
 
 Task 56 moved the loop's contract question to the keyed question and left the index form serving the

@@ -34,9 +34,8 @@ comparison and no absence. #139 built it (`b560df2a`, `Development_Subject_Index
 and derived `declarations_single_valued` from the exporter's obligation `isabelle_declared_once`; #176 states that
 obligation once in `Isabelle_Entities`, re-pointing the successor's stronger copy (every word equal, the seed report's field
 deciding a sufficient condition through one lemma) — landed by #243 (`76cd520c`); #256 (`cc1b03fb`) makes the exporter
-prove it at every state it defines, and #227, accepted, cites it at the exported states and lands again after its merge
-round (its `THEORY_MAP.md` row of `Isabelle_Entities` doubled at the merge). #42 and #110 wait on #227; the
-rule-family law #233 has landed. #267 (`8b77ee97`) listed the exporter's declarations in position order and proves the
+prove it at every state it defines, and #227 (`64af2b10`) cites it at the exported states, its map row's three
+sentences left to #42 (mailed). #42 and #110 are ready; the rule-family law #233 has landed. #267 (`8b77ee97`) listed the exporter's declarations in position order and proves the
 obligation linearly (one word change); #274 proves it on the definition's right-hand side, since rewriting the goal
 with the whole context term takes 0.6 s of its 0.62 s at the machinery state (#267's review). #42
 passes the indexes, #44 builds absence with no inequality and excess's witness over the index, #108 reads it. Roots
@@ -53,8 +52,8 @@ once, keyed, with the entity-key condition by name; from its review, #249 moves 
 `Development_State_Rows`, the presenter concluding it as `state_presenter_entity_key`, and #110 states the scope's
 `statements` step beside `development_constant_scope_member`. #110 checks declarations cited with
 `store_found_program` directly; #112's call carries the body's path stores built from the executor's lists, no rule
-reading a list as a store (native production stays Open 39). #110, the three search fields, after #227 (#261, `43f5bde0`, placed what #249 left of #182's items; its review's premise
-by name is mailed to #110 and #112);
+reading a list as a store (native production stays Open 39). #110, the three search fields, ready since #227 landed (#261, `43f5bde0`, placed what #249 left of #182's items; its
+review's premise by name is mailed to #110 and #112);
 #112, the construction — rule, program, contract, conditions and corollaries, admitting a request at its locus through
 the store search with #97's contract for held values — after #110; and #114, the held measurement of one
 construction, after #112.
@@ -181,9 +180,10 @@ stated it once in `Native_Collection_Programs`, #208's law its instance, with Op
 (`supported_clause`); #247 (`e8d2158c`) completed it — the introduction half at any relation, the conclusion from
 `supported_clause`, `holds_rule` returning the rule — its review's documentation corrections and the inductions going
 to #235 and its two factorings inside the theory to Open 79; its re-citations follow the builds editing their theories — the verdict's families, the
-value rule and the decomposition rule (#235, `fb032252`), readiness's rules and inductions (#259, `43f5bde0`; #272
-cites readiness at its instances' contracts and records the level a use cites in the law's entry, the planner's
-decision on #259's review, before #214, #237 and #239), the formation rules, the any rule and the two-premise call (#237, after #214, #235 and #261), the store search (#239, after #44) — each with its review.
+value rule and the decomposition rule (#235, `fb032252`), readiness's rules and inductions (#259, `43f5bde0`; #272,
+`75035bc1`, cites readiness at its instances' contracts and records the level a use cites in the law's entry; #275
+states the rearranging program's contract at an arbitrary support relation once, re-citing readiness's and the reach's
+inductions, with Open 79's items, before #214, #237 and #239, which wait on it), the formation rules, the any rule and the two-premise call (#237, after #214, #235 and #261), the store search (#239, after #44) — each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews; a fix the planner creates has no review task (the harness reviews it in its own folder). The
@@ -191,19 +191,19 @@ deepest chains are 9, the layout's and #135's line made one by the serialized wo
 layout #155, the answer records' re-recording #157 (after #267 too), then #161, #165, #167, #169 and its review #170,
 or #92 and #93 after #167; one task more may end that chain. The incremental line's measurement #194 and its review
 are 9 deep, through #161 and #187. Then #238 (after #237, #214, #44, #42 and #227), 6, and #114 (after #112, #110 and
-#227), 5. Beside them: the adoption tool's follow-up fix #273, the owner's ask's last part; #227's merge round; the
-probe's fix #271, then #251 after it; the presentation's refinement #269; the exporter proof's transport #274; readiness at its instances' contracts #272; the
+#227), 5. Beside them: the
+probe's fix #271, then #251 after it; the presentation's refinement #269; the exporter proof's transport #274; the rearranging contract at a support relation #275 (after #271); the
 re-citations #239 (after #44) and #237. A word change lands with its re-recorded words: since 20:12 the landing
 check's snapshot takes the report files a brief's Deliverable names (Q12, fixed in the harness as the provisional
 choice).
 
-**Order** (`147 128 227 273 271 241 155 156 42 43 110 111 269 274 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 272 251`).
+**Order** (`147 128 271 241 155 156 42 43 110 111 269 274 275 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 251`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
-#227's merge round, which #42 and #110 wait on; the owner's ask's last part, the adoption tool's follow-up #273; the probe's fix #271, which every session's inner loop needs and #251 waits
+the probe's fix #271, which every session's inner loop needs and #251 waits
 on; #241 after #147, head of the deepest chain, then the layout's word change #155, its answer records #157 and its
 measurement #159 soon after it, while the harness's lineage still holds the last base without it; the verdict's entry
-#42 and #110 as #227 lands; #269; the exporter proof's transport #274; #161; then the chains' next links as their inputs land, each ordered by the length of
-what follows it; the re-citations wherever a slot would otherwise stand idle; #64 and #92; #272 and #251 last. A
+#42 and #110, ready since #227 landed; #269; the exporter proof's transport #274 and the rearranging contract #275; #161; then the chains' next links as their inputs land, each ordered by the length of
+what follows it; the re-citations wherever a slot would otherwise stand idle; #64 and #92; #251 last. A
 parked task whose hold nears its end resumes first.
 
 ## Decisions
@@ -260,7 +260,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **A use cites the most specific contract that states what it needs** (the planner, on #259's review): an instance's
   contract (a rearranging program's `exact` or `at`, a family's `exact`) where one states it, the raw law only where
   none does; identifying a rule with its instance at a use makes in place the argument the instance makes once. #272
-  records it in the law's entry; #214, #237 and #239 were told.
+  records it in the law's entry (`75035bc1`); #214, #237 and #239 were told; #275 states the rearranging program's
+  contract at an arbitrary support relation, the rule's next level.
 - **Transport stays a task of its own and is not a design**: a packet is the presentation of a request row, so the
   octet direction's task 6 is a transport task with a reader contract, the reading the inverse of the presentation.
 - **A decision that cites rather than carries** waits for a measured need in a question that is then expensive (the
@@ -623,6 +624,13 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#267** (`8b77ee97`): the exporter's declarations in position order and `isabelle_declared_once` proved linearly by
   their strict order (one word change, landed through Q12's fix); its review's proof cost and order lemmas to #274,
   its note on the answer records to #157.
+- **#227** (`64af2b10`): `isabelle_declared_once` discharged at the exported states (`isabelle_declared_once_code`,
+  `Map_Filter_Lists`), landed in its fourth round with main's map row verbatim; the row's three sentences go to #42.
+- **#273** (`90991eac`): the adoption tool decides step 0 through the evidence by digest, an attempt never blocks a
+  later one, receipts keep digests once and no dangling path and are written atomically, the tool writes no bytecode;
+  the owner's ask of 18:32 closed. Its review's small items to Open 73.
+- **#272** (`75035bc1`): readiness's two theorems cite its rearranging families' contracts; the level a use cites is
+  recorded in the native rule family's law's entry; its review's support-relation lemma to #275.
 
 ## Open
 
@@ -857,7 +865,10 @@ Not yet planned, in the order they are expected to be planned:
 73. **#218's follow-ups** (DECISIONS.md "What a refinement keeps equal when a recorded state presents the refined
     constant's code equations"): (1) the adoption tool's criterion — `tools/development_adoption.py`'s step 3 (every
     word equal) replaced by the entry's, and adoption of seed-state answers at all — before the loop consumes an answer
-    to a seeded problem; (2) the six unexpanded constants restated at the premise's arity (`finite_citation_candidates`,
+    to a seeded problem, with #273's review's items: refusal receipts keeping a differing installed digest (as the context
+    step keeps `recorded_sha256`), the residual path check at retention dropped or its role stated, the entry saying
+    that no refusal persists, and the two older receipts' absolute `record` — kept as run, or given a derived relative
+    `record`, which renames the control again: the entry's decision; (2) the six unexpanded constants restated at the premise's arity (`finite_citation_candidates`,
     `finite_term_readings_bounded`, `finite_pattern_readings_bounded`, `finite_native_package_formed`,
     `finite_native_graph_demands`, `finite_native_package_readings`), with #131's follow-up 4 (their bodies named as
     constants), every word equal; (3) the seven seed roots so restated (the formation roots #130 guarded), a
@@ -884,11 +895,10 @@ Not yet planned, in the order they are expected to be planned:
 79. **#247's follow-ups inside `Native_Collection_Programs`** (`.build/tasks/247/review.md`): `holds_rule` re-derives
     what `holds_cases` derives — one `holds_clause` in `native_rule_family` for both; the four `unfold` corollaries
     share one composition — one law lemma, or dropped once #44, #110 and #235 cite `law.supported_clause` with
-    `unfold_rule`; the theory text's garbled "formed terms nowhere". With the next change to that theory, which
-    rebuilds about 1,049 theories; none is planned.
+    `unfold_rule`; the theory text's garbled "formed terms nowhere". Planned with #275.
 80. **#191's first review's follow-ups** (only their titles survive, in `.build/tasks/202/review.md`, since the
     re-review wrote over the first): the generic lemmas and `native_rotate_program` placed at their notions' homes
-    (the rotation with Open 79's next change to `Native_Collection_Programs`, if that is its home); one row reading over
+    (the rotation not with #275, which leaves #191's theory alone, but with that theory's next edit); one row reading over
     the key reading; O's closure in the same admission locale as the targets reading. With the next edit of #191's
     theory (`9c8622c2`), rediscovered there.
 81. **An adopted answer's precondition reconstructed at its receipt's `revision`** (#258's follow-up): possible for
@@ -914,19 +924,20 @@ Not yet planned, in the order they are expected to be planned:
   published state is never judged against itself"). Its adoption-tool half #265 landed (`75925bb8`). Its review's
   findings — step 0 by path while the evidence goes by digest, an attempt's receipt blocking a later attempt, a
   dangling path and one digest stored three times in the receipt, non-atomic receipt writes, a run without `-B`
-  refusing its own fresh tree over the tracked `.pyc` (Q9), the entry's old field name — are #273, which closes the
-  ask; the canonical digest is named `answer_digest` wherever it is carried (the planner, on #263's review).
+  refusing its own fresh tree over the tracked `.pyc` (Q9), the entry's old field name — were fixed by #273 (`90991eac`), which closed the ask: an
+  attempt is not an adoption and never blocks one, and the canonical digest is `answer_digest` wherever it is carried.
+  Its review's small items wait for the adoption tool's next edit (Open 73).
 - **The exporter's obligation**: #256 (`cc1b03fb`) makes the exporter prove `isabelle_declared_once` where it defines a
-  state; #227, accepted, re-lands after its merge round (its `THEORY_MAP.md` row of `Isabelle_Entities` doubled at the
-  merge, 19:56); its second round copied main's rows by hand and was rejected (20:14); in its third `bring-main`
-  refused at its gate the row both sides changed (20:19), so its fourth hands over main's row verbatim, which the
-  landing's merge settles, and #42 adds the row's three sentences after it lands (mailed). #267 lists the declarations in
+  state; #227 landed (`64af2b10`) with main's row of `Isabelle_Entities` verbatim, since `bring-main` refused at its
+  gate the row both sides had changed; until #42's map edit lands, that row lacks `Map_Filter_Lists` in its imports
+  column, `isabelle_declared_once_code` (via `map_filter_distinct_iff`) and the exporter's `NAME_declared_once` facts,
+  all three mailed to #42. #267 lists the declarations in
   position order and proves the obligation linearly (#256's proof is quadratic, 2.78 s on the machinery at every
   definition of a state): one word change, landed (`8b77ee97`); #157 re-records every answer record once over it and the
   layout (the native records' entity keys move with the order; mailed); #274 proves the obligation on the definition's
   right-hand side, the goal no longer rewritten with the whole context term (#267's review).
-- **In flight (plan-47, 20:13)**: #265, #227's merge round, the probe's fix #271 and #269 are ready; #267 hands over
-  again; #128 and #147 finish their landings. The harness's delta layer is deployed and dormant
+- **In flight (plan-47, 20:54)**: #269 and #271 work; #42, #110 and #274 are ready, #275 after #271; #128 and #147
+  finish their landings. The harness's delta layer is deployed and dormant
   (`notes/plan-delta-layer.md`), switched on for no base yet (20:12). Mailed to tasks not yet started, travelling with them: the level a use
   cites to #214, #237 and #239; #261's review to #110, #112, #192, #214 and #237; #263's and #255's to #265; #263's
   unproduced native rows to #157; #223's unmeasured gain to #159; and the earlier ones: #182's to #110, #189's to #192

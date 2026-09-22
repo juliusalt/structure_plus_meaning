@@ -349,7 +349,8 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
     have fields: "f [0]=readiness_table_term T \<and> f [1]=k"
       using shape by (simp add: rule readiness_settled_rule_def native_context_call_rule_def)
     have given: "(readiness_settled_search,Pair_Term (f [0]) (Pair_Term (f [1]) (f [0])))\<in>Y"
-      using native_rule_support[OF into[unfolded rule readiness_settled_rule_def native_context_call_rule_def]] by simp
+      by (rule readiness_settled_family.rearranged.law.supported_clause[OF clause[unfolded site] into])
+        (auto simp: finite_native_rule_eq_iff native_context_call_rule_def)
     have search: "(readiness_settled_search,Pair_Term (readiness_table_term T)
         (Pair_Term k (store_term readiness_row_value (path_store T))))\<in>Y"
       using given fields by (simp add: readiness_table_term_def)
@@ -411,7 +412,8 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
     have fields: "f [0]=readiness_table_term T" "v=Pair_Term (Payload_Term []) (f [1])"
       using shape by (simp_all add: rule readiness_answered_rule_def)
     have given: "(readiness_some,Pair_Term (f [0]) (f [1]))\<in>Y"
-      using native_rule_support[OF into[unfolded rule readiness_answered_rule_def]] by simp
+      by (rule readiness_answered_family.law.supported_clause[OF clause[unfolded site] into])
+        (auto simp: finite_native_rule_eq_iff)
     have some: "\<forall>vs. f [1]=data_list_term vs \<longrightarrow>
         (\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z))"
     proof (intro allI impI)

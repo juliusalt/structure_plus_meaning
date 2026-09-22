@@ -23,6 +23,40 @@ definition native_value_rule :: "(local_address,local_address,'u definition_site
 
 declare native_value_rule_def [code_unfold]
 
+text \<open>
+  The value rule's contract is stated once, here: a site whose family is the value rule holds of a pair exactly
+  when its two components are one formed term. It is the family's law (@{locale native_rule_law}) at the one rule
+  without premise; every site of the rule is an instance of this program.
+\<close>
+
+locale native_value_program = native_rule_family P d "[([0],native_value_rule)]"
+  for P :: "'u native_system" and d :: "'u definition_site"
+begin
+
+sublocale law: native_rule_law P d "[([0],native_value_rule)]"
+  by (rule native_rule_lawI[OF native_rule_family_axioms]) (auto simp: native_value_rule_def)
+
+theorem exact: "(d,Pair_Term x y)\<in>positive_meaning P \<longleftrightarrow> term_formed x \<and> x=y"
+proof
+  assume "(d,Pair_Term x y)\<in>positive_meaning P"
+  then obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set [([0]::local_address,
+      native_value_rule::(local_address,local_address,'u definition_site) finite_factor_schema)]"
+    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
+    and evaluated: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x y"
+    unfolding law.exact by (elim exE conjE) (rule that; assumption)
+  from rule have p: "p=Finite_Pattern_Pair (native_var 0) (native_var 0)"
+    by (simp add: native_value_rule_def finite_native_rule_eq_iff)
+  show "term_formed x \<and> x=y" using formed evaluated by (auto simp: p)
+next
+  assume formed: "term_formed x \<and> x=y"
+  show "(d,Pair_Term x y)\<in>positive_meaning P"
+    unfolding law.exact
+    by (rule exI[of _ "[0]"], rule exI[of _ "Finite_Pattern_Pair (native_var 0) (native_var 0)"],
+      rule exI[of _ "[]"], rule exI[of _ "\<lambda>_. x"]) (use formed in \<open>auto simp: native_value_rule_def\<close>)
+qed
+
+end
+
 abbreviation development_row_search :: "local_address option definition_site" where
   "development_row_search \<equiv> (Some [],[8])"
 
@@ -61,99 +95,20 @@ interpretation development_row_searches: native_store_search_program development
     (simp_all add: development_row_definitions_def native_store_search_rules_def native_store_found_rule_def
       native_store_left_rule_def native_store_right_rule_def)
 
-section \<open>The check is the native equality program\<close>
+section \<open>The check is the value rule's program\<close>
 
 text \<open>
-  The check is the existing native equality program (@{const native_equality_program}), relocated to the
-  check's site: its one clause is an alpha variant of @{const native_equality_schema}, so its meaning is
-  that program's meaning (@{thm native_equality_exact}) through the renaming and alpha contracts, and the
-  rows program agrees with it at the check's site, which calls nothing. No argument about equality is made
-  again here.
+  The check's family is the value rule, so its meaning is the value rule's program's
+  (@{locale native_value_program}): no argument about equality is made again here.
 \<close>
+
+interpretation development_row_checks: native_value_program development_rows_program development_row_check
+  unfolding native_value_program_def by (rule development_rows_family)
+    (simp_all add: development_row_definitions_def native_value_rule_def)
 
 theorem development_row_check_exact:
   "(development_row_check,Pair_Term x y)\<in>positive_meaning development_rows_program \<longleftrightarrow> term_formed x \<and> x=y"
-proof -
-  define Q :: "local_address option native_system" where
-    "Q=decode_finite_system (finite_rule_program [(development_row_check,[([0],native_value_rule)])])"
-  define g :: "local_address option definition_site \<Rightarrow> local_address option definition_site" where
-    "g=(\<lambda>_. development_row_check)"
-  have finite_formed: "finite_system_formed (finite_rule_program [(development_row_check,
-      [([0],native_value_rule::(local_address,local_address,local_address option definition_site) finite_factor_schema)])])"
-    by code_simp
-  have Qf: "schema_system_formed Q" using finite_formed by (simp only: Q_def finite_system_formed_correct)
-  have Qdefs: "system_definitions Q={development_row_check}"
-    by (simp add: Q_def finite_rule_program_definitions)
-  have rows_defs: "system_definitions development_rows_program={development_row_search,development_row_check}"
-    by (simp add: development_rows_program_def finite_development_rows_program_def finite_rule_program_definitions
-      development_row_definitions_def)
-  have shared: "system_definitions development_rows_program\<inter>system_definitions Q={development_row_check}"
-    using rows_defs Qdefs by auto
-  have agree: "systems_agree_on development_rows_program Q {development_row_check}"
-    unfolding systems_agree_on_def development_rows_program_def finite_development_rows_program_def Q_def
-      finite_rule_program_interface finite_rule_program_clause
-    by (simp add: development_row_definitions_def)
-  have first: "(development_row_check,t)\<in>positive_meaning development_rows_program \<longleftrightarrow>
-      (development_row_check,t)\<in>positive_meaning Q" for t
-    by (rule positive_meaning_shared_definitions[OF development_rows_program_formed Qf agree[folded shared]])
-      (simp_all add: rows_defs Qdefs)
-  have eq_defs: "system_definitions native_equality_program={(None,[Suc 0])}"
-    by (simp add: native_equality_program_def system_definitions_def rel_dom_def)
-  have inj: "inj_on g (system_definitions native_equality_program)" by (simp add: eq_defs)
-  have R: "rename_system g native_equality_program=\<lparr>system_interfaces={(development_row_check,Pattern_Variable [4])},
-      system_clauses={((development_row_check,[7]),native_equality_schema)}\<rparr>"
-    by (simp add: rename_system_def native_equality_program_def g_def rename_schema_def native_equality_schema_def
-      map_socket_graph_def)
-  have Rf: "schema_system_formed (rename_system g native_equality_program)"
-    by (rule renamed_system_formed[OF native_equality_system_formed inj])
-  have decoded: "decode_finite_schema (native_value_rule::(local_address,local_address,local_address option definition_site) finite_factor_schema)=
-      \<lparr>schema_conclusion=Pattern_Pair (Pattern_Variable [0]) (Pattern_Variable [0]),
-        schema_premises={},schema_material_premises={}\<rparr>"
-    by (simp add: decode_finite_schema_def native_value_rule_def finite_native_rule_def map_relation_values_def)
-  have alpha: "schema_alpha_variant native_equality_schema (decode_finite_schema native_value_rule)"
-    unfolding schema_alpha_variant_def decoded
-    by (rule exI[of _ "\<lambda>_. [0]"], rule exI[of _ id])
-      (simp add: native_equality_schema_def rename_schema_def map_socket_graph_def schema_variables_def
-        schema_sockets_def)
-  have fam: "schema_family_variant (\<lambda>_. [0]) {([7],native_equality_schema)} {([0],decode_finite_schema native_value_rule)}"
-    by (rule schema_family_variant_singleton_iff[THEN iffD2]) (use alpha in auto)
-  have variant: "system_alpha_variant (rename_system g native_equality_program) Q"
-    unfolding system_alpha_variant_def
-  proof (intro conjI ballI)
-    show "schema_system_formed (rename_system g native_equality_program)" by (rule Rf)
-    show "schema_system_formed Q" by (rule Qf)
-    show "system_definitions (rename_system g native_equality_program)=system_definitions Q"
-      unfolding Qdefs by (simp add: R system_definitions_def rel_dom_def)
-    fix d assume "d\<in>system_definitions (rename_system g native_equality_program)"
-    then have d: "d=development_row_check" by (simp add: R system_definitions_def rel_dom_def)
-    have iR: "system_interface (rename_system g native_equality_program) d=Pattern_Variable [4]"
-      by (rule system_interface_unique[OF Rf]) (simp add: R d)
-    have iQ: "system_interface Q d=Pattern_Variable [0]"
-      by (rule system_interface_unique[OF Qf]) (simp only: Q_def finite_rule_program_interface d; simp)
-    have fR: "system_clause_family (rename_system g native_equality_program) d={([7],native_equality_schema)}"
-    proof (rule set_eqI)
-      fix q show "q\<in>system_clause_family (rename_system g native_equality_program) d \<longleftrightarrow>
-          q\<in>{([7],native_equality_schema)}"
-        by (cases q) (simp add: R d)
-    qed
-    have fQ: "system_clause_family Q d={([0],decode_finite_schema native_value_rule)}"
-    proof (rule set_eqI)
-      fix q show "q\<in>system_clause_family Q d \<longleftrightarrow> q\<in>{([0],decode_finite_schema native_value_rule)}"
-        by (cases q) (simp only: system_clause_member Q_def finite_rule_program_clause d; auto)
-    qed
-    show "\<exists>f h. inj_on f (pattern_variables (system_interface (rename_system g native_equality_program) d)) \<and>
-        system_interface Q d=rename_pattern f (system_interface (rename_system g native_equality_program) d) \<and>
-        schema_family_variant h (system_clause_family (rename_system g native_equality_program) d)
-          (system_clause_family Q d)"
-      by (rule exI[of _ "\<lambda>_. [0]"], rule exI[of _ "\<lambda>_. [0]"]) (simp add: iR iQ fR fQ fam)
-  qed
-  have eq_member: "(None,[Suc 0])\<in>system_definitions native_equality_program" by (simp add: eq_defs)
-  have second: "(development_row_check,t)\<in>positive_meaning Q \<longleftrightarrow>
-      ((None,[Suc 0]),t)\<in>positive_meaning native_equality_program" for t
-    using system_variant_renamed_meaning_at[OF native_equality_system_formed inj variant eq_member, of t]
-    by (simp add: g_def)
-  show ?thesis by (simp only: first second native_equality_exact) auto
-qed
+  by (rule development_row_checks.exact)
 
 section \<open>The value asked is the value found\<close>
 

@@ -2,10 +2,10 @@
  "boundary": "The checked context defines the notions the first loop's judgments consult as a rooted state, in the same way as the seeded state: the problem a constant poses and its dependencies, readiness, the selection question, issuability, the refinement request, the verdict and the repair, the definition request and the definition verdict, the policy constructor, the certified recording of a payload, the locus of a problem, the recording of the loop's decisions, the publication of an admitted answer and the successor, together with their constituents, the development constants their items mention. The notions and their constituents are the roots and are expanded, and every development constant the constituents mention stands on the frontier. The state report presents the state with its computed observations and the acceptance of its own entities, as for the seed. Each root is the problem of its constant under the definition reading, the same notion as a refinement problem with the other reading: its subject is the constant, its contract the constant as the checked context declares it, marked as a definition, its incumbent the kernel definitions the state states for it, its origin a residual and its authority generated, because every one of these notions was defined outside the native process. A root the definition reading states no problem for is retained as unstated. A residual depends on the residuals of the other roots its kernel definitions mention, read from those definitions, so a notion's residual depends on the residuals of its constituents and the loop takes constituents first. The problem report presents the residuals, the unstated roots, the dependencies and the assessment of the residuals with nothing answered; the loop report presents the contract decision of every root, the executed selection of the ready residuals and the residuals it admits. Which notions are roots and how far the record reaches are choices generated outside the process and are themselves residuals. The verification report issues every selected residual as a definition request, the request of its one constant under the definition reading with the support and least context of the constant's scope, and judges answer states derived from each request with the definition verdict, which lets an answer replace the kernel definitions of its subject and the code equations derived from them and nothing else: the unchanged state and its renaming are accepted, the subject's definitions stated as axioms, dropped or stated through an unknown constant are refused, as is dropping the other residuals' definitions, and dropping the subject's code equations is accepted. That the library's contracts of a residual still hold under a new definition is Isabelle's acceptance of an actual answer, which this recipe does not judge; the requirements an answer to a residual must meet beyond those contracts are not established by this recipe. The native-answers report answers every issued definition request natively: the restating answer removes the subject's kernel definitions its context holds and adds them again, is presented with the names it uses, transported as the padded word of its presentation, read back by its exact reader and judged by the definition verdict on the answer state; the word without its terminating bit is refused. The judgment establishes that an answer is admissible for installation, not that the library's contracts hold under it.",
  "complete_recipe_source_manifest": "native-development-machinery-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "f6feaeb10e39ee8d46e970838d7c10a26e17eae7c9d1ab4ddf26e9899efd0383",
+  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
   "records": 5,
   "reports_equal": true,
-  "seconds": 53.74,
+  "seconds": 45.62,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": false,
    "complete_term_transport": false,
-   "module_sha256": "21c9a3145d39af82802b11c0b20eee56a9b705b6758c7988830e79082b92ff89",
+   "module_sha256": "6220608a3d02eb7fbddb0bb9f682d70dae2152d265d203b756b5d5e8f447a27f",
    "subject_contracts": {},
    "theory": "Native_Development_Machinery"
   },
@@ -55,11 +55,6 @@
    "tools/reconstruct_native_development_machinery.py": "c440228cc02ad37d75f5d24ed31345842a33540819e64f2d91083931ddb00ce5",
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
- },
- "execution_reuse": {
-  "base_receipt_sha256": "db1e451bfc1d0d4c625c792daa8ef9fadc55e6ef34b97a9f743ce7a85dab642c",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "21c9a3145d39af82802b11c0b20eee56a9b705b6758c7988830e79082b92ff89"
  },
  "recipe": "native-development-machinery",
  "recipe_inputs_unchanged": true,
@@ -102,34 +97,34 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "3e373dfa050590bdce02b5226e36b0ab5d710001a73d90c4baf29531c70842d1",
+ "source_manifest_sha256": "a1da3507e224192a9e3127355a362371bc77037901fbd65c55754e914eb1f4ed",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 15.978879971000424
+   "seconds": 13.24639328199919
   },
   {
    "exit_code": 0,
    "name": "presentation-problems",
-   "seconds": 17.184443788000863
+   "seconds": 15.632938123999338
   },
   {
    "exit_code": 0,
    "name": "presentation-loop",
-   "seconds": 27.202113279001424
+   "seconds": 22.503461441998297
   },
   {
    "exit_code": 0,
    "name": "presentation-verification",
-   "seconds": 53.62729436799964
+   "seconds": 45.56531711699972
   },
   {
    "exit_code": 0,
    "name": "presentation-native-answers",
-   "seconds": 35.057098221999695
+   "seconds": 29.570106174000102
   }
  ]
 }

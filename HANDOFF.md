@@ -32,8 +32,9 @@ guard decided a row's subject by path inequality, a comparison notion the entry 
 the rows about a subject through a subject index total over the state's atoms, an instance of the index notion with no
 comparison and no absence. #139 built it (`b560df2a`, `Development_Subject_Index`), re-pointed `excess` through it (`named` kept)
 and derived `declarations_single_valued` from the exporter's obligation `isabelle_declared_once`; #176 states that
-obligation once in `Isabelle_Entities`, re-pointing the successor's stronger copy (its third round keeps every word equal, the seed report's field
-deciding a sufficient condition through one lemma), and #227 discharges it once at the exported states; #42 and #110
+obligation once in `Isabelle_Entities`, re-pointing the successor's stronger copy (every word equal, the seed report's field
+deciding a sufficient condition through one lemma) — landed by #243 from a tree made from HEAD, since #176's branch
+carries rows no merge can make clean (q62) — and #227 discharges it once at the exported states; #42 and #110
 wait on both, and they, #44 and #112 on the rule-family law #233. #42
 passes the indexes, #44 builds absence with no inequality and excess's witness over the index, #108 reads it. Roots
 stay a store with distinct keys, #38 stating the roots field under a carried condition on their order, owned by the
@@ -121,8 +122,8 @@ clauses, and `family_ports` and `fresh_addresses` share the unary pattern. #136'
 uncompiled schema coordinates, `unary_address` retired (q47, q49); #142's builds are placed: the contracts with every
 word equal — #147 (re-queued for its commit), #149 (`8b39efea`, the flat forest), #151 (`c26ecb22`), the bound pattern forest
 #179 (`4393537e`; #149's review: a second forest the entry did not list, placed flat at `syntax_branch` with its binders fixed)
-and #153 — the layout with the one word change (#155, after
-them and #90), the answer records re-recorded over the layout on the base its landing advanced (#157), the held measurement on the
+and #153 (`34d67079`) — the layout with the one word change (#155, after
+them, #90 and #241, which switches the last two proofs reading the layout's definitions), the answer records re-recorded over the layout on the base its landing advanced (#157), the held measurement on the
 harness's last base without the layout and the first with it (#159, after #155 alone), each with its review. #216 briefed, from #179's review, the forest over a
 family of placements, placed before #155 so that compiled syntax has one layout and its words change once, every word
 equal: #221 states it once, the bound forest, its executable form and the pattern forest's table its instances; #223
@@ -162,18 +163,18 @@ value rule and the decomposition rule (#235, after #212), the formation rules, t
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
-changes: #153 with the placed forest #221, the syntax forest #225 (the premise forest #223 beside it), the layout
+changes: the placed forest #221, the syntax forest #225 (the premise forest #223 and #241 beside it), the layout
 #155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
-#161 and #192. Then #114 (after #112, #110, #182 or #227, #176) and #45 (after #44, #42, #227, #176), 5. Beside
+#161 and #192. Then #114 (after #112, #110, #182 or #227, #243) and #45 (after #44, #42, #227, #243), 5. Beside
 them: #231, then #220; the rule programs' re-citations #212 and #214; the rule-family law #233, then its re-citations
 #235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
 
-**Order** (`128 129 147 148 176 177 182 183 227 228 153 154 221 222 223 224 225 226 229 231 232 233 234 235 236 237 238 239 240 42 43 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 243 244 182 183 227 228 221 222 223 224 225 226 241 242 229 231 232 233 234 235 236 237 238 239 240 42 43 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
-review, #147, and the exporter's obligation #176 in its third round; then its discharge #227, which #42 and #110 wait
-on, and the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract #153 and the forest over
-placements (#221, then #223 and #225), which #155 waits on, close after their brief's author;
+review, #147, and #176's accepted work landed from HEAD (#243); then its discharge #227, which #42 and #110 wait
+on, and the excess locale #182, which #110, #112 and #191 wait on; the forest over placements (#221, then #223
+and #225) and the stragglers' switch #241, which #155 waits on, close after their brief's author;
 the probe's fix #229 (every later build's inner loop), the name-locality fix #231, the rule-family law #233 and the
 verdict's entry #42, heads of
 the deepest chains, so that a slot serves them as they become ready; the rule programs' re-citations; the layout's word
@@ -239,7 +240,7 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 
 **Working rules every brief carries:**
 
-- **The standing last step before any handover**: `check.source_checks()` and `investigate.source_graph(...)`, both
+- **The standing last step before any handover**: `check.source_checks()` and `execution_support.source_graph(...)` (`tools/execution_support.py`), both
   seconds and no Isabelle run.
 - **Before hand-over, a task in its own tree brings main in** (`v2.py bring-main`, the harness, 09:43), so that the
   landing check covers the tree that lands; a tree lagging the base rebuilds main's changes too (#124: 574 theories
@@ -489,6 +490,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   `List.map_filter` facts Open 62.
 - **#230** (brief) placed as #233–#240 (Graph): the rule-family law over any number of premises (q60) and its three
   re-citations, each with its review; #188 and #189 released, adding no such program.
+- **#153** `34d67079`: the layout's contracts, part 4 — `syntax_branch`'s equations out of the simpset, every consumer
+  on the contracts. Follow-ups: the two proofs still reading the layout's definitions to #241, the blank lines Open 76.
 
 ## Open
 
@@ -732,12 +735,15 @@ Not yet planned, in the order they are expected to be planned:
     facts' global names, kept while #42, #110, #182 and #188–#191 cite them; `lookup_eq_by_some`'s place; the probe
     cost of `Development_Verdict_Unreached`. With the next edit of their theories.
 75. **`evaluate_pattern_agree` and `evaluate_pattern_variables_formed` into `Factor_Rule_Instances`**, beside
-    `evaluate_pattern_cong` and `evaluate_pattern_formed` (#208's review), with #230's build.
+    `evaluate_pattern_cong` and `evaluate_pattern_formed` (#208's review), with #233's build.
+76. **Cosmetic, with the next edit of each theory** (#153's review): an extra blank line in `RRA_Collection_Frames`
+    after its section heading and in `Factor_Pattern_Forests` before `bound_branch_binder`; the explicit
+    `simp add: syntax_branch_eq_iff` in consumers, now redundant.
 
 ## Now
 
-- **In flight (plan-45, 16:35)**: #176 re-lands once a `bring-main` merge commit makes its THEORY_MAP.md
-  differ from main's in its three rows only (review 176.3); #212 and #229 build; #128 and #147 are in review, and #153 and #221 in their checks; #227
+- **In flight (plan-45, 16:35)**: #243 lands #176's accepted work from a tree made from HEAD (q62; #176,
+  dropped, stays in the list as its source until then, its review #177 deleted); #212 and #229 build; #128 and #147 are in review, #221 in its check; #188 builds; #227
   discharges the exporter's obligation after #176; #233 states the rule-family law (q60) before
   #42, #44, #110, #112 and #191; #231 states the name-locality of readings before #188, #189, #191 and #220. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
@@ -762,6 +768,9 @@ Not yet planned, in the order they are expected to be planned:
     (review 97's third round). #176's third round copied main's rows into its working file by hand, which does not
     move the merge base, so its landing would have doubled seven rows again (review 176.3): the queue that sends a task
     back for doubled rows could require a `bring-main` merge commit and run the union simulation before hand-over.
+    Then `bring-main` itself refused that merge, the branch's own commit carrying the doubled rows, and no session can
+    resolve a merge: the work was landed anew from HEAD (#243, q62). A `bring-main` that let the task's working file
+    resolve the merge would have saved two rounds.
   - The finalizer's landing check runs on the task's tree as it stands, so without `bring-main` no check covers what
     lands (#124's covered a tree where `Factor_Shared_Package_Readings` and `Factor_Finite_Source_Construction_Sharing`
     did not yet meet; #94's failed on a theory only main held). A finalizer that brought main in first would make the

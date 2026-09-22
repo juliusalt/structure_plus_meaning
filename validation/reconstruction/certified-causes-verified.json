@@ -2,10 +2,10 @@
  "boundary": "Complete native generation subjects, arbitrary recorded judgment scopes, literal applications and retained closed replays determine each original certified-base-cause condition. Every method result, derived observation and revision reason is reproduced. The test policy and history remain explicitly empty; full workflow policy, historical permission, coverage, cost and genesis remain open.",
  "complete_recipe_source_manifest": "certified-causes-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "f6feaeb10e39ee8d46e970838d7c10a26e17eae7c9d1ab4ddf26e9899efd0383",
+  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
   "records": 1,
   "reports_equal": true,
-  "seconds": 7.81,
+  "seconds": 5.48,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "413b7d89a657212beef97248e3ea776ad6c64fb57cc033d0c74ea9b246754db2",
+   "module_sha256": "186053a355ea47deba09af0eba1e601576009fb72370aec42d94e2132973b774",
    "subject_contracts": {
-    "certified_cause_investigation.yxml": "4989acd9c8f6ae45aacbc7d7835596ddeb63207798f2e4e95b5efdf5b6f7a244"
+    "certified_cause_investigation.yxml": "7c0a1e9c97a75f17273f50b959b47fe96e8db51efccbce8f731b2308a9f61341"
    },
    "theory": "Certified_Cause_Execution"
   },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "db1e451bfc1d0d4c625c792daa8ef9fadc55e6ef34b97a9f743ce7a85dab642c",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "413b7d89a657212beef97248e3ea776ad6c64fb57cc033d0c74ea9b246754db2"
- },
  "recipe": "certified-causes",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "4e339c0375a86c6f5055062356cb6fa8a936577e1d6f28f362cb75bef0662183",
+ "source_manifest_sha256": "1d034762069a04d271462996481153b88b1931adb9761512669a580b638bb4ea",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 7.721907504001138
+   "seconds": 5.380065450000984
   }
  ]
 }

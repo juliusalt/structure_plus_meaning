@@ -2,10 +2,10 @@
  "boundary": "The complete original source and requirement family determine the constructed policy and entry. Actual native records, scope and application readings, independent original requirement decisions, all method conditions and revision reasons are reconstructed. Exact policy identity is separate from payload permission and from admitting alternative proved policy realizations. Full workflow policy coverage, enforced transitions, history permission, physical cost and genesis remain open.",
  "complete_recipe_source_manifest": "required-causes-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "f6feaeb10e39ee8d46e970838d7c10a26e17eae7c9d1ab4ddf26e9899efd0383",
+  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
   "records": 1,
   "reports_equal": true,
-  "seconds": 7.61,
+  "seconds": 4.93,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "1bd370aecd1633a4f6e6403fc73f891ff3f27c4c53c39c378367e8b877f720e6",
+   "module_sha256": "3a47860b4aa867b485ad01347b4ef9d3848cc18cd341f8cc583c1d8d1afe3a43",
    "subject_contracts": {
-    "required_cause_investigation.yxml": "d4fc97d206245fd6bfd4969c2aa6291999ba339dc7d2e4c48976421f3df1c1ad"
+    "required_cause_investigation.yxml": "92264e2fa8fec21ff661e5d346048e1a771db354cfaf17d24e5b1743cc7ea728"
    },
    "theory": "Required_Cause_Execution"
   },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "db1e451bfc1d0d4c625c792daa8ef9fadc55e6ef34b97a9f743ce7a85dab642c",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "1bd370aecd1633a4f6e6403fc73f891ff3f27c4c53c39c378367e8b877f720e6"
- },
  "recipe": "required-causes",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "faf6958aa976988007a67c2af5be06c94b7850bcb79cee642cce3091dd105f4b",
+ "source_manifest_sha256": "973d0340e88845c822d77b0c19900959b4a041afed973e5721d18b618796ac67",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 7.470434328999545
+   "seconds": 4.827957169000001
   }
  ]
 }

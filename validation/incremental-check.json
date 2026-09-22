@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "db1e451bfc1d0d4c625c792daa8ef9fadc55e6ef34b97a9f743ce7a85dab642c",
- "checked_content_sha256": "f44643e3d0f23fc2c15d242b052726176f6d59c324851c4278f348f50952bc7a",
+ "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
+ "checked_content_sha256": "1ca0f37ebd4c9e65884f365b1b4aeb1c93d964af775c17c00cf7eb90dfc25b2a",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -23,11 +23,11 @@
  },
  "phases": {
   "base_and_impact": 0.29,
-  "execution_impact": 1.3,
-  "export": 5.82,
-  "proof": 441.61,
-  "recipe_impact": 0.45,
-  "recipes_and_host_tests": 10.88
+  "execution_impact": 1.26,
+  "export": 5.97,
+  "proof": 564.37,
+  "recipe_impact": 0.4,
+  "recipes_and_host_tests": 106.65
  },
  "rebuilt_theories": [
   "Admitted_Conditional_Applications",
@@ -65,6 +65,7 @@
   "Development_Decomposition",
   "Development_Decomposition_Soundness",
   "Development_Definition_Verification",
+  "Development_Edited_Local",
   "Development_Entity_Keys",
   "Development_Located_Rows",
   "Development_Loci",
@@ -178,7 +179,6 @@
   "Factor_Bag_Presentations",
   "Factor_Base_Admission",
   "Factor_Base_Admission_Contracts",
-  "Factor_Base_Cause",
   "Factor_Base_Cause_Base",
   "Factor_Base_Cause_Clauses",
   "Factor_Base_Cause_Contracts",
@@ -300,8 +300,6 @@
   "Factor_Data_Product_Execution",
   "Factor_Data_Product_Execution_Base",
   "Factor_Data_Reading_Fixture",
-  "Factor_Data_Reading_Investigation",
-  "Factor_Data_Reading_Methods",
   "Factor_Data_Set_Comparison",
   "Factor_Data_Set_Comparison_Contracts",
   "Factor_Data_Table_Operations",
@@ -374,7 +372,6 @@
   "Factor_Executable_Environment_Values",
   "Factor_Executable_Replay",
   "Factor_Family_Admission",
-  "Factor_Finite_Accumulated_Data_Syntax",
   "Factor_Finite_Admission_Goal_Evaluation",
   "Factor_Finite_Application_Construction",
   "Factor_Finite_Application_Encoding",
@@ -384,9 +381,7 @@
   "Factor_Finite_Checked_Requirements",
   "Factor_Finite_Child_Example",
   "Factor_Finite_Child_Premises",
-  "Factor_Finite_Citation_Syntax",
   "Factor_Finite_Code_Installation",
-  "Factor_Finite_Data_Syntax",
   "Factor_Finite_Definition_Compilation",
   "Factor_Finite_Development_Questions",
   "Factor_Finite_Generation_Replay",
@@ -407,8 +402,6 @@
   "Factor_Finite_Inference_Premises_Base",
   "Factor_Finite_Inference_Sources",
   "Factor_Finite_Interface_Syntax",
-  "Factor_Finite_Judgment_Quotation",
-  "Factor_Finite_Known_Judgment_Scopes",
   "Factor_Finite_Literal_Replay",
   "Factor_Finite_Mapped_Extensions",
   "Factor_Finite_Native_Admission_Construction",
@@ -461,7 +454,6 @@
   "Factor_Finite_Source_Entry_Installation",
   "Factor_Finite_Source_Extension_Cases",
   "Factor_Finite_Source_Extensions",
-  "Factor_Finite_Syntax_Accumulation",
   "Factor_Finite_Syntax_Blocks",
   "Factor_Finite_Template_Syntax",
   "Factor_Finite_Term_Demands",
@@ -478,7 +470,6 @@
   "Factor_Fragment_Presentations",
   "Factor_Fragment_Projections",
   "Factor_Generation_Admission",
-  "Factor_Generation_Causes",
   "Factor_Generation_Citation_Roots",
   "Factor_Generation_Clauses",
   "Factor_Generation_Construction",
@@ -502,7 +493,6 @@
   "Factor_Generation_Scope_Base",
   "Factor_Generation_Scope_Clauses",
   "Factor_Generation_Scope_Contracts",
-  "Factor_Generation_Scope_Extensions",
   "Factor_Generation_Scope_Presentations",
   "Factor_Generation_Source_Admission",
   "Factor_Generation_Source_Base",
@@ -691,7 +681,6 @@
   "Factor_Observation_Table_Investigation_Base",
   "Factor_Observation_Table_Native",
   "Factor_Observation_Table_Witnesses",
-  "Factor_Ordered_Generation_Checking",
   "Factor_Package_Admission",
   "Factor_Package_Closure_Admission",
   "Factor_Package_Coverage",
@@ -964,9 +953,7 @@
   "Factor_Syntax_Copy",
   "Factor_System_Composition",
   "Factor_Table_Admission_Profiles",
-  "Factor_Table_Assembly",
   "Factor_Table_Boundaries",
-  "Factor_Table_Enumeration",
   "Factor_Table_Literal_Lookup",
   "Factor_Table_Maps",
   "Factor_Table_Presentations",
@@ -1166,94 +1153,7 @@
   "Program_Evaluation_Execution",
   "Quoted_History_Execution",
   "Quoted_History_Presentation",
-  "RRA_Allocated_Environment_Cases",
-  "RRA_Allocated_Environment_Investigation",
-  "RRA_Allocated_Environment_Methods",
-  "RRA_Allocated_Environment_Paths",
-  "RRA_Allocated_Environment_Projection",
-  "RRA_Allocated_Environment_References",
-  "RRA_Allocation_Case_Families",
-  "RRA_Allocation_Result_Relations",
-  "RRA_Artifact_Lookup_Investigation",
-  "RRA_Artifact_Lookup_Methods",
-  "RRA_Bounded_Generation_Construction",
-  "RRA_Cached_Graft_Cases",
-  "RRA_Cached_Graft_Investigation",
-  "RRA_Cached_Graft_Methods",
-  "RRA_Cached_Graft_References",
-  "RRA_Collection_Frames",
-  "RRA_Collection_References",
-  "RRA_Collection_Selections",
-  "RRA_Digit_Allocated_Grafts",
-  "RRA_Digit_Allocated_Projection",
-  "RRA_Digit_Allocated_Stores",
-  "RRA_Digit_Allocation_Investigation",
-  "RRA_Digit_Allocation_Methods",
-  "RRA_Digit_Allocation_Paths",
-  "RRA_Digit_Allocation_References",
-  "RRA_Digit_Environment_Availability",
-  "RRA_Digit_Environment_Loading",
-  "RRA_Digit_Generation_Backend",
-  "RRA_Digit_Generation_Cases",
-  "RRA_Digit_Generation_Construction",
-  "RRA_Digit_Generation_Installation",
-  "RRA_Digit_Generation_Investigation",
-  "RRA_Digit_Generation_Methods",
-  "RRA_Digit_Generation_Readings",
-  "RRA_Digit_Generation_References",
-  "RRA_Embedded_Generation_Records",
-  "RRA_Encoded_Bounded_Grafts",
-  "RRA_Encoded_Bounded_States",
-  "RRA_Encoded_Bounded_Updates",
-  "RRA_Encoded_Environment_Assessments",
-  "RRA_Encoded_Environment_Investigation",
-  "RRA_Encoded_Environment_Methods",
-  "RRA_Encoded_Environment_References",
-  "RRA_Environment_Update_Correctness",
-  "RRA_Environment_Update_Investigation",
-  "RRA_Environment_Update_Methods",
-  "RRA_Environment_Update_References",
-  "RRA_Finite_Binding_Sequences",
-  "RRA_Finite_Embedded_Generation_Construction",
-  "RRA_Finite_Embedded_Generation_Records",
-  "RRA_Finite_Generation_Construction",
-  "RRA_Finite_Generation_Encoding",
-  "RRA_Finite_Generation_Record_Cases",
-  "RRA_Finite_Generation_Reference_Construction",
-  "RRA_Finite_Graft_Bounds",
-  "RRA_Finite_Syntax_Construction",
-  "RRA_Fresh_Generation_Frames",
-  "RRA_Generation_Child_Row_Images",
-  "RRA_Generation_Construction",
-  "RRA_Generation_Frames",
-  "RRA_Generation_Input_Transitions",
-  "RRA_Generation_Record_Assessment",
-  "RRA_Generation_Record_Backends",
-  "RRA_Generation_Record_Construction",
-  "RRA_Generation_Record_Correctness",
-  "RRA_Generation_Record_Investigation",
-  "RRA_Generation_Record_Permutations",
-  "RRA_Generation_Record_Recovery",
-  "RRA_Generation_Record_References",
-  "RRA_Graft_Admission_Investigation",
-  "RRA_Graft_Admission_Methods",
-  "RRA_Graft_Case_Families",
-  "RRA_Graft_Investigation",
-  "RRA_Graft_Methods",
-  "RRA_Indexed_Generation_Cases",
-  "RRA_Indexed_Generation_Investigation",
-  "RRA_Indexed_Generation_Methods",
-  "RRA_Indexed_Generation_Reports",
-  "RRA_Inserted_Attachments",
-  "RRA_Known_Generation_Rows",
-  "RRA_Known_Original_Generation_Rows",
-  "RRA_Lookup_Generation_Checking",
-  "RRA_Publication_Construction",
-  "RRA_Selected_Generation_Predecessors",
-  "RRA_Structural_Generation_Checking",
-  "RRA_Syntax_Families",
-  "RRA_Syntax_Forests",
-  "RRA_Syntax_Records",
+  "RRA_Placed_Forests",
   "Required_Cause_Execution",
   "Required_Cause_Presentation",
   "Required_History_Execution",
@@ -1298,48 +1198,48 @@
   },
   "certificate-coverage": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 3.12,
+   "status": "accepted"
   },
   "certificate-development": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 4.12,
+   "status": "accepted"
   },
   "certificate-input-development": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 4.22,
+   "status": "accepted"
   },
   "certificate-scope-repair": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 3.22,
+   "status": "accepted"
   },
   "certified-causes": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 5.48,
+   "status": "accepted"
   },
   "concurrent-history": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 15.19,
+   "status": "accepted"
   },
   "constructed-history": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 26.56,
+   "status": "accepted"
   },
   "data-reading": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 4.52,
+   "status": "accepted"
   },
   "decision-replay": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 7.99,
+   "status": "accepted"
   },
   "digit-allocation": {
    "exit_code": 0,
@@ -1353,13 +1253,13 @@
   },
   "digit-history": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 14.07,
+   "status": "accepted"
   },
   "digit-replay": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 25.63,
+   "status": "accepted"
   },
   "encoded-environments": {
    "exit_code": 0,
@@ -1388,8 +1288,8 @@
   },
   "history-index": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 10.81,
+   "status": "accepted"
   },
   "indexed-generation": {
    "exit_code": 0,
@@ -1398,28 +1298,28 @@
   },
   "known-history": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 13.84,
+   "status": "accepted"
   },
   "literal-replay": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 3.97,
+   "status": "accepted"
   },
   "native-admission": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 7.14,
+   "status": "accepted"
   },
   "native-certificate-replay": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 4.78,
+   "status": "accepted"
   },
   "native-certificates": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 6.13,
+   "status": "accepted"
   },
   "native-child": {
    "exit_code": 0,
@@ -1428,33 +1328,33 @@
   },
   "native-derivations": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 5.08,
+   "status": "accepted"
   },
   "native-development": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 4.37,
+   "status": "accepted"
   },
   "native-development-machinery": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 45.62,
+   "status": "accepted"
   },
   "native-development-seed": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 106.65,
+   "status": "accepted"
   },
   "native-evaluation": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 3.02,
+   "status": "accepted"
   },
   "native-extensions": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 3.07,
+   "status": "accepted"
   },
   "native-graphs": {
    "exit_code": 0,
@@ -1463,8 +1363,8 @@
   },
   "native-histories": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 4.33,
+   "status": "accepted"
   },
   "native-nodes": {
    "exit_code": 0,
@@ -1473,43 +1373,43 @@
   },
   "native-requirements": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 6.88,
+   "status": "accepted"
   },
   "native-sources": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 2.97,
+   "status": "accepted"
   },
   "native-steering": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 15.29,
+   "status": "accepted"
   },
   "native-workflow": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 13.93,
+   "status": "accepted"
   },
   "quoted-history": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 27.28,
+   "status": "accepted"
   },
   "required-causes": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 4.93,
+   "status": "accepted"
   },
   "required-history": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 6.38,
+   "status": "accepted"
   },
   "requirement-decisions": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 3.72,
+   "status": "accepted"
   },
   "requirement-plans": {
    "exit_code": 0,
@@ -1523,8 +1423,8 @@
   },
   "source-development": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 15.95,
+   "status": "accepted"
   },
   "use-allocation": {
    "exit_code": 0,
@@ -1537,19 +1437,19 @@
    "status": "reused"
   }
  },
- "reused_theories": 583,
- "seconds": 472.42,
+ "reused_theories": 685,
+ "seconds": 692.29,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1827,
+  "theory_count": 1829,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1827,
+ "theories": 1829,
  "validation_inputs": {
-  "ROOT": "f66f77200b112f2c755bb85f719a58e51503106ff026b15c92e8f3ffa645a093",
+  "ROOT": "bd97a64004e9a7bf4c33014c4f9b5f43e6fbe188bc1c7ea2f230de6f362f972d",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "82e934dc1ab241ad304872f32ca11b1f5a0e8ad06d5de97626b94c96458b4752"
  }

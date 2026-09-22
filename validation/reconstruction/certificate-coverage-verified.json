@@ -2,10 +2,10 @@
  "boundary": "The complete initial original certificate-family scope and its two actual outputs determine retention and every proof/call/sharing witness. All four conditions and three complete revision cycles are reproduced. This failed coverage result is retained as the original development problem.",
  "complete_recipe_source_manifest": "certificate-coverage-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "f6feaeb10e39ee8d46e970838d7c10a26e17eae7c9d1ab4ddf26e9899efd0383",
+  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.18,
+  "seconds": 3.12,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "4f7b7d7c8d8527b1ce2934e55a820fce330d3845b1bef5b655f29e928183f69b",
+   "module_sha256": "c2d6fefa001216cbff40465c776a2fbbb1b86dcd418df90de1104fce467c5439",
    "subject_contracts": {
-    "certificate_coverage_investigation.yxml": "cdf30b21d224275add85666e340b0d3a3828e30317eaf9b03201784022e49e19"
+    "certificate_coverage_investigation.yxml": "f57092760caaa67277dd02657af7c4a26a6a1bc793681c24159344a426993058"
    },
    "theory": "Native_Certificate_Coverage_Execution"
   },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "db1e451bfc1d0d4c625c792daa8ef9fadc55e6ef34b97a9f743ce7a85dab642c",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "4f7b7d7c8d8527b1ce2934e55a820fce330d3845b1bef5b655f29e928183f69b"
- },
  "recipe": "certificate-coverage",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "73866be7727e38051c83c4b0d53ba5266e227840028b68923067fac3113c5bcd",
+ "source_manifest_sha256": "f6fc9916451e99af5ceffe37fd7e9c481023aca12c7144d266c02caca4b3c5fe",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.090858561999994
+   "seconds": 3.0694904730007693
   }
  ]
 }

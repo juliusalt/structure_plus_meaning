@@ -2,10 +2,10 @@
  "boundary": "A run without --proof reconstructs the complete contracts from HOL. The certificate constructor recovers the actual source and follows its complete finite inference history. Each original requested positive call has a complete valid certificate, and the independent recursive checker is exactly the original schema proof checker on every finite input. Every original source, candidate answer and certificate, complete inspection, comparison and revision is reproduced. A sufficient finite certificate family need not enumerate all proofs of a cyclic program. The finite scope does not establish arbitrary-method coverage, recursive explanation traces, native artifact positioning and placement, native mathematical-proof checking, complete development-cycle enforcement, the whole cost account or genesis.",
  "complete_recipe_source_manifest": "native-derivations-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "f6feaeb10e39ee8d46e970838d7c10a26e17eae7c9d1ab4ddf26e9899efd0383",
+  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
   "records": 1,
   "reports_equal": true,
-  "seconds": 7.72,
+  "seconds": 5.08,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "4140b487a3fc6b80a4c68c402e4dcdfb7c82f11e4427070aa22b8b936a6feb97",
+   "module_sha256": "49f825a66106ee83d7b1babc46f2533be68838810ce40119cbc3136b14dfbd0e",
    "subject_contracts": {
-    "native_derivation_investigation.yxml": "5011483163345344ca5a9c1d57db602a019f3c4e596b8196aec9b331bf4c561e"
+    "native_derivation_investigation.yxml": "e5eaf2c0eb8c64cf89a465923afa11a6072f19a9b056d762835fbc7bde9fffd3"
    },
    "theory": "Native_Derivation_Investigation_Execution"
   },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "db1e451bfc1d0d4c625c792daa8ef9fadc55e6ef34b97a9f743ce7a85dab642c",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "4140b487a3fc6b80a4c68c402e4dcdfb7c82f11e4427070aa22b8b936a6feb97"
- },
  "recipe": "native-derivations",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "65f2c3369bf540cc965d1b4a380a07fd8b622e4314f906384e14941d93e7ed33",
+ "source_manifest_sha256": "c521338591fb28785d0560e4c80d0dd764205f791a953ebaf8cd78d16cc455a0",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 7.584686133999639
+   "seconds": 4.9826483329998155
   }
  ]
 }

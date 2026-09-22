@@ -27,18 +27,13 @@ text \<open>
   declared constants of the defined state are computed from the spine of its entity list alone, each
   entity by its constructor and the head of its term. The exporter declares every reached constant
   once and lists the declarations in the order of their positions in the name table, so the declared
-  positions are strictly increasing, and distinctness follows from one comparison of each adjacent
-  pair: the proof is linear in the declarations. No name, no type and no statement is evaluated.
+  positions are strictly increasing (\<open>sorted_wrt (<)\<close>, HOL's \<open>strict_sorted\<close>), and distinctness
+  follows from one comparison of each adjacent pair (\<open>strict_sorted_iff\<close>, \<open>sorted_wrt2_simps\<close>): the
+  proof is linear in the declarations. It is proved of the definition's right-hand side, whose
+  arguments it instantiates, and transported to the defined constant through the definition's
+  equation, so the context term is never rewritten or traversed. No name, no type and no statement
+  is evaluated.
 \<close>
-
-lemma isabelle_increasing_distinct: "sorted_wrt (<) (xs::'a::order list) \<Longrightarrow> distinct xs"
-  by (induction xs) auto
-
-lemma isabelle_increasing_rules:
-  "sorted_wrt (<) ([]::'a::order list)"
-  "sorted_wrt (<) [x::'a::order]"
-  "x < y \<Longrightarrow> sorted_wrt (<) (y#ys) \<Longrightarrow> sorted_wrt (<) (x#y#ys::'a::order list)"
-  by (auto intro: less_trans)
 
 lemma isabelle_shared_declarations:
   fixes f :: "nat \<Rightarrow> isabelle_type"
@@ -226,29 +221,44 @@ fun declared_conv ct =
     else_conv (Conv.rewrs_conv declared_keep then_conv Conv.arg_conv declared_conv)
     else_conv (Conv.rewrs_conv declared_drop then_conv declared_conv)) ct;
 
-(*Adjacent declared positions compared as numerals, by the order of binary numerals alone.*)
-val [increasing_nil, increasing_last, increasing_step] = @{thms isabelle_increasing_rules};
+(*A strictly increasing list is distinct, proved by comparing each adjacent pair as numerals, by the
+  order of binary numerals alone: HOL's rules of sorted_wrt (<).*)
+val increasing_distinct = @{thm strict_sorted_iff[THEN iffD1, THEN conjunct2]};
+val increasing_step = @{thm sorted_wrt2[OF transp_on_less, THEN iffD2, OF conjI]};
+val increasing_ends = @{thms sorted_wrt.simps(1)[THEN eqTrueE] sorted_wrt1[THEN eqTrueE]};
 
 fun numeral_less_ctxt ctxt = put_simpset HOL_basic_ss ctxt addsimps
   @{thms zero_less_one zero_less_numeral one_less_numeral_iff numeral_less_iff less_num_simps le_num_simps};
 
-(*The obligation that the state a definition presents declares each constant once, proved from the
-  definition: its declared positions are computed by the conversion, and their strict increase is
-  proved by comparing each adjacent pair. A state whose positions do not increase fails the proof.*)
+fun increasing_tac ctxt =
+  let val less_ctxt = numeral_less_ctxt ctxt
+  in
+    resolve_tac ctxt [increasing_distinct] 1
+    THEN REPEAT_DETERM (resolve_tac ctxt [increasing_step] 1 THEN SOLVED' (simp_tac less_ctxt) 1)
+    THEN resolve_tac ctxt increasing_ends 1
+  end;
+
+(*The obligation that the state a definition presents declares each constant once. It is proved of
+  the definition's right-hand side: the reduction is instantiated at its three arguments, the declared
+  positions are computed by the conversion from the spine of its entity list, and their strict
+  increase is proved by comparing each adjacent pair. The theorem is then transported to the defined
+  constant through the definition's equation, by congruence, so no step reads the context term
+  beyond the spine. A state whose positions do not increase fails the proof.*)
 fun declared_once ctxt def =
   let
     val def' = Local_Defs.meta_rewrite_rule ctxt def;
-    val goal = HOLogic.mk_Trueprop (\<^Const>\<open>isabelle_declared_once\<close> $ Thm.term_of (Thm.lhs_of def'));
-    val less_ctxt = numeral_less_ctxt ctxt;
-  in
-    Goal.prove ctxt [] [] goal (fn _ =>
-      rewrite_goal_tac ctxt [def'] 1
-      THEN resolve_tac ctxt @{thms isabelle_shared_declared_once} 1
-      THEN CONVERSION (HOLogic.Trueprop_conv (Conv.arg_conv declared_conv)) 1
-      THEN resolve_tac ctxt @{thms isabelle_increasing_distinct} 1
-      THEN REPEAT_DETERM (resolve_tac ctxt [increasing_step] 1 THEN SOLVED' (simp_tac less_ctxt) 1)
-      THEN resolve_tac ctxt [increasing_nil, increasing_last] 1)
-  end;
+    val rhs = Thm.rhs_of def';
+    val (names_ns, es) = Thm.dest_comb rhs;
+    val (names_app, ns) = Thm.dest_comb names_ns;
+    val names = Thm.dest_arg names_app;
+    val shared = infer_instantiate ctxt [(("names", 0), names), (("ns", 0), ns), (("es", 0), es)]
+      @{thm isabelle_shared_declared_once};
+    val positions = HOLogic.Trueprop_conv (Conv.arg_conv declared_conv) (Thm.cprem_of shared 1);
+    val increasing = Goal.prove_internal ctxt [] (Thm.rhs_of positions) (fn _ => increasing_tac ctxt);
+    val once = Thm.implies_elim shared (Thm.equal_elim (Thm.symmetric positions) increasing);
+    val transport = Thm.combination (Thm.reflexive \<^cterm>\<open>Trueprop\<close>)
+      (Thm.combination (Thm.reflexive \<^cterm>\<open>isabelle_declared_once\<close>) (Thm.symmetric def'));
+  in Thm.equal_elim transport once end;
 
 (*Define NAME_context and note NAME_declared_once, the exporter's obligation at the defined state.*)
 fun define_context binding context lthy =

@@ -62,14 +62,13 @@ the loop's problems, so that a decomposed problem is refused issue) waits on
 #94, #58 and #30, and its brief takes #94's contract when #94 lands. The build that applies a decomposition is Open 26.
 
 **The index notion (#76, #74, #96, #86).** The notion (#68) and its host and native instances (#70, #72) have landed.
-#76 (the readings' and engine's seven uses, 159 theories) was rejected three times for one argument left re-made
-(`demand_positions_lookup` proved from `RBT.lookup_bulkload`; its third round kept it as a decision against its brief);
-its brief is now that finding alone — re-proved from the instance or deleted, a reason to keep it asked of the planner
-first — queued for a fourth round;
+#76 (the readings' and engine's seven uses) has landed (`4836387c`) after four rounds, its one re-made argument
+re-proved from the instance;
 #74 (the stores' and native tables' six uses) has landed (`37a97cad`); #96 briefs, now that #74 has landed,
 what both reviews leave — arguments made twice, to be stated once in `Carrier_Indexes`, and fourteen theories still
-citing raw carrier facts. #86 advances the proof base now — #36's probes failed at load on the lagging base — and #105
-advances it again once #76 and #74 have landed (Q10).
+citing raw carrier facts. #86 advances the proof base now — #36's probes failed at load on the lagging base — told at
+05:35 to take HEAD with #76 if its check had not started; #105 advances again only if #86's base predates #76, and is
+dropped otherwise (Q10).
 
 **The keyed question (#88–#93).** The keyed packet costs 2.1–3.8 times the index form, growing with its candidates:
 #88 attributes and refines that growth, held, after #86; #90 switches the 20 overnight native-control theories after
@@ -84,8 +83,8 @@ includes their reviews. The deepest chains are 5: #45 (after #44, #42, #38/#40, 
 #38/#40, #36). Beside them: #76, #97, the presenter #101 (which #40 waits on), #106, #94, #74, #96, #30 with the answer
 reader's refusal #103 after it, #85, #86, #105 and the keyed line.
 
-**Order** (`86 76 77 97 98 36 37 101 102 106 107 38 39 40 41 42 43 44 45 108 109 110 111 112 113 114 94 74 75 105 96 30 31 103 104 85 88 89 90 91 64 65 92 93`).
-The base advance #86 first (#36's probes wait on it), #76's round and #97 (which #30 waits on); then #36 at the verdict
+**Order** (`86 97 98 36 37 101 102 106 107 38 39 40 41 42 43 44 45 108 109 110 111 112 113 114 94 105 96 30 31 103 104 85 88 89 90 91 64 65 92 93`).
+The base advance #86 first (#36's probes wait on it) and #97's landing round (which #30 waits on); then #36 at the verdict
 chain's head, the presenter #101 (which #40 waits on) and #106 (which #42 waits on); the verdict chain, which takes a slot
 whenever one of its tasks is ready; beside it the
 decomposition's #94, #74 with the next advance #105 and its consolidation, #30, #85 and the keyed line. A parked task whose hold
@@ -203,7 +202,8 @@ judgment's path.
 - **The decomposition** #60 `Development_Decomposition_Soundness` (`ffe12b46`), #58 `Development_Repair_Rows`
   (`b3b185bc`) and #62 `Development_Native_Decomposition` (`b535ef8f`).
 - **The index notion** #68 `Carrier_Indexes` (`a275a84e`), #70 the host instances (`b1dc9193`), #72
-  `Native_Path_Store_Indexes` (`202a2276`), #74 the stores' and native tables' six uses re-cited (`37a97cad`).
+  `Native_Path_Store_Indexes` (`202a2276`), #74 the stores' and native tables' six uses re-cited (`37a97cad`), #76 the
+  readings' and engine's seven uses re-cited (`4836387c`).
 - **The checking and tools** #12/#17, #19, #20, #15 (`9bb1dd7a`, `6227819a`, `91979be0`, `2edcabd3`); #48 the replay's
   `unproduced` (`3aaddd96`); #50 the check's named refusals (`955b34bb`); #79 the probe's 60 s default (`1e7ed068`);
   #81 the receipts retained (`cf24195e`); #82 the base advanced to `b1328831`; #80 the seed recipe's formation split,
@@ -338,14 +338,16 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
-- **In flight (plan-35, 05:32)**: #86 advancing the base to HEAD; #36 working, its probes waiting on #86 (`v2.py after
-  36 86`); #94 working, to continue on #36's declaration store when #36 lands (`v2.py after 94 36`, q37); #101 building
-  the presenter (its review #102; the answer reader's refusal #103 and its review #104 come after #30); #76's fourth
-  round in review; #97 re-queued for a round that only merges and makes `THEORY_MAP.md` hold the `Native_Path_Stores`
-  row once (its accepted commit, merged with #74's landing, held it twice). Startable: #106, request construction's
-  first build; #96, the index consolidation's brief; #85. #74's check executed all 52 recipes though its export
-  boundaries were unchanged (recipe phase 114 s): the receipts are stale against HEAD, and #86's check retains them when
-  it executes recipes (Q11).
+- **In flight (plan-35, 05:36)**: #86 advancing the base to HEAD (told at 05:35 to take HEAD with #76 if its check had
+  not started: if its base predates #76, #105 advances again, otherwise drop #105); #36 working, its probes waiting on
+  #86 (`v2.py after 36 86`); #94 working, to continue on #36's declaration store when #36 lands (`v2.py after 94 36`,
+  q37); #101 building the presenter (its review #102; the answer reader's refusal #103 and its review #104 come after
+  #30); #96 briefing the index consolidation (told of #74's and #76's follow-ups); #97 re-queued for a round that only
+  merges and makes `THEORY_MAP.md` hold the `Native_Path_Stores` row once. Startable: #106, request construction's first
+  build; #85. #74's check executed all 52 recipes though its export boundaries were unchanged, while #76's reused 50:
+  the receipts drift as landings change boundaries, and #86's check retains them when it executes recipes (Q11).
+- **Not handled at the close**: nothing is waiting on the planner. When #86 reports, judge its record and settle #105;
+  when #96 proposes, place it after #97 for the rows' lookups.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).

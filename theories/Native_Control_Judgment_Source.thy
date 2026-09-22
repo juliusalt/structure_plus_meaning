@@ -62,19 +62,20 @@ theorem judgment_bridge_source_total:
 theorem admitted_judgment_source_meaning:
   assumes question: "judgment_bridge_question ()=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-    and source: "judgment_bridge_source (judgment_bridge_candidates!i)=Some (d,F,u)"
+    and selected: "finite_path (first_occurrence_key judgment_bridge_candidates b)\<in>set accepted"
+    and member: "b\<in>set judgment_bridge_candidates"
+    and source: "judgment_bridge_source b=Some (d,F,u)"
     and package: "native_package_at (decode_finite_environment F) u [] P"
   shows "(d,decode_finite_term (syntax_judgment_data (C,syntax_proposition m)))\<in>positive_meaning P
     \<longleftrightarrow> C=syntax_checked_rooted_context \<and> syntax_join_refinement m"
 proof -
   have formed: "\<And>x. x\<in>set syntax_judgment_cases \<Longrightarrow> finite_term_formed (syntax_judgment_data x)" by simp
   have base: "(d,decode_finite_term (syntax_judgment_data s))\<in>positive_meaning P \<longleftrightarrow>
-      s\<in>set syntax_judgment_cases \<and> judgment_bridge_result (judgment_bridge_candidates!i) s" for s
+      s\<in>set syntax_judgment_cases \<and> judgment_bridge_result b s" for s
     by (rule filtered_judgment_source_meaning[OF syntax_judgment_data_injective formed
       source[unfolded judgment_bridge_source_def] package])
-  have condition: "judgment_bridge_condition (judgment_bridge_candidates!i) syntax_judgment_cases"
-    by (rule conjunct2[OF judgment_bridge_admission[OF question admission selected]])
+  have condition: "judgment_bridge_condition b syntax_judgment_cases"
+    by (rule judgment_bridge_admission[OF question admission selected member])
   have truth: "(d,decode_finite_term (syntax_judgment_data s))\<in>positive_meaning P \<longleftrightarrow>
       syntax_judgment_truth s" for s
     using base[of s] condition syntax_truth_has_case[of s]
@@ -97,7 +98,8 @@ theorem judgment_bridge_install_fields:
     and row: "(i,Some (d,F,u))\<in>set rows"
   obtains Q accepted where "judgment_bridge_question ()=Some Q"
     "native_development_admission Q report=Some accepted"
-    "finite_development_index i\<in>set accepted"
+    "i<length judgment_bridge_candidates"
+    "finite_path (first_occurrence_key judgment_bridge_candidates (judgment_bridge_candidates!i))\<in>set accepted"
     "judgment_bridge_source (judgment_bridge_candidates!i)=Some (d,F,u)"
 proof -
   obtain receives A where receive: "judgment_bridge_receive report=Some receives"
@@ -105,7 +107,8 @@ proof -
     and source: "judgment_bridge_source (judgment_bridge_candidates!i)=Some (d,F,u)"
     using result row by (auto simp: judgment_bridge_install_def split: option.splits)
   obtain Q accepted where "judgment_bridge_question ()=Some Q"
-    "native_development_admission Q report=Some accepted" "finite_development_index i\<in>set accepted"
+    "native_development_admission Q report=Some accepted" "i<length judgment_bridge_candidates"
+    "finite_path (first_occurrence_key judgment_bridge_candidates (judgment_bridge_candidates!i))\<in>set accepted"
     by (rule judgment_bridge_receive_fields[OF receive member]) blast
   then show thesis using source that by blast
 qed
@@ -116,8 +119,17 @@ corollary judgment_bridge_installed_truth:
     and package: "native_package_at (decode_finite_environment F) u [] P"
   shows "(d,decode_finite_term (syntax_judgment_data (C,syntax_proposition m)))\<in>positive_meaning P
     \<longleftrightarrow> C=syntax_checked_rooted_context \<and> syntax_join_refinement m"
-  by (rule judgment_bridge_install_fields[OF result row])
-    (rule admitted_judgment_source_meaning[OF _ _ _ _ package]; assumption)
+proof (rule judgment_bridge_install_fields[OF result row])
+  fix Q accepted
+  assume question: "judgment_bridge_question ()=Some Q"
+    and admission: "native_development_admission Q report=Some accepted"
+    and inside: "i<length judgment_bridge_candidates"
+    and selected: "finite_path (first_occurrence_key judgment_bridge_candidates
+      (judgment_bridge_candidates!i))\<in>set accepted"
+    and source: "judgment_bridge_source (judgment_bridge_candidates!i)=Some (d,F,u)"
+  show ?thesis
+    by (rule admitted_judgment_source_meaning[OF question admission selected nth_mem[OF inside] source package])
+qed
 
 definition judgment_bridge_install_summary where
   "judgment_bridge_install_summary result=map_option (map (\<lambda>(i,S). (i,S\<noteq>None))) result"

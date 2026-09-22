@@ -17,7 +17,8 @@ lemma cause_root_prepared_question_exact:
     prepared_faceted_question_exact cause_root_question_def)
 
 definition cause_root_prepared_choice where
-  "cause_root_prepared_choice prepared methods facets report = native_admitted_choice methods
+  "cause_root_prepared_choice prepared methods facets report =
+    keyed_admitted_choice (first_occurrence_key methods) methods
     (cause_root_prepared_question prepared methods facets) report"
 
 theorem cause_root_prepared_choice_exact:

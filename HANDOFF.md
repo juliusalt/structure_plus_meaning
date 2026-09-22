@@ -36,8 +36,9 @@ obligation once in `Isabelle_Entities`, re-pointing the successor's stronger cop
 deciding a sufficient condition through one lemma) — landed by #243 (`76cd520c`); #256 (`cc1b03fb`) makes the exporter
 prove it at every state it defines, and #227, accepted, cites it at the exported states and lands again after its merge
 round (its `THEORY_MAP.md` row of `Isabelle_Entities` doubled at the merge). #42 and #110 wait on #227; the
-rule-family law #233 has landed. #267 lists the exporter's declarations in position order and proves the obligation
-linearly, one word change, handing over again since the harness fixed Q12 (20:12). #42
+rule-family law #233 has landed. #267 (`8b77ee97`) listed the exporter's declarations in position order and proves the
+obligation linearly (one word change); #274 proves it on the definition's right-hand side, since rewriting the goal
+with the whole context term takes 0.6 s of its 0.62 s at the machinery state (#267's review). #42
 passes the indexes, #44 builds absence with no inequality and excess's witness over the index, #108 reads it. Roots
 stay a store with distinct keys, #38 stating the roots field under a carried condition on their order, owned by the
 exporter.
@@ -191,17 +192,17 @@ layout #155, the answer records' re-recording #157 (after #267 too), then #161, 
 or #92 and #93 after #167; one task more may end that chain. The incremental line's measurement #194 and its review
 are 9 deep, through #161 and #187. Then #238 (after #237, #214, #44, #42 and #227), 6, and #114 (after #112, #110 and
 #227), 5. Beside them: the adoption tool's follow-up fix #273, the owner's ask's last part; #227's merge round; the
-probe's fix #271, then #251 after it; the presentation's refinement #269; readiness at its instances' contracts #272; the
+probe's fix #271, then #251 after it; the presentation's refinement #269; the exporter proof's transport #274; readiness at its instances' contracts #272; the
 re-citations #239 (after #44) and #237. A word change lands with its re-recorded words: since 20:12 the landing
 check's snapshot takes the report files a brief's Deliverable names (Q12, fixed in the harness as the provisional
 choice).
 
-**Order** (`147 128 227 273 267 271 241 155 156 42 43 110 111 269 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 272 251`).
+**Order** (`147 128 227 273 271 241 155 156 42 43 110 111 269 274 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 272 251`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
-#227's merge round, which #42 and #110 wait on; the owner's ask's last part, the adoption tool's follow-up #273; #267, handing over again; the probe's fix #271, which every session's inner loop needs and #251 waits
+#227's merge round, which #42 and #110 wait on; the owner's ask's last part, the adoption tool's follow-up #273; the probe's fix #271, which every session's inner loop needs and #251 waits
 on; #241 after #147, head of the deepest chain, then the layout's word change #155, its answer records #157 and its
 measurement #159 soon after it, while the harness's lineage still holds the last base without it; the verdict's entry
-#42 and #110 as #227 lands; #269; #161; then the chains' next links as their inputs land, each ordered by the length of
+#42 and #110 as #227 lands; #269; the exporter proof's transport #274; #161; then the chains' next links as their inputs land, each ordered by the length of
 what follows it; the re-citations wherever a slot would otherwise stand idle; #64 and #92; #272 and #251 last. A
 parked task whose hold nears its end resumes first.
 
@@ -619,6 +620,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#265** (`75925bb8`): P1's second half, adoption by its evidence in the adoption tool (the clean-tree refusal, the
   frame's digest at installation, the final step through the evidence, the receipt written by the tool); its review's
   findings to #273.
+- **#267** (`8b77ee97`): the exporter's declarations in position order and `isabelle_declared_once` proved linearly by
+  their strict order (one word change, landed through Q12's fix); its review's proof cost and order lemmas to #274,
+  its note on the answer records to #157.
 
 ## Open
 
@@ -918,9 +922,9 @@ Not yet planned, in the order they are expected to be planned:
   refused at its gate the row both sides changed (20:19), so its fourth hands over main's row verbatim, which the
   landing's merge settles, and #42 adds the row's three sentences after it lands (mailed). #267 lists the declarations in
   position order and proves the obligation linearly (#256's proof is quadratic, 2.78 s on the machinery at every
-  definition of a state): one word change, done; parked on Q12 at 20:04 and told to hand over again once the harness
-  fixed it (20:12), its landing check's boundaries having equalled its re-recorded words; #157 re-records the answer
-  records once over it and the layout.
+  definition of a state): one word change, landed (`8b77ee97`); #157 re-records every answer record once over it and the
+  layout (the native records' entity keys move with the order; mailed); #274 proves the obligation on the definition's
+  right-hand side, the goal no longer rewritten with the whole context term (#267's review).
 - **In flight (plan-47, 20:13)**: #265, #227's merge round, the probe's fix #271 and #269 are ready; #267 hands over
   again; #128 and #147 finish their landings. The harness's delta layer is deployed and dormant
   (`notes/plan-delta-layer.md`), switched on for no base yet (20:12). Mailed to tasks not yet started, travelling with them: the level a use

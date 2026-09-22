@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "a385b9942ca2330027dc7fd750302c1778c7570d7d059e3a2006da02a7aaea5e",
- "checked_content_sha256": "cd4ef86420a3b1ff836b5428fdf44ab3565007bfe9184233971fd350aa42d050",
+ "base_receipt_sha256": "66d46634a45b52ad0ed5a9b2120e72f6b59d939b7a6e8f8ae3e439783ce9199a",
+ "checked_content_sha256": "cffc76ef1ce72dc5d2c6bdade9d2add39e20c29780766af842bfc5ec76b4ffcc",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,26 +22,75 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.29,
+  "base_and_impact": 0.28,
   "execution_impact": 0.05,
-  "export": 8.58,
-  "proof": 217.64,
-  "recipe_impact": 0.38,
-  "recipes_and_host_tests": 83.79
+  "export": 8.63,
+  "proof": 216.23,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 10.94
  },
  "rebuilt_theories": [
   "Admitted_Conditional_Applications",
   "Cached_Faceted_Questions",
   "Certificate_Construction_Review",
   "Conditional_Application_Review",
+  "Development_Admitted_Publication",
+  "Development_Certified_Generations",
+  "Development_Constant_Problems",
+  "Development_Constant_Verification",
+  "Development_Decision_Generations",
+  "Development_Decomposition",
+  "Development_Decomposition_Soundness",
+  "Development_Definition_Verification",
+  "Development_Edited_Local",
+  "Development_Edited_Reach",
+  "Development_Edited_Undeclared",
+  "Development_Entity_Keys",
+  "Development_Located_Rows",
+  "Development_Loci",
   "Development_Machinery",
+  "Development_Native_Answers",
+  "Development_Native_Decomposition",
+  "Development_Native_Selection",
+  "Development_Policy",
+  "Development_Problems",
+  "Development_Publication",
+  "Development_Refinement_Contracts",
+  "Development_Refinement_Repair",
+  "Development_Refinement_Verification",
+  "Development_Repair_Rows",
+  "Development_Request_Keys",
   "Development_Request_Packets",
+  "Development_Request_Scope",
+  "Development_Requests",
+  "Development_Row_Data",
+  "Development_Row_Presentations",
+  "Development_Rows",
   "Development_Seed",
   "Development_Seed_Loop",
   "Development_Seed_Publication",
   "Development_Seed_Verification",
+  "Development_State_Edit",
+  "Development_State_Presenter",
+  "Development_State_Rows",
+  "Development_Subject_Index",
+  "Development_Successor",
+  "Development_Verdict_Difference",
+  "Development_Verdict_Mentions",
+  "Development_Verdict_Statements",
+  "Development_Verdict_Unreached",
   "Faceted_Native_Questions",
+  "Isabelle_Acceptance",
+  "Isabelle_Code_Equations",
+  "Isabelle_Entities",
   "Isabelle_Entity_Export",
+  "Isabelle_Local_Names",
+  "Isabelle_Native_Reach",
+  "Isabelle_Readers",
+  "Isabelle_Renaming",
+  "Isabelle_State_Difference",
+  "Isabelle_Type_Tables",
+  "Map_Filter_Lists",
   "Material_Application_Observations",
   "Native_Control_Acceptance_Profile",
   "Native_Control_Admitted_Selection",
@@ -54,6 +103,7 @@
   "Native_Control_Closed_Installation",
   "Native_Control_Compile_Profile",
   "Native_Control_Constructed_Source_View",
+  "Native_Control_Context_Contract",
   "Native_Control_Context_Execution",
   "Native_Control_Filtered_Judgment",
   "Native_Control_Finite_Guard",
@@ -187,13 +237,13 @@
   },
   "native-development-machinery": {
    "exit_code": 0,
-   "seconds": 28.74,
-   "status": "accepted"
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development-seed": {
    "exit_code": 0,
-   "seconds": 83.79,
-   "status": "accepted"
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -250,19 +300,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1775,
- "seconds": 330.01,
+ "reused_theories": 1726,
+ "seconds": 255.63,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1832,
+  "theory_count": 1833,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1832,
+ "theories": 1833,
  "validation_inputs": {
-  "ROOT": "ad9238b98fb937b164fd67ccfd242ba9d2aabcb1457636c59e659300f151bfe1",
+  "ROOT": "4953f1d770225b1fbc73f560e46eadab06284277efb39ba22a74c442b2be5d91",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "82e934dc1ab241ad304872f32ca11b1f5a0e8ad06d5de97626b94c96458b4752"
  }

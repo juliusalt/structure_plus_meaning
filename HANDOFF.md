@@ -7,10 +7,10 @@ development itself is an entry of `DECISIONS.md` and here a reference; what a ta
 ## Graph
 
 The Q7 order in the ledger sets the lines, under the owner's two directions of 2026-09-19 — structure is explicit and
-octets are inert; native definitions are normative. The verdict of a kind and request construction, the step after it,
-are the chains that decide the run's length; the rows' retirement with the design of a row presented outside the store,
-the decomposition, the index line, the keyed question with the native reader's growth, and the in-place notions'
-instances run beside them; the base's lasting place (#144) and the receipts' form (#145) sit beside everything.
+octets are inert; native definitions are normative. The verdict of a kind, request construction after it and the
+incremental assessment of an edited state carry the order's present step; the layout's and the rows' serialized word
+changes make the chain that decides the run's length; the decomposition, the index line, the keyed question with the
+native reader's growth, the in-place notions' instances and the rule programs' re-citations run beside them.
 
 **Landing.** A build or fix is complete when it has landed: its check passes, its review accepts it, the finalizer
 commits it, and only then does the harness complete it and its reviews. A commit kept out of main only by the one
@@ -50,17 +50,23 @@ fields, after #176 and #182; #112, the construction — rule, program, contract,
 request at its locus through the store search with #97's contract for held values — after #110, #173 and #182; and
 #114, the held measurement of one construction, after #112.
 
-**The incremental assessment (#171, #178).** Design #171 (accepted 2026-09-22), DECISIONS.md "An answer state is judged
+**The incremental assessment (#185–#206, #219, #220).** Design #171's entry (`7a6093bf`), DECISIONS.md "An answer state is judged
 from its request state's assessment and the edit": the assessment as presentations only (indexes by a key reading, the
 declaration and row stores, the reach roots), the request state's closedness decided natively once through
 `checked_premise`; the edit as three families over which the answer state's presentation is the request state's
 updated; every field its own program at edit-sized arguments; the reach's loss bounded by a successor-closed key set
 produced by an executor and admitted natively; the contract `native_edited_fields`. Its held machinery measurement:
 statements 0.264 s, formed 0.645 s, excess 0.023 s, undeclared 1.791 s, unreached 4.602 s; restricted calls
-0.14–0.20 ms against 1.2 ms whole; no engine refinement needed (q54). #178 briefs its seven builds: 1 the index by a
-key reading, 2 the edit and the answer state's presentation (its exported-answer part after #161), 3–5 the fields and
-the reach after 1 and 2, 6 the incremental judgment and the held stage measurement after #42, 7 the witnesses after
-#44. Specifications keep their exception, judged whole (none in the loop's states).
+0.14–0.20 ms against 1.2 ms whole; no engine refinement needed (q54). #178 briefed its builds, each with its review:
+the index of a family by a key reading, the subject and mention indexes its instances (#185, subsuming Open 58); the
+edit and the answer state's presentation from it (#186, `786d11da`); the reach tables under seeding, restriction and
+removal (#190); the local fields (#188) and `undeclared` on the edited state (#189), after #185, #186 and #219;
+`unreached` with O's admission (#191), after #190 and #182; the incremental judgment, `native_edited_fields` and the
+stage's equation (#192), after #42 and the three field builds; the exported answer's edit (#187), after #161; the
+machinery's verification stage judged natively (#193) and its held measurement by field (#194), condition 5a's
+evidence for a stage's cost; the witnesses at the edit's parts (#195), after #44. From #186's review: #219 states the
+edit's and presenter's contracts once before #187, #188, #189 and #191; #220 makes the edit's constructor linear in
+the edit before the stage #193. Specifications keep their exception, judged whole (none in the loop's states).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
 a locus (#26), the presenters (#28), the store's (#83), the rows' fix (#84) and the store search's contract for values
@@ -99,10 +105,8 @@ re-citations (#74, #76, #117) and the consolidation (#115) have landed; the impo
 base and the receipts follow main (the owner, 12:55): each landing's check advances the base, and the harness commits
 that check's receipts after the landing, so no task advances the base or retains (Q10 and Q11 answered). The reboot of
 13:04 took `/tmp` and every base in it; #144 made a complete proof of `a2ed0ed7` at a lasting place (777 s, adopted
-14:01) and landed the tools change that names it once (`79f16061`). #145 gives a receipt the form of its boundary — no execution
-directory, nothing tree-relative, one field per line — now that each landing's retention enters the history (the
-receipts #119 reused named an execution long removed, which nothing read: problems.txt condition 3); the harness's
-retention after it lands converts them.
+14:01) and landed the tools change that names it once (`79f16061`). #145 (`37cbc5b2`) gave a receipt the form of its boundary — no execution
+directory, nothing tree-relative, one field per line; its follow-ups are Open 70.
 
 **The keyed question and the native reader (#142, #90–#93).** #88 (`cde3faf2`): the key search costs at most
 0.05 ms; a packet's cost is the native reading of the programs that state its candidates, superlinear in their syntax.
@@ -112,13 +116,15 @@ address length — `syntax_branch` places the i-th forest child under i + 1 comp
 clauses, and `family_ports` and `fresh_addresses` share the unary pattern. #136's entry
 (`609ffee6`) replaces the unary code by the library's digit code at every position of compiled syntax and at the
 uncompiled schema coordinates, `unary_address` retired (q47, q49); #142's builds are placed: the contracts with every
-word equal — #147 (re-queued for its commit), #149 (`8b39efea`, the flat forest), then #151, the bound pattern forest
-#179 (#149's review: a second forest the entry did not list, placed flat at `syntax_branch` with its binders fixed)
+word equal — #147 (re-queued for its commit), #149 (`8b39efea`, the flat forest), #151 (`c26ecb22`), the bound pattern forest
+#179 (`4393537e`; #149's review: a second forest the entry did not list, placed flat at `syntax_branch` with its binders fixed)
 and #153 — the layout with the one word change (#155, after
 them and #90), the answer records re-recorded over the layout on the base its landing advanced (#157), the held measurement on the
-harness's last base without the layout and the first with it (#159, after #155 alone), each with its review. #216 briefs, from #179's review, the forest over a
-family of placements (the syntax and bound forests and both executable forests its instances) and the premise forest's
-and schema body's placement on it, spliced before #155 so that compiled syntax has one layout and its words change once. #90 (`7379cfc7`) switched the 20 overnight native-control theories to the keyed question; the overnight
+harness's last base without the layout and the first with it (#159, after #155 alone), each with its review. #216 briefed, from #179's review, the forest over a
+family of placements, placed before #155 so that compiled syntax has one layout and its words change once, every word
+equal: #221 states it once, the bound forest, its executable form and the pattern forest's table its instances; #223
+places the premise forest and the schema body's premises through it; #225, after #153, makes the syntax forest, its
+positions and its table its instances. #90 (`7379cfc7`) switched the 20 overnight native-control theories to the keyed question; the overnight
 boundary, which no check runs and which lags its sources since `d0b70ea2`, `5c26b791` and `7379cfc7`, is recorded as
 historical at `aa946a22` by #172 (Open 55, q53). #92 retires `filtered_development_question`'s index form after #167,
 stating `keyed_development_admission_at` once for its four users (#90's follow-up 3); q33's facts are named in its
@@ -130,21 +136,12 @@ established, and a generator of the accepted candidates; their theories landed w
 `Established_Premises`, `Candidate_Generators`), the candidate re-citations with #132 (`79f16061`) and the premise
 re-citations with #130 (`accccb27`). #128 refines the seed publication's transactions as the first notion's instance
 at a constructor's contract. #130 kept its code equations at full arity: stated at the premise's arity, as the entry
-prescribes, they changed the seed's words, since the seeded state presents the code equations it reaches; #218
-decides what a refinement keeps equal then, correcting the entry's two false sentences. The seed recipe's other costs
-are Open 27.
-
-**The incremental assessment (#185–#206).** Design 171's entry (`7a6093bf`): an answer state is judged from its request
-state's assessment and the edit. #178 briefed its builds, each with its review: the index of a family by a key
-reading, the subject and mention indexes its instances (#185); the edit and the answer state's presentation from it
-(#186); the reach tables under seeding, restriction and removal (#190) — these three at once; then the local fields
-(#188) and `undeclared` on the edited state (#189), after #185 and #186; `unreached` with O's admission (#191), after
-#190 and #182; the incremental judgment, `native_edited_fields` and the stage's equation (#192), after #42 and the
-three field builds; the exported answer's edit (#187), after #161; the machinery's verification stage judged natively
-(#193) and its held measurement by field (#194), condition 5a's evidence for a stage's cost; the witnesses at the
-edit's parts (#195), after #44. #185 subsumes Open 58's inverted index of mentions. From #186's review (`786d11da`):
-#219 states the edit's and presenter's contracts once before #187, #188, #189 and #191; #220 makes the edit's
-constructor linear in the edit before the stage #193.
+prescribes, they changed the seed's words, since the seeded state presents the code equations it reaches. #218's
+entry (accepted; DECISIONS.md "What a refinement keeps equal when a recorded state presents the refined constant's
+code equations") decides it: a refinement keeps meanings equal, and a recorded state that expands a refined constant
+changes in exactly that constant's statements — each such constant judged by the harness as an answer to its
+refinement request, the state's words re-recorded once, a serialized word change; restating at the premise's arity is
+a refinement of its own. Its follow-ups are Open 73; the seed recipe's other costs are Open 27.
 
 **The rule programs (#173, #208–#215).** #173 (`a645759a`) stated the join law of finite rule programs once in
 `Native_Collection_Programs`; #42, #112 and #64 cite it. #207 briefed the rearranging single-premise rule: #208 states
@@ -156,24 +153,22 @@ found readings (#214, after #182 and #44). Each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
-changes: #151 or the bound pattern forest #179, #153, the layout #155, the answer records' re-recording #157, then #161, #165, #167,
-#169 and its review #170, or #92 and #93 after #167; one task more may end that chain. The incremental line's
-measurement #194 and its review are 9 deep, through #161 and #192. Then #114 (after #112, #110,
-#182, #176, #181), 6, and #45 (after #44, #42, #176, #181), 5. Beside them: #163 (no word, at once); the incremental
-assessment's first builds #185, #186 and #190; #144 and #145; the join law #173, then #64 (after #161 too), #42 and
-#112; the flaky test's fix #181, the exporter's obligation #176 and the excess locale #182, then #42, #110 and #112;
-#128; #132, then #130; the overnight boundary #172; the probe's summary #175.
+changes: #153 with the placed forest #221, the syntax forest #225 (the premise forest #223 beside it), the layout
+#155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
+#167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
+#161 and #192. Then #114 (after #112, #110, #182, #176), 5, and #45 (after #44, #42, #176), 4. Beside them: #219,
+then #220; the rule programs' re-citations #210, #212 and #214; the host tests' fix #217; #128.
 
-**Order** (`128 129 147 148 176 177 182 183 153 154 216 217 218 219 42 43 185 196 190 201 208 209 210 211 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
-The machine goes in this order, finalizers included (the harness, 09:43), so the landings the reboot interrupted come
-first: #128 with its review, the accepted commit #147, the exporter's
-obligation #176, which #42 and #110 wait on. Then the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract
-#153, the forest brief #216, the host tests' fix #217 and the design #218, and the verdict's entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the
-incremental assessment's three first builds (#185, #186, #190), which run at once in a slot those leave free; the rearranging rule #208, which #188, #189, #191 and #110 wait on; the
-layout's word change #155, its answer records #157 and its measurement #159 soon after it, while the harness's
-lineage still holds the last base without it; then #161; the rest of the verdict and request chains; the incremental
-line's later builds as their inputs land; #135's later builds; then #64 and #92. A parked task whose hold nears
-its end resumes first.
+**Order** (`128 129 147 148 176 177 182 183 153 154 221 222 223 224 225 226 217 219 42 43 185 196 190 201 208 209 210 211 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
+review, #147, and the exporter's obligation #176, which #42 and #110 wait on; then the excess locale #182, which #110,
+#112 and #191 wait on; the layout's last contract #153 and the forest over placements (#221, then #223 and #225), which
+#155 waits on, close after their brief's author; the host tests' fix #217, the edit's contracts #219 and the verdict's
+entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the incremental assessment's
+first builds (#185, #190) and the rearranging rule #208 with its re-citations; the layout's word change #155, its
+answer records #157 and its measurement #159 soon after it, while the harness's lineage still holds the last base
+without it; then #161; the rest of the verdict and request chains; the incremental line's later builds as their inputs
+land; #135's later builds; then #64 and #92. A parked task whose hold nears its end resumes first.
 
 ## Decisions
 
@@ -456,6 +451,12 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#186** (`786d11da`): `Development_State_Edit` — the edit as three families, the answer state's presentation from
   it with its constructor's facts, and the native answer's edit; its review's follow-ups became #219, #220 and mail
   to #187–#193.
+- **#216** (brief) placed as #221–#226 (Graph): the forest over a family of placements, and the premise forest's and
+  the syntax forest's placement on it, every word equal, before #155.
+- **#218** (design, accepted): DECISIONS.md "What a refinement keeps equal when a recorded state presents the refined
+  constant's code equations" — meanings; an expanded refined constant judged by the harness as an answer to its
+  refinement request and the recorded state's words re-recorded once; restatement at the premise's arity a refinement
+  of its own; task 85's three sentences corrected; follow-ups Open 73.
 
 ## Open
 
@@ -683,22 +684,29 @@ Not yet planned, in the order they are expected to be planned:
     request/answer pair keys continue, which is all the incremental judgment needs. Not decided now: loci and the
     history use the state's constant keys, and nothing compares entity keys across successors; decide when a consumer
     does (the incremental assessment carried across rounds, or history rows keyed by entity).
+73. **#218's follow-ups** (DECISIONS.md "What a refinement keeps equal when a recorded state presents the refined
+    constant's code equations"): (1) the adoption tool's criterion — `tools/development_adoption.py`'s step 3 (every
+    word equal) replaced by the entry's, and adoption of seed-state answers at all — before the loop consumes an answer
+    to a seeded problem; (2) the six unexpanded constants restated at the premise's arity (`finite_citation_candidates`,
+    `finite_term_readings_bounded`, `finite_pattern_readings_bounded`, `finite_native_package_formed`,
+    `finite_native_graph_demands`, `finite_native_package_readings`), with #131's follow-up 4 (their bodies named as
+    constants), every word equal; (3) the seven seed roots so restated (the formation roots #130 guarded), a
+    serialized word change with per-constant harness verdicts, routed provisionally through the loop as answers to the
+    seven seeded formation problems after (1), after the rows line's word changes; (2) and (3) wait for a measured need
+    or their theories' next edit, since a partial application is checked once only where a caller shares it, which no
+    caller on the loop's path is shown to do (Open 68 asks the same); (4) a design, when first met, of the comparison
+    of a recorded state across a refinement the harness cannot frame (a multi-equation constant, the machinery state).
 
 ## Now
 
-- **In flight (plan-44, 15:50)**: #128's session re-applies its refinement over #30's lines in
-  `Development_Admitted_Publication` and runs its held pair; #147 awaits its landing; #176 hands over after #181's
-  landing (`37cbc5b2`); #153, #185, #190, #208 and #217 build; #216 briefs the forest over placements (its builds to be
-  spliced before #155) and #218 designs the refinement criterion. #219 states the edit's and presenter's contracts once
-  before #187–#191; #220 makes the edit's constructor linear in the edit before #193; #186's other follow-ups were
-  mailed to #187–#193. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
+- **In flight (plan-45, 15:55)**: #128, #147, #176 (its second round), #185, #190, #208 and #217 are in review or
+  landing; #153 is parked; #216's builds are placed (#221, #223, #225, Graph); #218's entry is accepted (Graph, Open
+  73). #219 states the edit's and presenter's contracts once before #187–#191; #220 makes the edit's constructor linear
+  in the edit before #193; #186's other follow-ups were mailed to #187–#193. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
   declarations #40 needed (q54); #112's carries #106's review. #143 was withdrawn (Open 65); its finding is carried by
   #157 and the working rules. #155, #92 and #64 name the reports they re-record, no receipt.
 - **Owed to briefs when their inputs land**: #64's brief takes #161's identity lemma in place of a transport (#135's
   entry, q48).
-- **A flaky host test** (12:47): `test_investigation.test_interruption_records_failure_and_stops_children` fails under
-  load with no tool change; #176's landing check failed on it twice. #181 repairs it, first in the queue, and #176 waits
-  on it, to bring main in and hand over again unchanged.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).

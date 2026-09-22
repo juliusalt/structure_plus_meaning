@@ -1,5 +1,5 @@
 theory Factor_Finite_Schema_Compilation
-  imports Factor_Finite_Schema_Syntax Factor_Finite_Schema_Renaming Finite_Functional_Enumeration Factor_Schema_Code
+  imports Factor_Finite_Schema_Syntax Factor_Finite_Schema_Renaming Functional_Enumeration_Indexes Factor_Schema_Code
 begin
 
 section \<open>Enumeration is derived from both complete original premise fields\<close>
@@ -24,9 +24,13 @@ lemma finite_schema_template_rows_exact:
   assumes formed: "finite_schema_formed S"
   shows "map_relation_values decode_finite_native_premise (set (finite_schema_template_rows S))=
     socket_sum (schema_premises (decode_finite_schema S)) (schema_material_premises (decode_finite_schema S))"
-  by (simp only: finite_schema_template_rows_def
-    finite_functional_rows_exact[OF finite_schema_template_table_functional[OF formed]]
-    decode_finite_premise_socket_sum decode_finite_schema_fields)
+proof -
+  let ?R="finite_socket_sum (finite_schema_premises S) (finite_schema_materials S)"
+  have rows: "set (finite_functional_rows ?R)=fset ?R"
+    using functional_rows_index.found_pairs[OF finite_schema_template_table_functional[OF formed]] by simp
+  show ?thesis
+    by (simp only: finite_schema_template_rows_def rows decode_finite_premise_socket_sum decode_finite_schema_fields)
+qed
 
 type_synonym finite_compiled_schema = "finite_exact_artifact\<times>local_address\<times>
   (local_address,local_address,local_address option definition_site) finite_factor_schema\<times>

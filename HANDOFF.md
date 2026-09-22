@@ -236,6 +236,11 @@ judgment's path.
   `recipes/` or `exports-context/`, so a base advance removes its own.
 - **#122** `348c625f`: a check's host-test record names each failing test (`failing`: its outcome, its id and the last
   eight lines of its traceback, beside `tail`), parsed from unittest's printed report.
+- **#88** `cde3faf2`: the held attribution (`.build/tasks/keyed-question-cost/attribution.md`: the key search at most
+  0.05 ms, the cost the native reading of the programs that state the candidates, superlinear in their syntax) and
+  `Factor_Finite_Source_Construction_Sharing` (compile reads the condition's source once, the case-specific invariant
+  computed once). A packet's admission already reads no source (`development_constructed_fields`); the first
+  attribution had timed an arbitrary report's. Packets fall 10–41% keyed and 4–42% index.
 
 ## Open
 
@@ -261,7 +266,9 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
   landing that changes many recipes' boundaries. The seed and machinery receipts lag since `312a2ca2` (#86's result),
   so every landing check executes those two recipes, and #106's check, the first on #86's base, executed all 52
   (221.96 s). #120 retained them (`518ac1e7`): the next landing check's recipe phase fell to 6.11 s of 21.18 s. #119
-  retains after #105's advance; whether later landings can reuse executions at all is #134's.
+  retains after #105's advance. #134: reuse fires after a base move or a retention; a receipt goes stale only when a
+  code equation in its recipe's closure changes (as `a436a40e`'s segmented references did for all 52), and every later
+  check reaching such a recipe then re-executes it until a retention.
 
 Not yet planned, in the order they are expected to be planned:
 
@@ -393,22 +400,27 @@ Not yet planned, in the order they are expected to be planned:
     `TestResult.failures` and `errors`, through a result class on the suites' runner, which would remove the parsing;
     a tools task when a failure meets a gap or the suites' runner is next changed. `FORCE_COLOR=3` reaches the check's
     environment, so a test comparing text output could depend on it.
+46. **Observation's read-back of the installed program** (#88): a packet reads its candidates' syntax at generation,
+    compile and observation's read-back. Skipping the read-back needs a recovery theorem for finite programs — the
+    installer knows its program only up to an alpha variant, and the read-back program is part of the report's
+    words — a design question. After #124's measurement shows what the reading then costs.
 
 ## Now
 
-- **In flight (plan-37, 07:15)**: #134 asks whether proved-code export gives the same module bytes from two proof
-  contexts over identical sources (#120's retaining check reused no execution: 50 of 52 boundaries differed only in
-  the module's digest); #88 ended partial with its held attribution
-  (`.build/tasks/keyed-question-cost/attribution.md`): the key search costs at most 0.05 ms, so no index instance is
-  taken for it; a packet's cost is the native reading of its sources, which grows superlinearly with a program's
-  syntax and is repeated in generation, compile, observation and admission. #88 is re-planned to read each source
-  once across a packet's stages, the reader's growth is #124 (reviewed by #125), and #90 waits on both, #92 on #90 and #30; #121's builds placed: the notions' theories #126 first, then the seed transactions' refinement #128 and the
+- **In flight (plan-37, 07:15)**: #134 found proved-code export deterministic (52 groups of sessions over one closure, byte-identical)
+  and lands the property as a comment at `reusable_execution`, the one repository file the harness lets it finalize;#124 refines the native reader's growth in a program's syntax (after #88 the keyed packet
+  still costs 7.1 times the index one at 16 far candidates, the machinery's contract list 2.8 times); #90 waits on it,
+  #92 on #90 and #30; #121's builds placed: the notions' theories #126 first, then the seed transactions' refinement #128 and the
   candidate re-citation #132 beside it, the premise re-citation #130 after #124 as well; #36
   resuming on #86's base; #94 parked (`v2.py after 94 36`, q37); #105 parked until #117 lands (`v2.py after 105 117`),
   the retention #119 after it. #40's brief carries #101's review (the families measured first; the two consumer
   corollaries); #42's and #112's carry #106's (the introduction's subset form stated once by whichever first needs
   it; the key premise derived where it can be).
-- **Not handled**: nothing is waiting on the planner.
+- **Not handled** (plan-37, 07:40): #134's verdict when the finalizer hands it over — accept it with
+  `.build/tasks/134/verdict.md`, written, adding that the comment at `reusable_execution` landed; the orphaned session
+  databases `Incremental_5c2806e0` and `Incremental_50702571` in `/tmp/structural-isabelle` (task 120's two removed
+  contexts), for #105's advance to remove by literal name; and `## Graph`'s fuller rewrite, owed since plan-34 — the
+  lines added since (#121's builds #126–#133, #124, #134) stand only in `## Now` and `## Delivered`.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).
@@ -435,7 +447,11 @@ Not yet planned, in the order they are expected to be planned:
   - The probe guard still requires `--timeout` to be named and cites the old 1200 s default, as does the memory note on
     probing (#79's review).
   - A `=== write` in `v2.py change` replaces an earlier round's deliverable without notice (#80's second round), and a
-    held measurement leaves no record of its hold (#80's review: write the claim's window into held runs' receipts).
+    held measurement leaves no record of its hold (#80's review: write the claim's window into held runs' receipts;
+    #88's re-review: record each hold's task, start and end where a reviewer reads it).
+  - An investigation whose deliverables all lie under `.build/` can neither finalize (the finalizer takes only
+    repository files) nor record itself done (a done result needs a final job), and the planner's verdict waits for
+    the finalizer's hand-off (#134, 07:35).
   - Two git operations met in one task's worktree during concurrent finalizations (`index.lock`, #95's commit, 03:49):
     the lock was gone a minute later, yet landing the accepted entry needed a session round.
   - The planner cannot read a design's entry before it lands: `v2.py read` and a plain read of

@@ -1,5 +1,5 @@
 theory Positioned_Native_Evaluation
-  imports Keyed_Native_Evaluation Inference_Embeddings
+  imports Keyed_Native_Evaluation Member_Tree_Indexes Inference_Embeddings
 begin
 
 section \<open>A demanded call is compared through its key once and settled by its position\<close>
@@ -20,38 +20,139 @@ definition demand_positions :: "('a \<Rightarrow> 'k::linorder) \<Rightarrow> 'a
   "demand_positions key D=(let ks=sorted_list_of_fset (fimage key D) in
     RBT.bulkload (zip ks [0..<length ks]))"
 
+
+subsection \<open>The positions of a demand are an index of the demand\<close>
+
+text \<open>
+  The positions of a demand are the index notion's instance with positions as values, not with unit
+  values: the evaluation's correctness rests on a demanded key being found at its own position
+  (@{text demand_positions_index}, which makes the positioned map injective), and membership alone does
+  not carry that. A finite set of keys is the carrier of the relation of each key to its position in the
+  canonical listing; its index is the red-black tree of those rows, the tree's instance
+  (@{text tree_map_carrier_index}) read through the listing. The demand is the same carrier read through
+  a call's key, which distinguishes where it has a left inverse; at the native call key it does by
+  @{thm [source] native_call_inverse}.
+\<close>
+
+lemma key_positions_carrier_index:
+  "carrier_index (\<lambda>K k i. (k,i)\<in>set (zip (sorted_list_of_fset K) [0..<length (sorted_list_of_fset K)]))
+    (\<lambda>_. True) (UNIV::'k::linorder set) id
+    (\<lambda>K. RBT.bulkload (zip (sorted_list_of_fset K) [0..<length (sorted_list_of_fset K)])) tree_search"
+  by (rule carrier_index_through_key[OF tree_map_carrier_index]) (simp_all add: sorted_list_of_fset.rep_eq)
+
+interpretation key_positions_index:
+  carrier_index "\<lambda>K k i. (k,i)\<in>set (zip (sorted_list_of_fset K) [0..<length (sorted_list_of_fset K)])"
+    "\<lambda>_. True" "UNIV::'k::linorder set" id
+    "\<lambda>K. RBT.bulkload (zip (sorted_list_of_fset K) [0..<length (sorted_list_of_fset K)])" tree_search
+  by (rule key_positions_carrier_index)
+
+lemma demand_positions_rows:
+  "RBT.lookup (demand_positions key D) k=Some i \<longleftrightarrow>
+    (k,i)\<in>set (zip (sorted_list_of_fset (fimage key D)) [0..<length (sorted_list_of_fset (fimage key D))])"
+  using key_positions_index.query_search[where c="fimage key D" and q=k and v=i] by (simp add: demand_positions_def Let_def)
+
+text \<open>
+  The listing is distinct, so the rows are the graph of the map of the zip, and the lookup is that map.
+\<close>
+
 lemma demand_positions_lookup:
   "RBT.lookup (demand_positions key D)=
     map_of (zip (sorted_list_of_fset (fimage key D))
       [0..<length (sorted_list_of_fset (fimage key D))])"
-  by (simp add: demand_positions_def Let_def RBT.lookup_bulkload)
+proof (rule ext)
+  fix k
+  let ?Z="zip (sorted_list_of_fset (fimage key D)) [0..<length (sorted_list_of_fset (fimage key D))]"
+  have keys: "distinct (map fst ?Z)" by simp
+  have same: "RBT.lookup (demand_positions key D) k=Some i \<longleftrightarrow> map_of ?Z k=Some i" for i
+    using demand_positions_rows[of key D k i] map_of_is_SomeI[OF keys, of k i] map_of_SomeD[of ?Z k i]
+    by blast
+  show "RBT.lookup (demand_positions key D) k=map_of ?Z k"
+  proof (cases "map_of ?Z k")
+    case None
+    have "RBT.lookup (demand_positions key D) k=None"
+    proof (cases "RBT.lookup (demand_positions key D) k")
+      case (Some j)
+      with same[of j] None show ?thesis by simp
+    qed
+    with None show ?thesis by (simp only:)
+  next
+    case (Some j)
+    then show ?thesis using same[of j] by simp
+  qed
+qed
+
+lemma zip_positions_member: "(\<exists>i. (k,i)\<in>set (zip xs [0..<length xs])) \<longleftrightarrow> k\<in>set xs"
+proof
+  assume "\<exists>i. (k,i)\<in>set (zip xs [0..<length xs])"
+  then show "k\<in>set xs" by (auto dest: set_zip_leftD)
+next
+  assume "k\<in>set xs"
+  then obtain n where n: "n<length xs" "xs!n=k" by (auto simp: in_set_conv_nth)
+  have "(xs!n,[0..<length xs]!n)\<in>set (zip xs [0..<length xs])" using n(1) by (force simp: set_zip)
+  then show "\<exists>i. (k,i)\<in>set (zip xs [0..<length xs])" using n(2) by blast
+qed
 
 lemma demand_positions_member:
   "RBT.lookup (demand_positions key D) k\<noteq>None \<longleftrightarrow> k\<in>fset (fimage key D)"
 proof -
-  have "dom (RBT.lookup (demand_positions key D))=fset (fimage key D)"
-    by (simp add: demand_positions_lookup dom_map_of_zip)
-  then show ?thesis by (auto simp: domIff)
+  let ?ks="sorted_list_of_fset (fimage key D)"
+  have "RBT.lookup (demand_positions key D) k\<noteq>None \<longleftrightarrow> (\<exists>i. (k,i)\<in>set (zip ?ks [0..<length ?ks]))"
+    by (simp only: not_None_eq demand_positions_rows)
+  also have "\<dots> \<longleftrightarrow> k\<in>set ?ks" by (rule zip_positions_member)
+  finally show ?thesis by simp
 qed
 
 lemma demand_positions_members_subset:
   assumes inverse: "\<And>x. unkey (key x)=x"
   shows "fBall B (\<lambda>q. RBT.lookup (demand_positions key A) (key q)\<noteq>None) \<longleftrightarrow> B |\<subseteq>| A"
-  by (simp only: demand_positions_member ordered_member_tree_exact[symmetric]
-    keyed_members_subset[OF inverse])
+proof -
+  have injective: "inj key" by (rule distinguishes_by_left_inverse[where unkey=unkey]) (rule inverse)
+  have "fBall B (\<lambda>q. RBT.lookup (demand_positions key A) (key q)\<noteq>None) \<longleftrightarrow>
+      fBall B (\<lambda>q. key q\<in>fset (fimage key A))"
+    by (simp only: demand_positions_member)
+  then show ?thesis by (auto simp: less_eq_fset.rep_eq fimage.rep_eq inj_image_mem_iff[OF injective])
+qed
 
 lemma demand_positions_index:
   assumes lookup: "RBT.lookup (demand_positions key D) k=Some i"
   shows "sorted_list_of_fset (fimage key D)!i=k"
 proof -
-  have "map_of (zip (sorted_list_of_fset (fimage key D))
-      [0..<length (sorted_list_of_fset (fimage key D))]) k=Some i"
-    using lookup by (simp only: demand_positions_lookup)
-  then have "(k,i)\<in>set (zip (sorted_list_of_fset (fimage key D))
+  have "(k,i)\<in>set (zip (sorted_list_of_fset (fimage key D))
       [0..<length (sorted_list_of_fset (fimage key D))])"
-    by (rule map_of_SomeD)
+    using lookup by (simp only: demand_positions_rows)
   then show ?thesis by (auto simp: in_set_zip)
 qed
+
+lemma demand_positions_carrier_index:
+  assumes inverse: "\<And>x. unkey (key x)=x"
+  shows "carrier_index (\<lambda>D q i. (key q,i)\<in>set (zip (sorted_list_of_fset (fimage key D))
+      [0..<length (sorted_list_of_fset (fimage key D))])) (\<lambda>_. True) UNIV key (demand_positions key) tree_search"
+proof -
+  have positions: "demand_positions key=(\<lambda>D. RBT.bulkload (zip (sorted_list_of_fset (fimage key D))
+      [0..<length (sorted_list_of_fset (fimage key D))]))"
+    by (rule ext) (simp only: demand_positions_def Let_def)
+  show ?thesis unfolding positions
+  proof (rule carrier_index_through_key[OF key_positions_carrier_index])
+    show "inj_on key UNIV" by (rule distinguishes_by_left_inverse[where unkey=unkey]) (rule inverse)
+    fix D k and i :: nat
+    show "(k,i)\<in>set (zip (sorted_list_of_fset (fimage key D)) [0..<length (sorted_list_of_fset (fimage key D))]) \<longleftrightarrow>
+        (\<exists>q\<in>UNIV. key q=k \<and> (key q,i)\<in>set (zip (sorted_list_of_fset (fimage key D))
+          [0..<length (sorted_list_of_fset (fimage key D))]))"
+    proof
+      assume row: "(k,i)\<in>set (zip (sorted_list_of_fset (fimage key D)) [0..<length (sorted_list_of_fset (fimage key D))])"
+      then have "k\<in>set (sorted_list_of_fset (fimage key D))" by (rule set_zip_leftD)
+      then obtain q where "k=key q" by auto
+      then show "\<exists>q\<in>UNIV. key q=k \<and> (key q,i)\<in>set (zip (sorted_list_of_fset (fimage key D))
+          [0..<length (sorted_list_of_fset (fimage key D))])" using row by blast
+    qed blast
+  qed simp
+qed
+
+interpretation native_demand_positions:
+  carrier_index "\<lambda>D q i. (native_call_key q,i)\<in>set (zip (sorted_list_of_fset (fimage native_call_key D))
+      [0..<length (sorted_list_of_fset (fimage native_call_key D))])" "\<lambda>_. True" UNIV native_call_key
+    "demand_positions native_call_key" tree_search
+  by (rule demand_positions_carrier_index[OF native_call_inverse])
 
 text \<open>
   A demanded key receives its own position and an undemanded one keeps itself, in the second
@@ -165,7 +266,7 @@ proof -
     fix q
     show "q |\<in>| ffilter (\<lambda>q. RBT.lookup (ordered_member_tree A) (?g q)\<noteq>None) D \<longleftrightarrow>
         q |\<in>| ffilter (\<lambda>q. q\<in>finite_inference_result ?F {||}) D"
-      by (simp only: ffmember_filter ordered_member_tree_exact result image
+      by (simp only: ffmember_filter member_tree_lookup result image
         inj_image_mem_iff[OF ginj])
   qed
   show ?thesis

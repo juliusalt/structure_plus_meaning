@@ -10480,6 +10480,15 @@ read. The correspondence at a parent `p` with a locus and subject `{c}`:
   `I` is not empty and some `H` makes `development_decomposition_application C p I H` hold at the presented state.
   Parents without a locus are not presented; that partiality is a premise of the contract, never a total map onto
   them.
+- *Corrected 2026-09-22 (task 62, planner's answer q35): the contract as built is thinner than the equality above.
+  Task 24's rows do not carry what the state defines (the children's rows are posed by the application and do not
+  stand before it), so the native schema decides only what it reads: at a presented parent it holds exactly when the
+  intermediates are nonempty (`Development_Native_Decomposition.native_decomposition_applies`). That the state poses
+  the children (`development_state_poses`) is a separate premise of the soundness instance
+  (`native_decomposition_reduction`), never a premise inside the equality the program decides. Task 94 reads the
+  state's rows natively (the Definition family and the parent's kind family of `Development_State_Rows`, with
+  `state_presents` replacing `development_state_poses`) once the per-family traversal is stated, and restores the
+  equality above.*
 - Soundness is not weakened. `development_decomposition_reduction` holds at `p`, and there it is trivial as a
   composition: task 60's predicate reads only a problem's subject and the kind of its contract
   (`development_problem_stated`), the extended state keeps every position of the state it extends
@@ -10676,3 +10685,460 @@ is added, no consumer on the loop's path reading an unsatisfied contract facet. 
 as `keyed_faceted_question`, retiring the index form, and the steering's method identifiers are later tasks.
 
 Recorded 2026-09-22 (task 56).
+
+## Request construction is a native definition over the state's rows
+
+The Q7 order's step after the verdict of a kind. A leaf's request is today the value of a HOL
+function, `development_constant_request`, which the loop records as the request row at the problem's
+locus; the verdict then reads that row's subject and support through `request_presents`. So the
+loop's path from issue through request to verdict still carries a HOL result the native machinery
+takes on trust. This entry settles what a request is as a native definition over the same rows the
+verdict reads: its fields, how each is read from the request state, its contract, why its two kinds
+are one definition, how it is produced and admitted, its build order and its cost. It changes no
+theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The request of a problem is `development_constant_request reading kind C r a c`, computed in HOL and recorded as the request row. | It is a native definition over the request state's rows: a check whose positive meaning holds of a proposed request body exactly when the body lists the problem's support and least context. The HOL constructor becomes the specification its contract states, and the first producer whose answers the check admits. |
+| Constructing a request natively means the native engine computes the request. | The engine's generation (`finite_native_generation`) is one step over the term demand of its input: a conclusion is generated only when every premise call is a demanded call over the input's components. A request's context is a filtered family of the state, not a component of it, so no native computation today produces it. Construction is therefore the native admission of a proposed body, and production is an executor's, as the plan makes every native computation that answers a request an executor like any other. |
+| The least context needs the native reach (the brief's hypothesis). | The least context is one step: the scope of the constant and the declarations of the constants the scope's statements mention, and a declaration mentions nothing (`isabelle_declaration_specifies_nothing`), so the closure stops at once (`development_request_context_closed`, `development_request_context_least`). No closure is computed and the reach is not composed. What is read of the reach is its **table**, which is the index of the mention relation by the constant mentioned. |
+| The refinement and definition requests are instances of one definition at family selections, as the verdict's two are. | No selection distinguishes them. Neither the support (`development_request_support C c`) nor the context (`development_request_context C c`) depends on the reading; the kind enters only the problem's existence and contract and the incumbent, which is the demanded family's rows among the context, a selection the packet and the verdict make and not a field of the request. |
+
+### What a request carries, and what reads it
+
+A request of a problem of constant `c` (`development_constant_request_fields`) is the problem, the
+constant as the state declares it, the **support** — every constant a statement of the scope
+mentions (`development_request_support_member`), the scope being every entity with `c` among its
+subjects — and the **least context** — the scope together with the declarations of the support
+constants (`development_request_context_exact`). As a row (task 9's entry) the request stands at the
+problem's locus under the request role, and its body is two families of citations and nothing else:
+the support's constant keys and the context's row keys (`development_request_body`). It carries neither
+its problem nor its subject, which are the locus, nor its incumbent, which the context holds, nor the
+contract term, which the problem row carries inert.
+
+In the rows' own terms the support is the set of mention keys of the rows having `key c` among their
+subjects — a row's `row_mentions` is `map key (entity_mentions e)`, and `entity_mentions` is exactly
+what `development_request_support` collects of an entity — and the scope is the set of those rows, over
+every family: the scope filters the whole entity list and is not restricted to a kind.
+
+The verdict reads a request for its subject and its support (`request_presents`, whose context is
+existential); it never reads the context. The context is read by the packet, which presents the
+request row with the rows its citations reach, and by currentness (`development_request_current`),
+which asks whether every cited row persists in a later state. Request construction is therefore where
+the context is decided, and nowhere else.
+
+### The five fields
+
+The construction's call carries, as its context, the subject's key `k` — the tail of the request's
+locus (`request_presents_problem_locus`) — and the presentation of the request state its fields read,
+and, as its value, the request body: a support family `ks` and a context family `es`. Each field is a
+native program with its own contract, stated in row terms:
+
+| Field | Native program | What it consumes |
+|---|---|---|
+| support complete | *every* row having `k` among its subjects: *every* key of its mentions is in `ks` | `excess` (#36) of the request state, at the selection of every family and the request's own support |
+| scope cited | *every* row having `k` among its subjects: its key is in `es` | #36's guarded traversal, at the row predicate "its key is cited" |
+| declarations cited | *every* key of `ks`: the declaration row the declaration store holds at it is in `es` | #36's declaration store, the one `undeclared` reads |
+| context sound | *every* key of `es`: the request state's row at it has `k` among its subjects, or declares a key of `ks` | #38's search of a family's rows by key; #34's row reading of subjects |
+| support sound | *every* key of `ks`: the reach table's row at it has `k` among its predecessors | #40's reach table over the state's constant keys, as the index of mentions by the constant mentioned |
+
+`support complete` is `excess` itself, and that is its meaning: the request state, read as an answer
+to its own request, stays within the support — its HOL counterpart is
+`development_answer_statements_excess (λ_. True) (snd S) {|c|} (development_request_support (snd S) c)=[]`,
+which holds of every state by `development_request_support_member`. It is why the unchanged answer is accepted, and it makes
+the verdict's `excess` and this field one notion at two states, not two notions. `support sound` reads
+the reach table because the table's predecessors of `x` are exactly the subjects of the rows mentioning
+`x` (`isabelle_reach_predecessors`), so "some row about `c` mentions `x`" is "`c` is among the
+predecessors of `x`": one search per support key, where a traversal of the rows per key would cost the
+rows times the support. This is the index notion applied to the mention relation, not a new notion: the
+table is that relation's index by the mentioned constant, and its row lemma is the index's contract.
+
+What each field consumes is stated in the verdict's briefs in the form this construction needs (the
+planner, answering q36, before those builds start). From #36: the guarded traversal — every row of a
+selection having key `k` among its subjects satisfies a row predicate `P`, rows not about `k` passing —
+stated once over any selection and any `P`, with `excess` its instance; `excess` itself over any family
+selection and any support family; and the declaration store by constant key that `undeclared` reads, a
+reusable notion whose single-valuedness is a named carried condition. From #38: the search of a
+presented state's family rows by row key, for any presented state. From #40: the reach table over the
+state's constant keys with its row lemma — the predecessors of `x` are the keys of the subjects of the
+rows mentioning `x` — exposed as a reusable presentation, not only through `unreached`. From #34: the
+row presentation, `row_pattern` and the row reading of subjects, as landed.
+
+Every field is positive. The only complement anywhere is the guarded traversal's own — a row without
+`k` among its subjects passes — and it is #36's, consumed and never defined here. No field needs store
+absence; no field is defined as another's negation. No field reads a row's identity, so every
+statement stays inert. No field reads a kind: the scope is over every family.
+
+### Production and admission
+
+A request body is produced by an executor and admitted by the construction. The first producer is the
+HOL constructor itself, exported as code: it is an executor whose answers the contract proves the check
+admits, not the definition of a request. Any other producer — a deterministic program, a native
+producer once one exists — answers the same class and is admitted the same way; a producer whose body
+lists a row outside the least context, or leaves one out, is refused. That refusal is the plan's
+"a request carrying more than its least context is refused", delivered by the check and not by a rule
+of its own.
+
+**Admission at a locus** is the development store's search at the request locus with the construction
+as its checker: the search of `native_store_search_program`, at a site of its own, whose check receives
+the subject's key and the request state as context and the body the store holds as value. It is the
+search `development_request_at` makes with equality as its check (`native_value_rule`), with the
+construction in the checker's place, so the request row the loop records is admitted natively, and the
+path from issue to verdict carries no result the machinery has not decided.
+
+Request construction reads no issue row and no problem row. Which requests are issued — a leaf of the
+library whose prerequisites are settled, and the policy criteria of owner question Q2 — is the issue
+decision's; what the request of a problem is, is this definition's. A problem whose subject is not
+exactly one constant has no locus (task 9's Open, HANDOFF Open 13), so no request is constructed for it:
+the partiality is a premise of the contract, never a map that sends the omitted case somewhere.
+
+### The contract
+
+One presentation relation and one theorem, in the shape of `native_development_ready` and of the
+verdict's contract. Under `state_presents key S R` with the constant key a parameter under `inj_on`,
+`c<length (fst (snd S))`, and the conditions below, the construction holds of
+`(key c, the presented request state, development_request_body ks es)` exactly when
+
+    set ks=key ` fset (development_request_support (snd S) c) ∧
+    set es=ekey ` fset (development_request_context (snd S) c)
+
+with a lemma per field stating its own row-level meaning first, and the theorem the conjunction. Every
+listing is admitted, in any order: the relation is the one `development_requests_present` states.
+
+The conditions, each named with its owner:
+
+- **The entity key.** The context cites the request state's own row keys, and `ekey` is a parameter
+  with the premise that the presentation keys each entity's row by it:
+  `∀e∈set (snd (snd S)). (ekey e,entity_row key (snd S) e)∈presented_rows R`. `request_presents` fixes
+  the development rows' entity key to `development_entity_key (snd S)`, so the two meet when the request
+  state's presentation keys every entity row by its first-occurrence key — which also makes the contract
+  question's candidates (#54's entry), the state's rows and the context one key assignment. The
+  condition is discharged by the presenter of a state's rows (a function realizing `state_presents`,
+  HANDOFF Open 14, placed by the planner before #40 and before build 3), which keys every entity row by
+  `development_entity_key`; the answer state is keyed to share keys with it (`keys_shared`), not by its
+  own first occurrences.
+- **The declarations.** The declaration store is single-valued — at most one declaration row per
+  constant, #36's named carried condition, owned by the exporter, as the verdict's contract carries
+  single-valued stores — and every support constant is declared, which is the request state's own
+  `undeclared` field (#36) and holds of every closed state.
+
+Three corollaries consume the theorem, none restating it:
+
+- **The two kinds.** For every reading and kind, `development_constant_request reading kind (snd S) ra a c=Some r`
+  and a rows presentation holding `r` give that the construction holds of the stored body. At the
+  code-equation reading this is `development_refinement_request`, at the definition reading
+  `development_definition_request`: one lemma, with the reading universally quantified.
+- **Admission at a locus.** Under `request_presents key S R rows r k ks` and the entity key at
+  `development_entity_key (snd S)`, the admission search at the request locus holds exactly when the
+  request's support and context are `development_request_support (snd S) c` and
+  `development_request_context (snd S) c`.
+- **The payload audit.** The construction's program, with every consumed field's clauses, states no
+  payload but the empty one, in the terms of `finite_system_payloads`, proved once over the composed
+  program.
+
+The introduction of `request_presents` for a request constructed from the state — task 32's first
+follow-up: the positional conjunct from `state_presents_inside` and the positions of the scope's
+mentions, and the rows' entity-key premise from `request_entity_key_injective` and
+`development_request_context_exact` — is a lemma about the relation and belongs beside
+`request_presents_recovery` in `Development_Request_Keys`, the relation's introduction with its
+elimination. It is this line's first build because it needs nothing of the construction, and #42, whose
+two instances consume it, waits on it (the planner, q36).
+
+### The build order, smallest first
+
+1. **The introduction of `request_presents`** for constructed requests, in `Development_Request_Keys`.
+   It waits on nothing unlanded (#32, #46); #42 waits on it.
+2. **`support complete` and `scope cited`**, in `Development_Request_Scope`: the two fields over the
+   guarded traversal, `support complete` as `excess` at every family. Waits on #36.
+3. **`declarations cited`, `context sound` and `support sound`**, in `Development_Request_Citations`:
+   the three fields that search — the declaration store (#36), a family's rows by key (#38), the reach
+   table's rows (#40). Waits on #38, #40 and the presenter of a state's rows.
+4. **The construction**, in `Development_Native_Request`: its rule (one rule, five premise sockets), its
+   program at its own sites with every consumed rule family held there and each consumed locale
+   interpreted so that its `exact` is inherited, the contract, the two conditions, the three
+   corollaries, and the measurement of one construction on the presenter's rows of the seeded and the
+   machinery's states, the machine claimed and the number reported in reaches against #40's judgment.
+   Waits on builds 1–3; it does not wait on #42, whose verdict it does not read.
+
+Every build adds theories and changes no recipe, so the landing check accepts each with every recipe
+word equal. Reused and not rebuilt: `Native_Collection_Programs`, `Native_Path_Stores`,
+`native_rule_family` and `finite_rule_program`, the row presentation and readings of #34, the guarded
+traversal, `excess`, `undeclared` and the declaration store of #36, the family search of #38, the reach
+table of #40, `Development_Requests` as the specification. New: the construction's rule, and the row
+predicates its fields instantiate the consumed traversals and searches at (a row's key is cited; a row
+declares a cited support key). No index, decision or comparison notion is introduced.
+
+### Affordability
+
+No reach is composed. On a state of `n` entity rows, one construction is two guarded traversals of the
+rows — each of the order of the rows times a subject test — and one search per support and context key.
+On the machinery's state (337 entities, 1,561 mentions) the traversals are each of the order of the
+reach's 3,397 calls and the searches a few hundred to a thousand more, so **one construction costs two
+to three reaches, under one judgment's four**, and one on the seed's state well under a second. A
+request is constructed once per issued leaf, not once per control, so on the machinery's stage of 32
+requests construction adds of the order of 80 reaches to the judgments' 900: it is not what makes a
+stage unaffordable, and the incremental assessment stays the remedy for the stage. The two guarded
+traversals share their guard, and folding them into one pass is a refinement to take if the
+measurement of build 4 asks for it; the estimate is owed that measurement.
+
+### What the builds must respect
+
+The request body is two families of citations and nothing else; nothing may give it a field of its
+own, and the packet stays a presentation of the row with the rows its citations reach. Request
+construction reads no issue row and no problem row, and decides nothing about issuing. No field reads a
+kind, and the two kinds stay the one definition with the reading universally quantified; a field that
+depends on the kind is a defect. Every field is positive; the one complement is #36's guard, consumed;
+no store absence enters. Each field's contract is proved once and every consumed contract — the
+guarded traversal, `excess`, `undeclared`, the declaration store, the family search, the reach table's
+row lemma — is consumed by name and never re-proved; a consumed contract too weak to serve is a finding
+for its task. No field reads a row's identity. The constant key and the entity key are parameters under
+`inj_on`, and the entity key's agreement with `development_entity_key` is a named condition, never an
+assumption. The program states no payload but the empty one.
+
+### Open
+
+Native production: a native relation whose output is a filtered family of its input cannot be produced
+by one-step generation, and evaluating a functional native relation forward, its outputs computed from
+its inputs, is an engine notion the library does not have; until it does, producers are executors and
+the construction admits. The proof request class and its issued support, which the plan makes a
+request-construction problem of its own and HANDOFF's list places after this line. The packet's
+transport (the octet direction's task 6): what the packet must carry is fixed here — the request row, the
+context rows it cites and the atoms its support cites — and its reader contract is that task's.
+Currentness of a request after an admitted answer (`development_request_current`) is the context read
+against a later state, "every cited row is found in the other state's store", #38's shape at the
+context's citations; it is not designed here. Multi-constant subjects have no locus and no request. This
+design was made outside the loop and is a residual.
+
+Recorded 2026-09-22 (task 95's decision; a design, no theory changes).
+
+## The in-place refinements apply two notions: a check made where its premise is established, and a generator of the accepted candidates
+
+The owner's direction of 2026-09-19 — "even implementation should be structural with the non-structural
+efficiency as a structurally presented idea that can be applied" — and the first-use rule. "A refinement
+applies a notion; an index is one" named four code equations proved in place that restate one argument
+apiece across their uses — formation established once at a traversal's entry, an invariant of a traversal
+computed once, the smaller operand inserted into the larger, a reader generating only the candidates it
+can accept — and left to the planner whether each becomes a notion. "A snapshot's formation is read once
+for all the publications over it" added a fifth, stated at first as a copy of the case split that
+`finite_locus_publications_code` already stated (`finite_snapshot_publisher`), then extended where it
+stands. This entry settles the five and `ffilter_singleton`. The first and the fourth are notions; the
+fifth is an instance of the first, and so is task 5's construction that needs no re-verification;
+`ffilter_singleton` is a law of the fourth; the second and the third apply laws HOL already states and
+leave nothing to state. The seed publication's next refinement is an instance of the first.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Four code equations proved in place, each restating one argument; "whether each becomes a notion is for the planner" ("Which refinements are instances, and which are not"). | Formation established once and the candidates a reader can accept are notions, each with a contract a use discharges by obligations; an invariant computed once applies HOL's `Let` and the operand exchange the union's commutativity, each already citing its law. |
+| "No new notion, and no second copy of the case split" ("A snapshot's formation is read once for all the publications over it"). | An instance of the first notion checked at its entry. The copy it first made is what the notion forestalls: an instance is named by its operation, so a second refinement of the operation finds it and extends it. |
+| The constructed applications "apply the contract that a construction needs no re-verification, carried by `finite_constructed_applications_exact` and its three subject-level facts". | That contract is the first notion's third place of establishment, a constructor's contract; the constructed requests are also the second notion's tight instance, and `ffilter_singleton` its law at one candidate. |
+
+### A check is made where its premise is established
+
+The argument, stated once. A traversal checks a condition of what it reads at every step it makes: the
+formation of each artifact it reads, of each snapshot it transacts on, of each generation a transaction
+writes. A premise established at one point implies the condition at every step after it; under the premise
+a body that makes no such check computes the operation, and the check is made once, where the premise is
+established, and nowhere inside. The premise is established at one of three places:
+
+1. **at the operation's entry**, by checking it, the other branch returning the operation's own value
+   outside the premise, its refusal — "the guard returns the original value and not merely a default"
+   (`finite_program_applications_unformed_system`, `finite_program_applications_unformed`);
+2. **at an enclosing operation whose established premise implies it**: the parts it reads inherit it — a
+   formed environment has formed artifacts (`formed_environment_artifact`), a successful transaction on a
+   formed snapshot leaves a formed snapshot (`finite_transact_applied_formed`) — so the part's own check is
+   dropped and its body called, as the definition, schema, pattern, call and vector readings "consume one
+   another's formation-free bodies";
+3. **by the contract of the constructor that made the value**: nothing is checked, because the constructor
+   states the premise of what it returns — the constructed applications' values are subterms of a formed
+   call (`finite_matching_formed`, `finite_instantiated_premise_formed`).
+
+**The notion: `established_premise original premise body`, and its extension `checked_premise` with
+`refusal`**, in a theory `Established_Premises` of their own that imports `HOL-Library.FSet` (one law below
+is about finite sets) and, as `Carrier_Indexes`, carries no simp, intro or code attribute and states
+nothing about cost.
+
+- *Obligation (1), exactness*: `premise x ⟹ original x = body x`. A use proves it — for a recursive
+  traversal by its own induction, citing at each step the facts that establish the premise there. It is the
+  substantive obligation, as the member equation is the index's.
+- *Obligation (2), where the premise is established*: at the entry, `checked_premise`'s
+  `refused: ¬premise x ⟹ original x = refusal x`, with `refusal` the original's own value; at an enclosing
+  operation, the inheritance fact from its premise to the part's; at a constructor, the constructor's fact
+  that what it returns satisfies the premise. An establishing fact is stated once, with what it is about —
+  the environment's formation with the environment, the transaction's with the transaction, the
+  constructor's with the constructor — and never at a use. `formed_environment_artifact`,
+  `exact_formed_object` and `formed_environment_object` stand in `Factor_Formation_Once_Readings` and
+  `Factor_Formation_Once_Definitions`, use theories: they move to where finite environment formation is
+  stated, or are re-cited from a component fact there (`finite_environment_formed_components` is the one
+  to compare).
+- *What a use gets*: at the entry, `checked_at_entry: original x = (if premise x then body x else refusal x)`,
+  the code equation; `checked_through: t (original x) = (if premise x then t (body x) else t (refusal x))`
+  for any consumer `t`, the check hoisted out of a traversal that does not depend on it; and
+  `checked_union: ffUnion (fimage (λy. if P then T y else {||}) Y) = (if P then ffUnion (fimage T Y) else {||})`,
+  the check hoisted out of a union over a family, the union absorbing the empty refusal. At the other two
+  places a use gets exactness at the established value, which is obligation (1) with its establishing
+  fact; nothing more is derived there, and what the notion adds is that the pair — premise and body — and
+  its establishing fact are named, so a second refinement of the same operation finds them.
+- *The arity rule* (task 80's third round): `x` is exactly the premise's arguments, the arguments after it
+  lying inside the value. The code equation is stated at the arity where the premise's arguments end, so a
+  partial application — a publisher made once for a snapshot, a site reader made once for an environment —
+  checks once however often it is then applied. `finite_locus_publications_code` (stated for the snapshot
+  alone) and `finite_definition_site_reading_formed_exact` (by `ext`, for the environment alone) follow it;
+  the other instances are stated at full arity, and are restated at the premise's arity when re-cited: the
+  statement changes, no word can. This is where the notion meets the invariant computed once: the rule is
+  the let's evaluation applied to a check.
+- A premise on an argument that is not the first is instantiated with the constant applied to the arguments
+  before it (`original` is `finite_term_readings_bounded n`), the instance stated as a lemma for every such
+  argument and its laws cited as `checked_premise.checked_at_entry[OF …]`, as `Native_Path_Store_Indexes`
+  cites `native_store_search_program.index`.
+
+### Its instances
+
+| Instance | Premise, and where it is established | Facts | Re-cited |
+|---|---|---|---|
+| Readings of an environment (`Factor_Formation_Once_Readings`, `Factor_Formation_Once_Definitions`) | `finite_environment_formed E` (`finite_exact_formed C` for a citation's candidates), at the entry, refusal `{||}`; inherited by the artifacts and by each nested reading | the `*_formed_exact` facts; the code equations `finite_citation_candidates_formed_once_code`, `finite_term_readings_bounded_formed_once_code`, `finite_pattern_readings_bounded_formed_once_code`, `finite_family_readings_formed_once_code`, `finite_call_readings_formed_once_code`, `finite_pattern_record_readings_formed_once_code`, `finite_pattern_vector_readings_formed_once_code`, `finite_native_schema_readings_formed_once_code`, `finite_scoped_pattern_readings_formed_once_code`, `finite_native_definition_readings_formed_once_code`, `finite_native_definition_rows_formed_definitions_code` (superseding `finite_native_definition_rows_formed_once_code`), `finite_native_package_formed_once_code` | each code equation from `checked_at_entry`, its refusal a stated fact where its proof now unfolds the definition |
+| A record's candidates (`RRA_Linked_Record_Candidates`) | `finite_object_formed C`, at the entry, with the arity condition of the definition's own guard beside it | `finite_record_body_candidates_exact`, `finite_record_candidates_formed_once_code` | yes |
+| Proof-node rows (`Factor_Recovered_Graph_Sharing`) | `finite_environment_formed E`, at the rows' entry, hoisted out of the positions' union | `finite_proof_node_readings_formed_guard` (the guard is the reading's definition), `finite_proof_node_rows_formed_once_code`, `finite_native_graph_demands_formed_once_code` | yes, through `checked_union` |
+| Demanded site readings (`Factor_Demanded_Package_Readings`, `Factor_Demanded_Graph_Readings`) | the environment's formation, established at the enclosing demanded traversal's entry | `finite_definition_site_reading_formed_exact`, `finite_proof_site_reading_formed_exact` | no: consumers, already at the premise's arity |
+| Publications over a snapshot (`RRA_Formed_Snapshot_Transactions`, task 80) | `finite_snapshot_formed S`, at the entry, refusal `map (λq. None)`; inherited along the sequence | `finite_transact_formed_exact`, `finite_transact_applied_formed`, `finite_transact_after_applied`, `finite_locus_publications_formed_exact`, `finite_locus_publications_unformed`, `finite_locus_publications_code` (arity 1) | the code equation from `checked_at_entry` |
+| A demand's applications (`Factor_Constructed_Program_Applications`) | `finite_system_formed P` at the entry, and `finite_term_formed (snd q)` for each call inside the listed union, refusals `finite_program_applications_unformed_system`, `finite_program_applications_unformed` | `finite_constructed_applications_exact`, the `code abstract` equation `finite_program_applications_listed` | yes, if its abstract form takes the laws without restating its statement; otherwise a departure for the planner |
+| Constructed values (the same theory) | the formation of constructed values and premise calls, established by the construction | `finite_admitted_constructed`, `finite_constructed_instance`, `finite_call_formed_fits`, established by `finite_matching_formed`, `finite_instantiated_premise_formed` | no: each proves its exactness from its establishing facts, which is the obligation, and re-makes no law |
+| A join's conditions (`Factor_Join_Reading_Conditions`) | the degenerate case, each condition its own premise, checked at the level where its variables are bound (one at neither reading, four at the left, four at the right, three inside) | `finite_join_readings_disjoint_code`; `ffUnion_fimage_if_const`, `ffUnion_fimage_if_conj`, `ffUnion_fimage_empty` | the three lemmas are `checked_union`'s content, re-cited from it; `ffUnion_fimage_if_filter` (a condition of each element made a filter of the family, computed once) and `finite_join_condition_split` (the twelve conditions by what they depend on) are the join's own and stay |
+
+Consumers left as they stand: `Factor_Indexed_Readings`'s `*_formed_read_code` equations, which compute the
+formation-free bodies through an artifact's reading (instances of the index, consumers of the first row);
+`Development_Seed_Publication.development_seed_publication_from_published`, which binds the publisher once
+(a consumer of the publications' arity).
+
+### A generator of the accepted candidates
+
+The argument, stated once. A reader's meaning is the accepted part of a complete candidate space — every
+list of the arity over the headed rows, every compatible union, every requested application — filtered by
+its acceptance. A generator that constructs only candidates the reader can accept, rather than the whole
+space, gives the same accepted part when every generated candidate it accepts lies in the space and every
+accepted candidate of the space is generated. It is the separation the owner asked for on 2026-09-11, "to
+seperate the meaning of all compatible contributions from a demand-directed method for finding
+contributions sufficient for a given scope", stated once.
+
+**The notion: `candidate_generator space accepts generated`, and its extension
+`tight_candidate_generator`**, in a theory `Candidate_Generators` of their own that imports
+`HOL-Library.FSet`, with no attribute and nothing about cost.
+
+- *Obligation (1), soundness*: `x |∈| generated ⟹ accepts x ⟹ x |∈| space`.
+- *Obligation (2), completeness*: `x |∈| space ⟹ accepts x ⟹ x |∈| generated`.
+- *What a use gets*: `accepted_generated: ffilter accepts generated = ffilter accepts space`.
+- *Obligation (3), of the tight extension*: `x |∈| generated ⟹ accepts x`; it gets
+  `generated_accepted: generated = ffilter accepts space` — the generator is the meaning and no filter
+  runs over it.
+- *The laws at the smallest spaces*: `accepted_singleton: ffilter accepts {|x|} = (if accepts x then {|x|}
+  else {||})`, the guarded candidate being the tight generator of a one-candidate space, and
+  `accepted_empty: ffilter accepts {||} = {||}`.
+
+The subject is the accepted part, not the generator: two generators of one space and acceptance have one
+accepted part, so a generator acquires no subject of its own, and which generator is cheaper is an
+observation of its use.
+
+| Instance | Space, acceptance, generator | Facts | Re-cited |
+|---|---|---|---|
+| A record's candidate rows (`RRA_Linked_Record_Candidates`) | every list of the arity over the headed rows (`finite_lists_of_length n H`, split into sockets and endpoints); `finite_record_body C r`; the successor chains from each headed row (`finite_linked_record_rows`) | `finite_linked_record_rows_candidates`, from `finite_linked_rows_sound` (a chain has the arity and uses only headed rows) and `finite_linked_rows_complete`; consumed by `finite_record_body_candidates_linked_code` | yes: its proof re-makes the law |
+| A scoped binding search (`Finite_Directed_Contributions`), tight | `finite_compatible_unions B`; a union's domain being the scope (`finite_scoped_compatible_unions` is that filter); the demand-directed search | `finite_value_binding_search_exact`, from `finite_value_binding_search_sound` and `finite_value_binding_search_complete` | yes: its proof re-makes the tight law |
+| A clause's requests at a formed call (`Factor_Constructed_Program_Applications`), tight | `finite_requested_schema_applications S t`, one candidate at a formed call (`finite_requested_constructed`); admission (`finite_admitted_schema_instance`, reduced by `finite_admitted_constructed`); `finite_constructed_requests` | `finite_constructed_requests_exact`, through `ffilter_singleton` | yes: `ffilter_singleton` moves into `Candidate_Generators` as `accepted_singleton` |
+
+Consumers left: `Factor_Indexed_Readings`'s `read_linked_rows`, `read_linked_record_rows` and
+`read_record_candidates`, the linked generator over an artifact's reading, proved equal to the scanned one.
+
+`ffilter_singleton` is thus neither case-specific nor a library fact to leave in a use theory: it is the
+generator's law at a one-candidate space, and `HOL-Library.FSet` states no `ffilter` law at an empty or a
+one-member set (it states `ffmember_filter`, `eq_ffilter`, `subset_ffilter`, `fempty_ffilter`). The same
+class stands in `RRA_Selection`: `ffilter_empty_set` (the empty space) and `ffilter_true` (an acceptance of
+every candidate, under which every space is its own tight generator). They are re-cited from
+`Candidate_Generators` when `RRA_Selection` is changed; its dependents are most of the repository, and the
+two are `[simp]` there, so the timing of that move is the planner's.
+
+### What stays case-specific, and why
+
+- **An invariant of a traversal computed once** (`Factor_Invariant_Evaluation_Sharing`) is not a notion to
+  state: its content is HOL's `Let`, whose contract `Let_def` each of its equations already cites —
+  `finite_material_satisfied_shared_code`, `finite_system_formed_shared_code`,
+  `finite_program_head_covered_shared_code`, `finite_candidate_losses_shared_code`,
+  `finite_sound_observation_facets_shared_code`, `finite_program_history_shared_code`,
+  `finite_program_evaluation_shared_code`. The let is the idea's structural presentation: which value is
+  computed once is explicit in the term. Which subexpression is shared is the use's, and the benefit — the
+  code generator binds a let's value once and evaluates a lambda's body at every application — is an
+  observation. The theory's other equations apply stated notions: the three listed equations
+  (`finite_basis_residual_listed_code`, `finite_observation_conflicts_listed_code`,
+  `finite_available_observation_repairs_listed_code`) `Listed_Set_Unions`; `finite_inference_witnesses_direct_code`
+  a filter's congruence on its members, `ffilter_member_cong`, the rule form of FSet's `eq_ffilter`, which it
+  is proved from where it stands and which stays, because the adopted answer `Development_Answer_0ccf746fe2cf`
+  cites it by name; `finite_premise_joins_single_match` the fusion of a filter into a map,
+  `filter_map_single_pass`, the converse of List's `filter_map`, a list law stated for its one use.
+- **The smaller operand inserted into the larger** (`RRA_Inserted_Attachments.finite_attach_structure_inserting_code`)
+  applies the union's commutativity, which its proof cites (`sup_commute`). It has one use — the accumulation
+  theories cite the union's AC laws, but they accumulate rows and exchange no operand of their own — and which
+  operand is the smaller is observed. It shares its premise, that the library executes a union by inserting
+  its left operand into its right one, with `Listed_Set_Unions`, the notion for a union computed once and
+  only read.
+
+Each has an engine-level form that would make the idea a notion of the engine rather than of a use: a code
+generator that shares every invariant subexpression, and the library's own union inserting its smaller
+operand, which changes the listing of every union's result and so could change a word wherever a listing
+reaches one. Both are engine changes and are not taken (Questions of task 85).
+
+### The instance the seed publication's transactions take
+
+What remains of the publication's cost, after the snapshot's formation is read once, is the transactions'
+formation and comparisons. `finite_transact_formed S T` checks `finite_transaction_formed T`, which checks
+`finite_snapshot_formed` of the expected and of the proposed selection and so `finite_generation_formed` of
+each generation, recursively through every predecessor and target: an answer's formation checks its
+issue's, which checks its incumbent's and the selection's. Every generation the seed publication compares or
+writes — the selection, the issues, the answers and the incumbents they expect — is an output of
+`finite_construct_generation_record`, whose contract states it read at its site
+(`finite_construct_generation_record_correct`, its sixth clause), and a generation read at a site is formed
+(`RRA_Finite_Generation_Checking.finite_check_generation_formed`; `Development_Certified_Generations` derives
+the formation so). So the transactions' re-check is the first notion at its third place:
+
+- *premise*: every generation the transaction compares or writes is formed — for a locus transaction
+  `finite_locus_transaction I G`, `pred_option finite_generation_formed I ∧ finite_generation_formed G`;
+- *body*: the transaction with only the conditions of `finite_transaction_formed` that are not the
+  formation of its generations, stated beside `finite_transact_formed`, and the publications over it beside
+  `finite_locus_publications_formed`, in `RRA_Formed_Snapshot_Transactions`: the refinement extends the
+  publications' instance where it stands, and is not a copy in `Development_Seed_Publication`;
+- *exactness*, the obligation the build proves: under the premise the transaction equals its body, and
+  through the publications' recursion for a list whose generations are formed;
+- *established* at the client by the constructor's contract, so the code equation is stated for the
+  publication whose constructor is the recording one — `development_seed_publication`, or its
+  known-constructor chain (`development_seed_publication_from_known`) — and not for
+  `development_seed_publication_from` over an arbitrary `construct`, which has no contract to discharge it.
+
+The same premise discharges the generation half of the incumbents' snapshot check `finite_snapshot_formed
+S0`, whose local remainder is that its loci are distinct; whether the build takes it too is its own, on its
+measurement. The benefit is an observation of that build, held and reported; its acceptance is every recipe
+word equal.
+
+### What the builds must respect
+
+- A refinement's acceptance stays word equality of every report word; applying a notion is the second,
+  separate condition, which a re-citation meets and a refinement proved in place does not.
+- A re-citation replaces a proof, never a statement's meaning; a code equation re-cited under the first
+  notion is stated at its premise's arity.
+- A new refinement of an operation that already has an instance extends that instance where it stands.
+- An establishing fact is stated with what it is about, never at a use.
+- Task 68's criterion decides re-citation: a theory whose proof re-makes a law — the entry's case split,
+  the union's absorption, the generator's filter equality — interprets the notion and cites it; a theory
+  whose proofs consume an instance is left.
+- An instance that cannot interpret a locale without weakening its statement comes to the planner, since the
+  notion would then be two.
+
+### Evidence and limits
+
+This entry reads the repository and builds nothing. Each instance was compared with the locales'
+assumptions by reading its statement and, for the case splits and the generators, its proof
+(`finite_family_readings_formed_once_code`, `finite_record_candidates_formed_once_code`,
+`finite_attach_structure_inserting_code`, `finite_value_binding_search_exact`); the comparison is not a
+proof, and the instances' proofs land with their builds. The instances are those the named theories and a
+search for their shapes found (`formed_once`, `_formed_exact`, a filter equality proved from a soundness and
+a completeness fact); a further instance a build finds is re-cited by the same criterion. The seed instance's
+share of the publication's remaining seconds is unmeasured: task 80's attribution
+(`.build/tasks/seed-recipe-cost/attribution.md`) left the transactions' formation and comparisons together.
+This entry was written outside the loop and is a residual.
+
+Recorded 2026-09-22 (task 85's decision; a design, no theory changes).

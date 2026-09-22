@@ -10112,6 +10112,13 @@ a bound of five seconds; the seed's is 0.074 s against 0.2 on either. What does 
 machine is the ratio inside the one run: 9.3 at the machinery's scale, 6.2 at the seed's. That is
 what the two refinements of this line bought together: 44.6 s to about 5.
 
+*Correction (task 80, q28).* The sentence above narrows what the record states. 44.6 s is what this
+line's first refinement left, as the entries "A formed call's applications are constructed, not
+verified again" (at line 9277) and "A demand is settled over the positions of its calls" (this entry,
+at lines 10028-10029) state; not a reach before both refinements. And the second took the machinery's
+reach to 4.35 s on the machine the measurement claimed, about 5.8 s scaled to the baseline machine,
+as this entry states just above (lines 10064-10069). "About 5" reads the two forms together.
+
 Word equality cannot certify the attachment: out of scope at the exports the words would be
 unchanged and the refinement dead. So the attachment is verified in the source graph itself, in
 0.27 s and with no Isabelle run: `check.source_checks()` is clean at 1800 declared names,
@@ -10162,6 +10169,34 @@ and is a residual.
 
 Recorded 2026-09-20, commit `44738c20`.
 
+## A reference sequence is computed segment by segment
+
+The seed recipe's cost is one of its twelve presentations, the publication report (174-248 s in the
+landing checks since `955b34bb`, the others 12-38 s each), and within it, measured under a machine hold
+(task 80, `.build/tasks/seed-recipe-cost/attribution.md`), the word of the presented report: 79 s of
+153, of which 68 s is the first-occurrence reference run over 3,946 target occurrences of only 63
+distinct artifacts, one after another, each lookup of a value already held ending in a complete
+comparison of two equal keys. The recording of the generations and transactions is 58-61 s; the 21
+judgments, already prepared once, 9.8 s.
+
+What the refinement applies is a property of the reference notion, stated once in
+`Complete_Value_References`: the table a sequence leaves is the supplied table extended, in first
+occurrence, by the values it lacks (`value_reference_sequence_table`), and against a distinct table
+every index is its value's index in the final table (`value_reference_sequence_indices`). So the
+references of a concatenation of segments are each segment's references against an empty table,
+mapped through the references of the segments' distinct values against the supplied table
+(`value_reference_sequence_segment`, `value_reference_sequence_concat`, `value_reference_merged`). The
+segments are independent, so they are computed in parallel. `Indexed_Term_Words` proves the word's
+code equation over it (`finite_term_shared_word_segmented_code`, from the equation it replaces): about
+eight segments of the keys, each by the existing keyed run, then one keyed run over their distinct keys.
+No index notion is added; the keyed run and its key are those of the entry "A refinement applies a
+notion; an index is one". The word is unchanged by construction, so no recipe word changes.
+
+Limits: the full comparison of equal keys per occurrence is still paid, now shared among the threads;
+a report that repeats few large artifacts many times still costs that work. The recording stage is not
+refined here. Evidence: the recipe alone under a machine hold, with its own runner, took 140.8 s before
+and 96.5 s after (the publication presentation 140.8 s and 96.4 s, the eleven others 6.1-7.0 s), both
+receipts accepted with their reports equal.
 ## The index notion is a checked theory, and its carriers interpret it
 
 The owner's direction of 2026-09-19: "even implementation should be structural with the non-structural
@@ -10256,6 +10291,49 @@ notion would then be two. This entry was written outside the loop and is a resid
 
 Recorded 2026-09-21.
 
+## A snapshot's formation is read once for all the publications over it
+
+The seed recipe sets the recipe phase of every landing check (the recipes run in parallel and it is
+the longest), and within it one presentation, `development_seed_publication_value`, is the recipe:
+144.5 s in the base's check, 181.9 s in #49's, 241.7 s in #78's, against about 15 s for each of the
+other eleven. Attributed stage by stage under a machine hold on #78's export
+(`.build/tasks/seed-recipe-cost/attribution.md`), its seconds were the word fold (99 s, almost all
+of it the sequential first-occurrence reference run over 3,946 target occurrences of 63 artifacts,
+which `a436a40e` has since segmented, "A reference sequence is computed segment by segment") and
+the publication of the round (67 s). Exploratory runs beside other work, which show the split and not
+absolute cost, divided the round: per row about 0.5 s for the issue, up to 2 s for each answer and
+6–15 s for its three publications, of which 3.5–3.8 s was checking the formation of the published
+incumbents' snapshot. Every row and the round's own publication checked that one snapshot again:
+eleven times.
+
+The refinement reads it once, by extending the refinement that already states the publication over
+a formed snapshot: `finite_locus_publications_code` (`RRA_Formed_Snapshot_Transactions`) is now
+stated for the snapshot alone, `finite_locus_publications S = (if finite_snapshot_formed S then
+finite_locus_publications_formed S else map (λq. None))`, from the same two lemmas
+(`finite_locus_publications_formed_exact`, `finite_locus_publications_unformed`), so that every
+client's partial application checks the formation once, where it is made.
+`development_seed_publication_row_with` is the row over a given publisher,
+`development_seed_publication_row_published` proves the original row is it over the original
+publication, and the code equation `development_seed_publication_from_published` binds the publisher
+to `finite_locus_publications S` once for every row and the round. The report, and so every word, is
+unchanged: the equations are proved, not asserted. No new notion, and no second copy of the case split.
+
+### Evidence and limits
+
+The repository check accepts it (`.build/tasks/80/check-t80d`) with every proof, tool test and
+recipe word equal. Under one machine hold, back to back, the seed recipe run alone went from
+105.50 s (the tree at `77192fee`, before the refinement) to 93.04 s, all of it in the publication
+presentation (105.45 → 92.99 s), the eleven other presentations within run spread
+(`attribution.md` §4.2). A harness computing the publication presentation alone under a hold showed
+101.1 → 80.6 s, but its before export predates `77192fee`, so it does not measure the refinement
+alone. What remains of the
+publication's cost is the transactions' own formation and comparisons: each proposed generation's
+formation is checked with all its predecessors again, although every generation published here was
+just recorded by a constructor whose contract states it formed; carrying that fact into the
+transaction is a further refinement with its own proof, brought to the planner. This entry was written
+outside the loop and is a residual.
+
+Recorded 2026-09-22.
 ## A decomposition that applied is a row at its problem's locus
 
 The decomposition's builds stop at the issue: the repair's output is read from the history as rows headed by the

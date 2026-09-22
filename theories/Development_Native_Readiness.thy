@@ -97,24 +97,9 @@ lemma native_readiness_family:
   assumes member: "(d,rs)\<in>set readiness_definitions"
     and plain: "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}"
   shows "native_rule_family native_readiness_system d rs"
-proof (rule native_rule_family.intro)
-  show "schema_system_formed native_readiness_system" by (rule native_readiness_formed)
-  have distinct: "distinct (map fst readiness_definitions)" by (simp add: readiness_definitions_def)
-  show "((d,c),S)\<in>system_clauses native_readiness_system \<longleftrightarrow>
-      (\<exists>F. (c,F)\<in>set rs \<and> S=decode_finite_schema F)" for c S
-  proof -
-    have "((d,c),S)\<in>system_clauses native_readiness_system \<longleftrightarrow>
-        (\<exists>rs'. (d,rs')\<in>set readiness_definitions \<and> (\<exists>F. (c,F)\<in>set rs' \<and> S=decode_finite_schema F))"
-      unfolding native_readiness_system_def finite_native_readiness_def by (rule finite_rule_program_clause)
-    then show ?thesis using eq_key_imp_eq_value[OF distinct member] member by blast
-  qed
-  have site: "d\<in>fst ` set readiness_definitions" using member by (rule rev_image_eqI) simp
-  show "schema_call_formed native_readiness_system d t \<longleftrightarrow> term_formed t" for t
-    unfolding native_readiness_system_def finite_native_readiness_def
-    by (rule finite_rule_program_call[OF native_readiness_formed[unfolded native_readiness_system_def
-      finite_native_readiness_def] site])
-  show "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}" by (rule plain)
-qed
+  unfolding native_readiness_system_def finite_native_readiness_def
+  by (rule finite_rule_program_family[OF native_readiness_formed[unfolded native_readiness_system_def
+    finite_native_readiness_def] _ member plain]) (simp add: readiness_definitions_def)
 
 lemma native_readiness_definitions:
   "system_definitions native_readiness_system=fst ` set readiness_definitions"
@@ -626,15 +611,16 @@ definition finite_readiness_row :: "bool list \<Rightarrow> bool \<Rightarrow> b
 
 lemma decode_finite_readiness_row:
   "decode_finite_term (finite_readiness_row k a hs)=Pair_Term (path_term k) (readiness_value a hs)"
-  by (simp add: finite_readiness_row_def finite_store_row_def finite_readiness_row_value_def)
+  using fun_cong[OF decode_finite_readiness_row_value, of "(a,hs)"]
+  by (simp add: finite_readiness_row_def decode_finite_store_row readiness_row_value_def)
 
 definition finite_readiness_table :: "readiness_table \<Rightarrow> finite_factor_term" where
   "finite_readiness_table T=finite_listing_store finite_readiness_row_value T"
 
 lemma decode_finite_readiness_table:
   "decode_finite_term (finite_readiness_table T)=readiness_table_term T"
-  by (simp add: finite_readiness_table_def finite_listing_store_def readiness_table_term_def decode_finite_store
-    decode_finite_readiness_row_value)
+  by (simp only: finite_readiness_table_def decode_finite_listing_store decode_finite_readiness_row_value
+    readiness_table_term_def)
 
 section \<open>Native readiness is a condition of its own\<close>
 

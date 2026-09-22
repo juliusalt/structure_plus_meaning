@@ -28,15 +28,14 @@ lemma development_row_citation_injective:
 lemma development_row_citation_absent: "development_row_citation l=Payload_Term [] \<longleftrightarrow> l=None"
   by (cases l) simp_all
 
-lemma path_term_inj: "inj path_term"
-  by (rule injI) (simp add: path_term_injective)
 
 definition development_row_family :: "bool list list \<Rightarrow> factor_term" where
   "development_row_family ls=data_list_term (map path_term ls)"
 
 lemma development_row_family_injective:
   "development_row_family ls=development_row_family ms \<longleftrightarrow> ls=ms"
-  by (simp add: development_row_family_def data_list_term_injective inj_map_eq_map[OF path_term_inj])
+  by (simp add: development_row_family_def data_list_term_injective
+    inj_map_eq_map[OF injI[OF path_term_injective[THEN iffD1]]])
 
 lemma development_row_family_inj: "inj development_row_family"
   by (rule injI) (simp add: development_row_family_injective)
@@ -54,7 +53,7 @@ lemma readiness_decompositions_injective:
   by (simp add: readiness_decompositions_family data_list_term_injective
     inj_map_eq_map[OF development_row_family_inj])
 
-section \<open>The four bodies\<close>
+section \<open>The bodies of problems, requests and issues\<close>
 
 text \<open>
   A body holds what the loop's decisions read of a notion and nothing else. A problem's body is its
@@ -175,7 +174,7 @@ definition development_rows_present ::
       (development_issue \<Rightarrow> bool list list list) \<Rightarrow> development_problem list \<Rightarrow> development_request list \<Rightarrow>
       development_issue list \<Rightarrow> development_store_rows \<Rightarrow> bool" where
   "development_rows_present key ekey inert origin grant supported scope decs ps rs iss rows \<longleftrightarrow>
-    single_valued (set rows) \<and> inj_on key (development_row_constants ps rs) \<and>
+    single_valued (set rows) \<and> (\<forall>(l,v)\<in>set rows. term_formed v) \<and> inj_on key (development_row_constants ps rs) \<and>
     inj_on ekey (development_row_entities rs) \<and>
     inj_on inert (development_contract_term ` problem_contract ` set ps) \<and>
     development_problems_present key inert origin grant ps rows \<and>
@@ -188,6 +187,14 @@ context
 begin
 
 lemma development_rows_single_valued: "single_valued (set rows)"
+  using present by (simp add: development_rows_present_def)
+
+text \<open>
+  Every row's value is formed: a premise of the presentation, owned by whoever presents a state, so the
+  store presents each value as itself and no value stands for an unformed one.
+\<close>
+
+lemma development_rows_formed: "\<forall>(l,v)\<in>set rows. term_formed v"
   using present by (simp add: development_rows_present_def)
 
 lemma development_rows_key_injective: "inj_on key (development_row_constants ps rs)"

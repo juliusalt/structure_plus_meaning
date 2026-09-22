@@ -711,4 +711,25 @@ lemma finite_rule_program_call:
   shows "schema_call_formed (decode_finite_system (finite_rule_program ds)) d t \<longleftrightarrow> term_formed t"
   unfolding schema_call_formed_def finite_rule_program_interface using formed member by auto
 
+text \<open>
+  A formed rule program whose sites are distinct holds at each site exactly the family listed there, so
+  every contract of that family applies to it: the family is stated once here for every rule program.
+\<close>
+
+lemma finite_rule_program_family:
+  assumes formed: "schema_system_formed (decode_finite_system (finite_rule_program ds))"
+    and distinct: "distinct (map fst ds)" and member: "(d,rs)\<in>set ds"
+    and plain: "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}"
+  shows "native_rule_family (decode_finite_system (finite_rule_program ds)) d rs"
+proof (rule native_rule_family.intro)
+  show "schema_system_formed (decode_finite_system (finite_rule_program ds))" by (rule formed)
+  show "((d,c),S)\<in>system_clauses (decode_finite_system (finite_rule_program ds)) \<longleftrightarrow>
+      (\<exists>F. (c,F)\<in>set rs \<and> S=decode_finite_schema F)" for c S
+    using finite_rule_program_clause[of d c S ds] eq_key_imp_eq_value[OF distinct member] member by blast
+  have site: "d\<in>fst ` set ds" using member by (rule rev_image_eqI) simp
+  show "schema_call_formed (decode_finite_system (finite_rule_program ds)) d t \<longleftrightarrow> term_formed t" for t
+    by (rule finite_rule_program_call[OF formed site])
+  show "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}" by (rule plain)
+qed
+
 end

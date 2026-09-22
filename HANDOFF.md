@@ -223,7 +223,10 @@ judgment's path.
   its premise is established, and a generator of the accepted candidates" — `established_premise`/`checked_premise`
   (theory `Established_Premises`) and `candidate_generator` (`Candidate_Generators`), neither built yet; `Let` and
   `sup_commute` case-specific; the seed transactions' formation re-check the first notion at a constructor's contract.
-  Its builds are briefed by #121.
+  Its builds: #126 (the notions' theories), #128 (the seed transactions), #130 and #132 (the re-citations).
+- **#97** `b4c103e6`, in a fourth round: the store search's contract for values held formed where the store holds
+  them (the `exact_held` clause) and the reach's family an instance of `finite_rule_program_family`; its two map rows,
+  left as the merge-base had them, are #117's.
 
 ## Open
 
@@ -320,7 +323,7 @@ Not yet planned, in the order they are expected to be planned:
     about 6 s for each of the twelve presentations, CPU rather than wall. First decide, by a held pair of the `a436a40e`
     and `77192fee` trees (about 200 s), whether `77192fee` brought a regression of about 9 s or held runs spread by
     about 10%. The recipe bounds every landing check that touches the development line (125.05 s of #80's 318 s). Briefed
-    from #85's entry: the transactions' re-check is its first notion at a constructor's contract, briefed by #121; the
+    from #85's entry: the transactions' re-check is its first notion at a constructor's contract, built by #128; the
     word's fold and the presentations' floor stay here. The next longest recipe is `native-development-machinery`
     (48.3 s).
 28. **Every recipe's execution boundary holds `tools/build.py` and `tools/execution_support.py`** (#80): narrowing the
@@ -382,9 +385,8 @@ Not yet planned, in the order they are expected to be planned:
   (`.build/tasks/keyed-question-cost/attribution.md`): the key search costs at most 0.05 ms, so no index instance is
   taken for it; a packet's cost is the native reading of its sources, which grows superlinearly with a program's
   syntax and is repeated in generation, compile, observation and admission. #88 is re-planned to read each source
-  once across a packet's stages, the reader's growth is #124 (reviewed by #125), and #90 waits on both, #92 on #90 and #30; #97 in
-  a third round (review 97: the union merge writes map rows twice while its tree's merge-base is `d69bd0c9`, so its map
-  stays as that base has it unless main has been brought in, its two rows then going to #117); #121 briefs #85's builds; #36
+  once across a packet's stages, the reader's growth is #124 (reviewed by #125), and #90 waits on both, #92 on #90 and #30; #121's builds placed: the notions' theories #126 first, then the seed transactions' refinement #128 and the
+  candidate re-citation #132 beside it, the premise re-citation #130 after #124 as well; #36
   resuming on #86's base; #94 parked (`v2.py after 94 36`, q37); #105 parked until #117 lands (`v2.py after 105 117`),
   the retention #119 after it. #40's brief carries #101's review (the families measured first; the two consumer
   corollaries); #42's and #112's carry #106's (the introduction's subset form stated once by whichever first needs
@@ -402,7 +404,9 @@ Not yet planned, in the order they are expected to be planned:
     `THEORY_MAP.md` row merge into a doubled row that a session round must repair (#97's commit, 05:23). A quick-fix
     round is not preceded by bringing main into the task's tree, so a map edit next to a row main changed is written
     twice again (#97, 06:06); a pre-landing trial merge of `THEORY_MAP.md`, `ROOT` and `DECISIONS.md` with main,
-    checked for rows written twice, would find it in seconds before the commit fails (review 97).
+    checked for rows written twice, would find it in seconds before the commit fails (review 97) — with its three sides
+    written as files: `git merge-file` given process substitutions reads them as empty and prints the third side
+    (review 97's third round).
   - A task parked for a landing kept in the one tree the shared-file lines it installed at hand-over, which kept out the
     landing it waited for (#62 and #84, 03:00); taking them out left its theory undeclared, refusing every one-tree
     check (03:10). The harness could release a parked task's installed work, or refuse such a park.

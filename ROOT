@@ -1621,6 +1621,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Collection_Subset_Execution
     Finite_Filtered_Keyed_Products
     RRA_Linked_Record_Candidates
+    Tree_Map_Indexes
     Ordered_Member_Trees
     Member_Tree_Indexes
     Ordered_Finite_Rows

@@ -27,7 +27,8 @@ if Path(__file__).name == "fake_poly":
     (root / "runtime_called").write_text("yes")
     if mode in {"timeout", "interrupt"}:
         child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(600)"])
-        (root / "child_pid").write_text(str(child.pid))
+        (root / "child_pid.part").write_text(str(child.pid))
+        (root / "child_pid.part").rename(root / "child_pid")
         time.sleep(600)
     if mode == "case_change":
         with (root / "case.json").open("a") as stream: stream.write(" ")
@@ -386,10 +387,14 @@ class InvestigationTests(unittest.TestCase):
         self.mode("interrupt")
         process = subprocess.Popen(self.command("20"), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         try:
-            limit = time.monotonic() + 5
-            while not (self.root / "child_pid").exists() and time.monotonic() < limit:
+            # The interruption is meaningful only once the runtime has started its child: wait for that
+            # observable condition, bounded, and stop waiting at once if the tool exits before it.
+            limit = time.monotonic() + 120
+            while (not (self.root / "child_pid").exists() and process.poll() is None
+                   and time.monotonic() < limit):
                 time.sleep(0.01)
-            self.assertTrue((self.root / "child_pid").exists())
+            self.assertIsNone(process.poll(), "the tool exited before its runtime started a child")
+            self.assertTrue((self.root / "child_pid").exists(), "no child started within the bound")
             process.send_signal(signal.SIGTERM)
             output, _ = process.communicate(timeout=5)
             self.assertEqual(process.returncode, 143, output)

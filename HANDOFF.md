@@ -82,7 +82,8 @@ depends only on the names at the positions it uses (`isabelle_name_reading`), th
 made the edit's constructor look entities up through an index; #249 (`052d2c3e`) hoisted the caller's index, took
 `gone` and `D'` from the edit and shared the presenter's rows, measuring no gain at the machinery's 340 entities and
 what stays above the edit — the presenter's entity keys quadratic in the state, names read by list position in every
-row, the edit's insertion sort — which #269, ready since #261 landed, makes n log n before the stage #193. Specifications keep their exception, judged whole (none in the loop's states).
+row, the edit's insertion sort — of which #269 makes the names and the sort n log n before the stage #193, the entity
+keys keeping their scan, which measures cheaper below about 10^4 entities (q67, Open 84). Specifications keep their exception, judged whole (none in the loop's states).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
 a locus (#26), the presenters (#28), the store's (#83), the rows' fix (#84) and the store search's contract for values
@@ -189,16 +190,15 @@ deepest chains are 9, the layout's and #135's line made one by the serialized wo
 layout #155, the answer records' re-recording #157 (after #267 too), then #161, #165, #167, #169 and its review #170,
 or #92 and #93 after #167; one task more may end that chain. The incremental line's measurement #194 and its review
 are 9 deep, through #161 and #187. Then #238 (after #237, #214, #44, #42 and #227), 6, and #114 (after #112, #110 and
-#227), 5. Beside them: P1's fix in the adoption tool #265, the owner's ask, urgent; #227's merge round; the probe's fix
-#271, then #251 after it; the presentation's refinement #269; readiness at its instances' contracts #272; the
+#227), 5. Beside them: the adoption tool's follow-up fix #273, the owner's ask's last part; #227's merge round; the
+probe's fix #271, then #251 after it; the presentation's refinement #269; readiness at its instances' contracts #272; the
 re-citations #239 (after #44) and #237. A word change lands with its re-recorded words: since 20:12 the landing
 check's snapshot takes the report files a brief's Deliverable names (Q12, fixed in the harness as the provisional
 choice).
 
-**Order** (`147 128 265 227 267 271 241 155 156 42 43 110 111 269 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 272 251`).
+**Order** (`147 128 227 273 267 271 241 155 156 42 43 110 111 269 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 272 251`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
-the owner's ask, P1's fix in the adoption tool #265, ready since #255 and #263 landed; #227's merge round, which #42
-and #110 wait on; #267, handing over again; the probe's fix #271, which every session's inner loop needs and #251 waits
+#227's merge round, which #42 and #110 wait on; the owner's ask's last part, the adoption tool's follow-up #273; #267, handing over again; the probe's fix #271, which every session's inner loop needs and #251 waits
 on; #241 after #147, head of the deepest chain, then the layout's word change #155, its answer records #157 and its
 measurement #159 soon after it, while the harness's lineage still holds the last base without it; the verdict's entry
 #42 and #110 as #227 lands; #269; #161; then the chains' next links as their inputs land, each ordered by the length of
@@ -331,9 +331,10 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **A task whose commit fails at the merge is queued again as it is, never landed anew by a workaround task** (the
   harness, at the owner's word, 17:02): a merge now takes a row that one side holds as the other side once had it for
   a copy, and `bring-main` merges main under a session's uncommitted edits; #243 (`76cd520c`) was the last such task. The round
-  brings main in with `v2.py bring-main`, which commits main's merge into the branch, and keeps a doubled row as main's
-  carrying its own change; it never copies main's rows by hand — a row merged by hand is in neither side's history and
-  stays doubled at landing (#227's second round, rejected 20:14).
+  brings main in with `v2.py bring-main`, which commits main's merge into the branch; it never merges a row by hand —
+  such a row is in neither side's history and stays doubled at landing (#227's second round). Where both sides changed
+  one row, `bring-main` refuses at its gate (#227's third round): the round then hands over main's row verbatim, the
+  one copy the landing's merge settles, and its own change to that row is carried by a later task.
 
 ## Delivered
 
@@ -615,6 +616,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   #192, #214 and #237; the probe's stale chains to #271).
 - **#263** (`b4a9c108`): P1's first half, adoption by its evidence in the answer harness and the replay; its review's
   tool items and the digests' names to #265, the unproduced native rows to #157, the replay's cost to Open 83.
+- **#265** (`75925bb8`): P1's second half, adoption by its evidence in the adoption tool (the clean-tree refusal, the
+  frame's digest at installation, the final step through the evidence, the receipt written by the tool); its review's
+  findings to #273.
 
 ## Open
 
@@ -633,7 +637,8 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q9** the tracked `tools/__pycache__/build.cpython-314.pyc`: ignored by `.gitignore`, removed from the tree by #48,
   but the finalizer refuses to commit the removal of an ignored path. Provisional: it stands removed and uncommitted,
   and no task is made of it; the step is the finalizer's or the owner's. (#261's review saw the one tree's copy
-  modified again; the finalizer leaves it out.)
+  modified again; the finalizer leaves it out.) It now bites: a run of the adoption tool without `-B` in a fresh tree
+  recompiles it and the tool refuses its own tree (#265's review); #273 makes the tool write no bytecode.
 - **Q10, Q11** who advances the proof base and who retains the receipts: answered by the owner (12:55) — the harness,
   at every landing (Graph). A receipt goes stale only when a code equation in its recipe's closure changes, and reuse
   fires after a base move or a retention (#134).
@@ -893,20 +898,25 @@ Not yet planned, in the order they are expected to be planned:
 83. **The documented replay's cost** (#263's review, 5): 1,037 s for sixteen records at two runs; each framed row pays a
     parts session, a proof session and an export. A measured split per step first, then whether the parts reading can
     share the proof session's context; with Open 10, at a measured need.
+84. **The presenter's entity keys through an index** (#269's measurement, q67): the equality scan costs 0.001 s
+    against 0.022 s through `first_index_tree` at the machinery's 340 entities, with a crossover near 10^4 entities;
+    the keys are computed once per request state. Applied when a presented state approaches that size.
 
 ## Now
 
 - **The owner's ask (18:32)**: an external reviewer's two findings in the answer tools, verified (#253, #254; kept as
   tests with `unittest.expectedFailure` while they stood, q64). P2 is fixed (#255, `43f5bde0`); P1's harness and replay
   half landed (#263, `b4a9c108`) after design #258 (DECISIONS.md "An adoption is established by its evidence; the
-  published state is never judged against itself"). Its adoption-tool half #265 is urgent and first in the queue:
-  until it lands, every adoption withdraws at its final step (#263's review). Its mail carries #263's and #255's tool
-  follow-ups and the digests' names (`answer_digest` for the canonical digest wherever it is carried; `answer_sha256`
-  stays the raw file's in the judged records). #169, which edits the answer tools, waits on it.
+  published state is never judged against itself"). Its adoption-tool half #265 landed (`75925bb8`). Its review's
+  findings — step 0 by path while the evidence goes by digest, an attempt's receipt blocking a later attempt, a
+  dangling path and one digest stored three times in the receipt, non-atomic receipt writes, a run without `-B`
+  refusing its own fresh tree over the tracked `.pyc` (Q9), the entry's old field name — are #273, which closes the
+  ask; the canonical digest is named `answer_digest` wherever it is carried (the planner, on #263's review).
 - **The exporter's obligation**: #256 (`cc1b03fb`) makes the exporter prove `isabelle_declared_once` where it defines a
   state; #227, accepted, re-lands after its merge round (its `THEORY_MAP.md` row of `Isabelle_Entities` doubled at the
-  merge, 19:56); its second round copied main's rows by hand and was rejected (20:14), and its third brings main in
-  through the harness and puts back two theories' whitespace. #267 lists the declarations in
+  merge, 19:56); its second round copied main's rows by hand and was rejected (20:14); in its third `bring-main`
+  refused at its gate the row both sides changed (20:19), so its fourth hands over main's row verbatim, which the
+  landing's merge settles, and #42 adds the row's three sentences after it lands (mailed). #267 lists the declarations in
   position order and proves the obligation linearly (#256's proof is quadratic, 2.78 s on the machinery at every
   definition of a state): one word change, done; parked on Q12 at 20:04 and told to hand over again once the harness
   fixed it (20:12), its landing check's boundaries having equalled its re-recorded words; #157 re-records the answer
@@ -1004,7 +1014,10 @@ Not yet planned, in the order they are expected to be planned:
     for the renamed copies of #229's base-theory probes (#229's review). #245's probe left no log there either.
   - A merge round's brief said only to make the rows agree, and the session copied main's rows by hand, which stays
     doubled at landing (#227, 20:14): the finalizer's re-queue message could say to bring main in, and the harness
-    could warn when a tree holds `THEORY_MAP.md` rows of theories it does not contain (review-227).
+    could warn when a tree holds `THEORY_MAP.md` rows of theories it does not contain (review-227). And `bring-main`'s
+    gate makes a row changed on both sides unmergeable from the task's side (fix-227, 20:19): a way to resolve such a
+    row — the doubled row left for the session before its commit, or a resolution file — would keep a task's own
+    change to it, which today a later task must carry.
 - **The base lives at the lasting place** `.build/tasks/base-lasting/` (#144, landed `79f16061` with #132): its
   complete proof of `a2ed0ed7` (`complete-20260922e`, 777 s, re-recorded at 14:14 with its heap under the
   `/tmp/structural-isabelle` link so that the older tools read it too), the pointer `active-context.json` that main's

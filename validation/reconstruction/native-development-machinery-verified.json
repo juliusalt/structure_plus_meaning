@@ -2,21 +2,21 @@
  "boundary": "The checked context defines the notions the first loop's judgments consult as a rooted state, in the same way as the seeded state: the problem a constant poses and its dependencies, readiness, the selection question, issuability, the refinement request, the verdict and the repair, the definition request and the definition verdict, the policy constructor, the certified recording of a payload, the locus of a problem, the recording of the loop's decisions, the publication of an admitted answer and the successor, together with their constituents, the development constants their items mention. The notions and their constituents are the roots and are expanded, and every development constant the constituents mention stands on the frontier. The state report presents the state with its computed observations and the acceptance of its own entities, as for the seed. Each root is the problem of its constant under the definition reading, the same notion as a refinement problem with the other reading: its subject is the constant, its contract the constant as the checked context declares it, marked as a definition, its incumbent the kernel definitions the state states for it, its origin a residual and its authority generated, because every one of these notions was defined outside the native process. A root the definition reading states no problem for is retained as unstated. A residual depends on the residuals of the other roots its kernel definitions mention, read from those definitions, so a notion's residual depends on the residuals of its constituents and the loop takes constituents first. The problem report presents the residuals, the unstated roots, the dependencies and the assessment of the residuals with nothing answered; the loop report presents the contract decision of every root, the executed selection of the ready residuals and the residuals it admits. Which notions are roots and how far the record reaches are choices generated outside the process and are themselves residuals. The verification report issues every selected residual as a definition request, the request of its one constant under the definition reading with the support and least context of the constant's scope, and judges answer states derived from each request with the definition verdict, which lets an answer replace the kernel definitions of its subject and the code equations derived from them and nothing else: the unchanged state and its renaming are accepted, the subject's definitions stated as axioms, dropped or stated through an unknown constant are refused, as is dropping the other residuals' definitions, and dropping the subject's code equations is accepted. That the library's contracts of a residual still hold under a new definition is Isabelle's acceptance of an actual answer, which this recipe does not judge; the requirements an answer to a residual must meet beyond those contracts are not established by this recipe. The native-answers report answers every issued definition request natively: the restating answer removes the subject's kernel definitions its context holds and adds them again, is presented with the names it uses, transported as the padded word of its presentation, read back by its exact reader and judged by the definition verdict on the answer state; the word without its terminating bit is refused. The judgment establishes that an answer is admissible for installation, not that the library's contracts hold under it.",
  "complete_recipe_source_manifest": "native-development-machinery-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "a385b9942ca2330027dc7fd750302c1778c7570d7d059e3a2006da02a7aaea5e",
   "records": 5,
   "reports_equal": true,
-  "seconds": 44.87,
+  "seconds": 28.74,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/native-development-machinery-reports.json": "a8ef6ef14751f1ecbd55fe6feb42081a0670527adffe10e65b5dcbb4e3441dda"
+   "validation/reconstruction/native-development-machinery-reports.json": "059f31298b6211ef11783e153a77b758153944eb02f631c7d655e71784a06de5"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": false,
    "complete_term_transport": false,
-   "module_sha256": "43789b93ca712f0ad214224deb64471399bf37d1352880eda0474a5e9f344a06",
+   "module_sha256": "b57370641af4efb10db047d5ac0fdc896584d307f659abd321a49086dc072845",
    "subject_contracts": {},
    "theory": "Native_Development_Machinery"
   },
@@ -61,35 +61,35 @@
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "f3477fc494915e278c0e86a5fe49994d8daf407035e2d205cf6688a616e95c69",
+   "sha256": "2feda4edd85e32740a3e4653581eaf016d3983de52501087140c3b2470178b24",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
   },
   "presentation-loop": {
    "records": 1,
-   "sha256": "a5199b6eb63aebd9c56e6d847250595980b433b90e76831c5ca43d5e25cff1dd",
+   "sha256": "ac2d53a8d773684699df6de4a71520ceefa2a8680a4a23a5858fc61e1fa5fa4e",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
   },
   "presentation-native-answers": {
    "records": 1,
-   "sha256": "f612989b84495cbda653f2807c4cbb79fc6def1391f2e59f0f04182916e237bc",
+   "sha256": "ca1f12d74102965776564659640deddc9256fc98906c437fc4c369faf1670f32",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
   },
   "presentation-problems": {
    "records": 1,
-   "sha256": "e027b17ca4bc38041eef0bbd4c38af5813e97366ea7455739ce0380ff580b4fd",
+   "sha256": "b1f094f7465bb618ecf701d19397e170efe715004098dc4a2e7fde43c85aa46b",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
   },
   "presentation-verification": {
    "records": 1,
-   "sha256": "3c624f04e29943e0a445475df8a76c5ac3e489b46c0e96581081f191cddc1c01",
+   "sha256": "d0669c240f2c374093a6c64efbbe399d7565a81e675c32df10bb9cd4178ed6a0",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -97,34 +97,34 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "5c539216af4b20e58a1457a77234b671dc3ac350bc2e5f0a6f31c8210927b0bb",
+ "source_manifest_sha256": "ccf3c2f969496b18e4bd30cc4730c11598eebe5bac804fb67bb1354e3f27c37a",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 13.792820201997529
+   "seconds": 8.311257978999492
   },
   {
    "exit_code": 0,
    "name": "presentation-problems",
-   "seconds": 15.012024581999867
+   "seconds": 7.64818624200052
   },
   {
    "exit_code": 0,
    "name": "presentation-loop",
-   "seconds": 22.389550025000062
+   "seconds": 11.904732207996858
   },
   {
    "exit_code": 0,
    "name": "presentation-verification",
-   "seconds": 44.79130651400192
+   "seconds": 28.679853675999766
   },
   {
    "exit_code": 0,
    "name": "presentation-native-answers",
-   "seconds": 28.464925565000158
+   "seconds": 16.965386185998796
   }
  ]
 }

@@ -99,7 +99,7 @@ re-citations (#74, #76, #117) and the consolidation (#115) have landed; the impo
 base and the receipts follow main (the owner, 12:55): each landing's check advances the base, and the harness commits
 that check's receipts after the landing, so no task advances the base or retains (Q10 and Q11 answered). The reboot of
 13:04 took `/tmp` and every base in it; #144 made a complete proof of `a2ed0ed7` at a lasting place (777 s, adopted
-14:01) and lands the tools change that names it once. #145 gives a receipt the form of its boundary — no execution
+14:01) and landed the tools change that names it once (`79f16061`). #145 gives a receipt the form of its boundary — no execution
 directory, nothing tree-relative, one field per line — now that each landing's retention enters the history (the
 receipts #119 reused named an execution long removed, which nothing read: problems.txt condition 3); the harness's
 retention after it lands converts them.
@@ -152,9 +152,9 @@ assessment's first builds #185, #186 and #190; #144 and #145; the join law #173,
 #112; the flaky test's fix #181, the exporter's obligation #176 and the excess locale #182, then #42, #110 and #112;
 #128; #132, then #130; the overnight boundary #172; the probe's summary #175.
 
-**Order** (`144 128 129 132 133 147 148 173 174 175 181 179 180 151 152 176 177 145 146 163 164 182 183 153 154 42 43 185 196 186 197 190 201 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
+**Order** (`128 129 147 148 173 174 175 181 179 180 151 152 176 177 145 146 163 164 182 183 153 154 42 43 185 196 186 197 190 201 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43), so the landings the reboot interrupted come
-first: #144's lasting base, #128 with its review, the accepted commits #132, #147, #173 and #175, the landing checks
+first: #128 with its review, the accepted commits #147, #173 and #175, the landing checks
 of #181, #179 and #151, and the exporter's obligation #176 after #181, which #42 and #110 wait on. Then #145, beside
 everything; the parked #163; the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract
 #153 and the verdict's entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the
@@ -426,6 +426,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   edit as three families, every field its own program at edit-sized arguments, the reach's loss bounded by a
   successor-closed key set admitted natively, the contract `native_edited_fields`; seven builds, which #178 briefs.
   **#172** (`7a6093bf`): the overnight boundary recorded as historical at `aa946a22` (Open 55).
+- **#144** (`79f16061`): the heap store, the pointer and the fallback named once at the lasting place
+  `.build/tasks/base-lasting/`, its complete proof adopted, the dead lineage removed. **#132** (`79f16061`): the
+  candidate generators and the constructed applications re-cited to #85's notions, `ffilter_singleton` removed.
 
 ## Open
 
@@ -637,13 +640,18 @@ Not yet planned, in the order they are expected to be planned:
     of `state_rows`, so generated code recomputes a family (map, remdups, filter over all entities) at every read —
     29.5 s a call inside a per-row filter in #171's simulation. Host code reading `state_entities R k` inside a
     traversal is to be audited for it (the families computed once as a list); #178's builds respect it.
+67. **`import isabelle_places` among the standard-library imports** in `tools/investigate.py` and
+    `tools/native_answers.py` (#144's review): moved to the local imports with the next edit of those tools.
+68. **The record candidates' code equation at arity 1** (#132's reviews): a measurement against callers that apply
+    the function fully; at a measured need on the loop's path. The first review's other follow-ups were written over
+    by the re-review (the harness gap of #118).
 
 ## Now
 
 - **In flight (plan-44, 14:05)**: the reboot of 13:04 interrupted ten landings (#128, #132, #147, #171, #172, #173 and
   #175 committing, #151, #179 and #181 checking), all queued again, #151, #179 and #181 no longer waiting on a base;
   #128's session re-applies its refinement over #30's lines in `Development_Admitted_Publication` and runs its held
-  pair; #144 is in review, its acceptance corrected (the harness, 14:10); #145 builds the receipts' form; #163 is parked; the incremental
+  pair; #144 and #132 landed (`79f16061`); #145 builds the receipts' form; #163 is parked; the incremental
   assessment's builds are placed (#185–#206, briefed by #178 from #171's entry, landed `7a6093bf` with #172). #42's brief carries #106's review, #38's reduction and
   questions and the `[code_unfold]` declarations #40 needed (q54); #112's carries #106's review. #173 states the
   programs' join law before #42, #112 and #64; #176 the exporter's obligation before #42 and #110, after #181. #143
@@ -716,18 +724,22 @@ Not yet planned, in the order they are expected to be planned:
   - The finalizer ran two landing checks on one tree with identical inputs (#90: 311.5 s and 330.0 s, the same 155
     theories rebuilt); reusing an accepted check on unchanged inputs would save about five and a half minutes a
     landing (#90's review).
-  - `v2.py check` in a task's own tree is refused when the harness stages the tree: the sandbox mounts `/dev/null`
-    over the untracked `.bash_profile` and `.bashrc`, and staging fails with "can only add regular files" (#185,
-    14:47); the session hands over and the finalizer's landing check verifies.
-- **The base is `.build/tasks/base-lasting/complete-20260922e`** (#144: a complete proof of `a2ed0ed7`, 1,825 theories,
-  777 s), its heaps in `.build/tasks/base-lasting/isabelle-home`, which `/tmp/structural-isabelle` links to. A base
-  records its heap by its absolute path: as first recorded, the older tools refused it and every check failed within a
-  second (14:06–14:08, no failure counted); re-recorded at 14:14 with its heap under `/tmp/structural-isabelle`, it is
-  read by the older tools and by #144's alike (the harness, 14:25), and #171 and #172 landed on it. The two pointers
-  stay apart — `/tmp/structural-active-context.json` for the older tools, `.build/tasks/base-lasting/active-context.json`
-  for #144's — and the harness advances the base at every landing through the one main's tools read, retaining that
-  check's receipts (the owner, 12:55). A base the newer tools advance records the lasting store's paths; until #144 has
-  landed and the base advanced once, a reboot removes the link this record reads.
+
+  - The lasting base (#144's review): `v2.py:1349`'s default names the `/tmp` pointer and should name the lasting one
+    before the next reboot; `health.py`'s `base_at_risk` will report the lasting base as standing in a task's
+    directory; `finalize.py` refuses advancing outputs under `.build/tasks/`, so where the harness's advances write
+    decides whether the base returns to `/tmp`; the heap store's `/tmp/structural-isabelle` link, which
+    `complete-20260922e`'s record reads, goes with a reboot; the interim heap `RRA_Factor_Structural_Bootstrap`
+    (841 MB) now lies in the lasting store and can go once no check reads `/tmp/structural-accepted`; and
+    `.build/complete-20260921a` lies at `.build/`'s root, which no session writes.
+- **The base lives at the lasting place** `.build/tasks/base-lasting/` (#144, landed `79f16061` with #132): its
+  complete proof of `a2ed0ed7` (`complete-20260922e`, 777 s, re-recorded at 14:14 with its heap under the
+  `/tmp/structural-isabelle` link so that the older tools read it too), the pointer `active-context.json` that main's
+  tools read, and the heaps in `isabelle-home`. The harness advances the base at every landing through that pointer
+  and retains that check's receipts (the owner, 12:55); a base the new tools advance records the lasting store's paths
+  and is refused by the older tools (review 144), so a tree made before `79f16061` brings main in before any check or
+  probe (every working task told, 14:50). As first recorded, the lasting base was refused by the older tools and every
+  check failed within a second (14:06–14:08, no failure counted). The pointers stay apart (the harness, 14:25).
   The dead lineage (bases a–d, `.build/tasks/105/head-5a039e44`, `receipts-1`) is removed; `.build/complete-20260921a`,
   at `.build/`'s root, which the sandbox does not write, and the harness's interim base `/tmp/structural-accepted` are
   the owner's or the next reboot's.

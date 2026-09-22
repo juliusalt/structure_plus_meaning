@@ -1,5 +1,5 @@
 theory Finite_Presented_Enumeration
-  imports Finite_Presented_Collections Finite_Functional_Enumeration
+  imports Finite_Presented_Collections Functional_Enumeration_Indexes
 begin
 
 definition finite_presented_enumeration where
@@ -14,9 +14,10 @@ proof -
   have functional: "finite_relation_functional ?R"
     using injective by (auto simp: finite_relation_functional_correct single_valued_def
       inj_def split: prod.splits)
+  have rows: "set (finite_functional_rows ?R)=fset ?R"
+    using functional_rows_index.found_pairs[OF functional] by simp
   show ?thesis
-    by (simp add: finite_presented_enumeration_def finite_functional_rows_exact[OF functional]
-      fimage.rep_eq image_image)
+    by (simp add: finite_presented_enumeration_def rows fimage.rep_eq image_image)
 qed
 
 text \<open>The existing structural term order supplies presentation keys; the

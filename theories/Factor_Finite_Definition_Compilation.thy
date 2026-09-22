@@ -57,8 +57,10 @@ proof (cases "finite_pattern_formed p \<and> finite_relation_functional Cs")
 next
   case True
   have functional: "finite_relation_functional Cs" using True by blast
+  have rows: "set (finite_functional_rows Cs)=fset Cs"
+    using functional_rows_index.found_pairs[OF functional] by simp
   have range: "set (map snd (finite_functional_rows Cs))=rel_ran (fset Cs)"
-    by (simp only: set_map finite_functional_rows_exact[OF functional] rel_ran_image)
+    by (simp only: set_map rows rel_ran_image)
   have empty: "finite_compile_definition p Cs=None \<longleftrightarrow>
     finite_compile_schema_forest (map snd (finite_functional_rows Cs))=None"
     using True by (auto simp: finite_compile_definition_def Let_def split: option.splits prod.splits)
@@ -147,8 +149,10 @@ proof -
     by (simp add: decode_finite_definition_code_def fields(3) fset_of_list.rep_eq map_relation_values_def
       zip_map2 image_image map_map comp_def split_def finite_rename_schema_correct)
   let ?C="map_relation_values decode_finite_schema (fset Cs)"
+  have rows: "set (finite_functional_rows Cs)=fset Cs"
+    using functional_rows_index.found_pairs[OF functional] by simp
   have enum: "set (zip ?os ?Ss')=?C"
-    by (simp only: listed_relation_values finite_functional_rows_exact[OF functional])
+    by (simp only: listed_relation_values rows)
   have source_length: "length ?os=length ?Ss'" by simp
   have key_length: "length ?os=length code.ports" using code.properties(5) by simp
   have target_length: "length code.ports=length code.schemas" using code.properties(5,7) by simp

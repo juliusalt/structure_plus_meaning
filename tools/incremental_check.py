@@ -181,6 +181,30 @@ def run_logged(command, log, timeout):
     return code, time.monotonic() - started
 
 
+def failing_tests(text, lines=8):
+    """Every test unittest's report names as failing or erroring, with the last lines of its traceback.
+
+The report prints each failure as a block: a line of '=', the outcome and the test's id, a line of
+'-', then the traceback up to the next such separator line. Colour escapes, which unittest writes
+when the environment forces colour, are removed first."""
+    report = re.sub(r'\x1b\[[0-9;]*m', '', text).splitlines()
+    rule = lambda line, mark: len(line) >= 20 and set(line) == {mark}
+    found = []
+    for index, line in enumerate(report):
+        heading = re.match(r'(ERROR|FAIL): (.*)$', line)
+        if not heading or index == 0 or not rule(report[index - 1], '='):
+            continue
+        body = []
+        for following in report[index + 2:]:
+            if rule(following, '=') or rule(following, '-'):
+                break
+            body.append(following)
+        while body and not body[-1].strip():
+            body.pop()
+        found.append({'outcome': heading.group(1), 'test': heading.group(2), 'traceback': body[-lines:]})
+    return found
+
+
 def host_tests():
     """Run the tool and kernel test suites; return their counts from unittest's own summary."""
     suites = {'tools': (ROOT / 'tools', 'test_*.py'),
@@ -196,7 +220,7 @@ def host_tests():
         skipped = re.search(r'skipped=(\d+)', text)
         return name, {'exit_code': completed.returncode, 'ran': int(ran.group(1)) if ran else None,
                       'skipped': int(skipped.group(1)) if skipped else 0,
-                      'tail': text.strip().splitlines()[-1:] }
+                      'tail': text.strip().splitlines()[-1:], 'failing': failing_tests(text)}
 
     with ThreadPoolExecutor(max_workers=2) as pool:
         return dict(pool.map(run, suites.items()))
@@ -233,6 +257,9 @@ def execution_boundary(row, manifest, proof_path):
 
 def reusable_execution(verified, boundary):
     """An accepted execution applies to every check whose complete execution boundary is equal."""
+    # An exported module is byte-identical from any session over identical sources (task 134: 52 groups of
+    # distinct sessions over one closure), so a receipt goes stale only when a code equation in its recipe's
+    # closure changes, and reuse fires after a base move or a retention.
     return (verified.get('status') == 'accepted' and verified.get('reports_equal') is True
             and verified.get('execution_boundary') == boundary)
 

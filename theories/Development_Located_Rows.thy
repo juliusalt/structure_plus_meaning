@@ -158,8 +158,8 @@ qed
 section \<open>The value asked is the value found\<close>
 
 text \<open>
-  A store's presentation reads only the values it holds (@{thm store_term_cong}), so presenting every
-  stored value as itself is the presentation through any formed value map that is the identity on them.
+  A store presented by the identity holds formed values exactly where its rows do, which is all the
+  search's contract asks of it (@{thm development_row_searches.exact_held}).
 \<close>
 
 definition development_rows_term :: "development_store_rows \<Rightarrow> factor_term" where
@@ -167,8 +167,9 @@ definition development_rows_term :: "development_store_rows \<Rightarrow> factor
 
 text \<open>
   On formed rows the search holds at a locus of exactly the value the store holds there: the search's
-  own contract (@{thm development_row_searches.exact}) and the check's compose, neither restated. On a
-  single-valued store that is the value its row holds (@{thm path_store_lookup}).
+  own contract (@{thm development_row_searches.exact_held}) and the check's compose, neither restated. On a
+  single-valued store that is the value its row holds (the path store's index,
+  @{thm [source] path_store_carrier_index}).
 \<close>
 
 theorem development_row_lookup_at:
@@ -176,34 +177,29 @@ theorem development_row_lookup_at:
   shows "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
       \<in>positive_meaning development_rows_program \<longleftrightarrow> store_lookup (path_store rows) l=Some v"
 proof -
-  define f where "f=(\<lambda>y. if term_formed y then y else Payload_Term [])"
-  have ff: "term_formed (f y)" for y by (simp add: f_def octets_formed_def)
-  have stored: "term_formed w" if "store_lookup (path_store rows) bs=Some w" for bs w
-    using path_store_found[OF that] formed by blast
-  have same: "store_term id (path_store rows)=store_term f (path_store rows)"
-    by (rule store_term_cong) (simp add: f_def stored)
+  have stored: "term_formed (id w)" if "store_lookup (path_store rows) bs=Some w" for bs w
+    using path_store_found[OF that] formed by (simp only: id_apply) blast
   have "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
       \<in>positive_meaning development_rows_program \<longleftrightarrow>
     term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
-      (development_row_check,Pair_Term v (f w))\<in>positive_meaning development_rows_program)"
-    unfolding development_rows_term_def same by (rule development_row_searches.exact) (rule ff)
+      (development_row_check,Pair_Term v (id w))\<in>positive_meaning development_rows_program)"
+    unfolding development_rows_term_def by (rule development_row_searches.exact_held) (rule stored)
   also have "\<dots> \<longleftrightarrow> store_lookup (path_store rows) l=Some v"
   proof
     assume "term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
-      (development_row_check,Pair_Term v (f w))\<in>positive_meaning development_rows_program)"
+      (development_row_check,Pair_Term v (id w))\<in>positive_meaning development_rows_program)"
     then obtain bs w where key: "path_term l=path_term bs" and found: "store_lookup (path_store rows) bs=Some w"
-      and checked: "(development_row_check,Pair_Term v (f w))\<in>positive_meaning development_rows_program" by blast
+      and checked: "(development_row_check,Pair_Term v (id w))\<in>positive_meaning development_rows_program" by blast
     have "l=bs" using key by (simp only: path_term_injective)
-    moreover have "v=f w" using checked by (simp only: development_row_check_exact)
-    moreover have "f w=w" using stored[OF found] by (simp add: f_def)
+    moreover have "v=id w" using checked by (simp only: development_row_check_exact)
     ultimately show "store_lookup (path_store rows) l=Some v" using found by simp
   next
     assume found: "store_lookup (path_store rows) l=Some v"
-    have formed_v: "term_formed v" by (rule stored[OF found])
-    then have "(development_row_check,Pair_Term v (f v))\<in>positive_meaning development_rows_program"
-      by (simp add: f_def development_row_check_exact)
+    have formed_v: "term_formed v" using stored[OF found] by (simp only: id_apply)
+    then have "(development_row_check,Pair_Term v (id v))\<in>positive_meaning development_rows_program"
+      by (simp add: development_row_check_exact)
     then show "term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
-      (development_row_check,Pair_Term v (f w))\<in>positive_meaning development_rows_program)"
+      (development_row_check,Pair_Term v (id w))\<in>positive_meaning development_rows_program)"
       using found formed_v by blast
   qed
   finally show ?thesis .
@@ -213,7 +209,8 @@ theorem development_row_at:
   assumes sv: "single_valued (set rows)" and formed: "\<forall>(l,w)\<in>set rows. term_formed w"
   shows "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
       \<in>positive_meaning development_rows_program \<longleftrightarrow> (l,v)\<in>set rows"
-  by (simp only: development_row_lookup_at[OF formed] path_store_lookup[OF sv])
+  by (simp only: development_row_lookup_at[OF formed]
+    carrier_index.query_search[OF path_store_carrier_index sv UNIV_I, simplified id_apply])
 
 section \<open>The request at a locus\<close>
 

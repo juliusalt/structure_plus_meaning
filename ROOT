@@ -835,6 +835,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Library_Coverage
     Factor_Reader_Library_Coverage
     Carrier_Indexes
+    Established_Premises
+    Candidate_Generators
     Finite_Functional_Enumeration
     Functional_Enumeration_Indexes
     Finite_Singleton_Selection
@@ -1621,6 +1623,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Collection_Subset_Execution
     Finite_Filtered_Keyed_Products
     RRA_Linked_Record_Candidates
+    Tree_Map_Indexes
     Ordered_Member_Trees
     Member_Tree_Indexes
     Ordered_Finite_Rows
@@ -1635,9 +1638,11 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Demanded_Program_Calls
     Keyed_Demanded_Sites
     Factor_Demanded_Package_Readings
+    Factor_Shared_Package_Readings
     Factor_Demanded_Graph_Readings
     Listed_Set_Unions
     Factor_Constructed_Program_Applications
+    Factor_Finite_Source_Construction_Sharing
     RRA_Listed_Environment_Positions
     RRA_Inserted_Attachments
     Factor_Indexed_Readings
@@ -1813,8 +1818,10 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Optional_View_Refinement
     Native_Control_Acceptance_Profile
     Development_State_Rows
+    Development_State_Presenter
     Development_Rows
     Development_Located_Rows
     Development_Request_Keys
     Development_Verdict_Statements
+    Development_Verdict_Mentions
     Development_Row_Presentations

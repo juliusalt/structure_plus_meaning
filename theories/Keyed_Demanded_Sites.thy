@@ -1,5 +1,5 @@
 theory Keyed_Demanded_Sites
-  imports Keyed_Finite_Sets Finite_Demanded_Closures
+  imports Keyed_Finite_Sets Member_Tree_Indexes Finite_Demanded_Closures
 begin
 
 section \<open>The traversal of demanded sites keeps its sites in an ordered index\<close>
@@ -56,7 +56,32 @@ definition keyed_demanded_sites ::
 
 lemma keyed_fold_insert:
   "RBT.lookup (fold (\<lambda>x N. RBT.insert (key x) () N) T M) k\<noteq>None \<longleftrightarrow> RBT.lookup M k\<noteq>None \<or> k\<in>key ` set T"
-  by (induction T arbitrary: M) auto
+proof (induction T arbitrary: M)
+  case Nil
+  show ?case by simp
+next
+  case (Cons x T)
+  have "RBT.lookup (fold (\<lambda>x N. RBT.insert (key x) () N) (x#T) M) k\<noteq>None \<longleftrightarrow>
+      RBT.lookup (fold (\<lambda>x N. RBT.insert (key x) () N) T (RBT.insert (key x) () M)) k\<noteq>None" by simp
+  also have "\<dots> \<longleftrightarrow> RBT.lookup (RBT.insert (key x) () M) k\<noteq>None \<or> k\<in>key ` set T" by (rule Cons.IH)
+  also have "\<dots> \<longleftrightarrow> RBT.lookup M k\<noteq>None \<or> k\<in>key ` set (x#T)"
+    by (simp only: member_tree_insert, auto)
+  finally show ?case .
+qed
+
+text \<open>
+  At the key of a site the keyed fold is the member tree of the sites' keys asked through the key,
+  which distinguishes by the notion's @{thm [source] distinguishes_by_left_inverse}.
+\<close>
+
+lemma keyed_fold_insert_at:
+  assumes inverse: "\<And>x. unkey (key x)=x"
+  shows "RBT.lookup (fold (\<lambda>x N. RBT.insert (key x) () N) T M) (key y)\<noteq>None \<longleftrightarrow>
+    RBT.lookup M (key y)\<noteq>None \<or> y\<in>set T"
+proof -
+  have injective: "inj key" by (rule distinguishes_by_left_inverse[where unkey=unkey]) (rule inverse)
+  show ?thesis by (simp only: keyed_fold_insert inj_image_mem_iff[OF injective])
+qed
 
 lemma keyed_sites_step_frontier:
   assumes inverse: "\<And>x. unkey (key x)=x"
@@ -70,13 +95,7 @@ proof (rule fset_eqI)
   let ?A="finite_row_successors read succ (fset_of_list T)"
   have visited: "RBT.lookup ?M (key z)\<noteq>None \<longleftrightarrow> z\<in>set S \<or> z\<in>set T" for z
   proof -
-    have same: "key z\<in>key ` set T \<longleftrightarrow> z\<in>set T"
-    proof
-      assume "key z\<in>key ` set T"
-      then obtain w where "w\<in>set T" "key z=key w" by blast
-      then show "z\<in>set T" using inverse by metis
-    qed blast
-    show ?thesis using keyed_fold_insert[of key T M "key z"] inv same by auto
+    show ?thesis using keyed_fold_insert_at[where unkey=unkey and T=T and M=M and y=z, OF inverse] inv by auto
   qed
   have "y |\<in>| fset_of_list (map unkey (filter (\<lambda>k. RBT.lookup ?M k=None) (keyed_site_successors key read succ T)))
       \<longleftrightarrow> (\<exists>k. k\<in>set (keyed_site_successors key read succ T) \<and> RBT.lookup ?M k=None \<and> y=unkey k)"
@@ -111,13 +130,7 @@ proof -
       have old: "\<forall>x. RBT.lookup M (key x)\<noteq>None \<longleftrightarrow> x\<in>set S" using inv s by simp
       have "RBT.lookup (fold (\<lambda>x N. RBT.insert (key x) () N) T M) (key x)\<noteq>None \<longleftrightarrow> x\<in>set (S@T)" for x
       proof -
-        have same: "key x\<in>key ` set T \<longleftrightarrow> x\<in>set T"
-        proof
-          assume "key x\<in>key ` set T"
-          then obtain w where "w\<in>set T" "key x=key w" by blast
-          then show "x\<in>set T" using inverse by metis
-        qed blast
-        show ?thesis using keyed_fold_insert[of key T M "key x"] old same by auto
+        show ?thesis using keyed_fold_insert_at[where unkey=unkey and T=T and M=M and y=x, OF inverse] old by auto
       qed
       then show ?thesis by (simp add: s keyed_sites_step_def Let_def)
     qed

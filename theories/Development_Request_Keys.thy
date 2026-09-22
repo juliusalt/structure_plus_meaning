@@ -155,4 +155,120 @@ proof -
   show "set ks=key ` fset (development_request_support (snd S) c)" using ks support shape by simp
 qed
 
+section \<open>A request constructed from the state is presented\<close>
+
+text \<open>
+  The introduction of the relation, beside its elimination @{thm request_presents_recovery}. The rows'
+  entity key is not assumed injective: a request constructed from the state carries the least context of
+  its constant, whose entities are the state's (@{thm development_request_context_exact}), so a family of
+  constructed requests keys only entities of the state, where the first-occurrence key is injective
+  (@{thm request_entity_key_injective}).
+\<close>
+
+lemma request_rows_entity_key_injective:
+  assumes requests: "\<And>q. q\<in>set rs \<Longrightarrow>
+      \<exists>reading kind ra a d. development_constant_request reading kind (snd S) ra a d=Some q"
+  shows "inj_on (development_entity_key (snd S)) (development_row_entities rs)"
+proof (rule request_entity_key_injective, rule subsetI)
+  fix e assume "e\<in>development_row_entities rs"
+  then obtain q where q: "q\<in>set rs" "e\<in>fset (snd (snd (snd q)))"
+    unfolding development_row_entities_def by blast
+  obtain reading kind ra a d where built: "development_constant_request reading kind (snd S) ra a d=Some q"
+    using requests[OF q(1)] by blast
+  obtain p s Sup E where shape: "q=(p,s,Sup,E)" by (cases q)
+  have "E=development_request_context (snd S) d"
+    by (rule development_constant_request_fields(5)[OF built[unfolded shape]])
+  then have "e |\<in>| development_request_context (snd S) d" using q(2) shape by simp
+  then show "e\<in>set (snd (snd S))" by (simp only: development_request_context_exact)
+qed
+
+text \<open>
+  The subject and the support of a constructed request are positions of the state: the subject is declared
+  by an entity of the state and every constant of the support is mentioned by a statement of its scope, and
+  every position an entity of a presented state uses lies in its table (@{thm state_presents_inside}).
+\<close>
+
+lemma request_constructed_positions:
+  assumes state: "state_presents key S R"
+    and built: "development_constant_request reading kind (snd S) ra a c=Some r"
+  shows "fset (problem_subject (fst r)) \<union> fset (fst (snd (snd r)))\<subseteq>{..<length (fst (snd S))}"
+proof -
+  obtain p s Sup E where shape: "r=(p,s,Sup,E)" by (cases r)
+  have subject: "problem_subject p={|c|}" and support: "Sup=development_request_support (snd S) c"
+    using development_constant_request_fields[OF built[unfolded shape]] by blast+
+  have "development_stated_constant reading (snd S) c\<noteq>None"
+    using built unfolding development_constant_request_def by auto
+  then obtain t where "development_stated_constant reading (snd S) c=Some t" by blast
+  then obtain e where e: "e\<in>set (snd (snd S))" "isabelle_declared_constant e=Some c"
+    using development_stated_constant_declared by blast
+  have "c\<in>set (isabelle_entity_positions e)"
+    using entity_declared_positions[of e] e(2) by (simp add: entity_declared_def)
+  then have cp: "c\<in>state_positions S" using e(1) unfolding state_positions_def by blast
+  have dp: "d\<in>state_positions S" if d: "d |\<in>| Sup" for d
+  proof -
+    obtain e' q where e': "e'\<in>set (development_constant_scope (snd S) c)"
+      and q: "isabelle_specified_proposition e'=Some q" "d\<in>set (isabelle_term_constants q)"
+      using d support development_request_support_member by blast
+    have "d\<in>set (isabelle_entity_positions e')"
+      using entity_mentions_positions[of e'] q by (auto simp add: entity_mentions_def)
+    moreover have "e'\<in>set (snd (snd S))" using e' by (simp only: development_constant_scope_member)
+    ultimately show ?thesis unfolding state_positions_def by blast
+  qed
+  have "state_positions S\<subseteq>{..<length (fst (snd S))}" by (rule state_presents_inside[OF state])
+  then show ?thesis using cp dp subject shape by auto
+qed
+
+text \<open>
+  A request constructed from the state, held by a development-rows presentation that takes the state's
+  constant key and the rows' entity key @{term "development_entity_key (snd S)"}, is presented with the key
+  of its constant and the support family its row carries. The presentation's conjuncts are taken as they
+  stand, but its entity key's injectivity, which is derived from every request of the family being
+  constructed from the state. The subject's being exactly one constant is the construction's own
+  (@{thm development_constant_request_fields}), so no request without a locus enters.
+\<close>
+
+theorem request_presents_constructed:
+  assumes state: "state_presents key S R"
+    and sv: "single_valued (set rows)" and formed: "\<forall>(l,v)\<in>set rows. term_formed v"
+    and keys: "inj_on key (development_row_constants ps rs)"
+    and inerts: "inj_on inert (development_contract_term ` problem_contract ` set ps)"
+    and problems: "development_problems_present key inert origin grant ps rows"
+    and requested: "development_requests_present key (development_entity_key (snd S)) supported scope ps rs rows"
+    and issues: "development_issues_present key decs ps iss rows"
+    and requests: "\<And>q. q\<in>set rs \<Longrightarrow>
+      \<exists>reading kind ra a d. development_constant_request reading kind (snd S) ra a d=Some q"
+    and r: "r\<in>set rs"
+    and built: "development_constant_request reading kind (snd S) ra a c=Some r"
+  shows "request_presents key S R rows r (key c) (supported r)"
+proof -
+  have present: "development_rows_present key (development_entity_key (snd S)) inert origin grant supported scope decs ps rs iss rows"
+    unfolding development_rows_present_def
+    using sv formed keys request_rows_entity_key_injective[of rs S, OF requests] inerts problems requested issues
+    by blast
+  obtain p s Sup E where shape: "r=(p,s,Sup,E)" by (cases r)
+  have subject: "problem_subject (fst r)={|c|}"
+    using development_constant_request_fields(3)[OF built[unfolded shape]] shape by simp
+  have k: "key c=drop 6 (development_located_at key Development_Request_Role (fst r))"
+    by (simp only: development_located_at_subject[OF subject] development_locus_parts(3))
+  have found: "(development_row_search,Pair_Term (development_request_body (supported r) (scope r))
+      (Pair_Term (path_term (development_located_at key Development_Request_Role (fst r)))
+        (development_rows_term rows)))\<in>positive_meaning development_rows_program"
+    using development_request_at[OF present r, of "development_request_body (supported r) (scope r)"] by simp
+  have positions: "fset (problem_subject (fst r)) \<union> fset (fst (snd (snd r)))\<subseteq>{..<length (fst (snd S))}"
+    by (rule request_constructed_positions[OF state built])
+  show ?thesis
+    unfolding request_presents_def
+  proof (intro conjI)
+    show "state_presents key S R" by (rule state)
+    show "\<exists>inert origin grant supported' scope decs ps rs iss.
+        development_rows_present key (development_entity_key (snd S)) inert origin grant supported' scope decs ps rs iss rows \<and>
+        r\<in>set rs" using present r by blast
+    show "fset (problem_subject (fst r)) \<union> fset (fst (snd (snd r)))\<subseteq>{..<length (fst (snd S))}" by (rule positions)
+    show "key c=drop 6 (development_located_at key Development_Request_Role (fst r))" by (rule k)
+    show "\<exists>es. (development_row_search,Pair_Term (development_request_body (supported r) es)
+      (Pair_Term (path_term (development_located_at key Development_Request_Role (fst r)))
+        (development_rows_term rows)))\<in>positive_meaning development_rows_program" using found by blast
+  qed
+qed
+
 end

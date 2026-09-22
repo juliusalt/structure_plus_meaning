@@ -1,8 +1,9 @@
 theory Development_Publication
   imports Development_Successor Isabelle_Local_Names RRA_Finite_Transactions Factor_Finite_Data_Syntax Finite_Presented_Structures
+    Development_Loci Development_State_Presenter
 begin
 
-section \<open>A contract presented with its names locates its problem\<close>
+section \<open>The term of a contract\<close>
 
 fun development_contract_term :: "development_contract \<Rightarrow> isabelle_term" where
   "development_contract_term (Development_Refinement t)=t"
@@ -24,41 +25,13 @@ lemma development_contract_rename_cong:
     development_contract_rename f k=development_contract_rename g k"
   by (cases k) (auto intro: isabelle_term_rename_cong)
 
-definition development_local_contract ::
-    "String.literal list \<Rightarrow> development_contract \<Rightarrow> String.literal list\<times>development_contract" where
-  "development_local_contract names k=(let ps=isabelle_term_positions (development_contract_term k) in
-    (isabelle_local_names names ps,development_contract_rename (isabelle_local_embedding names ps) k))"
-
-theorem development_local_contract_renamed:
-  assumes corr: "isabelle_table_correspondence f names names'"
-    and inside: "\<forall>i\<in>set (isabelle_term_positions (development_contract_term k)). i<length names"
-  shows "development_local_contract names' (development_contract_rename f k)=development_local_contract names k"
-proof -
-  let ?ps="isabelle_term_positions (development_contract_term k)"
-  have positions: "isabelle_term_positions (development_contract_term (development_contract_rename f k))=map f ?ps"
-    by (simp add: development_contract_term_rename isabelle_term_rename_positions)
-  have names: "isabelle_local_names names' (map f ?ps)=isabelle_local_names names ?ps"
-    by (simp add: isabelle_local_names_def isabelle_local_names_renamed[OF corr])
-  have agree: "\<forall>i\<in>set ?ps. (isabelle_local_embedding names' (map f ?ps) \<circ> f) i=isabelle_local_embedding names ?ps i"
-    using inside by (simp add: isabelle_local_embedding_renamed[OF corr])
-  have renamed: "development_contract_rename (isabelle_local_embedding names' (map f ?ps)) (development_contract_rename f k)=
-      development_contract_rename (isabelle_local_embedding names ?ps) k"
-    by (simp only: development_contract_rename_compose development_contract_rename_cong[OF agree])
-  show ?thesis
-    by (simp only: development_local_contract_def Let_def positions names renamed)
-qed
-
 text \<open>
-  The locus of a problem is its contract presented with its names: a refinement's contract is
-  its constant as the state declares it, so every problem posed about that constant, whatever
-  its origin or authority, stands at one locus, and at most one answer to it is selected.
-  Subject positions, origin and authority are not part of the locus. A correspondence of tables
-  leaves the locus unchanged, so it is read identically from every state that holds the names.
+  A problem stands at its locus (\<open>Development_Loci\<close>): the prefix of its role, the prefix of its
+  contract's kind and the key of its one subject constant, the constant's position in the state's name
+  table (\<open>state_constant_key\<close>). A problem whose subject is not exactly one constant has no locus.
+  Origin and authority are not part of the locus, so every problem of one kind posed about one constant
+  stands at one locus, and at most one answer to it is selected.
 \<close>
-
-definition development_problem_locus :: "String.literal list \<Rightarrow> development_problem \<Rightarrow> finite_factor_term" where
-  "development_problem_locus names p=finite_pair_presentation isabelle_names_data development_contract_data
-    (development_local_contract names (problem_contract p))"
 
 section \<open>Generations of the development are generations of the library\<close>
 
@@ -73,45 +46,55 @@ text \<open>
 definition development_data_target :: "finite_factor_term \<Rightarrow> finite_exact_target option" where
   "development_data_target t=map_option Finite_Whole (finite_data_syntax (decode_finite_term t))"
 
+text \<open>
+  A locus is presented as its path (\<open>finite_path\<close>), and the target a generation of a role is recorded at
+  is the quotation of that path. A problem is cited by the store's optional value of its locus, absent
+  where it has none.
+\<close>
+
+abbreviation development_locus_target :: "development_role \<Rightarrow> development_problem \<Rightarrow> finite_exact_target option" where
+  "development_locus_target r p \<equiv> Option.bind (development_problem_locus_at state_constant_key r p)
+     (\<lambda>l. development_data_target (finite_path l))"
+
+abbreviation development_problem_citation :: "development_role \<Rightarrow> development_problem \<Rightarrow> finite_factor_term" where
+  "development_problem_citation r p \<equiv> finite_store_option finite_path (development_problem_locus_at state_constant_key r p)"
+
 section \<open>A decision stands at the locus of its kind\<close>
 
 text \<open>
   The development records its decisions as generations too, and each decision stands at a locus of its
   own kind beside the loci of the problems. The issue of a problem, the request an executor answers for
-  it, stands at the problem's issue locus: at most one request for a problem is current, and issuing it
-  again replaces the earlier one. The selection of the next problems stands at the development's
-  selection locus: at most one selection is current. The kind of a locus is the constructor of its
-  presentation, so no issue or selection locus is the locus of any problem.
+  it, stands at the problem's locus under the issue role: at most one request for a problem is current,
+  and issuing it again replaces the earlier one. The selection of the next problems stands at the
+  development's selection locus: at most one selection is current. The role prefix of a locus tells a
+  problem's locus from its issue's, and no path is the selection locus.
 \<close>
-
-definition development_issue_locus :: "String.literal list \<Rightarrow> development_problem \<Rightarrow> finite_factor_term" where
-  "development_issue_locus names p=Finite_Pair (Finite_Payload [1]) (development_problem_locus names p)"
 
 definition development_selection_locus :: finite_factor_term where
   "development_selection_locus=Finite_Pair (Finite_Payload [2]) (Finite_Payload [])"
 
-lemma isabelle_names_data_not_payload:
-  "isabelle_names_data ns\<noteq>Finite_Payload [n]" "Finite_Payload [n]\<noteq>isabelle_names_data ns"
-  by (cases ns; simp add: isabelle_names_data_def finite_sequence_presentation_def)+
-
 lemma development_decision_loci_distinct:
-  "development_issue_locus names p\<noteq>development_problem_locus names' q"
-  "development_selection_locus\<noteq>development_problem_locus names' q"
-  "development_selection_locus\<noteq>development_issue_locus names p"
-  by (simp_all add: development_issue_locus_def development_selection_locus_def development_problem_locus_def
-    finite_pair_presentation_def isabelle_names_data_not_payload)
+  "development_problem_locus_at key Development_Issue_Role p=Some l \<Longrightarrow>
+    development_problem_locus_at key' Development_Problem_Role q=Some l' \<Longrightarrow> l\<noteq>l'"
+  "development_selection_locus\<noteq>finite_path m"
+proof -
+  show "l\<noteq>l'" if issue: "development_problem_locus_at key Development_Issue_Role p=Some l"
+    and problem: "development_problem_locus_at key' Development_Problem_Role q=Some l'"
+  proof -
+    obtain c where c: "l=development_locus key Development_Issue_Role (problem_contract p) c"
+      using issue by (auto simp: development_problem_locus_at_exact)
+    obtain d where d: "l'=development_locus key' Development_Problem_Role (problem_contract q) d"
+      using problem by (auto simp: development_problem_locus_at_exact)
+    have "take 3 l\<noteq>take 3 l'"
+      by (simp only: c d development_locus_parts(1)) simp
+    then show ?thesis by auto
+  qed
+  show "development_selection_locus\<noteq>finite_path m"
+    by (cases m) (auto simp: development_selection_locus_def finite_path_def finite_bit_def)
+qed
 
-lemma development_issue_locus_eq:
-  "development_issue_locus names p=development_issue_locus names' q \<longleftrightarrow>
-    development_problem_locus names p=development_problem_locus names' q"
-  by (simp add: development_issue_locus_def)
-
-lemma development_loci_formed [simp]:
-  "finite_term_formed (development_problem_locus names p)"
-  "finite_term_formed (development_issue_locus names p)"
-  "finite_term_formed development_selection_locus"
-  by (simp_all add: development_problem_locus_def development_issue_locus_def development_selection_locus_def
-    finite_pair_presentation_def octets_formed_def)
+lemma development_selection_locus_formed [simp]: "finite_term_formed development_selection_locus"
+  by (simp add: development_selection_locus_def octets_formed_def)
 
 text \<open>
   A formed value's complete data quotation determines the value, so distinct loci are distinct

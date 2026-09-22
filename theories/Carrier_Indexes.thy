@@ -87,12 +87,56 @@ proof -
   then show ?thesis by (simp only: represents[OF c] represents[OF d])
 qed
 
+text \<open>
+  Three forms the uses ask of the notion, stated once so that no instance makes their argument again.
+  Every query of a set of queries is found exactly when each holds some value in the carrier
+  (@{text queries_search}). Where the search is an optional lookup, the lookup at a query's key finds
+  something exactly when the query holds some value (@{text lookup_found}), and so for every query of a
+  set (@{text lookup_queries_found}). The pairs an index finds are the keyed image of the carrier's
+  content (@{text found_pairs}), so a use needing a carrier's whole-set contract takes it from the notion
+  in one step.
+\<close>
+
+corollary queries_search:
+  assumes c: "formed c" and B: "B\<subseteq>Q"
+  shows "(\<forall>q\<in>B. \<exists>v. search (build c) (key q) v) \<longleftrightarrow> (\<forall>q\<in>B. \<exists>v. holds c q v)"
+proof (rule ball_cong[OF refl])
+  fix q assume "q\<in>B"
+  with B have q: "q\<in>Q" by blast
+  show "(\<exists>v. search (build c) (key q) v) \<longleftrightarrow> (\<exists>v. holds c q v)" by (simp only: query_search[OF c q])
+qed
+
+corollary lookup_found:
+  assumes lookup: "\<And>i k v. search i k v \<longleftrightarrow> look i k=Some v" and c: "formed c" and q: "q\<in>Q"
+  shows "look (build c) (key q)\<noteq>None \<longleftrightarrow> (\<exists>v. holds c q v)"
+proof -
+  have "look (build c) (key q)\<noteq>None \<longleftrightarrow> (\<exists>v. search (build c) (key q) v)" by (simp only: lookup not_None_eq)
+  also have "\<dots> \<longleftrightarrow> (\<exists>v. holds c q v)" by (simp only: query_search[OF c q])
+  finally show ?thesis .
+qed
+
+corollary lookup_queries_found:
+  assumes lookup: "\<And>i k v. search i k v \<longleftrightarrow> look i k=Some v" and c: "formed c" and B: "B\<subseteq>Q"
+  shows "(\<forall>q\<in>B. look (build c) (key q)\<noteq>None) \<longleftrightarrow> (\<forall>q\<in>B. \<exists>v. holds c q v)"
+proof -
+  have "(\<forall>q\<in>B. look (build c) (key q)\<noteq>None) \<longleftrightarrow> (\<forall>q\<in>B. \<exists>v. search (build c) (key q) v)"
+    by (simp only: lookup not_None_eq)
+  also have "\<dots> \<longleftrightarrow> (\<forall>q\<in>B. \<exists>v. holds c q v)" by (rule queries_search[OF c B])
+  finally show ?thesis .
+qed
+
+theorem found_pairs:
+  assumes c: "formed c"
+  shows "{(k,v). search (build c) k v}=(\<lambda>(q,v). (key q,v)) ` {(q,v). q\<in>Q \<and> holds c q v}"
+  unfolding represents[OF c] by auto
+
 end
 
 text \<open>
   An index of the image of the queries under a key, searched by the keys themselves, is an index of
   the carrier read through that key, when the key distinguishes: the argument
-  @{text Keyed_Finite_Sets.keyed_member_lookup} makes over @{text Ordered_Member_Trees}, stated once.
+  the keyed set makes over the ordered member tree (@{text Member_Tree_Indexes.keyed_set_index.carrier}),
+  stated once.
 \<close>
 
 lemma carrier_index_through_key:

@@ -31,7 +31,7 @@ local_setup \<open>fn lthy =>
          \<^term>\<open>development_refinement_repair\<close>, \<^term>\<open>development_definition_request\<close>,
          \<^term>\<open>development_definition_verdict\<close>]),
        ("_admission_roots", [\<^term>\<open>development_policy_source_with\<close>, \<^term>\<open>development_payload_generation_with\<close>,
-         \<^term>\<open>development_problem_locus\<close>, \<^term>\<open>development_loop_decisions\<close>,
+         \<^term>\<open>development_problem_locus_at\<close>, \<^term>\<open>development_loop_decisions\<close>,
          \<^term>\<open>development_answer_publication\<close>, \<^term>\<open>development_successor\<close>])];
     val names = distinct (op =) (maps (fn (_, ts) => maps (fn t => rev (Term.add_const_names t [])) ts) notions);
     (*The constituents are the development constants the notions' items mention: the frontier of the
@@ -216,9 +216,9 @@ definition development_machinery_renamed :: isabelle_rooted_context where
     (rev (fst development_machinery_context)) development_machinery_state"
 
 definition development_machinery_request_of :: "development_problem \<Rightarrow> development_request option" where
-  "development_machinery_request_of p=(case sorted_list_of_fset (problem_subject p) of
-     [c] \<Rightarrow> development_definition_request development_machinery_context Development_Residual Development_Generated c
-   | _ \<Rightarrow> None)"
+  "development_machinery_request_of p=(case development_subject_constant p of
+     Some c \<Rightarrow> development_definition_request development_machinery_context Development_Residual Development_Generated c
+   | None \<Rightarrow> None)"
 
 theorem development_machinery_issued:
   assumes selection: "development_loop_selection (development_machinery_state,development_machinery_problems,
@@ -237,7 +237,7 @@ proof -
     by (rule development_loop_selection_ready(1)[OF selection leaf(1)])
   obtain c where requested: "development_definition_request development_machinery_context
       Development_Residual Development_Generated c=Some r"
-    using leaf(4) by (auto simp: development_machinery_request_of_def split: list.splits)
+    using leaf(4) by (auto simp: development_machinery_request_of_def split: option.splits)
   obtain p s S E where parts: "r=(p,s,S,E)" by (cases r) auto
   have "problem_subject p={|c|}"
     by (rule development_definition_request_fields(3)[OF requested[unfolded parts]])

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "c365c3e3e9cf737a49c6a859bb3039624176e03c72dae95b5b2a94a7de458a70",
- "checked_content_sha256": "2725bf38535b0cb065ff93b894c34459e978481e0e08a8d718f6288f4db240b9",
+ "base_receipt_sha256": "fcbbcf5364b2c54d61730c19ec77380dd1f03f2567b5d917ac55783c5c5edf41",
+ "checked_content_sha256": "664059396db423c92c721beb84f70351bc53bf6a00dcfd380988d19ef393f472",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,55 +22,15 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.44,
-  "execution_impact": 0.06,
-  "export": 8.23,
-  "proof": 93.16,
-  "recipe_impact": 0.47,
-  "recipes_and_host_tests": 10.81
+  "base_and_impact": 0.3,
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "proof": 61.1,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.16
  },
  "rebuilt_theories": [
-  "Development_Admitted_Publication",
-  "Development_Certified_Generations",
-  "Development_Constant_Verification",
-  "Development_Decision_Generations",
-  "Development_Decomposition_Soundness",
-  "Development_Definition_Verification",
-  "Development_Edited_Local",
-  "Development_Edited_Undeclared",
-  "Development_Located_Rows",
-  "Development_Machinery",
-  "Development_Native_Answers",
-  "Development_Native_Decomposition",
-  "Development_Native_Readiness",
-  "Development_Native_Selection",
-  "Development_Publication",
-  "Development_Refinement_Repair",
-  "Development_Refinement_Verification",
-  "Development_Repair_Rows",
-  "Development_Request_Keys",
-  "Development_Request_Packets",
-  "Development_Request_Scope",
-  "Development_Requests",
-  "Development_Row_Data",
-  "Development_Row_Presentations",
-  "Development_Rows",
-  "Development_Seed_Loop",
-  "Development_Seed_Publication",
-  "Development_Seed_Verification",
-  "Development_State_Edit",
-  "Development_State_Presenter",
-  "Development_State_Rows",
-  "Development_Subject_Index",
-  "Development_Successor",
-  "Development_Verdict_Difference",
-  "Development_Verdict_Mentions",
-  "Development_Verdict_Statements",
-  "Development_Verdict_Unreached",
-  "Isabelle_Native_Reach",
-  "Native_Development_Machinery",
-  "Native_Development_Seed",
-  "Native_Table_Reach"
+  "Development_Edited_Reach"
  ],
  "recipes": {
   "allocated-environments": {
@@ -170,14 +130,10 @@
    "status": "unchanged"
   },
   "native-development-machinery": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-development-seed": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -234,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1789,
- "seconds": 129.6,
+ "reused_theories": 1830,
+ "seconds": 90.31,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1830,
+  "theory_count": 1831,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1830,
+ "theories": 1831,
  "validation_inputs": {
-  "ROOT": "c1fc89d5d4c6b777bcd86cb485fe589641ff7b9c9f5cc4c899a6fbe5b2612ae1",
+  "ROOT": "7b5e63938de1b73329d7ce6fcebf169c12c2af46d987f81962195ae4475d3a1d",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "82e934dc1ab241ad304872f32ca11b1f5a0e8ad06d5de97626b94c96458b4752"
  }

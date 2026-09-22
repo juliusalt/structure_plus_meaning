@@ -49,7 +49,7 @@ once, keyed, with the entity-key condition by name; from its review, #249 moves 
 `Development_State_Rows`, the presenter concluding it as `state_presenter_entity_key`, and #110 states the scope's
 `statements` step beside `development_constant_scope_member`. #110 checks declarations cited with
 `store_found_program` directly; #112's call carries the body's path stores built from the executor's lists, no rule
-reading a list as a store (native production stays Open 39). #110, the three search fields, after #227 and #249;
+reading a list as a store (native production stays Open 39). #110, the three search fields, after #227 and #261 (which places what #249 leaves of #182's items);
 #112, the construction — rule, program, contract, conditions and corollaries, admitting a request at its locus through
 the store search with #97's contract for held values — after #110; and #114, the held measurement of one
 construction, after #112.
@@ -171,23 +171,23 @@ stated it once in `Native_Collection_Programs`, #208's law its instance, with Op
 (`supported_clause`); #247 (`e8d2158c`) completed it — the introduction half at any relation, the conclusion from
 `supported_clause`, `holds_rule` returning the rule — its review's documentation corrections and the inductions going
 to #235 and its two factorings inside the theory to Open 79; its re-citations follow the builds editing their theories — the verdict's families, the
-value rule and the decomposition rule (#235, after #247), the formation rules, the any rule and the two-premise call
-(#237, after #214 and #235), the store search (#239, after #44) — each with its review.
+value rule and the decomposition rule (#235, `fb032252`), readiness's rules and inductions (#259, since no build edits
+its theory), the formation rules, the any rule and the two-premise call (#237, after #214, #235 and #261), the store search (#239, after #44) — each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
 changes: the premise forest #223, with #241 after #147, then the layout #155, the answer records' re-recording #157,
 then #161, #165, #167, #169 and its review #170, or #92 and #93 after #167; one task more may end that chain. The
 incremental line's measurement #194 and its review are 9 deep, through #161 and #187. Then #238 (after #237, #214,
-#44, #42 and #227), 6, and #114 (after #112, #110 and #227 or #249), 4. Beside them: #235 and #191, running; the
-placed forest's cleanup #251 after #223; the re-citations #239 (after #44) and #237.
+#44, #42 and #227), 6, and #114 (after #112, #110, #261 and #227), 5. Beside them: #191 and #256, running; the
+state rows' notions #261 after #249; readiness's re-citation #259; the placed forest's cleanup #251 after #223; the
+re-citations #239 (after #44) and #237.
 
-**Order** (`147 148 128 129 253 254 255 258 256 257 249 250 191 202 223 224 227 228 241 242 155 156 157 158 159 160 161 162 42 43 187 198 165 166 44 45 110 111 192 203 193 204 167 168 214 215 169 170 194 205 235 236 112 113 114 195 206 237 238 239 240 251 252 92 93 64 65`).
+**Order** (`147 148 128 129 255 258 256 257 249 250 261 262 191 202 223 224 227 228 241 242 155 156 157 158 159 160 161 162 42 43 187 198 165 166 44 45 110 111 192 203 193 204 167 168 214 215 169 170 194 205 112 113 114 195 206 259 260 237 238 239 240 251 252 92 93 64 65`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
-the owner's ask, the external review's two findings verified before anything is built on them (#253, #254), P2's fix
-#255 and the design of adoption's evidence for P1's fix; #227's performance fix #256, which #42 and #110 wait on
-through #227; the
-running #249 and #191, so that their checks are not held behind parked work; then the parked #223, head of the
+the owner's ask, both findings confirmed (#253, #254): P2's fix #255 and the design of adoption's evidence #258 for
+P1's fix; #227's performance fix #256, which #42 and #110 wait on through #227; the running #249, then the state rows'
+notions #261 after it, and #191, so that their checks are not held behind parked work; then the parked #223, head of the
 deepest chain, and #227, which #42 and #110 wait on; #241 after #147; the layout's word change #155, its answer
 records #157 and its measurement #159 soon after it, while the harness's lineage still holds the last base without
 it; #161; then the verdict's entry #42 and the chains' next links as their inputs land, each ordered by the length of
@@ -563,6 +563,11 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#254** `e2af9414`: the external review's P2 verified present on HEAD and wider (`.build/tasks/254/report.md`),
   its reproduction kept as tests in the adoption tool's test module, the unhandled exits expected failures. The fix is
   #255; a leftover theory reading as adopted joins P1.
+- **#235** `fb032252`: the verdict's rule families, the value rule and the decomposition rule re-cited to
+  `native_rule_law`, every statement kept, `entity_kinds` moved into `Development_State_Rows`. Follow-ups:
+  `verdict_equal_program` retired and the theory's opening text to #237; the family list once, with the State_Rows map
+  row, to #261; readiness's rules and inductions, with the law entry's notes, to #259; the equality contract Open 36;
+  two dead imports Open 44.
 
 ## Open
 
@@ -675,12 +680,11 @@ Not yet planned, in the order they are expected to be planned:
 34. **The probe records its options and summary beside its log** — planned as #175 (#32's, #40's and #103's reviews).
 35. **#80's entry marks its check-recorded figures** (144.5, 181.9 and 241.7 s, "about 15 s for each of the other
     eleven") as recorded by checks beside other recipes (#80's follow-up 3). With that entry's next edit.
-36. **The equality contract is proved twice** (#84's review): `Factor_Native_Equality.native_equality_exact` and
-    `Factor_Positive_Meaning.generic_equality_exact`. Join them by deriving the native one from the generic one through
-    relocation and an alpha variant (`system_alpha_variant`), the route `development_row_check_exact` takes. Low in the
-    import graph: one landing, when a change at that level is next made.
-37. **A one-site finite rule program shown equal to an existing program** (#84's review): `development_row_check_exact`
-    spends about 70 lines on the relocation and the alpha variant; at the second such use, factor that step once.
+36. **The equality contract stands three times** (#84's and #235's reviews): `Factor_Positive_Meaning.generic_equality_exact`,
+    `Factor_Native_Equality.native_equality_exact` and `native_value_program.exact` (`Development_Verdict_Difference`).
+    Join them, the native forms derived from the generic one through relocation and an alpha variant
+    (`system_alpha_variant`), that step factored once if it is made twice (the former Open 37, whose one use went with
+    #235). Low in the import graph: one landing, when a change at that level is next made.
 38. **The rows program's sites and readiness's are hand-chosen numbers** (`[8]`, `[9]` against `[1]`–`[7]`, #84's
     review; #62's entry adds `(Some [],[1])`): a stated join of the programs, or sites allocated through
     `Factor_Fresh_Program_Coordinates`, makes their disjointness a fact. When the programs are first joined.
@@ -700,6 +704,8 @@ Not yet planned, in the order they are expected to be planned:
     listing reaches one. Taken only at a measured cost on the loop's path.
 44. **`demand_positions_member`'s `simp add` form, and import edges possibly dead since the index re-citations**
     (#115's reviews): with the next edit of those theories, and an import audit once #117 and #105 have landed.
+    `Development_Located_Rows` imports `Factor_Native_Equality` and `Factor_System_Relocation`, which its text no
+    longer uses since #235 (its map row lists them): dropped, or imported where a dependent uses them.
 45. **The host-test record reads printed text** (#122's review): a documented test would lose its traceback, an
     unexpected success is not recorded, and `import subprocess` sits inside a test method. The structured source is
     `TestResult.failures` and `errors`, through a result class on the suites' runner, which would remove the parsing;
@@ -744,8 +750,7 @@ Not yet planned, in the order they are expected to be planned:
     native verdict is first admitted through certificates, after #42.
 57. **Facts placed downstream of their notions** (#40's follow-up 3): `isabelle_entity_reach_pairs_member`, `isabelle_reach_pairs_member`,
     `isabelle_reach_predecessors_member`, `isabelle_reach_heads_member` and `isabelle_reach_constants_member` into
-    `Isabelle_Native_Reach`, with their map row; `entity_kinds`, `state_families` and `state_families_range` into
-    `Development_State_Rows` (`state_families_rows` then over `state_families R`). With the next edit of each owner.
+    `Isabelle_Native_Reach`, with their map row. With the next edit of each owner; the state rows' family list is #261's.
 59. **The judgment bridge's rows carry a candidate position** (#90's follow-up 2): `judgment_bridge_receive` filters
     `[0..<length judgment_bridge_candidates]` by each position's key path, and its field lemmas state `i<length …` and
     `judgment_bridge_candidates!i`; the rows can carry the subject through `keyed_admitted_subjects`, stated at the
@@ -838,8 +843,8 @@ Not yet planned, in the order they are expected to be planned:
 - **#227's performance problem (19:01)**: `code_simp` of the exporter's obligation normalizes the whole exported
   context and does not finish, and `eval` is an oracle; #256 (reviewed by #257) proves the obligation at every state
   the exporter defines by a kernel-checked evaluation of the declarations alone, and #227 continues when it lands.
-- **In flight (plan-46, 18:30)**: #249, #191 and #235 work; #128 and #147 finish their landings; #223 and #227 are
-  parked. Follow-ups mailed to tasks not yet started travel with them: #182's to #249 and #110 (which waits on #249),
+- **In flight (plan-46, 19:20)**: #249, #191 and #256 work; #128 and #147 finish their landings; #223 is parked and
+  #227 waits for #256. Follow-ups mailed to tasks not yet started travel with them: #182's to #249 and #110 (which waits on #249),
   #189's to #192 and #193, #247's to #235, #44 and #110, #225's union form to #223, and the earlier ones plan-45 sent to
   #187–#193, #212–#214 and #223. #42's brief carries #106's review, #38's reduction and questions and the
   `[code_unfold]` declarations #40 needed (q54); #112's carries #106's review. #155, #92 and #64 name the reports they

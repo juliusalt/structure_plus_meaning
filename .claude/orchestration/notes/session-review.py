@@ -191,7 +191,14 @@ for who in v2.BASES:
     share = subprocess.run([sys.executable, os.path.join(HERE, "manifest.py"), "stale-share", who],
                            capture_output=True, text=True).stdout.strip()
     age = lambda p: f"{int((now - os.path.getmtime(p)) // 60)} min" if os.path.exists(p) else "none"
-    print(f"  {who}: layer last hit {age(hit)} ago, stable base's own entry {age(stable)}, layer stale {share}")
+    if v2.deltas_on(who):  # refreshed by what its delta has cost against what a refresh costs (plan-bases-upgrade D7)
+        import watchdog
+        owed, cost = watchdog.carried(who), watchdog.refresh_cost(who)
+        rule = (f"its delta has cost {owed / 1000:,.0f}K of a refresh's {cost / 1000:,.0f}K" if cost else
+                "no refresh cost recorded")
+    else:
+        rule = f"layer stale {share}"
+    print(f"  {who}: layer last hit {age(hit)} ago, stable base's own entry {age(stable)}, {rule}")
     delta = v2.delta_record(who)  # the third part (notes/plan-delta-layer.md): forked once the base is switched to it
     if delta:
         print(f"    delta {delta.get('sessionId', '?')[:8]} sealed {delta.get('sealed', '?')[11:16]}, "

@@ -67,8 +67,9 @@ edit and the answer state's presentation from it (#186, `786d11da`); the reach t
 removal (#190, `ff8a63c3`); the local fields (#188, `1841b32a`, landed before #231 and #233; #220 and #235 re-cite what it repeats) and `undeclared` on
 the edited state (#189, `fb73467f`: its review's store with the declaration store's presence and one list form of the
 fields' families to #192, the removed rows' keys as atoms of the answer state to #193);
-`unreached` with O's admission (#191; its reach roots are the keys some row of the request state is about and the root
-keys, since an atom no row is about stays unreached in a closed state — q63, a marked correction of the entry); the incremental judgment, `native_edited_fields` and the
+`unreached` with O's admission (#191, `0c0f36cf`: its reach roots are the keys some row of the request state is about
+and the root keys, since an atom no row is about stays unreached in a closed state — q63, a marked correction of the
+entry; its review's premises on K, V and U and build 6's host costs to #192 and #193); the incremental judgment, `native_edited_fields` and the
 stage's equation (#192), after #42 and the three field builds; the exported answer's edit (#187), after #161; the
 machinery's verification stage judged natively (#193) and its held measurement by field (#194), condition 5a's
 evidence for a stage's cost; the witnesses at the edit's parts (#195), after #44. From #186's review, #219 (`4dde066c`)
@@ -179,15 +180,16 @@ includes their reviews. The deepest chains are 9, the layout's and #135's line m
 changes: the premise forest #223, with #241 after #147, then the layout #155, the answer records' re-recording #157,
 then #161, #165, #167, #169 and its review #170, or #92 and #93 after #167; one task more may end that chain. The
 incremental line's measurement #194 and its review are 9 deep, through #161 and #187. Then #238 (after #237, #214,
-#44, #42 and #227), 6, and #114 (after #112, #110, #261 and #227), 5. Beside them: #191 and #256, running; the
-state rows' notions #261 after #249; readiness's re-citation #259; the placed forest's cleanup #251 after #223; the
+#44, #42 and #227), 6, and #114 (after #112, #110, #261 and #227), 5. Beside them: #255, #256 and #259, running; P1's fix
+#263, then #265 (after #255), with #169 after it; the state rows' notions #261 after #249; the placed forest's cleanup #251 after #223; the
 re-citations #239 (after #44) and #237.
 
-**Order** (`147 148 128 129 255 258 256 257 249 250 261 262 191 202 223 224 227 228 241 242 155 156 157 158 159 160 161 162 42 43 187 198 165 166 44 45 110 111 192 203 193 204 167 168 214 215 169 170 194 205 112 113 114 195 206 259 260 237 238 239 240 251 252 92 93 64 65`).
+**Order** (`147 148 128 129 255 258 259 260 263 264 265 266 256 257 249 250 261 262 223 224 227 228 241 242 155 156 157 158 159 160 161 162 42 43 187 198 165 166 44 45 110 111 192 203 193 204 167 168 214 215 169 170 194 205 112 113 114 195 206 237 238 239 240 251 252 92 93 64 65`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
-the owner's ask, both findings confirmed (#253, #254): P2's fix #255 and the design of adoption's evidence #258 for
-P1's fix; #227's performance fix #256, which #42 and #110 wait on through #227; the running #249, then the state rows'
-notions #261 after it, and #191, so that their checks are not held behind parked work; then the parked #223, head of the
+the owner's ask, both findings confirmed (#253, #254): P2's fix #255, and P1's fix #263 then #265 after the design of
+adoption's evidence #258; readiness's re-citation #259, running; #227's performance fix #256, which #42 and #110 wait
+on through #227; the running #249, then the state rows' notions #261 after it, so that their checks are not held
+behind parked work; then the parked #223, head of the
 deepest chain, and #227, which #42 and #110 wait on; #241 after #147; the layout's word change #155, its answer
 records #157 and its measurement #159 soon after it, while the harness's lineage still holds the last base without
 it; #161; then the verdict's entry #42 and the chains' next links as their inputs land, each ordered by the length of
@@ -568,6 +570,10 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   `verdict_equal_program` retired and the theory's opening text to #237; the family list once, with the State_Rows map
   row, to #261; readiness's rules and inductions, with the law entry's notes, to #259; the equality contract Open 36;
   two dead imports Open 44.
+- **#191** `0c0f36cf`: `unreached` on the edited state — O admitted by excess's reading at O's store and the new row
+  reading (the targets reading one locale, `edited_targets_program`), the reach roots updated, the seeded restricted
+  table; the entry's "every key of T is reached" corrected (q63). Follow-ups: build 6's premises on K, V and U, its
+  producers and host costs and the entry's further sentences to #192 and #193; the placements and factorings Open 80.
 
 ## Open
 
@@ -826,6 +832,15 @@ Not yet planned, in the order they are expected to be planned:
     share one composition — one law lemma, or dropped once #44, #110 and #235 cite `law.supported_clause` with
     `unfold_rule`; the theory text's garbled "formed terms nowhere". With the next change to that theory, which
     rebuilds about 1,049 theories; none is planned.
+80. **#191's first review's follow-ups** (only their titles survive, in `.build/tasks/202/review.md`, since the
+    re-review wrote over the first): the generic lemmas and `native_rotate_program` placed at their notions' homes
+    (the rotation with Open 79's next change to `Native_Collection_Programs`, if that is its home); one row reading over
+    the key reading; O's closure in the same admission locale as the targets reading. With the next edit of #191's
+    theory (`9c8622c2`), rediscovered there.
+81. **An adopted answer's precondition reconstructed at its receipt's `revision`** (#258's follow-up): possible for
+    future adoptions once #265 retains the revision, the walk's being a residual of its receipt; and the published
+    state as the judged answer state, the residual every adoption report names `unverified`, waits on Open 7's
+    persistent native published state. At the first adoption after #265.
 
 ## Now
 
@@ -834,17 +849,18 @@ Not yet planned, in the order they are expected to be planned:
   `unittest.expectedFailure` markers while it stands (q64: the evidence's reconstructible form, which the fixes turn
   into passing tests). P1, #253: confirmed (`.build/tasks/253/report.md`) — `adopted()` reads only
   a path, and the harness then judges the request state against itself, reporting a never-read answer accepted and
-  published; a design (placed next) decides adoption's evidence and what the harness and the replay report for an
-  adopted answer, and its fix goes before #169, which edits the answer tools; #157's re-recording does not rest on it
-  on HEAD. P2, #254: confirmed and wider (`.build/tasks/254/report.md`) — an unsuccessful adoption leaves its theory,
+  published. Design #258 (accepted; DECISIONS.md "An adoption is established by its evidence; the published state is
+  never judged against itself") decides adoption's evidence; its fix is #263 (the harness and the replay), then #265
+  (the adoption tool, after #255), each reviewed, before #169, which edits the answer tools; #157's re-recording does
+  not rest on the flaw on HEAD. P2, #254: confirmed and wider (`.build/tasks/254/report.md`) — an unsuccessful adoption leaves its theory,
   import and `ROOT` entry without a receipt at a timeout, an interrupt or SIGTERM, any exception outside four types,
   and any exception inside `install()` after its first write; #255 fixes it after #254 lands, one cleanup path over
   every exit.
 - **#227's performance problem (19:01)**: `code_simp` of the exporter's obligation normalizes the whole exported
   context and does not finish, and `eval` is an oracle; #256 (reviewed by #257) proves the obligation at every state
   the exporter defines by a kernel-checked evaluation of the declarations alone, and #227 continues when it lands.
-- **In flight (plan-46, 19:20)**: #249, #191 and #256 work; #128 and #147 finish their landings; #223 is parked and
-  #227 waits for #256. Follow-ups mailed to tasks not yet started travel with them: #182's to #249 and #110 (which waits on #249),
+- **In flight (plan-46, 19:30)**: #249, #255, #256 and #259 work; #128 and #147 finish their landings, #258 lands its
+  entry; #223 is parked and #227 waits for #256. Follow-ups mailed to tasks not yet started travel with them: #182's to #249 and #110 (which waits on #249),
   #189's to #192 and #193, #247's to #235, #44 and #110, #225's union form to #223, and the earlier ones plan-45 sent to
   #187–#193, #212–#214 and #223. #42's brief carries #106's review, #38's reduction and questions and the
   `[code_unfold]` declarations #40 needed (q54); #112's carries #106's review. #155, #92 and #64 name the reports they
@@ -897,7 +913,7 @@ Not yet planned, in the order they are expected to be planned:
   - The planner cannot read a design's entry before it lands: `v2.py read` and a plain read of
     `.build/trees/ID/DECISIONS.md` are refused, so a design's verdict rests on its result and commit message (#85).
   - A re-review writes over the first review's `review.md`, so the follow-ups it says still stand are in no file when
-    the build lands (#118); #38's first review's follow-ups were lost so (11:00), and #217's (16:25).
+    the build lands (#118); #38's first review's follow-ups were lost so (11:00), #217's (16:25) and #191's (19:22).
   - A probe's summary is not kept beside its log (#40's first probe kept only `probe.log` and `probe.ML`, so
     `parallel_proofs: 0` rests on the cpu/elapsed ratio): the probe tool's summary should be kept, as `mrun.out` was
     (#40's review).

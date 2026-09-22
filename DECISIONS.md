@@ -10480,6 +10480,15 @@ read. The correspondence at a parent `p` with a locus and subject `{c}`:
   `I` is not empty and some `H` makes `development_decomposition_application C p I H` hold at the presented state.
   Parents without a locus are not presented; that partiality is a premise of the contract, never a total map onto
   them.
+- *Corrected 2026-09-22 (task 62, planner's answer q35): the contract as built is thinner than the equality above.
+  Task 24's rows do not carry what the state defines (the children's rows are posed by the application and do not
+  stand before it), so the native schema decides only what it reads: at a presented parent it holds exactly when the
+  intermediates are nonempty (`Development_Native_Decomposition.native_decomposition_applies`). That the state poses
+  the children (`development_state_poses`) is a separate premise of the soundness instance
+  (`native_decomposition_reduction`), never a premise inside the equality the program decides. Task 94 reads the
+  state's rows natively (the Definition family and the parent's kind family of `Development_State_Rows`, with
+  `state_presents` replacing `development_state_poses`) once the per-family traversal is stated, and restores the
+  equality above.*
 - Soundness is not weakened. `development_decomposition_reduction` holds at `p`, and there it is trivial as a
   composition: task 60's predicate reads only a problem's subject and the kind of its contract
   (`development_problem_stated`), the extended state keeps every position of the state it extends

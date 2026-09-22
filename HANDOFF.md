@@ -33,8 +33,8 @@ the rows about a subject through a subject index total over the state's atoms, a
 comparison and no absence. #139 built it (`b560df2a`, `Development_Subject_Index`), re-pointed `excess` through it (`named` kept)
 and derived `declarations_single_valued` from the exporter's obligation `isabelle_declared_once`; #176 states that
 obligation once in `Isabelle_Entities`, re-pointing the successor's stronger copy (every word equal, the seed report's field
-deciding a sufficient condition through one lemma) — landed by #243 from a tree made from HEAD, since #176's branch
-carries rows no merge can make clean (q62) — and #227 discharges it once at the exported states; #42 and #110
+deciding a sufficient condition through one lemma) — landed by #243 from a tree made from HEAD, #176 staying dropped
+(never both) — and #227 discharges it once at the exported states; #42 and #110
 wait on both, and they, #44 and #112 on the rule-family law #233. #42
 passes the indexes, #44 builds absence with no inequality and excess's witness over the index, #108 reads it. Roots
 stay a store with distinct keys, #38 stating the roots field under a carried condition on their order, owned by the
@@ -63,13 +63,14 @@ statements 0.264 s, formed 0.645 s, excess 0.023 s, undeclared 1.791 s, unreache
 0.14–0.20 ms against 1.2 ms whole; no engine refinement needed (q54). #178 briefed its builds, each with its review:
 the index of a family by a key reading, the subject and mention indexes its instances (#185, `10f842ff`); the
 edit and the answer state's presentation from it (#186, `786d11da`); the reach tables under seeding, restriction and
-removal (#190, `ff8a63c3`); the local fields (#188) and `undeclared` on the edited state (#189), after #231;
+removal (#190, `ff8a63c3`); the local fields (#188, `1841b32a`, landed before #231 and #233; #220 and #235 re-cite what it repeats) and `undeclared` on
+the edited state (#189), after #231;
 `unreached` with O's admission (#191), after #182, #231 and the rule-family law #233; the incremental judgment, `native_edited_fields` and the
 stage's equation (#192), after #42 and the three field builds; the exported answer's edit (#187), after #161; the
 machinery's verification stage judged natively (#193) and its held measurement by field (#194), condition 5a's
 evidence for a stage's cost; the witnesses at the edit's parts (#195), after #44. From #186's review, #219 (`4dde066c`)
-stated the edit's and presenter's contracts once; from #219's review, #231 states once a reading that depends only on
-the names at the positions it uses, the appended-names facts through it, before #188, #189, #191 and #220; #220 makes
+stated the edit's and presenter's contracts once; from #219's review, #231 (`cded0ab7`) stated once a reading that
+depends only on the names at the positions it uses (`isabelle_name_reading`), the appended-names facts through it; #220 makes
 the edit's constructor and the index update linear in the edit before the stage #193 (#185's review). Specifications keep their exception, judged whole (none in the loop's states).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
@@ -126,7 +127,8 @@ and #153 (`34d67079`) — the layout with the one word change (#155, after
 them, #90 and #241, which switches the last two proofs reading the layout's definitions), the answer records re-recorded over the layout on the base its landing advanced (#157), the held measurement on the
 harness's last base without the layout and the first with it (#159, after #155 alone), each with its review. #216 briefed, from #179's review, the forest over a
 family of placements, placed before #155 so that compiled syntax has one layout and its words change once, every word
-equal: #221 states it once, the bound forest, its executable form and the pattern forest's table its instances; #223
+equal: #221 (`1841b32a`) stated it once in `RRA_Placed_Forests`, the bound forest, its executable form and the pattern
+forest's table its instances; #223
 places the premise forest and the schema body's premises through it; #225, after #153, makes the syntax forest, its
 positions and its table its instances. #90 (`7379cfc7`) switched the 20 overnight native-control theories to the keyed question; the overnight
 boundary, which no check runs and which lags its sources since `d0b70ea2`, `5c26b791` and `7379cfc7`, is recorded as
@@ -153,7 +155,7 @@ a refinement of its own. Its follow-ups are Open 73; the seed recipe's other cos
 unused premise dropped; #188, #189, #191 and #110 add such rules over it. Changes to that theory are batched, since
 each rebuilds about 1,140 theories. The re-citations: the subject index's call and the unreached join (#210, `d0fff527`);
 readiness's and reach's rules, with `readiness_answered_rule`'s two steps and `table_reached_simulation` moved into
-`Native_Table_Reach` (#212, after #210, which edits `Development_Verdict_Unreached` too); the row and found readings
+`Native_Table_Reach` (#212, `1841b32a`); the row and found readings
 with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each with its review. #230 briefed the
 law's family form — rules with any number of premises (q60), under no condition on their variables (q61): #233 states
 it once in `Native_Collection_Programs`, #208's law its instance, with Open 75's move, before #42, #44, #110, #112 and
@@ -163,19 +165,19 @@ value rule and the decomposition rule (#235, after #212), the formation rules, t
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
-changes: the placed forest #221, the syntax forest #225 (the premise forest #223 and #241 beside it), the layout
+changes: the syntax forest #225 and the premise forest #223, with #241 after #147, then the layout
 #155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
 #161 and #192. Then #114 (after #112, #110, #182 or #227, #243) and #45 (after #44, #42, #227, #243), 5. Beside
-them: #231, then #220; the rule programs' re-citations #212 and #214; the rule-family law #233, then its re-citations
+them: #220; the rule programs' re-citation #214; the rule-family law #233, then its re-citations
 #235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
 
-**Order** (`128 129 147 148 243 244 182 183 227 228 221 222 223 224 225 226 241 242 229 231 232 233 234 235 236 237 238 239 240 42 43 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 243 244 182 183 227 228 223 224 225 226 241 242 229 233 234 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
 review, #147, and #176's accepted work landed from HEAD (#243); then its discharge #227, which #42 and #110 wait
-on, and the excess locale #182, which #110, #112 and #191 wait on; the forest over placements (#221, then #223
-and #225) and the stragglers' switch #241, which #155 waits on, close after their brief's author;
-the probe's fix #229 (every later build's inner loop), the name-locality fix #231, the rule-family law #233 and the
+on, and the excess locale #182, which #110, #112 and #191 wait on; the placed forest's instances #223 and #225
+and the stragglers' switch #241, which #155 waits on, close after their brief's author;
+the probe's fix #229 (every later build's inner loop), the rule-family law #233 and the
 verdict's entry #42, heads of
 the deepest chains, so that a slot serves them as they become ready; the rule programs' re-citations; the layout's word
 change #155, its answer records #157 and its measurement #159 soon after it, while the harness's lineage still holds
@@ -291,6 +293,10 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   check's proof phase stands in until the probe's fix #229 lands (#176, #208).
 - **A brief names its task's own folder as `.build/tasks/<its id>/`**, never the key of the edit that created it: the
   harness uses the id (#210's and #219's reviews).
+- **A task whose commit fails at the merge is queued again as it is, never landed anew by a workaround task** (the
+  harness, at the owner's word, 17:02): a merge now takes a row that one side holds as the other side once had it for
+  a copy, and `bring-main` merges main under a session's uncommitted edits. #243 was the last such task; #176 stays
+  dropped, never both landed.
 
 ## Delivered
 
@@ -492,6 +498,19 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   re-citations, each with its review; #188 and #189 released, adding no such program.
 - **#153** `34d67079`: the layout's contracts, part 4 — `syntax_branch`'s equations out of the simpset, every consumer
   on the contracts. Follow-ups: the two proofs still reading the layout's definitions to #241, the blank lines Open 76.
+- **#221** `1841b32a`: the forest over a family of placements once, `RRA_Placed_Forests` (before `RRA_Syntax_Forests`,
+  naming no branch); the bound forest, its executable form and the pattern forest's table its instances. Follow-ups:
+  to #225 (the carrier step, the reference table, `syntax_forest_child_reads`), to #223 (the executable table),
+  `binder_silent` Open 76.
+- **#188** `1841b32a`: `Development_Edited_Local`, the local fields on the edited state. Follow-ups: the constructor's
+  fact and the edit's families computed once to #220, the arguments from the index lookup to #192; it landed before
+  #231 and #233, which re-cite what it repeats.
+- **#212** `1841b32a`: readiness's and reach's single-premise rules re-cited to the rearranging rule. Follow-ups: the
+  law's support-relation equation to #233; readiness's inductions, patterns and row to #235.
+- **#231** `cded0ab7`: `isabelle_name_reading` in `Isabelle_Local_Names` — a reading that depends only on the names at
+  the positions it uses, its laws under agreement and appending, its instances (the local names, the embedding,
+  `isabelle_equation_left`, `isabelle_entity_subjects`, `entity_row_kept`), the appended-names facts through it.
+  Follow-ups: the citations to #187, #189, #191 and #220; `entity_row_kept`'s statement Open 77.
 
 ## Open
 
@@ -671,8 +690,7 @@ Not yet planned, in the order they are expected to be planned:
     takes 240 s on the machinery, 7 times the bare reach; any admission of the verdict through `keyed_program_proofs`
     pays it, and a positioned labelled history (the Decisions' "Not taken") is its prerequisite. Planned when the
     native verdict is first admitted through certificates, after #42.
-57. **Facts placed downstream of their notions** (#40's follow-up 3): `table_reached_simulation` into
-    `Native_Table_Reach` (with #212); `isabelle_entity_reach_pairs_member`, `isabelle_reach_pairs_member`,
+57. **Facts placed downstream of their notions** (#40's follow-up 3): `isabelle_entity_reach_pairs_member`, `isabelle_reach_pairs_member`,
     `isabelle_reach_predecessors_member`, `isabelle_reach_heads_member` and `isabelle_reach_constants_member` into
     `Isabelle_Native_Reach`, with their map row; `entity_kinds`, `state_families` and `state_families_range` into
     `Development_State_Rows` (`state_families_rows` then over `state_families R`). With the next edit of each owner.
@@ -738,16 +756,22 @@ Not yet planned, in the order they are expected to be planned:
     `evaluate_pattern_cong` and `evaluate_pattern_formed` (#208's review), with #233's build.
 76. **Cosmetic, with the next edit of each theory** (#153's review): an extra blank line in `RRA_Collection_Frames`
     after its section heading and in `Factor_Pattern_Forests` before `bound_branch_binder`; the explicit
-    `simp add: syntax_branch_eq_iff` in consumers, now redundant.
+    `simp add: syntax_branch_eq_iff` in consumers, now redundant; `binder_silent_silent_at` unfolds `binder_silent_def`
+    outside its founding theory — define `binder_silent` as silence at every binder address when
+    `RRA_Bound_Syntax_Construction` next changes (#221's review).
+77. **`entity_row_kept`'s statement** (#231's review): its premises `prefix` and `inside` together are exactly
+    `isabelle_name_reading`'s agreement at the entity's positions; restating it with that premise would change its
+    statement, so it is kept while its consumers discharge the two premises; decided at its next consumer.
 
 ## Now
 
-- **In flight (plan-45, 16:35)**: #243 lands #176's accepted work from a tree made from HEAD (q62; #176,
-  dropped, stays in the list as its source until then, its review #177 deleted); #212 and #229 build; #128 and #147 are in review, #221 in its check; #188 builds; #227
-  discharges the exporter's obligation after #176; #233 states the rule-family law (q60) before
-  #42, #44, #110, #112 and #191; #231 states the name-locality of readings before #188, #189, #191 and #220. #220 makes the edit's constructor and the index
+- **In flight (plan-45, 17:05)**: #243 lands #176's accepted work from a tree made from HEAD (q62; #176,
+  dropped, stays in the list as its source until then, its review #177 deleted); #229 and #233
+  build; #128 and #147 are in review; #227 discharges the exporter's obligation after #243; #233 states the
+  rule-family law (q60, q61) before #42, #44, #110, #112 and #191; #231 (`cded0ab7`) stated the name-locality of
+  readings; #223 and #225, the placed forest's instances, can start. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
-  #208's to #212 and #214. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
+  #208's to #212 and #214, #221's to #223 and #225, #188's to #192 and #220, #212's to #233 and #235, #231's to #187, #189, #191 and #220. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
   declarations #40 needed (q54); #112's carries #106's review. #143 was withdrawn (Open 65); its finding is carried by
   #157 and the working rules. #155, #92 and #64 name the reports they re-record, no receipt.
 - **Owed to briefs when their inputs land**: #64's brief takes #161's identity lemma in place of a transport (#135's
@@ -765,12 +789,8 @@ Not yet planned, in the order they are expected to be planned:
     twice again (#97, 06:06); a pre-landing trial merge of `THEORY_MAP.md`, `ROOT` and `DECISIONS.md` with main,
     checked for rows written twice, would find it in seconds before the commit fails (review 97) — with its three sides
     written as files: `git merge-file` given process substitutions reads them as empty and prints the third side
-    (review 97's third round). #176's third round copied main's rows into its working file by hand, which does not
-    move the merge base, so its landing would have doubled seven rows again (review 176.3): the queue that sends a task
-    back for doubled rows could require a `bring-main` merge commit and run the union simulation before hand-over.
-    Then `bring-main` itself refused that merge, the branch's own commit carrying the doubled rows, and no session can
-    resolve a merge: the work was landed anew from HEAD (#243, q62). A `bring-main` that let the task's working file
-    resolve the merge would have saved two rounds.
+    (review 97's third round). Fixed by the harness at 17:02, at the owner's word: a merge takes a row that one side
+    holds as the other side once had it for a copy, and `bring-main` merges main under a session's uncommitted edits.
   - The finalizer's landing check runs on the task's tree as it stands, so without `bring-main` no check covers what
     lands (#124's covered a tree where `Factor_Shared_Package_Readings` and `Factor_Finite_Source_Construction_Sharing`
     did not yet meet; #94's failed on a theory only main held). A finalizer that brought main in first would make the

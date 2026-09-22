@@ -1,5 +1,5 @@
 {
- "base_receipt_sha256": "fb7264b08b3e8c08401e040bf4b6f6a2feed7a8aa12ff3d888ce6ddf6be49882",
+ "base_receipt_sha256": "ad5ecdcbffdb8e02d319180d6e98901264df9f42e0035d3d5b62d7540c13164e",
  "base_theories": 1833,
  "checked_content_sha256": "7bac5e96b7329b3fcfb05666acf037008fdfb7d3ba698b27af85810f49835038",
  "complete_native_reports": 74,
@@ -10,20 +10,19 @@
    "skipped": 2
   },
   "tools": {
-   "ran": 260,
+   "ran": 267,
    "skipped": 0
   }
  },
- "incremental_proof_theories": 40,
+ "incremental_proof_theories": 0,
  "phase_seconds": {
-  "base_and_impact": 0.28,
-  "execution_impact": 0.06,
-  "export": 9.48,
-  "proof": 86.06,
-  "recipe_impact": 0.41,
-  "recipes_and_host_tests": 11.47
+  "base_and_impact": 0.29,
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "recipe_impact": 0.38,
+  "recipes_and_host_tests": 11.09
  },
- "reused_recipes": 2,
+ "reused_recipes": 0,
  "source_only_reconstructions": [
   {
    "python_modules": 23,
@@ -352,7 +351,7 @@
    "source_files": 994,
    "source_manifest_sha256": "27fe9a750c5339141e8943bce00ab9d797023f3883c074deb397e9e3017b57db",
    "theories": 970,
-   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "validation": "unchanged complete manifest; retained verification applies",
    "verification_sha256": "59f13f93e6c54f21d5d67bc72de79e6c9ace17f535af879869d526661aca6245"
   },
   {
@@ -362,7 +361,7 @@
    "source_files": 996,
    "source_manifest_sha256": "23528b626f7095f9629bfb41b3d70089539f20e26971938f434ed34659f25e19",
    "theories": 972,
-   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "validation": "unchanged complete manifest; retained verification applies",
    "verification_sha256": "572a534aae2638f93ce37d32bb9fc45769eff7154250b2bd6bb67f7608f133e8"
   },
   {
@@ -547,7 +546,7 @@
   }
  ],
  "status": "accepted",
- "total_seconds": 127.38,
- "unchanged_recipes": 50,
+ "total_seconds": 15.51,
+ "unchanged_recipes": 52,
  "workspace_theories": 1833
 }

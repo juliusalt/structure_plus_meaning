@@ -1,5 +1,5 @@
 {
- "base_receipt_sha256": "fb7264b08b3e8c08401e040bf4b6f6a2feed7a8aa12ff3d888ce6ddf6be49882",
+ "base_receipt_sha256": "ad5ecdcbffdb8e02d319180d6e98901264df9f42e0035d3d5b62d7540c13164e",
  "checked_content_sha256": "7bac5e96b7329b3fcfb05666acf037008fdfb7d3ba698b27af85810f49835038",
  "host_tests": {
   "kernel": {
@@ -14,7 +14,7 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 260,
+   "ran": 267,
    "skipped": 0,
    "tail": [
     "OK"
@@ -22,55 +22,13 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.28,
-  "execution_impact": 0.06,
-  "export": 9.48,
-  "proof": 86.06,
-  "recipe_impact": 0.41,
-  "recipes_and_host_tests": 11.47
+  "base_and_impact": 0.29,
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "recipe_impact": 0.38,
+  "recipes_and_host_tests": 11.09
  },
- "rebuilt_theories": [
-  "Development_Admitted_Publication",
-  "Development_Certified_Generations",
-  "Development_Constant_Verification",
-  "Development_Decision_Generations",
-  "Development_Decomposition_Soundness",
-  "Development_Definition_Verification",
-  "Development_Edited_Local",
-  "Development_Edited_Reach",
-  "Development_Edited_Undeclared",
-  "Development_Located_Rows",
-  "Development_Machinery",
-  "Development_Native_Answers",
-  "Development_Native_Decomposition",
-  "Development_Native_Readiness",
-  "Development_Native_Selection",
-  "Development_Publication",
-  "Development_Refinement_Repair",
-  "Development_Refinement_Verification",
-  "Development_Repair_Rows",
-  "Development_Request_Keys",
-  "Development_Request_Packets",
-  "Development_Request_Scope",
-  "Development_Requests",
-  "Development_Row_Data",
-  "Development_Row_Presentations",
-  "Development_Rows",
-  "Development_Seed_Loop",
-  "Development_Seed_Publication",
-  "Development_Seed_Verification",
-  "Development_State_Edit",
-  "Development_State_Presenter",
-  "Development_State_Rows",
-  "Development_Subject_Index",
-  "Development_Successor",
-  "Development_Verdict_Difference",
-  "Development_Verdict_Mentions",
-  "Development_Verdict_Statements",
-  "Development_Verdict_Unreached",
-  "Native_Development_Machinery",
-  "Native_Development_Seed"
- ],
+ "rebuilt_theories": [],
  "recipes": {
   "allocated-environments": {
    "status": "unchanged"
@@ -169,14 +127,10 @@
    "status": "unchanged"
   },
   "native-development-machinery": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-development-seed": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -233,8 +187,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1793,
- "seconds": 127.38,
+ "reused_theories": 1833,
+ "seconds": 15.51,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

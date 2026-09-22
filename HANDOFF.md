@@ -180,9 +180,10 @@ stated it once in `Native_Collection_Programs`, #208's law its instance, with Op
 (`supported_clause`); #247 (`e8d2158c`) completed it — the introduction half at any relation, the conclusion from
 `supported_clause`, `holds_rule` returning the rule — its review's documentation corrections and the inductions going
 to #235 and its two factorings inside the theory to Open 79; its re-citations follow the builds editing their theories — the verdict's families, the
-value rule and the decomposition rule (#235, `fb032252`), readiness's rules and inductions (#259, `43f5bde0`; #272
-cites readiness at its instances' contracts and records the level a use cites in the law's entry, the planner's
-decision on #259's review, before #214, #237 and #239), the formation rules, the any rule and the two-premise call (#237, after #214, #235 and #261), the store search (#239, after #44) — each with its review.
+value rule and the decomposition rule (#235, `fb032252`), readiness's rules and inductions (#259, `43f5bde0`; #272,
+`75035bc1`, cites readiness at its instances' contracts and records the level a use cites in the law's entry; #275
+states the rearranging program's contract at an arbitrary support relation once, re-citing readiness's and the reach's
+inductions, with Open 79's items, before #214, #237 and #239, which wait on it), the formation rules, the any rule and the two-premise call (#237, after #214, #235 and #261), the store search (#239, after #44) — each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews; a fix the planner creates has no review task (the harness reviews it in its own folder). The
@@ -191,18 +192,18 @@ layout #155, the answer records' re-recording #157 (after #267 too), then #161, 
 or #92 and #93 after #167; one task more may end that chain. The incremental line's measurement #194 and its review
 are 9 deep, through #161 and #187. Then #238 (after #237, #214, #44, #42 and #227), 6, and #114 (after #112, #110 and
 #227), 5. Beside them: the
-probe's fix #271, then #251 after it; the presentation's refinement #269; the exporter proof's transport #274; readiness at its instances' contracts #272; the
+probe's fix #271, then #251 after it; the presentation's refinement #269; the exporter proof's transport #274; the rearranging contract at a support relation #275 (after #271); the
 re-citations #239 (after #44) and #237. A word change lands with its re-recorded words: since 20:12 the landing
 check's snapshot takes the report files a brief's Deliverable names (Q12, fixed in the harness as the provisional
 choice).
 
-**Order** (`147 128 271 241 155 156 42 43 110 111 269 274 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 272 251`).
+**Order** (`147 128 271 241 155 156 42 43 110 111 269 274 275 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 251`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
 the probe's fix #271, which every session's inner loop needs and #251 waits
 on; #241 after #147, head of the deepest chain, then the layout's word change #155, its answer records #157 and its
 measurement #159 soon after it, while the harness's lineage still holds the last base without it; the verdict's entry
-#42 and #110, ready since #227 landed; #269; the exporter proof's transport #274; #161; then the chains' next links as their inputs land, each ordered by the length of
-what follows it; the re-citations wherever a slot would otherwise stand idle; #64 and #92; #272 and #251 last. A
+#42 and #110, ready since #227 landed; #269; the exporter proof's transport #274 and the rearranging contract #275; #161; then the chains' next links as their inputs land, each ordered by the length of
+what follows it; the re-citations wherever a slot would otherwise stand idle; #64 and #92; #251 last. A
 parked task whose hold nears its end resumes first.
 
 ## Decisions
@@ -259,7 +260,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **A use cites the most specific contract that states what it needs** (the planner, on #259's review): an instance's
   contract (a rearranging program's `exact` or `at`, a family's `exact`) where one states it, the raw law only where
   none does; identifying a rule with its instance at a use makes in place the argument the instance makes once. #272
-  records it in the law's entry; #214, #237 and #239 were told.
+  records it in the law's entry (`75035bc1`); #214, #237 and #239 were told; #275 states the rearranging program's
+  contract at an arbitrary support relation, the rule's next level.
 - **Transport stays a task of its own and is not a design**: a packet is the presentation of a request row, so the
   octet direction's task 6 is a transport task with a reader contract, the reading the inverse of the presentation.
 - **A decision that cites rather than carries** waits for a measured need in a question that is then expensive (the
@@ -627,6 +629,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#273** (`90991eac`): the adoption tool decides step 0 through the evidence by digest, an attempt never blocks a
   later one, receipts keep digests once and no dangling path and are written atomically, the tool writes no bytecode;
   the owner's ask of 18:32 closed. Its review's small items to Open 73.
+- **#272** (`75035bc1`): readiness's two theorems cite its rearranging families' contracts; the level a use cites is
+  recorded in the native rule family's law's entry; its review's support-relation lemma to #275.
 
 ## Open
 
@@ -891,11 +895,10 @@ Not yet planned, in the order they are expected to be planned:
 79. **#247's follow-ups inside `Native_Collection_Programs`** (`.build/tasks/247/review.md`): `holds_rule` re-derives
     what `holds_cases` derives — one `holds_clause` in `native_rule_family` for both; the four `unfold` corollaries
     share one composition — one law lemma, or dropped once #44, #110 and #235 cite `law.supported_clause` with
-    `unfold_rule`; the theory text's garbled "formed terms nowhere". With the next change to that theory, which
-    rebuilds about 1,049 theories; none is planned.
+    `unfold_rule`; the theory text's garbled "formed terms nowhere". Planned with #275.
 80. **#191's first review's follow-ups** (only their titles survive, in `.build/tasks/202/review.md`, since the
     re-review wrote over the first): the generic lemmas and `native_rotate_program` placed at their notions' homes
-    (the rotation with Open 79's next change to `Native_Collection_Programs`, if that is its home); one row reading over
+    (the rotation not with #275, which leaves #191's theory alone, but with that theory's next edit); one row reading over
     the key reading; O's closure in the same admission locale as the targets reading. With the next edit of #191's
     theory (`9c8622c2`), rediscovered there.
 81. **An adopted answer's precondition reconstructed at its receipt's `revision`** (#258's follow-up): possible for
@@ -933,8 +936,8 @@ Not yet planned, in the order they are expected to be planned:
   definition of a state): one word change, landed (`8b77ee97`); #157 re-records every answer record once over it and the
   layout (the native records' entity keys move with the order; mailed); #274 proves the obligation on the definition's
   right-hand side, the goal no longer rewritten with the whole context term (#267's review).
-- **In flight (plan-47, 20:37)**: #269, #271, #272 and #273 work; #42, #110 and #274 are ready; #128 and #147 finish
-  their landings. The harness's delta layer is deployed and dormant
+- **In flight (plan-47, 20:54)**: #269 and #271 work; #42, #110 and #274 are ready, #275 after #271; #128 and #147
+  finish their landings. The harness's delta layer is deployed and dormant
   (`notes/plan-delta-layer.md`), switched on for no base yet (20:12). Mailed to tasks not yet started, travelling with them: the level a use
   cites to #214, #237 and #239; #261's review to #110, #112, #192, #214 and #237; #263's and #255's to #265; #263's
   unproduced native rows to #157; #223's unmeasured gain to #159; and the earlier ones: #182's to #110, #189's to #192

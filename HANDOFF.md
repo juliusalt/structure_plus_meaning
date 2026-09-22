@@ -125,14 +125,14 @@ stating `keyed_development_admission_at` once for its four users (#90's follow-u
 inputs. Observation's read-back of an installed program (Open 46) waits on the
 layout's measurement.
 
-**The in-place notions (#128–#133).** Task 85's entry (`60623c6a`): a check made where its premise is established, and
-a generator of the accepted candidates; their theories landed with #126 (`1af296a2`, `Established_Premises`,
-`Candidate_Generators`). #128 refines the seed publication's transactions as the first notion's instance at a
-constructor's contract (the seed recipe, 93.04 s held after #80, bounds every landing check that re-executes it); #132
-re-cites the candidate generators and the constructed applications, removing `ffilter_singleton`, and completes the
-missing-use lists in `REASONING_REUSE.md`; #130 re-cites the environment readings, the proof-node rows and the join
-after #124 and #132, which change the same readings or the same paragraph. The seed recipe's other costs are
-Open 27.
+**The in-place notions (#128–#133, #218).** Task 85's entry (`60623c6a`): a check made where its premise is
+established, and a generator of the accepted candidates; their theories landed with #126 (`1af296a2`,
+`Established_Premises`, `Candidate_Generators`), the candidate re-citations with #132 (`79f16061`) and the premise
+re-citations with #130 (`accccb27`). #128 refines the seed publication's transactions as the first notion's instance
+at a constructor's contract. #130 kept its code equations at full arity: stated at the premise's arity, as the entry
+prescribes, they changed the seed's words, since the seeded state presents the code equations it reaches; #218
+decides what a refinement keeps equal then, correcting the entry's two false sentences. The seed recipe's other costs
+are Open 27.
 
 **The incremental assessment (#185–#206).** Design 171's entry (`7a6093bf`): an answer state is judged from its request
 state's assessment and the edit. #178 briefed its builds, each with its review: the index of a family by a key
@@ -142,7 +142,9 @@ reading, the subject and mention indexes its instances (#185); the edit and the 
 #190 and #182; the incremental judgment, `native_edited_fields` and the stage's equation (#192), after #42 and the
 three field builds; the exported answer's edit (#187), after #161; the machinery's verification stage judged natively
 (#193) and its held measurement by field (#194), condition 5a's evidence for a stage's cost; the witnesses at the
-edit's parts (#195), after #44. #185 subsumes Open 58's inverted index of mentions.
+edit's parts (#195), after #44. #185 subsumes Open 58's inverted index of mentions. From #186's review (`786d11da`):
+#219 states the edit's and presenter's contracts once before #187, #188, #189 and #191; #220 makes the edit's
+constructor linear in the edit before the stage #193.
 
 **The rule programs (#173, #208–#215).** #173 (`a645759a`) stated the join law of finite rule programs once in
 `Native_Collection_Programs`; #42, #112 and #64 cite it. #207 briefed the rearranging single-premise rule: #208 states
@@ -162,15 +164,15 @@ assessment's first builds #185, #186 and #190; #144 and #145; the join law #173,
 #112; the flaky test's fix #181, the exporter's obligation #176 and the excess locale #182, then #42, #110 and #112;
 #128; #132, then #130; the overnight boundary #172; the probe's summary #175.
 
-**Order** (`128 129 147 148 176 177 182 183 153 154 216 217 42 43 185 196 186 197 190 201 208 209 210 211 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
+**Order** (`128 129 147 148 176 177 182 183 153 154 216 217 218 219 42 43 185 196 190 201 208 209 210 211 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43), so the landings the reboot interrupted come
 first: #128 with its review, the accepted commit #147, the exporter's
 obligation #176, which #42 and #110 wait on. Then the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract
-#153, the forest brief #216 and the host tests' fix #217, and the verdict's entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the
+#153, the forest brief #216, the host tests' fix #217 and the design #218, and the verdict's entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the
 incremental assessment's three first builds (#185, #186, #190), which run at once in a slot those leave free; the rearranging rule #208, which #188, #189, #191 and #110 wait on; the
 layout's word change #155, its answer records #157 and its measurement #159 soon after it, while the harness's
 lineage still holds the last base without it; then #161; the rest of the verdict and request chains; the incremental
-line's later builds as their inputs land; #135's later builds; then #130, #64 and #92. A parked task whose hold nears
+line's later builds as their inputs land; #135's later builds; then #64 and #92. A parked task whose hold nears
 its end resumes first.
 
 ## Decisions
@@ -449,6 +451,11 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   confirmed, #216). **#181**, **#145** and **#163** (`37cbc5b2`): the interruption test waits for its child; a receipt
   is its boundary (the check identified by `checked_content_sha256` over content, no execution or worktree path, one
   field per line; the harness's retention converts); the row presenters placed below the loop line.
+- **#130** (`accccb27`): the environment readings, the proof-node rows, a graph's demands, the package reader and a
+  join's conditions re-cited to `Established_Premises`, their code equations kept at full arity (#218).
+- **#186** (`786d11da`): `Development_State_Edit` — the edit as three families, the answer state's presentation from
+  it with its constructor's facts, and the native answer's edit; its review's follow-ups became #219, #220 and mail
+  to #187–#193.
 
 ## Open
 
@@ -669,18 +676,24 @@ Not yet planned, in the order they are expected to be planned:
 70. **The receipts' form, its follow-ups** (#145's reviews): `build.atomic_json` folded onto `publish_text`;
     `receipt_boundary` as an allowlist of the fields reuse reads; the runtime keyed by its identity rather than its
     absolute path, where reuse allows (the first review's detail was written over). With the next edit of those tools.
+71. **The establishing facts into `RRA_Finite_Environments`** (#130's review): `formed_environment_artifact`,
+    `exact_formed_object` and `formed_environment_object`, with the next landing that changes that theory.
+72. **Entity keys across rounds** (#186's review, follow-up 6): a state's presenter keys entities by first occurrence
+    in its own list, so an accepted answer state re-presented as the next request state keys them anew; within one
+    request/answer pair keys continue, which is all the incremental judgment needs. Not decided now: loci and the
+    history use the state's constant keys, and nothing compares entity keys across successors; decide when a consumer
+    does (the incremental assessment carried across rounds, or history rows keyed by entity).
 
 ## Now
 
-- **In flight (plan-44, 14:05)**: the reboot of 13:04 interrupted ten landings (#128, #132, #147, #171, #172, #173 and
-  #175 committing, #151, #179 and #181 checking), all queued again, #151, #179 and #181 no longer waiting on a base;
-  #128's session re-applies its refinement over #30's lines in `Development_Admitted_Publication` and runs its held
-  pair; #144 and #132 landed (`79f16061`); #145 builds the receipts' form; #163 is parked; the incremental
-  assessment's builds are placed (#185–#206, briefed by #178 from #171's entry, landed `7a6093bf` with #172). #42's brief carries #106's review, #38's reduction and
-  questions and the `[code_unfold]` declarations #40 needed (q54); #112's carries #106's review. #173 (`a645759a`)
-  and #175 (`af8c09b8`) landed; #176 states the exporter's obligation before #42 and #110, after #181. #143
-  was withdrawn (Open 65); its finding is carried by #157 and the working rules. #155, #92 and #64 name the reports
-  they re-record, no receipt.
+- **In flight (plan-44, 15:50)**: #128's session re-applies its refinement over #30's lines in
+  `Development_Admitted_Publication` and runs its held pair; #147 awaits its landing; #176 hands over after #181's
+  landing (`37cbc5b2`); #153, #185, #190, #208 and #217 build; #216 briefs the forest over placements (its builds to be
+  spliced before #155) and #218 designs the refinement criterion. #219 states the edit's and presenter's contracts once
+  before #187–#191; #220 makes the edit's constructor linear in the edit before #193; #186's other follow-ups were
+  mailed to #187–#193. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
+  declarations #40 needed (q54); #112's carries #106's review. #143 was withdrawn (Open 65); its finding is carried by
+  #157 and the working rules. #155, #92 and #64 name the reports they re-record, no receipt.
 - **Owed to briefs when their inputs land**: #64's brief takes #161's identity lemma in place of a transport (#135's
   entry, q48).
 - **A flaky host test** (12:47): `test_investigation.test_interruption_records_failure_and_stops_children` fails under

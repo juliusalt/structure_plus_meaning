@@ -14,7 +14,8 @@ abbreviation bridge where "bridge \<equiv> judgment_bridge_candidates!i"
 lemma original_fields:
   obtains Q accepted where "judgment_bridge_question ()=Some Q"
     "native_development_admission Q report=Some accepted"
-    "finite_development_index i\<in>set accepted"
+    "i<length judgment_bridge_candidates"
+    "finite_path (first_occurrence_key judgment_bridge_candidates bridge)\<in>set accepted"
     "judgment_bridge_source bridge=Some (d,F,u)"
   by (rule judgment_bridge_install_fields[OF installed selected]) (rule that; assumption)
 
@@ -22,8 +23,15 @@ lemma body_source: "judgment_bridge_source bridge=Some (d,F,u)"
   by (rule original_fields) assumption
 
 lemma body_condition: "judgment_bridge_condition bridge syntax_judgment_cases"
-  by (rule original_fields)
-    (rule conjunct2[OF judgment_bridge_admission]; assumption)
+proof (rule original_fields)
+  fix Q accepted
+  assume question: "judgment_bridge_question ()=Some Q"
+    and admission: "native_development_admission Q report=Some accepted"
+    and inside: "i<length judgment_bridge_candidates"
+    and path: "finite_path (first_occurrence_key judgment_bridge_candidates bridge)\<in>set accepted"
+    and source: "judgment_bridge_source bridge=Some (d,F,u)"
+  show ?thesis by (rule judgment_bridge_admission[OF question admission path nth_mem[OF inside]])
+qed
 
 sublocale receiver: installed_quoted_judgment syntax_judgment_data syntax_judgment_cases
     "judgment_bridge_result bridge" d F u P

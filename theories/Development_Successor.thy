@@ -436,57 +436,13 @@ text \<open>
   persist because the answer state is closed and every constant the persisting entities mention
   keeps its one declaration. The answers can therefore be admitted in any order, each against a
   request that is still current; the premise is that the request state declares every constant
-  once, which the state's own entities decide.
+  once (@{const isabelle_declared_once}, the exporter's obligation), which the state's own entities decide.
 \<close>
-
-lemma map_filter_unique:
-  assumes distinct: "distinct (List.map_filter g xs)" and x: "x\<in>set xs" and y: "y\<in>set xs"
-    and same: "g x=Some v" "g y=Some v"
-  shows "x=y"
-  using assms
-proof (induction xs)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons z zs)
-  show ?case
-  proof (cases "g z")
-    case None
-    then have "distinct (List.map_filter g zs)" using Cons.prems(1) by (simp add: List.map_filter_simps)
-    moreover have "x\<in>set zs" "y\<in>set zs" using Cons.prems(2,3,4,5) None by auto
-    ultimately show ?thesis using Cons.IH Cons.prems(4,5) by blast
-  next
-    case (Some w)
-    then have rest: "distinct (List.map_filter g zs)" and fresh: "w\<notin>set (List.map_filter g zs)"
-      using Cons.prems(1) by (simp_all add: List.map_filter_simps)
-    have inside: "u\<in>set zs \<Longrightarrow> g u=Some w \<Longrightarrow> False" for u
-      using fresh by (auto simp: map_filter_member)
-    show ?thesis
-    proof (cases "x=z")
-      case True
-      then have "w=v" using Some Cons.prems(4) by simp
-      then show ?thesis using True Cons.prems(3,5) inside by auto
-    next
-      case False
-      then have x': "x\<in>set zs" using Cons.prems(2) by simp
-      show ?thesis
-      proof (cases "y=z")
-        case True
-        then have "w=v" using Some Cons.prems(5) by simp
-        then show ?thesis using x' Cons.prems(4) inside by auto
-      next
-        case False
-        then have "y\<in>set zs" using Cons.prems(3) by simp
-        then show ?thesis using Cons.IH[OF rest x'] Cons.prems(4,5) by blast
-      qed
-    qed
-  qed
-qed
 
 theorem development_admitted_keeps_independent_current:
   assumes accepted: "development_verdict_accepted (development_refinement_verdict S (p,s,support,E) S')"
     and subject: "problem_subject p={|c|}" and other: "d\<noteq>c"
-    and declared_once: "distinct (List.map_filter isabelle_declared_constant (snd (snd S)))"
+    and once: "isabelle_declared_once (snd S)"
   shows "development_request_current (snd S) (snd S') (q,t,development_request_support (snd S) d,
     development_request_context (snd S) d)"
 proof -
@@ -564,7 +520,7 @@ proof -
       then obtain d'' where declares0: "isabelle_declared_constant e0=Some d''" and moved: "?f d''=?f d'"
         by (auto simp: map_option_eq_Some)
       have "d''=d'" using moved contract(7) by (simp add: inj_eq)
-      then have "e0=e" using map_filter_unique[OF declared_once e0 state] declares0 declares by blast
+      then have "e0=e" using once[unfolded isabelle_declared_once_def] e0 state declares0 declares by blast
       then show ?thesis using y image by simp
     qed
   qed

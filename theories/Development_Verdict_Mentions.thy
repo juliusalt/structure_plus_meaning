@@ -226,18 +226,13 @@ qed
 section \<open>The exporter's obligation: every constant is declared by at most one entity\<close>
 
 text \<open>
-  The obligation is stated once, on the Isabelle state, where the state's own entities decide it: no two
-  entities of the state declare one constant. Its owner is the exporter that defines a state's entities
-  (theory \<open>Isabelle_Entity_Export\<close>), from which an answer state is exported too;
-  a reader of an answer must refuse a state that fails it. The carried single-valuedness of the declaration
-  store is not a condition of its own: under \<^const>\<open>state_presents\<close> it is this obligation read through the
-  presentation (@{text declarations_single_valued_presented}), as distinct names, vacuous unknown positions
-  and distinct roots are for task 46's carried conditions.
+  The obligation that no two entities of the state declare one constant is stated once, on the Isabelle
+  state, where the state's own entities decide it (@{const isabelle_declared_once}, beside the reading it
+  constrains in theory \<open>Isabelle_Entities\<close>); its owner is the exporter. The carried single-valuedness
+  of the declaration store is not a condition of its own: under \<^const>\<open>state_presents\<close> it is this
+  obligation read through the presentation (@{text declarations_single_valued_presented}), as distinct
+  names, vacuous unknown positions and distinct roots are for task 46's carried conditions.
 \<close>
-
-definition isabelle_declared_once :: "isabelle_context \<Rightarrow> bool" where
-  "isabelle_declared_once C \<longleftrightarrow> (\<forall>e\<in>set (snd C). \<forall>e'\<in>set (snd C). \<forall>c.
-    isabelle_declared_constant e=Some c \<longrightarrow> isabelle_declared_constant e'=Some c \<longrightarrow> e=e')"
 
 theorem declarations_single_valued_presented:
   assumes present: "state_presents key S R" and once: "isabelle_declared_once (snd S)"

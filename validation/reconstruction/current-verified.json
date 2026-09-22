@@ -1,7 +1,7 @@
 {
- "base_receipt_sha256": "40345437032b580790e634ea7b074cbc9f485dcc0011f780f4312dc3f2cc5e15",
+ "base_receipt_sha256": "fd2e28446a75550aa1c24bfc1c80df40f7e98dea7297dc9048909d49fb6f95ca",
  "base_theories": 1829,
- "checked_content_sha256": "98d41a4acda48a2fbd6a0cea9874be68bfa59ed2632abdb6a1a32947f5223b90",
+ "checked_content_sha256": "a9679d74d062e8a86ca4e5f05e8ac7fc0ebb03fe677aa7e063feda078942cd63",
  "complete_native_reports": 74,
  "executed_recipes": 0,
  "host_tests": {
@@ -10,18 +10,18 @@
    "skipped": 2
   },
   "tools": {
-   "ran": 214,
+   "ran": 217,
    "skipped": 0
   }
  },
- "incremental_proof_theories": 30,
+ "incremental_proof_theories": 104,
  "phase_seconds": {
-  "base_and_impact": 0.28,
-  "execution_impact": 0.05,
-  "export": 5.27,
-  "proof": 64.06,
-  "recipe_impact": 0.36,
-  "recipes_and_host_tests": 10.85
+  "base_and_impact": 0.33,
+  "execution_impact": 0.06,
+  "export": 8.69,
+  "proof": 299.04,
+  "recipe_impact": 0.75,
+  "recipes_and_host_tests": 11.72
  },
  "reused_recipes": 2,
  "source_only_reconstructions": [
@@ -30,524 +30,524 @@
    "recipe": "allocated-environments",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "940cff02cca58430f75aaa253c89f8cdbc956afbb2280e69e83ba67b8222fc9e",
+   "source_manifest_sha256": "1acf296d35d182059c894f135f919babb69b8f8d75e8629c8f505857c8931476",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "5aa876839458a09605e63faba9eab7bc17136c5bcdc3ad0cfee60fe04bdf2b7e"
+   "verification_sha256": "2b767020014ff44b8334ea6591c644d71acdb0b9495c9f31112e092202351ad2"
   },
   {
    "python_modules": 23,
    "recipe": "artifact-lookup",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "356ff41a2cc162b4a507157b96f8a59f63b83d68ecd6a4994ae4fb392911f0c1",
+   "source_manifest_sha256": "a3406971b9de919779c3a3160c05272d95d265e40b4715f62201dd90eb522b34",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "a64e12ff6c34059107ec8c968a13d7870f16614c2342f8348d26a7e6dc6f9a79"
+   "verification_sha256": "16abcf906b8d72d8fa841ce043869f7612194c5599ff256967fb9918d5c5577b"
   },
   {
    "python_modules": 23,
    "recipe": "builtin-investigations",
    "reports": 1,
    "source_files": 733,
-   "source_manifest_sha256": "5a77f0d2b227c6c1e70c8a149d566d6f0567ba582f5bcc97b86114c2a70f4670",
+   "source_manifest_sha256": "2bf4b8b6f3b25ab56c377e38b00ea3966ad5e44966af1cac00e30550fe281b6f",
    "theories": 709,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "1d7e023542d1f3dbe0981a57cc0b422c93795b09a5c1e0b1e7397573b339ffba"
+   "verification_sha256": "0c87480e2967d45c75ae9f879ec3a1f97a6cb6f5e032c209c81577dceae5b2f1"
   },
   {
    "python_modules": 23,
    "recipe": "cached-grafts",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "f4a099421660f5f315e98d09f372d27af88c5663f0d9028b2a133b4eb909bdc0",
+   "source_manifest_sha256": "611519256faaee8788d4237c64b942e2bd9e91b3d87fd5e6cefe3e50c4ab4005",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "5100c5c6bf775ceb53f7752659ddebe1dd11d038675df0496812933a43cb4601"
+   "verification_sha256": "fdadc7ab9c410cbe85c620d6bde3b7749b03e7a3453fab39aca0f9d083863a26"
   },
   {
    "python_modules": 23,
    "recipe": "certificate-coverage",
    "reports": 1,
    "source_files": 884,
-   "source_manifest_sha256": "f6fc9916451e99af5ceffe37fd7e9c481023aca12c7144d266c02caca4b3c5fe",
+   "source_manifest_sha256": "b4ce655aae42e5a73457caf03866c1558cd4b028e919b4fde72587685a04ec33",
    "theories": 860,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "121fa2f4b7268cfec8995cb977b2804b53187578784b7856c8833d7836613deb"
+   "verification_sha256": "c68f0be1b3cc36bfc623dd32ba9b0e49204fe741e395d63da9e9f58d075d4686"
   },
   {
    "python_modules": 23,
    "recipe": "certificate-development",
    "reports": 1,
    "source_files": 884,
-   "source_manifest_sha256": "14fc4f9de134251be702af4b213fc83226ccf18a8f2faf6172b07c0878609d41",
+   "source_manifest_sha256": "0c06a57beabd47c79156ad1c9ac3ce329fd15f38330b000c881ae5d68dd39758",
    "theories": 860,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "c1c5e56be8f0ea2a9bc80c5d798618d9c8f0dd7ec42dff69befe46bf83a5d2e6"
+   "verification_sha256": "f2c0e170de74db2fd3aa7025351114c4102dc6b57e25727682bbbaf496bbdf38"
   },
   {
    "python_modules": 23,
    "recipe": "certificate-input-development",
    "reports": 1,
    "source_files": 884,
-   "source_manifest_sha256": "46d1b78bdf90d45069436ee0174730adf380a0886e9302b91e47341a06c4ef4c",
+   "source_manifest_sha256": "be767fedf6eb3f886a0358526606c455da06ec0927e8b6645fefa0ec11479af9",
    "theories": 860,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "f5acdac70ecfb0a728ab424dff9f3d28f0e26bda8466c7e691b2800ca7c4826a"
+   "verification_sha256": "88d241582a64891adf98dea08ba59708e3c9009965c21e2a8144fe4e9d7b67aa"
   },
   {
    "python_modules": 23,
    "recipe": "certificate-scope-repair",
    "reports": 1,
    "source_files": 884,
-   "source_manifest_sha256": "6f74ab80ee4856108fbf8bf006ea98f4c0b547a8dc9d93b3c1c076682f81aeaa",
+   "source_manifest_sha256": "f3ead269ba3015e91a50c6990de27205954d26e9dfdc91b55d064820d1424ddf",
    "theories": 860,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "2439cd7075a92307ea49de1761da1e8422aea2cbc63c29f022eaf13edd9898be"
+   "verification_sha256": "8237d1f553d5458262656c9ef5dd9864c6d57984bc805b472675576725c7e1cb"
   },
   {
    "python_modules": 23,
    "recipe": "certified-causes",
    "reports": 1,
    "source_files": 875,
-   "source_manifest_sha256": "1d034762069a04d271462996481153b88b1931adb9761512669a580b638bb4ea",
+   "source_manifest_sha256": "f93c4aaf3298f2fb519468e2a09be69b78895489e81cc94dcb22179c997db170",
    "theories": 851,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "4fed57b1072fd881f56e319627ddce3dbf944af91ccca3051e598cc8d086ebed"
+   "verification_sha256": "43cd6669f389a7c4cbd9702b5b1325964545ffe3719124406131b9f4b06cd057"
   },
   {
    "python_modules": 26,
    "recipe": "concurrent-history",
    "reports": 1,
    "source_files": 877,
-   "source_manifest_sha256": "735fd36e9f82823e663f8bd7c25f9805e668df7375071d8264a1eddf08063af5",
+   "source_manifest_sha256": "9921c6da0c8ee6deea2cc89ba06c5b8077cc35c960525b822a98238ea306c205",
    "theories": 850,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "288d545b836673469fcc3d422d1f8a3f604917103636ed855d973e68a16fc32c"
+   "verification_sha256": "f8459daa70d13bdb534cb3dcd73df4f352db0a2349b12f5e986ade7ecbafc373"
   },
   {
    "python_modules": 25,
    "recipe": "constructed-history",
    "reports": 1,
    "source_files": 833,
-   "source_manifest_sha256": "c1d0b40e25ef43020bbc81578acac81b24128a553117985fe4ce51280092303e",
+   "source_manifest_sha256": "b926ddde2a2631aef69109a4b043772131ca36e9ab7d2d9e87610a9915b3814e",
    "theories": 807,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "aabbe43e0d9d0180c7d4f7844bc522a920cfebbf057c0be09fb08e233523d4b8"
+   "verification_sha256": "2840ed1684416450a417bc519037a1dd7da1f116125c75848acf01f42c0f730f"
   },
   {
    "python_modules": 23,
    "recipe": "data-reading",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "1bab9856556f6e55c4e6e2f735fa5796113c293d6cee26383f09a8c0cfa9476d",
+   "source_manifest_sha256": "aa0244fc512174cdf6bb747eee921b66356afb288d17990e58b16108b519f337",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "2e707ffd0735fe985de0df12a483133816c6c857c1f1ae453c1cb58ab2ed05d3"
+   "verification_sha256": "c17aca72ce0fdfb0fe056524c47ac411c26cb75e0a5424cd42b017d862beb00a"
   },
   {
    "python_modules": 23,
    "recipe": "decision-replay",
    "reports": 1,
    "source_files": 869,
-   "source_manifest_sha256": "4ab0803d834cc65a9791e6cf3ed5d6f8d1510142e57d4d8a2c5c4c2bd7e36ddd",
+   "source_manifest_sha256": "915e35add66d5ee8b926dda28f549d82411d26f1f8447d12d6fd786c21eea264",
    "theories": 845,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "ea669146abde044f5ec289cf2706c2a1f6de3fb95c56cf74b6c903d043b9e583"
+   "verification_sha256": "3a005949b333d66506bc1de239bbb17fd15fcb8f0c70e9842224d5f1faedad68"
   },
   {
    "python_modules": 23,
    "recipe": "digit-allocation",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "f8d090b832b06f0ea76cab1c4b71559e7781de0375fb8c5aa1933a88335eafe9",
+   "source_manifest_sha256": "ac3a501f8165df41230b498ef1c622f910416cc0a2e0e64a257fcaee97f0c61d",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "4d93b8b10a74e6bf4202ae3c9083b4682dfdf6fe66caab9890e22e78aaddc677"
+   "verification_sha256": "a9cc717bc5d3423abdc67df0b38bbb0e849012ff1cb4f02a2671b0f7e97e9d90"
   },
   {
    "python_modules": 23,
    "recipe": "digit-generation",
    "reports": 1,
    "source_files": 870,
-   "source_manifest_sha256": "0d0c43f427888c87f0311ec3eb3c93712a676526ac6e15be76aa8dffbfe8abac",
+   "source_manifest_sha256": "82ba468bb553f3895727fb73c3fe577b87e8c2c61d2d18dca2d78846379f284b",
    "theories": 846,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "72a71367585cbd17064768b567c3e71d3f61e4750135c70d2558239414cc52d1"
+   "verification_sha256": "88452ede76ad06f6a643cfd096ba0d8152bc0a369388f324a65935307d06cd1e"
   },
   {
    "python_modules": 23,
    "recipe": "digit-history",
    "reports": 1,
    "source_files": 809,
-   "source_manifest_sha256": "4bdc2fab9a9fbbe6336c6456acb3cfd1e9856cdf3302e9f994be7a01fac86ea8",
+   "source_manifest_sha256": "dbb1c4a396a9e92e820ccf44fee10a70eae983cc51a0c9e2ab539fcea838003a",
    "theories": 785,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "5bf1ea0b3fd93db4a59ab6b612865a7ffa8d0ee6a03dc631f2bcff7b2cd0ac07"
+   "verification_sha256": "57c59cf09586792953154496f8da8c396f1ab99b91aa798109177b174271ba9f"
   },
   {
    "python_modules": 25,
    "recipe": "digit-replay",
    "reports": 1,
    "source_files": 889,
-   "source_manifest_sha256": "5a744b91035a8d3108dc51de0c64e2117f799f69be5122fd0af2d7ee66976027",
+   "source_manifest_sha256": "8db58d0c5e7f148e6406422e515a61edd439ac171d4f63a502bdb7c64155b9af",
    "theories": 863,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "0bbee2c245b32a0413cc6e94e51c2d8d7904169aadd73361c8422ef834fb06bb"
+   "verification_sha256": "639a0e774fbf487917d8f84ab32a791ac240cfa44421f1696b7ed12802bb775d"
   },
   {
    "python_modules": 23,
    "recipe": "encoded-environments",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "81300d4638bbf2617b96d354a2d04b37f36936f96141ae20aaf0101a0eb028cc",
+   "source_manifest_sha256": "afc23f92a64a35e639ae5d7065a19749820acb24fe78a7925bf0b2c84a30c581",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "778632c891aaad805ba5a8d0f051725bc3fca84ff857fdc40e51b4bb02dc75c5"
+   "verification_sha256": "0643ee7fa66ef03812898b3cfef4f525777bb1abafab7b71ef1cc886b25df83f"
   },
   {
    "python_modules": 23,
    "recipe": "environment-grafts",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "2e3a27fb17c4af6fc123382a8dae097962414f7b27092ed41db4fb9dcc7a3827",
+   "source_manifest_sha256": "91595cb5e099d65741364d92e71de0741f8c02facd5fd04789bbeb0da56b1c5d",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "c6076ab95ec8e856ba79db3485b6f3466cb301d9c763f47e6f5e1f43a285298c"
+   "verification_sha256": "2f3031b04f218d623023f52b9ce6a2b91b8c7fd4891fc5d9dea8f04a1b9528a8"
   },
   {
    "python_modules": 23,
    "recipe": "environment-updates",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "c72887bd702ea1ff82cbc9e40756ce6538dd8dd33d4f81bb630b21895c54c05d",
+   "source_manifest_sha256": "b039641308c86c798cbdfdfe5b8834500be1afffac218057dc19a89629a1e23b",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "4d64ea3c32ab048771cf77cb398eba7c35ca052b37262d84f836521ebb81af74"
+   "verification_sha256": "ea2d0296ea057f2805fca29b0a1356ea1e7877d52ae531d9acd8be52b5cc9105"
   },
   {
    "python_modules": 23,
    "recipe": "generation-records",
    "reports": 1,
    "source_files": 914,
-   "source_manifest_sha256": "36e7ef119b3563698ae59fd5518c483a6d5a0e4932022c7ee29169fdd08e7da3",
+   "source_manifest_sha256": "318c05d55d14ac91c4c08fbcbf81c0f7326f4ffa1c99478f65737b51931cee86",
    "theories": 890,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "8c1b3b2a31e38c6bdc683b8d5cf2b3886276701154e1a33611e626be0f6b6239"
+   "verification_sha256": "21f7e13ffc898d440be99b63076a24062c1162bf898f2b15034c359f0a707bf5"
   },
   {
    "python_modules": 23,
    "recipe": "graft-admission",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "3c564a24206eb85d34bf5f37155a646b4e82a4c23b61e243004a9d880cf1d332",
+   "source_manifest_sha256": "fb9e6596d931b5df862d8c0df4fa7adeef116fa4acd3d5b4b8ea65f218d264a7",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "7c6494259325717c8a8a1f11de84941b57c348082d7e94ab9dce2e6dfa2ef4ba"
+   "verification_sha256": "569e879d263a8999e43fc85732777c1bcdd65483398f32d6bd851468feb9a786"
   },
   {
    "python_modules": 23,
    "recipe": "history-index",
    "reports": 1,
    "source_files": 869,
-   "source_manifest_sha256": "6dbfd8330ab2ded88528778fa15c3660482bd6fea3e450db03a1749b64ed9b75",
+   "source_manifest_sha256": "a5204b8991495ea6f2fc932eec512286ea17ca9d77cabc2c8f3a9ad9ca4688ab",
    "theories": 845,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "567fbf4333b3143d6e66b3abaecbadff2d9d5f68a7628a17483fb53d0884292d"
+   "verification_sha256": "92e9e5373c59cebc9643f0bcf69a7aeb8d8a497afa0c82753f1e231a9e834bfd"
   },
   {
    "python_modules": 23,
    "recipe": "indexed-generation",
    "reports": 1,
    "source_files": 870,
-   "source_manifest_sha256": "ee8b6039d85f3e140cdee9e9cf2e4628dc7f35da0156199466719999a0819635",
+   "source_manifest_sha256": "4b9c8795d9d656289f709c00c0314ba111cb4e4425e31b8ae5292979f536fcd2",
    "theories": 846,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "0c36539af822d1b387c065bac0b74f76caf2d3b97adf8a0d479a100af29970e6"
+   "verification_sha256": "4dac119a353f2038ab7d61c003fe557c72c0859f399c5324e4a993a85a8a53d2"
   },
   {
    "python_modules": 25,
    "recipe": "known-history",
    "reports": 1,
    "source_files": 818,
-   "source_manifest_sha256": "f8201dc8cd75e4a932d821cdb42a06262b38e29919292675e969540df179ad67",
+   "source_manifest_sha256": "15173ee28311a3ad53351056cb541568df93e42b76b2c2c2fa33771fe59ba70d",
    "theories": 792,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "0af298d70a37d1991f3105fbccbfa83bf0998dfc15d846dd093037d022bbfcaa"
+   "verification_sha256": "8bee180c1c7c385f3e38693e81a27848694f9f426331caa516791e8bc8c72607"
   },
   {
    "python_modules": 23,
    "recipe": "literal-replay",
    "reports": 1,
    "source_files": 859,
-   "source_manifest_sha256": "8eabbabb1adae866649196ec1c5f3c48ffb87ef913272b3e27dec6033025fe00",
+   "source_manifest_sha256": "e83254fd3b0798c02879a5b8d80b6e2c0bf7902c795ac82ff3e512bed5c40698",
    "theories": 835,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "c0ba68ea52bf04a8d72bc4c4dbd90b99d2cfa7a62de54f8cfd4bc3aba9e3bdbf"
+   "verification_sha256": "8d8b4438fd2d2650ac607bf7f3984e4446138beed0ec505108efda49e58750ce"
   },
   {
    "python_modules": 23,
    "recipe": "native-admission",
    "reports": 1,
    "source_files": 888,
-   "source_manifest_sha256": "ae486f9d0d353fdc9c00ea9a6360c1763f88f9059227ccd0fc4bf28270b16e27",
+   "source_manifest_sha256": "2d1c348337a3422c93996e3b829c121f9b4a53b55d581dffd294fffedddcc23a",
    "theories": 864,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "b9077203573e48008db04cddf42803e6269819e82e86eea8b2a6e3486ca6b5d6"
+   "verification_sha256": "f5110a3499faf21a6349900124457fbddaac1b37b1fe3a5957f01b32d489de67"
   },
   {
    "python_modules": 23,
    "recipe": "native-certificate-replay",
    "reports": 1,
    "source_files": 879,
-   "source_manifest_sha256": "0ccd9475ceb2d201f200da0faa803690a636d5704acc6f50ee45c5abea73e629",
+   "source_manifest_sha256": "857bdf90605c6429a41bb50b42e77d4fe0855a8ea1e9446d065cf3750c0d96f1",
    "theories": 855,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "e1279f7027036304eb179581c509c3d128220bb4306117933f8ca20c3f6376b4"
+   "verification_sha256": "fee6106b7efa2d5bbd21795d07d238e26985d70285e8c565104265fc5a5bce84"
   },
   {
    "python_modules": 23,
    "recipe": "native-certificates",
    "reports": 1,
    "source_files": 876,
-   "source_manifest_sha256": "5f3815de6fd3520a4d8542b895ae5cf309552360d329fbd76cd4d2750dd4df10",
+   "source_manifest_sha256": "3c3bbde5514851f8272808be3da07a35b4ca43ac3f3a3416bf58cdaf107a5a90",
    "theories": 852,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "96748b459ecfc8b620326f596791fa466c359d9a4742be7ea26399dfe6fbdc70"
+   "verification_sha256": "301f33522821a0a7ea90d93e22e01da1b37655a242c1b4d2b841a023459196ee"
   },
   {
    "python_modules": 23,
    "recipe": "native-child",
    "reports": 1,
    "source_files": 1064,
-   "source_manifest_sha256": "74af9b9c6f3d08bcfe959ba859c8de2d9490fccc7972f31af529a31f455f8678",
+   "source_manifest_sha256": "12e99a42d62683a32ce9d3c857126b7be1c843d27350ad8a414e0224f80f2ad2",
    "theories": 1040,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "6907694851db98ec7a7c6d6fa0a19a22aeb3342a0c2397f68bc7fc16a86d994e"
+   "verification_sha256": "c139c23e93f32d0173874266b4fb130c2fec12eb1de49f431e3e753177918ac8"
   },
   {
    "python_modules": 23,
    "recipe": "native-derivations",
    "reports": 1,
    "source_files": 876,
-   "source_manifest_sha256": "c521338591fb28785d0560e4c80d0dd764205f791a953ebaf8cd78d16cc455a0",
+   "source_manifest_sha256": "32e28731ce010cbd4968c22a89d9ef45ab34a9d2a5aa7521459e8197d9a33535",
    "theories": 852,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "d4305a046bf835dafa612400d969f93f39bc1a774fe8d0c06d4c63af0d466c62"
+   "verification_sha256": "09ae81447cda879e750a87c93c619bb8b61cc5b7941573f3dd43cf12cf285a25"
   },
   {
    "python_modules": 23,
    "recipe": "native-development",
    "reports": 1,
    "source_files": 930,
-   "source_manifest_sha256": "f2f140d2401b8d66c2ec9ab067f434b5ce4f94750a6b34078944b93500439439",
+   "source_manifest_sha256": "22bad79cc1faf31e32ad389d22532305e5b92094fd53a2f9b2936dc6aafe3a82",
    "theories": 906,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "d5cd5344b156c77400142b9d8414017ff51006c886f4dedbb13c07fd3a5626d5"
+   "verification_sha256": "d47707cd9846bf6f8ff718d1a703a676bc0a33e86150dd1fa5ec777440a0dad5"
   },
   {
    "python_modules": 23,
    "recipe": "native-development-machinery",
    "reports": 5,
    "source_files": 993,
-   "source_manifest_sha256": "6e86cd72a5ef062b533fa4f7365332a3b6f2e209398f4ad5d754ae81615a223a",
+   "source_manifest_sha256": "51fb072ed11462c37a9e9224865465f1a446952a75c50988c574c8622146f744",
    "theories": 969,
    "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "c3097115f4764843e663ff6ad35567739d89c63c095b89848165642583603483"
+   "verification_sha256": "cabafd90d0173a3d725967c19d3deb6d23ce10ac7f6a7417d75cd7826985314d"
   },
   {
    "python_modules": 23,
    "recipe": "native-development-seed",
    "reports": 12,
    "source_files": 995,
-   "source_manifest_sha256": "ed0b1bd72aeaaece2cf4883d5dad7af9d34a28e04f29ce1768405a58034a3e3a",
+   "source_manifest_sha256": "f5632668148b648bb2df1cb95242a31533d75b63a2836dab825ae72f2fe9a20b",
    "theories": 971,
    "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "2b9d1e22ba5c054bbb66d846f0bdc95f0de09b342a8529c15ffcbb63145df8ec"
+   "verification_sha256": "a7a85b02bef2c6e7b6fd252e744fb785b5c2271ebb4c1334f473d2e3d11353ce"
   },
   {
    "python_modules": 23,
    "recipe": "native-evaluation",
    "reports": 1,
    "source_files": 855,
-   "source_manifest_sha256": "60418cc124506c452efcce15f0157f88a775a51002dfda9413d125817f1d927c",
+   "source_manifest_sha256": "5b238aee6594c519ba521dd01824f18dd9939b233f922e3fbafedbd1961bd06f",
    "theories": 831,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "95151c0e42e13c5eebdc355ad7070edb4f85a109ed8762db19b74e3d3e61376f"
+   "verification_sha256": "4aa8b3f76be9528b66f0ad52f40582dc7ba3951b16ad2a610cd1e25dbfea5a07"
   },
   {
    "python_modules": 23,
    "recipe": "native-extensions",
    "reports": 1,
    "source_files": 857,
-   "source_manifest_sha256": "c8c62d302bc798282e9f3ad9e3a69759aa7aa270edf63dc445a71473a3f1f57a",
+   "source_manifest_sha256": "d77c6eace21d8ea422801a494ec5ac19dc0261a89b48e865f91a86c4a1f88fbc",
    "theories": 833,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "23061b7ada1984a55aeb9683f59d07ef3ae96c9c8396c7a2811735b05328239b"
+   "verification_sha256": "ffc94a90dc485d5718e4df2b81b6f58b3a682931e2ff2ba372ef879d4a32c4b4"
   },
   {
    "python_modules": 23,
    "recipe": "native-graphs",
    "reports": 1,
    "source_files": 852,
-   "source_manifest_sha256": "8fdfb18f43d389add52aa310b9c0078aae9bdd91c891aaead25e595826b1ecd9",
+   "source_manifest_sha256": "f7f21d493abd1ff7648b018240b080ad944e1f8aab29e330844012a0c731406b",
    "theories": 828,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "0d2b25d95b719ae93166aeccaac7f759a0b5042047e07657b7619ae0b20d8b9b"
+   "verification_sha256": "8bca50be495f0a4c2cea93888a82a5f532d6a3e1180e6109415320d285dcafdc"
   },
   {
    "python_modules": 23,
    "recipe": "native-histories",
    "reports": 1,
    "source_files": 878,
-   "source_manifest_sha256": "8da18ab0ff1406c31f2412d8b67334745d920102ba15e955d5866821e82ca097",
+   "source_manifest_sha256": "d25d221dcfc9445a1b3ca6b4354cf875f752b2ece2752fcadf503eadac6de431",
    "theories": 854,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "0ff9d8380050e658ebc890a9e08133cac6de3966830892a1190a4a978ff252a8"
+   "verification_sha256": "7f29388f67ab289ae810c6ddf4315c828c9bf01dce13b63e2d5053c1fce6a424"
   },
   {
    "python_modules": 23,
    "recipe": "native-nodes",
    "reports": 1,
    "source_files": 852,
-   "source_manifest_sha256": "f5ff6079809ac841adf72169d1cce6d09c1a367677f04a6715306d980b5b00b6",
+   "source_manifest_sha256": "3d08dd4da4e16dae18fc3546c2cfac8ef825f2c2b622da3878175a37c18825c7",
    "theories": 828,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "4b0c024ab0383bf5ed7946a76e4318d1012743d9974d28e4a0e200d37f5a3c63"
+   "verification_sha256": "19364afe98eb5c4f0f6478bf83d768a366b53a98234ad34742261e7f90069826"
   },
   {
    "python_modules": 23,
    "recipe": "native-requirements",
    "reports": 1,
    "source_files": 887,
-   "source_manifest_sha256": "06951779a158d55b40b426853057fbd981623d53f76d5870e1a630873dfd7e4e",
+   "source_manifest_sha256": "b63545029620a00a11866321021b8023dfb45791d6271d18e4af83868b3dc4a2",
    "theories": 863,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "a8361817f1783a2f73bbbb0b8bf565a1c7294346bba9020180424235d7711d34"
+   "verification_sha256": "710eab633c0b9e5cd7411aee469a216656937de28ae0d3dacfb672935e5bce7f"
   },
   {
    "python_modules": 23,
    "recipe": "native-sources",
    "reports": 1,
    "source_files": 858,
-   "source_manifest_sha256": "30bc37a369df80a9137eb5468fa066204151134916f2eb65a9f0e4c4150bacb9",
+   "source_manifest_sha256": "c6aa7273b3ef173d4eaad450ed1827b7d52074f583bd04dec8c0c4aa1584c5c5",
    "theories": 834,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "301dfbe42f6004712c7780e7d51429da33f4e217a18f24024787c14a415ab619"
+   "verification_sha256": "43e7511276e767c70d3d4424f8486b45803edb9407ef18098ab5ec43fc111615"
   },
   {
    "python_modules": 23,
    "recipe": "native-steering",
    "reports": 3,
    "source_files": 931,
-   "source_manifest_sha256": "4c6fc0fcd2f74f2de1d3e2b8adaed65c870f1697d05611cf159903fee8e6c3fe",
+   "source_manifest_sha256": "d18ff2e126fa51f1b43f6edd5ecd1402e1f25a5f648a4d9e1ad19cac3918173e",
    "theories": 907,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "22d0d469667763e50a20ed26fb262353d73dcffb1385a9a798a327719e0c0891"
+   "verification_sha256": "202b86c738f0543691784efdb340dcc1303bbd730a4a3efda1038c740d1d1260"
   },
   {
    "python_modules": 23,
    "recipe": "native-workflow",
    "reports": 4,
    "source_files": 906,
-   "source_manifest_sha256": "d62256157dc9ca0587a965659e5e942066ec89f4733f73d68b0ef3d515b6d82c",
+   "source_manifest_sha256": "72ed4e26534ccc0e1b5a76664f8da5656d6f71e785800cd57a83f4263671c7e6",
    "theories": 882,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "9bac922133d9b18f809610db1f085fbfb3b317c6c5c2e236eba02d84960a3be8"
+   "verification_sha256": "9a6a09ad98667e0a5a6b7bb5282be0d2dc8a8b4424ad32edad43cb0b2ef5aa14"
   },
   {
    "python_modules": 25,
    "recipe": "quoted-history",
    "reports": 1,
    "source_files": 828,
-   "source_manifest_sha256": "d148f24f2b16a2129aa64e9ac6ee2a8e5e40616e306522325d3b9f7e4294a16d",
+   "source_manifest_sha256": "c7aee69f0ba8995d0218f0b6e8ea349d7e96efebd4eec4e32891884541af79c2",
    "theories": 802,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "132581db700157cf0d30642abb7d7a23115eb4babca188e4a670a4c5e8f56d63"
+   "verification_sha256": "5a952cafc899897683eb951edf816a4b88584de30ae72290aa5ff8ae109f28bc"
   },
   {
    "python_modules": 23,
    "recipe": "required-causes",
    "reports": 1,
    "source_files": 875,
-   "source_manifest_sha256": "973d0340e88845c822d77b0c19900959b4a041afed973e5721d18b618796ac67",
+   "source_manifest_sha256": "6e739706bd7631208db19aebb1e87f36c2aaf37579d874e67bb292e5ddb4762c",
    "theories": 851,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "2e6b823f61289f9ad61195d284ec65fb6a636f63c199256152235529fe3e4827"
+   "verification_sha256": "048b2de7b6c8d6def2d08caa9936ca76a41789c6b8754e45804d317b4862fad5"
   },
   {
    "python_modules": 23,
    "recipe": "required-history",
    "reports": 1,
    "source_files": 728,
-   "source_manifest_sha256": "bd491a13b8e8ce9a9a9550659f33bede128477767ffd3f12d56b642f77a963e1",
+   "source_manifest_sha256": "16cdd2b72a8af4d4fbee9a7d2e63fd791289f8819edf1c114ba8520b5ae46f63",
    "theories": 704,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "84f5157ef8b9f3c7272c1f5e023b7b434db452f0c19f881f997332776c35f087"
+   "verification_sha256": "fadfa9b48b80c4ca60831d6eeb48eb303e47b5b963e0ed35b75d339874f5b808"
   },
   {
    "python_modules": 23,
    "recipe": "requirement-decisions",
    "reports": 1,
    "source_files": 874,
-   "source_manifest_sha256": "0332a84980dcd34024b62fb71855d59c88725b12e02a7b764ce524267ad95c53",
+   "source_manifest_sha256": "ed4d067bd8f15c4a7f8db44b9f97e089004e946b4183c21130e1a79e18355257",
    "theories": 850,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "7c3d28fedcbde9c0a98eef452e140892611e8868983e3488e7fc7a84664d2b53"
+   "verification_sha256": "062fd521a587f65d9d49cbf326909d81a5249901ac43736aa614a3fc8e2bdb4a"
   },
   {
    "python_modules": 23,
    "recipe": "requirement-plans",
    "reports": 1,
    "source_files": 1001,
-   "source_manifest_sha256": "2a7d36a965439cc246c1bd15884b2891ed5a3db5be6596e8f1699c93075b879e",
+   "source_manifest_sha256": "07fa4a0974d6a08abbc9a6f7a3181b5574651c34d5a43a108cd96cf940051fa0",
    "theories": 977,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "305ef3b1f9330fe4ea3ee18170d6e4bed5a712e4f7341eafee0d4f0f793606b2"
+   "verification_sha256": "597a2cdb8b0915dfb4ddab4b181235078b878936724847ca41fed1366af9796a"
   },
   {
    "python_modules": 23,
    "recipe": "requirement-sources",
    "reports": 1,
    "source_files": 1001,
-   "source_manifest_sha256": "29e3e3e5a7b1e7f8c808f6cc6e9b7edc7aec518fe322ace1709c6323a6b665ba",
+   "source_manifest_sha256": "725f4ed92c103354480bebb787dbb6695ba20e0517f4a47852326ad0e590098a",
    "theories": 977,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "781411fe24dcb79a850f56a5538055ec0eb9bbe80f65d921f4939eee61e5b440"
+   "verification_sha256": "929a26b410c0142ce790b8a6acbcdc8b3f5b9140c786817184fd1d48c4917a7e"
   },
   {
    "python_modules": 23,
    "recipe": "source-development",
    "reports": 3,
    "source_files": 933,
-   "source_manifest_sha256": "12a4492cee52c31d90bd794c4ae294c14fc7917f091d3d0983b4549a53934938",
+   "source_manifest_sha256": "f6b9a9fb88334728dfe95175ea871e74fa74256c331d227dab8acc84b8278441",
    "theories": 909,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "eda6d67220f979575bec804d2ac2f110d64927693a71b4d3cf31cc7a3043f0fd"
+   "verification_sha256": "e8bc734bfaeddf2645b174bc220290785a254f6538b07a3c2edce8a2a55ff2d7"
   },
   {
    "python_modules": 23,
    "recipe": "use-allocation",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "6fdcc56704624a371f5afb123ce25336c7eb25133db0c99700ec8698d1b6bc9e",
+   "source_manifest_sha256": "75811bab0d8b1e552eabbaa4252f2b192b6ace9c025162877cc3597960679b9a",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "0573bcacac615a7ccfbf14c95abd804d3ef5c44da45aa7c65e10f998f62a269a"
+   "verification_sha256": "04e947e12ea54e2048003b122d8f9d7cc36dce63c3c55fc1c8ddc232bfefe3fb"
   },
   {
    "python_modules": 23,
    "recipe": "use-codecs",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "be5fde97c68f77db440d8967c5f769ac69980c288f684911959f87d5983212f8",
+   "source_manifest_sha256": "26c858ff2cb6dbe212c7d1b2658900d62477cbd516afefdcd80014f050eb54f2",
    "theories": 889,
    "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "27c5c9514e3a66fbcd6b460919d6c6cb0773cf9b846cc6e7e6846502ac6d8846"
+   "verification_sha256": "dfcd0beb20895d586ddf2b86e6e2f3ccbb734c727ad914e398eb25866b9a9607"
   }
  ],
  "status": "accepted",
- "total_seconds": 92.87,
+ "total_seconds": 337.44,
  "unchanged_recipes": 50,
  "workspace_theories": 1829
 }

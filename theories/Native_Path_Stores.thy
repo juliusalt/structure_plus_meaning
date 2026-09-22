@@ -697,6 +697,35 @@ proof -
   qed
 qed
 
+text \<open>
+  A store presented through a value map reads only the values it holds, so the search's contract needs
+  those values formed and no other: the contract above, through any formed map agreeing with the
+  presentation where the store holds a value (@{thm store_term_cong}).
+\<close>
+
+context native_store_search_program
+begin
+
+theorem exact_held:
+  assumes held: "\<And>bs y. store_lookup S bs=Some y \<Longrightarrow> term_formed (val y)"
+  shows "(k,Pair_Term x (Pair_Term key (store_term val S)))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed x \<and> (\<exists>bs v. key=path_term bs \<and> store_lookup S bs=Some v \<and> (ch,Pair_Term x (val v))\<in>positive_meaning P)"
+proof -
+  define f where "f=(\<lambda>y. if term_formed (val y) then val y else Payload_Term [])"
+  have ff: "term_formed (f y)" for y by (simp add: f_def octets_formed_def)
+  have agree: "f y=val y" if "store_lookup S bs=Some y" for bs y using held[OF that] by (simp add: f_def)
+  have same: "store_term val S=store_term f S" by (rule store_term_cong) (erule agree[symmetric])
+  have "(k,Pair_Term x (Pair_Term key (store_term val S)))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed x \<and> (\<exists>bs v. key=path_term bs \<and> store_lookup S bs=Some v \<and> (ch,Pair_Term x (f v))\<in>positive_meaning P)"
+    unfolding same by (rule exact) (rule ff)
+  also have "\<dots> \<longleftrightarrow>
+    term_formed x \<and> (\<exists>bs v. key=path_term bs \<and> store_lookup S bs=Some v \<and> (ch,Pair_Term x (val v))\<in>positive_meaning P)"
+    using agree by fastforce
+  finally show ?thesis .
+qed
+
+end
+
 theorem finite_listing_store_exact:
   assumes presented: "inj_on val (snd ` set rows \<union> snd ` set rows')"
     and sv: "single_valued (set rows)" and sv': "single_valued (set rows')"

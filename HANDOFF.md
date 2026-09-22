@@ -219,7 +219,7 @@ judgment's path.
 - **The plan** #49 (`1634d456`). **Briefs** #1, #10, #11, #13, #14, #16, #87, #96, #99, #100. **Investigation** #53
   (`.build/tasks/30/readers.md`).
 
-- **#85** (design, accepted 2026-09-22): DECISIONS.md "The in-place refinements apply two notions: a check made where
+- **#85** (design), committed `60623c6a`: DECISIONS.md "The in-place refinements apply two notions: a check made where
   its premise is established, and a generator of the accepted candidates" — `established_premise`/`checked_premise`
   (theory `Established_Premises`) and `candidate_generator` (`Candidate_Generators`), neither built yet; `Let` and
   `sup_commute` case-specific; the seed transactions' formation re-check the first notion at a constructor's contract.
@@ -378,9 +378,13 @@ Not yet planned, in the order they are expected to be planned:
   on #86's base, executed all 52 recipes (221.96 s of 260.94 s) though its change reaches no recipe's export — and
   says whether a check's reuse reads the active base's check outputs (#86's were removed at 05:58); #115, the index
   consolidation, accepted, its landing with main failing on one host test no record names (under load, 7.8 GiB free),
-  re-queued as a round of its own tree; #122 records which host test failed; #97 in
+  re-queued as a round of its own tree; #122 records which host test failed; #88 ended partial with its held attribution
+  (`.build/tasks/keyed-question-cost/attribution.md`): the key search costs at most 0.05 ms, so no index instance is
+  taken for it; a packet's cost is the native reading of its sources, which grows superlinearly with a program's
+  syntax and is repeated in generation, compile, observation and admission. #88 is re-planned to read each source
+  once across a packet's stages, the reader's growth is #124 (reviewed by #125), and #90 waits on both, #92 on #90 and #30; #97 in
   a third round (review 97: the union merge writes map rows twice while its tree's merge-base is `d69bd0c9`, so its map
-  stays as that base has it unless main has been brought in, its two rows then going to #117); #85 accepted, its builds briefed by #121; #36
+  stays as that base has it unless main has been brought in, its two rows then going to #117); #121 briefs #85's builds; #36
   resuming on #86's base; #94 parked (`v2.py after 94 36`, q37); #105 parked until #117 lands (`v2.py after 105 117`),
   the retention #119 after it. #40's brief carries #101's review (the families measured first; the two consumer
   corollaries); #42's and #112's carry #106's (the introduction's subset form stated once by whichever first needs

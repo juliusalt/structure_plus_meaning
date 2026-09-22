@@ -1,5 +1,5 @@
 theory Factor_Join_Reading_Conditions
-  imports Factor_Executable_Quotation
+  imports Factor_Executable_Quotation Established_Premises
 begin
 
 section \<open>Join admissibility is decided by pairwise disjointness\<close>
@@ -18,17 +18,21 @@ lemma finite_join_condition_split:
     (finite_disjoint L Q \<and> finite_disjoint L B \<and> finite_disjoint Q A)"
   by (auto simp: finite_disjoint_def fset_eq_iff)
 
-lemma ffUnion_fimage_empty: "ffUnion (fimage (\<lambda>y. {||}) Y)={||}"
-  by (simp add: fset_eq_iff ffUnion.rep_eq fimage.rep_eq)
-
-lemma ffUnion_fimage_if_const:
-  "ffUnion (fimage (\<lambda>y. if P then T y else {||}) Y)=(if P then ffUnion (fimage T Y) else {||})"
-  by (cases P) (simp_all add: ffUnion_fimage_empty)
+text \<open>
+  A condition of the join that no reading binds is checked once, outside the union over the family:
+  the union absorbs the empty refusal, which is @{thm [source] checked_union} of the first notion of
+  @{text Established_Premises}. A conjunction whose first condition binds nothing is the same law
+  after the condition is split.
+\<close>
 
 lemma ffUnion_fimage_if_conj:
   "ffUnion (fimage (\<lambda>y. if P \<and> Q y then T y else {||}) Y)=
     (if P then ffUnion (fimage (\<lambda>y. if Q y then T y else {||}) Y) else {||})"
-  by (cases P) (simp_all add: ffUnion_fimage_empty)
+proof -
+  have split: "(if P \<and> Q y then T y else {||})=(if P then (if Q y then T y else {||}) else {||})" for y
+    by simp
+  show ?thesis by (simp only: split checked_union)
+qed
 
 lemma ffUnion_fimage_if_filter:
   "ffUnion (fimage (\<lambda>y. if P y \<and> Q y then T y else {||}) Y)=
@@ -50,7 +54,7 @@ lemma finite_join_readings_disjoint_code [code]:
           else {||}) X))
     else {||})"
   unfolding finite_join_readings_def Let_def finite_join_condition_split case_prod_unfold
-  by (simp only: ffUnion_fimage_if_conj ffUnion_fimage_if_filter ffUnion_fimage_if_const)
+  by (simp only: ffUnion_fimage_if_conj ffUnion_fimage_if_filter checked_union)
 
 text \<open>
   A join of two readings is admissible exactly when twelve pairwise footprint

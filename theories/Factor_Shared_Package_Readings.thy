@@ -67,6 +67,43 @@ next
       finite_definition_site_reading_formed_def)
 qed
 
+text \<open>
+  The package reader is an instance of the first notion of @{text Established_Premises}, checked at
+  its entry: its code equation is the entry law, stated at the environment's arity.
+\<close>
+
+lemma finite_native_package_readings_checked_premise:
+  "checked_premise finite_native_package_readings finite_environment_formed
+    (\<lambda>E u r. ffUnion (fimage (\<lambda>Q. case finite_demanded_readings (finite_definition_site_reading_formed E)
+        finite_definition_dependencies (fimage snd Q) of
+      None \<Rightarrow> {||}
+    | Some (S,G) \<Rightarrow> (if S |\<subseteq>| fimage fst G then
+        {|\<lparr>finite_system_interfaces=fimage (\<lambda>(d,p,F). (d,p)) G,
+          finite_system_clauses=ffUnion (fimage (\<lambda>(d,p,F). fimage (\<lambda>(c,S). ((d,c),S)) F) G)\<rparr>|}
+        else {||})) (finite_native_root_family_readings E u r)))
+    (\<lambda>E u r. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  have each: "finite_native_package_readings E u r=
+    ffUnion (fimage (\<lambda>Q. case finite_demanded_readings (finite_definition_site_reading_formed E)
+        finite_definition_dependencies (fimage snd Q) of
+      None \<Rightarrow> {||}
+    | Some (S,G) \<Rightarrow> (if S |\<subseteq>| fimage fst G then
+        {|\<lparr>finite_system_interfaces=fimage (\<lambda>(d,p,F). (d,p)) G,
+          finite_system_clauses=ffUnion (fimage (\<lambda>(d,p,F). fimage (\<lambda>(c,S). ((d,c),S)) F) G)\<rparr>|}
+        else {||})) (finite_native_root_family_readings E u r))" for u r
+    unfolding finite_native_package_readings_def finite_native_program_def Let_def
+    by (simp add: 1 finite_native_package_formed_once_code finite_native_package_sites_read[OF 1]
+      finite_demanded_definition_readings_formed[OF 1])
+  show ?case by (intro ext) (rule each)
+next
+  case (2 E)
+  have each: "finite_native_package_readings E u r={||}" for u r
+    unfolding fset_eq_iff
+    by (simp add: 2 finite_native_package_readings_step finite_native_package_formed_once_code)
+  show ?case by (intro ext) (rule each)
+qed
+
 lemma finite_native_package_readings_shared_code [code]:
   "finite_native_package_readings E u r=(if finite_environment_formed E then
     ffUnion (fimage (\<lambda>Q. case finite_demanded_readings (finite_definition_site_reading_formed E)
@@ -77,16 +114,6 @@ lemma finite_native_package_readings_shared_code [code]:
           finite_system_clauses=ffUnion (fimage (\<lambda>(d,p,F). fimage (\<lambda>(c,S). ((d,c),S)) F) G)\<rparr>|}
         else {||})) (finite_native_root_family_readings E u r))
     else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  show ?thesis
-    unfolding finite_native_package_readings_def finite_native_program_def Let_def
-    by (simp add: True finite_native_package_formed_once_code finite_native_package_sites_read[OF True]
-      finite_demanded_definition_readings_formed[OF True])
-next
-  case False
-  show ?thesis unfolding fset_eq_iff
-    by (simp add: False finite_native_package_readings_step finite_native_package_formed_once_code)
-qed
+  by (rule checked_premise.checked_through[OF finite_native_package_readings_checked_premise, where t="\<lambda>f. f u r"])
 
 end

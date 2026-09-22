@@ -60,6 +60,11 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
+ "execution_reuse": {
+  "base_receipt_sha256": "070ea834f81caf9d07ce18049d4eb99456037574456e5a4c8fea58377ba87b7d",
+  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
+  "export_module_sha256": "7ef2439c6d1e94c9fae02fbd68cdc0855b277d40193c1f0ed59546333ae586e3"
+ },
  "recipe": "quoted-history",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -73,7 +78,7 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "2f62424c19049fcc0aca44f5cf434edf4b600484ab3bb55b762ec2569661c9ff",
+ "source_manifest_sha256": "461ff46ee4797032e526ecb6bd79c05897dbda0fadd2a84e2c7674e2379d8c69",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [

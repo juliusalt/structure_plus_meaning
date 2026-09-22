@@ -3,13 +3,29 @@ theory Factor_Formation_Once_Readings
     Factor_Executable_Quotation
     Factor_Executable_Patterns
     Factor_Finite_Prepared_Data_Readings
+    Established_Premises
 begin
 
 section \<open>Formation premises are established once for a traversal\<close>
 
+text \<open>
+  The establishing facts of the first notion of DECISIONS.md, "The in-place refinements apply two
+  notions": a formed environment has formed artifacts, read from its component statement
+  (@{thm [source] finite_environment_formed_components}), and a formed artifact is a formed object. They
+  stand here, beside their uses, until a landing changes @{text RRA_Finite_Environments}, where they
+  would be stated with the environment's formation.
+\<close>
+
 lemma formed_environment_artifact:
-  "finite_environment_formed E \<Longrightarrow> C |\<in>| finite_artifacts_at E u \<Longrightarrow> finite_exact_formed C"
-  by (auto simp: finite_environment_formed_def finite_artifacts_at_def)
+  assumes formed: "finite_environment_formed E" and member: "C |\<in>| finite_artifacts_at E u"
+  shows "finite_exact_formed C"
+proof -
+  obtain v where row: "(v,C) |\<in>| finite_environment_artifacts E"
+    using member by (auto simp: finite_artifacts_at_def)
+  have artifacts: "\<forall>v R. (v,R) |\<in>| finite_environment_artifacts E \<longrightarrow> finite_exact_formed R"
+    using formed by (simp add: finite_environment_formed_components)
+  show ?thesis by (rule artifacts[rule_format, OF row])
+qed
 
 lemma exact_formed_object: "finite_exact_formed C \<Longrightarrow> finite_object_formed C"
   by (simp add: finite_exact_formed_def)
@@ -24,9 +40,20 @@ lemma finite_citation_candidates_formed_exact:
 
 declare finite_citation_candidates_def[code del]
 
+lemma finite_citation_candidates_checked_premise:
+  "checked_premise finite_citation_candidates finite_exact_formed finite_citation_candidates_formed (\<lambda>C r. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 C)
+  show ?case by (rule ext) (rule finite_citation_candidates_formed_exact[OF 1])
+next
+  case (2 C)
+  show ?case
+    using 2 by (intro ext) (auto simp: finite_citation_candidates_def finite_citation_at_def fset_eq_iff)
+qed
+
 lemma finite_citation_candidates_formed_once_code [code]:
   "finite_citation_candidates C r=(if finite_exact_formed C then finite_citation_candidates_formed C r else {||})"
-  by (auto simp: finite_citation_candidates_def finite_citation_candidates_formed_def finite_citation_at_def fset_eq_iff)
+  by (rule checked_premise.checked_through[OF finite_citation_candidates_checked_premise, where t="\<lambda>f. f r"])
 
 definition finite_two_field_record_formed where
   "finite_two_field_record_formed C r F=ffUnion (fimage (\<lambda>(ps,xs).
@@ -61,15 +88,6 @@ lemma finite_variable_readings_formed_exact:
   "finite_exact_formed C \<Longrightarrow> finite_variable_readings C V r=finite_variable_readings_formed C V r"
   by (simp only: finite_variable_readings_def finite_variable_readings_formed_def finite_citation_candidates_formed_exact)
 
-declare finite_native_definition_rows_def[code del]
-
-lemma finite_native_definition_rows_formed_once_code [code]:
-  "finite_native_definition_rows E=(if finite_environment_formed E then ffUnion (fimage (\<lambda>d.
-      fimage (Pair d) (ffUnion (fimage (\<lambda>C. finite_two_field_record C (snd d)
-        (finite_definition_body_readings E (fst d) (snd d))) (finite_artifacts_at E (fst d)))))
-      (finite_environment_positions E)) else {||})"
-  by (auto simp: finite_native_definition_rows_def finite_native_definition_readings_def fset_eq_iff
-    ffUnion.rep_eq fimage.rep_eq)
 
 fun finite_term_readings_formed ::
   "nat \<Rightarrow> 'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow>
@@ -111,10 +129,26 @@ qed
 
 declare finite_term_readings_bounded.simps[code del]
 
+text \<open>
+  The premise is on the second argument, so the instance is stated for the constant applied to the
+  bound, and its code equation at the environment's arity.
+\<close>
+
+lemma finite_term_readings_bounded_checked_premise:
+  "checked_premise (finite_term_readings_bounded n) finite_environment_formed (finite_term_readings_formed n)
+    (\<lambda>E u r. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (rule ext) (rule finite_term_readings_formed_exact[OF 1])
+next
+  case (2 E)
+  show ?case by (intro ext) (cases n; simp add: 2)
+qed
+
 lemma finite_term_readings_bounded_formed_once_code [code]:
   "finite_term_readings_bounded n E u r=(if finite_environment_formed E
     then finite_term_readings_formed n E u r else {||})"
-  by (cases "finite_environment_formed E"; cases n) (simp_all add: finite_term_readings_formed_exact)
+  by (rule checked_premise.checked_through[OF finite_term_readings_bounded_checked_premise, where t="\<lambda>f. f u r"])
 
 definition finite_pattern_constants_formed where
   "finite_pattern_constants_formed E u V r=ffUnion (fimage (finite_pattern_leaf V) (finite_term_readings_formed 1 E u r))"
@@ -164,19 +198,32 @@ qed
 
 declare finite_pattern_readings_bounded.simps[code del]
 
+lemma finite_pattern_readings_bounded_checked_premise:
+  "checked_premise (finite_pattern_readings_bounded n) finite_environment_formed (finite_pattern_readings_formed n)
+    (\<lambda>E u V r. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (rule finite_pattern_readings_formed_exact[OF 1, THEN fun_cong])
+next
+  case (2 E)
+  show ?case by (intro ext) (cases n; simp add: 2)
+qed
+
 lemma finite_pattern_readings_bounded_formed_once_code [code]:
   "finite_pattern_readings_bounded n E u V r=(if finite_environment_formed E
     then finite_pattern_readings_formed n E u V r else {||})"
-  by (cases "finite_environment_formed E"; cases n) (simp_all add: finite_pattern_readings_formed_exact)
+  by (rule checked_premise.checked_through[OF finite_pattern_readings_bounded_checked_premise, where t="\<lambda>f. f u V r"])
 
 text \<open>
   A formed environment has formed artifacts. Its bounded term and pattern
   readings therefore consume the formation-free bodies of record candidates,
   citation choices, payload leaves and variable leaves, and check environment
-  formation once at entry. Citation choices share one object formation per root,
-  and definition rows establish environment formation once for all positions.
-  Unformed inputs keep every original empty result; formed inputs keep every
-  original traversal and its order.
+  formation once at entry. Each code equation is the check of an instance of the first notion of
+  @{text Established_Premises} hoisted through the application to the remaining arguments
+  (@{thm [source] checked_premise.checked_through}). It keeps the statement's full arity: the seeded
+  state presents the code equations in effect of its roots, so the arity rule's form would change
+  its words. Unformed inputs keep
+  every original empty result; formed inputs keep every original traversal and its order.
 \<close>
 
 end

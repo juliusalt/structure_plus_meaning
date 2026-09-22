@@ -116,7 +116,9 @@ word equal — #147 (re-queued for its commit), #149 (`8b39efea`, the flat fores
 #179 (#149's review: a second forest the entry did not list, placed flat at `syntax_branch` with its binders fixed)
 and #153 — the layout with the one word change (#155, after
 them and #90), the answer records re-recorded over the layout on the base its landing advanced (#157), the held measurement on the
-harness's last base without the layout and the first with it (#159, after #155 alone), each with its review. #90 (`7379cfc7`) switched the 20 overnight native-control theories to the keyed question; the overnight
+harness's last base without the layout and the first with it (#159, after #155 alone), each with its review. #216 briefs, from #179's review, the forest over a
+family of placements (the syntax and bound forests and both executable forests its instances) and the premise forest's
+and schema body's placement on it, spliced before #155 so that compiled syntax has one layout and its words change once. #90 (`7379cfc7`) switched the 20 overnight native-control theories to the keyed question; the overnight
 boundary, which no check runs and which lags its sources since `d0b70ea2`, `5c26b791` and `7379cfc7`, is recorded as
 historical at `aa946a22` by #172 (Open 55, q53). #92 retires `filtered_development_question`'s index form after #167,
 stating `keyed_development_admission_at` once for its four users (#90's follow-up 3); q33's facts are named in its
@@ -160,12 +162,11 @@ assessment's first builds #185, #186 and #190; #144 and #145; the join law #173,
 #112; the flaky test's fix #181, the exporter's obligation #176 and the excess locale #182, then #42, #110 and #112;
 #128; #132, then #130; the overnight boundary #172; the probe's summary #175.
 
-**Order** (`128 129 147 148 181 179 180 151 152 176 177 145 146 163 164 182 183 153 154 42 43 185 196 186 197 190 201 208 209 210 211 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
+**Order** (`128 129 147 148 176 177 182 183 153 154 216 217 42 43 185 196 186 197 190 201 208 209 210 211 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43), so the landings the reboot interrupted come
-first: #128 with its review, the accepted commit #147, the landing checks
-of #181, #179 and #151, and the exporter's obligation #176 after #181, which #42 and #110 wait on. Then #145, beside
-everything; the parked #163; the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract
-#153 and the verdict's entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the
+first: #128 with its review, the accepted commit #147, the exporter's
+obligation #176, which #42 and #110 wait on. Then the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract
+#153, the forest brief #216 and the host tests' fix #217, and the verdict's entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the
 incremental assessment's three first builds (#185, #186, #190), which run at once in a slot those leave free; the rearranging rule #208, which #188, #189, #191 and #110 wait on; the
 layout's word change #155, its answer records #157 and its measurement #159 soon after it, while the harness's
 lineage still holds the last base without it; then #161; the rest of the verdict and request chains; the incremental
@@ -273,8 +274,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **Answer records are replayed on a base holding their state closures as HEAD has them** (#143): on a base that
   lags them, `export_proved_code` refuses and the native records come out unproduced by construction, neither
   differing nor failed; a replay runs after the landing whose closure it needs, on the base that landing advanced.
-- **A `commit.md`'s Validation paragraph states the landing check's outcome** — the recipes' words, the host tests,
-  the theories re-proved and the seconds — written after the check, not the expectation (#149's review).
+- **A `commit.md`'s Validation paragraph states what the session verified itself** — its probes, host tests and own
+  checks — never the outcome of a check the harness runs: the harness closes each commit with "Checked by the harness:
+  …" (the harness, 15:32; #181's review was rejected over the earlier rule). Every open task was told (15:35).
 - **An edit to a base theory is probed with `--prelude`/`--substitute`**: otherwise the probe takes the theory from
   the heap and certifies nothing about the edit (#176's result).
 
@@ -442,6 +444,11 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#173** (`a645759a`): the join law of finite rule programs stated once in `Native_Collection_Programs`, with a
   generic program in place of the decomposition's transposition. **#175** (`af8c09b8`): a probe's summary and options
   kept beside its log.
+- **#151** (`c26ecb22`) and **#179** (`4393537e`): the layout's contracts, parts 3 and 2b — ports and coordinates read
+  through contracts, the bound pattern forest placed flat with its binders fixed (its dropped recursion equations
+  confirmed, #216). **#181**, **#145** and **#163** (`37cbc5b2`): the interruption test waits for its child; a receipt
+  is its boundary (the check identified by `checked_content_sha256` over content, no execution or worktree path, one
+  field per line; the harness's retention converts); the row presenters placed below the loop line.
 
 ## Open
 
@@ -659,6 +666,9 @@ Not yet planned, in the order they are expected to be planned:
     the function fully; at a measured need on the loop's path. The first review's other follow-ups were written over
     by the re-review (the harness gap of #118).
 69. **The rearranging single-premise rule** — #208–#215 (Graph).
+70. **The receipts' form, its follow-ups** (#145's reviews): `build.atomic_json` folded onto `publish_text`;
+    `receipt_boundary` as an allowlist of the fields reuse reads; the runtime keyed by its identity rather than its
+    absolute path, where reuse allows (the first review's detail was written over). With the next edit of those tools.
 
 ## Now
 
@@ -748,7 +758,8 @@ Not yet planned, in the order they are expected to be planned:
     `.build/complete-20260921a` lies at `.build/`'s root, which no session writes.
   - The review and brief protocols that ask for a probe could name `probe.summary.json` and its fields as the evidence
     a review reads (#175's review). A session database moved under a running export (`SQLITE_READONLY_DBMOVED`, #173's
-    re-check, around the base's move to the lasting place) cost a 500 s landing cycle.
+    re-check, around the base's move to the lasting place) cost a 500 s landing cycle. The first retention after a
+    landing could be a commit of its own (#145's review).
 - **The base lives at the lasting place** `.build/tasks/base-lasting/` (#144, landed `79f16061` with #132): its
   complete proof of `a2ed0ed7` (`complete-20260922e`, 777 s, re-recorded at 14:14 with its heap under the
   `/tmp/structural-isabelle` link so that the older tools read it too), the pointer `active-context.json` that main's

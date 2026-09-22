@@ -44,7 +44,7 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done (with where), `[-]` decided ag
    278, 192, 279, 276; 128 and 147 committed by rule); the build/seal/start sequence written for the owner; xhigh
    switched to deltas if task 3 decides it.
 10. [ ] Tests, mutation cases, suite, deploy, handoff note, commit.
-11. [ ] Then: every role's sessions for read/write batching and information delivery; every protocol and prompt.
+11. [~] Then: every role's sessions for read/write batching and information delivery; every protocol and prompt.
 
 ## For the owner: build, seal and start
 
@@ -68,6 +68,30 @@ tree, and the two trees whose work never landed (143, 176). To start without tha
 currentness", "proofs and replay", "admission", "base causes": 0 sessions); whether the theory map's index (77K on high
 after the cut) stays, or the names-only index (18K) replaces it; whether the 530K target itself stays (at 2026-09-22's
 rates every 10K of a worker base costs its forks about 150K an hour on high, 70K on xhigh).
+
+## Task 11: what the sessions show (read/write batching, information delivery)
+
+Examined on the day's 6,669 tool calls (reports J–M), and what came of each:
+
+- **Refusals and failures.** 369 over the day, but the largest classes belong to rules since changed: all 43 refusals
+  of a change joined to other commands fell between 00:14 and 09:40, before the owner's "any batch of commands" (the
+  guard allows it now). On the evening's harness (from 18:00) about 25 of 1,015 calls failed or were refused, several
+  of them only output containing the word, the rest scattered model slips. No class left to fix.
+- **The reviewer's first batch.** Every reviewer (104 of 104) opened with `read result log probes diff`, a request
+  each before it could judge: now given in its first message (v2.first_read). About 50K a review on xhigh.
+- **Orientation.** Implementers make their first change at request 7 of 33, reviewers 5 of 9; before it they read the
+  theories they edit (96%), DECISIONS.md entries (65%; ranges 113 times, greps 44, the end 40), THEORY_MAP rows (43%).
+  Briefs cite decisions informally ("the verdict entry's Affordability subsection"), so no delivery of them is sound
+  without a brief form that names headings exactly — the planner's form, put to the owner. Entries are added through
+  drafts mostly (30 direct changes to DECISIONS.md in the day, one refused): an `append` verb would save little.
+- **Files a brief names** (`.build/tasks/*`): fixers read 47% of those their brief names before the first change,
+  implementers 30%; delivering all of them would put about two files into each launch, half unread. Not done.
+- **The launch texts** are 22–36K characters, 38–55% shared by a role's forks. The checks section goes to reviewers
+  too, and 10 of 109 ran a probe or a check with it: kept.
+- **Pings of held sessions**: 108 in the day, 11.7M, 3.3M of it implement-147 held and orphaned from 11:33 (fixed,
+  0dbcd1e7) and most of the rest before the one-miss rule. The hold limits (3 hours for a parked worker, the owner's)
+  sit at the break-even of holding against restarting (a ping about 70K, a restart about 200–300K). Kept.
+- **Stale lines** (D11): forks name 17% (high) and 8% (xhigh) of the files their stale line lists: DELTA_MIN 4K.
 
 ## Decisions (with their data)
 
@@ -141,8 +165,11 @@ delta. It would pay only with several times today's forks per role and deltas ra
 every delta whole when any memory changes (1,118 of the 2,066 tokens of the high delta at 22:36). The lists hold
 `memory/[a-z]*.md`; memory files are named in lower-case kebab-case.
 
-**D11. DELTA_MIN stays 2K** until the share of changed files a fork actually reads is measured: the rebuild optimum is
-3–5K for a share of 10–50%, and 2K is inside its reach.
+**D11. DELTA_MIN is 4K.** ~~Stays 2K until the share of changed files a fork actually reads is measured.~~ Measured
+(report-M): of the files a fork's stale line listed, high forks named 17% in their own calls (24% as forks of the
+layer), xhigh forks 8%. A delta build costs the layer's read (~60K) and its write; what it buys is those re-reads, so
+the optimum is a build every ~44 minutes on high (~3.7K tokens moved) and ~62 on xhigh (~5.2K). One threshold of 4K
+serves both (the cost is flat near the optimum); the 20-minute floor stays.
 
 ## Findings log
 

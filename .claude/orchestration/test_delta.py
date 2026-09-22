@@ -563,7 +563,8 @@ class DeltaTriggerTests(unittest.TestCase):
         self.touch("high-layer.hit")                                    # the layer's entry, read by the delta's build
         self.touch("high-base.hit")                                     # what the roles fork, read by their forks
         self.started, self.said, self.once, self.errs = [], [], [], []
-        self.moved, self.measure, self.whole, self.owed, self.cost = 3000, (0.01, 0, 5000), 0.3, 0.0, 700_000.0
+        self.moved = watchdog.DELTA_MIN + 1000                          # enough has moved for a build, whatever the rule's line
+        self.measure, self.whole, self.owed, self.cost = (0.01, 0, 5000), 0.3, 0.0, 700_000.0
         self.patches = [
             patch.object(watchdog, "STATE", str(self.state)), patch.object(v2, "STATE", str(self.state)),
             patch.dict(os.environ, {"ORCH_DELTAS": "high"}),
@@ -626,7 +627,7 @@ class DeltaTriggerTests(unittest.TestCase):
     def test_a_delta_is_built_when_enough_has_moved_and_not_too_often(self):
         watchdog.deltas()
         self.assertEqual(self.started, [["high", "delta"]])
-        self.assertIn("the high delta is rebuilt: about 3,000 tokens moved since 19:30", self.said)
+        self.assertIn(f"the high delta is rebuilt: about {self.moved:,} tokens moved since 19:30", self.said)
         self.started.clear()
         watchdog.deltas()                                               # within DELTA_EVERY: not looked at again
         self.assertEqual(self.started, [])

@@ -570,7 +570,10 @@ LAYER_EVERY = int(os.environ.get("ORCH_LAYER_EVERY", 900))  # how often the shar
 # built as what the base holds moves, and the frontier layer is refreshed by what the delta holds of it. The first
 # thresholds are the owner's estimates, to be set from a day's measurement.
 DELTA_EVERY = int(os.environ.get("ORCH_DELTA_EVERY", 1200))    # a delta is looked at, and built, at most this often
-DELTA_MIN = int(os.environ.get("ORCH_DELTA_MIN", 2000))        # tokens moved since the standing delta
+# tokens moved since the standing delta: a build costs the layer's read (~60K) and its write; what it buys is the files
+# forks would otherwise read again, and forks named 17% (high) and 8% (xhigh) of the files their stale line listed on
+# 2026-09-22 — which puts a build at every ~3.7K tokens moved on high and ~5.2K on xhigh (notes/plan-bases-upgrade.md D11)
+DELTA_MIN = int(os.environ.get("ORCH_DELTA_MIN", 4000))
 STABLE_DELTA_MAX = int(os.environ.get("ORCH_STABLE_DELTA_MAX", 15000))  # tokens of the stable reference's changes
 LAYER_LOCK = int(os.environ.get("LAYER_LOCK", 2400))           # base.sh's: a build's lock older than this is stale
 WARM_EVERY = int(os.environ.get("ORCH_WARM_EVERY", 2400))      # warm_daemon.sh's: an entry is pinged this long after its read

@@ -564,7 +564,7 @@ PASSED = {
     "investigator": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
     "fixer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
     "task-designer": {"NAME", "ID", "SUBJECT", "BRIEF", "WHY", "GRAPH", "LIST", "STALE"},
-    "reviewer": {"NAME", "ID", "TASK", "SUBJECT", "REVIEW", "BRIEF", "SESSION", "STALE", "BEFORE", "WHERE"},
+    "reviewer": {"NAME", "ID", "TASK", "SUBJECT", "REVIEW", "BRIEF", "SESSION", "STALE", "BEFORE", "WHERE", "FIRST"},
     "consultant": {"NAME", "ID", "QID", "ASKER", "TARGET", "QUESTION", "NOTE", "STALE", "READING"},
 }
 PASSED = {role: names | {"ROUNDS", "READ", "RESERVE", "BATCH", "READ_BYTES", "CIRCLING", "FIX_MINUTES", "FIX_ROUNDS", "HOLD_HOURS", "ROOM_DESIGN",
@@ -3358,10 +3358,12 @@ class ReviewTaskTests(Flow):
         (first,) = self.forks("review-")
         self.assertIn("review task 6 of task 5", first[-1])
         self.assertIn("check the definition against the decided closure", first[-1])
-        # the small reads first and the diff last, taking what the batch has left: read first, a diff of 63K left
-        # no room for the log and the probes, refused at the batch's 80K (review-236, review-261, 2026-09-22)
-        self.assertIn("v2.py read result`, `v2.py read log`, `v2.py read probes`", first[-1])
-        self.assertIn("then `v2.py read diff` (whole,\nup to the call's bound)", first[-1])
+        # its first read is given in its first message, the small sources first and the diff last in what the batch
+        # has left (a diff read first left no room for the log and the probes, review-236 and review-261, 2026-09-22;
+        # every reviewer opened with that batch, a request each)
+        at = first[-1].index("## The work under review, as read at your start")
+        self.assertLess(first[-1].index("== result", at), first[-1].index("== log", at))
+        self.assertLess(first[-1].index("== probes", at), first[-1].index("== diff", at))
         self.assertIn("its other reviews are pending", self.verdict("6", "accept"))
         self.assertEqual(self.t("5")["stage"], "reviewing")
         self.assertEqual(len(self.forks("review-")), 2)  # the second review starts when the slot is free
@@ -3658,6 +3660,27 @@ class TreeTests(Flow):
         self.w.set_st(tasks={**self.w.st()["tasks"], "5": {"stage": "planner"}})  # given back: the next start makes one
         self.run_v2("v2.trees_tidied()")
         self.assertFalse(tree.exists())
+
+    def test_a_reviewer_is_given_its_first_read_in_its_first_message(self):
+        # every reviewer of 2026-09-22 opened with the batch of the task's result, log, probes and diff (104 of 104), a
+        # request each before it could judge anything: it is read for it, as that read shows it
+        s = self.start("5")
+        tree = self.w.project / ".build/trees/5"
+        (tree / "theories/Ready.thy").write_text("theory Ready imports Base begin (* the change under review *) end\n")
+        self.w.write(".build/tasks/5/result.md", "Status: done\n\nThe result of task five.\n")
+        self.w.write(".build/tasks/5/finalize.json", json.dumps(
+            {"check": "true", "files": ["theories/Ready.thy"], "message": ".build/tasks/5/commit.md"}))
+        self.w.write(".build/tasks/5/finalize.log", "check started\ncheck passed in 3 s\n")
+        self.run_v2("v2.start_review('5', '5')")
+        (call,) = [c for c in self.w.calls("--bg") if "review-5" in c["args"]]
+        first = call["args"][-1]
+        self.assertIn("## The work under review, as read at your start", first)
+        for part, said in (("== result", "The result of task five."), ("== log", "check passed in 3 s"),
+                           ("== probes", ""), ("== diff", "the change under review")):
+            self.assertIn(part, first)
+            self.assertIn(said, first[first.index(part):])
+        self.assertLess(first.index("== result"), first.index("== diff"))  # the diff last
+        self.assertNotIn("{FIRST}", first)
 
     def test_a_read_and_the_reviewer_see_the_tree_the_work_stands_in(self):
         s = self.start("5")

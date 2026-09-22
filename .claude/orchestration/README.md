@@ -781,7 +781,7 @@ every held file as it stands (`state/layer-<sid>-manifest.json`, marked `"delta"
 changed after it), records `state/WHO-delta.json` and stops the one it replaces. For a base named in `state/deltas`
 the roles fork the delta (`v2.base_file`, when it stands on the recorded layer), the daemon pings it, and the layer's
 own entry — then read only by the delta's builds — gets its own ping (`warm WHO layer --if-due`). The watchdog builds a
-delta when one built now would differ from the standing one by `ORCH_DELTA_MIN` (2,000) tokens, at most every
+delta when one built now would differ from the standing one by `ORCH_DELTA_MIN` (4,000) tokens, at most every
 `ORCH_DELTA_EVERY` (1,200 s), and refreshes the layer instead when its own entry is cold. The layer under a delta is
 refreshed when what the delta has cost the forks that carried it since the layer sealed reaches what a refresh costs
 (`watchdog.carried`: 0.1 × the delta tokens each fork recorded at its launch × its own requests, and 2 × each delta

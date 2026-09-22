@@ -3600,6 +3600,30 @@ def produce():
         return
 
 
+FIRST_READ = ("result", "log", "probes", "diff")
+
+
+def first_read(tid):
+    """What a reviewer's first batch reads, read for it and given in its first message: the task's result, the end of
+    its finalizer's log, its probes and its diff — as `v2.py read result log probes diff` shows them, each bounded as a
+    read bounds it and the diff last, whole where it fits and otherwise as much as the batch's room holds, with how to
+    read the rest. Every reviewer of 2026-09-22 opened with that batch (104 of 104), a request each, before it could
+    judge anything; the texts are written once either way."""
+    out, size = [], 0
+    for src in FIRST_READ:
+        text = read_source(src, tid, False, [], {"reads": {}}).rstrip()
+        head = f"== {src}\n"
+        room = BATCH_BYTES - size - len(head.encode()) - 1
+        if src == "diff":
+            body = one_read(text, max(room, READ_BYTES))
+        else:
+            body = one_read(text, min(source_bound(), max(room, 0)) or 1)
+        part = head + body + "\n"
+        out.append(part)
+        size += len(part.encode())
+    return "".join(out).rstrip("\n")
+
+
 def start_review(rid, tid):
     """The review task rid of the finished task tid (rid is tid itself when no review task was briefed: a review
     planned by the harness from the task's brief). The one who judged it before is resumed while warm for a re-review;
@@ -3636,7 +3660,7 @@ def start_review(rid, tid):
         REVIEW=(review.get("description") or "").strip() if own else "(no review task was briefed: judge the task "
         "against its brief, step by step, then against the principles)",
         BRIEF=(task.get("description") or "").strip(), SESSION=t.get("session", "-"),
-        STALE=stale_of(name, base_record("xhigh")[0] or "max", tree),
+        STALE=stale_of(name, base_record("xhigh")[0] or "max", tree), FIRST=first_read(tid),
         BEFORE=f"A previous review rejected it; its findings are in .build/tasks/{rid}/review.md. Judge those findings "
                "and whatever the fix broke; add nothing else." if r.get("verdict") == "reject" else ""),
         tree=tree, task=rid, reviews=tid)

@@ -30,8 +30,7 @@ definition state_root_keys :: "'j state_family \<Rightarrow> state_key list" whe
   "state_root_keys Rs=concat (map (\<lambda>z. row_mentions (snd z)) Rs)"
 
 definition state_reach_predecessors :: "'i state_family list \<Rightarrow> state_key \<Rightarrow> state_key list" where
-  "state_reach_predecessors Fs a=concat (map (\<lambda>F. concat (map (\<lambda>z.
-    if a\<in>set (row_mentions (snd z)) then row_subjects (snd z) else []) F)) Fs)"
+  "state_reach_predecessors Fs a=concat (map (\<lambda>F. concat (map (\<lambda>z. row_subjects (snd z)) (mention_fibre a F))) Fs)"
 
 definition state_reach_table ::
     "(state_key\<times>'n) list \<Rightarrow> 'j state_family \<Rightarrow> 'i state_family list \<Rightarrow> reach_table" where
@@ -44,7 +43,7 @@ lemma state_root_keys_member:
 lemma state_reach_predecessors_member:
   "p\<in>set (state_reach_predecessors Fs a) \<longleftrightarrow>
     (\<exists>F\<in>set Fs. \<exists>z\<in>set F. a\<in>set (row_mentions (snd z)) \<and> p\<in>set (row_subjects (snd z)))"
-  unfolding state_reach_predecessors_def set_concat set_map by (auto split: if_splits)
+  by (auto simp: state_reach_predecessors_def key_fibre_def) (metis snd_conv)+
 
 text \<open>The row lemma: the predecessors of a key are the keys of the subjects of the rows mentioning it.\<close>
 

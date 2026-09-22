@@ -54,6 +54,26 @@ proof (rule updated_carrier_index.intro[OF path_store_carrier_index], rule updat
     by (cases "k'=k") simp_all
 qed
 
+text \<open>
+  A sequence of replacements, one at each key of a list, finds at a key of the list the value replaced
+  there and elsewhere the old lookup; the replacements keep a store canonical.
+\<close>
+
+lemma path_store_updates_fold:
+  "store_lookup (fold (\<lambda>a T. store_update T a (Some (f a))) ks T) k=Some v \<longleftrightarrow>
+    (if k\<in>set ks then v=f k else store_lookup T k=Some v)"
+proof (induction ks arbitrary: T)
+  case Nil
+  show ?case by simp
+next
+  case (Cons a ks)
+  show ?case by (auto simp: Cons.IH path_store_updates.updated)
+qed
+
+lemma store_updates_canonical:
+  "store_canonical T \<Longrightarrow> store_canonical (fold (\<lambda>a T. store_update T a (Some (f a))) ks T)"
+  by (induction ks arbitrary: T) (simp_all add: store_update_canonical)
+
 lemma nested_store_carrier_index:
   "carrier_index (\<lambda>rows q v. (q,v)\<in>set rows) (\<lambda>_. True) UNIV id nested_relation_store
     (\<lambda>T k v. v |\<in>| nested_relation_lookup T (fst k) (snd k))"

@@ -32,6 +32,76 @@ next
     using path_store_lookup[OF sv, of k v] by simp
 qed
 
+text \<open>Two stores whose lookups find the same values at a key have the same lookup there.\<close>
+
+lemma lookup_eq_by_some:
+  assumes same: "\<And>w. x=Some w \<longleftrightarrow> y=Some w"
+  shows "x=y"
+proof (cases x)
+  case None
+  show ?thesis
+  proof (cases y)
+    case None
+    with \<open>x=None\<close> show ?thesis by simp
+  next
+    case (Some b)
+    with same[of b] \<open>x=None\<close> show ?thesis by simp
+  qed
+next
+  case (Some a)
+  with same[of a] show ?thesis by simp
+qed
+
+section \<open>A path store restricted to a key set\<close>
+
+text \<open>
+  The restriction law: the path store of any listing filtered to a key set has the full store's lookup
+  at every kept key, and finds nothing at a key outside the set. The store is the fold of its rows'
+  replacements; filtering keeps every row at a kept key in its order and drops only replacements at
+  other keys, which leave the lookup at the kept key unchanged. No single-valuedness is assumed. A call
+  that carries the part of a store its reading can reach therefore reads the same values at every key
+  it reaches.
+\<close>
+
+lemma path_store_fold_restrict:
+  assumes kept: "k\<in>S" and same: "store_lookup T k=store_lookup T' k"
+  shows "store_lookup (fold (\<lambda>(a,v) T. store_update T a (Some v)) (filter (\<lambda>r. fst r\<in>S) rows) T) k=
+    store_lookup (fold (\<lambda>(a,v) T. store_update T a (Some v)) rows T') k"
+  using same
+proof (induction rows arbitrary: T T')
+  case Nil
+  then show ?case by simp
+next
+  case (Cons r rows)
+  obtain a v where r: "r=(a,v)" by (cases r)
+  show ?case
+  proof (cases "a\<in>S")
+    case True
+    have eq: "store_lookup (store_update T a (Some v)) k=store_lookup (store_update T' a (Some v)) k"
+      using Cons.prems by simp
+    show ?thesis using True by (simp add: r) (rule Cons.IH[OF eq])
+  next
+    case False
+    have eq: "store_lookup T k=store_lookup (store_update T' a (Some v)) k"
+      using Cons.prems False kept by auto
+    show ?thesis using False by (simp add: r) (rule Cons.IH[OF eq])
+  qed
+qed
+
+lemma path_store_restrict:
+  assumes kept: "k\<in>S"
+  shows "store_lookup (path_store (filter (\<lambda>r. fst r\<in>S) rows)) k=store_lookup (path_store rows) k"
+  unfolding path_store_def by (rule path_store_fold_restrict[OF kept refl])
+
+lemma path_store_restrict_outside:
+  assumes outside: "k\<notin>S"
+  shows "store_lookup (path_store (filter (\<lambda>r. fst r\<in>S) rows)) k=None"
+proof (cases "store_lookup (path_store (filter (\<lambda>r. fst r\<in>S) rows)) k")
+  case (Some w)
+  then have "(k,w)\<in>set (filter (\<lambda>r. fst r\<in>S) rows)" by (rule path_store_found)
+  with outside show ?thesis by simp
+qed
+
 
 context native_store_search_program
 begin

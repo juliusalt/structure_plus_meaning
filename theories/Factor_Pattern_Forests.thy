@@ -102,6 +102,19 @@ proof -
   then show ?thesis by simp
 qed
 
+text \<open>
+  A child's carrier splits where the branch does: the part outside the binders is placed at
+  @{const syntax_branch}, the binder occurrences stay where they are. The split is stated once, and
+  every accounting of a bound forest's carrier reads it.
+\<close>
+
+lemma bound_branch_image_split:
+  assumes carrier: "A = B \<union> C" and outside: "B \<inter> binder_addresses = {}"
+    and binders: "C \<subseteq> binder_addresses"
+  shows "bound_branch i ` A = syntax_branch i ` B \<union> C"
+  by (simp only: carrier image_Un bound_branch_image_outside[OF outside]
+      bound_branch_image_binders[OF binders])
+
 lemma bound_branch_addressing:
   assumes formed: "exact_formed R"
   shows "finite_addressing (rra_carrier (object_structure R)) (bound_branch i)"
@@ -150,6 +163,17 @@ lemma bound_forest_carrier_member:
   "a \<in> rra_carrier (object_structure (bound_forest Rs)) \<longleftrightarrow>
     (\<exists>i<length Rs. \<exists>b\<in>rra_carrier (object_structure (Rs!i)). a = bound_branch i b)"
   by (simp add: bound_forest_def placed_forest_carrier_member)
+
+text \<open>
+  The bound forest's carrier is the union of its children's under their branches: the placed forest's
+  union form at @{const bound_branch}, stated here once with the forest's other facts, so that every
+  accounting of such a carrier reads it and @{const bound_forest}'s definition stays in this theory.
+\<close>
+
+lemma bound_forest_pushed:
+  "rra_carrier (object_structure (bound_forest Rs)) =
+    (\<Union>i<length Rs. bound_branch i ` rra_carrier (object_structure (Rs!i)))"
+  by (simp add: bound_forest_def placed_forest_pushed push_object_def cong: SUP_cong_simp)
 
 lemma bound_forest_incidence_member:
   "(r,p,x) \<in> rra_incidence (object_structure (bound_forest Rs)) \<longleftrightarrow>
@@ -435,11 +459,11 @@ proof -
     have paddr: "binder_addressing (pattern_variables (ps!i)) f"
       by (rule binder_addressing_mono[OF addressing]) (use nth_mem[OF i] in \<open>auto simp: pattern_forest_variables_def\<close>)
     have pb: "f ` pattern_variables (ps!i) \<subseteq> binder_addresses" using paddr by (simp add: binder_addressing_def)
+    have outside: "(pattern_syntax_interior (ps!i) \<union> rel_dom (pattern_literal_bindings (ps!i)))
+        \<inter> binder_addresses = {}"
+      using pattern_syntax_interior_outside[of "ps!i"] pattern_literal_slots_outside[of "ps!i"] by blast
     show ?thesis
-      by (simp only: pattern_syntax_carrier[OF paddr] image_Un
-          bound_branch_image_outside[OF pattern_syntax_interior_outside]
-          bound_branch_image_outside[OF pattern_literal_slots_outside]
-          bound_branch_image_binders[OF pb])
+      by (simp only: bound_branch_image_split[OF pattern_syntax_carrier[OF paddr] outside pb] image_Un)
   qed
   have vars0: "pattern_forest_variables ps = (\<Union>i<length ps. pattern_variables (ps!i))"
   proof (rule set_eqI, rule iffI)
@@ -456,7 +480,7 @@ proof -
     by (simp add: vars0 image_UN)
   have carrier: "rra_carrier (object_structure (pattern_forest_syntax f ps)) =
       (\<Union>i<length ps. bound_branch i ` rra_carrier (object_structure (pattern_syntax f (ps!i))))"
-    by (simp add: pattern_forest_syntax_def bound_forest_def placed_forest_def placed_positions_def cong: SUP_cong_simp)
+    by (simp add: pattern_forest_syntax_def bound_forest_pushed cong: SUP_cong_simp)
   show ?thesis
     by (simp add: carrier each vars pattern_forest_interior_def pattern_forest_slot_positions
         syntax_forest_positions_eq UN_Un_distrib cong: SUP_cong_simp)

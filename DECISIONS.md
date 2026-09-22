@@ -11935,6 +11935,25 @@ contracts alone.
   Factor_Premise_Forests `template_list_addressing`, `template_projection_fixed` (of which
   `template_projection_prefix` is an instance); in Factor_Reference_Tables `reference_table_placed`, of which
   `reference_table_forest` is now the instance at `syntax_branch`. No word changed.
+- *Correction (tasks 225 and 251, 2026-09-22; task 179's review, follow-up 1, and task 223's review,
+  follow-ups 1–4):* the syntax forest is the placed forest at `syntax_branch`: `syntax_forest`,
+  `syntax_forest_positions`, `syntax_forest_table` and the executable `finite_syntax_forest`,
+  `finite_syntax_forest_table` are defined through the notion, every statement kept, their own formation, reads and
+  member proofs **retired**, with `syntax_forest_positions_eq` and `syntax_forest_table_eq` stating the union form
+  their consumers read. That form is stated once for any family of placements: **new**
+  `RRA_Placed_Forests.placed_forest_pushed` (a forest's carrier, its incidence and its functional bindings are the
+  unions of those of each child pushed by its own placement), of which `syntax_forest_pushed` and
+  `Factor_Pattern_Forests.bound_forest_pushed` are the instances, the pattern and premise forests' carrier steps
+  reading the latter; **new** `Factor_Premise_Construction.placed_table_eq` (a placed
+  table is the union of each child's table under `map_slot_keys (g i)`), stated in the first theory holding both
+  notions and proved from `placed_table_member` and `placed_table_child`, so that `placed_table_def` is unfolded in
+  its own theory alone, and read by `syntax_forest_table_eq` and `reference_table_placed`; `syntax_forest_value_map`
+  becomes the instance of `placed_table_values`. **New** `Factor_Pattern_Forests.bound_branch_image_split` (a
+  child's carrier splits where the branch does: the part outside the binders is placed at `syntax_branch`, the
+  binder occurrences stay where they are), which the pattern forest's carrier accounting and `premise_forest_carrier`
+  both instantiate. **Retired** `syntax_forest_child_reads`' premise that every child is formed, which its
+  derivation from `placed_forest_reads` does not use, and with it the derivation that only supplied it in
+  `Factor_Schema_Forests.schema_codes_forest_recovers`. No word changed.
 
 Outside the founding theories no proof computes a position: `syntax_branch.simps` leave the simpset after the
 contracts are proved, `family_ports_def`, `syntax_record_ports_def` and `fresh_address_def` are unfolded nowhere

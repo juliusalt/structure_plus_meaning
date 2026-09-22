@@ -132,7 +132,7 @@ proof -
       by (rule reference_table_union[OF new old separate])
     show ?case using union by (simp only: lessThan_Suc UN_insert)
   qed
-  show ?thesis using prefix[of "length Ls"] len by (simp add: placed_table_def map_slot_keys_def)
+  show ?thesis using prefix[of "length Ls"] len by (simp add: placed_table_eq)
 qed
 
 lemma template_reference_table:

@@ -108,7 +108,7 @@ proof (intro allI impI)
   have small: "i < length children" using index by simp
   have child_reads: "object_reads_agree (push_object (syntax_branch i) ?R) body
     (syntax_branch i ` rra_carrier (object_structure ?R))"
-    using syntax_forest_child_reads[OF children_formed children_counts small] index by simp
+    using syntax_forest_child_reads[OF children_counts small] index by simp
   have whole_reads: "object_reads_agree (push_object (syntax_branch i) ?R) framed
     (syntax_branch i ` rra_carrier (object_structure ?R))"
     by (rule object_reads_agree_extend[OF child_reads reads])

@@ -12,10 +12,15 @@ import signal
 import subprocess
 import sys
 import tempfile
-import time
 import unittest
 
 TOOLS = Path(__file__).resolve().parent
+sys.path.insert(0, str(TOOLS))
+from host_test_support import GENEROUS, process_stopped, wait_for
+
+# The runtime timeout the timeout test measures: far above the time the fixture runtime takes to start
+# its child, so that the timeout stops a runtime that has a child to stop, even on a loaded machine.
+RUNTIME_TIMEOUT = "5"
 FAKE = r'''#!/usr/bin/env python3
 from pathlib import Path
 import json, subprocess, sys, time
@@ -145,16 +150,16 @@ class InvestigationTests(unittest.TestCase):
     def mode(self, name):
         (self.root / "mode").write_text(name)
 
-    def command(self, runtime_timeout="2"):
+    def command(self, runtime_timeout=str(GENEROUS)):
         return [sys.executable, "-B", str(self.root / "tools/investigate.py"),
             "--isabelle", str(self.root / "fake_isabelle"), "--poly", str(self.root / "fake_poly"),
             "--engine-cache", str(self.root / "cache"), "--output", str(self.root / "output"),
             "--runtime-timeout", runtime_timeout, "run", str(self.root / "case.json")]
 
-    def execute(self, mode="success", timeout="2"):
+    def execute(self, mode="success", timeout=str(GENEROUS)):
         self.mode(mode)
         result = subprocess.run(self.command(timeout), text=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT, timeout=10)
+                                stderr=subprocess.STDOUT, timeout=GENEROUS)
         receipt = json.loads((self.root / "output/receipt.json").read_text())
         proof = json.loads((self.root / "output/proof.json").read_text())
         self.assertNotEqual(receipt["invocation"], "OLD", result.stdout)
@@ -371,33 +376,27 @@ class InvestigationTests(unittest.TestCase):
         self.assertEqual(encoded.count('"'), 2)
 
     def assert_child_stopped(self):
+        self.assertTrue((self.root / "child_pid").exists(), "the runtime stopped before it started a child")
         child = int((self.root / "child_pid").read_text())
-        path = Path(f"/proc/{child}/stat")
-        limit = time.monotonic() + 2
-        while path.exists() and path.read_text().split()[2] != "Z" and time.monotonic() < limit:
-            time.sleep(0.01)
-        self.assertTrue(not path.exists() or path.read_text().split()[2] == "Z")
+        wait_for(lambda: process_stopped(child), f"the runtime's child {child} to stop")
 
     def test_runtime_timeout_records_failure_and_stops_children(self):
-        result, receipt, _ = self.execute("timeout", "0.3")
+        result, receipt, _ = self.execute("timeout", RUNTIME_TIMEOUT)
         self.assertEqual(result.returncode, 124, result.stdout)
         self.assertEqual(receipt["status"], "timed_out")
         self.assert_child_stopped()
 
     def test_interruption_records_failure_and_stops_children(self):
         self.mode("interrupt")
-        process = subprocess.Popen(self.command("20"), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        process = subprocess.Popen(self.command("600"), stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
         try:
             # The interruption is meaningful only once the runtime has started its child: wait for that
-            # observable condition, bounded, and stop waiting at once if the tool exits before it.
-            limit = time.monotonic() + 120
-            while (not (self.root / "child_pid").exists() and process.poll() is None
-                   and time.monotonic() < limit):
-                time.sleep(0.01)
+            # event, and stop waiting at once if the tool exits before it.
+            wait_for(lambda: (self.root / "child_pid").exists() or process.poll() is not None,
+                     "the runtime to start its child")
             self.assertIsNone(process.poll(), "the tool exited before its runtime started a child")
-            self.assertTrue((self.root / "child_pid").exists(), "no child started within the bound")
             process.send_signal(signal.SIGTERM)
-            output, _ = process.communicate(timeout=5)
+            output, _ = process.communicate(timeout=GENEROUS)
             self.assertEqual(process.returncode, 143, output)
             receipt = json.loads((self.root / "output/receipt.json").read_text())
             self.assertEqual(receipt["status"], "interrupted")

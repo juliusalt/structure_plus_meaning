@@ -365,17 +365,6 @@ text \<open>
   that depends only on the names at the positions it uses, is stated after them with its laws.
 \<close>
 
-lemma map_filter_agree:
-  "(\<And>x. x\<in>set xs \<Longrightarrow> f x=g x) \<Longrightarrow> List.map_filter f xs=List.map_filter g xs"
-proof (induction xs)
-  case Nil
-  then show ?case by (simp add: List.map_filter_simps)
-next
-  case (Cons x xs)
-  have head: "f x=g x" by (rule Cons.prems) simp
-  have tail: "List.map_filter f xs=List.map_filter g xs" by (rule Cons.IH) (rule Cons.prems, simp)
-  show ?case by (simp only: List.map_filter_simps head tail)
-qed
 
 lemma isabelle_local_names_agree:
   assumes agree: "\<And>i. i\<in>set ps \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i"

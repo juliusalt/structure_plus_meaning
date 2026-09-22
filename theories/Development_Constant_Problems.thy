@@ -3,17 +3,6 @@ theory Development_Constant_Problems
     Finite_Singleton_Selection "HOL-Library.Parallel"
 begin
 
-section \<open>Selecting from a list by an optional reading\<close>
-
-text \<open>
-  Every selection below reads each element of an actual list and keeps the results the
-  reading returns. Its membership is the library's optional image of that reading, so the
-  argument is instantiated once here and never repeated in the selections that follow.
-\<close>
-
-lemma map_filter_member:
-  "y\<in>set (List.map_filter f xs) \<longleftrightarrow> (\<exists>x\<in>set xs. f x=Some y)"
-  by (induction xs) (auto simp: List.map_filter_simps split: option.splits)
 
 section \<open>A problem of a constant reads one kind of its statements\<close>
 

@@ -1,5 +1,5 @@
 theory Isabelle_Entities
-  imports Isabelle_Terms Finite_Inference_Development
+  imports Isabelle_Terms Finite_Inference_Development Map_Filter_Lists
 begin
 
 section \<open>Checked contexts present development entities\<close>
@@ -161,59 +161,26 @@ definition isabelle_declared_once :: "isabelle_context \<Rightarrow> bool" where
 
 text \<open>
   Distinct declared constants are a condition sufficient for the obligation: an optional reading whose
-  values are distinct takes each value at one member only.
+  values are distinct takes each value at one member only (\<open>map_filter_unique\<close>).
 \<close>
-
-lemma map_filter_unique:
-  assumes distinct: "distinct (List.map_filter g xs)" and x: "x\<in>set xs" and y: "y\<in>set xs"
-    and same: "g x=Some v" "g y=Some v"
-  shows "x=y"
-  using assms
-proof (induction xs)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons z zs)
-  show ?case
-  proof (cases "g z")
-    case None
-    then have "distinct (List.map_filter g zs)" using Cons.prems(1) by (simp add: List.map_filter_simps)
-    moreover have "x\<in>set zs" "y\<in>set zs" using Cons.prems(2,3,4,5) None by auto
-    ultimately show ?thesis using Cons.IH Cons.prems(4,5) by blast
-  next
-    case (Some w)
-    then have rest: "distinct (List.map_filter g zs)" and fresh: "w\<notin>set (List.map_filter g zs)"
-      using Cons.prems(1) by (simp_all add: List.map_filter_simps)
-    have listed: "u\<in>set us \<Longrightarrow> g u=Some w \<Longrightarrow> w\<in>set (List.map_filter g us)" for u us
-      by (induction us) (auto simp: List.map_filter_simps split: option.splits)
-    have inside: "u\<in>set zs \<Longrightarrow> g u=Some w \<Longrightarrow> False" for u
-      using fresh listed by blast
-    show ?thesis
-    proof (cases "x=z")
-      case True
-      then have "w=v" using Some Cons.prems(4) by simp
-      then show ?thesis using True Cons.prems(3,5) inside by auto
-    next
-      case False
-      then have x': "x\<in>set zs" using Cons.prems(2) by simp
-      show ?thesis
-      proof (cases "y=z")
-        case True
-        then have "w=v" using Some Cons.prems(5) by simp
-        then show ?thesis using x' Cons.prems(4) inside by auto
-      next
-        case False
-        then have "y\<in>set zs" using Cons.prems(3) by simp
-        then show ?thesis using Cons.IH[OF rest x'] Cons.prems(4,5) by blast
-      qed
-    qed
-  qed
-qed
 
 lemma isabelle_declared_once_distinct:
   assumes "distinct (List.map_filter isabelle_declared_constant (snd C))"
   shows "isabelle_declared_once C"
   unfolding isabelle_declared_once_def using map_filter_unique[OF assms] by blast
+
+text \<open>
+  The obligation is decided by its code equation: the constants declared by the state's declarations,
+  with repeated declarations removed, are distinct. One declaring entity repeated is allowed; two
+  different entities declaring one constant are not. Only declarations are compared, since no other
+  entity declares a constant.
+\<close>
+
+lemma isabelle_declared_once_code [code]:
+  "isabelle_declared_once C \<longleftrightarrow> distinct (List.map_filter isabelle_declared_constant
+    (remdups (filter (\<lambda>e. isabelle_declared_constant e\<noteq>None) (snd C))))"
+  unfolding isabelle_declared_once_def map_filter_distinct_iff[OF distinct_remdups] set_remdups set_filter
+  by auto
 
 text \<open>
   A declaration states its constant as a term of the table carrying the declared type; that term

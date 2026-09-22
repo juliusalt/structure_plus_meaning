@@ -359,4 +359,48 @@ proof -
   then show ?thesis by (simp only: finite_schema_payloads_exact)
 qed
 
+section \<open>The programs the keyed question installs read no octet it adds but the empty payload\<close>
+
+text \<open>
+  The question installs two kinds of program beside the guard source: its scope program, the guard source
+  with one view whose clauses are the scope clauses, and one ground program per facet, the guard source
+  with one view whose clauses are the facet's ground clauses. Each view's interface is a variable and each
+  of its clauses states only the empty payload, so the payloads the installed program states are those of
+  the guard source and the empty payload, and nothing else: through @{thm finite_system_payloads_exact}
+  this is the octets the program reads as structure.
+\<close>
+
+lemma finite_add_view_payloads:
+  "v |\<in>| finite_system_payloads (finite_add_view_definition P d p C) \<longleftrightarrow>
+    v |\<in>| finite_system_payloads P \<or> v |\<in>| finite_pattern_payloads p \<or>
+    (\<exists>c S. (c,S) |\<in>| C \<and> v |\<in>| finite_schema_payloads S)"
+  by (auto simp: finite_system_payloads_def finite_add_view_definition_def ffUnion.rep_eq fimage.rep_eq)
+
+lemma finite_variable_view_payloads:
+  assumes clauses: "\<And>c S v. (c,S) |\<in>| C \<Longrightarrow> v |\<in>| finite_schema_payloads S \<Longrightarrow> v=[]"
+  shows "system_payloads (decode_finite_system (finite_add_view_definition P d (Finite_Variable a) C)) \<subseteq>
+    system_payloads (decode_finite_system P) \<union> {[]}"
+proof
+  fix v assume "v\<in>system_payloads (decode_finite_system (finite_add_view_definition P d (Finite_Variable a) C))"
+  then have "v |\<in>| finite_system_payloads (finite_add_view_definition P d (Finite_Variable a) C)"
+    by (simp only: finite_system_payloads_exact[symmetric])
+  then have "v |\<in>| finite_system_payloads P \<or> v=[]"
+    using clauses by (auto simp: finite_add_view_payloads)
+  then show "v\<in>system_payloads (decode_finite_system P) \<union> {[]}"
+    by (auto simp: finite_system_payloads_exact[symmetric])
+qed
+
+theorem keyed_scope_program_payloads:
+  "system_payloads (decode_finite_system (finite_scope_program (keyed_development_candidates key subjects))) \<subseteq>
+    system_payloads (decode_finite_system (finite_guard_source_program True)) \<union> {[]}"
+  unfolding finite_scope_program_def
+  by (rule finite_variable_view_payloads) (simp only: keyed_scope_clause_payloads)
+
+theorem keyed_facet_program_payloads:
+  "system_payloads (decode_finite_system (finite_ground_program
+      (finite_development_rows (keyed_development_facet key subjects condition)))) \<subseteq>
+    system_payloads (decode_finite_system (finite_guard_source_program True)) \<union> {[]}"
+  unfolding finite_ground_program_def
+  by (rule finite_variable_view_payloads) (simp only: keyed_facet_clause_payloads)
+
 end

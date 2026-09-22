@@ -1,5 +1,5 @@
 theory Development_Constant_Problems
-  imports Isabelle_Code_Equations Development_Problems Filtered_Native_Questions
+  imports Isabelle_Code_Equations Development_Problems Filtered_Native_Questions Development_Entity_Keys
     Finite_Singleton_Selection "HOL-Library.Parallel"
 begin
 
@@ -162,8 +162,9 @@ section \<open>The incumbent is the admitted answer of a native question on the 
 
 text \<open>
   The candidates of the question are the entities of the constant's own scope and its single
-  original condition is the demand of the reading, so the existing filtered question contract
-  applies without restating it. Admission establishes the demand at every admitted entity,
+  original condition is the demand of the reading, so the keyed question's contracts
+  (@{thm keyed_development_admission}, @{thm keyed_faceted_admission_at}) apply without restating
+  them. Admission establishes the demand at every admitted entity,
   and the admitted entity's statement is one of the demanded statements: the question admits
   every entity of the scope the reading demands, which is the incumbent family of the problem.
   Ranging the candidates over the whole entity list instead would conflate what the problem is
@@ -174,33 +175,55 @@ text \<open>
 definition development_constant_question ::
     "(isabelle_entity \<Rightarrow> isabelle_term option) \<Rightarrow> isabelle_context \<Rightarrow> nat \<Rightarrow>
       native_development_question option" where
-  "development_constant_question reading C c=filtered_development_question
+  "development_constant_question reading C c=keyed_development_question (development_entity_key C)
     (development_constant_scope C c) (development_demanded reading)"
+
+text \<open>
+  Each candidate of the question is an entity of the constant's scope named by its key in the state, the
+  path of its first occurrence in the state's entity list: one key names one entity across every question
+  asked on the state, and the key is injective on the scope because the scope is part of the state. The
+  question states its candidates as paths of shapes and reads no octet of them.
+\<close>
+
+lemma development_constant_key_injective:
+  "inj_on (development_entity_key C) (set (development_constant_scope C c))"
+  by (rule inj_on_subset[OF development_entity_key_injective])
+    (auto simp: development_constant_scope_member)
 
 theorem development_constant_admission:
   assumes question: "development_constant_question reading C c=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  shows "i<length (development_constant_scope C c) \<and>
-    development_demanded reading (development_constant_scope C c!i)"
-  by (rule filtered_development_admission[OF question[unfolded development_constant_question_def]
-    admission selected])
+    and selected: "x\<in>set accepted"
+  obtains e where "e\<in>set (development_constant_scope C c)" "x=finite_path (development_entity_key C e)"
+    "development_demanded reading e"
+  using keyed_development_admission[OF question[unfolded development_constant_question_def] admission selected]
+  by blast
+
+theorem development_constant_admitted_at:
+  assumes question: "development_constant_question reading C c=Some Q"
+    and admission: "native_development_admission Q report=Some accepted"
+    and selected: "finite_path (development_entity_key C e)\<in>set accepted"
+    and member: "e\<in>set (development_constant_scope C c)"
+  shows "development_demanded reading e"
+  using keyed_faceted_admission_at[OF development_constant_key_injective
+    question[unfolded development_constant_question_def keyed_development_question_def] admission selected member]
+  by simp
 
 theorem development_constant_admitted_statement:
   assumes question: "development_constant_question reading C c=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  obtains p where "reading (development_constant_scope C c!i)=Some p"
-    "p\<in>set (development_statements reading C c)"
+    and selected: "x\<in>set accepted"
+  obtains e p where "e\<in>set (development_constant_scope C c)" "x=finite_path (development_entity_key C e)"
+    "reading e=Some p" "p\<in>set (development_statements reading C c)"
 proof -
-  have condition: "i<length (development_constant_scope C c)"
-      "development_demanded reading (development_constant_scope C c!i)"
-    using development_constant_admission[OF assms] by simp_all
-  obtain p where read: "reading (development_constant_scope C c!i)=Some p"
-    using condition(2) by (auto simp: development_demanded_def)
+  obtain e where member: "e\<in>set (development_constant_scope C c)"
+      and path: "x=finite_path (development_entity_key C e)" and demanded: "development_demanded reading e"
+    by (rule development_constant_admission[OF question admission selected])
+  obtain p where read: "reading e=Some p"
+    using demanded by (auto simp: development_demanded_def)
   have "p\<in>set (development_statements reading C c)"
-    by (simp only: development_statements_exact) (use read nth_mem[OF condition(1)] in blast)
-  then show thesis by (rule that[OF read])
+    by (simp only: development_statements_exact) (use read member in blast)
+  then show thesis by (rule that[OF member path read])
 qed
 
 text \<open>

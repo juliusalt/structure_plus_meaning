@@ -1,6 +1,6 @@
 theory Development_Native_Selection
   imports Development_Native_Readiness Natural_Binary_Digits Development_Problems Factor_Finite_Development_Questions
-    Complete_Value_References
+    Complete_Value_References Development_Entity_Keys
 begin
 
 section \<open>The development's readiness is the native readiness of its rows\<close>
@@ -248,47 +248,6 @@ text \<open>
   hold is keyed by the list's length. It identifies a member of the list and orders nothing. Readiness keys
   problems by it; a state's entities are keyed by it in the state's own entity list.
 \<close>
-
-definition first_occurrence_key :: "'a list \<Rightarrow> 'a \<Rightarrow> bool list" where
-  "first_occurrence_key xs x=natural_binary_digits
-    (case value_reference_index x xs of None \<Rightarrow> length xs | Some i \<Rightarrow> i)"
-
-lemma first_occurrence_key_at:
-  assumes "x\<in>set xs"
-  obtains i where "value_reference_index x xs=Some i" "i<length xs" "xs!i=x"
-    "first_occurrence_key xs x=natural_binary_digits i"
-proof -
-  obtain i where index: "value_reference_index x xs=Some i"
-    using assms value_reference_index_absent[of x xs] by (cases "value_reference_index x xs") auto
-  show thesis using that[OF index] value_reference_index_read[OF index]
-    by (simp add: first_occurrence_key_def index)
-qed
-
-lemma first_occurrence_key_injective:
-  assumes x: "x\<in>set xs" and y: "y\<in>set xs"
-    and same: "first_occurrence_key xs x=first_occurrence_key xs y"
-  shows "x=y"
-proof -
-  obtain i where "xs!i=x" "first_occurrence_key xs x=natural_binary_digits i"
-    by (rule first_occurrence_key_at[OF x])
-  moreover obtain j where "xs!j=y" "first_occurrence_key xs y=natural_binary_digits j"
-    by (rule first_occurrence_key_at[OF y])
-  ultimately show ?thesis using same by simp
-qed
-
-lemma first_occurrence_key_inj_on: "inj_on (first_occurrence_key xs) (set xs)"
-  by (rule inj_onI) (rule first_occurrence_key_injective)
-
-text \<open>
-  The executable key of a state's entities is the first-occurrence key of an entity in the state's own
-  entity list; it is injective on those entities, which is all a keyed question asks of its key.
-\<close>
-
-definition development_entity_key :: "isabelle_context \<Rightarrow> isabelle_entity \<Rightarrow> bool list" where
-  "development_entity_key C=first_occurrence_key (snd C)"
-
-lemma development_entity_key_injective: "inj_on (development_entity_key C) (set (snd C))"
-  by (simp only: development_entity_key_def first_occurrence_key_inj_on)
 
 definition development_readiness_key :: "development_problem list \<Rightarrow> development_problem \<Rightarrow> bool list" where
   "development_readiness_key ps p=first_occurrence_key ps p"

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """A check run to its end, which ends by listing every error it reported: check_errors.py [--watch PATH]...
-[--keep DIR] -- COMMAND...
+[--keep DIR] [--note TEXT] -- COMMAND...
 
 The owner, 2026-09-21: better to wait for the full run and give the session all its errors, to be dealt with at once,
 than to stop at the first and have them fixed one by one — a check after each single fix spends a whole run on each.
@@ -12,8 +12,9 @@ end — and prints them last, one line each with where it stands, so that the en
 check that failed says also what else failed, which is no Isabelle message: a native execution, a recipe, a host test,
 a tool that raised — each part its output names as failed, with the failure its log ends on, each log written meanwhile
 that ends on one, and the check's own summary error (found 2026-09-21: a native controller's errors would have reached
-nobody but by reading the logs one by one). A list longer than ROOM is kept whole in DIR and named. It ends with the
-check's own status.
+nobody but by reading the logs one by one). A list longer than ROOM is kept whole in DIR and named. TEXT, what the guard
+changed of the command (work_meter.forked), is said after the output, before the list. It ends with the check's own
+status.
 """
 import json
 import os
@@ -150,6 +151,7 @@ def main():
     split = args.index("--")
     watched = [args[i + 1] for i in range(split - 1) if args[i] == "--watch"]
     keep = next((args[i + 1] for i in range(split - 1) if args[i] == "--keep"), None)
+    note = next((args[i + 1] for i in range(split - 1) if args[i] == "--note"), None)
     since = time.time() - 1  # a file system's times are coarser than the clock's
     process = subprocess.Popen(args[split + 1:], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     seen = []
@@ -168,8 +170,12 @@ def main():
     if status:  # a failed check says what else failed; one that passed has nothing to fix
         errors += failures(output, logs_read)
     errors = list(dict.fromkeys(errors))  # one message in the output and in a log is one error
+    ended = not seen or seen[-1].endswith("\n")
+    if note:
+        sys.stdout.write(("" if ended else "\n") + note + "\n")
+        ended = True
     if errors:
-        sys.stdout.write(("" if not seen or seen[-1].endswith("\n") else "\n") + listed(errors, keep))
+        sys.stdout.write(("" if ended else "\n") + listed(errors, keep))
     return status
 
 

@@ -11,9 +11,10 @@
              continue after IDLE_MAX seconds.
   held       a sealed session something may still consult or continue is pinged before its cache expires (v2.ping):
              the knowledge base and the planner always; a task's session while its task is being checked, reviewed,
-             fixed or committed; its reviewer while a re-review may come; a waiting (parked) session for v2.HOLD_PARK seconds,
-             after which it is resumed to record a partial result; a task designer or a designer while tasks it
-             briefed or designed are open, for at most v2.HOLD_MAX seconds. Anything else is released.
+             fixed or committed; its reviewer while a re-review may come; a waiting (parked) session for v2.HOLD_PARK seconds
+             (v2.HOLD_TREE when parked for the one tree: v2.hold_of), after which it is resumed to record a partial result; a task designer while
+             its proposal waits on the planner (who may send it back to be
+             revised: v2.revise_proposal), for at most v2.HOLD_MAX seconds. Anything else is released.
   finishing  a quick fix past its budget and a grace is stopped, the task given to the planner; a check or commit whose
              finalizer has not reported within FINAL_MAX seconds counts as failed.
   dispatch   then v2.dispatch: the knowledge base, the producing slot, the supporting slot, a quick fix, a
@@ -33,10 +34,14 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import v2  # noqa: E402
+import train  # noqa: E402
+import finalize  # noqa: E402
 
 STATE = v2.STATE
 IDLE_MAX = int(os.environ.get("ORCH_IDLE_MAX", 300))
 GONE_CHECKS = int(os.environ.get("ORCH_GONE_CHECKS", 3))
+API_RETRY_AFTER = int(os.environ.get("ORCH_API_RETRY_AFTER", 60))  # a turn the API broke off: redone after this
+API_RETRIES = int(os.environ.get("ORCH_API_RETRIES", 3))  # in a row, before it is a stall like any other
 BACKOFF = int(os.environ.get("ORCH_WAKE_BACKOFF", 600))
 # The finalizer waits for Isabelle at most ORCH_ISABELLE_WAIT and runs its check at most ORCH_FINAL_MAX; past both and a
 # margin it is given up. A finalizer that is gone without having reported is given up after START_GRACE.
@@ -72,6 +77,36 @@ def last_reply(sid):
     return None, "", 0
 
 
+def replied_between(sid, after, before):
+    """Whether the session made a reply of its own (not the harness's synthetic one) between two moments."""
+    path = v2.transcript(sid)
+    try:
+        size = os.path.getsize(path)
+        with open(path, "rb") as f:
+            f.seek(max(0, size - 2_000_000))
+            lines = f.read().decode(errors="ignore").splitlines()
+    except OSError:
+        return False
+    for line in reversed(lines):
+        if '"assistant"' not in line:
+            continue
+        try:
+            d = json.loads(line)
+        except ValueError:
+            continue
+        if d.get("type") != "assistant" or (d.get("message") or {}).get("model") == "<synthetic>":
+            continue
+        try:
+            epoch = datetime.datetime.fromisoformat(d.get("timestamp", "").replace("Z", "+00:00")).timestamp()
+        except ValueError:
+            continue
+        if epoch <= after:
+            return False
+        if epoch < before:
+            return True
+    return False
+
+
 def reset_epoch(text, said_at):
     """The local time the limit notice names, as an epoch at or after the moment it was said."""
     m = re.search(r"resets\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)", text, re.I)
@@ -90,6 +125,38 @@ def age(name):
         return time.time() - os.path.getmtime(os.path.join(STATE, name))
     except OSError:
         return None
+
+
+def api_failed(name, s):
+    """Whether a session's turn ended on the API failing mid-response ("API Error: Server error mid-response…"), and
+    is taken care of here: resumed after API_RETRY_AFTER to redo the step its cut reply was making, API_RETRIES times
+    in a row at most. It waited for the stall's rule, IDLE_MAX and a ten-minute backoff meant for loops, and was told
+    only that its turn had ended (investigate-82, 2026-09-22; the owner: resume it within a minute, and say so). A
+    reply of its own since starts the count again."""
+    model, said, at = last_reply(s["sid"])
+    mark = os.path.join(STATE, f"api-errors-{name}")
+    if model != "<synthetic>" or not said.startswith("API Error") or re.search(r"hit your .*limit", said, re.I):
+        with contextlib.suppress(OSError):
+            os.remove(mark)
+        return False
+    words = (open(mark).read().split() if os.path.exists(mark) else []) + ["0", "0"]
+    n, handled = int(words[0] or 0), float(words[1] or 0)
+    if handled and at <= handled:
+        return True  # this failure was taken care of: its resume is under way
+    if n and replied_between(s["sid"], handled, at):
+        # a reply of its own came between: not in a row. plan-35, working again after one failure, was counted "2 of
+        # 3 in a row" at its next — the count was reset only when a pass found it idle (2026-09-22 04:08)
+        n = 0
+    if n >= API_RETRIES:
+        return False  # tried enough: the stall's own rule
+    if time.time() - at < API_RETRY_AFTER or (age(f"{name}.woken") or API_RETRY_AFTER + 1) <= API_RETRY_AFTER:
+        return True  # a moment first
+    if not v2.resume(name, f"The API failed mid-response ({said[:160]}): your last reply may be incomplete, and what it "
+                           "was about to do may not have been done. Redo that step, and continue."):
+        return False
+    open(mark, "w").write(f"{n + 1} {at}")
+    v2.log(f"{name}: the API failed mid-response; resumed to redo its step ({n + 1} of {API_RETRIES} in a row)")
+    return True
 
 
 def gone(name):
@@ -179,6 +246,8 @@ def care(name, s):
     # gone count from ever reaching GONE_CHECKS: a session in that state would hold its slot for ever with nothing
     # said, since `gone` is only consulted when there is no row at all (2026-09-21)
     if r["activity"] not in ("busy", "idle"):
+        if s["role"] != "kb" and api_failed(name, s):
+            return  # a turn the API broke off leaves its session blocked, which is not gone
         if s["state"] in v2.LIVE and gone(name):
             lost(name, f"is listed as {r['activity']} and no turn of it runs")
         return
@@ -194,6 +263,8 @@ def care(name, s):
     if model == "<synthetic>" and re.search(r"hit your .*limit", said, re.I):
         if time.time() >= reset_epoch(said, at) + 90 and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
             v2.resume(name, "You were stopped by the account's usage limit, which has now reset. Continue.")
+        return
+    if api_failed(name, s):
         return
     if s["state"] in v2.LIVE and v2.has_mail(name) and not v2.running_jobs(name):
         messages = v2.unread(name)
@@ -235,6 +306,12 @@ def care(name, s):
         v2.seal(name)
         v2.log(f"{name} has handled what it was given and waits for the next event")
         return
+    run = v2.machine_wait(s)
+    if run:  # its turn ended waiting for the machine, which refused its run: woken when one may start, not before
+        if not v2.run_blocked((s.get("task"), s.get("reviews")), run) and (age(f"{name}.woken") or 61) > 60:
+            if not v2.resume(name, "A run may start on the machine now: run your check and continue."):
+                lost(name, "went cold while it waited for the machine")
+        return
     if at and time.time() - at > IDLE_MAX and (age(f"{name}.woken") or BACKOFF + 1) > BACKOFF:
         # what it is told is the rule that holds for it: a producing session's turn is freed by a park and by
         # nothing else (ctx_gauge.may_end), so telling it that a question of its own would free it is false, and
@@ -263,24 +340,42 @@ def held(st, name, s):
     if s["state"] == "parked":
         return {"run": "waits on its own run", "tree": "waits on the working tree",
                 "fix": "waits on its efficiency fix",
-                "answer": "waits on the answer to its question"}.get((t.get("parked") or {}).get("for"), "parked")
+                "answer": "waits on the answer to its question",
+                "machine": "waits on a free run"}.get((t.get("parked") or {}).get("for"), "parked")
     if s["state"] == "waiting":
         return "waits on the answer to its question"
     if s["role"] in v2.PRODUCING and t.get("session") == name and t.get("stage") in ("checking", "reviewing", "fixing",
                                                                                      "committing"):
         return f"its task is {t['stage']}"
+    if s["role"] in v2.PRODUCING and v2.may_come_back(st, name, s):
+        return "its task may come back to it"  # resumed when the planner queues it again (v2.reusable)
     x = tasks.get(s.get("reviews") or "") or {}
-    if s["role"] == "reviewer" and t.get("reviewed_by") == name and t.get("verdict") == "reject" \
-            and x.get("stage") in ("fixing", "checking", "reviewing"):
-        return "a re-review may come"
+    if s["role"] == "reviewer" and t.get("reviewed_by") == name and t.get("verdict") == "reject":
+        if x.get("stage") in ("fixing", "checking", "reviewing"):
+            return "a re-review may come"
+        # and while the fix waits (parked, with the planner, queued again), within the hold's bound: held only in the
+        # three stages above, review-23 was released when its task's fix parked for the tree and review-47 when its
+        # task went back to the planner (2026-09-21), and each re-review then needs a reviewer that reads all again
+        if x.get("stage") not in (None, "done", "deleted") and time.time() - ended <= v2.HOLD_MAX:
+            return "a re-review may come once the fix continues"
+    # One that accepted, while the task it accepted has not landed: its commit refused, its landing not merging or
+    # failing, a partial result, sent back to the planner and worked on again — each came back to a fresh reviewer that
+    # read it all again, 11 of them on 2026-09-21/22 (119 requests, 9.1M; start_review resumes this one instead)
+    if s["role"] == "reviewer" and v2.accepted_by(t) == name and x.get("stage") not in ("done", "deleted") \
+            and (v2.read_task(s.get("reviews") or "") or {}).get("status") not in ("completed", None) \
+            and time.time() - ended <= v2.HOLD_MAX and not os.path.exists(os.path.join(STATE, "flags", f"{s.get('sid')}.soft")):
+        return "the task it accepted has not landed"
     if time.time() - ended > v2.HOLD_MAX:
         return None
-    if s["role"] == "task-designer" and any(x.get("briefed_by") == name and x.get("stage") != "done" for x in tasks.values()):
-        return "tasks it briefed are open"
-    if s["role"] == "designer":
-        for tid, x in tasks.items():
-            if x.get("stage") != "done" and s.get("task") in ((v2.read_task(tid) or {}).get("blockedBy") or []):
-                return "tasks built on its design are open"
+    # a proposal is not final until the planner places it, and the one moment a correction is likely is before: held
+    # only while tasks it briefed were open, a task designer was released three seconds after its result, and the
+    # planner's `v2.py tell` found no session — brief 13 was re-planned and briefed again whole (2026-09-21)
+    if s["role"] == "task-designer" and t.get("session") == name and t.get("stage") == "proposed":
+        return "its proposal waits on the planner"
+    # Not held to be asked: a task designer while tasks it briefed were open, a designer while tasks built on its
+    # design were, was pinged for questions none ever came — none in the whole run of 2026-09-21/22, against 26 pings
+    # and 16.4M tokens read (design-66 still pinged an hour after it had landed), and a question to an author gone
+    # cold is answered by the knowledge base (the owner: stop keeping alive what is never asked, 2026-09-22)
     return None
 
 
@@ -331,9 +426,14 @@ def holds():
         since = (((st["tasks"].get(s.get("task")) or {}).get("parked") or {}).get("since") if s["state"] == "parked" else
                  min((q["asked"] for q in st["asks"].values() if q["from"] == name and q["state"] != "answered"),
                      default=None))
-        if s["state"] in ("parked", "waiting") and since and time.time() - since > v2.HOLD_PARK:
-            what = "The fix you waited for has not landed" if s["state"] == "parked" else "No answer to your question came"
-            if not v2.resume(name, f"{what} within {v2.HOLD_PARK // 3600} hours. Record a partial result now "
+        hold = v2.hold_of(st["tasks"].get(s.get("task")) or {}) if s["state"] == "parked" else v2.HOLD_PARK
+        if s["state"] in ("parked", "waiting") and since and time.time() - since > hold:
+            kind = ((st["tasks"].get(s.get("task")) or {}).get("parked") or {}).get("for", "fix")
+            what = {"fix": "The fix you waited for has not landed", "run": "Your run has not ended",
+                    "tree": "The working tree has not come free for you", "answer": "No answer to your question came",
+                    "machine": "No run could start on the machine"}.get(kind) if s["state"] == "parked" else \
+                "No answer to your question came"
+            if not v2.resume(name, f"{what} within {hold // 3600} hours. Record a partial result now "
                                    f"(`v2.py result {s.get('task')}`): what exists, and what remains."):
                 lost(name, "went cold while it waited")
             continue
@@ -371,9 +471,42 @@ def end_finalizer(tid):
 
 def finishing():
     st = v2.peek()
+    landers = checkers = False
     for tid, t in st["tasks"].items():
         stage = t.get("stage")
         if stage in ("checking", "committing"):
+            if t.get("held_finalizer"):
+                continue  # held with the graph (v2.reopen_unlanded): no finalizer is meant to run until it is released
+            if stage == "checking" and t.get("check_again"):
+                again = t["check_again"]
+                if not finalizer_alive(tid) and (time.time() - again.get("at", 0) >= finalize.BASE_RETRY
+                                                 or finalize.active_pointer() != again.get("pointer")):
+                    with v2.state() as w:
+                        w["tasks"][tid].pop("check_again", None)
+                        w["tasks"][tid]["finishing_since"] = None
+                    v2.log(f"task {tid}'s check, refused by the proof base, is run again")
+                    v2.background("finalize.py", "check", tid)
+                continue
+            if stage == "checking" and train.CHECK_QUEUE.queued(tid):
+                # its check waits in the check queue: the next batch checks it, whoever runs it (train.run_batcher)
+                checkers = checkers or finalizer_alive(tid)
+                continue
+            if stage == "committing":
+                d = train.decision(tid)
+                if d and d.get("what") == "landed":
+                    # landed, and its report is the lander's to make once it lets main go; one never made (the lander
+                    # ended) is made here: task 151 landed at 15:30:23 and was taken for a finalizer that had ended
+                    # without reporting, and sent to the planner (2026-09-22)
+                    with v2.landing(time.time()) as free:
+                        pass
+                    if free and not train.lander_alive() and time.time() - d.get("decided", 0) > 60:
+                        v2.log(f"task {tid} landed as {d.get('ref')}; its report was never made: it is made now")
+                        v2.committed(tid, d.get("ref"), None)
+                    continue
+            if stage == "committing" and train.queued(tid):
+                # committed on its branch and queued: the next train lands it, whoever lands it (train.run_lander)
+                landers = landers or finalizer_alive(tid)
+                continue
             since = t.get("finishing_since")
             if not since:
                 with v2.state() as w:
@@ -392,6 +525,16 @@ def finishing():
         elif t.get("finishing_since"):
             with v2.state() as w:
                 w["tasks"][tid]["finishing_since"] = None
+    asked = [tid for tid, e in train.CHECK_QUEUE.peek().items() if not e.get("decided")]
+    if asked and not checkers and not train.batcher_alive():
+        v2.log(f"the check queue holds task{'s' if len(asked) > 1 else ''} {train.listing(asked)} and nobody checks "
+               "it: a batcher starts")
+        v2.background("finalize.py", "check-batch")
+    waiting = [tid for tid, e in train.peek().items() if not e.get("decided")]
+    if waiting and not landers and not train.lander_alive():
+        v2.log(f"the landing queue holds task{'s' if len(waiting) > 1 else ''} {train.listing(waiting)} and nobody "
+               "lands it: a lander starts")
+        v2.background("finalize.py", "land-queue")
     for name, s in st["sessions"].items():
         fix = s.get("fix")
         if fix and s["state"] in v2.LIVE and time.time() - fix["since"] > v2.FIX_MINUTES * 60 + GRACE:
@@ -408,8 +551,9 @@ def layers():
     """Refresh a base's frontier layer when what it holds has moved: when the held files changed since the layer
     loaded reach ORCH_LAYER_STALE of its tokens, or when `state/<who>-layer.refresh` asks for one by hand —
     replaying the 30 commits of 2026-09-19 that came to 6 refreshes for the middle base and 7 for the implementation
-    one in 15.5 hours, about every 2.5 to 3 hours of continuous work. The stable reference under it is the owner's to
-    rebuild and is never touched here."""
+    one in 15.5 hours, about every 2.5 to 3 hours of continuous work. The stable reference under it is not rebuilt
+    here: a refresh that finds its stable base's own cache entry cold loads that base again first (base.sh restable,
+    the owner, 2026-09-21), since a fork of it would write it whole and every refresh after would too."""
     for who in v2.BASES:
         if not os.path.exists(os.path.join(STATE, f"{who}-layer.json")):
             continue
@@ -450,18 +594,69 @@ def watch():
         if (s["state"] in v2.LIVE and not (s["state"] == "waiting" and s.get("sealed"))) or (
                 s["role"] == "kb" and not s.get("sealed") and not s.get("released")):
             contained(f"care of {name}", care, name, s)
-    for part in (planner_mail, finishing, holds, layers, v2.archive):
+    for part in (planner_mail, finishing, holds, layers, v2.lands_when_free, v2.archive, isabelle_snapshot):
         contained(part.__name__, part)
 
 
+def isabelle_snapshot():
+    """The Isabelle processes on this machine and the run each is counted in (v2.isabelle_run_roots), written while
+    there are any to state/isabelle-processes.json: the watchdog sees the machine's processes, and a session's sandbox
+    does not. The count was in processes, the limit in runs (2026-09-21); this shows what one run is on the machine,
+    and it is the count a sandboxed command reads (v2.isabelle_runs), so it is written every pass, no run too."""
+    procs = v2.machine_processes()
+    roots = v2.isabelle_run_roots(procs)  # written every pass, none too: a sandboxed command reads its count here
+
+    def chain(pid, depth=12):
+        out = []
+        while pid in procs and len(out) < depth:
+            out.append({"pid": pid, "name": procs[pid][1], "command": procs[pid][2][:240]})
+            pid = procs[pid][0]
+        return out
+    def rss_mb(pid):  # its resident memory, to judge the probes' limit by (PROBE_MAX)
+        with contextlib.suppress(OSError, ValueError, IndexError):
+            for line in open(f"/proc/{pid}/status"):
+                if line.startswith("VmRSS:"):
+                    return int(line.split()[1]) // 1024
+        return None
+    kinds = {root: v2.run_kind(procs.get(root, (0, "", ""))[2]) for root in set(roots.values())}
+    unseen = v2.unseen_finalizer_runs(procs)  # let start, preparing, no Isabelle yet: a sandbox counts them from here
+
+    def in_sandbox(pid, depth=40):  # a session's run: under bwrap, the sandbox of a session's command
+        while pid in procs and depth:
+            if procs[pid][1] == "bwrap":
+                return True
+            pid, depth = procs[pid][0], depth - 1
+        return False
+    snapshot = {"at": v2.iso(), "memory_available_gb": v2.memory_available_gb(),
+                "runs": len(kinds) + unseen, "heavy": list(kinds.values()).count("heavy") + unseen, "unseen": unseen,
+                "roots": [{"pid": root, "kind": kind, "started": v2.process_started(root), "session": in_sandbox(root)}
+                          for root, kind in kinds.items()],  # what a session's mark is matched with (v2.session_marks)
+                "probes": list(kinds.values()).count("probe"),
+                "processes": [{"pid": pid, "run": root, "kind": kinds[root], "rss_mb": rss_mb(pid),
+                               "run_command": procs.get(root, (0, "", ""))[2][:240], "ancestors": chain(pid)}
+                              for pid, root in sorted(roots.items())]}
+    tmp = os.path.join(STATE, "isabelle-processes.json.tmp")
+    with open(tmp, "w") as f:
+        json.dump(snapshot, f, indent=1)
+    os.replace(tmp, os.path.join(STATE, "isabelle-processes.json"))
+
+
 def contained(what, fn, *args):
+    """One part of a pass, on its own: its failure is logged and holds up nothing else, and one that takes longer
+    than v2.SLOW_PART is named — a pass of 04:19:30–04:27:07 on 2026-09-22 held every resume and start for seven
+    minutes, and nothing said which part."""
+    began = time.time()
     try:
         fn(*args)
     except Exception as e:  # noqa: BLE001
         v2.log(f"watchdog error in {what}: {e!r}")
+    took = time.time() - began
+    if took > v2.SLOW_PART:
+        v2.log(f"the watchdog's {what} took {took:.0f} s")
 
 
 def main():
+    v2.keep_pointer_links()  # stopped or not: the owner's own checks read the base's places too
     if os.path.exists(os.path.join(STATE, "stopped")) or not v2.peek()["active"]:
         return
     v2.dispatch(pre=watch, wait=True)  # the care and the dispatch under one lock

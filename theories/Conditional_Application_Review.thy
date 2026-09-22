@@ -62,11 +62,11 @@ proof (rule fset_eqI)
 qed
 
 theorem conditional_application_admitted:
-  assumes chosen: "native_admitted_choice methods
+  assumes chosen: "keyed_admitted_choice (first_occurrence_key methods) methods
       (faceted_native_question methods facets (conditional_application_observation S q obs)) report = Some m"
     and facet: "f\<in>set facets"
   shows "conditional_application_requirement S q obs m f"
-  using faceted_native_choice[OF chosen facet]
+  using keyed_admitted_choice_condition[OF first_occurrence_key_inj_on chosen facet]
   by (simp only: conditional_application_observation_exact)
 
 lemma observed_application_original:

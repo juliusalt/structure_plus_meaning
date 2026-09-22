@@ -92,23 +92,23 @@ text \<open>
 
 lemma development_incumbent_with_fields:
   assumes built: "development_incumbent_with judge S p=Some (B,u,I)"
-  shows "development_data_target (development_problem_locus (fst (snd S)) p)=Some (generation_locus I)"
+  shows "development_locus_target Development_Problem_Role p=Some (generation_locus I)"
     "finite_generation_formed I"
 proof -
   obtain l t where key: "development_incumbent_key S p=Some (l,t)"
     and generated: "development_payload_generation_with judge t (finite_enumerated_environment [] []) l []=Some (B,u,I)"
     using built by (auto simp: development_incumbent_with_def bind_eq_Some_conv split: prod.splits)
-  have locus: "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
+  have locus: "development_locus_target Development_Problem_Role p=Some l"
     using key by (auto simp: development_incumbent_key_def bind_eq_Some_conv)
   note fields=development_payload_generation_fields[OF generated]
-  show "development_data_target (development_problem_locus (fst (snd S)) p)=Some (generation_locus I)"
+  show "development_locus_target Development_Problem_Role p=Some (generation_locus I)"
     using locus fields(1) by simp
   show "finite_generation_formed I" by (rule fields(2))
 qed
 
 lemma development_answer_with_fields:
   assumes built: "development_answer_with judge S r S' H rows=Some (B,u,G)"
-  shows "development_data_target (development_problem_locus (fst (snd S)) (fst r))=Some (generation_locus G)"
+  shows "development_locus_target Development_Problem_Role (fst r)=Some (generation_locus G)"
     "finite_generation_formed G"
 proof -
   obtain l t where key: "development_answer_key S r S'=Some (l,t)"
@@ -116,12 +116,12 @@ proof -
       (development_answer_citations (fst (snd S)) (fst r) l rows)=Some (B,u,G)"
     using built by (auto simp: development_answer_with_unfold bind_eq_Some_conv split: prod.splits)
   obtain p E payload v where generation: "development_answer_generation S r S'=Some (p,E,payload,v)"
-    and locus: "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
+    and locus: "development_locus_target Development_Problem_Role p=Some l"
     using key by (auto simp: development_answer_key_def bind_eq_Some_conv split: option.splits)
   have problem: "p=fst r"
     using generation by (auto simp: development_answer_generation_def Let_def split: prod.splits if_splits)
   note fields=development_payload_generation_fields[OF generated]
-  show "development_data_target (development_problem_locus (fst (snd S)) (fst r))=Some (generation_locus G)"
+  show "development_locus_target Development_Problem_Role (fst r)=Some (generation_locus G)"
     using locus fields(1) problem by simp
   show "finite_generation_formed G" by (rule fields(2))
 qed
@@ -143,14 +143,21 @@ proof -
     using answer by auto
   note incumbent_fields=development_incumbent_with_fields[OF incumbent]
   note answer_fields=development_answer_with_fields[OF recorded]
-  obtain B1 cited uq where issue_fields: "development_data_target (development_issue_locus (fst (snd S)) (fst r))=
+  obtain B1 cited uq where issue_fields: "development_locus_target Development_Issue_Role (fst r)=
       Some (generation_locus Q)" "finite_generation_formed Q"
     by (rule development_recorded_issue_fields[OF issue]) blast
   have locus: "generation_locus G=generation_locus I"
     using incumbent_fields(1) answer_fields(1) by simp
+  obtain li where li: "development_problem_locus_at state_constant_key Development_Issue_Role (fst r)=Some li"
+      "development_data_target (finite_path li)=Some (generation_locus Q)"
+    using issue_fields(1) by (auto simp: bind_eq_Some_conv)
+  obtain lp where lp: "development_problem_locus_at state_constant_key Development_Problem_Role (fst r)=Some lp"
+      "development_data_target (finite_path lp)=Some (generation_locus I)"
+    using incumbent_fields(1) by (auto simp: bind_eq_Some_conv)
+  have apart: "finite_path li\<noteq>finite_path lp"
+    using development_decision_loci_distinct(1)[OF li(1) lp(1)] finite_path_injective by (auto dest: injD)
   have separate: "generation_locus Q\<noteq>generation_locus I"
-    by (rule development_data_targets_distinct[OF issue_fields(1) incumbent_fields(1)])
-      (simp_all add: development_decision_loci_distinct)
+    by (rule development_data_targets_distinct[OF li(2) lp(2) finite_path_formed finite_path_formed apart])
   have formed: "finite_snapshot_formed {|I|}"
     using incumbent_fields(2) by (simp add: finite_snapshot_formed_def finite_snapshot_loci_def fcard_finsert_if fcard_fempty)
   have absent: "finite_snapshot_lookup {|I|} (generation_locus Q)=None"

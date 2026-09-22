@@ -17,7 +17,7 @@ commits it, and only then does the harness complete it and its reviews. A commit
 tree's uncommitted edits of the same files lands again by itself once they are gone (the harness, 03:04). A task that
 comes back to the planner moves again only when queued, and a queued task that a review rejected starts a new round.
 
-**The verdict line (#38–#45, #138, #139).** Task 3's design, briefed by #11. Landed: the state rows (#46), the
+**The verdict line (#38–#45, #139).** Task 3's design, briefed by #11. Landed: the state rows (#46), the
 request's subject and support as keys (#32, `Development_Request_Keys`), statements and malformed (#34,
 `Development_Verdict_Statements`), the concrete presenter of a state's rows (#101, `Development_State_Presenter`), and
 excess and undeclared (#36, `bb560b6a`, `Development_Verdict_Mentions`: the mentions notion, the family traversal
@@ -26,10 +26,12 @@ support family, the declaration store by constant key). Ready: roots with the pe
 presented state's rows by row key) and unreached (#40: the reach table as a reusable presentation, the presenter's
 families measured first, and the one measurement of a judgment). Then the entry rule, its contract and two instances
 (#42, after #106); store absence and the witnesses (#44), last, so that no positive field reaches an absence. #36's
-guard decides a row's subject by path inequality, a comparison notion the entry excludes: #138 decides it — the
-specialization of native data inequality, or a subject-fibre index as an instance of the index notion — and #44 waits
-on it; the field contracts stand either way, so nothing else does. #139 drops `native_excess_answer`'s name premise and
-derives `declarations_single_valued` from the exporter's obligation, before #110 consumes the declaration store. Roots
+guard decided a row's subject by path inequality, a comparison notion the entry excludes: design #138 (`10f3ec9d`) reads
+the rows about a subject through a subject index total over the state's atoms, an instance of the index notion with no
+comparison and no absence. #139 builds it, re-points `excess` through it (`named` kept) and derives
+`declarations_single_valued` from the exporter's obligation, one landing in the same theory; #42 (passing the indexes),
+#44 (absence with no inequality, excess's witness over the index) and #108 wait on it, and #110 consumes the derived
+condition. Roots
 stay a store with distinct keys, #38 stating the roots field under a carried condition on their order, owned by the
 exporter.
 
@@ -37,7 +39,7 @@ exporter.
 check over the request state's rows — a proposed body is admitted exactly when it lists the least context and the
 support, production being an executor's — composing no reach closure, the least context being one step; five fields:
 support complete, scope cited, declarations cited, context sound, support sound. Briefed by #100, each build with its
-review. Landed: #106 (`1add503f`, `request_presents_constructed`). Ready: #108, support complete and scope cited. Then
+review. Landed: #106 (`1add503f`, `request_presents_constructed`). #108, support complete and scope cited, reads the subject index (after #139). Then
 #110, the three search fields, after #38, #40, #101, #108 and #139; #112, the construction — rule, program, contract,
 conditions and corollaries, admitting a request at its locus through the store search with #97's contract for held
 values — after #106, #108, #110 and #97; and #114, the held measurement of one construction, after #112.
@@ -48,7 +50,7 @@ formed where the store holds them (#97, `b4c103e6`) have landed. #30 retires thr
 issue locus's `[1]`, the problem locus as a contract-with-names and `development_local_contract` — switches the loci
 and the machinery state's root, and re-records the words once, the one task whose check cannot accept by word equality
 (q45, q46). The other three — the problem datum's origin, authority and contract tags, and
-`development_named_request`'s lookup of a name — are decided by #135's entry (accepted 2026-09-22): a row outside the
+`development_named_request`'s lookup of a name — are decided by #135's entry (`5f81ee30`): a row outside the
 store is the store's row presented in its context; the successor keeps the positions of the state it succeeds (one
 identity lemma, no transport, q48); an answer designates its request by its locus. Its three builds — the successor
 keeping positions, the presenter switch, the designation — come after #30 in that order and are briefed by #141; #64
@@ -67,15 +69,14 @@ the loop's problems, so that a decomposed problem is refused issue) waits on
 #94, #58 and #30, and its brief takes #94's contract when #94 lands; its settlement corollary needs a locus carried
 across a successor, which #135 decides once. The build that applies a decomposition is Open 26.
 
-**The index notion (#105, #119).** The notion (#68), its host and native instances (#70, #72), both re-citations (#74,
-#76), the consolidation of the arguments made twice (#115, in `Carrier_Indexes`) and the re-citation of the
-functional-enumeration and development-row uses (#117, `27ff0f60`) have landed. #105 advances the proof base from
-`4836387c`, one advance for #115's and #117's rebuilds (about 466 theories), and #119 then retains the receipts from a
-check of its own HEAD (Q10, Q11). Until both, every landing check rebuilds about 390 theories and re-executes every
-recipe whose closure changed since the retention `518ac1e7`: #126's took 332.6 s, all 52 recipes (131.9 s, the seed
-recipe setting it), #117's 345.7 s. #134 explained why: a receipt goes stale only when a code equation in its recipe's
-closure changes, and reuse fires after a base move or a retention. The import audit of Open 44 is plannable once #105
-has landed.
+**The index notion (#119).** The notion (#68), its host and native instances (#70, #72), both re-citations (#74, #76),
+the consolidation of the arguments made twice (#115, in `Carrier_Indexes`) and the re-citation of the
+functional-enumeration and development-row uses (#117, `27ff0f60`) have landed, and #105 advanced the proof base over
+them to `5a039e44` (578 theories rebuilt; the next landing check 192.44 s with no proof phase). #119 retains the
+receipts from a check of its own HEAD (Q11): until then every landing check re-executes each recipe whose closure
+changed since the retention `518ac1e7` (22 of 52 in #105's check). #134 explained why: a receipt goes stale only when a
+code equation in its recipe's closure changes, and reuse fires after a base move or a retention. The import audit of
+Open 44 is now plannable.
 
 **The keyed question and the native reader (#124, #136, #90–#93).** #88 (`cde3faf2`): the key search costs at most
 0.05 ms; a packet's cost is the native reading of the programs that state its candidates, superlinear in their syntax.
@@ -100,15 +101,16 @@ after #124 and #132, which change the same readings or the same paragraph. The s
 Open 27.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
-includes their reviews. The deepest chains are 4: #45 (after #44, #42, #38/#40) and #114 (after #112, #110, #38/#40).
-Beside them: #30 with #103 and the brief of #135's builds (#141) after it; the designs #138 and #136; the fix #139;
-#94, then #64; #105 and #119; #124, then #130; #128 and #132; the keyed line's #90 and #92.
+includes their reviews. The deepest chains are #114 (after #112, #110, #108, #139), 5, and #45 (after #44, #42,
+#38/#40/#139), 4.
+Beside them: #30 with #103 and the brief of #135's builds (#141) after it; the design #136; #139 (the subject index);
+#94, then #64; #119; #124, then #130; #128 and #132; the keyed line's #90 and #92.
 
-**Order** (`105 119 30 31 141 94 124 125 138 136 139 140 38 39 40 41 108 109 128 129 132 133 42 43 44 45 110 111 112 113 114 130 131 103 104 90 91 64 65 92 93`).
-The tasks in flight first: the base advance #105, which #117's landing released, and the retention #119 after it
-(every landing check costs about 330–350 s until both); #30 resuming step 2, with the brief of #135's builds (#141)
-after its landing; #94 resuming on #36's landing; #124 re-planned to land what exists. Then the designs #138 and #136,
-whose entries change other tasks, and the small fix #139; the verdict and request chains, which take a slot whenever
+**Order** (`124 119 30 31 141 94 125 136 139 140 38 39 40 41 108 109 128 129 132 133 42 43 44 45 110 111 112 113 114 130 131 103 104 90 91 64 65 92 93`).
+The tasks in flight first: #124, whose accepted work waits on one import line written as the union of both sides, and
+the retention #119, which #105's base advance released; #30 resuming step 2, with the brief of #135's builds (#141)
+after its landing; #94 resuming on #36's landing. Then the design #136,
+whose entry changes other tasks, and #139, the subject index #108, #42 and #44 wait on; the verdict and request chains, which take a slot whenever
 one of their tasks is ready; #128 beside them; then the re-citations, the answer reader, the keyed line and the
 decomposition's #64. A parked task whose hold nears its end resumes first by itself.
 
@@ -239,7 +241,8 @@ judgment's path.
 - **The checking and tools** #12/#17, #19, #20, #15 (`9bb1dd7a`, `6227819a`, `91979be0`, `2edcabd3`); #48 the replay's
   `unproduced` (`3aaddd96`); #50 the check's named refusals (`955b34bb`); #79 the probe's 60 s default (`1e7ed068`);
   #81 the receipts retained (`cf24195e`); #82 the base advanced to `b1328831`, #86 to `4836387c` (425.48 s, 409
-  rebuilt, every word equal); #80 the seed recipe's formation split,
+  rebuilt, every word equal), #105 to `5a039e44` (477.2 s, 578 rebuilt, 22 recipes executed with equal words; the
+  orphaned session databases removed); #80 the seed recipe's formation split,
   extended at arity 1 (`2191409d`; the recipe 140.8 s before its first round, 105.50 → 93.04 s held for its third).
 - **The plan** #49 (`1634d456`). **Briefs** #1, #10, #11, #13, #14, #16, #87, #96, #99, #100. **Investigation** #53
   (`.build/tasks/30/readers.md`).
@@ -269,10 +272,13 @@ judgment's path.
   46's rows, one row reading at two stores (`native_excess_exact`, `native_excess_answer`, `native_undeclared_exact`),
   every rule positive, task 34's traversal made generic. Its review: path inequality to #138, two premises to #139,
   `path_store_present` to #44, the probe's options to Open 34.
-- **#135** (design, accepted 2026-09-22): DECISIONS.md "A row outside the store is presented in its context, and an
+- **#135** (design) `5f81ee30`: DECISIONS.md "A row outside the store is presented in its context, and an
   answer designates its request by its locus" — the context supplies a row's citations; the presenters move into a new
   `Development_Row_Data`; the successor keeps positions; the request at a locus through the path store's index
   instance; three builds in order, every reader of the four items with its decision.
+- **#138** (design) `10f3ec9d`: the verdict entry's subsection "The rows about a subject are read through a
+  subject index" — an index of each family's rows total over the state's atoms, an instance of the index notion at the
+  path store's carrier; the guard and path inequality to be retired; request construction's entry corrected.
 - **#134** (investigation) `5a039e44`: proved-code export is deterministic across proof contexts (52 groups of
   sessions, byte-identical modules), noted at `reusable_execution`; a receipt goes stale only when a code equation in
   its recipe's closure changes, and reuse fires after a base move or a retention (Q11).
@@ -295,8 +301,8 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
   but the finalizer refuses to commit the removal of an ignored path. Provisional: it stands removed and uncommitted,
   and no task is made of it; the step is the finalizer's or the owner's.
 - **Q10** who advances the proof base. Provisional: #82 advanced it once (a landing check fell to 19.18 s); #86
-  advanced it to `4836387c` (both re-citations), for #36's probes; #105 advances it again, #115 and #117 having
-  landed.
+  advanced it to `4836387c` (both re-citations), for #36's probes; #105 advanced it to `5a039e44` over
+  #115's and #117's landings (task 135's landing check then 192.44 s, no proof phase).
 - **Q11** who retains verified receipts. Provisional: #81 retained them once; the planner places another after a
   landing that changes many recipes' boundaries. The seed and machinery receipts lag since `312a2ca2` (#86's result),
   so every landing check executes those two recipes, and #106's check, the first on #86's base, executed all 52
@@ -454,21 +460,23 @@ Not yet planned, in the order they are expected to be planned:
 50. **A request's carried context through entity kind tags** (#135's entry): `isabelle_entity_data`'s kind tags,
     which task 3's families replace, and the problem assessment's `development_undeclared_subjects` presented as
     positions; neither is one of task 9's six items. The octet direction, when a decision first reads them.
+51. **The `some` readings through the subject index** (#138's follow-up): `statements` and the decomposition's state
+    reading (#94) read every row of a family; through the index they would read one search and a nonempty fibre, their
+    contracts unchanged. After #40's measurement, if a judgment's cost shows them.
 
 ## Now
 
-- **In flight (plan-39, 08:15)**: #117 landed (`27ff0f60`), releasing #105 (told to remove the orphaned session
-  databases `Incremental_5c2806e0` and `Incremental_50702571` by literal name), #119 after it; #30 resumes step 2 (the
-  loci, the machinery state's root, three retirements) after q45 and q46; #94 resumes on #36's landing; #128 refines
-  the seed transactions; #124 lands its constant factor and the growth's held cause (its review #125 judges that), and
-  design #136 decides the address layout that cause names. Every
-  landing check until #105 and #119 costs about 330–350 s (#126's: 387 rebuilt, all 52 recipes; #117's 345.7 s). #40's brief carries #101's review
+- **In flight (plan-39, 08:55)**: #105 advanced the base to `5a039e44`, releasing the retention #119; #30 resumes step
+  2 (the loci, the machinery state's root, three retirements) after q45 and q46; #94 resumes on #36's landing; #128
+  refines the seed transactions; #124's constant factor, accepted, did not merge into main at one import line of
+  `Native_Execution_Refinements` and is re-queued to write the union of both sides; design #136 decides the address
+  layout its held cause names; #139 builds the subject index design #138 decided. Until #119 lands, every landing check
+  re-executes the recipes whose closure changed since `518ac1e7`. #40's brief carries #101's review
   (the families measured first; the two consumer corollaries); #42's and #112's carry #106's (the introduction's subset
   form stated once by whichever first needs it; the key premise derived where it can be).
-- **Owed to briefs when their inputs land**: #44's brief takes #138's decision and moves `path_store_present` into
-  `Native_Path_Stores` with store absence (#36's review, follow-up 4); #110's brief takes #139's derived
-  `declarations_single_valued` in place of the carried condition; #64's brief takes build 1's identity lemma in place
-  of a transport (#135's entry, q48), and #141 wires #64 after that build.
+- **Owed to briefs when their inputs land**: #110's brief takes #139's derived `declarations_single_valued` in place
+  of the carried condition; #64's brief takes build 1's identity lemma in place of a transport (#135's entry, q48),
+  and #141 wires #64 after that build.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).
@@ -506,10 +514,15 @@ Not yet planned, in the order they are expected to be planned:
     `.build/trees/ID/DECISIONS.md` are refused, so a design's verdict rests on its result and commit message (#85).
   - A re-review writes over the first review's `review.md`, so the follow-ups it says still stand are in no file when
     the build lands (#118).
-- **The active base is `.build/tasks/base-advance/base-20260922b/proof`** (#86), a child of
-  `.build/tasks/base-advance/base-20260922a/proof` (#82) and `.build/complete-20260921a`: never remove any of the three
-  while the pointer `/tmp/structural-active-context.json` names the first. The heaps live in `/tmp/structural-isabelle`,
-  so a reboot loses the base (Open 11).
+- **The active base is `.build/tasks/base-advance/base-20260922c/proof`** (#105, HEAD `5a039e44`, session
+  `Incremental_4fa29c0a`), over `base-20260922b` (#86), `base-20260922a` (#82) and `.build/complete-20260921a`, checked
+  from the extracted tree `.build/tasks/105/head-5a039e44`: never remove a proof directory of this lineage, or that
+  tree, while the pointer `/tmp/structural-active-context.json` names the first. The lower bases' executions
+  (`recipes/`, `exports-context/`; 2.6 GB in `base-20260922b`) are not read by reuse, which reads only
+  `validation/reconstruction/` (#120), and go by literal path with the next task that moves a base. The heaps live in
+  `/tmp/structural-isabelle`, so a reboot loses the base (Open 11); the lineage is four levels (0.28 s to verify), and a
+  complete proof resets it to one when a change rebuilds most of the repository anyway (#136's builds) or the heaps
+  move.
 - **The harness no longer puts a task in the one tree for naming a shared file** (`ROOT`, `THEORY_MAP.md`,
   `DECISIONS.md`, `HANDOFF.md`, `PLANNING_LOG.md`) while another task's edit of one stands uncommitted (the owner,
   01:15); #74 was put there so and stays until it lands. A landing commits the planner's `HANDOFF.md` with the

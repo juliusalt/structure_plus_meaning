@@ -125,13 +125,16 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
     started = time.monotonic()
     run = run_logged(command, log, timeout, env=incremental_check.ENV)
     text = run['text']
-    return {'base': str(base), 'session': context['session'], 'seconds': round(time.monotonic() - started, 1),
-            'exit': run['exit'], 'loaded': marker in text and not run['timed_out'], 'order': order,
-            'timed_out': run['timed_out'], 'last_command': run['last_command'],
-            'parallel_proofs': parallel_proofs,
-            'substituted': substitutions, 'prelude': sorted(prelude),
-            'from_heap_despite_change': sorted(set(differing) - loaded - set(substitutions)),
-            'errors': run['errors'], 'log': str(log)}
+    marker_line = next((line for line in text.splitlines() if marker in line), None)
+    summary = {'base': str(base), 'session': context['session'], 'seconds': round(time.monotonic() - started, 1),
+               'exit': run['exit'], 'loaded': marker_line is not None and not run['timed_out'], 'order': order,
+               'marker': marker_line, 'timed_out': run['timed_out'], 'last_command': run['last_command'],
+               'parallel_proofs': parallel_proofs, 'timeout': timeout,
+               'substituted': substitutions, 'prelude': {name: str(path) for name, path in sorted(prelude.items())},
+               'from_heap_despite_change': sorted(set(differing) - loaded - set(substitutions)),
+               'errors': run['errors'], 'log': str(log), 'summary': str(work / 'probe.summary.json')}
+    Path(summary['summary']).write_text(json.dumps(summary) + '\n')
+    return summary
 
 
 def main():

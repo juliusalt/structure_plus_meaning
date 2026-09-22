@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "ad5ecdcbffdb8e02d319180d6e98901264df9f42e0035d3d5b62d7540c13164e",
- "checked_content_sha256": "745d74e78bfe96ddd2d29402ed793f9d5e09d0735185f10d292e0854915fca8d",
+ "base_receipt_sha256": "c16a8e8a4e438d9c7027c20e989d388270a11064885e0ed4bff262a6e4c52751",
+ "checked_content_sha256": "0f73bc5193d2df82e21df9d889a7caec8c37ceade92a56ba758dcd5c379826e7",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -25,12 +25,24 @@
   "base_and_impact": 0.28,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 63.88,
-  "recipe_impact": 0.45,
-  "recipes_and_host_tests": 10.98
+  "proof": 80.4,
+  "recipe_impact": 0.37,
+  "recipes_and_host_tests": 11.03
  },
  "rebuilt_theories": [
-  "Development_Request_Citations"
+  "Development_Edited_Local",
+  "Development_Edited_Reach",
+  "Development_Edited_Undeclared",
+  "Development_Native_Decomposition",
+  "Development_Native_Verdict",
+  "Development_Request_Citations",
+  "Development_Request_Scope",
+  "Development_State_Edit",
+  "Development_Subject_Index",
+  "Development_Verdict_Difference",
+  "Development_Verdict_Mentions",
+  "Development_Verdict_Statements",
+  "Development_Verdict_Unreached"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +202,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1833,
- "seconds": 97.04,
+ "reused_theories": 1822,
+ "seconds": 111.99,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1834,
+  "theory_count": 1835,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1834,
+ "theories": 1835,
  "validation_inputs": {
-  "ROOT": "11ade32624bc0fa12ed66fdfcf50b13cb90e971a0421b7d92733fa9e69f50196",
+  "ROOT": "e0391c5c36f2e5a3610e88dc5d4983edbddb97a1876f60746026db0152ab8bae",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "82e934dc1ab241ad304872f32ca11b1f5a0e8ad06d5de97626b94c96458b4752"
  }

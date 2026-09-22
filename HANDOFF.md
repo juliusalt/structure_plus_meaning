@@ -50,13 +50,16 @@ review. Landed: #106 (`1add503f`, `request_presents_constructed`) and #108 (`a2e
 support complete and scope cited). #182 (`f28e2695`) stated `excess` once as a locale and the rows about a constant
 once, keyed, with the entity-key condition by name; from its review, #249 moves `entity_rows_keyed` into
 `Development_State_Rows`, the presenter concluding it as `state_presenter_entity_key`, and #110 states the scope's
-`statements` step beside `development_constant_scope_member`. #110 checks declarations cited with
-`store_found_program` directly; #112's call carries the body's path stores built from the executor's lists, no rule
-reading a list as a store (native production stays Open 39). #110, the three search fields, ready since #227 landed (#261, `43f5bde0`, placed what #249 left of #182's items; its
-review's premise by name is mailed to #110 and #112);
-#112, the construction — rule, program, contract, conditions and corollaries, admitting a request at its locus through
-the store search with #97's contract for held values — after #110; and #114, the held measurement of one
-construction, after #112.
+`statements` step beside `development_constant_scope_member`. #110 landed (`355518e9`, `Development_Request_Citations`: declarations
+cited, context sound, support sound; #261 placed what #249 left of #182's items). Its review found the five fields
+reading each body family both as a list and as a path store, while the body the development store holds is two lists
+and no native rule makes a store of a list (Open 39): #277 has the fields read the body's lists, build 2's call shapes
+with them, and request construction's entry gains a marked sentence — the planner's decision, superseding the note
+that #112's call would carry stores the executor built. #276, before it, states once the position facts proved inline
+in five theories, both keyed forms of `request_rows_about`, the reach table's `predecessor_at` and one reach step
+rule. #112, the construction — rule, program, contract, conditions and corollaries, admitting a request at its locus
+through the store search with #97's contract for held values — after #277; and #114, the held measurement of one
+construction, after #112, with its review's support-sound scan measured apart (mailed).
 
 **The incremental assessment (#185–#206, #219, #220).** Design #171's entry (`7a6093bf`), DECISIONS.md "An answer state is judged
 from its request state's assessment and the edit": the assessment as presentations only (indexes by a key reading, the
@@ -190,13 +193,12 @@ includes their reviews; a fix the planner creates has no review task (the harnes
 deepest chains are 9, the layout's and #135's line made one by the serialized word changes: #241 after #147, the
 layout #155, the answer records' re-recording #157 (after #267 too), then #161, #165, #167, #169 and its review #170,
 or #92 and #93 after #167; one task more may end that chain. The incremental line's measurement #194 and its review
-are 9 deep, through #161 and #187. Then #238 (after #237, #214, #44, #42 and #227), 6, and #114 (after #112, #110 and
-#227), 5. Beside them: the placed forests' cleanup #251; the presentation's refinement #269; the exporter proof's transport #274; the rearranging contract at a support relation #275; the
+are 9 deep, through #161 and #187. Then #238 (after #237, #214, #44, #42 and #227), 6, and #114 (after #112, #277 and #276), 5. Beside them: the placed forests' cleanup #251; the presentation's refinement #269; the exporter proof's transport #274; the rearranging contract at a support relation #275; the
 re-citations #239 (after #44) and #237. A word change lands with its re-recorded words: since 20:12 the landing
 check's snapshot takes the report files a brief's Deliverable names (Q12, fixed in the harness as the provisional
 choice).
 
-**Order** (`147 128 241 155 156 42 43 110 111 269 274 275 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 251`).
+**Order** (`147 128 241 155 156 42 43 269 274 275 276 277 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 251`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
 #241 after #147, head of the deepest chain, then the layout's word change #155, its answer records #157 and its
 measurement #159 soon after it, while the harness's lineage still holds the last base without it; the verdict's entry
@@ -635,6 +637,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#271** (`ca5f3d94`): the probe loads the unchanged theories between a changed base theory and its changed
   dependents as renamed copies, refuses a load past its bound before loading, and names stale heap imports as the
   cause, with #229's polish; its reviews' follow-ups to Open 78 and the owner's list.
+- **#110** (`355518e9`): `Development_Request_Citations`, request construction's declarations-cited, context-sound and
+  support-sound fields; its review's body reading to #277, its repeated facts to #276, its support-sound scan to #114.
 
 ## Open
 
@@ -942,7 +946,7 @@ Not yet planned, in the order they are expected to be planned:
   definition of a state): one word change, landed (`8b77ee97`); #157 re-records every answer record once over it and the
   layout (the native records' entity keys move with the order; mailed); #274 proves the obligation on the definition's
   right-hand side, the goal no longer rewritten with the whole context term (#267's review).
-- **In flight (plan-47, 20:56)**: #269 works; #42, #110, #274, #275 and #251 are ready; #128 and #147 finish their
+- **In flight (plan-47, 21:07)**: #42 and #269 work; #274, #275, #276 and #251 are ready; #128 and #147 finish their
   landings. The harness's delta layer is deployed and dormant
   (`notes/plan-delta-layer.md`), switched on for no base yet (20:12). Mailed to tasks not yet started, travelling with them: the level a use
   cites to #214, #237 and #239; #261's review to #110, #112, #192, #214 and #237; #263's and #255's to #265; #263's

@@ -32,7 +32,9 @@ guard decided a row's subject by path inequality, a comparison notion the entry 
 the rows about a subject through a subject index total over the state's atoms, an instance of the index notion with no
 comparison and no absence. #139 built it (`b560df2a`, `Development_Subject_Index`), re-pointed `excess` through it (`named` kept)
 and derived `declarations_single_valued` from the exporter's obligation `isabelle_declared_once`; #176 states that
-obligation once in `Isabelle_Entities`, re-pointing the successor's stronger copy, and #42 and #110 wait on it. #42
+obligation once in `Isabelle_Entities`, re-pointing the successor's stronger copy (its third round keeps every word equal, the seed report's field
+deciding a sufficient condition through one lemma), and #227 discharges it once at the exported states; #42 and #110
+wait on both. #42
 passes the indexes, #44 builds absence with no inequality and excess's witness over the index, #108 reads it. Roots
 stay a store with distinct keys, #38 stating the roots field under a carried condition on their order, owned by the
 exporter.
@@ -58,15 +60,15 @@ updated; every field its own program at edit-sized arguments; the reach's loss b
 produced by an executor and admitted natively; the contract `native_edited_fields`. Its held machinery measurement:
 statements 0.264 s, formed 0.645 s, excess 0.023 s, undeclared 1.791 s, unreached 4.602 s; restricted calls
 0.14–0.20 ms against 1.2 ms whole; no engine refinement needed (q54). #178 briefed its builds, each with its review:
-the index of a family by a key reading, the subject and mention indexes its instances (#185, subsuming Open 58); the
+the index of a family by a key reading, the subject and mention indexes its instances (#185, `10f842ff`); the
 edit and the answer state's presentation from it (#186, `786d11da`); the reach tables under seeding, restriction and
-removal (#190); the local fields (#188) and `undeclared` on the edited state (#189), after #185, #186 and #219;
+removal (#190, `ff8a63c3`); the local fields (#188) and `undeclared` on the edited state (#189), after #185, #186 and #219;
 `unreached` with O's admission (#191), after #190 and #182; the incremental judgment, `native_edited_fields` and the
 stage's equation (#192), after #42 and the three field builds; the exported answer's edit (#187), after #161; the
 machinery's verification stage judged natively (#193) and its held measurement by field (#194), condition 5a's
 evidence for a stage's cost; the witnesses at the edit's parts (#195), after #44. From #186's review: #219 states the
-edit's and presenter's contracts once before #187, #188, #189 and #191; #220 makes the edit's constructor linear in
-the edit before the stage #193. Specifications keep their exception, judged whole (none in the loop's states).
+edit's and presenter's contracts once before #187, #188, #189 and #191; #220 makes the edit's constructor and the index
+update linear in the edit before the stage #193, after #210 (#185's review). Specifications keep their exception, judged whole (none in the loop's states).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
 a locus (#26), the presenters (#28), the store's (#83), the rows' fix (#84) and the store search's contract for values
@@ -144,31 +146,33 @@ refinement request, the state's words re-recorded once, a serialized word change
 a refinement of its own. Its follow-ups are Open 73; the seed recipe's other costs are Open 27.
 
 **The rule programs (#173, #208–#215).** #173 (`a645759a`) stated the join law of finite rule programs once in
-`Native_Collection_Programs`; #42, #112 and #64 cite it. #207 briefed the rearranging single-premise rule: #208 states
-it once there, the swap and the found call its instances, with `native_decomposition_shares`' unused premise dropped —
-every change to that theory in one build, since each rebuilds about 1,140 theories — and #188, #189, #191 and #110,
-which are about to add such rules, wait on it. The re-citations follow the builds editing their theories: the subject
-index's call and the unreached join (#210, after #185), readiness's and reach's rules (#212, after #190), the row and
-found readings (#214, after #182 and #44). Each with its review.
+`Native_Collection_Programs`; #42, #112 and #64 cite it. #208 (`db37daea`) stated the rearranging single-premise rule
+(`native_rearranging_program`) once there, the swap and the found call its instances, `native_decomposition_shares`'
+unused premise dropped; #188, #189, #191 and #110 add such rules over it. Changes to that theory are batched, since
+each rebuilds about 1,140 theories. The re-citations: the subject index's call and the unreached join (#210);
+readiness's and reach's rules, with `readiness_answered_rule`'s two steps and `table_reached_simulation` moved into
+`Native_Table_Reach` (#212, after #210, which edits `Development_Verdict_Unreached` too); the row and found readings
+with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
 changes: #153 with the placed forest #221, the syntax forest #225 (the premise forest #223 beside it), the layout
 #155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
-#161 and #192. Then #114 (after #112, #110, #182, #176), 5, and #45 (after #44, #42, #176), 4. Beside them: #219,
-then #220; the rule programs' re-citations #210, #212 and #214; the host tests' fix #217; #128.
+#161 and #192. Then #114 (after #112, #110, #182 or #227, #176) and #45 (after #44, #42, #227, #176), 5. Beside
+them: #219, then #220 (after #210 too); the rule programs' re-citations #210, #212 (after #210) and #214; the probe's
+fix #229; the host tests' fix #217; #128.
 
-**Order** (`128 129 147 148 176 177 182 183 153 154 221 222 223 224 225 226 217 219 42 43 185 196 190 201 208 209 210 211 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 176 177 182 183 227 228 153 154 221 222 223 224 225 226 217 219 229 42 43 210 211 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
-review, #147, and the exporter's obligation #176, which #42 and #110 wait on; then the excess locale #182, which #110,
-#112 and #191 wait on; the layout's last contract #153 and the forest over placements (#221, then #223 and #225), which
-#155 waits on, close after their brief's author; the host tests' fix #217, the edit's contracts #219 and the verdict's
-entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the incremental assessment's
-first builds (#185, #190) and the rearranging rule #208 with its re-citations; the layout's word change #155, its
-answer records #157 and its measurement #159 soon after it, while the harness's lineage still holds the last base
-without it; then #161; the rest of the verdict and request chains; the incremental line's later builds as their inputs
-land; #135's later builds; then #64 and #92. A parked task whose hold nears its end resumes first.
+review, #147, and the exporter's obligation #176 in its third round; then its discharge #227, which #42 and #110 wait
+on, and the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract #153 and the forest over
+placements (#221, then #223 and #225), which #155 waits on, close after their brief's author; the host tests' fix #217,
+the edit's contracts #219, the probe's fix #229 (every later build's inner loop) and the verdict's entry #42, heads of
+the deepest chains, so that a slot serves them as they become ready; the rule programs' re-citations; the layout's word
+change #155, its answer records #157 and its measurement #159 soon after it, while the harness's lineage still holds
+the last base without it; then #161; the rest of the verdict and request chains; the incremental line's later builds
+as their inputs land; #135's later builds; then #64 and #92. A parked task whose hold nears its end resumes first.
 
 ## Decisions
 
@@ -275,7 +279,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   checks — never the outcome of a check the harness runs: the harness closes each commit with "Checked by the harness:
   …" (the harness, 15:32; #181's review was rejected over the earlier rule). Every open task was told (15:35).
 - **An edit to a base theory is probed with `--prelude`/`--substitute`**: otherwise the probe takes the theory from
-  the heap and certifies nothing about the edit (#176's result).
+  the heap and certifies nothing about the edit (#176's result); where a changed base theory has changed dependents, the landing
+  check's proof phase stands in until the probe's fix #229 lands (#176, #208).
 
 ## Delivered
 
@@ -453,10 +458,19 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   to #187–#193.
 - **#216** (brief) placed as #221–#226 (Graph): the forest over a family of placements, and the premise forest's and
   the syntax forest's placement on it, every word equal, before #155.
-- **#218** (design, accepted): DECISIONS.md "What a refinement keeps equal when a recorded state presents the refined
+- **#218** (design, `db37daea`): DECISIONS.md "What a refinement keeps equal when a recorded state presents the refined
   constant's code equations" — meanings; an expanded refined constant judged by the harness as an answer to its
   refinement request and the recorded state's words re-recorded once; restatement at the premise's arity a refinement
   of its own; task 85's three sentences corrected; follow-ups Open 73.
+- **#185** `10f842ff`: `Development_Subject_Index` generalized over a key reading — the subject index (`row_subjects`)
+  and the mention index (`row_mentions`) its instances, every task-139 statement kept; the update law through
+  `path_store_updates`; `path_store_restrict` for any listing in `Native_Path_Store_Indexes`, `key_index_restrict` its
+  instance. Follow-ups: the update's value to #220, the rest Open 74.
+- **#190** `ff8a63c3`: reach tables under seeding, restriction and removal, a section of `Native_Table_Reach`.
+  Follow-ups: `table_reached_simulation`'s move to #212; two lemmas and the state half's owed facts to #191.
+- **#208** `db37daea`: the rearranging single-premise rule once in `Native_Collection_Programs`, the swap and the found
+  call its instances, `native_decomposition_shares`' unused premise dropped. Follow-ups: `row_subject_program` to #214,
+  `readiness_answered_rule` to #212, the two `evaluate_pattern` facts Open 75.
 
 ## Open
 
@@ -637,11 +651,10 @@ Not yet planned, in the order they are expected to be planned:
     pays it, and a positioned labelled history (the Decisions' "Not taken") is its prerequisite. Planned when the
     native verdict is first admitted through certificates, after #42.
 57. **Facts placed downstream of their notions** (#40's follow-up 3): `table_reached_simulation` into
-    `Native_Table_Reach`; `isabelle_entity_reach_pairs_member`, `isabelle_reach_pairs_member`,
+    `Native_Table_Reach` (with #212); `isabelle_entity_reach_pairs_member`, `isabelle_reach_pairs_member`,
     `isabelle_reach_predecessors_member`, `isabelle_reach_heads_member` and `isabelle_reach_constants_member` into
     `Isabelle_Native_Reach`, with their map row; `entity_kinds`, `state_families` and `state_families_range` into
     `Development_State_Rows` (`state_families_rows` then over `state_families R`). With the next edit of each owner.
-58. **The reach table's construction** (#40's follow-up 6) — subsumed by #185's mention index (Graph).
 59. **The judgment bridge's rows carry a candidate position** (#90's follow-up 2): `judgment_bridge_receive` filters
     `[0..<length judgment_bridge_candidates]` by each position's key path, and its field lemmas state `i<length …` and
     `judgment_bridge_candidates!i`; the rows can carry the subject through `keyed_admitted_subjects`, stated at the
@@ -659,7 +672,8 @@ Not yet planned, in the order they are expected to be planned:
 63. **The answer's formation check grows with the names** (#103's review, not measured): `length ns` per position and
     `distinct` over string literals; `Let` for the length and the ordered member index for distinctness, at a measured
     need on answers with large name tables.
-64. **The subject index's build** (#139's review, follow-up 3) — no measured need: #171 measured the per-atom
+64. **The subject index's build** (#139's review, follow-up 3; #185's review: one pass, which #40's follow-up 6 also
+    needs) — no measured need: #171 measured the per-atom
     filtering at 0.006 s of the index's 0.049 s build on the machinery; the grouping pass waits for a larger state.
 65. **`known-history` failed twice in #143's landing checks** (exit 1, `.build/tasks/143/check-b/recipes/known-history.log`),
     on a tree at `c6f5551f` changing one README sentence, while later landings on the same base accepted it: a cause
@@ -696,13 +710,20 @@ Not yet planned, in the order they are expected to be planned:
     or their theories' next edit, since a partial application is checked once only where a caller shares it, which no
     caller on the loop's path is shown to do (Open 68 asks the same); (4) a design, when first met, of the comparison
     of a recorded state across a refinement the harness cannot frame (a multi-equation constant, the machinery state).
+74. **#185's naming and placement follow-ups** (`.build/tasks/196/review.md`): the two facts named
+    `path_store_carrier_index`; the `key_fibre` stem beside `Factor_Key_Fibres` (one notion or two); the old locale
+    facts' global names, kept while #42, #110, #182 and #188–#191 cite them; `lookup_eq_by_some`'s place; the probe
+    cost of `Development_Verdict_Unreached`. With the next edit of their theories.
+75. **`evaluate_pattern_agree` and `evaluate_pattern_variables_formed` into `Factor_Rule_Instances`**, beside
+    `evaluate_pattern_cong` and `evaluate_pattern_formed` (#208's review), with the next batch that rebuilds it.
 
 ## Now
 
-- **In flight (plan-45, 15:55)**: #128, #147, #176 (its second round), #185, #190, #208 and #217 are in review or
-  landing; #153 is parked; #216's builds are placed (#221, #223, #225, Graph); #218's entry is accepted (Graph, Open
-  73). #219 states the edit's and presenter's contracts once before #187–#191; #220 makes the edit's constructor linear
-  in the edit before #193; #186's other follow-ups were mailed to #187–#193. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
+- **In flight (plan-45, 16:10)**: #176 runs its third round (review 176.2's fix, every word equal: Graph); #219
+  builds; #128 and #147 are in review, and #153, #210, #217 and #221 in their checks; #227 discharges the exporter's
+  obligation after #176, #229 fixes the probe for base-theory edits. #220 makes the edit's constructor and the index
+  update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
+  #208's to #212 and #214. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
   declarations #40 needed (q54); #112's carries #106's review. #143 was withdrawn (Open 65); its finding is carried by
   #157 and the working rules. #155, #92 and #64 name the reports they re-record, no receipt.
 - **Owed to briefs when their inputs land**: #64's brief takes #161's identity lemma in place of a transport (#135's

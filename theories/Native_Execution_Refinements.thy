@@ -1,5 +1,6 @@
 theory Native_Execution_Refinements
   imports Finite_Sorted_Set_Execution Finite_Ordered_Relation_Checks
+    Factor_Shared_Package_Readings
     Finite_Relation_Functionality_Execution Finite_Collection_Equality_Execution
     RRA_Ordered_Artifact_Formation Factor_Ordered_Target_Equality
     Factor_Finite_Accumulated_Data_Syntax Finite_Investigation_Execution_Sharing
@@ -13,7 +14,7 @@ theory Native_Execution_Refinements
     Factor_Policy_Scope_Sharing Factor_Formation_Once_Definitions Factor_Complete_Data_Walks Finite_Ordered_Set_Difference Factor_Ordered_Generation_Checking
     Ordered_Term_Demands Factor_Demanded_Package_Readings Factor_Demanded_Graph_Readings
     RRA_Listed_Environment_Positions Development_Answer_0ccf746fe2cf Factor_Indexed_Readings
-    RRA_Inserted_Attachments Factor_Constructed_Program_Applications Factor_Shared_Package_Readings
+    RRA_Inserted_Attachments Factor_Constructed_Program_Applications
 begin
 
 text \<open>The export boundary consumes the existing complete-result refinements.

@@ -12238,7 +12238,11 @@ Why each is exact:
 
 ### The reach under removal
 
-Let `T` be `R`'s reach table and `T'` the answer state's. Under (i) every key of `T` is reached: a key of `T` is a root
+Let `T` be `R`'s reach table and `T'` the answer state's. Under (i) every key of `T` is reached [correction, task 191: not every key — `T` holds a row at every atom of the
+name table, and an atom no root heads and no row declares or mentions is unreached even in a closed state, so seeding it
+would make an added row about it reached; the keys a closed state reaches, and the seeds `T''` takes, are the one key of
+each row and the root keys (`state_reach_seeds_reached`, `Development_Edited_Reach`); a kept row needs no seed, only
+the removal lemma]: a key of `T` is a root
 head or mentioned by a row, a row of a closed state is reached, so some subject of it is reached, and a key it mentions
 is preceded by that subject. The edit changes `T` in two ways. **Additions** only grow the reach: a new edge enters a
 key of `T`, already reached, or a key new to `T'` (a constant first mentioned by `A`), whose row in `T'` is kept real.

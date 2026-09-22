@@ -14,9 +14,16 @@ imports exactly the theories the layer's import boundary imports, and the reques
 beside it from the boundary itself. The theory Isabelle accepts is therefore the theory adoption
 installs, and there is one acceptance, not a second one in another context. The theory is named by
 the answer's own content, so its name is stable across replays and unique in the session; that name
-is a transport choice, not a correspondence. Once an answer's theory is part of the repository, the
-answer is adopted: the harness does not frame it again and judges the published state as the answer
-to the request that state presents, which is an unchanged answer when the adoption is exact.
+is a transport choice, not a correspondence.
+
+Whether an answer is adopted is decided by its evidence (`adoption_evidence`), never by a file name: the
+request's state adopts through its boundary, a retained receipt binds the answer's digest, the installed
+theory has the digest that receipt retained, and ROOT declares it and the boundary imports it. The harness
+decides its case before any Isabelle run. With no theory of the answer's name in the workspace, the answer
+is framed and judged. With one, the harness judges nothing: it reports `adopted` with the evidence when
+every connection holds, and `obstructed` with the connections that failed otherwise; the published state is
+never judged against itself, and the connection no workspace content establishes (the published state is the
+answer state the judgment produced) is reported as `unverified`.
 
 Before an answer is framed, Isabelle reads its declared parts with the outer syntax of the frame
 (Development_Answer_Parts), in a session of its own that holds the parts only as ML strings. An answer
@@ -61,6 +68,13 @@ STATES = {'development_seed': {'kind': 'development_seed', 'context': 'Native_Co
 FRAME_FACTS = 'Isabelle_Constant_Closure'
 # The theory that reads an answer's declared parts in the frame's syntax before the answer's theory exists.
 PARTS = 'Development_Answer_Parts'
+# The retained adoption receipts, found by the digest of the answer they bind.
+ADOPTIONS = Path('validation') / 'development-adoptions'
+# The connection of an adoption that nothing the workspace holds establishes.
+UNVERIFIED = ('The published state is the answer state this answer\'s judgment produced: its incumbent for the '
+              'subject is the answer\'s statement and nothing else it reads has changed since but by later adoptions '
+              'and refinements. Its native record, the answer\'s generation selected at the problem\'s locus in a '
+              'persistent native published state, does not exist for the refinement layer.')
 FIELDS = {'request', 'definitions', 'equation', 'proof'}
 QUALIFIED = re.compile(r'[A-Za-z][A-Za-z_0-9]*(\.[A-Za-z][A-Za-z_0-9]*)+')
 
@@ -91,10 +105,68 @@ DEMANDED = (
     '      development_demanded_constants,answered,[])"\n\n')
 
 
+def answer_digest(answer):
+    """The SHA-256 of the answer's canonical content, which its theory name abbreviates."""
+    return hashlib.sha256(json.dumps(answer, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+
 def answer_name(answer):
     """The answer's theory name, derived from its canonical content alone."""
-    canonical = json.dumps(answer, sort_keys=True, separators=(',', ':')).encode()
-    return 'Development_Answer_' + hashlib.sha256(canonical).hexdigest()[:12]
+    return 'Development_Answer_' + answer_digest(answer)[:12]
+
+
+def adoption_receipts(project=ROOT):
+    """Every retained adoption receipt of the project, by its file name."""
+    return {path.name: json.loads(path.read_text()) for path in sorted((project / ADOPTIONS).glob('*.json'))}
+
+
+def adoption_evidence(answer, project=ROOT, receipt=None):
+    """Each connection of the answer's adoption, checked on the project's own content.
+
+    The connections: the request's state adopts through its boundary; exactly one retained receipt, found by
+    the answer's digest (or the supplied one), binds it as adopted, not a control and not withdrawn; the
+    installed theory has the digest that receipt retained; ROOT declares it once and the boundary imports it.
+    `present` is whether a theory of the answer's name stands at all; `obstruction` lists the connections
+    that failed; `unverified` is the residual no workspace content establishes."""
+    state = STATES[answer['request']['state']]
+    name, digest = answer_name(answer), answer_digest(answer)
+    theory = project / 'theories' / (name + '.thy')
+    candidates = {'supplied': receipt} if receipt is not None else {
+        file: found for file, found in adoption_receipts(project).items() if found.get('answer_sha256') == digest}
+    bound = sorted(file for file, found in candidates.items()
+                   if found.get('answer_sha256') == digest and found.get('status') == 'adopted'
+                   and found.get('control') is False and 'withdrawn' not in found)
+    retained = (candidates[bound[0]].get('steps', {}).get('installation', {}).get('theory_sha256')
+                if len(bound) == 1 else None)
+    present = hashlib.sha256(theory.read_bytes()).hexdigest() if theory.is_file() else None
+    boundary = state.get('layer')
+    root = (project / 'ROOT').read_text().split() if (project / 'ROOT').is_file() else []
+    layer = project / 'theories' / ((boundary or '') + '.thy')
+    imports = investigate.theory_imports(layer.read_text(), boundary) if boundary and layer.is_file() else []
+    connections = {
+        'state': {'state': answer['request']['state'], 'boundary': boundary, 'holds': boundary is not None},
+        'receipt': {'answer_sha256': digest, 'found': sorted(candidates), 'bound': bound, 'holds': len(bound) == 1},
+        'installed': {'theory': 'theories/' + name + '.thy', 'retained_sha256': retained, 'present_sha256': present,
+                      'holds': present is not None and present == retained},
+        'declared': {'declarations': root.count(name), 'holds': root.count(name) == 1},
+        'imported': {'boundary': boundary, 'holds': name in imports}}
+    obstruction = [key for key, connection in connections.items() if not connection['holds']]
+    return {'theory': name, 'answer_sha256': digest, 'present': theory.is_file(), 'connections': connections,
+            'holds': not obstruction, 'obstruction': obstruction, 'unverified': UNVERIFIED}
+
+
+def adopted(answer, project=ROOT):
+    """Whether a theory of the answer's name stands, which is not adoption: the adoption tool reads it to refuse
+    adopting an answer whose name the workspace already holds, until its own evidence step replaces it."""
+    return adoption_evidence(answer, project)['present']
+
+
+def adoption_report(answer, evidence, base):
+    """The harness's report where a theory of the answer's name stands: no judgment, only the evidence."""
+    return {'status': 'adopted' if evidence['holds'] else 'obstructed', 'answer_sha256': evidence['answer_sha256'],
+            'request': answer['request'], 'base': str(base), 'theory': evidence['theory'], 'evidence': evidence,
+            'unverified': evidence['unverified'],
+            **({} if evidence['holds'] else {'obstruction': evidence['obstruction']})}
 
 
 def frame_imports(state, project=ROOT):
@@ -133,23 +205,10 @@ read with, and it holds the parts only as ML strings: nothing in them is process
             + investigate.ml_string(proof) + ')\\<close>\n\nend\n')
 
 
-def adopted(answer, project=ROOT):
-    """An answer whose theory is a theory of the project is part of its published state."""
-    return (project / 'theories' / (answer_name(answer) + '.thy')).is_file()
-
-
-def verification_theory(name, state, subject, theory=None):
-    """The verdict of the answer framed in theory; without a theory, of the published state itself."""
+def verification_theory(name, state, subject, theory):
+    """The verdict of the answer framed in theory, against the request state."""
     literal = "STR ''" + subject + "''"
-    if theory is None:
-        answer_state = ('definition development_answer_context :: isabelle_context where\n'
-                        '  "development_answer_context=' + name + '_context"\n\n'
-                        'definition development_answer_state :: isabelle_rooted_context where\n'
-                        '  "development_answer_state=' + name + '_state"\n\n'
-                        'definition development_answer_introduced_positions :: "nat list" where\n'
-                        '  "development_answer_introduced_positions=[]"\n\n')
-    else:
-        answer_state = ('local_setup \\<open>Isabelle_Entity_Export.define_again \\<^binding>\\<open>development_answer\\<close>\n'
+    answer_state = ('local_setup \\<open>Isabelle_Entity_Export.define_again \\<^binding>\\<open>development_answer\\<close>\n'
                         '  (@{thm ' + name + '_roots_def}, @{thm ' + name + '_context_def}) \\<^theory>\\<open>' + theory + '\\<close>\\<close>\n\n'
                         'declare development_answer_context_def [code] development_answer_roots_def [code]\n'
                         '  development_answer_introduced_def [code]\n\n'
@@ -157,7 +216,7 @@ def verification_theory(name, state, subject, theory=None):
                         '  "development_answer_state=(development_answer_roots,development_answer_context)"\n\n'
                         'definition development_answer_introduced_positions :: "nat list" where\n'
                         '  "development_answer_introduced_positions=List.map_filter isabelle_head_constant development_answer_introduced"\n\n')
-    imports = [state['context'], *([theory] if theory else []), state['verdicts'], 'Development_Refinement_Repair',
+    imports = [state['context'], theory, state['verdicts'], 'Development_Refinement_Repair',
                'Development_Admitted_Publication']
     return ('theory Development_Answer_Verification\n  imports ' + ' '.join(imports) + '\n'
             'begin\n\n' + answer_state +
@@ -368,12 +427,18 @@ def main():
     output = args.output.resolve()
     assert not output.exists(), 'Use a fresh answer directory.'
     name = 'development_demanded' if 'layer' in state else answer['request']['state']
+    evidence = adoption_evidence(answer)
+    if evidence['present']:
+        output.mkdir(parents=True)
+        record = adoption_report(answer, evidence, base)
+        write_json(output / 'answer.json', record)
+        print(json.dumps({k: record[k] for k in ('status', 'obstruction') if k in record}))
+        return 0 if record['status'] == 'adopted' else 1
     generated = {}
     if 'layer' in state:
         generated['Development_Request'] = request_theory(state, answer['request']['subject'])
-    theory = None if adopted(answer) else answer_name(answer)
-    if theory is not None:
-        generated[theory] = answer_theory(state, answer)
+    theory = answer_name(answer)
+    generated[theory] = answer_theory(state, answer)
     generated['Development_Answer_Verification'] = verification_theory(name, state, answer['request']['subject'], theory)
     project = overlay(output, generated)
     session = 'Development_Judgment_' + digest[:12]
@@ -381,24 +446,24 @@ def main():
     steps = []
     record = {'status': 'failed', 'answer': str(args.answer.resolve()), 'answer_sha256': digest,
               'request': answer['request'], 'base': str(base), 'session': session, 'steps': steps,
-              'theory': answer_name(answer), 'adopted': theory is None}
+              'theory': theory}
     try:
-        if theory is not None:
-            parts = overlay(output / 'parts', {'Development_Answer_Parts_Check': parts_theory(state, answer)})
-            steps.append(run('parts', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
-                                       '--project', parts, '--output', output / 'parts' / 'proof', '--session',
-                                       parts_session, '--without-heap', '--threads', '4', '--timeout', args.timeout,
-                                       'Development_Answer_Parts_Check'], output / 'parts.log', args.timeout + 60))
-            if steps[-1]['exit_code'] != 0:
-                reason = parts_refusal(output / 'parts.log', output / 'parts')
-                assert reason is not None, "The answer's parts could not be read."
-                record.update(status='refused', refusal=reason, accepted=False)
+        parts = overlay(output / 'parts', {'Development_Answer_Parts_Check': parts_theory(state, answer)})
+        steps.append(run('parts', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
+                                   '--project', parts, '--output', output / 'parts' / 'proof', '--session',
+                                   parts_session, '--without-heap', '--threads', '4', '--timeout', args.timeout,
+                                   'Development_Answer_Parts_Check'], output / 'parts.log', args.timeout + 60))
+        if steps[-1]['exit_code'] != 0:
+            reason = parts_refusal(output / 'parts.log', output / 'parts')
+            assert reason is not None, "The answer's parts could not be read."
+            record.update(status='refused', refusal=reason, accepted=False)
         if record['status'] != 'refused':
             steps.append(run('proof', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
                                        '--project', project, '--output', output / 'proof', '--session', session,
                                        '--without-heap', '--threads', '16', '--timeout', args.timeout,
                                        'Development_Answer_Verification'], output / 'proof.log', args.timeout + 60))
             assert steps[-1]['exit_code'] == 0, 'The answer or its verification theory was not accepted.'
+            record['frame_sha256'] = hashlib.sha256(generated[theory].encode()).hexdigest()
             steps.append(run('export', [sys.executable, '-B', TOOLS / 'export_proved_code.py', '--proof',
                                         output / 'proof' / 'result.json', '--project', project, '--output', output / 'export',
                                         '--module', 'Development_Answer_Verification:development_answer_verification.ML'],

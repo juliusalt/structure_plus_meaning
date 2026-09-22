@@ -1,5 +1,8 @@
 import json
 from pathlib import Path
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -49,17 +52,20 @@ class FrameTest(unittest.TestCase):
         self.assertIn("STR ''Theory_Name.constant_name''", text)
         self.assertIn('module_name Development_Answer_Verification', text)
 
-    def test_adopted_answer_is_judged_as_the_published_state(self):
+    def test_the_published_state_is_never_judged_against_itself(self):
         state = development_answer.STATES['refinement_layer']
-        text = development_answer.verification_theory('development_demanded', state, 'Theory_Name.constant_name')
-        self.assertIn('imports Development_Request Development_Successor Development_Refinement_Repair', text)
-        self.assertIn('"development_answer_state=development_demanded_state"', text)
-        self.assertIn('"development_answer_introduced_positions=[]"', text)
-        self.assertNotIn('define_again', text)
+        name = development_answer.answer_name(ANSWER)
+        text = development_answer.verification_theory('development_demanded', state, 'Theory_Name.constant_name', name)
+        self.assertIn('imports Development_Request ' + name + ' Development_Successor Development_Refinement_Repair', text)
+        self.assertIn('define_again', text)
+        self.assertNotIn('"development_answer_state=development_demanded_state"', text)
+        with self.assertRaises(TypeError):
+            development_answer.verification_theory('development_demanded', state, 'Theory_Name.constant_name')
 
     def test_verification_publishes_the_admitted_answer(self):
         state = development_answer.STATES['refinement_layer']
-        text = development_answer.verification_theory('development_demanded', state, 'Theory_Name.constant_name')
+        text = development_answer.verification_theory('development_demanded', state, 'Theory_Name.constant_name',
+                                                      development_answer.answer_name(ANSWER))
         self.assertIn('Development_Refinement_Repair Development_Admitted_Publication\nbegin', text)
         self.assertIn('development_admitted_publication\n    development_demanded_state r development_answer_state '
                       'development_answer_introduced_positions', text)
@@ -102,53 +108,112 @@ class FrameTest(unittest.TestCase):
 
 
 class AdoptionTest(unittest.TestCase):
-    # Adoption is a relation between an answer, the content Isabelle accepted and the published state; `adopted`
-    # reads the existence of a file of the answer's expected name. The two expected failures are P1 (task 253): a
-    # file that is not a theory, and the judged frame left behind by an unsuccessful adoption, neither declared in
-    # ROOT nor imported, read as adopted, and the harness then judges the request state against itself.
+    # Adoption is a relation between an answer, the content Isabelle accepted and the published state, established
+    # by its evidence and never by a file name (task 263, after P1 of task 253: a file that is not a theory, and the
+    # judged frame left behind by an unsuccessful adoption, were read as adopted).
     RECORDS = development_answer.ROOT / 'validation' / 'development-answers'
+    JUDGMENT = {'verdict_word', 'publication_word', 'accepted', 'summary', 'refusal'}
 
     def answer(self, record):
         return json.loads((self.RECORDS / (record + '.json')).read_text())['answer']
 
-    def project(self, directory, answer, text):
-        """A project holding the repository's ROOT and layer boundary, which name no answer theory, and one file."""
+    def project(self, directory, answer, text, keep=False):
+        """A project holding the repository's ROOT, layer boundary and receipts and one file of the answer's name;
+        unless kept, neither ROOT nor the boundary names the answer's theory."""
         project = Path(directory)
         (project / 'theories').mkdir()
+        shutil.copytree(development_answer.ROOT / development_answer.ADOPTIONS, project / development_answer.ADOPTIONS)
         layer = development_answer.STATES['refinement_layer']['layer'] + '.thy'
         name = development_answer.answer_name(answer)
         for source, target in ((development_answer.ROOT / 'ROOT', project / 'ROOT'),
                                (development_answer.ROOT / 'theories' / layer, project / 'theories' / layer)):
-            target.write_text(source.read_text().replace('    ' + name + '\n', '').replace(' ' + name + ' ', ' '))
+            content = source.read_text()
+            target.write_text(content if keep else content.replace('    ' + name + '\n', '').replace(' ' + name + ' ', ' '))
         (project / 'theories' / (name + '.thy')).write_text(text)
-        self.assertNotIn(name, (project / 'ROOT').read_text())
-        self.assertNotIn(name, (project / 'theories' / layer).read_text())
         return project
 
-    @unittest.expectedFailure
+    def failed(self, evidence):
+        return {key for key, connection in evidence['connections'].items() if not connection['holds']}
+
     def test_an_unimported_invalid_theory_of_the_expected_name_is_not_adoption(self):
         answer = self.answer('failed-proof')
         name = development_answer.answer_name(answer)
         with tempfile.TemporaryDirectory() as directory:
             project = self.project(directory, answer, 'theory ' + name + '\n  imports No_Such_Theory\nbegin\nnot a theory\nend\n')
-            self.assertFalse(development_answer.adopted(answer, project))
+            evidence = development_answer.adoption_evidence(answer, project)
+            self.assertTrue(evidence['present'])
+            self.assertFalse(evidence['holds'])
+            # failed-proof answers the seed state, which has no adoption boundary: that connection fails as well.
+            self.assertEqual(self.failed(evidence), {'state', 'receipt', 'installed', 'declared', 'imported'})
+            self.assertEqual(evidence['obstruction'], ['state', 'receipt', 'installed', 'declared', 'imported'])
 
-    @unittest.expectedFailure
     def test_a_judged_frame_left_unimported_is_not_adoption(self):
         answer = self.answer('demanded-identity')
         frame = development_answer.answer_theory(development_answer.STATES['refinement_layer'], answer)
         with tempfile.TemporaryDirectory() as directory:
-            project = self.project(directory, answer, frame)
-            self.assertFalse(development_answer.adopted(answer, project))
+            evidence = development_answer.adoption_evidence(answer, self.project(directory, answer, frame))
+            self.assertFalse(evidence['holds'])
+            self.assertEqual(self.failed(evidence), {'receipt', 'installed', 'declared', 'imported'})
 
-    def test_the_adopted_walk_is_declared_imported_and_read_as_adopted(self):
+    def test_the_adopted_walk_holds_every_connection(self):
         answer = self.answer('indexed-data-walk')
-        name = development_answer.answer_name(answer)
-        layer = development_answer.STATES['refinement_layer']['layer']
-        text = (development_answer.ROOT / 'theories' / (layer + '.thy')).read_text()
-        self.assertIn(name, development_answer.investigate.theory_imports(text, layer))
-        self.assertIn('    ' + name + '\n', (development_answer.ROOT / 'ROOT').read_text())
-        self.assertTrue(development_answer.adopted(answer))
+        evidence = development_answer.adoption_evidence(answer)
+        self.assertTrue(evidence['present'])
+        self.assertTrue(evidence['holds'])
+        self.assertEqual(evidence['obstruction'], [])
+        self.assertTrue(all(connection['holds'] for connection in evidence['connections'].values()))
+        self.assertEqual(evidence['connections']['receipt']['bound'], ['Development_Answer_0ccf746fe2cf.json'])
+        self.assertEqual(evidence['connections']['installed']['present_sha256'],
+                         '9102596f55e2ea2c5af2fed3f9cd3ed4be02b05a3ca81778aa1a71ae03169ea2')
+        self.assertEqual(evidence['unverified'], development_answer.UNVERIFIED)
+
+    def test_a_file_of_the_walks_name_with_other_content_is_obstructed(self):
+        answer = self.answer('indexed-data-walk')
+        text = (development_answer.ROOT / 'theories' / (development_answer.answer_name(answer) + '.thy')).read_text()
+        with tempfile.TemporaryDirectory() as directory:
+            project = self.project(directory, answer, text + '\n', keep=True)
+            evidence = development_answer.adoption_evidence(answer, project)
+            self.assertEqual(self.failed(evidence), {'installed'})
+
+    def test_a_seed_state_file_is_never_adoption(self):
+        answer = {**ANSWER, 'request': {'state': 'development_seed', 'subject': 'Theory_Name.constant_name'}}
+        with tempfile.TemporaryDirectory() as directory:
+            project = self.project(directory, answer, development_answer.answer_theory(
+                development_answer.STATES['development_seed'], answer), keep=True)
+            evidence = development_answer.adoption_evidence(answer, project)
+            self.assertIn('state', self.failed(evidence))
+            self.assertFalse(evidence['holds'])
+
+    def test_a_supplied_receipt_is_checked_as_a_found_one(self):
+        answer = self.answer('indexed-data-walk')
+        receipts = development_answer.adoption_receipts()
+        walk = receipts['Development_Answer_0ccf746fe2cf.json']
+        self.assertTrue(development_answer.adoption_evidence(answer, receipt=walk)['holds'])
+        self.assertFalse(development_answer.adoption_evidence(answer, receipt={**walk, 'withdrawn': True})['holds'])
+        control = self.answer('demanded-reformulated')
+        self.assertIn('receipt', development_answer.adoption_evidence(control)['obstruction'])
+
+    def test_an_adoption_report_carries_no_judgment(self):
+        for record in ('indexed-data-walk', 'failed-proof'):
+            answer = self.answer(record)
+            report = development_answer.adoption_report(answer, development_answer.adoption_evidence(answer), '/base')
+            self.assertFalse(self.JUDGMENT & set(report))
+            self.assertEqual(report['unverified'], development_answer.UNVERIFIED)
+        self.assertEqual(report['status'], 'obstructed')
+        self.assertEqual(report['obstruction'], report['evidence']['obstruction'])
+
+    def test_the_harness_reports_the_adopted_walk_without_a_judgment(self):
+        with tempfile.TemporaryDirectory() as directory:
+            answer = Path(directory) / 'answer.json'
+            answer.write_text(json.dumps(self.answer('indexed-data-walk')))
+            completed = subprocess.run([sys.executable, '-B', str(development_answer.ROOT / 'tools' / 'development_answer.py'),
+                                        'answer', '--answer', str(answer), '--output', str(Path(directory) / 'run')],
+                                       capture_output=True, text=True, timeout=60)
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            report = json.loads((Path(directory) / 'run' / 'answer.json').read_text())
+            self.assertEqual(report['status'], 'adopted')
+            self.assertFalse(self.JUDGMENT & set(report))
+            self.assertFalse((Path(directory) / 'run' / 'project').exists())
 
 
 class ExecutorTest(unittest.TestCase):

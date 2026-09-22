@@ -6,10 +6,21 @@ again and requires its retained verdict and publication words (nothing the answe
 that its admitted, certified generation publishes over the incumbent it was judged against, installs the theory
 Isabelle accepted when the answer was judged, byte for byte, as a repository theory imported by the
 layer's boundary `Native_Execution_Refinements`, runs the ordinary incremental check (every report
-word equal to its retained word), and judges the answer once more in the adopted workspace, where its
-theory is part of the published state and must be an unchanged answer that publishes over the incumbent
-it now is. A refused step withdraws the
-installation. The receipt keeps every step and the measured seconds of every executed recipe beside
+word equal to its retained word), and judges the answer once more in the adopted workspace. That last
+judgment defined the answer state as the request state and judged the published state against itself
+(DECISIONS.md, "An adoption is established by its evidence; the published state is never judged against
+itself"): the `published` step of both receipts below is that self-comparison, kept as it ran, and it
+established nothing about either answer. A refused step withdraws the
+installation.
+
+An answer is adopted exactly when its evidence holds (`development_answer.adoption_evidence`): the
+request's state adopts through the boundary, exactly one receipt here binds the answer's `answer_sha256`
+as adopted, not a control and not withdrawn, the installed theory has the digest the receipt retained at
+installation, and ROOT declares it once and the boundary imports it. Receipts are found by
+`answer_sha256`, not by their file name. Both receipts gained `answer_sha256` after they were written
+(task 263): each is derived from the answer of its record and marked so under `derived`; no step was
+rewritten. What no workspace content establishes, that the published state is the answer state the
+judgment produced, is reported as `unverified` wherever an adoption is. The receipt keeps every step and the measured seconds of every executed recipe beside
 its retained seconds, as observations: no ranking or selection is derived from them, because no
 internal account of a physical measurement exists yet.
 
@@ -27,8 +38,9 @@ published state never holds them; only their receipts are retained here.
 isolated copy; on 2026-09-19 it was adopted again through the publication gate in the working tree and
 withdrawn by the tool (the working tree held it only while the adoption ran): the precondition judged it
 accepted and published (26.9 s), the check proved 151 theories again (170 s of proof, 315 s in all),
-executed 48 recipes with every word equal and reused 3, and the published state judged it an unchanged
-answer that publishes over the incumbent it had become (27.3 s).
+executed 48 recipes with every word equal and reused 3, and the published state was judged against
+itself (27.3 s; the self-comparison above). `control` and `withdrawn` keep this receipt from ever
+establishing an adoption.
 
 `Development_Answer_0ccf746fe2cf.json` is the first adoption of a real answer: the indexed complete data
 walk answering the request for `Factor_Complete_Data_Walks.finite_data_walk`
@@ -37,7 +49,10 @@ for its six introduced constants and its repair accepted it over the extension d
 adopted through the repaired request: the precondition reproduced the retained word, the judged theory
 was installed at the boundary, the check proved 150 theories again (166 s of proof, 205 s in all),
 executed the 11 recipes the change reaches with every word equal to its retained word and reused 40,
-and the published state judged the answer as an unchanged answer. It stays in the published state.
+and the published state was judged against itself (the self-comparison above). It stays in the published
+state, and its evidence holds: the installed theory's digest is `9102596f…`, the digest the receipt
+retained and the base's accepted context records, ROOT declares it and the boundary imports it. Its
+`revision` is not recoverable, so the reproduction of its precondition is a residual of this receipt.
 The recipes that read recorded causes back ran in 10.9 against 26.5 s (certified causes), 27.7 against
 44.7 s (digit replay), 16.6 against 25.0 s (constructed history) and 16.3 against 23.8 s (quoted
 history); the others within about a second. These seconds were measured under the check's concurrent

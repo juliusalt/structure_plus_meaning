@@ -8,17 +8,19 @@ import unittest
 import replay_development_answers as replay
 
 
-def row(produced=True, reconstructed=True, adopted=False):
+def row(produced=True, reconstructed=True, status='judged'):
     """One answer's row, in the three fields the classification reads."""
-    return {'produced': produced, 'reconstructed': reconstructed, 'adopted': adopted}
+    return {'produced': produced, 'reconstructed': reconstructed, 'status': status if produced else None}
+
+
+NONE = {'adopted': [], 'obstructed': [], 'differing': [], 'unproduced': []}
 
 
 class AnswerGroups(unittest.TestCase):
-    """Produced and unproduced runs crossed with reconstructed, differing and adopted answers."""
+    """Produced and unproduced runs crossed with reconstructed, differing, adopted and obstructed answers."""
 
     def test_a_produced_reconstruction_falls_into_no_group(self):
-        self.assertEqual(replay.answer_groups({'reconstructed-answer': row()}),
-                         {'adopted': [], 'differing': [], 'unproduced': []})
+        self.assertEqual(replay.answer_groups({'reconstructed-answer': row()}), NONE)
 
     def test_a_compared_word_that_differs_is_a_re_evaluation(self):
         groups = replay.answer_groups({'changed-answer': row(reconstructed=False)})
@@ -34,18 +36,31 @@ class AnswerGroups(unittest.TestCase):
         # The retained `failed-proof` record parts the two notions: the harness judged that this
         # answer's build failed, so the row's own status is `failed` while its run produced that
         # judgment and its words were compared and reconstructed.
-        self.assertEqual(replay.answer_groups({'failed-proof': {**row(), 'status': 'failed'}}),
-                         {'adopted': [], 'differing': [], 'unproduced': []})
+        self.assertEqual(replay.answer_groups({'failed-proof': row(status='failed')}), NONE)
 
-    def test_an_adopted_answer_is_counted_in_neither_comparison_group(self):
-        groups = replay.answer_groups({'indexed-data-walk': row(reconstructed=False, adopted=True)})
-        self.assertEqual(groups, {'adopted': ['indexed-data-walk'], 'differing': [], 'unproduced': []})
+    def test_an_adopted_answer_is_counted_in_no_comparison_group_and_passes(self):
+        groups = replay.answer_groups({'indexed-data-walk': row(reconstructed=False, status='adopted')})
+        self.assertEqual(groups, {**NONE, 'adopted': ['indexed-data-walk']})
+        self.assertEqual(replay.replay_exit(groups, []), 0)
 
-    def test_an_adopted_answer_whose_run_left_no_judgment_is_unproduced(self):
-        groups = replay.answer_groups({'indexed-data-walk':
-                                       row(produced=False, reconstructed=False, adopted=True)})
-        self.assertEqual(groups, {'adopted': ['indexed-data-walk'], 'differing': [],
-                                  'unproduced': ['indexed-data-walk']})
+    def test_an_obstructed_answer_is_its_own_group_and_fails_the_replay(self):
+        groups = replay.answer_groups({'failed-proof': row(reconstructed=False, status='obstructed')})
+        self.assertEqual(groups, {**NONE, 'obstructed': ['failed-proof']})
+        self.assertEqual(replay.replay_exit(groups, []), 1)
+
+    def test_a_run_that_left_no_judgment_is_unproduced_whatever_was_expected(self):
+        groups = replay.answer_groups({'indexed-data-walk': row(produced=False, reconstructed=False)})
+        self.assertEqual(groups, {**NONE, 'unproduced': ['indexed-data-walk']})
+        self.assertEqual(replay.replay_exit(groups, []), 1)
+
+    def test_an_unrecorded_adoption_fails_the_replay(self):
+        self.assertEqual(replay.replay_exit(NONE, ['Development_Answer_x.json']), 1)
+        self.assertEqual(replay.replay_exit(NONE, []), 0)
+
+    def test_every_retained_adoption_has_its_answers_record(self):
+        self.assertEqual(replay.unrecorded_adoptions(), [])
+        with tempfile.TemporaryDirectory() as temporary:
+            self.assertEqual(replay.unrecorded_adoptions(Path(temporary)), ['Development_Answer_0ccf746fe2cf.json'])
 
     def test_the_groups_are_sorted_and_every_answer_is_accounted_for(self):
         groups = replay.answer_groups({'b-differs': row(reconstructed=False), 'a-differs': row(reconstructed=False),

@@ -44,13 +44,15 @@ check over the request state's rows — a proposed body is admitted exactly when
 support, production being an executor's — composing no reach closure, the least context being one step; five fields:
 support complete, scope cited, declarations cited, context sound, support sound. Briefed by #100, each build with its
 review. Landed: #106 (`1add503f`, `request_presents_constructed`) and #108 (`a2ed0ed7`, `Development_Request_Scope`:
-support complete and scope cited). #108's review: `excess` is stated once as a locale and the rows-about argument
-once, keyed, by #182 (after #176) before #110 and #112 consume them; #110 checks declarations cited with
-`store_found_program` directly and consumes `entity_rows_keyed`; #112's call carries the body's path stores built from
-the executor's lists, no rule reading a list as a store (native production stays Open 39). #110, the three search
-fields, after #176 and #182; #112, the construction — rule, program, contract, conditions and corollaries, admitting a
-request at its locus through the store search with #97's contract for held values — after #110, #173 and #182; and
-#114, the held measurement of one construction, after #112.
+support complete and scope cited). #182 (`f28e2695`) stated `excess` once as a locale and the rows about a constant
+once, keyed, with the entity-key condition by name; from its review, #249 moves `entity_rows_keyed` into
+`Development_State_Rows`, the presenter concluding it as `state_presenter_entity_key`, and #110 states the scope's
+`statements` step beside `development_constant_scope_member`. #110 checks declarations cited with
+`store_found_program` directly; #112's call carries the body's path stores built from the executor's lists, no rule
+reading a list as a store (native production stays Open 39). #110, the three search fields, after #227 and #249;
+#112, the construction — rule, program, contract, conditions and corollaries, admitting a request at its locus through
+the store search with #97's contract for held values — after #110; and #114, the held measurement of one
+construction, after #112.
 
 **The incremental assessment (#185–#206, #219, #220).** Design #171's entry (`7a6093bf`), DECISIONS.md "An answer state is judged
 from its request state's assessment and the edit": the assessment as presentations only (indexes by a key reading, the
@@ -63,8 +65,10 @@ statements 0.264 s, formed 0.645 s, excess 0.023 s, undeclared 1.791 s, unreache
 the index of a family by a key reading, the subject and mention indexes its instances (#185, `10f842ff`); the
 edit and the answer state's presentation from it (#186, `786d11da`); the reach tables under seeding, restriction and
 removal (#190, `ff8a63c3`); the local fields (#188, `1841b32a`, landed before #231 and #233; #220 and #235 re-cite what it repeats) and `undeclared` on
-the edited state (#189), after #231;
-`unreached` with O's admission (#191), after #182, #231 and the rule-family law #233; the incremental judgment, `native_edited_fields` and the
+the edited state (#189, `fb73467f`: its review's store with the declaration store's presence and one list form of the
+fields' families to #192, the removed rows' keys as atoms of the answer state to #193);
+`unreached` with O's admission (#191; its reach roots are the keys some row of the request state is about and the root
+keys, since an atom no row is about stays unreached in a closed state — q63, a marked correction of the entry); the incremental judgment, `native_edited_fields` and the
 stage's equation (#192), after #42 and the three field builds; the exported answer's edit (#187), after #161; the
 machinery's verification stage judged natively (#193) and its held measurement by field (#194), condition 5a's
 evidence for a stage's cost; the witnesses at the edit's parts (#195), after #44. From #186's review, #219 (`4dde066c`)
@@ -130,8 +134,11 @@ harness's last base without the layout and the first with it (#159, after #155 a
 family of placements, placed before #155 so that compiled syntax has one layout and its words change once, every word
 equal: #221 (`1841b32a`) stated it once in `RRA_Placed_Forests`, the bound forest, its executable form and the pattern
 forest's table its instances; #223
-places the premise forest and the schema body's premises through it; #225, after #153, makes the syntax forest, its
-positions and its table its instances. #90 (`7379cfc7`) switched the 20 overnight native-control theories to the keyed question; the overnight
+places the premise forest and the schema body's premises through it; #225 (`eca462e1`) made the syntax forest, its
+positions and its table its instances, consumers reading its `_eq` lemmas, which stand (the planner: they survive
+#155). Its review found the placed forest's union form proved in place twice (`syntax_forest_pushed`,
+`Factor_Pattern_Forests`): #223 states it once if its premise forest needs it, and #251, after #223 and beside #155,
+re-cites every copy, with the unused premise of `syntax_forest_child_reads` and #225's Contracts bullet. #90 (`7379cfc7`) switched the 20 overnight native-control theories to the keyed question; the overnight
 boundary, which no check runs and which lags its sources since `d0b70ea2`, `5c26b791` and `7379cfc7`, is recorded as
 historical at `aa946a22` by #172 (Open 55, q53). #92 retires `filtered_development_question`'s index form after #167,
 stating `keyed_development_admission_at` once for its four users (#90's follow-up 3); q33's facts are named in its
@@ -161,31 +168,31 @@ with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each 
 law's family form — rules with any number of premises (q60), under no condition on their variables (q61): #233 (`d5d0e747`)
 stated it once in `Native_Collection_Programs`, #208's law its instance, with Open 75's move, before #42, #44, #110,
 #112 and #191, which instantiate it; #245 (`d2d1ab33`) stated its elimination at an arbitrary support relation
-(`supported_clause`); #247 completes it — the introduction half at any relation, the conclusion from
-`supported_clause`, a case analysis returning the rule (#245's review) — before #235, #44 and #110; its re-citations follow the builds editing their theories — the verdict's families, the
+(`supported_clause`); #247 (`e8d2158c`) completed it — the introduction half at any relation, the conclusion from
+`supported_clause`, `holds_rule` returning the rule — its review's documentation corrections and the inductions going
+to #235 and its two factorings inside the theory to Open 79; its re-citations follow the builds editing their theories — the verdict's families, the
 value rule and the decomposition rule (#235, after #247), the formation rules, the any rule and the two-premise call
 (#237, after #214 and #235), the store search (#239, after #44) — each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
-changes: the syntax forest #225 and the premise forest #223, with #241 after #147, then the layout
-#155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
-#167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
-#161 and #192. Then #114 (after #112, #110, #182 or #227) and #45 (after #44, #42, #227), 4. Beside
-them: #249; the rule programs' re-citation #214; the rule-family law's completion #247, then the
-re-citations #235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
+changes: the premise forest #223, with #241 after #147, then the layout #155, the answer records' re-recording #157,
+then #161, #165, #167, #169 and its review #170, or #92 and #93 after #167; one task more may end that chain. The
+incremental line's measurement #194 and its review are 9 deep, through #161 and #187. Then #238 (after #237, #214,
+#44, #42 and #227), 6, and #114 (after #112, #110 and #227 or #249), 4. Beside them: #235 and #191, running; the
+placed forest's cleanup #251 after #223; the re-citations #239 (after #44) and #237.
 
-**Order** (`128 129 147 148 227 228 223 224 241 242 247 248 249 250 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
-The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
-review and #147; then the exporter's discharge #227, which #42 and #110 wait
-on, and the excess locale #182, which #110, #112 and #191 wait on; the placed forest's instances #223 and #225
-and the stragglers' switch #241, which #155 waits on, close after their brief's author;
-the probe's fix #229 (every later build's inner loop), the rule-family law's completion #247 and the
-verdict's entry #42, heads of
-the deepest chains, so that a slot serves them as they become ready; the rule programs' re-citations; the layout's word
-change #155, its answer records #157 and its measurement #159 soon after it, while the harness's lineage still holds
-the last base without it; then #161; the rest of the verdict and request chains; the incremental line's later builds
-as their inputs land; #135's later builds; then #64 and #92. A parked task whose hold nears its end resumes first.
+**Order** (`147 148 128 129 253 254 255 P1D 256 257 249 250 191 202 223 224 227 228 241 242 155 156 157 158 159 160 161 162 42 43 187 198 165 166 44 45 110 111 192 203 193 204 167 168 214 215 169 170 194 205 235 236 112 113 114 195 206 237 238 239 240 251 252 92 93 64 65`).
+The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
+the owner's ask, the external review's two findings verified before anything is built on them (#253, #254), P2's fix
+#255 and the design of adoption's evidence for P1's fix; #227's performance fix #256, which #42 and #110 wait on
+through #227; the
+running #249 and #191, so that their checks are not held behind parked work; then the parked #223, head of the
+deepest chain, and #227, which #42 and #110 wait on; #241 after #147; the layout's word change #155, its answer
+records #157 and its measurement #159 soon after it, while the harness's lineage still holds the last base without
+it; #161; then the verdict's entry #42 and the chains' next links as their inputs land, each ordered by the length of
+what follows it; the re-citations and the placed forest's cleanup wherever a slot would otherwise stand idle; #92 and
+#64 last. A parked task whose hold nears its end resumes first.
 
 ## Decisions
 
@@ -277,6 +284,11 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   measurement; refused for a full machine, a session parks for it (`v2.py park machine`) and is resumed when a run of
   its kind may start (the owner, 2026-09-21 22:31: up to 8 probes and 2 heavy runs at once).
 - **No task rests on reasoning not yet written.**
+- **Briefs do not ask for `--parallel-proofs 0`**: the harness leaves it out of probes (#182's review); a probe's
+  summary records the options it ran with.
+- **A bare file name in a Deliverable is the task's own folder's** (`.build/tasks/<id>/NAME`) unless the repository's
+  root has that file; a new file at the root is written `./NAME` (the harness, 18:52). A brief rewritten while its
+  session works is what the harness reads from then on.
 - **A probe's evidence is its summary** (#175): `probe.summary.json` beside the probe's log (`loaded`, `marker`,
   `parallel_proofs`, `timeout`, `seconds`) is what a review reads for a probe's completion and options.
 - **The harness advances the base and retains the receipts** (the owner, 2026-09-22 12:55): each landing's check
@@ -532,9 +544,17 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   key, the presenter's sharing and the general list-index facts to #249; the added path's timing to #194;
   `key_edit_update_index` to #193; the duplicate `entity_kinds` to #235.
 - **#225** `eca462e1`: the syntax forest, its positions and table, and both executable forms, instances of the placed
-  forest at `syntax_branch`. Follow-ups: under Now.
+  forest at `syntax_branch`. Follow-ups: the union form once to #223 and #251, with the unused premise and the
+  Contracts bullet; its `_eq` lemmas stand (the planner); #155's landing like its 559 s.
 - **#182** `f28e2695`: `excess` once as a locale, the rows about a constant once, the entity-key condition by name.
-  Follow-ups: under Now.
+  Follow-ups: `entity_rows_keyed` into `Development_State_Rows` with `state_presenter_entity_key`, and
+  `kinds_present_rows`, to #249; the scope's `statements` step to #110; the probes' option a working rule.
+- **#189** `fb73467f`: `undeclared` on the edited state — the rows mentioning a removed declaration, the restricted
+  declaration store. Follow-ups: the store generalized to any store with the declaration store's presence, and one
+  list form of the families, to #192; the removed rows' keys as atoms of the answer state to #193.
+- **#247** `e8d2158c`: `native_rule_law` completed — its introduction at any support relation, the conclusion from
+  `supported_clause`, `holds_rule` returning the rule. Follow-ups: the documentation corrections and the inductions to
+  #235; `holds_clause` and the `unfold` corollaries to Open 79.
 
 ## Open
 
@@ -788,27 +808,34 @@ Not yet planned, in the order they are expected to be planned:
     statement, so it is kept while its consumers discharge the two premises; decided at its next consumer.
 78. **The probe tool's polish** (#229's reviews): the stale `--theory` help, an additive `--load`, `certified` under
     `--theory`, and the 3.25 s lineage verification every probe pays. With the next edit of `tools/probe_theories.py`.
+79. **#247's follow-ups inside `Native_Collection_Programs`** (`.build/tasks/247/review.md`): `holds_rule` re-derives
+    what `holds_cases` derives — one `holds_clause` in `native_rule_family` for both; the four `unfold` corollaries
+    share one composition — one law lemma, or dropped once #44, #110 and #235 cite `law.supported_clause` with
+    `unfold_rule`; the theory text's garbled "formed terms nowhere". With the next change to that theory, which
+    rebuilds about 1,049 theories; none is planned.
 
 ## Now
 
-- **In flight (plan-45, 17:05)**: #189, #223 and #225 build; #128 and #147 are in review; #227 discharges the exporter's obligation, ready now; #233 (`d5d0e747`) and #245
-  (`d2d1ab33`) stated the rule-family law (q60, q61) and its elimination at any relation, and #247 completes it; #231 (`cded0ab7`) stated the name-locality of
-  readings. #220 makes the edit's constructor and the index
-  update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
-  #208's to #212 and #214, #221's to #223 and #225, #188's to #192 and #220, #212's to #233 and #235, #231's to #187, #189, #191 and #220.
-- **Not handled at plan-45's close (18:12)**: #182 landed (`f28e2695`) with follow-ups to place — (1) move
-  `entity_rows_keyed` into `Development_State_Rows` and let the presenter conclude it by name
-  (`state_presenter_entity_key`), which #110 and #112 then cite: best mailed to #249, which edits the presenter, with
-  #110 then waiting on #249; (2) whether `kinds_present_rows` is still used, else derived from `selection_rows_about`
-  (with 1); (3) the step `statements` of `support_complete_program.contract` as a lemma beside
-  `development_constant_scope_member` (to #110); (4) briefs stop asking for `--parallel-proofs 0`, which the harness
-  leaves out of probes (a working rule); (5) the landing checks rebuild 1,245 theories against base `train225` (the
-  owner's list). #225 landed (`eca462e1`); its first review's follow-ups — the placed forest's union equation for
-  `syntax_forest_pushed` and `Factor_Pattern_Forests`, the `_eq` lemmas against the member-lemma reading (the
-  planner's), a Contracts bullet, the unused `formed` premise of `syntax_forest_child_reads`, #155's landing cost like
-  its 559 s — are to be read in `.build/tasks/226/review.md` and 225's first review before they are placed. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
-  declarations #40 needed (q54); #112's carries #106's review. #143 was withdrawn (Open 65); its finding is carried by
-  #157 and the working rules. #155, #92 and #64 name the reports they re-record, no receipt.
+- **The owner's ask (18:32)**: an external reviewer's two findings in the answer tools, relayed by the harness, are
+  verified before anything is built on them, each reproduced in its task's own tree and kept as tests with
+  `unittest.expectedFailure` markers while it stands (q64: the evidence's reconstructible form, which the fixes turn
+  into passing tests). P1, #253: confirmed (`.build/tasks/253/report.md`) — `adopted()` reads only
+  a path, and the harness then judges the request state against itself, reporting a never-read answer accepted and
+  published; a design (placed next) decides adoption's evidence and what the harness and the replay report for an
+  adopted answer, and its fix goes before #169, which edits the answer tools; #157's re-recording does not rest on it
+  on HEAD. P2, #254: confirmed and wider (`.build/tasks/254/report.md`) — an unsuccessful adoption leaves its theory,
+  import and `ROOT` entry without a receipt at a timeout, an interrupt or SIGTERM, any exception outside four types,
+  and any exception inside `install()` after its first write; #255 fixes it after #254 lands, one cleanup path over
+  every exit.
+- **#227's performance problem (19:01)**: `code_simp` of the exporter's obligation normalizes the whole exported
+  context and does not finish, and `eval` is an oracle; #256 (reviewed by #257) proves the obligation at every state
+  the exporter defines by a kernel-checked evaluation of the declarations alone, and #227 continues when it lands.
+- **In flight (plan-46, 18:30)**: #249, #191 and #235 work; #128 and #147 finish their landings; #223 and #227 are
+  parked. Follow-ups mailed to tasks not yet started travel with them: #182's to #249 and #110 (which waits on #249),
+  #189's to #192 and #193, #247's to #235, #44 and #110, #225's union form to #223, and the earlier ones plan-45 sent to
+  #187–#193, #212–#214 and #223. #42's brief carries #106's review, #38's reduction and questions and the
+  `[code_unfold]` declarations #40 needed (q54); #112's carries #106's review. #155, #92 and #64 name the reports they
+  re-record, no receipt; #155's landing check will rebuild about 1,245 theories, like #225's 559 s.
 - **Owed to briefs when their inputs land**: #64's brief takes #161's identity lemma in place of a transport (#135's
   entry, q48).
 - **For the owner** (harness gaps, reported by the tasks):
@@ -850,9 +877,6 @@ Not yet planned, in the order they are expected to be planned:
   - A `=== write` in `v2.py change` replaces an earlier round's deliverable without notice (#80's second round), and a
     held measurement leaves no record of its hold (#80's review: write the claim's window into held runs' receipts;
     #88's re-review: record each hold's task, start and end where a reviewer reads it).
-  - An investigation whose deliverables all lie under `.build/` can neither finalize (the finalizer takes only
-    repository files) nor record itself done (a done result needs a final job), and the planner's verdict waits for
-    the finalizer's hand-off (#134, 07:35).
   - Two git operations met in one task's worktree during concurrent finalizations (`index.lock`, #95's commit, 03:49):
     the lock was gone a minute later, yet landing the accepted entry needed a session round.
   - A task resumed in a new session is refused `park`, `measuring` and `ask` as not the producing session (the caller
@@ -874,6 +898,11 @@ Not yet planned, in the order they are expected to be planned:
   - The finalizer ran two landing checks on one tree with identical inputs (#90: 311.5 s and 330.0 s, the same 155
     theories rebuilt); reusing an accepted check on unchanged inputs would save about five and a half minutes a
     landing (#90's review).
+  - #182's landing check rebuilt 1,245 theories against base `train225` (#182's review), where a base advanced at
+    every landing leaves only a task's own changes to rebuild; #247's, an hour later, reused 1,703 of 1,831.
+  - In a task's tree `.build` is a link to the one `.build`, so a script under `.build/tasks/<id>/` that finds its
+    tree from its own resolved path lands in the one tree — only the sandbox's read-only mount stopped #254's first run
+    writing there (#254's result).
 
   - The lasting base (#144's review): `v2.py:1349`'s default names the `/tmp` pointer and should name the lasting one
     before the next reboot; `health.py`'s `base_at_risk` will report the lasting base as standing in a task's

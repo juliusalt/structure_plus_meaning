@@ -27,8 +27,10 @@ import json, os, sys
 with open(os.environ['WARM_TEST_CALLS'], 'a') as f:
     f.write(json.dumps(sys.argv[1:]) + chr(10))
 if sys.argv[1:] == ['agents', '--json']:
-    print(json.dumps([dict(kind='background', id='t1', status='idle', state='done',
-                           sessionId='warm-test-fork', cwd=os.environ['WARM_TEST_CWD'], name='warm-max')]))
+    # the fork is listed under the name it was started with (warm-max, or warm-max-stable for the stable base)
+    names = [a[a.index('-n') + 1] for a in map(json.loads, open(os.environ['WARM_TEST_CALLS'])) if '-n' in a]
+    print(json.dumps([dict(kind='background', id='t1', status='idle', state='done', sessionId='warm-test-fork',
+                           cwd=os.environ['WARM_TEST_CWD'], name=n) for n in names[-1:] or ['warm-max']]))
 """
 
 
@@ -100,14 +102,17 @@ class WarmVerdictTests(unittest.TestCase):
         self.assertIn("warm max: OK", self.log())  # and so does the log, with nothing redirected into it
         self.assertTrue((self.state / "max-base.hit").exists())
         self.assertFalse((self.state / "max-base.miss").exists())
-        health = subprocess.run(
+        self.assertIn("base max: warm at", self.health())
+
+    def health(self):
+        out = subprocess.run(
             [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(HERE)!r}); "
              "import health; health.bases_and_trees()"],
             env=dict(self.env, ORCH_PROJECT=self.temp.name,
                      ORCH_ACTIVE_CONTEXT=str(Path(self.temp.name) / "no-such-context.json")),
             capture_output=True, text=True, timeout=60)
-        self.assertEqual(health.returncode, 0, health.stdout + health.stderr)
-        self.assertIn("base max: warm at", health.stdout)
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        return out.stdout
 
     def test_a_base_started_with_other_tools_is_not_pinged(self):
         # every fork reads its origin from cache only with the same tools; a ping of a base started with others (all
@@ -136,6 +141,35 @@ class WarmVerdictTests(unittest.TestCase):
         self.layer(base="a-base-that-was-rebuilt-away")
         self.warm()
         self.assertEqual(self.resumed(), ["warm-test-base"])
+
+    def test_the_stable_base_under_a_layer_is_pinged_on_its_own_while_its_entry_is_warm(self):
+        # a read of the layer does not keep the stable base's own entry alive: the max layer's refresh of 2026-09-21
+        # read 9,270 tokens and wrote 339,381 of it anew, three hours after its last own read
+        self.layer()
+        stable = f"sh {HERE / 'base.sh'} max warm stable"
+        self.warm(shell=stable)                                                     # asked by hand: pinged
+        self.assertEqual(self.resumed(), ["warm-test-base"])                       # the stable base, not the layer
+        self.assertIn("warm max stable: OK", self.log())
+        hit = self.state / "max-stable.hit"
+        self.assertTrue(hit.exists())
+        self.assertFalse((self.state / "max-base.hit").exists())                  # the layer's own time is apart
+        self.assertIn("stable base max (under its layer): warm at", self.health())
+        for ago, due in ((10 * 60, False), (45 * 60, True), (70 * 60, False)):  # early; due; cold, left alone
+            self.calls.write_text("")
+            then = time.time() - ago
+            os.utime(hit, (then, then))
+            self.warm(shell=stable + " --if-due")
+            self.assertEqual(self.resumed() == ["warm-test-base"], due, ago)
+
+    def test_a_missed_ping_is_not_taken_as_a_read_so_the_next_pass_tries_again(self):
+        # a miss wrote the fork's own prefix, which no later fork reads (each fork's first turn names the fork): taken
+        # as a read, the next try came forty minutes on, when the missed entry was surely gone
+        fork = Path(self.temp.name) / "home/.claude/projects" / TRANSCRIPTS / "warm-test-fork.jsonl"
+        fork.write_text(json.dumps(assistant("base-1", 0, 0, 500000)) + "\n"
+                        + json.dumps(assistant("own-1", 2, 0, 500062)) + "\n")
+        self.assertIn("warm max: MISS", self.warm())
+        self.assertFalse((self.state / "max-base.hit").exists())
+        self.assertEqual((self.state / "max-base.miss").read_text().split(), ["x"])
 
     def test_the_daemon_s_redirection_does_not_write_the_verdict_twice(self):
         # the daemon runs `base.sh WHO warm >/dev/null 2>> warm.log`: the verdict comes from base.sh, the stream

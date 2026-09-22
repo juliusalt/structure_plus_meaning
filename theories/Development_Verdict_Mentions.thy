@@ -371,28 +371,7 @@ interpretation undeclared_entry: native_rule_family verdict_mentions_system verd
     "[([0],undeclared_rule verdict_found_selection verdict_found_family)]"
   by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
 
-section \<open>The field \<open>excess\<close>, over any selection and any support\<close>
-
-lemma support_row_exact:
-  assumes identity: "\<And>y. term_formed (ident y)"
-  shows "(verdict_row_found,Pair_Term (support_term ks) (state_row_term ident z))
-      \<in>positive_meaning verdict_mentions_system \<longleftrightarrow> set (row_mentions (snd z))\<subseteq>set ks"
-  unfolding support_term_def by (subst mention_found.exact[OF identity]) (auto simp: support_store_lookup support_store_found)
-
-theorem native_excess_rows:
-  assumes identity: "\<And>y. term_formed (ident y)" and atom: "k\<in>set A"
-  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (support_term ks)) (subject_indexes_term ident A Fs))
-      \<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
-    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. k\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
-proof -
-  interpret excess: subject_selection_program verdict_mentions_system verdict_excess verdict_subject_family
-      verdict_subject_search verdict_found_family verdict_row_found support_term ident
-      "\<lambda>ks z. set (row_mentions (snd z))\<subseteq>set ks"
-    by unfold_locales (simp_all add: identity support_row_exact)
-  show ?thesis by (simp add: excess.exact[OF atom])
-qed
-
-section \<open>The field \<open>excess\<close> of a presented state\<close>
+section \<open>The field \<open>excess\<close>, over any program, any selection and any support\<close>
 
 lemma answer_statements_excess_empty:
   "development_answer_statements_excess kind C P S=[] \<longleftrightarrow>
@@ -419,6 +398,115 @@ next
     by (auto simp: map_filter_member entity_mentions_def split: option.splits)
 qed
 
+text \<open>
+  The field \<open>excess\<close> is the subject index's selection reading (@{locale subject_selection_program}) at the
+  mentions reading (@{locale row_mentions_program}) over the support store: a row about the key is read in
+  the store of the support family, and passes when every key it mentions is found there. The locale names
+  the sites of the field's program shape; its contract (@{text excess_program_contract}, stated beside it
+  because it reads the rows of a presented state) holds for any program holding it, any
+  \<open>kinds_present\<close> selection and any support family. \<open>excess\<close>'s own program holds it at its sites
+  (@{text verdict_excess_program}); request construction's \<open>support complete\<close> is its interpretation at the
+  selection of every family (theory \<open>Development_Request_Scope\<close>).
+\<close>
+
+locale excess_program = mentions: row_mentions_program P r e m kf ch +
+    search: native_store_search_program P k v + family: native_every_program P v r +
+    call: native_rule_family P g "[([0],subject_call_rule k)]" + every: native_every_program P s g
+  for P :: "'u native_system" and s g k v r e m kf ch :: "'u definition_site" +
+  fixes ident :: "'i \<Rightarrow> factor_term"
+  assumes identity: "\<And>y. term_formed (ident y)"
+begin
+
+lemma row_exact:
+  "(r,Pair_Term (support_term ks) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
+    set (row_mentions (snd z))\<subseteq>set ks"
+  unfolding support_term_def
+  by (subst mentions.exact[OF identity]) (auto simp: support_store_lookup support_store_found)
+
+sublocale selection: subject_selection_program P s g k v r support_term ident
+    "\<lambda>ks z. set (row_mentions (snd z))\<subseteq>set ks"
+  by unfold_locales (simp_all add: identity row_exact)
+
+theorem exact:
+  assumes atom: "a\<in>set A"
+  shows "(s,Pair_Term (Pair_Term (path_term a) (support_term ks)) (subject_indexes_term ident A Fs))\<in>positive_meaning P \<longleftrightarrow>
+    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
+  by (simp add: selection.exact[OF atom])
+
+end
+
+theorem excess_program_contract:
+  fixes ident :: "isabelle_context \<Rightarrow> factor_term"
+  assumes program: "excess_program P s g k v r e m kf ch ident"
+    and present: "state_presents key S R" and kinds: "kinds_present replaceable ks"
+    and selection: "set Fs=state_entities R ` ks" and bound: "c<length (fst (snd S))"
+    and support: "\<And>d. d<length (fst (snd S)) \<Longrightarrow> key d\<in>set ss \<longleftrightarrow> d |\<in>| X"
+  shows "(s,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+      (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
+    development_answer_statements_excess replaceable (snd S) {|c|} X=[]"
+proof -
+  let ?es="snd (snd S)"
+  have atom: "key c\<in>set (map fst (state_atoms R))"
+    using atoms_present_atom[OF state_presents_atoms[OF present] bound] by force
+  have mentions_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length (fst (snd S))"
+    using entity_mentions_positions state_presents_inside[OF present] by (force simp: state_positions_def)
+  have "(s,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+      (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
+    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ss)"
+    by (rule excess_program.exact[OF program atom])
+  also have "\<dots> \<longleftrightarrow> (\<forall>a p. (\<exists>k\<in>ks. (a,p)\<in>set (state_entities R k)) \<and> key c\<in>set (row_subjects p) \<longrightarrow>
+      set (row_mentions p)\<subseteq>set ss)"
+    using selection_rows_all[OF selection, where P="\<lambda>z. key c\<in>set (row_subjects (snd z))"
+      and Q="\<lambda>z. set (row_mentions (snd z))\<subseteq>set ss"] by simp
+  also have "\<dots> \<longleftrightarrow> (\<forall>a p. (a,p)\<in>presented_rows R \<and> (\<exists>e\<in>set ?es. replaceable e \<and>
+      c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<and>
+      p=entity_row key (snd S) e) \<longrightarrow> set (row_mentions p)\<subseteq>set ss)"
+    by (intro all_cong1 imp_cong selection_rows_about[OF present kinds bound] refl)
+  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. replaceable e \<longrightarrow>
+      (c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<longrightarrow>
+      set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss))"
+    using entity_row_presented[OF present] by blast
+  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. replaceable e \<longrightarrow>
+      (c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<longrightarrow>
+      (\<forall>d\<in>set (entity_mentions e). d |\<in>| X)))"
+  proof -
+    have m: "set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss \<longleftrightarrow> (\<forall>d\<in>set (entity_mentions e). d |\<in>| X)"
+      if e: "e\<in>set ?es" for e
+      using mentions_inside[OF e] support by (auto simp: subset_iff)
+    show ?thesis using m by blast
+  qed
+  also have "\<dots> \<longleftrightarrow> development_answer_statements_excess replaceable (snd S) {|c|} X=[]"
+    by (auto simp: answer_statements_excess_empty development_answer_statements_def
+      development_answer_statement_def list_ex_iff)
+  finally show ?thesis .
+qed
+
+text \<open>\<open>excess\<close>'s own program holds the field at its sites; the verdict's field is this interpretation.\<close>
+
+lemma verdict_excess_program:
+  assumes identity: "\<And>y. term_formed (ident y)"
+  shows "excess_program verdict_mentions_system verdict_excess verdict_subject_family
+    verdict_subject_search verdict_found_family verdict_row_found verdict_keys_found verdict_key_found
+    verdict_found_search verdict_found_any ident"
+  unfolding excess_program_def excess_program_axioms_def row_mentions_program_def
+    store_found_program_def native_store_search_program_def native_every_program_def
+  by (intro conjI allI; (rule verdict_mentions_family | rule identity)) (simp_all add: verdict_mentions_rule_defs)
+
+lemma support_row_exact:
+  assumes identity: "\<And>y. term_formed (ident y)"
+  shows "(verdict_row_found,Pair_Term (support_term ks) (state_row_term ident z))
+      \<in>positive_meaning verdict_mentions_system \<longleftrightarrow> set (row_mentions (snd z))\<subseteq>set ks"
+  by (rule excess_program.row_exact[OF verdict_excess_program[OF identity]])
+
+theorem native_excess_rows:
+  assumes identity: "\<And>y. term_formed (ident y)" and atom: "k\<in>set A"
+  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (support_term ks)) (subject_indexes_term ident A Fs))
+      \<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. k\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
+  by (rule excess_program.exact[OF verdict_excess_program[OF identity] atom])
+
+section \<open>The field \<open>excess\<close> of a presented state\<close>
+
 theorem native_excess_exact:
   assumes present: "state_presents key S R" and kinds: "kinds_present replaceable ks"
     and selection: "set Fs=state_entities R ` ks" and bound: "c<length (fst (snd S))"
@@ -427,42 +515,7 @@ theorem native_excess_exact:
   shows "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
     development_answer_statements_excess replaceable (snd S) {|c|} P=[]"
-proof -
-  let ?es="snd (snd S)"
-  have atom: "key c\<in>set (map fst (state_atoms R))"
-    using atoms_present_atom[OF state_presents_atoms[OF present] bound] by force
-  have mentions_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length (fst (snd S))"
-    using entity_mentions_positions state_presents_inside[OF present] by (force simp: state_positions_def)
-  have "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
-      (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
-    (\<forall>p\<in>(\<Union>k\<in>ks. set (map snd (state_entities R k))). key c\<in>set (row_subjects p) \<longrightarrow> set (row_mentions p)\<subseteq>set ss)"
-    by (auto simp: native_excess_rows[OF identity atom] selection)
-  also have "\<dots> \<longleftrightarrow> (\<forall>p\<in>entity_row key (snd S) ` {e\<in>set ?es. replaceable e}.
-      key c\<in>set (row_subjects p) \<longrightarrow> set (row_mentions p)\<subseteq>set ss)"
-    by (simp only: kinds_present_rows[OF present kinds])
-  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. replaceable e \<longrightarrow> (key c\<in>set (row_subjects (entity_row key (snd S) e)) \<longrightarrow>
-      set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss))"
-    by blast
-  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. replaceable e \<longrightarrow>
-      (c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<longrightarrow>
-      (\<forall>d\<in>set (entity_mentions e). d |\<in>| P)))"
-  proof -
-    have each: "(key c\<in>set (row_subjects (entity_row key (snd S) e)) \<longrightarrow>
-        set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss) \<longleftrightarrow>
-      (c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<longrightarrow>
-        (\<forall>d\<in>set (entity_mentions e). d |\<in>| P))" if e: "e\<in>set ?es" for e
-    proof -
-      have m: "set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss \<longleftrightarrow> (\<forall>d\<in>set (entity_mentions e). d |\<in>| P)"
-        using mentions_inside[OF e] support by (auto simp: subset_iff)
-      show ?thesis by (simp only: entity_row_subject_key[OF present bound e] m)
-    qed
-    show ?thesis using each by blast
-  qed
-  also have "\<dots> \<longleftrightarrow> development_answer_statements_excess replaceable (snd S) {|c|} P=[]"
-    by (auto simp: answer_statements_excess_empty development_answer_statements_def
-      development_answer_statement_def list_ex_iff)
-  finally show ?thesis .
-qed
+  by (rule excess_program_contract[OF verdict_excess_program[OF identity] present kinds selection bound support])
 
 text \<open>
   The verdict reads the field in the answer state, with the request's subject and support carried there by

@@ -57,21 +57,11 @@ lemma state_reach_table_formed: "reach_table_formed (state_reach_table A Rs Fs)"
 
 section \<open>The families of a state, every kind once\<close>
 
-definition entity_kinds :: "entity_kind list" where
-  "entity_kinds=[Base_Kind,Development_Kind,Frontier_Kind,Definition_Kind,Specification_Kind,Equation_Kind]"
-
-lemma entity_kinds_all: "set entity_kinds=UNIV"
-proof -
-  have "k\<in>set entity_kinds" for k by (cases k) (simp_all add: entity_kinds_def)
-  then show ?thesis by blast
-qed
-
 definition state_families :: "state_rows \<Rightarrow> isabelle_context state_family list" where
   "state_families R=map (state_entities R) entity_kinds"
 
 lemma state_families_range: "set (state_families R)=range (state_entities R)"
   by (simp add: state_families_def entity_kinds_all)
-
 
 section \<open>The state's reach, read from its pairs\<close>
 
@@ -283,35 +273,40 @@ locale row_reached_program = native_rule_family P r "row_reached_rules s" + some
   for P :: "'u native_system" and r s el :: "'u definition_site"
 begin
 
+sublocale law: native_rule_law P r "row_reached_rules s"
+  by (rule native_rule_lawI[OF native_rule_family_axioms])
+    (auto simp: row_reached_rules_def row_declared_reached_rule_def row_subject_reached_rule_def)
+
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(r,Pair_Term x (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow> term_formed x \<and>
     ((\<exists>h\<in>set (row_declared (snd z)). (el,Pair_Term x (path_term h))\<in>positive_meaning P) \<or>
      (\<exists>h\<in>set (row_subjects (snd z)). (el,Pair_Term x (path_term h))\<in>positive_meaning P))"
 proof
-  assume holds: "(r,Pair_Term x (state_row_term ident z))\<in>positive_meaning P"
-  obtain c F f where rule: "(c,F)\<in>set (row_reached_rules s)"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=Pair_Term x (state_row_term ident z)"
-    and support: "\<forall>q e p. (q,e,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f p)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds]) blast
+  assume "(r,Pair_Term x (state_row_term ident z))\<in>positive_meaning P"
+  then obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (row_reached_rules s)"
+    and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (state_row_term ident z)"
+    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    unfolding law.exact by (elim exE conjE) (rule that; assumption)
+  have p: "p=row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)"
+    using rule by (auto simp: row_reached_rules_def row_declared_reached_rule_def row_subject_reached_rule_def
+      finite_native_rule_eq_iff)
   have fields: "f [0]=x" "f [2]=keys_term (row_declared (snd z))" "f [3]=keys_term (row_subjects (snd z))"
-    using rule shape by (auto simp: row_reached_rules_def row_declared_reached_rule_def row_subject_reached_rule_def
-      row_pattern_def state_row_term_def)
-  from rule consider "F=row_declared_reached_rule s" | "F=row_subject_reached_rule s"
-    by (auto simp: row_reached_rules_def)
+    using shape by (simp_all add: p row_pattern_def state_row_term_def)
+  from rule consider "set ps={([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))}"
+      | "set ps={([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))}"
+    by (auto simp: row_reached_rules_def row_declared_reached_rule_def row_subject_reached_rule_def
+      finite_native_rule_eq_iff)
   then show "term_formed x \<and>
     ((\<exists>h\<in>set (row_declared (snd z)). (el,Pair_Term x (path_term h))\<in>positive_meaning P) \<or>
      (\<exists>h\<in>set (row_subjects (snd z)). (el,Pair_Term x (path_term h))\<in>positive_meaning P))"
   proof cases
     case 1
-    have "(s,Pair_Term (f [0]) (f [2]))\<in>positive_meaning P"
-      using native_rule_support[OF support[unfolded 1 row_declared_reached_rule_def]] by simp
+    have "(s,Pair_Term (f [0]) (f [2]))\<in>positive_meaning P" using support 1 by auto
     then show ?thesis by (auto simp: fields keys_term_def somes.exact)
   next
     case 2
-    have "(s,Pair_Term (f [0]) (f [3]))\<in>positive_meaning P"
-      using native_rule_support[OF support[unfolded 2 row_subject_reached_rule_def]] by simp
+    have "(s,Pair_Term (f [0]) (f [3]))\<in>positive_meaning P" using support 2 by auto
     then show ?thesis by (auto simp: fields keys_term_def somes.exact)
   qed
 next
@@ -328,9 +323,9 @@ next
         keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z))])
         (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3)
           (native_var 4) (native_var 5))))\<in>positive_meaning P"
-      by (rule native_step[where c="[0]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
+      by (rule law.step_at[where c="[0]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
         (use declared formed identity in \<open>simp_all add: row_reached_rules_def row_declared_reached_rule_def
-          row_pattern_def keys_term_def somes.exact data_list_term_formed\<close>)
+          row_pattern_def keys_term_def somes.exact data_list_term_formed insert_Diff_if\<close>)
     then show ?thesis by (simp add: row_pattern_def state_row_term_def)
   next
     case subject
@@ -338,9 +333,9 @@ next
         keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z))])
         (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3)
           (native_var 4) (native_var 5))))\<in>positive_meaning P"
-      by (rule native_step[where c="[1]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"])
+      by (rule law.step_at[where c="[1]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"])
         (use subject formed identity in \<open>simp_all add: row_reached_rules_def row_subject_reached_rule_def
-          row_pattern_def keys_term_def somes.exact data_list_term_formed\<close>)
+          row_pattern_def keys_term_def somes.exact data_list_term_formed insert_Diff_if\<close>)
     then show ?thesis by (simp add: row_pattern_def state_row_term_def)
   qed
 qed

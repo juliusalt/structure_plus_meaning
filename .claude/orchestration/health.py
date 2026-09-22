@@ -109,16 +109,24 @@ def bases_and_trees():
     mark is touched on a miss too, so it says only that it was pinged), and what stands in each task's own tree."""
     log = os.path.join(v2.STATE, "warm.log")
     lines = open(log).read().splitlines() if os.path.exists(log) else []
-    for who in v2.BASES:
-        last = [l for l in lines if f"warm {who}:" in l and (" OK" in l or "MISS" in l)]
+    # `base.sh WHO warm` forks the layer when there is one — what the roles fork is what must stay warm — so saying
+    # "base" of that ping named the wrong thing; the stable base under a layer keeps an entry of its own, which a read
+    # of the layer does not refresh (the max refresh of 2026-09-21 wrote 339,381 tokens of it anew), and is read by
+    # its own pings (`warm WHO stable`) and by each layer build (`layer WHO:`)
+    for who, stable in [(w, s) for w in v2.BASES for s in (False, True)]:
+        layered = v2.layer_record(who)
+        if stable and not layered:
+            continue
+        tags = (f"warm {who} stable:", f" layer {who}:") if stable else (f"warm {who}:",)
+        last = [l for l in lines if any(t in l for t in tags) and (" OK" in l or "MISS" in l)]
         if not last:
             continue
         at = last[-1].split()[0]
-        misses = os.path.join(v2.STATE, f"{who}-base.miss")
+        misses = os.path.join(v2.STATE, f"{who}-{'stable' if stable else 'base'}.miss")
         n = len(open(misses).read().split()) if os.path.exists(misses) else 0
-        # `base.sh WHO warm` forks the layer when there is one — what the roles fork is what must stay warm, and a
-        # fork of a layer reads the stable base under it — so saying "base" of that ping named the wrong thing.
-        what = f"layer {who} (with the base under it)" if v2.layer_record(who) else f"base {who}"
+        what = f"stable base {who} (under its layer)" if stable else f"layer {who}" if layered else f"base {who}"
+        # a fork that missed wrote its own prefix: a layer's or base's own entry, and the stable base's, stay gone
+        cold = "was COLD" if stable else "was COLD and was rewritten"
         # how long ago, and whether anything is left of it: "warm at 21:59:00" read at 01:17 says warm, and the entry
         # it names died at 22:59. A stopped run is read hours later, and this is the line that says what a restart
         # would find (2026-09-21).
@@ -127,10 +135,12 @@ def bases_and_trees():
         except ValueError:
             old = None
         print(("ATTENTION " if n >= 2 else "")
-              + f"{what}: {'warm' if ' OK' in last[-1] else 'was COLD and was rewritten'} at {at[11:19]}"
+              + f"{what}: {'warm' if ' OK' in last[-1] else cold} at {at[11:19]}"
               + (f" ({minutes(old)} ago" + ("; its cache entry has expired since" if old > CACHE_LIFE else "") + ")"
                  if old is not None else "")
-              + (f", {n} miss(es); two stop its pings" if n else ""))
+              + (f", {n} miss(es); two stop its pings" if n else "")
+              + ("; a miss does not make its entry again: the next layer refresh loads the base again first"
+                 if stable and " OK" not in last[-1] else ""))
     for who in v2.BASES:
         path = os.path.join(v2.STATE, f"{who}-layer.json")
         if not os.path.exists(path):
@@ -219,7 +229,7 @@ def standing(st, now):
             waits = {"run": "its own run", "tree": f"the working tree (task {p.get('holder')})",
                      "fix": f"its fix (task {p.get('after')})" if p.get("after") else "the planner to name its fix",
                      "answer": "the answer to its question"}.get(p.get("for"), p.get("after") or "the planner")
-            print(f"parked: task {tid} for {minutes(now - p.get('since', now))} of {v2.HOLD_PARK // 3600} h, waits on "
+            print(f"parked: task {tid} for {minutes(now - p.get('since', now))} of {v2.hold_of(t) // 3600} h, waits on "
                   f"{waits}" + (f": {p.get('why', '')[:100]}" if p.get("why") else ""))
         elif t.get("stage") == "proposed":
             print(f"ATTENTION task {tid}: {t.get('proposed', '?')} task(s) proposed and not placed — only the "
@@ -295,8 +305,14 @@ def main():
     for who in v2.BASES:
         if os.path.exists(os.path.join(S, f"{who}-base.json")):
             a = w.age(f"{who}-base.hit")
-            print(f"base {who}: " + ("never hit" if a is None else f"last hit {minutes(a)} ago"
-                                      + (" — its cache entry has expired" if a > CACHE_LIFE else "")))
+            print(f"{'layer' if v2.layer_record(who) else 'base'} {who}: "
+                  + ("never hit" if a is None else f"last hit {minutes(a)} ago"
+                     + (" — its cache entry has expired" if a > CACHE_LIFE else "")))
+            if v2.layer_record(who):  # pinged only while warm: once gone, only a rebuild of the base makes it again
+                a = w.age(f"{who}-stable.hit")
+                gone = " — no warm entry: the next layer refresh loads the base again first (base.sh restable)"
+                print(f"stable base {who}: " + ("no read of it known" + gone if a is None else
+                                                f"last hit {minutes(a)} ago" + (gone if a > CACHE_LIFE else "")))
     for line in recent("warm.log", 3600, "MISS"):
         # a layer's seal says whether it read its stable base (base.sh seal_layer); a ping says whether the layer is warm
         print("ATTENTION " + ("a layer did not read its base from cache: " if " layer " in line else "keep-warm miss: ")

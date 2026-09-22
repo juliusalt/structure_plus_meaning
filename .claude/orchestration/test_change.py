@@ -85,6 +85,24 @@ class ChangeTests(unittest.TestCase):
             self.assertIn(wrong, said, blocks)
         self.assertEqual(self.a.read_text(), THEORY)
 
+    def test_a_block_that_lost_a_line_of_its_own_is_refused_rather_than_written_into_the_file(self):
+        # design-66, 2026-09-21: the first of eight blocks had no `>>>>>>> REPLACE` line, the next block's markers and
+        # texts were written into its entry.md as the replacement, and five requests went to finding and repairing it
+        lost_replace = ("=== replace theories/A.thy\n<<<<<<< SEARCH\nlemma x\n=======\nlemma y\n=======\n"
+                        "<<<<<<< SEARCH\nby simp\n=======\nby auto\n>>>>>>> REPLACE\n")
+        said = self.change(lost_replace)
+        self.assertIn("refused, and nothing was changed", said)
+        self.assertIn("the block at line 2: its replacement text holds a", said)
+        self.assertIn("its own `>>>>>>> REPLACE` line is missing", said)
+        lost_divider = ("=== replace theories/A.thy\n<<<<<<< SEARCH\nlemma x\n>>>>>>> REPLACE\n<<<<<<< SEARCH\n"
+                        "by simp\n=======\nby auto\n>>>>>>> REPLACE\n")
+        self.assertIn("its search text holds a `>>>>>>> REPLACE` line, so its own `=======` line is missing",
+                      self.change(lost_divider))
+        self.assertEqual(self.a.read_text(), THEORY)
+        whole = "<<<<<<< SEARCH\nold\n=======\nnew\n>>>>>>> REPLACE\n"   # a whole file may hold them
+        self.assertIn("written anew", self.change(f"=== write docs/format.md\n{whole}"))
+        self.assertEqual((self.w.project / "docs/format.md").read_text(), whole)
+
     def test_a_failure_part_way_puts_back_what_was_written(self):
         locked = self.w.project / "locked"
         locked.mkdir()

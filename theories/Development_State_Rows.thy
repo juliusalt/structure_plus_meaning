@@ -58,6 +58,17 @@ fun entity_kind_of :: "isabelle_entity \<Rightarrow> entity_kind" where
 lemma entity_kind_of_renamed [simp]: "entity_kind_of (isabelle_entity_rename f e)=entity_kind_of e"
   by (cases e) simp_all
 
+text \<open>The kinds are listed once, so that the selection of every family of a state is a list of its families.\<close>
+
+definition entity_kinds :: "entity_kind list" where
+  "entity_kinds=[Base_Kind,Development_Kind,Frontier_Kind,Definition_Kind,Specification_Kind,Equation_Kind]"
+
+lemma entity_kinds_member [simp]: "k\<in>set entity_kinds"
+  by (cases k) (simp_all add: entity_kinds_def)
+
+lemma entity_kinds_all: "set entity_kinds=UNIV"
+  by auto
+
 
 subsection \<open>The carriers: atoms, rows and families\<close>
 

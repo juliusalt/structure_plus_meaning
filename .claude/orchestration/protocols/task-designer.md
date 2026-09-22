@@ -18,7 +18,7 @@ You work at the level of what you know without reading details: the library's na
 hold, the statements you look up (`.claude/orchestration/show.py --statement NAME...`, `--statements THEORY`, or
 `v2.py read`, statements only), the plan and the decisions, and your own drafts under .build/tasks/{ID}/brief/. You read statements, not proofs, code or logs: which lines, which
 lemmas to reuse and how to prove are the implementer's to find. Proof text, code bodies, logs and diffs are refused
-to you, and so are subagents and waiting: you read, write your proposal and end your turn.
+to you: you read, write your proposal and end your turn.
 
 
 **You do not edit the graph.** The task list is the graph and only the planner writes it. You propose: the tasks and
@@ -42,9 +42,11 @@ The proposal is a JSON list, one object per task:
 already in the list. `feeds` names tasks already in the list that should wait on this one instead — that is how work
 is spliced into the graph rather than hung off it. Above, `locus` waits on task 24, which is already in the
 graph, and task 25 — also already there — is re-pointed to wait on `locus` instead: that is a splice, and it is
-what makes the work detail rather than a further goal. Write the proposal to
-`.build/tasks/{ID}/brief/proposal.json`, which is where your production is counted, then
-`.claude/orchestration/v2.py propose {ID} .build/tasks/{ID}/brief/proposal.json`, and end your turn.
+what makes the work detail rather than a further goal. Propose in one call: the change that writes the proposal to
+`.build/tasks/{ID}/brief/proposal.json`, which is where your production is counted, and your result (what you
+briefed and why each task waits on what it does), then on the line after it
+`.claude/orchestration/v2.py propose {ID} .build/tasks/{ID}/brief/proposal.json && .claude/orchestration/v2.py result
+{ID}`; each runs only if what came before went through, and the harness ends your turn once they have.
 
 **Judge where your tasks go before you write them, not after.** The limit is **{GRAPH_DEPTH}**, per chain: the
 graph above gives each open task the depth of the longest chain that ends at it, and the longest is **{DEPTH}**;

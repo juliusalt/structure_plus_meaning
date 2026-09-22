@@ -135,6 +135,7 @@ class World:
         self.env.update(PATH=str(self.root / "bin") + os.pathsep + os.environ["PATH"], HOME=str(self.home),
                         FAKE_ROOT=str(self.root), ORCH_PROJECT=str(self.project), ORCH_STATE_DIR=str(self.state),
                         ORCH_ISABELLE_RUNS="0",  # no run of this machine is this world's
+                        ORCH_MEM_AVAILABLE_GB="1000",  # nor is its memory
                         ORCH_WORKERS="8",  # the slots' own capacity; the owner's rate is a setting, tested apart
                         ORCH_TREES="0",  # the one tree unless a test says otherwise
                         ORCH_ACTIVE_CONTEXT=str(self.state / "active-context.json"),

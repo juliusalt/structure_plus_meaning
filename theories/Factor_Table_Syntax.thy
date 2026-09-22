@@ -42,7 +42,7 @@ lemma reference_table: "reference_table_formed literals callees"
 
 lemma reference_domain: "rel_dom literals \<union> rel_dom callees=table_slots"
   by (simp only: syntax_forest_table_domain)
-     (use domains in \<open>auto simp: syntax_forest_positions_def\<close>)
+     (use domains in \<open>auto simp: syntax_forest_positions_eq\<close>)
 
 lemma reference_range: "rel_ran callees = (\<Union>q\<in>set qs. rel_ran (row_callees q))"
   by (simp add: syntax_forest_table_range)
@@ -58,10 +58,10 @@ lemma reference_bounds: "rel_dom literals \<union> rel_dom callees \<subseteq> r
   by (simp only: reference_domain carrier) blast
 
 lemma copied_interior_union: "\<Union>(set copied_interiors) = syntax_forest_positions interiors"
-  by (auto simp: syntax_forest_positions_def)
+  by (auto simp: syntax_forest_positions_eq)
 
 lemma copied_slot_union: "\<Union>(set copied_slots) = table_slots"
-  by (auto simp: syntax_forest_positions_def)
+  by (auto simp: syntax_forest_positions_eq)
 
 lemma body_separate: "syntax_forest_positions interiors \<inter> table_slots = {}"
   by (rule syntax_forest_positions_disjoint) (use separate in auto)

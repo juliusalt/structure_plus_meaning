@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """What one call shows at most: { ( CMD ) 2>&1; printf '\\n\\036%s\\n' "$?"; } | cut.py BYTES head|tail DIR [N].
 
-A call shows at most READ_BYTES (the owner, 2026-09-21: 5K bytes, so that a large chunk is read deliberately, split
+A call shows at most READ_BYTES (the owner, 2026-09-21: 5K bytes, 10K since 2026-09-22; so that a large chunk is read deliberately, split
 into many reads, rather than taken whole when most of it is taken by accident; and the limit applies to everything,
 outputs and checks too). The guard runs every command whose output's size it cannot know beforehand through this, by
 rewriting it before it runs (work_meter.bounded). A longer output is kept whole in DIR, and what is shown is its
@@ -88,7 +88,8 @@ def main():
     per = max(1, int(limit * lines / len(data)))  # about a read's worth of its lines
 
     def rest(a, b):
-        return (f"the whole output is kept in {path}: read the rest by its lines (`sed -n '{a},{b}p' {path}` and on), "
+        return (f"the whole output is kept in {path}: read the rest by its lines (`sed -n '{a},{b}p' {path}` and on, "
+                f"`SHOW=20K` before it for more at once), "
                 "several reads in one batch" if path else f"the whole output could not be kept ({failed}): narrow the "
                 "command")
     if end == "tail" or status:  # a failure is said at the end: a traceback, a native error, a check's summary

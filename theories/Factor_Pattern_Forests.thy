@@ -245,7 +245,7 @@ lemma pattern_forest_Nil [simp]:
   "pattern_forest_interior [] = {}"
   "pattern_forest_bindings [] = {}"
   "pattern_forest_roots [] = []"
-  by (simp_all add: pattern_forest_syntax_def pattern_forest_interior_def syntax_forest_positions_def
+  by (simp_all add: pattern_forest_syntax_def pattern_forest_interior_def syntax_forest_positions_eq
     pattern_forest_bindings_def pattern_forest_roots_def)
 
 lemma pattern_forest_roots_map [simp]: "pattern_forest_roots (map f ps)=pattern_forest_roots ps"
@@ -265,7 +265,7 @@ lemma pattern_forest_slots [simp]: "rel_dom (pattern_forest_bindings []) = {}"
 lemma pattern_forest_slot_positions:
   "rel_dom (pattern_forest_bindings ps) =
     syntax_forest_positions (map (\<lambda>p. rel_dom (pattern_literal_bindings p)) ps)"
-  unfolding syntax_forest_positions_def rel_dom_def
+  unfolding syntax_forest_positions_eq rel_dom_def
   by (auto simp: pattern_forest_binding_member)
 
 lemma pattern_forest_heads:
@@ -302,7 +302,7 @@ proof (intro allI impI)
 qed
 
 lemma pattern_forest_interior_finite [simp]: "finite (pattern_forest_interior ps)"
-  unfolding pattern_forest_interior_def syntax_forest_positions_def
+  unfolding pattern_forest_interior_def syntax_forest_positions_eq
   by (auto simp: pattern_syntax_interior_finite intro!: finite_UN_I finite_imageI)
 
 lemma pattern_forest_interior_outside:
@@ -391,7 +391,7 @@ proof -
     by (simp add: pattern_forest_syntax_def bound_forest_def placed_forest_def placed_positions_def cong: SUP_cong_simp)
   show ?thesis
     by (simp add: carrier each vars pattern_forest_interior_def pattern_forest_slot_positions
-        syntax_forest_positions_def UN_Un_distrib cong: SUP_cong_simp)
+        syntax_forest_positions_eq UN_Un_distrib cong: SUP_cong_simp)
 qed
 
 definition pattern_forest_environment ::
@@ -530,9 +530,9 @@ proof -
   have patterns: "map (\<lambda>i. rename_pattern f (ps!i)) [0..<length ps] = map (rename_pattern f) ps"
     by (rule nth_equalityI) simp_all
   have interior: "(\<Union>i\<in>set [0..<length ps]. ?I i) = pattern_forest_interior ps"
-    by (simp add: pattern_forest_interior_def syntax_forest_positions_def atLeast0LessThan cong: SUP_cong_simp)
+    by (simp add: pattern_forest_interior_def syntax_forest_positions_eq atLeast0LessThan cong: SUP_cong_simp)
   have slots: "(\<Union>i\<in>set [0..<length ps]. ?K i) = rel_dom (pattern_forest_bindings ps)"
-    by (simp add: pattern_forest_slot_positions syntax_forest_positions_def atLeast0LessThan cong: SUP_cong_simp)
+    by (simp add: pattern_forest_slot_positions syntax_forest_positions_eq atLeast0LessThan cong: SUP_cong_simp)
   show ?thesis using all by (simp only: roots patterns interior slots)
 qed
 

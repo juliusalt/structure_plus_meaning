@@ -56,9 +56,14 @@ class SplitListTests(unittest.TestCase):
         self.assertNotIn(select_base_load.FRONTIER_HEAD, (HERE / manifest.LISTS["max"]).read_text())
 
     def test_the_layer_begins_at_the_working_frontier(self):
+        # the frontier is measured again at every refresh from what the roles' sessions read, so which theories it
+        # holds moves (Development_Machinery.thy, named here, left it with the refreshes of 2026-09-22): what holds is
+        # that the layer begins with the frontier's tier and holds theories
         for who in ("xhigh", "high"):
             layer = parts(who)["layer"]
-            self.assertIn(str(PROJECT / "theories/Development_Machinery.thy"), layer, who)
+            text = (HERE / manifest.LISTS[who]).read_text()
+            self.assertLess(text.index(manifest.LAYER_MARK), text.index(select_base_load.FRONTIER_HEAD), who)
+            self.assertTrue(any(p.endswith(".thy") for p in layer), who)
             # the founding theories and the central ideas stay in the stable reference
             self.assertIn(str(PROJECT / "theories/RRA_Core.thy"), parts(who)["stable"], who)
 
@@ -116,23 +121,20 @@ class TransitionTests(unittest.TestCase):
         self.assertEqual(out.returncode, 0, out.stderr)
         return out.stdout.strip()
 
-    def test_a_session_on_the_layer_before_a_refresh_no_longer_marks_the_new_one_warm(self):
-        # warmth is marked per base name, and a worker's origin is that name: without this, a session still running
-        # on the layer it forked would keep the layer that replaced it looking warm while nothing had read it, and
-        # the first fork of the new one would pay a cold write of its whole size
+    def test_a_session_on_a_layer_marks_its_own_entry_and_never_the_layer(self):
+        # a request reads the longest prefix cached — the session's own — and a shorter entry under it is not kept alive
+        # by that read: design-171's requests kept the xhigh layer looking warm while its entry expired unpinged, and
+        # the next two forks of it wrote 235K each (2026-09-22 13:45); a session on the layer before a refresh would
+        # mark the new one besides. The layer is marked by what reads it: a fork's start, and its ping.
         self.w.session("design-1", "designer", "d1", origin="xhigh", origin_sid="layer-1")  # the layer before
         self.w.session("design-2", "designer", "d2", origin="xhigh", origin_sid=self.now)  # the one that stands
         old = 10_000
-        for name in ("xhigh-base.hit",):
-            (self.w.state / name).write_text("")
-            os.utime(self.w.state / name, (time.time() - old, time.time() - old))
-        self.py("v2.hit_chain('design-1')")
+        (self.w.state / "xhigh-base.hit").write_text("")
+        os.utime(self.w.state / "xhigh-base.hit", (time.time() - old, time.time() - old))
+        self.py("v2.hit('design-1'); v2.hit('design-2')")
         self.assertGreater(time.time() - (self.w.state / "xhigh-base.hit").stat().st_mtime, old - 60,
-                           "a session on the layer before the refresh marked the base")
-        self.assertTrue((self.w.state / "hits/design-1").exists())  # its own entry is warm, and that is true
-        self.py("v2.hit_chain('design-2')")
-        self.assertLess(time.time() - (self.w.state / "xhigh-base.hit").stat().st_mtime, 60,
-                        "a session on the layer that stands did not mark it")
+                           "a session's request marked the layer under it")
+        self.assertTrue((self.w.state / "hits/design-1").exists() and (self.w.state / "hits/design-2").exists())
 
     def test_an_orphaned_layer_is_not_forked(self):
         self.assertEqual(self.py("print(v2.base_record('xhigh')[1]['sid'])"), self.now)

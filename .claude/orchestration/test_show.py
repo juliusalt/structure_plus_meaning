@@ -80,10 +80,51 @@ class ShowTests(unittest.TestCase):
         self.assertIn("definition ready", out)
         self.assertIn("== Nope: no such theory", self.show("--statements", "Nope")[1])
 
+    def test_a_locale_or_an_interpretation_s_prefix_qualifies_a_name(self):
+        # brief-230's store_found_program.any_exact and four more locale facts were looked for in a theory of that name
+        # and said to be introduced nowhere, mentioned nowhere (2026-09-22 16:27; 19 such names in 12 sessions that day)
+        self.w.write("theories/Programs.thy", """theory Programs imports Ready begin
+
+locale first = fixes n :: nat assumes pos: "n > 0"
+begin
+lemma exact: "ready n" using pos by (simp add: ready_def)
+end
+
+locale second = fixes m :: nat
+begin
+lemma exact: "m = m" by simp
+end
+
+context second begin
+lemma kept: "m + 0 = m" by simp
+end
+
+lemma (in first) outside: "n \\<noteq> 0" using pos by simp
+
+interpretation one: first 1 by standard simp
+
+lemma exact: "True" by simp
+
+end
+""")
+        _, out, _ = self.show("first.exact")
+        self.assertEqual(out.count("== theories/"), 1, out)
+        self.assertIn("== theories/Programs.thy:5\nlemma exact: \"ready n\"", out)
+        _, out, _ = self.show("second.exact", "second.kept", "first.outside")
+        self.assertIn("== theories/Programs.thy:10\nlemma exact: \"m = m\"", out)
+        self.assertIn("== theories/Programs.thy:14\nlemma kept:", out)        # a block opened again by `context`
+        self.assertIn("== theories/Programs.thy:17\nlemma (in first) outside:", out)
+        _, out, _ = self.show("one.exact")                                        # the fact of what `one` interprets
+        self.assertIn("== theories/Programs.thy:5 (one interprets first: exact is its fact)", out)
+        _, out, _ = self.show("Programs.first.exact")
+        self.assertEqual(out.count("== theories/"), 1, out)
+        code, out, _ = self.show("third.exact")
+        self.assertIn("third.exact: no command introduces it in third; theories mentioning exact: Programs", out)
+
     def test_a_missing_name_says_where_it_is_mentioned(self):
         code, out, _ = self.show("ready_def")
         self.assertEqual(code, 1)
-        self.assertIn("== ready_def: no command introduces it; theories mentioning it: Ready", out)
+        self.assertIn("== ready_def: no command introduces it; theories mentioning ready_def: Ready", out)
 
 
 if __name__ == "__main__":

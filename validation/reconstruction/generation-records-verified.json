@@ -2,10 +2,10 @@
  "boundary": "Complete original targets, history, predecessor cores and actual reference sites determine every construction and condition. All returned environments, field readings, original-reference sets, comparisons and revisions are reconstructed. The closed-replay cause join has a proved constructor; arbitrary cause reading, full workflow transitions, historical permission, physical cost and genesis remain open.",
  "complete_recipe_source_manifest": "generation-records-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "f6feaeb10e39ee8d46e970838d7c10a26e17eae7c9d1ab4ddf26e9899efd0383",
+  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.95,
+  "seconds": 3.07,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "dbc56794727a1851bd9955123479221e9dbbfe2b1375e49a97f067692a68c9a9",
+   "module_sha256": "0669108b85f08ba97753d7bc0945e9180b1cb99ddb9421cb89e3074a7222b7ed",
    "subject_contracts": {
-    "generation_record_investigation.yxml": "8c0397f64a455ab7a6940e50b95c0b99dd14fd04b9440e9acacda83a472cf5f0"
+    "generation_record_investigation.yxml": "b2f8fd36f9e6733275573d1528e07efe4a5aee6916b14b6995e3600ddbcdbe53"
    },
    "theory": "Generation_Record_Execution"
   },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "f807b96298ae089f3133bc9445641120e96d4181527d61c485e5038f0bf4f795",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "dbc56794727a1851bd9955123479221e9dbbfe2b1375e49a97f067692a68c9a9"
- },
  "recipe": "generation-records",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "318c05d55d14ac91c4c08fbcbf81c0f7326f4ffa1c99478f65737b51931cee86",
+ "source_manifest_sha256": "c8662654eca751a0ab22dd25bda5c568f35cc3e431dbab0de3979a1aad68a3ab",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.843204388000231
+   "seconds": 2.969084470998496
   }
  ]
 }

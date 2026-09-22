@@ -101,6 +101,56 @@ class FrameTest(unittest.TestCase):
 
 
 
+class AdoptionTest(unittest.TestCase):
+    # Adoption is a relation between an answer, the content Isabelle accepted and the published state; `adopted`
+    # reads the existence of a file of the answer's expected name. The two expected failures are P1 (task 253): a
+    # file that is not a theory, and the judged frame left behind by an unsuccessful adoption, neither declared in
+    # ROOT nor imported, read as adopted, and the harness then judges the request state against itself.
+    RECORDS = development_answer.ROOT / 'validation' / 'development-answers'
+
+    def answer(self, record):
+        return json.loads((self.RECORDS / (record + '.json')).read_text())['answer']
+
+    def project(self, directory, answer, text):
+        """A project holding the repository's ROOT and layer boundary, which name no answer theory, and one file."""
+        project = Path(directory)
+        (project / 'theories').mkdir()
+        layer = development_answer.STATES['refinement_layer']['layer'] + '.thy'
+        name = development_answer.answer_name(answer)
+        for source, target in ((development_answer.ROOT / 'ROOT', project / 'ROOT'),
+                               (development_answer.ROOT / 'theories' / layer, project / 'theories' / layer)):
+            target.write_text(source.read_text().replace('    ' + name + '\n', '').replace(' ' + name + ' ', ' '))
+        (project / 'theories' / (name + '.thy')).write_text(text)
+        self.assertNotIn(name, (project / 'ROOT').read_text())
+        self.assertNotIn(name, (project / 'theories' / layer).read_text())
+        return project
+
+    @unittest.expectedFailure
+    def test_an_unimported_invalid_theory_of_the_expected_name_is_not_adoption(self):
+        answer = self.answer('failed-proof')
+        name = development_answer.answer_name(answer)
+        with tempfile.TemporaryDirectory() as directory:
+            project = self.project(directory, answer, 'theory ' + name + '\n  imports No_Such_Theory\nbegin\nnot a theory\nend\n')
+            self.assertFalse(development_answer.adopted(answer, project))
+
+    @unittest.expectedFailure
+    def test_a_judged_frame_left_unimported_is_not_adoption(self):
+        answer = self.answer('demanded-identity')
+        frame = development_answer.answer_theory(development_answer.STATES['refinement_layer'], answer)
+        with tempfile.TemporaryDirectory() as directory:
+            project = self.project(directory, answer, frame)
+            self.assertFalse(development_answer.adopted(answer, project))
+
+    def test_the_adopted_walk_is_declared_imported_and_read_as_adopted(self):
+        answer = self.answer('indexed-data-walk')
+        name = development_answer.answer_name(answer)
+        layer = development_answer.STATES['refinement_layer']['layer']
+        text = (development_answer.ROOT / 'theories' / (layer + '.thy')).read_text()
+        self.assertIn(name, development_answer.investigate.theory_imports(text, layer))
+        self.assertIn('    ' + name + '\n', (development_answer.ROOT / 'ROOT').read_text())
+        self.assertTrue(development_answer.adopted(answer))
+
+
 class ExecutorTest(unittest.TestCase):
     def test_restating_answer_reads_only_the_packet(self):
         import development_executor

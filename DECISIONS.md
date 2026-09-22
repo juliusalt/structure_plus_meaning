@@ -11830,6 +11830,16 @@ none. `syntax_forest_table` (Factor_Reference_Forests) is the union of each chil
 they hold for today's branch and for the new one. With today's branch the flat forest is the same value as the
 recursive one, and building it pushes each child once instead of once per later child.
 
+*Correction (task 225, 2026-09-22).* The forest, its positions and its table are no longer restated with their
+own formation and reads proofs: `syntax_forest`, `syntax_forest_positions` and `syntax_forest_table` are the
+placed forest, positions and table (RRA_Placed_Forests) at `syntax_branch`, and `finite_syntax_forest` and
+`finite_syntax_forest_table` the executable placed forest and table, sharing their one code equation. Formation is
+`placed_forest_formed` with `syntax_branch_addressing` and no meeting of placements (`syntax_branch_eq_iff`, from
+`syntax_branch_injective` and `_disjoint`); child reads are `placed_forest_reads` with `syntax_branch_injective`.
+Every statement under "Contracts" below is kept; consumers that unfolded the positions or the table read their
+union equations `syntax_forest_positions_eq`, `syntax_forest_table_eq`. A change of the branch changes its
+contracts alone.
+
 ### Contracts
 
 - **Kept, statement unchanged.** RRA_Syntax_Forests: `syntax_branch_zero`, `syntax_branch_injective`,

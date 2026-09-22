@@ -10112,6 +10112,13 @@ a bound of five seconds; the seed's is 0.074 s against 0.2 on either. What does 
 machine is the ratio inside the one run: 9.3 at the machinery's scale, 6.2 at the seed's. That is
 what the two refinements of this line bought together: 44.6 s to about 5.
 
+*Correction (task 80, q28).* The sentence above narrows what the record states. 44.6 s is what this
+line's first refinement left, as the entries "A formed call's applications are constructed, not
+verified again" (at line 9277) and "A demand is settled over the positions of its calls" (this entry,
+at lines 10028-10029) state; not a reach before both refinements. And the second took the machinery's
+reach to 4.35 s on the machine the measurement claimed, about 5.8 s scaled to the baseline machine,
+as this entry states just above (lines 10064-10069). "About 5" reads the two forms together.
+
 Word equality cannot certify the attachment: out of scope at the exports the words would be
 unchanged and the refinement dead. So the attachment is verified in the source graph itself, in
 0.27 s and with no Isabelle run: `check.source_checks()` is clean at 1800 declared names,
@@ -10162,6 +10169,34 @@ and is a residual.
 
 Recorded 2026-09-20, commit `44738c20`.
 
+## A reference sequence is computed segment by segment
+
+The seed recipe's cost is one of its twelve presentations, the publication report (174-248 s in the
+landing checks since `955b34bb`, the others 12-38 s each), and within it, measured under a machine hold
+(task 80, `.build/tasks/seed-recipe-cost/attribution.md`), the word of the presented report: 79 s of
+153, of which 68 s is the first-occurrence reference run over 3,946 target occurrences of only 63
+distinct artifacts, one after another, each lookup of a value already held ending in a complete
+comparison of two equal keys. The recording of the generations and transactions is 58-61 s; the 21
+judgments, already prepared once, 9.8 s.
+
+What the refinement applies is a property of the reference notion, stated once in
+`Complete_Value_References`: the table a sequence leaves is the supplied table extended, in first
+occurrence, by the values it lacks (`value_reference_sequence_table`), and against a distinct table
+every index is its value's index in the final table (`value_reference_sequence_indices`). So the
+references of a concatenation of segments are each segment's references against an empty table,
+mapped through the references of the segments' distinct values against the supplied table
+(`value_reference_sequence_segment`, `value_reference_sequence_concat`, `value_reference_merged`). The
+segments are independent, so they are computed in parallel. `Indexed_Term_Words` proves the word's
+code equation over it (`finite_term_shared_word_segmented_code`, from the equation it replaces): about
+eight segments of the keys, each by the existing keyed run, then one keyed run over their distinct keys.
+No index notion is added; the keyed run and its key are those of the entry "A refinement applies a
+notion; an index is one". The word is unchanged by construction, so no recipe word changes.
+
+Limits: the full comparison of equal keys per occurrence is still paid, now shared among the threads;
+a report that repeats few large artifacts many times still costs that work. The recording stage is not
+refined here. Evidence: the recipe alone under a machine hold, with its own runner, took 140.8 s before
+and 96.5 s after (the publication presentation 140.8 s and 96.4 s, the eleven others 6.1-7.0 s), both
+receipts accepted with their reports equal.
 ## The index notion is a checked theory, and its carriers interpret it
 
 The owner's direction of 2026-09-19: "even implementation should be structural with the non-structural
@@ -10256,6 +10291,49 @@ notion would then be two. This entry was written outside the loop and is a resid
 
 Recorded 2026-09-21.
 
+## A snapshot's formation is read once for all the publications over it
+
+The seed recipe sets the recipe phase of every landing check (the recipes run in parallel and it is
+the longest), and within it one presentation, `development_seed_publication_value`, is the recipe:
+144.5 s in the base's check, 181.9 s in #49's, 241.7 s in #78's, against about 15 s for each of the
+other eleven. Attributed stage by stage under a machine hold on #78's export
+(`.build/tasks/seed-recipe-cost/attribution.md`), its seconds were the word fold (99 s, almost all
+of it the sequential first-occurrence reference run over 3,946 target occurrences of 63 artifacts,
+which `a436a40e` has since segmented, "A reference sequence is computed segment by segment") and
+the publication of the round (67 s). Exploratory runs beside other work, which show the split and not
+absolute cost, divided the round: per row about 0.5 s for the issue, up to 2 s for each answer and
+6–15 s for its three publications, of which 3.5–3.8 s was checking the formation of the published
+incumbents' snapshot. Every row and the round's own publication checked that one snapshot again:
+eleven times.
+
+The refinement reads it once, by extending the refinement that already states the publication over
+a formed snapshot: `finite_locus_publications_code` (`RRA_Formed_Snapshot_Transactions`) is now
+stated for the snapshot alone, `finite_locus_publications S = (if finite_snapshot_formed S then
+finite_locus_publications_formed S else map (λq. None))`, from the same two lemmas
+(`finite_locus_publications_formed_exact`, `finite_locus_publications_unformed`), so that every
+client's partial application checks the formation once, where it is made.
+`development_seed_publication_row_with` is the row over a given publisher,
+`development_seed_publication_row_published` proves the original row is it over the original
+publication, and the code equation `development_seed_publication_from_published` binds the publisher
+to `finite_locus_publications S` once for every row and the round. The report, and so every word, is
+unchanged: the equations are proved, not asserted. No new notion, and no second copy of the case split.
+
+### Evidence and limits
+
+The repository check accepts it (`.build/tasks/80/check-t80d`) with every proof, tool test and
+recipe word equal. Under one machine hold, back to back, the seed recipe run alone went from
+105.50 s (the tree at `77192fee`, before the refinement) to 93.04 s, all of it in the publication
+presentation (105.45 → 92.99 s), the eleven other presentations within run spread
+(`attribution.md` §4.2). A harness computing the publication presentation alone under a hold showed
+101.1 → 80.6 s, but its before export predates `77192fee`, so it does not measure the refinement
+alone. What remains of the
+publication's cost is the transactions' own formation and comparisons: each proposed generation's
+formation is checked with all its predecessors again, although every generation published here was
+just recorded by a constructor whose contract states it formed; carrying that fact into the
+transaction is a further refinement with its own proof, brought to the planner. This entry was written
+outside the loop and is a residual.
+
+Recorded 2026-09-22.
 ## A decomposition that applied is a row at its problem's locus
 
 The decomposition's builds stop at the issue: the repair's output is read from the history as rows headed by the
@@ -10525,3 +10603,76 @@ presentation; and where the build waits, which is the planner's.
 - This design was made outside the loop and is a residual.
 
 Recorded 2026-09-21 (task 66's decision; a design, no theory changes).
+
+## The contract question states its candidates as entity keys
+
+Every contract decision of the seed and of the machinery is the native question
+`development_constant_question` over the entities of one constant's scope. Until now it was
+`filtered_development_question`, whose candidates are `finite_development_index` of the scope positions, the
+payload of the binary digits of a position, one octet per digit (position 0 the empty payload); these payloads are
+distinct from the clause coordinates `[i]` discussed under "Candidate counts". The
+scope program's clauses and the facet's ground clauses told candidates apart by those octets, so the loop read
+octets as structure, against "Structure is explicit; octets are inert". It is now
+`keyed_development_question (development_entity_key C)` (task 54): each candidate is the path of shapes of its
+entity's key in the state, the binary digits of the entity's first occurrence in the state's own entity list
+`snd C`. One key names one entity in every question on one state, so a constant's definition and its code
+equation, the two candidates of every seeded contract question, are never named alike, and task 22's loci
+never put them at one locus.
+
+**Contracts, restated against their own statements.** `development_constant_admission` now obtains, for an
+accepted candidate, an entity of the constant's scope whose key path it is and which the reading demands;
+`development_constant_admitted_at` reads the same at a named entity; `development_constant_admitted_statement`
+obtains that entity and its statement, one of `development_statements`. The key is injective on the scope
+because the scope is part of the state (`development_constant_key_injective`), which is all
+`keyed_faceted_admission` asks; nothing decides by a key's value. No theorem outside the theory consumed the
+old index statements (`Development_Machinery` names the statement theorem in its text only).
+
+**The installed programs' payloads.** `keyed_scope_program_payloads` and `keyed_facet_program_payloads` state,
+through `finite_system_payloads_exact`, that the scope program and each facet's ground program state no
+payload but those of the guard source and the empty payload: the question reads no octet it adds.
+`finite_add_view_payloads` and `finite_variable_view_payloads` are the general steps, for any view whose
+interface is a variable and whose clauses state only the empty payload.
+
+**The keys moved beneath both theories.** `first_occurrence_key` and `development_entity_key` moved unchanged
+from `Development_Native_Selection` to `Development_Entity_Keys`, which both import, so the contract question
+does not import the readiness theory.
+
+**Candidate counts.** Every seeded contract question has 2 candidates; the machinery's 65 questions have 1, 2,
+6 or 7. The clause coordinates `[i]` stay formed octets below 256 candidates; none comes near.
+
+**Why the words changed.** This is not a refinement: the candidates are stated inside every contract packet's
+question (its scope source and facet source), its report and its admission, so the report words of the two
+recipes that present contract packets change: the loop report of `native-development-seed`
+(`development_seed_loop_value`, whose first field is `development_seed_contract_packets`) and the loop report of
+`native-development-machinery` (`development_machinery_loop_value`, first field
+`development_machinery_contract_packets`). The check confirmed it: of the seed recipe's twelve report words and
+the machinery recipe's five, exactly `presentation-loop` differs in each (seed `52d09217…` → `318775a5…`,
+machinery `5f60bcfd…` → `d939bf12…`), and those two are re-recorded. The move of the keys changes no word: it
+moves definitions, not values. The class of the change is the store-search reordering's (a statement's presentation changed), not the
+engine line's refinements.
+
+**Cost.** Measured unheld (the planner, answering task 56's q32: the evidence is the ratio of alternating
+samples in one run), with no other Poly/ML process at the run's start or end: per question, five alternating
+samples of the index form and the keyed form, each the mean of ten executions of the question's native packet,
+on four seed questions and thirteen machinery questions covering every candidate count. The keyed packet costs
+2.1–2.4 times the index packet at 2 candidates on the seed (index 6.9–7.4 ms, keyed 14.5–16.5 ms), 2.4–2.7 times
+at 1 candidate and 2.4–3.0 times at 2 on the machinery, and 3.6–3.8 times at 6 and 7 candidates (index 10–11 ms,
+keyed 37–42 ms); within a question the spread of the ratio (its largest minus its smallest sample) is at most
+0.5 (machinery constant 74: 2.30–2.80). The ratio grows with the candidate count: the key is now the entity's
+position in the whole entity list `snd C`, not its position in the scope, so a candidate's path is ten to twelve
+shapes where its index payload was at most three octets (scope positions are below 7), and every key is found
+by a first-occurrence search through the whole entity list. The per-question lines are
+`.build/tasks/56/measure3/result.txt` (run log `.build/tasks/56/mprobe3/probe.log`). A separate earlier run,
+also unheld (`measure2/Measure_Keyed_Packets.thy`, log `.build/tasks/56/mprobe/probe.log`), timed the whole packet
+lists under the `Parallel.map` of `development_contract_packets`, two alternating samples each: wall time about
+0.04 s keyed against 0.02 s index for the ten seed questions, 0.28 s against 0.11 s for the machinery's 65;
+being parallel, these lie below the sums of the per-question times. Whether the index notion of "A refinement
+applies a notion; an index is one" is instantiated for the key is the planner's, from these numbers.
+
+**What remains.** The index form (`filtered_development_question` and its admitted-subject readers) stays in
+place, unchanged with its words: seventeen theories outside the loop's path use it — the faceted question and
+its users, the native-control reviews and choices. No keyed counterpart of `filtered_development_unsatisfied_facet`
+is added, no consumer on the loop's path reading an unsatisfied contract facet. Restating the faceted question
+as `keyed_faceted_question`, retiring the index form, and the steering's method identifiers are later tasks.
+
+Recorded 2026-09-22 (task 56).

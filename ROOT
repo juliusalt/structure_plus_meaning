@@ -1726,6 +1726,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Native_Readiness
     Native_Table_Reach
     Isabelle_Native_Reach
+    Development_Entity_Keys
     Development_Native_Selection
     Filtered_Native_Questions
     Development_Constant_Problems
@@ -1813,4 +1814,5 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_State_Rows
     Development_Rows
     Development_Located_Rows
+    Development_Request_Keys
     Development_Row_Presentations

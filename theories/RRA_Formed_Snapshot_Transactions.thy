@@ -128,9 +128,20 @@ qed
 
 declare finite_locus_publications.simps [code del]
 
+text \<open>
+  The equation is stated for the snapshot alone, so a publisher made once for a snapshot checks its
+  formation once, however many lists it then publishes.
+\<close>
+
 lemma finite_locus_publications_code [code]:
-  "finite_locus_publications S ps=(if finite_snapshot_formed S then finite_locus_publications_formed S ps
-    else map (\<lambda>q. None) ps)"
-  using finite_locus_publications_formed_exact[of S ps] finite_locus_publications_unformed[of S ps] by simp
+  "finite_locus_publications S=(if finite_snapshot_formed S then finite_locus_publications_formed S
+    else map (\<lambda>q. None))"
+proof (rule ext)
+  fix ps
+  show "finite_locus_publications S ps=(if finite_snapshot_formed S then finite_locus_publications_formed S
+    else map (\<lambda>q. None)) ps"
+    by (cases "finite_snapshot_formed S")
+      (simp_all add: finite_locus_publications_formed_exact finite_locus_publications_unformed)
+qed
 
 end

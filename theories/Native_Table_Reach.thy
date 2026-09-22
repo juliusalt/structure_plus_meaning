@@ -1,5 +1,5 @@
 theory Native_Table_Reach
-  imports Native_Path_Stores
+  imports Native_Path_Store_Indexes
 begin
 
 section \<open>Reach over a table of rows is a native definition\<close>
@@ -145,7 +145,9 @@ inductive_set table_reached :: "reach_table \<Rightarrow> bool list set" for T w
 lemma reach_table_lookup:
   assumes formed: "reach_table_formed T" and row: "(k,r,ps)\<in>set T"
   shows "store_lookup (path_store T) k=Some (r,ps)"
-  using path_store_lookup[of T k "(r,ps)"] formed row by (simp add: reach_table_formed_def)
+  using carrier_index.query_search[OF Native_Path_Store_Indexes.path_store_carrier_index,
+      where c=T and q=k and v="(r,ps)"]
+    formed row by (simp add: reach_table_formed_def)
 
 section \<open>Native reach is the least closure\<close>
 
@@ -381,11 +383,11 @@ lemma native_reached_search:
 proof -
   let ?c="reach_table_term T"
   have cf: "term_formed ?c" by simp
-  have lookup: "store_lookup (path_store T) k=Some (r,ps)" by (rule reach_table_lookup[OF formed row])
   have search: "(reach_search,Pair_Term ?c (Pair_Term (path_term k)
       (store_term reach_row_value (path_store T))))\<in>positive_meaning native_reach_system"
-    using cf holds_row lookup
-    by (auto simp: reach_searches.exact[OF reach_row_value_formed] path_term_injective)
+    using native_carrier_index.site_query[OF reach_searches.index[OF reach_row_value_formed],
+        where c=T and q=k and x="?c"] formed row cf holds_row
+    by (auto simp: reach_table_formed_def)
   have "(reach_reached,evaluate_pattern (native_values [?c,path_term k])
       (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning native_reach_system"
     by (rule reach_reached_family.native_step[where c="[0]" and

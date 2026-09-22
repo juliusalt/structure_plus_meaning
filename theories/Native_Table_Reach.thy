@@ -447,4 +447,275 @@ definition finite_reach_table :: "reach_table \<Rightarrow> finite_factor_term" 
 lemma decode_finite_reach_table: "decode_finite_term (finite_reach_table T)=reach_table_term T"
   by (simp add: finite_reach_table_def reach_table_term_def decode_finite_store decode_finite_reach_row_value)
 
+section \<open>Reach under seeding, restriction and removal\<close>
+
+text \<open>
+  Three changes of a table keep what it reaches, and the reach of an edited table is recomputed from
+  them. A row's edges run from each of its predecessors to its key; a root is a row whose status is a
+  root. Seeding makes rows roots without predecessors, restriction keeps the rows at a set of keys, and
+  removal takes edges away. The statements hold over any table, formed or not, and name no state: seeding
+  with keys the table already reaches leaves its reach unchanged; restriction to keys closed under the
+  predecessors of their rows keeps the reach at those keys; and a set of keys that holds the target of
+  every removed edge and is closed under the table's successors leaves every other reached key reached.
+\<close>
+
+definition reach_keys :: "reach_table \<Rightarrow> bool list set" where
+  "reach_keys T=fst ` set T"
+
+definition reach_roots :: "reach_table \<Rightarrow> bool list set" where
+  "reach_roots T={k. \<exists>ps. (k,True,ps)\<in>set T}"
+
+definition reach_edges :: "reach_table \<Rightarrow> (bool list\<times>bool list) set" where
+  "reach_edges T={(p,k). \<exists>r ps. (k,r,ps)\<in>set T \<and> p\<in>set ps}"
+
+definition reach_seed_row :: "bool list set \<Rightarrow> bool list\<times>bool\<times>bool list list \<Rightarrow> bool list\<times>bool\<times>bool list list" where
+  "reach_seed_row K w=(if fst w\<in>K then (fst w,True,[]) else w)"
+
+definition reach_seeded :: "bool list set \<Rightarrow> reach_table \<Rightarrow> reach_table" where
+  "reach_seeded K T=map (reach_seed_row K) T"
+
+definition reach_restricted :: "bool list set \<Rightarrow> reach_table \<Rightarrow> reach_table" where
+  "reach_restricted K T=filter (\<lambda>w. fst w\<in>K) T"
+
+lemma reach_edges_member: "(p,k)\<in>reach_edges T \<longleftrightarrow> (\<exists>r ps. (k,r,ps)\<in>set T \<and> p\<in>set ps)"
+  by (simp add: reach_edges_def)
+
+lemma table_reached_keys:
+  assumes "k\<in>table_reached T"
+  shows "k\<in>reach_keys T"
+  using assms
+proof (induction rule: table_reached.induct)
+  case (root k ps)
+  show ?case unfolding reach_keys_def by (rule rev_image_eqI[OF root.hyps]) simp
+next
+  case (step k r ps p)
+  show ?case unfolding reach_keys_def by (rule rev_image_eqI[OF step.hyps(1)]) simp
+qed
+
+lemma table_reached_mono:
+  assumes rows: "set T\<subseteq>set U"
+  shows "table_reached T\<subseteq>table_reached U"
+proof
+  fix k assume "k\<in>table_reached T"
+  then show "k\<in>table_reached U"
+  proof (induction rule: table_reached.induct)
+    case (root k ps)
+    then show ?case using rows by (blast intro: table_reached.root)
+  next
+    case (step k r ps p)
+    then show ?case using rows by (blast intro: table_reached.step)
+  qed
+qed
+
+lemma reach_seeded_member:
+  "(k,v)\<in>set (reach_seeded K T) \<longleftrightarrow> (\<exists>r ps. (k,r,ps)\<in>set T \<and> v=(if k\<in>K then (True,[]) else (r,ps)))"
+proof
+  assume "(k,v)\<in>set (reach_seeded K T)"
+  then obtain w where w: "w\<in>set T" and eq: "(k,v)=reach_seed_row K w"
+    unfolding reach_seeded_def set_map image_iff by blast
+  obtain k' r ps where ww: "w=(k',r,ps)" by (cases w)
+  have "k'=k \<and> v=(if k\<in>K then (True,[]) else (r,ps))"
+    using eq by (auto simp: ww reach_seed_row_def split: if_splits)
+  then show "\<exists>r ps. (k,r,ps)\<in>set T \<and> v=(if k\<in>K then (True,[]) else (r,ps))"
+    using w by (auto simp: ww)
+next
+  assume "\<exists>r ps. (k,r,ps)\<in>set T \<and> v=(if k\<in>K then (True,[]) else (r,ps))"
+  then obtain r ps where row: "(k,r,ps)\<in>set T" and v: "v=(if k\<in>K then (True,[]) else (r,ps))" by blast
+  have seeded: "reach_seed_row K (k,r,ps)=(k,v)" by (simp add: reach_seed_row_def v)
+  show "(k,v)\<in>set (reach_seeded K T)"
+    unfolding reach_seeded_def set_map by (rule image_eqI[where f="reach_seed_row K", OF seeded[symmetric] row])
+qed
+
+lemma reach_seeded_formed:
+  assumes formed: "reach_table_formed T"
+  shows "reach_table_formed (reach_seeded K T)"
+  unfolding reach_table_formed_def single_valued_def
+proof (intro allI impI)
+  fix x y z assume first: "(x,y)\<in>set (reach_seeded K T)" and second: "(x,z)\<in>set (reach_seeded K T)"
+  obtain r ps where a: "(x,r,ps)\<in>set T" and y: "y=(if x\<in>K then (True,[]) else (r,ps))"
+    using first[unfolded reach_seeded_member] by blast
+  obtain r' ps' where b: "(x,r',ps')\<in>set T" and z: "z=(if x\<in>K then (True,[]) else (r',ps'))"
+    using second[unfolded reach_seeded_member] by blast
+  have "(r,ps)=(r',ps')" using formed a b unfolding reach_table_formed_def single_valued_def by blast
+  then show "y=z" using y z by simp
+qed
+
+lemma reach_restricted_formed:
+  assumes formed: "reach_table_formed T"
+  shows "reach_table_formed (reach_restricted K T)"
+  unfolding reach_table_formed_def single_valued_def
+proof (intro allI impI)
+  fix x y z assume "(x,y)\<in>set (reach_restricted K T)" and "(x,z)\<in>set (reach_restricted K T)"
+  then have a: "(x,y)\<in>set T" and b: "(x,z)\<in>set T" by (simp_all add: reach_restricted_def)
+  show "y=z" using formed a b unfolding reach_table_formed_def single_valued_def by blast
+qed
+
+text \<open>
+  Seeding with keys of its own reach leaves a table's reach unchanged: a seeded key was reached, and a
+  derivation in the table reaches a seeded key at once and every other key through its unchanged row.
+\<close>
+
+theorem table_reached_seeded:
+  assumes seeds: "K\<subseteq>table_reached T"
+  shows "table_reached (reach_seeded K T)=table_reached T"
+proof (intro set_eqI iffI)
+  fix k assume "k\<in>table_reached (reach_seeded K T)"
+  then show "k\<in>table_reached T"
+  proof (induction rule: table_reached.induct)
+    case (root k ps)
+    obtain r ps0 where row: "(k,r,ps0)\<in>set T" and v: "(True,ps)=(if k\<in>K then (True,[]) else (r,ps0))"
+      using root.hyps[unfolded reach_seeded_member] by blast
+    show ?case
+    proof (cases "k\<in>K")
+      case True
+      then show ?thesis using seeds by blast
+    next
+      case False
+      then have "(k,True,ps)\<in>set T" using row v by simp
+      then show ?thesis by (rule table_reached.root)
+    qed
+  next
+    case (step k r ps p)
+    obtain r0 ps0 where row: "(k,r0,ps0)\<in>set T" and v: "(r,ps)=(if k\<in>K then (True,[]) else (r0,ps0))"
+      using step.hyps(1)[unfolded reach_seeded_member] by blast
+    show ?case
+    proof (cases "k\<in>K")
+      case True
+      then show ?thesis using seeds by blast
+    next
+      case False
+      then have "(k,r,ps)\<in>set T" using row v by simp
+      then show ?thesis by (rule table_reached.step[OF _ step.hyps(2) step.IH])
+    qed
+  qed
+next
+  fix k assume "k\<in>table_reached T"
+  then show "k\<in>table_reached (reach_seeded K T)"
+  proof (induction rule: table_reached.induct)
+    case (root k ps)
+    have "(k,(if k\<in>K then (True,[]) else (True,ps)))\<in>set (reach_seeded K T)"
+      unfolding reach_seeded_member using root.hyps by blast
+    then have "(k,True,if k\<in>K then [] else ps)\<in>set (reach_seeded K T)" by (cases "k\<in>K") simp_all
+    then show ?case by (rule table_reached.root)
+  next
+    case (step k r ps p)
+    have row: "(k,(if k\<in>K then (True,[]) else (r,ps)))\<in>set (reach_seeded K T)"
+      unfolding reach_seeded_member using step.hyps(1) by blast
+    show ?case
+    proof (cases "k\<in>K")
+      case True
+      then have "(k,True,[])\<in>set (reach_seeded K T)" using row by simp
+      then show ?thesis by (rule table_reached.root)
+    next
+      case False
+      then have "(k,r,ps)\<in>set (reach_seeded K T)" using row by simp
+      then show ?thesis by (rule table_reached.step[OF _ step.hyps(2) step.IH])
+    qed
+  qed
+qed
+
+text \<open>
+  Restricted to a set of keys closed under the predecessors of their rows, a table reaches the same keys
+  of the set: every derivation of such a key stays inside the set.
+\<close>
+
+theorem table_reached_restricted:
+  assumes closed: "\<And>p k. (p,k)\<in>reach_edges T \<Longrightarrow> k\<in>K \<Longrightarrow> p\<in>K" and key: "k\<in>K"
+  shows "k\<in>table_reached (reach_restricted K T) \<longleftrightarrow> k\<in>table_reached T"
+proof
+  assume "k\<in>table_reached (reach_restricted K T)"
+  then show "k\<in>table_reached T"
+    using table_reached_mono[of "reach_restricted K T" T] by (auto simp: reach_restricted_def)
+next
+  have "k\<in>K \<longrightarrow> k\<in>table_reached (reach_restricted K T)" if "k\<in>table_reached T" for k
+    using that
+  proof (induction rule: table_reached.induct)
+    case (root k ps)
+    show ?case
+    proof
+      assume "k\<in>K"
+      then have "(k,True,ps)\<in>set (reach_restricted K T)" using root.hyps by (simp add: reach_restricted_def)
+      then show "k\<in>table_reached (reach_restricted K T)" by (rule table_reached.root)
+    qed
+  next
+    case (step k r ps p)
+    show ?case
+    proof
+      assume inside: "k\<in>K"
+      have "(p,k)\<in>reach_edges T" unfolding reach_edges_member using step.hyps(1,2) by blast
+      then have "p\<in>K" using closed inside by blast
+      then have reached: "p\<in>table_reached (reach_restricted K T)" using step.IH by blast
+      have "(k,r,ps)\<in>set (reach_restricted K T)" using step.hyps(1) inside by (simp add: reach_restricted_def)
+      then show "k\<in>table_reached (reach_restricted K T)" by (rule table_reached.step[OF _ step.hyps(2) reached])
+    qed
+  qed
+  then show "k\<in>table_reached T \<Longrightarrow> k\<in>table_reached (reach_restricted K T)" using key by blast
+qed
+
+text \<open>
+  The removal lemma. Let \<open>T'\<close> keep every root of \<open>T\<close>, and let \<open>O\<close> hold the target of every edge of \<open>T\<close>
+  that \<open>T'\<close> lacks and be closed under the successors of \<open>T\<close>. A derivation in \<open>T\<close> of a key outside
+  \<open>O\<close> uses no edge whose source lies in \<open>O\<close>, since closure would carry its end into \<open>O\<close>; so it uses no
+  removed edge, and is a derivation in \<open>T'\<close>. The set is named \<open>L\<close> below, \<open>O\<close> being relational
+  composition in HOL.
+\<close>
+
+theorem table_reached_removal:
+  assumes roots: "reach_roots T\<subseteq>reach_roots T'"
+    and targets: "\<And>p k. (p,k)\<in>reach_edges T \<Longrightarrow> (p,k)\<notin>reach_edges T' \<Longrightarrow> k\<in>L"
+    and closed: "\<And>p k. (p,k)\<in>reach_edges T \<Longrightarrow> p\<in>L \<Longrightarrow> k\<in>L"
+    and reached: "k\<in>table_reached T" and outside: "k\<notin>L"
+  shows "k\<in>table_reached T'"
+proof -
+  have "k\<notin>L \<longrightarrow> k\<in>table_reached T'" using reached
+  proof (induction rule: table_reached.induct)
+    case (root k ps)
+    have "k\<in>reach_roots T" using root.hyps by (auto simp: reach_roots_def)
+    then obtain ps' where "(k,True,ps')\<in>set T'" using roots by (auto simp: reach_roots_def)
+    then have "k\<in>table_reached T'" by (rule table_reached.root)
+    then show ?case by blast
+  next
+    case (step k r ps p)
+    show ?case
+    proof
+      assume kO: "k\<notin>L"
+      have edge: "(p,k)\<in>reach_edges T" unfolding reach_edges_member using step.hyps(1,2) by blast
+      have pO: "p\<notin>L" using closed[OF edge] kO by blast
+      have reached': "p\<in>table_reached T'" using step.IH pO by blast
+      have "(p,k)\<in>reach_edges T'" using targets[OF edge] kO by blast
+      then obtain r' ps' where row: "(k,r',ps')\<in>set T'" and p: "p\<in>set ps'"
+        unfolding reach_edges_member by blast
+      show "k\<in>table_reached T'" by (rule table_reached.step[OF row p reached'])
+    qed
+  qed
+  then show ?thesis using outside by blast
+qed
+
+corollary table_reached_removal_keys:
+  assumes roots: "reach_roots T\<subseteq>reach_roots T'"
+    and targets: "\<And>p k. (p,k)\<in>reach_edges T \<Longrightarrow> (p,k)\<notin>reach_edges T' \<Longrightarrow> k\<in>L"
+    and closed: "\<And>p k. (p,k)\<in>reach_edges T \<Longrightarrow> p\<in>L \<Longrightarrow> k\<in>L"
+    and all: "reach_keys T\<subseteq>table_reached T"
+  shows "reach_keys T-L\<subseteq>table_reached T'"
+proof
+  fix k assume k: "k\<in>reach_keys T-L"
+  have reached: "k\<in>table_reached T" using k all by blast
+  have outside: "k\<notin>L" using k by blast
+  show "k\<in>table_reached T'"
+    by (rule table_reached_removal[OF roots _ _ reached outside]) (fact targets, fact closed)
+qed
+
+text \<open>
+  Its consequence: \<open>T'\<close> with every key of \<open>T\<close> outside \<open>O\<close> made a root without predecessors has the
+  reach of \<open>T'\<close>, since those keys are of its own reach.
+\<close>
+
+corollary table_reached_removal_seeded:
+  assumes roots: "reach_roots T\<subseteq>reach_roots T'"
+    and targets: "\<And>p k. (p,k)\<in>reach_edges T \<Longrightarrow> (p,k)\<notin>reach_edges T' \<Longrightarrow> k\<in>L"
+    and closed: "\<And>p k. (p,k)\<in>reach_edges T \<Longrightarrow> p\<in>L \<Longrightarrow> k\<in>L"
+    and all: "reach_keys T\<subseteq>table_reached T"
+  shows "table_reached (reach_seeded (reach_keys T-L) T')=table_reached T'"
+  by (rule table_reached_seeded[OF table_reached_removal_keys[OF roots targets closed all]])
+
 end

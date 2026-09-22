@@ -239,6 +239,8 @@ definition row_formed_rules ::
     "(local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
   "row_formed_rules=[([0],row_declares_rule),([1],row_states_rule)]"
 
+declare row_formed_rules_def [code_unfold]
+
 locale row_formed_program = native_rule_family P w row_formed_rules
   for P :: "'u native_system" and w :: "'u definition_site"
 begin

@@ -12799,6 +12799,17 @@ The replay stops deciding adoption in its own process and reads the harness's `s
 - **The control's receipt** (`Development_Answer_5aba3385cee9.json`) gains `answer_sha256` the same way; `control` and
   `withdrawn` keep it from ever establishing an adoption, and its `published` step is the self-comparison, kept as run.
 
+**Carried out in the adoption tool (task 265).** The canonical digest is named `answer_digest` wherever it is the
+answer's identity — the receipts, the evidence and the harness's adopted/obstructed report (the planner, on #263's
+review) — and both retained receipts were rewritten to it; `answer_sha256` stays the raw answer file's digest in the
+judged records. The `installed` connection reads the theory the receipt names at installation. The final step checks
+the evidence with the receipt the tool retains, taken as an adoption's (`status: adopted`, `control: false`): a
+control is established exactly as an adoption is and then withdrawn, and its retained `control` and `withdrawn` keep
+it from establishing one. The retained receipt is written as a planned file, so its failure withdraws the
+installation with the rest; a control's is written once its withdrawal succeeded. An existing retained receipt at the
+answer's path refuses the adoption before installation. Limits: the check's accepted context is read through its
+verified lineage (`proof_contexts.load_parent`), and the test of the final step stubs it, the check and the judgment.
+
 ### What the fix must respect
 
 - Adoption's evidence is the one function; no tool reads a path to decide it.

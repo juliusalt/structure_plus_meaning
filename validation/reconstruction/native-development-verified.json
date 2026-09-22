@@ -2,10 +2,10 @@
  "boundary": "The local source and input boundary reconstructs native generation, original condition compilation, all observations and certificates, independent complete evidence inspection and native scope criticism, comparison, revision, admission. The declared finite one-step generation scope remains explicit; adequacy for wider development problems and the eventual genesis handoff are separate conditions.",
  "complete_recipe_source_manifest": "native-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
+  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.37,
+  "seconds": 3.92,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "12bc8931464597f09a1b1796c12549f8ad651a4f640ad4980b0a6cc81283cdb7",
+   "module_sha256": "753f678af165b0fc6f6dc80eb0ac2adc813cf391422b50c291937e4c60fb51a5",
    "subject_contracts": {
-    "development_producer_investigation.yxml": "858adb6de7a8718acce38720cfe07454d898c62b35d804621d55495aac680576"
+    "development_producer_investigation.yxml": "8e9664a32b3c78fd8adecb956c5b1805e49cbffc810d19151ad8e6241ad04ad7"
    },
    "theory": "Native_Development_Execution"
   },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "90ecd0fadee8decf50a52b6a220063fb89b992aed000317a56770856773a8a29",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "12bc8931464597f09a1b1796c12549f8ad651a4f640ad4980b0a6cc81283cdb7"
- },
  "recipe": "native-development",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "b09ad411e0d3cab6b1f1b5cdf9604f178389f58f7be2243aa2dee0925abc4b18",
+ "source_manifest_sha256": "ee9566551988ee9e0d937252a55a61aa73f386748a3de01aa122b889417baf36",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.278527435000797
+   "seconds": 3.820177401001274
   }
  ]
 }

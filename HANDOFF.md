@@ -158,9 +158,10 @@ readiness's and reach's rules, with `readiness_answered_rule`'s two steps and `t
 with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each with its review. #230 briefed the
 law's family form — rules with any number of premises (q60), under no condition on their variables (q61): #233 (`d5d0e747`)
 stated it once in `Native_Collection_Programs`, #208's law its instance, with Open 75's move, before #42, #44, #110,
-#112 and #191, which instantiate it; #245 states it at an arbitrary support relation (#233's and #212's reviews: the
-hand decodings of a clause, readiness's and reach's inductions), before #235, #44 and #110; its re-citations follow the builds editing their theories — the verdict's families, the
-value rule and the decomposition rule (#235, after #245), the formation rules, the any rule and the two-premise call
+#112 and #191, which instantiate it; #245 (`d2d1ab33`) stated its elimination at an arbitrary support relation
+(`supported_clause`); #247 completes it — the introduction half at any relation, the conclusion from
+`supported_clause`, a case analysis returning the rule (#245's review) — before #235, #44 and #110; its re-citations follow the builds editing their theories — the verdict's families, the
+value rule and the decomposition rule (#235, after #247), the formation rules, the any rule and the two-premise call
 (#237, after #214 and #235), the store search (#239, after #44) — each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
@@ -169,15 +170,15 @@ changes: the syntax forest #225 and the premise forest #223, with #241 after #14
 #155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
 #161 and #192. Then #114 (after #112, #110, #182 or #227) and #45 (after #44, #42, #227), 4. Beside
-them: #220; the rule programs' re-citation #214; the rule-family law at any support relation #245, then the
+them: #220; the rule programs' re-citation #214; the rule-family law's completion #247, then the
 re-citations #235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
 
-**Order** (`128 129 147 148 182 183 227 228 223 224 225 226 241 242 245 246 229 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 182 183 227 228 223 224 225 226 241 242 247 248 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
 review and #147; then the exporter's discharge #227, which #42 and #110 wait
 on, and the excess locale #182, which #110, #112 and #191 wait on; the placed forest's instances #223 and #225
 and the stragglers' switch #241, which #155 waits on, close after their brief's author;
-the probe's fix #229 (every later build's inner loop), the rule-family law at any support relation #245 and the
+the probe's fix #229 (every later build's inner loop), the rule-family law's completion #247 and the
 verdict's entry #42, heads of
 the deepest chains, so that a slot serves them as they become ready; the rule programs' re-citations; the layout's word
 change #155, its answer records #157 and its measurement #159 soon after it, while the harness's lineage still holds
@@ -521,6 +522,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   condition through one lemma. Follow-ups: `map_filter_member` upstream to #227 (Open 62). #176 is deleted.
 - **#229** `76cd520c`: the probe loads every base theory the tree changes, with the changed theories importing them, as
   renamed copies (the working rule). Follow-ups: the harness's reading of `from_tree`; the tool's polish Open 78.
+- **#245** `d2d1ab33`: `native_rule_law.supported_clause`, the rule family's law eliminated at any support relation.
+  Follow-ups: the introduction half, the conclusion and the rule-returning case analysis to #247; the inductions to
+  #235; the probe's log for the harness.
 
 ## Open
 
@@ -777,8 +781,8 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
-- **In flight (plan-45, 17:05)**: #189, #220, #223 and #225 build; #128 and #147 are in review; #227 discharges the exporter's obligation, ready now; #233 (`d5d0e747`) stated the
-  rule-family law (q60, q61) and #245 states it at any support relation; #231 (`cded0ab7`) stated the name-locality of
+- **In flight (plan-45, 17:05)**: #189, #220, #223 and #225 build; #128 and #147 are in review; #227 discharges the exporter's obligation, ready now; #233 (`d5d0e747`) and #245
+  (`d2d1ab33`) stated the rule-family law (q60, q61) and its elimination at any relation, and #247 completes it; #231 (`cded0ab7`) stated the name-locality of
   readings. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
   #208's to #212 and #214, #221's to #223 and #225, #188's to #192 and #220, #212's to #233 and #235, #231's to #187, #189, #191 and #220. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
@@ -862,7 +866,7 @@ Not yet planned, in the order they are expected to be planned:
     re-check, around the base's move to the lasting place) cost a 500 s landing cycle. The first retention after a
     landing could be a commit of its own (#145's review). A probe run with `--candidates` or a prelude leaves no
     `probe.log` where `v2.py read probes` reads it (#233's review); it could also read the summary's `from_tree` map
-    for the renamed copies of #229's base-theory probes (#229's review).
+    for the renamed copies of #229's base-theory probes (#229's review). #245's probe left no log there either.
 - **The base lives at the lasting place** `.build/tasks/base-lasting/` (#144, landed `79f16061` with #132): its
   complete proof of `a2ed0ed7` (`complete-20260922e`, 777 s, re-recorded at 14:14 with its heap under the
   `/tmp/structural-isabelle` link so that the older tools read it too), the pointer `active-context.json` that main's

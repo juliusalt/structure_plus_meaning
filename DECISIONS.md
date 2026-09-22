@@ -11155,3 +11155,67 @@ share of the publication's remaining seconds is unmeasured: task 80's attributio
 This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 85's decision; a design, no theory changes).
+
+## A problem's generations stand at its locus, a path
+
+The loop records every problem's incumbent, issue and admitted answer as generations at loci, and
+until now those loci were terms: the problem's contract with its local names (`development_problem_locus`),
+and for the issue that term behind the octet `Finite_Payload [1]` (`development_issue_locus`). "The
+development notions are structure; a kind is a family and an identity is a path" retired both. They are
+retired here, and the loci are the paths `Development_Loci` states: a generation of a problem is recorded at
+the quotation of `finite_path` of `development_problem_locus_at state_constant_key r p`, with `r` the
+problem role for the incumbent and the answer and the issue role for the issue
+(`Development_Publication.development_locus_target`), and a decision payload cites a problem by the
+store's optional value of that path (`development_problem_citation`). The key is the constant's
+position in the state's name table (`Development_State_Presenter.state_constant_key`), never a
+position in a list of problems. A problem whose subject is not one constant has no locus, and nothing
+is recorded for it. The selection locus stays as it stands (its tag is a later task's), and
+`development_decision_loci_distinct` is re-established against it: an issue's locus and a problem's
+differ in their role prefix, and no path is the selection locus. `development_local_contract`, read
+only by the retired locus, goes with it.
+
+**The machinery state's root.** `development_problem_locus` was an admission root of the machinery's
+checked state. `development_problem_locus_at` (task 22) takes its place: it is the definition that now
+says where a problem stands. The state therefore holds other entities, and a residual problem of the new
+root replaces the retired one's.
+
+**Why the words changed, once.** This is not a refinement: a locus is presented differently, and word
+equality cannot accept it. The words of `reconstruct_native_development_seed`'s `presentation-publication`
+(incumbent, issue and answer loci; selection and issue payloads) and of all five executions of
+`reconstruct_native_development_machinery` (its checked state, whose root and entities changed, and every
+report over that state) changed; every other execution's words are equal. The retained answer records
+whose `publication_word` changed were re-recorded (`replay_development_answers.py --rerecord`):
+`demanded-identity`, `demanded-reformulated`, `deterministic`, `identity`, `introduced-helper` and
+`outside-support`, each in its publication word alone (its verdict word is equal); seven records
+reconstructed unchanged, and the adopted `indexed-data-walk` record is historical and not re-recorded.
+The two native records, `native-dropped` and `native-restating`, were not reproduced: in this replay
+`tools/native_answers.py judge` failed its export step at once ("Export failed.", 1.1 s), so they were
+neither reconstructed nor re-recorded. Their words are expected equal: they judge against the seeded state,
+whose request state, verdict and request presenter this task leaves unchanged, and the seed recipe's
+`presentation-native-answers` word is equal in the final check. They are replayed once the base advances.
+
+`development_local_contract` was offered for reuse in `Development_Publication`'s map row, but only as the
+instance, for the retired locus, of `Isabelle_Local_Names`' notion, whose contract
+`isabelle_local_entities_renamed` stays; the retirement therefore stands, and the row now offers that.
+
+**Across states.** Every locus is keyed in the state its problem belongs to. An answer's generation is
+recorded at the locus of the request's problem in the request state, as its incumbent and its issue are,
+so the transaction publishing it compares loci of one key assignment, and the answer with the reversed
+table is refused at the same locus. The successor renames problems into the answer state, where a
+position key names the same constant by another path; the retired contract-with-names was invariant
+there. How a locus is transported across a successor is left to the design of a row presented outside
+the store, not chosen here.
+
+**What stays.** The problem datum's tags (`development_origin_data`, `development_authority_data`,
+`development_contract_data`'s) and `development_named_request`'s lookup of a name remain, with their
+readers, until that design (the planner's answers to q45 and q46).
+
+**Size.** Measured on the machinery's state (313 names, 65 residual problems) by counting the nodes of
+each problem's locus term: the retired contract-with-names totals 15,133 nodes (mean 233, largest 769);
+the path totals 2,425 nodes (mean 37, largest 45) over 812 bits (mean 12.5: six of role and kind, the
+rest the key). The entry's estimate of about fourteen bits and about thirty-seven nodes holds, and the
+term `development_data_target` quotes into every recorded generation is about six times smaller on
+this state. The readiness and development tables are not switched here, so the entry's 1.75 times on a
+table that is its keys is still to be measured with the presenter switch.
+
+Recorded 2026-09-22 (task 30).

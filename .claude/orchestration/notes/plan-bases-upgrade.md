@@ -43,12 +43,12 @@ Status: `[ ]` open, `[~]` in progress, `[x]` done (with where), `[-]` decided ag
 9. [x] Fresh start: the first planner's charge (FRESH_CHARGE) for this run; the in-flight work carried (trees of 44,
    278, 192, 279, 276; 128 and 147 committed by rule); the build/seal/start sequence written for the owner; xhigh
    switched to deltas if task 3 decides it.
-10. [ ] Tests, mutation cases, suite, deploy, handoff note, commit.
-11. [~] Then: every role's sessions for read/write batching and information delivery; every protocol and prompt.
+10. [x] Tests, mutation cases, suite, deploy, handoff note, commit (3f758c6b, edf999cb and after; the suite 701 on the live code).
+11. [x] Then: every role's sessions for read/write batching and information delivery; every protocol and prompt (below).
 
 ## What it is worth, at 2026-09-22's volume (435M input-equivalent, 94 landings)
 
-- Smaller worker bases: high 601,541 → ~530K, xhigh 542,564 → ~457K; the base-prefix reads were 169M (high roles)
+- Smaller worker bases: high 601,541 → ~530K, xhigh 542,564 → ~460K; the base-prefix reads were 169M (high roles)
   and 75M (xhigh roles): about **20M + 12M a day**, with the budgets now holding what the roles used.
 - The reviewer's first read in its first message: about **5.4M a day** (a request of 109), and each review a turn
   sooner on the landing path.
@@ -73,7 +73,7 @@ a base does all of it now — the layer build reloads the stable base itself whe
 
 (`base.sh WHO restable` then `base.sh WHO layer` is the same in two steps.) A layer sealed over the 530K target says so
 in state/warm.log. Deltas are on for high and xhigh (state/deltas); the watchdog builds each base's first delta once
-2K tokens have moved. The first planner receives the fresh charge (FRESH_CHARGE, now naming the task trees) and the
+4K tokens have moved (D11). The first planner receives the fresh charge (FRESH_CHARGE, now naming the task trees) and the
 note `notes/fresh-start-2026-09-23.md`, queued as an event: what changed in the harness, what is in flight in which
 tree, and the two trees whose work never landed (143, 176). To start without that note: remove the event of kind
 `harness-change` from state/v2.json.
@@ -127,8 +127,10 @@ under which nothing is held however much room remains (5% of the forks: about 3 
 163 implementers and fixers, 157 middle roles; report-E), 176 of the 226 founding theories (144K tokens) were used by
 none of the implementer family and 175 (146K) by none of the middle roles; 13 and 15 more by one session. No review
 of 110 blamed a duplication on a founding notion that was not known (all 20 reviews naming a duplication name one within
-the task or map rows a merge doubled). Kept: those used by at least 2 sessions of the base's roles over the week (37
-for high, 36 for xhigh). The rest stay findable: on high each re-enters the theory map's index (which leaves out only
+the task or map rows a merge doubled). Kept: those used by at least 2 sessions of the base's roles over the week
+~~(37 for high, 36 for xhigh)~~ and left unchanged by main for 3 days — 27 for high, 26 for xhigh: a founding theory in
+use can be work in progress (13 on high had changed that day), and the stable part stands until the owner rebuilds it,
+so the frontier holds those (findings 23:42); the window reaches into v2's archive (findings 00:23). The rest stay findable: on high each re-enters the theory map's index (which leaves out only
 what the list holds); on xhigh a generated founding index gives each its map line. The founding theories were chosen by
 a naming heuristic (idea_candidates.founding_theories: the first theory whose name carries a word several theory names
 share), not by use. max is left as the owner chose it (founding theories at definitions; 20 forks a day; bases-design
@@ -146,8 +148,10 @@ base's roles used — a session uses a theory when it reads it or its own writin
 defines (report-D) — ranked by use per token at the list's level and taken until the layer's budget (the target less
 the stable part as measured, the layer's fixed entries and its session overhead) or the 5% floor. It was a fixed 40
 theories measured from 7 sessions (which collapsed to 1 of 40 on 2026-09-20), with no budget: the high base grew
-524,836 → 601,541 in a day (report in the findings). Simulated on 2026-09-22: high about 45 theories (mean use 17.6%
-against 13.3% for the 40 held), xhigh about 68 (every theory used by 5% or more), both totals near 530K.
+524,836 → 601,541 in a day (report in the findings). ~~Simulated on 2026-09-22: high about 45 theories (mean use 17.6%
+against 13.3% for the 40 held), xhigh about 68, both totals near 530K.~~ Chosen: high 71 theories within its 273K room
+(the room grew as the founding tier shrank and the index was cut), xhigh 55 — every theory 5% of its forks used, the
+floor binding before its 223K room; estimated loaded high ~529K, xhigh ~461K, and the packs verify (findings 00:30).
 
 **D5. The theory map's index (high) is capped at 90 characters of first clause.** It is 100.9K tokens of the high
 layer (31%) where the design measured 56K (1,462 rows, 2026-09-19); 1,772 rows now, median 138 characters, growing with
@@ -188,6 +192,16 @@ the optimum is a build every ~44 minutes on high (~3.7K tokens moved) and ~62 on
 serves both (the cost is flat near the optimum); the 20-minute floor stays.
 
 ## Findings log
+
+- 2026-09-23 00:30 pre-flight: `base.sh WHO pack` for both parts of high and xhigh builds and verifies (high stable
+  71 sources / layer 114, xhigh 70 / 108); high's layer holds the capped theory map index, xhigh's the founding index,
+  neither MEMORY.md.
+- 2026-09-23 00:23 the evidence window reaches into v2's archive (a session goes there a day after its release):
+  founding tiers chosen again, high 27 (133 sessions), xhigh 26 (156).
+- 2026-09-23 00:21 library-prompt.md said every base holds the founding theory of every notion: corrected (yours to
+  read). 00:03 a layer was built over the recorded stable base whenever its entry was warm, even once the list named
+  another reference (~665K on high): manifest.py stable-listed. And `date -d ""` is midnight today: a base record
+  with no seal time made yesterday's misses look answered after midnight — found by the clock, fixed.
 
 - 2026-09-22 23:42 the selection deployed (select_base_load --founding / --frontier, handoff 23:42); the lists
   rewritten: high 530K and xhigh 457K estimated. Found while doing it: a theory that entered the founding tier and had

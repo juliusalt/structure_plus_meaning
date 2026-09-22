@@ -168,6 +168,23 @@ proof (rule store_canonical_lookup_eq)
     by (rule lookup_eq_by_some) (rule key_index_edit)
 qed
 
+text \<open>
+  The update's value at a key is the old fibre without the removed rows followed by the added rows at the key;
+  on the index of the old family the old fibre is what that index finds at the key, so the update reads it from
+  the old index rather than filtering the family again.
+\<close>
+
+lemma key_edit_update_index:
+  "key_edit_update rd A D Ad F (key_index rd A F)=fold (\<lambda>a T. store_update T a
+      (Some (filter (\<lambda>z. z\<notin>set D) (the (store_lookup (key_index rd A F) a)) @ key_fibre rd a Ad)))
+      (key_edit_keys rd A D Ad) (key_index rd A F)"
+proof -
+  have found: "store_lookup (key_index rd A F) a=Some (key_fibre rd a F)" if "a\<in>set A" for a
+    using that by (simp add: key_index_lookup)
+  show ?thesis unfolding key_edit_update_def
+    by (intro fold_cong refl) (auto simp: key_edit_keys_def found)
+qed
+
 section \<open>The index restricted to the keys a call reaches\<close>
 
 text \<open>

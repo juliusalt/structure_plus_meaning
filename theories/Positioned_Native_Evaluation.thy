@@ -20,11 +20,6 @@ definition demand_positions :: "('a \<Rightarrow> 'k::linorder) \<Rightarrow> 'a
   "demand_positions key D=(let ks=sorted_list_of_fset (fimage key D) in
     RBT.bulkload (zip ks [0..<length ks]))"
 
-lemma demand_positions_lookup:
-  "RBT.lookup (demand_positions key D)=
-    map_of (zip (sorted_list_of_fset (fimage key D))
-      [0..<length (sorted_list_of_fset (fimage key D))])"
-  by (simp add: demand_positions_def Let_def RBT.lookup_bulkload)
 
 subsection \<open>The positions of a demand are an index of the demand\<close>
 
@@ -55,6 +50,36 @@ lemma demand_positions_rows:
   "RBT.lookup (demand_positions key D) k=Some i \<longleftrightarrow>
     (k,i)\<in>set (zip (sorted_list_of_fset (fimage key D)) [0..<length (sorted_list_of_fset (fimage key D))])"
   using key_positions_index.query_search[where c="fimage key D" and q=k and v=i] by (simp add: demand_positions_def Let_def)
+
+text \<open>
+  The listing is distinct, so the rows are the graph of the map of the zip, and the lookup is that map.
+\<close>
+
+lemma demand_positions_lookup:
+  "RBT.lookup (demand_positions key D)=
+    map_of (zip (sorted_list_of_fset (fimage key D))
+      [0..<length (sorted_list_of_fset (fimage key D))])"
+proof (rule ext)
+  fix k
+  let ?Z="zip (sorted_list_of_fset (fimage key D)) [0..<length (sorted_list_of_fset (fimage key D))]"
+  have keys: "distinct (map fst ?Z)" by simp
+  have same: "RBT.lookup (demand_positions key D) k=Some i \<longleftrightarrow> map_of ?Z k=Some i" for i
+    using demand_positions_rows[of key D k i] map_of_is_SomeI[OF keys, of k i] map_of_SomeD[of ?Z k i]
+    by blast
+  show "RBT.lookup (demand_positions key D) k=map_of ?Z k"
+  proof (cases "map_of ?Z k")
+    case None
+    have "RBT.lookup (demand_positions key D) k=None"
+    proof (cases "RBT.lookup (demand_positions key D) k")
+      case (Some j)
+      with same[of j] None show ?thesis by simp
+    qed
+    with None show ?thesis by (simp only:)
+  next
+    case (Some j)
+    then show ?thesis using same[of j] by simp
+  qed
+qed
 
 lemma zip_positions_member: "(\<exists>i. (k,i)\<in>set (zip xs [0..<length xs])) \<longleftrightarrow> k\<in>set xs"
 proof

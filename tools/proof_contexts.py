@@ -12,9 +12,10 @@ import re
 import subprocess
 
 import execution_support as investigate
+import isabelle_places
 import proved_code
 
-USER_HOME = Path('/tmp/structural-isabelle')
+USER_HOME = isabelle_places.USER_HOME
 ENV = {**os.environ, 'USER_HOME': str(USER_HOME)}
 CONTEXT_FILE = 'accepted-context.json'
 
@@ -241,6 +242,8 @@ def load_parent(project, _active=None, _memo=None, _verification=None):
     if path.exists():
         saved = json.loads(path.read_text())
         assert saved['version'] == 1
+        if 'stored' in saved:
+            saved['stored'] = isabelle_places.stored_in_store(saved['stored'])
         parent = load_parent(saved['parent'], active, memo, verification) if saved['parent'] else _empty_context()
         current = _proof_claims(project, parent, saved['project_declaration'], verification)
         for key in ('session', 'sources', 'imports', 'providers', 'directories', 'inputs', 'receipt'):
@@ -256,6 +259,7 @@ def load_parent(project, _active=None, _memo=None, _verification=None):
         session, sources, inputs = accepted_main_parent(project)
         stored = json.loads((project / 'base.json').read_text()) if (project / 'base.json').is_file() else None
         if stored:
+            stored['stored'] = isabelle_places.stored_in_store(stored['stored'])
             assert stored['session'] == session and stored['stored'] == heap_identity(session, verification)
             inputs |= {str(project / 'base.json'): investigate.file_hash(project / 'base.json'),
                        stored['stored']['heap']: stored['stored']['heap_sha256'],

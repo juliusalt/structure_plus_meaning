@@ -38,14 +38,15 @@ import time
 
 import build
 import execution_support as investigate
+import isabelle_places
 import proved_code
 from evidence_io import write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / 'tools'
 POLY = Path('/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly')
-HEAPS = Path('/tmp/structural-isabelle/.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux')
-ENV_HOME = {'USER_HOME': '/tmp/structural-isabelle', 'PYTHONDONTWRITEBYTECODE': '1'}
+HEAPS = isabelle_places.USER_HOME / '.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux'
+ENV_HOME = {'USER_HOME': str(isabelle_places.USER_HOME), 'PYTHONDONTWRITEBYTECODE': '1'}
 
 # The requested states the harness can frame. A seeded state is defined by a repository theory,
 # which also defines its requests and its loop state. A demanded state is exported by a generated
@@ -290,7 +291,7 @@ def overlay(output, generated):
 
 
 def active_base(base):
-    return (base or Path(json.loads(Path('/tmp/structural-active-context.json').read_text())['directory'])).resolve()
+    return (base or Path(json.loads(isabelle_places.ACTIVE_CONTEXT.read_text())['directory'])).resolve()
 
 
 def packet_main(args):

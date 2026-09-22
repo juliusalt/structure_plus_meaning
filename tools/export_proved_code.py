@@ -12,6 +12,7 @@ import subprocess
 import uuid
 
 import execution_support as investigate
+import isabelle_places
 import proved_code
 import prove_context
 
@@ -178,7 +179,7 @@ def main():
     try:
         with log_path.open("w") as log:
             result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT,
-                                    env={**os.environ, "USER_HOME": "/tmp/structural-isabelle"}, timeout=60)
+                                    env={**os.environ, "USER_HOME": str(isabelle_places.USER_HOME)}, timeout=60)
         report["exit_code"] = result.returncode
         assert result.returncode == 0, "See the retained export.log."
         assert proof_path.read_bytes() == original

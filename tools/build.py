@@ -16,6 +16,8 @@ import sys
 import tempfile
 import uuid
 
+import isabelle_places
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -179,7 +181,7 @@ def add_arguments(parser: argparse.ArgumentParser, *, combined: bool = False) ->
     parser.add_argument("--threads", type=int, default=min(12, os.cpu_count() or 1) if combined else 4)
     parser.add_argument("--timeout", type=int, default=120)
     parser.add_argument("--cache-home", type=Path,
-                        default=Path(tempfile.gettempdir()) / "structural-isabelle")
+                        default=isabelle_places.USER_HOME)
     if not combined:
         parser.add_argument("--verbose", action="store_true")
         parser.add_argument("--session", action="append", default=[])

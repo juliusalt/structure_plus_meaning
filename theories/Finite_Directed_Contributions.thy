@@ -1,5 +1,5 @@
 theory Finite_Directed_Contributions
-  imports Finite_Compatible_Unions Finite_Demand_Selection
+  imports Finite_Compatible_Unions Finite_Demand_Selection Candidate_Generators
 begin
 
 section \<open>Complete fragments remain feasible under a partial assignment\<close>
@@ -249,14 +249,25 @@ theorem finite_value_binding_search_exact:
   "finite_value_binding_search (fcard (fset_of_list As)) As
     (finite_compatible_binding_parts (fset_of_list As) B {||}) {||}=
     finite_scoped_compatible_unions (fset_of_list As) B"
-proof (rule fset_inject[THEN iffD1], rule set_eqI)
-  fix V
+    (is "?G=_")
+proof -
   have functional: "finite_relation_functional {||}" by (simp add: finite_relation_functional_def)
-  show "V\<in>fset (finite_value_binding_search (fcard (fset_of_list As)) As (finite_compatible_binding_parts (fset_of_list As) B {||}) {||})
-    \<longleftrightarrow> V\<in>fset (finite_scoped_compatible_unions (fset_of_list As) B)"
-    using finite_value_binding_search_sound[OF functional, of As V "fcard (fset_of_list As)" B]
-      finite_value_binding_search_complete[of V B As "{||}" "fcard (fset_of_list As)"]
-    by (auto simp: fsubset_iff fset_of_list_elem finite_scoped_compatible_union_member)
+  have generator: "tight_candidate_generator (finite_compatible_unions B) (\<lambda>V. fimage fst V=fset_of_list As) ?G"
+  proof (unfold_locales)
+    fix V assume "V |\<in>| ?G"
+    then show "V |\<in>| finite_compatible_unions B"
+      using finite_value_binding_search_sound[OF functional, of As V "fcard (fset_of_list As)" B] by simp
+  next
+    fix V assume "V |\<in>| finite_compatible_unions B" "fimage fst V=fset_of_list As"
+    then show "V |\<in>| ?G"
+      using finite_value_binding_search_complete[of V B As "{||}" "fcard (fset_of_list As)"] by simp
+  next
+    fix V assume "V |\<in>| ?G"
+    then show "fimage fst V=fset_of_list As"
+      using finite_value_binding_search_sound[OF functional, of As V "fcard (fset_of_list As)" B] by simp
+  qed
+  show ?thesis unfolding finite_scoped_compatible_unions_def
+    by (rule tight_candidate_generator.generated_accepted[OF generator])
 qed
 
 definition set_scoped_compatible_unions where

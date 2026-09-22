@@ -1,5 +1,5 @@
 {
- "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+ "base_receipt_sha256": "a385b9942ca2330027dc7fd750302c1778c7570d7d059e3a2006da02a7aaea5e",
  "checked_content_sha256": "e3b25f690d2de1ffd252c282a73b16ece674df6dea085dc7181d151c7099ca93",
  "host_tests": {
   "kernel": {
@@ -14,327 +14,181 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 237,
+   "ran": 245,
    "skipped": 0,
    "tail": [
-    "OK (expected failures=2)"
+    "OK"
    ]
   }
  },
  "phases": {
   "base_and_impact": 0.29,
-  "execution_impact": 1.29,
-  "export": 10.38,
-  "proof": 85.09,
-  "recipe_impact": 0.38,
-  "recipes_and_host_tests": 124.61
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "recipe_impact": 0.4,
+  "recipes_and_host_tests": 10.97
  },
- "rebuilt_theories": [
-  "Development_Admitted_Publication",
-  "Development_Certified_Generations",
-  "Development_Constant_Verification",
-  "Development_Decision_Generations",
-  "Development_Decomposition_Soundness",
-  "Development_Definition_Verification",
-  "Development_Edited_Local",
-  "Development_Edited_Reach",
-  "Development_Edited_Undeclared",
-  "Development_Located_Rows",
-  "Development_Machinery",
-  "Development_Native_Answers",
-  "Development_Native_Decomposition",
-  "Development_Native_Readiness",
-  "Development_Native_Selection",
-  "Development_Publication",
-  "Development_Refinement_Repair",
-  "Development_Refinement_Verification",
-  "Development_Repair_Rows",
-  "Development_Request_Keys",
-  "Development_Request_Packets",
-  "Development_Request_Scope",
-  "Development_Requests",
-  "Development_Row_Data",
-  "Development_Row_Presentations",
-  "Development_Rows",
-  "Development_Seed_Loop",
-  "Development_Seed_Publication",
-  "Development_Seed_Verification",
-  "Development_State_Edit",
-  "Development_State_Presenter",
-  "Development_State_Rows",
-  "Development_Subject_Index",
-  "Development_Successor",
-  "Development_Verdict_Difference",
-  "Development_Verdict_Mentions",
-  "Development_Verdict_Statements",
-  "Development_Verdict_Unreached",
-  "Native_Development_Machinery",
-  "Native_Development_Seed"
- ],
+ "rebuilt_theories": [],
  "recipes": {
   "allocated-environments": {
-   "exit_code": 0,
-   "seconds": 2.92,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "artifact-lookup": {
-   "exit_code": 0,
-   "seconds": 2.58,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "builtin-investigations": {
-   "exit_code": 0,
-   "seconds": 2.72,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "cached-grafts": {
-   "exit_code": 0,
-   "seconds": 2.72,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certificate-coverage": {
-   "exit_code": 0,
-   "seconds": 3.98,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certificate-development": {
-   "exit_code": 0,
-   "seconds": 4.53,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certificate-input-development": {
-   "exit_code": 0,
-   "seconds": 4.58,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certificate-scope-repair": {
-   "exit_code": 0,
-   "seconds": 3.88,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certified-causes": {
-   "exit_code": 0,
-   "seconds": 5.29,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "concurrent-history": {
-   "exit_code": 0,
-   "seconds": 14.89,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "constructed-history": {
-   "exit_code": 0,
-   "seconds": 25.5,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "data-reading": {
-   "exit_code": 0,
-   "seconds": 4.58,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "decision-replay": {
-   "exit_code": 0,
-   "seconds": 8.35,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "digit-allocation": {
-   "exit_code": 0,
-   "seconds": 3.27,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "digit-generation": {
-   "exit_code": 0,
-   "seconds": 4.08,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "digit-history": {
-   "exit_code": 0,
-   "seconds": 11.83,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "digit-replay": {
-   "exit_code": 0,
-   "seconds": 23.27,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "encoded-environments": {
-   "exit_code": 0,
-   "seconds": 3.92,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "environment-grafts": {
-   "exit_code": 0,
-   "seconds": 2.87,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "environment-updates": {
-   "exit_code": 0,
-   "seconds": 2.93,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "generation-records": {
-   "exit_code": 0,
-   "seconds": 2.92,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "graft-admission": {
-   "exit_code": 0,
-   "seconds": 2.87,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "history-index": {
-   "exit_code": 0,
-   "seconds": 12.23,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "indexed-generation": {
-   "exit_code": 0,
-   "seconds": 3.78,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "known-history": {
-   "exit_code": 0,
-   "seconds": 13.63,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "literal-replay": {
-   "exit_code": 0,
-   "seconds": 4.27,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-admission": {
-   "exit_code": 0,
-   "seconds": 7.09,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-certificate-replay": {
-   "exit_code": 0,
-   "seconds": 5.44,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-certificates": {
-   "exit_code": 0,
-   "seconds": 6.03,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-child": {
-   "exit_code": 0,
-   "seconds": 6.34,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-derivations": {
-   "exit_code": 0,
-   "seconds": 5.19,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development": {
-   "exit_code": 0,
-   "seconds": 4.43,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development-machinery": {
-   "exit_code": 0,
-   "seconds": 44.87,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development-seed": {
-   "exit_code": 0,
-   "seconds": 124.6,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-evaluation": {
-   "exit_code": 0,
-   "seconds": 3.88,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-extensions": {
-   "exit_code": 0,
-   "seconds": 3.48,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-graphs": {
-   "exit_code": 0,
-   "seconds": 7.04,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-histories": {
-   "exit_code": 0,
-   "seconds": 4.48,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-nodes": {
-   "exit_code": 0,
-   "seconds": 3.88,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-requirements": {
-   "exit_code": 0,
-   "seconds": 7.55,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-sources": {
-   "exit_code": 0,
-   "seconds": 3.68,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-steering": {
-   "exit_code": 0,
-   "seconds": 14.94,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-workflow": {
-   "exit_code": 0,
-   "seconds": 13.68,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "quoted-history": {
-   "exit_code": 0,
-   "seconds": 26.04,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "required-causes": {
-   "exit_code": 0,
-   "seconds": 5.13,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "required-history": {
-   "exit_code": 0,
-   "seconds": 6.69,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "requirement-decisions": {
-   "exit_code": 0,
-   "seconds": 4.18,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "requirement-plans": {
-   "exit_code": 0,
-   "seconds": 2.82,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "requirement-sources": {
-   "exit_code": 0,
-   "seconds": 3.17,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "source-development": {
-   "exit_code": 0,
-   "seconds": 15.34,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "use-allocation": {
-   "exit_code": 0,
-   "seconds": 2.57,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "use-codecs": {
-   "exit_code": 0,
-   "seconds": 2.83,
-   "status": "accepted"
+   "status": "unchanged"
   }
  },
- "reused_theories": 1792,
- "seconds": 240.95,
+ "reused_theories": 1832,
+ "seconds": 15.24,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

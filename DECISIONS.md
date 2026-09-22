@@ -10291,6 +10291,19 @@ notion would then be two. This entry was written outside the loop and is a resid
 
 Recorded 2026-09-21.
 
+Amended 2026-09-22 (task 115): the arguments the notion's level still made twice are stated once in it.
+`carrier_index` holds four corollaries without any carrier's premise: `queries_search` (every query of a
+set is found iff each holds some value), `lookup_found` and `lookup_queries_found` (the same where the
+search is an optional lookup, taken as a premise `search i k v ⟷ look i k=Some v`), and `found_pairs`
+(the found pairs are the keyed image of the content). `member_tree_lookup`, `listed_member_lookup`,
+`keyed_set_index.member_query`, `members_subset`, `demand_positions_member` and
+`demand_positions_members_subset` are their instances, statements unchanged. The red-black tree's instance
+moved below `Ordered_Member_Trees` into `Tree_Map_Indexes`, so `ordered_remdups_fold` takes the insertion's
+lookup from `tree_map_updates` rather than making it. `Keyed_Finite_Sets.keyed_member_lookup` and
+`keyed_members_subset`, pre-notion copies nothing else cited, are removed. The adopted answer's theory
+`Development_Answer_0ccf746fe2cf` is named by its content and is not edited: its `address_relation_store_member`
+still re-makes the relation store's member equation, recorded in its row.
+
 ## A snapshot's formation is read once for all the publications over it
 
 The seed recipe sets the recipe phase of every landing check (the recipes run in parallel and it is

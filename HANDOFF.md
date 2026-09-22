@@ -71,16 +71,18 @@ after #165, #103 and #143, re-recording the words once; #169, the designation by
 tools, the sixteen records), after #167 and #103. #64 waits on #161, #92 on #167. #103, the answer reader's refusal,
 is in review. New native definitions never wait for #30 (Decisions).
 
-**The decomposition (#94, #64).** The repair rows (#58), the soundness (#60), #66's entry — a decomposition that applied
+**The decomposition (#64, #173).** The repair rows (#58), the soundness (#60), #66's entry — a decomposition that applied
 is a row at its problem's locus, under a sixth role — and the native schema (#62, `b535ef8f`) have landed: the schema
 decides only I≠[] at a presented parent, reading the parent's row through `Development_Located_Rows`, and
 `development_state_poses` is a premise only of `native_decomposition_reduction`, with a marked correction to #66's entry
-(q35). #94 makes the state reading native through #34's traversal, `native_decomposition_reduction` then resting on the
-native application; a definition's declaration it reads through #36's declaration store, existence positively and
-uniqueness as #36's carried condition, so it continues when #36 lands (q37, `v2.py after 94 36`). #64 (the library at
-the loop's problems, so that a decomposed problem is refused issue) waits on
-#94, #58, #30 and #161, and its brief takes #94's contract when #94 lands and #161's identity lemma in place of a
-transport (#135's entry, q48). The build that applies a decomposition is Open 26.
+(q35). #94 (`0d42cd16`) made the state reading native through #34's traversal and #36's declaration store:
+`native_decomposition_applies` rests on `development_rows_present`, `state_presents` and `declarations_single_valued`,
+and `native_decomposition_reduction` on the native application. Its join law, `native_decomposition_shares`, is stated
+once in `Native_Collection_Programs` by #173, with a generic program in place of the transposition at
+`decomposition_defined` (review 94.1); #42, #112 and #64 wait on it. #64 (the library at the loop's problems, so that
+a decomposed problem is refused issue) waits on #58, #30, #161 and #173; its brief carries #94's contract, constructs
+the parent kind's families under a stated contract and installs the least rooted program (review 94.1), and takes
+#161's identity lemma in place of a transport (#135's entry, q48). The build that applies a decomposition is Open 26.
 
 **The index notion, the base and the receipts (#144, #145).** The notion (#68), its instances (#70, #72), the
 re-citations (#74, #76, #117) and the consolidation (#115) have landed. #119 (`c6f5551f`) advanced the base to
@@ -124,12 +126,13 @@ includes their reviews. The deepest chains are 10, the layout's and #135's line 
 changes: #149, #151, #153, the layout #155, the base reset #157, then #161, #165, #167, #169 and its review #170, or
 #92 and #93 after #167. Nothing is added after #170 or #93; detail spliced into that chain is. Then #114 (after #112,
 #110, #108, #139), 5, and #45 (after #44, #42, #139), 4. Beside them: #163 (no word, at once); the design #171
-after #139; #143; #144, then #145; #139; #94, then #64 (after #161 too); #128; #132, then #130; the overnight boundary #172.
+after #139; #143; #144, then #145; #139; the join law #173, then #64 (after #161 too), #42 and #112; #128; #132, then #130; the overnight boundary #172.
 
-**Order** (`94 128 129 144 139 140 143 103 104 132 133 171 172 147 148 149 150 151 152 153 154 108 109 42 43 145 146 155 156 157 158 161 162 163 164 44 45 110 111 112 113 114 165 166 167 168 169 170 159 160 130 131 64 65 92 93`).
+**Order** (`128 129 144 139 140 143 103 104 132 133 171 173 174 172 147 148 149 150 151 152 153 154 108 109 42 43 145 146 155 156 157 158 161 162 163 164 44 45 110 111 112 113 114 165 166 167 168 169 170 159 160 130 131 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43), so the landings in flight come first:
-#94's, #128's held pair with its review, #144 after the two, #139, the replay #143, #103 and #132. Then the
-design #171, which can change the work after it, and the small fix #172; the layout's contracts, which head the 10-deep chain and take one slot
+#128's held pair with its review, #144 after it, #139, the replay #143, #103 and #132. Then the
+design #171, which can change the work after it, the join law #173, which #42, #112 and #64 wait on, and the small
+fix #172; the layout's contracts, which head the 10-deep chain and take one slot
 at a time, before the verdict's and request construction's heads (#108, #42), so that the other slot serves those; the
 receipts' form, the layout's word change, its base reset and #161; #163, whose slack lasts until #161 lands; the rest
 of the verdict and request chains; #135's later builds; then #159, #130, #64 and #92. A parked task whose hold nears
@@ -350,6 +353,12 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   overnight words not re-recorded (q53); `finite_development_index`'s remaining readers are
   `Factor_Source_Development_Subjects` and `Native_Source_Development`. Its follow-ups: the boundary to #172, the
   one-facet admission to #92, Open 59–60, the doubled landing check to the owner.
+- **#94** `Development_Native_Decomposition`, committed `0d42cd16`: the parent and its intermediates read natively
+  (#34's traversal, #36's declaration store, one `native_every_program` premise per reading);
+  `native_decomposition_applies` without `development_state_poses`, resting on `development_rows_present`,
+  `state_presents` with the same key and `declarations_single_valued`; `native_decomposition_reduction` uses its
+  `holds` hypothesis; a marked correction to #66's entry. Review 94.1's follow-ups: the join law and a generic program
+  to #173, the parent kind's families and the least rooted program to #64, `development_stated_native` to Open 61.
 
 ## Open
 
@@ -554,21 +563,22 @@ Not yet planned, in the order they are expected to be planned:
 60. **Stale overnight map rows** (#90's follow-ups): `Native_Control_Judgment_Review`,
     `Native_Control_Refinement_Composition` and `Native_Control_Judgment_Source` name contracts now stated at a
     subject; `absent_native_choice` now states `keyed_admitted_choice`. With the next edit of each.
+61. **`development_stated_native` beside `declarations_single_valued` or `development_stated_constant`** (review
+    94.1): with the next edit of `Development_Verdict_Mentions` after #139.
 
 ## Now
 
-- **In flight (plan-42, 11:05)**: #94's quick fix (q52) hands over again with main's `validation/` files; #128 owes its
+- **In flight (plan-42, 11:15)**: #128 owes its
   held pair and hand-over; #139, #103 and #132 are with their reviews or finalizers, each told to bring main
-  in before hand-over; #143 replays #30's two unproduced records (parked); #144 advances and retains after #94 and
+  in before hand-over; #143 replays #30's two unproduced records (parked); #144 advances and retains after
   #128, #145 converts the receipts after it; #147 and #149, the layout's first contracts, build side by side; #171
   designs the incremental assessment after #139, measuring the machinery's whole judgment first. #42's brief carries
   #106's review, #38's reduction and questions, and the `[code_unfold]` declarations #40 needed (q54); #112's carries
   #106's review. #155's, #157's, #92's and #64's briefs name the receipts and reports they deliver under
   `validation/reconstruction/` (the owner, 11:00). #172 records the overnight boundary as historical, beside
-  everything.
+  everything; #173 states the programs' join law once, before #42, #112 and #64.
 - **Owed to briefs when their inputs land**: #110's brief takes #139's derived `declarations_single_valued` in place
-  of the carried condition; #64's brief takes #161's identity lemma in place of a transport (#135's entry, q48) and
-  #94's contract; #171's builds are briefed from its entry.
+  of the carried condition; #64's brief takes #161's identity lemma in place of a transport (#135's entry, q48); #171's builds are briefed from its entry.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).
@@ -586,7 +596,8 @@ Not yet planned, in the order they are expected to be planned:
   - The finalizer's landing check runs on the task's tree as it stands, so without `bring-main` no check covers what
     lands (#124's covered a tree where `Factor_Shared_Package_Readings` and `Factor_Finite_Source_Construction_Sharing`
     did not yet meet; #94's failed on a theory only main held). A finalizer that brought main in first would make the
-    step one no session can omit.
+    step one no session can omit. #94's branch check rebuilt 155 theories main had already rebuilt (193.8 s of proof
+    against 8.9 s in main's last check), since main's files were brought in by hand, not merged.
   - A task parked for a landing kept in the one tree the shared-file lines it installed at hand-over, which kept out the
     landing it waited for (#62 and #84, 03:00); taking them out left its theory undeclared, refusing every one-tree
     check (03:10). The harness could release a parked task's installed work, or refuse such a park.

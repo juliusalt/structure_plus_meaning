@@ -11742,6 +11742,17 @@ every schema's 6 + t headers (`Factor_Finite_Schema_Syntax`) and every interface
 stand deeper than its whole body. The right-nested forest is also quadratic to build: `syntax_forest (R#Rs) =
 syntax_union R (syntax_forest Rs)` pushes the whole tail once more at every child.
 
+*Correction (task 179, 2026-09-22; found by task 149's review, decided by the planner):* the table missed a second
+forest. `Factor_Pattern_Forests.pattern_forest_syntax` (bound pattern syntax, by `bound_union`) placed its i-th body
+at `3^i 2` through its own recursion over the heads 2 and 3, with `pattern_forest_interior`, `_bindings` and `_roots`
+recursing alike, and `pattern_forest_reference_table` was proved through `syntax_forest_table_heads`, which computed
+with `syntax_branch.simps`. It is now placed flat at `syntax_branch` like `syntax_forest`: `bound_branch i` is the
+branch except on binder addresses, which it fixes as `bound_union` fixes them, and `bound_forest` places each child by
+it; interior, bindings and roots are the bodies' own at the same branches, stated through the branch's contracts. With
+today's branch the flat forest is the same value (every word equal), and build 2 changes the branch and nothing above
+it. The executable forest (`Factor_Finite_Template_Syntax.finite_bound_forest`) takes carrier and bindings from the
+same placement, so no slot can stand outside its carrier under the new branch.
+
 ### One index code, the library's
 
 `index_address i = map (λb. if b then 0 else 1) (digit_natural_path i)`, stated in RRA_Exact's section on concrete
@@ -11838,6 +11849,13 @@ recursive one, and building it pushes each child once instead of once per later 
 - **New.** `index_address` with `index_address_formed`, `_nonempty`, `_cancel` (from `digit_natural_path_cancel`),
   `_inj`, `_length`, `_bound`, its reader and `index_address_tail_cancel` for codes of nonzero indices;
   `syntax_branch_prefix` (`syntax_branch i a = syntax_branch i [] @ a`); `fresh_address_extension_outside`.
+- *Correction (task 179, 2026-09-22):* **New** also `syntax_branch_top_prefix` (every branch position starts with 2
+  or 3), which the bound forest and its consumers read, and in Factor_Pattern_Forests `bound_branch`, `bound_forest`
+  and their facts, `syntax_branch_eq_iff`, `syntax_branch_not_binder`, `pattern_forest_slot_positions`,
+  `pattern_forest_child_slots`, `pattern_forest_heads`. **Retired** also `syntax_forest_table_heads`, the recursive
+  equations of the pattern forest (`pattern_forest_syntax.simps`, `_interior.simps`, `_bindings.simps`,
+  `_roots.simps`), the second equation of `pattern_forest_slots` and `pattern_forest_cons_slots`, which stated the
+  recursion over the heads 2 and 3 that the flat placement replaces.
 
 Outside the founding theories no proof computes a position: `syntax_branch.simps` leave the simpset after the
 contracts are proved, `family_ports_def`, `syntax_record_ports_def` and `fresh_address_def` are unfolded nowhere

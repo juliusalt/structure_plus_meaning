@@ -5,13 +5,34 @@ begin
 
 section \<open>Complete finite pattern records reuse the original child placement\<close>
 
-fun finite_pattern_forest_syntax :: "('a\<Rightarrow>local_address) \<Rightarrow> 'a finite_term_pattern list \<Rightarrow> finite_exact_artifact" where
-  "finite_pattern_forest_syntax f []=finite_empty_artifact"
-| "finite_pattern_forest_syntax f (p#ps)=finite_bound_union (finite_pattern_syntax f p) (finite_pattern_forest_syntax f ps)"
+text \<open>
+  The executable forest places each body where the forest places it, at its branch with its
+  binders fixed, so its carrier holds exactly the slots of its table.
+\<close>
+
+definition finite_bound_forest :: "finite_exact_artifact list \<Rightarrow> finite_exact_artifact" where
+  "finite_bound_forest Rs=(let is=[0..<length Rs] in \<lparr>finite_structure=\<lparr>
+    finite_carrier=ffUnion (fset_of_list (map (\<lambda>i.
+      fimage (bound_branch i) (finite_carrier (finite_structure (Rs!i)))) is)),
+    finite_incidence=ffUnion (fset_of_list (map (\<lambda>i.
+      fimage (\<lambda>(a,p,x). (bound_branch i a,bound_branch i p,bound_branch i x))
+        (finite_incidence (finite_structure (Rs!i)))) is))\<rparr>,
+    finite_data=\<lparr>finite_bag={#},finite_bindings=ffUnion (fset_of_list (map (\<lambda>i.
+      fimage (\<lambda>(a,v). (bound_branch i a,v)) (finite_bindings (finite_data (Rs!i)))) is))\<rparr>\<rparr>)"
+
+lemma decode_finite_bound_forest [simp]:
+  "decode_finite_object (finite_bound_forest Rs)=bound_forest (map decode_finite_object Rs)"
+  by (simp add: finite_bound_forest_def Let_def decode_finite_object_def decode_finite_structure_def
+    decode_finite_basis_def bound_forest_def push_structure_def
+    fimage.rep_eq ffUnion.rep_eq fset_of_list.rep_eq image_image atLeast0LessThan fun_eq_iff
+    cong: SUP_cong_simp)
+
+definition finite_pattern_forest_syntax :: "('a\<Rightarrow>local_address) \<Rightarrow> 'a finite_term_pattern list \<Rightarrow> finite_exact_artifact" where
+  "finite_pattern_forest_syntax f ps=finite_bound_forest (map (finite_pattern_syntax f) ps)"
 
 lemma decode_finite_pattern_forest_syntax [simp]:
   "decode_finite_object (finite_pattern_forest_syntax f ps)=pattern_forest_syntax f (map decode_finite_pattern ps)"
-  by (induction ps) simp_all
+  by (simp add: finite_pattern_forest_syntax_def pattern_forest_syntax_def comp_def)
 
 definition finite_pattern_forest_bindings :: "'a finite_term_pattern list \<Rightarrow> (local_address\<times>finite_exact_artifact) fset" where
   "finite_pattern_forest_bindings ps=finite_syntax_forest_table (map finite_pattern_literal_bindings ps)"

@@ -33,8 +33,7 @@ the rows about a subject through a subject index total over the state's atoms, a
 comparison and no absence. #139 built it (`b560df2a`, `Development_Subject_Index`), re-pointed `excess` through it (`named` kept)
 and derived `declarations_single_valued` from the exporter's obligation `isabelle_declared_once`; #176 states that
 obligation once in `Isabelle_Entities`, re-pointing the successor's stronger copy (every word equal, the seed report's field
-deciding a sufficient condition through one lemma) — landed by #243 from a tree made from HEAD, #176 staying dropped
-(never both) — and #227 discharges it once at the exported states; #42 and #110
+deciding a sufficient condition through one lemma) — landed by #243 (`76cd520c`) — and #227 discharges it once at the exported states; #42 and #110
 wait on both, and they, #44 and #112 on the rule-family law #233. #42
 passes the indexes, #44 builds absence with no inequality and excess's witness over the index, #108 reads it. Roots
 stay a store with distinct keys, #38 stating the roots field under a carried condition on their order, owned by the
@@ -169,13 +168,13 @@ includes their reviews. The deepest chains are 9, the layout's and #135's line m
 changes: the syntax forest #225 and the premise forest #223, with #241 after #147, then the layout
 #155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
-#161 and #192. Then #114 (after #112, #110, #182 or #227, #243) and #45 (after #44, #42, #227, #243), 5. Beside
+#161 and #192. Then #114 (after #112, #110, #182 or #227) and #45 (after #44, #42, #227), 4. Beside
 them: #220; the rule programs' re-citation #214; the rule-family law at any support relation #245, then the
 re-citations #235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
 
-**Order** (`128 129 147 148 243 244 182 183 227 228 223 224 225 226 241 242 245 246 229 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 182 183 227 228 223 224 225 226 241 242 245 246 229 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
-review, #147, and #176's accepted work landed from HEAD (#243); then its discharge #227, which #42 and #110 wait
+review and #147; then the exporter's discharge #227, which #42 and #110 wait
 on, and the excess locale #182, which #110, #112 and #191 wait on; the placed forest's instances #223 and #225
 and the stragglers' switch #241, which #155 waits on, close after their brief's author;
 the probe's fix #229 (every later build's inner loop), the rule-family law at any support relation #245 and the
@@ -289,15 +288,16 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **A `commit.md`'s Validation paragraph states what the session verified itself** — its probes, host tests and own
   checks — never the outcome of a check the harness runs: the harness closes each commit with "Checked by the harness:
   …" (the harness, 15:32; #181's review was rejected over the earlier rule). Every open task was told (15:35).
-- **An edit to a base theory is probed with `--prelude`/`--substitute`**: otherwise the probe takes the theory from
-  the heap and certifies nothing about the edit (#176's result); where a changed base theory has changed dependents, the landing
-  check's proof phase stands in until the probe's fix #229 lands (#176, #208).
+- **An edit to a base theory is probed from the tree** (#229): one probe loads every base theory the tree changes, with
+  the changed theories importing them, as renamed copies `<Name>_Probe` in dependency order on the base heap;
+  `probe.summary.json` names them (`from_tree`, `certified`) and the unchanged base theories importing a changed one
+  (`not_rechecked`), which only the landing check re-proves; `--from-heap` keeps a changed theory the heap's. Imports
+  and qualified `Name.x` references, inside strings too, are rewritten; unqualified uses of a theory's name are not.
 - **A brief names its task's own folder as `.build/tasks/<its id>/`**, never the key of the edit that created it: the
   harness uses the id (#210's and #219's reviews).
 - **A task whose commit fails at the merge is queued again as it is, never landed anew by a workaround task** (the
   harness, at the owner's word, 17:02): a merge now takes a row that one side holds as the other side once had it for
-  a copy, and `bring-main` merges main under a session's uncommitted edits. #243 was the last such task; #176 stays
-  dropped, never both landed.
+  a copy, and `bring-main` merges main under a session's uncommitted edits; #243 (`76cd520c`) was the last such task.
 
 ## Delivered
 
@@ -516,6 +516,11 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   of premises under no condition on their variables (q60, q61), #208's law its instance, Open 75's move. Follow-ups: the
   law at any support relation to #245; the entry's list and the sites still in place to #214, #235, #237 and #239; a
   probe's log for the harness.
+- **#243** `76cd520c`: #176's accepted work landed from a tree made from HEAD — `isabelle_declared_once` stated once in
+  `Isabelle_Entities`, the successor's premise re-pointed through it, the seed report's field deciding a sufficient
+  condition through one lemma. Follow-ups: `map_filter_member` upstream to #227 (Open 62). #176 is deleted.
+- **#229** `76cd520c`: the probe loads every base theory the tree changes, with the changed theories importing them, as
+  renamed copies (the working rule). Follow-ups: the harness's reading of `from_tree`; the tool's polish Open 78.
 
 ## Open
 
@@ -711,7 +716,7 @@ Not yet planned, in the order they are expected to be planned:
     94.1): with the next edit of `Development_Verdict_Mentions` after #139.
 62. **The generic `List.map_filter` facts at one list-level owner** (#103's and #219's reviews): `map_filter_agree`
     (a congruence), `map_filter_member` (`Development_Constant_Problems`) and `map_filter_unique` where #176 leaves
-    it; HOL's List.thy has no congruence for `List.map_filter`. With the next edit of their theories.
+    it; HOL's List.thy has no congruence for `List.map_filter`. With #227, which edits `Isabelle_Entities` (mailed).
 63. **The answer's formation check grows with the names** (#103's review, not measured): `length ns` per position and
     `distinct` over string literals; `Let` for the length and the ordered member index for distinctness, at a measured
     need on answers with large name tables.
@@ -767,12 +772,12 @@ Not yet planned, in the order they are expected to be planned:
 77. **`entity_row_kept`'s statement** (#231's review): its premises `prefix` and `inside` together are exactly
     `isabelle_name_reading`'s agreement at the entity's positions; restating it with that premise would change its
     statement, so it is kept while its consumers discharge the two premises; decided at its next consumer.
+78. **The probe tool's polish** (#229's reviews): the stale `--theory` help, an additive `--load`, `certified` under
+    `--theory`, and the 3.25 s lineage verification every probe pays. With the next edit of `tools/probe_theories.py`.
 
 ## Now
 
-- **In flight (plan-45, 17:05)**: #243 lands #176's accepted work from a tree made from HEAD (q62; #176,
-  dropped, stays in the list as its source until then, its review #177 deleted); #189, #220, #223, #225, #229 and #243
-  build; #128 and #147 are in review; #227 discharges the exporter's obligation after #243; #233 (`d5d0e747`) stated the
+- **In flight (plan-45, 17:05)**: #189, #220, #223 and #225 build; #128 and #147 are in review; #227 discharges the exporter's obligation, ready now; #233 (`d5d0e747`) stated the
   rule-family law (q60, q61) and #245 states it at any support relation; #231 (`cded0ab7`) stated the name-locality of
   readings. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
@@ -856,7 +861,8 @@ Not yet planned, in the order they are expected to be planned:
     a review reads (#175's review). A session database moved under a running export (`SQLITE_READONLY_DBMOVED`, #173's
     re-check, around the base's move to the lasting place) cost a 500 s landing cycle. The first retention after a
     landing could be a commit of its own (#145's review). A probe run with `--candidates` or a prelude leaves no
-    `probe.log` where `v2.py read probes` reads it (#233's review).
+    `probe.log` where `v2.py read probes` reads it (#233's review); it could also read the summary's `from_tree` map
+    for the renamed copies of #229's base-theory probes (#229's review).
 - **The base lives at the lasting place** `.build/tasks/base-lasting/` (#144, landed `79f16061` with #132): its
   complete proof of `a2ed0ed7` (`complete-20260922e`, 777 s, re-recorded at 14:14 with its heap under the
   `/tmp/structural-isabelle` link so that the older tools read it too), the pointer `active-context.json` that main's

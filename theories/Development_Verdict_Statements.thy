@@ -64,6 +64,71 @@ definition row_pattern ::
   "row_pattern x a d s m i=Finite_Pattern_Pair x (Finite_Pattern_Pair a (Finite_Pattern_Pair d
     (Finite_Pattern_Pair s (Finite_Pattern_Pair m i))))"
 
+section \<open>A family and a selection of families read by any row reading\<close>
+
+text \<open>
+  Every field of the verdict reads a family of rows, and a selection of families, through one traversal:
+  a program at a row site reads a row in a context, and \<open>every\<close> or \<open>some\<close> row of a family, and of every
+  or some family of a selection, is read by it. The traversal is one notion, generic over the row reading:
+  the context is presented by any \<open>present\<close>, the row reading is any relation \<open>reads\<close> the row site holds
+  exactly of, and the traversal's contract is stated once here. A row reading of subjects, of formation,
+  of mentions found in a store, and the guarded reading of the rows about a key are its instances.
+\<close>
+
+locale family_every_reading = every: native_every_program P v r
+  for P :: "'u native_system" and v r :: "'u definition_site" +
+  fixes present :: "'c \<Rightarrow> factor_term" and ident :: "'i \<Rightarrow> factor_term"
+    and reads :: "'c \<Rightarrow> state_key\<times>'i state_row \<Rightarrow> bool"
+  assumes identity: "\<And>y. term_formed (ident y)"
+    and row: "\<And>c z. (r,Pair_Term (present c) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow> reads c z"
+begin
+
+theorem exact:
+  "(v,Pair_Term (present c) (state_family_term ident F))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed (present c) \<and> (\<forall>z\<in>set F. reads c z)"
+  by (simp add: state_family_term_def every.exact row)
+
+end
+
+locale family_some_reading = some: native_some_program P f r
+  for P :: "'u native_system" and f r :: "'u definition_site" +
+  fixes present :: "'c \<Rightarrow> factor_term" and ident :: "'i \<Rightarrow> factor_term"
+    and reads :: "'c \<Rightarrow> state_key\<times>'i state_row \<Rightarrow> bool"
+  assumes identity: "\<And>y. term_formed (ident y)"
+    and row: "\<And>c z. (r,Pair_Term (present c) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow> reads c z"
+begin
+
+theorem exact:
+  "(f,Pair_Term (present c) (state_family_term ident F))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed (present c) \<and> (\<exists>z\<in>set F. reads c z)"
+  by (simp add: state_family_term_def some.exact row state_row_term_formed[OF identity])
+
+end
+
+locale selection_every_reading = families: family_every_reading P v r present ident reads +
+    every: native_every_program P u v
+  for P :: "'u native_system" and u v r :: "'u definition_site" and present ident reads
+begin
+
+theorem exact:
+  "(u,Pair_Term (present c) (state_families_term ident Fs))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed (present c) \<and> (\<forall>F\<in>set Fs. \<forall>z\<in>set F. reads c z)"
+  by (auto simp: state_families_term_def every.exact families.exact)
+
+end
+
+locale selection_some_reading = families: family_some_reading P f r present ident reads +
+    some: native_some_program P s f
+  for P :: "'u native_system" and s f r :: "'u definition_site" and present ident reads
+begin
+
+theorem exact:
+  "(s,Pair_Term (present c) (state_families_term ident Fs))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed (present c) \<and> (\<exists>F\<in>set Fs. \<exists>z\<in>set F. reads c z)"
+  by (auto simp: state_families_term_def some.exact families.exact state_family_term_formed[OF families.identity])
+
+end
+
 section \<open>A row, and some row of a family, has a key among its subjects\<close>
 
 text \<open>
@@ -128,7 +193,11 @@ theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(f,Pair_Term (path_term k) (state_family_term ident F))\<in>positive_meaning P \<longleftrightarrow>
     (\<exists>z\<in>set F. k\<in>set (row_subjects (snd z)))"
-  by (simp add: state_family_term_def some.exact rows.exact[OF identity] state_row_term_formed[OF identity])
+proof -
+  interpret reading: family_some_reading P f r path_term ident "\<lambda>k z. k\<in>set (row_subjects (snd z))"
+    by unfold_locales (simp_all add: identity rows.exact[OF identity])
+  show ?thesis by (simp add: reading.exact)
+qed
 
 end
 
@@ -140,7 +209,11 @@ theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(s,Pair_Term (path_term k) (state_families_term ident Fs))\<in>positive_meaning P \<longleftrightarrow>
     (\<exists>F\<in>set Fs. \<exists>z\<in>set F. k\<in>set (row_subjects (snd z)))"
-  by (simp add: state_families_term_def some.exact families.exact[OF identity] state_family_term_formed[OF identity])
+proof -
+  interpret reading: selection_some_reading P s f r path_term ident "\<lambda>k z. k\<in>set (row_subjects (snd z))"
+    by unfold_locales (simp_all add: identity families.rows.exact[OF identity])
+  show ?thesis by (simp add: reading.exact)
+qed
 
 end
 
@@ -225,7 +298,12 @@ theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(v,Pair_Term x (state_family_term ident F))\<in>positive_meaning P \<longleftrightarrow>
     term_formed x \<and> (\<forall>z\<in>set F. row_declared (snd z)\<noteq>[] \<or> row_subjects (snd z)\<noteq>[])"
-  by (auto simp: state_family_term_def every.exact rows.exact[OF identity])
+proof -
+  interpret reading: family_every_reading P v w "\<lambda>x. x" ident
+      "\<lambda>x z. term_formed x \<and> (row_declared (snd z)\<noteq>[] \<or> row_subjects (snd z)\<noteq>[])"
+    by unfold_locales (simp_all add: identity rows.exact[OF identity])
+  show ?thesis using reading.exact[of x F] by auto
+qed
 
 end
 
@@ -237,7 +315,12 @@ theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(u,Pair_Term x (state_families_term ident Fs))\<in>positive_meaning P \<longleftrightarrow>
     term_formed x \<and> (\<forall>F\<in>set Fs. \<forall>z\<in>set F. row_declared (snd z)\<noteq>[] \<or> row_subjects (snd z)\<noteq>[])"
-  by (auto simp: state_families_term_def every.exact families.exact[OF identity])
+proof -
+  interpret reading: selection_every_reading P u v w "\<lambda>x. x" ident
+      "\<lambda>x z. term_formed x \<and> (row_declared (snd z)\<noteq>[] \<or> row_subjects (snd z)\<noteq>[])"
+    by unfold_locales (simp_all add: identity families.rows.exact[OF identity])
+  show ?thesis using reading.exact[of x Fs] by auto
+qed
 
 end
 

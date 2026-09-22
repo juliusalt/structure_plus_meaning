@@ -542,69 +542,7 @@ next
   qed
 qed
 
-section \<open>A canonical store is determined by its lookups\<close>
-
-lemma store_canonical_none:
-  assumes "store_canonical T" "\<And>q. store_lookup T q=None"
-  shows "T=Empty_Store"
-  using assms
-proof (induction T)
-  case Empty_Store
-  then show ?case by simp
-next
-  case (Store_Node v l r)
-  have v: "v=None" using Store_Node.prems(2)[of "[]"] by simp
-  have l: "l=Empty_Store"
-  proof (rule Store_Node.IH(1))
-    show "store_canonical l" using Store_Node.prems(1) by simp
-    show "store_lookup l q=None" for q using Store_Node.prems(2)[of "False#q"] by simp
-  qed
-  have r: "r=Empty_Store"
-  proof (rule Store_Node.IH(2))
-    show "store_canonical r" using Store_Node.prems(1) by simp
-    show "store_lookup r q=None" for q using Store_Node.prems(2)[of "True#q"] by simp
-  qed
-  show ?case using Store_Node.prems(1) v l r by simp
-qed
-
-theorem store_canonical_lookup_eq:
-  assumes "store_canonical S" "store_canonical T" "\<And>q. store_lookup S q=store_lookup T q"
-  shows "S=T"
-  using assms
-proof (induction S arbitrary: T)
-  case Empty_Store
-  have "store_lookup T q=None" for q using Empty_Store.prems(3)[of q] by simp
-  from store_canonical_none[OF Empty_Store.prems(2) this] show ?case by simp
-next
-  case (Store_Node v l r)
-  note prems=Store_Node.prems and IH=Store_Node.IH
-  show ?case
-  proof (cases T)
-    case Empty_Store
-    have "store_lookup (Store_Node v l r) q=None" for q using prems(3)[of q] Empty_Store by simp
-    from store_canonical_none[OF prems(1) this] show ?thesis by simp
-  next
-    case (Store_Node v' l' r')
-    have v: "v=v'" using prems(3)[of "[]"] Store_Node by simp
-    have l: "l=l'"
-    proof (rule IH(1))
-      show "store_canonical l" using prems(1) by simp
-      show "store_canonical l'" using prems(2) Store_Node by simp
-      show "store_lookup l q=store_lookup l' q" for q using prems(3)[of "False#q"] Store_Node by simp
-    qed
-    have r: "r=r'"
-    proof (rule IH(2))
-      show "store_canonical r" using prems(1) by simp
-      show "store_canonical r'" using prems(2) Store_Node by simp
-      show "store_lookup r q=store_lookup r' q" for q using prems(3)[of "True#q"] Store_Node by simp
-    qed
-    show ?thesis using Store_Node v l r by simp
-  qed
-qed
-
-lemma path_store_fold_canonical:
-  "store_canonical T \<Longrightarrow> store_canonical (fold (\<lambda>(k,v) T. store_update T k (Some v)) rows T)"
-  by (induction rows arbitrary: T) (auto simp: split_beta intro: store_update_canonical)
+section \<open>A path store is canonical, so its lookups determine it\<close>
 
 lemma path_store_canonical: "store_canonical (path_store rows)"
   unfolding path_store_def by (rule path_store_fold_canonical) simp

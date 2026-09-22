@@ -58,7 +58,7 @@ class ValidationTests(unittest.TestCase):
         (self.root / "tools").mkdir()
         (self.root / "theories").mkdir()
         (self.root / "validation").mkdir()
-        for name in ("build.py", "check.py"):
+        for name in ("build.py", "check.py", "isabelle_places.py"):
             shutil.copyfile(TOOLS / name, self.root / "tools" / name)
         (self.root / "ROOT").write_text("session Fixture = HOL +\n  theories\n    Fixture\n")
         (self.root / "theories/Fixture.thy").write_text("theory Fixture imports Main begin end\n")

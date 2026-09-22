@@ -10,6 +10,7 @@ import sys
 import time
 
 from build import run_session
+import isabelle_places
 from evidence_io import digest, write_json
 from machine_reports import boundary, unique_object
 
@@ -90,7 +91,7 @@ def main(recipe, entrypoint, argv=None):
     output.mkdir(parents=True)
     poly = args.poly.resolve()
     tools = project / "tools"
-    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1", "USER_HOME": "/tmp/structural-isabelle"}
+    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1", "USER_HOME": str(isabelle_places.USER_HOME)}
     steps = []
     tracked = {str(path): digest(path) for path in
                (entrypoint, Path(__file__).resolve(), Path(__file__).with_name("machine_reports.py"),
@@ -121,7 +122,7 @@ def main(recipe, entrypoint, argv=None):
         steps.append(run("proof", [sys.executable, "-B", tools / "prove_context.py", "--project", project,
             "--output", output / "proof", "--session", args.session, "--threads", args.threads,
             "--timeout", args.timeout, *recipe.roots], 3600))
-        databases = list(Path("/tmp/structural-isabelle/.isabelle").glob(
+        databases = list((isabelle_places.USER_HOME / ".isabelle").glob(
             "*/heaps/*/log/" + args.session + ".db"))
         if len(databases) != 1:
             steps.append({"name": "diagnostics", "exit_code": "missing_or_ambiguous_database",

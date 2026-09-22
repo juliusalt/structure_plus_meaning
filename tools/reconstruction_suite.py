@@ -12,6 +12,7 @@ import traceback
 import uuid
 
 from build import run_session
+import isabelle_places
 from evidence_io import digest, write_json
 from machine_reports import unique_object
 from materialize_source_boundary import materialize
@@ -44,7 +45,7 @@ def main(argv=None):
                            'Each original execution consumes its own exported module and compares every report. '
                            'Sharing build work adds no subject semantics.'}
     write_json(output / 'suite.json', summary)
-    environment = {**os.environ, 'PYTHONDONTWRITEBYTECODE': '1', 'USER_HOME': '/tmp/structural-isabelle'}
+    environment = {**os.environ, 'PYTHONDONTWRITEBYTECODE': '1', 'USER_HOME': str(isabelle_places.USER_HOME)}
 
     def run(name, command, timeout, log_directory, cwd):
         log = log_directory / (name + '.log')
@@ -111,7 +112,7 @@ def main(argv=None):
         shared = [run('proof', [sys.executable, '-B', tools / 'prove_context.py', '--project', source,
             '--output', output / 'proof', '--session', args.session, '--threads', args.threads,
             '--timeout', args.timeout, *sorted(roots)], max(3600, args.timeout + 300), output, source)]
-        databases = list(Path('/tmp/structural-isabelle/.isabelle').glob(
+        databases = list((isabelle_places.USER_HOME / '.isabelle').glob(
             '*/heaps/*/log/' + args.session + '.db'))
         assert len(databases) == 1, databases
         shared.append(run('diagnostics', [sys.executable, '-B', tools / 'proof_diagnostics.py',

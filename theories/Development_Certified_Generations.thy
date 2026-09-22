@@ -538,6 +538,42 @@ proof -
   show ?thesis by (simp only: development_answer_using_def development_answer_with_unfold known)
 qed
 
+lemma development_incumbent_with_fields:
+  assumes built: "development_incumbent_with judge S p=Some (B,u,I)"
+  shows "development_data_target (development_problem_locus (fst (snd S)) p)=Some (generation_locus I)"
+    "finite_generation_formed I"
+proof -
+  obtain l t where key: "development_incumbent_key S p=Some (l,t)"
+    and generated: "development_payload_generation_with judge t (finite_enumerated_environment [] []) l []=Some (B,u,I)"
+    using built by (auto simp: development_incumbent_with_def bind_eq_Some_conv split: prod.splits)
+  have locus: "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
+    using key by (auto simp: development_incumbent_key_def bind_eq_Some_conv)
+  note fields=development_payload_generation_fields[OF generated]
+  show "development_data_target (development_problem_locus (fst (snd S)) p)=Some (generation_locus I)"
+    using locus fields(1) by simp
+  show "finite_generation_formed I" by (rule fields(2))
+qed
+
+lemma development_answer_with_fields:
+  assumes built: "development_answer_with judge S r S' H rows=Some (B,u,G)"
+  shows "development_data_target (development_problem_locus (fst (snd S)) (fst r))=Some (generation_locus G)"
+    "finite_generation_formed G"
+proof -
+  obtain l t where key: "development_answer_key S r S'=Some (l,t)"
+    and generated: "development_payload_generation_with judge t H l
+      (development_answer_citations (fst (snd S)) (fst r) l rows)=Some (B,u,G)"
+    using built by (auto simp: development_answer_with_unfold bind_eq_Some_conv split: prod.splits)
+  obtain p E payload v where generation: "development_answer_generation S r S'=Some (p,E,payload,v)"
+    and locus: "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
+    using key by (auto simp: development_answer_key_def bind_eq_Some_conv split: option.splits)
+  have problem: "p=fst r"
+    using generation by (auto simp: development_answer_generation_def Let_def split: prod.splits if_splits)
+  note fields=development_payload_generation_fields[OF generated]
+  show "development_data_target (development_problem_locus (fst (snd S)) (fst r))=Some (generation_locus G)"
+    using locus fields(1) problem by simp
+  show "finite_generation_formed G" by (rule fields(2))
+qed
+
 definition development_certified_answer ::
     "isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow>
       local_address option finite_artifact_environment \<Rightarrow> development_generation_row list \<Rightarrow>

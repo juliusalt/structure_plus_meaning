@@ -255,11 +255,19 @@ proof (rule ext)
       prod.case Let_def)
 qed
 
-lemma development_seed_publication_from_published [code]:
-  "development_seed_publication_from construct judge decisions=(let
+text \<open>
+  The publications of a round are the same over any publisher of a snapshot; the publisher the round
+  starts from is the publication over the incumbents' snapshot.
+\<close>
+
+definition development_seed_publication_over ::
+    "(finite_snapshot \<Rightarrow> (finite_generation option\<times>finite_generation option) list \<Rightarrow> finite_transaction_result option list) \<Rightarrow>
+      development_constructor \<Rightarrow> development_payload_judge \<Rightarrow> development_seed_decisions option \<Rightarrow>
+      development_seed_publication" where
+  "development_seed_publication_over P construct judge decisions=(let
      xs=development_seed_incumbents_with judge development_seed_problems;
      S0=development_seed_snapshot xs;
-     publish=(case S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> finite_locus_publications S) in
+     publish=(case S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> P S) in
      case decisions of None \<Rightarrow> (S0,None,[],[])
      | Some (selected,issues) \<Rightarrow> (let
          Sel=map_option (\<lambda>(B,u,G). G) (development_selection_generation_with judge (fst (snd development_seed_state))
@@ -268,14 +276,279 @@ lemma development_seed_publication_from_published [code]:
          incumbents=map (\<lambda>(r,reading). map_option (\<lambda>(B,u,G). G) (development_seed_incumbent_of xs r)) issues in
        (S0,Sel,rows,publish ((None,Sel)#map (\<lambda>(Q,G,H,results,equal). (None,Q)) rows@
              map (\<lambda>(I,(Q,G,H,results,equal)). (I,G)) (zip incumbents rows)))))"
+
+lemma development_seed_publication_from_published [code]:
+  "development_seed_publication_from construct judge decisions=
+    development_seed_publication_over finite_locus_publications construct judge decisions"
 proof -
   have publish: "(case S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> finite_locus_publications S)=
       (\<lambda>ps. case S0 of None \<Rightarrow> [] | Some S \<Rightarrow> finite_locus_publications S ps)" for S0 :: "finite_snapshot option"
     by (cases S0) simp_all
   show ?thesis
-    by (simp only: development_seed_publication_from_def development_seed_publication_row_published
-      publish Let_def)
+    by (simp only: development_seed_publication_from_def development_seed_publication_over_def
+      development_seed_publication_row_published publish Let_def)
 qed
+
+section \<open>A published generation's formation is established by its recording constructor\<close>
+
+text \<open>
+  Every generation the round compares or writes, the incumbents, the selection, the issues and the
+  answers, was made by the recording constructor, whose contract states it formed
+  (\<open>development_payload_generation_fields\<close>, \<open>development_recorded_issue_fields\<close>,
+  \<open>development_incumbent_with_recorded\<close>). So each publication the round makes satisfies the premise of
+  the body publications (\<open>finite_locus_publications_body_established\<close>), and the round publishes by the
+  body, the transactions checking only their loci. The premise is established here, for the recording
+  constructor; a round over another constructor has no contract to establish it.
+\<close>
+
+lemma development_seed_incumbent_of_formed:
+  "pred_option finite_generation_formed (map_option (\<lambda>(B,u,G). G)
+     (development_seed_incumbent_of (development_seed_incumbents_with judge ps) r))"
+proof (cases "development_seed_incumbent_of (development_seed_incumbents_with judge ps) r")
+  case None
+  then show ?thesis by simp
+next
+  case (Some incumbent)
+  obtain B u I where found: "development_seed_incumbent_of (development_seed_incumbents_with judge ps) r=Some (B,u,I)"
+    using Some by (cases incumbent) auto
+  have "finite_generation_formed I"
+    by (rule finite_check_generation_formed[OF development_seed_incumbent_of_recorded(2)[OF found]])
+  then show ?thesis by (simp add: found)
+qed
+
+lemma development_seed_selection_formed:
+  "pred_option finite_generation_formed (map_option (\<lambda>(B,u,G). G)
+     (development_selection_generation_with judge names selected H rows))"
+proof (cases "development_selection_generation_with judge names selected H rows")
+  case None
+  then show ?thesis by simp
+next
+  case (Some selection)
+  obtain B u G where built: "development_selection_generation_with judge names selected H rows=Some (B,u,G)"
+    using Some by (cases selection) auto
+  have "finite_generation_formed G" by (rule development_selection_generation_fields(2)[OF built])
+  then show ?thesis by (simp add: built)
+qed
+
+lemma development_seed_issue_formed:
+  "pred_option finite_generation_formed (map_option (\<lambda>(B,rows,Q). Q)
+     (development_seed_issue_using finite_construct_generation_record judge xs selected r reading))"
+proof (cases "development_seed_issue_using finite_construct_generation_record judge xs selected r reading")
+  case None
+  then show ?thesis by simp
+next
+  case (Some result)
+  obtain B2 rows Q where issued: "development_seed_issue_using finite_construct_generation_record judge xs selected r reading=
+      Some (B2,rows,Q)" using Some by (cases result) auto
+  obtain incumbent where issue: "development_recorded_issue_with judge (fst (snd development_seed_state)) (Some selected)
+      r reading incumbent=Some (B2,rows,Q)"
+    using issued by (auto simp: development_seed_issue_using_def development_recorded_issue_with_def bind_eq_Some_conv)
+  obtain B u I where shape: "incumbent=(B,u,I)" by (cases incumbent) auto
+  have "finite_generation_formed Q"
+    by (rule development_recorded_issue_fields[OF issue[unfolded shape]])
+  then show ?thesis by (simp add: issued)
+qed
+
+lemma development_seed_answer_formed:
+  "pred_option finite_generation_formed
+     (development_seed_answer_using finite_construct_generation_record judge S' r issued)"
+proof (cases issued)
+  case None
+  then show ?thesis by (simp add: development_seed_answer_using_def)
+next
+  case (Some result)
+  obtain B rows Q where shape: "issued=Some (B,rows,Q)" using Some by (cases result) auto
+  show ?thesis
+  proof (cases "development_answer_using finite_construct_generation_record judge development_seed_state r S' B rows")
+    case None
+    then show ?thesis by (simp add: development_seed_answer_using_def shape)
+  next
+    case (Some answer)
+    obtain B' u' G where answered: "development_answer_using finite_construct_generation_record judge
+        development_seed_state r S' B rows=Some (B',u',G)"
+      using Some by (cases answer) auto
+    have "finite_generation_formed G"
+      by (rule development_answer_with_fields(2)[OF answered[folded development_answer_with_def]])
+    then show ?thesis by (simp add: development_seed_answer_using_def shape answered)
+  qed
+qed
+
+lemma development_seed_publication_row_with_formed:
+  assumes row: "development_seed_publication_row_with P finite_construct_generation_record judge xs selected issue=
+      (Q,G,H,results,equal)"
+  shows "pred_option finite_generation_formed Q" "pred_option finite_generation_formed G"
+    "pred_option finite_generation_formed H"
+proof -
+  obtain r reading where shape: "issue=(r,reading)" by (cases issue) auto
+  show "pred_option finite_generation_formed Q" "pred_option finite_generation_formed G"
+    "pred_option finite_generation_formed H"
+    using row by (auto simp: shape development_seed_publication_row_with_def Let_def
+      development_seed_issue_formed development_seed_answer_formed)
+qed
+
+lemma development_seed_publication_row_with_agree:
+  assumes agree: "\<And>ps. finite_publications_formed_generations ps \<Longrightarrow> P ps=P' ps"
+  shows "development_seed_publication_row_with P finite_construct_generation_record judge
+      (development_seed_incumbents_with judge qs) selected=
+    development_seed_publication_row_with P' finite_construct_generation_record judge
+      (development_seed_incumbents_with judge qs) selected"
+proof (rule ext)
+  fix issue :: "development_request\<times>(nat\<times>development_problem) fset fset"
+  obtain r reading where shape: "issue=(r,reading)" by (cases issue) auto
+  let ?xs="development_seed_incumbents_with judge qs"
+  let ?I="map_option (\<lambda>(B,u,G). G) (development_seed_incumbent_of ?xs r)"
+  let ?issued="development_seed_issue_using finite_construct_generation_record judge ?xs selected r reading"
+  let ?Q="map_option (\<lambda>(B,rows,Q). Q) ?issued"
+  let ?G="development_seed_answer_using finite_construct_generation_record judge development_seed_state r ?issued"
+  let ?H="development_seed_answer_using finite_construct_generation_record judge development_seed_renamed r ?issued"
+  have formed: "finite_publications_formed_generations [(None,?Q),(?I,?G),(?I,?H)]"
+    by (simp add: finite_publications_formed_generations_def development_seed_incumbent_of_formed
+      development_seed_issue_formed development_seed_answer_formed)
+  show "development_seed_publication_row_with P finite_construct_generation_record judge ?xs selected issue=
+      development_seed_publication_row_with P' finite_construct_generation_record judge ?xs selected issue"
+    by (simp only: shape development_seed_publication_row_with_def prod.case Let_def agree[OF formed])
+qed
+
+lemma development_seed_publication_round_formed:
+  "finite_publications_formed_generations
+     ((None,map_option (\<lambda>(B,u,G). G) (development_selection_generation_with judge names selected H0 []))#
+       map (\<lambda>(Q,G,H,results,equal). (None,Q))
+         (Parallel.map (development_seed_publication_row_with P finite_construct_generation_record judge
+           (development_seed_incumbents_with judge qs) selected) issues)@
+       map (\<lambda>(I,(Q,G,H,results,equal)). (I,G))
+         (zip (map (\<lambda>(r,reading). map_option (\<lambda>(B,u,G). G)
+             (development_seed_incumbent_of (development_seed_incumbents_with judge qs) r)) issues)
+           (Parallel.map (development_seed_publication_row_with P finite_construct_generation_record judge
+             (development_seed_incumbents_with judge qs) selected) issues)))"
+proof -
+  let ?rows="Parallel.map (development_seed_publication_row_with P finite_construct_generation_record judge
+      (development_seed_incumbents_with judge qs) selected) issues"
+  let ?incs="map (\<lambda>(r,reading). map_option (\<lambda>(B,u,G). G)
+      (development_seed_incumbent_of (development_seed_incumbents_with judge qs) r)) issues"
+  have row: "pred_option finite_generation_formed Q \<and> pred_option finite_generation_formed G"
+    if member: "(Q,G,H,results,equal)\<in>set ?rows" for Q G H results equal
+  proof -
+    obtain issue where "development_seed_publication_row_with P finite_construct_generation_record judge
+        (development_seed_incumbents_with judge qs) selected issue=(Q,G,H,results,equal)"
+      using member by (auto simp: Parallel.map_def)
+    note formed=development_seed_publication_row_with_formed[OF this]
+    show ?thesis using formed(1,2) by simp
+  qed
+  have incumbent: "pred_option finite_generation_formed I" if "I\<in>set ?incs" for I
+    using that by (auto simp: development_seed_incumbent_of_formed)
+  have first: "\<forall>(I,A)\<in>set (map (\<lambda>(Q,G,H,results,equal). (None,Q)) ?rows).
+      pred_option finite_generation_formed I \<and> pred_option finite_generation_formed A"
+  proof
+    fix x :: "finite_generation option\<times>finite_generation option"
+    assume "x\<in>set (map (\<lambda>(Q,G,H,results,equal). (None,Q)) ?rows)"
+    then obtain y where y: "y\<in>set ?rows" and mapped: "x=(case y of (Q,G,H,results,equal) \<Rightarrow> (None,Q))"
+      unfolding set_map by blast
+    obtain Q G H results equal where shape: "y=(Q,G,H,results,equal)" by (rule prod_cases5)
+    have x: "x=(None,Q)" using mapped by (simp add: shape)
+    have member: "(Q,G,H,results,equal)\<in>set ?rows" using y by (simp add: shape)
+    show "case x of (I,A) \<Rightarrow> pred_option finite_generation_formed I \<and> pred_option finite_generation_formed A"
+      using row[OF member] by (simp add: x)
+  qed
+  have second: "\<forall>(I,A)\<in>set (map (\<lambda>(I,(Q,G,H,results,equal)). (I,G)) (zip ?incs ?rows)).
+      pred_option finite_generation_formed I \<and> pred_option finite_generation_formed A"
+  proof
+    fix x :: "finite_generation option\<times>finite_generation option"
+    assume "x\<in>set (map (\<lambda>(I,(Q,G,H,results,equal)). (I,G)) (zip ?incs ?rows))"
+    then obtain y where y: "y\<in>set (zip ?incs ?rows)"
+      and mapped: "x=(case y of (I,(Q,G,H,results,equal)) \<Rightarrow> (I,G))"
+      unfolding set_map by blast
+    obtain I Q G H results equal where shape: "y=(I,(Q,G,H,results,equal))" by (rule prod_cases6)
+    have x: "x=(I,G)" using mapped by (simp add: shape)
+    have zipped: "(I,(Q,G,H,results,equal))\<in>set (zip ?incs ?rows)" using y by (simp add: shape)
+    have "pred_option finite_generation_formed I" by (rule incumbent[OF set_zip_leftD[OF zipped]])
+    moreover have "pred_option finite_generation_formed G" using row[OF set_zip_rightD[OF zipped]] by simp
+    ultimately show "case x of (I,A) \<Rightarrow> pred_option finite_generation_formed I \<and> pred_option finite_generation_formed A"
+      by (simp add: x)
+  qed
+  show ?thesis
+    using first second by (auto simp: finite_publications_formed_generations_def development_seed_selection_formed)
+qed
+
+lemma development_seed_publication_over_formed:
+  "development_seed_publication_over finite_locus_publications finite_construct_generation_record judge decisions=
+    development_seed_publication_over (\<lambda>S. if finite_snapshot_formed S then finite_locus_publications_body S
+      else map (\<lambda>q. None)) finite_construct_generation_record judge decisions"
+proof -
+  have agree: "(case S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> finite_locus_publications S) ps=
+      (case S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> (if finite_snapshot_formed S then finite_locus_publications_body S
+        else map (\<lambda>q. None))) ps"
+    if formed: "finite_publications_formed_generations ps" for S0 ps
+    by (cases S0) (simp_all add: checked_premise.checked_at_entry[OF finite_locus_publications_checked]
+      established_premise.exact[OF finite_locus_publications_body_established formed])
+  have rows: "development_seed_publication_row_with (case S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> finite_locus_publications S)
+      finite_construct_generation_record judge (development_seed_incumbents_with judge qs) selected=
+    development_seed_publication_row_with (case S0 of None \<Rightarrow> (\<lambda>ps. [])
+        | Some S \<Rightarrow> (if finite_snapshot_formed S then finite_locus_publications_body S else map (\<lambda>q. None)))
+      finite_construct_generation_record judge (development_seed_incumbents_with judge qs) selected" for S0 qs selected
+    by (rule development_seed_publication_row_with_agree) (rule agree)
+  show ?thesis
+  proof (cases decisions)
+    case None
+    then show ?thesis by (simp add: development_seed_publication_over_def)
+  next
+    case (Some d)
+    obtain selected issues where d: "d=(selected,issues)" by (cases d) auto
+    show ?thesis
+      by (simp only: development_seed_publication_over_def Let_def Some d prod.case option.case rows
+        agree[OF development_seed_publication_round_formed])
+  qed
+qed
+
+lemma development_seed_publication_row_with_publisher:
+  "development_seed_publication_row_with P construct judge xs selected (r,reading)=
+    (case development_seed_publication_row_with P' construct judge xs selected (r,reading) of (Q,G,H,results,equal) \<Rightarrow>
+      (Q,G,H,P [(None,Q),(map_option (\<lambda>(B,u,G). G) (development_seed_incumbent_of xs r),G),
+        (map_option (\<lambda>(B,u,G). G) (development_seed_incumbent_of xs r),H)],equal))"
+  by (simp add: development_seed_publication_row_with_def Let_def)
+
+lemma development_seed_publication_row_with_known:
+  "development_seed_publication_row_with P finite_construct_known_original_generation judge
+      (development_seed_incumbents_with judge ps) selected=
+    development_seed_publication_row_with P finite_construct_generation_record judge
+      (development_seed_incumbents_with judge ps) selected"
+proof (rule ext)
+  fix issue :: "development_request\<times>(nat\<times>development_problem) fset fset"
+  obtain r reading where shape: "issue=(r,reading)" by (cases issue) auto
+  have none: "development_seed_publication_row_with (\<lambda>ps. []) finite_construct_known_original_generation judge
+      (development_seed_incumbents_with judge ps) selected (r,reading)=
+    development_seed_publication_row_with (\<lambda>ps. []) finite_construct_generation_record judge
+      (development_seed_incumbents_with judge ps) selected (r,reading)"
+    using fun_cong[OF development_seed_publication_row_known[of judge ps selected None], of "(r,reading)"]
+    by (simp only: development_seed_publication_row_published option.case)
+  show "development_seed_publication_row_with P finite_construct_known_original_generation judge
+      (development_seed_incumbents_with judge ps) selected issue=
+    development_seed_publication_row_with P finite_construct_generation_record judge
+      (development_seed_incumbents_with judge ps) selected issue"
+    by (simp only: shape development_seed_publication_row_with_publisher[where P=P and P'="\<lambda>ps. []"] none)
+qed
+
+lemma development_seed_publication_over_known:
+  "development_seed_publication_over P finite_construct_known_original_generation judge decisions=
+    development_seed_publication_over P finite_construct_generation_record judge decisions"
+  by (simp add: development_seed_publication_over_def development_seed_publication_row_with_known Let_def
+    split: option.splits prod.splits)
+
+declare development_seed_publication_prepared [code del]
+
+text \<open>
+  The code equation publishes the round by the body publications, the premise discharged above for the
+  recording constructor; the known constructor and the prepared judgment are the same round.
+\<close>
+
+lemma development_seed_publication_formed [code]:
+  "development_seed_publication answered=(let decisions=development_seed_decisions answered in
+     development_seed_publication_over (\<lambda>S. if finite_snapshot_formed S then finite_locus_publications_body S
+       else map (\<lambda>q. None)) finite_construct_known_original_generation
+       (parallel_computed_function development_payload_judgment
+         (development_seed_family_keys@development_seed_decision_keys decisions)) decisions)"
+  by (simp only: development_seed_publication_def development_seed_publication_from_published
+    development_seed_publication_over_formed development_seed_publication_over_known
+    parallel_computed_function_exact Let_def)
 
 section \<open>The report is presented through the presentations of its notions\<close>
 

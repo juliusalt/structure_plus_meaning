@@ -11283,6 +11283,49 @@ This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 85's decision; a design, no theory changes).
 
+## The native package reader reads each definition once
+
+The native package reader (`finite_native_source`, through `finite_native_package_readings`) read every
+definition of the package it reads five times. That repetition multiplied the reader's cost by a constant of
+about 4 at every size; the growth task 88 saw (×1.8–2.9 per doubling) is the definition reading's, and it is
+unchanged by this refinement. Held stage by stage (task 124's attribution,
+`.build/tasks/native-reading-cost/attribution.md`), the source of a scope program is the root family's
+reading, one traversal of the demanded sites for package formation, a formation check that reads every site
+again, and a second traversal for the program's graph; each traversal step read its frontier once for its
+rows and once for its successors. At 16 far keyed candidates the source cost 77.1 ms, the scope definition's
+reading 14.7 ms: five readings and the root family. A definition's reading itself grows as its artifact does
+(0.34 ms at 71 carrier atoms, 14.7 ms at 1,114): the artifact's index, built once per reading (1.5 ms), the 16
+schema readings (about 0.35 ms each, nearly constant), and the family and union around them, which carry the
+rest.
+
+### Decision
+
+A value computed twice is computed once by HOL's `Let`, as task 85's entry settles for that case: a traversal
+step shares its frontier's rows between the rows and the successors (`finite_demanded_step_shared_code`, every
+instance of the demanded closure), and the package reader takes sites and graph from one traversal
+(`finite_native_package_readings_shared_code`). Its formation test reads the graph's rows, which are exactly the
+sites' rows by `finite_demanded_readings_exact` (through `finite_native_definition_graph_rows`); the formation
+check at the entry is the existing place-1 check (`finite_native_package_formed_once_code`) carried over, not
+something this refinement adds. Only execution changes: no definition, statement or word.
+
+### Evidence and limits
+
+Before and after under one hold, from one tree, at the same samples, are in the attribution: at 16 far keyed
+candidates 78.5 → 20.2 ms; the whole contract packets 36.2 → 11.4 ms (seed) and 262.7 → 84.6 ms (machinery).
+The growth of
+one definition's reading with its artifact is not refined here: held with the index shared, its schema readings
+are the superlinear part (one schema of fixed shape 0.147 → 0.416 ms for 71 → 1,114 atoms), the family, unions
+and separation checks near linear. Held per address (`held-address.txt`, one hold, all four samples), the cost
+of every local reading at an address grows with the address's length and with nothing else: citation
+candidates 0.47 → 1.69 µs per address in the index form while its mean address grows from 5.3 to 13.5
+components, payload and record readings likewise. The source costs about 0.24–0.35 µs per bit of the artifact's
+address paths at every sample (far keyed 1: 0.55 ms for 71 × 25.5 bits; 16: 18.1 ms for 1,114 × 58.4). The
+reader is linear in the length of what it reads; what grows superlinearly is that length, because the i-th child
+of a syntax forest stands under i + 1 prefix components (`syntax_branch`), so the addresses of a scope program
+of n clauses total O(n²). Any reading by address reads the address, so no reader refinement removes this; it
+needs another forest layout, which changes every compiled artifact and word; the address layout of compiled
+syntax is decided by design task 136 (the planner, 2026-09-22). This refinement removes a constant factor and
+leaves the growth as it was. Recorded 2026-09-22 (task 124).
 ## A problem's generations stand at its locus, a path
 
 The loop records every problem's incumbent, issue and admitted answer as generations at loci, and

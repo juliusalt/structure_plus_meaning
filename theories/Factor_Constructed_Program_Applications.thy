@@ -1,5 +1,6 @@
 theory Factor_Constructed_Program_Applications
   imports Factor_Finite_Program_Applications Listed_Set_Unions Finite_Relation_Functionality_Execution
+    Established_Premises Candidate_Generators
 begin
 
 section \<open>A formed call's applications are constructed, not verified again\<close>
@@ -259,8 +260,6 @@ proof -
     by (simp add: finite_admitted_schema_instance_def)
 qed
 
-lemma ffilter_singleton: "ffilter P {|x|}=(if P x then {|x|} else {||})"
-  by (auto simp: fset_eq_iff)
 
 definition finite_constructed_requests ::
     "('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> finite_factor_term \<Rightarrow>
@@ -295,7 +294,8 @@ proof -
         finite_interface_fits P d t \<and> fBall ?H (\<lambda>(s,e,x). finite_interface_fits P e x)"
       by (rule finite_admitted_constructed[OF system formed clause instantiated material])
     show ?thesis using True admitted
-      by (simp add: finite_requested_constructed[OF formed] finite_constructed_requests_def Let_def ffilter_singleton)
+      by (simp add: finite_requested_constructed[OF formed] finite_constructed_requests_def Let_def
+        Candidate_Generators.accepted_singleton)
   next
     case False
     have requested: "finite_requested_schema_applications S t={||}"
@@ -382,27 +382,48 @@ lemma finite_program_applications_listed [code abstract]:
   "fset (finite_program_applications P D)=(if finite_system_formed P then listed_image_union
     (\<lambda>q. if finite_term_formed (snd q) then fset (finite_constructed_applications P (fst q) (snd q)) else {})
     (fset D) else {})"
-proof (cases "finite_system_formed P")
-  case True
-  have call: "fset (finite_program_applications P {|q|})=(if finite_term_formed (snd q) then
-      fset (finite_constructed_applications P (fst q) (snd q)) else {})" for q
-  proof -
-    obtain d t where q: "q=(d,t)" by (cases q) auto
-    show ?thesis
-      by (simp add: q finite_constructed_applications_exact[OF True] finite_program_applications_unformed)
+proof -
+  have entry: "checked_premise (\<lambda>P D. fset (finite_program_applications P D)) finite_system_formed
+      (\<lambda>P D. listed_image_union (\<lambda>q. if finite_term_formed (snd q) then
+        fset (finite_constructed_applications P (fst q) (snd q)) else {}) (fset D)) (\<lambda>P D. {})"
+  proof (unfold_locales)
+    fix P assume True: "finite_system_formed P"
+    have calls: "checked_premise (\<lambda>q. fset (finite_program_applications P {|q|})) (\<lambda>q. finite_term_formed (snd q))
+        (\<lambda>q. fset (finite_constructed_applications P (fst q) (snd q))) (\<lambda>q. {})"
+    proof (unfold_locales, goal_cases)
+      case (1 q)
+      obtain d t where q: "q=(d,t)" by (cases q) auto
+      show ?case using 1 by (simp add: q finite_constructed_applications_exact[OF True])
+    next
+      case (2 q)
+      obtain d t where q: "q=(d,t)" by (cases q) auto
+      show ?case using 2 by (simp add: q finite_program_applications_unformed)
+    qed
+    have call: "fset (finite_program_applications P {|q|})=(if finite_term_formed (snd q) then
+        fset (finite_constructed_applications P (fst q) (snd q)) else {})" for q
+      by (rule checked_premise.checked_at_entry[OF calls])
+    have "fset (finite_program_applications P D)=listed_image_union (\<lambda>q. if finite_term_formed (snd q) then
+        fset (finite_constructed_applications P (fst q) (snd q)) else {}) (fset D)" for D
+    proof -
+      have "fset (finite_program_applications P D)=(\<Union>q\<in>fset D. fset (finite_program_applications P {|q|}))"
+        by (rule finite_program_applications_calls)
+      also have "\<dots>=(\<Union>q\<in>fset D. if finite_term_formed (snd q) then
+          fset (finite_constructed_applications P (fst q) (snd q)) else {})"
+        by (simp only: call)
+      also have "\<dots>=listed_image_union (\<lambda>q. if finite_term_formed (snd q) then
+          fset (finite_constructed_applications P (fst q) (snd q)) else {}) (fset D)"
+        by (simp only: listed_image_union_def)
+      finally show ?thesis .
+    qed
+    then show "(\<lambda>D. fset (finite_program_applications P D))=(\<lambda>D. listed_image_union (\<lambda>q.
+        if finite_term_formed (snd q) then fset (finite_constructed_applications P (fst q) (snd q)) else {})
+        (fset D))" by (rule ext)
+  next
+    fix P assume "\<not> finite_system_formed P"
+    then show "(\<lambda>D. fset (finite_program_applications P D))=(\<lambda>D. {})"
+      by (simp add: finite_program_applications_unformed_system)
   qed
-  have "fset (finite_program_applications P D)=(\<Union>q\<in>fset D. fset (finite_program_applications P {|q|}))"
-    by (rule finite_program_applications_calls)
-  also have "\<dots>=(\<Union>q\<in>fset D. if finite_term_formed (snd q) then
-      fset (finite_constructed_applications P (fst q) (snd q)) else {})"
-    by (simp only: call)
-  also have "\<dots>=listed_image_union (\<lambda>q. if finite_term_formed (snd q) then
-      fset (finite_constructed_applications P (fst q) (snd q)) else {}) (fset D)"
-    by (simp only: listed_image_union_def)
-  finally show ?thesis using True by (simp only: if_True)
-next
-  case False
-  then show ?thesis by (simp add: finite_program_applications_unformed_system)
+  show ?thesis by (rule checked_premise.checked_through[OF entry, where t="\<lambda>f. f D"])
 qed
 
 text \<open>

@@ -132,24 +132,37 @@ missing-use lists in `REASONING_REUSE.md`; #130 re-cites the environment reading
 after #124 and #132, which change the same readings or the same paragraph. The seed recipe's other costs are
 Open 27.
 
+**The incremental assessment (#185–#206).** Design 171's entry (`7a6093bf`): an answer state is judged from its request
+state's assessment and the edit. #178 briefed its builds, each with its review: the index of a family by a key
+reading, the subject and mention indexes its instances (#185); the edit and the answer state's presentation from it
+(#186); the reach tables under seeding, restriction and removal (#190) — these three at once; then the local fields
+(#188) and `undeclared` on the edited state (#189), after #185 and #186; `unreached` with O's admission (#191), after
+#190 and #182; the incremental judgment, `native_edited_fields` and the stage's equation (#192), after #42 and the
+three field builds; the exported answer's edit (#187), after #161; the machinery's verification stage judged natively
+(#193) and its held measurement by field (#194), condition 5a's evidence for a stage's cost; the witnesses at the
+edit's parts (#195), after #44. #185 subsumes Open 58's inverted index of mentions.
+
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
 changes: #151 or the bound pattern forest #179, #153, the layout #155, the answer records' re-recording #157, then #161, #165, #167,
-#169 and its review #170, or #92 and #93 after #167; one task more may end that chain. Then #114 (after #112, #110,
-#182, #176, #181), 6, and #45 (after #44, #42, #176, #181), 5. Beside them: #163 (no word, at once); the brief
-#178 of #171's builds; #144 and #145; the join law #173, then #64 (after #161 too), #42 and
+#169 and its review #170, or #92 and #93 after #167; one task more may end that chain. The incremental line's
+measurement #194 and its review are 9 deep, through #161 and #192. Then #114 (after #112, #110,
+#182, #176, #181), 6, and #45 (after #44, #42, #176, #181), 5. Beside them: #163 (no word, at once); the incremental
+assessment's first builds #185, #186 and #190; #144 and #145; the join law #173, then #64 (after #161 too), #42 and
 #112; the flaky test's fix #181, the exporter's obligation #176 and the excess locale #182, then #42, #110 and #112;
 #128; #132, then #130; the overnight boundary #172; the probe's summary #175.
 
-**Order** (`128 129 132 133 147 148 173 174 172 175 171 178 181 179 180 151 152 176 177 144 145 146 163 164 182 183 153 154 42 43 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 165 166 167 168 169 170 130 131 64 65 92 93`).
+**Order** (`144 128 129 132 133 147 148 173 174 175 181 179 180 151 152 176 177 145 146 163 164 182 183 153 154 42 43 185 196 186 197 190 201 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43), so the landings the reboot interrupted come
-first: #128 with its review; the accepted commits #132, #147, #173, #172, #175 and #171, whose entry the brief #178
-waits on; the landing checks of #181, #179 and #151; the exporter's obligation #176 after #181, which #42 and #110
-wait on. Then #144 and #145, beside everything; the parked #163; the excess locale #182, which #110 and #112 wait on;
-the layout's last contract #153, before the verdict's and request construction's heads (#42, #110), so that the other
-slot serves those; the layout's word change #155, its answer records #157 and its measurement #159 soon after it,
-while the harness's lineage still holds the last base without it; then #161; the rest of the verdict and request
-chains; #135's later builds; then #130, #64 and #92. A parked task whose hold nears its end resumes first.
+first: #144's lasting base, #128 with its review, the accepted commits #132, #147, #173 and #175, the landing checks
+of #181, #179 and #151, and the exporter's obligation #176 after #181, which #42 and #110 wait on. Then #145, beside
+everything; the parked #163; the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract
+#153 and the verdict's entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the
+incremental assessment's three first builds (#185, #186, #190), which run at once in a slot those leave free; the
+layout's word change #155, its answer records #157 and its measurement #159 soon after it, while the harness's
+lineage still holds the last base without it; then #161; the rest of the verdict and request chains; the incremental
+line's later builds as their inputs land; #135's later builds; then #130, #64 and #92. A parked task whose hold nears
+its end resumes first.
 
 ## Decisions
 
@@ -408,6 +421,12 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   the rows-about lemma and `entity_rows_keyed` to #182, declarations cited through `store_found_program` to #110, the
   body's path stores to #112, the base advance to #144.
 
+- **#171** (design, `7a6093bf`): DECISIONS.md "An answer state is judged from its request state's assessment and the
+  edit" — the assessment held as presentations, the request state's closedness decided once (`checked_premise`), the
+  edit as three families, every field its own program at edit-sized arguments, the reach's loss bounded by a
+  successor-closed key set admitted natively, the contract `native_edited_fields`; seven builds, which #178 briefs.
+  **#172** (`7a6093bf`): the overnight boundary recorded as historical at `aa946a22` (Open 55).
+
 ## Open
 
 The owner's questions, each with its provisional choice, are in the ledger; where each bites now:
@@ -431,7 +450,7 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 
 Not yet planned, in the order they are expected to be planned:
 
-1. **The incremental assessment of an edited state** — planned as design #171 (Graph).
+1. **The incremental assessment of an edited state** — #185–#206 (Graph).
 2. **Request construction**: designed by #95 (accepted); its four builds briefed by #100.
 3. Problems whose subjects are native definitions, answered natively, and the translation of admitted native content
    into Isabelle material — the last step of the Q7 order.
@@ -591,10 +610,7 @@ Not yet planned, in the order they are expected to be planned:
     `isabelle_reach_predecessors_member`, `isabelle_reach_heads_member` and `isabelle_reach_constants_member` into
     `Isabelle_Native_Reach`, with their map row; `entity_kinds`, `state_families` and `state_families_range` into
     `Development_State_Rows` (`state_families_rows` then over `state_families R`). With the next edit of each owner.
-58. **The reach table's construction** (#40's follow-up 6): `state_reach_predecessors` per atom reads every
-    mentioning row, O(atoms × rows), with a row for every name-table atom; if request construction builds the table
-    per request, the refinement is an inverted index of mentions built once (a relation store keyed by mentioned key,
-    an index-notion instance). At #114's measurement.
+58. **The reach table's construction** (#40's follow-up 6) — subsumed by #185's mention index (Graph).
 59. **The judgment bridge's rows carry a candidate position** (#90's follow-up 2): `judgment_bridge_receive` filters
     `[0..<length judgment_bridge_candidates]` by each position's key path, and its field lemmas state `i<length …` and
     `judgment_bridge_candidates!i`; the rows can carry the subject through `keyed_admitted_subjects`, stated at the
@@ -627,8 +643,8 @@ Not yet planned, in the order they are expected to be planned:
 - **In flight (plan-44, 14:05)**: the reboot of 13:04 interrupted ten landings (#128, #132, #147, #171, #172, #173 and
   #175 committing, #151, #179 and #181 checking), all queued again, #151, #179 and #181 no longer waiting on a base;
   #128's session re-applies its refinement over #30's lines in `Development_Admitted_Publication` and runs its held
-  pair; #144 is in review, its acceptance corrected (the harness, 14:10); #145 builds the receipts' form; #163 is parked; #178 briefs
-  the incremental assessment's builds once #171's entry lands. #42's brief carries #106's review, #38's reduction and
+  pair; #144 is in review, its acceptance corrected (the harness, 14:10); #145 builds the receipts' form; #163 is parked; the incremental
+  assessment's builds are placed (#185–#206, briefed by #178 from #171's entry, landed `7a6093bf` with #172). #42's brief carries #106's review, #38's reduction and
   questions and the `[code_unfold]` declarations #40 needed (q54); #112's carries #106's review. #173 states the
   programs' join law before #42, #112 and #64; #176 the exporter's obligation before #42 and #110, after #181. #143
   was withdrawn (Open 65); its finding is carried by #157 and the working rules. #155, #92 and #64 name the reports
@@ -700,15 +716,18 @@ Not yet planned, in the order they are expected to be planned:
   - The finalizer ran two landing checks on one tree with identical inputs (#90: 311.5 s and 330.0 s, the same 155
     theories rebuilt); reusing an accepted check on unchanged inputs would save about five and a half minutes a
     landing (#90's review).
-- **The lasting base is `.build/tasks/base-lasting/complete-20260922e`** (#144: a complete proof of `a2ed0ed7`, 1,825
-  theories, 777 s), its pointer `.build/tasks/base-lasting/active-context.json` and its heaps
-  `.build/tasks/base-lasting/isabelle-home`, outside `/tmp`. A base records its heap by its absolute path, so tools
-  older than #144's (main's included until it lands) cannot use it: when #144 linked the old pointer to it, every check
-  failed within a second (14:06–14:08, no failure counted) until the harness removed the link. Until #144 lands, trees
-  check against the harness's interim base `/tmp/structural-accepted` (HEAD `a2ed0ed7`, read through the heap store's
-  link; a reboot before then leaves them none); after, a tree made before brings main in before any check or probe.
-  The pointer link is not made again. The harness advances the base at every landing, through the pointer main's
-  tools read, and retains that check's receipts (the owner, 12:55).
+  - `v2.py check` in a task's own tree is refused when the harness stages the tree: the sandbox mounts `/dev/null`
+    over the untracked `.bash_profile` and `.bashrc`, and staging fails with "can only add regular files" (#185,
+    14:47); the session hands over and the finalizer's landing check verifies.
+- **The base is `.build/tasks/base-lasting/complete-20260922e`** (#144: a complete proof of `a2ed0ed7`, 1,825 theories,
+  777 s), its heaps in `.build/tasks/base-lasting/isabelle-home`, which `/tmp/structural-isabelle` links to. A base
+  records its heap by its absolute path: as first recorded, the older tools refused it and every check failed within a
+  second (14:06–14:08, no failure counted); re-recorded at 14:14 with its heap under `/tmp/structural-isabelle`, it is
+  read by the older tools and by #144's alike (the harness, 14:25), and #171 and #172 landed on it. The two pointers
+  stay apart — `/tmp/structural-active-context.json` for the older tools, `.build/tasks/base-lasting/active-context.json`
+  for #144's — and the harness advances the base at every landing through the one main's tools read, retaining that
+  check's receipts (the owner, 12:55). A base the newer tools advance records the lasting store's paths; until #144 has
+  landed and the base advanced once, a reboot removes the link this record reads.
   The dead lineage (bases a–d, `.build/tasks/105/head-5a039e44`, `receipts-1`) is removed; `.build/complete-20260921a`,
   at `.build/`'s root, which the sandbox does not write, and the harness's interim base `/tmp/structural-accepted` are
   the owner's or the next reboot's.

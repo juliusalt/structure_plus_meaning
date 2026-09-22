@@ -30,6 +30,7 @@ import uuid
 import build
 import check
 import execution_support as investigate
+import isabelle_places
 import native_execution_runtime
 import prove_context
 import proof_contexts
@@ -40,7 +41,7 @@ from evidence_io import write_json
 ROOT = Path(__file__).resolve().parents[1]
 TOOLS = ROOT / 'tools'
 POLY = Path('/opt/isabelle/contrib/polyml-5.9.2-2/x86_64_32-linux/poly')
-ENV = {**os.environ, 'PYTHONDONTWRITEBYTECODE': '1', 'USER_HOME': '/tmp/structural-isabelle'}
+ENV = {**os.environ, 'PYTHONDONTWRITEBYTECODE': '1', 'USER_HOME': str(isabelle_places.USER_HOME)}
 # Every Isabelle/Poly/ML runtime file read by native executions, beyond the toolchain digests.
 NATIVE_RUNTIME = (*native_execution_runtime.inputs(), Path('/opt/isabelle/src/Pure/ML/ml_statistics.ML'))
 
@@ -88,7 +89,7 @@ def unknown_recipe_refusal(selected, known) -> str:
             + '; this project declares ' + ', '.join(sorted(known)) + '.')
 
 
-ACTIVE_CONTEXT = Path('/tmp/structural-active-context.json')
+ACTIVE_CONTEXT = isabelle_places.ACTIVE_CONTEXT
 
 
 def heap_identity(session):
@@ -100,6 +101,7 @@ def activate_context(directory, lineage=None):
     assert context['project_declaration'] == session_declaration(ROOT), \
         declaration_refusal(directory, session_declaration(ROOT), context['project_declaration'])
     assert context['stored_heap'], stored_heap_refusal(directory)
+    ACTIVE_CONTEXT.parent.mkdir(parents=True, exist_ok=True)
     temporary = ACTIVE_CONTEXT.with_suffix('.new.json')
     write_json(temporary, {'directory': str(Path(directory).resolve()),
                            'receipt_sha256': investigate.file_hash(Path(context['receipt']))})
@@ -116,7 +118,7 @@ def selected_base(explicit, lineage=None):
         assert investigate.file_hash(Path(context['receipt'])) == selected['receipt_sha256'], \
             active_context_refusal(ACTIVE_CONTEXT, selected['directory'], context['receipt'])
         return Path(selected['directory'])
-    return Path('/tmp/structural-accepted')
+    return isabelle_places.FALLBACK_BASE
 
 
 def recipes():
@@ -143,7 +145,8 @@ def establish(base, threads, timeout):
     names = theory_names(ROOT)
     for directory in ('theories', 'tools', 'validation'):
         (base / directory).mkdir(parents=True, exist_ok=True)
-    wanted = {'ROOT': ROOT / 'ROOT', 'tools/build.py': TOOLS / 'build.py', 'tools/check.py': TOOLS / 'check.py'}
+    wanted = {'ROOT': ROOT / 'ROOT', 'tools/build.py': TOOLS / 'build.py', 'tools/check.py': TOOLS / 'check.py',
+              'tools/isabelle_places.py': TOOLS / 'isabelle_places.py'}
     wanted |= {'theories/' + name + '.thy': ROOT / 'theories' / (name + '.thy') for name in names}
     for stale in (base / 'theories').glob('*.thy'):
         if 'theories/' + stale.name not in wanted:
@@ -554,7 +557,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     base = commands.add_parser('establish', help='Accept the current sources in the fixed base directory.')
-    base.add_argument('--base', type=Path, default=Path('/tmp/structural-accepted'))
+    base.add_argument('--base', type=Path, default=isabelle_places.FALLBACK_BASE)
     base.add_argument('--threads', type=int, default=16)
     base.add_argument('--timeout', type=int, default=1200)
     run = commands.add_parser('check', help='Validate the workspace against the current accepted base.')

@@ -240,6 +240,23 @@ definition isabelle_development_constants :: "isabelle_entity list \<Rightarrow>
   "isabelle_development_constants es=List.map_filter (\<lambda>e. case e of
      Isabelle_Development_Constant t \<Rightarrow> isabelle_declared_constant e | _ \<Rightarrow> None) es"
 
+text \<open>
+  An entity declares a development constant when it is that constant's development declaration
+  (\<open>development_declared\<close>); the development constants of a list are the constants its entities declare so,
+  and a constant is one of them exactly when some entity of the list declares it.
+\<close>
+
+definition development_declared :: "isabelle_entity \<Rightarrow> nat option" where
+  "development_declared e=(case e of Isabelle_Development_Constant t \<Rightarrow> isabelle_declared_constant e | _ \<Rightarrow> None)"
+
+lemma development_constants_declared: "isabelle_development_constants es=List.map_filter development_declared es"
+  by (simp only: isabelle_development_constants_def development_declared_def[abs_def])
+
+lemma development_constants_member:
+  "c\<in>set (isabelle_development_constants E) \<longleftrightarrow> (\<exists>e\<in>set E. development_declared e=Some c)"
+  unfolding development_constants_declared
+  by (induction E) (auto simp: List.map_filter_simps split: option.splits)
+
 definition isabelle_frontier_constants :: "isabelle_entity list \<Rightarrow> nat list" where
   "isabelle_frontier_constants es=List.map_filter (\<lambda>e. case e of
      Isabelle_Frontier_Constant t \<Rightarrow> isabelle_declared_constant e | _ \<Rightarrow> None) es"

@@ -62,6 +62,47 @@ definition state_rows_of :: "isabelle_rooted_context \<Rightarrow> state_rows" w
       (remdups (filter (\<lambda>e. entity_kind_of e=k) (snd (snd S))))),
     state_roots=map (\<lambda>t. (first_occurrence_key (fst S) t,root_row state_constant_key (snd S) t)) (fst S)\<rparr>"
 
+subsection \<open>A row read against a membership of the development constants\<close>
+
+text \<open>
+  A row reads the development constants of its context only as a membership, for the subjects of a
+  specification (@{text entity_row_with_row}); a use holding that membership another way, an index or the
+  constants an edit changes, reads the row through it. The development constants of a context are computed
+  once for all its rows (@{text entity_row_shared}), and a presented state reads its rows through one
+  partial application (@{text state_rows_of_shared}).
+\<close>
+
+definition entity_row_with ::
+    "(nat \<Rightarrow> state_key) \<Rightarrow> String.literal list \<Rightarrow> (nat \<Rightarrow> bool) \<Rightarrow> isabelle_entity \<Rightarrow> isabelle_context state_row" where
+  "entity_row_with key names D e=\<lparr>row_declared=map key (entity_declared e),
+    row_subjects=map key (case e of Isabelle_Specification p \<Rightarrow> filter D (isabelle_term_constants p)
+      | _ \<Rightarrow> isabelle_entity_subjects names [] e),
+    row_mentions=map key (entity_mentions e),
+    row_identity=isabelle_local_entities names [e]\<rparr>"
+
+lemma entity_row_with_row:
+  "entity_row key C=entity_row_with key (fst C) (\<lambda>c. c\<in>set (isabelle_development_constants (snd C)))"
+proof (rule ext)
+  fix e
+  show "entity_row key C e=entity_row_with key (fst C) (\<lambda>c. c\<in>set (isabelle_development_constants (snd C))) e"
+    by (cases e) (simp_all add: entity_row_def entity_row_with_def)
+qed
+
+lemma entity_row_shared [code]:
+  "entity_row key C=(let D=isabelle_development_constants (snd C) in
+    (\<lambda>e. \<lparr>row_declared=map key (entity_declared e),
+      row_subjects=map key (isabelle_entity_subjects (fst C) D e),
+      row_mentions=map key (entity_mentions e),
+      row_identity=isabelle_local_entities (fst C) [e]\<rparr>))"
+  by (simp add: fun_eq_iff entity_row_def Let_def)
+
+lemma state_rows_of_shared [code]:
+  "state_rows_of S=(let row=entity_row state_constant_key (snd S) in
+    \<lparr>state_atoms=map (\<lambda>i. (state_constant_key i,fst (snd S)!i)) [0..<length (fst (snd S))],
+    state_entities=(\<lambda>k. map (\<lambda>e. (development_entity_key (snd S) e,row e))
+      (remdups (filter (\<lambda>e. entity_kind_of e=k) (snd (snd S))))),
+    state_roots=map (\<lambda>t. (first_occurrence_key (fst S) t,root_row state_constant_key (snd S) t)) (fst S)\<rparr>)"
+  by (simp add: state_rows_of_def Let_def)
 definition state_presenter :: "isabelle_rooted_context \<Rightarrow> state_rows option" where
   "state_presenter S=(if state_presentable S then Some (state_rows_of S) else None)"
 

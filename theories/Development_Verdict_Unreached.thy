@@ -72,36 +72,6 @@ definition state_families :: "state_rows \<Rightarrow> isabelle_context state_fa
 lemma state_families_range: "set (state_families R)=range (state_entities R)"
   by (simp add: state_families_def entity_kinds_all)
 
-section \<open>Native reach transported along a map of keys\<close>
-
-text \<open>
-  A reached key of one table is reached in another when every row that can reach sends its key to a row
-  of the other that is a root wherever it is one and has the images of its predecessors among its own.
-  This is how the reach table of the rows and the reach table of \<open>Isabelle_Native_Reach\<close> are compared,
-  in both directions, so that fidelity is consumed from \<open>isabelle_reach_table_exact\<close>.
-\<close>
-
-lemma table_reached_simulation:
-  assumes rows: "\<And>k r ps. (k,r,ps)\<in>set T \<Longrightarrow> r \<or> ps\<noteq>[] \<Longrightarrow>
-      \<exists>r' ps'. (g k,r',ps')\<in>set T' \<and> (r\<longrightarrow>r') \<and> g ` set ps\<subseteq>set ps'"
-    and reached: "k\<in>table_reached T"
-  shows "g k\<in>table_reached T'"
-  using reached
-proof induction
-  case (root k ps)
-  have "\<exists>r' ps'. (g k,r',ps')\<in>set T' \<and> (True\<longrightarrow>r') \<and> g ` set ps\<subseteq>set ps'"
-    by (rule rows[OF root]) simp
-  then obtain r' ps' where row: "(g k,r',ps')\<in>set T'" and r': "r'" by blast
-  from row r' have "(g k,True,ps')\<in>set T'" by simp
-  then show ?case by (rule table_reached.root)
-next
-  case (step k r ps p)
-  have "\<exists>r' ps'. (g k,r',ps')\<in>set T' \<and> (r\<longrightarrow>r') \<and> g ` set ps\<subseteq>set ps'"
-    by (rule rows[OF step.hyps(1)]) (use step.hyps(2) in auto)
-  then obtain r' ps' where row: "(g k,r',ps')\<in>set T'" and sub: "g ` set ps\<subseteq>set ps'" by blast
-  have "g p\<in>set ps'" using sub step.hyps(2) by blast
-  then show ?case by (rule table_reached.step[OF row _ step.IH])
-qed
 
 section \<open>The state's reach, read from its pairs\<close>
 

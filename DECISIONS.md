@@ -12068,6 +12068,14 @@ rule's conclusion and premise set back from its value.
 
 No rule value and no statement changed, so no recorded word changes.
 
+The law completed (task 247, task 245's review): both halves at any support relation, `rule_instance` (an iff,
+the analogue of `reader_projection_rule`, formation over the rule's variables, conclusion's and premises', because
+`Y` need hold only of formed terms nowhere); `supported_clause` also returns the clause's conclusion, so each
+`unfold` is a corollary citing it and `unfold_rule` without re-deriving the conclusion; `holds_rule`, the elimination
+at the positive meaning returning the native rule itself, through which `exact`'s forward direction no longer
+re-encodes and decodes the clause. The four `unfold` lemmas stay, their statements unchanged, as their uses in
+Development_Native_Readiness and Native_Table_Reach cite them.
+
 ## The overnight native-control questions state their candidates as keys
 
 Task 56 moved the loop's contract question to the keyed question and left the index form serving the

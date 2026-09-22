@@ -780,6 +780,107 @@ proof -
       (use finite_rule_program_agrees[OF _ within] shared defs inside site in auto)
 qed
 
+section \<open>A single premise that calls a callee on a rearrangement of the conclusion's variables\<close>
+
+text \<open>
+  Two facts about a pattern's evaluation are read by every rule whose premise reads what its conclusion
+  binds: two evaluations of a pattern are equal only where they agree on its variables, and a formed
+  evaluation has formed values at its variables.
+\<close>
+
+lemma evaluate_pattern_agree:
+  assumes "evaluate_pattern f p=evaluate_pattern g p" "a\<in>pattern_variables p"
+  shows "f a=g a"
+  using assms by (induction p) auto
+
+lemma evaluate_pattern_variables_formed:
+  assumes "term_formed (evaluate_pattern f p)" "a\<in>pattern_variables p"
+  shows "term_formed (f a)"
+  using assms by (induction p) auto
+
+text \<open>
+  A site whose family is one rule, whose single premise calls a callee on a pattern whose variables the
+  conclusion binds, holds exactly where the callee holds of the premise's evaluation. The contract is
+  stated once here, in two forms, and its proof is the one place the argument through
+  @{thm native_rule_family.holds_cases} and @{thm native_rule_family.native_step} is made. It reads nothing
+  of the patterns' shape: a rearrangement of the conclusion's variables is an instance, and so is a
+  conclusion with literal leaves. An instance proves only its patterns' obligations.
+\<close>
+
+locale native_rearranging_program = native_rule_family P s "[([0],finite_native_rule p [([0],(r,q))])]"
+  for P :: "'u native_system" and s :: "'u definition_site" and p :: "local_address finite_term_pattern"
+    and r :: "'u definition_site" and q :: "local_address finite_term_pattern" +
+  assumes binds: "pattern_variables (decode_finite_pattern q)\<subseteq>pattern_variables (decode_finite_pattern p)"
+begin
+
+theorem exact:
+  "(s,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+    evaluate_pattern f (decode_finite_pattern p)=t \<and> (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
+proof
+  assume holds: "(s,t)\<in>positive_meaning P"
+  obtain c F f where rule: "(c,F)\<in>set [([0::nat],finite_native_rule p [([0],(r,q))])]"
+    and assignment: "\<forall>a\<in>schema_variables (decode_finite_schema F). term_formed (f a)"
+    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=t"
+    and support: "\<forall>k e u. (k,e,u)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
+      (e,evaluate_pattern f u)\<in>positive_meaning P"
+    by (rule holds_cases[OF holds]) blast
+  have F: "F=finite_native_rule p [([0],(r,q))]" using rule by simp
+  have premise: "(r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    using native_rule_support[OF support[unfolded F]] by simp
+  have formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
+    using assignment by (simp add: F native_rule_variables)
+  have evaluated: "evaluate_pattern f (decode_finite_pattern p)=t" using shape by (simp add: F)
+  show "\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+      evaluate_pattern f (decode_finite_pattern p)=t \<and> (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    by (intro exI[of _ f] conjI) (rule formed, rule evaluated, rule premise)
+next
+  assume "\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+    evaluate_pattern f (decode_finite_pattern p)=t \<and> (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+  then obtain f where formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
+    and evaluated: "evaluate_pattern f (decode_finite_pattern p)=t"
+    and premise: "(r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P" by blast
+  have "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
+  proof (rule native_step[where c="[0]" and ps="[([0],(r,q))]"])
+    show "([0],finite_native_rule p [([0],(r,q))])\<in>set [([0],finite_native_rule p [([0],(r,q))])]" by simp
+    show "\<forall>a\<in>pattern_variables (decode_finite_pattern p) \<union>
+        (\<Union>(k,d,u)\<in>set [([0],(r,q))]. pattern_variables (decode_finite_pattern u)). term_formed (f a)"
+      using formed binds by auto
+    show "\<forall>(k,d,u)\<in>set [([0],(r,q))]. (d,evaluate_pattern f (decode_finite_pattern u))\<in>positive_meaning P"
+      using premise by simp
+  qed
+  then show "(s,t)\<in>positive_meaning P" by (simp only: evaluated)
+qed
+
+theorem at:
+  "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P \<longleftrightarrow>
+    (\<forall>a\<in>pattern_variables (decode_finite_pattern p)-pattern_variables (decode_finite_pattern q). term_formed (f a)) \<and>
+    (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+proof
+  assume holds: "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
+  obtain g where formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (g a)"
+    and evaluated: "evaluate_pattern g (decode_finite_pattern p)=evaluate_pattern f (decode_finite_pattern p)"
+    and premise: "(r,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
+    using holds[unfolded exact] by blast
+  have agree: "\<And>a. a\<in>pattern_variables (decode_finite_pattern p) \<Longrightarrow> g a=f a"
+    by (rule evaluate_pattern_agree[OF evaluated])
+  have "evaluate_pattern g (decode_finite_pattern q)=evaluate_pattern f (decode_finite_pattern q)"
+    by (rule evaluate_pattern_cong) (use agree binds in blast)
+  then show "(\<forall>a\<in>pattern_variables (decode_finite_pattern p)-pattern_variables (decode_finite_pattern q). term_formed (f a)) \<and>
+      (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    using formed agree premise by auto
+next
+  assume "(\<forall>a\<in>pattern_variables (decode_finite_pattern p)-pattern_variables (decode_finite_pattern q). term_formed (f a)) \<and>
+    (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+  then have rest: "\<forall>a\<in>pattern_variables (decode_finite_pattern p)-pattern_variables (decode_finite_pattern q). term_formed (f a)"
+    and premise: "(r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P" by blast+
+  have read: "\<forall>a\<in>pattern_variables (decode_finite_pattern q). term_formed (f a)"
+    using evaluate_pattern_variables_formed[OF positive_meaning_term_formed[OF premise]] by blast
+  show "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
+    unfolding exact by (intro exI[of _ f] conjI) (use rest read premise in auto)
+qed
+
+end
+
 section \<open>The two components of a pair, exchanged\<close>
 
 text \<open>
@@ -795,31 +896,49 @@ definition native_swap_rule :: "'u definition_site \<Rightarrow>
 
 locale native_swap_program = native_rule_family P s "[([0],native_swap_rule r)]"
   for P :: "'u native_system" and s r :: "'u definition_site"
+
+sublocale native_swap_program \<subseteq> rearranged: native_rearranging_program P s
+  "Finite_Pattern_Pair (native_var 0) (native_var 1)" r "Finite_Pattern_Pair (native_var 1) (native_var 0)"
+  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
+  using native_rule_family_axioms[unfolded native_swap_rule_def] by auto
+
+context native_swap_program
 begin
 
 theorem exact:
   "(s,Pair_Term a b)\<in>positive_meaning P \<longleftrightarrow> (r,Pair_Term b a)\<in>positive_meaning P"
-proof
-  assume holds: "(s,Pair_Term a b)\<in>positive_meaning P"
-  obtain c F f where rule: "(c,F)\<in>set [([0::nat],native_swap_rule r)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=Pair_Term a b"
-    and support: "\<forall>k e p. (k,e,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f p)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds]) blast
-  have F: "F=native_swap_rule r" using rule by simp
-  have premise: "(r,Pair_Term (f [1]) (f [0]))\<in>positive_meaning P"
-    using native_rule_support[OF support[unfolded F native_swap_rule_def]] by simp
-  have "f [0]=a" "f [1]=b" using shape by (simp_all add: F native_swap_rule_def)
-  then show "(r,Pair_Term b a)\<in>positive_meaning P" using premise by simp
-next
-  assume holds: "(r,Pair_Term b a)\<in>positive_meaning P"
-  have formed: "term_formed (Pair_Term b a)" using holds by (rule positive_meaning_term_formed)
-  have "(s,evaluate_pattern (native_values [a,b])
-      (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning P"
-    by (rule native_step[where c="[0]" and ps="[([0],(r,Finite_Pattern_Pair (native_var 1) (native_var 0)))]"])
-      (use holds formed in \<open>simp_all add: native_swap_rule_def\<close>)
-  then show "(s,Pair_Term a b)\<in>positive_meaning P" by simp
-qed
+  using rearranged.at[of "native_values [a,b]"] by (simp add: insert_commute)
+
+end
+
+section \<open>A pair's first component, passed along as context\<close>
+
+text \<open>
+  A site holds of a pair exactly when a callee holds of the pair's first component beside the pair
+  reversed: the call that passes a context along with the element it reads. It is the second named
+  instance of the rearranging rule.
+\<close>
+
+definition native_context_call_rule :: "'u definition_site \<Rightarrow>
+    (local_address,local_address,'u definition_site) finite_factor_schema" where
+  "native_context_call_rule r=finite_native_rule (Finite_Pattern_Pair (native_var 0) (native_var 1))
+    [([0],(r,Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))))]"
+
+locale native_context_call_program = native_rule_family P s "[([0],native_context_call_rule r)]"
+  for P :: "'u native_system" and s r :: "'u definition_site"
+
+sublocale native_context_call_program \<subseteq> rearranged: native_rearranging_program P s
+  "Finite_Pattern_Pair (native_var 0) (native_var 1)" r
+  "Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))"
+  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
+  using native_rule_family_axioms[unfolded native_context_call_rule_def] by auto
+
+context native_context_call_program
+begin
+
+theorem exact:
+  "(s,Pair_Term x y)\<in>positive_meaning P \<longleftrightarrow> (r,Pair_Term x (Pair_Term y x))\<in>positive_meaning P"
+  using rearranged.at[of "native_values [x,y]"] by (simp add: insert_commute)
 
 end
 

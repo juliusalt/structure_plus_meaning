@@ -11968,6 +11968,39 @@ their own word changes over the final layout; none of them must precede task 30.
 
 Recorded 2026-09-22 (task 136's decision; a design, no theory changes).
 
+## A single premise on a rearrangement of the conclusion's variables is one notion
+
+A site whose family is one ordinary rule, `finite_native_rule p [([0],(r,q))]`, whose single premise calls a callee
+`r` on a pattern `q` whose variables the conclusion `p` binds, holds exactly where the callee holds of the premise's
+evaluation. The notion is `native_rearranging_program` in `Native_Collection_Programs` (task 208, following task
+173's review and the planner's task 207), over `native_rule_family`, with the side condition that `q`'s variables are
+among `p`'s. Its contract is stated once, in two forms: `exact`, the site holds of `t` exactly when some evaluation
+formed on `p`'s variables evaluates `p` to `t` and `r` holds of its evaluation of `q`; and `at`, at every evaluation
+`f`, the site holds of `f`'s evaluation of `p` exactly when the variables of `p` that `q` does not read are formed
+under `f` and `r` holds of `f`'s evaluation of `q` (the variables `q` reads are formed by the callee's own meaning).
+`exact` is the one proof by `holds_cases` and `native_step`; `at` follows from it and two pattern facts stated once,
+general over patterns: equal evaluations agree on a pattern's variables (`evaluate_pattern_agree`), and a formed
+evaluation has formed values at them (`evaluate_pattern_variables_formed`). The argument reads nothing of the
+patterns' shape, so a conclusion with literal leaves is an instance too.
+
+- Instances in `Native_Collection_Programs`: the swap (`native_swap_program`, its sublocale `rearranged`; its `exact`
+  now proves only its patterns' obligations, statement and rule value unchanged) and the call that passes a pair's
+  first component along as context (`native_context_call_rule`, `native_context_call_program.exact`), the rule value
+  that `store_found_rule` (Development_Verdict_Mentions), `readiness_settled_rule` (Development_Native_Readiness) and
+  `reach_reached_rule` (Native_Table_Reach) each define.
+- Re-citations that follow, each a task of its own after the builds that edit those theories: `store_found_program`
+  and the sites of `readiness_settled_rule` and `reach_reached_rule` to `native_context_call_program`;
+  `subject_selection_program.call_exact` (Development_Subject_Index, `((0,1),2)` to `(1,(0,2))`) to the notion; and
+  the further single-premise sites whose own `exact` is proved by `holds_cases`/`native_step`: `key_cited_program`
+  (Development_Request_Scope, a six-field row to its first two fields), `row_mentions_program`
+  (Development_Verdict_Mentions, a six-field row to fields 0 and 4) and `native_ready_exact`
+  (Development_Native_Readiness, a conclusion with literal status leaves). Rules with two premises
+  (`conjoined_calls_program`) or none (`verdict_equal_program`, `native_any_rule`) are not instances.
+- `native_decomposition_shares` (Development_Native_Decomposition) no longer takes `distinct (map fst ds)`: its proof
+  never read it; the join law needs distinctness of the whole program's sites only, which it computes itself.
+
+No rule value and no other statement changed, so no recorded word changes.
+
 ## The overnight native-control questions state their candidates as keys
 
 Task 56 moved the loop's contract question to the keyed question and left the index form serving the

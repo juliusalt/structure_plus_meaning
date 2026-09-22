@@ -7915,7 +7915,7 @@ Recorded 2026-09-18, commit `d0b70ea2`.
 
 Evidence: the control `demanded-reformulated` restates `ordered_member_tree` through `map (\<lambda>y. y)`;
 judged, it removes the incumbent equation and adds its own (accepted). Adopted in an isolated copy of the
-working tree ([receipt](validation/development-adoptions/Development_Answer_5aba3385cee9.json)): the
+working tree ([receipt](validation/development-adoptions/Development_Answer_5aba3385cee9-41e74a23a6af.json)): the
 precondition held, the judged theory was installed at the boundary, 150 theories were proved again
 (166 s), 48 recipes executed with every word equal to its retained word and 3 were reused, the answer
 was then judged in the adopted workspace as an accepted unchanged answer, and the adoption was withdrawn.
@@ -12702,7 +12702,9 @@ checked on the workspace's own content:
    as its adoption. When #218's follow-up 1 adopts answers of another state, it gives that state its boundary; this
    condition is where it enters.
 2. **A retained receipt binds the answer.** Among the retained adoption receipts (`validation/development-adoptions/`),
-   exactly one has `answer_sha256` equal to the SHA-256 of the answer's canonical JSON — the content the theory name
+   exactly one has `answer_sha256` [corrected by task 273: the field is `answer_digest`, as the task 265 paragraph
+   below records; `answer_sha256` is the judged records' digest of the raw answer file] equal to the SHA-256 of the
+   answer's canonical JSON — the content the theory name
    abbreviates — with `status: adopted`, `control: false` and no `withdrawn`. The receipt is found by that digest, not by
    its file name.
 3. **The installed content is the judged frame.** The theory the receipt names has the SHA-256 the receipt retained at
@@ -12779,7 +12781,8 @@ The replay stops deciding adoption in its own process and reads the harness's `s
   context records the installed theory at the frame's digest (the `sources` of its accepted context, as the base's
   context records the walk's): the check proved this content, not a later one. It runs no harness judgment; the harness's
   `adopted` report is exercised by the replay once the adoption has landed. The tool writes the receipt to its output
-  and, retained, to `validation/development-adoptions/<theory>.json` (a control's too, withdrawn), since without it the
+  and, retained, to `validation/development-adoptions/<theory>.json` [corrected by task 273: to
+  `<theory>-<12 hex of the receipt's own SHA-256>.json`, so no two attempts meet at one path] (a control's too, withdrawn), since without it the
   evidence does not hold.
 
 ### What the retained records keep
@@ -12790,13 +12793,14 @@ The replay stops deciding adoption in its own process and reads the harness's `s
   reproduced by no present replay and never re-recorded.
 - **The walk's receipt** (`Development_Answer_0ccf746fe2cf.json`) keeps every step as it ran. Its `published` step is the
   self-comparison and established nothing about the answer; it is kept as run and read as such. The fix adds
-  `answer_sha256`, derived from the record's answer and marked as derived, not observed. The evidence holds of it today:
+  `answer_sha256` [corrected by task 273: `answer_digest`], derived from the record's answer and marked as derived, not observed. The evidence holds of it today:
   the installed theory's digest is `installation.theory_sha256` (`9102596f…`, the digest the base's accepted context
   records for it), ROOT declares it and the boundary imports it. Its `revision` is not recoverable, the walk having been
   adopted in a working tree whose other uncommitted work landed with it in `78ae1536`, so the reproduction of its
   precondition is a residual of this receipt alone. Its `record`, an absolute path of the one tree, is kept as run;
-  lookups go by `answer_sha256`.
-- **The control's receipt** (`Development_Answer_5aba3385cee9.json`) gains `answer_sha256` the same way; `control` and
+  lookups go by `answer_sha256` [corrected by task 273: `answer_digest`].
+- **The control's receipt** (`Development_Answer_5aba3385cee9.json`, renamed `Development_Answer_5aba3385cee9-41e74a23a6af.json`
+  by task 273) gains `answer_sha256` [corrected by task 273: `answer_digest`] the same way; `control` and
   `withdrawn` keep it from ever establishing an adoption, and its `published` step is the self-comparison, kept as run.
 
 **Carried out in the adoption tool (task 265).** The canonical digest is named `answer_digest` wherever it is the
@@ -12807,8 +12811,27 @@ the evidence with the receipt the tool retains, taken as an adoption's (`status:
 control is established exactly as an adoption is and then withdrawn, and its retained `control` and `withdrawn` keep
 it from establishing one. The retained receipt is written as a planned file, so its failure withdraws the
 installation with the rest; a control's is written once its withdrawal succeeded. An existing retained receipt at the
-answer's path refuses the adoption before installation. Limits: the check's accepted context is read through its
+answer's path refuses the adoption before installation [corrected by task 273, below: step 0 decides by the digest,
+never by a path]. Limits: the check's accepted context is read through its
 verified lineage (`proof_contexts.load_parent`), and the test of the final step stubs it, the check and the judgment.
+
+**Carried out further (task 273, on #265's review).** Step 0 decides through the evidence over every retained receipt
+by the answer's digest: a theory of the answer's name refuses the adoption (adopted or obstructed), and so does any
+receipt binding the digest as adopted (`status: adopted`, `control: false`, no `withdrawn`), whatever its file name.
+No file's presence at a path decides, and a receipt that binds nothing — a control's, withdrawn, or a refused
+attempt's — blocks no later attempt: an attempt is not an adoption. A retained receipt is named by its own content,
+`<theory>-<first 12 hex of its SHA-256>.json`, so two attempts never meet at one path; the control's receipt was renamed
+so (`Development_Answer_5aba3385cee9-41e74a23a6af.json`, its content unchanged), and the walk's keeps its name, being the
+one receipt bound to its digest. Once an adoption's receipt is retained, the evidence over the repository's receipts
+must hold, or the installation and the receipt are withdrawn, so no retention leaves two receipts binding one digest.
+A new receipt keeps digests, never a path of the adoption's output, and each digest once: the frame's at the top and
+the installation's own; the context step keeps the digest of the check's `accepted-context.json` and whether the
+context records the frame (`records_frame`), the recorded digest only when it differs; the evidence step keeps its
+connections without the digests the receipt holds elsewhere. Both retained writes publish whole
+(`evidence_io.publish_text`), and the tool writes no bytecode, so the tracked `.pyc` (Q9, the owner's) cannot make
+`revision()` refuse a fresh tree made from HEAD. Limits: the two older receipts keep their `record` as the absolute path
+it was written with, their steps not being rewritten; a case where an attempt's receipt must block a later one (a
+refusal that persists) is not decided here.
 
 ### What the fix must respect
 

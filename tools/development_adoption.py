@@ -6,9 +6,11 @@ judged, framed where it is adopted, becomes a theory of the repository that the 
 boundary imports. The tool moves bytes and invokes the checked tools; it decides nothing. Each step
 is judged by the existing machinery:
 
-0. Before anything, a theory of the answer's name in the workspace refuses the adoption: already
-   adopted when its evidence (`development_answer.adoption_evidence`) holds, obstructed otherwise,
-   which is not this tool's to resolve. A tree whose `theories/`, `ROOT` or `tools/` differ from its
+0. Before anything, the adoption's evidence (`development_answer.adoption_evidence`) over every retained
+   receipt decides: a theory of the answer's name refuses the adoption (already adopted when the evidence
+   holds, obstructed otherwise), and so does any retained receipt binding the answer's digest as adopted,
+   whatever its file name. A receipt that binds nothing (a control's, a refused attempt's) blocks nothing,
+   and no file's presence at a path decides. A tree whose `theories/`, `ROOT` or `tools/` differ from its
    commit is refused too, and that commit is retained as `revision`, so the precondition's judgment is
    reproducible from the repository.
 1. The retained answer is judged again against the present workspace, and its verdict and
@@ -28,8 +30,15 @@ is judged by the existing machinery:
    retain, and the check's accepted proof context records the installed theory at the frame's digest:
    the check proved this content, not a later one. No harness judgment is run: the published state is
    never judged against itself. The tool then writes the receipt to its output and retains it as
-   `validation/development-adoptions/<theory>.json` (a control's too, withdrawn), since without it
-   the evidence does not hold.
+   `validation/development-adoptions/<theory>-<first 12 hex of the receipt's own SHA-256>.json` (a
+   control's too, withdrawn), since without it the evidence does not hold; named by its content, no
+   two attempts meet at one path. Once an adoption's receipt is retained, the evidence over the
+   repository's receipts must hold, so no retention leaves two receipts binding one digest. Both
+   retained writes publish whole (`evidence_io.publish_text`). The receipt keeps digests, never a path
+   of the adoption's output, and each digest once: the frame's at the top and the installation's own.
+
+The tool writes no bytecode (`sys.dont_write_bytecode`, set before its imports): a tracked `.pyc` it
+would recompile would make `revision()` refuse the tree it runs in.
 
 An adoption that does not succeed changes nothing, whatever ends it. The files installation writes are
 read before its first write, and one cleanup path, reached by every exit after the adoption directory
@@ -60,11 +69,13 @@ import subprocess
 import sys
 import time
 
-import build
-import development_answer
-from evidence_io import write_json
-import execution_support as investigate
-import proof_contexts
+sys.dont_write_bytecode = True
+
+import build  # noqa: E402 - imported after the bytecode guard
+import development_answer  # noqa: E402
+from evidence_io import publish_text, write_json  # noqa: E402
+import execution_support as investigate  # noqa: E402
+import proof_contexts  # noqa: E402
 
 ROOT = development_answer.ROOT
 TOOLS = ROOT / 'tools'
@@ -89,6 +100,11 @@ def context_sources(context):
 
 def retained_text(receipt):
     return json.dumps(receipt, indent=1, sort_keys=True) + '\n'
+
+
+def retained_path(name, text):
+    """A retained receipt's path, named by the receipt's own content, so two attempts never meet at one path."""
+    return ROOT / development_answer.ADOPTIONS / (name + '-' + investigate.digest(text.encode())[:12] + '.json')
 
 
 def redeliver(received):
@@ -119,8 +135,6 @@ Every check that can refuse the installation is made here, so a refusal here has
     assert investigate.digest(text.encode()) == frame_sha256, 'The judged frame is not the frame the judgment accepted.'
     theory = ROOT / 'theories' / (name + '.thy')
     assert not theory.exists()
-    assert not (ROOT / development_answer.ADOPTIONS / (name + '.json')).exists(), \
-        'A retained adoption receipt of this answer already stands.'
     layer = ROOT / 'theories' / (LAYER + '.thy')
     root = ROOT / 'ROOT'
     layer_text, root_text = layer.read_text(), root.read_text()
@@ -204,12 +218,13 @@ def adopt(args):
     assert not evidence['present'], ('The answer is already adopted.' if evidence['holds'] else
                                      'A theory of the answer\'s name obstructs the adoption: '
                                      + ', '.join(evidence['obstruction']) + ' fails.')
+    bound = evidence['connections']['receipt']['bound']
+    assert not bound, 'A retained adoption receipt already binds this answer: ' + ', '.join(bound) + '.'
     record_name = str(record_path.relative_to(ROOT.resolve()))
     output = args.output.resolve()
     assert not output.exists(), 'Use a fresh adoption directory.'
     output.mkdir(parents=True)
     name = development_answer.answer_name(answer)
-    retained = ROOT / development_answer.ADOPTIONS / (name + '.json')
     receipt = {'status': 'refused', 'answer_digest': development_answer.answer_digest(answer), 'record': record_name,
                'record_sha256': investigate.file_hash(record_path), 'theory': name, 'route': route,
                'control': args.control, 'steps': {}}
@@ -231,8 +246,8 @@ def adopt(args):
         answer_file.write_text(json.dumps(answer, indent=1) + '\n')
         before = judge(answer_file, output / 'before', args.timeout)
         receipt['steps']['precondition'] = {k: before.get(k) for k in ('status', 'accepted', 'verdict_word',
-                                                                       'publication_word', 'summary', 'frame_sha256',
-                                                                       'seconds', 'error')}
+                                                                       'publication_word', 'summary', 'seconds',
+                                                                       'error')}
         assert before['status'] == 'judged' and adoptable(before.get('summary')) == route, \
             'The answer is no longer accepted through the retained route.'
         assert before['verdict_word'] == record['verdict_word'], \
@@ -261,18 +276,32 @@ def adopt(args):
         # and its retained `control` and `withdrawn` keep it from ever establishing one.
         found = development_answer.adoption_evidence(answer, ROOT,
                                                      receipt={**receipt, 'status': 'adopted', 'control': False})
-        receipt['steps']['evidence'] = {k: found[k] for k in ('holds', 'obstruction', 'connections', 'unverified')}
+        # Each digest is kept once: the connections' digests are the receipt's own (`answer_digest`,
+        # `installation.theory_sha256`), and a present digest that differs is the `installed` obstruction.
+        receipt['steps']['evidence'] = {
+            **{k: found[k] for k in ('holds', 'obstruction', 'unverified')},
+            'connections': {key: {field: value for field, value in connection.items()
+                                  if not field.endswith('_sha256') and field != 'answer_digest'}
+                            for key, connection in found['connections'].items()}}
         assert found['holds'], 'The adoption\'s evidence fails: ' + ', '.join(found['obstruction']) + '.'
-        context = summary.get('accepted_proof_context')
+        context = Path(summary['accepted_proof_context'])
         recorded = context_sources(context).get(name)
-        receipt['steps']['context'] = {'accepted_proof_context': context, 'recorded_sha256': recorded}
+        accepted = context / proof_contexts.CONTEXT_FILE
+        receipt['steps']['context'] = {
+            'accepted_context_sha256': investigate.file_hash(accepted) if accepted.is_file() else None,
+            'records_frame': recorded == frame, **({} if recorded == frame else {'recorded_sha256': recorded})}
         assert recorded == frame, 'The check\'s accepted context does not record the installed theory at its frame digest.'
         receipt['status'] = 'adopted'
         if not args.control:
             text = retained_text(receipt)
+            retained = retained_path(name, text)
+            assert not retained.exists(), 'A retained receipt of this content already stands.'
             plan.append((retained, None, text))
             retained.parent.mkdir(parents=True, exist_ok=True)
-            retained.write_text(text)
+            publish_text(retained, text)
+            held = development_answer.adoption_evidence(answer, ROOT)
+            assert held['holds'], ('The repository\'s evidence fails once the receipt is retained: '
+                                   + ', '.join(held['obstruction']) + '.')
         state['raising'] = False
     except BaseException as error:
         state['raising'] = False
@@ -289,8 +318,10 @@ def adopt(args):
         try:
             write_json(output / 'receipt.json', receipt)
             if raised is None and args.control and receipt.get('withdrawn'):
+                text = retained_text(receipt)
+                retained = retained_path(name, text)
                 retained.parent.mkdir(parents=True, exist_ok=True)
-                retained.write_text(retained_text(receipt))
+                publish_text(retained, text)
         except Exception as error:
             unwritten = error
             print('The receipt could not be written (' + type(error).__name__ + ': ' + str(error) + '): '

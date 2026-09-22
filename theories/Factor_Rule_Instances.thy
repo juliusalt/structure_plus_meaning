@@ -25,6 +25,22 @@ lemma evaluate_pattern_cong:
   shows "evaluate_pattern f p=evaluate_pattern g p"
   using assms by (induction p) auto
 
+text \<open>
+  Two facts read by every rule whose premise reads what its conclusion binds: two evaluations of a pattern
+  are equal only where they agree on its variables, and a formed evaluation has formed values at its
+  variables.
+\<close>
+
+lemma evaluate_pattern_agree:
+  assumes "evaluate_pattern f p=evaluate_pattern g p" "a\<in>pattern_variables p"
+  shows "f a=g a"
+  using assms by (induction p) auto
+
+lemma evaluate_pattern_variables_formed:
+  assumes "term_formed (evaluate_pattern f p)" "a\<in>pattern_variables p"
+  shows "term_formed (f a)"
+  using assms by (induction p) auto
+
 lemma pattern_instance_evaluation:
   assumes sv: "single_valued V" and inst: "pattern_instance V p t"
     and assignment: "\<forall>a\<in>pattern_variables p. (a,f a)\<in>V"

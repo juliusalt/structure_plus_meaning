@@ -29,6 +29,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Read_Transport
     RRA_Binding_Extension
     RRA_Syntax_Construction
+    RRA_Placed_Forests
     RRA_Syntax_Forests
     RRA_Literal_Extension
     RRA_Bound_Syntax_Construction

@@ -11157,3 +11157,312 @@ share of the publication's remaining seconds is unmeasured: task 80's attributio
 This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 85's decision; a design, no theory changes).
+
+## A row outside the store is presented in its context, and an answer designates its request by its locus
+
+"The development notions are structure; a kind is a family and an identity is a path" retired six tagged
+items. Task 30 retires three of them — the issue locus's `Finite_Payload [1]`, the problem locus as a
+contract-with-names and `development_local_contract` — by switching readers to the paths `Development_Loci`
+states. The other three cannot be retired that way (q45, q46): the problem datum's origin, authority and
+contract tags, which reach every recorded word only through `development_problem_data`, and
+`development_named_request`'s lookup of a subject's name in the state's table. Each needs a decision the entry
+of task 9 did not make. A report presents a lone `development_problem`, and a lone problem does not hold the
+citation its origin makes: a demanded problem's origin is its parent's locus, which the datum does not
+contain. An executor names the request it answers by its subject's name, which is the lookup being retired.
+And a problem carried across a successor is keyed in each state by that state's positions, where the retired
+contract-with-names was invariant. This entry decides the four, and the builds that carry them out.
+
+### A row outside the store is a row in its context
+
+Inside the store a problem is the row the problem role holds at its locus: the locus, and a body of two
+optional citations and an inert contract term (`development_problem_body`, presented by
+`development_problem_body_data`). Outside the store — in a report, a record, a verdict word — it is **the same
+row, presented in the context that holds it: the context supplies the row's citations.** Nothing new is
+presented. The presenter of a problem outside the store takes exactly the four parameters the presentation
+relation `development_rows_present` takes, and no other:
+
+- `key`, the constant-key assignment of the state the row is keyed in (`state_constant_key`, as task 30 keys
+  the loci);
+- `inert`, the presentation of the contract term: its local presentation in that state's names
+  (`isabelle_local_root`), as #3 carries a statement and as the retired contract-with-names carried the
+  term — invariant under every correspondence of tables (`isabelle_local_root_renamed`), and compared across
+  two states that are not in correspondence by task 78's `isabelle_local_root_compared`;
+- `origin` and `grant`, the context's two citation functions.
+
+The row it presents is `finite_store_row (development_problem_body_data inert)` of the problem's locus
+(`development_located_at key Development_Problem_Role p`) and its body `(origin p, grant p, the contract term)`.
+Its contract is the one the relation already supports: injective on every set of problems a
+`development_problems_present key inert origin grant` holds (`finite_store_row_injective_on` with
+`development_problem_body_data_injective` and `development_rows_problem_loci`), and decoding to that
+relation's row (`decode_development_problem_body_data`). A report's rows are therefore the rows a store with
+the same parameters holds.
+
+**The contexts.** Each report is a presentation of a context, and the context is what supplies the
+citations:
+
+| Context | Reports | `origin` | `grant` |
+|---|---|---|---|
+| A residual record | the seed's problem report, problems-answered and loop; the machinery's problems, loop and verification; a request's problem in either | absent: every problem the seed, the machinery and a demanded state pose is residual — their constructors (`development_seed_problem`, the machinery's problems, `development_demanded_requests`) assign `Development_Residual` | absent: the same constructors assign `Development_Generated` |
+| A repair | `development_refinement_repair_data`, in the verdict word of every repaired answer and in the succession | each definition problem cites the repaired request's problem, `fst r`, at its problem locus: the extension keeps every position of the request state (`development_request_extension_persists`, `isabelle_state_embedding_prefix`), so that locus is the same in the request state and in the extension the definitions are keyed in | absent |
+| A loop | `development_loop_data`, `development_dependencies_data`, `development_generation_data`, `development_record_data`, the succession, a framed answer's successor | a demanded problem cites the problem heading the first repair record of the loop's history whose definition problems hold it — the row task 58 reads from that record (`development_history_rows_exact`) — and, once the decomposition build lands, the parent of the first decomposition record that posed it; a residual problem cites nothing | absent |
+| A request | wherever a request is carried | its problem's citations in the context that carries the request | the same |
+
+A demanded problem's origin is its parent because that is what the decomposition entry decided ("A child at
+a locus nothing holds is posed there. Its origin cites the parent's problem locus"), and `Development_Demand`
+with `Development_Generated` are the tagged forms of those two citations. The loop reads its origins from the
+history, not from its dependencies: the origin is what posed the problem, which is a recorded decision, while
+a row of `D` is settlement structure that a later premise may share.
+
+**A request outside the store** is its problem's row in the same context, together with its body as the
+request carries it: its support as the family of its constants' keys — the request row's own support family,
+presented by `development_citations_data` — and its context carried as its entities (`isabelle_entities_data`),
+because a report does not hold the state's entity rows a citation would reach. "A request cites where a packet
+carries", and a report carries, as a packet does. Two things are not presented: the request's own locus, which
+is its problem's locus under the request role (`development_request_problem_locus`), and its constant term `s`,
+which is its problem's contract term and is carried once, in the row. The presenter is injective on the
+requests a `development_requests_present` holds, among whose conditions is that `s` is the problem's contract
+term; every constructed request meets it (`development_constant_request_fields`).
+
+**The origins with no family to cite are not carried.** At HEAD every construction assigns an origin of
+`Development_Residual` or `Development_Demand` and the authority `Development_Generated`: the seed's, the
+machinery's and the demanded requests, the repair's definition problems, the decomposition's children. No
+construction assigns `Development_Obligation`, `Development_Direction`, `Development_Incompleteness`,
+`Development_Repair`, `Development_Owner` or `Development_Truth`. The presentation is partial, and its
+partiality is the relation's premise: the origin absent exactly for a residual problem, the grant absent exactly
+for a generated one, the authority not truth, one subject constant. Each report discharges the premise from the
+construction of the problems it carries. A context with no family to cite into has no citation to give, and a
+report carrying such a problem is not a presentation of it. The computed observation naming such problems is
+owed at the first construction that assigns one, and that construction brings the family its citation needs —
+a role of `Development_Loci` for owner records or obligation records, as the decomposition row brings the
+sixth — or its report refuses. The subjectless case already has its observation: `development_without_subject`.
+`Development_Truth` stays as task 9 left it: named, with no counterpart.
+
+**Restricting the presenters instead is rejected.** Restricting them to the problems of the seed and the
+machinery — a singleton subject, generated authority, residual origin — would leave the demanded problems
+the loop does pose with no presentation: the repair's definition problems, presented in the verdict word of
+every repaired answer (`introduced-helper`, `outside-support`) and in the succession, and the decomposition's
+children once they are posed. A residual-only presenter either refuses them, losing reports the loop makes, or
+presents them with an absent origin, mapping an omitted case onto the residual shape — the total form that is
+not honest. Presenting in context contains the restriction as its residual-record case with no second
+presenter, and it takes exactly the store's parameters. Its cost is that the loop's context reads the history
+once per report.
+
+### Where the presenters live
+
+The presenters that carry a problem or a request are defined today below the rows: in `Development_Problems`,
+`Development_Requests`, `Development_Refinement_Repair`, `Development_Successor` and
+`Development_Native_Answers`, while `Development_Rows` imports `Development_Publication`, which imports that
+whole line. The row presenters move down to where these can import them; nothing is defined twice.
+
+- `development_located_at` moves to `Development_Loci`, beside `development_problem_locus_at`, whose `the` it is;
+  `Development_Rows` keeps using it.
+- A new theory, `Development_Row_Data`, imports `Development_Loci` and `Development_Requests` (`Development_Loci`
+  imports only `Native_Path_Stores`, `Development_Problems` and `Factor_Finite_Payload_Literals`, so there is no
+  cycle). It holds the citation and body presenters with their injectivity and formation, moved from
+  `Development_Row_Presentations`; the problem row in context; `development_problems_data` and
+  `development_problem_assessment_data`, moved from `Development_Problems` and restated over the row;
+  `development_request_data` and `development_requests_data`, moved from `Development_Requests`; and the
+  located request of the fourth section, replacing `development_named_request` in
+  `Development_Constant_Verification`.
+- `Development_Row_Presentations` keeps the decode lemmas relating those presenters to `Development_Rows`'
+  bodies and the two abbreviations, and imports `Development_Row_Data`.
+- `Development_Problems` keeps its datatypes, unchanged, and the HOL specifications native readiness is proved
+  against; only its presenters leave it.
+
+Parameterizing each report's presenter by a problem presentation supplied by its use, as `development_record_data`
+takes the packet's, was weighed and rejected: the context is not a free parameter. A repair's definition
+problems cite the repair's own request, which only the repair's presenter holds; a parameter would move that
+knowledge into every use of the repair. The record's packet parameter stays as it is.
+
+### A locus across a successor: the successor keeps the positions of the state it succeeds
+
+Five decisions relate a problem of the request state to a problem of the answer state:
+`development_reevaluations`, which compares a recorded issue's problem with the current library;
+task 58's repair rows, read from the history and compared with the successor's dependencies and answered set,
+and task 64's corollary that a repaired successor settles; the decomposition records' re-evaluation (the build
+that applies a decomposition); publication across rounds, once a persistent published state holds generations
+of two rounds; and the loop's presenters, which read a demanded problem's origin from the history.
+`development_request_current` compares entities through the embedding and not loci, and the verdict compares
+two states through `isabelle_state_embedding`, which is its domain and not the locus's.
+
+The development already keeps positions wherever it builds a state itself. The repair's extension appends the
+answer's names to the request state's table (`development_request_extension`,
+`development_request_extension_persists`), and so does a native answer's state
+(`development_native_answer_state`); on both, the embedding is the identity on every old position
+(`isabelle_state_embedding_prefix`). Only `development_successor` moves positions: it takes the answer state as
+the exporter wrote it, renames the problems, the dependencies and the answered set by the embedding of the two
+tables, and leaves the history as it was recorded. After a successor the history and the loop are therefore in
+two coordinate systems.
+
+**Decided: the successor keeps the positions of the state it succeeds** (the planner, q48). It reads its answer
+state into the request state's table extended by the names it lacks — `Isabelle_Local_Names`' table extended by
+the names it lacks (`isabelle_appended_names`), which the extension and the native answer state already
+instantiate, factored once so that the extension and the successor share it. The reading is a correspondence of
+tables, so every decision on it is the decision on the answer state as exported, through that decision's own
+renaming contract (`development_ready_renaming` for readiness, `state_presents_renamed` for the verdict's rows);
+the answer's generation is computed on the read state, and its first obligation is that the verdict accepts
+there exactly when it accepts on the exported state. **One lemma** states that the successor's correspondence is
+the identity on every position the old state uses, so every problem, locus, row and record of the old state
+stands unchanged in the successor: `development_problem_rename` of it is itself. There is no transport, and
+nothing for a consumer to apply: what a locus means stays local to the successor's contract, stated once,
+instead of a transport that every reader of the history would have to compose.
+
+**What becomes of the vacuity.** Task 58's repair rows are read in the coordinates of the request state and of
+its extension, which the successor now keeps; its rows, the successor's dependencies and its answered set are in
+one coordinate system, so the corollary that a repaired successor settles holds of every repair, not only of the
+repairs whose answer state happened to keep the request's positions. `development_reevaluations` likewise
+compares a recorded issue's problem with the current library's problems in one coordinate system, so a reading
+differs exactly when the library changed what applies, which is the re-evaluation it means, and never because
+a table was reordered. Task 64 consumes the identity lemma in place of a transport.
+
+**The rekey stays for genuine renamings.** `readiness_presents_rekey` and `development_row_rekey` carry a
+presentation to another under an injective change of keys: the renaming controls, where a state is moved to
+another table on purpose. Succession is not such a renaming any more. Task 78's comparison compares a row's
+inert term across two states that are not in correspondence (an answer that drops names), which the local
+presentation makes possible; no locus is asked to do that.
+
+A dropped constant keeps its name at its position in the kept table, used by no entity. The succession stage
+judges two answer states, the seed state and `development_seed_renamed`; the second now reads back into the
+seed's table and its successor equals the first's. That is the point rather than a loss: a successor no longer
+depends on the order of the answer state's table.
+
+### An answer designates its request by its locus
+
+**The request at a locus replaces the request of a name.** `development_named_request` read a string the
+executor supplied, found its position in the state's table (`isabelle_name_position`) and took the singleton
+of the requests of that subject. The request of a locus is **the path store of the requests keyed by their
+request-role loci, looked up at the locus**: the index notion's path-store instance
+(`Native_Path_Store_Indexes.path_store_carrier_index`), exact under distinct loci by `path_store_lookup`, which is
+the relation's own "at most one row per locus" (`development_rows_problem_loci`); natively it is the store search
+`development_request_at` makes, and `development_rows_request_recovery` makes the request at a locus unique. A
+locus holding no request finds the store's own absence, and the answer is refused before any judgment. No name
+is looked up and no list is filtered.
+
+**The packet carries its request's locus, and the answer carries it back.** The packet is the presentation of
+the request row (task 9), whose locus is its first component. The native packet is presented as the pair of
+that locus (`finite_path`) and the packet as it stands; `development_native_packet` itself does not change, and
+the Isabelle-text packet of `Development_Request_Packets` carries the locus in its request field. A native
+answer is transported as the pair of the locus of the request it answers and its edit, read by the pair's
+reader over `finite_path_bits` (`finite_path_bits_path`) and the answer's reader; `development_native_answer`
+does not change, and the refusals task 103 adds to the answer's reader compose with the pair's. The designation
+travels in the answer's word, so the judgment takes one word and no string argument. A framed answer carries the
+locus in its request field. The executor copies the packet's locus into its answer, as it copies the designation
+today. When answers have rows (after task 38), an answer stands at that locus under the answer role
+(`development_locus_shared_tail`): the designation is its row's locus less the role.
+
+The alternative — the answer designates nothing and its request is the packet it answers — is rejected. The
+pairing of an answer with its packet would be held by the host, outside every contract; an answer apart from its
+packet would answer nothing; and the answer's row, when it comes, needs its locus.
+
+**A demanded state is designated by its root.** A demanded state is exported from one root, the subject
+constant, so it holds at most one request (`development_demanded_requests` over its roots' head constants). Its
+designation is that root: the constant handed to Isabelle's exporter, a name read by presentation, as names are.
+Its request is the one at its root constant's locus, computed from the root's head constant, never from a name
+in a table. The three demanded records — `demanded-identity`, `demanded-reformulated` and the adopted
+`indexed-data-walk` — keep `{"state", "subject"}`, the subject read as the root. The adopted answer must keep its
+file: `answer_name` hashes the whole answer, so a changed file would name another theory, and the harness would
+no longer find the adopted one.
+
+**A seeded state is designated by the locus.** The seed and the machinery hold many requests; a request of
+either is designated `{"state", "locus"}`, the locus as the list of its bits. A locus a host designates is read
+from a presented report, never computed from a name: a request's locus is its problem row's locus under the
+request role (`development_request_problem_locus`), and the loop's report presents the problem rows of the issued
+requests.
+
+What the tools, their tests and the records then carry:
+
+- `tools/development_answer.py`: the verification and packet theories it writes take the located request at the
+  answer's locus (a seeded state) or the demanded state's one request (a demanded state); `validate` admits the two
+  designations; `packet` takes `--locus` for a seeded state.
+- `tools/native_answers.py`: `packet --locus`; the answer's octets hold the designated answer, so `judge` passes one
+  word; `validated` admits the two designations.
+- `tools/development_executor.py`: copies the packet's designation, the locus included.
+- `tools/test_development_answer.py` (the packet theory's text at 125) and `tools/test_native_answers.py` (the
+  designation, the packet's round trip and the executor's answer).
+- `validation/development-answers`: the thirteen seeded records' answers are re-designated once with the locus of
+  the seed's request for `digit_replay_inspect`, read from the seed's issued requests; their framed theory names
+  change with their content, and none of them is adopted. The three demanded records' answers do not change.
+
+### The builds, in order
+
+Each changes words once, with its reason; none is a refinement, so word equality cannot accept it, and each
+build's entry says why its words changed. All come after task 30's landing, which re-records the seed's and the
+machinery's words once, and their words start from those.
+
+1. **The successor keeps positions.** `Development_Successor` (the successor reads its answer state into the
+   extended table, the reading factored with `development_request_extension`'s), with the identity lemma and the
+   acceptance obligation above. Words: the seed's presentation-succession; every word presenting a state after a
+   successor — the verdict words of the framed answers whose successor is computed (`identity`, `deterministic`,
+   `introduced-helper`, `outside-support`, `demanded-identity`, `demanded-reformulated`); the machinery's words,
+   because `development_successor` is an admission root of its checked state. The publication words present no
+   successor and stay. The reason: the successor's state is the answer state read into the request's table.
+   Before the presenter switch; ordered against tasks 64 and 92; task 64 then consumes the identity lemma.
+2. **The presenter switch.** `Development_Row_Data` and the moves of the second section; the problem row in
+   context and the request's presentation; each report's context; `development_origin_data`,
+   `development_authority_data`, `development_contract_data` and `development_problem_data` retired, with their
+   eight facts. Words: the seed's presentation-problems, -problems-answered, -loop and -succession; the
+   machinery's presentation-problems, -loop and -verification, and its presentation if the checked state's
+   constituents change; the framed verdict words; the native judgment words of `native-dropped` and
+   `native-restating`, whose judgment presents its request. The reason: a problem is presented as its row. After
+   build 1, because the loop's context reads the history in the loop's coordinates.
+3. **The answer designates its locus.** The located request, `development_named_request` retired;
+   `development_named_native_judgment`, `development_named_native_judgment_data`, `development_native_summary` and
+   `development_named_native_packet_data` take the designated word; the tools, tests and records of the fourth
+   section. Words: the packet words (`native-restating`'s `packet_word`, `deterministic`'s packet); every judgment
+   and verdict word stays equal, because the located request is the named one on every retained answer, which the
+   build checks. After build 2, which gives `Development_Row_Data`; ordered against task 103, which restates the
+   native answer's reader.
+
+### Every reader of the four items, and its decision
+
+| Reader (`.build/tasks/30/readers.md`) | Decision | Build |
+|---|---|---|
+| `development_problem_data` (Development_Problems:58) | retired; each use takes the problem row in its context | 2 |
+| `development_origin_data_injective`, `development_authority_data_injective`, `development_contract_data_injective` (64, 70, 76); their `_formed` (93, 96, 99) | go with the items; the row's injectivity (`finite_store_row_injective_on`, `development_problem_body_data_injective`) replaces them | 2 |
+| `development_problem_data_injective` (82), `development_problem_data_formed` (103) | replaced by the row's injectivity on a presented set and its formation | 2 |
+| `development_problems_data`, `development_problem_assessment_data` (259) | moved to `Development_Row_Data`, over the row in the report's context | 2 |
+| `development_request_data` (328), `development_requests_data` (338) | moved; the request's problem row with its support keys and its carried context | 2 |
+| `development_refinement_repair_data` (220) | the repair's context | 2 |
+| `development_dependencies_data` (575), `development_generation_data` (584), `development_record_data` (617), `development_loop_data` (636) | the loop's context, read from the history | 1, 2 |
+| `development_named_request` (Development_Constant_Verification:172) | retired; the located request | 3 |
+| `development_named_native_judgment` (299), `development_named_native_packet_data` (364), `development_native_summary` (316) | located, at the designated word's locus | 3 |
+| `development_named_native_judgment_data` (306) | the request in the state's context (2); the designated word (3) | 2, 3 |
+| Development_Seed (problem report 112, value 126), Development_Seed_Loop (data 99, value 112) | the seed's residual record | 2 |
+| Development_Seed_Verification: `native_judgment_value` (80), `native_summary` (85), `native_packet_value` (90) | the seed's context (2); located (3) | 2, 3 |
+| Development_Seed_Verification: `succession_data` (159), `succession_value` (180) | the loop's context over a successor that keeps positions | 1, 2 |
+| Development_Machinery: `_problem_data` (131), `_problem_value` (143), `_loop_data` (172), `_loop_value` (184), `_verification_data` (276), `_verification_value` (289), and the requests they carry (`_request_of` 218, `_issue` 254, `_requests` 260, `_verification` 267) | the machinery's residual record | 2 |
+| Development_Machinery: `_native_judgment_value` (323), `_native_summary` (328), `_native_packet_value` (333) | located | 3 |
+| Development_Machinery: `_state` (51), `_problems` (75), `_unstated` (80), `_dependencies` (84), `_contract_packets` (115), `_problem_report` (124), `_loop_report` (159), `_renamed` (213), `_native_answers` (314), `_native_answers_value` (319) | values the presenters above present: they present nothing themselves, and change only if a name or a type they read changes, which none of the three builds makes | — |
+| Development_Machinery's checked state (its constituents, reached from the roots) | recomputed from the roots, which name none of the four; its word changes if its constituents do | 1, 2 |
+| `tools/development_answer.py` (168, 171, 188, 214; its verdict and publication words) | the located request or the demanded state's one request; verdict words change in 1 and 2 | 1, 2, 3 |
+| `tools/test_development_answer.py:125`, `tools/native_answers.py`, `tools/test_native_answers.py`, `tools/development_executor.py` | the designation of the fourth section | 3 |
+| `validation/development-answers` (16 records) | words re-recorded in 1 and 2; thirteen answers re-designated in 3; the adopted record historical and untouched | 1, 2, 3 |
+
+The certified, decision and admitted-publication carriers and the seed's publication (readers.md §4) read loci
+only, which are task 30's, and none of the four items.
+
+### What the builds must respect
+
+Task 9's entry stands whole: a locus is a path and nothing else; origin and authority are families of
+citations and an absence is the store's own optional value; a request cites where a packet carries; the packet is
+a presentation and not a notion; a contract term, a statement and a name stay inert. A presenter outside the store
+takes the store's four parameters and no other, is partial with the relation's premise, and is never made total by
+mapping an omitted origin or authority onto a shape; a context supplies a citation or has none, and never invents
+one. The inert term is the local presentation. A locus is keyed by the state's constant-key assignment, a
+parameter under `inj_on`. Positions are kept across the loop, and no reader of the history applies a transport. A
+request is found at a locus and never by a name, in a theory or in a host; a name is an export root or a
+presentation. Nothing here is a new notion: the row presenters are `Native_Path_Stores`', the located request is
+the path store's index instance, the kept table is `Isabelle_Local_Names`'.
+
+### Open
+
+- The observation naming the problems whose origin or authority has no family to cite, owed at the first
+  construction that assigns one, and the families of owner records and obligation records.
+- A request's carried context is presented through `isabelle_entity_data`'s kind tags, which #3's families
+  replace; the problem assessment's `development_undeclared_subjects` stays presented as positions. Neither is
+  one of the four items.
+- The acceptance obligation of build 1 — the verdict on the read state against the verdict on the exported
+  state — is the build's first proof; if it fails, it goes to the planner before the successor changes.
+- This design was made outside the loop and is a residual.
+
+Recorded 2026-09-22 (task 135's decision; a design, no theory changes).

@@ -99,8 +99,9 @@ section \<open>What the contract rests on\<close>
 
 text \<open>
   Keys continue because a first occurrence in a prefix stays where it was (\<open>first_occurrence_key_append\<close>),
-  and a value's reading depends on the names at the positions it uses (\<open>isabelle_local_entities_agree\<close>,
-  \<open>isabelle_local_root_agree\<close>, \<open>isabelle_equation_left_agree\<close>); both are stated with their notions.
+  and a value's reading depends on the names at the positions it uses (the notion \<open>isabelle_name_reading\<close>,
+  whose instances are the local presentations of entities and roots and the subjects of an entity); both are
+  stated with their notions.
 \<close>
 
 text \<open>
@@ -121,28 +122,19 @@ proof -
     using prefix inside that by blast
   have subjects: "isabelle_entity_subjects names' (isabelle_development_constants E') e=
       isabelle_entity_subjects names (isabelle_development_constants E) e"
-  proof (cases e)
-    case (Isabelle_Base_Constant t) then show ?thesis by simp
-  next
-    case (Isabelle_Development_Constant t) then show ?thesis by simp
-  next
-    case (Isabelle_Frontier_Constant t) then show ?thesis by simp
-  next
-    case (Isabelle_Definition p)
-    have "isabelle_equation_left names' p=isabelle_equation_left names p"
-      by (rule isabelle_equation_left_agree) (rule agree, simp add: Isabelle_Definition isabelle_entity_positions_def)
-    then show ?thesis by (simp add: Isabelle_Definition)
-  next
-    case (Isabelle_Specification p)
-    have "filter (\<lambda>c. c\<in>set (isabelle_development_constants E')) (isabelle_term_constants p)=
-        filter (\<lambda>c. c\<in>set (isabelle_development_constants E)) (isabelle_term_constants p)"
-      by (rule filter_cong[OF refl]) (rule specified[OF Isabelle_Specification])
-    then show ?thesis by (simp add: Isabelle_Specification)
-  next
-    case (Isabelle_Code_Equation p)
-    have "isabelle_equation_left names' p=isabelle_equation_left names p"
-      by (rule isabelle_equation_left_agree) (rule agree, simp add: Isabelle_Code_Equation isabelle_entity_positions_def)
-    then show ?thesis by (simp add: Isabelle_Code_Equation)
+  proof -
+    have "isabelle_entity_subjects names' (isabelle_development_constants E') e=
+        isabelle_entity_subjects names (isabelle_development_constants E') e"
+      by (rule isabelle_name_reading.agree[OF isabelle_entity_subjects_reading]) (rule agree)
+    also have "\<dots>=isabelle_entity_subjects names (isabelle_development_constants E) e"
+    proof (cases e)
+      case (Isabelle_Specification p)
+      have "filter (\<lambda>c. c\<in>set (isabelle_development_constants E')) (isabelle_term_constants p)=
+          filter (\<lambda>c. c\<in>set (isabelle_development_constants E)) (isabelle_term_constants p)"
+        by (rule filter_cong[OF refl]) (rule specified[OF Isabelle_Specification])
+      then show ?thesis by (simp add: Isabelle_Specification)
+    qed simp_all
+    finally show ?thesis .
   qed
   have identity: "isabelle_local_entities names' [e]=isabelle_local_entities names [e]"
     by (rule isabelle_local_entities_agree) (rule agree, simp)
@@ -201,11 +193,11 @@ proof -
       edit_removed=(\<lambda>k. map (\<lambda>d. (development_entity_key (snd S) d,?row d)) (filter (\<lambda>d. entity_kind_of d=k) ?gone)),
       edit_added=(\<lambda>k. map ?f (filter (\<lambda>a. entity_kind_of a=k) ?new))\<rparr>"
     using edit by (simp add: state_edit_of_def edit_applied_def Let_def split: if_splits)
-  have longer: "length ?names\<le>length ?names'" by (simp add: isabelle_appended_names_def)
+  have longer: "length ?names\<le>length ?names'" by (rule isabelle_appended_names_longer)
   have prefix: "isabelle_name_at ?names' i=isabelle_name_at ?names i" if "i<length ?names" for i
-    using that by (simp add: isabelle_appended_names_def isabelle_name_at_def nth_append)
+    using that by (rule isabelle_appended_names_prefix)
   have nth_prefix: "?names'!i=?names!i" if "i<length ?names" for i
-    using that by (simp add: isabelle_appended_names_def nth_append)
+    using that by (rule isabelle_appended_names_nth)
   have old_inside: "\<forall>i\<in>set (isabelle_entity_positions g). i<length ?names" if "g\<in>set ?E" for g
     using that inside by (auto simp: state_positions_def)
   have new_inside: "\<forall>i\<in>set (isabelle_entity_positions g). i<length ?names'" if "g\<in>set ?E'" for g
@@ -297,10 +289,9 @@ proof -
     if t: "t\<in>set (fst S)" for t
   proof -
     have "isabelle_local_root ?names' t=isabelle_local_root ?names t"
-    proof (rule isabelle_local_root_agree)
+    proof (rule isabelle_local_root_appended)
       fix i assume "i\<in>set (isabelle_term_positions t)"
-      then have "i<length ?names" using t inside by (auto simp: state_positions_def)
-      then show "isabelle_name_at ?names' i=isabelle_name_at ?names i" by (rule prefix)
+      then show "i<length ?names" using t inside by (auto simp: state_positions_def)
     qed
     then show ?thesis by (simp add: root_row_def)
   qed

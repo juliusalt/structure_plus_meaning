@@ -1,5 +1,5 @@
 theory Native_Control_Syntax_Candidate
-  imports Native_Control_Compile_Profile Filtered_Native_Questions
+  imports Native_Control_Compile_Profile Filtered_Native_Questions Development_Entity_Keys
 begin
 
 section \<open>Exact finite union with an explicit enumeration boundary\<close>
@@ -51,16 +51,21 @@ definition union_candidates where
   "union_candidates=[Original_Union,Enumerated_Union,Left_Projection]"
 
 definition union_question where
-  "union_question pairs=filtered_development_question union_candidates
+  "union_question pairs=keyed_development_question (first_occurrence_key union_candidates) union_candidates
     (\<lambda>m. union_observation m pairs)"
 
 theorem union_admission_original_condition:
   assumes question: "union_question pairs=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  shows "i<length union_candidates \<and> union_original_condition (union_candidates!i) pairs"
-  using filtered_development_admission[OF question[unfolded union_question_def] admission selected]
-  by (simp only: union_observation_exact)
+    and selected: "finite_path (first_occurrence_key union_candidates m)\<in>set accepted"
+    and member: "m\<in>set union_candidates"
+  shows "union_original_condition m pairs"
+proof -
+  have "union_observation m pairs"
+    by (rule keyed_faceted_admission_at[OF first_occurrence_key_inj_on
+      question[unfolded union_question_def keyed_development_question_def] admission selected member]) simp
+  then show ?thesis by (simp only: union_observation_exact)
+qed
 
 definition union_subjects where
   "union_subjects xs=(let carriers=map (\<lambda>t.

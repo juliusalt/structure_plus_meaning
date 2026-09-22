@@ -14,8 +14,8 @@ lemma absent_development_admission [simp]:
   by (simp add: native_development_admission_def absent_development_report_def)
 
 lemma absent_native_choice [simp]:
-  "native_admitted_choice subjects question absent_development_report = None"
-  by (simp add: native_admitted_choice_def native_admitted_subjects_def split: option.splits)
+  "keyed_admitted_choice key subjects question absent_development_report = None"
+  by (simp add: keyed_admitted_choice_def keyed_admitted_subjects_def split: option.splits)
 
 lemma absent_adapter_install [simp]:
   "admitted_guard_install body absent_development_report target = None"
@@ -96,14 +96,14 @@ definition receiving_refinement_question where
     receiving_facets optional_view_observation"
 
 definition receiving_refinement_choice where
-  "receiving_refinement_choice report = native_admitted_choice receiving_programs
-    (receiving_refinement_question ()) report"
+  "receiving_refinement_choice report = keyed_admitted_choice (first_occurrence_key receiving_programs)
+    receiving_programs (receiving_refinement_question ()) report"
 
 theorem receiving_refinement_original_conditions:
   assumes chosen: "receiving_refinement_choice report = Some program"
     and facet: "facet \<in> set receiving_facets"
   shows "receiving.requirement program facet"
-  using faceted_native_choice[OF chosen[unfolded receiving_refinement_choice_def
+  using keyed_admitted_choice_condition[OF first_occurrence_key_inj_on chosen[unfolded receiving_refinement_choice_def
     receiving_refinement_question_def] facet]
   by (simp only: receiving.observation_exact)
 
@@ -112,7 +112,7 @@ theorem receiving_refinement_selected_program:
   shows "program = (Project_Optional,Keep_Source_Reader)"
 proof -
   have all: "\<And>f. f \<in> set receiving_facets \<Longrightarrow> optional_view_observation program f"
-    by (rule faceted_native_choice[OF chosen[unfolded receiving_refinement_choice_def
+    by (rule keyed_admitted_choice_condition[OF first_occurrence_key_inj_on chosen[unfolded receiving_refinement_choice_def
       receiving_refinement_question_def]])
   obtain p q where program: "program=(p,q)" by (cases program) auto
   show ?thesis using all[of Complete_Optional_View] all[of Original_Source_Reader]

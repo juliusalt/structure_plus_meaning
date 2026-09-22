@@ -5,7 +5,7 @@ begin
 definition admitted_conditional_applications where
   "admitted_conditional_applications methods facets S q obs report = map_option
     (\<lambda>m. conditional_application_run m S q obs)
-    (native_admitted_choice methods (faceted_native_question methods facets
+    (keyed_admitted_choice (first_occurrence_key methods) methods (faceted_native_question methods facets
       (conditional_application_observation S q obs)) report)"
 
 theorem admitted_conditional_applications_original:
@@ -16,14 +16,14 @@ theorem admitted_conditional_applications_original:
     "(t,V,H) |\<in>| A \<Longrightarrow> finite_schema_instance S V t H"
     "(t,V,H) |\<in>| A \<Longrightarrow> finite_schema_material_satisfied S V"
 proof -
-  obtain m where choice: "native_admitted_choice methods (faceted_native_question methods facets
+  obtain m where choice: "keyed_admitted_choice (first_occurrence_key methods) methods (faceted_native_question methods facets
       (conditional_application_observation S q obs)) report=Some m"
     and actual: "A=conditional_application_run m S q obs"
     using result by (auto simp: admitted_conditional_applications_def split: option.splits)
   have head: "conditional_application_observation S q obs m Requested_Result"
-    by (rule faceted_native_choice[OF choice requested])
+    by (rule keyed_admitted_choice_condition[OF first_occurrence_key_inj_on choice requested])
   have rule: "conditional_application_observation S q obs m Original_Rule"
-    by (rule faceted_native_choice[OF choice original])
+    by (rule keyed_admitted_choice_condition[OF first_occurrence_key_inj_on choice original])
   have wanted: "A\<noteq>{||} \<and> fBall A (\<lambda>(t,V,H). t=q)"
     using head by (simp only: actual conditional_application_observation.simps Let_def; blast)
   have checked: "fBall A (\<lambda>(t,V,H). finite_schema_instance S V t H \<and>

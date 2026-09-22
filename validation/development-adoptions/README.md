@@ -6,22 +6,26 @@ again and requires its retained verdict and publication words (nothing the answe
 that its admitted, certified generation publishes over the incumbent it was judged against, installs the theory
 Isabelle accepted when the answer was judged, byte for byte, as a repository theory imported by the
 layer's boundary `Native_Execution_Refinements`, runs the ordinary incremental check (every report
-word equal to its retained word), and judges the answer once more in the adopted workspace. That last
-judgment defined the answer state as the request state and judged the published state against itself
+word equal to its retained word), and then checks the adoption's evidence with the receipt it retains
+and that the check's accepted context records the installed theory at the judged frame's digest
+(`frame_sha256`). It refuses a theory of the answer's name that already stands and a tree whose
+`theories/`, `ROOT` or `tools/` differ from its commit, which it retains as `revision`, and writes its
+receipt here itself. Until task 265 its last step judged the answer once more in the adopted workspace,
+which defined the answer state as the request state and judged the published state against itself
 (DECISIONS.md, "An adoption is established by its evidence; the published state is never judged against
 itself"): the `published` step of both receipts below is that self-comparison, kept as it ran, and it
-established nothing about either answer. A refused step withdraws the
-installation.
+established nothing about either answer. A refused step withdraws the installation.
 
 An answer is adopted exactly when its evidence holds (`development_answer.adoption_evidence`): the
-request's state adopts through the boundary, exactly one receipt here binds the answer's `answer_sha256`
-as adopted, not a control and not withdrawn, the installed theory has the digest the receipt retained at
-installation, and ROOT declares it once and the boundary imports it. Receipts are found by
-`answer_sha256`, not by their file name. Both receipts gained `answer_sha256` after they were written
-(task 263): each is derived from the answer of its record and marked so under `derived`; no step was
-rewritten. What no workspace content establishes, that the published state is the answer state the
-judgment produced, is reported as `unverified` wherever an adoption is. The receipt keeps every step and the measured seconds of every executed recipe beside
-its retained seconds, as observations: no ranking or selection is derived from them, because no
+request's state adopts through the boundary, exactly one receipt here binds the answer's `answer_digest`
+(the SHA-256 of its canonical content, which its theory name abbreviates) as adopted, not a control and not
+withdrawn, the theory the receipt names at installation has the digest it retained there, and ROOT declares
+it once and the boundary imports it. Receipts are found by `answer_digest`, not by their file name. Both
+receipts gained that digest after they were written (task 263, named `answer_digest` since task 265): each
+is derived from the answer of its record and marked so under `derived`; no step was rewritten. What no
+workspace content establishes, that the published state is the answer state the judgment produced, is
+reported as `unverified` wherever an adoption is. The receipt keeps every step and the measured seconds of
+every executed recipe beside its retained seconds, as observations: no ranking or selection is derived from them, because no
 internal account of a physical measurement exists yet.
 
 Answers are framed where they are adopted: their theory imports exactly the boundary's imports, and

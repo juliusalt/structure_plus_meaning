@@ -166,7 +166,7 @@ def unrecorded_adoptions(records=RECORDS, project=ROOT):
                 for path in records.glob('*.json')}
     return sorted(file for file, receipt in development_answer.adoption_receipts(project).items()
                   if receipt.get('status') == 'adopted' and receipt.get('control') is False
-                  and 'withdrawn' not in receipt and receipt.get('answer_sha256') not in recorded)
+                  and 'withdrawn' not in receipt and receipt.get('answer_digest') not in recorded)
 
 
 def retained_seconds(record_path):

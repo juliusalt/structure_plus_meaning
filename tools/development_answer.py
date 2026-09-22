@@ -125,45 +125,41 @@ def adoption_evidence(answer, project=ROOT, receipt=None):
 
     The connections: the request's state adopts through its boundary; exactly one retained receipt, found by
     the answer's digest (or the supplied one), binds it as adopted, not a control and not withdrawn; the
-    installed theory has the digest that receipt retained; ROOT declares it once and the boundary imports it.
+    theory the receipt names at installation has the digest it retained there; ROOT declares the answer's theory
+    once and the boundary imports it.
     `present` is whether a theory of the answer's name stands at all; `obstruction` lists the connections
     that failed; `unverified` is the residual no workspace content establishes."""
     state = STATES[answer['request']['state']]
     name, digest = answer_name(answer), answer_digest(answer)
     theory = project / 'theories' / (name + '.thy')
     candidates = {'supplied': receipt} if receipt is not None else {
-        file: found for file, found in adoption_receipts(project).items() if found.get('answer_sha256') == digest}
+        file: found for file, found in adoption_receipts(project).items() if found.get('answer_digest') == digest}
     bound = sorted(file for file, found in candidates.items()
-                   if found.get('answer_sha256') == digest and found.get('status') == 'adopted'
+                   if found.get('answer_digest') == digest and found.get('status') == 'adopted'
                    and found.get('control') is False and 'withdrawn' not in found)
-    retained = (candidates[bound[0]].get('steps', {}).get('installation', {}).get('theory_sha256')
-                if len(bound) == 1 else None)
-    present = hashlib.sha256(theory.read_bytes()).hexdigest() if theory.is_file() else None
+    installation = candidates[bound[0]].get('steps', {}).get('installation', {}) if len(bound) == 1 else {}
+    retained = installation.get('theory_sha256')
+    named = installation.get('theory') or 'theories/' + name + '.thy'
+    present = hashlib.sha256((project / named).read_bytes()).hexdigest() if (project / named).is_file() else None
     boundary = state.get('layer')
     root = (project / 'ROOT').read_text().split() if (project / 'ROOT').is_file() else []
     layer = project / 'theories' / ((boundary or '') + '.thy')
     imports = investigate.theory_imports(layer.read_text(), boundary) if boundary and layer.is_file() else []
     connections = {
         'state': {'state': answer['request']['state'], 'boundary': boundary, 'holds': boundary is not None},
-        'receipt': {'answer_sha256': digest, 'found': sorted(candidates), 'bound': bound, 'holds': len(bound) == 1},
-        'installed': {'theory': 'theories/' + name + '.thy', 'retained_sha256': retained, 'present_sha256': present,
+        'receipt': {'answer_digest': digest, 'found': sorted(candidates), 'bound': bound, 'holds': len(bound) == 1},
+        'installed': {'theory': named, 'retained_sha256': retained, 'present_sha256': present,
                       'holds': present is not None and present == retained},
         'declared': {'declarations': root.count(name), 'holds': root.count(name) == 1},
         'imported': {'boundary': boundary, 'holds': name in imports}}
     obstruction = [key for key, connection in connections.items() if not connection['holds']]
-    return {'theory': name, 'answer_sha256': digest, 'present': theory.is_file(), 'connections': connections,
+    return {'theory': name, 'answer_digest': digest, 'present': theory.is_file(), 'connections': connections,
             'holds': not obstruction, 'obstruction': obstruction, 'unverified': UNVERIFIED}
-
-
-def adopted(answer, project=ROOT):
-    """Whether a theory of the answer's name stands, which is not adoption: the adoption tool reads it to refuse
-    adopting an answer whose name the workspace already holds, until its own evidence step replaces it."""
-    return adoption_evidence(answer, project)['present']
 
 
 def adoption_report(answer, evidence, base):
     """The harness's report where a theory of the answer's name stands: no judgment, only the evidence."""
-    return {'status': 'adopted' if evidence['holds'] else 'obstructed', 'answer_sha256': evidence['answer_sha256'],
+    return {'status': 'adopted' if evidence['holds'] else 'obstructed', 'answer_digest': evidence['answer_digest'],
             'request': answer['request'], 'base': str(base), 'theory': evidence['theory'], 'evidence': evidence,
             'unverified': evidence['unverified'],
             **({} if evidence['holds'] else {'obstruction': evidence['obstruction']})}

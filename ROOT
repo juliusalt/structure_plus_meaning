@@ -1626,6 +1626,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     RRA_Linked_Record_Candidates
     Tree_Map_Indexes
     First_Index_Trees
+    Merge_Sort_Keys
     Ordered_Member_Trees
     Member_Tree_Indexes
     Ordered_Finite_Rows
@@ -1725,6 +1726,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Isabelle_Renaming
     Isabelle_State_Difference
     Isabelle_Local_Names
+    Isabelle_Name_Trees
     Factor_Finite_Ground_Evaluation
     Isabelle_Acceptance
     Isabelle_Entity_Export

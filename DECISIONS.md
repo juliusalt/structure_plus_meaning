@@ -11856,6 +11856,10 @@ recursive one, and building it pushes each child once instead of once per later 
   equations of the pattern forest (`pattern_forest_syntax.simps`, `_interior.simps`, `_bindings.simps`,
   `_roots.simps`), the second equation of `pattern_forest_slots` and `pattern_forest_cons_slots`, which stated the
   recursion over the heads 2 and 3 that the flat placement replaces.
+- *Correction (task 153, 2026-09-22):* `syntax_branch_eq_iff` (two branch positions are one exactly when their
+  children and addresses are) is a contract of RRA_Syntax_Forests, [simp], proved from the branch's injectivity and
+  disjointness; its copies in Factor_Pattern_Forests and RRA_Collection_Frames are retired, their uses reading the
+  founding contract.
 
 Outside the founding theories no proof computes a position: `syntax_branch.simps` leave the simpset after the
 contracts are proved, `family_ports_def`, `syntax_record_ports_def` and `fresh_address_def` are unfolded nowhere

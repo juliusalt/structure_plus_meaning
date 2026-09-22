@@ -1,5 +1,5 @@
 theory Native_Table_Reach
-  imports Native_Path_Stores
+  imports Native_Path_Store_Indexes
 begin
 
 section \<open>Reach over a table of rows is a native definition\<close>
@@ -67,24 +67,9 @@ lemma native_reach_family:
   assumes member: "(d,rs)\<in>set reach_definitions"
     and plain: "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}"
   shows "native_rule_family native_reach_system d rs"
-proof (rule native_rule_family.intro)
-  show "schema_system_formed native_reach_system" by (rule native_reach_formed)
-  have distinct: "distinct (map fst reach_definitions)" by (simp add: reach_definitions_def)
-  show "((d,c),S)\<in>system_clauses native_reach_system \<longleftrightarrow>
-      (\<exists>F. (c,F)\<in>set rs \<and> S=decode_finite_schema F)" for c S
-  proof -
-    have "((d,c),S)\<in>system_clauses native_reach_system \<longleftrightarrow>
-        (\<exists>rs'. (d,rs')\<in>set reach_definitions \<and> (\<exists>F. (c,F)\<in>set rs' \<and> S=decode_finite_schema F))"
-      unfolding native_reach_system_def finite_native_reach_def by (rule finite_rule_program_clause)
-    then show ?thesis using eq_key_imp_eq_value[OF distinct member] member by blast
-  qed
-  have site: "d\<in>fst ` set reach_definitions" using member by (rule rev_image_eqI) simp
-  show "schema_call_formed native_reach_system d t \<longleftrightarrow> term_formed t" for t
-    unfolding native_reach_system_def finite_native_reach_def
-    by (rule finite_rule_program_call[OF native_reach_formed[unfolded native_reach_system_def
-      finite_native_reach_def] site])
-  show "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}" by (rule plain)
-qed
+  unfolding native_reach_system_def finite_native_reach_def
+  by (rule finite_rule_program_family[OF native_reach_formed[unfolded native_reach_system_def
+    finite_native_reach_def] _ member plain]) (simp add: reach_definitions_def)
 
 lemma native_reach_definitions:
   "system_definitions native_reach_system=fst ` set reach_definitions"
@@ -145,7 +130,9 @@ inductive_set table_reached :: "reach_table \<Rightarrow> bool list set" for T w
 lemma reach_table_lookup:
   assumes formed: "reach_table_formed T" and row: "(k,r,ps)\<in>set T"
   shows "store_lookup (path_store T) k=Some (r,ps)"
-  using path_store_lookup[of T k "(r,ps)"] formed row by (simp add: reach_table_formed_def)
+  using carrier_index.query_search[OF Native_Path_Store_Indexes.path_store_carrier_index,
+      where c=T and q=k and v="(r,ps)"]
+    formed row by (simp add: reach_table_formed_def)
 
 section \<open>Native reach is the least closure\<close>
 
@@ -381,11 +368,11 @@ lemma native_reached_search:
 proof -
   let ?c="reach_table_term T"
   have cf: "term_formed ?c" by simp
-  have lookup: "store_lookup (path_store T) k=Some (r,ps)" by (rule reach_table_lookup[OF formed row])
   have search: "(reach_search,Pair_Term ?c (Pair_Term (path_term k)
       (store_term reach_row_value (path_store T))))\<in>positive_meaning native_reach_system"
-    using cf holds_row lookup
-    by (auto simp: reach_searches.exact[OF reach_row_value_formed] path_term_injective)
+    using native_carrier_index.site_query[OF reach_searches.index[OF reach_row_value_formed],
+        where c=T and q=k and x="?c"] formed row cf holds_row
+    by (auto simp: reach_table_formed_def)
   have "(reach_reached,evaluate_pattern (native_values [?c,path_term k])
       (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning native_reach_system"
     by (rule reach_reached_family.native_step[where c="[0]" and

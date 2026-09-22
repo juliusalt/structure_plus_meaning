@@ -1,5 +1,5 @@
 theory Keyed_Native_Evaluation
-  imports Keyed_Finite_Sets Keyed_Demanded_Sites Ordered_Finite_Terms Right_Ordered_Terms Factor_Workflow_Execution_Sharing
+  imports Keyed_Finite_Sets Member_Tree_Indexes Keyed_Demanded_Sites Ordered_Finite_Terms Right_Ordered_Terms Factor_Workflow_Execution_Sharing
     Factor_Finite_Application_Proofs Factor_Finite_Native_Proof_Construction
 begin
 
@@ -23,7 +23,7 @@ lemma keyed_inference_enabled_exact:
   assumes inverse: "\<And>x. unkey (key x)=x"
   shows "keyed_inference_enabled key F X=finite_inference_enabled F (fset X)"
   by (simp only: keyed_inference_enabled_def finite_inference_enabled_def Let_def
-    keyed_members_subset[OF inverse] less_eq_fset.rep_eq)
+    keyed_set_index.members_subset[OF keyed_set_index.intro[OF inverse]] less_eq_fset.rep_eq)
 
 definition keyed_inference_next ::
     "('a \<Rightarrow> 'k::linorder) \<Rightarrow> ('k \<Rightarrow> 'a) \<Rightarrow> ('a\<times>('i\<times>'a) fset) fset \<Rightarrow> 'a fset \<Rightarrow> 'a fset \<Rightarrow> 'a fset" where
@@ -65,7 +65,7 @@ proof (rule fset_eqI)
   fix w
   show "w |\<in>| keyed_inference_witnesses key project F X \<longleftrightarrow> w |\<in>| finite_inference_witnesses project F X"
     by (simp only: keyed_inference_witnesses_def Let_def ffmember_filter finite_inference_witness_member
-      keyed_members_subset[OF inverse])
+      keyed_set_index.members_subset[OF keyed_set_index.intro[OF inverse]])
 qed
 
 definition keyed_labelled_history where
@@ -129,7 +129,7 @@ proof -
       (\<lambda>(q,H). fBall (fimage snd H) (\<lambda>r. RBT.lookup (ordered_member_tree (fimage key D)) (key r)\<noteq>None)) \<longleftrightarrow>
     finite_program_demand_closed P D"
     by (simp only: finite_program_demand_closed_def finite_program_rule_table_def
-      keyed_members_subset[OF inverse])
+      keyed_set_index.members_subset[OF keyed_set_index.intro[OF inverse]])
   show ?thesis
     by (simp only: keyed_program_history_def finite_program_history_def Let_def closed
       finite_program_evaluation_ready_def keyed_labelled_history_exact[OF inverse])
@@ -161,7 +161,7 @@ proof -
   have closed: "fBall (finite_program_rule_table P D)
       (\<lambda>(q,H). fBall (fimage snd H) (\<lambda>r. RBT.lookup (ordered_member_tree (fimage key D)) (key r)\<noteq>None)) \<longleftrightarrow>
     finite_program_demand_closed P D"
-    by (simp only: finite_program_demand_closed_def keyed_members_subset[OF inverse])
+    by (simp only: finite_program_demand_closed_def keyed_set_index.members_subset[OF keyed_set_index.intro[OF inverse]])
   obtain A where settled: "keyed_inference_settled key unkey (finite_program_rule_table P D) {||}=Some A"
     and result: "fset A=finite_inference_result (finite_program_rule_table P D) {||}"
     by (rule keyed_inference_settled_result[OF inverse])
@@ -171,7 +171,7 @@ proof -
     fix q
     show "q |\<in>| ffilter (\<lambda>q. RBT.lookup (ordered_member_tree (fimage key A)) (key q)\<noteq>None) D \<longleftrightarrow>
         q |\<in>| ffilter (\<lambda>q. q\<in>finite_inference_result (finite_program_rule_table P D) {||}) D"
-      by (simp only: ffmember_filter keyed_member_lookup[OF inverse] result[symmetric])
+      by (simp only: ffmember_filter keyed_set_index.member_query[OF keyed_set_index.intro[OF inverse]] result[symmetric])
   qed
   show ?thesis
     by (simp only: keyed_program_evaluation_def finite_program_evaluation_def Let_def closed
@@ -199,6 +199,14 @@ definition native_call_unkey :: "local_address option definition_site\<times>rig
 
 lemma native_call_inverse: "native_call_unkey (native_call_key q)=q"
   by (simp add: native_call_key_def native_call_unkey_def)
+
+text \<open>
+  The settled calls of a native program are a keyed set under the call key: the index notion's instance
+  whose key distinguishes by @{thm [source] native_call_inverse}.
+\<close>
+
+interpretation native_call_set: keyed_set_index native_call_key native_call_unkey
+  by (rule keyed_set_index.intro) (rule native_call_inverse)
 
 text \<open>
   The demand of a stage is the closure of its requests, read by the traversal of the demanded sites; with

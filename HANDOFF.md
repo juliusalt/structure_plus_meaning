@@ -7,10 +7,9 @@ development itself is an entry of `DECISIONS.md` and here a reference; what a ta
 ## Graph
 
 The Q7 order in the ledger sets the lines, under the owner's two directions of 2026-09-19 — structure is explicit and
-octets are inert; native definitions are normative. The verdict of a kind is the chain that decides the run's length;
-request construction, the step after it, is designed beside it; the rows' retirement, the decomposition, the index
-notion's re-citations and the keyed question run beside that chain; the seed recipe's cost and the proof base sit
-beside everything.
+octets are inert; native definitions are normative. The verdict of a kind and request construction, the step after it,
+are the chains that decide the run's length; the rows' retirement, the decomposition, the index notion's consolidation
+and the keyed question run beside them; the seed recipe's cost and the proof base sit beside everything.
 
 **Landing.** A build or fix is complete when it has landed: its check passes, its review accepts it, the finalizer
 commits it, and only then does the harness complete it and its reviews. A commit kept out of main only by the one
@@ -25,20 +24,22 @@ the mentions notion; the family traversal made generic over the row reading, #34
 selection and support family, and the declaration store by constant key); roots with the permitted
 difference (#38, after #78; the search of a presented state's rows by row key, for any state) and unreached (#40: the
 reach table as a reusable presentation, and the one measurement of a judgment, run on the rows of the concrete
-presenter #101, whose build #40 waits on); the entry rule, its contract and two instances (#42, to wait on request construction's first
-build, the introduction of `request_presents` for constructed requests); store absence and the witnesses (#44), last,
+presenter #101, whose build #40 waits on); the entry rule, its contract and two instances (#42, after #106, the
+introduction of `request_presents` for constructed requests); store absence and the witnesses (#44), last,
 so that no positive field reaches an absence. Roots stay a store with distinct keys, #38 stating the roots field under a
 carried condition on their order, owned by the exporter. The corrections of #36, #38 and #40 came from design 95 (q36)
 before any of them started.
 
-**Request construction (#100).** Task 95's entry (accepted 2026-09-22), the Q7 order's step after the verdict: a native
+**Request construction (#106–#114).** Task 95's entry (accepted 2026-09-22), the Q7 order's step after the verdict: a native
 check over the request state's rows — a proposed body is admitted exactly when it lists the least context and the
 support, production being an executor's (the HOL constructor, exported, the first) — composing no reach closure, the
 least context being one step (a declaration mentions nothing); five fields: support complete, scope cited, declarations
-cited, context sound, support sound. Its builds, which #100 briefs once the entry lands: B1, the introduction of
-`request_presents` for constructed requests in `Development_Request_Keys` (nothing unlanded; #42 is to wait on it); B2
-after #36; B3 after #38, #40 and the presenter (#101); B4 — the construction, its contract, the two kinds, admission at a
-locus and a measurement — after B1–B3.
+cited, context sound, support sound. Its builds, briefed by #100 from the landed entry (`8c641235`), each with its
+review: #106, the introduction of `request_presents` for constructed requests in `Development_Request_Keys` (nothing
+unlanded; #42 waits on it); #108, support complete and scope cited, after #36; #110, the three search fields, after #38,
+#40, #101 and #108; #112, the construction — rule, program, contract, conditions and corollaries, admitting a request
+at its locus through the store search with #97's contract for held values — after #106, #108, #110 and #97; and #114,
+the held measurement of one construction, after #112.
 
 **The rows line (#97, #30).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
 a locus (#26), the presenters (#28), the store's (#83) and the rows' fix (#84: the formedness of every row value a
@@ -54,18 +55,21 @@ is a row at its problem's locus, under a sixth role — and the native schema (#
 decides only I≠[] at a presented parent, reading the parent's row through `Development_Located_Rows`, and
 `development_state_poses` is a premise only of `native_decomposition_reduction`, with a marked correction to #66's entry
 (q35). #94 makes the state reading native through #34's traversal, `native_decomposition_reduction` then resting on the
-native application; #64 (the library at the loop's problems, so that a decomposed problem is refused issue) waits on
+native application; a definition's declaration it reads through #36's declaration store, existence positively and
+uniqueness as #36's carried condition, so it continues when #36 lands (q37, `v2.py after 94 36`). #64 (the library at
+the loop's problems, so that a decomposed problem is refused issue) waits on
 #94, #58 and #30, and its brief takes #94's contract when #94 lands. The build that applies a decomposition is Open 26.
 
-**The index notion (#76, #74, #96, #86).** The notion (#68) and its host and native instances (#70, #72) have landed.
-#76 (the readings' and engine's seven uses, 159 theories) was rejected three times for one argument left re-made
-(`demand_positions_lookup` proved from `RBT.lookup_bulkload`; its third round kept it as a decision against its brief);
-its brief is now that finding alone — re-proved from the instance or deleted, a reason to keep it asked of the planner
-first — queued for a fourth round;
-#74 (the stores' and native tables' six uses, 359 theories) resumes when the one tree is free; #96 briefs, after #74,
-what both reviews leave — arguments made twice, to be stated once in `Carrier_Indexes`, and fourteen theories still
-citing raw carrier facts. #86 advances the proof base after #76; the next advance follows #74's and #96's landings
-(Q10).
+**The index notion (#115–#118, #86, #105).** The notion (#68), its host and native instances (#70, #72) and both
+re-citations (#74 `37a97cad`, #76 `4836387c`) have landed. #96's brief (placed 05:37) split what both reviews leave:
+#115 states the arguments made twice once in `Carrier_Indexes` (members found iff contained, the `= Some`/`≠ None`
+step at four instances, the keyed set's pre-notion copies, `ordered_remdups_fold`), one landing low in the import graph
+(about 378 theories); #117 re-cites ten Factor finite compilation theories and two development theories to the
+instances, after #115 and #97 (about 466 theories, 194 beyond #115's), and writes the `Native_Path_Stores` and
+`Development_Located_Rows` rows as #97 and it leave them, where #97 lands without its map rows (q40, review 97). #86
+advanced the proof base to
+`4836387c` (both re-citations; accepted 05:57); #105 advances it again once #117 has landed (`v2.py after 105 117`),
+one advance for both landings, and #119 then retains the receipts from a check of its own HEAD (Q10, Q11).
 
 **The keyed question (#88–#93).** The keyed packet costs 2.1–3.8 times the index form, growing with its candidates:
 #88 attributes and refines that growth, held, after #86; #90 switches the 20 overnight native-control theories after
@@ -76,16 +80,18 @@ and #30. q33's facts, unread by the planner, are named in #90's and #92's inputs
 engine's in-place refinements are notions; the recipe's next refinement (Open 27) is briefed from its entry.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
-includes their reviews. The deepest chain is 6 (#45 after #44, #42, #38/#40, #36); request construction's builds hang
-after the verdict builds they consume. Beside the chain: #76, #97, the presenter #101 (which #40 waits on), #100, #94,
-#74, #96, #30 with the answer reader's refusal #103 after it, #85, #86 and the keyed line.
+includes their reviews. The deepest chains are 5: #45 (after #44, #42, #38/#40, #36) and #114 (after #112, #110,
+#38/#40, #36). Beside them: #97, the presenter #101 (which #40 waits on), #106, #94, #30 with the answer reader's
+refusal #103 after it, #85, the retentions #120 and #119 (after #105), the keyed line and the index consolidation (#115,
+then #117).
 
-**Order** (`95 76 77 97 98 36 37 101 102 100 38 39 40 41 42 43 44 45 94 86 74 75 96 30 31 103 104 85 88 89 90 91 64 65 92 93`).
-#95's landing, #76's round and #97 (which #30 waits on) first; then #36 at the verdict chain's head and the presenter
-#101 (which #40 waits on), with the brief #100 (request construction's builds); the verdict chain, which takes a slot
-whenever one of its tasks is ready; beside it the
-decomposition's #94, the base advance, #74 and its consolidation, #30, #85 and the keyed line. A parked task whose hold
-nears its end resumes first by itself.
+**Order** (`120 97 98 105 119 36 37 38 39 40 41 42 43 44 45 108 109 110 111 112 113 114 94 115 116 117 118 30 31 103 104 85 88 89 90 91 64 65 92 93`).
+The retention #120 first (every landing check re-executes all recipes until it lands) and #97's third round (#30 waits
+on it); #105 and then the retention #119 as soon as they are ready, since every
+check between #115's landing and them rebuilds several hundred theories and re-executes lagging recipes; then #36 at
+the verdict chain's head and #106 (which #42 waits on); the verdict and request chains, which take a slot whenever one
+of their tasks is ready; beside them the decomposition's #94, the index line (#117 close after #115, so that one
+advance covers both), #30, #85 and the keyed line. A parked task whose hold nears its end resumes first by itself.
 
 ## Decisions
 
@@ -177,7 +183,7 @@ judgment's path.
   structural rows, acceptance positive; a refinement applies a notion, and an index of a carrier by a key is one; the
   development notions are one notion, a row at a locus; a decomposition that applied is a row at its problem's locus
   (task 2's entry amended with it); request construction is a native definition over the state's rows, a check
-  admitting a proposed body (#95, accepted 2026-09-22).
+  admitting a proposed body (#95, `8c641235`).
 - **The engine line** #5, #7 (`6227819a`, `44738c20`): constructed applications and `Positioned_Native_Evaluation`
   (`positioned_program_evaluation_exact`); the machinery's reach 171.8 s → 4.35 s; the certificate path left keyed.
 - **The rows line** #22 `Development_Loci` (`612ee5a9`; consumers' names in `.build/tasks/22/names.md`; every program
@@ -193,19 +199,48 @@ judgment's path.
   only), #78 `Isabelle_Local_Names` (`93e45ed6`: the comparison of local presentations across two states, for #38), #32
   `Development_Request_Keys` (`0381bc5f`: `request_presents`, consuming the locus, the rows' relation and the request at
   a locus by name), #34 `Development_Verdict_Statements` (`d12eea07`: the answer state's `statements` component and the
-  formed field over `kinds_present`).
+  formed field over `kinds_present`), #101 `Development_State_Presenter` (`4509776a`: `state_presenter` returns
+  `state_rows_of S` exactly when `state_presentable S`, the conjunction of `state_presents`' three conditions with their
+  owners; entity rows keyed by `development_entity_key`).
+- **Request construction** #106 `request_presents_constructed` in `Development_Request_Keys` (`1add503f`: the
+  relation's introduction for a request constructed from the state, its entity-key and positional conjuncts derived).
 - **The question's candidates** #54 the keyed form of `Filtered_Native_Questions` (`ff37efef`) and #56 the contract
   question keyed (`312a2ca2`, keys in `Development_Entity_Keys`).
 - **The decomposition** #60 `Development_Decomposition_Soundness` (`ffe12b46`), #58 `Development_Repair_Rows`
   (`b3b185bc`) and #62 `Development_Native_Decomposition` (`b535ef8f`).
 - **The index notion** #68 `Carrier_Indexes` (`a275a84e`), #70 the host instances (`b1dc9193`), #72
-  `Native_Path_Store_Indexes` (`202a2276`).
+  `Native_Path_Store_Indexes` (`202a2276`), #74 the stores' and native tables' six uses re-cited (`37a97cad`), #76 the
+  readings' and engine's seven uses re-cited (`4836387c`).
 - **The checking and tools** #12/#17, #19, #20, #15 (`9bb1dd7a`, `6227819a`, `91979be0`, `2edcabd3`); #48 the replay's
   `unproduced` (`3aaddd96`); #50 the check's named refusals (`955b34bb`); #79 the probe's 60 s default (`1e7ed068`);
-  #81 the receipts retained (`cf24195e`); #82 the base advanced to `b1328831`; #80 the seed recipe's formation split,
+  #81 the receipts retained (`cf24195e`); #82 the base advanced to `b1328831`, #86 to `4836387c` (425.48 s, 409
+  rebuilt, every word equal); #80 the seed recipe's formation split,
   extended at arity 1 (`2191409d`; the recipe 140.8 s before its first round, 105.50 → 93.04 s held for its third).
-- **The plan** #49 (`1634d456`). **Briefs** #1, #10, #11, #13, #14, #16, #87, #99. **Investigation** #53
+- **The plan** #49 (`1634d456`). **Briefs** #1, #10, #11, #13, #14, #16, #87, #96, #99, #100. **Investigation** #53
   (`.build/tasks/30/readers.md`).
+
+- **#85** (design), committed `60623c6a`: DECISIONS.md "The in-place refinements apply two notions: a check made where
+  its premise is established, and a generator of the accepted candidates" — `established_premise`/`checked_premise`
+  (theory `Established_Premises`) and `candidate_generator` (`Candidate_Generators`), neither built yet; `Let` and
+  `sup_commute` case-specific; the seed transactions' formation re-check the first notion at a constructor's contract.
+  Its builds: #126 (the notions' theories), #128 (the seed transactions), #130 and #132 (the re-citations).
+- **#97** `b4c103e6`, in a fourth round: the store search's contract for values held formed where the store holds
+  them (the `exact_held` clause) and the reach's family an instance of `finite_rule_program_family`; its two map rows,
+  left as the merge-base had them, are #117's.
+- **#115** `fda985c7`, its landing in a second round: the index notion's repeated arguments stated once in
+  `Carrier_Indexes` (members found iff contained, the lookup's `= Some` to `≠ None` step, the keyed set's pre-notion
+  copies, the tree insertion of `ordered_remdups_fold`); landing check 460 s, 1816 theories (1436 reused). #117 takes
+  its map and DECISIONS.md follow-ups.
+- **#120** `518ac1e7`: the receipts of an accepted check of `1add503f` retained (158 files under `validation/`); the
+  landing check after it 21.18 s, every recipe unchanged. Reuse reads only `validation/reconstruction/`, not a base's
+  `recipes/` or `exports-context/`, so a base advance removes its own.
+- **#122** `348c625f`: a check's host-test record names each failing test (`failing`: its outcome, its id and the last
+  eight lines of its traceback, beside `tail`), parsed from unittest's printed report.
+- **#88** `cde3faf2`: the held attribution (`.build/tasks/keyed-question-cost/attribution.md`: the key search at most
+  0.05 ms, the cost the native reading of the programs that state the candidates, superlinear in their syntax) and
+  `Factor_Finite_Source_Construction_Sharing` (compile reads the condition's source once, the case-specific invariant
+  computed once). A packet's admission already reads no source (`development_constructed_fields`); the first
+  attribution had timed an arbitrary report's. Packets fall 10–41% keyed and 4–42% index.
 
 ## Open
 
@@ -225,9 +260,15 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
   but the finalizer refuses to commit the removal of an ignored path. Provisional: it stands removed and uncommitted,
   and no task is made of it; the step is the finalizer's or the owner's.
 - **Q10** who advances the proof base. Provisional: #82 advanced it once (a landing check fell to 19.18 s); #86
-  advances it after #76, and the planner places the next after #74's and #96's landings.
+  advanced it to `4836387c` (both re-citations), for #36's probes; #105 advances it again once #115 and #117 have
+  landed.
 - **Q11** who retains verified receipts. Provisional: #81 retained them once; the planner places another after a
-  landing that changes many recipes' boundaries.
+  landing that changes many recipes' boundaries. The seed and machinery receipts lag since `312a2ca2` (#86's result),
+  so every landing check executes those two recipes, and #106's check, the first on #86's base, executed all 52
+  (221.96 s). #120 retained them (`518ac1e7`): the next landing check's recipe phase fell to 6.11 s of 21.18 s. #119
+  retains after #105's advance. #134: reuse fires after a base move or a retention; a receipt goes stale only when a
+  code equation in its recipe's closure changes (as `a436a40e`'s segmented references did for all 52), and every later
+  check reaching such a recipe then re-executes it until a retention.
 
 Not yet planned, in the order they are expected to be planned:
 
@@ -263,9 +304,15 @@ Not yet planned, in the order they are expected to be planned:
     obstructions, so no instance exists; plan it when the first is posed.
 
 19. **One pre-flight command for the standing last step** (#50's review): `source_checks()` and `source_graph(...)` as one
-    command, which would also expose `source_checks` passing while `source_graph` refuses. Small; tools.
-18. **`isabelle_name_position_member` belongs beside `isabelle_name_position`'s laws** in `Isabelle_State_Difference`
-    (#78's review), serving the two older proofs that write its pattern inline. With the next edit of that theory.
+    command, which would also expose `source_checks` passing while `source_graph` refuses. It would take the task's
+    changed theories as the graph's overlays, which briefs leave unnamed, and skip the graph for a change with no
+    theory (#120's review). Small; tools.
+18. **`Isabelle_State_Difference`'s embedding facts, each stated once** (#78's and #101's reviews):
+    `isabelle_name_position_member` beside `isabelle_name_position`'s laws, serving the two older proofs that write its
+    pattern inline; `isabelle_state_embedding_prefix` moved down from `Development_Refinement_Repair` beside
+    `isabelle_state_embedding_agrees`, the presenter's `state_self_embedding` (and `state_self_embedding_entity`)
+    stated once there as its instance, consumed by the presenter and the repair. One fix; after #30 if #30 edits the
+    repair.
 17. **The replay's timeout stops only the direct child** (#48's review): `tools/build.py`'s `run_session` is the existing
     whole-tree stop, to extend and reuse in `run_harness`. When a harness run next outlives its limit, or sooner if
     orphaned Isabelle runs are found holding the machine.
@@ -295,9 +342,15 @@ Not yet planned, in the order they are expected to be planned:
     about 6 s for each of the twelve presentations, CPU rather than wall. First decide, by a held pair of the `a436a40e`
     and `77192fee` trees (about 200 s), whether `77192fee` brought a regression of about 9 s or held runs spread by
     about 10%. The recipe bounds every landing check that touches the development line (125.05 s of #80's 318 s). Briefed
-    from #85's entry, applying its notion. The next longest recipe is `native-development-machinery` (48.3 s).
+    from #85's entry: the transactions' re-check is its first notion at a constructor's contract, built by #128; the
+    word's fold and the presentations' floor stay here. The next longest recipe is `native-development-machinery`
+    (48.3 s).
 28. **Every recipe's execution boundary holds `tools/build.py` and `tools/execution_support.py`** (#80): narrowing the
     boundaries to what can change a word is a task of its own, if a tools change is again seen to re-execute everything.
+    #101's review attributes the seed recipe's execution in its check (122.79 s of 301.72 s, for a build adding one
+    theory no recipe reads) to the ROOT digest among the check's inputs; #72's check (18.95 s, no recipe executed for an
+    added theory) and #86's result, that the seed and machinery receipts lag since `312a2ca2`, point the other way. The
+    first landing check after #119's retention that adds a theory decides it.
 29. **The map's "Reuse (...)" citations** (#66): #60's row cites a DECISIONS.md heading; if such citations are meant to
     resolve in REASONING_REUSE.md, the row is corrected with its next edit.
 30. **What a present citation of a development row cites** (#24's review): an owner record, or the parent problem's
@@ -331,15 +384,43 @@ Not yet planned, in the order they are expected to be planned:
     an engine notion the library lacks. Until then producers are executors and the construction admits.
 40. **Currentness of a request after an admitted answer** (`development_request_current` natively, #95's entry): the
     context read against a later state, #38's search at the context's citations. Not designed.
+41. **A named fact that a constructed request's constant is stated**, in `Development_Requests` (#106's review):
+    `request_constructed_positions` unfolds `development_constant_request_def` for it. With the next edit of
+    `Development_Requests`.
+42. **`ffilter_empty_set` and `ffilter_true` into `Candidate_Generators`** (#85's entry): the generator's laws at the
+    empty space and the accepting predicate. They move from `RRA_Selection` with the next landing that changes
+    `RRA_Selection` or a theory beneath it; nothing restates them meanwhile.
+43. **The engine-level forms #85 left** (a code generator sharing invariant subexpressions; the union inserting its
+    smaller operand): not taken — engine changes with no measured need, the second able to change a word where a
+    listing reaches one. Taken only at a measured cost on the loop's path.
+44. **`demand_positions_member`'s `simp add` form, and import edges possibly dead since the index re-citations**
+    (#115's reviews): with the next edit of those theories, and an import audit once #117 and #105 have landed.
+45. **The host-test record reads printed text** (#122's review): a documented test would lose its traceback, an
+    unexpected success is not recorded, and `import subprocess` sits inside a test method. The structured source is
+    `TestResult.failures` and `errors`, through a result class on the suites' runner, which would remove the parsing;
+    a tools task when a failure meets a gap or the suites' runner is next changed. `FORCE_COLOR=3` reaches the check's
+    environment, so a test comparing text output could depend on it.
+46. **Observation's read-back of the installed program** (#88): a packet reads its candidates' syntax at generation,
+    compile and observation's read-back. Skipping the read-back needs a recovery theorem for finite programs — the
+    installer knows its program only up to an alpha variant, and the read-back program is part of the report's
+    words — a design question. After #124's measurement shows what the reading then costs.
 
 ## Now
 
-- **In flight (plan-35, 04:05)**: #97 stating the store search's contract for held values; #76 checking its fourth
-  round (review 77's one finding, its brief rewritten to it); #95's landing round accepted again (its first commit met a
-  transient git lock in its worktree, 03:49); #74 parked for the one tree, which #62's landing freed. Ready: #36, the
-  verdict chain's head; the presenter #101 (placed from #99: #101 and its review #102 before #40; the answer reader's
-  refusal of a duplicated name, #103 and its review #104, after #30, which edits `Development_Native_Answers`); #94; #85;
-  #100 once #95's entry lands.
+- **In flight (plan-37, 07:15)**: #134 found proved-code export deterministic (52 groups of sessions over one closure, byte-identical)
+  and lands the property as a comment at `reusable_execution`, the one repository file the harness lets it finalize;#124 refines the native reader's growth in a program's syntax (after #88 the keyed packet
+  still costs 7.1 times the index one at 16 far candidates, the machinery's contract list 2.8 times); #90 waits on it,
+  #92 on #90 and #30; #121's builds placed: the notions' theories #126 first, then the seed transactions' refinement #128 and the
+  candidate re-citation #132 beside it, the premise re-citation #130 after #124 as well; #36
+  resuming on #86's base; #94 parked (`v2.py after 94 36`, q37); #105 parked until #117 lands (`v2.py after 105 117`),
+  the retention #119 after it. #40's brief carries #101's review (the families measured first; the two consumer
+  corollaries); #42's and #112's carry #106's (the introduction's subset form stated once by whichever first needs
+  it; the key premise derived where it can be).
+- **Not handled** (plan-37, 07:40): #134's verdict when the finalizer hands it over — accept it with
+  `.build/tasks/134/verdict.md`, written, adding that the comment at `reusable_execution` landed; the orphaned session
+  databases `Incremental_5c2806e0` and `Incremental_50702571` in `/tmp/structural-isabelle` (task 120's two removed
+  contexts), for #105's advance to remove by literal name; and `## Graph`'s fuller rewrite, owed since plan-34 — the
+  lines added since (#121's builds #126–#133, #124, #134) stand only in `## Now` and `## Delivered`.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).
@@ -347,7 +428,13 @@ Not yet planned, in the order they are expected to be planned:
     the hand-over's run rather than the re-run it commits on (#49's re-review); it commits whole files, so the one tree's
     shared files couple landings, where committing a task's own hunks would not; and entries appended at the end of
     `DECISIONS.md` conflict when two tasks record at once — #80's commit failed twice so — which a `union` merge driver,
-    or bringing main in as a fixed step before every landing, would end (#80's review).
+    or bringing main in as a fixed step before every landing, would end (#80's review); and two landings that edited one
+    `THEORY_MAP.md` row merge into a doubled row that a session round must repair (#97's commit, 05:23). A quick-fix
+    round is not preceded by bringing main into the task's tree, so a map edit next to a row main changed is written
+    twice again (#97, 06:06); a pre-landing trial merge of `THEORY_MAP.md`, `ROOT` and `DECISIONS.md` with main,
+    checked for rows written twice, would find it in seconds before the commit fails (review 97) — with its three sides
+    written as files: `git merge-file` given process substitutions reads them as empty and prints the third side
+    (review 97's third round).
   - A task parked for a landing kept in the one tree the shared-file lines it installed at hand-over, which kept out the
     landing it waited for (#62 and #84, 03:00); taking them out left its theory undeclared, refusing every one-tree
     check (03:10). The harness could release a parked task's installed work, or refuse such a park.
@@ -360,12 +447,19 @@ Not yet planned, in the order they are expected to be planned:
   - The probe guard still requires `--timeout` to be named and cites the old 1200 s default, as does the memory note on
     probing (#79's review).
   - A `=== write` in `v2.py change` replaces an earlier round's deliverable without notice (#80's second round), and a
-    held measurement leaves no record of its hold (#80's review: write the claim's window into held runs' receipts).
+    held measurement leaves no record of its hold (#80's review: write the claim's window into held runs' receipts;
+    #88's re-review: record each hold's task, start and end where a reviewer reads it).
+  - An investigation whose deliverables all lie under `.build/` can neither finalize (the finalizer takes only
+    repository files) nor record itself done (a done result needs a final job), and the planner's verdict waits for
+    the finalizer's hand-off (#134, 07:35).
   - Two git operations met in one task's worktree during concurrent finalizations (`index.lock`, #95's commit, 03:49):
     the lock was gone a minute later, yet landing the accepted entry needed a session round.
-- **The active base is `.build/tasks/base-advance/base-20260922a/proof`** (#82), a child of `.build/complete-20260921a`:
-  never remove either while the pointer `/tmp/structural-active-context.json` names it. Both heaps live in
-  `/tmp/structural-isabelle`, so a reboot loses the base (Open 11).
+  - The planner cannot read a design's entry before it lands: `v2.py read` and a plain read of
+    `.build/trees/ID/DECISIONS.md` are refused, so a design's verdict rests on its result and commit message (#85).
+- **The active base is `.build/tasks/base-advance/base-20260922b/proof`** (#86), a child of
+  `.build/tasks/base-advance/base-20260922a/proof` (#82) and `.build/complete-20260921a`: never remove any of the three
+  while the pointer `/tmp/structural-active-context.json` names the first. The heaps live in `/tmp/structural-isabelle`,
+  so a reboot loses the base (Open 11).
 - **The harness no longer puts a task in the one tree for naming a shared file** (`ROOT`, `THEORY_MAP.md`,
   `DECISIONS.md`, `HANDOFF.md`, `PLANNING_LOG.md`) while another task's edit of one stands uncommitted (the owner,
   01:15); #74 was put there so and stays until it lands. A landing commits the planner's `HANDOFF.md` with the

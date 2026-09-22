@@ -74,42 +74,9 @@ proof
 qed (simp add: keyed_equal_def)
 
 text \<open>
-  Membership in a keyed set is asked of the ordered index of its keys. The key must
-  determine the member; the left inverse is the witness of that.
+  Membership in a keyed set is asked of the ordered index of its keys, the index notion's instance
+  @{text Member_Tree_Indexes.keyed_set_index}: the key must determine the member, and the left inverse
+  is the witness of that.
 \<close>
-
-lemma keyed_member_lookup:
-  assumes inverse: "\<And>x. unkey (key x)=x"
-  shows "RBT.lookup (ordered_member_tree (fimage key A)) (key x)\<noteq>None \<longleftrightarrow> x |\<in>| A"
-proof -
-  have injective: "inj key" by (rule inj_on_inverseI[of _ unkey]) (rule inverse)
-  have "RBT.lookup (ordered_member_tree (fimage key A)) (key x)\<noteq>None \<longleftrightarrow> key x\<in>key ` fset A"
-    by (simp only: ordered_member_tree_exact fimage.rep_eq)
-  also have "\<dots>\<longleftrightarrow> x |\<in>| A" by (simp add: inj_image_mem_iff[OF injective])
-  finally show ?thesis .
-qed
-
-lemma keyed_members_subset:
-  assumes inverse: "\<And>x. unkey (key x)=x"
-  shows "fBall B (\<lambda>q. RBT.lookup (ordered_member_tree (fimage key A)) (key q)\<noteq>None) \<longleftrightarrow> B |\<subseteq>| A"
-proof
-  assume all: "fBall B (\<lambda>q. RBT.lookup (ordered_member_tree (fimage key A)) (key q)\<noteq>None)"
-  show "B |\<subseteq>| A"
-  proof (rule fsubsetI)
-    fix x assume "x |\<in>| B"
-    then have "RBT.lookup (ordered_member_tree (fimage key A)) (key x)\<noteq>None" by (rule fbspec[OF all])
-    then show "x |\<in>| A" by (simp only: keyed_member_lookup[OF inverse])
-  qed
-next
-  assume included: "B |\<subseteq>| A"
-  show "fBall B (\<lambda>q. RBT.lookup (ordered_member_tree (fimage key A)) (key q)\<noteq>None)"
-  proof (rule fBallI)
-    fix x assume "x |\<in>| B"
-    then have "x |\<in>| A" by (rule fsubsetD[OF included])
-    then show "RBT.lookup (ordered_member_tree (fimage key A)) (key x)\<noteq>None"
-      by (simp only: keyed_member_lookup[OF inverse])
-  qed
-qed
-
 
 end

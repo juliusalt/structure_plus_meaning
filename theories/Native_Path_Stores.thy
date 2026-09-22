@@ -542,69 +542,7 @@ next
   qed
 qed
 
-section \<open>A canonical store is determined by its lookups\<close>
-
-lemma store_canonical_none:
-  assumes "store_canonical T" "\<And>q. store_lookup T q=None"
-  shows "T=Empty_Store"
-  using assms
-proof (induction T)
-  case Empty_Store
-  then show ?case by simp
-next
-  case (Store_Node v l r)
-  have v: "v=None" using Store_Node.prems(2)[of "[]"] by simp
-  have l: "l=Empty_Store"
-  proof (rule Store_Node.IH(1))
-    show "store_canonical l" using Store_Node.prems(1) by simp
-    show "store_lookup l q=None" for q using Store_Node.prems(2)[of "False#q"] by simp
-  qed
-  have r: "r=Empty_Store"
-  proof (rule Store_Node.IH(2))
-    show "store_canonical r" using Store_Node.prems(1) by simp
-    show "store_lookup r q=None" for q using Store_Node.prems(2)[of "True#q"] by simp
-  qed
-  show ?case using Store_Node.prems(1) v l r by simp
-qed
-
-theorem store_canonical_lookup_eq:
-  assumes "store_canonical S" "store_canonical T" "\<And>q. store_lookup S q=store_lookup T q"
-  shows "S=T"
-  using assms
-proof (induction S arbitrary: T)
-  case Empty_Store
-  have "store_lookup T q=None" for q using Empty_Store.prems(3)[of q] by simp
-  from store_canonical_none[OF Empty_Store.prems(2) this] show ?case by simp
-next
-  case (Store_Node v l r)
-  note prems=Store_Node.prems and IH=Store_Node.IH
-  show ?case
-  proof (cases T)
-    case Empty_Store
-    have "store_lookup (Store_Node v l r) q=None" for q using prems(3)[of q] Empty_Store by simp
-    from store_canonical_none[OF prems(1) this] show ?thesis by simp
-  next
-    case (Store_Node v' l' r')
-    have v: "v=v'" using prems(3)[of "[]"] Store_Node by simp
-    have l: "l=l'"
-    proof (rule IH(1))
-      show "store_canonical l" using prems(1) by simp
-      show "store_canonical l'" using prems(2) Store_Node by simp
-      show "store_lookup l q=store_lookup l' q" for q using prems(3)[of "False#q"] Store_Node by simp
-    qed
-    have r: "r=r'"
-    proof (rule IH(2))
-      show "store_canonical r" using prems(1) by simp
-      show "store_canonical r'" using prems(2) Store_Node by simp
-      show "store_lookup r q=store_lookup r' q" for q using prems(3)[of "True#q"] Store_Node by simp
-    qed
-    show ?thesis using Store_Node v l r by simp
-  qed
-qed
-
-lemma path_store_fold_canonical:
-  "store_canonical T \<Longrightarrow> store_canonical (fold (\<lambda>(k,v) T. store_update T k (Some v)) rows T)"
-  by (induction rows arbitrary: T) (auto simp: split_beta intro: store_update_canonical)
+section \<open>A path store is canonical, so its lookups determine it\<close>
 
 lemma path_store_canonical: "store_canonical (path_store rows)"
   unfolding path_store_def by (rule path_store_fold_canonical) simp
@@ -758,6 +696,35 @@ proof -
         into[OF _ same[symmetric] sv' presented', where q="fst x" and v="snd x"] by (metis prod.collapse)
   qed
 qed
+
+text \<open>
+  A store presented through a value map reads only the values it holds, so the search's contract needs
+  those values formed and no other: the contract above, through any formed map agreeing with the
+  presentation where the store holds a value (@{thm store_term_cong}).
+\<close>
+
+context native_store_search_program
+begin
+
+theorem exact_held:
+  assumes held: "\<And>bs y. store_lookup S bs=Some y \<Longrightarrow> term_formed (val y)"
+  shows "(k,Pair_Term x (Pair_Term key (store_term val S)))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed x \<and> (\<exists>bs v. key=path_term bs \<and> store_lookup S bs=Some v \<and> (ch,Pair_Term x (val v))\<in>positive_meaning P)"
+proof -
+  define f where "f=(\<lambda>y. if term_formed (val y) then val y else Payload_Term [])"
+  have ff: "term_formed (f y)" for y by (simp add: f_def octets_formed_def)
+  have agree: "f y=val y" if "store_lookup S bs=Some y" for bs y using held[OF that] by (simp add: f_def)
+  have same: "store_term val S=store_term f S" by (rule store_term_cong) (erule agree[symmetric])
+  have "(k,Pair_Term x (Pair_Term key (store_term val S)))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed x \<and> (\<exists>bs v. key=path_term bs \<and> store_lookup S bs=Some v \<and> (ch,Pair_Term x (f v))\<in>positive_meaning P)"
+    unfolding same by (rule exact) (rule ff)
+  also have "\<dots> \<longleftrightarrow>
+    term_formed x \<and> (\<exists>bs v. key=path_term bs \<and> store_lookup S bs=Some v \<and> (ch,Pair_Term x (val v))\<in>positive_meaning P)"
+    using agree by fastforce
+  finally show ?thesis .
+qed
+
+end
 
 theorem finite_listing_store_exact:
   assumes presented: "inj_on val (snd ` set rows \<union> snd ` set rows')"

@@ -1,6 +1,6 @@
 {
  "base_receipt_sha256": "ad5ecdcbffdb8e02d319180d6e98901264df9f42e0035d3d5b62d7540c13164e",
- "checked_content_sha256": "7bac5e96b7329b3fcfb05666acf037008fdfb7d3ba698b27af85810f49835038",
+ "checked_content_sha256": "745d74e78bfe96ddd2d29402ed793f9d5e09d0735185f10d292e0854915fca8d",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,13 +22,16 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.29,
+  "base_and_impact": 0.28,
   "execution_impact": 0.0,
   "export": 0.0,
-  "recipe_impact": 0.38,
-  "recipes_and_host_tests": 11.09
+  "proof": 63.88,
+  "recipe_impact": 0.45,
+  "recipes_and_host_tests": 10.98
  },
- "rebuilt_theories": [],
+ "rebuilt_theories": [
+  "Development_Request_Citations"
+ ],
  "recipes": {
   "allocated-environments": {
    "status": "unchanged"
@@ -188,18 +191,18 @@
   }
  },
  "reused_theories": 1833,
- "seconds": 15.51,
+ "seconds": 97.04,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1833,
+  "theory_count": 1834,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1833,
+ "theories": 1834,
  "validation_inputs": {
-  "ROOT": "4953f1d770225b1fbc73f560e46eadab06284277efb39ba22a74c442b2be5d91",
+  "ROOT": "11ade32624bc0fa12ed66fdfcf50b13cb90e971a0421b7d92733fa9e69f50196",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "82e934dc1ab241ad304872f32ca11b1f5a0e8ad06d5de97626b94c96458b4752"
  }

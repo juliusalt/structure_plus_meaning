@@ -146,7 +146,7 @@ unread: its check passed); #225 (`eca462e1`) made the syntax forest, its
 positions and its table its instances, consumers reading its `_eq` lemmas, which stand (the planner: they survive
 #155). Its review found the placed forest's union form proved in place twice (`syntax_forest_pushed`,
 `Factor_Pattern_Forests`), and #223's review the placed table's union form unfolded outside its notion and two
-bound-forest arguments that may be copies: #251, after the probe's fix #271 and beside #155, states both union forms
+bound-forest arguments that may be copies: #251, ready since the probe's fix #271 landed (`ca5f3d94`), and beside #155, states both union forms
 once and re-cites every copy, with the unused premise of `syntax_forest_child_reads` and #225's Contracts bullet. #90 (`7379cfc7`) switched the 20 overnight native-control theories to the keyed question; the overnight
 boundary, which no check runs and which lags its sources since `d0b70ea2`, `5c26b791` and `7379cfc7`, is recorded as
 historical at `aa946a22` by #172 (Open 55, q53). #92 retires `filtered_development_question`'s index form after #167,
@@ -191,16 +191,14 @@ deepest chains are 9, the layout's and #135's line made one by the serialized wo
 layout #155, the answer records' re-recording #157 (after #267 too), then #161, #165, #167, #169 and its review #170,
 or #92 and #93 after #167; one task more may end that chain. The incremental line's measurement #194 and its review
 are 9 deep, through #161 and #187. Then #238 (after #237, #214, #44, #42 and #227), 6, and #114 (after #112, #110 and
-#227), 5. Beside them: the
-probe's fix #271, then #251 after it; the presentation's refinement #269; the exporter proof's transport #274; the rearranging contract at a support relation #275 (after #271); the
+#227), 5. Beside them: the placed forests' cleanup #251; the presentation's refinement #269; the exporter proof's transport #274; the rearranging contract at a support relation #275; the
 re-citations #239 (after #44) and #237. A word change lands with its re-recorded words: since 20:12 the landing
 check's snapshot takes the report files a brief's Deliverable names (Q12, fixed in the harness as the provisional
 choice).
 
-**Order** (`147 128 271 241 155 156 42 43 110 111 269 274 275 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 251`).
+**Order** (`147 128 241 155 156 42 43 110 111 269 274 275 157 158 159 160 161 162 44 45 112 113 114 192 203 187 198 214 215 237 238 239 240 195 206 165 166 167 168 169 170 193 204 194 205 64 65 92 93 251`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
-the probe's fix #271, which every session's inner loop needs and #251 waits
-on; #241 after #147, head of the deepest chain, then the layout's word change #155, its answer records #157 and its
+#241 after #147, head of the deepest chain, then the layout's word change #155, its answer records #157 and its
 measurement #159 soon after it, while the harness's lineage still holds the last base without it; the verdict's entry
 #42 and #110, ready since #227 landed; #269; the exporter proof's transport #274 and the rearranging contract #275; #161; then the chains' next links as their inputs land, each ordered by the length of
 what follows it; the re-citations wherever a slot would otherwise stand idle; #64 and #92; #251 last. A
@@ -328,6 +326,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   `probe.summary.json` names them (`from_tree`, `certified`) and the unchanged base theories importing a changed one
   (`not_rechecked`), which only the landing check re-proves; `--from-heap` keeps a changed theory the heap's. Imports
   and qualified `Name.x` references, inside strings too, are rewritten; unqualified uses of a theory's name are not.
+  Since #271 (`ca5f3d94`) it also loads, as renamed copies, every unchanged theory on an import path from a changed
+  theory to a loaded dependent, refuses before loading a set its bound cannot load, naming the chain, and reports
+  stale heap imports as the cause rather than as the theories' own errors.
 - **A brief names its task's own folder as `.build/tasks/<its id>/`**, never the key of the edit that created it: the
   harness uses the id (#210's and #219's reviews).
 - **A task whose commit fails at the merge is queued again as it is, never landed anew by a workaround task** (the
@@ -631,6 +632,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   the owner's ask of 18:32 closed. Its review's small items to Open 73.
 - **#272** (`75035bc1`): readiness's two theorems cite its rearranging families' contracts; the level a use cites is
   recorded in the native rule family's law's entry; its review's support-relation lemma to #275.
+- **#271** (`ca5f3d94`): the probe loads the unchanged theories between a changed base theory and its changed
+  dependents as renamed copies, refuses a load past its bound before loading, and names stale heap imports as the
+  cause, with #229's polish; its reviews' follow-ups to Open 78 and the owner's list.
 
 ## Open
 
@@ -891,7 +895,9 @@ Not yet planned, in the order they are expected to be planned:
 77. **`entity_row_kept`'s statement** (#231's review): its premises `prefix` and `inside` together are exactly
     `isabelle_name_reading`'s agreement at the entity's positions; restating it with that premise would change its
     statement, so it is kept while its consumers discharge the two premises; decided at its next consumer.
-78. **The probe tool's polish** (#229's reviews) — planned with #271.
+78. **The probe tool's follow-ups** (#271's reviews; the first's text written over, its titles kept): the load
+    estimate's calibration across the retained probe summaries; intermediates loaded below an excluded theory;
+    `base_context`'s unverified docstring claim. With the next edit of `tools/probe_theories.py`.
 79. **#247's follow-ups inside `Native_Collection_Programs`** (`.build/tasks/247/review.md`): `holds_rule` re-derives
     what `holds_cases` derives — one `holds_clause` in `native_rule_family` for both; the four `unfold` corollaries
     share one composition — one law lemma, or dropped once #44, #110 and #235 cite `law.supported_clause` with
@@ -936,8 +942,8 @@ Not yet planned, in the order they are expected to be planned:
   definition of a state): one word change, landed (`8b77ee97`); #157 re-records every answer record once over it and the
   layout (the native records' entity keys move with the order; mailed); #274 proves the obligation on the definition's
   right-hand side, the goal no longer rewritten with the whole context term (#267's review).
-- **In flight (plan-47, 20:54)**: #269 and #271 work; #42, #110 and #274 are ready, #275 after #271; #128 and #147
-  finish their landings. The harness's delta layer is deployed and dormant
+- **In flight (plan-47, 20:56)**: #269 works; #42, #110, #274, #275 and #251 are ready; #128 and #147 finish their
+  landings. The harness's delta layer is deployed and dormant
   (`notes/plan-delta-layer.md`), switched on for no base yet (20:12). Mailed to tasks not yet started, travelling with them: the level a use
   cites to #214, #237 and #239; #261's review to #110, #112, #192, #214 and #237; #263's and #255's to #265; #263's
   unproduced native rows to #157; #223's unmeasured gain to #159; and the earlier ones: #182's to #110, #189's to #192
@@ -1033,6 +1039,8 @@ Not yet planned, in the order they are expected to be planned:
     gate makes a row changed on both sides unmergeable from the task's side (fix-227, 20:19): a way to resolve such a
     row — the doubled row left for the session before its commit, or a resolution file — would keep a task's own
     change to it, which today a later task must carry.
+  - The harness's probe reader (`v2.py read probes`) could read the causes and refusals #271's probe now writes into
+    its summary (`PROBE CAUSE`, `refused`), so that a review sees why a probe did not load (#271's review).
 - **The base lives at the lasting place** `.build/tasks/base-lasting/` (#144, landed `79f16061` with #132): its
   complete proof of `a2ed0ed7` (`complete-20260922e`, 777 s, re-recorded at 14:14 with its heap under the
   `/tmp/structural-isabelle` link so that the older tools read it too), the pointer `active-context.json` that main's

@@ -70,9 +70,11 @@ your piece of work yourself, and take a question to whoever holds it.
 
 A `replace` may hold several blocks; its SEARCH text must occur exactly once in the file as the changes before it
 left it (`=== replace-all PATH` replaces every occurrence). A block's texts hold no marker line (`<<<<<<< SEARCH`,
-`=======`, `>>>>>>> REPLACE`): a block that does lost its end, and is refused naming the line; a text that must hold
-one is written whole with `=== write`. The changes are judged whole and written all or none, and
-what refuses them is said, change by change; a write makes the directories it needs.
+`=======`, `>>>>>>> REPLACE`): a block that does lost its end, and is refused naming the line it stands at; a text
+that must hold one is made two blocks, one for what stands before that line and one for what stands after, or is
+written whole with `=== write`. The changes are judged whole and written all or none, and
+what refuses them is said, change by change; a write makes the directories it needs; the glyphs of what it writes into
+a theory (⇒, ∀, ‹›, as the digests show them) are written as their escapes (`\<Rightarrow>`), as Isabelle reads them.
 Quote the delimiter (`<<'EOF'`), so the text reaches the command as it
 is. The call may hold other commands too, before and after the change — reads, a probe or a check, `v2.py result` —
 each judged as it would be alone, and what follows a change runs only if the change went through; a `cd` before a

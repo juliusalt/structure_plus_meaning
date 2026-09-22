@@ -82,18 +82,13 @@ CASES = [
     ("v2.py", '    return [x for x in trouble_of(tree, target, changed) if x not in before]',
      '    return trouble_of(tree, target, changed)', "trouble_head_already_has", "only new trouble refused"),
     ("commit_gate.py", 'if worse:', 'if False:', "manual_commit_is_held", "the git hook"),
-    ("finalize.py", '        m = git("merge", "--no-commit", "--no-ff", main, tree=tree)',
-     '        m = git("merge", "--no-commit", "--no-ff", "HEAD", tree=tree)', "checked_with_what_landed",
-     "what landed brought into the branch"),
-    ("finalize.py", '            ok, tail = recheck(tid, tree, deadline)', '            ok, tail = True, ""',
-     "does_not_stand_with_what_landed", "the landing re-check"),
-    ("finalize.py", 'if git("rev-parse", "HEAD", tree=tree).stdout.strip() != before:', 'if True:',
-     "nothing_is_checked_again", "no re-check when nothing landed"),
+    ('train.py', '        m = fz.git("merge", "--no-commit", "--no-ff", head(), tree=tree)', '        m = fz.git("merge", "--no-commit", "--no-ff", "HEAD", tree=tree)', 'failure_its_report_names', 'what landed brought into the branch'),
+    ('train.py', '    ok, plan.seconds, plan.tail = fz.run_logged(plan.members[0], command, plan.tree, plan.log)\n    plan.ok, plan.kind = ok, "repository"', '    ok, plan.seconds, plan.tail = True, 0.0, ""\n    plan.ok, plan.kind = ok, "repository"', 'does_not_stand_with_what_landed', 'the landing re-check'),
+    ('train.py', '    if len(plan.members) == 1 and fz.git("merge-base", "--is-ancestor", main, entries[plan.members[0]]["head"]', '    if False and len(plan.members) == 1 and fz.git("merge-base", "--is-ancestor", main, entries[plan.members[0]]["head"]', 'nothing_is_checked_again', 'no re-check when nothing landed'),
     ("v2.py", '                t.update(stage="fixing", fixing=None, fix_text=text)',
      '                to_planner(st, tid, "the finalizer", text)', "goes_back_to_be_fixed",
      "a failed landing goes to a quick fix"),
-    ("finalize.py", '            if not held:\n                return refuse(', '            if False:\n                return refuse(',
-     "one_landing_at_a_time", "the landing lock"),
+    ('finalize.py', '        with v2.landing(deadline) as held:\n            if not held:\n                with v2.state() as w:  # nothing of it is wrong', '        with v2.landing(deadline) as held:\n            if False:\n                with v2.state() as w:  # nothing of it is wrong', 'one_landing_at_a_time', 'the landing lock'),
     ("v2.py", '    absolute = one_tree_paths(text)', '    absolute = []', "absolute_path_is_not_in_form",
      "a brief naming the repository by its absolute path"),
     ("finalize.py", '    unreviewed = unreviewed_work(tid, files, own_tree)\n', '    unreviewed = {}\n',
@@ -138,8 +133,7 @@ CASES = [
     ("v2.py", '    link_reviews()\n    st = peek()', '    st = peek()', "planner_writes_is_linked",
      "a planner's review task linked"),
     ("v2.py", '        if x == "--":', '        if x == "---":', "double_dash_are_each", "batched groups"),
-    ("v2.py", '        for tid in rest[:max(n, 1)]:', '        for tid in rest[:1]:', "several_ids_directly",
-     "tell to several tasks"),
+    ('v2.py', '        for tid in tids:\n            say(cmd_tell(tid, text))', '        for tid in tids[:1]:\n            say(cmd_tell(tid, text))', 'several_ids_directly', 'tell to several tasks'),
     ("v2.py", '    if name.startswith("task:"):', '    if False:', "takes_task_briefs_and_proposals", "the gather reading a task"),
     ("v2.py", '    for key in keys:\n        e = next(', '    for key in keys[:1]:\n        e = next(',
      "takes_task_briefs_and_proposals", "several briefs of a proposal"),
@@ -189,7 +183,7 @@ CASES = [
      '        return 0', "batch_reads_at_most_its_bytes", "what a command showed"),
     ("work_meter.py", '            return "read" if V2_READS.search(c) else "own"', '            return "own"',
      "reading_commands_are_reads", "the harness's reading commands"),
-    ("v2.py", '{text if seen else one_read(text, BATCH_BYTES if whole_brief(src) else READ_BYTES)}', '{text}', "every_source_is_a_read", "a source as one read"),
+    ('v2.py', '{text if seen else one_read(text, BATCH_BYTES if whole else source_bound())}', '{text}', 'every_source_is_a_read', 'a source as one read'),
     ("v2.py", '        if unshown or (out and size + n > BATCH_BYTES):', '        if False:',
      "read_bounds_each_source_and_the_call", "a read of several sources, bounded"),
     ("v2.py", '            unshown.append(src)  # each source bounded', '            pass  # each source bounded',
@@ -292,8 +286,7 @@ CASES = [
      "not_said_to_be_out_of_the_list", "an unreadable file called a missing task"),
     ("v2.py", 'if c and c["role"] != "planner" and q.get("session") != c["name"]:', 'if False:',
      "planner_tells_a_working_session", "who may answer a question"),
-    ("v2.py", 'if not c or c["role"] not in PRODUCING or not c.get("task"):', 'if not c or not c.get("task"):',
-     "timing_run_takes_the_machine", "who may claim the machine"),
+    ('v2.py', '    2026-09-20). Claimed before the run is launched; it stands while the run does, and falls of itself after."""\n    c = caller()\n    if not c or c["role"] not in PRODUCING or not c.get("task"):', '    2026-09-20). Claimed before the run is launched; it stands while the run does, and falls of itself after."""\n    c = caller()\n    if not c or not c.get("task"):', 'timing_run_takes_the_machine', 'who may claim the machine'),
     ("v2.py", 'missing = [tid for tid in ids if not in_list(tid)]\n    if missing:', 'missing = []\n    if missing:',
      "names_nothing_is_refused", "an order naming a task that is not there"),
     # every output bounded, the gather a read, the tokens gone (the owner, 2026-09-21)
@@ -347,8 +340,6 @@ CASES = [
     ("v2.py", '        if path not in now:\n            try:', '        if True:\n            try:',
      "changes_to_many_files_in_one_call_in_order", "each change on what the one before left"),
     ("v2.py", '            if body[j] != SEARCH:', '            if False:', "form_is_said", "a block's form"),
-    ("work_meter.py", '            return "write"  # the one way a session changes files', '            return "own"  # x',
-     "change_is_a_write", "a change is a write"),
     ("work_meter.py", '    if not how:\n        return None', '    if True:\n        return None', "every_other_way_of_writing",
      "other content writes refused"),
     ("work_meter.py", "    for words in segments(shell_syntax(command)):\n        while words and os.path.basename(words[0]) in PREFIXES:",
@@ -380,8 +371,6 @@ CASES = [
      "only a fixable refusal told to fix"),
     ("work_meter.py", '        said["permissionDecisionReason"] += " " + fix_note(kept)', '        pass',
      "refused_one_says_how_to_fix_it", "a refusal told how to fix"),
-    ("work_meter.py", '    if fixed and not denied and "updatedInput" not in said:\n        refused = allow(inp)',
-     '    if False:\n        refused = allow(inp)', "again_runs_the_kept_command_fixed", "a fixed command run when uncut"),
     ("work_meter.py", '    inp = {"command": resolved[call.get("id")]} if call.get("id") in (resolved or {}) else call.get("input") or {}',
      '    inp = call.get("input") or {}', "again_call_counts", "an again call counted as what it ran"),
     ("work_meter.py", '    if tool == "Bash" and resolved:  # a `v2.py again` call', '    if False:  # a `v2.py again` call',
@@ -396,12 +385,9 @@ CASES = [
      "ended_failing_is_told", "a failed command told how to fix"),
     ("work_meter.py", 'if kept and k != "check" and not answers(body)', 'if kept and not answers(body)',
      "ended_failing_is_told", "a check not told to fix its command"),
-    ("v2.py", '        return 1 if said.startswith("refused") else 0', '        return 0', "ended_failing_is_told",
-     "a refused change reads as failing"),
-    ("check_errors.py", '    errors = errors_in(output) + [e for', '    errors = [] + [e for', "lists_every_error_last",
-     "the errors of a check's output"),
-    ("check_errors.py", '[e for _, text in logs_read for e in errors_in(text)]', '[]',
-     "logs_it_wrote_are_gathered", "the errors of the logs it wrote"),
+    ('v2.py', '        return 1 if said.startswith("refused") else 0  # a refused change reads as failing, and is told how to fix it', '        return 0  # a refused change reads as failing, and is told how to fix it', 'ended_failing_is_told', 'a refused change reads as failing'),
+    ('check_errors.py', '    found = detailed(output) + [e for', '    found = [] + [e for', 'lists_every_error_last', "the errors of a check's output"),
+    ('check_errors.py', '[e for _, text in logs_read for e in detailed(text)]', '[]', 'logs_it_wrote_are_gathered', 'the errors of the logs it wrote'),
     ("check_errors.py", '                if os.path.getmtime(log) >= since:', '                if True:',
      "an_old_log_is_not", "another run's log"),
     ("check_errors.py", '    errors = list(dict.fromkeys(errors))', '    errors = list(errors)', "is_one_error",
@@ -450,9 +436,6 @@ CASES = [
      "lists_what_else_failed", "the check's own error"),
     ("check_errors.py", '        said = last_failure(text) if path not in used else None', '        said = None',
      "lists_what_else_failed", "a log that ends on a failure"),
-    ("finalize.py", '    check = work_meter.gathering(fresh_output(tid, spec["check"], cwd), cwd, os.path.join(d, "run-errors"))',
-     '    check = fresh_output(tid, spec["check"], cwd)', "failed_check_gets_one_quick_fix",
-     "the finalizer's check lists its errors"),
     ("check_errors.py", '        if body.strip().startswith("At command"):\n            close()',
      '        if False:\n            close()', "without_a_place_of_its_own", "a message ends at its command"),
     # the sandbox (2026-09-21): what a session cannot do there is asked of the supervisor, never half done
@@ -488,8 +471,8 @@ CASES = [
     ("worker-settings.json", '  "env": {\n    "DISABLE_GROWTHBOOK": "1"\n  },\n', '',
      "feature_flags_off", "the feature flags off in every session"),
     # a complete layer refused for a slip in its reply (2026-09-21), and adopted rather than loaded again
-    ("base_pack.py", "and sum(a != b for a, b in zip(words[1], pack_id)) <= 1)",
-     "and sum(a != b for a, b in zip(words[1], pack_id)) <= 0)", "slip_in_the_echoed_id", "a slip in the echoed id"),
+    ("base_pack.py", "    return slips(words[1], pack_id, SLIPS)", "    return words[1] == pack_id",
+     "slip_in_the_echoed_id", "a slip in the echoed id"),
     ("base.sh", '|| { echo "refused: $n is not a fork of the $who base; nothing is recorded" >&2; exit 3; }', '|| true',
      "adopted_without_a_second_load", "layer --adopt records only a fork of the base"),
     ("session_fork_check.py", "    if not base_reqs or missing:", "    if not base_reqs:",
@@ -501,8 +484,7 @@ CASES = [
      "did_not_read_its_base_is_named", "health names a layer's cold read"),
     # three finalizers started in one second and ran three checks against a limit of two; the reopening did so under
     # the graph's hold (2026-09-21)
-    ("finalize.py", '                open(os.path.join(v2.ADMITTED, tid), "w").close()\n', '',
-     "run_let_start_counts", "a finalizer records the run it is let start"),
+    ('finalize.py', 'open(os.path.join(v2.ADMITTED, tid), "w").write(str(os.getpid()))  # who runs it (unseen_finalizer_runs)', 'pass  # who runs it (unseen_finalizer_runs)', 'run_let_start_counts', 'a finalizer records the run it is let start'),
     ("v2.py", '        return {"heavy": int(stated) + isabelle_admitted(), "probe": int(probes or 0)}', '        return {"heavy": int(stated), "probe": int(probes or 0)}',
      "run_let_start_counts", "the runs let start count among the runs"),
     ("v2.py", 'held = stage in ("checking", "committing") and bool(graph_held())', 'held = False',
@@ -523,8 +505,7 @@ CASES = [
      "takes_its_briefs_from", "an edit takes its briefs from the drafts"),
     ("v2.py", "        if not full.startswith(PLANS + os.sep):", "        if False:", "takes_its_briefs_from",
      "a descriptionFile is a draft under .build/plans/"),
-    ("v2.py", "one_read(text, BATCH_BYTES if whole_brief(src) else READ_BYTES)", "one_read(text, READ_BYTES)",
-     "brief_named_whole", "a brief named whole is shown whole"),
+    ('v2.py', 'BATCH_BYTES if whole else source_bound()', 'source_bound()', 'brief_named_whole', 'a brief named whole is shown whole'),
     ("work_meter.py", "        most = BATCH if tool == \"Bash\" and reads_itself(",
      "        most = READ_BYTES if tool == \"Bash\" and reads_itself(", "cut_that_did_not_take",
      "a `v2.py read` is not taken for a cut that did not apply"),
@@ -547,8 +528,7 @@ CASES = [
     # a proposal goes back to its held task designer rather than to a new one (brief 13, 2026-09-21)
     ("watchdog.py", '    if s["role"] == "task-designer" and t.get("session") == name and t.get("stage") == "proposed":',
      "    if False:", "proposal_waits_on_the_planner", "a task designer is held while its proposal waits"),
-    ("v2.py", 'return revise_proposal(tid, (c or {}).get("name", "the owner"), text) or f"refused: no session',
-     'return f"refused: no session', "goes_back_to_its_held", "`tell` sends a waiting proposal back to its designer"),
+    ('v2.py', '        return (revise_proposal(tid, sender, text) or keep_told(tid, sender, text)', '        return (keep_told(tid, sender, text)', 'goes_back_to_its_held', '`tell` sends a waiting proposal back to its designer'),
     ("v2.py", '        if t.get("stage") == "proposed" and t.get("revise"):  # a correction first',
      "        if False:  # a correction first", "goes_back_to_its_held", "the supporting slot resumes the designer"),
     ("v2.py", "    if rec.get(\"revise\"):\n        return (f\"refused: brief task {bid}'s proposal",
@@ -576,9 +556,7 @@ CASES = [
     ("work_meter.py", '            st["refused"] = (st.get("refused") or []) + ([uid] if uid not in (st.get("refused") or []) else [])',
      '            pass', "read_refused_early", "a read refused early takes nothing from the tiers"),
     # task 46's re-review taken for done after its re-plan, and the order of the parked tasks (2026-09-21)
-    ("v2.py", 'if k in ("briefed_by", "briefing", "review_tasks", "reviews", "rejections")}',
-     'if k in ("briefed_by", "briefing", "review_tasks", "reviews")}', "keeps_its_review_history",
-     "a re-planned task keeps its rejections"),
+    ('v2.py', '"reviews", "rejections", "told",', '"reviews", "told",', 'keeps_its_review_history', 'a re-planned task keeps its rejections'),
     ("v2.py", "            or stage == \"unformed\" or orphan or judge or stalled", "            or stage == \"unformed\" or orphan or judge",
      "nothing_will_start", "a review nothing will start is owed"),
     ("v2.py", '        if stalled:\n            log(f"ATTENTION task', '        if False:\n            log(f"ATTENTION task',
@@ -600,8 +578,7 @@ CASES = [
     ("work_meter.py", "    for a, b in sorted((int(x), int(y)) for x, y in ranges):", "    for a, b in sorted(ranges):",
      "cut_where_part_of_it", "gaps orders ranges of either form"),
     # a change's text read as a git command (fix-48, 2026-09-21)
-    ("work_meter.py", '    ran = shell_syntax(c) if harness_only(c) else c',
-     "    ran = c", "text_is_data", "a change's text is not read as what the call runs"),
+    ('work_meter.py', '    ran = shell_syntax(c) if harness_only(c) else c', '    ran = c', 'quoted_words_are_data', "a change's text is not read as what the call runs"),
     # a small read followed by another, named (implement-24, 2026-09-21)
     ("work_meter.py", "    return shown if shown is not None and shown < SMALL_READ else None", "    return None",
      "small_read_followed", "a small read followed by another is named"),
@@ -646,8 +623,7 @@ CASES = [
     ("v2.py", "                f\"{ISABELLE_MAX}: three have filled its memory).\")\n    return memory_short()",
      "                f\"{ISABELLE_MAX}: three have filled its memory).\")\n    return None", "memory",
      "a run waits for memory"),
-    ("finalize.py", "                and not v2.memory_short() and queued in (None, tid)  # and the memory a run must leave free",
-     "                and queued in (None, tid)", "check_waits_for_memory", "a finalizer's check waits for memory"),
+    ('finalize.py', '        and not v2.memory_short() and queued in (None, tid) \\', '        and queued in (None, tid) \\', 'check_waits_for_memory', "a finalizer's check waits for memory"),
     # the harness's text as data, tracked files committed, corrections of changes, inert commands after a change
     ("work_meter.py", "    ran = shell_syntax(c) if harness_only(c) else c", "    ran = c", "quoted_words_are_data",
      "a harness command's quoted words are data"),
@@ -734,16 +710,12 @@ CASES += [
 ]
 CASES += [
     # a landing and the one tree, the index rows, and a task that came back (task 24, task 80, 2026-09-21/22)
-    ("finalize.py", "            rows_agreed(tree)\n", "            pass\n", "stands_once",
-     "the index rows of a merge are agreed"),
+    ('train.py', '    fz.rows_agreed(tree)\n    c = fz.git("commit", "--no-edit", "-m", f"Take up the work of task {tid}", tree=tree)', '    c = fz.git("commit", "--no-edit", "-m", f"Take up the work of task {tid}", tree=tree)', 'stands_once', 'the index rows of a merge are agreed'),
     ("finalize.py", "        want = vt if vo == vb else vo if vt == vb or vo == vt else False",
      "        want = vo if vo == vb else vt if vt == vb or vo == vt else False", "stands_once",
      "the side that changed a row wins"),
-    ("finalize.py", "            return standing  # committed_run lets main go, waits for them, and lands again",
-     "            return merge_refused(tid, list(standing))", "waited_for_with_main_let_go",
-     "what came to stand during a landing is handed back"),
-    ("finalize.py", "        standing = stood_for(tid, list(code), deadline)", "        standing = code",
-     "waited_for_with_main_let_go", "what came to stand is waited for with main let go"),
+    ('train.py', '    if standing:\n        return standing\n    r = fz.git("merge", "--ff-only", "-q", plan.head)', '    if False:\n        return standing\n    r = fz.git("merge", "--ff-only", "-q", plan.head)', 'waited_for_with_main_let_go', 'what came to stand during a landing is handed back'),
+    ('train.py', '            fz.stood_for(wait[1], list(wait[2]), deadline)', '            pass', 'waited_for_with_main_let_go', 'what came to stand is waited for with main let go'),
     ("finalize.py", '        w["tasks"].setdefault(tid, {})["lands_again"] = time.time()', "        pass",
      "made_again_when_queued", "a commit kept out by the one tree is marked to be made again"),
     ("v2.py", '            if t.get("lands_again") and t.get("stage") == "planner" and review_accepted(st, tid):',
@@ -767,13 +739,11 @@ CASES += [
 CASES += [
     # the sessions after 22:55: reads read as reads, writes where they write, a correction's nesting, a failed ping
     ("work_meter.py", "[^\\s|;&]+)(?![\\w-])\")", "[^\\s|;&]+)\\b\")", "read_as_reads", "git merge-base is a read"),
-    ("work_meter.py", '        script = next((w for w in words[1:] if not w.startswith("-")), "") if prog.startswith("python") else words[0]',
-     '        script = " ".join(words)', "read_as_reads", "a check is what a command runs"),
+    ('work_meter.py', '        script = next((w for w in words[1:] if not w.startswith("-")), "") if prog.startswith("python") else words[0]\n        if CHECK_TOOL.search(script)', '        script = " ".join(words)\n        if CHECK_TOOL.search(script)', 'read_as_reads', 'a check is what a command runs'),
     ("work_meter.py", "            operands = [given] if given else operands[-1:]", "            pass",
      "read_as_reads", "a copy writes only where it copies to"),
     ("work_meter.py", "        known[name] = value.strip(\"'\\\"\")", "        pass", "read_as_reads",
      "a plain variable's value is followed"),
-    ("work_meter.py", '    if lead and "$" not in lead.group(1):', "    if False:", "read_as_reads", "a leading cd is followed"),
     ("v2.py", "        if nested and body[x] == SEARCH:", "        if False:", "holds_the_change_s_own",
      "a correction's blocks nest"),
     ("v2.py", "        while i < len(lines) and not (markers and CHANGE_HEAD.match(lines[i])):",
@@ -823,8 +793,7 @@ CASES += [
     # the one tree emptied: the files every task writes a line of do not keep a task there (tasks 56, 62, 72)
     ("v2.py", "    there = sorted((named & set(changed_paths())) - set(SHARED_FILES))",
      "    there = sorted(named & set(changed_paths()))", "every_task_writes_gets_a_tree", "shared files keep no task"),
-    ("v2.py", '            subprocess.run(["git", "-C", PROJECT, "add", "--", "HANDOFF.md"], capture_output=True, text=True)',
-     "            pass", "checked_with_what_landed_before", "a landing commits the planner's HANDOFF.md"),
+    ('train.py', '    handoff = bool(fz.git("status", "--porcelain", "--", "HANDOFF.md").stdout.strip())', '    handoff = False', 'checked_with_what_landed_before', "a landing commits the planner's HANDOFF.md"),
     # a measurement queued, not refused (task 56, 2026-09-22)
     ("v2.py", "    if pending and pending[\"task\"] not in own:\n        return (f\"Task {pending['task']} waits to measure",
      "    if False:\n        return (f\"Task {pending['task']} waits to measure", "claimed_while_runs_go",
@@ -864,8 +833,7 @@ CASES += [
     # a read of more than a read shows is cut, not refused (2026-09-22)
     ("work_meter.py", '            if rest and (tool != "Bash" or not shown):',
      '            if rest:', "longer_than_a_read", "a long read shows what fits"),
-    ("work_meter.py", "    while n < len(wanted) and total + sizes[wanted[n]] <= READ_BYTES:",
-     "    while n < len(wanted):", "longer_than_a_read", "what it shows fits a read"),
+    ('work_meter.py', '    while n < len(wanted) and total + sizes[wanted[n]] <= most:', '    while n < len(wanted):', 'longer_than_a_read', 'what it shows fits a read'),
     ("work_meter.py", "    if total is not None and not shown_by_rewrite:", "    if total is not None:",
      "longer_than_a_read", "what a cut read did not show is not taken as read"),
     ("work_meter.py", '            (m.get("pending") or {}).pop(hook.get("tool_use_id") or "", None)',
@@ -917,8 +885,7 @@ CASES += [
 ]
 CASES += [
     # a session's heavy check let start counts until the snapshot shows it (2026-09-22 05:43)
-    ("work_meter.py", "                v2.admit_session(rec.get(\"name\"))\n", "                pass\n",
-     "let_start_counts", "the guard marks the check it lets start"),
+    ('work_meter.py', '                v2.admit_session(rec.get("name"), rec.get("task"))', '                pass', 'let_start_counts', 'the guard marks the check it lets start'),
     ("v2.py", "        if run is not None and taken > at:\n            used.add(run)", "        if False:\n            used.add(run)",
      "let_start_counts", "the mark counts only until the snapshot shows its run"),
     ("v2.py", "if i not in used and started >= at - 10), None)", "if i not in used), None)", "let_start_counts",
@@ -928,22 +895,17 @@ CASES += [
 ]
 CASES += [
     # a script writing by a name it gave a literal path (implement-26, fix-97.2, 2026-09-22)
-    ("work_meter.py", "    names += [given[v] for match in SCRIPT_NAMED.findall(command) for v in match if v and v in given]\n",
-     "", "writing_by_a_name", "a script's named path is read"),
 ]
 CASES += [
     # a finalizer's run counts until its Isabelle shows (tasks 115, 97, 106, 2026-09-22 05:54-05:57)
-    ("v2.py", "        n += finalizer in procs and finalizer not in lines", "        n += 0",
-     "counts_until_its_isabelle", "a preparing finalizer run is counted"),
-    ("v2.py", "        n += finalizer in procs and finalizer not in lines", "        n += finalizer in procs",
-     "counts_until_its_isabelle", "a visible finalizer run is counted once"),
+    ('v2.py', '        n += runner in procs and runner not in lines', '        n += 0', 'counts_until_its_isabelle', 'a preparing finalizer run is counted'),
+    ('v2.py', '        n += runner in procs and runner not in lines', '        n += runner in procs', 'counts_until_its_isabelle', 'a visible finalizer run is counted once'),
 ]
 CASES += [
     # unit tests after a change (fix-122), temporary files (review-97.3), a tree's documents for the planner (plan-37)
     ("work_meter.py", '    if rel.startswith("..") and os.path.normpath(path).startswith(TEMP_DIRS):', "    if False:",
      "temporary_file_is_no_write", "a temporary file is scratch"),
-    ("work_meter.py", '(?!tasks/[^/]+/[^/]+\\.md$|outputs/|trees/[^/]+/[^/]+\\.md$)', '(?!tasks/[^/]+/[^/]+\\.md$|outputs/)',
-     "reads_a_task_tree_s_documents", "the planner reads a task tree's documents"),
+    ('work_meter.py', 'outputs/|trees/[^/]+/[^/]+\\.md$|plans/', 'outputs/|plans/', 'reads_a_task_tree_s_documents', "the planner reads a task tree's documents"),
 ]
 CASES += [
     # a script writing into a temporary directory it makes (review-122, 2026-09-22)
@@ -952,8 +914,7 @@ CASES += [
 ]
 CASES += [
     # a machine wait is held as long as a tree wait (task 94, 2026-09-22)
-    ("v2.py", 'in ("tree", "machine") else HOLD_PARK', '== "tree" else HOLD_PARK', "machine_is_held_for_its_turn",
-     "a machine wait is held six hours"),
+    ('v2.py', 'in ("tree", "machine", "check", "probe") else HOLD_PARK', 'in ("tree", "check", "probe") else HOLD_PARK', 'machine_is_held_for_its_turn', 'a machine wait is held six hours'),
 ]
 CASES += [
     # an index compared by word, not by line (the names wrapped many to a line, 2026-09-22 07:43)
@@ -962,14 +923,12 @@ CASES += [
 ]
 CASES += [
     # re-anchored after the night's changes (reads cut, the snapshot's roots, the machine's hold)
-    ("work_meter.py", "if size is not None and size > READ_BYTES else (missing, [])", "if False else (missing, [])",
-     "longer_than_a_read_shows", "a known read over its bytes"),
+    ('work_meter.py', 'within(path, missing, most) if size is not None and size > most else (missing, [])', 'within(path, missing, most) if False else (missing, [])', 'longer_than_a_read_shows', 'a known read over its bytes'),
     ("work_meter.py", "{','.join(f'{a}-{b}' for a, b in shown)}", "{first}-{end}", "several_gaps_shows_each",
      "a command filtered to what is missing"),
     ("watchdog.py", '"heavy": list(kinds.values()).count("heavy") + unseen,', '"heavy": 0 + unseen,',
      "isabelle_processes", "the snapshot counts the kinds"),
-    ("v2.py", 'return HOLD_TREE if (t.get("parked") or {}).get("for") in ("tree", "machine") else HOLD_PARK',
-     "return HOLD_PARK", "parked_for_the_one_tree", "hold_of"),
+    ('v2.py', 'return HOLD_TREE if (t.get("parked") or {}).get("for") in ("tree", "machine", "check", "probe") else HOLD_PARK', 'return HOLD_PARK', 'parked_for_the_one_tree', 'hold_of'),
     # a change in a call with any other commands (the owner, 2026-09-22)
     ("work_meter.py", '        changed = [v2.change_path(shell_context(before, cwd)[0], op["path"])',
      '        changed = [v2.change_path(cwd or v2.PROJECT, op["path"])', "exactly_its_files",
@@ -1015,8 +974,7 @@ CASES += [
     ("v2.py", "        ahead = machine_ahead(peek(), [x for x in own if x])\n        if ahead:",
      "        ahead = machine_ahead(peek(), [x for x in own if x])\n        if False:", "waits_its_turn",
      "a session's check waits its turn"),
-    ("finalize.py", "                    and not v2.machine_ahead(v2.peek(), [tid])", "                    and True",
-     "planner_s_order", "a finalizer waits its turn"),
+    ('finalize.py', '        and not v2.machine_ahead(v2.peek(), [tid])  # the memory a run must leave free; its turn', '        and True  # the memory a run must leave free; its turn', 'planner_s_order', 'a finalizer waits its turn'),
     ("v2.py", "    if not at_capacity(st) and len(producing(st)) < PRODUCERS_MAX:  # a slot could resume it now",
      "    if True:  # a slot could resume it now", "planner_s_order", "a parked task holds nothing up with no slot"),
     ("v2.py", "                machine_turn(tid)  # its turn is held", "                pass  # its turn is held",
@@ -1031,13 +989,9 @@ CASES += [
 ]
 CASES += [
     # a theory's imports merged as a list at a landing (task 124, 2026-09-22), and main brought into a task's branch
-    ("finalize.py", "            left = imports_agreed(tree, conflicts) if merging and conflicts else conflicts\n            if left or not conflicts:\n                if merging:\n                    git(\"merge\", \"--abort\", tree=tree)\n                return merge_refused",
-     "            left = conflicts\n            if left or not conflicts:\n                if merging:\n                    git(\"merge\", \"--abort\", tree=tree)\n                return merge_refused",
-     "imports_both_sides", "a landing merges imports as a list"),
+    ('train.py', 'left = fz.imports_agreed(tree, conflicts) if merging and conflicts else conflicts\n        if left or not conflicts:\n            if merging and left:\n                fz.keep_marked(tid, tree, left, main)', 'left = conflicts\n        if left or not conflicts:\n            if merging and left:\n                fz.keep_marked(tid, tree, left, main)', 'imports_both_sides', 'a landing merges imports as a list'),
     ("finalize.py", "        if rest.returncode or rest.stdout.count(MARK) != 1:", "        if False:",
      "beyond_its_imports", "a conflict beyond the imports stays one"),
-    ("finalize.py", "            if mine:\n                return (\"refused: main changed", "            if False:\n                return (\"refused: main changed",
-     "brings_main", "bring-main names the session's changes in the way"),
     ("finalize.py", '    if git("merge-base", "--is-ancestor", main, "HEAD", tree=tree).returncode == 0:',
      "    if False:", "brings_main", "bring-main with main already in"),
     ("v2.py", "    kick()\n    turn_over(c)\n    what = {", "    kick()\n    what = {", "parked_for_its_run_the_slot",
@@ -1057,6 +1011,145 @@ CASES += [
     ("work_meter.py", """STATUS_LINE = 'orch_rc=$?; [ "$orch_rc" -eq 0 ] || exit "$orch_rc"'""",
      """STATUS_LINE = 'status=$?; [ "$status" -eq 0 ] || exit "$status"'""", "sessions_own_shell",
      "the status line runs in zsh"),
+    # a timeout names what it left unfinished; one failure reported through other theories is one (2026-09-22)
+    ("check_errors.py", "                    \"select distinct theory_name from isabelle_exports where name = 'PIDE/markup'\")}",
+     "                    \"select distinct theory_name from isabelle_exports\")}", "timeout_names_the_theories",
+     "a theory begun but not ended is unfinished"),
+    ("check_errors.py", "    late = unfinished(text) if any(e == \"Timeout\" for e, _ in out) else None",
+     "    late = None", "timeout_names_the_theories", "the timeout's line names them"),
+    ("check_errors.py", "    elif late is not None:  # task 227's check, 19:01: all 106 theories ended, their commands in 598 s of 1,200",
+     "    elif False:", "timeout_names_the_theories", "every theory ended: a forked proof did not"),
+    # a half found alone is told when its own check ends (task 223 waited on 227's half, 2026-09-22)
+    ("train.py", "        if c.found_at_once and p.ok is False and not p.stacked and len(p.members) == 1:",
+     "        if False:", "half_found_alone", "a batch tells a half found alone at once"),
+    ("check_errors.py", "        if trace and (not body.strip() or body.strip().startswith(\"At command\")):",
+     "        if False:", "reported_through_other_theories", "the commands a failure came through are no error"),
+    ("check_errors.py", "           for i, (e, d) in enumerate(out) if i not in cut or e.split(\": \", 1)[0] not in whole]",
+     "           for i, (e, d) in enumerate(out)]", "reported_through_other_theories", "a cut copy of a whole one goes"),
+    # an order is traced to who set it; the delta layer, tasks 4 and 5 (when a delta is built, when a layer refreshed)
+    ('v2.py', '    log(f"the order is set by {(c or {}).get(\'name\') or \'the owner\'}: {len(order)} task(s), where it held {held}")', '    pass', 'edit_makes_splices_rewrites_and_queues', "the order's setting is logged"),
+    ('watchdog.py', '        if not asked and (age(f"{who}-delta.looked") or DELTA_EVERY + 1) < DELTA_EVERY:\n            continue', '        if False:\n            continue', 'built_when_enough_has_moved', 'a delta is built at most every DELTA_EVERY'),
+    ('watchdog.py', '        if not asked and moved < DELTA_MIN:', '        if not asked and moved > DELTA_MIN:', 'built_when_enough_has_moved', 'a delta is built once DELTA_MIN has moved'),
+    ('watchdog.py', '        if (age(f"{who}-layer.building") or LAYER_LOCK + 1) < LAYER_LOCK:\n            continue  # one build over a layer at a time', '        if False:\n            continue  # one build over a layer at a time', 'over_a_build_or_for_a_base_not_switched', 'no delta is built over a build'),
+    ('watchdog.py', '        if not (v2.deltas_on(who) or asked or os.path.exists(question)):', '        if not (True or asked or os.path.exists(question)):', 'over_a_build_or_for_a_base_not_switched', 'no delta is built for a base not switched to it'),
+    ('watchdog.py', '        if entry is None or entry >= v2.WARM_MAX:', '        if False:', 'cold_layer_or_a_moved_frontier', 'a cold layer is refreshed instead'),
+    ('watchdog.py', '        if taken_in >= FRONTIER_MOVED:', '        if taken_in > FRONTIER_MOVED:', 'cold_layer_or_a_moved_frontier', 'a frontier moved by FRONTIER_MOVED refreshes the layer'),
+    ('watchdog.py', '            if share < LAYER_DELTA_MAX:\n                continue', '            if share < 0.5:\n                continue', 'refreshed_by_what_the_delta_holds', "the layer under a delta is refreshed by the delta's share"),
+    ('watchdog.py', '        elif v2.deltas_on(who):', '        elif False:', 'refreshed_by_what_the_delta_holds', 'the whole-file share does not decide under a delta'),
+    ('watchdog.py', '            if stable >= STABLE_DELTA_MAX:', '            if False:', 'stable_part_s_drift_is_the_owner_s', "the stable part's drift is said to the owner"),
+    # the guard reads more of where a command writes (review-227, fix-265, 2026-09-22 20:08-20:12)
+    ('work_meter.py', '        known[name] = value.strip("\'") if value.startswith("\'") else re.sub(', '        known[name] = value.strip("\'") if True else re.sub(', 'where_the_call_stands_then', 'a name made from a known variable is followed'),
+    ('work_meter.py', '    command = TRIPLE.sub(\'""\', command)\n', '', 'made_at_run_time_in_a_draft', "a script's triple-quoted text is no write"),
+    ('work_meter.py', '                        r"""|\\(\\s*(\\w+)\\s*/[^()\\n]*\\)\\s*\\.\\s*write_(?:text|bytes)\\(""")', '                        r"""|\\(never\\)""")', 'made_at_run_time_in_a_draft', 'a path joined under a name is a place a script writes'),
+    ('base.sh', '        && [ "$( [ -e "$STATE/$who-$part.miss" ] && wc -l < "$STATE/$who-$part.miss" || echo 0)" -lt 1 ] || exit 0', '        && [ "$( [ -e "$STATE/$who-$part.miss" ] && wc -l < "$STATE/$who-$part.miss" || echo 0)" -lt 2 ] || exit 0', 'missed_ping_is_not_taken_as_a_read', "one miss stops that entry's pings"),
+    ('base.sh', '  [ ! -e "$STATE/$who-stable.miss" ] || return 1', '  :', 'stable_base_whose_entry_was_missed', 'a stable base whose entry was missed is cold'),
+    ('v2.py', '    if verdict.startswith("MISS"):', '    if False:', 'ping_that_missed_is_no_read', 'a ping that missed marks the session, and is no read'),
+    ('v2.py', '        os.remove(hits(name) + ".miss")  # its request wrote its entry anew: it is pinged again from here', '        pass', 'ping_that_missed_is_no_read', "a session's own request makes its entry again"),
+    # a complete load thrown away over the id copied back (the high base's reloads of 21:36 and 21:56)
+    ('base_pack.py', 'SLIPS = 4  # how far the id said back', 'SLIPS = 0  # how far the id said back', 'id_copied_with_slips', 'an id copied with a stutter still names the pack'),
+    ('base_pack.py', '    if abs(len(said) - len(pack_id)) > most:', '    if abs(len(said) - len(pack_id)) > 0:', 'id_copied_with_slips', 'an id of another length is still a copy'),
+    ('base_pack.py', '            row.append(min(before[j] + 1, row[j - 1] + 1, before[j - 1] + (c != d)))', '            row.append(min(row[j - 1] + 1, before[j - 1] + (c != d)))', 'id_copied_with_slips', 'a character doubled costs one, not the tail after it'),
+    # a stale stable miss would send every layer refresh through a reload of the stable base
+    ('base.sh', '    [ "${sealed_s:-0}" -gt "$(stat -c %Y "$STATE/$who-stable.miss")" ] || return 1', '    return 1', 'miss_recorded_before_the_base_was_sealed', "a miss older than the base's seal is not its entry's"),
+    ('base.sh', '    rm -f "$STATE/$who-stable.miss"\n  fi', '    :\n  fi', 'miss_recorded_before_the_base_was_sealed', 'a miss that is answered is taken'),
+    # a marker line inside a block: what it costs the session to recover (20 refusals on 2026-09-22)
+    ('v2.py', 'f"{part} text holds a `{line}` line at line {start + where + 1}, so either its "', 'f"{part} text holds a `{line}` line, so either its "', 'block_that_lost_a_line_of_its_own', 'the refusal names the line the marker stands at'),
+    ('v2.py', 'f"line belongs to the {part} text — then make two blocks, one for what stands "', 'f"line belongs to the {part} text — "', 'block_that_lost_a_line_of_its_own', 'and the way out that costs nothing'),
+    # a check of a transcript that is gone (the ping fork deleted beside it)
+    ('session_fork_check.py', '    if not os.path.exists(path):', '    if False:', 'transcript_that_is_not_there', 'a transcript that is not there is no traceback'),
+    # a delta built over a layer whose entry is gone (the high layer's ping of 21:56, 593K)
+    ('watchdog.py', '    if entry_missed(who, part, (v2.layer_record(who) or {}).get("sealed")):', '    if False:', 'layer_whose_entry_was_missed', 'an entry that was missed is gone, however lately it was read'),
+    ('watchdog.py', '    return not (sealed and time.mktime(time.strptime(sealed, "%Y-%m-%dT%H:%M:%S")) > when)', '    return True', 'layer_whose_entry_was_missed', 'a part sealed since the miss holds the entry again'),
+    # what a build that fails says, where the run is read (the high layer refresh of 21:36 that said nothing)
+    ('base.sh', '  echo "$(date +%Y-%m-%dT%H:%M:%S) $*" >> "$STATE/warm.log"', '  :', 'build_that_fails_says_why', 'a failed build says why in warm.log'),
+    ('base.sh', '  [ "$ERRLOG" = "$(readlink -f "$STATE/warm.log")" ] || echo "$*" >&2', '  echo "$*" >&2', 'build_that_fails_says_why', 'it is not said twice where stderr is warm.log already'),
+    ('watchdog.py', '                            stdout=subprocess.DEVNULL, stderr=open(os.path.join(STATE, "warm.log"), "a"),', '                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,', 'builds_it_starts_say', 'the stream a started build says it on'),
+    # a fork that missed its entry has what it forks made anew (the evictions of 21:04-21:07)
+    ('v2.py', '            who = (peek()["sessions"].get(name) or {}).get("origin")\n            if v.startswith("MISS") and who in BASES:', '            who = (peek()["sessions"].get(name) or {}).get("origin")\n            if False:', 'fork_that_missed_its_entry', "a fork's miss marks its base"),
+    ('watchdog.py', '        if not (asked or missed) and (age(f"{who}-delta.looked") or DELTA_EVERY + 1) < DELTA_EVERY:', '        if not asked and (age(f"{who}-delta.looked") or DELTA_EVERY + 1) < DELTA_EVERY:', 'fork_that_missed_its_entry', 'a missed entry is made again whatever the interval'),
+    ('watchdog.py', '    fresh = sealed and time.time() - time.mktime(time.strptime(sealed, "%Y-%m-%dT%H:%M:%S")) < SEALED_FRESH', '    fresh = False', 'fork_that_missed_its_entry', 'a part sealed since the miss answers it'),
+    ('watchdog.py', '        if not v2.deltas_on(who) and missed_fork(who, (v2.layer_record(who) or {}).get("sealed")):', '        if False:', 'fork_that_missed_its_entry', 'the layer is refreshed for a miss where no delta stands'),
+    # the layer under a delta pinged by the watchdog; one ping at a time
+    ('watchdog.py', '        if v2.deltas_on(who) and v2.delta_record(who) and WARM_EVERY <= (age(f"{who}-layer.hit") or 0) < v2.WARM_MAX:', '        if False:', 'layer_under_a_standing_delta_is_pinged', 'the watchdog pings the layer under a delta'),
+    ('base.sh', '      [ -e "$pinging" ] && [ "$(( $(date +%s) - $(stat -c %Y "$pinging") ))" -lt 300 ] && exit 0', '      :', 'layer_under_a_delta_is_pinged', 'one ping of an entry at a time'),
+    # fix-274's claim deadlocked with task 271's finalizer ahead in the order (20:37-20:47)
+    ('v2.py', '    if claim:\n        # the machine is its own: no task waiting ahead of it counts', '    if False:\n        # the machine is its own: no task waiting ahead of it counts', 'waits_its_turn_in_the_planner_s_order', "the claim's holder is not held behind a task waiting ahead"),
+    # q65: a brief's re-recorded report words are its work, in the check's snapshot
+    ('v2.py', '        own = [p for p in delivered_receipts(tid) if os.path.exists(os.path.join(tree, p))]', '        own = []', 'receipts_its_brief_delivers', 'a snapshot takes the receipts its brief delivers'),
+    # the delta layer, task 6: what is kept warm under a delta
+    ("base.sh", "      *) forked=$(python3 -c 'import sys; sys.path.insert(0, sys.argv[1]); import v2; print(v2.base_file(sys.argv[2]))' \"$HERE\" \"$who\" 2>/dev/null)",
+     "      *) forked=\"$layer\"", "ping_goes_to_the_delta", "the ping goes to what the roles fork"),
+    ("base.sh", '      [ "$part" = layer ] && { forks_delta || exit 0; }', '      :', "layer_under_a_delta_is_pinged",
+     "the layer is pinged on its own only under a delta"),
+    # the delta layer, task 3: forks start from the delta
+    ("v2.py", '    if deltas_on(who) and delta_record(who):\n        return os.path.join(STATE, f"{who}-delta.json")\n', "",
+     "fork_the_delta_once_the_base_is_switched", "the roles fork the delta"),
+    ("v2.py", "    if deltas_on(who) and delta_record(who):", "    if delta_record(who):",
+     "fork_the_delta_once_the_base_is_switched", "a delta is forked only once its base is switched to it"),
+    ("v2.py", '    return delta if layer and delta.get("layer") == layer.get("sessionId") and delta.get("base") == layer.get("base") \\\n        else None',
+     "    return delta", "fork_the_delta_once_the_base_is_switched", "an orphan delta is not forked"),
+    ("manifest.py", '            if json.load(open(layer_snapshot)).get("delta"):\n                records = [("delta", layer_snapshot)]',
+     '            if json.load(open(layer_snapshot)).get("delta"):\n                pass', "only_what_changed_after_it",
+     "a fork of the delta is told only what changed after it"),
+    ("v2.py", "    holding |= {(delta_record(who) or {}).get(\"sessionId\") for who in BASES}  # the delta standing, forked or not\n", "",
+     "snapshot_and_text_are_kept", "the standing delta's snapshot is kept"),
+    ("v2.py", "and path not in standing \\\n", "\\\n", "snapshot_and_text_are_kept", "the standing delta's text is kept"),
+    # the delta layer, task 2: the delta session (base.sh WHO delta)
+    ("base.sh", '    claude --bg --resume "$(field "$layer" sessionId)" --fork-session $LEAN --model "$(field "$layer" model)" \\\n      --effort "$(field "$layer" effort)" --permission-mode auto --autocompact',
+     '    claude --bg --resume "$(field "$rec" sessionId)" --fork-session $LEAN --model "$(field "$layer" model)" \\\n      --effort "$(field "$layer" effort)" --permission-mode auto --autocompact',
+     "fork_of_the_layer_verified", "the delta forks the layer, not the stable base"),
+    ("base.sh", '      why=$(python3 "$HERE/base_pack.py" held "$SESSIONS/$lsid.jsonl" "$digest" 2>&1 >/dev/null)', '      why=""',
+     "not_held_is_not_recorded", "a delta not held is not recorded"),
+    ("manifest.py", '        record = {"taken": time.strftime("%Y-%m-%dT%H:%M:%S"), "delta": True,',
+     '        record = {"taken": time.strftime("%Y-%m-%dT%H:%M:%S"),', "fork_of_the_layer_verified",
+     "the delta's snapshot is marked as a delta's"),
+    ("base.sh", '    if [ -n "$old_row" ]; then set -- $old_row; claude stop "$2" >/dev/null 2>&1; fi\n    touch "$STATE/$who-base.hit" "$STATE/$who-base.used" "$STATE/$who-layer.hit"',
+     '    touch "$STATE/$who-base.hit" "$STATE/$who-base.used" "$STATE/$who-layer.hit"', "fork_of_the_layer_verified",
+     "the delta replaced is stopped"),
+    ("base.sh", '      echo "a $who layer or delta is being built (since $(stat -c %y "$lock" | cut -c12-19))" >&2; exit 3', "      :",
+     "holds_it_off", "a build over the layer holds a delta off"),
+    ("base.sh", '    if [ "$(wc -c < "$text")" -le "${DELTA_ARG:-120000}" ]; then', '    if [ "$(wc -c < "$text")" -gt "${DELTA_ARG:-120000}" ]; then',
+     "argument_limit", "a delta over the argument limit is loaded by chunks"),
+    ("base.sh", '      { claude stop "$2"; claude rm "$2"; } >/dev/null 2>&1\n      rm -rf "${SESSIONS:?}/$4"',
+     '      { claude stop "$2"; } >/dev/null 2>&1\n      rm -rf "${SESSIONS:?}/$4"', "canary_asks", "the canary's fork is removed"),
+    # the delta layer, task 1: what changed, in its new form (notes/plan-delta-layer-tasks.md)
+    ("manifest.py", "        shown = [body for key, body in kept.items() if was.get(key) != body]",
+     "        shown = list(kept.values())", "one_lemma_changed", "a changed file shows its changed parts only"),
+    ("manifest.py", "        if removed:  # by their keys", "        if False:  # by their keys", "removed_lemma",
+     "a removed part is named"),
+    ("manifest.py", '            out.append((path, part, "new", now, int(len(now) / ratio)))', "            pass",
+     "new_file_is_whole", "a file new to the load is given whole"),
+    ("manifest.py", '                out.append((path, part, "gone", "", 0))', "                pass",
+     "new_file_is_whole", "a file no longer held is named"),
+    ("manifest.py", '        part = PARTS.get(path, "stable")\n        held.add(path)',
+     '        part = PARTS.get(path, "stable")\n        held.add(path)\n        if part == "stable":\n            continue',
+     "stable_part_s_changes", "the stable part's changes are held"),
+    ("manifest.py", '    return ("\\n".join(lines) + "\\n", sum(t for _, p, _, _, t in entries if p == "layer"),',
+     '    return ("\\n".join(lines) + "\\n", sum(t for _, p, _, _, t in entries),', "stable_part_s_changes",
+     "the stable part's tokens are counted apart"),
+    # a run counts between its Isabelle phases, by its tool's process; a session naming a tool is none (19:40)
+    ("v2.py", "    return set(isabelle_run_roots(procs).values()) | {outermost_tool(procs, pid) for pid in procs if run_tool(procs, pid)}",
+     "    return set(isabelle_run_roots(procs).values())", "between_its_isabelle_phases", "a run's tool counts it"),
+    ("v2.py", '    return name == "claude" or cmd.startswith("claude ") or "/claude/versions/" in cmd',
+     '    return name == "claude" or cmd.startswith("claude ")', "between_its_isabelle_phases",
+     "a versioned Claude Code binary naming a tool is no run"),
+    ("v2.py", '    return not claude_process(name, cmd) and RUN_TOOLS.search(cmd) is not None',
+     '    return RUN_TOOLS.search(cmd) is not None', "between_its_isabelle_phases", "a session naming a tool is no run"),
+    ("v2.py", '        if name == "poly" or run_tool(procs, pid):\n            p, seen = pid, 0', '        if name == "poly":\n            p, seen = pid, 0',
+     "counts_until_its_isabelle_shows", "a runner with its tool under it is counted once"),
+    # a call is spilled to a file well under the argument limit: the sandbox's profile shares the argument (fix-255)
+    ("work_meter.py", "ARG_SAFE = 6_000", "ARG_SAFE = 32_000", "too_long_to_start", "a 10K call is spilled"),
+    # a result is read with its commit message and the questions it names (review-202, 2026-09-22)
+    ("v2.py", "            if not a:\n                text += beside_the_result(tid, text)", "            pass",
+     "every_source_it_names_at_any_time", "a result is read with what its reader needs beside it"),
+    # a bare file name in a Deliverable is the task's own folder's (q64, briefs 253 and 254, 2026-09-22)
+    ("v2.py", '    if tid and "/" not in p and FILE_NAME.fullmatch(p) and not os.path.lexists(os.path.join(PROJECT, p)):',
+     "    if False:", "file_named_bare", "a bare deliverable is the task's folder's"),
+    ("v2.py", '                           if not placed(p, tid).startswith(".build/")]',
+     '                           if not p.startswith(".build/")]', "own_folder_needs_no_final_job",
+     "the result reads a bare deliverable as the task's folder's"),
+    ("v2.py", '            brief_record(str(op["rewrite"]), op["description"])', "            pass",
+     "rewritten_while_a_session", "a rewritten brief is recorded for the session at work"),
     ("v2.py", "        return (revise_proposal(tid, sender, text) or keep_told(tid, sender, text)",
      "        return (revise_proposal(tid, sender, text) or None", "task_nobody_works_on", "a tell kept for the next session"),
     ("v2.py", '    log(f"started {name} ({role}, from {who})")\n    hand_told(name)', '    log(f"started {name} ({role}, from {who})")',
@@ -1094,8 +1187,7 @@ CASES += [
      "written_by_the_session", "bring-main takes the session's resolution"),
     ("finalize.py", "        if not MARKER.search(text):\n", "        if True:\n", "written_by_the_session",
      "a file still marked is not taken"),
-    ("finalize.py", "                    if left:\n                        keep_marked(tid, tree, left, main)", "                    if False:\n                        keep_marked(tid, tree, left, main)",
-     "beyond_its_imports_still_conflicts", "the landing keeps the marked files"),
+    ('train.py', '            if merging and left:\n                fz.keep_marked(tid, tree, left, main)', '            if False:\n                fz.keep_marked(tid, tree, left, main)', 'beyond_its_imports_still_conflicts', 'the landing keeps the marked files'),
     ("work_meter.py", "        if parts:  # what a change writes is not read", "        if False:  # what a change writes is not read",
      "change_writes_is_no_reading", "a change's text is no reading"),
     ("work_meter.py", "            here = os.path.normpath(os.path.join(here, os.path.expanduser(moved.group(1).strip(\"'\\\"\"))))",
@@ -1125,10 +1217,8 @@ CASES += [
      "    c = \" \".join((inp.get(\"command\") or \"\").split())", "declare_how_much", "a declared read is still a file read"),
     ("v2.py", "    return max(READ_BYTES, min(int(m.group(1)) * (1000 if m.group(2) else 1), BATCH_BYTES))", "    return READ_BYTES",
      "readable_by_its_lines", "v2 read honours the declared bound"),
-    ("finalize.py", '        if git("merge-base", "--is-ancestor", main, "HEAD", tree=tree).returncode != 0 \\\n                and time.time() < deadline and not machine_free(tid):',
-     '        if False:', "lets_main_go", "a landing lets main go while the machine is busy"),
-    ("finalize.py", '                    w["tasks"].setdefault(tid, {}).update(lands_again=time.time(), lands_again_why="main")',
-     "                    pass", "lands_again_by_itself", "a commit that waited out main lands again by itself"),
+    ('train.py', 'if c.heavy(plans[0], entries) and time.time() < deadline and not fz.machine_free(lead):', 'if False:', 'lets_main_go', 'a landing lets main go while the machine is busy'),
+    ('finalize.py', 'w["tasks"].setdefault(tid, {}).update(lands_again=time.time(), lands_again_why="main")', 'pass', 'one_landing_at_a_time', 'a commit that waited out main lands again by itself'),
     ("ctx_gauge.py", "    ended = ended and not mail", "    ended = ended",
      "mail_that_came_meanwhile", "mail goes on rather than end the turn"),
     ("ctx_gauge.py", "    return time.time() - at < ENDED_FRESH", "    return True", "hook_never_ran",
@@ -1161,8 +1251,6 @@ CASES += [
     ("v2.py", "    if not left:\n        return None\n    return (f\"refused: {left[0]}\"",
      "    if False:\n        return None\n    return (f\"refused: {left[0]}\"", "retention_and_by_no_other",
      "a brief that delivers receipts"),
-    ("finalize.py", "    put_back_receipts(tid, tree)\n    for _ in range(3):", "    for _ in range(3):",
-     "did_not_commit_are_put_back", "uncommitted receipts put back before landing"),
 ]
 CASES += [
     # the documents-only check, and the base and receipts following main (notes/plan-landing-train.md, stages 1 and 2)
@@ -1180,20 +1268,12 @@ CASES += [
      "checked_by_the_finalizer_itself", "a conflict marker in a document"),
     ("finalize.py", "    found += [p for p in now if p not in before]", "    found += now", "row_head_already_lacks",
      "what HEAD already has is not the commit's"),
-    ("finalize.py", "    if documents_task(tid):\n        ok, tail = documents_check(",
-     "    if False:\n        ok, tail = documents_check(", "landing_of_documents",
-     "a landing of documents is checked by the documents check"),
-    ("finalize.py", " and not documents_task(tid) and not machine_free(tid)", " and not machine_free(tid)",
-     "landing_of_documents", "a landing of documents waits for no machine"),
-    ("finalize.py", '    command = v2.LANDING_CHECK.format(output=out) + (" --advance-base" if advancing else "")',
-     "    command = v2.LANDING_CHECK.format(output=out)", "advances_the_base_and_its_receipts",
-     "a landing check advances the base"),
-    ("finalize.py", "        retain_landed(tid)  # the base follows main", "        pass  # the base follows main",
-     "advances_the_base_and_its_receipts", "the receipts of a landing are retained and committed"),
-    ("finalize.py", "        record_lineage(tid, out, depth, seconds, ok)", "        pass",
-     "advances_the_base_and_its_receipts", "what the lineage costs is recorded"),
-    ("finalize.py", "                undo_advance(tid)  # it did not land", "                pass  # it did not land",
-     "advanced_for_a_landing_that_did_not_happen", "a base advanced for no landing is put back"),
+    ('train.py', '    ok, tail = fz.documents_check(plan.tree, documents, sources=alone) if documents or alone else (True, "")', '    ok, tail = (True, "")', 'landing_of_documents', 'a landing of documents is checked by the documents check'),
+    ('train.py', '    return not all(entries[t].get("documents") for t in plan.members)', '    return True', 'landing_of_documents', 'a landing of documents waits for no machine'),
+    ('train.py', '(" --advance-base" if advancing else "")', '("")', 'advances_the_base_and_its_receipts', 'a landing check advances the base'),
+    ('train.py', '    if plan.out and plan.kind == "repository" and fz.ADVANCE and "incremental_check.py check" in v2.LANDING_CHECK:', '    if False:', 'advances_the_base_and_its_receipts', 'the receipts of a landing are retained and committed'),
+    ('train.py', '        fz.record_lineage("+".join(plan.members), plan.out, depth, plan.seconds, ok)', '        pass', 'advances_the_base_and_its_receipts', 'what the lineage costs is recorded'),
+    ('train.py', '    if before is not None and now != before:\n        fz.restore_base(before)', '    if False:\n        fz.restore_base(before)', 'advanced_for_a_landing_that_did_not_happen', 'a base advanced for no landing is put back'),
     ("v2.py", "        elif time.time() - os.path.getmtime(d) > BASE_KEEP:", "        elif False:",
      "bases_nothing_stands_on", "a base nothing stands on is removed"),
     ("v2.py", " or os.path.dirname(d) != root or d == active:", " or os.path.dirname(d) != root:",
@@ -1273,10 +1353,8 @@ CASES += [
     ("work_meter.py", "        if repository_check(ran) and rec.get(\"role\") in v2.PRODUCING",
      "        if False and rec.get(\"role\") in v2.PRODUCING", "asked_of_the_harness",
      "the repository's check of a task in its tree is the harness's"),
-    ("v2.py", "    if kind == \"check\":\n        return bool(p.get(\"result\"))", "    if kind == \"check\":\n        return False",
-     "run_once_for_all", "a session parked for its check is resumed with its result"),
-    ("v2.py", "                if os.path.isdir(path) and not os.path.islink(path):", "                if False:",
-     "keeps_its_reports_and_loses_its_bulk", "a combined check's bulk is pruned"),
+    ('v2.py', '    if kind in ("check", "probe"):\n        return bool(p.get("result"))', '    if kind in ("check", "probe"):\n        return False', 'run_once_for_all', 'a session parked for its check is resumed with its result'),
+    ('v2.py', '            shutil.rmtree(path, ignore_errors=True)\n            removed.append(path)\n    if removed:\n        log(f"pruned {len(removed)} part(s) of the checks\' outputs', '            pass\n            removed.append(path)\n    if removed:\n        log(f"pruned {len(removed)} part(s) of the checks\' outputs', 'loses_its_bulk', "a combined check's bulk is pruned"),
 ]
 CASES += [
     # an admission names its runner (2026-09-22 14:42: a train's run counted twice, a stopped finalizer's marker once)
@@ -1300,7 +1378,8 @@ CASES += [
      "declare_how_much", "a SHOW declared at a later command of the call counts"),
 ]
 CASES += [
-    ("base_pack.py", "    words = lines[-1].split() if lines else []", "    words = text.strip().split()",
+    ("base_pack.py", "    lines = [line for line in text.strip().splitlines() if line.strip()]\n"
+     "    words = lines[-1].split() if lines else []", "    words = text.strip().split()",
      "slip_in_the_echoed_id", "a load acknowledged on the reply's last line is complete"),
 ]
 CASES += [
@@ -1357,8 +1436,7 @@ CASES += [
      "a row the session copied from main and did not commit is main's too"),
     ("v2.py", "never had its own\n        f = opt(\"--file\")", "never had its own\n        f = None",
      "planner_tells_a_working_session", "a message told from a file is the file's text"),
-    ("work_meter.py", "|trees/[^/]+/[^/]+\\.md$|plans/[^/]+/[^/]+\\.md$)", "|trees/[^/]+/[^/]+\\.md$)",
-     "reads_its_own_drafts", "a planner's notes are statements, read by every statements reader"),
+    ('work_meter.py', '|trees/[^/]+/[^/]+\\.md$|plans/[^/]+/[^/]+\\.md$"', '|trees/[^/]+/[^/]+\\.md$"', 'reads_its_own_drafts', "a planner's notes are statements, read by every statements reader"),
     ("show.py", "            within = {scopes[-1]} | interpreted(scopes[-1], extra)\n",
      "            within = {scopes[-1]}\n", "interpretation_s_prefix_qualifies",
      "an interpretation's prefix qualifies the fact of the locale it interprets"),
@@ -1370,30 +1448,82 @@ CASES += [
     ("ctx_gauge.py", "    v2.hit(rec[\"name\"])  # its requests keep its own cache entry alive",
      "    v2.hit(rec[\"name\"]); v2.hit(rec.get(\"origin\") or rec[\"name\"])  # its requests keep its own cache entry alive",
      "own_cache_warm_and_not", "a session's request keeps its own entry warm, not its origin's"),
+    ("check_errors.py", "            if under and len(under.encode()) <= left:", "            if False:",
+     "what_fixing_it_needs", "each error comes with what fixing it needs while room is left"),
+    ("work_meter.py", "        v2.claim_call(MEASURED_NOW[0], hook.get(\"tool_use_id\"))", "        pass",
+     "holds_the_machine_for_the_call", "a measurement's call holds the machine while it runs"),
+    ("work_meter.py", "        v2.release_claim(hook.get(\"tool_use_id\"))  # a measurement's hold ends with the call that ran it",
+     "        pass", "holds_the_machine_for_the_call", "a measurement's hold ends with the call that ran it"),
+    ("work_meter.py", '                  r"|tasks/[^/]+/(?:brief|finalize|finalized|active-context)\\.json$)")',
+     '                  r")")', "reads_its_own_drafts", "a task's records and the base's pointer are a planner's reading"),
+    ("work_meter.py", "            kept = None if capped else through_changes(c)\n", "            kept = None\n",
+     "takes_no_change_of_its_call", "a check the machine refuses takes no change of its call with it"),
+    ("work_meter.py", "            queued = queued_probe(c, run, rec) if not capped else None\n",
+     "            queued = None\n", "marked_queue_is_queued", "a probe marked QUEUE=1 is queued when the machine refuses it"),
+    ("v2.py", "        if run_blocked((e[\"task\"],), \"probe\"):\n            break  # in the order queued",
+     "        if False:\n            break  # in the order queued", "probe_the_machine_refuses_is_queued",
+     "a queued probe waits for room on the machine"),
+    ("v2.py", "                p.update(result=\"Your queued probe ran:\\n\" + text)",
+     "                p.update(result=\"\")", "probe_the_machine_refuses_is_queued",
+     "a queued probe's output resumes its session"),
 ]
 ONLY = set(sys.argv[1:])
 CASES = [c for c in CASES if not ONLY or c[3] in ONLY]
-bad = []
-for fname, old, new, k, label in CASES:
-    src = open(fname).read()
-    if src.count(old) != 1:
-        bad.append(f"{label}: anchor not unique ({src.count(old)})"); continue
-    shutil.copy(fname, fname + ".bak")
+# Side by side (the owner, 2026-09-22: "update the testing and mutation setup as it is taking way to long bottlenecking
+# our work"): the 565 cases took twenty minutes one after another in one directory. Each worker breaks a copy of its
+# own, a case runs only the test files that name its key, and it stops at the first test that fails — one is all a
+# case needs. At a lower priority than the machine's own work, which runs beside it.
+import queue, re, tempfile
+from concurrent.futures import ThreadPoolExecutor
+WORKERS = int(os.environ.get("ORCH_MUTATION_WORKERS", max(2, min(12, (os.cpu_count() or 4) // 3))))
+TESTS = {f: open(f).read() for f in os.listdir(".") if re.fullmatch(r"test_\w+\.py", f) and f != "test_layer.py"}
+work = tempfile.mkdtemp(prefix="mutation-workers-")
+free = queue.Queue()
+for i in range(max(1, min(WORKERS, len(CASES)))):
+    copy = os.path.join(work, f"w{i}")
+    shutil.copytree(ORCH, copy, symlinks=True, ignore=shutil.ignore_patterns(
+        "state", "__pycache__", ".claude", ".mcp.json", "test_layer.py", "*.bak"))
+    free.put(copy)
+
+
+def files_for(k):
+    return sorted(f for f, text in TESTS.items() if k in text) or sorted(TESTS)
+
+
+def run_case(case):
+    fname, old, new, k, label = case
+    here = free.get()
     try:
-        open(fname, "w").write(src.replace(old, new))
-        # no bytecode: Python's cache is keyed by a file's modified second and its size, and this rewrites the same
-        # files several times a second, so a test could run an earlier mutant or the original — a mutation it did
-        # catch alone read as missed in the full run (2026-09-21)
-        shutil.rmtree("__pycache__", ignore_errors=True)
-        r = subprocess.run([sys.executable, "-B", "-m", "pytest", "-q", "-p", "no:cacheprovider", "-k", k]
-                           + [f for f in os.listdir(".") if f.startswith("test_") and f.endswith(".py")],
-                           capture_output=True, text=True, env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
-        last = r.stdout.splitlines()[-1] if r.stdout.strip() else ""
-        caught, broken = "failed" in last, "error" in last and "failed" not in last
-        print(f"  {'CAUGHT ' if caught else 'BROKEN ' if broken else 'MISSED '} {label}")
-        if broken: bad.append(f"{label}: the mutation broke the import rather than the repair; write another")
-        elif not caught: bad.append(f"{label}: the mutation was not caught")
+        path = os.path.join(here, fname)
+        src = open(path).read()
+        if src.count(old) != 1:
+            return f"anchor not unique ({src.count(old)})", None
+        open(path, "w").write(src.replace(old, new))
+        try:
+            # no bytecode: Python's cache is keyed by a file's modified second and its size, and a file rewritten
+            # several times a second could run an earlier mutant or the original (2026-09-21)
+            r = subprocess.run(["nice", "-n", "10", sys.executable, "-B", "-m", "pytest", "-q", "-x", "-p",
+                                "no:cacheprovider", "-k", k] + files_for(k), cwd=here, capture_output=True, text=True,
+                               env=dict(os.environ, PYTHONDONTWRITEBYTECODE="1"))
+        finally:
+            open(path, "w").write(src)
+        return None, (r.stdout.splitlines()[-1] if r.stdout.strip() else "")
     finally:
-        shutil.move(fname + ".bak", fname)
+        free.put(here)
+
+
+bad = []
+try:
+    with ThreadPoolExecutor(max_workers=free.qsize()) as pool:
+        for (fname, old, new, k, label), (problem, last) in zip(CASES, pool.map(run_case, CASES)):
+            if problem:
+                bad.append(f"{label}: {problem}")
+                continue
+            caught, broken = "failed" in last, "error" in last and "failed" not in last
+            print(f"  {'CAUGHT ' if caught else 'BROKEN ' if broken else 'MISSED '} {label}", flush=True)
+            if broken: bad.append(f"{label}: the mutation broke the import rather than the repair; write another")
+            elif not caught: bad.append(f"{label}: the mutation was not caught")
+finally:
+    shutil.rmtree(work, ignore_errors=True)
 print()
 print("\n".join("  ! " + b for b in bad) or "  every mutation was caught")

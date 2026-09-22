@@ -162,16 +162,27 @@ if ready and not v2.slot(st, v2.PRODUCING):
 elif not ready and not v2.slot(st, v2.PRODUCING) and not v2.resume_order(st):
     print(f"  nothing produces and nothing can start: all {len(st['queue'])} queued tasks wait on blockers "
           "(the planner's graph is that narrow)")
-claims = [l for l in open(os.path.join(v2.STATE, "v2.log"), errors="ignore")
-          if l[:19] >= iso(now - 7200)[:19] and "holds the machine for a measurement" in l]
-by = {}
-for l in claims:
+# what a measurement costs the others is the time it holds the machine, not how often it takes one: task 269's four
+# holds of about 30 s each were flagged where nothing was wrong (2026-09-22 21:22), each ended by the call that ran it
+HELD_LONG, HELD_TOTAL = 300, 600
+held, since, log = {}, {}, [l for l in open(os.path.join(v2.STATE, "v2.log"), errors="ignore") if l[:19] >= iso(now - 7200)[:19]]
+for l in log:
     m = re.search(r"task (\w+) holds the machine", l)
-    if m:
-        by[m.group(1)] = by.get(m.group(1), 0) + 1
-for tid, n in by.items():
-    if n >= 3:
-        print(f"  task {tid} claimed the whole machine {n} times in two hours (every other task's runs wait meanwhile)")
+    at = time.mktime(time.strptime(l[:19], "%Y-%m-%dT%H:%M:%S")) if l[:4] == "2026" else None
+    if m and at:
+        since[m.group(1)] = at
+    end = re.search(r"the measurement of task (\w+) ended|cleared the machine's claim by task (\w+)", l)
+    if end and at:
+        tid = end.group(1) or end.group(2)
+        if tid in since:
+            held[tid] = held.get(tid, (0, 0))
+            held[tid] = (held[tid][0] + at - since.pop(tid), held[tid][1] + 1)
+for tid, at in since.items():  # still holding it
+    held[tid] = (held.get(tid, (0, 0))[0] + now - at, held.get(tid, (0, 0))[1] + 1)
+for tid, (seconds, n) in held.items():
+    if seconds >= HELD_TOTAL or (n == 1 and seconds >= HELD_LONG):
+        print(f"  task {tid} held the whole machine {int(seconds // 60)} min {int(seconds % 60)} s in two hours "
+              f"({n} measurement{'s' if n > 1 else ''}; every other task's runs wait meanwhile)")
 
 print("\n## standing")
 for who in v2.BASES:
@@ -181,6 +192,12 @@ for who in v2.BASES:
                            capture_output=True, text=True).stdout.strip()
     age = lambda p: f"{int((now - os.path.getmtime(p)) // 60)} min" if os.path.exists(p) else "none"
     print(f"  {who}: layer last hit {age(hit)} ago, stable base's own entry {age(stable)}, layer stale {share}")
+    delta = v2.delta_record(who)  # the third part (notes/plan-delta-layer.md): forked once the base is switched to it
+    if delta:
+        print(f"    delta {delta.get('sessionId', '?')[:8]} sealed {delta.get('sealed', '?')[11:16]}, "
+              f"{delta.get('tokens', '?')} tokens ({delta.get('layer_tokens', '?')} frontier, "
+              f"{delta.get('stable_tokens', '?')} stable), {'forked' if v2.deltas_on(who) else 'not yet forked'}; "
+              f"the layer's own entry {age(os.path.join(v2.STATE, f'{who}-layer.hit'))}")
 beat = os.path.join(v2.STATE, "warm.beat")
 print(f"  daemon heartbeat {int(now - os.path.getmtime(beat))} s ago" if os.path.exists(beat) else "  NO daemon heartbeat")
 disk = shutil.disk_usage(v2.PROJECT)

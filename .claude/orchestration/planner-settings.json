@@ -2,7 +2,9 @@
   "promptCacheTtl": "1h",
   "env": {
     "CLAUDE_CODE_TASK_LIST_ID": "orchestration-graph",
-    "DISABLE_GROWTHBOOK": "1"
+    "DISABLE_GROWTHBOOK": "1",
+    "PYTHON_COLORS": "0",
+    "NO_COLOR": "1"
   },
   "hooks": {
     "PreToolUse": [

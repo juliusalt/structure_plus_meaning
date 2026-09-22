@@ -54,6 +54,26 @@ class StaleShareTests(unittest.TestCase):
             self.assertEqual(manifest.moved_tokens(str(index), {str(index): manifest.digest(str(index))}, {}), 0)
 
 
+class AcknowledgementTests(unittest.TestCase):
+    """The load's final line: what it shows is that the session read to the end, not that it copies well."""
+
+    ID = "ad30832f993fef053894f978fc63de2caf65ced842e7f438fee7cd62ee8c2744"
+
+    def test_an_id_copied_with_slips_says_the_session_read_to_the_end(self):
+        # every chunk of the high base's reload was complete on 2026-09-22 21:56 and the load was thrown away for
+        # four stuttered characters, as it had been at 21:36: 270K each time, and no layer refresh could finish
+        self.assertTrue(p.acknowledges("LOADED " + self.ID, self.ID))
+        self.assertTrue(p.acknowledges("LOADED ad30832f993f993fef053894f978fc63de2caf65ced842e7f438fee7cd"
+                                       "62ee8c2744", self.ID))                  # stuttered, 68 characters
+        self.assertTrue(p.acknowledges("LOADED " + self.ID[:20] + self.ID[21:], self.ID))   # one dropped, 63
+        self.assertFalse(p.acknowledges("LOADED " + self.ID[:30], self.ID))     # half of it: it did not copy the id
+        self.assertTrue(p.acknowledges("PART 6/6 all complete\n\nLOADED " + self.ID[:-1] + "0", self.ID))
+        self.assertFalse(p.acknowledges("LOADED " + "f" * 64, self.ID))  # another pack's id: it read nothing
+        self.assertFalse(p.acknowledges("LOADED", self.ID))
+        self.assertFalse(p.acknowledges("done", self.ID))
+        self.assertFalse(p.acknowledges("LOADED " + self.ID + "\nstill loading", self.ID))  # not its last line
+
+
 class PackingTests(unittest.TestCase):
     def test_fact_prefixes_preserve_names_duplicates_and_order(self):
         for names in [
@@ -363,7 +383,8 @@ class PackingTests(unittest.TestCase):
                     return False
 
             self.assertTrue(complete(loaded + [reply("LOADED " + slipped(meta["id"], 12))]))
-            self.assertFalse(complete(loaded + [reply("LOADED " + slipped(meta["id"], 12, 13))]))  # two: not a slip
+            self.assertTrue(complete(loaded + [reply("LOADED " + slipped(meta["id"], 12, 13))]))   # two: a copy still
+            self.assertFalse(complete(loaded + [reply("LOADED " + slipped(meta["id"], *range(12, 20)))]))  # eight: no
             self.assertFalse(complete([reply("LOADED " + meta["id"])] + loaded))  # said before the chunks arrived
             self.assertFalse(complete(loaded + [reply("LOADED")]))
             # the right line last, after a garbled one: the high layer of 2026-09-22 15:07, all seven chunks loaded

@@ -650,17 +650,59 @@ def bootstrap(directory, meta):
             "turn.\n\n" + command + "\n")
 
 
+SLIPS = 4  # how far the id said back may stand from the pack's: the stutter of 2026-09-22 21:56 was four characters
+
+
+def slips(said, pack_id, most):
+    """Whether what was said is the pack's id copied with at most `most` characters slipped, doubled or dropped."""
+    if abs(len(said) - len(pack_id)) > most:
+        return False
+    before = list(range(len(pack_id) + 1))
+    for i, c in enumerate(said, 1):
+        row = [i]
+        for j, d in enumerate(pack_id, 1):
+            row.append(min(before[j] + 1, row[j - 1] + 1, before[j - 1] + (c != d)))
+        before = row
+    return before[-1] <= most
+
+
 def acknowledges(text, pack_id):
-    """The load's final reply, `LOADED <pack id>`: the id as given, or with one character slipped in the copying. The
-    chunks are what is checked exactly; this says only that the session read to the end. On 2026-09-21 the max layer
-    loaded all four of its chunks and wrote one character of its 64-character id wrong, and the complete layer was
-    refused."""
-    # its last line: the high layer of 2026-09-22 15:07 loaded all seven chunks and replied "LOADED 30a2fc2b208b PART 7/7
-    # all complete — LOADED 30a2fc2b208b208b… correction:" before the right line, and the complete layer was refused
+    """The load's final reply, `LOADED <pack id>`: the pack's id copied, with up to SLIPS characters wrong. The
+    chunks are what is checked exactly, and this says only that the session read to the end - so a session that
+    copies 64 characters by hand is not made to copy them perfectly. Three complete loads were refused for that:
+    the max layer of 2026-09-21 (one character wrong), the high layer of 2026-09-22 15:07 (the right line after a
+    garbled one - hence the last line, not any line), and the high base's reload of 2026-09-22 21:56, all six chunks
+    complete, which said "ad30832f993f993fef05…" with four characters stuttered, 270K thrown away twice over."""
     lines = [line for line in text.strip().splitlines() if line.strip()]
     words = lines[-1].split() if lines else []
-    return (len(words) == 2 and words[0] == "LOADED" and len(words[1]) == len(pack_id)
-            and sum(a != b for a, b in zip(words[1], pack_id)) <= 1)
+    if len(words) != 2 or words[0] != "LOADED":
+        return False
+    return slips(words[1], pack_id, SLIPS)
+
+
+def check_held(transcript, digest):
+    """A delta session's load (base.sh WHO delta): its own message holds the delta's digest, and its last reply is
+    `HELD <digest>` — the digest copied, with one character wrong at most (slips), as `acknowledges` allows a
+    layer's id four: this one is twelve characters, not sixty-four."""
+    asked = replied = False
+    for line in Path(transcript).read_text().splitlines():
+        record = json.loads(line)
+        if record.get("isSidechain"):
+            continue
+        content = (record.get("message") or {}).get("content", [])
+        texts = [content] if isinstance(content, str) else [b.get("text", "") for b in content
+                                                            if isinstance(b, dict) and b.get("type") == "text"]
+        for text in texts:
+            if record.get("type") == "user" and f"HELD {digest}" in text:
+                asked = True
+            elif record.get("type") == "assistant" and asked:
+                lines = [x for x in text.strip().splitlines() if x.strip()]
+                words = lines[-1].split() if lines else []
+                replied = len(words) == 2 and words[0] == "HELD" and slips(words[1], digest, 1)
+    if not (asked and replied):
+        raise ValueError(f"the delta is not held: its message {'found' if asked else 'not found'}, "
+                         f"its reply {'HELD' if replied else 'missing or other'}")
+    return {"digest": digest}
 
 
 def check_load(directory, transcript):
@@ -750,6 +792,11 @@ def main():
     p.add_argument("--symbols", type=Path, default=Path(os.environ.get("ISABELLE_SYMBOLS", "/opt/isabelle/etc/symbols")))
     p.add_argument("--chunk-bytes", type=int, default=CHUNK_BYTES)
     p.add_argument("--from-pack", type=Path, help="reuse exactly the previous candidate's frozen source digests")
+    p = sub.add_parser("last-reply")  # a session's last reply, as text (base.sh WHO delta --ask)
+    p.add_argument("transcript", type=Path)
+    p = sub.add_parser("held")  # a delta session's load: its message and its HELD reply (base.sh WHO delta)
+    p.add_argument("transcript", type=Path)
+    p.add_argument("digest")
     for name in ("verify", "bootstrap", "emit", "check-load", "snapshot", "count"):
         p = sub.add_parser(name)
         p.add_argument("directory", type=Path)
@@ -776,6 +823,13 @@ def main():
         sys.stdout.write(envelope(meta, args.part, text))
     elif args.command == "check-load":
         print(json.dumps(check_load(args.directory, args.transcript)))
+    elif args.command == "held":
+        print(json.dumps(check_held(args.transcript, args.digest)))
+    elif args.command == "last-reply":
+        replies = [b.get("text", "") for line in args.transcript.read_text().splitlines()
+                   for r in [json.loads(line)] if r.get("type") == "assistant" and not r.get("isSidechain")
+                   for b in ((r.get("message") or {}).get("content") or []) if isinstance(b, dict) and b.get("type") == "text"]
+        print(replies[-1] if replies else "")
     else:
         meta = verify(args.directory)
         if args.command == "verify":

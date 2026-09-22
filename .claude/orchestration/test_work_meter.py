@@ -131,6 +131,13 @@ class PlannerGuardTests(Guarded):
         # a planner's notes are statements, as everything it writes: brief-230 was refused the note plan-45 sent it
         self.w.write(".build/plans/plan-0/t230.md", "x\n")
         self.assertIsNone(self.guard("Bash", {"command": "cat .build/plans/plan-0/t230.md"}))
+        # and so are a task's records and the base's pointer (plan-43, plan-44 were refused them, 2026-09-22)
+        for path in (".build/tasks/7/finalized.json", ".build/tasks/7/finalize.json", ".build/tasks/7/brief.json",
+                     ".build/tasks/base-lasting/active-context.json"):
+            self.w.write(path, "{}\n")
+            self.assertIsNone(self.guard("Bash", {"command": f"cat {path}"}), path)
+        self.w.write(".build/tasks/7/check/incremental.json", "{}\n")                  # a check's own output is not one
+        self.assertIn("reads statements, not details", self.guard("Bash", {"command": "cat .build/tasks/7/check/incremental.json"}))
         self.w.set_st(sessions={})
         self.w.session("brief-2", "task-designer", "s1", task="2", settings="planner-settings.json")
         self.w.write(".build/tasks/2/brief/proposal.json", "[]\n")
@@ -838,6 +845,43 @@ class WorkerGuardTests(Guarded):
         self.thy.write_text(THEORY.replace("\nend\n", "\n" + text + "end\n"))
         self.record("Bash", {"command": fakes.change(str(self.thy))}, {"filePath": str(self.thy)})
 
+    def test_a_probe_marked_queue_is_queued_when_the_machine_refuses_it(self):
+        import base64
+        (self.w.state / "isabelle-exclusive").write_text(json.dumps(
+            {"task": "9", "why": "a measurement", "session": "implement-9", "at": time.time()}))
+        probe = "python3 -B tools/probe_theories.py --work .build/tasks/1/p --theory Ready --timeout 60 2>&1 | tail -5"
+        said = self.guard("Bash", {"command": probe})                          # unmarked: refused, and told it may queue
+        self.assertIn("Task 9 holds the machine", said)
+        self.assertIn("lead the probe with QUEUE=1", said)
+        change = fakes.change((".build/tasks/1/x.md", "drafted\n"))
+        self.assertIsNone(self.guard("Bash", {"command": change + "\nQUEUE=1 " + probe}))
+        command = self.rewritten()["command"]
+        self.assertIn("drafted", command)                                      # its change goes through
+        head, _, queued = command.rpartition(" queue-probe ")
+        self.assertTrue(head.endswith("v2.py"))
+        self.assertEqual(base64.b64decode(queued).decode(), probe)             # and the probe waits in the queue
+        self.assertLess(command.index(work_meter.STATUS_LINE), command.index("queue-probe"))
+
+    def test_a_measurement_holds_the_machine_for_the_call_that_runs_it(self):
+        # run in the foreground, a measurement is no job of its session, and its hold stood CLAIM_GRACE from the
+        # grant: fix-220's 17 s timing held the machine three minutes while two checks waited, and task 128's pair of
+        # about 200 s lost its hold at 189 s (2026-09-22). The call that runs it holds it, and no longer
+        claim = self.w.state / "isabelle-exclusive"
+        claim.write_text(json.dumps({"task": "1", "why": "a timing", "session": "implement-1", "at": time.time() - 60}))
+        probe = "python3 -B tools/probe_theories.py --work .build/tasks/1/m --theory Ready --timeout 360"
+        self.assertIsNone(self.guard("Bash", {"command": probe}, tool_use="t-m"))
+        held = json.loads(claim.read_text())
+        self.assertEqual(held["call"], "t-m")
+        claim.write_text(json.dumps(dict(held, at=time.time() - 900)))  # the run goes on past the grace
+        code = f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; print(v2.exclusive_holder())"
+        holder = lambda: subprocess.run([sys.executable, "-c", code], env=self.w.env, capture_output=True,
+                                        text=True).stdout.strip()
+        self.assertEqual(holder(), "1")                                  # past its grace, while the call runs
+        self.record("Bash", {"command": probe}, {"stdout": "MEASURE 0.2"}, tool_use="t-m")
+        self.assertFalse(claim.exists())                                  # and it ends with the call
+        self.assertIn("the measurement of task 1 ended with the call that ran it", (self.w.state / "v2.log").read_text())
+        self.assertEqual(holder(), "None")
+
     def test_a_worker_may_not_wait_start_subagents_or_read_a_running_jobs_output(self):
         self.assertIn("starts no subagents", self.guard("Agent", {"prompt": "x"}))
         self.assertIn("Waiting is refused", self.guard("TaskOutput", {"task_id": "b1"}))
@@ -1233,6 +1277,10 @@ class SharingTests(Guarded):
         self.assertIsNone(self.guard("Bash", {"command": change + "\ncd .build/tasks/1/brief && echo '{}' > proposal.json"}))
         self.assertIn("Not by a redirection", self.guard("Bash", {"command": "cd theories && echo x > A.thy"}))
         self.assertIn("Not by a redirection", self.guard("Bash", {"command": "cd .build/tasks/1 && cd ../../../theories && echo x > A.thy"}))
+        # a name given from a variable already known: review-227's `T="$TMPDIR/r227"` (2026-09-22 20:12)
+        self.assertIsNone(self.guard("Bash", {"command": 'T="$TMPDIR/r227"; mkdir -p "$T"; for n in a b; do '
+                                                         'git show HEAD:ROOT > "$T/$n"; done'}))
+        self.assertIn("Not by a redirection", self.guard("Bash", {"command": 'T="$PWD/theories"; echo x > "$T/A.thy"'}))
 
     def test_a_script_whose_paths_are_made_at_run_time_in_a_draft_s_place_stands(self):
         # plan-42's `open('.build/plans/plan-42/b'+tid+'.md','w')` and review-94.2's `open(f'{T}/{n}','wb')` with
@@ -1247,6 +1295,13 @@ class SharingTests(Guarded):
             "for n in ('A', 'B'):\n    open('theories/'+n+'.thy','w').write('x')\n")}))       # made, but in the tree
         self.assertIn("could not be read", self.guard("Bash", {"command": run.format(
             "import sys\nopen(sys.argv[1],'w').write('x')\n")}))                              # made from nothing fixed
+        # a triple-quoted string holds text, not where the script writes; a path joined under a known name writes in
+        # its directory (fix-265, 2026-09-22 20:08)
+        self.assertIsNone(self.guard("Bash", {"command": run.format(
+            "from pathlib import Path\ndst=Path('.build/tasks/1/frame')\ns='''    theory.write_text(text)\n'''\n"
+            "(dst/'inject.py').write_text(s)\n")}))
+        self.assertIn("Not by a script that writes", self.guard("Bash", {"command": run.format(
+            "from pathlib import Path\ndst=Path('theories')\n(dst/'A.thy').write_text('x')\n")}))  # in the tree
         said = self.guard("Bash", {"command": run.format("open('.build/outputs/implement-1/mf/b','wb').write(b'x')\n")})
         self.assertIn(".build/outputs/ is the harness's", said)                           # and why not there
         self.assertIn(".build/tasks/<your task>/", said)
@@ -1407,6 +1462,24 @@ class SharingTests(Guarded):
         self.assertIsNone(self.guard("Bash", {"command": fakes.change(str(self.w.project / ".build/tasks/2/x.md"))},
                                      tool_use="t-new"))
 
+    def test_a_check_the_machine_refuses_takes_no_change_of_its_call_with_it(self):
+        # implement-189, implement-182 and fix-227 lost the change before their probe with the probe, refused while
+        # task 220 waited to measure, and learned so only by looking (fix-227: three requests, 2026-09-22 17:30)
+        (self.w.state / "isabelle-exclusive").write_text(json.dumps(
+            {"task": "1", "why": "a measurement", "session": "implement-1", "at": time.time()}))
+        change = fakes.change((".build/tasks/2/x.md", "drafted\n"))
+        probe = "python3 -B tools/probe_theories.py --work .build/tasks/2/p --theory Ready --timeout 60"
+        self.assertIsNone(self.guard("Bash", {"command": change + "\n" + probe}))
+        command = self.rewritten()["command"]
+        self.assertIn("drafted", command)                                  # the change goes through
+        self.assertNotIn("probe_theories", command)                        # and only the probe waits
+        self.assertIn("Your changes were made; what followed them in this call was not run. Task 1 holds the machine",
+                      command)
+        self.assertLess(command.index(work_meter.STATUS_LINE), command.index("Your changes were made"))  # if they were
+        # a check before the change, or a call without one, is refused whole as before
+        self.assertIn("Task 1 holds the machine", self.guard("Bash", {"command": probe + "\n" + change}))
+        self.assertIn("Task 1 holds the machine", self.guard("Bash", {"command": probe}))
+
     def test_no_check_beside_a_measurement_either(self):
         # a run whose result is a timing holds the machine the same way a base-advancing check does
         (self.w.state / "isabelle-exclusive").write_text(json.dumps(
@@ -1454,6 +1527,12 @@ class SharingTests(Guarded):
         (self.w.state / "machine-wait" / "1").write_text(str(time.time()))      # task 1's finalizer waits
         check = "python3 -B tools/incremental_check.py check --output .build/tasks/2/c1"
         self.assertIn("Task 1 waits for a heavy run ahead of yours", self.guard("Bash", {"command": check}) or "")
+        # but not while the machine is its own for a measurement: task 1 cannot start before it has run, and fix-274,
+        # holding the claim, waited parked behind task 271's finalizer, which waited on that claim (2026-09-22 20:37)
+        (self.w.state / "isabelle-exclusive").write_text(json.dumps(
+            {"task": "2", "why": "a timing", "pid": None, "session": "implement-2", "at": time.time(), "seen": True}))
+        self.assertIsNone(self.guard("Bash", {"command": check}))
+        (self.w.state / "isabelle-exclusive").unlink()
         (self.w.state / "machine-wait" / "1").unlink()
         self.assertIsNone(self.guard("Bash", {"command": check}))
 
@@ -1488,7 +1567,9 @@ class ChangeGuardTests(Guarded):
         self.assertIn("A probe gets `--timeout", self.guard("Bash", {"command": call + "\n" + probe.format(900)}))
         self.w.env["ORCH_ISABELLE_RUNS"] = "0"
         self.w.env["ORCH_PROBE_RUNS"] = str(work_meter.v2.PROBE_MAX)                     # the probes full
-        self.assertIn("probes are going", self.guard("Bash", {"command": call + "\n" + probe.format(60)}))
+        self.assertIsNone(self.guard("Bash", {"command": call + "\n" + probe.format(60)}))  # the change goes through,
+        self.assertIn("probes are going", self.rewritten()["command"])                 # and only its probe waits
+        self.assertNotIn("probe_theories", self.rewritten()["command"])
         self.w.env["ORCH_PROBE_RUNS"] = "0"
         # its change is the change it is: the harness's files refused, its files the task's
         harness = self.change(f"=== write {fakes.HERE / 'x.py'}\nx\n")["command"]
@@ -1546,6 +1627,11 @@ class ChangeGuardTests(Guarded):
         # a call that fits runs as it is
         self.assertIsNone(self.guard("Bash", {"command": self.change("=== write .build/tasks/1/S.thy\nx\n")["command"]}))
         self.assertFalse((self.rewritten() or {}).get("command", "").startswith(". "))
+        # and one of 10K is spilled too: fix-255's change of 23.8K was refused at spawn where 8.1K had started, the
+        # sandbox's profile taking the rest of the argument (2026-09-22 19:14)
+        mid = self.change("=== write .build/tasks/1/M.thy\n" + "x" * 10_000 + "\n")["command"]
+        self.assertIsNone(self.guard("Bash", {"command": mid}, tool_use="mid"))
+        self.assertTrue(self.rewritten()["command"].startswith(". "))
 
     def test_a_probe_in_a_script_of_the_session_s_own_is_the_check_it_runs(self):
         # implement-76 ran its probe as `bash .build/tasks/76/runprobe.sh …` (2026-09-22): read from the command alone
@@ -1684,7 +1770,9 @@ class ChangeGuardTests(Guarded):
         self.assertIn("EOF\n" + work_meter.STATUS_LINE + "\nls .build/tasks/1", run)    # only if the change went through
         self.assertIn("A probe gets `--timeout", self.guard("Bash", {"command": batch.replace("60", "900")}))
         self.w.env["ORCH_PROBE_RUNS"] = str(work_meter.v2.PROBE_MAX)
-        self.assertIn("probes are going", self.guard("Bash", {"command": batch}))       # the machine's limits too
+        self.assertIsNone(self.guard("Bash", {"command": batch}))                       # the machine's limits too:
+        self.assertIn("probes are going", self.rewritten()["command"])                 # what follows the change waits
+        self.assertNotIn("probe_theories", self.rewritten()["command"])
         self.w.env["ORCH_PROBE_RUNS"] = "0"
         # the rest of the call is judged as it would be alone: its writes and its git
         self.assertIn("Not by a redirection", self.guard("Bash", {"command": change + "\necho x > NOTES.md"}))

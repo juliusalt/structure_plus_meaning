@@ -101,7 +101,8 @@ PY_ASSIGN = re.compile(r"""^[ \t]*(\w+)\s*=\s*(?:Path\(\s*)?['"]([^'"\n]+)['"]""
 # NAME.write_text/bytes. Where the expression is made at run time its fixed beginning is read (script_writes).
 WRITE_SITE = re.compile(r"""open\(\s*([^,()\n]+?)\s*,\s*['"][wax]b?\+?['"]"""
                         r"""|Path\(\s*([^()\n]+?)\s*\)\s*\.\s*write_(?:text|bytes)\("""
-                        r"""|\b(\w+)\s*\.\s*write_(?:text|bytes)\(""")
+                        r"""|\b(\w+)\s*\.\s*write_(?:text|bytes)\("""
+                        r"""|\(\s*(\w+)\s*/[^()\n]*\)\s*\.\s*write_(?:text|bytes)\(""")
 # a name given the temporary directory, or a path made from it or from a literal: `T=os.environ['TMPDIR']+'/mf'`
 PY_PREFIX = re.compile(r"""^[ \t]*(\w+)\s*=\s*(?:Path\(\s*)?(os\.environ\[['"]TMPDIR['"]\]|os\.environ\.get\(\s*['"]TMPDIR['"][^)]*\)"""
                        r"""|os\.getenv\(\s*['"]TMPDIR['"][^)]*\)|tempfile\.gettempdir\(\s*\)|f?['"][^'"\n]*['"])\s*(.*)$""", re.M)
@@ -255,7 +256,11 @@ RUNNERS = ("python", "python3", "sh", "bash", "env")
 # a planner's notes (.build/plans/plan-N/*.md) are no body: the planner reads statements alone, so what it writes is
 # statements too — brief-230 was refused the note plan-45 had sent it by its path, twice (2026-09-22 16:34)
 BODY = re.compile(r"\.(?:thy|ML|sml|py|sh|log|out|output)$|(?:^|/)(?:theories|tools)(?:/|$)|(?:^|/)\.build(?:/|$)"
-                  r"(?!tasks/[^/]+/[^/]+\.md$|outputs/|trees/[^/]+/[^/]+\.md$|plans/[^/]+/[^/]+\.md$)")
+                  r"(?!tasks/[^/]+/[^/]+\.md$|outputs/|trees/[^/]+/[^/]+\.md$|plans/[^/]+/[^/]+\.md$"
+                  r"|tasks/[^/]+/(?:brief|finalize|finalized|active-context)\.json$)")
+# the harness's records of a task (its brief, its hand-over, its outcome) and the base's pointer are no body either: they
+# are the planner's to read — plan-43 was refused task 128's outcome after the reboot, and plan-44 which base stood
+# (2026-09-22 13:08, 15:10)
 CONTENT = {"cat", "sed", "head", "tail", "grep", "egrep", "fgrep", "rg", "awk", "nl", "less", "more", "bat", "diff",
            "strings", "xxd", "od", "cut", "sort", "uniq", "jq", "tac"}
 PATTERNED = {"grep", "egrep", "fgrep", "rg", "sed", "awk"}  # their first operand is a pattern or a script
@@ -325,6 +330,53 @@ def change_parts(command):
     return ChangeParts(changes, "\n".join(out)) if changes else None
 
 
+QUEUE_ASKED = re.compile(r"(^|[\s;&|(])QUEUE=1\s+")
+
+
+def queued_probe(command, run, rec):
+    """The call a probe refused for the machine becomes when its session marked it QUEUE=1 (it has nothing else to do
+    until it has run): its changes as they are, then `v2.py queue-probe` with the probe, which is queued and run as soon
+    as the machine has room while the session is parked (v2.cmd_queue_probe, v2.run_queued_probes). None otherwise."""
+    if run != "probe" or rec.get("role") not in v2.PRODUCING or not QUEUE_ASKED.search(HEREDOC.sub(" ", command)):
+        return None
+    kept = through_changes(command)
+    rest = command[len(kept):].lstrip("\n") if kept else command
+    rest = QUEUE_ASKED.sub(r"\1", rest)
+    if not rest.strip() or kind("Bash", {"command": rest}) != "check" or v2.run_kind(rest) != "probe":
+        return None
+    import base64
+    call = (f"{shlex.quote(sys.executable)} -B {shlex.quote(os.path.join(HERE, 'v2.py'))} queue-probe "
+            f"{base64.b64encode(rest.encode()).decode()}")
+    return (kept + "\n" + STATUS_LINE + "\n" + call) if kept else call
+
+
+def through_changes(command):
+    """The call up to the end of its last change, when every check it holds comes after that: a check refused for the
+    machine then takes nothing with it. The whole call was refused, its changes too: implement-189, implement-182 and
+    fix-227 each learned so only by looking, and fix-227 spent three requests on it (2026-09-22, 17:21–17:30, while
+    task 220 waited to measure). None when the call holds no change, or a check before its last."""
+    if not change_parts(command):
+        return None
+    lines, i, end = command.split("\n"), 0, None
+    while i < len(lines):
+        opened = {m.end(): m for m in CHANGE_OPEN.finditer(lines[i])}
+        docs = [(m, opened.get(m.end())) for m in ANY_HEREDOC.finditer(lines[i])]
+        i += 1
+        for m, change in docs:
+            while i < len(lines) and (lines[i].lstrip("\t") if m.group(1) else lines[i]).rstrip() != m.group(3):
+                i += 1
+            i += 1
+            if change:
+                end = i
+    if end is None or end >= len(lines):
+        return None
+    head = "\n".join(lines[:end])
+    parts = change_parts(head)
+    if parts and kind("Bash", {"command": parts.rest}) == "check":
+        return None
+    return head
+
+
 def after_changes_only(command):
     """A call with changes, rewritten so that what follows each change runs only if it went through: on a new line
     after the heredoc it would run anyway, and `v2.py result` after a refused change would record the result the change
@@ -374,6 +426,11 @@ def scratch(path):
 
 
 
+# a script's triple-quoted strings are text it handles, not code it runs: fix-265's `inj.replace("""…theory.write_text(…)…""")`
+# was refused as a script whose target could not be read (2026-09-22 20:08)
+TRIPLE = re.compile(r'"""[\s\S]*?"""' + "|'''" + r"[\s\S]*?'''")
+
+
 def script_writes(command, cwd=None):
     """Where a script inside the command writes, each place as the file it names or the directory its path begins in:
     plan-42's `open('.build/plans/plan-42/b'+tid+'.md','w')` and review-94.2's `open(f'{T}/{n}','wb')` with
@@ -381,6 +438,7 @@ def script_writes(command, cwd=None):
     both writing their own drafts. None when any place cannot be read: a path handed in, or made from nothing fixed."""
     base, _ = shell_context(command, cwd)
     tmp = os.environ.get("TMPDIR") or "/tmp"
+    command = TRIPLE.sub('""', command)
     names = {}
     for name, value, rest in PY_PREFIX.findall(command):  # in order, each from those before it
         if value.startswith(("os.", "tempfile.")):
@@ -561,6 +619,7 @@ def fix_note(n):
 
 
 ADMITTED_NOW = []  # the session whose heavy check this call marked as starting (v2.admit_session)
+MEASURED_NOW = []  # the task whose measurement this call runs, under its hold of the machine (v2.claim_call)
 
 
 def deny(text, fixable=False, end=False):
@@ -1345,14 +1404,26 @@ def session_guard(hook, rec):
             # in forty seconds and then asked the planner, since no park reason fitted (2026-09-21)
             wait = ("park for the machine (`.claude/orchestration/v2.py park machine`)" if rec.get("role") in v2.PRODUCING
                     else "end your turn")  # a supporting session has no slot to free: it ends its turn and is woken
-            return deny(blocked + " Continue with what needs no check (drafts, the next step's writing); when nothing "
-                        f"else is left, {wait}: you are resumed when a run may start."
-                        + (" And: " + capped if capped else ""), fixable=bool(capped))
+            said = (blocked + " Continue with what needs no check (drafts, the next step's writing); when nothing "
+                    f"else is left, {wait}: you are resumed when a run may start."
+                    + (" Or lead the probe with QUEUE=1: it is queued, runs as soon as the machine has room, and you "
+                       "are parked and resumed with its output." if run == "probe" and rec.get("role") in v2.PRODUCING
+                       else ""))
+            queued = queued_probe(c, run, rec) if not capped else None
+            if queued:
+                return allow(dict(inp, command=queued))
+            kept = None if capped else through_changes(c)
+            if kept:  # the changes go through; only what follows them waits for the machine
+                return allow(dict(inp, command=kept + "\n" + STATUS_LINE + "\nprintf '%s\\n' " + shlex.quote(
+                    "[Your changes were made; what followed them in this call was not run. " + said + "]")))
+            return deny(said + (" And: " + capped if capped else ""), fixable=bool(capped))
         if capped:
             return deny(capped, fixable=True)
         if load(hook.get("session_id", "")).get("run_refused"):  # let through: it waits on the machine no longer
             with meter(hook.get("session_id", "")) as m:
                 m["run_refused"] = None
+        if claim and claim["task"] in own and not inp.get("run_in_background"):
+            MEASURED_NOW.append(claim["task"])  # its run in this call holds the machine (v2.claim_call), if let through
     st = load(session)
     fix = rec.get("fix") or {}
     if fix and k not in ("own",):
@@ -1751,21 +1822,24 @@ def write_targets(tool, inp, command, cwd, content=False):
     return list(dict.fromkeys(at(w) for w in names if w.strip("'\"`") not in ("", "/dev/null")))
 
 
-ASSIGN = re.compile(r"(?:^|[;\n]|&&)\s*(?:export\s+)?([A-Za-z_]\w*)=(\"[^\"$`]*\"|'[^']*'|[^\s;&|$`'\"]+)(?=\s*(?:$|[;\n]|&&))")
+ASSIGN = re.compile(r"(?:^|[;\n]|&&)\s*(?:export\s+)?([A-Za-z_]\w*)=(\"[^\"`]*\"|'[^']*'|[^\s;&|`'\"(]+)(?=\s*(?:$|[;\n]|&&))")
 
 
 def shell_context(command, cwd):
     """(where relative paths start, {NAME: value}): a leading `cd DIR` moves the start, and a plain assignment standing
     as a command of its own (`W=.build/tasks/80/time;`) gives its value — so that `cd DIR && … > out` and
     `… > $W/out` are judged where they write. fix-80.2 was refused four writes under .build/ that the guard read as
-    written into its tree (2026-09-21). A value made by a command, or by another variable, is not followed."""
+    written into its tree (2026-09-21). A value made from variables known before it is followed (review-227's
+    `T="$TMPDIR/r227"; … > "$T/$n"` was refused as a redirection into the tree, 2026-09-22 20:12); one made by a
+    command is not."""
     base = cwd or v2.PROJECT
     lead = re.match(r"^\s*cd\s+([^;&|\n]+?)\s*(?:&&|;|\n)", shell_syntax(command))
     if lead and "$" not in lead.group(1):
         base = os.path.normpath(os.path.join(base, os.path.expanduser(lead.group(1).strip("'\""))))
     known = {"PWD": base, "TMPDIR": os.environ.get("TMPDIR") or "/tmp"}  # a temporary file's place, as the shell has it
     for name, value in ASSIGN.findall(HEREDOC.sub(" ", command or "")):
-        known[name] = value.strip("'\"")
+        known[name] = value.strip("'") if value.startswith("'") else re.sub(
+            r"\$\{?(\w+)\}?", lambda m: known.get(m.group(1), m.group(0)), value.strip('"'))
     return base, known
 
 
@@ -1891,6 +1965,9 @@ def completed(transcript, job):
 def record(hook, rec):
     """After a working session's tool call: its reads, its production and its checks. Returns a note for it, or None."""
     session, tool, inp = hook.get("session_id", ""), hook.get("tool_name"), hook.get("tool_input") or {}
+    if tool == "Bash":
+        v2.release_claim(hook.get("tool_use_id"))  # a measurement's hold ends with the call that ran it
+        v2.keep_probes(rec.get("task"))  # its probes kept as they are after the call, whatever it removes later
     if tool == "Bash" and inp.get("command"):  # the call as the session made it, whichever of the two is given here
         inp = dict(inp, command=unwrapped(inp["command"]))
     response = hook.get("tool_response")
@@ -2054,6 +2131,11 @@ def _guard(hook):
             with contextlib.suppress(OSError):
                 os.remove(os.path.join(v2.ADMITTED, v2.SESSION_MARK + (name or "unnamed")))
     ADMITTED_NOW.clear()
+    if tool == "Bash" and rec.get("task"):
+        v2.keep_probes(rec.get("task"))  # before the call: a call that removes its probes keeps nothing of them
+    if MEASURED_NOW and not denied:
+        v2.claim_call(MEASURED_NOW[0], hook.get("tool_use_id"))
+    MEASURED_NOW.clear()
     if denied and kept and fixable:
         said["permissionDecisionReason"] += " " + fix_note(kept)
     if fixed and not denied and "updatedInput" not in said:
@@ -2083,10 +2165,13 @@ def globbing(decision, inp):
 
 
 # A command Claude Code starts is its argument to the shell, and Linux takes at most 128K bytes in one argument
-# (MAX_ARG_STRLEN). The command reaches it about 3.3 times over: implement-38's change of 59K bytes (60.7K as the guard
-# ran it) was "command line 200.3KB … (largest single arg 200.3KB)", refused with E2BIG and never run (2026-09-22
-# 09:56, and implement-36's at 07:52). The more a call holds — one call for every change that is ready — the sooner.
-ARG_SAFE = 32_000
+# (MAX_ARG_STRLEN). The sandbox's profile goes into that argument too — a deny path for each of the settings, skills
+# and hooks of every registered git worktree among them, so it grows with the trees standing when the session began:
+# implement-38's change of 59K bytes (60.7K as the guard ran it) was "command line 200.3KB … (largest single arg
+# 200.3KB)" (2026-09-22 09:56, and implement-36's at 07:52), and fix-255's of 23.8K was "145KB" (19:14), where 8.1K
+# had started in the same session: its room was about 10K. A call over ARG_SAFE is run from a file, which costs nothing
+# — about 8% of the calls of 2026-09-22, every change of a theory's worth among them.
+ARG_SAFE = 6_000
 
 
 def spilled(decision, inp, rec, kept, hook):

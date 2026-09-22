@@ -17,9 +17,10 @@ the verdicts of its reviews decide whether it is committed. {{inherited}}
 {WHERE}
 
 Follow your review task's plan step by step; open the first step with one batch:
-`.claude/orchestration/v2.py read result`, `v2.py read diff` (whole, up to the call's bound), `v2.py read log`,
-`v2.py read probes` (what each probe loaded, whether its completion marker is there, and whether it probed the theory
-as the tree holds it) — a call each, in one batch — and whatever the step names. Judge the work against its
+`.claude/orchestration/v2.py read result`, `v2.py read log`, `v2.py read probes` (what each probe loaded, whether
+its completion marker is there, and whether it probed the theory as the tree holds it), then `v2.py read diff` (whole,
+up to the call's bound) — a call each, in one batch, in that order: a batch refuses what comes after 80K read, so the
+diff goes last — and whatever the step names. Judge the work against its
 brief (the deliverable, the acceptance, the decided statements) and the principles (reuse and extension of what exists, never duplication; native definitions normative;
 each notion's contract established once and consumed, not re-proved; no conflation of notions the library keeps
 apart).

@@ -437,7 +437,7 @@ def holds():
                                    f"(`v2.py result {s.get('task')}`): what exists, and what remains."):
                 lost(name, "went cold while it waited")
             continue
-        if v2.hit_age(name) > v2.PING_AGE and not pinging(name):
+        if v2.hit_age(name) > v2.PING_AGE and not pinging(name) and not v2.ping_missed(name):
             open(os.path.join(STATE, f"ping-{name}"), "w").write(str(time.time()))
             subprocess.Popen([sys.executable, os.path.join(HERE, "v2.py"), "ping", name], stdout=subprocess.DEVNULL,
                              stderr=subprocess.DEVNULL, start_new_session=True)
@@ -545,6 +545,16 @@ def finishing():
 
 LAYER_STALE = float(os.environ.get("ORCH_LAYER_STALE", 0.20))
 LAYER_EVERY = int(os.environ.get("ORCH_LAYER_EVERY", 900))  # how often the share is looked at
+# The delta layer (notes/plan-delta-layer.md, decided 2026-09-22 19:45): for a base named in state/deltas a delta is
+# built as what the base holds moves, and the frontier layer is refreshed by what the delta holds of it. The first
+# thresholds are the owner's estimates, to be set from a day's measurement.
+DELTA_EVERY = int(os.environ.get("ORCH_DELTA_EVERY", 1200))    # a delta is looked at, and built, at most this often
+DELTA_MIN = int(os.environ.get("ORCH_DELTA_MIN", 2000))        # tokens moved since the standing delta
+LAYER_DELTA_MAX = float(os.environ.get("ORCH_LAYER_DELTA_MAX", 0.08))  # of the layer's tokens, held by the delta
+FRONTIER_MOVED = int(os.environ.get("ORCH_FRONTIER_MOVED", 5))  # theories the frontier would take in
+STABLE_DELTA_MAX = int(os.environ.get("ORCH_STABLE_DELTA_MAX", 15000))  # tokens of the stable reference's changes
+LAYER_LOCK = int(os.environ.get("LAYER_LOCK", 2400))           # base.sh's: a build's lock older than this is stale
+WARM_EVERY = int(os.environ.get("ORCH_WARM_EVERY", 2400))      # warm_daemon.sh's: an entry is pinged this long after its read
 
 
 def layers():
@@ -558,20 +568,187 @@ def layers():
         if not os.path.exists(os.path.join(STATE, f"{who}-layer.json")):
             continue
         asked = os.path.exists(os.path.join(STATE, f"{who}-layer.refresh"))
+        why = ""
+        if not v2.deltas_on(who) and missed_fork(who, (v2.layer_record(who) or {}).get("sealed")):
+            # what the roles fork is the layer: it is the entry a fork missed (deltas() answers it where a delta stands)
+            open(os.path.join(STATE, f"{who}-layer.refresh"), "w").write(
+                "why: a fork missed its entry, and every fork after it would write the whole prefix anew")
+            asked, why = True, "a fork missed its entry, and every fork after it would write the whole prefix anew"
         if not asked and (age(f"{who}-layer.looked") or LAYER_EVERY + 1) < LAYER_EVERY:
             continue
         if os.path.exists(os.path.join(STATE, f"{who}-layer.building")):
             continue  # one refresh of a layer at a time; base.sh holds this while it builds and gives it up at the end
         open(os.path.join(STATE, f"{who}-layer.looked"), "w").write(str(time.time()))
-        share = 1.0 if asked else stale_share(who)
-        if share < LAYER_STALE:
-            continue
+        if asked:
+            with contextlib.suppress(OSError):  # a reason the watchdog wrote (deltas): `why: …`; by hand, anything
+                said = open(os.path.join(STATE, f"{who}-layer.refresh")).read().strip()
+                why = said[len("why: "):] if said.startswith("why: ") else ""
+            said = f"the {who} layer is refreshed: {why}" if why else f"the {who} layer is refreshed, asked for by hand"
+        elif v2.deltas_on(who):
+            # decided by what the delta holds of the layer, not by the changed files counted whole: the high layer's
+            # refresh of 19:25 on 2026-09-22 read 23.4% by that count and 1.4% by the lines that changed
+            measured = delta_measure(who)
+            if measured is None:
+                continue
+            share, stable, _ = measured
+            if stable >= STABLE_DELTA_MAX:
+                v2.say_once(f"stable-delta-{who}", f"ATTENTION the {who} delta holds {stable:,} tokens of the stable "
+                            f"reference's changes: loading it again (base.sh {who} restable) is the owner's", every=86400)
+            if share < LAYER_DELTA_MAX:
+                continue
+            said = (f"the {who} layer is refreshed: the delta holds {share:.0%} of it (the whole-file share "
+                    f"{stale_share(who):.0%})")
+        else:
+            share = stale_share(who)
+            if share < LAYER_STALE:
+                continue
+            said = f"the {who} layer is refreshed: {share:.0%} of what it holds has changed since it loaded"
         with contextlib.suppress(OSError):
             os.remove(os.path.join(STATE, f"{who}-layer.refresh"))
-        v2.log(f"the {who} layer is refreshed: {share:.0%} of what it holds has changed since it loaded"
-               if not asked else f"the {who} layer is refreshed, asked for by hand")
-        subprocess.Popen(["sh", os.path.join(HERE, "base.sh"), who, "layer"], cwd=v2.PROJECT,
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        v2.log(said)
+        base_run(who, "layer")
+
+
+def base_run(who, *args):
+    """base.sh in the background, with what it says kept: a build started from here is read by nobody, and its
+    stderr went to /dev/null until the high layer refresh of 2026-09-22 21:36 left a pack, no layer and no
+    reason. warm.log is where the run is read, and base.sh timestamps what it means to say (fail)."""
+    return subprocess.Popen(["sh", os.path.join(HERE, "base.sh"), who, *args], cwd=v2.PROJECT,
+                            stdout=subprocess.DEVNULL, stderr=open(os.path.join(STATE, "warm.log"), "a"),
+                            start_new_session=True)
+
+
+def manifest_says(*args):
+    """What manifest.py prints, for the base it names (its own list, never an inherited one)."""
+    return subprocess.run([sys.executable, os.path.join(HERE, "manifest.py"), *args], capture_output=True, text=True,
+                          timeout=120, env={k: v for k, v in os.environ.items() if k != "ORCH_LOAD_LIST"}).stdout
+
+
+def delta_measure(who):
+    """(the share of the layer's tokens a delta built now would hold of it, its stable tokens, its tokens), or None."""
+    try:
+        share, stable, total = manifest_says("delta-share", who).split()
+        return float(share), int(stable), int(total)
+    except (ValueError, OSError, subprocess.SubprocessError) as e:
+        v2.say_once(f"delta-measure-{who}", f"ATTENTION the {who} delta could not be measured ({e!r})", every=3600)
+        return None
+
+
+def moved_since_delta(who):
+    """The tokens by which a delta built now would differ from the standing one (by word: its text against the
+    standing one's), or from none."""
+    rec = v2.delta_record(who)
+    try:
+        was = open(rec["text"]).read() if rec else ""
+    except (OSError, KeyError, TypeError):
+        was = ""
+    a, b = was.split(), manifest_says("delta", who).split()
+    import difflib
+    changed = sum(sum(len(x) + 1 for x in a[i1:i2]) + sum(len(x) + 1 for x in b[j1:j2])
+                  for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes()
+                  if op != "equal")
+    return int(changed / 2.9)
+
+
+def frontier_moved(who):
+    """The theories the frontier, measured again now, would take in (select_base_load.py --frontier WHO --dry-run)."""
+    try:
+        out = subprocess.run([sys.executable, os.path.join(HERE, "select_base_load.py"), "--frontier", who, "--dry-run"],
+                             capture_output=True, text=True, timeout=120).stdout
+    except (OSError, subprocess.SubprocessError):
+        return 0
+    m = re.search(r"(\d+) new, (\d+) dropped", out)
+    return int(m.group(1)) if m else 0
+
+
+def entry_missed(who, part, sealed):
+    """Whether this part's own cache entry is gone: a ping or a fork of it missed and no load has made it since. The
+    mark stands until the load that writes the entry clears it (base.sh), and a part sealed since the miss is that
+    load. It is read, not taken: what answers it is the load, not the reading."""
+    try:
+        when = os.path.getmtime(os.path.join(STATE, f"{who}-{part}.miss"))
+    except OSError:
+        return False
+    return not (sealed and time.mktime(time.strptime(sealed, "%Y-%m-%dT%H:%M:%S")) > when)
+
+
+def layer_entry_age(who):
+    """How long ago the layer's own cache entry was read: through its forks and pings while the roles fork it, through
+    the delta's builds and its own pings once they fork the delta (base.sh). An entry that was missed is gone, however
+    lately it was read: a delta built over it would fork a session nothing holds and write the whole prefix again (the
+    high layer's ping missed at 2026-09-22 21:56, 593K, with its last read 41 minutes old)."""
+    part = "base" if v2.base_file(who).endswith("-layer.json") else "layer"
+    if entry_missed(who, part, (v2.layer_record(who) or {}).get("sealed")):
+        return None
+    return age(f"{who}-{part}.hit")
+
+
+SEALED_FRESH = 600  # a part sealed this recently holds the entry a fork missed: it is not made again for that miss
+
+
+def missed_fork(who, sealed):
+    """Whether the entry this base's roles fork is gone and must be made anew: a fork of it missed (the mark, taken
+    here), or a keep-warm ping of it did (`<who>-base.miss`, which the load that makes the entry clears — base.sh —
+    and which holds the pings off meanwhile). A part sealed since (SEALED_FRESH) is the answer to both."""
+    mark, pinged = (os.path.join(STATE, f"{who}-{x}") for x in (v2.FORK_MISSED, "base.miss"))
+    if not os.path.exists(mark) and not os.path.exists(pinged):
+        return False
+    fresh = sealed and time.time() - time.mktime(time.strptime(sealed, "%Y-%m-%dT%H:%M:%S")) < SEALED_FRESH
+    with contextlib.suppress(OSError):
+        os.remove(mark)  # the ping's mark is the load's to clear: a ping meanwhile would miss and pay again
+    return not fresh
+
+
+def deltas():
+    """Build a base's delta (base.sh WHO delta) as what it holds moves: for a base named in state/deltas, when a delta
+    built now would differ from the standing one by DELTA_MIN tokens, at most every DELTA_EVERY seconds, with no build
+    over the layer going. A layer whose own entry is cold is refreshed instead (a delta over it would write it again),
+    and so is one whose frontier would take in FRONTIER_MOVED theories. By hand: state/WHO-delta.build builds one at the
+    next pass, and state/WHO-delta.ask (a question) asks a fork of the standing delta (the canary)."""
+    for who in v2.BASES:
+        if not v2.layer_record(who):
+            continue
+        if v2.deltas_on(who) and v2.delta_record(who) and WARM_EVERY <= (age(f"{who}-layer.hit") or 0) < v2.WARM_MAX:
+            # under a delta the layer is read by the delta's builds alone: its own entry is pinged here, as the daemon's
+            # `warm WHO layer --if-due` does once the daemon runs a version with that line — its loop is parsed once,
+            # and the high layer's entry stood at 40 minutes, 15 short of cold, with no ping to come (2026-09-22 20:55)
+            base_run(who, "warm", "layer", "--if-due")
+        build, question = (os.path.join(STATE, f"{who}-delta.{x}") for x in ("build", "ask"))
+        asked = os.path.exists(build)
+        if not (v2.deltas_on(who) or asked or os.path.exists(question)):
+            continue
+        if (age(f"{who}-layer.building") or LAYER_LOCK + 1) < LAYER_LOCK:
+            continue  # one build over a layer at a time
+        if os.path.exists(question) and v2.delta_record(who):
+            text = open(question).read().strip()
+            os.remove(question)
+            v2.log(f"the {who} delta is asked a question, a fork of it answering into state/{who}-delta-answer.txt")
+            base_run(who, "delta", "--ask", text)
+            continue
+        missed = missed_fork(who, (v2.delta_record(who) or {}).get("sealed"))
+        if missed:
+            v2.log(f"the {who} delta is built again: a fork missed its entry, and every fork after it would write the "
+                   "whole prefix anew")
+        if not (asked or missed) and (age(f"{who}-delta.looked") or DELTA_EVERY + 1) < DELTA_EVERY:
+            continue
+        open(os.path.join(STATE, f"{who}-delta.looked"), "w").write(str(time.time()))
+        moved = moved_since_delta(who)
+        if not (asked or missed) and moved < DELTA_MIN:
+            continue
+        refresh = os.path.join(STATE, f"{who}-layer.refresh")
+        entry, taken_in = layer_entry_age(who), frontier_moved(who)
+        if entry is None or entry >= v2.WARM_MAX:
+            open(refresh, "w").write("why: its own cache entry is cold, so a delta over it would write it again")
+            continue
+        if taken_in >= FRONTIER_MOVED:
+            open(refresh, "w").write(f"why: its frontier would take in {taken_in} theories")
+            continue
+        with contextlib.suppress(OSError):
+            os.remove(build)
+        since = (v2.delta_record(who) or {}).get("sealed") or "the layer's load"
+        v2.log(f"the {who} delta is rebuilt: about {moved:,} tokens moved since {since[11:16] if since[:2] == '20' else since}"
+               + (", asked for by hand" if asked else ""))
+        base_run(who, "delta")
 
 
 def stale_share(who):
@@ -594,7 +771,7 @@ def watch():
         if (s["state"] in v2.LIVE and not (s["state"] == "waiting" and s.get("sealed"))) or (
                 s["role"] == "kb" and not s.get("sealed") and not s.get("released")):
             contained(f"care of {name}", care, name, s)
-    for part in (planner_mail, finishing, holds, layers, v2.lands_when_free, v2.archive, isabelle_snapshot):
+    for part in (planner_mail, finishing, holds, layers, deltas, v2.lands_when_free, v2.archive, isabelle_snapshot):
         contained(part.__name__, part)
 
 
@@ -618,7 +795,7 @@ def isabelle_snapshot():
                 if line.startswith("VmRSS:"):
                     return int(line.split()[1]) // 1024
         return None
-    kinds = {root: v2.run_kind(procs.get(root, (0, "", ""))[2]) for root in set(roots.values())}
+    kinds = {root: v2.run_kind(procs.get(root, (0, "", ""))[2]) for root in v2.run_roots(procs)}
     unseen = v2.unseen_finalizer_runs(procs)  # let start, preparing, no Isabelle yet: a sandbox counts them from here
 
     def in_sandbox(pid, depth=40):  # a session's run: under bwrap, the sandbox of a session's command
@@ -660,6 +837,9 @@ def main():
     if os.path.exists(os.path.join(STATE, "stopped")) or not v2.peek()["active"]:
         return
     v2.dispatch(pre=watch, wait=True)  # the care and the dispatch under one lock
+    if v2.control():  # it sees every run: a queued probe is started when the machine has room, and ended when its run is
+        if v2.run_queued_probes():
+            v2.dispatch(wait=True)  # a probe that ended resumes its session at once
 
 
 if __name__ == "__main__":

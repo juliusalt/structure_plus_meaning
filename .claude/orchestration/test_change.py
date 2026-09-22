@@ -42,6 +42,21 @@ class ChangeTests(unittest.TestCase):
         self.assertEqual(self.a.read_text(), THEORY.replace("by simp", "by (auto simp: x_def)"))
         self.assertEqual((self.w.project / "theories/sub/B.thy").read_text(), "theory B imports A begin\nend\n")
 
+    def test_a_theory_is_written_in_escapes_whatever_glyphs_the_change_uses(self):
+        # the digests show glyphs, a theory takes escapes: fix-249 wrote a script of its own to turn one into the
+        # other (2026-09-22)
+        said = self.change("=== write theories/G.thy\ntheory G imports A begin\nlemma g: \"\u2200x. P x \u27f9 P x\" by simp\n"
+                           "text \u2039a \u2014 b\u203a\nend\n"
+                           "=== write NOTES.md\n\u2200 as it is\n")
+        self.assertEqual((self.w.project / "theories/G.thy").read_text(),
+                         "theory G imports A begin\nlemma g: \"\\<forall>x. P x \\<Longrightarrow> P x\" by simp\n"
+                         "text \\<open>a \u2014 b\\<close>\nend\n")           # no symbol of Isabelle's: as it is
+        self.assertIn("4 glyphs written into a theory as their escape", said)
+        self.assertEqual((self.w.project / "NOTES.md").read_text(), "\u2200 as it is\n")  # a document keeps its own
+        said = self.change("=== replace theories/G.thy\n<<<<<<< SEARCH\n\u2200x. P x\n=======\n\u2200y. P y\n>>>>>>> REPLACE\n")
+        self.assertIn("theories/G.thy (1 replaced", said)                 # its search as the file holds it too
+        self.assertIn("\\<forall>y. P y", (self.w.project / "theories/G.thy").read_text())
+
     def test_the_text_reaches_the_file_as_written(self):
         # a quoted heredoc passes Isabelle's symbols, a shell's `$` and backquotes, and backslashes untouched
         text = 'lemma y: "\\<forall>x. x = x \\<longrightarrow> True"  (* $HOME `date` \\n *)\n'
@@ -93,11 +108,14 @@ class ChangeTests(unittest.TestCase):
         said = self.change(lost_replace)
         self.assertIn("refused, and nothing was changed", said)
         self.assertIn("the block at line 2: its replacement text holds a", said)
+        self.assertIn("`=======` line at line 6", said)                 # which line, so it need not count them
         self.assertIn("its own `>>>>>>> REPLACE` line is missing", said)
+        self.assertIn("make two blocks", said)                          # and the way out that costs nothing:
+        self.assertIn("write the file whole", said)                     # the file's whole text is the other
         lost_divider = ("=== replace theories/A.thy\n<<<<<<< SEARCH\nlemma x\n>>>>>>> REPLACE\n<<<<<<< SEARCH\n"
                         "by simp\n=======\nby auto\n>>>>>>> REPLACE\n")
-        self.assertIn("its search text holds a `>>>>>>> REPLACE` line, so its own `=======` line is missing",
-                      self.change(lost_divider))
+        self.assertIn("its search text holds a `>>>>>>> REPLACE` line at line 4, so either its own `=======` line "
+                      "is missing", self.change(lost_divider))
         self.assertEqual(self.a.read_text(), THEORY)
         whole = "<<<<<<< SEARCH\nold\n=======\nnew\n>>>>>>> REPLACE\n"   # a whole file may hold them
         self.assertIn("written anew", self.change(f"=== write docs/format.md\n{whole}"))

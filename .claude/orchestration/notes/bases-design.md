@@ -612,3 +612,19 @@ One fault, found by it happening: `cmd_start` marked every layer for refresh at 
 that had just been built were rebuilt immediately. The staleness rule already refreshes a layer whose files have
 moved, within a minute of starting, so the mark was redundant as well as wasteful. It is gone; a refresh happens on
 staleness, or when `state/<who>-layer.refresh` asks for one by hand.
+
+
+## 18. The delta: a third part holding the changes (2026-09-22, the owner)
+
+The layer's refresh rule counted every changed file whole, on the reasoning that a fork told "this file is stale"
+reads it again whole. Measured on the refreshes of 2026-09-22: the high layer's of 19:25 read 23.4% by that count and
+1.4% by the lines that changed (4.9K of 344K tokens; `Development_Native_Readiness` counted 9,537 tokens for about 12
+changed); the xhigh layer's of 19:17, 23.1% and about 3.5%. A refresh costs 720–810K input-equivalent (four requests,
+520–590K written), and the high layer was refreshed five times from 15:06 to 19:25. Telling each fork the changed
+lines in its first message was proposed and dropped: every fork would write them (1.25×). The delta is a fork of the
+layer holding the changes as its one message, written once per build and read by every fork from cache (0.1×); a
+build is one request (about 58K of cached prefix read and the delta written, 70–100K for 10–25K tokens). The layer is
+then refreshed only when the delta holds 8% of it or its frontier moves, and the stable reference's drift is carried
+by the delta and said to the owner past 15K tokens. Its plan and tasks: notes/plan-delta-layer.md and
+notes/plan-delta-layer-tasks.md; its rollout: high first, xhigh after a day's measurement, max not at all (4 forks a
+day, and the knowledge base integrates HANDOFF.md itself).

@@ -44,7 +44,7 @@ while :; do
     [ -e "$STATE/$who-base.json" ] || continue
     any=1
     [ "$(age "$STATE/$who-base.used")" -gt "$idle_max" ] && continue
-    [ "$( [ -e "$STATE/$who-base.miss" ] && wc -l < "$STATE/$who-base.miss" || echo 0)" -ge 2 ] && continue
+    [ "$( [ -e "$STATE/$who-base.miss" ] && wc -l < "$STATE/$who-base.miss" || echo 0)" -ge 1 ] && continue
     # base.sh writes the verdict to warm.log itself, so that a ping run by hand is recorded there too; only what
     # fails before it reaches that line is redirected
     [ "$(age "$STATE/$who-base.hit")" -ge "$every" ] && "$HERE/base.sh" "$who" warm >/dev/null 2>> "$STATE/warm.log"
@@ -53,6 +53,9 @@ while :; do
     # and never once it is cold — a fork that misses writes its own prefix, not the base's, so a ping would buy a cold
     # write and bring nothing back; a rebuild of the base makes the entry again (base.sh seal)
     "$HERE/base.sh" "$who" warm stable --if-due >/dev/null 2>> "$STATE/warm.log"
+    # under a delta (notes/plan-delta-layer.md) the layer's own entry is read only by the delta's builds: pinged the same
+    # way while no build has read it within the interval
+    "$HERE/base.sh" "$who" warm layer --if-due >/dev/null 2>> "$STATE/warm.log"
   done
   [ "$any" = 0 ] && ! active && break
   # A request from inside the sandbox (state/wanted/, v2.want: a session released, a dispatch, a final check) is

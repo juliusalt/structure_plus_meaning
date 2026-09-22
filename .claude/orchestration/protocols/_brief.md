@@ -3,7 +3,8 @@ window; a piece of work beyond one window is several tasks, with their dependenc
 
     Kind: design | investigate | build | fix | brief | review
     Serves: what it serves, and why now
-    Deliverable: what it produces: files in backticks (not directories) for design, investigate, build and fix; the
+    Deliverable: what it produces: files in backticks (not directories) for design, investigate, build and fix — a
+      bare name is the task's own folder's (`.build/tasks/<id>/`), a new file at the repository's root `./NAME`; the
       tasks it briefs for brief; the verdict for review
     Reviews: the task it reviews (a review task only)
     Acceptance: the check that accepts it, its paths relative to the repository (the finalizer runs it where the

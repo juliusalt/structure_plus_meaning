@@ -12,6 +12,8 @@
 #                               already frozen pack. build-packed is the same command.
 #   base.sh WHO pack            prepare and verify a pack without launching a session
 #   base.sh WHO status          one line: load state, measured context against the expected size
+#   base.sh WHO stable-warm     exit 0 while the stable base's own cache entry is there (no miss recorded, read within
+#                               ORCH_WARM_MAX): what a layer build reads to know whether to load it again first
 #   base.sh WHO seal            when the load has finished: verify its size, snapshot the held files, stop it, record it
 #   base.sh WHO warm            hit the base's cache entry with a throwaway fork, verify the hit, delete the fork
 #                                    (each ping's text is unique, so the longest cached prefix it can match is the base itself)
@@ -22,6 +24,9 @@
 #                               blocks until sealed; repeatable, and the layer it replaces is stopped.
 #   base.sh WHO layer --adopt NAME PACK   record a layer session that loaded completely but was not recorded (its
 #                               checks refused it, or it was stopped first): the same checks, no second load
+#   base.sh WHO delta           hold what the base holds that has changed since its loads, in its new form, in a fork of
+#                               the layer (notes/plan-delta-layer.md): every role then forks the delta. --ask QUESTION
+#                               asks a fork of it, writing the answer to state/WHO-delta-answer.txt (the canary)
 #   base.sh WHO restable        load a split base's stable part again while the base and layer standing serve; its next
 #                               `layer` is built over it, and the two replace the old pair together. A layer build
 #                               does this itself when the stable base's cache entry is cold.
@@ -30,6 +35,17 @@
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd); PROJECT=$(cd "$HERE/../.." && pwd); STATE="${ORCH_STATE_DIR:-$HERE/state}"
 cd "$PROJECT" || exit 1; mkdir -p "$STATE"
+# What a build that fails says, and where the run is read: these run unattended (the watchdog starts layer,
+# delta and warm builds in the background), and a failure that leaves nothing behind but a pack said why to
+# /dev/null - the high layer refresh of 2026-09-22 21:36 ended in rebuild_stable with no session started, and
+# no line anywhere. The message goes to stderr as well, unless stderr is warm.log already (the daemon runs
+# `base.sh WHO warm >/dev/null 2>> warm.log`), which would write it twice.
+ERRLOG=""  # where stderr goes, read before anything redirects it (`2>/dev/null` in the substitution would be read)
+[ -e /proc/self/fd/2 ] && ERRLOG=$(readlink -f /proc/self/fd/2)
+fail() {
+  echo "$(date +%Y-%m-%dT%H:%M:%S) $*" >> "$STATE/warm.log"
+  [ "$ERRLOG" = "$(readlink -f "$STATE/warm.log")" ] || echo "$*" >&2
+}
 who=${1:-}; cmd=${2:-}
 case "$who" in
   max)   name=${BASE_NAME:-max-base};   effort=${BASE_EFFORT:-max};   list=base-load-max.txt ;;
@@ -69,6 +85,17 @@ expected() {
 daemon() { "$HERE/warm_daemon.sh" --ensure; }
 # Whether the stable base's own cache entry is warm: read within its life (a seal, a layer that read it, a ping).
 stable_warm() {
+  # a recorded miss is the entry's absence, whatever its last read says: the max layer's refresh of 2026-09-22 21:28
+  # forked a stable base evicted twelve minutes before, whose hit was 51 minutes old, and wrote its 341K inside the
+  # layer's own prefix — leaving no stable entry for the refreshes after it
+  if [ -e "$STATE/$who-stable.miss" ]; then
+    # unless the base was sealed after the miss was recorded: that load wrote the entry the miss speaks of (a `seal`,
+    # or a layer that adopted a base loaded again), and a miss left from the base before it would send every refresh
+    # from here on through a fifteen-minute reload of the stable base
+    sealed_s=$(date -d "$(field "$rec" sealed)" +%s 2>/dev/null || echo 0)
+    [ "${sealed_s:-0}" -gt "$(stat -c %Y "$STATE/$who-stable.miss")" ] || return 1
+    rm -f "$STATE/$who-stable.miss"
+  fi
   [ -e "$STATE/$who-stable.hit" ] && [ "$(( $(date +%s) - $(stat -c %Y "$STATE/$who-stable.hit") ))" -lt "${ORCH_WARM_MAX:-3300}" ]
 }
 # A layer is a fork of its stable base, and a fork of a base whose own entry is gone writes the whole base again — and
@@ -94,12 +121,12 @@ rebuild_stable() {
     i=$((i + 1)); sleep 2
   done
   set -- $("$HERE/session_row.py" "$bn")
-  [ -n "${4:-}" ] || { echo "the $who base was not loaded again: no session $bn; nothing is replaced" >&2; return 4; }
+  [ -n "${4:-}" ] || { fail "the $who base was not loaded again: no session $bn; nothing is replaced"; return 4; }
   case "${3:-}" in done|idle) ;; *) claude stop "$2" >/dev/null 2>&1
-    echo "the $who base did not finish loading ($bn); nothing is replaced" >&2; return 4 ;; esac
+    fail "the $who base did not finish loading ($bn); nothing is replaced"; return 4 ;; esac
   bsid=$4
   python3 "$HERE/base_pack.py" check-load "$packed" "$SESSIONS/$bsid.jsonl" \
-    || { claude stop "$2" >/dev/null 2>&1; echo "the $who base's load is incomplete ($bn); nothing is replaced" >&2; return 3; }
+    || { claude stop "$2" >/dev/null 2>&1; fail "the $who base's load is incomplete ($bn); nothing is replaced"; return 3; }
   python3 "$HERE/base_pack.py" snapshot "$packed" "$next_manifest" || return 3
   bctx=$("$HERE/ctx_gauge.py" measure "$SESSIONS/$bsid.jsonl")
   claude stop "$2" >/dev/null 2>&1
@@ -153,7 +180,7 @@ prepare_pack() {
 # its held files snapshotted, its context measured, the session stopped and recorded, the layer it replaces stopped.
 # `layer` and `layer --adopt` both end here.
 seal_layer() {
-  python3 "$HERE/base_pack.py" check-load "$packed" "$SESSIONS/$lsid.jsonl" || { echo "the $who layer is incomplete; it is not recorded (look with claude attach $lid)" >&2; exit 3; }
+  python3 "$HERE/base_pack.py" check-load "$packed" "$SESSIONS/$lsid.jsonl" || { fail "the $who layer is incomplete; it is not recorded (look with claude attach $lid)"; exit 3; }
   python3 "$HERE/base_pack.py" snapshot "$packed" "$STATE/$who-layer-manifest.json" || exit 3
   under=${under:-$rec}  # the stable base this layer stands on: the one recorded, or the one just loaded again
   stable_manifest="$STATE/$who-manifest.json"; [ "$under" = "$rec" ] || stable_manifest="$next_manifest"
@@ -196,7 +223,7 @@ LAYERREC
   # the layer this replaces is stopped, never removed: a fork launched from it while this ran must still find it,
   # and a sealed session is exactly what a base is
   if [ -n "$old_row" ]; then set -- $old_row; claude stop "$2" >/dev/null 2>&1; fi
-  touch "$STATE/$who-base.hit" "$STATE/$who-base.used"; rm -f "$STATE/$who-base.miss"
+  touch "$STATE/$who-base.hit" "$STATE/$who-base.used" "$STATE/$who-layer.hit"; rm -f "$STATE/$who-base.miss" "$STATE/$who-layer.miss"
   case "$read" in OK*) touch "$STATE/$who-stable.hit"; rm -f "$STATE/$who-stable.miss" ;; esac
   daemon
   echo "sealed the $who layer $lsid at $ctx tokens; its forks have about $(( (${ORCH_WINDOW:-1000000} - ctx) / 1000 ))K of room"
@@ -206,11 +233,11 @@ LAYERREC
 # Starting, stopping and removing sessions cannot be done from inside Claude Code's sandbox (v2.py control): these
 # are run from the owner's own terminal, or by the daemon, which runs outside it.
 case "$cmd" in
-  build|build-packed|layer|restable|seal|warm) "$HERE/v2.py" control || exit 3 ;;
+  build|build-packed|layer|restable|seal|warm|delta) "$HERE/v2.py" control || exit 3 ;;
 esac
 # Nothing here starts a session while the hold is on; packing and reporting still do, since they start none.
 case "$cmd" in
-  build|build-packed|layer|restable)
+  build|build-packed|layer|restable|delta)
     [ -e "$STATE/no-launch" ] && { echo "refused: $cmd starts a session and the hold is on ($(cat "$STATE/no-launch" 2>/dev/null)). Take it off when you mean to begin: rm $STATE/no-launch" >&2; exit 3; } ;;
 esac
 case "$cmd" in
@@ -238,6 +265,8 @@ if packed:
 json.dump(record, open(path, "w"))
 PY
     echo "loading $name id=$2: estimated $(expected)K loaded; check with base.sh $who status, then base.sh $who seal" ;;
+  stable-warm)  # whether the stable base's own entry is there (exit 0), for a layer build and for the tests
+    stable_warm ;;
   status)
     if [ -e "$layer" ]; then
       lsid=$(field "$layer" sessionId)
@@ -274,16 +303,32 @@ PY
     # what the roles fork is what must stay warm: the layer when there is one. A fork of it reads the prefix under it
     # through the layer's own entry, which does not keep the stable base's shorter entry alive (the max refresh of
     # 2026-09-21 wrote 339,381 tokens of it anew): `warm stable` pings the stable base itself, and keeps its own time
-    stable=0; [ "${3:-}" = stable ] && stable=1
-    if [ "${4:-}" = "--if-due" ]; then  # the daemon's: only under a layer, only while the entry is warm, not after 2 misses
-      s_age=$( [ -e "$STATE/$who-stable.hit" ] && echo $(( $(date +%s) - $(stat -c %Y "$STATE/$who-stable.hit") )) || echo 999999999 )
+    # Under a delta (notes/plan-delta-layer.md) the roles fork the delta, and the layer's own entry is read only by the
+    # delta's builds: `warm layer` pings it, under the stable ping's rule.
+    part=""; case "${3:-}" in stable|layer) part=$3 ;; esac
+    stable=0; [ "$part" = stable ] && stable=1
+    forks_delta() { python3 -c 'import sys; sys.path.insert(0, sys.argv[1]); import v2; sys.exit(0 if v2.base_file(sys.argv[2]).endswith("-delta.json") else 1)' "$HERE" "$who"; }
+    if [ "${4:-}" = "--if-due" ]; then  # the daemon's: only under a layer (a delta), only while warm, not after 2 misses
+      s_age=$( [ -e "$STATE/$who-$part.hit" ] && echo $(( $(date +%s) - $(stat -c %Y "$STATE/$who-$part.hit") )) || echo 999999999 )
       [ -e "$layer" ] && [ "$s_age" -ge "${ORCH_WARM_EVERY:-2400}" ] && [ "$s_age" -lt "${ORCH_WARM_MAX:-3300}" ] \
-        && [ "$( [ -e "$STATE/$who-stable.miss" ] && wc -l < "$STATE/$who-stable.miss" || echo 0)" -lt 2 ] || exit 0
+        && [ "$( [ -e "$STATE/$who-$part.miss" ] && wc -l < "$STATE/$who-$part.miss" || echo 0)" -lt 1 ] || exit 0
+      [ "$part" = layer ] && { forks_delta || exit 0; }
+      # one ping of an entry at a time: the watchdog asks each minute while it is due, and the daemon too
+      pinging="$STATE/$who-$part.pinging"
+      [ -e "$pinging" ] && [ "$(( $(date +%s) - $(stat -c %Y "$pinging") ))" -lt 300 ] && exit 0
+      touch "$pinging"; trap 'rm -f "$pinging"' EXIT
     fi
-    forked="$rec"; [ "$stable" = 0 ] && [ -e "$layer" ] && forked="$layer"
-    mark="$who-base"; [ "$stable" = 1 ] && mark="$who-stable"
-    lean_as "$forked" || { echo "refused: the $who base was started with other tools than session-flags gives now, so a ping would write its whole prefix again: build it again (base.sh $who build, then seal)" >&2; exit 3; }
-    sid=$(field "$forked" sessionId); n="warm-$who"; [ "$stable" = 1 ] && n="warm-$who-stable"
+    # what the roles fork is the one rule v2.base_file keeps: the delta when its base is switched to it and it stands on
+    # the layer, the layer when it stands on the base, the stable base otherwise
+    case "$part" in
+      stable) forked="$rec" ;;
+      layer) forked="$layer" ;;
+      *) forked=$(python3 -c 'import sys; sys.path.insert(0, sys.argv[1]); import v2; print(v2.base_file(sys.argv[2]))' "$HERE" "$who" 2>/dev/null)
+         [ -e "$forked" ] || forked="$rec" ;;
+    esac
+    mark="$who-base"; [ -n "$part" ] && mark="$who-$part"
+    lean_as "$forked" || { fail "refused: the $who base was started with other tools than session-flags gives now, so a ping would write its whole prefix again: build it again (base.sh $who build, then seal)"; exit 3; }
+    sid=$(field "$forked" sessionId); n="warm-$who"; [ -n "$part" ] && n="warm-$who-$part"
     claude --bg --resume "$sid" --fork-session $LEAN --model "$(field "$forked" model)" --effort "$(field "$forked" effort)" \
       --permission-mode auto --settings "$HERE/base-settings.json" -n "$n" \
       "Keep-warm ping $(date +%s). Use no tools. Reply with the single word WARM and end your turn." >/dev/null 2>&1
@@ -293,20 +338,22 @@ PY
     [ -n "${4:-}" ] && rm -rf "$SESSIONS/$4" "$SESSIONS/$4.jsonl"
     # A MISS wrote the fork's own prefix, never the entry it missed: every fork's first turn names the fork itself (the
     # sandbox's instructions carry its session id), so no later fork reads what a miss wrote — the max refreshes of
-    # 2026-09-21 at 22:25 and 22:40 both missed. It is counted and not taken as a read, so the next pass tries again
-    # while a missed entry may still be there, not forty minutes on, when it surely is not; two misses stop the pings.
-    # A ping nobody answered (usage limit) is neither.
+    # 2026-09-21 at 22:25 and 22:40 both missed. It is counted and not taken as a read, and one miss stops that entry's
+    # pings: an entry that is gone does not come back, and each further ping writes its whole prefix for nothing — the
+    # evicted stable bases of 2026-09-22 21:16-21:20 were pinged twice each, 341K and 268K a ping, both times missing.
+    # What makes an entry again is a load: a layer refresh (which loads a cold stable base first), a delta's build, or
+    # a base's rebuild, and each clears the misses of what it wrote. A ping nobody answered (usage limit) is neither.
     case "$result" in OK*) touch "$STATE/$mark.hit"; rm -f "$STATE/$mark.miss" ;; MISS*) echo x >> "$STATE/$mark.miss" ;; esac
     # The verdict is recorded here, not by whoever redirects this command's output. health.py reads warm.log, and a
     # ping run by hand left nothing in it: on 2026-09-20 all three bases were refreshed by hand at 16:09 and answered
     # OK, and health.py went on reporting the 15:19 daemon ping's COLD for the fifty minutes after.
-    line="$(date +%Y-%m-%dT%H:%M:%S) warm $who$([ "$stable" = 1 ] && echo " stable"): $result"
+    line="$(date +%Y-%m-%dT%H:%M:%S) warm $who$([ -n "$part" ] && echo " $part"): $result"
     echo "$line" >> "$STATE/warm.log"
     echo "$line" ;;
   layer)
-    [ "$split" = 1 ] || { echo "the $who list is not split by a layer line: there is no layer to refresh" >&2; exit 1; }
-    [ -e "$rec" ] || { echo "no sealed $who base to layer over (base.sh $who build, then seal)" >&2; exit 1; }
-    lean_as "$rec" || { echo "refused: the $who base was started with other tools than session-flags gives now, so a layer over it would write its whole prefix again: build it again (base.sh $who build, then seal)" >&2; exit 3; }
+    [ "$split" = 1 ] || { fail "the $who list is not split by a layer line: there is no layer to refresh"; exit 1; }
+    [ -e "$rec" ] || { fail "no sealed $who base to layer over (base.sh $who build, then seal)"; exit 1; }
+    lean_as "$rec" || { fail "refused: the $who base was started with other tools than session-flags gives now, so a layer over it would write its whole prefix again: build it again (base.sh $who build, then seal)"; exit 3; }
     export ORCH_BASE_PART=layer
     lock="$STATE/$who-layer.building"
     if [ -e "$lock" ] && [ "$(( $(date +%s) - $(stat -c %Y "$lock") ))" -lt "${LAYER_LOCK:-2400}" ]; then
@@ -359,10 +406,108 @@ PY
         i=$((i + 1)); sleep 2
       done
       set -- $("$HERE/session_row.py" "$n")
-      [ -n "${4:-}" ] || { echo "the $who layer did not load: no session $n" >&2; exit 4; }
+      [ -n "${4:-}" ] || { fail "the $who layer did not load: no session $n"; exit 4; }
       lsid=$4; lid=$2
     fi
     seal_layer ;;
+  delta)
+    # The third part (notes/plan-delta-layer.md): a fork of the recorded layer whose one message is what the base holds
+    # that has changed since the loads under it, in its new form (manifest.py delta). Once it is recorded every role of
+    # the base forks it (v2.base_file) and reads the changes from cache with the rest, where a fork of the layer was
+    # told file names and read files again whole. `delta --ask QUESTION` forks the delta standing with a question and
+    # writes its answer to state/WHO-delta-answer.txt (the canary, notes/plan-delta-layer-tasks.md task 8).
+    [ "$split" = 1 ] || { fail "the $who list is not split by a layer line: there is no layer to hold a delta over"; exit 1; }
+    { [ -e "$rec" ] && [ -e "$layer" ]; } || { fail "no sealed $who base with a layer to hold a delta over"; exit 1; }
+    [ "$(field "$layer" base)" = "$(field "$rec" sessionId)" ] || { fail "the $who layer stands on a base that is gone: refresh the layer first"; exit 1; }
+    lean_as "$layer" || { fail "refused: the $who layer was started with other tools than session-flags gives now, so a delta over it would write its whole prefix again"; exit 3; }
+    delta="$STATE/$who-delta.json"
+    if [ "${3:-}" = "--ask" ]; then
+      { [ -e "$delta" ] && [ "$(field "$delta" layer)" = "$(field "$layer" sessionId)" ]; } || { fail "no $who delta stands on its layer"; exit 1; }
+      n="$who-delta-ask-$(date +%H%M%S)"
+      claude --bg --resume "$(field "$delta" sessionId)" --fork-session $LEAN --model "$(field "$delta" model)" \
+        --effort "$(field "$delta" effort)" --permission-mode auto --settings "$HERE/base-settings.json" -n "$n" \
+        "${4:-} Answer from what you hold, briefly, and use no tools." >/dev/null 2>&1
+      i=0; while [ $i -lt "${LAYER_WAIT:-450}" ]; do set -- $("$HERE/session_row.py" "$n"); case "${3:-}" in done|idle) break ;; esac; i=$((i + 1)); sleep 2; done
+      set -- $("$HERE/session_row.py" "$n")
+      [ -n "${4:-}" ] || { fail "the $who delta was asked nothing: no session $n"; exit 4; }
+      python3 "$HERE/base_pack.py" last-reply "$SESSIONS/$4.jsonl" > "$STATE/$who-delta-answer.txt"
+      { claude stop "$2"; claude rm "$2"; } >/dev/null 2>&1
+      rm -rf "${SESSIONS:?}/$4" "$SESSIONS/$4.jsonl"
+      echo "the $who delta answered: $STATE/$who-delta-answer.txt"
+      exit 0
+    fi
+    lock="$STATE/$who-layer.building"  # one build over a layer at a time: its refresh or its delta
+    if [ -e "$lock" ] && [ "$(( $(date +%s) - $(stat -c %Y "$lock") ))" -lt "${LAYER_LOCK:-2400}" ]; then
+      echo "a $who layer or delta is being built (since $(stat -c %y "$lock" | cut -c12-19))" >&2; exit 3
+    fi
+    echo $$ > "$lock"
+    trap 'rm -f "$lock"' EXIT INT TERM
+    stamp=$(date +%Y%m%dT%H%M%S); text="$STATE/$who-delta-$stamp.md"; counts="$STATE/$who-delta-$stamp.json"
+    if [ -n "${BASE_DELTA_TEXT:-}" ]; then  # a text given (the tests; by hand): counted by its size
+      cp "$BASE_DELTA_TEXT" "$text"
+      python3 -c 'import json, sys; n = int(len(open(sys.argv[1]).read()) / 2.9); json.dump({"layer_tokens": n, "stable_tokens": 0, "tokens": n}, open(sys.argv[2], "w"))' "$text" "$counts"
+    else
+      python3 "$HERE/manifest.py" delta "$who" --counts "$counts" > "$text" || { rm -f "$text" "$counts"; exit 3; }
+    fi
+    if [ ! -s "$text" ]; then rm -f "$text" "$counts"; echo "nothing the $who base holds has changed since its loads: no delta"; exit 0; fi
+    digest=$(sha256sum "$text" | cut -c1-12)
+    n="$who-delta-$(date +%H%M%S)"
+    old_row=""; [ -e "$delta" ] && old_row=$("$HERE/session_row.py" "$(field "$delta" name)")
+    packed=""
+    if [ "$(wc -c < "$text")" -le "${DELTA_ARG:-120000}" ]; then
+      # the delta is the fork's first message: one request, reading the layer from cache and writing the text
+      prompt="Hold the changes below to what you hold; do no work and run nothing. Reply with exactly HELD $digest and end your turn.
+
+$(cat "$text")"
+    else
+      # above Linux's 128K argument it is packed and loaded by chunks, as a layer is (check-load verifies it)
+      list="$STATE/$who-delta-$stamp.list"; printf '# === layer ===\n# the delta\n%s\n' "$text" > "$list"
+      packed="$STATE/base-pack-$stamp-delta-$$"
+      ORCH_LOAD_LIST="$list" ORCH_BASE_PART=layer python3 "$HERE/base_pack.py" build --output "$packed" >/dev/null || exit $?
+      prompt=$(python3 "$HERE/base_pack.py" bootstrap "$packed") || exit $?
+    fi
+    claude --bg --resume "$(field "$layer" sessionId)" --fork-session $LEAN --model "$(field "$layer" model)" \
+      --effort "$(field "$layer" effort)" --permission-mode auto --autocompact "${BASE_AUTOCOMPACT:-1M}" \
+      --settings "$HERE/base-settings.json" -n "$n" "$prompt" >/dev/null 2>&1
+    i=0; while [ $i -lt "${LAYER_WAIT:-450}" ]; do set -- $("$HERE/session_row.py" "$n"); case "${3:-}" in done|idle) break ;; esac; i=$((i + 1)); sleep 2; done
+    set -- $("$HERE/session_row.py" "$n")
+    [ -n "${4:-}" ] || { fail "the $who delta did not load: no session $n"; exit 4; }
+    lsid=$4; lid=$2
+    if [ -n "$packed" ]; then
+      why=$(python3 "$HERE/base_pack.py" check-load "$packed" "$SESSIONS/$lsid.jsonl" 2>&1 >/dev/null)
+    else
+      why=$(python3 "$HERE/base_pack.py" held "$SESSIONS/$lsid.jsonl" "$digest" 2>&1 >/dev/null)
+    fi
+    if [ $? -ne 0 ]; then
+      echo "$(date +%Y-%m-%dT%H:%M:%S) delta $who: not recorded, $(echo "$why" | tail -1)" >> "$STATE/warm.log"
+      claude stop "$lid" >/dev/null 2>&1
+      fail "the $who delta was not held: $(echo "$why" | tail -1)"; exit 3
+    fi
+    # every held file's digest as the delta holds them: a fork of it is told only what changed after it (manifest.py)
+    python3 "$HERE/manifest.py" snapshot-delta "$who" "$STATE/layer-$lsid-manifest.json" >/dev/null || exit 3
+    ctx=$("$HERE/ctx_gauge.py" measure "$SESSIONS/$lsid.jsonl")
+    read=$("$HERE/session_fork_check.py" "$lsid" "$(field "$layer" sessionId)" 2>&1 | head -1)
+    echo "$(date +%Y-%m-%dT%H:%M:%S) delta $who: $read" >> "$STATE/warm.log"
+    claude stop "$lid" >/dev/null 2>&1
+    python3 - "$delta.new" "$lsid" "$n" "$(field "$layer" sessionId)" "$(field "$rec" sessionId)" "$(field "$layer" model)" \
+      "$(field "$layer" effort)" "$(echo $LEAN)" "$(git -C "$PROJECT" log -1 --format=%h 2>/dev/null)" "$digest" "$text" \
+      "$counts" "$ctx" <<'DELTAREC'
+import json, sys, time
+path, sid, name, layer, base, model, effort, flags, head, digest, text, counts, ctx = sys.argv[1:]
+record = dict(sessionId=sid, name=name, layer=layer, base=base, model=model, effort=effort, flags=flags, head=head,
+              digest=digest, text=text, context=int(ctx or 0), sealed=time.strftime("%Y-%m-%dT%H:%M:%S"))
+try:
+    record.update(json.load(open(counts)))
+except (OSError, ValueError):
+    pass
+json.dump(record, open(path, "w"))
+DELTAREC
+    mv "$delta.new" "$delta"
+    rm -f "$counts"
+    # the delta this replaces is stopped, never removed: a fork launched from it while this ran must still find it
+    if [ -n "$old_row" ]; then set -- $old_row; claude stop "$2" >/dev/null 2>&1; fi
+    touch "$STATE/$who-base.hit" "$STATE/$who-base.used" "$STATE/$who-layer.hit"; rm -f "$STATE/$who-base.miss"
+    echo "sealed the $who delta $lsid at $ctx tokens; its read of the layer: $read" ;;
   restable)
     [ "$split" = 1 ] || { echo "the $who list is not split by a layer line: its base is rebuilt by drop, build and seal" >&2; exit 1; }
     [ -e "$rec" ] || { echo "no sealed $who base to load again (base.sh $who build, then seal)" >&2; exit 1; }
@@ -375,5 +520,5 @@ PY
     rebuild_stable || exit $?
     echo "the next $who layer is built over it (base.sh $who layer), and the two replace the old pair together" ;;
   drop) rm -f "$rec" "$building" "$layer" "$STATE/$who-base-next.json" "$STATE/$who-manifest-next.json" "$STATE/$who-manifest.json" "$STATE/$who-layer-manifest.json" "$STATE/$who-base.hit" "$STATE/$who-base.used" "$STATE/$who-base.miss" "$STATE/$who-stable.hit" "$STATE/$who-stable.miss"; echo "$who base and layer forgotten; live sessions start plain" ;;
-  *) echo "usage: base.sh max pack|build|status|seal|layer [--adopt NAME PACK]|restable|warm|drop" >&2; exit 2 ;;
+  *) echo "usage: base.sh max pack|build|status|seal|layer [--adopt NAME PACK]|delta [--ask QUESTION]|restable|warm|drop" >&2; exit 2 ;;
 esac

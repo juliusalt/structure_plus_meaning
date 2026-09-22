@@ -3,6 +3,7 @@ episodes, the producing and supporting sessions, consultations and the finalizer
 `claude` (fakes.py)."""
 import json
 import re
+import shutil
 import subprocess
 import tempfile
 import os
@@ -56,6 +57,11 @@ class FormTests(unittest.TestCase):
         for settings in sorted(files):
             env = json.load(open(HERE / settings)).get("env") or {}
             self.assertEqual(env.get("DISABLE_GROWTHBOOK"), "1", settings)
+        # and what the sessions run speaks without colour: investigate-253's traceback, written to a file, came back as
+        # `\x1b[35m…` escape codes read as text (2026-09-22; 143 of the day's 11,256 outputs held such codes)
+        for settings in ("worker-settings.json", "planner-settings.json"):
+            env = json.load(open(HERE / settings)).get("env") or {}
+            self.assertEqual((env.get("PYTHON_COLORS"), env.get("NO_COLOR")), ("0", "1"), settings)
 
     def test_a_brief_in_form_passes_and_its_fields_are_read_whole(self):
         self.assertEqual(v2.brief_problems(BRIEF), [])
@@ -72,6 +78,20 @@ class FormTests(unittest.TestCase):
         self.assertEqual(v2.deliverables(brief), ["theories/Ready.thy", "DECISIONS.md"])
         self.assertEqual(v2.inputs(brief), ["theories/Base.thy"])
         self.assertNotIn("the proof", v2.section(brief, "Plan"))
+
+    def test_a_file_named_bare_is_the_task_s_own_folder_s(self):
+        # briefs 253 and 254 named `report.md`, "in this task's own folder", and it was read as a file at the
+        # repository's root: the result was refused for a final job, the final job for a file under .build/ (q64)
+        brief = BRIEF.replace("Deliverable: `theories/Ready.thy`, the readiness theory",
+                              "Deliverable: `report.md`, in this task's own folder (`.build/tasks/9/report.md`), "
+                              "`DECISIONS.md`, `./NEW.md` and `Base.base_def`")
+        with tempfile.TemporaryDirectory() as root, patch.object(v2, "PROJECT", root):
+            open(os.path.join(root, "DECISIONS.md"), "w").close()
+            self.assertEqual(v2.deliverables(brief, "9"),
+                             [".build/tasks/9/report.md", "DECISIONS.md", "./NEW.md", "Base.base_def"])
+            self.assertEqual(v2.placed("report.md", "9"), ".build/tasks/9/report.md")
+            self.assertEqual(v2.placed("DECISIONS.md", "9"), "DECISIONS.md")        # the root's own stays
+            self.assertEqual(v2.deliverables(brief)[0], "report.md")                   # no task: as written
 
     def test_a_brief_out_of_form_is_told_what_is_missing(self):
         problems = v2.brief_problems("Kind: refactor\nServes: x\nDeliverable: a theory\nPlan:\n1. one step\n")
@@ -1281,6 +1301,46 @@ class PlanningTests(Flow):
         self.assertEqual(out.returncode, 0, out.stderr)
         self.assertTrue([c for c in self.w.calls("--bg") if any(a.startswith("warm-brief-4-") for a in c["args"])])
 
+    def test_a_ping_that_missed_is_no_read_and_stops_the_pings_of_that_session(self):
+        # kb-12's ping missed at 21:28 on 2026-09-22 (534K written) and the session was marked warm all the same: it
+        # would have been pinged every PING_AGE, each ping missing, until it was resumed
+        self.w.session("brief-4", "task-designer", "b4", task="4", live=False, settings="planner-settings.json")
+        base = {"type": "assistant", "timestamp": "2026-09-22T21:28:00.000Z",
+                "message": {"id": "m1", "model": "claude-opus-5", "content": [{"type": "text", "text": "WARM"}],
+                            "usage": {"input_tokens": 0, "cache_read_input_tokens": 0,
+                                      "cache_creation_input_tokens": 500000}}}
+        own = json.loads(json.dumps(base))
+        own["message"]["id"] = "m2"
+        own["message"]["usage"] = {"input_tokens": 2, "cache_read_input_tokens": 0, "cache_creation_input_tokens": 500062}
+        # session_fork_check reads the transcripts of the project it stands in, under the world's HOME
+        where = Path(self.w.home) / ".claude/projects" / str(fakes.HERE.parent.parent).replace("/", "-").replace("_", "-")
+        where.mkdir(parents=True, exist_ok=True)
+        (where / "b4.jsonl").write_text(json.dumps(base) + "\n")
+        for n in range(1, 10):  # whichever id the fake claude gives this ping's fork
+            (where / f"sid{n}.jsonl").write_text(json.dumps(base) + "\n" + json.dumps(own) + "\n")
+        (self.w.state / "hits").mkdir(exist_ok=True)
+        hit = self.w.state / "hits/brief-4"
+        hit.write_text("")                                              # read within the hour: the ping goes
+        then = time.time() - 40 * 60
+        os.utime(hit, (then, then))
+        said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               "print(v2.ping('brief-4'))"], env=dict(self.w.env, ORCH_PING_WAIT="0"),
+                              capture_output=True, text=True)
+        self.assertEqual(said.returncode, 0, said.stderr)
+        missed = self.w.state / "hits/brief-4.miss"
+        self.assertIn("MISS", said.stdout)
+        self.assertTrue(missed.exists())
+        self.assertLess(hit.stat().st_mtime, then + 60)  # not marked warm again by a ping that missed
+        self.py("v2.hit('brief-4')")                    # its own request writes its entry anew
+        self.assertFalse(missed.exists())
+        self.assertTrue(hit.exists())
+
+    def py(self, code):
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n{code}"],
+                             env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(out.returncode, 0, out.stderr)
+        return out.stdout.strip()
+
     def test_a_ping_with_no_verdict_is_tried_again_while_the_entry_may_be_warm(self):
         # fix-49.3 and implement-56 each went cold ten minutes after one ping with no verdict: its mark held the
         # retry off for ten minutes, past the entry's life (2026-09-21)
@@ -1290,7 +1350,8 @@ class PlanningTests(Flow):
         out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
                               "print(v2.ping('brief-4'))"], env=self.w.env, capture_output=True, text=True)
         self.assertEqual(out.returncode, 0, out.stderr)
-        self.assertIn("no verdict: ", out.stdout)              # its fork has no transcript here: said, not blank
+        said = out.stdout.strip()                              # its fork has no transcript here: said, not blank,
+        self.assertTrue(said and not said.startswith(("OK", "MISS")), said)   # and no verdict either way
         self.assertGreaterEqual(time.time() - mark.stat().st_mtime, v2.PING_RETRY_AFTER - 5)  # tried again soon
 
     def test_no_shared_part_is_said_twice_in_one_message(self):
@@ -1637,6 +1698,18 @@ class TaskTests(Flow):
         self.w.write(".build/tasks/1/review.md", VERDICT.format(v=v, f=findings))
         return self.as_(name, "verdict", "1", v, "--file", ".build/tasks/1/review.md")
 
+    def test_what_a_brief_delivers_in_the_task_s_own_folder_needs_no_final_job(self):
+        # investigate-254's brief named `report.md`, "in this task's own folder", and its result was refused for a
+        # final job, which the finalizer refuses for a file under .build/ (q64, 2026-09-22)
+        self.w.write(".build/tasks/1/brief.json", json.dumps({"task": "1", "deliverables": ["report.md",
+                                                                                          "tools/test_ready.py"]}))
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="done"))
+        said = self.as_(self.impl, "result", "1")
+        self.assertTrue(said.startswith("refused: your brief delivers tools/test_ready.py into the repository"), said)
+        self.w.write(".build/tasks/1/brief.json", json.dumps({"task": "1", "deliverables": ["report.md"]}))
+        self.assertIn("recorded", self.as_(self.impl, "result", "1"))
+        self.assertEqual(self.t("1")["stage"], "reviewing")                    # judged as it is
+
     def test_a_task_taken_out_of_the_list_while_the_harness_works_on_it_is_named(self):
         # the planner does take tasks out of the list: 21 and 51 were gone from it on 2026-09-20 while the state
         # still held them. The conflict check read "completed" alone, so a task deleted under a live session — or a
@@ -1845,6 +1918,15 @@ class TaskTests(Flow):
         # a finished task's own artifacts are sources too, and a fixer or a reviewer reads them
         self.finish()
         self.assertIn("== result\nStatus: done", self.as_(self.impl, "read", "result"))
+        # with its commit message and the questions it names, answered: 55 of 106 reviewers read the message by
+        # hand, and review-202 dug q63's answer out of the harness's state (2026-09-22)
+        self.w.set_st(asks={"q7": {"from": "implement-1", "to": "planner", "text": "Which of the two?",
+                                   "state": "answered", "answer": "The first."}})
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="done") + "\nq7 assumed: the first.\n")
+        out = self.as_(self.impl, "read", "result")
+        self.assertIn("== its commit message (.build/tasks/1/commit.md)\nAdd readiness", out)
+        self.assertIn("== q7, from implement-1 to planner: Which of the two?\nanswered: The first.", out)
+        self.assertNotIn("its commit message", self.as_(self.impl, "read", "result:1-2"))  # a range is the result's
         self.assertIn("== log", self.as_(self.impl, "read", "log"))
         diff = self.as_(self.impl, "read", "diff")
         self.assertIn("== diff\n", diff)
@@ -2630,6 +2712,27 @@ class SupportTests(Flow):
             self.assertEqual(v2.isabelle_runs(), 4)                                 # what the limit is held to
             self.assertEqual(v2.isabelle_load(), {"heavy": 3, "probe": 1})          # the check, the replay, the unknown
 
+    def test_a_run_counts_between_its_isabelle_phases_and_a_session_that_names_a_tool_is_none(self):
+        # fix-263's replay ran Isabelle in phases: between them no poly showed, its mark had been answered by the
+        # snapshot that first showed it, and batch 255 started beside it and train 223's check — three heavy runs at
+        # 3 GiB (2026-09-22 19:40)
+        procs = {1: (0, "systemd", "/sbin/init"),
+                 5: (1, "claude", "claude --bg --resume s --fork-session -n fix-263 'check with tools/incremental_check.py'"),
+                 6: (5, "bwrap", "bwrap --new-session /bin/zsh -c python3 -B tools/replay_development_answers.py --keep"),
+                 7: (6, "zsh", "/bin/zsh -c python3 -B tools/replay_development_answers.py --keep"),
+                 8: (7, "python3", "python3 -B tools/replay_development_answers.py --keep"),       # between phases
+                 9: (1, "claude", "claude --bg --resume t --fork-session -n review-9 'its acceptance: "
+                                  "python3 -B tools/incremental_check.py check --output x'"),         # names a tool only
+                 11: (1, "2.1.273", "/home/u/.local/share/claude/versions/2.1.273 --resume u 'tools/build.py'")}
+        self.assertEqual(v2.run_roots(procs), {6})                                  # one run: the session's command
+        with patch.object(v2, "machine_processes", lambda: procs), patch.object(v2, "control", lambda: True), \
+                patch.object(v2, "unseen_finalizer_runs", lambda procs: 0), patch.object(v2, "session_marks", lambda: 0), \
+                patch.dict(os.environ, {"ORCH_ISABELLE_RUNS": ""}):
+            os.environ.pop("ORCH_ISABELLE_RUNS")
+            self.assertEqual(v2.isabelle_load(), {"heavy": 1, "probe": 0})
+            procs[10] = (8, "poly", "poly -q")                                       # a phase: still one run
+            self.assertEqual(v2.isabelle_load(), {"heavy": 1, "probe": 0})
+
     def test_a_finalizer_s_run_counts_until_its_isabelle_shows(self):
         # a check prepares for minutes before its Isabelle starts, and three finalizers' checks were let start one
         # after another as each earlier admission lapsed at 60 s (tasks 115, 97, 106, 2026-09-22 05:54-05:57, 2.2 GiB)
@@ -2649,8 +2752,9 @@ class SupportTests(Flow):
             os.environ.pop("ORCH_ISABELLE_RUNS")
             self.assertEqual(v2.isabelle_load()["heavy"], 1)                   # preparing: still counted
             procs.update({101: (100, "bash", "bash -c check"),
-                          102: (101, "python3", "python3 -B tools/incremental_check.py check --output x"),
-                          103: (102, "poly", "poly -q")})
+                          102: (101, "python3", "python3 -B tools/incremental_check.py check --output x")})
+            self.assertEqual(v2.isabelle_load()["heavy"], 1)                   # its tool runs, no Isabelle yet: once
+            procs[103] = (102, "poly", "poly -q")
             self.assertEqual(v2.isabelle_load()["heavy"], 1)                   # its Isabelle shows: counted once
             del procs[100]
             procs[101] = (1, "bash", "bash -c check")
@@ -3253,8 +3357,10 @@ class ReviewTaskTests(Flow):
         (first,) = self.forks("review-")
         self.assertIn("review task 6 of task 5", first[-1])
         self.assertIn("check the definition against the decided closure", first[-1])
-        self.assertIn("v2.py read result`, `v2.py read diff` (whole, up to the call's bound), `v2.py read log`,\n"
-                      "`v2.py read probes`", first[-1])
+        # the small reads first and the diff last, taking what the batch has left: read first, a diff of 63K left
+        # no room for the log and the probes, refused at the batch's 80K (review-236, review-261, 2026-09-22)
+        self.assertIn("v2.py read result`, `v2.py read log`, `v2.py read probes`", first[-1])
+        self.assertIn("then `v2.py read diff` (whole,\nup to the call's bound)", first[-1])
         self.assertIn("its other reviews are pending", self.verdict("6", "accept"))
         self.assertEqual(self.t("5")["stage"], "reviewing")
         self.assertEqual(len(self.forks("review-")), 2)  # the second review starts when the slot is free
@@ -3713,6 +3819,18 @@ class GraphEditTests(Flow):
         said = self.edit([{"rewrite": "20", "subject": "alone, re-planned again"}, {"queue": ["20"]}])
         self.assertNotIn("came back to you", said)                       # queued in the same edit: it moves
 
+    def test_a_brief_rewritten_while_a_session_works_to_it_is_read_as_it_now_stands(self):
+        # plan-46 added a test module to task 254's Deliverable at 18:44 while investigate-254 worked, and the harness
+        # went on reading the brief as it was at the session's start (2026-09-22)
+        self.w.write(".build/tasks/20/brief.json", json.dumps({"task": "20", "deliverables": ["report.md"]}))
+        brief = BRIEF.replace("Deliverable: `theories/Ready.thy`, the readiness theory",
+                              "Deliverable: `report.md`, in this task's own folder, and `tools/test_ready.py`")
+        self.assertIn("edited", self.edit([{"rewrite": "20", "description": brief}]))
+        record = json.loads((self.w.project / ".build/tasks/20/brief.json").read_text())
+        self.assertEqual(record["deliverables"], [".build/tasks/20/report.md", "tools/test_ready.py"])
+        self.assertIn("edited", self.edit([{"rewrite": "11", "description": brief}]))
+        self.assertFalse((self.w.project / ".build/tasks/11/brief.json").exists())  # no session: none written
+
     def test_an_edit_makes_splices_rewrites_and_queues_in_one_call(self):
         said = self.edit([
             {"create": "k", "subject": "New work", "description": BRIEF, "why": "needed", "blockedBy": ["20"]},
@@ -3726,6 +3844,7 @@ class GraphEditTests(Flow):
         self.assertEqual(self.w.read_task("7")["blockedBy"], ["6", "21"])     # keys resolved to the ids made
         self.assertEqual(self.w.read_task("20")["subject"], "alone, corrected")
         self.assertEqual(self.w.st()["queue"], ["21", "20"])
+        self.assertIn("the order is set by plan-1: 2 task(s), where it held", (self.w.state / "v2.log").read_text())
 
     def test_an_edit_that_would_leave_something_waiting_on_a_deleted_task_writes_nothing(self):
         before = self.ids()
@@ -3879,6 +3998,7 @@ class BatchTests(Flow):
     def test_a_brief_named_whole_is_shown_whole(self):
         # the planner, 2026-09-21: 9 of the 13 briefs it took stock of were cut at 5,000 bytes (they were 5.3-8.4K),
         # what it decides on standing at their end, and three more requests went to reading their ends
+        self.w.env["ORCH_READ_BYTES"] = "5000"  # the bound it was written against: a brief past a read's bound
         long = BRIEF + "".join(f"more {i}\n" for i in range(1, 600))  # about 5.9K shown
         for i in range(8, 17):
             self.w.task(str(i), subject=f"brief {i}", description=long)
@@ -4264,6 +4384,37 @@ class DocumentsAndBasesTests(unittest.TestCase):
         self.assertEqual(subprocess.run(which, env=env, capture_output=True, text=True).stdout.strip(),
                          str(lasting / "active-context.json"))               # and the lasting one once #144 landed
 
+    def test_a_snapshot_takes_the_receipts_its_brief_delivers_and_the_others_as_head_has_them(self):
+        # fix-267's brief re-records two recipes' report words; the snapshot took validation/reconstruction/ as HEAD had
+        # it, and its check compared its new words with the old ones (q65, 2026-09-22 20:04)
+        import v2
+        repo = self.w.root / "snap"
+        (repo / "validation/reconstruction").mkdir(parents=True)
+        git = lambda *a: subprocess.run(["git", "-C", str(repo), *a], capture_output=True, text=True, check=True).stdout
+        git("init", "-q")
+        files = {"theories/A.thy": "old theory\n", "validation/incremental-check.json": "{}\n",
+                 "validation/reconstruction/seed-reports.json": "old words\n",
+                 "validation/reconstruction/other-reports.json": "old other\n"}
+        for rel, text in files.items():
+            (repo / rel).parent.mkdir(parents=True, exist_ok=True)
+            (repo / rel).write_text(text)
+        git("add", "-A")
+        git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "base")
+        for rel in files:
+            (repo / rel).write_text("new " + files[rel])
+        build = self.w.root / "build"
+        (build / "9").mkdir(parents=True)
+        (build / "9" / "brief.json").write_text(json.dumps({"task": "9", "deliverables": [
+            "theories/A.thy", "validation/reconstruction/seed-reports.json"]}))
+        with patch.object(v2, "BUILD", str(build)), patch.object(v2, "STATE", str(self.w.state)):
+            commit, why = v2.snapshot("9", str(repo))
+        self.assertIsNone(why)
+        shown = lambda rel: git("show", f"{commit}:{rel}")
+        self.assertEqual(shown("theories/A.thy"), "new old theory\n")
+        self.assertEqual(shown("validation/reconstruction/seed-reports.json"), "new old words\n")  # delivered: its work
+        self.assertEqual(shown("validation/reconstruction/other-reports.json"), "old other\n")     # a retain's: HEAD's
+        self.assertEqual(shown("validation/incremental-check.json"), "{}\n")
+
     def test_a_snapshot_leaves_out_what_the_sandbox_mounts_and_nothing_else(self):
         # a session's sandbox mounts /dev/null over .bash_profile and .bashrc in its tree, and git refuses a character
         # device: every `v2.py check` from a session was refused (implement-185, 2026-09-22 14:47)
@@ -4353,6 +4504,13 @@ class DocumentsAndBasesTests(unittest.TestCase):
         self.assertIn("Edit as the tree holds it now", said)
         self.assertIn("NOT complete: no completion marker; 1 error line(s)", said)
         self.assertIn("Edit DIFFERS from the tree now", said)
+        # its session removes its probes before handing over: the harness's copy stands (fix-245, 2026-09-22)
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.keep_probes('3')"], env=self.w.env, check=True)
+        shutil.rmtree(probe)
+        said = self.w.v2("read", "probes", env=self.w.as_session("k3"))
+        self.assertIn(".build/tasks/3/probe (removed by its session; the harness's copy) at", said)
+        self.assertIn("complete: PROBE THEORIES LOADED; 0 error line(s); its theories loaded in 3.1 s", said)
 
     def test_integration_trees_are_not_tasks_trees(self):
         # a landing train's integration tree (train.py) holds nothing of its own between trains: the sweep of empty
@@ -4369,20 +4527,34 @@ class DocumentsAndBasesTests(unittest.TestCase):
         self.assertTrue(path.exists())
         self.assertTrue((self.w.project / ".build/trees/check-b").exists())
 
-    def test_a_combined_check_keeps_its_reports_and_loses_its_bulk(self):
-        out = self.w.project / ".build/tasks/batches/20260922-120000-batch3-4"
-        (out / "recipes/r").mkdir(parents=True)
-        (out / "proof").mkdir()
-        (out / "incremental.json").write_text("{}")
+    def test_every_check_keeps_its_reports_and_loses_its_bulk_but_what_the_base_stands_in(self):
+        # the checks a task's hand-over names and the task-by-task landings' were never pruned: 115 of the 139 GB under
+        # .build on 2026-09-22 (the owner: "figure out why disk usage is not cleaning up")
+        tasks = self.w.project / ".build/tasks"
+        outs = [tasks / "batches/20260922-120000-batch3-4", tasks / "declared-once/check-2", tasks / "108/landing-1",
+                tasks / "base-lasting/complete"]
+        for out in outs:
+            (out / "recipes/r").mkdir(parents=True)
+            (out / "exports-context/code").mkdir(parents=True)
+            (out / "proof/original-sources").mkdir(parents=True)
+            (out / "proof/build.log").write_text("*** an error\n")
+            (out / "incremental.json").write_text("{}")
+            old = time.time() - 7200
+            os.utime(out, (old, old))
         (self.w.project / ".build/tasks/batches/20260922-120000-batch3-4.log").write_text("the log\n")
-        old = time.time() - 7200
-        os.utime(out, (old, old))
+        (outs[3] / "proof/accepted-context.json").write_text(json.dumps({"parent": None}))
+        (self.w.state / "active-context.json").write_text(json.dumps({"directory": str(outs[3] / "proof")}))
         subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
                         "v2.prune_combined_outputs()"], env=self.w.env, check=True)
-        self.assertFalse((out / "recipes").exists())
-        self.assertFalse((out / "proof").exists())
-        self.assertTrue((out / "incremental.json").exists())
+        for out in outs[:3]:
+            self.assertFalse((out / "recipes").exists(), out)
+            self.assertFalse((out / "exports-context").exists(), out)
+            self.assertFalse((out / "proof/original-sources").exists(), out)
+            self.assertTrue((out / "proof/build.log").exists(), out)             # what `read check:` reads
+            self.assertTrue((out / "incremental.json").exists(), out)
         self.assertTrue((self.w.project / ".build/tasks/batches/20260922-120000-batch3-4.log").exists())
+        self.assertTrue((outs[3] / "recipes/r").exists())                        # the base's lineage stands in it
+        self.assertTrue((outs[3] / "proof/original-sources").exists())
 
     def test_the_bases_nothing_stands_on_are_pruned_and_the_lineage_kept(self):
         bases = self.w.project / ".build/bases"
@@ -4530,6 +4702,31 @@ class SandboxTests(Flow):
         self.assertIn("The machine is yours for your measurement (my timing)", resume[3])
         self.assertEqual(json.loads((self.w.state / "isabelle-exclusive").read_text())["task"], "1")
         self.assertFalse((self.w.state / "isabelle-exclusive-pending").exists())
+
+    def test_a_probe_the_machine_refuses_is_queued_run_when_there_is_room_and_its_session_resumed_with_it(self):
+        # the owner: "put them in a queue for probes ... a command signifying that they have nothing to do if probe is
+        # not ran", and "why wait for a slot to be free in order to run the probe if there is space to run?" (2026-09-22)
+        import base64
+        sid = self.running()["sid"]
+        probe = base64.b64encode(b"echo PROBED OUTPUT").decode()
+        self.assertIn("queued: your probe runs as soon as the machine has room",
+                      self.w.v2("queue-probe", probe, env=self.w.as_session(sid)))
+        self.assertEqual(self.w.st()["tasks"]["1"]["parked"]["for"], "probe")
+        run = lambda **env: subprocess.run(
+            [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+             "print(v2.run_queued_probes())"], env=dict(self.w.env, **env), capture_output=True, text=True).stdout
+        run(ORCH_PROBE_RUNS=str(v2.PROBE_MAX))                             # no room: it waits
+        (entry,) = json.loads((self.w.state / "probe-queue.json").read_text()).values()
+        self.assertNotIn("pid", entry)
+        run(ORCH_PROBE_RUNS="0")                                           # room: it runs, whatever the slots do
+        deadline = time.time() + 20
+        while "True" not in run(ORCH_PROBE_RUNS="0") and time.time() < deadline:
+            time.sleep(0.2)
+        self.assertIn("PROBED OUTPUT", self.w.st()["tasks"]["1"]["parked"]["result"])
+        self.w.v2("dispatch")
+        (resume,) = [c["args"] for c in self.w.calls("--bg") if c["args"][:3] == ["--bg", "--resume", sid]]
+        self.assertIn("Your queued probe ran:", resume[3])
+        self.assertIn("PROBED OUTPUT", resume[3])
 
     def test_a_queued_measurement_of_a_session_still_at_work_is_given_by_message(self):
         sid = self.running()["sid"]

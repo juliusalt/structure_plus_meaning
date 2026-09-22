@@ -1,7 +1,9 @@
 {
   "promptCacheTtl": "1h",
   "env": {
-    "DISABLE_GROWTHBOOK": "1"
+    "DISABLE_GROWTHBOOK": "1",
+    "PYTHON_COLORS": "0",
+    "NO_COLOR": "1"
   },
   "hooks": {
     "PreToolUse": [

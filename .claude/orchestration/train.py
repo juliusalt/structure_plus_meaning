@@ -20,6 +20,7 @@ from concurrent.futures import ThreadPoolExecutor
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import v2  # noqa: E402
+import check_errors  # noqa: E402
 import finalize as fz  # noqa: E402
 
 ON = os.environ.get("ORCH_TRAINS", "1") == "1"
@@ -274,9 +275,16 @@ def run_checks(c, plans, main, entries, deadline):
             fz.wait_for_isabelle(p.members[0], False, end=time.time())
             admitted.append(p.members[0])
             run.append(p)
+    def checked(p):
+        c.check(p, main, entries)
+        # a member checked alone with main that fails is found, and a batch tells it when its own check ends, not when
+        # the check beside it does: task 223, found at 18:48:44, waited on the 20 minutes of task 227's half, and the
+        # batch's next checks behind it (2026-09-22)
+        if c.found_at_once and p.ok is False and not p.stacked and len(p.members) == 1:
+            c.fail(p.members[0], main, p)
     try:
         with ThreadPoolExecutor(max_workers=len(run)) as pool:
-            list(pool.map(lambda p: c.check(p, main, entries), run))
+            list(pool.map(checked, run))
     finally:
         for tid in admitted:
             fz.admitted_no_more(tid)
@@ -344,8 +352,8 @@ def attribute(plan, main, entries):
         error = report.get("error") or ""
         theories = set()
         try:
-            theories |= set(FAILING_THEORY.findall(open(os.path.join(v2.PROJECT, plan.out, "proof", "build.log"),
-                                                        errors="ignore").read()))
+            log = open(os.path.join(v2.PROJECT, plan.out, "proof", "build.log"), errors="ignore").read()
+            theories |= set(FAILING_THEORY.findall(log)) | set(check_errors.unfinished(log) or ())  # a timeout's
         except OSError:
             pass
         for missing, importer in re.findall(r"Missing local theory: ([\w.]+), imported by ([\w.]+)", error):

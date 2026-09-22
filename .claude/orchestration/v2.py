@@ -678,11 +678,38 @@ def layer_record(who):
     return layer if layer.get("base") == base.get("sessionId") else None
 
 
+def deltas_on(who):
+    """Whether a base's roles fork its delta (notes/plan-delta-layer.md): the bases named in state/deltas, one a line,
+    or in ORCH_DELTAS — switched there, so that a delta built by hand is asked its canary question before any fork
+    holds it (notes/plan-delta-layer-tasks.md, task 8)."""
+    named = os.environ.get("ORCH_DELTAS")
+    if named is None:
+        try:
+            named = open(os.path.join(STATE, "deltas")).read()
+        except OSError:
+            named = ""
+    return who in named.replace(",", " ").split()
+
+
+def delta_record(who):
+    """The recorded delta of a base, or None: one standing on another layer than the recorded one (refreshed since),
+    or on a stable base rebuilt since, is an orphan, and nothing forks it."""
+    layer = layer_record(who)
+    try:
+        delta = json.load(open(os.path.join(STATE, f"{who}-delta.json")))
+    except (OSError, ValueError):
+        return None
+    return delta if layer and delta.get("layer") == layer.get("sessionId") and delta.get("base") == layer.get("base") \
+        else None
+
+
 def base_file(who):
-    """What a role of this base forks: its frontier layer when one is recorded, the stable base otherwise. A fork of
-    the layer reads the whole prefix under it, the stable base included, from cache — measured on 2026-09-20: a fork
-    of the sealed knowledge base (a layer over `max` in all but name) read 538,051 of its 538,044 tokens and wrote 62
-    — so the layer is what everything forks and what is pinged."""
+    """What a role of this base forks: its delta when the base is switched to deltas and one stands on its layer, its
+    frontier layer when one is recorded, the stable base otherwise. A fork reads the whole prefix under it from cache —
+    measured on 2026-09-20: a fork of the sealed knowledge base (a layer over `max` in all but name) read 538,051 of
+    its 538,044 tokens and wrote 62 — so what everything forks is what is pinged."""
+    if deltas_on(who) and delta_record(who):
+        return os.path.join(STATE, f"{who}-delta.json")
     if layer_record(who):
         return os.path.join(STATE, f"{who}-layer.json")
     return os.path.join(STATE, f"{who}-base.json")
@@ -729,6 +756,8 @@ def hit(name):
             os.utime(path)
         return
     os.makedirs(os.path.join(STATE, "hits"), exist_ok=True)
+    with contextlib.suppress(OSError):
+        os.remove(hits(name) + ".miss")  # its request wrote its entry anew: it is pinged again from here
     open(hits(name), "a").close()
     os.utime(hits(name))
 
@@ -1164,20 +1193,40 @@ def machine_processes():
     return out
 
 
+def claude_process(name, cmd):
+    """Whether a process is Claude Code itself (by its name, or its command: `claude …`, or a versioned binary)."""
+    return name == "claude" or cmd.startswith("claude ") or "/claude/versions/" in cmd
+
+
+def run_tool(procs, pid):
+    """Whether a process runs one of RUN_TOOLS: a shell, a Python tool or the sandbox around a session's command — not
+    a Claude Code session, whose prompt names `tools/incremental_check.py` in its brief and which lives as long as it."""
+    _, name, cmd = procs[pid]
+    return not claude_process(name, cmd) and RUN_TOOLS.search(cmd) is not None
+
+
+def outermost_tool(procs, pid):
+    """The outermost ancestor of a process (itself included) that runs one of RUN_TOOLS, or the process itself."""
+    root, p, seen = pid, procs[pid][0], 0
+    while p in procs and seen < 100:
+        if run_tool(procs, p):
+            root = p
+        p, seen = procs[p][0], seen + 1
+    return root
+
+
 def isabelle_run_roots(procs):
     """{Isabelle process: the run it belongs to} — the outermost ancestor running one of RUN_TOOLS, or the process itself
     when none does, so that work whose tool is not known still counts as a run of its own."""
-    roots = {}
-    for pid, (parent, name, _) in procs.items():
-        if name != "poly":
-            continue
-        root, p, seen = pid, parent, 0
-        while p in procs and seen < 100:
-            if RUN_TOOLS.search(procs[p][2]):
-                root = p
-            p, seen = procs[p][0], seen + 1
-        roots[pid] = root
-    return roots
+    return {pid: outermost_tool(procs, pid) for pid, (_, name, _) in procs.items() if name == "poly"}
+
+
+def run_roots(procs):
+    """Every run going: each Isabelle process's (isabelle_run_roots), and each tool's that runs whether or not an
+    Isabelle shows under it now. A replay runs Isabelle in phases, and a check prepares before its Isabelle starts:
+    between them a session's run was in no count — a mark counts until a snapshot shows its run once (session_marks) —
+    and batch 255 started beside train 223's check and fix-263's replay, three heavy runs at 3 GiB (2026-09-22 19:40)."""
+    return set(isabelle_run_roots(procs).values()) | {outermost_tool(procs, pid) for pid in procs if run_tool(procs, pid)}
 
 
 def isabelle_load():
@@ -1197,7 +1246,7 @@ def isabelle_load():
                         "probe": int(snap.get("probes", 0))}
         return {"heavy": ISABELLE_MAX + isabelle_admitted(), "probe": PROBE_MAX}
     procs = machine_processes()
-    kinds = [run_kind(procs.get(root, (0, "", ""))[2]) for root in set(isabelle_run_roots(procs).values())]
+    kinds = [run_kind(procs.get(root, (0, "", ""))[2]) for root in run_roots(procs)]
     return {"heavy": kinds.count("heavy") + unseen_finalizer_runs(procs) + session_marks(), "probe": kinds.count("probe")}
 
 
@@ -1226,6 +1275,11 @@ def run_blocked(own=(), kind="heavy"):
     claim = exclusive_claim()
     if claim and claim["task"] not in own:
         return f"Task {claim['task']} holds the machine ({claim['why']}): nothing else runs meanwhile."
+    if claim:
+        # the machine is its own: no task waiting ahead of it counts, since none of them can start until it has run —
+        # fix-274 held the claim parked, not resumed, while task 271's finalizer, ahead in the order, waited on that
+        # claim: ten idle minutes, until the unseen claim lapsed (2026-09-22 20:37-20:47)
+        return None
     pending = pending_claim()
     if pending and pending["task"] not in own:
         return (f"Task {pending['task']} waits to measure on this machine ({pending['why']}): no new run starts until "
@@ -1323,9 +1377,9 @@ def unseen_finalizer_runs(procs):
         names = [n for n in os.listdir(ADMITTED) if not n.startswith(SESSION_MARK)]
     except OSError:
         return 0
-    lines = set()
+    lines = set()  # what runs, and everything above it: a runner with a run under it is counted by that run
     for pid, (_, name, _) in procs.items():
-        if name == "poly":
+        if name == "poly" or run_tool(procs, pid):
             p, seen = pid, 0
             while p in procs and seen < 100:
                 lines.add(p)
@@ -1487,13 +1541,49 @@ def exclusive_claim():
         return claim
     grace = CLAIM_GRACE if claim.get("seen", True) else CLAIM_UNSEEN  # counted from its reading (claim_seen)
     alive = (claim.get("pid") and os.path.exists(f"/proc/{claim['pid']}")) or (
-        claim.get("session") and (running_jobs(claim["session"]) or time.time() - claim.get("at", 0) < grace))
+        claim.get("session") and (running_jobs(claim["session"]) or time.time() - claim.get("at", 0) < grace
+                                  or (claim.get("call") and time.time() - claim.get("call_at", 0) < CALL_MAX)))
     if alive:
         return claim
     with contextlib.suppress(OSError):
         os.remove(path)
         log(f"cleared the machine's claim by task {claim.get('task')}: what held it is gone")
     return None
+
+
+# A measurement run in the foreground is no job of its session: its hold stood CLAIM_GRACE from the grant and no longer,
+# whatever the run did. It idled the machine after a short run — fix-220's 17 s timing held it until 17:25:07, three
+# minutes, while two checks waited — and let others start beside a long one: task 128's pair of about 200 s lost its
+# hold at 189 s (2026-09-22; seventeen measurements that day, every hold ended so). The call that runs it holds the
+# machine from its start to its end (work_meter: claim_call as the guard lets it through, release_claim after it).
+CALL_MAX = float(os.environ.get("ORCH_CLAIM_CALL_MAX", 1200))  # a call is bounded at 600 s; past this it is gone
+
+
+def claim_call(tid, call):
+    """The measurement of task tid runs in this call of its session: its hold stands until the call ends."""
+    path = os.path.join(STATE, EXCLUSIVE)
+    try:
+        claim = json.load(open(path))
+    except (OSError, ValueError):
+        return
+    if isinstance(claim, dict) and claim.get("task") == tid and call:
+        claim.update(call=call, call_at=time.time())
+        json.dump(claim, open(path, "w"))
+
+
+def release_claim(call):
+    """The call that ran a measurement has ended: so has the hold on the machine."""
+    path = os.path.join(STATE, EXCLUSIVE)
+    try:
+        claim = json.load(open(path))
+    except (OSError, ValueError):
+        return
+    if isinstance(claim, dict) and call and claim.get("call") == call:
+        with contextlib.suppress(OSError):
+            os.remove(path)
+        log(f"the measurement of task {claim.get('task')} ended with the call that ran it "
+            f"({round(time.time() - claim.get('call_at', time.time()))} s): the machine is free")
+        kick()  # what waited for it — a queued probe, a batch, a parked session — goes at once
 
 
 def exclusive_holder():
@@ -2096,24 +2186,35 @@ COMBINED_KEEP = int(os.environ.get("ORCH_COMBINED_KEEP", 3600))
 
 
 def prune_combined_outputs():
-    """The bulk of the checks landing trains and check batches ran without advancing the base (.build/tasks/trains/,
-    .build/tasks/batches/): a batch's check is a whole heapless check, up to ~2 GB with its recipes' runs and exports,
-    and a batch every few minutes would fill the disk in days. Once COMBINED_KEEP old — its attribution long made —
-    each keeps its reports (incremental.json, manifests.json) and its log, and loses the rest."""
+    """The bulk of every repository check once COMBINED_KEEP old: a check is a whole heapless check, ~2.7 GB with its
+    recipes' runs (recipes/) and exports (exports-context/). Each keeps its reports (incremental.json, manifests.json),
+    its logs and its proof's own files (build.log, result.json: `read check:` and attribution read them), and loses its
+    directories. It pruned the combined checks' outputs only (.build/tasks/trains/, .build/tasks/batches/): the checks
+    a task's hand-over names (.build/tasks/NAME/check, check-2, …) and the task-by-task landings' (landing, landing-2,
+    …) were never pruned, and held 115 of the 139 GB under .build on 2026-09-22 ("figure out why disk usage is not
+    cleaning up", the owner). What the base's lineage stands in, or holds, is never touched."""
+    keep = [os.path.realpath(p) for p in base_lineage()]
+    near = lambda d: any(k == d or k.startswith(d + os.sep) or d.startswith(k + os.sep) for k in keep)
     removed = []
-    for kind in ("trains", "batches"):
-        root = os.path.realpath(os.path.join(BUILD, kind))
-        for d in sorted(glob.glob(os.path.join(root, "*"))) if os.path.isdir(root) else []:
-            d = os.path.realpath(d)
-            if not os.path.isdir(d) or os.path.dirname(d) != root or time.time() - os.path.getmtime(d) < COMBINED_KEEP:
+    for report in glob.glob(os.path.join(BUILD, "**", "incremental.json"), recursive=True):
+        d = os.path.realpath(os.path.dirname(report))
+        if near(d) or time.time() - os.path.getmtime(d) < COMBINED_KEEP:
+            continue
+        for part in os.listdir(d):
+            path = os.path.join(d, part)
+            if not os.path.isdir(path) or os.path.islink(path):
                 continue
-            for part in os.listdir(d):
-                path = os.path.join(d, part)
-                if os.path.isdir(path) and not os.path.islink(path):
-                    shutil.rmtree(path, ignore_errors=True)
-                    removed.append(path)
+            if part == "proof":  # its own files stay; what it copied in to run goes
+                for inner in os.listdir(path):
+                    sub = os.path.join(path, inner)
+                    if os.path.isdir(sub) and not os.path.islink(sub):
+                        shutil.rmtree(sub, ignore_errors=True)
+                        removed.append(sub)
+                continue
+            shutil.rmtree(path, ignore_errors=True)
+            removed.append(path)
     if removed:
-        log(f"pruned {len(removed)} part(s) of the combined checks' outputs: their reports and logs kept")
+        log(f"pruned {len(removed)} part(s) of the checks' outputs: their reports, logs and proof logs kept")
     return removed
 
 
@@ -2462,8 +2563,36 @@ def names_in(text):
     return out
 
 
-def deliverables(text):
-    return [p for p in names_in(section(text, "Deliverable")) if "/" in p or "." in p]
+# A file a Deliverable names bare, with no place, is the task's own folder's: a brief made in an edit cannot know its id,
+# and says "`report.md`, in this task's own folder" — briefs 253 and 254 did (2026-09-22), and `report.md` was read as a
+# file at the repository's root: the result was refused for a final job, and the final job refused a file under .build/
+# (q64). A file already at the root (THEORY_MAP.md, DECISIONS.md) stays the root's; a new one there is `./NAME`.
+FILE_NAME = re.compile(r"[\w-]+(?:\.[\w-]+)*\.(?:md|json|jsonl|txt|log|thy|ML|py|sh)")
+
+
+def placed(p, tid):
+    """Where a deliverable named `p` of task tid stands."""
+    if tid and "/" not in p and FILE_NAME.fullmatch(p) and not os.path.lexists(os.path.join(PROJECT, p)):
+        return f".build/tasks/{tid}/{p}"
+    return p
+
+
+def deliverables(text, tid=None):
+    out = []
+    for p in names_in(section(text, "Deliverable")):
+        p = placed(p, tid)
+        if ("/" in p or "." in p) and p not in out:
+            out.append(p)
+    return out
+
+
+def brief_record(tid, brief):
+    """What the harness reads of the brief a session works to — its deliverables, drafts and inputs — written when the
+    session starts and again when the planner rewrites the brief: task 254's stood as its brief was at its start after
+    plan-46 had added a test module to its Deliverable (2026-09-22 18:44)."""
+    os.makedirs(os.path.join(BUILD, tid), exist_ok=True)
+    json.dump({"task": tid, "deliverables": deliverables(brief, tid), "drafts": f".build/tasks/{tid}/",
+               "inputs": inputs(brief)}, open(os.path.join(BUILD, tid, "brief.json"), "w"))
 
 
 def inputs(text):
@@ -2889,9 +3018,7 @@ def start_producer(tid):
     brief = task["description"]
     kind = brief_kind(brief)
     role = PRODUCER[kind]
-    os.makedirs(os.path.join(BUILD, tid), exist_ok=True)
-    json.dump({"task": tid, "deliverables": deliverables(brief), "drafts": f".build/tasks/{tid}/", "inputs": inputs(brief)},
-              open(os.path.join(BUILD, tid, "brief.json"), "w"))
+    brief_record(tid, brief)
     again = reusable(tid, role)
     sha = hashlib.sha1(brief.strip().encode()).hexdigest()
     if again:
@@ -2951,7 +3078,7 @@ def parked_ready(st, tid, p):
         return not (mine & set(locked_files(st, {"task": tid})))
     if kind == "answer":
         return all((st["asks"].get(q) or {}).get("state") == "answered" for q in p.get("questions", []))
-    if kind == "check":
+    if kind in ("check", "probe"):
         return bool(p.get("result"))
     if kind == "machine":  # the guard's own condition for its kind of run, so that it is not refused again at once
         queued = pending_claim()
@@ -2966,7 +3093,8 @@ PARKED_TEXT = {"fix": "The fix of the performance problem you parked for has lan
                "tree": "The working tree is yours: install what you drafted and continue task {tid}.",
                "answer": "The answer you parked for is in the mail below. Continue task {tid}.",
                "machine": "A run may start on the machine now: run your check and continue task {tid}.",
-               "check": "{result}\n\nContinue task {tid}."}
+               "check": "{result}\n\nContinue task {tid}.",
+               "probe": "{result}\n\nContinue task {tid}."}
 
 
 def parking_care():
@@ -3042,7 +3170,7 @@ def in_main_tree(tid, standing=None):
     if standing.get(str(tid)):
         return "your task's own work stands there, uncommitted: " + ", ".join(sorted(standing[str(tid)])[:4])
     brief = (read_task(tid) or {}).get("description") or ""
-    named = {os.path.normpath(p.split(":")[0]) for p in inputs(brief) + deliverables(brief)}
+    named = {os.path.normpath(p.split(":")[0]) for p in inputs(brief) + deliverables(brief, str(tid))}
     # but not the files every task writes a line of, nor the planner's: nearly every brief names THEORY_MAP.md, and
     # while one task in the one tree held a row of it uncommitted, every task started meanwhile was put there too —
     # tasks 56, 62 and 72 on 2026-09-22, and the one tree never emptied. A task in a tree of its own writes its own
@@ -3363,7 +3491,7 @@ def hold_of(t):
     for the machine — a turn that always comes, only later when others' checks and landings are many — HOLD_PARK for
     anything else, a fix, an answer or a run that may never come. Task 94, parked for a heavy slot at 05:55 on
     2026-09-22, waited behind a stream of landings and a measurement for two hours with an hour of its three left."""
-    return HOLD_TREE if (t.get("parked") or {}).get("for") in ("tree", "machine", "check") else HOLD_PARK
+    return HOLD_TREE if (t.get("parked") or {}).get("for") in ("tree", "machine", "check", "probe") else HOLD_PARK
 
 
 def hold_left(t):
@@ -4399,6 +4527,15 @@ def tidied():
     holding = {s.get("origin_sid") for s in sessions.values()
                if s.get("state") in LIVE + ("parked", "idle") and not s.get("released")}
     holding |= {(layer_record(who) or {}).get("sessionId") for who in BASES}
+    holding |= {(delta_record(who) or {}).get("sessionId") for who in BASES}  # the delta standing, forked or not
+    standing = {(delta_record(who) or {}).get("text") for who in BASES}
+    for name in os.listdir(STATE):  # a delta's text is read by the next build only: the standing ones stay
+        path = os.path.join(STATE, name)
+        if re.fullmatch(r"(max|xhigh|high)-delta-\d{8}T\d{6}\.(md|json|list)", name) and path not in standing \
+                and (age_of(name) or 0) > PACK_KEEP:
+            with contextlib.suppress(OSError):
+                os.remove(path)
+            gone.append(name)
     for name in os.listdir(STATE):
         if name.startswith("layer-") and name.endswith("-manifest.json") and name[6:-14] not in holding:
             with contextlib.suppress(OSError):
@@ -4797,6 +4934,30 @@ def lines_of_text(text, a, b):
     return "\n".join(f"{i:6}\t{lines[i - 1]}" for i in range(a, min(b, len(lines)) + 1))
 
 
+ANSWER_BYTES = 4_000  # of each question a result names, and of its answer
+
+
+def beside_the_result(tid, text):
+    """What a result's reader needs beside it and looked for by hand: the commit message its final job hands the
+    finalizer — 55 of the day's 106 reviewers read it themselves (96 calls), from wherever its brief had put it
+    (review-202 looked in .build/tasks/edited-reach/, its brief's key, before .build/tasks/191/) — and each question the
+    result names, with its answer (review-202 dug q63's out of the harness's state in two requests; 2026-09-22)."""
+    out = []
+    try:
+        message = json.load(open(os.path.join(BUILD, tid, "finalize.json"))).get("message")
+    except (OSError, ValueError, AttributeError):
+        message = None
+    if message and os.path.isfile(os.path.join(PROJECT, message)):
+        out.append(f"== its commit message ({message})\n" + open(os.path.join(PROJECT, message), errors="ignore").read().strip())
+    asks = peek().get("asks") or {}
+    for q in dict.fromkeys(re.findall(r"\bq\d+\b", text)):
+        ask = asks.get(q) or {}
+        if ask.get("text"):
+            out.append(f"== {q}, from {ask.get('from')} to {ask.get('to')}: {ask['text'][:ANSWER_BYTES]}\n"
+                       + (f"answered: {str(ask['answer'])[:ANSWER_BYTES]}" if ask.get("answer") else "(not answered)"))
+    return "".join("\n\n" + x for x in out) + ("\n" if out else "")
+
+
 def read_source(src, tid, statements, shown, st, own=()):
     """One source of a read: a file or a range of it, the task's diff, result or check log, or a named fact — each
     read in the tree task tid's work stands in, its own while it has one: a reviewer of work in a tree, or its
@@ -4827,6 +4988,8 @@ def read_source(src, tid, statements, shown, st, own=()):
         if what == "result":
             p = os.path.join(d, "result.md")
             text = open(p).read() if os.path.exists(p) else "(no result yet)"
+            if not a:
+                text += beside_the_result(tid, text)
         elif what == "log":
             p = os.path.join(d, "finalize.log")
             text = open(p, errors="ignore").read() if os.path.exists(p) else "(no log)"
@@ -4950,15 +5113,58 @@ def timed(elapsed, d):
                     f"; the run {run} s in all (the heap's load included)" if run is not None else ""])
 
 
+# A task's probes are its reviewer's evidence (probes_text), and its session removed them before handing over — fix-245
+# at 17:18:56 and implement-221 at 16:12, 2026-09-22, following a rule read as their own ("remove probes promptly"):
+# review-246 found no probe.log under .build/tasks/245, as #234's had. The harness keeps a copy of each: every tool
+# call of a task's session copies what a probe left under its task's directory that is newer than the copy kept.
+PROBES_KEPT = os.path.join(STATE, "probes")
+PROBE_FILES = ("probe.log", "probe.summary.json", "probe.ML")
+
+
+def keep_probes(tid):
+    """Copy every probe the task's directory holds (its log, summary and script, and the theories it probed) to
+    PROBES_KEPT/ID/, where no session writes, when it is newer than the copy kept there."""
+    if not tid:
+        return
+    root = os.path.join(BUILD, str(tid))
+    for log in glob.glob(os.path.join(root, "**", "probe.log"), recursive=True):
+        d = os.path.dirname(log)
+        kept = os.path.join(PROBES_KEPT, str(tid), os.path.relpath(d, root).replace(os.sep, "__"))
+        with contextlib.suppress(OSError):
+            if os.path.exists(os.path.join(kept, "probe.log")) and \
+                    os.path.getmtime(os.path.join(kept, "probe.log")) >= os.path.getmtime(log):
+                continue
+            os.makedirs(os.path.join(kept, "theories"), exist_ok=True)
+            for f in PROBE_FILES:
+                if os.path.isfile(os.path.join(d, f)):
+                    shutil.copy2(os.path.join(d, f), os.path.join(kept, f))
+            for thy in glob.glob(os.path.join(d, "theories", "*.thy")):
+                shutil.copy2(thy, os.path.join(kept, "theories", os.path.basename(thy)))
+            json.dump({"from": os.path.relpath(d, PROJECT)}, open(os.path.join(kept, "from.json"), "w"))
+
+
+def probe_logs(tid):
+    """The task's probe logs, newest first: those under its directory, and the kept copy of each its session removed."""
+    here = glob.glob(os.path.join(BUILD, str(tid), "**", "probe.log"), recursive=True)
+    gone = []
+    for log in glob.glob(os.path.join(PROBES_KEPT, str(tid), "*", "probe.log")):
+        try:
+            origin = json.load(open(os.path.join(os.path.dirname(log), "from.json")))["from"]
+        except (OSError, ValueError, KeyError):
+            continue
+        if not os.path.isfile(os.path.join(PROJECT, origin, "probe.log")):
+            gone.append(log)
+    return sorted(here + gone, key=os.path.getmtime, reverse=True)
+
+
 def probes_text(tid, tree):
     """The task's probe runs (tools/probe_theories.py, each in a directory of its own under .build/tasks/ID/, newest
     first): the theories each loaded, whether its completion marker is there, its errors, its time, and whether each
     theory it probed is the one the tree holds now. A reviewer dug this out with `ls` and `tail` over the probe
     directories, about one request a review (47 in the 55 reviews of 2026-09-22)."""
-    logs = sorted(glob.glob(os.path.join(BUILD, tid, "**", "probe.log"), recursive=True), key=os.path.getmtime,
-                  reverse=True)
+    logs = probe_logs(tid)
     if not logs:
-        return "(no probe of this task: no probe.log under its .build/tasks directory)"
+        return "(no probe of this task: no probe.log under its .build/tasks directory, and none kept by the harness)"
     body = lambda text: text.split("\nbegin", 1)[-1] if "\nbegin" in text else text  # past the header a probe rewrites
     memo = {}
 
@@ -4999,7 +5205,11 @@ def probes_text(tid, tree):
             # a copy under a name of its own (`P130_Readings`): the tree's theory whose body it is, if any
             twin = next((t for t, b in changed_bodies().items() if b == mine), None)
             same.append(f"{n}: the tree's {twin} as it stands" if twin else f"{n}: no theory the task changed is it now")
-        out.append(f"{os.path.relpath(d, PROJECT)} at {time.strftime('%H:%M', time.localtime(os.path.getmtime(log)))}: "
+        where = os.path.relpath(d, PROJECT)
+        if d.startswith(PROBES_KEPT + os.sep):  # its session removed it: the harness's copy (keep_probes)
+            with contextlib.suppress(OSError, ValueError, KeyError):
+                where = json.load(open(os.path.join(d, "from.json")))["from"] + " (removed by its session; the harness's copy)"
+        out.append(f"{where} at {time.strftime('%H:%M', time.localtime(os.path.getmtime(log)))}: "
                    f"{state}; {len(errors)} error line(s){': ' + '; '.join(errors[:3]) if errors else ''}"
                    + timed(elapsed, d) + "\n  "
                    + "; ".join(same or ["it loaded no theory: it proves nothing of the task's"]))
@@ -5411,7 +5621,10 @@ def cmd_end():
 def snapshot(tid, tree):
     """A commit of a task's tree as its check would see it — its tracked and untracked files, what .gitignore leaves out
     left out, the receipts as its HEAD has them (a retain of its own is no work of the task's, and only a retention
-    commits them) — on no branch: (commit, None), or (None, why). What a check batch merges (train.Batch)."""
+    commits them) but for those its brief delivers — on no branch: (commit, None), or (None, why). What a check batch
+    merges (train.Batch). A brief that changes a recipe's words names the report files it re-records, and they are its
+    work: taken as HEAD had them, fix-267's check compared its new words with the old ones and could never pass (q65,
+    2026-09-22 20:04)."""
     index = os.path.join(STATE, f"snapshot-{tid}.index")
     env = dict(os.environ, GIT_INDEX_FILE=index)
     run = lambda *a: subprocess.run(["git", "-C", tree, *a], capture_output=True, text=True, env=env, timeout=300)
@@ -5422,6 +5635,11 @@ def snapshot(tid, tree):
             refused = not_added(r.stderr) if args[0] == "add" else [r.stderr.strip() or "failed"]
             if r.returncode and refused:
                 return None, f"git {args[0]} in its tree: {'; '.join(refused)[-300:]}"
+        own = [p for p in delivered_receipts(tid) if os.path.exists(os.path.join(tree, p))]
+        if own:
+            r = run("add", "-A", "--", *own)
+            if r.returncode:
+                return None, f"git add of the receipts its brief delivers: {r.stderr.strip()[-300:]}"
         work = run("write-tree").stdout.strip()
         c = subprocess.run(["git", "-C", tree, "commit-tree", work, "-p", "HEAD", "-m",
                             f"The work of task {tid} as its check sees it"], capture_output=True, text=True, timeout=60)
@@ -5605,16 +5823,23 @@ def receipts_in(files):
     return [f for f in files if os.path.normpath(f) == RECEIPTS[0] or os.path.normpath(f).startswith(RECEIPTS[1])]
 
 
+def delivered_receipts(tid):
+    """The receipts a task's brief delivers — a retention, or the report words its work changes, named in its
+    Deliverable (the planner's rule) — which are its own work, not a check's by-product."""
+    try:
+        delivered = json.load(open(os.path.join(BUILD, tid, "brief.json"))).get("deliverables") or []
+    except (OSError, ValueError, AttributeError):
+        delivered = []
+    return [os.path.normpath(d).rstrip("/") for d in delivered  # a file among them, or their directory
+            if isinstance(d, str) and receipts_in([d, os.path.join(os.path.normpath(d), "x")])]
+
+
 def receipts_refused(tid, files):
     """Receipts in a task's commit that no retention commits: with other files, and not what its brief delivers."""
     receipts = receipts_in(files)
     if not receipts or len(receipts) == len(files):
         return None
-    try:
-        delivered = json.load(open(os.path.join(BUILD, tid, "brief.json"))).get("deliverables") or []
-    except (OSError, ValueError, AttributeError):
-        delivered = []
-    named = [os.path.normpath(d).rstrip("/") for d in delivered if isinstance(d, str)]
+    named = delivered_receipts(tid)
     left = [f for f in receipts if not any(os.path.normpath(f) == d or os.path.normpath(f).startswith(d + "/")
                                            for d in named)]
     if not left:
@@ -5697,6 +5922,94 @@ def cmd_finalize(tid, args):
     return "the final job is prepared; its check runs when you record your result"
 
 
+# A probe the machine refuses (a measurement holds it or waits for it, or every probe slot is taken) was the session's
+# to try again: it parked for the machine, was resumed, and ran it — or, with a change in the same call, lost the change
+# too (implement-189, implement-182, fix-227, 2026-09-22 17:21–17:30). The owner: "put them in a queue for probes by
+# allowing them to call it with a command signifying that they have nothing to do if probe is not ran" — and "why wait
+# for a slot to be free in order to run the probe if there is space to run?". A probe led by QUEUE=1 is queued when the
+# machine refuses it (work_meter rewrites the call to `v2.py queue-probe`), its session parks, the watchdog runs it as
+# soon as the machine has room (run_queued_probes, whatever the producing slot is doing), and the session is resumed
+# with its output.
+PROBE_QUEUE = os.path.join(STATE, "probe-queue.json")
+
+
+def probe_queue():
+    import train
+    return train.Queue(PROBE_QUEUE)
+
+
+def cmd_queue_probe(encoded):
+    """A producing session's probe, refused for the machine and marked QUEUE=1: queued to run in its working directory as
+    soon as the machine has room, and the session parked until its output has come."""
+    import base64
+    c = caller()
+    if not c or c["role"] not in PRODUCING or not c.get("task"):
+        return "refused: a producing session queues its task's probe"
+    try:
+        command = base64.b64decode(encoded).decode()
+    except ValueError:
+        return "refused: the probe to queue could not be read"
+    tid, key = c["task"], f"{c['task']}-{int(time.time() * 1000)}"
+    probe_queue().put(key, head=None, command=command, cwd=os.getcwd(), session=c["name"], task=tid)
+    with state() as w:
+        w["tasks"].setdefault(tid, {}).update(stage="parked", parked={
+            "since": time.time(), "for": "probe", "why": "", "after": None, "holds_tree": False, "questions": [],
+            "holder": None, "run": "probe", "probe": key})
+        w["sessions"][c["name"]]["state"] = "parked"
+    log(f"task {tid}'s probe waits for room on the machine: it runs as soon as there is, and its session is parked")
+    kick()
+    turn_over(c)
+    return ("queued: your probe runs as soon as the machine has room for it, without you. End your turn now: you are "
+            "parked, the producing slot free meanwhile, and resumed here with its output.")
+
+
+def run_queued_probes():
+    """The watchdog's: start each queued probe the machine has room for (the guard's own condition for a probe), and
+    give each that has ended its output — cut to a read, kept whole — as the result its parked session is resumed with.
+    Whether one ended: its session is then ready to be resumed."""
+    q, st, ended = probe_queue(), peek(), False
+    for key, e in q.peek().items():
+        if e.get("decided") or not e.get("pid"):
+            continue
+        if os.path.exists(f"/proc/{e['pid']}"):
+            continue
+        try:
+            out = open(e["out"], errors="replace").read()
+        except OSError:
+            out = "(the probe left no output)"
+        text = out if len(out.encode()) <= READ_BYTES else (
+            f"[its output's last part; the whole is kept in {os.path.relpath(e['out'], PROJECT)}]\n"
+            + out.encode()[-READ_BYTES:].decode(errors="ignore"))
+        q.decide(key, 0, "ran")
+        with state() as w:
+            t = w["tasks"].get(e["task"]) or {}
+            p = t.get("parked") or {}
+            if t.get("stage") == "parked" and p.get("for") == "probe" and p.get("probe") == key:
+                p.update(result="Your queued probe ran:\n" + text)
+        log(f"task {e['task']}'s queued probe ran: its session is resumed with its output")
+        ended = True
+    for key, e in sorted(q.peek().items(), key=lambda x: x[1].get("queued", 0)):
+        if e.get("decided") or e.get("pid"):
+            continue
+        if (st["sessions"].get(e.get("session")) or {}).get("state") != "parked":
+            q.decide(key, 1, "dropped")  # its session went on, or away: the probe is no longer waited for
+            continue
+        if run_blocked((e["task"],), "probe"):
+            break  # in the order queued: none jumps the one waiting before it
+        import work_meter
+        keep = outputs_of(e["session"])
+        os.makedirs(keep, exist_ok=True)
+        out = os.path.join(keep, f"queued-probe-{key}.txt")
+        run = subprocess.Popen(["bash", "-c", work_meter.gathering(e["command"], e["cwd"], keep)], cwd=e["cwd"],
+                               stdout=open(out, "w"), stderr=subprocess.STDOUT, start_new_session=True,
+                               env=dict(os.environ, ORCH_READ_BYTES=str(READ_BYTES)))
+        with q.open() as w:
+            if key in w:
+                w[key].update(pid=run.pid, out=out, started=time.time())
+        log(f"task {e['task']}'s queued probe started: the machine has room for it")
+    return ended
+
+
 def cmd_bring_main():
     """A task's session asks for main in its branch (finalize.bring_main)."""
     c = caller()
@@ -5719,12 +6032,14 @@ def cmd_result(tid):
     final = os.path.join(BUILD, tid, "finalize.json")
     try:
         committed_files = [p for p in json.load(open(os.path.join(BUILD, tid, "brief.json")))["deliverables"]
-                           if not p.startswith(".build/")]
+                           if not placed(p, tid).startswith(".build/")]
     except (OSError, ValueError, KeyError):
         committed_files = []
     if status == "done" and committed_files and not os.path.exists(final):
-        return ("refused: a done task's deliverables are committed by the finalizer: hand it the final job first "
-                f"(`v2.py finalize {tid} --check ... --files ... --message .build/tasks/{tid}/commit.md`)")
+        return (f"refused: your brief delivers {', '.join(committed_files)} into the repository, and a done task's "
+                "files there are committed by the finalizer: hand it the final job first (`v2.py finalize "
+                f"{tid} --check ... --files ... --message .build/tasks/{tid}/commit.md`); what it delivers under "
+                ".build/ is read where it stands")
     c = caller()
     refused = jobs_refusal(c, "record your result")
     if refused:
@@ -6232,6 +6547,9 @@ def cmd_edit(path):
     except GraphEditFailed as err:
         return f"refused: the edit could not be written ({err.cause!r}); what it had written is taken back"
     said = [drop(op["delete"], "deleted") for op in ops if "delete" in op]
+    for op in ops:  # a session at work reads its brief as it now stands
+        if "rewrite" in op and "description" in op and os.path.exists(os.path.join(BUILD, str(op["rewrite"]), "brief.json")):
+            brief_record(str(op["rewrite"]), op["description"])
     link_reviews()
     order = [op["queue"] for op in ops if "queue" in op]
     queued = cmd_queue([ids.get(q, q) for q in order[-1]]) if order else ""
@@ -6337,14 +6655,20 @@ def change_blocks(text, markers=True):
             # means one of its own is missing and it has taken in the next block: without its REPLACE line, the next
             # block's markers and texts were written into the file as its replacement (design-66's entry.md, eight
             # blocks, 2026-09-21: five requests to find and repair it)
-            for part, text, missing in (("search", body[j + 1:k], DIVIDER), ("replacement", body[k + 1:r], REPLACE))[
-                    :2 if markers else 0]:
-                held = next((x for x in text if x in (SEARCH, DIVIDER, REPLACE)), None)  # the first
+            for part, at, text, missing in (("search", j + 1, body[j + 1:k], DIVIDER),
+                                            ("replacement", k + 1, body[k + 1:r], REPLACE))[:2 if markers else 0]:
+                held = next(((x, at + i) for i, x in enumerate(text) if x in (SEARCH, DIVIDER, REPLACE)), None)
                 if held:
+                    # Either reading leaves the file wrong, so it says both and the way out of each: 20 of the day's
+                    # refusals were a `=======` in a replacement (2026-09-22), and being sent to write the file whole
+                    # costs a session the file's whole text where two blocks around the line cost it nothing.
+                    line, where = held
                     problems.append(f"change {ops[-1]['n']} ({verb} {path}), the block at line {start + j + 1}: its "
-                                    f"{part} text holds a `{held}` line, so its own `{missing}` line is missing and "
-                                    "it has taken in the next block. A text that must hold such a line is written "
-                                    "whole (`=== write`)")
+                                    f"{part} text holds a `{line}` line at line {start + where + 1}, so either its "
+                                    f"own `{missing}` line is missing and it has taken in the next block, or that "
+                                    f"line belongs to the {part} text — then make two blocks, one for what stands "
+                                    "before that line and one for what stands after, or write the file whole "
+                                    "(`=== write`)")
                     break
             blocks, j = blocks + 1, r + 1
         if not blocks and not problems:
@@ -6402,12 +6726,47 @@ def changed_texts(ops, base):
     return now, at, problems
 
 
+# A session reads the library in glyphs (⇒, ∀, ‹›: the digests show them so), and a theory is written in Isabelle's
+# escapes (\<Rightarrow>): fix-249 wrote its theory in glyphs and then a script of its own to turn them into escapes,
+# a request spent on it (2026-09-22). A change writes the glyphs of what it writes into a theory as their escapes,
+# by Isabelle's own table; what the file already holds is as it was.
+SYMBOLS = os.environ.get("ISABELLE_SYMBOLS", "/opt/isabelle/etc/symbols")
+_ESCAPES = {}
+
+
+def escapes():
+    if not _ESCAPES:
+        with contextlib.suppress(OSError):
+            for line in open(SYMBOLS, errors="ignore"):
+                m = re.match(r"^(\\<[^>\s]+>)\s+code:\s*0x([0-9a-fA-F]+)", line)
+                if m:
+                    _ESCAPES.setdefault(chr(int(m.group(2), 16)), m.group(1))
+    return _ESCAPES
+
+
+def escaped(text):
+    """(the text with each glyph Isabelle's table names written as its escape, how many were)."""
+    table, n, out = escapes(), 0, []
+    for ch in text:
+        e = table.get(ch) if ord(ch) > 127 else None
+        n += e is not None
+        out.append(e or ch)
+    return "".join(out), n
+
+
 def cmd_change(text, base=None):
     """Change files: any number of whole-file writes and exact replacements, in one call, judged whole and written all
     or none. What refuses it is said, change by change; nothing is written then."""
     ops, problems = change_blocks(text)
     if problems:
         return "refused, and nothing was changed:\n- " + "\n- ".join(problems)
+    glyphs = 0
+    for op in ops:
+        if op["path"].endswith(".thy"):
+            for key in ("text", "old", "new"):
+                if isinstance(op.get(key), str):
+                    op[key], n = escaped(op[key])
+                    glyphs += n
     base = base or os.getcwd()
     now, at, problems = changed_texts(ops, base)
     if problems:
@@ -6446,6 +6805,9 @@ def cmd_change(text, base=None):
         said.append(f"{os.path.relpath(path, base)} ({', '.join(parts)})")
     note = ("\n[one change in this call. When several are ready — in this file or in others — make them in one call: "
             "it takes any number of changes, written all or none.]" if len(ops) == 1 else "")
+    if glyphs:
+        note += (f"\n[{glyphs} glyph{'s' * (glyphs > 1)} written into a theory as {'their' if glyphs > 1 else 'its'} "
+                 "escape (⇒ as \\<Rightarrow>), as Isabelle reads a theory]")
     return f"changed: {'; '.join(said)}" + note
 
 
@@ -6619,7 +6981,7 @@ def cmd_queue(ids):
         return ("refused: v2.py queue ID ID... — the order is the tasks in the order they are to be done. Naming "
                 "none would empty the queue, which is not an order; `v2.py drop ID` takes one task out.")
     since = (c or {}).get("started") or time.time()
-    recommit = []
+    recommit, held = [], len(peek()["queue"])
     with state() as st:
         for tid in ids:
             t = st["tasks"].get(tid) or {}
@@ -6667,6 +7029,9 @@ def cmd_queue(ids):
                 at += 1
             order.insert(at, tid)
         st["queue"] = order
+    # said, so that an order is traced to who set it: at 20:01 on 2026-09-22 the queue held task 267 alone, 59 tasks
+    # ready, where plan-46's last edit had queued 68 at 19:41, and nothing in the log said how
+    log(f"the order is set by {(c or {}).get('name') or 'the owner'}: {len(order)} task(s), where it held {held}")
     if graph_held():  # the planner has said what the order is: the graph it inherited is now the graph it chose
         with contextlib.suppress(OSError):
             os.remove(os.path.join(STATE, GRAPH_HELD))
@@ -7201,7 +7566,12 @@ def ping(name):
         for p in (f"{TRANSCRIPTS}/{r['sid']}.jsonl", f"{TRANSCRIPTS}/{r['sid']}"):
             with contextlib.suppress(OSError):
                 shutil.rmtree(p) if os.path.isdir(p) else os.remove(p)
-    if verdict.startswith(("OK", "MISS")) or os.environ.get("ORCH_PING_WAIT") == "0":
+    if verdict.startswith("MISS"):
+        # its entry is gone, and a ping cannot make it again: the fork wrote its own prefix, which nothing reads, and
+        # the session's own entry comes back only with its next request (hit). Marked warm after a miss, kb-12 was
+        # pinged every PING_AGE for 534K a time (2026-09-22 21:28), and every ping after it would have missed too.
+        open(hits(name) + ".miss", "w").write(str(time.time()))
+    elif verdict.startswith("OK") or os.environ.get("ORCH_PING_WAIT") == "0":
         hit(name)  # the ping read the session's own entry, and not the shorter ones under it (hit)
     else:
         # tried again in two minutes, while the entry may still be warm: a ping with no verdict held its mark for the
@@ -7214,13 +7584,28 @@ def ping(name):
     return verdict
 
 
+def ping_missed(name):
+    """Whether a ping of this session missed its entry and none is to be made until the session itself writes one."""
+    return os.path.exists(hits(name) + ".miss")
+
+
+FORK_MISSED = "forked.miss"  # <who>-forked.miss: a fork of this base wrote its prefix anew (cache_check)
+
+
 def cache_check(sid, base_sid, name):
-    """Background: record whether a fork's first request read its origin from cache."""
+    """Background: record whether a fork's first request read its origin from cache. A fork that missed wrote its own
+    prefix, which no later fork reads — every fork after it writes the whole prefix again (600K each) until the entry
+    is made anew: the base is marked, and the watchdog rebuilds what its roles fork once (deltas, layers). Three
+    entries were evicted within four minutes on 2026-09-22 (21:04 the high delta, 21:05 the xhigh layer, 21:07 a held
+    session's), each write about 600K."""
     for _ in range(40):
         v = subprocess.run([os.path.join(HERE, "session_fork_check.py"), sid, base_sid], capture_output=True, text=True).stdout
         if v.startswith(("OK", "MISS")):
             log(f"cache of {name}: {v.split(' first own request ')[-1].split(' (')[0] if 'first own request' in v else v[:80]}"
                 + ("" if v.startswith("OK") else " MISS"))
+            who = (peek()["sessions"].get(name) or {}).get("origin")
+            if v.startswith("MISS") and who in BASES:
+                open(os.path.join(STATE, f"{who}-{FORK_MISSED}"), "w").write(str(time.time()))
             return
         time.sleep(3)
 
@@ -7345,6 +7730,10 @@ def run_command(c, rest):
         say(cmd_result(rest[0]))
     elif c == "bring-main" and not rest:
         say(cmd_bring_main())
+    elif c == "queue-probe" and len(rest) == 1:
+        said = cmd_queue_probe(rest[0])
+        say(said)
+        return 1 if said.startswith("refused") else 0
     elif c == "check" and not rest:
         say(cmd_check())
     elif c == "verdict" and len(rest) >= 2:

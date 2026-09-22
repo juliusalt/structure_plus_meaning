@@ -367,12 +367,11 @@ def documents_task(tid):
 
 
 def run_check(tid, d, spec):
-    import work_meter
     cwd = v2.worktree_of(tid)
-    # run to its end and ending with every error it reported, as a session's check does: the quick fix that follows
-    # a failed one is given the log's end, which then holds them all (2026-09-21); a long list is kept in the task's
-    # run-errors/, which is a run's output and no draft
-    check = work_meter.gathering(fresh_output(tid, spec["check"], cwd), cwd, os.path.join(d, "run-errors"))
+    # run to its end and ending with every error it reported, as every check the harness runs is (run_logged): the
+    # quick fix that follows a failed one is given the log's end, which then holds them all (2026-09-21). It was also
+    # wrapped here, and listed its errors twice once run_logged did (2026-09-22)
+    check = fresh_output(tid, spec["check"], cwd)
     ok, seconds, tail = run_logged(tid, check, cwd, os.path.join(d, "finalize.log"))
     if base_refused(ok, seconds, os.path.join(d, "finalize.log")):
         check_again(tid, tail)

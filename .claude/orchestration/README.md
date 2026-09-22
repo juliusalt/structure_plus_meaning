@@ -166,8 +166,9 @@ designer writes the build and fix tasks and, for each, its review tasks, whose p
 A task is committed only when all its review tasks accept; a build or fix nobody briefed a review for gets one the
 harness plans from its brief. A task not in form is not taken up, and the planner is told why.
 
-The brief: `Kind`, `Serves`, `Deliverable` (files in backticks, not directories, for the producing kinds; the tasks
-for a brief; the verdict for a review), `Reviews` (a review task: the task it reviews), `Acceptance`, `Inputs`,
+The brief: `Kind`, `Serves`, `Deliverable` (files in backticks, not directories, for the producing kinds — a bare
+name is the task's own folder's, `.build/tasks/<id>/NAME`, unless the repository's root holds it, and a new root file
+is `./NAME` (`v2.placed`); the tasks for a brief; the verdict for a review), `Reviews` (a review task: the task it reviews), `Acceptance`, `Inputs`,
 `Decided`, `Plan` (at least two numbered steps: each one's purpose and output, the sources it rests on by name, what
 it depends on, where its check falls), `Yours`, `Planner's`, `While checks run`, `Size` (an estimate in tokens of
 work, within the room its session's base leaves, `v2.room_of`: on the bases of 2026-09-20 about 364K for a build or
@@ -769,6 +770,24 @@ stable snapshot, so its sessions are told what changed since the load they hold.
 did not seal is reused while it is warm. The packs of loads in progress (a layer, a base loaded again or built) are
 not swept by the hourly tidy, nor any pack younger than `ORCH_PACK_KEEP` (3 hours). A base's seal and a layer that read its base from cache mark it warm (`state/WHO-stable.hit`); each sealed layer
 records in `state/warm.log` whether it did (`layer WHO: OK|MISS …`), and `health.py` reports the stable base apart.
+
+**The delta** (notes/plan-delta-layer.md, the owner, 2026-09-22 19:45) is a third part over the layer: a fork of the
+recorded layer whose one message is what the base holds that has changed since the loads under it — both parts, the
+stable reference's drift too — in its new form (`manifest.py delta WHO`: a theory's changed and added commands in
+their held form and its removed ones by name, a document's changed sections, an index's changed lines, a new file
+whole, a gone one named), headed by what it supersedes. `base.sh WHO delta` builds it in one request (the text as the
+fork's first message, up to 120K; beyond, packed and loaded by chunks), verifies its `HELD <digest>` reply, snapshots
+every held file as it stands (`state/layer-<sid>-manifest.json`, marked `"delta"`, so a fork of it is told only what
+changed after it), records `state/WHO-delta.json` and stops the one it replaces. For a base named in `state/deltas`
+the roles fork the delta (`v2.base_file`, when it stands on the recorded layer), the daemon pings it, and the layer's
+own entry — then read only by the delta's builds — gets its own ping (`warm WHO layer --if-due`). The watchdog builds a
+delta when one built now would differ from the standing one by `ORCH_DELTA_MIN` (2,000) tokens, at most every
+`ORCH_DELTA_EVERY` (1,200 s), and refreshes the layer instead when its own entry is cold or its frontier would take in
+`ORCH_FRONTIER_MOVED` (5) theories; the layer under a delta is refreshed when the delta holds `ORCH_LAYER_DELTA_MAX`
+(8%) of it, not by the whole-file share, and the stable part's drift past `ORCH_STABLE_DELTA_MAX` (15,000 tokens) is an
+ATTENTION for the owner (the restable is theirs). By hand: `state/WHO-delta.build` builds one, `state/WHO-delta.ask`
+(a question) asks a fork of it and writes the answer to `state/WHO-delta-answer.txt` — the canary before a base is
+switched on.
 
 A load is complete when every chunk has arrived whole in the session's tool results and the session then replies
 `LOADED <pack id>`; the id may carry one slipped character, since the chunks are what is checked exactly (on

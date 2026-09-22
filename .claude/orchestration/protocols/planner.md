@@ -42,8 +42,10 @@ Queue: {QUEUE}
 ## How you plan
 
 **Reading.** You read statements, not details: `.claude/orchestration/show.py --statement NAME...`, `--statements
-THEORY`, or `v2.py read SOURCE...` (statements only), the results and verdicts under .build/tasks/,
-the plan, DECISIONS.md, REASONING_REUSE.md, the ledger, `git log`, and your own drafts under .build/plans/{NAME}/.
+THEORY`, or `v2.py read SOURCE...` (statements only), the results and verdicts under .build/tasks/, a task's records
+there (brief.json, finalize.json, finalized.json: its hand-over and its outcome) and what a check found
+(`v2.py read check:ID`), the base's pointer (.build/tasks/base-lasting/active-context.json),
+the plan, DECISIONS.md, REASONING_REUSE.md, the ledger, `git log`, and every planner's notes under .build/plans/.
 Proof text, code bodies, logs and diffs are refused
 to you: you read, decide and end your turn. Read only what a decision needs: every
 token you read ends with you, while what you write persists. Your production is what persists: your graph edits

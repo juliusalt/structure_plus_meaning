@@ -66,16 +66,12 @@ definition decomposition_rule ::
     "(local_address,local_address,local_address option definition_site) finite_factor_schema" where
   "decomposition_rule=finite_native_rule decomposition_conclusion decomposition_premises"
 
-definition decomposition_defined_rule ::
-    "(local_address,local_address,local_address option definition_site) finite_factor_schema" where
-  "decomposition_defined_rule=finite_native_rule (Finite_Pattern_Pair (native_var 0) (native_var 1))
-    [([0],(verdict_statements,Finite_Pattern_Pair (native_var 1) (native_var 0)))]"
 
 definition decomposition_definitions :: "(local_address option definition_site\<times>
     (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
   "decomposition_definitions=(decomposition_applies,[([0],decomposition_rule)])#
     (decomposition_every,native_every_rules decomposition_every decomposition_defined)#
-    (decomposition_defined,[([0],decomposition_defined_rule)])#
+    (decomposition_defined,[([0],native_swap_rule verdict_statements)])#
     (decomposition_declared,native_every_rules decomposition_declared verdict_key_found)#
     development_row_definitions@verdict_rows_definitions@verdict_mentions_definitions"
 
@@ -106,9 +102,11 @@ interpretation decomposition_applies_family: native_rule_family native_decomposi
     "[([0],decomposition_rule)]"
   by (rule native_decomposition_family) (simp_all add: decomposition_definitions_def decomposition_rule_def)
 
-interpretation decomposition_defined_family: native_rule_family native_decomposition_system decomposition_defined
-    "[([0],decomposition_defined_rule)]"
-  by (rule native_decomposition_family) (simp_all add: decomposition_definitions_def decomposition_defined_rule_def)
+interpretation decomposition_defined_swap: native_swap_program native_decomposition_system decomposition_defined
+    verdict_statements
+  unfolding native_swap_program_def
+  by (rule native_decomposition_family)
+    (simp_all add: decomposition_definitions_def native_swap_rule_def)
 
 interpretation decomposition_everys: native_every_program native_decomposition_system decomposition_every
     decomposition_defined
@@ -127,7 +125,8 @@ section \<open>The search and the traversals keep their meanings in this program
 text \<open>
   The program holds the row search's and the traversals' definitions as their own programs hold them, at
   sites of their own, so their shared definitions agree (@{thm positive_meaning_shared_definitions}) and no
-  argument about the search or the traversals is made again.
+  argument about the search or the traversals is made again: each is an instance of the join law of rule
+  programs (@{thm finite_rule_program_join}).
 \<close>
 
 lemma native_decomposition_definitions:
@@ -138,12 +137,6 @@ lemma native_decomposition_definitions:
   by (simp add: native_decomposition_system_def finite_native_decomposition_def finite_rule_program_definitions
     decomposition_definitions_def image_Un Un_assoc)
 
-lemma native_decomposition_agrees:
-  assumes sites: "U\<subseteq>fst ` set ds" and within: "\<forall>d\<in>U. \<forall>rs. (d,rs)\<in>set ds \<longleftrightarrow> (d,rs)\<in>set decomposition_definitions"
-  shows "systems_agree_on native_decomposition_system (decode_finite_system (finite_rule_program ds)) U"
-  unfolding systems_agree_on_def native_decomposition_system_def finite_native_decomposition_def
-    finite_rule_program_interface finite_rule_program_clause
-  using sites within by (auto simp: image_iff)
 
 lemma native_decomposition_shares:
   assumes formed: "schema_system_formed (decode_finite_system (finite_rule_program ds))"
@@ -153,28 +146,10 @@ lemma native_decomposition_shares:
     (d,t)\<in>positive_meaning (decode_finite_system (finite_rule_program ds))"
 proof -
   have outer: "distinct (map fst decomposition_definitions)" by code_simp
-  have within: "\<forall>d\<in>fst ` set ds. \<forall>rs. (d,rs)\<in>set ds \<longleftrightarrow> (d,rs)\<in>set decomposition_definitions"
-  proof (intro ballI allI iffI)
-    fix d rs assume "(d,rs)\<in>set ds"
-    then show "(d,rs)\<in>set decomposition_definitions" using whole by blast
-  next
-    fix d rs assume d: "d\<in>fst ` set ds" and m: "(d,rs)\<in>set decomposition_definitions"
-    obtain rs' where m': "(d,rs')\<in>set ds" using d by force
-    have "(d,rs')\<in>set decomposition_definitions" using m' whole by blast
-    then have "rs=rs'" by (rule eq_key_imp_eq_value[OF outer m])
-    then show "(d,rs)\<in>set ds" using m' by simp
-  qed
-  have defs: "system_definitions (decode_finite_system (finite_rule_program ds))=fst ` set ds"
-    by (rule finite_rule_program_definitions)
-  have inside: "fst ` set ds\<subseteq>system_definitions native_decomposition_system"
-    using whole by (auto simp: native_decomposition_system_def finite_native_decomposition_def
-      finite_rule_program_definitions)
-  have shared: "system_definitions native_decomposition_system\<inter>
-      system_definitions (decode_finite_system (finite_rule_program ds))=fst ` set ds"
-    using defs inside by auto
-  show ?thesis
-    by (rule positive_meaning_shared_definitions[OF native_decomposition_formed formed])
-      (use native_decomposition_agrees[OF _ within] shared defs inside site in auto)
+  have whole_formed: "schema_system_formed (decode_finite_system (finite_rule_program decomposition_definitions))"
+    using native_decomposition_formed by (simp add: native_decomposition_system_def finite_native_decomposition_def)
+  show ?thesis unfolding native_decomposition_system_def finite_native_decomposition_def
+    by (rule finite_rule_program_join[OF whole_formed outer formed whole site])
 qed
 
 lemma native_decomposition_search:
@@ -209,30 +184,7 @@ text \<open>
 lemma native_decomposition_defined:
   "(decomposition_defined,Pair_Term a b)\<in>positive_meaning native_decomposition_system \<longleftrightarrow>
     (verdict_statements,Pair_Term b a)\<in>positive_meaning native_decomposition_system"
-proof
-  assume holds: "(decomposition_defined,Pair_Term a b)\<in>positive_meaning native_decomposition_system"
-  obtain c F f where rule: "(c,F)\<in>set [([0::nat],decomposition_defined_rule)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=Pair_Term a b"
-    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f p)\<in>positive_meaning native_decomposition_system"
-    by (rule decomposition_defined_family.holds_cases[OF holds]) blast
-  have F: "F=decomposition_defined_rule" using rule by simp
-  have premise: "(verdict_statements,Pair_Term (f [1]) (f [0]))\<in>positive_meaning native_decomposition_system"
-    using native_rule_support[OF support[unfolded F decomposition_defined_rule_def]] by simp
-  have "f [0]=a" "f [1]=b" using shape by (simp_all add: F decomposition_defined_rule_def)
-  then show "(verdict_statements,Pair_Term b a)\<in>positive_meaning native_decomposition_system"
-    using premise by simp
-next
-  assume holds: "(verdict_statements,Pair_Term b a)\<in>positive_meaning native_decomposition_system"
-  have formed: "term_formed (Pair_Term b a)" using holds by (rule positive_meaning_term_formed)
-  have "(decomposition_defined,evaluate_pattern (native_values [a,b])
-      (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))
-      \<in>positive_meaning native_decomposition_system"
-    by (rule decomposition_defined_family.native_step[where c="[0]"
-        and ps="[([0],(verdict_statements,Finite_Pattern_Pair (native_var 1) (native_var 0)))]"])
-      (use holds formed in \<open>simp_all add: decomposition_defined_rule_def\<close>)
-  then show "(decomposition_defined,Pair_Term a b)\<in>positive_meaning native_decomposition_system" by simp
-qed
+  by (rule decomposition_defined_swap.exact)
 
 section \<open>The program's only literal is the empty payload\<close>
 

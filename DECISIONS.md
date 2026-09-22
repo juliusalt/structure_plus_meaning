@@ -11988,3 +11988,313 @@ paths and its admission accepts paths. This is not a refinement: a question's pr
 boundary was already behind the sources before this task (q33); its re-recording is left to the planner (q53).
 
 Recorded 2026-09-22 (task 90).
+
+## An answer state is judged from its request state's assessment and the edit
+
+The verdict of a kind judges an answer state whole: each field's call carries the answer state's families, its
+indexes and its reach table, built again for each answer. One judgment is affordable and a stage is not. Measured on
+the machinery's state with the machine held (`.build/tasks/171/measurement.md`), five of its fields cost 7.33 s
+positioned for one judgment — `unreached` 4.60 s, `undeclared` 1.79, `formed` 0.65, `statements` 0.26, `excess` 0.02 —
+so a verification stage of 224 answer states is of the order of 2,000 s natively against 22.4 s for the HOL stage (the
+verdict entry had estimated 4,500 s at four reaches a judgment). The verdict entry's "Affordability" named the remedy:
+an answer is an edit, and the fields of an edited state should be read from its request state's assessment and the
+edit. This entry decides that assessment, the edit, each field's form on the edited state, the contract, the builds
+and what they leave. It changes no theory; it was made outside the loop and is a residual.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A stage judges every answer state whole. | An answer state is its request state updated by the edit. Its fields are read from the request state's **assessment** — the indexes of its rows, built once per request state — and the edit: each field's own program at arguments the size of the edit, and one closure recomputed from what the edit's removed rows reach. A stage costs one whole judgment per request state and a local one per answer. |
+| The incremental assessment needs new native programs: a reach under removal, a delete-and-rederive, a declaration count. | **No new field program.** Every field's form on the edited state is that field's own program at other arguments, and the incremental judgment is the verdict's own entry at another argument. The reach needs one thing beyond its program — the set of keys the removed rows can make unreached — which an executor produces and the assessment admits: its closure by `undeclared`'s row reading, every mention found in a store, at that set's store, and its targets by the one new row reading this design adds. The rest is presentation and lemmas: the edit, the answer state's presentation from it, restrictions and updates of the indexes, a seeded reach table, and the contract. |
+| Exactness in every case needs the witnesses of every field held in the assessment, and with them store absence (task 44). | The forms rest on a premise checked once per request state: the request state is **closed**, its `formed`, `undeclared` and `unreached` fields holding. The loop's request states are closed — the seed is, and a successor is an accepted answer state, which the verdict requires closed — so nothing is lost; a request state that is not closed, an edit with no reduced form, or a refused key set is judged whole: the premise's refusal is the whole-state evaluation, never a verdict. Acceptance reads no absence, and the witnesses stay the reasons' concern. |
+| The answer state's presentation sharing keys with its request state is a presentation of a pair of states, left unstated (`Development_State_Presenter`). | It is the request state's presentation **updated by the edit**: the atoms extended by the appended names at the positions design 135 keeps, the removed rows dropped with their keys retired, the added rows at keys continuing the request state's entity positions. `keys_shared` and `edit_reduced` then hold by construction, as the successor's kept positions do. |
+| The subject index is built once per presented state and never updated (task 139: the notion's obligation (4), "none"). | It is updated: the fibre at a key after the edit is the fibre without the removed rows followed by the added rows about the key — the notion's `updated_carrier_index` at the path store. And a call that searches an index at a few keys carries the index restricted to those keys, which the path store's member equation leaves exact at every key kept. |
+
+### What the assessment of a state holds
+
+The **assessment** of a presented request state `R`, `state_assessment R`, holds presentations only, built once where
+the stage first reads `R`, each an instance of the index notion (`Carrier_Indexes`) at the path store's carrier; it
+holds no decision's answer. What each field reads of it:
+
+| Field | What the assessment holds for it |
+|---|---|
+| `statements`, `excess` | the subject index of each family (task 139's `subject_index`); `excess` also reads the request's support store, which is the request's and not the state's |
+| `formed` | nothing: the premise that `R` is formed |
+| `undeclared` | the declaration store (`declaration_store`), and the **mention index** of each family and of the root family |
+| `unreached` | the **reach roots**: the keys of `R`'s reach table as roots without predecessors, which under the premise is `R`'s reach; the mention index, whose fibre's subjects are the table's predecessors at a key; the subject index, the declaration store and the row store, which find the rows at a key |
+| `removed`, `added` | nothing: the edit's own rows |
+| `roots` | the root family's keys |
+| `tables`, `unknown` | the answer reader's condition; vacuous |
+
+The mention index is the subject index read through `row_mentions` instead of `row_subjects`: one notion, the index of
+a family **by a key reading**, whose fibre at a key is the family's rows having the key among the keys the reading
+gives, in the family's order. `Development_Subject_Index` is generalized over the reading, and the subject index and
+the mention index are its two instances; the declaration store stays as it is, since a declaration row's reach is its
+declared key's and the row store gives the declaring row where one is needed. The mention index is also what the reach
+table's predecessors are: `state_reach_predecessors` filters every row once per atom (task 40's follow-up 6, which
+this subsumes).
+
+The **premise** — the request state is closed — is not held in the assessment: it is the native evaluation of the
+three whole-state fields on `R` (`native_formed_exact`, `native_undeclared_exact`, `native_unreached_exact`), made once
+where the stage's equation checks it (below). The assessment is a function of `R`'s rows alone, so every answer to
+every request on one state shares it, and a verification stage on the machinery's state pays for it once.
+
+### The edit, in rows
+
+An answer's **edit**, `state_edit`, is three families: the atoms `N` it appends, the rows `D` it removes and the rows
+`A` it adds, `D` and `A` each by kind, since a kind is the family that holds a row.
+
+- `N` are the names the answer state adds, at the positions after the request state's table: the answer state is read
+  into the request state's table extended by the names it lacks (`isabelle_appended_names`; design 135, "A locus
+  across a successor"). Every constant of `R` keeps its position and so its key (`state_constant_key`); a new
+  constant's key is fresh.
+- `D` are rows of `R`, at their keys in `R`.
+- `A` are rows of the answer state, at keys continuing `R`'s entity positions: the first-occurrence key of an added
+  entity in `R`'s entity list followed by the added entities. A removed row's key is retired and never reused, as a
+  dropped constant keeps its name at its position.
+
+The answer state's presentation, `edited_state R e`, is `R` **updated by the edit**: atoms `R`'s followed by `N`, each
+family `R`'s without `D`'s rows followed by `A`'s, roots `R`'s. This is the presentation of a pair of states that
+`Development_State_Presenter` leaves unstated, and it carries, by construction, the three premises task 38 names:
+`state_presents` of the answer state, `keys_shared` with `R`, and `edit_reduced R R' D A`. They are the constructor's
+contract, stated once with it (task 85's third place), and no field re-checks them.
+
+- A **native answer** (`Development_Native_Answers`) is read into its edit directly: its removed entities' rows of `R`,
+  its added entities' rows in the answer state's context. The answer state it defines
+  (`development_native_answer_state`) already appends its names and keeps `R`'s entities in `R`'s order, so a kept row
+  of the answer state equals its row in `R`.
+- An **exported answer state** (a framed answer) is read into its edit by the difference of the two presentations: `D`
+  the rows of `R` whose identity the answer state lacks, `A` the answer state's rows whose identity `R` lacks, kept rows
+  at `R`'s keys — a host merge of the two identity-ordered listings, linear in the states, and reduced by task 38's
+  `state_difference_removed` and `state_difference_added`. It needs the answer state read into `R`'s table, which is
+  design 135's build 1.
+- **A specification is the exception.** A specification's subjects are the development constants it mentions
+  (`isabelle_entity_subjects`), so they are read against the whole development family. An edit that adds or removes a
+  development declaration changes the rows of the specifications mentioning that constant at their kept keys, and
+  `edit_reduced` has no place for a changed row at a kept key. Such an edit has no reduced form: its constructor
+  refuses it and the answer state is judged whole. No state in the loop has a specification (the machinery's and the
+  seed's specification families are empty), so this costs nothing now (Open).
+
+The edit's term holds its names and rows only.
+
+### Each field on the edited state
+
+The forms rest on one premise `P`: (i) the request state `R` is closed; (ii) the edit is reduced, by the construction of
+the answer state `R'` from it; (iii) the roots agree; (iv) the key set `O` of the next section is admitted. Under `P`,
+each field of `R'` is the field's own program at the arguments below; "the field's program" names the call its
+contract states, and only the argument changes.
+
+| Field | Its program on `R'`, at | What it reads |
+|---|---|---|
+| `statements` | the family of `R'`'s demanded rows about the subject `k`: the fibre at `k` of `R`'s subject index without `D`, followed by `A`'s rows about `k` | the subject's own rows |
+| `excess` | the subject index of `R'`'s replaceable families restricted to the atom list `[k]` (`native_excess_rows` holds for any atom list holding `k`) | the subject's own rows |
+| `formed` | `A`'s families, the specification family exempt | the edit: a kept row is a row of `R`, formed by (i) |
+| `undeclared` | `R'`'s declaration store restricted to the keys the checked rows mention; the families `A` and the rows of `R'` mentioning a key that a row of `D` declares (the mention index at those keys); the roots of `R'` mentioning such a key | the edit, and the rows mentioning a removed declaration |
+| `unreached` | the seeded reach table `T''` restricted to the keys it can visit; the families `A` and the rows of `R'` at a key of `O` (`native_unreached_rows`: any formed table, any selection) | the edit, and what its removed rows reach |
+| `removed` | `D`'s families, split into replaceable and other, and the empty row store | the edit |
+| `added` | `A`'s families and the empty row store | the edit |
+| `roots` | the two root families; equal by construction for a native answer | the roots |
+| `tables` | the answer reader's condition (task 103): names distinct, `N`'s names new | `N` |
+| `unknown` | vacuous | — |
+
+Why each is exact:
+
+- `formed` is an `every` over rows of a row-local reading, and the kept rows are `R`'s.
+- `undeclared`: a kept row's mention was declared in `R` by (i). It stays declared unless its declaration row is in `D`
+  and no row of `A` declares it again, and then the row mentions a key a row of `D` declares, so it is among the rows
+  checked. A root is kept by (iii), and a root whose head's declaration `D` removes is found by the root family's
+  mention index. `A`'s rows are checked whole.
+- `removed` and `added`: the whole-state traversal visits every row of `R` (of `R'`), searching the other state's row
+  store. Under (ii) a kept row is found and passes, a removed row's key is no key of `R'`, and an added row's key is
+  fresh; so the traversal's value is its value on `D` (on `A`) with nothing found, which is its value at the empty
+  store.
+- `statements` and `excess` read only the rows about `k`, and `R'`'s rows about `k` are `R`'s without `D` followed by
+  `A`'s. The restriction of an index to the keys a call searches is exact at those keys: a path store's lookup at a key
+  depends only on the rows at that key (`path_store_lookup`).
+- `unreached` is the next section.
+
+### The reach under removal
+
+Let `T` be `R`'s reach table and `T'` the answer state's. Under (i) every key of `T` is reached: a key of `T` is a root
+head or mentioned by a row, a row of a closed state is reached, so some subject of it is reached, and a key it mentions
+is preceded by that subject. The edit changes `T` in two ways. **Additions** only grow the reach: a new edge enters a
+key of `T`, already reached, or a key new to `T'` (a constant first mentioned by `A`), whose row in `T'` is kept real.
+**Removals** can shrink it: an edge `s→c` of `T` (a row with subject `s` mentioning `c`) is removed when no row of `R'`
+with subject `s` mentions `c`, and every removed edge's target is mentioned by a row of `D`.
+
+A key is lost exactly when it is **reached only through removed rows**: every derivation of it in `T` uses a removed
+edge. Let `O` be a set of keys holding every removed edge's target and closed under `T`'s successors (the successors
+of `s` are the mentions of `R`'s rows about `s`). Then every key of `T` outside `O` is reached in `T'`: a derivation in
+`T` that uses a removed edge `s→t` passes through `t∈O` and goes on to its end along edges of `T`, so by closure its end
+is in `O`; a key outside `O` therefore has a derivation using no removed edge, which is a derivation in `T'`. So the
+table `T''` that is `T'` with every key of `T` outside `O` made a root without predecessors has the reach of `T'`:
+seeding a table with keys of its own reach leaves its reach unchanged. And every row of `R'` is reached in `T'` exactly
+when every row of `A` and every row of `R'` at a key of `O` is reached in `T''`: a kept row with no key in `O` has a key
+of `T` (it was reached in `R`) outside `O`, a root of `T''`. The rows at a key of `O` are found through `R'`'s subject
+index and, for a declaration row, the declaration store and the row store. `T''` is read only where the evaluation can
+go — the keys of `O`, the keys new to `T'`, their predecessors, and the keys of the checked rows: a table restricted to
+a set of keys closed under the predecessors of its rows has the same reach at those keys, and `T''`'s seeded keys have
+none.
+
+So the **closure is recomputed from what the edit reaches**: over `O` and the keys new to `T'`, every other key of `T` a
+root. `T''` is `R`'s reach roots updated at those keys with their rows in `T'` (predecessors: the subjects of the
+mention fibre of `R'` at the key) — an update of the assessment, not a table built again.
+
+**`O` is produced and admitted.** The forward cone of the removed edges' targets is a closure over the successors,
+which demand-driven evaluation cannot enumerate: an evaluation settles the calls a request demands and has no forward
+production (request construction's entry, "Production and admission", decides the same situation for a filtered
+family). An executor produces `O` — the host's walk from the targets through `R`'s subject index — and the assessment
+admits it natively by two readings. **Closure** is `undeclared`'s own row reading, every mention found in a store, at
+`O`'s store over `R`'s rows about a key of `O` (the subject index at `O`'s keys). **Targets** are the one new row
+reading: every mention of a row of `D` is found in `O`'s store, or is kept — for every subject of the row, some row of
+`R'` about that subject mentions it — composed of the existing collection notions (`native_every_program`,
+`native_some_program`, `native_member_program`) and the subject index's search. Admission establishes what the lemma
+asks, so a larger `O` costs work and never truth, and a refused `O` is judged whole. A restating answer, whose added
+rows mention what its removed rows mentioned under the same subject, removes no edge, and its `O` is empty.
+
+**Weighed.** Holding `R`'s reach as a store and reading its absence (stratified negation) is unnecessary: under (i) the
+reach of `T` is its keys. Delete-and-rederive by counting derivations is not positive. A narrower `O` — the keys whose
+recorded support in the reach's certificate uses a removed edge, the certificate being the native reach's proof graph —
+bounds the work by the certificate's subtree rather than the cone; it refines `O`'s producer only, taken at a need the
+builds measure. Computing `O` in HOL and trusting it would let a HOL function decide which keys are reached, and is
+refused.
+
+### The contract
+
+The incremental judgment is not a second verdict. It is the verdict's entry at another argument: the entry passes each
+field its part, every part above has the form the field's call takes, and only how a part is built differs — from the
+two whole states for the whole judgment, from the assessment and the edit here. The contract is stated once, as the
+local contract of the assessment and the edit:
+
+`native_edited_fields`: for a request state `R` presented (`state_presents key S R`), an edit whose `edited_state`
+presents the answer state with its constructor's three facts, the subject and support given by `request_presents`, the
+two kind selections given by `kinds_present`, and the premise `P`: each field's call at its incremental part holds
+exactly when its call at its whole part on `R'` holds.
+
+Each field's lemma consumes the field's own contracts by name and proves nothing of the field again:
+`verdict_statement_selections.exact` and `native_statements_exact`; `native_excess_rows` and `native_excess_exact`;
+`verdict_formed_selections.exact` and `native_formed_exact`; `native_mentions_found` (any store, any families, any
+roots) and `native_undeclared_exact`; `native_unreached_rows` and `native_unreached_exact` with
+`state_reach_table_exact` and `native_reached_exact`; `permitted_row_program.exact` (any store, `store_lookup_empty` at
+the empty one) with `native_removed_exact` and `native_added_exact`; `native_roots_exact`. The edit's facts come from
+`edit_reduced_lists`; the indexes' from `subject_index_lookup`, the update's `update_represents`
+(`updated_carrier_index`) and the restriction law; the reach's from the two table lemmas and the removal lemma. Every
+field has a rows-level contract (a locale's `exact` over any selection), which is what the incremental part needs, so
+no field's contract is too weak. Composed with the fields' whole-state contracts, the incremental judgment's positive
+meaning is `development_verdict_accepted (development_constant_verdict replaceable demanded S r S')`, and every use of
+an accepted verdict goes on consuming `development_constant_verdict_contract` unchanged.
+
+**The stage's equation** is task 85's first notion, `checked_premise` (`Established_Premises`), at the arity where each
+premise's arguments end. The premise that the request state is closed depends on `R` alone, so the stage's function of
+`R` checks it once and returns, for every answer, the per-answer function: the incremental judgment where (iii) and
+(iv) hold, and the whole judgment of `R'` otherwise; where `R` is not closed, the whole judgment of every answer. The
+refusal is always the whole-state evaluation, computed by its own constant, so `checked_at_entry` is the code equation
+and an unavailable incremental form is never a verdict. (ii) is not checked: it is the constructor's contract.
+
+### The builds, smallest first
+
+Each is one window; each instantiates existing notions and adds no second one.
+
+1. **The index by a key reading, its update and its restriction.** `Development_Subject_Index` generalized over the
+   reading (`row_subjects`, `row_mentions`): the fibre, the index and its `carrier_index` instance stated once, the
+   subject index its instance with every consumer's fact kept by name, the mention index the other. The reach table's
+   predecessors read through the mention fibre. The notion's obligation (4): the fibre index after an edit is the path
+   store updated at the keys the edit's rows are about, the fibre there the old fibre without `D`'s rows followed by
+   `A`'s (`updated_carrier_index`, at `Binary_Store_Indexes`' path-store instance). The restriction law beside
+   `Native_Path_Store_Indexes`: the store of a listing filtered to a key set has the full store's lookup at every kept
+   key. Instances: `Carrier_Indexes`, `Native_Path_Store_Indexes`, `Binary_Store_Indexes`, `Native_Path_Stores`.
+2. **The edit and the answer state's presentation from it.** `state_edit` (`N`, and `D`, `A` by kind), `edited_state`,
+   `state_assessment`, and the constructor's contract — `state_presents`, `keys_shared`, `edit_reduced`, equal root
+   families — for the native answer state (`development_native_answer_state`) with the edit read from the answer, under
+   the condition that no specification of `R` mentions a constant whose development declaration the edit adds or
+   removes. Instances: `Development_State_Rows`, `Development_State_Presenter`, `Development_Verdict_Difference`,
+   `Development_Native_Answers`, `Isabelle_Local_Names`. The exported answer state's edit, the key difference of two
+   presentations, is a second part of this build and waits on design 135's build 1.
+3. **The local fields.** `statements`, `excess`, `formed`, `removed`, `added` and `roots` at the edit's parts: one lemma
+   each, the field's rows-level contract at the incremental part equal to its whole-state contract on `R'`. No program.
+4. **`undeclared`** at the edit's parts: the rows mentioning a removed declaration through the mention index, the
+   declaration store restricted to the checked rows' mentions, and its lemma through `native_mentions_found`. No
+   program.
+5. **The reach.** In `Native_Table_Reach`, two lemmas over any formed table: seeding a table with keys of its own reach
+   leaves its reach unchanged, and a table restricted to a key set closed under its rows' predecessors has the same
+   reach at those keys. The removal lemma (every key of `T` outside an admitted `O` is reached in `T'`); `O`'s
+   admission, closure by `undeclared`'s row reading at `O`'s store and targets by the one new row reading; `T''` as the
+   update of `R`'s reach roots; and `unreached`'s lemma at the edit's parts through `native_unreached_rows`.
+6. **The incremental judgment.** The verdict's entry at the incremental argument, which waits on the build of the
+   verdict's entry and its contract; `native_edited_fields` as the conjunction of builds 3–5; the stage's equation by
+   `checked_premise`; the producers (the index updates and restrictions, `O`'s walk) exported; the machinery's
+   verification stage measured by field, against 22.4 s for the HOL stage.
+7. After task 44, **the witnesses** at the same parts: under the premise `R`'s witnesses are empty, so the answer
+   state's arise only among the rows the incremental forms visit, and the reasons a refusal carries come from the same
+   local calls.
+
+Builds 3, 4 and 5 depend on 1 and 2 and not on each other; build 6 on all three.
+
+### Affordability
+
+Measured with the machine held (`.build/tasks/171/measurement.md`; `development_machinery_state`, positioned
+evaluation). The request state's assessment is paid once per state: its premise, the three whole-state fields, costs
+7.04 s on the machinery's state, and an index about 0.05 s to build, almost all of it forcing the family (restricted to
+one atom the same build takes 0.043 s). One incremental judgment then costs, by field:
+
+- the edit's rows: `formed` 5 to 35 calls for 1 to 16 rows, at most 0.013 s; `undeclared` over the restricted
+  declaration store 0.001 s for one row and 0.13 s for sixteen; `removed`, `added` and `statements` traverse the edit's
+  rows or the subject's, of the order of `formed`;
+- `excess` at the index restricted to `[k]`: 0.002 s, against 0.020 s with the whole index for the same 88 calls;
+- `unreached`: removing one code equation, the cone of its mentions held 5, 11 and 69 of the 217 keys. At 5 and 11
+  keys the seeded, restricted table took 632 and 777 calls, 0.089 s and 0.154 s, against 4.60 s and 4.64 s for the
+  whole answer state, with equal results; `O`'s admission reads the same rows once more. A restating answer removes no
+  edge and checks only its added rows.
+
+So one judgment is of the order of 0.01 s for a restating answer and 0.1–0.3 s where the removed rows reach ten keys;
+the 69-key cone, a third of the state, is estimated below a second. A stage of 224 answer states on one request state
+is then of the order of 10–70 s natively — one assessment and 224 local judgments — against 22.4 s for the HOL stage
+and about 2,000 s judged whole.
+
+**What remains after the builds** is the positioned evaluation's constant: about 0.14–0.20 ms a call on edit-sized
+arguments, against 1.2 ms on whole-state ones (`unreached`: 3,798 calls in 4.6 s). Restricting every index and table
+to the keys a call can reach is what moves a call from the one to the other; with it no engine refinement is needed
+for a stage, and one is planned only if build 6 measures otherwise. Host work per answer is linear in the edit —
+index updates, restrictions, `O`'s walk — provided a presented state's families are computed once: `state_entities` is
+a function field of `state_rows`, recomputed at every read, and the measurement's simulation, which read it inside a
+per-row filter, spent 29.5 s a call rebuilding an answer state's reach table.
+
+### Weighed and rejected
+
+- **Refining the positioned evaluation first** (the planner, q54): a stage's cost is its count of whole-state
+  judgments; refining the evaluation scales that count and removes nothing.
+- **Holding every field's witnesses in the assessment**, for exactness when the request state is not closed: it needs
+  store absence for `undeclared` and `unreached`, and makes acceptance read the witnesses. The premise route needs
+  neither, and loses nothing in the loop, whose request states are closed.
+- **Building the answer state's indexes and reach table again for each answer**, or building its table whole and
+  seeding it afterwards: host work linear in the state per answer, and each call carrying a whole index or table; the
+  update of the request state's, restricted to the keys a call searches, is linear in the edit.
+
+### What the builds must respect
+
+- The assessment holds presentations only; no decision's answer is held in it. The premise is decided natively, once
+  per request state, where the stage's equation checks it.
+- Every incremental form is an existing field program at other arguments, and the verdict's entry is the same program.
+  The one new row reading is `O`'s targets. No second verdict, no second index notion, no comparison.
+- An edit is reduced by its constructor and never checked by a decision; a specification change is refused to the
+  whole judgment, not approximated.
+- `O` is produced and admitted; a larger `O` costs work and never truth; a refused `O` is judged whole.
+- Keys continue: the answer state's constants and kept entities keep `R`'s keys, a removed row's key is retired and
+  never reused, and an added row's key is fresh.
+- Acceptance reads no absence: an empty fibre is a shape, found and empty. An unavailable incremental form is the
+  whole-state evaluation, never a refusal; an empty result and a failed one stay apart.
+- Keys are paths and octets inert: every store and table here is a path store and states no payload but the empty one.
+- A call carries only the part of the assessment its reading can reach, never a whole index or table; a presented
+  state's families are computed once and read as lists.
+
+### Open
+
+- **Specifications**: a specification's subjects are a join the presenter performs over the whole development family.
+  Making them a join the program reads — a specification row's mentions found among the development declarations —
+  would make a specification row invariant under an edit, and the exception disappear. The planner keeps the
+  exception until a loop state holds a specification; none does today.
+- **Exported answer states** are read into their edits by a merge linear in the states: host work and no native call,
+  but a stage of framed answers does not cost only its edits. Native answers, the Q7 direction, carry their edit.
+- **`O`'s producer** may be narrowed to the reach certificate's subtree, at a need build 6 measures.
+- **A request state that is not closed** is judged whole for every answer to it.
+
+Recorded 2026-09-22 (task 171's design; no theory changes).

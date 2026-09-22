@@ -1895,7 +1895,8 @@ keys its use presents.
 
 **Missing use by development.** The notion has no statement, so each carrier re-derives its
 obligations and no use can cite it as a use cites a presentation class; whether it needs a theory of
-its own is open. Which key to choose is not in the contract and must not enter it: two keys
+its own is open. [Corrected 2026-09-22: it has one, `Carrier_Indexes`, and its carriers interpret it;
+DECISIONS.md, "The index notion is a checked theory, and its carriers interpret it".] Which key to choose is not in the contract and must not enter it: two keys
 satisfying it have differed tenfold in the same evaluation, so an index's benefit is an observation
 of a use, reported, never a claim of the notion — the distinction `Binary_Path_Stores` already keeps
 between a structural step count and a physical cost.
@@ -1912,8 +1913,51 @@ listed union of a demand's applications and the functionality of premises each c
 their own. It is not met by code equations proved in place — formation established once at a
 traversal's entry, an invariant computed once, the smaller operand inserted into the larger, a
 reader generating only the candidates it can accept — each of which restates one argument across its
-uses. A second notion is at its second use and is the next to factor: an argument ordered so that
+uses. [Corrected 2026-09-22: the first and the fourth are notions, stated below and in
+`Established_Premises` and `Candidate_Generators`; the second and the third apply laws HOL already
+states; DECISIONS.md, "The in-place refinements apply two notions: a check made where its premise is
+established, and a generator of the accepted candidates".] A second notion is at its second use and is the next to factor: an argument ordered so that
 comparison meets what differs first (`Right_Ordered_Terms` with `native_call_key`), whose limit is
 already recorded — which component tells two terms apart is a convention of the programs that build
 them, not a property of terms. The basis, the instances and the limits are in DECISIONS.md, "A
 refinement applies a notion; an index is one".
+
+**A check made where its premise is established.** The repeated argument: a traversal checks a
+condition of what it reads at every step — the formation of each artifact, snapshot or generation it
+reads. **Given** a premise that implies the condition at every step after the point where it holds, and
+a body that makes no such check and computes the operation under the premise (obligation (1),
+exactness: `premise x ⟹ original x = body x`), **the check is made once, where the premise is
+established, and nowhere inside.** The premise is established at one of three places: at the
+operation's entry, by checking it, the other branch returning the operation's own refusal (obligation
+(2): `¬premise x ⟹ original x = refusal x`); at an enclosing operation whose established premise
+implies it, the parts it reads inheriting it (a formed environment has formed artifacts, a successful
+transaction on a formed snapshot leaves a formed snapshot); or by the contract of the constructor that
+made the value. An establishing fact is stated once, with what it is about, never at a use. The arity
+rule: the checked arguments are exactly the premise's, so the code equation is stated where the
+premise's arguments end and a partial application checks once however often it is applied.
+*Existing native content*: `Established_Premises` — `established_premise` and `checked_premise`, with
+`checked_at_entry` (the code equation), `checked_through` (through any consumer) and `checked_union`
+(the empty refusal absorbed by a union over a family). *Missing use by development*: the formation-once
+readings, a record's candidates, proof-node rows and the snapshot's publications still prove their
+code equations in place; they are re-cited from the notion as their theories are next changed, and the
+seed publication's transactions take the third place as their refinement.
+
+**A generator of the accepted candidates.** The repeated argument: a reader's meaning is the accepted
+part of a complete candidate space. **Given** a generator whose accepted candidates lie in the space
+(soundness) and which generates every accepted candidate of the space (completeness), **it has the same
+accepted part** (`candidate_generator.accepted_generated`); a tight generator, which constructs only
+accepted candidates, is the meaning and needs no filter (`tight_candidate_generator.generated_accepted`).
+The subject is the accepted part: a generator acquires no subject of its own, and which one is cheaper is
+an observation. *Existing native content*: `Candidate_Generators`, with its law at a one-candidate
+space `accepted_singleton` (the guarded candidate as a tight generator, `singleton_tight_generator`);
+the empty space's law is `RRA_Selection.ffilter_empty_set`. *Missing use by development*: a record's
+linked candidate rows, the scoped binding search and a clause's constructed requests re-make the law in
+their proofs; `Factor_Constructed_Program_Applications.ffilter_singleton` is `accepted_singleton`.
+
+**What stays case-specific.** An invariant of a traversal computed once is HOL's `Let`, and each of its
+equations already cites `Let_def`: which value is computed once is explicit in the term, and what that
+saves is observed. The smaller operand inserted into the larger applies the union's commutativity
+(`sup_commute`), at its one use, and which operand is the smaller is observed. Each has an engine-level
+form — a code generator sharing every invariant subexpression, the library's union inserting its smaller
+operand — that would change the engine and could change a word wherever a listing reaches one; neither
+is taken.

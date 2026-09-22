@@ -220,7 +220,7 @@ text \<open>At most one row stands at a locus: a premise of the presentation, ne
 lemma development_rows_lookup:
   assumes "(l,v)\<in>set rows"
   shows "store_lookup (path_store rows) l=Some v"
-  using path_store_lookup[OF development_rows_single_valued] assms by simp
+  using carrier_index.query_search[OF path_store_carrier_index development_rows_single_valued UNIV_I] assms by simp
 
 lemma development_rows_unique:
   assumes "(l,v)\<in>set rows" "(l,w)\<in>set rows"

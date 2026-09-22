@@ -1,5 +1,5 @@
 theory Factor_Finite_Proof_Tables
-  imports Factor_Finite_Proof_Rows Factor_Finite_Syntax_Blocks Finite_Functional_Enumeration Factor_Proof_Tables
+  imports Factor_Finite_Proof_Rows Factor_Finite_Syntax_Blocks Functional_Enumeration_Indexes Factor_Proof_Tables
     "HOL-Library.List_Lexorder" "HOL-Library.Product_Lexorder" "HOL-Library.Option_ord"
 begin
 
@@ -48,9 +48,10 @@ proof -
   have functional: "finite_relation_functional V" using ready by (simp only: finite_binding_table_ready_def; blast)
   show "distinct (map fst (finite_functional_rows V))"
     by (rule finite_functional_rows_distinct_keys[OF functional])
+  have rows: "set (finite_functional_rows V)=fset V"
+    using functional_rows_index.found_pairs[OF functional] by simp
   show "set (map (\<lambda>(d,t). (d,decode_finite_term t)) (finite_functional_rows V))=decode_finite_term_bindings V"
-    by (simp only: set_map finite_functional_rows_exact[OF functional]
-      decode_finite_term_bindings_def map_relation_values_def)
+    by (simp only: set_map rows decode_finite_term_bindings_def map_relation_values_def)
 qed
 
 lemma finite_discharge_table_rows:
@@ -62,7 +63,7 @@ proof -
   show "distinct (map fst (finite_functional_rows D))"
     by (rule finite_functional_rows_distinct_keys[OF functional])
   show "set (finite_functional_rows D)=fset D"
-    by (rule finite_functional_rows_exact[OF functional])
+    using functional_rows_index.found_pairs[OF functional] by simp
 qed
 
 locale finite_binding_table_construction =
@@ -75,7 +76,10 @@ abbreviation decoded where "decoded \<equiv> map (\<lambda>(d,t). (d,decode_fini
 abbreviation block where "block \<equiv> finite_table_block (map finite_binding_row_block rows)"
 
 lemma row_set: "set rows=fset V"
-  by (rule finite_functional_rows_exact) (use ready in \<open>simp add: finite_binding_table_ready_def\<close>)
+proof -
+  have functional: "finite_relation_functional V" using ready by (simp add: finite_binding_table_ready_def)
+  show ?thesis using functional_rows_index.found_pairs[OF functional] by simp
+qed
 
 sublocale native: binding_table_construction decoded
 proof (rule binding_table_construction.intro)

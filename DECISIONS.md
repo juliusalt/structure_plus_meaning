@@ -9236,12 +9236,18 @@ with `Isabelle_Native_Reach`, `native_rule_family` and `finite_rule_program`,
 `finite_program_condition` and `finite_standalone_condition`, `Isabelle_Local_Names`, and
 `Development_Constant_Verification` as the specification. New: the verdict's own rules, the
 presentation, and store absence. No index, decision or comparison notion is introduced.
+*Corrected 2026-09-22 (task 138, "The rows about a subject are read through a subject index", at the end of this
+entry): the rows about a subject are read through the subject index of each family, an instance of the index notion
+(`Carrier_Indexes`) and no new notion; no comparison notion is introduced, and the path inequality task 36 built for
+its guard is retired.*
 
 ### Affordability
 
 The verdict's acceptance costs, on a state of `n` entity rows, `m` mentions and `c` constants: one
 `every` over the rows per permitted-row field with a search each, one traversal of the mentions with
-at most `c` distinct declaredness calls, the subject's own statements against the support, and one
+at most `c` distinct declaredness calls, the subject's own statements against the support (*corrected
+2026-09-22, task 138: that is the cost of reading them through the subject index; the guarded traversal task 36
+built visits every row of the replaceable families and traverses all their mentions*), and one
 reach. On the machinery's state (337 entities, 217 constants, 1,561 mentions) that is of the order
 of 14,000 calls against the reach's 3,397, so **one judgment costs about four reaches** and the
 reach is the unit in which the verdict's cost is stated.
@@ -9284,6 +9290,117 @@ and the request construction that follows the verdict in the Q7 order, over thes
 design was made outside the loop and is a residual.
 
 Recorded 2026-09-20 (task 3's decision; a design, no theory changes).
+
+### The rows about a subject are read through a subject index — 2026-09-22 (task 138)
+
+Task 36 built `excess` as a guarded traversal: a row of the replaceable families passes when the subject's key
+differs from every key of its subjects (`guard_differs_rule`, through `keys_differ_program` and
+`path_differ_program`, a positive path inequality), or when every mention of it is found in the support store
+(`guard_checked_rule`). That is a comparison notion this entry excludes, and it costs what the affordability above
+did not count. This decides how a native definition reads the rows about a subject — the verdict's `excess`,
+request construction's `support complete` and `scope cited`, `excess`'s witness — through the **subject index** of
+each family, an instance of the index notion, and not through a complement of "about".
+
+| Earlier proposal or state | Correction |
+|---|---|
+| "Every row of a selection having `k` among its subjects satisfies a row reading" is read over every row of the selection, the rows not about `k` passing by a path inequality (task 36: `guarded_row_program`, `guarded_selection_program`). | It is read over the rows about `k` alone. The subject index of a family holds, at every atom key of the state, the family's rows having that key among their subjects — its **fibre** at the key, empty where no row has it. The reading searches the index at `k` and reads every row of the fibre it finds. No row not about `k` is visited and no key is compared with another. |
+| Keep path inequality, recorded as the specialization to paths of native data inequality (`Factor_Data_Comparison.data_comparison_exact`) and data absence (`Factor_Bag_Difference.data_absence_exact`) by a lemma relating them. | Rejected. A lemma equating the meanings leaves a second comparison program beside the first, which "a comparison is the existing native comparison specialized, never a second one" refuses. The existing one is had only by relocating the data program into the verdict's — its recognition, its payload-difference clause and the formation check of every unexamined child, as `Development_Located_Rows` relocated equality — for a comparison whose one use is the complement the index removes; and the witnesses would need the complement again. |
+| The field contracts hold at every key: the guard passes every row both when no row is about `k` and when `k` is no key of the state. | They hold at the state's atom keys, which is where every consumer asks them. At an atom that no row of the family is about, the fibre is found and empty, and every row of it holds: an empty result. At a key that is no atom of the state the search finds nothing and the reading fails: a failed one. The library's rule that the two are kept apart is met positively; the guard conflated them, and an index keyed only by the keys some row is about could tell the empty fibre only by absence. |
+
+**The index.** For a family `F` and the state's atom keys `A` (the keys of `state_atoms R`, distinct by
+`atoms_present`), the fibre of `F` at `a` is `filter (λz. a∈set (row_subjects (snd z))) F`: the rows in `F`'s
+order, each identity inert. The subject index of `F` is `path_store` of the rows `(a, fibre of F at a)` for `a` in
+`A`, presented by `store_term (state_family_term ident)`. It is no new notion: it is the path store's carrier
+(`Native_Path_Store_Indexes.path_store_carrier_index`) at those rows, single-valued exactly because `A` is
+distinct. Its obligations as an instance of the notion: (1) the key is the path itself (`inj id`); (2) the lookup at
+`a` is the fibre exactly when `a∈set A` (`path_store_lookup`); (3) the one operation its uses need, a filter
+lemma: a row is in the fibre at `a` exactly when it is a row of `F` having `a` among its subjects; (4) none, since
+the index is built once per presented state and never updated — an edited state's index belongs to the incremental
+assessment, which stays open. Its native part is `native_store_search_program` whose checker is the family's
+every-reading (`family_every_reading`, generic over the row reading); interpreted in a theory importing
+`Native_Path_Store_Indexes`, the search inherits `index` and `index_sound`, and by `exact_held` it holds at the
+reading's context, the path of `k` and the index exactly when `k∈set A` and every row of `F` about `k` satisfies the
+reading. A selection is the `every` of that search over the list of its families' indexes, with the key and the
+reading's context as the context: one rule rearranging the call, as `undeclared_rule` and `row_mentions_rule` do.
+The index is computed from the presented atoms and family where the call's argument is built, as `support_term` and
+`declaration_term` are; it is neither a field of `state_rows` nor a condition `state_presents` carries. It is per
+family, so a kind stays the family that holds a row and the index adds no kind.
+
+Its selection reading replaces the guarded traversal, over any selection and any row reading: its contract is
+`guarded_selection_program.exact` with the premise `k∈set A` and the index of the selection as the argument.
+`excess` is its instance at the reading "every mention is found in the support store", as before. The guard and the
+path inequality have no other consumer and are retired: `path_differ_program`, `keys_differ_program`,
+`guarded_row_program`, `guarded_selection_program`, their rules and the sites `verdict_path_differ`,
+`verdict_keys_differ`, `verdict_guard_row` and `verdict_guard_family`.
+
+**The cost on one judgment**, in the terms above: the field `excess` of a refinement verdict on the machinery's state
+(337 entities of which 120 are statement rows, 217 constants, 1,561 mentions, a key of at most 8 bits), estimates owed
+#40's measurement.
+
+| Reading of the rows about the subject | Rows visited | Mention steps | Key searches (a path each, at most 9 calls) | Key comparisons |
+|---|---|---|---|---|
+| guarded traversal (task 36) | every row of the replaceable families: a part of the 120 statement rows | every mention of those rows: a part of the 1,561 | one per distinct key those rows mention (at most 217) | one path inequality per subject citation of those rows, of at most 9 bit steps |
+| subject index | the subject's own statements, one or a few | their mentions, some tens | one index search per replaceable family, and one per distinct key the subject's statements mention | none |
+
+The guard visits every row because its two rules share one head pattern: demand-driven evaluation demands both
+premises of every row, the inequality and the checked reading, so the guard decides nothing about what is demanded.
+Under it `excess` grows with the replaceable families up to the size of `undeclared`'s traversal of the statement
+rows; under the index it is what the affordability above counted. Request construction differs more: `support
+complete` and `scope cited` read every family, so under the guard each visits all 337 rows and `support complete`
+traverses all 1,561 mentions, as much as `undeclared`, where its entry counted the rows times a subject test; under
+the index each is six index searches and the subject's own statements. Building an index is host work and no native
+call: one pass over the family's rows per atom, or one grouping pass, shared by every reading of that presented
+state. Its term holds each row of the family once per subject the row has and an entry per atom; the search's first
+call carries the whole index, as the guard's first call carried the whole family, and every later call a subtree
+along the path.
+
+**What each consumer reads.**
+
+- `excess` (#36): the indexes of the replaceable families of the state it is read in. `native_excess_rows` gains the
+  premise `k∈set A` and takes the index of `Fs` as its argument. `native_excess_exact` and `native_excess_answer`
+  keep their HOL sides and their premises: `c<length (fst (snd S))` gives `key c∈set A` (`atoms_present_atom`), and
+  `native_excess_answer`'s `named` puts the subject's key among the answer state's atoms (`keys_shared_embedding`).
+  That premise is the one the index reads, so the half of #139 that drops it is withdrawn; its other half, deriving
+  `declarations_single_valued` from the exporter's obligation, stands.
+- `undeclared` (#36): reads every row and no subject; unchanged.
+- store absence and the witnesses (#44): absence in `Native_Path_Stores` descends a path by its bits' shapes to an
+  empty store or an absent value and compares no keys, so the inequality task 36 expected it to need is not needed.
+  `excess`'s witness is read over the index: the fibre at the subject's key, and for each of its rows the mentions
+  absent from the support store. No witness reads a row that is not about the subject.
+- request construction (#108): `support complete` is `excess` at the indexes of every family with `ks`; `scope
+  cited` is the index's selection reading at the row predicate "its key is cited". Their contracts stand, at `key c`
+  with `c<length (fst (snd S))`. #110 is unchanged: `context sound` reads the row found at a context key (#38's
+  search) with #34's row reading of subjects, and the declaration store and the reach table read no rows about a
+  subject.
+- `statements` (#34) and the decomposition's state reading (#94): `some` readings, positive without a complement,
+  membership decided by a repeated variable; they need no index and stand as built. Reading them through the index —
+  one search and a nonempty fibre instead of every row of the family — is a refinement with their contracts
+  unchanged, to take if #40's measurement asks for it.
+- the entry (#42): passes `excess` the indexes of the answer state's replaceable families over its atoms, and
+  discharges `excess`'s atom premise from `statements` in both directions of its contract: the native `statements`
+  holds only if some row of the answer state has the key among its subjects, and every key a row cites is an atom
+  (`state_presents_cited_atoms`); `development_verdict_accepted` requires a demanded statement of the embedded
+  subject in the answer state, whose name its table then holds.
+
+**The builds.** (1) A build before #44 and #108, which the planner numbers: the subject index in a theory of its own
+(`Development_Subject_Index`, importing `Development_Verdict_Statements` and `Native_Path_Store_Indexes`, imported by
+`Development_Verdict_Mentions`) — the fibre, the index, its obligations and native reading, the selection reading;
+then, in `Development_Verdict_Mentions`, `excess` re-pointed, `native_excess_rows` restated, `native_excess_exact` and
+`native_excess_answer` re-proved with their HOL sides unchanged, the guard and the path inequality removed, and the
+`THEORY_MAP.md` rows. It changes no recipe. (2) #139 loses its first half and is ordered against build (1), which
+writes the same theory. (3) #108 after build (1), consuming its selection reading in place of the guarded traversal.
+(4) #44 after build (1): store absence with no inequality, `excess`'s witness over the index. (5) #42 passes `excess`
+the indexes and discharges its premise from `statements`. (6) #94 and #110 unchanged. A later refinement may re-point
+the `some` readings through the index.
+
+**What the builds must respect.** No native definition of the verdict or of request construction compares two keys;
+the rows about a subject are read through the index, and none of them reads a row that is not about the subject. The
+index holds every atom of the state: an empty fibre is found, a key outside the state fails, and acceptance stays
+positive with absence kept for the witnesses. The index is exact by `path_store_lookup` and computed from the
+presented atoms and family, never supplied beside them. A contract's HOL side stands; the premise `k∈set A` is
+discharged from the presentation where the consumer asks, never carried to a caller that has it by `c<length`.
+
+Recorded 2026-09-22 (task 138's decision; a design, no theory changes).
 
 ## A formed call's applications are constructed, not verified again
 
@@ -9385,7 +9502,7 @@ Nothing about cost belongs to the contract; see *Where efficiency stays an obser
 | carrier | theory | key | contract |
 |---|---|---|---|
 | a finite set of a linearly ordered type, and a list read as the set of its members | `Ordered_Member_Trees` | the member under its own order | `ordered_member_tree_exact`, `ordered_member_tree_listed`, `ordered_remdups_exact` |
-| a finite set whose members have an ordered key with a left inverse | `Keyed_Finite_Sets` | `key`, under `unkey (key x) = x` | `keyed_rows_set`, `keyed_set_exact`, `keyed_union_exact`, `keyed_equal_exact`, `keyed_member_lookup`, `keyed_members_subset` |
+| a finite set whose members have an ordered key with a left inverse | `Keyed_Finite_Sets` | `key`, under `unkey (key x) = x` | `keyed_rows_set`, `keyed_set_exact`, `keyed_union_exact`, `keyed_equal_exact`, `keyed_member_lookup`, `keyed_members_subset` (correction, task 117: task 115 removed these two; membership stands as `Member_Tree_Indexes.keyed_set_index.member_query`, and the subset form as `Member_Tree_Indexes.keyed_set_index.members_subset`, the notion's `lookup_queries_found` at unit values) |
 | a finite relation, and a nested relation by two keys, whose keys have injective binary paths | `Binary_Path_Stores`, `Binary_Relation_Stores`, `Binary_Nested_Stores`, over the paths of `RRA_Binary_Use_Paths` and `RRA_Digit_Natural_Paths` | the path of the key | `relation_store_member`, `nested_relation_store_member`, `store_lookup_update`, `store_off_path_preserved`, `store_canonical` |
 | a native table of rows, searched inside a Factor program | `Native_Path_Stores` | a path of shapes — incidence, not an octet tag | `native_store_search_program.exact` with `.sound`, over `path_store_lookup` and `path_store_found` |
 
@@ -10257,7 +10374,9 @@ and `site_refuses_unpresented`.
 
 `carrier_index_through_key` states once the argument `keyed_member_lookup` makes over
 `ordered_member_tree`: an index of the key image searched by the keys themselves is an index of the
-carrier read through a key that distinguishes.
+carrier read through a key that distinguishes. (Correction, task 117: task 115 removed
+`keyed_member_lookup`; the argument stands as `Member_Tree_Indexes.keyed_set_index.carrier`, and the
+membership it stated as `keyed_set_index.member_query`.)
 
 The theory imports `Main` only, so every carrier's instance theory can import it, and carries no simp,
 intro or code attribute: an instance's facts reach every theory above the uses that import it, and a
@@ -10775,12 +10894,16 @@ reusable notion whose single-valuedness is a named carried condition. From #38: 
 presented state's family rows by row key, for any presented state. From #40: the reach table over the
 state's constant keys with its row lemma — the predecessors of `x` are the keys of the subjects of the
 rows mentioning `x` — exposed as a reusable presentation, not only through `unreached`. From #34: the
-row presentation, `row_pattern` and the row reading of subjects, as landed.
+row presentation, `row_pattern` and the row reading of subjects, as landed. *Corrected 2026-09-22 (task 138, "The rows
+about a subject are read through a subject index", in the verdict's entry): `support complete` and `scope cited`
+consume the subject index's selection reading, which replaces #36's guarded traversal; their contracts stand.*
 
 Every field is positive. The only complement anywhere is the guarded traversal's own — a row without
 `k` among its subjects passes — and it is #36's, consumed and never defined here. No field needs store
 absence; no field is defined as another's negation. No field reads a row's identity, so every
-statement stays inert. No field reads a kind: the scope is over every family.
+statement stays inert. No field reads a kind: the scope is over every family. *Corrected 2026-09-22 (task 138): there
+is no complement anywhere; the rows about `k` are read through the subject index, which visits no row not about
+`k`.*
 
 ### Production and admission
 
@@ -10892,7 +11015,10 @@ request is constructed once per issued leaf, not once per control, so on the mac
 requests construction adds of the order of 80 reaches to the judgments' 900: it is not what makes a
 stage unaffordable, and the incremental assessment stays the remedy for the stage. The two guarded
 traversals share their guard, and folding them into one pass is a refinement to take if the
-measurement of build 4 asks for it; the estimate is owed that measurement.
+measurement of build 4 asks for it; the estimate is owed that measurement. *Corrected 2026-09-22 (task 138): under the
+guard each traversal also demands the checked reading of every row, so `support complete` traverses all the state's
+mentions, as much as `undeclared`; read through the subject index, each field is six index searches and the
+subject's own statements, and one construction is the per-key searches of the three other fields.*
 
 ### What the builds must respect
 
@@ -10900,7 +11026,8 @@ The request body is two families of citations and nothing else; nothing may give
 own, and the packet stays a presentation of the row with the rows its citations reach. Request
 construction reads no issue row and no problem row, and decides nothing about issuing. No field reads a
 kind, and the two kinds stay the one definition with the reading universally quantified; a field that
-depends on the kind is a defect. Every field is positive; the one complement is #36's guard, consumed;
+depends on the kind is a defect. Every field is positive; the one complement is #36's guard, consumed
+(*corrected 2026-09-22, task 138: there is none; the subject index's reading is consumed instead*);
 no store absence enters. Each field's contract is proved once and every consumed contract — the
 guarded traversal, `excess`, `undeclared`, the declaration store, the family search, the reach table's
 row lemma — is consumed by name and never re-proved; a consumed contract too weak to serve is a finding
@@ -11219,3 +11346,311 @@ this state. The readiness and development tables are not switched here, so the e
 table that is its keys is still to be measured with the presenter switch.
 
 Recorded 2026-09-22 (task 30).
+## A row outside the store is presented in its context, and an answer designates its request by its locus
+
+"The development notions are structure; a kind is a family and an identity is a path" retired six tagged
+items. Task 30 retires three of them — the issue locus's `Finite_Payload [1]`, the problem locus as a
+contract-with-names and `development_local_contract` — by switching readers to the paths `Development_Loci`
+states. The other three cannot be retired that way (q45, q46): the problem datum's origin, authority and
+contract tags, which reach every recorded word only through `development_problem_data`, and
+`development_named_request`'s lookup of a subject's name in the state's table. Each needs a decision the entry
+of task 9 did not make. A report presents a lone `development_problem`, and a lone problem does not hold the
+citation its origin makes: a demanded problem's origin is its parent's locus, which the datum does not
+contain. An executor names the request it answers by its subject's name, which is the lookup being retired.
+And a problem carried across a successor is keyed in each state by that state's positions, where the retired
+contract-with-names was invariant. This entry decides the four, and the builds that carry them out.
+
+### A row outside the store is a row in its context
+
+Inside the store a problem is the row the problem role holds at its locus: the locus, and a body of two
+optional citations and an inert contract term (`development_problem_body`, presented by
+`development_problem_body_data`). Outside the store — in a report, a record, a verdict word — it is **the same
+row, presented in the context that holds it: the context supplies the row's citations.** Nothing new is
+presented. The presenter of a problem outside the store takes exactly the four parameters the presentation
+relation `development_rows_present` takes, and no other:
+
+- `key`, the constant-key assignment of the state the row is keyed in (`state_constant_key`, as task 30 keys
+  the loci);
+- `inert`, the presentation of the contract term: its local presentation in that state's names
+  (`isabelle_local_root`), as #3 carries a statement and as the retired contract-with-names carried the
+  term — invariant under every correspondence of tables (`isabelle_local_root_renamed`), and compared across
+  two states that are not in correspondence by task 78's `isabelle_local_root_compared`;
+- `origin` and `grant`, the context's two citation functions.
+
+The row it presents is `finite_store_row (development_problem_body_data inert)` of the problem's locus
+(`development_located_at key Development_Problem_Role p`) and its body `(origin p, grant p, the contract term)`.
+Its contract is the one the relation already supports: injective on every set of problems a
+`development_problems_present key inert origin grant` holds (`finite_store_row_injective_on` with
+`development_problem_body_data_injective` and `development_rows_problem_loci`), and decoding to that
+relation's row (`decode_development_problem_body_data`). A report's rows are therefore the rows a store with
+the same parameters holds.
+
+**The contexts.** Each report is a presentation of a context, and the context is what supplies the
+citations:
+
+| Context | Reports | `origin` | `grant` |
+|---|---|---|---|
+| A residual record | the seed's problem report, problems-answered and loop; the machinery's problems, loop and verification; a request's problem in either | absent: every problem the seed, the machinery and a demanded state pose is residual — their constructors (`development_seed_problem`, the machinery's problems, `development_demanded_requests`) assign `Development_Residual` | absent: the same constructors assign `Development_Generated` |
+| A repair | `development_refinement_repair_data`, in the verdict word of every repaired answer and in the succession | each definition problem cites the repaired request's problem, `fst r`, at its problem locus: the extension keeps every position of the request state (`development_request_extension_persists`, `isabelle_state_embedding_prefix`), so that locus is the same in the request state and in the extension the definitions are keyed in | absent |
+| A loop | `development_loop_data`, `development_dependencies_data`, `development_generation_data`, `development_record_data`, the succession, a framed answer's successor | a demanded problem cites the problem heading the first repair record of the loop's history whose definition problems hold it — the row task 58 reads from that record (`development_history_rows_exact`) — and, once the decomposition build lands, the parent of the first decomposition record that posed it; a residual problem cites nothing | absent |
+| A request | wherever a request is carried | its problem's citations in the context that carries the request | the same |
+
+A demanded problem's origin is its parent because that is what the decomposition entry decided ("A child at
+a locus nothing holds is posed there. Its origin cites the parent's problem locus"), and `Development_Demand`
+with `Development_Generated` are the tagged forms of those two citations. The loop reads its origins from the
+history, not from its dependencies: the origin is what posed the problem, which is a recorded decision, while
+a row of `D` is settlement structure that a later premise may share.
+
+**A request outside the store** is its problem's row in the same context, together with its body as the
+request carries it: its support as the family of its constants' keys — the request row's own support family,
+presented by `development_citations_data` — and its context carried as its entities (`isabelle_entities_data`),
+because a report does not hold the state's entity rows a citation would reach. "A request cites where a packet
+carries", and a report carries, as a packet does. Two things are not presented: the request's own locus, which
+is its problem's locus under the request role (`development_request_problem_locus`), and its constant term `s`,
+which is its problem's contract term and is carried once, in the row. The presenter is injective on the
+requests a `development_requests_present` holds, among whose conditions is that `s` is the problem's contract
+term; every constructed request meets it (`development_constant_request_fields`).
+
+**The origins with no family to cite are not carried.** At HEAD every construction assigns an origin of
+`Development_Residual` or `Development_Demand` and the authority `Development_Generated`: the seed's, the
+machinery's and the demanded requests, the repair's definition problems, the decomposition's children. No
+construction assigns `Development_Obligation`, `Development_Direction`, `Development_Incompleteness`,
+`Development_Repair`, `Development_Owner` or `Development_Truth`. The presentation is partial, and its
+partiality is the relation's premise: the origin absent exactly for a residual problem, the grant absent exactly
+for a generated one, the authority not truth, one subject constant. Each report discharges the premise from the
+construction of the problems it carries. A context with no family to cite into has no citation to give, and a
+report carrying such a problem is not a presentation of it. The computed observation naming such problems is
+owed at the first construction that assigns one, and that construction brings the family its citation needs —
+a role of `Development_Loci` for owner records or obligation records, as the decomposition row brings the
+sixth — or its report refuses. The subjectless case already has its observation: `development_without_subject`.
+`Development_Truth` stays as task 9 left it: named, with no counterpart.
+
+**Restricting the presenters instead is rejected.** Restricting them to the problems of the seed and the
+machinery — a singleton subject, generated authority, residual origin — would leave the demanded problems
+the loop does pose with no presentation: the repair's definition problems, presented in the verdict word of
+every repaired answer (`introduced-helper`, `outside-support`) and in the succession, and the decomposition's
+children once they are posed. A residual-only presenter either refuses them, losing reports the loop makes, or
+presents them with an absent origin, mapping an omitted case onto the residual shape — the total form that is
+not honest. Presenting in context contains the restriction as its residual-record case with no second
+presenter, and it takes exactly the store's parameters. Its cost is that the loop's context reads the history
+once per report.
+
+### Where the presenters live
+
+The presenters that carry a problem or a request are defined today below the rows: in `Development_Problems`,
+`Development_Requests`, `Development_Refinement_Repair`, `Development_Successor` and
+`Development_Native_Answers`, while `Development_Rows` imports `Development_Publication`, which imports that
+whole line. The row presenters move down to where these can import them; nothing is defined twice.
+
+- `development_located_at` moves to `Development_Loci`, beside `development_problem_locus_at`, whose `the` it is;
+  `Development_Rows` keeps using it.
+- A new theory, `Development_Row_Data`, imports `Development_Loci` and `Development_Requests` (`Development_Loci`
+  imports only `Native_Path_Stores`, `Development_Problems` and `Factor_Finite_Payload_Literals`, so there is no
+  cycle). It holds the citation and body presenters with their injectivity and formation, moved from
+  `Development_Row_Presentations`; the problem row in context; `development_problems_data` and
+  `development_problem_assessment_data`, moved from `Development_Problems` and restated over the row;
+  `development_request_data` and `development_requests_data`, moved from `Development_Requests`; and the
+  located request of the fourth section, replacing `development_named_request` in
+  `Development_Constant_Verification`.
+- `Development_Row_Presentations` keeps the decode lemmas relating those presenters to `Development_Rows`'
+  bodies and the two abbreviations, and imports `Development_Row_Data`.
+- `Development_Problems` keeps its datatypes, unchanged, and the HOL specifications native readiness is proved
+  against; only its presenters leave it.
+
+Parameterizing each report's presenter by a problem presentation supplied by its use, as `development_record_data`
+takes the packet's, was weighed and rejected: the context is not a free parameter. A repair's definition
+problems cite the repair's own request, which only the repair's presenter holds; a parameter would move that
+knowledge into every use of the repair. The record's packet parameter stays as it is.
+
+### A locus across a successor: the successor keeps the positions of the state it succeeds
+
+Five decisions relate a problem of the request state to a problem of the answer state:
+`development_reevaluations`, which compares a recorded issue's problem with the current library;
+task 58's repair rows, read from the history and compared with the successor's dependencies and answered set,
+and task 64's corollary that a repaired successor settles; the decomposition records' re-evaluation (the build
+that applies a decomposition); publication across rounds, once a persistent published state holds generations
+of two rounds; and the loop's presenters, which read a demanded problem's origin from the history.
+`development_request_current` compares entities through the embedding and not loci, and the verdict compares
+two states through `isabelle_state_embedding`, which is its domain and not the locus's.
+
+The development already keeps positions wherever it builds a state itself. The repair's extension appends the
+answer's names to the request state's table (`development_request_extension`,
+`development_request_extension_persists`), and so does a native answer's state
+(`development_native_answer_state`); on both, the embedding is the identity on every old position
+(`isabelle_state_embedding_prefix`). Only `development_successor` moves positions: it takes the answer state as
+the exporter wrote it, renames the problems, the dependencies and the answered set by the embedding of the two
+tables, and leaves the history as it was recorded. After a successor the history and the loop are therefore in
+two coordinate systems.
+
+**Decided: the successor keeps the positions of the state it succeeds** (the planner, q48). It reads its answer
+state into the request state's table extended by the names it lacks — `Isabelle_Local_Names`' table extended by
+the names it lacks (`isabelle_appended_names`), which the extension and the native answer state already
+instantiate, factored once so that the extension and the successor share it. The reading is a correspondence of
+tables, so every decision on it is the decision on the answer state as exported, through that decision's own
+renaming contract (`development_ready_renaming` for readiness, `state_presents_renamed` for the verdict's rows);
+the answer's generation is computed on the read state, and its first obligation is that the verdict accepts
+there exactly when it accepts on the exported state. **One lemma** states that the successor's correspondence is
+the identity on every position the old state uses, so every problem, locus, row and record of the old state
+stands unchanged in the successor: `development_problem_rename` of it is itself. There is no transport, and
+nothing for a consumer to apply: what a locus means stays local to the successor's contract, stated once,
+instead of a transport that every reader of the history would have to compose.
+
+**What becomes of the vacuity.** Task 58's repair rows are read in the coordinates of the request state and of
+its extension, which the successor now keeps; its rows, the successor's dependencies and its answered set are in
+one coordinate system, so the corollary that a repaired successor settles holds of every repair, not only of the
+repairs whose answer state happened to keep the request's positions. `development_reevaluations` likewise
+compares a recorded issue's problem with the current library's problems in one coordinate system, so a reading
+differs exactly when the library changed what applies, which is the re-evaluation it means, and never because
+a table was reordered. Task 64 consumes the identity lemma in place of a transport.
+
+**The rekey stays for genuine renamings.** `readiness_presents_rekey` and `development_row_rekey` carry a
+presentation to another under an injective change of keys: the renaming controls, where a state is moved to
+another table on purpose. Succession is not such a renaming any more. Task 78's comparison compares a row's
+inert term across two states that are not in correspondence (an answer that drops names), which the local
+presentation makes possible; no locus is asked to do that.
+
+A dropped constant keeps its name at its position in the kept table, used by no entity. The succession stage
+judges two answer states, the seed state and `development_seed_renamed`; the second now reads back into the
+seed's table and its successor equals the first's. That is the point rather than a loss: a successor no longer
+depends on the order of the answer state's table.
+
+### An answer designates its request by its locus
+
+**The request at a locus replaces the request of a name.** `development_named_request` read a string the
+executor supplied, found its position in the state's table (`isabelle_name_position`) and took the singleton
+of the requests of that subject. The request of a locus is **the path store of the requests keyed by their
+request-role loci, looked up at the locus**: the index notion's path-store instance
+(`Native_Path_Store_Indexes.path_store_carrier_index`), exact under distinct loci by `path_store_lookup`, which is
+the relation's own "at most one row per locus" (`development_rows_problem_loci`); natively it is the store search
+`development_request_at` makes, and `development_rows_request_recovery` makes the request at a locus unique. A
+locus holding no request finds the store's own absence, and the answer is refused before any judgment. No name
+is looked up and no list is filtered.
+
+**The packet carries its request's locus, and the answer carries it back.** The packet is the presentation of
+the request row (task 9), whose locus is its first component. The native packet is presented as the pair of
+that locus (`finite_path`) and the packet as it stands; `development_native_packet` itself does not change, and
+the Isabelle-text packet of `Development_Request_Packets` carries the locus in its request field. A native
+answer is transported as the pair of the locus of the request it answers and its edit, read by the pair's
+reader over `finite_path_bits` (`finite_path_bits_path`) and the answer's reader; `development_native_answer`
+does not change, and the refusals task 103 adds to the answer's reader compose with the pair's. The designation
+travels in the answer's word, so the judgment takes one word and no string argument. A framed answer carries the
+locus in its request field. The executor copies the packet's locus into its answer, as it copies the designation
+today. When answers have rows (after task 38), an answer stands at that locus under the answer role
+(`development_locus_shared_tail`): the designation is its row's locus less the role.
+
+The alternative — the answer designates nothing and its request is the packet it answers — is rejected. The
+pairing of an answer with its packet would be held by the host, outside every contract; an answer apart from its
+packet would answer nothing; and the answer's row, when it comes, needs its locus.
+
+**A demanded state is designated by its root.** A demanded state is exported from one root, the subject
+constant, so it holds at most one request (`development_demanded_requests` over its roots' head constants). Its
+designation is that root: the constant handed to Isabelle's exporter, a name read by presentation, as names are.
+Its request is the one at its root constant's locus, computed from the root's head constant, never from a name
+in a table. The three demanded records — `demanded-identity`, `demanded-reformulated` and the adopted
+`indexed-data-walk` — keep `{"state", "subject"}`, the subject read as the root. The adopted answer must keep its
+file: `answer_name` hashes the whole answer, so a changed file would name another theory, and the harness would
+no longer find the adopted one.
+
+**A seeded state is designated by the locus.** The seed and the machinery hold many requests; a request of
+either is designated `{"state", "locus"}`, the locus as the list of its bits. A locus a host designates is read
+from a presented report, never computed from a name: a request's locus is its problem row's locus under the
+request role (`development_request_problem_locus`), and the loop's report presents the problem rows of the issued
+requests.
+
+What the tools, their tests and the records then carry:
+
+- `tools/development_answer.py`: the verification and packet theories it writes take the located request at the
+  answer's locus (a seeded state) or the demanded state's one request (a demanded state); `validate` admits the two
+  designations; `packet` takes `--locus` for a seeded state.
+- `tools/native_answers.py`: `packet --locus`; the answer's octets hold the designated answer, so `judge` passes one
+  word; `validated` admits the two designations.
+- `tools/development_executor.py`: copies the packet's designation, the locus included.
+- `tools/test_development_answer.py` (the packet theory's text at 125) and `tools/test_native_answers.py` (the
+  designation, the packet's round trip and the executor's answer).
+- `validation/development-answers`: the thirteen seeded records' answers are re-designated once with the locus of
+  the seed's request for `digit_replay_inspect`, read from the seed's issued requests; their framed theory names
+  change with their content, and none of them is adopted. The three demanded records' answers do not change.
+
+### The builds, in order
+
+Each changes words once, with its reason; none is a refinement, so word equality cannot accept it, and each
+build's entry says why its words changed. All come after task 30's landing, which re-records the seed's and the
+machinery's words once, and their words start from those.
+
+1. **The successor keeps positions.** `Development_Successor` (the successor reads its answer state into the
+   extended table, the reading factored with `development_request_extension`'s), with the identity lemma and the
+   acceptance obligation above. Words: the seed's presentation-succession; every word presenting a state after a
+   successor — the verdict words of the framed answers whose successor is computed (`identity`, `deterministic`,
+   `introduced-helper`, `outside-support`, `demanded-identity`, `demanded-reformulated`); the machinery's words,
+   because `development_successor` is an admission root of its checked state. The publication words present no
+   successor and stay. The reason: the successor's state is the answer state read into the request's table.
+   Before the presenter switch; ordered against tasks 64 and 92; task 64 then consumes the identity lemma.
+2. **The presenter switch.** `Development_Row_Data` and the moves of the second section; the problem row in
+   context and the request's presentation; each report's context; `development_origin_data`,
+   `development_authority_data`, `development_contract_data` and `development_problem_data` retired, with their
+   eight facts. Words: the seed's presentation-problems, -problems-answered, -loop and -succession; the
+   machinery's presentation-problems, -loop and -verification, and its presentation if the checked state's
+   constituents change; the framed verdict words; the native judgment words of `native-dropped` and
+   `native-restating`, whose judgment presents its request. The reason: a problem is presented as its row. After
+   build 1, because the loop's context reads the history in the loop's coordinates.
+3. **The answer designates its locus.** The located request, `development_named_request` retired;
+   `development_named_native_judgment`, `development_named_native_judgment_data`, `development_native_summary` and
+   `development_named_native_packet_data` take the designated word; the tools, tests and records of the fourth
+   section. Words: the packet words (`native-restating`'s `packet_word`, `deterministic`'s packet); every judgment
+   and verdict word stays equal, because the located request is the named one on every retained answer, which the
+   build checks. After build 2, which gives `Development_Row_Data`; ordered against task 103, which restates the
+   native answer's reader.
+
+### Every reader of the four items, and its decision
+
+| Reader (`.build/tasks/30/readers.md`) | Decision | Build |
+|---|---|---|
+| `development_problem_data` (Development_Problems:58) | retired; each use takes the problem row in its context | 2 |
+| `development_origin_data_injective`, `development_authority_data_injective`, `development_contract_data_injective` (64, 70, 76); their `_formed` (93, 96, 99) | go with the items; the row's injectivity (`finite_store_row_injective_on`, `development_problem_body_data_injective`) replaces them | 2 |
+| `development_problem_data_injective` (82), `development_problem_data_formed` (103) | replaced by the row's injectivity on a presented set and its formation | 2 |
+| `development_problems_data`, `development_problem_assessment_data` (259) | moved to `Development_Row_Data`, over the row in the report's context | 2 |
+| `development_request_data` (328), `development_requests_data` (338) | moved; the request's problem row with its support keys and its carried context | 2 |
+| `development_refinement_repair_data` (220) | the repair's context | 2 |
+| `development_dependencies_data` (575), `development_generation_data` (584), `development_record_data` (617), `development_loop_data` (636) | the loop's context, read from the history | 1, 2 |
+| `development_named_request` (Development_Constant_Verification:172) | retired; the located request | 3 |
+| `development_named_native_judgment` (299), `development_named_native_packet_data` (364), `development_native_summary` (316) | located, at the designated word's locus | 3 |
+| `development_named_native_judgment_data` (306) | the request in the state's context (2); the designated word (3) | 2, 3 |
+| Development_Seed (problem report 112, value 126), Development_Seed_Loop (data 99, value 112) | the seed's residual record | 2 |
+| Development_Seed_Verification: `native_judgment_value` (80), `native_summary` (85), `native_packet_value` (90) | the seed's context (2); located (3) | 2, 3 |
+| Development_Seed_Verification: `succession_data` (159), `succession_value` (180) | the loop's context over a successor that keeps positions | 1, 2 |
+| Development_Machinery: `_problem_data` (131), `_problem_value` (143), `_loop_data` (172), `_loop_value` (184), `_verification_data` (276), `_verification_value` (289), and the requests they carry (`_request_of` 218, `_issue` 254, `_requests` 260, `_verification` 267) | the machinery's residual record | 2 |
+| Development_Machinery: `_native_judgment_value` (323), `_native_summary` (328), `_native_packet_value` (333) | located | 3 |
+| Development_Machinery: `_state` (51), `_problems` (75), `_unstated` (80), `_dependencies` (84), `_contract_packets` (115), `_problem_report` (124), `_loop_report` (159), `_renamed` (213), `_native_answers` (314), `_native_answers_value` (319) | values the presenters above present: they present nothing themselves, and change only if a name or a type they read changes, which none of the three builds makes | — |
+| Development_Machinery's checked state (its constituents, reached from the roots) | recomputed from the roots, which name none of the four; its word changes if its constituents do | 1, 2 |
+| `tools/development_answer.py` (168, 171, 188, 214; its verdict and publication words) | the located request or the demanded state's one request; verdict words change in 1 and 2 | 1, 2, 3 |
+| `tools/test_development_answer.py:125`, `tools/native_answers.py`, `tools/test_native_answers.py`, `tools/development_executor.py` | the designation of the fourth section | 3 |
+| `validation/development-answers` (16 records) | words re-recorded in 1 and 2; thirteen answers re-designated in 3; the adopted record historical and untouched | 1, 2, 3 |
+
+The certified, decision and admitted-publication carriers and the seed's publication (readers.md §4) read loci
+only, which are task 30's, and none of the four items.
+
+### What the builds must respect
+
+Task 9's entry stands whole: a locus is a path and nothing else; origin and authority are families of
+citations and an absence is the store's own optional value; a request cites where a packet carries; the packet is
+a presentation and not a notion; a contract term, a statement and a name stay inert. A presenter outside the store
+takes the store's four parameters and no other, is partial with the relation's premise, and is never made total by
+mapping an omitted origin or authority onto a shape; a context supplies a citation or has none, and never invents
+one. The inert term is the local presentation. A locus is keyed by the state's constant-key assignment, a
+parameter under `inj_on`. Positions are kept across the loop, and no reader of the history applies a transport. A
+request is found at a locus and never by a name, in a theory or in a host; a name is an export root or a
+presentation. Nothing here is a new notion: the row presenters are `Native_Path_Stores`', the located request is
+the path store's index instance, the kept table is `Isabelle_Local_Names`'.
+
+### Open
+
+- The observation naming the problems whose origin or authority has no family to cite, owed at the first
+  construction that assigns one, and the families of owner records and obligation records.
+- A request's carried context is presented through `isabelle_entity_data`'s kind tags, which #3's families
+  replace; the problem assessment's `development_undeclared_subjects` stays presented as positions. Neither is
+  one of the four items.
+- The acceptance obligation of build 1 — the verdict on the read state against the verdict on the exported
+  state — is the build's first proof; if it fails, it goes to the planner before the successor changes.
+- This design was made outside the loop and is a residual.
+
+Recorded 2026-09-22 (task 135's decision; a design, no theory changes).

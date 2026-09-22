@@ -1,11 +1,16 @@
 theory RRA_Digit_Environment_Loading
-  imports RRA_Digit_Generation_Readings Finite_Functional_Enumeration
+  imports RRA_Digit_Generation_Readings Functional_Enumeration_Indexes
     "HOL-Library.Option_ord" "HOL-Library.List_Lexorder" "HOL-Library.Product_Lexorder"
 begin
 
 lemma finite_functional_rows_fset:
   "finite_relation_functional rows \<Longrightarrow> fset_of_list (finite_functional_rows rows)=rows"
-  by (simp only: fset_inject[symmetric] fset_of_list.rep_eq finite_functional_rows_exact)
+proof -
+  assume functional: "finite_relation_functional rows"
+  have listed: "set (finite_functional_rows rows)=fset rows"
+    using functional_rows_index.found_pairs[OF functional] by simp
+  show ?thesis by (simp only: fset_inject[symmetric] fset_of_list.rep_eq listed)
+qed
 
 lemma digit_allocated_load_view:
   "map_option digit_allocated_view (load_digit_allocated A B)=

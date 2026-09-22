@@ -25,12 +25,13 @@ lemma development_loci_data_injective [intro]: "inj development_loci_data"
   unfolding development_loci_data_def by (intro finite_collection_presentation_injective) simp
 
 text \<open>
-  A selection presents the loci of the problems it admitted: a problem is what its contract states,
-  whatever its origin, so problems with equal contracts are one admitted problem.
+  A selection presents the loci of the problems it admitted, each cited by its locus: a problem stands at
+  its locus whatever its origin, so problems of one kind about one constant are one admitted problem.
 \<close>
 
 definition development_selection_payload :: "String.literal list \<Rightarrow> development_problem list \<Rightarrow> finite_factor_term" where
-  "development_selection_payload names xs=development_loci_data (fset_of_list (map (development_problem_locus names) xs))"
+  "development_selection_payload names xs=development_loci_data
+     (fset_of_list (map (development_problem_citation Development_Problem_Role) xs))"
 
 text \<open>
   An issue presents the locus of its problem, the names of the support its answer may use and the library
@@ -46,11 +47,11 @@ definition development_support_names :: "String.literal list \<Rightarrow> nat f
 definition development_reading_data ::
     "String.literal list \<Rightarrow> (nat\<times>development_problem) fset fset \<Rightarrow> finite_factor_term" where
   "development_reading_data names=finite_collection_presentation (finite_collection_presentation
-     (finite_pair_presentation isabelle_position_data (development_problem_locus names)))"
+     (finite_pair_presentation isabelle_position_data (development_problem_citation Development_Problem_Role)))"
 
 definition development_issue_payload ::
     "String.literal list \<Rightarrow> development_request \<Rightarrow> (nat\<times>development_problem) fset fset \<Rightarrow> finite_factor_term" where
-  "development_issue_payload names r reading=Finite_Pair (development_problem_locus names (fst r))
+  "development_issue_payload names r reading=Finite_Pair (development_problem_citation Development_Problem_Role (fst r))
      (Finite_Pair (finite_collection_presentation isabelle_name_data (development_support_names names (fst (snd (snd r)))))
        (development_reading_data names reading))"
 
@@ -70,7 +71,7 @@ definition development_issue_generation_using ::
       development_generation_row list \<Rightarrow>
       (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
   "development_issue_generation_using construct judge names r reading H rows=
-     Option.bind (development_data_target (development_issue_locus names (fst r)))
+     Option.bind (development_locus_target Development_Issue_Role (fst r))
        (\<lambda>l. development_payload_generation_using construct judge (development_issue_payload names r reading) H l rows)"
 
 definition development_selection_generation_with ::
@@ -93,7 +94,7 @@ lemma development_selection_generation_with_unfold:
 
 lemma development_issue_generation_with_unfold:
   "development_issue_generation_with judge names r reading H rows=
-     Option.bind (development_data_target (development_issue_locus names (fst r)))
+     Option.bind (development_locus_target Development_Issue_Role (fst r))
        (\<lambda>l. development_payload_generation_with judge (development_issue_payload names r reading) H l rows)"
   by (simp only: development_issue_generation_with_def development_issue_generation_using_def
     development_payload_generation_using_original)
@@ -148,14 +149,14 @@ qed
 
 lemma development_issue_generation_fields:
   assumes built: "development_issue_generation_with judge names r reading H rows=Some (B,u,G)"
-  shows "development_data_target (development_issue_locus names (fst r))=Some (generation_locus G)"
+  shows "development_locus_target Development_Issue_Role (fst r)=Some (generation_locus G)"
     "finite_generation_formed G" "generation_predecessors G=fset_of_list (map snd rows)"
 proof -
-  obtain l where locus: "development_data_target (development_issue_locus names (fst r))=Some l"
+  obtain l where locus: "development_locus_target Development_Issue_Role (fst r)=Some l"
     and generated: "development_payload_generation_with judge (development_issue_payload names r reading) H l rows=Some (B,u,G)"
     using built by (auto simp: development_issue_generation_with_unfold bind_eq_Some_conv)
   note fields=development_payload_generation_fields[OF generated]
-  show "development_data_target (development_issue_locus names (fst r))=Some (generation_locus G)"
+  show "development_locus_target Development_Issue_Role (fst r)=Some (generation_locus G)"
     using locus fields(1) by simp
   show "finite_generation_formed G" by (rule fields(2))
   show "generation_predecessors G=fset_of_list (map snd rows)" by (rule fields(3))
@@ -194,7 +195,7 @@ qed
 
 theorem development_issue_generation_certified:
   assumes built: "development_issue_generation_with development_payload_judgment names r reading H rows=Some (B,u,G)"
-  obtains R d K pu E root where "development_data_target (development_issue_locus names (fst r))=Some (generation_locus G)"
+  obtains R d K pu E root where "development_locus_target Development_Issue_Role (fst r)=Some (generation_locus G)"
     "development_data_target (development_issue_payload names r reading)=Some (generation_payload G)"
     "generation_payload G=Finite_Whole R"
     "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
@@ -202,7 +203,7 @@ theorem development_issue_generation_certified:
       (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
     "generation_predecessors G=fset_of_list (map snd rows)"
 proof -
-  obtain l where locus: "development_data_target (development_issue_locus names (fst r))=Some l"
+  obtain l where locus: "development_locus_target Development_Issue_Role (fst r)=Some l"
     and generated: "development_payload_generation_with development_payload_judgment
       (development_issue_payload names r reading) H l rows=Some (B,u,G)"
     using built by (auto simp: development_issue_generation_with_unfold bind_eq_Some_conv)
@@ -213,7 +214,7 @@ proof -
       (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
     and fields: "generation_locus G=l" "generation_predecessors G=fset_of_list (map snd rows)"
     by (rule development_payload_generation_certified[OF generated]) blast
-  have "development_data_target (development_issue_locus names (fst r))=Some (generation_locus G)"
+  have "development_locus_target Development_Issue_Role (fst r)=Some (generation_locus G)"
     using locus fields(1) by simp
   then show thesis by (rule that[OF _ target whole policy cause fields(2)])
 qed
@@ -305,7 +306,7 @@ lemma development_recorded_issue_fields:
   assumes recorded: "development_recorded_issue_with judge names selection r reading (B,u,I)=Some (B2,rows,Q)"
   obtains B1 cited uq where "development_issue_generation_with judge names r reading B1 (((u,[]),I)#cited)=Some (B2,uq,Q)"
     "rows=[((uq,[]),Q)]"
-    "development_data_target (development_issue_locus names (fst r))=Some (generation_locus Q)"
+    "development_locus_target Development_Issue_Role (fst r)=Some (generation_locus Q)"
     "finite_generation_formed Q" "I |\<in>| generation_predecessors Q"
 proof -
   obtain B1 cited where cited: "(case selection of None \<Rightarrow> Some (B,[])

@@ -59,20 +59,19 @@ qed
 theorem native_union_admission_refines_syntax:
   assumes question: "union_question (union_subjects xs)=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
+    and selected: "finite_path (first_occurrence_key union_candidates m)\<in>set accepted"
+    and member: "m\<in>set union_candidates"
     and scope: "xs\<noteq>[]"
-  shows "i<length union_candidates \<and> syntax_join_refinement (union_candidates!i)"
+  shows "syntax_join_refinement m"
 proof -
-  have condition: "i<length union_candidates \<and>
-      union_original_condition (union_candidates!i) (union_subjects xs)"
-    by (rule union_admission_original_condition[OF question admission selected])
+  have condition: "union_original_condition m (union_subjects xs)"
+    by (rule union_admission_original_condition[OF question admission selected member])
   obtain B where witness: "({||},B)\<in>set (union_subjects xs)" and nonempty: "B\<noteq>{||}"
     by (rule union_subjects_have_witness[OF scope]) blast
-  have leaf: "union_candidates!i\<noteq>Left_Projection"
-    by (rule nonempty_right_operand_excludes_projection[OF conjunct2[OF condition] witness nonempty])
-  have parent: "syntax_join_refinement (union_candidates!i)"
+  have leaf: "m\<noteq>Left_Projection"
+    by (rule nonempty_right_operand_excludes_projection[OF condition witness nonempty])
+  show ?thesis
     by (rule obligation_reduction_discharge[OF syntax_join_refinement_reduction]) (use leaf in auto)
-  show ?thesis using condition parent by blast
 qed
 
 lemma empty_scope_does_not_exclude_projection:
@@ -103,10 +102,11 @@ lemma seed_union_scope_nonempty: "profile_terms ()\<noteq>[]"
 corollary native_seed_union_refines_syntax:
   assumes question: "union_execution_question ()=Some Q"
     and admission: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  shows "i<length union_candidates \<and> syntax_join_refinement (union_candidates!i)"
+    and selected: "finite_path (first_occurrence_key union_candidates m)\<in>set accepted"
+    and member: "m\<in>set union_candidates"
+  shows "syntax_join_refinement m"
   by (rule native_union_admission_refines_syntax[OF question[unfolded union_execution_question_def]
-    admission selected seed_union_scope_nonempty])
+    admission selected member seed_union_scope_nonempty])
 
 text \<open>The receiver instantiates the existing obligation reduction with its
   original whole-constructor equality and the actual selected candidate. A

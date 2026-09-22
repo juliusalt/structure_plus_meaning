@@ -1638,6 +1638,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Demanded_Program_Calls
     Keyed_Demanded_Sites
     Factor_Demanded_Package_Readings
+    Factor_Shared_Package_Readings
     Factor_Demanded_Graph_Readings
     Listed_Set_Unions
     Factor_Constructed_Program_Applications
@@ -1822,4 +1823,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Located_Rows
     Development_Request_Keys
     Development_Verdict_Statements
+    Development_Subject_Index
+    Development_Verdict_Mentions
+    Development_Verdict_Unreached
+    Development_Verdict_Difference
     Development_Row_Presentations

@@ -90,7 +90,6 @@ text \<open>
   not proved again.
 \<close>
 
-
 theorem development_answer_publication_applied:
   assumes published: "development_answer_publication_with judge S r S'=(Some I,Some Q,Some G,results)"
   obtains U V where "results=[Some (Finite_Applied U),Some (Finite_Applied V)]" "finite_snapshot_formed V"
@@ -108,14 +107,21 @@ proof -
     using answer by auto
   note incumbent_fields=development_incumbent_with_fields[OF incumbent]
   note answer_fields=development_answer_with_fields[OF recorded]
-  obtain B1 cited uq where issue_fields: "development_data_target (development_issue_locus (fst (snd S)) (fst r))=
+  obtain B1 cited uq where issue_fields: "development_locus_target Development_Issue_Role (fst r)=
       Some (generation_locus Q)" "finite_generation_formed Q"
     by (rule development_recorded_issue_fields[OF issue]) blast
   have locus: "generation_locus G=generation_locus I"
     using incumbent_fields(1) answer_fields(1) by simp
+  obtain li where li: "development_problem_locus_at state_constant_key Development_Issue_Role (fst r)=Some li"
+      "development_data_target (finite_path li)=Some (generation_locus Q)"
+    using issue_fields(1) by (auto simp: bind_eq_Some_conv)
+  obtain lp where lp: "development_problem_locus_at state_constant_key Development_Problem_Role (fst r)=Some lp"
+      "development_data_target (finite_path lp)=Some (generation_locus I)"
+    using incumbent_fields(1) by (auto simp: bind_eq_Some_conv)
+  have apart: "finite_path li\<noteq>finite_path lp"
+    using development_decision_loci_distinct(1)[OF li(1) lp(1)] finite_path_injective by (auto dest: injD)
   have separate: "generation_locus Q\<noteq>generation_locus I"
-    by (rule development_data_targets_distinct[OF issue_fields(1) incumbent_fields(1)])
-      (simp_all add: development_decision_loci_distinct)
+    by (rule development_data_targets_distinct[OF li(2) lp(2) finite_path_formed finite_path_formed apart])
   have formed: "finite_snapshot_formed {|I|}"
     using incumbent_fields(2) by (simp add: finite_snapshot_formed_def finite_snapshot_loci_def fcard_finsert_if fcard_fempty)
   have absent: "finite_snapshot_lookup {|I|} (generation_locus Q)=None"

@@ -52,7 +52,7 @@ theorem finite_compile_graph_node_correct:
       (fset (finite_block_callees B)) (fset (finite_block_interior B)) (fset (finite_block_slots B))"
 proof -
   have selected: "finite_relation_option (finite_graph_inferences G) n=Some N"
-    by (simp only: finite_relation_option_correct[OF functional]; rule member)
+    by (simp only: functional_option_index.query_search[OF functional UNIV_I, unfolded id_apply]; rule member)
   have actual: "finite_compile_proof_node E N (finite_graph_premises G n)=Some B"
     using compiled by (simp only: finite_compile_graph_node_def selected option.case)
   show "finite_proof_node_ready E N (finite_graph_premises G n)"
@@ -75,7 +75,7 @@ proof -
     obtain N where member: "(n,N) |\<in>| finite_graph_inferences G"
       using inside by (auto simp: finite_graph_nodes_def)
     have selected: "finite_relation_option (finite_graph_inferences G) n=Some N"
-      by (simp only: finite_relation_option_correct[OF functional]; rule member)
+      by (simp only: functional_option_index.query_search[OF functional UNIV_I, unfolded id_apply]; rule member)
     have input: "finite_proof_node_ready E N (finite_graph_premises G n)"
       by (rule finite_rooted_graph_node_ready[OF ready roots member])
     obtain B where code: "finite_compile_proof_node E N (finite_graph_premises G n)=Some B"

@@ -18,8 +18,12 @@ definition finite_program_construction where
 lemma finite_program_clause_rows_exact:
   assumes formed: "finite_system_formed P"
   shows "set (finite_program_clause_rows P)=fset (finite_system_clauses P)"
-  unfolding finite_program_clause_rows_def
-  by (rule finite_functional_rows_exact) (use formed in \<open>simp add: finite_system_formed_def\<close>)
+proof -
+  have functional: "finite_relation_functional (finite_system_clauses P)"
+    using formed by (simp add: finite_system_formed_def)
+  show ?thesis unfolding finite_program_clause_rows_def
+    using functional_rows_index.found_pairs[OF functional] by simp
+qed
 
 lemma finite_program_library_member:
   assumes formed: "finite_system_formed P"

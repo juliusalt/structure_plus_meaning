@@ -434,7 +434,7 @@ text \<open>
 
 definition development_incumbent_key ::
     "isabelle_rooted_context \<Rightarrow> development_problem \<Rightarrow> (finite_exact_target\<times>finite_factor_term) option" where
-  "development_incumbent_key S p=Option.bind (development_data_target (development_problem_locus (fst (snd S)) p))
+  "development_incumbent_key S p=Option.bind (development_locus_target Development_Problem_Role p)
      (\<lambda>l. map_option (Pair l) (development_family_key (snd S) (development_answer_equations (snd S) (problem_subject p))))"
 
 definition development_incumbent_with ::
@@ -460,21 +460,21 @@ definition development_certified_incumbent ::
   "development_certified_incumbent=development_incumbent_with development_payload_judgment"
 
 lemma development_certified_incumbent_family:
-  "development_certified_incumbent S p=Option.bind (development_data_target (development_problem_locus (fst (snd S)) p))
+  "development_certified_incumbent S p=Option.bind (development_locus_target Development_Problem_Role p)
      (\<lambda>l. development_family_generation (snd S) (development_answer_equations (snd S) (problem_subject p))
         (finite_enumerated_environment [] []) l [])"
-  by (cases "development_data_target (development_problem_locus (fst (snd S)) p)")
+  by (cases "development_locus_target Development_Problem_Role p")
     (simp_all add: development_certified_incumbent_def development_incumbent_with_def development_incumbent_key_def
       development_family_generation_def bind_eq_Some_conv Option.bind_map_option comp_def)
 
 theorem development_certified_incumbent_base:
   assumes built: "development_certified_incumbent S p=Some (B,u,G)"
-  obtains l where "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
+  obtains l where "development_locus_target Development_Problem_Role p=Some l"
     "development_family_generation (snd S) (development_answer_equations (snd S) (problem_subject p))
       (finite_enumerated_environment [] []) l []=Some (B,u,G)"
     "generation_locus G=l" "generation_predecessors G={||}"
 proof -
-  obtain l where locus: "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
+  obtain l where locus: "development_locus_target Development_Problem_Role p=Some l"
     and family: "development_family_generation (snd S) (development_answer_equations (snd S) (problem_subject p))
       (finite_enumerated_environment [] []) l []=Some (B,u,G)"
     using built by (auto simp: development_certified_incumbent_family bind_eq_Some_conv)
@@ -488,11 +488,11 @@ definition development_answer_key ::
       (finite_exact_target\<times>finite_factor_term) option" where
   "development_answer_key S r S'=(case development_answer_generation S r S' of
      None \<Rightarrow> None
-   | Some (p,E,payload,v) \<Rightarrow> Option.bind (development_data_target (development_problem_locus (fst (snd S)) p))
+   | Some (p,E,payload,v) \<Rightarrow> Option.bind (development_locus_target Development_Problem_Role p)
        (\<lambda>l. map_option (Pair l) (development_family_key (snd S') payload)))"
 
 text \<open>
-  An answer cites the issue of the request it answers, at the problem's issue locus. The issue cites the
+  An answer cites the issue of the request it answers, at the problem's locus under the issue role. The issue cites the
   incumbent the request was made against, so the incumbent is an ancestor of the answer and is not cited
   again: only direct edges are recorded. Every other row the use supplies is not cited.
 \<close>
@@ -501,7 +501,7 @@ definition development_answer_citations ::
     "String.literal list \<Rightarrow> development_problem \<Rightarrow> finite_exact_target \<Rightarrow> development_generation_row list \<Rightarrow>
       development_generation_row list" where
   "development_answer_citations names p l rows=filter (\<lambda>(d,G).
-     development_data_target (development_issue_locus names p)=Some (generation_locus G)) rows"
+     development_locus_target Development_Issue_Role p=Some (generation_locus G)) rows"
 
 definition development_answer_using ::
     "development_constructor \<Rightarrow> development_payload_judge \<Rightarrow> isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow>
@@ -583,7 +583,7 @@ definition development_certified_answer ::
 lemma development_certified_answer_family:
   "development_certified_answer S r S' H rows=(case development_answer_generation S r S' of
      None \<Rightarrow> None
-   | Some (p,E,payload,v) \<Rightarrow> Option.bind (development_data_target (development_problem_locus (fst (snd S)) p))
+   | Some (p,E,payload,v) \<Rightarrow> Option.bind (development_locus_target Development_Problem_Role p)
        (\<lambda>l. development_family_generation (snd S') payload H l (development_answer_citations (fst (snd S)) (fst r) l rows)))"
 proof (cases "development_answer_generation S r S'")
   case None
@@ -592,7 +592,7 @@ next
   case (Some generation)
   obtain p E payload v where shape: "generation=(p,E,payload,v)" by (cases generation) auto
   show ?thesis
-    by (cases "development_data_target (development_problem_locus (fst (snd S)) p)")
+    by (cases "development_locus_target Development_Problem_Role p")
       (simp_all add: Some shape development_certified_answer_def development_answer_with_unfold development_answer_key_def
         development_family_generation_def Option.bind_map_option comp_def)
 qed
@@ -601,12 +601,12 @@ theorem development_certified_answer_accepted:
   assumes built: "development_certified_answer S r S' H rows=Some (B,u,G)"
   obtains p E payload v l where "development_answer_generation S r S'=Some (p,E,payload,v)"
     "development_verdict_accepted v" "p=fst r"
-    "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
+    "development_locus_target Development_Problem_Role p=Some l"
     "development_family_generation (snd S') payload H l (development_answer_citations (fst (snd S)) (fst r) l rows)=Some (B,u,G)"
 proof -
   obtain p E payload v where generation: "development_answer_generation S r S'=Some (p,E,payload,v)"
     using built by (auto simp: development_certified_answer_family split: option.splits)
-  obtain l where locus: "development_data_target (development_problem_locus (fst (snd S)) p)=Some l"
+  obtain l where locus: "development_locus_target Development_Problem_Role p=Some l"
     and family: "development_family_generation (snd S') payload H l (development_answer_citations (fst (snd S)) (fst r) l rows)=Some (B,u,G)"
     using built generation by (auto simp: development_certified_answer_family bind_eq_Some_conv)
   have accepted: "development_verdict_accepted v"

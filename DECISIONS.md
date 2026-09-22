@@ -11133,7 +11133,11 @@ nothing about cost.
   checks once however often it is then applied. `finite_locus_publications_code` (stated for the snapshot
   alone) and `finite_definition_site_reading_formed_exact` (by `ext`, for the environment alone) follow it;
   the other instances are stated at full arity, and are restated at the premise's arity when re-cited: the
-  statement changes, no word can. This is where the notion meets the invariant computed once: the rule is
+  statement changes, no word can. [Corrected 2026-09-22, task 218: false for a constant a recorded state
+  expands — its code equation is an entity of the state, so the restatement changes every word computed from
+  it; and a restatement at the premise's arity is a refinement of its own, not a re-citation. See "What a
+  refinement keeps equal when a recorded state presents the refined constant's code equations".] This is
+  where the notion meets the invariant computed once: the rule is
   the let's evaluation applied to a check.
 - A premise on an argument that is not the first is instantiated with the constant applied to the arguments
   before it (`original` is `finite_term_readings_bounded n`), the instance stated as a lemma for every such
@@ -11144,7 +11148,7 @@ nothing about cost.
 
 | Instance | Premise, and where it is established | Facts | Re-cited |
 |---|---|---|---|
-| Readings of an environment (`Factor_Formation_Once_Readings`, `Factor_Formation_Once_Definitions`) | `finite_environment_formed E` (`finite_exact_formed C` for a citation's candidates), at the entry, refusal `{||}`; inherited by the artifacts and by each nested reading | the `*_formed_exact` facts; the code equations `finite_citation_candidates_formed_once_code`, `finite_term_readings_bounded_formed_once_code`, `finite_pattern_readings_bounded_formed_once_code`, `finite_family_readings_formed_once_code`, `finite_call_readings_formed_once_code`, `finite_pattern_record_readings_formed_once_code`, `finite_pattern_vector_readings_formed_once_code`, `finite_native_schema_readings_formed_once_code`, `finite_scoped_pattern_readings_formed_once_code`, `finite_native_definition_readings_formed_once_code`, `finite_native_definition_rows_formed_definitions_code` (superseding `finite_native_definition_rows_formed_once_code`), `finite_native_package_formed_once_code` | each code equation from `checked_at_entry`, its refusal a stated fact where its proof now unfolds the definition |
+| Readings of an environment (`Factor_Formation_Once_Readings`, `Factor_Formation_Once_Definitions`) | `finite_environment_formed E` (`finite_exact_formed C` for a citation's candidates), at the entry, refusal `{||}`; inherited by the artifacts and by each nested reading | the `*_formed_exact` facts; the code equations `finite_citation_candidates_formed_once_code`, `finite_term_readings_bounded_formed_once_code`, `finite_pattern_readings_bounded_formed_once_code`, `finite_family_readings_formed_once_code`, `finite_call_readings_formed_once_code`, `finite_pattern_record_readings_formed_once_code`, `finite_pattern_vector_readings_formed_once_code`, `finite_native_schema_readings_formed_once_code`, `finite_scoped_pattern_readings_formed_once_code`, `finite_native_definition_readings_formed_once_code`, `finite_native_definition_rows_formed_definitions_code` (superseding `finite_native_definition_rows_formed_once_code`), `finite_native_package_formed_once_code` | each code equation from `checked_at_entry` [corrected 2026-09-22, task 218: from `checked_through`, keeping its full-arity statement (task 130); the arity form is a refinement of its own], its refusal a stated fact where its proof now unfolds the definition |
 | A record's candidates (`RRA_Linked_Record_Candidates`) | `finite_object_formed C`, at the entry, with the arity condition of the definition's own guard beside it | `finite_record_body_candidates_exact`, `finite_record_candidates_formed_once_code` | yes |
 | Proof-node rows (`Factor_Recovered_Graph_Sharing`) | `finite_environment_formed E`, at the rows' entry, hoisted out of the positions' union | `finite_proof_node_readings_formed_guard` (the guard is the reading's definition), `finite_proof_node_rows_formed_once_code`, `finite_native_graph_demands_formed_once_code` | yes, through `checked_union` |
 | Demanded site readings (`Factor_Demanded_Package_Readings`, `Factor_Demanded_Graph_Readings`) | the environment's formation, established at the enclosing demanded traversal's entry | `finite_definition_site_reading_formed_exact`, `finite_proof_site_reading_formed_exact` | no: consumers, already at the premise's arity |
@@ -11268,7 +11272,9 @@ word equal.
 - A refinement's acceptance stays word equality of every report word; applying a notion is the second,
   separate condition, which a re-citation meets and a refinement proved in place does not.
 - A re-citation replaces a proof, never a statement's meaning; a code equation re-cited under the first
-  notion is stated at its premise's arity.
+  notion is stated at its premise's arity [corrected 2026-09-22, task 218: a re-cited code equation keeps
+  its statement; its restatement at the premise's arity is a refinement of its own, under "What a refinement
+  keeps equal when a recorded state presents the refined constant's code equations"].
 - A new refinement of an operation that already has an instance extends that instance where it stands.
 - An establishing fact is stated with what it is about, never at a use.
 - Task 68's criterion decides re-citation: a theory whose proof re-makes a law — the entry's case split,
@@ -11962,6 +11968,39 @@ their own word changes over the final layout; none of them must precede task 30.
 
 Recorded 2026-09-22 (task 136's decision; a design, no theory changes).
 
+## A single premise on a rearrangement of the conclusion's variables is one notion
+
+A site whose family is one ordinary rule, `finite_native_rule p [([0],(r,q))]`, whose single premise calls a callee
+`r` on a pattern `q` whose variables the conclusion `p` binds, holds exactly where the callee holds of the premise's
+evaluation. The notion is `native_rearranging_program` in `Native_Collection_Programs` (task 208, following task
+173's review and the planner's task 207), over `native_rule_family`, with the side condition that `q`'s variables are
+among `p`'s. Its contract is stated once, in two forms: `exact`, the site holds of `t` exactly when some evaluation
+formed on `p`'s variables evaluates `p` to `t` and `r` holds of its evaluation of `q`; and `at`, at every evaluation
+`f`, the site holds of `f`'s evaluation of `p` exactly when the variables of `p` that `q` does not read are formed
+under `f` and `r` holds of `f`'s evaluation of `q` (the variables `q` reads are formed by the callee's own meaning).
+`exact` is the one proof by `holds_cases` and `native_step`; `at` follows from it and two pattern facts stated once,
+general over patterns: equal evaluations agree on a pattern's variables (`evaluate_pattern_agree`), and a formed
+evaluation has formed values at them (`evaluate_pattern_variables_formed`). The argument reads nothing of the
+patterns' shape, so a conclusion with literal leaves is an instance too.
+
+- Instances in `Native_Collection_Programs`: the swap (`native_swap_program`, its sublocale `rearranged`; its `exact`
+  now proves only its patterns' obligations, statement and rule value unchanged) and the call that passes a pair's
+  first component along as context (`native_context_call_rule`, `native_context_call_program.exact`), the rule value
+  that `store_found_rule` (Development_Verdict_Mentions), `readiness_settled_rule` (Development_Native_Readiness) and
+  `reach_reached_rule` (Native_Table_Reach) each define.
+- Re-citations that follow, each a task of its own after the builds that edit those theories: `store_found_program`
+  and the sites of `readiness_settled_rule` and `reach_reached_rule` to `native_context_call_program`;
+  `subject_selection_program.call_exact` (Development_Subject_Index, `((0,1),2)` to `(1,(0,2))`) to the notion; and
+  the further single-premise sites whose own `exact` is proved by `holds_cases`/`native_step`: `key_cited_program`
+  (Development_Request_Scope, a six-field row to its first two fields), `row_mentions_program`
+  (Development_Verdict_Mentions, a six-field row to fields 0 and 4) and `native_ready_exact`
+  (Development_Native_Readiness, a conclusion with literal status leaves). Rules with two premises
+  (`conjoined_calls_program`) or none (`verdict_equal_program`, `native_any_rule`) are not instances.
+- `native_decomposition_shares` (Development_Native_Decomposition) no longer takes `distinct (map fst ds)`: its proof
+  never read it; the join law needs distinctness of the whole program's sites only, which it computes itself.
+
+No rule value and no other statement changed, so no recorded word changes.
+
 ## The overnight native-control questions state their candidates as keys
 
 Task 56 moved the loop's contract question to the keyed question and left the index form serving the
@@ -12334,3 +12373,179 @@ argument is generalized over the entity and root keys (`state_presents_keyed`); 
 instance at the first-occurrence keys and is not yet restated through it.
 
 Recorded 2026-09-22 (task 186; the theory probed with its completion marker in 8.1 s, proofs serialized).
+
+## What a refinement keeps equal when a recorded state presents the refined constant's code equations
+
+Task 130 re-cited the guarded reading entries to `Established_Premises` and, following task 85's arity rule,
+first stated their code equations at the premise's arity. That landing (`20260922-150712-batch145-163-130`)
+failed: the `native-development-seed` recipe's words all changed, after 176 s. The seeded state is defined
+inside the checked context (`Isabelle_Entity_Export.define` in `Native_Control_Seed_Subject`, which imports
+`Native_Execution_Refinements`) and expands its ten roots, seven of which are guarded entries of
+`Factor_Formation_Once_Definitions` (`finite_native_definition_readings`, `finite_family_readings`,
+`finite_call_readings`, `finite_pattern_record_readings`, `finite_pattern_vector_readings`,
+`finite_native_schema_readings`, `finite_scoped_pattern_readings`). The state holds the code equations in effect
+for each root as entities (`Isabelle_Code_Equation`), so a restated equation is a changed entity, and every report
+the recipe computes from the state — its assessment, the problems with their incumbents, the loop, verification,
+succession and publication — changed with it. Task 130 kept the full-arity statements, proved by `checked_through`
+so that no argument is restated, and every word equal. The seeded state was built to present exactly these
+equations: they are the incumbents of the seven seeded refinement problems of the formation candidate. The two
+requirements held fixed — word equality as a refinement's acceptance, and recorded states that present the code
+equations in effect — do not conflict once each is read on its own subject.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Task 85's arity rule: "the other instances are stated at full arity, and are restated at the premise's arity when re-cited: the statement changes, no word can." | False for a constant a recorded state expands: its code equation is an entity of the state, so a restated equation changes every word computed from the state. Restating an existing equation at the premise's arity is not a re-citation, which replaces a proof and keeps the statement, but a refinement of the constant; it changes no word for a constant no recorded state expands, and for an expanded one it lands as its own task under the criterion below. |
+| Task 85's instance row "Readings of an environment": "each code equation from `checked_at_entry`". | Each code equation from `checked_through`, the consumer being the application to the remaining arguments, keeping its full-arity statement (task 130); `checked_at_entry` states the equation at the premise's arity, which is the refinement above. |
+| Task 85's "What the builds must respect": "a code equation re-cited under the first notion is stated at its premise's arity". | A re-cited code equation keeps its statement; its restatement at the premise's arity is a refinement of its own. |
+| "A refinement applies a notion; an index is one", and task 85's first bullet: word equality of every report word is a refinement's acceptance. | Kept, and scoped to its subject: it is exact for every report whose subject is determined by the meanings of the constants involved. A recorded state's subject is a quotation of the checked context's statements, the refined constant's code equations among them; for it the refinement's claim is that the state changes by its own statements and by nothing else, shown by the development's own verdict (below). |
+
+### What a refinement keeps equal
+
+A refinement states new code equations of an existing constant and proves them; Isabelle accepts a `[code]`
+declaration only of a theorem. It therefore keeps the constant's meaning, and every value computed from meanings:
+the value of every exported operation on inputs that do not quote code. This is what word equality observes, and
+why equality is exact there: a report word presents, injectively, a value computed from such inputs.
+
+A recorded state is not such an input. `development_seed_state`, `development_machinery_state` and the request
+and answer states the harness exports are quotations of a checked context: their value holds, as entities, the
+declarations, definitions, specifications and code equations in effect of the constants they **expand** — their
+roots, and in an answer state the constants its theory introduces. A constant they only mention stands on their
+frontier as a declaration, and its code equations are not held. The value of such a state is determined by the
+code equations it quotes, so a refinement of an expanded constant changes it, by what it quotes. A refinement
+changes implementation and keeps meaning; a recorded state presents implementation. The two are different
+subjects, and they are kept apart:
+
+- **Preservation of meaning** is the refinement's proof. It is observed by the words of every report that reads
+  no recorded state expanding a refined constant: they are equal, as before, and a difference among them refuses
+  the refinement.
+- **Presentation of code** is the recorded state's. For it the refinement keeps equal everything but its own
+  statements: the roots, the name table under the correspondence of the two tables, every declaration (the
+  refined constant's too, so its problem keeps its identity: "A refinement's contract is its constant"), every
+  definition and specification, and every code equation of every other constant. Removed are exactly the refined
+  constant's former code equations, added exactly its new ones, and the state stays closed.
+
+The second condition is not a new notion. It is the verdict of a refinement answer (`development_constant_verdict`
+at the code-equation readings), whose contract (`development_constant_verdict_contract`) states exactly these
+conclusions: nothing but replaceable statements of the subject removed or added, a statement of the demanded kind,
+support respected, closure, roots kept, tables free of repeated names. A refinement of an expanded constant is, in
+the development's terms, an answer to that constant's refinement problem over the recorded state — for a seed
+root, an answer to one of the seeded problems, made outside the loop and a residual as such — and the development
+already judges such answers. Every report the recipe computes from the state then changes only through the state,
+since the reports are values of exported operations whose meanings the refinement keeps; those words are
+re-recorded from the new state, as a re-evaluation, never edited, as "A refinement's contract is its constant"
+re-recorded the seed's words once.
+
+A constant is expanded in a recorded state exactly when the state holds its development-constant declaration
+(`isabelle_development_constants`), not a frontier declaration. Today that is the seed's ten roots
+(`Native_Control_Seed_Subject`), the machinery state's roots (`Development_Machinery`), and, in the replays, the
+subject of each retained answer (`digit_replay_inspect`, `ordered_member_tree`, `finite_data_walk`) with the
+constants its theory introduces.
+
+### The criterion, as a reviewer applies it
+
+1. **The refined constants**: the head constants of every code equation whose `[code]` statement the work adds
+   or changes. A change of a proof alone refines nothing.
+2. **The recorded states that expand any of them**, by the list above.
+3. **Every other word equal**: the words of every recipe that reads none of those states, and the verdict words
+   of every retained answer whose subject is not refined. A difference refuses the work.
+4. **Each expanded refined constant judged**: its new code equations, framed as an answer to its refinement
+   request over the recorded state, accepted by the development's verdict — through the harness
+   (`tools/development_answer.py answer`, of the state's kind), its verdict word stated in the commit's
+   validation. Several refined constants are judged one by one; their state differences compose into the whole
+   one because the state reads a constant's declared equations alone (the reading is local, so a callee's change
+   never alters a caller's presented equation: "A refinement's contract is its constant"). A refinement the
+   harness cannot frame — several equations of one constant (the answer frame's recorded one-equation limit), or
+   a recorded state of a kind the harness lacks (the machinery state) — waits for the comparison of follow-up 4.
+   Where the refinement introduces a constant (a body named as a constant, for example), the state also gains its
+   declaration, and the verdict's repair route — the introduced constant's conservative definition, the request
+   issued again over it — is the evidence, as the adoption tool's second route already takes it.
+5. **The words of those states re-recorded once**: every word of a recipe reading an expanded state, and the
+   verdict word of every retained answer whose subject is refined (`tools/replay_development_answers.py
+   --rerecord`), re-recorded in the same landing and named in the commit as a re-evaluation with the refined
+   constants — never mixed with a word change of another reason unless that change is shown confined by its own
+   evidence.
+
+A difference outside step 5's words, or a verdict that refuses, is a change of meaning or of more than the
+refinement, and refuses the work whatever its proof.
+
+### The arity rule stands; it does not yield
+
+The rule is the first notion's own statement of where the check stands: `x` is exactly the premise's arguments,
+so the check is made where the premise is established and a partial application checks once. A full-arity
+statement, even proved by `checked_through` with no argument restated, places the check at every full
+application, where more than the premise is known. The rule does not yield to a recorded state's presentation:
+
+- A recorded state presents code so that code can change. The seeded problems are refinement problems of exactly
+  the constants the seed expands, and every answer to one changes its incumbent; a rule that yielded for presented
+  equations would make the loop's own problems unanswerable in principle and freeze the implementation of exactly
+  the constants the development exists to refine.
+- It would let a presentation dictate implementation structure, conflating the two subjects the criterion keeps
+  apart, against the owner's direction that implementation itself is structural (2026-09-19).
+- A word change is not a reason against a refinement; its cost is a re-recording, which the planner serializes.
+
+What changes is where the rule meets existing equations. It governs an equation when it is first stated, and a
+re-citation keeps a statement; restating an existing equation at the premise's arity is a refinement of its own,
+and the rule alone is sufficient reason for it — it makes the implementation present the notion's placement; its
+benefit where a consumer binds the partial application is an observation, reported, not its justification. For a
+constant no recorded state expands, the restatement changes no word and lands with any task that touches the
+theory. For an expanded constant, it lands as its own task under the criterion above, its re-recording placed
+among the serialized word changes, and it is best taken through the loop as the answer it is, once an answer to a
+seeded problem can be adopted (follow-up 1).
+
+### Follow-ups, for the planner
+
+1. **Adoption of an answer over a recorded state that expands its subject** (tools). `tools/development_adoption.py`
+   requires every word equal after installation (its step 3) and adopts refinement-layer answers only. Under this
+   criterion the words of recipes reading a state that expands the adopted subject are re-recorded, evidenced by
+   the adoption-time verdict and step 4's judgment in the adopted workspace; answers to seeded problems need an
+   adoption at all. Needed before the loop can consume an answer to any seeded problem (stage 2's gate).
+2. **The arity restatement of the guarded entries no recorded state expands** (a build, every word equal, not
+   serialized): `finite_citation_candidates`, `finite_term_readings_bounded` and `finite_pattern_readings_bounded`
+   (the constant applied to its bound, the premise's arity after it), `finite_native_package_formed`,
+   `finite_native_graph_demands`, `finite_native_package_readings`, with task 131's follow-up 4 (the package
+   reader's and graph demands' bodies named as constants, stated once). The build confirms none of them is expanded
+   by a recorded state; a changed word refuses it.
+3. **The arity restatement of the seven formation roots** listed above: an answer to each of the seven seeded
+   formation problems, judged per constant through the harness (kind `development_seed`), the seed recipe's words
+   re-recorded once. The route — the loop after follow-up 1, or an implementer task with the per-constant
+   verdicts — and its place among the serialized word changes are the planner's.
+4. **The comparison of a recorded state across a refinement the harness cannot frame** (a design, when first
+   needed): the before-state and the after-state compared entity by entity (`Isabelle_State_Difference`) and judged
+   by the verdict's permitted-row fields at the set of refined constants, whose contract is stated for a finite
+   set. Its first need is the first refinement of a multi-equation expanded constant, or of a loop notion the
+   machinery state expands; task 171's builds that change a code equation of such a notion meet it.
+
+### What the builds must respect
+
+- A re-citation keeps the statement it re-proves; a restatement at another arity is a refinement.
+- A refinement of an expanded constant lands with its per-constant verdicts and its recorded states' words
+  re-recorded, in one landing, never inside another task's word-equal check.
+- Every word outside those states stays equal; a word change is never accepted by naming a recorded state that
+  does not expand a refined constant.
+- A recorded state is never redefined below a refinement, or made to present less, to avoid a re-recording: its
+  incumbents must be the code in effect.
+
+### Weighed and rejected
+
+- *The rule yields for presented equations* (task 130's choice and the Definitions row's reason): rejected above.
+- *The seed defined below the refinement boundary*, so that it presents older code: its incumbents would not be the
+  code in effect, and the verdict would judge answers against equations no longer executed.
+- *Recorded states presenting definitions only*: the seeded problems are refinement problems whose incumbents are
+  code equations; a state without them cannot pose them.
+- *The seed recipe exempted from word equality for refinements*: it would then accept a change of more than the
+  refinement; the criterion confines the difference and re-records exactly its consequences.
+- *A new notion of a refinement's state difference*: the development's verdict is that notion, its contract proved
+  once; the criterion instantiates it.
+
+### Evidence and limits
+
+This entry reads the repository and builds nothing. The failed batch's run output was swept; its outcome is task
+131's review and task 130's result (the seed recipe failed after 176 s, its words all changed), and the cause is
+read from the statements: the seven roots listed in `Native_Control_Seed_Subject` are guarded entries whose
+`*_formed_once_code` equations task 130 restated. That the full-arity statements keep every word is task 130's
+landing check (all 52 recipes reused, every export boundary unchanged). The composition of per-constant verdicts
+rests on the exporter's local reading of declared equations, an ML property of `Isabelle_Constant_Closure` stated
+by "A refinement's contract is its constant", not a theorem. The list of expanded constants is today's; a recorded
+state added later extends it. This entry was written outside the loop and is a residual.
+
+Recorded 2026-09-22 (task 218; a design, no theory changes).

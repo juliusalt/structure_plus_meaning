@@ -140,7 +140,7 @@ lemma native_decomposition_definitions:
 
 lemma native_decomposition_shares:
   assumes formed: "schema_system_formed (decode_finite_system (finite_rule_program ds))"
-    and distinct: "distinct (map fst ds)" and whole: "set ds\<subseteq>set decomposition_definitions"
+    and whole: "set ds\<subseteq>set decomposition_definitions"
     and site: "d\<in>fst ` set ds"
   shows "(d,t)\<in>positive_meaning native_decomposition_system \<longleftrightarrow>
     (d,t)\<in>positive_meaning (decode_finite_system (finite_rule_program ds))"

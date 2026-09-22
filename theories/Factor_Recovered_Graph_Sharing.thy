@@ -1,5 +1,5 @@
 theory Factor_Recovered_Graph_Sharing
-  imports Factor_Executable_Replay_Retention
+  imports Factor_Executable_Replay_Retention Established_Premises
 begin
 
 section \<open>Recovered graphs read their proof rows and closures once\<close>
@@ -45,10 +45,30 @@ definition finite_proof_node_readings_formed ::
       finite_three_field_record C r (finite_proof_inference_readings E u r))
       (finite_artifacts_at E u))"
 
+text \<open>
+  A proof-node reading is an instance of the first notion of @{text Established_Premises}: its
+  definition checks the environment's formation at its entry, so its guard is the entry law, stated at
+  the environment's arity. The rows and the graph's demands hoist that check through each reading
+  (@{thm [source] checked_premise.checked_through}) and out of the union over the family
+  (@{thm [source] checked_union}).
+\<close>
+
+lemma finite_proof_node_readings_checked_premise:
+  "checked_premise finite_proof_node_readings finite_environment_formed finite_proof_node_readings_formed
+    (\<lambda>E u r. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case
+    by (intro ext) (simp only: finite_proof_node_readings_def finite_proof_node_readings_formed_def 1 if_True)
+next
+  case (2 E)
+  show ?case by (intro ext) (simp only: finite_proof_node_readings_def 2 if_False)
+qed
+
 lemma finite_proof_node_readings_formed_guard:
-  "finite_proof_node_readings E u r=
-    (if finite_environment_formed E then finite_proof_node_readings_formed E u r else {||})"
-  by (simp only: finite_proof_node_readings_def finite_proof_node_readings_formed_def)
+  "finite_proof_node_readings E=
+    (if finite_environment_formed E then finite_proof_node_readings_formed E else (\<lambda>u r. {||}))"
+  by (rule checked_premise.checked_at_entry[OF finite_proof_node_readings_checked_premise])
 
 declare finite_proof_node_rows_def[code del]
 
@@ -56,14 +76,13 @@ lemma finite_proof_node_rows_formed_once_code [code]:
   "finite_proof_node_rows E=(if finite_environment_formed E then ffUnion (fimage (\<lambda>n.
       fimage (Pair n) (finite_proof_node_readings_formed E (fst n) (snd n))) (finite_environment_positions E))
     else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis by (simp add: finite_proof_node_rows_def finite_proof_node_readings_formed_guard)
-next
-  case False
-  then show ?thesis
-    by (auto simp: finite_proof_node_rows_def finite_proof_node_readings_formed_guard fset_eq_iff
-      ffUnion.rep_eq fimage.rep_eq)
+proof -
+  have each: "fimage (Pair n) (finite_proof_node_readings E (fst n) (snd n))=
+      (if finite_environment_formed E then fimage (Pair n) (finite_proof_node_readings_formed E (fst n) (snd n))
+       else {||})" for n
+    by (simp only: checked_premise.checked_through[OF finite_proof_node_readings_checked_premise,
+      where t="\<lambda>f. fimage (Pair n) (f (fst n) (snd n))"] fimage_fempty)
+  show ?thesis by (simp only: finite_proof_node_rows_def each checked_union)
 qed
 
 definition finite_native_node_slots_formed ::
@@ -75,22 +94,43 @@ definition finite_native_node_slots_formed ::
 
 declare finite_native_graph_demands_def[code del]
 
+lemma finite_native_graph_demands_checked_premise:
+  "checked_premise finite_native_graph_demands finite_environment_formed
+    (\<lambda>E G. ffUnion (fimage (\<lambda>(n,N).
+      fimage (Pair (fst n)) (finite_native_node_slots_formed E n N (finite_graph_premises G n)))
+        (finite_graph_inferences G)))
+    (\<lambda>E G. {||})"
+proof -
+  have empty: "finite_reading_slots (ffilter Q {||})={||}" for Q
+    by (auto simp: finite_reading_slots_def fset_eq_iff ffUnion.rep_eq fimage.rep_eq ffilter.rep_eq)
+  have each: "fimage (Pair (fst n)) (finite_native_node_slots E n N D)=
+      (if finite_environment_formed E then fimage (Pair (fst n)) (finite_native_node_slots_formed E n N D)
+       else {||})" for E n N D
+    by (simp only: finite_native_node_slots_def finite_native_node_slots_formed_def
+      checked_premise.checked_through[OF finite_proof_node_readings_checked_premise,
+        where t="\<lambda>f. fimage (Pair (fst n))
+          (finite_reading_slots (ffilter (\<lambda>((M,F),I,K). M=N \<and> F=D) (f (fst n) (snd n))))"]
+      empty fimage_fempty)
+  have joined: "finite_native_graph_demands E G=(if finite_environment_formed E then ffUnion (fimage (\<lambda>(n,N).
+      fimage (Pair (fst n)) (finite_native_node_slots_formed E n N (finite_graph_premises G n)))
+        (finite_graph_inferences G)) else {||})" for E G
+    by (simp only: finite_native_graph_demands_def case_prod_unfold each checked_union)
+  show ?thesis
+  proof (unfold_locales, goal_cases)
+    case (1 E)
+    show ?case by (intro ext) (simp only: joined 1 if_True)
+  next
+    case (2 E)
+    show ?case by (intro ext) (simp only: joined 2 if_False)
+  qed
+qed
+
 lemma finite_native_graph_demands_formed_once_code [code]:
   "finite_native_graph_demands E G=(if finite_environment_formed E then ffUnion (fimage (\<lambda>(n,N).
       fimage (Pair (fst n)) (finite_native_node_slots_formed E n N (finite_graph_premises G n)))
         (finite_graph_inferences G))
     else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis
-    by (simp add: finite_native_graph_demands_def finite_native_node_slots_def
-      finite_native_node_slots_formed_def finite_proof_node_readings_formed_guard)
-next
-  case False
-  then show ?thesis
-    by (auto simp: finite_native_graph_demands_def finite_native_node_slots_def
-      finite_proof_node_readings_formed_guard finite_reading_slots_def fset_eq_iff ffUnion.rep_eq fimage.rep_eq)
-qed
+  by (rule checked_premise.checked_through[OF finite_native_graph_demands_checked_premise, where t="\<lambda>f. f G"])
 
 section \<open>Graph formation and read environments share their invariant sets\<close>
 

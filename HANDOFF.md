@@ -68,8 +68,8 @@ the row presenters in `Development_Row_Data` with the problem row in context and
 change, ready at once; #165, each context's citations and #84's formedness premise discharged on the loop's states,
 after #161 and #163, no word; #167, the presenter switch retiring the problem datum's tags with the table listings,
 after #165, #103 and #143, re-recording the words once; #169, the designation by locus (packet, answer, both answer
-tools, the sixteen records), after #167 and #103. #64 waits on #161, #92 on #167. #103, the answer reader's refusal,
-is in review. New native definitions never wait for #30 (Decisions).
+tools, the sixteen records), after #167 and #103. #64 waits on #161, #92 on #167. #103 (`bf25fbbd`) landed the answer
+reader's refusal. New native definitions never wait for #30 (Decisions).
 
 **The decomposition (#64, #173).** The repair rows (#58), the soundness (#60), #66's entry — a decomposition that applied
 is a row at its problem's locus, under a sixth role — and the native schema (#62, `b535ef8f`) have landed: the schema
@@ -126,13 +126,13 @@ includes their reviews. The deepest chains are 10, the layout's and #135's line 
 changes: #149, #151, #153, the layout #155, the base reset #157, then #161, #165, #167, #169 and its review #170, or
 #92 and #93 after #167. Nothing is added after #170 or #93; detail spliced into that chain is. Then #114 (after #112,
 #110, #108, #139), 5, and #45 (after #44, #42, #139), 4. Beside them: #163 (no word, at once); the design #171
-after #139; #143; #144, then #145; #139; the join law #173, then #64 (after #161 too), #42 and #112; #128; #132, then #130; the overnight boundary #172.
+after #139; #143; #144, then #145; #139; the join law #173, then #64 (after #161 too), #42 and #112; #128; #132, then #130; the overnight boundary #172; the probe's summary #175.
 
-**Order** (`128 129 144 139 140 143 103 104 132 133 171 173 174 172 147 148 149 150 151 152 153 154 108 109 42 43 145 146 155 156 157 158 161 162 163 164 44 45 110 111 112 113 114 165 166 167 168 169 170 159 160 130 131 64 65 92 93`).
+**Order** (`128 129 144 139 140 143 132 133 171 173 174 172 175 147 148 149 150 151 152 153 154 108 109 42 43 145 146 155 156 157 158 161 162 163 164 44 45 110 111 112 113 114 165 166 167 168 169 170 159 160 130 131 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43), so the landings in flight come first:
-#128's held pair with its review, #144 after it, #139, the replay #143, #103 and #132. Then the
+#128's held pair with its review, #144 after it, #139, the replay #143 and #132. Then the
 design #171, which can change the work after it, the join law #173, which #42, #112 and #64 wait on, and the small
-fix #172; the layout's contracts, which head the 10-deep chain and take one slot
+fixes #172 and #175; the layout's contracts, which head the 10-deep chain and take one slot
 at a time, before the verdict's and request construction's heads (#108, #42), so that the other slot serves those; the
 receipts' form, the layout's word change, its base reset and #161; #163, whose slack lasts until #161 lands; the rest
 of the verdict and request chains; #135's later builds; then #159, #130, #64 and #92. A parked task whose hold nears
@@ -359,6 +359,13 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   `state_presents` with the same key and `declarations_single_valued`; `native_decomposition_reduction` uses its
   `holds` hypothesis; a marked correction to #66's entry. Review 94.1's follow-ups: the join law and a generic program
   to #173, the parent kind's families and the least rooted program to #64, `development_stated_native` to Open 61.
+- **#103** `Development_Native_Answers`, committed `bf25fbbd`: the reader refuses exactly the two conditions it owns —
+  `development_native_answer_formed` (distinct names, every removed and added entity's positions below their length);
+  `development_native_answer_read` is the former pair reader (`development_native_answer_presented_read`) filtered by
+  it, so a refusal is no answer; the five contracts restated with the condition;
+  `development_native_answer_state_presentable` in task 46's terms, the roots' distinctness carried by
+  `isabelle_local_root_agree`. Its follow-ups: the laws' places to Open 62 (and to #161), the probe's summary to #175,
+  the formed check's cost to Open 63, a corollary over `development_native_answer_bits_read` to Open 20.
 
 ## Open
 
@@ -432,7 +439,8 @@ Not yet planned, in the order they are expected to be planned:
     orphaned Isabelle runs are found holding the machine.
 20. **The answer family of the development rows** (q29, withdrawn from #24): the answer's row, its body as the edit
     over the request state's rows read through #38's reduction of an edit, its presenter, and the switch of
-    `Development_Native_Answers`' tagged presenter. After #38.
+    `Development_Native_Answers`' tagged presenter. After #38; with it, a corollary of #103's preservation lemma over
+    `development_native_answer_bits_read bits = Some A`, if the family's consumers need that step (#103's review).
 22. **The probe's last command** (#79's review): if a timeout shows a line that does not locate the stalled command,
     recognise Isabelle's own position report. At that need.
 23. **`development_definition_sockets` can reuse the singleton reading** (#58's review). With the next edit of its
@@ -476,7 +484,7 @@ Not yet planned, in the order they are expected to be planned:
 33. **A named projection of a locus's key part** in `Development_Loci`, with its parts lemma (#32's follow-up 2):
     consumers write the prefix widths as literals (`drop 6` in `Development_Request_Keys`, `drop 3` in
     `development_request_problem_locus`). With the next edit of `Development_Loci`.
-34. **The probe records its options** (`--parallel-proofs`) beside its log (#32's follow-up 5). Tools, small.
+34. **The probe records its options and summary beside its log** — planned as #175 (#32's, #40's and #103's reviews).
 35. **#80's entry marks its check-recorded figures** (144.5, 181.9 and 241.7 s, "about 15 s for each of the other
     eleven") as recorded by checks beside other recipes (#80's follow-up 3). With that entry's next edit.
 36. **The equality contract is proved twice** (#84's review): `Factor_Native_Equality.native_equality_exact` and
@@ -565,12 +573,20 @@ Not yet planned, in the order they are expected to be planned:
     subject; `absent_native_choice` now states `keyed_admitted_choice`. With the next edit of each.
 61. **`development_stated_native` beside `declarations_single_valued` or `development_stated_constant`** (review
     94.1): with the next edit of `Development_Verdict_Mentions` after #139.
+62. **Two laws in a consumer theory** (#103's review): `isabelle_local_root_agree` beside
+    `isabelle_local_root_renamed` and `isabelle_local_root_compared` in `Isabelle_Local_Names`, with its next edit
+    (#161 is told), and `map_filter_agree`, a congruence of `List.map_filter`, at a list-level owner.
+63. **The answer's formation check grows with the names** (#103's review, not measured): `length ns` per position and
+    `distinct` over string literals; `Let` for the length and the ordered member index for distinctness, at a measured
+    need on answers with large name tables.
 
 ## Now
 
 - **In flight (plan-42, 11:15)**: #128 owes its
-  held pair and hand-over; #139, #103 and #132 are with their reviews or finalizers, each told to bring main
-  in before hand-over; #143 replays #30's two unproduced records (parked); #144 advances and retains after
+  held pair and hand-over; #139 and #132 are with their reviews or finalizers, each told to bring main
+  in before hand-over; #143 found both native records reconstruct against #119's landing context, the replay on base d leaving
+  them unproduced by construction since #124 changed `Native_Execution_Refinements` after it (q55: it lands a sentence
+  where the replay is documented); #144 advances and retains after
   #128, #145 converts the receipts after it; #147 and #149, the layout's first contracts, build side by side; #171
   designs the incremental assessment after #139, measuring the machinery's whole judgment first. #42's brief carries
   #106's review, #38's reduction and questions, and the `[code_unfold]` declarations #40 needed (q54); #112's carries

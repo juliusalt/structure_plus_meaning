@@ -182,7 +182,7 @@ incremental line's measurement #194 and its review are 9 deep, through #161 and 
 #44, #42 and #227), 6, and #114 (after #112, #110 and #227 or #249), 4. Beside them: #235 and #191, running; the
 placed forest's cleanup #251 after #223; the re-citations #239 (after #44) and #237.
 
-**Order** (`147 148 128 129 253 254 255 P1D 256 257 249 250 191 202 223 224 227 228 241 242 155 156 157 158 159 160 161 162 42 43 187 198 165 166 44 45 110 111 192 203 193 204 167 168 214 215 169 170 194 205 235 236 112 113 114 195 206 237 238 239 240 251 252 92 93 64 65`).
+**Order** (`147 148 128 129 253 254 255 258 256 257 249 250 191 202 223 224 227 228 241 242 155 156 157 158 159 160 161 162 42 43 187 198 165 166 44 45 110 111 192 203 193 204 167 168 214 215 169 170 194 205 235 236 112 113 114 195 206 237 238 239 240 251 252 92 93 64 65`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
 the owner's ask, the external review's two findings verified before anything is built on them (#253, #254), P2's fix
 #255 and the design of adoption's evidence for P1's fix; #227's performance fix #256, which #42 and #110 wait on
@@ -555,6 +555,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#247** `e8d2158c`: `native_rule_law` completed — its introduction at any support relation, the conclusion from
   `supported_clause`, `holds_rule` returning the rule. Follow-ups: the documentation corrections and the inductions to
   #235; `holds_clause` and the `unfold` corollaries to Open 79.
+- **#254** `e2af9414`: the external review's P2 verified present on HEAD and wider (`.build/tasks/254/report.md`),
+  its reproduction kept as tests in the adoption tool's test module, the unhandled exits expected failures. The fix is
+  #255; a leftover theory reading as adopted joins P1.
 
 ## Open
 

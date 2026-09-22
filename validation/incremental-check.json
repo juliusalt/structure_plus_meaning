@@ -1,5 +1,5 @@
 {
- "base_receipt_sha256": "6c874a8e6820031fc7800ea911408306e90d0d231831c24833a1d63128d1a3bd",
+ "base_receipt_sha256": "c365c3e3e9cf737a49c6a859bb3039624176e03c72dae95b5b2a94a7de458a70",
  "checked_content_sha256": "2d50de467a96e8faae43f3393bbf701b0f7b4548d4c41b4d7890d0ed7c6a7cf6",
  "host_tests": {
   "kernel": {
@@ -14,134 +14,21 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 217,
+   "ran": 231,
    "skipped": 0,
    "tail": [
-    "OK"
+    "OK (expected failures=9)"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.29,
-  "execution_impact": 0.11,
-  "export": 6.88,
-  "proof": 190.23,
-  "recipe_impact": 0.38,
-  "recipes_and_host_tests": 10.74
+  "base_and_impact": 0.41,
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "recipe_impact": 0.49,
+  "recipes_and_host_tests": 11.23
  },
- "rebuilt_theories": [
-  "Admitted_Conditional_Applications",
-  "Cached_Faceted_Questions",
-  "Certificate_Construction_Review",
-  "Conditional_Application_Review",
-  "Development_Admitted_Publication",
-  "Development_Certified_Generations",
-  "Development_Constant_Problems",
-  "Development_Constant_Verification",
-  "Development_Decision_Generations",
-  "Development_Decomposition_Soundness",
-  "Development_Definition_Verification",
-  "Development_Edited_Local",
-  "Development_Edited_Undeclared",
-  "Development_Located_Rows",
-  "Development_Loci",
-  "Development_Machinery",
-  "Development_Native_Answers",
-  "Development_Native_Decomposition",
-  "Development_Native_Readiness",
-  "Development_Native_Selection",
-  "Development_Presentation",
-  "Development_Publication",
-  "Development_Refinement_Contracts",
-  "Development_Refinement_Repair",
-  "Development_Refinement_Verification",
-  "Development_Repair_Rows",
-  "Development_Request_Keys",
-  "Development_Request_Packets",
-  "Development_Request_Scope",
-  "Development_Requests",
-  "Development_Row_Data",
-  "Development_Row_Presentations",
-  "Development_Rows",
-  "Development_Seed",
-  "Development_Seed_Loop",
-  "Development_Seed_Publication",
-  "Development_Seed_Verification",
-  "Development_State_Edit",
-  "Development_State_Presenter",
-  "Development_State_Rows",
-  "Development_Subject_Index",
-  "Development_Successor",
-  "Development_Verdict_Difference",
-  "Development_Verdict_Mentions",
-  "Development_Verdict_Statements",
-  "Development_Verdict_Unreached",
-  "Faceted_Native_Questions",
-  "Factor_Constructed_Development_Execution",
-  "Factor_Development_Steering",
-  "Factor_Finite_Development_Questions",
-  "Factor_Source_Development_Admission",
-  "Factor_Source_Development_Cases",
-  "Factor_Source_Development_Cycle",
-  "Factor_Source_Development_Input",
-  "Factor_Source_Development_Subjects",
-  "Factor_Source_Execution_Sharing",
-  "Factor_Steered_Development",
-  "Factor_Steered_Execution_Sharing",
-  "Filtered_Native_Questions",
-  "Isabelle_Native_Reach",
-  "Material_Application_Observations",
-  "Native_Collection_Programs",
-  "Native_Control_Acceptance_Profile",
-  "Native_Control_Admitted_Selection",
-  "Native_Control_Artifact_Comparison",
-  "Native_Control_Artifact_Reused_Execution",
-  "Native_Control_Artifact_Source",
-  "Native_Control_Cause_Continuation",
-  "Native_Control_Cause_Review",
-  "Native_Control_Child_Review",
-  "Native_Control_Closed_Installation",
-  "Native_Control_Compile_Profile",
-  "Native_Control_Constructed_Source_View",
-  "Native_Control_Context_Contract",
-  "Native_Control_Context_Execution",
-  "Native_Control_Filtered_Judgment",
-  "Native_Control_Finite_Guard",
-  "Native_Control_Guard_Construction",
-  "Native_Control_Guard_Execution",
-  "Native_Control_Guard_Source",
-  "Native_Control_Guard_Transport",
-  "Native_Control_Installed_Guard",
-  "Native_Control_Judgment_Graph",
-  "Native_Control_Judgment_Review",
-  "Native_Control_Judgment_Scope",
-  "Native_Control_Judgment_Source",
-  "Native_Control_Literal_Boundary",
-  "Native_Control_Prepared_Cause_Review",
-  "Native_Control_Quotation_Construction",
-  "Native_Control_Quoted_Judgment",
-  "Native_Control_Receiving_Controls",
-  "Native_Control_Receiving_Review",
-  "Native_Control_Refinement_Composition",
-  "Native_Control_Reviewed_Receiving",
-  "Native_Control_Selected_Root",
-  "Native_Control_Source_Execution",
-  "Native_Control_Source_Profile",
-  "Native_Control_Sourced_Children",
-  "Native_Control_Syntax_Candidate",
-  "Native_Control_Syntax_Execution",
-  "Native_Control_Syntax_Statements",
-  "Native_Control_Union_Observation_Execution",
-  "Native_Development_Execution",
-  "Native_Development_Execution_Base",
-  "Native_Development_Machinery",
-  "Native_Development_Seed",
-  "Native_Development_Steering",
-  "Native_Path_Store_Indexes",
-  "Native_Path_Stores",
-  "Native_Source_Development",
-  "Native_Table_Reach"
- ],
+ "rebuilt_theories": [],
  "recipes": {
   "allocated-environments": {
    "status": "unchanged"
@@ -237,19 +124,13 @@
    "status": "unchanged"
   },
   "native-development": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-development-machinery": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-development-seed": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -273,9 +154,7 @@
    "status": "unchanged"
   },
   "native-steering": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-workflow": {
    "status": "unchanged"
@@ -299,9 +178,7 @@
    "status": "unchanged"
   },
   "source-development": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "use-allocation": {
    "status": "unchanged"
@@ -310,8 +187,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1719,
- "seconds": 224.22,
+ "reused_theories": 1830,
+ "seconds": 15.45,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

@@ -149,10 +149,12 @@ a refinement of its own. Its follow-ups are Open 73; the seed recipe's other cos
 `Native_Collection_Programs`; #42, #112 and #64 cite it. #208 (`db37daea`) stated the rearranging single-premise rule
 (`native_rearranging_program`) once there, the swap and the found call its instances, `native_decomposition_shares`'
 unused premise dropped; #188, #189, #191 and #110 add such rules over it. Changes to that theory are batched, since
-each rebuilds about 1,140 theories. The re-citations: the subject index's call and the unreached join (#210);
+each rebuilds about 1,140 theories. The re-citations: the subject index's call and the unreached join (#210, `d0fff527`);
 readiness's and reach's rules, with `readiness_answered_rule`'s two steps and `table_reached_simulation` moved into
 `Native_Table_Reach` (#212, after #210, which edits `Development_Verdict_Unreached` too); the row and found readings
-with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each with its review.
+with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each with its review. #230 briefs the
+law's family form — every rule with zero or one premise on a rearrangement of its conclusion's variables — once before
+the queued builds add such programs, with its re-citations and Open 75's move (#210's review).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
@@ -160,15 +162,16 @@ changes: #153 with the placed forest #221, the syntax forest #225 (the premise f
 #155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
 #161 and #192. Then #114 (after #112, #110, #182 or #227, #176) and #45 (after #44, #42, #227, #176), 5. Beside
-them: #219, then #220 (after #210 too); the rule programs' re-citations #210, #212 (after #210) and #214; the probe's
-fix #229; the host tests' fix #217; #128.
+them: #219, then #220; the rule programs' re-citations #212 and #214 and the family brief #230; the probe's fix #229;
+the host tests' fix #217; #128.
 
-**Order** (`128 129 147 148 176 177 182 183 227 228 153 154 221 222 223 224 225 226 217 219 229 42 43 210 211 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 176 177 182 183 227 228 153 154 221 222 223 224 225 226 217 219 229 230 42 43 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
 review, #147, and the exporter's obligation #176 in its third round; then its discharge #227, which #42 and #110 wait
 on, and the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract #153 and the forest over
 placements (#221, then #223 and #225), which #155 waits on, close after their brief's author; the host tests' fix #217,
-the edit's contracts #219, the probe's fix #229 (every later build's inner loop) and the verdict's entry #42, heads of
+the edit's contracts #219, the probe's fix #229 (every later build's inner loop), the family brief #230 and the
+verdict's entry #42, heads of
 the deepest chains, so that a slot serves them as they become ready; the rule programs' re-citations; the layout's word
 change #155, its answer records #157 and its measurement #159 soon after it, while the harness's lineage still holds
 the last base without it; then #161; the rest of the verdict and request chains; the incremental line's later builds
@@ -471,6 +474,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#208** `db37daea`: the rearranging single-premise rule once in `Native_Collection_Programs`, the swap and the found
   call its instances, `native_decomposition_shares`' unused premise dropped. Follow-ups: `row_subject_program` to #214,
   `readiness_answered_rule` to #212, the two `evaluate_pattern` facts Open 75.
+- **#210** `d0fff527`: the subject index's call re-cited to the rearranging rule and the unreached verdict's join to
+  the join law. Follow-ups: the single-premise sites still in place to #214, the rule families to #230.
 
 ## Open
 
@@ -715,13 +720,14 @@ Not yet planned, in the order they are expected to be planned:
     facts' global names, kept while #42, #110, #182 and #188–#191 cite them; `lookup_eq_by_some`'s place; the probe
     cost of `Development_Verdict_Unreached`. With the next edit of their theories.
 75. **`evaluate_pattern_agree` and `evaluate_pattern_variables_formed` into `Factor_Rule_Instances`**, beside
-    `evaluate_pattern_cong` and `evaluate_pattern_formed` (#208's review), with the next batch that rebuilds it.
+    `evaluate_pattern_cong` and `evaluate_pattern_formed` (#208's review), with #230's build.
 
 ## Now
 
-- **In flight (plan-45, 16:10)**: #176 runs its third round (review 176.2's fix, every word equal: Graph); #219
-  builds; #128 and #147 are in review, and #153, #210, #217 and #221 in their checks; #227 discharges the exporter's
-  obligation after #176, #229 fixes the probe for base-theory edits. #220 makes the edit's constructor and the index
+- **In flight (plan-45, 16:30)**: #176, accepted, re-lands once its tree makes the doubled `Native_Collection_Programs`
+  row of THEORY_MAP.md one; #219 builds; #128 and #147 are in review, and #153, #217 and #221 in their checks; #227
+  discharges the exporter's obligation after #176, #229 fixes the probe for base-theory edits, #230 briefs the rule
+  families. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
   #208's to #212 and #214. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
   declarations #40 needed (q54); #112's carries #106's review. #143 was withdrawn (Open 65); its finding is carried by

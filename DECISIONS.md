@@ -11466,3 +11466,240 @@ the path store's index instance, the kept table is `Isabelle_Local_Names`'.
 - This design was made outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 135's decision; a design, no theory changes).
+
+## The i-th position of compiled syntax is the library's digit code of i
+
+Task 124's per-address split (`.build/tasks/native-reading-cost/attribution.md`, "What grows, per address") found the
+native package reader linear in what it reads — 0.24–0.35 µs per bit of an artifact's address paths
+(`address_binary_path`) at every sample — and the growth of a program's reading in its clauses to be the length of
+those addresses: `syntax_branch (Suc n) a = 3#syntax_branch n a` places the i-th child of a syntax forest under i + 1
+components, so a program of n clauses holds O(n²) address material (mean address 8.5 → 16.7 components, 25.5 → 58.4
+key bits, from 1 to 16 clauses). A reading by address reads the address, so no code equation of a reader removes
+it, and every native question, every program read back and every word over a compiled artifact pays it. The planner
+decided (2026-09-22, task 124's q47) that the layout changes. This entry decides the layout, what it leaves of the
+proved contracts, the builds that apply it and the words it changes.
+
+An address is a position chosen by construction and read by no reader (RRA_Exact: "The spelling of a local address
+belongs to exact artifact identity, but has no structural meaning"). Which child, port or binder a position holds
+is explicit in the incidence — the family's sockets, the record's successor chain, the binder family — never in
+the address's octets ("Record order and family multiplicity"; "Structure is explicit; octets are inert"). The
+layout therefore changes where atoms stand and nothing a reader accepts: no reader, reading contract or reader
+test changes.
+
+### What allocates the i-th position today
+
+| Construction | Theory | Position of index i | Components |
+|---|---|---|---|
+| forest child | `RRA_Syntax_Forests.syntax_branch` | `3^i 2` then the child's address | i + 1 |
+| family and record-wrapper ports | `RRA_Syntax_Composition.family_ports` | `[1,2] @ unary_address i` | i + 3 |
+| pattern-record ports | `Factor_Record_Construction.syntax_record_ports` | `0 # unary_address i` | i + 2 |
+| binder coordinates | `Factor_Finite_Pattern_Syntax.finite_binder_coordinates` | `6 # unary_address n` | n + 2 |
+| fresh addresses | `RRA_Exact.fresh_address(es)`, `RRA_Finite_Fresh_Addresses` | `unary_address` of the longest reserved length, then one longer each | L + 1, L + 2, … |
+| uncompiled schema coordinates | `Factor_Finite_Native_Admission_Syntax`, `Factor_Finite_Native_Requirement_Guards` | `unary_address i` | i + 1 |
+
+(`unary_address i = replicate i 0 @ [1]`.) Fresh wrapper headers are longer than the longest address they avoid:
+every schema's 6 + t headers (`Factor_Finite_Schema_Syntax`) and every interface's four (`Factor_Finite_Interface_Syntax`)
+stand deeper than its whole body. The right-nested forest is also quadratic to build: `syntax_forest (R#Rs) =
+syntax_union R (syntax_forest Rs)` pushes the whole tail once more at every child.
+
+### One index code, the library's
+
+`index_address i = map (λb. if b then 0 else 1) (digit_natural_path i)`, stated in RRA_Exact's section on concrete
+local-address realizations, where it replaces `unary_address`, which is retired (the planner, q49: one index code,
+not two). `digit_natural_path n = delimited_bit_word (natural_binary_digits n)` (RRA_Digit_Natural_Paths) is the
+library's prefix code of the naturals: the binary digits of n, least significant first, each behind a True marker,
+and a closing False. It is instantiated, not restated: `digit_natural_path_cancel` gives prefix-freeness, hence
+injectivity and the separation of any two indices under any suffixes; `digit_natural_path_bound` gives the length,
+2k + 1 components for i < 2^k; `read_digit_natural_path_exact` gives the reading the executable fresh address uses.
+
+- **Octets 0 and 1.** A position is read by a key built from it, and both keys the library has grow with the
+  component: `address_binary_path` spends v + 1 bits on a component v, the digit words 2·|digits v| + 1. The two
+  least octets make every symbol cheapest under both.
+- **True to 0.** True is the frequent symbol of the code (every digit carries a True marker; one False closes the
+  word), so it takes the cheaper octet. The map is injective on the two symbols; nothing else depends on it.
+- **Import.** RRA_Digit_Natural_Paths imports RRA_Binary_Use_Paths without using it; it imports only
+  Natural_Binary_Digits and Delimited_Bit_Words, and RRA_Exact imports it. RRA_Digit_Use_Paths, its one dependent,
+  imports RRA_Binary_Use_Paths itself if it reads it. Natural_Binary_Digits imports `HOL-Library.Code_Target_Nat`,
+  so target-integer naturals then reach every theory from RRA_Exact on. That changes generated code, never a value:
+  the build that makes the import establishes it by word equality and by every export still generating.
+
+### The layout of each construction
+
+| Construction | Position of index i | Components, i < 2^k |
+|---|---|---|
+| forest child 0 | `2 # a` (unchanged) | 1 |
+| forest child i ≥ 1 | `3 # tl (index_address i) @ a` | 2k + 1 |
+| family and record-wrapper ports | `[1,2] @ index_address i` | 2k + 3 |
+| pattern-record ports | `0 # index_address i` | 2k + 2 |
+| binder coordinates | `6 # index_address n` | 2k + 2 |
+| fresh address of a finite set A | `index_address j`, j the least index whose code no element of A starts with | 2·⌈log₂(|A|+1)⌉ + 1 at most |
+| uncompiled schema coordinates | `index_address i` | 2k + 1 |
+
+- **The forest's child.** `syntax_branch 0 a = 2#a` and `syntax_branch (Suc n) a = 3 # tl (index_address (Suc n)) @ a`.
+  The first symbol of the code says only whether the index is 0 (the code of 0 is the lone False, every other code
+  starts with a True marker), and that is the distinction the forest's two heads already make: child 0 stands at the
+  union's left side, 2, as today, and every other child under the right side, 3, followed by the rest of its code.
+  No symbol is spent twice, the heads stay the union's (`syntax_forest_top_prefix` and `syntax_forest_prefix_absent`
+  keep their statements) and `syntax_branch_zero` holds as it stands, so a one-child forest keeps every address.
+  Under `address_binary_path` child i ≥ 1 costs at most 3k + 5 key bits against 4i + 3 today; at no index is it
+  dearer (children 0 and 1 cost 3 and 7 bits either way, child 2 10 against 11, child 3 9 against 15, child 15 13
+  against 63; the mean over 16 children is 12.1 bits against 33).
+- **Ports, record ports, binders.** Each construction keeps its head — the region that separates it from the others
+  in one artifact ([1,2] from roots and the definition frame's [1,0]; 0 inside pattern records; 6, the binder region
+  `binder_addresses = range (Cons 6)`, which bound unions keep fixed) — and the code follows it. Index 0 keeps its
+  position (the code of 0 is `[1]`, `unary_address 0` is `[1]`). A port stands once per member and is not repeated
+  under the member's addresses, so the slightly longer ports of small families (at most 4 key bits more below
+  index 12) are paid once each, while every address under a forest child pays that child's prefix.
+- **Fresh addresses.** `fresh_address A` is the code of the least index j such that no element of A is
+  `index_address j @ b` for any b. Each address starts with at most one code (prefix-freeness), so at most |A| indices
+  are blocked, j ≤ |A|, and the address is O(log |A|) long. It is fresh in the stronger sense the prescribed
+  addressing needs: no extension of it is in A (`fresh_address_extension_outside`), which today follows from its
+  length. `fresh_addresses` keeps its recursion; each step blocks one more index. The executable one reads, in one
+  pass over the reserved set, the index each address starts with (`read_digit_natural_path` through the symbol map)
+  and takes the least index not read.
+
+Positions of the first indices, for the builds' tests: forest children `[2]`, `[3,0,1]`, `[3,1,0,0,1]`,
+`[3,0,0,0,1]`, `[3,1,0,1,0,0,1]` (today `[2]`, `[3,2]`, `[3,3,2]`, `[3,3,3,2]`, `[3,3,3,3,2]`); ports `[1,2,1]`,
+`[1,2,0,0,1]`, `[1,2,0,1,0,0,1]`; `index_address` of 0 to 3: `[1]`, `[0,0,1]`, `[0,1,0,0,1]`, `[0,0,0,0,1]`.
+
+### The forest is its children placed at their branches
+
+The forest is no longer an iterated `syntax_union`, which gives each later child one more component whatever its
+code: `syntax_forest Rs` is defined directly — carrier `syntax_forest_positions (map carrier Rs)` (the definition
+moves from RRA_Syntax_Families to RRA_Syntax_Forests, its founding theory as the forest's carrier), incidence and
+functional bindings each child's pushed by `syntax_branch i`, and no counted data, as `syntax_union` already keeps
+none. `syntax_forest_table` (Factor_Reference_Forests) is the union of each child's table under `map_slot_keys
+(syntax_branch i)`. Both are proved from the branch's contracts alone — injective, disjoint, formed, top prefix — so
+they hold for today's branch and for the new one. With today's branch the flat forest is the same value as the
+recursive one, and building it pushes each child once instead of once per later child.
+
+### Contracts
+
+- **Kept, statement unchanged.** RRA_Syntax_Forests: `syntax_branch_zero`, `syntax_branch_injective`,
+  `syntax_branch_formed`, `syntax_branch_addressing`, `syntax_branch_disjoint`, `syntax_forest_no_counts`,
+  `_formed`, `_empty_absent`, `_prefix_absent`, `_top_prefix`, `_child_inside`, `_atom_origin`, `_child_reads`; the
+  `syntax_union_*` facts untouched. RRA_Syntax_Families: the `syntax_family_construction` facts and the
+  `syntax_forest_positions` facts. RRA_Syntax_Records: the `record_*` facts. RRA_Syntax_Composition:
+  `family_ports_length`, `_distinct`, `_formed` and the wrapper facts. Factor_Record_Construction:
+  `syntax_record_ports_length`, `_distinct`, `_root`, `syntax_record_headers_outside`, `syntax_record_ports_formed`.
+  RRA_Exact: `fresh_address_formed`, `fresh_address_not_in`, `fresh_addresses_length`, `_formed`, `_disjoint`,
+  `fresh_four_addresses`, `finite_addressing_exists`. RRA_Finite_Fresh_Addresses: all four. Factor_Reference_Forests:
+  `syntax_forest_empty_tables`, `syntax_forest_table_member`, `_origin`, `_child`, `_range`, `_domain`, `_bounds`,
+  `reference_table_forest`. RRA_Generation_Frames: every statement (sockets, nodes and slots are stated through
+  `syntax_branch` and `family_ports`). The decode equalities `decode_finite_syntax_forest`,
+  `finite_syntax_forest_table_exact`, `finite_binder_coordinates_properties`.
+- **Stated anew.** `family_ports_shape` states the unary shape; it becomes the region its uses need, `a ∈ set
+  (family_ports n) ⟹ ∃b. a = [1,2] @ b`, beside a new `syntax_record_ports_shape` (`∃b. a = 0#b`). The admission and
+  guard facts that name `unary_address` (`finite_native_admission_schema`'s equations,
+  `finite_native_requirement_schema_occurrences`) name `index_address`.
+- **Retired.** `syntax_branch_successor` (the unary step; used only by `syntax_forest_child_reads`' proof);
+  `syntax_forest.simps` and `syntax_forest_table.simps` (they become definitions, with `syntax_forest_Nil` for the
+  one consumer that read the empty case); `unary_address` with `unary_address_formed`, `_length`, `_inj`, `_eq_iff`.
+- **New.** `index_address` with `index_address_formed`, `_nonempty`, `_cancel` (from `digit_natural_path_cancel`),
+  `_inj`, `_length`, `_bound`, its reader and `index_address_tail_cancel` for codes of nonzero indices;
+  `syntax_branch_prefix` (`syntax_branch i a = syntax_branch i [] @ a`); `fresh_address_extension_outside`.
+
+Outside the founding theories no proof computes a position: `syntax_branch.simps` leave the simpset after the
+contracts are proved, `family_ports_def`, `syntax_record_ports_def` and `fresh_address_def` are unfolded nowhere
+else, and a consumer that needs a fact about positions takes it from a contract. That is what makes "read by no
+reader" checkable: the layout build changes the founding theories only, and its check is the evidence that no other
+theory read the layout.
+
+### The executable side
+
+`RRA_Finite_Syntax_Construction.finite_syntax_forest` computes the flat forest: each child's structure and bindings
+pushed once by its branch and united, `finite_syntax_join` staying for the binary unions. `finite_syntax_forest_table`
+(Factor_Finite_Reference_Forests) likewise. `finite_fresh_address` computes the least unread index;
+`finite_binder_coordinates`, the admission rename and the guard sockets take `index_address`. The compilers —
+Factor_Finite_Syntax_Blocks, _Schema_Forests, _Schema_Syntax, _Interface_Syntax, _Root_Syntax, _Proof_Nodes,
+_Definition_Compilation, the generation encodings — place through `syntax_branch`, `family_ports` and the fresh
+addresses and change neither definition nor proof.
+
+### The words change once
+
+**Reason, stated once:** the positions that compiled syntax allocates by index — forest children from index 1,
+ports, record ports and binders from index 1, every fresh header — and the coordinates of uncompiled admission and
+guard schemas move from the unary code to the library's digit code, so that a program of n clauses holds
+O(n log n) address material. Every word whose value holds such a position changes: compiled programs and the
+programs read back from them, packets and environments holding them, generation records built by
+RRA_Generation_Frames and every history, replay, cause and certificate holding them, digit words over any of these,
+and the reports that present admission or guard source programs. The values' meanings — every reading, answer,
+refusal and verdict — are unchanged; a computation that lists positions in their order lists them in the new order.
+
+Recipes expected to change: native_admission, native_extensions, native_sources, native_evaluation,
+native_requirements, requirement_plans, requirement_sources, requirement_decisions, native_histories, native_nodes,
+native_graphs, native_derivations, native_certificates, native_certificate_replay, certificate_coverage,
+certificate_development, certificate_input_development, certificate_scope_repair, native_workflow, native_steering,
+native_development, source_development, native_development_seed, native_development_machinery, overnight,
+decision_replay, generation_records, digit_generation, indexed_generation, history_index, required_history,
+digit_history, known_history, quoted_history, constructed_history, concurrent_history, streamed_digit_replay,
+literal_replay, certified_causes, required_causes. Expected unchanged (their subjects are environment stores,
+allocations and data quotations): allocated_environments, artifact_lookup, cached_grafts, digit_allocation,
+encoded_environments, environment_grafts, environment_updates, graft_admission, use_allocation, use_codecs,
+data_reading, builtin_investigations. native_child's fixtures are hand-written: expected unchanged unless they pass
+through a compiler. These lists are this design's prediction from the recipes' subjects; the landing check is the
+evidence, and a word outside the prediction is a finding for the review — a report holding compiled positions that
+was missed, or a computation that reads the layout.
+
+### The builds, in order
+
+1. **The contracts first (words equal).** The index code and its facts in RRA_Exact with the import change; the flat
+   forest and table over today's branch; `fresh_address_extension_outside`, `syntax_branch_prefix`,
+   `syntax_forest_Nil`, the two shape facts; every consumer switched to the contracts, with `syntax_branch.simps`
+   out of the simpset; the proof-only uses of `unary_address` (`finite_addressing_exists`, Factor_Native_Incidence)
+   on `index_address`. Acceptance: every word equal.
+2. **The layout (the one word change).** The definitions of `syntax_branch`, `family_ports`, `syntax_record_ports`,
+   `finite_binder_coordinates`, `fresh_address` and `finite_fresh_address`, the admission rename and the guard
+   sockets; `unary_address` retired; each construction's own contracts re-proved in its founding theory. No other
+   theory changes; if one must, it read the layout, and that goes to the planner. Acceptance: the review of the word
+   change against the reason and the prediction above.
+3. **The measurement.** Task 124's runner (`.build/tasks/124/runner3/Measure_Address_Stages.thy`) with its samples
+   and far keyed and far index at n = 32 and 64, on the last base without build 2 and the first base with it (the
+   former kept until this run), back to back under one hold. Reported per sample: size, mean components, mean key
+   bits, source ms, µs per key bit. The growth is removed when mean key bits grow by a bounded amount per doubling of
+   n (about 3 bits, the next digit of the child's code) where they grew by about 2n before, and source ms per clause
+   grows as log n.
+
+The builds follow task 30's landing; build 1 changes no word and can land whenever it is ready after it. Build 2
+lands after build 1 and before #90 and #92, as the planner's order already places #136, so that their reviews judge
+their own word changes over the final layout; none of them must precede task 30.
+
+### What the builds must respect
+
+- Readers and their contracts do not change. A test that names a position of compiled syntax states it through its
+  construction (`syntax_branch i []`, `family_ports n ! i`), never as a literal; hand-written fixtures keep theirs.
+- Build 2's diff holds the founding theories only; build 1's check is where every other theory stops reading the
+  layout.
+- The executable constructions keep their decode equalities' statements and compute each child's positions once.
+- `binder_addresses` stays `range (Cons 6)`, and the forest's heads stay 2 and 3.
+- THEORY_MAP rows: RRA_Exact (the index code), RRA_Digit_Natural_Paths (imports), RRA_Syntax_Forests (the flat
+  forest, the branch), RRA_Syntax_Composition, Factor_Record_Construction, Factor_Reference_Forests,
+  RRA_Finite_Syntax_Construction, RRA_Finite_Fresh_Addresses, Factor_Finite_Pattern_Syntax.
+
+### Weighed and rejected
+
+- *A balanced forest* (child i at its path in a balanced tree of n leaves): the address would depend on n, every
+  statement at `syntax_branch i` would take the list's length, and appending a child would move every other child.
+  The code keeps a child's position a function of its index alone.
+- *A shorter step in the right-nested union*: any recursion that adds a component per child is linear.
+- *A byte-radix code* (base-256 digits and a terminator): fewer components, but large component values cost O(v)
+  bits under the unary component key, and a new encoding where the library has one.
+- *The code over 2 and 3 everywhere*, keeping every compiled position in the union's region: 3–4 key bits per symbol
+  against 1–2.
+- *A plain head for the forest* (`2 # index_address i @ a`): one component and two key bits more at every forest
+  level, and child 0 moves.
+- *A code with fewer symbols per digit* (Finite_Term_Words' counted digit word, log i + 2 log log i): longer at the
+  sizes in use and founded far downstream of RRA_Exact.
+- *Keeping the unary code for uncompiled coordinates*: a second index code (the planner, q49).
+
+### Limits and open
+
+- A term's quotation places a pair's second component under 3 (`pair_syntax`), so a list term of length m stands
+  m deep and holds O(m²) positions; a key of log n bits quoted as a list costs O(log² n) positions per clause. That
+  is the depth of the quoted term, not an index's layout; it is a follow-up if measured to matter.
+- Fresh uses (`RRA_Fresh_Uses`) are environment coordinates, not positions of compiled syntax, and are not decided
+  here.
+- The recipe lists above are a prediction; the landing check decides them.
+- This design was made outside the loop and is a residual.
+
+Recorded 2026-09-22 (task 136's decision; a design, no theory changes).

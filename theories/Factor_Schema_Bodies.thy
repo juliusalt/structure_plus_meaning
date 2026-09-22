@@ -21,7 +21,7 @@ definition schema_body_callees ::
   "schema_body_callees ts = map_slot_keys (syntax_prefix 3) (premise_forest_callees ts)"
 
 definition schema_body_roots :: "'a list \<Rightarrow> local_address list" where
-  "schema_body_roots ts = map (\<lambda>i. syntax_prefix 3 (premise_branch i [])) [0..<length ts]"
+  "schema_body_roots ts = map (\<lambda>i. syntax_prefix 3 (bound_branch i [])) [0..<length ts]"
 
 lemma schema_body_roots_map [simp]: "schema_body_roots (map f ts)=schema_body_roots ts"
   by (simp add: schema_body_roots_def)
@@ -31,38 +31,17 @@ lemma schema_body_roots_length [simp]: "length (schema_body_roots ts) = length t
 
 lemma schema_body_root_nth:
   assumes "i < length ts"
-  shows "schema_body_roots ts ! i = syntax_prefix 3 (premise_branch i [])"
-  using assms by (simp add: schema_body_roots_def)
+  shows "schema_body_roots ts ! i = syntax_prefix 3 (bound_branch i [])"
+  using assms by (simp add: schema_body_roots_def del: bound_branch_root)
 
 lemma premise_forest_root_inside:
-  assumes "i < length ts"
-  shows "premise_branch i [] \<in> rra_carrier (object_structure (premise_forest_syntax f ts))"
-  using assms
-proof (induction ts arbitrary: i)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons t ts)
-  show ?case
-  proof (cases i)
-    case 0
-    have present: "syntax_prefix 2 [] \<in> syntax_prefix 2 ` rra_carrier (object_structure (template_syntax f t))"
-      by (rule imageI[OF template_syntax_properties(1)])
-    show ?thesis using present
-      by (simp only: 0 premise_branch.simps premise_forest_syntax.simps bound_union_def
-          structured_object.select_convs rra_structure.select_convs) blast
-  next
-    case (Suc n)
-    have small: "n < length ts" using Cons.prems Suc by simp
-    have old: "premise_branch n [] \<in> rra_carrier (object_structure (premise_forest_syntax f ts))"
-      by (rule Cons.IH[OF small])
-    have present: "syntax_prefix 3 (premise_branch n []) \<in>
-      syntax_prefix 3 ` rra_carrier (object_structure (premise_forest_syntax f ts))"
-      by (rule imageI[OF old])
-    show ?thesis using present
-      by (simp only: Suc premise_branch.simps premise_forest_syntax.simps bound_union_def
-          structured_object.select_convs rra_structure.select_convs) blast
-  qed
+  assumes i: "i < length ts"
+  shows "bound_branch i [] \<in> rra_carrier (object_structure (premise_forest_syntax f ts))"
+proof -
+  have i': "i < length (map (template_syntax f) ts)" using i by simp
+  have r: "[] \<in> rra_carrier (object_structure (map (template_syntax f) ts ! i))"
+    using i template_syntax_properties(1)[of f "ts!i"] by simp
+  show ?thesis unfolding premise_forest_syntax_def bound_forest_carrier_member using i' r by blast
 qed
 
 locale schema_bodies =
@@ -214,9 +193,9 @@ proof -
     by (rule syntax_references_mono[OF refs]) (auto simp: schema_body_literals_def schema_body_callees_def)
   have clone_refs: "syntax_references ?F ?z (premise_forest_literals ts) (premise_forest_callees ts)"
     by (rule cloned_syntax_references[OF ef fresh bounds right_refs])
-  have originals: "\<forall>i<length ts. native_premise_at ?F ?z variables (premise_branch i [])
-    (template_projection f (ts!i)) (premise_branch i ` template_interior (ts!i))
-    (premise_branch i ` (rel_dom (template_literals (ts!i)) \<union> rel_dom (template_callees (ts!i))))"
+  have originals: "\<forall>i<length ts. native_premise_at ?F ?z variables (bound_branch i [])
+    (template_projection f (ts!i)) (bound_branch i ` template_interior (ts!i))
+    (bound_branch i ` (rel_dom (template_literals (ts!i)) \<union> rel_dom (template_callees (ts!i))))"
     by (rule premise_forest_recovers[OF templates_formed premise_addressing premise_scope boundary ff src clone_refs])
   have addr: "finite_addressing (rra_carrier (object_structure ?R)) (syntax_prefix 3)"
     by (rule syntax_prefix_addressing[OF premise_code_formed]) simp_all
@@ -243,9 +222,9 @@ proof -
     have projection: "map_native_premise (syntax_prefix 3) (relocated_site ?z u (syntax_prefix 3))
       (template_projection f (ts!i)) = template_projection f (ts!i)"
       by (rule template_projection_prefix[OF taddr nonlocal])
-    have original: "native_premise_at ?F ?z variables (premise_branch i [])
-      (template_projection f (ts!i)) (premise_branch i ` template_interior (ts!i))
-      (premise_branch i ` (rel_dom (template_literals (ts!i)) \<union> rel_dom (template_callees (ts!i))))"
+    have original: "native_premise_at ?F ?z variables (bound_branch i [])
+      (template_projection f (ts!i)) (bound_branch i ` template_interior (ts!i))
+      (bound_branch i ` (rel_dom (template_literals (ts!i)) \<union> rel_dom (template_callees (ts!i))))"
       using originals index by blast
     show "\<exists>I K. native_premise_at E u variables (schema_body_roots ts ! i) (template_projection f (ts!i)) I K"
       using native_syntax_copy.copy_premise[OF copy original]

@@ -48,6 +48,72 @@ qed
 lemma placed_table_Nil [simp]: "placed_table g [] = {}"
   by (simp add: placed_table_def)
 
+lemma placed_positions_child:
+  assumes "i < length As" "b \<in> As!i"
+  shows "g i b \<in> placed_positions g As"
+  unfolding placed_positions_member using assms by blast
+
+lemma placed_table_child:
+  assumes "i < length Ms" "(k,v) \<in> Ms!i"
+  shows "(g i k,v) \<in> placed_table g Ms"
+  unfolding placed_table_member using assms by blast
+
+lemma placed_positions_map_member:
+  "a \<in> placed_positions g (map F xs) \<longleftrightarrow> (\<exists>i<length xs. \<exists>b\<in>F (xs!i). a = g i b)"
+proof
+  assume "a \<in> placed_positions g (map F xs)"
+  then obtain i b where i: "i < length (map F xs)" and b: "b \<in> map F xs ! i" and ab: "a = g i b"
+    unfolding placed_positions_member by blast
+  have i': "i < length xs" using i by simp
+  have b': "b \<in> F (xs!i)" using b i' by simp
+  show "\<exists>i<length xs. \<exists>b\<in>F (xs!i). a = g i b" using i' b' ab by blast
+next
+  assume "\<exists>i<length xs. \<exists>b\<in>F (xs!i). a = g i b"
+  then obtain i b where i': "i < length xs" and b': "b \<in> F (xs!i)" and ab: "a = g i b" by blast
+  show "a \<in> placed_positions g (map F xs)" unfolding ab by (rule placed_positions_child) (use i' b' in simp_all)
+qed
+
+lemma placed_table_domain: "rel_dom (placed_table g Ms) = placed_positions g (map rel_dom Ms)"
+proof (rule set_eqI, rule iffI)
+  fix a assume "a \<in> rel_dom (placed_table g Ms)"
+  then obtain v i k where i: "i < length Ms" and kv: "(k,v) \<in> Ms!i" and a: "a = g i k"
+    unfolding rel_dom_def placed_table_member by blast
+  have i': "i < length (map rel_dom Ms)" using i by simp
+  have k: "k \<in> map rel_dom Ms ! i" using i kv by (auto simp: rel_dom_def)
+  show "a \<in> placed_positions g (map rel_dom Ms)" unfolding a by (rule placed_positions_child[OF i' k])
+next
+  fix a assume "a \<in> placed_positions g (map rel_dom Ms)"
+  then obtain i b where i: "i < length (map rel_dom Ms)" and b: "b \<in> map rel_dom Ms ! i" and a: "a = g i b"
+    unfolding placed_positions_member by blast
+  have i': "i < length Ms" using i by simp
+  obtain v where bv: "(b,v) \<in> Ms!i" using b i' by (auto simp: rel_dom_def)
+  have "(a,v) \<in> placed_table g Ms" unfolding a by (rule placed_table_child[OF i' bv])
+  then show "a \<in> rel_dom (placed_table g Ms)" by (rule rel_domI)
+qed
+
+lemma placed_table_values:
+  "map_relation_values h (placed_table g Ms) = placed_table g (map (map_relation_values h) Ms)"
+proof (rule set_eqI, rule iffI)
+  fix x assume "x \<in> map_relation_values h (placed_table g Ms)"
+  then obtain a v where x: "x = (a,h v)" and av: "(a,v) \<in> placed_table g Ms"
+    by (auto simp: map_relation_values_def)
+  obtain i k where i: "i < length Ms" and kv: "(k,v) \<in> Ms!i" and a: "a = g i k"
+    using av unfolding placed_table_member by blast
+  have i': "i < length (map (map_relation_values h) Ms)" using i by simp
+  have kh: "(k,h v) \<in> map (map_relation_values h) Ms ! i" using i kv by auto
+  show "x \<in> placed_table g (map (map_relation_values h) Ms)" unfolding x a by (rule placed_table_child[OF i' kh])
+next
+  fix x assume member: "x \<in> placed_table g (map (map_relation_values h) Ms)"
+  obtain a w where x: "x = (a,w)" by (cases x)
+  obtain i k where i: "i < length (map (map_relation_values h) Ms)"
+    and kw: "(k,w) \<in> map (map_relation_values h) Ms ! i" and a: "a = g i k"
+    using member unfolding x placed_table_member by blast
+  have i': "i < length Ms" using i by simp
+  obtain v where kv: "(k,v) \<in> Ms!i" and w: "w = h v" using kw i' by auto
+  have "(a,v) \<in> placed_table g Ms" unfolding a by (rule placed_table_child[OF i' kv])
+  then show "x \<in> map_relation_values h (placed_table g Ms)" unfolding x w by auto
+qed
+
 lemma placed_table_finite:
   assumes "\<And>i. i < length Ms \<Longrightarrow> finite (Ms!i)"
   shows "finite (placed_table g Ms)"
@@ -146,6 +212,44 @@ next
       and at: "c = g i b"
       unfolding placed_forest_binding_member by blast
     show False using silent[OF i at[symmetric]] bind unfolding silent_at_iff by blast
+  qed
+qed
+
+text \<open>
+  Where two objects are both silent, they read alike; a push by an injective placement is silent at
+  the image of every position its object is silent at.
+\<close>
+
+lemma silent_reads_agree:
+  assumes inside: "I \<subseteq> rra_carrier (object_structure R)" "I \<subseteq> rra_carrier (object_structure S)"
+    and silent: "\<forall>a\<in>I. silent_at R a" "\<forall>a\<in>I. silent_at S a"
+  shows "object_reads_agree R S I"
+  using silent_on_iff[of I R] silent_on_iff[of I S] inside silent unfolding object_reads_agree_def by simp
+
+lemma push_silent_at:
+  assumes injective: "inj g" and counts: "bag_count (object_data R) = (\<lambda>_. 0)" and silent: "silent_at R a"
+  shows "silent_at (push_object g R) (g a)"
+  unfolding silent_at_iff
+proof (intro conjI allI)
+  fix p x show "(g a,p,x) \<notin> rra_incidence (object_structure (push_object g R))"
+  proof
+    assume "(g a,p,x) \<in> rra_incidence (object_structure (push_object g R))"
+    then obtain r' p' x' where edge: "(r',p',x') \<in> rra_incidence (object_structure R)" and at: "g a = g r'"
+      by (auto simp: push_object_def push_structure_def)
+    have "r' = a" using at by (simp add: inj_eq[OF injective])
+    then show False using edge silent unfolding silent_at_iff by blast
+  qed
+next
+  fix v show "bag_count (object_data (push_object g R)) (g a,v) = 0"
+    by (simp add: push_object_def push_basis_def pushed_count_def counts)
+next
+  fix v show "(g a,v) \<notin> functional_bindings (object_data (push_object g R))"
+  proof
+    assume "(g a,v) \<in> functional_bindings (object_data (push_object g R))"
+    then obtain b where bv: "(b,v) \<in> functional_bindings (object_data R)" and at: "g a = g b"
+      by (auto simp: push_object_def push_basis_def)
+    have "b = a" using at by (simp add: inj_eq[OF injective])
+    then show False using bv silent unfolding silent_at_iff by blast
   qed
 qed
 

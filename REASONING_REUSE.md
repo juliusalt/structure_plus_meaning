@@ -1937,10 +1937,16 @@ rule: the checked arguments are exactly the premise's, so the code equation is s
 premise's arguments end and a partial application checks once however often it is applied.
 *Existing native content*: `Established_Premises` — `established_premise` and `checked_premise`, with
 `checked_at_entry` (the code equation), `checked_through` (through any consumer) and `checked_union`
-(the empty refusal absorbed by a union over a family). *Missing use by development*: the formation-once
-readings, a record's candidates, proof-node rows and the snapshot's publications still prove their
-code equations in place; they are re-cited from the notion as their theories are next changed, and the
-seed publication's transactions take the third place as their refinement.
+(the empty refusal absorbed by a union over a family). *Used by development*: a record's candidates
+(`finite_record_candidates_checked_premise`, its code equation `checked_at_entry` at the object's
+arity) and a demand's applications (`finite_program_applications_listed`, its system-formation premise
+through `checked_through` at its `code abstract` form, its statement unrestated, and each call's
+term-formation premise inside the listed union through `checked_at_entry`). *Missing use by
+development*: the formation-once readings, proof-node rows and the snapshot's publications still prove
+their code equations in place; they are re-cited from the notion as their theories are next changed,
+and the seed publication's transactions take the third place as their refinement; the join's three
+lemmas (`ffUnion_fimage_if_const`, `ffUnion_fimage_if_conj`, `ffUnion_fimage_empty`), which task 130
+re-cites from `checked_union`.
 
 **A generator of the accepted candidates.** The repeated argument: a reader's meaning is the accepted
 part of a complete candidate space. **Given** a generator whose accepted candidates lie in the space
@@ -1950,9 +1956,13 @@ accepted candidates, is the meaning and needs no filter (`tight_candidate_genera
 The subject is the accepted part: a generator acquires no subject of its own, and which one is cheaper is
 an observation. *Existing native content*: `Candidate_Generators`, with its law at a one-candidate
 space `accepted_singleton` (the guarded candidate as a tight generator, `singleton_tight_generator`);
-the empty space's law is `RRA_Selection.ffilter_empty_set`. *Missing use by development*: a record's
-linked candidate rows, the scoped binding search and a clause's constructed requests re-make the law in
-their proofs; `Factor_Constructed_Program_Applications.ffilter_singleton` is `accepted_singleton`.
+the empty space's law is `RRA_Selection.ffilter_empty_set`. *Used by development*: a record's linked
+candidate rows (`finite_linked_record_rows_candidates`), the scoped binding search
+(`finite_value_binding_search_exact`, tight) and a clause's constructed requests
+(`finite_constructed_requests_exact`, tight, through `accepted_singleton`, which replaced the use
+theory's own `ffilter_singleton`). *Missing use by development*: `RRA_Selection.ffilter_empty_set` and
+`ffilter_true`, the laws at the empty space and at an acceptance of every candidate, re-cited from
+`Candidate_Generators` when `RRA_Selection` is next changed.
 
 **What stays case-specific.** An invariant of a traversal computed once is HOL's `Let`, and each of its
 equations already cites `Let_def`: which value is computed once is explicit in the term, and what that

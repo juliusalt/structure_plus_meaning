@@ -69,28 +69,31 @@ the loop's problems, so that a decomposed problem is refused issue) waits on
 #94, #58 and #30, and its brief takes #94's contract when #94 lands; its settlement corollary needs a locus carried
 across a successor, which #135 decides once. The build that applies a decomposition is Open 26.
 
-**The index notion (#119).** The notion (#68), its host and native instances (#70, #72), both re-citations (#74, #76),
-the consolidation of the arguments made twice (#115, in `Carrier_Indexes`) and the re-citation of the
-functional-enumeration and development-row uses (#117, `27ff0f60`) have landed, and #105 advanced the proof base over
-them to `5a039e44` (578 theories rebuilt; the next landing check 192.44 s with no proof phase). #119 advances the
-base to HEAD over #30's landing (491 theories rebuilt in each landing check until then) and retains the receipts of
-that check (Q10, Q11): until then every landing check re-executes each recipe whose closure changed since the
-retention `518ac1e7`. #134 explained why: a receipt goes stale only when a
-code equation in its recipe's closure changes, and reuse fires after a base move or a retention. The import audit of
-Open 44 is now plannable.
+**The index notion, the base and the receipts (#144, #145).** The notion (#68), its instances (#70, #72), the
+re-citations (#74, #76, #117) and the consolidation (#115) have landed. #119 (`c6f5551f`) advanced the base to
+`609ffee6` (`base-20260922d`) and retained its receipts; #124 landed after it (`c02d05d5`), adding
+`Factor_Shared_Package_Readings` to `Native_Execution_Refinements`, which every recipe's closure reaches, so on base d
+every landing check rebuilds 124's dependents (186) and re-executes all 52 recipes (#134: a receipt goes stale when a
+code equation in its closure changes). #144 advances and retains again after #94 and #128, whose landings change the
+development recipes' closures. #145 then gives a receipt the form of its boundary — no execution directory, nothing
+tree-relative, one field per line — and converts the retained receipts once; it waits on #144, whose retain writes the
+same files (the receipts #119 reused named an execution long removed, which nothing read: problems.txt condition 3).
+The import audit of Open 44 is now plannable.
 
-**The keyed question and the native reader (#124, #142, #90–#93).** #88 (`cde3faf2`): the key search costs at most
+**The keyed question and the native reader (#142, #90–#93).** #88 (`cde3faf2`): the key search costs at most
 0.05 ms; a packet's cost is the native reading of the programs that state its candidates, superlinear in their syntax.
-#124 lands a constant factor of about 4 on the package reader (`Factor_Shared_Package_Readings`, `Let`) and its held
+#124 landed (`c02d05d5`) a constant factor of about 4 on the package reader (`Factor_Shared_Package_Readings`, `Let`) and its held
 per-address split: the reader is linear in what it reads, about 0.28 µs per bit of address path, and the growth is the
 address length — `syntax_branch` places the i-th forest child under i + 1 components, O(n²) address material in n
 clauses, and `family_ports` and `fresh_addresses` share the unary pattern. #136's entry
 (`609ffee6`) replaces the unary code by the library's digit code at every position of compiled syntax and at the
-uncompiled schema coordinates, `unary_address` retired (q47, q49); #142 briefs its builds after #30: the contracts with
-every word equal, then the layout with the one word change (after #90, before #135's first build), a base reset to one
-level, then the held measurement. #90 switches the 20 overnight native-control theories after #124, re-recording the overnight
-recipe once; #92 retires `filtered_development_question`'s index form after #90 and #30. q33's facts, unread by the
-planner, are named in #90's and #92's inputs. Observation's read-back of an installed program (Open 46) waits on the
+uncompiled schema coordinates, `unary_address` retired (q47, q49); #142's builds are placed: the contracts in four parts with
+every word equal (#147 and #149 side by side, then #151 and #153), the layout with the one word change (#155, after
+them and #90), the base reset to one level with its receipts retained (#157, after #145 too, which writes the same
+receipts), the held measurement on the last base without the layout and the first with it (#159), each with its review. #90 switches the 20 overnight native-control theories; the overnight boundary, which no check runs
+and which lags its sources since `d0b70ea2` and `5c26b791` (q33, as #90 read it), is not re-recorded by it (q53,
+Open 55). #92 retires `filtered_development_question`'s index form after #90 and #30; q33's facts are named in its
+inputs. Observation's read-back of an installed program (Open 46) waits on the
 layout's measurement.
 
 **The in-place notions (#128–#133).** Task 85's entry (`60623c6a`): a check made where its premise is established, and
@@ -103,18 +106,19 @@ after #124 and #132, which change the same readings or the same paragraph. The s
 Open 27.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
-includes their reviews. The deepest chains are #114 (after #112, #110, #108, #139), 5, and #45 (after #44, #42,
-#38/#40/#139), 4.
-Beside them: #103 and the briefs of #135's and #136's builds (#141, #142), all released by #30; #119, then #143; #139 (the subject index);
-#94, then #64; #124, then #130; #128 and #132; the keyed line's #90 and #92.
+includes their reviews. The deepest chain is the layout's, 7 (#149, #151, #153, #155, #157, #159,
+#160); then #114 (after #112, #110, #108, #139), 5, and #45 (after #44, #42, #38/#40/#139), 4.
+Beside them: #103 and #141 (the brief of #135's builds), released by #30; #143; #144, then #145; #139 (the subject index);
+#94, then #64; #128; #132, then #130; the keyed line's #90 and #92.
 
-**Order** (`124 128 119 143 141 142 94 125 139 140 38 39 40 41 108 109 129 132 133 42 43 44 45 110 111 112 113 114 130 131 103 104 90 91 64 65 92 93`).
-The tasks in flight first: #124, whose accepted work waits on one import line written as the union of both sides;
-#128's held pair and hand-over; the base advance and retention #119 over #30's landing, then the replay #143; #94 resuming on #36's landing. The briefs
-#141 and #142, released by #30; #139, the subject
-index #108, #42 and #44 wait on; the verdict and request chains, which take a slot whenever
-one of their tasks is ready; #128 beside them; then the re-citations, the answer reader, the keyed line and the
-decomposition's #64. A parked task whose hold nears its end resumes first by itself.
+**Order** (`94 128 129 144 139 140 38 39 40 41 143 90 91 103 104 132 133 141 145 146 108 109 42 43 44 45 110 111 112 113 114 147 148 149 150 151 152 153 154 155 156 157 158 159 160 130 131 64 65 92 93`).
+The machine goes in this order, finalizers included (the harness, 09:43), so the landings in flight come first:
+#94's, #128's held pair with its review; #144 waits on the two. Then #139,
+which #108, #42 and #44 wait on, and the verdict and request chains, which take a slot whenever one of their tasks is
+ready; the replay #143; #90 before the answer reader and the re-citations, since the layout's word change waits on
+it; the running #103, #132 and #141; the receipts' form #145, which only #157 waits on; the layout's line (#147–#160)
+after the verdict and request chains, its first two parts side by side, taking a slot whenever nothing ahead is
+ready; then #130, #64 and #92. #141's proposal places #135's first build after #155. A parked task whose hold nears its end resumes first.
 
 ## Decisions
 
@@ -144,6 +148,11 @@ the library does not state: it is what the two development recipes spend (163.4 
 measured candidate worth about 160 s of every cycle, and #40's measurement says whether certificates are on a
 judgment's path.
 
+**A task told to continue after a landing (`v2.py after`) keeps the tree it had** (q51): #94 wrote against main's text
+in a tree made before #36 landed, and its finalizer's check, run on the tree as it stands, failed on
+`Development_Verdict_Mentions`, which only main held. Such a task runs `v2.py bring-main` before it hands over; a task
+that consumes another's landed theories otherwise waits on it as a blocker, so that its tree holds them.
+
 **Still bearing on work not yet briefed:**
 
 - **The Q7 order stands provisionally** (ledger, Q7). An owner answer reorders the whole graph.
@@ -171,6 +180,9 @@ judgment's path.
 
 - **The standing last step before any handover**: `check.source_checks()` and `investigate.source_graph(...)`, both
   seconds and no Isabelle run.
+- **Before hand-over, a task in its own tree brings main in** (`v2.py bring-main`, the harness, 09:43), so that the
+  landing check covers the tree that lands; a tree lagging the base rebuilds main's changes too (#124: 574 theories
+  against 186 on a current tree). A refusal names the files both sides changed. `v2.py finalize` may follow a change.
 - **Checks are written relative** (`python3 -B tools/incremental_check.py check --output …`), their output under the
   task's own `.build/tasks/` folder: the sandbox refuses a session's write to `.build/check-*` (review 77). The finalizer
   runs a check where the task works, its own tree or the one tree. A brief naming the repository by its absolute path is
@@ -291,6 +303,13 @@ judgment's path.
 - **#134** (investigation) `5a039e44`: proved-code export is deterministic across proof contexts (52 groups of
   sessions, byte-identical modules), noted at `reusable_execution`; a receipt goes stale only when a code equation in
   its recipe's closure changes, and reuse fires after a base move or a retention (Q11).
+- **#124** `Factor_Shared_Package_Readings`, committed `c02d05d5` (second landing, the import on a line of its own): the
+  package reader's constant factor of about 4 (`Let`, case-specific) and the held per-address split, the growth being
+  the unary index code (#136's entry). Its landing check (base c, 574 rebuilt, 383.1 s) covered its tree, not the merge.
+- **#119** `c6f5551f`: the base advanced to `609ffee6` (`base-20260922d`: 177.05 s, 15 rebuilt, proof 38.28 s,
+  recipes 126.03 s — the seed recipe's; 22 executed, 30 reused) and 52 recipes' receipts retained (158 files); its
+  landing check 8.1 s, nothing rebuilt, every recipe reused. The 30 it reused name `.build/tasks/receipts-1/retain-check`,
+  long removed and read by nothing; #145 gives receipts their boundary form.
 
 ## Open
 
@@ -309,18 +328,15 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q9** the tracked `tools/__pycache__/build.cpython-314.pyc`: ignored by `.gitignore`, removed from the tree by #48,
   but the finalizer refuses to commit the removal of an ignored path. Provisional: it stands removed and uncommitted,
   and no task is made of it; the step is the finalizer's or the owner's.
-- **Q10** who advances the proof base. Provisional: #82 advanced it once (a landing check fell to 19.18 s); #86
-  advanced it to `4836387c` (both re-citations), for #36's probes; #105 advanced it to `5a039e44` over
-  #115's and #117's landings (task 135's landing check then 192.44 s, no proof phase); #119 advances it again over
-  #30's landing, with its retention.
-- **Q11** who retains verified receipts. Provisional: #81 retained them once; the planner places another after a
-  landing that changes many recipes' boundaries. The seed and machinery receipts lag since `312a2ca2` (#86's result),
-  so every landing check executes those two recipes, and #106's check, the first on #86's base, executed all 52
-  (221.96 s). #120 retained them (`518ac1e7`): the next landing check's recipe phase fell to 6.11 s of 21.18 s. #119
-  retains after #105's advance. #134: reuse fires after a base move or a retention; a receipt goes stale only when a
-  code equation in its recipe's closure changes (as `a436a40e`'s segmented references did for all 52), and every later
-  check reaching such a recipe then re-executes it until a retention. #126's landing check (`1af296a2`) re-executed
-  all 52 again (131.9 s of 332.6 s) once #88, #97 and #115 had changed code equations since `518ac1e7`.
+- **Q10** who advances the proof base. Provisional: the planner places an advance after landings that rebuild many
+  theories — #82, #86, #105 and #119 (`c6f5551f`, base d at `609ffee6`, its landing check 8.1 s with nothing rebuilt);
+  #144 advances over #124's `c02d05d5`, whose import reaches every recipe's closure, after #94 and #128; the layout's
+  second build brings a complete proof that resets the lineage to one level (#142).
+- **Q11** who retains verified receipts. Provisional: the planner places a retention with each advance (#81, #120,
+  #119; #144 next). A receipt goes stale only when a code equation in its recipe's closure changes, and reuse fires
+  after a base move or a retention (#134); until #144 every landing check re-executes all 52 (stale since
+  `c02d05d5`), the seed recipe's 126 s bounding its recipe phase. #145 gives a receipt its boundary form, so that a
+  retain's diff is the lines of the fields it changes.
 
 Not yet planned, in the order they are expected to be planned:
 
@@ -411,11 +427,6 @@ Not yet planned, in the order they are expected to be planned:
 31. **`Development_Rows`' slips the rows' fix leaves** (#24's review): `readiness_presents_rekey` can now move into
     `Development_Native_Selection` (#56 moved the keys beneath it), with that theory's next edit; the `the` in
     `development_located_at` stays while the verdict's tasks consume it.
-32. **The receipts' form** (#81's review; problems.txt condition 3): a retain rewrites whole single-line files (158
-    files, 5.47 MB, an 11 MB diff for a few changed fields), and the receipts record worktree paths that dangle once a
-    task is cleaned. Keep what a check changes apart from the stable boundary, or present receipts one field per line;
-    record tools repository-relative and the check by commit identity. A tools task, when a retain next follows a
-    shared tool's change or Q11 is answered.
 33. **A named projection of a locus's key part** in `Development_Loci`, with its parts lemma (#32's follow-up 2):
     consumers write the prefix widths as literals (`drop 6` in `Development_Request_Keys`, `drop 3` in
     `development_request_problem_locus`). With the next edit of `Development_Loci`.
@@ -480,36 +491,53 @@ Not yet planned, in the order they are expected to be planned:
     pass per address; a code equation, optional.
 54. **Task 124's entry names design 136's entry** where it names design task 136 ("The native package reader reads
     each definition once"). With that entry's next edit.
+55. **The overnight boundary** (`tools/reconstruct_overnight.py`, `validation/overnight-20260918/`; q33, q53): no
+    check runs it — a consolidated build of every integration root (16 threads, 1200 s), an export and three native
+    replays whose sources replay has timed out — and it lags its sources since `d0b70ea2` and `5c26b791`; #90's
+    switch changes the words of its certificate, material and source reports. Either a recipe of the check, so that a
+    refinement's word equality covers the overnight theories (its sources replay's cost attributed first), or its
+    boundary recorded as historical at the commit it reproduces. Planned from #90's result, after its landing.
 
 ## Now
 
-- **In flight (plan-39, 09:15)**: #30 landed (`854da994`), releasing the briefs #141 and #142 and #103; #119 advances
-  the base to HEAD and retains its receipts, then #143 replays the two native records #30 left unproduced; #94 resumes,
-  writing against main's text since its tree predates #36 (q50); #128's refinement is written and checked (every word
-equal; after side held 64.04 s against 93.04 s), its held pair and hand-over re-queued; #124's constant factor, accepted, did not merge into main at one import line of
-  `Native_Execution_Refinements` and is re-queued to write the union of both sides; design #136's layout is briefed by
-  #142 after #30; #139 builds the subject index design #138 decided. Until #119 lands, every landing check
-  re-executes the recipes whose closure changed since `518ac1e7`. #40's brief carries #101's review
-  (the families measured first; the two consumer corollaries); #42's and #112's carry #106's (the introduction's subset
-  form stated once by whichever first needs it; the key premise derived where it can be).
+- **In flight (plan-41, 10:10)**: #94 was accepted, but its commit (`b5e30643` on `task/94`) did not merge: 166 files
+  under `validation/` differ from main's #119 retain. Its quick fix (q52) finalizes again with those files at main's
+  content beside its theory and record lines, the branch then equal to main there; nothing retains before it lands
+  (#144 waits on it). #128 (every word equal; after side held 64.04 s against 93.04 s) owes its held pair and hand-over; #139
+  (parked), #38 and #40 build, each told to bring main in before hand-over; #143 replays #30's two unproduced records;
+  #144 advances and retains after #94 and #128, and #145 converts the receipts after it; #142's fourteen tasks are
+  placed (#147–#160), and #141 briefs #135's builds; #90, #103 and #132 build. #40's brief carries #101's review (the families measured first;
+  the two consumer corollaries); #42's and #112's carry #106's (the introduction's subset form stated once by
+  whichever first needs it; the key premise derived where it can be).
+- **Not handled (plan-41, 10:36)**: q54 from implement-40 — #40's held measurement (`.build/tasks/40/measurement.txt`):
+  the presenter's families 0.105 s on the machinery state (no presenter refinement needed); one seeded judgment 0.30 s
+  positioned (unreached 51%), 3.9 s keyed; the machinery's unreached 0.87 s closure + 3.90 s positioned (240 s keyed);
+  a stage of 224 answer states about 4,500 s. It asks whether a further engine refinement precedes the incremental
+  assessment (Open 1), and says `code_reflect` of the verdict programs needed `[code_unfold]` on the site-free
+  polymorphic rules, a declaration that belongs with those theories when the verdict is exported. The course plan-41
+  would take: no engine refinement first; Open 1 is plannable from #40's result; the declaration goes to #42's brief.
 - **Owed to briefs when their inputs land**: #110's brief takes #139's derived `declarations_single_valued` in place
   of the carried condition; #64's brief takes build 1's identity lemma in place of a transport (#135's entry, q48),
-  and #141 wires #64 after that build. When #141's and #142's proposals are placed, #135's first build waits on the
-  layout's build 2.
+  and #141 wires #64 after that build. When #141's proposal is placed, #135's first build waits on #155 (the layout,
+  placed from #142).
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).
   - The finalizer: its check's summary could be appended to the task's report (#50's review); its commit message quotes
     the hand-over's run rather than the re-run it commits on (#49's re-review); it commits whole files, so the one tree's
     shared files couple landings, where committing a task's own hunks would not; and entries appended at the end of
-    `DECISIONS.md` conflict when two tasks record at once — #80's commit failed twice so — which a `union` merge driver,
-    or bringing main in as a fixed step before every landing, would end (#80's review); and two landings that edited one
+    `DECISIONS.md` conflicted when two tasks recorded at once — #80's commit failed twice so — which the `union` merge
+    driver (`.gitattributes`) now ends for `DECISIONS.md`, `THEORY_MAP.md` and `ROOT`; and two landings that edited one
     `THEORY_MAP.md` row merge into a doubled row that a session round must repair (#97's commit, 05:23). A quick-fix
     round is not preceded by bringing main into the task's tree, so a map edit next to a row main changed is written
     twice again (#97, 06:06); a pre-landing trial merge of `THEORY_MAP.md`, `ROOT` and `DECISIONS.md` with main,
     checked for rows written twice, would find it in seconds before the commit fails (review 97) — with its three sides
     written as files: `git merge-file` given process substitutions reads them as empty and prints the third side
     (review 97's third round).
+  - The finalizer's landing check runs on the task's tree as it stands, so without `bring-main` no check covers what
+    lands (#124's covered a tree where `Factor_Shared_Package_Readings` and `Factor_Finite_Source_Construction_Sharing`
+    did not yet meet; #94's failed on a theory only main held). A finalizer that brought main in first would make the
+    step one no session can omit.
   - A task parked for a landing kept in the one tree the shared-file lines it installed at hand-over, which kept out the
     landing it waited for (#62 and #84, 03:00); taking them out left its theory undeclared, refusing every one-tree
     check (03:10). The harness could release a parked task's installed work, or refuse such a park.
@@ -517,8 +545,16 @@ equal; after side held 64.04 s against 93.04 s), its held pair and hand-over re-
     the planner, and queueing it starts a new round (#76, 03:20).
   - The harness kept the deleted review task 67 in #66's `review_tasks`, so #66 waited until the same verdict was
     recorded against 67.
-  - The sessions' sandbox cannot write the repository's `.build/` root (q31; briefs named `.build/check-*`), and
-    `v2.py change` followed by `v2.py finalize` in one call fails on zsh's read-only `status` (review 77).
+  - A planner's `tell` is refused while a re-queued task's session is not yet attached, so the answer to a failed
+    commit reaches its quick fix only as a reply to its question (#94, 10:05). The finalizer's landing check accepted
+    #94's tree while it held stale copies of main's `validation/` files, and the commit then failed at the merge: a
+    trial merge of every file a task changes, before its check, finds that in seconds (#97's rows written twice are
+    the same gap). `bring-main` then refuses the conflicted branch, and refuses again once those files are rewritten
+    (uncommitted changes in their paths), so a quick fix resolves a failed merge only through the files it hands over
+    (#94, q52).
+  - The sessions' sandbox cannot write the repository's `.build/` root (q31; briefs named `.build/check-*`). A
+    command after `v2.py change` in the same call still stops on zsh's read-only `status` (plan-41, 10:00: the change
+    written, the command after it not run), although the harness of 09:43 lets a change share a call.
   - The probe guard still requires `--timeout` to be named and cites the old 1200 s default, as does the memory note on
     probing (#79's review).
   - A `=== write` in `v2.py change` replaces an earlier round's deliverable without notice (#80's second round), and a
@@ -535,15 +571,17 @@ equal; after side held 64.04 s against 93.04 s), its held pair and hand-over re-
     `.build/trees/ID/DECISIONS.md` are refused, so a design's verdict rests on its result and commit message (#85).
   - A re-review writes over the first review's `review.md`, so the follow-ups it says still stand are in no file when
     the build lands (#118).
-- **The active base is `.build/tasks/base-advance/base-20260922c/proof`** (#105, HEAD `5a039e44`, session
+- **The active base is `.build/tasks/base-advance/base-20260922d/proof`** (#119, `c6f5551f`, HEAD `609ffee6`; the lineage five
+  levels, 0.33 s to verify; #119 removed `base-20260922c`'s executions, and its receipts name `base-20260922d/recipes`
+  and, for the 30 it reused, `.build/tasks/receipts-1/retain-check`, long removed and read by nothing), over
+  `base-20260922c` (#105, HEAD `5a039e44`, session
   `Incremental_4fa29c0a`), over `base-20260922b` (#86), `base-20260922a` (#82) and `.build/complete-20260921a`, checked
   from the extracted tree `.build/tasks/105/head-5a039e44`: never remove a proof directory of this lineage, or that
   tree, while the pointer `/tmp/structural-active-context.json` names the first. The lower bases' executions
   (`recipes/`, `exports-context/`; 2.6 GB in `base-20260922b`) are not read by reuse, which reads only
   `validation/reconstruction/` (#120), and go by literal path with the next task that moves a base. The heaps live in
-  `/tmp/structural-isabelle`, so a reboot loses the base (Open 11); the lineage is four levels (0.28 s to verify), and a
-  complete proof resets it to one when a change rebuilds most of the repository anyway (#136's builds) or the heaps
-  move.
+  `/tmp/structural-isabelle`, so a reboot loses the base (Open 11), and a complete proof resets the lineage to one
+  level after the layout's second build (#142) or when the heaps move.
 - **The harness no longer puts a task in the one tree for naming a shared file** (`ROOT`, `THEORY_MAP.md`,
   `DECISIONS.md`, `HANDOFF.md`, `PLANNING_LOG.md`) while another task's edit of one stands uncommitted (the owner,
   01:15); #74 was put there so and stays until it lands. A landing commits the planner's `HANDOFF.md` with the

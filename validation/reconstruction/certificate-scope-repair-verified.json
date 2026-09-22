@@ -2,10 +2,10 @@
  "boundary": "The actual scope correction retains every full original input and appends compiled native sources and independently checked supplied certificates. Every complete input, source/proof check, original family, conflict witness, comparison and revision is reproduced. The correction is assessed against the original retention and coverage conditions.",
  "complete_recipe_source_manifest": "certificate-scope-repair-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
+  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.64,
+  "seconds": 3.88,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -41,7 +41,7 @@
    "python": "3.14.5"
   },
   "tools": {
-   "tools/build.py": "1546367dc88deddd31e9e56e4326aa38a1d96f5cf4d2102672db3de2a1bfec44",
+   "tools/build.py": "c330c1410f6e996bd5075371add7b4088db58ed982057f832e22dbcaa6ed617a",
    "tools/check_presented_report.py": "ad2111bffe1a2bdb05e90c95ac68209cdce47be1c82aa7e0e3a3fdd040bf1077",
    "tools/evidence_io.py": "3fa63f8fe266eacdfe8f2f4ea88b7ac171af353d69bbae1b08ff35b645c73d93",
    "tools/execution_support.py": "64d1c28b69ec776ff8888a3c7db24a9679e37c6bc3bd40a0b48cb63c884490f4",
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "8df8a5b36a9c23da84bcd1b66fc30a6659d3fea148ecd74fd6db13829749d89c",
+ "source_manifest_sha256": "3cbf358c00dfc082a3ff9715e9ff64020db4659a5a1d3ade34a015b3b6c3615b",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.4586969670017425
+   "seconds": 3.7775412980008696
   }
  ]
 }

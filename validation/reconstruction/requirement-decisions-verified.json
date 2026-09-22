@@ -2,10 +2,10 @@
  "boundary": "The complete original native source, every original requirement and term precede actual construction. Every returned environment, source program, term-derived demand, positive answer, certificate, independent proof check and admitted term family is reproduced with full original and candidate evaluations and all comparison and revision reasons. This scoped operation does not establish complete development-workflow enforcement, subject coverage, history permission, full cost or genesis.",
  "complete_recipe_source_manifest": "requirement-decisions-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
+  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
   "records": 1,
   "reports_equal": true,
-  "seconds": 6.61,
+  "seconds": 4.18,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -41,7 +41,7 @@
    "python": "3.14.5"
   },
   "tools": {
-   "tools/build.py": "1546367dc88deddd31e9e56e4326aa38a1d96f5cf4d2102672db3de2a1bfec44",
+   "tools/build.py": "c330c1410f6e996bd5075371add7b4088db58ed982057f832e22dbcaa6ed617a",
    "tools/check_presented_report.py": "ad2111bffe1a2bdb05e90c95ac68209cdce47be1c82aa7e0e3a3fdd040bf1077",
    "tools/evidence_io.py": "3fa63f8fe266eacdfe8f2f4ea88b7ac171af353d69bbae1b08ff35b645c73d93",
    "tools/execution_support.py": "64d1c28b69ec776ff8888a3c7db24a9679e37c6bc3bd40a0b48cb63c884490f4",
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "a0147bd318a02f9c2f96829e8933a406705a4179de76dec0b8a11ba56081f1bd",
+ "source_manifest_sha256": "f0b171196995d57068e4bd111bacb8bac986e5dcbee7c63f845b41169855d7e7",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 6.452984988001845
+   "seconds": 4.078475661000994
   }
  ]
 }

@@ -2,10 +2,10 @@
  "boundary": "The source boundary reconstructs all complete native comparisons, including original requirements, generated rule applications, complete executions, all certificates, admission results, comparisons and revisions. Every observation has a proved subject equation. Compilation binds every workflow position to its original native goals. Adequacy of those goals for real development roles, candidate scope, operative integration, condition-6 coverage, the complete cost account and genesis remain separate requirements.",
  "complete_recipe_source_manifest": "native-workflow-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
+  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
   "records": 4,
   "reports_equal": true,
-  "seconds": 15.49,
+  "seconds": 13.68,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -44,7 +44,7 @@
    "python": "3.14.5"
   },
   "tools": {
-   "tools/build.py": "1546367dc88deddd31e9e56e4326aa38a1d96f5cf4d2102672db3de2a1bfec44",
+   "tools/build.py": "c330c1410f6e996bd5075371add7b4088db58ed982057f832e22dbcaa6ed617a",
    "tools/check_presented_report.py": "ad2111bffe1a2bdb05e90c95ac68209cdce47be1c82aa7e0e3a3fdd040bf1077",
    "tools/evidence_io.py": "3fa63f8fe266eacdfe8f2f4ea88b7ac171af353d69bbae1b08ff35b645c73d93",
    "tools/execution_support.py": "64d1c28b69ec776ff8888a3c7db24a9679e37c6bc3bd40a0b48cb63c884490f4",
@@ -95,29 +95,29 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "fb1ce6408bbdfa8b9ccb5426e4ccabd8c25241ec40f65b90859029110f126ffc",
+ "source_manifest_sha256": "da44ff57c6a20aed715238ad703be724e6b5919847e72ad70d728fa71eea2e61",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation-workflow",
-   "seconds": 10.786288803999923
+   "seconds": 12.500405290000344
   },
   {
    "exit_code": 0,
    "name": "presentation-requirements",
-   "seconds": 15.210267086000385
+   "seconds": 12.661186419001751
   },
   {
    "exit_code": 0,
    "name": "presentation-input-scope",
-   "seconds": 11.037528979999479
+   "seconds": 13.554310034000082
   },
   {
    "exit_code": 0,
    "name": "presentation-expanded",
-   "seconds": 15.409671974000958
+   "seconds": 12.94718803700016
   }
  ]
 }

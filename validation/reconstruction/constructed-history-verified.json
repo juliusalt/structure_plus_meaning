@@ -2,10 +2,10 @@
  "boundary": "Original closed history validity and actual indexed membership supply every known predecessor reading. Actual replay and quotation supply the complete policy scope. The composite operation retains both guards and every remaining original check, complete optional result, original subject and original method. Both preceding refinements and the raw omitted-membership control remain explicit. Full physical cost, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "constructed-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
+  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
   "records": 1,
   "reports_equal": true,
-  "seconds": 28.66,
+  "seconds": 25.5,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -41,7 +41,7 @@
    "python": "3.14.5"
   },
   "tools": {
-   "tools/build.py": "1546367dc88deddd31e9e56e4326aa38a1d96f5cf4d2102672db3de2a1bfec44",
+   "tools/build.py": "c330c1410f6e996bd5075371add7b4088db58ed982057f832e22dbcaa6ed617a",
    "tools/check_presented_report.py": "ad2111bffe1a2bdb05e90c95ac68209cdce47be1c82aa7e0e3a3fdd040bf1077",
    "tools/compressed_machine_reports.py": "e5547b335a6815c698d71e49fbb48c1805d67f914d4345b2e708cf24d725dea4",
    "tools/compressed_reconstruction.py": "dcb9cdd43691165ed6b85996766421887ab6ef2bef522c2467c821d9aa607cbd",
@@ -73,14 +73,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "975c321126cfe4368197fb3ea16f74a3b0e86c4bb3b42d0909b88927ae3b951e",
+ "source_manifest_sha256": "f31ebf9d435bb464f2ad7cd5f5badff8cbde8bd45d9f93a1229a78f23704016b",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 28.540975006002554
+   "seconds": 25.412730939999165
   }
  ]
 }

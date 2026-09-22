@@ -2,10 +2,10 @@
  "boundary": "A run without --proof rebuilds the complete source and extension contracts from HOL. Native readers derive observations on the actual complete inputs; the existing investigation computes revisions and re-evaluates them. The source-checking constructor derives its complete source premise from each actual environment, then extends the package under the same universal meaning and preservation theorem. Every complete report is compared. Arbitrary alpha-model search, the whole development protocol, its cost account and genesis remain open.",
  "complete_recipe_source_manifest": "native-sources-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
+  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.38,
+  "seconds": 3.68,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -41,7 +41,7 @@
    "python": "3.14.5"
   },
   "tools": {
-   "tools/build.py": "1546367dc88deddd31e9e56e4326aa38a1d96f5cf4d2102672db3de2a1bfec44",
+   "tools/build.py": "c330c1410f6e996bd5075371add7b4088db58ed982057f832e22dbcaa6ed617a",
    "tools/check_presented_report.py": "ad2111bffe1a2bdb05e90c95ac68209cdce47be1c82aa7e0e3a3fdd040bf1077",
    "tools/evidence_io.py": "3fa63f8fe266eacdfe8f2f4ea88b7ac171af353d69bbae1b08ff35b645c73d93",
    "tools/execution_support.py": "64d1c28b69ec776ff8888a3c7db24a9679e37c6bc3bd40a0b48cb63c884490f4",
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "c7ed8eaf324cb8f8c3cc595c7f4c58471060c10f7d632bca6cedf35bd8f7f498",
+ "source_manifest_sha256": "f22b21c14705305b7c791c609ee451a24588cf886744c810797923cd27214c71",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.2842304469995725
+   "seconds": 3.5781293520012696
   }
  ]
 }

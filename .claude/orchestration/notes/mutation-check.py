@@ -1073,6 +1073,7 @@ CASES += [
     ('base.sh', '    [ -n "$sealed" ] && sealed_s=$(date -d "$sealed" +%s 2>/dev/null || echo 0)', '    sealed_s=$(date -d "$sealed" +%s 2>/dev/null || echo 0)', 'miss_recorded_before_the_base_was_sealed', 'a record with no seal time is no seal'),
     ('v2.py', '        STALE=stale_of(name, base_record("xhigh")[0] or "max", tree), FIRST=first_read(tid),', '        STALE=stale_of(name, base_record("xhigh")[0] or "max", tree), FIRST="",', 'given_its_first_read', 'a reviewer is given its first read'),
     ('v2.py', '        if src == "diff":\n            body = one_read(text, max(room, READ_BYTES))', '        if src == "diff":\n            body = ""', 'given_its_first_read', 'the diff is given, last'),
+    ('select_base_load.py', '        recorded += archived_sessions(roles)\n', '', 'reach_into_the_archive', 'the window reaches into the archive'),
     # an accepted task left in review with no review due (tasks 128 and 147, eight hours)
     ('watchdog.py', '        if stage == "reviewing" and accepted_unmoved(st, tid, t):', '        if False:', 'accepted_task_left_in_review', 'an accepted task left in review has its commit made'),
     ('watchdog.py', '            and os.path.exists(os.path.join(v2.BUILD, tid, "finalize.json")) and v2.review_accepted(st, tid))', '            and os.path.exists(os.path.join(v2.BUILD, tid, "finalize.json")) and True)', 'accepted_task_left_in_review', 'only a task its reviews accepted'),

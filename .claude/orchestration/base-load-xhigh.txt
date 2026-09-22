@@ -8,7 +8,7 @@
 # design (section 8) the tiers up to the central ideas are the stable reference and the rest, with HANDOFF.md before
 # the owner's words, is the frontier layer. The frontier is re-measured at each build from the sessions of the roles
 # that use it. Comments are curation notes; they never reach the loaded text.
-# every other founding theory its roles used, as signatures (generated 2026-09-22: of the 238 founding theories the central ideas do not pin, the 23 that at least 2 of the last 147 sessions of designer, investigator, reviewer, task-designer read or named and main left unchanged for 3 days — 14 more in use are changing, and the frontier holds them; the others are said by the indexes; in import order)
+# every other founding theory its roles used, as signatures (generated 2026-09-23: of the 238 founding theories the central ideas do not pin, the 26 that at least 2 of the last 156 sessions of designer, investigator, reviewer, task-designer read or named and main left unchanged for 3 days — 14 more in use are changing, and the frontier holds them; the others are said by the indexes; in import order)
 theories/RRA_Finite_Environments.thy
 theories/RRA_Syntax_Construction.thy
 theories/RRA_Bound_Syntax_Construction.thy
@@ -17,11 +17,14 @@ theories/Factor_Executable_Terms.thy
 theories/Factor_Native_Equality.thy
 theories/Factor_Executable_Definitions.thy
 theories/Factor_Data_Comparison.thy
+theories/Factor_List_Profiles.thy
+theories/Factor_Related_Bags.thy
 theories/Factor_Reader_Clauses.thy
 theories/Factor_Bag_Difference.thy
 theories/Inference_Closure.thy
 theories/Factor_Pattern_Specialization.thy
 theories/Finite_Functional_Enumeration.thy
+theories/Finite_Ordered_Representatives.thy
 theories/RRA_Binary_Use_Paths.thy
 theories/Binary_Nested_Stores.thy
 theories/Finite_Presented_Collections.thy
@@ -93,7 +96,7 @@ theories/Factor_Base_Programs.thy
 .claude/orchestration/state/held/theory-names.md
 # pinned: the founding theories this list does not hold, one line each (generated at pack time: the first clause of each one's THEORY_MAP.md row)
 .claude/orchestration/state/held/founding-index.md
-# the working frontier (55 theories for the designer, investigator, reviewer, task-designer sessions, chosen 2026-09-22 from the last 60 of them: each used by at least 3, by use per token, within the layer's 227K), as definitions
+# the working frontier (55 theories for the designer, investigator, reviewer, task-designer sessions, chosen 2026-09-23 from the last 60 of them: each used by at least 3, by use per token, within the layer's 223K), as definitions
 theories/Map_Filter_Lists.thy  # 7 sessions, ~1K tokens
 theories/Factor_Finite_Reference_Forests.thy  # 6 sessions, ~1K tokens
 theories/Development_Entity_Keys.thy  # 7 sessions, ~1K tokens

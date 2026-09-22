@@ -131,6 +131,27 @@ class EvidenceTests(unittest.TestCase):
         self.assertEqual(defined["alpha_one"], {"theories/Alpha.thy"})
 
 
+class WindowTests(unittest.TestCase):
+    def test_the_sessions_measured_reach_into_the_archive(self):
+        # v2 archives a session a day after it was released: a window of 400 sessions was a day of them, not a week
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "v2-archive.jsonl").write_text(
+                json.dumps({"session": {"name": "fix-1", "role": "fixer", "sid": "old", "started": 100}}) + "\n"
+                + json.dumps({"ask": {"qid": "q1"}}) + "\n"
+                + json.dumps({"session": {"name": "review-2", "role": "reviewer", "sid": "other", "started": 150}}) + "\n")
+            live = {"fix-3": {"role": "fixer", "sid": "new", "started": 300}, "implement-4": {"role": "implementer",
+                                                                                          "sid": "mid", "started": 200}}
+            for sid in ("old", "other", "new", "mid"):
+                (root / f"{sid}.jsonl").write_text("{}\n")
+            import v2
+            with patch.object(v2, "STATE", str(root)), patch.object(v2, "peek", lambda: {"sessions": live}), \
+                    patch.object(v2, "transcript", lambda sid: str(root / f"{sid}.jsonl")):
+                got = sbl.sessions_of({"fixer", "implementer"}, limit=10)
+                self.assertEqual([os.path.basename(p) for p in got], ["new.jsonl", "mid.jsonl", "old.jsonl"])
+                self.assertEqual(len(sbl.sessions_of({"fixer", "implementer"}, limit=2)), 2)
+
+
 class ChoiceTests(unittest.TestCase):
     def test_ranked_by_use_per_token_within_the_room_and_over_the_floor(self):
         use = {"a": {1, 2, 3, 4}, "b": {1, 2, 3, 4, 5, 6}, "c": {1, 2}, "d": {1}, "e": {1, 2, 3}}

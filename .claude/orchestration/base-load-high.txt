@@ -7,7 +7,7 @@
 # the founding theories at the outline level, which is not built: section 7). In the layered design (section 8) the
 # tiers up to the central ideas are the stable reference and the rest is the frontier layer. Comments are curation
 # notes; they never reach the loaded text.
-# every other founding theory its roles used, as signatures (generated 2026-09-22: of the 238 founding theories the central ideas do not pin, the 27 that at least 2 of the last 125 sessions of fixer, implementer read or named and main left unchanged for 3 days — 13 more in use are changing, and the frontier holds them; the others are said by the indexes; in import order)
+# every other founding theory its roles used, as signatures (generated 2026-09-23: of the 238 founding theories the central ideas do not pin, the 27 that at least 2 of the last 133 sessions of fixer, implementer read or named and main left unchanged for 3 days — 13 more in use are changing, and the frontier holds them; the others are said by the indexes; in import order)
 theories/RRA_Environment.thy
 theories/RRA_Finite_Environments.thy
 theories/RRA_Structural_Syntax.thy
@@ -94,7 +94,7 @@ theories/Factor_Base_Programs.thy
 # === layer === the frontier layer below: refreshed on its own (base.sh high layer) when what it holds has changed; the reference above is the owner's to rebuild.
 # pinned: what each theory holds (generated at pack time: the first clause of its THEORY_MAP.md row, the theories this list holds left out)
 .claude/orchestration/state/held/theory-map-index.md
-# the working frontier (71 theories for the fixer, implementer sessions, chosen 2026-09-22 from the last 60 of them: each used by at least 3, by use per token, within the layer's 273K), as statements
+# the working frontier (71 theories for the fixer, implementer sessions, chosen 2026-09-23 from the last 60 of them: each used by at least 3, by use per token, within the layer's 273K), as statements
 theories/Map_Filter_Lists.thy  # 11 sessions, ~1K tokens
 theories/Natural_Binary_Digits.thy  # 4 sessions, ~1K tokens
 theories/Development_Entity_Keys.thy  # 8 sessions, ~1K tokens

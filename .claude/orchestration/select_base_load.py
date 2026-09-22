@@ -40,6 +40,7 @@ D1-D4): reading the base prefix is 62% of what the run spends, 176 of the 226 fo
 implementer or fixer in a week, and the frontier, a fixed 40 theories measured from 7 sessions, had taken the high base
 from 525K to 602K in a day.
 """
+import contextlib
 import glob
 import json
 import os
@@ -401,14 +402,31 @@ def forking_roles(who):
     return {role for role, spec in v2.ROLES.items() if spec.get("origin") == who}
 
 
+def archived_sessions(roles):
+    """The sessions of those roles that v2 archived (state/v2-archive.jsonl: released a day ago and referred to by
+    nothing): without them a window of FOUNDING_SESSIONS was a day of sessions, never the week it is meant to be."""
+    import v2
+    out = []
+    try:
+        for line in open(os.path.join(v2.STATE, "v2-archive.jsonl"), errors="ignore"):
+            with contextlib.suppress(ValueError):
+                s = json.loads(line).get("session") or {}
+                if s.get("role") in roles and s.get("sid"):
+                    out.append(s)
+    except OSError:
+        pass
+    return out
+
+
 def sessions_of(roles, limit=SESSIONS):
     """The transcripts of the most recent sessions of those roles, newest first, taken from the orchestration's own
     record of which session held which role. Until it has one, the v1 implementers stand in, as they did for the
     lists as first written."""
     try:
         import v2
-        recorded = sorted((s for s in v2.peek()["sessions"].values() if s.get("role") in roles and s.get("sid")),
-                          key=lambda s: s.get("started") or 0, reverse=True)
+        recorded = [s for s in v2.peek()["sessions"].values() if s.get("role") in roles and s.get("sid")]
+        recorded += archived_sessions(roles)
+        recorded = sorted({s["sid"]: s for s in recorded}.values(), key=lambda s: s.get("started") or 0, reverse=True)
     except Exception:  # noqa: BLE001 — a missing or unreadable state must not stop a refresh
         recorded = []
     out = [v2.transcript(s["sid"]) for s in recorded]  # a session in a task's tree keeps its transcript there

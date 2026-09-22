@@ -1,5 +1,5 @@
 theory Ordered_Member_Trees
-  imports "HOL-Library.RBT" "HOL-Library.FSet"
+  imports Tree_Map_Indexes "HOL-Library.FSet"
 begin
 
 section \<open>Ordered indexes over complete finite rows\<close>
@@ -36,7 +36,10 @@ next
     then have lookup: "RBT.lookup seen x=None" using snoc.prems by auto
     have step: "ordered_remdups_step x (acc,seen)=(x#acc,RBT.insert x () seen)"
       by (simp add: ordered_remdups_step_def lookup)
-    have domain: "dom (RBT.lookup (RBT.insert x () seen))=set (x#acc)" using snoc.prems by auto
+    have inserted: "k\<in>dom (RBT.lookup (RBT.insert x () seen)) \<longleftrightarrow> k=x \<or> k\<in>dom (RBT.lookup seen)" for k
+      using tree_map_updates.updated[where i=seen and k=x and u="()" and k'=k and v="()"]
+      by (cases "k=x"; cases "RBT.lookup seen k") (auto simp del: RBT.lookup_insert)
+    have domain: "dom (RBT.lookup (RBT.insert x () seen))=set (x#acc)" using snoc.prems inserted by (auto simp del: RBT.lookup_insert)
     have filtered: "[y\<leftarrow>xs@[x]. y\<notin>set acc]=[y\<leftarrow>xs. y\<notin>set acc]@[x]" using False by simp
     show ?thesis
       using snoc.IH[OF domain] False

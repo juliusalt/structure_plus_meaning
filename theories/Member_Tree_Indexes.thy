@@ -2,17 +2,10 @@ theory Member_Tree_Indexes
 imports Carrier_Indexes Ordered_Member_Trees Keyed_Finite_Sets
 begin
 
-section \<open>The red-black tree is an index of its rows, and the member tree and the keyed set are its instances\<close>
+section \<open>The member tree and the keyed set are instances of the red-black tree's index\<close>
 
 text \<open>
-  A list of rows with distinct keys is the carrier of the partial map it states; its index is the
-  red-black tree @{const RBT.bulkload} builds from it, searched by lookup and keyed by the identity. The
-  tree's own contract @{thm [source] RBT.lookup_bulkload} discharges the notion's obligation (2) at every
-  key, and an insertion is the notion's update: the lookup of an insertion
-  (@{thm [source] RBT.lookup_insert}) makes the inserted value the one found at its key and keeps every
-  other key. The values are of any type.
-
-  A finite set of a linearly ordered type is the carrier of the relation of its members to the one
+  The red-black tree is an index of its rows (@{text Tree_Map_Indexes}). A finite set of a linearly ordered type is the carrier of the relation of its members to the one
   value of @{typ unit}; its index @{const ordered_member_tree} is the tree of the rows of its canonical
   listing, so it is the tree's instance read through that listing by the notion's
   @{thm [source] carrier_index_through_key}, and its update is the tree's update at unit values. The
@@ -25,34 +18,6 @@ text \<open>
 
 abbreviation member_holds :: "'a fset \<Rightarrow> 'a \<Rightarrow> unit \<Rightarrow> bool" where
   "member_holds A q v \<equiv> q |\<in>| A"
-
-abbreviation tree_search :: "('k::linorder,'v) rbt \<Rightarrow> 'k \<Rightarrow> 'v \<Rightarrow> bool" where
-  "tree_search T k v \<equiv> RBT.lookup T k=Some v"
-
-lemma tree_map_carrier_index:
-  "carrier_index (\<lambda>rows q v. (q,v)\<in>set rows) (\<lambda>rows. distinct (map fst rows)) (UNIV::'k::linorder set) id
-    RBT.bulkload tree_search"
-proof (rule carrier_index.intro)
-  show "inj_on id (UNIV::'k set)" by simp
-  fix rows :: "('k\<times>'v) list" and k :: 'k and v :: 'v
-  assume distinct: "distinct (map fst rows)"
-  show "RBT.lookup (RBT.bulkload rows) k=Some v \<longleftrightarrow> (\<exists>q\<in>UNIV. id q=k \<and> (q,v)\<in>set rows)"
-    by (auto simp: RBT.lookup_bulkload intro: map_of_is_SomeI[OF distinct] dest: map_of_SomeD)
-qed
-
-interpretation tree_map_index:
-  carrier_index "\<lambda>rows q v. (q,v)\<in>set rows" "\<lambda>rows. distinct (map fst rows)" "UNIV::'k::linorder set" id
-    RBT.bulkload tree_search
-  by (rule tree_map_carrier_index)
-
-interpretation tree_map_updates:
-  updated_carrier_index "\<lambda>rows q v. (q,v)\<in>set rows" "\<lambda>rows. distinct (map fst rows)" "UNIV::'k::linorder set" id
-    RBT.bulkload tree_search "\<lambda>T k u. RBT.insert k u T" "\<lambda>u f v. v=u"
-proof (rule updated_carrier_index.intro[OF tree_map_carrier_index], rule updated_carrier_index_axioms.intro)
-  fix T :: "('k,'v) rbt" and k k' :: 'k and u v :: 'v
-  show "RBT.lookup (RBT.insert k u T) k'=Some v \<longleftrightarrow> (if k'=k then v=u else RBT.lookup T k'=Some v)"
-    by (cases "k'=k") (auto simp: RBT.lookup_insert)
-qed
 
 lemma member_tree_carrier_index:
   "carrier_index member_holds (\<lambda>_. True) (UNIV::'a::linorder set) id ordered_member_tree tree_search"
@@ -86,11 +51,16 @@ proof (rule updated_carrier_index.intro[OF member_tree_carrier_index], rule upda
 qed
 
 text \<open>
-  The member tree's query and update forms, as its uses ask them: whether a lookup finds anything.
+  The member tree's query and update forms, as its uses ask them: whether a lookup finds anything, the
+  notion's @{text lookup_found} at unit values.
 \<close>
 
 corollary member_tree_lookup: "RBT.lookup (ordered_member_tree A) x\<noteq>None \<longleftrightarrow> x |\<in>| A"
-  using member_tree_index.query_search[where c=A and q=x and v="()"] by (cases "RBT.lookup (ordered_member_tree A) x") auto
+proof -
+  have "RBT.lookup (ordered_member_tree A) (id x)\<noteq>None \<longleftrightarrow> (\<exists>v::unit. x |\<in>| A)"
+    by (rule member_tree_index.lookup_found[where look=RBT.lookup]) simp_all
+  then show ?thesis by simp
+qed
 
 corollary member_tree_found: "RBT.lookup (ordered_member_tree A) x=Some () \<longleftrightarrow> x |\<in>| A"
   using member_tree_index.query_search[where c=A and q=x and v="()"] by simp
@@ -118,8 +88,11 @@ interpretation listed_member_tree_index:
   by (rule listed_member_tree_carrier_index)
 
 corollary listed_member_lookup: "RBT.lookup (ordered_member_tree (fset_of_list xs)) x\<noteq>None \<longleftrightarrow> x\<in>set xs"
-  using listed_member_tree_index.query_search[where c=xs and q=x and v="()"]
-  by (cases "RBT.lookup (ordered_member_tree (fset_of_list xs)) x") auto
+proof -
+  have "RBT.lookup (ordered_member_tree (fset_of_list xs)) (id x)\<noteq>None \<longleftrightarrow> (\<exists>v::unit. x\<in>set xs)"
+    by (rule listed_member_tree_index.lookup_found[where look=RBT.lookup]) simp_all
+  then show ?thesis by simp
+qed
 
 locale keyed_set_index =
   fixes key :: "'a \<Rightarrow> 'k::linorder" and unkey :: "'k \<Rightarrow> 'a"
@@ -138,19 +111,23 @@ sublocale carrier_index member_holds "\<lambda>_. True" UNIV key "\<lambda>A. or
   by (rule carrier)
 
 text \<open>
-  The keyed set's own contract @{thm [source] keyed_member_lookup} is the query form of the notion here;
-  the uses of the index notion cite this form, the carrier keeping its own since it cannot import its
-  instance.
+  The keyed set's query and inclusion forms are the notion's @{text lookup_found} and
+  @{text lookup_queries_found} at unit values; the uses of the keyed set cite these forms.
 \<close>
 
 corollary member_query: "RBT.lookup (ordered_member_tree (fimage key A)) (key x)\<noteq>None \<longleftrightarrow> x |\<in>| A"
-  using query_search[where c=A and q=x and v="()"] by (cases "RBT.lookup (ordered_member_tree (fimage key A)) (key x)") auto
+proof -
+  have "RBT.lookup (ordered_member_tree (fimage key A)) (key x)\<noteq>None \<longleftrightarrow> (\<exists>v::unit. x |\<in>| A)"
+    by (rule lookup_found[where look=RBT.lookup]) simp_all
+  then show ?thesis by simp
+qed
 
 corollary members_subset:
   "fBall B (\<lambda>q. RBT.lookup (ordered_member_tree (fimage key A)) (key q)\<noteq>None) \<longleftrightarrow> B |\<subseteq>| A"
 proof -
-  have "fBall B (\<lambda>q. RBT.lookup (ordered_member_tree (fimage key A)) (key q)\<noteq>None) \<longleftrightarrow> fBall B (\<lambda>q. q |\<in>| A)"
-    by (simp only: member_query)
+  have "(\<forall>q\<in>fset B. RBT.lookup (ordered_member_tree (fimage key A)) (key q)\<noteq>None) \<longleftrightarrow>
+      (\<forall>q\<in>fset B. \<exists>v::unit. q |\<in>| A)"
+    by (rule lookup_queries_found[where look=RBT.lookup]) simp_all
   then show ?thesis by (auto simp: less_eq_fset.rep_eq)
 qed
 

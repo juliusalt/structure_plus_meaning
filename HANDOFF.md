@@ -157,10 +157,11 @@ each rebuilds about 1,140 theories. The re-citations: the subject index's call a
 readiness's and reach's rules, with `readiness_answered_rule`'s two steps and `table_reached_simulation` moved into
 `Native_Table_Reach` (#212, `1841b32a`); the row and found readings
 with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each with its review. #230 briefed the
-law's family form — rules with any number of premises (q60), under no condition on their variables (q61): #233 states
-it once in `Native_Collection_Programs`, #208's law its instance, with Open 75's move, before #42, #44, #110, #112 and
-#191, which instantiate it; its re-citations follow the builds editing their theories — the verdict's families, the
-value rule and the decomposition rule (#235, after #212), the formation rules, the any rule and the two-premise call
+law's family form — rules with any number of premises (q60), under no condition on their variables (q61): #233 (`d5d0e747`)
+stated it once in `Native_Collection_Programs`, #208's law its instance, with Open 75's move, before #42, #44, #110,
+#112 and #191, which instantiate it; #245 states it at an arbitrary support relation (#233's and #212's reviews: the
+hand decodings of a clause, readiness's and reach's inductions), before #235, #44 and #110; its re-citations follow the builds editing their theories — the verdict's families, the
+value rule and the decomposition rule (#235, after #245), the formation rules, the any rule and the two-premise call
 (#237, after #214 and #235), the store search (#239, after #44) — each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
@@ -169,15 +170,15 @@ changes: the syntax forest #225 and the premise forest #223, with #241 after #14
 #155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
 #161 and #192. Then #114 (after #112, #110, #182 or #227, #243) and #45 (after #44, #42, #227, #243), 5. Beside
-them: #220; the rule programs' re-citation #214; the rule-family law #233, then its re-citations
-#235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
+them: #220; the rule programs' re-citation #214; the rule-family law at any support relation #245, then the
+re-citations #235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
 
-**Order** (`128 129 147 148 243 244 182 183 227 228 223 224 225 226 241 242 229 233 234 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 243 244 182 183 227 228 223 224 225 226 241 242 245 246 229 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
 review, #147, and #176's accepted work landed from HEAD (#243); then its discharge #227, which #42 and #110 wait
 on, and the excess locale #182, which #110, #112 and #191 wait on; the placed forest's instances #223 and #225
 and the stragglers' switch #241, which #155 waits on, close after their brief's author;
-the probe's fix #229 (every later build's inner loop), the rule-family law #233 and the
+the probe's fix #229 (every later build's inner loop), the rule-family law at any support relation #245 and the
 verdict's entry #42, heads of
 the deepest chains, so that a slot serves them as they become ready; the rule programs' re-citations; the layout's word
 change #155, its answer records #157 and its measurement #159 soon after it, while the harness's lineage still holds
@@ -511,6 +512,10 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   the positions it uses, its laws under agreement and appending, its instances (the local names, the embedding,
   `isabelle_equation_left`, `isabelle_entity_subjects`, `entity_row_kept`), the appended-names facts through it.
   Follow-ups: the citations to #187, #189, #191 and #220; `entity_row_kept`'s statement Open 77.
+- **#233** `d5d0e747`: `native_rule_law` in `Native_Collection_Programs`, the rule family's law over rules of any number
+  of premises under no condition on their variables (q60, q61), #208's law its instance, Open 75's move. Follow-ups: the
+  law at any support relation to #245; the entry's list and the sites still in place to #214, #235, #237 and #239; a
+  probe's log for the harness.
 
 ## Open
 
@@ -766,10 +771,10 @@ Not yet planned, in the order they are expected to be planned:
 ## Now
 
 - **In flight (plan-45, 17:05)**: #243 lands #176's accepted work from a tree made from HEAD (q62; #176,
-  dropped, stays in the list as its source until then, its review #177 deleted); #229 and #233
-  build; #128 and #147 are in review; #227 discharges the exporter's obligation after #243; #233 states the
-  rule-family law (q60, q61) before #42, #44, #110, #112 and #191; #231 (`cded0ab7`) stated the name-locality of
-  readings; #223 and #225, the placed forest's instances, can start. #220 makes the edit's constructor and the index
+  dropped, stays in the list as its source until then, its review #177 deleted); #189, #220, #223, #225, #229 and #243
+  build; #128 and #147 are in review; #227 discharges the exporter's obligation after #243; #233 (`d5d0e747`) stated the
+  rule-family law (q60, q61) and #245 states it at any support relation; #231 (`cded0ab7`) stated the name-locality of
+  readings. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
   #208's to #212 and #214, #221's to #223 and #225, #188's to #192 and #220, #212's to #233 and #235, #231's to #187, #189, #191 and #220. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
   declarations #40 needed (q54); #112's carries #106's review. #143 was withdrawn (Open 65); its finding is carried by
@@ -850,7 +855,8 @@ Not yet planned, in the order they are expected to be planned:
   - The review and brief protocols that ask for a probe could name `probe.summary.json` and its fields as the evidence
     a review reads (#175's review). A session database moved under a running export (`SQLITE_READONLY_DBMOVED`, #173's
     re-check, around the base's move to the lasting place) cost a 500 s landing cycle. The first retention after a
-    landing could be a commit of its own (#145's review).
+    landing could be a commit of its own (#145's review). A probe run with `--candidates` or a prelude leaves no
+    `probe.log` where `v2.py read probes` reads it (#233's review).
 - **The base lives at the lasting place** `.build/tasks/base-lasting/` (#144, landed `79f16061` with #132): its
   complete proof of `a2ed0ed7` (`complete-20260922e`, 777 s, re-recorded at 14:14 with its heap under the
   `/tmp/structural-isabelle` link so that the older tools read it too), the pointer `active-context.json` that main's

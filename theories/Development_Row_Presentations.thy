@@ -14,9 +14,8 @@ text \<open>
   already says: the kind and the role are prefixes of the locus, the subject is its key, and the contract
   term's presentation is supplied, as the relation takes its inert presentation.
 
-  The shape followed is the readiness line's: a row is the pair of its locus and its body
-  (@{const finite_readiness_row}), and a table is the path store of its rows
-  (@{const finite_readiness_table}).
+  A row is the path store's row presentation, the pair of its locus and its body
+  (@{const finite_store_row}), and a table is the path store of its rows (@{const finite_listing_store}).
 \<close>
 
 

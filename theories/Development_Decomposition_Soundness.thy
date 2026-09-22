@@ -160,17 +160,9 @@ definition development_decomposition_application ::
       list_all2 (\<lambda>c q. development_part_problem C p c=Some q) (sorted_list_of_fset (problem_subject p)) rs \<and>
       H=fset_of_list (zip [0..<length (ds@rs)] (ds@rs)))"
 
-lemma list_all2_left_member:
-  "list_all2 P xs ys \<Longrightarrow> x\<in>set xs \<Longrightarrow> \<exists>y\<in>set ys. P x y"
-  by (induction rule: list_all2_induct) auto
-
 lemma list_all2_some_map_filter:
   "list_all2 (\<lambda>x y. f x=Some y) xs ys \<Longrightarrow> List.map_filter f xs=ys"
   by (induction rule: list_all2_induct) (simp_all add: List.map_filter_simps)
-
-lemma list_all2_some_the:
-  "(\<forall>x\<in>set xs. f x\<noteq>None) \<Longrightarrow> list_all2 (\<lambda>x y. f x=Some y) xs (map (the \<circ> f) xs)"
-  by (induction xs) auto
 
 lemma zip_indices_values: "snd ` set (zip [0..<length zs] zs)=set zs"
   using zip_range[of "[0..<length zs]" zs] by (simp add: rel_ran_image)
@@ -193,11 +185,18 @@ theorem development_decomposition_application_exists:
     and parts: "\<forall>c. c |\<in>| problem_subject p \<longrightarrow> development_part_problem C p c\<noteq>None"
   shows "\<exists>H. development_decomposition_application C p I H"
 proof -
+  have some: "list_all2 (\<lambda>x y. f x=Some y) xs (map (the \<circ> f) xs)"
+    if defined: "\<forall>x\<in>set xs. f x\<noteq>None" for f :: "nat \<Rightarrow> development_problem option" and xs
+  proof -
+    have "list_all2 (\<lambda>x y. y=(the \<circ> f) x \<and> f x\<noteq>None) xs (map (the \<circ> f) xs)"
+      by (subst list_all2_function_restricted) (simp add: defined)
+    then show ?thesis by (rule list_all2_mono) auto
+  qed
   have "\<forall>c\<in>set (sorted_list_of_fset (problem_subject p)). development_part_problem C p c\<noteq>None"
     using parts by simp
   then show ?thesis
     unfolding development_decomposition_application_def
-    using subject list_all2_some_the[OF intermediates] list_all2_some_the by blast
+    using subject some[OF intermediates] some by blast
 qed
 
 section \<open>Every application reduces its parent to its children\<close>
@@ -226,7 +225,7 @@ proof -
     if c: "c |\<in>| problem_subject p" for c
   proof -
     obtain q where q: "q\<in>set rs" and part: "development_part_problem C p c=Some q"
-      using list_all2_left_member[OF parts] c by auto
+      using conjunct1[OF list_all2_members[OF parts]] c by auto
     have subject: "problem_subject q={|c|}"
       using part unfolding development_part_problem_def by (rule development_constant_problem_subject)
     obtain t where contract: "problem_contract q=development_contract_kind (problem_contract p) t"
@@ -324,18 +323,15 @@ section \<open>Instance B: one constant, one intermediate splitting its support\
 
 text \<open>
   The material of a split is a computed observation of the state: the part of the support each
-  intermediate's definitions mention. A split names one intermediate outside the support whose
-  definitions take a nonempty part of it; no threshold on the size of the support is asserted.
+  intermediate's definitions mention, read by the mention reading of the constant problems
+  (\<open>development_constant_mentions\<close>) over the support. A split names one intermediate outside
+  the support whose definitions take a nonempty part of it; no threshold on the size of the support is
+  asserted.
 \<close>
 
-definition development_statement_constants ::
-    "(isabelle_entity \<Rightarrow> isabelle_term option) \<Rightarrow> isabelle_context \<Rightarrow> nat \<Rightarrow> nat fset" where
-  "development_statement_constants reading C c=
-    fset_of_list (concat (map isabelle_term_constants (development_statements reading C c)))"
-
 definition development_support_partition :: "isabelle_context \<Rightarrow> nat fset \<Rightarrow> nat list \<Rightarrow> (nat\<times>nat fset) list" where
-  "development_support_partition C S I=
-    map (\<lambda>h. (h,S |\<inter>| development_statement_constants isabelle_definition_proposition C h)) I"
+  "development_support_partition C S I=map (\<lambda>h. (h,fset_of_list (development_constant_mentions
+     isabelle_definition_proposition C (sorted_list_of_fset S) h))) I"
 
 definition development_split_application ::
     "isabelle_context \<Rightarrow> nat fset \<Rightarrow> development_problem \<Rightarrow> nat \<Rightarrow> (nat\<times>development_problem) fset \<Rightarrow> bool" where

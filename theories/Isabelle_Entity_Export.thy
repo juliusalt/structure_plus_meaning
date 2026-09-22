@@ -17,6 +17,42 @@ text \<open>
   context, so a failed build defines nothing and every later use reads exactly the defined value.
 \<close>
 
+section \<open>A defined state declares each constant once\<close>
+
+text \<open>
+  The exporter owes that no two entities of a state it defines declare one constant
+  (\<open>isabelle_declared_once\<close>). It discharges the obligation where it defines the state, and reads
+  what the obligation reads: the declarations. A declaration of a shared entity is read through the
+  table of types without reading the type, and a statement declares nothing whatever its term, so the
+  declared constants of the defined state are computed from the spine of its entity list alone, each
+  entity by its constructor and the head of its term, and are distinct because the exporter declares
+  every reached constant once. No name, no type and no statement is evaluated.
+\<close>
+
+lemma isabelle_shared_declarations:
+  fixes f :: "nat \<Rightarrow> isabelle_type"
+  defines "g \<equiv> map_isabelle_entity_with (map_isabelle_term_with f)"
+  shows "List.map_filter isabelle_declared_constant (map g [])=[]"
+    "List.map_filter isabelle_declared_constant (map g (Isabelle_Base_Constant (Isabelle_Constant c k)#es))=
+      c#List.map_filter isabelle_declared_constant (map g es)"
+    "List.map_filter isabelle_declared_constant (map g (Isabelle_Development_Constant (Isabelle_Constant c k)#es))=
+      c#List.map_filter isabelle_declared_constant (map g es)"
+    "List.map_filter isabelle_declared_constant (map g (Isabelle_Frontier_Constant (Isabelle_Constant c k)#es))=
+      c#List.map_filter isabelle_declared_constant (map g es)"
+    "List.map_filter isabelle_declared_constant (map g (Isabelle_Definition t#es))=
+      List.map_filter isabelle_declared_constant (map g es)"
+    "List.map_filter isabelle_declared_constant (map g (Isabelle_Specification t#es))=
+      List.map_filter isabelle_declared_constant (map g es)"
+    "List.map_filter isabelle_declared_constant (map g (Isabelle_Code_Equation t#es))=
+      List.map_filter isabelle_declared_constant (map g es)"
+  unfolding g_def by (simp_all add: List.map_filter_simps)
+
+lemma isabelle_shared_declared_once:
+  assumes "distinct (List.map_filter isabelle_declared_constant
+    (map (map_isabelle_entity_with (map_isabelle_term_with (isabelle_table_type (isabelle_type_table ns)))) es))"
+  shows "isabelle_declared_once (isabelle_shared_context names ns es)"
+  using assms by (simp only: isabelle_shared_context_fields(2) isabelle_declared_once_distinct)
+
 ML \<open>
 structure Isabelle_Entity_Export =
 struct
@@ -167,6 +203,44 @@ fun context_terms thy expand root_names seeds groups further =
       map (fn (suffix, names) => (suffix, root_terms names)) groups, position)
   end;
 
+(*The declared constants of a defined state, read from the spine of its entity list: a declaration
+  contributes the position of its constant, a statement nothing, and no term is read further.*)
+val declared_rules = map mk_meta_eq @{thms isabelle_shared_declarations};
+val declared_nil = hd declared_rules;
+val declared_keep = take 3 (tl declared_rules);
+val declared_drop = drop 4 declared_rules;
+
+fun declared_conv ct =
+  (Conv.rewr_conv declared_nil
+    else_conv (Conv.rewrs_conv declared_keep then_conv Conv.arg_conv declared_conv)
+    else_conv (Conv.rewrs_conv declared_drop then_conv declared_conv)) ct;
+
+(*The obligation that the state a definition presents declares each constant once, proved from the
+  definition: its declared positions are computed by the conversion and compared as numerals.*)
+fun declared_once ctxt def =
+  let
+    val def' = Local_Defs.meta_rewrite_rule ctxt def;
+    val goal = HOLogic.mk_Trueprop (\<^Const>\<open>isabelle_declared_once\<close> $ Thm.term_of (Thm.lhs_of def'));
+  in
+    Goal.prove ctxt [] [] goal (fn _ =>
+      rewrite_goal_tac ctxt [def'] 1
+      THEN resolve_tac ctxt @{thms isabelle_shared_declared_once} 1
+      THEN CONVERSION (HOLogic.Trueprop_conv (Conv.arg_conv declared_conv)) 1
+      THEN simp_tac ctxt 1)
+  end;
+
+(*Define NAME_context and note NAME_declared_once, the exporter's obligation at the defined state.*)
+fun define_context binding context lthy =
+  let
+    val name = Binding.suffix_name "_context" binding;
+    val (_, (_, def), lthy') =
+      (case Local_Theory.define ((name, NoSyn), ((Thm.def_binding name, []), context)) lthy of
+        ((t, (n, th)), lthy') => (t, (n, th), lthy'));
+    val once = declared_once lthy' def;
+  in
+    lthy' |> Local_Theory.note ((Binding.suffix_name "_declared_once" binding, []), [once]) |> snd
+  end;
+
 (*Define NAME_context, NAME_roots and the roots of each named group. Every group is read
   against the one name table of the defined context, so the positions of a group's roots are
   positions of that context. Which roots form a group is the caller's choice, not the
@@ -183,7 +257,7 @@ fun define binding groups lthy =
       let val name = Binding.suffix_name suffix binding
       in Local_Theory.define ((name, NoSyn), ((Thm.def_binding name, []), value)) #> snd end;
   in
-    lthy |> define_value "_context" context |> define_value "_roots" root_list
+    lthy |> define_context binding context |> define_value "_roots" root_list
       |> fold (fn (suffix, value) => define_value suffix value) group_lists
   end;
 
@@ -226,7 +300,7 @@ fun define_again binding (roots_def, context_def) introducing lthy =
       let val name = Binding.suffix_name suffix binding
       in Local_Theory.define ((name, NoSyn), ((Thm.def_binding name, []), value)) #> snd end;
   in
-    lthy |> define_value "_context" context |> define_value "_roots" root_list
+    lthy |> define_context binding context |> define_value "_roots" root_list
       |> fold (fn (suffix, value) => define_value suffix value) group_lists
   end;
 

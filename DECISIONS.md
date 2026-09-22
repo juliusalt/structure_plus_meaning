@@ -9385,7 +9385,7 @@ Nothing about cost belongs to the contract; see *Where efficiency stays an obser
 | carrier | theory | key | contract |
 |---|---|---|---|
 | a finite set of a linearly ordered type, and a list read as the set of its members | `Ordered_Member_Trees` | the member under its own order | `ordered_member_tree_exact`, `ordered_member_tree_listed`, `ordered_remdups_exact` |
-| a finite set whose members have an ordered key with a left inverse | `Keyed_Finite_Sets` | `key`, under `unkey (key x) = x` | `keyed_rows_set`, `keyed_set_exact`, `keyed_union_exact`, `keyed_equal_exact`, `keyed_member_lookup`, `keyed_members_subset` |
+| a finite set whose members have an ordered key with a left inverse | `Keyed_Finite_Sets` | `key`, under `unkey (key x) = x` | `keyed_rows_set`, `keyed_set_exact`, `keyed_union_exact`, `keyed_equal_exact`, `keyed_member_lookup`, `keyed_members_subset` (correction, task 117: task 115 removed these two; membership stands as `Member_Tree_Indexes.keyed_set_index.member_query`, and the subset form as `Member_Tree_Indexes.keyed_set_index.members_subset`, the notion's `lookup_queries_found` at unit values) |
 | a finite relation, and a nested relation by two keys, whose keys have injective binary paths | `Binary_Path_Stores`, `Binary_Relation_Stores`, `Binary_Nested_Stores`, over the paths of `RRA_Binary_Use_Paths` and `RRA_Digit_Natural_Paths` | the path of the key | `relation_store_member`, `nested_relation_store_member`, `store_lookup_update`, `store_off_path_preserved`, `store_canonical` |
 | a native table of rows, searched inside a Factor program | `Native_Path_Stores` | a path of shapes — incidence, not an octet tag | `native_store_search_program.exact` with `.sound`, over `path_store_lookup` and `path_store_found` |
 
@@ -10257,7 +10257,9 @@ and `site_refuses_unpresented`.
 
 `carrier_index_through_key` states once the argument `keyed_member_lookup` makes over
 `ordered_member_tree`: an index of the key image searched by the keys themselves is an index of the
-carrier read through a key that distinguishes.
+carrier read through a key that distinguishes. (Correction, task 117: task 115 removed
+`keyed_member_lookup`; the argument stands as `Member_Tree_Indexes.keyed_set_index.carrier`, and the
+membership it stated as `keyed_set_index.member_query`.)
 
 The theory imports `Main` only, so every carrier's instance theory can import it, and carries no simp,
 intro or code attribute: an instance's facts reach every theory above the uses that import it, and a

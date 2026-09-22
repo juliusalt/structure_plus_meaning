@@ -1,5 +1,5 @@
 theory Factor_Library_Compilation
-  imports Factor_Learned_Investigation Finite_Functional_Enumeration Finite_Set_Encoding
+  imports Factor_Learned_Investigation Functional_Enumeration_Indexes Finite_Set_Encoding
 begin
 
 section \<open>A schema supplies its own complete premise enumeration\<close>
@@ -18,7 +18,11 @@ lemma finite_compiled_library_member:
 lemma finite_compiled_schema_enumeration:
   assumes formed: "finite_schema_formed S"
   shows "set (finite_functional_rows (finite_schema_premises S))=fset (finite_schema_premises S)"
-  by (rule finite_functional_rows_exact) (use formed in \<open>simp add: finite_schema_formed_def\<close>)
+proof -
+  have functional: "finite_relation_functional (finite_schema_premises S)"
+    using formed by (simp add: finite_schema_formed_def)
+  show ?thesis using functional_rows_index.found_pairs[OF functional] by simp
+qed
 
 theorem finite_compiled_library_formed:
   "finite_schema_library_formed (finite_compiled_library sources) \<longleftrightarrow>

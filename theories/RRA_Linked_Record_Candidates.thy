@@ -1,5 +1,5 @@
 theory RRA_Linked_Record_Candidates
-  imports RRA_Finite_Syntax_Bodies
+  imports RRA_Finite_Syntax_Bodies Established_Premises Candidate_Generators
 begin
 
 section \<open>A record's rows follow its successor chain\<close>
@@ -83,14 +83,13 @@ lemma finite_linked_record_rows_candidates:
       (fimage (\<lambda>rows. (map fst rows,map snd rows))
         (finite_lists_of_length n (finite_headed_incidence (finite_structure C) r)))"
     (is "ffilter ?B (fimage ?split ?linked)=ffilter ?B (fimage ?split ?all)")
-proof (rule fset_eqI)
-  fix c :: "'a list\<times>'a list"
-  obtain ps xs where c: "c=(ps,xs)" by (cases c)
+proof -
   let ?H="finite_headed_incidence (finite_structure C) r"
-  show "c |\<in>| ffilter ?B (fimage ?split ?linked) \<longleftrightarrow> c |\<in>| ffilter ?B (fimage ?split ?all)"
-  proof
-    assume "c |\<in>| ffilter ?B (fimage ?split ?linked)"
-    then obtain rows where rows: "rows |\<in>| ?linked" "c=?split rows" and body: "?B c" by auto
+  have generator: "candidate_generator (fimage ?split ?all) ?B (fimage ?split ?linked)"
+  proof (rule candidate_generator.intro)
+    fix c :: "'a list\<times>'a list"
+    assume "c |\<in>| fimage ?split ?linked"
+    then obtain rows where rows: "rows |\<in>| ?linked" "c=?split rows" by auto
     have linked: "length rows=n \<and> (\<forall>row\<in>set rows. row |\<in>| ?H)"
     proof (cases "n=0")
       case True
@@ -102,19 +101,21 @@ proof (rule fset_eqI)
       show ?thesis by (rule finite_linked_rows_sound[OF chain])
     qed
     then have "rows |\<in>| ?all" by (auto simp: finite_lists_of_length_member)
-    then show "c |\<in>| ffilter ?B (fimage ?split ?all)" using rows(2) body by auto
+    then show "c |\<in>| fimage ?split ?all" using rows(2) by auto
   next
-    assume "c |\<in>| ffilter ?B (fimage ?split ?all)"
-    then obtain rows where rows: "rows |\<in>| ?all" "c=?split rows" and body: "?B c" by auto
+    fix c :: "'a list\<times>'a list"
+    obtain ps xs where c: "c=(ps,xs)" by (cases c)
+    assume "c |\<in>| fimage ?split ?all" and body: "?B c"
+    then obtain rows where rows: "rows |\<in>| ?all" "c=?split rows" by auto
     have length: "length rows=n" and within: "set rows\<subseteq>fset ?H"
       using rows(1) by (simp_all add: finite_lists_of_length_member)
     have split: "ps=map fst rows" "xs=map snd rows" using rows(2) c by simp_all
     have zipped: "zip ps xs=rows" by (simp add: split zip_map_fst_snd)
-    show "c |\<in>| ffilter ?B (fimage ?split ?linked)"
+    show "c |\<in>| fimage ?split ?linked"
     proof (cases "n=0")
       case True
       then have "rows=[]" using length by simp
-      then show ?thesis using rows(2) body True by (simp add: finite_linked_record_rows_def)
+      then show ?thesis using rows(2) True by (simp add: finite_linked_record_rows_def)
     next
       case False
       have lengths: "length ps=n" "length xs=n" using split length by simp_all
@@ -128,9 +129,10 @@ proof (rule fset_eqI)
       have "rows |\<in>| ?linked"
         using member start False
         by (auto simp: finite_linked_record_rows_def ffUnion.rep_eq fimage.rep_eq intro!: bexI[of _ "(p,x)"])
-      then show ?thesis using rows(2) body by auto
+      then show ?thesis using rows(2) by auto
     qed
   qed
+  show ?thesis by (rule candidate_generator.accepted_generated[OF generator])
 qed
 
 declare finite_record_body_candidates_def[code del]
@@ -145,19 +147,30 @@ lemma finite_record_body_candidates_linked_code [code]:
 
 declare finite_record_candidates_def[code del]
 
-lemma finite_record_candidates_formed_once_code [code]:
-  "finite_record_candidates C r n=(
-    if fcard (finite_headed_incidence (finite_structure C) r)=n \<and> finite_object_formed C
-    then finite_record_body_candidates C r n else {||})"
-proof (cases "finite_object_formed C")
-  case True
-  then show ?thesis
-    by (simp add: finite_record_body_candidates_exact[OF True, symmetric] finite_record_body_candidates_def Let_def)
+text \<open>
+  The premise, formation of the whole object, is the first argument's: the equation is stated at that
+  arity, so a partial application checks it once. The arity condition stays where the definition puts
+  it, in the guard of @{const finite_record_body_candidates}.
+\<close>
+
+lemma finite_record_candidates_checked_premise:
+  "checked_premise finite_record_candidates finite_object_formed finite_record_body_candidates (\<lambda>C r n. {||})"
+proof (unfold_locales)
+  fix C :: "('a,'v) finite_structured_object"
+  assume formed: "finite_object_formed C"
+  show "finite_record_candidates C=finite_record_body_candidates C"
+    by (rule ext, rule ext, rule finite_record_body_candidates_exact[OF formed, symmetric])
 next
-  case False
-  then show ?thesis
-    by (auto simp: finite_record_candidates_def Let_def finite_record_at_def)
+  fix C :: "('a,'v) finite_structured_object"
+  assume unformed: "\<not> finite_object_formed C"
+  show "finite_record_candidates C=(\<lambda>r n. {||})"
+    using unformed by (intro ext) (auto simp: finite_record_candidates_def Let_def finite_record_at_def)
 qed
+
+lemma finite_record_candidates_formed_once_code [code]:
+  "finite_record_candidates C=(
+    if finite_object_formed C then finite_record_body_candidates C else (\<lambda>r n. {||}))"
+  by (rule checked_premise.checked_at_entry[OF finite_record_candidates_checked_premise])
 
 text \<open>
   The complete original candidate filter is unchanged. Only candidate rows that

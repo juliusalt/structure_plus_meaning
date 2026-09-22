@@ -69,8 +69,10 @@ stage's equation (#192), after #42 and the three field builds; the exported answ
 machinery's verification stage judged natively (#193) and its held measurement by field (#194), condition 5a's
 evidence for a stage's cost; the witnesses at the edit's parts (#195), after #44. From #186's review, #219 (`4dde066c`)
 stated the edit's and presenter's contracts once; from #219's review, #231 (`cded0ab7`) stated once a reading that
-depends only on the names at the positions it uses (`isabelle_name_reading`), the appended-names facts through it; #220 makes
-the edit's constructor and the index update linear in the edit before the stage #193 (#185's review). Specifications keep their exception, judged whole (none in the loop's states).
+depends only on the names at the positions it uses (`isabelle_name_reading`), the appended-names facts through it; #220 (`fe9e844f`)
+made the edit's constructor look entities up through an index; #249 makes the rest of the answer's construction
+linear in the edit — the caller's index hoisted, `gone` and `D'` from the edit, the key measured, the presenter's rows
+shared (#220's review) — before the stage #193. Specifications keep their exception, judged whole (none in the loop's states).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
 a locus (#26), the presenters (#28), the store's (#83), the rows' fix (#84) and the store search's contract for values
@@ -170,10 +172,10 @@ changes: the syntax forest #225 and the premise forest #223, with #241 after #14
 #155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
 #161 and #192. Then #114 (after #112, #110, #182 or #227) and #45 (after #44, #42, #227), 4. Beside
-them: #220; the rule programs' re-citation #214; the rule-family law's completion #247, then the
+them: #249; the rule programs' re-citation #214; the rule-family law's completion #247, then the
 re-citations #235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
 
-**Order** (`128 129 147 148 182 183 227 228 223 224 225 226 241 242 247 248 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 182 183 227 228 223 224 225 226 241 242 247 248 249 250 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
 review and #147; then the exporter's discharge #227, which #42 and #110 wait
 on, and the excess locale #182, which #110, #112 and #191 wait on; the placed forest's instances #223 and #225
@@ -525,6 +527,10 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#245** `d2d1ab33`: `native_rule_law.supported_clause`, the rule family's law eliminated at any support relation.
   Follow-ups: the introduction half, the conclusion and the rule-returning case analysis to #247; the inductions to
   #235; the probe's log for the harness.
+- **#220** `fe9e844f`: code equations of `Development_State_Edit` proved equal to their definitions, the edit's
+  constructor looking entities up through an index of the request state's. Follow-ups: the rest of the linearity, the
+  key, the presenter's sharing and the general list-index facts to #249; the added path's timing to #194;
+  `key_edit_update_index` to #193; the duplicate `entity_kinds` to #235.
 
 ## Open
 
@@ -781,7 +787,7 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
-- **In flight (plan-45, 17:05)**: #189, #220, #223 and #225 build; #128 and #147 are in review; #227 discharges the exporter's obligation, ready now; #233 (`d5d0e747`) and #245
+- **In flight (plan-45, 17:05)**: #189, #223 and #225 build; #128 and #147 are in review; #227 discharges the exporter's obligation, ready now; #233 (`d5d0e747`) and #245
   (`d2d1ab33`) stated the rule-family law (q60, q61) and its elimination at any relation, and #247 completes it; #231 (`cded0ab7`) stated the name-locality of
   readings. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,

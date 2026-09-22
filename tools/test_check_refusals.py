@@ -34,6 +34,32 @@ def theory(name: str, body: str = '') -> str:
     return 'theory ' + name + '\n  imports Pure\nbegin\n' + body + 'end\n'
 
 
+class HostTestFailures(unittest.TestCase):
+    """A failing host suite names every failing and erroring test with its traceback's last lines."""
+
+    def test_failures_and_errors_are_named(self):
+        with tempfile.TemporaryDirectory() as directory:
+            Path(directory, 'test_sample.py').write_text(
+                'import unittest\n'
+                'class Sample(unittest.TestCase):\n'
+                '    def test_passes(self):\n        pass\n'
+                '    def test_fails(self):\n        self.assertEqual(1, 2)\n'
+                '    def test_errs(self):\n        raise KeyError("absent")\n')
+            import subprocess
+            completed = subprocess.run([sys.executable, '-B', '-m', 'unittest', 'discover', '-s', '.'],
+                                       cwd=directory, capture_output=True, text=True, timeout=60)
+            found = incremental_check.failing_tests(completed.stderr + completed.stdout)
+        by_outcome = {item['outcome']: item for item in found}
+        self.assertEqual(set(by_outcome), {'FAIL', 'ERROR'})
+        self.assertIn('test_fails', by_outcome['FAIL']['test'])
+        self.assertIn('AssertionError: 1 != 2', by_outcome['FAIL']['traceback'][-1])
+        self.assertIn('test_errs', by_outcome['ERROR']['test'])
+        self.assertIn("KeyError: 'absent'", by_outcome['ERROR']['traceback'][-1])
+
+    def test_passing_report_names_none(self):
+        self.assertEqual(incremental_check.failing_tests('.\n' + '-' * 70 + '\nRan 1 test in 0.0s\n\nOK\n'), [])
+
+
 class ProbeTimeout(unittest.TestCase):
     """A probe is bounded without naming its limit, and a timed-out one names where it stood."""
 

@@ -227,6 +227,15 @@ judgment's path.
 - **#97** `b4c103e6`, in a fourth round: the store search's contract for values held formed where the store holds
   them (the `exact_held` clause) and the reach's family an instance of `finite_rule_program_family`; its two map rows,
   left as the merge-base had them, are #117's.
+- **#115** `fda985c7`, its landing in a second round: the index notion's repeated arguments stated once in
+  `Carrier_Indexes` (members found iff contained, the lookup's `= Some` to `≠ None` step, the keyed set's pre-notion
+  copies, the tree insertion of `ordered_remdups_fold`); landing check 460 s, 1816 theories (1436 reused). #117 takes
+  its map and DECISIONS.md follow-ups.
+- **#120** `518ac1e7`: the receipts of an accepted check of `1add503f` retained (158 files under `validation/`); the
+  landing check after it 21.18 s, every recipe unchanged. Reuse reads only `validation/reconstruction/`, not a base's
+  `recipes/` or `exports-context/`, so a base advance removes its own.
+- **#122** `348c625f`: a check's host-test record names each failing test (`failing`: its outcome, its id and the last
+  eight lines of its traceback, beside `tail`), parsed from unittest's printed report.
 
 ## Open
 
@@ -251,7 +260,8 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q11** who retains verified receipts. Provisional: #81 retained them once; the planner places another after a
   landing that changes many recipes' boundaries. The seed and machinery receipts lag since `312a2ca2` (#86's result),
   so every landing check executes those two recipes, and #106's check, the first on #86's base, executed all 52
-  (221.96 s); #120 retains now and #119 after #105's advance.
+  (221.96 s). #120 retained them (`518ac1e7`): the next landing check's recipe phase fell to 6.11 s of 21.18 s. #119
+  retains after #105's advance; whether later landings can reuse executions at all is #134's.
 
 Not yet planned, in the order they are expected to be planned:
 
@@ -287,7 +297,9 @@ Not yet planned, in the order they are expected to be planned:
     obstructions, so no instance exists; plan it when the first is posed.
 
 19. **One pre-flight command for the standing last step** (#50's review): `source_checks()` and `source_graph(...)` as one
-    command, which would also expose `source_checks` passing while `source_graph` refuses. Small; tools.
+    command, which would also expose `source_checks` passing while `source_graph` refuses. It would take the task's
+    changed theories as the graph's overlays, which briefs leave unnamed, and skip the graph for a change with no
+    theory (#120's review). Small; tools.
 18. **`Isabelle_State_Difference`'s embedding facts, each stated once** (#78's and #101's reviews):
     `isabelle_name_position_member` beside `isabelle_name_position`'s laws, serving the two older proofs that write its
     pattern inline; `isabelle_state_embedding_prefix` moved down from `Development_Refinement_Repair` beside
@@ -374,14 +386,19 @@ Not yet planned, in the order they are expected to be planned:
 43. **The engine-level forms #85 left** (a code generator sharing invariant subexpressions; the union inserting its
     smaller operand): not taken — engine changes with no measured need, the second able to change a word where a
     listing reaches one. Taken only at a measured cost on the loop's path.
+44. **`demand_positions_member`'s `simp add` form, and import edges possibly dead since the index re-citations**
+    (#115's reviews): with the next edit of those theories, and an import audit once #117 and #105 have landed.
+45. **The host-test record reads printed text** (#122's review): a documented test would lose its traceback, an
+    unexpected success is not recorded, and `import subprocess` sits inside a test method. The structured source is
+    `TestResult.failures` and `errors`, through a result class on the suites' runner, which would remove the parsing;
+    a tools task when a failure meets a gap or the suites' runner is next changed. `FORCE_COLOR=3` reaches the check's
+    environment, so a test comparing text output could depend on it.
 
 ## Now
 
-- **In flight (plan-36, 06:15)**: #120 retains the receipts now, first in the queue — #106's landing check, the first
-  on #86's base, executed all 52 recipes (221.96 s of 260.94 s) though its change reaches no recipe's export — and
-  says whether a check's reuse reads the active base's check outputs (#86's were removed at 05:58); #115, the index
-  consolidation, accepted, its landing with main failing on one host test no record names (under load, 7.8 GiB free),
-  re-queued as a round of its own tree; #122 records which host test failed; #88 ended partial with its held attribution
+- **In flight (plan-37, 07:15)**: #134 asks whether proved-code export gives the same module bytes from two proof
+  contexts over identical sources (#120's retaining check reused no execution: 50 of 52 boundaries differed only in
+  the module's digest); #88 ended partial with its held attribution
   (`.build/tasks/keyed-question-cost/attribution.md`): the key search costs at most 0.05 ms, so no index instance is
   taken for it; a packet's cost is the native reading of its sources, which grows superlinearly with a program's
   syntax and is repeated in generation, compile, observation and admission. #88 is re-planned to read each source
@@ -391,8 +408,7 @@ Not yet planned, in the order they are expected to be planned:
   the retention #119 after it. #40's brief carries #101's review (the families measured first; the two consumer
   corollaries); #42's and #112's carry #106's (the introduction's subset form stated once by whichever first needs
   it; the key premise derived where it can be).
-- **Not handled**: nothing is waiting on the planner. If #120 finds that reuse reads a base's check outputs, #105's
-  brief must keep its own.
+- **Not handled**: nothing is waiting on the planner.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).

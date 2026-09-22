@@ -20,7 +20,6 @@ definition demand_positions :: "('a \<Rightarrow> 'k::linorder) \<Rightarrow> 'a
   "demand_positions key D=(let ks=sorted_list_of_fset (fimage key D) in
     RBT.bulkload (zip ks [0..<length ks]))"
 
-
 subsection \<open>The positions of a demand are an index of the demand\<close>
 
 text \<open>
@@ -97,20 +96,10 @@ lemma demand_positions_member:
 proof -
   let ?ks="sorted_list_of_fset (fimage key D)"
   have "RBT.lookup (demand_positions key D) k\<noteq>None \<longleftrightarrow> (\<exists>i. (k,i)\<in>set (zip ?ks [0..<length ?ks]))"
-    by (simp only: not_None_eq demand_positions_rows)
+    using key_positions_index.lookup_found[where look=RBT.lookup and c="fimage key D" and q=k]
+    by (simp add: demand_positions_def Let_def)
   also have "\<dots> \<longleftrightarrow> k\<in>set ?ks" by (rule zip_positions_member)
   finally show ?thesis by simp
-qed
-
-lemma demand_positions_members_subset:
-  assumes inverse: "\<And>x. unkey (key x)=x"
-  shows "fBall B (\<lambda>q. RBT.lookup (demand_positions key A) (key q)\<noteq>None) \<longleftrightarrow> B |\<subseteq>| A"
-proof -
-  have injective: "inj key" by (rule distinguishes_by_left_inverse[where unkey=unkey]) (rule inverse)
-  have "fBall B (\<lambda>q. RBT.lookup (demand_positions key A) (key q)\<noteq>None) \<longleftrightarrow>
-      fBall B (\<lambda>q. key q\<in>fset (fimage key A))"
-    by (simp only: demand_positions_member)
-  then show ?thesis by (auto simp: less_eq_fset.rep_eq fimage.rep_eq inj_image_mem_iff[OF injective])
 qed
 
 lemma demand_positions_index:
@@ -153,6 +142,20 @@ interpretation native_demand_positions:
       [0..<length (sorted_list_of_fset (fimage native_call_key D))])" "\<lambda>_. True" UNIV native_call_key
     "demand_positions native_call_key" tree_search
   by (rule demand_positions_carrier_index[OF native_call_inverse])
+
+lemma demand_positions_members_subset:
+  assumes inverse: "\<And>x. unkey (key x)=x"
+  shows "fBall B (\<lambda>q. RBT.lookup (demand_positions key A) (key q)\<noteq>None) \<longleftrightarrow> B |\<subseteq>| A"
+proof -
+  have injective: "inj key" by (rule distinguishes_by_left_inverse[where unkey=unkey]) (rule inverse)
+  let ?ks="sorted_list_of_fset (fimage key A)"
+  have "(\<forall>q\<in>fset B. RBT.lookup (demand_positions key A) (key q)\<noteq>None) \<longleftrightarrow>
+      (\<forall>q\<in>fset B. \<exists>i. (key q,i)\<in>set (zip ?ks [0..<length ?ks]))"
+    by (rule carrier_index.lookup_queries_found[OF demand_positions_carrier_index[OF inverse], where look=RBT.lookup])
+      simp_all
+  also have "\<dots> \<longleftrightarrow> (\<forall>q\<in>fset B. key q\<in>set ?ks)" by (simp only: zip_positions_member)
+  finally show ?thesis by (auto simp: less_eq_fset.rep_eq fimage.rep_eq inj_image_mem_iff[OF injective])
+qed
 
 text \<open>
   A demanded key receives its own position and an undemanded one keeps itself, in the second

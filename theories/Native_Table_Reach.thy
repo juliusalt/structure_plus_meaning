@@ -67,24 +67,9 @@ lemma native_reach_family:
   assumes member: "(d,rs)\<in>set reach_definitions"
     and plain: "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}"
   shows "native_rule_family native_reach_system d rs"
-proof (rule native_rule_family.intro)
-  show "schema_system_formed native_reach_system" by (rule native_reach_formed)
-  have distinct: "distinct (map fst reach_definitions)" by (simp add: reach_definitions_def)
-  show "((d,c),S)\<in>system_clauses native_reach_system \<longleftrightarrow>
-      (\<exists>F. (c,F)\<in>set rs \<and> S=decode_finite_schema F)" for c S
-  proof -
-    have "((d,c),S)\<in>system_clauses native_reach_system \<longleftrightarrow>
-        (\<exists>rs'. (d,rs')\<in>set reach_definitions \<and> (\<exists>F. (c,F)\<in>set rs' \<and> S=decode_finite_schema F))"
-      unfolding native_reach_system_def finite_native_reach_def by (rule finite_rule_program_clause)
-    then show ?thesis using eq_key_imp_eq_value[OF distinct member] member by blast
-  qed
-  have site: "d\<in>fst ` set reach_definitions" using member by (rule rev_image_eqI) simp
-  show "schema_call_formed native_reach_system d t \<longleftrightarrow> term_formed t" for t
-    unfolding native_reach_system_def finite_native_reach_def
-    by (rule finite_rule_program_call[OF native_reach_formed[unfolded native_reach_system_def
-      finite_native_reach_def] site])
-  show "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}" by (rule plain)
-qed
+  unfolding native_reach_system_def finite_native_reach_def
+  by (rule finite_rule_program_family[OF native_reach_formed[unfolded native_reach_system_def
+    finite_native_reach_def] _ member plain]) (simp add: reach_definitions_def)
 
 lemma native_reach_definitions:
   "system_definitions native_reach_system=fst ` set reach_definitions"

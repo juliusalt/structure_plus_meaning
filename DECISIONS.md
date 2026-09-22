@@ -10923,3 +10923,235 @@ context's citations; it is not designed here. Multi-constant subjects have no lo
 design was made outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 95's decision; a design, no theory changes).
+
+## The in-place refinements apply two notions: a check made where its premise is established, and a generator of the accepted candidates
+
+The owner's direction of 2026-09-19 — "even implementation should be structural with the non-structural
+efficiency as a structurally presented idea that can be applied" — and the first-use rule. "A refinement
+applies a notion; an index is one" named four code equations proved in place that restate one argument
+apiece across their uses — formation established once at a traversal's entry, an invariant of a traversal
+computed once, the smaller operand inserted into the larger, a reader generating only the candidates it
+can accept — and left to the planner whether each becomes a notion. "A snapshot's formation is read once
+for all the publications over it" added a fifth, stated at first as a copy of the case split that
+`finite_locus_publications_code` already stated (`finite_snapshot_publisher`), then extended where it
+stands. This entry settles the five and `ffilter_singleton`. The first and the fourth are notions; the
+fifth is an instance of the first, and so is task 5's construction that needs no re-verification;
+`ffilter_singleton` is a law of the fourth; the second and the third apply laws HOL already states and
+leave nothing to state. The seed publication's next refinement is an instance of the first.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Four code equations proved in place, each restating one argument; "whether each becomes a notion is for the planner" ("Which refinements are instances, and which are not"). | Formation established once and the candidates a reader can accept are notions, each with a contract a use discharges by obligations; an invariant computed once applies HOL's `Let` and the operand exchange the union's commutativity, each already citing its law. |
+| "No new notion, and no second copy of the case split" ("A snapshot's formation is read once for all the publications over it"). | An instance of the first notion checked at its entry. The copy it first made is what the notion forestalls: an instance is named by its operation, so a second refinement of the operation finds it and extends it. |
+| The constructed applications "apply the contract that a construction needs no re-verification, carried by `finite_constructed_applications_exact` and its three subject-level facts". | That contract is the first notion's third place of establishment, a constructor's contract; the constructed requests are also the second notion's tight instance, and `ffilter_singleton` its law at one candidate. |
+
+### A check is made where its premise is established
+
+The argument, stated once. A traversal checks a condition of what it reads at every step it makes: the
+formation of each artifact it reads, of each snapshot it transacts on, of each generation a transaction
+writes. A premise established at one point implies the condition at every step after it; under the premise
+a body that makes no such check computes the operation, and the check is made once, where the premise is
+established, and nowhere inside. The premise is established at one of three places:
+
+1. **at the operation's entry**, by checking it, the other branch returning the operation's own value
+   outside the premise, its refusal — "the guard returns the original value and not merely a default"
+   (`finite_program_applications_unformed_system`, `finite_program_applications_unformed`);
+2. **at an enclosing operation whose established premise implies it**: the parts it reads inherit it — a
+   formed environment has formed artifacts (`formed_environment_artifact`), a successful transaction on a
+   formed snapshot leaves a formed snapshot (`finite_transact_applied_formed`) — so the part's own check is
+   dropped and its body called, as the definition, schema, pattern, call and vector readings "consume one
+   another's formation-free bodies";
+3. **by the contract of the constructor that made the value**: nothing is checked, because the constructor
+   states the premise of what it returns — the constructed applications' values are subterms of a formed
+   call (`finite_matching_formed`, `finite_instantiated_premise_formed`).
+
+**The notion: `established_premise original premise body`, and its extension `checked_premise` with
+`refusal`**, in a theory `Established_Premises` of their own that imports `HOL-Library.FSet` (one law below
+is about finite sets) and, as `Carrier_Indexes`, carries no simp, intro or code attribute and states
+nothing about cost.
+
+- *Obligation (1), exactness*: `premise x ⟹ original x = body x`. A use proves it — for a recursive
+  traversal by its own induction, citing at each step the facts that establish the premise there. It is the
+  substantive obligation, as the member equation is the index's.
+- *Obligation (2), where the premise is established*: at the entry, `checked_premise`'s
+  `refused: ¬premise x ⟹ original x = refusal x`, with `refusal` the original's own value; at an enclosing
+  operation, the inheritance fact from its premise to the part's; at a constructor, the constructor's fact
+  that what it returns satisfies the premise. An establishing fact is stated once, with what it is about —
+  the environment's formation with the environment, the transaction's with the transaction, the
+  constructor's with the constructor — and never at a use. `formed_environment_artifact`,
+  `exact_formed_object` and `formed_environment_object` stand in `Factor_Formation_Once_Readings` and
+  `Factor_Formation_Once_Definitions`, use theories: they move to where finite environment formation is
+  stated, or are re-cited from a component fact there (`finite_environment_formed_components` is the one
+  to compare).
+- *What a use gets*: at the entry, `checked_at_entry: original x = (if premise x then body x else refusal x)`,
+  the code equation; `checked_through: t (original x) = (if premise x then t (body x) else t (refusal x))`
+  for any consumer `t`, the check hoisted out of a traversal that does not depend on it; and
+  `checked_union: ffUnion (fimage (λy. if P then T y else {||}) Y) = (if P then ffUnion (fimage T Y) else {||})`,
+  the check hoisted out of a union over a family, the union absorbing the empty refusal. At the other two
+  places a use gets exactness at the established value, which is obligation (1) with its establishing
+  fact; nothing more is derived there, and what the notion adds is that the pair — premise and body — and
+  its establishing fact are named, so a second refinement of the same operation finds them.
+- *The arity rule* (task 80's third round): `x` is exactly the premise's arguments, the arguments after it
+  lying inside the value. The code equation is stated at the arity where the premise's arguments end, so a
+  partial application — a publisher made once for a snapshot, a site reader made once for an environment —
+  checks once however often it is then applied. `finite_locus_publications_code` (stated for the snapshot
+  alone) and `finite_definition_site_reading_formed_exact` (by `ext`, for the environment alone) follow it;
+  the other instances are stated at full arity, and are restated at the premise's arity when re-cited: the
+  statement changes, no word can. This is where the notion meets the invariant computed once: the rule is
+  the let's evaluation applied to a check.
+- A premise on an argument that is not the first is instantiated with the constant applied to the arguments
+  before it (`original` is `finite_term_readings_bounded n`), the instance stated as a lemma for every such
+  argument and its laws cited as `checked_premise.checked_at_entry[OF …]`, as `Native_Path_Store_Indexes`
+  cites `native_store_search_program.index`.
+
+### Its instances
+
+| Instance | Premise, and where it is established | Facts | Re-cited |
+|---|---|---|---|
+| Readings of an environment (`Factor_Formation_Once_Readings`, `Factor_Formation_Once_Definitions`) | `finite_environment_formed E` (`finite_exact_formed C` for a citation's candidates), at the entry, refusal `{||}`; inherited by the artifacts and by each nested reading | the `*_formed_exact` facts; the code equations `finite_citation_candidates_formed_once_code`, `finite_term_readings_bounded_formed_once_code`, `finite_pattern_readings_bounded_formed_once_code`, `finite_family_readings_formed_once_code`, `finite_call_readings_formed_once_code`, `finite_pattern_record_readings_formed_once_code`, `finite_pattern_vector_readings_formed_once_code`, `finite_native_schema_readings_formed_once_code`, `finite_scoped_pattern_readings_formed_once_code`, `finite_native_definition_readings_formed_once_code`, `finite_native_definition_rows_formed_definitions_code` (superseding `finite_native_definition_rows_formed_once_code`), `finite_native_package_formed_once_code` | each code equation from `checked_at_entry`, its refusal a stated fact where its proof now unfolds the definition |
+| A record's candidates (`RRA_Linked_Record_Candidates`) | `finite_object_formed C`, at the entry, with the arity condition of the definition's own guard beside it | `finite_record_body_candidates_exact`, `finite_record_candidates_formed_once_code` | yes |
+| Proof-node rows (`Factor_Recovered_Graph_Sharing`) | `finite_environment_formed E`, at the rows' entry, hoisted out of the positions' union | `finite_proof_node_readings_formed_guard` (the guard is the reading's definition), `finite_proof_node_rows_formed_once_code`, `finite_native_graph_demands_formed_once_code` | yes, through `checked_union` |
+| Demanded site readings (`Factor_Demanded_Package_Readings`, `Factor_Demanded_Graph_Readings`) | the environment's formation, established at the enclosing demanded traversal's entry | `finite_definition_site_reading_formed_exact`, `finite_proof_site_reading_formed_exact` | no: consumers, already at the premise's arity |
+| Publications over a snapshot (`RRA_Formed_Snapshot_Transactions`, task 80) | `finite_snapshot_formed S`, at the entry, refusal `map (λq. None)`; inherited along the sequence | `finite_transact_formed_exact`, `finite_transact_applied_formed`, `finite_transact_after_applied`, `finite_locus_publications_formed_exact`, `finite_locus_publications_unformed`, `finite_locus_publications_code` (arity 1) | the code equation from `checked_at_entry` |
+| A demand's applications (`Factor_Constructed_Program_Applications`) | `finite_system_formed P` at the entry, and `finite_term_formed (snd q)` for each call inside the listed union, refusals `finite_program_applications_unformed_system`, `finite_program_applications_unformed` | `finite_constructed_applications_exact`, the `code abstract` equation `finite_program_applications_listed` | yes, if its abstract form takes the laws without restating its statement; otherwise a departure for the planner |
+| Constructed values (the same theory) | the formation of constructed values and premise calls, established by the construction | `finite_admitted_constructed`, `finite_constructed_instance`, `finite_call_formed_fits`, established by `finite_matching_formed`, `finite_instantiated_premise_formed` | no: each proves its exactness from its establishing facts, which is the obligation, and re-makes no law |
+| A join's conditions (`Factor_Join_Reading_Conditions`) | the degenerate case, each condition its own premise, checked at the level where its variables are bound (one at neither reading, four at the left, four at the right, three inside) | `finite_join_readings_disjoint_code`; `ffUnion_fimage_if_const`, `ffUnion_fimage_if_conj`, `ffUnion_fimage_empty` | the three lemmas are `checked_union`'s content, re-cited from it; `ffUnion_fimage_if_filter` (a condition of each element made a filter of the family, computed once) and `finite_join_condition_split` (the twelve conditions by what they depend on) are the join's own and stay |
+
+Consumers left as they stand: `Factor_Indexed_Readings`'s `*_formed_read_code` equations, which compute the
+formation-free bodies through an artifact's reading (instances of the index, consumers of the first row);
+`Development_Seed_Publication.development_seed_publication_from_published`, which binds the publisher once
+(a consumer of the publications' arity).
+
+### A generator of the accepted candidates
+
+The argument, stated once. A reader's meaning is the accepted part of a complete candidate space — every
+list of the arity over the headed rows, every compatible union, every requested application — filtered by
+its acceptance. A generator that constructs only candidates the reader can accept, rather than the whole
+space, gives the same accepted part when every generated candidate it accepts lies in the space and every
+accepted candidate of the space is generated. It is the separation the owner asked for on 2026-09-11, "to
+seperate the meaning of all compatible contributions from a demand-directed method for finding
+contributions sufficient for a given scope", stated once.
+
+**The notion: `candidate_generator space accepts generated`, and its extension
+`tight_candidate_generator`**, in a theory `Candidate_Generators` of their own that imports
+`HOL-Library.FSet`, with no attribute and nothing about cost.
+
+- *Obligation (1), soundness*: `x |∈| generated ⟹ accepts x ⟹ x |∈| space`.
+- *Obligation (2), completeness*: `x |∈| space ⟹ accepts x ⟹ x |∈| generated`.
+- *What a use gets*: `accepted_generated: ffilter accepts generated = ffilter accepts space`.
+- *Obligation (3), of the tight extension*: `x |∈| generated ⟹ accepts x`; it gets
+  `generated_accepted: generated = ffilter accepts space` — the generator is the meaning and no filter
+  runs over it.
+- *The laws at the smallest spaces*: `accepted_singleton: ffilter accepts {|x|} = (if accepts x then {|x|}
+  else {||})`, the guarded candidate being the tight generator of a one-candidate space, and
+  `accepted_empty: ffilter accepts {||} = {||}`.
+
+The subject is the accepted part, not the generator: two generators of one space and acceptance have one
+accepted part, so a generator acquires no subject of its own, and which generator is cheaper is an
+observation of its use.
+
+| Instance | Space, acceptance, generator | Facts | Re-cited |
+|---|---|---|---|
+| A record's candidate rows (`RRA_Linked_Record_Candidates`) | every list of the arity over the headed rows (`finite_lists_of_length n H`, split into sockets and endpoints); `finite_record_body C r`; the successor chains from each headed row (`finite_linked_record_rows`) | `finite_linked_record_rows_candidates`, from `finite_linked_rows_sound` (a chain has the arity and uses only headed rows) and `finite_linked_rows_complete`; consumed by `finite_record_body_candidates_linked_code` | yes: its proof re-makes the law |
+| A scoped binding search (`Finite_Directed_Contributions`), tight | `finite_compatible_unions B`; a union's domain being the scope (`finite_scoped_compatible_unions` is that filter); the demand-directed search | `finite_value_binding_search_exact`, from `finite_value_binding_search_sound` and `finite_value_binding_search_complete` | yes: its proof re-makes the tight law |
+| A clause's requests at a formed call (`Factor_Constructed_Program_Applications`), tight | `finite_requested_schema_applications S t`, one candidate at a formed call (`finite_requested_constructed`); admission (`finite_admitted_schema_instance`, reduced by `finite_admitted_constructed`); `finite_constructed_requests` | `finite_constructed_requests_exact`, through `ffilter_singleton` | yes: `ffilter_singleton` moves into `Candidate_Generators` as `accepted_singleton` |
+
+Consumers left: `Factor_Indexed_Readings`'s `read_linked_rows`, `read_linked_record_rows` and
+`read_record_candidates`, the linked generator over an artifact's reading, proved equal to the scanned one.
+
+`ffilter_singleton` is thus neither case-specific nor a library fact to leave in a use theory: it is the
+generator's law at a one-candidate space, and `HOL-Library.FSet` states no `ffilter` law at an empty or a
+one-member set (it states `ffmember_filter`, `eq_ffilter`, `subset_ffilter`, `fempty_ffilter`). The same
+class stands in `RRA_Selection`: `ffilter_empty_set` (the empty space) and `ffilter_true` (an acceptance of
+every candidate, under which every space is its own tight generator). They are re-cited from
+`Candidate_Generators` when `RRA_Selection` is changed; its dependents are most of the repository, and the
+two are `[simp]` there, so the timing of that move is the planner's.
+
+### What stays case-specific, and why
+
+- **An invariant of a traversal computed once** (`Factor_Invariant_Evaluation_Sharing`) is not a notion to
+  state: its content is HOL's `Let`, whose contract `Let_def` each of its equations already cites —
+  `finite_material_satisfied_shared_code`, `finite_system_formed_shared_code`,
+  `finite_program_head_covered_shared_code`, `finite_candidate_losses_shared_code`,
+  `finite_sound_observation_facets_shared_code`, `finite_program_history_shared_code`,
+  `finite_program_evaluation_shared_code`. The let is the idea's structural presentation: which value is
+  computed once is explicit in the term. Which subexpression is shared is the use's, and the benefit — the
+  code generator binds a let's value once and evaluates a lambda's body at every application — is an
+  observation. The theory's other equations apply stated notions: the three listed equations
+  (`finite_basis_residual_listed_code`, `finite_observation_conflicts_listed_code`,
+  `finite_available_observation_repairs_listed_code`) `Listed_Set_Unions`; `finite_inference_witnesses_direct_code`
+  a filter's congruence on its members, `ffilter_member_cong`, the rule form of FSet's `eq_ffilter`, which it
+  is proved from where it stands and which stays, because the adopted answer `Development_Answer_0ccf746fe2cf`
+  cites it by name; `finite_premise_joins_single_match` the fusion of a filter into a map,
+  `filter_map_single_pass`, the converse of List's `filter_map`, a list law stated for its one use.
+- **The smaller operand inserted into the larger** (`RRA_Inserted_Attachments.finite_attach_structure_inserting_code`)
+  applies the union's commutativity, which its proof cites (`sup_commute`). It has one use — the accumulation
+  theories cite the union's AC laws, but they accumulate rows and exchange no operand of their own — and which
+  operand is the smaller is observed. It shares its premise, that the library executes a union by inserting
+  its left operand into its right one, with `Listed_Set_Unions`, the notion for a union computed once and
+  only read.
+
+Each has an engine-level form that would make the idea a notion of the engine rather than of a use: a code
+generator that shares every invariant subexpression, and the library's own union inserting its smaller
+operand, which changes the listing of every union's result and so could change a word wherever a listing
+reaches one. Both are engine changes and are not taken (Questions of task 85).
+
+### The instance the seed publication's transactions take
+
+What remains of the publication's cost, after the snapshot's formation is read once, is the transactions'
+formation and comparisons. `finite_transact_formed S T` checks `finite_transaction_formed T`, which checks
+`finite_snapshot_formed` of the expected and of the proposed selection and so `finite_generation_formed` of
+each generation, recursively through every predecessor and target: an answer's formation checks its
+issue's, which checks its incumbent's and the selection's. Every generation the seed publication compares or
+writes — the selection, the issues, the answers and the incumbents they expect — is an output of
+`finite_construct_generation_record`, whose contract states it read at its site
+(`finite_construct_generation_record_correct`, its sixth clause), and a generation read at a site is formed
+(`RRA_Finite_Generation_Checking.finite_check_generation_formed`; `Development_Certified_Generations` derives
+the formation so). So the transactions' re-check is the first notion at its third place:
+
+- *premise*: every generation the transaction compares or writes is formed — for a locus transaction
+  `finite_locus_transaction I G`, `pred_option finite_generation_formed I ∧ finite_generation_formed G`;
+- *body*: the transaction with only the conditions of `finite_transaction_formed` that are not the
+  formation of its generations, stated beside `finite_transact_formed`, and the publications over it beside
+  `finite_locus_publications_formed`, in `RRA_Formed_Snapshot_Transactions`: the refinement extends the
+  publications' instance where it stands, and is not a copy in `Development_Seed_Publication`;
+- *exactness*, the obligation the build proves: under the premise the transaction equals its body, and
+  through the publications' recursion for a list whose generations are formed;
+- *established* at the client by the constructor's contract, so the code equation is stated for the
+  publication whose constructor is the recording one — `development_seed_publication`, or its
+  known-constructor chain (`development_seed_publication_from_known`) — and not for
+  `development_seed_publication_from` over an arbitrary `construct`, which has no contract to discharge it.
+
+The same premise discharges the generation half of the incumbents' snapshot check `finite_snapshot_formed
+S0`, whose local remainder is that its loci are distinct; whether the build takes it too is its own, on its
+measurement. The benefit is an observation of that build, held and reported; its acceptance is every recipe
+word equal.
+
+### What the builds must respect
+
+- A refinement's acceptance stays word equality of every report word; applying a notion is the second,
+  separate condition, which a re-citation meets and a refinement proved in place does not.
+- A re-citation replaces a proof, never a statement's meaning; a code equation re-cited under the first
+  notion is stated at its premise's arity.
+- A new refinement of an operation that already has an instance extends that instance where it stands.
+- An establishing fact is stated with what it is about, never at a use.
+- Task 68's criterion decides re-citation: a theory whose proof re-makes a law — the entry's case split,
+  the union's absorption, the generator's filter equality — interprets the notion and cites it; a theory
+  whose proofs consume an instance is left.
+- An instance that cannot interpret a locale without weakening its statement comes to the planner, since the
+  notion would then be two.
+
+### Evidence and limits
+
+This entry reads the repository and builds nothing. Each instance was compared with the locales'
+assumptions by reading its statement and, for the case splits and the generators, its proof
+(`finite_family_readings_formed_once_code`, `finite_record_candidates_formed_once_code`,
+`finite_attach_structure_inserting_code`, `finite_value_binding_search_exact`); the comparison is not a
+proof, and the instances' proofs land with their builds. The instances are those the named theories and a
+search for their shapes found (`formed_once`, `_formed_exact`, a filter equality proved from a soundness and
+a completeness fact); a further instance a build finds is re-cited by the same criterion. The seed instance's
+share of the publication's remaining seconds is unmeasured: task 80's attribution
+(`.build/tasks/seed-recipe-cost/attribution.md`) left the transactions' formation and comparisons together.
+This entry was written outside the loop and is a residual.
+
+Recorded 2026-09-22 (task 85's decision; a design, no theory changes).

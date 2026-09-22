@@ -1,16 +1,22 @@
 # Adoptions of accepted answers
 
 An adoption carries an accepted answer to a request of the refinement layer into the published
-repository state. `tools/development_adoption.py --record R --output DIR` judges the retained answer
+repository state. `python3 -B tools/development_adoption.py --record R --output DIR` judges the retained answer
 again and requires its retained verdict and publication words (nothing the answer read has moved) and
 that its admitted, certified generation publishes over the incumbent it was judged against, installs the theory
 Isabelle accepted when the answer was judged, byte for byte, as a repository theory imported by the
 layer's boundary `Native_Execution_Refinements`, runs the ordinary incremental check (every report
 word equal to its retained word), and then checks the adoption's evidence with the receipt it retains
 and that the check's accepted context records the installed theory at the judged frame's digest
-(`frame_sha256`). It refuses a theory of the answer's name that already stands and a tree whose
-`theories/`, `ROOT` or `tools/` differ from its commit, which it retains as `revision`, and writes its
-receipt here itself. Until task 265 its last step judged the answer once more in the adopted workspace,
+(`frame_sha256`). Before anything it decides through that evidence over every receipt here, by the
+answer's digest: a theory of the answer's name that already stands refuses the adoption, and so does a
+receipt of any name binding the digest as adopted; a control's or a refused attempt's receipt binds
+nothing and blocks no later attempt. It also refuses a tree whose `theories/`, `ROOT` or `tools/` differ
+from its commit, which it retains as `revision`, and writes no bytecode, so a tracked `.pyc` cannot make
+it refuse its own tree. It writes its receipt here itself, whole, named by its own content
+(`<theory>-<first 12 hex of the receipt's SHA-256>.json`), so no two attempts meet at one path; once an
+adoption's receipt is written the evidence over every receipt here must hold, or the adoption is
+withdrawn. A receipt keeps digests and no path of the adoption's output, each digest once. Until task 265 its last step judged the answer once more in the adopted workspace,
 which defined the answer state as the request state and judged the published state against itself
 (DECISIONS.md, "An adoption is established by its evidence; the published state is never judged against
 itself"): the `published` step of both receipts below is that self-comparison, kept as it ran, and it
@@ -37,7 +43,8 @@ transport choice that makes the theory unique and stable across replays, not a c
 refinement to adopt. Controls are run in an isolated working copy of the repository, so the
 published state never holds them; only their receipts are retained here.
 
-`Development_Answer_5aba3385cee9.json` is the receipt of the control `demanded-reformulated`
+`Development_Answer_5aba3385cee9-41e74a23a6af.json` (renamed by task 273 from `Development_Answer_5aba3385cee9.json`,
+its content unchanged, so that it stands apart from any later attempt) is the receipt of the control `demanded-reformulated`
 (`ordered_member_tree` restated through `map (\<lambda>y. y)`). It was first adopted and withdrawn in an
 isolated copy; on 2026-09-19 it was adopted again through the publication gate in the working tree and
 withdrawn by the tool (the working tree held it only while the adoption ran): the precondition judged it
@@ -46,7 +53,8 @@ executed 48 recipes with every word equal and reused 3, and the published state 
 itself (27.3 s; the self-comparison above). `control` and `withdrawn` keep this receipt from ever
 establishing an adoption.
 
-`Development_Answer_0ccf746fe2cf.json` is the first adoption of a real answer: the indexed complete data
+`Development_Answer_0ccf746fe2cf.json`, named before receipts were named by their content, is the first adoption of a
+real answer: the indexed complete data
 walk answering the request for `Factor_Complete_Data_Walks.finite_data_walk`
 ([indexed-data-walk.json](../development-answers/indexed-data-walk.json)). The retained verdict refused it
 for its six introduced constants and its repair accepted it over the extension defining them, so it was

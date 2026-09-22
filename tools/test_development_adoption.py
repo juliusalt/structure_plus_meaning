@@ -10,6 +10,10 @@ BaseException included, a failure inside install() after its first write, and SI
 check; a withdrawal that fails part-way names the file it could not restore. The final step checks the
 adoption's evidence and the check's accepted context (task 265): the installed file changed after
 installation, a context recording another digest and a tree that differs from its commit are each refused.
+Step 0 decides through the evidence over every retained receipt by the answer's digest (task 273): a
+receipt of another name binding the digest refuses, a control's or a refused attempt's receipt blocks
+nothing, a receipt binding the digest that appears before retention withdraws the adoption, the retained
+receipt is published whole and holds no path of the output, and the tool writes no bytecode.
 """
 import argparse
 import contextlib
@@ -56,7 +60,19 @@ class AdoptionExits(unittest.TestCase):
         self.frame_text = development_answer.answer_theory(development_answer.STATES['refinement_layer'],
                                                            self.answer)
         self.frame = hashlib.sha256(self.frame_text.encode()).hexdigest()
-        self.retained = self.project / RETAINED / (self.name + '.json')
+        self.retained_dir = self.project / RETAINED
+
+    def receipts(self):
+        """The retained receipts of the temporary project."""
+        return sorted(self.retained_dir.glob('*.json')) if self.retained_dir.is_dir() else []
+
+    def plant(self, file, **fields):
+        """A retained receipt of the answer's digest under the given file name."""
+        self.retained_dir.mkdir(parents=True, exist_ok=True)
+        planted = self.retained_dir / file
+        planted.write_text(json.dumps({'answer_digest': development_answer.answer_digest(self.answer), 'steps': {},
+                                       **fields}))
+        return planted
 
     def adopt(self, final=None, check=None, before=None, control=False, tree='revision-of-the-tree', patches=()):
         """Run the adoption; return its exit code, or the exception it raised.
@@ -117,6 +133,8 @@ class AdoptionExits(unittest.TestCase):
             (out / 'incremental.json').write_text(json.dumps(
                 {'status': 'accepted', 'recipes': {}, 'phases': {}, 'rebuilt_theories': [],
                  'accepted_proof_context': str(out / 'proof')}))
+            (out / 'proof').mkdir()
+            (out / 'proof' / 'accepted-context.json').write_text('{}\n')
             return types.SimpleNamespace(returncode=0)
         return run
 
@@ -125,7 +143,7 @@ class AdoptionExits(unittest.TestCase):
         self.assertFalse(self.theory.exists(), 'the answer theory stayed installed')
         self.assertEqual(self.layer.read_text(), self.original['layer'], 'the layer import stayed installed')
         self.assertEqual(self.root.read_text(), self.original['root'], 'the ROOT entry stayed installed')
-        self.assertFalse(self.retained.exists(), 'a receipt was retained')
+        self.assertEqual(self.receipts(), [], 'a receipt was retained')
         receipt = self.output / 'receipt.json'
         self.assertTrue(receipt.is_file(), 'no receipt was written')
         self.assertNotEqual(json.loads(receipt.read_text())['status'], 'adopted')
@@ -158,7 +176,8 @@ class AdoptionExits(unittest.TestCase):
                          (self.original['layer'], self.original['root']))
         receipt = json.loads((self.output / 'receipt.json').read_text())
         self.assertEqual((receipt['status'], receipt.get('withdrawn'), receipt['control']), ('adopted', True, True))
-        self.assertEqual(json.loads(self.retained.read_text()), receipt)
+        [retained] = self.receipts()
+        self.assertEqual(json.loads(retained.read_text()), receipt)
         evidence = development_answer.adoption_evidence(self.answer, self.project)
         self.assertEqual((evidence['present'], evidence['holds']), (False, False))
 
@@ -175,15 +194,26 @@ class AdoptionExits(unittest.TestCase):
                          (development_answer.answer_digest(self.answer), self.frame, 'revision-of-the-tree',
                           'validation/development-answers/' + RECORD.name))
         self.assertEqual(receipt['steps']['installation']['theory_sha256'], self.frame)
-        self.assertEqual(receipt['steps']['context']['recorded_sha256'], self.frame)
-        self.assertEqual(json.loads(self.retained.read_text()), receipt)
+        self.assertEqual(receipt['steps']['context'],
+                         {'accepted_context_sha256': hashlib.sha256(b'{}\n').hexdigest(), 'records_frame': True})
+        self.assertNotIn('frame_sha256', receipt['steps']['precondition'])
+        text = json.dumps(receipt)
+        self.assertEqual(text.count(self.frame), 2, 'the frame digest is kept more than at its two places')
+        self.assertEqual(text.count(receipt['answer_digest']), 1, 'the answer digest is kept more than once')
+        self.assertNotIn(str(self.output), text)
+        self.assertNotIn(str(self.project), text)
+        [retained] = self.receipts()
+        self.assertEqual(json.loads(retained.read_text()), receipt)
+        self.assertEqual(retained.name, self.name + '-' + hashlib.sha256(retained.read_bytes()).hexdigest()[:12]
+                         + '.json')
+        self.assertEqual([p for p in self.retained_dir.iterdir() if p.suffix != '.json'], [])
         self.assertTrue(development_answer.adoption_evidence(self.answer, self.project)['holds'])
 
     # Refusals before anything: the answer's name already stands, or the tree differs from its commit.
 
     def test_already_adopted_is_refused(self):
         self.assertEqual(self.adopt(), 0)
-        state = {path: path.read_bytes() for path in (self.theory, self.layer, self.root, self.retained)}
+        state = {path: path.read_bytes() for path in (self.theory, self.layer, self.root, *self.receipts())}
         shutil.rmtree(self.output)
         outcome = self.adopt()
         self.assertIsInstance(outcome, AssertionError)
@@ -198,7 +228,63 @@ class AdoptionExits(unittest.TestCase):
         self.assertEqual(self.theory.read_text(), 'planted\n')
         self.assertEqual((self.layer.read_text(), self.root.read_text()),
                          (self.original['layer'], self.original['root']))
-        self.assertFalse(self.retained.exists())
+        self.assertEqual(self.receipts(), [])
+
+    # Step 0 through the evidence over every retained receipt, by the answer's digest.
+
+    def test_receipt_under_another_name_binding_the_digest_is_refused(self):
+        planted = self.plant('Elsewhere.json', status='adopted', control=False)
+        outcome = self.adopt()
+        self.assertIsInstance(outcome, AssertionError)
+        self.assertIn('already binds', str(outcome))
+        self.assertFalse(self.theory.exists())
+        self.assertEqual((self.layer.read_text(), self.root.read_text()),
+                         (self.original['layer'], self.original['root']))
+        self.assertEqual(self.receipts(), [planted])
+
+    def test_attempts_receipts_do_not_block_a_later_attempt(self):
+        refused = self.plant(self.name + '.json', status='refused', control=False)
+        text = refused.read_text()
+        self.assertEqual(self.adopt(control=True), 0)
+        shutil.rmtree(self.output)
+        self.assertEqual(self.adopt(), 0)
+        self.assertEqual(refused.read_text(), text)
+        self.assertEqual(len(self.receipts()), 3)
+        self.assertTrue(development_answer.adoption_evidence(self.answer, self.project)['holds'])
+
+    def test_binding_receipt_appearing_before_retention_is_withdrawn(self):
+        run, plant = self.adopt_check_run(), self.plant
+
+        def planting(command, **options):
+            plant('Appeared.json', status='adopted', control=False)
+            return run(command, **options)
+        outcome = self.adopt(patches=[mock.patch('subprocess.run', planting)])
+        self.assertIsInstance(outcome, int)
+        self.assertNotEqual(outcome, 0)
+        self.assertFalse(self.theory.exists())
+        self.assertEqual([p.name for p in self.receipts()], ['Appeared.json'])
+        self.assertIn('evidence fails once the receipt is retained',
+                      json.loads((self.output / 'receipt.json').read_text())['error'])
+
+    def test_retained_receipt_is_published_whole(self):
+        published, publish = [], development_adoption.publish_text
+
+        def recording(path, text):
+            published.append(Path(path))
+            return publish(path, text)
+        self.assertEqual(self.adopt(patches=[mock.patch.object(development_adoption, 'publish_text', recording)]), 0)
+        self.assertEqual(published, self.receipts())
+
+    def test_the_tool_writes_no_bytecode(self):
+        tools = self.project.parent / 'tools'
+        tools.mkdir()
+        for source in (development_answer.ROOT / 'tools').glob('*.py'):
+            shutil.copyfile(source, tools / source.name)
+        environment = {k: v for k, v in os.environ.items() if k != 'PYTHONDONTWRITEBYTECODE'}
+        completed = subprocess.run([development_adoption.sys.executable, str(tools / 'development_adoption.py'),
+                                    '--help'], cwd=tools, env=environment, capture_output=True, text=True)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertEqual(list(tools.rglob('*.pyc')), [])
 
     def test_tree_differing_from_its_commit_is_withdrawn(self):
         self.assertWithdrawn(self.adopt(tree=AssertionError('The tree differs from its commit: ROOT')))
@@ -243,13 +329,9 @@ class AdoptionExits(unittest.TestCase):
         self.assertWithdrawn(self.adopt(final=[]))
 
     def test_unwritable_retained_receipt_is_withdrawn(self):
-        retained, write_text = self.retained, Path.write_text
-
-        def failing(path, *args, **options):
-            if path == retained:
-                raise OSError('injected OSError retaining the receipt')
-            return write_text(path, *args, **options)
-        self.assertWithdrawn(self.adopt(patches=[mock.patch.object(Path, 'write_text', failing)]))
+        def failing(path, text):
+            raise OSError('injected OSError retaining the receipt')
+        self.assertWithdrawn(self.adopt(patches=[mock.patch.object(development_adoption, 'publish_text', failing)]))
 
     def test_timeout_at_the_first_judgment_writes_a_receipt(self):
         self.assertWithdrawn(self.adopt(before=TIMEOUT))

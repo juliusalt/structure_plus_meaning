@@ -78,7 +78,7 @@ records made under the earlier fixed name `Development_Answer` differ in exactly
 `demanded-reformulated.json` is a control on the same refinement-layer request: it states
 `ordered_member_tree` through `map (\<lambda>y. y)`, so the verdict reads the incumbent equation removed and
 its own added, and accepts it. It was adopted and withdrawn in an isolated copy
-([receipt](../development-adoptions/Development_Answer_5aba3385cee9.json)).
+([receipt](../development-adoptions/Development_Answer_5aba3385cee9-41e74a23a6af.json)).
 
 `indexed-data-walk.json` is the first real answer: the request for
 `Factor_Complete_Data_Walks.finite_data_walk` (two incumbent code equations) is answered by the complete

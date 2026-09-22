@@ -11934,3 +11934,48 @@ their own word changes over the final layout; none of them must precede task 30.
 - This design was made outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 136's decision; a design, no theory changes).
+
+## The overnight native-control questions state their candidates as keys
+
+Task 56 moved the loop's contract question to the keyed question and left the index form serving the
+overnight native-control group (HANDOFF Open 21). Every question of that group is now an instance of
+`keyed_faceted_question` or its one-facet instance `keyed_development_question`, so no theory outside
+`Filtered_Native_Questions` reads `filtered_development_question`, `filtered_development_indices`,
+`native_admitted_subjects`, `native_admitted_choice`, `native_packet_subjects`, or states a candidate as a
+`finite_development_index` payload. `Filtered_Native_Questions` is unchanged; retiring the index form is the
+next build.
+
+**The key.** None of these subject lists had a key in use, so each takes the first-occurrence key of its own
+list, `first_occurrence_key subjects`, injective on the subjects (`first_occurrence_key_inj_on`), which is all
+the keyed contracts ask. `faceted_native_question` stays only as an abbreviation of `keyed_faceted_question`
+at that key; its two theorems are gone, and its users take `keyed_admitted_choice_condition` directly. The
+first-occurrence key names equal subjects alike where the index form told their positions apart. The only
+scopes with equal subjects are the review controls that repeat a whole list (`receiving_review_scopes`,
+`cause_root_review_scopes`, `cause_certificate_scopes`): with either form every position of an accepted
+subject is kept and the choice is the singleton of equal values, so no decision tells equal subjects apart.
+
+**Contracts restated over the subject.** The admissions that named an index are stated at the subject whose
+key path is accepted: `guard_representation_admission` and `judgment_artifact_admission` obtain the
+candidate; `judgment_bridge_admission`, `union_admission_original_condition`,
+`context_input_admission_original_condition`, `admitted_bridge_native_meaning`, `admitted_bridge_known_calls`,
+`admitted_judgment_source_meaning`, `native_union_admission_refines_syntax` and
+`native_seed_union_refines_syntax` take the subject and its membership. Each is `keyed_faceted_admission_at`
+or `keyed_development_admission` read through the theory's own observation equation; no question contract is
+proved here. The bridge's receive and install rows keep the position of each admitted candidate in the
+candidate list, the row presentation the group's later theories read (`admitted_judgment_artifacts`), and
+their field lemmas now give that position's bound and its candidate's key path instead of an index payload.
+
+**Candidate counts.** Guard representation 3, judgment artifact 4, judgment bridge 3, union 3, context input
+2, receiving programs 6 (12 in the repeated control), cause-root and child-application methods 3 (6 repeated),
+certificate results one per constructor run (3, 6 repeated). The keyed question's growth with the candidate
+count (task 56's entry, 3.6–3.8 times the index form at 6–7 candidates) is at most that here.
+
+**Words.** No recipe the landing check runs presents these questions, so no landing-check word changes, and
+the seed's and machinery's words are equal. The overnight recipe (`tools/reconstruct_overnight.py`, boundary
+`validation/overnight-20260918/`) presents them in all three replayed reports — certificates through
+`cause_certificate_choice`, materials through `cause_child_application_choice`, sources through the admitted
+guard requests — so its expected report boundaries change: each packet's question states its candidates as
+paths and its admission accepts paths. This is not a refinement: a question's presentation changed. That
+boundary was already behind the sources before this task (q33); its re-recording is left to the planner (q53).
+
+Recorded 2026-09-22 (task 90).

@@ -88,17 +88,25 @@ definition guard_representation_candidates where
   "guard_representation_candidates=[Body_Only_Target,Empty_Target,Complete_Guard_Target]"
 
 definition guard_representation_question where
-  "guard_representation_question xs=filtered_development_question guard_representation_candidates
+  "guard_representation_question xs=keyed_development_question
+    (first_occurrence_key guard_representation_candidates) guard_representation_candidates
     (\<lambda>m. guard_representation_observation m xs)"
 
 theorem guard_representation_admission:
   assumes question: "guard_representation_question xs=Some Q"
     and admitted: "native_development_admission Q report=Some accepted"
-    and selected: "finite_development_index i\<in>set accepted"
-  shows "i<length guard_representation_candidates \<and>
-    guard_representation_condition (guard_representation_candidates!i) xs"
-  using filtered_development_admission[OF question[unfolded guard_representation_question_def] admitted selected]
-  by (simp only: guard_representation_observation_exact)
+    and selected: "x\<in>set accepted"
+  obtains m where "m\<in>set guard_representation_candidates"
+    "x=finite_path (first_occurrence_key guard_representation_candidates m)"
+    "guard_representation_condition m xs"
+proof -
+  obtain m where member: "m\<in>set guard_representation_candidates"
+    and path: "x=finite_path (first_occurrence_key guard_representation_candidates m)"
+    and observed: "guard_representation_observation m xs"
+    by (rule keyed_development_admission[OF question[unfolded guard_representation_question_def]
+      admitted selected])
+  show thesis by (rule that[OF member path observed[unfolded guard_representation_observation_exact]])
+qed
 
 definition checked_judgment_rows where
   "checked_judgment_rows=filtered_judgment_rows syntax_judgment_data syntax_judgment_cases syntax_judgment_check"

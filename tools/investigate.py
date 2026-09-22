@@ -11,6 +11,8 @@ import json
 import math
 import os
 from pathlib import Path
+
+import isabelle_places
 import platform
 import re
 import signal
@@ -873,7 +875,7 @@ def main() -> int:
     parser.add_argument("--threads", type=int, default=min(12, os.cpu_count() or 1))
     parser.add_argument("--build-timeout", type=float, default=300)
     parser.add_argument("--runtime-timeout", type=float, default=60)
-    parser.add_argument("--cache-home", type=Path, default=Path(tempfile.gettempdir()) / "structural-isabelle")
+    parser.add_argument("--cache-home", type=Path, default=isabelle_places.USER_HOME)
     parser.add_argument("--engine-cache", type=Path, default=Path(tempfile.gettempdir()) / "structural-investigation-engines")
     parser.add_argument("--output", type=Path, help="Run directory; receipt.json is replaced atomically for this invocation")
     modes = parser.add_subparsers(dest="mode", required=True)

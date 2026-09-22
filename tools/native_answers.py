@@ -16,6 +16,8 @@ import argparse
 import gzip
 import hashlib
 import json
+
+import isabelle_places
 import re
 import subprocess
 import sys
@@ -358,7 +360,7 @@ SUBJECT = re.compile(r"[A-Za-z][A-Za-z_0-9']*(\.[A-Za-z][A-Za-z_0-9']*)*")
 
 
 def active_base(base):
-    return (base or Path(json.loads(Path('/tmp/structural-active-context.json').read_text())['directory'])).resolve()
+    return (base or Path(json.loads(isabelle_places.ACTIVE_CONTEXT.read_text())['directory'])).resolve()
 
 
 def run(name, command, log, timeout):

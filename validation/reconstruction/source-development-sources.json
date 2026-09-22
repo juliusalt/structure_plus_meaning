@@ -738,7 +738,7 @@
   "theories/Memoized_Function_Sequences.thy": "3e8e520472d292bdf7d1c82b16b1562fbf10bd385dfcd4a1f4903b49e57ea78a",
   "theories/Method_Development.thy": "82f4630526ae2bbfaba29d226b47bad77ed086cfc93e9765a3b04ca3bcfc3915",
   "theories/Method_Investigation.thy": "aefaf2532a1096f9945c6592b52241e9ac9e4ec0558fafabdcf6a30b3ddba7c1",
-  "theories/Native_Collection_Programs.thy": "465f01094d94c88719e7684fe7077115c9a01648384f466551d4e47cc88a830f",
+  "theories/Native_Collection_Programs.thy": "64fcb7309aeb26cf6afa679cd118fbe489228b1c6c057e21125298cb4ddf26a9",
   "theories/Native_Development_Execution.thy": "4bfcec27dcff8c8b658dd784c8c448613aa2beda5f687d983685e50fa55fcae3",
   "theories/Native_Development_Execution_Base.thy": "7a8a7a00e9593e8388ce848b65ba22404c37eee8c7e9f4f2bea83331dfa8a1b8",
   "theories/Native_Development_Steering.thy": "ef4cd6de08d93f1c5ca7ea6090f7954a6c5e4f65e5247b9639fdb0b7df8cc841",

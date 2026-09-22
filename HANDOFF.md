@@ -38,8 +38,10 @@ obligation once in `Isabelle_Entities`, re-pointing the successor's stronger cop
 deciding a sufficient condition through one lemma) — landed by #243 (`76cd520c`); #256 (`cc1b03fb`) makes the exporter
 prove it at every state it defines, and #227 (`64af2b10`) cites it at the exported states, its map row's three
 sentences left to #42 (mailed). #42 and #110 are ready; the rule-family law #233 has landed. #267 (`8b77ee97`) listed the exporter's declarations in position order and proves the
-obligation linearly (one word change); #274 proves it on the definition's right-hand side, since rewriting the goal
-with the whole context term takes 0.6 s of its 0.62 s at the machinery state (#267's review). #42
+obligation linearly (one word change); #274 (`d913c103`) proved it on the definition's right-hand side, the goal no
+longer rewritten with the whole context term; what remains is the spine conversion, 0.21 s at the machinery's entity
+list and paid at every state the exporter defines, which #279 takes through one equation of the notion instantiated
+per state. #42
 passes the indexes, #44 builds absence with no inequality and excess's witness over the index, #108 reads it. Roots
 stay a store with distinct keys, #38 stating the roots field under a carried condition on their order, owned by the
 exporter.
@@ -644,6 +646,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#42** (`5cb209d6`): `Development_Native_Verdict` — the verdict's entry rule, its contract and the two instances,
   the loop's central judgment native over two whole states; its review's reflection and measurement to #278, its
   n-ary tuple to #112 (Open 85), its atom consequence and the decomposition import to #44.
+- **#274** (`d913c103`): the exporter's obligation proved on the definition's right-hand side and transported through
+  its equation, #267's order lemmas retired for HOL's; its review's remaining spine conversion to #279, its survey of
+  order facts named for their user to Open 86.
 
 ## Open
 
@@ -927,6 +932,10 @@ Not yet planned, in the order they are expected to be planned:
 83. **The documented replay's cost** (#263's review, 5): 1,037 s for sixteen records at two runs; each framed row pays a
     parts session, a proof session and an export. A measured split per step first, then whether the parts reading can
     share the proof session's context; with Open 10, at a measured need.
+86. **Order facts named for their user** (#274's review): a general order fact restated locally and named `isabelle_*`
+    rather than for its subject — the exporter's two are now retired for HOL's. A bounded pass over the repository's
+    own `sorted_wrt`, `sorted` and `distinct` lemmas would apply the reuse rule once instead of once per reviewer.
+    When slots stand idle, or with the next edit of a theory holding such a lemma.
 85. **The n-ary tuple below the verdict** (#42's review, follow-up 2): `term_tuple`, `finite_pattern_tuple` and
     `evaluate_pattern_tuple` stand in `Development_Native_Verdict`; their second use is #112's n-ary conclusion, which
     cites them where they stand or moves them beside the rule constructors in `Native_Collection_Programs` — a change
@@ -953,10 +962,10 @@ Not yet planned, in the order they are expected to be planned:
   all three mailed to #42. #267 lists the declarations in
   position order and proves the obligation linearly (#256's proof is quadratic, 2.78 s on the machinery at every
   definition of a state): one word change, landed (`8b77ee97`); #157 re-records every answer record once over it and the
-  layout (the native records' entity keys move with the order; mailed); #274 proves the obligation on the definition's
-  right-hand side, the goal no longer rewritten with the whole context term (#267's review).
-- **In flight (plan-47, 21:15)**: #269 works, #275 is in review; #44, #274, #276, #278 and #251 are ready; #128 and
-  #147 finish their landings. The harness's delta layer is deployed and dormant
+  layout (the native records' entity keys move with the order; mailed); #274 (`d913c103`) proved the obligation on the definition's
+  right-hand side; what remains is the spine conversion over a state's entities, which #279 takes through one equation.
+- **In flight (plan-47, 21:25)**: #44, #251, #269, #275 and #278 work; #276, #277 and #279 are ready; #128 and #147
+  finish their landings. The harness's delta layer is deployed and dormant
   (`notes/plan-delta-layer.md`), switched on for no base yet (20:12). Mailed to tasks not yet started, travelling with them: the level a use
   cites to #214, #237 and #239; #261's review to #110, #112, #192, #214 and #237; #263's and #255's to #265; #263's
   unproduced native rows to #157; #223's unmeasured gain to #159; and the earlier ones: #182's to #110, #189's to #192

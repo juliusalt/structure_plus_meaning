@@ -12316,3 +12316,21 @@ per-row filter, spent 29.5 s a call rebuilding an answer state's reach table.
 - **A request state that is not closed** is judged whole for every answer to it.
 
 Recorded 2026-09-22 (task 171's design; no theory changes).
+
+## An answer's edit is its entity difference, and its constructor presents the answer state
+
+Build 2 of the preceding entry (task 186, `Development_State_Edit`). The applied edit is stated over entity lists:
+the answer state is the request state's table extended by `isabelle_appended_names`, its entities kept in the request's
+order followed by the added ones, its roots the request's (`edit_applied`), which is exactly the native answer state
+(`development_native_answer_state_applied`). The edit's rows are those of the true difference, not of the answer's two
+lists: an entity removed and added again, as the restating answer does, or an added entity the request already holds,
+stays at its row with its key, since `keys_shared` gives one identity one key across the two states and `edit_reduced`
+has no place for a row that is both removed and added. The constructor returns an option: it refuses exactly the edits
+failing the specification condition (`state_edit_of_refuses`), and its refusal is no verdict. The contract is stated for
+a request state presented by its presenter (`state_presenter S=Some R`): an added row's key is fresh only against the
+presenter's first-occurrence keys, which an arbitrary `state_presents` does not fix. Presentability of the answer state
+is a premise, discharged for the native answer by `development_native_answer_state_presentable`. The presenter's
+argument is generalized over the entity and root keys (`state_presents_keyed`); `state_presenter_presents` is its
+instance at the first-occurrence keys and is not yet restated through it.
+
+Recorded 2026-09-22 (task 186; the theory probed with its completion marker in 8.1 s, proofs serialized).

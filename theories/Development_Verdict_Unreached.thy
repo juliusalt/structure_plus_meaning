@@ -55,13 +55,6 @@ theorem state_reach_table_row:
 lemma state_reach_table_formed: "reach_table_formed (state_reach_table A Rs Fs)"
   unfolding reach_table_formed_def single_valued_def by (auto simp: state_reach_table_row)
 
-section \<open>The families of a state, every kind once\<close>
-
-definition state_families :: "state_rows \<Rightarrow> isabelle_context state_family list" where
-  "state_families R=map (state_entities R) entity_kinds"
-
-lemma state_families_range: "set (state_families R)=range (state_entities R)"
-  by (simp add: state_families_def entity_kinds_all)
 
 section \<open>The state's reach, read from its pairs\<close>
 
@@ -511,8 +504,8 @@ text \<open>The presenter's rows, read with every kind's family once.\<close>
 corollary native_unreached_presented:
   assumes presented: "state_presenter S=Some R" and identity: "\<And>y. term_formed (ident y)"
   shows "(verdict_unreached,Pair_Term (reach_table_term (state_reach_table (state_atoms R) (state_roots R)
-      (state_families R))) (state_families_term ident (state_families R)))\<in>positive_meaning verdict_unreached_system \<longleftrightarrow>
+      (state_all_families R))) (state_families_term ident (state_all_families R)))\<in>positive_meaning verdict_unreached_system \<longleftrightarrow>
     isabelle_unreached_entities (fst S) (snd S)=[]"
-  by (rule native_unreached_exact[OF state_presenter_presents[OF presented] state_families_range identity])
+  by (rule native_unreached_exact[OF state_presenter_presents[OF presented] state_all_families_range identity])
 
 end

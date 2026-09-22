@@ -242,31 +242,17 @@ locale key_selection_program = index: key_index_program P k v r present ident re
   for P :: "'u native_system" and s g k v r :: "'u definition_site" and present ident reads rd
 begin
 
+text \<open>The call is an instance of the rearranging rule; it proves only its patterns' obligations.\<close>
+
+sublocale rearranged: native_rearranging_program P g
+  "Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)" k
+  "Finite_Pattern_Pair (native_var 1) (Finite_Pattern_Pair (native_var 0) (native_var 2))"
+  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
+  using call.native_rule_family_axioms[unfolded subject_call_rule_def] by auto
+
 lemma call_exact:
   "(g,Pair_Term (Pair_Term x y) w)\<in>positive_meaning P \<longleftrightarrow> (k,Pair_Term y (Pair_Term x w))\<in>positive_meaning P"
-proof
-  assume holds: "(g,Pair_Term (Pair_Term x y) w)\<in>positive_meaning P"
-  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,subject_call_rule k)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=Pair_Term (Pair_Term x y) w"
-    and support: "\<forall>s e q. (s,e,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f q)\<in>positive_meaning P"
-    by (rule call.holds_cases[OF holds]) blast
-  have F: "F=subject_call_rule k" using rule by simp
-  have fields: "f [0]=x" "f [Suc 0]=y" "f [2]=w" using shape by (simp_all add: F subject_call_rule_def)
-  show "(k,Pair_Term y (Pair_Term x w))\<in>positive_meaning P"
-    using native_rule_support[OF support[unfolded F subject_call_rule_def]] by (simp add: fields)
-next
-  assume held: "(k,Pair_Term y (Pair_Term x w))\<in>positive_meaning P"
-  have formed: "term_formed x" "term_formed y" "term_formed w"
-    using positive_meaning_term_formed[OF held] by simp_all
-  have "(g,evaluate_pattern (native_values [x,y,w]) (decode_finite_pattern
-      (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2))))
-      \<in>positive_meaning P"
-    by (rule call.native_step[where c="[0]" and
-        ps="[([0],(k,Finite_Pattern_Pair (native_var 1) (Finite_Pattern_Pair (native_var 0) (native_var 2))))]"])
-      (use held formed in \<open>simp_all add: subject_call_rule_def\<close>)
-  then show "(g,Pair_Term (Pair_Term x y) w)\<in>positive_meaning P" by simp
-qed
+  using rearranged.at[of "native_values [x,y,w]"] by (simp add: insert_commute)
 
 theorem family_exact:
   "(g,Pair_Term (Pair_Term (path_term a) (present c)) (key_index_term rd ident A F))\<in>positive_meaning P \<longleftrightarrow>

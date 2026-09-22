@@ -432,26 +432,10 @@ lemmas verdict_unreached_rule_defs = verdict_unreached_definitions_def reach_def
 lemma verdict_unreached_reach:
   assumes site: "d\<in>{reach_reached,reach_search,reach_holds,reach_some}"
   shows "(d,t)\<in>positive_meaning verdict_unreached_system \<longleftrightarrow> (d,t)\<in>positive_meaning native_reach_system"
-proof -
-  have defs: "system_definitions verdict_unreached_system=
-      {reach_reached,reach_search,reach_holds,reach_some,verdict_reached_some,verdict_row_reached,
-        verdict_reached_family,verdict_unreached}"
-    by (simp add: verdict_unreached_system_def finite_verdict_unreached_def finite_rule_program_definitions
-      verdict_unreached_definitions_def reach_definitions_def)
-  have reach_defs: "system_definitions native_reach_system={reach_reached,reach_search,reach_holds,reach_some}"
-    by (simp add: native_reach_system_def finite_native_reach_def finite_rule_program_definitions reach_definitions_def)
-  have shared: "system_definitions verdict_unreached_system\<inter>system_definitions native_reach_system=
-      {reach_reached,reach_search,reach_holds,reach_some}"
-    using defs reach_defs by auto
-  have agree: "systems_agree_on verdict_unreached_system native_reach_system
-      {reach_reached,reach_search,reach_holds,reach_some}"
-    unfolding systems_agree_on_def verdict_unreached_system_def finite_verdict_unreached_def
-      native_reach_system_def finite_native_reach_def finite_rule_program_interface finite_rule_program_clause
-    by (simp add: verdict_unreached_definitions_def reach_definitions_def)
-  show ?thesis
-    by (rule positive_meaning_shared_definitions[OF verdict_unreached_formed native_reach_formed])
-      (use agree shared defs reach_defs site in auto)
-qed
+  unfolding verdict_unreached_system_def finite_verdict_unreached_def native_reach_system_def finite_native_reach_def
+  by (rule finite_rule_program_join[OF verdict_unreached_formed[unfolded verdict_unreached_system_def
+    finite_verdict_unreached_def] _ native_reach_formed[unfolded native_reach_system_def finite_native_reach_def]])
+    (use site in \<open>simp_all add: verdict_unreached_definitions_def reach_definitions_def\<close>)
 
 lemma verdict_unreached_reached:
   assumes formed: "reach_table_formed T"

@@ -2,10 +2,10 @@
  "boundary": "Every original subject, candidate, complete result, observation, comparison and revision is reconstructed from source under the original subject contract. Native exact sharing, source projection and Isabelle parallel-map equations preserve the complete packet. The compact report boundary includes its complete native artifact dictionary. The runtime uses the declared Isabelle2025-2 and Poly/ML 5.9.2 bootstrap and records its complete inputs. All six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "concurrent-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 17.22,
+  "seconds": 17.34,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -17,9 +17,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "dd7006d4f35a1587500d77f5329aecf9ce0e7836e97b0bc16192bfe3df3d0eef",
+   "module_sha256": "af9f6bf7b63431d399000a81e70e43168d3fd3db109771ea59e2d449c6d662ae",
    "subject_contracts": {
-    "constructed_history_investigation.yxml": "1756fd3b7201c8b209d2415d8a9349f4ccd002c81ef37f507e2871699f5f7604"
+    "constructed_history_investigation.yxml": "d4a7d7bbe4099350cd046d5fa44e6c6bd88a34370ebf446b77cd7f1576aeb63c"
    },
    "theory": "Concurrent_History_Execution"
   },
@@ -61,11 +61,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "53961ef337b643ac40f943d68af0d8cc8f4142465fc8a525fe611e268ce694e3",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "dd7006d4f35a1587500d77f5329aecf9ce0e7836e97b0bc16192bfe3df3d0eef"
- },
  "recipe": "concurrent-history",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -79,14 +74,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "4bb1e6626ad30077dabe977317455b1b5912f739843ed846251be9fb7a5d2c7c",
+ "source_manifest_sha256": "3972f20a29a9cea96953d96ece4ca03c822ebc27ab04bc70655c097ba00e61d1",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 16.88301850100106
+   "seconds": 17.101220243999705
   }
  ]
 }

@@ -2,10 +2,10 @@
  "boundary": "The source boundary reconstructs all complete native comparisons, including original requirements, generated rule applications, complete executions, all certificates, admission results, comparisons and revisions. Every observation has a proved subject equation. Compilation binds every workflow position to its original native goals. Adequacy of those goals for real development roles, candidate scope, operative integration, condition-6 coverage, the complete cost account and genesis remain separate requirements.",
  "complete_recipe_source_manifest": "native-workflow-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 4,
   "reports_equal": true,
-  "seconds": 15.61,
+  "seconds": 15.49,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,12 +16,12 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "dd8dbcac454064674cb2cf5d2fffcb92c05f9b87502f58f54020163b7c432dc9",
+   "module_sha256": "d2ea03427ecd40fbbf8a09946395b8aec294c6d582032d583f2c3ab7fcf5595b",
    "subject_contracts": {
-    "required_workflow_investigation.yxml": "bbffb0a9b535dcd738043d41f2b998b15ace544ddc8ef35cf9c569a07619440a",
-    "required_workflow_scope_investigation.yxml": "b8da7352b37a52eb45496b607f0f4bb6875e7b1584d54306f5b29abd75f17e7b",
-    "workflow_input_scope_investigation.yxml": "f9bc2ca5128aad9a661b3bb6da36a840c312bcd82b1198598ff5f941685f609a",
-    "workflow_investigation.yxml": "f78da75f84e80bbe8a4fbe2aee56280280e12a37b03a9437c2428f55af1a3664"
+    "required_workflow_investigation.yxml": "11896723ead2f2ddca5590ab32215393013f831b2e1f7f2f165e0a41fc6178da",
+    "required_workflow_scope_investigation.yxml": "5c0a6798e8f354d92eecbbd1cb21569263b240cb0a72abf7847b1f650056daf8",
+    "workflow_input_scope_investigation.yxml": "fcf51efa93cb6c9497ba256f61c77732a29fb6f543db15f175b07d830f31da61",
+    "workflow_investigation.yxml": "aa65ae0dee53b7d7675eef71b2bb2c990f00dc5469edb32b7a00a7b75b17f100"
    },
    "theory": "Native_Workflow_Execution"
   },
@@ -61,11 +61,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "53961ef337b643ac40f943d68af0d8cc8f4142465fc8a525fe611e268ce694e3",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "dd8dbcac454064674cb2cf5d2fffcb92c05f9b87502f58f54020163b7c432dc9"
- },
  "recipe": "native-workflow",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -100,29 +95,29 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "d379737b76d7d526426664f0438e30e2bbea55b2bddcc0a32fb331b33df1ac93",
+ "source_manifest_sha256": "fb1ce6408bbdfa8b9ccb5426e4ccabd8c25241ec40f65b90859029110f126ffc",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation-workflow",
-   "seconds": 15.527574472998822
+   "seconds": 10.786288803999923
   },
   {
    "exit_code": 0,
    "name": "presentation-requirements",
-   "seconds": 13.87064320400168
+   "seconds": 15.210267086000385
   },
   {
    "exit_code": 0,
    "name": "presentation-input-scope",
-   "seconds": 13.717339091999747
+   "seconds": 11.037528979999479
   },
   {
    "exit_code": 0,
    "name": "presentation-expanded",
-   "seconds": 14.134614651000447
+   "seconds": 15.409671974000958
   }
  ]
 }

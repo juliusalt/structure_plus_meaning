@@ -75,9 +75,10 @@ machinery's verification stage judged natively (#193) and its held measurement b
 evidence for a stage's cost; the witnesses at the edit's parts (#195), after #44. From #186's review, #219 (`4dde066c`)
 stated the edit's and presenter's contracts once; from #219's review, #231 (`cded0ab7`) stated once a reading that
 depends only on the names at the positions it uses (`isabelle_name_reading`), the appended-names facts through it; #220 (`fe9e844f`)
-made the edit's constructor look entities up through an index; #249 makes the rest of the answer's construction
-linear in the edit — the caller's index hoisted, `gone` and `D'` from the edit, the key measured, the presenter's rows
-shared (#220's review) — before the stage #193. Specifications keep their exception, judged whole (none in the loop's states).
+made the edit's constructor look entities up through an index; #249 (`052d2c3e`) hoisted the caller's index, took
+`gone` and `D'` from the edit and shared the presenter's rows, measuring no gain at the machinery's 340 entities and
+what stays above the edit — the presenter's entity keys quadratic in the state, names read by list position in every
+row, the edit's insertion sort — which #269, after #261, makes n log n before the stage #193. Specifications keep their exception, judged whole (none in the loop's states).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
 a locus (#26), the presenters (#28), the store's (#83), the rows' fix (#84) and the store search's contract for values
@@ -181,14 +182,14 @@ changes: the premise forest #223, with #241 after #147, then the layout #155, th
 then #161, #165, #167, #169 and its review #170, or #92 and #93 after #167; one task more may end that chain. The
 incremental line's measurement #194 and its review are 9 deep, through #161 and #187. Then #238 (after #237, #214,
 #44, #42 and #227), 6, and #114 (after #112, #110, #261 and #227), 5. Beside them: #255, #259 and #263, running; #267; P1's fix
-#263, then #265 (after #255), with #169 after it; the state rows' notions #261 after #249; the placed forest's cleanup #251 after #223; the
+#263, then #265 (after #255), with #169 after it; the state rows' notions #261, then the presentation's refinement #269; the placed forest's cleanup #251 after #223; the
 re-citations #239 (after #44) and #237.
 
-**Order** (`147 148 128 129 255 259 260 263 264 265 266 267 268 249 250 261 262 223 224 227 228 241 242 155 156 157 158 159 160 161 162 42 43 187 198 165 166 44 45 110 111 192 203 193 204 167 168 214 215 169 170 194 205 112 113 114 195 206 237 238 239 240 251 252 92 93 64 65`).
+**Order** (`147 148 128 129 255 259 260 263 264 265 266 267 268 261 262 269 270 223 224 227 228 241 242 155 156 157 158 159 160 161 162 42 43 187 198 165 166 44 45 110 111 192 203 193 204 167 168 214 215 169 170 194 205 112 113 114 195 206 237 238 239 240 251 252 92 93 64 65`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way (#147, #128);
 the owner's ask, both findings confirmed (#253, #254): P2's fix #255, and P1's fix #263 then #265 (design #258
 landed); readiness's re-citation #259, running; the exporter proof's linear form #267, which every answer frame pays;
-the running #249, then the state rows' notions #261 after it, so that their checks are not held behind parked work; then the parked #223, head of the
+the state rows' notions #261, ready now, and the presentation's n log n form #269 after it, before the stage; then the parked #223, head of the
 deepest chain, and #227, which #42 and #110 wait on; #241 after #147; the layout's word change #155, its answer
 records #157 and its measurement #159 soon after it, while the harness's lineage still holds the last base without
 it; #161; then the verdict's entry #42 and the chains' next links as their inputs land, each ordered by the length of
@@ -577,6 +578,10 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   `define_again`), kernel-checked and reading the declarations alone — `development_seed_declared_once`,
   `development_machinery_declared_once`. Follow-ups: #227 cites them; the proof's quadratic simp and the declared
   constant's invariance under the type map to #267; `define_again`'s first exercise to #263's replay.
+- **#249** `052d2c3e`: the answer state's construction linear in the edit — the caller's index hoisted, `gone` and
+  `D'` from the edit, the presenter's rows shared, the general list-index facts in `First_Index_Trees`, facts at their
+  owners (`Carrier_Indexes`, `Isabelle_Entities`). Follow-ups: #182's entity-key items to #261; the presenter's keys,
+  names read by position and the edit's sort to #269.
 - **#258** `1c664961`: DECISIONS.md "An adoption is established by its evidence; the published state is never judged
   against itself" — the four connections, the harness's three cases, the replay's four groups, the adoption tool's
   final step, the retained records; marked corrections in every entry resting on the self-comparison. Its fix: #263,
@@ -866,10 +871,14 @@ Not yet planned, in the order they are expected to be planned:
 - **#227's performance problem (19:01)**: `code_simp` of the exporter's obligation normalized the whole exported
   context, and `eval` is an oracle; #256 (`cc1b03fb`) made the exporter prove it where it defines a state, and #227
   continues, citing `development_seed_declared_once` and `development_machinery_declared_once`. That proof's simp is
-  quadratic (0.30 s seeded, 2.78 s machinery, at every definition of a state, answer frames included): #267 makes it
-  linear by the declared positions' strict order.
-- **In flight (plan-46, 19:30)**: #249, #255, #256 and #259 work; #128 and #147 finish their landings, #258 lands its
-  entry; #223 is parked and #227 waits for #256. Follow-ups mailed to tasks not yet started travel with them: #182's to #249 and #110 (which waits on #249),
+  quadratic (0.30 s seeded, 2.78 s machinery, at every definition of a state, answer frames included), and the linear
+  proof fails because the declarations follow `Symtab`'s key order (`fast_string_ord`) rather than the positions'
+  (#267's first round): #267, re-planned, lists them in position order — one word change of the defined states'
+  presentations — and proves the obligation by their strict order, and #157 re-records the answer records once over
+  it and the layout.
+- **In flight (plan-46, 19:50, at its close)**: #255, #259, #263 and #267 work; #128 and #147 finish their landings;
+  #223 is parked, and #227 continues after #256's landing. No event is left unhandled; the harness's 19:41 note that
+  #157 waited on an unplanned #267 predated #267's re-plan, which runs. Follow-ups mailed to tasks not yet started travel with them: #182's to #249 and #110 (which waits on #249),
   #189's to #192 and #193, #247's to #235, #44 and #110, #225's union form to #223, and the earlier ones plan-45 sent to
   #187–#193, #212–#214 and #223. #42's brief carries #106's review, #38's reduction and questions and the
   `[code_unfold]` declarations #40 needed (q54); #112's carries #106's review. #155, #92 and #64 name the reports they
@@ -922,7 +931,8 @@ Not yet planned, in the order they are expected to be planned:
   - The planner cannot read a design's entry before it lands: `v2.py read` and a plain read of
     `.build/trees/ID/DECISIONS.md` are refused, so a design's verdict rests on its result and commit message (#85).
   - A re-review writes over the first review's `review.md`, so the follow-ups it says still stand are in no file when
-    the build lands (#118); #38's first review's follow-ups were lost so (11:00), #217's (16:25) and #191's (19:22).
+    the build lands (#118); #38's first review's follow-ups were lost so (11:00), #217's (16:25), #191's (19:22) and
+    #249's (19:35).
   - A probe's summary is not kept beside its log (#40's first probe kept only `probe.log` and `probe.ML`, so
     `parallel_proofs: 0` rests on the cpu/elapsed ratio): the probe tool's summary should be kept, as `mrun.out` was
     (#40's review).

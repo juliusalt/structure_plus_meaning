@@ -1,0 +1,951 @@
+theory Development_Verdict_Mentions
+imports Development_Verdict_Statements
+begin
+
+section \<open>Two fields of one shape: a row's mentions read against a family of atoms\<close>
+
+text \<open>
+  The verdict's field \<open>excess\<close> reads the statements of one subject against the support of a request;
+  the assessment's field \<open>undeclared\<close> reads every row, and every root, against the declared atoms of the
+  whole state. Both read a row's mentions as citations of atoms and ask that each be found in a store of
+  atoms given as the context: the support store, built from the request's support family, and the
+  declaration store, built from the state's declaring rows. They are one row reading at two stores, kept
+  apart at what each demands of the state: \<open>excess\<close> the rows about one key, \<open>undeclared\<close> every row.
+
+  Both are stated positively. Acceptance reads that every mention is found; the list of the offending
+  constants, which needs a store's absence, is not built here. The one complement is the guarded
+  traversal's own: a row that does not have the key among its subjects passes, and that is read
+  positively, by a key differing from every key of the row's subjects.
+\<close>
+
+section \<open>Two paths differ\<close>
+
+text \<open>
+  Two paths differ when one is empty and the other is not, when their first bits have different shapes,
+  or when their first bits agree and their tails differ. Each rule reads a positive shape; no rule reads an
+  absence, and a path is read only through the shapes of its bits.
+\<close>
+
+definition path_empty_left :: "(local_address,local_address,'u definition_site) finite_factor_schema" where
+  "path_empty_left=finite_native_rule (Finite_Pattern_Pair (Finite_Pattern_Payload [])
+    (Finite_Pattern_Pair (native_var 0) (native_var 1))) []"
+
+definition path_empty_right :: "(local_address,local_address,'u definition_site) finite_factor_schema" where
+  "path_empty_right=finite_native_rule (Finite_Pattern_Pair
+    (Finite_Pattern_Pair (native_var 0) (native_var 1)) (Finite_Pattern_Payload [])) []"
+
+definition path_bit_left :: "(local_address,local_address,'u definition_site) finite_factor_schema" where
+  "path_bit_left=finite_native_rule (Finite_Pattern_Pair
+    (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 0))
+    (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload [])) (native_var 1))) []"
+
+definition path_bit_right :: "(local_address,local_address,'u definition_site) finite_factor_schema" where
+  "path_bit_right=finite_native_rule (Finite_Pattern_Pair
+    (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload [])) (native_var 0))
+    (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1))) []"
+
+definition path_tail_rule :: "'u definition_site \<Rightarrow>
+    (local_address,local_address,'u definition_site) finite_factor_schema" where
+  "path_tail_rule d=finite_native_rule (Finite_Pattern_Pair
+    (Finite_Pattern_Pair (native_var 0) (native_var 1)) (Finite_Pattern_Pair (native_var 0) (native_var 2)))
+    [([0],(d,Finite_Pattern_Pair (native_var 1) (native_var 2)))]"
+
+declare path_empty_left_def [code_unfold] path_empty_right_def [code_unfold]
+  path_bit_left_def [code_unfold] path_bit_right_def [code_unfold]
+
+definition path_differ_rules :: "'u definition_site \<Rightarrow>
+    (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
+  "path_differ_rules d=[([0],path_empty_left),([1],path_empty_right),([2],path_bit_left),([3],path_bit_right),
+    ([4],path_tail_rule d)]"
+
+lemmas path_rule_defs = path_empty_left_def path_empty_right_def path_bit_left_def path_bit_right_def
+  path_tail_rule_def
+
+locale path_differ_program = native_rule_family P d "path_differ_rules d"
+  for P :: "'u native_system" and d :: "'u definition_site"
+begin
+
+theorem exact: "(d,Pair_Term (path_term p) (path_term q))\<in>positive_meaning P \<longleftrightarrow> p\<noteq>q"
+proof
+  assume "(d,Pair_Term (path_term p) (path_term q))\<in>positive_meaning P"
+  then show "p\<noteq>q"
+  proof (induction p arbitrary: q)
+    case Nil
+    obtain c F f where rule: "(c,F)\<in>set (path_differ_rules d)"
+      and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
+        Pair_Term (path_term []) (path_term q)"
+      by (rule holds_cases[OF Nil.prems]) blast
+    then show ?case by (auto simp: path_differ_rules_def path_rule_defs path_term_shapes bit_term_shapes)
+  next
+    case (Cons b p)
+    obtain c F f where rule: "(c,F)\<in>set (path_differ_rules d)"
+      and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
+        Pair_Term (path_term (b#p)) (path_term q)"
+      and support: "\<forall>s e r. (s,e,r)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
+        (e,evaluate_pattern f r)\<in>positive_meaning P"
+      by (rule holds_cases[OF Cons.prems]) blast
+    show ?case
+    proof (cases "F=path_tail_rule d")
+      case True
+      have premise: "(d,Pair_Term (f [1]) (f [2]))\<in>positive_meaning P"
+        using native_rule_support[OF support[unfolded True path_tail_rule_def]] by simp
+      have "\<exists>b' qs. q=b'#qs \<and> f [0]=bit_term b' \<and> f [2]=path_term qs \<and> f [0]=bit_term b \<and> f [1]=path_term p"
+        using shape by (auto simp: True path_tail_rule_def path_term_shapes)
+      then obtain b' qs where q: "q=b'#qs" and fields: "f [0]=bit_term b'" "f [2]=path_term qs"
+        "f [0]=bit_term b" "f [1]=path_term p" by blast
+      have "p\<noteq>qs" using Cons.IH[of qs] premise fields by simp
+      then show ?thesis using q by simp
+    next
+      case False
+      then have "F=path_empty_left \<or> F=path_empty_right \<or> F=path_bit_left \<or> F=path_bit_right"
+        using rule by (auto simp: path_differ_rules_def)
+      then show ?thesis using shape by (auto simp: path_rule_defs path_term_shapes bit_term_shapes)
+    qed
+  qed
+next
+  assume "p\<noteq>q"
+  then show "(d,Pair_Term (path_term p) (path_term q))\<in>positive_meaning P"
+  proof (induction p arbitrary: q)
+    case Nil
+    then obtain b qs where q: "q=b#qs" by (cases q) auto
+    have "(d,evaluate_pattern (native_values [bit_term b,path_term qs])
+        (decode_finite_pattern (Finite_Pattern_Pair (Finite_Pattern_Payload [])
+          (Finite_Pattern_Pair (native_var 0) (native_var 1)))))\<in>positive_meaning P"
+      by (rule native_step[where c="[0]" and ps="[]"]) (simp_all add: path_differ_rules_def path_empty_left_def)
+    then show ?case by (simp add: q)
+  next
+    case (Cons b p)
+    note IH=Cons.IH and differ=Cons.prems
+    show ?case
+    proof (cases q)
+      case Nil
+      have "(d,evaluate_pattern (native_values [bit_term b,path_term p])
+          (decode_finite_pattern (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1))
+            (Finite_Pattern_Payload []))))\<in>positive_meaning P"
+        by (rule native_step[where c="[1]" and ps="[]"]) (simp_all add: path_differ_rules_def path_empty_right_def)
+      then show ?thesis by (simp add: Nil)
+    next
+      case (Cons b' qs)
+      note q=this
+      show ?thesis
+      proof (cases "b=b'")
+        case True
+        then have "p\<noteq>qs" using differ q by simp
+        then have inner: "(d,Pair_Term (path_term p) (path_term qs))\<in>positive_meaning P" by (rule IH)
+        have "(d,evaluate_pattern (native_values [bit_term b,path_term p,path_term qs])
+            (decode_finite_pattern (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1))
+              (Finite_Pattern_Pair (native_var 0) (native_var 2)))))\<in>positive_meaning P"
+          by (rule native_step[where c="[4]" and ps="[([0],(d,Finite_Pattern_Pair (native_var 1) (native_var 2)))]"])
+            (use inner in \<open>simp_all add: path_differ_rules_def path_tail_rule_def\<close>)
+        then show ?thesis by (simp add: q True)
+      next
+        case False
+        show ?thesis
+        proof (cases b)
+          case True
+          then have b': "\<not>b'" using False by simp
+          have "(d,evaluate_pattern (native_values [path_term p,path_term qs])
+              (decode_finite_pattern (Finite_Pattern_Pair
+                (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload []))
+                  (native_var 0))
+                (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1)))))\<in>positive_meaning P"
+            by (rule native_step[where c="[3]" and ps="[]"]) (simp_all add: path_differ_rules_def path_bit_right_def)
+          then show ?thesis by (simp add: q True b' bit_term_def)
+        next
+          case b: False
+          then have b': "b'" using False by simp
+          have "(d,evaluate_pattern (native_values [path_term p,path_term qs])
+              (decode_finite_pattern (Finite_Pattern_Pair
+                (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 0))
+                (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload []))
+                  (native_var 1)))))\<in>positive_meaning P"
+            by (rule native_step[where c="[2]" and ps="[]"]) (simp_all add: path_differ_rules_def path_bit_left_def)
+          then show ?thesis by (simp add: q b b' bit_term_def)
+        qed
+      qed
+    qed
+  qed
+qed
+
+end
+
+text \<open>
+  A key differs from every key of a list exactly when it is not among them: the \<open>every\<close> of a context list
+  with the context passed to each element.
+\<close>
+
+locale keys_differ_program = differs: path_differ_program P d + every: native_every_program P a d
+  for P :: "'u native_system" and a d :: "'u definition_site"
+begin
+
+theorem exact: "(a,Pair_Term (path_term k) (keys_term ks))\<in>positive_meaning P \<longleftrightarrow> k\<notin>set ks"
+  by (auto simp: keys_term_def every.exact differs.exact)
+
+end
+
+section \<open>The guarded traversal: every row about a key satisfies a row reading\<close>
+
+text \<open>
+  A row passes the guard when the key differs from every key of its subjects, or when it satisfies the
+  row reading of a site \<open>p\<close> in the reading's context. Its context is the key paired with that reading's
+  context. So every row of a family, and of a selection, that has the key among its subjects satisfies the
+  reading, rows not about the key passing: stated once, over any selection and any row reading, and read
+  by \<open>excess\<close> at the reading \<open>every mention is found in the support\<close>. Neither rule reads the statement a
+  row carries: the identity stays a variable.
+\<close>
+
+definition guard_differs_rule :: "'u definition_site \<Rightarrow>
+    (local_address,local_address,'u definition_site) finite_factor_schema" where
+  "guard_differs_rule a=finite_native_rule
+    (row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 6)) (native_var 1) (native_var 2) (native_var 3)
+      (native_var 4) (native_var 5))
+    [([0],(a,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"
+
+definition guard_checked_rule :: "'u definition_site \<Rightarrow>
+    (local_address,local_address,'u definition_site) finite_factor_schema" where
+  "guard_checked_rule p=finite_native_rule
+    (row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 6)) (native_var 1) (native_var 2) (native_var 3)
+      (native_var 4) (native_var 5))
+    [([0],(p,row_pattern (native_var 6) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)))]"
+
+definition guarded_row_rules :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
+    (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
+  "guarded_row_rules a p=[([0],guard_differs_rule a),([1],guard_checked_rule p)]"
+
+locale guarded_row_program = native_rule_family P g "guarded_row_rules a p" + keys: keys_differ_program P a d
+  for P :: "'u native_system" and g a d p :: "'u definition_site" +
+  fixes present :: "'c \<Rightarrow> factor_term" and ident :: "'i \<Rightarrow> factor_term"
+    and reads :: "'c \<Rightarrow> state_key\<times>'i state_row \<Rightarrow> bool"
+  assumes identity: "\<And>y. term_formed (ident y)"
+    and presented: "\<And>c. term_formed (present c)"
+    and check: "\<And>c z. (p,Pair_Term (present c) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow> reads c z"
+begin
+
+theorem exact:
+  "(g,Pair_Term (Pair_Term (path_term k) (present c)) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
+    (k\<in>set (row_subjects (snd z)) \<longrightarrow> reads c z)"
+proof
+  assume holds: "(g,Pair_Term (Pair_Term (path_term k) (present c)) (state_row_term ident z))\<in>positive_meaning P"
+  obtain c' F f where rule: "(c',F)\<in>set (guarded_row_rules a p)"
+    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
+      Pair_Term (Pair_Term (path_term k) (present c)) (state_row_term ident z)"
+    and support: "\<forall>s e q. (s,e,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
+      (e,evaluate_pattern f q)\<in>positive_meaning P"
+    by (rule holds_cases[OF holds]) blast
+  have fields: "f [0]=path_term k" "f [6]=present c" "f [Suc 0]=path_term (fst z)"
+    "f [2]=keys_term (row_declared (snd z))" "f [3]=keys_term (row_subjects (snd z))"
+    "f [4]=keys_term (row_mentions (snd z))" "f [5]=ident (row_identity (snd z))"
+    using rule shape by (auto simp: guarded_row_rules_def guard_differs_rule_def guard_checked_rule_def
+      row_pattern_def state_row_term_def)
+  have "F=guard_differs_rule a \<or> F=guard_checked_rule p" using rule by (auto simp: guarded_row_rules_def)
+  then show "k\<in>set (row_subjects (snd z)) \<longrightarrow> reads c z"
+  proof
+    assume F: "F=guard_differs_rule a"
+    have "(a,Pair_Term (f [0]) (f [3]))\<in>positive_meaning P"
+      using native_rule_support[OF support[unfolded F guard_differs_rule_def]] by simp
+    then have "k\<notin>set (row_subjects (snd z))" by (simp add: fields keys.exact)
+    then show ?thesis by blast
+  next
+    assume F: "F=guard_checked_rule p"
+    have "(p,evaluate_pattern f (decode_finite_pattern (row_pattern (native_var 6) (native_var 1) (native_var 2)
+        (native_var 3) (native_var 4) (native_var 5))))\<in>positive_meaning P"
+      using native_rule_support[OF support[unfolded F guard_checked_rule_def]] by simp
+    then have "(p,Pair_Term (present c) (state_row_term ident z))\<in>positive_meaning P"
+      by (simp add: row_pattern_def fields state_row_term_def)
+    then show ?thesis by (simp add: check)
+  qed
+next
+  assume guarded: "k\<in>set (row_subjects (snd z)) \<longrightarrow> reads c z"
+  have formed: "term_formed (present c)" by (rule presented)
+  show "(g,Pair_Term (Pair_Term (path_term k) (present c)) (state_row_term ident z))\<in>positive_meaning P"
+  proof (cases "k\<in>set (row_subjects (snd z))")
+    case True
+    then have checked: "(p,Pair_Term (present c) (state_row_term ident z))\<in>positive_meaning P"
+      using guarded check by blast
+    have "(g,evaluate_pattern (native_values [path_term k,path_term (fst z),keys_term (row_declared (snd z)),
+        keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z)),present c])
+        (decode_finite_pattern (row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 6)) (native_var 1)
+          (native_var 2) (native_var 3) (native_var 4) (native_var 5))))\<in>positive_meaning P"
+      by (rule native_step[where c="[1]" and
+          ps="[([0],(p,row_pattern (native_var 6) (native_var 1) (native_var 2) (native_var 3) (native_var 4)
+            (native_var 5)))]"])
+        (use checked formed identity in \<open>simp_all add: guarded_row_rules_def guard_checked_rule_def row_pattern_def
+          state_row_term_def\<close>)
+    then show ?thesis by (simp add: row_pattern_def state_row_term_def)
+  next
+    case False
+    then have absent: "(a,Pair_Term (path_term k) (keys_term (row_subjects (snd z))))\<in>positive_meaning P"
+      by (simp add: keys.exact)
+    have "(g,evaluate_pattern (native_values [path_term k,path_term (fst z),keys_term (row_declared (snd z)),
+        keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z)),present c])
+        (decode_finite_pattern (row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 6)) (native_var 1)
+          (native_var 2) (native_var 3) (native_var 4) (native_var 5))))\<in>positive_meaning P"
+      by (rule native_step[where c="[0]" and ps="[([0],(a,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"])
+        (use absent formed identity in \<open>simp_all add: guarded_row_rules_def guard_differs_rule_def row_pattern_def\<close>)
+    then show ?thesis by (simp add: row_pattern_def state_row_term_def)
+  qed
+qed
+
+end
+
+locale guarded_selection_program = rows: guarded_row_program P g a d p present ident reads +
+    family: native_every_program P f g + selection: native_every_program P s f
+  for P :: "'u native_system" and s f g a d p :: "'u definition_site" and present ident reads
+begin
+
+sublocale reading: selection_every_reading P s f g "\<lambda>(k,c). Pair_Term (path_term k) (present c)" ident
+    "\<lambda>(k,c) z. k\<in>set (row_subjects (snd z)) \<longrightarrow> reads c z"
+  by unfold_locales (simp_all add: rows.identity rows.exact split: prod.split)
+
+theorem family_exact:
+  "(f,Pair_Term (Pair_Term (path_term k) (present c)) (state_family_term ident F))\<in>positive_meaning P \<longleftrightarrow>
+    (\<forall>z\<in>set F. k\<in>set (row_subjects (snd z)) \<longrightarrow> reads c z)"
+  using reading.families.exact[of "(k,c)" F] by (simp add: rows.presented)
+
+theorem exact:
+  "(s,Pair_Term (Pair_Term (path_term k) (present c)) (state_families_term ident Fs))\<in>positive_meaning P \<longleftrightarrow>
+    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. k\<in>set (row_subjects (snd z)) \<longrightarrow> reads c z)"
+  using reading.exact[of "(k,c)" Fs] by (simp add: rows.presented)
+
+end
+
+section \<open>A key is found in a store\<close>
+
+text \<open>
+  A store of atoms is searched by a key with the store's own search, whose checker accepts every value
+  found: finding a key reads the store at its path and nothing of the value there. A mention is found when
+  the store given as the context holds a value at its key; a row's mentions are found when each is.
+\<close>
+
+definition native_any_rule :: "(local_address,local_address,'u definition_site) finite_factor_schema" where
+  "native_any_rule=finite_native_rule (Finite_Pattern_Pair (native_var 0) (native_var 1)) []"
+
+definition store_found_rule :: "'u definition_site \<Rightarrow>
+    (local_address,local_address,'u definition_site) finite_factor_schema" where
+  "store_found_rule k=finite_native_rule (Finite_Pattern_Pair (native_var 0) (native_var 1))
+    [([0],(k,Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))))]"
+
+declare native_any_rule_def [code_unfold]
+
+locale store_found_program = native_rule_family P m "[([0],store_found_rule k)]" +
+    search: native_store_search_program P k ch + any: native_rule_family P ch "[([0],native_any_rule)]"
+  for P :: "'u native_system" and m k ch :: "'u definition_site"
+begin
+
+lemma any_exact: "(ch,Pair_Term x y)\<in>positive_meaning P \<longleftrightarrow> term_formed x \<and> term_formed y"
+proof
+  assume "(ch,Pair_Term x y)\<in>positive_meaning P"
+  then show "term_formed x \<and> term_formed y" using any.holds_formed by fastforce
+next
+  assume formed: "term_formed x \<and> term_formed y"
+  have "(ch,evaluate_pattern (native_values [x,y]) (decode_finite_pattern
+      (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning P"
+    by (rule any.native_step[where c="[0]" and ps="[]"]) (use formed in \<open>simp_all add: native_any_rule_def\<close>)
+  then show "(ch,Pair_Term x y)\<in>positive_meaning P" by simp
+qed
+
+theorem exact:
+  assumes valued: "\<And>y. term_formed (val y)"
+  shows "(m,Pair_Term (store_term val T) (path_term q))\<in>positive_meaning P \<longleftrightarrow> store_lookup T q\<noteq>None"
+proof
+  assume holds: "(m,Pair_Term (store_term val T) (path_term q))\<in>positive_meaning P"
+  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,store_found_rule k)]"
+    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
+      Pair_Term (store_term val T) (path_term q)"
+    and support: "\<forall>s e r. (s,e,r)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
+      (e,evaluate_pattern f r)\<in>positive_meaning P"
+    by (rule holds_cases[OF holds]) (rule that; assumption)
+  have F: "F=store_found_rule k" using rule by simp
+  have premise: "(k,Pair_Term (f [0]) (Pair_Term (f [1]) (f [0])))\<in>positive_meaning P"
+    using native_rule_support[OF support[unfolded F store_found_rule_def]] by simp
+  have fields: "f [0]=store_term val T" "f [Suc 0]=path_term q" using shape by (simp_all add: F store_found_rule_def)
+  show "store_lookup T q\<noteq>None"
+    using premise by (auto simp: fields search.exact[OF valued] path_term_injective)
+next
+  assume "store_lookup T q\<noteq>None"
+  then obtain v where v: "store_lookup T q=Some v" by auto
+  have sf: "term_formed (store_term val T)" by (rule store_term_formed[OF valued])
+  have "(ch,Pair_Term (store_term val T) (val v))\<in>positive_meaning P" by (simp add: any_exact sf valued)
+  then have searched: "(k,Pair_Term (store_term val T) (Pair_Term (path_term q) (store_term val T)))
+      \<in>positive_meaning P"
+    using v sf by (auto simp: search.exact[OF valued])
+  have "(m,evaluate_pattern (native_values [store_term val T,path_term q])
+      (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning P"
+    by (rule native_step[where c="[0]" and
+        ps="[([0],(k,Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))))]"])
+      (use searched sf in \<open>simp_all add: store_found_rule_def\<close>)
+  then show "(m,Pair_Term (store_term val T) (path_term q))\<in>positive_meaning P" by simp
+qed
+
+end
+
+definition row_mentions_rule :: "'u definition_site \<Rightarrow>
+    (local_address,local_address,'u definition_site) finite_factor_schema" where
+  "row_mentions_rule e=finite_native_rule
+    (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5))
+    [([0],(e,Finite_Pattern_Pair (native_var 0) (native_var 4)))]"
+
+locale row_mentions_program = native_rule_family P r "[([0],row_mentions_rule e)]" +
+    found: store_found_program P m k ch + every: native_every_program P e m
+  for P :: "'u native_system" and r e m k ch :: "'u definition_site"
+begin
+
+theorem exact:
+  assumes identity: "\<And>y. term_formed (ident y)" and valued: "\<And>y. term_formed (val y)"
+  shows "(r,Pair_Term (store_term val T) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
+    (\<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None)"
+proof
+  assume holds: "(r,Pair_Term (store_term val T) (state_row_term ident z))\<in>positive_meaning P"
+  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,row_mentions_rule e)]"
+    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
+      Pair_Term (store_term val T) (state_row_term ident z)"
+    and support: "\<forall>s d q. (s,d,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
+      (d,evaluate_pattern f q)\<in>positive_meaning P"
+    by (rule holds_cases[OF holds]) (rule that; assumption)
+  have F: "F=row_mentions_rule e" using rule by simp
+  have premise: "(e,Pair_Term (f [0]) (f [4]))\<in>positive_meaning P"
+    using native_rule_support[OF support[unfolded F row_mentions_rule_def]] by simp
+  have fields: "f [0]=store_term val T" "f [4]=keys_term (row_mentions (snd z))"
+    using shape by (simp_all add: F row_mentions_rule_def row_pattern_def state_row_term_def)
+  show "\<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None"
+    using premise by (simp add: fields keys_term_def every.exact found.exact[OF valued])
+next
+  assume found: "\<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None"
+  have sf: "term_formed (store_term val T)" by (rule store_term_formed[OF valued])
+  have mentions: "(e,Pair_Term (store_term val T) (keys_term (row_mentions (snd z))))\<in>positive_meaning P"
+    using found sf by (simp add: keys_term_def every.exact found.exact[OF valued])
+  have "(r,evaluate_pattern (native_values [store_term val T,path_term (fst z),keys_term (row_declared (snd z)),
+      keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z))])
+      (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3)
+        (native_var 4) (native_var 5))))\<in>positive_meaning P"
+    by (rule native_step[where c="[0]" and ps="[([0],(e,Finite_Pattern_Pair (native_var 0) (native_var 4)))]"])
+      (use mentions sf identity in \<open>simp_all add: row_mentions_rule_def row_pattern_def\<close>)
+  then show "(r,Pair_Term (store_term val T) (state_row_term ident z))\<in>positive_meaning P"
+    by (simp add: row_pattern_def state_row_term_def)
+qed
+
+end
+
+section \<open>A key is present in a path store whatever the rows\<close>
+
+lemma path_store_fold_present:
+  "store_lookup (fold (\<lambda>(k,v) T. store_update T k (Some v)) rows T) q\<noteq>None \<longleftrightarrow>
+    q\<in>fst ` set rows \<or> store_lookup T q\<noteq>None"
+  by (induction rows arbitrary: T) (auto simp: store_lookup_update split: if_splits)
+
+lemma path_store_present: "store_lookup (path_store rows) q\<noteq>None \<longleftrightarrow> q\<in>fst ` set rows"
+  using path_store_fold_present[of rows Empty_Store q] by (simp add: path_store_def)
+
+section \<open>The support store and the declaration store\<close>
+
+text \<open>
+  The support store holds each key of the request's support family at its own path, and is single-valued
+  by construction. The declaration store holds, at the key of each declared constant, the key of the row
+  declaring it: the index of the declaring rows by the constant declared. Its single-valuedness is a
+  condition the presentation carries, named here and owned by the exporter, which exports one declaration
+  per constant; \<open>undeclared\<close> needs only that a key is present, which holds whatever the rows.
+\<close>
+
+definition support_store :: "state_key list \<Rightarrow> state_key binary_path_store" where
+  "support_store ks=path_store (map (\<lambda>q. (q,q)) ks)"
+
+definition support_term :: "state_key list \<Rightarrow> factor_term" where
+  "support_term ks=store_term path_term (support_store ks)"
+
+lemma support_term_formed [simp]: "term_formed (support_term ks)"
+  unfolding support_term_def by (rule store_term_formed) simp
+
+lemma support_store_lookup: "store_lookup (support_store ks) q\<noteq>None \<longleftrightarrow> q\<in>set ks"
+  unfolding support_store_def by (simp only: path_store_present) (force simp: image_image)
+
+lemma support_store_found: "(\<exists>y. store_lookup (support_store ks) q=Some y) \<longleftrightarrow> q\<in>set ks"
+  using support_store_lookup[of ks q] by auto
+
+definition declaration_rows :: "'i state_family list \<Rightarrow> (state_key\<times>state_key) list" where
+  "declaration_rows Fs=concat (map (\<lambda>F. concat (map (\<lambda>z. map (\<lambda>d. (d,fst z)) (row_declared (snd z))) F)) Fs)"
+
+lemma declaration_rows_member:
+  "(d,e)\<in>set (declaration_rows Fs) \<longleftrightarrow> (\<exists>F\<in>set Fs. \<exists>p. (e,p)\<in>set F \<and> d\<in>set (row_declared p))"
+  by (auto simp: declaration_rows_def) (blast, force)
+
+definition declaration_store :: "'i state_family list \<Rightarrow> state_key binary_path_store" where
+  "declaration_store Fs=path_store (declaration_rows Fs)"
+
+definition declaration_term :: "'i state_family list \<Rightarrow> factor_term" where
+  "declaration_term Fs=store_term path_term (declaration_store Fs)"
+
+lemma declaration_term_formed [simp]: "term_formed (declaration_term Fs)"
+  unfolding declaration_term_def by (rule store_term_formed) simp
+
+definition declarations_single_valued :: "'i state_family list \<Rightarrow> bool" where
+  "declarations_single_valued Fs \<longleftrightarrow> single_valued (set (declaration_rows Fs))"
+
+theorem declaration_store_at:
+  assumes sv: "declarations_single_valued Fs"
+  shows "store_lookup (declaration_store Fs) d=Some e \<longleftrightarrow>
+    (\<exists>F\<in>set Fs. \<exists>p. (e,p)\<in>set F \<and> d\<in>set (row_declared p))"
+  using path_store_lookup[OF sv[unfolded declarations_single_valued_def]]
+  by (simp add: declaration_store_def declaration_rows_member)
+
+theorem declaration_store_declared:
+  "store_lookup (declaration_store Fs) d\<noteq>None \<longleftrightarrow> (\<exists>F\<in>set Fs. \<exists>z\<in>set F. d\<in>set (row_declared (snd z)))"
+  unfolding declaration_store_def path_store_present by (force simp: declaration_rows_def)
+
+lemma declaration_store_found:
+  "(\<exists>y. store_lookup (declaration_store Fs) d=Some y) \<longleftrightarrow> (\<exists>F\<in>set Fs. \<exists>z\<in>set F. d\<in>set (row_declared (snd z)))"
+  using declaration_store_declared[of Fs d] by auto
+
+text \<open>
+  A search of the declaration store, with any checker, finds at a constant's key the key of its one
+  declaring row: the store search's own contract read through the carried single-valuedness.
+\<close>
+
+theorem declaration_store_search:
+  assumes search: "native_store_search_program P k ch" and sv: "declarations_single_valued Fs"
+  shows "(k,Pair_Term x (Pair_Term (path_term d) (declaration_term Fs)))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed x \<and> (\<exists>e. (\<exists>F\<in>set Fs. \<exists>p. (e,p)\<in>set F \<and> d\<in>set (row_declared p)) \<and>
+      (ch,Pair_Term x (path_term e))\<in>positive_meaning P)"
+proof -
+  have "(k,Pair_Term x (Pair_Term (path_term d) (store_term path_term (declaration_store Fs))))\<in>positive_meaning P \<longleftrightarrow>
+      term_formed x \<and> (\<exists>bs v. path_term d=path_term bs \<and> store_lookup (declaration_store Fs) bs=Some v \<and>
+        (ch,Pair_Term x (path_term v))\<in>positive_meaning P)"
+    by (rule native_store_search_program.exact[OF search]) simp
+  then show ?thesis by (auto simp: declaration_term_def path_term_injective declaration_store_at[OF sv])
+qed
+
+section \<open>The program of the two fields\<close>
+
+abbreviation verdict_path_differ :: "local_address option definition_site" where
+  "verdict_path_differ \<equiv> (Some [],[21])"
+abbreviation verdict_keys_differ :: "local_address option definition_site" where
+  "verdict_keys_differ \<equiv> (Some [],[22])"
+abbreviation verdict_found_any :: "local_address option definition_site" where
+  "verdict_found_any \<equiv> (Some [],[23])"
+abbreviation verdict_found_search :: "local_address option definition_site" where
+  "verdict_found_search \<equiv> (Some [],[24])"
+abbreviation verdict_key_found :: "local_address option definition_site" where
+  "verdict_key_found \<equiv> (Some [],[25])"
+abbreviation verdict_keys_found :: "local_address option definition_site" where
+  "verdict_keys_found \<equiv> (Some [],[26])"
+abbreviation verdict_row_found :: "local_address option definition_site" where
+  "verdict_row_found \<equiv> (Some [],[27])"
+abbreviation verdict_guard_row :: "local_address option definition_site" where
+  "verdict_guard_row \<equiv> (Some [],[28])"
+abbreviation verdict_guard_family :: "local_address option definition_site" where
+  "verdict_guard_family \<equiv> (Some [],[29])"
+abbreviation verdict_excess :: "local_address option definition_site" where
+  "verdict_excess \<equiv> (Some [],[30])"
+abbreviation verdict_found_family :: "local_address option definition_site" where
+  "verdict_found_family \<equiv> (Some [],[31])"
+abbreviation verdict_found_selection :: "local_address option definition_site" where
+  "verdict_found_selection \<equiv> (Some [],[32])"
+abbreviation verdict_undeclared :: "local_address option definition_site" where
+  "verdict_undeclared \<equiv> (Some [],[33])"
+
+definition undeclared_rule :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
+    (local_address,local_address,'u definition_site) finite_factor_schema" where
+  "undeclared_rule u f=finite_native_rule
+    (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
+    [([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
+
+definition verdict_mentions_definitions :: "(local_address option definition_site\<times>
+    (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
+  "verdict_mentions_definitions=[(verdict_path_differ,path_differ_rules verdict_path_differ),
+    (verdict_keys_differ,native_every_rules verdict_keys_differ verdict_path_differ),
+    (verdict_found_any,[([0],native_any_rule)]),
+    (verdict_found_search,native_store_search_rules verdict_found_search verdict_found_any),
+    (verdict_key_found,[([0],store_found_rule verdict_found_search)]),
+    (verdict_keys_found,native_every_rules verdict_keys_found verdict_key_found),
+    (verdict_row_found,[([0],row_mentions_rule verdict_keys_found)]),
+    (verdict_guard_row,guarded_row_rules verdict_keys_differ verdict_row_found),
+    (verdict_guard_family,native_every_rules verdict_guard_family verdict_guard_row),
+    (verdict_excess,native_every_rules verdict_excess verdict_guard_family),
+    (verdict_found_family,native_every_rules verdict_found_family verdict_row_found),
+    (verdict_found_selection,native_every_rules verdict_found_selection verdict_found_family),
+    (verdict_undeclared,[([0],undeclared_rule verdict_found_selection verdict_found_family)])]"
+
+definition finite_verdict_mentions :: "local_address option finite_native_system" where
+  "finite_verdict_mentions=finite_rule_program verdict_mentions_definitions"
+
+definition verdict_mentions_system :: "local_address option native_system" where
+  "verdict_mentions_system=decode_finite_system finite_verdict_mentions"
+
+lemma finite_verdict_mentions_formed: "finite_system_formed finite_verdict_mentions"
+  by code_simp
+
+lemma verdict_mentions_formed: "schema_system_formed verdict_mentions_system"
+  using finite_verdict_mentions_formed by (simp only: verdict_mentions_system_def finite_system_formed_correct)
+
+lemma verdict_mentions_family:
+  assumes member: "(d,rs)\<in>set verdict_mentions_definitions"
+    and plain: "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}"
+  shows "native_rule_family verdict_mentions_system d rs"
+  unfolding verdict_mentions_system_def finite_verdict_mentions_def
+  by (rule finite_rule_program_family[OF verdict_mentions_formed[unfolded verdict_mentions_system_def
+      finite_verdict_mentions_def] _ member plain]) (simp add: verdict_mentions_definitions_def)
+
+lemmas verdict_mentions_rule_defs = verdict_mentions_definitions_def native_every_rules_def native_every_nil_def
+  native_every_step_def path_differ_rules_def path_rule_defs native_store_search_rules_def
+  native_store_found_rule_def native_store_left_rule_def native_store_right_rule_def native_any_rule_def
+  store_found_rule_def row_mentions_rule_def guarded_row_rules_def guard_differs_rule_def guard_checked_rule_def
+  undeclared_rule_def
+
+interpretation mention_differs: keys_differ_program verdict_mentions_system verdict_keys_differ verdict_path_differ
+  unfolding keys_differ_program_def path_differ_program_def native_every_program_def
+  by (intro conjI; rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
+
+interpretation mention_found: row_mentions_program verdict_mentions_system verdict_row_found verdict_keys_found
+    verdict_key_found verdict_found_search verdict_found_any
+  unfolding row_mentions_program_def store_found_program_def native_store_search_program_def
+    native_every_program_def
+  by (intro conjI; rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
+
+interpretation guard_rows: native_rule_family verdict_mentions_system verdict_guard_row
+    "guarded_row_rules verdict_keys_differ verdict_row_found"
+  by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
+
+interpretation guard_families: native_every_program verdict_mentions_system verdict_guard_family verdict_guard_row
+  unfolding native_every_program_def by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
+
+interpretation guard_selections: native_every_program verdict_mentions_system verdict_excess verdict_guard_family
+  unfolding native_every_program_def by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
+
+interpretation found_families: native_every_program verdict_mentions_system verdict_found_family verdict_row_found
+  unfolding native_every_program_def by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
+
+interpretation found_selections: native_every_program verdict_mentions_system verdict_found_selection
+    verdict_found_family
+  unfolding native_every_program_def by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
+
+interpretation undeclared_entry: native_rule_family verdict_mentions_system verdict_undeclared
+    "[([0],undeclared_rule verdict_found_selection verdict_found_family)]"
+  by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
+
+section \<open>The field \<open>excess\<close>, over any selection and any support\<close>
+
+lemma support_row_exact:
+  assumes identity: "\<And>y. term_formed (ident y)"
+  shows "(verdict_row_found,Pair_Term (support_term ks) (state_row_term ident z))
+      \<in>positive_meaning verdict_mentions_system \<longleftrightarrow> set (row_mentions (snd z))\<subseteq>set ks"
+  unfolding support_term_def by (subst mention_found.exact[OF identity]) (auto simp: support_store_lookup support_store_found)
+
+theorem native_excess_rows:
+  assumes identity: "\<And>y. term_formed (ident y)"
+  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (support_term ks)) (state_families_term ident Fs))
+      \<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. k\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
+proof -
+  interpret excess: guarded_selection_program verdict_mentions_system verdict_excess verdict_guard_family
+      verdict_guard_row verdict_keys_differ verdict_path_differ verdict_row_found support_term ident
+      "\<lambda>ks z. set (row_mentions (snd z))\<subseteq>set ks"
+    by unfold_locales (simp_all add: identity support_row_exact)
+  show ?thesis by (rule excess.exact)
+qed
+
+section \<open>The field \<open>excess\<close> of a presented state\<close>
+
+lemma answer_statements_excess_empty:
+  "development_answer_statements_excess kind C P S=[] \<longleftrightarrow>
+    (\<forall>e\<in>set (development_answer_statements kind C P). \<forall>d\<in>set (entity_mentions e). d |\<in>| S)"
+proof
+  assume empty: "development_answer_statements_excess kind C P S=[]"
+  show "\<forall>e\<in>set (development_answer_statements kind C P). \<forall>d\<in>set (entity_mentions e). d |\<in>| S"
+  proof (intro ballI)
+    fix e d
+    assume e: "e\<in>set (development_answer_statements kind C P)" and d: "d\<in>set (entity_mentions e)"
+    then obtain p where p: "isabelle_specified_proposition e=Some p" "d\<in>set (isabelle_term_constants p)"
+      by (cases "isabelle_specified_proposition e") (auto simp: entity_mentions_def)
+    have "isabelle_term_constants p\<in>set (List.map_filter (map_option isabelle_term_constants \<circ>
+        isabelle_specified_proposition) (development_answer_statements kind C P))"
+      unfolding map_filter_member using e p(1) by (intro bexI[of _ e]) simp_all
+    then show "d |\<in>| S"
+      using empty p(2) unfolding development_answer_statements_excess_def remdups_eq_nil_iff filter_empty_conv
+      by auto
+  qed
+next
+  assume "\<forall>e\<in>set (development_answer_statements kind C P). \<forall>d\<in>set (entity_mentions e). d |\<in>| S"
+  then show "development_answer_statements_excess kind C P S=[]"
+    unfolding development_answer_statements_excess_def remdups_eq_nil_iff filter_empty_conv
+    by (auto simp: map_filter_member entity_mentions_def split: option.splits)
+qed
+
+theorem native_excess_exact:
+  assumes present: "state_presents key S R" and kinds: "kinds_present replaceable ks"
+    and selection: "set Fs=state_entities R ` ks" and bound: "c<length (fst (snd S))"
+    and support: "\<And>d. d<length (fst (snd S)) \<Longrightarrow> key d\<in>set ss \<longleftrightarrow> d |\<in>| P"
+    and identity: "\<And>y. term_formed (ident y)"
+  shows "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss)) (state_families_term ident Fs))
+      \<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    development_answer_statements_excess replaceable (snd S) {|c|} P=[]"
+proof -
+  let ?es="snd (snd S)"
+  have mentions_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length (fst (snd S))"
+    using entity_mentions_positions state_presents_inside[OF present] by (force simp: state_positions_def)
+  have "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss)) (state_families_term ident Fs))
+      \<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    (\<forall>p\<in>(\<Union>k\<in>ks. set (map snd (state_entities R k))). key c\<in>set (row_subjects p) \<longrightarrow> set (row_mentions p)\<subseteq>set ss)"
+    by (auto simp: native_excess_rows[OF identity] selection)
+  also have "\<dots> \<longleftrightarrow> (\<forall>p\<in>entity_row key (snd S) ` {e\<in>set ?es. replaceable e}.
+      key c\<in>set (row_subjects p) \<longrightarrow> set (row_mentions p)\<subseteq>set ss)"
+    by (simp only: kinds_present_rows[OF present kinds])
+  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. replaceable e \<longrightarrow> (key c\<in>set (row_subjects (entity_row key (snd S) e)) \<longrightarrow>
+      set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss))"
+    by blast
+  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. replaceable e \<longrightarrow>
+      (c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<longrightarrow>
+      (\<forall>d\<in>set (entity_mentions e). d |\<in>| P)))"
+  proof -
+    have each: "(key c\<in>set (row_subjects (entity_row key (snd S) e)) \<longrightarrow>
+        set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss) \<longleftrightarrow>
+      (c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<longrightarrow>
+        (\<forall>d\<in>set (entity_mentions e). d |\<in>| P))" if e: "e\<in>set ?es" for e
+    proof -
+      have m: "set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss \<longleftrightarrow> (\<forall>d\<in>set (entity_mentions e). d |\<in>| P)"
+        using mentions_inside[OF e] support by (auto simp: subset_iff)
+      show ?thesis by (simp only: entity_row_subject_key[OF present bound e] m)
+    qed
+    show ?thesis using each by blast
+  qed
+  also have "\<dots> \<longleftrightarrow> development_answer_statements_excess replaceable (snd S) {|c|} P=[]"
+    by (auto simp: answer_statements_excess_empty development_answer_statements_def
+      development_answer_statement_def list_ex_iff)
+  finally show ?thesis .
+qed
+
+text \<open>
+  The verdict reads the field in the answer state, with the request's subject and support carried there by
+  the correspondence of the two tables. Both are consumed from @{const request_presents}: the subject's key
+  unchanged, and the support store built from the request's support keys. A support constant the answer
+  state drops is carried outside the answer's table, and so is never mentioned there; the store holds its
+  key, which no atom of the answer state carries.
+\<close>
+
+corollary native_excess_answer:
+  assumes request: "request_presents key S R rows r k ks" and present': "state_presents key' S' R'"
+    and shared: "keys_shared R R'"
+    and named: "(!) (fst (snd S)) ` fset (problem_subject (fst r))\<subseteq>set (fst (snd S'))"
+    and kinds: "kinds_present replaceable kinds" and selection: "set Fs=state_entities R' ` kinds"
+    and identity: "\<And>y. term_formed (ident y)"
+  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (support_term ks)) (state_families_term ident Fs))
+      \<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    development_answer_statements_excess replaceable (snd S')
+      (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (problem_subject (fst r)))
+      (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (fst (snd (snd r))))=[]"
+proof -
+  have present: "state_presents key S R" using request by (simp add: request_presents_def)
+  have range: "fset (fst (snd (snd r)))\<subseteq>{..<length (fst (snd S))}" using request by (simp add: request_presents_def)
+  obtain c where subject: "problem_subject (fst r)={|c|}" and k: "k=key c" and bound: "c<length (fst (snd S))"
+    and "(k,fst (snd S)!c)\<in>set (state_atoms R)" and keys: "set ks=key ` fset (fst (snd (snd r)))"
+    and "\<forall>d\<in>fset (fst (snd (snd r))). (key d,fst (snd S)!d)\<in>set (state_atoms R)"
+    by (rule request_presents_recovery[OF request])
+  let ?f="isabelle_state_embedding (fst (snd S)) (fst (snd S'))"
+  have name: "fst (snd S)!c\<in>set (fst (snd S'))" using named subject by simp
+  have carried: "key' (?f c)=key c" by (rule keys_shared_embedding[OF present present' shared bound name])
+  have "isabelle_name_at (fst (snd S')) (?f c)=Some (fst (snd S)!c)"
+    by (rule isabelle_state_embedding_shared) (simp_all add: isabelle_name_at_def bound name)
+  then have bound': "?f c<length (fst (snd S'))" by (simp add: isabelle_name_at_def split: if_splits)
+  have image: "fimage ?f (problem_subject (fst r))={|?f c|}" using subject by simp
+  have distinct': "distinct (fst (snd S'))" by (rule state_presents_distinct_names[OF present'])
+  have support: "key' q\<in>set ks \<longleftrightarrow> q |\<in>| fimage ?f (fst (snd (snd r)))" if q: "q<length (fst (snd S'))" for q
+  proof
+    assume "key' q\<in>set ks"
+    then obtain d where d: "d |\<in>| fst (snd (snd r))" "key' q=key d" using keys by auto
+    have dl: "d<length (fst (snd S))" using range d(1) by auto
+    have names: "fst (snd S)!d=fst (snd S')!q" using keys_shared_atom[OF present present' shared dl q] d(2) by simp
+    have "?f d=q"
+      using isabelle_state_embedding_named[of "fst (snd S)" d "fst (snd S)!d" "fst (snd S')" q]
+        isabelle_name_position_at[OF distinct' q] names dl by (simp add: isabelle_name_at_def)
+    then show "q |\<in>| fimage ?f (fst (snd (snd r)))" using d(1) by force
+  next
+    assume "q |\<in>| fimage ?f (fst (snd (snd r)))"
+    then obtain d where d: "d |\<in>| fst (snd (snd r))" "q=?f d" by auto
+    have dl: "d<length (fst (snd S))" using range d(1) by auto
+    have named_d: "fst (snd S)!d\<in>set (fst (snd S'))"
+    proof (rule ccontr)
+      assume unnamed: "fst (snd S)!d\<notin>set (fst (snd S'))"
+      have "?f d=length (fst (snd S'))+d"
+        by (rule isabelle_state_embedding_unshared) (use unnamed dl in \<open>simp add: isabelle_name_at_def\<close>)
+      then show False using q d(2) by simp
+    qed
+    have "isabelle_name_at (fst (snd S')) (?f d)=Some (fst (snd S)!d)"
+      by (rule isabelle_state_embedding_shared) (simp_all add: isabelle_name_at_def dl named_d)
+    then have "fst (snd S')!q=fst (snd S)!d" using q d(2) by (simp add: isabelle_name_at_def)
+    then have "key d=key' q" using keys_shared_atom[OF present present' shared dl q] by simp
+    then show "key' q\<in>set ks" using keys d(1) by force
+  qed
+  show ?thesis
+    unfolding k carried[symmetric] image
+    by (rule native_excess_exact[OF present' kinds selection bound' support identity])
+qed
+
+section \<open>The field \<open>undeclared\<close>\<close>
+
+lemma undeclared_entry_exact:
+  "(verdict_undeclared,Pair_Term x (Pair_Term y w))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    (verdict_found_selection,Pair_Term x y)\<in>positive_meaning verdict_mentions_system \<and>
+    (verdict_found_family,Pair_Term x w)\<in>positive_meaning verdict_mentions_system"
+proof
+  assume holds: "(verdict_undeclared,Pair_Term x (Pair_Term y w))\<in>positive_meaning verdict_mentions_system"
+  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,undeclared_rule verdict_found_selection verdict_found_family)]"
+    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=Pair_Term x (Pair_Term y w)"
+    and support: "\<forall>s e q. (s,e,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
+      (e,evaluate_pattern f q)\<in>positive_meaning verdict_mentions_system"
+    by (rule undeclared_entry.holds_cases[OF holds]) blast
+  have F: "F=undeclared_rule verdict_found_selection verdict_found_family" using rule by simp
+  have fields: "f [0]=x" "f [Suc 0]=y" "f [2]=w" using shape by (simp_all add: F undeclared_rule_def)
+  show "(verdict_found_selection,Pair_Term x y)\<in>positive_meaning verdict_mentions_system \<and>
+      (verdict_found_family,Pair_Term x w)\<in>positive_meaning verdict_mentions_system"
+    using native_rule_support[OF support[unfolded F undeclared_rule_def]] by (simp add: fields)
+next
+  assume both: "(verdict_found_selection,Pair_Term x y)\<in>positive_meaning verdict_mentions_system \<and>
+      (verdict_found_family,Pair_Term x w)\<in>positive_meaning verdict_mentions_system"
+  have formed: "term_formed x" "term_formed y" "term_formed w"
+    using both positive_meaning_term_formed by fastforce+
+  have "(verdict_undeclared,evaluate_pattern (native_values [x,y,w]) (decode_finite_pattern
+      (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))))
+      \<in>positive_meaning verdict_mentions_system"
+    by (rule undeclared_entry.native_step[where c="[0]" and
+        ps="[([0],(verdict_found_selection,Finite_Pattern_Pair (native_var 0) (native_var 1))),
+          ([1],(verdict_found_family,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
+      (use both formed in \<open>simp_all add: undeclared_rule_def\<close>)
+  then show "(verdict_undeclared,Pair_Term x (Pair_Term y w))\<in>positive_meaning verdict_mentions_system" by simp
+qed
+
+theorem native_mentions_found:
+  assumes identity: "\<And>y. term_formed (ident y)" and roots: "\<And>y. term_formed (identr y)"
+    and valued: "\<And>y. term_formed (val y)"
+  shows "(verdict_undeclared,Pair_Term (store_term val T) (Pair_Term (state_families_term ident Fs)
+      (state_family_term identr Rs)))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None) \<and>
+    (\<forall>z\<in>set Rs. \<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None)"
+proof -
+  interpret entities: selection_every_reading verdict_mentions_system verdict_found_selection verdict_found_family
+      verdict_row_found "store_term val" ident "\<lambda>T z. \<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None"
+    by unfold_locales (simp_all add: identity mention_found.exact[OF identity valued])
+  interpret roots: family_every_reading verdict_mentions_system verdict_found_family verdict_row_found
+      "store_term val" identr "\<lambda>T z. \<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None"
+    by unfold_locales (simp_all add: roots mention_found.exact[OF roots valued])
+  show ?thesis by (simp add: undeclared_entry_exact entities.exact roots.exact store_term_formed[OF valued])
+qed
+
+lemma mentioned_constants_member:
+  "c\<in>set (isabelle_mentioned_constants roots C) \<longleftrightarrow>
+    (\<exists>t\<in>set roots. c\<in>set (root_mentions t)) \<or> (\<exists>e\<in>set (snd C). c\<in>set (entity_mentions e))"
+  by (auto simp: isabelle_mentioned_constants_def map_filter_member root_mentions_def entity_mentions_def
+    split: option.splits; metis)
+
+lemma declared_constants_member:
+  "c\<in>set (List.map_filter isabelle_declared_constant es) \<longleftrightarrow> (\<exists>e\<in>set es. c\<in>set (entity_declared e))"
+  by (auto simp: map_filter_member entity_declared_def split: option.splits; metis)
+
+lemma undeclared_constants_empty:
+  "isabelle_undeclared_constants roots C=[] \<longleftrightarrow>
+    (\<forall>c\<in>set (isabelle_mentioned_constants roots C). c\<in>set (List.map_filter isabelle_declared_constant (snd C)))"
+proof
+  assume empty: "isabelle_undeclared_constants roots C=[]"
+  show "\<forall>c\<in>set (isabelle_mentioned_constants roots C). c\<in>set (List.map_filter isabelle_declared_constant (snd C))"
+  proof
+    fix c
+    assume mentioned: "c\<in>set (isabelle_mentioned_constants roots C)"
+    show "c\<in>set (List.map_filter isabelle_declared_constant (snd C))"
+    proof (rule ccontr)
+      assume "c\<notin>set (List.map_filter isabelle_declared_constant (snd C))"
+      then have "c\<in>set (isabelle_undeclared_constants roots C)"
+        using isabelle_undeclared_constants_exact mentioned by blast
+      then show False using empty by simp
+    qed
+  qed
+next
+  assume all: "\<forall>c\<in>set (isabelle_mentioned_constants roots C). c\<in>set (List.map_filter isabelle_declared_constant (snd C))"
+  show "isabelle_undeclared_constants roots C=[]"
+  proof (rule ccontr)
+    assume "isabelle_undeclared_constants roots C\<noteq>[]"
+    then obtain c where "c\<in>set (isabelle_undeclared_constants roots C)"
+      by (cases "isabelle_undeclared_constants roots C") auto
+    then show False using all isabelle_undeclared_constants_exact by blast
+  qed
+qed
+
+text \<open>
+  A constant of a presented state has a declaration row exactly when the declaration store holds a row at
+  its key, and the found program reads that positively. Taken with the carried single-valuedness
+  (@{const declarations_single_valued}, owned by the exporter), the row it holds is the constant's one
+  declaration (@{thm [source] declaration_store_at}).
+\<close>
+
+lemma state_families_rows:
+  assumes present: "state_presents key S R" and families: "set Fs=range (state_entities R)"
+  shows "(\<Union>F\<in>set Fs. set (map snd F))=entity_row key (snd S) ` set (snd (snd S))"
+  using kinds_present_rows[OF present, of "\<lambda>_. True" UNIV] families by (simp add: kinds_present_def)
+
+theorem declaration_store_constant:
+  assumes present: "state_presents key S R" and families: "set Fs=range (state_entities R)"
+    and bound: "h<length (fst (snd S))"
+  shows "store_lookup (declaration_store Fs) (key h)\<noteq>None \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). h\<in>set (entity_declared e))"
+proof -
+  have inj: "inj_on key {..<length (fst (snd S))}"
+    by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
+  have declared_inside: "\<And>e d. e\<in>set (snd (snd S)) \<Longrightarrow> d\<in>set (entity_declared e) \<Longrightarrow> d<length (fst (snd S))"
+    using entity_declared_positions state_presents_inside[OF present] by (force simp: state_positions_def)
+  have "store_lookup (declaration_store Fs) (key h)\<noteq>None \<longleftrightarrow>
+      (\<exists>p\<in>(\<Union>F\<in>set Fs. set (map snd F)). key h\<in>set (row_declared p))"
+    by (auto simp: declaration_store_declared declaration_store_found)
+  also have "\<dots> \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). key h\<in>key ` set (entity_declared e))"
+    by (simp only: state_families_rows[OF present families]) auto
+  also have "\<dots> \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). h\<in>set (entity_declared e))"
+    using declared_inside inj bound by (auto simp: inj_on_eq_iff)
+  finally show ?thesis .
+qed
+
+theorem native_declared_exact:
+  assumes present: "state_presents key S R" and families: "set Fs=range (state_entities R)"
+    and bound: "h<length (fst (snd S))"
+  shows "(verdict_key_found,Pair_Term (declaration_term Fs) (path_term (key h)))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    (\<exists>e\<in>set (snd (snd S)). h\<in>set (entity_declared e))"
+  unfolding declaration_term_def
+  by (subst mention_found.found.exact) (use declaration_store_constant[OF present families bound] in auto)+
+
+theorem native_undeclared_exact:
+  assumes present: "state_presents key S R" and families: "set Fs=range (state_entities R)"
+    and identity: "\<And>y. term_formed (ident y)" and roots: "\<And>y. term_formed (identr y)"
+  shows "(verdict_undeclared,Pair_Term (declaration_term Fs) (Pair_Term (state_families_term ident Fs)
+      (state_family_term identr (state_roots R))))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    isabelle_undeclared_constants (fst S) (snd S)=[]"
+proof -
+  let ?C="snd S" and ?es="snd (snd S)" and ?n="fst (snd S)"
+  have rows: "(\<Union>F\<in>set Fs. set (map snd F))=entity_row key ?C ` set ?es"
+    by (rule state_families_rows[OF present families])
+  have root_rows: "snd ` set (state_roots R)=root_row key ?C ` set (fst S)"
+    using state_presents_root_family[OF present] by (metis list.set_map)
+  have inj: "inj_on key {..<length ?n}" by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
+  have inside: "state_positions S\<subseteq>{..<length ?n}" by (rule state_presents_inside[OF present])
+  have declared_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_declared e) \<Longrightarrow> d<length ?n"
+    using entity_declared_positions inside by (force simp: state_positions_def)
+  have mentions_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length ?n"
+    using entity_mentions_positions inside by (force simp: state_positions_def)
+  have roots_inside: "\<And>t d. t\<in>set (fst S) \<Longrightarrow> d\<in>set (root_mentions t) \<Longrightarrow> d<length ?n"
+    using root_mentions_positions inside by (force simp: state_positions_def)
+  have found: "store_lookup (declaration_store Fs) q\<noteq>None \<longleftrightarrow> (\<exists>e\<in>set ?es. q\<in>key ` set (entity_declared e))" for q
+  proof -
+    have "store_lookup (declaration_store Fs) q\<noteq>None \<longleftrightarrow>
+        (\<exists>p\<in>(\<Union>F\<in>set Fs. set (map snd F)). q\<in>set (row_declared p))"
+      by (auto simp: declaration_store_declared declaration_store_found)
+    then show ?thesis unfolding rows by auto
+  qed
+  have key_declared: "key d\<in>key ` set (entity_declared e') \<longleftrightarrow> d\<in>set (entity_declared e')"
+    if "d<length ?n" "e'\<in>set ?es" for d e'
+    using that declared_inside inj by (auto simp: inj_on_eq_iff)
+  have "(verdict_undeclared,Pair_Term (declaration_term Fs) (Pair_Term (state_families_term ident Fs)
+      (state_family_term identr (state_roots R))))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    (\<forall>p\<in>(\<Union>F\<in>set Fs. set (map snd F)). \<forall>q\<in>set (row_mentions p). store_lookup (declaration_store Fs) q\<noteq>None) \<and>
+    (\<forall>p\<in>snd ` set (state_roots R). \<forall>q\<in>set (row_mentions p). store_lookup (declaration_store Fs) q\<noteq>None)"
+    unfolding declaration_term_def by (auto simp: native_mentions_found[OF identity roots])
+  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. \<forall>d\<in>set (entity_mentions e). \<exists>e'\<in>set ?es. d\<in>set (entity_declared e')) \<and>
+      (\<forall>t\<in>set (fst S). \<forall>d\<in>set (root_mentions t). \<exists>e'\<in>set ?es. d\<in>set (entity_declared e'))"
+    unfolding rows root_rows found using key_declared mentions_inside roots_inside by auto
+  also have "\<dots> \<longleftrightarrow> isabelle_undeclared_constants (fst S) (snd S)=[]"
+    by (auto simp: undeclared_constants_empty mentioned_constants_member declared_constants_member)
+  finally show ?thesis .
+qed
+
+end

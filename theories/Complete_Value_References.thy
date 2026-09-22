@@ -14,6 +14,10 @@ lemma value_reference_index_absent:
   "value_reference_index x xs=None \<longleftrightarrow> x\<notin>set xs"
   by (induction xs) auto
 
+lemma value_reference_index_append_member:
+  "x\<in>set xs \<Longrightarrow> value_reference_index x (xs@ys)=value_reference_index x xs"
+  by (induction xs) auto
+
 definition value_reference_read :: "'a list \<Rightarrow> nat \<Rightarrow> 'a option" where
   "value_reference_read table i=(if i<length table then Some (table!i) else None)"
 

@@ -93,7 +93,21 @@ qed
 text \<open>
   Within one state, two entities have one local presentation exactly when they are one entity: the
   comparison of local presentations across two states (\<open>isabelle_local_entities_compared\<close>) at equal tables.
+  It is stated once for any table free of repeated names that holds the positions both entities use, and a
+  presentable state is its instance.
 \<close>
+
+lemma local_entities_injective_within:
+  assumes distinct: "distinct names"
+    and ie: "\<forall>i\<in>set (isabelle_entity_positions e). i<length names"
+    and ig: "\<forall>i\<in>set (isabelle_entity_positions g). i<length names"
+  shows "isabelle_local_entities names [e]=isabelle_local_entities names [g] \<longleftrightarrow> e=g"
+proof -
+  have "isabelle_local_entities names [e]=isabelle_local_entities names [g] \<longleftrightarrow>
+      isabelle_entity_rename (isabelle_state_embedding names names) e=g"
+    by (rule isabelle_local_entities_compared[OF distinct ie ig])
+  then show ?thesis using state_self_embedding_entity[OF distinct ie] by simp
+qed
 
 lemma state_local_entities_injective:
   assumes presentable: "state_presentable S"
@@ -107,9 +121,88 @@ proof -
     using inside e by (auto simp: state_positions_def)
   have ig: "\<forall>j\<in>set (isabelle_entity_positions g). j<length (fst (snd S))"
     using inside g by (auto simp: state_positions_def)
-  have "isabelle_entity_rename (isabelle_state_embedding (fst (snd S)) (fst (snd S))) e=g"
-    using isabelle_local_entities_compared[OF distinct ie ig] same by simp
-  then show ?thesis using state_self_embedding_entity[OF distinct ie] by simp
+  show ?thesis using local_entities_injective_within[OF distinct ie ig] same by simp
+qed
+
+subsection \<open>Rows keyed injectively present a presentable state\<close>
+
+text \<open>
+  A presentable state is presented by any rows whose atoms are its positions keyed by the constant key, whose
+  families hold exactly its entities of their kind at keys an injective entity key assigns, each family keyed
+  once, and whose roots are its roots at keys an injective root key assigns. The presenter is the instance at
+  the first-occurrence keys; an edited state is the instance at keys continuing its request state's.
+\<close>
+
+lemma state_presents_keyed:
+  assumes presentable: "state_presentable S"
+    and atoms: "state_atoms R=map (\<lambda>i. (state_constant_key i,fst (snd S)!i)) [0..<length (fst (snd S))]"
+    and families: "\<And>k. set (state_entities R k)=
+      (\<lambda>e. (\<kappa> e,entity_row state_constant_key (snd S) e)) ` {e\<in>set (snd (snd S)). entity_kind_of e=k}"
+    and keyed: "\<And>k. distinct (map fst (state_entities R k))"
+    and injective: "inj_on \<kappa> (set (snd (snd S)))"
+    and roots: "state_roots R=map (\<lambda>t. (\<rho> t,root_row state_constant_key (snd S) t)) (fst S)"
+    and root_keys: "inj_on \<rho> (set (fst S))"
+  shows "state_presents state_constant_key S R"
+proof -
+  have distinct: "distinct (fst (snd S))" and inside: "state_positions S\<subseteq>{..<length (fst (snd S))}"
+    and local_roots: "distinct (map (isabelle_local_root (fst (snd S))) (fst S))"
+    using presentable by (simp_all add: state_presentable_def)
+  have atoms_ok: "atoms_present state_constant_key (fst (snd S)) R"
+  proof -
+    have fsts: "map fst (state_atoms R)=map state_constant_key [0..<length (fst (snd S))]"
+      by (simp only: atoms map_map comp_def fst_conv)
+    have snds: "map snd (state_atoms R)=fst (snd S)"
+      by (simp only: atoms map_map comp_def snd_conv map_nth)
+    have set_atoms: "set (state_atoms R)=(\<lambda>i. (state_constant_key i,fst (snd S)!i)) ` {..<length (fst (snd S))}"
+      by (simp only: atoms set_map set_upt atLeast0LessThan)
+    have length_atoms: "length (state_atoms R)=length (fst (snd S))"
+      by (simp only: atoms length_map length_upt diff_zero)
+    have "distinct (map state_constant_key [0..<length (fst (snd S))])"
+      using inj_on_subset[OF state_constant_key_injective] by (simp add: distinct_map)
+    then show ?thesis using distinct fsts snds set_atoms length_atoms
+      by (simp only: atoms_present_def)
+  qed
+  have rows_ok: "rows_present state_constant_key (snd S) R"
+  proof -
+    have "set (map snd (state_entities R k))=
+        entity_row state_constant_key (snd S) ` {e\<in>set (snd (snd S)). entity_kind_of e=k}" for k
+      by (simp add: families image_image)
+    then show ?thesis using keyed by (simp add: rows_present_def)
+  qed
+  have roots_ok: "roots_present state_constant_key (snd S) (fst S) R"
+  proof -
+    have "distinct (fst S)" using local_roots by (simp add: distinct_map)
+    then have "distinct (map \<rho> (fst S))" using root_keys by (simp add: distinct_map)
+    then show ?thesis by (simp add: roots_present_def roots comp_def)
+  qed
+  have presented: "presented_rows R=(\<lambda>e. (\<kappa> e,entity_row state_constant_key (snd S) e)) ` set (snd (snd S))"
+    unfolding presented_rows_def families by blast
+  have row_keys: "keyed_agree row_identity (presented_rows R) (presented_rows R)"
+  proof (rule keyed_agreeI)
+    fix a x b y assume "(a,x)\<in>presented_rows R" "(b,y)\<in>presented_rows R"
+    then obtain e g where e: "e\<in>set (snd (snd S))" "a=\<kappa> e" "x=entity_row state_constant_key (snd S) e"
+      and g: "g\<in>set (snd (snd S))" "b=\<kappa> g" "y=entity_row state_constant_key (snd S) g"
+      unfolding presented by auto
+    have "(a=b)=(e=g)" using e(2) g(2) inj_onD[OF injective _ e(1) g(1)] by auto
+    moreover have "(e=g)=(row_identity x=row_identity y)"
+      using e g state_local_entities_injective[OF presentable] by auto
+    ultimately show "(a=b)=(row_identity x=row_identity y)" by simp
+  qed
+  have root_keys_ok: "keyed_agree row_identity (set (state_roots R)) (set (state_roots R))"
+  proof (rule keyed_agreeI)
+    fix a x b y assume "(a,x)\<in>set (state_roots R)" "(b,y)\<in>set (state_roots R)"
+    then obtain t u where t: "t\<in>set (fst S)" "a=\<rho> t" "x=root_row state_constant_key (snd S) t"
+      and u: "u\<in>set (fst S)" "b=\<rho> u" "y=root_row state_constant_key (snd S) u"
+      by (auto simp: roots)
+    have local: "inj_on (isabelle_local_root (fst (snd S))) (set (fst S))"
+      using local_roots by (simp add: distinct_map)
+    have "(a=b)=(t=u)" using t(2) u(2) inj_onD[OF root_keys _ t(1) u(1)] by auto
+    moreover have "(t=u)=(row_identity x=row_identity y)"
+      using t u inj_onD[OF local] by auto
+    ultimately show "(a=b)=(row_identity x=row_identity y)" by simp
+  qed
+  show ?thesis
+    using atoms_ok rows_ok roots_ok inside row_keys root_keys_ok by (simp add: state_presents_def)
 qed
 
 subsection \<open>The presenter realizes the relation\<close>
@@ -120,71 +213,23 @@ theorem state_presenter_presents:
 proof -
   have presentable: "state_presentable S" and R: "R=state_rows_of S"
     using presented by (simp_all add: state_presenter_def split: if_splits)
-  have distinct: "distinct (fst (snd S))" and inside: "state_positions S\<subseteq>{..<length (fst (snd S))}"
-    and roots: "distinct (map (isabelle_local_root (fst (snd S))) (fst S))"
-    using presentable by (simp_all add: state_presentable_def)
-  have distinct_roots: "distinct (fst S)" using roots by (simp add: distinct_map)
-  have atoms: "atoms_present state_constant_key (fst (snd S)) R"
+  have atoms: "state_atoms R=map (\<lambda>i. (state_constant_key i,fst (snd S)!i)) [0..<length (fst (snd S))]"
+    by (simp add: R state_rows_of_def)
+  have families: "\<And>k. set (state_entities R k)=(\<lambda>e. (development_entity_key (snd S) e,
+      entity_row state_constant_key (snd S) e)) ` {e\<in>set (snd (snd S)). entity_kind_of e=k}"
+    by (auto simp: R state_rows_of_def)
+  have keyed: "\<And>k. distinct (map fst (state_entities R k))"
   proof -
-    have A: "state_atoms R=map (\<lambda>i. (state_constant_key i,fst (snd S)!i)) [0..<length (fst (snd S))]"
-      by (simp add: R state_rows_of_def)
-    have fsts: "map fst (state_atoms R)=map state_constant_key [0..<length (fst (snd S))]"
-      by (simp only: A map_map comp_def fst_conv)
-    have snds: "map snd (state_atoms R)=fst (snd S)"
-      by (simp only: A map_map comp_def snd_conv map_nth)
-    have set_atoms: "set (state_atoms R)=(\<lambda>i. (state_constant_key i,fst (snd S)!i)) ` {..<length (fst (snd S))}"
-      by (simp only: A set_map set_upt atLeast0LessThan)
-    have length_atoms: "length (state_atoms R)=length (fst (snd S))"
-      by (simp only: A length_map length_upt diff_zero)
-    have "distinct (map state_constant_key [0..<length (fst (snd S))])"
-      using inj_on_subset[OF state_constant_key_injective] by (simp add: distinct_map)
-    then show ?thesis using distinct fsts snds set_atoms length_atoms
-      by (simp only: atoms_present_def)
-  qed
-  have rows: "rows_present state_constant_key (snd S) R"
-  proof -
+    fix k
     have "distinct (map (development_entity_key (snd S)) (remdups (filter (\<lambda>e. entity_kind_of e=k) (snd (snd S)))))"
-      for k using inj_on_subset[OF development_entity_key_injective] by (auto simp: distinct_map)
-    then show ?thesis by (auto simp: rows_present_def R state_rows_of_def comp_def)
+      using inj_on_subset[OF development_entity_key_injective] by (auto simp: distinct_map)
+    then show "distinct (map fst (state_entities R k))" by (simp add: R state_rows_of_def comp_def)
   qed
-  have root_family: "roots_present state_constant_key (snd S) (fst S) R"
-  proof -
-    have "distinct (map (first_occurrence_key (fst S)) (fst S))"
-      using distinct_roots first_occurrence_key_inj_on by (simp add: distinct_map)
-    then show ?thesis by (simp add: roots_present_def R state_rows_of_def comp_def)
-  qed
-  have row_keys: "keyed_agree row_identity (presented_rows R) (presented_rows R)"
-  proof (rule keyed_agreeI)
-    fix a x b y assume "(a,x)\<in>presented_rows R" "(b,y)\<in>presented_rows R"
-    then obtain e g where e: "e\<in>set (snd (snd S))" "a=development_entity_key (snd S) e"
-      "x=entity_row state_constant_key (snd S) e"
-      and g: "g\<in>set (snd (snd S))" "b=development_entity_key (snd S) g"
-      "y=entity_row state_constant_key (snd S) g"
-      by (auto simp: R state_rows_of_presented)
-    have "(a=b)=(e=g)"
-      using e(2) g(2) inj_onD[OF development_entity_key_injective[of "snd S"] _ e(1) g(1)] by auto
-    moreover have "(e=g)=(row_identity x=row_identity y)"
-      using e g state_local_entities_injective[OF presentable] by auto
-    ultimately show "(a=b)=(row_identity x=row_identity y)" by simp
-  qed
-  have root_keys: "keyed_agree row_identity (set (state_roots R)) (set (state_roots R))"
-  proof (rule keyed_agreeI)
-    fix a x b y assume "(a,x)\<in>set (state_roots R)" "(b,y)\<in>set (state_roots R)"
-    then obtain t u where t: "t\<in>set (fst S)" "a=first_occurrence_key (fst S) t"
-      "x=root_row state_constant_key (snd S) t"
-      and u: "u\<in>set (fst S)" "b=first_occurrence_key (fst S) u"
-      "y=root_row state_constant_key (snd S) u"
-      by (auto simp: R state_rows_of_def)
-    have local: "inj_on (isabelle_local_root (fst (snd S))) (set (fst S))"
-      using roots by (simp add: distinct_map)
-    have "(a=b)=(t=u)"
-      using t u first_occurrence_key_injective by auto
-    moreover have "(t=u)=(row_identity x=row_identity y)"
-      using t u inj_onD[OF local] by auto
-    ultimately show "(a=b)=(row_identity x=row_identity y)" by simp
-  qed
+  have roots: "state_roots R=map (\<lambda>t. (first_occurrence_key (fst S) t,root_row state_constant_key (snd S) t)) (fst S)"
+    by (simp add: R state_rows_of_def)
   show ?thesis
-    using atoms rows root_family inside row_keys root_keys by (simp add: state_presents_def)
+    by (rule state_presents_keyed[OF presentable atoms families keyed development_entity_key_injective roots
+      first_occurrence_key_inj_on])
 qed
 
 subsection \<open>The partiality is exact\<close>

@@ -97,76 +97,11 @@ theorem state_edit_of_refuses:
 
 section \<open>What the contract rests on\<close>
 
-subsection \<open>Keys continue: a first occurrence in a prefix stays where it was\<close>
-
-lemma value_reference_index_append_member:
-  "x\<in>set xs \<Longrightarrow> value_reference_index x (xs@ys)=value_reference_index x xs"
-  by (induction xs) auto
-
-lemma first_occurrence_key_append:
-  assumes member: "x\<in>set xs"
-  shows "first_occurrence_key (xs@ys) x=first_occurrence_key xs x"
-  using member value_reference_index_absent[of x xs]
-  by (cases "value_reference_index x xs") (simp_all add: first_occurrence_key_def value_reference_index_append_member[OF member])
-
-subsection \<open>A value's reading depends on the names at the positions it uses\<close>
-
-lemma isabelle_equation_left_agree:
-  assumes "\<And>i. i\<in>set (isabelle_term_positions p) \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i"
-  shows "isabelle_equation_left names' p=isabelle_equation_left names p"
-  using assms
-proof (induction names p rule: isabelle_equation_left.induct)
-  case (1 names c T p)
-  have head: "isabelle_name_at names' c=isabelle_name_at names c" by (rule "1.prems") simp
-  show ?case
-  proof (cases "isabelle_name_at names c=Some isabelle_judgment_name")
-    case True
-    have "isabelle_equation_left names' p=isabelle_equation_left names p"
-      using True "1.prems" by (intro "1.IH") auto
-    then show ?thesis using True head by simp
-  next
-    case False
-    then show ?thesis using head by simp
-  qed
-next
-  case (2 names c T l r)
-  have head: "isabelle_name_at names' c=isabelle_name_at names c" by (rule "2.prems") simp
-  then show ?case by simp
-qed simp_all
-
-lemma isabelle_local_entities_agree:
-  assumes agree: "\<And>i. i\<in>set (concat (map isabelle_entity_positions es)) \<Longrightarrow>
-      isabelle_name_at names' i=isabelle_name_at names i"
-  shows "isabelle_local_entities names' es=isabelle_local_entities names es"
-proof -
-  let ?ps="concat (map isabelle_entity_positions es)"
-  have local_names: "isabelle_local_names names' ?ps=isabelle_local_names names ?ps"
-    unfolding isabelle_local_names_def by (simp only: map_filter_agree[of ?ps, OF agree])
-  have embedding: "isabelle_local_embedding names' ?ps i=isabelle_local_embedding names ?ps i"
-    if used: "i\<in>set ?ps" for i
-    unfolding isabelle_local_embedding_def isabelle_state_embedding_def local_names agree[OF used] ..
-  have "map (isabelle_entity_rename (isabelle_local_embedding names' ?ps)) es=
-      map (isabelle_entity_rename (isabelle_local_embedding names ?ps)) es"
-  proof (rule map_cong[OF refl])
-    fix e assume e: "e\<in>set es"
-    show "isabelle_entity_rename (isabelle_local_embedding names' ?ps) e=
-        isabelle_entity_rename (isabelle_local_embedding names ?ps) e"
-      by (rule isabelle_entity_rename_cong) (rule embedding, use e in auto)
-  qed
-  then show ?thesis by (simp add: isabelle_local_entities_def Let_def local_names)
-qed
-
-lemma local_entities_injective_within:
-  assumes distinct: "distinct names"
-    and ie: "\<forall>i\<in>set (isabelle_entity_positions e). i<length names"
-    and ig: "\<forall>i\<in>set (isabelle_entity_positions g). i<length names"
-  shows "isabelle_local_entities names [e]=isabelle_local_entities names [g] \<longleftrightarrow> e=g"
-proof -
-  have "isabelle_local_entities names [e]=isabelle_local_entities names [g] \<longleftrightarrow>
-      isabelle_entity_rename (isabelle_state_embedding names names) e=g"
-    by (rule isabelle_local_entities_compared[OF distinct ie ig])
-  then show ?thesis using state_self_embedding_entity[OF distinct ie] by simp
-qed
+text \<open>
+  Keys continue because a first occurrence in a prefix stays where it was (\<open>first_occurrence_key_append\<close>),
+  and a value's reading depends on the names at the positions it uses (\<open>isabelle_local_entities_agree\<close>,
+  \<open>isabelle_local_root_agree\<close>, \<open>isabelle_equation_left_agree\<close>); both are stated with their notions.
+\<close>
 
 text \<open>
   A kept entity has the same row in the answer state as in the request state: its names are at the same
@@ -212,87 +147,6 @@ proof -
   have identity: "isabelle_local_entities names' [e]=isabelle_local_entities names [e]"
     by (rule isabelle_local_entities_agree) (rule agree, simp)
   show ?thesis by (simp add: entity_row_def subjects identity)
-qed
-
-subsection \<open>Rows keyed injectively present a presentable state\<close>
-
-text \<open>
-  A presentable state is presented by any rows whose atoms are its positions keyed by the constant key, whose
-  families hold exactly its entities of their kind at keys an injective entity key assigns, each family keyed
-  once, and whose roots are its roots at keys an injective root key assigns. The presenter is the instance at
-  the first-occurrence keys; an edited state is the instance at keys continuing its request state's.
-\<close>
-
-lemma state_presents_keyed:
-  assumes presentable: "state_presentable S"
-    and atoms: "state_atoms R=map (\<lambda>i. (state_constant_key i,fst (snd S)!i)) [0..<length (fst (snd S))]"
-    and families: "\<And>k. set (state_entities R k)=
-      (\<lambda>e. (\<kappa> e,entity_row state_constant_key (snd S) e)) ` {e\<in>set (snd (snd S)). entity_kind_of e=k}"
-    and keyed: "\<And>k. distinct (map fst (state_entities R k))"
-    and injective: "inj_on \<kappa> (set (snd (snd S)))"
-    and roots: "state_roots R=map (\<lambda>t. (\<rho> t,root_row state_constant_key (snd S) t)) (fst S)"
-    and root_keys: "inj_on \<rho> (set (fst S))"
-  shows "state_presents state_constant_key S R"
-proof -
-  have distinct: "distinct (fst (snd S))" and inside: "state_positions S\<subseteq>{..<length (fst (snd S))}"
-    and local_roots: "distinct (map (isabelle_local_root (fst (snd S))) (fst S))"
-    using presentable by (simp_all add: state_presentable_def)
-  have atoms_ok: "atoms_present state_constant_key (fst (snd S)) R"
-  proof -
-    have fsts: "map fst (state_atoms R)=map state_constant_key [0..<length (fst (snd S))]"
-      by (simp only: atoms map_map comp_def fst_conv)
-    have snds: "map snd (state_atoms R)=fst (snd S)"
-      by (simp only: atoms map_map comp_def snd_conv map_nth)
-    have set_atoms: "set (state_atoms R)=(\<lambda>i. (state_constant_key i,fst (snd S)!i)) ` {..<length (fst (snd S))}"
-      by (simp only: atoms set_map set_upt atLeast0LessThan)
-    have length_atoms: "length (state_atoms R)=length (fst (snd S))"
-      by (simp only: atoms length_map length_upt diff_zero)
-    have "distinct (map state_constant_key [0..<length (fst (snd S))])"
-      using inj_on_subset[OF state_constant_key_injective] by (simp add: distinct_map)
-    then show ?thesis using distinct fsts snds set_atoms length_atoms
-      by (simp only: atoms_present_def)
-  qed
-  have rows_ok: "rows_present state_constant_key (snd S) R"
-  proof -
-    have "set (map snd (state_entities R k))=
-        entity_row state_constant_key (snd S) ` {e\<in>set (snd (snd S)). entity_kind_of e=k}" for k
-      by (simp add: families image_image)
-    then show ?thesis using keyed by (simp add: rows_present_def)
-  qed
-  have roots_ok: "roots_present state_constant_key (snd S) (fst S) R"
-  proof -
-    have "distinct (fst S)" using local_roots by (simp add: distinct_map)
-    then have "distinct (map \<rho> (fst S))" using root_keys by (simp add: distinct_map)
-    then show ?thesis by (simp add: roots_present_def roots comp_def)
-  qed
-  have presented: "presented_rows R=(\<lambda>e. (\<kappa> e,entity_row state_constant_key (snd S) e)) ` set (snd (snd S))"
-    unfolding presented_rows_def families by blast
-  have row_keys: "keyed_agree row_identity (presented_rows R) (presented_rows R)"
-  proof (rule keyed_agreeI)
-    fix a x b y assume "(a,x)\<in>presented_rows R" "(b,y)\<in>presented_rows R"
-    then obtain e g where e: "e\<in>set (snd (snd S))" "a=\<kappa> e" "x=entity_row state_constant_key (snd S) e"
-      and g: "g\<in>set (snd (snd S))" "b=\<kappa> g" "y=entity_row state_constant_key (snd S) g"
-      unfolding presented by auto
-    have "(a=b)=(e=g)" using e(2) g(2) inj_onD[OF injective _ e(1) g(1)] by auto
-    moreover have "(e=g)=(row_identity x=row_identity y)"
-      using e g state_local_entities_injective[OF presentable] by auto
-    ultimately show "(a=b)=(row_identity x=row_identity y)" by simp
-  qed
-  have root_keys_ok: "keyed_agree row_identity (set (state_roots R)) (set (state_roots R))"
-  proof (rule keyed_agreeI)
-    fix a x b y assume "(a,x)\<in>set (state_roots R)" "(b,y)\<in>set (state_roots R)"
-    then obtain t u where t: "t\<in>set (fst S)" "a=\<rho> t" "x=root_row state_constant_key (snd S) t"
-      and u: "u\<in>set (fst S)" "b=\<rho> u" "y=root_row state_constant_key (snd S) u"
-      by (auto simp: roots)
-    have local: "inj_on (isabelle_local_root (fst (snd S))) (set (fst S))"
-      using local_roots by (simp add: distinct_map)
-    have "(a=b)=(t=u)" using t(2) u(2) inj_onD[OF root_keys _ t(1) u(1)] by auto
-    moreover have "(t=u)=(row_identity x=row_identity y)"
-      using t u inj_onD[OF local] by auto
-    ultimately show "(a=b)=(row_identity x=row_identity y)" by simp
-  qed
-  show ?thesis
-    using atoms_ok rows_ok roots_ok inside row_keys root_keys_ok by (simp add: state_presents_def)
 qed
 
 section \<open>The constructor's contract\<close>
@@ -604,6 +458,23 @@ theorem development_native_answer_edit_refuses:
     \<not>edit_specification_condition (snd (snd S)) (snd (snd (development_native_answer_state S (ns,removed,added))))"
   by (simp add: development_native_answer_edit_def development_native_answer_state_applied state_edit_of_refuses Let_def)
 
+text \<open>
+  A formed native answer keeps a presentable state presentable: the three conditions of
+  \<open>development_native_answer_state_presentable\<close> are exactly \<open>state_presentable\<close>. Every consumer of the
+  native answer's edit takes the constructor's contract through this corollary, once.
+\<close>
+
+corollary development_native_answer_presentable:
+  assumes formed: "development_native_answer_formed A" and presentable: "state_presentable S"
+  shows "state_presentable (development_native_answer_state S A)"
+proof -
+  have d: "distinct (fst (snd S))" and i: "state_positions S\<subseteq>{..<length (fst (snd S))}"
+    and r: "distinct (map (isabelle_local_root (fst (snd S))) (fst S))"
+    using presentable by (simp_all add: state_presentable_def)
+  note answer=development_native_answer_state_presentable[OF formed d i r]
+  show ?thesis unfolding state_presentable_def by (intro conjI answer)
+qed
+
 theorem development_native_answer_edit_contract:
   assumes read: "development_native_answer_read t=Some A" and presented: "state_presenter S=Some R"
     and edit: "development_native_answer_edit S A=Some e"
@@ -612,21 +483,23 @@ theorem development_native_answer_edit_contract:
     and "edit_reduced R (edited_state R e) (edit_rows (edit_removed e)) (edit_rows (edit_added e))"
     and "state_roots (edited_state R e)=state_roots R"
     and "\<And>z. z\<in>presented_rows R \<Longrightarrow> z\<notin>edit_rows (edit_removed e) \<Longrightarrow> z\<in>presented_rows (edited_state R e)"
+    and "\<And>a n. (a,n)\<in>set (edit_atoms e) \<Longrightarrow> a\<notin>fst ` set (state_atoms R)"
+    and "\<And>g. g\<in>set (snd (snd S)) \<Longrightarrow> g\<in>set (snd (snd (development_native_answer_state S A))) \<Longrightarrow>
+      (development_entity_key (snd S) g,entity_row state_constant_key (snd S) g)
+        \<in>set (state_entities (edited_state R e) (entity_kind_of g))"
+    and "\<And>a z. (a,z)\<in>edit_rows (edit_removed e) \<Longrightarrow> a\<notin>fst ` presented_rows (edited_state R e)"
+    and "\<And>b q. (b,q)\<in>edit_rows (edit_added e) \<Longrightarrow> b\<notin>fst ` presented_rows R"
 proof -
   obtain ns removed added where A: "A=(ns,removed,added)" by (cases A) auto
   let ?g="isabelle_state_embedding ns (isabelle_appended_names (fst (snd S)) ns)"
   have formed: "development_native_answer_formed A" using read by (simp add: development_native_answer_reads)
   have presentable: "state_presentable S" using presented by (simp add: state_presenter_def split: if_splits)
-  have d: "distinct (fst (snd S))" and i: "state_positions S\<subseteq>{..<length (fst (snd S))}"
-    and r: "distinct (map (isabelle_local_root (fst (snd S))) (fst S))"
-    using presentable by (simp_all add: state_presentable_def)
   have state: "development_native_answer_state S A=
       edit_applied S ns (map (isabelle_entity_rename ?g) removed) (map (isabelle_entity_rename ?g) added)"
     by (simp add: A development_native_answer_state_applied Let_def)
   have answer: "state_presentable (edit_applied S ns (map (isabelle_entity_rename ?g) removed)
       (map (isabelle_entity_rename ?g) added))"
-    using development_native_answer_state_presentable[OF formed d i r]
-    by (simp add: state_presentable_def state)
+    using development_native_answer_presentable[OF formed presentable] by (simp only: state)
   have edit': "state_edit_of S ns (map (isabelle_entity_rename ?g) removed) (map (isabelle_entity_rename ?g) added)=Some e"
     using edit by (simp add: A development_native_answer_edit_def Let_def)
   note contract=state_edit_contract[OF presented answer edit']
@@ -637,6 +510,16 @@ proof -
   show "state_roots (edited_state R e)=state_roots R" by (rule contract(4))
   show "z\<in>presented_rows (edited_state R e)" if "z\<in>presented_rows R" "z\<notin>edit_rows (edit_removed e)" for z
     by (rule contract(5)[OF that])
+  show "a\<notin>fst ` set (state_atoms R)" if "(a,n)\<in>set (edit_atoms e)" for a n
+    by (rule contract(6)[OF that])
+  show "(development_entity_key (snd S) g,entity_row state_constant_key (snd S) g)
+      \<in>set (state_entities (edited_state R e) (entity_kind_of g))"
+    if "g\<in>set (snd (snd S))" "g\<in>set (snd (snd (development_native_answer_state S A)))" for g
+    by (rule contract(7)[OF that(1) that(2)[unfolded state]])
+  show "a\<notin>fst ` presented_rows (edited_state R e)" if "(a,z)\<in>edit_rows (edit_removed e)" for a z
+    by (rule contract(8)[OF that])
+  show "b\<notin>fst ` presented_rows R" if "(b,q)\<in>edit_rows (edit_added e)" for b q
+    by (rule contract(9)[OF that])
 qed
 
 end

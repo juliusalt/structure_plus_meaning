@@ -60,20 +60,20 @@ text \<open>
   interpretation as a rearranging program and the proofs below read these names.
 \<close>
 
-abbreviation readiness_answered_conclusion :: "local_address finite_term_pattern" where
+abbreviation (input) readiness_answered_conclusion :: "local_address finite_term_pattern" where
   "readiness_answered_conclusion \<equiv>
     Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1))"
 
-abbreviation readiness_answered_premise :: "local_address finite_term_pattern" where
+abbreviation (input) readiness_answered_premise :: "local_address finite_term_pattern" where
   "readiness_answered_premise \<equiv> Finite_Pattern_Pair (native_var 0) (native_var 1)"
 
-abbreviation readiness_ready_conclusion :: "local_address finite_term_pattern" where
+abbreviation (input) readiness_ready_conclusion :: "local_address finite_term_pattern" where
   "readiness_ready_conclusion \<equiv>
     Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (Finite_Pattern_Pair (native_var 2)
       (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload []))
         (native_var 3))))"
 
-abbreviation readiness_ready_premise :: "local_address finite_term_pattern" where
+abbreviation (input) readiness_ready_premise :: "local_address finite_term_pattern" where
   "readiness_ready_premise \<equiv> Finite_Pattern_Pair (native_var 1) (native_var 3)"
 
 definition readiness_answered_rule ::
@@ -357,13 +357,21 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
     fix T k
     assume site: "d=readiness_settled"
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (readiness_table_term T) k"
-    have rule: "S=decode_finite_schema readiness_settled_rule"
-      using clause site readiness_settled_family.family by (auto simp: readiness_settled_rule_def)
-    have fields: "f [0]=readiness_table_term T \<and> f [1]=k"
-      using shape by (simp add: rule readiness_settled_rule_def native_context_call_rule_def)
-    have given: "(readiness_settled_search,Pair_Term (f [0]) (Pair_Term (f [1]) (f [0])))\<in>Y"
+    obtain p ps where mem: "(c,finite_native_rule p ps)\<in>set [([0],finite_native_rule
+          (Finite_Pattern_Pair (native_var 0) (native_var 1))
+          [([0],(readiness_settled_search,
+            Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))))])]"
+      and concl: "schema_conclusion S=decode_finite_pattern p"
+      and supp: "\<forall>(s,e,q)\<in>set ps. (e,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
       by (rule readiness_settled_family.rearranged.law.supported_clause[OF clause[unfolded site] into])
-        (auto simp: finite_native_rule_eq_iff native_context_call_rule_def)
+    have p: "p=Finite_Pattern_Pair (native_var 0) (native_var 1)"
+      and ps: "set ps={([0],(readiness_settled_search,
+        Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))))}"
+      using mem by (simp_all add: finite_native_rule_eq_iff)
+    have fields: "f [0]=readiness_table_term T \<and> f [1]=k"
+      using shape by (simp add: concl p)
+    have given: "(readiness_settled_search,Pair_Term (f [0]) (Pair_Term (f [1]) (f [0])))\<in>Y"
+      using supp by (simp add: ps)
     have search: "(readiness_settled_search,Pair_Term (readiness_table_term T)
         (Pair_Term k (store_term readiness_row_value (path_store T))))\<in>Y"
       using given fields by (simp add: readiness_table_term_def)
@@ -420,13 +428,18 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
     fix T v
     assume site: "d=readiness_answered"
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (readiness_table_term T) v"
-    have rule: "S=decode_finite_schema readiness_answered_rule"
-      using clause site readiness_answered_family.family by (auto simp: readiness_answered_rule_def)
-    have fields: "f [0]=readiness_table_term T" "v=Pair_Term (Payload_Term []) (f [1])"
-      using shape by (simp_all add: rule readiness_answered_rule_def)
-    have given: "(readiness_some,Pair_Term (f [0]) (f [1]))\<in>Y"
+    obtain p ps where mem: "(c,finite_native_rule p ps)\<in>set [([0],finite_native_rule readiness_answered_conclusion
+          [([0],(readiness_some,readiness_answered_premise))])]"
+      and concl: "schema_conclusion S=decode_finite_pattern p"
+      and supp: "\<forall>(s,e,q)\<in>set ps. (e,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
       by (rule readiness_answered_family.law.supported_clause[OF clause[unfolded site] into])
-        (auto simp: finite_native_rule_eq_iff)
+    have p: "p=readiness_answered_conclusion"
+      and ps: "set ps={([0],(readiness_some,readiness_answered_premise))}"
+      using mem by (simp_all add: finite_native_rule_eq_iff)
+    have fields: "f [0]=readiness_table_term T" "v=Pair_Term (Payload_Term []) (f [1])"
+      using shape by (simp_all add: concl p)
+    have given: "(readiness_some,Pair_Term (f [0]) (f [1]))\<in>Y"
+      using supp by (simp add: ps)
     have some: "\<forall>vs. f [1]=data_list_term vs \<longrightarrow>
         (\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z))"
     proof (intro allI impI)
@@ -514,9 +527,7 @@ proof (induction rule: table_settled.induct)
     using cf all settle.hyps(2) by (auto simp: readiness_somes.exact readiness_decompositions_def data_list_term_formed)
   have "(readiness_answered,evaluate_pattern (native_values [?c,readiness_decompositions hs])
       (decode_finite_pattern readiness_answered_conclusion))\<in>positive_meaning native_readiness_system"
-    by (rule readiness_answered_family.law.step_at[where c="[0]"
-          and ps="[([0],(readiness_some,readiness_answered_premise))]"])
-      (use some in \<open>simp_all\<close>)
+    by (rule readiness_answered_family.at[THEN iffD2]) (use some in simp)
   then have answered: "(readiness_answered,Pair_Term ?c (readiness_row_value (True,hs)))
       \<in>positive_meaning native_readiness_system"
     by (simp add: readiness_row_value_def readiness_value_def readiness_status_def)
@@ -555,24 +566,19 @@ theorem native_ready_exact:
 proof
   assume holds: "(readiness_ready,Pair_Term x (Pair_Term (readiness_table_term T) (Pair_Term k (readiness_value a hs))))
     \<in>positive_meaning native_readiness_system"
-  obtain c :: local_address and p ps and f :: "local_address \<Rightarrow> factor_term"
-    where rule: "(c,finite_native_rule p ps)\<in>set [([0],finite_native_rule readiness_ready_conclusion
-        [([0],(readiness_every,readiness_ready_premise))])]"
-      and "\<forall>a\<in>pattern_variables (decode_finite_pattern p) \<union>
-        (\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)). term_formed (f a)"
-      and evaluated: "evaluate_pattern f (decode_finite_pattern p)=
+  obtain f :: "local_address \<Rightarrow> factor_term"
+    where "\<forall>a\<in>pattern_variables (decode_finite_pattern readiness_ready_conclusion). term_formed (f a)"
+      and evaluated: "evaluate_pattern f (decode_finite_pattern readiness_ready_conclusion)=
         Pair_Term x (Pair_Term (readiness_table_term T) (Pair_Term k (readiness_value a hs)))"
-      and supported: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))
+      and supported: "(readiness_every,evaluate_pattern f (decode_finite_pattern readiness_ready_premise))
         \<in>positive_meaning native_readiness_system"
-    by (rule readiness_ready_family.law.holds_rule[OF holds])
-  have p: "p=readiness_ready_conclusion" and ps: "set ps={([0],(readiness_every,readiness_ready_premise))}"
-    using rule by (simp_all add: finite_native_rule_eq_iff)
+    using readiness_ready_family.exact[THEN iffD1, OF holds] by (elim exE conjE) (rule that)
   have shape: "Pair_Term (f [0]) (Pair_Term (f [1]) (Pair_Term (f [2])
       (Pair_Term (Pair_Term (Payload_Term []) (Payload_Term [])) (f [3]))))=
       Pair_Term x (Pair_Term (readiness_table_term T) (Pair_Term k (readiness_value a hs)))"
-    using evaluated by (simp add: p)
+    using evaluated by simp
   have given: "(readiness_every,Pair_Term (f [1]) (f [3]))\<in>positive_meaning native_readiness_system"
-    using supported by (simp add: ps)
+    using supported by simp
   have fields: "f [1]=readiness_table_term T" "readiness_status a=Pair_Term (Payload_Term []) (Payload_Term [])"
       "f [3]=readiness_decompositions hs"
     using shape by (simp_all add: readiness_value_def)
@@ -589,9 +595,7 @@ next
     using native_every_settled[OF formed] settled by simp
   have "(readiness_ready,evaluate_pattern (native_values [x,?c,k,readiness_decompositions hs])
       (decode_finite_pattern readiness_ready_conclusion))\<in>positive_meaning native_readiness_system"
-    by (rule readiness_ready_family.law.step_at[where c="[0]"
-          and ps="[([0],(readiness_every,readiness_ready_premise))]"])
-      (use every xf kf in \<open>auto simp: native_values_def\<close>)
+    by (rule readiness_ready_family.at[THEN iffD2]) (use every xf kf in \<open>auto simp: native_values_def\<close>)
   then show "(readiness_ready,Pair_Term x (Pair_Term ?c (Pair_Term k (readiness_value a hs))))
       \<in>positive_meaning native_readiness_system"
     using opened by (simp add: readiness_value_def readiness_status_def)

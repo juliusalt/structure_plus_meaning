@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "a385b9942ca2330027dc7fd750302c1778c7570d7d059e3a2006da02a7aaea5e",
- "checked_content_sha256": "cd4ef86420a3b1ff836b5428fdf44ab3565007bfe9184233971fd350aa42d050",
+ "base_receipt_sha256": "ad5ecdcbffdb8e02d319180d6e98901264df9f42e0035d3d5b62d7540c13164e",
+ "checked_content_sha256": "7bac5e96b7329b3fcfb05666acf037008fdfb7d3ba698b27af85810f49835038",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -14,7 +14,7 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 255,
+   "ran": 267,
    "skipped": 0,
    "tail": [
     "OK"
@@ -23,71 +23,12 @@
  },
  "phases": {
   "base_and_impact": 0.29,
-  "execution_impact": 0.05,
-  "export": 8.58,
-  "proof": 217.64,
+  "execution_impact": 0.0,
+  "export": 0.0,
   "recipe_impact": 0.38,
-  "recipes_and_host_tests": 83.79
+  "recipes_and_host_tests": 11.09
  },
- "rebuilt_theories": [
-  "Admitted_Conditional_Applications",
-  "Cached_Faceted_Questions",
-  "Certificate_Construction_Review",
-  "Conditional_Application_Review",
-  "Development_Machinery",
-  "Development_Request_Packets",
-  "Development_Seed",
-  "Development_Seed_Loop",
-  "Development_Seed_Publication",
-  "Development_Seed_Verification",
-  "Faceted_Native_Questions",
-  "Isabelle_Entity_Export",
-  "Material_Application_Observations",
-  "Native_Control_Acceptance_Profile",
-  "Native_Control_Admitted_Selection",
-  "Native_Control_Artifact_Comparison",
-  "Native_Control_Artifact_Reused_Execution",
-  "Native_Control_Artifact_Source",
-  "Native_Control_Cause_Continuation",
-  "Native_Control_Cause_Review",
-  "Native_Control_Child_Review",
-  "Native_Control_Closed_Installation",
-  "Native_Control_Compile_Profile",
-  "Native_Control_Constructed_Source_View",
-  "Native_Control_Context_Execution",
-  "Native_Control_Filtered_Judgment",
-  "Native_Control_Finite_Guard",
-  "Native_Control_Guard_Construction",
-  "Native_Control_Guard_Execution",
-  "Native_Control_Guard_Source",
-  "Native_Control_Guard_Transport",
-  "Native_Control_Installed_Guard",
-  "Native_Control_Judgment_Graph",
-  "Native_Control_Judgment_Review",
-  "Native_Control_Judgment_Scope",
-  "Native_Control_Judgment_Source",
-  "Native_Control_Literal_Boundary",
-  "Native_Control_Prepared_Cause_Review",
-  "Native_Control_Quotation_Code",
-  "Native_Control_Quotation_Construction",
-  "Native_Control_Quotation_Representation",
-  "Native_Control_Quoted_Judgment",
-  "Native_Control_Receiving_Controls",
-  "Native_Control_Receiving_Review",
-  "Native_Control_Refinement_Composition",
-  "Native_Control_Reviewed_Receiving",
-  "Native_Control_Seed_Subject",
-  "Native_Control_Selected_Root",
-  "Native_Control_Source_Execution",
-  "Native_Control_Source_Profile",
-  "Native_Control_Sourced_Children",
-  "Native_Control_Syntax_Candidate",
-  "Native_Control_Syntax_Execution",
-  "Native_Control_Syntax_Statements",
-  "Native_Control_Union_Observation_Execution",
-  "Native_Development_Machinery",
-  "Native_Development_Seed"
- ],
+ "rebuilt_theories": [],
  "recipes": {
   "allocated-environments": {
    "status": "unchanged"
@@ -186,14 +127,10 @@
    "status": "unchanged"
   },
   "native-development-machinery": {
-   "exit_code": 0,
-   "seconds": 28.74,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development-seed": {
-   "exit_code": 0,
-   "seconds": 83.79,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -250,19 +187,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1775,
- "seconds": 330.01,
+ "reused_theories": 1833,
+ "seconds": 15.51,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1832,
+  "theory_count": 1833,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1832,
+ "theories": 1833,
  "validation_inputs": {
-  "ROOT": "ad9238b98fb937b164fd67ccfd242ba9d2aabcb1457636c59e659300f151bfe1",
+  "ROOT": "4953f1d770225b1fbc73f560e46eadab06284277efb39ba22a74c442b2be5d91",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "82e934dc1ab241ad304872f32ca11b1f5a0e8ad06d5de97626b94c96458b4752"
  }

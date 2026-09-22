@@ -8,13 +8,17 @@ A theory the base holds and the tree changes is loaded from the tree as well, un
 copy (`<Name>_Probe`): the heap already holds a theory of its name, and one context cannot merge
 two theories of one base name. Every loaded theory importing it imports the copy, every qualified
 reference `Name.x` in a loaded theory is rewritten to the copy's, and the changed theories are
-loaded in dependency order before the new ones. The probe certifies exactly the theories it loads
-from the tree, and its summary names them. Two limits are reported, not repaired: a base theory the
-tree does not change that imports a changed one stays the heap's and is not re-checked
-(`not_rechecked`), and a loaded theory whose heap imports reach the heap's copy of a changed theory
-sees both texts at once (`stale_heap_imports`). A supplied prelude can still stand for a changed
-base theory (`--substitute`), and `--from-heap` takes a changed theory from the heap. The probe is
-an inner loop and does not replace the repository check.
+loaded in dependency order before the new ones. An unchanged base theory standing on an import path
+from a changed base theory to a loaded theory is loaded as a renamed copy too (`intermediate`), so no
+loaded theory meets the heap's copy of a theory the tree changes. The probe certifies exactly the
+theories it loads from the tree, and its summary names them. Two limits are reported, not repaired: a
+base theory the tree does not change that imports a changed one and that no loaded theory imports stays
+the heap's and is not re-checked (`not_rechecked`), and a loaded theory whose heap imports reach the
+heap's copy of a changed theory taken from the heap or a prelude sees both texts at once
+(`stale_heap_imports`, then the cause of every error the run reports, said in the summary and the log).
+A supplied prelude can still stand for a changed base theory (`--substitute`), and `--from-heap` takes
+a changed theory from the heap. A load estimated to exceed the bound is refused before it runs, the
+chain named. The probe is an inner loop and does not replace the repository check.
 """
 from __future__ import annotations
 
@@ -100,6 +104,40 @@ and every theory's complete imports."""
 
 
 DEFAULT_TIMEOUT = 60
+STARTUP_SECONDS = 8
+BYTES_PER_SECOND = 12000
+
+
+def base_context(base, verify=False):
+    """The claims of the accepted base: read from its context file, verified only when asked.
+
+The lineage's verification digests every level's heap and database (about 3 s) and is the check's
+business, not the inner loop's: the probe then loads that heap, which Isabelle itself refuses when it
+does not match its session. A base without a context file is verified, as it has no other record."""
+    path = Path(base) / proof_contexts.CONTEXT_FILE
+    if verify or not path.is_file():
+        return proof_contexts.load_parent(base, None, *proof_contexts.new_lineage())
+    saved = json.loads(path.read_text())
+    return {key: saved[key] for key in ('session', 'sources', 'imports', 'providers', 'directories')}
+
+
+def intermediate_theories(graph, tree_imports, changed_base, loaded, excluded=()):
+    """Unchanged base theories on an import path from a changed base theory to a loaded theory.
+
+graph is the base's import graph; tree_imports the workspace imports of the loaded theories, which
+take their place. A theory is on such a path when it imports a changed base theory, directly or
+through others, and a loaded theory imports it, directly or through others."""
+    above = {n for n, clean in investigate.contexts_satisfying(graph, lambda n: n not in changed_base).items()
+             if not clean}
+    combined = dict(graph) | {name: list(parents) for name, parents in tree_imports.items()}
+    below = investigate.import_contexts(combined, [p for n in loaded for p in combined.get(n, [])])
+    return sorted((above & below) - set(changed_base) - set(loaded) - set(excluded))
+
+
+def load_estimate(paths):
+    """Seconds a load of these sources is expected to take: the session's start and a rate of bytes."""
+    size = sum(Path(path).stat().st_size for path in paths)
+    return round(STARTUP_SECONDS + size / BYTES_PER_SECOND, 1), size
 
 
 def last_command(text):
@@ -131,21 +169,27 @@ run with no error: its errors name the timeout, the command the log last reached
 
 
 def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, timeout, candidates=(),
-          from_heap=()):
-    context = proof_contexts.load_parent(base, None, *proof_contexts.new_lineage())
+          from_heap=(), verify_base=False):
+    context = base_context(base, verify_base)
     assert context['sources'], 'The base ' + str(base) + ' carries no accepted sources.'
     present = workspace_theories(candidates)
     differing = changed(context['sources'], present)
     new = {name for name, accepted in differing.items() if accepted is None}
-    loaded = set(loaded or (set(differing) - set(from_heap) - set(substitutions))) | set(prelude)
+    loaded = set(loaded) | (set(differing) - set(from_heap) - set(substitutions)) | set(prelude)
     missing = loaded - set(present) - set(prelude)
     assert not missing, 'Not a workspace theory: ' + ', '.join(sorted(missing))
+    graph = context.get('imports', {})
+    changed_base = {name for name in loaded - set(prelude) if context['sources'].get(name) is not None}
+    tree_imports = {name: investigate.theory_imports(present[name].read_text(), name)
+                    for name in loaded if name in present}
+    intermediate = intermediate_theories(graph, tree_imports, changed_base, loaded,
+                                         set(substitutions) | set(from_heap))
+    loaded |= set(intermediate)
     from_tree = {name for name in loaded - set(prelude) if context['sources'].get(name) is not None}
     renamed = {name: probe_name(name) for name in sorted(from_tree)}
     clash = sorted(set(renamed.values()) & (set(present) | set(context['sources'])))
     assert not clash, 'A renamed copy would take the name of an existing theory: ' + ', '.join(clash)
     directory, imports, complete = prepare(work, context, present, loaded, substitutions, prelude, renamed)
-    graph = context.get('imports', {})
     unchanged = investigate.contexts_satisfying(graph, lambda n: n not in from_tree)
     not_rechecked = sorted(n for n, clean in unchanged.items()
                            if not clean and n not in loaded and n not in substitutions)
@@ -155,7 +199,28 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
         reached = sorted(investigate.import_contexts(graph, heap) & from_tree)
         if reached:
             stale[name] = reached
-    order = ordered({n: i for n, i in imports.items() if n in (targets or loaded)})
+    closure = investigate.import_contexts(imports, targets) if targets else set(loaded)
+    order = ordered({n: i for n, i in imports.items() if n in closure})
+    estimate, size = load_estimate([directory / (renamed.get(name, name) + '.thy') for name in order])
+    common = {'base': str(base), 'session': context['session'], 'order': order,
+              'from_tree': renamed, 'intermediate': intermediate, 'new': sorted(new & loaded),
+              'not_rechecked': not_rechecked, 'stale_heap_imports': stale,
+              'estimate_seconds': estimate, 'estimate_bytes': size,
+              'parallel_proofs': parallel_proofs, 'timeout': timeout,
+              'substituted': substitutions, 'prelude': {name: str(path) for name, path in sorted(prelude.items())},
+              'from_heap_despite_change': sorted(set(differing) - loaded - set(substitutions)),
+              'from_heap': sorted(from_heap), 'summary': str(work / 'probe.summary.json')}
+    if estimate > timeout:
+        refusal = ('The probe is refused before it loads: its load of %d theories (%d bytes) is estimated at '
+                   '%s s, past its bound of %s s; the chain it would load is %s%s. Ask for the repository '
+                   'check instead, or give the probe a longer --timeout as a measurement.'
+                   % (len(order), size, estimate, timeout, ' -> '.join(order),
+                      ('; its intermediates: ' + ', '.join(intermediate)) if intermediate else ''))
+        summary = common | {'refused': refusal, 'loaded': False, 'certified': [], 'exit': None, 'seconds': 0,
+                            'timed_out': False, 'marker': None, 'last_command': None, 'cause': None,
+                            'errors': [refusal], 'messages': [], 'log': None}
+        Path(summary['summary']).write_text(json.dumps(summary) + '\n')
+        return summary
     marker = 'PROBE THEORIES LOADED'
     script = work / 'probe.ML'
     script.write_text(''.join('val _ = Thy_Info.use_thy_legacy "%s";\n' % (directory / renamed.get(name, name))
@@ -170,17 +235,21 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
     text = run['text']
     marker_line = next((line for line in text.splitlines() if marker in line), None)
     completed = marker_line is not None and not run['timed_out']
-    summary = {'base': str(base), 'session': context['session'], 'seconds': round(time.monotonic() - started, 1),
-               'exit': run['exit'], 'loaded': completed, 'order': order,
-               'certified': order if completed and not run['errors'] else [],
-               'from_tree': renamed, 'new': sorted(new & loaded),
-               'not_rechecked': not_rechecked, 'stale_heap_imports': stale,
-               'marker': marker_line, 'timed_out': run['timed_out'], 'last_command': run['last_command'],
-               'parallel_proofs': parallel_proofs, 'timeout': timeout,
-               'substituted': substitutions, 'prelude': {name: str(path) for name, path in sorted(prelude.items())},
-               'from_heap_despite_change': sorted(set(differing) - loaded - set(substitutions)),
-               'from_heap': sorted(from_heap),
-               'errors': run['errors'], 'log': str(log), 'summary': str(work / 'probe.summary.json')}
+    cause = None
+    errors = run['errors']
+    if stale:
+        cause = ('stale_heap_imports: ' + '; '.join('%s reaches the heap copy of %s' % (name, ', '.join(reached))
+                                                    for name, reached in sorted(stale.items()))
+                 + '. The run meets the heap text and the tree text of these theories at once, so its '
+                   'messages are this cause, not errors of the theories; they are kept under "messages".')
+        errors = [cause] if (errors or not completed) else []
+        with log.open('a') as stream:
+            stream.write('PROBE CAUSE: ' + cause + '\n')
+    summary = common | {'seconds': round(time.monotonic() - started, 1), 'exit': run['exit'], 'loaded': completed,
+                        'certified': order if completed and not run['errors'] and not stale else [],
+                        'refused': None, 'cause': cause, 'marker': marker_line, 'timed_out': run['timed_out'],
+                        'last_command': run['last_command'], 'errors': errors, 'messages': run['errors'],
+                        'log': str(log)}
     Path(summary['summary']).write_text(json.dumps(summary) + '\n')
     return summary
 
@@ -189,9 +258,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--base', type=Path, help='Override the active accepted context.')
     parser.add_argument('--work', type=Path, required=True, help='Directory for the rewritten sources and the log.')
-    parser.add_argument('--theory', action='append', default=[], help='Candidate to load; default every new theory.')
+    parser.add_argument('--theory', action='append', default=[],
+                        help='Theory whose load the probe runs: it and the loaded theories it imports are '
+                             'loaded and certified; default every loaded theory.')
     parser.add_argument('--load', action='append', default=[],
-                        help='Theory loaded from workspace source; default every theory the tree changes or adds.')
+                        help='Theory loaded from workspace source besides every theory the tree changes or adds '
+                             'and the unchanged theories between them.')
+    parser.add_argument('--verify-base', action='store_true',
+                        help='Verify the base lineage (its heaps and databases) before loading; the check does.')
     parser.add_argument('--from-heap', action='append', default=[], metavar='THEORY',
                         help='A changed base theory taken from the heap rather than loaded from the tree.')
     parser.add_argument('--prelude', type=Path, action='append', default=[],
@@ -216,9 +290,9 @@ def main():
                         + '; the supplied preludes are ' + (', '.join(sorted(prelude)) or 'none') + '.')
     summary = probe(incremental_check.selected_base(args.base).resolve(), args.work.resolve(), args.theory,
                     args.load, substitutions, prelude, args.parallel_proofs, args.timeout,
-                    [directory.resolve() for directory in args.candidates], args.from_heap)
+                    [directory.resolve() for directory in args.candidates], args.from_heap, args.verify_base)
     print(json.dumps(summary))
-    return 0 if summary['loaded'] and not summary['exit'] else 1
+    return 0 if summary['loaded'] and not summary['exit'] and not summary['cause'] else 1
 
 
 if __name__ == '__main__':

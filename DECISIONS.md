@@ -7919,6 +7919,10 @@ working tree ([receipt](validation/development-adoptions/Development_Answer_5aba
 precondition held, the judged theory was installed at the boundary, 150 theories were proved again
 (166 s), 48 recipes executed with every word equal to its retained word and 3 were reused, the answer
 was then judged in the adopted workspace as an accepted unchanged answer, and the adoption was withdrawn.
+**Corrected by "An adoption is established by its evidence; the published state is never judged against itself"
+below:** that last judgment, the table's final step above, judged the published state against itself and established
+nothing about the answer; what connected the installed theory to the published state were its installation and the
+check.
 The measured recipe seconds sit beside the retained ones (certified causes 30.9 against 26.5 seconds,
 the rest within a few percent) and decide nothing. A complete source proof of all 1,757 theories took
 524 seconds and reset the base to one level; the reading's correction then changed no exported module,
@@ -7976,7 +7980,9 @@ The answer was adopted through the repaired request
 ([receipt](validation/development-adoptions/Development_Answer_0ccf746fe2cf.json)): the retained word
 was reproduced, the judged theory was installed at the boundary, the check proved 150 theories again
 and executed the 11 recipes the change reaches with every word equal (40 reused), and the published
-state judged the answer unchanged. The next check made that workspace the base (154 theories, 11
+state judged the answer unchanged (corrected by "An adoption is established by its evidence; the published state is
+never judged against itself" below: that was the published state judged against itself; the adoption's evidence is its
+installation, its declaration and import, and its check). The next check made that workspace the base (154 theories, 11
 recipes equal, together with the exporter's reading of logical constants only). The adopted walk is
 consumed where the finished process reads recorded causes back: on the seed's entities as
 whole-artifact targets, reading a certified base cause takes 0.14, 0.19, 0.31 and 0.55 seconds at
@@ -8159,7 +8165,7 @@ admitted and published natively, beside its verdict.
 |---|---|
 | The harness presents the verdict and repair of an answer; admission as a generation and publication happen only in the seed report. | The harness presents a second report beside the verdict (`Development_Admitted_Publication`): the incumbent of the request state and, when the answer is admitted, the answer recorded beside it, both generations whose causes are certified under the policy that lists their family, and the transaction that publishes the answer over the incumbent it was judged against. Admission and selection keep separate words: the verdict word holds the judgment, the publication word the generations and the transaction. That the transaction applies whenever both generations exist is the published state's replacement theorem instantiated (`development_answer_publication_applied`, for every judge), and the adoption tool requires it (`published`) before it installs and again in the adopted workspace. |
 | A repaired answer is admitted against the extension, which the repaired successor states inline. | The route an answer is admitted through (`development_admitted_route`: its own request when the verdict accepts it, the request issued again over the extension when only the constants it introduces refused it and the repair accepts) reads the extension from `development_repair_state`, now stated once in `Development_Refinement_Repair` and used by the repaired successor too. |
-| Re-recording a retained answer whose words changed replaces its record. | An adopted answer is judged by the harness as the published state's unchanged answer, so its retained record, the judgment that admitted it before adoption, can no longer be reproduced; re-recording it would erase the evidence of the admission. The replay reports an adopted answer's present judgment beside its record and never re-records it. |
+| Re-recording a retained answer whose words changed replaces its record. | An adopted answer is judged by the harness as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself], so its retained record, the judgment that admitted it before adoption, can no longer be reproduced; re-recording it would erase the evidence of the admission. The replay reports an adopted answer's present judgment beside its record and never re-records it. |
 
 Evidence: a probe on the base heap (every proof checked) publishes the first seed request's
 unchanged answer in 10.2 seconds, the family judged once, and the answer with the reversed table in
@@ -8171,6 +8177,10 @@ seeded requests, 12.1 and 28.9 MB for the two repaired answers, whose answers di
 incumbents), every admitted answer published and every refused one published nothing; the
 publication step takes 3.6 to 3.9 seconds for a request of the refinement layer and 11.6 to 17.9 for
 a seeded one. The control `demanded-reformulated` was adopted again through the new gate and withdrawn: the precondition judged it accepted and published, the check proved 151 theories again in 170 seconds and executed 48 recipes with every word equal (3 reused), and the adopted workspace judged it an unchanged answer publishing over the incumbent it had become.
+**Corrected by "An adoption is established by its evidence; the published state is never judged against itself"
+below:** that judgment, and the adoption tool's requirement of `published` after installation in the first row, were
+the published state judged against itself, and the third row's reason rests on it: an adopted answer is not judged at
+all, and its record is historical for that reason.
 
 Open: the published state a judgment publishes into holds the incumbent alone, because the refinement
 layer has no persistent native published state, so an adoption records the transaction of its
@@ -8211,7 +8221,7 @@ reason, in about 16 seconds and before any answer theory was processed; the axio
 reached the verdict and been refused for its axiom, is now refused as an `axiomatization`. Replaying the
 fourteen retained answers on that base reproduced every verdict and publication word of the six judged
 answers that are not adopted (the parts reading refused none of them), every refusal, the failure of the
-answer Isabelle refuses, and reported the adopted walk as the published state's unchanged answer.
+answer Isabelle refuses, and reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself].
 
 Open: the packet does not yet state the declared form to the executor; the executor is not yet run with
 the packet as its only input (an agent executor is owner question Q4); a method defined by a later theory
@@ -8290,7 +8300,7 @@ problems and no unstated root. Three dependencies are read from the definitions:
 constant's problems on the problem of a constant, the selection question on readiness and the repair on
 the verdict. With nothing answered the other eleven residuals are ready, and the executed selection admits
 exactly those eleven (6.6 seconds). Replaying the fourteen retained answers on the new base
-reconstructed twelve, reported the adopted walk as the published state's unchanged answer, and differed only
+reconstructed twelve, reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself], and differed only
 for the answer that introduces a helper: its repair's definition problem now carries the helper as declared
 instead of its definition, so its verdict word was re-recorded (38,209 against 40,325 bytes), with its outcome
 and publication word unchanged.
@@ -8366,7 +8376,7 @@ passing. On the new base a native question over 8, 16, 32, 64, 128 and 256 candi
 seconds (27.7 and 42.6 seconds at 128 before); its scope review takes 0.091 seconds at 128 candidates,
 against 21.7 before, and its input is 2.2 million bits at 128 candidates. Replaying the fourteen retained
 answers on the new base reconstructed thirteen with every word equal and reported the adopted walk as the
-published state's unchanged answer.
+published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself].
 
 Open: the revision of a question's comparison now dominates it (0.016, 0.23, 3.6 and 70.7 seconds at 32,
 64, 128 and 256 candidates, growing with the fourth power): the comparison relation and the observation
@@ -8402,7 +8412,7 @@ and was retained, with 171 tool and 35 kernel tests passing. The four recipes th
 ran 0.3 to 0.7 seconds faster than in the previous check in the check that advanced the base, and 1.6 to 2.1
 seconds slower in the confirming one, under the load of fifty concurrent executions rather than eleven; the
 seed recipe took 175.4, 202.3 and 152.0 seconds in the three checks. Replaying the fourteen retained answers on the new base reconstructed thirteen
-with every word equal and reported the adopted walk as the published state's unchanged answer.
+with every word equal and reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself].
 
 Open: at 512 candidates the generation (24.8 seconds), the observations (18.2) and the scope review
 (17.5) dominate and revision takes 5.2: the first two read the installed ground program back, which still
@@ -8451,7 +8461,7 @@ with every word equal, and the machinery recipe executed in 5.7 seconds (12.3 in
 changed its three words, because the checked context's content changed with the datatypes: the loop's notions
 are stated over the parameterized term and entity types, so the machinery state names `isabelle_term_with`,
 `isabelle_entity_with` and `isabelle_type` where it had named `isabelle_term` and `isabelle_entity` (151 names
-against 150). The words were re-recorded as re-evaluations and the proof adopted. The confirming check reused all 1,780 proof contexts, executed both recipes with every word equal (the machinery recipe in 5.9 seconds, the seed recipe in 113.4) and was retained with 171 tool and 35 kernel tests passing; replaying the fourteen retained answers on the new base reconstructed thirteen with every word equal and reported the adopted walk as the published state's unchanged answer.
+against 150). The words were re-recorded as re-evaluations and the proof adopted. The confirming check reused all 1,780 proof contexts, executed both recipes with every word equal (the machinery recipe in 5.9 seconds, the seed recipe in 113.4) and was retained with 171 tool and 35 kernel tests passing; replaying the fourteen retained answers on the new base reconstructed thirteen with every word equal and reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself].
 
 Open: the table's numerals make the layer's term 839,656 nodes where shared nodes alone would need about
 534,000; native computations over a state still read a type at every occurrence, since the state notion keeps
@@ -8539,7 +8549,7 @@ code equations is accepted for 29 requests and refused for three (`development_c
 `isabelle_state_embedding`, `development_answer_publication_with`): their code equations are the only
 statements reaching some declarations of the state (ten, one and one), which that control keeps, so its
 answer state is not closed. Replaying the fourteen retained answers reconstructed thirteen with every
-word equal and reported the adopted walk as the published state's unchanged answer.
+word equal and reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself].
 
 Open: no definition answer exists, and no answer of either kind is yet a native value; admission and
 publication are stated for refinement answers judged by the harness only. Native answers, their reader
@@ -8758,7 +8768,7 @@ steered result and every source-development admission. On a probe of the new bas
 exactly the development's ready problems, 10 of 10 on the seed and 36 of 65 on the machinery. The words were
 recorded, and the confirming check executed the six native-question recipes again with every word equal
 and was retained, with 177 tool and 35 kernel tests passing. Replaying the sixteen retained answers reconstructed
-fifteen with every word equal and reported the adopted walk as the published state's unchanged answer.
+fifteen with every word equal and reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself].
 
 Open: the scope states its candidates literally, so by the payload criterion the scope program reads the
 octets of the problems' binary positions as structure while the decision reads none; identity of problems is
@@ -8796,7 +8806,7 @@ candidate indices before, by the audit of "A program's payload literals are the 
 selection admits exactly the development's ready problems on both. The words were recorded, and the confirming check
 executed both recipes again with every word equal and was retained, with 177 tool and 35 kernel tests passing.
 Replaying the sixteen retained answers reconstructed fifteen
-with every word equal and reported the adopted walk as the published state's unchanged answer. A probe of the new
+with every word equal and reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself]. A probe of the new
 base also measured the evaluation that stages use (keyed by the call's ordered term) against a key that compares a
 pair's right component first: 0.95 and 0.94 seconds at 24 problems, so the comparisons inside the keyed evaluation
 are not where the remaining cost lies.
@@ -8830,7 +8840,7 @@ them, and reaches the same calls. The check that advanced the base to `.build/ch
 changed and dependent theories in 172 seconds and executed the six native-question recipes (seed, machinery,
 steering, development, source development and workflow) with every word equal to its retained word, as a
 refinement must; it was retained with 177 tool and 35 kernel tests passing. Replaying the sixteen retained answers
-reconstructed fifteen with every word equal and reported the adopted walk as the published state's unchanged answer.
+reconstructed fifteen with every word equal and reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself].
 
 Open: the traversal's union of the visited calls with the frontier and the difference of the successors from them
 still compare calls structurally, and every call of a candidate shares its context, so the closure still grows
@@ -8860,7 +8870,7 @@ the keyed traversal against 9.47 seconds through the traversal of finite sets. T
 native-question recipes with every word equal to its retained word, as a refinement must; their stage times equal
 check ak's within the variation between runs (the seed's publication stage 141.3 against 142.5 seconds, the
 machinery's verification 38.2 against 36.9). It was retained with 177 tool and 35 kernel tests passing. Replaying the sixteen retained answers reconstructed fifteen with every word equal and
-reported the adopted walk as the published state's unchanged answer.
+reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself].
 
 Open: every call of a context-carrying program still carries the whole context, so an evaluation over a whole state
 pays the context in every call: the machinery's reach spends 121.9 of its 171.8 seconds closing 3,397 calls that each
@@ -9428,7 +9438,7 @@ batch is therefore word equality: a changed recipe word would be a failure, not 
 `probe.log`; source copy `.build/impl31/t3/`; probe theory `.build/impl31/t2/P31_Engine_Profile.thy`):
 the seeded state's demanded closure 0.014 seconds against 0.063 before, its evaluation 0.403 against
 1.224 and equal to the HOL result; the machinery's closure 0.784 against 3.83, its evaluation 43.812
-seconds with 217 results and equal to the HOL result. The check `tools/incremental_check.py check --advance-base` (`.build/check-20260920a`, 341.51 seconds, the base advanced to its proof context) proved 153 of the 1,797 theories and reused 1,644, and executed 33 of the 52 recipes, the other 19 reusing their accepted executions: every executed recipe accepted, so every recipe word equals its retained word and no recipe failed. The 177 tool tests and the 35 kernel tests pass. Replaying the sixteen retained answers reconstructed fifteen with every word equal and reported the adopted walk as the published state's unchanged answer, none differing.
+seconds with 217 results and equal to the HOL result. The check `tools/incremental_check.py check --advance-base` (`.build/check-20260920a`, 341.51 seconds, the base advanced to its proof context) proved 153 of the 1,797 theories and reused 1,644, and executed 33 of the 52 recipes, the other 19 reusing their accepted executions: every executed recipe accepted, so every recipe word equals its retained word and no recipe failed. The 177 tool tests and the 35 kernel tests pass. Replaying the sixteen retained answers reconstructed fifteen with every word equal and reported the adopted walk as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself], none differing.
 
 **Open.** The second refinement of the line — the evaluation over the positions of the demanded calls,
 where the rule table is renamed by the injective map sending each demanded call to its position among
@@ -10106,7 +10116,7 @@ seconds in its row, because every acceptance from here on is read through this s
 ### Evidence and limits
 
 The documented command on the sixteen retained answers: sixteen replayed, fifteen reconstructed, the adopted `indexed-data-walk` reported as the
-published state's unchanged answer, and both the differing and the failed group empty, the run taking
+published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself], and both the differing and the failed group empty, the run taking
 283.6 s at two Isabelle runs at once and its answers 9.5 s to 97.1 s each. The failed group is not
 exercised by these records, since every harness run left its answer; the classification is decided by
 whether the harness's `answer.json` exists, which is the one condition under which the replay
@@ -10155,11 +10165,15 @@ that decided the groups inside `main` are one named function over the results, `
 reconstructed, differing and adopted — including the `failed-proof` case that parts the two notions,
 and a run that outlives its limit and a harness that cannot start, both returning rather than
 raising. It runs among the tool tests that every acceptance already runs, and needs no Isabelle.
+**Corrected by "An adoption is established by its evidence; the published state is never judged against itself"
+below:** the `adopted` group was decided in the replay's own process by `adopted()`, a file's presence, and its rows
+were the published state judged against itself; from that entry on it is decided from the harness's report of the
+adoption's evidence, and an `obstructed` group holds a theory of an answer's name that is not its adoption.
 
 ### Evidence and limits
 
 The documented command on the sixteen retained answers, run alone: sixteen replayed, fifteen
-reconstructed, the adopted `indexed-data-walk` reported as the published state's unchanged answer,
+reconstructed, the adopted `indexed-data-walk` reported as the published state's unchanged answer [corrected by "An adoption is established by its evidence; the published state is never judged against itself" below: that was the published state judged against itself],
 nothing differing and nothing unproduced. The repository check accepted with every recipe word equal.
 
 The classification was parted on real rows before those counts were taken. Run while the working tree
@@ -12585,7 +12599,10 @@ seeded problem can be adopted (follow-up 1).
 1. **Adoption of an answer over a recorded state that expands its subject** (tools). `tools/development_adoption.py`
    requires every word equal after installation (its step 3) and adopts refinement-layer answers only. Under this
    criterion the words of recipes reading a state that expands the adopted subject are re-recorded, evidenced by
-   the adoption-time verdict and step 4's judgment in the adopted workspace; answers to seeded problems need an
+   the adoption-time verdict and step 4's judgment in the adopted workspace (corrected by "An adoption is established by
+   its evidence; the published state is never judged against itself" below: step 4 judged the published state against
+   itself; its replacement checks the adoption's evidence and judges nothing, so the adoption-time verdict is the
+   evidence); answers to seeded problems need an
    adoption at all. Needed before the loop can consume an answer to any seeded problem (stage 2's gate).
 2. **The arity restatement of the guarded entries no recorded state expands** (a build, every word equal, not
    serialized): `finite_citation_candidates`, `finite_term_readings_bounded` and `finite_pattern_readings_bounded`
@@ -12637,3 +12654,160 @@ by "A refinement's contract is its constant", not a theorem. The list of expande
 state added later extends it. This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 218; a design, no theory changes).
+
+## An adoption is established by its evidence; the published state is never judged against itself
+
+Task 253 confirmed the external review's P1 (`.build/tasks/253/report.md`). `adopted()` in `tools/development_answer.py`
+reads one path, `theories/<answer name>.thy`, and when a file stands there the harness frames nothing: it defines the
+answer state as the request state and reports the verdict and publication of the request state judged against itself.
+With a file of the `failed-proof` answer's name that is no theory, declared nowhere and imported by nothing, the harness
+reported that answer `judged`, `accepted` and `published`, with the words of a correct answer (`identity`'s), though
+Isabelle never read its equation or its proof; the replay filed the row `adopted`, compared it with nothing and passed.
+Task 254 found that every unsuccessful adoption can leave such a file. The adoption tool's final step reads the same
+self-comparison, so what the entries above say the published state judged of the adopted walk and of the control was
+never a judgment of either answer. This entry decides what establishes an adoption and what each tool reports for one.
+The rule that admits an adoption before genesis is the owner's question Q1 and is not decided here; nor is #218's
+criterion for the adoption's check (HANDOFF Open 73 (1)), which this entry does not need.
+
+### What establishes that an answer is adopted
+
+An adoption is a relation between an answer, the content Isabelle accepted when the answer was judged, and the
+published state. A file name is evidence of none of it: the theory's name abbreviates the answer's content digest, and
+a file of that name holds whatever was written there. An answer is adopted in a workspace exactly when these hold, each
+checked on the workspace's own content:
+
+1. **The request's state adopts.** A state adopts through its **adoption boundary**, the theory at which the state is
+   read and which imports every adopted theory: the refinement layer's is `Native_Execution_Refinements`. The seed state
+   and every other state have none, so no answer of theirs is adopted, and a file of such an answer's name is never read
+   as its adoption. When #218's follow-up 1 adopts answers of another state, it gives that state its boundary; this
+   condition is where it enters.
+2. **A retained receipt binds the answer.** Among the retained adoption receipts (`validation/development-adoptions/`),
+   exactly one has `answer_sha256` equal to the SHA-256 of the answer's canonical JSON — the content the theory name
+   abbreviates — with `status: adopted`, `control: false` and no `withdrawn`. The receipt is found by that digest, not by
+   its file name.
+3. **The installed content is the judged frame.** The theory the receipt names has the SHA-256 the receipt retained at
+   installation (`installation.theory_sha256`). That digest is the judged frame's identity: the adoption tool copies,
+   byte for byte, the text of the frame Isabelle accepted when its precondition judged the answer. The identity is
+   retained, not recomputed, because a frame imports the boundary's imports at the time it is judged: the installed walk
+   differs from the frame rendered today in its imports alone (the walk itself and eight theories added to the boundary
+   since), so a frame rendered again is not the frame that was judged.
+4. **It is declared and imported where the published state is read.** ROOT declares the theory once, in the session,
+   and the adoption boundary imports it. Declaration makes every accepted check of the workspace prove it; the import
+   makes every reading of the published state read it, since a request theory of the layer imports the boundary.
+   Isabelle's acceptance of the installed content is therefore not a separate connection the adoption test makes: it is
+   the repository check's, which accepts a workspace only with every declared theory proved.
+
+One connection stays a **residual**: that the published state is the answer state the answer's judgment produced — its
+incumbent for the subject is the answer's statement, and nothing else it reads has changed since but by later adoptions
+and refinements of their own. Nothing the workspace holds establishes it: its native record is the answer's generation
+selected at the problem's locus in a persistent native published state, which the refinement layer does not have
+(HANDOFF.md). Every report of an adoption names it as unverified; nothing assumes it.
+
+The digest and the receipt make condition 3 hold by construction (problems.txt condition 2) and leave it reconstructible
+(condition 3): the installed theory is committed, its digest is retained where it was established, and the receipt's
+precondition is reproducible at the revision it names (below). The evidence is one function over the answer, its
+receipt and the workspace, owned by `tools/development_answer.py` in place of `adopted()`; the harness, the replay
+(through the harness's report) and the adoption tool read it, and none of them decides adoption otherwise.
+
+### What the harness reports
+
+The harness decides which case it is in before any Isabelle run:
+
+- **No theory of the answer's name stands in the workspace**: the answer is framed and judged as today. Its record
+  gains `frame_sha256`, the digest of the frame it generated and Isabelle accepted when the proof step passes: the
+  judged frame's identity at its source. The retained judgment record does not keep it: it moves with the boundary while
+  the judgment's words need not, and it is adoption's identity, which the receipt retains.
+- **A theory of that name stands and the evidence holds**: the harness judges nothing and says so. It reports
+  `status: adopted` with the evidence as it checked it — the receipt, the answer's digest, the retained and the present
+  digest of the installed theory, the declaration, the import, the state — and, under `unverified`, the residual. It
+  reports no `verdict_word`, `publication_word`, `accepted` or `summary`, which are a judgment's, and runs no Isabelle.
+  It exits 0, and `--retain` writes nothing, since only a judgment is retained.
+- **A theory of that name stands and the evidence fails** (the file's content, a missing or unbound receipt, a missing
+  declaration or import, or a state that does not adopt): the adoption check refuses it — it is never adoption — and the
+  answer is not judged either, since the frame it would be judged in cannot take a name the workspace holds. The harness
+  reports `status: obstructed` with `obstruction`, each connection that failed, judges nothing and exits 1. An
+  obstruction is a condition of the workspace (a leftover of an unsuccessful adoption, task 254, or a planted file), not
+  a judgment of the answer.
+
+The self-comparison theory (`verification_theory` without an answer theory) goes: no path defines the answer state as
+the request state.
+
+### How the replay classifies and compares
+
+The replay stops deciding adoption in its own process and reads the harness's `status`. Its groups:
+
+- `adopted`: the harness reported `adopted`. The row compares the evidence — every connection held — and records it with
+  the residual; `reconstructed` stays false. The record's retained judgment is historical, the judgment that admitted the
+  answer before its adoption, and cannot be reproduced where the answer is part of the request state: it is compared with
+  nothing and never re-recorded.
+- `obstructed`: the harness reported `obstructed`. Nothing was judged, so it is neither a re-evaluation of the answer
+  (`differing`) nor a run that left nothing (`unproduced`), and the replay fails on it as on those.
+- `differing` and `unproduced` keep their meaning: a judgment produced and a word that differed; no answer left.
+- The exit is 0 exactly when `differing`, `unproduced` and `obstructed` are empty. `--rerecord` re-records judged and
+  refused rows alone.
+
+### What the adoption tool's final step checks
+
+- **Before anything**: a theory of the answer's name in the workspace refuses the adoption — already adopted when the
+  evidence holds, obstructed otherwise, which is #255's cleanup to resolve, not this tool's. The tool also refuses a tree
+  whose `theories/`, `ROOT` or `tools/` differ from its commit, and retains that commit as `revision`, so the
+  precondition's judgment is reproducible from the repository.
+- **The installation** copies the judged frame and asserts its digest equals the precondition's `frame_sha256`, in place
+  of the comparison with the frame rendered again (equal at that moment, but not the judged identity).
+- **The final step**, in place of judging the published state against itself: after the check accepted, the adoption's
+  evidence holds in the adopted workspace with the receipt the tool is about to retain, and the check's accepted proof
+  context records the installed theory at the frame's digest (the `sources` of its accepted context, as the base's
+  context records the walk's): the check proved this content, not a later one. It runs no harness judgment; the harness's
+  `adopted` report is exercised by the replay once the adoption has landed. The tool writes the receipt to its output
+  and, retained, to `validation/development-adoptions/<theory>.json` (a control's too, withdrawn), since without it the
+  evidence does not hold.
+
+### What the retained records keep
+
+- **The walk's judgment record** (`validation/development-answers/indexed-data-walk.json`) keeps what it holds: the
+  answer and the judgment that admitted it before adoption, through the repaired route. It is the precondition's
+  reference (the receipt's `record_sha256`, `1c6e164f…`, is still its digest) and historical evidence of the admission,
+  reproduced by no present replay and never re-recorded.
+- **The walk's receipt** (`Development_Answer_0ccf746fe2cf.json`) keeps every step as it ran. Its `published` step is the
+  self-comparison and established nothing about the answer; it is kept as run and read as such. The fix adds
+  `answer_sha256`, derived from the record's answer and marked as derived, not observed. The evidence holds of it today:
+  the installed theory's digest is `installation.theory_sha256` (`9102596f…`, the digest the base's accepted context
+  records for it), ROOT declares it and the boundary imports it. Its `revision` is not recoverable, the walk having been
+  adopted in a working tree whose other uncommitted work landed with it in `78ae1536`, so the reproduction of its
+  precondition is a residual of this receipt alone. Its `record`, an absolute path of the one tree, is kept as run;
+  lookups go by `answer_sha256`.
+- **The control's receipt** (`Development_Answer_5aba3385cee9.json`) gains `answer_sha256` the same way; `control` and
+  `withdrawn` keep it from ever establishing an adoption, and its `published` step is the self-comparison, kept as run.
+
+### What the fix must respect
+
+- Adoption's evidence is the one function; no tool reads a path to decide it.
+- A report of an adopted or an obstructed answer carries no field of a judgment; a judgment of the request state is
+  never reported beside an answer as the answer's.
+- The residual is named wherever an adoption is reported, until a persistent native published state holds the answer's
+  generation.
+- Retained receipts' steps are not rewritten; a field the fix adds is derived from retained content and marked so.
+
+### Weighed and rejected
+
+- *An obstruction reported as `refused`*: `refused` is the answer's own refusal by the reading of its parts, whose reason
+  the replay compares with the retained refusal as a judgment of the answer; a condition of the workspace among them
+  would read as a re-evaluation.
+- *Framing an adopted answer again under another name*: the frame would not be the adopted theory, and the request state
+  now holds the answer, so the judgment would compare the answer with itself once more.
+- *Keeping the self-comparison, labelled*: a judgment of the request state beside an adopted answer is a judgment of
+  another subject and would be read as the answer's, which is P1.
+- *The frame rendered again as the identity*: it moves with the boundary.
+- *The frame's digest in the judgment record*: it changes with every boundary move without the judgment changing, and it
+  conflates judgment with adoption.
+- *Isabelle run in the harness's adopted case*: it repeats the repository check, which declaration makes the judge of
+  acceptance by construction.
+
+### Evidence and limits
+
+This entry reads the repository and builds nothing: #253's reproduction and its control, #254's leftovers, the tools'
+code on HEAD, the two receipts, and the walk's digests (its theory `9102596f…` equal to its receipt's and to the base's
+accepted context's, its record `1c6e164f…` equal to its receipt's `record_sha256`, its declaration and import present).
+The fix is a separate build. This entry was written outside the loop and is a residual.
+
+Recorded 2026-09-22 (task 258; a design, no theory changes).

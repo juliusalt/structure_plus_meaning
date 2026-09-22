@@ -234,6 +234,8 @@ judgment's path.
 - **#120** `518ac1e7`: the receipts of an accepted check of `1add503f` retained (158 files under `validation/`); the
   landing check after it 21.18 s, every recipe unchanged. Reuse reads only `validation/reconstruction/`, not a base's
   `recipes/` or `exports-context/`, so a base advance removes its own.
+- **#122** `348c625f`: a check's host-test record names each failing test (`failing`: its outcome, its id and the last
+  eight lines of its traceback, beside `tail`), parsed from unittest's printed report.
 
 ## Open
 
@@ -386,13 +388,17 @@ Not yet planned, in the order they are expected to be planned:
     listing reaches one. Taken only at a measured cost on the loop's path.
 44. **`demand_positions_member`'s `simp add` form, and import edges possibly dead since the index re-citations**
     (#115's reviews): with the next edit of those theories, and an import audit once #117 and #105 have landed.
+45. **The host-test record reads printed text** (#122's review): a documented test would lose its traceback, an
+    unexpected success is not recorded, and `import subprocess` sits inside a test method. The structured source is
+    `TestResult.failures` and `errors`, through a result class on the suites' runner, which would remove the parsing;
+    a tools task when a failure meets a gap or the suites' runner is next changed. `FORCE_COLOR=3` reaches the check's
+    environment, so a test comparing text output could depend on it.
 
 ## Now
 
-- **In flight (plan-36, 06:15)**: #134 asks whether proved-code export gives the same module bytes from two proof
+- **In flight (plan-37, 07:15)**: #134 asks whether proved-code export gives the same module bytes from two proof
   contexts over identical sources (#120's retaining check reused no execution: 50 of 52 boundaries differed only in
-  the module's digest); #122 records which host test failed (#115's first landing check failed on one unnamed tools test under load; the
-  suite passed alone in 5.9 s); #88 ended partial with its held attribution
+  the module's digest); #88 ended partial with its held attribution
   (`.build/tasks/keyed-question-cost/attribution.md`): the key search costs at most 0.05 ms, so no index instance is
   taken for it; a packet's cost is the native reading of its sources, which grows superlinearly with a program's
   syntax and is repeated in generation, compile, observation and admission. #88 is re-planned to read each source

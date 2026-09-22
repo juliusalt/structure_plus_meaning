@@ -12043,7 +12043,8 @@ every premise `(k,(d,q))` of `ps` has `d` holding of `f`'s evaluation of `q`; `s
 needs no side condition on the premises' variables: a premise that holds is formed, so `f` is formed at every
 variable a premise reads (`evaluate_pattern_variables_formed`). Only `native_rearranging_program.at`, an iff at every
 evaluation, needs the premise's variables among the conclusion's, and keeps that assumption. Its proof is the one
-place the `holds_cases`/`native_step` argument is made; it reads nothing of the patterns' shape, so literal leaves,
+place the `holds_cases`/`native_step` argument is made [corrected by task 247: the law's argument is
+`ordinary_schema_rule_valuation`/`native_step`]; it reads nothing of the patterns' shape, so literal leaves,
 repeated variables, no premise and several premises are instances alike. `finite_native_rule_eq_iff` reads a native
 rule's conclusion and premise set back from its value.
 
@@ -12051,7 +12052,7 @@ rule's conclusion and premise set back from its value.
   `native_rearranging_program` (its `exact` is the law's at one rule and one premise; `at` from that and the two pattern
   facts), `native_member_program.exact`, `native_every_program.relation_equation` (its step rule has two premises),
   `native_some_program.exact`, `native_keyed_search_program.exact`. What the law does not replace stays: each
-  program's `unfold`, the inversion of one rule application supported in an arbitrary relation, which least-fixed-point
+  program's `unfold` [corrected by task 247: each `unfold` is a corollary of the law's `supported_clause`], the inversion of one rule application supported in an arbitrary relation, which least-fixed-point
   arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
   the law's single step does not carry.
 - The two pattern facts now stand in `Factor_Rule_Instances` beside `evaluate_pattern_cong` and
@@ -12070,11 +12071,23 @@ No rule value and no statement changed, so no recorded word changes.
 
 The law completed (task 247, task 245's review): both halves at any support relation, `rule_instance` (an iff,
 the analogue of `reader_projection_rule`, formation over the rule's variables, conclusion's and premises', because
-`Y` need hold only of formed terms nowhere); `supported_clause` also returns the clause's conclusion, so each
+`Y` may hold of unformed terms); `supported_clause` also returns the clause's conclusion, so each
 `unfold` is a corollary citing it and `unfold_rule` without re-deriving the conclusion; `holds_rule`, the elimination
 at the positive meaning returning the native rule itself, through which `exact`'s forward direction no longer
 re-encodes and decodes the clause. The four `unfold` lemmas stay, their statements unchanged, as their uses in
 Development_Native_Readiness and Native_Table_Reach cite them.
+
+Re-cited (task 235): the value rule's contract is stated once beside `native_value_rule` in Development_Located_Rows
+(`native_value_program`, its `exact`: the site holds of `Pair_Term x y` exactly when `x` is formed and `x=y`), and
+`development_row_check_exact` and `verdict_equal_program.exact` are its instances, their statements kept; the
+relocation of the equality program to the check's site and its alpha variant are no longer used there.
+`permitted_row_program`, `row_reached_program`, the site `decomposition_applies` (`decomposition_applies_family`,
+`native_decomposition_reads`, `native_decomposition_progress`) and the reach's `reach_holds` family
+(`native_reached_complete` and the invariant's `reach_holds` case) take the law (`exact`, `holds_rule`, `step_at`,
+`supported_clause`), every statement kept; the invariant inductions of the reach (`reach_reached` case) and of
+readiness (`readiness_settled` and `readiness_answered` cases) take `supported_clause` for their support. The
+least-closure inductions stay: the law is one rule application, and the invariant over the least fixed point is not
+carried by it. `conjoined_calls_program` stays as it stands. No rule value changed, so no recorded word changes.
 
 ## The overnight native-control questions state their candidates as keys
 

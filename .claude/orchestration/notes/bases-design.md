@@ -628,3 +628,17 @@ then refreshed only when the delta holds 8% of it or its frontier moves, and the
 by the delta and said to the owner past 15K tokens. Its plan and tasks: notes/plan-delta-layer.md and
 notes/plan-delta-layer-tasks.md; its rollout: high first, xhigh after a day's measurement, max not at all (4 forks a
 day, and the knowledge base integrates HANDOFF.md itself).
+
+## 18. The bases chosen by use (2026-09-22/23, the owner: review the bases against the day's sessions)
+
+Measured on the sessions of 2026-09-22 and the week before (notes/plan-bases-upgrade.md, its decisions D1-D11 and
+the datasets under state/analysis/): reading the base prefix is 62% of what the run spends; 176 of the 226 founding
+theories held at signatures were used by no implementer or fixer in a week, 175 by no middle role, while theories no
+base held were used by 15-25 forks a day; the frontier, a fixed 40 theories measured from 7 sessions with no budget, had
+taken the high base from 525K to 602K in a day; the theory map's index had grown from the 56K measured here (§5) to
+100.9K. What changed: the founding tier holds what its roles use and main leaves unchanged (27 on high, 23 on xhigh);
+the frontier is chosen within the layer's room by use per token from 60 sessions (71 theories on high, 55 on xhigh);
+the index keeps 90 characters of first clause; xhigh holds a founding index of the founding theories it no longer
+holds. Estimated loaded: high 530K, xhigh 457K. The central ideas (the owner's pins, §3) and max (§12: the founding
+theories at definitions) are unchanged; what the week's data says of the pins is put to the owner (plan D3).
+

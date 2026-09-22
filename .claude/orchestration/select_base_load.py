@@ -25,22 +25,32 @@ base_pack.SELECTED; sizes here use base_pack's measured ratios and that form's m
 is ORCH_BASE_TARGET (530,000, everything included; manifest.TARGET) less the lean session a base starts from
 and one tool call per chunk.
 
-usage: select_base_load.py [--dry-run | --refresh-index | --frontier WHO]
+usage: select_base_load.py [--dry-run | --refresh-index | --frontier WHO | --founding WHO]
 --refresh-index updates only the generated indexes (refresh_indexes), without selecting or removing load-list entries.
---frontier WHO rewrites only the working-frontier tier of that base's list (max, xhigh, high), measured from the
-sessions of the roles that fork it; that tier is what its layer holds, and base.sh runs this at every layer refresh.
+--frontier WHO rewrites only the working-frontier tier of that base's list (max, xhigh, high): the theories the last
+FRONTIER_SESSIONS sessions of the roles that fork it used, ranked by use per token and taken until the layer's budget
+(the target less the stable part and the layer's other entries) or the floor (FRONTIER_FLOOR of the sessions); that
+tier is what its layer holds, and base.sh runs this at every layer refresh.
+--founding WHO rewrites the founding tier of that list to the founding theories its roles used (FOUNDING_MIN of the
+last FOUNDING_SESSIONS sessions): the stable part is the owner's to rebuild, so this is run when it is.
+
+A session uses a theory when it reads it or when its own writing — its tool calls and visible replies, never what came
+back to it — names one of the names the theory defines (use_of). Measured on 2026-09-22 (notes/plan-bases-upgrade.md
+D1-D4): reading the base prefix is 62% of what the run spends, 176 of the 226 founding theories were used by no
+implementer or fixer in a week, and the frontier, a fixed 40 theories measured from 7 sessions, had taken the high base
+from 525K to 602K in a day.
 """
 import glob
 import json
 import os
 import re
+import subprocess
 import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 from digest import held_text  # noqa: E402
-from idea_candidates import founding_theories  # noqa: E402
 import manifest  # noqa: E402
 from base_pack import (CHUNK_BYTES, CALL_TOKENS, INDEX_RATIO, PACKED_RATIO, SELECTED_FACTOR,  # noqa: E402
                        SESSION_TOKENS)
@@ -54,6 +64,16 @@ MIN_SHARE = 0.10
 CHUNK_FILL = CHUNK_BYTES * 0.9  # chunks break at line ends, so they average a little under their bound
 FIXED_TOKENS = 0  # the lean session measured by base_pack already includes the role prompt and the load's turns
 NEVER = {"HANDOFF.md", "PLANNING_LOG.md", ".claude/orchestration/owner-ledger.md", "THEORY_MAP.md"}
+FRONTIER_SESSIONS = int(os.environ.get("ORCH_FRONTIER_SESSIONS", 60))  # 7 collapsed to 1 of 40 theories (2026-09-20)
+FRONTIER_FLOOR = float(os.environ.get("ORCH_FRONTIER_FLOOR", 0.05))    # nothing used by fewer holds a place (D1)
+FRONTIER_EVIDENCE = 10  # fewer sessions than this measure nothing: the frontier is left as it stands
+FOUNDING_SESSIONS = int(os.environ.get("ORCH_FOUNDING_SESSIONS", 400))  # a week of the roles (347 on 2026-09-22)
+FOUNDING_MIN = 2
+FOUNDING_QUIET_DAYS = int(os.environ.get("ORCH_FOUNDING_QUIET_DAYS", 3))  # changed since: the frontier's, not the stable part's
+# The layer's measured size against its estimate: the fork's own launch and the chunk calls' turns (2026-09-22 22:18,
+# 325,243 measured against 302,435 estimated). The stable part measures as estimated (276,298 against 275,196).
+LAYER_FACTOR = 1.075
+CLAUSE = 90  # what an index keeps of a theory's map row: its first clause, cut at a word under this many characters
 # always read fresh or not at all, never held: the planner's state, the planner's log, the ledger, the theory map
 
 
@@ -166,6 +186,118 @@ def measure(files):
     return use
 
 
+def founding_theories():
+    """idea_candidates.founding_theories, imported when first asked: that module reads THEORY_MAP.md as it loads, and
+    imported at the top it made this one unloadable wherever the map does not stand beside it (a test's copy)."""
+    from idea_candidates import founding_theories as found
+    return found()
+
+
+DECLARED = re.compile(r"^\s*(?:lemma|theorem|corollary|proposition|definition|fun|function|primrec|abbreviation|"
+                      r"inductive|inductive_set|locale|datatype|type_synonym|record|consts|lift_definition|lemmas)\s+"
+                      r"(?:\(in\s+\w+\)\s+)?\"?([A-Za-z][\w']*)", re.M)
+NAME = re.compile(r"[A-Za-z][A-Za-z0-9_']{3,}")
+DEFINED = {}
+
+
+def defined_names():
+    """{name: the theories that define it}, for the names a session may write: a theory's own name and every name its
+    declarations introduce. A name that more than three theories define says nothing of which one a session used."""
+    owners = {}
+    for path in glob.glob(os.path.join(PROJECT, "theories", "*.thy")):
+        rel, theory = os.path.relpath(path, PROJECT), os.path.basename(path)[:-4]
+        try:
+            text = open(path, errors="ignore").read()
+        except OSError:
+            continue
+        for name in set(DECLARED.findall(text)) | {theory}:
+            if len(name) >= 4:
+                owners.setdefault(name, set()).add(rel)
+    return {n: ts for n, ts in owners.items() if len(ts) <= 3}
+
+
+def own_writing(path):
+    """The names a session itself wrote — in its tool calls and its visible replies, after its own launch — and never
+    what came back to it: a name it wrote is one it worked with, a name it was shown may be one it passed over. Names
+    are those with an underscore or an inner capital (Isabelle's and Python's), not words."""
+    own = not is_base_load(open(path, errors="ignore").read(600_000))
+    words = set()
+    for line in open(path, errors="ignore"):
+        if not own:  # a fork: everything before its own launch is a copy of the base's load
+            own = any('"' + p in line or p in line[:400] for p in LIBRARY_ROLES)
+            continue
+        if '"assistant"' not in line:
+            continue
+        try:
+            d = json.loads(line)
+        except ValueError:
+            continue
+        for c in (d.get("message") or {}).get("content") or []:
+            if isinstance(c, dict) and c.get("type") in ("text", "tool_use"):
+                said = c.get("text", "") if c["type"] == "text" else json.dumps(c.get("input") or {})
+                words |= {w.rstrip("'") for w in NAME.findall(said) if "_" in w or re.search(r"[a-z][A-Z]", w)}
+    return words
+
+
+def use_of(files):
+    """{file: the sessions that used it}: a session uses a theory or a tool when it reads it (measure), and a theory too
+    when its own writing names one of the names the theory defines — the evidence of work with held content, which a
+    session uses without reading (2026-09-22: every one of the high frontier's 40 theories was used, 13% of the forks
+    each, while the forks read few of them)."""
+    if not DEFINED:
+        DEFINED.update(defined_names())
+    out = {p: set(u[0]) for p, u in measure(files).items()}
+    for f in files:
+        for w in own_writing(f):
+            for rel in DEFINED.get(w, ()):
+                out.setdefault(rel, set()).add(f)
+    return out
+
+
+def ranked_within(use, sizes, room, need):
+    """The candidates taken, best first: each used by at least `need` sessions, ranked by sessions per token, and taken
+    while they fit in `room` (one that does not fit is passed over for a smaller one below it)."""
+    order = sorted((rel for rel in use if len(use[rel]) >= need and sizes.get(rel)),
+                   key=lambda rel: (-len(use[rel]) / sizes[rel], rel))
+    chosen, spent = [], 0
+    for rel in order:
+        if spent + sizes[rel] <= room:
+            chosen.append(rel)
+            spent += sizes[rel]
+    return chosen, spent
+
+
+def held_by(who, part=None):
+    """(tier, path) of what a base's list holds, for that base whatever the caller's own list."""
+    was = os.environ.get("ORCH_LOAD_LIST")
+    os.environ["ORCH_LOAD_LIST"] = os.path.join(HERE, manifest.LISTS[who])
+    try:
+        files = manifest.held_files(part=part or "")
+        return [(tier, p, manifest.level_of(p)) for tier, p in files]
+    finally:
+        if was is None:
+            os.environ.pop("ORCH_LOAD_LIST", None)
+        else:
+            os.environ["ORCH_LOAD_LIST"] = was
+
+
+def estimate(entries):
+    """Tokens a list's entries take loaded, their chunk calls included."""
+    total = calls = 0.0
+    for _, p, level in entries:
+        t, c = tokens(p, level)
+        total += t
+        calls += c
+    return int(total + CALL_TOKENS * calls)
+
+
+def layer_room(stable, fixed, target=None, factor=None):
+    """The tokens a layer's frontier may take: the target less the stable part, with the layer's measured overhead
+    (factor) on everything the layer holds, its other entries (`fixed`) first."""
+    target, factor = TARGET if target is None else target, LAYER_FACTOR if factor is None else factor
+    return max(0, int((target - stable) / factor - fixed))
+
+
 def theory_names():
     """Every actual theory file, in ROOT order; names absent from ROOT come last.
 
@@ -199,10 +331,34 @@ def theory_map_index(skip=()):
     digest a base holds anyway (`skip`) are left out."""
     rows = re.findall(r"^\| (\w+) \| [^|]* \| (.*?) \|$", open(os.path.join(PROJECT, "THEORY_MAP.md"), errors="ignore").read(), re.M)
     out = ["# What each theory holds: the first clause of its THEORY_MAP.md row (grep the map or the source for the rest).", ""]
-    out += [f"{name}: {re.split(r'[;.]', content)[0].strip()}" for name, content in rows if name != "Theory" and name not in skip]
+    out += [f"{name}: {clause(content)}" for name, content in rows if name != "Theory" and name not in skip]
     held = os.path.join(HERE, "state", "held")
     os.makedirs(held, exist_ok=True)
     open(os.path.join(held, "theory-map-index.md"), "w").write("\n".join(out) + "\n")
+    return len(out) - 2
+
+
+def clause(content, cap=CLAUSE):
+    """The first clause of a map row, cut at a whole word under `cap` characters: the index is one line a theory, and
+    the design measured it at 56K tokens (1,462 rows, 2026-09-19) where it stood at 100.9K on 2026-09-22 (1,772 rows,
+    a median line of 138 characters). The row itself is a grep away."""
+    first = re.split(r"[;.](?:\s|$)", content)[0].strip()
+    if len(first) <= cap:
+        return first
+    return first[:cap].rsplit(" ", 1)[0].rstrip(",:;") + " …"
+
+
+def founding_index(held):
+    """The founding theories a list does not hold, one line each (the first clause of its map row): a base whose
+    founding tier keeps only what its roles use still says what the others are (D2)."""
+    content = dict(re.findall(r"^\| (\w+) \| [^|]* \| (.*?) \|$", open(os.path.join(PROJECT, "THEORY_MAP.md"),
+                                                                     errors="ignore").read(), re.M))
+    out = ["# The founding theories this base does not hold, with the first clause of each one's THEORY_MAP.md row "
+           "(read the source before relying on one).", ""]
+    out += [f"{n}: {clause(content.get(n, ''))}" for n in founding_theories() if n not in held]
+    target = os.path.join(HERE, "state", "held")
+    os.makedirs(target, exist_ok=True)
+    open(os.path.join(target, "founding-index.md"), "w").write("\n".join(out) + "\n")
     return len(out) - 2
 
 
@@ -227,12 +383,14 @@ def refresh_indexes():
     count = theory_names()
     decisions_index()
     listed = open(manifest.load_list()).read()
+    held = {os.path.basename(p)[:-4] for _, p in manifest.held_files() if p.endswith(".thy")}
     if "theory-map-index.md" in listed:
-        theory_map_index(skip={os.path.basename(p)[:-4] for _, p in manifest.held_files() if p.endswith(".thy")})
+        theory_map_index(skip=held)
+    if "founding-index.md" in listed:
+        founding_index(held)
     return count
 
 
-FRONTIER_N = int(os.environ.get("ORCH_FRONTIER_N", 40))
 FRONTIER_HEAD = "# the working frontier"
 
 
@@ -259,9 +417,12 @@ def sessions_of(roles, limit=SESSIONS):
 
 
 def frontier(who, dry_run=False):
-    """Rewrite the working-frontier tier of a base's list from what the roles that fork it actually consulted. The
-    frontier is what the layer holds and what goes stale; the tiers above it are the stable reference and are not
-    touched here."""
+    """Rewrite the working-frontier tier of a base's list from what the roles that fork it used: the theories outside
+    the rest of the list that the last FRONTIER_SESSIONS sessions of those roles used (use_of), each by at least
+    FRONTIER_FLOOR of them, ranked by use per token at the tier's level and taken until the layer's budget is full
+    (layer_room: the target less the stable part and the layer's other entries). The frontier is what the layer holds
+    and what goes stale; the tiers above it are the stable reference and are not touched here. With too few sessions to
+    measure anything it is left as it stands."""
     path = os.path.join(HERE, manifest.LISTS[who])
     text = open(path).read()
     head = re.search(rf"^{re.escape(FRONTIER_HEAD)}.*$", text, re.M)
@@ -277,43 +438,35 @@ def frontier(who, dry_run=False):
     was = [ln.split("  #")[0].strip() for ln in after[:following.start() if following else len(after)].splitlines()]
     was = [ln for ln in was if ln and not ln.startswith("#")]
     roles = forking_roles(who)
-    files = sessions_of(roles)
-    use = measure(files)
-    elsewhere = {ln for ln in (l.split("  #")[0].strip() for l in text.splitlines())
-                 if ln and not ln.startswith("#")} - set(was)
-    cands = []
-    for rel, (ss, pulled) in use.items():
+    files = sessions_of(roles, FRONTIER_SESSIONS)
+    if len(files) < FRONTIER_EVIDENCE:
+        print(f"the {who} frontier is left as it stands: {len(files)} sessions of {', '.join(sorted(roles))} measure "
+              f"nothing (at least {FRONTIER_EVIDENCE})")
+        return 0
+    use = use_of(files)
+    # what the list holds outside this tier, by where it stands: a theory the founding tier now keeps that the frontier
+    # held before is the stable part's (counted by name, it was chosen again and held twice, 2026-09-22)
+    elsewhere = {ln for ln in (l.split("  #")[0].strip() for l in (text[:head.start()] + text[end:]).splitlines())
+                 if ln and not ln.startswith("#")}
+    cands, sizes = {}, {}
+    for rel, ss in use.items():
         full = os.path.join(PROJECT, rel)
         if not rel.startswith("theories/") or rel in elsewhere or rel in NEVER or not os.path.isfile(full):
             continue
-        if pulled < MIN_SHARE * os.path.getsize(full):
-            continue
-        density = (pulled / max(1, len(files))) / max(1, os.path.getsize(full))
-        cands.append((len(ss), density, rel, pulled))
-    cands.sort(key=lambda x: (x[0] < MIN_SESSIONS, -x[1]))
-    measured = [(rel, f"{n} sessions, {pulled // 1000}K pulled") for n, _, rel, pulled in cands[:FRONTIER_N]]
-    # What the roles that fork this base have read is thin evidence early in a run — the xhigh roles read statements
-    # through gathers, not whole theories — and a tier rebuilt from it alone would collapse (1 of 40 on 2026-09-20).
-    # So the measurement promotes what it found and the previous frontier fills the rest, in its own order: the tier
-    # keeps its size, and it changes only where there is evidence to change it.
-    lines, seen = list(measured), {rel for rel, _ in measured}
-    for rel in was:
-        if len(lines) >= FRONTIER_N:
-            break
-        if rel not in seen and os.path.isfile(os.path.join(PROJECT, rel)):
-            lines.append((rel, "carried from the frontier before this refresh"))
-            seen.add(rel)
-    if not lines:
-        print(f"the {who} frontier is left as it is: nothing measured and nothing to carry")
-        return 0
-    block = [f"{FRONTIER_HEAD} ({len(lines)} theories for the {', '.join(sorted(roles))} sessions, re-measured "
-             f"{time.strftime('%Y-%m-%d')} from {len(files)} of them: {len(measured)} by what they consulted, "
-             f"{len(lines) - len(measured)} carried), as {level}"]
-    block += [f"{rel}  # {note}" for rel, note in lines]
-    kept = [rel for rel, _ in lines]
-    print(f"{who} frontier: {len(lines)} theories ({len(measured)} measured from {len(files)} sessions of "
-          f"{', '.join(sorted(roles))}, {len(lines) - len(measured)} carried); "
-          f"{len(set(kept) - set(was))} new, {len(set(was) - set(kept))} dropped")
+        cands[rel], sizes[rel] = ss, tokens(full, level)[0]
+    frontier_paths = {os.path.join(PROJECT, rel) for rel in was}
+    stable = estimate(held_by(who, "stable"))
+    fixed = estimate([e for e in held_by(who, "layer") if e[1] not in frontier_paths])
+    room = layer_room(stable, fixed)
+    need = max(MIN_SESSIONS, -(-int(FRONTIER_FLOOR * 1000) * len(files) // 1000))
+    chosen, spent = ranked_within(cands, sizes, room, need)
+    block = [f"{FRONTIER_HEAD} ({len(chosen)} theories for the {', '.join(sorted(roles))} sessions, chosen "
+             f"{time.strftime('%Y-%m-%d')} from the last {len(files)} of them: each used by at least {need}, by use per "
+             f"token, within the layer's {room // 1000}K), as {level}"]
+    block += [f"{rel}  # {len(cands[rel])} sessions, ~{sizes[rel] // 1000 or 1}K tokens" for rel in chosen]
+    print(f"{who} frontier: {len(chosen)} theories, ~{spent // 1000}K of the layer's {room // 1000}K (stable ~{stable // 1000}K, "
+          f"the layer's other entries ~{fixed // 1000}K), each used by at least {need} of {len(files)} sessions of "
+          f"{', '.join(sorted(roles))}; {len(set(chosen) - set(was))} new, {len(set(was) - set(chosen))} dropped")
     if dry_run:
         return 0
     open(path, "w").write(text[:head.start()] + "\n".join(block) + "\n" + text[end:])
@@ -321,10 +474,68 @@ def frontier(who, dry_run=False):
     return 0
 
 
+FOUNDING_HEAD = "# every other founding theory"
+
+
+def recently_changed(days=None):
+    """The theories main changed within the last `days`: work in progress, which the frontier holds and refreshes,
+    not the stable part, whose every change would stand in the delta until the owner rebuilt it."""
+    days = FOUNDING_QUIET_DAYS if days is None else days
+    out = subprocess.run(["git", "-C", PROJECT, "log", f"--since={days} days ago", "--name-only", "--format=", "--",
+                          "theories/"], capture_output=True, text=True).stdout
+    return {os.path.basename(line)[:-4] for line in out.split() if line.endswith(".thy")}
+
+
+def founding(who, dry_run=False):
+    """Rewrite a list's founding tier to the founding theories its roles used: of every founding theory the central
+    ideas do not pin (idea_candidates.founding_theories, a naming heuristic), those that at least FOUNDING_MIN of the
+    last FOUNDING_SESSIONS sessions of the roles that fork the base used (use_of). Over the week to 2026-09-22, 176 of
+    the 226 were used by no implementer or fixer (D2). The others are said by the indexes: on high the theory map's,
+    which leaves out only what the list holds, elsewhere the founding index (founding_index). The stable part is the
+    owner's to rebuild: this is run when it is."""
+    path = os.path.join(HERE, manifest.LISTS[who])
+    text = open(path).read()
+    head = re.search(rf"^{re.escape(FOUNDING_HEAD)}.*$", text, re.M)
+    if not head:
+        print(f"the {who} list has no founding tier: nothing to choose")
+        return 0
+    after = text[head.end():]
+    following = re.search(r"^# ", after, re.M)
+    end = head.end() + (following.start() if following else len(after))
+    level = next((lv for lv in ("signatures", "definitions") if f"as {lv}" in head.group(0)), "statements")
+    pinned = {os.path.basename(p)[:-4] for tier, p, _ in held_by(who) if tier.startswith("pinned")}
+    candidates = [n for n in founding_theories() if n not in pinned]
+    roles = forking_roles(who)
+    files = sessions_of(roles, FOUNDING_SESSIONS)
+    if len(files) < FRONTIER_EVIDENCE:
+        print(f"the {who} founding tier is left as it stands: {len(files)} sessions measure nothing")
+        return 0
+    use = use_of(files)
+    moving = recently_changed()
+    used = [n for n in candidates if len(use.get(f"theories/{n}.thy", ())) >= FOUNDING_MIN]
+    kept = [n for n in used if n not in moving]
+    block = [f"{FOUNDING_HEAD} its roles used, as {level} (generated {time.strftime('%Y-%m-%d')}: of the "
+             f"{len(candidates)} founding theories the central ideas do not pin, the {len(kept)} that at least "
+             f"{FOUNDING_MIN} of the last {len(files)} sessions of {', '.join(sorted(roles))} read or named and main "
+             f"left unchanged for {FOUNDING_QUIET_DAYS} days — {len(used) - len(kept)} more in use are changing, and the "
+             f"frontier holds them; the others are said by the indexes; in import order)"]
+    block += [f"theories/{n}.thy" for n in kept]
+    print(f"{who} founding tier: {len(kept)} of {len(candidates)} used by at least {FOUNDING_MIN} of {len(files)} sessions "
+          f"and unchanged for {FOUNDING_QUIET_DAYS} days ({len(used) - len(kept)} used but changing, left to the frontier)")
+    if dry_run:
+        return 0
+    open(path, "w").write(text[:head.start()] + "\n".join(block) + "\n" + text[end:])
+    print(f"{os.path.basename(path)}: the founding tier rewritten")
+    return 0
+
+
 def main():
     if "--frontier" in sys.argv:
         who = sys.argv[sys.argv.index("--frontier") + 1]
         return frontier(who, "--dry-run" in sys.argv)
+    if "--founding" in sys.argv:
+        who = sys.argv[sys.argv.index("--founding") + 1]
+        return founding(who, "--dry-run" in sys.argv)
     count = refresh_indexes()
     print(f"theory-names.md: {count} names")
     if "--refresh-index" in sys.argv:

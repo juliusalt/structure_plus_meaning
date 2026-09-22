@@ -326,6 +326,21 @@ def main():
         total = sum(tokens(p) for _, p in held_files("layer")) or 1
         print(f"{layer / total:.3f} {stable} {layer + stable}")
         return 0
+    if mode == "stable-listed":  # whether the stable base recorded loaded the files the list's stable part names now
+        # A layer is built over the recorded stable base when its entry is warm; once the list's stable part names other
+        # files (the founding tier chosen by use, 2026-09-22), that base would hold the old reference under a layer
+        # chosen for the new one — about 665K on high against the 530K target. Its contents moving is the delta's.
+        listed = {p for _, p in held_files("stable")}
+        try:
+            loaded = set(json.load(open(os.path.join(STATE, f"{WHO}-manifest.json")))["files"])
+        except (OSError, ValueError, KeyError):
+            print(f"no snapshot of the {WHO} stable base")
+            return 1
+        if listed == loaded:
+            return 0
+        print(f"the list's stable part names {len(listed - loaded)} file(s) the {WHO} stable base did not load and "
+              f"leaves out {len(loaded - listed)} it did")
+        return 1
     if mode == "stale-share":  # what the refresh rule reads: the share of the layer's tokens whose files have changed
         layer = held_files("layer")
         if not layer or not os.path.exists(LAYER_MANIFEST):

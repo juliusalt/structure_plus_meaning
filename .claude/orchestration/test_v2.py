@@ -544,7 +544,8 @@ class StartTests(Flow):
         (plan,) = self.forks("plan-")
         self.assertEqual(plan[plan.index("--resume") + 1], self.s("kb-2")["sid"])
         for said in ("take stock", "What has been produced", "What the graph no longer needs",
-                     "What the structure should now be", "Only then queue"):
+                     "What the structure should now be", "Only then queue",
+                     "each task's own tree"):  # work in progress outlives its session there (2026-09-22: five trees)
             self.assertIn(said, plan[-1])
 
 

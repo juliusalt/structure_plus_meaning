@@ -468,8 +468,7 @@ CASES = [
      "the daemon's heartbeat"),
     # the tool set (2026-09-21): a feature flag sent some sessions a fifth tool, and a fork that drew otherwise than
     # its base read none of it from cache
-    ("worker-settings.json", '  "env": {\n    "DISABLE_GROWTHBOOK": "1"\n  },\n', '',
-     "feature_flags_off", "the feature flags off in every session"),
+    ('worker-settings.json', '    "DISABLE_GROWTHBOOK": "1",\n', '', 'feature_flags_off', 'the feature flags off in every session'),
     # a complete layer refused for a slip in its reply (2026-09-21), and adopted rather than loaded again
     ("base_pack.py", "    return slips(words[1], pack_id, SLIPS)", "    return words[1] == pack_id",
      "slip_in_the_echoed_id", "a slip in the echoed id"),
@@ -541,8 +540,7 @@ CASES = [
     ("v2.py", 'and t.get("proposal") and not t.get("revise"))', 'and t.get("proposal"))', "being_revised",
      "a proposal being revised is not named as waiting"),
     # a block that lost a line of its own took in the next one, markers and all (design-66, 2026-09-21)
-    ("v2.py", "                held = next((x for x in text if x in (SEARCH, DIVIDER, REPLACE)), None)",
-     "                held = None", "lost_a_line_of_its_own", "a block holding a marker line is refused"),
+    ('v2.py', '                held = next(((x, at + i) for i, x in enumerate(text) if x in (SEARCH, DIVIDER, REPLACE)), None)', '                held = None', 'lost_a_line_of_its_own', 'a block holding a marker line is refused'),
     # a rejecting reviewer released while the fix waited, and a parked quick fix's clock run on (2026-09-21)
     ("watchdog.py", '        if x.get("stage") not in (None, "done", "deleted") and time.time() - ended <= v2.HOLD_MAX:',
      "        if False:", "rejecting_reviewer", "a rejecting reviewer is held while the fix waits"),
@@ -585,11 +583,8 @@ CASES = [
     ("work_meter.py", '    if k in ("read", "other") and mid and st.get("small_told") != st.get("production_at"):',
      '    if k in ("read", "other") and mid:', "small_read_followed", "the small-read note is said once a stretch"),
     # Isabelle counted in runs, a park for the machine, and what one run is (implement-78, 2026-09-21)
-    ("v2.py", "            if RUN_TOOLS.search(procs[p][2]):\n                root = p", "            if False:\n                root = p",
-     "counted_by_run", "a run is the outermost tool among a process's ancestors"),
-    ("v2.py", 'for root in set(isabelle_run_roots(procs).values())]',
-     'for root in isabelle_run_roots(procs)]', "counted_by_run",
-     "the machine's count is of runs"),
+    ('v2.py', '        if run_tool(procs, p):\n            root = p', '        if False:\n            root = p', 'counted_by_run', "a run is the outermost tool among a process's ancestors"),
+    ('v2.py', '    kinds = [run_kind(procs.get(root, (0, "", ""))[2]) for root in run_roots(procs)]', '    kinds = [run_kind(procs.get(root, (0, "", ""))[2]) for root in [p for p, (_, n, _) in procs.items() if n == "poly"]]', 'counted_by_run', "the machine's count is of runs"),
     ("v2.py", '        return run_blocked((tid,), p.get("run") or "heavy") is None', '        return True', "parks_for_the_machine",
      "a session parked for the machine waits until a run may start"),
     ("work_meter.py", '        blocked = v2.run_blocked(own, run)', '        blocked = None',
@@ -641,10 +636,8 @@ CASES = [
     ("manifest.py", "    was = {relative(p, ONE): h for p, h in recorded.items()}", "    was = dict(recorded)",
      "compared_to_the_load", "a tree's files are compared by their place in the tree"),
     # the stable base under a layer, pinged on its own: the max refresh wrote 339,381 tokens of it cold (2026-09-21)
-    ("base.sh", 'forked="$rec"; [ "$stable" = 0 ] && [ -e "$layer" ] && forked="$layer"',
-     'forked="$rec"; [ -e "$layer" ] && forked="$layer"', "stable_base_under_a_layer", "warm stable pings the base"),
-    ("base.sh", 'mark="$who-base"; [ "$stable" = 1 ] && mark="$who-stable"', 'mark="$who-base"',
-     "stable_base_under_a_layer", "the stable base keeps its own time"),
+    ('base.sh', '      stable) forked="$rec" ;;', '      stable) forked="$layer" ;;', 'stable_base_under_a_layer', 'warm stable pings the base'),
+    ('base.sh', '    mark="$who-base"; [ -n "$part" ] && mark="$who-$part"', '    mark="$who-base"', 'stable_base_under_a_layer', 'the stable base keeps its own time'),
     ("base.sh", '[ "$s_age" -lt "${ORCH_WARM_MAX:-3300}" ]', 'true', "stable_base_under_a_layer",
      "a cold stable base is not pinged"),
     ("base.sh", 'case "$read" in OK*) touch "$STATE/$who-stable.hit"; rm -f "$STATE/$who-stable.miss" ;; esac',
@@ -705,8 +698,7 @@ CASES += [
      "cold_stable_base_is_loaded_again", "the base is loaded anew, not forked from the cold one"),
     ("v2.py", '        for part in ("layer", "base-next", "base-building"):', '        for part in ():',
      "nothing_names_any_more", "the packs of loads in progress are not swept"),
-    ("v2.py", "                and (age_of(name) or 0) > PACK_KEEP:", "                and True:",
-     "nothing_names_any_more", "a pack younger than a load is spared"),
+    ('v2.py', '        elif sweep_packs and name.startswith("base-pack-") and os.path.isdir(path) and path not in packs \\\n                and (age_of(name) or 0) > PACK_KEEP:', '        elif sweep_packs and name.startswith("base-pack-") and os.path.isdir(path) and path not in packs:', 'nothing_names_any_more', 'a pack younger than a load is spared'),
 ]
 CASES += [
     # a landing and the one tree, the index rows, and a task that came back (task 24, task 80, 2026-09-21/22)
@@ -742,8 +734,7 @@ CASES += [
     ('work_meter.py', '        script = next((w for w in words[1:] if not w.startswith("-")), "") if prog.startswith("python") else words[0]\n        if CHECK_TOOL.search(script)', '        script = " ".join(words)\n        if CHECK_TOOL.search(script)', 'read_as_reads', 'a check is what a command runs'),
     ("work_meter.py", "            operands = [given] if given else operands[-1:]", "            pass",
      "read_as_reads", "a copy writes only where it copies to"),
-    ("work_meter.py", "        known[name] = value.strip(\"'\\\"\")", "        pass", "read_as_reads",
-     "a plain variable's value is followed"),
+    ('work_meter.py', '        known[name] = value.strip("\'") if value.startswith("\'") else re.sub(', '        known[name] = "" if True else re.sub(', 'read_as_reads', "a plain variable's value is followed"),
     ("v2.py", "        if nested and body[x] == SEARCH:", "        if False:", "holds_the_change_s_own",
      "a correction's blocks nest"),
     ("v2.py", "        while i < len(lines) and not (markers and CHANGE_HEAD.match(lines[i])):",
@@ -841,8 +832,7 @@ CASES += [
 ]
 CASES += [
     # a commit kept out by the one tree lands by itself once what stood is committed (task 32, 2026-09-22)
-    ("watchdog.py", "holds, layers, v2.lands_when_free, v2.archive", "holds, layers, v2.archive", "lands_by_itself",
-     "the watchdog lands it again"),
+    ('watchdog.py', 'holds, layers, deltas, v2.lands_when_free, v2.archive', 'holds, layers, deltas, v2.archive', 'lands_by_itself', 'the watchdog lands it again'),
     ("v2.py", "        if standing:\n            continue\n        with state() as w:\n            t = w[\"tasks\"].get(tid) or {}\n            if not (t.get(\"lands_again\")",
      "        if False:\n            continue\n        with state() as w:\n            t = w[\"tasks\"].get(tid) or {}\n            if not (t.get(\"lands_again\")",
      "lands_by_itself", "not while what stood still stands"),
@@ -1028,21 +1018,19 @@ CASES += [
      "           for i, (e, d) in enumerate(out)]", "reported_through_other_theories", "a cut copy of a whole one goes"),
     # an order is traced to who set it; the delta layer, tasks 4 and 5 (when a delta is built, when a layer refreshed)
     ('v2.py', '    log(f"the order is set by {(c or {}).get(\'name\') or \'the owner\'}: {len(order)} task(s), where it held {held}")', '    pass', 'edit_makes_splices_rewrites_and_queues', "the order's setting is logged"),
-    ('watchdog.py', '        if not asked and (age(f"{who}-delta.looked") or DELTA_EVERY + 1) < DELTA_EVERY:\n            continue', '        if False:\n            continue', 'built_when_enough_has_moved', 'a delta is built at most every DELTA_EVERY'),
-    ('watchdog.py', '        if not asked and moved < DELTA_MIN:', '        if not asked and moved > DELTA_MIN:', 'built_when_enough_has_moved', 'a delta is built once DELTA_MIN has moved'),
+    ('watchdog.py', '        if not (asked or missed) and (age(f"{who}-delta.looked") or DELTA_EVERY + 1) < DELTA_EVERY:\n            continue', '        if False:\n            continue', 'built_when_enough_has_moved', 'a delta is built at most every DELTA_EVERY'),
+    ('watchdog.py', '        if not (asked or missed) and moved < DELTA_MIN:', '        if False:', 'built_when_enough_has_moved', 'a delta is built once DELTA_MIN has moved'),
     ('watchdog.py', '        if (age(f"{who}-layer.building") or LAYER_LOCK + 1) < LAYER_LOCK:\n            continue  # one build over a layer at a time', '        if False:\n            continue  # one build over a layer at a time', 'over_a_build_or_for_a_base_not_switched', 'no delta is built over a build'),
     ('watchdog.py', '        if not (v2.deltas_on(who) or asked or os.path.exists(question)):', '        if not (True or asked or os.path.exists(question)):', 'over_a_build_or_for_a_base_not_switched', 'no delta is built for a base not switched to it'),
-    ('watchdog.py', '        if entry is None or entry >= v2.WARM_MAX:', '        if False:', 'cold_layer_or_a_moved_frontier', 'a cold layer is refreshed instead'),
-    ('watchdog.py', '        if taken_in >= FRONTIER_MOVED:', '        if taken_in > FRONTIER_MOVED:', 'cold_layer_or_a_moved_frontier', 'a frontier moved by FRONTIER_MOVED refreshes the layer'),
-    ('watchdog.py', '            if share < LAYER_DELTA_MAX:\n                continue', '            if share < 0.5:\n                continue', 'refreshed_by_what_the_delta_holds', "the layer under a delta is refreshed by the delta's share"),
-    ('watchdog.py', '        elif v2.deltas_on(who):', '        elif False:', 'refreshed_by_what_the_delta_holds', 'the whole-file share does not decide under a delta'),
-    ('watchdog.py', '            if stable >= STABLE_DELTA_MAX:', '            if False:', 'stable_part_s_drift_is_the_owner_s', "the stable part's drift is said to the owner"),
+    ('watchdog.py', '        if entry is None or entry >= v2.WARM_MAX:', '        if False:', 'cold_layer_is_refreshed_instead', 'a cold layer is refreshed instead'),
+    ('watchdog.py', '        elif v2.deltas_on(who):', '        elif False:', 'carried_a_refresh_s_cost', 'the whole-file share does not decide under a delta'),
+    ('watchdog.py', '            if measured and measured[1] >= STABLE_DELTA_MAX:', '            if False:', 'stable_part_s_drift_is_the_owner_s', "the stable part's drift is said to the owner"),
     # the guard reads more of where a command writes (review-227, fix-265, 2026-09-22 20:08-20:12)
     ('work_meter.py', '        known[name] = value.strip("\'") if value.startswith("\'") else re.sub(', '        known[name] = value.strip("\'") if True else re.sub(', 'where_the_call_stands_then', 'a name made from a known variable is followed'),
     ('work_meter.py', '    command = TRIPLE.sub(\'""\', command)\n', '', 'made_at_run_time_in_a_draft', "a script's triple-quoted text is no write"),
     ('work_meter.py', '                        r"""|\\(\\s*(\\w+)\\s*/[^()\\n]*\\)\\s*\\.\\s*write_(?:text|bytes)\\(""")', '                        r"""|\\(never\\)""")', 'made_at_run_time_in_a_draft', 'a path joined under a name is a place a script writes'),
     ('base.sh', '        && [ "$( [ -e "$STATE/$who-$part.miss" ] && wc -l < "$STATE/$who-$part.miss" || echo 0)" -lt 1 ] || exit 0', '        && [ "$( [ -e "$STATE/$who-$part.miss" ] && wc -l < "$STATE/$who-$part.miss" || echo 0)" -lt 2 ] || exit 0', 'missed_ping_is_not_taken_as_a_read', "one miss stops that entry's pings"),
-    ('base.sh', '  [ ! -e "$STATE/$who-stable.miss" ] || return 1', '  :', 'stable_base_whose_entry_was_missed', 'a stable base whose entry was missed is cold'),
+    ('base.sh', '  if [ -e "$STATE/$who-stable.miss" ]; then', '  if false; then', 'stable_base_whose_entry_was_missed', 'a stable base whose entry was missed is cold'),
     ('v2.py', '    if verdict.startswith("MISS"):', '    if False:', 'ping_that_missed_is_no_read', 'a ping that missed marks the session, and is no read'),
     ('v2.py', '        os.remove(hits(name) + ".miss")  # its request wrote its entry anew: it is pinged again from here', '        pass', 'ping_that_missed_is_no_read', "a session's own request makes its entry again"),
     # a complete load thrown away over the id copied back (the high base's reloads of 21:36 and 21:56)
@@ -1052,6 +1040,37 @@ CASES += [
     # a stale stable miss would send every layer refresh through a reload of the stable base
     ('base.sh', '    [ "${sealed_s:-0}" -gt "$(stat -c %Y "$STATE/$who-stable.miss")" ] || return 1', '    return 1', 'miss_recorded_before_the_base_was_sealed', "a miss older than the base's seal is not its entry's"),
     ('base.sh', '    rm -f "$STATE/$who-stable.miss"\n  fi', '    :\n  fi', 'miss_recorded_before_the_base_was_sealed', 'a miss that is answered is taken'),
+    # what a base holds, chosen by use (notes/plan-bases-upgrade.md D1-D5)
+    ('select_base_load.py', '            for rel in DEFINED.get(w, ()):', '            for rel in ():', 'uses_what_it_reads_or_names', 'a name a session wrote counts for the theory that defines it'),
+    ('select_base_load.py', '    own = not is_base_load(open(path, errors="ignore").read(600_000))\n    words = set()', '    own = True\n    words = set()', 'uses_what_it_reads_or_names', "the copy of the base's load is not the session's own writing"),
+    ('select_base_load.py', '    return {n: ts for n, ts in owners.items() if len(ts) <= 3}', '    return {n: ts for n, ts in owners.items()}', 'many_theories_define', 'a name many theories define says nothing'),
+    ('select_base_load.py', '    order = sorted((rel for rel in use if len(use[rel]) >= need and sizes.get(rel)),', '    order = sorted((rel for rel in use if sizes.get(rel)),', 'ranked_by_use_per_token', 'the floor'),
+    ('select_base_load.py', '        if spent + sizes[rel] <= room:', '        if True:', 'ranked_by_use_per_token', 'the room'),
+    ('select_base_load.py', '    return max(0, int((target - stable) / factor - fixed))', '    return max(0, int(target / factor - fixed))', 'target_less_what_else', 'the stable part comes off the target'),
+    ('select_base_load.py', '    if len(files) < FRONTIER_EVIDENCE:\n        print(f"the {who} frontier is left as it stands', '    if False:\n        print(f"the {who} frontier is left as it stands', 'too_few_sessions', 'too few sessions measure nothing'),
+    ('select_base_load.py', '        if not rel.startswith("theories/") or rel in elsewhere or rel in NEVER or not os.path.isfile(full):', '        if not rel.startswith("theories/") or rel in NEVER or not os.path.isfile(full):', 'what_the_roles_used_by_use_per_token', 'what the list holds elsewhere is no frontier candidate'),
+    ('select_base_load.py', '    used = [n for n in candidates if len(use.get(f"theories/{n}.thy", ())) >= FOUNDING_MIN]', '    used = list(candidates)', 'founding_tier_keeps_what', 'the founding tier keeps what its roles used'),
+    ('select_base_load.py', '    out += [f"{n}: {clause(content.get(n, \'\'))}" for n in founding_theories() if n not in held]', '    out += [f"{n}: {clause(content.get(n, \'\'))}" for n in founding_theories()]', 'founding_tier_keeps_what', 'the founding index says what is not held'),
+    ('select_base_load.py', '    if len(first) <= cap:\n        return first', '    if True:\n        return first', 'first_clause_cut_at_a_word', 'the index line is cut'),
+    ('select_base_load.py', 'for l in (text[:head.start()] + text[end:]).splitlines())', 'for l in text.splitlines())', 'rest_of_the_list_holds_is_never_chosen', 'what the rest of the list holds, by position'),
+    ('select_base_load.py', '    kept = [n for n in used if n not in moving]', '    kept = list(used)', 'founding_tier_keeps_what', "a changing founding theory is the frontier's"),
+    # the layer refreshed when its delta has carried a refresh's cost (D7)
+    ('watchdog.py', '            owed += 0.1 * s["delta_tokens"] * own_requests(s)', '            owed += 0', 'every_fork_of_the_delta_carried', 'what each fork of the delta carried'),
+    ('watchdog.py', '        if s.get("origin") == who and (s.get("started") or 0) >= since and s.get("delta_tokens"):', '        if s.get("delta_tokens"):', 'every_fork_of_the_delta_carried', "only this base's forks since its layer sealed"),
+    ('watchdog.py', '                        owed += 2 * int(m.group(3))', '                        owed += 0', 'every_fork_of_the_delta_carried', 'what each build of the delta wrote'),
+    ('watchdog.py', '                    if time.mktime(time.strptime(m.group(1), "%Y-%m-%dT%H:%M:%S")) >= since:', '                    if True:', 'every_fork_of_the_delta_carried', 'only builds since the layer sealed'),
+    ('watchdog.py', '    return 2 * max(0, whole - stable) + 0.1 * stable', '    return 2 * whole', 'refresh_costs_its_layer_written', 'a refresh writes the layer and reads the stable base'),
+    ('watchdog.py', '            if cost is None or owed < cost:\n                continue', '            if cost is None or owed <= cost:\n                continue', 'carried_a_refresh_s_cost', 'a refresh once the delta has carried its cost'),
+    ('watchdog.py', '        if t >= since:\n            seen.add', '        if True:\n            seen.add', 'own_requests_are_its_turns', "a fork's own requests, not its origin's"),
+    ('v2.py', '            st["sessions"][name]["delta_tokens"] = delta_size(who)', '            pass', 'records_what_the_delta_adds', 'a fork of the delta records what it carries'),
+    ('v2.py', '    if not d or not layer or not base_file(who).endswith("-delta.json"):', '    if not d or not layer:', 'records_what_the_delta_adds', 'a fork of the layer carries no delta'),
+    ('base.sh', '  if [ "$ctx" -gt $(( target * 103 / 100 )) ]; then\n    fail "note: the $who base is', '  if false; then\n    fail "note: the $who base is', 'cold_stable_base_is_loaded_again', "a base over the target is said at its layer's seal"),
+    ('base.sh', '  if [ "$ctx" -gt $(( target * 103 / 100 )) ]; then\n    fail "note: the $who base is', '  if true; then\n    fail "note: the $who base is', 'cold_stable_base_is_loaded_again', 'a base within the target says nothing'),
+    ('v2.py', '    "tree and in each task\'s own tree (`.build/trees/N`, `git -C .build/trees/N status`), and write it into HANDOFF.md "', '    "tree, and write it into HANDOFF.md "', 'charges_the_first_planner', 'the fresh charge names the task trees'),
+    ('manifest.py', '        if listed == loaded:\n            return 0', '        if True:\n            return 0', 'only_while_it_loaded_the_same_files', "the stable base recorded is the list's only while it loaded the same files"),
+    ('base.sh', '      elif ! listed=$(python3 "$HERE/manifest.py" stable-listed "$who"); then', '      elif false; then', 'not_built_over_a_stable_base_the_list_no_longer_names', 'a layer is not built over a reference the list no longer names'),
+    ('base.sh', 'stable $who: ${1:-its entry is cold}, so the base', 'stable $who: its entry is cold, so the base', 'not_built_over_a_stable_base_the_list_no_longer_names', 'the reload says why'),
+    ('base.sh', '    [ -n "$sealed" ] && sealed_s=$(date -d "$sealed" +%s 2>/dev/null || echo 0)', '    sealed_s=$(date -d "$sealed" +%s 2>/dev/null || echo 0)', 'miss_recorded_before_the_base_was_sealed', 'a record with no seal time is no seal'),
     # an accepted task left in review with no review due (tasks 128 and 147, eight hours)
     ('watchdog.py', '        if stage == "reviewing" and accepted_unmoved(st, tid, t):', '        if False:', 'accepted_task_left_in_review', 'an accepted task left in review has its commit made'),
     ('watchdog.py', '            and os.path.exists(os.path.join(v2.BUILD, tid, "finalize.json")) and v2.review_accepted(st, tid))', '            and os.path.exists(os.path.join(v2.BUILD, tid, "finalize.json")) and True)', 'accepted_task_left_in_review', 'only a task its reviews accepted'),

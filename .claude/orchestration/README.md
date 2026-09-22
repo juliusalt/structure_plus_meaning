@@ -782,10 +782,13 @@ changed after it), records `state/WHO-delta.json` and stops the one it replaces.
 the roles fork the delta (`v2.base_file`, when it stands on the recorded layer), the daemon pings it, and the layer's
 own entry — then read only by the delta's builds — gets its own ping (`warm WHO layer --if-due`). The watchdog builds a
 delta when one built now would differ from the standing one by `ORCH_DELTA_MIN` (2,000) tokens, at most every
-`ORCH_DELTA_EVERY` (1,200 s), and refreshes the layer instead when its own entry is cold or its frontier would take in
-`ORCH_FRONTIER_MOVED` (5) theories; the layer under a delta is refreshed when the delta holds `ORCH_LAYER_DELTA_MAX`
-(8%) of it, not by the whole-file share, and the stable part's drift past `ORCH_STABLE_DELTA_MAX` (15,000 tokens) is an
-ATTENTION for the owner (the restable is theirs). By hand: `state/WHO-delta.build` builds one, `state/WHO-delta.ask`
+`ORCH_DELTA_EVERY` (1,200 s), and refreshes the layer instead when its own entry is cold. The layer under a delta is
+refreshed when what the delta has cost the forks that carried it since the layer sealed reaches what a refresh costs
+(`watchdog.carried`: 0.1 × the delta tokens each fork recorded at its launch × its own requests, and 2 × each delta
+build's write; `refresh_cost`: 2 × the layer's tokens + 0.1 × the stable base's) — rent against purchase
+(notes/plan-bases-upgrade.md D7; the share rule and the frontier trigger it replaces asked a refresh at the old
+whole-file pace). The stable part's drift past `ORCH_STABLE_DELTA_MAX` (15,000 tokens) is an ATTENTION for the owner
+(the restable is theirs). high and xhigh run on deltas (`state/deltas`). By hand: `state/WHO-delta.build` builds one, `state/WHO-delta.ask`
 (a question) asks a fork of it and writes the answer to `state/WHO-delta-answer.txt` — the canary before a base is
 switched on.
 
@@ -901,7 +904,23 @@ in (density-ranked; v1 implementers and the sessions of every role, forks includ
 sessions that work on the orchestration left out), and an `# optional` tier that is never loaded. Every run of
 `select_base_load.py`, `--dry-run` included, regenerates the generated indexes (`state/held/theory-names.md`,
 `decisions-index.md`, and `theory-map-index.md` without the theories the list holds, when the list holds it);
-`base.sh` regenerates them before it freezes a new pack. The target is `ORCH_BASE_TARGET` (`manifest.TARGET`), 530K
+`base.sh` regenerates them before it freezes a new pack.
+
+**Chosen by use** (notes/plan-bases-upgrade.md, 2026-09-22/23). Reading the base prefix is most of what the run spends
+(62% on 2026-09-22), and a held theory pays for itself in tokens only if a large share of forks need it; the base is a
+quality instrument, and its budget goes to what the roles use. A session uses a theory when it reads it or its own
+writing names one of the names the theory defines (`select_base_load.use_of`). A worker base's founding tier holds the
+founding theories its roles used (2 of the last 400 sessions) that main has left unchanged for 3 days
+(`select_base_load --founding WHO`, run when the owner rebuilds the stable part; the others are said by the theory
+map's index on high and by `state/held/founding-index.md` on xhigh); the central ideas are the owner's pins. The
+working frontier is chosen at every layer refresh from the last 60 sessions of the base's roles (`--frontier WHO`),
+each theory used by at least 5% of them, ranked by use per token and taken until the layer's room — the target less
+the stable part and the layer's other entries, with the layer's measured overhead (`layer_room`) — is full. A layer is
+built over the recorded stable base only while that base loaded the files the list's stable part names
+(`manifest.py stable-listed`); otherwise the stable base is loaded again first. A layer sealed over the target says so
+in `state/warm.log`. The theory map's index keeps each row's first clause cut at 90 characters.
+
+The target is `ORCH_BASE_TARGET` (`manifest.TARGET`), 530K
 loaded with everything included, the owner's request of 2026-09-19; `select_base_load.py` sizes the measured tier
 against it in the loaded form, and the pack report and `seal` say when a load exceeds it. The first full packed load
 (2026-09-19, base 32f5e011) measured 560,299 tokens against an estimate of 526,647; the estimator's constants in

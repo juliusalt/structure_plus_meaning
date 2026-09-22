@@ -5,7 +5,7 @@ window, and what its forks read at their start.
     python3 -B notes/delta-measure.py SINCE [UNTIL]      times as "YYYY-MM-DD HH:MM" (local)
 
 Per base: layer refreshes and delta builds, each with its cost in input-equivalent tokens (its session's own requests:
-cache reads at 0.1, writes at 1.25, fresh input at 1, output at 5), the keep-warm pings (their first request), and the
+cache reads at 0.1, writes at 2 (every entry the harness writes is a 1-hour one), fresh input at 1, output at 5), the keep-warm pings (their first request), and the
 forks started from it (their first request's read and write, from the log's "cache of" lines). The upkeep an hour is
 (refreshes + builds + pings) over the window. The baseline is the same script over 2026-09-22 10:00-20:00.
 """
@@ -33,15 +33,28 @@ def lines(path, since, until):
             yield line.rstrip("\n")
 
 
+WRITE = 2.0  # a 1-hour cache write costs twice the base input (a 5-minute one 1.25): the harness writes only 1-hour ones
+
+
 def cost(usage):
-    return (usage.get("cache_read_input_tokens", 0) * 0.1 + usage.get("cache_creation_input_tokens", 0) * 1.25
+    return (usage.get("cache_read_input_tokens", 0) * 0.1 + usage.get("cache_creation_input_tokens", 0) * WRITE
             + usage.get("input_tokens", 0) + usage.get("output_tokens", 0) * 5)
 
 
-def session_cost(prefix):
-    """The input-equivalent of every request a session made itself (not the prefix it forked), found by its id's start."""
+def request_ids(prefix):
     for path in glob.glob(os.path.join(PROJECTS, "*", prefix + "*.jsonl")):
-        seen, total = set(), 0.0
+        return {json.loads(line).get("message", {}).get("id") for line in open(path, errors="ignore")
+                if '"usage"' in line and '"assistant"' in line}
+    return set()
+
+
+def session_cost(prefix, origin=None):
+    """The input-equivalent of every request a session made itself, found by its id's start: a fork's transcript begins
+    with a copy of its origin's requests, ids and all, and counted with them a layer's refresh was charged its stable
+    base's whole load and a delta's build its layer's (5,121K for three builds that cost about 1.3M, 2026-09-22)."""
+    theirs = request_ids(origin) if origin else set()
+    for path in glob.glob(os.path.join(PROJECTS, "*", prefix + "*.jsonl")):
+        seen, total = set(theirs), 0.0
         for line in open(path, errors="ignore"):
             if '"usage"' not in line:
                 continue
@@ -81,13 +94,13 @@ def main():
     for who in ("max", "xhigh", "high"):
         refresh, build, ping = [], [], []
         for line in lines(warm, since, until):
-            m = re.match(rf" (layer|delta) {who}: \w+ +session fork (\w+)", line[19:])
+            m = re.match(rf" (layer|delta) {who}: \w+ +session fork (\w+) of base (\w+)", line[19:])
             if m:
-                c = session_cost(m.group(2))
+                c = session_cost(m.group(2), m.group(3))
                 (refresh if m.group(1) == "layer" else build).append(c or 0)
             elif re.search(rf" warm {who}( stable| layer)?: OK", line):
                 r, w = first_request(line)
-                ping.append(r * 0.1 + w * 1.25)
+                ping.append(r * 0.1 + w * WRITE)
         upkeep = sum(refresh) + sum(build) + sum(ping)
         f = forks.get(who, [])
         print(f"{who}: {len(refresh)} layer refreshes ({sum(refresh) / 1000:,.0f}K), {len(build)} delta builds "

@@ -727,6 +727,15 @@ def base_record(who):
     return None, None
 
 
+def delta_size(who):
+    """The tokens a base's standing delta adds to its layer — what every request of a fork of it carries beyond the
+    layer, and what a refresh of the layer takes back — or 0 when its roles fork the layer itself."""
+    d, layer = delta_record(who), layer_record(who)
+    if not d or not layer or not base_file(who).endswith("-delta.json"):
+        return 0
+    return max(0, int(d.get("context") or 0) - int(layer.get("context") or 0))
+
+
 def origin_of(origin):
     """(name, record) of what a fork starts from: a base by its name, "kb" for the knowledge base, or a session."""
     if origin in BASES:
@@ -870,6 +879,9 @@ def launch(role, key, prompt_of, tree=UNSET, **fields):
         st["sessions"][name] = dict(name=name, role=role, origin=who, origin_sid=org["sid"], model=org["model"],
                                     effort=org["effort"], settings=settings, state="starting", starting=time.time(),
                                     flags=" ".join(session_flags()), **fields)
+        if who in BASES and delta_size(who):
+            # what each of its requests carries of the delta: the watchdog weighs it against a refresh (carried)
+            st["sessions"][name]["delta_tokens"] = delta_size(who)
     hit(who)  # its first request reads the entry of what it forks, and only that
     if tree is UNSET:
         tree = task_tree(key)[0] if role in PRODUCING else None
@@ -7236,8 +7248,11 @@ FRESH_CHARGE = (
     "since changed, and some of it exists only because of faults that are now fixed. Before you queue anything, take "
     "stock, and make that your first piece of work:\n"
     "- **What has been produced.** Read what the finished tasks delivered and what stands uncommitted in the working "
-    "tree, and write it into HANDOFF.md at the level later work needs. Work that is done but not yet integrated is "
-    "the first thing to carry; a task whose deliverable already stands is completed, not repeated. What was done and "
+    "tree and in each task's own tree (`.build/trees/N`, `git -C .build/trees/N status`), and write it into HANDOFF.md "
+    "at the level later work needs. Work that is done but not yet integrated is the first thing to carry; a task whose "
+    "deliverable already stands is completed, not repeated. A task whose session is gone keeps its tree, and the next "
+    "session of it continues there from what the last one wrote; a tree whose task is done or dropped holds work that "
+    "never landed — carry it or say why it is superseded. What was done and "
     "how — the course it took, what was abandoned, what it cost — goes to PLANNING_LOG.md, appended after what "
     "earlier planners left there, dated: HANDOFF.md is what you need to act now, the log is everything true that you "
     "no longer need to act on.\n"

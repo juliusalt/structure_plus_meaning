@@ -540,6 +540,11 @@ elif '--bg' in sys.argv and '--resume' not in sys.argv:  # the base loads: its t
                 self.assertEqual(kept["files"], {"/example/A.thy": "old", "L": "l0"})
                 self.assertTrue((state / "xhigh-stable.hit").exists())    # the layer read it: warm, and pinged
                 self.assertIn("its read of the base: OK", done.stdout)
+                self.assertNotIn("over the", (state / "warm.log").read_text())  # a base within the target says nothing
+                env["ORCH_BASE_TARGET"] = "1000"
+                again = base_sh("layer", "--adopt", "xhigh-layer-1", str(directory))
+                self.assertEqual(again.returncode, 0, again.stdout + again.stderr)  # said, not refused
+                self.assertIn("over the 1000 target", (state / "warm.log").read_text())
             finally:
                 for _ in range(30):  # seal_layer starts the keep-warm daemon, which outlives the command
                     if (state / "warm.pid").exists():
@@ -547,6 +552,41 @@ elif '--bg' in sys.argv and '--resume' not in sys.argv:  # the base loads: its t
                             os.kill(int((state / "warm.pid").read_text()), 15)
                         break
                     time.sleep(0.1)
+
+    def test_a_layer_is_not_built_over_a_stable_base_the_list_no_longer_names(self):
+        # the founding tier chosen by use (2026-09-22) changed what the stable part lists; a layer built over the
+        # recorded stable base, its entry still warm, would have held the old reference under a layer chosen for the
+        # new one (about 665K against the 530K target). The base is loaded again from the list, and says why.
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            directory = self.make_pack(root)
+            home, state, binary = root / "home", root / "state", root / "bin"
+            for d in (state, binary, home):
+                d.mkdir(parents=True, exist_ok=True)
+            flags = " ".join((p.HERE / "session-flags").read_text().split())
+            (state / "xhigh-base.json").write_text(json.dumps(
+                {"sessionId": "old-base-sid", "model": "claude-opus-5[1m]", "effort": "xhigh", "name": "xhigh-base",
+                 "flags": flags}))
+            (state / "xhigh-layer.json").write_text(json.dumps(
+                {"sessionId": "old-layer-sid", "base": "old-base-sid", "name": "xhigh-layer-old", "flags": flags}))
+            (state / "xhigh-manifest.json").write_text(json.dumps({"taken": "t0", "files": {"/example/A.thy": "old"}}))
+            (state / "xhigh-stable.hit").write_text("")                  # its entry warm: read a minute ago
+            calls = root / "calls.log"
+            fake = binary / "claude"
+            fake.write_text("#!/bin/sh\necho \"$*\" >> \"$REBUILD_TEST_LOG\"\n"
+                            "[ \"$1 $2\" = \"agents --json\" ] && echo '[]'\nexit 0\n")
+            fake.chmod(0o755)
+            env = {k: v for k, v in os.environ.items() if not k.startswith(("ORCH_", "CLAUDE"))}
+            env.update(HOME=str(home), PATH=str(binary) + os.pathsep + os.environ["PATH"], ORCH_CONTROL="1",
+                       ORCH_STATE_DIR=str(state), REBUILD_TEST_LOG=str(calls), BASE_PACK_DIR=str(directory),
+                       STABLE_WAIT="2", LAYER_WAIT="2")
+            out = subprocess.run(["sh", str(p.HERE / "base.sh"), "xhigh", "layer"], env=env, capture_output=True,
+                                 text=True, timeout=120)
+            self.assertNotEqual(out.returncode, 0)                       # the fake base never starts: it stops there
+            said = (state / "warm.log").read_text()
+            self.assertIn("stable xhigh: the list's stable part names", said)
+            started = [l for l in calls.read_text().splitlines() if "--bg" in l]
+            self.assertTrue(started and all("--resume" not in l for l in started), started)  # loaded, not forked
 
     def test_a_layer_that_loaded_but_was_not_recorded_is_adopted_without_a_second_load(self):
         # the max layer of 2026-09-21 was complete and refused for a slip in its reply; loading it again would have

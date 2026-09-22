@@ -92,7 +92,10 @@ stable_warm() {
     # unless the base was sealed after the miss was recorded: that load wrote the entry the miss speaks of (a `seal`,
     # or a layer that adopted a base loaded again), and a miss left from the base before it would send every refresh
     # from here on through a fifteen-minute reload of the stable base
-    sealed_s=$(date -d "$(field "$rec" sealed)" +%s 2>/dev/null || echo 0)
+    # a record with no seal time is no seal: `date -d ""` is midnight today, not an error, and read so it made every
+    # miss recorded before midnight look answered (found at 00:01 on 2026-09-23, when the test's miss fell before it)
+    sealed=$(field "$rec" sealed); sealed_s=0
+    [ -n "$sealed" ] && sealed_s=$(date -d "$sealed" +%s 2>/dev/null || echo 0)
     [ "${sealed_s:-0}" -gt "$(stat -c %Y "$STATE/$who-stable.miss")" ] || return 1
     rm -f "$STATE/$who-stable.miss"
   fi
@@ -105,7 +108,7 @@ stable_warm() {
 # 2026-09-21: the harness rebuilds it). The base and layer standing serve until the new pair is sealed: the new base
 # is recorded in $next, its snapshot in $next_manifest, and seal_layer puts both in place with the layer.
 rebuild_stable() {
-  echo "$(date +%Y-%m-%dT%H:%M:%S) stable $who: its entry is cold, so the base is loaded again before its layer" >> "$STATE/warm.log"
+  echo "$(date +%Y-%m-%dT%H:%M:%S) stable $who: ${1:-its entry is cold}, so the base is loaded again before its layer" >> "$STATE/warm.log"
   export ORCH_BASE_PART=stable
   prepare_pack || return $?
   bootstrap=$(python3 "$HERE/base_pack.py" bootstrap "$packed") || return $?
@@ -226,6 +229,13 @@ LAYERREC
   touch "$STATE/$who-base.hit" "$STATE/$who-base.used" "$STATE/$who-layer.hit"; rm -f "$STATE/$who-base.miss" "$STATE/$who-layer.miss"
   case "$read" in OK*) touch "$STATE/$who-stable.hit"; rm -f "$STATE/$who-stable.miss" ;; esac
   daemon
+  # a base its layer takes over the owner's target is said when it is sealed: the high base grew from 525K to 602K
+  # in a day and nothing said so (2026-09-22). The frontier is chosen within the layer's room (select_base_load),
+  # so this says an estimate that did not hold.
+  target=${ORCH_BASE_TARGET:-530000}  # manifest.TARGET
+  if [ "$ctx" -gt $(( target * 103 / 100 )) ]; then
+    fail "note: the $who base is $ctx tokens with its layer, over the $target target; its frontier was chosen within an estimated room (select_base_load --frontier $who, the tier's header)"
+  fi
   echo "sealed the $who layer $lsid at $ctx tokens; its forks have about $(( (${ORCH_WINDOW:-1000000} - ctx) / 1000 ))K of room"
   echo "its read of the base: $read"
 }
@@ -383,6 +393,8 @@ PY
     else
       if [ -e "$next" ] && [ -e "$next_manifest" ] && [ "$(( $(date +%s) - $(stat -c %Y "$next") ))" -lt "${ORCH_WARM_MAX:-3300}" ]; then
         under="$next"  # loaded again for a layer that was not sealed, and still warm: not loaded a third time
+      elif ! listed=$(python3 "$HERE/manifest.py" stable-listed "$who"); then
+        rebuild_stable "$listed" || exit $?  # the list names another reference than the one recorded
       elif stable_warm; then
         under="$rec"
       else

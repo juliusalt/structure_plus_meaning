@@ -21,6 +21,7 @@
              consultation, a planning episode.
 Nothing is done while state/stopped exists or the orchestration is inactive. Every action is one line in state/v2.log.
 """
+import calendar
 import contextlib
 import datetime
 import json
@@ -570,8 +571,6 @@ LAYER_EVERY = int(os.environ.get("ORCH_LAYER_EVERY", 900))  # how often the shar
 # thresholds are the owner's estimates, to be set from a day's measurement.
 DELTA_EVERY = int(os.environ.get("ORCH_DELTA_EVERY", 1200))    # a delta is looked at, and built, at most this often
 DELTA_MIN = int(os.environ.get("ORCH_DELTA_MIN", 2000))        # tokens moved since the standing delta
-LAYER_DELTA_MAX = float(os.environ.get("ORCH_LAYER_DELTA_MAX", 0.08))  # of the layer's tokens, held by the delta
-FRONTIER_MOVED = int(os.environ.get("ORCH_FRONTIER_MOVED", 5))  # theories the frontier would take in
 STABLE_DELTA_MAX = int(os.environ.get("ORCH_STABLE_DELTA_MAX", 15000))  # tokens of the stable reference's changes
 LAYER_LOCK = int(os.environ.get("LAYER_LOCK", 2400))           # base.sh's: a build's lock older than this is stale
 WARM_EVERY = int(os.environ.get("ORCH_WARM_EVERY", 2400))      # warm_daemon.sh's: an entry is pinged this long after its read
@@ -605,19 +604,20 @@ def layers():
                 why = said[len("why: "):] if said.startswith("why: ") else ""
             said = f"the {who} layer is refreshed: {why}" if why else f"the {who} layer is refreshed, asked for by hand"
         elif v2.deltas_on(who):
-            # decided by what the delta holds of the layer, not by the changed files counted whole: the high layer's
-            # refresh of 19:25 on 2026-09-22 read 23.4% by that count and 1.4% by the lines that changed
+            # refreshed when what its delta has cost the forks that carried it reaches what a refresh costs: the delta
+            # is rent every fork request pays, the refresh a purchase that ends it (notes/plan-bases-upgrade.md D7).
+            # It was a share of the layer (8%) and a count of theories the frontier would take in (5), which asked a
+            # refresh 1h24m after the last on 2026-09-22 — the old whole-file pace — where the costs of that day put
+            # the refresh every 3.5 to 5 hours. The stable reference's drift a refresh does not take back: it is said.
             measured = delta_measure(who)
-            if measured is None:
-                continue
-            share, stable, _ = measured
-            if stable >= STABLE_DELTA_MAX:
-                v2.say_once(f"stable-delta-{who}", f"ATTENTION the {who} delta holds {stable:,} tokens of the stable "
+            if measured and measured[1] >= STABLE_DELTA_MAX:
+                v2.say_once(f"stable-delta-{who}", f"ATTENTION the {who} delta holds {measured[1]:,} tokens of the stable "
                             f"reference's changes: loading it again (base.sh {who} restable) is the owner's", every=86400)
-            if share < LAYER_DELTA_MAX:
+            owed, cost = carried(who), refresh_cost(who)
+            if cost is None or owed < cost:
                 continue
-            said = (f"the {who} layer is refreshed: the delta holds {share:.0%} of it (the whole-file share "
-                    f"{stale_share(who):.0%})")
+            said = (f"the {who} layer is refreshed: its delta has cost the forks that carried it {owed / 1000:,.0f}K since "
+                    f"the layer sealed, what a refresh costs ({cost / 1000:,.0f}K)")
         else:
             share = stale_share(who)
             if share < LAYER_STALE:
@@ -670,15 +670,77 @@ def moved_since_delta(who):
     return int(changed / 2.9)
 
 
-def frontier_moved(who):
-    """The theories the frontier, measured again now, would take in (select_base_load.py --frontier WHO --dry-run)."""
+def sealed_at(rec):
     try:
-        out = subprocess.run([sys.executable, os.path.join(HERE, "select_base_load.py"), "--frontier", who, "--dry-run"],
-                             capture_output=True, text=True, timeout=120).stdout
-    except (OSError, subprocess.SubprocessError):
+        return time.mktime(time.strptime(rec["sealed"], "%Y-%m-%dT%H:%M:%S"))
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def own_requests(s):
+    """The requests a session made itself: its transcript's assistant turns from its launch on, each counted once (a
+    fork's transcript begins with a copy of its origin's)."""
+    path, since, seen = v2.transcript(s.get("sid") or ""), (s.get("started") or 0) - 5, set()
+    try:
+        lines = open(path, errors="ignore")
+    except OSError:
         return 0
-    m = re.search(r"(\d+) new, (\d+) dropped", out)
-    return int(m.group(1)) if m else 0
+    for line in lines:
+        if '"assistant"' not in line or '"usage"' not in line:
+            continue
+        try:
+            d = json.loads(line)
+            t = calendar.timegm(time.strptime(d["timestamp"][:19], "%Y-%m-%dT%H:%M:%S"))
+        except (ValueError, KeyError):
+            continue
+        if t >= since:
+            seen.add((d.get("message") or {}).get("id"))
+    return len(seen)
+
+
+DELTA_BUILT = re.compile(r"^(\S+) delta (\w+): \w+ +session fork \w+ of base \w+: first own request cache_read=\d+ "
+                         r"cache_write=(\d+)")
+
+
+def carried(who):
+    """What a base's delta has cost since its layer sealed — what a refresh of the layer would have spared: every fork
+    of the delta carried its tokens in each of its requests (0.1 a token a request), and every build of the delta
+    wrote it (2 a token)."""
+    since = sealed_at(v2.layer_record(who) or {})
+    if since is None:
+        return 0.0
+    owed = 0.0
+    for s in v2.peek()["sessions"].values():
+        if s.get("origin") == who and (s.get("started") or 0) >= since and s.get("delta_tokens"):
+            owed += 0.1 * s["delta_tokens"] * own_requests(s)
+    try:
+        for line in open(os.path.join(STATE, "warm.log"), errors="ignore"):
+            m = DELTA_BUILT.match(line)
+            if m and m.group(2) == who:
+                with contextlib.suppress(ValueError):
+                    if time.mktime(time.strptime(m.group(1), "%Y-%m-%dT%H:%M:%S")) >= since:
+                        owed += 2 * int(m.group(3))
+    except OSError:
+        pass
+    return owed
+
+
+def refresh_cost(who):
+    """What refreshing a layer costs: the layer written anew (2 a token) over one read of the stable base under it
+    (0.1 a token), from the records' measured contexts; None when either is not recorded."""
+    base, layer = _record(who, "base"), v2.layer_record(who)
+    try:
+        stable, whole = int(base["context"]), int(layer["context"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    return 2 * max(0, whole - stable) + 0.1 * stable
+
+
+def _record(who, part):
+    try:
+        return json.load(open(os.path.join(STATE, f"{who}-{part}.json")))
+    except (OSError, ValueError):
+        return None
 
 
 def entry_missed(who, part, sealed):
@@ -722,8 +784,8 @@ def missed_fork(who, sealed):
 def deltas():
     """Build a base's delta (base.sh WHO delta) as what it holds moves: for a base named in state/deltas, when a delta
     built now would differ from the standing one by DELTA_MIN tokens, at most every DELTA_EVERY seconds, with no build
-    over the layer going. A layer whose own entry is cold is refreshed instead (a delta over it would write it again),
-    and so is one whose frontier would take in FRONTIER_MOVED theories. By hand: state/WHO-delta.build builds one at the
+    over the layer going. A layer whose own entry is cold is refreshed instead (a delta over it would write it again);
+    when the layer is refreshed otherwise is layers()' (carried). By hand: state/WHO-delta.build builds one at the
     next pass, and state/WHO-delta.ask (a question) asks a fork of the standing delta (the canary)."""
     for who in v2.BASES:
         if not v2.layer_record(who):
@@ -756,12 +818,9 @@ def deltas():
         if not (asked or missed) and moved < DELTA_MIN:
             continue
         refresh = os.path.join(STATE, f"{who}-layer.refresh")
-        entry, taken_in = layer_entry_age(who), frontier_moved(who)
+        entry = layer_entry_age(who)
         if entry is None or entry >= v2.WARM_MAX:
             open(refresh, "w").write("why: its own cache entry is cold, so a delta over it would write it again")
-            continue
-        if taken_in >= FRONTIER_MOVED:
-            open(refresh, "w").write(f"why: its frontier would take in {taken_in} theories")
             continue
         with contextlib.suppress(OSError):
             os.remove(build)

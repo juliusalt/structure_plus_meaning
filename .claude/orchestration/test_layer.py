@@ -6,6 +6,7 @@ measured on 2026-09-20: a fork of the sealed knowledge base, a layer over `max` 
 538,044 tokens and wrote 62 — so the layer is what every role forks and what is pinged.
 """
 import json
+import re
 import os
 from pathlib import Path
 import subprocess
@@ -79,9 +80,19 @@ class SplitListTests(unittest.TestCase):
                 name = line.split("  #")[0].strip()
                 if name:
                     entries.append(name)
-            self.assertEqual(len(entries), select_base_load.FRONTIER_N, f"{who}'s frontier is not {select_base_load.FRONTIER_N} theories")
+            said = int(re.search(r"\((\d+) theories", after[0]).group(1))
+            self.assertEqual(len(entries), said, f"{who}'s frontier holds {len(entries)} theories and says {said}")
             for name in entries:
                 self.assertTrue((PROJECT / name).is_file(), f"{who}'s frontier names {name}, which is not there")
+
+    def test_each_worker_base_fits_the_owner_s_target(self):
+        # the frontier was a fixed 40 theories with no budget, and the high base grew from 525K to 602K in a day
+        # (2026-09-22); it is chosen within the layer's room now, and the founding tier holds what its roles used
+        for who in ("xhigh", "high"):
+            stable = select_base_load.estimate(select_base_load.held_by(who, "stable"))
+            layer = select_base_load.estimate(select_base_load.held_by(who, "layer"))
+            loaded = stable + layer * select_base_load.LAYER_FACTOR
+            self.assertLess(loaded, select_base_load.TARGET * 1.03, f"{who}: about {loaded:,.0f} loaded")
 
     def test_a_layer_pays_for_no_fresh_session(self):
         # it is loaded by a fork of the sealed stable base, which carries the lean session already

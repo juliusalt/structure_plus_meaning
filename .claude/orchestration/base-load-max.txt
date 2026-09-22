@@ -305,7 +305,7 @@ native_control_plan.md
 # pinned: the owner's voice and the operating rules
 .claude/orchestration/codex-owner-directions.md
 .claude/orchestration/owner-directions.md
-~/.claude/projects/-home-julius-structure-and-semantics/memory/*.md
+~/.claude/projects/-home-julius-structure-and-semantics/memory/[a-z]*.md  # the memory files, not their index (MEMORY.md repeats them and enters every delta whole)
 AGENTS.md
 DEVELOPMENT_WORKFLOW.md
 problems.txt

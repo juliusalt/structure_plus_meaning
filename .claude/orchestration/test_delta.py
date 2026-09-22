@@ -278,6 +278,79 @@ class DeltaScriptTests(unittest.TestCase):
         self.assertIn(["rm", "id-" + name], self.calls_made())          # the canary's fork is removed
 
 
+class StableListedTests(unittest.TestCase):
+    """manifest.py stable-listed: whether the stable base recorded loaded what the list's stable part names now."""
+
+    def test_the_recorded_stable_base_is_the_list_s_only_while_it_loaded_the_same_files(self):
+        with tempfile.TemporaryDirectory() as temp:
+            state, lst = Path(temp) / "state", Path(temp) / "list.txt"
+            state.mkdir()
+            lst.write_text(f"# reference\n{HERE / 'README.md'}\n# === layer === below\n# direction\n{HERE / 'v2.py'}\n")
+            env = dict({k: v for k, v in os.environ.items() if not k.startswith("ORCH_")},
+                       ORCH_STATE_DIR=str(state), ORCH_LOAD_LIST=str(lst))
+            listed = lambda: subprocess.run([sys.executable, str(HERE / "manifest.py"), "stable-listed", "high"], env=env,
+                                            capture_output=True, text=True)
+            self.assertEqual(listed().returncode, 1)                     # no snapshot of a stable base at all
+            (state / "high-manifest.json").write_text(json.dumps({"files": {str(HERE / "README.md"): "x"}}))
+            self.assertEqual(listed().returncode, 0)                     # its contents may have moved: the delta's
+            lst.write_text(lst.read_text().replace("# === layer", f"{HERE / 'base.sh'}\n# === layer"))
+            out = listed()
+            self.assertEqual(out.returncode, 1)                          # the list names another reference now
+            self.assertIn("names 1 file(s) the high stable base did not load and leaves out 0", out.stdout)
+
+
+class DeltaCostTests(unittest.TestCase):
+    """What a delta has cost since its layer sealed (carried), and what a refresh costs (refresh_cost)."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.state = Path(self.temp.name)
+        (self.state / "high-base.json").write_text(json.dumps({"sessionId": "stable-sid", "context": 276_298}))
+        (self.state / "high-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "base": "stable-sid", "context": 601_541, "sealed": "2026-09-22T22:18:14"}))
+        self.sealed = time.mktime(time.strptime("2026-09-22T22:18:14", "%Y-%m-%dT%H:%M:%S"))
+        self.patches = [patch.object(watchdog, "STATE", str(self.state)), patch.object(v2, "STATE", str(self.state))]
+        for p in self.patches:
+            p.start()
+
+    def tearDown(self):
+        for p in reversed(self.patches):
+            p.stop()
+        self.temp.cleanup()
+
+    def test_what_every_fork_of_the_delta_carried_and_every_build_wrote(self):
+        after, before = self.sealed + 600, self.sealed - 600
+        sessions = {"fix-1": dict(origin="high", started=after, delta_tokens=5000, sid="a"),
+                    "fix-2": dict(origin="high", started=before, delta_tokens=5000, sid="b"),   # forked the old layer
+                    "review-3": dict(origin="xhigh", started=after, delta_tokens=5000, sid="c"),  # another base's
+                    "fix-4": dict(origin="high", started=after, sid="d")}                        # forked no delta
+        (self.state / "v2.json").write_text(json.dumps({"sessions": sessions, "tasks": {}, "queue": [], "events": []}))
+        (self.state / "warm.log").write_text(
+            "2026-09-22T22:36:26 delta high: OK   session fork 00bbf073 of base bf471854: first own request "
+            "cache_read=601539 cache_write=6451 uncached=2 (98% read)\n"
+            "2026-09-22T21:15:09 delta high: OK   session fork 72dc01e5 of base e3a1676c: first own request "
+            "cache_read=600393 cache_write=4000 uncached=2 (99% read)\n"                   # before the layer sealed
+            "2026-09-22T22:40:00 delta xhigh: OK   session fork 11111111 of base 22222222: first own request "
+            "cache_read=500000 cache_write=9000 uncached=2 (99% read)\n")
+        with patch.object(watchdog, "own_requests", lambda s: 20):
+            self.assertAlmostEqual(watchdog.carried("high"), 0.1 * 5000 * 20 + 2 * 6451)
+
+    def test_a_session_s_own_requests_are_its_turns_from_its_launch(self):
+        launched = self.sealed + 60
+        stamp = lambda t: time.strftime("%Y-%m-%dT%H:%M:%S.000Z", time.gmtime(t))
+        turn = lambda mid, t: {"type": "assistant", "timestamp": stamp(t), "message": {"id": mid, "usage": {"input_tokens": 1}}}
+        path = self.state / "fork.jsonl"
+        path.write_text("".join(json.dumps(r) + "\n" for r in (turn("copied", launched - 3600), turn("m1", launched + 10),
+                                                                turn("m1", launched + 11), turn("m2", launched + 20))))
+        with patch.object(v2, "transcript", lambda sid: str(path)):
+            self.assertEqual(watchdog.own_requests({"sid": "x", "started": launched}), 2)
+
+    def test_a_refresh_costs_its_layer_written_over_a_read_of_the_stable_base(self):
+        self.assertAlmostEqual(watchdog.refresh_cost("high"), 2 * (601_541 - 276_298) + 0.1 * 276_298)
+        (self.state / "high-layer.json").write_text(json.dumps({"sessionId": "layer-sid"}))
+        self.assertIsNone(watchdog.refresh_cost("high"))
+
+
 class DeltaForkTests(unittest.TestCase):
     """What a role of the base forks once a delta stands on its layer, and what it is told has changed since."""
 
@@ -302,6 +375,17 @@ class DeltaForkTests(unittest.TestCase):
                              env=dict(self.w.env, **env), capture_output=True, text=True)
         self.assertEqual(out.returncode, 0, out.stderr)
         return out.stdout.strip()
+
+    def test_a_fork_of_the_delta_records_what_the_delta_adds_to_its_layer(self):
+        # what the watchdog weighs against a refresh (carried): each of its requests carries that many tokens
+        for name, context in (("high-layer.json", 601_541), ("high-delta.json", 607_992)):
+            rec = json.loads((self.w.state / name).read_text())
+            (self.w.state / name).write_text(json.dumps(dict(rec, context=context)))
+        start = ("n = v2.launch('implementer', '7', lambda n: 'You are implement-7, working on task 7.', tree=None)\n"
+                 "print(v2.peek()['sessions'][n].get('delta_tokens'))")
+        self.assertEqual(self.py(start), "None")                       # the layer is what its roles fork
+        (self.w.state / "deltas").write_text("high\n")
+        self.assertEqual(self.py(start.replace("'7'", "'8'").replace("-7", "-8").replace("task 7", "task 8")), "6451")
 
     def test_the_roles_fork_the_delta_once_the_base_is_switched_to_it(self):
         forked = "print(v2.base_record('high')[1]['sid'])"
@@ -412,8 +496,8 @@ class DeltaWarmTests(unittest.TestCase):
         record = self.state / "max-base.json"
         hit.write_text("")
         miss.write_text("x\n")
-        then = time.time() - 10 * 60
-        os.utime(miss, (then, then))
+        then = time.time() - 36 * 3600                                  # before any midnight: a record with no seal
+        os.utime(miss, (then, then))                                    # time is no seal (`date -d ""` is midnight)
         self.assertFalse(self.stable_warm())                            # nothing says the base was loaded since
         held = json.loads(record.read_text())
         held["sealed"] = time.strftime("%Y-%m-%dT%H:%M:%S")
@@ -479,12 +563,13 @@ class DeltaTriggerTests(unittest.TestCase):
         self.touch("high-layer.hit")                                    # the layer's entry, read by the delta's build
         self.touch("high-base.hit")                                     # what the roles fork, read by their forks
         self.started, self.said, self.once, self.errs = [], [], [], []
-        self.moved, self.taken_in, self.measure, self.whole = 3000, 0, (0.01, 0, 5000), 0.3
+        self.moved, self.measure, self.whole, self.owed, self.cost = 3000, (0.01, 0, 5000), 0.3, 0.0, 700_000.0
         self.patches = [
             patch.object(watchdog, "STATE", str(self.state)), patch.object(v2, "STATE", str(self.state)),
             patch.dict(os.environ, {"ORCH_DELTAS": "high"}),
             patch.object(watchdog, "moved_since_delta", lambda who: self.moved),
-            patch.object(watchdog, "frontier_moved", lambda who: self.taken_in),
+            patch.object(watchdog, "carried", lambda who: self.owed),
+            patch.object(watchdog, "refresh_cost", lambda who: self.cost),
             patch.object(watchdog, "delta_measure", lambda who: self.measure),
             patch.object(watchdog, "stale_share", lambda who: self.whole),
             patch.object(watchdog.subprocess, "Popen", self.launch),
@@ -515,7 +600,7 @@ class DeltaTriggerTests(unittest.TestCase):
         watchdog.deltas()
         self.assertEqual(self.started, [["high", "warm", "layer", "--if-due"], ["high", "delta"]])
         self.touch("high-layer.looked", ago=watchdog.LAYER_EVERY + 60)
-        self.measure = (watchdog.LAYER_DELTA_MAX, 0, 20000)
+        self.owed = self.cost
         watchdog.layers()
         self.assertEqual(self.started[-1], ["high", "layer"])
         self.assertEqual(len(self.errs), 3)
@@ -559,21 +644,14 @@ class DeltaTriggerTests(unittest.TestCase):
             watchdog.deltas()
         self.assertEqual(self.started, [])
 
-    def test_a_cold_layer_or_a_moved_frontier_is_refreshed_instead(self):
+    def test_a_cold_layer_is_refreshed_instead_of_a_delta_built_over_it(self):
         self.touch("high-layer.hit", ago=2 * 3600)                      # the layer's own entry is cold
         watchdog.deltas()
         self.assertEqual(self.started, [])
         self.assertIn("cold", (self.state / "high-layer.refresh").read_text())
-        (self.state / "high-layer.refresh").unlink()
-        self.touch("high-layer.hit")
-        self.touch("high-delta.looked", ago=watchdog.DELTA_EVERY + 60)
-        self.taken_in = watchdog.FRONTIER_MOVED
-        watchdog.deltas()
-        self.assertEqual(self.started, [])
-        self.assertIn(f"take in {watchdog.FRONTIER_MOVED} theories", (self.state / "high-layer.refresh").read_text())
         watchdog.layers()                                               # which the layer's look takes up, saying why
         self.assertEqual(self.started, [["high", "layer"]])
-        self.assertIn(f"the high layer is refreshed: its frontier would take in {watchdog.FRONTIER_MOVED} theories",
+        self.assertIn("the high layer is refreshed: its own cache entry is cold, so a delta over it would write it again",
                       self.said)
 
     def test_a_delta_asked_for_or_asked_a_question_is_built_or_asked_at_once(self):
@@ -589,15 +667,24 @@ class DeltaTriggerTests(unittest.TestCase):
             watchdog.deltas()
         self.assertEqual(self.started[-1], ["high", "delta", "--ask", "What does lemma l7 state?"])
 
-    def test_the_layer_under_a_delta_is_refreshed_by_what_the_delta_holds_of_it(self):
-        self.whole = 0.5                                                # the whole-file share alone refreshes nothing
+    def test_the_layer_under_a_delta_is_refreshed_once_its_delta_has_carried_a_refresh_s_cost(self):
+        # rent against purchase (D7): a share of the layer (8%) and a count of theories the frontier would take in (5)
+        # asked a refresh 1h24m after the last on 2026-09-22, where the day's costs put it every 3.5 to 5 hours
+        self.whole, self.measure = 0.5, (0.3, 0, 90000)                 # a large share alone refreshes nothing now
+        self.owed = self.cost - 1
         watchdog.layers()
         self.assertEqual(self.started, [])
         self.touch("high-layer.looked", ago=watchdog.LAYER_EVERY + 60)
-        self.measure = (watchdog.LAYER_DELTA_MAX, 0, 20000)
+        self.owed = self.cost
         watchdog.layers()
         self.assertEqual(self.started, [["high", "layer"]])
-        self.assertIn("the high layer is refreshed: the delta holds 8% of it (the whole-file share 50%)", self.said)
+        self.assertIn("the high layer is refreshed: its delta has cost the forks that carried it 700K since the layer "
+                      "sealed, what a refresh costs (700K)", self.said)
+        # the stable reference's drift, which a refresh does not take back, is said to the owner
+        self.touch("high-layer.looked", ago=watchdog.LAYER_EVERY + 60)
+        self.measure, self.owed = (0.01, watchdog.STABLE_DELTA_MAX, 20000), 0.0
+        watchdog.layers()
+        self.assertTrue(any("tokens of the stable reference's changes" in t for t in self.once))
 
     def test_the_layer_under_a_standing_delta_is_pinged_when_due(self):
         # its entry is read by the delta's builds alone; the daemon's own ping waits for its restart (2026-09-22 20:55)

@@ -78,6 +78,8 @@ note `notes/fresh-start-2026-09-23.md`, queued as an event: what changed in the 
 tree, and the two trees whose work never landed (143, 176). To start without that note: remove the event of kind
 `harness-change` from state/v2.json.
 
+**Yours to read**: `library-prompt.md`, the system prompt of every base, now says which founding theories a base holds (every one on the planner's base, those its roles use on the others, the rest named in an index) — it said every base held all of them, which the founding tiers made false; you read changes to that file (bases-design §9).
+
 **Yours to decide** (data in D3, D5): whether the central ideas nobody used in a week stay pinned ("authority and
 currentness", "proofs and replay", "admission", "base causes": 0 sessions); whether the theory map's index (77K on high
 after the cut) stays, or the names-only index (18K) replaces it; whether the 530K target itself stays (at 2026-09-22's

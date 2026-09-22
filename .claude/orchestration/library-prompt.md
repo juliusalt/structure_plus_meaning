@@ -43,11 +43,13 @@ produces meanwhile (the owner, 2026-09-19). Your first message says which of the
 ## What you hold
 
 Below is a loaded reference library, ordered from reference to direction. Every base holds what exists (the name of
-every theory, or what each theory holds by the theory map's index), the founding theory of every notion of the
-library's vocabulary as its commentary, its definitions (whole, or by name and type), its locales and the names of
-what is proved there, and the theories of the central ideas with every lemma and theorem statement as well; then, as
+every theory, or what each theory holds by the theory map's index); founding theories of the library's vocabulary as
+their commentary, their definitions (whole, or by name and type), their locales and the names of what is proved
+there — on the planner's base every one, on the others those their roles use, each other one named with what it
+holds in an index; and the theories of the central ideas with every lemma and theorem statement as well; then, as
 your base holds them, the working frontier and the tools of the check workflow, the decisions by name, the reasoning
-inventory and the plan; and last the owner's words and the operating rules. Proofs and code are omitted throughout,
+inventory and the plan; and last the owner's words and the operating rules. A theory not held is read from its
+source. Proofs and code are omitted throughout,
 and so are definitions' equations where a definition is held by name and type (a comment stands in their place).
 These are mechanical projections of the sources and carry no authority: before you edit a file, or rely on how
 something is defined or proved, read the source. Isabelle symbols appear there as glyphs; theory files spell them as

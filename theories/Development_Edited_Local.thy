@@ -39,15 +39,6 @@ lemma edited_state_member:
     (z\<in>set (state_entities R j) \<and> z\<notin>set (edit_removed e j)) \<or> z\<in>set (edit_added e j)"
   by (auto simp: edited_state_entities)
 
-text \<open>A removed row of the constructor's edit is a row of its own kind's family in the request state.\<close>
-
-lemma state_edit_of_removed_within:
-  assumes presented: "state_presenter S=Some R" and edit: "state_edit_of S ns removed added=Some e"
-  shows "set (edit_removed e j)\<subseteq>set (state_entities R j)"
-proof -
-  have R: "R=state_rows_of S" using presented by (simp add: state_presenter_def split: if_splits)
-  show ?thesis using edit by (auto simp: R state_rows_of_def state_edit_of_def Let_def split: if_splits)
-qed
 
 section \<open>The subject's fibres after the edit\<close>
 

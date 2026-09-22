@@ -26,27 +26,19 @@ proof -
   finally show ?thesis .
 qed
 
-text \<open>
-  The pattern forest's literal bindings are stated by their own recursion over the heads 2 and 3,
-  so relating them to the forest's table reads the branch's first two equations.
-\<close>
-
-lemma syntax_forest_table_heads:
-  "syntax_forest_table (M#Ms)=map_slot_keys (Cons 2) M \<union> map_slot_keys (Cons 3) (syntax_forest_table Ms)"
-proof -
-  have split: "{..<Suc (length Ms)} = insert 0 (Suc ` {..<length Ms})"
-    by (auto simp: image_iff less_Suc_eq_0_disj)
-  show ?thesis
-    by (simp add: syntax_forest_table_def split map_slot_keys_def image_UN image_image split_def)
-qed
 
 lemma finite_syntax_forest_table_values:
   "map_relation_values f (fset (finite_syntax_forest_table Ms))=
     syntax_forest_table (map (\<lambda>M. map_relation_values f (fset M)) Ms)"
   by (simp add: syntax_forest_value_map map_map comp_def)
 
+text \<open>
+  The pattern forest places its bodies at the forest's branches, so its literal bindings are the
+  forest's table of the bodies' tables.
+\<close>
+
 lemma pattern_forest_reference_table:
   "syntax_forest_table (map pattern_literal_bindings ps)=pattern_forest_bindings ps"
-  by (induction ps) (simp_all add: syntax_forest_table_heads map_slot_keys_def)
+  by (simp add: syntax_forest_table_def pattern_forest_bindings_def map_slot_keys_def cong: SUP_cong_simp)
 
 end

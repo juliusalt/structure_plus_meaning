@@ -25,7 +25,7 @@ lemma syntax_record_ports_formed:
   using unary_address_formed by (auto simp: syntax_record_ports_def octets_formed_def)
 
 lemma pattern_forest_roots_length [simp]: "length (pattern_forest_roots ps) = length ps"
-  by (induction ps) simp_all
+  by (simp add: pattern_forest_roots_def)
 
 definition pattern_record_syntax :: "('a \<Rightarrow> local_address) \<Rightarrow> 'a term_pattern list \<Rightarrow> exact_artifact" where
   "pattern_record_syntax f ps = record_wrapper (pattern_forest_syntax f ps) []
@@ -41,8 +41,12 @@ lemma pattern_record_header_fresh:
 proof -
   have body: "insert [] (set (syntax_record_ports (length ps))) \<inter>
     (pattern_forest_interior ps \<union> rel_dom (pattern_forest_bindings ps)) = {}"
-    by (cases ps; simp only: pattern_forest_interior.simps pattern_forest_slots)
-       (auto simp: syntax_record_ports_def)
+  proof (rule equals0I)
+    fix a assume a: "a \<in> insert [] (set (syntax_record_ports (length ps))) \<inter>
+      (pattern_forest_interior ps \<union> rel_dom (pattern_forest_bindings ps))"
+    obtain b where "a = 2#b \<or> a = 3#b" using pattern_forest_heads[of a ps] a by blast
+    with a show False by (auto simp: syntax_record_ports_def)
+  qed
   have vars: "f ` pattern_forest_variables ps \<subseteq> binder_addresses"
     using addressing by (simp add: binder_addressing_def)
   have bound: "insert [] (set (syntax_record_ports (length ps))) \<inter> f ` pattern_forest_variables ps = {}"
@@ -99,7 +103,11 @@ lemma pattern_record_slot_boundary:
   "pattern_record_interior ps \<inter> rel_dom (pattern_forest_bindings ps) = {}"
 proof -
   have fresh: "insert [] (set (syntax_record_ports (length ps))) \<inter> rel_dom (pattern_forest_bindings ps) = {}"
-    by (cases ps; simp only: pattern_forest_slots) (auto simp: syntax_record_ports_def)
+  proof (rule equals0I)
+    fix a assume a: "a \<in> insert [] (set (syntax_record_ports (length ps))) \<inter> rel_dom (pattern_forest_bindings ps)"
+    obtain b where "a = 2#b \<or> a = 3#b" using pattern_forest_heads[of a ps] a by blast
+    with a show False by (auto simp: syntax_record_ports_def)
+  qed
   show ?thesis using fresh pattern_forest_slot_boundary[of ps] by (auto simp: pattern_record_interior_def)
 qed
 

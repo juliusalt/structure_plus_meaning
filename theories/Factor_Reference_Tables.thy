@@ -95,6 +95,46 @@ proof -
   show ?thesis by (rule reference_table_union[OF left right separate])
 qed
 
+text \<open>
+  A forest over placements that are injective and whose images are apart has formed reference tables
+  when each child has.
+\<close>
+
+lemma reference_table_placed:
+  assumes len: "length Ls = length Cs"
+    and profiles: "\<forall>i<length Ls. reference_table_formed (Ls!i) (Cs!i)"
+    and injective: "\<And>i. inj (g i)" and apart: "\<And>i j. i \<noteq> j \<Longrightarrow> range (g i) \<inter> range (g j) = {}"
+  shows "reference_table_formed (placed_table g Ls) (placed_table g Cs)"
+proof -
+  let ?L = "\<lambda>n. \<Union>i<n. map_slot_keys (g i) (Ls!i)"
+  let ?C = "\<lambda>n. \<Union>i<n. map_slot_keys (g i) (Cs!i)"
+  have prefix: "n \<le> length Ls \<Longrightarrow> reference_table_formed (?L n) (?C n)" for n
+  proof (induction n)
+    case 0
+    then show ?case by simp
+  next
+    case (Suc n)
+    have old: "reference_table_formed (?L n) (?C n)" using Suc.IH Suc.prems by simp
+    have small: "n < length Ls" using Suc.prems by simp
+    have new: "reference_table_formed (map_slot_keys (g n) (Ls!n)) (map_slot_keys (g n) (Cs!n))"
+      by (rule reference_table_map[OF _ injective]) (use profiles small in blast)
+    have separated: "range (g i) \<inter> range (g n) = {}" if "i < n" for i
+      using that by (intro apart) simp
+    have below: "rel_dom (?L n) \<union> rel_dom (?C n) \<subseteq> (\<Union>i<n. range (g i))"
+      unfolding rel_dom_image image_UN
+      by (intro Un_least UN_mono subset_refl) (auto simp: map_slot_keys_def)
+    have here: "rel_dom (map_slot_keys (g n) (Ls!n)) \<union> rel_dom (map_slot_keys (g n) (Cs!n)) \<subseteq> range (g n)"
+      by (auto simp: map_slot_keys_domain)
+    have separate: "(rel_dom (map_slot_keys (g n) (Ls!n)) \<union> rel_dom (map_slot_keys (g n) (Cs!n)))
+      \<inter> (rel_dom (?L n) \<union> rel_dom (?C n)) = {}"
+      using below here separated by blast
+    have union: "reference_table_formed (map_slot_keys (g n) (Ls!n) \<union> ?L n) (map_slot_keys (g n) (Cs!n) \<union> ?C n)"
+      by (rule reference_table_union[OF new old separate])
+    show ?case using union by (simp only: lessThan_Suc UN_insert)
+  qed
+  show ?thesis using prefix[of "length Ls"] len by (simp add: placed_table_def map_slot_keys_def)
+qed
+
 lemma template_reference_table:
   assumes formed: "template_formed t"
   shows "reference_table_formed (template_literals t) (template_callees t)"
@@ -127,18 +167,17 @@ qed
 lemma premise_forest_reference_table:
   assumes formed: "\<forall>t\<in>set ts. template_formed t"
   shows "reference_table_formed (premise_forest_literals ts) (premise_forest_callees ts)"
-  using formed
-proof (induction ts)
-  case Nil
-  show ?case by simp
-next
-  case (Cons t ts)
-  have head: "reference_table_formed (template_literals t) (template_callees t)"
-    by (rule template_reference_table) (use Cons.prems in simp)
-  have tail: "reference_table_formed (premise_forest_literals ts) (premise_forest_callees ts)"
-    by (rule Cons.IH) (use Cons.prems in simp)
-  show ?case by (simp only: premise_forest_literals.simps premise_forest_callees.simps)
-    (rule reference_table_prefix_union[OF head tail template_reference_slots_outside premise_forest_reference_slots_outside])
+  unfolding premise_forest_literals_def premise_forest_callees_def
+proof (rule reference_table_placed[OF _ _ syntax_branch_injective syntax_branch_disjoint])
+  show "length (map template_literals ts) = length (map template_callees ts)" by simp
+  show "\<forall>i<length (map template_literals ts). reference_table_formed (map template_literals ts ! i) (map template_callees ts ! i)"
+  proof (intro allI impI)
+    fix i assume "i < length (map template_literals ts)"
+    then have i: "i < length ts" by simp
+    have "template_formed (ts!i)" using formed nth_mem[OF i] by blast
+    then show "reference_table_formed (map template_literals ts ! i) (map template_callees ts ! i)"
+      using i by (simp add: template_reference_table)
+  qed
 qed
 
 lemma template_callee_range_left:
@@ -147,7 +186,19 @@ lemma template_callee_range_left:
 
 lemma premise_forest_callee_range:
   "rel_ran (premise_forest_callees ts) = (\<Union>t\<in>set ts. rel_ran (template_callees t))"
-  by (induction ts) (simp_all add: rel_ran_union map_slot_keys_range)
+proof (rule set_eqI, rule iffI)
+  fix d assume "d \<in> rel_ran (premise_forest_callees ts)"
+  then obtain a where "(a,d) \<in> premise_forest_callees ts" by (auto simp: rel_ran_def)
+  then obtain i k where i: "i < length ts" and kd: "(k,d) \<in> template_callees (ts!i)"
+    unfolding premise_forest_callees_def placed_table_member by auto
+  show "d \<in> (\<Union>t\<in>set ts. rel_ran (template_callees t))"
+    unfolding rel_ran_def using nth_mem[OF i] kd by blast
+next
+  fix d assume "d \<in> (\<Union>t\<in>set ts. rel_ran (template_callees t))"
+  then obtain t k where t: "t \<in> set ts" and kd: "(k,d) \<in> template_callees t" by (auto simp: rel_ran_def)
+  obtain j where "(j,d) \<in> premise_forest_callees ts" using premise_forest_callee_origin[OF t kd] by blast
+  then show "d \<in> rel_ran (premise_forest_callees ts)" unfolding rel_ran_def by blast
+qed
 
 lemma (in schema_bodies) reference_table:
   "reference_table_formed literals callees"

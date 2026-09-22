@@ -2,10 +2,10 @@
  "boundary": "The complete initial original certificate-family scope and its two actual outputs determine retention and every proof/call/sharing witness. All four conditions and three complete revision cycles are reproduced. This failed coverage result is retained as the original development problem.",
  "complete_recipe_source_manifest": "certificate-coverage-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.17,
+  "seconds": 5.04,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "2a8b4145013839446f329f60cc73b41dee0fb7a0fce7b866c64734d08c240513",
+   "module_sha256": "231a159770174d8666eb9e75299e7599b54fe08275ea72215ed470eab42a00a1",
    "subject_contracts": {
-    "certificate_coverage_investigation.yxml": "e03e58c763501136dd7185a7c6f927c43fcc18f59b2cf2c130f5a2dbe70a8a83"
+    "certificate_coverage_investigation.yxml": "34e1854c247a587537c7e9eae20838f69aa5a2014b07555cb3f2e1498b524397"
    },
    "theory": "Native_Certificate_Coverage_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "905127cb28966d707f733540b12c11227f0336599e010d8479194aa8ec66dfca",
+ "source_manifest_sha256": "e2e53ad1abc181b1c1d15e4e407b4b787afa196228a5cc6aeadeec7638022a27",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 3.070468134999828
+   "seconds": 4.939530439998634
   }
  ]
 }

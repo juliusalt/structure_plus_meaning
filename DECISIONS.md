@@ -11903,6 +11903,22 @@ contracts alone.
   `placed_table syntax_branch`, its member and finiteness facts derived from `placed_table_member` and
   `placed_table_finite`). `binder_silent` keeps its
   definition. The syntax forest, its positions and its table become instances in the build after task 153.
+- *Correction (task 223, 2026-09-22; task 179's review, follow-up 3):* the premise forest was a second, unary layout
+  (its i-th premise at `premise_branch i`, a recursion over the heads 2 and 3 through `bound_union`). It is placed
+  flat through the forest's placement: `premise_forest_syntax f ts` is `bound_forest` of the templates' syntax,
+  `premise_forest_interior` the placed positions of their interiors at `syntax_branch`, `premise_forest_literals`
+  and `premise_forest_callees` the placed tables of theirs at `syntax_branch`, and their executable forms the
+  executable placed forest and tables of the same children. The schema body keeps its two heads (conclusion 2,
+  premises 3) and its definitions; its premise i stands at `3 # bound_branch i`. **Retired** `premise_branch`,
+  `premise_branch_zero`, `premise_branch_successor` and the recursive equations of `premise_forest_syntax`,
+  `_interior`, `_literals`, `_callees` and of their executable forms (replaced by `premise_forest_Nil`); every
+  statement that named `premise_branch` reads `bound_branch`. **New** in RRA_Placed_Forests
+  `placed_positions_child`, `placed_table_child`, `placed_positions_map_member`, `placed_table_domain`,
+  `placed_table_values`, `silent_reads_agree`, `push_silent_at`; in Factor_Pattern_Forests
+  `bound_forest_reads_carrier` (a child's whole carrier, binders included, reads alike in the bound forest); in
+  Factor_Premise_Forests `template_list_addressing`, `template_projection_fixed` (of which
+  `template_projection_prefix` is an instance); in Factor_Reference_Tables `reference_table_placed`, of which
+  `reference_table_forest` is now the instance at `syntax_branch`. No word changed.
 
 Outside the founding theories no proof computes a position: `syntax_branch.simps` leave the simpset after the
 contracts are proved, `family_ports_def`, `syntax_record_ports_def` and `fresh_address_def` are unfolded nowhere

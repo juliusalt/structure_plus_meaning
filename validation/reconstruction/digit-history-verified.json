@@ -2,10 +2,10 @@
  "boundary": "The closed history stores its header, actual digit material, ordered ledger and exact cache. Actual membership, generation, cause and policy operations preserve every original bounded transition. All original and subsequent source inputs, whole results, counter and cache relations, actual coverage, comparisons and revisions are reconstructed. Full physical cost, whole workflow adequacy, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "digit-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 16.19,
+  "seconds": 14.99,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "00a46c092236cf5ce3a7d514b66d40fb50c20ae8212dc4fd782d880705707f89",
+   "module_sha256": "d2540e5c6d7b2508701c7a4b3acc7ef3f6c6921bbb39d205be851f8b5c250403",
    "subject_contracts": {
-    "digit_history_investigation.yxml": "5951380fb481f74dc4cf0ca95a6f951692400a9f9584d2fd64e0a81282619b07"
+    "digit_history_investigation.yxml": "8771c5b32fdca5cd1772619e9d291d561f8136494c33c94673c6fc6ce23b1cc2"
    },
    "theory": "Digit_History_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "29b698251191708366b45b61b43f6f17430a96fafb25567dfe9c899e6b3c7e3d",
+ "source_manifest_sha256": "0fb8c74871a4c692d17b5bd1281cfe106c67d13c66376b0caff87a2978c45020",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 15.853898314999242
+   "seconds": 14.817416236001009
   }
  ]
 }

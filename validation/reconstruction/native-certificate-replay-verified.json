@@ -2,10 +2,10 @@
  "boundary": "Complete original source and certificate families determine actual source-positioned graphs, newly installed graph and application artifacts, the least retained environment and closed native replay. Every candidate result, original-source correspondence, application and graph reading, individual and family condition, complete comparison and revision is reproduced. Shared readers have complete-input equality contracts. The full workflow, cost, mathematical-proof admission and genesis remain open.",
  "complete_recipe_source_manifest": "native-certificate-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.52,
+  "seconds": 7.7,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "283c95b61e70b289b1442fdc86b7e1af5ee30864cdd331a6e7d3b59a98f0e5d0",
+   "module_sha256": "92c9dc83a1be4a4acc6a992c041b1ac82ce3791dfd2d09e2fd407336c951ad6e",
    "subject_contracts": {
-    "native_replay_investigation.yxml": "822526812d16410cb50c79bbb5e157c96968f57e07d4b15bc1e115a0a3867906"
+    "native_replay_investigation.yxml": "853f830b59a8134dc4f16fe311285532a2041ec45165c689afc3d342ecf6b719"
    },
    "theory": "Native_Certificate_Replay_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "20d23e3a401331ccc1a5107fcca1ae8ac3c011b1d3a46731bbc2ccd5366bd249",
+ "source_manifest_sha256": "5df3ed6866d0de89008d262ad06565f6acc86e55730dde7927fa8dcdb7aea670",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.4216271080003935
+   "seconds": 7.597766077000415
   }
  ]
 }

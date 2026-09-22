@@ -155,6 +155,22 @@ proof (rule carrier_index.intro)
   finally show "search (build (img c)) k v \<longleftrightarrow> (\<exists>q\<in>Q. key q=k \<and> holds c q v)" .
 qed
 
+text \<open>
+  An index whose search agrees with an index's search on every formed carrier is an index of the same
+  carrier: a use building another tree with the same lookups takes the notion's contract through it.
+\<close>
+
+lemma carrier_index_search_agrees:
+  assumes index: "carrier_index holds formed Q key build search"
+    and agrees: "\<And>c k v. formed c \<Longrightarrow> search' (build' c) k v \<longleftrightarrow> search (build c) k v"
+  shows "carrier_index holds formed Q key build' search'"
+proof (rule carrier_index.intro)
+  show "inj_on key Q" by (rule carrier_index.distinguishes[OF index])
+  fix c k v assume c: "formed c"
+  show "search' (build' c) k v \<longleftrightarrow> (\<exists>q\<in>Q. key q=k \<and> holds c q v)"
+    by (simp only: agrees[OF c] carrier_index.represents[OF index c])
+qed
+
 section \<open>An index updated rather than built once\<close>
 
 text \<open>

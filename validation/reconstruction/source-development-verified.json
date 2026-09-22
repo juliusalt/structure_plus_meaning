@@ -2,10 +2,10 @@
  "boundary": "The original policy questions and complete source-change requests reconstruct all observations, native generation, criticism, comparison, revision, selection, installation and subsequent query evidence. A unique complete target is selected through the existing computed native producer choice. Final admission preserves the original target meaning, old material and ordered query scope. Empty and ambiguous choices, unreadable or incompatible sources, absent entries and missing required query evidence remain explicit. The requested finite target family, wider discovery, global cost, historical authority, native mathematical proof admission and genesis are separate boundaries.",
  "complete_recipe_source_manifest": "source-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 3,
   "reports_equal": true,
-  "seconds": 16.76,
+  "seconds": 16.51,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "22b3aca10c0de181b8e931abe7dd32256489e9e45a3b812a5d3a97f8d60c5915",
+   "module_sha256": "e1e38f984dd785dbb1bd21961f1c06fe01ed374d75e33fc9e62fe4790790f6af",
    "subject_contracts": {
-    "development_subject_investigation.yxml": "70c3ee97bbdf39505afbb346aa1af84877f8613c1aabd33a8777ee30056c0ca2"
+    "development_subject_investigation.yxml": "ac6863b7ea289cc96b7d26ec641339e75c223af471b8a2dd447bec43c83886c5"
    },
    "theory": "Native_Source_Development"
   },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "6c874a8e6820031fc7800ea911408306e90d0d231831c24833a1d63128d1a3bd",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "22b3aca10c0de181b8e931abe7dd32256489e9e45a3b812a5d3a97f8d60c5915"
- },
  "recipe": "source-development",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -90,24 +85,24 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "e7a552f7b06606bd2851083b79081f16ae7cd2e49536cf04417bc869194884b8",
+ "source_manifest_sha256": "136eeb07dcec16ce483e2a40901334792c88512991515f538ffc990f07a591f9",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 16.471847016000538
+   "seconds": 16.43596645999787
   },
   {
    "exit_code": 0,
    "name": "presentation-empty",
-   "seconds": 13.798741949998657
+   "seconds": 14.046388121001655
   },
   {
    "exit_code": 0,
    "name": "presentation-first",
-   "seconds": 16.201530279999133
+   "seconds": 14.375468040998385
   }
  ]
 }

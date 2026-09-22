@@ -209,6 +209,74 @@ proof (rule placed_forest_reads[OF i bound_branch_injective counts inside])
   qed
 qed
 
+text \<open>
+  A child's whole carrier reads alike in the forest: off the binders by the reads above, and on them
+  because child and forest are both silent there.
+\<close>
+
+lemma bound_forest_reads_carrier:
+  assumes i: "i < length Rs" and counts: "bag_count (object_data (Rs!i)) = (\<lambda>_. 0)"
+    and silent: "\<forall>R\<in>set Rs. binder_silent R"
+  shows "object_reads_agree (push_object (bound_branch i) (Rs!i)) (bound_forest Rs)
+    (bound_branch i ` rra_carrier (object_structure (Rs!i)))"
+proof -
+  let ?R = "Rs!i"
+  let ?C = "rra_carrier (object_structure ?R)"
+  let ?B = "?C \<inter> binder_addresses"
+  have child: "binder_silent ?R" using silent nth_mem[OF i] by blast
+  have forest: "binder_silent (bound_forest Rs)" by (rule bound_forest_silent[OF silent])
+  have fixed: "bound_branch i b = b" if "b \<in> ?B" for b using that by (simp add: bound_branch_binder)
+  have outer: "object_reads_agree (push_object (bound_branch i) ?R) (bound_forest Rs) (bound_branch i ` (?C - binder_addresses))"
+    by (rule bound_forest_reads[OF i counts]) blast+
+  have in_push: "?B \<subseteq> rra_carrier (object_structure (push_object (bound_branch i) ?R))"
+  proof
+    fix b assume b: "b \<in> ?B"
+    have "b \<in> bound_branch i ` ?C" by (rule rev_image_eqI[of b]) (use b fixed[OF b] in simp_all)
+    then show "b \<in> rra_carrier (object_structure (push_object (bound_branch i) ?R))" by (simp add: push_object_def)
+  qed
+  have in_forest: "?B \<subseteq> rra_carrier (object_structure (bound_forest Rs))"
+  proof
+    fix b assume b: "b \<in> ?B"
+    have "b = bound_branch i b" using fixed[OF b] by simp
+    then show "b \<in> rra_carrier (object_structure (bound_forest Rs))" unfolding bound_forest_carrier_member using i b by blast
+  qed
+  have push_silent: "\<forall>b\<in>?B. silent_at (push_object (bound_branch i) ?R) b"
+  proof
+    fix b assume b: "b \<in> ?B"
+    have "silent_at ?R b" using child b by (auto simp: binder_silent_silent_at)
+    then have "silent_at (push_object (bound_branch i) ?R) (bound_branch i b)"
+      by (rule push_silent_at[OF bound_branch_injective counts])
+    then show "silent_at (push_object (bound_branch i) ?R) b" using fixed[OF b] by simp
+  qed
+  have forest_silent: "\<forall>b\<in>?B. silent_at (bound_forest Rs) b" using forest by (auto simp: binder_silent_silent_at)
+  have inner: "object_reads_agree (push_object (bound_branch i) ?R) (bound_forest Rs) ?B"
+    by (rule silent_reads_agree[OF in_push in_forest push_silent forest_silent])
+  have split: "bound_branch i ` ?C = bound_branch i ` (?C - binder_addresses) \<union> ?B"
+  proof (rule set_eqI, rule iffI)
+    fix a assume "a \<in> bound_branch i ` ?C"
+    then obtain c where c: "c \<in> ?C" and a: "a = bound_branch i c" by blast
+    show "a \<in> bound_branch i ` (?C - binder_addresses) \<union> ?B"
+    proof (cases "c \<in> binder_addresses")
+      case True
+      then show ?thesis using c a fixed[of c] by simp
+    next
+      case False
+      then show ?thesis using c a by blast
+    qed
+  next
+    fix a assume "a \<in> bound_branch i ` (?C - binder_addresses) \<union> ?B"
+    then show "a \<in> bound_branch i ` ?C"
+    proof
+      assume "a \<in> bound_branch i ` (?C - binder_addresses)"
+      then show ?thesis by blast
+    next
+      assume b: "a \<in> ?B"
+      show ?thesis by (rule rev_image_eqI[of a]) (use b fixed[OF b] in simp_all)
+    qed
+  qed
+  show ?thesis unfolding split by (rule object_reads_agree_union[OF outer inner])
+qed
+
 section \<open>Finite collections of bodies sharing one declared scope\<close>
 
 definition pattern_forest_variables :: "'a term_pattern list \<Rightarrow> 'a set" where

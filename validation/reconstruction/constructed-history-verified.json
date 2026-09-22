@@ -2,10 +2,10 @@
  "boundary": "Original closed history validity and actual indexed membership supply every known predecessor reading. Actual replay and quotation supply the complete policy scope. The composite operation retains both guards and every remaining original check, complete optional result, original subject and original method. Both preceding refinements and the raw omitted-membership control remain explicit. Full physical cost, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "constructed-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 30.69,
+  "seconds": 28.66,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "b5994891592799131a4cb44ee491cc92c2caf3a38e713e989fab0b3a08c7312f",
+   "module_sha256": "3ca0781d18729165e87e14de57382a7cf46e6b50d50830690a6b189aca5b713f",
    "subject_contracts": {
-    "constructed_history_investigation.yxml": "1756fd3b7201c8b209d2415d8a9349f4ccd002c81ef37f507e2871699f5f7604"
+    "constructed_history_investigation.yxml": "d4a7d7bbe4099350cd046d5fa44e6c6bd88a34370ebf446b77cd7f1576aeb63c"
    },
    "theory": "Constructed_History_Execution"
   },
@@ -73,14 +73,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "96cbbb0162783af458ee3fe04a674a2b7ad58a1aa800eba272b15482d87e2fbe",
+ "source_manifest_sha256": "975c321126cfe4368197fb3ea16f74a3b0e86c4bb3b42d0909b88927ae3b951e",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 30.59538343800159
+   "seconds": 28.540975006002554
   }
  ]
 }

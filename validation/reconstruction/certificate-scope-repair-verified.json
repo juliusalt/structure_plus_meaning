@@ -2,10 +2,10 @@
  "boundary": "The actual scope correction retains every full original input and appends compiled native sources and independently checked supplied certificates. Every complete input, source/proof check, original family, conflict witness, comparison and revision is reproduced. The correction is assessed against the original retention and coverage conditions.",
  "complete_recipe_source_manifest": "certificate-scope-repair-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.37,
+  "seconds": 5.64,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "2e067eeac3d4f76ab3c439c31f52bc2ce43dc1a3424483c33f840e824555fa82",
+   "module_sha256": "caf273a457c1d34dfd1f0b9ff94d23ed6757866fd97d969e41699fb50ae873aa",
    "subject_contracts": {
-    "certificate_scope_repair_investigation.yxml": "48430e8ea9bac044b34b7b6a637dc689bcf14e5807ce2a991d4b5725bcbfaf75"
+    "certificate_scope_repair_investigation.yxml": "1aa6b620eae01a31c412a4e2397cf20da3232cb2770c7a74e63ef8302ce5da2d"
    },
    "theory": "Native_Certificate_Scope_Repair_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "5996efcf333f8d97ff8d87a48fe1c723d1b16196ccbc1c7e13bc7f7e93f4a6c9",
+ "source_manifest_sha256": "8df8a5b36a9c23da84bcd1b66fc30a6659d3fea148ecd74fd6db13829749d89c",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 3.2697168579979916
+   "seconds": 5.4586969670017425
   }
  ]
 }

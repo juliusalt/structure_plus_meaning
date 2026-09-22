@@ -2,10 +2,10 @@
  "boundary": "The shared development cycle executes the natively selected expanded input scope. It preserves every original input and output, retains supplied proof-check reasons, computes every actual method result and condition, and admits only candidates satisfying all scoped conditions, basis readiness and computed criticism. Complete workflow enforcement, arbitrary development adequacy, cost and genesis remain required.",
  "complete_recipe_source_manifest": "certificate-input-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.12,
+  "seconds": 6.8,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "a35a7b77c38ed452d936ff3b7cfdde28169f3c64a4929276e416400162c8ede3",
+   "module_sha256": "b9b4afdda1f046284ffd8f9b5d6354a237a51ad10f00dbba3b08e13f75efdad6",
    "subject_contracts": {
-    "native_certificate_input_investigation.yxml": "ff71d4d47d931d543df6336748c0b22bda16772b1d8b5b9ab65e93f1bdacc629"
+    "native_certificate_input_investigation.yxml": "6014b59f97ea1c425e51c2358800cfb98ef16f46caed773464d0970bafe35ada"
    },
    "theory": "Native_Certificate_Input_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "3650bc89ba87b7ca3277f27ed98ea2432ac953d2a65781561ffc4987ca32baf2",
+ "source_manifest_sha256": "a609f22d5894d66548fb0dd5a84be49724085125269b4c0c67ce59a7414402bb",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.022882237997692
+   "seconds": 6.709371254000871
   }
  ]
 }

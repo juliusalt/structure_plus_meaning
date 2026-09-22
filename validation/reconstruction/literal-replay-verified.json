@@ -2,10 +2,10 @@
  "boundary": "Complete source, native application, proof root and requested payload determine the admission condition. The actual requirement decision and full keyed certificate/replay family, all reader outputs, coverage, method decisions and comparison reasons are reconstructed. The explicitly empty test policy does not establish whole-workflow policy adequacy; arbitrary cause reading, history permission, cost and genesis remain open.",
  "complete_recipe_source_manifest": "literal-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.77,
+  "seconds": 6.5,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "0f8057475cad45acf97799939c631c4bfc06ca545bcf8af761d075c580398bfb",
+   "module_sha256": "75b8a5a83ddade7a7b6aaa84b4b1a7402dd5d28845decef17ae2c37d358218b9",
    "subject_contracts": {
-    "literal_replay_investigation.yxml": "5d16bf98e419c1b9551df34f67513d171469502813d16c1700ce43237008eb9f"
+    "literal_replay_investigation.yxml": "415c312167f359dec4077ea1e8865a8cfc104097d0b7c374d69c723aa7bb0ea6"
    },
    "theory": "Literal_Replay_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "38b3ffde8ae536d394057db8563044d968087e4f0b3bf19e453f27c8794f4923",
+ "source_manifest_sha256": "9d02ef882bcd7747c053b61bbffd3849f4c076c4c1ef3a1d99a5ed0196d4abc0",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 3.6710191940001096
+   "seconds": 6.401251718998537
   }
  ]
 }

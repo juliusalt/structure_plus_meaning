@@ -2,10 +2,10 @@
  "boundary": "Actual original requirement evaluation supplies complete certificate and replay families. The invariant-carrying history API preserves the original request and policy, checks every requested predecessor against the admission ledger, joins actual replay and generation construction, and checks the original policy cause. Complete optional state outputs, certificate keys, unavailable positions, condition observations, comparisons, revisions and coverage counts are reproduced. Whole workflow-policy adequacy, complete historical permission and reachability, indexed generation storage and allocation, full physical cost and genesis remain open. The presentation stage retains the proved digit word of the complete presented report on the same export.",
  "complete_recipe_source_manifest": "required-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 8.61,
+  "seconds": 9.12,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "2768d9e768accd0bc7e26a8e50472edd892c3622e3102c7c19854837ce6b94c1",
+   "module_sha256": "66534fa2a22cb412b80b0f54a1f3b434ae80c9284cd65e0686fd218e888ad414",
    "subject_contracts": {
-    "required_history_investigation.yxml": "943c1f9988d7207dece811f3a268994c22985d57d828cf60b6c58aa0d39304d5"
+    "required_history_investigation.yxml": "9ef61a12353f7024240ac1b7127c2a57158d7786d78ee6d96a60c7d9ad03ddc6"
    },
    "theory": "Required_History_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "a25c42ba0e7087e7c8c3385bc70920bbf8b0d3783df54c8bf6f8f58ea123d466",
+ "source_manifest_sha256": "281d4986c343799e45267bdd8fb25b1d1fb86994a70aa937c96f1ed54a2a2a00",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 8.517034751999745
+   "seconds": 8.969096084998455
   }
  ]
 }

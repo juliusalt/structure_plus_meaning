@@ -2,5 +2,5 @@
  "boundary": "Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized.",
  "recipe_files": 913,
  "recipe_source_manifest": "graft-admission-sources.json",
- "recipe_source_manifest_sha256": "b5925a1c669a87eb95f4f6976d034fe1d3adec9fc40635dacfa17deebe55a2d2"
+ "recipe_source_manifest_sha256": "16f4a87c685d905c0f9dcf62397fbd81e8721e810187cdad34c5d05a7039cb62"
 }

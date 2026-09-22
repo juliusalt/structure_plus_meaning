@@ -26,18 +26,13 @@ lemma decode_finite_pattern_forest_syntax [simp]:
   by (simp add: finite_pattern_forest_syntax_def pattern_forest_syntax_def comp_def)
 
 definition finite_pattern_forest_bindings :: "'a finite_term_pattern list \<Rightarrow> (local_address\<times>finite_exact_artifact) fset" where
-  "finite_pattern_forest_bindings ps=finite_syntax_forest_table (map finite_pattern_literal_bindings ps)"
+  "finite_pattern_forest_bindings ps=finite_placed_table syntax_branch (map finite_pattern_literal_bindings ps)"
 
 lemma finite_pattern_forest_bindings_exact:
   "map_relation_values decode_finite_object (fset (finite_pattern_forest_bindings ps))=
     pattern_forest_bindings (map decode_finite_pattern ps)"
-proof -
-  have tables: "map (\<lambda>M. map_relation_values decode_finite_object (fset M)) (map finite_pattern_literal_bindings ps)=
-    map pattern_literal_bindings (map decode_finite_pattern ps)"
-    by (simp add: map_map comp_def finite_pattern_literal_bindings_exact)
-  show ?thesis by (simp only: finite_pattern_forest_bindings_def finite_syntax_forest_table_values
-    tables pattern_forest_reference_table)
-qed
+  by (simp add: finite_pattern_forest_bindings_def pattern_forest_bindings_def placed_table_values comp_def
+    finite_pattern_literal_bindings_exact)
 
 definition finite_pattern_record_syntax :: "('a\<Rightarrow>local_address) \<Rightarrow> 'a finite_term_pattern list \<Rightarrow> finite_exact_artifact" where
   "finite_pattern_record_syntax f ps=finite_record_wrapper (finite_pattern_forest_syntax f ps) []
@@ -107,39 +102,33 @@ lemma finite_template_callees_exact [simp]:
   "fset (finite_template_callees t)=template_callees (decode_finite_native_premise t)"
   by (cases t) (auto simp: decode_finite_call_pattern_def split: prod.splits)
 
-fun finite_premise_forest_syntax :: "('a\<Rightarrow>local_address) \<Rightarrow> ('a,'u) finite_premise_template list \<Rightarrow> finite_exact_artifact" where
-  "finite_premise_forest_syntax f []=finite_empty_artifact"
-| "finite_premise_forest_syntax f (t#ts)=finite_bound_union (finite_template_syntax f t) (finite_premise_forest_syntax f ts)"
+text \<open>
+  The executable premise forest and its tables place each premise as the premise forest does: its
+  syntax through the executable bound forest, its literal and callee tables through the executable
+  placed table at the forest's branch.
+\<close>
+
+definition finite_premise_forest_syntax :: "('a\<Rightarrow>local_address) \<Rightarrow> ('a,'u) finite_premise_template list \<Rightarrow> finite_exact_artifact" where
+  "finite_premise_forest_syntax f ts=finite_bound_forest (map (finite_template_syntax f) ts)"
 
 lemma decode_finite_premise_forest_syntax [simp]:
   "decode_finite_object (finite_premise_forest_syntax f ts)=premise_forest_syntax f (map decode_finite_native_premise ts)"
-  by (induction ts) simp_all
+  by (simp add: finite_premise_forest_syntax_def premise_forest_syntax_def comp_def)
 
-fun finite_premise_forest_literals :: "('a,'u) finite_premise_template list \<Rightarrow> (local_address\<times>finite_exact_artifact) fset" where
-  "finite_premise_forest_literals []={||}"
-| "finite_premise_forest_literals (t#ts)=finite_slot_keys (syntax_prefix 2) (finite_template_literals t) |\<union>|
-    finite_slot_keys (syntax_prefix 3) (finite_premise_forest_literals ts)"
+definition finite_premise_forest_literals :: "('a,'u) finite_premise_template list \<Rightarrow> (local_address\<times>finite_exact_artifact) fset" where
+  "finite_premise_forest_literals ts=finite_placed_table syntax_branch (map finite_template_literals ts)"
 
 lemma finite_premise_forest_literals_exact [simp]:
   "map_relation_values decode_finite_object (fset (finite_premise_forest_literals ts))=
     premise_forest_literals (map decode_finite_native_premise ts)"
-proof (induction ts)
-  case Nil
-  then show ?case by (simp add: map_relation_values_def)
-next
-  case (Cons t ts)
-  show ?case by (simp only: finite_premise_forest_literals.simps list.map premise_forest_literals.simps
-    finite_reference_union_values finite_slot_keys_values finite_template_literals_exact Cons.IH)
-qed
+  by (simp add: finite_premise_forest_literals_def premise_forest_literals_def placed_table_values comp_def)
 
-fun finite_premise_forest_callees :: "('a,'u) finite_premise_template list \<Rightarrow> (local_address\<times>'u definition_site) fset" where
-  "finite_premise_forest_callees []={||}"
-| "finite_premise_forest_callees (t#ts)=finite_slot_keys (syntax_prefix 2) (finite_template_callees t) |\<union>|
-    finite_slot_keys (syntax_prefix 3) (finite_premise_forest_callees ts)"
+definition finite_premise_forest_callees :: "('a,'u) finite_premise_template list \<Rightarrow> (local_address\<times>'u definition_site) fset" where
+  "finite_premise_forest_callees ts=finite_placed_table syntax_branch (map finite_template_callees ts)"
 
 lemma finite_premise_forest_callees_exact [simp]:
   "fset (finite_premise_forest_callees ts)=premise_forest_callees (map decode_finite_native_premise ts)"
-  by (induction ts) simp_all
+  by (simp add: finite_premise_forest_callees_def premise_forest_callees_def comp_def)
 
 section \<open>The complete mixed schema body shares one actual binder boundary\<close>
 

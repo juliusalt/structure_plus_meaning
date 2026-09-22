@@ -121,37 +121,8 @@ lemma reference_table_forest:
   assumes len: "length Ls = length Cs"
     and profiles: "\<forall>i<length Ls. reference_table_formed (Ls!i) (Cs!i)"
   shows "reference_table_formed (syntax_forest_table Ls) (syntax_forest_table Cs)"
-proof -
-  let ?L = "\<lambda>n. \<Union>i<n. map_slot_keys (syntax_branch i) (Ls!i)"
-  let ?C = "\<lambda>n. \<Union>i<n. map_slot_keys (syntax_branch i) (Cs!i)"
-  have prefix: "n \<le> length Ls \<Longrightarrow> reference_table_formed (?L n) (?C n)" for n
-  proof (induction n)
-    case 0
-    then show ?case by simp
-  next
-    case (Suc n)
-    have old: "reference_table_formed (?L n) (?C n)" using Suc.IH Suc.prems by simp
-    have small: "n < length Ls" using Suc.prems by simp
-    have new: "reference_table_formed (map_slot_keys (syntax_branch n) (Ls!n)) (map_slot_keys (syntax_branch n) (Cs!n))"
-      by (rule reference_table_map[OF _ syntax_branch_injective]) (use profiles small in blast)
-    have apart: "range (syntax_branch i) \<inter> range (syntax_branch n) = {}" if "i < n" for i
-      using that by (intro syntax_branch_disjoint) simp
-    have below: "rel_dom (?L n) \<union> rel_dom (?C n) \<subseteq> (\<Union>i<n. range (syntax_branch i))"
-      unfolding rel_dom_image image_UN
-      by (intro Un_least UN_mono subset_refl) (auto simp: map_slot_keys_def)
-    have here: "rel_dom (map_slot_keys (syntax_branch n) (Ls!n)) \<union> rel_dom (map_slot_keys (syntax_branch n) (Cs!n))
-      \<subseteq> range (syntax_branch n)"
-      by (auto simp: map_slot_keys_domain)
-    have separate: "(rel_dom (map_slot_keys (syntax_branch n) (Ls!n)) \<union> rel_dom (map_slot_keys (syntax_branch n) (Cs!n)))
-      \<inter> (rel_dom (?L n) \<union> rel_dom (?C n)) = {}"
-      using below here apart by blast
-    have union: "reference_table_formed (map_slot_keys (syntax_branch n) (Ls!n) \<union> ?L n)
-      (map_slot_keys (syntax_branch n) (Cs!n) \<union> ?C n)"
-      by (rule reference_table_union[OF new old separate])
-    show ?case using union by (simp only: lessThan_Suc UN_insert)
-  qed
-  show ?thesis using prefix[of "length Ls"] len by (simp add: syntax_forest_table_eq)
-qed
+  unfolding syntax_forest_table_def
+  by (rule reference_table_placed[OF len profiles syntax_branch_injective syntax_branch_disjoint])
 
 text \<open>
   A forest reference has exactly one source block and copied source slot.

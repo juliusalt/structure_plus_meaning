@@ -2,10 +2,10 @@
  "boundary": "The initial shared development cycle retains every actual subject, candidate, condition, comparison, revision, original-scope criticism and admission. Missing original identity/sharing witnesses prevent admission despite comparison selection. The scoped gate does not establish the complete workflow.",
  "complete_recipe_source_manifest": "certificate-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
+  "base_receipt_sha256": "1a258f246fc7afce92a0de34023160f6e3a91436e44c778ea271872aa05c8e14",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.82,
+  "seconds": 6.45,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "4f3f2eb9a612156e015c27a123cc1a137c9dad7c0b456f86dae023335fae2d92",
+   "module_sha256": "c2ff73fdb065edd3e763955c6220571eb1cd14d309ed1c156909d53a9beaef84",
    "subject_contracts": {
-    "native_certificate_investigation.yxml": "b39080ac888f81e2530468ea9438d79e679bd6090ca51dca45fec64b60e056f4"
+    "native_certificate_investigation.yxml": "9fbc2ef5b83e313913c350605ff1f381e69137ad6f14d7eaaf218f711810e328"
    },
    "theory": "Native_Certificate_Development_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "d2b21afa4b6b08a16b966a63260e21ace48f28bd7a578b0c5f42783015da51d9",
+ "source_manifest_sha256": "d176b757691ba0ca6ab2933244b2353d70a545d3fe720638194e120c5ee97cf0",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 3.7201120579993585
+   "seconds": 6.355819730997609
   }
  ]
 }

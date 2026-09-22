@@ -444,9 +444,6 @@ proof -
   then show ?thesis by (blast intro: presented_rows_member)
 qed
 
-definition entity_rows_keyed ::
-    "(nat \<Rightarrow> state_key) \<Rightarrow> (isabelle_entity \<Rightarrow> state_key) \<Rightarrow> isabelle_rooted_context \<Rightarrow> state_rows \<Rightarrow> bool" where
-  "entity_rows_keyed key ekey S R \<longleftrightarrow> (\<forall>e\<in>set (snd (snd S)). (ekey e,entity_row key (snd S) e)\<in>presented_rows R)"
 
 text \<open>
   The keyed rows of a \<open>kinds_present\<close> selection having the key of \<open>c\<close> among their subjects are the

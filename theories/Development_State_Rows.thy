@@ -105,6 +105,33 @@ lemma presented_rows_family:
   obtains k where "(a,p)\<in>set (state_entities R k)"
   using assms by (auto simp: presented_rows_def)
 
+text \<open>
+  Every family of a state, each kind's once: the selection of every family is a list of its families, read
+  over the kinds as they are listed.
+\<close>
+
+definition state_all_families :: "state_rows \<Rightarrow> isabelle_context state_family list" where
+  "state_all_families R=map (state_entities R) entity_kinds"
+
+lemma state_all_families_range: "set (state_all_families R)=range (state_entities R)"
+  by (simp add: state_all_families_def entity_kinds_all)
+
+lemma state_all_families_rows: "(\<Union>F\<in>set (state_all_families R). set F)=presented_rows R"
+  by (auto simp: state_all_families_def presented_rows_def)
+
+lemma state_all_families_found:
+  "(\<exists>F\<in>set (state_all_families R). \<exists>p. (a,p)\<in>set F) \<longleftrightarrow> (\<exists>p. (a,p)\<in>presented_rows R)"
+proof
+  assume "\<exists>F\<in>set (state_all_families R). \<exists>p. (a,p)\<in>set F"
+  then show "\<exists>p. (a,p)\<in>presented_rows R" by (auto simp: state_all_families_def presented_rows_def)
+next
+  assume "\<exists>p. (a,p)\<in>presented_rows R"
+  then obtain p k where row: "(a,p)\<in>set (state_entities R k)" by (auto simp: presented_rows_def)
+  have "state_entities R k\<in>set (state_all_families R)"
+    unfolding state_all_families_def set_map by (rule imageI) simp
+  then show "\<exists>F\<in>set (state_all_families R). \<exists>p. (a,p)\<in>set F" using row by blast
+qed
+
 subsection \<open>Keys agree when the values they key are the same\<close>
 
 text \<open>
@@ -364,6 +391,15 @@ proof -
     show "row_identity p=isabelle_local_entities (fst (snd S)) [e]" by (simp add: origin(3))
   qed
 qed
+
+text \<open>
+  The entity-key condition: an entity key keys every entity's row as the presentation does. It is a
+  condition of a presentation, named once here; the presenter concludes it for its own keys.
+\<close>
+
+definition entity_rows_keyed ::
+    "(nat \<Rightarrow> state_key) \<Rightarrow> (isabelle_entity \<Rightarrow> state_key) \<Rightarrow> isabelle_rooted_context \<Rightarrow> state_rows \<Rightarrow> bool" where
+  "entity_rows_keyed key ekey S R \<longleftrightarrow> (\<forall>e\<in>set (snd (snd S)). (ekey e,entity_row key (snd S) e)\<in>presented_rows R)"
 
 subsection \<open>The keys of the atoms, and the two conditions the presentation carries\<close>
 

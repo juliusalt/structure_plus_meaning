@@ -322,6 +322,11 @@ proof -
     by (rule presented_rows_member)
 qed
 
+corollary state_presenter_entity_rows_keyed:
+  assumes presented: "state_presenter S=Some R"
+  shows "entity_rows_keyed state_constant_key (development_entity_key (snd S)) S R"
+  unfolding entity_rows_keyed_def using state_presenter_entity_key(2)[OF presented] by blast
+
 theorem state_presenter_root_key:
   assumes presented: "state_presenter S=Some R" and member: "t\<in>set (fst S)"
   shows "(first_occurrence_key (fst S) t,root_row state_constant_key (snd S) t)\<in>set (state_roots R)"

@@ -9,29 +9,9 @@ text \<open>
   path store at their keys, each row with its key as the value there, and the store is searched with the
   store's own search: this is stated once, for any presented state and any selection of families, and every
   reading of a state's rows by row key consumes it — the difference of two states below, and request
-  construction when it searches the request state's rows. The kinds of the entity language are listed once,
-  so that the selection of every family of a state is a list of its families.
+  construction when it searches the request state's rows. The selection of every family of a state is
+  @{const state_all_families}, stated with the kinds in \<open>Development_State_Rows\<close>.
 \<close>
-
-
-definition state_all_families :: "state_rows \<Rightarrow> isabelle_context state_family list" where
-  "state_all_families R=map (state_entities R) entity_kinds"
-
-lemma state_all_families_rows: "(\<Union>F\<in>set (state_all_families R). set F)=presented_rows R"
-  by (auto simp: state_all_families_def presented_rows_def)
-
-lemma state_all_families_found:
-  "(\<exists>F\<in>set (state_all_families R). \<exists>p. (a,p)\<in>set F) \<longleftrightarrow> (\<exists>p. (a,p)\<in>presented_rows R)"
-proof
-  assume "\<exists>F\<in>set (state_all_families R). \<exists>p. (a,p)\<in>set F"
-  then show "\<exists>p. (a,p)\<in>presented_rows R" by (auto simp: state_all_families_def presented_rows_def)
-next
-  assume "\<exists>p. (a,p)\<in>presented_rows R"
-  then obtain p k where row: "(a,p)\<in>set (state_entities R k)" by (auto simp: presented_rows_def)
-  have "state_entities R k\<in>set (state_all_families R)"
-    unfolding state_all_families_def set_map by (rule imageI) simp
-  then show "\<exists>F\<in>set (state_all_families R). \<exists>p. (a,p)\<in>set F" using row by blast
-qed
 
 definition family_row_store :: "'i state_family list \<Rightarrow> (state_key\<times>'i state_row) binary_path_store" where
   "family_row_store Fs=path_store (map (\<lambda>z. (fst z,z)) (concat Fs))"

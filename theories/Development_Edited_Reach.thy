@@ -504,36 +504,36 @@ text \<open>
 
 definition state_reach_seeds :: "state_rows \<Rightarrow> state_key list" where
   "state_reach_seeds R=concat (map (\<lambda>F. concat (map (\<lambda>z. one_key (row_declared (snd z)@row_subjects (snd z))) F))
-    (state_families R))@state_root_keys (state_roots R)"
+    (state_all_families R))@state_root_keys (state_roots R)"
 
 definition state_reach_roots :: "state_rows \<Rightarrow> reach_table" where
   "state_reach_roots R=map (\<lambda>k. (k,True,[])) (state_reach_seeds R)"
 
 lemma state_reach_seeds_member:
   "k\<in>set (state_reach_seeds R) \<longleftrightarrow>
-    (\<exists>F\<in>set (state_families R). \<exists>z\<in>set F. remdups (row_declared (snd z)@row_subjects (snd z))=[k]) \<or>
+    (\<exists>F\<in>set (state_all_families R). \<exists>z\<in>set F. remdups (row_declared (snd z)@row_subjects (snd z))=[k]) \<or>
     k\<in>set (state_root_keys (state_roots R))"
   by (auto simp: state_reach_seeds_def one_key_member)
 
 lemma state_reach_seeds_reached:
   assumes present: "state_presents key S R"
-    and rows: "\<forall>F\<in>set (state_families R). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
-      h\<in>table_reached (state_reach_table (state_atoms R) (state_roots R) (state_families R))"
-  shows "set (state_reach_seeds R)\<subseteq>table_reached (state_reach_table (state_atoms R) (state_roots R) (state_families R))"
+    and rows: "\<forall>F\<in>set (state_all_families R). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
+      h\<in>table_reached (state_reach_table (state_atoms R) (state_roots R) (state_all_families R))"
+  shows "set (state_reach_seeds R)\<subseteq>table_reached (state_reach_table (state_atoms R) (state_roots R) (state_all_families R))"
 proof
   fix k assume "k\<in>set (state_reach_seeds R)"
-  then consider (row) F z where "F\<in>set (state_families R)" "z\<in>set F"
+  then consider (row) F z where "F\<in>set (state_all_families R)" "z\<in>set F"
       "remdups (row_declared (snd z)@row_subjects (snd z))=[k]"
     | (root) "k\<in>set (state_root_keys (state_roots R))"
     by (auto simp: state_reach_seeds_member)
-  then show "k\<in>table_reached (state_reach_table (state_atoms R) (state_roots R) (state_families R))"
+  then show "k\<in>table_reached (state_reach_table (state_atoms R) (state_roots R) (state_all_families R))"
   proof cases
     case row
     have "set (remdups (row_declared (snd z)@row_subjects (snd z)))=set [k]" by (simp only: row(3))
     then have one: "set (row_declared (snd z))\<union>set (row_subjects (snd z))={k}"
       by (simp only: set_remdups set_append list.set)
     obtain h where "h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z))"
-        "h\<in>table_reached (state_reach_table (state_atoms R) (state_roots R) (state_families R))"
+        "h\<in>table_reached (state_reach_table (state_atoms R) (state_roots R) (state_all_families R))"
       using bspec[OF bspec[OF rows row(1)] row(2)] by (elim bexE)
     with one show ?thesis by (simp only: singleton_iff)
   next
@@ -543,8 +543,8 @@ proof
     then obtain a where "(a,q)\<in>set (state_roots R)" by auto
     then have atom: "k\<in>fst ` set (state_atoms R)"
       using state_presents_root_cited_atoms[OF present] q(2) by blast
-    have "(k,True,state_reach_predecessors (state_families R) k)\<in>set
-        (state_reach_table (state_atoms R) (state_roots R) (state_families R))"
+    have "(k,True,state_reach_predecessors (state_all_families R) k)\<in>set
+        (state_reach_table (state_atoms R) (state_roots R) (state_all_families R))"
       using atom root by (simp add: state_reach_table_row)
     then show ?thesis by (rule table_reached.root)
   qed
@@ -595,48 +595,48 @@ context edited_local
 begin
 
 abbreviation request_table :: reach_table where
-  "request_table \<equiv> state_reach_table (state_atoms R) (state_roots R) (state_families R)"
+  "request_table \<equiv> state_reach_table (state_atoms R) (state_roots R) (state_all_families R)"
 
 abbreviation answer_table :: reach_table where
   "answer_table \<equiv> state_reach_table (state_atoms (edited_state R e)) (state_roots (edited_state R e))
-    (state_families (edited_state R e))"
+    (state_all_families (edited_state R e))"
 
 theorem edited_unreached:
   assumes closed: "isabelle_unreached_entities (fst S) (snd S)=[]"
-    and closure: "\<forall>a\<in>set L. \<forall>F\<in>set (state_families R). \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow>
+    and closure: "\<forall>a\<in>set L. \<forall>F\<in>set (state_all_families R). \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow>
       set (row_mentions (snd z))\<subseteq>set L"
     and targets: "\<forall>D\<in>set (map (edit_removed e) entity_kinds). \<forall>z\<in>set D.
-      edited_target L A (state_families (edited_state R e)) z"
+      edited_target L A (state_all_families (edited_state R e)) z"
     and seeds: "set K\<subseteq>set (state_reach_seeds R)"
     and formed: "reach_table_formed U"
     and table: "set U=set (reach_restricted (set V) (edited_reach_table K L answer_table))"
     and visit_closed: "\<And>p k. (p,k)\<in>reach_edges answer_table \<Longrightarrow> k\<in>set V \<Longrightarrow> k\<notin>set K-set L \<Longrightarrow> p\<in>set V"
-    and visit_rows: "\<forall>G\<in>set (edited_reach_families e (state_families (edited_state R e)) L). \<forall>z\<in>set G.
+    and visit_rows: "\<forall>G\<in>set (edited_reach_families e (state_all_families (edited_state R e)) L). \<forall>z\<in>set G.
       set (row_declared (snd z))\<union>set (row_subjects (snd z))\<subseteq>set V"
   shows "(verdict_unreached,Pair_Term (reach_table_term U)
-      (state_families_term ident (edited_reach_families e (state_families (edited_state R e)) L)))
+      (state_families_term ident (edited_reach_families e (state_all_families (edited_state R e)) L)))
       \<in>positive_meaning verdict_unreached_system \<longleftrightarrow>
-    (verdict_unreached,Pair_Term (reach_table_term answer_table) (state_families_term ident (state_families (edited_state R e))))
+    (verdict_unreached,Pair_Term (reach_table_term answer_table) (state_families_term ident (state_all_families (edited_state R e))))
       \<in>positive_meaning verdict_unreached_system"
     and "(verdict_unreached,Pair_Term (reach_table_term U)
-      (state_families_term ident (edited_reach_families e (state_families (edited_state R e)) L)))
+      (state_families_term ident (edited_reach_families e (state_all_families (edited_state R e)) L)))
       \<in>positive_meaning verdict_unreached_system \<longleftrightarrow> isabelle_unreached_entities (fst S') (snd S')=[]"
 proof -
   let ?R'="edited_state R e"
-  let ?C="edited_reach_families e (state_families ?R') L"
+  let ?C="edited_reach_families e (state_all_families ?R') L"
   let ?T''="edited_reach_table K L answer_table"
   have closed_call: "(verdict_unreached,Pair_Term (reach_table_term request_table) (state_families_term ident
-      (state_families R)))\<in>positive_meaning verdict_unreached_system"
-    using native_unreached_exact[where ident=ident, OF request state_families_range identity] closed by simp
-  have rowsT: "\<forall>F\<in>set (state_families R). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
+      (state_all_families R)))\<in>positive_meaning verdict_unreached_system"
+    using native_unreached_exact[where ident=ident, OF request state_all_families_range identity] closed by simp
+  have rowsT: "\<forall>F\<in>set (state_all_families R). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
       h\<in>table_reached request_table"
     by (rule iffD1[OF native_unreached_rows[where ident=ident, OF state_reach_table_formed identity] closed_call])
   have atoms: "state_atoms ?R'=state_atoms R@edit_atoms e" by (simp add: edited_state_def)
   have roots: "reach_roots request_table\<subseteq>reach_roots answer_table"
     by (auto simp: state_reach_table_roots atoms)
-  have kept: "\<And>F z. F\<in>set (state_families R) \<Longrightarrow> z\<in>set F \<Longrightarrow>
-      (\<exists>D\<in>set (map (edit_removed e) entity_kinds). z\<in>set D) \<or> (\<exists>F'\<in>set (state_families ?R'). z\<in>set F')"
-    by (auto simp: state_families_range edited_state_member entity_kinds_all)
+  have kept: "\<And>F z. F\<in>set (state_all_families R) \<Longrightarrow> z\<in>set F \<Longrightarrow>
+      (\<exists>D\<in>set (map (edit_removed e) entity_kinds). z\<in>set D) \<or> (\<exists>F'\<in>set (state_all_families ?R'). z\<in>set F')"
+    by (auto simp: state_all_families_range edited_state_member entity_kinds_all)
   have tg: "\<And>p k. (p,k)\<in>reach_edges request_table \<Longrightarrow> (p,k)\<notin>reach_edges answer_table \<Longrightarrow> k\<in>set L"
     by (rule removal_targets_edges[OF targets _ kept]) (auto simp: atoms)
   have cl: "\<And>p k. (p,k)\<in>reach_edges request_table \<Longrightarrow> p\<in>set L \<Longrightarrow> k\<in>set L"
@@ -660,22 +660,22 @@ proof -
     (\<forall>G\<in>set ?C. \<forall>z\<in>set G. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)). h\<in>table_reached U)"
     by (rule native_unreached_rows[where ident=ident, OF formed identity])
   have whole: "(verdict_unreached,Pair_Term (reach_table_term answer_table) (state_families_term ident
-      (state_families ?R')))\<in>positive_meaning verdict_unreached_system \<longleftrightarrow>
-    (\<forall>F\<in>set (state_families ?R'). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
+      (state_all_families ?R')))\<in>positive_meaning verdict_unreached_system \<longleftrightarrow>
+    (\<forall>F\<in>set (state_all_families ?R'). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
       h\<in>table_reached answer_table)"
     by (rule native_unreached_rows[where ident=ident, OF state_reach_table_formed identity])
   have eq: "(\<forall>G\<in>set ?C. \<forall>z\<in>set G. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
       h\<in>table_reached U) \<longleftrightarrow>
-    (\<forall>F\<in>set (state_families ?R'). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
+    (\<forall>F\<in>set (state_all_families ?R'). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
       h\<in>table_reached answer_table)"
   proof
     assume inc: "\<forall>G\<in>set ?C. \<forall>z\<in>set G. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
       h\<in>table_reached U"
-    show "\<forall>F\<in>set (state_families ?R'). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
+    show "\<forall>F\<in>set (state_all_families ?R'). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
       h\<in>table_reached answer_table"
     proof (intro ballI)
-      fix F z assume F: "F\<in>set (state_families ?R')" and z: "z\<in>set F"
-      obtain j where Fj: "F=state_entities ?R' j" using F by (auto simp: state_families_range)
+      fix F z assume F: "F\<in>set (state_all_families ?R')" and z: "z\<in>set F"
+      obtain j where Fj: "F=state_entities ?R' j" using F by (auto simp: state_all_families_range)
       show "\<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)). h\<in>table_reached answer_table"
       proof (cases "z\<in>set (edit_added e j)")
         case True
@@ -696,7 +696,7 @@ proof -
           then show ?thesis using inc below by blast
         next
           case False
-          have "state_entities R j\<in>set (state_families R)" by (simp add: state_families_range)
+          have "state_entities R j\<in>set (state_all_families R)" by (simp add: state_all_families_range)
           then obtain h where h: "h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z))"
               "h\<in>table_reached request_table"
             using rowsT zR by blast
@@ -706,20 +706,20 @@ proof -
       qed
     qed
   next
-    assume wh: "\<forall>F\<in>set (state_families ?R'). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
+    assume wh: "\<forall>F\<in>set (state_all_families ?R'). \<forall>z\<in>set F. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)).
       h\<in>table_reached answer_table"
     show "\<forall>G\<in>set ?C. \<forall>z\<in>set G. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)). h\<in>table_reached U"
     proof (intro ballI)
       fix G z assume G: "G\<in>set ?C" and z: "z\<in>set G"
       from G consider (added) j where "G=edit_added e j"
-        | (fibre) a F where "F\<in>set (state_families ?R')"
+        | (fibre) a F where "F\<in>set (state_all_families ?R')"
           "G=key_fibre row_subjects a F \<or> G=key_fibre row_declared a F"
         by (auto simp: edited_reach_families_member)
-      then have "\<exists>F\<in>set (state_families ?R'). z\<in>set F"
+      then have "\<exists>F\<in>set (state_all_families ?R'). z\<in>set F"
       proof cases
         case added
         then have "z\<in>set (state_entities ?R' j)" using z edited_state_member by blast
-        then show ?thesis by (auto simp: state_families_range)
+        then show ?thesis by (auto simp: state_all_families_range)
       next
         case fibre
         then show ?thesis using z by (auto simp: key_fibre_member)
@@ -732,38 +732,38 @@ proof -
   qed
   show first: "(verdict_unreached,Pair_Term (reach_table_term U) (state_families_term ident ?C))
       \<in>positive_meaning verdict_unreached_system \<longleftrightarrow>
-    (verdict_unreached,Pair_Term (reach_table_term answer_table) (state_families_term ident (state_families ?R')))
+    (verdict_unreached,Pair_Term (reach_table_term answer_table) (state_families_term ident (state_all_families ?R')))
       \<in>positive_meaning verdict_unreached_system"
     using incr whole eq by simp
   show "(verdict_unreached,Pair_Term (reach_table_term U) (state_families_term ident ?C))
       \<in>positive_meaning verdict_unreached_system \<longleftrightarrow> isabelle_unreached_entities (fst S') (snd S')=[]"
-    by (rule trans[OF first native_unreached_exact[where ident=ident, OF answer state_families_range identity]])
+    by (rule trans[OF first native_unreached_exact[where ident=ident, OF answer state_all_families_range identity]])
 qed
 
 text \<open>The same judgment with \<open>O\<close> admitted natively: both readings are calls of the admission program.\<close>
 
 corollary edited_unreached_admitted:
   assumes closed: "isabelle_unreached_entities (fst S) (snd S)=[]"
-    and closure: "(removal_closure,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident L (state_families R)))
+    and closure: "(removal_closure,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident L (state_all_families R)))
       (keys_term L))\<in>positive_meaning edited_reach_system"
     and targets: "(removal_targets,Pair_Term (Pair_Term (support_term L)
-      (subject_indexes_term ident A (state_families (edited_state R e))))
+      (subject_indexes_term ident A (state_all_families (edited_state R e))))
       (state_families_term ident (map (edit_removed e) entity_kinds)))\<in>positive_meaning edited_reach_system"
     and seeds: "set K\<subseteq>set (state_reach_seeds R)"
     and formed: "reach_table_formed U"
     and table: "set U=set (reach_restricted (set V) (edited_reach_table K L answer_table))"
     and visit_closed: "\<And>p k. (p,k)\<in>reach_edges answer_table \<Longrightarrow> k\<in>set V \<Longrightarrow> k\<notin>set K-set L \<Longrightarrow> p\<in>set V"
-    and visit_rows: "\<forall>G\<in>set (edited_reach_families e (state_families (edited_state R e)) L). \<forall>z\<in>set G.
+    and visit_rows: "\<forall>G\<in>set (edited_reach_families e (state_all_families (edited_state R e)) L). \<forall>z\<in>set G.
       set (row_declared (snd z))\<union>set (row_subjects (snd z))\<subseteq>set V"
   shows "(verdict_unreached,Pair_Term (reach_table_term U)
-      (state_families_term ident (edited_reach_families e (state_families (edited_state R e)) L)))
+      (state_families_term ident (edited_reach_families e (state_all_families (edited_state R e)) L)))
       \<in>positive_meaning verdict_unreached_system \<longleftrightarrow> isabelle_unreached_entities (fst S') (snd S')=[]"
 proof -
-  have c: "\<forall>a\<in>set L. \<forall>F\<in>set (state_families R). \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow>
+  have c: "\<forall>a\<in>set L. \<forall>F\<in>set (state_all_families R). \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow>
       set (row_mentions (snd z))\<subseteq>set L"
     using closure native_closure_exact[where ident=ident, OF identity] by simp
   have t: "\<forall>D\<in>set (map (edit_removed e) entity_kinds). \<forall>z\<in>set D.
-      edited_target L A (state_families (edited_state R e)) z"
+      edited_target L A (state_all_families (edited_state R e)) z"
     using targets native_targets_exact[where ident=ident, OF identity] by simp
   show ?thesis by (rule edited_unreached(2)[OF closed c t seeds formed table visit_closed visit_rows])
 qed

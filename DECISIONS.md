@@ -9236,12 +9236,18 @@ with `Isabelle_Native_Reach`, `native_rule_family` and `finite_rule_program`,
 `finite_program_condition` and `finite_standalone_condition`, `Isabelle_Local_Names`, and
 `Development_Constant_Verification` as the specification. New: the verdict's own rules, the
 presentation, and store absence. No index, decision or comparison notion is introduced.
+*Corrected 2026-09-22 (task 138, "The rows about a subject are read through a subject index", at the end of this
+entry): the rows about a subject are read through the subject index of each family, an instance of the index notion
+(`Carrier_Indexes`) and no new notion; no comparison notion is introduced, and the path inequality task 36 built for
+its guard is retired.*
 
 ### Affordability
 
 The verdict's acceptance costs, on a state of `n` entity rows, `m` mentions and `c` constants: one
 `every` over the rows per permitted-row field with a search each, one traversal of the mentions with
-at most `c` distinct declaredness calls, the subject's own statements against the support, and one
+at most `c` distinct declaredness calls, the subject's own statements against the support (*corrected
+2026-09-22, task 138: that is the cost of reading them through the subject index; the guarded traversal task 36
+built visits every row of the replaceable families and traverses all their mentions*), and one
 reach. On the machinery's state (337 entities, 217 constants, 1,561 mentions) that is of the order
 of 14,000 calls against the reach's 3,397, so **one judgment costs about four reaches** and the
 reach is the unit in which the verdict's cost is stated.
@@ -9284,6 +9290,117 @@ and the request construction that follows the verdict in the Q7 order, over thes
 design was made outside the loop and is a residual.
 
 Recorded 2026-09-20 (task 3's decision; a design, no theory changes).
+
+### The rows about a subject are read through a subject index — 2026-09-22 (task 138)
+
+Task 36 built `excess` as a guarded traversal: a row of the replaceable families passes when the subject's key
+differs from every key of its subjects (`guard_differs_rule`, through `keys_differ_program` and
+`path_differ_program`, a positive path inequality), or when every mention of it is found in the support store
+(`guard_checked_rule`). That is a comparison notion this entry excludes, and it costs what the affordability above
+did not count. This decides how a native definition reads the rows about a subject — the verdict's `excess`,
+request construction's `support complete` and `scope cited`, `excess`'s witness — through the **subject index** of
+each family, an instance of the index notion, and not through a complement of "about".
+
+| Earlier proposal or state | Correction |
+|---|---|
+| "Every row of a selection having `k` among its subjects satisfies a row reading" is read over every row of the selection, the rows not about `k` passing by a path inequality (task 36: `guarded_row_program`, `guarded_selection_program`). | It is read over the rows about `k` alone. The subject index of a family holds, at every atom key of the state, the family's rows having that key among their subjects — its **fibre** at the key, empty where no row has it. The reading searches the index at `k` and reads every row of the fibre it finds. No row not about `k` is visited and no key is compared with another. |
+| Keep path inequality, recorded as the specialization to paths of native data inequality (`Factor_Data_Comparison.data_comparison_exact`) and data absence (`Factor_Bag_Difference.data_absence_exact`) by a lemma relating them. | Rejected. A lemma equating the meanings leaves a second comparison program beside the first, which "a comparison is the existing native comparison specialized, never a second one" refuses. The existing one is had only by relocating the data program into the verdict's — its recognition, its payload-difference clause and the formation check of every unexamined child, as `Development_Located_Rows` relocated equality — for a comparison whose one use is the complement the index removes; and the witnesses would need the complement again. |
+| The field contracts hold at every key: the guard passes every row both when no row is about `k` and when `k` is no key of the state. | They hold at the state's atom keys, which is where every consumer asks them. At an atom that no row of the family is about, the fibre is found and empty, and every row of it holds: an empty result. At a key that is no atom of the state the search finds nothing and the reading fails: a failed one. The library's rule that the two are kept apart is met positively; the guard conflated them, and an index keyed only by the keys some row is about could tell the empty fibre only by absence. |
+
+**The index.** For a family `F` and the state's atom keys `A` (the keys of `state_atoms R`, distinct by
+`atoms_present`), the fibre of `F` at `a` is `filter (λz. a∈set (row_subjects (snd z))) F`: the rows in `F`'s
+order, each identity inert. The subject index of `F` is `path_store` of the rows `(a, fibre of F at a)` for `a` in
+`A`, presented by `store_term (state_family_term ident)`. It is no new notion: it is the path store's carrier
+(`Native_Path_Store_Indexes.path_store_carrier_index`) at those rows, single-valued exactly because `A` is
+distinct. Its obligations as an instance of the notion: (1) the key is the path itself (`inj id`); (2) the lookup at
+`a` is the fibre exactly when `a∈set A` (`path_store_lookup`); (3) the one operation its uses need, a filter
+lemma: a row is in the fibre at `a` exactly when it is a row of `F` having `a` among its subjects; (4) none, since
+the index is built once per presented state and never updated — an edited state's index belongs to the incremental
+assessment, which stays open. Its native part is `native_store_search_program` whose checker is the family's
+every-reading (`family_every_reading`, generic over the row reading); interpreted in a theory importing
+`Native_Path_Store_Indexes`, the search inherits `index` and `index_sound`, and by `exact_held` it holds at the
+reading's context, the path of `k` and the index exactly when `k∈set A` and every row of `F` about `k` satisfies the
+reading. A selection is the `every` of that search over the list of its families' indexes, with the key and the
+reading's context as the context: one rule rearranging the call, as `undeclared_rule` and `row_mentions_rule` do.
+The index is computed from the presented atoms and family where the call's argument is built, as `support_term` and
+`declaration_term` are; it is neither a field of `state_rows` nor a condition `state_presents` carries. It is per
+family, so a kind stays the family that holds a row and the index adds no kind.
+
+Its selection reading replaces the guarded traversal, over any selection and any row reading: its contract is
+`guarded_selection_program.exact` with the premise `k∈set A` and the index of the selection as the argument.
+`excess` is its instance at the reading "every mention is found in the support store", as before. The guard and the
+path inequality have no other consumer and are retired: `path_differ_program`, `keys_differ_program`,
+`guarded_row_program`, `guarded_selection_program`, their rules and the sites `verdict_path_differ`,
+`verdict_keys_differ`, `verdict_guard_row` and `verdict_guard_family`.
+
+**The cost on one judgment**, in the terms above: the field `excess` of a refinement verdict on the machinery's state
+(337 entities of which 120 are statement rows, 217 constants, 1,561 mentions, a key of at most 8 bits), estimates owed
+#40's measurement.
+
+| Reading of the rows about the subject | Rows visited | Mention steps | Key searches (a path each, at most 9 calls) | Key comparisons |
+|---|---|---|---|---|
+| guarded traversal (task 36) | every row of the replaceable families: a part of the 120 statement rows | every mention of those rows: a part of the 1,561 | one per distinct key those rows mention (at most 217) | one path inequality per subject citation of those rows, of at most 9 bit steps |
+| subject index | the subject's own statements, one or a few | their mentions, some tens | one index search per replaceable family, and one per distinct key the subject's statements mention | none |
+
+The guard visits every row because its two rules share one head pattern: demand-driven evaluation demands both
+premises of every row, the inequality and the checked reading, so the guard decides nothing about what is demanded.
+Under it `excess` grows with the replaceable families up to the size of `undeclared`'s traversal of the statement
+rows; under the index it is what the affordability above counted. Request construction differs more: `support
+complete` and `scope cited` read every family, so under the guard each visits all 337 rows and `support complete`
+traverses all 1,561 mentions, as much as `undeclared`, where its entry counted the rows times a subject test; under
+the index each is six index searches and the subject's own statements. Building an index is host work and no native
+call: one pass over the family's rows per atom, or one grouping pass, shared by every reading of that presented
+state. Its term holds each row of the family once per subject the row has and an entry per atom; the search's first
+call carries the whole index, as the guard's first call carried the whole family, and every later call a subtree
+along the path.
+
+**What each consumer reads.**
+
+- `excess` (#36): the indexes of the replaceable families of the state it is read in. `native_excess_rows` gains the
+  premise `k∈set A` and takes the index of `Fs` as its argument. `native_excess_exact` and `native_excess_answer`
+  keep their HOL sides and their premises: `c<length (fst (snd S))` gives `key c∈set A` (`atoms_present_atom`), and
+  `native_excess_answer`'s `named` puts the subject's key among the answer state's atoms (`keys_shared_embedding`).
+  That premise is the one the index reads, so the half of #139 that drops it is withdrawn; its other half, deriving
+  `declarations_single_valued` from the exporter's obligation, stands.
+- `undeclared` (#36): reads every row and no subject; unchanged.
+- store absence and the witnesses (#44): absence in `Native_Path_Stores` descends a path by its bits' shapes to an
+  empty store or an absent value and compares no keys, so the inequality task 36 expected it to need is not needed.
+  `excess`'s witness is read over the index: the fibre at the subject's key, and for each of its rows the mentions
+  absent from the support store. No witness reads a row that is not about the subject.
+- request construction (#108): `support complete` is `excess` at the indexes of every family with `ks`; `scope
+  cited` is the index's selection reading at the row predicate "its key is cited". Their contracts stand, at `key c`
+  with `c<length (fst (snd S))`. #110 is unchanged: `context sound` reads the row found at a context key (#38's
+  search) with #34's row reading of subjects, and the declaration store and the reach table read no rows about a
+  subject.
+- `statements` (#34) and the decomposition's state reading (#94): `some` readings, positive without a complement,
+  membership decided by a repeated variable; they need no index and stand as built. Reading them through the index —
+  one search and a nonempty fibre instead of every row of the family — is a refinement with their contracts
+  unchanged, to take if #40's measurement asks for it.
+- the entry (#42): passes `excess` the indexes of the answer state's replaceable families over its atoms, and
+  discharges `excess`'s atom premise from `statements` in both directions of its contract: the native `statements`
+  holds only if some row of the answer state has the key among its subjects, and every key a row cites is an atom
+  (`state_presents_cited_atoms`); `development_verdict_accepted` requires a demanded statement of the embedded
+  subject in the answer state, whose name its table then holds.
+
+**The builds.** (1) A build before #44 and #108, which the planner numbers: the subject index in a theory of its own
+(`Development_Subject_Index`, importing `Development_Verdict_Statements` and `Native_Path_Store_Indexes`, imported by
+`Development_Verdict_Mentions`) — the fibre, the index, its obligations and native reading, the selection reading;
+then, in `Development_Verdict_Mentions`, `excess` re-pointed, `native_excess_rows` restated, `native_excess_exact` and
+`native_excess_answer` re-proved with their HOL sides unchanged, the guard and the path inequality removed, and the
+`THEORY_MAP.md` rows. It changes no recipe. (2) #139 loses its first half and is ordered against build (1), which
+writes the same theory. (3) #108 after build (1), consuming its selection reading in place of the guarded traversal.
+(4) #44 after build (1): store absence with no inequality, `excess`'s witness over the index. (5) #42 passes `excess`
+the indexes and discharges its premise from `statements`. (6) #94 and #110 unchanged. A later refinement may re-point
+the `some` readings through the index.
+
+**What the builds must respect.** No native definition of the verdict or of request construction compares two keys;
+the rows about a subject are read through the index, and none of them reads a row that is not about the subject. The
+index holds every atom of the state: an empty fibre is found, a key outside the state fails, and acceptance stays
+positive with absence kept for the witnesses. The index is exact by `path_store_lookup` and computed from the
+presented atoms and family, never supplied beside them. A contract's HOL side stands; the premise `k∈set A` is
+discharged from the presentation where the consumer asks, never carried to a caller that has it by `c<length`.
+
+Recorded 2026-09-22 (task 138's decision; a design, no theory changes).
 
 ## A formed call's applications are constructed, not verified again
 
@@ -10777,12 +10894,16 @@ reusable notion whose single-valuedness is a named carried condition. From #38: 
 presented state's family rows by row key, for any presented state. From #40: the reach table over the
 state's constant keys with its row lemma — the predecessors of `x` are the keys of the subjects of the
 rows mentioning `x` — exposed as a reusable presentation, not only through `unreached`. From #34: the
-row presentation, `row_pattern` and the row reading of subjects, as landed.
+row presentation, `row_pattern` and the row reading of subjects, as landed. *Corrected 2026-09-22 (task 138, "The rows
+about a subject are read through a subject index", in the verdict's entry): `support complete` and `scope cited`
+consume the subject index's selection reading, which replaces #36's guarded traversal; their contracts stand.*
 
 Every field is positive. The only complement anywhere is the guarded traversal's own — a row without
 `k` among its subjects passes — and it is #36's, consumed and never defined here. No field needs store
 absence; no field is defined as another's negation. No field reads a row's identity, so every
-statement stays inert. No field reads a kind: the scope is over every family.
+statement stays inert. No field reads a kind: the scope is over every family. *Corrected 2026-09-22 (task 138): there
+is no complement anywhere; the rows about `k` are read through the subject index, which visits no row not about
+`k`.*
 
 ### Production and admission
 
@@ -10894,7 +11015,10 @@ request is constructed once per issued leaf, not once per control, so on the mac
 requests construction adds of the order of 80 reaches to the judgments' 900: it is not what makes a
 stage unaffordable, and the incremental assessment stays the remedy for the stage. The two guarded
 traversals share their guard, and folding them into one pass is a refinement to take if the
-measurement of build 4 asks for it; the estimate is owed that measurement.
+measurement of build 4 asks for it; the estimate is owed that measurement. *Corrected 2026-09-22 (task 138): under the
+guard each traversal also demands the checked reading of every row, so `support complete` traverses all the state's
+mentions, as much as `undeclared`; read through the subject index, each field is six index searches and the
+subject's own statements, and one construction is the per-key searches of the three other fields.*
 
 ### What the builds must respect
 
@@ -10902,7 +11026,8 @@ The request body is two families of citations and nothing else; nothing may give
 own, and the packet stays a presentation of the row with the rows its citations reach. Request
 construction reads no issue row and no problem row, and decides nothing about issuing. No field reads a
 kind, and the two kinds stay the one definition with the reading universally quantified; a field that
-depends on the kind is a defect. Every field is positive; the one complement is #36's guard, consumed;
+depends on the kind is a defect. Every field is positive; the one complement is #36's guard, consumed
+(*corrected 2026-09-22, task 138: there is none; the subject index's reading is consumed instead*);
 no store absence enters. Each field's contract is proved once and every consumed contract — the
 guarded traversal, `excess`, `undeclared`, the declaration store, the family search, the reach table's
 row lemma — is consumed by name and never re-proved; a consumed contract too weak to serve is a finding

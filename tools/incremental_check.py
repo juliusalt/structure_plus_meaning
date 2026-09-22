@@ -257,6 +257,9 @@ def execution_boundary(row, manifest, proof_path):
 
 def reusable_execution(verified, boundary):
     """An accepted execution applies to every check whose complete execution boundary is equal."""
+    # An exported module is byte-identical from any session over identical sources (task 134: 52 groups of
+    # distinct sessions over one closure), so a receipt goes stale only when a code equation in its recipe's
+    # closure changes, and reuse fires after a base move or a retention.
     return (verified.get('status') == 'accepted' and verified.get('reports_equal') is True
             and verified.get('execution_boundary') == boundary)
 

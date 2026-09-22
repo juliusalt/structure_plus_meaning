@@ -175,7 +175,7 @@ changes: the syntax forest #225 and the premise forest #223, with #241 after #14
 them: #249; the rule programs' re-citation #214; the rule-family law's completion #247, then the
 re-citations #235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
 
-**Order** (`128 129 147 148 182 183 227 228 223 224 225 226 241 242 247 248 249 250 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 227 228 223 224 241 242 247 248 249 250 235 236 237 238 239 240 42 43 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
 review and #147; then the exporter's discharge #227, which #42 and #110 wait
 on, and the excess locale #182, which #110, #112 and #191 wait on; the placed forest's instances #223 and #225
@@ -531,6 +531,10 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   constructor looking entities up through an index of the request state's. Follow-ups: the rest of the linearity, the
   key, the presenter's sharing and the general list-index facts to #249; the added path's timing to #194;
   `key_edit_update_index` to #193; the duplicate `entity_kinds` to #235.
+- **#225** `eca462e1`: the syntax forest, its positions and table, and both executable forms, instances of the placed
+  forest at `syntax_branch`. Follow-ups: under Now.
+- **#182** `f28e2695`: `excess` once as a locale, the rows about a constant once, the entity-key condition by name.
+  Follow-ups: under Now.
 
 ## Open
 
@@ -791,7 +795,18 @@ Not yet planned, in the order they are expected to be planned:
   (`d2d1ab33`) stated the rule-family law (q60, q61) and its elimination at any relation, and #247 completes it; #231 (`cded0ab7`) stated the name-locality of
   readings. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
-  #208's to #212 and #214, #221's to #223 and #225, #188's to #192 and #220, #212's to #233 and #235, #231's to #187, #189, #191 and #220. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
+  #208's to #212 and #214, #221's to #223 and #225, #188's to #192 and #220, #212's to #233 and #235, #231's to #187, #189, #191 and #220.
+- **Not handled at plan-45's close (18:12)**: #182 landed (`f28e2695`) with follow-ups to place — (1) move
+  `entity_rows_keyed` into `Development_State_Rows` and let the presenter conclude it by name
+  (`state_presenter_entity_key`), which #110 and #112 then cite: best mailed to #249, which edits the presenter, with
+  #110 then waiting on #249; (2) whether `kinds_present_rows` is still used, else derived from `selection_rows_about`
+  (with 1); (3) the step `statements` of `support_complete_program.contract` as a lemma beside
+  `development_constant_scope_member` (to #110); (4) briefs stop asking for `--parallel-proofs 0`, which the harness
+  leaves out of probes (a working rule); (5) the landing checks rebuild 1,245 theories against base `train225` (the
+  owner's list). #225 landed (`eca462e1`); its first review's follow-ups — the placed forest's union equation for
+  `syntax_forest_pushed` and `Factor_Pattern_Forests`, the `_eq` lemmas against the member-lemma reading (the
+  planner's), a Contracts bullet, the unused `formed` premise of `syntax_forest_child_reads`, #155's landing cost like
+  its 559 s — are to be read in `.build/tasks/226/review.md` and 225's first review before they are placed. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
   declarations #40 needed (q54); #112's carries #106's review. #143 was withdrawn (Open 65); its finding is carried by
   #157 and the working rules. #155, #92 and #64 name the reports they re-record, no receipt.
 - **Owed to briefs when their inputs land**: #64's brief takes #161's identity lemma in place of a transport (#135's

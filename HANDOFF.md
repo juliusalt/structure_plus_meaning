@@ -78,15 +78,16 @@ changed since the retention `518ac1e7` (22 of 52 in #105's check). #134 explaine
 code equation in its recipe's closure changes, and reuse fires after a base move or a retention. The import audit of
 Open 44 is now plannable.
 
-**The keyed question and the native reader (#124, #136, #90–#93).** #88 (`cde3faf2`): the key search costs at most
+**The keyed question and the native reader (#124, #142, #90–#93).** #88 (`cde3faf2`): the key search costs at most
 0.05 ms; a packet's cost is the native reading of the programs that state its candidates, superlinear in their syntax.
 #124 lands a constant factor of about 4 on the package reader (`Factor_Shared_Package_Readings`, `Let`) and its held
 per-address split: the reader is linear in what it reads, about 0.28 µs per bit of address path, and the growth is the
 address length — `syntax_branch` places the i-th forest child under i + 1 components, O(n²) address material in n
-clauses, and `family_ports` and `fresh_addresses` share the unary pattern. #136, a design, decides the address layout
-of compiled syntax (the planner, answering q47: the layout changes, since every native question, read-back and word
-pays it); its builds, briefed from the entry, change every compiled artifact and every word once, after #30 and ordered
-against #90 and #92. #90 switches the 20 overnight native-control theories after #124, re-recording the overnight
+clauses, and `family_ports` and `fresh_addresses` share the unary pattern. #136's entry
+(accepted) replaces the unary code by the library's digit code at every position of compiled syntax and at the
+uncompiled schema coordinates, `unary_address` retired (q47, q49); #142 briefs its builds after #30: the contracts with
+every word equal, then the layout with the one word change (after #90, before #135's first build), a base reset to one
+level, then the held measurement. #90 switches the 20 overnight native-control theories after #124, re-recording the overnight
 recipe once; #92 retires `filtered_development_question`'s index form after #90 and #30. q33's facts, unread by the
 planner, are named in #90's and #92's inputs. Observation's read-back of an installed program (Open 46) waits on the
 layout's measurement.
@@ -103,14 +104,14 @@ Open 27.
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are #114 (after #112, #110, #108, #139), 5, and #45 (after #44, #42,
 #38/#40/#139), 4.
-Beside them: #30 with #103 and the brief of #135's builds (#141) after it; the design #136; #139 (the subject index);
+Beside them: #30 with #103 and the briefs of #135's and #136's builds (#141, #142) after it; #139 (the subject index);
 #94, then #64; #119; #124, then #130; #128 and #132; the keyed line's #90 and #92.
 
-**Order** (`124 119 30 31 141 94 125 136 139 140 38 39 40 41 108 109 128 129 132 133 42 43 44 45 110 111 112 113 114 130 131 103 104 90 91 64 65 92 93`).
+**Order** (`124 119 30 31 141 142 94 125 139 140 38 39 40 41 108 109 128 129 132 133 42 43 44 45 110 111 112 113 114 130 131 103 104 90 91 64 65 92 93`).
 The tasks in flight first: #124, whose accepted work waits on one import line written as the union of both sides, and
 the retention #119, which #105's base advance released; #30 resuming step 2, with the brief of #135's builds (#141)
-after its landing; #94 resuming on #36's landing. Then the design #136,
-whose entry changes other tasks, and #139, the subject index #108, #42 and #44 wait on; the verdict and request chains, which take a slot whenever
+after its landing; #94 resuming on #36's landing. The briefs #141 and #142 after #30; #139, the subject
+index #108, #42 and #44 wait on; the verdict and request chains, which take a slot whenever
 one of their tasks is ready; #128 beside them; then the re-citations, the answer reader, the keyed line and the
 decomposition's #64. A parked task whose hold nears its end resumes first by itself.
 
@@ -276,6 +277,10 @@ judgment's path.
   answer designates its request by its locus" — the context supplies a row's citations; the presenters move into a new
   `Development_Row_Data`; the successor keeps positions; the request at a locus through the path store's index
   instance; three builds in order, every reader of the four items with its decision.
+- **#136** (design, accepted 2026-09-22): DECISIONS.md "The i-th position of compiled syntax is the library's digit
+  code of i" — `index_address` (the digit natural path over octets 0/1) at every position and at the uncompiled schema
+  coordinates, `unary_address` retired; a flat forest; fresh addresses by the least unblocked index; three builds, the
+  first moving every proof onto the contracts with every word equal.
 - **#138** (design) `10f3ec9d`: the verdict entry's subsection "The rows about a subject are read through a
   subject index" — an index of each family's rows total over the state's atoms, an instance of the index notion at the
   path store's carrier; the guard and path inequality to be retired; request construction's entry corrected.
@@ -446,7 +451,7 @@ Not yet planned, in the order they are expected to be planned:
     compile and observation's read-back. Skipping the read-back needs a recovery theorem for finite programs — the
     installer knows its program only up to an alpha variant, and the read-back program is part of the report's
     words — a design question. #124 measured the reading linear in its address material; after the layout's builds
-    (#136) show what it then costs.
+    (#142) show what it then costs.
 47. **`finite_demanded_step_shared_code` into `Finite_Demanded_Closures`** (#124's review): the traversal's shared step
     stated where the traversal is. With the next edit of that theory.
 48. **Formation checks that grow with their input** (#124's attribution): `finite_object_formed` is quadratic in the
@@ -463,20 +468,28 @@ Not yet planned, in the order they are expected to be planned:
 51. **The `some` readings through the subject index** (#138's follow-up): `statements` and the decomposition's state
     reading (#94) read every row of a family; through the index they would read one search and a nonempty fibre, their
     contracts unchanged. After #40's measurement, if a judgment's cost shows them.
+52. **Term quotation depth** (#136's follow-up): `pair_syntax` places a pair's second component under 3, so a list term
+    of length m holds O(m²) positions (a key of log n bits quoted as a list: O(log² n) per clause). A design of its own
+    if the layout's measurement shows it to matter.
+53. **`finite_fresh_addresses` in one pass** (#136's follow-up): the n least unread indices at once rather than one
+    pass per address; a code equation, optional.
+54. **Task 124's entry names design 136's entry** where it names design task 136 ("The native package reader reads
+    each definition once"). With that entry's next edit.
 
 ## Now
 
 - **In flight (plan-39, 08:55)**: #105 advanced the base to `5a039e44`, releasing the retention #119; #30 resumes step
   2 (the loci, the machinery state's root, three retirements) after q45 and q46; #94 resumes on #36's landing; #128
   refines the seed transactions; #124's constant factor, accepted, did not merge into main at one import line of
-  `Native_Execution_Refinements` and is re-queued to write the union of both sides; design #136 decides the address
-  layout its held cause names; #139 builds the subject index design #138 decided. Until #119 lands, every landing check
+  `Native_Execution_Refinements` and is re-queued to write the union of both sides; design #136's layout is briefed by
+  #142 after #30; #139 builds the subject index design #138 decided. Until #119 lands, every landing check
   re-executes the recipes whose closure changed since `518ac1e7`. #40's brief carries #101's review
   (the families measured first; the two consumer corollaries); #42's and #112's carry #106's (the introduction's subset
   form stated once by whichever first needs it; the key premise derived where it can be).
 - **Owed to briefs when their inputs land**: #110's brief takes #139's derived `declarations_single_valued` in place
   of the carried condition; #64's brief takes build 1's identity lemma in place of a transport (#135's entry, q48),
-  and #141 wires #64 after that build.
+  and #141 wires #64 after that build. When #141's and #142's proposals are placed, #135's first build waits on the
+  layout's build 2.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).

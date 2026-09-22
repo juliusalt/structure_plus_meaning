@@ -34,7 +34,7 @@ comparison and no absence. #139 built it (`b560df2a`, `Development_Subject_Index
 and derived `declarations_single_valued` from the exporter's obligation `isabelle_declared_once`; #176 states that
 obligation once in `Isabelle_Entities`, re-pointing the successor's stronger copy (its third round keeps every word equal, the seed report's field
 deciding a sufficient condition through one lemma), and #227 discharges it once at the exported states; #42 and #110
-wait on both. #42
+wait on both, and they, #44 and #112 on the rule-family law #233. #42
 passes the indexes, #44 builds absence with no inequality and excess's witness over the index, #108 reads it. Roots
 stay a store with distinct keys, #38 stating the roots field under a carried condition on their order, owned by the
 exporter.
@@ -62,13 +62,14 @@ statements 0.264 s, formed 0.645 s, excess 0.023 s, undeclared 1.791 s, unreache
 0.14–0.20 ms against 1.2 ms whole; no engine refinement needed (q54). #178 briefed its builds, each with its review:
 the index of a family by a key reading, the subject and mention indexes its instances (#185, `10f842ff`); the
 edit and the answer state's presentation from it (#186, `786d11da`); the reach tables under seeding, restriction and
-removal (#190, `ff8a63c3`); the local fields (#188) and `undeclared` on the edited state (#189), after #185, #186 and #219;
-`unreached` with O's admission (#191), after #190 and #182; the incremental judgment, `native_edited_fields` and the
+removal (#190, `ff8a63c3`); the local fields (#188) and `undeclared` on the edited state (#189), after #231;
+`unreached` with O's admission (#191), after #182, #231 and the rule-family law #233; the incremental judgment, `native_edited_fields` and the
 stage's equation (#192), after #42 and the three field builds; the exported answer's edit (#187), after #161; the
 machinery's verification stage judged natively (#193) and its held measurement by field (#194), condition 5a's
-evidence for a stage's cost; the witnesses at the edit's parts (#195), after #44. From #186's review: #219 states the
-edit's and presenter's contracts once before #187, #188, #189 and #191; #220 makes the edit's constructor and the index
-update linear in the edit before the stage #193, after #210 (#185's review). Specifications keep their exception, judged whole (none in the loop's states).
+evidence for a stage's cost; the witnesses at the edit's parts (#195), after #44. From #186's review, #219 (`4dde066c`)
+stated the edit's and presenter's contracts once; from #219's review, #231 states once a reading that depends only on
+the names at the positions it uses, the appended-names facts through it, before #188, #189, #191 and #220; #220 makes
+the edit's constructor and the index update linear in the edit before the stage #193 (#185's review). Specifications keep their exception, judged whole (none in the loop's states).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
 a locus (#26), the presenters (#28), the store's (#83), the rows' fix (#84) and the store search's contract for values
@@ -152,9 +153,12 @@ unused premise dropped; #188, #189, #191 and #110 add such rules over it. Change
 each rebuilds about 1,140 theories. The re-citations: the subject index's call and the unreached join (#210, `d0fff527`);
 readiness's and reach's rules, with `readiness_answered_rule`'s two steps and `table_reached_simulation` moved into
 `Native_Table_Reach` (#212, after #210, which edits `Development_Verdict_Unreached` too); the row and found readings
-with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each with its review. #230 briefs the
-law's family form — every rule with zero or one premise on a rearrangement of its conclusion's variables — once before
-the queued builds add such programs, with its re-citations and Open 75's move (#210's review).
+with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each with its review. #230 briefed the
+law's family form — rules with any number of premises (q60), under no condition on their variables (q61): #233 states
+it once in `Native_Collection_Programs`, #208's law its instance, with Open 75's move, before #42, #44, #110, #112 and
+#191, which instantiate it; its re-citations follow the builds editing their theories — the verdict's families, the
+value rule and the decomposition rule (#235, after #212), the formation rules, the any rule and the two-premise call
+(#237, after #214 and #235), the store search (#239, after #44) — each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
@@ -162,15 +166,15 @@ changes: #153 with the placed forest #221, the syntax forest #225 (the premise f
 #155, the answer records' re-recording #157, then #161, #165, #167, #169 and its review #170, or #92 and #93 after
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
 #161 and #192. Then #114 (after #112, #110, #182 or #227, #176) and #45 (after #44, #42, #227, #176), 5. Beside
-them: #219, then #220; the rule programs' re-citations #212 and #214 and the family brief #230; the probe's fix #229;
-#128.
+them: #231, then #220; the rule programs' re-citations #212 and #214; the rule-family law #233, then its re-citations
+#235, #239 (after #44) and #237 (after #214, 6 deep); the probe's fix #229; #128.
 
-**Order** (`128 129 147 148 176 177 182 183 227 228 153 154 221 222 223 224 225 226 219 229 230 42 43 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 176 177 182 183 227 228 153 154 221 222 223 224 225 226 229 231 232 233 234 235 236 237 238 239 240 42 43 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
 review, #147, and the exporter's obligation #176 in its third round; then its discharge #227, which #42 and #110 wait
 on, and the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract #153 and the forest over
 placements (#221, then #223 and #225), which #155 waits on, close after their brief's author;
-the edit's contracts #219, the probe's fix #229 (every later build's inner loop), the family brief #230 and the
+the probe's fix #229 (every later build's inner loop), the name-locality fix #231, the rule-family law #233 and the
 verdict's entry #42, heads of
 the deepest chains, so that a slot serves them as they become ready; the rule programs' re-citations; the layout's word
 change #155, its answer records #157 and its measurement #159 soon after it, while the harness's lineage still holds
@@ -284,6 +288,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **An edit to a base theory is probed with `--prelude`/`--substitute`**: otherwise the probe takes the theory from
   the heap and certifies nothing about the edit (#176's result); where a changed base theory has changed dependents, the landing
   check's proof phase stands in until the probe's fix #229 lands (#176, #208).
+- **A brief names its task's own folder as `.build/tasks/<its id>/`**, never the key of the edit that created it: the
+  harness uses the id (#210's and #219's reviews).
 
 ## Delivered
 
@@ -478,6 +484,11 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   the join law. Follow-ups: the single-premise sites still in place to #214, the rule families to #230.
 - **#217** `c1a27170`: the host tests' remaining races and fixed bounds through one shared wait helper (`GENEROUS`,
   `RUNTIME_TIMEOUT` in `tools/test_investigation.py`); its first review's follow-ups were written over by the re-review.
+- **#219** `4dde066c`: the edit's and presenter's contracts stated once — the keyed presenter contract, the agreement
+  of local names, all nine conclusions for native answers. Follow-ups: the name-locality notion to #231, the
+  `List.map_filter` facts Open 62.
+- **#230** (brief) placed as #233–#240 (Graph): the rule-family law over any number of premises (q60) and its three
+  re-citations, each with its review; #188 and #189 released, adding no such program.
 
 ## Open
 
@@ -672,10 +683,9 @@ Not yet planned, in the order they are expected to be planned:
     subject; `absent_native_choice` now states `keyed_admitted_choice`. With the next edit of each.
 61. **`development_stated_native` beside `declarations_single_valued` or `development_stated_constant`** (review
     94.1): with the next edit of `Development_Verdict_Mentions` after #139.
-62. **Two laws in a consumer theory** (#103's review): `isabelle_local_root_agree` beside
-    `isabelle_local_root_renamed` and `isabelle_local_root_compared` in `Isabelle_Local_Names`, with its next edit
-    (#161 is told), and `map_filter_agree`, a congruence of `List.map_filter`, at a list-level owner; with them
-    `map_filter_unique`, left unused in `Development_Successor` by #176.
+62. **The generic `List.map_filter` facts at one list-level owner** (#103's and #219's reviews): `map_filter_agree`
+    (a congruence), `map_filter_member` (`Development_Constant_Problems`) and `map_filter_unique` where #176 leaves
+    it; HOL's List.thy has no congruence for `List.map_filter`. With the next edit of their theories.
 63. **The answer's formation check grows with the names** (#103's review, not measured): `length ns` per position and
     `distinct` over string literals; `Let` for the length and the ordered member index for distinctness, at a measured
     need on answers with large name tables.
@@ -726,10 +736,10 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
-- **In flight (plan-45, 16:30)**: #176, accepted, re-lands once its tree makes the doubled `Native_Collection_Programs`
-  row of THEORY_MAP.md one; #219 builds; #128 and #147 are in review, and #153 and #221 in their checks; #227
-  discharges the exporter's obligation after #176, #229 fixes the probe for base-theory edits, #230 briefs the rule
-  families. #220 makes the edit's constructor and the index
+- **In flight (plan-45, 16:35)**: #176 re-lands once a `bring-main` merge commit makes its THEORY_MAP.md
+  differ from main's in its three rows only (review 176.3); #212 and #229 build; #128 and #147 are in review, and #153 and #221 in their checks; #227
+  discharges the exporter's obligation after #176; #233 states the rule-family law (q60) before
+  #42, #44, #110, #112 and #191; #231 states the name-locality of readings before #188, #189, #191 and #220. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
   #208's to #212 and #214. #42's brief carries #106's review, #38's reduction and questions and the `[code_unfold]`
   declarations #40 needed (q54); #112's carries #106's review. #143 was withdrawn (Open 65); its finding is carried by
@@ -749,7 +759,9 @@ Not yet planned, in the order they are expected to be planned:
     twice again (#97, 06:06); a pre-landing trial merge of `THEORY_MAP.md`, `ROOT` and `DECISIONS.md` with main,
     checked for rows written twice, would find it in seconds before the commit fails (review 97) — with its three sides
     written as files: `git merge-file` given process substitutions reads them as empty and prints the third side
-    (review 97's third round).
+    (review 97's third round). #176's third round copied main's rows into its working file by hand, which does not
+    move the merge base, so its landing would have doubled seven rows again (review 176.3): the queue that sends a task
+    back for doubled rows could require a `bring-main` merge commit and run the union simulation before hand-over.
   - The finalizer's landing check runs on the task's tree as it stands, so without `bring-main` no check covers what
     lands (#124's covered a tree where `Factor_Shared_Package_Readings` and `Factor_Finite_Source_Construction_Sharing`
     did not yet meet; #94's failed on a theory only main held). A finalizer that brought main in first would make the

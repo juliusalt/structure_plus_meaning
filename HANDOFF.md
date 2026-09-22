@@ -81,6 +81,13 @@ then #32) ahead of the work beside it; #83 before #30, which switches the uses t
 and #62 as they are in flight; the verdict line; #64 after #30; the index re-citations last. A task that comes back to
 the planner moves again only when it is queued.
 
+**Added by plan-34 (2026-09-22).** #84, the rows' fix, after #83 and before #30; #94, the decomposition's state
+reading made native, after #62 and #34 and before #64; #85, the design of which in-place refinements are notions,
+after #80; #86, a second base advance, after #76; and #87's keyed-question line: #88 (the keyed packet's growth, after
+#86), #90 (the overnight group's switch, after #88, beside the chain), #92 (the index form's retirement, after #88, #90
+and #30), each build with its review. The queue puts #32 and #76's re-made commits first, then the parked #80 and
+#62, the base advance, the chain with #84 and #30 beside it, and the keyed line and #85 behind the verdict.
+
 ## Decisions
 
 Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
@@ -257,6 +264,10 @@ judgment's path.
   the store; one row presenter (`finite_store_row`) and one store-of-a-listing presenter (`finite_listing_store`) with
   injectivity as identification; the converse proved (`path_store_rows`, `finite_listing_store_exact`), so a table's
   word is a function of its rows and #30 chooses no listing for tables. Its review's follow-ups went to #84, #74 and #30.
+- **#56** the contract question keyed, committed `312a2ca2` after one fix round: `development_constant_question` is
+  `keyed_development_question (development_entity_key C)` over the constant's scope, the keys moved unchanged to
+  `Development_Entity_Keys`, the admission contracts restated over the key, and `presentation-loop` re-recorded in the
+  two recipes that present contract packets. Its reviews' follow-ups are the keyed-question brief.
 
 ## Open
 
@@ -336,8 +347,7 @@ Not yet planned, in the order they are expected to be planned:
     over the request state's rows (removed rows cited in the request state, added rows in the answer state) read
     through #38's reduction of an edit, its presenter, and the switch of `Development_Native_Answers`' tagged
     presenter. After #38.
-21. **The index form's retirement** (#54's review): restate the faceted question and its five users as instances of
-    `keyed_faceted_question` and retire `filtered_development_question`'s index form entirely. After #56.
+
 22. **The probe's last command** (#79's review): the log's last non-empty line; if a timeout shows a line that does not
     locate the stalled command, recognise Isabelle's own position report. At that need.
 23. **`development_definition_sockets` can reuse the singleton reading** (#58's review). With the next edit of its
@@ -374,11 +384,21 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
+- **#32 and #76 accepted, their commits re-queued (02:58)**: each commit had failed on #62's uncommitted `ROOT` and
+  `THEORY_MAP.md` lines in the one tree; #62 is told to take them out until its next hand-over (q30). If they come back
+  again, queue them again once #62's lines are gone; #34 waits on #32 and #86 on #76.
 - **In flight (plan-34, 02:10)**: #74, #76 and #84 working (#84 the rows' fix, which #30 waits on; #84 and #74 took
   #72's and #83's reviews); #32 ready at the verdict chain's head; #86 (the second base advance) waits on #76; #80
   re-planned for a third round after its re-review rejected the second (the downstream copy of an existing formation
-  split, the recipe's held before/after, unheld figures marked), and #85 (the formation-once design) waits on it; #56
-  parked for the machine (its q32 timing taken unheld, as a ratio); #62 parked, told of #84.
+  split, the recipe's held before/after, unheld figures marked), and #85 (the formation-once design) waits on it; #62
+  parked, told of #84, answered (q35): its schema lands thin — it decides I≠[] at a presented parent, with
+  `development_state_poses` a separate premise of the soundness instance and a marked correction to #66's entry — and
+  #94 makes the state reading native after #34's per-family traversal (#34's brief now states the traversal over any
+  family and subject key), with #64 waiting on #94; #62 reuses `Development_Located_Rows` once #84 lands (`v2.py after
+  62 84`). When #94 lands, #64's brief takes its contract. The keyed question's line (#87's brief, q34): #88 attributes and refines the keyed packet's
+  growth after #86's base holds the keyed form; #90 switches the 20 overnight native-control theories after #88,
+  beside the chain, re-recording the overnight recipe once; #92 retires `filtered_development_question`'s index form
+  after #88, #90 and #30, re-recording the seed's and machinery's words once; each with its review.
 - **For the owner**: `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap
   (#22's re-review); #50's review suggests the finalizer append its check's summary to the task's report, since a result
   is recorded before the finalizer's check runs; #49's re-review, that the finalizer's commit message quotes the
@@ -389,7 +409,11 @@ Not yet planned, in the order they are expected to be planned:
   the harness kept the deleted review task 67 in #66's `review_tasks`, so the planner's verdict on #66 counted as one
   review of two and #66 waited until the same verdict was recorded against 67 (00:33); and the sessions' sandbox cannot
   write the repository's `.build/` root, so #82 puts the advanced base under `.build/tasks/base-advance/` (q31); and a `=== write` in `v2.py change` replaces an earlier round's deliverable
-  without notice (task 80's second round lost its first round's held attribution table so).
+  without notice (task 80's second round lost its first round's held attribution table so); and `v2.py read` refuses the
+  planner an undelivered answer the harness asks it to carry (`.build/tasks/87/answers/q33.md`, as "code and logs"),
+  so q33 went into #90's and #92's inputs unread; and a task sent back for a fix round keeps the `ROOT` and
+  `THEORY_MAP.md` lines it installed at hand-over in the one tree, refusing every landing that touches them — #32 and
+  #76, both accepted, each waited 60 minutes on #62's at 02:57 and came back.
 - **The active base is `.build/tasks/base-advance/base-20260922a/proof`** (#82), a child of `.build/complete-20260921a`:
   never remove either while the pointer `/tmp/structural-active-context.json` names it. Both heaps live in
   `/tmp/structural-isabelle`, so a reboot loses the base (Open 11).

@@ -163,13 +163,13 @@ changes: #153 with the placed forest #221, the syntax forest #225 (the premise f
 #167; one task more may end that chain. The incremental line's measurement #194 and its review are 9 deep, through
 #161 and #192. Then #114 (after #112, #110, #182 or #227, #176) and #45 (after #44, #42, #227, #176), 5. Beside
 them: #219, then #220; the rule programs' re-citations #212 and #214 and the family brief #230; the probe's fix #229;
-the host tests' fix #217; #128.
+#128.
 
-**Order** (`128 129 147 148 176 177 182 183 227 228 153 154 221 222 223 224 225 226 217 219 229 230 42 43 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
+**Order** (`128 129 147 148 176 177 182 183 227 228 153 154 221 222 223 224 225 226 219 229 230 42 43 212 213 214 215 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 220 187 198 193 204 194 205 195 206 165 166 167 168 169 170 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43): first the landings under way — #128 with its
 review, #147, and the exporter's obligation #176 in its third round; then its discharge #227, which #42 and #110 wait
 on, and the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract #153 and the forest over
-placements (#221, then #223 and #225), which #155 waits on, close after their brief's author; the host tests' fix #217,
+placements (#221, then #223 and #225), which #155 waits on, close after their brief's author;
 the edit's contracts #219, the probe's fix #229 (every later build's inner loop), the family brief #230 and the
 verdict's entry #42, heads of
 the deepest chains, so that a slot serves them as they become ready; the rule programs' re-citations; the layout's word
@@ -476,6 +476,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   `readiness_answered_rule` to #212, the two `evaluate_pattern` facts Open 75.
 - **#210** `d0fff527`: the subject index's call re-cited to the rearranging rule and the unreached verdict's join to
   the join law. Follow-ups: the single-premise sites still in place to #214, the rule families to #230.
+- **#217** `c1a27170`: the host tests' remaining races and fixed bounds through one shared wait helper (`GENEROUS`,
+  `RUNTIME_TIMEOUT` in `tools/test_investigation.py`); its first review's follow-ups were written over by the re-review.
 
 ## Open
 
@@ -725,7 +727,7 @@ Not yet planned, in the order they are expected to be planned:
 ## Now
 
 - **In flight (plan-45, 16:30)**: #176, accepted, re-lands once its tree makes the doubled `Native_Collection_Programs`
-  row of THEORY_MAP.md one; #219 builds; #128 and #147 are in review, and #153, #217 and #221 in their checks; #227
+  row of THEORY_MAP.md one; #219 builds; #128 and #147 are in review, and #153 and #221 in their checks; #227
   discharges the exporter's obligation after #176, #229 fixes the probe for base-theory edits, #230 briefs the rule
   families. #220 makes the edit's constructor and the index
   update linear in the edit before #193; #186's other follow-ups were mailed to #187–#193, #190's to #191 and #212,
@@ -782,7 +784,7 @@ Not yet planned, in the order they are expected to be planned:
   - The planner cannot read a design's entry before it lands: `v2.py read` and a plain read of
     `.build/trees/ID/DECISIONS.md` are refused, so a design's verdict rests on its result and commit message (#85).
   - A re-review writes over the first review's `review.md`, so the follow-ups it says still stand are in no file when
-    the build lands (#118); #38's first review's follow-ups were lost so (11:00).
+    the build lands (#118); #38's first review's follow-ups were lost so (11:00), and #217's (16:25).
   - A probe's summary is not kept beside its log (#40's first probe kept only `probe.log` and `probe.ML`, so
     `parallel_proofs: 0` rests on the cpu/elapsed ratio): the probe tool's summary should be kept, as `mrun.out` was
     (#40's review).

@@ -31,7 +31,7 @@
   "theories/Complete_Child_Assignments.thy": "66391c13777ca4d41ae662a57f37b82cf6b227b334466333c01e91e7efa448fe",
   "theories/Complete_Object_References.thy": "be4813d26d5183893c02eae5754a3548ff369e91aa42a604de7cc3c90c0429b4",
   "theories/Complete_Term_References.thy": "8310447e9567495de469cefe295b41fba5a5cc22866fa1f8432ad22af6e36305",
-  "theories/Complete_Value_References.thy": "70873f6e9311f344563db0fa9f6a2a5a120ecb445499493ac596b8c5974d441e",
+  "theories/Complete_Value_References.thy": "130b70cf8e75ce13d392f27d4a96cdc6d9f1549cb6ebcf37c3d1745d846b75e2",
   "theories/Delimited_Bit_Words.thy": "9e335a9f4eac975c91cfdc882bf6fde2011a20ba24373f95b0414221e3f1071c",
   "theories/Development_Answer_0ccf746fe2cf.thy": "9102596f55e2ea2c5af2fed3f9cd3ed4be02b05a3ca81778aa1a71ae03169ea2",
   "theories/Digit_History_Presentation.thy": "c2b4717e6d53bb956e9c64631758f7ddcb0e651e49acb673cf325b60087db622",

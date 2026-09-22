@@ -26,7 +26,7 @@ support family, the declaration store by constant key). Ready: roots with the pe
 presented state's rows by row key) and unreached (#40: the reach table as a reusable presentation, the presenter's
 families measured first, and the one measurement of a judgment). Then the entry rule, its contract and two instances
 (#42, after #106); store absence and the witnesses (#44), last, so that no positive field reaches an absence. #36's
-guard decided a row's subject by path inequality, a comparison notion the entry excludes: design #138 (accepted) reads
+guard decided a row's subject by path inequality, a comparison notion the entry excludes: design #138 (`10f3ec9d`) reads
 the rows about a subject through a subject index total over the state's atoms, an instance of the index notion with no
 comparison and no absence. #139 builds it, re-points `excess` through it (`named` kept) and derives
 `declarations_single_valued` from the exporter's obligation, one landing in the same theory; #42 (passing the indexes),
@@ -276,7 +276,7 @@ judgment's path.
   answer designates its request by its locus" — the context supplies a row's citations; the presenters move into a new
   `Development_Row_Data`; the successor keeps positions; the request at a locus through the path store's index
   instance; three builds in order, every reader of the four items with its decision.
-- **#138** (design, accepted 2026-09-22): the verdict entry's subsection "The rows about a subject are read through a
+- **#138** (design) `10f3ec9d`: the verdict entry's subsection "The rows about a subject are read through a
   subject index" — an index of each family's rows total over the state's atoms, an instance of the index notion at the
   path store's carrier; the guard and path inequality to be retired; request construction's entry corrected.
 - **#134** (investigation) `5a039e44`: proved-code export is deterministic across proof contexts (52 groups of

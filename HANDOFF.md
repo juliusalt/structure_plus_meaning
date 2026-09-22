@@ -142,6 +142,12 @@ three field builds; the exported answer's edit (#187), after #161; the machinery
 (#193) and its held measurement by field (#194), condition 5a's evidence for a stage's cost; the witnesses at the
 edit's parts (#195), after #44. #185 subsumes Open 58's inverted index of mentions.
 
+**The rule programs (#173, #207).** #173 (`a645759a`) stated the join law of finite rule programs once in
+`Native_Collection_Programs`; #42, #112 and #64 cite it. #207 briefs the rearranging single-premise rule stated once
+there — `native_swap_rule`, `subject_call_rule`, `store_found_rule` and the rearranging calls of the readiness and reach
+programs its instances — with that theory's other follow-ups in one build, since a change to it rebuilds about 1,140
+theories; the re-citations follow the builds editing their theories (#185, #176, #182).
+
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 9, the layout's and #135's line made one by the serialized word
 changes: #151 or the bound pattern forest #179, #153, the layout #155, the answer records' re-recording #157, then #161, #165, #167,
@@ -152,13 +158,13 @@ assessment's first builds #185, #186 and #190; #144 and #145; the join law #173,
 #112; the flaky test's fix #181, the exporter's obligation #176 and the excess locale #182, then #42, #110 and #112;
 #128; #132, then #130; the overnight boundary #172; the probe's summary #175.
 
-**Order** (`128 129 147 148 173 174 175 181 179 180 151 152 176 177 145 146 163 164 182 183 153 154 42 43 185 196 186 197 190 201 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
+**Order** (`128 129 147 148 181 179 180 151 152 176 177 145 146 163 164 182 183 153 154 42 43 185 196 186 197 190 201 207 155 156 157 158 159 160 161 162 44 45 110 111 112 113 114 188 199 189 200 191 202 192 203 187 198 193 204 194 205 195 206 165 166 167 168 169 170 130 131 64 65 92 93`).
 The machine goes in this order, finalizers included (the harness, 09:43), so the landings the reboot interrupted come
-first: #128 with its review, the accepted commits #147, #173 and #175, the landing checks
+first: #128 with its review, the accepted commit #147, the landing checks
 of #181, #179 and #151, and the exporter's obligation #176 after #181, which #42 and #110 wait on. Then #145, beside
 everything; the parked #163; the excess locale #182, which #110, #112 and #191 wait on; the layout's last contract
 #153 and the verdict's entry #42, heads of the deepest chains, so that a slot serves them as they become ready; the
-incremental assessment's three first builds (#185, #186, #190), which run at once in a slot those leave free; the
+incremental assessment's three first builds (#185, #186, #190), which run at once in a slot those leave free; the brief #207 of the rearranging rule; the
 layout's word change #155, its answer records #157 and its measurement #159 soon after it, while the harness's
 lineage still holds the last base without it; then #161; the rest of the verdict and request chains; the incremental
 line's later builds as their inputs land; #135's later builds; then #130, #64 and #92. A parked task whose hold nears
@@ -254,6 +260,8 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
   measurement; refused for a full machine, a session parks for it (`v2.py park machine`) and is resumed when a run of
   its kind may start (the owner, 2026-09-21 22:31: up to 8 probes and 2 heavy runs at once).
 - **No task rests on reasoning not yet written.**
+- **A probe's evidence is its summary** (#175): `probe.summary.json` beside the probe's log (`loaded`, `marker`,
+  `parallel_proofs`, `timeout`, `seconds`) is what a review reads for a probe's completion and options.
 - **The harness advances the base and retains the receipts** (the owner, 2026-09-22 12:55): each landing's check
   advances the base, and after the landing the harness commits that check's receipts (`validation/incremental-check.json`
   and the receipts under `validation/reconstruction/`); no task advances the base, retains or hands over a receipt, and
@@ -429,6 +437,9 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#144** (`79f16061`): the heap store, the pointer and the fallback named once at the lasting place
   `.build/tasks/base-lasting/`, its complete proof adopted, the dead lineage removed. **#132** (`79f16061`): the
   candidate generators and the constructed applications re-cited to #85's notions, `ffilter_singleton` removed.
+- **#173** (`a645759a`): the join law of finite rule programs stated once in `Native_Collection_Programs`, with a
+  generic program in place of the decomposition's transposition. **#175** (`af8c09b8`): a probe's summary and options
+  kept beside its log.
 
 ## Open
 
@@ -645,6 +656,8 @@ Not yet planned, in the order they are expected to be planned:
 68. **The record candidates' code equation at arity 1** (#132's reviews): a measurement against callers that apply
     the function fully; at a measured need on the loop's path. The first review's other follow-ups were written over
     by the re-review (the harness gap of #118).
+69. **The rearranging single-premise rule** — briefed by #207 (Graph), with `native_decomposition_shares`' unused
+    premise and the Unreached join (#173's review).
 
 ## Now
 
@@ -653,8 +666,8 @@ Not yet planned, in the order they are expected to be planned:
   #128's session re-applies its refinement over #30's lines in `Development_Admitted_Publication` and runs its held
   pair; #144 and #132 landed (`79f16061`); #145 builds the receipts' form; #163 is parked; the incremental
   assessment's builds are placed (#185–#206, briefed by #178 from #171's entry, landed `7a6093bf` with #172). #42's brief carries #106's review, #38's reduction and
-  questions and the `[code_unfold]` declarations #40 needed (q54); #112's carries #106's review. #173 states the
-  programs' join law before #42, #112 and #64; #176 the exporter's obligation before #42 and #110, after #181. #143
+  questions and the `[code_unfold]` declarations #40 needed (q54); #112's carries #106's review. #173 (`a645759a`)
+  and #175 (`af8c09b8`) landed; #176 states the exporter's obligation before #42 and #110, after #181. #143
   was withdrawn (Open 65); its finding is carried by #157 and the working rules. #155, #92 and #64 name the reports
   they re-record, no receipt.
 - **Owed to briefs when their inputs land**: #64's brief takes #161's identity lemma in place of a transport (#135's
@@ -732,6 +745,9 @@ Not yet planned, in the order they are expected to be planned:
     `complete-20260922e`'s record reads, goes with a reboot; the interim heap `RRA_Factor_Structural_Bootstrap`
     (841 MB) now lies in the lasting store and can go once no check reads `/tmp/structural-accepted`; and
     `.build/complete-20260921a` lies at `.build/`'s root, which no session writes.
+  - The review and brief protocols that ask for a probe could name `probe.summary.json` and its fields as the evidence
+    a review reads (#175's review). A session database moved under a running export (`SQLITE_READONLY_DBMOVED`, #173's
+    re-check, around the base's move to the lasting place) cost a 500 s landing cycle.
 - **The base lives at the lasting place** `.build/tasks/base-lasting/` (#144, landed `79f16061` with #132): its
   complete proof of `a2ed0ed7` (`complete-20260922e`, 777 s, re-recorded at 14:14 with its heap under the
   `/tmp/structural-isabelle` link so that the older tools read it too), the pointer `active-context.json` that main's

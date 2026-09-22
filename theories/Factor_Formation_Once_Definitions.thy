@@ -332,116 +332,174 @@ declare finite_family_readings_def[code del] finite_call_readings_def[code del]
   finite_pattern_record_readings_def[code del] finite_pattern_vector_readings.simps[code del]
   finite_native_schema_readings_def[code del] finite_scoped_pattern_readings_def[code del]
   finite_native_definition_readings_def[code del] finite_native_package_formed_def[code del]
-  finite_native_definition_rows_formed_once_code[code del]
+  finite_native_definition_rows_def[code del]
+
+text \<open>
+  Each guarded entry is an instance of the first notion of @{text Established_Premises}: its premise,
+  the environment's formation, is checked at the entry, its body is the formation-free reading and
+  its refusal the reading's own empty value. Exactness is the @{text "_formed_exact"} fact above, the
+  refusal is read from the definition, and the code equation is the check hoisted through the
+  application to the remaining arguments, keeping the statement the seeded state presents.
+\<close>
+
+lemma finite_family_readings_checked_premise:
+  "checked_premise finite_family_readings finite_environment_formed finite_family_readings_formed
+    (\<lambda>E u r reads. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (rule finite_family_readings_formed_exact[OF 1])
+next
+  case (2 E)
+  show ?case by (intro ext) (simp only: finite_family_readings_def 2 if_False)
+qed
 
 lemma finite_family_readings_formed_once_code [code]:
   "finite_family_readings E u r reads=(if finite_environment_formed E
     then finite_family_readings_formed E u r reads else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis by (simp only: finite_family_readings_formed_exact[OF True] if_True)
+  by (rule checked_premise.checked_through[OF finite_family_readings_checked_premise, where t="\<lambda>f. f u r reads"])
+
+lemma finite_call_readings_checked_premise:
+  "checked_premise finite_call_readings finite_environment_formed finite_call_readings_formed
+    (\<lambda>E u V r reads. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (rule finite_call_readings_formed_exact[OF 1])
 next
-  case False
-  then show ?thesis by (simp only: finite_family_readings_def if_False)
+  case (2 E)
+  show ?case by (intro ext) (simp only: finite_call_readings_def 2 if_False)
 qed
 
 lemma finite_call_readings_formed_once_code [code]:
   "finite_call_readings E u V r reads=(if finite_environment_formed E
     then finite_call_readings_formed E u V r reads else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis by (simp only: finite_call_readings_formed_exact[OF True] if_True)
+  by (rule checked_premise.checked_through[OF finite_call_readings_checked_premise, where t="\<lambda>f. f u V r reads"])
+
+lemma finite_pattern_record_readings_checked_premise:
+  "checked_premise finite_pattern_record_readings finite_environment_formed finite_pattern_record_readings_formed
+    (\<lambda>E u V r n. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (rule finite_pattern_record_readings_formed_exact[OF 1])
 next
-  case False
-  then show ?thesis by (simp only: finite_call_readings_def if_False)
+  case (2 E)
+  show ?case by (intro ext) (simp only: finite_pattern_record_readings_def 2 if_False)
 qed
 
 lemma finite_pattern_record_readings_formed_once_code [code]:
   "finite_pattern_record_readings E u V r n=(if finite_environment_formed E
     then finite_pattern_record_readings_formed E u V r n else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis by (simp only: finite_pattern_record_readings_formed_exact[OF True] if_True)
+  by (rule checked_premise.checked_through[OF finite_pattern_record_readings_checked_premise, where t="\<lambda>f. f u V r n"])
+
+lemma finite_pattern_vector_readings_checked_premise:
+  "checked_premise finite_pattern_vector_readings finite_environment_formed finite_pattern_vector_readings_formed
+    (\<lambda>E u V rs. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (rule finite_pattern_vector_readings_formed_exact[OF 1])
 next
-  case False
-  then show ?thesis by (simp only: finite_pattern_record_readings_def if_False)
+  case (2 E)
+  have none: "finite_pattern_readings E u V q={||}" for u V q
+    by (simp add: finite_pattern_readings_def
+      checked_premise.refused[OF finite_pattern_readings_bounded_checked_premise 2]
+      checked_union[where P=False, simplified])
+  have each: "finite_pattern_vector_readings E u V rs={||}" for u V rs
+    by (cases rs) (simp_all add: 2 none)
+  show ?case by (intro ext) (rule each)
 qed
 
 lemma finite_pattern_vector_readings_formed_once_code [code]:
   "finite_pattern_vector_readings E u V rs=(if finite_environment_formed E
     then finite_pattern_vector_readings_formed E u V rs else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis by (simp only: finite_pattern_vector_readings_formed_exact[OF True] if_True)
+  by (rule checked_premise.checked_through[OF finite_pattern_vector_readings_checked_premise, where t="\<lambda>f. f u V rs"])
+
+lemma finite_native_schema_readings_checked_premise:
+  "checked_premise finite_native_schema_readings finite_environment_formed finite_native_schema_readings_formed
+    (\<lambda>E u r. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (rule finite_native_schema_readings_formed_exact[OF 1])
 next
-  case False
-  have bounded: "finite_pattern_readings_bounded n E u V q={||}" for n q
-    by (cases n) (simp_all add: False)
-  have none: "finite_pattern_readings E u V q={||}" for q
-    by (auto simp: finite_pattern_readings_def bounded fset_eq_iff ffUnion.rep_eq fimage.rep_eq)
-  show ?thesis by (cases rs) (simp_all add: False none)
+  case (2 E)
+  show ?case by (intro ext) (simp only: finite_native_schema_readings_def 2 if_False)
 qed
 
 lemma finite_native_schema_readings_formed_once_code [code]:
   "finite_native_schema_readings E u r=(if finite_environment_formed E
     then finite_native_schema_readings_formed E u r else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis by (simp only: finite_native_schema_readings_formed_exact[OF True] if_True)
+  by (rule checked_premise.checked_through[OF finite_native_schema_readings_checked_premise, where t="\<lambda>f. f u r"])
+
+lemma finite_scoped_pattern_readings_checked_premise:
+  "checked_premise finite_scoped_pattern_readings finite_environment_formed finite_scoped_pattern_readings_formed
+    (\<lambda>E u r. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (rule finite_scoped_pattern_readings_formed_exact[OF 1])
 next
-  case False
-  then show ?thesis by (simp only: finite_native_schema_readings_def if_False)
+  case (2 E)
+  show ?case by (intro ext) (simp only: finite_scoped_pattern_readings_def 2 if_False)
 qed
 
 lemma finite_scoped_pattern_readings_formed_once_code [code]:
   "finite_scoped_pattern_readings E u r=(if finite_environment_formed E
     then finite_scoped_pattern_readings_formed E u r else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis by (simp only: finite_scoped_pattern_readings_formed_exact[OF True] if_True)
+  by (rule checked_premise.checked_through[OF finite_scoped_pattern_readings_checked_premise, where t="\<lambda>f. f u r"])
+
+lemma finite_native_definition_readings_checked_premise:
+  "checked_premise finite_native_definition_readings finite_environment_formed
+    finite_native_definition_readings_formed (\<lambda>E u r. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (rule finite_native_definition_readings_formed_exact[OF 1])
 next
-  case False
-  then show ?thesis by (simp only: finite_scoped_pattern_readings_def if_False)
+  case (2 E)
+  show ?case by (intro ext) (simp only: finite_native_definition_readings_def 2 if_False)
 qed
 
 lemma finite_native_definition_readings_formed_once_code [code]:
   "finite_native_definition_readings E u r=(if finite_environment_formed E
     then finite_native_definition_readings_formed E u r else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis by (simp only: finite_native_definition_readings_formed_exact[OF True] if_True)
-next
-  case False
-  then show ?thesis by (simp only: finite_native_definition_readings_def if_False)
-qed
+  by (rule checked_premise.checked_through[OF finite_native_definition_readings_checked_premise, where t="\<lambda>f. f u r"])
+
+text \<open>
+  The rows of an environment read a definition at every position: the check hoisted through each
+  reading (@{thm [source] checked_premise.checked_through}) and out of the union over the positions
+  (@{thm [source] checked_union}).
+\<close>
 
 lemma finite_native_definition_rows_formed_definitions_code [code]:
   "finite_native_definition_rows E=(if finite_environment_formed E then ffUnion (fimage (\<lambda>d.
       fimage (Pair d) (finite_native_definition_readings_formed E (fst d) (snd d))) (finite_environment_positions E))
     else {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis
-    by (simp only: finite_native_definition_rows_def finite_native_definition_readings_formed_exact[OF True] if_True)
+proof -
+  have each: "fimage (Pair d) (finite_native_definition_readings E (fst d) (snd d))=
+      (if finite_environment_formed E then fimage (Pair d) (finite_native_definition_readings_formed E (fst d) (snd d))
+       else {||})" for d
+    by (simp only: checked_premise.checked_through[OF finite_native_definition_readings_checked_premise,
+      where t="\<lambda>f. fimage (Pair d) (f (fst d) (snd d))"] fimage_fempty)
+  show ?thesis by (simp only: finite_native_definition_rows_def each checked_union)
+qed
+
+lemma finite_native_package_formed_checked_premise:
+  "checked_premise finite_native_package_formed finite_environment_formed
+    (\<lambda>E roots. fBall (finite_native_definition_sites E roots)
+      (\<lambda>d. finite_native_definition_readings_formed E (fst d) (snd d) \<noteq> {||}))
+    (\<lambda>E roots. False)"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case
+    by (intro ext) (simp only: finite_native_package_formed_def
+      finite_native_definition_readings_formed_exact[OF 1] 1 simp_thms)
 next
-  case False
-  then show ?thesis
-    by (auto simp: finite_native_definition_rows_def finite_native_definition_readings_def
-      fset_eq_iff ffUnion.rep_eq fimage.rep_eq)
+  case (2 E)
+  show ?case by (intro ext) (simp only: finite_native_package_formed_def 2 simp_thms)
 qed
 
 lemma finite_native_package_formed_once_code [code]:
   "finite_native_package_formed E roots \<longleftrightarrow> finite_environment_formed E \<and>
     fBall (finite_native_definition_sites E roots)
       (\<lambda>d. finite_native_definition_readings_formed E (fst d) (snd d) \<noteq> {||})"
-proof (cases "finite_environment_formed E")
-  case True
-  then show ?thesis
-    by (simp only: finite_native_package_formed_def finite_native_definition_readings_formed_exact[OF True])
-next
-  case False
-  then show ?thesis by (simp only: finite_native_package_formed_def simp_thms)
-qed
+  by (simp only: checked_premise.checked_through[OF finite_native_package_formed_checked_premise,
+      where t="\<lambda>f. f roots"] if_bool_eq_conj simp_thms) blast
 
 text \<open>
   A formed environment has exactly formed artifacts, so their record, family,

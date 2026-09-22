@@ -1941,12 +1941,15 @@ premise's arguments end and a partial application checks once however often it i
 (`finite_record_candidates_checked_premise`, its code equation `checked_at_entry` at the object's
 arity) and a demand's applications (`finite_program_applications_listed`, its system-formation premise
 through `checked_through` at its `code abstract` form, its statement unrestated, and each call's
-term-formation premise inside the listed union through `checked_at_entry`). *Missing use by
-development*: the formation-once readings, proof-node rows and the snapshot's publications still prove
-their code equations in place; they are re-cited from the notion as their theories are next changed,
-and the seed publication's transactions take the third place as their refinement; the join's three
-lemmas (`ffUnion_fimage_if_const`, `ffUnion_fimage_if_conj`, `ffUnion_fimage_empty`), which task 130
-re-cites from `checked_union`.
+term-formation premise inside the listed union through `checked_at_entry`), the formation-once readings
+of an environment and the package reader (each guarded entry a `*_checked_premise` instance, its code
+equation `checked_through` at its full-arity statement, since the seeded state presents the code
+equations of its roots and the arity rule's form would change its words), the proof-node rows and a
+graph's demands (the reading's check hoisted by `checked_through` and `checked_union`), and a join's
+conditions (`checked_union` cited directly; `ffUnion_fimage_if_conj` its corollary). *Missing use by
+development*: the snapshot's publications still prove their code equation in place, re-cited from the
+notion as their theory is next changed, and the seed publication's transactions take the third place as
+their refinement.
 
 **A generator of the accepted candidates.** The repeated argument: a reader's meaning is the accepted
 part of a complete candidate space. **Given** a generator whose accepted candidates lie in the space

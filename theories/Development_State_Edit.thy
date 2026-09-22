@@ -1,6 +1,6 @@
 theory Development_State_Edit
   imports Development_State_Presenter Development_Verdict_Difference Development_Native_Answers
-    Member_Tree_Indexes Ordered_Finite_Terms
+    Member_Tree_Indexes Ordered_Finite_Terms First_Index_Trees Binary_Relation_Stores
 begin
 
 section \<open>An answer is an edit of its request state's rows\<close>
@@ -548,98 +548,6 @@ definition entity_order_key :: "isabelle_entity \<Rightarrow> ordered_factor_ter
 lemma entity_order_key_injective: "inj entity_order_key"
   by (rule injI) (auto simp: entity_order_key_def dest: injD[OF isabelle_entity_data_injective])
 
-definition first_index_tree :: "('a \<Rightarrow> 'k::linorder) \<Rightarrow> 'a list \<Rightarrow> ('k,nat) rbt" where
-  "first_index_tree key xs=RBT.bulkload (zip (map key xs) [0..<length xs])"
-
-lemma map_of_first_index:
-  assumes key: "inj key"
-  shows "map_of (zip (map key xs) [0..<length xs]) (key x)=value_reference_index x xs"
-proof (induction xs)
-  case Nil
-  show ?case by simp
-next
-  case (Cons y ys)
-  have upto: "[0..<length (y#ys)]=0#map Suc [0..<length ys]"
-    by (simp only: length_Cons map_Suc_upt upt_conv_Cons[OF zero_less_Suc])
-  show ?case unfolding upto by (simp add: zip_map2 map_of_map Cons.IH inj_eq[OF key])
-qed
-
-lemma first_index_tree_lookup:
-  assumes key: "inj key"
-  shows "RBT.lookup (first_index_tree key xs) (key x)=value_reference_index x xs"
-  by (simp add: first_index_tree_def RBT.lookup_bulkload map_of_first_index[OF key])
-
-lemma first_index_tree_absent:
-  assumes "k\<notin>range key"
-  shows "RBT.lookup (first_index_tree key xs) k=None"
-  using assms by (auto simp: first_index_tree_def RBT.lookup_bulkload map_of_eq_None_iff dest!: set_zip_leftD)
-
-lemma first_index_tree_found:
-  assumes key: "inj key"
-  shows "RBT.lookup (first_index_tree key xs) (key x)=None \<longleftrightarrow> x\<notin>set xs"
-  by (simp add: first_index_tree_lookup[OF key] value_reference_index_absent)
-
-lemma first_index_image:
-  "(k,v)\<in>set (map (\<lambda>x. (key x,the (value_reference_index x c))) (remdups c)) \<longleftrightarrow>
-    (\<exists>q\<in>UNIV. key q=k \<and> value_reference_index q c=Some v)"
-proof
-  assume "(k,v)\<in>set (map (\<lambda>x. (key x,the (value_reference_index x c))) (remdups c))"
-  then obtain x where x: "x\<in>set c" "k=key x" "v=the (value_reference_index x c)" by auto
-  have "value_reference_index x c=Some v"
-    using x value_reference_index_absent[of x c] by (cases "value_reference_index x c") auto
-  then show "\<exists>q\<in>UNIV. key q=k \<and> value_reference_index q c=Some v" using x by auto
-next
-  assume "\<exists>q\<in>UNIV. key q=k \<and> value_reference_index q c=Some v"
-  then obtain q where q: "k=key q" "value_reference_index q c=Some v" by auto
-  have "q\<in>set c" using q(2) value_reference_index_absent[of q c] by auto
-  then show "(k,v)\<in>set (map (\<lambda>x. (key x,the (value_reference_index x c))) (remdups c))"
-    using q by (auto simp: image_iff intro!: bexI[where x=q])
-qed
-
-text \<open>
-  The index of a list by the first positions of its members is the tree map's index
-  (@{thm [source] tree_map_carrier_index}) read through an injective key (@{thm [source] carrier_index_through_key}):
-  its carrier is the relation of a member to its first position (@{const value_reference_index}). The tree the
-  code builds, the bulkload of the keys zipped with their positions, has that index's lookups, since a bulkload
-  keeps the first row at a key.
-\<close>
-
-lemma first_index_carrier_index:
-  assumes key: "inj key"
-  shows "carrier_index (\<lambda>xs x i. value_reference_index x xs=Some i) (\<lambda>_. True) UNIV key
-    (first_index_tree key) tree_search"
-proof -
-  interpret through: carrier_index "\<lambda>xs x i. value_reference_index x xs=Some i" "\<lambda>_. True" UNIV key
-    "\<lambda>c. RBT.bulkload (map (\<lambda>x. (key x,the (value_reference_index x c))) (remdups c))" tree_search
-  proof (rule carrier_index_through_key[OF tree_map_carrier_index])
-    show "distinct (map fst (map (\<lambda>x. (key x,the (value_reference_index x c))) (remdups c)))" for c
-      using inj_on_subset[OF key] by (simp add: distinct_map o_def)
-    show "(k,v)\<in>set (map (\<lambda>x. (key x,the (value_reference_index x c))) (remdups c)) \<longleftrightarrow>
-        (\<exists>q\<in>UNIV. key q=k \<and> value_reference_index q c=Some v)" for c k v
-      by (rule first_index_image)
-    show "inj_on key UNIV" by (rule key)
-  qed
-  show ?thesis
-  proof (rule carrier_index.intro)
-    show "inj_on key UNIV" by (rule key)
-    fix c k v
-    show "tree_search (first_index_tree key c) k v \<longleftrightarrow> (\<exists>q\<in>UNIV. key q=k \<and> value_reference_index q c=Some v)"
-    proof (cases "k\<in>range key")
-      case True
-      then obtain x where k: "k=key x" by auto
-      have "tree_search (first_index_tree key c) k v \<longleftrightarrow> value_reference_index x c=Some v"
-        by (simp add: k first_index_tree_lookup[OF key])
-      also have "\<dots> \<longleftrightarrow> (\<exists>q\<in>UNIV. key q=k \<and> value_reference_index q c=Some v)"
-        using through.represents[where c=c and k=k and v=v] through.query_search[where c=c and q=x and v=v]
-        by (simp add: k)
-      finally show ?thesis .
-    next
-      case False
-      then show ?thesis by (auto simp: first_index_tree_absent)
-    qed
-  qed
-qed
-
 lemma member_tree_key_found:
   assumes key: "inj key"
   shows "RBT.lookup (ordered_member_tree (fset_of_list (map key xs))) (key x)\<noteq>None \<longleftrightarrow> x\<in>set xs"
@@ -670,16 +578,6 @@ proof (induction E)
 next
   case (Cons e E)
   then show ?case by (cases e) simp_all
-qed
-
-lemma value_reference_index_append_absent:
-  "x\<notin>set xs \<Longrightarrow> value_reference_index x (xs@ys)=map_option ((+) (length xs)) (value_reference_index x ys)"
-proof (induction xs)
-  case Nil
-  show ?case by (cases "value_reference_index x ys") simp_all
-next
-  case (Cons y xs)
-  then show ?case by (cases "value_reference_index x ys") simp_all
 qed
 
 subsection \<open>Duplicates are removed through the key's order\<close>
@@ -742,6 +640,110 @@ lemma removed_keys:
   "natural_binary_digits (case value_reference_index d E of None \<Rightarrow> length E | Some i \<Rightarrow> i)=first_occurrence_key E d"
   by (simp add: first_occurrence_key_def)
 
+subsection \<open>The answer state's development constants are read at the constants the edit changes\<close>
+
+text \<open>
+  The answer state is not materialized: its development constants are read as a membership, held when a
+  declaring entity of the request state is not removed or an added entity declares the constant
+  (@{text held_constants}), through an index of the request state's declarations by constant
+  (@{text held_indexed}); the specification condition reads only the constants the edit's removed and
+  added entities declare (@{text edit_condition_changed}); the removed entities are those of the edit found
+  in the request state and not added, ordered by their first positions when the request state's entities
+  are distinct (@{text gone_indexed}). Only the names' append stays linear in the names.
+\<close>
+
+
+definition development_declarations :: "isabelle_entity list \<Rightarrow> (state_key\<times>isabelle_entity) list" where
+  "development_declarations E=List.map_filter (\<lambda>e. map_option (\<lambda>c. (state_constant_key c,e)) (development_declared e)) E"
+
+lemma development_declarations_member:
+  "(state_constant_key c,e)\<in>set (development_declarations E) \<longleftrightarrow> e\<in>set E \<and> development_declared e=Some c"
+  by (auto simp: development_declarations_def map_filter_member inj_eq[OF state_constant_key_injective])
+
+lemma held_indexed:
+  "fBex (relation_store_lookup (relation_store (development_declarations E)) (state_constant_key c))
+      (\<lambda>e. RBT.lookup (ordered_member_tree (fset_of_list (map entity_order_key removed))) (entity_order_key e)=None) \<longleftrightarrow>
+    (\<exists>e\<in>set E. e\<notin>set removed \<and> development_declared e=Some c)"
+proof -
+  have mem: "e |\<in>| relation_store_lookup (relation_store (development_declarations E)) (state_constant_key c) \<longleftrightarrow>
+      e\<in>set E \<and> development_declared e=Some c" for e
+    by (simp only: relation_store_member development_declarations_member)
+  show ?thesis unfolding member_tree_key_absent[OF entity_order_key_injective]
+    using mem by (blast intro: fBexI elim: fBexE)
+qed
+
+lemma held_constants:
+  "c\<in>set (isabelle_development_constants (filter (\<lambda>e. e\<notin>set removed) E@added)) \<longleftrightarrow>
+    (\<exists>e\<in>set E. e\<notin>set removed \<and> development_declared e=Some c) \<or> c\<in>set (isabelle_development_constants added)"
+  by (auto simp: development_constants_member)
+
+lemma edit_condition_changed:
+  "edit_specification_condition E (filter (\<lambda>e. e\<notin>set removed) E@added) \<longleftrightarrow>
+    list_all (\<lambda>c. c\<notin>set (concat (map (\<lambda>e. case e of Isabelle_Specification p \<Rightarrow> isabelle_term_constants p | _ \<Rightarrow> []) E)) \<or>
+      (c\<in>set (isabelle_development_constants E))=(c\<in>set (isabelle_development_constants (filter (\<lambda>e. e\<notin>set removed) E@added))))
+      (isabelle_development_constants removed@isabelle_development_constants added)"
+proof -
+  let ?C="concat (map (\<lambda>e. case e of Isabelle_Specification p \<Rightarrow> isabelle_term_constants p | _ \<Rightarrow> []) E)"
+  let ?Q="\<lambda>c. (c\<in>set (isabelle_development_constants E))=(c\<in>set (isabelle_development_constants (filter (\<lambda>e. e\<notin>set removed) E@added)))"
+  have out: "?Q c" if "c\<notin>set (isabelle_development_constants removed@isabelle_development_constants added)" for c
+    using that by (auto simp: development_constants_member)
+  have "edit_specification_condition E (filter (\<lambda>e. e\<notin>set removed) E@added) \<longleftrightarrow> list_all ?Q ?C"
+    by (simp only: edit_specification_condition_def list_all_specification_constants)
+  also have "\<dots> \<longleftrightarrow> list_all (\<lambda>c. c\<notin>set ?C \<or> ?Q c) (isabelle_development_constants removed@isabelle_development_constants added)"
+    unfolding list_all_iff using out by blast
+  finally show ?thesis .
+qed
+
+lemma distinct_by_order_key:
+  "length (ordered_remdups (map entity_order_key E))=length E \<longleftrightarrow> distinct E"
+proof -
+  have "length (ordered_remdups (map entity_order_key E))=length (map entity_order_key E) \<longleftrightarrow> distinct (map entity_order_key E)"
+    by (simp only: ordered_remdups_exact length_remdups_eq remdups_id_iff_distinct)
+  then show ?thesis using inj_on_subset[OF entity_order_key_injective subset_UNIV] by (simp add: distinct_map)
+qed
+
+lemma gone_positions:
+  assumes E: "distinct E"
+  shows "remdups (filter (\<lambda>d. d\<in>set removed \<and> d\<notin>set added) E)=
+    map snd (sort_key fst (map (\<lambda>d. (the (value_reference_index d E),d)) (filter (\<lambda>d. d\<in>set E \<and> d\<notin>set added) (remdups removed))))"
+proof -
+  have "map snd (sort_key fst (map (\<lambda>d. (the (value_reference_index d E),d)) (filter (\<lambda>d. d\<in>set E \<and> d\<notin>set added) (remdups removed))))=
+      filter (\<lambda>d. d\<in>set removed \<and> d\<notin>set added) E"
+    by (rule first_positions_sort[OF E]) auto
+  then show ?thesis using E by (simp add: distinct_remdups_id)
+qed
+
+lemma gone_indexed:
+  "(if length (ordered_remdups (map entity_order_key E))=length E
+     then map snd (sort_key fst (map (\<lambda>d. (the (RBT.lookup (first_index_tree entity_order_key E) (entity_order_key d)),d))
+       (filter (\<lambda>d. RBT.lookup (first_index_tree entity_order_key E) (entity_order_key d)\<noteq>None \<and>
+         RBT.lookup (first_index_tree entity_order_key added) (entity_order_key d)=None) (entity_remdups removed))))
+     else entity_remdups (keyed_filter (\<lambda>k. RBT.lookup (ordered_member_tree (fset_of_list (map entity_order_key removed))) k\<noteq>None \<and>
+       RBT.lookup (first_index_tree entity_order_key added) k=None) (map (\<lambda>e. (e,entity_order_key e)) E)))=
+    remdups (filter (\<lambda>d. d\<in>set removed \<and> d\<notin>set added) E)"
+proof -
+  have fast: "filter (\<lambda>d. RBT.lookup (first_index_tree entity_order_key E) (entity_order_key d)\<noteq>None \<and>
+      RBT.lookup (first_index_tree entity_order_key added) (entity_order_key d)=None) (entity_remdups removed)=
+    filter (\<lambda>d. d\<in>set E \<and> d\<notin>set added) (remdups removed)"
+    by (simp add: entity_remdups_exact first_index_tree_lookup[OF entity_order_key_injective] value_reference_index_absent)
+  have positions: "map (\<lambda>d. (the (RBT.lookup (first_index_tree entity_order_key E) (entity_order_key d)),d)) xs=
+      map (\<lambda>d. (the (value_reference_index d E),d)) xs" for xs
+    by (simp add: first_index_tree_lookup[OF entity_order_key_injective])
+  have slow: "entity_remdups (keyed_filter (\<lambda>k. RBT.lookup (ordered_member_tree (fset_of_list (map entity_order_key removed))) k\<noteq>None \<and>
+       RBT.lookup (first_index_tree entity_order_key added) k=None) (map (\<lambda>e. (e,entity_order_key e)) E))=
+    remdups (filter (\<lambda>d. d\<in>set removed \<and> d\<notin>set added) E)"
+    by (simp only: entity_remdups_exact keyed_filter_map member_tree_key_found[OF entity_order_key_injective]
+        first_index_tree_lookup[OF entity_order_key_injective] value_reference_index_absent)
+  show ?thesis
+  proof (cases "distinct E")
+    case True
+    then show ?thesis by (simp only: True distinct_by_order_key if_True fast positions gone_positions[OF True])
+  next
+    case False
+    then show ?thesis by (simp only: False distinct_by_order_key if_False slow)
+  qed
+qed
+
 subsection \<open>The code equations\<close>
 
 lemma isabelle_appended_names_indexed [code]:
@@ -763,37 +765,56 @@ lemma edit_specification_condition_indexed [code]:
   by (intro ext) (simp only: edit_specification_condition_def Let_def listed_member_lookup
       list_all_specification_constants)
 
-lemma entity_row_shared [code]:
-  "entity_row key C=(let D=isabelle_development_constants (snd C) in
-    (\<lambda>e. \<lparr>row_declared=map key (entity_declared e),
-      row_subjects=map key (isabelle_entity_subjects (fst C) D e),
-      row_mentions=map key (entity_mentions e),
-      row_identity=isabelle_local_entities (fst C) [e]\<rparr>))"
-  by (simp add: fun_eq_iff entity_row_def Let_def)
+text \<open>
+  At its first argument the constructor builds, once per request state, the index of the request state's
+  entities by first position, whether they are distinct, the names' index, the members of the request
+  state's development and specification constants and the index of its declarations by constant; per
+  answer it reads only the edit.
+\<close>
 
 lemma state_edit_of_indexed [code]:
   "state_edit_of S=(let E=snd (snd S); names=fst (snd S); T=first_index_tree entity_order_key E;
-     EK=map (\<lambda>e. (e,entity_order_key e)) E; appended=isabelle_appended_names names;
-     condition=edit_specification_condition E;
+     EK=map (\<lambda>e. (e,entity_order_key e)) E; single=(length (ordered_remdups (map entity_order_key E))=length E);
+     appended=isabelle_appended_names names;
+     DE=ordered_member_tree (fset_of_list (isabelle_development_constants E));
+     CT=ordered_member_tree (fset_of_list (concat (map (\<lambda>e. case e of Isabelle_Specification p \<Rightarrow> isabelle_term_constants p | _ \<Rightarrow> []) E)));
+     DT=relation_store (development_declarations E);
      key=(\<lambda>d. natural_binary_digits (case RBT.lookup T (entity_order_key d) of None \<Rightarrow> length E | Some i \<Rightarrow> i));
-     row=entity_row state_constant_key (snd S) in
+     row=entity_row_with state_constant_key names (\<lambda>c. RBT.lookup DE c\<noteq>None) in
      (\<lambda>ns removed added. let Rm=ordered_member_tree (fset_of_list (map entity_order_key removed));
-       S'=(fst S,(appended ns,keyed_filter (\<lambda>k. RBT.lookup Rm k=None) EK@added)); names'=fst (snd S');
-       Ta=first_index_tree entity_order_key added;
-       gone=entity_remdups (keyed_filter (\<lambda>k. RBT.lookup Rm k\<noteq>None \<and> RBT.lookup Ta k=None) EK);
+       names'=appended ns; Ta=first_index_tree entity_order_key added;
+       DA=ordered_member_tree (fset_of_list (isabelle_development_constants added));
+       held=(\<lambda>c. fBex (relation_store_lookup DT (state_constant_key c)) (\<lambda>e. RBT.lookup Rm (entity_order_key e)=None) \<or>
+         RBT.lookup DA c\<noteq>None);
+       gone=(if single then map snd (sort_key fst (map (\<lambda>d. (the (RBT.lookup T (entity_order_key d)),d))
+           (filter (\<lambda>d. RBT.lookup T (entity_order_key d)\<noteq>None \<and> RBT.lookup Ta (entity_order_key d)=None) (entity_remdups removed))))
+         else entity_remdups (keyed_filter (\<lambda>k. RBT.lookup Rm k\<noteq>None \<and> RBT.lookup Ta k=None) EK));
        new=entity_remdups (filter (\<lambda>a. RBT.lookup T (entity_order_key a)=None) added);
        key'=(\<lambda>a. natural_binary_digits (case RBT.lookup Ta (entity_order_key a) of
          None \<Rightarrow> length E+length added | Some j \<Rightarrow> length E+j));
-       row'=entity_row state_constant_key (snd S') in
-     if condition (snd (snd S')) then
+       row'=entity_row_with state_constant_key names' held in
+     if list_all (\<lambda>c. RBT.lookup CT c=None \<or> (RBT.lookup DE c\<noteq>None)=held c)
+         (isabelle_development_constants removed@isabelle_development_constants added) then
        Some \<lparr>edit_atoms=map (\<lambda>(i,n). (state_constant_key i,n))
            (zip [length names..<length names'] (drop (length names) names')),
          edit_removed=kind_families (\<lambda>d. (key d,row d)) gone,
          edit_added=kind_families (\<lambda>a. (key' a,row' a)) new\<rparr>
      else None))"
-  unfolding Let_def keyed_filter_map member_tree_key_found[OF entity_order_key_injective]
-    member_tree_key_absent[OF entity_order_key_injective] first_index_tree_lookup[OF entity_order_key_injective]
-  by (intro ext) (simp add: state_edit_of_def Let_def edit_applied_def appended_atoms entity_remdups_exact kind_families_exact
-      value_reference_index_absent development_entity_key_def removed_keys added_keys)
+  unfolding Let_def
+  unfolding gone_indexed held_indexed
+  unfolding first_index_tree_lookup[OF entity_order_key_injective] listed_member_lookup listed_member_absent
+  by (intro ext) (simp add: state_edit_of_def Let_def edit_applied_def appended_atoms entity_remdups_exact
+      kind_families_exact value_reference_index_absent development_entity_key_def removed_keys added_keys
+      entity_row_with_row edit_condition_changed held_constants)
 
+text \<open>
+  A stage judging several answers against one request state applies the native answer's edit to that state
+  once: the constructor's partial application and the names' index are shared by every answer.
+\<close>
+
+lemma development_native_answer_edit_shared [code]:
+  "development_native_answer_edit S=(let edit=state_edit_of S; appended=isabelle_appended_names (fst (snd S)) in
+    (\<lambda>A. case A of (ns,removed,added) \<Rightarrow> let g=isabelle_state_embedding ns (appended ns) in
+      edit ns (map (isabelle_entity_rename g) removed) (map (isabelle_entity_rename g) added)))"
+  by (simp add: fun_eq_iff development_native_answer_edit_def Let_def split: prod.split)
 end

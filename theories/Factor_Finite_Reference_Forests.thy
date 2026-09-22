@@ -39,6 +39,6 @@ text \<open>
 
 lemma pattern_forest_reference_table:
   "syntax_forest_table (map pattern_literal_bindings ps)=pattern_forest_bindings ps"
-  by (simp add: syntax_forest_table_def pattern_forest_bindings_def map_slot_keys_def cong: SUP_cong_simp)
+  by (simp add: syntax_forest_table_def pattern_forest_bindings_def placed_table_def map_slot_keys_def cong: SUP_cong_simp)
 
 end

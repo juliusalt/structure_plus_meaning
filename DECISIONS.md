@@ -11856,6 +11856,19 @@ recursive one, and building it pushes each child once instead of once per later 
   equations of the pattern forest (`pattern_forest_syntax.simps`, `_interior.simps`, `_bindings.simps`,
   `_roots.simps`), the second equation of `pattern_forest_slots` and `pattern_forest_cons_slots`, which stated the
   recursion over the heads 2 and 3 that the flat placement replaces.
+- *Correction (task 221, 2026-09-22; task 179's review, follow-up 1):* the forest over a family of placements is
+  stated once, in the new RRA_Placed_Forests (after RRA_Syntax_Construction): `placed_positions`, `placed_forest`,
+  `placed_table`, their executable forms `finite_placed_forest`, `finite_placed_table` (exact decodes, one code
+  equation each reading the children through `zip [0..<length Rs] Rs`), silence at a position `silent_at`, and
+  `placed_forest_formed`, `_reads`, `_silent` proved once from each placement being an injective formed addressing
+  of its child and two placements meeting only at positions silent in both. The theory reads no branch.
+  **Retired** the copies: the bound forest's own definition and its proofs of formation, reads, silence and the
+  member lemmas (`bound_forest` is `placed_forest bound_branch`, each statement kept and derived with
+  `bound_branch_injective`, `_overlap`, `_addressing` and `binder_silent_silent_at`, new); `finite_bound_forest`'s
+  own definition (it is `finite_placed_forest bound_branch`); `pattern_forest_bindings`' own union (it is
+  `placed_table syntax_branch`, its member and finiteness facts derived from `placed_table_member` and
+  `placed_table_finite`). `binder_silent` keeps its
+  definition. The syntax forest, its positions and its table become instances in the build after task 153.
 
 Outside the founding theories no proof computes a position: `syntax_branch.simps` leave the simpset after the
 contracts are proved, `family_ports_def`, `syntax_record_ports_def` and `fresh_address_def` are unfolded nowhere

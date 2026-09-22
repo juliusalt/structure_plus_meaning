@@ -168,7 +168,8 @@ definition development_rows_term :: "development_store_rows \<Rightarrow> factor
 text \<open>
   On formed rows the search holds at a locus of exactly the value the store holds there: the search's
   own contract (@{thm development_row_searches.exact_held}) and the check's compose, neither restated. On a
-  single-valued store that is the value its row holds (@{thm path_store_lookup}).
+  single-valued store that is the value its row holds (the path store's index,
+  @{thm [source] path_store_carrier_index}).
 \<close>
 
 theorem development_row_lookup_at:
@@ -208,7 +209,8 @@ theorem development_row_at:
   assumes sv: "single_valued (set rows)" and formed: "\<forall>(l,w)\<in>set rows. term_formed w"
   shows "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
       \<in>positive_meaning development_rows_program \<longleftrightarrow> (l,v)\<in>set rows"
-  by (simp only: development_row_lookup_at[OF formed] path_store_lookup[OF sv])
+  by (simp only: development_row_lookup_at[OF formed]
+    carrier_index.query_search[OF path_store_carrier_index sv UNIV_I, simplified id_apply])
 
 section \<open>The request at a locus\<close>
 

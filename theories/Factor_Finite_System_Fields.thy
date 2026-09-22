@@ -1,5 +1,5 @@
 theory Factor_Finite_System_Fields
-  imports Factor_Executable_Systems Factor_System_Renaming Factor_Finite_Schema_Renaming Finite_Functional_Enumeration
+  imports Factor_Executable_Systems Factor_System_Renaming Factor_Finite_Schema_Renaming Functional_Enumeration_Indexes
 begin
 
 section \<open>Executable projections and simultaneous definition relocation\<close>
@@ -22,7 +22,8 @@ proof -
   have functional: "finite_relation_functional (finite_system_interfaces P)"
     using formed by (simp add: finite_system_formed_def)
   have selected: "finite_system_interface_option P d=Some p"
-    by (simp only: finite_system_interface_option_def finite_relation_option_correct[OF functional]; rule row)
+    by (simp only: finite_system_interface_option_def
+      functional_option_index.query_search[OF functional UNIV_I, unfolded id_apply]; rule row)
   have source: "schema_system_formed (decode_finite_system P)"
     using formed by (simp only: finite_system_formed_correct)
   have actual: "(d,decode_finite_pattern p)\<in>system_interfaces (decode_finite_system P)"

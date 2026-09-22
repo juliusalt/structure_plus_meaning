@@ -42,16 +42,18 @@ review. Landed: #106 (`1add503f`, `request_presents_constructed`). Ready: #108, 
 conditions and corollaries, admitting a request at its locus through the store search with #97's contract for held
 values — after #106, #108, #110 and #97; and #114, the held measurement of one construction, after #112.
 
-**The rows line (#30, #135).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
+**The rows line (#30, #141).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
 a locus (#26), the presenters (#28), the store's (#83), the rows' fix (#84) and the store search's contract for values
 formed where the store holds them (#97, `b4c103e6`) have landed. #30 retires three of task 9's six tagged items — the
 issue locus's `[1]`, the problem locus as a contract-with-names and `development_local_contract` — switches the loci
 and the machinery state's root, and re-records the words once, the one task whose check cannot accept by word equality
-(q45, q46). The problem datum's origin, authority and contract tags and `development_named_request`'s lookup of a name
-need a row presented outside the store: a report's problem with the citations its context supplies, and a request
-designated by its locus in a packet and an answer, which is transport. #135 designs that, beside everything; the
-presenter switch and the transport are briefed from its entry, each with its own word change, and the table listings
-(#83's `path_store_rows`) and the discharge of #84's formedness premise go with the presenter switch. #103, the answer
+(q45, q46). The other three — the problem datum's origin, authority and contract tags, and
+`development_named_request`'s lookup of a name — are decided by #135's entry (accepted 2026-09-22): a row outside the
+store is the store's row presented in its context; the successor keeps the positions of the state it succeeds (one
+identity lemma, no transport, q48); an answer designates its request by its locus. Its three builds — the successor
+keeping positions, the presenter switch, the designation — come after #30 in that order and are briefed by #141; #64
+waits on the first, #92 on the second, the third on #103; the table listings (#83's `path_store_rows`) and the
+discharge of #84's formedness premise go with the presenter switch. #103, the answer
 reader's refusal, waits on #30. New native definitions never wait for #30 (Decisions).
 
 **The decomposition (#94, #64).** The repair rows (#58), the soundness (#60), #66's entry — a decomposition that applied
@@ -78,11 +80,15 @@ has landed.
 **The keyed question and the native reader (#124, #136, #90–#93).** #88 (`cde3faf2`): the key search costs at most
 0.05 ms; a packet's cost is the native reading of the programs that state its candidates, superlinear in their syntax.
 #124 lands a constant factor of about 4 on the package reader (`Factor_Shared_Package_Readings`, `Let`) and its held
-split: the growth is the schema readings', within a schema the conclusion's sized pattern reading; #136 refines that
-growth at its cause, attributed per node first. #90 switches the 20 overnight native-control theories after #124,
-re-recording the overnight recipe once; #92 retires `filtered_development_question`'s index form after #90 and #30.
-q33's facts, unread by the planner, are named in #90's and #92's inputs. Observation's read-back of an installed
-program (Open 46) waits on #136's measurement.
+per-address split: the reader is linear in what it reads, about 0.28 µs per bit of address path, and the growth is the
+address length — `syntax_branch` places the i-th forest child under i + 1 components, O(n²) address material in n
+clauses, and `family_ports` and `fresh_addresses` share the unary pattern. #136, a design, decides the address layout
+of compiled syntax (the planner, answering q47: the layout changes, since every native question, read-back and word
+pays it); its builds, briefed from the entry, change every compiled artifact and every word once, after #30 and ordered
+against #90 and #92. #90 switches the 20 overnight native-control theories after #124, re-recording the overnight
+recipe once; #92 retires `filtered_development_question`'s index form after #90 and #30. q33's facts, unread by the
+planner, are named in #90's and #92's inputs. Observation's read-back of an installed program (Open 46) waits on the
+layout's measurement.
 
 **The in-place notions (#128–#133).** Task 85's entry (`60623c6a`): a check made where its premise is established, and
 a generator of the accepted candidates; their theories landed with #126 (`1af296a2`, `Established_Premises`,
@@ -90,21 +96,21 @@ a generator of the accepted candidates; their theories landed with #126 (`1af296
 constructor's contract (the seed recipe, 93.04 s held after #80, bounds every landing check that re-executes it); #132
 re-cites the candidate generators and the constructed applications, removing `ffilter_singleton`, and completes the
 missing-use lists in `REASONING_REUSE.md`; #130 re-cites the environment readings, the proof-node rows and the join
-after #124, #136 and #132, which change the same readings or the same paragraph. The seed recipe's other costs are
+after #124 and #132, which change the same readings or the same paragraph. The seed recipe's other costs are
 Open 27.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews. The deepest chains are 4: #45 (after #44, #42, #38/#40) and #114 (after #112, #110, #38/#40).
-Beside them: #30 with #103 after it; the designs #135 and #138; the fix #139; #94, then #64; #105 and #119; #124,
-#136, then #130; #128 and #132; the keyed line's #90 and #92.
+Beside them: #30 with #103 and the brief of #135's builds (#141) after it; the designs #138 and #136; the fix #139;
+#94, then #64; #105 and #119; #124, then #130; #128 and #132; the keyed line's #90 and #92.
 
-**Order** (`105 119 30 31 94 124 125 135 138 139 140 38 39 40 41 108 109 128 129 136 137 132 133 42 43 44 45 110 111 112 113 114 130 131 103 104 90 91 64 65 92 93`).
+**Order** (`105 119 30 31 141 94 124 125 138 136 139 140 38 39 40 41 108 109 128 129 132 133 42 43 44 45 110 111 112 113 114 130 131 103 104 90 91 64 65 92 93`).
 The tasks in flight first: the base advance #105, which #117's landing released, and the retention #119 after it
-(every landing check costs about 330–350 s until both); #30 resuming step 2 and #94 resuming on #36's landing; #124
-re-planned to land what exists. Then the two designs, whose entries change other tasks, and the small fix #139; the
-verdict and request chains, which take a slot whenever one of their tasks is ready; #128 and #136 beside them; then the
-re-citations, the answer reader, the keyed line and the decomposition's #64. A parked task whose hold nears its end
-resumes first by itself.
+(every landing check costs about 330–350 s until both); #30 resuming step 2, with the brief of #135's builds (#141)
+after its landing; #94 resuming on #36's landing; #124 re-planned to land what exists. Then the designs #138 and #136,
+whose entries change other tasks, and the small fix #139; the verdict and request chains, which take a slot whenever
+one of their tasks is ready; #128 beside them; then the re-citations, the answer reader, the keyed line and the
+decomposition's #64. A parked task whose hold nears its end resumes first by itself.
 
 ## Decisions
 
@@ -263,9 +269,13 @@ judgment's path.
   46's rows, one row reading at two stores (`native_excess_exact`, `native_excess_answer`, `native_undeclared_exact`),
   every rule positive, task 34's traversal made generic. Its review: path inequality to #138, two premises to #139,
   `path_store_present` to #44, the probe's options to Open 34.
-- **#134** (investigation, accepted 2026-09-22): proved-code export is deterministic across proof contexts; a receipt
-  goes stale only when a code equation in its recipe's closure changes, and reuse fires after a base move or a
-  retention (Q11).
+- **#135** (design, accepted 2026-09-22): DECISIONS.md "A row outside the store is presented in its context, and an
+  answer designates its request by its locus" — the context supplies a row's citations; the presenters move into a new
+  `Development_Row_Data`; the successor keeps positions; the request at a locus through the path store's index
+  instance; three builds in order, every reader of the four items with its decision.
+- **#134** (investigation) `5a039e44`: proved-code export is deterministic across proof contexts (52 groups of
+  sessions, byte-identical modules), noted at `reusable_execution`; a receipt goes stale only when a code equation in
+  its recipe's closure changes, and reuse fires after a base move or a retention (Q11).
 
 ## Open
 
@@ -429,23 +439,36 @@ Not yet planned, in the order they are expected to be planned:
 46. **Observation's read-back of the installed program** (#88): a packet reads its candidates' syntax at generation,
     compile and observation's read-back. Skipping the read-back needs a recovery theorem for finite programs — the
     installer knows its program only up to an alpha variant, and the read-back program is part of the report's
-    words — a design question. After #124's measurement shows what the reading then costs.
+    words — a design question. #124 measured the reading linear in its address material; after the layout's builds
+    (#136) show what it then costs.
+47. **`finite_demanded_step_shared_code` into `Finite_Demanded_Closures`** (#124's review): the traversal's shared step
+    stated where the traversal is. With the next edit of that theory.
+48. **Formation checks that grow with their input** (#124's attribution): `finite_object_formed` is quadratic in the
+    artifact (8.3 ms at 1,114 atoms) and environment formation grows with positions (at most 1.3 ms at the samples);
+    neither is a stage of the reader. At a measured need on the loop's path; an index instance if a pairwise check is
+    the cause.
+49. **Origins and authorities no construction assigns yet** (#135's entry): the observation naming a problem whose
+    origin or authority has no family to cite is owed at the first construction that assigns one (an obligation, a
+    direction, an owner record), which brings the family its citation needs — a role of `Development_Loci` for owner
+    or obligation records — or its report refuses.
+50. **A request's carried context through entity kind tags** (#135's entry): `isabelle_entity_data`'s kind tags,
+    which task 3's families replace, and the problem assessment's `development_undeclared_subjects` presented as
+    positions; neither is one of task 9's six items. The octet direction, when a decision first reads them.
 
 ## Now
 
 - **In flight (plan-39, 08:15)**: #117 landed (`27ff0f60`), releasing #105 (told to remove the orphaned session
   databases `Incremental_5c2806e0` and `Incremental_50702571` by literal name), #119 after it; #30 resumes step 2 (the
   loci, the machinery state's root, three retirements) after q45 and q46; #94 resumes on #36's landing; #128 refines
-  the seed transactions; #124 is re-planned to land its constant factor and attribution (its review #125 judges that),
-  #136 refining the growth after it; #134 accepted, its comment at `reusable_execution` with the finalizer. Every
+  the seed transactions; #124 lands its constant factor and the growth's held cause (its review #125 judges that), and
+  design #136 decides the address layout that cause names. Every
   landing check until #105 and #119 costs about 330–350 s (#126's: 387 rebuilt, all 52 recipes; #117's 345.7 s). #40's brief carries #101's review
   (the families measured first; the two consumer corollaries); #42's and #112's carry #106's (the introduction's subset
   form stated once by whichever first needs it; the key premise derived where it can be).
 - **Owed to briefs when their inputs land**: #44's brief takes #138's decision and moves `path_store_present` into
   `Native_Path_Stores` with store absence (#36's review, follow-up 4); #110's brief takes #139's derived
-  `declarations_single_valued` in place of the carried condition; #64's brief takes #135's transport of a locus across
-  a successor, if the entry places it there; the follow-up builds of #135 (the presenter switch, the transport) are
-  briefed from its entry, after #30 and ordered against #64, #92 and #103.
+  `declarations_single_valued` in place of the carried condition; #64's brief takes build 1's identity lemma in place
+  of a transport (#135's entry, q48), and #141 wires #64 after that build.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).

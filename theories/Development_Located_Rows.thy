@@ -1,15 +1,21 @@
 theory Development_Located_Rows
-imports Development_Rows
+imports Development_Rows Factor_Native_Equality Factor_System_Relocation
 begin
 
-section \<open>The value asked is the value found\<close>
+section \<open>The development's store and its one search\<close>
 
 text \<open>
-  A search of a path store checks the value it finds in a context (@{locale native_store_search_program}).
-  Asking which value a store holds at a locus is that search whose context is the value asked and whose
-  check is equality: one rule, whose conclusion is a pair of one variable with itself and which has no
-  premise. It compares the two values only for equality, through the variable that occurs twice, and
-  reads nothing inside them.
+  The development's store is the path store of its rows (@{const development_rows_present}), and one
+  search reads it: the search of the path store (@{locale native_store_search_program}) installed at its
+  own site, whose check is equality at a second site. Asking which value a store holds at a locus is that
+  search whose context is the value asked: the check compares the two values only for equality and reads
+  nothing inside them. A row stands at a locus and the locus alone selects it: the role and the kind are
+  prefixes of the path the search descends, so no program selects a family, compares a kind or a role, or
+  reads a name. The two sites are the program's own: native readiness holds its definitions at other
+  sites, so the two programs can be joined in one system.
+
+  The store presents each row's value as itself. Every row value is formed by the presentation relation
+  (@{thm development_rows_formed}), which is a premise owned by whoever presents a state.
 \<close>
 
 definition native_value_rule :: "(local_address,local_address,'u definition_site) finite_factor_schema" where
@@ -17,49 +23,11 @@ definition native_value_rule :: "(local_address,local_address,'u definition_site
 
 declare native_value_rule_def [code_unfold]
 
-locale native_value_program = native_rule_family P ch "[([0],native_value_rule)]"
-  for P :: "'u native_system" and ch :: "'u definition_site"
-begin
-
-theorem exact: "(ch,Pair_Term x y)\<in>positive_meaning P \<longleftrightarrow> term_formed x \<and> x=y"
-proof
-  assume holds: "(ch,Pair_Term x y)\<in>positive_meaning P"
-  have "x=y"
-    by (rule holds_cases[OF holds]) (simp add: native_value_rule_def, metis)
-  then show "term_formed x \<and> x=y" using holds_formed[OF holds] by simp
-next
-  assume given: "term_formed x \<and> x=y"
-  then have xf: "term_formed x" and xy: "x=y" by blast+
-  have "(ch,evaluate_pattern (\<lambda>_. x) (decode_finite_pattern
-      (Finite_Pattern_Pair (native_var 0) (native_var 0))))\<in>positive_meaning P"
-    by (rule native_step[where c="[0]" and p="Finite_Pattern_Pair (native_var 0) (native_var 0)" and ps="[]"])
-      (use xf in \<open>simp_all add: native_value_rule_def\<close>)
-  then show "(ch,Pair_Term x y)\<in>positive_meaning P" using xy by simp
-qed
-
-end
-
-section \<open>The development's store and its one search\<close>
-
-text \<open>
-  The development's store is the path store of its rows (@{const development_rows_present}), and one
-  search reads it: the search of the path store (@{locale native_store_search_program}) installed at its own site, whose check is
-  the value rule above at a second site. A row stands at a locus and the locus alone selects it: the
-  role and the kind are prefixes of the path the search descends, so no program selects a family,
-  compares a kind or a role, or reads a name.
-
-  A native call's argument is formed, so the store is presented with each value formed: a formed value
-  is presented as itself, and the one shape a native program cannot hold is presented as the empty
-  payload. Every body the presentation stores is formed, so for those the presentation is the value
-  itself; whether every row's value is formed is a question about the presentation relation, and this
-  theory asks it of no row but the one it reads.
-\<close>
-
 abbreviation development_row_search :: "local_address option definition_site" where
-  "development_row_search \<equiv> (Some [],[1])"
+  "development_row_search \<equiv> (Some [],[8])"
 
 abbreviation development_row_check :: "local_address option definition_site" where
-  "development_row_check \<equiv> (Some [],[2])"
+  "development_row_check \<equiv> (Some [],[9])"
 
 definition development_row_definitions :: "(local_address option definition_site\<times>
     (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
@@ -83,24 +51,9 @@ lemma development_rows_family:
   assumes member: "(d,rs)\<in>set development_row_definitions"
     and plain: "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}"
   shows "native_rule_family development_rows_program d rs"
-proof (rule native_rule_family.intro)
-  show "schema_system_formed development_rows_program" by (rule development_rows_program_formed)
-  have distinct: "distinct (map fst development_row_definitions)" by (simp add: development_row_definitions_def)
-  show "((d,c),S)\<in>system_clauses development_rows_program \<longleftrightarrow>
-      (\<exists>F. (c,F)\<in>set rs \<and> S=decode_finite_schema F)" for c S
-  proof -
-    have "((d,c),S)\<in>system_clauses development_rows_program \<longleftrightarrow>
-        (\<exists>rs'. (d,rs')\<in>set development_row_definitions \<and> (\<exists>F. (c,F)\<in>set rs' \<and> S=decode_finite_schema F))"
-      unfolding development_rows_program_def finite_development_rows_program_def by (rule finite_rule_program_clause)
-    then show ?thesis using eq_key_imp_eq_value[OF distinct member] member by blast
-  qed
-  have site: "d\<in>fst ` set development_row_definitions" using member by (rule rev_image_eqI) simp
-  show "schema_call_formed development_rows_program d t \<longleftrightarrow> term_formed t" for t
-    unfolding development_rows_program_def finite_development_rows_program_def
-    by (rule finite_rule_program_call[OF development_rows_program_formed[unfolded development_rows_program_def
-      finite_development_rows_program_def] site])
-  show "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}" by (rule plain)
-qed
+  unfolding development_rows_program_def finite_development_rows_program_def
+  by (rule finite_rule_program_family[OF development_rows_program_formed[unfolded development_rows_program_def
+    finite_development_rows_program_def] _ member plain]) (simp add: development_row_definitions_def)
 
 interpretation development_row_searches: native_store_search_program development_rows_program
     development_row_search development_row_check
@@ -108,58 +61,159 @@ interpretation development_row_searches: native_store_search_program development
     (simp_all add: development_row_definitions_def native_store_search_rules_def native_store_found_rule_def
       native_store_left_rule_def native_store_right_rule_def)
 
-interpretation development_row_checks: native_value_program development_rows_program development_row_check
-  unfolding native_value_program_def by (rule development_rows_family)
-    (simp_all add: development_row_definitions_def native_value_rule_def)
-
-definition development_row_value :: "factor_term \<Rightarrow> factor_term" where
-  "development_row_value y=(if term_formed y then y else Payload_Term [])"
-
-lemma development_row_value_formed: "term_formed (development_row_value y)"
-  by (simp add: development_row_value_def octets_formed_def)
-
-lemma development_row_value_at: "term_formed y \<Longrightarrow> development_row_value y=y"
-  by (simp add: development_row_value_def)
-
-definition development_rows_term :: "development_store_rows \<Rightarrow> factor_term" where
-  "development_rows_term rows=store_term development_row_value (path_store rows)"
+section \<open>The check is the native equality program\<close>
 
 text \<open>
-  On a single-valued store the search holds at a locus of exactly the value its row holds there: the
-  search's own contract (@{thm development_row_searches.exact}) and the store's lookup
-  (@{thm path_store_lookup}) compose, neither restated.
+  The check is the existing native equality program (@{const native_equality_program}), relocated to the
+  check's site: its one clause is an alpha variant of @{const native_equality_schema}, so its meaning is
+  that program's meaning (@{thm native_equality_exact}) through the renaming and alpha contracts, and the
+  rows program agrees with it at the check's site, which calls nothing. No argument about equality is made
+  again here.
+\<close>
+
+theorem development_row_check_exact:
+  "(development_row_check,Pair_Term x y)\<in>positive_meaning development_rows_program \<longleftrightarrow> term_formed x \<and> x=y"
+proof -
+  define Q :: "local_address option native_system" where
+    "Q=decode_finite_system (finite_rule_program [(development_row_check,[([0],native_value_rule)])])"
+  define g :: "local_address option definition_site \<Rightarrow> local_address option definition_site" where
+    "g=(\<lambda>_. development_row_check)"
+  have finite_formed: "finite_system_formed (finite_rule_program [(development_row_check,
+      [([0],native_value_rule::(local_address,local_address,local_address option definition_site) finite_factor_schema)])])"
+    by code_simp
+  have Qf: "schema_system_formed Q" using finite_formed by (simp only: Q_def finite_system_formed_correct)
+  have Qdefs: "system_definitions Q={development_row_check}"
+    by (simp add: Q_def finite_rule_program_definitions)
+  have rows_defs: "system_definitions development_rows_program={development_row_search,development_row_check}"
+    by (simp add: development_rows_program_def finite_development_rows_program_def finite_rule_program_definitions
+      development_row_definitions_def)
+  have shared: "system_definitions development_rows_program\<inter>system_definitions Q={development_row_check}"
+    using rows_defs Qdefs by auto
+  have agree: "systems_agree_on development_rows_program Q {development_row_check}"
+    unfolding systems_agree_on_def development_rows_program_def finite_development_rows_program_def Q_def
+      finite_rule_program_interface finite_rule_program_clause
+    by (simp add: development_row_definitions_def)
+  have first: "(development_row_check,t)\<in>positive_meaning development_rows_program \<longleftrightarrow>
+      (development_row_check,t)\<in>positive_meaning Q" for t
+    by (rule positive_meaning_shared_definitions[OF development_rows_program_formed Qf agree[folded shared]])
+      (simp_all add: rows_defs Qdefs)
+  have eq_defs: "system_definitions native_equality_program={(None,[Suc 0])}"
+    by (simp add: native_equality_program_def system_definitions_def rel_dom_def)
+  have inj: "inj_on g (system_definitions native_equality_program)" by (simp add: eq_defs)
+  have R: "rename_system g native_equality_program=\<lparr>system_interfaces={(development_row_check,Pattern_Variable [4])},
+      system_clauses={((development_row_check,[7]),native_equality_schema)}\<rparr>"
+    by (simp add: rename_system_def native_equality_program_def g_def rename_schema_def native_equality_schema_def
+      map_socket_graph_def)
+  have Rf: "schema_system_formed (rename_system g native_equality_program)"
+    by (rule renamed_system_formed[OF native_equality_system_formed inj])
+  have decoded: "decode_finite_schema (native_value_rule::(local_address,local_address,local_address option definition_site) finite_factor_schema)=
+      \<lparr>schema_conclusion=Pattern_Pair (Pattern_Variable [0]) (Pattern_Variable [0]),
+        schema_premises={},schema_material_premises={}\<rparr>"
+    by (simp add: decode_finite_schema_def native_value_rule_def finite_native_rule_def map_relation_values_def)
+  have alpha: "schema_alpha_variant native_equality_schema (decode_finite_schema native_value_rule)"
+    unfolding schema_alpha_variant_def decoded
+    by (rule exI[of _ "\<lambda>_. [0]"], rule exI[of _ id])
+      (simp add: native_equality_schema_def rename_schema_def map_socket_graph_def schema_variables_def
+        schema_sockets_def)
+  have fam: "schema_family_variant (\<lambda>_. [0]) {([7],native_equality_schema)} {([0],decode_finite_schema native_value_rule)}"
+    by (rule schema_family_variant_singleton_iff[THEN iffD2]) (use alpha in auto)
+  have variant: "system_alpha_variant (rename_system g native_equality_program) Q"
+    unfolding system_alpha_variant_def
+  proof (intro conjI ballI)
+    show "schema_system_formed (rename_system g native_equality_program)" by (rule Rf)
+    show "schema_system_formed Q" by (rule Qf)
+    show "system_definitions (rename_system g native_equality_program)=system_definitions Q"
+      unfolding Qdefs by (simp add: R system_definitions_def rel_dom_def)
+    fix d assume "d\<in>system_definitions (rename_system g native_equality_program)"
+    then have d: "d=development_row_check" by (simp add: R system_definitions_def rel_dom_def)
+    have iR: "system_interface (rename_system g native_equality_program) d=Pattern_Variable [4]"
+      by (rule system_interface_unique[OF Rf]) (simp add: R d)
+    have iQ: "system_interface Q d=Pattern_Variable [0]"
+      by (rule system_interface_unique[OF Qf]) (simp only: Q_def finite_rule_program_interface d; simp)
+    have fR: "system_clause_family (rename_system g native_equality_program) d={([7],native_equality_schema)}"
+    proof (rule set_eqI)
+      fix q show "q\<in>system_clause_family (rename_system g native_equality_program) d \<longleftrightarrow>
+          q\<in>{([7],native_equality_schema)}"
+        by (cases q) (simp add: R d)
+    qed
+    have fQ: "system_clause_family Q d={([0],decode_finite_schema native_value_rule)}"
+    proof (rule set_eqI)
+      fix q show "q\<in>system_clause_family Q d \<longleftrightarrow> q\<in>{([0],decode_finite_schema native_value_rule)}"
+        by (cases q) (simp only: system_clause_member Q_def finite_rule_program_clause d; auto)
+    qed
+    show "\<exists>f h. inj_on f (pattern_variables (system_interface (rename_system g native_equality_program) d)) \<and>
+        system_interface Q d=rename_pattern f (system_interface (rename_system g native_equality_program) d) \<and>
+        schema_family_variant h (system_clause_family (rename_system g native_equality_program) d)
+          (system_clause_family Q d)"
+      by (rule exI[of _ "\<lambda>_. [0]"], rule exI[of _ "\<lambda>_. [0]"]) (simp add: iR iQ fR fQ fam)
+  qed
+  have eq_member: "(None,[Suc 0])\<in>system_definitions native_equality_program" by (simp add: eq_defs)
+  have second: "(development_row_check,t)\<in>positive_meaning Q \<longleftrightarrow>
+      ((None,[Suc 0]),t)\<in>positive_meaning native_equality_program" for t
+    using system_variant_renamed_meaning_at[OF native_equality_system_formed inj variant eq_member, of t]
+    by (simp add: g_def)
+  show ?thesis by (simp only: first second native_equality_exact) auto
+qed
+
+section \<open>The value asked is the value found\<close>
+
+text \<open>
+  A store's presentation reads only the values it holds (@{thm store_term_cong}), so presenting every
+  stored value as itself is the presentation through any formed value map that is the identity on them.
+\<close>
+
+definition development_rows_term :: "development_store_rows \<Rightarrow> factor_term" where
+  "development_rows_term rows=store_term id (path_store rows)"
+
+text \<open>
+  On formed rows the search holds at a locus of exactly the value the store holds there: the search's
+  own contract (@{thm development_row_searches.exact}) and the check's compose, neither restated. On a
+  single-valued store that is the value its row holds (@{thm path_store_lookup}).
 \<close>
 
 theorem development_row_lookup_at:
-  "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
-      \<in>positive_meaning development_rows_program \<longleftrightarrow>
-    term_formed v \<and> (\<exists>w. store_lookup (path_store rows) l=Some w \<and> v=development_row_value w)"
+  assumes formed: "\<forall>(l,w)\<in>set rows. term_formed w"
+  shows "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
+      \<in>positive_meaning development_rows_program \<longleftrightarrow> store_lookup (path_store rows) l=Some v"
 proof -
+  define f where "f=(\<lambda>y. if term_formed y then y else Payload_Term [])"
+  have ff: "term_formed (f y)" for y by (simp add: f_def octets_formed_def)
+  have stored: "term_formed w" if "store_lookup (path_store rows) bs=Some w" for bs w
+    using path_store_found[OF that] formed by blast
+  have same: "store_term id (path_store rows)=store_term f (path_store rows)"
+    by (rule store_term_cong) (simp add: f_def stored)
   have "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
       \<in>positive_meaning development_rows_program \<longleftrightarrow>
     term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
-      (development_row_check,Pair_Term v (development_row_value w))\<in>positive_meaning development_rows_program)"
-    unfolding development_rows_term_def by (rule development_row_searches.exact) (rule development_row_value_formed)
-  also have "\<dots> \<longleftrightarrow> term_formed v \<and> (\<exists>w. store_lookup (path_store rows) l=Some w \<and> v=development_row_value w)"
-    by (simp only: path_term_injective development_row_checks.exact) blast
+      (development_row_check,Pair_Term v (f w))\<in>positive_meaning development_rows_program)"
+    unfolding development_rows_term_def same by (rule development_row_searches.exact) (rule ff)
+  also have "\<dots> \<longleftrightarrow> store_lookup (path_store rows) l=Some v"
+  proof
+    assume "term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
+      (development_row_check,Pair_Term v (f w))\<in>positive_meaning development_rows_program)"
+    then obtain bs w where key: "path_term l=path_term bs" and found: "store_lookup (path_store rows) bs=Some w"
+      and checked: "(development_row_check,Pair_Term v (f w))\<in>positive_meaning development_rows_program" by blast
+    have "l=bs" using key by (simp only: path_term_injective)
+    moreover have "v=f w" using checked by (simp only: development_row_check_exact)
+    moreover have "f w=w" using stored[OF found] by (simp add: f_def)
+    ultimately show "store_lookup (path_store rows) l=Some v" using found by simp
+  next
+    assume found: "store_lookup (path_store rows) l=Some v"
+    have formed_v: "term_formed v" by (rule stored[OF found])
+    then have "(development_row_check,Pair_Term v (f v))\<in>positive_meaning development_rows_program"
+      by (simp add: f_def development_row_check_exact)
+    then show "term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
+      (development_row_check,Pair_Term v (f w))\<in>positive_meaning development_rows_program)"
+      using found formed_v by blast
+  qed
   finally show ?thesis .
 qed
 
 theorem development_row_at:
-  assumes sv: "single_valued (set rows)"
+  assumes sv: "single_valued (set rows)" and formed: "\<forall>(l,w)\<in>set rows. term_formed w"
   shows "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
-      \<in>positive_meaning development_rows_program \<longleftrightarrow>
-    term_formed v \<and> (\<exists>w. (l,w)\<in>set rows \<and> v=development_row_value w)"
-proof -
-  have "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
-      \<in>positive_meaning development_rows_program \<longleftrightarrow>
-    term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
-      (development_row_check,Pair_Term v (development_row_value w))\<in>positive_meaning development_rows_program)"
-    unfolding development_rows_term_def by (rule development_row_searches.exact) (rule development_row_value_formed)
-  also have "\<dots> \<longleftrightarrow> term_formed v \<and> (\<exists>w. (l,w)\<in>set rows \<and> v=development_row_value w)"
-    by (simp only: path_term_injective path_store_lookup[OF sv] development_row_checks.exact) blast
-  finally show ?thesis .
-qed
+      \<in>positive_meaning development_rows_program \<longleftrightarrow> (l,v)\<in>set rows"
+  by (simp only: development_row_lookup_at[OF formed] path_store_lookup[OF sv])
 
 section \<open>The request at a locus\<close>
 
@@ -186,11 +240,8 @@ proof -
   have look: "store_lookup (path_store rows) (development_located_at key Development_Request_Role (fst r))=
       Some (development_request_body (supported r) (scope r))"
     by (rule development_rows_request(5)[OF present r])
-  have formed: "term_formed (development_request_body (supported r) (scope r))"
-    by (rule development_request_body_formed)
   show ?thesis
-    unfolding development_row_lookup_at look option.inject
-    using formed development_row_value_at[OF formed] by auto
+    unfolding development_row_lookup_at[OF development_rows_formed[OF present]] look by auto
 qed
 
 text \<open>

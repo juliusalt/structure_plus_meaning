@@ -153,6 +153,53 @@ proof -
     by (simp only: finite_term_shared_word_indexed keys run rows Let_def case_prod_unfold fst_conv snd_conv)
 qed
 
+lemma keyed_compared_reference_sequence:
+  "keyed_reference_compared_run compare_compared_rows ks RBT.empty 0 [] []=value_reference_sequence ks []"
+proof -
+  have "keyed_reference_compared_run compare_compared_rows ks RBT.empty 0 [] []=keyed_reference_run id ks RBT.empty 0 [] []"
+    by (rule keyed_reference_compared_run_exact[OF compare_compared_rows_linear])
+  also have "\<dots>=(fst (value_reference_sequence ks []),map id (snd (value_reference_sequence ks [])))"
+    by (rule keyed_reference_run_exact[OF inj_on_id])
+  finally show ?thesis by (simp only: list.map_id prod.collapse)
+qed
+
+definition keyed_segmented_references ::
+  "compared_artifact_rows list list \<Rightarrow> nat list\<times>compared_artifact_rows list" where
+  "keyed_segmented_references cs=(let
+      locals=Parallel.map (\<lambda>c. keyed_reference_compared_run compare_compared_rows c RBT.empty 0 [] []) cs;
+      (G,U)=keyed_reference_compared_run compare_compared_rows (concat (map snd locals)) RBT.empty 0 [] []
+    in (value_reference_merged locals G,U))"
+
+lemma keyed_segmented_references_exact:
+  "keyed_segmented_references cs=value_reference_sequence (concat cs) []"
+proof -
+  have split: "value_reference_sequence (concat cs) []=(let locals=map (\<lambda>c. value_reference_sequence c []) cs;
+      (G,U)=value_reference_sequence (concat (map snd locals)) [] in (value_reference_merged locals G,U))"
+    by (rule value_reference_sequence_concat[OF distinct.simps(1)[THEN eqTrueE]])
+  show ?thesis
+    by (simp only: keyed_segmented_references_def keyed_compared_reference_sequence Parallel.map_def split)
+qed
+
+declare finite_term_shared_word_compared_code[code del]
+
+lemma finite_term_shared_word_segmented_code [code]:
+  "finite_term_shared_word_fold f t s=(let
+      keys=Parallel.map (compared_artifact_rows \<circ> finite_artifact_rows \<circ> finite_target_artifact)
+        (finite_term_targets_pending [t] []);
+      (indices,table)=keyed_segmented_references (value_reference_chunks (length keys div 8+1) keys)
+    in finite_term_word_indexed f [t] indices (counted_word_fold artifact_word_fold f (map compared_rows_listing table) s))"
+  by (simp only: finite_term_shared_word_compared_code keyed_segmented_references_exact
+    value_reference_chunks_concat keyed_compared_reference_sequence)
+
+text \<open>
+  The first-occurrence references of the keys are computed segment by segment: each of about
+  eight consecutive segments against its own empty table, in parallel, and then only the segments'
+  distinct keys against one table (\<open>value_reference_sequence_concat\<close>). The indices and the
+  table are those of the one sequential run, so the word is unchanged. A report whose targets repeat
+  few distinct artifacts many times spent its word in the one sequential run, one complete comparison
+  of equal keys per occurrence; the segments share that work among the threads.
+\<close>
+
 text \<open>
   Each complete artifact occurrence is compared with the first-occurrence table
   once. The existing reference sequence returns every occurrence's index while it

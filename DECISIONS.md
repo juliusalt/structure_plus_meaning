@@ -10112,6 +10112,13 @@ a bound of five seconds; the seed's is 0.074 s against 0.2 on either. What does 
 machine is the ratio inside the one run: 9.3 at the machinery's scale, 6.2 at the seed's. That is
 what the two refinements of this line bought together: 44.6 s to about 5.
 
+*Correction (task 80, q28).* The sentence above narrows what the record states. 44.6 s is what this
+line's first refinement left, as the entries "A formed call's applications are constructed, not
+verified again" (at line 9277) and "A demand is settled over the positions of its calls" (this entry,
+at lines 10028-10029) state; not a reach before both refinements. And the second took the machinery's
+reach to 4.35 s on the machine the measurement claimed, about 5.8 s scaled to the baseline machine,
+as this entry states just above (lines 10064-10069). "About 5" reads the two forms together.
+
 Word equality cannot certify the attachment: out of scope at the exports the words would be
 unchanged and the refinement dead. So the attachment is verified in the source graph itself, in
 0.27 s and with no Isabelle run: `check.source_checks()` is clean at 1800 declared names,
@@ -10162,6 +10169,34 @@ and is a residual.
 
 Recorded 2026-09-20, commit `44738c20`.
 
+## A reference sequence is computed segment by segment
+
+The seed recipe's cost is one of its twelve presentations, the publication report (174-248 s in the
+landing checks since `955b34bb`, the others 12-38 s each), and within it, measured under a machine hold
+(task 80, `.build/tasks/seed-recipe-cost/attribution.md`), the word of the presented report: 79 s of
+153, of which 68 s is the first-occurrence reference run over 3,946 target occurrences of only 63
+distinct artifacts, one after another, each lookup of a value already held ending in a complete
+comparison of two equal keys. The recording of the generations and transactions is 58-61 s; the 21
+judgments, already prepared once, 9.8 s.
+
+What the refinement applies is a property of the reference notion, stated once in
+`Complete_Value_References`: the table a sequence leaves is the supplied table extended, in first
+occurrence, by the values it lacks (`value_reference_sequence_table`), and against a distinct table
+every index is its value's index in the final table (`value_reference_sequence_indices`). So the
+references of a concatenation of segments are each segment's references against an empty table,
+mapped through the references of the segments' distinct values against the supplied table
+(`value_reference_sequence_segment`, `value_reference_sequence_concat`, `value_reference_merged`). The
+segments are independent, so they are computed in parallel. `Indexed_Term_Words` proves the word's
+code equation over it (`finite_term_shared_word_segmented_code`, from the equation it replaces): about
+eight segments of the keys, each by the existing keyed run, then one keyed run over their distinct keys.
+No index notion is added; the keyed run and its key are those of the entry "A refinement applies a
+notion; an index is one". The word is unchanged by construction, so no recipe word changes.
+
+Limits: the full comparison of equal keys per occurrence is still paid, now shared among the threads;
+a report that repeats few large artifacts many times still costs that work. The recording stage is not
+refined here. Evidence: the recipe alone under a machine hold, with its own runner, took 140.8 s before
+and 96.5 s after (the publication presentation 140.8 s and 96.4 s, the eleven others 6.1-7.0 s), both
+receipts accepted with their reports equal.
 ## The index notion is a checked theory, and its carriers interpret it
 
 The owner's direction of 2026-09-19: "even implementation should be structural with the non-structural
@@ -10256,6 +10291,49 @@ notion would then be two. This entry was written outside the loop and is a resid
 
 Recorded 2026-09-21.
 
+## A snapshot's formation is read once for all the publications over it
+
+The seed recipe sets the recipe phase of every landing check (the recipes run in parallel and it is
+the longest), and within it one presentation, `development_seed_publication_value`, is the recipe:
+144.5 s in the base's check, 181.9 s in #49's, 241.7 s in #78's, against about 15 s for each of the
+other eleven. Attributed stage by stage under a machine hold on #78's export
+(`.build/tasks/seed-recipe-cost/attribution.md`), its seconds were the word fold (99 s, almost all
+of it the sequential first-occurrence reference run over 3,946 target occurrences of 63 artifacts,
+which `a436a40e` has since segmented, "A reference sequence is computed segment by segment") and
+the publication of the round (67 s). Exploratory runs beside other work, which show the split and not
+absolute cost, divided the round: per row about 0.5 s for the issue, up to 2 s for each answer and
+6–15 s for its three publications, of which 3.5–3.8 s was checking the formation of the published
+incumbents' snapshot. Every row and the round's own publication checked that one snapshot again:
+eleven times.
+
+The refinement reads it once, by extending the refinement that already states the publication over
+a formed snapshot: `finite_locus_publications_code` (`RRA_Formed_Snapshot_Transactions`) is now
+stated for the snapshot alone, `finite_locus_publications S = (if finite_snapshot_formed S then
+finite_locus_publications_formed S else map (λq. None))`, from the same two lemmas
+(`finite_locus_publications_formed_exact`, `finite_locus_publications_unformed`), so that every
+client's partial application checks the formation once, where it is made.
+`development_seed_publication_row_with` is the row over a given publisher,
+`development_seed_publication_row_published` proves the original row is it over the original
+publication, and the code equation `development_seed_publication_from_published` binds the publisher
+to `finite_locus_publications S` once for every row and the round. The report, and so every word, is
+unchanged: the equations are proved, not asserted. No new notion, and no second copy of the case split.
+
+### Evidence and limits
+
+The repository check accepts it (`.build/tasks/80/check-t80d`) with every proof, tool test and
+recipe word equal. Under one machine hold, back to back, the seed recipe run alone went from
+105.50 s (the tree at `77192fee`, before the refinement) to 93.04 s, all of it in the publication
+presentation (105.45 → 92.99 s), the eleven other presentations within run spread
+(`attribution.md` §4.2). A harness computing the publication presentation alone under a hold showed
+101.1 → 80.6 s, but its before export predates `77192fee`, so it does not measure the refinement
+alone. What remains of the
+publication's cost is the transactions' own formation and comparisons: each proposed generation's
+formation is checked with all its predecessors again, although every generation published here was
+just recorded by a constructor whose contract states it formed; carrying that fact into the
+transaction is a further refinement with its own proof, brought to the planner. This entry was written
+outside the loop and is a residual.
+
+Recorded 2026-09-22.
 ## A decomposition that applied is a row at its problem's locus
 
 The decomposition's builds stop at the issue: the repair's output is read from the history as rows headed by the
@@ -10402,6 +10480,15 @@ read. The correspondence at a parent `p` with a locus and subject `{c}`:
   `I` is not empty and some `H` makes `development_decomposition_application C p I H` hold at the presented state.
   Parents without a locus are not presented; that partiality is a premise of the contract, never a total map onto
   them.
+- *Corrected 2026-09-22 (task 62, planner's answer q35): the contract as built is thinner than the equality above.
+  Task 24's rows do not carry what the state defines (the children's rows are posed by the application and do not
+  stand before it), so the native schema decides only what it reads: at a presented parent it holds exactly when the
+  intermediates are nonempty (`Development_Native_Decomposition.native_decomposition_applies`). That the state poses
+  the children (`development_state_poses`) is a separate premise of the soundness instance
+  (`native_decomposition_reduction`), never a premise inside the equality the program decides. Task 94 reads the
+  state's rows natively (the Definition family and the parent's kind family of `Development_State_Rows`, with
+  `state_presents` replacing `development_state_poses`) once the per-family traversal is stated, and restores the
+  equality above.*
 - Soundness is not weakened. `development_decomposition_reduction` holds at `p`, and there it is trivial as a
   composition: task 60's predicate reads only a problem's subject and the kind of its contract
   (`development_problem_stated`), the extended state keeps every position of the state it extends
@@ -10598,3 +10685,228 @@ is added, no consumer on the loop's path reading an unsatisfied contract facet. 
 as `keyed_faceted_question`, retiring the index form, and the steering's method identifiers are later tasks.
 
 Recorded 2026-09-22 (task 56).
+
+## Request construction is a native definition over the state's rows
+
+The Q7 order's step after the verdict of a kind. A leaf's request is today the value of a HOL
+function, `development_constant_request`, which the loop records as the request row at the problem's
+locus; the verdict then reads that row's subject and support through `request_presents`. So the
+loop's path from issue through request to verdict still carries a HOL result the native machinery
+takes on trust. This entry settles what a request is as a native definition over the same rows the
+verdict reads: its fields, how each is read from the request state, its contract, why its two kinds
+are one definition, how it is produced and admitted, its build order and its cost. It changes no
+theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The request of a problem is `development_constant_request reading kind C r a c`, computed in HOL and recorded as the request row. | It is a native definition over the request state's rows: a check whose positive meaning holds of a proposed request body exactly when the body lists the problem's support and least context. The HOL constructor becomes the specification its contract states, and the first producer whose answers the check admits. |
+| Constructing a request natively means the native engine computes the request. | The engine's generation (`finite_native_generation`) is one step over the term demand of its input: a conclusion is generated only when every premise call is a demanded call over the input's components. A request's context is a filtered family of the state, not a component of it, so no native computation today produces it. Construction is therefore the native admission of a proposed body, and production is an executor's, as the plan makes every native computation that answers a request an executor like any other. |
+| The least context needs the native reach (the brief's hypothesis). | The least context is one step: the scope of the constant and the declarations of the constants the scope's statements mention, and a declaration mentions nothing (`isabelle_declaration_specifies_nothing`), so the closure stops at once (`development_request_context_closed`, `development_request_context_least`). No closure is computed and the reach is not composed. What is read of the reach is its **table**, which is the index of the mention relation by the constant mentioned. |
+| The refinement and definition requests are instances of one definition at family selections, as the verdict's two are. | No selection distinguishes them. Neither the support (`development_request_support C c`) nor the context (`development_request_context C c`) depends on the reading; the kind enters only the problem's existence and contract and the incumbent, which is the demanded family's rows among the context, a selection the packet and the verdict make and not a field of the request. |
+
+### What a request carries, and what reads it
+
+A request of a problem of constant `c` (`development_constant_request_fields`) is the problem, the
+constant as the state declares it, the **support** — every constant a statement of the scope
+mentions (`development_request_support_member`), the scope being every entity with `c` among its
+subjects — and the **least context** — the scope together with the declarations of the support
+constants (`development_request_context_exact`). As a row (task 9's entry) the request stands at the
+problem's locus under the request role, and its body is two families of citations and nothing else:
+the support's constant keys and the context's row keys (`development_request_body`). It carries neither
+its problem nor its subject, which are the locus, nor its incumbent, which the context holds, nor the
+contract term, which the problem row carries inert.
+
+In the rows' own terms the support is the set of mention keys of the rows having `key c` among their
+subjects — a row's `row_mentions` is `map key (entity_mentions e)`, and `entity_mentions` is exactly
+what `development_request_support` collects of an entity — and the scope is the set of those rows, over
+every family: the scope filters the whole entity list and is not restricted to a kind.
+
+The verdict reads a request for its subject and its support (`request_presents`, whose context is
+existential); it never reads the context. The context is read by the packet, which presents the
+request row with the rows its citations reach, and by currentness (`development_request_current`),
+which asks whether every cited row persists in a later state. Request construction is therefore where
+the context is decided, and nowhere else.
+
+### The five fields
+
+The construction's call carries, as its context, the subject's key `k` — the tail of the request's
+locus (`request_presents_problem_locus`) — and the presentation of the request state its fields read,
+and, as its value, the request body: a support family `ks` and a context family `es`. Each field is a
+native program with its own contract, stated in row terms:
+
+| Field | Native program | What it consumes |
+|---|---|---|
+| support complete | *every* row having `k` among its subjects: *every* key of its mentions is in `ks` | `excess` (#36) of the request state, at the selection of every family and the request's own support |
+| scope cited | *every* row having `k` among its subjects: its key is in `es` | #36's guarded traversal, at the row predicate "its key is cited" |
+| declarations cited | *every* key of `ks`: the declaration row the declaration store holds at it is in `es` | #36's declaration store, the one `undeclared` reads |
+| context sound | *every* key of `es`: the request state's row at it has `k` among its subjects, or declares a key of `ks` | #38's search of a family's rows by key; #34's row reading of subjects |
+| support sound | *every* key of `ks`: the reach table's row at it has `k` among its predecessors | #40's reach table over the state's constant keys, as the index of mentions by the constant mentioned |
+
+`support complete` is `excess` itself, and that is its meaning: the request state, read as an answer
+to its own request, stays within the support — its HOL counterpart is
+`development_answer_statements_excess (λ_. True) (snd S) {|c|} (development_request_support (snd S) c)=[]`,
+which holds of every state by `development_request_support_member`. It is why the unchanged answer is accepted, and it makes
+the verdict's `excess` and this field one notion at two states, not two notions. `support sound` reads
+the reach table because the table's predecessors of `x` are exactly the subjects of the rows mentioning
+`x` (`isabelle_reach_predecessors`), so "some row about `c` mentions `x`" is "`c` is among the
+predecessors of `x`": one search per support key, where a traversal of the rows per key would cost the
+rows times the support. This is the index notion applied to the mention relation, not a new notion: the
+table is that relation's index by the mentioned constant, and its row lemma is the index's contract.
+
+What each field consumes is stated in the verdict's briefs in the form this construction needs (the
+planner, answering q36, before those builds start). From #36: the guarded traversal — every row of a
+selection having key `k` among its subjects satisfies a row predicate `P`, rows not about `k` passing —
+stated once over any selection and any `P`, with `excess` its instance; `excess` itself over any family
+selection and any support family; and the declaration store by constant key that `undeclared` reads, a
+reusable notion whose single-valuedness is a named carried condition. From #38: the search of a
+presented state's family rows by row key, for any presented state. From #40: the reach table over the
+state's constant keys with its row lemma — the predecessors of `x` are the keys of the subjects of the
+rows mentioning `x` — exposed as a reusable presentation, not only through `unreached`. From #34: the
+row presentation, `row_pattern` and the row reading of subjects, as landed.
+
+Every field is positive. The only complement anywhere is the guarded traversal's own — a row without
+`k` among its subjects passes — and it is #36's, consumed and never defined here. No field needs store
+absence; no field is defined as another's negation. No field reads a row's identity, so every
+statement stays inert. No field reads a kind: the scope is over every family.
+
+### Production and admission
+
+A request body is produced by an executor and admitted by the construction. The first producer is the
+HOL constructor itself, exported as code: it is an executor whose answers the contract proves the check
+admits, not the definition of a request. Any other producer — a deterministic program, a native
+producer once one exists — answers the same class and is admitted the same way; a producer whose body
+lists a row outside the least context, or leaves one out, is refused. That refusal is the plan's
+"a request carrying more than its least context is refused", delivered by the check and not by a rule
+of its own.
+
+**Admission at a locus** is the development store's search at the request locus with the construction
+as its checker: the search of `native_store_search_program`, at a site of its own, whose check receives
+the subject's key and the request state as context and the body the store holds as value. It is the
+search `development_request_at` makes with equality as its check (`native_value_rule`), with the
+construction in the checker's place, so the request row the loop records is admitted natively, and the
+path from issue to verdict carries no result the machinery has not decided.
+
+Request construction reads no issue row and no problem row. Which requests are issued — a leaf of the
+library whose prerequisites are settled, and the policy criteria of owner question Q2 — is the issue
+decision's; what the request of a problem is, is this definition's. A problem whose subject is not
+exactly one constant has no locus (task 9's Open, HANDOFF Open 13), so no request is constructed for it:
+the partiality is a premise of the contract, never a map that sends the omitted case somewhere.
+
+### The contract
+
+One presentation relation and one theorem, in the shape of `native_development_ready` and of the
+verdict's contract. Under `state_presents key S R` with the constant key a parameter under `inj_on`,
+`c<length (fst (snd S))`, and the conditions below, the construction holds of
+`(key c, the presented request state, development_request_body ks es)` exactly when
+
+    set ks=key ` fset (development_request_support (snd S) c) ∧
+    set es=ekey ` fset (development_request_context (snd S) c)
+
+with a lemma per field stating its own row-level meaning first, and the theorem the conjunction. Every
+listing is admitted, in any order: the relation is the one `development_requests_present` states.
+
+The conditions, each named with its owner:
+
+- **The entity key.** The context cites the request state's own row keys, and `ekey` is a parameter
+  with the premise that the presentation keys each entity's row by it:
+  `∀e∈set (snd (snd S)). (ekey e,entity_row key (snd S) e)∈presented_rows R`. `request_presents` fixes
+  the development rows' entity key to `development_entity_key (snd S)`, so the two meet when the request
+  state's presentation keys every entity row by its first-occurrence key — which also makes the contract
+  question's candidates (#54's entry), the state's rows and the context one key assignment. The
+  condition is discharged by the presenter of a state's rows (a function realizing `state_presents`,
+  HANDOFF Open 14, placed by the planner before #40 and before build 3), which keys every entity row by
+  `development_entity_key`; the answer state is keyed to share keys with it (`keys_shared`), not by its
+  own first occurrences.
+- **The declarations.** The declaration store is single-valued — at most one declaration row per
+  constant, #36's named carried condition, owned by the exporter, as the verdict's contract carries
+  single-valued stores — and every support constant is declared, which is the request state's own
+  `undeclared` field (#36) and holds of every closed state.
+
+Three corollaries consume the theorem, none restating it:
+
+- **The two kinds.** For every reading and kind, `development_constant_request reading kind (snd S) ra a c=Some r`
+  and a rows presentation holding `r` give that the construction holds of the stored body. At the
+  code-equation reading this is `development_refinement_request`, at the definition reading
+  `development_definition_request`: one lemma, with the reading universally quantified.
+- **Admission at a locus.** Under `request_presents key S R rows r k ks` and the entity key at
+  `development_entity_key (snd S)`, the admission search at the request locus holds exactly when the
+  request's support and context are `development_request_support (snd S) c` and
+  `development_request_context (snd S) c`.
+- **The payload audit.** The construction's program, with every consumed field's clauses, states no
+  payload but the empty one, in the terms of `finite_system_payloads`, proved once over the composed
+  program.
+
+The introduction of `request_presents` for a request constructed from the state — task 32's first
+follow-up: the positional conjunct from `state_presents_inside` and the positions of the scope's
+mentions, and the rows' entity-key premise from `request_entity_key_injective` and
+`development_request_context_exact` — is a lemma about the relation and belongs beside
+`request_presents_recovery` in `Development_Request_Keys`, the relation's introduction with its
+elimination. It is this line's first build because it needs nothing of the construction, and #42, whose
+two instances consume it, waits on it (the planner, q36).
+
+### The build order, smallest first
+
+1. **The introduction of `request_presents`** for constructed requests, in `Development_Request_Keys`.
+   It waits on nothing unlanded (#32, #46); #42 waits on it.
+2. **`support complete` and `scope cited`**, in `Development_Request_Scope`: the two fields over the
+   guarded traversal, `support complete` as `excess` at every family. Waits on #36.
+3. **`declarations cited`, `context sound` and `support sound`**, in `Development_Request_Citations`:
+   the three fields that search — the declaration store (#36), a family's rows by key (#38), the reach
+   table's rows (#40). Waits on #38, #40 and the presenter of a state's rows.
+4. **The construction**, in `Development_Native_Request`: its rule (one rule, five premise sockets), its
+   program at its own sites with every consumed rule family held there and each consumed locale
+   interpreted so that its `exact` is inherited, the contract, the two conditions, the three
+   corollaries, and the measurement of one construction on the presenter's rows of the seeded and the
+   machinery's states, the machine claimed and the number reported in reaches against #40's judgment.
+   Waits on builds 1–3; it does not wait on #42, whose verdict it does not read.
+
+Every build adds theories and changes no recipe, so the landing check accepts each with every recipe
+word equal. Reused and not rebuilt: `Native_Collection_Programs`, `Native_Path_Stores`,
+`native_rule_family` and `finite_rule_program`, the row presentation and readings of #34, the guarded
+traversal, `excess`, `undeclared` and the declaration store of #36, the family search of #38, the reach
+table of #40, `Development_Requests` as the specification. New: the construction's rule, and the row
+predicates its fields instantiate the consumed traversals and searches at (a row's key is cited; a row
+declares a cited support key). No index, decision or comparison notion is introduced.
+
+### Affordability
+
+No reach is composed. On a state of `n` entity rows, one construction is two guarded traversals of the
+rows — each of the order of the rows times a subject test — and one search per support and context key.
+On the machinery's state (337 entities, 1,561 mentions) the traversals are each of the order of the
+reach's 3,397 calls and the searches a few hundred to a thousand more, so **one construction costs two
+to three reaches, under one judgment's four**, and one on the seed's state well under a second. A
+request is constructed once per issued leaf, not once per control, so on the machinery's stage of 32
+requests construction adds of the order of 80 reaches to the judgments' 900: it is not what makes a
+stage unaffordable, and the incremental assessment stays the remedy for the stage. The two guarded
+traversals share their guard, and folding them into one pass is a refinement to take if the
+measurement of build 4 asks for it; the estimate is owed that measurement.
+
+### What the builds must respect
+
+The request body is two families of citations and nothing else; nothing may give it a field of its
+own, and the packet stays a presentation of the row with the rows its citations reach. Request
+construction reads no issue row and no problem row, and decides nothing about issuing. No field reads a
+kind, and the two kinds stay the one definition with the reading universally quantified; a field that
+depends on the kind is a defect. Every field is positive; the one complement is #36's guard, consumed;
+no store absence enters. Each field's contract is proved once and every consumed contract — the
+guarded traversal, `excess`, `undeclared`, the declaration store, the family search, the reach table's
+row lemma — is consumed by name and never re-proved; a consumed contract too weak to serve is a finding
+for its task. No field reads a row's identity. The constant key and the entity key are parameters under
+`inj_on`, and the entity key's agreement with `development_entity_key` is a named condition, never an
+assumption. The program states no payload but the empty one.
+
+### Open
+
+Native production: a native relation whose output is a filtered family of its input cannot be produced
+by one-step generation, and evaluating a functional native relation forward, its outputs computed from
+its inputs, is an engine notion the library does not have; until it does, producers are executors and
+the construction admits. The proof request class and its issued support, which the plan makes a
+request-construction problem of its own and HANDOFF's list places after this line. The packet's
+transport (the octet direction's task 6): what the packet must carry is fixed here — the request row, the
+context rows it cites and the atoms its support cites — and its reader contract is that task's.
+Currentness of a request after an admitted answer (`development_request_current`) is the context read
+against a later state, "every cited row is found in the other state's store", #38's shape at the
+context's citations; it is not designed here. Multi-constant subjects have no locus and no request. This
+design was made outside the loop and is a residual.
+
+Recorded 2026-09-22 (task 95's decision; a design, no theory changes).

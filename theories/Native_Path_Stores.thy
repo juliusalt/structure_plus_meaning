@@ -631,6 +631,42 @@ proof (rule store_canonical_lookup_eq[OF path_store_canonical path_store_canonic
   qed
 qed
 
+section \<open>A store's presentation reads only the values it holds\<close>
+
+lemma store_term_cong:
+  assumes same: "\<And>bs v. store_lookup T bs=Some v \<Longrightarrow> f v=g v"
+  shows "store_term f T=store_term g T"
+  using same
+proof (induction T)
+  case Empty_Store
+  then show ?case by simp
+next
+  case (Store_Node v l r)
+  have held: "store_option_term f v=store_option_term g v"
+  proof (cases v)
+    case None
+    then show ?thesis by (simp add: store_option_term_def)
+  next
+    case (Some x)
+    have "store_lookup (Store_Node v l r) []=Some x" using Some by simp
+    then have "f x=g x" by (rule Store_Node.prems)
+    then show ?thesis using Some by (simp add: store_option_term_def)
+  qed
+  have left: "store_term f l=store_term g l"
+  proof (rule Store_Node.IH(1))
+    fix bs x assume "store_lookup l bs=Some x"
+    then have "store_lookup (Store_Node v l r) (False#bs)=Some x" by simp
+    then show "f x=g x" by (rule Store_Node.prems)
+  qed
+  have right: "store_term f r=store_term g r"
+  proof (rule Store_Node.IH(2))
+    fix bs x assume "store_lookup r bs=Some x"
+    then have "store_lookup (Store_Node v l r) (True#bs)=Some x" by simp
+    then show "f x=g x" by (rule Store_Node.prems)
+  qed
+  show ?case by (simp only: store_term.simps held left right)
+qed
+
 section \<open>A row is its path with its value, and a table is the store of its rows\<close>
 
 text \<open>
@@ -647,10 +683,28 @@ definition finite_listing_store ::
     "('v \<Rightarrow> finite_factor_term) \<Rightarrow> (bool list\<times>'v) list \<Rightarrow> finite_factor_term" where
   "finite_listing_store val rows=finite_store val (path_store rows)"
 
+text \<open>
+  A row presenter is injective on the rows whose values its value presentation is injective on, so a row
+  whose values are presented injectively only where they occur is still presented injectively.
+\<close>
+
+lemma finite_store_row_injective_on:
+  assumes injective: "inj_on val A"
+  shows "inj_on (finite_store_row val) {r. snd r\<in>A}"
+proof (rule inj_onI)
+  fix r s assume r: "r\<in>{r. snd r\<in>A}" and s: "s\<in>{r. snd r\<in>A}"
+    and same: "finite_store_row val r=finite_store_row val s"
+  have paths: "finite_path (fst r)=finite_path (fst s)" and presented: "val (snd r)=val (snd s)"
+    using same by (simp_all add: finite_store_row_def finite_pair_presentation_def)
+  have "fst r=fst s" by (rule injD[OF finite_path_injective paths])
+  moreover have "snd r=snd s" by (rule inj_onD[OF injective presented]) (use r s in simp_all)
+  ultimately show "r=s" by (rule prod_eqI)
+qed
+
 lemma finite_store_row_injective [intro]:
   assumes "inj val"
   shows "inj (finite_store_row val)"
-  unfolding finite_store_row_def by (intro finite_pair_presentation_injective finite_path_injective assms)
+  using finite_store_row_injective_on[OF assms] by simp
 
 lemma finite_store_row_formed:
   assumes "finite_term_formed (val v)"

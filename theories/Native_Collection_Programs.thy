@@ -183,6 +183,23 @@ proof -
   then show ?thesis by simp
 qed
 
+text \<open>
+  A call that holds is an instance of one rule of the family at the positive meaning: the one elimination
+  both @{text holds_cases} and the law's @{text holds_rule} read.
+\<close>
+
+lemma holds_clause:
+  assumes holds: "(site,t)\<in>positive_meaning P"
+  obtains c F where "(c,F)\<in>set rules" "schema_rule_instance (decode_finite_schema F) (positive_meaning P) t"
+proof -
+  obtain c S where member: "(c,S)\<in>system_clause_family P site"
+    and applied: "schema_rule_instance S (positive_meaning P) t"
+    using holds positive_variable_rule_family[OF call] by blast
+  obtain F where rule: "(c,F)\<in>set rules" and S: "S=decode_finite_schema F"
+    using member family by (auto simp: system_clause_family_def)
+  show thesis by (rule that[OF rule]) (use applied S in simp)
+qed
+
 lemma holds_cases:
   assumes holds: "(site,t)\<in>positive_meaning P"
   obtains c F f where "(c,F)\<in>set rules"
@@ -191,13 +208,9 @@ lemma holds_cases:
     "\<forall>s e p. (s,e,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
       (e,evaluate_pattern f p)\<in>positive_meaning P"
 proof -
-  obtain c S where member: "(c,S)\<in>system_clause_family P site"
-    and rule_instance: "schema_rule_instance S (positive_meaning P) t"
-    using holds positive_variable_rule_family[OF call] by blast
-  obtain F where rule: "(c,F)\<in>set rules" and S: "S=decode_finite_schema F"
-    using member family by (auto simp: system_clause_family_def)
-  have rule_instance': "schema_rule_instance (decode_finite_schema F) (positive_meaning P) t"
-    using rule_instance S by simp
+  obtain c F where rule: "(c,F)\<in>set rules"
+    and rule_instance': "schema_rule_instance (decode_finite_schema F) (positive_meaning P) t"
+    by (rule holds_clause[OF holds])
   obtain f where assignment: "\<forall>a\<in>schema_variables (decode_finite_schema F). term_formed (f a)"
     and shape: "t=evaluate_pattern f (schema_conclusion (decode_finite_schema F))"
     and support: "\<forall>s d p. (s,d,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
@@ -235,10 +248,11 @@ text \<open>
   of the family is an instance at @{term Y} exactly when some evaluation formed on the rule's variables
   evaluates its conclusion to the term and every premise's callee holds in @{term Y} of the premise's
   evaluation (@{text rule_instance}; the variables are the conclusion's and the premises', since @{term Y} need
-  hold only of formed terms nowhere). Elimination at a clause: a clause of the family is a decoded native rule,
+  not hold of formed terms only). Elimination at a clause: a clause of the family is a decoded native rule,
   its conclusion is the rule's, and a support of its premises in @{term Y} reads over the rule's premise list
-  (@{text supported_clause}). Every use that unfolds a clause under a support relation other than the positive
-  meaning, a least-fixed-point argument over a program among them, takes it from here. At the positive meaning
+  (@{text supported_clause}); a reading of every rule of the family at the clause's evaluated conclusion is a
+  reading of the clause (@{text read_clause}). Every use that unfolds a clause under a support relation other
+  than the positive meaning, a least-fixed-point argument over a program among them, takes it from here. At the positive meaning
   the elimination returns the native rule itself (@{text holds_rule}), and @{text exact} is
   @{text rule_instance}'s form there: a premise that holds is formed, so formation on the conclusion's
   variables suffices.
@@ -284,6 +298,22 @@ proof -
     (simp only: S F decode_finite_native_rule)
 qed
 
+lemma read_clause:
+  assumes member: "((site,c),S)\<in>system_clauses P"
+    and support: "\<forall>s e r. (s,e,r)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f r)\<in>Y"
+    and shape: "evaluate_pattern f (schema_conclusion S)=t"
+    and read: "\<And>c p ps. (c,finite_native_rule p ps)\<in>set rules \<Longrightarrow>
+      \<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y \<Longrightarrow>
+      evaluate_pattern f (decode_finite_pattern p)=t \<Longrightarrow> Q"
+  shows Q
+proof (rule supported_clause[OF member support])
+  fix p ps assume rule: "(c,finite_native_rule p ps)\<in>set rules"
+    and conclusion: "schema_conclusion S=decode_finite_pattern p"
+    and supported: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
+    and "S=decode_finite_schema (finite_native_rule p ps)"
+  show Q by (rule read[OF rule supported shape[unfolded conclusion]])
+qed
+
 lemma holds_rule:
   assumes holds: "(site,t)\<in>positive_meaning P"
   obtains c p ps f where "(c,finite_native_rule p ps)\<in>set rules"
@@ -292,17 +322,15 @@ lemma holds_rule:
     "evaluate_pattern f (decode_finite_pattern p)=t"
     "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
 proof -
-  obtain c S where member: "(c,S)\<in>system_clause_family P site"
-    and applied: "schema_rule_instance S (positive_meaning P) t"
-    using holds positive_variable_rule_family[OF call] by blast
-  obtain F where rule: "(c,F)\<in>set rules" and S: "S=decode_finite_schema F"
-    using member family by (auto simp: system_clause_family_def)
+  obtain c F where rule: "(c,F)\<in>set rules"
+    and applied: "schema_rule_instance (decode_finite_schema F) (positive_meaning P) t"
+    by (rule holds_clause[OF holds])
   obtain p ps where F: "F=finite_native_rule p ps" using native rule by blast
   obtain f where "\<forall>a\<in>pattern_variables (decode_finite_pattern p) \<union>
       (\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)). term_formed (f a)"
     "evaluate_pattern f (decode_finite_pattern p)=t"
     "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-    using applied[unfolded S F rule_instance[OF rule[unfolded F]]] by blast
+    using applied[unfolded F rule_instance[OF rule[unfolded F]]] by blast
   then show thesis by (rule that[OF rule[unfolded F]])
 qed
 
@@ -420,18 +448,6 @@ proof -
   qed
 qed
 
-lemma unfold:
-  assumes member: "((m,c),S)\<in>system_clauses P"
-    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f p)\<in>Y"
-    and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term x (data_list_term xs)"
-  shows "\<exists>y ys. xs=y#ys \<and> (x=y \<or> (m,Pair_Term x (data_list_term ys))\<in>Y)"
-proof (rule law.supported_clause[OF member support])
-  fix p ps assume rule: "(c,finite_native_rule p ps)\<in>set (native_member_rules m)"
-    and conclusion: "schema_conclusion S=decode_finite_pattern p"
-    and supported: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
-    and "S=decode_finite_schema (finite_native_rule p ps)"
-  show ?thesis by (rule unfold_rule[OF rule supported shape[unfolded conclusion]])
-qed
 
 theorem exact:
   "(m,Pair_Term x (data_list_term xs))\<in>positive_meaning P \<longleftrightarrow> x\<in>set xs \<and> (\<forall>y\<in>set xs. term_formed y)"
@@ -542,18 +558,7 @@ proof -
   qed
 qed
 
-lemma unfold:
-  assumes member: "((e,c),S)\<in>system_clauses P"
-    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern f p)\<in>Y"
-    and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term x (data_list_term zs)"
-  shows "zs=[] \<or> (\<exists>z zs'. zs=z#zs' \<and> (el,Pair_Term x z)\<in>Y \<and> (e,Pair_Term x (data_list_term zs'))\<in>Y)"
-proof (rule law.supported_clause[OF member support])
-  fix p ps assume rule: "(c,finite_native_rule p ps)\<in>set (native_every_rules e el)"
-    and conclusion: "schema_conclusion S=decode_finite_pattern p"
-    and supported: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
-    and "S=decode_finite_schema (finite_native_rule p ps)"
-  show ?thesis by (rule unfold_rule[OF rule supported shape[unfolded conclusion]])
-qed
+
 
 lemma relation_equation:
   "(e,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>a. t=Pair_Term a (Payload_Term []) \<and> term_formed a) \<or>
@@ -674,18 +679,6 @@ proof -
   qed
 qed
 
-lemma unfold:
-  assumes member: "((s,c),S)\<in>system_clauses P"
-    and support: "\<forall>k d p. (k,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern f p)\<in>Y"
-    and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term x (data_list_term hs)"
-  shows "\<exists>h hs'. hs=h#hs' \<and> ((el,Pair_Term x h)\<in>Y \<or> (s,Pair_Term x (data_list_term hs'))\<in>Y)"
-proof (rule law.supported_clause[OF member support])
-  fix p ps assume rule: "(c,finite_native_rule p ps)\<in>set (native_some_rules s el)"
-    and conclusion: "schema_conclusion S=decode_finite_pattern p"
-    and supported: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
-    and "S=decode_finite_schema (finite_native_rule p ps)"
-  show ?thesis by (rule unfold_rule[OF rule supported shape[unfolded conclusion]])
-qed
 
 theorem exact:
   "(s,Pair_Term x (data_list_term hs))\<in>positive_meaning P \<longleftrightarrow>
@@ -803,20 +796,6 @@ proof -
   qed
 qed
 
-lemma unfold:
-  assumes member: "((k,c),S)\<in>system_clauses P"
-    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern f p)\<in>Y"
-    and shape: "evaluate_pattern f (schema_conclusion S)=
-      Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) rows)))"
-  shows "\<exists>a v rows'. rows=(a,v)#rows' \<and> ((a=key \<and> (ch,Pair_Term x v)\<in>Y) \<or>
-    (k,Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) rows'))))\<in>Y)"
-proof (rule law.supported_clause[OF member support])
-  fix p ps assume rule: "(c,finite_native_rule p ps)\<in>set (native_keyed_search_rules k ch)"
-    and conclusion: "schema_conclusion S=decode_finite_pattern p"
-    and supported: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
-    and "S=decode_finite_schema (finite_native_rule p ps)"
-  show ?thesis by (rule unfold_rule[OF rule supported shape[unfolded conclusion]])
-qed
 
 theorem exact:
   "(k,Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) rows))))\<in>positive_meaning P \<longleftrightarrow>
@@ -1038,6 +1017,27 @@ begin
 
 sublocale law: native_rule_law P s "[([0],finite_native_rule p [([0],(r,q))])]"
   by (rule native_rule_lawI[OF native_rule_family_axioms]) auto
+
+text \<open>
+  A clause of the site whose premise holds in any support relation @{term Y} has the rule's conclusion, and
+  its premise's callee holds in @{term Y} of the premise's evaluation: the law's @{text supported_clause} read
+  at the one rule, so an induction over a program holding the site spells out no rule pattern.
+\<close>
+
+lemma supported:
+  assumes member: "((s,c),S)\<in>system_clauses P"
+    and support: "\<forall>k e u. (k,e,u)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f u)\<in>Y"
+  shows "schema_conclusion S=decode_finite_pattern p" "(r,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
+proof -
+  obtain p' ps where rule: "(c,finite_native_rule p' ps)\<in>set [([0::nat],finite_native_rule p [([0],(r,q))])]"
+    and conclusion: "schema_conclusion S=decode_finite_pattern p'"
+    and supported: "\<forall>(k,d,u)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern u))\<in>Y"
+    by (rule law.supported_clause[OF member support])
+  have pattern: "p'=p" and listed: "set ps={([0],(r,q))}"
+    using rule by (simp_all add: finite_native_rule_eq_iff)
+  show "schema_conclusion S=decode_finite_pattern p" using conclusion pattern by simp
+  show "(r,evaluate_pattern f (decode_finite_pattern q))\<in>Y" using supported listed by auto
+qed
 
 theorem exact:
   "(s,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>

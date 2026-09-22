@@ -250,13 +250,11 @@ proof (rule positive_valuation_induct[OF holds, where property=reach_invariant])
     fix T k
     assume site: "d=reach_reached"
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (reach_table_term T) k"
-    have rule: "S=decode_finite_schema reach_reached_rule"
-      using clause site reach_reached_family.family by (auto simp: reach_reached_rule_def)
+    note clause_read=reach_reached_family.rearranged.supported[OF clause[unfolded site] into]
     have fields: "f [0]=reach_table_term T \<and> f [1]=k"
-      using shape by (simp add: rule reach_reached_rule_def native_context_call_rule_def)
+      using shape by (simp add: clause_read(1))
     have given: "(reach_search,Pair_Term (f [0]) (Pair_Term (f [1]) (f [0])))\<in>Y"
-      by (rule reach_reached_family.rearranged.law.supported_clause[OF clause[unfolded site] into])
-        (auto simp: finite_native_rule_eq_iff native_context_call_rule_def)
+      using clause_read(2) by simp
     have search: "(reach_search,Pair_Term (reach_table_term T)
         (Pair_Term k (store_term reach_row_value (path_store T))))\<in>Y"
       using given fields by (simp add: reach_table_term_def)
@@ -345,10 +343,13 @@ proof (rule positive_valuation_induct[OF holds, where property=reach_invariant])
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (reach_table_term T) (data_list_term ps)"
     have clause': "((reach_some,c),S)\<in>system_clauses native_reach_system"
       using clause site by simp
+    have some_cases: "\<exists>h hs'. ps=h#hs' \<and> ((reach_reached,Pair_Term (reach_table_term T) h)\<in>Y \<or>
+        (reach_some,Pair_Term (reach_table_term T) (data_list_term hs'))\<in>Y)"
+      by (rule reach_somes.law.read_clause[OF clause' into shape]) (rule reach_somes.unfold_rule)
     obtain h ps' where ps: "ps=h#ps'"
       and choice: "(reach_reached,Pair_Term (reach_table_term T) h)\<in>Y \<or>
         (reach_some,Pair_Term (reach_table_term T) (data_list_term ps'))\<in>Y"
-      using reach_somes.unfold[OF clause' into shape] by blast
+      using some_cases by blast
     show "\<exists>p\<in>set ps. reach_key T p"
       using choice
     proof

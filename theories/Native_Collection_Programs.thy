@@ -732,4 +732,95 @@ proof (rule native_rule_family.intro)
   show "\<forall>r\<in>set rs. finite_schema_materials (snd r)={||}" by (rule plain)
 qed
 
+section \<open>A rule program joined into a larger one keeps its meaning at its sites\<close>
+
+text \<open>
+  A program presented by a whole list of definitions with distinct sites holds a sublist's definitions as
+  the sublist's own program holds them, so the two agree on the sublist's sites and those sites are closed
+  under their callees in the sublist's program. The locality contract of positive meaning
+  (@{thm positive_meaning_shared_definitions}) then gives each site its meaning in the sublist's program:
+  a use that joins programs consumes this law and makes no argument about their meanings again.
+\<close>
+
+lemma finite_rule_program_agrees:
+  assumes sites: "U\<subseteq>fst ` set ds" and within: "\<forall>d\<in>U. \<forall>rs. (d,rs)\<in>set ds \<longleftrightarrow> (d,rs)\<in>set ws"
+  shows "systems_agree_on (decode_finite_system (finite_rule_program ws))
+    (decode_finite_system (finite_rule_program ds)) U"
+  unfolding systems_agree_on_def finite_rule_program_interface finite_rule_program_clause
+  using sites within by (auto simp: image_iff)
+
+theorem finite_rule_program_join:
+  assumes whole_formed: "schema_system_formed (decode_finite_system (finite_rule_program ws))"
+    and outer: "distinct (map fst ws)"
+    and formed: "schema_system_formed (decode_finite_system (finite_rule_program ds))"
+    and whole: "set ds\<subseteq>set ws" and site: "d\<in>fst ` set ds"
+  shows "(d,t)\<in>positive_meaning (decode_finite_system (finite_rule_program ws)) \<longleftrightarrow>
+    (d,t)\<in>positive_meaning (decode_finite_system (finite_rule_program ds))"
+proof -
+  have within: "\<forall>d\<in>fst ` set ds. \<forall>rs. (d,rs)\<in>set ds \<longleftrightarrow> (d,rs)\<in>set ws"
+  proof (intro ballI allI iffI)
+    fix d rs assume "(d,rs)\<in>set ds"
+    then show "(d,rs)\<in>set ws" using whole by blast
+  next
+    fix d rs assume d: "d\<in>fst ` set ds" and m: "(d,rs)\<in>set ws"
+    obtain rs' where m': "(d,rs')\<in>set ds" using d by force
+    have "(d,rs')\<in>set ws" using m' whole by blast
+    then have "rs=rs'" by (rule eq_key_imp_eq_value[OF outer m])
+    then show "(d,rs)\<in>set ds" using m' by simp
+  qed
+  have defs: "system_definitions (decode_finite_system (finite_rule_program ds))=fst ` set ds"
+    by (rule finite_rule_program_definitions)
+  have inside: "fst ` set ds\<subseteq>system_definitions (decode_finite_system (finite_rule_program ws))"
+    using whole by (auto simp: finite_rule_program_definitions)
+  have shared: "system_definitions (decode_finite_system (finite_rule_program ws))\<inter>
+      system_definitions (decode_finite_system (finite_rule_program ds))=fst ` set ds"
+    using defs inside by auto
+  show ?thesis
+    by (rule positive_meaning_shared_definitions[OF whole_formed formed])
+      (use finite_rule_program_agrees[OF _ within] shared defs inside site in auto)
+qed
+
+section \<open>The two components of a pair, exchanged\<close>
+
+text \<open>
+  A site holds of a pair exactly when a callee holds of the pair with its components exchanged: one rule,
+  whose premise passes the second component first. A traversal that calls its element beside its context
+  reaches a callee that reads the element first through it.
+\<close>
+
+definition native_swap_rule :: "'u definition_site \<Rightarrow>
+    (local_address,local_address,'u definition_site) finite_factor_schema" where
+  "native_swap_rule r=finite_native_rule (Finite_Pattern_Pair (native_var 0) (native_var 1))
+    [([0],(r,Finite_Pattern_Pair (native_var 1) (native_var 0)))]"
+
+locale native_swap_program = native_rule_family P s "[([0],native_swap_rule r)]"
+  for P :: "'u native_system" and s r :: "'u definition_site"
+begin
+
+theorem exact:
+  "(s,Pair_Term a b)\<in>positive_meaning P \<longleftrightarrow> (r,Pair_Term b a)\<in>positive_meaning P"
+proof
+  assume holds: "(s,Pair_Term a b)\<in>positive_meaning P"
+  obtain c F f where rule: "(c,F)\<in>set [([0::nat],native_swap_rule r)]"
+    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=Pair_Term a b"
+    and support: "\<forall>k e p. (k,e,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
+      (e,evaluate_pattern f p)\<in>positive_meaning P"
+    by (rule holds_cases[OF holds]) blast
+  have F: "F=native_swap_rule r" using rule by simp
+  have premise: "(r,Pair_Term (f [1]) (f [0]))\<in>positive_meaning P"
+    using native_rule_support[OF support[unfolded F native_swap_rule_def]] by simp
+  have "f [0]=a" "f [1]=b" using shape by (simp_all add: F native_swap_rule_def)
+  then show "(r,Pair_Term b a)\<in>positive_meaning P" using premise by simp
+next
+  assume holds: "(r,Pair_Term b a)\<in>positive_meaning P"
+  have formed: "term_formed (Pair_Term b a)" using holds by (rule positive_meaning_term_formed)
+  have "(s,evaluate_pattern (native_values [a,b])
+      (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning P"
+    by (rule native_step[where c="[0]" and ps="[([0],(r,Finite_Pattern_Pair (native_var 1) (native_var 0)))]"])
+      (use holds formed in \<open>simp_all add: native_swap_rule_def\<close>)
+  then show "(s,Pair_Term a b)\<in>positive_meaning P" by simp
+qed
+
+end
+
 end

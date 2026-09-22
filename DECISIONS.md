@@ -9208,6 +9208,11 @@ native data in path stores, as readiness's and the reach's are.
 | `roots` | the two root families agree pairwise on their keys |
 | `tables` | a condition of the presentation: each name names at most one atom |
 
+*Corrected 2026-09-22 (task 42, settling task 38's first question): the removed rows permitted are a replaceable
+statement of the subject or any declaration, as the HOL field states (`isabelle_declared_constant e≠None`), and
+`native_removed_exact`/`native_removed_request` read exactly that; whether a removed declaration is still mentioned is
+`undeclared`'s, not this field's.*
+
 Three conditions the presentation carries rather than the verdict computing them are named with
 their owner: distinct names, the vacuity of unknown positions, and — for the report's `removed` and
 `added` to be the answer's own two lists — that the edit is reduced. The first belongs to the
@@ -9300,6 +9305,13 @@ and the request construction that follows the verdict in the Q7 order, over thes
 design was made outside the loop and is a residual.
 
 Recorded 2026-09-20 (task 3's decision; a design, no theory changes).
+
+Built 2026-09-22 (task 42, `Development_Native_Verdict`): the entry is one rule of eight premises at `(Some
+[],[80])` over a tuple of the parts each field reads, in the join of the field programs; its contract
+`native_verdict_exact` is the entry's as stated above, consuming every field contract by name; acceptance reads no
+reduction of an edit, which enters only the report's removed and added lists (`native_verdict_edit`). The two
+instances are the one definition at `[Equation_Kind]`/`[Equation_Kind]` and at
+`[Definition_Kind,Equation_Kind]`/`[Definition_Kind]`. The program states the empty payload alone.
 
 ### The rows about a subject are read through a subject index — 2026-09-22 (task 138)
 
@@ -9409,6 +9421,10 @@ index holds every atom of the state: an empty fibre is found, a key outside the 
 positive with absence kept for the witnesses. The index is exact by `path_store_lookup` and computed from the
 presented atoms and family, never supplied beside them. A contract's HOL side stands; the premise `k∈set A` is
 discharged from the presentation where the consumer asks, never carried to a caller that has it by `c<length`.
+*Corrected 2026-09-22 (task 42, settling task 38's second question): what is excluded is deciding that two keys
+differ by a comparison program; the equality of two keys through a variable occurring twice (`native_value_rule`, the
+positive class's own equality, inert by `Factor_Positive_Parametricity`) is not a comparison program, and the roots
+field uses it (`verdict_equal_program`, `native_roots_exact`).*
 
 Recorded 2026-09-22 (task 138's decision; a design, no theory changes).
 

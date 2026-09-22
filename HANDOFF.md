@@ -176,8 +176,8 @@ a refinement of its own. Its follow-ups are Open 73; the seed recipe's other cos
 **The rule programs (#173, #208–#215).** #173 (`a645759a`) stated the join law of finite rule programs once in
 `Native_Collection_Programs`; #42, #112 and #64 cite it. #208 (`db37daea`) stated the rearranging single-premise rule
 (`native_rearranging_program`) once there, the swap and the found call its instances, `native_decomposition_shares`'
-unused premise dropped; #188, #189, #191 and #110 add such rules over it. Changes to that theory are batched, since
-each rebuilds about 1,140 theories. The re-citations: the subject index's call and the unreached join (#210, `d0fff527`);
+unused premise dropped; #188, #189, #191 and #110 add such rules over it. Changes to that theory are batched; one rebuilds about 112 theories and 206–215 s
+of check (#275's measured pair, correcting the 1,049 the briefs assumed). The re-citations: the subject index's call and the unreached join (#210, `d0fff527`);
 readiness's and reach's rules, with `readiness_answered_rule`'s two steps and `table_reached_simulation` moved into
 `Native_Table_Reach` (#212, `1841b32a`); the row and found readings
 with `row_subject_program`, which #208 omitted (#214, after #182 and #44). Each with its review. #230 briefed the
@@ -188,9 +188,10 @@ stated it once in `Native_Collection_Programs`, #208's law its instance, with Op
 `supported_clause`, `holds_rule` returning the rule — its review's documentation corrections and the inductions going
 to #235 and its two factorings inside the theory to Open 79; its re-citations follow the builds editing their theories — the verdict's families, the
 value rule and the decomposition rule (#235, `fb032252`), readiness's rules and inductions (#259, `43f5bde0`; #272,
-`75035bc1`, cites readiness at its instances' contracts and records the level a use cites in the law's entry; #275
-states the rearranging program's contract at an arbitrary support relation once, re-citing readiness's and the reach's
-inductions, with Open 79's items, before #214, #237 and #239, which wait on it), the formation rules, the any rule and the two-premise call (#237, after #214, #235 and #261), the store search (#239, after #44) — each with its review.
+`75035bc1`, cites readiness at its instances' contracts and records the level a use cites in the law's entry; #275 (`e4c3b14d`)
+stated the rearranging program's contract at an arbitrary support relation once, with readiness's and the reach's
+inductions on it and Open 79's items; #214, #237 and #239 take it, or the law's `read_clause`, at the sites its review
+lists (mailed)), the formation rules, the any rule and the two-premise call (#237, after #214, #235 and #261), the store search (#239, after #44) — each with its review.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
 includes their reviews; a fix the planner creates has no review task (the harness reviews it in its own folder). The
@@ -649,6 +650,10 @@ that consumes another's landed theories otherwise waits on it as a blocker, so t
 - **#274** (`d913c103`): the exporter's obligation proved on the definition's right-hand side and transported through
   its equation, #267's order lemmas retired for HOL's; its review's remaining spine conversion to #279, its survey of
   order facts named for their user to Open 86.
+- **#269, #275** (`e4c3b14d`, one train): the answer state's presentation n log n in the state (names through an index,
+  the edit's sort by mergesort; the entity keys keep their scan, Open 84) and the rearranging program's contract at an
+  arbitrary support relation, with Open 79's items; their reviews' items to #187, #193, #194, #112, #214, #237, #239
+  (mailed) and to Open 57, 66, 85, 87, 88.
 
 ## Open
 
@@ -838,6 +843,10 @@ Not yet planned, in the order they are expected to be planned:
 57. **Facts placed downstream of their notions** (#40's follow-up 3): `isabelle_entity_reach_pairs_member`, `isabelle_reach_pairs_member`,
     `isabelle_reach_predecessors_member`, `isabelle_reach_heads_member` and `isabelle_reach_constants_member` into
     `Isabelle_Native_Reach`, with their map row. With the next edit of each owner; the state rows' family list is #261's.
+    #269's review adds: `appended_new_names` and `appended_atoms_new` (`Development_State_Edit`) into
+    `Isabelle_Local_Names` beside `isabelle_appended_names`' other facts, `distinct_ordered_remdups` into
+    `Ordered_Member_Trees` beside `ordered_remdups_exact`, and the stale `entity_row_with` in the presenter's
+    THEORY_MAP row dropped.
 59. **The judgment bridge's rows carry a candidate position** (#90's follow-up 2): `judgment_bridge_receive` filters
     `[0..<length judgment_bridge_candidates]` by each position's key path, and its field lemmas state `i<length …` and
     `judgment_bridge_candidates!i`; the rows can carry the subject through `keyed_admitted_subjects`, stated at the
@@ -863,7 +872,10 @@ Not yet planned, in the order they are expected to be planned:
 66. **A presented state's families read inside a traversal** (#171's follow-up): `state_entities` is a function field
     of `state_rows`, so generated code recomputes a family (map, remdups, filter over all entities) at every read —
     29.5 s a call inside a per-row filter in #171's simulation. Host code reading `state_entities R k` inside a
-    traversal is to be audited for it (the families computed once as a list); #178's builds respect it.
+    traversal is to be audited for it (the families computed once as a list); #178's builds respect it. #269's review
+  measures what it costs the presenter: every access recomputes the kind's family, its `remdups` (quadratic in the
+  family) and its rows, with 0.090 s of the presenter's rows at 340 entities unexplained; the six families computed
+  once is the repair, before a state of the residual record's size is presented (mailed to #187 and #193).
 67. **`import isabelle_places` among the standard-library imports** in `tools/investigate.py` and
     `tools/native_answers.py` (#144's review): moved to the local imports with the next edit of those tools.
 68. **The record candidates' code equation at arity 1** (#132's reviews): a measurement against callers that apply
@@ -932,6 +944,16 @@ Not yet planned, in the order they are expected to be planned:
 83. **The documented replay's cost** (#263's review, 5): 1,037 s for sixteen records at two runs; each framed row pays a
     parts session, a proof session and an export. A measured split per step first, then whether the parts reading can
     share the proof session's context; with Open 10, at a measured need.
+87. **One definition per reading of a name table** (#269's review): the `_by` readings of `Isabelle_Name_Trees` repeat
+    the bodies of `isabelle_local_names`, `isabelle_state_embedding`, `isabelle_local_entities`,
+    `isabelle_equation_left` and `isabelle_entity_subjects`, which word equality forces while the machinery state
+    reaches the originals. When those theories' words are next re-established (#161 or #167), define the originals as
+    the `_by` forms at `isabelle_name_at`, and state that a reading over a lookup is an instance of
+    `isabelle_name_reading`.
+88. **The next change to `Native_Collection_Programs`** (#275's review, follow-up 5): three consecutive blank lines
+    where `unfold` left `native_every_program` (~line 560); and `read_clause`'s `read` premise rebinds `c`, so a
+    consumer that needs the clause's identity cannot take it from the lemma — harmless for its three users, to be
+    stated if a use needs the identity.
 86. **Order facts named for their user** (#274's review): a general order fact restated locally and named `isabelle_*`
     rather than for its subject — the exporter's two are now retired for HOL's. A bounded pass over the repository's
     own `sorted_wrt`, `sorted` and `distinct` lemmas would apply the reuse rule once instead of once per reviewer.
@@ -939,7 +961,8 @@ Not yet planned, in the order they are expected to be planned:
 85. **The n-ary tuple below the verdict** (#42's review, follow-up 2): `term_tuple`, `finite_pattern_tuple` and
     `evaluate_pattern_tuple` stand in `Development_Native_Verdict`; their second use is #112's n-ary conclusion, which
     cites them where they stand or moves them beside the rule constructors in `Native_Collection_Programs` — a change
-    that rebuilds about 1,049 theories at its landing (mailed). #275 was already in review when the decision came.
+    that rebuilds about 112 theories at its landing, 206–215 s of check (#275's measured pair). #275 was already in
+    review when the decision came, so #112 makes the move; it was mailed the figure.
 84. **The presenter's entity keys through an index** (#269's measurement, q67): the equality scan costs 0.001 s
     against 0.022 s through `first_index_tree` at the machinery's 340 entities, with a crossover near 10^4 entities;
     the keys are computed once per request state. Applied when a presented state approaches that size.
@@ -964,8 +987,8 @@ Not yet planned, in the order they are expected to be planned:
   definition of a state): one word change, landed (`8b77ee97`); #157 re-records every answer record once over it and the
   layout (the native records' entity keys move with the order; mailed); #274 (`d913c103`) proved the obligation on the definition's
   right-hand side; what remains is the spine conversion over a state's entities, which #279 takes through one equation.
-- **In flight (plan-47, 21:25)**: #44, #251, #269, #275 and #278 work; #276, #277 and #279 are ready; #128 and #147
-  finish their landings. The harness's delta layer is deployed and dormant
+- **In flight (plan-47, 21:32)**: #44, #251 and #278 work; #276, #277 and #279 are ready; #128 and #147 finish their
+  landings. The harness's delta layer is deployed and dormant
   (`notes/plan-delta-layer.md`), switched on for no base yet (20:12). Mailed to tasks not yet started, travelling with them: the level a use
   cites to #214, #237 and #239; #261's review to #110, #112, #192, #214 and #237; #263's and #255's to #265; #263's
   unproduced native rows to #157; #223's unmeasured gain to #159; and the earlier ones: #182's to #110, #189's to #192

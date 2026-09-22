@@ -10,10 +10,12 @@ import signal
 import subprocess
 import sys
 import tempfile
-import time
 import unittest
 
 TOOLS = Path(__file__).resolve().parent
+sys.path.insert(0, str(TOOLS))
+from host_test_support import GENEROUS, process_stopped, wait_for
+
 FAKE = r'''#!/usr/bin/env python3
 import json
 from pathlib import Path
@@ -44,7 +46,8 @@ if mode == "tool_change":
         stream.write("\n# changed during build\n")
 if mode == "slow":
     child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(600)"])
-    (root / "child_pid").write_text(str(child.pid))
+    (root / "child_pid.part").write_text(str(child.pid))
+    (root / "child_pid.part").rename(root / "child_pid")
     time.sleep(600)
 print("Finished Fixture", flush=True)
 '''
@@ -84,7 +87,7 @@ class ValidationTests(unittest.TestCase):
 
     def run_wrapper(self, script="check.py", executable=None):
         result = subprocess.run(self.command(script, executable), text=True, stdout=subprocess.PIPE,
-                                stderr=subprocess.STDOUT, timeout=15)
+                                stderr=subprocess.STDOUT, timeout=GENEROUS)
         report = json.loads((self.root / "validation/check.json").read_text())
         receipt = json.loads((self.root / "validation/build.json").read_text())
         self.assertNotEqual(report["invocation"], "OLD", result.stdout)
@@ -171,30 +174,25 @@ class ValidationTests(unittest.TestCase):
         process = subprocess.Popen(self.command(), text=True, stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT, start_new_session=True)
         try:
-            deadline = time.monotonic() + 5
-            while not (self.root / "child_pid").exists() and time.monotonic() < deadline:
+            def started():
                 # Concurrent readers must always see complete JSON, including during startup.
                 for name in ("build.json", "check.json"):
                     json.loads((self.root / "validation" / name).read_text())
-                time.sleep(0.01)
-            self.assertTrue((self.root / "child_pid").exists())
+                return (self.root / "child_pid").exists() or process.poll() is not None
+
+            wait_for(started, "the build to start its child")
+            self.assertIsNone(process.poll(), "the check exited before its build started a child")
             running = json.loads((self.root / "validation/check.json").read_text())
             self.assertEqual(running["status"], "running")
             process.send_signal(signum)
-            output, _ = process.communicate(timeout=8)
+            output, _ = process.communicate(timeout=GENEROUS)
             self.assertEqual(process.returncode, 128 + signum, output)
             for name in ("build.json", "check.json"):
                 report = json.loads((self.root / "validation" / name).read_text())
                 self.assertEqual(report["status"], "interrupted", output)
                 self.assertEqual(report["invocation"], running["invocation"])
             child = int((self.root / "child_pid").read_text())
-            proc_stat = Path(f"/proc/{child}/stat")
-            deadline = time.monotonic() + 2
-            while proc_stat.exists() and time.monotonic() < deadline:
-                if proc_stat.read_text().split()[2] == "Z":
-                    break
-                time.sleep(0.01)
-            self.assertTrue(not proc_stat.exists() or proc_stat.read_text().split()[2] == "Z")
+            wait_for(lambda: process_stopped(child), f"the build's child {child} to stop")
         finally:
             if process.poll() is None:
                 process.kill()

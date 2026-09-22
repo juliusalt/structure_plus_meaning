@@ -25,14 +25,15 @@ begin
 
 theorem site_rows_exact:
   "encoded_site_represents use_code slot_code (encoded_site_rows use_code slot_code rows) (set rows)"
-  by (auto simp: encoded_site_represents_def encoded_site_rows_def encoded_site_lookup_def
-    nested_relation_store_member; force)
+  by (simp add: encoded_site_represents_def encoded_site_rows_def encoded_site_lookup_def rows_binding_lookup)
 
 lemma site_insert_lookup:
   "encoded_site_lookup use_code slot_code (encoded_site_insert use_code slot_code I u k v) x y=
     (if x=u \<and> y=k then finsert v (encoded_site_lookup use_code slot_code I x y)
       else encoded_site_lookup use_code slot_code I x y)"
-  by (simp add: encoded_site_lookup_def encoded_site_insert_def)
+  apply (rule fset_eqI)
+  using nested_store_updates.updated[where i=I and k="(use_code u,slot_code k)" and u=v and k'="(use_code x,slot_code y)"]
+  by (simp add: encoded_site_lookup_def encoded_site_insert_def del: nested_relation_lookup_insert)
 
 theorem site_insert_exact:
   "encoded_site_represents use_code slot_code I A \<Longrightarrow>

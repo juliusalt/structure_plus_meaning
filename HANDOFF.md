@@ -25,20 +25,22 @@ the mentions notion; the family traversal made generic over the row reading, #34
 selection and support family, and the declaration store by constant key); roots with the permitted
 difference (#38, after #78; the search of a presented state's rows by row key, for any state) and unreached (#40: the
 reach table as a reusable presentation, and the one measurement of a judgment, run on the rows of the concrete
-presenter #101, whose build #40 waits on); the entry rule, its contract and two instances (#42, to wait on request construction's first
-build, the introduction of `request_presents` for constructed requests); store absence and the witnesses (#44), last,
+presenter #101, whose build #40 waits on); the entry rule, its contract and two instances (#42, after #106, the
+introduction of `request_presents` for constructed requests); store absence and the witnesses (#44), last,
 so that no positive field reaches an absence. Roots stay a store with distinct keys, #38 stating the roots field under a
 carried condition on their order, owned by the exporter. The corrections of #36, #38 and #40 came from design 95 (q36)
 before any of them started.
 
-**Request construction (#100).** Task 95's entry (accepted 2026-09-22), the Q7 order's step after the verdict: a native
+**Request construction (#106–#114).** Task 95's entry (accepted 2026-09-22), the Q7 order's step after the verdict: a native
 check over the request state's rows — a proposed body is admitted exactly when it lists the least context and the
 support, production being an executor's (the HOL constructor, exported, the first) — composing no reach closure, the
 least context being one step (a declaration mentions nothing); five fields: support complete, scope cited, declarations
-cited, context sound, support sound. Its builds, which #100 briefs once the entry lands: B1, the introduction of
-`request_presents` for constructed requests in `Development_Request_Keys` (nothing unlanded; #42 is to wait on it); B2
-after #36; B3 after #38, #40 and the presenter (#101); B4 — the construction, its contract, the two kinds, admission at a
-locus and a measurement — after B1–B3.
+cited, context sound, support sound. Its builds, briefed by #100 from the landed entry (`8c641235`), each with its
+review: #106, the introduction of `request_presents` for constructed requests in `Development_Request_Keys` (nothing
+unlanded; #42 waits on it); #108, support complete and scope cited, after #36; #110, the three search fields, after #38,
+#40, #101 and #108; #112, the construction — rule, program, contract, conditions and corollaries, admitting a request
+at its locus through the store search with #97's contract for held values — after #106, #108, #110 and #97; and #114,
+the held measurement of one construction, after #112.
 
 **The rows line (#97, #30).** Task 9's one notion, a row at a locus: the locus (#22), the relation (#24), the request at
 a locus (#26), the presenters (#28), the store's (#83) and the rows' fix (#84: the formedness of every row value a
@@ -62,10 +64,10 @@ native application; #64 (the library at the loop's problems, so that a decompose
 (`demand_positions_lookup` proved from `RBT.lookup_bulkload`; its third round kept it as a decision against its brief);
 its brief is now that finding alone — re-proved from the instance or deleted, a reason to keep it asked of the planner
 first — queued for a fourth round;
-#74 (the stores' and native tables' six uses, 359 theories) resumes when the one tree is free; #96 briefs, after #74,
+#74 (the stores' and native tables' six uses, 359 theories) is working in the one tree; #96 briefs, after #74,
 what both reviews leave — arguments made twice, to be stated once in `Carrier_Indexes`, and fourteen theories still
-citing raw carrier facts. #86 advances the proof base after #76; the next advance follows #74's and #96's landings
-(Q10).
+citing raw carrier facts. #86 advances the proof base now — #36's probes failed at load on the lagging base — and #105
+advances it again once #76 and #74 have landed (Q10).
 
 **The keyed question (#88–#93).** The keyed packet costs 2.1–3.8 times the index form, growing with its candidates:
 #88 attributes and refines that growth, held, after #86; #90 switches the 20 overnight native-control theories after
@@ -76,15 +78,15 @@ and #30. q33's facts, unread by the planner, are named in #90's and #92's inputs
 engine's in-place refinements are notions; the recipe's next refinement (Open 27) is briefed from its entry.
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes, and their landing
-includes their reviews. The deepest chain is 6 (#45 after #44, #42, #38/#40, #36); request construction's builds hang
-after the verdict builds they consume. Beside the chain: #76, #97, the presenter #101 (which #40 waits on), #100, #94,
-#74, #96, #30 with the answer reader's refusal #103 after it, #85, #86 and the keyed line.
+includes their reviews. The deepest chains are 5: #45 (after #44, #42, #38/#40, #36) and #114 (after #112, #110,
+#38/#40, #36). Beside them: #76, #97, the presenter #101 (which #40 waits on), #106, #94, #74, #96, #30 with the answer
+reader's refusal #103 after it, #85, #86, #105 and the keyed line.
 
-**Order** (`95 76 77 97 98 36 37 101 102 100 38 39 40 41 42 43 44 45 94 86 74 75 96 30 31 103 104 85 88 89 90 91 64 65 92 93`).
-#95's landing, #76's round and #97 (which #30 waits on) first; then #36 at the verdict chain's head and the presenter
-#101 (which #40 waits on), with the brief #100 (request construction's builds); the verdict chain, which takes a slot
+**Order** (`86 76 77 97 98 36 37 101 102 106 107 38 39 40 41 42 43 44 45 108 109 110 111 112 113 114 94 74 75 105 96 30 31 103 104 85 88 89 90 91 64 65 92 93`).
+The base advance #86 first (#36's probes wait on it), #76's round and #97 (which #30 waits on); then #36 at the verdict
+chain's head, the presenter #101 (which #40 waits on) and #106 (which #42 waits on); the verdict chain, which takes a slot
 whenever one of its tasks is ready; beside it the
-decomposition's #94, the base advance, #74 and its consolidation, #30, #85 and the keyed line. A parked task whose hold
+decomposition's #94, #74 with the next advance #105 and its consolidation, #30, #85 and the keyed line. A parked task whose hold
 nears its end resumes first by itself.
 
 ## Decisions
@@ -177,7 +179,7 @@ judgment's path.
   structural rows, acceptance positive; a refinement applies a notion, and an index of a carrier by a key is one; the
   development notions are one notion, a row at a locus; a decomposition that applied is a row at its problem's locus
   (task 2's entry amended with it); request construction is a native definition over the state's rows, a check
-  admitting a proposed body (#95, accepted 2026-09-22).
+  admitting a proposed body (#95, `8c641235`).
 - **The engine line** #5, #7 (`6227819a`, `44738c20`): constructed applications and `Positioned_Native_Evaluation`
   (`positioned_program_evaluation_exact`); the machinery's reach 171.8 s → 4.35 s; the certificate path left keyed.
 - **The rows line** #22 `Development_Loci` (`612ee5a9`; consumers' names in `.build/tasks/22/names.md`; every program
@@ -204,7 +206,7 @@ judgment's path.
   `unproduced` (`3aaddd96`); #50 the check's named refusals (`955b34bb`); #79 the probe's 60 s default (`1e7ed068`);
   #81 the receipts retained (`cf24195e`); #82 the base advanced to `b1328831`; #80 the seed recipe's formation split,
   extended at arity 1 (`2191409d`; the recipe 140.8 s before its first round, 105.50 → 93.04 s held for its third).
-- **The plan** #49 (`1634d456`). **Briefs** #1, #10, #11, #13, #14, #16, #87, #99. **Investigation** #53
+- **The plan** #49 (`1634d456`). **Briefs** #1, #10, #11, #13, #14, #16, #87, #99, #100. **Investigation** #53
   (`.build/tasks/30/readers.md`).
 
 ## Open
@@ -225,7 +227,7 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
   but the finalizer refuses to commit the removal of an ignored path. Provisional: it stands removed and uncommitted,
   and no task is made of it; the step is the finalizer's or the owner's.
 - **Q10** who advances the proof base. Provisional: #82 advanced it once (a landing check fell to 19.18 s); #86
-  advances it after #76, and the planner places the next after #74's and #96's landings.
+  advances it now, for #36's probes; #105 advances it again once #76 and #74 have landed.
 - **Q11** who retains verified receipts. Provisional: #81 retained them once; the planner places another after a
   landing that changes many recipes' boundaries.
 
@@ -334,12 +336,10 @@ Not yet planned, in the order they are expected to be planned:
 
 ## Now
 
-- **In flight (plan-35, 04:05)**: #97 stating the store search's contract for held values; #76 checking its fourth
-  round (review 77's one finding, its brief rewritten to it); #95's landing round accepted again (its first commit met a
-  transient git lock in its worktree, 03:49); #74 parked for the one tree, which #62's landing freed. Ready: #36, the
-  verdict chain's head; the presenter #101 (placed from #99: #101 and its review #102 before #40; the answer reader's
-  refusal of a duplicated name, #103 and its review #104, after #30, which edits `Development_Native_Answers`); #94; #85;
-  #100 once #95's entry lands.
+- **In flight (plan-35, 05:12)**: #74 working in the one tree; #36 working, its probes waiting on #86, the base advance
+  made to run now (`v2.py after 36 86`); #76's fourth round and #97 in review. Startable: the presenter #101 (placed from #99: #101 and its review #102 before #40; the answer reader's
+  refusal of a duplicated name, #103 and its review #104, after #30, which edits `Development_Native_Answers`); #106,
+  request construction's first build (placed from #100 with #108–#114); #94; #85.
 - **For the owner** (harness gaps, reported by the tasks):
   - `v2.py read` crashes with a `TypeError` in `work_meter.gaps` when two ranges in one batch overlap (#22's re-review),
     and refuses the planner an undelivered answer the harness asks it to carry (q33).

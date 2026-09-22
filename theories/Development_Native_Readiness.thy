@@ -1,5 +1,5 @@
 theory Development_Native_Readiness
-  imports Native_Path_Stores
+  imports Native_Path_Store_Indexes
 begin
 
 section \<open>Readiness is a native definition\<close>
@@ -197,7 +197,9 @@ lemma readiness_table_found:
 lemma readiness_table_lookup:
   assumes formed: "readiness_table_formed T" and row: "(k,a,hs)\<in>set T"
   shows "store_lookup (path_store T) k=Some (a,hs)"
-  using path_store_lookup[of T k "(a,hs)"] formed row by (simp add: readiness_table_formed_def)
+  using carrier_index.query_search[OF Native_Path_Store_Indexes.path_store_carrier_index,
+      where c=T and q=k and v="(a,hs)"]
+    formed row by (simp add: readiness_table_formed_def)
 
 section \<open>Native settlement is the least closure\<close>
 
@@ -499,12 +501,11 @@ proof (induction rule: table_settled.induct)
   then have answered: "(readiness_answered,Pair_Term ?c (readiness_row_value (True,hs)))
       \<in>positive_meaning native_readiness_system"
     by (simp add: readiness_row_value_def readiness_value_def readiness_status_def)
-  have lookup: "store_lookup (path_store T) k=Some (True,hs)"
-    by (rule readiness_table_lookup[OF formed settle.hyps(1)])
   have search: "(readiness_settled_search,Pair_Term ?c (Pair_Term (path_term k)
       (store_term readiness_row_value (path_store T))))\<in>positive_meaning native_readiness_system"
-    using cf answered lookup
-    by (auto simp: readiness_settled_searches.exact[OF readiness_row_value_formed] path_term_injective)
+    using native_carrier_index.site_query[OF readiness_settled_searches.index[OF readiness_row_value_formed],
+        where c=T and q=k and x="?c"] formed settle.hyps(1) cf answered
+    by (auto simp: readiness_table_formed_def)
   have "(readiness_settled,evaluate_pattern (native_values [?c,path_term k])
       (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning native_readiness_system"
     by (rule readiness_settled_family.native_step[where c="[0]" and

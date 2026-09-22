@@ -103,6 +103,28 @@ next
   qed
 qed
 
+text \<open>
+  Two branch positions are one exactly when their children and addresses are: injectivity and
+  disjointness together, stated once so that a consumer comparing positions reads no layout.
+\<close>
+lemma syntax_branch_eq_iff [simp]: "syntax_branch i a = syntax_branch j b \<longleftrightarrow> i = j \<and> a = b"
+proof
+  assume same: "syntax_branch i a = syntax_branch j b"
+  have "i = j"
+  proof (rule ccontr)
+    assume "i \<noteq> j"
+    then have "range (syntax_branch i) \<inter> range (syntax_branch j) = {}" by (rule syntax_branch_disjoint)
+    then show False using same by blast
+  qed
+  then show "i = j \<and> a = b" using same syntax_branch_injective[of j] by (simp add: inj_eq)
+qed simp
+
+text \<open>
+  The contracts above are all that is read of the branch: its equations leave the simpset here, so no
+  proof after them computes a position, and a change of the layout changes this theory alone.
+\<close>
+declare syntax_branch.simps [simp del]
+
 section \<open>The forest is its children placed at their branches\<close>
 
 definition syntax_forest_positions :: "local_address set list \<Rightarrow> local_address set" where

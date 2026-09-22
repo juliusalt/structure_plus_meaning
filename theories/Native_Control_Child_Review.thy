@@ -75,7 +75,7 @@ lemma cause_certificate_question_exact:
 
 definition cause_certificate_choice where
   "cause_certificate_choice prepared results facets report =
-    native_admitted_choice results (cause_certificate_question prepared results facets) report"
+    keyed_admitted_choice (first_occurrence_key results) results (cause_certificate_question prepared results facets) report"
 
 lemma cause_certificate_choice_exact:
   "cause_certificate_choice (cause_certificate_prepare D) results facets report=
@@ -162,7 +162,8 @@ lemma cause_child_application_question_exact:
     Let_def prod.case prepared_faceted_question_exact)
 
 definition cause_child_application_choice where
-  "cause_child_application_choice prepared methods facets report=native_admitted_choice methods
+  "cause_child_application_choice prepared methods facets report=
+    keyed_admitted_choice (first_occurrence_key methods) methods
     (cause_child_application_question prepared methods facets) report"
 
 theorem cause_child_application_choice_original:

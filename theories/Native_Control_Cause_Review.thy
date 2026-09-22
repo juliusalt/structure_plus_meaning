@@ -40,7 +40,7 @@ definition cause_root_question where
     (cause_root_observation subject)"
 
 definition cause_root_choice where
-  "cause_root_choice subject methods facets report=native_admitted_choice methods
+  "cause_root_choice subject methods facets report=keyed_admitted_choice (first_occurrence_key methods) methods
     (cause_root_question subject methods facets) report"
 
 theorem cause_root_original_requirements:

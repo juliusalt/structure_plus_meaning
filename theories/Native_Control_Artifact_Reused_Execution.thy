@@ -5,7 +5,8 @@ begin
 declare judgment_artifact_execution_question_def[code del]
 
 lemma judgment_artifact_execution_reused_code [code]:
-  "judgment_artifact_execution_question ignored=filtered_development_question judgment_artifact_candidates
+  "judgment_artifact_execution_question ignored=keyed_development_question
+    (first_occurrence_key judgment_artifact_candidates) judgment_artifact_candidates
     (\<lambda>a. list_all (\<lambda>s. syntax_judgment_check s \<longrightarrow> a=Complete_Artifact_Body) syntax_judgment_cases)"
   by (simp only: judgment_artifact_execution_question_def judgment_artifact_question_def
     judgment_artifact_reused_observation)

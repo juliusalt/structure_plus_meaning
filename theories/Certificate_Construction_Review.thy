@@ -49,13 +49,14 @@ definition certificate_result_question where
 
 definition certificate_result_choice where
   "certificate_result_choice P D results facets report =
-    native_admitted_choice results (certificate_result_question P D results facets) report"
+    keyed_admitted_choice (first_occurrence_key results) results
+      (certificate_result_question P D results facets) report"
 
 theorem certificate_result_choice_conditions:
   assumes chosen: "certificate_result_choice P D results facets report=Some result"
     and facet: "f\<in>set facets"
   shows "certificate_requirement P D result f"
-  using faceted_native_choice[OF chosen[unfolded certificate_result_choice_def
+  using keyed_admitted_choice_condition[OF first_occurrence_key_inj_on chosen[unfolded certificate_result_choice_def
     certificate_result_question_def] facet]
   by (simp only: certificate_observation_exact)
 

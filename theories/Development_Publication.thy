@@ -3,14 +3,7 @@ theory Development_Publication
     Development_Loci Development_State_Presenter
 begin
 
-section \<open>The term of a contract\<close>
-
-fun development_contract_term :: "development_contract \<Rightarrow> isabelle_term" where
-  "development_contract_term (Development_Refinement t)=t"
-| "development_contract_term (Development_Proof t)=t"
-| "development_contract_term (Development_Presentation t)=t"
-| "development_contract_term (Development_Definition t)=t"
-| "development_contract_term (Development_Amendment t)=t"
+section \<open>The term of a contract moves with the positions of the state\<close>
 
 lemma development_contract_term_rename:
   "development_contract_term (development_contract_rename f k)=isabelle_term_rename f (development_contract_term k)"

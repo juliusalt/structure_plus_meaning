@@ -159,6 +159,20 @@ theorem development_locus_shared_tail:
   "drop 3 (development_locus key r k c)=drop 3 (development_locus key s k c)"
   by (cases r; cases s; simp_all add: development_locus_def)
 
+section \<open>The term of a contract\<close>
+
+text \<open>
+  A contract is its kind and its term: the kind is the prefix of the locus, and the term is what the row
+  carries inert.
+\<close>
+
+fun development_contract_term :: "development_contract \<Rightarrow> isabelle_term" where
+  "development_contract_term (Development_Refinement t)=t"
+| "development_contract_term (Development_Proof t)=t"
+| "development_contract_term (Development_Presentation t)=t"
+| "development_contract_term (Development_Definition t)=t"
+| "development_contract_term (Development_Amendment t)=t"
+
 section \<open>The locus of a problem, where its subject is exactly one constant\<close>
 
 text \<open>
@@ -265,6 +279,23 @@ next
       Some (development_locus key r (problem_contract p) c)"
     using Some by (simp add: development_problem_locus_at_def)
   then show ?thesis using subject by auto
+qed
+
+text \<open>
+  A notion stands at the locus of its problem under its role. The locus is stated where the problem's
+  subject is one constant; every presented problem has one, so its row locus is that locus.
+\<close>
+
+definition development_located_at ::
+    "(nat \<Rightarrow> bool list) \<Rightarrow> development_role \<Rightarrow> development_problem \<Rightarrow> bool list" where
+  "development_located_at key r p=the (development_problem_locus_at key r p)"
+
+lemma development_located_at_subject:
+  assumes subject: "problem_subject p={|c|}"
+  shows "development_located_at key r p=development_locus key r (problem_contract p) c"
+proof -
+  have "development_subject_constant p=Some c" using subject development_subject_constant_exact by blast
+  then show ?thesis by (simp add: development_located_at_def development_problem_locus_at_def)
 qed
 
 corollary development_without_subject_has_no_locus:

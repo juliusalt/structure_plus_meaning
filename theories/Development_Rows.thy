@@ -1,5 +1,5 @@
 theory Development_Rows
-imports Development_Loci Development_Publication
+imports Development_Loci Development_Row_Data Development_Publication
 begin
 
 section \<open>A citation is a path, and its absence is the store's own optional value\<close>
@@ -95,26 +95,6 @@ lemma development_contract_by_kind:
   shows "k=l"
   using assms by (cases k; cases l) simp_all
 
-section \<open>The locus of a presented notion\<close>
-
-text \<open>
-  A notion stands at the locus of its problem under its role. The locus is stated where the problem's
-  subject is one constant (@{const development_problem_locus_at}); every presented problem has one, so
-  its row locus is that locus.
-\<close>
-
-definition development_located_at ::
-    "(nat \<Rightarrow> bool list) \<Rightarrow> development_role \<Rightarrow> development_problem \<Rightarrow> bool list" where
-  "development_located_at key r p=the (development_problem_locus_at key r p)"
-
-lemma development_located_at_subject:
-  assumes subject: "problem_subject p={|c|}"
-  shows "development_located_at key r p=development_locus key r (problem_contract p) c"
-proof -
-  have "development_subject_constant p=Some c" using subject development_subject_constant_exact by blast
-  then show ?thesis by (simp add: development_located_at_def development_problem_locus_at_def)
-qed
-
 section \<open>The presentation relation\<close>
 
 type_synonym development_store_rows = "(bool list\<times>factor_term) list"
@@ -143,9 +123,7 @@ definition development_problems_present ::
       (development_problem \<Rightarrow> bool list option) \<Rightarrow> development_problem list \<Rightarrow> development_store_rows \<Rightarrow> bool" where
   "development_problems_present key inert origin grant ps rows \<longleftrightarrow>
     inj_on (development_located_at key Development_Problem_Role) (set ps) \<and>
-    (\<forall>p\<in>set ps. (\<exists>c. problem_subject p={|c|}) \<and> problem_authority p\<noteq>Development_Truth \<and>
-      (origin p=None \<longleftrightarrow> problem_origin p=Development_Residual) \<and>
-      (grant p=None \<longleftrightarrow> problem_authority p=Development_Generated) \<and>
+    (\<forall>p\<in>set ps. development_row_premise origin grant p \<and>
       (development_located_at key Development_Problem_Role p,
         development_problem_body inert (origin p) (grant p) (problem_contract p))\<in>set rows)"
 
@@ -235,17 +213,17 @@ lemma development_rows_problem:
     "store_lookup (path_store rows) (development_located_at key Development_Problem_Role p)=
       Some (development_problem_body inert (origin p) (grant p) (problem_contract p))"
 proof -
-  have "(\<exists>c. problem_subject p={|c|}) \<and> problem_authority p\<noteq>Development_Truth \<and>
-      (origin p=None \<longleftrightarrow> problem_origin p=Development_Residual) \<and>
-      (grant p=None \<longleftrightarrow> problem_authority p=Development_Generated) \<and>
+  have all: "development_row_premise origin grant p \<and>
       (development_located_at key Development_Problem_Role p,
         development_problem_body inert (origin p) (grant p) (problem_contract p))\<in>set rows"
     using bspec[OF conjunct2[OF development_rows_parts(1)[unfolded development_problems_present_def]] p] .
-  note all = this
-  from all[THEN conjunct1] obtain c where c: "problem_subject p={|c|}" by (rule exE)
-  show ?thesis by (rule that[OF c all[THEN conjunct2, THEN conjunct1]
-    all[THEN conjunct2, THEN conjunct2, THEN conjunct1] all[THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct1]
-    development_rows_lookup[OF all[THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2]]])
+  obtain c where c: "problem_subject p={|c|}" by (rule development_row_premise_subject[OF all[THEN conjunct1]])
+  have prem: "problem_authority p\<noteq>Development_Truth \<and>
+      (origin p=None \<longleftrightarrow> problem_origin p=Development_Residual) \<and>
+      (grant p=None \<longleftrightarrow> problem_authority p=Development_Generated)"
+    using all[THEN conjunct1] unfolding development_row_premise_def by (elim conjE) (intro conjI)
+  show ?thesis by (rule that[OF c prem[THEN conjunct1] prem[THEN conjunct2, THEN conjunct1]
+    prem[THEN conjunct2, THEN conjunct2] development_rows_lookup[OF all[THEN conjunct2]]])
 qed
 
 lemma development_rows_subject_constant:

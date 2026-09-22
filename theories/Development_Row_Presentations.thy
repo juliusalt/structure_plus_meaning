@@ -1,43 +1,15 @@
 theory Development_Row_Presentations
-imports Development_Rows
+imports Development_Rows Development_Row_Data
 begin
 
-section \<open>A row is presented through the generic presentations of its parts\<close>
+section \<open>The presenters of a row decode into the store's bodies\<close>
 
 text \<open>
-  The development's notions are rows at loci (the relation @{const development_rows_present}): a locus is a path, a problem's
-  body is its origin citation, its authority citation and its contract term carried inert, a request's
-  body is its support and its context, two families of citations, and an issue's body is the family of
-  decompositions that applied. Their executable presentations are composed here from the generic ones and
-  from the path store's own, and each states injectivity and nothing else, so that any other member of the
-  class may replace it. No presenter carries a tag, a position in a name table, or a field the locus
-  already says: the kind and the role are prefixes of the locus, the subject is its key, and the contract
-  term's presentation is supplied, as the relation takes its inert presentation.
-
-  A row is the path store's row presentation, the pair of its locus and its body
-  (@{const finite_store_row}), and a table is the path store of its rows (@{const finite_listing_store}).
+  The presenters of @{text Development_Row_Data} present exactly the bodies of the store's relation
+  (@{const development_rows_present}). A row is the path store's row presentation, the pair of its locus
+  and its body (@{const finite_store_row}), and a table is the path store of its rows
+  (@{const finite_listing_store}).
 \<close>
-
-
-section \<open>A citation and a family of citations\<close>
-
-definition development_citation_data :: "bool list option \<Rightarrow> finite_factor_term" where
-  "development_citation_data=finite_store_option finite_path"
-
-definition development_citations_data :: "bool list list \<Rightarrow> finite_factor_term" where
-  "development_citations_data=finite_sequence_presentation finite_path"
-
-lemma development_citation_data_injective [intro]: "inj development_citation_data"
-  unfolding development_citation_data_def by (rule finite_store_option_injective[OF finite_path_injective])
-
-lemma development_citations_data_injective [intro]: "inj development_citations_data"
-  unfolding development_citations_data_def by (rule finite_sequence_presentation_injective[OF finite_path_injective])
-
-lemma development_citation_data_formed [simp]: "finite_term_formed (development_citation_data l)"
-  unfolding development_citation_data_def by (rule finite_store_option_formed) simp
-
-lemma development_citations_data_formed [simp]: "finite_term_formed (development_citations_data ls)"
-  by (simp add: development_citations_data_def finite_sequence_presentation_def finite_data_list_formed list_all_iff)
 
 lemma decode_development_citation_data [simp]:
   "decode_finite_term (development_citation_data l)=development_row_citation l"
@@ -46,64 +18,6 @@ lemma decode_development_citation_data [simp]:
 lemma decode_development_citations_data [simp]:
   "decode_finite_term (development_citations_data ls)=development_row_family ls"
   by (simp add: development_citations_data_def finite_sequence_presentation_def development_row_family_def comp_def)
-
-section \<open>The bodies of a problem, a request and an issue\<close>
-
-type_synonym development_problem_row = "bool list option\<times>bool list option\<times>isabelle_term"
-type_synonym development_request_row = "bool list list\<times>bool list list"
-type_synonym development_issue_row = "bool list list list"
-
-definition development_problem_body_data ::
-    "(isabelle_term \<Rightarrow> finite_factor_term) \<Rightarrow> development_problem_row \<Rightarrow> finite_factor_term" where
-  "development_problem_body_data inert=finite_pair_presentation development_citation_data
-    (finite_pair_presentation development_citation_data inert)"
-
-definition development_request_body_data :: "development_request_row \<Rightarrow> finite_factor_term" where
-  "development_request_body_data=finite_pair_presentation development_citations_data development_citations_data"
-
-definition development_issue_body_data :: "development_issue_row \<Rightarrow> finite_factor_term" where
-  "development_issue_body_data=finite_sequence_presentation development_citations_data"
-
-text \<open>
-  The contract term is carried inert, and its presentation need be injective only on the terms carried,
-  as the relation asks of it (@{text development_rows_inert_injective}).
-\<close>
-
-lemma development_problem_body_data_injective [intro]:
-  assumes "inj_on inert A"
-  shows "inj_on (development_problem_body_data inert) {b. snd (snd b)\<in>A}"
-proof (rule inj_onI)
-  fix b c assume b: "b\<in>{b. snd (snd b)\<in>A}" and c: "c\<in>{b. snd (snd b)\<in>A}"
-    and same: "development_problem_body_data inert b=development_problem_body_data inert c"
-  obtain x1 x2 x3 where B: "b=(x1,x2,x3)" by (cases b) auto
-  obtain y1 y2 y3 where C: "c=(y1,y2,y3)" by (cases c) auto
-  have e: "development_citation_data x1=development_citation_data y1 \<and>
-      development_citation_data x2=development_citation_data y2 \<and> inert x3=inert y3"
-    using same by (simp add: B C development_problem_body_data_def)
-  have "x1=y1" by (rule injD[OF development_citation_data_injective]) (use e in simp)
-  moreover have "x2=y2" by (rule injD[OF development_citation_data_injective]) (use e in simp)
-  moreover have "x3=y3" by (rule inj_onD[OF assms]) (use e b c B C in simp)+
-  ultimately show "b=c" by (simp add: B C)
-qed
-
-lemma development_request_body_data_injective [intro]: "inj development_request_body_data"
-  unfolding development_request_body_data_def
-  by (intro finite_pair_presentation_injective development_citations_data_injective)
-
-lemma development_issue_body_data_injective [intro]: "inj development_issue_body_data"
-  unfolding development_issue_body_data_def
-  by (rule finite_sequence_presentation_injective[OF development_citations_data_injective])
-
-lemma development_problem_body_data_formed:
-  assumes "finite_term_formed (inert t)"
-  shows "finite_term_formed (development_problem_body_data inert (x,y,t))"
-  using assms by (simp add: development_problem_body_data_def)
-
-lemma development_request_body_data_formed [simp]: "finite_term_formed (development_request_body_data z)"
-  by (cases z) (simp add: development_request_body_data_def)
-
-lemma development_issue_body_data_formed [simp]: "finite_term_formed (development_issue_body_data hs)"
-  by (simp add: development_issue_body_data_def finite_sequence_presentation_def finite_data_list_formed list_all_iff)
 
 text \<open>
   Each body presents exactly the body of the relation: a problem's with the contract term its locus
@@ -123,6 +37,82 @@ lemma decode_development_issue_body_data:
   "decode_finite_term (development_issue_body_data hs)=readiness_decompositions hs"
   by (simp add: development_issue_body_data_def finite_sequence_presentation_def
     readiness_decompositions_family comp_def)
+
+section \<open>The row of a problem or a request in context is the store's row\<close>
+
+text \<open>
+  Every problem a store holds is inside the premise of its presentation in context, so a report that
+  presents the problems of a store with the store's own parameters presents them injectively, and its
+  rows decode to the rows the store holds; so do the requests.
+\<close>
+
+lemma development_problems_present_premise:
+  assumes present: "development_problems_present key inert origin grant ps rows" and p: "p\<in>set ps"
+  shows "development_row_premise origin grant p"
+  using present p by (simp add: development_problems_present_def)
+
+theorem development_problem_row_data_present_injective:
+  assumes present: "development_problems_present key (decode_finite_term \<circ> inert) origin grant ps rows"
+  shows "inj_on (development_problem_row_data key inert origin grant) (set ps)"
+proof (rule inj_onI)
+  fix p q assume p: "p\<in>set ps" and q: "q\<in>set ps"
+    and same: "development_problem_row_data key inert origin grant p=development_problem_row_data key inert origin grant q"
+  have loci: "inj_on (development_located_at key Development_Problem_Role) (set ps)"
+    using present by (simp add: development_problems_present_def)
+  have row: "development_problem_row_data key inert origin grant p=
+      Some (finite_store_row (development_problem_body_data inert)
+        (development_located_at key Development_Problem_Role p,
+          origin p,grant p,development_contract_term (problem_contract p)))"
+    by (rule development_problem_row_data_inside[OF development_problems_present_premise[OF present p]])
+  show "p=q" by (rule development_problem_row_data_injective[OF loci p q row]) (use same row in simp)
+qed
+
+theorem development_problem_row_data_present_decode:
+  assumes present: "development_problems_present key (decode_finite_term \<circ> inert) origin grant ps rows"
+    and p: "p\<in>set ps"
+  obtains x where "development_problem_row_data key inert origin grant p=Some x"
+    "decode_finite_term x=Pair_Term (path_term (development_located_at key Development_Problem_Role p))
+      (development_problem_body (decode_finite_term \<circ> inert) (origin p) (grant p) (problem_contract p))"
+    "(development_located_at key Development_Problem_Role p,
+      development_problem_body (decode_finite_term \<circ> inert) (origin p) (grant p) (problem_contract p))\<in>set rows"
+proof -
+  have row: "development_problem_row_data key inert origin grant p=
+      Some (finite_store_row (development_problem_body_data inert)
+        (development_located_at key Development_Problem_Role p,
+          origin p,grant p,development_contract_term (problem_contract p)))"
+    by (rule development_problem_row_data_inside[OF development_problems_present_premise[OF present p]])
+  show ?thesis
+    by (rule that[OF row]) (use present p in \<open>simp_all add: decode_finite_store_row
+      decode_development_problem_body_data development_problems_present_def\<close>)
+qed
+
+theorem development_request_row_data_present_injective:
+  assumes present: "development_rows_present key ekey (decode_finite_term \<circ> inert) origin grant
+      supported scope decs ps rs iss rows"
+  shows "inj_on (development_request_row_data key inert origin grant) (set rs)"
+proof (rule inj_onI)
+  fix r r' assume r: "r\<in>set rs" and r': "r'\<in>set rs"
+    and same: "development_request_row_data key inert origin grant r=development_request_row_data key inert origin grant r'"
+  have problems: "development_problems_present key (decode_finite_term \<circ> inert) origin grant ps rows"
+    and requests: "development_requests_present key ekey supported scope ps rs rows"
+    using development_rows_parts[OF present] by simp_all
+  have inside: "fst ` set rs\<subseteq>set ps" using requests by (auto simp: development_requests_present_def)
+  have loci: "inj_on (development_located_at key Development_Problem_Role) (fst ` set rs)"
+    by (rule inj_on_subset[OF development_rows_problem_loci[OF present] inside])
+  have keys: "inj_on key (\<Union>r\<in>set rs. fset (fst (snd (snd r))))"
+    by (rule inj_on_subset[OF development_rows_key_injective[OF present]])
+      (auto simp: development_row_constants_def)
+  have terms: "\<And>r. r\<in>set rs \<Longrightarrow> development_contract_term (problem_contract (fst r))=fst (snd r)"
+    using requests by (simp add: development_requests_present_def)
+  obtain p s S E where R: "r=(p,s,S,E)" by (cases r) auto
+  have "fst r\<in>set ps" using inside r by auto
+  then have "development_row_premise origin grant p"
+    using development_problems_present_premise[OF problems] by (simp add: R)
+  then obtain x where "development_request_row_data key inert origin grant r=Some x"
+    by (simp add: R development_request_row_data_def development_problem_row_data_inside)
+  then show "r=r'"
+    using development_request_row_data_injective[OF loci keys terms r r'] same by simp
+qed
 
 section \<open>A row is its locus with its body, and a table is the store of its rows\<close>
 

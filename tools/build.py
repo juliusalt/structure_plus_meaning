@@ -14,6 +14,7 @@ import signal
 import subprocess
 import sys
 import tempfile
+import threading
 import uuid
 
 import isabelle_places
@@ -68,17 +69,38 @@ class RunInterrupted(Exception):
 
 
 @contextmanager
-def interruption_signals():
-    def interrupt(signum, _frame):
-        raise RunInterrupted(signum)
+def interruption_signals(state=None):
+    """Deliver SIGINT, SIGTERM and SIGHUP as RunInterrupted while the block runs.
 
-    signals = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+    With a `state` dict, a signal whose disposition is inherited as ignored (as under nohup, or
+    SIGINT in a background job) stays ignored, and the block has a cleanup phase: a signal raises
+    only while state['raising'], and the first one clears it before it raises, so at most one is
+    raised and none inside the cleanup; every signal received is kept in state['received'] and,
+    once the previous handlers are restored at the block's end, delivered again, so the process
+    still ends by it after its cleanup. Outside the main thread no handler can be installed.
+    """
+    if threading.current_thread() is not threading.main_thread():
+        yield
+        return
+
+    def interrupt(signum, _frame):
+        if state is None:
+            raise RunInterrupted(signum)
+        state['received'].append(signum)
+        if state['raising']:
+            state['raising'] = False
+            raise RunInterrupted(signum)
+
+    signals = [s for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
+               if state is None or signal.getsignal(s) != signal.SIG_IGN]
     previous = {s: signal.signal(s, interrupt) for s in signals}
     try:
         yield
     finally:
         for signum, handler in previous.items():
             signal.signal(signum, handler)
+        for signum in (state or {}).get('received', []):
+            os.kill(os.getpid(), signum)
 
 
 def process_descendants(pid: int) -> list[int]:

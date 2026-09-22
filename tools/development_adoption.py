@@ -22,13 +22,23 @@ is judged by the existing machinery:
    state; it must be accepted as an unchanged answer, with nothing removed or added, whose
    certified generation again publishes over the incumbent it now is.
 
-Any refused step withdraws the installation. The receipt retains every step and, for every executed
-recipe, its measured seconds beside its retained seconds. Measured cost is an observation; nothing
-is ranked or selected by it. Which recipes a change reaches is computed by the host from manifests.
+An adoption that does not succeed changes nothing, whatever ends it. The files installation writes are
+read before its first write, and one cleanup path, reached by every exit after the adoption directory
+is made (any exception, `BaseException` included, and SIGINT, SIGTERM or SIGHUP, which are delivered as
+exceptions while the adoption runs and deferred while it cleans up, `build.interruption_signals`; a
+signal inherited as ignored stays ignored), returns them to their original
+text and writes the receipt; a deferred or received termination signal is delivered again once the
+receipt is written, and an exception other than a refusal propagates after it. A withdrawal that fails
+part-way names the files it restored and those it could not, and ends the run with an error. A receipt
+that cannot be written is printed to stderr and its error raised, chained to the original one, after
+the signals are delivered again. SIGKILL is beyond any handler. The receipt retains every step and, for every executed recipe, its measured
+seconds beside its retained seconds. Measured cost is an observation; nothing is ranked or selected by
+it. Which recipes a change reaches is computed by the host from manifests.
 """
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 from pathlib import Path
 import re
@@ -36,6 +46,7 @@ import subprocess
 import sys
 import time
 
+import build
 import development_answer
 from evidence_io import write_json
 import execution_support as investigate
@@ -56,8 +67,11 @@ def judge(answer_file, output, timeout):
     return record
 
 
-def install(answer, judged):
-    """Install the theory exactly as it was judged and import it at the layer's boundary."""
+def prepare(answer, judged):
+    """What installation writes: each file with its text before and after, all read before any write.
+
+The theory exactly as it was judged, the layer importing it at its boundary and ROOT declaring it.
+Every check that can refuse the installation is made here, so a refusal here has written nothing."""
     name = development_answer.answer_name(answer)
     text = (judged / 'project' / 'theories' / (name + '.thy')).read_text()
     assert text == development_answer.answer_theory(development_answer.STATES['refinement_layer'], answer), \
@@ -66,24 +80,48 @@ def install(answer, judged):
     assert not theory.exists()
     layer = ROOT / 'theories' / (LAYER + '.thy')
     root = ROOT / 'ROOT'
-    original = {'layer': layer.read_text(), 'root': root.read_text()}
-    header = re.match(r'(\s*theory\s+\S+\s+imports\s+)([\s\S]*?)(\s+begin\b)', original['layer'])
-    assert header and name not in investigate.theory_imports(original['layer'], LAYER)
+    layer_text, root_text = layer.read_text(), root.read_text()
+    header = re.match(r'(\s*theory\s+\S+\s+imports\s+)([\s\S]*?)(\s+begin\b)', layer_text)
+    assert header and name not in investigate.theory_imports(layer_text, LAYER)
     entry = '    ' + LAYER + '\n'
-    assert original['root'].count(entry) == 1
-    theory.write_text(text)
-    layer.write_text(header[1] + header[2] + ' ' + name + header[3] + original['layer'][header.end():])
-    root.write_text(original['root'].replace(entry, '    ' + name + '\n' + entry))
-    assert name in investigate.theory_imports(layer.read_text(), LAYER)
+    assert root_text.count(entry) == 1
+    return [(theory, None, text),
+            (layer, layer_text, header[1] + header[2] + ' ' + name + header[3] + layer_text[header.end():]),
+            (root, root_text, root_text.replace(entry, '    ' + name + '\n' + entry))]
+
+
+def install(answer, plan):
+    """Write the planned files. The caller holds the plan before this runs, so any failure here is withdrawn."""
+    for path, before, after in plan:
+        path.write_text(after)
+    theory, layer, root = (path for path, before, after in plan)
+    assert development_answer.answer_name(answer) in investigate.theory_imports(layer.read_text(), LAYER)
     return {'theory': str(theory.relative_to(ROOT)), 'theory_sha256': investigate.file_hash(theory),
-            'layer_sha256': investigate.file_hash(layer), 'root_sha256': investigate.file_hash(root)}, original
+            'layer_sha256': investigate.file_hash(layer), 'root_sha256': investigate.file_hash(root)}
 
 
-def withdraw(answer, original):
-    name = development_answer.answer_name(answer)
-    (ROOT / 'theories' / (name + '.thy')).unlink(missing_ok=True)
-    (ROOT / 'theories' / (LAYER + '.thy')).write_text(original['layer'])
-    (ROOT / 'ROOT').write_text(original['root'])
+def withdraw(plan):
+    """Return every planned file to its text before installation, reporting what was restored and what not.
+
+A file already at its original text is left alone, so a failure that came before its write does not
+make the withdrawal write it. A file that cannot be restored is named with its error, and the others
+are still restored."""
+    withdrawal = {'restored': [], 'unchanged': [], 'unrestored': {}}
+    for path, before, after in plan:
+        name = str(path.relative_to(ROOT))
+        try:
+            if before is None:
+                present = path.exists()
+                path.unlink(missing_ok=True)
+            else:
+                present = path.read_text() != before
+                if present:
+                    path.write_text(before)
+            withdrawal['restored' if present else 'unchanged'].append(name)
+        except Exception as error:
+            withdrawal['unrestored'][name] = type(error).__name__ + ': ' + str(error)
+    return withdrawal
+
 
 
 def recipe_costs(summary):
@@ -122,13 +160,21 @@ def adopt(args):
     output = args.output.resolve()
     assert not output.exists(), 'Use a fresh adoption directory.'
     output.mkdir(parents=True)
-    answer_file = output / 'answer.json'
-    answer_file.write_text(json.dumps(answer, indent=1) + '\n')
     name = development_answer.answer_name(answer)
     receipt = {'status': 'refused', 'record': str(record_path), 'record_sha256': investigate.file_hash(record_path),
                'theory': name, 'route': route, 'control': args.control, 'steps': {}}
-    original = None
+    # One cleanup path: every exit after this point reaches the handler below, which withdraws whatever
+    # `plan` names and writes the receipt. The plan is read before installation's first write.
+    # Termination signals take the same path (build.interruption_signals with a state): raised once while
+    # the adoption runs, deferred while it cleans up, and delivered again once the handlers are restored.
+    state = {'raising': False, 'received': []}
+    signals = contextlib.ExitStack()
+    signals.enter_context(build.interruption_signals(state))
+    plan, raised, unwritten = None, None, None
     try:
+        state['raising'] = True
+        answer_file = output / 'answer.json'
+        answer_file.write_text(json.dumps(answer, indent=1) + '\n')
         before = judge(answer_file, output / 'before', args.timeout)
         receipt['steps']['precondition'] = {k: before.get(k) for k in ('status', 'accepted', 'verdict_word',
                                                                        'publication_word', 'summary', 'adopted',
@@ -139,8 +185,8 @@ def adopt(args):
             'The verdict changed since the answer was retained: it is a re-evaluation, not an adoption.'
         assert before.get('publication_word') == record.get('publication_word'), \
             'The publication changed since the answer was retained: it is a re-evaluation, not an adoption.'
-        installed, original = install(answer, output / 'before')
-        receipt['steps']['installation'] = installed
+        plan = prepare(answer, output / 'before')
+        receipt['steps']['installation'] = install(answer, plan)
         started = time.monotonic()
         code = subprocess.run([sys.executable, '-B', str(TOOLS / 'incremental_check.py'), 'check', '--output',
                                str(output / 'check'), '--jobs', '8', '--threads', '16'],
@@ -164,17 +210,37 @@ def adopt(args):
         assert counts[:4] == [0, 0, 0, 0], 'The published state differs from the adopted answer.'
         assert (after.get('summary') or {}).get('published'), \
             'The adopted answer does not publish over the incumbent it now is.'
+        state['raising'] = False
         receipt['status'] = 'adopted'
-    except (AssertionError, OSError, ValueError, KeyError) as error:
-        receipt['error'] = str(error)
-        if original is not None:
-            withdraw(answer, original)
-            receipt['withdrawn'] = True
-    if receipt['status'] == 'adopted' and args.control:
-        withdraw(answer, original)
-        receipt['withdrawn'] = True
-    write_json(output / 'receipt.json', receipt)
+    except BaseException as error:
+        state['raising'] = False
+        raised = error
+        receipt['status'] = 'refused'
+        receipt['error'] = str(error) or type(error).__name__
+        receipt['error_type'] = type(error).__name__
+    try:
+        if plan is not None and (raised is not None or args.control):
+            withdrawal = withdraw(plan)
+            receipt['withdrawal'] = withdrawal
+            if not withdrawal['unrestored']:
+                receipt['withdrawn'] = True
+        try:
+            write_json(output / 'receipt.json', receipt)
+        except Exception as error:
+            unwritten = error
+            print('The receipt could not be written (' + type(error).__name__ + ': ' + str(error) + '): '
+                  + json.dumps(receipt, default=str), file=sys.stderr)
+    finally:
+        signals.close()
     print(json.dumps({k: receipt[k] for k in ('status', 'theory', 'error', 'withdrawn') if k in receipt}))
+    if unwritten is not None:
+        raise unwritten from raised
+    unrestored = (receipt.get('withdrawal') or {}).get('unrestored')
+    if unrestored:
+        raise OSError('The withdrawal could not restore ' + ', '.join(sorted(unrestored))) from raised
+    if raised is not None and not isinstance(raised, (AssertionError, OSError, ValueError, KeyError,
+                                                      build.RunInterrupted)):
+        raise raised
     return 0 if receipt['status'] == 'adopted' else 1
 
 

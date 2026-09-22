@@ -198,13 +198,13 @@ proof -
   interpret frame: syntax_family_construction "[]" by (rule syntax_family_construction.intro) simp_all
   have carrier: "rra_carrier (object_structure frame.record_framed)={[]}"
     by (simp add: record_wrapper_def attach_structure_def record_structure_def
-      syntax_forest_Nil empty_artifact_def family_ports_def)
-  have rec: "record_at frame.record_framed [] [] []" using frame.record_read by (simp add: family_ports_def)
+      syntax_forest_Nil empty_artifact_def family_ports_empty)
+  have rec: "record_at frame.record_framed [] [] []" using frame.record_read by (simp add: family_ports_empty)
   have every: "\<forall>E u. environment_formed E \<longrightarrow> artifact_at E u frame.record_framed \<longrightarrow>
       native_proof_node_at E u [] Schema_Assertion {} {[]} {}"
     by (intro allI impI) (rule native_proof_node_at.assertion[OF _ _ rec]; assumption)
   have same: "assertion_node_syntax=frame.record_framed"
-    by (simp add: assertion_node_syntax_def family_ports_def)
+    by (simp add: assertion_node_syntax_def family_ports_empty)
   show "exact_formed assertion_node_syntax"
     "bag_count (object_data assertion_node_syntax)=(\<lambda>_. 0)"
     "rra_carrier (object_structure assertion_node_syntax)={[]}"

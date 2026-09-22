@@ -115,8 +115,9 @@ begin
 sublocale install: finite_native_admission_installation P
     "finite_native_list_clauses a (finite_native_admission_fresh P)"
   by (unfold_locales; (rule source)?)
-    (use element in \<open>auto simp: finite_native_list_clauses_def single_valued_def
-      finite_native_admission_schema_dependencies intro: finite_native_admission_schema_formed\<close>)
+    (use element in \<open>auto simp: finite_native_list_clauses_single_valued
+      finite_native_admission_schema_dependencies dest!: finite_native_list_clauses_schemas
+      intro: finite_native_admission_schema_formed\<close>)
 
 sublocale semantics: list_rule_relation "positive_meaning (decode_finite_system install.target)" a install.entry
   by (rule list_profile_rule_family[OF install.call])

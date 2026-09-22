@@ -57,6 +57,21 @@ proof -
     admitted_pair_schema_list_step)
 qed
 
+text \<open>
+  An installation reads the list clauses through two contracts, not through their coordinates: the family
+  is single-valued, and each clause is one of the two admission schemas.
+\<close>
+
+lemma finite_native_list_clauses_single_valued:
+  "single_valued (fset (finite_native_list_clauses a d))"
+  by (simp add: finite_native_list_clauses_def single_valued_def)
+
+lemma finite_native_list_clauses_schemas:
+  assumes "(c,S)\<in>fset (finite_native_list_clauses a d)"
+  shows "S=finite_native_admission_schema finite_data_list_nil_schema \<or>
+    S=finite_native_admission_schema (finite_admitted_pair_schema a d)"
+  using assms by (auto simp: finite_native_list_clauses_def)
+
 section \<open>Fresh provisional definitions are constructed in the recovered program\<close>
 
 definition finite_native_admission_fresh :: "local_address option finite_native_system \<Rightarrow>

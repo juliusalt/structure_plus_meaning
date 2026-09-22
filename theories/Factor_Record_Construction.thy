@@ -16,6 +16,11 @@ lemma syntax_record_ports_distinct [simp]: "distinct (syntax_record_ports n)"
 lemma syntax_record_ports_root [simp]: "[] \<notin> set (syntax_record_ports n)"
   by (auto simp: syntax_record_ports_def)
 
+lemma syntax_record_ports_shape:
+  assumes "a \<in> set (syntax_record_ports n)"
+  shows "\<exists>b. a=0#b"
+  using assms by (auto simp: syntax_record_ports_def)
+
 lemma syntax_record_headers_outside:
   "insert [] (set (syntax_record_ports n)) \<inter> binder_addresses = {}"
   by (auto simp: syntax_record_ports_def)

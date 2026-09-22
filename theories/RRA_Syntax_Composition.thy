@@ -70,8 +70,11 @@ lemma family_ports_distinct [simp]: "distinct (family_ports n)"
 
 lemma family_ports_shape:
   assumes "a \<in> set (family_ports n)"
-  shows "\<exists>i<n. a=[1,2] @ unary_address i"
+  shows "\<exists>b. a=[1,2] @ b"
   using assms by (auto simp: family_ports_def)
+
+lemma family_ports_empty: "family_ports 0 = []"
+  by (simp add: family_ports_def)
 
 lemma family_ports_formed:
   "\<forall>a\<in>set (family_ports n). octets_formed a"

@@ -29,9 +29,7 @@ abbreviation reach_some :: "local_address option definition_site" where
 
 definition reach_reached_rule ::
     "(local_address,local_address,local_address option definition_site) finite_factor_schema" where
-  "reach_reached_rule=finite_native_rule (Finite_Pattern_Pair (native_var 0) (native_var 1))
-    [([0],(reach_search,Finite_Pattern_Pair (native_var 0)
-      (Finite_Pattern_Pair (native_var 1) (native_var 0))))]"
+  "reach_reached_rule=native_context_call_rule reach_search"
 
 definition reach_root_rule ::
     "(local_address,local_address,local_address option definition_site) finite_factor_schema" where
@@ -75,9 +73,9 @@ lemma native_reach_definitions:
   "system_definitions native_reach_system=fst ` set reach_definitions"
   by (simp add: native_reach_system_def finite_native_reach_def finite_rule_program_definitions)
 
-interpretation reach_reached_family: native_rule_family native_reach_system reach_reached
-    "[([0],reach_reached_rule)]"
-  by (rule native_reach_family) (simp_all add: reach_definitions_def reach_reached_rule_def)
+interpretation reach_reached_family: native_context_call_program native_reach_system reach_reached reach_search
+  unfolding native_context_call_program_def by (rule native_reach_family)
+    (simp_all add: reach_definitions_def reach_reached_rule_def native_context_call_rule_def)
 
 interpretation reach_searches: native_store_search_program native_reach_system reach_search reach_holds
   unfolding native_store_search_program_def by (rule native_reach_family)
@@ -252,11 +250,11 @@ proof (rule positive_valuation_induct[OF holds, where property=reach_invariant])
     assume site: "d=reach_reached"
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (reach_table_term T) k"
     have rule: "S=decode_finite_schema reach_reached_rule"
-      using clause site reach_reached_family.family by auto
+      using clause site reach_reached_family.family by (auto simp: reach_reached_rule_def)
     have fields: "f [0]=reach_table_term T \<and> f [1]=k"
-      using shape by (simp add: rule reach_reached_rule_def)
+      using shape by (simp add: rule reach_reached_rule_def native_context_call_rule_def)
     have given: "(reach_search,Pair_Term (f [0]) (Pair_Term (f [1]) (f [0])))\<in>Y"
-      using native_rule_support[OF into[unfolded rule reach_reached_rule_def]] by simp
+      using native_rule_support[OF into[unfolded rule reach_reached_rule_def native_context_call_rule_def]] by simp
     have search: "(reach_search,Pair_Term (reach_table_term T)
         (Pair_Term k (store_term reach_row_value (path_store T))))\<in>Y"
       using given fields by (simp add: reach_table_term_def)
@@ -373,13 +371,7 @@ proof -
     using native_carrier_index.site_query[OF reach_searches.index[OF reach_row_value_formed],
         where c=T and q=k and x="?c"] formed row cf holds_row
     by (auto simp: reach_table_formed_def)
-  have "(reach_reached,evaluate_pattern (native_values [?c,path_term k])
-      (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning native_reach_system"
-    by (rule reach_reached_family.native_step[where c="[0]" and
-        ps="[([0],(reach_search,Finite_Pattern_Pair (native_var 0)
-          (Finite_Pattern_Pair (native_var 1) (native_var 0))))]"])
-      (use search cf in \<open>simp_all add: reach_reached_rule_def reach_table_term_def\<close>)
-  then show ?thesis by simp
+  show ?thesis unfolding reach_reached_family.exact using search by (simp add: reach_table_term_def)
 qed
 
 theorem native_reached_complete:
@@ -492,19 +484,42 @@ next
   show ?case unfolding reach_keys_def by (rule rev_image_eqI[OF step.hyps(1)]) simp
 qed
 
+text \<open>
+  A reached key of one table is reached in another when every row that can reach sends its key to a row
+  of the other that is a root wherever it is one and has the images of its predecessors among its own:
+  reach transported along a map of keys. Inclusion of rows is its identity instance.
+\<close>
+
+lemma table_reached_simulation:
+  assumes rows: "\<And>k r ps. (k,r,ps)\<in>set T \<Longrightarrow> r \<or> ps\<noteq>[] \<Longrightarrow>
+      \<exists>r' ps'. (g k,r',ps')\<in>set T' \<and> (r\<longrightarrow>r') \<and> g ` set ps\<subseteq>set ps'"
+    and reached: "k\<in>table_reached T"
+  shows "g k\<in>table_reached T'"
+  using reached
+proof induction
+  case (root k ps)
+  have "\<exists>r' ps'. (g k,r',ps')\<in>set T' \<and> (True\<longrightarrow>r') \<and> g ` set ps\<subseteq>set ps'"
+    by (rule rows[OF root]) simp
+  then obtain r' ps' where row: "(g k,r',ps')\<in>set T'" and r': "r'" by blast
+  from row r' have "(g k,True,ps')\<in>set T'" by simp
+  then show ?case by (rule table_reached.root)
+next
+  case (step k r ps p)
+  have "\<exists>r' ps'. (g k,r',ps')\<in>set T' \<and> (r\<longrightarrow>r') \<and> g ` set ps\<subseteq>set ps'"
+    by (rule rows[OF step.hyps(1)]) (use step.hyps(2) in auto)
+  then obtain r' ps' where row: "(g k,r',ps')\<in>set T'" and sub: "g ` set ps\<subseteq>set ps'" by blast
+  have "g p\<in>set ps'" using sub step.hyps(2) by blast
+  then show ?case by (rule table_reached.step[OF row _ step.IH])
+qed
+
 lemma table_reached_mono:
   assumes rows: "set T\<subseteq>set U"
   shows "table_reached T\<subseteq>table_reached U"
 proof
-  fix k assume "k\<in>table_reached T"
-  then show "k\<in>table_reached U"
-  proof (induction rule: table_reached.induct)
-    case (root k ps)
-    then show ?case using rows by (blast intro: table_reached.root)
-  next
-    case (step k r ps p)
-    then show ?case using rows by (blast intro: table_reached.step)
-  qed
+  fix k assume reached: "k\<in>table_reached T"
+  have "id k\<in>table_reached U"
+    by (rule table_reached_simulation[OF _ reached]) (use rows in auto)
+  then show "k\<in>table_reached U" by simp
 qed
 
 lemma reach_seeded_member:

@@ -2,10 +2,10 @@
  "boundary": "A run without --proof reconstructs the complete contracts from HOL. The certificate constructor recovers the actual source and follows its complete finite inference history. Each original requested positive call has a complete valid certificate, and the independent recursive checker is exactly the original schema proof checker on every finite input. Every original source, candidate answer and certificate, complete inspection, comparison and revision is reproduced. A sufficient finite certificate family need not enumerate all proofs of a cyclic program. The finite scope does not establish arbitrary-method coverage, recursive explanation traces, native artifact positioning and placement, native mathematical-proof checking, complete development-cycle enforcement, the whole cost account or genesis.",
  "complete_recipe_source_manifest": "native-derivations-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
+  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.08,
+  "seconds": 5.39,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "49f825a66106ee83d7b1babc46f2533be68838810ce40119cbc3136b14dfbd0e",
+   "module_sha256": "6a41e5d72336f3087d10e1878cd47128334d28f75a5c3d264fe2a025436c1de5",
    "subject_contracts": {
-    "native_derivation_investigation.yxml": "e5eaf2c0eb8c64cf89a465923afa11a6072f19a9b056d762835fbc7bde9fffd3"
+    "native_derivation_investigation.yxml": "1e0964d791ecfe6a334d63292c1163252c571befd01691bf382b172a5f6ccf74"
    },
    "theory": "Native_Derivation_Investigation_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "c521338591fb28785d0560e4c80d0dd764205f791a953ebaf8cd78d16cc455a0",
+ "source_manifest_sha256": "dde031e848a28c6903fdbdd8694a9af49acc6824611645b8cc7b460c5a99ae29",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.9826483329998155
+   "seconds": 5.2816931160014065
   }
  ]
 }

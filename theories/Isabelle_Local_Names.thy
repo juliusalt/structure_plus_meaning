@@ -119,6 +119,19 @@ text \<open>
 definition isabelle_appended_names :: "String.literal list \<Rightarrow> String.literal list \<Rightarrow> String.literal list" where
   "isabelle_appended_names names names'=names@filter (\<lambda>n. n\<notin>set names) names'"
 
+text \<open>An appended table keeps the original's names at its positions.\<close>
+
+lemma isabelle_appended_names_longer: "length names\<le>length (isabelle_appended_names names ns)"
+  by (simp add: isabelle_appended_names_def)
+
+lemma isabelle_appended_names_nth:
+  "i<length names \<Longrightarrow> isabelle_appended_names names ns!i=names!i"
+  by (simp add: isabelle_appended_names_def nth_append)
+
+lemma isabelle_appended_names_prefix:
+  "i<length names \<Longrightarrow> isabelle_name_at (isabelle_appended_names names ns) i=isabelle_name_at names i"
+  by (simp add: isabelle_appended_names_def isabelle_name_at_def nth_append)
+
 lemma isabelle_name_position_append:
   "isabelle_name_position (xs@ys) n=(case isabelle_name_position xs n of Some j \<Rightarrow> Some j
     | None \<Rightarrow> map_option ((+) (length xs)) (isabelle_name_position ys n))"
@@ -348,7 +361,8 @@ text \<open>
   that agree there give it the same local names and the same embedding at those positions. The local
   presentations of entities and of roots are its instances; neither establishes the agreement again.
   The equation reading of a statement likewise reads only the names at the positions it uses; it is
-  proved by its own recursion and stated beside them.
+  proved by its own recursion and stated beside them. The notion these share, a reading of a name table
+  that depends only on the names at the positions it uses, is stated after them with its laws.
 \<close>
 
 lemma map_filter_agree:
@@ -424,5 +438,94 @@ next
   have head: "isabelle_name_at names' c=isabelle_name_at names c" by (rule "2.prems") simp
   then show ?case by simp
 qed simp_all
+
+subsection \<open>A reading of a name table at the positions it uses\<close>
+
+text \<open>
+  A reading of a name table is a function of the table and a value that depends only on the names at the
+  positions the value uses: two tables that agree at those positions give equal readings. That is the
+  notion's one condition, and its first law. Its second law follows once: a table appended with the names
+  it lacks (\<open>isabelle_appended_names\<close>) keeps every reading of a value whose positions are the original's.
+  The local names, the local embedding, the local presentations of entities and roots, the equation
+  reading and the subjects of an entity are its instances; each receiving proof cites the notion's laws at
+  its instance and establishes no agreement again.
+\<close>
+
+locale isabelle_name_reading =
+  fixes read :: "String.literal list \<Rightarrow> 'v \<Rightarrow> 'r" and positions :: "'v \<Rightarrow> nat list"
+  assumes agree: "(\<And>i. i\<in>set (positions v) \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i) \<Longrightarrow>
+      read names' v=read names v"
+begin
+
+theorem appended:
+  assumes inside: "\<And>i. i\<in>set (positions v) \<Longrightarrow> i<length names"
+  shows "read (isabelle_appended_names names ns) v=read names v"
+proof (rule agree)
+  fix i assume "i\<in>set (positions v)"
+  then show "isabelle_name_at (isabelle_appended_names names ns) i=isabelle_name_at names i"
+    by (rule isabelle_appended_names_prefix[OF inside])
+qed
+
+end
+
+lemma isabelle_local_names_reading: "isabelle_name_reading isabelle_local_names (\<lambda>ps. ps)"
+  by (rule isabelle_name_reading.intro) (rule isabelle_local_names_agree(1), blast)
+
+lemma isabelle_local_embedding_reading:
+  "isabelle_name_reading (\<lambda>names v. isabelle_local_embedding names (fst v) (snd v)) (\<lambda>v. snd v#fst v)"
+proof (rule isabelle_name_reading.intro)
+  fix v :: "nat list\<times>nat" and names' names :: "String.literal list"
+  assume agree: "\<And>i. i\<in>set (snd v#fst v) \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i"
+  have local_names: "isabelle_local_names names' (fst v)=isabelle_local_names names (fst v)"
+    by (rule isabelle_local_names_agree(1)) (rule agree, simp)
+  have at: "isabelle_name_at names' (snd v)=isabelle_name_at names (snd v)" by (rule agree) simp
+  show "isabelle_local_embedding names' (fst v) (snd v)=isabelle_local_embedding names (fst v) (snd v)"
+    unfolding isabelle_local_embedding_def isabelle_state_embedding_def local_names at ..
+qed
+
+lemma isabelle_local_entities_reading:
+  "isabelle_name_reading isabelle_local_entities (\<lambda>es. concat (map isabelle_entity_positions es))"
+  by (rule isabelle_name_reading.intro) (rule isabelle_local_entities_agree, blast)
+
+lemma isabelle_local_root_reading: "isabelle_name_reading isabelle_local_root isabelle_term_positions"
+  by (rule isabelle_name_reading.intro) (rule isabelle_local_root_agree, blast)
+
+lemma isabelle_equation_left_reading: "isabelle_name_reading isabelle_equation_left isabelle_term_positions"
+  by (rule isabelle_name_reading.intro) (rule isabelle_equation_left_agree, blast)
+
+lemma isabelle_entity_subjects_reading:
+  "isabelle_name_reading (\<lambda>names. isabelle_entity_subjects names D) isabelle_entity_positions"
+proof (rule isabelle_name_reading.intro)
+  fix e and names' names :: "String.literal list"
+  assume agree: "\<And>i. i\<in>set (isabelle_entity_positions e) \<Longrightarrow> isabelle_name_at names' i=isabelle_name_at names i"
+  show "isabelle_entity_subjects names' D e=isabelle_entity_subjects names D e"
+  proof (cases e)
+    case (Isabelle_Definition p)
+    have "isabelle_equation_left names' p=isabelle_equation_left names p"
+      by (rule isabelle_equation_left_agree) (rule agree, simp add: Isabelle_Definition isabelle_entity_positions_def)
+    then show ?thesis by (simp add: Isabelle_Definition)
+  next
+    case (Isabelle_Code_Equation p)
+    have "isabelle_equation_left names' p=isabelle_equation_left names p"
+      by (rule isabelle_equation_left_agree) (rule agree, simp add: Isabelle_Code_Equation isabelle_entity_positions_def)
+    then show ?thesis by (simp add: Isabelle_Code_Equation)
+  qed simp_all
+qed
+
+text \<open>The roots' corollary: an appended table keeps the local presentation of every root of the original.\<close>
+
+corollary isabelle_local_root_appended:
+  "(\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> i<length names) \<Longrightarrow>
+    isabelle_local_root (isabelle_appended_names names ns) t=isabelle_local_root names t"
+  by (rule isabelle_name_reading.appended[OF isabelle_local_root_reading])
+
+corollary isabelle_local_roots_appended:
+  assumes inside: "\<And>t i. t\<in>set ts \<Longrightarrow> i\<in>set (isabelle_term_positions t) \<Longrightarrow> i<length names"
+  shows "map (isabelle_local_root (isabelle_appended_names names ns)) ts=map (isabelle_local_root names) ts"
+proof (rule map_cong[OF refl])
+  fix t assume member: "t\<in>set ts"
+  show "isabelle_local_root (isabelle_appended_names names ns) t=isabelle_local_root names t"
+    by (rule isabelle_local_root_appended) (rule inside[OF member])
+qed
 
 end

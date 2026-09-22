@@ -2,10 +2,10 @@
  "boundary": "Complete native generation subjects, arbitrary recorded judgment scopes, literal applications and retained closed replays determine each original certified-base-cause condition. Every method result, derived observation and revision reason is reproduced. The test policy and history remain explicitly empty; full workflow policy, historical permission, coverage, cost and genesis remain open.",
  "complete_recipe_source_manifest": "certified-causes-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
+  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.48,
+  "seconds": 5.89,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "186053a355ea47deba09af0eba1e601576009fb72370aec42d94e2132973b774",
+   "module_sha256": "61a587b52e3171d7e8e2cbba645c2280e5fd88a5b5e01a3f7706f99cfb4d12f3",
    "subject_contracts": {
-    "certified_cause_investigation.yxml": "7c0a1e9c97a75f17273f50b959b47fe96e8db51efccbce8f731b2308a9f61341"
+    "certified_cause_investigation.yxml": "edfc6f69203d50b0f70d70a33277dfe832e96cbfed989185672d54d4aec3648e"
    },
    "theory": "Certified_Cause_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "1d034762069a04d271462996481153b88b1931adb9761512669a580b638bb4ea",
+ "source_manifest_sha256": "59a880c85f278973fe5a47cce914a121e511542902585e5769a87db95cad5734",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.380065450000984
+   "seconds": 5.783597690999159
   }
  ]
 }

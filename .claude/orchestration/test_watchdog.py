@@ -1,6 +1,8 @@
 """The watchdog's flows (watchdog.py), one run at a time in a throwaway world with a fake `claude` (fakes.py)."""
 import datetime
 import json
+
+v2_retries = lambda: int(os.environ.get("ORCH_API_RETRIES", 3))  # watchdog.API_RETRIES, as the test world has it
 import os
 from pathlib import Path
 import sys
@@ -394,7 +396,7 @@ class WatchdogTests(unittest.TestCase):
             if self.forked("warm-kb-1"):
                 break
             time.sleep(0.05)
-        (ping,) = [c["args"] for c in self.w.calls("--bg") if "warm-kb-1" in c["args"]]
+        (ping,) = [c["args"] for c in self.w.calls("--bg") if any(a.startswith("warm-kb-1-") for a in c["args"])]
         self.assertEqual(ping[ping.index("--resume") + 1], "kbsid")
         self.assertIn("Keep-warm ping", ping[-1])
         self.run_watchdog()
@@ -410,8 +412,63 @@ class WatchdogTests(unittest.TestCase):
         self.run_watchdog()
         self.assertTrue(self.s("review-5").get("released"))
         self.assertFalse(self.s("implement-4").get("released"))
+        self.assertTrue(self.s("brief-6").get("released"))  # an author is not held to be asked (2026-09-22)
+
+    def test_the_machine_s_isabelle_processes_are_written_with_the_run_each_counts_in(self):
+        # a session's sandbox cannot see the machine's processes, and the count was of processes where the limit is of
+        # runs (2026-09-21): the watchdog, which sees them, writes what one run is
+        procs = {1: (0, "systemd", "/sbin/init"), 10: (1, "python3", "python3 tools/incremental_check.py check"),
+                 11: (10, "poly", "poly -q"), 12: (10, "poly", "poly -q")}
+        with patch.object(watchdog.v2, "machine_processes", lambda: procs), \
+                patch.object(watchdog, "STATE", str(self.w.state)):
+            watchdog.isabelle_snapshot()
+        snap = json.loads((self.w.state / "isabelle-processes.json").read_text())
+        self.assertEqual((snap["runs"], snap["heavy"], snap["probes"]), (1, 1, 0))
+        self.assertEqual([p["run"] for p in snap["processes"]], [10, 10])
+        self.assertEqual({p["kind"] for p in snap["processes"]}, {"heavy"})
+        self.assertIn("rss_mb", snap["processes"][0])
+        self.assertIn("incremental_check.py", snap["processes"][0]["run_command"])
+        self.assertEqual(snap["processes"][0]["ancestors"][1]["pid"], 10)
+        with patch.object(watchdog.v2, "machine_processes", lambda: {1: (0, "systemd", "/sbin/init")}), \
+                patch.object(watchdog, "STATE", str(self.w.state)):
+            watchdog.isabelle_snapshot()                                        # no run: written all the same
+        self.assertEqual(json.loads((self.w.state / "isabelle-processes.json").read_text())["runs"], 0)
+
+    def test_a_rejecting_reviewer_is_held_while_the_fix_waits_within_the_hold(self):
+        # review-23 was released when its task's fix parked for the tree, review-47 when its task went back to the
+        # planner (2026-09-21): each re-review then needs a new reviewer that reads everything again
+        self.w.session("review-5", "reviewer", "r5", task="5", reviews="4", state="done", live=False, ended=time.time())
+        self.w.set_st(tasks={"5": {"stage": "ready", "reviewed_by": "review-5", "verdict": "reject"},
+                             "4": {"stage": "parked", "session": "fix-4"}})
+        self.run_watchdog()
+        self.assertFalse(self.s("review-5").get("released"))                      # its fix parked
+        self.w.set_st(tasks=dict(self.w.st()["tasks"], **{"4": {"stage": "planner"}}))
+        self.run_watchdog()
+        self.assertFalse(self.s("review-5").get("released"))                      # the task with the planner
+        self.update("review-5", ended=time.time() - v2.HOLD_MAX - 60)
+        self.run_watchdog()
+        self.assertTrue(self.s("review-5").get("released"))                       # within the hold's bound
+
+    def test_an_author_is_not_held_to_be_asked(self):
+        # held while tasks it briefed or designed were open, pinged for questions none ever came: 26 pings and 16.4M
+        # tokens read in one run, design-66 an hour after it had landed (the owner, 2026-09-22)
+        self.w.session("brief-6", "task-designer", "b6", task="6", state="done", live=False, ended=time.time())
+        self.w.session("design-7", "designer", "d7", task="7", state="done", live=False, ended=time.time())
+        self.w.task("8", subject="built on the design", blockedBy=["7"])
+        self.w.set_st(tasks={"6": {"stage": "done"}, "7": {"stage": "done"},
+                             "8": {"stage": "running", "briefed_by": "brief-6"}})
+        self.run_watchdog()
+        self.assertTrue(self.s("brief-6").get("released"))
+        self.assertTrue(self.s("design-7").get("released"))
+
+    def test_a_task_designer_is_held_while_its_proposal_waits_on_the_planner(self):
+        # brief 13's designer was released three seconds after its result, before the planner had read its proposal,
+        # and the planner's correction found no session (2026-09-21)
+        self.w.session("brief-6", "task-designer", "b6", task="6", state="done", live=False, ended=time.time())
+        self.w.set_st(tasks={"6": {"stage": "proposed", "session": "brief-6", "proposal": ".build/tasks/6/p.json"}})
+        self.run_watchdog()
         self.assertFalse(self.s("brief-6").get("released"))
-        self.update("brief-6", ended=time.time() - v2.HOLD_MAX - 60)
+        self.update("brief-6", ended=time.time() - v2.HOLD_MAX - 60)               # within the hold's bound
         self.run_watchdog()
         self.assertTrue(self.s("brief-6").get("released"))
 
@@ -422,6 +479,116 @@ class WatchdogTests(unittest.TestCase):
         self.run_watchdog()
         (resume,) = self.resumed("w4")
         self.assertIn("has not landed within 3 hours. Record a partial result now", resume[3])
+
+    def test_a_reviewer_waiting_on_the_machine_is_woken_when_a_run_may_start(self):
+        self.w.session("review-4", "reviewer", "r4", task="4", status="idle")
+        self.said("r4", ago=600)
+        (self.w.state / "work-r4.json").write_text(json.dumps({"run_refused": "heavy"}))
+        self.run_watchdog(ORCH_ISABELLE_RUNS=v2.ISABELLE_MAX)
+        self.assertEqual(self.resumed("r4"), [])               # not woken to be refused again
+        self.run_watchdog(ORCH_ISABELLE_RUNS=0)
+        (resume,) = self.resumed("r4")
+        self.assertIn("A run may start on the machine now: run your check and continue.", resume[3])
+
+    def test_a_turn_the_api_broke_off_is_redone_within_a_minute_a_few_times_in_a_row(self):
+        # investigate-82's reply was cut by "API Error: Server error mid-response" and it waited for the stall's rule,
+        # ten minutes of a loop's backoff, told only that its turn had ended (2026-09-22)
+        self.w.session("implement-4", "implementer", "w4", task="4", status="idle")
+        self.w.set_st(tasks={"4": {"stage": "running", "session": "implement-4"}})
+        error = "API Error: Server error mid-response. The response above may be incomplete."
+        self.said("w4", error, ago=20, model="<synthetic>")
+        self.run_watchdog()
+        self.assertEqual(self.resumed("w4"), [])                        # a moment first
+        self.said("w4", error, ago=90, model="<synthetic>")
+        self.run_watchdog()
+        (resume,) = self.resumed("w4")
+        self.assertIn("The API failed mid-response", resume[3])
+        self.assertIn("Redo that step", resume[3])
+        # blocked, as such a session is listed, it is not gone: it is resumed the same way
+        blocked = lambda: self.w.set_rows([dict(r, status="blocked", state="blocked") if r["name"] == "implement-4"
+                                           else r for r in self.w.rows()])
+        self.w.set_rows([dict(r, status="blocked", state="blocked") if r["name"] == "implement-4" else r
+                         for r in self.w.rows()])
+        os.utime(self.w.state / "implement-4.woken", (time.time() - 120, time.time() - 120))
+        self.run_watchdog()
+        self.assertEqual(len(self.resumed("w4")), 1)                    # one failure, one resume, however long
+        for n in range(2, v2_retries() + 1):
+            blocked()                                                   # its resumed turn broken off again
+            self.said("w4", error, ago=90 - n, model="<synthetic>")
+            (self.w.state / "implement-4.woken").write_text("x")
+            os.utime(self.w.state / "implement-4.woken", (time.time() - 120, time.time() - 120))
+            self.run_watchdog()
+            self.assertEqual(len(self.resumed("w4")), n)
+        self.assertNotIn("implement-4 is listed as blocked", (self.w.state / "v2.log").read_text())
+        blocked()
+        self.said("w4", error, ago=80, model="<synthetic>")
+        (self.w.state / "implement-4.woken").write_text("x")
+        os.utime(self.w.state / "implement-4.woken", (time.time() - 120, time.time() - 120))
+        self.run_watchdog()
+        self.assertEqual(len(self.resumed("w4")), v2_retries())       # enough in a row: a stall like any other
+        self.said("w4", "a reply of its own", ago=30)                    # and one of its own starts the count again
+        self.w.set_rows([dict(r, status="idle") if r["name"] == "implement-4" else r for r in self.w.rows()])
+        self.run_watchdog()
+        self.assertFalse((self.w.state / "api-errors-implement-4").exists())
+
+    def test_a_slow_part_of_a_pass_is_named(self):
+        # a pass of 04:19:30–04:27:07 on 2026-09-22 held every resume and start for seven minutes, and nothing said
+        # which part
+        self.run_watchdog(ORCH_SLOW_PART=-1)
+        log = (self.w.state / "v2.log").read_text()
+        self.assertIn("the watchdog's layers took", log)
+        self.assertIn("the dispatch's produce took", log)
+        self.run_watchdog()
+        self.assertEqual((self.w.state / "v2.log").read_text().count("the watchdog's layers took"), 1)
+
+    def test_a_failure_after_a_reply_of_its_own_is_not_counted_in_a_row(self):
+        # plan-35, working again after one failure, was counted "2 of 3 in a row" at its next: the count was reset
+        # only when a pass found it idle (2026-09-22 04:08)
+        self.w.session("implement-4", "implementer", "w4", task="4", status="idle")
+        self.w.set_st(tasks={"4": {"stage": "running", "session": "implement-4"}})
+        error = "API Error: 529 Overloaded."
+        self.said("w4", error, ago=200, model="<synthetic>")
+        self.run_watchdog()
+        self.assertEqual(len(self.resumed("w4")), 1)
+        self.w.transcript("w4", [assistant("m1", fakes.iso(time.time() - 200), [{"type": "text", "text": error}],
+                                           model="<synthetic>"),
+                                 assistant("m2", fakes.iso(time.time() - 150), [{"type": "text", "text": "working"}]),
+                                 assistant("m3", fakes.iso(time.time() - 90), [{"type": "text", "text": error}],
+                                           model="<synthetic>")])
+        self.w.set_rows([dict(r, status="blocked", state="blocked") if r["name"] == "implement-4" else r
+                         for r in self.w.rows()])                       # its resumed turn ended on the failure
+        (self.w.state / "implement-4.woken").write_text("x")
+        os.utime(self.w.state / "implement-4.woken", (time.time() - 120, time.time() - 120))
+        self.run_watchdog()
+        self.assertEqual(len(self.resumed("w4")), 2)
+        log = (self.w.state / "v2.log").read_text()
+        self.assertEqual(log.count("implement-4: the API failed mid-response; resumed to redo its step (1 of"), 2)
+        self.assertNotIn("(2 of", log)
+        self.assertEqual((self.w.state / "api-errors-implement-4").read_text().split()[0], "1")
+
+    def test_a_task_parked_for_the_machine_is_held_for_its_turn_as_for_the_tree(self):
+        # a slot on the machine always comes, only later when landings and measurements are many: task 94 waited two
+        # hours for one on 2026-09-22 with an hour of its three left
+        self.assertEqual(v2.hold_of({"parked": {"for": "machine"}}), v2.HOLD_TREE)
+        self.assertEqual(v2.hold_of({"parked": {"for": "tree"}}), v2.HOLD_TREE)
+        for kind in ("fix", "answer", "run"):
+            self.assertEqual(v2.hold_of({"parked": {"for": kind}}), v2.HOLD_PARK, kind)
+
+    def test_a_task_parked_for_the_one_tree_is_held_for_its_turn(self):
+        # landings go one at a time and a turn always comes: tasks 66 and 68 had waited 1.5-1.7 hours on 2026-09-21,
+        # and the owner chose 6 hours for such a wait, where a fix or an answer that may never come keeps 3
+        self.w.session("implement-4", "implementer", "w4", task="4", state="parked", live=False)
+        self.w.write(".build/tasks/7/finalize.json", json.dumps({"check": "true", "files": ["ROOT"], "message": "m"}))
+        checking = {"stage": "checking"}  # task 7's check holds the tree meanwhile
+        self.w.set_st(tasks={"7": checking, "4": {"stage": "parked", "session": "implement-4", "parked": {
+            "since": time.time() - 4 * 3600, "for": "tree", "holder": "7"}}})
+        self.run_watchdog()
+        self.assertEqual(self.resumed("w4"), [])
+        self.w.set_st(tasks={"7": checking, "4": {"stage": "parked", "session": "implement-4", "parked": {
+            "since": time.time() - v2.HOLD_TREE - 60, "for": "tree", "holder": "7"}}})
+        self.run_watchdog()
+        (resume,) = self.resumed("w4")
+        self.assertIn("The working tree has not come free for you within 6 hours. Record a partial result now", resume[3])
 
     # ------------------------------------------------------------ finishing
 

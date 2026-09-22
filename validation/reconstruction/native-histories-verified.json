@@ -2,10 +2,10 @@
  "boundary": "A run without --proof reconstructs the complete contracts from HOL. The actual source reader supplies the program and the complete finite evaluator retains every progressive preceding state with all original activated clauses, bindings and premise occurrences. Independent conditions assess original requested positive meaning, source identity, availability, the complete state sequence and exact schema witnesses. Every source, candidate history, answer difference, assessment, comparison and revision is reproduced. The finite scope does not establish arbitrary-method coverage, native proof-artifact construction, native mathematical-proof checking, complete development-cycle enforcement, the whole cost account or genesis.",
  "complete_recipe_source_manifest": "native-histories-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
+  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.33,
+  "seconds": 3.72,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "7354b5b9537c69b14ef20af0e9a6e6fca54214df1f9492b17aae207b9c45d32d",
+   "module_sha256": "4dd8ab2995d098c8d8a0e55738084290304a68598ec6ef0474a4021ac469c5c0",
    "subject_contracts": {
-    "native_history_investigation.yxml": "bf9cb2568a40ba9f463637a7d9a87a0c499cba409fc1e441614a7d00f3417a2a"
+    "native_history_investigation.yxml": "614495656f6ded05310909bdf97fbafa1b69c536f5af660f2ad760fe56cba275"
    },
    "theory": "Native_History_Investigation_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "8da18ab0ff1406c31f2412d8b67334745d920102ba15e955d5866821e82ca097",
+ "source_manifest_sha256": "58807a59febafb808bc04c734b633509aa03d4accbd1fea06aa9a9df13968680",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.226826779999101
+   "seconds": 3.6704961209979956
   }
  ]
 }

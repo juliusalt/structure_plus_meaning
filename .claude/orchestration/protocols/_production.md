@@ -2,9 +2,11 @@
 statement, locale or proof in a theory, about forty words of a document, about five lines of code (what counts for
 your role is said above). Reading is limited in reads, and a read is a batch: one request, however many calls it
 holds, up to {BATCH}K bytes read in it — past that the rest of the batch is refused and goes in your next. So put what
-you need together. Each call shows at most {READ_BYTES}K bytes, so that a large chunk is read deliberately, in pieces:
-a read of a file's lines that is longer is refused with the lines that fit named, and every other call's output — a
-search, a script, a check — is cut there, its whole output kept in a file the cut names, to be read on by its lines.
+you need together. Each call shows at most {READ_BYTES}K bytes unless it declares more: lead it with `SHOW=20K` (any
+size, up to the batch's {BATCH}K) when you know you want a larger chunk — a long listing, a whole section — rather
+than reading on after a cut, which spends a request. Past its bound:
+a read of a file's lines that is longer shows the lines that fit and names the rest, and every other call's output —
+a search, a script, a check — is cut there, its whole output kept in a file the cut names, to be read on by its lines.
 The cut shows the output's beginning, or its end for a check or a command that failed, where it says how it ended or
 what went wrong (a failure said before that end is quoted). Between two productions you may make {ROUNDS} reads; past that, each
 read draws one from a reserve of {RESERVE}, and each production restarts the first tier and gives one back to the
@@ -20,13 +22,37 @@ files and commands, `.claude/orchestration/v2.py read SOURCE...` reads any sourc
 (`path` or `path:FIRST-LAST`), facts and definitions by name (`Theory.name` or `name`), your task's `diff`, `result`
 and `log` (each by its lines too: `diff:A-B`; a reviewer's are those of the task it reviews), a task's brief as the
 graph holds it (`task:ID`, or `task:ID:A-B`), and a brief's proposal (`proposal:ID` for what placing it needs,
-`proposal:ID:KEY` for one of its briefs, with `:A-B` for its lines; a fact too, `Theory.name:A-B`). One call shows at
-most {READ_BYTES}K bytes and names the sources it had no room for: put several calls in the batch.
+`proposal:ID:KEY` for one of its briefs, with `:A-B` for its lines; a fact too, `Theory.name:A-B`), and the recipes
+whose exported theory reaches theories through its imports (`reach:A,B`, or `reach` for those your task changes; a
+theory no recipe reaches is named so), and your task's probe runs (`probes`: what each loaded, whether its
+completion marker is there, and whether each theory it probed is the tree's as it stands), and a check the harness ran
+(`check:STAMP` by the stamp of a batch or a train, `check:ID` for a task's last: what failed and where its report is).
+Each source
+shows at most {READ_BYTES}K bytes — a brief named whole (`task:ID`, `proposal:ID:KEY`) whole, for it is one unit and
+what it decides stands at its end — and one call at most {BATCH}K, naming the sources it had no room for: name
+everything the step needs in one call.
 
 **Batch what you do, not only what you read.** The limits are there so that you take what you need at once, never to
 ration it. Every `v2.py` command takes several things in one call: its arguments again in groups separated by a bare
 `--` (`v2.py reply q1 "..." -- q2 --file F`), and `queue`, `read`, `drop`, `accept`, `proposal` and `tell ID... TEXT`
-take several ids directly.
+take several ids directly. A change and the check or the command that needs it are two calls of one request, which
+run one after another, in order; a request that only writes what your last one could have written is a request
+spent, and you are told so.
+
+**Ending a turn.** Every request reads your whole context again, and a closing message that only says what you did is
+one such request, read by nobody. A turn whose work a harness command records — a result, a verdict, a park,
+`planned`, an answer — ends with that command: the harness ends the turn there. Any other turn you end with your last
+call: join `.claude/orchestration/v2.py end` to its last command with `&&`, so that it ends only if that went through,
+and write no closing message. Put it only on a call whose output you need not see; it is refused where your turn may
+not end, and says why.
+
+**What no session does.** The working tree changes only by writing files, and the index and history only by the
+finalizer: no session stages, commits, stashes, checks out, resets, merges or pushes (read with git status, diff, log
+and show). The orchestration's own files — `.claude/orchestration/`, its state and the task list — are the owner's
+and no session's to write, and its scripts are the harness's to run: yours are `v2.py` and `show.py`. What you find
+wrong in the harness goes into your result, or to the planner. Waiting is refused (sleep, wait loops, reading a
+job's output before its completion: the completion notifies you), and so are subagents and starting a session: do
+your piece of work yourself, and take a question to whoever holds it.
 
 **Your tools, and changing files.** You have Bash, TaskCreate, TaskUpdate and TaskStop. You read through Bash and
 `v2.py read`, and you change files with one command, which takes any number of changes to any number of files:
@@ -43,9 +69,15 @@ take several ids directly.
     EOF
 
 A `replace` may hold several blocks; its SEARCH text must occur exactly once in the file as the changes before it
-left it (`=== replace-all PATH` replaces every occurrence). The changes are judged whole and written all or none, and
-what refuses them is said, change by change. Quote the delimiter (`<<'EOF'`), so the text reaches the command as it
-is. Make the changes you have ready in one call: a call that makes one change is told so. Writing a file's content
+left it (`=== replace-all PATH` replaces every occurrence). A block's texts hold no marker line (`<<<<<<< SEARCH`,
+`=======`, `>>>>>>> REPLACE`): a block that does lost its end, and is refused naming the line; a text that must hold
+one is written whole with `=== write`. The changes are judged whole and written all or none, and
+what refuses them is said, change by change; a write makes the directories it needs.
+Quote the delimiter (`<<'EOF'`), so the text reaches the command as it
+is. The call may hold other commands too, before and after the change — reads, a probe or a check, `v2.py result` —
+each judged as it would be alone, and what follows a change runs only if the change went through; a `cd` before a
+change is joined to it by `&&`. A harness command that refuses exits 1, so one joined by `&&` after it runs only if it
+went through. Make the changes you have ready in one call: a call that makes one change is told so. Writing a file's content
 any other way — a redirection into a file, `tee`, `sed -i`, a script that writes — is refused, but under .build/: a
 program's output, generated data or a draft may be written there by any command. Moving, copying and removing files
 stand.
@@ -61,7 +93,9 @@ is refused, send only its correction:
     >>>>>>> REPLACE
     EOF
 
-runs command N fixed (N left out: your last command; no block: it runs as it was), as if you had written it so, and
-keeps that as your next. A refused `v2.py change` is fixed the same way: the failing change's block, not the whole
-call again. A long command written again whole spends what its correction would not, and can bring new mistakes into
+runs command N fixed (N left out: your last command; no block, or `v2.py again N` alone: it runs as it was), as if
+you had written it so, and keeps that as your next. A refused `v2.py change` is fixed the same way: the failing
+change's block, not the whole call again. The call holds nothing else: a change the command needs first — a draft it
+reads — is a call of its own before it in the same request, whose calls that change something run one after another,
+in order. A long command written again whole spends what its correction would not, and can bring new mistakes into
 what was right.

@@ -20,10 +20,32 @@ from fakes import BRIEF, BRIEF_TASK, PLANNER_STATE, RESULT, REVIEW_TASK  # noqa:
 import v2  # noqa: E402
 
 NODE = "Serves: the reach of a state\nDeliverable: a theory of reach\nDecided: reach is a closure\n"
-VERDICT = "Verdict: {v}\n## Summary\nThe readiness theory is in place.\n## Findings\n{f}\n## Follow-ups\nMeasure the reach.\n"
+VERDICT = "Verdict: {v}\n## Summary\nThe readiness theory is in place. Its proof reads the base's rows.\n## Findings\n{f}\n## Follow-ups\nMeasure the reach.\n"
 
 
 class FormTests(unittest.TestCase):
+    def test_every_guarded_role_is_told_the_rules_the_guard_holds_it_to(self):
+        # a rule the guard enforces is taught before it refuses: reviewers were refused probes that named no limit,
+        # a rule only the tree protocol stated, which they do not get; and the rules held over every session (git,
+        # the harness's files and scripts, waiting) were stated to the producing roles alone (2026-09-21)
+        world = fakes.World()  # a render logs what it could not fill: into a world's log, never the run's
+        self.addCleanup(world.close)
+        render = lambda role: subprocess.run(
+            [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+             f"print(v2.render({role!r}))"], env=world.env, capture_output=True, text=True).stdout
+        every = ("no session stages, commits, stashes", "are the owner's\nand no session's to write",
+                 "yours are `v2.py` and `show.py`", "Waiting is refused", "subagents")
+        checks = ("heavy Isabelle runs", f"bounded at {v2.PROBE_SECONDS} seconds", "any other ends its turn")
+        for role in ("planner", "task-designer", "designer", "investigator", "implementer", "fixer", "reviewer",
+                     "consultant"):  # the knowledge base is not guarded: it reads, replies and ends
+            text = render(role)
+            for rule in every + (checks if role in ("designer", "investigator", "implementer", "fixer", "reviewer")
+                                 else ()):
+                self.assertIn(rule, text, f"{role} is not told: {rule}")
+            if role in v2.PRODUCING:
+                self.assertIn("HANDOFF.md is the planner's state", text)
+        self.assertIn("moves again only when you\nqueue it (`v2.py queue ID`", render("planner"))  # task 24, 2026-09-21
+
     def test_every_session_starts_with_the_feature_flags_off(self):
         # EndConversation comes behind a GrowthBook flag that one session's start fetches in time and another's not:
         # bases and forks started with the same flags were sent four tools or five, and a fork that drew otherwise
@@ -111,7 +133,7 @@ class FormTests(unittest.TestCase):
         values = dict(NAME="x-1", ID="7", KIND="build", SUBJECT="S", BRIEF="B", STALE="st", WHAT="w", SESSION="s",
                       BEFORE="", NODE="n", WHY="y", GRAPH="g", LIST="l", QID="q1", ASKER="a", TARGET="kb-1",
                       QUESTION="q", NOTE="", EVENTS="e", QUEUE="7", STATUS="s", OWNER="", HANDOFF="h", ORIGIN_NOTE="",
-                      TASK="6", REVIEW="r", FIRST="", TREE="t", WHERE="")
+                      TASK="6", REVIEW="r", FIRST="", TREE="t", WHERE="", READING="")
         import re
         with tempfile.TemporaryDirectory() as temp, patch.object(v2, "STATE", temp):
             # in its own state: render logs what it could not fill, and this test wrote that into the live log
@@ -237,13 +259,16 @@ class InProcessTests(unittest.TestCase):
         finally:
             v2._leave = real
 
-    def test_warmth_follows_the_last_hit_down_the_origins(self):
+    def test_a_read_keeps_warm_the_entry_it_read_and_nothing_under_it(self):
+        # a request reads the longest prefix cached: plan-42's requests kept kb-10 looking warm while its entry expired,
+        # and it was never pinged (resumed at 12:54, 527K written anew, 2026-09-22)
         self.world.session("kb-1", "kb", "k", origin="max", warm=False)
         self.world.session("ask-q1", "consultant", "a", origin="kb-1", warm=False)
         self.assertFalse(v2.warm("kb-1"))
-        v2.hit_chain("ask-q1")
-        self.assertTrue(v2.warm("kb-1") and v2.warm("ask-q1"))
-        self.assertTrue((self.world.state / "max-base.hit").exists())
+        v2.hit("ask-q1")
+        self.assertTrue(v2.warm("ask-q1"))
+        self.assertFalse(v2.warm("kb-1"))
+        self.assertFalse((self.world.state / "max-base.hit").exists())
         self.world.hit("kb-1", age=v2.WARM_MAX + 5)
         self.assertFalse(v2.warm("kb-1"))
 
@@ -284,6 +309,10 @@ class Flow(unittest.TestCase):
 
     def as_(self, name, *args):
         return self.w.v2(*args, env=self.w.as_session(self.s(name)["sid"]))
+
+    def ended(self, name):
+        """Whether the harness marked the session's turn over (v2.turn_over): its hook ends the turn at once."""
+        return (self.w.state / "flags" / f"{self.s(name)['sid']}.ended").exists()
 
 
 class StartTests(Flow):
@@ -515,11 +544,11 @@ PASSED = {
     "fixer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
     "task-designer": {"NAME", "ID", "SUBJECT", "BRIEF", "WHY", "GRAPH", "LIST", "STALE"},
     "reviewer": {"NAME", "ID", "TASK", "SUBJECT", "REVIEW", "BRIEF", "SESSION", "STALE", "BEFORE", "WHERE"},
-    "consultant": {"NAME", "ID", "QID", "ASKER", "TARGET", "QUESTION", "NOTE", "STALE"},
+    "consultant": {"NAME", "ID", "QID", "ASKER", "TARGET", "QUESTION", "NOTE", "STALE", "READING"},
 }
 PASSED = {role: names | {"ROUNDS", "READ", "RESERVE", "BATCH", "READ_BYTES", "CIRCLING", "FIX_MINUTES", "FIX_ROUNDS", "HOLD_HOURS", "ROOM_DESIGN",
                          "ROOM_TASK", "BRIEF_BACKLOG", "GRAPH_DEPTH", "DEPTH", "WIDTH", "SLOTS", "CONSULT_HOURS",
-                         "ISABELLE_MAX"}
+                         "ISABELLE_MAX", "PARK_URGENT", "PROBE_MAX", "PROBE_SECONDS", "MEM_MARGIN"}
           for role, names in PASSED.items()}  # render's own defaults
 
 
@@ -930,6 +959,33 @@ class PlanningTests(Flow):
         self.assertIn("has stood", self.heard())
         self.assertIn("with its brief not in form", self.heard())
 
+    def test_the_planner_s_verdict_decides_a_design_and_a_deleted_review_decides_nothing(self):
+        # design 66 waited half an hour after the planner accepted it, for review task 67, which the planner had deleted
+        # and nothing would ever have judged (2026-09-22)
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        design = BRIEF.replace("Kind: build", "Kind: design")
+        for tid, kind in (("4", "design"), ("6", "build")):
+            self.w.task(tid, subject=f"a {kind}", description=design if kind == "design" else BRIEF)
+        self.w.task("7", subject="the build's review", description=REVIEW_TASK.format(task="6"))
+        self.w.task("8", subject="a review task of the design", description=REVIEW_TASK.format(task="4"))
+        self.w.write(".build/tasks/4/verdict.md", "Verdict: accept\n## Summary\n" + "word " * 30 + "\n")
+        self.w.set_st(tasks={"4": {"stage": "reviewing", "kind": "design", "review_tasks": ["5", "8"]},
+                             "6": {"stage": "reviewing", "kind": "build", "review_tasks": ["5", "7"]},
+                             "7": {"reviews": "6"}})
+        # a build's review tasks count only while the graph holds them: 5 is gone, 7 is the one due
+        due = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.pending_reviews(v2.peek()))"], env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(due.stdout.strip(), "[('7', '6')]", due.stderr)
+        said = self.as_("plan-1", "verdict", "4", "accept", "--file", ".build/tasks/4/verdict.md")
+        self.assertNotIn("pending", said)
+        self.assertEqual(self.w.st()["tasks"]["4"]["stage"], "done")          # nothing to commit: accepted
+        self.assertEqual(self.w.read_task("4")["status"], "completed")
+        self.assertEqual(self.w.read_task("8")["status"], "completed")          # its review task goes with it
+        # and a build is decided by the reviews the graph holds or that have judged: 5, deleted unjudged, is none
+        self.w.write(".build/tasks/7/review.md", "Verdict: accept\n## Summary\n" + "word " * 30 + "\n")
+        self.as_("plan-1", "verdict", "7", "accept", "--file", ".build/tasks/7/review.md")
+        self.assertEqual(self.w.st()["tasks"]["6"]["stage"], "done")
+
     def test_a_design_waiting_for_the_planner_s_verdict_is_named_again(self):
         # pending_reviews starts a reviewer only for a build or a fix, so a finished design or investigation waits
         # for a verdict only the planner can give. It was said once, in the event when it finished (2026-09-21).
@@ -972,6 +1028,8 @@ class PlanningTests(Flow):
         self.w.v2("dispatch")
         self.assertIn("Task 4 has stood with you", self.heard())
         self.assertIn("nothing else moves it", self.heard())
+        self.assertIn("then queue it (`v2.py queue 4`, in your order): a rewrite alone does not restart it",
+                      self.heard())  # plan-33 rewrote task 24 and did not queue it; it stood 30 minutes (2026-09-21)
 
     def test_one_planner_lives_across_its_events_and_each_reaches_it_as_its_own_message(self):
         # 23 of the 48 sessions of 2026-09-20 were planning episodes, each a fork of the knowledge base at about
@@ -1017,6 +1075,7 @@ class PlanningTests(Flow):
         self.w.write("HANDOFF.md", PLANNER_STATE)
         self.w.write(".build/plans/plan-1/notes.md", "Decided: readiness is a path.")
         self.assertIn("planned", self.as_("plan-1", "planned", "--notes", ".build/plans/plan-1/notes.md"))
+        self.assertTrue(self.ended("plan-1"))
         self.event("Task 4 is committed.")
         self.w.v2("dispatch")
         self.assertEqual(self.forks("plan-"), [])  # its notes are not in the knowledge base yet
@@ -1040,6 +1099,32 @@ class PlanningTests(Flow):
         self.assertEqual(self.w.v2("who", "planner"), "plan-1")  # attach.sh finds it between its events
         (resumed,) = self.resumes(self.s("plan-1")["sid"])
         self.assertIn("The owner is here", resumed[-1])
+
+    def test_both_slots_may_produce_and_a_waiting_review_takes_the_second_first(self):
+        # the owner, 2026-09-22: both slots may be used for producers, not only one producing and one supporting — two
+        # implementers had waited for the one producing slot a designer held, the machine idle meanwhile
+        self.w.task("1")
+        self.w.task("2", subject="Another build")
+        self.w.env["ORCH_WORKERS"] = "2"  # the owner's rate
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json", origin="kb-1")
+        self.assertEqual(self.as_("plan-1", "queue", "1", "2"), "queued")
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("implement-")), 2)
+        self.assertEqual((self.t("1")["stage"], self.t("2")["stage"]), ("running", "running"))
+
+    def test_a_waiting_review_takes_the_free_slot_before_a_second_producer(self):
+        # a finished task lands only once it is reviewed: with one producer working, the other slot goes to the review
+        self.w.task("1")
+        self.w.task("2", subject="Another build")
+        self.w.task("3", subject="Finished")
+        self.w.env["ORCH_WORKERS"] = "2"  # the owner's rate
+        self.w.session("implement-1", "implementer", "i1", task="1")
+        self.w.set_st(queue=["1", "2"], tasks={"1": {"stage": "running", "kind": "build", "session": "implement-1"},
+                                               "2": {"stage": "ready", "kind": "build"},
+                                               "3": {"stage": "reviewing", "kind": "build", "session": "implement-3"}})
+        self.w.v2("dispatch")
+        self.assertEqual(self.forks("implement-"), [])
+        self.assertEqual(len(self.forks("review-")), 1)
 
     def test_an_episode_queues_ends_with_notes_and_the_knowledge_base_integrates_them(self):
         self.w.task("1")
@@ -1194,7 +1279,19 @@ class PlanningTests(Flow):
                               "v2.ping('brief-4')"], env=dict(self.w.env, ORCH_PING_WAIT="0"),
                              capture_output=True, text=True)
         self.assertEqual(out.returncode, 0, out.stderr)
-        self.assertTrue([c for c in self.w.calls("--bg") if "warm-brief-4" in c["args"]])
+        self.assertTrue([c for c in self.w.calls("--bg") if any(a.startswith("warm-brief-4-") for a in c["args"])])
+
+    def test_a_ping_with_no_verdict_is_tried_again_while_the_entry_may_be_warm(self):
+        # fix-49.3 and implement-56 each went cold ten minutes after one ping with no verdict: its mark held the
+        # retry off for ten minutes, past the entry's life (2026-09-21)
+        self.w.session("brief-4", "task-designer", "b4", task="4", live=False, settings="planner-settings.json")
+        mark = self.w.state / "ping-brief-4"
+        mark.write_text(str(time.time()))                      # the watchdog's mark, as it starts a ping
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(v2.ping('brief-4'))"], env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertIn("no verdict: ", out.stdout)              # its fork has no transcript here: said, not blank
+        self.assertGreaterEqual(time.time() - mark.stat().st_mtime, v2.PING_RETRY_AFTER - 5)  # tried again soon
 
     def test_no_shared_part_is_said_twice_in_one_message(self):
         # _inherited.md and _held.md held the same sentence, and every role but the consultant included both: the
@@ -1406,7 +1503,14 @@ class PlanningTests(Flow):
         (self.w.state / "old-session.woken").write_text("x")
         os.utime(self.w.state / "old-session.woken", (time.time() - 200_000, time.time() - 200_000))
         (self.w.state / "fresh.woken").write_text("x")
-        (self.w.state / "base-pack-20260101T000000-1").mkdir()
+        old = time.time() - 4 * 3600
+        for pack in ("base-pack-20260101T000000-1", "base-pack-loading", "base-pack-next", "base-pack-layer"):
+            (self.w.state / pack).mkdir()
+            os.utime(self.w.state / pack, (old, old))
+        (self.w.state / "base-pack-young").mkdir()            # a load may be reading it, named by nothing yet
+        (self.w.state / "xhigh-base-next.json").write_text(json.dumps({"pack": str(self.w.state / "base-pack-next")}))
+        (self.w.state / "max-layer.json").write_text(json.dumps({"pack": str(self.w.state / "base-pack-layer")}))
+        (self.w.state / "high-base-building.json").write_text(json.dumps({"pack": str(self.w.state / "base-pack-loading")}))
         for who in ("max", "xhigh", "high"):  # every base names its pack, as a built one does
             f = self.w.state / f"{who}-base.json"
             d = json.loads(f.read_text()) if f.exists() else {"sid": who, "model": "m", "effort": who}
@@ -1416,6 +1520,10 @@ class PlanningTests(Flow):
             [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
              "print(repr(sorted(v2.tidied())))"], env=self.w.env, capture_output=True, text=True).stdout.strip())
         self.assertIn("base-pack-20260101T000000-1", gone)  # no base names it
+        # what a load is reading stays: the pack of a base loaded again, of a layer, of a base being built, and any
+        # pack younger than a load may take (the max layers' packs went with the hourly sweep, 2026-09-21)
+        for kept in ("base-pack-next", "base-pack-layer", "base-pack-loading", "base-pack-young"):
+            self.assertNotIn(kept, gone)
         self.assertIn("old-session.woken", gone)
         self.assertNotIn("fresh.woken", gone)              # a wake attach.sh may still read
         self.assertTrue((self.w.state / "fresh.woken").exists())
@@ -1424,6 +1532,45 @@ class PlanningTests(Flow):
         self.assertNotIn("mail/design-3.jsonl", gone)      # said to have reached nobody, and kept to be read
         self.assertNotIn("mail/implement-1.jsonl", gone)   # its session is still working
 
+    def test_superseded_check_outputs_are_removed_and_what_may_be_read_again_stays(self):
+        # about 3 GB each, and nothing removed them: 131 GB on 2026-09-22 (the owner: superseded check outputs are
+        # removed as soon as they are no longer needed)
+        build = self.w.project / ".build"
+        old = time.time() - v2.CHECK_KEEP - 600
+        def check(path, age=old, marker="incremental.json"):
+            (build / path).mkdir(parents=True)
+            (build / path / marker).write_text("{}")
+            os.utime(build / path, (age, age))
+        self.w.task("5", status="completed")
+        self.w.task("6")
+        for tid, named in (("5", "check-t5"), ("6", "check-t6")):
+            self.w.write(f".build/tasks/{tid}/finalize.json", json.dumps({"check": f"x --output .build/{named}",
+                                                                          "files": [], "message": "m"}))
+        check("check-t5")                                       # its task landed
+        check("check-t5-2", age=time.time() - 60)               # a rerun of it: its task's, young as it is
+        check("check-t6")                                       # its task is in flight
+        check("check-old")                                      # no task names it, and old
+        check("check-young", age=time.time())                   # no task names it, and young
+        check("tasks/5/landing-1", age=time.time())             # the newest landed: retain may read it
+        check("check-read", age=old)                            # no task names it, old — but a live session reads it
+        self.w.session("implement-6", "implementer", "i6", task="6")
+        commands = self.w.project / ".build/outputs/implement-6/commands"
+        commands.mkdir(parents=True)
+        (commands / "3.sh").write_text("diff -r .build/check-read/exports-context .build/check-t6/exports-context\n")
+        (build / "tasks/base-advance/base-x/recipes").mkdir(parents=True)  # a base being made, no check at all
+        os.utime(build / "tasks/base-advance/base-x", (old, old))
+        (build / "check-old.out").write_text("log")
+        gone = set(subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                   "import v2; print(chr(10).join(v2.superseded_checks(v2.peek())))"],
+                                  env=self.w.env, capture_output=True, text=True).stdout.split())
+        self.assertEqual({os.path.relpath(d, build) for d in gone}, {"check-t5", "check-t5-2", "check-old"})
+        (self.w.state / "tidied").unlink(missing_ok=True)
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.tidied()"], env=self.w.env, capture_output=True, text=True)
+        self.assertFalse((build / "check-t5").exists())
+        self.assertFalse((build / "check-old.out").exists())   # with the log beside it
+        for kept in ("check-t6", "check-young", "tasks/5/landing-1", "tasks/base-advance/base-x", "check-read"):
+            self.assertTrue((build / kept).exists(), kept)
     def test_the_planner_cannot_name_a_fix_that_waits_on_the_task_it_fixes(self):
         self.w.task("1", subject="The waiting task")
         self.w.task("2", subject="The fix", blockedBy=["1"])
@@ -1504,13 +1651,150 @@ class TaskTests(Flow):
         self.w.v2("dispatch")
         self.assertIn("Task 1 is completed in the task list", self.heard())
 
+    def held(self, name):
+        code = (f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2, watchdog; st = v2.peek(); "
+                f"print(watchdog.held(st, {name!r}, st['sessions'][{name!r}]))")
+        return subprocess.run([sys.executable, "-c", code], env=self.w.env, capture_output=True, text=True).stdout.strip()
+
+    def test_a_task_that_comes_back_goes_to_the_session_that_worked_on_it_last(self):
+        # 22 times on 2026-09-21/22 a fresh session took over a task whose last session was released when it went to
+        # the planner, and made 177 requests (10.8M) before its first change (the owner: "find all such failures")
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="partial"))
+        self.assertIn("recorded", self.as_(self.impl, "result", "1"))
+        self.assertEqual(self.t("1")["stage"], "planner")
+        self.assertEqual(self.held(self.impl), "its task may come back to it")        # not released: kept warm
+        self.w.v2("tell", "1", "Keep the statement; split the proof.")                # kept for whoever takes it
+        self.w.v2("queue", "1")                                                       # which dispatches at once
+        self.assertEqual(self.forks("implement-1."), [])                             # no fresh session
+        again = self.resumes(self.s(self.impl)["sid"])[-1][3]
+        self.assertIn("Task 1 is yours again", again)
+        self.assertIn("Split it into tasks over what exists", again)                  # why it came back
+        self.assertIn("Its brief is as you have it.", again)                          # not the brief again, unchanged
+        self.assertEqual((self.t("1")["stage"], self.t("1")["session"]), ("running", self.impl))
+        self.assertIn("Keep the statement; split the proof.", json.dumps(self.w.mail(self.impl)))
+        # near its window's end it could not take the task on: a fresh one does
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="partial"))
+        self.as_(self.impl, "result", "1")
+        (self.w.state / "flags").mkdir(exist_ok=True)
+        (self.w.state / "flags" / f"{self.s(self.impl)['sid']}.soft").write_text("907000")
+        self.assertEqual(self.held(self.impl), "None")
+        self.w.v2("queue", "1")
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("implement-1.")), 1)
+
+    def test_a_measurement_given_by_mail_is_held_until_its_session_has_read_it(self):
+        # design-171 was given the machine four minutes into a long request; the grace, counted from the grant, cleared
+        # the claim before it had read it, and it was refused twice and waited ten minutes more (2026-09-22 11:42)
+        run = lambda body: subprocess.run([sys.executable, "-c", f"import sys, json, os; sys.path.insert(0, "
+                                           f"{str(fakes.HERE)!r}); import v2\n" + body], env=self.w.env,
+                                          capture_output=True, text=True).stdout.strip()
+        age = lambda seconds: run("p = os.path.join(v2.STATE, v2.EXCLUSIVE); c = json.load(open(p)); "
+                                  f"c['at'] -= {seconds}; json.dump(c, open(p, 'w'))")
+        held = lambda: run("print((v2.exclusive_claim() or {}).get('task'))")
+        run("v2.grant({'task': '1', 'why': 'a timing', 'session': 'implement-1'})\n"
+            "v2.deliver('implement-1', 'the harness', v2.MACHINE_YOURS.format(why='a timing', minutes=3, tid='1'))")
+        age(240)
+        self.assertEqual(held(), "1")                                  # unread past the grace: still its own
+        sid = self.s(self.impl)["sid"]
+        path = self.w.transcript(sid, [fakes.assistant("m1", fakes.iso(time.time()), usage={
+            "input_tokens": 2, "cache_read_input_tokens": 500_000, "cache_creation_input_tokens": 10, "output_tokens": 1})])
+        out = self.w.hook("ctx_gauge.py", "gauge", {"session_id": sid, "tool_name": "Bash", "tool_input": {"command": "true"},
+                                                    "tool_response": {"stdout": ""}, "transcript_path": path,
+                                                    "hook_event_name": "PostToolUse", "cwd": str(self.w.project)})[1]
+        self.assertIn("The machine is yours", json.dumps(out))       # read at its next tool call
+        age(120)
+        self.assertEqual(held(), "1")                                  # the grace counts from then
+        age(120)
+        self.assertEqual(held(), "None")                               # and ends: no run was launched
+
+    def test_a_task_that_comes_back_with_its_brief_changed_is_given_the_brief(self):
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="partial"))
+        self.assertIn("recorded", self.as_(self.impl, "result", "1"))
+        self.w.task("1", description=fakes.BRIEF.rstrip() + " Its reach is stated too.\n", status="in_progress")
+        self.w.v2("queue", "1")
+        again = self.resumes(self.s(self.impl)["sid"])[-1][3]
+        self.assertIn("changed since you had it", again)
+        self.assertIn("Its reach is stated too.", again)
+
+    def test_a_task_that_did_not_land_is_judged_again_by_the_reviewer_that_accepted_it(self):
+        # 11 reviews on 2026-09-21/22 were redone by a fresh reviewer after the task they accepted did not land and was
+        # worked on again (119 requests, 9.1M); task 80's and 97's reviewed themselves, and the re-queue lost who had
+        self.assertIn("recorded", self.finish())
+        self.assertEqual(len(self.forks("review-")), 1)
+        code = (f"import sys, time; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n"
+                "with v2.state() as st:\n"
+                "    st['tasks']['1'].update(verdict='accept', reviewed_by='review-1', reviewing=None, stage='committing')\n"
+                "    st['sessions']['review-1'].update(state='done', ended=time.time())\n"
+                "v2.committed('1', None, 'its commit stands on branch task/1 and does not merge into main')\n")
+        subprocess.run([sys.executable, "-c", code], env=self.w.env, check=True)   # as the finalizer's merge refusal
+        self.assertEqual(self.t("1")["stage"], "planner")
+        self.assertEqual(self.held("review-1"), "the task it accepted has not landed")
+        self.w.v2("queue", "1")                                                    # its record read afresh
+        self.assertEqual(self.t("1").get("previous_reviewer"), "review-1")
+        self.assertIn("Task 1 is yours again", self.resumes(self.s(self.impl)["sid"])[-1][3])
+        self.assertEqual(self.held("review-1"), "the task it accepted has not landed")
+        self.assertIn("recorded", self.finish())
+        self.assertEqual(len(self.forks("review-")), 1)                           # no fresh reviewer
+        again = self.resumes(self.s("review-1")["sid"])[-1][3]
+        self.assertIn("Task 1, which you accepted, did not land", again)
+        self.assertIn("does not merge into main", again)
+
+    def test_receipts_are_committed_by_a_retention_and_by_no_other_task(self):
+        # task 94 committed the 166 receipts of its own check with its theory; main's retention had written the same
+        # files, and its landing did not merge (2026-09-22 10:03)
+        self.w.write("theories/Ready.thy", "theory Ready imports Main begin end\n")
+        self.w.write("validation/incremental-check.json", "{}\n")
+        self.w.write("validation/reconstruction/a-verified.json", "{}\n")
+        self.w.write(".build/tasks/1/commit.md", "Add readiness\n\nValidation: checked.\n")
+        hand = lambda *files: self.as_(self.impl, "finalize", "1", "--check", "true", "--files", *files,
+                                       "--message", ".build/tasks/1/commit.md")
+        said = hand("theories/Ready.thy", "validation/incremental-check.json", "validation/reconstruction/a-verified.json")
+        self.assertTrue(said.startswith("refused: validation/incremental-check.json and 1 other receipt(s)"), said)
+        self.assertIn("only a retention commits them", said)
+        self.assertIn("prepared", hand("validation/incremental-check.json", "validation/reconstruction/a-verified.json"))
+        self.w.write(".build/tasks/1/brief.json", json.dumps({"task": "1", "deliverables": [
+            "theories/Ready.thy", "validation/incremental-check.json", "validation/reconstruction/"]}))
+        self.assertIn("prepared", hand("theories/Ready.thy", "validation/incremental-check.json",
+                                       "validation/reconstruction/a-verified.json"))  # its brief delivers them
+
+    def test_a_turn_no_command_ends_ends_with_its_last_call_where_it_may_end(self):
+        # the owner, 2026-09-22: no closing summaries, for everyone — about 40 of the planner's alone in nine hours
+        env = self.w.as_session(self.s(self.impl)["sid"])
+        code, out, _ = self.w.run("v2.py", "end", env=env)
+        self.assertEqual((code, out.split(":")[0]), (1, "refused"))  # the producing slot: its result or a park
+        self.assertIn("result recorded or a park", out)
+        self.assertFalse(self.ended(self.impl))
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json", origin="kb-1")
+        self.assertEqual(self.as_("plan-1", "end"), "ended")                 # between its events
+        self.assertTrue(self.ended("plan-1"))
+        self.w.session("review-9", "reviewer", "r9", task="9")
+        self.assertIn("refused: your turn does not end here", self.as_("review-9", "end"))
+        self.w.set_st(asks={"q7": {"from": "review-9", "state": "open", "to": "planner", "text": "Which?"}})
+        self.assertEqual(self.as_("review-9", "end"), "ended")               # while its question is open
+        self.assertIn("your reply, which is read", self.as_("kb-1", "end"))  # the knowledge base answers in words
+        self.assertFalse(self.ended("kb-1"))
+
+    def test_a_refused_command_exits_1_so_that_what_follows_it_does_not_run(self):
+        # the protocols hand a piece of work over in one call — `v2.py finalize … && v2.py result ID` — and a refused
+        # hand-over followed by a result that says it was made would be worse than two requests
+        env = self.w.as_session(self.s(self.impl)["sid"])
+        code, out, _ = self.w.run("v2.py", "result", "1", env=env)
+        self.assertEqual((code, out.split(":")[0]), (1, "refused"))  # nothing written yet
+        code, out, _ = self.w.run("v2.py", "ask", "--to", "planner", "Which of the two?", env=env)
+        self.assertEqual((code, out.split(" (")[0].strip()), (0, "asked as q1"))
+
     def test_a_session_that_ends_with_its_question_open_is_told_where_the_answer_goes(self):
         # six of nineteen answers on 2026-09-20 came to a session that had ended, and the planner carried each
         self.assertIn("asked as q1", self.as_(self.impl, "ask", "--to", "planner", "Which of the two?"))
+        self.assertFalse(self.ended(self.impl))  # a question alone ends no turn
         said = self.finish()
-        self.assertIn("your question q1 is still open", said.lower())
+        self.assertTrue(said.startswith("refused: your question q1 is still open"), said)
         self.assertIn(".build/tasks/1/answers/", said)
         self.assertIn("what you assumed", said)
+        self.assertFalse(self.ended(self.impl))  # its result is to say what it assumed first
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="done") + "\nq1 assumed: the first of the two.\n")
+        self.assertIn("recorded", self.as_(self.impl, "result", "1"))
+        self.assertTrue(self.ended(self.impl))
 
     def test_a_check_that_would_leave_the_base_in_the_task_s_own_directory_is_refused(self):
         # task 7's final check was given --output .build/tasks/7/final-check on 2026-09-20, and the repository's base
@@ -1741,7 +2025,24 @@ class TaskTests(Flow):
                        env=self.w.env, capture_output=True, text=True)
         told = " ".join(e["text"] for e in self.w.st()["events"])
         self.assertIn("The working tree is inconsistent after a commit", told)
-        self.assertIn("Every task's check refuses on this", told)
+        self.assertIn("Every check made in the one tree refuses on this", told)
+        self.assertIn("a task in a tree of its own checks there", told)
+
+    def test_trouble_in_the_shared_tree_names_whose_change_stands_there(self):
+        # task 62 took its ROOT line out of the one tree and left its new theory; the trouble was found after task
+        # 32's commit and said to be "after its commit (task 32)" (2026-09-22 03:10)
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n")
+        self.w.write("theories/Base.thy", "theory Base imports Main begin end\n")
+        self.w.git("add", "ROOT", "theories/Base.thy")
+        self.w.git("commit", "-q", "-m", "base")
+        self.w.write("theories/Mine.thy", "theory Mine imports Base begin end\n")  # its ROOT line taken out
+        (self.w.state / "tree-owners.json").write_text(json.dumps({"theories/Mine.thy": "62"}))
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.tree_checked('task 32', 'its commit', None)"],
+                       env=self.w.env, capture_output=True, text=True)
+        told = " ".join(e["text"] for e in self.w.st()["events"])
+        self.assertIn("theories/Mine.thy is in the tree and no ROOT line declares it", told)
+        self.assertIn("What stands uncommitted there is task 62's (theories/Mine.thy)", told)
 
     def test_a_task_that_stops_leaves_its_change_whole(self):
         # a change here is a set of parts — a theory, the ROOT line that declares it, the import that reaches it —
@@ -1800,7 +2101,26 @@ class TaskTests(Flow):
         os.utime(out, (time.time() - 10_000, time.time() - 10_000))
         self.assertIn("recorded", self.as_(self.impl, "result", "1"))
 
+    def test_a_job_whose_output_went_with_a_restart_counts_as_ended(self):
+        # implement-163 parked for its run at 12:58 on 2026-09-22; the reboot at 13:04 took the run and /tmp with its
+        # output, and the job counted as running for the rest of the task's three hours
+        sid = self.s(self.impl)["sid"]
+        gone = self.w.root / "claude-tmp" / "tasks" / "bq1.output"     # the reboot took Claude Code's /tmp area
+        self.w.transcript(sid, [{"type": "user", "message": {"content": [{"type": "tool_result",
+            "content": f"Command running in background with ID: bq1. Output is being written to: {gone}"}]}}])
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="partial"))
+        self.w.env["ORCH_CLAUDE_TMP"] = str(self.w.root / "claude-tmp")
+        self.assertIn("recorded", self.as_(self.impl, "result", "1"))
+        self.assertIn("its output's directory is gone", (self.w.state / "v2.log").read_text())
+        gone.parent.mkdir(parents=True)  # a directory that is there: a job just started, not yet written
+        self.w.transcript(sid, [{"type": "user", "message": {"content": [{"type": "tool_result",
+            "content": f"Command running in background with ID: bq2. Output is being written to: {gone.parent / 'bq2.output'}"}]}}])
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              f"print(v2.running_jobs({self.impl!r}))"], env=self.w.env, capture_output=True, text=True)
+        self.assertIn("bq2", out.stdout, out.stderr)
+
     def test_parked_for_its_run_the_slot_goes_to_another_worker_and_the_task_comes_back_after(self):
+        self.w.env["ORCH_PRODUCERS"] = "1"  # the park and resume of one slot (two: both_slots_may_produce)
         sid = self.s(self.impl)["sid"]
         job = lambda done: self.w.transcript(sid, [{"type": "user", "message": {"content": [{"type": "tool_result",
             "content": "Command running in background with ID: bq1. Output is being written to: x"}]}}] + ([{
@@ -1810,7 +2130,10 @@ class TaskTests(Flow):
         subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
                         "v2.own('1', ['theories/Ready.thy'])"], env=self.w.env, check=True)
         job(done=False)
+        self.assertIn("refused: your runs bq1 are going on", self.as_(self.impl, "park", "answer"))
+        self.assertFalse(self.ended(self.impl))
         self.assertIn("parked", self.as_(self.impl, "park", "run"))
+        self.assertTrue(self.ended(self.impl))
         self.w.task("2", subject="The next task")
         self.w.set_st(queue=["1", "2"])
         self.w.set_rows([r for r in self.w.rows() if r["name"] != self.impl])
@@ -1821,7 +2144,10 @@ class TaskTests(Flow):
             "session_id": self.s("implement-2")["sid"], "tool_name": "Bash", "tool_input": {"command": fakes.change(
                 "ROOT")}, "cwd": str(self.w.project), "hook_event_name": "PreToolUse"}))[1]
         self.assertIn("Task 1 holds the working tree (parked for its run, which reads its changes)", refusal)
-        job(done=True)
+        # the run's end comes while it is parked: its prompt hook keeps it rather than wake it (ctx_gauge owner)
+        (self.w.state / "notified").mkdir(exist_ok=True)
+        (self.w.state / "notified" / f"{sid}.txt").write_text(
+            "<task-notification><task-id>bq1</task-id><status>completed</status></task-notification>\n")
         self.w.v2("dispatch")
         self.assertTrue((self.w.project / "theories/Ready.thy").exists())  # the run has ended; its work stays
         self.assertEqual(self.t("1")["stage"], "parked")  # the slot is implement-2's
@@ -1831,6 +2157,8 @@ class TaskTests(Flow):
         self.w.v2("dispatch")
         self.assertEqual(self.t("1")["stage"], "running")
         self.assertIn("The run you parked for has ended", self.resumes(sid)[-1][3])
+        self.assertIn("<task-id>bq1</task-id><status>completed</status>", self.resumes(sid)[-1][3])  # told now
+        self.assertFalse((self.w.state / "notified" / f"{sid}.txt").exists())
         self.assertTrue((self.w.project / "theories/Ready.thy").exists())  # its changes are back
 
     def test_a_check_parks_whoever_else_holds_changes_and_a_review_does_not(self):
@@ -1884,14 +2212,18 @@ class TaskTests(Flow):
 
     def test_a_task_is_checked_reviewed_fixed_once_reviewed_again_and_committed(self):
         self.assertIn("recorded", self.finish())
+        self.assertTrue(self.ended(self.impl))  # its hook ends the turn: the closing request is not made
         self.assertEqual(self.t("1")["stage"], "reviewing")
         (review,) = self.forks("review-")
         self.assertIn("produced by implement-1", review[-1])
         self.assertIn("refused: the verdict is not in form", self.as_("review-1", "verdict", "1", "reject", "--file", "nope"))
+        self.assertFalse(self.ended("review-1"))  # a refused verdict ends nothing
         self.assertIn("rejected task 1", self.verdict("review-1", "reject", "- `ready_def` duplicates `base_def`"))
+        self.assertTrue(self.ended("review-1"))
         # one quick fix: the implementer resumed with every finding
         self.assertEqual(self.t("1")["stage"], "fixing")
         fix = self.resumes(self.s(self.impl)["sid"])[-1]
+        self.assertFalse(self.ended(self.impl))  # a resume takes the mark: it ends no turn but the one it was made in
         self.assertIn("duplicates `base_def`", fix[3])
         self.assertIn(f"at most {v2.FIX_MINUTES} minutes", fix[3])
         self.assertTrue(self.s(self.impl).get("fix"))
@@ -1908,7 +2240,9 @@ class TaskTests(Flow):
         self.assertEqual(self.w.read_task("1")["status"], "completed")
         ev = self.heard()
         self.assertIn("is committed as", ev)
-        self.assertIn("The readiness theory is in place. Follow-ups proposed: Measure the reach.", ev)
+        self.assertIn("The readiness theory is in place. (review: .build/tasks/1/review.md) Follow-ups proposed: Measure the "
+                      "reach.", ev)  # the summary's first sentence, where the review is, and the follow-ups whole
+        self.assertNotIn("Its proof reads the base's rows", ev)  # the rest of what the review says, in its file
         self.assertTrue(self.s(self.impl)["released"] and self.s("review-1")["released"])
         # every event of the whole cycle reached one planner (heard() above), and only one was ever forked for them:
         # 28 of the 59 sessions of 2026-09-20 were planning episodes, one per batch of events
@@ -2001,17 +2335,20 @@ class ConsultationTests(Flow):
         self.assertEqual(ask[ask.index("--resume") + 1], "kbsid")
         self.assertTrue(ask[ask.index("--settings") + 1].endswith("planner-settings.json"))
         self.assertIn("Is readiness a path?", ask[-1])
+        self.assertIn("You read statements, not details", ask[-1])  # as the knowledge base does, and as it is guarded
         self.assertEqual(self.w.st()["asks"]["q1"]["state"], "open")
         sid = self.s("ask-q1")["sid"]
         self.assertEqual(self.w.v2("reply", "q1", "Yes: DECISIONS.md, readiness.", env=self.w.as_session(sid)),
                          "answered; end your turn")
         self.assertEqual(self.s("ask-q1")["state"], "done")
+        self.assertTrue(self.ended("ask-q1"))
         self.assertIn("Yes: DECISIONS.md, readiness.", self.w.mail("implement-1")[0]["text"])  # busy: its hooks deliver
 
     def test_a_question_to_a_warm_author_forks_the_author_and_a_cold_one_the_knowledge_base(self):
         self.w.v2("ask", "--to", "designer", "Why a path?", env=self.w.as_session("i1"))
         ask = self.forks("ask-")[0]
         self.assertEqual(ask[ask.index("--resume") + 1], "d0")
+        self.assertNotIn("You read statements, not details", ask[-1])  # a designer reads what it needs
         self.w.v2("reply", "q1", "Because.", "--decision", env=self.w.as_session(self.s("ask-q1")["sid"]))
         self.assertIn("decides something not decided before", self.heard())
         self.assertIn("Because.", self.resumes("kbsid")[-1][3])  # integrated into the knowledge base at once
@@ -2038,12 +2375,33 @@ class ConsultationTests(Flow):
         self.assertEqual(asks[-1][asks[-1].index("--resume") + 1], "d0")
         self.assertEqual(self.w.st()["asks"]["q4"]["state"], "queued")
 
+    def test_what_the_planner_tells_a_task_nobody_works_on_goes_to_its_next_session(self):
+        # the planner told task 94 three times while it waited for its next session: "refused: no session works on
+        # task 94", and kept the answer in HANDOFF.md in case it was asked (2026-09-22 09:48)
+        self.w.session("plan-3", "planner", "p3", settings="planner-settings.json", origin="kb-1")
+        self.w.task("2", subject="The next task")
+        said = self.as_("plan-3", "tell", "2", "Take main's receipts; hand over again.")
+        self.assertTrue(said.startswith("kept: no session works on task 2 now"), said)
+        self.assertIn("refused: no session works on task 9", self.as_("plan-3", "tell", "9", "x"))  # no such task
+        self.w.set_st(queue=["1", "2"])
+        self.w.v2("dispatch")
+        (name,) = [n for n, s in self.w.st()["sessions"].items() if s.get("task") == "2"]
+        self.assertIn("Take main's receipts", json.dumps(self.w.mail(name)))  # read at its first tool call
+        self.assertNotIn("told", self.t("2"))
+
     def test_the_planner_tells_a_working_session_and_a_consultation_asks_nothing(self):
         self.w.session("plan-3", "planner", "p3", settings="planner-settings.json", origin="kb-1")
         self.assertIn("refused: no session works on task 9", self.as_("plan-3", "tell", "9", "x"))
         self.assertEqual(self.as_("plan-3", "tell", "1", "The review changes the statement: keep the old one."),
                          "told implement-1")
         self.assertIn("The review changes the statement", json.dumps(self.w.mail("implement-1")))
+        # a message written in a file is told as its text: six of plan-45's reached their sessions as "--file PATH"
+        self.w.write(".build/plans/plan-3/t1.md", "Keep the old statement; the finding stands.\n")
+        self.assertEqual(self.as_("plan-3", "tell", "1", "--file", ".build/plans/plan-3/t1.md"), "told implement-1")
+        self.assertIn("Keep the old statement; the finding stands.", json.dumps(self.w.mail("implement-1")))
+        self.assertNotIn("--file", json.dumps(self.w.mail("implement-1")))
+        self.assertIn("refused: no file", self.as_("plan-3", "tell", "1", "--file", ".build/plans/plan-3/none.md"))
+        self.assertIn("refused: tell ID... TEXT|--file FILE", self.as_("plan-3", "tell", "1", "--flie", "t1.md"))
         self.assertIn("refused: telling a working session is the planner's", self.as_("implement-1", "tell", "1", "x"))
         self.w.v2("ask", "--to", "kb", "Why?", env=self.w.as_session("i1"))
         ask = self.s("ask-q1")
@@ -2187,6 +2545,236 @@ class SupportTests(Flow):
         self.w.v2("dispatch")
         self.assertIn("the answer it waited for", json.dumps(self.w.mail("implement-3")))
 
+    def v2_eval(self, expr):
+        return subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               f"print({expr})"], env=self.w.env, capture_output=True, text=True, check=True).stdout.strip()
+
+    def test_a_re_planned_task_keeps_its_review_history(self):
+        # task 46, rejected, went to the planner and was queued again: `queue` rebuilt its record without its
+        # rejections, which then read 0 against its review's round 0, and its re-review was taken for done while nine
+        # tasks stood parked behind it (2026-09-21)
+        self.w.task("4", subject="A rejected build")
+        self.w.task("5", subject="Its review")
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.w.set_st(tasks={"4": {"stage": "planner", "kind": "build", "review_tasks": ["5"], "rejections": 1,
+                                   "session": "fix-4", "fix_text": "x"},
+                             "5": {"stage": "ready", "kind": "review", "reviews": "4", "verdict": "reject", "round": 0}})
+        self.as_("plan-1", "queue", "4", "5")
+        self.assertEqual((self.t("4").get("rejections"), self.t("4").get("fix_text")), (1, None))  # kept; the rest not
+        self.w.set_st(tasks=dict(self.w.st()["tasks"], **{"4": dict(self.t("4"), stage="reviewing")}))
+        self.assertEqual(self.v2_eval("v2.pending_reviews(v2.peek())"), "[('5', '4')]")
+
+    def test_a_review_nothing_will_start_is_named_and_one_waiting_for_the_slot_is_not(self):
+        self.w.session("review-8", "reviewer", "r8", task="8")                     # the slot taken
+        for r, x in (("5", "4"), ("7", "6")):                                        # review tasks the graph holds
+            self.w.task(r, subject=f"review {x}", description=REVIEW_TASK.format(task=x))
+        self.w.set_st(tasks={"4": {"stage": "reviewing", "kind": "build", "review_tasks": ["5"], "rejections": 1},
+                             "5": {"stage": "ready", "kind": "review", "reviews": "4", "verdict": "reject", "round": 1},
+                             "6": {"stage": "reviewing", "kind": "build", "review_tasks": ["7"]},
+                             "7": {"stage": "ready", "kind": "review", "reviews": "6"}})
+        self.w.v2("dispatch")
+        old = time.time() - v2.STALL_AFTER - 60
+        for tid in ("4", "6"):
+            mark = self.w.state / f"returned-{tid}"
+            mark.write_text(str(old))
+            os.utime(mark, (old, old))
+        self.w.v2("dispatch")
+        self.assertIn("Task 4 has stood", self.heard())
+        self.assertIn("in review with no review due and none running", self.heard())
+        self.assertNotIn("Task 6 has stood", self.heard())                          # due: it waits for the slot
+        self.assertIn("ATTENTION task 4 stands in review", (self.w.state / "v2.log").read_text())
+
+    def test_parked_tasks_resume_in_the_planner_s_order_a_hold_near_its_end_first(self):
+        now = time.time()
+        park = lambda ago: {"stage": "parked", "kind": "build", "parked": {"since": now - ago * 60, "for": "tree"}}
+        self.w.set_st(queue=["4", "7", "3"], tasks={"3": park(60), "4": park(10), "5": park(330), "6": park(100),
+                                                    "7": {"stage": "ready", "kind": "build"}})
+        # 5's hold (six hours for the tree, v2.hold_of) ends in thirty minutes: first; then the planner's order (4, 3);
+        # then 6, which its order does not name
+        self.assertEqual(self.v2_eval("v2.resume_order(v2.peek())"), "['5', '4', '3', '6']")
+        status = self.w.v2("status")
+        self.assertIn("parked, in the order they resume when their wait is over", status)
+        self.assertRegex(status, r"5 \(330 min, its hold ends in \d+ min, so it goes first, not in your order\)")
+        self.assertRegex(status, r"6 \(100 min, hold \d+ min left, not in your order\)")
+        self.assertLess(status.index("4 (10 min"), status.index("3 (60 min"))    # the planner's order
+        self.w.set_st(sessions={k: v for k, v in self.w.st()["sessions"].items() if k != "implement-9"})
+        for tid in ("3", "4", "5", "6"):                                          # the producing slot resumes that one
+            self.w.session(f"implement-{tid}", "implementer", f"i{tid}", task=tid, state="parked", live=False)
+            self.w.set_st(tasks=dict(self.w.st()["tasks"], **{tid: dict(self.t(tid), session=f"implement-{tid}")}))
+        self.w.set_st(tasks=dict(self.w.st()["tasks"], **{"5": {"stage": "done", "kind": "build"}}))
+        self.w.v2("dispatch")                                  # the planner's first, not the longest parked (6, then 3)
+        self.assertEqual([r[2] for r in self.resumes()], ["i4"])
+
+    def test_isabelle_runs_are_counted_by_run_not_by_process(self):
+        # a probe was refused as "11 Isabelle runs are going" while two were: the count was of poly processes, and one
+        # run makes several (implement-78, 2026-09-21)
+        procs = {1: (0, "systemd", "/sbin/init"),
+                 10: (1, "python3", "python3 -B tools/incremental_check.py check --output .build/check-x"),  # a check
+                 11: (10, "java", "java -classpath isabelle.jar isabelle build -d . Native"),
+                 12: (11, "poly", "poly -q"), 13: (11, "poly", "poly -q"), 14: (11, "poly", "poly -q"),
+                 20: (1, "python3", "python3 -B tools/replay_development_answers.py --output r"),  # a replay's check
+                 21: (20, "python3", "python3 tools/incremental_check.py check --output y"),
+                 22: (21, "poly", "poly -q"), 23: (21, "poly", "poly -q"),
+                 30: (1, "bash", "bash -c timeout 300 python3 tools/probe_theories.py --work p"),  # a probe
+                 31: (30, "python3", "python3 tools/probe_theories.py --work p"), 32: (31, "poly", "poly -q"),
+                 40: (1, "bash", "bash"), 41: (40, "poly", "poly -q")}  # no tool known: a run of its own
+        roots = v2.isabelle_run_roots(procs)
+        self.assertEqual({roots[p] for p in (12, 13, 14)}, {10})
+        self.assertEqual({roots[p] for p in (22, 23)}, {20})                        # the outermost: the replay
+        self.assertEqual((roots[32], roots[41]), (30, 41))
+        self.assertEqual(len(set(roots.values())), 4)                              # four runs, eight processes
+        with patch.object(v2, "machine_processes", lambda: procs), patch.object(v2, "isabelle_admitted", lambda: 0), \
+                patch.object(v2, "unseen_finalizer_runs", lambda procs: 0), patch.object(v2, "session_marks", lambda: 0), \
+                patch.object(v2, "control", lambda: True), patch.dict(os.environ, {"ORCH_ISABELLE_RUNS": ""}):
+            os.environ.pop("ORCH_ISABELLE_RUNS")
+            self.assertEqual(v2.isabelle_runs(), 4)                                 # what the limit is held to
+            self.assertEqual(v2.isabelle_load(), {"heavy": 3, "probe": 1})          # the check, the replay, the unknown
+
+    def test_a_finalizer_s_run_counts_until_its_isabelle_shows(self):
+        # a check prepares for minutes before its Isabelle starts, and three finalizers' checks were let start one
+        # after another as each earlier admission lapsed at 60 s (tasks 115, 97, 106, 2026-09-22 05:54-05:57, 2.2 GiB)
+        import tempfile
+        tmp = Path(tempfile.mkdtemp(dir=self.w.root))
+        admitted, build = tmp / "admitted", tmp / "build"
+        (build / "3").mkdir(parents=True)
+        admitted.mkdir()
+        (build / "3" / "finalizer.pid").write_text("100\n4242")
+        (admitted / "3").write_text("100")                                   # the process let start the run
+        long_ago = time.time() - 600
+        os.utime(admitted / "3", (long_ago, long_ago))                       # admitted ten minutes ago
+        procs = {1: (0, "systemd", "/sbin/init"), 100: (1, "python3", "python3 finalize.py commit 3")}
+        with patch.object(v2, "machine_processes", lambda: procs), patch.object(v2, "control", lambda: True), \
+                patch.object(v2, "ADMITTED", str(admitted)), patch.object(v2, "BUILD", str(build)), \
+                patch.object(v2, "STATE", str(tmp)), patch.dict(os.environ, {"ORCH_ISABELLE_RUNS": ""}):
+            os.environ.pop("ORCH_ISABELLE_RUNS")
+            self.assertEqual(v2.isabelle_load()["heavy"], 1)                   # preparing: still counted
+            procs.update({101: (100, "bash", "bash -c check"),
+                          102: (101, "python3", "python3 -B tools/incremental_check.py check --output x"),
+                          103: (102, "poly", "poly -q")})
+            self.assertEqual(v2.isabelle_load()["heavy"], 1)                   # its Isabelle shows: counted once
+            del procs[100]
+            procs[101] = (1, "bash", "bash -c check")
+            self.assertEqual(v2.isabelle_load()["heavy"], 1)                   # the run, its finalizer gone
+            for pid in (101, 102, 103):
+                del procs[pid]
+            self.assertEqual(v2.isabelle_load()["heavy"], 0)                   # nothing of it runs
+            # a train's lander admits its run under its first member's name and runs it itself: the member's own
+            # finalizer, which runs nothing, counted the one run twice (the train of 144 and 132, 2026-09-22 14:42)
+            (build / "4").mkdir()
+            (build / "4" / "finalizer.pid").write_text("200")
+            (admitted / "4").write_text("300")
+            procs.update({200: (1, "python3", "python3 finalize.py commit 4"),
+                          300: (1, "python3", "python3 finalize.py commit 5"),
+                          301: (300, "python3", "python3 -B tools/incremental_check.py check --output y"),
+                          302: (301, "poly", "poly -q")})
+            self.assertEqual(v2.isabelle_load()["heavy"], 1)
+            # a marker from before markers named their runner, older than the finalizer on record: an ended one's
+            for pid in (200, 300, 301, 302):
+                del procs[pid]
+            (admitted / "4").unlink()
+            (admitted / "6").write_text("")
+            (build / "6").mkdir()
+            (build / "6" / "finalizer.pid").write_text("400")
+            os.utime(admitted / "6", (long_ago, long_ago))
+            procs[400] = (1, "python3", "python3 finalize.py check 6")
+            self.assertEqual(v2.isabelle_load()["heavy"], 0)
+
+    def test_in_a_sandbox_the_machine_is_read_from_the_watchdog_and_parking_is_not_judged(self):
+        # `v2.py park machine` runs in the session's sandbox, whose process namespace shows no Isabelle: it answered "a
+        # run may start now" while the guard, outside, refused the probe after it as "2 Isabelle runs are going", four
+        # times (implement-24, 2026-09-21)
+        self.w.set_st(sessions={k: v for k, v in self.w.st()["sessions"].items() if k != "implement-9"})
+        self.w.session("implement-3", "implementer", "i3", task="3")
+        self.w.task("3", subject="A build")
+        self.w.set_st(queue=["3"], tasks={"3": {"stage": "running", "kind": "build", "session": "implement-3"}})
+        sandboxed = dict(self.w.as_session("i3"), ORCH_CONTROL="0")
+        said = self.w.v2("park", "machine", env=sandboxed)                          # it sees nothing, and parks
+        self.assertIn("when a run may start on the machine", said)
+        self.assertEqual(self.t("3")["parked"]["for"], "machine")
+        snapshot = self.w.state / "isabelle-processes.json"
+        with patch.object(v2, "control", lambda: False), patch.object(v2, "STATE", str(self.w.state)), \
+                patch.object(v2, "isabelle_admitted", lambda: 0), patch.dict(os.environ, {"ORCH_ISABELLE_RUNS": ""}):
+            os.environ.pop("ORCH_ISABELLE_RUNS")
+            full = {"heavy": v2.ISABELLE_MAX, "probe": v2.PROBE_MAX}
+            self.assertEqual(v2.isabelle_load(), full)                              # none written: taken as full
+            snapshot.write_text(json.dumps({"at": "t", "runs": 3, "heavy": 1, "probes": 2, "processes": []}))
+            self.assertEqual(v2.isabelle_load(), {"heavy": 1, "probe": 2})          # the watchdog's, fresh
+            old = time.time() - v2.SNAPSHOT_FRESH - 60
+            os.utime(snapshot, (old, old))
+            self.assertEqual(v2.isabelle_load(), full)                              # too old to trust
+
+    def test_a_park_for_the_machine_waits_for_the_kind_of_run_it_was_refused(self):
+        self.w.set_st(sessions={k: v for k, v in self.w.st()["sessions"].items() if k != "implement-9"})
+        self.w.session("implement-3", "implementer", "i3", task="3")
+        self.w.task("3", subject="A build")
+        self.w.set_st(queue=["3"], tasks={"3": {"stage": "running", "kind": "build", "session": "implement-3"}})
+        (self.w.state / "work-i3.json").write_text(json.dumps({"run_refused": "probe"}))  # the guard refused a probe
+        full = {"ORCH_PROBE_RUNS": str(v2.PROBE_MAX)}
+        self.assertIn("when a run may start", self.w.v2("park", "machine", env=dict(self.w.as_session("i3"), **full)))
+        self.assertEqual(self.t("3")["parked"]["run"], "probe")
+        self.w.v2("dispatch", env=full)
+        self.assertEqual(self.resumes("i3"), [])                                   # the probes still full
+        self.w.v2("dispatch", env={"ORCH_ISABELLE_RUNS": str(v2.ISABELLE_MAX)})   # heavy full: no matter to a probe
+        self.assertEqual(len(self.resumes("i3")), 1)
+        self.assertFalse((self.w.state / "machine-turn" / "3").exists())          # a probe holds no heavy turn
+
+    def test_a_task_resumed_for_a_heavy_run_holds_its_turn_until_its_check_starts(self):
+        # a finalizer took a freed heavy slot within a poll while the resumed session had yet to make its call
+        self.w.set_st(sessions={k: v for k, v in self.w.st()["sessions"].items() if k != "implement-9"})
+        self.w.session("implement-3", "implementer", "i3", task="3")
+        self.w.task("3", subject="A build")
+        self.w.set_st(queue=["3"], tasks={"3": {"stage": "running", "kind": "build", "session": "implement-3"}})
+        (self.w.state / "work-i3.json").write_text(json.dumps({"run_refused": "heavy"}))
+        full = {"ORCH_ISABELLE_RUNS": str(v2.ISABELLE_MAX)}
+        self.w.v2("park", "machine", env=dict(self.w.as_session("i3"), **full))
+        self.w.v2("dispatch", env={"ORCH_ISABELLE_RUNS": "0"})
+        self.assertEqual(len(self.resumes("i3")), 1)
+        self.assertTrue((self.w.state / "machine-turn" / "3").exists())
+
+    def test_a_park_for_the_machine_waits_for_memory_and_unreadable_memory_blocks_nothing(self):
+        self.w.set_st(sessions={k: v for k, v in self.w.st()["sessions"].items() if k != "implement-9"})
+        self.w.session("implement-3", "implementer", "i3", task="3")
+        self.w.task("3", subject="A build")
+        self.w.set_st(queue=["3"], tasks={"3": {"stage": "running", "kind": "build", "session": "implement-3"}})
+        short = {"ORCH_MEM_AVAILABLE_GB": str(v2.MEM_MARGIN_GB - 1)}
+        self.w.v2("park", "machine", env=dict(self.w.as_session("i3"), **short))
+        self.assertEqual(self.t("3")["parked"]["for"], "machine")
+        self.w.v2("dispatch", env=short)
+        self.assertEqual(self.resumes("i3"), [])                                   # memory still short
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.resumes("i3")), 1)
+        with patch.object(v2, "memory_available_gb", lambda: None):
+            self.assertIsNone(v2.memory_short())                                   # unreadable: not called full
+
+    def test_a_session_parks_for_the_machine_and_is_resumed_when_a_run_may_start(self):
+        # implement-78 had nothing left but its probe, refused seven times for a full machine, and no park fitted
+        self.w.set_st(sessions={k: v for k, v in self.w.st()["sessions"].items() if k != "implement-9"})
+        self.w.session("implement-3", "implementer", "i3", task="3")
+        self.w.task("3", subject="A build")
+        self.w.set_st(queue=["3"], tasks={"3": {"stage": "running", "kind": "build", "session": "implement-3"}})
+        full = dict(self.w.as_session("i3"), ORCH_ISABELLE_RUNS=str(v2.ISABELLE_MAX))
+        self.assertIn("a run may start now", self.as_("implement-3", "park", "machine"))  # free: nothing to wait for
+        said = self.w.v2("park", "machine", env=full)
+        self.assertIn("when a run may start on the machine", said)
+        self.assertEqual((self.t("3")["stage"], self.t("3")["parked"]["for"]), ("parked", "machine"))
+        self.w.v2("dispatch", env={"ORCH_ISABELLE_RUNS": str(v2.ISABELLE_MAX)})
+        self.assertEqual(self.resumes("i3"), [])                                   # still full
+        self.w.v2("dispatch")
+        (resume,) = self.resumes("i3")
+        self.assertIn("A run may start on the machine now", resume[-1])
+
+    def test_a_parked_quick_fix_comes_back_with_the_budget_it_had_when_it_parked(self):
+        # fix-22 parked for the tree two minutes into its fifteen, and would have come back past them (2026-09-21)
+        now = time.time()
+        self.w.set_st(sessions={k: v for k, v in self.w.st()["sessions"].items() if k != "implement-9"})
+        self.w.session("fix-3", "fixer", "f3", task="3", state="parked", live=False, fix={"since": now - 20 * 60})
+        self.w.task("3", subject="A rejected build")
+        self.w.set_st(queue=["3"], tasks={"3": {"stage": "parked", "kind": "build", "session": "fix-3",
+                                                "parked": {"since": now - 18 * 60, "for": "tree", "holder": None}}})
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.resumes("f3")), 1)
+        self.assertAlmostEqual(self.s("fix-3")["fix"]["since"], time.time() - 2 * 60, delta=30)  # 18 minutes waited
+
     def test_an_answer_to_a_parked_session_is_not_called_lost(self):
         # parked is alive: the session reads its mail when it is resumed, and four answers were declared lost to
         # sessions that were only waiting for the working tree (2026-09-20)
@@ -2296,6 +2884,67 @@ class SupportTests(Flow):
                                              "description": REVIEW_TASK.format(task="b")}])
         self.assertIn("proposed 2 task(s)", ok)
 
+
+    def test_a_proposal_goes_back_to_its_held_task_designer_to_be_revised(self):
+        # the planner told brief 13's designer what to change a minute after it proposed and found no session: it had
+        # been released three seconds after its result, and a new designer briefed it again whole (2026-09-21)
+        self.w.env["ORCH_PRODUCERS"] = "1"  # its placed build waits behind the working producer, as the test reads it
+        entries = [{"key": "b", "subject": "A build", "why": "-", "blockedBy": [], "description": BRIEF},
+                   {"key": "r", "subject": "Its review", "why": "-", "blockedBy": ["b"],
+                    "description": REVIEW_TASK.format(task="b")}]
+        self.w.session("brief-2", "task-designer", "b2", task="2", state="done", live=False)
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json", state="idle", live=False)
+        self.w.set_st(queue=["2"], tasks={"2": {"stage": "running", "kind": "brief", "session": "brief-2",
+                                                "role": "task-designer"}})
+        self.assertIn("proposed 2 task(s)", self.propose("2", "b2", entries))
+        self.w.session("review-8", "reviewer", "r8", task="8")                     # the supporting slot is taken
+        told = self.as_("plan-1", "tell", "2", "Split b in two: its statement and its proof.")
+        self.assertIn("sent back to its task designer, brief-2", told)
+        self.assertEqual(self.resumes("b2"), [])                                   # it waits for the slot
+        self.assertIn("went back to its task designer", self.as_("plan-1", "accept", "2"))  # nothing placed meanwhile
+        self.w.set_st(sessions={k: v for k, v in self.w.st()["sessions"].items() if k != "review-8"})
+        self.w.v2("dispatch")
+        (resume,) = self.resumes("b2")
+        self.assertIn("Split b in two: its statement and its proof.", resume[-1])
+        self.assertIn("propose again (`v2.py propose 2 FILE`)", resume[-1])
+        self.assertEqual((self.t("2")["stage"], self.t("2").get("revise")), ("running", None))
+        self.assertIn("proposed 2 task(s)", self.propose("2", "b2", entries))       # revised, proposed again
+        self.assertIn("placed b as", self.as_("plan-1", "accept", "2"))
+        # a designer no longer held is said to be, with where its proposal is
+        self.w.set_st(tasks=dict(self.w.st()["tasks"], **{"3": {"stage": "proposed", "session": "brief-3",
+                                                                   "proposal": ".build/tasks/3/proposal.json"}}))
+        self.w.session("brief-3", "task-designer", "b3", task="3", state="done", live=False, released=True)
+        self.assertIn("is no longer held", self.as_("plan-1", "tell", "3", "x"))
+        # one that went cold before its turn came: the brief is the planner's, with what it had asked
+        self.w.set_st(sessions=dict(self.w.st()["sessions"], **{"brief-2": dict(self.s("brief-2"), state="done")}))
+        self.w.session("brief-4", "task-designer", "b4", task="4", state="done", live=False, warm=False)
+        self.w.set_st(tasks=dict(self.w.st()["tasks"], **{"4": {"stage": "proposed", "session": "brief-4",
+                                                                   "proposal": ".build/tasks/4/proposal.json"}}))
+        self.as_("plan-1", "tell", "4", "Name the files.")
+        self.w.v2("dispatch")
+        self.assertEqual(self.resumes("b4"), [])
+        self.assertEqual(self.t("4")["stage"], "planner")
+        self.assertIn("could not be resumed with your correction", self.heard())
+        self.assertIn("Name the files.", self.heard())
+
+    def test_a_proposal_being_revised_is_not_named_as_waiting_to_be_placed(self):
+        self.w.session("review-8", "reviewer", "r8", task="8")                     # the slot taken: the correction waits
+        for tid in ("5", "6"):
+            self.w.task(tid, description=BRIEF_TASK)
+            self.w.session(f"brief-{tid}", "task-designer", f"b{tid}", task=tid, state="done", live=False)
+        self.w.set_st(tasks={"5": {"stage": "proposed", "kind": "brief", "session": "brief-5", "proposal": "p5.json",
+                                   "proposed": 2, "revise": {"from": "plan-1", "text": "x", "at": time.time()}},
+                             "6": {"stage": "proposed", "kind": "brief", "session": "brief-6", "proposal": "p6.json",
+                                   "proposed": 2}})
+        self.w.v2("dispatch")
+        old = time.time() - v2.RETURNED_AFTER - 60
+        for tid in ("5", "6"):
+            mark = self.w.state / f"returned-{tid}"
+            mark.write_text(str(old))
+            os.utime(mark, (old, old))
+        self.w.v2("dispatch")
+        self.assertIn("Brief task 6 proposed 2 task(s)", self.heard())            # the one waiting is named
+        self.assertNotIn("Brief task 5 proposed 2 task(s)", self.heard())         # the one being revised is not
 
     def test_a_brief_that_records_its_result_after_proposing_is_still_placed(self):
         # the designer is told to propose and then to record its result, and the result moved a brief with no final
@@ -2604,7 +3253,8 @@ class ReviewTaskTests(Flow):
         (first,) = self.forks("review-")
         self.assertIn("review task 6 of task 5", first[-1])
         self.assertIn("check the definition against the decided closure", first[-1])
-        self.assertIn("v2.py read result`, `v2.py read diff`, `v2.py read log`", first[-1])
+        self.assertIn("v2.py read result`, `v2.py read diff` (whole, up to the call's bound), `v2.py read log`,\n"
+                      "`v2.py read probes`", first[-1])
         self.assertIn("its other reviews are pending", self.verdict("6", "accept"))
         self.assertEqual(self.t("5")["stage"], "reviewing")
         self.assertEqual(len(self.forks("review-")), 2)  # the second review starts when the slot is free
@@ -2814,6 +3464,14 @@ class TreeTests(Flow):
         self.assertFalse((self.w.project / ".build/trees/5").exists())
         self.assertIn("your brief names theories/Base.thy", self.first_message("implement-5"))
 
+    def test_a_task_whose_brief_names_a_file_every_task_writes_gets_a_tree_of_its_own(self):
+        # nearly every brief names THEORY_MAP.md or DECISIONS.md, and while one task in the one tree held a line of
+        # one uncommitted, every task started was put there too: 56, 62 and 72 on 2026-09-22
+        self.w.write("DECISIONS.md", "# Decisions\n\nanother task's entry, uncommitted\n")
+        self.run_v2("v2.own('4', ['DECISIONS.md'])")
+        s = self.start("5")  # BRIEF names DECISIONS.md among its inputs
+        self.assertEqual(s.get("tree"), ".build/trees/5")
+
     def test_a_task_waits_for_the_work_it_stands_on_to_land(self):
         # tasks 22 and 46 were completed in the graph with their theories uncommitted: a task after them, started
         # from HEAD in a tree of its own, would have built on nothing. It waits, through the tasks between, and is
@@ -2922,6 +3580,27 @@ class ReviewBeforeCommitTests(Flow):
         self.w.set_st(tasks={"22": {"stage": "done", "review_tasks": ["23"]}, "23": {"stage": "ready",
                                                                                     "reviews": "22"}})
 
+    def test_under_the_graph_s_hold_its_check_waits_for_the_planner_s_order(self):
+        # a fresh start's hold stood, and reopening started three checks at once all the same (2026-09-21)
+        self.w.write(".build/tasks/22/finalize.json", json.dumps(
+            {"check": "true", "files": ["theories/Loci.thy"], "message": ".build/tasks/22/commit.md"}))
+        self.w.write(".build/tasks/22/commit.md", "Add the locus\n\nValidation: checked.\n")
+        (self.w.state / "graph-held").write_text("this run began fresh")
+        self.w.v2("dispatch")
+        self.assertEqual((self.t("22")["stage"], self.t("22").get("held_finalizer")), ("checking", "checking"))
+        self.assertFalse((self.w.project / ".build/tasks/22/finalize.log").exists())  # its check did not run
+        self.assertIn("its check runs once your order releases the graph", self.heard())
+        # the watchdog does not take a finalizer that is not meant to run for one that ended without reporting
+        tasks = self.w.st()["tasks"]
+        tasks["22"]["finishing_since"] = time.time() - 1000
+        self.w.set_st(tasks=tasks, active=True)
+        self.w.run("watchdog.py")
+        self.assertEqual(self.t("22")["stage"], "checking")
+        (self.w.state / "graph-held").unlink()  # what the planner's order does
+        self.w.v2("dispatch")
+        self.assertEqual(self.t("22")["stage"], "reviewing")  # checked, and now in review
+        self.assertNotIn("held_finalizer", self.t("22"))
+
     def test_a_build_completed_without_landing_is_taken_back_to_its_check(self):
         self.w.write(".build/tasks/22/finalize.json", json.dumps(
             {"check": "true", "files": ["theories/Loci.thy"], "message": ".build/tasks/22/commit.md"}))
@@ -3012,6 +3691,28 @@ class GraphEditTests(Flow):
     def ids(self):
         return sorted(f[:-5] for f in os.listdir(self.w.tasks) if f.endswith(".json"))
 
+    def test_a_correction_of_a_change_holds_the_change_s_own_heads_and_blocks(self):
+        # implement-72 dropped a `=== replace ROOT` block of its refused change with `again`, as the protocol says to
+        # correct a change: its correction's text held that block, and was read as a second change (2026-09-22)
+        correction = ("=== replace command 8\n<<<<<<< SEARCH\n=== write theories/New.thy\n=======\n"
+                      "=== write .build/tasks/72/draft/New.thy\n>>>>>>> REPLACE\n<<<<<<< SEARCH\n=== replace ROOT\n"
+                      "<<<<<<< SEARCH\n    Old\n=======\n    Old\n    New\n>>>>>>> REPLACE\nEOF\n=======\nEOF\n"
+                      ">>>>>>> REPLACE\n")
+        ops, problems = v2.change_blocks(correction, markers=False)
+        self.assertEqual(problems, [])
+        self.assertEqual([(o["old"], o["new"]) for o in ops], [
+            ("=== write theories/New.thy", "=== write .build/tasks/72/draft/New.thy"),
+            ("=== replace ROOT\n<<<<<<< SEARCH\n    Old\n=======\n    Old\n    New\n>>>>>>> REPLACE\nEOF", "EOF")])
+        self.assertTrue(v2.change_blocks(correction.replace("command 8", "ROOT"))[1])  # a change's own stays strict
+
+    def test_a_rewrite_of_a_task_that_came_back_says_it_moves_only_when_queued(self):
+        # plan-33 rewrote task 24's brief at 23:30 and did not queue it: it stood until the notice at 23:59 (2026-09-21)
+        self.w.set_st(tasks={"20": {"stage": "planner", "kind": "build"}})
+        said = self.edit([{"rewrite": "20", "subject": "alone, re-planned"}])
+        self.assertIn("Task 20 came back to you and moves again only when queued", said)
+        said = self.edit([{"rewrite": "20", "subject": "alone, re-planned again"}, {"queue": ["20"]}])
+        self.assertNotIn("came back to you", said)                       # queued in the same edit: it moves
+
     def test_an_edit_makes_splices_rewrites_and_queues_in_one_call(self):
         said = self.edit([
             {"create": "k", "subject": "New work", "description": BRIEF, "why": "needed", "blockedBy": ["20"]},
@@ -3060,6 +3761,32 @@ class GraphEditTests(Flow):
         self.assertIn("g is task 21", self.edit([{"create": "g", "subject": "A goal", "description": BRIEF,
                                                    "blockedBy": ["20"]}]))
 
+    def test_an_edit_takes_its_briefs_from_the_planner_s_drafts(self):
+        # the planner, 2026-09-21: 14 briefs drafted as files, put into one edit by a script — refused as a script
+        # that writes, a request spent and every brief written a second time
+        drafts = self.w.project / ".build/plans/plan-1"
+        drafts.mkdir(parents=True, exist_ok=True)
+        (drafts / "k.md").write_text(BRIEF + "\n")
+        (drafts / "b20.md").write_text(BRIEF.replace("prove it sound", "prove it sound, corrected") + "\n")
+        said = self.edit([{"create": "k", "subject": "New", "descriptionFile": ".build/plans/plan-1/k.md"},
+                          {"rewrite": "20", "descriptionFile": ".build/plans/plan-1/b20.md"}])
+        self.assertIn("k is task 21", said)
+        self.assertEqual(self.w.read_task("21")["description"], BRIEF.strip())
+        self.assertIn("prove it sound, corrected", self.w.read_task("20")["description"])
+        before = self.ids()
+        said = self.edit([{"create": "a", "subject": "x", "descriptionFile": ".build/plans/plan-1/none.md"},
+                          {"create": "b", "subject": "x", "descriptionFile": "theories/Ready.thy"},
+                          {"create": "c", "subject": "x", "description": BRIEF,
+                           "descriptionFile": ".build/plans/plan-1/k.md"}])
+        self.assertIn("refused, and nothing is written", said)                  # judged whole, every reason said
+        self.assertIn("task a: descriptionFile .build/plans/plan-1/none.md cannot be read", said)
+        self.assertIn("task b: descriptionFile theories/Ready.thy is not a draft under .build/plans/", said)
+        self.assertIn("task c: a description or a descriptionFile, not both", said)
+        self.assertEqual(self.ids(), before)
+        (drafts / "k.md").write_text("no\n")                                    # a draft is judged as a brief is
+        self.assertIn("task k: the brief has no", self.edit([{"create": "k", "subject": "x",
+                                                                 "descriptionFile": ".build/plans/plan-1/k.md"}]))
+
     def test_an_edit_refuses_a_cycle_a_brief_out_of_form_and_a_role_without_the_graph(self):
         self.assertIn("a cycle nothing could ever start", self.edit([{"blockers": "1", "set": ["11"]}]))
         self.assertIn("task k: the brief has no", self.edit([{"create": "k", "subject": "x", "description": "no"}]))
@@ -3101,6 +3828,12 @@ class BatchTests(Flow):
 
     def setUp(self):
         super().setUp()
+        # the batch's bound: these fixtures are sized for 50,000 bytes, the bound until 2026-09-22 15:40 (80,000
+        # since); what they test is the mechanism, not its value
+        self.w.env["ORCH_BATCH_BYTES"] = "50000"
+        bound = patch.object(v2, "BATCH_BYTES", 50000)
+        bound.start()
+        self.addCleanup(bound.stop)
         for i in ("5", "6", "7"):
             self.w.task(i, subject=f"task {i}")
         self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
@@ -3124,10 +3857,13 @@ class BatchTests(Flow):
         # a read shows at most READ_BYTES, so a longer source is cut, with how to read on — and every kind of source
         # can be named by its lines, or what is cut could not be read at all (the owner, 2026-09-21)
         self.w.write("NOTES.md", "".join(f"line {i} " + "w" * 40 + "\n" for i in range(1, 400)))  # about 19K
-        self.w.task("8", subject="a long brief", description=BRIEF + "".join(f"more {i}\n" for i in range(1, 600)))
+        # a brief named whole is shown whole up to BATCH_BYTES (test_a_brief_named_whole_is_shown_whole); one longer
+        # is cut the same way
+        self.w.task("8", subject="a long brief", description=BRIEF + "".join(f"more {i}\n" for i in range(1, 6000)))
         whole = self.as_("plan-1", "read", "NOTES.md")
         self.assertIn("[this source stops here", whole)
-        self.assertLessEqual(len(whole.encode()), v2.READ_BYTES + 700)
+        self.assertIn("`SHOW=20K`", whole)                              # and how to have more at once
+        self.assertLessEqual(len(whole.encode()), v2.READ_BYTES + 900)
         ranged = self.as_("plan-1", "read", "NOTES.md:200-202")
         self.assertIn("line 201 ", ranged)
         self.assertNotIn("[this source stops here", ranged)
@@ -3135,6 +3871,29 @@ class BatchTests(Flow):
         self.assertIn("[this source stops here", brief)
         self.assertIn("task:ID:A-B", brief)                        # how to read the rest of it
         self.assertIn("     3\t", self.as_("plan-1", "read", "task:8:3-4"))  # and by its lines it is read
+        # unless the call declares more, as the shell's own assignment hands it on (the owner, 2026-09-22)
+        wide = self.w.v2("read", "NOTES.md:201-399", env=dict(self.w.as_session(self.s("plan-1")["sid"]), SHOW="20K"))
+        self.assertIn("line 399 ", wide)
+        self.assertNotIn("[this source stops here", wide)
+
+    def test_a_brief_named_whole_is_shown_whole(self):
+        # the planner, 2026-09-21: 9 of the 13 briefs it took stock of were cut at 5,000 bytes (they were 5.3-8.4K),
+        # what it decides on standing at their end, and three more requests went to reading their ends
+        long = BRIEF + "".join(f"more {i}\n" for i in range(1, 600))  # about 5.9K shown
+        for i in range(8, 17):
+            self.w.task(str(i), subject=f"brief {i}", description=long)
+        self.w.write("NOTES.md", "".join(f"line {i} " + "w" * 40 + "\n" for i in range(1, 400)))  # about 19K
+        shown = self.as_("plan-1", "read", "task:8", "task:9", "NOTES.md", "task:10")
+        self.assertEqual(shown.count("more 599"), 3)                  # each brief whole, its end with it
+        self.assertIn("[this source stops here, at line", shown)      # the file beside them still read in pieces
+        self.assertNotIn("[this read stops here", shown)
+        many = self.as_("plan-1", "read", *[f"task:{i}" for i in range(8, 17)])  # nine: past BATCH_BYTES of briefs
+        self.assertEqual(many.count("more 599"), 8)
+        self.assertIn("there was no room for task:16", many)
+        self.assertLessEqual(len(many.encode()), v2.BATCH_BYTES + 700)
+        ranged = self.as_("plan-1", "read", "task:8:3-4")                 # by its lines, as before
+        self.assertIn("     3\t", ranged)
+        self.assertNotIn("more 599", ranged)
 
     def test_a_result_a_log_and_a_diff_are_the_readers_own_task_s(self):
         self.w.session("implement-5", "implementer", "i5", task="5")
@@ -3146,20 +3905,47 @@ class BatchTests(Flow):
         self.w.session("review-5", "reviewer", "r5", task="9", reviews="5")
         self.assertIn("   250\tresult line 250", self.as_("review-5", "read", "result:250-251"))  # what it reviews
 
-    def test_one_read_shows_at_most_a_read_and_names_what_it_had_no_room_for(self):
+    def test_a_read_bounds_each_source_and_the_call_at_a_batch_and_names_what_it_had_no_room_for(self):
+        # `read A B C` was bounded at READ_BYTES whole, while `read A -- B -- C` showed each: a session naming several
+        # sources, as the protocol invites, was cut and learnt `--` later (fix-49.3, 2026-09-21)
         self.w.write("NOTES.md", "".join(f"n {i} " + "w" * 60 + "\n" for i in range(1, 2000)))
-        sources = [f"NOTES.md:{1 + 10 * i}-{10 * (i + 1)}" for i in range(10)]  # ten sources of about 700 bytes
+        sources = [f"NOTES.md:{1 + 10 * i}-{10 * (i + 1)}" for i in range(100)]  # a hundred sources of about 700 bytes
         shown = self.as_("plan-1", "read", *sources)
-        self.assertLessEqual(len(shown.encode()), v2.READ_BYTES + 500)
+        self.assertGreater(len(shown.encode()), 4 * v2.READ_BYTES)                 # more than one source's bound
+        self.assertLessEqual(len(shown.encode()), v2.BATCH_BYTES + 700)           # the call's
         # whole sources only past the first, and what is not shown is named and not recorded as read
         unshown = shown.split("there was no room for ")[1].split(" — ")[0].split()
+        self.assertTrue(unshown)
         self.assertEqual(unshown, sources[len(sources) - len(unshown):])
         shown_to = 10 * (len(sources) - len(unshown))
         self.assertIn(f"{shown_to:6}\tn ", shown)                                 # the last source shown, to its end
         ranges = json.loads((self.w.state / "work-p1.json").read_text())["reads"][str(self.w.project / "NOTES.md")]["ranges"]
         import work_meter
         self.assertEqual(work_meter.gaps(ranges, 1, shown_to), [])
-        self.assertEqual(work_meter.gaps(ranges, shown_to + 1, 100), [(shown_to + 1, 100)])
+        self.assertEqual(work_meter.gaps(ranges, shown_to + 1, 1000), [(shown_to + 1, 1000)])
+        each = self.as_("plan-1", "read", "NOTES.md:1001-1200", "NOTES.md:1201-1400")  # each source still at most
+        self.assertEqual(each.count("[this source stops here"), 2)                  # a read's bytes
+        grouped = self.as_("plan-1", "read", "NOTES.md:1401-1410", "--", "NOTES.md:1411-1420")  # `--`: one read
+        self.assertEqual(grouped.count("== NOTES.md"), 2)
+        self.assertIn("  1420\tn ", grouped)
+        for tid in ("30", "31"):  # two briefs of about 40K: one call has room for one, groups or not
+            self.w.task(tid, subject="a long brief", description=BRIEF + "".join(f"more {i}\n" for i in range(1, 4000)))
+        self.assertIn("there was no room for task:31", self.as_("plan-1", "read", "task:30", "--", "task:31"))
+
+    def test_a_read_cut_where_part_of_it_is_in_context_shows_the_rest(self):
+        # the lines shown went to gaps() as lists and those in context as tuples, which sorted() cannot order: a read
+        # cut at READ_BYTES whose lines were partly in context crashed with a TypeError (review-23, the planner,
+        # 2026-09-21) — two overlapping sources of one read, or a range read before
+        self.w.write("NOTES.md", "".join(f"n {i} " + "w" * 60 + "\n" for i in range(1, 2000)))
+        one = self.as_("plan-1", "read", "NOTES.md:1-10", "NOTES.md:5-400")
+        self.assertIn("lines 5-10 of NOTES.md are already in your context", one)
+        self.assertIn("[this source stops here, at line", one)
+        self.assertIn("    11\tn 11 ", one)
+        self.as_("plan-1", "read", "NOTES.md:600-620")
+        two = self.as_("plan-1", "read", "NOTES.md:590-900")
+        self.assertIn("lines 600-620 of NOTES.md are already in your context", two)
+        self.assertIn("   590\tn 590 ", two)
+        self.assertIn("[this source stops here, at line", two)
 
     def test_a_read_leaves_out_what_is_in_context_and_records_only_what_it_printed(self):
         # the gather recorded every range it was asked for, lines its cuts dropped included: with reads filtered, those
@@ -3421,6 +4207,224 @@ class HarnessTests(Flow):
         self.assertEqual((self.w.v2("who", "producer"), self.w.v2("who", "planner")), ("implement-1", ""))
 
 
+class DocumentsAndBasesTests(unittest.TestCase):
+    def setUp(self):
+        self.w = fakes.World()
+        self.w.repository()
+        self.w.base()
+        self.w.kb()
+        self.w.session("design-3", "designer", "k3", task="3", state="working")
+        self.w.set_st(tasks={"3": {"stage": "running", "role": "designer", "session": "design-3"}})
+        self.w.task("3")
+        self.w.write(".build/tasks/3/commit.md", "Decide the order\n\nValidation: the documents check.\n")
+
+    def tearDown(self):
+        self.w.close()
+
+    def test_a_hand_over_of_documents_needs_no_check(self):
+        self.w.write("DECISIONS.md", "# Decisions\n")
+        said = self.w.v2("finalize", "3", "--files", "DECISIONS.md", "--message", ".build/tasks/3/commit.md",
+                         env=self.w.as_session("k3"))
+        self.assertNotIn("refused", said)
+        spec = json.loads((self.w.project / ".build/tasks/3/finalize.json").read_text())
+        self.assertEqual(spec["check"], "documents")
+        # anything but Markdown outside the theories, the tools and the recorded validation needs its check
+        self.w.write("ROOT", "session S = HOL +\n")
+        said = self.w.v2("finalize", "3", "--files", "DECISIONS.md", "ROOT", "--message", ".build/tasks/3/commit.md",
+                         env=self.w.as_session("k3"))
+        self.assertIn("--check may be left out when every file is a Markdown document", said)
+        self.w.write("tools/notes.md", "# tools\n")
+        said = self.w.v2("finalize", "3", "--files", "tools/notes.md", "--message", ".build/tasks/3/commit.md",
+                         env=self.w.as_session("k3"))
+        self.assertIn("refused", said)
+
+    def test_the_old_heap_store_is_a_link_again_and_the_pointers_are_never_crossed(self):
+        # task 144 moved the heap store to .build/tasks/base-lasting/ and left links at the /tmp paths; a base records
+        # its heap by its path, and the pointer's link led every tree's older tools to a base they refuse ("Accepted
+        # heap/database changed", 2026-09-22 14:06): the store's link is kept, the pointers are each their own tools'
+        lasting, old = self.w.project / ".build/tasks/base-lasting", self.w.root / "old"
+        (lasting / "isabelle-home").mkdir(parents=True)
+        old.mkdir()
+        (lasting / "active-context.json").write_text('{"directory": "complete"}')
+        (old / "pointer.json").write_text('{"directory": "interim"}')        # what the older tools select
+        env = dict(self.w.env, ORCH_LASTING=str(lasting), ORCH_OLD_POINTER=str(old / "pointer.json"),
+                   ORCH_OLD_HOME=str(old / "home"))
+        keep = [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                "v2.keep_pointer_links()"]
+        subprocess.run(keep, env=env, check=True)
+        self.assertTrue((old / "home").is_symlink())                          # made again after a reboot
+        self.assertFalse((old / "pointer.json").is_symlink())
+        self.assertEqual(json.loads((old / "pointer.json").read_text())["directory"], "interim")
+        self.assertEqual(json.loads((lasting / "active-context.json").read_text())["directory"], "complete")
+        which = [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                 "print(v2.places()[0])"]
+        self.assertEqual(subprocess.run(which, env=env, capture_output=True, text=True).stdout.strip(),
+                         str(old / "pointer.json"))                          # main's tools read the old one
+        self.w.write("tools/isabelle_places.py", "USER_HOME = 1\nACTIVE_CONTEXT = 2\n")
+        self.assertEqual(subprocess.run(which, env=env, capture_output=True, text=True).stdout.strip(),
+                         str(lasting / "active-context.json"))               # and the lasting one once #144 landed
+
+    def test_a_snapshot_leaves_out_what_the_sandbox_mounts_and_nothing_else(self):
+        # a session's sandbox mounts /dev/null over .bash_profile and .bashrc in its tree, and git refuses a character
+        # device: every `v2.py check` from a session was refused (implement-185, 2026-09-22 14:47)
+        import v2
+        said = ("warning: could not open directory 'x/': Permission denied\n"
+                "error: .bash_profile: can only add regular files, symbolic links or git-directories\n"
+                "error: .bashrc: can only add regular files, symbolic links or git-directories\n"
+                "fatal: adding files failed\n")
+        self.assertEqual(v2.not_added(said), [])                                  # git's summary says nothing more
+        self.assertEqual(v2.not_added(said.replace("fatal: adding files failed\n", "")), [])
+        self.assertEqual(v2.not_added(said + "error: ROOT: short read while indexing\n"),
+                         ["fatal: adding files failed", "error: ROOT: short read while indexing"][1:])
+        self.assertEqual(v2.not_added("error: theories/X.thy: short read while indexing\n"),
+                         ["error: theories/X.thy: short read while indexing"])
+
+    def test_a_read_says_which_recipes_reach_each_theory(self):
+        # five briefs of 2026-09-22 asked which recipe exports reach each changed theory, and implement-130 spent three
+        # requests building it by hand
+        self.w.write("theories/Base.thy", "theory Base imports Main begin end\n")
+        self.w.write("theories/Mid.thy", "theory Mid imports Base begin end\n")
+        self.w.write("theories/Top.thy", "theory Top\n  imports Mid \"HOL-Library.FSet\"\nbegin end\n")
+        self.w.write("theories/Alone.thy", "theory Alone imports Main begin end\n")
+        self.w.write("tools/reconstruct_top.py", "RECIPE = Recipe(\n    name='top-recipe',\n    export='Top:top.ML',\n)\n")
+        self.w.write("tools/reconstruct_mid.py", "RECIPE = Recipe(name='mid-recipe', export='Mid:mid.ML')\n")
+        said = self.w.v2("read", "reach:Base,Top,Alone", env=self.w.as_session("k3"))
+        self.assertIn("Base: all 2 recipes", said)
+        self.assertIn("Top: 1 of 2 recipes — top-recipe (exports Top)", said)
+        self.assertIn("Alone: no recipe reaches it", said)
+        self.assertIn("reached by no recipe (1): Alone", said)
+
+    def test_a_read_shows_the_diff_whole_up_to_the_call_s_bound(self):
+        # 21 of the 54 reviews of 2026-09-22 read the diff twice, their SHOW short of it (review-197 declared 30K)
+        self.w.write("NOTES.md", "".join(f"note {i}: " + "w" * 70 + "\n" for i in range(300)))   # about 24K, new
+        self.w.write(".build/tasks/3/finalize.json", json.dumps({"check": "documents", "files": ["NOTES.md"],
+                                                                 "message": ".build/tasks/3/commit.md"}))
+        said = self.w.v2("read", "diff", env=self.w.as_session("k3"))
+        self.assertIn("note 299:", said)                                   # the whole of it, past READ_BYTES
+        self.assertNotIn("not shown", said)
+
+    def test_a_read_says_what_a_check_found_by_its_stamp_or_its_task(self):
+        # design-218 spent five requests finding a failed batch's report its brief named by its stamp (2026-09-22 15:45)
+        out = self.w.project / ".build/tasks/batches/20260922-150712-batch145-163-130"
+        (out / "proof").mkdir(parents=True)
+        (out / "incremental.json").write_text(json.dumps({
+            "status": "failed", "seconds": 345, "theories": 1826, "rebuilt_theories": ["A"], "reused_theories": 1825,
+            "error": "AssertionError: Failed recipes: native-development-seed", "failed_recipes": ["native-development-seed"]}))
+        (out / "proof/build.log").write_text(  # two errors, the second's goal on lines of its own: each listed once
+            "*** Undefined fact: \"x\" (line 3 of \"theories/A.thy\")\n"
+            "*** Failed to finish proof (line 9 of \"theories/B.thy\"):\n*** goal (1 subgoal):\n***  1. False\n"
+            "*** At command \"by\" (line 9 of \"theories/B.thy\")\n")
+        (self.w.project / ".build/tasks/batches/20260922-150712-batch145-163-130.log").write_text("the log\n")
+        for name in ("20260922-150712-batch145-163-130", "130"):
+            said = self.w.v2("read", f"check:{name}", env=self.w.as_session("k3"))
+            self.assertIn("report: .build/tasks/batches/20260922-150712-batch145-163-130/", said)
+            self.assertIn("log: .build/tasks/batches/20260922-150712-batch145-163-130.log", said)
+            self.assertIn("status: failed in 345 s", said)
+            self.assertIn("failed recipes (1): native-development-seed", said)
+            self.assertIn("the proof's errors (2;", said)
+            self.assertIn('- A.thy:3: Undefined fact: "x"', said)
+            self.assertIn("- B.thy:9: Failed to finish proof", said)
+
+    def test_a_read_says_what_the_task_s_probes_certified(self):
+        # a reviewer dug the probes out with ls and tail over their directories, about a request a review (47 in the
+        # 55 reviews of 2026-09-22)
+        self.w.write("theories/Edit.thy", "theory Edit imports Main\nbegin\nlemma e: True by simp\nend\n")
+        probe = self.w.project / ".build/tasks/3/probe"
+        (probe / "theories").mkdir(parents=True)
+        (probe / "theories/Edit.thy").write_text("theory Edit imports \"Draft.Main\"\nbegin\nlemma e: True by simp\nend\n")
+        (probe / "probe.ML").write_text(f'val _ = Thy_Info.use_thy_legacy "{probe}/theories/Edit";\n'
+                                        'val _ = writeln "PROBE THEORIES LOADED";\n')
+        (probe / "probe.log").write_text("### theory \"Draft.Edit\"\n### 3.1s elapsed time, 3.5s cpu time\nPROBE THEORIES LOADED\n")
+        (probe / "probe.summary.json").write_text(json.dumps({"seconds": 6.0, "exit": 0, "loaded": True}))
+        old = self.w.project / ".build/tasks/3/probe-old"
+        (old / "theories").mkdir(parents=True)
+        (old / "theories/Edit.thy").write_text("theory Edit imports Main\nbegin\nlemma e: False sorry\nend\n")
+        (old / "probe.ML").write_text(f'val _ = Thy_Info.use_thy_legacy "{old}/theories/Edit";\n')
+        (old / "probe.log").write_text("*** Failed to finish proof (line 3 of \"Edit.thy\")\n")
+        t = time.time() - 3600
+        for f in (old / "probe.log",):
+            os.utime(f, (t, t))
+        said = self.w.v2("read", "probes", env=self.w.as_session("k3"))
+        first, second = said.index(".build/tasks/3/probe at"), said.index(".build/tasks/3/probe-old at")
+        self.assertLess(first, second)                                                   # newest first
+        # each time named: the theories' 0.235 s beside the run's 6.0 s read to review-199 as a discrepancy (task 188)
+        self.assertIn("complete: PROBE THEORIES LOADED; 0 error line(s); its theories loaded in 3.1 s (Isabelle's "
+                      "elapsed time); the run 6.0 s in all (the heap's load included)", said)
+        self.assertIn("Edit as the tree holds it now", said)
+        self.assertIn("NOT complete: no completion marker; 1 error line(s)", said)
+        self.assertIn("Edit DIFFERS from the tree now", said)
+
+    def test_integration_trees_are_not_tasks_trees(self):
+        # a landing train's integration tree (train.py) holds nothing of its own between trains: the sweep of empty
+        # task trees would take it from under the lander
+        path = self.w.project / ".build/trees/train-a"
+        self.w.git("worktree", "add", "--detach", str(path), "HEAD")
+        self.w.git("worktree", "add", "--detach", str(self.w.project / ".build/trees/check-b"), "HEAD")
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print([x['task'] for x in v2.trees_standing()]); v2.trees_tidied()"],
+                             env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertNotIn("train-a", out.stdout)
+        self.assertNotIn("check-b", out.stdout)
+        self.assertTrue(path.exists())
+        self.assertTrue((self.w.project / ".build/trees/check-b").exists())
+
+    def test_a_combined_check_keeps_its_reports_and_loses_its_bulk(self):
+        out = self.w.project / ".build/tasks/batches/20260922-120000-batch3-4"
+        (out / "recipes/r").mkdir(parents=True)
+        (out / "proof").mkdir()
+        (out / "incremental.json").write_text("{}")
+        (self.w.project / ".build/tasks/batches/20260922-120000-batch3-4.log").write_text("the log\n")
+        old = time.time() - 7200
+        os.utime(out, (old, old))
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.prune_combined_outputs()"], env=self.w.env, check=True)
+        self.assertFalse((out / "recipes").exists())
+        self.assertFalse((out / "proof").exists())
+        self.assertTrue((out / "incremental.json").exists())
+        self.assertTrue((self.w.project / ".build/tasks/batches/20260922-120000-batch3-4.log").exists())
+
+    def test_the_bases_nothing_stands_on_are_pruned_and_the_lineage_kept(self):
+        bases = self.w.project / ".build/bases"
+        for name, parent in (("a", None), ("b", "a"), ("c", "b"), ("stray", "a"), ("twin", "a")):
+            (bases / name / "proof").mkdir(parents=True)
+            (bases / name / "recipes").mkdir()
+            (bases / name / "exports-context").mkdir()
+            (bases / name / "proof/accepted-context.json").write_text(
+                json.dumps({"parent": str(bases / parent / "proof") if parent else None}))
+        heaps = self.w.root / "isabelle/heaps"
+        heaps.mkdir(parents=True)
+        for name, heap in (("a", "a"), ("stray", "stray"), ("twin", "a")):  # twin: a landing retried as it was
+            (heaps / heap).write_text("heap")
+            context = bases / name / "proof/accepted-context.json"
+            context.write_text(json.dumps(dict(json.loads(context.read_text()), stored={"heap": str(heaps / heap)})))
+        (self.w.state / "active-context.json").write_text(json.dumps({"directory": str(bases / "c/proof")}))
+        old = time.time() - 7200
+        os.utime(bases / "stray", (old, old))
+        os.utime(bases / "twin", (old, old))
+        removed = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                  "import v2; print(len(v2.prune_bases()))"],
+                                 env=dict(self.w.env, ORCH_BASE_KEEP="3600", ORCH_ISABELLE_HOME=str(self.w.root / "isabelle")),
+                                 capture_output=True, text=True)
+        self.assertEqual(removed.returncode, 0, removed.stderr)
+        self.assertFalse((bases / "stray").exists())                                  # nothing stands on it
+        self.assertFalse((bases / "twin").exists())
+        for level in ("a", "b"):
+            self.assertTrue((bases / level / "proof").exists())                       # every level keeps its proof
+            self.assertFalse((bases / level / "recipes").exists())                    # and loses its check's bulk
+            self.assertFalse((bases / level / "exports-context").exists())
+        self.assertTrue((bases / "c/recipes").exists())                               # the base in use stays whole
+        self.assertFalse((heaps / "stray").exists())                                  # its heap, in memory, with it
+        self.assertTrue((heaps / "a").exists())                                       # a level's heap stays
+        self.assertIn("pruned", (self.w.state / "v2.log").read_text())
+        (self.w.state / "active-context.json").unlink()  # the pointer gone (a reboot): nothing is pruned
+        (bases / "d/proof").mkdir(parents=True)
+        os.utime(bases / "d", (old, old))
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.prune_bases()"], env=dict(self.w.env, ORCH_BASE_KEEP="3600"), check=True)
+        self.assertTrue((bases / "d").exists())
+
+
 if __name__ == "__main__":
     unittest.main()
 
@@ -3507,6 +4511,33 @@ class SandboxTests(Flow):
         self.assertEqual(json.loads(claim.read_text())["task"], "1")
         self.assertEqual(self.wanted(), [])
 
+    def test_a_measurement_claimed_while_runs_go_is_queued_and_given_the_machine_once_it_is_empty(self):
+        # task 56 was told three times a run could start, claimed the machine for a fifteen-second timing, and was
+        # refused each time, other runs going: a refused claim was only to be made again (2026-09-22)
+        sid = self.running()["sid"]
+        busy, empty = dict(self.w.as_session(sid), ORCH_ISABELLE_RUNS="1"), dict(ORCH_ISABELLE_RUNS="0")
+        self.assertIn("queued: 1 Isabelle run(s) are going", self.w.v2("measuring", "my timing", env=busy))
+        blocked = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                                  "print(v2.run_blocked(('9',), 'probe')); print(v2.run_blocked(('1',), 'probe'))"],
+                                 env=dict(self.w.env, ORCH_ISABELLE_RUNS="1"), capture_output=True, text=True).stdout
+        self.assertIn("Task 1 waits to measure on this machine (my timing)", blocked)   # no new run of another task
+        self.assertTrue(blocked.strip().endswith("None"))                                 # its own may
+        self.assertIn("parked", self.w.v2("park", "machine", env=busy))
+        self.w.v2("dispatch", env=dict(ORCH_ISABELLE_RUNS="1"))
+        self.assertFalse([c for c in self.w.calls("--bg") if c["args"][:3] == ["--bg", "--resume", sid]])  # not yet
+        self.w.v2("dispatch", env=empty)
+        (resume,) = [c["args"] for c in self.w.calls("--bg") if c["args"][:3] == ["--bg", "--resume", sid]]
+        self.assertIn("The machine is yours for your measurement (my timing)", resume[3])
+        self.assertEqual(json.loads((self.w.state / "isabelle-exclusive").read_text())["task"], "1")
+        self.assertFalse((self.w.state / "isabelle-exclusive-pending").exists())
+
+    def test_a_queued_measurement_of_a_session_still_at_work_is_given_by_message(self):
+        sid = self.running()["sid"]
+        self.assertIn("queued", self.w.v2("measuring", "my timing", env=dict(self.w.as_session(sid), ORCH_ISABELLE_RUNS="2")))
+        self.w.v2("dispatch", env=dict(ORCH_ISABELLE_RUNS="0"))
+        self.assertIn("The machine is yours for your measurement", json.dumps(self.w.mail("implement-1")))
+        self.assertEqual(json.loads((self.w.state / "isabelle-exclusive").read_text())["task"], "1")
+
     def test_the_owner_s_commands_refuse_inside_and_change_nothing(self):
         before = self.w.st()
         for script, args in (("v2.py", ["start"]), ("v2.py", ["stop"]), ("v2.py", ["talk"]), ("v2.py", ["ping", "kb-1"]),
@@ -3570,9 +4601,10 @@ class WalkTests(Flow):
         self.assertEqual(self.t("1")["stage"], "done")
         self.assertEqual(self.w.read_task("1")["status"], "completed")
         self.assertTrue((self.w.project / "theories/Ready.thy").exists())  # landed in main, with what was there
-        self.assertTrue((self.w.project / ".build/tasks/1/landing-1").is_dir())  # checked together first
+        trains = self.w.project / ".build/tasks/trains"                     # checked together first, in its train
+        self.assertEqual(len([p for p in trains.glob("*-train1") if p.is_dir()]), 1)
         self.assertFalse(tree.exists())
-        self.assertIn("Take up the work of task 1", self.w.git("log", "-1", "main", cwd=self.remote))  # pushed
+        self.assertIn("Take up the work of task 1", self.w.git("log", "-3", "main", cwd=self.remote))  # pushed
         self.assertEqual(self.attention(), [])
 
     def test_a_build_completed_without_landing_walks_back_through_its_review_to_its_commit(self):

@@ -36,7 +36,7 @@ lemma reference_table: "reference_table_formed literals callees"
 
 lemma reference_domain: "rel_dom literals\<union>rel_dom callees=slots"
   by (simp only: syntax_forest_table_domain)
-     (use domains literal_length callee_length slot_length in \<open>auto simp: syntax_forest_positions_def\<close>)
+     (use domains literal_length callee_length slot_length in \<open>auto simp: syntax_forest_positions_eq\<close>)
 
 lemma reference_range: "rel_ran callees=(\<Union>C\<in>set Cs. rel_ran C)"
   by (rule syntax_forest_table_range)
@@ -64,7 +64,7 @@ lemma boundary: "interior\<inter>slots={}"
 lemma child_interior_subset:
   assumes index: "i<length Rs"
   shows "image (syntax_branch i) (Is!i)\<subseteq>syntax_forest_positions Is"
-  using index interior_length by (auto simp: syntax_forest_positions_def)
+  using index interior_length by (auto simp: syntax_forest_positions_eq)
 
 lemma child_header_separate:
   assumes index: "i<length Rs"

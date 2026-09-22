@@ -2,10 +2,10 @@
  "boundary": "The complete original source and requirement family determine the constructed policy and entry. Actual native records, scope and application readings, independent original requirement decisions, all method conditions and revision reasons are reconstructed. Exact policy identity is separate from payload permission and from admitting alternative proved policy realizations. Full workflow policy coverage, enforced transitions, history permission, physical cost and genesis remain open.",
  "complete_recipe_source_manifest": "required-causes-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
+  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.93,
+  "seconds": 4.32,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "3a47860b4aa867b485ad01347b4ef9d3848cc18cd341f8cc583c1d8d1afe3a43",
+   "module_sha256": "1c25f95f7b6897a6925d28ca0cec4d332ffbba09246d8c7e4bc5875503864ef6",
    "subject_contracts": {
-    "required_cause_investigation.yxml": "92264e2fa8fec21ff661e5d346048e1a771db354cfaf17d24e5b1743cc7ea728"
+    "required_cause_investigation.yxml": "2698eb56bb51a77c218a8247b6698b6e6b57d4b5434f83b94e3d2f57e8ec7201"
    },
    "theory": "Required_Cause_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "973d0340e88845c822d77b0c19900959b4a041afed973e5721d18b618796ac67",
+ "source_manifest_sha256": "42399fa3d9ca07ad08a2fa51d38f1a54b40f608b513b43cdfafdd658ccdb7d6a",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.827957169000001
+   "seconds": 4.22419529599938
   }
  ]
 }

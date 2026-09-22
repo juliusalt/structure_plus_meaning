@@ -18,6 +18,42 @@ import manifest
 import pack_notation as notation
 
 
+class StaleShareTests(unittest.TestCase):
+    """What of a layer has moved since it loaded (manifest.moved_tokens): a generated index by the lines that changed,
+    anything else whole, and nothing where what the layer holds is the same."""
+
+    def test_an_index_moves_by_its_changed_lines_and_a_theory_whole(self):
+        # the theory names and the decision index, 34.5K of the max layer's 148K tokens, counted whole put it past
+        # the refresh line after nearly every landing (refreshed 22:24 and 22:39 on 2026-09-21)
+        with tempfile.TemporaryDirectory() as temp:
+            index = Path(temp) / "theory-names.md"
+            old = "".join(f"Theory_{i}\n" for i in range(800))
+            index.write_text(old + "Theory_new\n")
+            doc = Path(temp) / "NOTES.md"
+            doc.write_text("a changed note\n" * 50)
+            thy = Path(temp) / "A.thy"
+            before = "theory A imports Main begin\nlemma l: \"True\" by simp\nend\n"
+            thy.write_text(before.replace("by simp", "by auto"))     # a proof changed, the statement not
+            recorded = {str(index): "old", str(doc): "old", str(thy): "old"}
+            loaded = {str(index): old, str(doc): "a note\n" * 50,
+                      str(thy): manifest.held_text(str(thy), manifest.level_of(str(thy)))[0]}
+            moved = manifest.moved_tokens(str(index), recorded, loaded)
+            self.assertGreater(moved, 0)
+            self.assertLess(moved, manifest.tokens(str(index)) / 50)       # one line of 801, not the file
+            self.assertEqual(manifest.moved_tokens(str(doc), recorded, loaded), manifest.tokens(str(doc)))
+            self.assertEqual(manifest.moved_tokens(str(thy), recorded, loaded), 0)  # what it holds is the same
+            # names wrapped many to a line: one put in re-wraps every line after it, and it is still one name
+            import textwrap
+            names = [f"Theory_{i}" for i in range(1500)]
+            wrapped = lambda xs: textwrap.fill(" ".join(xs), 100) + "\n"
+            index.write_text(wrapped(names[:10] + ["Theory_inserted"] + names[10:]))
+            moved = manifest.moved_tokens(str(index), recorded, {str(index): wrapped(names)})
+            self.assertLess(moved, manifest.tokens(str(index)) / 100)
+            # without the layer's own text, the digests decide, as before
+            self.assertEqual(manifest.moved_tokens(str(index), recorded, {}), manifest.tokens(str(index)))
+            self.assertEqual(manifest.moved_tokens(str(index), {str(index): manifest.digest(str(index))}, {}), 0)
+
+
 class PackingTests(unittest.TestCase):
     def test_fact_prefixes_preserve_names_duplicates_and_order(self):
         for names in [
@@ -330,6 +366,11 @@ class PackingTests(unittest.TestCase):
             self.assertFalse(complete(loaded + [reply("LOADED " + slipped(meta["id"], 12, 13))]))  # two: not a slip
             self.assertFalse(complete([reply("LOADED " + meta["id"])] + loaded))  # said before the chunks arrived
             self.assertFalse(complete(loaded + [reply("LOADED")]))
+            # the right line last, after a garbled one: the high layer of 2026-09-22 15:07, all seven chunks loaded
+            short = meta["id"][:12]
+            self.assertTrue(complete(loaded + [reply(f"LOADED {short} PART 7/7 all complete — LOADED {short}{short[-4:]}… "
+                                                     f"correction:\n\nLOADED {meta['id']}")]))
+            self.assertFalse(complete(loaded + [reply(f"LOADED {meta['id']}\nand something after it")]))  # not the last
 
     def test_altered_chunk_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -394,6 +435,98 @@ class PackingTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, "ANTHROPIC_API_KEY"):
                     p.count(directory, "test-model")
 
+    def test_a_cold_stable_base_is_loaded_again_and_replaces_the_old_with_its_layer(self):
+        # a fork of a stable base whose own entry is gone writes it whole, and so would every refresh after it: a fork
+        # that misses never makes that entry again (each fork's first turn names the fork). The harness loads it again
+        # (the owner, 2026-09-21), the old base and layer serving until the new pair is sealed.
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            directory = self.make_pack(root)
+            meta = p.load(directory)
+            home, state, binary = root / "home", root / "state", root / "bin"
+            project = p.HERE.parent.parent
+            sessions = home / ".claude/projects" / str(project).replace("/", "-").replace("_", "-")
+            for d in (sessions, state, binary):
+                d.mkdir(parents=True)
+            flags = " ".join((p.HERE / "session-flags").read_text().split())
+
+            def request(rid, read, write, text="."):
+                return {"type": "assistant", "message": {"id": rid, "content": [{"type": "text", "text": text}],
+                        "usage": {"input_tokens": 2, "cache_read_input_tokens": read,
+                                  "cache_creation_input_tokens": write}}}
+
+            def write(sid, records):
+                (sessions / f"{sid}.jsonl").write_text("".join(json.dumps(r) + "\n" for r in records))
+
+            (state / "xhigh-base.json").write_text(json.dumps(
+                {"sessionId": "old-base-sid", "model": "claude-opus-5[1m]", "effort": "xhigh", "name": "xhigh-base",
+                 "flags": flags}))
+            (state / "xhigh-layer.json").write_text(json.dumps(
+                {"sessionId": "old-layer-sid", "base": "old-base-sid", "name": "xhigh-layer-old", "flags": flags}))
+            (state / "xhigh-manifest.json").write_text(json.dumps({"taken": "t0", "files": {"/example/A.thy": "old"}}))
+            (state / "layer-old-layer-sid-manifest.json").write_text(json.dumps({"taken": "t0", "files": {"L": "l0"}}))
+            loaded = [{"type": "user", "message": {"content": [{"type": "tool_result", "content": p.envelope(meta, i, t)}]}}
+                      for i, t in enumerate(p.checked_chunks(directory, meta), 1)]
+            base = loaded + [request("req-newbase", 0, 1300, "LOADED " + meta["id"])]
+            write("new-layer-sid", base + loaded + [request("req-layer", 1300, 300, "LOADED " + meta["id"])])
+            fake = binary / "claude"
+            fake.write_text("""#!/usr/bin/env python3
+import json, os, sys
+log = os.environ['REBUILD_TEST_LOG']
+open(log, 'a').write(json.dumps(sys.argv[1:]) + '\\n')
+calls = [json.loads(l) for l in open(log)]
+if sys.argv[1:] == ['agents', '--json']:
+    names = [a[a.index('-n') + 1] for a in calls if '--bg' in a and '-n' in a]
+    print(json.dumps([dict(name=n, id='id-' + n, sessionId='new-base-sid', kind='background', status='idle',
+                           state='done', cwd=os.environ['REBUILD_TEST_PROJECT']) for n in names]
+                     + [dict(name='xhigh-layer-1', id='id-layer', sessionId='new-layer-sid', kind='background',
+                             status='idle', state='done', cwd=os.environ['REBUILD_TEST_PROJECT'])]))
+elif '--bg' in sys.argv and '--resume' not in sys.argv:  # the base loads: its transcript, as a complete load leaves it
+    open(os.environ['REBUILD_TEST_BASE'], 'w').write(os.environ['REBUILD_TEST_RECORDS'])
+""")
+            fake.chmod(0o755)
+            calls = root / "calls.log"
+            env = {k: v for k, v in os.environ.items() if not k.startswith(("ORCH_", "CLAUDE"))}
+            env.update(HOME=str(home), PATH=str(binary) + os.pathsep + os.environ["PATH"], ORCH_CONTROL="1",
+                       ORCH_STATE_DIR=str(state), REBUILD_TEST_LOG=str(calls),
+                       REBUILD_TEST_PROJECT=str(project), BASE_PACK_DIR=str(directory),
+                       REBUILD_TEST_BASE=str(sessions / "new-base-sid.jsonl"),
+                       REBUILD_TEST_RECORDS="".join(json.dumps(r) + "\n" for r in base))
+
+            def base_sh(*args):
+                return subprocess.run(["sh", str(p.HERE / "base.sh"), "xhigh", *args], env=env, capture_output=True,
+                                      text=True, timeout=120)
+            try:
+                again = base_sh("restable")
+                self.assertEqual(again.returncode, 0, again.stdout + again.stderr)
+                started = [json.loads(l) for l in calls.read_text().splitlines() if '"--bg"' in l]
+                self.assertEqual(len(started), 1)
+                self.assertNotIn("--resume", started[0])                 # loaded anew, not a fork of the cold base
+                self.assertIn("its entry is cold, so the base is loaded again", (state / "warm.log").read_text())
+                self.assertEqual(json.loads((state / "xhigh-base.json").read_text())["sessionId"], "old-base-sid")
+                self.assertEqual(json.loads((state / "xhigh-base-next.json").read_text())["sessionId"], "new-base-sid")
+                self.assertTrue((state / "xhigh-manifest-next.json").exists())  # the old pair serves meanwhile
+                done = base_sh("layer", "--adopt", "xhigh-layer-1", str(directory))
+                self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
+                self.assertEqual(json.loads((state / "xhigh-base.json").read_text())["sessionId"], "new-base-sid")
+                layer = json.loads((state / "xhigh-layer.json").read_text())
+                self.assertEqual((layer["sessionId"], layer["base"]), ("new-layer-sid", "new-base-sid"))
+                self.assertFalse((state / "xhigh-base-next.json").exists())
+                self.assertFalse((state / "xhigh-manifest-next.json").exists())
+                self.assertNotIn("/example/A.thy\": \"old", (state / "xhigh-manifest.json").read_text())
+                # a session of the old layer is still told what changed against the stable load it holds
+                kept = json.loads((state / "layer-old-layer-sid-manifest.json").read_text())
+                self.assertEqual(kept["files"], {"/example/A.thy": "old", "L": "l0"})
+                self.assertTrue((state / "xhigh-stable.hit").exists())    # the layer read it: warm, and pinged
+                self.assertIn("its read of the base: OK", done.stdout)
+            finally:
+                for _ in range(30):  # seal_layer starts the keep-warm daemon, which outlives the command
+                    if (state / "warm.pid").exists():
+                        with contextlib.suppress(OSError, ValueError):
+                            os.kill(int((state / "warm.pid").read_text()), 15)
+                        break
+                    time.sleep(0.1)
+
     def test_a_layer_that_loaded_but_was_not_recorded_is_adopted_without_a_second_load(self):
         # the max layer of 2026-09-21 was complete and refused for a slip in its reply; loading it again would have
         # written 135K. `layer --adopt` records it through the same steps as a new layer's, and only a fork of the base.
@@ -426,6 +559,7 @@ class PackingTests(unittest.TestCase):
             write("base-sid", base)
             write("layer-sid", base + loaded + [request("req-layer", 1000, 300, "LOADED " + slipped)])
             write("other-sid", loaded + [request("req-other", 0, 1300, "LOADED " + meta["id"])])  # not a fork of it
+            write("missed-sid", base + loaded + [request("req-missed", 0, 1300, "LOADED " + meta["id"])])  # wrote it
             fake = binary / "claude"
             fake.write_text("""#!/usr/bin/env python3
 import json, os, sys
@@ -433,7 +567,8 @@ open(os.environ['ADOPT_TEST_LOG'], 'a').write(' '.join(sys.argv[1:]) + '\\n')
 if sys.argv[1:] == ['agents', '--json']:
     print(json.dumps([dict(name=n, id=i, sessionId=s, kind='background', status='idle', state='done',
                            cwd=os.environ['ADOPT_TEST_PROJECT'])
-                      for n, i, s in (('max-layer-1', 'abcd1234', 'layer-sid'), ('max-other-1', 'ef567890', 'other-sid'))]))
+                      for n, i, s in (('max-layer-1', 'abcd1234', 'layer-sid'), ('max-other-1', 'ef567890', 'other-sid'),
+                                      ('max-layer-2', 'aa11bb22', 'missed-sid'))]))
 """)
             fake.chmod(0o755)
             calls = root / "calls.log"
@@ -460,6 +595,14 @@ if sys.argv[1:] == ['agents', '--json']:
                 # and every sealed layer says whether it read its base from cache: only the layer is pinged
                 self.assertIn("layer max: OK   session fork layer-si of base base-sid", (state / "warm.log").read_text())
                 self.assertIn("its read of the base: OK", done.stdout)
+                # the stable base's own entry is warm after a layer that read it, and not after one that missed: a
+                # fork that missed wrote its own prefix, which no later fork reads (the max refreshes of 2026-09-21)
+                self.assertTrue((state / "max-stable.hit").exists())
+                (state / "max-stable.hit").unlink()
+                missed = adopt("max-layer-2")
+                self.assertEqual(missed.returncode, 0, missed.stdout + missed.stderr)
+                self.assertIn("its read of the base: MISS", missed.stdout)
+                self.assertFalse((state / "max-stable.hit").exists())
             finally:
                 for _ in range(30):  # seal_layer starts the keep-warm daemon, which outlives the command
                     if (state / "warm.pid").exists():
@@ -515,6 +658,54 @@ else:
             self.assertEqual(extension.returncode, 2)
             self.assertIn("usage", extension.stderr)
             self.assertEqual((root / "args.json").read_text(), before)
+
+class StaleInATreeTests(unittest.TestCase):
+    def test_a_tree_s_files_are_compared_to_the_load_by_their_place_in_the_tree(self):
+        # the load is recorded in the one tree; review-79, in a tree of its own, was told 664 files were stale since
+        # the xhigh load, of 362 it holds: every one read as changed and again as new (2026-09-21)
+        from unittest.mock import patch
+        recorded = {"/one/theories/A.thy": "a", "/one/theories/B.thy": "b", "/state/held/names.md": "n"}
+        now = {"/one/.build/trees/79/theories/A.thy": "a", "/one/.build/trees/79/theories/B.thy": "B2",
+               "/one/.build/trees/79/theories/C.thy": "c", "/state/held/names.md": "n"}
+        with patch.object(manifest, "ONE", "/one"), patch.object(manifest, "PROJECT", "/one/.build/trees/79"):
+            self.assertEqual(manifest.changed_since(recorded, now), (["theories/B.thy"], ["theories/C.thy"]))
+        with patch.object(manifest, "ONE", "/one"), patch.object(manifest, "PROJECT", "/one"):  # the one tree itself
+            self.assertEqual(manifest.changed_since(recorded, {"/one/theories/A.thy": "a"}),
+                             (["theories/B.thy", "/state/held/names.md"], []))
+
+    def test_what_is_stale_is_said_by_the_load_that_holds_it_and_the_tree_s_own_apart(self):
+        # task 145's session, its tree made before #144's tools landed, was told the tools a layer loaded eight minutes
+        # before were "stale since xhigh load 02:00:38" — the stable load's time over both parts (2026-09-22 15:00)
+        import json, tempfile
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as d:
+            one, tree, state = Path(d) / "one", Path(d) / "one/.build/trees/145", Path(d) / "state"
+            for root in (one, tree):
+                (root / "theories").mkdir(parents=True)
+                (root / "tools").mkdir(parents=True)
+            state.mkdir()
+            write = lambda p, text: (p.write_text(text), manifest.digest(str(p)))[1]
+            loaded_stable = write(one / "theories/S.thy", "stable as loaded")
+            write(one / "theories/S.thy", "stable changed in main")
+            write(tree / "theories/S.thy", "stable changed in main")
+            loaded_tool = write(one / "tools/t.py", "tool as the layer loaded it")
+            write(tree / "tools/t.py", "the tool as the older tree holds it")
+            loaded_index = write(state / "names.md", "an index only the one tree has")
+            (state / "stable.json").write_text(json.dumps({"taken": "2026-09-22T02:00:38", "files": {
+                str(one / "theories/S.thy"): loaded_stable}}))
+            (state / "layer.json").write_text(json.dumps({"taken": "2026-09-22T14:55:59", "files": {  # and, as a
+                str(one / "theories/S.thy"): loaded_stable,                    # kept layer record does, the stable's
+                str(one / "tools/t.py"): loaded_tool, str(one / "names.md"): loaded_index}}))
+            (one / "names.md").write_text("an index only the one tree has")
+            files = [("", str(tree / "theories/S.thy")), ("", str(tree / "tools/t.py"))]
+            with patch.object(manifest, "ONE", str(one)), patch.object(manifest, "PROJECT", str(tree)), \
+                    patch.object(manifest, "WHO", "xhigh"):
+                line = manifest.stale_line([("stable", str(state / "stable.json")), ("layer", str(state / "layer.json"))],
+                                           files)
+        self.assertIn("since the xhigh stable load of 2026-09-22T02:00:38 (1): S", line)
+        self.assertIn("since the xhigh layer load of 2026-09-22T14:55:59 (0): none", line)   # the index is the one tree's
+        self.assertIn("differing in your own tree alone (1", line)
+        self.assertIn("brings main in with `v2.py bring-main`): t", line)
 
 
 if __name__ == "__main__":

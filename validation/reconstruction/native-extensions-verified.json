@@ -2,10 +2,10 @@
  "boundary": "A run without --proof rebuilds the complete constructor and source proofs from HOL, exports the accepted code and executes all complete package reports. Every returned artifact, binding, interface, clause and coordinate is retained in the reproduced output. Complete source correspondence is proved for the concrete source models and remains a premise of the general constructor contract. General native admission of that correspondence, the whole development protocol and its cost account remain open.",
  "complete_recipe_source_manifest": "native-extensions-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
+  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.07,
+  "seconds": 2.87,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "99085e012efb45af18f784726528cc0a44d0633d7b9dbed098f8dccd95010f2c",
+   "module_sha256": "548ce2f5132997a51cb6db3a8eba27f1087c2921947d0c12c8a2f76471dc530f",
    "subject_contracts": {},
    "theory": "Native_Extension_Execution"
   },
@@ -69,14 +69,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "c8c62d302bc798282e9f3ad9e3a69759aa7aa270edf63dc445a71473a3f1f57a",
+ "source_manifest_sha256": "f64b839f0adb5b43a046dd8d77554ec109edd4b4c327af9e078e3e16a46ee3e0",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 2.9705347919989435
+   "seconds": 2.7695877719997952
   }
  ]
 }

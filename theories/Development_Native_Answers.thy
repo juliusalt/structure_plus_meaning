@@ -170,9 +170,7 @@ proof -
   have state: "development_native_answer_state S A=(fst S,(?N,filter (\<lambda>e. e\<notin>set (map (isabelle_entity_rename ?g) removed))
       (snd (snd S))@map (isabelle_entity_rename ?g) added))"
     by (simp add: A development_native_answer_state_def Let_def)
-  have longer: "length ?names\<le>length ?N" by (simp add: isabelle_appended_names_def)
-  have prefix: "isabelle_name_at ?N i=isabelle_name_at ?names i" if bound: "i<length ?names" for i
-    using bound by (simp add: isabelle_appended_names_def isabelle_name_at_def nth_append)
+  have longer: "length ?names\<le>length ?N" by (rule isabelle_appended_names_longer)
   show "distinct (fst (snd (development_native_answer_state S A)))"
     using distinct ns by (auto simp: state isabelle_appended_names_def)
   have moved: "?g i<length ?N" if bound: "i<length ns" for i
@@ -202,14 +200,10 @@ proof -
   show "state_positions (development_native_answer_state S A)\<subseteq>{..<length (fst (snd (development_native_answer_state S A)))}"
     unfolding state state_positions_def by (auto intro: old new root)
   have same_roots: "map (isabelle_local_root ?N) (fst S)=map (isabelle_local_root ?names) (fst S)"
-  proof (rule map_cong[OF refl])
-    fix t assume member: "t\<in>set (fst S)"
-    show "isabelle_local_root ?N t=isabelle_local_root ?names t"
-    proof (rule isabelle_local_root_agree)
-      fix i assume position: "i\<in>set (isabelle_term_positions t)"
-      have "i\<in>state_positions S" using member position by (auto simp: state_positions_def)
-      then show "isabelle_name_at ?N i=isabelle_name_at ?names i" using inside by (intro prefix) auto
-    qed
+  proof (rule isabelle_local_roots_appended)
+    fix t i assume member: "t\<in>set (fst S)" and position: "i\<in>set (isabelle_term_positions t)"
+    have "i\<in>state_positions S" using member position by (auto simp: state_positions_def)
+    then show "i<length ?names" using inside by auto
   qed
   show "distinct (map (isabelle_local_root (fst (snd (development_native_answer_state S A))))
       (fst (development_native_answer_state S A)))"

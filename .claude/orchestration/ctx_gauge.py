@@ -47,6 +47,22 @@ CHARS_PER_TOKEN = 2.5
 SHOWN_CHARS = 30_000
 
 
+def model_chars(attachment):
+    """What an attachment carries to the model, in characters, as Claude Code 2.1.273 renders it: a PreToolUse or
+    PostToolUse hook's success is not sent (its additional context is an attachment of its own), and the task list's
+    reminder is one line a task, `#id. [status] subject`, without the descriptions. Counted whole, the planner's
+    reminder of 137 tasks was 744K characters, about 298K tokens, where the model was given about 6K: plan-40 was told
+    "Context is at 948K tokens" at 652K and handed over after sixteen minutes of a 380K room (2026-09-22 09:48)."""
+    kind = attachment.get("type") if isinstance(attachment, dict) else None
+    if kind == "hook_success" and attachment.get("hookEvent") not in ("SessionStart", "UserPromptSubmit",
+                                                                     "UserPromptExpansion"):
+        return 0
+    if kind == "task_reminder":
+        return 200 + sum(len(f"#{t.get('id')}. [{t.get('status')}] {t.get('subject')}\n")
+                         for t in attachment.get("content") or [] if isinstance(t, dict))
+    return len(json.dumps(attachment or ""))
+
+
 def scan(lines):
     """(context, output, characters recorded after it) of the latest main-chain request among transcript lines."""
     after = 0
@@ -66,7 +82,7 @@ def scan(lines):
         elif d.get("type") == "user":
             after += len(json.dumps((d.get("message") or {}).get("content") or ""))
         elif d.get("type") == "attachment":
-            after += len(json.dumps(d.get("attachment") or ""))
+            after += model_chars(d.get("attachment"))
     return None
 
 
@@ -140,6 +156,25 @@ def blocked_again(session, rec, role):
                "refused, or it cannot do it; `v2.py drop` its task, or stop it")
 
 
+ENDED_FRESH = 600  # a turn-over mark older than this was left by a call whose hook never ran: it ends nothing
+
+
+def turn_ended(session):
+    """Whether the call just made ended the session's turn: the harness marked it so while the call ran (v2.turn_over)
+    — a result, verdict, plan or answer recorded, or a park. The mark is taken either way."""
+    path = mark(session, "ended")
+    try:
+        at = float(open(path).read().strip() or 0)
+    except (OSError, ValueError):
+        return False
+    with contextlib.suppress(OSError):
+        os.remove(path)
+    return time.time() - at < ENDED_FRESH
+
+
+ENDED_REASON = "The harness ended your turn with this call; you are resumed with a message when there is more to do."
+
+
 def add_context(event, text):
     print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": text}}))
 
@@ -192,6 +227,9 @@ def may_end(role, rec):
         return (v2.peek()["tasks"].get(rec.get("task") or "") or {}).get("stage") not in ("running", "fixing", None)
     if v2.running_jobs(rec["name"]):
         return True  # it waits for its own background job: the job's completion runs its turn
+    run = v2.machine_wait(rec)
+    if run and v2.run_blocked((rec.get("task"), rec.get("reviews")), run):
+        return True  # it waits for the machine, which refuses its run: the watchdog wakes it when one may start
     return any(q["from"] == rec["name"] and q["state"] != "answered" for q in v2.peek()["asks"].values())
 
 
@@ -220,6 +258,17 @@ def main():
         return 0
 
     if mode == "owner":  # what the harness says begins with its mark; launch prompts and wrappers are not the owner's
+        prompt = hook.get("prompt") or ""
+        if prompt.lstrip().startswith("<task-notification>") and rec.get("state") == "parked":
+            # A parked session's own run ended and Claude Code woke it to say so: a request that could only answer
+            # "Waiting to be resumed." (implement-40, implement-90, 2026-09-22), for the harness resumes it when what
+            # it waits for has come. The notification is kept for that resume (v2.notified) and read as the run's end
+            # (v2.running_jobs); the prompt hook's `continue: false` makes no request (Claude Code 2.1.273: the prompt
+            # is not queried).
+            v2.notified(rec, prompt)
+            print(json.dumps({"continue": False, "stopReason": "Parked: the harness resumes you with this when what "
+                                                                "you wait for has come."}))
+            return 0
         from extract_owner_directions import owner_statement
         text = owner_statement(hook.get("prompt") or "", set(), session)
         if text:
@@ -256,12 +305,22 @@ def main():
 
     # gauge
     used = next_request_tokens(hook.get("transcript_path", ""), hook.get("tool_name"), hook.get("tool_response"))
-    v2.hit_chain(rec["name"])  # its requests keep its own cache entry and its origins' alive (measured 2026-09-18)
+    v2.hit(rec["name"])  # its requests keep its own cache entry alive, and not its origins' (v2.hit)
     parts = []
-    mail = v2.take_mail(rec["name"])
+    # The call ended the turn (its result, verdict, plan or answer recorded, or its park): it ends here, before the
+    # request that would only say so. A session parked or finished cannot act on mail now: it stays in its box, and
+    # comes at its first call once resumed (implement-40, parked with a message of the harness in the same call, said
+    # "Parked for the machine; ending turn." to it, 2026-09-22 10:24). Mail to one that ended with `v2.py end` goes on
+    # to it instead, since it may: an answer it waited for. The Stop hook does not run for a turn a hook ended, so
+    # nothing it would say is lost.
+    ended = turn_ended(session)
+    mail = None if ended and rec.get("state") in ("parked", "done") else v2.take_mail(rec["name"])
     if mail:
         parts.append(mail)
-    if used >= SOFT and not os.path.exists(mark(session, "soft")):
+    ended = ended and not mail
+    if mail and "The machine is yours for your measurement" in mail:
+        v2.claim_seen(rec["name"])  # its grace to launch counts from now
+    if used >= SOFT and not ended and not os.path.exists(mark(session, "soft")):
         raise_mark(session, "soft", used, "soft-threshold")
         parts.append(notice(role, rec, used))
     if used >= HARD:
@@ -277,6 +336,11 @@ def main():
             note = None
         if note:
             parts.append(note)
+    if ended:
+        with contextlib.suppress(OSError):
+            os.remove(mark(session, "blocks"))  # the Stop hook, which clears it at an ending turn, does not run
+        print(json.dumps({"continue": False, "stopReason": ENDED_REASON}))
+        return 0
     if parts:
         add_context(event, "\n\n".join(parts))
     return 0

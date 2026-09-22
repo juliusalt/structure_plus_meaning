@@ -11830,6 +11830,16 @@ none. `syntax_forest_table` (Factor_Reference_Forests) is the union of each chil
 they hold for today's branch and for the new one. With today's branch the flat forest is the same value as the
 recursive one, and building it pushes each child once instead of once per later child.
 
+*Correction (task 225, 2026-09-22).* The forest, its positions and its table are no longer restated with their
+own formation and reads proofs: `syntax_forest`, `syntax_forest_positions` and `syntax_forest_table` are the
+placed forest, positions and table (RRA_Placed_Forests) at `syntax_branch`, and `finite_syntax_forest` and
+`finite_syntax_forest_table` the executable placed forest and table, sharing their one code equation. Formation is
+`placed_forest_formed` with `syntax_branch_addressing` and no meeting of placements (`syntax_branch_eq_iff`, from
+`syntax_branch_injective` and `_disjoint`); child reads are `placed_forest_reads` with `syntax_branch_injective`.
+Every statement under "Contracts" below is kept; consumers that unfolded the positions or the table read their
+union equations `syntax_forest_positions_eq`, `syntax_forest_table_eq`. A change of the branch changes its
+contracts alone.
+
 ### Contracts
 
 - **Kept, statement unchanged.** RRA_Syntax_Forests: `syntax_branch_zero`, `syntax_branch_injective`,
@@ -11995,7 +12005,9 @@ among `p`'s. Its contract is stated once, in two forms: `exact`, the site holds 
 formed on `p`'s variables evaluates `p` to `t` and `r` holds of its evaluation of `q`; and `at`, at every evaluation
 `f`, the site holds of `f`'s evaluation of `p` exactly when the variables of `p` that `q` does not read are formed
 under `f` and `r` holds of `f`'s evaluation of `q` (the variables `q` reads are formed by the callee's own meaning).
-`exact` is the one proof by `holds_cases` and `native_step`; `at` follows from it and two pattern facts stated once,
+`exact` is the one proof by `holds_cases` and `native_step` [corrected by task 245: `exact` takes that argument from
+`native_rule_law.exact`, where it is made once for every family of native rules; `native_rule_law.supported_clause`
+states the same law at any support relation]; `at` follows from it and two pattern facts stated once,
 general over patterns: equal evaluations agree on a pattern's variables (`evaluate_pattern_agree`), and a formed
 evaluation has formed values at them (`evaluate_pattern_variables_formed`). The argument reads nothing of the
 patterns' shape, so a conclusion with literal leaves is an instance too.
@@ -12013,10 +12025,48 @@ patterns' shape, so a conclusion with literal leaves is an instance too.
   (Development_Verdict_Mentions, a six-field row to fields 0 and 4) and `native_ready_exact`
   (Development_Native_Readiness, a conclusion with literal status leaves). Rules with two premises
   (`conjoined_calls_program`) or none (`verdict_equal_program`, `native_any_rule`) are not instances.
+  [Corrected by task 233: they are not instances of this single-rule form, but they are instances of the
+  family's law below, of which this notion is itself an instance.]
 - `native_decomposition_shares` (Development_Native_Decomposition) no longer takes `distinct (map fst ds)`: its proof
   never read it; the join law needs distinctness of the whole program's sites only, which it computes itself.
 
 No rule value and no other statement changed, so no recorded word changes.
+
+**The family's law (task 233, the review of task 210's follow-up 2, the planner's q60 and q61).** The argument above
+reads the premise list whole, so it is stated once for a site whose family is any list of native rules
+`finite_native_rule p ps`, with any number of premises: `native_rule_law` in `Native_Collection_Programs`, over
+`native_rule_family`, whose one assumption is that every rule of the family is a native rule (`native_rule_lawI`).
+Its contract, over the callees' positive meaning: `exact`, the site holds of `t` exactly when some rule
+`(c,finite_native_rule p ps)` of the family and some evaluation `f` formed on `p`'s variables evaluate `p` to `t` and
+every premise `(k,(d,q))` of `ps` has `d` holding of `f`'s evaluation of `q`; `step_at`, at one rule, the site holds of
+`f`'s evaluation of `p` when `f` is formed on the variables of `p` no premise reads and every premise holds. The law
+needs no side condition on the premises' variables: a premise that holds is formed, so `f` is formed at every
+variable a premise reads (`evaluate_pattern_variables_formed`). Only `native_rearranging_program.at`, an iff at every
+evaluation, needs the premise's variables among the conclusion's, and keeps that assumption. Its proof is the one
+place the `holds_cases`/`native_step` argument is made; it reads nothing of the patterns' shape, so literal leaves,
+repeated variables, no premise and several premises are instances alike. `finite_native_rule_eq_iff` reads a native
+rule's conclusion and premise set back from its value.
+
+- Instances in `Native_Collection_Programs`, each a sublocale `law` with every statement kept:
+  `native_rearranging_program` (its `exact` is the law's at one rule and one premise; `at` from that and the two pattern
+  facts), `native_member_program.exact`, `native_every_program.relation_equation` (its step rule has two premises),
+  `native_some_program.exact`, `native_keyed_search_program.exact`. What the law does not replace stays: each
+  program's `unfold`, the inversion of one rule application supported in an arbitrary relation, which least-fixed-point
+  arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
+  the law's single step does not carry.
+- The two pattern facts now stand in `Factor_Rule_Instances` beside `evaluate_pattern_cong` and
+  `evaluate_pattern_formed` (HANDOFF Open 75, task 209's review), statements unchanged.
+- Re-citations that follow, each a task of its own after the builds that edit those theories: `row_formed_rules`
+  (Development_Verdict_Statements), `native_any_rule` and `undeclared_rule` (Development_Verdict_Mentions,
+  `any_exact`, `undeclared_entry_exact`), `permitted_row_rules`, `conjoined_calls_program`, `verdict_equal_program`
+  (Development_Verdict_Difference), `native_value_rule` (Development_Located_Rows), `decomposition_rule`
+  (Development_Native_Decomposition, `native_decomposition_reads`, `native_decomposition_progress`), `row_reached_rules`
+  (Development_Verdict_Unreached), `reach_root_rule`, `reach_step_rule` (Native_Table_Reach,
+  `native_reached_search`, `native_reached_complete`), `native_store_search_rules` (Native_Path_Stores, `sound`,
+  `exact`), and beyond them `native_ready_exact`, `native_settled_complete` (Development_Native_Readiness) and
+  `key_cited_program.exact` (Development_Request_Scope).
+
+No rule value and no statement changed, so no recorded word changes.
 
 ## The overnight native-control questions state their candidates as keys
 

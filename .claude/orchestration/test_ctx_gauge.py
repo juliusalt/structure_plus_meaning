@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+import subprocess
 import sys
 import time
 import unittest
@@ -76,6 +77,13 @@ class GaugeTests(unittest.TestCase):
         self.assertIn("or while you wait on a question of your own", said)
         self.assertIn("v2.py verdict 3 accept|reject", said)
 
+    def test_a_reviewer_whose_run_the_machine_refused_may_end_its_turn_while_it_is_full(self):
+        (self.w.state / "work-r3.json").write_text(json.dumps({"run_refused": "heavy"}))
+        self.w.env["ORCH_ISABELLE_RUNS"] = str(ctx_gauge.v2.ISABELLE_MAX)
+        self.assertIsNone(self.stop("r3"))                     # the watchdog wakes it when a run may start
+        self.w.env["ORCH_ISABELLE_RUNS"] = "0"
+        self.assertIn("v2.py verdict 3 accept|reject", self.stop("r3"))  # a run may start: it goes on
+
     def test_a_turn_that_cannot_end_at_all_is_named_once_it_says_a_loop(self):
         # fix-49.2 turned for as long as the owner let it on 2026-09-20: its Stop hook blocked it and every way out
         # was refused. The hard mark is the backstop, a whole window of requests away, and a session that calls no
@@ -105,6 +113,29 @@ class GaugeTests(unittest.TestCase):
         self.gauge("w4", ctx_gauge.HARD + 1000)
         self.assertTrue((self.w.state / "flags/w4.hard").exists())
 
+    def test_what_reaches_the_model_is_counted_and_not_what_the_transcript_keeps_beside_it(self):
+        # plan-40 was told "Context is at 948K tokens" at 652K (2026-09-22 09:48): its call ended before its request was
+        # recorded, and the task list's reminder after the one before counted whole — 744K characters, of which the
+        # model is given one line a task
+        usage = {"input_tokens": 2, "cache_read_input_tokens": 623_609, "cache_creation_input_tokens": 1000,
+                 "output_tokens": 20_000}
+        tasks = [{"id": str(i), "subject": f"Task {i}", "description": "x" * 5000, "status": "pending"} for i in range(137)]
+        hook_said = {"type": "hook_success", "hookEvent": "PreToolUse", "hookName": "PreToolUse:Bash",
+                     "stdout": json.dumps({"updatedInput": {"command": "y" * 60_000}})}
+        path = self.w.transcript("p1", [assistant("m1", fakes.iso(time.time()), usage=usage),
+                                        {"type": "attachment", "attachment": {"type": "task_reminder", "content": tasks}},
+                                        {"type": "attachment", "attachment": hook_said}])
+        self.assertLess(ctx_gauge.next_request_tokens(path, "Bash", {"stdout": ""}), 660_000)
+        hook = {"session_id": "p1", "tool_name": "Bash", "tool_input": {"command": "true"}, "tool_response": {"stdout": ""},
+                "transcript_path": path, "hook_event_name": "PostToolUse", "cwd": str(self.w.project)}
+        code, out, err = self.w.hook("ctx_gauge.py", "gauge", hook)
+        self.assertNotIn("near the end of your window", json.dumps(out or {}))
+        # what does reach it is counted: a hook's additional context, a tool's result
+        said = {"type": "hook_additional_context", "content": ["z" * 700_000]}
+        path = self.w.transcript("p1", [assistant("m1", fakes.iso(time.time()), usage=usage),
+                                        {"type": "attachment", "attachment": said}])
+        self.assertGreater(ctx_gauge.next_request_tokens(path, "Bash", {"stdout": ""}), 900_000)
+
     def test_mail_is_delivered_at_the_next_tool_call(self):
         self.post("implement-4", "Keep the statement of ready_holds.")
         text = self.gauge("w4")
@@ -113,20 +144,88 @@ class GaugeTests(unittest.TestCase):
         self.assertEqual(self.w.mail("implement-4"), [])
         self.assertNotIn("Message from", self.gauge("w4"))  # once; what remains is the countdown
 
+    def hook_out(self, sid, **extra):
+        hook = {"session_id": sid, "tool_name": "Bash", "tool_input": {"command": "true"},
+                "tool_response": {"stdout": ""}, "transcript_path": self.at(sid, 100_000),
+                "hook_event_name": "PostToolUse", "cwd": str(self.w.project), **extra}
+        code, out, err = self.w.hook("ctx_gauge.py", "gauge", hook)
+        self.assertEqual((code, err), (0, ""))
+        return out
+
+    def end_mark(self, sid, age=0):
+        (self.w.state / "flags").mkdir(exist_ok=True)
+        (self.w.state / "flags" / f"{sid}.ended").write_text(str(time.time() - age))
+
+    def test_a_call_that_ended_the_turn_ends_it_before_the_request_that_would_say_so(self):
+        # 172 requests in nine hours of 2026-09-22 only said the turn was over — "Parked while the check runs." —
+        # each reading the whole context again (the owner: the cost balloons)
+        self.assertNotIn("continue", self.hook_out("w4") or {})  # a call that ended nothing
+        self.end_mark("w4")
+        (self.w.state / "flags" / "w4.blocks").write_text("3")
+        out = self.hook_out("w4")
+        self.assertEqual(out, {"continue": False, "stopReason": ctx_gauge.ENDED_REASON})
+        self.assertFalse((self.w.state / "flags" / "w4.ended").exists())  # taken: it ends that one turn
+        self.assertFalse((self.w.state / "flags" / "w4.blocks").exists())  # the Stop hook, which clears it, does not run
+        self.assertNotIn("continue", self.hook_out("w4") or {})
+
+    def test_mail_that_came_meanwhile_goes_on_to_the_session_instead(self):
+        self.end_mark("r3")
+        self.post("review-3", "Judge the fix as well.")
+        out = self.hook_out("r3")
+        self.assertNotIn("continue", out)
+        self.assertIn("Judge the fix as well.", out["hookSpecificOutput"]["additionalContext"])
+        self.assertFalse((self.w.state / "flags" / "r3.ended").exists())
+
+    def test_mail_to_a_session_that_parked_waits_in_its_box_for_its_resume(self):
+        # implement-40 parked in the call its message of the harness came with, and said "Parked for the machine;
+        # ending turn." to it (2026-09-22 10:24)
+        self.set_session("implement-4", state="parked")
+        self.end_mark("w4")
+        self.post("implement-4", "queued: 2 Isabelle run(s) are going.")
+        self.assertEqual(self.hook_out("w4"), {"continue": False, "stopReason": ctx_gauge.ENDED_REASON})
+        self.assertEqual(len(self.w.mail("implement-4")), 1)  # kept for its first call once resumed
+
+    def test_a_parked_session_woken_by_its_run_makes_no_request_and_is_told_at_its_resume(self):
+        # implement-40 and implement-90, parked for their runs, were woken by each run's end and answered "Waiting to
+        # be resumed." — a request for nothing, the harness resuming them afterwards (2026-09-22)
+        note = ("<task-notification>\n<task-id>bq1</task-id>\n<output-file>/x/bq1.output</output-file>\n"
+                "<status>completed</status>\n<summary>Background command finished</summary>\n</task-notification>")
+        self.w.transcript("w4", [{"type": "user", "message": {"content": [{"type": "tool_result",
+            "content": "Command running in background with ID: bq1. Output is being written to: /x/bq1.output"}]}}])
+        jobs = lambda: subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                       "import v2; print(v2.running_jobs('implement-4'))"], env=self.w.env,
+                                      capture_output=True, text=True).stdout.strip()
+        self.assertEqual(jobs(), "['bq1']")
+        prompt = lambda sid: self.w.hook("ctx_gauge.py", "owner", {"session_id": sid, "prompt": note,
+                                                                   "hook_event_name": "UserPromptSubmit"})[1]
+        self.assertIsNone(prompt("w4"))                                    # working: the notification wakes it
+        self.set_session("implement-4", state="parked")
+        self.assertIs(prompt("w4")["continue"], False)                     # parked: no request
+        self.assertEqual(jobs(), "[]")                                     # and its run has ended, as the harness reads
+        self.assertIn("<task-id>bq1</task-id>", (self.w.state / "notified" / "w4.txt").read_text())
+
+    def test_a_mark_whose_hook_never_ran_ends_nothing(self):
+        self.end_mark("w4", age=ctx_gauge.ENDED_FRESH + 60)
+        self.assertNotIn("continue", self.hook_out("w4") or {})
+        self.assertFalse((self.w.state / "flags" / "w4.ended").exists())
+
     def test_a_session_without_a_role_is_left_alone(self):
         self.assertEqual(self.gauge("other", ctx_gauge.HARD + 1000), "")
         self.assertIsNone(self.stop("other"))
         self.assertFalse((self.w.state / "flags").exists())
 
-    def test_a_working_session_keeps_its_own_and_its_origins_caches_warm(self):
+    def test_a_working_session_keeps_its_own_cache_warm_and_not_its_origins(self):
+        # its requests read its own entry, not the shorter ones under it: plan-42's kept kb-10 looking warm, and
+        # design-171's the xhigh layer, while their entries expired unpinged (2026-09-22: 527K, and 235K twice)
         old = time.time() - 3000
         for name in ("plan-1", "kb-1"):
             self.w.hit(name, age=3000)
         (self.w.state / "max-base.hit").write_text("")
         os.utime(self.w.state / "max-base.hit", (old, old))
         self.gauge("p1")
-        for path in ("hits/plan-1", "hits/kb-1", "max-base.hit"):
-            self.assertGreater((self.w.state / path).stat().st_mtime, old + 100, path)
+        self.assertGreater((self.w.state / "hits/plan-1").stat().st_mtime, old + 100)
+        for path in ("hits/kb-1", "max-base.hit"):
+            self.assertLess((self.w.state / path).stat().st_mtime, old + 100, path)
 
     def test_the_planner_s_turn_ends_when_it_has_handled_what_it_was_given(self):
         # it lives across its events: its turn ends with the last of them, it is sealed warm, and the next wakes it

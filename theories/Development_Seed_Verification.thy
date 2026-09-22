@@ -135,9 +135,11 @@ text \<open>
   admitted problems are issued once; every successor starts from the development that recorded
   both. The report presents the problems the selection admitted, whose executed packet the loop
   report already presents, the issued requests, the problems left unissued, the problems the
-  cyclic control refuses, and for each successor only the records it adds. It also decides the
-  premise under which the answers to the independent requests keep each other current: the seeded
-  state declares every constant once. Finally it re-evaluates the issue records against the seeded
+  cyclic control refuses, and for each successor only the records it adds. It also decides a
+  condition sufficient for the premise under which the answers to the independent requests keep
+  each other current: the seeded state's declared constants are distinct, from which
+  @{thm [source] isabelle_declared_once_distinct} derives the exporter's obligation
+  @{const isabelle_declared_once}. Finally it re-evaluates the issue records against the seeded
   library, where every reading still holds, and against the cyclic library, where every issued
   request relied on an absence that no longer holds.
 \<close>

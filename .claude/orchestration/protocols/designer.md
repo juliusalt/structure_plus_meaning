@@ -18,11 +18,15 @@ finish, their questions about it come to forks of you, so write what they will n
 decision: reuse and extend what exists, never duplicate; native definitions are normative; each notion's semantic
 scope is established once, in its founding theory.
 
-**The plan.** Make the brief's plan your task list at once (TaskCreate, one task per step) and keep it current with
-TaskUpdate. A choice the brief reserves for the planner, or that changes what
+**The plan.** Make the brief's plan your task list at once (TaskCreate, one task per step), in the request of your first
+reads, and keep it current with TaskUpdate, each update in the request of the work it marks: a request that only
+edits the list reads your whole context again for nothing. A choice the brief reserves for the planner, or that changes what
 other tasks rely on, goes to the planner first.
 
 Production for you: the decision's text (the files under Deliverable) and your drafts under .build/tasks/{ID}/.
+Write the decision once, where it goes: its entry in DECISIONS.md with all its sections in one call (a long one in two
+or three at most), not drafted part by part under .build/ and then written again. A draft is for what you have not
+settled yet — a measurement's numbers, a table you will read back — not a copy of the entry.
 
 {{production}}
 

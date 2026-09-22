@@ -10,41 +10,39 @@ lemma map_slot_keys_composition:
 
 text \<open>
   The forest's reference table is each child's table under that child's branch, as the forest is
-  each child placed at its branch; its facts follow from the branch's contracts alone.
+  each child placed at its branch: it is the placed table (@{text RRA_Placed_Forests}) at the family
+  of the syntax branches, and its facts follow from the notion's member equation and the branch's
+  contracts alone.
 \<close>
 
 definition syntax_forest_table :: "(local_address \<times> 'a) set list \<Rightarrow> (local_address \<times> 'a) set" where
+  "syntax_forest_table Ms = placed_table syntax_branch Ms"
+
+lemma syntax_forest_table_eq:
   "syntax_forest_table Ms = (\<Union>i<length Ms. map_slot_keys (syntax_branch i) (Ms!i))"
+  by (simp add: syntax_forest_table_def placed_table_def map_slot_keys_def)
 
 lemma syntax_forest_table_Nil [simp]: "syntax_forest_table [] = {}"
   by (simp add: syntax_forest_table_def)
 
 lemma syntax_forest_empty_tables [simp]:
   "syntax_forest_table (replicate n {}) = {}"
-  by (simp add: syntax_forest_table_def map_slot_keys_def cong: SUP_cong_simp)
+  by (auto simp: syntax_forest_table_def placed_table_member)
 
 lemma syntax_forest_table_member:
   assumes index: "i < length Ms" and member: "(k,x) \<in> Ms!i"
   shows "(syntax_branch i k,x) \<in> syntax_forest_table Ms"
-  unfolding syntax_forest_table_def
-  by (rule UN_I[where B="\<lambda>j. map_slot_keys (syntax_branch j) (Ms!j)", OF _ map_slot_keys_member[OF member]])
-    (simp only: lessThan_iff index)
+  unfolding syntax_forest_table_def placed_table_member using index member by blast
 
 lemma syntax_forest_table_origin:
   assumes "(k,x) \<in> syntax_forest_table Ms"
   shows "\<exists>i<length Ms. \<exists>a. (a,x) \<in> Ms!i \<and> k=syntax_branch i a"
-proof -
-  obtain i where i0: "i \<in> {..<length Ms}" "(k,x) \<in> map_slot_keys (syntax_branch i) (Ms!i)"
-    using assms unfolding syntax_forest_table_def by (rule UN_E)
-  have index: "i < length Ms" using i0(1) by (simp only: lessThan_iff)
-  obtain a where "(a,x) \<in> Ms!i" "k=syntax_branch i a" using i0(2) by (auto simp: map_slot_keys_def)
-  then show ?thesis using index by blast
-qed
+  using assms unfolding syntax_forest_table_def placed_table_member by blast
 
 lemma syntax_forest_table_child:
   assumes index: "i < length Ms"
   shows "map_slot_keys (syntax_branch i) (Ms!i) \<subseteq> syntax_forest_table Ms"
-  unfolding syntax_forest_table_def by (rule UN_upper) (simp only: lessThan_iff index)
+  using syntax_forest_table_member[OF index] by (auto simp: map_slot_keys_def)
 
 lemma syntax_forest_table_range:
   "rel_ran (syntax_forest_table Ms) = (\<Union>M\<in>set Ms. rel_ran M)"
@@ -152,7 +150,7 @@ proof -
       by (rule reference_table_union[OF new old separate])
     show ?case using union by (simp only: lessThan_Suc UN_insert)
   qed
-  show ?thesis using prefix[of "length Ls"] len by (simp add: syntax_forest_table_def)
+  show ?thesis using prefix[of "length Ls"] len by (simp add: syntax_forest_table_eq)
 qed
 
 text \<open>

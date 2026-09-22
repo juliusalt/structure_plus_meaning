@@ -2,7 +2,7 @@
  "boundary": "A run without --proof rebuilds the complete contracts from HOL. Actual program clauses supply complete requested applications; checked head scope and closed demand give the original positive meaning with no true seeds supplied. Computed method comparisons and revisions retain their actual subjects, including the corrected material operands. The selected operation reads and evaluates actual native packages under the existing positive-query contract. All complete reports are compared. Unrestricted program decision, native proof construction, complete development-cycle enforcement, its cost account and genesis remain open.",
  "complete_recipe_source_manifest": "native-evaluation-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
+  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
   "records": 1,
   "reports_equal": true,
   "seconds": 3.02,
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "c2e6cf34555e1e302efa58fd35d8daf0a6d846abe3fa24c78e0b6e9461f192fa",
+   "module_sha256": "3fd80bab85fdd19f1d5b43017c2524fc622e6bd39f52a883bfd71fa63762a12b",
    "subject_contracts": {
     "program_evaluation_investigation.yxml": "c839fd70368d230cd553de4eb85a47e44d8533a09cd17032330d6687a179e4b5"
    },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "60418cc124506c452efcce15f0157f88a775a51002dfda9413d125817f1d927c",
+ "source_manifest_sha256": "fe572f14bc0a56e7965a0c76c4291fe12a81b450ff7fe220338918e7a680295a",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 2.922005035999973
+   "seconds": 2.9193723069984117
   }
  ]
 }

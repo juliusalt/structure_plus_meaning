@@ -655,7 +655,10 @@ def acknowledges(text, pack_id):
     chunks are what is checked exactly; this says only that the session read to the end. On 2026-09-21 the max layer
     loaded all four of its chunks and wrote one character of its 64-character id wrong, and the complete layer was
     refused."""
-    words = text.strip().split()
+    # its last line: the high layer of 2026-09-22 15:07 loaded all seven chunks and replied "LOADED 30a2fc2b208b PART 7/7
+    # all complete — LOADED 30a2fc2b208b208b… correction:" before the right line, and the complete layer was refused
+    lines = [line for line in text.strip().splitlines() if line.strip()]
+    words = lines[-1].split() if lines else []
     return (len(words) == 2 and words[0] == "LOADED" and len(words[1]) == len(pack_id)
             and sum(a != b for a, b in zip(words[1], pack_id)) <= 1)
 

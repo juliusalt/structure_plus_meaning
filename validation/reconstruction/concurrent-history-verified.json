@@ -2,10 +2,10 @@
  "boundary": "Every original subject, candidate, complete result, observation, comparison and revision is reconstructed from source under the original subject contract. Native exact sharing, source projection and Isabelle parallel-map equations preserve the complete packet. The compact report boundary includes its complete native artifact dictionary. The runtime uses the declared Isabelle2025-2 and Poly/ML 5.9.2 bootstrap and records its complete inputs. All six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "concurrent-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "16265b3daccb3361a32000d57cd609c01a9cac75fe718a651ce032359536d95d",
+  "base_receipt_sha256": "18d992311e05fec86c3b0115be7d172381aa7864928f2b94e3bc3fc92dcb5255",
   "records": 1,
   "reports_equal": true,
-  "seconds": 15.19,
+  "seconds": 17.22,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -17,9 +17,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "5514c9f9d7ace00239f8204f1200e73e92c6927dbfd533d62cd89e3a71a43345",
+   "module_sha256": "dd7006d4f35a1587500d77f5329aecf9ce0e7836e97b0bc16192bfe3df3d0eef",
    "subject_contracts": {
-    "constructed_history_investigation.yxml": "147ccfcfe8d1692dd58303fe1befe488d3b44a06e0f8c50fea9e79edd4588919"
+    "constructed_history_investigation.yxml": "1756fd3b7201c8b209d2415d8a9349f4ccd002c81ef37f507e2871699f5f7604"
    },
    "theory": "Concurrent_History_Execution"
   },
@@ -74,14 +74,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "735fd36e9f82823e663f8bd7c25f9805e668df7375071d8264a1eddf08063af5",
+ "source_manifest_sha256": "4acff749d195562a6ef5d5e5ff6688df95a8d2c9c0456b6e64e31e952af441d8",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 15.041424954999457
+   "seconds": 16.88301850100106
   }
  ]
 }

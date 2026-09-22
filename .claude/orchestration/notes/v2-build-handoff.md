@@ -2601,3 +2601,1013 @@ base and writes `layer WHO: OK|MISS …` to warm.log (and prints it); `health.py
 its base cold, not as a keep-warm miss. A test in each place, two mutation cases caught. If refreshes miss, the choice
 is a ping of each stable base besides its layer. Not committed. The load lists high and xhigh were rewritten by the
 owner's layer builds (`select_base_load.py --frontier`), as every layer build does.
+
+**The run started (20:05), and two fixes from it.** `start.sh --fresh` (the owner) put tasks 22, 46 and 50 — completed
+in the graph with their work unlanded — back to checking through `reopen_unlanded`, which the graph's hold did not gate
+(the hold stops task sessions only); their three finalizers started in one second, each counted no Isabelle run (none
+had started one yet) and ran three checks at once against ISABELLE_MAX=2: load 96 on 32 cores. All three failed with
+"Host tests failed" (the tools suite, one error or failure each); the tools suite passes alone (201 tests, 4.5 s), so the
+failures are the load's, not the tasks'. Fixed at the owner's word once the checks had ended: finalizers decide under a
+lock and a run let start counts until its finalizer ends (`v2.isabelle_admitted`, `finalize.admitted_no_more`, within
+`isabelle_runs()` so every gate sees it); the reopening marks its finalizer held while the graph is held
+(`held_finalizer`), `release_held_finalizers` starts it once the hold is gone, and the watchdog does not give up a held
+finalizer. Two tests, five mutation cases caught. The three tasks stand as the failures left them (22 fixing, 46 and
+50 parked on 22's tree): a fix of task 22 would fix nothing; the owner decides how they are rechecked. Not committed.
+
+**The recheck, and the planner's batching (20:18–20:45).** At the owner's word tasks 22, 46 and 50 went back to their
+checks held with the graph (`held_finalizer` set by hand, an event to the planner saying the 20:11 failures were the
+load's). The owner declined a ping of the stable bases: when their own entries expire (about an hour after their last
+direct read), a layer refresh pays one cold write of the base, and warm.log's `layer WHO:` line will show it. plan-32
+(started 20:08) took stock, rewrote the graph in one edit at 20:26 (made 53, 11 rewritten, 2 re-pointed, 52 deleted)
+and queued at 20:28:55; the three checks started at once, two were let in (`state/isabelle-admitted/` held 22 and 46)
+and 50 waited: 22 passed 20:33:03, 46 20:33:12, 50 20:35:59. The admission fix works, and the failures were the load's.
+
+Read against the batching rules (`protocols/_production.md`, in the planner's prompt), plan-32 batched: 5 reading
+requests of 5–7 calls, its 14 briefs in one `change`, the graph in one `edit`. Where it did not, the harness split it:
+9 of 13 briefs were cut at 5,000 bytes (5.3–8.4K, their `Planner's:` line at the end), costing three reading rounds;
+and its last step took 7 requests (each re-reading ~690K from cache) where 2 do — `drop 52` (its own redundancy, the
+edit deletes 52), a script assembling the edit from its drafts refused as a script that writes (its path not literal),
+the edit refused on its content (task 48's Deliverable named `tools/`: a fair refusal), a `change` and `again 30` in
+one call refused (the call holds nothing else), `again 30` without a heredoc refused although the protocol says "no
+block: as it was", then `again 30 <<'EOF'` with nothing in it. At the owner's word, after reasoning each through:
+- `v2.py again N` alone runs command N as it was (the AGAIN pattern's heredoc optional);
+- `edit` takes `"descriptionFile": PATH` (a draft under `.build/plans/`) in place of `"description"`
+  (`edit_descriptions`), stated in the planner's protocol;
+- a change and its `again` in one call stay refused — the call must be read as the one command it runs, and a change
+  in front would carry a read past the meter — but the refusal and the protocol now say to make them two calls of one
+  request, which Claude Code runs in order (measured: the second call started after the first ended) (`AGAIN_ALONE`);
+- a brief named whole (`task:ID`, `proposal:ID:KEY`) is shown whole, up to BATCH_BYTES of briefs a call
+  (`whole_brief`; files and every other source keep READ_BYTES).
+The warning "the guard's rewrite of it through cut.py did not apply" had fired at 20:30:34 on fix-49.3's `v2.py read`
+with four `--` groups (each group a read of its own, 15,228 bytes in all): a false alarm; `v2.py read` now has its own
+ceiling there (`reads_itself`). Tests: again alone and the refusal, the edit's drafts (read, refused outside
+.build/plans/, unreadable, both forms at once, judged as a brief), briefs whole and bounded, the warning. Seven
+mutation cases, caught — run on a copy under $TMPDIR (without test_layer.py, which reads the project's THEORY_MAP.md
+when it loads), because the mutation check rewrites the harness in place and the run was live. Not committed.
+
+**The other sessions, read the same way (20:50–21:05).** The run's other sessions (fix-48, brief-14, fix-49.3,
+investigate-53, brief-10, implement-54, brief-13; kb-6 only loads) batched their reading: several calls a request,
+several sources a call, `--` groups (brief-10 read 27K of DECISIONS.md in one call, and three briefs whole in another).
+Three things spent requests, about 11M tokens read from cache in all: a `v2.py read` of several sources showed 5K in
+all while `--` groups showed 5K each (fix-49.3: five reading requests in 30 s, learning `--` on the third); every
+session that wrote lost a request to the form of `change` (a command after it in the same call 3, a `mkdir` first 2 —
+`change` makes its directories, which no protocol said —, `cd DIR;` 1); and brief-10 wrote its ten briefs in five
+requests back to back, implement-54 probed each change in the request after it. At the owner's word, reasoned first:
+- a read bounds each source at READ_BYTES (a brief named whole, whole) and the call at BATCH_BYTES; its `--` groups
+  are one call (v2.main) — what READ_BYTES is for, a large chunk read in pieces, is a bound on a source;
+- a change out of its form is told what was wrong with the call (`change_form_faults`): a command that needs it is
+  a call of its own after it in the same request, no `mkdir` first, a `cd` joined by `&&` (a `cd DIR;` stays refused:
+  a `cd` that failed would leave the change writing elsewhere); the protocol says a write makes its directories;
+- a request that only changes files or checks, right after one that only changed files (every change gone through,
+  nothing read, no mail or job's end between: a `queued_command` attachment or user text), is told that what it
+  holds was ready there (`ready_before`, `READY_NOTE`), once a request; a note, not a refusal. Replayed on the run's
+  transcripts it is told exactly where found by hand: brief-10 5, implement-54 4, investigate-53 1 (a correction of
+  its own result written in the request after it), none in the others.
+Tests for each; 14 mutation cases (the batch before and these, two of the earlier rewritten for the new code),
+caught, on a copy under $TMPDIR. Not committed.
+
+**Brief 13's proposal, sent back (21:05–21:25).** plan-32 found brief 13's 14-task proposal built for the old harness
+(its builds handed over unchecked, one group check at the end; every build now lands by its own check, review and
+commit) and told its designer what to change (`v2.py tell 13`, 21:01:19): refused, "no session works on task 13" —
+the watchdog had released brief-13 at 21:00:28, three seconds after its result, since a task designer was held only
+while tasks it briefed are open and an unplaced proposal has none; and `tell` reached only live or parked sessions. So
+it re-planned the brief (drop, rewrite pointing at the old proposal, requeue), and brief-13.2 briefs it again (brief-13
+had cost 12 requests, 6.8M read from cache). The planner's account and substance were right; the harness failed it.
+At the owner's word, reasoned first: the watchdog holds a task designer while its own brief is `proposed`, within
+HOLD_MAX; `tell` on such a brief records the correction (`revise_proposal`), the supporting slot resumes the designer
+with it before any review or brief (`revise_now`: the brief `running` again; a designer that cannot be resumed gives
+the brief to the planner with the correction), `accept` refuses the proposal meanwhile and the placing reminder is
+silent; a released designer is said to be. The planner protocol and the harness's proposal message say `tell` sends
+a proposal back. Tests (the round trip; the slot taken; released; cold; the reminder; the hold), seven mutation cases
+caught on a copy. brief-13.2 was left running. Not committed.
+
+**The new sessions, read again (21:15–21:30).** Every session started since 20:47 batched its reading (several calls
+and sources a request, up to 27 sources; reads after a cut at most two a session; review-23's four single reads at
+its end a chain of checks each on the last). The tailored `change` refusal worked where it was given: implement-60
+(20:57) and fix-22 (21:05) put the change and its probe as two calls of one request every time after it (6 of 6 for
+implement-60); implement-58's refusal (20:50) came before it and was told the form only. The ready note was said where
+it held (brief-13 once, design-66 once). The waste left was a defect of `change`: design-66's eight-block change
+(21:13:53) had a first block without its `>>>>>>> REPLACE` line; the parser ends a block at its first REPLACE line, so
+the first block's replacement took in the second block, markers and all, and they were written into entry.md; five
+requests went to repairing it. At the owner's word, reasoned first: a replace block whose search or replacement text
+holds a marker line is refused, naming the line it lost (`=======` when the search text holds one, `>>>>>>> REPLACE`
+when the replacement does); `=== write` bodies stay unchecked, the way to write a text that must hold such a line. It
+is in `change_blocks`, so `change`, `again` and the guard all have it. A test (both losses, nothing written, a whole
+file holding markers written), one mutation case caught on a copy. Not committed.
+
+**Why everything parked (21:20–21:35).** No builder ran because the two sessions allowed at once were review-47 and a
+consultation (ask-q23, which counts against WORKERS_MAX); and everything parked because HEAD is inconsistent, so no
+tree is made, every task works in the one tree, and each finalization holds it while all others park — the run has
+been serial since 20:05. The two landings that end it are 22 and 46: review-23 rejected 22 (21:04), whose fix-22 parked
+for the tree two minutes later; review-47 rejected 46 (21:24), and fix-46 was stopped by its quick-fix budget at its
+eighth request (four single reads, a `cd DIR;` change refused, one probe) with its one-line repair in hand, so 46 went
+back to the planner, still holding the tree as its writer. plan-32 queued 46 first and implement-46 started 21:29;
+review-50 rejected 50 (21:27, fix-50 parked). The order after 46 is the planner's and was not changed: the harness
+resumes tasks parked for the tree longest-parked first (48, 49, 58, 60 before 22), and the planner has no command
+that orders parked tasks; plan-32 was told the problem and the proposal (22 next; unstarted builds to wait for 22 and
+46 by `blockers`; the owner's word for a harness change that resumes parked tasks in the queue's order, if it asks).
+At the owner's word, reasoned first: a rejecting reviewer is held while the task it rejected is unfinished (active
+stages as before; parked, with the planner or queued again within HOLD_MAX) — review-23, -47 and -50 were released and
+each re-review needs a new reviewer; and a parked quick fix's clock stops while it waits (produce shifts `fix.since`
+by the time parked). The owner set the quick fix's budget to 30 minutes and 15 requests (from 15 and 8). Tests and two
+mutation cases, caught on a copy. Open for the owner: the quick fix's requests count refused ones too. Not committed.
+
+**No refused request counts (21:40).** At the owner's word, a refused call counts in no limit counted in requests: the
+guard records every refusal in one place (`guard` wraps `_guard`), into the stretch's `refused` (the reading tiers,
+which counted a read refused early — a removed tool, a malformed `again`) and a `denied` list kept past productions
+(the quick fix's count, `rounds_since`, which now leaves out a request whose calls were all refused). The quick fix's
+refusal and `_finishing.md` say "requests, a refused one not counted". Tests (refused requests past the budget
+uncounted, made ones counted; refused early reads leave the tiers at one), three mutation cases caught on a copy; the
+wiring test reads the removed tools' refusal in `_guard`. Not committed.
+
+**The deadlock of 21:37, and the parked order (21:38–21:50).** From 21:37:13 nothing ran: task 46's fix passed its
+check and stood `reviewing`, but no review started — plan-32's re-plan (`v2.py queue 46`) had rebuilt 46's record
+keeping four fields and dropping `rejections`, which then read 0 against review 47's round 0 (`pending_reviews`), so
+the re-review read as done; 46's finalization held the one tree and nine tasks stood parked. At the owner's word,
+reasoned first: `queue` keeps a re-planned task's `rejections` (its review history pairs with its review tasks'
+rounds); 46's count was restored to 1 by hand (21:41:35) — review-47 was resumed, accepted, and 46 committed as
+7b4bb54f (21:42:44); and `returned_tasks` names a finished build or fix in review with no review due and none
+running, after STALL_AFTER (5 min), as ATTENTION and to the planner. Then the parked order, as proposed and approved:
+`resume_order` — a hold within PARK_URGENT (45 min) of its end first, then the planner's queue, then what it does not
+name, longest parked first; the status line lists them so, the planner protocol says it ({PARK_URGENT}), and plan-32
+was told (its Q8 answered; 50 not in its order). fix-22 took the tree when 46 landed, being the tree's writer. Tests
+and six mutation cases (one first missed — the urgent task was also the oldest — and the test made to tell the orders
+apart), caught on a copy. Not committed.
+
+**The sessions after the last changes, and the trees back (21:45–22:00).** Reading stayed batched (review-47 read 25
+and 18 sources in single calls). Every new session lost one request to the `change` form (implement-68, fix-46,
+fix-50, implement-46): three led with `cd <the project>;`, three put a command after the change; ask-q23 had two
+valid `again` calls refused for giving its runner by path (`/usr/bin/python3`); and implement-68's change and probe in
+two requests went untold, because the recorder looked for its call's request without waiting and a background probe
+returns before its line is written. At the owner's word, reasoned first: the runner by path and flags in the forms of
+`change` and `again` (RUNNER_ARG); `cd DIR;` accepted when DIR is the session's own directory (`own_directory`),
+refused and named otherwise; the protocol says at the form that the call holds only the change; the recorder waits
+for its call's line (BATCH_WAIT), once, for the note and the batch's bytes alike. Tests and four mutation cases, caught
+on a copy. Meanwhile task 22 was checked (21:47:13), re-reviewed by review-23 resumed, and committed as 612ee5a9
+(21:48:02): HEAD is consistent, and task 24 was started in a tree of its own (.build/trees/24, 21:49:10) — the first
+tree of the run. fix-48 resumed first among the parked (the planner's order) and holds the machine for its replay.
+Not committed.
+
+**`v2.py read` crashed on a cut read partly in context (22:00).** review-23 (21:01, `v2.py read DECISIONS.md:9600-9659`)
+and the planner got a TypeError from `work_meter.gaps`: when a source is cut at READ_BYTES and some of its lines were
+in context already (two overlapping sources of one read, or a range read before), file_read passed gaps() the lines
+shown as lists and those left out as tuples, which sorted() cannot order. Reproduced both ways in a fake world; gaps
+now reads each range as a pair of ints, whatever its form (the meter's JSON gives lists, gaps itself tuples). A test
+(both ways: the rest shown, the lines in context named, the cut said), one mutation case caught on a copy. Not
+committed.
+
+**fix-48 and implement-24 (21:48–22:05).** Both batched reasonably; implement-24 has the first tree of the run and
+worked in it without harness trouble (a detour through a scratch copy of DECISIONS.md cost two requests; two small
+independent reads were one request each). fix-48's replay launch failed on a missing /usr/bin/time (the machine's,
+not the harness's), and its edit of commit.md was refused as a git command: its text named `git rm --cached`, and the
+git, waiting and job-output checks read the raw call, a change's text included. At the owner's word, reasoned first:
+those checks read a `v2.py change` without its heredoc text (data written to a file, never run); what the call holds
+outside it, and every other heredoc, is still read. A test and one mutation case, caught on a copy. Its retry was
+refused for `cd <the project>;`, three minutes before own_directory went live. implement-24 was not told that its
+small single reads each cost a read: every read gets the same countdown, whatever it held. Not committed.
+At the owner's word, then: a reading request right after one that showed under SMALL_READ (2,500 bytes) is told, once
+between two productions, that the earlier one cost a whole read (`small_read_before`, looking back one request as the
+ready note does, since a call cannot know whether more calls of its request are coming). A test, two mutation cases
+caught on a copy. Not committed.
+
+**Isabelle in runs, and a park for the machine (22:10–22:20).** implement-78 (q26 to the planner) had only its probe
+left, refused seven times in forty seconds as "11, 10, 9, 7, 3, 2, 2 Isabelle runs are going" while at most two were:
+`isabelle_runs` counted poly processes against a limit in runs, and one run makes several; and no park reason fitted,
+so it asked. (The planner answered: hand over, the landing check proves the theory first.) At the owner's word,
+reasoned first: runs counted by the outermost probe/check/replay/build/Isabelle tool among a poly process's ancestors
+(`isabelle_run_roots`; unknown ones count alone); one condition for a run (`run_blocked`: another's measurement, or
+ISABELLE_MAX runs) for the guard and for `v2.py park machine`, whose session is resumed when a run may start; the
+refusal says to park rather than to try again, and the protocols (_checks, _tree) say so; the watchdog writes the
+machine's Isabelle processes with their runs to state/isabelle-processes.json. Its first snapshot (22:15:36): two
+checks (78's in its tree, 50's), each one run rooted at check_errors.py, one poly each in their recipe phase. Tests
+and five mutation cases, caught on a copy. Not committed.
+
+**`park machine` in the sandbox, and two run limits (22:15–22:35).** implement-24 (q27) was told by `v2.py park machine`
+"a run may start now" and then refused four times: the command runs in the session's sandbox, whose process
+namespace shows no Isabelle. Fixed, reasoned first: a sandboxed park parks without judging (the dispatch, outside,
+resumes it), and inside a sandbox the count is the watchdog's snapshot (written every pass), a stale or missing one
+counting the machine as full. Then the owner: probes take tens of seconds at most and 8 may go at once, the limit of
+2 being for full builds. The review: every ordinary probe took 3-4 s; the long one was implement-24's (21:58:55,
+`--timeout 900`, one theory, hung at a `have` 3 s in, killed at 900 s, holding a run slot — part of why implement-78
+was refused); task 7's long ones (09-20) were engine measurements; checks take 164-272 s. Made, reasoned first: two
+kinds and limits (`run_kind`, `isabelle_load`, PROBE_MAX 8, ISABELLE_MAX 2 for heavy runs, unknown tools heavy); a
+probe names `--timeout 60` at most (PROBE_SECONDS) unless measuring, said with the machine's refusal in one message;
+the finalizer's check waits for a heavy slot, a base advance for no run; a park waits for the kind it was refused;
+the snapshot gives kinds and memory (a heavy check's main process 7.5 GB — a probe's is still to be seen, and 8 of
+them beside 2 heavy runs fit only if a probe is far lighter). The planner was told, with a proposed task for the probe
+tool (default 60, report the command a timeout stopped at) after task 50 lands. Tests (the guard's older probes now
+name a limit) and 9 mutation cases, caught on a copy. Not committed.
+Then, at the owner's word: no run starts while the machine's available memory (MemAvailable, readable from a sandbox
+too) is below MEM_MARGIN_GB, 10 GiB (`memory_short`, in `run_blocked` — the guard and a park for the machine — and in
+the finalizer's wait), whatever the counts allow; unreadable memory blocks nothing and is said once. The machine: 60.4
+GiB, 89 GB swap, 32 cores; 39 GiB available with one heavy check running. The snapshot records the memory available.
+Tests (the fake world and the finalizer's tests state the memory), three mutation cases caught on a copy. Not committed.
+
+**The sessions after the two limits (22:35–22:55).** Batching held (reviewers up to 28 sources a request; the notes said
+where they held). Harness faults found, and fixed at the owner's word, reasoned first: plan-32's ledger question was
+refused as a git command for its quoted text (`harness_only`: a call of harness commands only carries its quoted words
+and heredocs as data, unless something runs from inside a quote); fix-48's finalize refused the tracked
+tools/__pycache__/build.cpython-314.pyc as exempt and ignored (a path HEAD tracks is the repository's: `v2.py
+finalize` takes it, `finalize.stage` stages it with `add -f`, or `rm --cached` when gone — `git add` refused both;
+the harness's own paths stay refused) — the obstacle of plan-32's Q9 to the owner; fix-48's `again` correcting its
+change was refused by the marker check (off for corrections); `change` then `v2.py result` in one call cost a request in
+most sessions (the harness's inert commands may follow a change, rewritten to run only if it went through); and 3 s
+probes run in the background cost three requests each for implement-78 (the checks protocol: a probe in the foreground,
+after its change in the same request; heavy runs in the background). Tests and seven mutation cases, caught on a copy.
+Not committed.
+
+**Every tree session was told its whole load was stale (22:55).** review-79 got "stale since xhigh load … (664): …" of
+the 362 files the xhigh load holds: `manifest.py changed` compared the recorded absolute paths (the one tree's) with
+the tree's own, so every file read as changed and again as new — for every session in a tree since trees came back at
+21:49. Fixed: files compared by their place in their own tree (`changed_since`, ONE for the record, the tree for now);
+tree 79 now reads 6 (the tools 48 and 50 landed, the plan 49 did, two regenerated indexes). A test and one mutation
+case, caught on a copy. Not committed.
+
+**The four fixes of 22:55, finished in a new session, and every rule taught before it refuses (23:08–23:35).** The
+session above was cleared mid-way through the four fixes the owner had approved ("reason whether the changes are
+adequate and coherent and then fix it, yes I want to increase the hold"); this one read its transcript and finished
+them, each reasoned again first:
+- *The stable bases pinged* (`base.sh WHO warm stable --if-due`, run by the daemon for each base under a layer, 40 to
+  55 minutes after its last read; its own mark `state/WHO-stable.hit`; `health.py` reports it apart). Its test failed
+  on the fake `claude`, which listed its fork only as `warm-max`. Corrected on the way: a fork that misses does not
+  make the stable base's entry again — the max refreshes of 22:25 and 22:40 both read 9,270 and wrote 339K, fifteen
+  minutes apart — so only a layer that read its base from cache marks it warm, and the mark the session above had set
+  by hand (`max-stable.hit` at 22:40) was removed: every stable base's own entry has been gone since about an hour
+  after its layer was built (19:33–19:51), and only a rebuild makes one; the pings keep it from then on. **The daemon
+  runs the old loop** (a shell loop is read once): the stable pings start when the owner restarts it.
+- *The file lock in a task's own tree*, adequate only with the landing: an own-tree task lands by a merge into the one
+  tree, which git refuses over a working change there. So: no lock of the one tree's files for a finalization in a
+  tree (`locked_files`); an own-tree commit is not refused for another task's one-tree work (`unreviewed_work` — the
+  false refusal of task 24 at 23:02:10, for task 54's THEORY_MAP.md, which 54 committed at 23:03:06; implement-24 was
+  released and 24.2 started from nothing); the landing waits, before it holds main and within the commit's budget,
+  for the one tree's uncommitted changes of the files it writes (`one_tree_changes`), refused past it as what it is;
+  what came between is named as standing there (`merge_refused` with its own text); and a commit standing on its
+  branch lands as it stands when made again (a commit of nothing failed).
+- *The probe rule*: the probe tool's default became 60 at 23:02 (bba91b39, task 50), so the guard reads the default of
+  the tool the session runs (`probe_default`: trees 24 and 80 still hold 1200) and lets a bare probe go where it is
+  60; `_checks.md` states the bound.
+- *The hold*: 6 hours for a task parked for the one tree (`HOLD_TREE`, `hold_of`: the watchdog, the park's message,
+  the resume order, the status), 3 for the rest; the wake names what the session waited for (it said "the fix" to
+  every park). Not changed: a rejecting reviewer is held at most HOLD_MAX (3 h) while its task's fix may wait 6 for
+  the tree, so a re-review after that needs a new reviewer.
+
+Then the owner: "do 4 for others" — teach every rule the guard enforces in the protocol of every role it reaches. The
+audit (each refusal of `work_meter`'s guard against each role's composed protocol): the rules held over every session
+but the knowledge base (no git mutation, the harness's files, its scripts other than `v2.py` and `show.py`, no
+waiting, subagents or sessions) were stated to the producing roles only, or nowhere — now `_production.md`, which
+every guarded role gets (the planner's and task designer's own lines trimmed); the machine's limits were in
+`_tree.md`, which reviewers do not get — now `_checks.md`; HANDOFF.md and PLANNING_LOG.md as the planner's — now
+`_result.md`; the marker-line rule of `change` — now `_production.md`; a consultation of the knowledge base, the
+planner or a task designer is guarded to statements and was never told — now `{READING}` (`STATEMENTS_READ`). And one
+the audit found undoable: a reviewer refused a run for a full machine was told to park, which is refused to it, and
+`may_end` would not let it end its turn — it could only retry. Now it ends its turn (`machine_wait`: the guard's
+refusal, cleared when a run of it is let through), the watchdog wakes it when a run may start, and `park machine`
+tells it so. A form test holds every guarded role to the rules; 20 mutation cases, all caught on a copy (the check
+now takes `MUTATION_ORCH` and case keys). Not committed.
+
+**Can a base still be written cold? (23:37–23:50).** The owner restarted the daemon (pid 2098968, 23:37:32; its loop
+holds the stable pings) and asked to check that cold caching can no longer happen. It can, in these cases, and one is
+certain: every stable base's own entry is gone (their last reads were the layer builds of 19:33–19:51), and nothing
+but a rebuild makes one again — each fork's first turn carries the fork's own session id (the sandbox's instructions
+name its task directory; the two max refreshes' first turns differ only there), so no fork, whatever its first
+message, writes a prefix a later fork reads beyond the base. So the next refresh of each layer writes its stable base
+cold (max about 339K, xhigh and high about 273K; xhigh's layer stands at 16% of its 20% threshold), and a rebuild of
+the base costs about the same while leaving an entry the daemon keeps. After that, an entry goes cold only while the
+daemon is down for its hour, when its base is unused for 12 hours, or after two missed pings. One change: a missed
+ping took itself as a read (the mark touched), so its retry came forty minutes on, when the entry was surely gone; it
+is now counted only, and the next pass tries again. A test and a mutation case. Also: 19 cases of the mutation check
+had anchors the day's later changes had rewritten (18 before this session, one of its own), so they broke nothing;
+they are re-anchored to the same repairs. Not committed.
+
+**A cold stable base is loaded again by the refresh (00:00–00:30, the owner's "2").** Given the choice (rebuild the
+three by hand; let a refresh that finds its stable base cold rebuild it; leave every refresh cold), the owner chose the
+second. `base.sh WHO layer` now loads the stable base again first when its entry is cold (`stable_warm`:
+`WHO-stable.hit` within WARM_MAX), as its own step `base.sh WHO restable` (`rebuild_stable`): a fresh load of the
+stable part of the list as it stands now, under a new name, recorded in `WHO-base-next.json` with its snapshot in
+`WHO-manifest-next.json`, while the base and layer standing serve. The layer is then a fork of that base, and
+`seal_layer` puts base and layer in place together, two renames apart; before that, `keep_stable_snapshot` merges the
+old stable snapshot into the kept snapshot of every layer a session still holds (and every new layer's kept snapshot
+holds its stable part), so a session forked before is still told what changed since the load it has. A base loaded
+again for a layer that did not seal is reused while warm; `layer --adopt` takes a layer over it. Found on the way: the
+hourly tidy swept every pack no sealed base names — so the pack of a layer or base being loaded could go mid-load (the
+max layers' packs of 22:24 and 22:39 went at 23:06, after their seal); now the packs of loads in progress and any pack
+younger than 3 hours stay. The xhigh layer, at 16% of its 20%, is the first it will meet. Tests (the rebuild and the
+swap end to end against a fake `claude`; the tidy), six mutation cases caught. Also fixed: two mutation cases named a
+test renamed later (they ran nothing and read as missed), and the recorder-wait test slept less than its hook took to
+start, so it held nothing; all 345 cases are caught. Not committed.
+
+**Task 24's and task 80's landings, and a task that came back (00:05–00:40).** The owner relayed plan-33's finding
+("#24 was stuck because a rewritten brief alone does not restart a task that has come back to me; it has to be queued
+again") and asked which of these problems are fixed, still open, or not the harness's; then, after the review below:
+"review the fixes and if they are coherent and adequate apply them". Traced in the log, git and plan-33's transcript:
+- task 24's first refusal (23:02, another task's one-tree work) was fixed above; its landing then waited for task 58
+  (23:22–23:29), as meant;
+- its second failure (23:29:03): main had changed Development_Loci's row (task 79 added an import) and task 24's branch
+  added its row just below; union kept both versions of the changed row and the commit gate refused the merge.
+  Fixed: the merge of main into a branch is made without committing, THEORY_MAP.md rows and ROOT's theory lines are
+  agreed by their theory as a three-way merge does (`finalize.agreed`, `rows_agreed`; on task 24's real merge: one
+  Development_Loci row, main's, and its own row kept), then committed through the gate;
+- that refusal was said as lines "written in the same place by another task", git's text cut to its last 300
+  characters. Fixed: a gate refusal says what the gate found, whole, and to queue the task (`gate_refused`);
+- task 80 (00:00:55): its landing waited for task 68 as meant, then during its five-minute landing check task 66 wrote
+  DECISIONS.md in the one tree, and the check before the merge refused it to the planner — a hole this session's
+  removal of the file lock opened. Fixed: the landing hands back what came to stand, and the finalizer lets main go,
+  waits for it and lands again (`stood_for`), within the commit's budget; past it, the task is marked (`lands_again`)
+  and `v2.py queue` makes its commit again with no session. The planner had already re-queued task 80 as a session;
+- a task that came back moves only when queued, which neither the protocol ("re-plan it") nor the 30-minute notice
+  said, and plan-33 rewrote task 24 at 23:30 and queued it at 23:59. Fixed: the protocol and the notice say it, and an
+  `edit` that rewrites such a task says so at once; nothing queues it by itself, the order being the planner's;
+- not the harness's: plan-33's `tell 80` reached the reviewer (the fixer had handed over; the reply named it); Q11.
+Tests for each (landings against the one tree, the rows, the gate's text, queueing a commit again, the edit's reply,
+the notice, the protocol); ten mutation cases, and three older ones re-anchored to the changed code. Not committed.
+
+**Task 56's install past the tree's holder (00:45–01:00).** Relayed by the owner: while task 66 held the one tree
+(reviewing), implement-56.2's `v2.py change` of ROOT was refused, and its next call — `for f in …; do cp
+.build/tasks/56/draft/$f.thy theories/$f.thy; done` — went through: three theories changed and
+`theories/Development_Entity_Keys.thy` new, undeclared in ROOT, so the one tree refuses every check. The guard read the
+loop's command as `do` (the write test wanted a writer at a command's start, and the command splitter took `do` for
+the command), so it saw no write at all; any file command in a loop or a condition escaped it, and the planner's
+statements-only reading the same way. Fixed: shell keywords are read through (`SHELL_KEYWORDS` in `segments`, and
+`WRITE_SHELL`). Its revert was refused rightly (its `rm` named a tree file), and the originals it names under
+`.build/tasks/56/orig/` do not exist — that call never ran; the three are HEAD's, and the new file's copy is in its
+drafts. Also from its transcript: its question to the planner was refused as a change out of form because its quoted
+text named `v2.py change`; a change is now read from the command's syntax, quoted words out. Tests and three mutation
+cases. The one tree still holds the partial install (no task owns it); restoring HEAD's three files and removing the
+new one is the owner's call. Not committed.
+At the owner's word the one tree was restored (00:20): HEAD's three theories, the new file removed (its draft kept);
+`git status` clean there, no tree trouble. Task 56 was told (`v2.py tell 56`: skip the restore step of the planner's
+q30 answer, whose `orig/` does not exist), and the planner by an event from the owner (the restore, the guard fix, and
+tonight's fixes not in the protocol it holds: a returned task moves only when queued; a landing waits for the one
+tree and `queue` re-makes a marked commit with no session; one-sided row changes merge to one row). The full mutation
+check: 353 of 355, the two misses tests that no longer pinned their repair (the wait before the landing, now also
+covered by the wait inside it, saves a landing check — pinned so; the gate's finding — its boilerplate asserted out);
+with those and the guard's three cases (one re-anchored on the form check that refused task 56's question), all 358
+are caught. The suite: 521 pass. Not committed.
+
+**The sessions after 22:55, read (00:30–01:10).** At the owner's word ("check all the new sessions for harness
+issues"): 17 sessions (8 implementers, 2 fixers, 7 reviewers), 35 refused or failed calls, read one by one. Harness
+faults, fixed:
+- `git merge-base` was refused as `git merge` (`GIT_MUTATE` ended in `\b`, which a hyphen satisfies): four requests
+  in four sessions (implement-24.2, -24.3, review-25.2, -25.3);
+- a check was any command naming a check's tool: `grep … tools/incremental_check.py`, `sed … probe_theories.py`,
+  `probe_theories.py --help`, a script reading a check's output directory — refused while the machine was full (six
+  requests: fix-81, implement-56, fix-80.2). Now what a command runs (`runs_check`: the tool as the program, by a
+  runner or by path, after `timeout`/`env`/…; `isabelle build|process|ML_process`; not `--help`); replays count as
+  checks here too, as they do in the machine's count;
+- `cp`'s sources were counted as written: `cp theories/A.thy … .build/tasks/56/draft/` was refused as a write into the
+  held tree (two requests). Only the destination (or `-t DIR`) now;
+- writes under .build/ behind a leading `cd DIR &&` or a plain variable (`W=…; … > $W/x`) were read as written into
+  the session's tree (fix-80.2, four requests): both are followed now (`shell_context`); a script's target handed to
+  it as an argument still cannot be read, and its refusal now says so;
+- `v2.py measuring` after a change was refused as out of form (implement-56, twice): it reads nothing, and may follow;
+- an `again` correction of a change, as the protocol says to make one, holds the change's own heads and blocks, and
+  was read as further changes (implement-72): a correction is now read to its end, its markers nested (`marker_at`);
+- two keep-warm pings gave no verdict (`session_fork_check` failed — the fork's transcript not found, cause unseen:
+  each ping deletes its fork) and each session went cold ten minutes later, its whole context lost (fix-49.3 at 22:11,
+  implement-56 at 00:09): the retry was held off by the ping's ten-minute mark. A ping with no verdict now says why,
+  and sets its mark back so that it is tried again in two minutes; each ping's fork has a name of its own.
+Not harness faults: reviewers and fixers reading a job's output after parking (refused, rightly); reads over 5K
+(told what fits); a SEARCH that did not match; real writes into a held tree (refused, rightly); a heavy run refused
+with three going. Open for the owner: a check put after a change in the same call is refused by design (three of the
+17 sessions did it; the protocol says two calls), which the guard could instead judge as the check it is. Tests for
+each; ten mutation cases. Not committed.
+
+**A change and its check in one call; design 66 and review 67; the build directory (01:00–02:10).** At the owner's word:
+- *A check after a change, in its call* (`change_then_check`): a change followed by one check line (and what filters
+  its output) is judged as the check it is — the probe's bound, the machine's limits, a failure's repeats, gathered
+  and cut as a check — its change as the change it is (write guard, form, the task's files), and the check runs only
+  if the change went through (`STATUS_LINE`). A read after a change is still a call of its own. `_production.md`,
+  `_checks.md` and the change's form refusal say so.
+- *Design 66 waited half an hour after the planner accepted it* (00:04 to 00:31), the harness answering "its other
+  reviews are pending": review task 67, deleted from the graph, which no reviewer would ever take — a design's reviews
+  are the planner's verdict alone. `deciding`: a build's or fix's review tasks count while the graph holds them
+  (`held_reviews`, in the verdict, `pending_reviews`, the stall check and the completion); a design's or an
+  investigation's verdict decides alone, given on it or on a review task of it, and its review tasks go with it.
+- *More from the newest sessions*: investigate-82's `mkdir`/`grep "…shutil.copy…"` was read as a script that writes
+  (the pattern as code): a script is looked for only where an interpreter runs (`runs_script`, `programs`); its
+  change followed by `v2.py ask "…; …"` was refused as out of form (the tail stopped at a quoted `;`): quoted words
+  are read whole; implement-62 was told no command number with the tree holder's refusal and corrected the wrong
+  commands: the tree holder's and the file lock's refusals now name it (fixable).
+- *Batching, sessions since 22:50* (23 sessions, 355 requests, 1.5 calls a request): reviewers read 8–17K a reading
+  request, implementers and fixers 2–5K; 68 of 170 reading requests showed under 2.5K, 21 right after another. Most
+  of those pairs were retries after the misread refusals fixed tonight, the rest lookups each needing the one before;
+  fix-80.2 (a measurement, 70 requests at 1.0 calls) is the outlier. Writes: 49 calls made one change alone.
+- *The build directory, 131 GB*: 46 check outputs of about 3 GB each (recipes 2.6, exports 0.5) and 36 GB of checks in
+  tasks' directories; nothing removed any of them. The tidy now removes a check output once every task naming it has
+  landed or left the graph — not the newest of those (`retain` reads the last landing's), nor one a task in flight
+  names, nor one no task names younger than 3 hours, nor anything but a check (`.build/check-*`, and `check*`,
+  `landing-*`, `final-check*` in a numbered task's directory — a base being made under `.build/tasks/base-advance/`
+  is none). Dry run on the live state: 47 outputs, 108 GB, at the next hourly tidy.
+Tests and mutation cases for each. Not committed.
+
+**A turn the API broke off (01:00).** investigate-82's reply ended in "API Error: Server error mid-response" (00:54:46);
+the watchdog would have resumed it after five idle minutes and the ten-minute backoff of loops (about 01:03:45), told
+only that its turn had ended. At the owner's word: `api_failed` resumes a session whose last reply is such an error
+after a minute (`API_RETRY_AFTER`), saying the reply may be incomplete and to redo the step, up to three times in a row
+(`API_RETRIES`, counted in `state/api-errors-NAME`, cleared by a reply of its own), idle or listed as blocked (a blocked
+row counted as gone). It resumed investigate-82 at 01:02:54 on its first pass. Also: two mutation cases had tests my
+earlier changes had made blind — the recorder's unwrapping (the guard now reads through the cut's wrapper, so only a
+check, hidden in check_errors.py's `bash -c`, shows it: pinned so) and "a pattern naming a writing call" (its test's
+targets were all under .build/: now one outside). Not committed.
+
+**The one tree emptied, and a measurement queued (01:05–01:30).** At the owner's word, reasoned first:
+- *Placement*: a task was put in the one tree when its brief named a path standing uncommitted there — and nearly every
+  brief names THEORY_MAP.md or DECISIONS.md, so while one task in the one tree held a row uncommitted every task
+  started was put there too (56, 62, 72; the one tree never emptied, and most of the night's trouble came from it).
+  `in_main_tree` no longer counts `SHARED_FILES` (ROOT, THEORY_MAP.md, DECISIONS.md, HANDOFF.md, PLANNING_LOG.md); a
+  task whose own work stands there, or whose brief names another uncommitted file, stays. What made it coherent: with
+  no task in the one tree, nothing would have committed the planner's HANDOFF.md — a landing's merge (`merged`) now
+  takes it, as a commit made in the one tree did. DECISIONS.md still merges by union; an amendment beside another's
+  entry is caught by the gate, not agreed.
+- *Task 56's measurement*: parked for the machine, it was woken when a heavy slot was free, claimed the machine for a
+  fifteen-second timing, and was refused, other runs going — three times (it then asked the planner, who let it
+  measure unheld, alternating the two forms in one run: q32). A claim made while runs go is now queued
+  (`pending_claim`): no new run of another task starts (`run_blocked`, and the finalizer's admission), and once the
+  machine is empty the claim is the session's — by message (`grant_pending`, in the dispatch) or with its resume if it
+  parked for the machine (`parked_ready`, `produce`), for at most `PENDING_MAX` (30 minutes) of waiting or while its
+  session stands. `_tree.md` says so; the planner was told (an event from the owner).
+Also: a mutation case whose test gave a base a `recipes` file instead of a directory; and the fix of the review count
+(a review task counts while the graph holds it or once it has judged — a finished one left the graph and blocked a
+commit in a test). Tests for each; the full mutation check and the suite run on the copy. Not committed.
+Verified at 01:30: the full mutation check caught all 391 cases (on a copy), and 533 tests pass. The owner then left the
+run to be monitored: the stop, if needed, is a request to the supervisor (`v2.want(run=["v2.py", "stop"])`, carried out
+within seconds — tested with `status`), then `state/stopped`; running checks and finalizers finish by themselves.
+
+# STANDING INSTRUCTION (the owner, 2026-09-22 ~01:35): monitor the run, never stop, through compaction
+
+The owner left the run to this session: "keep doing the work we have been doing together — looking at the sessions,
+diagnosing problems, fixing and repeating. Make sure you keep going through compaction, make sure you never stop
+monitoring." Also: "add stuck investigations to your review loop", and stop everything if something goes wrong.
+
+**The loop, kept up without end:**
+1. A Monitor on `state/v2.log` and `state/warm.log` for problem lines (ATTENTION, went cold, lost, failed, refused
+   commits/landings, stood/waited, given up, inconsistent, MISS, stable/layer lines, not resumed), `grep -v "protocol
+   has no value"`. It expires every 30 minutes: re-arm it at once on its expiry notice.
+2. Every ~25 minutes a review (a background `sleep 1500` as the timer; on its completion run the review, then arm the
+   next timer): `python3 -B notes/session-review.py` (since the last review; mark in $TMPDIR/session-review.since) —
+   each session's refusals, errors and batching, the log's anomalies, keep-warm, bases, disk, the one tree; plus stuck
+   work (tasks parked long, stages unchanged long, sessions resumed repeatedly — to be added to the script).
+3. Each harness fault: reason whether the fix is adequate and coherent, write it with a test, add a mutation case
+   (run on a copy: `MUTATION_ORCH=$TMPDIR/mut/p/.claude/orchestration python3 -B notes/mutation-check.py KEYS`), run
+   the suite (`python3 -m pytest -q -p no:cacheprovider test_*.py` in .claude/orchestration, background), update
+   README and this note. Never commit (the owner's word is needed). Tell the planner by an event from the owner when a
+   change alters what it should do (`with v2.state() as w: v2.event(w, "the owner", text)`, then `v2.kick()`).
+4. Stop everything only for ongoing damage (runaway spending — repeated cold rewrites, resume loops; repository damage
+   — HEAD inconsistent, unreviewed commits, conflict markers; the harness failing repeatedly; memory or disk out):
+   `v2.want(run=["v2.py", "stop"])` (the daemon carries it out within seconds; tested), then write `state/stopped`.
+   Running checks and finalizers finish by themselves; `start.sh` (the owner's terminal) resumes.
+
+**Open at this handoff (01:40):**
+- Just made: authors are no longer held to be asked (`watchdog.held`: the task designer's "tasks it briefed are open"
+  and the designer's "tasks built on its design are open" removed; the proposal-wait hold stays). Test added;
+  `test_what_nothing_refers_to_is_released_and_what_may_come_back_is_held` fails — it expected a held author: update
+  it, add a mutation case, run the suite.
+- The owner asked: what happened to task 56 (parked on q32, then running without the hold; check its state and
+  result), and to add stuck investigations to the review loop (extend session-review.py).
+- session-review.py's keep-warm section printed old traceback lines (continuation lines without a timestamp pass the
+  date filter): fix it.
+- implement-76: `perl -0pi` on its own `.build/tasks/76/runprobe.sh` was refused as an in-place edit — write_targets
+  reads `sed -i` targets but not `perl -i`'s, so the target under .build/ was not seen: fix. Its three `change` calls
+  refused as out of form (22:27:05, 22:27:58, 22:28:10 UTC): see what followed each (a probe run through its own
+  wrapper script is not recognised as a check).
+- Disk: 919 GiB free after the sweep removed 108 GB (926 before): the space may be held by filesystem snapshots
+  (Timeshift) — report to the owner, not a harness fault.
+- review-73's one bwrap failure (a worktree removed while its call started): a race, one request; noted only.
+
+**Done since (01:40–02:00):**
+- Author holds removed (above): the old test updated, mutation case `not_held_to_be_asked` caught; design-66 released
+  01:35:34. session-review.py: keep-warm continuation lines fixed; a `## stuck work` section (tasks parked over 30 min
+  with reason, readiness and hold left; sessions resumed ≥3 times in ten minutes from `state/NAME.woken`; busy sessions
+  whose transcript is still 20 min; nothing producing while queued tasks could; a task claiming the whole machine ≥3
+  times in two hours).
+- Task 56: parked for the machine behind task 80's measurement (01:16–01:47), resumed 01:47:10 and again 01:53; fine.
+- implement-76's refusals, fixed: `scripts_run` (work_meter) reads a shell script a command runs from a file (`bash F`,
+  `source F`, a `.sh`/shell-shebang file by its path; two deep) as part of the command for `runs_check`, the run's
+  kind and a probe's bound, and git; so a probe in the session's own script counts as the check after a change, and is
+  refused beside a measurement's claim (it had escaped the machine's limits). `perl -i` names its files in
+  `write_targets` (`-M`/`-I`/`-m`/`-x` excluded), so an in-place edit of a draft under .build/ stands. Mutation keys
+  `script_of_the_session`, `in_place_edit_of_a_draft`.
+- A read of a file's lines longer than READ_BYTES is no longer refused: it shows the lines that fit (`within`) and
+  names the rest with how to read on (`cut_short`), through lines.py as the in-context filter does (ten refusals that
+  night, six within 12% of the bound, a request spent each). The recorder records only what a rewritten read showed;
+  a stale rewrite record for a call run as is is dropped. Protocol `_production.md` and README updated. Mutation key
+  `longer_than_a_read` (+ `lines_in_context_is_filtered` re-anchored).
+- Task 80: its first handover named a check without `--output` ("did not run", no round spent), corrected, passed.
+- Remaining known: change followed by a read (fix-83's `git diff --stat`, implement-76's `--help`) is still refused as
+  out of form — two in two hours; left as is (a read would need the read bounds on its part).
+- 02:00:37–02:01:40 the xhigh layer refresh (21% stale) exercised the restable path live: "stable xhigh: its entry is
+  cold, so the base is loaded again before its layer" → new stable base 4a18e83e (02:01:05) → the layer's fork read
+  273,316 of it from cache (99%), sealed at 517,620 (02:01:40), xhigh-stable.hit set. Verified: the next xhigh fork
+  (review-57, 02:08:16) read 517,618 from cache. The max layer stood at 23% stale at 02:01: its refresh comes at its next look
+  (LAYER_EVERY 900 s) and will take the same path.
+- session-review.py: a resume's synthetic "No response requested." is not listed as an error.
+- 02:15:46–02:16:58 the max layer (23% stale) took the same path: stable reloaded (95f7de81), the layer's fork read
+  346,976 from cache (99%), sealed at 482,899. All three layers now refreshed or warm; the high layer (0.178 at 02:01)
+  is next when it passes 0.20.
+- 02:26 review: change followed by other commands — fix-84 (`rm -rf` of an old check output), fix-80.3 (a preparation
+  chain) — refused as out of form; with fix-83's and implement-76's reads, four in two hours, each corrected by
+  `again`. The owner allowed one check after a change; broadening to any command would need the tail guarded as a
+  call of its own (reads, writes, counting). Left for the owner. session-review.py's "nothing produces" now uses
+  `v2.startable` (the queue of 22 was all blocked: the graph narrow, the planner at work).
+- ~02:27 the machine ran low on memory: Claude Code killed this session's review timer for it (19.7 GiB available at
+  02:26, 29.9 at 02:28, 34 at 02:31; swap 8.8 GiB used). Running then: task 32's landing check (5.7 GB RSS) and task
+  84's final check (passed 02:27:31). Host processes are not visible from the sandbox (only /proc/meminfo and the
+  watchdog's Isabelle snapshot), and nothing was routed around that. A memory Monitor now says when available memory
+  falls below 12 GiB (re-arm with the others); the harness's own gate refuses new runs below 10 GiB (MEM_MARGIN_GB).
+  If it stays low with runs refused and sessions slowed, that is a stop condition to weigh.
+- 02:57–03:10 task 32 (and 76), accepted, kept out of main by task 62's uncommitted ROOT/THEORY_MAP.md for 60 min,
+  refused to the planner. Fixed three things:
+  1. `v2.lands_when_free` (watchdog pass): a commit marked `lands_again` lands by itself once what stood is committed,
+     with no session; `drop` clears the mark; the refusal's words say so. Tests in test_finalize (`lands_by_itself`,
+     `does_not_land_by_itself`); mutation cases.
+  2. The planner's requeue at 02:58 did NOT take the no-session recommit: `cmd_queue` read the accepted review task 33
+     (stage done, completed in the list only at its task's commit) as a task put back to pending whenever the planner
+     named it in an order, and reset its entry — the verdict gone, 32 read as unreviewed, so the re-plan path started
+     implement-32.2 and implement-76.2, which found nothing to do; checks and reviews ran again (32 committed 03:10:23
+     as 0381bc5f after its second review). Fix: `awaiting` in cmd_queue (a review with a verdict whose task is not done
+     is not reopened). Test `keeps_its_verdict` (the order names the review first); mutation case.
+  3. `tree_checked` said "after its commit (task 32)" and "every task's check refuses" when task 62 (told by the
+     planner to take its ROOT and THEORY_MAP.md lines out) left its new theory undeclared in the one tree: it now
+     names whose uncommitted change stands there and says only checks made in the one tree refuse. A correction was
+     sent to the planner (event from the harness). The one tree stays inconsistent until 62's ROOT line is back; only
+     one-tree checks are blocked (62 holds the tree anyway).
+- 03:16 review: (a) implement-62's `git show HEAD:$f > .build/tasks/62/head/$f; …; cp … .` refused as a redirection
+  into the tree — content_write counted the cp destination; now `write_targets(content=True)` judges only content
+  writes (redirection, tee, truncate, -i edits, scripts); copies stand as the rule says (write_guard still judges
+  them). (b) plan-35, moving 62's stray theory itself, was refused rightly (62 holds the tree) but told to write drafts
+  under `.build/tasks/None/` and park: a session without a task is now told the tree is the holder's to change and to
+  `v2.py tell` it. Mutation keys `draft_written_beside`, `without_a_task_is_told`. (c) Change + read after it: a fifth
+  (implement-34's grep) — still for the owner. (d) plan-35's `git show HEAD:DECISIONS.md` with diffs refused by the
+  planner's statements rule — as designed.
+- 03:26 suite 542 passed. Reviewer holds are used: review-27, -73, -77, -57 were resumed for re-reviews; review-63 is
+  held because it rejected task 62 and the fix is under way. Task 80's re-reviews got new sessions because after its
+  second rejection it went to the planner and was re-planned, and cmd_queue's reset of a re-planned task clears the
+  `verdict`/`reviewed_by` a harness-planned review keeps on the task itself: a fresh reviewer (a warm fork) — left.
+- 03:32:45–03:34:28 the high layer (21% stale) refreshed by the same path: stable reloaded (f4581b85), the layer's fork
+  read 273,144 of it from cache (99%), sealed at 541,897. All three layers refreshed tonight through restable.
+- 03:42 review: the max and xhigh layers read 23.3% and 24.9% stale 1.5–2 h after their refreshes. Two generated
+  indexes (state/held/theory-names.md, decisions-index.md: 34.5K of max's 148K tokens) change a line with almost every
+  landing and were counted whole — max past the line after nearly any landing, and each max refresh is followed by a
+  new knowledge base (kb-7, kb-8, kb-9 right after the 22:24, 22:39, 02:15 refreshes). `manifest.moved_tokens` now
+  compares with the text the layer loaded (restored from its pack): same held text → 0 (proof-only changes), the
+  generated INDEXES by changed lines, anything else whole (bases-design §1's re-read cost). Max 1.3%, xhigh 11.5%,
+  high 0. Falls back to digests when the pack is gone. Test StaleShareTests; mutation key
+  `index_moves_by_its_changed_lines`. The CLI wiring (`layer_texts` in stale-share) has no test. Also: base.sh and
+  warm_daemon.sh no longer print a missing .miss file's error (warm_daemon's change takes effect at its next restart:
+  the running loop was parsed whole).
+- 03:50 memory dipped to 9 GiB: two heavy session checks at ~15.7–16.6 GB RSS each (fix-97's in its tree and one
+  other) — twice the 7.5 GB per check the two-run limit was set on (2026-09-21). Recovered within a minute when one
+  ended; available memory swings 13–44 GiB within 20 s while they run. The 10 GiB start gate held. If two such runs
+  become the rule, the heavy-run limit or the margin is the owner's to weigh (not changed).
+- A stray git stderr line reached v2.log at 03:49 ("Another git process seems to be running in this repository"):
+  index.lock contention between two git commands; noted only.
+- 04:07 review: API 529/500 errors hit five sessions 03:56–04:06; the retries brought plan-35 and design-95.2 back.
+  Fixed: (a) the retry count ran across own replies ("2 of 3 in a row" for plan-35 after it had worked again) — the
+  mark now keeps the handled failure's moment, a reply of its own since restarts the count (`replied_between`), and one
+  failure is resumed once. (b) task 95's landing commit met another git process's index.lock in its tree and was taken
+  for the commit gate's refusal ("does not stand with what landed"), sending the task back — a new designer found its
+  work whole. finalize.git() now tries a command refused on the index lock again (10 × 2 s) for every command
+  (git_retrying is the same function). Mutation keys `not_counted_in_a_row`, `api_broke_off`, `holding_its_tree_s_index`.
+- 04:27 a watchdog pass ran 04:19:30–04:27:07 (a 5-minute silence after "resumed fix-97"); every resume and start
+  waited on it. Unknown which part: now each part of a pass (watchdog.contained: the care of each session, the mail,
+  finishing, holds, layers, landings, archive, snapshot) and of the dispatch (dispatch_once) that takes longer than
+  v2.SLOW_PART (120 s) is logged ("the watchdog's X took N s" / "the dispatch's X took N s"). Test
+  `slow_part_of_a_pass_is_named`. Watch for these lines to find the cause.
+- Memory: two heavy runs at 9 and 13 GB again 04:26–04:28, swings down to 7 GiB for seconds; swap creeping 8 → 10 GiB.
+- 04:24–04:35 review-77.2 resumed (logged) but its transcript got nothing after its earlier round (03:38): the resumed
+  job died before its first request — during the API outage (529/500 03:56–04:38) — and was found gone after
+  GONE_CHECKS passes, 11 minutes later; review-77.3 started, accepted, task 76 went on to land. First "is gone" of the
+  night; noted only. Stable-base pings meanwhile ended "fork has made no request of its own yet" (the API refused
+  them): neither a hit nor a miss, tried again; if the entries expire meanwhile, the next refresh reloads the base.
+- 05:02 implement-36's 60 KB `v2.py change` could not start: E2BIG, "command line 137.7KB" at spawn (Linux's 128 KB
+  per-argument limit) — Claude Code's quoting of the command more than doubled Isabelle text full of `'a`; the
+  guard's wrap adds ~200 bytes. It wrote the file in two parts at the next request. The only one all night: no rule
+  added (a protocol line would cost every prompt and stale the layers); if it recurs, the guard could refuse a change
+  over ~50 KB up front with "write it in parts".
+- 05:15 memory swings 10–25 GiB with two full checks (13 and 9–15 GB); the memory Monitor now fires below 7 GiB for
+  30 s or at 20 GiB of swap (was 12 GiB, which fired on every swing).
+- 05:38:45–05:39:59 the xhigh layer refreshed at 21% (theories changed by landings, counted whole; indexes by lines):
+  no reload this time — its stable base 4a18e83e, kept warm by the daemon's stable pings, was read from cache
+  (273,316, 99%) and the layer sealed in about a minute. The stable pings pay off as designed.
+- 05:43 THREE heavy runs at once (13.6 + 6.1 GB session checks, 12.9 GB task 101 landing check), memory 6 GiB for
+  30 s: a sandboxed guard counts heavy runs from the watchdog's snapshot (fresh for 180 s) plus finalizer admissions,
+  and a session's check registered nothing, so checks started within one snapshot's life each saw room. Now the guard
+  decides under the finalizers' admission lock (`v2.admission`) and marks an allowed heavy check
+  (`v2.admit_session`, state/isabelle-admitted/session-NAME), counted until a snapshot 90 s newer (SEEN_AFTER), 600 s
+  at most, taken back when the guard refuses the call for another reason. Test `let_start_counts`; 3 mutation cases.
+- 05:47 review: (a) scripts writing by a name given a literal path (`p='.build/tasks/97/result.md'; open(p,'w')`) were
+  refused as unreadable — implement-26, fix-97.2: `write_targets` now follows SCRIPT_NAMED/PY_ASSIGN; test
+  `writing_by_a_name`. (b) review-75's `v2.py change <<'EOF' && v2.py verdict …` (the verb on the opener line) refused:
+  once; CHANGE_CALL's groups are used in several places — left. (c) task 97's landing refused at 05:23 for
+  Native_Path_Stores twice: replayed with the real versions (base d69bd0c9, ours 492a6b80, theirs 37a97cad) the two
+  sides changed the row differently (3,260 vs 2,968 chars), a true conflict `agreed` rightly leaves to the gate;
+  fix-97.2's "same text" was not so. No harness fault.
+- 05:58 THREE heavy finalizer checks again (tasks 115, 97, 106 admitted 05:54:42, 05:55:42, 05:57:40), memory 2.2 GiB
+  at the snapshot, swap 10 → 21 GiB: a finalizer's admission counted ADMIT_GRACE (60 s) and then only the machine's
+  processes, but a check prepares for minutes before its Isabelle starts — each admission lapsed before its run
+  showed. Now `v2.unseen_finalizer_runs(procs)` counts an admission while its finalizer (first pid of
+  .build/tasks/ID/finalizer.pid) lives and no poly descends from it; the control branch of isabelle_load uses it, and
+  the watchdog's snapshot adds it to "heavy" (field "unseen") so sandboxed guards count it too. `session_marks()` split
+  out. Test `counts_until_its_isabelle`; 2 mutation cases. The snapshot wiring has no test.
+- 06:12 review: tasks 36 and 94, parked for the machine 31–37 min, were ready (no heavy run going) and waited for the
+  one producing slot, held by design-85 — the machine idle meanwhile. By design (one producing slot); an observation
+  for the owner on throughput, not changed. session-review.py now says whose slot a ready parked task waits for.
+- 06:26 memory 7.8 GiB free, swap 26 GB used, with only one visible Isabelle run (9.8 GB) and one preparing: about
+  40 GB outside Isabelle (sessions' Claude processes, desktop, /tmp tmpfs 3.1 GB of which /tmp/structural-isabelle
+  3.0 GB is the project's tooling, left alone). Swap traffic over 30 s at 06:28: none — idle pages parked in swap, no
+  thrashing; free memory back to 35 GiB. Claude Code again killed this session's review timer for low memory.
+- 06:29 task 115's landing check failed on one tools host test (1 error of 205; which is not recorded — the check keeps
+  only the tail) with proof and all recipes accepted, at the memory low; its own check at 06:21 passed the same tests.
+  Second failure → the planner; told the facts (event from the harness). A harness retry of a host-test-only landing
+  failure is NOT safe as is: on a re-run the branch already holds main, so land() would skip the landing check. If
+  such failures recur: a retry must force the landing check (and the check tool should record which test failed).
+- 06:37 review, fixed: (a) plan-37 lost a request of seven reads of design 85's DECISIONS.md in its tree: BODY now
+  lets the planner read a task tree's top-level .md (`trees/N/*.md`), theories and tools there stay bodies. (b)
+  review-97.3's `> $TMPDIR/main.md` read as a write into its tree: `scratch` takes /tmp and $TMPDIR (TEMP_DIRS), and
+  shell_context knows TMPDIR. (c) fix-122's change followed by `cd tools && python3 -m unittest …` refused twice: the
+  tools' unit tests may follow a change like a check (`runs_tests`), a `cd DIR &&` may lead the tail, and the call is
+  judged as the write (no machine limits); `_production.md` and the refusal text say so. Mutation keys
+  `unit_tests_that_need_it`, `temporary_file_is_no_write`, `reads_a_task_tree_s_documents`. Planner events: none needed.
+- 07:02 review: review-122's script testing fix-122's function in a `tempfile.TemporaryDirectory()` refused twice as a
+  script whose target could not be read: `content_write` now lets a script stand that writes through `tempfile`
+  (TEMPFILE) when no target it names is outside scratch (a named repository path is still refused). Test
+  `temporary_directory_it_makes`. Else: fix-124's change + tail refusals (the owner's question), fix-88.2's `again`
+  with a SEARCH not in its command, brief-121 refused a detail by its role — as designed. 552 passed before this.
+- 07:26 review: task 94, parked for a heavy slot since 05:55, starved: landings and checks (115, 88, 120, 122, 126)
+  took the slots back to back 06:54–07:20, then task 124's measurement held the machine (and the producing slot).
+  It had an hour of its three-hour hold left — then a forced partial result. A machine slot always comes, like the one
+  tree: `hold_of` now gives machine waits HOLD_TREE (6 h). Test `machine_is_held_for_its_turn`; mutation case.
+  NOT changed (owner's to weigh): finalizers take a freed heavy slot within 15 s while a parked session is resumed only
+  at a dispatch — no queue between them; a FIFO of heavy-slot waiters would make it fair.
+  Also: task 115's landing check, re-run after the planner queued it, passed at 06:59 — its host-test failure at 06:29
+  was load, as told.
+- 07:43 max layer refresh at 34%: REASONING_REUSE.md (49K of 151K tokens) changed — a document, counted whole by
+  design, so the refresh stands — and theory-names.md counted whole again although a generated index: its names are
+  wrapped many to a line and one new theory re-wrapped lines 107–230. `moved_tokens` compares indexes by word now;
+  test (wrapped names) and mutation case. xhigh refreshed at 25% (theories), warm (its stable read 99% from cache).
+- 08:16 review: implement-30 told "3 heavy runs (at most 2)" at 07:55:59 — implement-128's check (started 07:54:24)
+  counted twice, by its visible run and its session mark (the 90 s rule), a safe overcount; but the same rule let a
+  mark lapse while a check still prepared (as the finalizers' did). `session_marks` now matches each mark with a heavy
+  run in a session's sandbox (under bwrap) that started after it: the snapshot's new `roots` carry each run's start
+  (`v2.process_started`) and `session`; a mark counts until matched, SESSION_GRACE (600 s) at most. SEEN_AFTER is gone.
+  Test `let_start_counts` extended (preparing, earlier run, matched); 4 mutation cases caught.
+  test_layer's frontier test asserted a named theory (Development_Machinery) the refreshed frontier no longer holds:
+  it now asserts the property (the layer begins with the frontier tier and holds theories). Suite: 553 + that one.
+  Also: fix-124.2's answer to q47 arrived after it finished ("reached nobody"): written to its answers, as designed.
+
+# The owner's decisions of 2026-09-22 ~09:10, deployed 09:43:18 (built in $TMPDIR/dev/orch, tested there, then copied)
+1. A `v2.py change` may share its call with any other commands (`change_parts`: the changes judged by their blocks,
+   the rest — the call with each change put as `true` — as it would be alone: writes, how, a check and its limits,
+   git, waiting; `after_changes_only` puts STATUS_LINE after each change something follows). A `cd` elsewhere joined to
+   a change by `;` or a new line is refused. `again` stays alone. The old one-form code (CHANGE_CALL, change_call,
+   change_then_check, after_change_only, change_form_faults, CHANGE_FAULTS, INERT_VERBS, runs_tests) is gone.
+2. The machine goes in the planner's queue order, finalizers included (`machine_waiters`, `machine_ahead`): finalizers
+   waiting to start (state/machine-wait/ID, heartbeat each poll, fresh 60 s: `machine_waiting`), tasks resumed for a
+   heavy run (state/machine-turn/ID, until admit_session, TURN_GRACE 180 s), tasks parked for the machine while a slot
+   could resume them. Applied in run_blocked (sessions' checks, parked_ready), finalize.wait_for_isabelle.
+3. Two producing slots (`PRODUCERS_MAX`, `producing(st)`): produce() takes up to two within WORKERS_MAX; a waiting
+   review takes a free slot before a second producer.
+Also from the owner's "are these harness problems" (09:3x): the sweep keeps check outputs a live session names
+(`read_by_the_living`: its kept commands and the scripts under its task's directory — task 128's before-export was
+swept); a theory whose sides conflict only in `imports` merges as a list at a landing (`finalize.imports_agreed`);
+`v2.py bring-main` (finalize.bring_main) merges main into a task's own branch on its session's request (implement-94,
+q50/q51), told in tree_text. The planner was told all of it by an event (09:43). Suite in the dev copy: 538 passed, the
+6 failures the unchanged copy has too (tests that need the real project), the 2 one-slot tests pinned to ORCH_PRODUCERS=1.
+Mutation cases added for each; 24 stale anchors of the old change form replaced.
+
+# The owner: "the persistent one-change calls and small reads … investigate, this balloons the cost" (2026-09-22 ~09:50)
+Deployed 10:16:33 (built in $TMPDIR/dev/orch; the dev suite's six failures are the copy's own — git status, theories/ —
+as before the change).
+Measured over nine hours of the sessions' own requests ($TMPDIR/costscan.py): 2,242 requests, 168.7M input-equivalent,
+81% cache reads, about 70K a request whatever the request does — the cost is the number of requests. Three levers:
+(a) the closing text after a turn-ending command: 217 text-only requests right after a call, 172 of them after a park
+(78), a result (60), a verdict (16) or the guard's "You are parked" refusal (18) — 11.1M; (b) hand-overs made one step a
+request (change → change → finalize → result; C1→H:result 34 times, C1→H:verdict 30): 138 runs of 2–11, 227 requests
+mergeable, 15.8M; (c) a single small read right after a read: 182 requests, 13.4M, an upper bound (many need what the
+read before showed).
+1. (a) `v2.turn_over(c)` marks the turn over (`state/flags/<sid>.ended`) where a result (with no question of its own
+   open: it still completes its result then), a reviewer's verdict, `planned`, a consultant's reply or a park succeeds;
+   `ctx_gauge.turn_ended` takes the mark in the call's PostToolUse and answers `{"continue": false, "stopReason": …}`;
+   the guard's parked refusal carries `continue: false` too (`deny(end=True)`). Mail taken in the same hook continues
+   the turn instead; a mark older than ENDED_FRESH (600 s) ends nothing; `resume` removes it. Read in Claude Code
+   2.1.273's source (the claude-code-guide agent pointed at issue #29991, which is about the Agent SDK's callback
+   hooks, not command hooks): PostToolUse `preventContinuation` → `hook_stopped_continuation` → the query loop returns
+   `hook_stopped` before the next request; a PreToolUse deny with it likewise; the Stop hook is then run only for session
+   function hooks (`sessionFunctionHooksOnly`), so ctx_gauge stop does not run and cannot take mail it would drop. The
+   stopped turn clears the `blocks` count itself (the Stop hook did).
+2. (b) The protocols hand over in one call: _finishing.md (one change writing the rows, entries, commit.md and
+   result.md; then `v2.py finalize … && v2.py result ID`, with an example), _result.md, reviewer.md (review.md's change,
+   then the verdict), planner.md (the notes' change, then `planned`), task-designer.md (proposal.json and the result,
+   then `propose … && result`). For `&&` to mean it, a refused `v2.py` command exits 1 (`say`/`REFUSED` in
+   `run_command`; `change` already did); _production.md says so.
+3. (c) not changed: the reading limits and the small-read notes already ask for batches; what remains is the model's.
+   The planner's closing summaries (about 40 requests, 2.7M) are not stoppable by the harness — nothing says its
+   handling is over; a `v2.py handled` verb would be the owner's to want.
+Tests: gauge (ends the turn, mail goes on, stale mark), v2 (marks by park/result/verdict/planned/reply, none for a
+refusal or an open question, resume takes it; a refused command exits 1), work_meter (parked refusal ends the turn).
+12 mutation cases, all caught.
+- 10:25 review (deployed 10:24:27): implement-38's call (a change of 59K bytes) failed "Could not start /bin/zsh: … E2BIG … command line
+  200.3KB … largest single arg 200.3KB" at 09:56, and implement-36's at 07:52 — never run, a request lost and the
+  change redone in parts. Claude Code passes the command as one argument, about 3.3× its length (the guard's rewrite
+  was 60.7K), and MAX_ARG_STRLEN is 128K. `work_meter.spilled`: a call over ARG_SAFE (32K) is written as it would run
+  to `commands/N.run` and becomes `. FILE`; `resolved` makes the meter record it as made (without it the change counted
+  as a read, "other"). Test `too_long_to_start` (runs the spilled change in a world); 2 mutation cases caught.
+  Also seen: task 94's landing refused on 166 validation/ receipts both it and main's base advance retained; the
+  planner answered q52 (a task retains no receipt; hand over at main's content). The finalizer could refuse
+  validation/ receipts in a task's --files — the owner's to want; not changed.
+
+# The owner (~10:30): "do the planner closing summary removal … shouldn't this be done for everyone … enforce it in the
+# finalizer. Also plan-40 turned to plan-41 in 30 minutes, why is that?" — and after it: brief-142's "shell wrapper"
+# errors, the planner's refused `tell`, and "find all such failures, where sessions are not reused"
+Deployed: the status line 10:43:42 (hotfix), the gauge 10:55:26 (hotfix: plan-41 had rotated at 711K too, told
+1031K), the rest 11:00:35. Dev suite 554 passed (its 6 failures the copy's own).
+1. plan-40 was told "Context is at 948K tokens, near the end of your window" at 09:48:04 with 652K — a room of 380K
+   used for 125K — wrote its notes and `planned` (09:49), and the knowledge base integrated them for plan-41. Two faults
+   of the gauge together: its call ended before Claude Code recorded the request it was made in, so the latest request
+   read was the one before (624,611); and after it stood the task list's reminder (planner-settings.json puts the
+   planner on the shared list), 744K characters of task objects counted as 298K tokens — the model is given one line a
+   task (`#id. [status] subject`, read in 2.1.273's source), about 6K. `ctx_gauge.model_chars` counts what is rendered:
+   the reminder by its lines, a PreToolUse/PostToolUse `hook_success` as nothing (not sent; its additional context is
+   an attachment of its own, counted). plan-39's end at 873K may have come early the same way. Test
+   `what_reaches_the_model`; 2 mutation cases.
+2. `v2.py end` (cmd_end): the last call of a turn no harness command ends — `… && v2.py end` — marks it over
+   (turn_over) where `ctx_gauge.may_end` lets it end, and is refused elsewhere (a producing session: its result or a
+   park); the knowledge base (its INTEGRATED is read) and an owner's episode are refused. _production.md ("Ending a
+   turn", every role), planner.md (between its events, no summary). Test `no_command_ends`; 2 mutation cases.
+3. Receipts: `v2.receipts_refused` at `finalize` — receipts (validation/incremental-check.json,
+   validation/reconstruction/) with other files are refused unless the task's brief delivers them; alone they are a
+   retention (#119's 158). Not a blanket refusal: #119, #144 and #145 are retentions and conversions the planner
+   placed (HANDOFF Q11). `finalize.put_back_receipts`: a task tree's uncommitted receipts (only `retain` writes them; the
+   check does not) are put back before main is merged in, as git merges nothing over a changed file; the one tree is
+   left alone (a retention may stand there uncommitted). Tests `retention_and_by_no_other`,
+   `did_not_commit_are_put_back`; 4 mutation cases.
+4. Since 10:16, 12 turns ended by the harness; four closing messages remained. implement-40's park at 10:24 came
+   with a message of the harness in the same call, which by the rule went on to the session: a parked or finished
+   session's mail now waits in its box for its resume (test `parked_waits_in_its_box`). Its result at 10:36 had a
+   question open, which by the rule left the turn going to "say in your result what you assumed" — and it wrote a
+   summary instead: a result is now refused while an open question of its own is unnamed in it, and a recorded result
+   always ends the turn (test `question_open` rewritten; mutation re-anchored). The other two were wakes of parked
+   sessions by their run's completion (implement-40, implement-90) answered in text: no call, so no hook ends them —
+   a parked session woken by its run could be resumed in that wake if the slot is free (not built; the dispatcher's
+   order would have to be read in the guard).
+5. brief-142 (10:33, the owner relayed it): "The assembly step hit an error in the shell wrapper … the shell wrapper
+   failed again after the change". `(eval):42: read-only variable: status`: STATUS_LINE (`status=$?; …`), put after a
+   change when more follows, runs in zsh — Claude Code's shell for a session's command — where `status` is $? itself and
+   read-only. Every change followed by anything that is not a check (a check is wrapped in `bash -c`) failed after the
+   change, since the line went in: 157 times from 2026-09-21 23:08 to 10:40, 23 in the last hour as batching grew. It
+   is what implement-94 called "the same shell issue as before with a command after the change" at ~09:30, which I had
+   read as the old form's refusal. `orch_rc=$?` now; the tests ran the rewritten commands in bash, and
+   `sessions_own_shell` runs a change and what follows in zsh and bash (mutation: the old line, caught). Hotfixed alone
+   at 10:43:42.
+6. The planner's `tell 94` refused three times (the owner: why sessionless?). Two windows: from its result (09:44) its
+   session is `done` while the task is finalized — held for a quick fix, but `tell` reaches only live and parked
+   sessions; and when the landing did not merge (10:03) the task went to the planner, `held()` holds a producing
+   session only while its task is checking/reviewing/fixing/committing, so the watchdog released implement-94 at
+   10:04:27, and the planner's queue started implement-94.2 afresh at 10:06 (its context gone: 15 requests to learn
+   the work again). `keep_told`/`hand_told`: a tell to a listed, unfinished task no session works on is kept on the
+   task and posted to the session that next starts or is resumed on it (test `task_nobody_works_on`; 2 mutation cases).
+   Not changed (the owner's to want): holding a task's session while the planner decides after a failed landing, and
+   resuming it when the task is queued again, instead of a fresh fork.
+7. The owner: "find all such failures, where sessions are not reused — this is a very expensive problem". From the state
+   and the log, 2026-09-21 20:00 to 2026-09-22 10:50: 22 fresh producing sessions on tasks another session had worked
+   (13 after the finalizer — merge refused, commit refused over the one tree, landing failed, a git lock — sent the task
+   to the planner: 24 ×2, 80 ×2, 76 ×3, 32, 97 ×2, 95, 94, 124; 5 after a partial result: 46, 88, 124 ×2, 128; 2 went
+   cold while they waited: 49, 56; 1 re-planned brief: 13), 564 requests and 35.7M, 177 requests (10.8M) before their
+   first change; and 11 fresh reviewers for reviews an accepting reviewer had made (25 ×2, 80 ×2, 77 ×2, 33, 97 ×2, 116,
+   125), 119 requests, 9.1M. The cause was one rule: `held()` kept a producing session only while its task was
+   checking/reviewing/fixing/committing, and an accepting reviewer not at all once its verdict was in; the planner's
+   `queue` then read the task's record afresh (dropping `session`, `reviewed_by`, `told`). Now: `v2.may_come_back` and
+   the hold "its task may come back to it"; `start_producer` resumes `reusable(tid, role)` with why it came back and the
+   brief as it stands; the hold "the task it accepted has not landed" and `start_review` resuming `accepted_by(r)`;
+   `cmd_queue` keeps previous_session, previous_reviewer, back and told. Tests `comes_back_goes_to_the_session`,
+   `judged_again_by_the_reviewer`; 8 mutation cases. Holding costs a ping per ~50 min (about 60K a ping) against a fresh
+   session's learning (8–21 requests). The two cold losses (49, 56, both on the night of 09-21) were parked sessions;
+   not changed.
+
+# 2026-09-22 ~11:25–11:45: script targets (11:28:14), the parked wake, fix-175, task 128's conflict (deployed 11:36:31)
+- 11:25 review: plan-42's `open('.build/plans/plan-42/b'+tid+'.md','w')` and review-94.2's `open(f'{T}/{n}','wb')` with
+  `T=os.environ['TMPDIR']+'/mf'` refused as scripts whose targets could not be read; review-94.2's third try, literal
+  paths under .build/outputs/, refused on the same words ("under .build/"), though .build/outputs/ is the harness's.
+  `work_meter.script_writes`/`fixed_start` read each write's fixed beginning (a literal, an f-string's known first
+  field, a name given TMPDIR or a literal) and a write whose directory is a draft's place stands; the refusal names
+  .build/tasks/<task>/ and $TMPDIR, and says .build/outputs/ is the harness's when that is the target. Test
+  `made_at_run_time`; 3 mutation cases. Deployed 11:28:14.
+  Also: review-104's `bwrap: Can't find source path …/.git/worktrees/40/commondir` — Claude Code binds the registered
+  worktrees' paths into its sandbox, and task 40's tree was removed between its listing and the call (second such, one
+  request each); not changed.
+- The owner on the parked wake ("can we address this?"): a parked session's run that ends makes Claude Code queue a
+  task notification, which woke it for a request answering "Waiting to be resumed." Claude Code 2.1.273 runs the
+  prompt hooks (prompt.submit) on it as on any prompt, and a hook's preventContinuation sets shouldQuery false. The
+  UserPromptSubmit hook (ctx_gauge owner) answers `continue: false` for a parked session and keeps the notification
+  (`v2.notified`); `running_jobs` reads it as the run's end (it read the transcript alone, where a stopped prompt may
+  not be), `resume` gives it to the session and removes it, `forget` too. Tests `woken_by_its_run`, the park-for-run
+  test; 3 mutation cases. Not yet seen live: watch for "was told a background run ended: kept for its resume".
+- 11:32 task 128's landing did not merge (theories/Development_Admitted_Publication.thy: main's 4ab8486e and its
+  d73ae6ca rewrote the same lemmas). implement-128.2 is held ("its task may come back to it", warm) — the reuse working
+  live — and the planner's tell was kept for it (11:35). But a session could not resolve such a conflict: it runs no
+  merge, bring-main refused "changed the same lines … write main's version of each with your lines in it, then ask
+  again", and asking again was refused as uncommitted changes (implement-94.2's loop); handing over without a merge
+  commit conflicts again where both changed a line differently. `finalize.keep_marked`: the landing's refusal and
+  bring-main's leave each conflicted file, both sides marked, in .build/tasks/ID/merge/ (with the main merged against);
+  `resolved_drafts`: bring-main asked again takes the session's unmarked files for those paths and commits the merge.
+  merge_refused tells the planner so. Tests `written_by_the_session`, the landing conflict test; 3 mutation cases.
+- The owner: "why did fix 175 not continue in the implementer session?" — 175 is a new task the planner made at 11:17
+  from follow-ups of the reviews of 32, 40 and 103 (a probe keeps no summary), in tools/probe_theories.py; reuse is for
+  a task that comes back, and those implementers were released at their landings (two cold). fix-175 took 9 requests
+  (74 s). Its prompt opened "whose session could not take its own fix", the quick-fix wording, over a "Nothing failed"
+  section: protocols/fixer.md now opens for both. Routing follow-ups to the finished task's session would need holding
+  implementers past landing — the owner's to want.
+- 11:50 measurement (the owner: are the batching changes working, and no errors of the orchestrator?). Deployed 11:49:55:
+  brief-141's change of its own draft saying "show.py finds none" was refused as a reading of details — planner_guard
+  judged the change's text; it now judges the call without it (test `change_writes_is_no_reading`). And its
+  `cd .build/tasks/141/brief && jq … > proposal.json` after the change was read as writing the project's proposal.json:
+  write_targets followed only a leading cd; a redirection now resolves where the call stands then, every cd before it
+  counted (test `where_the_call_stands_then`). 2 mutation cases.
+  Seen live: 11:47:49 "implement-128.2, parked, was told a background run ended: kept for its resume, no request made" —
+  the prompt hook does run on task notifications.
+- 11:58 (the owner, from a review: "bring-main dropped uncommitted ROOT and THEORY_MAP.md edits … is this resolved?"):
+  implement-139's result said so at 10:08. `rows_agreed` (after bring-main's and a landing's merge) agreed the rows of
+  ROOT and THEORY_MAP.md whatever the merge had done with them, reading the file in the tree — the session's uncommitted
+  one: its new ROOT line and THEORY_MAP row, in neither side, were dropped, and its other edits `git add`-ed into the
+  merge commit. Now only a file both sides changed is agreed (one side alone: git's merge is exact, no union doubling).
+  Test `uncommitted_index_rows`; mutation case. Deployed 11:53:54. The probe's missing `--parallel-proofs` is task 175's
+  (a summary file with the options beside each probe log), waiting for its check since 11:24; not landed yet.
+- 12:05 the owner: "the planner receives a lot of information from the harness — is it all needed?" In sixteen hours the
+  planners were given 342K characters by the harness (~85K tokens, each kept and read again by every later request).
+  The finalizer's commit events were 141K of it (47): half the review's whole Summary of an accepted task, which its
+  review file holds. `v2.first_sentence`: the summary's first sentence, the review file's place, the follow-ups whole
+  (the planner places them). A failed check's message carried the log's last 30 lines — task 143's second failure 28
+  lines of recipes accepted and a 1.5K summary, its error list after them: `finalize.log_tail` gives the check's own
+  error list (check_errors.py's) and the whole log's place, else the last 15 lines each cut; the quick fix is told the
+  same. Tests `told_by_its_errors`, the review cycle's commit event; 2 mutation cases. Deployed 11:58:58.
+- 12:10 the owner: "check all the other harness messages to every role for similar problems". Measured over sixteen hours
+  ($TMPDIR/harnessmsgs.py, every session's transcript): 5.5M characters of harness text — launch prompts 3.8M (20–34K
+  each: the brief ~7K, the role's protocol ~15K, the same for every session of a role and written into each one's cache),
+  notes after calls 0.99M, resumes 0.37M, refusals 0.15M, mail 0.14M, Stop replies 0.03M. Changed: the read-count note
+  (2,850 of ~300 characters, 200 of each the protocol's own sentence on how reads count) says the counts, and the
+  sentence only at the first read drawn from the reserve and the last (`countdown`, test
+  `where_it_starts_to_bite`); a merge refusal names at most twelve paths and how many more (`finalize.listed`: task
+  94's named its 166 receipts to the planner and its session). 2 mutation cases. Deployed 12:04:57. Not changed: the old
+  form's change refusal (67, none since 23:45 yesterday); the proposals, findings, answers and questions, which are
+  what their readers act on; the protocols' length — sharing them would mean holding them in the bases (a base rebuild,
+  the owner's), and trimming them is the owner's text.
+  And the reuse's own resume (11:00) gave the brief whole again (~7K), which the resumed session holds: the brief's
+  hash is kept at a start (`brief_sha`, through the re-queue), and the resume says "Its brief is as you have it." unless
+  the planner changed it. Tests `comes_back_goes_to_the_session`, `brief_changed_is_given`; 2 mutation cases.
+  Deployed 12:08:17.
+- 12:20 design-171 reviewed request by request (the owner): 46 requests, 4.1M; about 20 avoidable (1.7M): the entry drafted
+  in six files then written again (6, 0.55M), reading on outputs cut at 5K (6, 0.41M), the machine (5, 0.38M), task-list
+  calls alone (2, 0.17M), its own acceptance check (2, 0.16M). The machine's: granted at 11:39:04 four minutes into a
+  request, its claim cleared at 11:42:05 (CLAIM_GRACE from the grant) before it had read the mail. Now a claim given by
+  mail is `seen=False` and held up to CLAIM_UNSEEN (600 s); the gauge marks it seen when the session's mail says so
+  (`claim_seen`), and CLAIM_GRACE counts from then; a resume that says so (produce) and the session's own
+  `measuring` are seen at once. Test `given_by_mail_is_held`; 2 mutation cases. Deployed 12:18:48 (the owner: yes).
+  (the owner: yes to 3) implementer, investigator and designer protocols: the task list made in the request of the
+  first reads, each update in the request of the work it marks; the designer writes its entry once, into DECISIONS.md,
+  all its sections in one call (two or three for a long one), drafts only for what is not settled. Deployed 12:19:25.
+- 12:30 Open for the owner, written down, not built: the finalizer's own check for a documents-only commit (designs,
+  investigations) — notes/proposal-documents-only-check.md (--check optional for Markdown-only --files; a second-long
+  documents check; no heavy slot; the same check at its landing instead of LANDING_CHECK).
+- 12:35 deployed 12:30:43: (2, the owner's idea) a call declares how much it wants shown, `SHOW=20K …` up to the batch's 50K
+  (`shown_bound`, `v2.source_bound` for `v2.py read`, cut.py and the file-read cut name it; _production.md says it;
+  tests `declare_how_much`, the read test; 3 mutation cases). And main: from 11:24 to 12:23 one landing held main while
+  it waited for a heavy run for its check with what landed, and 147 and 132 were refused behind it and went to their
+  implementers through the planner, with nothing to do. `finalize.MACHINE`: a landing that would be checked with what
+  landed and cannot start a heavy run now lets main go, waits (`machine_free`, wait_for_isabelle's own test without
+  admitting), and lands after; past its budget as before. A commit refused for main held past its budget is
+  `lands_again` (why: main) and lands again by itself, no session; may_come_back holds no session for it. Tests
+  `lets_main_go` (main free while it waits), `lands_again_by_itself`; 2 mutation cases.
+- 12:45 Open for the owner, planned, not built: landing trains with the documents-only check folded in —
+  notes/plan-landing-train.md (a queue; one lander at a time takes every accepted task waiting as one train in an
+  integration tree; one check of the combination; a failure resolved by attribution from the check's report and
+  bisection on both heavy slots, never one by one — the owner: "do not allow that"; documents-only commits take no
+  heavy slot). Measured: 38 rechecks, median 302 s, 37 passed.
+- 12:58 the owner's decisions: the finalizer takes over the proof base's advance and the receipts (a harness commit per
+  landing is fine); the lineage's depth decided by measured data. Planned (notes/plan-landing-train.md 1a, 1b): the
+  base and receipts follow main; the finalizer takes the session's own accepted check when the tree is unchanged; and
+  checks batched across tasks — sessions check with probes, the repository's check is the harness's, run once for
+  every task ready (attribution and parallel bisection as in the train). Measured: 235 heavy runs in 17 h (80 by
+  sessions, 27 of them refused; 116 finalizer, 24 of those repeats; 39 landing); 93% of finalizer checks pass.
+- 13:04 the machine rebooted (uptime from 13:04): /tmp is a tmpfs, and with it went every stored Isabelle heap
+  (`/tmp/structural-isabelle`: complete-20260921a and bases a–d) and the active pointer
+  `/tmp/structural-active-context.json`; the base directories under `.build/` stand without their heaps. Every check
+  and probe fails in seconds until a base exists. plan-43 (13:07–13:14) rewrote #144 into the lasting fix (heap store
+  and pointer under `.build/`, one complete proof after the interrupted landings) — but #144 waits on 128, 132, 147,
+  172, 173 and 175, whose own checks need a base. The owner stopped the orchestration at 13:14 (`stop.sh --keep-warm`).
+  An interim complete base is established from HEAD (`incremental_check.py establish`, /tmp/structural-accepted, the
+  tool's fallback when no pointer exists) so that those landings can be checked; #144 then makes it lasting. Found on
+  the way: `establish` inside Claude Code's sandbox puts its heaps under `$TMPDIR/structural-isabelle` (tools/build.py's
+  `--cache-home` defaults to `tempfile.gettempdir()`), where the base's own heap identity never looks — run with
+  `TMPDIR=/tmp`.
+- 13:26:50 deployed stages 1 and 2 of notes/plan-landing-train.md. (1) documents-only: `v2.documents_only` (Markdown
+  outside theories/, tools/, validation/); `--check` optional for it (`v2.DOCUMENTS_CHECK`); `finalize.documents_check`
+  (tools/check.py `source_checks()`, THEORY_MAP.md rows that name no theory or twice — only what HEAD does not already
+  have — and conflict markers), at the hand-over and at the landing instead of LANDING_CHECK, no machine. (2) the base
+  and receipts follow main: a landing check runs `--advance-base` into `.build/bases/<time>-task<ID>`, each recorded in
+  `state/lineage.jsonl` (depth, rebuilt, phases, heap bytes: the depth is decided from it); after the landing the harness
+  retains and commits its receipts alone (`retain_landed`); a landing that did not happen puts the pointer back
+  (`undo_advance`, writing through a link at the old path, as #144 will leave); `v2.prune_bases` (with the tidy) keeps
+  every level's proof, drops its recipes/ and exports-context/, removes a base no lineage holds after BASE_KEEP with its
+  heap (tmpfs: memory), and prunes nothing without a pointer. The receipts refusal and _finishing.md say so. Tests:
+  documents (hand-over, finalizer, HEAD's own row, landing), advance and receipts, put back, prune; 21 mutation cases,
+  all caught (the landing ones only after the tests were moved out of the file's `if __name__` block, where pytest never
+  collected them). Once #144 lands: v2.ACTIVE_CONTEXT and v2.ISABELLE_HOME are to be read from the one module it names.
+- 13:28:34 the interim base is established (1,825 theories, 679.8 s; heap 841 MB; Pure and HOL rebuilt into /tmp/structural-isabelle too); the check tool selects it (load_parent verified). An event for the next planner says so, and that advances and retentions are the harness's now (Q11), documents need no --check.
+- 13:52 the xhigh layer went cold: no xhigh fork started between 12:28 and 13:45 (the stop), and its own cache entry
+  outlived nothing — review-129.2 (13:45) and review-133.2 (13:48) each read only the stable base (273,316) and wrote
+  ~236K. A fork that misses writes its own prefix, never the layer's (base.sh's own finding for the stable base), so
+  every xhigh fork would miss until a new layer is made; and the daemon never pings a layer whose `<who>-base.hit` is
+  fresh, which every fork's start and every kept session's ping touch (v2.hit_chain), though they read their own
+  entries and not the layer's — the session review's "layer last hit" reads the same mark. Asked the watchdog for an
+  xhigh layer refresh (state/xhigh-layer.refresh: one frontier write on the warm stable base instead of ~236K per
+  fork). Not changed: pinging every layer every 40 minutes whatever its forks do would cost more (~500K cached reads
+  a ping) than the two misses in three days; the misleading mark is left as an observation for the owner.
+- 13:56:50 deployed stage 3 (and 4) of notes/plan-landing-train.md: landing trains, `train.py`. A task in its own tree
+  is committed on its branch and queued (state/landing-queue.json); whoever holds main next — a finalizer, or
+  `finalize.py land-queue` the watchdog starts when entries wait and nobody lands them — lands every entry waiting as
+  one train: merged onto main in `.build/trees/train-a|-b` (imports, rows, keep_marked, the gate: a member that cannot
+  be merged is taken out and said), one check of the combination (documents alone: the documents check; else the
+  documents' rows and markers, then LANDING_CHECK advancing the base), main fast-forwarded once, the receipts and
+  HANDOFF.md in one harness commit ("Retain …"), one push, the planner told once (`v2.landed_together`). A failed
+  train: attribution from its report (failed theories → their import closure; failed recipes → their manifests'
+  files; host tests → the tools) — the cleared land after one check, the suspects checked stacked on top; what nothing
+  names in halves side by side on both heavy slots; an interaction lands the first half and checks the second on top;
+  a member found gets main brought into its tree and its quick fix with that check's log. Main let go while a train
+  waits for the machine or the one tree; a combination checked is not checked again for the wait (PASSED). A finalizer
+  whose budget ends leaves its entry queued (lands_again(main) is gone for own trees); known failures carry over to the
+  next lander. ORCH_TRAINS=0 restores the one-by-one landing. Tests: TrainTests (7) plus the landing suite, all
+  through trains (intended changes: check outputs under .build/tasks/trains/, imports in main's layout first, the
+  put-back log); 14 mutation cases, all caught. planner.md and README say so.
+- 13:58:26 deployed: v2.job_stale — a background job whose output's directory is gone counts as ended (the reboot took implement-163's run and /tmp with its output; the job counted as running and held task 163 parked). Test `output_went_with_a_restart`; 1 mutation case, caught.
+- 13:59:28 deployed: an ended job is said once a day (v2.job_ended, say_once under state/jobs-ended/): every read of a session's jobs judged it again and logged it each time.
+- 14:04:57 deployed: the proof base's lasting places. fix-144 (13:40–14:02) made a complete proof of HEAD a2ed0ed7
+  (777 s) at .build/tasks/base-lasting/complete-20260922e, its pointer .build/tasks/base-lasting/active-context.json and
+  its heaps in .build/tasks/base-lasting/isabelle-home, named once in tools/isabelle_places.py (in its tree; it lands
+  with #144), and turned the /tmp pointer and home into links. Until #144 lands, main's tools are older: an advancing
+  check (a landing's, a train's) replaces the /tmp pointer link with a file of its own (fix-144's follow-up). Now
+  `v2.ACTIVE_CONTEXT` and `v2.ISABELLE_HOME` are the lasting ones once the lasting place is there, and
+  `v2.keep_pointer_links` (every watchdog pass, stopped or not, and before the finalizer reads the base) carries a
+  pointer an older tool wrote over the link to the lasting pointer and makes the link again, and makes the /tmp links
+  again after a reboot. Test `older_tool_wrote_over`. Once #144 has landed and every tree has brought main in, the
+  links are no longer read; v2 could then read tools/isabelle_places.py itself.
+- 14:15:10 deployed: the ended-job rule narrowed to Claude Code's own /tmp area (v2.CLAUDE_TMP, /tmp/claude-<uid>/), which a reboot clears — the tests' fictional paths (/x/…, /t/…) and any other path stay as they were.
+- 14:06–14:09 what the lasting base's link did, and the repair (the planner told, 14:09 and 14:10): a base records its
+  heap by its absolute path; fix-144's link of /tmp/structural-active-context.json to the lasting pointer led every
+  tree's older tools to complete-20260922e, which they refuse ("Accepted heap/database changed", in a second). The
+  landings of 128, 132 and the trains of 147, 172, 171 were sent to quick fixes, the checks of 173, 175, 179, 181, 151,
+  145 told their commands were not runnable. Removed the pointer link (14:07:59: the older tools fall back to the interim
+  base /tmp/structural-accepted, still valid through the heap-store link); `v2.places()`: the harness reads the pointer
+  main's own tools read (tools/isabelle_places.py once #144 lands, /tmp before); `keep_pointer_links` keeps only the
+  heap-store link, never crosses the pointers. Put the tasks back (to land or be checked, no failure counted), told
+  147 and 151, whose fixes had begun. My own slip: an edit cut `_read`…`base_lineage` out of live v2.py from 14:07:59 to
+  14:08:27 (a slice ended at the wrong anchor); restored from the backup; nothing in the log failed in that window.
+- 14:20:54 deployed: (1) a check the proof base refuses before it begins (`finalize.BASE_REFUSED`: heap changed or
+  missing, lineage broken) is nobody's failure — a hand-over's stays checking and is run again by the watchdog once the
+  pointer changes or after BASE_RETRY (600 s); a train's or a batch's entries stay queued (the lander waits for the base
+  to change); (2) train.py's rounds as a strategy (Train, Batch) over two queues; (3) stage 5, dormant behind
+  ORCH_BATCHES=0: `v2.py check` (a snapshot of the task's tree, queued, the session parked for "check" and resumed with
+  its result), `finalize.py check-batch`, the finalizer's hand-over of exactly the repository's check joining the batch
+  (`BATCHABLE`), a passed tree not checked again (state/check-results.json), the guard pointing own-tree sessions to
+  `v2.py check`, the watchdog starting a batcher; (4) integration and check trees (any non-numeric name under
+  .build/trees) are no tasks' trees; the combined checks' bulk is pruned after an hour, their reports kept. Tests:
+  BatchTests (4), base-refused (2), the guard, pruning; the stage 3 and base-refused mutation cases all caught.
+- 14:24 correction: complete-20260922e's accepted-context.json was re-recorded by fix-144 at 14:14:33 with its heap under
+  /tmp/structural-isabelle; both the older tools and #144's accept it now (verified), and the 14:06 failures were the
+  record as it stood then, not a lasting incompatibility; the planner is told. The first live train landed at 14:23:15:
+  tasks 171 and 172, one check (159 s, 0 theories rebuilt: its recipes and host tests), the base advanced, one harness
+  commit "Retain the recipe receipts of the check tasks 171 and 172 landed with, and the planner's state".
+- 14:25:13 switched on: checks batched across tasks (ORCH_BATCHES=1): train.py, protocols/_checks.md (the repository's check of a task in its own tree is asked for with `v2.py check`), _finishing.md (a hand-over of exactly that check joins the batch; a tree its `v2.py check` passed is not checked again), README. Suites green but the three location-bound tests (green on live); stage 5 mutation cases (9) all caught. The nine finalizers checking since 14:09 run the older code and check one by one; every check handed over from now joins a batch.
+- 14:43:01 removed state/isabelle-admitted/173 (written 14:26:13 by 173's older finalizer, stopped at the owner's word; the relaunched one counted it as its own unseen run, and the batch of seven waited behind a phantom).
+- 14:45:20 deployed: an admission marker names the process let start the run (finalize.wait_for_isabelle writes its pid; v2.unseen_finalizer_runs reads it): a train's or a batch's lander admits under its first member's name and runs the check itself, and that member's own finalizer — running nothing — made the run count twice (the train of 144 and 132 at 14:42 counted 3 heavy runs for 1); a marker older than the finalizer on record (a stopped one's) counts for nobody. Test `counts_until_its_isabelle_shows` (+2 cases), 2 mutation cases.
+- 14:46:23 deployed: a batchable hand-over check that runs by itself says why (ATTENTION when the batch gave no answer). Unexplained: task 151's relaunched finalizer (14:27:46, queued in the batch) ran its own check at 14:32:46 with nothing logged; its check passed. The batch of the others waited behind phantom runs (above) and the train of 144 and 132, which lands #144's tools.
+- 14:48:03 #144 landed with 132 as one train (79f16061; 368 s, 177 theories rebuilt, heap 79.6 MB): main's tools name the lasting places (tools/isabelle_places.py), and the harness reads the lasting pointer since (v2.places): it names the train's advanced base over complete-20260922e (lineage depth 2). Trees made before it keep the /tmp pointer (complete-20260922e) until they bring main in. 14:44:49 the first batch: tasks 173, 175, 181, 179, 145 and 163 checked together with main.
+- 14:52:02 deployed: v2.snapshot adds with --ignore-errors and leaves out only what git refuses as no regular file (the sandbox's /dev/null mounts over .bash_profile and .bashrc in a session's tree: implement-185's `v2.py check` was refused, q59); any other error still refuses. Test `snapshot_leaves_out`. The planner is told.
+- 15:05:19 deployed: manifest.py's stale line says each load part with its own time (the stable reference, the layer) and apart what differs only in the session's tree (its work, or main moved since the tree was made: bring-main); a file only the one tree holds (the generated indexes) is compared there. The owner asked why task 145's session was told tools a layer loaded at 14:55 were 'stale since xhigh load 02:00:38': the one line took the stable load's time over both parts, and its tree predated #144's tools. Test `said_by_the_load_that_holds_it`, 2 mutation cases.
+- 15:06:38 asked the watchdog for a high layer refresh: the high layer, loaded 03:33:15, held 17 files changed since (12 theories, the tools #144 rewired: incremental_check, build, development_answer), at 17.5% of its tokens, below the 20% refresh line; implementers and fixers fork it. max (14:48) and xhigh (14:55) layers are current; all three stable parts hold the same 9 changed theories (a restable is the owner's).
+- 15:06:41 my refresh request met the high stable base's own entry cold (≈676 min): the harness's rule loads the stable base again before its layer, so the request cost a whole high stable load as well (it also brings the stable part current). Before asking for a refresh: read the stable entry's age in the review's 'standing' (warm under ~55 min), and ask the owner when it is cold.
+- 15:16:20 deployed: a SHOW declared at the head of any command of a call counts, the largest (work_meter.shown_bound): implement-130's `sed …; SHOW=12K sed …` was cut at the default. Test in declare_how_much; mutation cases updated (2 caught). From implement-130's review (the owner's ask): 14 requests, 0 errors, one-call hand-over; 4 spills at the 5,000-byte default (19.6K, 14.4K, 12.5K, 8.3K), each remainder read later; 3 requests (#15–#17) building by hand the recipe-reach list its brief demanded. Across today's sessions: 257 spills in 101 sessions, the remainder read later in 52%, whole output median 7.5K bytes, 72% ≤ 10K, 92% ≤ 20K; 5 briefs demand the recipe-reach list.
+- 15:23:35 deployed (the owner: yes): READ_BYTES 10,000 (was 5,000): on the day's 257 cut reads in 101 sessions, a median 7.5K whole, 72% within 10K, the rest read later in 52%. ReadTiersTests pinned to 5,000 (their fixtures measure the mechanism); a v2 read test's claim relative to it corrected.
+- 15:25:08 deployed (the owner: yes): `v2.py read reach:A,B` (and `reach`: the task's changed theories): the recipes whose exported theory reaches each theory through its imports, in the tree's own sources; 'all N', 'all but …', or the few named; a theory no recipe reaches named so. _production.md lists it. 0.03 s. Test `which_recipes_reach_each_theory`, 1 mutation case.
+- 15:32:10 deployed: the harness states its own checks in the commits it makes — a task's commit gets 'Checked by the harness: the repository's check of this work with main [and the work of tasks …] passed in N s — T theories, R rebuilt and K reused from the base; recipes run and reused, all accepted; tool and kernel tests' (finalize.harness_validation, from the check's report: check_output recorded for batches, reuse and solo checks; the documents check said as such); a train's 'Retain …' commit closes with 'Validation: the harness's check of tasks … together with main, exactly as it lands, …'. _finishing.md: the Validation paragraph states what the session verified itself; reviewer.md: the harness's outcomes missing from a message is no finding; the planner told. Task 181's review had rejected a message saying the landing check 'is run by the finalizer' (its brief asked for the landing check's outcome, which no session can know). And manifest.py's stale line says a file once, under the load that brought it: a layer's kept record holds the stable files too (the owner: 'why twice?'). Tests; mutation cases caught.
+- 15:36:35 deployed: a lander lands one train a call and lets main go between them (train.rounds returns after each; run_lander and run_batcher go round again while entries wait): the reports it defers while it holds main are made when each train has landed. Task 151 landed at 15:30:23 while 181, 145 and 163 waited; its lander went on to their train holding 151's report, 151's finalizer ended with its entry decided, and the watchdog sent a landed task to the planner, which queued it, and implement-151.2 was started on it (released at 15:33, 151 recorded done as c26ecb22 by hand). The watchdog (15:36:19) makes a landed entry's report itself when no lander holds main and a minute has passed, and never takes such a task for a finalizer that ended without reporting. Test `report_was_never_made`, 1 mutation case.
+- 15:47:39 deployed: BATCH_BYTES 80,000 (the owner; sessions' bashOutputMaxChars is 128,000); `read diff` shown whole up to the call's bound by default, as a brief named whole (21 of the day's 54 reviews read it twice); `v2.py read probes`: the task's probe runs, newest first — what each loaded, its completion marker, its errors and time, and whether each probed theory is the tree's as it stands (a renamed copy matched by its body against the theories the task changes; an empty probe said to prove nothing) — reviewers spent about a request each digging it out (47 in 55 reviews). From review-197 (the owner's ask): 6 requests, 2 of them the diff's remainder and the probe hunt. _production.md lists both sources; the read-batch tests pinned to 50K. Tests `diff_whole`, `probes_certified`; 2 mutation cases caught.
+- 15:48:00 reviewer.md's first batch names `read probes` beside result, diff (whole) and log.
+- 15:59:37 deployed (the owner's choices from design-218): `v2.py read check:STAMP` or `check:ID` — a check the harness ran, found under .build/tasks/batches/, .build/tasks/trains/ or .build/bases/ by its stamp, or by a task's number (its finalized.json check_output, else the newest batch or train whose stamp names it): its report and log paths, status, time, rebuilt and reused counts and base, error, failed recipes with where their logs are, failed host tests, the proof's *** errors (the first twelve). A batch's failure text and a train's failure tail name the report and the read. design-218 spent five requests finding a batch report its brief named by its stamp. And every allowed Bash call of a session starts with `setopt nonomatch 2>/dev/null; ` (work_meter.globbing, applied last; unwrapped strips it): zsh refuses a whole command at an unmatched glob however its errors are redirected — `cat a *x* 2>/dev/null` prints nothing, a `for` over an unmatched glob ends the whole call — while sessions write for bash; 65 of the day's 8,842 calls in 41 sessions. Sessions run under --permission-mode auto, so the rewritten call still goes to the classifier. Tests `what_a_check_found`, `unmatched_globs_left_as_they_are`; 2 mutation cases caught. Backup: state/dev-patches/predeploy-155937.
+- 16:06:22 deployed: a batch tells a member its report found at once, wherever its group stands (train.Batch.found_at_once): task 153, found by the report of its batch with 176 at 15:42:53, was told at 15:46:19, after the 206 s check of 176 alone that the report had cleared, while its session waited parked. A train still tells its found member after what the report cleared has landed (Train.found_at_once False): its tree gets main merged in, and that main should hold what landed, and its report waits for main to be let go anyway. The narrowing line said "176 is cleared, and 153 is checked apart", the reverse of what ran; it now says "its report clears 176, checked again without task 153, which it finds" (or "tasks …, which are checked in halves"). Test `failure_goes_to_its_own_task` pins the order; 1 mutation case caught. The dev copy had test_layer.py, which the mutation doc says a copy leaves out (it reads the project's THEORY_MAP.md): its collection error read as "broke the import"; removed from the copy.
+- 16:12 measured, no change: whether batches should overlap (the plan's 1b.3 says a batch starts "when a heavy slot is free"; the batcher runs one at a time). Since BATCHES went on at 14:25: 26 waits for a batch, 191 min in all; 99 of them in one stretch, 14:27–14:41, when seven base-refused checks were queued at once while the solo checks begun before batching (147, 132, 151) held both heavy slots — the switch-over, not the batcher; 29 min behind a train's check, which advances the base and so runs alone; 63 min beside one running batch, the part an overlapping batch could take back (~2.4 min a task). Against it: an overlap is one more heavy check, and it narrows the empty-machine windows a train's advancing check needs. Left as it is; to be measured again with a day of steady state.
+- 16:36:04 deployed (the owner, on implement-221's analysis: "the failure outputs should be batched and then fixed together. Try to find other similar failures and fix them too"):
+  1. A probe reports every failing proof of a theory in one run: the guard leaves `--parallel-proofs 0` out of a probe (work_meter.forked, heredocs untouched), and check_errors.py says so after the output (`--note`); `IN_PLACE=1` leading the call keeps it, for what in place is for — which proof does not return, after a probe timed out (_checks.md says both). In place a probe stops at the first failing proof; forked it lists all, in the same 5.4 s (a probe of a theory with three failures, both ways). 512 of the day's 728 probes ran in place, and 100 times in 31 sessions the next probe failed further down the same theory; implement-221 spent requests 6–8 on lines 60, 390 and 395 of one theory.
+  2. A check the harness runs (a batch, a train, a finalizer's) ends with every error it reported: fz.run_logged runs it through check_errors.py watching its --output (the proof's build.log, the recipes' logs), the list kept whole beside its report when too long, and log_tail sends the whole list. Since the harness runs the checks, a failure reached its session as the check's one JSON line cut at 300 characters, naming build.log and no error — task 153 at 15:46. Test `lists_every_error_its_check_reported` (a fake check shaped as the real one: errors only in proof/build.log; the test world's check command now written with --output, as the real one is).
+  3. `v2.py read check:` lists every error of the proof, one line each (check_errors.errors_in), where it showed the first 12 `***` lines (the 40 of batch176-153's are 2 errors).
+  4. bring-main merges main under the session's uncommitted changes instead of refusing them: set_aside keeps its versions of the files main changed too (.build/tasks/ID/bring-main/), merged_in commits the merge as before, carry_back brings each version onto it as a three-way merge (index files as unions with their rows agreed; other files with lines both changed marked `<<<<<<< main` … `>>>>>>> yours`), put_back restores them exactly on any refusal. The refusal told sessions to copy main's version in by hand (`git show main:PATH`): a branch holding main's lines without main in its history lands them as its own changes, and a row main changed again is then both sides' — THEORY_MAP.md held a row twice at the landings of task 176 (16:21, Native_Collection_Programs), 97 (05:23) and 24 (23:29), each a fix round. 11 of the day's 83 bring-mains were refused so. The refusal that remains (a file that could not be set aside) says not to copy by hand.
+  Swept for more: back-to-back refusals of one kind of call with different reasons — none but a session trying three forbidden ways to write a file (each refusal named the right way); `again` and `change` already say every block's problem, the documents check every problem, a review every finding. Tests; 4 mutation cases caught.
+  Also: test_v2's review test expected the first batch as it read before 15:48 (reviewer.md names the diff whole and `read probes`); updated. Backup: state/dev-patches/predeploy-163604.
+- 17:02:10 deployed (the owner, on brief-230's analysis and the two messages about task 176: "Add them to the other fixes", "tell the planner what to do once you deploy it"):
+  1. `v2.py tell ID... --file FILE` tells the file's text; an unknown `--` option is refused, not told. It told the words "--file PATH" themselves: six of plan-45's messages of the day (t176, t176b, t176c, t212, t212b, t230), and brief-230 never had its own.
+  2. A planner's notes (.build/plans/plan-N/*.md) are no body (work_meter.BODY): every statements reader reads them. brief-230 was refused t230.md twice (requests 9–10), losing the calls beside it.
+  3. A row one side holds as the other side once had it is a copy, and the other side's row stands (finalize.agreed with row_history: the rows each side's first-parent line held since the merge base; rows_agreed passes both sides', carry_back main's). implement-176 copied main's rows by hand (as the old bring-main refusal said), its branch 5562b8a6 held them without main in its history, and every merge after held them twice: its landing (16:21), review-176.3's rejection (16:42), bring-main's merge commit refused by the gate (q62, 16:50). Dry run on task/176 against main: before, Native_Collection_Programs and RRA_Syntax_Forests twice; after, the merged map differs from main only in 176's three rows. The planner had made #243 to re-land 176's work from HEAD (sound, left to finish).
+  4. show.py (and `v2.py read NAME`) resolves a qualifier as a theory where one has that name, else as a locale (a fact in its `locale … begin` / `context … begin` block, or `lemma (in L)`) or an interpretation's prefix (the fact of the locale it interprets). It took every qualifier for a theory: brief-230's store_found_program.any_exact and four more "introduced nowhere, mentioned nowhere"; 19 such names in 12 sessions of the day.
+  The planner told by an event (what 176's failure was, let #243 land and leave 176 dropped, no such workaround again; the six --file messages and t230's unanswered question on #189 and #191; show.py). Tests (test_show's locale test; the row tests with the repository's union attributes); 6 mutation cases caught. Backup: state/dev-patches/predeploy-170210.
+- 17:09:57 deployed: `v2.py read probes` names a probe's two times — its theories' load (Isabelle's elapsed time, the log's last) and the run's whole (the probe tool's `seconds`, the heap's load included). It gave the first alone and unnamed: task 188's commit message said 6.0 s (the run), the read 0.235 s (the theory), and review-199 flagged them as differing (a minor finding, the owner's question: harness-made). Test `probes_certified`; 1 mutation case. Backup: predeploy-170957.
+- Correction to 16:12's measurement: a train's check does not run alone. It is admitted as any heavy run (train.run_checks: wait_for_isabelle(lead, False)), and at 17:09 train 233 and batch 225 ran side by side (heavy 2, no exclusive holder). So of the 191 min of batch waits, the 29 counted "behind a train" had a slot taken by the train, not the whole machine; the conclusion stands (an overlapping batch would take the second slot a train or a batch holds), but not its reason.
+- 17:21:41 deployed (the owner: "check that everything is hitting cache, that there is no unexpected misses"): a read keeps warm the entry it read and nothing under it (v2.hit; hit_chain removed). Since 10:00, 1,648 of the sessions' own requests: none missed within the hour; nine base/layer loads, each a refresh the log names (13:53 by hand, 14:48, 14:55, 15:06 mine, 15:42, 15:49, 16:05, 17:07) and each read at 98–99% by its fork. The misses were three, all one cause: every request of a session marked its origins hit down to the base (ctx_gauge → hit_chain, "measured 2026-09-18"), but a request reads the longest prefix cached, and a shorter entry under it is not kept alive (base.sh's own note, the max refresh of 2026-09-21). plan-42's 95 requests (10:46–12:54) kept kb-10 marked warm — held as the knowledge base, never pinged — while its entry expired at ~11:47: resumed at 12:54, 527,247 tokens written anew. design-171's requests until 13:33 kept the xhigh layer (7cba04e1) marked while its entry, last read by review-176's fork at 12:27, expired: review-129.2 and 133.2 forked it at 13:45 and 13:48, 235K each. Now a session's request marks itself (ctx_gauge), a fork's start its direct origin (start), a ping the session pinged; the daemon and the watchdog keep bases and held sessions warm by what they see truly read. Tests rewritten (test_v2, test_ctx_gauge, test_layer: they pinned the chain); 1 mutation case. Backup: predeploy-172141.

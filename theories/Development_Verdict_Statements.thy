@@ -429,33 +429,120 @@ proof -
   then show ?thesis using inj bound by (simp add: inj_on_image_mem_iff)
 qed
 
+text \<open>
+  Every entity of a presented state has its row at some key; the entity-key condition names one key
+  assignment that keys every entity's row as the presentation does. It is a condition of a presentation,
+  stated once here and consumed by name.
+\<close>
+
+lemma entity_row_presented:
+  assumes present: "state_presents key S R" and member: "e\<in>set (snd (snd S))"
+  shows "\<exists>a. (a,entity_row key (snd S) e)\<in>presented_rows R"
+proof -
+  obtain a where "(a,entity_row key (snd S) e)\<in>set (state_entities R (entity_kind_of e))"
+    by (rule state_presents_row[OF present member])
+  then show ?thesis by (blast intro: presented_rows_member)
+qed
+
+definition entity_rows_keyed ::
+    "(nat \<Rightarrow> state_key) \<Rightarrow> (isabelle_entity \<Rightarrow> state_key) \<Rightarrow> isabelle_rooted_context \<Rightarrow> state_rows \<Rightarrow> bool" where
+  "entity_rows_keyed key ekey S R \<longleftrightarrow> (\<forall>e\<in>set (snd (snd S)). (ekey e,entity_row key (snd S) e)\<in>presented_rows R)"
+
+text \<open>
+  The keyed rows of a \<open>kinds_present\<close> selection having the key of \<open>c\<close> among their subjects are the
+  presented rows of the entities the selection's predicate holds of that have \<open>c\<close> among theirs. Every use
+  that reads the rows about a constant, over whatever selection, is a corollary of this one lemma.
+\<close>
+
+lemma selection_rows_about:
+  assumes present: "state_presents key S R" and kinds: "kinds_present demanded ks"
+    and bound: "c<length (fst (snd S))"
+  shows "(\<exists>k\<in>ks. (a,p)\<in>set (state_entities R k)) \<and> key c\<in>set (row_subjects p) \<longleftrightarrow>
+    (a,p)\<in>presented_rows R \<and> (\<exists>e\<in>set (snd (snd S)). demanded e \<and>
+      c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e) \<and>
+      p=entity_row key (snd S) e)"
+proof
+  assume "(\<exists>k\<in>ks. (a,p)\<in>set (state_entities R k)) \<and> key c\<in>set (row_subjects p)"
+  then obtain k where k: "k\<in>ks" and row: "(a,p)\<in>set (state_entities R k)"
+    and about: "key c\<in>set (row_subjects p)" by blast
+  obtain e where e: "e\<in>set (snd (snd S))" "entity_kind_of e=k" "p=entity_row key (snd S) e"
+    by (rule state_presents_row_origin[OF present row])
+  have "demanded e" using kinds_presentD[OF kinds, of e] e(2) k by simp
+  moreover have "c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
+    using entity_row_subject_key[OF present bound e(1)] about e(3) by simp
+  ultimately show "(a,p)\<in>presented_rows R \<and> (\<exists>e\<in>set (snd (snd S)). demanded e \<and>
+      c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e) \<and>
+      p=entity_row key (snd S) e)"
+    using presented_rows_member[OF row] e(1) e(3) by blast
+next
+  assume "(a,p)\<in>presented_rows R \<and> (\<exists>e\<in>set (snd (snd S)). demanded e \<and>
+      c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e) \<and>
+      p=entity_row key (snd S) e)"
+  then obtain e where row: "(a,p)\<in>presented_rows R" and e: "e\<in>set (snd (snd S))" "demanded e"
+    "c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
+    "p=entity_row key (snd S) e" by blast
+  obtain k where family: "(a,p)\<in>set (state_entities R k)" by (rule presented_rows_family[OF row])
+  have "k=entity_kind_of e"
+  proof (rule ccontr)
+    assume "k\<noteq>entity_kind_of e"
+    then have "entity_row key (snd S) e\<notin>set (map snd (state_entities R k))"
+      by (rule state_presents_kind_only[OF present e(1)])
+    then show False using family e(4) by force
+  qed
+  then have "k\<in>ks" using kinds_presentD[OF kinds, of e] e(2) by simp
+  moreover have "key c\<in>set (row_subjects p)" using entity_row_subject_key[OF present bound e(1)] e(3) e(4) by simp
+  ultimately show "(\<exists>k\<in>ks. (a,p)\<in>set (state_entities R k)) \<and> key c\<in>set (row_subjects p)"
+    using family by blast
+qed
+
+text \<open>A property of every row of a selection of families is one of every keyed row of the selected kinds.\<close>
+
+lemma selection_rows_all:
+  assumes selection: "set Fs=G ` ks"
+  shows "(\<forall>F\<in>set Fs. \<forall>z\<in>set F. P z \<longrightarrow> Q z) \<longleftrightarrow>
+    (\<forall>a p. (\<exists>k\<in>ks. (a,p)\<in>set (G k)) \<and> P (a,p) \<longrightarrow> Q (a,p))"
+proof
+  assume rows: "\<forall>F\<in>set Fs. \<forall>z\<in>set F. P z \<longrightarrow> Q z"
+  show "\<forall>a p. (\<exists>k\<in>ks. (a,p)\<in>set (G k)) \<and> P (a,p) \<longrightarrow> Q (a,p)"
+  proof (intro allI impI)
+    fix a p assume "(\<exists>k\<in>ks. (a,p)\<in>set (G k)) \<and> P (a,p)"
+    then obtain k where k: "k\<in>ks" and row: "(a,p)\<in>set (G k)" and about: "P (a,p)" by blast
+    have "G k\<in>set Fs" using selection k by simp
+    then show "Q (a,p)" using rows row about by blast
+  qed
+next
+  assume rows: "\<forall>a p. (\<exists>k\<in>ks. (a,p)\<in>set (G k)) \<and> P (a,p) \<longrightarrow> Q (a,p)"
+  show "\<forall>F\<in>set Fs. \<forall>z\<in>set F. P z \<longrightarrow> Q z"
+  proof (intro ballI impI)
+    fix F z assume F: "F\<in>set Fs" and z: "z\<in>set F" and about: "P z"
+    obtain k where k: "k\<in>ks" and Fk: "F=G k" using F selection by auto
+    obtain a p where zp: "z=(a,p)" by (cases z)
+    show "Q z" using rows k z Fk about zp by blast
+  qed
+qed
+
 theorem statement_rows_exact:
   assumes present: "state_presents key S R" and kinds: "kinds_present demanded ks"
     and bound: "c<length (fst (snd S))"
   shows "{p. p\<in>(\<Union>k\<in>ks. set (map snd (state_entities R k))) \<and> key c\<in>set (row_subjects p)}=
     entity_row key (snd S) ` set (development_answer_statements demanded (snd S) {|c|})"
-  unfolding kinds_present_rows[OF present kinds]
-proof (rule set_eqI)
-  fix p
-  show "p\<in>{p. p\<in>entity_row key (snd S) ` {e\<in>set (snd (snd S)). demanded e} \<and> key c\<in>set (row_subjects p)} \<longleftrightarrow>
-      p\<in>entity_row key (snd S) ` set (development_answer_statements demanded (snd S) {|c|})"
-  proof
-    assume "p\<in>{p. p\<in>entity_row key (snd S) ` {e\<in>set (snd (snd S)). demanded e} \<and> key c\<in>set (row_subjects p)}"
-    then obtain e where e: "e\<in>set (snd (snd S))" "demanded e" "p=entity_row key (snd S) e"
-      and k: "key c\<in>set (row_subjects p)" by blast
-    have "c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
-      using entity_row_subject_key[OF present bound e(1)] k e(3) by blast
-    then show "p\<in>entity_row key (snd S) ` set (development_answer_statements demanded (snd S) {|c|})"
-      using e by (auto simp: development_answer_statements_def development_answer_statement_def list_ex_iff)
-  next
-    assume "p\<in>entity_row key (snd S) ` set (development_answer_statements demanded (snd S) {|c|})"
-    then obtain e where e: "e\<in>set (snd (snd S))" "demanded e" "p=entity_row key (snd S) e"
-      and s: "c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
-      by (auto simp: development_answer_statements_def development_answer_statement_def list_ex_iff)
-    have "key c\<in>set (row_subjects p)" using entity_row_subject_key[OF present bound e(1)] s e(3) by blast
-    then show "p\<in>{p. p\<in>entity_row key (snd S) ` {e\<in>set (snd (snd S)). demanded e} \<and> key c\<in>set (row_subjects p)}"
-      using e by blast
+proof -
+  let ?A="{p. p\<in>(\<Union>k\<in>ks. set (map snd (state_entities R k))) \<and> key c\<in>set (row_subjects p)}"
+  let ?B="entity_row key (snd S) ` set (development_answer_statements demanded (snd S) {|c|})"
+  have statements: "e\<in>set (development_answer_statements demanded (snd S) {|c|}) \<longleftrightarrow> e\<in>set (snd (snd S)) \<and>
+      demanded e \<and> c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)" for e
+    by (auto simp: development_answer_statements_def development_answer_statement_def list_ex_iff)
+  have "p\<in>?A \<longleftrightarrow> p\<in>?B" for p
+  proof -
+    have "p\<in>?A \<longleftrightarrow> (\<exists>a. (\<exists>k\<in>ks. (a,p)\<in>set (state_entities R k)) \<and> key c\<in>set (row_subjects p))" by force
+    also have "\<dots> \<longleftrightarrow> (\<exists>a. (a,p)\<in>presented_rows R \<and> (\<exists>e\<in>set (snd (snd S)). demanded e \<and>
+        c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e) \<and>
+        p=entity_row key (snd S) e))"
+      by (intro ex_cong1 selection_rows_about[OF present kinds bound])
+    also have "\<dots> \<longleftrightarrow> p\<in>?B" using entity_row_presented[OF present] statements by blast
+    finally show ?thesis .
   qed
+  then show ?thesis by (rule set_eqI)
 qed
 
 theorem native_statements_exact:

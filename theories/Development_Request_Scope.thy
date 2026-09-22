@@ -13,7 +13,7 @@ text \<open>
   selection reading's shape: the subject's key with the body's family as context, the indexes of the
   families as value; the family is presented as the store of its keys (@{const support_term}).
 
-  \<open>support complete\<close> is no new notion: it is \<open>excess\<close> (theory \<open>Development_Verdict_Mentions\<close>) at the
+  \<open>support complete\<close> is no new notion: it is \<open>excess\<close> (@{locale excess_program}) interpreted at the
   selection of every family, read with the request's own support family; the verdict reads the same field
   in the answer state. The one new rule here is the row predicate "its key is cited": the row's key is found
   in the store given as the context. No field reads a kind, a row's identity or a store's absence.
@@ -23,7 +23,8 @@ subsection \<open>The rows about the subject, over every family, are the rows of
 
 text \<open>
   Over the selection of every family of a presented state, the rows having the subject's key among their
-  subjects are exactly the rows of the entities of the subject's scope. This is what both contracts consume.
+  subjects are exactly the rows of the entities of the subject's scope: @{thm [source] selection_rows_about}
+  at the selection of every kind. This is what \<open>scope cited\<close>'s contract consumes.
 \<close>
 
 lemma request_rows_about:
@@ -32,77 +33,34 @@ lemma request_rows_about:
   shows "(\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> Q z) \<longleftrightarrow>
     (\<forall>e\<in>set (development_constant_scope (snd S) c). \<forall>a. (a,entity_row key (snd S) e)\<in>presented_rows R \<longrightarrow>
       Q (a,entity_row key (snd S) e))"
-proof
-  assume rows: "\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> Q z"
-  show "\<forall>e\<in>set (development_constant_scope (snd S) c). \<forall>a. (a,entity_row key (snd S) e)\<in>presented_rows R \<longrightarrow>
-      Q (a,entity_row key (snd S) e)"
-  proof (intro ballI allI impI)
-    fix e a
-    assume e: "e\<in>set (development_constant_scope (snd S) c)" and row: "(a,entity_row key (snd S) e)\<in>presented_rows R"
-    have member: "e\<in>set (snd (snd S))"
-      and subject: "c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
-      using e by (simp_all add: development_constant_scope_member)
-    obtain k where family: "(a,entity_row key (snd S) e)\<in>set (state_entities R k)"
-      by (rule presented_rows_family[OF row])
-    have Fk: "state_entities R k\<in>set Fs" using selection by simp
-    have about: "key c\<in>set (row_subjects (entity_row key (snd S) e))"
-      using subject by (simp only: entity_row_subject_key[OF present bound member])
-    show "Q (a,entity_row key (snd S) e)" using rows Fk family about by fastforce
-  qed
-next
-  assume scope: "\<forall>e\<in>set (development_constant_scope (snd S) c). \<forall>a. (a,entity_row key (snd S) e)\<in>presented_rows R \<longrightarrow>
-      Q (a,entity_row key (snd S) e)"
-  show "\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> Q z"
-  proof (intro ballI impI)
-    fix F z
-    assume F: "F\<in>set Fs" and z: "z\<in>set F" and about: "key c\<in>set (row_subjects (snd z))"
-    obtain k where Fk: "F=state_entities R k" using F selection by auto
-    obtain a p where zp: "z=(a,p)" by (cases z)
-    have row: "(a,p)\<in>set (state_entities R k)" using z Fk zp by simp
-    obtain e where member: "e\<in>set (snd (snd S))" and "entity_kind_of e=k" and p: "p=entity_row key (snd S) e"
-      by (rule state_presents_row_origin[OF present row])
-    have about': "key c\<in>set (row_subjects (entity_row key (snd S) e))" using about zp p by simp
-    have "c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
-      using about' by (simp only: entity_row_subject_key[OF present bound member])
-    then have e: "e\<in>set (development_constant_scope (snd S) c)"
-      using member by (simp add: development_constant_scope_member)
-    have "(a,entity_row key (snd S) e)\<in>presented_rows R" using presented_rows_member[OF row] p by simp
-    then show "Q z" using scope e zp p by blast
-  qed
+proof -
+  have kinds: "kinds_present (\<lambda>_. True) UNIV" by (simp add: kinds_present_def)
+  have "(\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> Q z) \<longleftrightarrow>
+      (\<forall>a p. (\<exists>k\<in>UNIV. (a,p)\<in>set (state_entities R k)) \<and> key c\<in>set (row_subjects p) \<longrightarrow> Q (a,p))"
+    using selection_rows_all[OF selection, where P="\<lambda>z. key c\<in>set (row_subjects (snd z))" and Q=Q] by simp
+  also have "\<dots> \<longleftrightarrow> (\<forall>a p. (a,p)\<in>presented_rows R \<and> (\<exists>e\<in>set (snd (snd S)). True \<and>
+      c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e) \<and>
+      p=entity_row key (snd S) e) \<longrightarrow> Q (a,p))"
+    by (intro all_cong1 imp_cong selection_rows_about[OF present kinds bound] refl)
+  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set (development_constant_scope (snd S) c). \<forall>a.
+      (a,entity_row key (snd S) e)\<in>presented_rows R \<longrightarrow> Q (a,entity_row key (snd S) e))"
+    by (simp only: Ball_def development_constant_scope_member) blast
+  finally show ?thesis .
 qed
 
 subsection \<open>The field \<open>support complete\<close> is \<open>excess\<close> at every family\<close>
 
 text \<open>
-  The field's row reading is the mentions reading of \<open>excess\<close> (@{locale row_mentions_program}) at the store
-  of the support family; the field is the index's selection reading at it. The locale names the sites of
-  \<open>excess\<close>'s program shape, so a program that holds it at its sites inherits \<open>exact\<close> and the contract;
-  \<open>excess\<close>'s own program holds it at its sites (@{text support_complete_excess}).
+  The field is @{locale excess_program} at the selection of every kind (\<open>kinds_present (\<lambda>_. True) UNIV\<close>):
+  its row reading, its \<open>exact\<close> and its contract are the locale's. Its contract here reads the locale's at
+  the support family of the constants the scope's statements mention, taken by name through
+  @{thm [source] development_request_support_member}.
 \<close>
 
-locale support_complete_program = mentions: row_mentions_program P r e m kf ch +
-    search: native_store_search_program P k v + family: native_every_program P v r +
-    call: native_rule_family P g "[([0],subject_call_rule k)]" + every: native_every_program P s g
-  for P :: "'u native_system" and s g k v r e m kf ch :: "'u definition_site" +
-  fixes ident :: "isabelle_context \<Rightarrow> factor_term"
-  assumes identity: "\<And>y. term_formed (ident y)"
+locale support_complete_program = excess: excess_program P s g k v r e m kf ch ident
+  for P :: "'u native_system" and s g k v r e m kf ch :: "'u definition_site"
+    and ident :: "isabelle_context \<Rightarrow> factor_term"
 begin
-
-lemma row_exact:
-  "(r,Pair_Term (support_term ks) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
-    set (row_mentions (snd z))\<subseteq>set ks"
-  unfolding support_term_def
-  by (subst mentions.exact[OF identity]) (auto simp: support_store_lookup support_store_found)
-
-sublocale selection: subject_selection_program P s g k v r support_term ident
-    "\<lambda>ks z. set (row_mentions (snd z))\<subseteq>set ks"
-  by unfold_locales (simp_all add: identity row_exact)
-
-theorem exact:
-  assumes atom: "a\<in>set A"
-  shows "(s,Pair_Term (Pair_Term (path_term a) (support_term ks)) (subject_indexes_term ident A Fs))\<in>positive_meaning P \<longleftrightarrow>
-    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
-  by (simp add: selection.exact[OF atom])
 
 theorem contract:
   assumes present: "state_presents key S R" and bound: "c<length (fst (snd S))"
@@ -112,50 +70,35 @@ theorem contract:
     key ` fset (development_request_support (snd S) c)\<subseteq>set ks"
 proof -
   let ?scope="set (development_constant_scope (snd S) c)"
-  let ?X="development_request_support (snd S) c"
-  have atom: "key c\<in>set (map fst (state_atoms R))"
-    using atoms_present_atom[OF state_presents_atoms[OF present] bound] by force
-  have rows: "\<exists>a. (a,entity_row key (snd S) e)\<in>presented_rows R" if "e\<in>?scope" for e
+  let ?Y="development_request_support (snd S) c"
+  let ?X="ffilter (\<lambda>d. key d\<in>set ks) (fset_of_list [0..<length (fst (snd S))])"
+  have kinds: "kinds_present (\<lambda>_. True) UNIV" by (simp add: kinds_present_def)
+  have X: "d |\<in>| ?X \<longleftrightarrow> d<length (fst (snd S)) \<and> key d\<in>set ks" for d by (auto simp: fset_of_list_elem)
+  have support: "key d\<in>set ks \<longleftrightarrow> d |\<in>| ?X" if "d<length (fst (snd S))" for d using that X by blast
+  have Y: "d |\<in>| ?Y \<longleftrightarrow> (\<exists>e\<in>?scope. d\<in>set (entity_mentions e))" for d
   proof -
-    have "e\<in>set (snd (snd S))" using that by (simp add: development_constant_scope_member)
-    then obtain a where "(a,entity_row key (snd S) e)\<in>set (state_entities R (entity_kind_of e))"
-      by (rule state_presents_row[OF present])
-    then show ?thesis by (blast intro: presented_rows_member)
+    have "d\<in>set (entity_mentions e) \<longleftrightarrow>
+        (\<exists>p. isabelle_specified_proposition e=Some p \<and> d\<in>set (isabelle_term_constants p))" for e
+      by (cases "isabelle_specified_proposition e") (simp_all add: entity_mentions_def)
+    then show ?thesis by (simp add: development_request_support_member)
   qed
+  have inside: "d<length (fst (snd S))" if "d |\<in>| ?Y" for d
+    using that entity_mentions_positions state_presents_inside[OF present]
+    by (force simp: Y development_constant_scope_member state_positions_def)
+  have statements: "set (development_answer_statements (\<lambda>_. True) (snd S) {|c|})=?scope"
+    by (auto simp: development_answer_statements_def development_answer_statement_def list_ex_iff
+      development_constant_scope_member)
   have "(s,Pair_Term (Pair_Term (path_term (key c)) (support_term ks))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
-    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
-    by (rule exact[OF atom])
-  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>?scope. \<forall>a. (a,entity_row key (snd S) e)\<in>presented_rows R \<longrightarrow>
-      set (row_mentions (entity_row key (snd S) e))\<subseteq>set ks)"
-    using request_rows_about[OF present bound selection, where Q="\<lambda>z. set (row_mentions (snd z))\<subseteq>set ks"]
-    by simp
-  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>?scope. key ` set (entity_mentions e)\<subseteq>set ks)"
-    using rows unfolding entity_row_fields set_map by blast
-  also have "\<dots> \<longleftrightarrow> key ` fset ?X\<subseteq>set ks"
-  proof
-    assume each: "\<forall>e\<in>?scope. key ` set (entity_mentions e)\<subseteq>set ks"
-    show "key ` fset ?X\<subseteq>set ks"
-    proof
-      fix y assume "y\<in>key ` fset ?X"
-      then obtain d where d: "d |\<in>| ?X" "y=key d" by blast
-      then obtain e p where e: "e\<in>?scope" "isabelle_specified_proposition e=Some p" "d\<in>set (isabelle_term_constants p)"
-        by (auto simp: development_request_support_member)
-      then have "d\<in>set (entity_mentions e)" by (simp add: entity_mentions_def)
-      then show "y\<in>set ks" using each e(1) d(2) by blast
-    qed
-  next
-    assume support: "key ` fset ?X\<subseteq>set ks"
-    show "\<forall>e\<in>?scope. key ` set (entity_mentions e)\<subseteq>set ks"
-    proof (intro ballI subsetI)
-      fix e y assume e: "e\<in>?scope" and "y\<in>key ` set (entity_mentions e)"
-      then obtain d where d: "d\<in>set (entity_mentions e)" "y=key d" by blast
-      obtain p where "isabelle_specified_proposition e=Some p" "d\<in>set (isabelle_term_constants p)"
-        using d(1) by (cases "isabelle_specified_proposition e") (simp_all add: entity_mentions_def)
-      then have "d |\<in>| ?X" using e by (auto simp: development_request_support_member)
-      then show "y\<in>set ks" using support d(2) by blast
-    qed
+    development_answer_statements_excess (\<lambda>_. True) (snd S) {|c|} ?X=[]"
+  proof -
+    have program: "excess_program P s g k v r e m kf ch ident" by intro_locales
+    show ?thesis by (rule excess_program_contract[OF program present kinds selection bound support])
   qed
+  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>?scope. \<forall>d\<in>set (entity_mentions e). d |\<in>| ?X)"
+    by (simp only: answer_statements_excess_empty statements)
+  also have "\<dots> \<longleftrightarrow> (\<forall>d. d |\<in>| ?Y \<longrightarrow> d |\<in>| ?X)" by (simp only: Y) blast
+  also have "\<dots> \<longleftrightarrow> key ` fset ?Y\<subseteq>set ks" using X inside by auto
   finally show ?thesis .
 qed
 
@@ -194,9 +137,7 @@ lemma support_complete_excess:
   shows "support_complete_program verdict_mentions_system verdict_excess verdict_subject_family
     verdict_subject_search verdict_found_family verdict_row_found verdict_keys_found verdict_key_found
     verdict_found_search verdict_found_any ident"
-  unfolding support_complete_program_def support_complete_program_axioms_def row_mentions_program_def
-    store_found_program_def native_store_search_program_def native_every_program_def
-  by (intro conjI allI; (rule verdict_mentions_family | rule identity)) (simp_all add: verdict_mentions_rule_defs)
+  unfolding support_complete_program_def by (rule verdict_excess_program[OF identity])
 
 corollary request_support_complete:
   assumes identity: "\<And>y. term_formed (ident y)"
@@ -292,7 +233,7 @@ text \<open>
 theorem contract:
   assumes present: "state_presents key S R" and bound: "c<length (fst (snd S))"
     and selection: "set Fs=range (state_entities R)"
-    and keyed: "\<forall>e\<in>set (snd (snd S)). (ekey e,entity_row key (snd S) e)\<in>presented_rows R"
+    and keyed: "entity_rows_keyed key ekey S R"
   shows "(s,Pair_Term (Pair_Term (path_term (key c)) (support_term es))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
     ekey ` set (development_constant_scope (snd S) c)\<subseteq>set es"
@@ -301,7 +242,7 @@ proof -
   have atom: "key c\<in>set (map fst (state_atoms R))"
     using atoms_present_atom[OF state_presents_atoms[OF present] bound] by force
   have own: "(ekey e,entity_row key (snd S) e)\<in>presented_rows R" if "e\<in>?scope" for e
-    using keyed that by (simp add: development_constant_scope_member)
+    using keyed that by (simp add: entity_rows_keyed_def development_constant_scope_member)
   have same: "a=ekey e" if "e\<in>?scope" "(a,entity_row key (snd S) e)\<in>presented_rows R" for e a
     using keyed_agreeD[OF state_presents_row_keys[OF present] that(2) own[OF that(1)]] by simp
   have "(s,Pair_Term (Pair_Term (path_term (key c)) (support_term es))

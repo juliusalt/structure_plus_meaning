@@ -469,11 +469,31 @@ def end_finalizer(tid):
         time.sleep(2)
 
 
+def accepted_unmoved(st, tid, t):
+    """Whether a task in review is one its reviews have accepted already, with a final job and no review running: a
+    verdict is what moves an accepted task to its commit (v2.cmd_verdict), and such a task has no verdict to come —
+    pending_reviews offers no review whose verdict is given, and the planner's stalled line leaves accepted tasks out.
+    It comes of a task accepted in an earlier round and checked again: tasks 128 and 147 (2026-09-22) were accepted,
+    their landings interrupted by the reboot of 13:04, sent to the planner, queued again, their checks passed at 14:10
+    and 14:26 — and they stood in review eight hours, their sessions pinged warm (23 pings, about 2.5M), 147 heading
+    the planner's order. A review running on it judges it afresh, and while the graph is held the commit waits for the
+    planner's order, as reopen_unlanded's do."""
+    return (not t.get("reviewing") and not v2.graph_held()
+            and os.path.exists(os.path.join(v2.BUILD, tid, "finalize.json")) and v2.review_accepted(st, tid))
+
+
 def finishing():
     st = v2.peek()
     landers = checkers = False
     for tid, t in st["tasks"].items():
         stage = t.get("stage")
+        if stage == "reviewing" and accepted_unmoved(st, tid, t):
+            with v2.state() as w:
+                w["tasks"][tid]["stage"] = "committing"
+                w["tasks"][tid].pop("finishing_since", None)
+            v2.log(f"task {tid} was accepted and stood in review with no review due: its commit is made")
+            v2.background("finalize.py", "commit", tid)
+            continue
         if stage in ("checking", "committing"):
             if t.get("held_finalizer"):
                 continue  # held with the graph (v2.reopen_unlanded): no finalizer is meant to run until it is released

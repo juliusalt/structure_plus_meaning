@@ -1052,6 +1052,12 @@ CASES += [
     # a stale stable miss would send every layer refresh through a reload of the stable base
     ('base.sh', '    [ "${sealed_s:-0}" -gt "$(stat -c %Y "$STATE/$who-stable.miss")" ] || return 1', '    return 1', 'miss_recorded_before_the_base_was_sealed', "a miss older than the base's seal is not its entry's"),
     ('base.sh', '    rm -f "$STATE/$who-stable.miss"\n  fi', '    :\n  fi', 'miss_recorded_before_the_base_was_sealed', 'a miss that is answered is taken'),
+    # an accepted task left in review with no review due (tasks 128 and 147, eight hours)
+    ('watchdog.py', '        if stage == "reviewing" and accepted_unmoved(st, tid, t):', '        if False:', 'accepted_task_left_in_review', 'an accepted task left in review has its commit made'),
+    ('watchdog.py', '            and os.path.exists(os.path.join(v2.BUILD, tid, "finalize.json")) and v2.review_accepted(st, tid))', '            and os.path.exists(os.path.join(v2.BUILD, tid, "finalize.json")) and True)', 'accepted_task_left_in_review', 'only a task its reviews accepted'),
+    ('watchdog.py', '    return (not t.get("reviewing") and not v2.graph_held()', '    return (True and not v2.graph_held()', 'accepted_task_left_in_review', 'not while a review of it runs'),
+    ('watchdog.py', '    return (not t.get("reviewing") and not v2.graph_held()', '    return (not t.get("reviewing") and True', 'accepted_task_left_in_review', 'not while the graph is held'),
+    ('watchdog.py', '            and os.path.exists(os.path.join(v2.BUILD, tid, "finalize.json")) and v2.review_accepted(st, tid))', '            and True and v2.review_accepted(st, tid))', 'accepted_task_left_in_review', 'only a task with a final job'),
     # a marker line inside a block: what it costs the session to recover (20 refusals on 2026-09-22)
     ('v2.py', 'f"{part} text holds a `{line}` line at line {start + where + 1}, so either its "', 'f"{part} text holds a `{line}` line, so either its "', 'block_that_lost_a_line_of_its_own', 'the refusal names the line the marker stands at'),
     ('v2.py', 'f"line belongs to the {part} text — then make two blocks, one for what stands "', 'f"line belongs to the {part} text — "', 'block_that_lost_a_line_of_its_own', 'and the way out that costs nothing'),

@@ -615,6 +615,35 @@ class WatchdogTests(unittest.TestCase):
         self.assertEqual(self.w.st()["tasks"]["5"]["stage"], "planner")
         self.assertIn("has not reported within", self.heard())
 
+    def test_an_accepted_task_left_in_review_with_no_review_due_has_its_commit_made(self):
+        # tasks 128 and 147 (2026-09-22): accepted, their landings interrupted by the reboot, queued again and checked
+        # again, and put in review with no review due — where nothing moved them for eight hours
+        (self.w.project / ".build/tasks/5").mkdir(parents=True)
+        final = self.w.project / ".build/tasks/5/finalize.json"
+        final.write_text(json.dumps({"check": "true", "files": ["theories/A.thy"], "message": ".build/tasks/5/m.md"}))
+        accepted = {"stage": "done", "kind": "review", "reviews": "5", "verdict": "accept", "round": 0}
+        log = self.w.state / "v2.log"
+        made = "task 5 was accepted and stood in review with no review due: its commit is made"
+
+        def run(task=None, review=None, held=False):
+            log.write_text("")
+            self.w.set_st(tasks={"5": dict({"stage": "reviewing", "kind": "build", "review_tasks": ["6"]}, **(task or {})),
+                                 "6": dict(accepted, **(review or {}))})
+            marker = self.w.state / v2.GRAPH_HELD
+            marker.write_text("x") if held else (marker.unlink() if marker.exists() else None)
+            self.run_watchdog()
+            return self.w.st()["tasks"]["5"].get("stage"), made in log.read_text()
+
+        self.assertEqual(run(review={"verdict": None}), ("reviewing", False))  # its review is still to be given
+        self.assertEqual(run(task={"reviewing": "review-6"}), ("reviewing", False))  # a review of it runs: it judges
+        self.assertEqual(run(held=True), ("reviewing", False))                # the graph held: the planner's order first
+        final.unlink()
+        self.assertEqual(run(), ("reviewing", False))                         # no final job: nothing of it to commit
+        final.write_text(json.dumps({"check": "true", "files": ["theories/A.thy"], "message": ".build/tasks/5/m.md"}))
+        stage, said = run()
+        self.assertTrue(said)                                                 # accepted and handed over: committed,
+        self.assertNotEqual(stage, "reviewing")                               # whatever its commit then finds
+
     def test_the_dispatch_runs_after_the_care(self):
         self.w.task("1", BRIEF)
         self.w.set_st(queue=["1"])

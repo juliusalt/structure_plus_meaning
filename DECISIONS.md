@@ -11995,7 +11995,9 @@ among `p`'s. Its contract is stated once, in two forms: `exact`, the site holds 
 formed on `p`'s variables evaluates `p` to `t` and `r` holds of its evaluation of `q`; and `at`, at every evaluation
 `f`, the site holds of `f`'s evaluation of `p` exactly when the variables of `p` that `q` does not read are formed
 under `f` and `r` holds of `f`'s evaluation of `q` (the variables `q` reads are formed by the callee's own meaning).
-`exact` is the one proof by `holds_cases` and `native_step`; `at` follows from it and two pattern facts stated once,
+`exact` is the one proof by `holds_cases` and `native_step` [corrected by task 245: `exact` takes that argument from
+`native_rule_law.exact`, where it is made once for every family of native rules; `native_rule_law.supported_clause`
+states the same law at any support relation]; `at` follows from it and two pattern facts stated once,
 general over patterns: equal evaluations agree on a pattern's variables (`evaluate_pattern_agree`), and a formed
 evaluation has formed values at them (`evaluate_pattern_variables_formed`). The argument reads nothing of the
 patterns' shape, so a conclusion with literal leaves is an instance too.

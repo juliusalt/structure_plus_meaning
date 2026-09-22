@@ -91,13 +91,27 @@ lemma decode_finite_bound_union [simp]:
   "decode_finite_object (finite_bound_union R S)=bound_union (decode_finite_object R) (decode_finite_object S)"
   by (simp add: finite_bound_union_def decode_finite_syntax_join bound_union_def bound_pair_syntax_def)
 
-fun finite_syntax_forest :: "finite_exact_artifact list \<Rightarrow> finite_exact_artifact" where
-  "finite_syntax_forest []=finite_empty_artifact"
-| "finite_syntax_forest (R#Rs)=finite_syntax_union R (finite_syntax_forest Rs)"
+text \<open>
+  The executable forest pushes each child's structure and bindings once, by that child's branch,
+  and unites them.
+\<close>
+
+definition finite_syntax_forest :: "finite_exact_artifact list \<Rightarrow> finite_exact_artifact" where
+  "finite_syntax_forest Rs=(let is=[0..<length Rs] in \<lparr>finite_structure=\<lparr>
+    finite_carrier=ffUnion (fset_of_list (map (\<lambda>i.
+      fimage (syntax_branch i) (finite_carrier (finite_structure (Rs!i)))) is)),
+    finite_incidence=ffUnion (fset_of_list (map (\<lambda>i.
+      fimage (\<lambda>(a,p,x). (syntax_branch i a,syntax_branch i p,syntax_branch i x))
+        (finite_incidence (finite_structure (Rs!i)))) is))\<rparr>,
+    finite_data=\<lparr>finite_bag={#},finite_bindings=ffUnion (fset_of_list (map (\<lambda>i.
+      fimage (\<lambda>(a,v). (syntax_branch i a,v)) (finite_bindings (finite_data (Rs!i)))) is))\<rparr>\<rparr>)"
 
 lemma decode_finite_syntax_forest [simp]:
   "decode_finite_object (finite_syntax_forest Rs)=syntax_forest (map decode_finite_object Rs)"
-  by (induction Rs) simp_all
+  by (simp add: finite_syntax_forest_def Let_def decode_finite_object_def decode_finite_structure_def
+    decode_finite_basis_def syntax_forest_def syntax_forest_positions_def push_structure_def
+    fimage.rep_eq ffUnion.rep_eq fset_of_list.rep_eq image_image atLeast0LessThan fun_eq_iff
+    cong: SUP_cong_simp)
 
 definition finite_attach_structure :: "finite_exact_artifact \<Rightarrow> local_address finite_rra_structure \<Rightarrow> finite_exact_artifact" where
   "finite_attach_structure R H=\<lparr>finite_structure=\<lparr>

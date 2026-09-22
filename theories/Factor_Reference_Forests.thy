@@ -8,70 +8,63 @@ lemma map_slot_keys_composition:
   "map_slot_keys f (map_slot_keys g M) = map_slot_keys (f \<circ> g) M"
   by (simp add: map_slot_keys_def image_image split_def comp_def)
 
-fun syntax_forest_table :: "(local_address \<times> 'a) set list \<Rightarrow> (local_address \<times> 'a) set" where
-  "syntax_forest_table [] = {}"
-| "syntax_forest_table (M#Ms) = map_slot_keys (Cons 2) M \<union> map_slot_keys (Cons 3) (syntax_forest_table Ms)"
+text \<open>
+  The forest's reference table is each child's table under that child's branch, as the forest is
+  each child placed at its branch; its facts follow from the branch's contracts alone.
+\<close>
+
+definition syntax_forest_table :: "(local_address \<times> 'a) set list \<Rightarrow> (local_address \<times> 'a) set" where
+  "syntax_forest_table Ms = (\<Union>i<length Ms. map_slot_keys (syntax_branch i) (Ms!i))"
+
+lemma syntax_forest_table_Nil [simp]: "syntax_forest_table [] = {}"
+  by (simp add: syntax_forest_table_def)
 
 lemma syntax_forest_empty_tables [simp]:
   "syntax_forest_table (replicate n {}) = {}"
-  by (induction n) (simp_all add: map_slot_keys_def)
+  by (simp add: syntax_forest_table_def map_slot_keys_def cong: SUP_cong_simp)
 
 lemma syntax_forest_table_member:
   assumes index: "i < length Ms" and member: "(k,x) \<in> Ms!i"
   shows "(syntax_branch i k,x) \<in> syntax_forest_table Ms"
-  using index member
-proof (induction Ms arbitrary: i)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons M Ms)
-  show ?case
-  proof (cases i)
-    case 0
-    have head: "(k,x) \<in> M" using Cons.prems(2) 0 by simp
-    show ?thesis using map_slot_keys_member[OF head, of "Cons 2"] by (simp add: 0)
-  next
-    case (Suc n)
-    have small: "n < length Ms" and tail: "(k,x) \<in> Ms!n" using Cons.prems Suc by simp_all
-    have entry: "(syntax_branch n k,x) \<in> syntax_forest_table Ms" by (rule Cons.IH[OF small tail])
-    show ?thesis using map_slot_keys_member[OF entry, of "Cons 3"] by (simp add: Suc)
-  qed
-qed
+  unfolding syntax_forest_table_def
+  by (rule UN_I[where B="\<lambda>j. map_slot_keys (syntax_branch j) (Ms!j)", OF _ map_slot_keys_member[OF member]])
+    (simp only: lessThan_iff index)
 
 lemma syntax_forest_table_origin:
   assumes "(k,x) \<in> syntax_forest_table Ms"
   shows "\<exists>i<length Ms. \<exists>a. (a,x) \<in> Ms!i \<and> k=syntax_branch i a"
-  using assms
-proof (induction Ms arbitrary: k)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons M Ms)
-  have alternatives: "(k,x) \<in> map_slot_keys (Cons 2) M \<or>
-    (k,x) \<in> map_slot_keys (Cons 3) (syntax_forest_table Ms)" using Cons.prems by simp
-  then show ?case
-  proof
-    assume "(k,x) \<in> map_slot_keys (Cons 2) M"
-    then obtain a where entry: "(a,x) \<in> M" "k=2#a" by (auto simp: map_slot_keys_def)
-    show ?thesis by (rule exI[of _ 0]) (use entry in auto)
-  next
-    assume "(k,x) \<in> map_slot_keys (Cons 3) (syntax_forest_table Ms)"
-    then obtain b where tail: "(b,x) \<in> syntax_forest_table Ms" "k=3#b"
-      by (auto simp: map_slot_keys_def)
-    obtain i a where origin: "i < length Ms" "(a,x) \<in> Ms!i" "b=syntax_branch i a"
-      using Cons.IH[OF tail(1)] by blast
-    show ?thesis by (rule exI[of _ "Suc i"]) (use origin tail(2) in auto)
-  qed
+proof -
+  obtain i where i0: "i \<in> {..<length Ms}" "(k,x) \<in> map_slot_keys (syntax_branch i) (Ms!i)"
+    using assms unfolding syntax_forest_table_def by (rule UN_E)
+  have index: "i < length Ms" using i0(1) by (simp only: lessThan_iff)
+  obtain a where "(a,x) \<in> Ms!i" "k=syntax_branch i a" using i0(2) by (auto simp: map_slot_keys_def)
+  then show ?thesis using index by blast
 qed
 
 lemma syntax_forest_table_child:
   assumes index: "i < length Ms"
   shows "map_slot_keys (syntax_branch i) (Ms!i) \<subseteq> syntax_forest_table Ms"
-  using syntax_forest_table_member[OF index] by (auto simp: map_slot_keys_def)
+  unfolding syntax_forest_table_def by (rule UN_upper) (simp only: lessThan_iff index)
 
 lemma syntax_forest_table_range:
   "rel_ran (syntax_forest_table Ms) = (\<Union>M\<in>set Ms. rel_ran M)"
-  by (induction Ms) (simp_all add: rel_ran_union map_slot_keys_range)
+proof (rule set_eqI, rule iffI)
+  fix x assume "x \<in> rel_ran (syntax_forest_table Ms)"
+  then have "\<exists>k. (k,x) \<in> syntax_forest_table Ms" by (simp only: rel_ran_def mem_Collect_eq)
+  then obtain k where "(k,x) \<in> syntax_forest_table Ms" ..
+  then show "x \<in> (\<Union>M\<in>set Ms. rel_ran M)"
+    by (elim syntax_forest_table_origin[elim_format] exE conjE) (rule UN_I[OF nth_mem rel_ranI])
+next
+  fix x assume "x \<in> (\<Union>M\<in>set Ms. rel_ran M)"
+  then obtain M where M0: "M \<in> set Ms" "x \<in> rel_ran M" by (rule UN_E)
+  have "\<exists>k. (k,x) \<in> M" using M0(2) by (simp only: rel_ran_def mem_Collect_eq)
+  then obtain k where "(k,x) \<in> M" ..
+  with M0 have M: "M \<in> set Ms" "(k,x) \<in> M" by simp_all
+  obtain i where i: "i < length Ms" "Ms!i = M" using M(1) by (auto simp: in_set_conv_nth)
+  have "(syntax_branch i k,x) \<in> syntax_forest_table Ms"
+    by (rule syntax_forest_table_member) (use i M in auto)
+  then show "x \<in> rel_ran (syntax_forest_table Ms)" by (rule rel_ranI)
+qed
 
 lemma syntax_forest_table_domain:
   "rel_dom (syntax_forest_table Ms) = syntax_forest_positions (map rel_dom Ms)"
@@ -130,22 +123,36 @@ lemma reference_table_forest:
   assumes len: "length Ls = length Cs"
     and profiles: "\<forall>i<length Ls. reference_table_formed (Ls!i) (Cs!i)"
   shows "reference_table_formed (syntax_forest_table Ls) (syntax_forest_table Cs)"
-  using len profiles
-proof (induction Ls arbitrary: Cs)
-  case Nil
-  then have "Cs=[]" by simp
-  then show ?case by simp
-next
-  case (Cons L Ls)
-  obtain C Ds where shape: "Cs=C#Ds" using Cons.prems(1) by (cases Cs) auto
-  have lengths: "length Ls = length Ds" using Cons.prems(1) shape by simp
-  have head: "reference_table_formed L C" using Cons.prems(2)[rule_format, of 0] by (simp add: shape)
-  have tail: "\<forall>i<length Ls. reference_table_formed (Ls!i) (Ds!i)"
-    using Cons.prems(2)[rule_format, of "Suc _"] by (simp add: shape)
-  have profile: "reference_table_formed (syntax_forest_table Ls) (syntax_forest_table Ds)"
-    by (rule Cons.IH[OF lengths tail])
-  show ?case by (simp only: shape syntax_forest_table.simps)
-    (rule reference_table_disjoint_copies[OF head profile])
+proof -
+  let ?L = "\<lambda>n. \<Union>i<n. map_slot_keys (syntax_branch i) (Ls!i)"
+  let ?C = "\<lambda>n. \<Union>i<n. map_slot_keys (syntax_branch i) (Cs!i)"
+  have prefix: "n \<le> length Ls \<Longrightarrow> reference_table_formed (?L n) (?C n)" for n
+  proof (induction n)
+    case 0
+    then show ?case by simp
+  next
+    case (Suc n)
+    have old: "reference_table_formed (?L n) (?C n)" using Suc.IH Suc.prems by simp
+    have small: "n < length Ls" using Suc.prems by simp
+    have new: "reference_table_formed (map_slot_keys (syntax_branch n) (Ls!n)) (map_slot_keys (syntax_branch n) (Cs!n))"
+      by (rule reference_table_map[OF _ syntax_branch_injective]) (use profiles small in blast)
+    have apart: "range (syntax_branch i) \<inter> range (syntax_branch n) = {}" if "i < n" for i
+      using that by (intro syntax_branch_disjoint) simp
+    have below: "rel_dom (?L n) \<union> rel_dom (?C n) \<subseteq> (\<Union>i<n. range (syntax_branch i))"
+      unfolding rel_dom_image image_UN
+      by (intro Un_least UN_mono subset_refl) (auto simp: map_slot_keys_def)
+    have here: "rel_dom (map_slot_keys (syntax_branch n) (Ls!n)) \<union> rel_dom (map_slot_keys (syntax_branch n) (Cs!n))
+      \<subseteq> range (syntax_branch n)"
+      by (auto simp: map_slot_keys_domain)
+    have separate: "(rel_dom (map_slot_keys (syntax_branch n) (Ls!n)) \<union> rel_dom (map_slot_keys (syntax_branch n) (Cs!n)))
+      \<inter> (rel_dom (?L n) \<union> rel_dom (?C n)) = {}"
+      using below here apart by blast
+    have union: "reference_table_formed (map_slot_keys (syntax_branch n) (Ls!n) \<union> ?L n)
+      (map_slot_keys (syntax_branch n) (Cs!n) \<union> ?C n)"
+      by (rule reference_table_union[OF new old separate])
+    show ?case using union by (simp only: lessThan_Suc UN_insert)
+  qed
+  show ?thesis using prefix[of "length Ls"] len by (simp add: syntax_forest_table_def)
 qed
 
 text \<open>

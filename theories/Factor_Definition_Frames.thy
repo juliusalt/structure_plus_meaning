@@ -40,10 +40,10 @@ lemma interface_inside: "2#r \<in> rra_carrier (object_structure body)"
   using interface_root by (auto simp: syntax_union_def)
 
 lemma family_fresh: "insert [1,0] (rel_dom members) \<inter> rra_carrier (object_structure body) = {}"
-  by (simp only: member_domain) (auto simp: syntax_union_def family_ports_def)
+  by (simp only: member_domain) (auto simp: syntax_union_def dest!: family_ports_shape)
 
 lemma family_separate: "[1,0] \<notin> rel_dom members"
-  by (simp only: member_domain) (auto simp: family_ports_def)
+  by (simp only: member_domain) (auto dest!: family_ports_shape)
 
 lemma family_addresses: "\<forall>a\<in>insert [1,0] (rel_dom members \<union> rel_ran members). octets_formed a"
 proof -
@@ -70,7 +70,7 @@ lemma family_reads: "object_reads_agree body family_body (rra_carrier (object_st
 
 lemma record_fresh:
   "insert [] (set [[0,0],[0,1]]) \<inter> rra_carrier (object_structure family_body) = {}"
-  by (simp only: family_carrier) (auto simp: syntax_union_def family_ports_def)
+  by (simp only: family_carrier) (auto simp: syntax_union_def dest!: family_ports_shape)
 
 lemma formed: "exact_formed framed"
 proof -

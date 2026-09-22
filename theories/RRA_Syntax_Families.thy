@@ -33,10 +33,10 @@ proof
 qed
 
 lemma headers_fresh: "insert [] (rel_dom members) \<inter> rra_carrier (object_structure body) = {}"
-  by (simp only: member_domain) (auto simp: family_ports_def)
+  by (simp only: member_domain) (auto dest!: family_ports_shape)
 
 lemma headers_separate: "[] \<notin> rel_dom members"
-  by (simp only: member_domain) (auto simp: family_ports_def)
+  by (simp only: member_domain) (auto dest!: family_ports_shape)
 
 lemma member_addresses: "\<forall>a\<in>insert [] (rel_dom members \<union> rel_ran members). octets_formed a"
 proof -

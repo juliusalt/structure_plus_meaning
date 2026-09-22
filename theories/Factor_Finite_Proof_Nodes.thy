@@ -75,7 +75,7 @@ lemma finite_assertion_node_block_fields:
   "map_relation_values decode_finite_object (fset (finite_block_literals finite_assertion_node_block))={}"
   "fset (finite_block_callees finite_assertion_node_block)={}"
   by (simp_all add: finite_assertion_node_block_def finite_record_block_fields
-    assertion_node_syntax_def family_ports_def)
+    assertion_node_syntax_def family_ports_empty)
 
 lemma finite_assertion_node_block_boundaries:
   "fset (finite_block_slots finite_assertion_node_block)={}"

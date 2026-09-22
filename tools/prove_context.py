@@ -85,7 +85,7 @@ def main():
     command += ['-D',str(output)]
     started = build.utc_now()
     with (output/'build.log').open('w') as log:
-        process = subprocess.run(command, env={**os.environ,'USER_HOME':'/tmp/structural-isabelle'},
+        process = subprocess.run(command, env={**os.environ,'USER_HOME':str(proof_contexts.USER_HOME)},
                                  stdout=log, stderr=subprocess.STDOUT)
     stable = all(investigate.file_hash(Path(path)) == sha for path, sha in (parent_inputs|helper_inputs).items())
     stable = stable and investigate.current_sources(sources) and investigate.file_hash(output/'ROOT') == root_digest

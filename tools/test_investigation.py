@@ -101,7 +101,8 @@ class InvestigationTests(unittest.TestCase):
         self.root = Path(temporary.name)
         for name in ("tools", "theories", "output"):
             (self.root / name).mkdir()
-        for name in ("build.py", "investigate.py", "observation_contracts.py", "execution_support.py"):
+        for name in ("build.py", "investigate.py", "observation_contracts.py", "execution_support.py",
+                     "isabelle_places.py"):
             shutil.copyfile(TOOLS / name, self.root / "tools" / name)
         (self.root / "theories/Presentation_Completion_Investigation.thy").write_text(
             "theory Presentation_Completion_Investigation imports Main begin end\n")

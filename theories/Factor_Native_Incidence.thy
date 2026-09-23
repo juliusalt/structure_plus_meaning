@@ -470,13 +470,13 @@ theorem native_incidence_has_infinite_meaning:
   "infinite {t. ((None,[Suc 0]),t) \<in> positive_meaning native_incidence_program}"
 proof
   assume finite: "finite {t. ((None,[Suc 0]),t) \<in> positive_meaning native_incidence_program}"
-  let ?f = "\<lambda>n. Target_Term (Whole_Artifact (loop_artifact (unary_address n)))"
+  let ?f = "\<lambda>n. Target_Term (Whole_Artifact (loop_artifact (index_address n)))"
   have each: "\<And>n. ((None,[Suc 0]),?f n) \<in> positive_meaning native_incidence_program"
   proof -
     fix n
-    have formed: "exact_formed (loop_artifact (unary_address n))"
-      by (rule loop_artifact_formed[OF unary_address_formed])
-    have nonempty: "rra_incidence (object_structure (loop_artifact (unary_address n))) \<noteq> {}"
+    have formed: "exact_formed (loop_artifact (index_address n))"
+      by (rule loop_artifact_formed[OF index_address_formed])
+    have nonempty: "rra_incidence (object_structure (loop_artifact (index_address n))) \<noteq> {}"
       by (simp add: loop_artifact_def)
     show "((None,[Suc 0]),?f n) \<in> positive_meaning native_incidence_program"
       by (rule native_incidence_holds[OF formed nonempty])

@@ -6,7 +6,7 @@ what held up the tasks, how content was used, what could better prepare the sess
 baseline, to be improved conceptually, not only in its details; autonomously, without stopping, until the owner says
 stop. After a compaction: re-read the order, this file, and continue from the first open task.
 
-Working rules: nothing committed or pushed; every change built in `$TMPDIR/dev/orch`, tested (tests, mutation cases,
+Working rules (until the owner's word of 09:25, which had it committed): nothing committed or pushed; every change built in `$TMPDIR/dev/orch`, tested (tests, mutation cases,
 `notes/run-tests.py`), then deployed to the live files with a backup in `state/dev-patches/predeploy-*` and recorded in
 `notes/v2-build-handoff.md`; the run is stopped (state/stopped 2026-09-22 22:37:06) and stays so; data under
 `state/analysis/` (ignored by git). A conceptual change the owner must decide (it changes a policy they set) is
@@ -16,7 +16,7 @@ written here as a proposal with its data, and implemented behind a switch that l
 
 **The owner's word of 09-23 morning** (C7, C10, C15 yes; the per-role reasoning layer to be built behind a switch; the last session of each role read): its tasks and plan are notes/plan-owner-word-2026-09-23.md.
 
-**For the owner, on waking.** Nothing is committed. Six switches, all off, each a file whose presence turns it on
+**For the owner, on waking.** Committed and pushed on the owner's word at 09:25 (6a4b17be, the checker's `--keep-heap`; b798ff0b, the harness's work of the night and the morning). Six switches, all off, each a file whose presence turns it on
 (`touch .claude/orchestration/state/NAME`, remove it to turn it off; the health screen names those on):
 - `review-beside-check` (C9): a task's review starts at its result, beside its check — a median 8.2 of the 18.4 minutes
   from result to commit; an accept waits for the check and is void if it fails;

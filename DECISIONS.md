@@ -11327,6 +11327,66 @@ share of the publication's remaining seconds is unmeasured: task 80's attributio
 This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 85's decision; a design, no theory changes).
+## A published generation's formation is established by the constructor that recorded it
+
+The seed publication's transactions checked the formation of every generation they compare and write,
+recursively through every predecessor and target, although each of those generations — the incumbents, the
+selection, the issues and the answers — was just made by `finite_construct_generation_record`, whose contract
+states it formed. Task 85's entry decided that this re-check is the first notion of `Established_Premises`
+at its third place, a constructor's contract; this entry records the instance.
+
+- *Premise*: every generation the transaction compares or writes is formed:
+  `fBall (finite_transaction_generations T) finite_generation_formed`, the generations being its expected and
+  proposed selections. For a locus transaction it is `pred_option finite_generation_formed I ∧
+  finite_generation_formed G` (`finite_locus_transaction_generations`); for a publication list it holds of
+  every pair (`finite_publications_formed_generations`).
+- *Body*: `finite_transaction_formed` is exactly that premise and the conditions that are not the formation of
+  generations — distinct loci in each selection, formed absent targets, the disjointness of selected and absent
+  loci, the changed loci compared (`finite_transaction_body_formed`, `finite_transaction_formed_generations`).
+  No condition of `finite_transaction_formed` escaped the split, so no word could change. The body transaction
+  `finite_transact_body` and the body publications `finite_locus_publications_body` stand beside
+  `finite_transact_formed` and `finite_locus_publications_formed` in `RRA_Formed_Snapshot_Transactions`.
+- *Exactness*: the instances `finite_transact_body_established` and `finite_locus_publications_body_established`
+  of `established_premise`, the second by induction through the publications' recursion, citing the first.
+  The premise is on the transaction, the argument after the snapshot, so the instance is stated for the
+  constant applied to the snapshot. No refusal: nothing is checked at an entry.
+- *Established*: in `Development_Seed_Publication`, by the recording constructor's contract, cited through
+  `development_payload_generation_fields`, `development_answer_with_fields`, `development_recorded_issue_fields`,
+  `development_selection_generation_fields`, `development_seed_incumbent_of_recorded` and
+  `finite_check_generation_formed`. The round is stated over any publisher of a snapshot
+  (`development_seed_publication_over`, which `development_seed_publication_from_published` now names), the
+  premise is discharged for the recording constructor only (`development_seed_publication_over_formed`), and the
+  known constructor's round is shown equal to it over any publisher
+  (`development_seed_publication_over_known`, from the existing `development_seed_publication_row_known`).
+  `development_answer_with_fields` and `development_incumbent_with_fields` moved unchanged from
+  `Development_Admitted_Publication` into `Development_Certified_Generations`, beside the constructors they are
+  about, so that both publications cite one statement. The
+  code equation `development_seed_publication_formed` states the report over the body publications; no
+  statement is made for `development_seed_publication_from` over an arbitrary constructor.
+- *The existing snapshot instance* is re-cited where it stands: `finite_locus_publications_checked` is the
+  instance of `checked_premise` (exactness `finite_locus_publications_formed_exact`, refusal
+  `finite_locus_publications_unformed`), and `finite_locus_publications_code` is its `checked_at_entry`, at the
+  snapshot's arity as before. `finite_transact_formed_exact` is not re-cited: it is the exactness the snapshot's
+  own instance consumes, and stating it through the notion would need the statement it proves.
+- *Not taken*: the incumbents' snapshot check `finite_snapshot_formed S0` keeps its generation half; it is read
+  once per round since task 80, and the same premise would leave only the distinctness of its loci.
+
+### Evidence and limits
+
+The repository check accepts it (`.build/tasks/seed-transactions/check`) with every proof, the 207 tool and
+35 kernel tests and every recipe word equal; the seed recipe reaches both changed theories and the machinery
+recipe `RRA_Formed_Snapshot_Transactions`. Under one machine hold the held pair ran the seed recipe back to
+back (`.build/tasks/seed-transactions/held-pair.sh`, logs `held-before.log` and `held-after.log`), every
+report accepted on both sides: before, the tree at `1af296a2` against its own accepted check
+(`.build/tasks/seed-transactions/check-head`), took 85.02 s wall, 84.97 s of it the publication
+presentation; after, this tree against its check, took 63.50 s wall, 63.45 s of it the publication
+presentation, a difference of 21.52 s (25 %) attributable to this refinement. The eleven other
+presentations took 6.4–7.2 s each on both sides. Against the 93.04 s task 80 recorded after its refinement,
+the scale factor is 0.91 before and 0.68 after; task 80's figure was taken on an older tree. The benefit is
+an observation of this build, not a claim of the notion. This entry was written outside the loop and is a
+residual.
+
+Recorded 2026-09-22 (task 128).
 
 ## The native package reader reads each definition once
 

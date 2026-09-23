@@ -1,4 +1,4 @@
-**Recording.** What the task settles is written once, where it is read (DEVELOPMENT_WORKFLOW.md): its decisions, with
+**Recording.** What the task settles is written once, where it is read: its decisions, with
 their evidence and limits, as an entry of DECISIONS.md — a decision of the development itself, a notion, its
 semantics or what a proof establishes, never what the machinery or a run needs (a tool's default, a command's cost,
 a limit of this machine), which belongs where the machinery is written or is reported as a performance problem; what a theory offers for reuse, in that theory's row of

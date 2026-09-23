@@ -67,6 +67,76 @@ class DeltaTextTests(unittest.TestCase):
     def entry(self, name):
         return next(e for e in manifest.delta_entries("high") if e[0].endswith(name))
 
+    def test_an_increment_holds_only_what_changed_since_the_chain_s_last_message_and_counts_what_it_supersedes(self):
+        # the owner, 2026-09-23: "should the delta not be layered" — each message written once
+        state = self.root / "state"
+        state.mkdir()
+        path = str(self.root / "theories/A.thy")
+        self.write("theories/A.thy", THEORY.format(body=LEMMAS.replace('lemma l7: "P7 x"', 'lemma l7: "Q7 x"')))
+        (state / "high-layer.json").write_text(json.dumps({"sessionId": "layer-2"}))
+        (state / "high-delta.json").write_text(json.dumps({"sessionId": "d1", "layer": "layer-2"}))
+        stacked = self.held()[path]                                     # l7 as the chain's first message gave it
+        (state / "high-delta-held.json").write_text(json.dumps({"top": "d1", "files": {path: stacked}}))
+        self.write("theories/A.thy", THEORY.format(body=LEMMAS.replace('lemma l7: "P7 x"', 'lemma l7: "R7 x"')
+                                                   .replace('lemma l8: "P8 x"', 'lemma l8: "Q8 x"')))
+        with patch.object(manifest, "STATE", str(state)):
+            entries = manifest.increment_entries("high")
+            text = manifest.increment_text("high")[0]
+            (a,) = [e for e in entries if e[0].endswith("A.thy")]
+            self.assertIn('lemma l7: "R7 x"', a[3])
+            self.assertIn('lemma l8: "Q8 x"', a[3])
+            self.assertNotIn("Q7", a[3])                                    # its own earlier form is not given again
+            self.assertGreater(a[5], 0)                                     # l7's form the chain held is superseded
+            self.assertEqual(a[5], int(len(manifest.units(path, stacked)['lemma l7']) / manifest.RATIO[".thy"]))
+            self.assertTrue(text.startswith("What you hold has changed since the last message of this kind"))
+            (state / "high-layer.json").write_text(json.dumps({"sessionId": "layer-2"}))
+            (state / "high-delta.json").write_text(json.dumps({"sessionId": "d1", "layer": "layer-2"}))
+            self.assertIn(path, manifest.stack_held("high"))
+            (state / "high-layer.json").write_text(json.dumps({"sessionId": "layer-3"}))   # parts refreshed since
+            self.assertEqual(manifest.stack_held("high"), {})                            # the chain is orphaned
+            (state / "high-layer.json").write_text(json.dumps({"sessionId": "layer-2"}))
+            (state / "high-delta.json").write_text(json.dumps({"sessionId": "d2", "layer": "layer-2"}))  # another top
+            self.assertEqual(manifest.stack_held("high"), {})
+
+    def test_a_holder_reads_what_changed_since_it_took_the_files_in_and_nothing_it_holds_again(self):
+        # the owner, 2026-09-24: "the goal is to not duplicate information and use changes when possible" — a fork told
+        # a file changed read it again whole
+        state = self.root / "state"
+        state.mkdir()
+        path = str(self.root / "theories/A.thy")
+        self.write("theories/A.thy", THEORY.format(body=LEMMAS.replace('lemma l7: "P7 x"', 'lemma l7: "Q7 x"')))
+        at_text = self.held()[path]                                     # l7 as the chain's text t1 gave it
+        (state / "layer-high-text-1-held.json").write_text(json.dumps({"top": "high-text-1", "files": {path: at_text}}))
+        self.write("theories/A.thy", THEORY.format(body=LEMMAS.replace('lemma l7: "P7 x"', 'lemma l7: "Q7 x"')
+                                                   .replace('lemma l8: "P8 x"', 'lemma l8: "Q8 x"')))
+        self.write("docs/N.md", DOC.replace("The second section.", "The second section, rewritten."))
+        with patch.object(manifest, "STATE", str(state)):
+            since_load = manifest.held_changes("high", "-")
+            self.assertIn('lemma l7: "Q7 x"', since_load)                 # a holder of the loads alone lacks both
+            self.assertIn('lemma l8: "Q8 x"', since_load)
+            self.assertNotIn("lemma l9", since_load)                     # the unchanged units: held, not again
+            since_text = manifest.held_changes("high", "high-text-1")
+            self.assertIn('lemma l8: "Q8 x"', since_text)
+            self.assertNotIn("Q7", since_text)                           # the text it holds gave that already
+            only_n = manifest.held_changes("high", "high-text-1", ["N"])  # by name, as its stale line names it
+            self.assertIn("rewritten", only_n)
+            self.assertNotIn("lemma", only_n)
+            self.assertIn("nothing of those", manifest.held_changes("high", "high-text-1", ["S"]))
+
+    def test_a_part_s_old_forms_are_what_it_loaded_that_is_held_anew(self):
+        # what a fork carries for nothing once the delta holds the current forms, and a refresh of the part ends
+        path = str(self.root / "theories/A.thy")
+        with patch.object(manifest, "loaded_parts", lambda who: self.loaded):
+            self.assertEqual(manifest.old_forms("high"), {})
+            self.write("theories/A.thy", THEORY.format(body=LEMMAS.replace('lemma l3: "P3 x"', 'lemma l3: "Q3 x"')
+                                                       + 'lemma added: "R x"\n  by simp\n\n'))
+            was = manifest.units(path, self.loaded["layer"][path])["lemma l3"]
+            self.assertEqual(manifest.old_forms("high"), {"layer": int(len(was) / manifest.RATIO[".thy"])})
+            self.list.write_text(self.list.read_text().replace("docs/N.md\n", ""))   # no longer held: all of it
+            gone = self.loaded["layer"][str(self.root / "docs/N.md")]
+            self.assertEqual(manifest.old_forms("high")["layer"], int(len(was) / manifest.RATIO[".thy"])
+                             + int(len(gone) / manifest.RATIO[".md"]))
+
     def test_one_lemma_changed_is_that_lemma_alone_in_its_new_form(self):
         self.write("theories/A.thy", THEORY.format(body=LEMMAS.replace('lemma l7: "P7 x"', 'lemma l7: "Q7 x"')))
         path, part, kind, text, tokens = self.entry("A.thy")
@@ -75,6 +145,14 @@ class DeltaTextTests(unittest.TestCase):
         self.assertNotIn("P7", text)                                  # the old form is not repeated
         self.assertNotIn("lemma l8", text)                            # nor any lemma that did not change
         self.assertLess(tokens, manifest.tokens(path) / 10)           # a part of the file, not the file
+        whole = manifest.delta_text("high")[0]                         # named by where it is held: no working frontier
+        self.assertIn("theories/A.thy (the parts over it)", whole)     # has stood since the named parts (2026-09-23)
+        # the delta counted by the part holding each change: the watchdog keeps each part's account by it
+        self.write("docs/S.md", "# S\n\nThe stable part, rewritten.\n")
+        manifest.delta_text("high")
+        parts = manifest.delta_parts("high")
+        self.assertEqual(sorted(parts), ["layer", "stable"])
+        self.assertTrue(all(v > 0 for v in parts.values()))
 
     def test_a_removed_lemma_is_named_and_an_added_one_given_whole(self):
         body = LEMMAS.replace('lemma l5: "P5 x"\n  by simp\n\n', "") + 'lemma added: "R x"\n  by simp\n\n'
@@ -105,10 +183,26 @@ class DeltaTextTests(unittest.TestCase):
     def test_the_stable_part_s_changes_are_held_and_counted_apart(self):
         self.write("docs/S.md", "# Stable\n\nThe reference, amended.\n")
         text, layer, stable = manifest.delta_text("high")
-        self.assertIn("docs/S.md (the stable reference)", text)
+        self.assertIn("docs/S.md (the stable part)", text)
+        self.assertNotIn("working frontier", text)  # there has been none since the named parts (2026-09-23)
         self.assertIn("The reference, amended.", text)
         self.assertEqual(layer, 0)
         self.assertGreater(stable, 0)
+
+    def test_the_stable_part_drifts_too_and_what_it_holds_unlisted_is_counted(self):
+        # the owner, 2026-09-23: "base layers also drift but we expect less but that needs to also be available"
+        state = self.root / "state"
+        state.mkdir()
+        s_md = str(self.root / "docs/S.md")
+        with patch.object(manifest, "STATE", str(state)):
+            self.assertIsNone(manifest.stable_share("high"))                  # no snapshot of a stable base
+            (state / "high-manifest.json").write_text(json.dumps({"files": {s_md: manifest.digest(s_md)}}))
+            self.assertEqual(manifest.stable_share("high")[:2], (0.0, 0))     # nothing moved
+            self.write("docs/S.md", "# Stable\n\nThe reference, amended at some length.\n")
+            share, moved, total, unlisted = manifest.stable_share("high")
+            self.assertEqual((share, moved, unlisted), (1.0, total, 0))       # its one file moved: whole
+            self.loaded["stable"][str(self.root / "docs/Old.md")] = "x" * 305  # loaded, and the list names it no more
+            self.assertEqual(manifest.stable_share("high")[3], int(305 / 3.05))
 
     def test_nothing_changed_is_no_delta(self):
         self.assertEqual(manifest.delta_entries("high"), [])
@@ -204,6 +298,102 @@ class DeltaScriptTests(unittest.TestCase):
         warm.write_text("")
         subprocess.run(f"sh {HERE / 'base.sh'} high delta >/dev/null 2>> {warm}", shell=True, env=self.env, timeout=60)
         self.assertEqual(len(warm.read_text().splitlines()), 1, warm.read_text())
+        # the canary, which base.sh answers itself, says why the same way
+        warm.write_text("")
+        out = self.delta("--ask", "What does lemma l7 state?")
+        self.assertEqual(out.returncode, 1)
+        self.assertIn("no sealed high base with a layer to hold a delta over", out.stderr)
+        self.assertRegex(warm.read_text(), r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d no sealed high base with a layer")
+        warm.write_text("")
+        subprocess.run(f"sh {HERE / 'base.sh'} high delta --ask Q >/dev/null 2>> {warm}", shell=True, env=self.env,
+                       timeout=60)
+        self.assertEqual(len(warm.read_text().splitlines()), 1, warm.read_text())
+
+    def cut(self, *extra, env=None):
+        return self.delta("--text", *extra, env=env)
+
+    def test_texts_are_cut_without_a_session_and_a_session_is_made_of_them_on_demand(self):
+        # the owner, 2026-09-24: "write the text on every change, as now, but build the session only when something is
+        # about to start from it" — a cut starts nothing; a session holds what the one before it does not
+        out = self.cut()
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        self.assertEqual(self.forks(), [])                               # a text, and no session
+        first = json.loads((self.state / "high-delta.json").read_text())
+        (node,) = first["stack"]
+        self.assertNotIn("sessionId", first)
+        self.assertEqual((first["top"], node["kind"], first["layer"], first["base"]),
+                         (node["id"], "delta", "layer-sid", "stable-sid"))
+        self.assertTrue(json.loads((self.state / f"layer-{node['id']}-manifest.json").read_text())["delta"])
+        self.assertEqual(json.loads((self.state / "high-delta-held.json").read_text())["top"], node["id"])
+        # kept with the text: what a holder of the chain to it holds of each file (v2.py read changes)
+        self.assertEqual(json.loads((self.state / f"layer-{node['id']}-held.json").read_text())["top"], node["id"])
+        # the session is made when asked for: what changed is cut first, and it holds both texts over the layer
+        self.text.write_text("What you hold has changed since the last message of this kind you hold.\n\n"
+                             "== theories/A.thy\nlemma l8: Q8\n")
+        out = self.delta()
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        ((resumed, name),) = self.forks()
+        self.assertEqual(resumed, "layer-sid")
+        prompt = next(a for a in reversed(self.calls_made()) if "--bg" in a)[-1]
+        self.assertIn("lemma l7", prompt)
+        self.assertIn("lemma l8", prompt)
+        record = json.loads((self.state / "high-delta.json").read_text())
+        self.assertEqual([n["kind"] for n in record["stack"]], ["delta", "increment"])
+        self.assertEqual(record["tokens"], first["tokens"] + record["stack"][1]["tokens"])
+        self.assertEqual((record["sessionId"], record["session_len"], record["stack"][1]["sessionId"]),
+                         ("fork-" + name, 2, "fork-" + name))
+        self.assertIn(f"HELD {record['stack'][1]['digest']}", prompt)   # the top text's digest
+        self.assertTrue(json.loads((self.state / f"layer-fork-{name}-manifest.json").read_text())["delta"])
+        # the next session forks this one, warm, and holds the new text alone
+        self.text.write_text("What you hold has changed since the last message of this kind you hold.\n\n"
+                             "== theories/A.thy\nlemma l9: Q9\n")
+        time.sleep(1.1)                                                 # a session is named by its second
+        self.assertEqual(self.delta().returncode, 0)
+        resumed, later = self.forks()[-1]
+        self.assertEqual(resumed, "fork-" + name)
+        prompt = next(a for a in reversed(self.calls_made()) if "--bg" in a)[-1]
+        self.assertIn("lemma l9", prompt)
+        self.assertNotIn("lemma l7", prompt)
+        record = json.loads((self.state / "high-delta.json").read_text())
+        self.assertEqual((record["sessionId"], record["session_len"], len(record["stack"])), ("fork-" + later, 3, 3))
+        self.assertIn(["stop", "id-" + name], self.calls_made())        # replaced: stopped, never removed
+        # every text cut and every session made, with its kind: one over the layer writes every text again
+        builds = [json.loads(x) for x in (self.state / "high-delta-builds.jsonl").read_text().splitlines()]
+        self.assertEqual([b["kind"] for b in builds],
+                         ["text-delta", "text-increment", "session-whole", "text-increment", "session"])
+        # begun anew as one whole text: no session until one is made for it, and the roles fork the layer meanwhile
+        self.assertEqual(self.cut("--whole").returncode, 0)
+        record = json.loads((self.state / "high-delta.json").read_text())
+        self.assertEqual((len(record["stack"]), record["stack"][0]["kind"]), (1, "delta"))
+        self.assertNotIn("sessionId", record)
+
+    def test_a_session_is_made_over_the_layer_when_the_one_standing_is_cold(self):
+        self.assertEqual(self.delta().returncode, 0)
+        ((_, name),) = self.forks()
+        then = time.time() - 2 * 3600                                   # its entry gone cold since
+        os.utime(self.state / "high-base.hit", (then, then))
+        time.sleep(1.1)
+        self.assertEqual(self.delta().returncode, 0)
+        resumed, _ = self.forks()[-1]
+        self.assertEqual(resumed, "layer-sid")                          # a fork of it would write its whole prefix
+        record = json.loads((self.state / "high-delta.json").read_text())
+        self.assertEqual(record["session_len"], len(record["stack"]))  # every text again, over the layer
+
+    def test_no_text_is_cut_while_a_build_holds_the_chain(self):
+        (self.state / "high-layer.building").write_text(str(os.getpid()))   # a build that is running
+        out = self.cut()
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertFalse((self.state / "high-delta.json").exists())     # its end would orphan it: cut after
+
+    def test_a_session_that_holds_its_chain_to_its_top_is_not_made_again(self):
+        empty = self.text.with_name("empty.md")
+        empty.write_text("")
+        self.assertEqual(self.delta().returncode, 0)
+        before = len(self.forks())
+        out = self.delta(env={"BASE_DELTA_TEXT": str(empty)})            # nothing changed since
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertIn("holds its chain to its top", out.stdout)
+        self.assertEqual(len(self.forks()), before)
 
     def test_the_delta_is_a_fork_of_the_layer_verified_snapshotted_and_recorded(self):
         out = self.delta()
@@ -235,7 +425,7 @@ class DeltaScriptTests(unittest.TestCase):
     def test_a_delta_not_held_is_not_recorded(self):
         out = self.delta(env={"DELTA_TEST_REPLY": "I will look at the files first."})
         self.assertEqual(out.returncode, 3, out.stdout + out.stderr)
-        self.assertFalse((self.state / "high-delta.json").exists())
+        self.assertNotIn("sessionId", json.loads((self.state / "high-delta.json").read_text()))  # its text stands
         self.assertIn("not recorded", (self.state / "warm.log").read_text())
         ((_, name),) = self.forks()
         self.assertIn(["stop", "id-" + name], self.calls_made())
@@ -248,7 +438,7 @@ class DeltaScriptTests(unittest.TestCase):
         self.assertEqual(self.forks(), [])
 
     def test_a_build_over_the_layer_holds_it_off(self):
-        (self.state / "high-layer.building").write_text("123")
+        (self.state / "high-layer.building").write_text(str(os.getpid()))   # a build that is running
         out = self.delta()
         self.assertEqual(out.returncode, 3)
         self.assertIn("is being built", out.stderr)
@@ -325,7 +515,9 @@ class DeltaCostTests(unittest.TestCase):
                     "review-3": dict(origin="xhigh", started=after, delta_tokens=5000, sid="c"),  # another base's
                     "fix-4": dict(origin="high", started=after, sid="d"),                        # forked no delta
                     "layer-fixer": dict(origin="high", role="role-layer", started=after, sid="e"),   # a role layer
-                    "fix-5": dict(origin="layer-fixer", started=after, delta_tokens=5000, sid="f")}  # its fork: carries it
+                    "fix-5": dict(origin="layer-fixer", started=after, delta_tokens=5000, sid="f"),  # its fork: carries it
+                    "churn-fixer": dict(origin="layer-fixer", role="role-churn", started=after, delta_tokens=3000,
+                                        sid="g")}                                   # a role's churn: wrote it once
         (self.state / "v2.json").write_text(json.dumps({"sessions": sessions, "tasks": {}, "queue": [], "events": []}))
         (self.state / "warm.log").write_text(
             "2026-09-22T22:36:26 delta high: OK   session fork 00bbf073 of base bf471854: first own request "
@@ -334,8 +526,8 @@ class DeltaCostTests(unittest.TestCase):
             "cache_read=600393 cache_write=4000 uncached=2 (99% read)\n"                   # before the layer sealed
             "2026-09-22T22:40:00 delta xhigh: OK   session fork 11111111 of base 22222222: first own request "
             "cache_read=500000 cache_write=9000 uncached=2 (99% read)\n")
-        with patch.object(watchdog, "own_requests", lambda s: 20):
-            self.assertAlmostEqual(watchdog.carried("high"), 2 * 0.1 * 5000 * 20 + 2 * 6451)
+        with patch.object(watchdog, "own_requests", lambda s: 30):  # not 20: 0.1 × 20 would equal a write's 2
+            self.assertAlmostEqual(watchdog.carried("high"), 2 * 0.1 * 5000 * 30 + 2 * 6451 + 2 * 3000)
 
     def test_a_session_s_own_requests_are_its_turns_from_its_launch(self):
         launched = self.sealed + 60
@@ -349,8 +541,184 @@ class DeltaCostTests(unittest.TestCase):
 
     def test_a_refresh_costs_its_layer_written_over_a_read_of_the_stable_base(self):
         self.assertAlmostEqual(watchdog.refresh_cost("high"), 2 * (601_541 - 276_298) + 0.1 * 276_298)
+        # and the role layers standing on it, which a refresh builds again (role_layer_due)
+        (self.state / "v2.json").write_text(json.dumps({"sessions": {
+            "layer-fixer": {"role": "role-layer", "origin": "high:layer", "layer_state": "sealed", "build_cost": 210_000,
+                            "flags": " ".join(v2.session_flags())}}, "tasks": {}, "queue": [], "events": [],
+            "role_layers": {"fixer": {"name": "layer-fixer"}}}))
+        (self.state / "hits").mkdir()
+        (self.state / "hits" / "layer-fixer").write_text("")                  # warm: it serves
+        with patch.dict(os.environ, {"ORCH_ROLE_LAYERS": "fixer"}):
+            self.assertAlmostEqual(watchdog.refresh_cost("high"), 2 * (601_541 - 276_298) + 0.1 * 276_298 + 210_000)
         (self.state / "high-layer.json").write_text(json.dumps({"sessionId": "layer-sid"}))
         self.assertIsNone(watchdog.refresh_cost("high"))
+
+
+class ChainScheduleTests(unittest.TestCase):
+    """Each part of a chain on its own schedule (the owner, 2026-09-23: "the layers must be ordered by churn and
+    dependency and so update schedules also should differ"; "sometimes consolidation for the lower parts rather than
+    carrying their changes in a higher layer"): each part's account of what carrying its changes has cost since it
+    loaded, and the lowest part whose account, with those over it, has paid for loading them again."""
+
+    T0, T1, T2 = "2026-09-23T10:00:00", "2026-09-23T12:00:00", "2026-09-23T14:00:00"
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.state = Path(self.temp.name)
+        at = lambda s: time.mktime(time.strptime(s, "%Y-%m-%dT%H:%M:%S"))
+        self.t0, self.t1, self.t2 = at(self.T0), at(self.T1), at(self.T2)
+        (self.state / "high-base.json").write_text(json.dumps({"sessionId": "stable-sid", "context": 100_000,
+                                                               "sealed": self.T0}))
+        parts = [{"part": "stable", "sessionId": "stable-sid", "context": 100_000, "sealed": self.T0},
+                 {"part": "reasoning", "kind": "reasoning", "sessionId": "r", "parent": "stable-sid", "context": 120_000,
+                  "sealed": self.T0},
+                 {"part": "direction", "kind": "material", "sessionId": "d", "parent": "r", "context": 150_000,
+                  "sealed": self.T1},
+                 {"part": "inventory", "kind": "material", "sessionId": "i", "parent": "d", "context": 230_000,
+                  "sealed": self.T1},
+                 {"part": "catalogue", "kind": "material", "sessionId": "c", "parent": "i", "context": 300_000,
+                  "sealed": self.T2}]
+        (self.state / "high-layer.json").write_text(json.dumps({"sessionId": "c", "base": "stable-sid",
+                                                                "context": 300_000, "sealed": self.T2, "parts": parts}))
+        self.patches = [patch.object(watchdog, "STATE", str(self.state)), patch.object(v2, "STATE", str(self.state)),
+                        patch.object(v2, "role_layers", lambda: [])]
+        for p in self.patches:
+            p.start()
+
+    def tearDown(self):
+        for p in reversed(self.patches):
+            p.stop()
+        self.temp.cleanup()
+
+    def test_each_part_s_account_is_what_its_old_forms_and_whole_rewrites_cost_since_it_loaded(self):
+        # the arithmetic review of 2026-09-23 (C): a refresh does not end the carrying of a part's changes — their
+        # current forms move from the delta into the part — only of the part's own superseded old forms, and the
+        # writing of its changes again at each whole rewrite of the chain
+        sessions = {"a": dict(origin="high", started=self.t2 + 60, sid="a", delta_tokens=9000,
+                              old_forms={"direction": 300, "catalogue": 1000}),
+                    "b": dict(origin="high", started=self.t1 + 60, sid="b", old_forms={"direction": 500}),
+                    # before the catalogue loaded: the direction's alone counts
+                    "c": dict(origin="high", started=self.t0 + 60, sid="c", old_forms={"direction": 500}),
+                    # before the direction loaded: nobody's now
+                    "d": dict(origin="high", started=self.t2 + 60, sid="d", delta_tokens=1000),
+                    # it carries changes, and no old forms: nothing a refresh would spare
+                    "layer-x": dict(origin="high:layer", role="role-layer", started=self.t2, sid="x"),
+                    "churn-x": dict(origin="layer-x", role="role-churn", started=self.t2 + 60, sid="g",
+                                    whole_parts={"catalogue": 700}),                  # built whole: it wrote them again
+                    "churn-y": dict(origin="churn-x", role="role-churn", started=self.t2 + 90, sid="h")}  # grown
+        (self.state / "v2.json").write_text(json.dumps({"sessions": sessions, "tasks": {}, "queue": [], "events": []}))
+        (self.state / "high-delta-builds.jsonl").write_text(
+            json.dumps({"at": "2026-09-23T14:30:00", "kind": "delta", "parts": {"catalogue": 400, "direction": 100}})
+            + "\n" + json.dumps({"at": "2026-09-23T14:40:00", "kind": "increment", "parts": {"catalogue": 999}}) + "\n"
+            + json.dumps({"at": "2026-09-23T11:00:00", "kind": "delta", "parts": {"catalogue": 50}}) + "\n")
+        with patch.object(watchdog, "own_requests", lambda s: 50):
+            owed = watchdog.carried_parts("high")
+        self.assertAlmostEqual(owed["direction"], 0.1 * 300 * 50 + 0.1 * 500 * 50 + 2 * 100)
+        self.assertAlmostEqual(owed["catalogue"], 0.1 * 1000 * 50 + 2 * 700 + 2 * 400)   # not the increment's
+        self.assertEqual((owed["inventory"], owed["stable"]), (0.0, 0.0))
+
+    def test_the_part_whose_accounts_most_exceed_its_refresh_is_refreshed_and_the_parts_under_it_keep_carrying(self):
+        # suffix costs over the fixture's chain: from the catalogue 2 × 70K + 0.1 × 230K, the inventory 2 × 150K +
+        # 0.1 × 150K, the direction 2 × 180K + 0.1 × 120K, the stable part 2 × 300K
+        catalogue, direction, stable = 163_000.0, 372_000.0, 600_000.0
+        owed = {"stable": 0.0, "direction": 10_000.0, "inventory": 0.0, "catalogue": catalogue}
+        with patch.object(watchdog, "carried_parts", lambda who: owed):
+            self.assertEqual(watchdog.refresh_plan("high"), ("catalogue", catalogue, catalogue))
+            # the arithmetic review of 2026-09-23 (D): a large account higher up pays for a refresh from lower parts
+            # too, but a lower part is loaded again only where its own account covers what it adds
+            owed.update(direction=0.0, catalogue=500_000.0)
+            self.assertEqual(watchdog.refresh_plan("high"), ("catalogue", 500_000.0, catalogue))
+            owed.update(direction=250_000.0)                     # its own changes cover what it adds (209K)
+            self.assertEqual(watchdog.refresh_plan("high"), ("direction", 750_000.0, direction))
+            owed.update(direction=0.0, catalogue=0.0, stable=2 * 300_000 + 100_000)
+            self.assertEqual(watchdog.refresh_plan("high"), ("stable", 700_000.0, stable))   # one candidate among them
+            owed.update(stable=1.0, catalogue=1.0)
+            self.assertIsNone(watchdog.refresh_plan("high"))
+
+class DeltaChainRuleTests(unittest.TestCase):
+    """The delta as a chain of messages each written once (the owner, 2026-09-23: "should the delta not be layered";
+    "the 4k number needs to somehow depend on the size of the delta"): what the pending changes have cost the forks
+    against a message holding them, and what the chain's superseded forms have cost against writing it anew."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.state = Path(self.temp.name)
+        self.sealed = "2026-09-23T12:00:00"
+        self.t = time.mktime(time.strptime(self.sealed, "%Y-%m-%dT%H:%M:%S"))
+        (self.state / "high-base.json").write_text(json.dumps({"sessionId": "stable-sid", "context": 300_000}))
+        (self.state / "high-layer.json").write_text(json.dumps({"sessionId": "layer-sid", "base": "stable-sid",
+                                                                "context": 400_000, "sealed": "2026-09-23T10:00:00"}))
+        self.patches = [patch.object(watchdog, "STATE", str(self.state)), patch.object(v2, "STATE", str(self.state))]
+        for p in self.patches:
+            p.start()
+
+    def tearDown(self):
+        for p in reversed(self.patches):
+            p.stop()
+        self.temp.cleanup()
+
+    def sessions(self, **sessions):
+        (self.state / "v2.json").write_text(json.dumps({"sessions": sessions, "tasks": {}, "queue": [], "events": []}))
+
+    def test_what_is_pending_has_cost_each_fork_since_the_last_message_its_write(self):
+        top = {"sessionId": "d2", "context": 450_000, "sealed": self.sealed, "layer": "layer-sid", "base": "stable-sid",
+               "top": "t2", "session_len": 1, "stack": [{"id": "t1", "sessionId": "d2"}, {"id": "t2", "tokens": 1000}]}
+        (self.state / "high-delta.json").write_text(json.dumps(top))
+        self.sessions(a=dict(origin="high", started=self.t + 60, pending_tokens=3000, sid="a"),
+                      b=dict(origin="high", started=self.t - 60, pending_tokens=3000, sid="b"),   # before the session
+                      c=dict(origin="high", started=self.t + 90, sid="c"))                        # nothing pending
+        with patch.dict(os.environ, {"ORCH_DELTAS": "high"}), patch.object(watchdog, "own_requests", lambda s: 20):
+            (self.state / "high-base.hit").write_text("")               # the session standing, warm: made over it
+            owed, cost = watchdog.pending_paid("high", top, 3000)
+            # its write alone: carried after, a change costs the same in the fork's context and in the session's
+            # prefix (the arithmetic review of 2026-09-23, A)
+            self.assertAlmostEqual(owed, 3000 * 2)
+            self.assertAlmostEqual(cost, 2 * 3000 + 0.1 * 450_000)      # a larger prefix asks more to be lacked
+            os.utime(self.state / "high-base.hit", (0, 0))              # gone cold: made over the layer
+            self.assertAlmostEqual(watchdog.pending_paid("high", top, 3000)[1], 2 * 3000 + 0.1 * 400_000)
+            (self.state / "high-delta.json").unlink()
+            _, over_the_layer = watchdog.pending_paid("high", None, 3000)
+            self.assertAlmostEqual(over_the_layer, 2 * 3000 + 0.1 * 400_000)
+
+    def test_the_knowledge_base_is_built_again_for_max_s_parts_alone(self):
+        # the owner, 2026-09-24: "the knowledge base is rebuilt on every max session make this lzay too" — it takes the
+        # texts in by integration (v2.kb_texts): a session of max's delta costs nothing of it, the chain begun anew its
+        # taking the whole text, a refresh of max's parts its build
+        (self.state / "max-base.json").write_text(json.dumps({"sessionId": "max-stable", "context": 300_000}))
+        (self.state / "max-layer.json").write_text(json.dumps({"sessionId": "max-layer", "base": "max-stable",
+                                                               "context": 500_000, "sealed": "2026-09-23T10:00:00"}))
+        self.sessions(**{"kb-1": dict(role="kb", origin="max", kb_state="sealed", build_cost=150_000, sid="k",
+                                      context=560_000, stack_len=2, stack_base="t1")})
+        state = json.loads((self.state / "v2.json").read_text())
+        (self.state / "v2.json").write_text(json.dumps(dict(state, kb="kb-1")))
+        top = {"sessionId": "d2", "context": 520_000, "sealed": self.sealed, "tokens": 20_000, "superseded": 2000,
+               "stack": [{"id": "t1", "sealed": self.sealed}, {"id": "t2", "sessionId": "d2"}]}
+        with patch.object(v2, "role_layers", lambda: []):
+            self.assertAlmostEqual(watchdog.pending_paid("max", top, 1000)[1], 2 * 1000 + 0.1 * 500_000)
+            # begun anew: the knowledge base takes the whole text over itself, and the chain's session over the layer
+            self.assertAlmostEqual(watchdog.stack_waste("max", top)[1],
+                                   (2 * 18_000 + 0.1 * 560_000) + (2 * 18_000 + 0.1 * 500_000))
+            self.assertAlmostEqual(watchdog.refresh_cost("max"), 2 * (500_000 - 300_000) + 0.1 * 300_000 + 150_000)
+            self.assertAlmostEqual(watchdog.pending_paid("high", None, 1000)[1], 2 * 1000 + 0.1 * 400_000)  # not high's
+            # and a refresh of max's parts, from its top part, the knowledge base with the role layers
+            parts = [{"part": "stable", "sessionId": "max-stable", "context": 300_000},
+                     {"part": "direction", "kind": "material", "sessionId": "md", "parent": "max-stable", "context": 400_000},
+                     {"part": "catalogue", "kind": "material", "sessionId": "mc", "parent": "md", "context": 500_000}]
+            (self.state / "max-layer.json").write_text(json.dumps({"sessionId": "mc", "base": "max-stable",
+                                                                   "context": 500_000, "parts": parts}))
+            with patch.object(watchdog, "carried_parts", lambda who: {"catalogue": 10_000_000.0}):
+                self.assertEqual(watchdog.refresh_plan("max")[2], 2 * 100_000 + 0.1 * 400_000 + 150_000)
+
+    def test_the_chain_s_superseded_forms_are_weighed_against_writing_it_anew(self):
+        top = {"sessionId": "d3", "tokens": 30_000, "superseded": 4000,
+               "stack": [{"sessionId": "d1", "sealed": self.sealed}, {"sessionId": "d2"}, {"sessionId": "d3"}]}
+        self.sessions(a=dict(origin="high", started=self.t + 60, superseded_tokens=4000, sid="a"),
+                      b=dict(origin="high", started=self.t - 60, superseded_tokens=4000, sid="b"))
+        with patch.object(watchdog, "own_requests", lambda s: 50):
+            owed, cost = watchdog.stack_waste("high", top)
+        self.assertAlmostEqual(owed, 0.1 * 4000 * 50)
+        self.assertAlmostEqual(cost, 2 * (30_000 - 4000) + 0.1 * 400_000)
+        self.assertEqual(watchdog.stack_waste("high", dict(top, stack=top["stack"][:1])), (0.0, 0.0))  # one message
 
 
 class DeltaForkTests(unittest.TestCase):
@@ -388,6 +756,57 @@ class DeltaForkTests(unittest.TestCase):
         self.assertEqual(self.py(start), "None")                       # the layer is what its roles fork
         (self.w.state / "deltas").write_text("high\n")
         self.assertEqual(self.py(start.replace("'7'", "'8'").replace("-7", "-8").replace("task 7", "task 8")), "6451")
+        # and whose changes it carries, by part: each part's account is its own (watchdog.carried_parts)
+        rec = json.loads((self.w.state / "high-delta.json").read_text())
+        (self.w.state / "high-delta.json").write_text(json.dumps(dict(rec, parts={"direction": 300, "catalogue": 900})))
+        shares = start.replace("'7'", "'9'").replace("-7", "-9").replace("task 7", "task 9").replace(
+            "get('delta_tokens')", "get('delta_shares')")
+        self.assertEqual(self.py(shares), "{'direction': 0.25, 'catalogue': 0.75}")
+        (self.w.state / "high-delta.json").write_text(json.dumps(dict(json.loads((self.w.state / "high-delta.json")
+                                                                                .read_text()), superseded=120)))
+        (self.w.state / "high-delta-pending.json").write_text(json.dumps({"top": "delta-sid", "tokens": 700}))
+        both = start.replace("'7'", "'10'").replace("-7", "-10").replace("task 7", "task 10").replace(
+            "get('delta_tokens')", "get('pending_tokens'), v2.peek()['sessions'][n].get('superseded_tokens')")
+        self.assertEqual(self.py(both), "700 120")
+
+    def test_only_a_fork_of_the_base_itself_awaits_its_session_and_every_session_standing_on_it_uses_it(self):
+        # the owner, 2026-09-24: sessions only when something is about to start from them — the knowledge base, the
+        # roles' reasoning layers and churns take the texts in themselves, and a session relieves none of them
+        sessions = {"kb-1": {"role": "kb", "origin": "max"},
+                    "layer-reviewer": {"role": "role-layer", "layer_of": "reviewer", "origin": "xhigh"},
+                    "layer-implementer": {"role": "role-layer", "layer_of": "implementer", "origin": "high:layer"},
+                    "churn-implementer": {"role": "role-churn", "origin": "layer-implementer"}}
+        forks = [("high", "designer"), ("high:layer", "implementer"), ("xhigh", "role-layer"), ("max", "kb"),
+                 ("kb-1", "planner"), ("churn-implementer", "implementer"), ("high:stable", "base-reasoning"),
+                 ("high:catalogue", None), ("nobody", None)]
+        self.assertEqual([v2.top_rider(o, sessions, r) for o, r in forks],
+                         ["high", "high", None, None, None, None, None, None, None])
+        # the base is in use while any session standing on it starts (warm_daemon.sh's idle rule)
+        self.assertEqual([v2.stands_on(o, sessions) for o in ("high", "kb-1", "layer-reviewer", "layer-implementer",
+                                                               "churn-implementer", "nobody")],
+                         ["high", "max", "xhigh", "high", "high", None])
+
+    def test_a_session_standing_on_a_base_is_a_use_of_it_whatever_it_forks(self):
+        # the simulation of 09-21/22: planners reach max through the knowledge base alone, max counted as unused, its
+        # pings stopped after twelve hours (warm_daemon.sh), and its whole chain was built again for the next message
+        self.w.session("kb-1", "kb", "kb-sid", origin="max")
+        used = self.w.state / "max-base.used"
+        self.assertFalse(used.exists())
+        self.py("v2.launch('planner', '1', lambda n: 'You are plan-1.', tree=None, origin='kb-1')")
+        self.assertTrue(used.exists())
+        self.assertLess(time.time() - used.stat().st_mtime, 60)
+
+    def test_a_fork_of_any_session_carrying_the_delta_carries_it_and_awaits_what_is_pending(self):
+        self.w.session("kb-1", "kb", "kb-sid", origin="high", delta_tokens=5000, delta_shares={"catalogue": 1.0},
+                       superseded_tokens=10)
+        for name, context in (("high-layer.json", 601_541), ("high-delta.json", 607_992)):
+            rec = json.loads((self.w.state / name).read_text())
+            (self.w.state / name).write_text(json.dumps(dict(rec, context=context)))
+        (self.w.state / "deltas").write_text("high\n")
+        child = ("n = v2.launch('implementer', '13', lambda n: 'You are implement-13, working on task 13.', tree=None, "
+                 "origin='kb-1')\ns = v2.peek()['sessions'][n]\n"
+                 "print(s.get('delta_tokens'), s.get('delta_shares'), s.get('superseded_tokens'))")
+        self.assertEqual(self.py(child), "5000 {'catalogue': 1.0} 10")    # a planner of the knowledge base, say
 
     def test_the_roles_fork_the_delta_once_the_base_is_switched_to_it(self):
         forked = "print(v2.base_record('high')[1]['sid'])"
@@ -420,12 +839,31 @@ class DeltaForkTests(unittest.TestCase):
         self.assertIn("cache of fix-9:", (self.w.state / "v2.log").read_text())
 
     def test_the_standing_delta_s_snapshot_and_text_are_kept_and_the_rest_swept(self):
-        for sid in ("delta-sid", "delta-old"):
+        for sid in ("delta-sid", "delta-old", "delta-first", "delta-mid"):
             (self.w.state / f"layer-{sid}-manifest.json").write_text(json.dumps({"taken": "t", "delta": True, "files": {}}))
         self.standing.write_text("the standing delta")
         old = self.w.state / "high-delta-20260922T120000.md"
         old.write_text("an older delta")
-        for path in (self.standing, old):
+        gone = self.py("print(sorted(v2.tidied()))")                   # a delta recorded as one message, no chain
+        self.assertNotIn("layer-delta-sid-manifest.json", gone)        # the delta standing, whether forked or not
+        self.assertIn("layer-delta-first-manifest.json", gone)         # no message of anything standing
+        (self.w.state / "tidied").unlink()                             # the sweep's own pace: at most hourly
+        # the chain's first message: a churn built whole reads every message of the chain
+        first = self.w.state / "high-delta-20260922T150000.md"
+        first.write_text("the chain's first message")
+        for sid in ("delta-first", "delta-mid", "delta-old"):
+            (self.w.state / f"layer-{sid}-manifest.json").write_text(json.dumps({"taken": "t", "delta": True, "files": {}}))
+        rec = json.loads((self.w.state / "high-delta.json").read_text())
+        rec["stack"] = [{"sessionId": "delta-first", "text": str(first)},
+                        {"sessionId": "delta-sid", "text": str(self.standing)}]
+        (self.w.state / "high-delta.json").write_text(json.dumps(rec))
+        # a judging role's layer that reasoned over a message no longer of the chain (a test's state: its forks are
+        # told what changed since it, while it stands)
+        st = self.w.st() or {}
+        self.w.set_st(sessions=dict(st.get("sessions") or {}, **{"layer-reviewer": dict(
+            role="role-layer", layer_of="reviewer", layer_state="sealed", origin="high", origin_sid="delta-mid",
+            state="done")}))
+        for path in (self.standing, old, first):
             then = os.path.getmtime(path) - 5 * 3600
             os.utime(path, (then, then))
         gone = self.py("print(sorted(v2.tidied()))")
@@ -433,6 +871,16 @@ class DeltaForkTests(unittest.TestCase):
         self.assertNotIn("layer-delta-sid-manifest.json", gone)        # the delta standing, whether forked or not
         self.assertIn("high-delta-20260922T120000.md", gone)
         self.assertNotIn(self.standing.name, gone)                     # the next build reads it
+        self.assertNotIn(first.name, gone)                             # and every message of its chain
+        self.assertNotIn("layer-delta-first-manifest.json", gone)      # whose snapshots a judging layer's forks read
+        self.assertNotIn("layer-delta-mid-manifest.json", gone)        # the message a standing layer forked
+        # a chain of texts: each text's snapshot stays with it, what a holder of the chain to it is told from
+        (self.w.state / "tidied").unlink()
+        (self.w.state / "layer-high-text-1-manifest.json").write_text(json.dumps({"taken": "t", "delta": True, "files": {}}))
+        rec["stack"] = [{"id": "high-text-1", "text": str(first)}, {"id": "high-text-2", "text": str(self.standing)}]
+        (self.w.state / "high-delta.json").write_text(json.dumps(rec))
+        gone = self.py("print(sorted(v2.tidied()))")
+        self.assertNotIn("layer-high-text-1-manifest.json", gone)
 
     def test_a_fork_of_the_delta_is_told_only_what_changed_after_it(self):
         project = self.w.project
@@ -564,18 +1012,23 @@ class DeltaTriggerTests(unittest.TestCase):
             rec, sessionId="delta-sid", layer="layer-sid", base="stable-sid", sealed="2026-09-22T19:30:00")))
         self.touch("high-layer.hit")                                    # the layer's entry, read by the delta's build
         self.touch("high-base.hit")                                     # what the roles fork, read by their forks
-        self.started, self.said, self.once, self.errs = [], [], [], []
-        self.moved = watchdog.DELTA_MIN + 1000                          # enough has moved for a build, whatever the rule's line
+        self.started, self.said, self.once, self.errs, self.cuts = [], [], [], [], []
+        # what is pending since the delta's last message, what that has cost the forks against a message holding it,
+        # and what the chain's superseded forms have cost against writing it anew (the rules' own tests are apart)
+        self.pending, self.paid, self.waste = 5000, (1.0, 1.0), (0.0, 0.0)
         self.measure, self.whole, self.owed, self.cost = (0.01, 0, 5000), 0.3, 0.0, 700_000.0
         self.patches = [
             patch.object(watchdog, "STATE", str(self.state)), patch.object(v2, "STATE", str(self.state)),
             patch.dict(os.environ, {"ORCH_DELTAS": "high"}),
-            patch.object(watchdog, "moved_since_delta", lambda who: self.moved),
+            patch.object(watchdog, "pending_tokens", lambda who: self.pending),
+            patch.object(watchdog, "pending_paid", lambda who, top, pending: self.paid),
+            patch.object(watchdog, "stack_waste", lambda who, top: self.waste),
             patch.object(watchdog, "carried", lambda who: self.owed),
             patch.object(watchdog, "refresh_cost", lambda who: self.cost),
             patch.object(watchdog, "delta_measure", lambda who: self.measure),
             patch.object(watchdog, "stale_share", lambda who: self.whole),
             patch.object(watchdog.subprocess, "Popen", self.launch),
+            patch.object(watchdog, "cut_text", lambda who, whole=False: self.cuts.append((who, whole))),
             patch.object(v2, "log", self.said.append),
             patch.object(v2, "say_once", lambda key, text, **kw: self.once.append(text))]
         for p in self.patches:
@@ -591,6 +1044,13 @@ class DeltaTriggerTests(unittest.TestCase):
         path.write_text(path.read_text() if path.exists() else "")
         then = time.time() - ago
         os.utime(path, (then, then))
+
+    def texts_only(self):
+        """The chain as texts with no session made of them: the roles fork the layer."""
+        rec = json.loads((self.state / "high-delta.json").read_text())
+        rec.pop("sessionId")
+        (self.state / "high-delta.json").write_text(json.dumps(dict(
+            rec, top="high-text-1", stack=[{"id": "high-text-1", "digest": "t1", "tokens": 5000}])))
 
     def launch(self, args, **kw):
         self.started.append(args[2:])
@@ -610,9 +1070,30 @@ class DeltaTriggerTests(unittest.TestCase):
         for stream in self.errs:
             self.assertTrue(str(stream).endswith("warm.log"), self.errs)
 
+    def test_a_chain_s_layer_entry_is_its_top_part_read_under_its_own_marks(self):
+        # the simulation of the run of 09-21/22: with every role of high on a layer of its own nothing forked the base,
+        # its mark aged while the top part's pings answered, and the layer was refreshed as cold with its stable base
+        (self.state / "high-delta.json").unlink()
+        rec = json.loads((self.state / "high-layer.json").read_text())
+        rec["parts"] = [{"part": "stable", "sessionId": "stable-sid"},
+                        {"part": "catalogue", "kind": "material", "sessionId": "layer-sid", "parent": "stable-sid"}]
+        (self.state / "high-layer.json").write_text(json.dumps(rec))
+        self.touch("high-base.hit", ago=2 * v2.WARM_MAX)                    # nothing forks the base itself
+        self.assertGreaterEqual(watchdog.layer_entry_age("high"), 2 * v2.WARM_MAX - 5)
+        (self.state / "high-catalogue.hit").write_text("layer-sid")
+        self.touch("high-catalogue.hit", ago=600)                          # the top part's ping, ten minutes ago
+        self.assertLess(watchdog.layer_entry_age("high"), 700)
+        (self.state / "high-catalogue.hit").write_text("another-sid")      # a mark of another session's
+        self.touch("high-catalogue.hit", ago=600)
+        self.assertGreaterEqual(watchdog.layer_entry_age("high"), 2 * v2.WARM_MAX - 5)
+        (self.state / "entry-hits").mkdir()
+        self.touch("entry-hits/layer-sid", ago=300)                         # its own mark, a fork's read
+        self.assertLess(watchdog.layer_entry_age("high"), 400)
+
     def test_a_layer_whose_entry_was_missed_holds_no_delta_over_it(self):
         # the high layer's own ping missed at 2026-09-22 21:56 and wrote 593K: a delta built over the layer after
         # that would fork a session whose entry is gone and write the whole prefix again, for a delta nothing reads
+        self.touch("high-delta.build")                                  # asked for: a session over the layer
         self.touch("high-layer.hit")                                    # read just now, as far as its reads say
         self.touch("high-layer.miss", ago=600)                          # and missed ten minutes ago: it is gone
         watchdog.deltas()
@@ -620,23 +1101,54 @@ class DeltaTriggerTests(unittest.TestCase):
         self.assertIn("cold", (self.state / "high-layer.refresh").read_text())
         # the layer sealed since answers the miss: its load wrote the entry
         (self.state / "high-layer.refresh").unlink()
-        self.touch("high-delta.looked", ago=watchdog.DELTA_EVERY + 60)
         record = json.loads((self.state / "high-layer.json").read_text())
         (self.state / "high-layer.json").write_text(json.dumps(dict(record, sealed=time.strftime("%Y-%m-%dT%H:%M:%S"))))
         watchdog.deltas()
-        self.assertEqual(self.started, [["high", "delta"]])
-
-    def test_a_delta_is_built_when_enough_has_moved_and_not_too_often(self):
-        watchdog.deltas()
-        self.assertEqual(self.started, [["high", "delta"]])
-        self.assertIn(f"the high delta is rebuilt: about {self.moved:,} tokens moved since 19:30", self.said)
+        self.assertEqual(self.started, [["high", "delta", "--whole"]])
+        # with texts alone the roles fork the layer: its reads and its miss are the base's marks, and the miss is a
+        # fork's, which has the layer refreshed
         self.started.clear()
-        watchdog.deltas()                                               # within DELTA_EVERY: not looked at again
+        self.texts_only()
+        (self.state / "high-layer.json").write_text(json.dumps(record))       # sealed long before the miss
+        self.touch("high-base.miss", ago=600)
+        self.touch("high-delta.looked", ago=watchdog.DELTA_EVERY + 60)
+        watchdog.deltas()
+        self.assertEqual(self.started, [])
+        self.assertIn("missed its entry", (self.state / "high-layer.refresh").read_text())
+
+    def test_a_delta_message_is_built_once_what_is_pending_has_paid_for_it_and_not_measured_too_often(self):
+        watchdog.deltas()                                               # its session holds the chain; 5,000 uncut
+        self.assertEqual(self.started, [["high", "delta"]])
+        self.assertTrue(any("the high delta's session is made: what the forks of the base lacked of 5,000 tokens" in x
+                            for x in self.said), self.said)
+        self.started.clear()
+        watchdog.deltas()                                               # within DELTA_EVERY: not measured again
         self.assertEqual(self.started, [])
         self.touch("high-delta.looked", ago=watchdog.DELTA_EVERY + 60)
-        self.moved = watchdog.DELTA_MIN - 1
-        watchdog.deltas()                                               # below DELTA_MIN: nothing
+        self.paid = (0.9, 1.0)                                          # not yet paid for: nothing
+        watchdog.deltas()
         self.assertEqual(self.started, [])
+        pending = json.loads((self.state / "high-delta-pending.json").read_text())
+        self.assertEqual((pending["top"], pending["tokens"]), ("delta-sid", 5000))   # what forks record meanwhile
+
+    def test_the_chain_s_session_is_made_by_its_rule_and_the_chain_begun_anew_as_one_text_by_its_own(self):
+        rec = json.loads((self.state / "high-delta.json").read_text())
+        (self.state / "high-delta.json").write_text(json.dumps(dict(
+            rec, top="high-text-2", superseded=500, session_len=1,
+            stack=[{"id": "high-text-1", "sessionId": "delta-sid", "tokens": 4000},
+                   {"id": "high-text-2", "tokens": 1000, "superseded": 500}])))
+        (self.state / "high-delta-held.json").write_text(json.dumps({"top": "high-text-2", "files": {}}))
+        watchdog.deltas()
+        self.assertEqual(self.started, [["high", "delta"]])             # over its session: the texts after it
+        self.assertTrue(any("session is made" in x for x in self.said), self.said)
+        self.assertEqual(self.cuts, [])                                 # the session's build cuts what it takes
+        self.started.clear()
+        self.touch("high-delta.looked", ago=watchdog.DELTA_EVERY + 60)
+        self.pending, self.waste = 0, (3.0, 2.0)                       # nothing uncut, and the chain's waste paid
+        watchdog.deltas()
+        self.assertEqual(self.started, [])                              # a cut, local: no session for it
+        self.assertEqual(self.cuts, [("high", True)])
+        self.assertTrue(any("its superseded forms have cost its holders" in x for x in self.said), self.said)
 
     def test_no_delta_is_built_over_a_build_or_for_a_base_not_switched_to_it(self):
         self.touch("high-layer.building")
@@ -648,7 +1160,9 @@ class DeltaTriggerTests(unittest.TestCase):
         self.assertEqual(self.started, [])
 
     def test_a_cold_layer_is_refreshed_instead_of_a_delta_built_over_it(self):
-        self.touch("high-layer.hit", ago=2 * 3600)                      # the layer's own entry is cold
+        self.texts_only()                                               # the session would be made over the layer
+        self.touch("high-layer.hit", ago=2 * 3600)
+        self.touch("high-base.hit", ago=2 * 3600)                       # which the roles fork: its reads marked there                      # the layer's own entry is cold
         watchdog.deltas()
         self.assertEqual(self.started, [])
         self.assertIn("cold", (self.state / "high-layer.refresh").read_text())
@@ -659,11 +1173,11 @@ class DeltaTriggerTests(unittest.TestCase):
 
     def test_a_delta_asked_for_or_asked_a_question_is_built_or_asked_at_once(self):
         self.touch("high-delta.looked")
-        self.moved = 0
+        self.pending = 0
         self.touch("high-delta.build")
         with patch.dict(os.environ, {"ORCH_DELTAS": ""}):               # by hand, before its base is switched to it
             watchdog.deltas()
-        self.assertEqual(self.started, [["high", "delta"]])
+        self.assertEqual(self.started, [["high", "delta", "--whole"]])  # the chain one text, and a session of it
         self.assertFalse((self.state / "high-delta.build").exists())
         (self.state / "high-delta.ask").write_text("What does lemma l7 state?")
         with patch.dict(os.environ, {"ORCH_DELTAS": ""}):
@@ -691,7 +1205,7 @@ class DeltaTriggerTests(unittest.TestCase):
 
     def test_the_layer_under_a_standing_delta_is_pinged_when_due(self):
         # its entry is read by the delta's builds alone; the daemon's own ping waits for its restart (2026-09-22 20:55)
-        self.moved, pings = 0, lambda: [a for a in self.started if a[1:2] == ["warm"]]
+        self.pending, pings = 0, lambda: [a for a in self.started if a[1:2] == ["warm"]]
         for ago, due in ((10 * 60, False), (45 * 60, True), (70 * 60, False)):  # early; due; cold, left alone
             self.started.clear()
             self.touch("high-layer.hit", ago=ago)
@@ -722,11 +1236,11 @@ class DeltaTriggerTests(unittest.TestCase):
     def test_a_fork_that_missed_its_entry_has_it_made_anew(self):
         # three entries were evicted within four minutes on 2026-09-22 (21:04 the high delta, 21:05 the xhigh layer):
         # a fork that missed wrote its own prefix, which no later fork reads, so every fork after it wrote 600K
-        self.moved = 0
+        self.pending = 0
         self.touch("high-delta.looked")                                 # within DELTA_EVERY, nothing moved
         (self.state / f"high-{v2.FORK_MISSED}").write_text(str(time.time()))
         watchdog.deltas()
-        self.assertEqual(self.started, [["high", "delta"]])
+        self.assertEqual(self.started, [["high", "delta", "--over-layer"]])  # its session made again, over the layer
         self.assertFalse((self.state / f"high-{v2.FORK_MISSED}").exists())   # taken, once
         self.started.clear()
         watchdog.deltas()
@@ -742,10 +1256,17 @@ class DeltaTriggerTests(unittest.TestCase):
         (self.state / "high-delta.json").write_text(json.dumps(dict(rec, sealed="2026-09-22T19:30:00")))
         (self.state / "high-base.miss").write_text("x\n")
         watchdog.deltas()
-        self.assertEqual(self.started, [["high", "delta"]])
+        self.assertEqual(self.started, [["high", "delta", "--over-layer"]])
         self.assertTrue((self.state / "high-base.miss").exists())       # the load that makes the entry clears it
         (self.state / "high-base.miss").unlink()
         self.started.clear()
+        # texts with no session made of them: the roles fork the layer, whose entry the fork missed
+        self.texts_only()
+        (self.state / f"high-{v2.FORK_MISSED}").write_text(str(time.time()))
+        watchdog.deltas()
+        self.assertEqual(self.started, [])
+        self.assertIn("a fork missed its entry", (self.state / "high-layer.refresh").read_text())
+        (self.state / "high-layer.refresh").unlink()
         # a base whose roles fork the layer has its layer refreshed instead
         (self.state / f"high-{v2.FORK_MISSED}").write_text(str(time.time()))
         with patch.dict(os.environ, {"ORCH_DELTAS": ""}):
@@ -753,6 +1274,25 @@ class DeltaTriggerTests(unittest.TestCase):
         self.assertEqual(self.started, [["high", "layer"]])
         self.assertTrue(any(x.startswith("the high layer is refreshed: a fork missed its entry") for x in self.said),
                         self.said)
+
+    def test_a_chain_refreshes_from_the_lowest_part_that_has_paid_the_stable_part_by_the_same_rule(self):
+        rec = json.loads((self.state / "high-layer.json").read_text())
+        rec["parts"] = [{"part": "stable", "sessionId": "stable-sid"},
+                        {"part": "direction", "kind": "material", "sessionId": "layer-sid", "parent": "stable-sid"}]
+        (self.state / "high-layer.json").write_text(json.dumps(rec))
+        self.touch("high-layer.looked", ago=watchdog.LAYER_EVERY + 60)
+        plan = ("inventory", 200_000.0, 150_000.0)
+        with patch.object(watchdog, "refresh_plan", lambda who: plan):
+            watchdog.layers()
+        self.assertEqual(self.started[-1], ["high", "layer", "--from", "inventory"])
+        self.assertTrue(any("the high parts from inventory up are refreshed" in x for x in self.said), self.said)
+        self.started.clear()
+        plan = ("stable", 700_000.0, 600_000.0)
+        self.touch("high-layer.looked", ago=watchdog.LAYER_EVERY + 60)
+        with patch.object(watchdog, "refresh_plan", lambda who: plan):
+            watchdog.layers()
+        self.assertEqual(self.started, [["high", "layer", "--from", "stable"]])   # its reload, once paid, by the rule
+        self.assertTrue(any("the high parts from stable up are refreshed" in x for x in self.said), self.said)
 
     def test_the_stable_part_s_drift_is_the_owner_s_and_refreshes_nothing(self):
         self.measure = (0.01, watchdog.STABLE_DELTA_MAX, 20000)

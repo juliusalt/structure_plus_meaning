@@ -11,6 +11,10 @@ native_control_plan.md: task {ID}, "{SUBJECT}", a {KIND} task. {{inherited}}
 
 {INPUTS}
 
+## What your task's theories stand on, and what uses them
+
+{RELATIONS}
+
 ## How you work
 
 You build what the brief's design says. The brief is at the level its task designer knew without reading: which
@@ -37,8 +41,6 @@ Production for you: your task's deliverables (the files under Deliverable) and y
 {{efficiency}}
 
 {{consult}}
-
-{{owner}}
 
 {{finishing}}
 

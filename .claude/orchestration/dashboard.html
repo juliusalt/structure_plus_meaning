@@ -1,0 +1,1723 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Run console</title>
+<style>
+:root {
+  --bg: #f4f5f7; --panel: #ffffff; --panel-2: #f8f9fb; --ink: #17202a; --ink-2: #3d4753; --muted: #6b7684;
+  --line: #e1e5ea; --line-2: #eef1f4; --accent: #2f6fdb; --accent-ink: #ffffff;
+  --ok: #1e8a4c; --warn: #b26b00; --bad: #c0392b; --info: #2f6fdb;
+  --ok-bg: #e7f5ec; --warn-bg: #fdf3e2; --bad-bg: #fbeaea; --info-bg: #e9f0fc;
+  --code: #f1f3f6; --shadow: 0 1px 2px rgba(20, 30, 40, .06), 0 2px 8px rgba(20, 30, 40, .04);
+  --g-waiting: #8792a2; --g-ready: #56627a; --g-idle: #aab3bf; --g-running: #2f6fdb; --g-parked: #b26b00;
+  --g-check: #7b4fd6; --g-review: #0f8a8a; --g-fix: #d0661e; --g-train: #1e8a4c; --g-planner: #c0392b; --g-done: #9aa5b1;
+  /* the charts' colours, each validated (the dataviz skill's validate_palette.js, against the panel): the categorical
+     slots in their fixed order; the shared chain's material parts an ordinal blue ramp, its bottom darkest; status apart */
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100; --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7;
+  --r1: #104281; --r2: #1c5cab; --r3: #2a78d6; --r4: #5598e7; --r5: #86b6ef; --r-ink1: #fff; --r-ink5: #0b0b0b;
+  --st-warn: #fab219; --st-serious: #ec835a; --grid: #e6e8ec; --axis: #c3c2b7;
+  --c-read: var(--s1); --c-write: var(--s2); --c-input: var(--s3); --c-output: var(--s4); --c-pings: var(--s5); --c-loads: var(--s6);
+  --p-reasoning: var(--s6); --p-delta: var(--s2); --p-role: var(--s3); --p-kb: var(--s4); --p-churn: var(--s7);
+  --t-model: var(--s1); --t-tools: var(--s2); --t-idle: #a7a6a0;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0f1216; --panel: #171b21; --panel-2: #1c2129; --ink: #e6eaef; --ink-2: #c3cad3; --muted: #8e99a7;
+          --line: #2a313b; --line-2: #222831; --accent: #6ea0ff; --accent-ink: #0f1216;
+          --ok: #4cc27f; --warn: #e3a646; --bad: #ff6f5f; --info: #6ea0ff;
+          --ok-bg: #16281e; --warn-bg: #2d2413; --bad-bg: #2f1a18; --info-bg: #182338;
+          --code: #1f252e; --shadow: none;
+          --g-waiting: #8792a2; --g-ready: #9aa6b8; --g-idle: #6b7582; --g-running: #6ea0ff; --g-parked: #e3a646;
+          --g-check: #a88af0; --g-review: #3cc0c0; --g-fix: #f08a45; --g-train: #4cc27f; --g-planner: #ff6f5f; --g-done: #5f6b78;
+          --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500; --s5: #d55181; --s6: #008300; --s7: #9085e9;
+          --r1: #184f95; --r2: #256abf; --r3: #3987e5; --r4: #6da7ec; --r5: #b7d3f6; --r-ink1: #fff; --r-ink5: #0b0b0b;
+          --grid: #262c35; --axis: #383d45; --t-idle: #6b6a66; }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+code, pre, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+a { color: var(--accent); text-decoration: none; cursor: pointer; }
+a:hover { text-decoration: underline; }
+
+/* the frame */
+header.top { position: sticky; top: 0; z-index: 10; background: var(--panel); border-bottom: 1px solid var(--line); }
+.bar { display: flex; align-items: center; gap: 16px; padding: 10px 20px; max-width: 1640px; margin: 0 auto; flex-wrap: wrap; }
+.brand { font-weight: 700; font-size: 15px; letter-spacing: .01em; white-space: nowrap; }
+.pills { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.updated { color: var(--muted); font-size: 12px; white-space: nowrap; display: flex; gap: 8px; align-items: center; }
+.updated.paused #updated { color: var(--warn); }
+.jump { margin-left: auto; position: relative; display: flex; align-items: center; }
+.jump input { width: 230px; padding-right: 26px; }
+.jump kbd, kbd { font: 11px ui-monospace, Menlo, monospace; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; background: var(--panel-2); }
+.jump kbd { position: absolute; right: 7px; pointer-events: none; }
+nav.tabs { display: flex; gap: 2px; padding: 0 20px; max-width: 1640px; margin: 0 auto; overflow-x: auto; }
+nav.tabs .sep { width: 1px; background: var(--line); margin: 8px 8px; }
+nav.tabs button { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 9px 12px;
+                  font: inherit; font-weight: 500; cursor: pointer; white-space: nowrap; }
+nav.tabs button:hover { color: var(--ink); }
+nav.tabs button.on { color: var(--ink); border-bottom-color: var(--accent); }
+nav.tabs .count { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 6px; border-radius: 9px; font-size: 11px;
+                  line-height: 18px; background: var(--bad); color: #fff; text-align: center; }
+main { max-width: 1640px; margin: 0 auto; padding: 18px 20px 60px; }
+main.loading { opacity: .5; transition: opacity .12s .08s; pointer-events: none; }  /* a click taken, its view coming */
+
+/* building blocks */
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); min-width: 0; }
+.panel > .head { display: flex; align-items: baseline; gap: 10px; padding: 12px 16px 8px; flex-wrap: wrap; }
+.panel > .head h2 { margin: 0; font-size: 14px; font-weight: 650; }
+.panel > .head .sub { color: var(--muted); font-size: 12px; }
+.panel > .head .actions { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+.panel > .body { padding: 4px 16px 14px; }
+.panel > .body.flush { padding: 0 0 6px; }
+.stack { display: grid; gap: 16px; align-content: start; grid-template-columns: minmax(0, 1fr); }
+.cols { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 1150px) { .cols.two { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+                             .cols.halves { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+                             .cols.detail { grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); } }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500;
+        background: var(--line-2); color: var(--ink-2); white-space: nowrap; }
+.pill .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.pill.ok { background: var(--ok-bg); color: var(--ok); } .pill.warn { background: var(--warn-bg); color: var(--warn); }
+.pill.bad { background: var(--bad-bg); color: var(--bad); } .pill.info { background: var(--info-bg); color: var(--info); }
+.chip { display: inline-flex; align-items: center; gap: 5px; padding: 1px 8px; border-radius: 6px; font-size: 12px; font-weight: 500;
+        border: 1px solid; white-space: nowrap; line-height: 18px; }
+.role { display: inline-block; padding: 0 7px; border-radius: 5px; font-size: 11.5px; font-weight: 600; background: var(--line-2);
+        color: var(--ink-2); line-height: 18px; white-space: nowrap; }
+.muted { color: var(--muted); } .small { font-size: 12px; } .ok { color: var(--ok); } .warn { color: var(--warn); } .bad { color: var(--bad); }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.nowrap { white-space: nowrap; }
+.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* a table's box scrolls both ways; a long table's box is at most the window's height, so its header stays in view and
+   its sideways scrollbar is on screen, not under its last row; a shadow marks the side where columns are out of view */
+.tablebox { overflow: auto; scrollbar-width: thin; scrollbar-color: var(--muted) transparent;
+  background: linear-gradient(to right, var(--panel) 30%, transparent) left / 40px 100% no-repeat local,
+              linear-gradient(to left, var(--panel) 30%, transparent) right / 40px 100% no-repeat local,
+              radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.45), transparent) left / 16px 100% no-repeat scroll,
+              radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.45), transparent) right / 16px 100% no-repeat scroll; }
+.tablebox.tall { max-height: calc(100vh - 230px); }
+.tablebox::-webkit-scrollbar { height: 10px; width: 10px; }
+.tablebox::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 5px; border: 2px solid var(--panel); }
+table.t { width: 100%; border-collapse: collapse; }
+table.t th { text-align: left; font-size: 11.5px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em;
+             padding: 8px 10px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--panel); z-index: 1;
+             line-height: 1.25; vertical-align: bottom; }
+table.t td { padding: 7px 10px; border-bottom: 1px solid var(--line-2); vertical-align: middle; }
+table.t tr.click { cursor: pointer; }
+table.t tr.click:hover td { background: var(--panel-2); }
+table.t td.subject .ellipsis { max-width: clamp(180px, 32vw, 560px); }
+@media (max-width: 1250px) { table.t td, table.t th { padding-left: 7px; padding-right: 7px; } }
+.empty { padding: 18px 16px; color: var(--muted); }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
+.tile { background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 8px; padding: 9px 12px; }
+.tile .k { font-size: 11.5px; color: var(--muted); }
+.tile .v { font-size: 20px; font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.3; }
+.tile .v.small { font-size: 14px; font-weight: 600; }
+.tile.warn .v { color: var(--warn); } .tile.bad .v { color: var(--bad); } .tile.ok .v { color: var(--ok); }
+
+.meter { display: grid; grid-template-columns: 110px 1fr auto; gap: 10px; align-items: center; margin: 8px 0; }
+.meter .track { height: 8px; background: var(--line-2); border-radius: 4px; overflow: hidden; }
+.meter .fill { height: 100%; background: var(--accent); border-radius: 4px; }
+.meter .fill.warn { background: var(--warn); } .meter .fill.bad { background: var(--bad); }
+.meter .label { font-size: 13px; color: var(--ink-2); } .meter .val { font-size: 13px; font-variant-numeric: tabular-nums; }
+
+.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 5px 16px; font-size: 13px; }
+.kv > .k { color: var(--muted); } .kv > .v { min-width: 0; overflow-wrap: anywhere; }
+
+pre.box { background: var(--code); border: 1px solid var(--line-2); border-radius: 6px; padding: 10px 12px; margin: 6px 0;
+          white-space: pre-wrap; word-break: break-word; font-size: 12px; line-height: 1.45; max-height: 520px; overflow: auto; }
+pre.box.tall { max-height: 78vh; }
+
+/* attention */
+.attn { display: grid; gap: 8px; }
+.attn .item { display: grid; grid-template-columns: 20px 1fr auto; gap: 10px; align-items: start; padding: 9px 12px; border-radius: 8px;
+              border: 1px solid; font-size: 13px; }
+.attn .item.bad { background: var(--bad-bg); border-color: transparent; color: var(--ink); }
+.attn .item.warn { background: var(--warn-bg); border-color: transparent; }
+.attn .item.info { background: var(--info-bg); border-color: transparent; }
+.attn .icon { font-weight: 700; text-align: center; }
+.attn .item.bad .icon { color: var(--bad); } .attn .item.warn .icon { color: var(--warn); } .attn .item.info .icon { color: var(--info); }
+.allgood { display: flex; gap: 10px; align-items: center; color: var(--ok); padding: 4px 0; font-weight: 500; }
+
+/* pipeline */
+.pipe { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; align-items: stretch; }
+.lane { background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 8px; min-height: 90px; display: flex; flex-direction: column;
+        flex: 1 1 180px; min-width: 165px; }
+.lane.none { flex: 0 0 104px; min-width: 104px; opacity: .7; }
+.lane.none .lh { white-space: normal; line-height: 1.25; }
+.lane .lh { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-bottom: 1px solid var(--line-2); font-size: 12.5px; font-weight: 600; }
+.lane .lh .n { margin-left: auto; font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 600; }
+.lane .cards { padding: 6px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; max-height: 330px; overflow-y: auto; overflow-x: hidden; }
+.card { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid; border-radius: 6px; padding: 5px 8px; cursor: pointer; min-width: 0; }
+.card:hover { border-color: var(--accent); }
+.card .id { font-size: 11.5px; font-weight: 700; color: var(--ink-2); }
+.card .s { font-size: 12.5px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card .st { font-size: 11.5px; color: var(--muted); }
+
+/* held up */
+.held { display: grid; gap: 6px; }
+.hrow { display: grid; grid-template-columns: minmax(0, 5fr) 64px minmax(0, 7fr); gap: 12px; align-items: center; padding: 7px 10px;
+        border: 1px solid var(--line-2); border-radius: 8px; background: var(--panel-2); }
+.hroot { cursor: pointer; min-width: 0; } .hroot:hover b { color: var(--accent); }
+.hroot .s { font-size: 12.5px; color: var(--ink-2); }
+.hn { text-align: center; font-size: 18px; line-height: 1.1; } .hn .small { font-size: 11px; }
+.hwait { display: flex; flex-wrap: wrap; gap: 4px; }
+.tchip { font-size: 12px; padding: 1px 7px; border-radius: 5px; border: 1px solid var(--line); background: var(--panel); color: var(--ink-2); white-space: nowrap; }
+.tchip.direct { border-color: var(--g-waiting); color: var(--ink); font-weight: 600; }
+.tchip:hover { border-color: var(--accent); text-decoration: none; }
+@media (max-width: 700px) { .hrow { grid-template-columns: minmax(0, 1fr) 50px; } .hwait { grid-column: 1 / -1; } }
+
+/* sessions now */
+.live { display: grid; gap: 8px; }
+.srow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding: 9px 12px; border: 1px solid var(--line-2);
+        border-radius: 8px; background: var(--panel-2); cursor: pointer; }
+.srow:hover { border-color: var(--accent); }
+.srow .who { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.srow .who b { white-space: nowrap; }
+.srow .what { grid-column: 1 / -1; font-size: 12.5px; color: var(--ink-2); }
+.srow .last { grid-column: 1 / -1; font-size: 12px; color: var(--muted); }
+.srow .last code { color: var(--ink-2); }
+.srow .now { grid-column: 1 / -1; font-size: 12px; } .srow .now code { font-size: 11.5px; color: var(--ink-2); }
+.tbar { display: inline-flex; height: 8px; gap: 1px; vertical-align: middle; }
+.tbar > span { display: block; height: 100%; min-width: 1px; } .tbar > span:first-child { border-radius: 2px 0 0 2px; }
+.tbar > span:last-child { border-radius: 0 2px 2px 0; } .tbar > span:only-child { border-radius: 2px; }
+.tip { position: fixed; z-index: 30; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 7px;
+       box-shadow: 0 4px 16px rgba(0,0,0,.18); padding: 7px 10px; font-size: 12px; line-height: 1.45; display: none; max-width: 360px; }
+.tip b { font-weight: 650; } .tip .row { display: flex; gap: 8px; align-items: center; } .tip .row i { width: 10px; height: 3px; border-radius: 1px; }
+.tip .row .val { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; padding-left: 12px; }
+svg g[data-tip]:hover > :not(:first-child), svg rect[data-tip]:hover { opacity: .8; }
+.cseg[data-tip]:hover, .tbar[data-tip]:hover { filter: brightness(1.1); }
+.tline { position: relative; } .tline svg { display: block; width: 100%; height: 26px; }
+.tline .axis { position: relative; height: 16px; font-size: 11px; color: var(--muted); }
+.tline .axis span { position: absolute; transform: translateX(-50%); white-space: nowrap; top: 2px; }
+.tline .axis span.first { transform: none; } .tline .axis span.last { transform: translateX(-100%); }
+.ctx { width: 110px; height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; }
+.ctx > span { display: block; height: 100%; background: var(--accent); }
+
+/* activity */
+.feed { display: grid; }
+.feed .ev { display: grid; grid-template-columns: 96px 12px minmax(0, 1fr); gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--line-2);
+            font-size: 13px; align-items: baseline; }
+.feed .ev:last-child { border-bottom: 0; }
+.feed .ev .when { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.feed .ev .mark { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; }
+
+/* the conversation */
+.turns { display: grid; gap: 6px; grid-template-columns: minmax(0, 1fr); }
+.turns > * { min-width: 0; }
+.ended { display: grid; gap: 4px; margin-top: 4px; }
+.ended .srow { background: none; }
+svg .edge.hl { stroke: var(--accent) !important; stroke-width: 2.5px; stroke-dasharray: none; }
+svg.focus .edge:not(.hl) { opacity: .15; }
+svg.focus .node:not(.hl) { opacity: .45; }
+.loglines .l.quiet { color: var(--muted); }
+.msg { border: 1px solid var(--line-2); border-left: 3px solid var(--accent); border-radius: 6px; background: var(--panel-2); }
+.msg > summary, .req > summary { list-style: none; cursor: pointer; padding: 7px 12px; display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.msg > summary::-webkit-details-marker, .req > summary::-webkit-details-marker { display: none; }
+.msg .inner, .req .inner { padding: 0 12px 10px; }
+.req { border: 1px solid var(--line-2); border-radius: 6px; background: var(--panel); }
+.req.joinable { border-left: 3px solid var(--warn); }
+.req.refused { border-left: 3px solid var(--bad); }
+.req .n { font-weight: 700; font-size: 12.5px; min-width: 40px; }
+.req .cmdline { font-family: ui-monospace, Menlo, monospace; font-size: 12px; color: var(--ink-2); min-width: 0; flex: 1 1 380px;
+                overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.req .meta { font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.call { border-top: 1px solid var(--line-2); padding-top: 8px; margin-top: 8px; }
+.call .ch { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 12.5px; }
+.call .refusal { background: var(--bad-bg); color: var(--ink); border-radius: 6px; padding: 7px 10px; margin: 6px 0; font-size: 12.5px; }
+.call .note { color: var(--muted); font-size: 12px; margin: 3px 0; padding-left: 10px; border-left: 2px solid var(--line); }
+
+/* forms */
+input[type=text], input[type=number], input[type=search], textarea, select {
+  background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 6px 9px; font: inherit; font-size: 13px; }
+input:focus, textarea:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+button.b { background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; font: inherit;
+           font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; }
+button.b:hover { border-color: var(--accent); }
+button.b.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+button.b.danger { color: var(--bad); border-color: var(--bad); }
+button.b.danger:hover { background: var(--bad); color: #fff; }
+button.b.small { padding: 2px 9px; font-size: 12px; }
+.toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; }
+.seg button { background: var(--panel); border: 0; border-right: 1px solid var(--line); padding: 5px 11px; font: inherit; font-size: 12.5px;
+              color: var(--ink-2); cursor: pointer; }
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: var(--accent); color: var(--accent-ink); }
+.tabset { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 10px; flex-wrap: wrap; }
+.tabset button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 6px 10px; font: inherit; font-size: 13px;
+                 color: var(--muted); cursor: pointer; }
+.tabset button.on { color: var(--ink); border-bottom-color: var(--accent); }
+.switch { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 16px; padding: 10px 0; border-bottom: 1px solid var(--line-2); }
+.switch:last-child { border-bottom: 0; }
+.switch .name { font-weight: 600; font-size: 13.5px; }
+.switch .desc { color: var(--muted); font-size: 12.5px; grid-column: 1; }
+.switch .ctl { grid-row: 1 / span 2; grid-column: 2; display: flex; gap: 6px; align-items: center; }
+.toggle { position: relative; width: 38px; height: 22px; border-radius: 11px; background: var(--line); border: 0; cursor: pointer; }
+.toggle::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff;
+                 transition: left .15s; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+.toggle.on { background: var(--ok); } .toggle.on::after { left: 19px; }
+.results { display: grid; gap: 6px; }
+.results .r { font-size: 12.5px; padding: 7px 10px; border-radius: 6px; background: var(--panel-2); border: 1px solid var(--line-2); white-space: pre-wrap; }
+.toast { position: fixed; bottom: 18px; right: 18px; max-width: 540px; background: var(--panel); border: 1px solid var(--line);
+         border-radius: 8px; padding: 10px 14px; box-shadow: 0 6px 24px rgba(0,0,0,.18); white-space: pre-wrap; display: none; z-index: 20; font-size: 13px; }
+.legend { display: flex; gap: 6px; flex-wrap: wrap; }
+.graphbox { overflow: auto; max-height: calc(100vh - 230px); border-top: 1px solid var(--line-2); }
+.loglines { font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+.loglines .l { display: grid; grid-template-columns: 68px minmax(0, 1fr); gap: 10px; padding: 2px 0; border-bottom: 1px solid var(--line-2); }
+.loglines .l .when { color: var(--muted); }
+.loglines .l.attention { color: var(--bad); } .loglines .l.good { color: var(--ok); }
+.loglines.history .l { grid-template-columns: 62px minmax(0, 1fr) 56px; }
+.loglines .gap { text-align: right; color: var(--muted); font-variant-numeric: tabular-nums; }
+.loglines .gap.mid { color: var(--warn); } .loglines .gap.long { color: var(--bad); font-weight: 600; }
+.loglines .l.warnline { color: var(--warn); }
+.loglines .day { font-family: system-ui, sans-serif; font-weight: 650; font-size: 12.5px; padding: 12px 0 4px; color: var(--ink-2); }
+/* bases and layers */
+.chainhead { margin: 14px 0 4px; font-size: 13.5px; } .chainhead:first-of-type { margin-top: 4px; }
+.chain { display: grid; grid-template-columns: 220px minmax(0, 1fr) 84px; gap: 12px; align-items: center; margin: 5px 0; }
+.chain .who { font-size: 12.5px; min-width: 0; }
+.chain .cbar { display: flex; height: 22px; gap: 2px; }
+.chain .cseg { display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; white-space: nowrap;
+              min-width: 0; border-radius: 0; }
+.chain .cseg:first-child { border-radius: 4px 0 0 4px; } .chain .cseg:last-child { border-radius: 0 4px 4px 0; }
+.chain .cseg:only-child { border-radius: 4px; }
+.chain .cseg.ghost { background: transparent !important; border: 1.5px dashed; }
+.chain .cseg.proj { opacity: .8; }
+.chain .dbar { display: flex; height: 4px; gap: 2px; margin-top: 2px; }
+.chain .dbar > span { display: flex; justify-content: flex-end; min-width: 0; } .chain .dbar i { display: block; height: 100%; }
+.chain .total { font-size: 12.5px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.chain .total .small { font-weight: 400; }
+.chain .warmth { font-size: 11.5px; }
+.legend .key { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); margin-right: 12px; }
+.legend .key i, i.sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 6px; vertical-align: -1px; }
+.legend .key i.ghostkey { border: 1.5px dashed var(--muted); background: transparent; }
+.legend .key i.strip { height: 4px; width: 14px; border-radius: 0; }
+.legend .ramp { display: inline-flex; gap: 2px; margin-right: 6px; } .legend .ramp i { margin: 0; width: 14px; border-radius: 0; }
+.chain .tag { display: inline-block; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: 0 5px; border-radius: 4px; }
+.chain .tag.now { background: var(--info-bg); color: var(--info); } .chain .tag.scratch { background: var(--line-2); color: var(--ink-2); }
+.stale { border-top: 1px solid var(--line-2); padding: 10px 16px; font-size: 13px; }
+.stale .sh, .sh { font-weight: 650; font-size: 12.5px; margin-bottom: 4px; }
+.told { margin: 4px 0; font-size: 12.5px; } .told .names { color: var(--ink-2); overflow-wrap: anywhere; }
+.basebody { display: grid; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 1150px) { .basebody { grid-template-columns: minmax(0, 11fr) minmax(0, 9fr); }
+  .basebody > .stales { border-left: 1px solid var(--line-2); } .basebody > .stales > .stale:first-child { border-top: 0; } }
+.told details > summary { cursor: pointer; color: var(--accent); font-size: 12px; }
+.plan { display: grid; gap: 8px; }
+.plan .step { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 10px 12px;
+              border: 1px solid var(--line-2); border-radius: 8px; background: var(--panel-2); }
+.plan .step .no { width: 24px; height: 24px; border-radius: 50%; background: var(--line); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.btns.tight { flex-wrap: nowrap; gap: 3px; justify-content: flex-end; } .btns.tight .b.small { padding: 1px 7px; }
+table.t td.subject.narrow .ellipsis { max-width: clamp(120px, 18vw, 300px); }
+/* costs */
+.tiles.wide { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+.hbar { display: flex; height: 12px; gap: 2px; }
+.hbar > span { display: block; height: 100%; min-width: 1px; } .hbar > span:last-child { border-radius: 0 4px 4px 0; }
+.hbar.before { height: 3px; margin-top: 3px; } .hbar.before > span { background: var(--muted); opacity: .7; border-radius: 0; }
+.kindrow { display: grid; grid-template-columns: 150px 110px minmax(0, 1fr) 70px 44px; gap: 10px; align-items: center; margin: 7px 0; font-size: 13px; }
+.rolerow { display: grid; grid-template-columns: 150px minmax(0, 1fr) 150px; gap: 12px; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--line-2); font-size: 13px; }
+.rolerow:last-child { border-bottom: 0; }
+@media (max-width: 700px) { .chain { grid-template-columns: minmax(0, 1fr); } .kindrow, .rolerow { grid-template-columns: minmax(0, 1fr); } }
+table.t th.sortable { cursor: pointer; user-select: none; }
+table.t th.sortable:hover { color: var(--ink); }
+@media (max-width: 700px) {
+  .bar, nav.tabs, main { padding-left: 16px; padding-right: 16px; }
+  .updated #updated { display: none; }
+  .jump { margin-left: 0; width: 100%; } .jump input { width: 100%; }
+  table.t .hide-sm { display: none; }
+  .srow { grid-template-columns: minmax(0, 1fr); }
+  .srow .who { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="bar">
+    <div class="brand">Run console</div>
+    <div class="pills" id="pills"></div>
+    <div class="jump"><input type="search" id="jump" placeholder="Go to task # or session…" title="press / to come here; a number opens the task, a name the session"
+      autocomplete="off" list="jumplist"><kbd>/</kbd><datalist id="jumplist"></datalist></div>
+    <div class="updated"><span id="updated"></span> <button class="b small" id="pause" title="stop or resume reading the run every few seconds">pause</button></div>
+  </div>
+  <nav class="tabs" id="nav"></nav>
+</header>
+<main id="main"></main>
+<div class="toast" id="toast"></div>
+<div class="tip" id="tip" role="tooltip"></div>
+<script>
+const TOKEN = "__TOKEN__";
+// the views, in the order of the owner's three jobs: monitor, review, control
+const VIEWS = [
+  ["now", "Now"], ["graph", "Task graph"], ["machine", "Machine"], ["bases", "Bases & layers"], ["trains", "Batches & trains"], null,
+  ["sessions", "Sessions"], ["tasks", "Tasks"], ["costs", "Costs"], ["log", "Log"], null,
+  ["control", "Control"]];
+const GROUP = {
+  waiting: ["Waiting on blockers", "var(--g-waiting)"], ready: ["Ready", "var(--g-ready)"], running: ["Running", "var(--g-running)"],
+  parked: ["Parked", "var(--g-parked)"], check: ["Checking", "var(--g-check)"], review: ["In review", "var(--g-review)"],
+  fix: ["Being fixed", "var(--g-fix)"], train: ["Finalizing / landing", "var(--g-train)"], planner: ["With the planner", "var(--g-planner)"],
+  done: ["Landed", "var(--g-done)"], idle: ["Not queued", "var(--g-idle)"]};
+const LANES = ["waiting", "ready", "running", "parked", "check", "review", "fix", "train", "planner", "done"];
+const PIPE = ["ready", "idle", "running", "parked", "check", "review", "fix", "train", "planner", "done"];  // the Now page's: what moves
+const SWITCHES = {
+  "review-beside-check": ["Review beside the check", "A finished task's review starts at its result, beside its check (C9)."],
+  "continue-by-fork": ["Continue by fork", "A follow-up task forks the session that did the work it continues (C13)."],
+  "measure-bound": ["Bounded measurements", "A held measurement holds the machine at most the seconds given (C14)."],
+  "support-apart": ["Reviews apart", "Reviews get a slot of their own beside the two producers (C6)."],
+  "grouped-repairs": ["Grouped repairs", "Small repairs of the same theories are briefed as one task (C8)."],
+  "role-layers": ["Role layers", "Each role's sessions fork a layer that reasoned about the role and its work ahead; empty means every role."]};
+let CONTEXT_MAX = 977000;  // the harness's ceiling (v2.CEILING), from the overview
+let state = {version: null, timer: null, attention: 0, actions: [], seq: 0};
+
+// ---------------------------------------------------------------- small helpers
+function el(tag, attrs, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === undefined || v === null || v === false) continue;
+    if (k === "class") e.className = v; else if (k === "style") e.style.cssText = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat(Infinity)) if (k !== null && k !== undefined && k !== false) e.append(k instanceof Node ? k : String(k));
+  return e;
+}
+// one fetch per address a refresh: what a refresh asks for early (the shared data, the view's own) is what its view
+// reads, not asked again after it
+let inflight = new Map();
+function api(path, params) {
+  const url = path + "?" + new URLSearchParams(Object.assign({token: TOKEN}, params || {})).toString();
+  if (!inflight.has(url))
+    inflight.set(url, fetch(url).then(async r => { const body = await r.json(); if (!r.ok) throw new Error(body.error || String(r.status)); return body; }));
+  return inflight.get(url);
+}
+async function act(action, data, confirmText) {
+  if (confirmText && !confirm(confirmText)) return;
+  let said;
+  try {
+    const r = await fetch("/api/control?token=" + encodeURIComponent(TOKEN), {method: "POST",
+      headers: {"Content-Type": "application/json", "X-Token": TOKEN}, body: JSON.stringify(Object.assign({action}, data || {}))});
+    const body = await r.json();
+    said = body.said || body.error || "done";
+  } catch (e) { said = "failed: " + e; }
+  state.actions.unshift({at: new Date(), action, said});
+  toast(said);
+  refresh();
+}
+function toast(text) {
+  const t = document.getElementById("toast"); t.textContent = text; t.style.display = "block";
+  clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", 8000);
+}
+// times: the harness's records keep seconds since the epoch; its log and state files write local time; a
+// transcript's timestamps are UTC with the zone cut off (the server keeps their first 19 characters)
+const U = t => t ? Date.parse(String(t).slice(0, 19) + "Z") / 1000 : null;
+const L = t => t ? Date.parse(String(t).slice(0, 19)) / 1000 : null;
+const toEpoch = x => typeof x === "number" ? x : U(x);
+function ago(x) {
+  const t = toEpoch(x); if (!t) return "—";
+  const s = Math.max(0, Date.now() / 1000 - t);
+  if (s < 60) return Math.round(s) + "s ago"; if (s < 3600) return Math.round(s / 60) + " min ago";
+  if (s < 86400) return (s / 3600).toFixed(s < 36000 ? 1 : 0) + " h ago"; return Math.round(s / 86400) + " d ago";
+}
+function dur(s) {
+  if (s === null || s === undefined || isNaN(s)) return "—"; s = Math.max(0, s);
+  if (s < 60) return Math.round(s) + "s"; if (s < 3600) return Math.round(s / 60) + "m";
+  return Math.floor(s / 3600) + "h " + String(Math.round((s % 3600) / 60)).padStart(2, "0") + "m";
+}
+const clock = x => { const t = toEpoch(x); if (!t) return "—"; const d = new Date(t * 1000);
+  const hm = d.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hour12: false});
+  return d.toDateString() === new Date().toDateString() ? hm : d.toLocaleDateString([], {month: "short", day: "numeric"}) + " " + hm; };
+const n = x => (x === undefined || x === null || x === "") ? "—" : Number(x).toLocaleString();
+const k = x => !x ? "—" : x >= 1e9 ? (x / 1e9).toFixed(2) + "B" : x >= 1e6 ? (x / 1e6).toFixed(2) + "M" : x >= 1000 ? Math.round(x / 1000) + "K" : String(Math.round(x));
+const gib = x => x ? (x / 2 ** 30).toFixed(1) + " GiB" : "—";
+const cut = (s, m) => { s = String(s || ""); return s.length > m ? s.slice(0, m - 1) + "…" : s; };
+const firstLine = s => String(s || "").split("\n").find(l => l.trim()) || "";
+function panel(title, sub, body, actions, flush) {
+  return el("section", {class: "panel"}, el("div", {class: "head"}, el("h2", {}, title), sub ? el("span", {class: "sub"}, sub) : null,
+    actions ? el("div", {class: "actions"}, actions) : null), el("div", {class: "body" + (flush ? " flush" : "")}, body));
+}
+// a table; with `sortId` a column that has a `sort` key sorts it on a click of its heading (again: the other way),
+// remembered per table while the page is open; with `limit` the first rows only, the rest on a click
+const sorts = {};
+function table(cols, rows, onclick, empty, sortId, limit) {
+  if (!rows.length) return el("div", {class: "empty"}, empty || "Nothing here.");
+  const s = sortId && sorts[sortId];
+  if (s && cols[s.i] && cols[s.i].sort) {
+    const key = cols[s.i].sort;
+    const none = v => v === null || v === undefined || v === "";  // what a row lacks goes last, either way round
+    rows = rows.slice().sort((a, b) => { const x = key(a), y = key(b);
+      return none(x) || none(y) ? none(x) - none(y) : (x === y ? 0 : x < y ? -1 : 1) * s.dir; });
+  }
+  const box = el("div", {class: "tablebox" + (rows.length > 15 ? " tall" : "")});
+  const draw = all => box.replaceChildren(...[el("table", {class: "t"},
+    el("thead", {}, el("tr", {}, cols.map((c, i) => el("th", {class: (c.num ? "num " : "") + (c.hide ? "hide-sm" : "") + (sortId && c.sort ? " sortable" : ""),
+      title: sortId && c.sort ? "sort by " + c.label.toLowerCase() : null,
+      onclick: sortId && c.sort ? () => { sorts[sortId] = {i, dir: s && s.i === i ? -s.dir : (c.num ? -1 : 1)}; refresh(); } : null},
+      c.label, s && s.i === i ? (s.dir > 0 ? " ▲" : " ▼") : "")))),
+    el("tbody", {}, (all || !limit ? rows : rows.slice(0, limit)).map(r => el("tr", {class: onclick ? "click" : "", onclick: onclick ? () => onclick(r) : null},
+      cols.map(c => el("td", {class: (c.num ? "num " : "") + (c.cls || "") + (c.hide ? " hide-sm" : "")}, c.get(r))))))),
+    !all && limit && rows.length > limit ? el("div", {style: "padding:6px 10px"}, el("button", {class: "b small",
+      onclick: () => { if (sortId) sorts[sortId + ":all"] = true; draw(true); }}, `show ${rows.length - limit} more`)) : null].filter(Boolean));  // a null would be the text "null"
+  draw(!!(sortId && sorts[sortId + ":all"]));  // shown whole stays whole across refreshes
+  return box;
+}
+function queueButtons(id, o) {
+  const at = o.queue.findIndex(t => t.id === id);
+  return el("div", {class: "btns"},
+    at !== 0 ? el("button", {class: "b small", title: "the whole order set again with this task first", onclick: () => placeTask(id, "first", `Put task ${id} first in the queue?`)}, at < 0 ? "Queue first" : "Move first") : null,
+    at < 0 ? el("button", {class: "b small", onclick: () => placeTask(id, "last", `Put task ${id} last in the queue?`)}, "Queue last") : null,
+    at >= 0 ? el("button", {class: "b small", title: "the whole order set again without it; it stays in the list", onclick: () => placeTask(id, "out", `Take task ${id} out of the queue? It stays in the task list; nothing starts it until it is queued again.`)}, "Out of the queue") : null);
+}
+function kv(pairs) { return el("div", {class: "kv"}, pairs.filter(Boolean).flatMap(([a, b]) => [el("div", {class: "k"}, a), el("div", {class: "v"}, b)])); }
+function tile(label, value, tone, smallValue) { return el("div", {class: "tile " + (tone || "")}, el("div", {class: "k"}, label), el("div", {class: "v" + (smallValue ? " small" : "")}, value)); }
+function stageChip(group, text) {
+  const [label, color] = GROUP[group] || GROUP.idle;
+  return el("span", {class: "chip", style: `color:${color};border-color:${color}`}, text || label);
+}
+function meter(label, used, max, text, tone) {
+  const pct = max ? Math.min(100, Math.round(100 * used / max)) : 0;
+  return el("div", {class: "meter"}, el("span", {class: "label"}, label),
+    el("div", {class: "track"}, el("div", {class: "fill " + (tone || (pct >= 100 ? "warn" : "")), style: `width:${pct}%`})),
+    el("span", {class: "val"}, text));
+}
+function go(view, sub) { location.hash = view + (sub ? "/" + encodeURIComponent(sub) : ""); }
+function pre(text, tall) { return el("pre", {class: "box" + (tall ? " tall" : "")}, text || ""); }
+
+// ---------------------------------------------------------------- the frame
+function renderNav(current) {
+  const nav = document.getElementById("nav"); nav.replaceChildren();
+  for (const v of VIEWS) {
+    if (!v) { nav.append(el("span", {class: "sep"})); continue; }
+    const key = VIEWS.filter(Boolean).indexOf(v);
+    nav.append(el("button", {class: v[0] === current ? "on" : "", onclick: () => go(v[0]), title: `key ${key === 9 ? 0 : key + 1}`}, v[1],
+      v[0] === "now" && state.attention ? el("span", {class: "count"}, state.attention) : null));
+  }
+}
+function pills(o, m, log) {
+  const p = document.getElementById("pills"); p.replaceChildren();
+  const run = o.stopped ? ["warn", "Stopped since " + clock(L(o.stopped))] : o.active ? ["ok", "Running"] : ["warn", "Inactive"];
+  p.append(el("span", {class: "pill " + run[0]}, el("span", {class: "dot"}), run[1]));
+  p.append(el("span", {class: "pill " + (o.daemon ? "ok" : (o.active && !o.stopped ? "bad" : ""))}, el("span", {class: "dot"}), o.daemon ? "Daemon up" : "Daemon down"));
+  if (o.holds.graph) p.append(el("span", {class: "pill warn"}, "Graph held"));
+  if (o.holds.launch) p.append(el("span", {class: "pill warn"}, "Launches held"));
+  const load = (m && m.load) || (o.machine && o.machine.runs) || {};
+  const lim = (m && m.limits) || {heavy: 2, probes: 8};
+  p.append(el("span", {class: "pill"}, `Heavy ${load.heavy || 0}/${lim.heavy}`));
+  p.append(el("span", {class: "pill"}, `Probes ${load.probe || 0}/${lim.probes}`));
+  p.append(el("span", {class: "pill" + (o.live.length ? " info" : ""), style: "cursor:pointer", onclick: () => go("now")}, `${o.live.length} live`));
+  // the log's last line: whether the harness is saying anything at all (while it runs, it says something every few minutes)
+  const lastLine = (log || []).filter(l => /^\d{4}-/.test(l)).slice(-1)[0];
+  if (lastLine) {
+    const quiet = Date.now() / 1000 - L(lastLine);
+    p.append(el("span", {class: "pill" + (o.active && !o.stopped && quiet > 900 ? " warn" : ""), style: "cursor:pointer", onclick: () => go("log"),
+      title: "the harness's last line: " + lastLine.slice(20, 220)}, "last event " + ago(L(lastLine))));
+  }
+  updatedLine();
+}
+function updatedLine() {
+  const box = document.getElementById("updated");
+  box.textContent = (state.paused ? "paused at " : "updated ") + new Date(state.readAt || Date.now()).toLocaleTimeString([], {hour12: false});
+  box.parentNode.classList.toggle("paused", !!state.paused);
+  document.getElementById("pause").textContent = state.paused ? "resume" : "pause";
+}
+
+// what needs the owner: the server's (dashboard.attention), which the report reads too
+const attentionItems = o => o.attention || [];
+const ACTIVITY = [
+  [/ATTENTION/, "bad"], [/landed|lands on|is committed as|committed on its branch/, "ok"], [/passed/, "ok"], [/failed|rejected/, "warn"],
+  [/^started /, "info"], [/parked|waits for the machine/, "muted"], [/lost|gone|given up/, "warn"], [/the planner edited the graph/, "info"]];
+// lines of the log that say how the harness keeps itself, not what the run did: left out of the activity, dimmed in the log
+// the server's (dashboard.LOG_NOISE, which the report reads too), from the overview: until it comes, nothing is noise
+let NOISE = /$^/;
+function activity(log) {
+  const out = [];
+  for (const line of log.slice().reverse()) {
+    const t = L(line), text = line.slice(20);
+    if (!/^\d{4}-/.test(line) || NOISE.test(text)) continue;
+    const kind = ACTIVITY.find(([re]) => re.test(text));
+    if (!kind) continue;
+    out.push({t, text, tone: kind[1]});
+    if (out.length >= 40) break;
+  }
+  return out;
+}
+// what the harness's lines name — a task ("task 279", "tasks 269, 275", "#279"), a session ("fix-279", "review-251.1",
+// "layer-reviewer") — as links to it
+const NAMES = /(\btasks? #?\d+(?:(?:,| and) #?\d+)*|#\d+\b|\b(?:review|fix|implement|plan|brief|design|kb|investigate)-\d+(?:\.\d+)?\b|\bask-q\d+\b|\b(?:layer|churn)-(?:task-designer|reviewer|fixer|implementer|designer|investigator|planner)\b)/;
+const taskLink = id => el("a", {title: "task #" + id, onclick: e => { e.stopPropagation(); go("tasks", id); }}, "#" + id);
+const sessionLink = name => el("a", {title: "session " + name, onclick: e => { e.stopPropagation(); go("sessions", name); }}, name);
+function linkify(text) {
+  return String(text).split(NAMES).map((p, i) => i % 2 === 0 ? p
+    : /^tasks? /.test(p) ? el("span", {}, p.replace(/[#\d]+/g, "").replace(/(,| and)/g, "").trim() + " ",
+        p.match(/\d+/g).map((id, j) => [j ? ", " : "", taskLink(id)]))
+    : p.startsWith("#") ? taskLink(p.slice(1)) : sessionLink(p));
+}
+const linkTasks = linkify;
+
+// ---------------------------------------------------------------- Now: what is happening, and what needs you
+// what each task holds up and what holds the waiting tasks up: the server's (dashboard.held_up), which the report reads
+const holdsOf = g => Object.fromEntries(g.nodes.map(x => [x.id, {size: x.holds || 0}]));
+function heldUp(g) {
+  const by = Object.fromEntries(g.nodes.map(x => [x.id, x]));
+  return (g.held_up || []).map(h => ({root: by[h.root] || {id: h.root, subject: h.subject, group: h.group, status: h.status, kind: h.kind},
+    waiting: h.waiting.map(w => by[w]).filter(Boolean), direct: h.direct.length, isDirect: x => h.direct.includes(x.id)}));
+}
+function heldPanel(g, holds) {
+  const groups = heldUp(g), waiting = g.nodes.filter(x => x.group === "waiting").length;
+  if (!waiting) return null;
+  return panel("Held up", `${waiting} tasks wait on others · each row: a task that does not wait itself, and every open task whose chain of waits leads to it · most held first`,
+    el("div", {class: "held"}, groups.map(gr => el("div", {class: "hrow"},
+      el("div", {class: "hroot", onclick: () => go("tasks", gr.root.id), title: gr.root.status},
+        el("div", {}, el("b", {}, "#" + gr.root.id), gr.root.kind ? el("span", {class: "muted"}, " · " + gr.root.kind) : null, " ", stageChip(gr.root.group, cut(gr.root.status, 40))),
+        el("div", {class: "s ellipsis"}, gr.root.subject)),
+      el("div", {class: "hn"}, el("b", {}, gr.waiting.length), el("div", {class: "muted small"}, `${gr.direct} directly`)),
+      el("div", {class: "hwait"}, gr.waiting.map(x => el("a", {class: "tchip" + (gr.isDirect(x) ? " direct" : ""),
+        title: `#${x.id} ${x.subject}\n${x.status}${holds[x.id] && holds[x.id].size ? "\nholds " + holds[x.id].size + " more" : ""}`,
+        onclick: () => go("tasks", x.id)}, "#" + x.id, x.kind ? el("span", {class: "muted"}, " " + x.kind) : null)))))));
+}
+async function viewNow(m, sub, {o, g, log, mach, items}) {
+  const subjects = Object.fromEntries(g.nodes.map(x => [x.id, x.subject]));
+  const holds = holdsOf(g);
+  const live = new Set(o.live.map(s => s.name));
+  const ended = (await api("/api/sessions")).filter(s => !live.has(s.name) && !["layer", "churn"].some(p => (s.name || "").startsWith(p))).slice(0, 6);
+  m.append(el("div", {class: "stack"},
+    panel("Needs attention", items.length ? `${items.length} item(s)` : null,
+      items.length ? el("div", {class: "attn"}, items.map(([tone, text, where, t]) =>
+        el("div", {class: "item " + tone}, el("span", {class: "icon"}, tone === "bad" ? "!" : tone === "warn" ? "▲" : "i"),
+          el("div", {}, text, t ? el("span", {class: "muted small"}, "  · " + ago(t)) : null),
+          where ? el("button", {class: "b small", onclick: () => go(...where.split("/"))}, "open") : el("span"))))
+      : el("div", {class: "allgood"}, "✓", "Nothing needs you right now.")),
+    panel("Pipeline", `${g.nodes.filter(x => !x.done && x.group !== "waiting").length} tasks in motion, left to right as they move · ${g.nodes.filter(x => x.group === "waiting").length} waiting on others are under “Held up” · landed in the last 6 h at the end`, el("div", {class: "pipe"},
+      PIPE.filter(lane => lane !== "idle" || g.nodes.some(x => x.group === "idle")).map(lane => {
+        const cards = g.nodes.filter(x => x.group === lane).sort((a, b) => (g.queue.indexOf(a.id) + 1 || 1e6) - (g.queue.indexOf(b.id) + 1 || 1e6));
+        const [label, color] = GROUP[lane];
+        return el("div", {class: "lane" + (cards.length ? "" : " none")}, el("div", {class: "lh", style: `color:${color}`}, label, el("span", {class: "n"}, cards.length)),
+          el("div", {class: "cards"}, cards.map(c => el("div", {class: "card", style: `border-left-color:${color}`, onclick: () => go("tasks", c.id),
+            title: c.status}, el("div", {class: "id"}, `#${c.id}`, c.kind ? el("span", {class: "muted"}, " · " + c.kind) : null,
+            holds[c.id] && holds[c.id].size ? el("span", {class: "warn", title: "open tasks waiting on it, through any chain of waits"}, " · holds " + holds[c.id].size) : null,
+            c.rejections ? el("span", {class: "bad"}, " · rejected " + c.rejections + "×") : null),
+            el("div", {class: "s"}, c.subject), ["running", "parked", "review", "fix", "check", "train"].includes(lane)
+              ? el("div", {class: "st"}, cut(c.status, 44), c.parked_since ? el("span", {class: Date.now() / 1000 - c.parked_since > 2700 ? "warn" : ""}, " · " + dur(Date.now() / 1000 - c.parked_since)) : null) : null))));
+      }))),
+    heldPanel(g, holds),
+    el("div", {class: "cols two"},
+      panel("Sessions", `${o.live.length} working`, el("div", {},
+        o.live.length ? el("div", {class: "live"}, o.live.map(s => sessionRow(s, subjects))) : el("div", {class: "empty", style: "padding:6px 0 10px"}, "No session is working."),
+        ended.length ? el("div", {class: "muted small", style: "margin-top:10px"}, "Ended last") : null,
+        el("div", {class: "ended"}, ended.map(s => sessionRow(s, subjects))))),
+      el("div", {class: "stack"},
+        panel("Machine", mach.snapshot_at ? "as of " + clock(mach.snapshot_at) : null, machineSummary(mach), el("button", {class: "b small", onclick: () => go("machine")}, "details")),
+        panel("Switches", null, el("div", {class: "legend"}, Object.entries(o.switches).map(([name, s]) =>
+          el("span", {class: "pill " + (s.on ? "ok" : ""), title: (SWITCHES[name] || [])[1]}, (SWITCHES[name] || [name])[0] + (s.on ? (s.value ? ": " + s.value : "") : ": off")))),
+          el("button", {class: "b small", onclick: () => go("control")}, "change")),
+        panel("Bases and layers", null, basesSummary(o)))),
+    panel("Recent activity", "from the harness's log, newest first", el("div", {class: "feed"}, activity(log).map(ev =>
+      el("div", {class: "ev"}, el("span", {class: "when", title: ago(ev.t)}, clock(ev.t)),
+        el("span", {class: "mark", style: `background:${ev.tone === "ok" ? "var(--ok)" : ev.tone === "bad" ? "var(--bad)" : ev.tone === "warn" ? "var(--warn)" : ev.tone === "info" ? "var(--info)" : "var(--line)"}`}),
+        el("span", {}, linkTasks(ev.text))))), el("button", {class: "b small", onclick: () => go("log")}, "full log"))));
+}
+function sessionRow(s, subjects) {
+  const going = ["starting", "working", "waiting"].includes(s.state);
+  const since = s.started ? (going ? Date.now() / 1000 : (s.ended || U(s.last) || Date.now() / 1000)) - s.started : null;
+  const ctxPct = s.context ? Math.min(100, Math.round(100 * s.context / CONTEXT_MAX)) : 0;
+  const quiet = s.last ? Date.now() / 1000 - U(s.last) : 0;
+  return el("div", {class: "srow", onclick: () => go("sessions", s.name)},
+    el("div", {class: "who"}, el("span", {class: "role"}, s.role), el("b", {}, s.name),
+      s.task ? el("a", {onclick: e => { e.stopPropagation(); go("tasks", s.task); }}, "#" + s.task) : null,
+      el("span", {class: "muted small"}, s.state)),
+    el("div", {class: "muted small nowrap"}, dur(since), " · ", n(s.requests), " req · ",
+      el("span", {class: "ctx", title: `context ${k(s.context)} of ${k(CONTEXT_MAX)}`}, el("span", {style: `width:${ctxPct}%`})), " ", k(s.context)),
+    s.task && subjects[s.task] ? el("div", {class: "what ellipsis"}, subjects[s.task]) : null,
+    s.last_call ? el("div", {class: "now ellipsis", title: s.last_call}, s.last_call_open && going
+      ? el("span", {class: "ok"}, "running" + (s.last_call_at ? " " + dur(Date.now() / 1000 - U(s.last_call_at)) : "") + ": ")
+      : el("span", {class: "muted"}, "last call: "), el("code", {}, s.last_call)) : null,
+    el("div", {class: "last"}, el("span", {class: going && quiet > 900 ? "warn" : ""}, (going ? "last activity " : s.state + " · last activity ") + ago(U(s.last))),
+      s.model_s || s.tools_s ? el("span", {}, ` · model ${dur(s.model_s)}, calls ${dur(s.tools_s)}` + (s.idle_s > 60 ? `, idle ${dur(s.idle_s)}` : "")) : null,
+      s.refused ? el("span", {class: "bad"}, ` · ${s.refused} refused`) : null,
+      s.joinable ? el("span", {class: "warn"}, ` · ${s.joinable} joinable`) : null,
+      s.stopped ? el("span", {class: "warn"}, ` · ${s.stopped} stopped`) : null,
+      s.failed ? el("span", {class: "warn"}, ` · ${s.failed} failed`) : null));
+}
+// the watchdog writes its snapshot every pass while the run is active; an older one is what the slots are read from
+// inside a sandbox, which counts the machine as full
+const snapshotAge = mach => mach.snapshot_at ? Date.now() / 1000 - toEpoch(mach.snapshot_at) : null;
+function machineSummary(mach) {
+  const load = mach.load || {}, lim = mach.limits;
+  const free = mach.memory_available_gb || 0, age = snapshotAge(mach);
+  return el("div", {},
+    age > 300 ? el("div", {class: "warn small", style: "margin-bottom:6px"}, `The watchdog's snapshot is ${ago(toEpoch(mach.snapshot_at))}: the runs below are as it saw them then.`) : null,
+    meter("Heavy slots", load.heavy || 0, lim.heavy, `${load.heavy || 0} of ${lim.heavy}`),
+    meter("Probe slots", load.probe || 0, lim.probes, `${load.probe || 0} of ${lim.probes}`),
+    meter("Memory free", free, (mach.memory_total || 1) / 2 ** 30, `${free.toFixed(1)} GiB`, free < lim.memory_floor_gb ? "bad" : ""),
+    kv([["Held by", mach.claim ? `task ${mach.claim.task} — ${mach.claim.why}` : "nobody"],
+        mach.pending ? ["Waiting to hold", `task ${mach.pending.task} — ${mach.pending.why}`] : null,
+        ["Load", `${(mach.loadavg || []).join(" / ")} of ${mach.cpus} threads`]]));
+}
+function basesSummary(o) {
+  const rows = Object.entries(o.bases).map(([who, b]) => [who, [b.base ? "base " + k(b.base.context) : null, b.layer ? "layer " + k(b.layer.context) : null,
+    b.delta ? "churn " + k((b.delta.context || 0) - ((b.layer || {}).context || 0)) : null].filter(Boolean).join(" · ") || "not built"]);
+  const layers = Object.entries(o.role_layers || {}).map(([role, l]) => [role, (l.on ? "" : "off · ") + (l.forks ? "forks " + l.forks : "forks its base")
+    + (l.building ? " · reasoning" : "") + (l.churn_building ? " · churn loading" : "")]);
+  return el("div", {}, kv(rows), layers.length ? el("div", {style: "margin-top:10px"}, el("div", {class: "muted small", style: "margin-bottom:4px"}, "Role layers"), kv(layers)) : null);
+}
+
+// ---------------------------------------------------------------- the task graph
+const SVGNS = "http://www.w3.org/2000/svg";
+function svg(tag, attrs, ...kids) {
+  const e = document.createElementNS(SVGNS, tag);
+  for (const [a, v] of Object.entries(attrs || {})) { if (a.startsWith("on")) e.addEventListener(a.slice(2), v); else e.setAttribute(a, v); }
+  for (const c of kids) e.append(c instanceof Node ? c : document.createTextNode(String(c)));
+  return e;
+}
+const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim() || "#888";
+let graphHours = 6;
+async function viewGraph(m, sub, ctx) {
+  const g = graphHours === 6 ? ctx.g : await api("/api/graph", {hours: graphHours});
+  const hours = graphHours;
+  const by = Object.fromEntries(g.nodes.map(x => [x.id, x])), holds = holdsOf(g);
+  const layer = {};
+  const depth = id => { if (layer[id] !== undefined) return layer[id]; layer[id] = 0;
+    const bs = by[id].blocked_by.filter(b => by[b]); return layer[id] = bs.length ? 1 + Math.max(...bs.map(depth)) : 0; };
+  g.nodes.forEach(x => depth(x.id));
+  const cols = {};
+  g.nodes.forEach(x => (cols[layer[x.id]] = cols[layer[x.id]] || []).push(x));
+  const qi = id => { const i = g.queue.indexOf(id); return i < 0 ? 1e6 + Number(id) : i; };
+  Object.values(cols).forEach(c => c.sort((a, b) => (a.done - b.done) || qi(a.id) - qi(b.id)));
+  // each later column in the order of where its blockers stand (their mean row), so edges cross less
+  const row = {};
+  Object.keys(cols).map(Number).sort((a, b) => a - b).forEach(l => {
+    const c = cols[l];
+    if (l > 0) {
+      const bary = x => { const rs = x.blocked_by.filter(b => row[b] !== undefined).map(b => row[b]); return rs.length ? rs.reduce((a, b) => a + b, 0) / rs.length : 1e6; };
+      const keyed = c.map((x, i) => [bary(x), i, x]);
+      keyed.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      cols[l] = keyed.map(e => e[2]);
+    }
+    cols[l].forEach((x, i) => row[x.id] = i);
+  });
+  const W = 300, H = 80, GX = 56, GY = 12, P = 16, pos = {};
+  const lines2 = (s, m) => { const words = String(s).split(" "); let a = ""; while (words.length && (a + " " + words[0]).trim().length <= m) a = (a + " " + words.shift()).trim();
+    return [a, cut(words.join(" "), m)]; };
+  Object.entries(cols).forEach(([l, c]) => c.forEach((x, i) => pos[x.id] = {x: P + Number(l) * (W + GX), y: P + i * (H + GY)}));
+  const width = P * 2 + (Math.max(0, ...Object.keys(cols).map(Number)) + 1) * (W + GX) - GX;
+  const height = P * 2 + Math.max(1, ...Object.values(cols).map(c => c.length)) * (H + GY) - GY;
+  const box = svg("svg", {width, height, viewBox: `0 0 ${width} ${height}`, role: "img", "aria-label": "the task graph"});
+  const ink = cssVar("--ink"), muted = cssVar("--muted"), line = cssVar("--line");
+  for (const [b, t] of g.edges) {
+    const a = pos[b], z = pos[t], x1 = a.x + W, y1 = a.y + H / 2, x2 = z.x, y2 = z.y + H / 2, mx = (x1 + x2) / 2;
+    box.append(svg("path", {class: `edge e-${b} e-${t}`, d: `M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`, fill: "none", stroke: by[b].done ? line : muted,
+      "stroke-width": by[b].done ? 1 : 1.5, "stroke-dasharray": by[b].done ? "4 3" : ""}));
+  }
+  // hovering a task shows what it waits on and what waits on it; everything else is dimmed
+  const near = id => new Set([id, ...g.edges.filter(e => e.includes(id)).flat()]);
+  const focus = id => { box.classList.add("focus"); const ns = near(id);
+    box.querySelectorAll(".edge").forEach(e => e.classList.toggle("hl", e.classList.contains("e-" + id)));
+    box.querySelectorAll(".node").forEach(e => e.classList.toggle("hl", ns.has(e.dataset.id))); };
+  const unfocus = () => { box.classList.remove("focus"); box.querySelectorAll(".hl").forEach(e => e.classList.remove("hl")); };
+  const panelBg = cssVar("--panel");
+  for (const x of g.nodes) {
+    const p = pos[x.id], color = cssVar("--g-" + (GROUP[x.group] ? x.group : "idle"));
+    box.append(svg("g", {class: "node", "data-id": x.id, transform: `translate(${p.x},${p.y})`, style: "cursor:pointer", onclick: () => go("tasks", x.id),
+      onmouseenter: () => focus(x.id), onmouseleave: unfocus},
+      svg("title", {}, `#${x.id} ${x.subject}\n${x.status}${x.rejections ? "\nrejected " + x.rejections + "×" : ""}`),
+      svg("rect", {width: W, height: H, rx: 7, fill: panelBg}),
+      svg("rect", {width: W, height: H, rx: 7, fill: color, "fill-opacity": x.done ? 0.07 : 0.12, stroke: color, "stroke-width": 1.2}),
+      svg("rect", {width: 5, height: H, rx: 2.5, fill: color}),
+      svg("text", {x: 14, y: 19, "font-size": 12, "font-weight": 700, fill: ink}, `#${x.id}` + (x.kind ? `  ${x.kind}` : "") + (x.rejections ? `  ✗${x.rejections}` : "")),
+      holds[x.id] && holds[x.id].size && !x.done ? svg("text", {x: W - 10, y: 19, "font-size": 11.5, "font-weight": 600, fill: cssVar("--warn"), "text-anchor": "end"},
+        `holds ${holds[x.id].size}`) : "",
+      ...lines2(x.subject, 44).map((t, i) => svg("text", {x: 14, y: 36 + 15 * i, "font-size": 12.5, fill: ink}, t)),
+      svg("text", {x: 14, y: 70, "font-size": 11.5, fill: color, "font-weight": 600}, cut(x.status, 46))));
+  }
+  const counts = {};
+  g.nodes.forEach(x => counts[x.group] = (counts[x.group] || 0) + 1);
+  m.append(panel("Task graph", `${g.nodes.length} tasks, ${g.edges.length} dependencies · a task stands to the right of what it waits on · “holds N”: the open tasks waiting on it through any chain · hover a task to see its neighbours`,
+    el("div", {}, el("div", {class: "toolbar", style: "margin:4px 0 10px"},
+      el("div", {class: "legend"}, LANES.concat(["idle"]).filter(l => counts[l]).map(l => stageChip(l, `${GROUP[l][0]} ${counts[l]}`))),
+      el("span", {style: "margin-left:auto", class: "muted small"}, "landed within ",
+        el("input", {type: "number", id: "ghours", min: 0, value: hours, style: "width:62px",
+          onchange: e => { graphHours = Number(e.target.value) || 0; refresh(); }}), " h")),
+      el("div", {class: "graphbox"}, box)), null, false));
+}
+
+// ---------------------------------------------------------------- the machine
+async function viewMachine(m, sub, {mach: d}) {
+  const byKind = {heavy: d.runs.filter(r => r.kind === "heavy"), probe: d.runs.filter(r => r.kind === "probe")};
+  m.append(el("div", {class: "stack"},
+    el("div", {class: "cols halves"},
+      panel("Slots and memory", d.snapshot_at ? "the watchdog's snapshot of " + clock(d.snapshot_at) : "no snapshot yet", machineSummary(d)),
+      panel("Who holds the machine", null, kv([
+        ["Held for a measurement", d.claim ? `task ${d.claim.task}: ${d.claim.why} (${ago(d.claim.at)})` : "no one"],
+        ["Waiting to hold it", d.pending ? `task ${d.pending.task}: ${d.pending.why}` : "no one"],
+        ["Sharing it", d.shared.length ? d.shared.map(x => `task ${x.task}: ${x.why}`).join("; ") : "no measurement"],
+        ["Measurement window", d.measure_seconds + " s"],
+        ["Probes queued", d.probe_queue.filter(x => !x.decided).length || "none"]]))),
+    panel("Heavy runs", `${byKind.heavy.length} of ${d.limits.heavy} slots`, runsTable(byKind.heavy, "No heavy run."), null, true),
+    panel("Probes", `${byKind.probe.length} of ${d.limits.probes} slots`, runsTable(byKind.probe, "No probe running."), null, true),
+    panel("The last hour", "sessions working, a line a minute (the watchdog's occupancy)", occupancyChart(d.occupancy))));
+}
+function runsTable(rows, empty) {
+  return table([{label: "Whose", get: r => r.session ? "a session" : "the harness"},
+    {label: "Processes", num: 1, get: r => r.processes}, {label: "Memory", num: 1, get: r => r.rss_mb ? (r.rss_mb / 1024).toFixed(1) + " GiB" : "—"},
+    {label: "Command", get: r => el("code", {class: "small"}, cut(r.command, 150))}], rows, null, empty);
+}
+function occupancyChart(lines) {
+  const pts = (lines || []).map(l => l.split(/\s+/).map(Number)).filter(p => p.length >= 2 && !isNaN(p[0]));
+  if (!pts.length) return el("div", {class: "empty"}, "No occupancy recorded yet (the watchdog writes it while the run is active).");
+  const W = 1000, H = 130, Lm = 34, B = 22, T = 8;
+  const ax = axisTicks(Math.max(2, ...pts.map(p => p[1])), Math.min(4, Math.max(2, ...pts.map(p => p[1]))));
+  const slot = (W - Lm) / pts.length, bw = Math.min(24, Math.max(1, slot - 2));
+  const y = v => T + (H - T - B) * (1 - v / ax.top);
+  const box = svg("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "sessions working, a bar a minute"});
+  for (const v of ax.ticks.filter(v => Number.isInteger(v)))
+    box.append(svg("line", {x1: Lm, x2: W, y1: y(v), y2: y(v), stroke: v === 0 ? cssVar("--axis") : cssVar("--grid")}),
+      svg("text", {x: Lm - 6, y: y(v) + 4, "font-size": 11, fill: cssVar("--muted"), "text-anchor": "end"}, v));
+  pts.forEach((p, i) => {
+    const h = y(0) - y(p[1]), x = Lm + i * slot + (slot - bw) / 2;
+    const g = svg("g", {"data-tip": `${new Date(p[0] * 1000).toLocaleTimeString([], {hour12: false})}\nworking\t${p[1]}\t\nheld warm\t${p[2] || 0}\t`},
+      svg("rect", {x: Lm + i * slot, y: T, width: slot, height: H - T - B, fill: "transparent"}));
+    if (p[1] > 0) g.append(svg("path", {d: colPath(x, y(p[1]), bw, h, 3), fill: cssVar("--s1")}));
+    box.append(g);
+  });
+  const every = Math.max(1, Math.ceil(pts.length / 8));
+  pts.forEach((p, i) => { if (i % every === 0) box.append(svg("text", {x: Lm + i * slot + slot / 2, y: H - 6, "font-size": 11, fill: cssVar("--muted"), "text-anchor": "middle"},
+    new Date(p[0] * 1000).toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hour12: false}))); });
+  return box;
+}
+
+// ---------------------------------------------------------------- batches and trains
+async function viewTrains(m) {
+  const d = await api("/api/checks");
+  const tone = r => !r.decided ? "warn" : /pass|landed/.test(r.state) ? "ok" : /fail|reject|conflict/.test(r.state) ? "bad" : "muted";
+  const queue = (rows, empty) => table([
+    {label: "Task", get: r => el("a", {onclick: e => { e.stopPropagation(); go("tasks", r.task); }}, "#" + r.task)},
+    {label: "State", get: r => el("span", {class: tone(r)}, r.state)},
+    {label: "Queued", get: r => ago(r.queued)}, {label: "Decided", get: r => r.decided_at ? ago(r.decided_at) : "—"},
+    {label: "Commit", get: r => r.ref ? el("code", {}, r.ref) : el("span", {class: "muted"}, r.head || "")}], rows, null, empty);
+  const logs = (rows, key) => {
+    const shown = el("div");
+    return el("div", {}, table([{label: "Log", get: r => el("code", {class: "small"}, r.name)}, {label: "Size", num: 1, get: r => k(r.size)},
+      {label: "When", get: r => ago(r.at)}, {label: "", get: r => r.growing ? el("span", {class: "pill ok"}, "running") : ""}],
+      rows, r => api("/api/file", {path: r.path}).then(f => shown.replaceChildren(pre((f.text || "(gone)").split("\n").slice(-200).join("\n")))), "No log.", key, 6), shown);
+  };
+  m.append(el("div", {class: "cols halves"},
+    el("div", {class: "stack"},
+      panel("Check batches", d.batcher ? "a batch is being checked" : "no batch running", queue(d.batches, "No task waits for a check."), null, true),
+      panel("Batch logs", "click one to read its end", logs(d.batch_logs, "batch-logs"), null, true),
+      panel("Trees that passed", "a tree checked is not checked again", table([{label: "Tree", get: r => el("code", {}, r.tree)},
+        {label: "When", get: r => ago(r.at)}, {label: "With tasks", get: r => (r.with || []).map(t => "#" + t).join(" ")}], d.passed, null, "None yet.", "passed", 8), null, true)),
+    el("div", {class: "stack"},
+      panel("Landing trains", d.lander ? "a train is landing" : "no train landing", queue(d.trains, "No task waits to land."), null, true),
+      panel("Train logs", "click one to read its end", logs(d.train_logs, "train-logs"), null, true),
+      panel("Builds kept for a landing", "a landing on its batch's build needs no check of its own (C10)",
+        d.kept.length ? pre(JSON.stringify(d.kept, null, 1)) : el("div", {class: "empty"}, "None kept."), null, false))));
+}
+
+// ---------------------------------------------------------------- sessions
+let sessionFilter = {text: "", role: "all", state: "all", archive: false};
+const LIVE_STATES = ["starting", "working", "waiting"];
+// where a session's time went: the model's answers, its calls, idle (parked, waiting for mail) — one small bar
+// where a session's time went, as shares of it — the model's answers, the wait on its calls, idle — each bar whole (its
+// length is the Ran column's; sessions ran from 16 s to hours, so one scale left most bars a few pixels)
+const timeOf = s => (s.model_s || 0) + (s.tools_s || 0) + (s.idle_s || 0);
+function timeBar(s, width) {
+  const parts = [[s.model_s, "var(--t-model)", "the model's answers"], [s.tools_s, "var(--t-tools)", "the wait on its calls"], [s.idle_s, "var(--t-idle)", "idle"]];
+  const all = timeOf(s);
+  if (!all) return null;
+  return el("span", {class: "tbar", style: `width:${width || 80}px`,
+      "data-tip": [`${s.name || ""} · ${dur(all)}`, ...parts.map(p => `${p[2]}\t${dur(p[0] || 0)} · ${Math.round(100 * (p[0] || 0) / all)}%\t${p[1]}`)].join("\n")},
+    parts.filter(p => p[0] > 0).map(p => el("span", {style: `flex:${p[0]} 1 0;background:${p[1]}`})));
+}
+async function viewSessions(m, name) {
+  if (name) return viewSession(m, name);
+  const rows = await api("/api/sessions", sessionFilter.archive ? {all: 1} : {});
+  const roles = ["all", ...Array.from(new Set(rows.map(r => r.role).filter(Boolean))).sort()];
+  const states = ["all", "live", ...Array.from(new Set(rows.map(r => r.state).filter(x => x && !LIVE_STATES.includes(x)))).sort()];
+  const f = sessionFilter.text.toLowerCase();
+  const inState = s => sessionFilter.state === "all" || (sessionFilter.state === "live" ? LIVE_STATES.includes(s.state) : s.state === sessionFilter.state);
+  const shown = rows.filter(s => (sessionFilter.role === "all" || s.role === sessionFilter.role) && inState(s)
+    && (!f || [s.name, s.role, s.state, s.task].join(" ").toLowerCase().includes(f)));
+  m.append(el("div", {class: "toolbar"},
+    el("input", {type: "search", id: "sfilter", placeholder: "Search sessions…", value: sessionFilter.text, style: "width:240px",
+      oninput: e => { sessionFilter.text = e.target.value; clearTimeout(window._f); window._f = setTimeout(refresh, 250); }}),
+    el("div", {class: "seg"}, roles.map(r => el("button", {class: r === sessionFilter.role ? "on" : "", onclick: () => { sessionFilter.role = r; refresh(); }}, r))),
+    el("div", {class: "seg"}, states.map(x => el("button", {class: x === sessionFilter.state ? "on" : "", onclick: () => { sessionFilter.state = x; refresh(); }},
+      x, x !== "all" ? el("span", {class: "muted"}, " " + rows.filter(s => x === "live" ? LIVE_STATES.includes(s.state) : s.state === x).length) : null))),
+    el("label", {class: "small muted"}, el("input", {type: "checkbox", checked: sessionFilter.archive || null,
+      onchange: e => { sessionFilter.archive = e.target.checked; refresh(); }}), " include archived"),
+    el("span", {class: "muted small", style: "margin-left:auto"}, `${shown.length} sessions`)));
+  const ran = s => s.started ? (s.ended || U(s.last) || Date.now() / 1000) - s.started : null;
+  m.append(panel("Sessions", "newest first · a heading sorts · click a session to read it whole", table([
+    {label: "Session", get: s => el("b", {}, s.name), sort: s => s.name}, {label: "Role", get: s => el("span", {class: "role"}, s.role), sort: s => s.role},
+    {label: "Task", get: s => s.task ? taskLink(s.task) : "—", sort: s => s.task ? Number(s.task) : null},
+    {label: "State", get: s => el("span", {class: ["working", "starting", "waiting"].includes(s.state) ? "ok" : "muted"}, s.state), sort: s => s.state},
+    {label: "Requests", num: 1, get: s => n(s.requests), sort: s => s.requests}, {label: "Ops / req", num: 1, get: s => s.ops || "—", hide: 1, sort: s => s.ops},
+    {label: "Before 1st change", num: 1, get: s => s.first_change ? s.first_change - 1 : "—", hide: 1, sort: s => s.first_change ? s.first_change - 1 : null},
+    {label: "Joinable", num: 1, get: s => s.joinable ? el("span", {class: "warn"}, s.joinable) : "", hide: 1, sort: s => s.joinable},
+    {label: "Refused", num: 1, get: s => s.refused ? el("span", {class: "bad"}, s.refused) : "", sort: s => s.refused},
+    {label: "Stopped", num: 1, get: s => s.stopped ? el("span", {class: "warn", title: "calls the harness's guard stopped before they ran"}, s.stopped) : "", hide: 1, sort: s => s.stopped},
+    {label: "Failed", num: 1, get: s => s.failed ? el("span", {class: "warn", title: "commands that failed (an exit code) or the tool's own failures"}, s.failed) : "", hide: 1, sort: s => s.failed},
+    {label: "Context", num: 1, get: s => k(s.context), hide: 1, sort: s => s.context},
+    {label: "Cost", num: 1, get: s => k(s.cost), sort: s => s.cost}, {label: "Started", get: s => ago(s.started), sort: s => -(s.started || 0)},
+    {label: "Ran", num: 1, get: s => dur(ran(s)), sort: ran},
+    {label: "Its time: model · calls · idle", get: s => timeBar(s, 90), hide: 1, sort: s => timeOf(s) ? (s.model_s || 0) / timeOf(s) : null}],
+    shown, s => go("sessions", s.name), "No session matches.", "sessions", 150), null, true));
+}
+async function viewSession(m, name) {
+  const d = await api("/api/session", {name});
+  const s = d.session, sm = d.summary || {};
+  m.append(el("div", {class: "toolbar"}, el("button", {class: "b", onclick: () => go("sessions")}, "← Sessions"),
+    el("span", {class: "role"}, s.role), el("b", {style: "font-size:16px"}, s.name),
+    s.task ? el("a", {onclick: () => go("tasks", s.task)}, "task #" + s.task) : null,
+    el("span", {class: "muted small"}, [s.state, s.origin ? "forked from " + s.origin : null, s.model].filter(Boolean).join(" · ")),
+    el("span", {style: "margin-left:auto"}),
+    el("button", {class: "b small", onclick: () => act("ping", {name: s.name})}, "Ping"),
+    el("button", {class: "b small danger", onclick: () => act("release", {name: s.name}, `Release ${s.name}? It is stopped and forgotten.`)}, "Release")));
+  const reqs = d.items.filter(i => i.kind === "request");
+  const live = LIVE_STATES.includes(s.state);
+  let before = 0;  // each request's context and what it added to the one before
+  for (const q of reqs) { const u = q.usage || {};
+    q.ctx = (u.input_tokens || 0) + (u.cache_read_input_tokens || 0) + (u.cache_creation_input_tokens || 0); q.added = before ? q.ctx - before : null; before = q.ctx; }
+  const flagged = it => it.kind === "request" && (it.joinable || it.calls.some(c => c.refused || c.stopped || c.error));
+  const shown = convo.flagged ? d.items.filter(flagged) : d.items;
+  const all = open => document.querySelectorAll("details.req, details.msg").forEach(x => x.open = open);
+  m.append(el("div", {class: "stack"},
+    el("div", {class: "tiles"},
+      tile("Requests", n(sm.requests)), tile("Calls", n(sm.calls)), tile("Operations / request", sm.ops || "—"),
+      tile("Before its first change", sm.first_change ? sm.first_change - 1 : "none made"),
+      tile("Joinable requests", n(sm.joinable), sm.joinable ? "warn" : ""), tile("Refused", n(sm.refused), sm.refused ? "bad" : ""),
+      tile("Stopped by the guard", n(sm.stopped), sm.stopped ? "warn" : ""), tile("Failed", n(sm.failed), sm.failed ? "warn" : ""),
+      tile("Context at the end", k(sm.context)), tile("Output tokens", k(sm.output)),
+      tile("Cost", k(sm.cost)), tile("Ran", sm.first ? dur(U(sm.last) - U(sm.first)) : "—", "", true),
+      tile("Model time", dur(sm.model_s), "", true), tile("Calls' time", dur(sm.tools_s), "", true), tile("Idle", dur(sm.idle_s), "", true)),
+    reqs.length ? panel("Where its time went", "each request's model time (thinking and writing; the calls it makes run while it writes the next), then the wait on its calls after its last block · idle: parked or waiting for a message · hover for a part, click a request to open it",
+      timeline(d.items, live)) : null,
+    sm.produced && sm.produced.length ? panel("Produced", `${sm.produced.length} file(s) changed`,
+      el("div", {class: "legend"}, sm.produced.map(p => el("span", {class: "pill"}, p)))) : null,
+    panel("Conversation", `${reqs.length} requests · a request is one model turn and the calls it made · amber: joinable with the one before · red: something was refused`,
+      el("div", {class: "turns"}, shown.length ? shown.map(it => turnView(it, d.items.indexOf(it))) : el("div", {class: "empty"}, "Nothing flagged: no refusal, failure or joinable request.")),
+      [el("div", {class: "seg"}, [[false, "all"], [true, "flagged only"]].map(([v, label]) =>
+        el("button", {class: convo.flagged === v ? "on" : "", onclick: () => { convo.flagged = v; refresh(); }}, label,
+          v ? el("span", {class: "muted"}, " " + d.items.filter(flagged).length) : null))),
+       el("button", {class: "b small", onclick: () => all(true)}, "expand all"), el("button", {class: "b small", onclick: () => all(false)}, "collapse all")])));
+}
+let convo = {flagged: false};
+// where a session's time went, on a scale of time: each request's model time, then the wait on its calls, and idle
+// (parked, waiting for mail) at its true length — or, asked for, left out, each cut marked where it was
+let timelineIdle = true;
+function timeline(items, live) {
+  const segs = [];
+  for (const it of items) {
+    if (it.kind === "message" && it.idle_s) segs.push({kind: "idle", from: U(it.at) - it.idle_s, to: U(it.at), at: it.at});
+    if (it.kind !== "request") continue;
+    const end = U(it.last || it.at);
+    if (it.model_s) segs.push({kind: "model", from: end - it.model_s, to: end, n: it.n, at: it.at});
+    const going = it.open && live ? Math.max(0, Date.now() / 1000 - end) : 0;
+    if (it.tools_s || going) segs.push({kind: "tools", from: end, to: end + (it.tools_s || going), n: it.n, open: !!going});
+  }
+  if (!segs.length) return el("div", {class: "empty"}, "No time recorded.");
+  const shown = timelineIdle ? segs : segs.filter(x => x.kind !== "idle");
+  // positions: real time, or the active time alone, the idle stretches taken out
+  let t = 0;
+  const pos = shown.map(x => { const at = timelineIdle ? x.from - shown[0].from : t; t += timelineIdle ? 0 : x.to - x.from; return at; });
+  const total = timelineIdle ? shown[shown.length - 1].to - shown[0].from : t;
+  const W = 1000, X = v => W * v / Math.max(1, total);
+  const color = {model: "var(--t-model)", tools: "var(--t-tools)", idle: "var(--t-idle)"};
+  const box = svg("svg", {viewBox: `0 0 ${W} 26`, preserveAspectRatio: "none", role: "img", "aria-label": "where the session's time went"});
+  const cuts = [];
+  shown.forEach((x, i) => {
+    const w = X(x.to - x.from), gap = w > 4 ? 1 : 0;
+    const tip = x.kind === "idle" ? `idle ${dur(x.to - x.from)}\nparked or waiting for a message, until ${clock(x.to)}`
+      : `#${x.n} · ${x.kind === "model" ? "the model's answer" : "the wait on its calls"}\n${dur(x.to - x.from)}${x.open ? " so far, still running" : ""} · from ${clock(x.from)}`;
+    box.append(svg("rect", {x: X(pos[i]), y: 0, width: Math.max(0.6, w - gap), height: 26, fill: color[x.kind],
+      "data-tip": tip, style: x.n ? "cursor:pointer" : "", onclick: x.n ? () => openRequest(x.n) : null}));
+    if (!timelineIdle && i && shown[i - 1].to < x.from - 30) cuts.push([pos[i], x.from - shown[i - 1].to]);
+  });
+  for (const [at, gone] of cuts)  // where idle was taken out: a mark of the page's ink across the strip
+    box.append(svg("rect", {x: X(at) - 1.5, y: 0, width: 3, height: 26, fill: "var(--ink)", "data-tip": `idle ${dur(gone)} left out here`}));
+  // the axis: clock times on a real scale, elapsed active time without idle, at a round interval
+  const every = [30, 60, 120, 300, 600, 900, 1800, 3600, 7200, 10800, 21600, 43200].find(v => total / v <= 8) || 86400;
+  const ticks = [];
+  for (let v = 0; v <= total + 1; v += every) ticks.push(v);
+  const axis = el("div", {class: "axis"}, ticks.map((v, i) => el("span", {class: i === 0 ? "first" : v / Math.max(1, total) > 0.95 ? "last" : "", style: `left:${100 * v / Math.max(1, total)}%`},
+    timelineIdle ? clock(shown[0].from + v) : dur(v))));
+  const sum = kind => segs.filter(x => x.kind === kind).reduce((a, x) => a + (x.to - x.from), 0);
+  const active = sum("model") + sum("tools");
+  return el("div", {class: "tline"}, box, axis,
+    el("div", {class: "toolbar", style: "margin:6px 0 0"},
+      el("div", {class: "legend"}, [["model", "the model's answers"], ["tools", "the wait on its calls"], ["idle", "idle"]].map(([key, label]) => el("span", {class: "key"},
+        el("i", {style: `background:var(--t-${key})`}), `${label} ${dur(sum(key))}` + (key !== "idle" && active ? ` (${Math.round(100 * sum(key) / active)}% of the active time)` : "")))),
+      el("div", {class: "seg", style: "margin-left:auto"}, [[true, "with idle"], [false, "active time only"]].map(([v, label]) =>
+        el("button", {class: timelineIdle === v ? "on" : "", onclick: () => { timelineIdle = v; refresh(); }}, label)))));
+}
+function openRequest(nr) {
+  const d = document.getElementById("req-" + nr);
+  if (!d) return;
+  d.open = true;
+  d.scrollIntoView({block: "start", behavior: "smooth"});
+}
+function turnView(it, i) {
+  if (it.kind === "message") {
+    return el("details", {class: "msg", open: i === 0 || it.text.length > 800 ? null : true, "data-key": "m" + i}, el("summary", {}, el("b", {class: "small"}, i === 0 ? "First message" : "Message to it"),
+      el("span", {class: "muted small"}, clock(it.at)), it.idle_s > 30 ? el("span", {class: "pill"}, "after " + dur(it.idle_s) + " idle") : null,
+      el("span", {class: "small ellipsis", style: "flex:1;min-width:0"}, cut(firstLine(it.text), 140)),
+      it.text.length > 800 ? el("span", {class: "muted small"}, `${n(it.text.length)} characters`) : null),
+      el("div", {class: "inner"}, pre(it.text)));
+  }
+  if (it.kind === "note") return el("div", {class: "muted small"}, clock(it.at), " harness: ", it.text);
+  const u = it.usage || {}, refused = it.calls.some(c => c.refused);
+  // a call's line: a shell command's first line; another tool by its name and what it was given, shortly
+  const callLine = c => {
+    if (c.tool === "Bash") return firstLine(c.command);
+    let inp = {}; try { inp = JSON.parse(c.command); } catch (e) {}
+    return c.tool + " " + (inp.subject || inp.file_path || inp.description || inp.pattern || inp.prompt || firstLine(c.command)).toString().slice(0, 160);
+  };
+  const summaryLine = it.calls.length ? it.calls.map(callLine).join("   ⏐   ") : (it.text.length ? "(text only)" : "(thinking only)");
+  const failed = it.calls.some(c => c.error && !c.refused && !c.stopped), stopped = it.calls.some(c => c.stopped);
+  return el("details", {class: "req" + (refused ? " refused" : it.joinable ? " joinable" : ""), "data-key": "r" + it.n, id: "req-" + it.n},
+    el("summary", {}, el("span", {class: "n"}, "#" + it.n), el("span", {class: "meta", title: new Date(U(it.at) * 1000).toLocaleString()}, clock(it.at)),
+      el("span", {class: "cmdline", title: summaryLine}, summaryLine),
+      el("span", {class: "meta", title: "the model's time on it, then its calls' time"},
+        el("span", {style: "color:var(--t-model)"}, "▮"), dur(it.model_s), " ", el("span", {style: "color:var(--t-tools)"}, "▮"), it.open ? "running" : dur(it.tools_s)),
+      el("span", {class: "meta", title: "the context it read, and what it added to the request before"}, "ctx " + k(it.ctx) + (it.added ? ` +${k(it.added)}` : "")),
+      el("span", {class: "meta"}, `${it.calls.length} call${it.calls.length === 1 ? "" : "s"} · ${it.ops} op${it.ops === 1 ? "" : "s"}`),
+      stopped ? el("span", {class: "pill warn", title: "the harness's guard stopped a call before it ran"}, "stopped") : null,
+      failed ? el("span", {class: "pill warn"}, "failed") : null,
+      refused ? el("span", {class: "pill bad"}, "refused") : null, it.joinable ? el("span", {class: "pill warn"}, "joinable") : null),
+    el("div", {class: "inner"},
+      el("div", {class: "muted small"}, `read ${k(u.cache_read_input_tokens)} · wrote ${k(u.cache_creation_input_tokens)} · output ${n(u.output_tokens)}`, it.thinking ? " · thought first" : ""),
+      it.text.map(t => pre(t)),
+      it.calls.map(c => el("div", {class: "call"},
+        el("div", {class: "ch"}, el("b", {}, c.tool), c.background ? el("span", {class: "pill"}, "background") : null,
+          c.refused ? el("span", {class: "pill bad"}, "refused") : c.stopped ? el("span", {class: "pill warn"}, "stopped by the guard")
+            : c.error ? el("span", {class: "pill warn"}, "failed") : el("span", {class: "pill ok"}, "ran"),
+          el("span", {class: "muted small"}, `${n(c.size)} characters back`)),
+        pre(c.command),
+        c.refused ? el("div", {class: "refusal"}, c.refused) : null,
+        c.stopped ? el("div", {class: "refusal"}, c.stopped) : null,
+        c.notes.map(x => el("div", {class: "note"}, x)),
+        c.result !== null ? el("details", {"data-key": "c" + c.id}, el("summary", {class: "small muted", style: "cursor:pointer"}, "What came back" + (c.cut ? " (cut)" : "")), pre(c.result)) : el("div", {class: "muted small"}, "no result yet")))));
+}
+
+// ---------------------------------------------------------------- tasks
+let taskFilter = {text: "", group: "open"};
+async function viewTasks(m, id, ctx) {
+  if (id) return viewTask(m, id, ctx);
+  const [rows, g] = await Promise.all([api("/api/tasks"), api("/api/graph", {hours: 24})]);
+  const status = Object.fromEntries(g.nodes.map(x => [x.id, x])), holds = holdsOf(g);
+  const held = id => holds[id] && !(status[id] || {}).done ? holds[id].size : 0;
+  const f = taskFilter.text.toLowerCase();
+  const inGroup = t => { const s = status[t.id]; if (taskFilter.group === "all") return true;
+    if (taskFilter.group === "open") return s && !s.done; if (taskFilter.group === "done") return !s || s.done; return s && s.group === taskFilter.group; };
+  const shown = rows.filter(t => inGroup(t) && (!f || [t.id, t.subject, t.kind, t.stage].join(" ").toLowerCase().includes(f)));
+  m.append(el("div", {class: "toolbar"},
+    el("input", {type: "search", placeholder: "Search tasks…", value: taskFilter.text, style: "width:240px",
+      oninput: e => { taskFilter.text = e.target.value; clearTimeout(window._t); window._t = setTimeout(refresh, 250); }}),
+    el("div", {class: "seg"}, [["open", "Open"], ["running", "Running"], ["check", "Checking"], ["review", "Review"], ["fix", "Fixing"],
+      ["train", "Landing"], ["waiting", "Waiting"], ["planner", "Planner"], ["done", "Done"], ["all", "All"]].map(([g2, label]) =>
+      el("button", {class: g2 === taskFilter.group ? "on" : "", onclick: () => { taskFilter.group = g2; refresh(); }}, label))),
+    el("span", {class: "muted small", style: "margin-left:auto"}, `${shown.length} tasks`)));
+  m.append(panel("Tasks", "a heading sorts · click a task for its brief, result, review and logs", table([
+    {label: "Task", get: t => el("b", {}, "#" + t.id), sort: t => Number(t.id)},
+    {label: "Subject", cls: "subject", get: t => el("div", {class: "ellipsis", title: t.subject}, t.subject), sort: t => t.subject},
+    {label: "Kind", get: t => t.kind || "—", hide: 1, sort: t => t.kind},
+    {label: "Where it stands", get: t => status[t.id] ? stageChip(status[t.id].group, cut(status[t.id].status, 46)) : el("span", {class: "muted"}, t.status || "—"),
+      sort: t => status[t.id] ? LANES.indexOf(status[t.id].group) : 99},
+    {label: "Holds", num: 1, get: t => held(t.id) ? el("span", {class: "warn", title: "open tasks waiting on it, through any chain of waits"}, held(t.id)) : "", sort: t => held(t.id) || null},
+    {label: "Session", get: t => t.session ? sessionLink(t.session) : "—", hide: 1, sort: t => t.session},
+    {label: "Rejected", num: 1, get: t => t.rejections ? el("span", {class: "bad"}, t.rejections) : "", sort: t => t.rejections},
+    {label: "Checks failed", num: 1, get: t => t.checks_failed ? el("span", {class: "warn"}, t.checks_failed) : "", hide: 1, sort: t => t.checks_failed}],
+    shown, t => go("tasks", t.id), "No task matches.", "tasks", 150), null, true));
+}
+let taskTab = "Brief";
+// a task's place in the queue: the whole order given again with it moved (the server's "place"); out is said explicitly
+const placeTask = (id, where, ask) => act("place", {id, where}, ask);
+async function viewTask(m, id, {o}) {
+  const [d, g] = await Promise.all([api("/api/task", {id}), api("/api/graph", {hours: 48})]);
+  const node = g.nodes.find(x => x.id === id), holds = (holdsOf(g)[id] || new Set()).size;
+  const st = d.state || {};
+  m.append(el("div", {class: "toolbar", style: "flex-wrap:nowrap;align-items:flex-start"}, el("button", {class: "b", onclick: () => go("tasks")}, "← Tasks"),
+    el("div", {style: "flex:1;min-width:0"}, el("b", {style: "font-size:16px"}, "#" + id, " "), el("span", {style: "font-size:15px"}, d.task.subject || ""),
+      " ", node ? stageChip(node.group, node.status) : null),
+    node && node.done ? null : queueButtons(id, o),
+    el("button", {class: "b small danger", title: "stops whatever works on it, takes it out of the queue and gives it back to the planner",
+      onclick: () => act("drop", {ids: [id]}, `Drop task ${id}? Whatever works on it stops, it leaves the queue, and it goes back to the planner to re-plan.`)}, "Drop to the planner")));
+  const files = Object.assign({"Brief": d.task.description || "(none)"}, d.files);
+  const tabs = Object.keys(files);
+  if (!tabs.includes(taskTab)) taskTab = "Brief";
+  const pane = el("div", {}, pre(files[taskTab], true));
+  const tabset = el("div", {class: "tabset"}, tabs.map(t => el("button", {class: t === taskTab ? "on" : "",
+    onclick: e => { taskTab = t; pane.replaceChildren(pre(files[t], true)); [...e.target.parentNode.children].forEach(b => b.classList.toggle("on", b === e.target)); }}, t)));
+  m.append(el("div", {class: "cols detail"},
+    el("div", {class: "stack"},
+      panel("Where it stands", null, kv([["Status", node ? node.status : (d.task.status || "—")], ["Stage", st.stage || "—"], ["Kind", d.record.kind || "—"],
+        ["Session", st.session ? el("a", {onclick: () => go("sessions", st.session)}, st.session) : "—"],
+        ["Waits on", (d.task.blockedBy || []).length ? d.task.blockedBy.map((b, i) => [i ? ", " : "", taskLink(b)]) : "nothing"],
+        ["Waited on by", (d.dependents || []).length ? d.dependents.map((b, i) => [i ? ", " : "", taskLink(b)]) : "nothing"],
+        holds ? ["Holds", el("span", {class: "warn"}, `${holds} open task${holds === 1 ? "" : "s"}, through any chain of waits`)] : null,
+        ["Rejected", st.rejections || 0], ["Checks failed", st.checks_failed || 0],
+        st.parked ? ["Parked", `for ${st.parked.for}${st.parked.since ? ", " + ago(st.parked.since) : ""}`] : null,
+        ["In the queue", d.record.queued ? `${o.queue.findIndex(t => t.id === id) + 1} of ${o.queue.length}` : "no"]])),
+      panel("Tell its sessions", "reaches the session working on it at its next call", el("div", {class: "toolbar", style: "margin:0"},
+        el("input", {type: "text", id: "telltext", placeholder: "What they should know…", style: "flex:1;min-width:200px"}),
+        el("button", {class: "b primary", onclick: () => act("tell", {task: id, text: document.getElementById("telltext").value})}, "Tell"))),
+      panel("Sessions on it", `${d.sessions.length} · ${k(d.sessions.reduce((a, s) => a + (s.cost || 0), 0))} of cost in all`, table([{label: "Session", get: s => el("b", {}, s.name)}, {label: "Role", get: s => el("span", {class: "role"}, s.role)},
+        {label: "State", get: s => s.state}, {label: "Requests", num: 1, get: s => n(s.requests)}, {label: "Ran", num: 1, get: s => el("span", {class: "nowrap"}, dur(timeOf(s)), " ", timeBar(s, 56))},
+        {label: "Cost", num: 1, get: s => k(s.cost)}],
+        d.sessions, s => go("sessions", s.name), "No session has worked on it."), null, true)),
+    el("div", {class: "stack"}, historyPanel(d.history || []), panel("Its records", null, el("div", {}, tabset, pane)))));
+}
+
+// a task's life as the harness's log tells it, oldest first, with the time each step took before the next: a long
+// gap is where it waited (for the machine, a batch, a review, the planner)
+function historyPanel(lines) {
+  const rows = lines.filter(l => /^\d{4}-/.test(l));
+  if (!rows.length) return panel("Its history", null, el("div", {class: "empty"}, "The log says nothing of it yet."));
+  const first = L(rows[0]), last = L(rows[rows.length - 1]);
+  let day = null;
+  const out = [];
+  rows.forEach((l, i) => {
+    const t = L(l), next = i + 1 < rows.length ? L(rows[i + 1]) - t : null;
+    if (l.slice(0, 10) !== day) { day = l.slice(0, 10); out.push(el("div", {class: "day"}, new Date(t * 1000).toLocaleDateString([], {weekday: "long", month: "long", day: "numeric"}))); }
+    const text = l.slice(20);
+    out.push(el("div", {class: "l " + (/ATTENTION/.test(text) ? "attention" : /landed|passed/.test(text) ? "good" : /failed|rejected|lost/.test(text) ? "warnline" : NOISE.test(text) ? "quiet" : "")},
+      el("span", {class: "when"}, l.slice(11, 19)), el("span", {}, linkify(text)),
+      el("span", {class: "gap" + (next >= 1800 ? " long" : next >= 600 ? " mid" : ""), title: next !== null ? "until the next line" : ""}, next !== null && next >= 60 ? dur(next) : "")));
+  });
+  return panel("Its history", `from the harness's log, oldest first · ${dur(last - first)} from its first line to its last · the right column: the time until the next line`,
+    el("div", {class: "loglines history"}, out));
+}
+
+// ---------------------------------------------------------------- the log
+let logFilter = {text: "", kind: "all"};
+const LOGKINDS = {all: null, attention: /ATTENTION/, landings: /landed|lands|committed|train/, checks: /check/, sessions: /started |released|lost|resumed/, planner: /planner|plan-\d/};
+async function viewLog(m) {
+  const lines = await api("/api/log", {n: 1500});
+  const re = LOGKINDS[logFilter.kind], f = logFilter.text.toLowerCase();
+  const shown = lines.filter(l => (!re || re.test(l)) && (!f || l.toLowerCase().includes(f))).reverse().slice(0, 600);
+  m.append(el("div", {class: "toolbar"},
+    el("input", {type: "search", placeholder: "Only lines with…", value: logFilter.text, style: "width:260px",
+      oninput: e => { logFilter.text = e.target.value; clearTimeout(window._g); window._g = setTimeout(refresh, 300); }}),
+    el("div", {class: "seg"}, Object.keys(LOGKINDS).map(kd => el("button", {class: kd === logFilter.kind ? "on" : "", onclick: () => { logFilter.kind = kd; refresh(); }}, kd))),
+    el("span", {class: "muted small", style: "margin-left:auto"}, `${shown.length} lines, newest first`)));
+  let day = null;
+  const rows = [];
+  for (const l of shown) {
+    if (l.slice(0, 10) !== day) { day = l.slice(0, 10); rows.push(el("div", {class: "day"}, new Date(L(l) * 1000).toLocaleDateString([], {weekday: "long", month: "long", day: "numeric"}))); }
+    rows.push(el("div", {class: "l " + (/ATTENTION/.test(l) ? "attention" : /landed|passed/.test(l) ? "good" : NOISE.test(l.slice(20)) ? "quiet" : "")},
+      el("span", {class: "when"}, l.slice(11, 19)), el("span", {}, linkify(l.slice(20)))));
+  }
+  m.append(panel("The harness's log", "state/v2.log", el("div", {class: "loglines"}, rows)));
+}
+
+// ---------------------------------------------------------------- bases and layers
+// a chain's parts: the shared chain's material parts in the order they stand on each other, an ordinal blue ramp (the
+// bottom darkest); what stands on the chain — reasoning, a delta, a role's layer and churn, the knowledge base — each a
+// categorical slot. [label, fill, the ink a label inside it takes]
+const PART = {base: ["stable base", "var(--r1)", "#fff"], direction: ["direction", "var(--r2)", "#fff"],
+  inventory: ["inventory", "var(--r3)", "#fff"], catalogue: ["catalogue", "var(--r4)", "#0b0b0b"], working: ["working material", "var(--r5)", "#0b0b0b"],
+  layer: ["medium layer", "var(--r3)", "#fff"], material: ["held material", "var(--r3)", "#fff"],
+  reasoning: ["reference reasoning", "var(--p-reasoning)", "#fff"], delta: ["delta", "var(--p-delta)", "#0b0b0b"],
+  role: ["role layer", "var(--p-role)", "#0b0b0b"], churn: ["churn", "var(--p-churn)", "#fff"], kb: ["knowledge base", "var(--p-kb)", "#0b0b0b"]};
+const RAMP = ["base", "direction", "inventory", "catalogue", "working"];
+const BASE_OF = {max: "the planner's base: the knowledge base and the planners fork it",
+  xhigh: "the middle base: designers, task designers, investigators and reviewers",
+  high: "the implementation base: implementers and fixers"};
+const span = s => s === null || s === undefined ? "—" : s < 90 ? Math.round(s) + " s" : s < 5400 ? Math.round(s / 60) + " min" : (s / 3600).toFixed(1) + " h";
+function expiry(e) {
+  if (e.read_age === null) return el("span", {class: "muted"}, "never read");
+  return e.expires_in > 0 ? el("span", {class: e.expires_in < 900 ? "warn" : "ok"}, "in " + span(e.expires_in))
+    : el("span", {class: "muted"}, "expired " + span(-e.expires_in) + " ago");
+}
+const nextPing = e => e.next_ping === null ? el("span", {class: "muted small"}, e.why)
+  : el("span", {title: e.why}, e.next_ping <= 0 ? "due now" : "in " + span(e.next_ping), el("div", {class: "muted small"}, e.why));
+const lastPing = p => p ? el("span", {}, el("b", {class: p.ok ? "ok" : "bad"}, p.ok ? "read" : "missed"), " ", ago(p.at),
+  el("div", {class: "muted small"}, `read ${k(p.read)}, wrote ${k(p.write)} · cost ${k(p.cost)}`)) : el("span", {class: "muted"}, "none logged");
+const warmth = e => el("span", {class: "pill " + (e.warm ? "ok" : "")}, el("span", {class: "dot"}), e.warm ? "warm" : e.read_age === null ? "unknown" : "cold");
+function toldParts(text) {  // manifest.py's line: what a fork is told has changed, by the load that brought it in
+  return (text || "").split(/; (?=since the |held now and not loaded|differing in your own tree)/).filter(Boolean).map(part => {
+    const m = part.match(/^(.*?) \((\d+)(?:: [^)]*)?\): (.*)$/);
+    if (!m) return el("div", {class: "told small"}, part);
+    const names = Number(m[2]) > 12 ? el("details", {"data-key": "told-" + m[1]}, el("summary", {}, `show the ${m[2]}`), el("div", {class: "small names"}, m[3]))
+      : Number(m[2]) ? el("div", {class: "small names"}, m[3]) : null;
+    return el("div", {class: "told"}, el("b", {}, m[1].replace(/ of (\d{4}-\d\d-\d\dT[\d:]+)/, (x, t) => " of " + clock(L(t)))), el("span", {class: "muted"}, ` — ${m[2]}`), names);
+  });
+}
+// the width of a chain's bar at full scale, in pixels, to know whether a label fits inside a part (it is never clipped)
+const chainPx = () => Math.max(260, Math.min((typeof window !== "undefined" && window.innerWidth) || 1440, 1640) - 402);
+const fits = (text, px) => text.length * 6.4 + 12 <= px;
+function segEl(s, scale) {
+  const [label, color, ink] = PART[s.part] || [s.part, "var(--r3)", "#fff"];
+  const px = chainPx() * (s.tokens || 0) / scale;
+  const tip = [`${label}${s.name ? " · " + s.name : ""}`, `${n(s.tokens)} tokens${s.ghost ? " at least" : " of its own"}`]
+    .concat(s.note ? [s.note] : []).concat(s.purposes?.length ? ["purpose: " + s.purposes.join(", ")] : [])
+    .concat((s.inner || []).filter(x => x.tokens > 0).map(x => `${x.kind === "moved" ? "moved since it loaded" : "held of files the list no longer names"}: ${n(x.tokens)}`))
+    .concat([s.projected ? "as a build from scratch would hold it now" : s.ghost ? "" : s.warm ? "its cache entry is warm" : "its cache entry is cold",
+             s.forked ? "what its roles fork now" : ""]).filter(Boolean).join("\n");
+  const text = fits(`${label} ${k(s.tokens)}`, px) ? `${label} ${k(s.tokens)}` : fits(k(s.tokens), px) ? k(s.tokens) : "";
+  return el("div", {class: "cseg" + (s.ghost ? " ghost" : s.projected ? " proj" : ""), "data-tip": tip,
+    style: `flex:${Math.max(s.tokens || 0, scale * 0.004)} 1 0;min-width:3px;` + (s.ghost ? `border-color:${color};color:var(--ink-2)` : `background:${color};color:${ink}`)}, text);
+}
+function chainRow(tag, label, sub, segs, scale, against, extra) {
+  const total = segs.reduce((a, s) => a + (s.tokens || 0), 0);
+  const diff = against !== undefined ? total - against : null;
+  const cold = tag === "now" ? segs.filter(x => !x.ghost && x.warm === false).map(x => (PART[x.part] || [x.part])[0]) : [];
+  const drifting = segs.some(x => (x.inner || []).some(i => i.tokens > 0));
+  const width = `width:${Math.min(100, 100 * total / scale)}%`;
+  return el("div", {class: "chain"}, el("div", {class: "who"}, el("span", {class: "tag " + tag}, tag === "now" ? "now" : "from scratch"), " ", el("b", {}, label),
+      sub ? el("div", {class: "muted small"}, sub) : null,
+      tag === "now" ? el("div", {class: "warmth " + (cold.length ? "warn" : "ok")}, cold.length === segs.length ? "every entry cold"
+        : cold.length ? "cold: " + cold.join(", ") : "every entry warm") : null),
+    el("div", {}, el("div", {class: "cbar", style: width}, segs.map(x => segEl(x, scale))),
+      drifting ? el("div", {class: "dbar", style: width}, segs.map(x => {
+        const moved = (x.inner || []).filter(i => i.tokens > 0);
+        return el("span", {style: `flex:${Math.max(x.tokens || 0, scale * 0.004)} 1 0;min-width:3px`},
+          moved.map(i => el("i", {style: `width:${Math.min(100, 100 * i.tokens / Math.max(1, x.tokens))}%;background:${i.kind === "moved" ? "var(--st-warn)" : "var(--st-serious)"}`,
+            "data-tip": `${(PART[x.part] || [x.part])[0]}\n${i.kind === "moved" ? "moved since it loaded" : "held of files the list no longer names"}: ${n(i.tokens)} of ${n(x.tokens)}`})));
+      })) : null),
+    el("div", {class: "total", "data-tip": segs.some(s => s.ghost) || extra ? ["at least " + n(total) + " tokens"].concat(extra ? [extra] : [])
+        .concat(segs.some(s => s.ghost) ? ["a layer not built yet: its message, its reasoning on top"] : []).join("\n") : null},
+      (segs.some(s => s.ghost) || extra ? "≥" : "") + k(total),
+      diff !== null && Math.abs(diff) >= 1000 ? el("div", {class: "small muted"}, `${diff < 0 ? "−" : "+"}${k(Math.abs(diff))} on now`) : null));
+}
+function organization(d) {
+  const rows = [];
+  const spec = (tag, label, sub, segs, against) => ({tag, label, sub, segs, against});
+  const kb = d.held.find(h => h.name === d.kb);
+  for (const b of d.bases) {
+    const s = b.staleness || {}, proj = d.projected[b.who]?.valid === false ? null : d.projected[b.who];
+    const parts = Object.fromEntries(b.parts.map(p => [p.part, p]));
+    const now = s.delta_now || {};
+    const layerFiles = now.share > 0 ? (now.tokens - now.stable) / now.share : parts.layer ? parts.layer.own : 0;
+    const drift = {base: s.stable ? [{kind: "moved", tokens: s.stable.moved}, {kind: "unlisted", tokens: s.stable.unlisted}] : [],
+      layer: parts.layer ? [{kind: "moved", tokens: Math.min(parts.layer.own, Math.round((s.layer_share || 0) * layerFiles))}] : [], delta: []};
+    const upTo = b.parts.findIndex(p => p.forked);
+    const built = b.parts.slice(0, upTo + 1).map(p => ({part: p.part, name: p.name, purposes: p.purposes,
+      tokens: p.own, warm: p.entry.warm, forked: p.forked,
+      inner: p.drift?.moved ? [{kind: "moved", tokens: Math.min(p.own, p.drift.moved)}] : drift[p.part]}));
+    const builtTotal = built.reduce((a, x) => a + x.tokens, 0);
+    // the reference reasoning over the stable part is unmeasured until built: said beside the total, drawn nowhere
+    const scratch = proj ? (proj.parts || [{part: "stable", tokens: proj.stable}, {part: "layer", tokens: proj.layer}])
+      .map(p => ({part: p.part === "stable" ? "base" : p.part, tokens: p.tokens, projected: true})) : null;
+    const scratchTotal = scratch ? scratch.reduce((a, x) => a + x.tokens, 0) : 0;
+    const mine = d.roles.filter(r => r.base === b.who);
+    const plain = mine.filter(r => !(r.forks || "").startsWith("layer-") && !(r.forks || "").startsWith("churn-")).map(r => r.role);
+    rows.push(el("div", {class: "chainhead"}, el("b", {}, b.who), el("span", {class: "muted small"}, " — " + BASE_OF[b.who])));
+    rows.push(spec("now", "shared", `its roles fork its ${b.forks}` + (plain.length ? ": " + plain.join(", ") : b.who === "max" ? ": the knowledge base" : ""), built));
+    if (scratch) rows.push(spec("scratch", "shared", "the required material parts; reasoning is unmeasured until built"
+      + (b.deltas ? "; no delta: the layer holds what stands" : ""), scratch, builtTotal));
+    if (b.who === "max" && kb && kb.context) {
+      const kbOwn = Math.max(0, kb.context - (b.parts[upTo] ? b.parts[upTo].context : 0));
+      rows.push(spec("now", `knowledge base ${kb.name}`, "the planners fork it", built.map(x => ({...x, forked: false})).concat([{part: "kb", name: kb.name, tokens: kbOwn, warm: kb.entry.warm, forked: true}])));
+      if (scratch) rows.push(spec("scratch", "knowledge base", "its own part as last built", scratch.concat([{part: "kb", tokens: kbOwn, projected: true}]), builtTotal + kbOwn));
+    }
+    for (const r of mine) {
+      const own = (r.forks || "").startsWith("layer-") || (r.forks || "").startsWith("churn-");
+      if (own) {
+        const parentAt = b.parts.findIndex(p => p.sid === (r.origin_sid || "").slice(0, 8));
+        const medium = parentAt >= 0 ? b.parts.slice(0, parentAt + 1).map(p => ({part: p.part, name: p.name, tokens: p.own, warm: p.entry.warm, inner: drift[p.part]}))
+          : [{part: "material", tokens: r.origin_context || 0, name: "earlier parent; composition not retained here"}];
+        const segs = medium.concat(r.layer ? [{part: "role", name: r.layer.name, tokens: r.layer_own, warm: r.layer.entry.warm, forked: !r.churn}] : [])
+          .concat(r.churn ? [{part: "churn", name: r.churn.name, tokens: r.churn_own, warm: r.churn.entry.warm, forked: true}] : []);
+        rows.push(spec("now", r.role, `forks ${r.forks}; ${r.placement}`, segs));
+      }
+      if (!r.on || !scratch) continue;
+      const message = d.role_messages[r.role];
+      const layer = {part: "role", ghost: true, tokens: message || 0, note: message ? `its message, ${n(message)} tokens: its protocol and its evidence as they stand; its reasoning comes on top, known once built` : "its size is known once built"};
+      rows.push(spec("scratch", r.role, r.layer && r.layer_own ? "its layer as last built" : "its layer: its message as it stands, its reasoning on top", scratch.concat([layer])));
+    }
+  }
+  const total = r => r.segs.reduce((a, x) => a + (x.tokens || 0), 0);
+  const scale = Math.max(1, ...rows.filter(r => r.segs).map(total));  // every bar at one scale: the longest fills the width
+  const all = rows.map(r => r.segs ? chainRow(r.tag, r.label, r.sub, r.segs, scale, r.against, r.tag === "scratch" ? "the reference reasoning over the stable part, unmeasured until built" : null) : r);
+  const when = Object.values(d.projected).filter(Boolean).map(p => p.at);
+  const shown = new Set(rows.filter(r => r.segs).flatMap(r => r.segs.map(x => x.part)));
+  const key = part => el("span", {class: "key"}, el("i", {style: `background:${PART[part][1]}`}), PART[part][0]);
+  return el("div", {}, el("div", {class: "legend", style: "margin-bottom:4px"},
+      el("span", {class: "muted small", style: "margin-right:8px"}, "the shared chain, bottom first:"), RAMP.filter(p => shown.has(p)).map(key),
+      ["layer", "material"].filter(p => shown.has(p)).map(key)),
+    el("div", {class: "legend", style: "margin-bottom:10px"},
+      el("span", {class: "muted small", style: "margin-right:8px"}, "over it:"), ["reasoning", "delta", "role", "churn", "kb"].filter(p => shown.has(p) || p === "reasoning").map(key),
+      el("span", {class: "key"}, el("i", {class: "ghostkey"}), "not built yet: at least its message"),
+      el("span", {class: "key"}, el("i", {class: "strip", style: "background:var(--st-warn)"}), "moved since it loaded"),
+      el("span", {class: "key"}, el("i", {class: "strip", style: "background:var(--st-serious)"}), "held, no longer in the list")),
+    all, el("div", {class: "muted small", style: "margin-top:6px"}, when.length
+      ? `From scratch: what base.sh would load now — the list's stable part as written (the owner's: the intent and the library's ideas, held to steer), a layer with its frontier chosen again (select_base_load --frontier), in the tokens their loads take; projected ${span(Date.now() / 1000 - Math.min(...when))} ago, every ${span(d.rules.project_every)}.`
+      : "From scratch: computing the role relations and the complete plan; a failed projection is reported below."));
+}
+function baseCard(b, r) {
+  const s = b.staleness || {};
+  const layer = b.parts.find(p => p.part === "layer"), delta = b.parts.find(p => p.part === "delta");
+  const now = s.delta_now || {};
+  const layerFiles = now.share > 0 ? (now.tokens - now.stable) / now.share : layer ? layer.own : 0;
+  const moved = (s.layer_share || 0) * layerFiles;
+  const blocks = [];
+  const stable = b.parts.find(p => p.part === "base");
+  if (s.stable && stable) {
+    blocks.push(el("div", {class: "stale"}, el("div", {class: "sh"}, "The stable base, since it loaded at " + clock(L(stable.sealed))),
+      el("div", {}, `${(s.stable.share * 100).toFixed(1)}% of the tokens the list's stable part holds have moved — ${k(s.stable.moved)} of ${k(s.stable.tokens)}`,
+        el("div", {class: "muted small"}, "counted as the layer's are; a file it did not load counts whole")),
+      s.stable.unlisted ? el("div", {class: "warn"}, `it holds ${k(s.stable.unlisted)} of files the list no longer names — carried in every fork's prefix for nothing`) : null,
+      now.stable !== undefined ? meter("In the delta", now.stable, r.stable_delta_max, `${now.stable ? k(now.stable) : "0"} of ${k(r.stable_delta_max)}`) : null,
+      el("div", {class: "muted small"}, `the stable base is the owner's to load again (base.sh ${b.who} restable, or a layer refresh when the list names another reference); the watchdog says so once a delta holds ${k(r.stable_delta_max)} of its changes`)));
+  }
+  if (layer) {
+    blocks.push(el("div", {class: "stale"}, el("div", {class: "sh"}, "The medium layer, since it loaded at " + clock(L(layer.sealed))),
+      el("div", {}, `${((s.layer_share || 0) * 100).toFixed(1)}% of its held tokens have moved — about ${k(moved)} of ${k(layerFiles)}`,
+        el("div", {class: "muted small"}, "counted as the refresh rule counts: a changed proof under unchanged statements moves nothing; an index moves by the words that changed; any other changed file whole")),
+      b.deltas ? meter("Refresh", s.carried || 0, s.refresh_cost || 1, `${s.carried ? k(s.carried) : "0"} of ${k(s.refresh_cost)}`)
+        : meter("Refresh", s.layer_share || 0, r.layer_stale, `${((s.layer_share || 0) * 100).toFixed(0)}% of ${(r.layer_stale * 100).toFixed(0)}%`),
+      el("div", {class: "muted small"}, b.deltas ? "refreshed when what its delta has cost the forks that carried it reaches what a refresh costs (the layer written again over one read of the stable base, and the role layers on it)"
+        : `refreshed when ${(r.layer_stale * 100).toFixed(0)}% of it has moved; looked at every ${span(r.layer_every)}` + (b.layer_looked !== null ? `, last ${span(b.layer_looked)} ago` : ""))));
+  }
+  if (b.deltas) {
+    blocks.push(el("div", {class: "stale"}, el("div", {class: "sh"}, delta ? "The delta, built at " + clock(L(delta.sealed)) + (delta.head ? " on main " + delta.head : "") : "No delta stands"),
+      delta ? el("div", {}, `holds ${k(delta.tokens)} tokens of change (${k(delta.layer_tokens)} of the layer, ${k(delta.stable_tokens)} of the stable base)`) : null,
+      now.tokens !== undefined ? el("div", {}, `a delta built now would hold ${k(now.tokens)} (${k(now.tokens - now.stable)} of the layer, ${k(now.stable)} of the stable base)`) : null,
+      delta && s.chain ? el("div", {}, `a chain of ${s.chain} message${s.chain > 1 ? "s" : ""}, each written once`) : null,
+      s.pending ? meter("Next message", s.pending_owed || 0, s.pending_cost || 1, `${k(s.pending)} tokens pending have cost the forks ${k(s.pending_owed || 0)} of ${k(s.pending_cost || 0)}`) : null,
+      delta && s.waste_cost ? meter("Consolidation", s.waste_owed || 0, s.waste_cost, `its superseded forms have cost the forks ${k(s.waste_owed || 0)} of ${k(s.waste_cost)}`) : null,
+      el("div", {class: "muted small"}, `an increment is built when what the changes since its last message have cost the forks reaches what a message holding them costs, and the chain is written anew as one message when its superseded forms have cost what that costs; measured every ${span(r.delta_every)}`
+        + (b.delta_looked !== null ? `, last ${span(b.delta_looked)} ago` : ""))));
+  }
+  const told = b.forks === "delta" ? s.told_delta : s.told_layer;
+  if (told) blocks.push(el("div", {class: "stale"}, el("div", {class: "sh"}, `What a fork of its ${b.forks} is told has changed`), toldParts(told)));
+  const controls = [
+    el("button", {class: "b small", onclick: () => buildBase(b.who, "layer", `Refresh the ${b.who} medium layer now? It is loaded again from the list as it stands (about ${k((s.refresh_cost || 0))} to write), and every role layer over it is built again after.`)}, "Refresh the layer"),
+    b.deltas ? el("button", {class: "b small", onclick: () => buildBase(b.who, "delta", `Build the ${b.who} delta now? It holds what changed since the layer loaded (${k((s.delta_now || {}).tokens)} tokens as it stands).`)}, "Build the delta") : null,
+    el("button", {class: "b small", onclick: () => buildBase(b.who, "restable", `Load the ${b.who} stable base again? The standing base and layer serve until its next layer is built over it; the two then replace the old pair.`)}, "Reload the stable base")];
+  return panel(`${b.who}`, `its roles fork its ${b.forks}` + (b.deltas ? " · deltas on" : "") + (b.building ? " · a layer is being built" : "")
+      + (s.at ? ` · measured ${span(Date.now() / 1000 - s.at)} ago` : " · not measured yet"),
+    el("div", {class: "basebody"}, el("div", {}, table([
+      {label: "Part", get: p => el("span", {}, el("i", {class: "sw", style: `background:${(PART[p.part] || [p.part, "var(--r3)"])[1]}`}), el("b", {}, (PART[p.part] || [p.part])[0]), el("div", {class: "small muted"}, (p.purposes || []).join(", ")), p.forked ? el("div", {class: "small ok"}, "forked now") : null)},
+      {label: "Its own tokens", num: 1, get: p => el("span", {}, k(p.own), el("div", {class: "muted small"}, "prefix " + k(p.context)))},
+      {label: "Sealed", get: p => el("span", {}, clock(L(p.sealed)), el("div", {class: "muted small"}, p.sid))},
+      {label: "Its entry", get: p => el("span", {}, warmth(p.entry), el("div", {class: "muted small"}, p.entry.read_age === null ? "" : "read " + span(p.entry.read_age) + " ago"))},
+      {label: "Expires", get: p => expiry(p.entry)},
+      {label: "Next ping", get: p => nextPing(p.entry)},
+      {label: "Last ping", get: p => lastPing(p.entry.last_ping)},
+      {label: "Misses", num: 1, get: p => p.entry.misses ? el("span", {class: "bad"}, p.entry.misses) : ""}], b.parts),
+      b.orphan_delta ? el("div", {class: "warn small", style: "margin:6px 16px"}, "Its recorded delta stands on another layer than the recorded one: nothing forks it.") : null),
+      el("div", {class: "stales"}, blocks)), controls, true);
+}
+function buildBase(who, part, question) {
+  act("build", {part, who}, question);
+}
+function buildRole(role, part, going) {
+  if (!going) { toast("The run is stopped: nothing would seal a role's " + (part === "churn" ? "churn" : "layer") + " built now or keep it warm, and it would go cold within the hour. Start the run, then build it."); return; }
+  act("build", {part, role}, `Build the ${role}'s ${part === "churn" ? "churn (the delta over its layer)" : "reasoning layer (its evidence read, then a fork of the medium layer that reasons over it)"} now?`);
+}
+async function viewBases(m) {
+  const d = await api("/api/bases");
+  const r = d.rules;
+  const quiet = !d.daemon ? "The daemon is not running: nothing is pinged, and every entry goes cold an hour after its last read."
+    : d.stopped || !d.active ? "The run is stopped: the bases are still pinged by the daemon, the held sessions are not." : null;
+  m.append(el("div", {class: "stack"},
+    quiet ? el("div", {class: "attn"}, el("div", {class: "item warn"}, el("span", {class: "icon"}, "▲"), el("div", {}, quiet), el("span"))) : null,
+    Object.entries(d.projected || {}).filter(([_, p]) => p?.valid === false).map(([who, p]) =>
+      panel("Projection unavailable: " + who, p.error || "The required input could not be read.")),
+    panel("How they are organized", "as built now, and as a build from scratch would hold it now · each bar is what a fork reads from cache, bottom layer first, all at one scale",
+      el("div", {}, organization(d), el("div", {class: "muted small", style: "margin-top:8px"},
+        `An entry lives ${span(r.cache_life)} after its last read (counted warm under ${span(r.warm_max)}). What a base's roles fork is pinged ${span(r.warm_every)} after its last read while a role forks it and it was used within ${span(r.idle_max)}; an entry under it (the stable base under the layer, the layer under a delta) the same way while warm; a session held warm ${span(r.ping_age)} after. A missed entry is not pinged again: the next load writes it.`)),
+      [el("button", {class: "b small primary", title: "base.sh WHO layer for every base, one after another (Control shows where it has got to)",
+        disabled: d.bases.some(b => b.building) || null, onclick: () => buildAllLayers(d.bases.map(b => b.who))}, d.bases.some(b => b.building) ? "a layer is being built…" : "Build every layer")]),
+    d.bases.map(b => baseCard(b, r)),
+    panel("The roles' own layers", `${d.roles.length} role(s) switched on or holding one · each role reasons above the material it judges; placement and source parent are explicit`,
+      table([
+        {label: "Role", get: x => el("span", {}, el("b", {}, x.role), el("div", {class: "muted small"}, x.base + (x.on ? "" : " · switched off")))},
+        {label: "Forks now", get: x => el("code", {class: "small"}, x.forks)},
+        {label: "Role layer", get: x => x.layer ? el("span", {}, el("b", {}, x.layer.name), el("div", {class: "muted small"}, `${k(x.layer_own)} of its own · built ${ago(x.built)}${x.builds ? " · " + x.builds + " build(s)" : ""}`))
+          : el("span", {class: "muted"}, x.building ? "being built: " + x.building : "none")},
+        {label: "Its entry", get: x => x.layer ? el("span", {}, warmth(x.layer.entry), " ", expiry(x.layer.entry), el("div", {}, nextPing(x.layer.entry))) : ""},
+        {label: "Churn", get: x => x.churn ? el("span", {}, el("b", {}, x.churn.name), el("div", {class: "small " + (x.churn_current ? "ok" : "warn")},
+            x.churn_current ? "holds the delta standing now" : `behind the delta · ${x.behind_forks} fork(s) behind it · ${k(x.owed)} of ${k(x.churn_build)} to a rebuild`),
+            el("div", {class: "muted small"}, `${k(x.churn_own)} of its own`)) : el("span", {class: "muted"}, x.churn_building ? "being built: " + x.churn_building : "none")},
+        {label: "Its entry", get: x => x.churn ? el("span", {}, warmth(x.churn.entry), " ", expiry(x.churn.entry), el("div", {}, nextPing(x.churn.entry))) : ""},
+        {label: "Keep", get: x => [x.layer, x.churn].filter(Boolean).map(h => el("div", {class: "small"}, `${h.name}: ${h.pings} ping(s), ${k(h.ping_cost)}`
+          + (h.build_cost ? ` · build ${k(h.build_cost)}` : "") + (h.worth === false ? " · no longer worth its pings" : "")))},
+        {label: "Build", get: x => x.on ? el("div", {class: "btns"},
+          el("button", {class: "b small", onclick: () => buildRole(x.role, "role-layer", d.going)}, "its layer"),
+          x.placement !== "above changes" && d.bases.some(b => b.who === x.base && b.deltas) ? el("button", {class: "b small", onclick: () => buildRole(x.role, "churn", d.going)}, "its churn") : null)
+          : el("span", {class: "muted small"}, "switched off")}],
+        d.roles, null, "No role is switched on for a layer of its own."), null, true),
+    panel("Other sessions held warm", `${d.held.length} · pinged ${span(r.ping_age)} after their last read while the run goes`, table([
+      {label: "Session", get: h => el("a", {onclick: () => go("sessions", h.name)}, el("b", {}, h.name)), sort: h => h.name},
+      {label: "Role", get: h => el("span", {class: "role"}, h.role), sort: h => h.role},
+      {label: "Held because", get: h => h.held},
+      {label: "Context", num: 1, get: h => k(h.context), sort: h => h.context},
+      {label: "Its entry", get: h => el("span", {}, warmth(h.entry), el("div", {class: "muted small"}, h.entry.read_age === null ? "" : "read " + span(h.entry.read_age) + " ago")), sort: h => h.entry.read_age},
+      {label: "Expires", get: h => expiry(h.entry), sort: h => h.entry.expires_in},
+      {label: "Next ping", get: h => nextPing(h.entry)},
+      {label: "Last ping", get: h => lastPing(h.entry.last_ping)},
+      {label: "Pinged", num: 1, get: h => h.pings ? `${h.pings} · ${k(h.ping_cost)}` : "", sort: h => h.ping_cost}],
+      d.held, null, "No session is held warm.", "held"), null, true),
+    panel("Recent pings and loads", "from warm.log and v2.log, newest first", table([
+      {label: "When", get: e => el("span", {title: new Date(e.at * 1000).toLocaleString()}, clock(e.at))},
+      {label: "What", get: e => e.what},
+      {label: "Result", get: e => el("b", {class: e.ok ? "ok" : "bad"}, e.ok ? "read from cache" : "missed: wrote it anew")},
+      {label: "Read", num: 1, get: e => k(e.read)}, {label: "Written", num: 1, get: e => k(e.write)},
+      {label: "Cost", num: 1, get: e => k(e.cost)}], d.recent, null, "None logged.", "recent", 12), null, true)));
+}
+
+// ---------------------------------------------------------------- costs
+let costHours = 24;
+const KINDS = [["read", "Cache read", "var(--c-read)"], ["write", "Cache write", "var(--c-write)"], ["input", "Uncached input", "var(--c-input)"],
+  ["output", "Output", "var(--c-output)"], ["pings", "Keep-warm pings", "var(--c-pings)"], ["loads", "Base loads", "var(--c-loads)"]];
+const niceMax = v => { const p = 10 ** Math.floor(Math.log10(v)); const x = v / p; return (x <= 1 ? 1 : x <= 2 ? 2 : x <= 5 ? 5 : 10) * p; };
+// an axis from 0 over values up to `max`: about `count` ticks on a step of 1, 2, 2.5 or 5 times a power of ten, each
+// label as precise as its step needs (never "1, 1, 1, 0, 0")
+function axisTicks(max, count) {
+  const raw = Math.max(max, 1e-9) / (count || 4), p = 10 ** Math.floor(Math.log10(raw)), x = raw / p;
+  const step = (x <= 1 ? 1 : x <= 2 ? 2 : x <= 2.5 ? 2.5 : x <= 5 ? 5 : 10) * p;
+  const top = Math.max(step, Math.ceil(max / step - 1e-9) * step);
+  const unit = top >= 1e9 ? [1e9, "B"] : top >= 1e6 ? [1e6, "M"] : top >= 1e3 ? [1e3, "K"] : [1, ""];
+  const places = Math.max(0, Math.ceil(-Math.log10(step / unit[0]) - 1e-9));
+  const ticks = [];
+  for (let v = 0; v <= top + step / 2; v += step) ticks.push(v);
+  return {top, ticks, label: v => v === 0 ? "0" : (v / unit[0]).toFixed(Math.min(places, 2)) + unit[1]};
+}
+// a column whose top corners are rounded (the data end), square at its baseline
+const colPath = (x, y, w, h, r) => { r = Math.max(0, Math.min(r, w / 2, h)); return `M${x},${y + h}V${y + r}Q${x},${y} ${x + r},${y}H${x + w - r}Q${x + w},${y} ${x + w},${y + r}V${y + h}Z`; };
+// the change on the span before: coloured only where its direction means better or worse (`good`: "up" or "down"),
+// and a span with nothing in it said as such, never as a fall of 100%
+function versus(now, before, good) {
+  if (!now || !isFinite(now)) return el("div", {class: "muted small"}, "nothing in this span" + (before && isFinite(before) ? ` (${k(before)} in the one before)` : ""));
+  if (!before || !isFinite(before)) return el("div", {class: "muted small"}, "nothing in the span before");
+  const d = (now - before) / before, up = d > 0;
+  const tone = !good ? "muted" : up === (good === "up") ? "ok" : "bad";
+  return el("div", {class: "small " + tone}, `${up ? "▲" : "▼"} ${Math.abs(d * 100).toFixed(0)}% on the span before (${k(before)})`);
+}
+function costTile(label, value, sub, tone) { return el("div", {class: "tile " + (tone || "")}, el("div", {class: "k"}, label), el("div", {class: "v"}, value), sub || null); }
+function stackChart(buckets, step) {
+  const totals = buckets.map(b => KINDS.reduce((a, [key]) => a + (b[key] || 0), 0));
+  if (!totals.some(v => v > 0)) return el("div", {class: "empty"}, "Nothing was spent in this span.");
+  const W = 1100, H = 250, Lm = 58, B = 26, T = 14;
+  const ax = axisTicks(Math.max(...totals), 4), slot = (W - Lm) / buckets.length, bw = Math.min(24, Math.max(2, slot - 6));
+  const y = v => T + (H - T - B) * (1 - v / ax.top);
+  const box = svg("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "cost over time, every kind stacked"});
+  const muted = cssVar("--muted"), grid = cssVar("--grid"), axis = cssVar("--axis");
+  for (const v of ax.ticks) {
+    box.append(svg("line", {x1: Lm, x2: W, y1: y(v), y2: y(v), stroke: v === 0 ? axis : grid, "stroke-width": 1}),
+      svg("text", {x: Lm - 8, y: y(v) + 4, "font-size": 11, fill: muted, "text-anchor": "end"}, ax.label(v)));
+  }
+  const every = Math.max(1, Math.ceil(buckets.length / 12));
+  const when = at => new Date(at * 1000).toLocaleString([], {month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false});
+  buckets.forEach((b, i) => {
+    const x = Lm + i * slot + (slot - bw) / 2;
+    const tip = [`${when(b.at)} · ${span(step)}`].concat(KINDS.filter(([key]) => b[key]).reverse().map(([key, label, color]) => `${label}\t${k(b[key])}\t${color}`))
+      .concat([`all\t${k(totals[i])}\t`]).join("\n");
+    const col = svg("g", {class: "col", "data-tip": totals[i] ? tip : `${when(b.at)}\nnothing spent`},
+      svg("rect", {x: Lm + i * slot, y: T, width: slot, height: H - T - B, fill: "transparent"}));  // the hit area: the whole slot
+    const shown = KINDS.filter(([key]) => b[key] > 0);
+    let base = 0;
+    shown.forEach(([key, , color], j) => {
+      const top = y(base + b[key]), bottom = y(base) - (j ? 2 : 0), h = Math.max(1, bottom - top);  // 2 px of surface between parts
+      col.append(j === shown.length - 1 ? svg("path", {d: colPath(x, bottom - h, bw, h, 4), fill: color})
+                                        : svg("rect", {x, y: bottom - h, width: bw, height: h, fill: color}));
+      base += b[key];
+    });
+    box.append(col);
+    if (i % every === 0) {
+      const d = new Date(b.at * 1000);
+      box.append(svg("text", {x: Lm + i * slot + slot / 2, y: H - 8, "font-size": 11, fill: muted, "text-anchor": "middle"},
+        step >= 86400 ? d.toLocaleDateString([], {month: "short", day: "numeric"}) : d.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", hour12: false})));
+    }
+  });
+  return box;
+}
+function hstack(parts, scale) {  // [[value, color, label]]: one bar, its parts side by side, its length its sum on `scale`
+  const shown = parts.filter(p => p[0] > 0), sum = shown.reduce((a, p) => a + p[0], 0);
+  return el("div", {class: "hbar", style: `width:${Math.min(100, 100 * sum / Math.max(1, scale))}%`,
+      "data-tip": [shown.length === 1 ? shown[0][2] : `its parts, ${k(sum)} in all`, ...shown.map(([v, color, label]) => `${label}\t${k(v)}\t${color}`)].join("\n")},
+    shown.map(([v, color]) => el("span", {style: `flex:${v} 1 0;background:${color}`})));
+}
+function legend(keys) { return el("div", {class: "legend", style: "margin-bottom:6px"}, keys.map(([, label, color]) => el("span", {class: "key"}, el("i", {style: `background:${color}`}), label))); }
+async function viewCosts(m) {
+  const c = await api("/api/costs", {hours: costHours});
+  const w = c.weights, t = c.total, p = c.previous;
+  const facet = (x, key) => (x[key] || 0) * w[key];
+  const inputs = t.read + t.write + t.input;
+  const prevInputs = p.read + p.write + p.input;
+  const all = t.cost + c.keep.cost + c.loads.cost;
+  m.append(el("div", {class: "toolbar"},
+    el("div", {class: "seg"}, [[6, "6 h"], [24, "24 h"], [72, "3 days"], [168, "7 days"], [0, "All"]].map(([h, label]) =>
+      el("button", {class: h === costHours ? "on" : "", onclick: () => { costHours = h; refresh(); }}, label))),
+    el("span", {class: "small " + (c.shifted ? "warn" : "muted")}, (c.shifted ? `nothing since ${clock(c.shifted.last)}: the span up to the run's last activity, ` : "")
+      + `${new Date(c.since * 1000).toLocaleString([], {month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false})} – ${c.shifted ? clock(c.now) : "now"} · bars of ${span(c.step)}`),
+    el("span", {class: "muted small", style: "margin-left:auto"}, `cost in input-equivalent tokens: cache read ${w.read}, cache write ${w.write}, uncached input ${w.input}, output ${w.output}`)));
+  m.append(el("div", {class: "stack"},
+    el("div", {class: "tiles wide"},
+      costTile("All it cost", k(all), el("div", {class: "muted small"}, `sessions ${k(t.cost)} · pings ${k(c.keep.cost)} · loads ${k(c.loads.cost)}`)),
+      costTile("The sessions", k(t.cost), versus(t.cost, p.cost)),
+      costTile("Sessions · requests", `${n(t.sessions)} · ${n(t.requests)}`, versus(t.requests, p.requests)),
+      costTile("Per request", t.requests ? k(t.cost / t.requests) : "—", versus(t.requests ? t.cost / t.requests : 0, p.requests ? p.cost / p.requests : 0, "down")),
+      costTile("Read from cache", inputs ? `${(100 * t.read / inputs).toFixed(1)}%` : "—", el("div", {class: "muted small"},
+        inputs ? `of the input tokens${prevInputs ? ` (${(100 * p.read / prevInputs).toFixed(1)}% before)` : ""}` : "no input in this span"), inputs ? (t.read / inputs < 0.9 ? "warn" : "") : ""),
+      costTile("Prefix read again", t.read ? `${(100 * t.reread / t.read).toFixed(0)}%` : "—", el("div", {class: "muted small"}, t.read ? `of what was read: ${k(t.reread * w.read)} of cost` : "nothing read in this span")),
+      costTile("Keep-warm pings", `${n(c.keep.count)} · ${k(c.keep.cost)}`, el("div", {class: "small " + (c.keep.missed ? "bad" : "muted")}, `${c.keep.missed} missed`)),
+      costTile("Loads of bases and layers", `${n(c.loads.count)} · ${k(c.loads.cost)}`, el("div", {class: "small " + (c.loads.missed ? "bad" : "muted")}, `${c.loads.missed} found their base cold`))),
+    panel("Cost over time", "input-equivalent tokens a bar, every kind stacked · hover a bar for its parts", el("div", {}, legend(KINDS), stackChart(c.buckets, c.step))),
+    el("div", {class: "cols halves"},
+      panel("Where it went", "by kind, as tokens and as cost", el("div", {},
+        KINDS.slice(0, 4).map(([key, label, color]) => el("div", {class: "kindrow"}, el("span", {}, el("i", {class: "sw", style: `background:${color}`}), label),
+          el("span", {class: "num"}, k(t[key]) + " tokens"), hstack([[facet(t, key), color, label]], Math.max(1, ...KINDS.slice(0, 4).map(([x]) => facet(t, x)))),
+          el("span", {class: "num"}, k(facet(t, key))), el("span", {class: "num muted"}, `${t.cost ? (100 * facet(t, key) / t.cost).toFixed(0) : 0}%`))),
+        el("div", {class: "sh", style: "margin-top:14px"}, "The input tokens"),
+        hstack([[t.reread, "var(--c-read)", "a fork's prefix read again"], [t.read - t.reread, "color-mix(in srgb, var(--c-read) 50%, var(--panel))", "read from cache otherwise"],
+          [t.write, "var(--c-write)", "written to the cache"], [t.input, "var(--c-input)", "uncached"]], Math.max(1, inputs)),
+        el("div", {class: "muted small", style: "margin-top:4px"}, `prefix read again ${k(t.reread)} · read otherwise ${k(t.read - t.reread)} · written ${k(t.write)} · uncached ${k(t.input)}`))),
+      panel("By role", "this span, and the one before as the thin line", el("div", {}, legend(KINDS.slice(0, 4)),
+        (() => { const top = Math.max(1, ...c.roles.map(r => Math.max(r.cost, r.previous))); return c.roles.map(r => el("div", {class: "rolerow"},
+          el("span", {}, el("b", {}, r.role), el("div", {class: "muted small"}, `${r.sessions} sessions · median ${k(r.median)}`)),
+          el("div", {}, hstack(KINDS.slice(0, 4).map(([key, label, color]) => [facet(r, key), color, label]), top),
+            el("div", {class: "hbar before", title: `the span before: ${k(r.previous)}`}, el("span", {style: `width:${100 * r.previous / top}%`}))),
+          el("span", {class: "num"}, k(r.cost), versus(r.cost, r.previous)))); })()))),
+    el("div", {class: "cols halves"},
+      panel("The costliest sessions", null, table([
+        {label: "Session", get: r => el("a", {onclick: () => go("sessions", r.name)}, el("b", {}, r.name))},
+        {label: "Role", get: r => el("span", {class: "role"}, r.role)}, {label: "Task", get: r => r.task ? "#" + r.task : "—"},
+        {label: "Requests", num: 1, get: r => n(r.requests)}, {label: "Written", num: 1, get: r => k(r.write)},
+        {label: "Cost", num: 1, get: r => k(r.cost)}], c.sessions, null, "None in this span.", "cost-sessions", 12), null, true),
+      panel("The costliest tasks", "every session of the task and its reviews", table([
+        {label: "Task", get: r => el("a", {onclick: () => go("tasks", r.task)}, el("b", {}, "#" + r.task))},
+        {label: "Subject", cls: "subject", get: r => el("div", {class: "ellipsis", title: r.subject}, r.subject)},
+        {label: "Sessions", num: 1, get: r => r.sessions}, {label: "Requests", num: 1, get: r => n(r.requests)},
+        {label: "Cost", num: 1, get: r => k(r.cost)}], c.tasks, null, "None in this span.", "cost-tasks", 12), null, true)),
+    el("div", {class: "cols halves"},
+      panel("Forks that wrote their prefix anew", `a first request that wrote ${k(50000)} or more read nothing of its origin`, table([
+        {label: "When", get: r => clock(r.at)}, {label: "Session", get: r => el("a", {onclick: () => go("sessions", r.name)}, r.name)},
+        {label: "Forked", get: r => el("code", {class: "small"}, r.origin)}, {label: "Written", num: 1, get: r => k(r.write)},
+        {label: "Cost", num: 1, get: r => k(r.cost)}], c.cold, null, "None: every fork read its origin from cache.", "cost-cold", 10), null, true),
+      panel("Keep-warm pings and loads", `${c.keep.count} pings (${c.keep.missed} missed) · ${c.loads.count} loads`, table([
+        {label: "When", get: e => clock(e.at)}, {label: "What", get: e => e.what},
+        {label: "Result", get: e => el("b", {class: e.ok ? "ok" : "bad"}, e.ok ? "read" : "missed")},
+        {label: "Read", num: 1, get: e => k(e.read)}, {label: "Written", num: 1, get: e => k(e.write)},
+        {label: "Cost", num: 1, get: e => k(e.cost)}], c.keep.events.concat(c.loads.events).sort((a, b) => b.at - a.at), null, "None in this span.", "cost-keep", 10), null, true))));
+}
+
+// ---------------------------------------------------------------- control
+async function viewControl(m, sub, {o}) {
+  const running = o.active && !o.stopped;
+  const builds = await api("/api/builds");
+  const switches = Object.entries(o.switches).map(([name, s]) => {
+    const [label, desc] = SWITCHES[name] || [name, ""];
+    const input = name === "measure-bound" ? el("input", {type: "number", min: 30, id: "v-" + name, value: s.value || o.measure_seconds, style: "width:80px", title: "seconds"})
+      : name === "role-layers" ? el("input", {type: "text", id: "v-" + name, placeholder: "roles, or empty for all", value: s.value, style: "width:190px"}) : null;
+    return el("div", {class: "switch"}, el("div", {class: "name"}, label, " ", el("code", {class: "muted small"}, name)), el("div", {class: "desc"}, desc),
+      el("div", {class: "ctl"}, input, input && s.on ? el("button", {class: "b small", onclick: () => act("switch", {name, on: true, value: input.value})}, "Set") : null,
+        el("button", {class: "toggle" + (s.on ? " on" : ""), title: s.on ? "on: click to turn off" : "off: click to turn on",
+          onclick: () => act("switch", {name, on: !s.on, value: input ? input.value : ""})})));
+  });
+  m.append(el("div", {class: "cols halves"},
+    el("div", {class: "stack"},
+      panel("The run", running ? "running" : o.stopped ? "stopped since " + clock(L(o.stopped)) : "inactive", el("div", {},
+        kv([["State", running ? el("span", {class: "ok"}, "running") : el("span", {class: "warn"}, o.stopped ? "stopped" : "inactive")],
+            ["Daemon", o.daemon ? "running" : "not running"], ["Live sessions", o.live.length]]),
+        el("div", {class: "toolbar", style: "margin:12px 0 0"},
+          el("button", {class: "b primary", onclick: () => act("start", {fresh: document.getElementById("fresh").checked}, "Start the run?")}, "Start"),
+          el("label", {class: "small"}, el("input", {type: "checkbox", id: "fresh"}), " fresh (new knowledge base; the first planner takes stock)"),
+          el("span", {style: "flex:1"}),
+          el("label", {class: "small"}, el("input", {type: "checkbox", id: "keepwarm", checked: true}), " keep bases warm"),
+          el("button", {class: "b danger", onclick: () => act("stop", {keep_warm: document.getElementById("keepwarm").checked}, "Stop every session and the run?")}, "Stop")))),
+      panel("Holds and the dispatch", null, el("div", {},
+        el("div", {class: "switch"}, el("div", {class: "name"}, "Hold the graph"), el("div", {class: "desc"}, "No task starts; sessions already working go on."),
+          el("div", {class: "ctl"}, el("button", {class: "toggle" + (o.holds.graph ? " on" : ""), onclick: () => act("hold", {what: "graph", on: !o.holds.graph})}))),
+        el("div", {class: "switch"}, el("div", {class: "name"}, "Hold every launch"), el("div", {class: "desc"}, "No session of any kind starts, the planner's included."),
+          el("div", {class: "ctl"}, el("button", {class: "toggle" + (o.holds.launch ? " on" : ""), onclick: () => act("hold", {what: "launch", on: !o.holds.launch})}))),
+        el("div", {class: "switch"}, el("div", {class: "name"}, "Run the dispatch now"), el("div", {class: "desc"}, "Starts what can start, without waiting for the next minute."),
+          el("div", {class: "ctl"}, el("button", {class: "b small", onclick: () => act("dispatch", {})}, "Dispatch"))))),
+      queuePanel(o),
+      panel("Tasks and sessions", null, el("div", {},
+        el("div", {class: "muted small"}, "The order (task ids separated by spaces): these first, in this order, every other queued task after them"),
+        el("div", {class: "toolbar", style: "margin:4px 0 12px"}, el("input", {type: "text", id: "tids", value: o.queue.map(t => t.id).join(" "), style: "flex:1"}),
+          el("button", {class: "b", onclick: () => setOrder(o)}, "Set this order"),
+          el("label", {class: "small", title: "v2.py queue --drop-unnamed: the queue becomes these tasks alone; the others stay in the task list"},
+            el("input", {type: "checkbox", id: "dropunnamed"}), " and take the queued tasks it leaves out out of the queue")),
+        el("div", {class: "muted small"}, "Drop tasks to the planner (ids separated by spaces): whatever works on them stops"),
+        el("div", {class: "toolbar", style: "margin:4px 0 12px"}, el("input", {type: "text", id: "dids", placeholder: "e.g. 251 276", style: "flex:1"}),
+          el("button", {class: "b danger", onclick: () => act("drop", {ids: document.getElementById("dids").value.split(/\s+/).filter(Boolean)}, "Drop these tasks to the planner? Whatever works on them stops.")}, "Drop")),
+        el("div", {class: "muted small"}, "Tell a task's sessions"),
+        el("div", {class: "toolbar", style: "margin:4px 0 12px"}, el("input", {type: "text", id: "ttask", placeholder: "task", style: "width:80px"}),
+          el("input", {type: "text", id: "ttext", placeholder: "what they should know", style: "flex:1"}),
+          el("button", {class: "b primary", onclick: () => act("tell", {task: document.getElementById("ttask").value, text: document.getElementById("ttext").value})}, "Tell")),
+        el("div", {class: "muted small"}, "A session"),
+        el("div", {class: "toolbar", style: "margin:4px 0 0"}, el("input", {type: "text", id: "sname", placeholder: "session name", style: "flex:1"}),
+          el("button", {class: "b", onclick: () => act("ping", {name: document.getElementById("sname").value})}, "Ping"),
+          el("button", {class: "b danger", onclick: () => act("release", {name: document.getElementById("sname").value}, "Release it?")}, "Release"))))),
+    el("div", {class: "stack"},
+      buildsPanel(builds),
+      panel("Switches", "the owner's; each takes effect at the next dispatch", el("div", {}, switches)),
+      panel("What you did here", "this page's actions and what the harness said", state.actions.length ? el("div", {class: "results"},
+        state.actions.slice(0, 12).map(a => el("div", {class: "r"}, el("b", {}, a.at.toLocaleTimeString() + " " + a.action + ": "), a.said)))
+        : el("div", {class: "empty"}, "Nothing yet.")))));
+}
+
+// the bases' layers built by the owner: one base's (base.sh WHO layer), or every one, one after another
+function buildAllLayers(order) {
+  act("build", {part: "layers"}, `Build every layer now, one after another: ${order.join(", then ")}?\n\nEach is base.sh WHO layer: its stable base loaded again first if it is cold or its list names another, the reference reasoning and the named parts built, the chain recorded. One after another, since the builds share the indexes they regenerate.`);
+}
+function buildOneLayer(who) {
+  act("build", {part: "layer", who}, `Build the ${who} layer now (base.sh ${who} layer)?\n\nIts stable base is loaded again first if it is cold or its list names another; then the reference reasoning and the named parts are built and the chain recorded.`);
+}
+function buildsPanel(d) {
+  const running = d.chain && d.chain.going, order = d.bases.map(b => b.who);
+  const layout = b => !b.layer ? el("span", {class: "warn"}, "no layer")
+    : b.parts.length ? el("span", {}, "a chain of named parts", el("div", {class: "muted small"}, b.parts.join(" · ")))
+    : el("span", {class: "warn"}, "the stable base and one medium layer", el("div", {class: "muted small"}, "the layout before the named parts: its next build makes the chain"));
+  const chainLine = d.chain ? el("div", {class: "small " + (running ? "ok" : "muted"), style: "margin:4px 0 10px"},
+    `${running ? "Building every layer" : "The last build of every layer"}, started ${clock(d.chain.started)} (${ago(d.chain.started)}): `,
+    d.bases.filter(b => (d.chain.order || []).includes(b.who)).map((b, i) => [i ? " · " : "", el("b", {}, b.who), " " + (b.status || "—")])) : null;
+  return panel("Bases and layers", "a layer's build: base.sh WHO layer — the stable base loaded again first if it is cold or its list names another, the reference reasoning and the named parts built, the chain recorded"
+      + (d.daemon ? "" : " · the daemon is not running: what is built goes cold an hour after its last read unless the run starts"),
+    el("div", {}, chainLine, table([
+      {label: "Base", get: b => el("b", {}, b.who)},
+      {label: "It stands as", get: layout},
+      {label: "Sealed", get: b => b.sealed ? el("span", {}, clock(L(b.sealed)), el("div", {class: "muted small"}, ago(L(b.sealed)))) : "—"},
+      {label: "Entry", get: b => el("span", {class: "pill " + (b.warm ? "ok" : "")}, el("span", {class: "dot"}), b.warm ? "warm" : "cold")},
+      {label: "From scratch", num: 1, get: b => b.projected ? k(b.projected) : "—"},
+      {label: "", get: b => b.status === "building" ? el("span", {class: "ok small"}, "building…")
+        : b.status === "waiting its turn" ? el("span", {class: "muted small"}, "waiting its turn")
+        : el("button", {class: "b small", onclick: () => buildOneLayer(b.who)}, "Build its layer")}], d.bases, null, "No base stands: base.sh WHO build, status, seal."),
+      d.log.length ? el("details", {"data-key": "build-log", open: running || null, style: "margin-top:10px"}, el("summary", {class: "small muted", style: "cursor:pointer"}, "what the builds said (state/warm.log), newest first"),
+        el("div", {class: "loglines"}, d.log.slice().reverse().slice(0, 16).map(l => el("div", {class: "l" + (/ATTENTION|fail|refused|MISS/i.test(l) ? " attention" : /sealed|OK|built/.test(l) ? " good" : "")},
+          el("span", {class: "when"}, l.slice(11, 19)), el("span", {}, l.slice(20)))))) : null),
+    [el("button", {class: "b small primary", disabled: running || null, onclick: () => buildAllLayers(order)}, running ? "building every layer…" : "Build every layer")], true);
+}
+function setOrder(o) {
+  const ids = document.getElementById("tids").value.split(/[\s,]+/).map(x => x.replace("#", "")).filter(Boolean);
+  const now = o.queue.map(t => t.id), leave = now.filter(x => !ids.includes(x)), come = ids.filter(x => !now.includes(x));
+  if (!ids.length) { toast("An empty order is none: drop tasks, or take one out of the queue from its page."); return; }
+  const drop = document.getElementById("dropunnamed").checked;
+  act("queue", {ids, drop_unnamed: drop}, `Queue these ${ids.length} task(s) first, in this order?`
+    + (leave.length ? (drop ? `\n\nThese ${leave.length} leave the queue (they stay in the task list): ${leave.map(x => "#" + x).join(" ")}`
+                            : `\n\nThese ${leave.length}, not named, stay queued after them: ${leave.map(x => "#" + x).join(" ")}`) : "")
+    + (come.length ? `\n\nThese come into it: ${come.map(x => "#" + x).join(" ")}` : ""));
+}
+function queuePanel(o) {
+  return panel("The queue", `${o.queue.length} task(s), in the order the dispatch starts them as they become ready · a move sets the whole order again`,
+    table([{label: "#", num: 1, get: t => o.queue.indexOf(t) + 1},
+      {label: "Task", get: t => taskLink(t.id)},
+      {label: "Subject", cls: "subject narrow", get: t => el("div", {class: "ellipsis", title: t.subject}, t.subject)},
+      {label: "Stage", get: t => el("span", {class: "muted small nowrap"}, t.stage || "—")},
+      {label: "", get: t => el("div", {class: "btns tight"},
+        el("button", {class: "b small", title: "one place earlier", onclick: e => { e.stopPropagation(); placeTask(t.id, "up"); }}, "↑"),
+        el("button", {class: "b small", title: "one place later", onclick: e => { e.stopPropagation(); placeTask(t.id, "down"); }}, "↓"),
+        el("button", {class: "b small", title: "first", onclick: e => { e.stopPropagation(); placeTask(t.id, "first", `Put task ${t.id} first in the queue?`); }}, "first"),
+        el("button", {class: "b small", title: "out of the queue (it stays in the list)", onclick: e => { e.stopPropagation(); placeTask(t.id, "out", `Take task ${t.id} out of the queue? It stays in the task list.`); }}, "out"))}],
+      o.queue, t => go("tasks", t.id), "Nothing is queued.", null, 12), null, true);
+}
+
+// ---------------------------------------------------------------- the loop
+async function followSource() {
+  try {
+    const v = await api("/api/version");
+    const key = v.started + ":" + v.page;
+    if (state.version !== null && state.version !== key) { location.reload(); return true; }
+    state.version = key;
+  } catch (e) {}
+  return false;
+}
+const RENDER = {now: viewNow, graph: viewGraph, machine: viewMachine, bases: viewBases, trains: viewTrains, sessions: viewSessions, tasks: viewTasks, costs: viewCosts, log: viewLog, control: viewControl};
+const SCROLLERS = ".tablebox, .graphbox, pre.box, .lane .cards";
+// what each view reads beside the shared data, asked for at once with it
+const PREFETCH = {
+  now: () => [["/api/sessions"]],
+  graph: () => graphHours === 6 ? [] : [["/api/graph", {hours: graphHours}]],
+  trains: () => [["/api/checks"]],
+  sessions: sub => sub ? [["/api/session", {name: sub}]] : [["/api/sessions", sessionFilter.archive ? {all: 1} : {}]],
+  tasks: sub => sub ? [["/api/task", {id: sub}], ["/api/graph", {hours: 48}]] : [["/api/tasks"], ["/api/graph", {hours: 24}]],
+  log: () => [["/api/log", {n: 1500}]],
+  bases: () => [["/api/bases"]],
+  costs: () => [["/api/costs", {hours: costHours}]],
+  control: () => [["/api/builds"]]};
+// a refresh by the timer waits while the owner reads: paused, or text selected (a new page would drop the selection)
+const selecting = () => { try { return String(window.getSelection() || "").length > 0; } catch (e) { return false; } };
+function later(ms) { clearTimeout(state.timer); state.timer = setTimeout(() => (state.paused || selecting()) ? later(5000) : refresh(), ms); }
+async function refresh() {
+  const seq = ++state.seq;  // a later refresh (a click, the timer) supersedes this one
+  const [v, rawSub] = location.hash.slice(1).split("/");
+  const view = RENDER[v] ? v : "now", sub = rawSub && decodeURIComponent(rawSub);
+  inflight = new Map();
+  const changed = followSource();
+  const shared = Promise.all([api("/api/overview"), api("/api/machine"), api("/api/graph", {hours: 6}), api("/api/log", {n: 800})]);
+  (PREFETCH[view] ? PREFETCH[view](sub) : []).forEach(([p, q]) => api(p, q).catch(() => {}));  // its own, meanwhile
+  const next = el("main", {id: "main"});
+  try {
+    // what every view shows around it (the header, the attention count) is read once a refresh
+    const [o, mach, g, log] = await shared;
+    if (await changed) return;
+    if (seq !== state.seq) return;
+    if (o.noise) NOISE = new RegExp(o.noise);
+    if (o.ceiling) CONTEXT_MAX = o.ceiling;
+    const items = attentionItems(o);
+    state.attention = items.filter(i => i[0] !== "info").length;
+    state.readAt = Date.now(); state.failed = false;
+    pills(o, mach, log); renderNav(view);
+    await RENDER[view](next, sub, {o, mach, g, log, items});
+  } catch (e) {
+    renderNav(view); next.append(panel("Could not read the run", null, pre(String(e && e.stack || e))));
+    if (!state.failed) { state.failed = true; document.getElementById("pills").prepend(el("span", {class: "pill bad"}, el("span", {class: "dot"}), "Console unreachable")); }
+  }
+  if (seq !== state.seq) return;
+  // what the owner opened, closed or scrolled on this view is kept through the refresh: each details by its key, each
+  // scrolling box (a table, the graph, a text, a lane) by its place in the page
+  const same = state.shown === location.hash;
+  const focus = document.activeElement && document.activeElement.id, caret = focus && document.activeElement.selectionStart;
+  const opened = same ? new Map([...document.querySelectorAll("details[data-key]")].map(d => [d.dataset.key, d.open])) : new Map();
+  const scrolled = same ? [...document.querySelectorAll(SCROLLERS)].map(e => [e.scrollTop, e.scrollLeft]) : [];
+  next.querySelectorAll("details[data-key]").forEach(d => { if (opened.has(d.dataset.key)) d.open = opened.get(d.dataset.key); });
+  const y = window.scrollY;
+  document.getElementById("main").replaceWith(next);
+  document.querySelectorAll(SCROLLERS).forEach((e, i) => { if (scrolled[i]) { e.scrollTop = scrolled[i][0]; e.scrollLeft = scrolled[i][1]; } });
+  state.shown = location.hash;
+  if (focus && document.getElementById(focus)) { const f = document.getElementById(focus); f.focus(); try { f.setSelectionRange(caret, caret); } catch (e) {} }
+  window.scrollTo(0, y);
+  const reading = (view === "sessions" || view === "tasks") && sub;
+  later(view === "control" ? 15000 : reading || view === "costs" ? 30000 : view === "graph" ? 15000 : 6000);
+}
+// one tooltip for every chart: a mark's data-tip, its first line the heading; a line "label TAB value TAB colour" is a
+// row with its colour's key and its value to the right
+window.addEventListener("pointermove", e => {
+  const box = document.getElementById("tip"), t = e.target && e.target.closest ? e.target.closest("[data-tip]") : null;
+  if (!t) { box.style.display = "none"; return; }
+  const [head, ...rest] = t.getAttribute("data-tip").split("\n");
+  box.replaceChildren(el("b", {}, head), ...rest.map(r => { const [label, value, color] = r.split("\t");
+    return value === undefined ? el("div", {}, r) : el("div", {class: "row"}, el("i", {style: color ? `background:${color}` : "background:transparent"}), el("span", {}, label), el("span", {class: "val"}, value)); }));
+  box.style.display = "block";
+  const w = box.offsetWidth, h = box.offsetHeight;
+  box.style.left = Math.max(8, Math.min(window.innerWidth - w - 8, e.clientX + 14)) + "px";
+  box.style.top = (e.clientY + 18 + h > window.innerHeight ? e.clientY - h - 10 : e.clientY + 18) + "px";
+});
+// the keyboard: 1–9 and 0 open the views in the order of the tabs, / goes to the jump box, Escape leaves a field
+window.addEventListener("keydown", e => {
+  const t = e.target || {}, typing = /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName || "");
+  if (typing) { if (e.key === "Escape" && t.blur) t.blur(); return; }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === "/") { e.preventDefault(); document.getElementById("jump").focus(); return; }
+  if (/^[0-9]$/.test(e.key)) { const v = VIEWS.filter(Boolean)[e.key === "0" ? 9 : Number(e.key) - 1]; if (v) go(v[0]); }
+});
+// the jump box: a number (or #number) opens the task, anything else the session of that name
+function jump(text) {
+  const v = String(text || "").trim();
+  if (!v) return;
+  if (/^#?\d+$/.test(v)) go("tasks", v.replace("#", "")); else go("sessions", v);
+  const box = document.getElementById("jump"); box.value = ""; box.blur();
+}
+const jumpBox = document.getElementById("jump");
+jumpBox.addEventListener("keydown", e => { if (e.key === "Enter") jump(e.target.value); });
+jumpBox.addEventListener("input", e => { if (e.inputType === "insertReplacementText" || e.inputType === undefined) jump(e.target.value); });  // picked from the list
+jumpBox.addEventListener("focus", () => api("/api/sessions").then(rows => document.getElementById("jumplist").replaceChildren(
+  ...rows.map(s => el("option", {value: s.name}, `${s.role}${s.task ? " · #" + s.task : ""} · ${s.state}`)))).catch(() => {}));
+document.getElementById("pause").addEventListener("click", () => { state.paused = !state.paused; updatedLine(); if (!state.paused) refresh(); });
+window.addEventListener("hashchange", () => {
+  // the click is shown at once: its tab, and the page dimmed until its view is read
+  const v = location.hash.slice(1).split("/")[0];
+  renderNav(RENDER[v] ? v : "now");
+  document.getElementById("main").classList.add("loading");
+  window.scrollTo(0, 0);
+  refresh();
+});
+refresh();
+</script>
+</body>
+</html>

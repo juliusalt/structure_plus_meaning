@@ -656,5 +656,60 @@ class WatchdogTests(unittest.TestCase):
         self.assertEqual(self.forked("implement-"), ["implement-1"])
 
 
+class HeldIndexTests(unittest.TestCase):
+    """The generated indexes the bases hold follow main (watchdog.held_indexes): made only by a build of a base, what the
+    parts hold of them never changed between builds, and the delta, the stale lines, what is pending and the parts'
+    accounts were all blind to them (found by the simulation of the run of 09-21/22, 2026-09-23)."""
+
+    def git(self, *args):
+        import subprocess
+        return subprocess.run(["git", "-C", self.repo, *args], capture_output=True, text=True, check=True).stdout
+
+    def setUp(self):
+        import tempfile
+        self.temp = tempfile.TemporaryDirectory()
+        self.repo = self.temp.name
+        self.git("init", "-q", "-b", "main")
+        self.git("config", "user.email", "t@example.org")
+        self.git("config", "user.name", "t")
+        self.commit("DECISIONS.md", "## One\n")
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def commit(self, name, text):
+        Path(self.repo, name).write_text(text)
+        self.git("add", name)
+        self.git("commit", "-q", "-m", name)
+
+    def test_the_held_indexes_are_made_again_once_for_each_commit_of_main(self):
+        import select_base_load
+        made = []
+        with patch.object(v2, "PROJECT", self.repo), patch.object(watchdog, "STATE", self.repo), \
+                patch.object(select_base_load, "refresh_indexes", lambda who=None: made.append(who)):
+            watchdog.held_indexes()
+            watchdog.held_indexes()
+            self.assertEqual(made, [None])                                # every base's, once for this commit
+            self.commit("DECISIONS.md", "## One\n\n## Two\n")          # a decision lands
+            watchdog.held_indexes()
+            self.assertEqual(made, [None, None])
+
+    def test_the_indexes_are_made_before_the_layers_and_the_deltas_read_them(self):
+        order = []
+        names = ("planner_mail", "finishing", "holds", "held_indexes", "layers", "deltas", "isabelle_snapshot")
+        patches = [patch.object(watchdog, n, (lambda n: lambda: order.append(n))(n)) for n in names]
+        patches += [patch.object(v2, n, lambda: None) for n in ("lands_when_free", "archive")]
+        patches.append(patch.object(v2, "peek", lambda: {"sessions": {}}))
+        for p in patches:
+            p.start()
+        try:
+            watchdog.watch()
+        finally:
+            for p in reversed(patches):
+                p.stop()
+        self.assertLess(order.index("held_indexes"), order.index("layers"))
+        self.assertLess(order.index("layers"), order.index("deltas"))
+
+
 if __name__ == "__main__":
     unittest.main()

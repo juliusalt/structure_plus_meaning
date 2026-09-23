@@ -20,11 +20,12 @@ request. When the hook runs, the request that made the tool call is not always r
 notice said 956K while that request carried 972K), so the gauge counts what the next request carries at least: the
 latest recorded request, its output, what was recorded after it, and this tool's response as the model is shown it.
 
-The ceiling is not the window. The API accepted impl-23's request of 972,479 tokens and refused the next, of about
-979K ("Prompt is too long"): Claude Code retries a request whose input and max_tokens exceed the context limit with
-a smaller max_tokens, but not below 3,000, and its own compaction of a 1M window starts only at 987K. The largest
-growth of one request seen in 2,164 requests of impl-8 to impl-25 is 35K (p99 24K), over four requests 53K at p99;
-the notice leaves room for a request not yet recorded and the handoff, the hard mark for one ordinary step.
+The ceiling is not the window. Claude Code 2.1.280 holds back 20K of a 1M window for each reply (the API refuses a
+request whose input and max_tokens exceed the window) and sends nothing beyond that less 3K: 977K (v2.CEILING). Its
+auto-compact, which would run at 967K, is off in every settings file; the tripwire below stays. The notice comes 30K
+below the ceiling (the owner's wrap-up margin, 2026-09-23), the end mark 10K below it. The largest growth of one
+request seen in 2,164 requests of impl-8 to impl-25 (Claude Opus 5) was 35K (p99 24K), over four requests 53K at p99;
+Claude Opus 5.5 thinks more per turn, and window_watch.py says when a session outgrows the margin.
 """
 import contextlib
 import json
@@ -213,7 +214,7 @@ def may_end(role, rec):
     session never waits otherwise (the owner, 2026-09-19: with nothing productive left it parks, and another worker
     produces); another session may also end its turn while a question of its own is open or a background job of its
     own runs (the answer, or the job's completion, runs its turn)."""
-    if role in ("kb", "planner", "role-layer") or rec.get("owner") or rec.get("state") in ("done", "parked", "lost"):
+    if role in ("kb", "planner") + v2.LAYER_ROLES or rec.get("owner") or rec.get("state") in ("done", "parked", "lost"):
         return True  # the planner's turn ends when it has handled what it was given: the next event wakes it, and its
         # mail is taken above, so there is nothing left when this is reached. An episode the owner opened waits for
         # the owner's words between turns.

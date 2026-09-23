@@ -9,6 +9,7 @@
   manifest.py delta [WHO]      what the base holds that has changed since each part loaded, in its new form (the
                                delta session's text: notes/plan-delta-layer.md)
   manifest.py delta-share [WHO]  three numbers: the delta's share of the layer's tokens, its stable tokens, its tokens
+  manifest.py stable-share [WHO]  four numbers: the stable part's moved share, those tokens, its tokens, what it holds unlisted
   manifest.py snapshot-delta WHO PATH  every held file's digest, both parts, marked as a delta's (base.sh WHO delta)
 
 A loaded context is append-only, so a held file is a snapshot; `changed` is
@@ -20,11 +21,13 @@ loads and which the harness refreshes on its own. ORCH_BASE_PART picks one part 
 command is about the whole, which is what a fork of the layer actually holds — so `changed` reads both snapshots and
 says what changed in either.
 """
+import contextlib
 import difflib
 import glob
 import hashlib
 import json
 import os
+import re
 import sys
 import time
 
@@ -60,35 +63,66 @@ def load_list():
     return os.environ.get("ORCH_LOAD_LIST") or os.path.join(HERE, LISTS.get(WHO, "base-load-max.txt"))
 
 
+LAYER_LINE = re.compile(r"^#\s*=== layer(?:\s+([a-z][a-z0-9_-]*))? ===(?:\s.*)?$")
+
+
+def layer_names(path=None):
+    """Named material boundaries in their declared order; the legacy unnamed boundary is `layer`."""
+    return [m.group(1) or 'layer' for line in open(path or load_list()) if (m:=LAYER_LINE.match(line.strip()))]
+
+
 def has_layer(path=None):
-    """Whether this list is split into a stable part and a frontier layer."""
-    return any(LAYER_MARK in line for line in open(path or load_list()))
+    return bool(layer_names(path))
+
+
+def list_entries(text, project=None, virtual=(), strict=False):
+    """Load entries with their own part, depth and purpose, without mutating files or global environment.
+
+    A later, deeper projection explicitly supersedes an earlier shallower one. It does not erase the tokens already
+    held below it. Duplicate entries at the same or a shallower depth add nothing and are omitted.
+    """
+    project = PROJECT if project is None else project
+    tier, where, out, seen = '', 'stable', [], {}
+    order = {'signatures':0,'definitions':1,'statements':2}
+    for raw in text.splitlines():
+        line = raw.split('  #')[0].strip()
+        if line.startswith('#'):
+            mark=LAYER_LINE.match(line)
+            if mark:
+                where=mark.group(1) or 'layer'
+            elif not line.startswith('# ==='):
+                tier=line.lstrip('# ').strip()
+            continue
+        if not line or tier.startswith('optional'):
+            continue
+        level=next((v for v in ('signatures','definitions') if f'as {v}' in tier),'statements')
+        purpose=re.search(r'purpose=(reading|steering|both)\b',tier)
+        pattern=os.path.expanduser(line)
+        if line.startswith('.claude/orchestration/state/held/'):
+            pattern=os.path.join(os.environ.get('ORCH_HELD_DIR') or os.path.join(project,'.claude','orchestration','state','held'),os.path.basename(line))
+        if not os.path.isabs(pattern):
+            pattern=os.path.join(project,pattern)
+        paths=sorted(set(glob.glob(pattern)) | ({pattern} if pattern in virtual else set()))
+        if not paths and strict and not glob.has_magic(pattern):
+            raise FileNotFoundError('Required base source is missing: '+pattern)
+        for path in paths:
+            if not os.path.isfile(path) and path not in virtual: continue
+            previous=seen.get(path)
+            if previous and order[level] <= order[previous]: continue
+            out.append(dict(tier=tier,path=path,level=level,part=where,
+                            purpose=purpose.group(1) if purpose else 'both',deepens=previous))
+            seen[path]=level
+    return out
 
 
 def held_files(part=None):
-    """(tier, path) for every file matched by the base's load list; optional tiers are skipped. `part` (or
-    ORCH_BASE_PART) narrows it to the stable reference or to the frontier layer below the `# === layer ===` line."""
-    part = PART if part is None else part
-    tier, where, out, seen = "", "stable", [], set()
-    for raw in open(load_list()):
-        line = raw.split("  #")[0].strip()  # a trailing "  # …" is a comment
-        if line.startswith("#"):
-            if LAYER_MARK in line:
-                where = "layer"
-            elif not line.lstrip("# ").startswith(("everything below", "sealed, and every role", "have changed")):
-                tier = line.lstrip("# ").strip()
-            continue
-        if not line or tier.startswith("optional") or (part and where != part):
-            continue
-        pattern = os.path.expanduser(line)
-        if not os.path.isabs(pattern):
-            pattern = os.path.join(PROJECT, pattern)
-        for p in sorted(glob.glob(pattern)):
-            if p not in seen and os.path.isfile(p):
-                seen.add(p)
-                LEVELS[p] = next((lv for lv in ("signatures", "definitions") if f"as {lv}" in tier), "statements")
-                PARTS[p] = where
-                out.append((tier, p))
+    """Held files of a material part; `layer` also names the aggregate above the stable reference."""
+    part=PART if part is None else part
+    out=[]
+    for e in list_entries(open(load_list()).read()):
+        if part and not (e['part']==part or (part=='layer' and e['part']!='stable')): continue
+        LEVELS[e['path']]=e['level']; PARTS[e['path']]=e['part']
+        out.append((e['tier'],e['path']))
     return out
 
 
@@ -115,17 +149,20 @@ def digest(path):
 # fork reads again whole). Counted whole, the two in the max layer, 34.5K of its 148K tokens, put it past the refresh
 # line after nearly every landing: it was refreshed at 22:24 and again at 22:39 on 2026-09-21, and each refresh of it
 # is followed by a new knowledge base.
-INDEXES = ("theory-names.md", "decisions-index.md", "theory-map-index.md")
+INDEXES = ("theory-names.md", "decisions-index.md", "theory-map-index.md", "tool-index.md", "plan-index.md") + tuple(
+    f"{name}-{who}.md" for name in ("theory-map-index", "tool-index") for who in LISTS)  # each base's own
 
 
 def loaded_texts(who, part):
     """{path: the held text a part of the base loaded} — the stable reference's or the frontier layer's — restored from
     its pack (base_pack.sources_from_pack), or {} when the pack is gone or unreadable."""
     try:
-        pack = json.load(open(os.path.join(STATE, f"{who}-{'base' if part == 'stable' else 'layer'}.json")))["pack"]
+        rec = json.load(open(os.path.join(STATE, f"{who}-{'base' if part == 'stable' else 'layer'}.json")))
         import base_pack
         from pathlib import Path
-        return {s["path"]: s["text"] for s in base_pack.sources_from_pack(Path(pack))[0]}
+        chain = rec.get('parts')
+        packs = [p['pack'] for p in chain if p.get('pack') and p.get('part') != 'stable'] if chain and part == 'layer' else [rec['pack']]
+        return {s["path"]: s["text"] for pack in packs for s in base_pack.sources_from_pack(Path(pack))[0]}
     except Exception:  # noqa: BLE001  the measure falls back; it must not fail the refresh rule
         return {}
 
@@ -200,14 +237,27 @@ def units(path, text):
     return out
 
 
+def changed_units(path, old, now):
+    """A held file's change from `old` to `now`, as the delta and its increments give it: its added or changed units in
+    their new form, and those removed, by their keys (a command by its name, anything unnamed by its first line)."""
+    was, kept = units(path, old), units(path, now)
+    shown = [body for key, body in kept.items() if was.get(key) != body]
+    removed = [key for key in was if key not in kept]
+    text = "\n\n".join(shown) if os.path.splitext(path)[1] in (".thy", ".md") else "\n".join(shown)
+    if removed:
+        first = [k.splitlines()[0].strip() if k.strip() else k for k in removed]
+        text += ("\n\n" if text else "") + "removed: " + "; ".join(k if len(k) <= 80 else k[:77] + "…" for k in first)
+    return text
+
+
 def delta_entries(who):
     """[(path, part, kind, text, tokens)] of every held file whose held text differs from what its part loaded: `new`
     (the part did not load it: whole), `gone` (loaded, no longer held: named), `changed` (its parts added or changed, in
     their new form, and those removed, by their keys), `whole` (changed, its part's pack gone: whole)."""
     loaded = {"stable": loaded_texts(who, "stable"), "layer": loaded_texts(who, "layer")}
     out, held = [], set()
-    for _, path in held_files(""):
-        part = PARTS.get(path, "stable")
+    for path in dict.fromkeys(p for _, p in held_files("")):
+        part = 'stable' if PARTS.get(path, "stable") == 'stable' else 'layer'
         held.add(path)
         now = held_text(path, level_of(path))[0]
         ratio = RATIO.get(os.path.splitext(path)[1], 2.6)
@@ -219,14 +269,7 @@ def delta_entries(who):
             continue
         if old == now:
             continue
-        was, kept = units(path, old), units(path, now)
-        shown = [body for key, body in kept.items() if was.get(key) != body]
-        removed = [key for key in was if key not in kept]
-        text = "\n\n".join(shown) if os.path.splitext(path)[1] in (".thy", ".md") else "\n".join(shown)
-        if removed:  # by their keys: a command by its name, anything unnamed by its first line
-            first = [k.splitlines()[0].strip() if k.strip() else k for k in removed]
-            text += ("\n\n" if text else "") + "removed: " + "; ".join(
-                k if len(k) <= 80 else k[:77] + "…" for k in first)
+        text = changed_units(path, old, now)
         out.append((path, part, "changed", text, int(len(text) / ratio)))
     for part in ("stable", "layer"):
         for path in loaded[part]:
@@ -235,10 +278,29 @@ def delta_entries(who):
     return out
 
 
+LAST_DELTA = {}  # who -> the entries delta_text read last, which delta_parts divides by part
+
+
+def delta_parts(who, entries=None):
+    """{part: tokens} of the delta's text (or an increment's, `entries`) by the named part holding each change — the
+    stable part's too: each part's changes are carried until carrying them has cost what loading that part and those
+    over it again costs (the watchdog's refresh_plan), so the cost of carrying is counted by part."""
+    if entries is None:
+        entries = LAST_DELTA.get(who)
+    if entries is None:
+        entries = delta_entries(who)
+    out = {}
+    for path, _, _, _, tokens, *_ in entries:
+        if tokens:
+            name = PARTS.get(path, "stable")
+            out[name] = out.get(name, 0) + tokens
+    return out
+
+
 def delta_text(who):
-    """(the delta's text, the tokens it holds of the frontier layer, of the stable reference); ("", 0, 0) when nothing
-    has changed."""
-    entries = delta_entries(who)
+    """(the delta's text, the tokens it holds of the parts over the stable part, of the stable part); ("", 0, 0) when
+    nothing has changed."""
+    entries = LAST_DELTA[who] = delta_entries(who)
     gone_packs = [part for part in ("stable", "layer") if not loaded_texts(who, part)]
     if not entries:
         return "", 0, 0
@@ -248,33 +310,209 @@ def delta_text(who):
             return json.load(open(os.path.join(STATE, f"{who}-{'base' if part == 'stable' else 'layer'}.json")))["sealed"]
         except (OSError, ValueError, KeyError):
             return "an unrecorded time"
-    import subprocess
-    head = subprocess.run(["git", "-C", PROJECT, "log", "-1", "--format=%h %cd", "--date=format:%Y-%m-%d %H:%M"],
-                          capture_output=True, text=True).stdout.strip() or "(no commit)"
-    lines = [f"What you hold has changed since it loaded: the stable reference at {sealed('stable')}, the working "
-             f"frontier at {sealed('layer')}. As of main {head}, the text below is the current form of each part it "
+    lines = [f"What you hold has changed since it loaded: the stable part at {sealed('stable')}, the parts over it "
+             f"at {sealed('layer')}. As of main {main_head()}, the text below is the current form of each part it "
              "names, and it supersedes what you hold of those parts; everything else you hold is current. Nothing here "
              "asks for work."]
     if gone_packs:
         lines.append(f"(The {' and '.join(gone_packs)} part's load cannot be read back, so its changes are not here.)")
+    render_entries(lines, entries)
+    return ("\n".join(lines) + "\n", sum(e[4] for e in entries if e[1] == "layer"),
+            sum(e[4] for e in entries if e[1] == "stable"))
+
+
+def main_head():
+    import subprocess
+    return subprocess.run(["git", "-C", PROJECT, "log", "-1", "--format=%h %cd", "--date=format:%Y-%m-%d %H:%M"],
+                          capture_output=True, text=True).stdout.strip() or "(no commit)"
+
+
+def render_entries(lines, entries):
+    """Each changed file of a delta or an increment, the stable part's first: named with where it is held, and its
+    units in their current form, whole when new, named when gone."""
     for part in ("stable", "layer"):
-        for path, p, kind, text, _ in entries:
+        for path, p, kind, text, *_ in entries:
             if p != part:
                 continue
             name = short(path) if path.startswith(PROJECT + os.sep) else path
-            where = "the stable reference" if part == "stable" else "the working frontier"
+            where = "the stable part" if part == "stable" else "the parts over it"
             if kind == "gone":
                 lines.append(f"\n== {name} ({where}): no longer held")
             elif kind == "new":
                 lines.append(f"\n== {name} ({where}): new to what you hold, whole\n{text}")
             else:
                 lines.append(f"\n== {name} ({where}): its parts changed or added, in their current form\n{text}")
-    return ("\n".join(lines) + "\n", sum(t for _, p, _, _, t in entries if p == "layer"),
-            sum(t for _, p, _, _, t in entries if p == "stable"))
+
+
+# ---------------------------------------------------------------- the delta's increments (the owner, 2026-09-23:
+# "should the delta not be layered"): the standing delta is a chain — its consolidated message over the parts, then
+# increments each forking the one before with only what changed since. A build writes its own increment alone, where a
+# delta built again wrote every earlier change again; the chain is consolidated, one message written anew over the
+# parts, when what its superseded forms have cost the forks reaches what that costs (watchdog.deltas).
+
+def stack_held(who):
+    """{path: the held text the standing delta's messages give a file they changed, None for one they said is gone} —
+    what an increment is measured against — or {} when none is recorded for the delta standing now."""
+    try:
+        held = json.load(open(os.path.join(STATE, f"{who}-delta-held.json")))
+        delta = json.load(open(os.path.join(STATE, f"{who}-delta.json")))
+        layer = json.load(open(os.path.join(STATE, f"{who}-layer.json"))).get("sessionId")
+    except (OSError, ValueError):
+        return {}
+    # the chain's top is its last text (`top`); a record from before the texts named its top by its session
+    if held.get("top") != (delta.get("top") or delta.get("sessionId")) or delta.get("layer") != layer:
+        return {}  # another top, or a chain over a layer refreshed since: orphaned, the next text is whole
+    return held.get("files") or {}
+
+
+def increment_entries(who, stacked=None):
+    """[(path, part, kind, text, tokens, superseded, now)] of what changed since the standing delta's messages took each
+    file in: each held file's units against the text those messages give it (the last that named it), or its part's
+    load; `superseded` the tokens of the messages' own earlier forms of units now changed again, which stay held,
+    superseded, until the chain is consolidated; `now` the held text now, which the next increment is measured from."""
+    loaded = {"stable": loaded_texts(who, "stable"), "layer": loaded_texts(who, "layer")}
+    stacked, out, held = (stack_held(who) if stacked is None else stacked), [], set()
+    for path in dict.fromkeys(p for _, p in held_files("")):
+        part = 'stable' if PARTS.get(path, "stable") == 'stable' else 'layer'
+        held.add(path)
+        if not loaded[part]:
+            continue
+        now = held_text(path, level_of(path))[0]
+        ratio = RATIO.get(os.path.splitext(path)[1], 2.6)
+        base = stacked[path] if path in stacked else loaded[part].get(path)
+        if base is None:  # new to what the parts loaded, or back after the messages said it was gone
+            out.append((path, part, "new", now, int(len(now) / ratio), 0, now))
+            continue
+        if base == now:
+            continue
+        text = changed_units(path, base, now)
+        superseded = 0
+        if path in stacked:
+            was, kept, origin = units(path, base), units(path, now), units(path, loaded[part].get(path) or "")
+            superseded = int(sum(len(body) for key, body in was.items()
+                                 if kept.get(key) != body and origin.get(key) != body) / ratio)
+        out.append((path, part, "changed", text, int(len(text) / ratio), superseded, now))
+    for part in ("stable", "layer"):
+        for path in loaded[part]:
+            if path not in held and stacked.get(path, "") is not None:
+                out.append((path, part, "gone", "", 0, 0, None))
+    return out
+
+
+LAST_INCREMENT = {}
+
+
+def loaded_parts(who):
+    """{part: {path: the held text that part loaded}} — the stable reference and each named part of the chain, read
+    back from their packs; a part whose pack cannot be read is left out."""
+    import base_pack
+    from pathlib import Path
+    out = {}
+    try:
+        stable = json.load(open(os.path.join(STATE, f"{who}-base.json")))
+        out["stable"] = {s["path"]: s["text"] for s in base_pack.sources_from_pack(Path(stable["pack"]))[0]}
+    except Exception:  # noqa: BLE001  a measure; it must not fail the delta's build
+        pass
+    try:
+        chain = json.load(open(os.path.join(STATE, f"{who}-layer.json"))).get("parts") or []
+    except (OSError, ValueError):
+        chain = []
+    for node in chain:
+        if node.get("pack") and node.get("part") not in (None, "stable", "reasoning"):
+            try:
+                out[node["part"]] = {s["path"]: s["text"] for s in base_pack.sources_from_pack(Path(node["pack"]))[0]}
+            except Exception:  # noqa: BLE001
+                continue
+    return out
+
+
+def old_forms(who):
+    """{part: tokens} of what each part loaded that is no longer what the base holds: the units of a held file changed
+    or removed since its part loaded, and a file it loaded that is no longer held, whole. Once the delta holds the
+    current forms (a message built now), every request of a fork carries these for nothing, and loading the part again
+    is what ends it (watchdog.carried_parts: the arithmetic review of 2026-09-23 — a refresh does not end the carrying
+    of a part's changes, whose current forms move from the delta into the part, only of its superseded old forms)."""
+    now_held = {}
+    for _, path in held_files(""):
+        now_held.setdefault(path, None)
+    out = {}
+    for part, texts in loaded_parts(who).items():
+        for path, old in texts.items():
+            ratio = RATIO.get(os.path.splitext(path)[1], 2.6)
+            if path not in now_held:
+                n = len(old)
+            else:
+                now = held_text(path, level_of(path))[0]
+                if now == old:
+                    continue
+                was, kept = units(path, old), units(path, now)
+                n = sum(len(body) for key, body in was.items() if kept.get(key) != body)
+            if n:
+                out[part] = out.get(part, 0) + int(n / ratio)
+    return out
+
+
+def increment_text(who):
+    """(the increment's text, the tokens it holds of the parts over the stable part, of the stable part, the tokens of
+    earlier forms it supersedes); ("", 0, 0, 0) when nothing has changed since the delta's last message."""
+    entries = LAST_INCREMENT[who] = increment_entries(who)
+    if not entries:
+        return "", 0, 0, 0
+    lines = [f"What you hold has changed since the last message of this kind you hold. As of main {main_head()}, the "
+             "text below is the current form of each part it names, and it supersedes what you hold of those parts — "
+             "as they loaded or as an earlier message gave them; everything else you hold is current. Nothing here asks "
+             "for work."]
+    render_entries(lines, entries)
+    return ("\n".join(lines) + "\n", sum(e[4] for e in entries if e[1] == "layer"),
+            sum(e[4] for e in entries if e[1] == "stable"), sum(e[5] for e in entries))
+
+
+def held_changes(who, node, names=()):
+    """What changed in the files base `who` holds since a holder took them in, in their current form (v2.py read
+    changes): the texts the chain's text `node` it holds to gives each file it changed (layer-<text id>-held.json,
+    base_stack.cut), the parts' loads for the rest (`-` for a holder of the loads alone). `names` picks files as a stale
+    line names them (a file's name without its extension, or the end of its path)."""
+    stacked = {}
+    if node and node != "-":
+        try:
+            stacked = json.load(open(os.path.join(STATE, f"layer-{node}-held.json"))).get("files") or {}
+        except (OSError, ValueError):
+            held = {}
+            with contextlib.suppress(OSError, ValueError):
+                held = json.load(open(os.path.join(STATE, f"{who}-delta-held.json")))
+            stacked = (held.get("files") or {}) if held.get("top") == node else {}
+    entries = increment_entries(who, stacked=stacked)
+    if names:
+        entries = [e for e in entries
+                   if any(os.path.splitext(os.path.basename(e[0]))[0] == n or e[0].endswith(n) for n in names)]
+    if not entries:
+        return "(nothing " + ("of those " if names else "") + "you hold has changed since you took it in)"
+    lines = [f"What changed in what you hold since you took it in, as of main {main_head()}: the text below is the "
+             "current form of each part it names, and it supersedes what you hold of those parts; everything else you "
+             "hold of these files is current."]
+    render_entries(lines, entries)
+    return "\n".join(lines)
 
 
 def relative(path, root):
     return os.path.relpath(path, root) if path.startswith(root + os.sep) else path
+
+
+def stable_share(who):
+    """The stable reference's drift, counted as the layer's is (moved_tokens), for the stable reference drifts too, and
+    more slowly: (the share of the tokens the list's stable part holds whose held text moved since the stable base
+    loaded — a file it did not load counted whole —, those tokens, the part's tokens, the tokens the stable base holds
+    of files the list no longer names: held for nothing until the owner loads it again), or None with no snapshot."""
+    stable, path = held_files("stable"), os.path.join(STATE, f"{who}-manifest.json")
+    if not stable or not os.path.exists(path):
+        return None
+    record = json.load(open(path))["files"]
+    loaded = loaded_texts(who, "stable")
+    total = sum(tokens(p) for _, p in stable) or 1
+    moved = sum(moved_tokens(p, record, loaded) for _, p in stable)
+    listed = {p for _, p in stable}
+    unlisted = sum(int(len(text) / RATIO.get(os.path.splitext(p)[1], 2.6)) for p, text in loaded.items() if p not in listed)
+    return moved / total, moved, total, unlisted
 
 
 def changed_since(recorded, now):
@@ -312,8 +550,33 @@ def main():
         text, layer, stable = delta_text(WHO)
         sys.stdout.write(text)
         if "--counts" in sys.argv:
-            json.dump({"layer_tokens": layer, "stable_tokens": stable, "tokens": layer + stable},
+            json.dump({"layer_tokens": layer, "stable_tokens": stable, "tokens": layer + stable,
+                       "parts": delta_parts(WHO), "old_forms": old_forms(WHO)},
                       open(sys.argv[sys.argv.index("--counts") + 1], "w"))
+        if "--held" in sys.argv:  # what the consolidated message gives each file it names: its increments start there
+            files = {p: (held_text(p, level_of(p))[0] if kind != "gone" else None) for p, _, kind, *_ in LAST_DELTA[WHO]}
+            json.dump({"files": files}, open(sys.argv[sys.argv.index("--held") + 1], "w"))
+        return 0
+    if mode == "delta-increment":  # an increment's text (base.sh WHO delta --increment), its counts and what it holds
+        text, layer, stable, superseded = increment_text(WHO)
+        sys.stdout.write(text)
+        entries = LAST_INCREMENT[WHO]
+        if "--counts" in sys.argv:
+            json.dump({"layer_tokens": layer, "stable_tokens": stable, "tokens": layer + stable, "superseded": superseded,
+                       "parts": delta_parts(WHO, entries), "old_forms": old_forms(WHO)},
+                      open(sys.argv[sys.argv.index("--counts") + 1], "w"))
+        if "--held" in sys.argv:
+            files = dict(stack_held(WHO))
+            files.update({e[0]: e[6] for e in entries})
+            json.dump({"files": files}, open(sys.argv[sys.argv.index("--held") + 1], "w"))
+        return 0
+    if mode == "pending":  # the tokens a delta message built now would hold: an increment's, or a whole delta's
+        entries = increment_entries(WHO) if stack_held(WHO) else delta_entries(WHO)
+        print(sum(e[4] for e in entries))
+        return 0
+
+    if mode == "held-changes":  # what changed since a holder took the files in, in their current form (v2.py read changes)
+        print(held_changes(WHO, sys.argv[3], sys.argv[4:]))
         return 0
     if mode == "snapshot-delta":  # every held file's digest, both parts, as a delta session holds them (base.sh)
         record = {"taken": time.strftime("%Y-%m-%dT%H:%M:%S"), "delta": True,
@@ -351,6 +614,10 @@ def main():
         loaded = layer_texts(WHO)
         moved = sum(moved_tokens(p, record, loaded) for _, p in layer)
         print(f"{moved / total:.3f}")
+        return 0
+    if mode == "stable-share":  # the same count for the stable reference (stable_share)
+        got = stable_share(WHO)
+        print(f"{got[0]:.3f} {got[1]} {got[2]} {got[3]}" if got else "0 0 0 0")
         return 0
     # A fork holds both parts, so both snapshots are read: the stable one and, when there is a layer, its own —
     # the layer the reader actually forked (--since-layer SID), which after a refresh is not the one standing now.

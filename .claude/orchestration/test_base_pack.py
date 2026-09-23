@@ -186,7 +186,7 @@ class PackingTests(unittest.TestCase):
         self.assertEqual(p.expand_index(after), second)
         self.assertEqual(p.restore_text(packed, edits), original)
 
-    def test_map_index_leaves_out_what_the_list_holds(self):
+    def test_map_index_keeps_the_whole_vocabulary_independently_of_the_building_base(self):
         import select_base_load as selector
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -204,7 +204,7 @@ class PackingTests(unittest.TestCase):
                 selector.refresh_indexes()
             index = (root / "state/held/theory-map-index.md").read_text()
             self.assertIn("B: What B holds", index)
-            self.assertNotIn("A: ", index)
+            self.assertIn("A: What A holds", index)
             self.assertIn("## One — The first.", (root / "state/held/decisions-index.md").read_text())
 
     def test_catalogue_includes_sources_missing_from_the_map(self):
@@ -220,31 +220,6 @@ class PackingTests(unittest.TestCase):
             text = (root / "state/held/theory-names.md").read_text()
             self.assertEqual(p.index_names(text), ["B", "A", "New"])
             self.assertIn("Additional source files not listed in ROOT", text)
-
-    def test_selector_measures_implementers_not_bases_or_orchestration(self):
-        import select_base_load as selector
-        def session(*texts_and_commands):
-            records = []
-            for kind, value in texts_and_commands:
-                if kind == "user":
-                    records.append({"type": "user", "message": {"role": "user", "content": value}})
-                else:
-                    records.append({"type": "assistant", "message": {"model": "claude-opus-5", "content": [
-                        {"type": "tool_use", "name": "Bash", "input": {"command": value}}]}})
-            return "".join(json.dumps(r, separators=(",", ":")) + "\n" for r in records)
-        load = ("user", p.BOOTSTRAP_PREFIX + " For PART=1 through 2, run the command below.")
-        emit = ("tool", "/usr/bin/python3 .claude/orchestration/base_pack.py emit /pack 1")
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            (root / "base.jsonl").write_text(session(load, emit))
-            (root / "impl.jsonl").write_text(session(load, emit, ("user", "You are impl-3, a working copy."),
-                                                     ("tool", "cat .claude/orchestration/state/v2.json"),
-                                                     ("tool", "sed -n 1,40p theories/RRA_Selection.thy")))
-            (root / "orch.jsonl").write_text(session(("user", "Review the orchestrator."),
-                                                     ("tool", "cat .claude/orchestration/watchdog.py"),
-                                                     ("tool", "sed -n 1,40p theories/RRA_Selection.thy")))
-            with patch.object(selector, "TRANSCRIPTS", str(root)):
-                self.assertEqual([Path(f).name for f in selector.implementer_sessions()], ["impl.jsonl"])
 
     def test_utf8_chunks_handle_long_lines_without_loss(self):
         original = "⇒" * 1000 + "\n" + "x\n" * 400
@@ -580,6 +555,11 @@ elif '--bg' in sys.argv and '--resume' not in sys.argv:  # the base loads: its t
             env.update(HOME=str(home), PATH=str(binary) + os.pathsep + os.environ["PATH"], ORCH_CONTROL="1",
                        ORCH_STATE_DIR=str(state), REBUILD_TEST_LOG=str(calls), BASE_PACK_DIR=str(directory),
                        STABLE_WAIT="2", LAYER_WAIT="2")
+            legacy=root/'legacy.list'
+            legacy.write_text(f'# reference\n{root / "new-reference.md"}\n# === layer ===\n# layer\n{root / "new-layer.md"}\n')
+            (root/'new-reference.md').write_text('new reference\n')
+            (root/'new-layer.md').write_text('new layer\n')
+            env['BASE_LOAD_LIST']=str(legacy)
             out = subprocess.run(["sh", str(p.HERE / "base.sh"), "xhigh", "layer"], env=env, capture_output=True,
                                  text=True, timeout=120)
             self.assertNotEqual(out.returncode, 0)                       # the fake base never starts: it stops there

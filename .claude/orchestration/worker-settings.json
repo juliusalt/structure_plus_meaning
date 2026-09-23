@@ -1,9 +1,15 @@
 {
   "promptCacheTtl": "1h",
+  "autoCompactEnabled": false,
+  "autoMemoryEnabled": false,
+  "includeGitInstructions": false,
   "env": {
     "DISABLE_GROWTHBOOK": "1",
     "PYTHON_COLORS": "0",
-    "NO_COLOR": "1"
+    "NO_COLOR": "1",
+    "DISABLE_AUTO_COMPACT": "1",
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS": "1"
   },
   "hooks": {
     "PreToolUse": [

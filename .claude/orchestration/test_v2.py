@@ -187,8 +187,8 @@ class FormTests(unittest.TestCase):
         values = dict(NAME="x-1", ID="7", KIND="build", SUBJECT="S", BRIEF="B", STALE="st", WHAT="w", SESSION="s",
                       BEFORE="", NODE="n", WHY="y", GRAPH="g", LIST="l", QID="q1", ASKER="a", TARGET="kb-1",
                       QUESTION="q", NOTE="", EVENTS="e", QUEUE="7", STATUS="s", OWNER="", HANDOFF="h", ORIGIN_NOTE="",
-                      TASK="6", REVIEW="r", FIRST="", TREE="t", WHERE="", READING="", INPUTS="i", HANDOFF_DELTA="d",
-                      ROLE="implementer", PROTOCOL="p", EVIDENCE="e", PRACTICES="12", DONE="D")
+                      TASK="6", REVIEW="r", FIRST="", TREE="t", WHERE="", READING="", INPUTS="i", RELATIONS="r", HANDOFF_DELTA="d",
+                      ROLE="implementer", WHO="high", PROTOCOL="p", EVIDENCE="e", DONE="D", DIGEST="abc", DELTA="d")
         import re
         with tempfile.TemporaryDirectory() as temp, patch.object(v2, "STATE", temp):
             # in its own state: render logs what it could not fill, and this test wrote that into the live log
@@ -412,9 +412,15 @@ class StartTests(Flow):
         self.w.v2("dispatch")
         st = self.w.st()
         self.assertEqual((st["kb"], self.s("kb-1")["kb_state"]), ("kb-1", "sealed"))
+        self.assertIn("build_cost", self.s("kb-1"))  # what building it again costs: max's rules weigh it (watchdog.kb_cost)
         (plan,) = self.forks("plan-")
         self.assertEqual(plan[plan.index("--resume") + 1], self.s("kb-1")["sid"])
-        self.assertIn("You are plan-1, the planner", plan[-1])
+        # its protocol is held once, in the knowledge base it forks: it is given its own values (the owner, 2026-09-24:
+        # "Why is the planner protocol not held below knowledge base layer")
+        self.assertIn("You are plan-1, a session of the planner", plan[-1])
+        self.assertNotIn("## How you plan", plan[-1])
+        self.assertIn("## The planner's protocol, as each of its sessions receives it", fork[-1])
+        self.assertIn("## How you plan", fork[-1])
         self.assertIn("## The first planner: a new task graph", plan[-1])
         self.assertIn("they do not bind it", plan[-1])  # the history and the handoff inform the graph
         self.assertIn("uncommitted changes that no task owns yet: none", plan[-1])
@@ -575,7 +581,7 @@ class StartTests(Flow):
         self.assertEqual(st["notes"], [])                   # they were for the base being left behind
         (kb,) = self.forks("kb-")                           # a new one is built at once
         self.assertIn("Read now, together, what the library does not hold: HANDOFF.md", kb[-1])
-        self.assertNotIn("notes.md", kb[-1])
+        self.assertNotIn("-notes.md", kb[-1])                # nor the notes it was integrating
         self.assertEqual(self.forks("plan-"), [])           # nothing plans until it holds the knowledge
         self.w.reply(self.s("kb-2")["sid"], "INTEGRATED")
         self.w.v2("dispatch")
@@ -585,6 +591,9 @@ class StartTests(Flow):
                      "What the structure should now be", "Only then queue",
                      "each task's own tree"):  # work in progress outlives its session there (2026-09-22: five trees)
             self.assertIn(said, plan[-1])
+        # the charge is the harness's, at the owner's order to start fresh — never the owner's own words
+        self.assertIn("from the harness: The owner started this run fresh", plan[-1])
+        self.assertNotIn("from the owner: This run begins on a knowledge base built fresh", plan[-1])
 
 
 def v2_first(world):
@@ -595,23 +604,25 @@ def v2_first(world):
 
 # The values each role's first message is rendered with (v2.render's own defaults, and the call for that role).
 PASSED = {
-    "kb": {"NAME", "STALE"},
+    "kb": {"NAME", "STALE", "CHANGES", "PROTOCOLS"},
     "planner": {"NAME", "ID", "EVENTS", "HANDOFF", "GRAPH", "QUEUE", "STATUS", "LIST", "OWNER", "FIRST", "STALE",
                 "HANDOFF_DELTA"},
-    "designer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS"},
-    "implementer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS"},
-    "investigator": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS"},
-    "fixer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS"},
-    "task-designer": {"NAME", "ID", "SUBJECT", "BRIEF", "WHY", "GRAPH", "LIST", "STALE", "INPUTS"},
+    "designer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS", "RELATIONS"},
+    "implementer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS", "RELATIONS"},
+    "investigator": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS", "RELATIONS"},
+    "fixer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS", "RELATIONS"},
+    "task-designer": {"NAME", "ID", "SUBJECT", "BRIEF", "WHY", "GRAPH", "LIST", "STALE", "INPUTS", "RELATIONS"},
     "reviewer": {"NAME", "ID", "TASK", "SUBJECT", "REVIEW", "BRIEF", "SESSION", "STALE", "BEFORE", "WHERE", "FIRST",
-                 "INPUTS"},
+                 "INPUTS", "RELATIONS"},
     "consultant": {"NAME", "ID", "QID", "ASKER", "TARGET", "QUESTION", "NOTE", "STALE", "READING"},
-    "role-layer": {"NAME", "STALE", "ROLE", "PROTOCOL", "EVIDENCE", "PRACTICES", "DONE"},
+    "role-layer": {"NAME", "STALE", "ROLE", "PROTOCOL", "EVIDENCE", "DONE", "CHANGES"},
+    "role-churn": {"NAME", "ROLE", "DIGEST", "DELTA"},
+    "base-reasoning": {"NAME", "WHO", "DONE"},
 }
 PASSED = {role: names | {"ROUNDS", "READ", "RESERVE", "BATCH", "READ_BYTES", "CIRCLING", "FIX_MINUTES", "FIX_ROUNDS", "HOLD_HOURS", "ROOM_DESIGN",
                          "ROOM_TASK", "BRIEF_BACKLOG", "GRAPH_DEPTH", "DEPTH", "WIDTH", "SLOTS", "CONSULT_HOURS",
                          "ISABELLE_MAX", "PARK_URGENT", "PROBE_MAX", "PROBE_SECONDS", "MEM_MARGIN", "GROUPING",
-                         "CONTINUES", "CONTINUED", "CHECKED", "LAYERED"}
+                         "CONTINUES", "CONTINUED", "CHECKED", "LAYERED", "MEASURE_MINUTES"}
           for role, names in PASSED.items()}  # render's own defaults
 
 
@@ -823,8 +834,26 @@ class PlanningTests(Flow):
         # and an order naming a task that is not there does not take the ones that are out of the queue
         said = self.as_("plan-1", "queue", "4", "99")
         self.assertIn("no task '99' in the list", said)
-        self.assertIn("set whole", said)
+        self.assertIn("nothing was queued", said)
         self.assertEqual(self.w.st()["queue"], ["4"])
+        self.assertIn("would empty the queue", self.as_("plan-1", "queue", "--drop-unnamed"))
+        self.assertEqual(self.w.st()["queue"], ["4"])
+
+    def test_an_order_puts_its_tasks_first_and_drops_only_when_told(self):
+        # the owner, 2026-09-24: "dropping the queue should happen explicitly not by accident". An order naming one
+        # task left it alone in the queue, every other queued task out (the console's Queue button did just that)
+        for tid in ("4", "5", "6", "7", "8"):
+            self.w.task(tid)
+        self.w.set_st(queue=["4", "5", "6", "7"], tasks={"7": {"stage": "done", "kind": "build"}})
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        said = self.as_("plan-1", "queue", "6", "8")
+        self.assertEqual(self.w.st()["queue"], ["6", "8", "4", "5"])       # named first; the rest after, as they stood
+        self.assertIn("after them as they stood, not named: 4, 5", said)   # a finished task has no place in an order
+        said = self.as_("plan-1", "queue", "--drop-unnamed", "5", "6")
+        self.assertEqual(self.w.st()["queue"], ["5", "6"])
+        self.assertIn("taken out of the queue, not named (--drop-unnamed; still in the list): 8, 4", said)
+        self.assertIn("plan-1 took task(s) 8, 4 out of the queue (--drop-unnamed)", (self.w.state / "v2.log").read_text())
+        self.assertTrue(self.w.read_task("4"))                               # still in the list
 
     def test_an_id_named_twice_in_the_order_is_one_place_in_the_queue(self):
         self.w.task("4")
@@ -1279,7 +1308,7 @@ class PlanningTests(Flow):
         self.w.v2("dispatch")
         (new,) = self.forks("kb-")
         self.assertIn("Read now, together, what the library does not hold: HANDOFF.md", new[-1])
-        self.assertNotIn("notes.md", new[-1])
+        self.assertNotIn("Decided: readiness is a path.", new[-1])
         self.w.reply(self.s("kb-2")["sid"], "INTEGRATED")
         self.w.v2("dispatch")
         self.assertEqual(self.w.st()["kb"], "kb-2")
@@ -1299,7 +1328,8 @@ class PlanningTests(Flow):
         # C13, the owner's switch: 27 of 52 fixes continued one reviewed task's work, its producer warm for 18
         fix = BRIEF.replace("Kind: build", "Kind: fix")
         self.w.task("5", status="completed", subject="The work")
-        self.w.session("implement-5", "implementer", "impl5sid", state="done", live=False, task="5", context=600_000)
+        self.w.session("implement-5", "implementer", "impl5sid", state="done", live=False, task="5", context=600_000,
+                       stated_theories=["Base"])
         self.w.task("6", description=fix, subject="Its follow-up", metadata={"kind": "fix", "why": "-", "continues": "5"})
         self.w.set_st(queue=["6"], tasks={"6": {"stage": "ready", "kind": "fix", "queued_at": time.time()}})
         (self.w.state / "continue-by-fork").write_text("")
@@ -1310,6 +1340,8 @@ class PlanningTests(Flow):
         self.assertNotRegex(fixer[-1], r"\{[A-Z][A-Z_]{2,}\}")
         rec = self.s("fix-6")
         self.assertEqual((rec["origin"], rec["continues"]), ("implement-5", "5"))
+        # the theories its source holds at statements it holds too: their facts are not stated again (inputs_read)
+        self.assertEqual(rec["stated_theories"], ["Base"])
         # what changed since its load is measured against the load its origin holds, not against a session's own id
         st = self.w.st()
         st["sessions"]["implement-5"]["origin_sid"] = "the-layer-it-forked"
@@ -1923,6 +1955,19 @@ class TaskTests(Flow):
         self.assertIn("Its brief is as you have it.", again)                          # not the brief again, unchanged
         self.assertEqual((self.t("1")["stage"], self.t("1")["session"]), ("running", self.impl))
         self.assertIn("Keep the statement; split the proof.", json.dumps(self.w.mail(self.impl)))
+        # back again with its brief changed: the lines that changed, not the brief again (the owner, 2026-09-24: "the
+        # goal is to not duplicate information and use changes when possible")
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="partial"))
+        self.as_(self.impl, "result", "1")
+        task = self.w.read_task("1")
+        self.w.task("1", description=task["description"].replace("Decided: readiness is a path",
+                                                                 "Decided: readiness is a path of calls"))
+        self.w.v2("queue", "1")
+        again = self.resumes(self.s(self.impl)["sid"])[-1][3]
+        self.assertIn("Its brief changed since you had it — these lines are new or changed", again)
+        self.assertIn("Decided: readiness is a path of calls", again)
+        self.assertIn("taken out: Decided: readiness is a path", again)
+        self.assertNotIn("Kind: build", again)                                        # held, not given again
         # near its window's end it could not take the task on: a fresh one does
         self.w.write(".build/tasks/1/result.md", RESULT.format(status="partial"))
         self.as_(self.impl, "result", "1")
@@ -2282,13 +2327,18 @@ class TaskTests(Flow):
     def test_a_timing_run_takes_the_machine_and_falls_with_the_run(self):
         # a neighbour distorts a measurement as surely as it exceeds the memory; the harness gave that hold only to a
         # check advancing the base heap (the owner, 2026-09-20)
-        said = self.as_(self.impl, "measuring", "the machinery's evaluation against its bound")
+        bare = self.as_(self.impl, "measuring", "the machinery's evaluation against its bound")
+        self.assertIn("refused: say which, each time", bare)                  # no default (the owner, 2026-09-23)
+        self.assertIn("--exclusive", bare)
+        self.assertIn("--shared", bare)
+        self.assertIn("refused: say which", self.as_(self.impl, "measuring", "--shared", "--exclusive", "x"))
+        said = self.as_(self.impl, "measuring", "--exclusive", "the machinery's evaluation against its bound")
         self.assertIn("the machine is yours", said)
         # and only a producing session claims it: a task designer has a task too and measures nothing, so its claim
         # would hold the machine against every check for the grace it is given (2026-09-21)
         self.w.session("brief-9", "task-designer", "b9", task="9")
         self.assertIn("a producing session working on a task claims the machine",
-                      self.as_("brief-9", "measuring", "nothing of mine"))
+                      self.as_("brief-9", "measuring", "--exclusive", "nothing of mine"))
         claim = json.loads((self.w.state / "isabelle-exclusive").read_text())
         self.assertEqual((claim["task"], claim["session"]), ("1", self.impl))
         self.assertIn("machinery's evaluation", claim["why"])
@@ -2297,14 +2347,14 @@ class TaskTests(Flow):
             {"task": "1", "why": "a measurement", "session": self.impl, "at": 0}))
         self.w.session("fix-9", "fixer", "f9", task="9", state="working")
         self.w.task("9", subject="Another task")
-        self.assertIn("the machine is yours", self.w.v2("measuring", "theirs", env=self.w.as_session("f9")))
+        self.assertIn("the machine is yours", self.w.v2("measuring", "--exclusive", "theirs", env=self.w.as_session("f9")))
         self.assertEqual(json.loads((self.w.state / "isabelle-exclusive").read_text())["task"], "9")
 
     def test_the_machine_is_claimed_by_one_task_at_a_time(self):
-        self.as_(self.impl, "measuring", "mine")
+        self.as_(self.impl, "measuring", "--exclusive", "mine")
         self.w.session("fix-9", "fixer", "f9", task="9", state="working")
         self.w.task("9", subject="Another task")
-        said = self.w.v2("measuring", "theirs", env=self.w.as_session("f9"))
+        said = self.w.v2("measuring", "--exclusive", "theirs", env=self.w.as_session("f9"))
         self.assertIn("task 1 holds the machine", said)
         self.assertIn("mine", said)
 
@@ -2667,6 +2717,32 @@ class TaskTests(Flow):
         # 28 of the 59 sessions of 2026-09-20 were planning episodes, one per batch of events
         self.assertEqual(len(self.forks("plan-")), 1)
 
+    def test_a_re_review_resumes_its_reviewer_with_what_changed_since_its_verdict_mechanically(self):
+        # the owner, 2026-09-23: "the same reviewer gets reused and then gets what has changed since mechanically"
+        self.assertIn("recorded", self.finish())
+        fin = json.loads((self.w.project / ".build/tasks/1/finalize.json").read_text())
+        self.w.write("NOTES.md", "notes\n")
+        self.w.write(".build/tasks/1/finalize.json", json.dumps(dict(fin, files=fin["files"] + ["NOTES.md"])))
+        self.assertIn("rejected task 1", self.verdict("review-1", "reject", "- `ready_def` duplicates `base_def`"))
+        judged = json.loads((self.w.project / ".build/tasks/1/reviewed.json").read_text())
+        self.assertEqual(judged["files"], {"theories/Ready.thy": True, "NOTES.md": True})  # what it judged, kept
+        self.w.write("theories/Ready.thy", "theory Ready imports Base begin\nlemma ready: True by simp\nend\n")
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="done"))
+        self.assertIn("prepared", self.as_(self.impl, "finalize", "1", "--check", "true", "--files", "theories/Ready.thy",
+                                           "NOTES.md", "--message", ".build/tasks/1/commit.md"))
+        self.as_(self.impl, "result", "1")
+        self.assertEqual(self.t("1")["stage"], "reviewing")
+        resumed = self.resumes(self.s("review-1")["sid"])[-1][3]             # the same reviewer, resumed
+        self.assertIn("what changed since your verdict", resumed)
+        self.assertIn("== since\nsince the verdict of", resumed)
+        self.assertIn("1 file(s) changed", resumed)                              # NOTES.md did not
+        self.assertNotIn("NOTES.md (as you judged it)", resumed)
+        self.assertIn("-theory Ready imports Main begin end", resumed)         # from what it judged
+        self.assertIn("+lemma ready: True by simp", resumed)                   # to what stands
+        self.assertIn("== result", resumed)
+        # read on demand too
+        self.assertIn("+lemma ready: True by simp", self.as_("review-1", "read", "since"))
+
     def test_the_close_in_one_call_with_the_index_by_name_reaches_the_commit(self):
         # tonight's pieces together (notes/plan-orchestrator-concepts.md C1, C2, C4): the theory, its declaration and
         # its row by name, the commit message and the result in one change, the hand-over in the same call recording
@@ -2676,7 +2752,7 @@ class TaskTests(Flow):
         self.w.write("THEORY_MAP.md", "| Theory | Direct imports | Content |\n|---|---|---|\n| Base | Main | The base. |\n")
         self.w.git("add", "ROOT", "THEORY_MAP.md", "theories/Base.thy")
         self.w.git("commit", "-qm", "the index files")
-        call = (f"{sys.executable} {fakes.HERE / 'v2.py'} change <<'EOF'\n"
+        call = (f"{sys.executable} {fakes.HERE / 'v2.py'} change --no-probe <<'EOF'\n"
                 "=== write theories/Ready.thy\ntheory Ready imports Base begin\nend\n"
                 "=== root Ready\n=== row Ready\nReadiness over paths.\n"
                 "=== write .build/tasks/1/commit.md\nAdd readiness\n\nValidation: the argument in the result.\n"
@@ -3775,6 +3851,365 @@ class SupportTests(Flow):
         self.assertIn("2 build and fix tasks can start and there are 2 slots", log)  # said in shape, not in a count
 
 
+class DeltaTextTakersTests(Flow):
+    """The delta's texts taken in by what holds them itself, in its own message, with no session made of them for it
+    (the owner, 2026-09-24: "build the session only when something is about to start from it"; "the knowledge base is
+    rebuilt on every max session make this lzay too")."""
+
+    def setUp(self):
+        super().setUp()
+        (self.w.state / "max-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "model": "claude-opus-5[1m]", "effort": "max", "context": 560_000,
+             "base": "base-sid", "flags": fakes.LEAN, "sealed": "2026-09-23T08:00:00"}))
+        (self.w.state / "deltas").write_text("max\n")
+        self.first = ("max-text-1", self.w.write(".build/text-1.md", "== theories/Ready.thy\ntheory Ready imports Main "
+                                                                     "begin end\n"), 4000)
+        self.second = ("max-text-2", self.w.write(".build/text-2.md", "== theories/Later.thy\nlemma later: True by "
+                                                                      "simp\n"), 500)
+        self.chain([self.first])
+
+    def chain(self, nodes, **extra):
+        """max's chain of texts as base_stack.cut records it, each text's snapshot beside it."""
+        stack = [dict(id=i, text=str(path), digest="d" + i.rsplit("-", 1)[1], tokens=n, parts={"catalogue": n},
+                      kind="increment" if k else "delta", superseded=0) for k, (i, path, n) in enumerate(nodes)]
+        (self.w.state / "max-delta.json").write_text(json.dumps(dict(
+            dict(layer="layer-sid", base="base-sid", model="claude-opus-5[1m]", effort="max", flags=fakes.LEAN,
+                 top=stack[-1]["id"], digest=stack[-1]["digest"], text=stack[-1]["text"], stack=stack,
+                 tokens=sum(n for *_, n in nodes), parts={"catalogue": sum(n for *_, n in nodes)},
+                 old_forms={"catalogue": 900}), **extra)))
+        for node in stack:
+            (self.w.state / f"layer-{node['id']}-manifest.json").write_text(json.dumps({"delta": True, "files": {}}))
+
+    def py(self, code):
+        return subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n{code}"],
+                              env=self.w.env, capture_output=True, text=True).stdout.strip()
+
+    def test_the_roles_fork_the_layer_until_a_session_is_made_and_a_fork_of_it_lacks_every_text(self):
+        self.assertTrue(self.py("print(v2.base_file('max'))").endswith("max-layer.json"))   # texts are no session
+        self.assertEqual(self.py("print(v2.delta_pending('max'))"), "4000")
+        self.chain([self.first, self.second], sessionId="delta-sid", session_len=1, session_base="max-text-1",
+                   context=565_000)
+        self.assertTrue(self.py("print(v2.base_file('max'))").endswith("max-delta.json"))
+        self.assertEqual(self.py("print(v2.delta_pending('max'))"), "500")         # past what its session holds
+        (self.w.state / "max-delta-pending.json").write_text(json.dumps({"top": "max-text-2", "tokens": 300}))
+        self.assertEqual(self.py("print(v2.delta_pending('max'))"), "800")         # and what is not cut yet
+        (self.w.state / "max-delta-pending.json").write_text(json.dumps({"top": "max-text-1", "tokens": 300}))
+        self.assertEqual(self.py("print(v2.delta_pending('max'))"), "500")         # measured before the last cut
+
+    def test_the_knowledge_base_holds_max_s_texts_and_takes_later_ones_in_instead_of_being_built_again(self):
+        self.py("v2.kb_build()")
+        kb = self.w.st()["kb_building"]
+        (fork,) = self.forks("kb-")
+        self.assertEqual(fork[fork.index("--resume") + 1], "layer-sid")          # no session of max's delta made for it
+        self.assertIn("theory Ready imports Main", fork[-1])                     # the chain's text, in its own message
+        built = self.s(kb)
+        self.assertEqual((built["stack_base"], built["stack_len"], built["holds_node"], built["layer_sid"],
+                          built["whole_parts"]), ("max-text-1", 1, "max-text-1", "layer-sid", {"catalogue": 4000}))
+        self.w.reply(built["sid"], "INTEGRATED")
+        self.py("v2.kb_care()")
+        sealed = self.s(kb)
+        self.assertEqual((self.w.st()["kb"], sealed["snapshot"], sealed["delta_tokens"]), (kb, True, 4000))
+        self.assertTrue((self.w.state / f"layer-{built['sid']}-manifest.json").exists())   # its planners' stale line
+        # a new text of max's chain: it still stands, and nothing is built or resumed for it while no planner lacks it
+        self.chain([self.first, self.second])
+        calls = len(self.w.calls("--bg"))
+        self.py("v2.kb_care()")
+        self.assertEqual((self.w.st()["kb_building"], len(self.w.calls("--bg"))), (None, calls))
+        # a planner forked from it lacks the text; the planners' notes take it in with them
+        self.py("v2.launch('planner', '1', lambda n: 'You are plan-1.', tree=None, origin=v2.peek()['kb'])")
+        self.assertEqual(self.s("plan-1")["kb_lacking"], 500)
+        self.w.set_st(notes=["a planner's note"])
+        self.py("v2.kb_care()")
+        message = self.resumes(built["sid"])[-1][-1]
+        self.assertIn("a planner's note", message)
+        self.assertIn("lemma later: True by simp", message)
+        self.assertNotIn("theory Ready", message)                                # what it holds, not again
+        self.w.reply(built["sid"], "INTEGRATED")
+        self.py("v2.kb_care()")
+        taken = self.s(kb)
+        self.assertEqual((taken["kb_state"], taken["stack_len"], taken["holds_node"], taken["delta_tokens"]),
+                         ("sealed", 2, "max-text-2", 4500))
+        self.assertEqual(self.py(f"print(v2.kb_lacking(v2.peek()['sessions'][{kb!r}])[1])"), "0")
+        # max's parts refreshed: a load it does not hold — built again
+        layer = json.loads((self.w.state / "max-layer.json").read_text())
+        (self.w.state / "max-layer.json").write_text(json.dumps(dict(layer, sessionId="layer-sid-2")))
+        self.py("v2.kb_care()")
+        self.assertIsNotNone(self.w.st()["kb_building"])
+
+    def test_the_knowledge_base_takes_texts_in_alone_once_its_planners_lacking_them_have_paid(self):
+        self.w.session("kb-1", "kb", "kbsid", state="done", live=False, kb_state="sealed", context=560_000,
+                       stack_base="max-text-1", stack_len=1, layer_sid="layer-sid", started=time.time() - 60)
+        self.chain([self.first, self.second])
+        for i in range(3):   # each lacked 500 and read it again: 3 * 2 * 500 against 2 * 500 + 56,000
+            self.w.session(f"plan-{i}", "planner", f"p{i}", origin="kb-1", kb_lacking=500)
+        self.py("v2.kb_care()")
+        self.assertEqual(self.resumes("kbsid"), [])
+        for i in range(3, 60):
+            self.w.session(f"plan-{i}", "planner", f"p{i}", origin="kb-1", kb_lacking=500)
+        self.py("v2.kb_care()")
+        (resumed,) = self.resumes("kbsid")
+        self.assertTrue(resumed[-1].startswith(v2.HARNESS + "Integrate the changes below into what you hold"))
+        self.assertIn("lemma later", resumed[-1])
+
+    def test_changes_not_cut_yet_count_a_fork_behind_and_are_cut_when_its_churn_takes_them(self):
+        (self.w.state / "role-layers").write_text("reviewer")
+        self.w.session("layer-reviewer", "role-layer", "lr", state="done", live=False, layer_state="sealed",
+                       layer_of="reviewer", origin="max", origin_sid="layer-sid", context=590_000, digest="d1",
+                       stack_base="max-text-1", stack_len=1, delta_size=4000, protocol_sha=self.py(
+                           "print(v2.protocol_sha('reviewer'))"))
+        self.w.set_st(role_layers={"reviewer": {"name": "layer-reviewer", "built": time.time(), "wanted": time.time()}})
+        self.assertEqual(self.py("print(v2.role_layer_of('reviewer'))"), "layer-reviewer")
+        self.py("v2.launch('reviewer', '5', lambda n: 'You are review-5.', tree=None)")
+        self.assertEqual(self.w.st()["role_layers"]["reviewer"].get("behind_forks", 0), 0)   # it holds the top
+        (self.w.state / "max-delta-pending.json").write_text(json.dumps({"top": "max-text-1", "tokens": 300}))
+        self.py("v2.launch('reviewer', '6', lambda n: 'You are review-6.', tree=None)")
+        self.assertEqual(self.w.st()["role_layers"]["reviewer"]["behind_forks"], 1)          # 300 not cut yet
+        # its churn takes them: cut first (the world's texts give nothing to cut), and nothing it holds built again
+        self.py("v2.role_churn_care('reviewer', force=True)")
+        self.assertEqual(self.forks("churn-"), [])
+
+    def test_a_judging_role_s_layer_reasons_over_the_texts_in_its_own_message_and_stands_while_they_do(self):
+        (self.w.state / "role-layers").write_text("reviewer")
+        self.py("v2.role_layer_build('reviewer', 'the test')")
+        (layer,) = self.forks("layer-")
+        self.assertEqual(layer[layer.index("--resume") + 1], "layer-sid")        # the parts: no session made
+        self.assertIn("theory Ready imports Main", layer[-1])
+        self.assertLess(layer[-1].index("theory Ready"), layer[-1].index("## Your reasoning"))   # reasoned over
+        built = self.s("layer-reviewer")
+        self.assertEqual((built["digest"], built["stack_base"], built["stack_len"], built["holds_node"]),
+                         ("d1", "max-text-1", 1, "max-text-1"))
+        self.w.reply(built["sid"], "ROLE-LAYER READY")
+        self.py("v2.role_layer_care()")
+        sealed = self.s("layer-reviewer")
+        self.assertEqual((sealed["snapshot"], sealed["delta_tokens"], sealed["old_forms"]), (True, 4000, {"catalogue": 900}))
+        st = self.w.st()
+        st["sessions"]["layer-reviewer"]["context"] = 590_000
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.assertEqual(self.py("print(v2.role_layer_of('reviewer'))"), "layer-reviewer")
+        self.py("v2.role_churn_care('reviewer', force=True)")
+        self.assertEqual(self.forks("churn-"), [])                               # it holds the chain to its top
+        self.chain([self.first, self.second])                                    # a text more: it stands
+        self.assertEqual(self.py("print(v2.role_layer_of('reviewer'))"), "layer-reviewer")
+        self.py("v2.role_churn_care('reviewer', force=True)")
+        (churn,) = self.forks("churn-")
+        self.assertEqual(churn[churn.index("--resume") + 1], built["sid"])       # grown from the layer itself
+        self.assertIn("lemma later", churn[-1])
+        self.assertNotIn("theory Ready", churn[-1])
+        self.assertEqual(self.s("churn-reviewer")["delta_sid"], "max-text-2")   # whose snapshot it takes at its seal
+        # begun anew as one text: it reasoned over a chain that no longer stands
+        self.chain([("max-text-9", self.second[1], 4500)])
+        self.assertIn("replaced", self.py("print(v2.role_layer_due(v2.peek(), 'reviewer'))"))
+
+
+class NoDuplicationTests(Flow):
+    """Nothing a session holds is given it again: changes where it holds an earlier form (the owner, 2026-09-24: "the
+    goal is to not duplicate information and use changes when possible not just in this case but in general")."""
+
+    def setUp(self):
+        super().setUp()
+        self.w.repository()
+        self.w.task("1")
+        self.w.set_st(queue=["1"])
+
+    def py(self, code):
+        return subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n{code}"],
+                              env=self.w.env, capture_output=True, text=True).stdout.strip()
+
+    def layer(self):
+        (self.w.state / "role-layers").write_text("implementer\n")
+        self.w.v2("dispatch")
+        self.w.reply(self.s("layer-implementer")["sid"], "ROLE-LAYER READY")
+        self.w.v2("dispatch")
+        return self.s("layer-implementer")
+
+    def older_copy(self, layer):
+        """The layer's copy of its protocol as it was before one paragraph changed and one was taken out."""
+        now = self.py("print(v2.generic_protocol('implementer'))")
+        first, self.unchanged = [b for b in now.split("\n\n") if b.startswith("**")][:2]
+        old = now.replace(first, first + " An earlier form.") + "\n\nA paragraph taken out since."
+        (self.w.state / "role-protocols" / "old-sha.md").write_text(old)
+        st = self.w.st()
+        st["sessions"]["layer-implementer"]["protocol_sha"] = "old-sha"
+        st["sessions"]["implement-1"]["state"] = "done"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        return first
+
+    def test_a_changed_protocol_reaches_the_layer_s_forks_as_its_changes_and_its_churn_takes_them(self):
+        layer = self.layer()
+        self.assertTrue((self.w.state / "role-protocols" / f"{layer['protocol_sha']}.md").exists())  # kept by digest
+        first = self.older_copy(layer)
+        self.w.task("2")
+        self.w.set_st(queue=["2"])
+        self.w.v2("dispatch")
+        (fork,) = [f for f in self.forks("implement-") if f[f.index("-n") + 1] == "implement-2"]
+        message = fork[-1]
+        self.assertIn("with the changes given at the end of this message", message)
+        self.assertIn(first, message)                                  # the paragraph in its current form
+        self.assertIn("Taken out: A paragraph taken out since.", message)
+        self.assertNotIn(self.unchanged, message)                      # not the protocol again
+        s = self.s("implement-2")
+        self.assertGreater(s["protocol_written"], 0)
+        self.assertGreater(s["protocol_superseded"], 0)
+        self.assertFalse(s["protocol_rendered"])
+        self.assertEqual(self.py("print(v2.role_layer_due(v2.peek(), 'implementer'))"), "None")  # not reasoned again
+        # the churn takes the changes: its forks are given their values alone
+        self.py("v2.role_churn_care('implementer', force=True)")
+        (churn,) = self.forks("churn-")
+        self.assertIn(first, churn[-1])
+        self.assertIn("Taken out: A paragraph taken out since.", churn[-1])
+        built = self.s("churn-implementer")
+        self.assertEqual(built["protocol_sha"], self.py("print(v2.protocol_sha('implementer'))"))
+        self.w.reply(built["sid"], f"HELD {built['digest']}")
+        self.py("v2.role_churn_care('implementer')")
+        self.assertEqual(self.py("print(v2.role_churn_of('implementer'))"), "churn-implementer")
+        self.w.task("3")
+        st = self.w.st()
+        st["sessions"]["implement-2"]["state"] = "done"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.set_st(queue=["3"])
+        self.w.v2("dispatch")
+        (third,) = [f for f in self.forks("implement-") if f[f.index("-n") + 1] == "implement-3"]
+        self.assertEqual(third[third.index("--resume") + 1], built["sid"])
+        self.assertIn("whole and as it stands now", third[-1])
+        self.assertNotIn(first, third[-1])
+
+    def test_the_layer_is_reasoned_again_once_what_its_forks_carried_of_the_changes_has_paid(self):
+        self.older_copy(self.layer())
+        st = self.w.st()
+        st["sessions"]["layer-implementer"]["build_cost"] = 200_000
+        st["sessions"]["implement-8"] = dict(role="implementer", started=time.time(), protocol_written=60_000,
+                                            protocol_superseded=0)
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.assertEqual(self.py("print(v2.role_layer_due(v2.peek(), 'implementer'))"), "None")   # 120K of 200K
+        st["sessions"]["implement-9"] = dict(role="implementer", started=time.time(), protocol_written=50_000)
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.assertIn("has paid for reasoning over it anew", self.py("print(v2.role_layer_due(v2.peek(), 'implementer'))"))
+
+    def test_a_continuation_holds_the_protocol_of_the_session_it_forks(self):
+        sha = self.py("print(v2.keep_protocol('implementer'))")
+        self.w.session("implement-9", "implementer", "i9", state="done", live=False, protocol_sha=sha,
+                       protocol_role="implementer", protocol_rendered=False)
+        self.w.session("implement-10", "implementer", "i10", origin="implement-9")
+        held = self.py("print(v2.render('implementer', NAME='implement-10', ID='10', BRIEF='The brief.'))")
+        self.assertIn("You are implement-10, a session of the implementer", held)
+        self.assertNotIn("## How you work", held)
+        # one given its protocol rendered with its own values is not: a fork of it is given the protocol whole
+        self.w.session("implement-11", "implementer", "i11", state="done", live=False, protocol_sha=sha,
+                       protocol_role="implementer", protocol_rendered=True)
+        self.w.session("implement-12", "implementer", "i12", origin="implement-11")
+        self.assertIn("## How you work", self.py("print(v2.render('implementer', NAME='implement-12', ID='12', "
+                                                  "BRIEF='The brief.'))"))
+
+    def test_the_planner_is_given_what_changed_in_the_graph_and_the_handoff_since_the_knowledge_base_held_them(self):
+        self.w.task("2", subject="The second")
+        graph = self.py("print(v2.graph_text())")
+        (self.w.state / "graphs").mkdir()
+        (self.w.state / "graphs" / "kb-1.md").write_text(graph)
+        st = self.w.st()
+        st["sessions"]["kb-1"]["graph_copy"] = True
+        st["sessions"]["plan-4"] = dict(role="planner", origin="kb-1", name="plan-4")
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.assertIn("nothing in it has changed since", self.py("print(v2.graph_for('plan-4'))"))
+        self.w.task("3", subject="A third task")
+        told = self.py("print(v2.graph_for('plan-4'))")
+        self.assertIn("A third task", told)
+        self.assertNotIn("The second", told)                           # held, not given again
+        # HANDOFF.md's Now and Open: what changed since the knowledge base read the file
+        self.w.write("HANDOFF.md", "# Handoff\n\n## Now\nWork on T3.\n\n## Open\n- Q1\n")
+        (self.w.state / "kb-1-handoff.md").write_text("# Handoff\n\n## Now\nWork on T3.\n\n## Open\n- Q0\n")
+        parts = self.py("print(v2.handoff_parts('kb-1'))")
+        self.assertIn("### Now\n(as you hold it from the knowledge base: unchanged", parts)
+        self.assertIn("- Q1", parts)
+        self.assertIn("(taken out: - Q0)", parts)
+        self.assertNotIn("Work on T3", parts)
+
+    def test_the_knowledge_base_holds_the_planner_s_protocol_and_graph_and_takes_their_changes_with_the_notes(self):
+        self.py("v2.kb_build()")
+        kb = self.w.st()["kb_building"]
+        (fork,) = self.forks(kb)
+        self.assertIn("## The planner's protocol, as each of its sessions receives it", fork[-1])
+        self.assertIn("## The consultant's protocol, as each of its sessions receives it", fork[-1])
+        self.assertIn("## The graph as it stood when you were built", fork[-1])
+        self.assertEqual(set(self.s(kb)["protocol_shas"]), {"planner", "consultant"})
+        self.w.reply(self.s(kb)["sid"], "INTEGRATED")
+        self.py("v2.kb_care()")
+        self.w.task("7", subject="Made since")
+        st = self.w.st()
+        st["sessions"][kb]["protocol_shas"]["planner"] = "old-planner"
+        (self.w.state / "role-protocols" / "old-planner.md").write_text(
+            self.py("print(v2.generic_protocol('planner'))") + "\n\nA planner's paragraph taken out since.")
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.set_st(notes=["a planner's note"])
+        self.py("v2.kb_care()")
+        message = self.resumes(self.s(kb)["sid"])[-1][-1]
+        self.assertIn("## The graph, as changed since you last held it", message)
+        self.assertIn("Made since", message)
+        self.assertIn("Taken out: A planner's paragraph taken out since.", message)
+        self.w.reply(self.s(kb)["sid"], "INTEGRATED")
+        self.py("v2.kb_care()")
+        self.assertEqual(self.s(kb)["protocol_shas"]["planner"], self.py("print(v2.protocol_sha('planner'))"))
+        self.assertIn("Made since", (self.w.state / "graphs" / f"{kb}.md").read_text())
+
+    def test_the_task_designer_s_layer_holds_the_graph_and_its_forks_are_given_what_changed_in_it(self):
+        (self.w.state / "role-layers").write_text("task-designer\n")
+        self.py("v2.role_layer_build('task-designer', 'the test')")
+        (layer,) = self.forks("layer-")
+        self.assertIn("## The graph as it stood when this layer was built", layer[-1])
+        self.assertTrue(self.s("layer-task-designer")["graph_copy"])
+        st = self.w.st()
+        st["sessions"]["brief-5"] = dict(role="task-designer", origin="layer-task-designer", name="brief-5")
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.task("6", subject="Briefed since")
+        told = self.py("print(v2.graph_for('brief-5'))")
+        self.assertIn("as your role's reasoning layer holds it", told)
+        self.assertIn("Briefed since", told)
+
+    def test_a_session_reads_what_changed_in_what_it_holds(self):
+        self.w.session("implement-4", "implementer", "i4", origin="max")
+        self.assertIn("(nothing you hold has changed since you took it in)",
+                      self.w.v2("read", "changes", env=self.w.as_session("i4")))
+        self.assertIn("(nothing of those you hold has changed", self.w.v2("read", "changes:Ready",
+                                                                           env=self.w.as_session("i4")))
+
+    def test_the_sweep_keeps_the_protocol_copies_and_graphs_a_session_holds(self):
+        sha = self.py("print(v2.keep_protocol('implementer'))")
+        (self.w.state / "role-protocols" / "unheld.md").write_text("an old protocol no session holds")
+        (self.w.state / "role-protocols" / "held-sha.md").write_text("an old protocol a layer holds")
+        (self.w.state / "graphs").mkdir()
+        (self.w.state / "graphs" / "kb-1.md").write_text("- 1 [pending] (build) x; after -")
+        (self.w.state / "graphs" / "kb-0.md").write_text("- 1 [pending] (build) x; after -")
+        st = self.w.st()
+        st["sessions"]["layer-x"] = dict(role="role-layer", protocol_sha="held-sha", layer_state="sealed")
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        gone = self.py("print(sorted(v2.tidied()))")
+        self.assertIn("role-protocols/unheld.md", gone)
+        self.assertNotIn("role-protocols/held-sha.md", gone)
+        self.assertNotIn(f"role-protocols/{sha}.md", gone)              # the current one, whoever holds it
+        self.assertIn("graphs/kb-0.md", gone)
+        self.assertNotIn("graphs/kb-1.md", gone)
+
+    def test_a_session_s_held_text_is_what_it_took_in_or_forked(self):
+        self.w.base("high", sid="high-sid")
+        (self.w.state / "high-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "base": "high-sid", "model": "m", "effort": "high", "flags": fakes.LEAN}))
+        (self.w.state / "high-delta.json").write_text(json.dumps(
+            {"layer": "layer-sid", "base": "high-sid", "top": "high-text-2", "sessionId": "dsid", "session_len": 1,
+             "stack": [{"id": "high-text-1", "sessionId": "dsid"}, {"id": "high-text-2"}]}))
+        (self.w.state / "layer-high-text-2-held.json").write_text(json.dumps({"top": "high-text-2", "files": {}}))
+        st = self.w.st()
+        st["sessions"].update({
+            "implement-4": dict(role="implementer", origin="high", origin_sid="dsid"),
+            "churn-x": dict(role="role-churn", origin="layer-x", delta_sid="high-text-2"),
+            "fix-5": dict(role="fixer", origin="churn-x"),
+            "kb-3": dict(role="kb", origin="max", holds_node="max-text-4"),
+            "plan-6": dict(role="planner", origin="kb-3"),
+            "implement-7": dict(role="implementer", origin="high:layer", origin_sid="layer-sid")})
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        code = ("s = v2.peek()['sessions']\nprint([v2.held_node(s[n], s) for n in "
+                "('implement-4', 'fix-5', 'plan-6', 'implement-7')])")
+        self.assertEqual(self.py(code), "['high-text-1', 'high-text-2', 'max-text-4', None]")
+
+
 class RoleLayerTests(Flow):
     """The per-role reasoning layer (the owner, 2026-09-23: built behind a switch, which the owner turns on to test):
     a fork of the role's base that reasons once over what the run has shown of the role, which the role's sessions
@@ -3793,6 +4228,50 @@ class RoleLayerTests(Flow):
         self.assertEqual(impl[impl.index("--resume") + 1], "base-sid")
         self.assertNotIn("reasoning layer", impl[-1])
 
+    def test_a_fork_of_a_layer_is_given_its_own_values_and_not_its_protocol_again(self):
+        # the layer holds the protocol whole, each value a placeholder; its fork holding it again was about 8K tokens
+        # in every request of every session of the role (2026-09-23)
+        (self.w.state / "role-layers").write_text("implementer\n")
+        self.w.v2("dispatch")
+        (layer,) = self.forks("layer-")
+        self.assertIn("## How you work", layer[-1])
+        self.assertIn("task <ID>", layer[-1])
+        self.w.reply(self.s("layer-implementer")["sid"], "ROLE-LAYER READY")
+        self.w.v2("dispatch")
+        self.w.task("2", description=BRIEF.replace("Kind: build", "Kind: build\nSubject: the second"))
+        self.w.set_st(queue=["2"])
+        st = self.w.st()
+        st["sessions"]["implement-1"]["state"] = "done"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        (fork,) = [f for f in self.forks("implement-") if f[f.index("-n") + 1] != "implement-1"]
+        message = fork[-1]
+        self.assertIn("your role's reasoning layer holds above", message)
+        self.assertIn("- <ID>: 2", message)
+        self.assertIn("the reasoning of layer-implementer, your role's reasoning layer", message)
+        self.assertNotIn("## How you work", message)                    # the protocol is the layer's, once
+        self.assertLess(len(message), len(layer[-1]) // 2)
+
+    def test_a_layer_holding_another_protocol_is_due_and_its_forks_are_given_the_protocol_whole(self):
+        (self.w.state / "role-layers").write_text("implementer\n")
+        self.w.v2("dispatch")
+        self.w.reply(self.s("layer-implementer")["sid"], "ROLE-LAYER READY")
+        self.w.v2("dispatch")
+        st = self.w.st()
+        st["sessions"]["layer-implementer"]["protocol_sha"] = "another"   # built before the protocol changed
+        st["sessions"]["implement-1"]["state"] = "done"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.task("2")
+        self.w.set_st(queue=["2"])
+        code = f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; print(v2.role_layer_due(v2.peek(), 'implementer'))"
+        due = subprocess.run([sys.executable, "-c", code], env=self.w.env, capture_output=True, text=True).stdout
+        self.assertIn("protocol has changed", due)
+        self.w.v2("dispatch")
+        for fork in self.forks("implement-"):
+            if fork[fork.index("-n") + 1] != "implement-1" and "--resume" in fork \
+                    and fork[fork.index("--resume") + 1] == self.s("layer-implementer")["sid"]:
+                self.assertIn("## How you work", fork[-1])
+
     def test_a_layer_is_built_when_its_role_is_wanted_sealed_when_it_has_reasoned_and_forked_by_the_role(self):
         (self.w.state / "role-layers").write_text("implementer\n")
         self.w.v2("dispatch")
@@ -3800,8 +4279,9 @@ class RoleLayerTests(Flow):
         self.assertEqual(layer[layer.index("--resume") + 1], "base-sid")
         self.assertIn("You are layer-implementer, the reasoning layer of the implementer", layer[-1])
         self.assertIn("## The implementer's protocol, as each of its sessions receives it", layer[-1])
-        self.assertIn("No session of the implementer has ended yet", layer[-1])  # the evidence, read in the background
-        self.assertIn("End your reply with the line `ROLE-LAYER READY`", layer[-1])
+        self.assertIn("No session of the implementer on claude-opus-5-5 has ended yet", layer[-1])  # the evidence
+        self.assertIn("with the single line `ROLE-LAYER READY`", layer[-1])
+        self.assertIn("no one reads what you write", layer[-1])                 # it reasons, and writes nothing
         self.assertNotIn("{", re.sub(r"\{[^A-Z]", "", layer[-1].split("## What the run")[0]))  # its protocol filled
         (impl,) = self.forks("implement-")                              # meanwhile the role forks its base
         self.assertEqual(impl[impl.index("--resume") + 1], "base-sid")
@@ -3839,7 +4319,9 @@ class RoleLayerTests(Flow):
         (self.w.state / "v2.json").write_text(json.dumps(st))
         self.w.v2("dispatch")
         last = [f for f in self.forks("implement-")][-1]
-        self.assertEqual(last[last.index("--resume") + 1], "base-sid-2")        # not the layer over the old base
+        # the layer serves until its successor seals: it holds the content the rebuilt base took in, and its fork is
+        # told what changed since
+        self.assertEqual(last[last.index("--resume") + 1], self.s("layer-implementer")["sid"])
 
     def test_a_layer_uses_no_tool_is_held_while_its_role_is_wanted_and_let_go_when_its_switch_is_off(self):
         (self.w.state / "role-layers").write_text("implementer")
@@ -3847,7 +4329,7 @@ class RoleLayerTests(Flow):
         said = self.w.hook("work_meter.py", "guard", {"session_id": self.s("layer-implementer")["sid"], "tool_name": "Bash",
                                                       "tool_input": {"command": "cat HANDOFF.md"}, "cwd": str(self.w.project),
                                                       "hook_event_name": "PreToolUse"})[1]
-        self.assertIn("A reasoning layer uses no tool", json.dumps(said))
+        self.assertIn("A reasoning layer or a churn uses no tool", json.dumps(said))
         self.assertIsNone(self.w.hook("ctx_gauge.py", "stop", {"session_id": self.s("layer-implementer")["sid"],
                                                                "hook_event_name": "Stop"})[1])  # its reply ends its turn
         self.assertEqual(self.held("layer-implementer"), "the implementer's reasoning layer, reasoning")
@@ -3855,9 +4337,12 @@ class RoleLayerTests(Flow):
         self.w.v2("dispatch")
         self.assertEqual(self.held("layer-implementer"), "the implementer's reasoning layer")  # pinged while wanted
         st = self.w.st()
-        st["role_layers"]["implementer"]["wanted"] = time.time() - v2.ROLE_LAYER_IDLE - 60
+        st["sessions"]["layer-implementer"]["used"] = time.time() - 3 * v2.PING_AGE - 60
         (self.w.state / "v2.json").write_text(json.dumps(st))
-        self.assertEqual(self.held("layer-implementer"), "None")          # not wanted for long: its pings stop
+        self.assertEqual(self.held("layer-implementer"), "the implementer's reasoning layer")  # 3 pings < a build
+        st["sessions"]["layer-implementer"]["used"] = time.time() - 4 * v2.PING_AGE - 60
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.assertEqual(self.held("layer-implementer"), "None")          # 4 pings cost more than building it again
         (self.w.state / "role-layers").unlink()
         self.w.v2("dispatch")
         self.assertTrue(self.s("layer-implementer").get("released"))
@@ -3900,6 +4385,7 @@ class RoleLayerTests(Flow):
         text = (self.w.state / "role-evidence/implementer.md").read_text()
         self.assertIn("the last 1 sessions of the implementer", text)
         self.assertIn("requests: median 2 (from 2 to 2); before the first change: median 1", text)
+        self.assertIn("- batching: 1.0 operations a request; 0 of 2 requests began where the protocol puts them", text)
         self.assertIn("their tasks: 1 of 1 rejected at least once", text)
         self.assertIn("One change in this call: batch them.", text)            # what it was told
         self.assertNotIn("Since your last production", text)                   # not its counters
@@ -3908,6 +4394,11 @@ class RoleLayerTests(Flow):
         self.assertNotIn("copied-from-the-base", text)
         self.assertIn("- task 5 (implementer), by review-5", text)
         self.assertIn("- `ready` duplicates `base_def`", text)                  # the findings as given
+        # the content its sessions will work in: the tasks ahead, with what their briefs name, and what it did lately
+        self.assertIn("### The work ahead: the tasks the implementer's sessions will take next", text)
+        self.assertIn("- task 1 (build, queued): Readiness of calls", text)
+        self.assertIn("### What the implementer's last sessions worked on\n- task 5", text)
+        self.assertEqual(json.loads((self.w.state / "role-evidence/implementer.json").read_text()), {"ahead": ["1"]})
         code, out, err = self.w.run("role_evidence.py", "reviewer")
         self.assertIn("now done, rejected 1 time(s)", (self.w.state / "role-evidence/reviewer.md").read_text())
         self.w.write(".build/tasks/5/review.md", "Verdict: accept\n## Summary\nfixed\n## Findings\n- fixed\n")
@@ -3916,6 +4407,383 @@ class RoleLayerTests(Flow):
         self.w.run("role_evidence.py", "implementer")
         self.assertIn("(none among the last reviews)", (self.w.state / "role-evidence/implementer.md").read_text())
         # the file holds its re-review's accept now, not the findings of the rejection
+
+    def test_a_layer_is_built_again_once_the_work_ahead_it_reasoned_over_is_done(self):
+        (self.w.state / "role-layers").write_text("implementer")
+        self.w.v2("dispatch")
+        self.assertIn("work out from what you hold", self.forks("layer-")[0][-1])  # the content, not only the evidence
+        self.assertIn("- task 1 (build", self.forks("layer-")[0][-1])
+        self.w.reply(self.s("layer-implementer")["sid"], "## The work ahead\n…\n## Practices\n…\nROLE-LAYER READY")
+        self.w.v2("dispatch")
+        self.assertEqual(self.w.st()["role_layers"]["implementer"]["ahead"], ["1"])
+        self.w.task("1", status="completed")                           # the work it reasoned over is done
+        self.w.task("2")
+        self.w.set_st(queue=["2"])
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("layer-")), 1)                  # not before its age: a build is about 200K
+        st = self.w.st()
+        st["role_layers"]["implementer"]["built"] = time.time() - v2.ROLE_LAYER_AGE - 60
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("layer-")), 2)
+        self.assertIn("or half the work ahead it reasoned over is done", (self.w.state / "v2.log").read_text())
+
+    def test_the_four_layers_the_role_layer_on_the_medium_layer_its_churn_above_outliving_a_delta_rebuild(self):
+        # the owner, 2026-09-23: the base, the medium layer, the churn and the role layer, placed coherently — each
+        # layer under the ones that change faster: a delta rebuild (up to three an hour) must not take the role layer
+        (self.w.state / "max-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "model": "claude-opus-5[1m]", "effort": "max", "context": 560_000,
+             "base": "base-sid", "flags": fakes.LEAN, "sealed": "2026-09-23T08:00:00"}))
+        text = self.w.write(".build/delta-1.md", "== theories/Ready.thy\ntheory Ready imports Main begin end\n")
+        (self.w.state / "max-delta.json").write_text(json.dumps(
+            {"sessionId": "delta-sid", "name": "max-delta-1", "layer": "layer-sid", "base": "base-sid",
+             "model": "claude-opus-5[1m]", "effort": "max", "flags": fakes.LEAN, "digest": "d1", "text": str(text),
+             "context": 580_000}))
+        (self.w.state / "deltas").write_text("max\n")
+        (self.w.state / "layer-delta-sid-manifest.json").write_text(json.dumps({"delta": True, "files": {}}))
+        (self.w.state / "role-layers").write_text("implementer")
+        self.w.v2("dispatch")
+        (layer,) = self.forks("layer-")
+        self.assertEqual(layer[layer.index("--resume") + 1], "layer-sid")        # the medium layer, not the delta
+        (impl,) = self.forks("implement-")
+        self.assertEqual(impl[impl.index("--resume") + 1], "delta-sid")          # meanwhile the role forks the delta
+        self.w.reply(self.s("layer-implementer")["sid"], "ROLE-LAYER READY")
+        self.w.v2("dispatch")                                                     # sealed
+        self.assertEqual(self.forks("churn-"), [])                                # no fork of it lacks the delta yet
+        self.behind("implementer", 100)                                           # forks of the bare layer have
+        self.w.v2("dispatch")                                                     # paid for its churn
+        (churn,) = self.forks("churn-")
+        self.assertEqual(churn[churn.index("--resume") + 1], self.s("layer-implementer")["sid"])
+        self.assertIn("Reply with exactly HELD d1", churn[-1])
+        self.assertIn("theory Ready imports Main begin end", churn[-1])           # the shared delta's text, as it is
+        self.w.reply(self.s("churn-implementer")["sid"], "ok")
+        self.w.v2("dispatch")
+        self.assertNotEqual(self.s("churn-implementer").get("layer_state"), "sealed")  # not before it holds its delta
+        self.w.reply(self.s("churn-implementer")["sid"], "HELD d1")
+        self.w.v2("dispatch")
+        c = self.s("churn-implementer")
+        self.assertEqual((c["layer_state"], c.get("snapshot")), ("sealed", True))
+        self.assertTrue((self.w.state / f"layer-{c['sid']}-manifest.json").exists())  # told what changed after it
+        self.w.task("2")
+        self.w.set_st(queue=["2"])
+        st = self.w.st()
+        st["sessions"]["implement-1"]["state"] = "done"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        fork = [f for f in self.forks("implement-") if f[f.index("-n") + 1] != "implement-1"][-1]
+        self.assertEqual(fork[fork.index("--resume") + 1], c["sid"])             # the role's sessions fork its churn
+        self.assertIn("the reasoning of layer-implementer", fork[-1])
+        self.assertNotIn("no snapshot", fork[-1])                                # what changed is counted from the churn
+        # the shared delta rebuilt: the churn behind it still serves, its forks told what changed after it, until
+        # what that has cost them reaches a churn's build; then a new churn over the same role layer, which stands
+        text.write_text("== theories/Ready.thy\ntheory Ready imports Main begin\nlemma x: True by simp\nend\n")
+        delta = json.loads((self.w.state / "max-delta.json").read_text())
+        (self.w.state / "max-delta.json").write_text(json.dumps(dict(delta, sessionId="delta-sid-2", digest="d2",
+                                                                     tokens=6000)))
+        st = self.w.st()
+        st["sessions"]["churn-implementer"].update(build_cost=12_000, delta_size=2000)  # 4,000 moved: 8K a fork
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("churn-")), 1)                            # no fork behind it yet
+        self.w.task("4")
+        self.w.set_st(queue=["4"])
+        st = self.w.st()
+        for n in st["sessions"]:
+            if n.startswith("implement-"):
+                st["sessions"][n]["state"] = "done"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        behind = [f for f in self.forks("implement-")][-1]
+        self.assertEqual(behind[behind.index("--resume") + 1], c["sid"])         # the churn behind still serves
+        self.assertEqual(self.w.st()["role_layers"]["implementer"]["behind_forks"], 1)
+        self.assertEqual(len(self.forks("churn-")), 1)                            # 16K owed, under its 20K build
+        st = self.w.st()
+        st["role_layers"]["implementer"]["behind_forks"] = 2                      # a second fork behind: 32K owed
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("layer-")), 1)                            # the role layer outlives it
+        self.assertEqual([f[f.index("-n") + 1] for f in self.forks("churn-")], ["churn-implementer", "churn-implementer.2"])
+        self.assertIn("lemma x: True by simp", self.forks("churn-")[-1][-1])
+        # the medium layer refreshed: the role layer is built again over it, the standing one serving meanwhile
+        layer_rec = json.loads((self.w.state / "max-layer.json").read_text())
+        (self.w.state / "max-layer.json").write_text(json.dumps(dict(layer_rec, sessionId="layer-sid-2")))
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("layer-")), 2)
+        self.assertEqual(self.forks("layer-")[-1][self.forks("layer-")[-1].index("--resume") + 1], "layer-sid-2")
+        self.assertEqual(self.py("print(v2.role_layer_of('implementer'), v2.role_layer_current('implementer'))"),
+                         "layer-implementer None")                              # it serves; no churn is built over it
+        churns = len(self.forks("churn-"))
+        delta = json.loads((self.w.state / "max-delta.json").read_text())
+        (self.w.state / "max-delta.json").write_text(json.dumps(dict(delta, layer="layer-sid-2", digest="d3")))
+        st = self.w.st()
+        st["role_layers"]["implementer"]["behind_forks"] = 9
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("churn-")), churns)                      # the new delta is not the old layer's
+
+    def test_a_churn_takes_the_delta_s_increments_as_an_increment_of_its_own(self):
+        # the owner, 2026-09-23: the delta layered, each message written once — a churn over a role layer too
+        (self.w.state / "max-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "model": "claude-opus-5[1m]", "effort": "max", "context": 560_000,
+             "base": "base-sid", "flags": fakes.LEAN, "sealed": "2026-09-23T08:00:00"}))
+        text = self.w.write(".build/delta-1.md", "== theories/Ready.thy\ntheory Ready imports Main begin end\n")
+        (self.w.state / "max-delta.json").write_text(json.dumps(
+            {"sessionId": "delta-sid", "name": "max-delta-1", "layer": "layer-sid", "base": "base-sid",
+             "model": "claude-opus-5[1m]", "effort": "max", "flags": fakes.LEAN, "digest": "d1", "text": str(text),
+             "context": 580_000, "tokens": 4000}))
+        (self.w.state / "deltas").write_text("max\n")
+        (self.w.state / "layer-delta-sid-manifest.json").write_text(json.dumps({"delta": True, "files": {}}))
+        (self.w.state / "role-layers").write_text("implementer")
+        self.w.v2("dispatch")
+        self.w.reply(self.s("layer-implementer")["sid"], "ROLE-LAYER READY")
+        self.w.v2("dispatch")
+        self.behind("implementer", 100)
+        self.w.v2("dispatch")
+        self.w.reply(self.s("churn-implementer")["sid"], "HELD d1")
+        self.w.v2("dispatch")
+        churn_sid = self.s("churn-implementer")["sid"]
+        later = self.w.write(".build/delta-2.md", "== theories/Later.thy\nlemma later: True by simp\n")
+        stack = [{"sessionId": "delta-sid", "text": str(text), "tokens": 4000, "kind": "delta"},
+                 {"sessionId": "delta-sid-2", "text": str(later), "tokens": 500, "kind": "increment"}]
+        (self.w.state / "max-delta.json").write_text(json.dumps(dict(json.loads((self.w.state / "max-delta.json")
+                                                                                .read_text()),
+                                                                     sessionId="delta-sid-2", digest="d2", tokens=4500,
+                                                                     stack=stack, text=str(later))))
+        (self.w.state / "layer-delta-sid-2-manifest.json").write_text(json.dumps({"delta": True, "files": {}}))
+        self.py("v2.role_churn_care('implementer', force=True)")
+        last = self.forks("churn-")[-1]
+        self.assertEqual(last[last.index("--resume") + 1], churn_sid)             # the churn itself, not its layer
+        self.assertIn("lemma later: True by simp", last[-1])
+        self.assertNotIn("theory Ready", last[-1])                                # the message it holds, not again
+        grown = self.s("churn-implementer.2")
+        self.assertEqual((grown["origin"], grown["over"], grown["stack_len"]),
+                         ("churn-implementer", "layer-implementer", 2))
+        self.w.reply(grown["sid"], "HELD d2")
+        self.w.v2("dispatch")
+        self.assertEqual(self.py("print(v2.role_churn_of('implementer'))"), "churn-implementer.2")  # its role forks it
+
+    def test_a_judging_role_s_layer_stands_across_the_chain_s_increments_and_its_churn_holds_them(self):
+        # the owner, 2026-09-23, yes: the judging roles take the chain's increments as a churn over their layer, which
+        # is reasoned again only when the chain is written anew or the parts are refreshed
+        (self.w.state / "max-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "model": "claude-opus-5[1m]", "effort": "max", "context": 560_000,
+             "base": "base-sid", "flags": fakes.LEAN, "sealed": "2026-09-23T08:00:00"}))
+        text = self.w.write(".build/delta-1.md", "== theories/Ready.thy\ntheory Ready imports Main begin end\n")
+        first = {"sessionId": "delta-sid", "text": str(text), "tokens": 4000, "kind": "delta"}
+        (self.w.state / "max-delta.json").write_text(json.dumps(
+            {"sessionId": "delta-sid", "name": "max-delta-1", "layer": "layer-sid", "base": "base-sid",
+             "model": "claude-opus-5[1m]", "effort": "max", "flags": fakes.LEAN, "digest": "d1", "text": str(text),
+             "context": 580_000, "tokens": 4000, "stack": [first], "parts": {"catalogue": 4000},
+             "old_forms": {"catalogue": 900}}))
+        (self.w.state / "deltas").write_text("max\n")
+        (self.w.state / "layer-delta-sid-manifest.json").write_text(json.dumps({"delta": True, "files": {}}))
+        (self.w.state / "role-layers").write_text("reviewer")
+        self.py("v2.role_layer_build('reviewer', 'the test')")
+        (layer,) = self.forks("layer-")
+        self.assertEqual(layer[layer.index("--resume") + 1], "delta-sid")         # over the chain's top
+        built = self.s("layer-reviewer")
+        self.assertEqual((built["digest"], built["stack_base"], built["stack_len"], built["delta_size"]),
+                         ("d1", "delta-sid", 1, 4000))
+        self.w.reply(built["sid"], "ROLE-LAYER READY")
+        self.py("v2.role_layer_care()")
+        st = self.w.st()
+        st["sessions"]["layer-reviewer"]["context"] = 590_000                     # what a churn over it reads
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.assertEqual(self.py("print(v2.role_layer_of('reviewer'))"), "layer-reviewer")
+        self.py("v2.role_churn_care('reviewer', force=True)")
+        self.assertEqual(self.forks("churn-"), [])                                # it holds the chain to its top
+        # the chain grows by an increment: the layer stands, its forks are behind it
+        later = self.w.write(".build/delta-2.md", "== theories/Later.thy\nlemma later: True by simp\n")
+        (self.w.state / "max-delta.json").write_text(json.dumps(dict(
+            json.loads((self.w.state / "max-delta.json").read_text()), sessionId="delta-sid-2", digest="d2",
+            tokens=4500, text=str(later), stack=[first, {"sessionId": "delta-sid-2", "text": str(later), "tokens": 500,
+                                                         "kind": "increment"}], old_forms={"catalogue": 1000})))
+        (self.w.state / "layer-delta-sid-2-manifest.json").write_text(json.dumps({"delta": True, "files": {}}))
+        self.assertEqual(self.py("print(v2.role_layer_of('reviewer'), v2.role_layer_due(v2.peek(), 'reviewer'))"),
+                         "layer-reviewer None")                                   # not due for an increment
+        self.py("v2.launch('reviewer', '5', lambda n: 'You are review-5.', tree=None)")
+        self.assertEqual(self.w.st()["role_layers"]["reviewer"]["behind_forks"], 1)   # a fork behind the top
+        review = self.s("review-5")
+        self.assertEqual((review["origin"], review["old_forms"]), ("layer-reviewer", {"catalogue": 900}))
+        self.py("v2.role_churn_care('reviewer')")
+        self.assertEqual(self.forks("churn-"), [])                                # by its rule: 1K owed, 60K a build
+        st = self.w.st()
+        st["role_layers"]["reviewer"]["behind_forks"] = 60                        # 60K owed
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.py("v2.role_churn_care('reviewer')")
+        (churn,) = self.forks("churn-")
+        self.assertEqual(churn[churn.index("--resume") + 1], built["sid"])       # grown from the layer itself
+        self.assertIn("lemma later: True by simp", churn[-1])
+        self.assertNotIn("theory Ready", churn[-1])                               # the message the layer holds, not again
+        grown = self.s("churn-reviewer")
+        self.assertEqual((grown["origin"], grown["over"], grown["stack_len"]), ("layer-reviewer", "layer-reviewer", 2))
+        self.w.reply(grown["sid"], "HELD d2")
+        self.py("v2.role_churn_care('reviewer')")
+        self.assertEqual(self.py("print(v2.role_churn_of('reviewer'))"), "churn-reviewer")
+        self.assertEqual(self.s("churn-reviewer")["old_forms"], {"catalogue": 1000})  # what it holds, for its forks
+        # the chain written anew: the reasoning is over a chain that no longer stands, and is due
+        (self.w.state / "max-delta.json").write_text(json.dumps(dict(
+            json.loads((self.w.state / "max-delta.json").read_text()), sessionId="delta-sid-3", digest="d3",
+            stack=[{"sessionId": "delta-sid-3", "text": str(later), "tokens": 4500, "kind": "delta"}])))
+        self.assertEqual(self.py("print(v2.role_layer_of('reviewer'), v2.role_churn_of('reviewer'))"), "None None")
+        self.assertIn("replaced", self.py("print(v2.role_layer_due(v2.peek(), 'reviewer'))"))
+
+    def test_a_judging_role_s_layer_over_the_parts_stands_under_the_chain_s_first_message(self):
+        # the simulation of the run of 09-21/22: xhigh's first message made the reviewer's layer, built over the parts
+        # before the chain had a message, due again — the first message is an increment to it like any later one
+        (self.w.state / "max-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "model": "claude-opus-5[1m]", "effort": "max", "context": 560_000,
+             "base": "base-sid", "flags": fakes.LEAN, "sealed": "2026-09-23T08:00:00"}))
+        (self.w.state / "deltas").write_text("max\n")
+        (self.w.state / "role-layers").write_text("reviewer")
+        self.py("v2.role_layer_build('reviewer', 'the test')")
+        (layer,) = self.forks("layer-")
+        self.assertEqual(layer[layer.index("--resume") + 1], "layer-sid")         # no chain yet: over the parts
+        self.w.reply(self.s("layer-reviewer")["sid"], "ROLE-LAYER READY")
+        self.py("v2.role_layer_care()")
+        st = self.w.st()
+        st["sessions"]["layer-reviewer"]["context"] = 590_000
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        text = self.w.write(".build/delta-1.md", "== theories/Ready.thy\ntheory Ready imports Main begin end\n")
+        (self.w.state / "max-delta.json").write_text(json.dumps(
+            {"sessionId": "delta-sid", "name": "max-delta-1", "layer": "layer-sid", "base": "base-sid",
+             "model": "claude-opus-5[1m]", "effort": "max", "flags": fakes.LEAN, "digest": "d1", "text": str(text),
+             "context": 580_000, "tokens": 4000, "stack": [{"sessionId": "delta-sid", "text": str(text), "tokens": 4000,
+                                                          "kind": "delta"}]}))
+        (self.w.state / "layer-delta-sid-manifest.json").write_text(json.dumps({"delta": True, "files": {}}))
+        self.assertEqual(self.py("print(v2.role_layer_of('reviewer'), v2.role_layer_due(v2.peek(), 'reviewer'))"),
+                         "layer-reviewer None")                                   # it stands under the first message
+        self.py("v2.launch('reviewer', '5', lambda n: 'You are review-5.', tree=None)")
+        self.assertEqual(self.w.st()["role_layers"]["reviewer"]["behind_forks"], 1)   # its fork lacks that message
+        st = self.w.st()
+        st["role_layers"]["reviewer"]["behind_forks"] = 60
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.py("v2.role_churn_care('reviewer')")
+        (churn,) = self.forks("churn-")
+        self.assertEqual(churn[churn.index("--resume") + 1], self.s("layer-reviewer")["sid"])
+        self.assertIn("theory Ready imports Main begin end", churn[-1])           # the whole chain, over the layer
+
+    def test_an_executing_role_s_first_churn_waits_for_its_forks_to_pay_for_it(self):
+        # the simulation of the run of 09-21/22: built at once, the investigator's churn was built twice in the night
+        # and forked by nobody, 71K each — the first churn over an executing role's layer follows the rule too
+        (self.w.state / "max-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "model": "claude-opus-5[1m]", "effort": "max", "context": 560_000,
+             "base": "base-sid", "flags": fakes.LEAN, "sealed": "2026-09-23T08:00:00"}))
+        text = self.w.write(".build/delta-1.md", "== theories/Ready.thy\ntheory Ready imports Main begin end\n")
+        (self.w.state / "max-delta.json").write_text(json.dumps(
+            {"sessionId": "delta-sid", "name": "max-delta-1", "layer": "layer-sid", "base": "base-sid",
+             "model": "claude-opus-5[1m]", "effort": "max", "flags": fakes.LEAN, "digest": "d1", "text": str(text),
+             "context": 580_000, "tokens": 4000}))
+        (self.w.state / "deltas").write_text("max\n")
+        (self.w.state / "layer-delta-sid-manifest.json").write_text(json.dumps({"delta": True, "files": {}}))
+        (self.w.state / "role-layers").write_text("implementer")
+        self.py("v2.role_layer_build('implementer', 'the test')")
+        self.w.reply(self.s("layer-implementer")["sid"], "ROLE-LAYER READY")
+        self.py("v2.role_layer_care()")
+        self.assertEqual(self.forks("churn-"), [])                                # nothing has paid for it yet
+        st = self.w.st()
+        st["sessions"]["layer-implementer"]["context"] = 560_000                  # what a churn over it reads
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.py("v2.launch('implementer', '5', lambda n: 'You are implement-5.', tree=None)")
+        self.assertEqual(self.s("implement-5")["origin"], "layer-implementer")
+        self.assertEqual(self.w.st()["role_layers"]["implementer"]["behind_forks"], 1)   # it lacks the delta
+        self.py("v2.role_churn_care('implementer')")
+        self.assertEqual(self.forks("churn-"), [])                                # 8K owed, a build 64K
+        self.behind("implementer", 8)
+        self.py("v2.role_churn_care('implementer')")
+        (churn,) = self.forks("churn-")
+        self.assertEqual(churn[churn.index("--resume") + 1], self.s("layer-implementer")["sid"])
+
+    def test_the_owner_s_hand_builds_a_churn_its_rule_would_not_yet(self):
+        # the console's build (dashboard.build: role_churn_care with force): a churn behind the delta whose forks have
+        # cost nothing yet — never one that holds the delta standing
+        (self.w.state / "max-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "model": "claude-opus-5[1m]", "effort": "max", "context": 560_000,
+             "base": "base-sid", "flags": fakes.LEAN, "sealed": "2026-09-23T08:00:00"}))
+        text = self.w.write(".build/delta-1.md", "== theories/Ready.thy\ntheory Ready imports Main begin end\n")
+        (self.w.state / "max-delta.json").write_text(json.dumps(
+            {"sessionId": "delta-sid", "name": "max-delta-1", "layer": "layer-sid", "base": "base-sid",
+             "model": "claude-opus-5[1m]", "effort": "max", "flags": fakes.LEAN, "digest": "d1", "text": str(text),
+             "context": 580_000}))
+        (self.w.state / "deltas").write_text("max\n")
+        (self.w.state / "layer-delta-sid-manifest.json").write_text(json.dumps({"delta": True, "files": {}}))
+        (self.w.state / "role-layers").write_text("implementer")
+        self.w.v2("dispatch")
+        self.w.reply(self.s("layer-implementer")["sid"], "ROLE-LAYER READY")
+        self.w.v2("dispatch")
+        self.behind("implementer", 100)
+        self.w.v2("dispatch")
+        self.w.reply(self.s("churn-implementer")["sid"], "HELD d1")
+        self.w.v2("dispatch")
+        self.assertEqual(self.s("churn-implementer")["layer_state"], "sealed")
+        self.py("v2.role_churn_care('implementer', force=True)")
+        self.assertEqual(len(self.forks("churn-")), 1)                            # it holds the delta standing
+        delta = json.loads((self.w.state / "max-delta.json").read_text())
+        (self.w.state / "max-delta.json").write_text(json.dumps(dict(delta, sessionId="delta-sid-2", digest="d2",
+                                                                     tokens=6000)))
+        st = self.w.st()
+        st["sessions"]["churn-implementer"].update(build_cost=20_000, delta_size=2000)
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.py("v2.role_churn_care('implementer')")
+        self.assertEqual(len(self.forks("churn-")), 1)                            # by its rule: nothing owed yet
+        self.py("v2.role_churn_care('implementer', force=True)")
+        self.assertEqual([f[f.index("-n") + 1] for f in self.forks("churn-")], ["churn-implementer", "churn-implementer.2"])
+
+    def behind(self, role, forks):
+        """What the role's forks lacking the delta's messages have been counted (launch), as if that many had come."""
+        st = self.w.st()
+        st.setdefault("role_layers", {}).setdefault(role, {})["behind_forks"] = forks
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+
+    def py(self, code):
+        return subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2\n{code}"],
+                              env=self.w.env, capture_output=True, text=True).stdout.strip()
+
+    def test_the_shared_part_is_pinged_only_while_a_role_forks_it_and_a_cold_one_is_not_forked(self):
+        (self.w.state / "high-base.json").write_text(json.dumps(
+            {"sessionId": "high-sid", "model": "claude-opus-5[1m]", "effort": "high", "flags": fakes.LEAN}))
+        self.assertEqual(self.py("print(v2.shared_part_forked('high'), v2.shared_part_forked('max'))"), "True True")
+        (self.w.state / "role-layers").write_text("implementer fixer")   # both of high's roles, no layer yet
+        self.assertEqual(self.py("print(v2.shared_part_forked('high'))"), "True")
+        self.assertEqual(self.py("import unittest.mock as m\n"
+                                 "with m.patch.object(v2, 'role_layer_of', lambda r: 'layer-' + r):\n"
+                                 "    print(v2.shared_part_forked('high'), v2.shared_part_forked('max'))"),
+                         "False True")                                   # every role on its own: nobody forks it
+        code = subprocess.run([sys.executable, str(fakes.HERE / "v2.py"), "base-forked", "high"], env=self.w.env,
+                              capture_output=True).returncode
+        self.assertEqual(code, 0)
+        # a shared delta known cold is not forked: the medium layer is, which the delta's builds keep warm
+        (self.w.state / "max-layer.json").write_text(json.dumps(
+            {"sessionId": "layer-sid", "model": "claude-opus-5[1m]", "effort": "max", "base": "base-sid",
+             "flags": fakes.LEAN}))
+        (self.w.state / "max-delta.json").write_text(json.dumps(
+            {"sessionId": "delta-sid", "layer": "layer-sid", "base": "base-sid", "model": "claude-opus-5[1m]",
+             "effort": "max", "flags": fakes.LEAN, "digest": "d1"}))
+        (self.w.state / "deltas").write_text("max\n")
+        (self.w.state / "role-layers").unlink()
+        (self.w.state / "high-base.json").unlink()                       # the implementer forks max again (FALLBACK)
+        hit = self.w.state / "max-base.hit"
+        hit.write_text("")
+        os.utime(hit, (time.time() - v2.WARM_MAX - 60, time.time() - v2.WARM_MAX - 60))
+        self.w.v2("dispatch")
+        (impl,) = self.forks("implement-")
+        self.assertEqual(impl[impl.index("--resume") + 1], "layer-sid")
+
+    def test_a_request_s_operations_and_the_requests_the_protocol_puts_in_the_one_before(self):
+        import role_evidence as rev
+        self.assertEqual(rev.call_ops("grep -n a x.thy | head; sed -n 1,9p y.thy && cat z.md"), 3)  # a pipe is one
+        self.assertEqual(rev.call_ops(".claude/orchestration/v2.py change <<'EOF'\n=== write a\nx; y\n=== replace b\n"
+                                      "<<<<<<< SEARCH\nu\n=======\nv\n>>>>>>> REPLACE\n=== row A\nr\nEOF"), 3)
+        self.assertEqual(rev.call_ops("cd .build/trees/4 && true"), 1)
+        change = ".claude/orchestration/v2.py change <<'EOF'\n=== write a\nx\nEOF"
+        probe = "python3 -B tools/probe_theories.py --theory A --timeout 60"
+        self.assertTrue(rev.joinable([change], "written: a (whole)", [probe]))
+        self.assertTrue(rev.joinable([change], "written: a (whole)", [change]))
+        self.assertTrue(rev.joinable([change], "written: a", [".claude/orchestration/v2.py finalize 4"]))
+        self.assertFalse(rev.joinable([change], "refused, and nothing was changed", [change]))      # a correction
+        self.assertFalse(rev.joinable([change], "written.\n[the sources, as this change leaves them: …]", [change]))
+        self.assertFalse(rev.joinable([change], "written", ["sed -n 1,9p a"]))                       # it reads first
+        self.assertFalse(rev.joinable([change, probe], "written", [change]))                          # it was batched
 
     def test_the_switch_names_roles_or_all(self):
         with tempfile.TemporaryDirectory() as temp, patch.object(v2, "STATE", temp), \
@@ -4438,6 +5306,91 @@ class ReviewBesideCheckTests(Flow):
         self.assertEqual(self.run_v2("print(v2.pending_reviews(v2.peek()))").stdout.strip(), "[('23', '22')]")
 
 
+    def start_beside(self):
+        (self.w.state / "review-beside-check").write_text("")
+        self.w.v2("dispatch")                                        # the review starts while the check runs
+        st = self.w.st()
+        st["sessions"]["review-23"].update(task="23", reviews="22")
+        self.w.set_st(sessions=st["sessions"])
+        self.assertTrue(self.t("23").get("reviewing"))
+
+    def test_a_review_under_way_when_the_check_fails_still_counts_its_rejection_joins_the_fix(self):
+        # before, its verdict was refused ("not awaiting a verdict (it is fixing)") and the fixed work was reviewed
+        # from nothing
+        self.start_beside()
+        (self.w.state / "graph-held").write_text("the owner's order")   # no fix starts before the verdict comes
+        self.run_v2("v2.checked('22', False, '*** a proof failed')")
+        t = self.t("22")
+        self.assertEqual((t["stage"], t.get("reviews_going"), t.get("fixing")), ("fixing", ["23"], None))
+        self.assertIn("The check of task 22, beside which you review, failed", json.dumps(self.w.mail("review-23")))
+        said = self.verdict("reject", "1. The locus is stated twice.")
+        self.assertIn("rejected task 22 for review 23: its findings go into the fix round with the check's failure", said)
+        t = self.t("22")
+        self.assertIn("*** a proof failed", t["fix_text"])
+        self.assertIn("The locus is stated twice.", t["fix_text"])
+        self.assertEqual((t["rejections"], t.get("reviews_going")), (1, None))
+        self.assertTrue(self.ended("review-23"))
+
+    def test_a_rejection_under_way_reaches_the_session_already_fixing(self):
+        self.start_beside()
+        self.run_v2("v2.checked('22', False, '*** a proof failed')")
+        fixing = self.t("22")["fixing"]                              # its fix began at once, as a free slot takes it
+        self.assertTrue(fixing)
+        self.assertIn(f"its findings were sent to {fixing}", self.verdict("reject", "1. The row is stale."))
+        self.assertIn("The row is stale.", json.dumps(self.w.mail(fixing)))
+
+    def test_an_accept_under_way_when_the_check_fails_is_void_and_the_fixed_work_reviewed_again(self):
+        self.start_beside()
+        self.run_v2("v2.checked('22', False, '*** a proof failed')")
+        self.assertIn("void, since its check had failed", self.verdict("accept"))
+        r = self.t("23")
+        self.assertEqual((r.get("verdict"), r.get("round")), (None, None))
+        tasks = self.w.st()["tasks"]
+        tasks["22"]["stage"] = "checking"                           # the fix handed over: in its check again
+        self.w.set_st(tasks=tasks)
+        self.assertEqual(self.run_v2("print(v2.pending_reviews(v2.peek()))").stdout.strip(), "[('23', '22')]")
+
+    def test_an_accept_voided_by_the_failed_check_brings_the_fixed_work_back_to_its_reviewer(self):
+        # before, a voided accept left no one to resume (its verdict None) and nothing held its reviewer: a fresh one
+        # forked the middle base and read everything again
+        (self.w.state / "review-beside-check").write_text("")
+        self.w.write(".build/tasks/22/finalize.json", json.dumps({"files": ["theories/Locus.thy"], "check": "true"}))
+        self.w.write("theories/Locus.thy", "theory Locus imports Main begin end\n")
+        tasks = self.w.st()["tasks"]
+        tasks["23"]["reviewed_by"] = "review-23"                           # as start_review records its reviewer
+        self.w.set_st(tasks=tasks)
+        self.verdict("accept")
+        self.run_v2("v2.checked('22', False, '*** a proof failed')")
+        self.assertEqual(self.t("23").get("voided"), "its check failed after the accept")
+        held = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2, "
+                               "watchdog; st = v2.peek(); print(watchdog.held(st, 'review-23', st['sessions']['review-23']))"],
+                              env=self.w.env, capture_output=True, text=True).stdout.strip()
+        self.assertIn("its accept was voided by a failed check", held)
+        self.w.write("theories/Locus.thy", "theory Locus imports Main begin\nlemma fixed: True by simp\nend\n")
+        tasks = self.w.st()["tasks"]
+        tasks["22"]["stage"] = "checking"                                  # the fix handed over, beside its check
+        self.w.set_st(tasks=tasks)
+        self.w.v2("dispatch")
+        self.assertEqual([f for f in self.forks("review-")], [])           # no fresh reviewer
+        resumed = self.resumes(self.s("review-23")["sid"])[-1][3]
+        self.assertIn("The work of task 22 you accepted failed its check", resumed)
+        self.assertIn("+lemma fixed: True by simp", resumed)
+
+    def test_a_rejection_that_comes_while_the_fixed_work_is_checked_reaches_it_with_that_check(self):
+        self.start_beside()
+        self.run_v2("v2.checked('22', False, '*** a proof failed')")
+        tasks = self.w.st()["tasks"]
+        tasks["22"]["stage"] = "checking"                           # fixed and in its check again before the verdict
+        self.w.set_st(tasks=tasks)
+        self.assertIn("reach the task's session when the check of the fixed work ends",
+                      self.verdict("reject", "1. The locus is stated twice."))
+        self.assertEqual(self.t("22").get("rejections", 0), 0)
+        self.run_v2("v2.checked('22', True)")
+        t = self.t("22")
+        self.assertEqual((t["stage"], t["rejections"]), ("fixing", 1))
+        self.assertIn("The locus is stated twice.", t["fix_text"])
+
+
 class PlannerDepthTests(Flow):
     def setUp(self):
         super().setUp()
@@ -4558,6 +5511,14 @@ class GraphEditTests(Flow):
         self.assertEqual(self.w.read_task("20")["subject"], "alone, corrected")
         self.assertEqual(self.w.st()["queue"], ["21", "20"])
         self.assertIn("the order is set by plan-1: 2 task(s), where it held", (self.w.state / "v2.log").read_text())
+
+    def test_an_edit_s_order_drops_only_when_told(self):
+        self.w.set_st(queue=["5", "6"])
+        self.edit([{"queue": ["20"]}])
+        self.assertEqual(self.w.st()["queue"], ["20", "5", "6"])
+        self.assertIn("a queue operation is", self.edit([{"queue": ["20"], "dropUnnamed": "yes"}]))
+        self.edit([{"queue": ["6", "20"], "dropUnnamed": True}])
+        self.assertEqual(self.w.st()["queue"], ["6", "20"])
 
     def test_an_edit_that_would_leave_something_waiting_on_a_deleted_task_writes_nothing(self):
         before = self.ids()
@@ -5496,7 +6457,7 @@ class SandboxTests(Flow):
         try:
             claim.write_text(json.dumps({"task": "7", "why": "its final check advances the base heap",
                                          "pid": finalizer.pid, "at": time.time()}))
-            self.assertIn("asked of the supervisor", self.inside("implement-1", "measuring", "my timing"))
+            self.assertIn("asked of the supervisor", self.inside("implement-1", "measuring", "--exclusive", "my timing"))
             self.assertEqual(json.loads(claim.read_text())["task"], "7")  # still standing
             self.w.v2("dispatch")  # the supervisor, which sees the finalizer
             self.assertIn("task 7 holds the machine", json.dumps(self.w.mail("implement-1")))
@@ -5504,7 +6465,7 @@ class SandboxTests(Flow):
         finally:
             finalizer.kill()
             finalizer.wait()
-        self.inside("implement-1", "measuring", "my timing")
+        self.inside("implement-1", "measuring", "--exclusive", "my timing")
         self.w.v2("dispatch")  # the finalizer has ended: its claim falls, and the machine is the measurement's
         self.assertIn("the machine is yours", json.dumps(self.w.mail("implement-1")))
         self.assertEqual(json.loads(claim.read_text())["task"], "1")
@@ -5515,7 +6476,7 @@ class SandboxTests(Flow):
         # refused each time, other runs going: a refused claim was only to be made again (2026-09-22)
         sid = self.running()["sid"]
         busy, empty = dict(self.w.as_session(sid), ORCH_ISABELLE_RUNS="1"), dict(ORCH_ISABELLE_RUNS="0")
-        self.assertIn("queued: 1 Isabelle run(s) are going", self.w.v2("measuring", "my timing", env=busy))
+        self.assertIn("queued: 1 Isabelle run(s) are going", self.w.v2("measuring", "--exclusive", "my timing", env=busy))
         blocked = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
                                   "print(v2.run_blocked(('9',), 'probe')); print(v2.run_blocked(('1',), 'probe'))"],
                                  env=dict(self.w.env, ORCH_ISABELLE_RUNS="1"), capture_output=True, text=True).stdout
@@ -5557,7 +6518,7 @@ class SandboxTests(Flow):
 
     def test_a_queued_measurement_of_a_session_still_at_work_is_given_by_message(self):
         sid = self.running()["sid"]
-        self.assertIn("queued", self.w.v2("measuring", "my timing", env=dict(self.w.as_session(sid), ORCH_ISABELLE_RUNS="2")))
+        self.assertIn("queued", self.w.v2("measuring", "--exclusive", "my timing", env=dict(self.w.as_session(sid), ORCH_ISABELLE_RUNS="2")))
         self.w.v2("dispatch", env=dict(ORCH_ISABELLE_RUNS="0"))
         self.assertIn("The machine is yours for your measurement", json.dumps(self.w.mail("implement-1")))
         self.assertEqual(json.loads((self.w.state / "isabelle-exclusive").read_text())["task"], "1")

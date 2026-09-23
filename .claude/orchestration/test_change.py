@@ -354,3 +354,69 @@ class KeyedTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+PROBE_STUB = """import argparse, json, os, sys
+p = argparse.ArgumentParser(); p.add_argument('--work'); p.add_argument('--theory', action='append', default=[])
+p.add_argument('--timeout'); a = p.parse_args()
+os.makedirs(a.work, exist_ok=True)
+bad = [t for t in a.theory if 'oops' in open(os.path.join('theories', t + '.thy')).read()]
+log = ''.join(f'*** Failed to finish proof (line 3 of \\"theories/{t}.thy\\")\\n' for t in bad) or 'PROBE THEORIES LOADED\\n'
+open(os.path.join(a.work, 'probe.log'), 'w').write(log)
+json.dump({'loaded': not bad, 'certified': [] if bad else a.theory, 'timed_out': False},
+          open(os.path.join(a.work, 'probe.summary.json'), 'w'))
+"""
+
+
+class ChangeProbeTests(unittest.TestCase):
+    """A producing session's change that writes a theory probes it as it leaves it (the owner, 2026-09-23), unless
+    `--no-probe`: 30 requests of the 09-22 afternoon did nothing but the probe after a change."""
+
+    def setUp(self):
+        self.w = fakes.World()
+        self.w.write("theories/A.thy", THEORY)
+        self.w.write("tools/probe_theories.py", PROBE_STUB)
+        self.w.session("implement-1", "implementer", "s1", task="1")
+
+    def tearDown(self):
+        self.w.close()
+
+    def change(self, blocks, flag=""):
+        script = f"{sys.executable} {HERE / 'v2.py'} change {flag}<<'EOF'\n{blocks}EOF\n"
+        out = subprocess.run(["bash", "-c", script], cwd=self.w.project, env=dict(self.w.env, **self.w.as_session("s1")),
+                             capture_output=True, text=True, timeout=120)
+        return out.stdout
+
+    def test_a_theory_written_is_probed_as_the_change_leaves_it(self):
+        said = self.change("=== write theories/A.thy\n" + THEORY.replace("True", "True \\<and> True"), flag="--probe ")
+        self.assertIn("[probed as this change leaves it (A)", said)
+        self.assertIn("complete, no error — PROBE THEORIES LOADED", said)
+        probes = sorted((self.w.project / ".build/tasks/1").glob("probe-change-*/probe.log"))
+        self.assertEqual(len(probes), 1)                                   # in the task's folder, where its probes are
+        said = self.change("=== write theories/A.thy\ntheory A imports Main begin\nlemma x: False\n  oops\nend\n",
+                           flag="--probe ")
+        self.assertIn("NOT complete:\n  *** Failed to finish proof", said)
+        self.assertIn("(its log: .build/tasks/1/probe-change-", said)
+
+    def test_a_theory_change_says_probe_or_not_there_is_no_default(self):
+        said = self.change("=== write theories/A.thy\n" + THEORY.replace("x:", "w:"))
+        self.assertIn("refused, and nothing was changed", said)
+        self.assertIn("say whether it is probed as the change leaves it — `v2.py change --probe", said)
+        self.assertIn("`v2.py change --no-probe <<'EOF'`; there is no default", said)
+        self.assertIn("x:", (self.w.project / "theories/A.thy").read_text())    # nothing written
+        self.assertIn("changed: NOTES.md", self.change("=== write NOTES.md\nnotes\n"))  # no theory: no flag needed
+
+    def test_no_probe_when_more_is_to_come_or_no_theory_or_no_room(self):
+        self.assertNotIn("probed", self.change("=== write theories/A.thy\n" + THEORY, flag="--probe "))  # as it was
+        said = self.change("=== write theories/A.thy\n" + THEORY.replace("x:", "z:"), flag="--no-probe ")
+        self.assertIn("[not probed (A): --no-probe]", said)
+        self.assertNotIn("probed as", self.change("=== write NOTES.md\nnotes\n"))    # no theory, no probe
+        (self.w.state / "isabelle-exclusive").write_text(__import__("json").dumps(
+            {"task": "9", "why": "a held timing", "session": "implement-9", "at": __import__("time").time()}))
+        said = self.change("=== write theories/A.thy\n" + THEORY.replace("x:", "y:"), flag="--probe ")
+        self.assertIn("[not probed (A): Task 9 holds the machine", said)
+        # outside a producing session, a change probes nothing
+        out = subprocess.run(["bash", "-c", f"{sys.executable} {HERE / 'v2.py'} change <<'EOF'\n=== write theories/B.thy\n"
+                              "theory B imports Main begin end\nEOF\n"], cwd=self.w.project, env=self.w.env,
+                             capture_output=True, text=True, timeout=60).stdout
+        self.assertNotIn("probed", out)

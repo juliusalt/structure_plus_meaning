@@ -30,7 +30,7 @@ first message (its protocol and its piece of work). It sets direction and saves 
 What a session has in view is what it thinks with, so a base holds what its roles must reason from, and leaves to a
 gather (`v2.py step`) what a piece of work needs in detail.
 
-- **Room.** A fork's room for work is the notice (907K) less the base less its first message (about 20K).
+- **Room.** A fork's room for work is the notice (907K; 947K since 2026-09-23 evening) less the base less its first message (about 20K).
 - **Reading.** 0.1 of the base per request of every fork: 40K a request at 404K, 54K at 536K; about 4.8M and 6.4M over
   an implementer session of 120 requests.
 - **Writing.** The present base's build, measured from its transcript: 1.56M (writes 1.11M, reads 0.39M over 16
@@ -92,7 +92,7 @@ held them, because the held copies were stale.
 
 ## 5. The designs as decided, measured
 
-Rooms are before the notice (907K), less a first message of 20K. Loaded in chunks of 120,000 bytes (section 11) the
+Rooms are before the notice (907K then; 947K since 2026-09-23 evening), less a first message of 20K. Loaded in chunks of 120,000 bytes (section 11) the
 decided designs measure about 11K less: A 470K, B 519K, C″ 524K, loaded in 11 to 12 parts instead of 70 to 76 (the
 rows below were measured with 20,000-byte chunks).
 
@@ -629,7 +629,7 @@ by the delta and said to the owner past 15K tokens. Its plan and tasks: notes/pl
 notes/plan-delta-layer-tasks.md; its rollout: high first, xhigh after a day's measurement, max not at all (4 forks a
 day, and the knowledge base integrates HANDOFF.md itself).
 
-## 18. The bases chosen by use (2026-09-22/23, the owner: review the bases against the day's sessions)
+## 18b. The bases chosen by use (2026-09-22/23, the owner: review the bases against the day's sessions)
 
 Measured on the sessions of 2026-09-22 and the week before (notes/plan-bases-upgrade.md, its decisions D1-D11 and
 the datasets under state/analysis/): reading the base prefix is 62% of what the run spends; 176 of the 226 founding
@@ -642,3 +642,35 @@ the index keeps 90 characters of first clause; xhigh holds a founding index of t
 holds. Estimated loaded: high 530K, xhigh 457K. The central ideas (the owner's pins, §3) and max (§12: the founding
 theories at definitions) are unchanged; what the week's data says of the pins is put to the owner (plan D3).
 
+
+
+## 19. Bases for both purposes, with explicit reasoning dependencies (2026-09-23)
+
+The reasoning in §§1 and 4 remains the starting point: a role must have the material it needs to understand and align
+its work, as well as material that saves reading. The use-only choices of §18b are superseded. The owner's
+words, including the correction that data tests hypotheses rather than deciding the design, are in
+`bases-discussion.md`. `plan-bases-two-purposes.md` records the resulting responsibilities, checks, corrections and
+implementation decisions; it is the current account.
+
+The implementation preserves the owner's reference pins, supplies a complete purpose-bearing catalogue and whole-plan
+discovery, selects working content by explicit relations and assigns depth by what a role does with it. It supports
+named material boundaries, a shared reasoning block directly over the reference, and role reasoning above the material
+its judgment concerns. The current boundaries are reference, direction, catalogue and working material. They are not a
+universal count: a new independent input/consumer justifies a new boundary. No content priority is inferred from churn
+counts or a value-per-token score. A changed lower input rebuilds dependent reasoning; an upper change leaves lower
+understanding intact. Exact frozen inputs and direct parent identities establish reuse of the same input prefix, not
+correctness of the model's interpretation.
+
+The build and console share this account. Projections derive current catalogue text without writing it, actual records
+retain measured contexts and inherited snapshots, and unknown reasoning sizes stay unknown until built. Task size is
+bounded by the prefix actually forked. The owner builds all three chains with `base.sh WHO layer`, then starts with
+`start.sh --fresh`; README gives the order and what to inspect. No build or run was started by this implementation work,
+and the no-commit/no-push hold remains in force. Quality benefit is still to be observed in that run.
+
+**Corrected after its review (2026-09-23 evening; `plan-bases-two-purposes.md`, its last section).** The working part
+— the union of every current task's relations — is gone: it grew with the queue (280K tokens for 5 tasks, 620K for 20)
+and every change of the queue rebuilt it and the role layers over it. A base's parts are reference, direction and
+catalogue, none of them dependent on the queue; the whole-plan notions and the tools' contracts stand in the catalogue.
+A task's own relations are given to its sessions as they start (`v2.relations_read`), counted in its room at its form
+check and at its first start. A chain is rebuilt at once only when its structure changes; the delta and the watchdog's
+cost rule carry everything else. A build installs its list only with the chain it describes.

@@ -201,7 +201,7 @@ class World:
     def base(self, who="max", sid="base-sid", flags=None):
         """A sealed base, started with the flags session-flags gives (or others: `flags`), as base.sh records one."""
         (self.state / f"{who}-base.json").write_text(json.dumps(
-            {"sessionId": sid, "model": "claude-opus-5[1m]", "effort": "max", "name": f"{who}-base",
+            {"sessionId": sid, "model": "claude-opus-5-5[1m]", "effort": "max", "name": f"{who}-base",
              "flags": LEAN if flags is None else flags}))
 
     def task(self, tid, description=BRIEF, subject="Readiness of calls", **fields):
@@ -234,7 +234,7 @@ class World:
             self.set_rows([r for r in self.rows() if r["name"] != name] + [
                 {"name": name, "id": f"id-{sid}", "sessionId": sid, "kind": "background", "status": status,
                  "state": "working", "cwd": str(self.project)}])
-        rec = dict(dict(name=name, role=role, sid=sid, id=f"id-{sid}", state=state, model="claude-opus-5[1m]",
+        rec = dict(dict(name=name, role=role, sid=sid, id=f"id-{sid}", state=state, model="claude-opus-5-5[1m]",
                         effort="max", settings="worker-settings.json", origin="max", started=time.time(),
                         sealed=not live, flags=LEAN), **fields)
         st = self.st() or {}
@@ -305,7 +305,7 @@ class World:
         return remote
 
 
-def assistant(msg_id, ts, content=None, usage=None, model="claude-opus-5"):
+def assistant(msg_id, ts, content=None, usage=None, model="claude-opus-5-5"):
     m = {"id": msg_id, "model": model, "content": content or [{"type": "text", "text": "ok"}]}
     if usage:
         m["usage"] = usage

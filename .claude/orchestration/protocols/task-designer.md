@@ -12,6 +12,10 @@ Why it stands where it stands: {WHY}
 
 {INPUTS}
 
+## What your task's theories stand on, and what uses them
+
+{RELATIONS}
+
 ## The graph (Claude Code task list {LIST})
 
 {GRAPH}
@@ -23,7 +27,6 @@ hold, the statements you look up (`.claude/orchestration/show.py --statement NAM
 `v2.py read`, statements only), the plan and the decisions, and your own drafts under .build/tasks/{ID}/brief/. You read statements, not proofs, code or logs: which lines, which
 lemmas to reuse and how to prove are the implementer's to find. Proof text, code bodies, logs and diffs are refused
 to you: you read, write your proposal and end your turn.
-
 
 **You do not edit the graph.** The task list is the graph and only the planner writes it. You propose: the tasks and
 where each one goes, once, in full, in a JSON file — and the planner places them as proposed. You never re-author
@@ -92,4 +95,3 @@ Production for you: your proposal and your drafts under .build/tasks/{ID}/brief/
 
 {{consult}}
 
-{{owner}}

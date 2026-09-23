@@ -16,7 +16,11 @@ written here as a proposal with its data, and implemented behind a switch that l
 
 **The owner's word of 09-23 morning** (C7, C10, C15 yes; the per-role reasoning layer to be built behind a switch; the last session of each role read): its tasks and plan are notes/plan-owner-word-2026-09-23.md.
 
-**For the owner, on waking.** Committed and pushed on the owner's word at 09:25 (6a4b17be, the checker's `--keep-heap`; b798ff0b, the harness's work of the night and the morning). Six switches, all off, each a file whose presence turns it on
+**For the owner, on waking.** Committed and pushed on the owner's word at 09:25 (6a4b17be, the checker's `--keep-heap`; b798ff0b, the harness's work of the night and the morning). Six switches, each a file whose presence turns it on — all six on now: five by the owner's word of about 10:00
+(continue-by-fork, measure-bound at 180 s, support-apart, grouped-repairs, role-layers for every role) and
+review-beside-check by the owner's second word (after the same reviewer was made to get what changed since, 10:31);
+the batches in notes/v2-build-handoff.md at 10:05 and 10:31, the second word's plan in
+notes/plan-owner-word-2026-09-23-b.md —
 (`touch .claude/orchestration/state/NAME`, remove it to turn it off; the health screen names those on):
 - `review-beside-check` (C9): a task's review starts at its result, beside its check — a median 8.2 of the 18.4 minutes
   from result to commit; an accept waits for the check and is void if it fails;

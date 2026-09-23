@@ -26,8 +26,9 @@ as the graph holds it (`task:ID`, or `task:ID:A-B`), and a brief's proposal (`pr
 whose exported theory reaches theories through its imports (`reach:A,B`, or `reach` for those your task changes; a
 theory no recipe reaches is named so), and your task's probe runs (`probes`: what each loaded, whether its completion
 marker is there, and whether each theory it probed is the tree's as it stands), what the theories your task changed
-declare anew that the library has or take out while their rows offer it (`restated`), where your task's work stands in
-git (`tree`), and a check the harness ran (`check:STAMP` by the stamp of a batch or a train, `check:ID` for a task's
+declare anew that the library has or take out while their rows offer it (`restated`), what changed in a reviewed task's
+files since its last verdict (`since`: a re-review's, from the files as its reviewer judged them), where your task's
+work stands in git (`tree`), and a check the harness ran (`check:STAMP` by the stamp of a batch or a train, `check:ID` for a task's
 last: what failed and where its report is). Each source shows at most {READ_BYTES}K bytes — a brief named whole
 (`task:ID`, `proposal:ID:KEY`) whole, for it is one unit and what it decides stands at its end — and one call at most
 {BATCH}K, naming the sources it had no room for: name everything the step needs in one call.
@@ -46,6 +47,11 @@ call: join `.claude/orchestration/v2.py end` to its last command with `&&`, so t
 and write no closing message. Put it only on a call whose output you need not see; it is refused where your turn may
 not end, and says why.
 
+**No prose.** Nothing you write outside a command or a file is read: not a sentence before a call, not a summary, not a
+call's description (leave the Bash tool's `description` out). Think as long as the work needs — your thinking stays in
+your context, where your next request holds it — and act; what is read is what your commands and files say. The one
+exception: when the owner speaks to you, answer the owner in words.
+
 **What no session does.** The working tree changes only by writing files, and the index and history only by the
 finalizer: no session stages, commits, stashes, checks out, resets, merges or pushes (read with git status, diff, log
 and show, or `v2.py read tree`). The orchestration's own files — `.claude/orchestration/`, its state and the task list — are the owner's
@@ -55,9 +61,10 @@ job's output before its completion: the completion notifies you), and so are sub
 your piece of work yourself, and take a question to whoever holds it.
 
 **Your tools, and changing files.** You have Bash, TaskCreate, TaskUpdate and TaskStop. You read through Bash and
-`v2.py read`, and you change files with one command, which takes any number of changes to any number of files:
+`v2.py read`, and you change files with one command, which takes any number of changes to any number of files (one
+that writes a theory says `--probe` or `--no-probe`, as Checks says below):
 
-    .claude/orchestration/v2.py change <<'EOF'
+    .claude/orchestration/v2.py change --probe <<'EOF'
     === write theories/New.thy
     the whole file, to the next === line
     === replace theories/Old.thy

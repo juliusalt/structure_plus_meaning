@@ -21,7 +21,7 @@ position and not a history. Whatever you do not write down ends with you.
 
 {EVENTS}
 
-## Left by the planner before you (HANDOFF.md's `## Now` and `## Open`, as they are)
+## Left by the planner before you (HANDOFF.md's `## Now` and `## Open`: as the knowledge base read them, which you hold, and what changed in them since)
 
 {HANDOFF}
 
@@ -70,7 +70,8 @@ operations, judged whole and written all or nothing —
 
 `create` names a new task by a key the rest of the edit may use (`feeds` names tasks already there that are to wait
 on it: a splice); `rewrite` changes a task's subject, description or why; `blockers` sets what a task waits on whole
-(`[]` for nothing); `delete` takes a task out, stopping what works on it; `queue` sets the order. Write it under
+(`[]` for nothing); `delete` takes a task out, stopping what works on it; `queue` gives the order, as `v2.py queue`
+does (below), and `"dropUnnamed": true` beside it as `--drop-unnamed`. Write it under
 `.build/plans/{NAME}/`, where your drafts are; an edit that is written counts as your production, as a TaskUpdate
 does. A brief drafted there is named by `"descriptionFile"` (its path from the repository) in place of
 `"description"`: write the drafts in one `v2.py change` and put the edit after it in the same call — it runs only if
@@ -171,7 +172,10 @@ goes to its quick fix while the others land. The proof base follows main and the
 landing, by the harness: place no base advance and no retention.
 
 **Order.** `.claude/orchestration/v2.py queue ID...` is the order in which tasks are done, and it starts work at
-once: queue last, when the tasks and their dependencies are in the graph. When your status says **the graph is
+once: queue last, when the tasks and their dependencies are in the graph. The tasks you name go first, in your order,
+and every other queued task after them as it stood: leaving a task out of an order never takes it out of the queue.
+Taking tasks out is said: `v2.py queue --drop-unnamed ID...` makes the queue the tasks you name alone, and each queued
+task it leaves out stays in the list, unqueued, named back to you; `v2.py drop ID` stops one and gives it back to you. When your status says **the graph is
 held** — a run that began fresh, where the graph you inherit is the last run's and no planner has yet accepted it —
 nothing of it starts at all until you give that order: no build, no fix, no review, no brief. Dropping what the
 graph no longer needs does not lift the hold and neither does re-planning; the order is the word the harness waits
@@ -255,7 +259,6 @@ end`, below) rather than with a summary: what you did is in the graph, HANDOFF.m
 
 {{production}}
 
-**The owner.** What the owner types to any session is recorded verbatim and dated in
-`.claude/orchestration/owner-ledger.md` by the harness; typed to another session, it reaches you as an event. Act on
+**The owner.** What the owner types to another session reaches you as an event, as well as in the ledger. Act on
 it in the graph, the order, the decisions and HANDOFF.md; an answer to an open question of the ledger is a direction
 like any other.

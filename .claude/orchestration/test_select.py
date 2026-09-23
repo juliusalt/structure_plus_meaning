@@ -1,11 +1,12 @@
-"""What a base holds is chosen by use (select_base_load): the evidence a session leaves, the frontier within the layer's
-budget, the founding tier by what its roles used, and the indexes that say what is not held. Each test builds a small
-project of its own — theories, a map, a load list and transcripts — so nothing here reads the repository's sources."""
+"""What a base holds by its responsibilities, and what a task is given of its own relations. Each test builds a small
+project of its own — theories, a map, a plan and a load list — so nothing here reads the repository's sources."""
 import json
 import os
 from pathlib import Path
 import sys
 import tempfile
+import subprocess
+import time
 import unittest
 from unittest.mock import patch
 
@@ -31,33 +32,20 @@ theories/Found_Two.thy
 theories/Found_Three.thy
 # pinned idea: the test's pin
 theories/Pinned.thy
-# === layer === the frontier layer below
-# the working frontier (1 theories for the implementer sessions, chosen by hand), as statements
-theories/Delta.thy
-# pinned: the owner's voice
+# === layer direction ===
+# pinned: the owner's voice; purpose=steering
 notes.md
+# === layer catalogue ===
+# the generated plan tier
+# === relations ===
+# === end relations ===
 """
 
 
-def thy(name, lemmas, filler):
+def thy(name, lemmas, filler, imports="Main"):
     body = "\n".join(f"lemma {n}: \"True\"\n  by simp" for n in lemmas)
     pad = "\n".join(f"lemma {name.lower()}_filler_{i}: \"x{i} = x{i} \\<and> True \\<and> True\"\n  by simp" for i in range(filler))
-    return f"theory {name}\n  imports Main\nbegin\n\n{body}\n\n{pad}\n\nend\n"
-
-
-def assistant(text="", command=None):
-    content = [{"type": "text", "text": text}] if text else []
-    if command:
-        content.append({"type": "tool_use", "id": f"t{abs(hash(command)) % 10**8}", "name": "Bash", "input": {"command": command}})
-    return {"type": "assistant", "message": {"id": f"m{abs(hash(text + str(command))) % 10**8}", "content": content}}
-
-
-def user(text):
-    return {"type": "user", "message": {"content": [{"type": "text", "text": text}]}}
-
-
-def result(tool_id, body):
-    return {"type": "user", "message": {"content": [{"type": "tool_result", "tool_use_id": tool_id, "content": body}]}}
+    return f"theory {name}\n  imports {imports}\nbegin\n\n{body}\n\n{pad}\n\nend\n"
 
 
 class Project:
@@ -65,234 +53,266 @@ class Project:
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
         (self.root / "theories").mkdir()
+        imports = {"Alpha": "Beta Found_One", "Gamma": "Alpha"}
         for name, (lemmas, filler) in THEORIES.items():
-            (self.root / "theories" / f"{name}.thy").write_text(thy(name, lemmas, filler))
+            (self.root / "theories" / f"{name}.thy").write_text(thy(name, lemmas, filler, imports.get(name, "Main")))
         rows = "\n".join(f"| {n} | x | {n} holds its lemmas; and more words follow here |" for n in THEORIES)
         (self.root / "THEORY_MAP.md").write_text("| Theory | Imports | Content |\n|---|---|---|\n" + rows + "\n")
         self.orch = self.root / ".claude" / "orchestration"
         (self.orch / "state" / "held").mkdir(parents=True)
-        (self.orch / "base-load-high.txt").write_text(LIST)
+        for who in ("max", "xhigh", "high"):
+            (self.orch / f"base-load-{who}.txt").write_text(LIST)
         (self.root / "notes.md").write_text("the owner's words\n")
-        self.transcripts = self.root / "t"
-        self.transcripts.mkdir()
-        self.n = 0
-        self.changing = set()
+        (self.root / "native_control_plan.md").write_text("## Active\n`Alpha`\n## Later\n`Delta`\n## Still missing\n"
+                                                          "No implementation yet.\n")
+        (self.root / "problems.txt").write_text("1. Preserve meaning.\n2. Keep every obligation.\n")
+        self.tasks = [dict(id="1", status="pending", description="Kind: build\nDeliverable: `theories/Alpha.thy`\n",
+                           blockedBy=[])]
+        self.state = {"tasks": {"1": {"kind": "build", "stage": "ready"}}}
 
-    def session(self, *records, fork=True):
-        """A transcript: a fork's copy of its base's load first (naming names that are not its own), then its launch."""
-        self.n += 1
-        lines = []
-        if fork:
-            lines += [user("Load the reference library; ..."), assistant("gamma_law is held", "echo gamma_law")]
-            lines += [user(f"You are implement-{self.n}, working on task {self.n}.")]
-        lines += list(records)
-        path = self.transcripts / f"s{self.n}.jsonl"
-        path.write_text("".join(json.dumps(r) + "\n" for r in lines))
-        return str(path)
-
-    def patches(self, sessions):
+    def patches(self):
         return [patch.object(sbl, "PROJECT", str(self.root)), patch.object(sbl, "HERE", str(self.orch)),
                 patch.object(manifest, "PROJECT", str(self.root)), patch.object(manifest, "HERE", str(self.orch)),
-                patch.object(sbl, "sessions_of", lambda roles, limit=0: sessions[:limit] if limit else sessions),
-                patch.object(sbl, "forking_roles", lambda who: {"implementer"}),
-                patch.object(sbl, "founding_theories", lambda: ["Found_One", "Found_Two", "Found_Three", "Pinned"]),
-                patch.object(sbl, "recently_changed", lambda days=None: self.changing),
-                patch.dict(sbl.DEFINED, {}, clear=True), patch.dict(sbl.FACT_THEORY, {}, clear=True)]
+                patch.object(sbl, "forking_roles", lambda who: {"high": {"implementer", "fixer"},
+                                                                 "xhigh": {"reviewer", "designer"}}.get(who, {"planner"})),
+                patch.dict(sbl.LIBRARY, {}, clear=True)]
 
 
-class EvidenceTests(unittest.TestCase):
+class Case(unittest.TestCase):
     def setUp(self):
         self.p = Project()
+        self.patches = self.p.patches()
+        for p in self.patches:
+            p.start()
 
     def tearDown(self):
+        for p in reversed(self.patches):
+            p.stop()
         self.p.temp.cleanup()
 
-    def test_a_session_uses_what_it_reads_or_names_itself_and_not_what_it_was_shown(self):
-        shown = assistant("", "grep -rn lemma theories/ | head")
-        tool = shown["message"]["content"][0]["id"]
-        read = assistant("", "sed -n 1,20p theories/Beta.thy")
-        s = self.p.session(assistant("I cite alpha_one in the proof", "echo alpha_one"),
-                           read, result(read["message"]["content"][0]["id"], "theory Beta ..."),
-                           shown, result(tool, "theories/Delta.thy: lemma delta_step"))
-        with patch.object(sbl, "PROJECT", str(self.p.root)), patch.dict(sbl.DEFINED, {}, clear=True), \
-                patch.dict(sbl.FACT_THEORY, {}, clear=True):
-            use = sbl.use_of([s])
-        self.assertIn("theories/Alpha.thy", use)          # named in its own writing
-        self.assertIn("theories/Beta.thy", use)           # read
-        self.assertNotIn("theories/Delta.thy", use)       # only shown to it
-        self.assertNotIn("theories/Gamma.thy", use)       # named in the copy of its base's load, not by it
+    def v2(self, tasks=None, state=None):
+        import v2
+        return [patch.object(v2, "all_tasks", return_value=self.p.tasks if tasks is None else tasks),
+                patch.object(v2, "peek", return_value=self.p.state if state is None else state)]
 
+
+class VocabularyTests(Case):
     def test_a_name_many_theories_define_says_nothing(self):
         for name in ("Epsilon", "Zeta", "Eta", "Theta"):
             (self.p.root / "theories" / f"{name}.thy").write_text(thy(name, ["shared_name"], 5))
-        with patch.object(sbl, "PROJECT", str(self.p.root)):
-            defined = sbl.defined_names()
+        defined = sbl.defined_names()
         self.assertNotIn("shared_name", defined)
         self.assertEqual(defined["alpha_one"], {"theories/Alpha.thy"})
 
+    def test_ordinary_prose_is_not_a_reference_and_every_quoted_owner_is_retained(self):
+        owners = {"ordinary": {"theories/Beta.thy"}, "shared_name": {"theories/Alpha.thy", "theories/Gamma.thy"}}
+        paths = {f"theories/{n}.thy": n for n in ("Alpha", "Beta", "Gamma")}
+        self.assertEqual(sbl.names_in("ordinary language", owners, paths), set())
+        self.assertEqual(sbl.names_in("consume `shared_name`", owners, paths), {"Alpha", "Gamma"})
 
-class WindowTests(unittest.TestCase):
-    def test_the_sessions_measured_reach_into_the_archive(self):
-        # v2 archives a session a day after it was released: a window of 400 sessions was a day of them, not a week
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            (root / "v2-archive.jsonl").write_text(
-                json.dumps({"session": {"name": "fix-1", "role": "fixer", "sid": "old", "started": 100}}) + "\n"
-                + json.dumps({"ask": {"qid": "q1"}}) + "\n"
-                + json.dumps({"session": {"name": "review-2", "role": "reviewer", "sid": "other", "started": 150}}) + "\n")
-            live = {"fix-3": {"role": "fixer", "sid": "new", "started": 300}, "implement-4": {"role": "implementer",
-                                                                                          "sid": "mid", "started": 200}}
-            for sid in ("old", "other", "new", "mid"):
-                (root / f"{sid}.jsonl").write_text("{}\n")
-            import v2
-            with patch.object(v2, "STATE", str(root)), patch.object(v2, "peek", lambda: {"sessions": live}), \
-                    patch.object(v2, "transcript", lambda sid: str(root / f"{sid}.jsonl")):
-                got = sbl.sessions_of({"fixer", "implementer"}, limit=10)
-                self.assertEqual([os.path.basename(p) for p in got], ["new.jsonl", "mid.jsonl", "old.jsonl"])
-                self.assertEqual(len(sbl.sessions_of({"fixer", "implementer"}, limit=2)), 2)
+    def test_the_library_is_read_again_when_a_theory_changes_and_not_otherwise(self):
+        first = sbl.library()
+        self.assertIs(sbl.library(), first)
+        path = self.p.root / "theories" / "Delta.thy"
+        path.write_text(thy("Delta", ["delta_step"], 10, "Gamma"))
+        os.utime(path, ns=(time.time_ns() + 10**9,) * 2)
+        again = sbl.library()
+        self.assertIsNot(again, first)
+        self.assertIn("Gamma", again["refs"]["Delta"])
 
 
-class ChoiceTests(unittest.TestCase):
-    def test_ranked_by_use_per_token_within_the_room_and_over_the_floor(self):
-        use = {"a": {1, 2, 3, 4}, "b": {1, 2, 3, 4, 5, 6}, "c": {1, 2}, "d": {1}, "e": {1, 2, 3}}
-        sizes = {"a": 100, "b": 600, "c": 50, "d": 10, "e": 1000}
-        chosen, spent = sbl.ranked_within(use, sizes, room=800, need=2)
-        # c: 0.04/token, a: 0.04, b: 0.01, e: 0.003; d under the floor; e does not fit after the others
-        self.assertEqual(chosen, ["a", "c", "b"])
-        self.assertEqual(spent, 750)
-        chosen, _ = sbl.ranked_within(use, sizes, room=160, need=2)
-        self.assertEqual(chosen, ["a", "c"])               # b passed over, smaller ones still taken
+class BaseRelationTests(Case):
+    def test_the_whole_plan_is_held_by_the_bases_that_steer_by_it_whatever_the_queue(self):
+        for tasks in ([], self.p.tasks):
+            with self.v2(tasks)[0], self.v2(tasks)[1]:
+                c = sbl.relation_choice("xhigh", tasks, self.p.state)
+            self.assertEqual([t["relation"] for t in c["tiers"]], ["whole-plan notions"])
+            self.assertEqual(c["chosen"], ["theories/Alpha.thy", "theories/Delta.thy"])
+            self.assertIn("plan: Still missing", c["unresolved_plan_parts"])
+            self.assertIn("condition: 1", c["unresolved_plan_parts"])
+        with self.v2()[0], self.v2()[1]:
+            self.assertEqual(sbl.relation_choice("high")["chosen"], [])  # high's roles steer by their briefs
 
-    def test_the_room_is_the_target_less_what_else_the_base_holds(self):
-        self.assertEqual(sbl.layer_room(200_000, 100_000, target=530_000, factor=1.1), int(330_000 / 1.1 - 100_000))
-        self.assertEqual(sbl.layer_room(600_000, 0, target=530_000, factor=1.0), 0)
+    def test_a_plan_notion_the_owner_already_holds_deeper_is_not_held_again(self):
+        listed = self.p.orch / "base-load-xhigh.txt"
+        listed.write_text(listed.read_text().replace("theories/Pinned.thy", "theories/Pinned.thy\ntheories/Alpha.thy"))
+        with self.v2()[0], self.v2()[1]:
+            self.assertEqual(sbl.relation_choice("xhigh")["chosen"], ["theories/Delta.thy"])
 
-    def test_an_index_line_keeps_the_first_clause_cut_at_a_word(self):
-        self.assertEqual(sbl.clause("Short clause; the rest"), "Short clause")
-        long = "An index notion over rows whose every key is placed once and read back by its position in the store"
-        cut = sbl.clause(long, cap=40)
-        self.assertTrue(cut.endswith(" …") and len(cut) <= 42, cut)
-        self.assertTrue(long.startswith(cut[:-2]))
-        self.assertEqual(sbl.clause("Version 2.1 holds; more"), "Version 2.1 holds")  # a dot inside a word is no end
+    def test_projection_is_read_only_and_matches_the_written_block(self):
+        listed = self.p.orch / "base-load-xhigh.txt"
+        with self.v2()[0], self.v2()[1], patch.dict(os.environ, {"BASE_LOAD_LIST": ""}):
+            before = listed.read_text()
+            projected = sbl.projection("xhigh")
+            self.assertEqual(listed.read_text(), before)
+            sbl.frontier("xhigh")
+            after = sbl.projection("xhigh")
+            self.assertEqual(projected["total"], after["total"])
+            self.assertEqual(after["frontier"], {"new": 0, "dropped": 0})
+            text = listed.read_text()
+            sbl.frontier("xhigh")
+            self.assertEqual(listed.read_text(), text)
+        self.assertIn("# relation: whole-plan notions; purpose=steering; as signatures\ntheories/Alpha.thy", text)
+        self.assertEqual(sbl.without_generated(text), sbl.without_generated(before))  # the owner's pins untouched
+
+    def test_projection_says_what_each_current_task_is_given(self):
+        with self.v2()[0], self.v2()[1], patch.dict(os.environ, {"BASE_LOAD_LIST": ""}):
+            got = sbl.projection("high")["deliveries"]
+        self.assertEqual([d["task"] for d in got], ["1"])
+        self.assertGreater(got[0]["tokens"], 0)
+
+    def test_named_material_parts_preserve_their_depths_and_purposes(self):
+        text = LIST.replace("# the generated plan tier", "# relation: subjects; purpose=steering; as signatures")
+        es = manifest.list_entries(text + "theories/Found_One.thy\n", str(self.p.root))
+        self.assertEqual([e["level"] for e in es if e["path"].endswith("Found_One.thy")], ["signatures"])
+        es = manifest.list_entries(text + "# consumed contract; purpose=both; as statements\ntheories/Found_One.thy\n",
+                                   str(self.p.root))
+        self.assertEqual({e["part"] for e in es}, {"stable", "direction", "catalogue"})
+        self.assertEqual([(e["part"], e["level"], e["purpose"]) for e in es if e["path"].endswith("Found_One.thy")],
+                         [("stable", "signatures", "both"), ("catalogue", "statements", "both")])
+
+    def test_projection_reads_current_catalogue_sources_without_writing_generated_files(self):
+        listed = self.p.orch / "base-load-high.txt"
+        listed.write_text(listed.read_text() + "# discovery; purpose=steering\n"
+                          ".claude/orchestration/state/held/theory-map-index.md\n")
+        with self.v2([])[0], self.v2([])[1], patch.dict(os.environ, {"BASE_LOAD_LIST": ""}):
+            first = sbl.projection("high")
+            (self.p.root / "theories/New_Notion.thy").write_text("theory New_Notion imports Main begin end\n")
+            second = sbl.projection("high")
+        self.assertGreater(second["total"], first["total"])
+        self.assertFalse((self.p.orch / "state/held/theory-map-index.md").exists())
+        self.assertIn("No THEORY_MAP description", sbl.theory_map_index(write=False))
 
 
-class FrontierTests(unittest.TestCase):
+class TaskRelationTests(Case):
+    def test_a_task_is_given_its_suppliers_at_its_roles_depth_its_subjects_and_consumers_at_signatures(self):
+        r = sbl.task_relations("high", self.p.tasks[0]["description"])
+        tiers = {t["relation"]: t for t in r["tiers"]}
+        self.assertEqual(r["targets"], ["Alpha"])
+        self.assertEqual(tiers["supplier contracts"]["level"], "statements")
+        # Found_One is held at signatures by the base: its contract is deeper, and given; Beta is held nowhere
+        self.assertEqual(tiers["supplier contracts"]["names"], ["Beta", "Found_One"])
+        self.assertEqual(tiers["work subjects"]["names"], ["Alpha"])
+        self.assertEqual(tiers["direct consumers"]["names"], ["Gamma"])
+        middle = {t["relation"]: t for t in sbl.task_relations("xhigh", self.p.tasks[0]["description"])["tiers"]}
+        self.assertEqual(middle["supplier meanings"]["level"], "definitions")
+
+    def test_what_the_base_holds_at_that_depth_is_not_given_again(self):
+        held = {"Beta": "statements", "Found_One": "definitions", "Gamma": "signatures"}
+        tiers = {t["relation"]: t for t in sbl.task_relations("high", "`theories/Alpha.thy`", held=held)["tiers"]}
+        self.assertEqual(tiers["supplier contracts"]["names"], ["Found_One"])
+        self.assertEqual(tiers["supplier contracts"]["held"], ["Beta"])
+        self.assertEqual(tiers["direct consumers"]["names"], [])
+        texts = sbl.relations_texts(sbl.task_relations("high", "`theories/Alpha.thy`", held=held))
+        self.assertEqual([(n, d) for n, _, d, _ in texts], [("Found_One", "statements"), ("Alpha", "signatures")])
+        self.assertIn("found_one_def", texts[0][3])
+
+    def test_the_relations_are_given_as_the_tasks_tree_holds_them(self):
+        tree = self.p.root / "tree"
+        (tree / "theories").mkdir(parents=True)
+        (tree / "theories" / "Beta.thy").write_text(thy("Beta", ["beta_rule", "beta_in_the_tree"], 1))
+        texts = sbl.relations_texts(sbl.task_relations("high", "`theories/Alpha.thy`", held={}), tree=str(tree))
+        beta = next(text for name, _, _, text in texts if name == "Beta")
+        self.assertIn("beta_in_the_tree", beta)
+
+    def test_future_blocked_work_is_current_when_its_prerequisite_is_done(self):
+        roles = {"implementer"}
+        self.p.tasks[0]["blockedBy"] = ["2"]
+        self.p.tasks.append(dict(id="2", status="pending", description="Kind: build\n", blockedBy=[]))
+        with self.v2()[0], self.v2()[1]:
+            self.assertEqual([t["id"] for t in sbl.current_tasks(roles, self.p.tasks, self.p.state)], ["2"])
+            self.p.tasks[1]["status"] = "completed"
+            self.assertEqual([t["id"] for t in sbl.current_tasks(roles, self.p.tasks, self.p.state)], ["1"])
+            self.p.tasks[1]["status"] = "pending"
+            self.p.state["tasks"]["1"]["stage"] = "parked"
+            self.assertIn("1", [t["id"] for t in sbl.current_tasks(roles, self.p.tasks, self.p.state)])
+
+    def test_other_current_work_on_the_same_theories_is_named(self):
+        self.p.tasks.append(dict(id="2", status="pending", blockedBy=[],
+                                 description="Kind: build\nDeliverable: `theories/Beta.thy`\n"))
+        self.p.tasks.append(dict(id="3", status="pending", blockedBy=[],
+                                 description="Kind: build\nDeliverable: `theories/Pinned.thy`\n"))
+        self.p.state["tasks"].update({"2": {"kind": "build", "stage": "running"}, "3": {"kind": "build"}})
+        r = sbl.task_relations("high", self.p.tasks[0]["description"])
+        with self.v2()[0], self.v2()[1]:
+            got = sbl.concurrent_work("1", r, self.p.tasks, self.p.state)
+        self.assertEqual(got, [("2", "running", ["Beta"], "suppliers: Beta")])
+
+
+class DeliveryTests(Case):
+    """v2 gives a session its task's own relations: in files of the task's folder, for its first batch."""
+
     def setUp(self):
-        self.p = Project()
+        super().setUp()
+        import v2
+        self.v2mod = v2
+        self.build = self.p.root / ".build" / "tasks"
+        self.more = [patch.object(v2, "PROJECT", str(self.p.root)), patch.object(v2, "BUILD", str(self.build)),
+                     patch.object(v2, "base_record", lambda who: (who, {})), *self.v2()]
+        for p in self.more:
+            p.start()
 
     def tearDown(self):
-        self.p.temp.cleanup()
+        for p in reversed(self.more):
+            p.stop()
+        super().tearDown()
 
-    def run_frontier(self, sessions, target, dry=False):
-        ps = self.p.patches(sessions) + [patch.object(sbl, "TARGET", target), patch.object(sbl, "FRONTIER_EVIDENCE", 3)]
-        for q in ps:
-            q.start()
-        try:
-            return sbl.frontier("high", dry_run=dry)
-        finally:
-            for q in reversed(ps):
-                q.stop()
+    def test_a_session_is_told_to_read_its_relations_in_its_first_batch(self):
+        text, given, stated = self.v2mod.relations_read("1", "implementer", self.p.tasks[0]["description"], None)
+        files = sorted((self.build / "1" / "relations-high").glob("*.md"))
+        self.assertEqual(len(files), 1)
+        self.assertIn(f"`cat .build/tasks/1/relations-high/1.md`", text)
+        self.assertIn("- supplier contracts, as statements: Beta, Found_One", text)
+        self.assertIn("beta_rule", files[0].read_text())
+        self.assertGreater(given, 0)
+        again, _, _ = self.v2mod.relations_read("1", "reviewer", self.p.tasks[0]["description"], None)
+        self.assertIn("supplier meanings, as definitions", again)
+        self.assertTrue((self.build / "1" / "relations-xhigh" / "1.md").exists())
 
-    def tier(self):
-        text = (self.p.orch / "base-load-high.txt").read_text()
-        lines = text[text.index(sbl.FRONTIER_HEAD):].splitlines()
-        entries = []
-        for l in lines[1:]:
-            if l.startswith("# "):
-                break
-            if l.strip():
-                entries.append(l.split("  #")[0])
-        return lines[0], entries
+    def test_a_fact_the_session_holds_at_statements_is_not_stated_again(self):
+        text, given, stated = self.v2mod.relations_read("1", "implementer", self.p.tasks[0]["description"], None)
+        self.assertEqual({"Beta", "Found_One"} <= stated, True)      # given at statements with the task
+        self.assertIn("Pinned", stated)                              # held at statements by the base
+        brief = "Inputs: `Beta.beta_rule`, `found_one_def`\nDecided: nothing\n"
+        said = self.v2mod.named_statements(brief, str(self.p.root), stated)
+        self.assertIn("Stated already in what you hold", said)
+        self.assertIn("`Beta.beta_rule`", said)
+        self.assertIn("`found_one_def`", said)
 
-    def test_the_frontier_is_what_the_roles_used_by_use_per_token_within_the_layer_s_room(self):
-        s = []
-        for i in range(10):
-            names = ["alpha_one"] + (["gamma_law"] if i < 6 else []) + (["beta_rule"] if i < 8 else []) + \
-                    (["delta_step"] if i < 1 else []) + (["found_one_def"] if i < 9 else [])
-            s.append(self.p.session(assistant("working with " + " ".join(names), "echo " + " ".join(names))))
-        self.run_frontier(s, target=10_000_000)
-        head, entries = self.tier()
-        # Found_One is held in the stable part, Delta used by one session only (under the floor of 2)
-        self.assertEqual(entries, ["theories/Alpha.thy", "theories/Gamma.thy", "theories/Beta.thy"])
-        self.assertIn("(3 theories", head)
-        self.assertIn("as statements", head)
+    def test_what_a_session_is_given_is_split_so_each_read_is_shown_whole(self):
+        with patch.object(self.v2mod, "RELATIONS_CHUNK", 2000):
+            text, _, _ = self.v2mod.relations_read("1", "implementer", self.p.tasks[0]["description"], None)
+        files = sorted((self.build / "1" / "relations-high").glob("*.md"))
+        self.assertGreater(len(files), 1)
+        self.assertTrue(all(len(f.read_bytes()) <= 2000 for f in files))
+        self.assertIn(f"{len(files)} files", text)
 
-    def test_what_the_rest_of_the_list_holds_is_never_chosen_again(self):
-        # a theory the founding tier now keeps, which the frontier held before, stays the stable part's alone: counted
-        # by name it was chosen again and held in both parts (2026-09-22)
-        text = (self.p.orch / "base-load-high.txt").read_text()
-        (self.p.orch / "base-load-high.txt").write_text(
-            text.replace("theories/Delta.thy\n", "theories/Delta.thy\ntheories/Found_One.thy\ntheories/Gamma.thy\n"))
-        s = [self.p.session(assistant("x", "echo found_one_def alpha_one gamma_law")) for _ in range(6)]
-        self.run_frontier(s, target=10_000_000)
-        _, entries = self.tier()
-        self.assertEqual(sorted(entries), ["theories/Alpha.thy", "theories/Gamma.thy"])  # Gamma, held before, again
+    def test_a_brief_naming_nothing_is_given_nothing(self):
+        text, given, _ = self.v2mod.relations_read("1", "implementer", "Kind: build\n", None)
+        self.assertEqual(given, 0)
+        self.assertIn("names no theory", text)
+        self.assertFalse((self.build / "1" / "relations-high").exists())
 
-    def test_too_few_sessions_leave_it_as_it_stands(self):
-        before = (self.p.orch / "base-load-high.txt").read_text()
-        self.run_frontier([self.p.session(assistant("alpha_one", "echo alpha_one"))], target=10_000_000)
-        self.assertEqual((self.p.orch / "base-load-high.txt").read_text(), before)
-
-    def test_the_layer_s_room_bounds_it(self):
-        s = [self.p.session(assistant("x", "echo alpha_one gamma_law beta_rule")) for _ in range(5)]
-        ps = self.p.patches(s)
-        for q in ps:
-            q.start()
-        try:
-            stable = sbl.estimate(sbl.held_by("high", "stable"))
-            fixed = sbl.estimate([e for e in sbl.held_by("high", "layer") if not e[1].endswith("Delta.thy")])
-            alpha = sbl.tokens(str(self.p.root / "theories/Alpha.thy"))[0]
-            gamma = sbl.tokens(str(self.p.root / "theories/Gamma.thy"))[0]
-        finally:
-            for q in reversed(ps):
-                q.stop()
-        target = int((stable + (fixed + alpha + gamma) * sbl.LAYER_FACTOR)) + 5  # room for Alpha and Gamma, not Beta
-        self.run_frontier(s, target=target)
-        _, entries = self.tier()
-        self.assertEqual(sorted(entries), ["theories/Alpha.thy", "theories/Gamma.thy"])
+    def test_the_brief_form_counts_the_relations_against_the_room(self):
+        brief = self.p.tasks[0]["description"]
+        given = self.v2mod.relations_size(brief, "build")
+        self.assertGreater(given, 0)
+        with patch.object(self.v2mod, "room_of", return_value=100_000):
+            fits = [p for p in self.v2mod.brief_problems(brief + "Size: about 99K\n") if "Size" in p]
+            self.assertTrue(any("of the task's own relations" in p for p in fits), fits)
+            self.assertFalse([p for p in self.v2mod.brief_problems(brief + f"Size: about {(100_000 - given) // 1000 - 1}K\n")
+                              if "Size" in p])
 
 
-class FoundingTests(unittest.TestCase):
-    def setUp(self):
-        self.p = Project()
-
-    def tearDown(self):
-        self.p.temp.cleanup()
-
-    def test_the_founding_tier_keeps_what_its_roles_used_and_the_index_says_the_rest(self):
-        s = [self.p.session(assistant("x", "echo found_one_def")) for _ in range(3)]
-        rd = assistant("x", "sed -n 1,5p theories/Found_Two.thy")
-        s += [self.p.session(rd, result(rd["message"]["content"][1]["id"], "theory Found_Two"))]  # read by one only
-        s += [self.p.session(assistant("x", "echo alpha_one")) for _ in range(6)]
-        ps = self.p.patches(s) + [patch.object(sbl, "FRONTIER_EVIDENCE", 3)]
-        for q in ps:
-            q.start()
-        try:
-            sbl.founding("high")
-            text = (self.p.orch / "base-load-high.txt").read_text()
-            head = text[text.index(sbl.FOUNDING_HEAD):].splitlines()
-            tier = [l for l in head[1:head.index("# pinned idea: the test's pin")] if l]
-            self.assertEqual(tier, ["theories/Found_One.thy"])       # Found_Two by one session, Found_Three by none
-            self.assertIn("as signatures", head[0])                   # the level the tier's header gives stays
-            self.assertIn("the 1 that at least 2 of the last 10", head[0])
-            self.assertIn("theories/Pinned.thy", text)               # the central ideas are not the tier's
-            held = {os.path.basename(p)[:-4] for _, p, _ in sbl.held_by("high") if p.endswith(".thy")}
-            sbl.founding_index(held)
-            index = (self.p.orch / "state/held/founding-index.md").read_text()
-            self.assertIn("Found_Two: Found_Two holds its lemmas", index)
-            self.assertIn("Found_Three:", index)
-            self.assertNotIn("Found_One:", index)                    # held
-            self.assertNotIn("Pinned:", index)
-            # a founding theory in use that main is changing is the frontier's, not the stable part's
-            self.p.changing = {"Found_One"}
-            sbl.founding("high")
-            text = (self.p.orch / "base-load-high.txt").read_text()
-            head = text[text.index(sbl.FOUNDING_HEAD):].splitlines()
-            self.assertEqual([l for l in head[1:head.index("# pinned idea: the test's pin")] if l], [])
-            self.assertIn("1 more in use are changing", head[0])
-        finally:
-            for q in reversed(ps):
-                q.stop()
+class CommandTests(unittest.TestCase):
+    def test_the_command_runs_as_base_sh_runs_it(self):
+        # base.sh runs `select_base_load.py --frontier WHO` at every layer refresh: the command itself, not only its
+        # functions — its entry point was once lost with every function's test passing (2026-09-23)
+        out = subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(sbl.__file__)), "select_base_load.py"),
+                              "--frontier", "max", "--dry-run"], capture_output=True, text=True, timeout=120,
+                             env={k: v for k, v in os.environ.items() if k not in ("ORCH_LOAD_LIST", "BASE_LOAD_LIST")})
+        self.assertEqual(out.returncode, 0, out.stderr)
+        self.assertIn("max", out.stdout)
 
 
 if __name__ == "__main__":

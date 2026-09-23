@@ -22,8 +22,10 @@ window; a piece of work beyond one window is several tasks, with their dependenc
     Planner's: what it must bring to the planner
     While checks run: what can proceed
     Size: an estimate in tokens of work (for example `about 150K`), within the room its session's base leaves: about
-      {ROOM_DESIGN}K for a design, investigation, brief or review task, about {ROOM_TASK}K for a build or fix task; a
-      task beyond its room is refused and split
+      {ROOM_DESIGN}K for a design, investigation, brief or review task, about {ROOM_TASK}K for a build or fix task,
+      less what the task's own relations take — its session is given, as it starts, what the theories the brief names
+      stand on and what uses them, and the form check says how much that is; a task beyond its room is refused and
+      split
 
 A step is a unit its session reads for at once (one batch) and then writes. The plan is malleable: the session
 follows it while it holds, changes it when the work shows a better course, and says what it changed and why.

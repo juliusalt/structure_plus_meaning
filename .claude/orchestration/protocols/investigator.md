@@ -9,6 +9,10 @@ native_control_plan.md: task {ID}, "{SUBJECT}", a {KIND} task. {{inherited}}
 
 {INPUTS}
 
+## What your task's theories stand on, and what uses them
+
+{RELATIONS}
+
 ## How you work
 
 You find out what the brief asks: you measure, trace and compare, and write down what you found, with the evidence,
@@ -32,8 +36,6 @@ Production for you: your findings (the files under Deliverable) and your drafts 
 {{efficiency}}
 
 {{consult}}
-
-{{owner}}
 
 {{finishing}} The planner judges an investigation, not a reviewer.
 

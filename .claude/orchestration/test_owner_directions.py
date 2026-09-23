@@ -49,10 +49,12 @@ def write(path, records):
 
 
 class NewDirectionsTests(unittest.TestCase):
-    def run_collector(self, claude_sessions, codex_sessions):
+    def run_collector(self, claude_sessions, codex_sessions, ledger=None):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             (root / "here").mkdir()
+            if ledger:
+                (root / "here/owner-ledger.md").write_text(ledger)
             (root / "here/owner-directions-selection.json").write_text(
                 json.dumps({"reviewed_through": "2026-09-18T20:00:00Z"}))
             claude, codex = root / "claude", root / "codex/2026/09/19"
@@ -116,6 +118,29 @@ class NewDirectionsTests(unittest.TestCase):
                        "plan-1", "Stop hook", "Your turn", "usage limit", "[harness]", "the answer", "Make the base smaller", "out of the ledger",
                        "sole agent", "Shave the loaded"):
             self.assertNotIn(absent, text)
+
+    def test_a_background_sessions_prompts_are_its_launchers_never_the_owners(self):
+        # 30 of the 34 statements collected by 2026-09-23 were the prompts of background sessions: probes, and delta
+        # hold messages with whole theory diffs in them. What the owner types into a harness session reaches the ledger.
+        bg = {"sessionKind": "bg"}
+        text = self.run_collector(
+            {"f0f0aaaa-probe": [dict(claude_user("2026-09-21T15:32:00Z", "Probe 1790004752, the base. Use no tools."), **bg)],
+             "f1f1bbbb-delta": [dict(claude_user("2026-09-22T17:14:00Z", "Hold the changes below to what you hold."), **bg)],
+             "f2f2cccc-owner": [claude_user("2026-09-22T18:00:00Z", "Keep presentations local to their notion.")]}, {})
+        self.assertIn("> Keep presentations local to their notion.", text)
+        for absent in ("Probe 1790004752", "Hold the changes below"):
+            self.assertNotIn(absent, text)
+
+    def test_what_the_ledger_records_is_read_there_and_not_again_here(self):
+        # the two Codex questions of 2026-09-19 stood in the ledger and in this file both, read one after the other
+        ledger = ("# Owner ledger\n\n## Owner directions\n\n**2026-09-19 10:00 UTC** (in Codex session cccc3333):\n\n"
+                  "> Reuse the existing\n> index notion.\n\n## Open questions to the owner\n")
+        text = self.run_collector({}, {"cccc3333": ("cli", [codex_user("2026-09-19T10:00:00Z", "Reuse the existing index notion."),
+                                                            codex_user("2026-09-19T10:05:00Z", "Keep the reader apart.")])},
+                                  ledger)
+        self.assertNotIn("existing index notion", text)
+        self.assertIn("> Keep the reader apart.", text)
+        self.assertIn("less what the owner ledger records", text)
 
     def test_nothing_new_says_so(self):
         self.assertIn("None.", self.run_collector({}, {}))

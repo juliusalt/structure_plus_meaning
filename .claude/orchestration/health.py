@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """One-screen health report of the orchestration: the daemon, the knowledge base, each slot's session, the queue and
-its stages, parked and finishing tasks, questions, what is held warm, the bases. Lines that need someone start with
+its stages, parked and finishing tasks, questions, what is held warm, the bases, the context window (window_watch). Lines that need someone start with
 ATTENTION."""
 import calendar
 import json
@@ -14,6 +14,7 @@ sys.path.insert(0, HERE)
 import ctx_gauge  # noqa: E402
 import v2  # noqa: E402
 import watchdog as w  # noqa: E402
+import window_watch  # noqa: E402
 
 S = v2.STATE
 
@@ -207,9 +208,10 @@ def bases_and_trees():
     layers = []
     for role in sorted(v2.role_layers()):  # what each switched-on role forks now, and what is being built for it
         rec = v2.role_layer_record(role)
-        now_ = v2.role_layer_of(role)
+        now_, churn = v2.role_layer_of(role), v2.role_churn_of(role)
         layers.append(f"{role} {now_ + ' (' + str((rec.get('context') or 0) // 1000) + 'K)' if now_ else 'its base'}"
-                      + (f", {rec['building']} reasoning" if rec.get("building") else ""))
+                      + (f" + {churn}" if churn else "") + (f", {rec['building']} reasoning" if rec.get("building") else "")
+                      + (f", {rec['churn_building']} loading" if rec.get("churn_building") else ""))
     if layers:
         print("role layers: " + "; ".join(layers))
     hour = v2.softly("the last hour's occupancy", v2.occupancy_text, default="")
@@ -272,6 +274,8 @@ def main():
     mem = {k: int(v.split()[0]) // 1024 for k, v in (ln.split(":") for ln in open("/proc/meminfo")) if k in ("MemTotal", "MemAvailable")}
     print(f"memory: {mem['MemAvailable'] // 1024} GiB available of {mem['MemTotal'] // 1024}")
     bases_and_trees()
+    for line in window_watch.summary():  # what the watchdog's minute read of the transcripts has found
+        print(line)
     st = v2.peek()
     if read("stopped"):
         print(f"stopped at {read('stopped')}; start.sh resumes")  # the marker says when, not who wrote it

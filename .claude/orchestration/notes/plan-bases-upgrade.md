@@ -114,7 +114,11 @@ Examined on the day's 6,669 tool calls (reports J–M), and what came of each:
 (A decision revised later keeps its first form, struck through, and says why. Data: `state/analysis/` — the datasets
 `sessions-*.jsonl`, `names-*.jsonl` (notes/session-data.py) and the reports `report-A…I`.)
 
-**D1. What a base is for, and its budget.** Reading the base prefix is 62% of all the run spent on 2026-09-22 (435M
+**D1. Superseded: usage is not the content-selection principle.** The owner corrected this on 2026-09-23.
+`plan-bases-two-purposes.md` now derives selection from responsibilities, intent and source relations; budgets are
+deliberated outcomes. The following is the historical rejected argument, not the active rule.
+
+**Earlier D1. What a base is for, and its budget.** Reading the base prefix is 62% of all the run spent on 2026-09-22 (435M
 input-equivalent: implementers 71% of their cost, fixers 69%, investigators 77%, reviewers 56%). A held theory pays
 for itself in tokens alone only if a large share of forks need it (holding costs 0.1 × tokens × requests per fork;
 getting it on demand ≈ 7 × tokens for a fork that needs it — its source is read, written at 2 and re-read — so the
@@ -123,7 +127,7 @@ So the base is a quality instrument — knowledge in context without depending o
 the owner's 530K (bases-design §12), is to be spent on the content most likely to be used, per token, with a floor
 under which nothing is held however much room remains (5% of the forks: about 3 of 60).
 
-**D2. The founding tier (high, xhigh): only what is used.** Over the week to 2026-09-22 (347 library sessions:
+**D2. ~~The founding tier (high, xhigh): only what is used.~~ Revoked by the owner, 2026-09-23 ~13:30:** "that is stupid … it is not just to give what will be used to change it is also to align the content produced with the goals and intent of the repository. Thus it is a two fold problem - reduce reading by already having the necessary information in the context and reduce writing and mistakes and improve the content by having the information necessary to steer the correct changes"; and: "It does not mean however that we need to keep the bases and layers as they were before it just means that we need to improve them and optimize with the twofold objective." Use measures the first purpose only; steering leaves no trace in use (a session that never saw a notion does not show that it missed it), so the review evidence below proves nothing about it. The founding tiers of high and xhigh are put back as the stable bases hold them (226 founding theories as signatures) until the selection is optimized for both purposes (notes/plan-bases-two-purposes.md); the from-scratch projection no longer chooses the founding tier again. Its first form, kept: Over the week to 2026-09-22 (347 library sessions:
 163 implementers and fixers, 157 middle roles; report-E), 176 of the 226 founding theories (144K tokens) were used by
 none of the implementer family and 175 (146K) by none of the middle roles; 13 and 15 more by one session. No review
 of 110 blamed a duplication on a founding notion that was not known (all 20 reviews naming a duplication name one within
@@ -142,7 +146,11 @@ notions" regularly; "authority and currentness", "proofs and replay", "admission
 week; "presentations", "loci", "history" and "the generalization machinery" by a handful. Whether to keep all of them is
 the owner's.
 
-**D4. The frontier: chosen within the layer's budget, by use per token, from 60 sessions.** At each layer refresh
+**D4. Superseded: the frontier is selected by relation.** The current `--frontier` command preserves its name but
+applies the responsibility-based rule in `plan-bases-two-purposes.md`. It has no usage floor or token-ranking cutoff.
+The following remains as historical evidence of what was replaced.
+
+**Earlier D4. The frontier: chosen within the layer's budget, by use per token, from 60 sessions.** At each layer refresh
 (select_base_load --frontier) the frontier is the theories outside the stable part that the last 60 sessions of the
 base's roles used — a session uses a theory when it reads it or its own writing names one of the names the theory
 defines (report-D) — ranked by use per token at the list's level and taken until the layer's budget (the target less

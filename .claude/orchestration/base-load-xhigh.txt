@@ -1,158 +1,389 @@
-# The middle base's load list (`xhigh`, xhigh: designer, task designer, investigator, reviewer; written 2026-09-19,
-# revised after the owner's answers, built from 2026-09-20): design B of notes/bases-design.md; the owner builds the base. Ordered
-# from reference to direction: the founding theories as signatures and the central ideas' statements, then — below
-# the layer mark — what exists, the working frontier as definitions, the check and measurement tools, the decisions
-# by name, the reasoning
-# inventory, the plan, and last the owner's words and the operating rules. Measured by a real pack: 581K with the plan
-# and REASONING_REUSE.md as they are, about 523K once they are condensed (the owner's aim: about 530K). In the layered
-# design (section 8) the tiers up to the central ideas are the stable reference and the rest, with HANDOFF.md before
-# the owner's words, is the frontier layer. The frontier is re-measured at each build from the sessions of the roles
-# that use it. Comments are curation notes; they never reach the loaded text.
-# every other founding theory its roles used, as signatures (generated 2026-09-23: of the 238 founding theories the central ideas do not pin, the 26 that at least 2 of the last 156 sessions of designer, investigator, reviewer, task-designer read or named and main left unchanged for 3 days — 14 more in use are changing, and the frontier holds them; the others are said by the indexes; in import order)
+# Middle roles' reference (xhigh). Current reasoning: notes/plan-bases-two-purposes.md.
+# The parts, below to above, in the order of their dependencies, which is also the order of how often each
+# modifies what it holds per token held (measured over the run's 472 commits, 2026-09-23): the stable part —
+# the owner's words, problems.txt and the practice, then the reference (founding theories as signatures, the
+# central ideas as statements) — with the reference reasoning over it; direction (the plan, the decisions);
+# inventory (the tool index, the notions the plan names, REASONING_REUSE.md); catalogue (the theory map, the tools a
+# session runs).
+# Nothing here depends on the task queue: a task's own relations are given to its sessions as they start.
+# Comments are curation notes; they never reach the loaded text.
+
+# pinned: the owner's voice — the owner's words and the problems they set; first, for everything held rests on the owner's intent, and none of it changed in the run's 472 commits of 09-19/23; purpose=steering
+.claude/orchestration/codex-owner-directions.md
+.claude/orchestration/owner-directions.md
+problems.txt
+
+# pinned: the library's working practice — the owner's words and the lessons its development recorded, as library-practice.txt names them (never the orchestrator's own memory); purpose=steering
+.claude/orchestration/state/held/library-practice-xhigh.md
+
+# every other founding theory, as signatures (generated: commentary, definitions, locales and the names of what is proved; one per notion of the library's vocabulary, in import order); purpose=steering
+theories/RRA_Data_Views.thy
+theories/RRA_Environment.thy
 theories/RRA_Finite_Environments.thy
+theories/RRA_Fresh_Uses.thy
+theories/RRA_Source_Clone.thy
+theories/RRA_Structural_Syntax.thy
+theories/RRA_Record_Chains.thy
+theories/RRA_Read_Transport.thy
+theories/RRA_Binding_Extension.thy
 theories/RRA_Syntax_Construction.thy
+theories/RRA_Syntax_Forests.thy
+theories/RRA_Literal_Extension.thy
 theories/RRA_Bound_Syntax_Construction.thy
+theories/RRA_Scope_Construction.thy
+theories/RRA_Syntax_Composition.thy
+theories/RRA_Citation_Closure.thy
+theories/RRA_Evidence.thy
+theories/RRA_Generation_Dependencies.thy
+theories/RRA_Publication.thy
+theories/Factor_Structure.thy
 theories/Factor_Terms.thy
 theories/Factor_Executable_Terms.thy
+theories/Factor_Quotation.thy
+theories/Factor_Term_Encoding.thy
+theories/Factor_Material_Observation.thy
+theories/Factor_Finite_Artifact_Enumeration.thy
+theories/Factor_Patterns.thy
+theories/Factor_Schemas.thy
+theories/Factor_Schema_Renaming.thy
+theories/Factor_System_Clauses.thy
+theories/Factor_Native_Transport.thy
+theories/Factor_Packages.thy
+theories/Factor_Applications.thy
+theories/Factor_Application_Encoding.thy
+theories/Factor_Package_Dependencies.thy
+theories/Factor_Pattern_Encoding.thy
+theories/Factor_Premise_Construction.thy
+theories/Factor_Reference_Tables.thy
+theories/Factor_Root_Syntax.thy
+theories/Factor_Schema_Lists.thy
+theories/Factor_Schema_Compilation.thy
+theories/Factor_Syntax_Copy.thy
+theories/Factor_Schema_Code.thy
+theories/Factor_Definition_Frames.thy
+theories/Factor_Program_Construction.thy
 theories/Factor_Native_Equality.thy
+theories/Factor_Derivation.thy
+theories/RRA_Fragment.thy
+theories/RRA_Assembly.thy
+theories/Factor_Construction_Recovery.thy
+theories/Factor_Construction_Omissions.thy
+theories/Factor_Derivation_Graphs.thy
+theories/Factor_Proof_Positions.thy
+theories/Factor_Proof_Flattening.thy
+theories/Factor_Graph_Renaming.thy
+theories/Factor_Positioned_Instances.thy
+theories/Factor_Native_References.thy
+theories/Factor_Table_Metadata.thy
+theories/Factor_Realization.thy
+theories/Factor_Proof_Retention.thy
+theories/Factor_Proof_Rows.thy
+theories/RRA_Syntax_Families.thy
+theories/Factor_Proof_Row_Copy.thy
+theories/Factor_Finite_Presentations.thy
+theories/Factor_Pattern_Programs.thy
+theories/Factor_Construction_Permission_Examples.thy
+theories/RRA_Syntax_Records.thy
+theories/Factor_Proof_Node_Construction.thy
+theories/Factor_Proof_Inclusion.thy
+theories/Factor_Certified_Construction.thy
+theories/Factor_Executable_Readings.thy
+theories/Factor_Executable_Scopes.thy
+theories/Factor_Executable_Premises.thy
 theories/Factor_Executable_Definitions.thy
+theories/Factor_View_Definitions.thy
+theories/Factor_Cause.thy
 theories/Factor_Data_Comparison.thy
+theories/Factor_Bag_Comparison.thy
 theories/Factor_List_Profiles.thy
 theories/Factor_Related_Bags.thy
+theories/Factor_Material_Data_Projection.thy
+theories/Factor_Coordinate_Admission.thy
+theories/Factor_Keyed_Lists.thy
+theories/Factor_Family_Admission.thy
+theories/Factor_Target_Admission.thy
+theories/Factor_Environment_Lookup.thy
+theories/Factor_Citation_Interpretation.thy
+theories/Factor_Citation_Reading.thy
+theories/Factor_Data_List_Operations.thy
+theories/Factor_Data_Collection_Operations.thy
+theories/Factor_Pattern_Instantiation.thy
+theories/Factor_Material_Checking.thy
+theories/Factor_Definition_Call_Admission.thy
+theories/Factor_Definition_Clause_Reading.thy
+theories/Factor_Admitted_Instantiation.thy
+theories/Factor_Boundary_Lists.thy
+theories/Factor_Site_Citation_Reading.thy
+theories/Factor_Proof_Claim_Values.thy
+theories/Factor_Slot_Observations.thy
+theories/Factor_Replay_Coverage.thy
+theories/Factor_Judgment_Retention.thy
+theories/Factor_Complete_Data_Quotation.thy
+theories/Factor_Recorded_Cause.thy
+theories/Factor_Generation_Causes.thy
+theories/Lambda_Closures.thy
+theories/SK_Lambda_Results.thy
+theories/Lambda_Substitution.thy
+theories/Lambda_Head_Evaluation.thy
+theories/Factor_Continuation_Values.thy
+theories/Factor_Amendment_Values.thy
+theories/Factor_Current_Entry_Construction.thy
+theories/Factor_Correspondence_Reports.thy
+theories/Factor_Report_Programs.thy
+theories/Factor_Current_Certificates.thy
+theories/Factor_Transition_Values.thy
+theories/Factor_Assembly_Support.thy
+theories/Factor_Dependency_Support.thy
+theories/Factor_Amendment_Comparisons.thy
+theories/Factor_Reference_Bindings.thy
 theories/Factor_Reader_Clauses.thy
+theories/Factor_Constrained_Contracts.thy
+theories/Factor_Finite_Set_Presentations.thy
 theories/Factor_Bag_Difference.thy
+theories/Factor_Generation_Equations.thy
+theories/Factor_Generation_Value_Programs.thy
+theories/Factor_Quoted_Artifacts.thy
+theories/Factor_Context_Clauses.thy
+theories/Factor_Fragment_Projections.thy
+theories/Factor_Related_List_Maps.thy
+theories/List_Relation_Folds.thy
+theories/Factor_Row_Value_Agreement.thy
+theories/Factor_Assembly_Components.thy
+theories/Factor_Term_Sequence_Presentations.thy
+theories/Factor_Product_Contracts.thy
+theories/Factor_Selected_Fragments.thy
 theories/Inference_Closure.thy
+theories/Inference_Development.thy
+theories/Presentation_Completion.thy
+theories/Factor_Related_Test_Clauses.thy
+theories/Factor_Package_Extensions.thy
+theories/Candidate_Observations.thy
+theories/Factor_Proof_Scheme_Instances.thy
 theories/Factor_Pattern_Specialization.thy
+theories/Factor_Observation_Execution.thy
+theories/Factor_Observation_Result_Clauses.thy
+theories/Factor_Binary_Result_Comparison.thy
+theories/Factor_Observation_Table_Controls.thy
+theories/Factor_Pair_Scope_Investigation.thy
+theories/Factor_Admission_Plans.thy
+theories/Factor_Admission_Plan_Clauses.thy
+theories/Factor_Admission_Installation.thy
+theories/Factor_Investigation_Input_Presentations.thy
+theories/Factor_Admission_Pair_Reasoning.thy
+theories/Factor_Library_Coverage.thy
 theories/Finite_Functional_Enumeration.thy
+theories/Factor_Source_Shape_Requirements.thy
+theories/Factor_Observed_Applications.thy
+theories/Finite_Indexed_Candidate_Assembly.thy
+theories/Factor_Finite_Child_Example.thy
+theories/Factor_Finite_Child_Source_Checks.thy
+theories/Factor_Finite_Child_Sources.thy
+theories/Factor_Ground_Inference_Premises.thy
+theories/Factor_Prefixed_Observation_Clauses.thy
+theories/Keyed_Fibre_Identity.thy
+theories/Factor_Requirement_Guards.thy
+theories/Factor_Portable_Table_Guard.thy
+theories/Factor_Admission_Sequences.thy
+theories/Factor_Admission_Request_Boundary.thy
+theories/Factor_Admission_Goal_Support.thy
+theories/Factor_Checked_Requirement_Plans.thy
+theories/Factor_Retained_Clause_Admission.thy
+theories/Factor_Fresh_Program_Coordinates.thy
+theories/Factor_Native_Requirement_Cases.thy
+theories/Factor_Native_Admission_Assessment.thy
+theories/Finite_Iteration_Histories.thy
+theories/Factor_Finite_Program_History_Inspection.thy
+theories/Factor_Native_Derivation_Correctness.thy
+theories/Finite_Indexed_Relation_Images.thy
+theories/Factor_Finite_Proof_Paths.thy
+theories/Factor_Native_Certificate_Assessment.thy
+theories/Finite_Investigation_Readiness.thy
 theories/Finite_Ordered_Representatives.thy
+theories/Factor_Native_Replay_Caches.thy
+theories/Factor_Requirement_Decision_Assessment.thy
+theories/Factor_Decision_Replay_Sharing.thy
+theories/Finite_Optional_Relation_Predicates.thy
+theories/Boolean_Decision_Assessments.thy
+theories/Factor_Data_Reading_Methods.thy
+theories/Factor_Finite_Artifact_Value_Readers.thy
+theories/Factor_Finite_Prepared_Data_Readings.thy
+theories/Binary_Path_Stores.thy
 theories/RRA_Binary_Use_Paths.thy
+theories/Factor_Policy_Causes.thy
+theories/Factor_Finite_Required_Causes.thy
 theories/Binary_Nested_Stores.thy
+theories/RRA_Local_Environment_Updates.thy
+theories/RRA_Environment_Update_References.thy
+theories/Factor_Required_History_States.thy
+theories/Factor_Required_History_Steps.thy
 theories/Finite_Presented_Collections.thy
 theories/Finite_Term_Words.thy
+theories/RRA_Use_Allocation_Observations.thy
+theories/RRA_Bounded_Environment_States.thy
+theories/RRA_Allocated_Environment_Stores.thy
 theories/RRA_Digit_Natural_Paths.thy
+theories/Finite_Codec_Observations.thy
 theories/RRA_General_Environment_Grafts.thy
-theories/Factor_Demanded_Graph_Readings.thy
+theories/RRA_Finite_Embedded_Grafts.thy
+theories/RRA_Graft_Observations.thy
+theories/RRA_Encoded_Environments.thy
+theories/RRA_Environment_Index_Equivalence.thy
+theories/RRA_Cached_Graft_References.thy
+theories/Factor_Required_History_Transitions.thy
+theories/RRA_Known_Generation_Rows.thy
+theories/Factor_Digit_History_Constructed_Attempts.thy
+theories/Factor_Digit_History_Attempt_Refinement.thy
+theories/Factor_Computed_Replay_Causes.thy
+theories/Factor_Known_History_Control_Construction.thy
+theories/Factor_Packet_Observation_Readings.thy
+theories/Factor_Parallel_Packet_Cycles.thy
+theories/Factor_Shared_History_Construction.thy
+theories/Factor_Required_Workflow_Cases.thy
 theories/Factor_Finite_Development_Questions.thy
-theories/Development_Constant_Verification.thy
+theories/Isabelle_Constant_Closure.thy
 theories/Development_Seed.thy
-# pinned idea: structure without names — the relational substrate
+theories/Certificate_Construction_Review.thy
+# pinned idea: structure without names — the relational substrate; purpose=both
 theories/Bootstrap_Relations.thy
 theories/RRA_Core.thy
 theories/RRA_Data.thy
 theories/RRA_Exact.thy
-# pinned idea: presentations, and contracts owned locally by their notion
+# pinned idea: presentations, and contracts owned locally by their notion; purpose=both
 theories/Presentation_Classes.thy
 theories/Presentation_Relations.thy
 theories/Presentation_Closure.thy
 theories/Presentation_Transport.thy
 theories/Presentation_Contracts.thy
-# pinned idea: artifacts
+# pinned idea: artifacts; purpose=both
 theories/RRA_Finite_Artifacts.thy
 theories/Factor_Artifact_Values.thy
-# pinned idea: history — generations and their predecessors
+# pinned idea: history — generations and their predecessors; purpose=both
 theories/Generation_Structures.thy
 theories/RRA_Generation.thy
 theories/RRA_Generation_Frames.thy
-# pinned idea: loci — selection, replacement, transactions
+# pinned idea: loci — selection, replacement, transactions; purpose=both
 theories/RRA_Selection.thy
 theories/RRA_Replacement.thy
 theories/RRA_Transaction.thy
 theories/Factor_Transaction_Values.thy
-# pinned idea: authority and currentness — a judgment relative to an authority, generation, purpose and locus, never ambient
+# pinned idea: authority and currentness — a judgment relative to an authority, generation, purpose and locus, never ambient; purpose=both
 theories/Factor_Authority.thy
 theories/Factor_Current_Values.thy
 theories/Factor_Current_Scopes.thy
 theories/Factor_Current_Programs.thy
 theories/Factor_Current_Entries.thy
-# pinned idea: positive meaning and locality
+# pinned idea: positive meaning and locality; purpose=both
 theories/Factor_Positive_Meaning.thy
 theories/Factor_Positive_Locality.thy
 theories/Factor_Positive_Parametricity.thy
 theories/Factor_Native_Meaning.thy
-# pinned idea: proofs and replay
+# pinned idea: proofs and replay; purpose=both
 theories/Factor_Native_Proofs.thy
 theories/Factor_Replay_Retention.thy
 theories/Factor_Replay.thy
-# pinned idea: admission
+# pinned idea: admission; purpose=both
 theories/Factor_Generation_Admission.thy
 theories/Factor_Generation_Contracts.thy
 theories/Factor_Artifact_Admission.thy
-# pinned idea: the generalization machinery and the closed development workflow
+# pinned idea: the generalization machinery and the closed development workflow; purpose=both
 theories/Candidate_Investigation.thy
 theories/Method_Investigation.thy
 theories/Factor_Development_Cycle.thy
 theories/Factor_Development_Steering.thy
 theories/Factor_Steered_Development.thy
-# pinned idea: index notions that exist (the first run reached for these only after being told)
+# pinned idea: index notions that exist (the first run reached for these only after being told); purpose=both
 theories/Ordered_Member_Trees.thy
 theories/Keyed_Finite_Sets.thy
 theories/Binary_Relation_Stores.thy
 theories/RRA_Indexed_Artifact_Lookup.thy
-# pinned idea: base causes and programs
+# pinned idea: base causes and programs; purpose=both
 theories/Factor_Base_Cause.thy
 theories/Factor_Base_Programs.thy
-# === layer === the frontier layer below: refreshed on its own (base.sh xhigh layer) when what it holds has changed; the reference above is the owner's to rebuild.
-# pinned: what exists — every theory source name, in ROOT order (generated from current source files; grep the map or source for content)
-.claude/orchestration/state/held/theory-names.md
-# pinned: the founding theories this list does not hold, one line each (generated at pack time: the first clause of each one's THEORY_MAP.md row)
-.claude/orchestration/state/held/founding-index.md
-# the working frontier (55 theories for the designer, investigator, reviewer, task-designer sessions, chosen 2026-09-23 from the last 60 of them: each used by at least 3, by use per token, within the layer's 223K), as definitions
-theories/Map_Filter_Lists.thy  # 7 sessions, ~1K tokens
-theories/Factor_Finite_Reference_Forests.thy  # 6 sessions, ~1K tokens
-theories/Development_Entity_Keys.thy  # 7 sessions, ~1K tokens
-theories/Factor_Reference_Forests.thy  # 5 sessions, ~1K tokens
-theories/Isabelle_Entity_Export.thy  # 7 sessions, ~1K tokens
-theories/Factor_Rule_Instances.thy  # 8 sessions, ~1K tokens
-theories/Native_Execution_Refinements.thy  # 5 sessions, ~1K tokens
-theories/RRA_Finite_Fresh_Addresses.thy  # 3 sessions, ~1K tokens
-theories/RRA_Bound_Forests.thy  # 3 sessions, ~1K tokens
-theories/First_Index_Trees.thy  # 4 sessions, ~1K tokens
-theories/Development_Request_Scope.thy  # 11 sessions, ~1K tokens
-theories/Development_Verdict_Unreached.thy  # 18 sessions, ~3K tokens
-theories/RRA_Syntax_Families.thy  # 3 sessions, ~1K tokens
-theories/Factor_Record_Construction.thy  # 4 sessions, ~1K tokens
-theories/RRA_Syntax_Forests.thy  # 7 sessions, ~1K tokens
-theories/Factor_Premise_Forests.thy  # 4 sessions, ~1K tokens
-theories/Native_Table_Reach.thy  # 18 sessions, ~4K tokens
-theories/Factor_Finite_Pattern_Syntax.thy  # 4 sessions, ~1K tokens
-theories/Native_Path_Store_Indexes.thy  # 4 sessions, ~1K tokens
-theories/Development_State_Presenter.thy  # 12 sessions, ~3K tokens
-theories/Established_Premises.thy  # 4 sessions, ~1K tokens
-theories/Isabelle_Local_Names.thy  # 10 sessions, ~2K tokens
-theories/Development_Verdict_Mentions.thy  # 20 sessions, ~5K tokens
-theories/Development_Located_Rows.thy  # 7 sessions, ~2K tokens
-theories/RRA_Syntax_Composition.thy  # 3 sessions, ~1K tokens
-theories/Development_Answer_0ccf746fe2cf.thy  # 9 sessions, ~2K tokens
-theories/Binary_Path_Stores.thy  # 4 sessions, ~1K tokens
-theories/Factor_Pattern_Forests.thy  # 7 sessions, ~2K tokens
-theories/Factor_Schema_Bodies.thy  # 3 sessions, ~1K tokens
-theories/Isabelle_Entities.thy  # 19 sessions, ~6K tokens
-theories/Complete_Value_References.thy  # 4 sessions, ~1K tokens
-theories/Development_Verdict_Statements.thy  # 15 sessions, ~5K tokens
-theories/Native_Collection_Programs.thy  # 18 sessions, ~6K tokens
-theories/RRA_Placed_Forests.thy  # 5 sessions, ~1K tokens
-theories/Native_Path_Stores.thy  # 10 sessions, ~4K tokens
-theories/Native_Control_Seed_Subject.thy  # 3 sessions, ~1K tokens
-theories/Isabelle_State_Difference.thy  # 4 sessions, ~1K tokens
-theories/Development_Native_Readiness.thy  # 13 sessions, ~5K tokens
-theories/Development_Subject_Index.thy  # 12 sessions, ~5K tokens
-theories/Development_Verdict_Difference.thy  # 15 sessions, ~6K tokens
-theories/Development_State_Rows.thy  # 13 sessions, ~6K tokens
-theories/Carrier_Indexes.thy  # 6 sessions, ~3K tokens
-theories/Development_State_Edit.thy  # 10 sessions, ~5K tokens
-theories/Factor_Finite_Template_Syntax.thy  # 5 sessions, ~2K tokens
-theories/Development_Native_Decomposition.thy  # 8 sessions, ~4K tokens
-theories/Factor_Native_Incidence.thy  # 3 sessions, ~1K tokens
-theories/Development_Constant_Problems.thy  # 7 sessions, ~4K tokens
-theories/RRA_Finite_Syntax_Construction.thy  # 4 sessions, ~2K tokens
-theories/Development_Request_Keys.thy  # 3 sessions, ~2K tokens
-theories/Development_Edited_Local.thy  # 3 sessions, ~2K tokens
-theories/Development_Seed_Verification.thy  # 4 sessions, ~4K tokens
-theories/Development_Successor.thy  # 4 sessions, ~5K tokens
-theories/Development_Native_Answers.thy  # 5 sessions, ~7K tokens
-theories/Development_Edited_Reach.thy  # 3 sessions, ~6K tokens
-theories/Development_Machinery.thy  # 3 sessions, ~6K tokens
-# the check and measurement workflow's tools (docstrings, signatures, arguments)
+# === layer direction ===
+# pinned: the plan (the basis of nearly every correction the first run's implementers needed); purpose=steering
+native_control_plan.md
+
+# the decisions, by heading and first sentence: appended as batches decide and never rewritten (84 added and none changed in the run), so a new one is carried by the delta until a refresh; purpose=steering
+.claude/orchestration/state/held/decisions-index.md
+
+# === layer inventory ===
+# the library's tools, a line each (those held whole stand in the catalogue): appended as tools are made and almost never rewritten (6 added and 1 changed in the run's 472 commits, 234 added and 3 changed before it); purpose=steering
+.claude/orchestration/state/held/tool-index-xhigh.md
+
+# === relations ===
+# relation: whole-plan notions; purpose=steering; as signatures
+theories/Development_Loci.thy
+theories/Development_Machinery.thy
+theories/Factor_Admission_Goal_Construction.thy
+theories/Factor_Admission_Goal_Sequences.thy
+theories/Factor_Application_Candidates.thy
+theories/Factor_Application_Comparison.thy
+theories/Factor_Application_Retention.thy
+theories/Factor_Certified_Policy_Readings.thy
+theories/Factor_Chained_Investigation.thy
+theories/Factor_Current_Acceptance_Certificates.thy
+theories/Factor_Decision_Replay_Investigation.thy
+theories/Factor_Definition_Closure.thy
+theories/Factor_Definition_Encoding.thy
+theories/Factor_Development_Subjects.thy
+theories/Factor_Finite_Certified_Causes.thy
+theories/Factor_Generation_Dependency_Contracts.thy
+theories/Factor_Generation_History_Append.thy
+theories/Factor_Guided_Investigation.thy
+theories/Factor_Inference_Development.thy
+theories/Factor_Learned_Execution_Soundness.thy
+theories/Factor_Learned_Schemas.thy
+theories/Factor_Native_Amendment.thy
+theories/Factor_Native_Definition_Extensions.thy
+theories/Factor_Predecessor_Continuation.thy
+theories/Factor_Requirement_Artifact_Admission.thy
+theories/Factor_Requirement_Plans.thy
+theories/Factor_Result_Comparison.thy
+theories/Factor_Schema_Forests.thy
+theories/Factor_Schema_Generation.thy
+theories/Factor_Source_Development_Admission.thy
+theories/Factor_System_Relocation.thy
+theories/Factor_System_Restriction.thy
+theories/Factor_Transition_Selection.thy
+theories/Factor_Workflow_Admission.thy
+theories/Factor_Workflow_Protocol.thy
+theories/Factor_Workflow_Readiness.thy
+theories/Factor_Workflow_Requirements.thy
+theories/Finite_Candidate_Assembly.thy
+theories/Finite_Demand_Selection.thy
+theories/Finite_Derived_Observations.thy
+theories/Finite_Inference_Development.thy
+theories/Finite_Observation_Contracts.thy
+theories/Finite_Singleton_Selection.thy
+theories/Finite_Subject_Investigation.thy
+theories/Inference_Demands.thy
+theories/Inference_Rounds.thy
+theories/Isabelle_Entity_Export.thy
+theories/Isabelle_Renaming.thy
+theories/Isabelle_Terms.thy
+theories/Method_Development.thy
+theories/Native_Execution_Refinements.thy
+theories/Obligation_Reductions.thy
+theories/Observation_Invariance.thy
+theories/Observation_Repairs.thy
+theories/Observation_Revisions.thy
+theories/Parallel_Assessment_Execution.thy
+theories/Presentation_Contract_Constructions.thy
+theories/Presentation_Development.thy
+theories/Presentation_Function_Witnesses.thy
+theories/RRA_Executable_Retention.thy
+theories/RRA_Generation_Record_Construction.thy
+theories/RRA_Publication_Dependencies.thy
+# === end relations ===
+
+# pinned: the accumulated reasoning that further generalization must reuse, published with the landings that add a pattern of reasoning — the catalogue's cause, acting far less often (its text changed in 6 of the run's 472 commits of 09-19/23, the rest of the direction in 2, the catalogue in 187); purpose=steering
+REASONING_REUSE.md
+
+# === layer catalogue ===
+# complete library vocabulary, a line each theory the base does not hold: rows rewritten far more than added in the run (512 against 126); purpose=steering
+.claude/orchestration/state/held/theory-map-index-xhigh.md
+
+# the repository's own tools a session runs (docstrings, signatures, arguments): the check and measurement workflow, and the native development tools that check, replay and reconstruct answers to development requests — never the harness's (v2.py and show.py are taught by each session's protocol); the rest of tools/ is in the tool index; purpose=both
 tools/probe_theories.py
 tools/incremental_check.py
 tools/build.py
@@ -167,16 +398,4 @@ tools/export_proved_code.py
 tools/development_adoption.py
 tools/investigate.py
 tools/native_execution_runtime.py
-# pinned: the decisions, as an index (generated at pack time: DECISIONS.md's headings and first sentences)
-.claude/orchestration/state/held/decisions-index.md
-# pinned: the accumulated reasoning that further generalization must reuse
-REASONING_REUSE.md
-# pinned: the plan (the basis of nearly every correction the first run's implementers needed)
-native_control_plan.md
-# pinned: the owner's voice and the operating rules
-.claude/orchestration/codex-owner-directions.md
-.claude/orchestration/owner-directions.md
-~/.claude/projects/-home-julius-structure-and-semantics/memory/[a-z]*.md  # the memory files, not their index (MEMORY.md repeats them and enters every delta whole)
-AGENTS.md
-DEVELOPMENT_WORKFLOW.md
-problems.txt
+

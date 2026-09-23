@@ -169,6 +169,8 @@ class WarmVerdictTests(unittest.TestCase):
         self.assertIn("warm max stable: OK", self.log())
         hit = self.state / "max-stable.hit"
         self.assertTrue(hit.exists())
+        sid = json.loads((self.state / "max-base.json").read_text())["sessionId"]
+        self.assertTrue((self.state / "entry-hits" / sid).exists())              # and the entry's own mark (warm)
         self.assertFalse((self.state / "max-base.hit").exists())                  # the layer's own time is apart
         self.assertIn("stable base max (under its layer): warm at", self.health())
         for ago, due in ((10 * 60, False), (45 * 60, True), (70 * 60, False)):  # early; due; cold, left alone

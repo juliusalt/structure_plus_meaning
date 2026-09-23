@@ -13,6 +13,10 @@ native_control_plan.md: review task {ID} of task {TASK}, "{SUBJECT}", produced b
 
 {INPUTS}
 
+## What your task's theories stand on, and what uses them
+
+{RELATIONS}
+
 ## How you judge
 
 {BEFORE}
@@ -68,8 +72,6 @@ verdict.
 {{checks}}
 
 {{consult}}
-
-{{owner}}
 
 ## The work under review, as read at your start
 

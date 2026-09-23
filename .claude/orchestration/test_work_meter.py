@@ -12,6 +12,7 @@ import sys
 import time
 import unittest
 from unittest.mock import patch
+import tempfile
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
@@ -1009,6 +1010,69 @@ class WorkerGuardTests(Guarded):
         claim.write_text(json.dumps({"task": "2", "why": "its final check advances the base heap", "pid": os.getpid(),
                                      "at": long_ago}))
         self.assertEqual(holder(), "2")
+        # the window is a number the owner changes: the switch's file says it in seconds, else ORCH_MEASURE_MAX (180)
+        minutes = lambda: subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                          "import v2; print(v2.measure_minutes())"], env=self.w.env,
+                                         capture_output=True, text=True).stdout.strip()
+        self.assertEqual(minutes(), "3")
+        (self.w.state / "measure-bound").write_text("240\n")
+        self.assertEqual(minutes(), "4")
+        claim.write_text(json.dumps({"task": "1", "why": "a timing", "session": "implement-1", "at": time.time() - 200,
+                                     "call": "t-m", "call_at": time.time() - 200}))
+        self.assertEqual(holder(), "1")                           # 200 s: inside the 240 its file says
+        (self.w.state / "measure-bound").write_text("60")
+        self.assertEqual(holder(), "None")                        # past the 60 it says now, though inside ORCH's 600
+
+    def test_a_shared_measurement_takes_its_kind_s_slot_holds_nothing_and_is_told_the_load(self):
+        # the owner, 2026-09-23: "the only difference should be that it gets ran without holding all of the machine, but
+        # if it is heavy then it uses a heavy slot if it is like a probe it uses a probe slot"
+        self.w.env.update(ORCH_ISABELLE_RUNS="1", ORCH_LOAD_SAMPLER="0")  # one heavy slot of two taken
+        said = subprocess.run([sys.executable, str(fakes.HERE / "v2.py"), "measuring", "--shared", "the judgment's cost"],
+                              env=dict(self.w.env, **self.w.as_session("s1"), ORCH_CONTROL="0"), capture_output=True,
+                              text=True, cwd=self.w.project).stdout
+        self.assertIn("measure now, sharing the machine", said)
+        self.assertIn("a heavy slot for a heavy run, a probe slot for a probe", said)
+        self.assertIn("fitted to 3 minutes", said)
+        long_probe = "python3 -B tools/probe_theories.py --work .build/tasks/1/m --theory Ready --timeout 600"
+        self.assertIn("A measurement fits its window: `--timeout 180` at most", self.guard("Bash", {"command": long_probe}))
+        check = "python3 -B tools/incremental_check.py check --output .build/tasks/1/c1"
+        self.assertIsNone(self.guard("Bash", {"command": check}, tool_use="t-sh"))  # the free heavy slot
+        self.assertFalse((self.w.state / "isabelle-exclusive").exists())             # and nothing held
+        marker = json.loads((self.w.state / "measure-shared" / "implement-1.json").read_text())
+        self.assertEqual(marker["call"], "t-sh")
+        self.assertIn("cpu_total", marker["sample"])
+        note = self.record("Bash", {"command": check}, {"stdout": "done"}, tool_use="t-sh")
+        self.assertIn("Your measurement ran", json.dumps(note))
+        self.assertIn("runnable work waited for a CPU", json.dumps(note))
+        self.assertIn("Isabelle runs counted on the machine 2 heavy and 0 probes", json.dumps(note))  # its own among them
+        log = (self.w.project / ".build/tasks/1/measurements.log").read_text()
+        self.assertIn("the judgment's cost, shared, the machine not held;", log)
+        self.assertFalse((self.w.state / "measure-shared" / "implement-1.json").exists())  # one measurement a claim
+        # with every heavy slot taken it waits for one, as any heavy run does
+        self.w.env.update(ORCH_ISABELLE_RUNS="2")
+        subprocess.run([sys.executable, str(fakes.HERE / "v2.py"), "measuring", "--shared", "again"],
+                       env=dict(self.w.env, **self.w.as_session("s1"), ORCH_CONTROL="0"), capture_output=True,
+                       cwd=self.w.project)
+        self.assertIn("heavy Isabelle runs (checks", self.guard("Bash", {"command": check}) or "")
+
+    def test_the_load_over_an_interval_and_its_sampler(self):
+        import threading
+        v2 = work_meter.v2
+        with tempfile.TemporaryDirectory() as temp, patch.object(v2, "LOADS", temp), patch.object(v2, "LOAD_EVERY", 0.05):
+            start = v2.machine_sample()
+            worker = threading.Thread(target=v2.cmd_sample_load, args=("c1",))
+            worker.start()
+            time.sleep(0.3)
+            line, fig = v2.machine_load(start, "c1")
+            worker.join(5)
+            self.assertFalse(worker.is_alive())                        # it ends with the call
+            self.assertIn("memory in use", line)
+            self.assertTrue(0 <= fig["cpu_busy"] <= 1, fig)
+            self.assertIn("% busy on average", line)
+            self.assertGreaterEqual(fig["memory_peak"], fig["memory_mean"])
+            self.assertFalse(os.path.exists(os.path.join(temp, "c1.samples")))
+        self.assertIn("little contention", v2.load_verdict({"cpu_pressure": 0.01, "memory_pressure": 0}))
+        self.assertIn("heavy contention", v2.load_verdict({"cpu_pressure": 0.4, "memory_pressure": 0}))
 
     def test_a_worker_may_not_wait_start_subagents_or_read_a_running_jobs_output(self):
         self.assertIn("starts no subagents", self.guard("Agent", {"prompt": "x"}))

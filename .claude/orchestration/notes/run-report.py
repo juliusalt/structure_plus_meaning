@@ -316,6 +316,19 @@ def main():
     for role, c in by_role.most_common():
         print(f"  {role:14} {n_role[role]:4} sessions {c / 1e6:7.1f}M {c / total:6.1%}   base read again "
               f"{base_part[role] / c:4.0%}")
+    import role_evidence as rev  # the harness's own reading of a session's batching (call_ops, joinable)
+    batching = Counter()
+    for name, x in chosen.items():
+        if x.get("role") not in ("implementer", "fixer", "reviewer", "designer", "investigator", "task-designer"):
+            continue
+        f = rev.session_facts(x, paths[x["sid"]])
+        batching[(x["role"], "requests")] += f[0]
+        batching[(x["role"], "ops")] += f[6]
+        batching[(x["role"], "joinable")] += f[7]
+    for role in sorted({r for r, _ in batching}):
+        n = batching[(role, "requests")] or 1
+        print(f"  batching, {role}: {batching[(role, 'ops')] / n:.2f} operations a request; "
+              f"{batching[(role, 'joinable')]} of {n} requests the protocol puts in the one before")
     for role in ("implementer", "fixer"):
         n = phase[(role, "sessions")]
         if not n:

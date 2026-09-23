@@ -16,6 +16,10 @@ says which. {{inherited}}
 
 {INPUTS}
 
+## What your task's theories stand on, and what uses them
+
+{RELATIONS}
+
 ## How you work
 
 You repair what failed, and nothing else: no design, no statement or definition changed that the brief decided, no
@@ -33,8 +37,6 @@ Production for you: the task's deliverables (the files under the brief's Deliver
 {{efficiency}}
 
 {{consult}}
-
-{{owner}}
 
 {{finishing}}
 

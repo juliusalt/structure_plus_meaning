@@ -289,7 +289,7 @@ STATUS_LINE = 'orch_rc=$?; [ "$orch_rc" -eq 0 ] || exit "$orch_rc"'
 # only if it went through (the owner, 2026-09-22: "why not allow any batch of commands in general"). Until then a call
 # held its change and at most the harness's inert commands or one check after it, and sessions lost requests to reads,
 # removals and preparations joined to their changes — nine refusals of the form on the night of 2026-09-21/22.
-CHANGE_OPEN = re.compile(RUNNER_ARG + r"\S*v2\.py\s+change\s*<<(-?)\s*(['\"]?)(\w+)\2")
+CHANGE_OPEN = re.compile(RUNNER_ARG + r"\S*v2\.py\s+change(?:\s+--(?:no-)?probe)?\s*<<(-?)\s*(['\"]?)(\w+)\2")
 ANY_HEREDOC = re.compile(r"<<(-?)\s*(['\"]?)(\w+)\2")
 CD_BY_SEMICOLON = re.compile(r"(?:^|&&|;|\n)\s*cd\s+([^;&|\n]+?)\s*(?:;|\n)\s*$")
 
@@ -620,6 +620,7 @@ def fix_note(n):
 
 ADMITTED_NOW = []  # the session whose heavy check this call marked as starting (v2.admit_session)
 MEASURED_NOW = []  # the task whose measurement this call runs, under its hold of the machine (v2.claim_call)
+MEASURED_SHARED = []  # the session whose measurement beside everything else this call runs (v2.shared_call)
 
 
 def deny(text, fixable=False, end=False):
@@ -1325,6 +1326,16 @@ def settle_check(st):
 
 # ---------------------------------------------------------------- a working session's guard and record
 
+# The orchestrator's own development — its notes, and Claude Code's memory directory, which every session of this
+# repository shares — is never a run session's to read (the owner, 2026-09-23 evening: "raw memory includes orchestrator
+# session information which should never be shown to any of the content producing bases"). What of the memory the
+# library's work needs, its base holds (the library's working practice, library-practice.txt).
+PRIVATE = re.compile(r"\.claude/projects/[^\s'\"]*memory|\.claude/orchestration/notes/")
+PRIVATE_SAID = ("The orchestrator's own development — its notes and the memory directory — is not the run's to read: "
+                "what of it your work needs, your base holds (the library's working practice) or your first message "
+                "gives. Continue from what you hold and read the repository's own sources.")
+
+
 def session_guard(hook, rec):
     """What any working session may not do: wait, start subagents, read what is already in its context, check again
     after the same failure, and read past its limits before it has produced (a quick fix: past its budget)."""
@@ -1333,6 +1344,8 @@ def session_guard(hook, rec):
         return deny("You are parked: the producing slot is another worker's until what you wait for has come and the "
                     "slot is free, and then the harness resumes you here, your context intact. End your turn now.",
                     end=True)
+    if PRIVATE.search(json.dumps(inp)):
+        return deny(PRIVATE_SAID)
     # planner-settings.json is what puts a session on the shared graph (CLAUDE_CODE_TASK_LIST_ID); every other
     # session's task list is its own, and a worker is told to make its plan there.
     if tool in ("TaskCreate", "TaskUpdate") and rec.get("settings") == v2.GRAPH_SETTINGS \
@@ -1403,13 +1416,24 @@ def session_guard(hook, rec):
                         "check` — your tree's work is checked with main and the work of every other task waiting, once "
                         "for all, and you are parked until its result comes (the same tree handed over is not checked "
                         "again). Probe what you change meanwhile (`tools/probe_theories.py`, seconds); a timing claims "
-                        "the machine first (`v2.py measuring`).")
+                        "the machine first (`v2.py measuring --exclusive`, or `--shared` to share it).")
         capped = None
+        # a measurement sharing the machine (`v2.py measuring --shared`): its next check, in the foreground
+        shared = v2.shared_measure(rec.get("name")) if rec.get("role") in v2.PRODUCING and not (
+            claim and claim["task"] in own) and not inp.get("run_in_background") else None
+        shared = shared if shared and not shared.get("call") else None
+        bound = v2.measure_max() if shared else v2.PROBE_SECONDS  # a measurement's probe fits the measurement's window
         if run == "probe" and not (claim and claim["task"] in own):
             limit, named = probe_timeout(ran), True
             if limit is None:  # the tool's own default where it is run: 60 since 2026-09-21 23:02, 1200 before
                 limit, named = probe_default(ran, hook.get("cwd")), False
-            if limit is None or limit > v2.PROBE_SECONDS:
+            if shared and limit is not None and limit <= bound:
+                pass
+            elif shared:
+                capped = (f"A measurement fits its window: `--timeout {bound}` at most, named in its command"
+                          + (f" (this one names {limit})" if named else "") + f" — {v2.measure_minutes()} minutes. Time "
+                          "the part the number is for, with fewer repetitions or a smaller input, so that it fits.")
+            elif limit is None or limit > v2.PROBE_SECONDS:
                 capped = (f"A probe gets `--timeout {v2.PROBE_SECONDS}` at most, named in its command"
                           + (f" (this one names {limit})" if named else " (without one it would get the tool's own "
                              + (f"{limit}, as it stands where you run it)" if limit else "default, which could not be "
@@ -1418,7 +1442,7 @@ def session_guard(hook, rec):
                           "of 2026-09-21 took 3-4 — and one that runs longer has a proof method that did not terminate "
                           "(implement-24's hung at a `have` for its whole 900 s, holding a run slot): its log names the "
                           "command it stopped at. A run that needs longer is a measurement: claim the machine first "
-                          "(`v2.py measuring`).")
+                          "(`v2.py measuring --exclusive`, or `--shared` to share it).")
         with v2.admission():  # decided and marked as one: two sessions' guards at once saw room for one run each
             blocked = v2.run_blocked(own, run)
             if not blocked and run == "heavy":
@@ -1451,6 +1475,8 @@ def session_guard(hook, rec):
                 m["run_refused"] = None
         if claim and claim["task"] in own and not inp.get("run_in_background"):
             MEASURED_NOW.append(claim["task"])  # its run in this call holds the machine (v2.claim_call), if let through
+        elif shared:
+            MEASURED_SHARED.append(rec.get("name"))  # its load is read from this call's start (v2.shared_call)
     st = load(session)
     fix = rec.get("fix") or {}
     if fix and k not in ("own",):
@@ -2046,8 +2072,10 @@ def completed(transcript, job):
 def record(hook, rec):
     """After a working session's tool call: its reads, its production and its checks. Returns a note for it, or None."""
     session, tool, inp = hook.get("session_id", ""), hook.get("tool_name"), hook.get("tool_input") or {}
+    measured = None
     if tool == "Bash":
-        v2.release_claim(hook.get("tool_use_id"))  # a measurement's hold ends with the call that ran it
+        measured = v2.release_claim(hook.get("tool_use_id"))  # a measurement's hold ends with the call that ran it
+        measured = v2.release_shared(rec.get("name"), hook.get("tool_use_id")) or measured  # and what the load was
         v2.lap("the machine's claim")
         v2.keep_probes(rec.get("task"))  # its probes kept as they are after the call, whatever it removes later
         v2.lap("its probes kept")
@@ -2058,7 +2086,7 @@ def record(hook, rec):
         v2.lap("its meter's lock")
         note = _record(hook, rec, st, session, tool, inp, response)
         v2.lap("its reads and production")
-        return note
+        return " ".join(filter(None, [measured, note])) or None
 
 
 def _record(hook, rec, st, session, tool, inp, response):
@@ -2197,10 +2225,10 @@ def _guard(hook):
     tool, inp = hook.get("tool_name"), hook.get("tool_input") or {}
     if tool in REMOVED_TOOLS:
         return deny(f"{tool} is not a session's tool (the owner, 2026-09-21). {REMOVED_TOOLS[tool]}")
-    if role == "role-layer":  # what it reasons over is its message: a read would stand in every fork of it
-        return deny("A reasoning layer uses no tool: everything it reasons over is in its message, and whatever it "
-                    f"read would stand in the prefix of every session of its role. Reason in your reply, and end it "
-                    f"with the line `{v2.ROLE_LAYER_DONE}`.")
+    if role in v2.LAYER_ROLES:  # what it reasons over is its message: a read would stand in every fork of it
+        return deny("A reasoning layer or a churn uses no tool: everything it reasons over or holds is in its message, "
+                    "and whatever it read would stand in the prefix of every session of its role. Reply as your message "
+                    "asks, and end your turn.")
     fixed = kept = None
     if tool == "Bash" and inp.get("command"):
         fixed, why = again(rec.get("name"), inp["command"])
@@ -2233,6 +2261,9 @@ def _guard(hook):
     if MEASURED_NOW and not denied:
         v2.claim_call(MEASURED_NOW[0], hook.get("tool_use_id"))
     MEASURED_NOW.clear()
+    if MEASURED_SHARED and not denied:
+        v2.shared_call(MEASURED_SHARED[0], hook.get("tool_use_id"))
+    MEASURED_SHARED.clear()
     if denied and kept and fixable:
         said["permissionDecisionReason"] += " " + fix_note(kept)
     if fixed and not denied and "updatedInput" not in said:

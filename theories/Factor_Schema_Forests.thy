@@ -14,13 +14,6 @@ lemma schema_codes_forest_recovers:
   shows "\<forall>i<length Rs. native_schema_at E u (syntax_branch i (rs!i))
     (rename_schema (syntax_branch i) (syntax_branch i) id (As!i))"
 proof -
-  have formed: "\<forall>R\<in>set Rs. exact_formed R"
-  proof (intro ballI)
-    fix R assume member: "R \<in> set Rs"
-    obtain i where index: "i < length Rs" "R=Rs!i" using member by (metis in_set_conv_nth)
-    have code: "schema_code (Rs!i) (rs!i) (As!i) (Ls!i) (Cs!i)" using codes index(1) by blast
-    show "exact_formed R" using schema_code_properties(1)[OF code] index(2) by simp
-  qed
   have counts: "\<forall>R\<in>set Rs. bag_count (object_data R) = (\<lambda>_. 0)"
   proof (intro ballI)
     fix R assume member: "R \<in> set Rs"
@@ -40,7 +33,7 @@ proof -
       by (rule syntax_references_mono[OF refs syntax_forest_table_child[OF li] syntax_forest_table_child[OF ci]])
     have child_reads: "object_reads_agree (push_object (syntax_branch i) (Rs!i)) T
       (syntax_branch i ` rra_carrier (object_structure (Rs!i)))"
-      by (rule object_reads_agree_extend[OF syntax_forest_child_reads[OF formed counts index] reads])
+      by (rule object_reads_agree_extend[OF syntax_forest_child_reads[OF counts index] reads])
     show "native_schema_at E u (syntax_branch i (rs!i))
       (rename_schema (syntax_branch i) (syntax_branch i) id (As!i))"
       by (rule compiled_schema_copy[OF schema_code_properties(1,5,7)[OF code] dependencies ef target

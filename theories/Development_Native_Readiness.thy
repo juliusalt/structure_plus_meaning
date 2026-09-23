@@ -357,21 +357,11 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
     fix T k
     assume site: "d=readiness_settled"
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (readiness_table_term T) k"
-    obtain p ps where mem: "(c,finite_native_rule p ps)\<in>set [([0],finite_native_rule
-          (Finite_Pattern_Pair (native_var 0) (native_var 1))
-          [([0],(readiness_settled_search,
-            Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))))])]"
-      and concl: "schema_conclusion S=decode_finite_pattern p"
-      and supp: "\<forall>(s,e,q)\<in>set ps. (e,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
-      by (rule readiness_settled_family.rearranged.law.supported_clause[OF clause[unfolded site] into])
-    have p: "p=Finite_Pattern_Pair (native_var 0) (native_var 1)"
-      and ps: "set ps={([0],(readiness_settled_search,
-        Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))))}"
-      using mem by (simp_all add: finite_native_rule_eq_iff)
+    note clause_read=readiness_settled_family.rearranged.supported[OF clause[unfolded site] into]
     have fields: "f [0]=readiness_table_term T \<and> f [1]=k"
-      using shape by (simp add: concl p)
+      using shape by (simp add: clause_read(1))
     have given: "(readiness_settled_search,Pair_Term (f [0]) (Pair_Term (f [1]) (f [0])))\<in>Y"
-      using supp by (simp add: ps)
+      using clause_read(2) by simp
     have search: "(readiness_settled_search,Pair_Term (readiness_table_term T)
         (Pair_Term k (store_term readiness_row_value (path_store T))))\<in>Y"
       using given fields by (simp add: readiness_table_term_def)
@@ -428,18 +418,11 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
     fix T v
     assume site: "d=readiness_answered"
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (readiness_table_term T) v"
-    obtain p ps where mem: "(c,finite_native_rule p ps)\<in>set [([0],finite_native_rule readiness_answered_conclusion
-          [([0],(readiness_some,readiness_answered_premise))])]"
-      and concl: "schema_conclusion S=decode_finite_pattern p"
-      and supp: "\<forall>(s,e,q)\<in>set ps. (e,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
-      by (rule readiness_answered_family.law.supported_clause[OF clause[unfolded site] into])
-    have p: "p=readiness_answered_conclusion"
-      and ps: "set ps={([0],(readiness_some,readiness_answered_premise))}"
-      using mem by (simp_all add: finite_native_rule_eq_iff)
+    note clause_read=readiness_answered_family.supported[OF clause[unfolded site] into]
     have fields: "f [0]=readiness_table_term T" "v=Pair_Term (Payload_Term []) (f [1])"
-      using shape by (simp_all add: concl p)
+      using shape by (simp_all add: clause_read(1))
     have given: "(readiness_some,Pair_Term (f [0]) (f [1]))\<in>Y"
-      using supp by (simp add: ps)
+      using clause_read(2) by simp
     have some: "\<forall>vs. f [1]=data_list_term vs \<longrightarrow>
         (\<exists>u\<in>set vs. \<forall>zs. u=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z))"
     proof (intro allI impI)
@@ -456,10 +439,13 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (readiness_table_term T) (data_list_term vs)"
     have clause': "((readiness_some,c),S)\<in>system_clauses native_readiness_system"
       using clause site by simp
+    have some_cases: "\<exists>h hs'. vs=h#hs' \<and> ((readiness_all,Pair_Term (readiness_table_term T) h)\<in>Y \<or>
+        (readiness_some,Pair_Term (readiness_table_term T) (data_list_term hs'))\<in>Y)"
+      by (rule readiness_somes.law.read_clause[OF clause' into shape]) (rule readiness_somes.unfold_rule)
     obtain h vs' where vs: "vs=h#vs'"
       and choice: "(readiness_all,Pair_Term (readiness_table_term T) h)\<in>Y \<or>
         (readiness_some,Pair_Term (readiness_table_term T) (data_list_term vs'))\<in>Y"
-      using readiness_somes.unfold[OF clause' into shape] by blast
+      using some_cases by blast
     show "\<exists>v\<in>set vs. \<forall>zs. v=data_list_term zs \<longrightarrow> (\<forall>z\<in>set zs. readiness_settled_key T z)"
       using choice
     proof
@@ -485,7 +471,7 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
       using clause site by simp
     have cases: "zs=[] \<or> (\<exists>z zs'. zs=z#zs' \<and> (readiness_settled,Pair_Term (readiness_table_term T) z)\<in>Y \<and>
         (readiness_all,Pair_Term (readiness_table_term T) (data_list_term zs'))\<in>Y)"
-      by (rule readiness_alls.unfold[OF clause' into shape])
+      by (rule readiness_alls.law.read_clause[OF clause' into shape]) (rule readiness_alls.unfold_rule)
     show "\<forall>z\<in>set zs. readiness_settled_key T z"
       using cases
     proof

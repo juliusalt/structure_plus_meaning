@@ -11935,6 +11935,25 @@ contracts alone.
   Factor_Premise_Forests `template_list_addressing`, `template_projection_fixed` (of which
   `template_projection_prefix` is an instance); in Factor_Reference_Tables `reference_table_placed`, of which
   `reference_table_forest` is now the instance at `syntax_branch`. No word changed.
+- *Correction (tasks 225 and 251, 2026-09-22; task 179's review, follow-up 1, and task 223's review,
+  follow-ups 1–4):* the syntax forest is the placed forest at `syntax_branch`: `syntax_forest`,
+  `syntax_forest_positions`, `syntax_forest_table` and the executable `finite_syntax_forest`,
+  `finite_syntax_forest_table` are defined through the notion, every statement kept, their own formation, reads and
+  member proofs **retired**, with `syntax_forest_positions_eq` and `syntax_forest_table_eq` stating the union form
+  their consumers read. That form is stated once for any family of placements: **new**
+  `RRA_Placed_Forests.placed_forest_pushed` (a forest's carrier, its incidence and its functional bindings are the
+  unions of those of each child pushed by its own placement), of which `syntax_forest_pushed` and
+  `Factor_Pattern_Forests.bound_forest_pushed` are the instances, the pattern and premise forests' carrier steps
+  reading the latter; **new** `Factor_Premise_Construction.placed_table_eq` (a placed
+  table is the union of each child's table under `map_slot_keys (g i)`), stated in the first theory holding both
+  notions and proved from `placed_table_member` and `placed_table_child`, so that `placed_table_def` is unfolded in
+  its own theory alone, and read by `syntax_forest_table_eq` and `reference_table_placed`; `syntax_forest_value_map`
+  becomes the instance of `placed_table_values`. **New** `Factor_Pattern_Forests.bound_branch_image_split` (a
+  child's carrier splits where the branch does: the part outside the binders is placed at `syntax_branch`, the
+  binder occurrences stay where they are), which the pattern forest's carrier accounting and `premise_forest_carrier`
+  both instantiate. **Retired** `syntax_forest_child_reads`' premise that every child is formed, which its
+  derivation from `placed_forest_reads` does not use, and with it the derivation that only supplied it in
+  `Factor_Schema_Forests.schema_codes_forest_recovers`. No word changed.
 
 Outside the founding theories no proof computes a position: `syntax_branch.simps` leave the simpset after the
 contracts are proved, `family_ports_def`, `syntax_record_ports_def` and `fresh_address_def` are unfolded nowhere
@@ -12098,7 +12117,10 @@ rule's conclusion and premise set back from its value.
   `native_rearranging_program` (its `exact` is the law's at one rule and one premise; `at` from that and the two pattern
   facts), `native_member_program.exact`, `native_every_program.relation_equation` (its step rule has two premises),
   `native_some_program.exact`, `native_keyed_search_program.exact`. What the law does not replace stays: each
-  program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's `supported_clause`], the inversion of one rule application supported in an arbitrary relation, which least-fixed-point
+  program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's
+  `supported_clause`; corrected 2026-09-22, task 275: the four `unfold` corollaries are gone and their composition
+  is stated once as the law's `read_clause`, which a use cites with the program's own `unfold_rule`], the inversion
+  of one rule application supported in an arbitrary relation, which least-fixed-point
   arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
   the law's single step does not carry.
 - The two pattern facts now stand in `Factor_Rule_Instances` beside `evaluate_pattern_cong` and
@@ -12121,7 +12143,11 @@ the analogue of `reader_projection_rule`, formation over the rule's variables, c
 `unfold` is a corollary citing it and `unfold_rule` without re-deriving the conclusion; `holds_rule`, the elimination
 at the positive meaning returning the native rule itself, through which `exact`'s forward direction no longer
 re-encodes and decodes the clause. The four `unfold` lemmas stay, their statements unchanged, as their uses in
-Development_Native_Readiness and Native_Table_Reach cite them.
+Development_Native_Readiness and Native_Table_Reach cite them [corrected 2026-09-22, task 275: they are gone; the
+composition they were is the law's `read_clause` (a reading of every rule of the family at a clause's evaluated
+conclusion is a reading of the clause), which the three uses — readiness's some and every cases and the reach's some
+case — cite with the program's `unfold_rule`, and the clauses of a one-rule, one-premise site are read by
+`native_rearranging_program.supported`].
 
 Re-cited (task 235): the value rule's contract is stated once beside `native_value_rule` in Development_Located_Rows
 (`native_value_program`, its `exact`: the site holds of `Pair_Term x y` exactly when `x` is formed and `x=y`), and

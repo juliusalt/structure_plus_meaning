@@ -204,8 +204,7 @@ lemma syntax_forest_pushed:
     (\<Union>i<length Rs. rra_incidence (object_structure (push_object (syntax_branch i) (Rs!i))))"
   "functional_bindings (object_data (syntax_forest Rs)) =
     (\<Union>i<length Rs. functional_bindings (object_data (push_object (syntax_branch i) (Rs!i))))"
-  by (simp_all add: syntax_forest_def placed_forest_def placed_positions_def push_object_def push_basis_def
-      cong: SUP_cong_simp)
+  by (simp_all add: syntax_forest_def placed_forest_pushed)
 
 lemma syntax_forest_pieces_separate:
   assumes "a \<in> rra_carrier (object_structure (push_object (syntax_branch i) R))"
@@ -279,8 +278,7 @@ lemma syntax_forest_atom_origin:
   using assms unfolding syntax_forest_carrier_member .
 
 lemma syntax_forest_child_reads:
-  assumes formed: "\<forall>R\<in>set Rs. exact_formed R"
-    and counts: "\<forall>R\<in>set Rs. bag_count (object_data R) = (\<lambda>_. 0)"
+  assumes counts: "\<forall>R\<in>set Rs. bag_count (object_data R) = (\<lambda>_. 0)"
     and index: "i < length Rs"
   shows "object_reads_agree (push_object (syntax_branch i) (Rs!i)) (syntax_forest Rs)
     (syntax_branch i ` rra_carrier (object_structure (Rs!i)))"

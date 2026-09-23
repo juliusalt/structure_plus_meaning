@@ -169,6 +169,22 @@ next
   then show "(a,v) \<in> functional_bindings (object_data (placed_forest g Rs))" by (simp add: placed_forest_def)
 qed
 
+text \<open>
+  The forest is its children placed: its carrier, its incidence and its functional bindings are the
+  unions of those of each child pushed by its own placement. The form is stated here once, for any
+  family of placements, so that a forest over such a family reads it instead of the definitions.
+\<close>
+
+lemma placed_forest_pushed:
+  "rra_carrier (object_structure (placed_forest g Rs)) =
+    (\<Union>i<length Rs. rra_carrier (object_structure (push_object (g i) (Rs!i))))"
+  "rra_incidence (object_structure (placed_forest g Rs)) =
+    (\<Union>i<length Rs. rra_incidence (object_structure (push_object (g i) (Rs!i))))"
+  "functional_bindings (object_data (placed_forest g Rs)) =
+    (\<Union>i<length Rs. functional_bindings (object_data (push_object (g i) (Rs!i))))"
+  by (simp_all add: placed_forest_def placed_positions_def push_object_def push_basis_def
+      cong: SUP_cong_simp)
+
 section \<open>Silence at a position\<close>
 
 text \<open>

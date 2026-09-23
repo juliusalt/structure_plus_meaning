@@ -1,5 +1,5 @@
 theory Development_State_Edit
-  imports Development_State_Presenter Development_Verdict_Difference Development_Native_Answers
+  imports Development_State_Presenter Development_Verdict_Difference Development_Native_Answers Merge_Sort_Keys
     Member_Tree_Indexes Ordered_Finite_Terms First_Index_Trees Binary_Relation_Stores
 begin
 
@@ -696,11 +696,8 @@ qed
 
 lemma distinct_by_order_key:
   "length (ordered_remdups (map entity_order_key E))=length E \<longleftrightarrow> distinct E"
-proof -
-  have "length (ordered_remdups (map entity_order_key E))=length (map entity_order_key E) \<longleftrightarrow> distinct (map entity_order_key E)"
-    by (simp only: ordered_remdups_exact length_remdups_eq remdups_id_iff_distinct)
-  then show ?thesis using inj_on_subset[OF entity_order_key_injective subset_UNIV] by (simp add: distinct_map)
-qed
+  using distinct_ordered_remdups[of "map entity_order_key E"] inj_on_subset[OF entity_order_key_injective subset_UNIV]
+  by (simp add: distinct_map)
 
 lemma gone_positions:
   assumes E: "distinct E"
@@ -766,46 +763,73 @@ lemma edit_specification_condition_indexed [code]:
       list_all_specification_constants)
 
 text \<open>
+  An answer state's names are the request state's followed by the answer's names the request state lacks,
+  found through the names' member tree, so they are read through the request state's name index extended by
+  those names alone (@{text appended_name_tree}), and the appended atoms are those names at the positions after
+  the table's (@{text appended_new_names}).
+\<close>
+
+lemma appended_name_tree:
+  "RBT.lookup (isabelle_name_tree_extend (length names)
+      (filter (\<lambda>n. RBT.lookup (ordered_member_tree (fset_of_list names)) n=None) ns)
+      (isabelle_name_tree names))=isabelle_name_at (isabelle_appended_names names ns)"
+  by (simp add: listed_member_absent isabelle_name_tree_appended isabelle_appended_names_def)
+
+lemma appended_new_names:
+  "drop (length names) (isabelle_appended_names names ns)=filter (\<lambda>n. n\<notin>set names) ns"
+  "length (isabelle_appended_names names ns)=length names+length (filter (\<lambda>n. n\<notin>set names) ns)"
+  by (simp_all add: isabelle_appended_names_def)
+
+lemma appended_atoms_new:
+  "map (\<lambda>i. (f i,isabelle_appended_names names ns!i)) [length names..<length names+length (filter (\<lambda>n. n\<notin>set names) ns)]=
+    map (\<lambda>(i,n). (f i,n)) (zip [length names..<length names+length (filter (\<lambda>n. n\<notin>set names) ns)]
+      (filter (\<lambda>n. n\<notin>set names) ns))"
+  by (rule nth_equalityI) (simp_all add: isabelle_appended_names_def nth_append)
+
+text \<open>
   At its first argument the constructor builds, once per request state, the index of the request state's
-  entities by first position, whether they are distinct, the names' index, the members of the request
-  state's development and specification constants and the index of its declarations by constant; per
-  answer it reads only the edit.
+  entities by first position, whether they are distinct, the names' member tree and their index by position,
+  the members of the request state's development and specification constants and the index of its
+  declarations by constant; per answer it reads only the edit, and sorts the removed entities by merging
+  (@{thm [source] sort_key_by_mergesort}).
 \<close>
 
 lemma state_edit_of_indexed [code]:
   "state_edit_of S=(let E=snd (snd S); names=fst (snd S); T=first_index_tree entity_order_key E;
      EK=map (\<lambda>e. (e,entity_order_key e)) E; single=(length (ordered_remdups (map entity_order_key E))=length E);
-     appended=isabelle_appended_names names;
+     m=length names; NM=ordered_member_tree (fset_of_list names);
      DE=ordered_member_tree (fset_of_list (isabelle_development_constants E));
      CT=ordered_member_tree (fset_of_list (concat (map (\<lambda>e. case e of Isabelle_Specification p \<Rightarrow> isabelle_term_constants p | _ \<Rightarrow> []) E)));
      DT=relation_store (development_declarations E);
      key=(\<lambda>d. natural_binary_digits (case RBT.lookup T (entity_order_key d) of None \<Rightarrow> length E | Some i \<Rightarrow> i));
-     row=entity_row_with state_constant_key names (\<lambda>c. RBT.lookup DE c\<noteq>None) in
+     NT=isabelle_name_tree names;
+     row=entity_row_by state_constant_key (RBT.lookup NT) (\<lambda>c. RBT.lookup DE c\<noteq>None) in
      (\<lambda>ns removed added. let Rm=ordered_member_tree (fset_of_list (map entity_order_key removed));
-       names'=appended ns; Ta=first_index_tree entity_order_key added;
+       new_names=filter (\<lambda>n. RBT.lookup NM n=None) ns; Ta=first_index_tree entity_order_key added;
        DA=ordered_member_tree (fset_of_list (isabelle_development_constants added));
        held=(\<lambda>c. fBex (relation_store_lookup DT (state_constant_key c)) (\<lambda>e. RBT.lookup Rm (entity_order_key e)=None) \<or>
          RBT.lookup DA c\<noteq>None);
-       gone=(if single then map snd (sort_key fst (map (\<lambda>d. (the (RBT.lookup T (entity_order_key d)),d))
+       gone=(if single then map snd (Sorting_Algorithms.mergesort (Comparator.key fst default) (map (\<lambda>d. (the (RBT.lookup T (entity_order_key d)),d))
            (filter (\<lambda>d. RBT.lookup T (entity_order_key d)\<noteq>None \<and> RBT.lookup Ta (entity_order_key d)=None) (entity_remdups removed))))
          else entity_remdups (keyed_filter (\<lambda>k. RBT.lookup Rm k\<noteq>None \<and> RBT.lookup Ta k=None) EK));
        new=entity_remdups (filter (\<lambda>a. RBT.lookup T (entity_order_key a)=None) added);
        key'=(\<lambda>a. natural_binary_digits (case RBT.lookup Ta (entity_order_key a) of
          None \<Rightarrow> length E+length added | Some j \<Rightarrow> length E+j));
-       row'=entity_row_with state_constant_key names' held in
+       row'=entity_row_by state_constant_key
+         (RBT.lookup (isabelle_name_tree_extend m new_names NT)) held in
      if list_all (\<lambda>c. RBT.lookup CT c=None \<or> (RBT.lookup DE c\<noteq>None)=held c)
          (isabelle_development_constants removed@isabelle_development_constants added) then
        Some \<lparr>edit_atoms=map (\<lambda>(i,n). (state_constant_key i,n))
-           (zip [length names..<length names'] (drop (length names) names')),
+           (zip [m..<m+length new_names] new_names),
          edit_removed=kind_families (\<lambda>d. (key d,row d)) gone,
          edit_added=kind_families (\<lambda>a. (key' a,row' a)) new\<rparr>
      else None))"
-  unfolding Let_def
+  unfolding Let_def sort_key_by_mergesort[symmetric] isabelle_name_tree_lookup_fun appended_name_tree
   unfolding gone_indexed held_indexed
   unfolding first_index_tree_lookup[OF entity_order_key_injective] listed_member_lookup listed_member_absent
   by (intro ext) (simp add: state_edit_of_def Let_def edit_applied_def appended_atoms entity_remdups_exact
       kind_families_exact value_reference_index_absent development_entity_key_def removed_keys added_keys
-      entity_row_with_row edit_condition_changed held_constants)
+      entity_row_with_row edit_condition_changed held_constants appended_new_names appended_atoms_new)
 
 text \<open>
   A stage judging several answers against one request state applies the native answer's edit to that state

@@ -101,7 +101,8 @@ PY_ASSIGN = re.compile(r"""^[ \t]*(\w+)\s*=\s*(?:Path\(\s*)?['"]([^'"\n]+)['"]""
 # NAME.write_text/bytes. Where the expression is made at run time its fixed beginning is read (script_writes).
 WRITE_SITE = re.compile(r"""open\(\s*([^,()\n]+?)\s*,\s*['"][wax]b?\+?['"]"""
                         r"""|Path\(\s*([^()\n]+?)\s*\)\s*\.\s*write_(?:text|bytes)\("""
-                        r"""|\b(\w+)\s*\.\s*write_(?:text|bytes)\(""")
+                        r"""|\b(\w+)\s*\.\s*write_(?:text|bytes)\("""
+                        r"""|\(\s*(\w+)\s*/[^()\n]*\)\s*\.\s*write_(?:text|bytes)\(""")
 # a name given the temporary directory, or a path made from it or from a literal: `T=os.environ['TMPDIR']+'/mf'`
 PY_PREFIX = re.compile(r"""^[ \t]*(\w+)\s*=\s*(?:Path\(\s*)?(os\.environ\[['"]TMPDIR['"]\]|os\.environ\.get\(\s*['"]TMPDIR['"][^)]*\)"""
                        r"""|os\.getenv\(\s*['"]TMPDIR['"][^)]*\)|tempfile\.gettempdir\(\s*\)|f?['"][^'"\n]*['"])\s*(.*)$""", re.M)
@@ -255,7 +256,11 @@ RUNNERS = ("python", "python3", "sh", "bash", "env")
 # a planner's notes (.build/plans/plan-N/*.md) are no body: the planner reads statements alone, so what it writes is
 # statements too — brief-230 was refused the note plan-45 had sent it by its path, twice (2026-09-22 16:34)
 BODY = re.compile(r"\.(?:thy|ML|sml|py|sh|log|out|output)$|(?:^|/)(?:theories|tools)(?:/|$)|(?:^|/)\.build(?:/|$)"
-                  r"(?!tasks/[^/]+/[^/]+\.md$|outputs/|trees/[^/]+/[^/]+\.md$|plans/[^/]+/[^/]+\.md$)")
+                  r"(?!tasks/[^/]+/[^/]+\.md$|outputs/|trees/[^/]+/[^/]+\.md$|plans/[^/]+/[^/]+\.md$"
+                  r"|tasks/[^/]+/(?:brief|finalize|finalized|active-context)\.json$)")
+# the harness's records of a task (its brief, its hand-over, its outcome) and the base's pointer are no body either: they
+# are the planner's to read — plan-43 was refused task 128's outcome after the reboot, and plan-44 which base stood
+# (2026-09-22 13:08, 15:10)
 CONTENT = {"cat", "sed", "head", "tail", "grep", "egrep", "fgrep", "rg", "awk", "nl", "less", "more", "bat", "diff",
            "strings", "xxd", "od", "cut", "sort", "uniq", "jq", "tac"}
 PATTERNED = {"grep", "egrep", "fgrep", "rg", "sed", "awk"}  # their first operand is a pattern or a script
@@ -284,7 +289,7 @@ STATUS_LINE = 'orch_rc=$?; [ "$orch_rc" -eq 0 ] || exit "$orch_rc"'
 # only if it went through (the owner, 2026-09-22: "why not allow any batch of commands in general"). Until then a call
 # held its change and at most the harness's inert commands or one check after it, and sessions lost requests to reads,
 # removals and preparations joined to their changes — nine refusals of the form on the night of 2026-09-21/22.
-CHANGE_OPEN = re.compile(RUNNER_ARG + r"\S*v2\.py\s+change\s*<<(-?)\s*(['\"]?)(\w+)\2")
+CHANGE_OPEN = re.compile(RUNNER_ARG + r"\S*v2\.py\s+change(?:\s+--(?:no-)?probe)?\s*<<(-?)\s*(['\"]?)(\w+)\2")
 ANY_HEREDOC = re.compile(r"<<(-?)\s*(['\"]?)(\w+)\2")
 CD_BY_SEMICOLON = re.compile(r"(?:^|&&|;|\n)\s*cd\s+([^;&|\n]+?)\s*(?:;|\n)\s*$")
 
@@ -323,6 +328,53 @@ def change_parts(command):
             else:
                 out.extend(body + ([closing] if closing is not None else []))
     return ChangeParts(changes, "\n".join(out)) if changes else None
+
+
+QUEUE_ASKED = re.compile(r"(^|[\s;&|(])QUEUE=1\s+")
+
+
+def queued_probe(command, run, rec):
+    """The call a probe refused for the machine becomes when its session marked it QUEUE=1 (it has nothing else to do
+    until it has run): its changes as they are, then `v2.py queue-probe` with the probe, which is queued and run as soon
+    as the machine has room while the session is parked (v2.cmd_queue_probe, v2.run_queued_probes). None otherwise."""
+    if run != "probe" or rec.get("role") not in v2.PRODUCING or not QUEUE_ASKED.search(HEREDOC.sub(" ", command)):
+        return None
+    kept = through_changes(command)
+    rest = command[len(kept):].lstrip("\n") if kept else command
+    rest = QUEUE_ASKED.sub(r"\1", rest)
+    if not rest.strip() or kind("Bash", {"command": rest}) != "check" or v2.run_kind(rest) != "probe":
+        return None
+    import base64
+    call = (f"{shlex.quote(sys.executable)} -B {shlex.quote(os.path.join(HERE, 'v2.py'))} queue-probe "
+            f"{base64.b64encode(rest.encode()).decode()}")
+    return (kept + "\n" + STATUS_LINE + "\n" + call) if kept else call
+
+
+def through_changes(command):
+    """The call up to the end of its last change, when every check it holds comes after that: a check refused for the
+    machine then takes nothing with it. The whole call was refused, its changes too: implement-189, implement-182 and
+    fix-227 each learned so only by looking, and fix-227 spent three requests on it (2026-09-22, 17:21–17:30, while
+    task 220 waited to measure). None when the call holds no change, or a check before its last."""
+    if not change_parts(command):
+        return None
+    lines, i, end = command.split("\n"), 0, None
+    while i < len(lines):
+        opened = {m.end(): m for m in CHANGE_OPEN.finditer(lines[i])}
+        docs = [(m, opened.get(m.end())) for m in ANY_HEREDOC.finditer(lines[i])]
+        i += 1
+        for m, change in docs:
+            while i < len(lines) and (lines[i].lstrip("\t") if m.group(1) else lines[i]).rstrip() != m.group(3):
+                i += 1
+            i += 1
+            if change:
+                end = i
+    if end is None or end >= len(lines):
+        return None
+    head = "\n".join(lines[:end])
+    parts = change_parts(head)
+    if parts and kind("Bash", {"command": parts.rest}) == "check":
+        return None
+    return head
 
 
 def after_changes_only(command):
@@ -374,6 +426,11 @@ def scratch(path):
 
 
 
+# a script's triple-quoted strings are text it handles, not code it runs: fix-265's `inj.replace("""…theory.write_text(…)…""")`
+# was refused as a script whose target could not be read (2026-09-22 20:08)
+TRIPLE = re.compile(r'"""[\s\S]*?"""' + "|'''" + r"[\s\S]*?'''")
+
+
 def script_writes(command, cwd=None):
     """Where a script inside the command writes, each place as the file it names or the directory its path begins in:
     plan-42's `open('.build/plans/plan-42/b'+tid+'.md','w')` and review-94.2's `open(f'{T}/{n}','wb')` with
@@ -381,6 +438,7 @@ def script_writes(command, cwd=None):
     both writing their own drafts. None when any place cannot be read: a path handed in, or made from nothing fixed."""
     base, _ = shell_context(command, cwd)
     tmp = os.environ.get("TMPDIR") or "/tmp"
+    command = TRIPLE.sub('""', command)
     names = {}
     for name, value, rest in PY_PREFIX.findall(command):  # in order, each from those before it
         if value.startswith(("os.", "tempfile.")):
@@ -561,6 +619,8 @@ def fix_note(n):
 
 
 ADMITTED_NOW = []  # the session whose heavy check this call marked as starting (v2.admit_session)
+MEASURED_NOW = []  # the task whose measurement this call runs, under its hold of the machine (v2.claim_call)
+MEASURED_SHARED = []  # the session whose measurement beside everything else this call runs (v2.shared_call)
 
 
 def deny(text, fixable=False, end=False):
@@ -1034,17 +1094,27 @@ SMALL_READ = READ_BYTES // 2
 
 
 def small_read_before(transcript, tool_use, st):
-    """The bytes the reading request before this call's showed, when it showed under SMALL_READ; None otherwise."""
+    """The bytes the request before this call's showed, when every call of it read (no run, no change, no check among
+    them) and together they showed under SMALL_READ; None otherwise. Summed from what the post-hook recorded of each
+    call by its id (`calls_shown`), the request's calls read from the transcript, where a finished request stands whole:
+    the bytes it had recorded by batch missed a call whose batch it could not place — implement-192 was told its last
+    request "read 3,966 bytes" after one that read about 33K in three calls — and counted a probe's output as a read
+    (fix-279, 2026-09-22)."""
+    calls = list(tool_uses(transcript_tail(transcript) or []))
     order = []
-    for mid, _ in tool_uses(transcript_tail(transcript) or []):
+    for mid, _ in calls:
         if mid not in order:
             order.append(mid)
-    mine = next((mid for mid, c in tool_uses(transcript_tail(transcript) or []) if c.get("id") == tool_use), None)
+    mine = next((mid for mid, c in calls if c.get("id") == tool_use), None)
     if mine is None or order.index(mine) == 0:
         return None
     before = order[order.index(mine) - 1]
-    shown = (st.get("batches") or {}).get(before)
-    return shown if shown is not None and shown < SMALL_READ else None
+    seen = st.get("calls_shown") or {}
+    shown = [seen.get(c.get("id")) for mid, c in calls if mid == before]
+    if not shown or any(x is None or x[0] not in ("read", "other") for x in shown):
+        return None
+    total = sum(x[1] for x in shown)
+    return total if total < SMALL_READ else None
 
 
 PROBE_TIMEOUT = re.compile(r"--timeout(?:=|\s+)(\d+)")
@@ -1071,6 +1141,23 @@ def probe_default(command, cwd):
         return None
     d = TOOL_DEFAULT.search(text)
     return int(d.group(1) or d.group(2)) if d else None
+
+
+PROBE_WORK = re.compile(r"probe_theories\.py\b((?:[^;&|\n\\]|\\.)*)")
+WORK_ARG = re.compile(r"--work(?:=|\s+)(['\"]?)([^\s'\"]+)\1")
+
+
+def probe_work(command, cwd):
+    """The directories the probes of a command name as their `--work`, as the shell would resolve them: after a
+    leading `cd`, with $TMPDIR and the call's own assignments filled in (shell_context)."""
+    base, known = shell_context(command, cwd)
+    out = []
+    for args in PROBE_WORK.findall(command or ""):
+        for _, value in WORK_ARG.findall(args):
+            value = re.sub(r"\$\{?(\w+)\}?", lambda m: known.get(m.group(1), m.group(0)), value)
+            if "$" not in value:
+                out.append(os.path.normpath(os.path.join(base, os.path.expanduser(value))))
+    return out
 
 
 def shown_bytes(tool, response):
@@ -1239,6 +1326,16 @@ def settle_check(st):
 
 # ---------------------------------------------------------------- a working session's guard and record
 
+# The orchestrator's own development — its notes, and Claude Code's memory directory, which every session of this
+# repository shares — is never a run session's to read (the owner, 2026-09-23 evening: "raw memory includes orchestrator
+# session information which should never be shown to any of the content producing bases"). What of the memory the
+# library's work needs, its base holds (the library's working practice, library-practice.txt).
+PRIVATE = re.compile(r"\.claude/projects/[^\s'\"]*memory|\.claude/orchestration/notes/")
+PRIVATE_SAID = ("The orchestrator's own development — its notes and the memory directory — is not the run's to read: "
+                "what of it your work needs, your base holds (the library's working practice) or your first message "
+                "gives. Continue from what you hold and read the repository's own sources.")
+
+
 def session_guard(hook, rec):
     """What any working session may not do: wait, start subagents, read what is already in its context, check again
     after the same failure, and read past its limits before it has produced (a quick fix: past its budget)."""
@@ -1247,6 +1344,8 @@ def session_guard(hook, rec):
         return deny("You are parked: the producing slot is another worker's until what you wait for has come and the "
                     "slot is free, and then the harness resumes you here, your context intact. End your turn now.",
                     end=True)
+    if PRIVATE.search(json.dumps(inp)):
+        return deny(PRIVATE_SAID)
     # planner-settings.json is what puts a session on the shared graph (CLAUDE_CODE_TASK_LIST_ID); every other
     # session's task list is its own, and a worker is told to make its plan there.
     if tool in ("TaskCreate", "TaskUpdate") and rec.get("settings") == v2.GRAPH_SETTINGS \
@@ -1317,13 +1416,24 @@ def session_guard(hook, rec):
                         "check` — your tree's work is checked with main and the work of every other task waiting, once "
                         "for all, and you are parked until its result comes (the same tree handed over is not checked "
                         "again). Probe what you change meanwhile (`tools/probe_theories.py`, seconds); a timing claims "
-                        "the machine first (`v2.py measuring`).")
+                        "the machine first (`v2.py measuring --exclusive`, or `--shared` to share it).")
         capped = None
+        # a measurement sharing the machine (`v2.py measuring --shared`): its next check, in the foreground
+        shared = v2.shared_measure(rec.get("name")) if rec.get("role") in v2.PRODUCING and not (
+            claim and claim["task"] in own) and not inp.get("run_in_background") else None
+        shared = shared if shared and not shared.get("call") else None
+        bound = v2.measure_max() if shared else v2.PROBE_SECONDS  # a measurement's probe fits the measurement's window
         if run == "probe" and not (claim and claim["task"] in own):
             limit, named = probe_timeout(ran), True
             if limit is None:  # the tool's own default where it is run: 60 since 2026-09-21 23:02, 1200 before
                 limit, named = probe_default(ran, hook.get("cwd")), False
-            if limit is None or limit > v2.PROBE_SECONDS:
+            if shared and limit is not None and limit <= bound:
+                pass
+            elif shared:
+                capped = (f"A measurement fits its window: `--timeout {bound}` at most, named in its command"
+                          + (f" (this one names {limit})" if named else "") + f" — {v2.measure_minutes()} minutes. Time "
+                          "the part the number is for, with fewer repetitions or a smaller input, so that it fits.")
+            elif limit is None or limit > v2.PROBE_SECONDS:
                 capped = (f"A probe gets `--timeout {v2.PROBE_SECONDS}` at most, named in its command"
                           + (f" (this one names {limit})" if named else " (without one it would get the tool's own "
                              + (f"{limit}, as it stands where you run it)" if limit else "default, which could not be "
@@ -1332,7 +1442,7 @@ def session_guard(hook, rec):
                           "of 2026-09-21 took 3-4 — and one that runs longer has a proof method that did not terminate "
                           "(implement-24's hung at a `have` for its whole 900 s, holding a run slot): its log names the "
                           "command it stopped at. A run that needs longer is a measurement: claim the machine first "
-                          "(`v2.py measuring`).")
+                          "(`v2.py measuring --exclusive`, or `--shared` to share it).")
         with v2.admission():  # decided and marked as one: two sessions' guards at once saw room for one run each
             blocked = v2.run_blocked(own, run)
             if not blocked and run == "heavy":
@@ -1345,14 +1455,28 @@ def session_guard(hook, rec):
             # in forty seconds and then asked the planner, since no park reason fitted (2026-09-21)
             wait = ("park for the machine (`.claude/orchestration/v2.py park machine`)" if rec.get("role") in v2.PRODUCING
                     else "end your turn")  # a supporting session has no slot to free: it ends its turn and is woken
-            return deny(blocked + " Continue with what needs no check (drafts, the next step's writing); when nothing "
-                        f"else is left, {wait}: you are resumed when a run may start."
-                        + (" And: " + capped if capped else ""), fixable=bool(capped))
+            said = (blocked + " Continue with what needs no check (drafts, the next step's writing); when nothing "
+                    f"else is left, {wait}: you are resumed when a run may start."
+                    + (" Or lead the probe with QUEUE=1: it is queued, runs as soon as the machine has room, and you "
+                       "are parked and resumed with its output." if run == "probe" and rec.get("role") in v2.PRODUCING
+                       else ""))
+            queued = queued_probe(c, run, rec) if not capped else None
+            if queued:
+                return allow(dict(inp, command=queued))
+            kept = None if capped else through_changes(c)
+            if kept:  # the changes go through; only what follows them waits for the machine
+                return allow(dict(inp, command=kept + "\n" + STATUS_LINE + "\nprintf '%s\\n' " + shlex.quote(
+                    "[Your changes were made; what followed them in this call was not run. " + said + "]")))
+            return deny(said + (" And: " + capped if capped else ""), fixable=bool(capped))
         if capped:
             return deny(capped, fixable=True)
         if load(hook.get("session_id", "")).get("run_refused"):  # let through: it waits on the machine no longer
             with meter(hook.get("session_id", "")) as m:
                 m["run_refused"] = None
+        if claim and claim["task"] in own and not inp.get("run_in_background"):
+            MEASURED_NOW.append(claim["task"])  # its run in this call holds the machine (v2.claim_call), if let through
+        elif shared:
+            MEASURED_SHARED.append(rec.get("name"))  # its load is read from this call's start (v2.shared_call)
     st = load(session)
     fix = rec.get("fix") or {}
     if fix and k not in ("own",):
@@ -1402,7 +1526,13 @@ def session_guard(hook, rec):
         v2.own(rec["task"], [os.path.relpath(t, v2.PROJECT) for t in write_targets(
             tool, inp, c, hook.get("cwd")) if t.startswith(v2.PROJECT + os.sep)])
     if k in READING and not fix:
+        began = time.time()
         batch = batch_id(hook.get("transcript_path", ""), hook.get("tool_use_id"), BATCH_WAIT)
+        with meter(session) as m:  # a read's guard waits up to BATCH_WAIT for its call's line: the guard of a read took
+            # a median 0.64 s, of any other call 0.10-0.16 s (09-22) — whether the wait finds it is what these say
+            looked = m.setdefault("batch_lookups", {"found": 0, "missed": 0, "seconds": 0.0})
+            looked["found" if batch else "missed"] += 1
+            looked["seconds"] = round(looked["seconds"] + time.time() - began, 3)
         read = (st.get("batches") or {}).get(batch, 0) if batch else 0
         if read >= BATCH:
             return deny(f"This batch has read {read // 1000}K bytes, and a batch reads at most {BATCH // 1000}K: the "
@@ -1751,21 +1881,24 @@ def write_targets(tool, inp, command, cwd, content=False):
     return list(dict.fromkeys(at(w) for w in names if w.strip("'\"`") not in ("", "/dev/null")))
 
 
-ASSIGN = re.compile(r"(?:^|[;\n]|&&)\s*(?:export\s+)?([A-Za-z_]\w*)=(\"[^\"$`]*\"|'[^']*'|[^\s;&|$`'\"]+)(?=\s*(?:$|[;\n]|&&))")
+ASSIGN = re.compile(r"(?:^|[;\n]|&&)\s*(?:export\s+)?([A-Za-z_]\w*)=(\"[^\"`]*\"|'[^']*'|[^\s;&|`'\"(]+)(?=\s*(?:$|[;\n]|&&))")
 
 
 def shell_context(command, cwd):
     """(where relative paths start, {NAME: value}): a leading `cd DIR` moves the start, and a plain assignment standing
     as a command of its own (`W=.build/tasks/80/time;`) gives its value — so that `cd DIR && … > out` and
     `… > $W/out` are judged where they write. fix-80.2 was refused four writes under .build/ that the guard read as
-    written into its tree (2026-09-21). A value made by a command, or by another variable, is not followed."""
+    written into its tree (2026-09-21). A value made from variables known before it is followed (review-227's
+    `T="$TMPDIR/r227"; … > "$T/$n"` was refused as a redirection into the tree, 2026-09-22 20:12); one made by a
+    command is not."""
     base = cwd or v2.PROJECT
     lead = re.match(r"^\s*cd\s+([^;&|\n]+?)\s*(?:&&|;|\n)", shell_syntax(command))
     if lead and "$" not in lead.group(1):
         base = os.path.normpath(os.path.join(base, os.path.expanduser(lead.group(1).strip("'\""))))
     known = {"PWD": base, "TMPDIR": os.environ.get("TMPDIR") or "/tmp"}  # a temporary file's place, as the shell has it
     for name, value in ASSIGN.findall(HEREDOC.sub(" ", command or "")):
-        known[name] = value.strip("'\"")
+        known[name] = value.strip("'") if value.startswith("'") else re.sub(
+            r"\$\{?(\w+)\}?", lambda m: known.get(m.group(1), m.group(0)), value.strip('"'))
     return base, known
 
 
@@ -1798,6 +1931,10 @@ def write_guard(tool, inp, command, rec, cwd):
                     "does the work of its task and does not change the harness it runs under. What you found in it "
                     "goes into your result, or to the planner (`v2.py ask --to planner`, or `v2.py escalate "
                     "--efficiency` for a cost).")
+    if rec.get("role") == "reviewer":
+        refused = reviewer_write_refusal(targets, command, rec, cwd)
+        if refused:
+            return deny(refused)
     theirs = {os.path.join(d, f) for d in (v2.PROJECT, v2.tree_of(rec)) for f in ("HANDOFF.md", v2.PLANNER_LOG)}
     if rec.get("role") != "planner" and theirs & set(targets):
         return deny(f"HANDOFF.md is the planner's state and {v2.PLANNER_LOG} is its log: what you did goes into your "
@@ -1850,6 +1987,50 @@ def write_guard(tool, inp, command, rec, cwd):
     return None
 
 
+def reviewer_write_refusal(targets, command, rec, cwd):
+    """What a reviewer may write in the repository, or why not (C7, the owner's yes of 2026-09-23): its own record and
+    the reviewed task's (.build/tasks/ID/ — its verdict, its scratch, and the task's commit message and result, which
+    it corrects where they misstate the work), and by `=== row THEORY` the row of a theory that task changed, when
+    THEORY_MAP.md is among the files it hands over. Nothing else of the repository or of the task's tree: a finding
+    about a theory, code or a decision entry is a rejection, and "the reviewer judges, never produces" holds by
+    construction (a reviewer stands in the reviewed task's tree, which no guard kept it from writing). Its scratch
+    outside the repository is its own. About 12 of 31 rejections were words a reviewer had already found, each a fix
+    round (about 1.7M and 45 minutes)."""
+    rid, tid = str(rec.get("task") or ""), str(rec.get("reviews") or rec.get("task") or "")
+    real = os.path.realpath
+    records = [real(os.path.join(v2.BUILD, x)) + os.sep for x in {rid, tid} if x]
+    handed = {real(os.path.join(v2.BUILD, tid, f)) for f in ("finalize.json", "brief.json")}  # the harness's own
+    index = real(os.path.join(v2.tree_of(rec), "THEORY_MAP.md"))
+    try:
+        files = json.load(open(os.path.join(v2.BUILD, tid, "finalize.json")))["files"]
+    except (OSError, ValueError, KeyError, TypeError):
+        files = []
+    changed = {os.path.basename(f)[:-4] for f in files if f.startswith("theories/") and f.endswith(".thy")}
+    parts = change_parts(command) if command else None
+    ops = [(op, real(v2.change_path(shell_context(before, cwd)[0], op["path"])))
+           for before, _, text in (parts.changes if parts else []) for op in v2.change_blocks(text)[0]]
+    project = real(v2.PROJECT) + os.sep
+    for t in targets:
+        r = real(t)
+        if not r.startswith(project) or (any((r + os.sep).startswith(d) for d in records) and r not in handed):
+            continue
+        if r == index:
+            wrong = [op for op, path in ops if path == index and not (op["op"] == "row" and op.get("theory") in changed)]
+            if "THEORY_MAP.md" in files and ops and not wrong:
+                continue
+            return ("A reviewer corrects a THEORY_MAP.md row only by `=== row THEORY`, for a theory the task it judges "
+                    f"changed ({', '.join(sorted(changed)) or 'none'}), and only when that task hands THEORY_MAP.md "
+                    "over; name it under `## Corrected` in your accepting verdict. Anything else in the map is a "
+                    "finding: reject, and say it.")
+        return (f"A reviewer judges; it writes its verdict and scratch under .build/tasks/{tid}/ (or outside the "
+                "repository), and corrects only words that misstate the work: the task's commit message and result "
+                f"(.build/tasks/{tid}/commit.md, result.md) and, by `=== row THEORY`, the row of a theory the task "
+                "changed — each named under `## Corrected` in an accepting verdict. "
+                f"{os.path.relpath(t, cwd or v2.PROJECT)} is none of those: a finding about a theory, code or a "
+                "decision entry is a rejection.")
+    return None
+
+
 def graph_edit_refusal(inp):
     """What the planner may not do with TaskUpdate, which is the one door to the graph the harness does not own:
     complete a build, a fix or a review by hand — those complete by landing (check, review, commit) and by a verdict,
@@ -1891,11 +2072,21 @@ def completed(transcript, job):
 def record(hook, rec):
     """After a working session's tool call: its reads, its production and its checks. Returns a note for it, or None."""
     session, tool, inp = hook.get("session_id", ""), hook.get("tool_name"), hook.get("tool_input") or {}
+    measured = None
+    if tool == "Bash":
+        measured = v2.release_claim(hook.get("tool_use_id"))  # a measurement's hold ends with the call that ran it
+        measured = v2.release_shared(rec.get("name"), hook.get("tool_use_id")) or measured  # and what the load was
+        v2.lap("the machine's claim")
+        v2.keep_probes(rec.get("task"))  # its probes kept as they are after the call, whatever it removes later
+        v2.lap("its probes kept")
     if tool == "Bash" and inp.get("command"):  # the call as the session made it, whichever of the two is given here
         inp = dict(inp, command=unwrapped(inp["command"]))
     response = hook.get("tool_response")
     with meter(session) as st:
-        return _record(hook, rec, st, session, tool, inp, response)
+        v2.lap("its meter's lock")
+        note = _record(hook, rec, st, session, tool, inp, response)
+        v2.lap("its reads and production")
+        return " ".join(filter(None, [measured, note])) or None
 
 
 def _record(hook, rec, st, session, tool, inp, response):
@@ -1935,6 +2126,10 @@ def _record(hook, rec, st, session, tool, inp, response):
                         f"the {READ_BYTES:,} a read shows: the guard's rewrite of it through cut.py did not apply")
         if mid:  # what the batch has read, which bounds what more it may (the guard)
             st["batches"] = dict(st.get("batches") or {}, **{mid: (st.get("batches") or {}).get(mid, 0) + shown})
+    if hook.get("tool_use_id"):  # each call's kind and what it showed, by its id (small_read_before), the last 200
+        seen = st.get("calls_shown") or {}
+        seen[hook["tool_use_id"]] = [k, shown_bytes(tool, response) if k in READING else 0]
+        st["calls_shown"] = dict(list(seen.items())[-200:])
     if k == "check":
         text = json.dumps(response or "")
         # its whole output: a run in the background writes it to a file, and one cut to a read's bytes is kept whole
@@ -2030,6 +2225,10 @@ def _guard(hook):
     tool, inp = hook.get("tool_name"), hook.get("tool_input") or {}
     if tool in REMOVED_TOOLS:
         return deny(f"{tool} is not a session's tool (the owner, 2026-09-21). {REMOVED_TOOLS[tool]}")
+    if role in v2.LAYER_ROLES:  # what it reasons over is its message: a read would stand in every fork of it
+        return deny("A reasoning layer or a churn uses no tool: everything it reasons over or holds is in its message, "
+                    "and whatever it read would stand in the prefix of every session of its role. Reply as your message "
+                    "asks, and end your turn.")
     fixed = kept = None
     if tool == "Bash" and inp.get("command"):
         fixed, why = again(rec.get("name"), inp["command"])
@@ -2054,6 +2253,17 @@ def _guard(hook):
             with contextlib.suppress(OSError):
                 os.remove(os.path.join(v2.ADMITTED, v2.SESSION_MARK + (name or "unnamed")))
     ADMITTED_NOW.clear()
+    if tool == "Bash" and rec.get("task"):
+        if not denied:  # where each probe of the call runs, so that it is found wherever that is (v2.probe_dirs)
+            v2.softly("where the call's probes run", lambda: v2.note_probe_dirs(
+                rec.get("task"), probe_work(inp.get("command") or "", hook.get("cwd"))), default=False)
+        v2.keep_probes(rec.get("task"))  # before the call: a call that removes its probes keeps nothing of them
+    if MEASURED_NOW and not denied:
+        v2.claim_call(MEASURED_NOW[0], hook.get("tool_use_id"))
+    MEASURED_NOW.clear()
+    if MEASURED_SHARED and not denied:
+        v2.shared_call(MEASURED_SHARED[0], hook.get("tool_use_id"))
+    MEASURED_SHARED.clear()
     if denied and kept and fixable:
         said["permissionDecisionReason"] += " " + fix_note(kept)
     if fixed and not denied and "updatedInput" not in said:
@@ -2083,10 +2293,13 @@ def globbing(decision, inp):
 
 
 # A command Claude Code starts is its argument to the shell, and Linux takes at most 128K bytes in one argument
-# (MAX_ARG_STRLEN). The command reaches it about 3.3 times over: implement-38's change of 59K bytes (60.7K as the guard
-# ran it) was "command line 200.3KB … (largest single arg 200.3KB)", refused with E2BIG and never run (2026-09-22
-# 09:56, and implement-36's at 07:52). The more a call holds — one call for every change that is ready — the sooner.
-ARG_SAFE = 32_000
+# (MAX_ARG_STRLEN). The sandbox's profile goes into that argument too — a deny path for each of the settings, skills
+# and hooks of every registered git worktree among them, so it grows with the trees standing when the session began:
+# implement-38's change of 59K bytes (60.7K as the guard ran it) was "command line 200.3KB … (largest single arg
+# 200.3KB)" (2026-09-22 09:56, and implement-36's at 07:52), and fix-255's of 23.8K was "145KB" (19:14), where 8.1K
+# had started in the same session: its room was about 10K. A call over ARG_SAFE is run from a file, which costs nothing
+# — about 8% of the calls of 2026-09-22, every change of a theory's worth among them.
+ARG_SAFE = 6_000
 
 
 def spilled(decision, inp, rec, kept, hook):
@@ -2111,8 +2324,12 @@ def main():
     if sys.argv[1:2] != ["guard"]:
         print(__doc__)
         return 2
+    watch = v2.Stopwatch("the guard")
     try:
-        decision = guard(json.load(sys.stdin))
+        hook = json.load(sys.stdin)
+        decision = guard(hook)
+        watch.done(lambda: f"the guard of a {hook.get('tool_name')} call of "
+                           f"{(v2.role_of(hook.get('session_id', ''))[1] or {}).get('name')}")
     except Exception as e:  # noqa: BLE001
         # A guard that fails lets the call through rather than block the work — but silently, it is every limit and
         # every refusal switched off with nothing to show for it, which is the fault of the PreToolUse matcher in

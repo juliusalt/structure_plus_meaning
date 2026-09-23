@@ -1,5 +1,5 @@
 theory Development_State_Presenter
-imports Development_State_Rows Development_Entity_Keys
+imports Development_State_Rows Development_Entity_Keys Isabelle_Name_Trees Ordered_Member_Trees
 begin
 
 section \<open>A rooted state presented as its rows\<close>
@@ -47,12 +47,17 @@ lemma state_positions_listed:
     concat (map isabelle_term_positions (fst S)))"
   by (auto simp: state_positions_def)
 
+text \<open>The names' distinctness is read through their order, once (@{text distinct_ordered_remdups}).\<close>
+
+lemma distinct_ordered_remdups: "length (ordered_remdups xs)=length xs \<longleftrightarrow> distinct xs"
+  by (simp only: ordered_remdups_exact length_remdups_eq remdups_id_iff_distinct)
+
 lemma state_presentable_code [code]:
-  "state_presentable S \<longleftrightarrow> distinct (fst (snd S)) \<and>
+  "state_presentable S \<longleftrightarrow> length (ordered_remdups (fst (snd S)))=length (fst (snd S)) \<and>
     list_all (\<lambda>i. i<length (fst (snd S))) (concat (map isabelle_entity_positions (snd (snd S))) @
       concat (map isabelle_term_positions (fst S))) \<and>
     distinct (map (isabelle_local_root (fst (snd S))) (fst S))"
-  unfolding state_presentable_def state_positions_listed list_all_iff by auto
+  unfolding state_presentable_def state_positions_listed list_all_iff distinct_ordered_remdups by auto
 
 subsection \<open>The rows\<close>
 
@@ -65,30 +70,33 @@ definition state_rows_of :: "isabelle_rooted_context \<Rightarrow> state_rows" w
 subsection \<open>A row read against a membership of the development constants\<close>
 
 text \<open>
-  A row reads the development constants of its context only as a membership, for the subjects of a
-  specification (@{text entity_row_with_row}); a use holding that membership another way, an index or the
-  constants an edit changes, reads the row through it. The development constants of a context are computed
-  once for all its rows (@{text entity_row_shared}), and a presented state reads its rows through one
-  partial application (@{text state_rows_of_shared}).
+  A row reads the names of its context through a lookup and the development constants only as a
+  membership, for the subjects of a specification (\<open>entity_row_by\<close>, @{text entity_row_with_row}); a use
+  holding the names or that membership another way, an index or the constants an edit changes, reads the row
+  through it. The development constants of a context are computed once for all its rows
+  (@{text entity_row_shared}), and a presented state reads its rows through one partial application
+  (@{text state_rows_of_shared}).
 \<close>
 
-definition entity_row_with ::
-    "(nat \<Rightarrow> state_key) \<Rightarrow> String.literal list \<Rightarrow> (nat \<Rightarrow> bool) \<Rightarrow> isabelle_entity \<Rightarrow> isabelle_context state_row" where
-  "entity_row_with key names D e=\<lparr>row_declared=map key (entity_declared e),
+definition entity_row_by :: "(nat \<Rightarrow> state_key) \<Rightarrow> (nat \<Rightarrow> String.literal option) \<Rightarrow> (nat \<Rightarrow> bool) \<Rightarrow>
+    isabelle_entity \<Rightarrow> isabelle_context state_row" where
+  "entity_row_by key look D e=\<lparr>row_declared=map key (entity_declared e),
     row_subjects=map key (case e of Isabelle_Specification p \<Rightarrow> filter D (isabelle_term_constants p)
-      | _ \<Rightarrow> isabelle_entity_subjects names [] e),
+      | _ \<Rightarrow> isabelle_entity_subjects_by look [] e),
     row_mentions=map key (entity_mentions e),
-    row_identity=isabelle_local_entities names [e]\<rparr>"
+    row_identity=isabelle_local_entities_by look [e]\<rparr>"
 
 lemma entity_row_with_row:
-  "entity_row key C=entity_row_with key (fst C) (\<lambda>c. c\<in>set (isabelle_development_constants (snd C)))"
+  "entity_row key C=entity_row_by key (isabelle_name_at (fst C)) (\<lambda>c. c\<in>set (isabelle_development_constants (snd C)))"
 proof (rule ext)
   fix e
-  show "entity_row key C e=entity_row_with key (fst C) (\<lambda>c. c\<in>set (isabelle_development_constants (snd C))) e"
-    by (cases e) (simp_all add: entity_row_def entity_row_with_def)
+  show "entity_row key C e=entity_row_by key (isabelle_name_at (fst C))
+      (\<lambda>c. c\<in>set (isabelle_development_constants (snd C))) e"
+    by (cases e) (simp_all add: entity_row_def entity_row_by_def isabelle_entity_subjects_by_def
+      isabelle_local_entities_by_names isabelle_equation_left_by_names)
 qed
 
-lemma entity_row_shared [code]:
+lemma entity_row_shared:
   "entity_row key C=(let D=isabelle_development_constants (snd C) in
     (\<lambda>e. \<lparr>row_declared=map key (entity_declared e),
       row_subjects=map key (isabelle_entity_subjects (fst C) D e),
@@ -96,13 +104,43 @@ lemma entity_row_shared [code]:
       row_identity=isabelle_local_entities (fst C) [e]\<rparr>))"
   by (simp add: fun_eq_iff entity_row_def Let_def)
 
+subsection \<open>A row read through the index of the name table\<close>
+
+text \<open>
+  A state's rows read the names through the index of its name table
+  (\<open>isabelle_name_tree\<close>) and the development constants through their member tree, both built once for all its
+  rows (@{text entity_row_indexed}).
+\<close>
+
+
+lemma entity_row_indexed [code]:
+  "entity_row key C=(let T=isabelle_name_tree (fst C);
+     D=ordered_member_tree (fset_of_list (isabelle_development_constants (snd C))) in
+    entity_row_by key (RBT.lookup T) (\<lambda>c. RBT.lookup D c\<noteq>None))"
+  by (simp only: Let_def isabelle_name_tree_lookup_fun ordered_member_tree_listed entity_row_with_row)
+
+subsection \<open>The atoms are read with their positions\<close>
+
+text \<open>
+  The atoms pair each name with its position in one pass over the table (@{text state_atoms_enumerated}). The
+  entities keep their first-occurrence keys by the definition's reading (\<^const>\<open>development_entity_key\<close>),
+  which compares entities by equality: measured on the machinery's state (340 entities) it costs 1 ms, where
+  the index of first positions under the ordered key (\<open>first_index_tree\<close>) costs 22 ms and removing
+  duplicates through that key 20 ms against under 1 ms, so the ordered key pays only beyond some ten thousand
+  entities.
+\<close>
+
+lemma state_atoms_enumerated:
+  "map (\<lambda>i. (key i,xs!i)) [0..<length xs]=map (\<lambda>(i,n). (key i,n)) (enumerate 0 xs)"
+  by (rule nth_equalityI) (simp_all add: nth_enumerate_eq)
+
 lemma state_rows_of_shared [code]:
   "state_rows_of S=(let row=entity_row state_constant_key (snd S) in
-    \<lparr>state_atoms=map (\<lambda>i. (state_constant_key i,fst (snd S)!i)) [0..<length (fst (snd S))],
+    \<lparr>state_atoms=map (\<lambda>(i,n). (state_constant_key i,n)) (enumerate 0 (fst (snd S))),
     state_entities=(\<lambda>k. map (\<lambda>e. (development_entity_key (snd S) e,row e))
       (remdups (filter (\<lambda>e. entity_kind_of e=k) (snd (snd S))))),
     state_roots=map (\<lambda>t. (first_occurrence_key (fst S) t,root_row state_constant_key (snd S) t)) (fst S)\<rparr>)"
-  by (simp add: state_rows_of_def Let_def)
+  by (simp add: state_rows_of_def Let_def state_atoms_enumerated)
 definition state_presenter :: "isabelle_rooted_context \<Rightarrow> state_rows option" where
   "state_presenter S=(if state_presentable S then Some (state_rows_of S) else None)"
 

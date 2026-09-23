@@ -8,6 +8,10 @@ tasks it is to produce and in what course; you make them into briefs a session c
 
 Why it stands where it stands: {WHY}
 
+## What your brief task names, as the library states it now
+
+{INPUTS}
+
 ## The graph (Claude Code task list {LIST})
 
 {GRAPH}
@@ -69,6 +73,8 @@ each `why` what it does not wait for. Never buy that at the cost of the work: do
 belongs together, do not let two tasks establish the same notion, and do not leave a task short of what it needs to
 decide — one that must ask before it can begin is worse than one that waits. A review task depends on the task it
 reviews and on nothing else.
+
+{GROUPING}
 
 **The graph's shape is not yours to bend.** Brief the work as the work is: do not make a task wait on something it
 does not need, and do not contort a detailing to make the graph look wider or a chain shorter than it is. Work spliced

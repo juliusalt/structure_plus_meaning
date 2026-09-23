@@ -681,26 +681,35 @@ def check_summary(out):
             f"accepted" + (f"; {tests}" if tests else ""))
 
 
-def harness_validation(tid):
-    """The paragraph the harness adds to a task's commit: what its own check of the work found. The owner's commits
-    close with their checks' results, and a session writes its message before the harness checks the work — task
-    181's review rejected a message that said the landing check "is run by the finalizer" (2026-09-22 15:25). None when
-    the check left no report (a task's own command)."""
+def harness_validation(tid, tree=None):
+    """The paragraph the harness adds to a task's commit: what its session's probes verified, as the harness keeps
+    them (v2.probed_whole), and what its own check of the work found. The owner's commits close with their checks'
+    results, and a session writes its message before the harness checks the work — task 181's review rejected a
+    message that said the landing check "is run by the finalizer" (2026-09-22 15:25), and five of the 31 rejections
+    whose findings the state held on 2026-09-23 were a message misstating a run. None when neither left a record."""
     o = {}
     with contextlib.suppress(OSError, ValueError):
         o = json.load(open(os.path.join(v2.BUILD, tid, "finalized.json")))
+    parts = []
+    theories, runs = v2.softly("the probes' record", v2.probed_whole, tid, tree or v2.worktree_of(tid), default=([], 0))
+    if theories:
+        named = theories[0] if len(theories) == 1 else ", ".join(theories[:-1]) + " and " + theories[-1]
+        parts.append(f"Probed in its session, as the harness keeps the runs: {named}, as the tree holds "
+                     f"{'it' if len(theories) == 1 else 'them'}, to the completion marker with no error "
+                     f"({runs} run{'s' * (runs > 1)}).")
     if o.get("documents"):
-        return ("Checked by the harness: the documents check (the sources' structure, THEORY_MAP.md's rows, no conflict "
-                "marker) passed.")
+        parts.append("Checked by the harness: the documents check (the sources' structure, THEORY_MAP.md's rows, no "
+                     "conflict marker) passed.")
+        return " ".join(parts)
     out = o.get("check_output") or (o["reused"][:-4] if str(o.get("reused") or "").endswith(".log") else None)
     said = check_summary(os.path.relpath(out, v2.PROJECT) if out and os.path.isabs(out) else out) if out else None
-    if not said:
-        return None
-    others = [t for t in o.get("batch") or [] if t != tid]
-    return ("Checked by the harness: the repository's check of this work with main"
-            + (f" and the work of task{'s' if len(others) > 1 else ''} "
-               + (others[0] if len(others) == 1 else ", ".join(others[:-1]) + " and " + others[-1]) if others else "")
-            + f" {said}.")
+    if said:
+        others = [t for t in o.get("batch") or [] if t != tid]
+        parts.append("Checked by the harness: the repository's check of this work with main"
+                     + (f" and the work of task{'s' if len(others) > 1 else ''} "
+                        + (others[0] if len(others) == 1 else ", ".join(others[:-1]) + " and " + others[-1]) if others
+                        else "") + f" {said}.")
+    return " ".join(parts) or None
 
 
 def branch_commit(tid, spec, tree, files, own_tree):
@@ -736,10 +745,10 @@ def branch_commit(tid, spec, tree, files, own_tree):
     stands = own_tree and git("diff", "--cached", "--quiet", "--", *files, tree=tree).returncode == 0 and git(
         "rev-list", "--count", f"{git('rev-parse', 'HEAD').stdout.strip()}..HEAD", tree=tree).stdout.strip() not in ("", "0")
     message = os.path.join(v2.PROJECT, spec["message"])
-    checked = harness_validation(tid)
-    if checked and not stands:  # the harness's own check, said by the harness beside the session's words
+    checked = harness_validation(tid, tree)
+    if checked and not stands:  # the harness's own record, said by the harness beside the session's words
         text = open(message, errors="ignore").read().rstrip()
-        if "Checked by the harness:" not in text:
+        if "Checked by the harness:" not in text and "Probed in its session, as the harness keeps" not in text:
             message = os.path.join(v2.BUILD, tid, "commit-final.md")
             open(message, "w").write(text + "\n\n" + checked + "\n")
     c = subprocess.CompletedProcess([], 0, "", "") if stands else git_retrying(

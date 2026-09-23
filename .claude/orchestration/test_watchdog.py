@@ -237,6 +237,11 @@ class WatchdogTests(unittest.TestCase):
         self.w.hit("implement-4", age=v2.PING_AGE + 60)
         self.run_watchdog(ORCH_PING_WAIT=0)
         self.assertTrue(self.w.wait_for(self.w.state / "ping-implement-4", 5))  # pinged before its cache expires
+        # the ping runs in the background and marks the session hit when it ends: waited for, or its hit could land
+        # after the age set below and the session read as warm (it failed so under the suite's load, 2026-09-23)
+        end = time.time() + 20
+        while time.time() < end and "ping implement-4:" not in (self.w.state / "v2.log").read_text():
+            time.sleep(0.1)
         self.w.hit("implement-4", age=v2.WARM_MAX + 60)
         self.run_watchdog()
         self.assertEqual(self.s("implement-4")["state"], "lost")

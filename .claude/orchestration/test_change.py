@@ -32,6 +32,19 @@ class ChangeTests(unittest.TestCase):
         self.assertEqual(out.stderr, "")
         return out.stdout
 
+    def test_an_append_adds_its_text_at_the_end_with_nothing_to_match(self):
+        # plan-47's append to PLANNING_LOG.md by SEARCH/REPLACE was refused for a text that recurred there, and its
+        # mail and HANDOFF.md with it (2026-09-22 21:14)
+        (self.w.project / "LOG.md").write_text("# Log\n\nsame line\nsame line")
+        said = self.change("=== append LOG.md\n\nthe next entry\n=== write NOTES.md\nnotes\n")
+        self.assertIn("LOG.md (appended at line 5)", said)
+        self.assertEqual((self.w.project / "LOG.md").read_text(), "# Log\n\nsame line\nsame line\n\nthe next entry\n")
+        said = self.change("=== append NEW.md\nfirst\n")        # a file not there yet begins with it
+        self.assertEqual((self.w.project / "NEW.md").read_text(), "first\n")
+        # the note that a call made one change: said of an edit of the repository's files, not of a session's own record
+        self.assertIn("[one change in this call", said)
+        self.assertNotIn("[one change in this call", self.change("=== write .build/tasks/1/result.md\nStatus: done\n"))
+
     def test_many_changes_to_many_files_in_one_call_in_order(self):
         said = self.change("=== replace theories/A.thy\n<<<<<<< SEARCH\n  by simp\n=======\n  by auto\n>>>>>>> REPLACE\n"
                            "<<<<<<< SEARCH\n  by auto\n=======\n  by (auto simp: x_def)\n>>>>>>> REPLACE\n"
@@ -163,6 +176,181 @@ class ChangeTests(unittest.TestCase):
         self.assertEqual([(o["op"], o["path"], o["n"]) for o in ops],
                          [("write", "a.md", 1), ("replace", "b.md", 2), ("replace-all", "a.md", 3)])
 
+
+
+ROOT_TEXT = ('session S = HOL +\n  options [document = false]\n  directories "theories"\n  theories\n'
+             '    A\n    C\n')
+MAP = ("# Active theory graph\n\n| Theory | Direct imports | Content |\n|---|---|---|\n"
+       "| A | Main | The first. |\n| C | A | The third. |\n\nAfter the table.\n")
+
+
+class KeyedTests(unittest.TestCase):
+    """The index files edited by the theory they index: a THEORY_MAP.md row (`=== row`), its imports read from the
+    theory, and a ROOT declaration (`=== root`) — 161 requests of the implementers and fixers of 2026-09-21/22 did
+    nothing but quote and rewrite a row — and what the source checks say of a change, told with it."""
+
+    def setUp(self):
+        self.w = fakes.World()
+        self.w.write("theories/A.thy", THEORY)
+        self.w.write("theories/C.thy", "theory C imports A begin\nend\n")
+        self.w.write("ROOT", ROOT_TEXT)
+        self.w.write("THEORY_MAP.md", MAP)
+
+    def tearDown(self):
+        self.w.close()
+
+    change = ChangeTests.change
+
+    def read(self, name):
+        return (self.w.project / name).read_text()
+
+    def test_a_new_theory_is_declared_and_given_its_row_in_one_call(self):
+        said = self.change('=== write theories/B.thy\ntheory B\n  imports A (* the first *) "HOL-Library.FSet"\nbegin\nend\n'
+                           "=== row B\nThe second,\n  over the first.\n=== root B\n")
+        self.assertIn("ROOT (B declared at line 6)", said)
+        self.assertIn("THEORY_MAP.md (the row of B written anew, at line 6)", said)
+        self.assertNotIn("the sources", said)                           # declared and with its row: nothing to say
+        self.assertEqual(self.read("ROOT"), ROOT_TEXT.replace("    A\n", "    A\n    B\n"))   # after its import
+        rows = [l for l in self.read("THEORY_MAP.md").splitlines() if l.startswith("| ")]
+        self.assertEqual(rows[1:], ["| A | Main | The first. |", '| B | A, HOL-Library.FSet | The second, over the first. |',
+                                    "| C | A | The third. |"])          # in ROOT's order, imports as the theory has them
+
+    def test_a_row_alone_reads_its_imports_again_and_keeps_its_content(self):
+        self.change("=== replace theories/C.thy\n<<<<<<< SEARCH\nimports A\n=======\nimports A Main\n>>>>>>> REPLACE\n")
+        said = self.change("=== row C\n")
+        self.assertIn("the row of C replaced, at line 6", said)
+        self.assertIn("| C | A, Main | The third. |", self.read("THEORY_MAP.md"))
+        self.change("=== row C\nThe third, anew.\n")
+        self.assertIn("| C | A, Main | The third, anew. |", self.read("THEORY_MAP.md"))
+        self.assertEqual(self.read("THEORY_MAP.md").count("| C |"), 1)
+
+    def test_a_new_row_goes_beside_the_row_named_the_map_being_in_sections(self):
+        self.w.write("THEORY_MAP.md", MAP + "\n## A section\n\n| Theory | Imports | Responsibility |\n|---|---|---|\n"
+                                            "| Y | A | The first of it. |\n| Z | A | The last. |\n")
+        self.w.write("theories/B.thy", "theory B imports A begin\nend\n")
+        said = self.change("=== row B after Y\nIn the section.\n")
+        self.assertIn("the row of B written anew", said)
+        rows = [l for l in self.read("THEORY_MAP.md").splitlines() if l.startswith("| ")]
+        self.assertEqual(rows[-3:], ["| Y | A | The first of it. |", "| B | A | In the section. |", "| Z | A | The last. |"])
+
+    def test_a_declaration_goes_where_it_is_named_and_is_made_once(self):
+        self.w.write("theories/D.thy", "theory D imports C begin\nend\n")
+        self.assertIn("D declared at line 6", self.change("=== root D after A\n"))
+        said = self.change("=== root D\n")
+        self.assertIn("D declared already, at line 6", said)
+        self.assertIn("as it was", said)
+        self.assertEqual(self.read("ROOT").count("    D\n"), 1)
+
+    def test_what_refuses_an_index_edit_is_said_and_nothing_is_written(self):
+        before = (self.read("ROOT"), self.read("THEORY_MAP.md"))
+        for blocks, said in (("=== row Nowhere\nIts row.\n", "theories/Nowhere.thy is not there"),
+                             ("=== row B\n", None),
+                             ("=== root New after Nowhere\n", "ROOT declares no Nowhere"),
+                             ("=== root C\nsome text\n", "a declaration is its head line alone"),
+                             ("=== row C\nA | B\n", "holds a `|`"),
+                             ("=== row C after A\nx\n", "`after` places a new row"),
+                             ("=== row New after Nowhere\nx\n", "holds no row of Nowhere")):
+            out = self.change("=== write theories/New.thy\ntheory New imports A begin\nend\n" + blocks)
+            self.assertTrue(out.startswith("refused, and nothing was changed"), out)
+            if said:
+                self.assertIn(said, out)
+            self.assertFalse((self.w.project / "theories/New.thy").exists())
+        self.assertIn("B has no row yet", self.change("=== write theories/B.thy\ntheory B imports A begin\nend\n=== row B\n"))
+        self.w.write("THEORY_MAP.md", MAP.replace("| C | A | The third. |", "| C | A | The third. |\n| C | A | Again. |"))
+        self.assertIn("holds the row of C 2 times", self.change("=== row C\nOnce.\n"))
+        self.assertEqual(before[0], self.read("ROOT"))
+
+    def test_the_sources_are_told_with_the_change_that_concerns_them(self):
+        said = self.change("=== write theories/B.thy\ntheory B imports A begin\nlemma b: True sorry\nend\n")
+        self.assertIn("theories/B.thy is not declared in ROOT (`=== root B`)", said)
+        self.assertIn("theories/B.thy:2 escapes its proof: lemma b: True sorry", said)
+        self.assertIn("B has no row in THEORY_MAP.md", said)
+        # a theory whose imports change is told its row names others; a proof changed is not told its row again
+        said = self.change("=== replace theories/C.thy\n<<<<<<< SEARCH\nimports A\n=======\nimports A B\n>>>>>>> REPLACE\n")
+        self.assertIn("the row of C names the imports A, and the theory imports A, B", said)
+        said = self.change("=== replace theories/A.thy\n<<<<<<< SEARCH\n  by simp\n=======\n  by auto\n>>>>>>> REPLACE\n")
+        self.assertNotIn("the sources", said)
+        # a declaration taken out of ROOT whose theory stays: told; a change elsewhere than a tree's top: nothing
+        said = self.change("=== replace ROOT\n<<<<<<< SEARCH\n    C\n=======\n>>>>>>> REPLACE\n")
+        self.assertIn("theories/C.thy is not declared in ROOT", said)
+        (self.w.project / "sub/theories").mkdir(parents=True)
+        self.assertNotIn("the sources", self.change("=== write theories/E.thy\ntheory E imports A begin\nend\n",
+                                                    cwd=self.w.project / "sub"))
+
+    def test_a_name_or_statement_the_library_has_is_told_when_it_is_written_again(self):
+        # 14 of the 31 rejections whose findings the state held on 2026-09-23 were a notion or fact the library
+        # already had; three were a row offering what the task had removed
+        long = "finite_carrier S \\<Longrightarrow> card (image f S) \\<le> card S"
+        self.w.write("theories/C.thy", f'theory C imports A begin\nlemma carrier_card_image: "{long}"\n  by simp\n'
+                                       'lemma short: "True" by simp\nlemma carrier_only_here: "True" by simp\n'
+                                       'definition cell_result where "cell_result c = (case c of None \\<Rightarrow> None | Some (r, a) \\<Rightarrow> r)"\nend\n')
+        self.w.write("THEORY_MAP.md", MAP.replace("The third.", "Offers `carrier_card_image`, `short` and `carrier_only_here`; "
+                                                  "the superseded `carrier_old_bound` is removed."))
+        said = self.change(f'=== write theories/D.thy\ntheory D imports C begin\nlemma carrier_card_image: "True" by simp\n'
+                           f'lemma image_card_bound:\n  "{long}"\n  by simp\nlemma short: "True" by simp\n'
+                           'definition history_result :: "(nat \\<times> nat) option \\<Rightarrow> nat option" where\n'
+                           '  "history_result x = (case x of None \\<Rightarrow> None | Some (r, a) \\<Rightarrow> r)"\nend\n'
+                           "=== root D\n=== row D\nThe fourth.\n")
+        self.assertIn("`carrier_card_image`, new in D, is declared in C too", said)
+        self.assertIn("`image_card_bound` states what C.carrier_card_image states, word for word", said)
+        self.assertIn("`history_result` defines what C.cell_result defines, its arguments aside", said)
+        self.assertNotIn("`short`", said)                                  # a name that says little is left alone
+        # written again, what it already declared is not told again
+        said = self.change("=== replace theories/D.thy\n<<<<<<< SEARCH\nlemma short\n=======\nlemma short'\n>>>>>>> REPLACE\n")
+        self.assertNotIn("carrier_card_image", said)
+        # a fact taken out that the theory's row still offers, and that a decision cites
+        self.w.write("DECISIONS.md", "# Decisions\n\n## The carrier's bound\n\nIt rests on `carrier_only_here` and "
+                                     "`carrier_card_image`.\n")
+        said = self.change("=== replace theories/C.thy\n<<<<<<< SEARCH\nlemma carrier_only_here\n=======\nlemma carrier_card_bound\n>>>>>>> REPLACE\n")
+        self.assertIn("the row of C offers `carrier_only_here`, which this change took out of C", said)
+        self.assertIn('DECISIONS.md cites `carrier_only_here`, which this change took out of C, in "The carrier\'s bound"',
+                      said)
+        # one that another theory still declares has moved, and its mention cites it there; a removal note offers nothing
+        said = self.change("=== replace theories/C.thy\n<<<<<<< SEARCH\nlemma carrier_card_image\n=======\nlemma carrier_image_bound\n>>>>>>> REPLACE\n")
+        self.assertNotIn("carrier_card_image", said)                     # D declares it
+        self.w.write("theories/C.thy", open(self.w.project / "theories/C.thy").read().replace("end\n", 'lemma carrier_old_bound: "True" by simp\nend\n'))
+        said = self.change("=== replace theories/C.thy\n<<<<<<< SEARCH\nlemma carrier_old_bound\n=======\nlemma carrier_new_bound\n>>>>>>> REPLACE\n")
+        self.assertNotIn("carrier_old_bound", said)                      # its row says it is removed
+        # a definition made an input abbreviation is still declared (task 272's rule patterns, told taken out)
+        self.w.write("theories/C.thy", open(self.w.project / "theories/C.thy").read().replace(
+            "end\n", 'definition carrier_input_form :: bool where "carrier_input_form = True"\nend\n'))
+        self.w.write("THEORY_MAP.md", open(self.w.project / "THEORY_MAP.md").read().replace("and `carrier_only_here`",
+                                                                                          "`carrier_input_form` and `carrier_only_here`"))
+        said = self.change("=== replace theories/C.thy\n<<<<<<< SEARCH\ndefinition carrier_input_form :: bool where \"carrier_input_form = True\"\n"
+                           "=======\nabbreviation (input) carrier_input_form :: bool where \"carrier_input_form \\<equiv> True\"\n>>>>>>> REPLACE\n")
+        self.assertNotIn("carrier_input_form", said)
+
+    def test_the_import_graph_is_told_with_the_change_that_writes_a_theory(self):
+        # the planner's standing last step ran the repository's import graph by hand before every hand-over: the tree's
+        # own tool says it now, with the change (here a stand-in that names what the real one refuses)
+        self.w.write("tools/execution_support.py",
+                     "def source_graph(project, overlays, roots):\n"
+                     "    if 'Loop' in roots:\n"
+                     "        raise ValueError('Cyclic theory import: Loop; Loop imports Loop.')\n"
+                     "    return {}, {}\n")
+        said = self.change("=== write theories/Loop.thy\ntheory Loop imports Loop begin\nend\n=== root Loop\n"
+                           "=== row Loop\nA loop.\n")
+        self.assertIn("the import graph: Cyclic theory import: Loop; Loop imports Loop.", said)
+        said = self.change("=== write theories/Fine.thy\ntheory Fine imports A begin\nend\n=== root Fine\n=== row Fine\nFine.\n")
+        self.assertNotIn("import graph", said)
+
+    def test_what_the_harness_tells_beside_a_change_never_breaks_it(self):
+        # the information parts fail soft (v2.softly): a launch failed on one before its test, 2026-09-23
+        from unittest.mock import patch
+        with patch.object(v2, "STATE", str(self.w.state)), \
+                patch.object(v2, "sources_said", side_effect=RuntimeError("boom")):
+            said = v2.cmd_change("=== write theories/B.thy\ntheory B imports A begin\nend\n", base=str(self.w.project))
+            self.assertEqual(v2.softly("x", lambda: 1 / 0, default="none"), "none")  # logged in the fake's state only
+        self.assertTrue(said.startswith("changed: theories/B.thy (written anew)"), said)
+        self.assertTrue((self.w.project / "theories/B.thy").exists())
+        self.assertIn("ATTENTION what the sources say after the change could not be had: RuntimeError('boom')",
+                      (self.w.state / "v2.log").read_text())
+
+    def test_the_guard_reads_an_index_edit_as_a_write_of_its_file(self):
+        ops, problems = v2.change_blocks("=== row B\nIts row.\n=== root B after A\n")
+        self.assertEqual(problems, [])
+        self.assertEqual([(o["op"], o["path"], o["theory"], o["after"]) for o in ops],
+                         [("row", "THEORY_MAP.md", "B", None), ("root", "ROOT", "B", "A")])
 
 if __name__ == "__main__":
     unittest.main()

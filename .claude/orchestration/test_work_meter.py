@@ -228,6 +228,37 @@ class ReadTiersTests(Guarded):
         self.assertIn(f"the {r} a production allows", refused)
         self.assertIn(f"the {n} your reserve held", refused)
 
+    def test_a_slow_hook_says_where_its_time_went(self):
+        # theory changes took a median 7.7 s with one heavy run going and 0.8 s with none (09-21/22); the parts timed
+        # apart were fast on the repository, so the hooks and the session's commands say it when they are slow
+        env = {"ORCH_SLOW": "0"}
+        self.w.write("theories/Ready.thy", THEORY + LEMMA)
+        self.records.append(assistant("mslow", fakes.iso(time.time()), [
+            {"type": "tool_use", "id": "slow-1", "name": "Bash", "input": {"command": "true"}}]))
+        self.w.transcript("s1", self.records)
+        h = self.hook("Bash", {"command": "true"}, tool_use="slow-1")
+        self.w.hook("work_meter.py", "guard", h, env=env)
+        self.w.hook("ctx_gauge.py", "gauge", dict(h, tool_response={"stdout": ""}, hook_event_name="PostToolUse"), env=env)
+        log = (self.w.state / "v2.log").read_text()
+        self.assertRegex(log, r"slow: the guard of a Bash call of implement-1 took [\d.]+ s")
+        self.assertRegex(log, r"slow: the gauge of a Bash call of implement-1 took [\d.]+ s")
+        self.w.v2("status", env=dict(self.w.as_session("s1"), ORCH_SLOW="0"))
+        self.assertRegex((self.w.state / "v2.log").read_text(), r"slow: `v2.py status` of implement-1 took [\d.]+ s")
+        # and nothing is said of what is quick
+        before = (self.w.state / "v2.log").read_text()
+        self.w.hook("work_meter.py", "guard", h)
+        self.w.v2("status", env=self.w.as_session("s1"))
+        self.assertEqual((self.w.state / "v2.log").read_text().count("slow:"), before.count("slow:"))
+
+    def test_a_read_s_guard_counts_whether_it_found_its_call(self):
+        # a read's guard took a median 0.64 s against 0.10-0.16 s for any other call (09-22): the wait for its call's
+        # line in the transcript, whose outcome nothing recorded
+        before = self.meter().get("batch_lookups") or {"found": 0, "missed": 0}
+        self.read()
+        looked = self.meter()["batch_lookups"]
+        self.assertEqual(looked["found"] + looked["missed"], before["found"] + before["missed"] + 1)
+        self.assertGreaterEqual(looked["seconds"], 0)
+
     def test_a_production_restarts_the_first_tier_and_gives_one_back(self):
         for _ in range(work_meter.ROUNDS + 5):
             self.assertIsNone(self.read()[0])
@@ -661,6 +692,20 @@ class ReadTiersTests(Guarded):
         self.assertNotIn(small, self.read()[1] or "")
         self.assertIn(small, self.read()[1])                                        # a new stretch, a small one again
 
+    def test_the_small_read_note_counts_the_whole_request_and_reads_alone(self):
+        # implement-192 was told "your last request read 3,966 bytes" after a request that read about 33K in three
+        # calls, and fix-279 had a probe's 831 bytes counted as a read (2026-09-22)
+        small = "Your last request read"
+        self.produce()
+        self.call(*self.sed(200), *[self.sed(200) for _ in range(2)])        # three reads in one request, not small
+        self.assertNotIn(small, self.read()[1] or "")
+        self.produce()
+        refused, _ = self.call("Bash", {"command": "python3 -B tools/probe_theories.py --work .build/tasks/1/p "
+                                           "--theory Ready --timeout 60"},
+                               {"stdout": "ok", "stderr": "", "interrupted": False})    # a probe is no read
+        self.assertIsNone(refused)
+        self.assertNotIn(small, self.read()[1] or "")
+
     def test_a_read_refused_early_takes_nothing_from_the_tiers(self):
         # a read refused late (the tiers, a batch's bytes) was left out of the count; one refused early — a removed
         # tool, a malformed `again` — was counted (the owner, 2026-09-21: a refused request counts nowhere)
@@ -816,6 +861,62 @@ class PlannerGraphTests(Guarded):
         self.assertIsNone(self.guard("TaskUpdate", {"taskId": "20", "addBlockedBy": ["10"]}))
 
 
+class ReviewerWriteTests(Guarded):
+    """C7 (the owner's yes of 2026-09-23): a reviewer corrects the words of the work it judges — the task's commit
+    message, its result, the row of a theory it changed — and writes nothing else of the repository."""
+
+    def setUp(self):
+        super().setUp()
+        self.w.session("review-3", "reviewer", "s1", task="3", reviews="3")
+        self.w.write(".build/tasks/3/finalize.json", json.dumps({"files": ["theories/Ready.thy", "THEORY_MAP.md"]}))
+        self.w.write("theories/Ready.thy", THEORY)
+        self.w.write("THEORY_MAP.md", "| Ready | Main | The readiness theory. |\n")
+
+    def test_its_verdict_the_task_s_words_and_its_scratch_are_its_own(self):
+        for path in (".build/tasks/3/review.md", ".build/tasks/3/commit.md", ".build/tasks/3/result.md",
+                     ".build/tasks/3/diffs/rows.txt"):
+            self.assertIsNone(self.guard("Bash", {"command": fakes.change((path, "text\n"))}), path)
+        self.assertIsNone(self.guard("Bash", {"command": "git diff main > $TMPDIR/r3.diff"}))
+
+    def test_a_row_of_a_theory_the_task_changed_by_its_verb_alone(self):
+        row = ".claude/orchestration/v2.py change <<'EOF'\n=== row Ready\nThe readiness theory, over its base.\nEOF"
+        self.assertIsNone(self.guard("Bash", {"command": row}))
+        said = self.guard("Bash", {"command": row.replace("row Ready", "row Other")})
+        self.assertIn("only by `=== row THEORY`, for a theory the task it judges changed (Ready)", said)
+        said = self.guard("Bash", {"command": fakes.change(("THEORY_MAP.md", "| Ready | Main | x |\n"))})
+        self.assertIn("only by `=== row THEORY`", said)
+        self.assertIn("only by `=== row THEORY`", self.guard("Bash", {"command": "echo '| X |' >> THEORY_MAP.md"}))
+        self.w.write(".build/tasks/3/finalize.json", json.dumps({"files": ["theories/Ready.thy"]}))
+        self.assertIn("only when that task hands THEORY_MAP.md over", self.guard("Bash", {"command": row}))
+
+    def test_in_the_reviewed_task_s_tree_its_folder_and_the_tree_s_map_are_read_through_the_link(self):
+        tree = self.w.project / ".build/trees/3"
+        tree.mkdir(parents=True)
+        os.symlink(self.w.project / ".build", tree / ".build")          # every tree's .build is the project's
+        (tree / "THEORY_MAP.md").write_text("| Ready | Main | x |\n")
+        (tree / "theories").mkdir()
+        st = json.loads((self.w.state / "v2.json").read_text())
+        st["sessions"]["review-3"]["tree"] = ".build/trees/3"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+
+        def guard(command):
+            hook = dict(self.hook("Bash", {"command": command}), cwd=str(tree))
+            out = self.w.hook("work_meter.py", "guard", hook)[1] or {}
+            said = out.get("hookSpecificOutput") or {}
+            return said.get("permissionDecisionReason") if said.get("permissionDecision") == "deny" else None
+        self.assertIsNone(guard(fakes.change((".build/tasks/3/commit.md", "text\n"))))
+        self.assertIsNone(guard(".claude/orchestration/v2.py change <<'EOF'\n=== row Ready\nThe theory.\nEOF"))
+        self.assertIn("A reviewer judges", guard(fakes.change(("theories/Ready.thy", "x\n"))))
+
+    def test_a_theory_code_or_a_decision_is_a_finding_and_refused(self):
+        for path in ("theories/Ready.thy", "DECISIONS.md", "ROOT", "tools/x.py", ".build/tasks/3/finalize.json",
+                     ".build/tasks/3/brief.json"):
+            said = self.guard("Bash", {"command": fakes.change((path, "text\n"))})
+            self.assertIn("A reviewer judges", said, path)
+            self.assertIn("is a rejection", said, path)
+        self.assertIn("A reviewer judges", self.guard("Bash", {"command": "echo x >> theories/Ready.thy"}))
+
+
 class WorkerGuardTests(Guarded):
     def setUp(self):
         super().setUp()
@@ -881,6 +982,33 @@ class WorkerGuardTests(Guarded):
         self.assertFalse(claim.exists())                                  # and it ends with the call
         self.assertIn("the measurement of task 1 ended with the call that ran it", (self.w.state / "v2.log").read_text())
         self.assertEqual(holder(), "None")
+        # recorded where its review reads it (#129's review: a claim had left no durable record)
+        self.assertIn("the machine held for a timing, no other run beside it",
+                      (self.w.project / ".build/tasks/1/measurements.log").read_text())
+
+    def test_a_measurement_holds_the_machine_at_most_its_bound_under_the_owner_s_switch(self):
+        # C14: 37 holds of 09-20/22 took 3.0 hours; four past ten minutes, 1.1 hours — the longest one probe of 31 minutes
+        claim = self.w.state / "isabelle-exclusive"
+        long_ago = time.time() - 900
+        claim.write_text(json.dumps({"task": "1", "why": "a timing", "session": "implement-1", "at": long_ago,
+                                     "call": "t-m", "call_at": long_ago}))
+        code = f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; print(v2.exclusive_holder())"
+        holder = lambda: subprocess.run([sys.executable, "-c", code], env=dict(self.w.env, ORCH_MEASURE_MAX="600"),
+                                        capture_output=True, text=True).stdout.strip()
+        self.assertEqual(holder(), "1")                           # the switch is off: it holds while its call runs
+        (self.w.state / "measure-bound").write_text("")
+        self.assertEqual(holder(), "None")                        # on: past its bound, it lapses
+        self.assertFalse(claim.exists())
+        self.assertIn("the measurement of task 1 held the machine past 10 min: its claim lapses",
+                      (self.w.state / "v2.log").read_text())
+        self.assertIn("until the bound of 10 min lapsed it", (self.w.project / ".build/tasks/1/measurements.log").read_text())
+        mail = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               "print(v2.take_mail('implement-1'))"], env=self.w.env, capture_output=True, text=True).stdout
+        self.assertIn("the most a measurement holds it", mail)
+        # a check that advances the base is no session's measurement: it holds as long as it runs
+        claim.write_text(json.dumps({"task": "2", "why": "its final check advances the base heap", "pid": os.getpid(),
+                                     "at": long_ago}))
+        self.assertEqual(holder(), "2")
 
     def test_a_worker_may_not_wait_start_subagents_or_read_a_running_jobs_output(self):
         self.assertIn("starts no subagents", self.guard("Agent", {"prompt": "x"}))
@@ -1580,6 +1708,23 @@ class ChangeGuardTests(Guarded):
         # and anything may follow it (the owner, 2026-09-22), running only if the change went through
         self.assertIsNone(self.guard("Bash", {"command": call + "\nsed -n 1p NOTES.md"}))
         self.assertIn(work_meter.STATUS_LINE + "\nsed -n 1p NOTES.md", work_meter.unwrapped(self.rewritten()["command"]))
+
+    def test_where_a_probe_runs_is_recorded_for_its_task(self):
+        probe = "python3 -B tools/probe_theories.py --work .build/tasks/named-folder/probe1 --theory A --timeout 60"
+        self.assertIsNone(self.guard("Bash", {"command": probe}))
+        self.assertIn(os.path.realpath(self.w.project / ".build/tasks/named-folder/probe1"),
+                      json.loads((self.w.state / "probes/1/dirs.json").read_text()))
+
+    def test_an_index_edit_writes_its_index_file_and_a_result_s_text_is_data(self):
+        # `=== row` and `=== root` write THEORY_MAP.md and ROOT where `=== replace` would name them: the guard, the
+        # ownership of the tree and the command read the same paths
+        self.assertIsNone(self.guard("Bash", self.change("=== write theories/B.thy\nx\n=== row B\nIts row.\n=== root B\n")))
+        owners = json.loads((self.w.state / "tree-owners.json").read_text())
+        self.assertEqual((owners.get("THEORY_MAP.md"), owners.get("ROOT")), ("1", "1"))
+        # a result given as the command's text is the harness's to write: what it says is not run
+        said = self.guard("Bash", {"command": ".claude/orchestration/v2.py result 1 <<'EOF'\nStatus: done\n\n## Produced\n"
+                                              "`git commit -m x > THEORY_MAP.md` was not run\nEOF"})
+        self.assertIsNone(said)
 
     def test_what_follows_a_change_runs_in_the_sessions_own_shell_only_if_the_change_went_through(self):
         # Claude Code runs a session's command in zsh, where `status` is read-only: the line put after a change failed

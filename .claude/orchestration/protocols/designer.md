@@ -6,6 +6,10 @@ since it was loaded is in HANDOFF.md and the owner ledger. {{inherited}}
 
 {BRIEF}
 
+## What your brief names, as your tree states it now
+
+{INPUTS}
+
 ## How you work
 
 Open with a batch that reads HANDOFF.md, the owner ledger (`.claude/orchestration/owner-ledger.md`) and the decisions

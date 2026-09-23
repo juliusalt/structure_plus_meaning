@@ -1093,17 +1093,27 @@ SMALL_READ = READ_BYTES // 2
 
 
 def small_read_before(transcript, tool_use, st):
-    """The bytes the reading request before this call's showed, when it showed under SMALL_READ; None otherwise."""
+    """The bytes the request before this call's showed, when every call of it read (no run, no change, no check among
+    them) and together they showed under SMALL_READ; None otherwise. Summed from what the post-hook recorded of each
+    call by its id (`calls_shown`), the request's calls read from the transcript, where a finished request stands whole:
+    the bytes it had recorded by batch missed a call whose batch it could not place — implement-192 was told its last
+    request "read 3,966 bytes" after one that read about 33K in three calls — and counted a probe's output as a read
+    (fix-279, 2026-09-22)."""
+    calls = list(tool_uses(transcript_tail(transcript) or []))
     order = []
-    for mid, _ in tool_uses(transcript_tail(transcript) or []):
+    for mid, _ in calls:
         if mid not in order:
             order.append(mid)
-    mine = next((mid for mid, c in tool_uses(transcript_tail(transcript) or []) if c.get("id") == tool_use), None)
+    mine = next((mid for mid, c in calls if c.get("id") == tool_use), None)
     if mine is None or order.index(mine) == 0:
         return None
     before = order[order.index(mine) - 1]
-    shown = (st.get("batches") or {}).get(before)
-    return shown if shown is not None and shown < SMALL_READ else None
+    seen = st.get("calls_shown") or {}
+    shown = [seen.get(c.get("id")) for mid, c in calls if mid == before]
+    if not shown or any(x is None or x[0] not in ("read", "other") for x in shown):
+        return None
+    total = sum(x[1] for x in shown)
+    return total if total < SMALL_READ else None
 
 
 PROBE_TIMEOUT = re.compile(r"--timeout(?:=|\s+)(\d+)")
@@ -1130,6 +1140,23 @@ def probe_default(command, cwd):
         return None
     d = TOOL_DEFAULT.search(text)
     return int(d.group(1) or d.group(2)) if d else None
+
+
+PROBE_WORK = re.compile(r"probe_theories\.py\b((?:[^;&|\n\\]|\\.)*)")
+WORK_ARG = re.compile(r"--work(?:=|\s+)(['\"]?)([^\s'\"]+)\1")
+
+
+def probe_work(command, cwd):
+    """The directories the probes of a command name as their `--work`, as the shell would resolve them: after a
+    leading `cd`, with $TMPDIR and the call's own assignments filled in (shell_context)."""
+    base, known = shell_context(command, cwd)
+    out = []
+    for args in PROBE_WORK.findall(command or ""):
+        for _, value in WORK_ARG.findall(args):
+            value = re.sub(r"\$\{?(\w+)\}?", lambda m: known.get(m.group(1), m.group(0)), value)
+            if "$" not in value:
+                out.append(os.path.normpath(os.path.join(base, os.path.expanduser(value))))
+    return out
 
 
 def shown_bytes(tool, response):
@@ -1473,7 +1500,13 @@ def session_guard(hook, rec):
         v2.own(rec["task"], [os.path.relpath(t, v2.PROJECT) for t in write_targets(
             tool, inp, c, hook.get("cwd")) if t.startswith(v2.PROJECT + os.sep)])
     if k in READING and not fix:
+        began = time.time()
         batch = batch_id(hook.get("transcript_path", ""), hook.get("tool_use_id"), BATCH_WAIT)
+        with meter(session) as m:  # a read's guard waits up to BATCH_WAIT for its call's line: the guard of a read took
+            # a median 0.64 s, of any other call 0.10-0.16 s (09-22) — whether the wait finds it is what these say
+            looked = m.setdefault("batch_lookups", {"found": 0, "missed": 0, "seconds": 0.0})
+            looked["found" if batch else "missed"] += 1
+            looked["seconds"] = round(looked["seconds"] + time.time() - began, 3)
         read = (st.get("batches") or {}).get(batch, 0) if batch else 0
         if read >= BATCH:
             return deny(f"This batch has read {read // 1000}K bytes, and a batch reads at most {BATCH // 1000}K: the "
@@ -1872,6 +1905,10 @@ def write_guard(tool, inp, command, rec, cwd):
                     "does the work of its task and does not change the harness it runs under. What you found in it "
                     "goes into your result, or to the planner (`v2.py ask --to planner`, or `v2.py escalate "
                     "--efficiency` for a cost).")
+    if rec.get("role") == "reviewer":
+        refused = reviewer_write_refusal(targets, command, rec, cwd)
+        if refused:
+            return deny(refused)
     theirs = {os.path.join(d, f) for d in (v2.PROJECT, v2.tree_of(rec)) for f in ("HANDOFF.md", v2.PLANNER_LOG)}
     if rec.get("role") != "planner" and theirs & set(targets):
         return deny(f"HANDOFF.md is the planner's state and {v2.PLANNER_LOG} is its log: what you did goes into your "
@@ -1924,6 +1961,50 @@ def write_guard(tool, inp, command, rec, cwd):
     return None
 
 
+def reviewer_write_refusal(targets, command, rec, cwd):
+    """What a reviewer may write in the repository, or why not (C7, the owner's yes of 2026-09-23): its own record and
+    the reviewed task's (.build/tasks/ID/ — its verdict, its scratch, and the task's commit message and result, which
+    it corrects where they misstate the work), and by `=== row THEORY` the row of a theory that task changed, when
+    THEORY_MAP.md is among the files it hands over. Nothing else of the repository or of the task's tree: a finding
+    about a theory, code or a decision entry is a rejection, and "the reviewer judges, never produces" holds by
+    construction (a reviewer stands in the reviewed task's tree, which no guard kept it from writing). Its scratch
+    outside the repository is its own. About 12 of 31 rejections were words a reviewer had already found, each a fix
+    round (about 1.7M and 45 minutes)."""
+    rid, tid = str(rec.get("task") or ""), str(rec.get("reviews") or rec.get("task") or "")
+    real = os.path.realpath
+    records = [real(os.path.join(v2.BUILD, x)) + os.sep for x in {rid, tid} if x]
+    handed = {real(os.path.join(v2.BUILD, tid, f)) for f in ("finalize.json", "brief.json")}  # the harness's own
+    index = real(os.path.join(v2.tree_of(rec), "THEORY_MAP.md"))
+    try:
+        files = json.load(open(os.path.join(v2.BUILD, tid, "finalize.json")))["files"]
+    except (OSError, ValueError, KeyError, TypeError):
+        files = []
+    changed = {os.path.basename(f)[:-4] for f in files if f.startswith("theories/") and f.endswith(".thy")}
+    parts = change_parts(command) if command else None
+    ops = [(op, real(v2.change_path(shell_context(before, cwd)[0], op["path"])))
+           for before, _, text in (parts.changes if parts else []) for op in v2.change_blocks(text)[0]]
+    project = real(v2.PROJECT) + os.sep
+    for t in targets:
+        r = real(t)
+        if not r.startswith(project) or (any((r + os.sep).startswith(d) for d in records) and r not in handed):
+            continue
+        if r == index:
+            wrong = [op for op, path in ops if path == index and not (op["op"] == "row" and op.get("theory") in changed)]
+            if "THEORY_MAP.md" in files and ops and not wrong:
+                continue
+            return ("A reviewer corrects a THEORY_MAP.md row only by `=== row THEORY`, for a theory the task it judges "
+                    f"changed ({', '.join(sorted(changed)) or 'none'}), and only when that task hands THEORY_MAP.md "
+                    "over; name it under `## Corrected` in your accepting verdict. Anything else in the map is a "
+                    "finding: reject, and say it.")
+        return (f"A reviewer judges; it writes its verdict and scratch under .build/tasks/{tid}/ (or outside the "
+                "repository), and corrects only words that misstate the work: the task's commit message and result "
+                f"(.build/tasks/{tid}/commit.md, result.md) and, by `=== row THEORY`, the row of a theory the task "
+                "changed — each named under `## Corrected` in an accepting verdict. "
+                f"{os.path.relpath(t, cwd or v2.PROJECT)} is none of those: a finding about a theory, code or a "
+                "decision entry is a rejection.")
+    return None
+
+
 def graph_edit_refusal(inp):
     """What the planner may not do with TaskUpdate, which is the one door to the graph the harness does not own:
     complete a build, a fix or a review by hand — those complete by landing (check, review, commit) and by a verdict,
@@ -1967,12 +2048,17 @@ def record(hook, rec):
     session, tool, inp = hook.get("session_id", ""), hook.get("tool_name"), hook.get("tool_input") or {}
     if tool == "Bash":
         v2.release_claim(hook.get("tool_use_id"))  # a measurement's hold ends with the call that ran it
+        v2.lap("the machine's claim")
         v2.keep_probes(rec.get("task"))  # its probes kept as they are after the call, whatever it removes later
+        v2.lap("its probes kept")
     if tool == "Bash" and inp.get("command"):  # the call as the session made it, whichever of the two is given here
         inp = dict(inp, command=unwrapped(inp["command"]))
     response = hook.get("tool_response")
     with meter(session) as st:
-        return _record(hook, rec, st, session, tool, inp, response)
+        v2.lap("its meter's lock")
+        note = _record(hook, rec, st, session, tool, inp, response)
+        v2.lap("its reads and production")
+        return note
 
 
 def _record(hook, rec, st, session, tool, inp, response):
@@ -2012,6 +2098,10 @@ def _record(hook, rec, st, session, tool, inp, response):
                         f"the {READ_BYTES:,} a read shows: the guard's rewrite of it through cut.py did not apply")
         if mid:  # what the batch has read, which bounds what more it may (the guard)
             st["batches"] = dict(st.get("batches") or {}, **{mid: (st.get("batches") or {}).get(mid, 0) + shown})
+    if hook.get("tool_use_id"):  # each call's kind and what it showed, by its id (small_read_before), the last 200
+        seen = st.get("calls_shown") or {}
+        seen[hook["tool_use_id"]] = [k, shown_bytes(tool, response) if k in READING else 0]
+        st["calls_shown"] = dict(list(seen.items())[-200:])
     if k == "check":
         text = json.dumps(response or "")
         # its whole output: a run in the background writes it to a file, and one cut to a read's bytes is kept whole
@@ -2107,6 +2197,10 @@ def _guard(hook):
     tool, inp = hook.get("tool_name"), hook.get("tool_input") or {}
     if tool in REMOVED_TOOLS:
         return deny(f"{tool} is not a session's tool (the owner, 2026-09-21). {REMOVED_TOOLS[tool]}")
+    if role == "role-layer":  # what it reasons over is its message: a read would stand in every fork of it
+        return deny("A reasoning layer uses no tool: everything it reasons over is in its message, and whatever it "
+                    f"read would stand in the prefix of every session of its role. Reason in your reply, and end it "
+                    f"with the line `{v2.ROLE_LAYER_DONE}`.")
     fixed = kept = None
     if tool == "Bash" and inp.get("command"):
         fixed, why = again(rec.get("name"), inp["command"])
@@ -2132,6 +2226,9 @@ def _guard(hook):
                 os.remove(os.path.join(v2.ADMITTED, v2.SESSION_MARK + (name or "unnamed")))
     ADMITTED_NOW.clear()
     if tool == "Bash" and rec.get("task"):
+        if not denied:  # where each probe of the call runs, so that it is found wherever that is (v2.probe_dirs)
+            v2.softly("where the call's probes run", lambda: v2.note_probe_dirs(
+                rec.get("task"), probe_work(inp.get("command") or "", hook.get("cwd"))), default=False)
         v2.keep_probes(rec.get("task"))  # before the call: a call that removes its probes keeps nothing of them
     if MEASURED_NOW and not denied:
         v2.claim_call(MEASURED_NOW[0], hook.get("tool_use_id"))
@@ -2196,8 +2293,12 @@ def main():
     if sys.argv[1:2] != ["guard"]:
         print(__doc__)
         return 2
+    watch = v2.Stopwatch("the guard")
     try:
-        decision = guard(json.load(sys.stdin))
+        hook = json.load(sys.stdin)
+        decision = guard(hook)
+        watch.done(lambda: f"the guard of a {hook.get('tool_name')} call of "
+                           f"{(v2.role_of(hook.get('session_id', ''))[1] or {}).get('name')}")
     except Exception as e:  # noqa: BLE001
         # A guard that fails lets the call through rather than block the work — but silently, it is every limit and
         # every refusal switched off with nothing to show for it, which is the fault of the PreToolUse matcher in

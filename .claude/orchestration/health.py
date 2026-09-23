@@ -200,6 +200,21 @@ def bases_and_trees():
     if trees:
         print("trees: " + ", ".join(f"task {x['task']} ({x['changed']} changed, {x['commits']} commit(s))"
                                     for x in trees))
+    switches = [f for f in ("support-apart", "grouped-repairs", "continue-by-fork", "measure-bound", "review-beside-check",
+                            "role-layers") if os.path.exists(os.path.join(v2.STATE, f))]
+    if switches:  # the owner's switches (notes/plan-orchestrator-concepts.md C6, C8, C9, C13, C14; the role layers)
+        print("switches on: " + ", ".join(switches))
+    layers = []
+    for role in sorted(v2.role_layers()):  # what each switched-on role forks now, and what is being built for it
+        rec = v2.role_layer_record(role)
+        now_ = v2.role_layer_of(role)
+        layers.append(f"{role} {now_ + ' (' + str((rec.get('context') or 0) // 1000) + 'K)' if now_ else 'its base'}"
+                      + (f", {rec['building']} reasoning" if rec.get("building") else ""))
+    if layers:
+        print("role layers: " + "; ".join(layers))
+    hour = v2.softly("the last hour's occupancy", v2.occupancy_text, default="")
+    if hour:  # what the planner's status says of the last hour (finding 11), on the owner's screen too
+        print(hour)
 
 
 def standing(st, now):

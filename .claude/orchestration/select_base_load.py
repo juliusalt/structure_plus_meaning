@@ -51,7 +51,7 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from digest import held_text  # noqa: E402
+from digest import DECLARED, held_text  # noqa: E402
 import manifest  # noqa: E402
 from base_pack import (CHUNK_BYTES, CALL_TOKENS, INDEX_RATIO, PACKED_RATIO, SELECTED_FACTOR,  # noqa: E402
                        SESSION_TOKENS)
@@ -194,9 +194,6 @@ def founding_theories():
     return found()
 
 
-DECLARED = re.compile(r"^\s*(?:lemma|theorem|corollary|proposition|definition|fun|function|primrec|abbreviation|"
-                      r"inductive|inductive_set|locale|datatype|type_synonym|record|consts|lift_definition|lemmas)\s+"
-                      r"(?:\(in\s+\w+\)\s+)?\"?([A-Za-z][\w']*)", re.M)
 NAME = re.compile(r"[A-Za-z][A-Za-z0-9_']{3,}")
 DEFINED = {}
 

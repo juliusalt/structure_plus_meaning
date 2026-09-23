@@ -22,6 +22,9 @@ was replaced is measured in `notes/efficiency-baseline.md`.
     .claude/orchestration/health.py             # one screen; lines that need someone start with ATTENTION
     .claude/orchestration/v2.py status          # the slots and the queue; `v2.py graph` the task graph
     .claude/orchestration/efficiency.py         # how each session spent its window and what it produced, by role
+    python3 -B .claude/orchestration/notes/run-report.py --since YYYY-MM-DDTHH:MM   # the run's cost, its producers'
+                                                # orientation and bookkeeping, what the change replies told, rejections
+                                                # and a task's way, against the baseline in notes/plan-orchestrator-concepts.md
 
 `start.sh` refuses without a sealed base. `stop.sh` makes the orchestration inactive; what it interrupted is an event
 for the planner, and `start.sh` resumes with the sealed knowledge base. A wake writes
@@ -62,6 +65,7 @@ and anything chained after it, run outside.
 | implementer | `implement-ID` | a written design built | the implementation base (`high`), high |
 | fixer | `fix-ID` | a failed check or a rejected review repaired, when the task's own session cannot take it | the implementation base, high |
 | consultation | `ask-qN` | one question answered by a fork of the consulted session | the consulted session |
+| reasoning layer | `layer-ROLE` | behind `state/role-layers` (off): reasons once over what the run has shown of a role — its protocol, its last sessions' measures, notes and refusals, the reviews' findings on its work — and writes practices; the role's sessions fork it; never works, uses no tool | the role's base, its effort |
 
 A fork runs at its origin's effort: an effort change invalidates the messages cache (API documentation, prompt
 caching, invalidation hierarchy), so choosing a task's effort is choosing what its session forks. A role whose base is
@@ -71,7 +75,14 @@ the held files changed since the load, and the rules it works under. A role is g
 `_tree.md` and `_checks.md` go to the sessions that write the working tree and run checks, and not to the planner, the
 task designer or a consultation, which have neither a tree nor a check — until 2026-09-20 every role was told it had a
 git worktree of its own, which four of them never have, and `{TREE}` now says where the session really works, its own
-tree or the one it shares. `_checks.md` goes to reviewers too, who run checks without a tree of their own. A rule the
+tree or the one it shares. `_checks.md` goes to reviewers too, who run checks without a tree of their own. A producing session's, a task designer's
+and a reviewer's first message states the facts and definitions the brief's Inputs and Decided name, as the task's
+tree holds them, proofs left out
+(`{INPUTS}`, `v2.inputs_read`, through show.py --statement, bounded by `INPUTS_BYTES` 20K; a name the tree does not
+hold is said; theories and files are left to its reading): implementers spent 26% and fixers 28% of what they cost
+on 2026-09-21/22 before their first change, 55% of the files they read then named by the brief, and 7 of the 31
+rejections whose findings the state held were a named contract proved again instead of consumed (a reviewer's first
+read, `{FIRST}`, is the same idea for its role). A rule the
 guard holds a role to is taught in that role's protocol before it refuses (the owner, 2026-09-21; the form test holds
 it): what holds for every guarded session — no git mutation, the harness's files and scripts, no waiting, subagents or
 sessions — in `_production.md`; the machine's run limits and how each role waits for it, and a probe's bound, in
@@ -95,7 +106,12 @@ finished task lands only once it is reviewed); one quick fix;
 consultations side by side (up to `ORCH_CONSULT_MAX`, 4: each a fork answering one question, the owner's decision).
 The planner is outside all of this: it is one session, not a worker, so the rate never holds an event back from it.
 `ORCH_WORKERS` (2) caps the sum of the producing, supporting and consultation slots — a quick fix starts whatever it
-says. With two producers the machine's two heavy Isabelle runs bind as well. At 1 a finished task waited to be reviewed and a question to the knowledge base waited for a
+says. `state/support-apart` (or `ORCH_SUPPORT_APART=1`; off: the owner's to set, notes/plan-orchestrator-concepts.md
+C6) puts the supporting session outside that cap, in a slot of its own, so two producers and a review work at once and
+a producer no longer yields its slot to a waiting review; the status line says so. `state/grouped-repairs` (off:
+the owner's, C8) gives the planner's and the task designer's protocols a rule on a task's size against its fixed cost:
+small repairs of the same theories, and follow-ups consolidating what is stated twice, go into one task up to about
+half of its room (`grouping_text`). `state/continue-by-fork` (or `ORCH_CONTINUE_BY_FORK=1`; off: the owner's, C13) lets a task whose metadata says which task's work it continues (`"continues": "N"`, the planner's) fork the session that did that work instead of its role's base — while it is warm, not working, at the base's effort and model, and within `ORCH_CONTINUE_MAX` (700K) — and holds that session until the task starts (`continued_session`, `watchdog.continuing`) — and, before the planner has made them into tasks, while its review asked for follow-ups, for `ORCH_CONTINUE_GRACE` (90 minutes) after its own work ended; the fork is told whose work it holds and that its task is over. `state/measure-bound` (or `ORCH_MEASURE_BOUND=1`; off: the owner's, C14) bounds a session's measurement's hold on the machine at `ORCH_MEASURE_MAX` (600 s): past it the claim lapses, the session is told and the task's measurements.log says so (`measure_lapsed`) — 37 holds of 09-20/22 took 3.0 hours, four of them past ten minutes 1.1 hours; a check advancing the base is not bounded. `state/review-beside-check` (or `ORCH_REVIEW_BESIDE_CHECK=1`; off: the owner's, C9) starts a build's or a fix's review when its result is recorded, beside its check (`pending_reviews` takes a task in its check): an accept waits for the check and is committed when it passes (`accepted_early`), an accept of work that then fails its check is void and the fix reviewed again, and a rejection waits for the check's end and reaches the session with its failure, if any, in one fix round (`rejected_early`); the reviewer is told the check runs beside it. `state/role-layers` (or `ORCH_ROLE_LAYERS`; off: the owner's to turn on and test, the owner's word of 2026-09-23; its words name the roles, empty or `all` every role that forks a base) gives each named role a reasoning layer: when the role is wanted (a session of it in the last `ORCH_ROLE_LAYER_IDLE`, two hours, or a task it would take) `role_evidence.py` reads, in the background, what the run has shown of it — its last 12 ended sessions' requests, requests before their first change, cost, the harness's notes (not its counters) and refusals most often, and the blocking findings of the last reviews that rejected its work (a reviewer's: the rejections and what became of each) — and a fork of the role's base (`layer-ROLE`, protocols/role-layer.md) is given that and the role's protocol, reasons once for every session of the role, writes at most 12 practices each with the evidence it answers, and ends `ROLE-LAYER READY`; sealed, it is what the role's sessions fork (`role_layer_of`), each told so (`{LAYERED}`, `layered_text`), until its base is rebuilt or refreshed, it goes cold, or it is older than `ORCH_ROLE_LAYER_AGE` (four hours) with the run having shown the role more (six sessions ended, or a rejection); meanwhile the role forks its base. The watchdog holds it warm while its role is wanted; a switch turned off lets it go. It uses no tool (work_meter refuses every call: a read would stand in every fork's prefix). run-report sets the sessions that forked a role layer beside those that did not. With two producers the machine's two heavy Isabelle runs bind as well. At 1 a finished task waited to be reviewed and a question to the knowledge base waited for a
 gap in production, which is what 2 buys back (the owner, 2026-09-20).
 A producing session never waits
 holding its slot (the owner, 2026-09-19): with nothing productive left it parks (`v2.py park run|fix|tree|answer`) and
@@ -113,7 +129,7 @@ belongs and referenced). HANDOFF.md is the state a planner needs to act now, bou
 tokens) because every knowledge base holds it and every designer reads it; what was done and how goes to
 `PLANNING_LOG.md`, which no base holds, nothing reads to plan from, and nothing bounds. `v2.py status` tells the
 planner what its state weighs and which section carries it, so the pressure runs both ways: it grew from 6.5K
-characters to 81K in a day when nothing measured it. `start.sh --fresh` leaves the one that stands behind on purpose — the planner that lives
+characters to 81K in a day when nothing measured it. A task's passing state is not written there: the graph shows each open task's stage (parked and what for, since when; rejected how many times) and the status the landings of the last three hours with their commits, for every planner, current — the planners of 09-21/22 had spent 405 of their 908 edits of HANDOFF.md on such words. `start.sh --fresh` leaves the one that stands behind on purpose — the planner that lives
 goes with it, so the next forks the new one — and charges the first planner to take stock before it queues anything:
 what has been produced and is not yet carried, what the graph no longer needs and why, and what its structure should
 be under the harness as it now is. What the old knowledge base held and HANDOFF.md does not is lost to that, which
@@ -122,6 +138,12 @@ with a batch that reads HANDOFF.md and the ledger: the most recent details are n
 holds what persists. When even a fresh knowledge
 base loads within 50K of its limit, the planner is asked to condense HANDOFF.md, and `health.py` says a base
 rebuild is due: that is the owner's (base.sh), and takes in what the documents now hold.
+
+**What a planner holds of HANDOFF.md.** A knowledge base keeps the copy of HANDOFF.md it loads
+(`state/kb-N-handoff.md`, `keep_kb_handoff`; swept once it is no longer the one planners fork), and a planner forking it
+is told, beside `## Now` and `## Open`, the items of the other parts added or rewritten since and the first lines of
+those taken out (`{HANDOFF_DELTA}`, `handoff_delta`, bounded by `ORCH_HANDOFF_DELTA_MAX`): kb-10 was built at 04:44 on
+2026-09-22 and forked until 13:30, and plan-40 read the file again in six ranges.
 
 **The planner** is one session that lives across its events. Each event (a result, a verdict, an escalation, a
 failure, a question, what a stop interrupted, the owner's words) reaches it as its own message as it happens: nothing
@@ -139,7 +161,7 @@ dependency is written only where it is real (a task's inputs are another's artif
 decision another takes), never for order or tidiness, and never at the cost of splitting reasoning that belongs
 together or letting two tasks establish the same notion. `v2.py status` says which tasks could start now — the width
 of the graph as it was drawn; at one, nothing can take the producing slot while the task holding it is parked or
-checking, which is how 2026-09-20 stood still for six and a half hours.
+checking, which is how 2026-09-20 stood still for six and a half hours. It also says the last hour: how many sessions worked on average, and in how many minutes a slot stood free while a queued task waited only on work in its check, review or landing (`occupancy_text`, from the line a minute the watchdog writes to `state/occupancy.log`, `sample_occupancy`) — the moment alone had hidden that fewer than two sessions worked in 349 of the 638 minutes of 09-22's afternoon.
 
 ## Tasks and briefs
 
@@ -215,8 +237,10 @@ held back 68% of the requests that read (6 rounds: 30% and 47%). Reading was als
 until the owner had it taken out on 2026-09-21: every call being bounded in bytes, it bound nothing they did not.
 
 Any source is read by `v2.py read SOURCE...`, a read like any other: files and ranges, facts by name, the session's
-task's `diff`, `result` and `log` (a reviewer's: the task it reviews), a task's brief (`task:ID`) and a proposal
-(`proposal:ID[:KEY]`), each nameable by its lines (`path:A-B`, `diff:A-B`, `task:ID:A-B`, `proposal:ID:KEY:A-B`,
+task's `diff`, `result` and `log` (a reviewer's: the task it reviews), its `probes`, what its changed theories declare
+anew that the library has (`restated`), where its work stands in git (`tree`), a check the harness ran (`check:STAMP`,
+`check:ID`), a task's brief (`task:ID`)
+and a proposal (`proposal:ID[:KEY]`), each nameable by its lines (`path:A-B`, `diff:A-B`, `task:ID:A-B`, `proposal:ID:KEY:A-B`,
 `Theory.name:A-B`). Each source shows at most 10K and one call at most 80K, naming the sources it had no room for (the
 task's `diff` whole up to the call's bound, as a brief named whole: 21 of the day's 54 reviews read it twice);
 its `--` groups are one call. Until 2026-09-21 the call was bounded at 5K whole, while `--` groups got 5K each, so a
@@ -309,7 +333,7 @@ resolving a failure as a train does: attribution, the cleared passing after one 
 resumed with its result — its own errors, or that it passed — and a finalizer's task goes to its review or its quick fix
 as before; a tree whose work passed is not checked again for its hand-over (`state/check-results.json`). A member whose
 lines meet another member's waits for the next batch; one whose lines meet main's is told to bring main in. A batch
-moves nothing: what passed lands with its train, which checks exactly what lands. A check the proof base refuses before
+moves nothing: what passed lands with its train, which checks exactly what lands. A batch of the repository's check keeps its heap (`incremental_check.py check --keep-heap`: stored, not selected; its output in .build/bases/, where a heap stays bound to its path) and is recorded by the content it checked (`train.record_build`: its tree's entries, HANDOFF.md and PLANNING_LOG.md aside); a train whose tree has that content, on the base the batch stood on, lands on the batch's build instead of checking again — adopted as the base, its receipts retained, the commit's Validation naming the batch's check of the same content (`kept_build`, C10: the batches' and the trains' proofs, nearly all of both checks' time, proved the same members' theories). A base part nobody adopts keeps its reports and loses its heap and bulk after `ORCH_BASE_KEEP`. `ORCH_BATCH_KEEPS_HEAP=0` turns the keeping off. A check the proof base refuses before
 it begins (`finalize.BASE_REFUSED`: its heap missing or recorded under another store) is nobody's failure: a hand-over's
 is run again once the base has changed (`check_again`, the watchdog), a train's or a batch's entries stay queued. The merge writes the one tree, and git refuses one that would overwrite a working change there: a
 landing waits, before it holds main (the commit it waits for holds main to land) and out of the commit's one budget,
@@ -414,6 +438,28 @@ literal, an f-string's known first field, a name given `$TMPDIR` or a literal), 
 draft's place (plan-42's `'.build/plans/plan-42/b'+tid+'.md'`, review-94.2's `f'{T}/{n}'` from `$TMPDIR`, refused
 before, 2026-09-22); the refusal names where drafts go, and says `.build/outputs/` is the harness's when it was named. Moving, copying and removing files stand. Edit and Write had been batched in 10 of the
 268 requests that held them, and a command's writes fail silently when they match nothing.
+
+**The index files by key** (notes/plan-orchestrator-concepts.md, C1). `=== row THEORY` and its content write the
+theory's THEORY_MAP.md row — the imports column read from the theory as the call leaves it (`theory_imports`), a new
+row after the row of the nearest theory ROOT declares before it (or after OTHER's, `=== row THEORY after OTHER`: the
+map is in four sections), `=== row THEORY` alone reading an existing row's
+imports again — and `=== root THEORY [after OTHER]` declares it in ROOT, by default after the last line declaring one
+of its imports (`keyed_edit`). They are applied after the call's other changes, declarations before rows, and read as
+writes of THEORY_MAP.md and ROOT by the guard, as a `=== replace` of them would be. A change that writes a theory,
+ROOT or THEORY_MAP.md is answered with what the structural checks then say of the theories it concerns
+(`sources_said`: a theory not declared, a declaration without its file, a proof escaped, a theory without its row, a
+row whose imports are not its theory's; `import_graph`: what the tree's own tools/execution_support.source_graph
+says of the theories it wrote, a cycle or an import that is not there, in a process of its own) — the documents
+check's items and the planner's standing last step, told when they arise — and what it declares
+anew that the library has (`restated`: a name of at least 8 characters with an underscore that one or two other
+theories declare, a statement of at least 30 characters another states word for word, over `library_index`, read
+in a quarter of a second) or took out while its row still offers it. Its reviewer reads the same over the task's whole change
+(`v2.py read restated`, `restated_text`: from where the branch left main, or from HEAD in the one tree), in its first
+read between the probes and the diff. Of the 31 rejections whose findings the state
+held on 2026-09-23, 14 were a notion or fact the library had and three a row offering what the task removed; of the
+library's 22,783 such names 79 are declared twice, of its 8,347 such statements 19. On 2026-09-21/22, 161
+requests of implementers and fixers did nothing but quote and rewrite a row (13M), 68 ran the source checks by hand,
+and 138 of the map's 1,812 rows named imports their theory no longer had.
 
 **A command that went wrong is fixed, not written again** (the owner, 2026-09-21). The guard keeps every Bash command
 a session makes, refused ones included, numbered, under `.build/outputs/SESSION/commands/N.sh`. `v2.py again N
@@ -562,6 +608,25 @@ stands; a reviewer that accepted is held until the task lands and `start_review`
 planner's re-queue reads a task's record afresh and kept neither: it now keeps `previous_session`, `previous_reviewer`,
 why it came back (`back`) and what was told it (`told`).
 
+**A reviewer corrects words; it produces nothing else** (C7, the owner's yes of 2026-09-23). About 12 of 31 rejections
+of 09-21/22 were a commit message, a result or a row misstating sound work, each a fix round (about 1.7M and 45
+minutes). A reviewer writes in the repository only its own record and the reviewed task's (`.build/tasks/ID/`: its
+verdict, its scratch, and the task's commit.md and result.md, never its finalize.json or brief.json) and, by `=== row
+THEORY`, the row of a theory the task changed when the task hands THEORY_MAP.md over (`work_meter.reviewer_write_refusal`);
+a theory, code, ROOT or a decision entry is refused to it as a finding — before, a reviewer standing in the reviewed
+task's tree could have written any of them. Its accepting verdict names what it corrected under `## Corrected`
+(`verdict_problems` refuses corrections on a rejection, and any file but those three), and the planner's commit event
+carries "Corrected by its review: …".
+
+**A follow-up's brief begun by the harness** (C15, the owner's yes, "if information quality stays the same or
+increases"). `v2.py follow-up TASK:ITEM,ITEM...` (several reviews' in one) writes a draft brief under the planner's
+drafts from each task's last verdict: Serves naming the reviews and their follow-ups, Inputs the review files and the
+names the follow-ups give exactly as given (`follow_names`), the follow-ups verbatim and quoted under `From the review:`
+(a field of the form), and every judged part — why now, the files, what shows it done, Decided, Plan, Size — marked
+`<<PLANNER: …>>`, which `brief_problems` refuses while one is left. Nothing is summarized: the session reads the
+review's words where the planner's restatement stood. `v2.py edit` creates and rewrites take `"continues": "N"` (C13's
+mark), which only TaskCreate's metadata carried before.
+
 **What the planner is told of a finish.** A commit's event gives the review's first sentence, where the review is, and
 its follow-ups whole (`first_sentence`): the whole Summary was half of the 141K characters of commit events planners
 were given in sixteen hours of 2026-09-22, each kept and read again by their every request. A failed check's message —
@@ -584,7 +649,19 @@ its tree was refused by `bring-main` as uncommitted (implement-94.2; task 128's 
 ## Finishing a task
 
 `v2.py finalize ID --check CMD --files ... --message FILE` hands over the final job; `v2.py result ID` records the
-result. The receipts `tools/incremental_check.py retain` writes (`validation/incremental-check.json`,
+result (its text may be given as the command's heredoc: written and recorded in one command). The two are one event:
+a hand-over records the result the session wrote this round (since its start or its last resume), and a `v2.py result`
+chained after it is told it is recorded, not recorded twice (`handed`, `RESULT_ECHO`); in a task's own tree `--files`
+may be left out and the commit takes what the tree has changed (`changed_paths`); `--check` left out is the
+repository's check (`REPOSITORY_CHECK`, batchable) for a commit with code and the documents check for Markdown alone,
+and `--message` left out is .build/tasks/ID/commit.md — so in a task's own tree `v2.py finalize ID` is the whole
+hand-over (109 of 126 hand-overs had named that check, nine one not runnable as written). Of the 69 producing sessions of
+2026-09-21/22 that recorded a result, one made the protocol's single call, and 41 handed over, then wrote the result,
+then recorded it. The commit states the harness's own records beside the session's words
+(`finalize.harness_validation`): the theories a complete, clean probe of the session loaded as the tree holds them
+(`v2.probed_whole`, over `probe_runs`, which `v2.py read probes` formats) and the outcome of its check; the session's
+Validation paragraph holds what no record does — five of the 31 rejections whose findings the state held on
+2026-09-23 were a message misstating a run. The receipts `tools/incremental_check.py retain` writes (`validation/incremental-check.json`,
 `validation/reconstruction/`) are committed only by a retention: alone, or by a task whose brief delivers them
 (`v2.receipts_refused`); what a task's tree holds of them uncommitted is put back before main is merged in
 (`finalize.put_back_receipts`) — task 94's own 166 collided with main's retention and its landing did not merge. Both go in one call after the change that writes the commit message, the result and the last rows and entries
@@ -674,6 +751,8 @@ check of the base tree ran again to make it anew (2026-09-22). The watchdog's ca
 lock. Every action is a line in `state/v2.log`.
 
 ## Hooks
+
+A hook, and a harness command a session runs, that takes longer than `ORCH_SLOW` (2 s) says so in v2.log — `slow: the gauge of a Bash call of implement-5 took 12.3 s — start 0.4, its meter's lock 11.2, …` — with where its time went (`v2.Stopwatch`; `run-report.py` sums the lines): theory changes took a median 7.7 s with one heavy run going and 0.8 s with none, and no part timed apart on the repository was slow. A read's guard waits up to `ORCH_BATCH_WAIT` (0.5 s) for its call's line in the transcript, to bound what one batch reads; whether it found it and how long it waited is counted in the session's meter (`batch_lookups`, summed by `run-report.py`) — a read's guard took a median 0.64 s against 0.10–0.16 s for every other call.
 
 `planner-settings.json` (the planner) and `worker-settings.json` (every other session) wire
 the same scripts; they differ in one thing only, `CLAUDE_CODE_TASK_LIST_ID`, which puts a session on the shared task
@@ -982,6 +1061,7 @@ estimate of 699K, and Fable tokenized the same material to within a thousand tok
 | `ctx_gauge.py` | context gauge (what the next request carries at least), the notices at 907K and 942K below the 972K the API has accepted, mail delivery, the Stop rule, warmth marks, the compaction tripwire |
 | `session_row.py`, `session_fork_check.py` | a named session's listing row; whether a fork's first request read its origin from cache (logged by `v2.py`) |
 | `efficiency.py` | how each session spent its window and what it produced, by role |
+| `role_evidence.py` | what the run has shown of a role — its last sessions' measures, notes and refusals, the reviews' findings on its work — for its reasoning layer (behind `state/role-layers`) |
 | `base.sh`, `base_pack.py`, `base-settings.json` | pack the list, load it chunk by chunk, check the load, seal, warm and drop the base; `pack_notation.py` holds the comparison notations |
 | `base-load-max.txt`, `base-load-xhigh.txt`, `base-load-high.txt` | the load list of each base: the planner's and the knowledge base's (max), the middle one (xhigh), the implementation one (high); `notes/bases-design.md` is why each holds what it holds |
 | `library-prompt.md` | the system prompt of every base, which every fork inherits: the standing goal, what the session holds, the settled distinctions, the owner, the harness |
@@ -1067,3 +1147,10 @@ four-tool set and the refusal of every other tool; `v2.py ledger`. The rewrites 
 harness (2026-09-21). Every base must be built again before they can run, since each was started with the old tool
 list. Still unverified with real sessions: the watchdog resuming a session after a usage-limit stop or a lost turn;
 `attach.sh` following a real role.
+
+Built on 2026-09-23 while the run stood stopped, tested against the fake and on the recorded run data, and not yet run
+live (notes/plan-orchestrator-concepts.md, notes/plan-owner-word-2026-09-23.md, each deployment in
+notes/v2-build-handoff.md): the reviewer's corrections (C7), the follow-up's draft brief (C15), a landing on its check
+batch's kept build (C10), and — behind the owner's switches, off — the review beside the check (C9), the continuation
+forked from its producer (C13), the bounded measurement hold (C14), support apart (C6), grouped repairs (C8) and the
+roles' reasoning layers. run-report measures each once a run has used it.

@@ -255,8 +255,8 @@ def care(name, s):
     seen(name)
     if r["activity"] != "idle":
         return
-    if s["role"] == "kb":
-        return  # v2.kb_care seals it when it has replied INTEGRATED
+    if s["role"] in ("kb", "role-layer"):
+        return  # v2.kb_care seals it when it has replied INTEGRATED, v2.role_layer_care when it has reasoned
     model, said, at = last_reply(s["sid"])
     # the limit first: a session stopped by it is not idle by choice, and resuming it to hand over mail spends the
     # resume on a turn that hits the limit again while unread() has already emptied its box — the mail would be
@@ -333,6 +333,14 @@ def held(st, name, s):
         return None
     if name == st["kb"]:
         return "the knowledge base"
+    if s["role"] == "role-layer":
+        rec = (st.get("role_layers") or {}).get(s.get("layer_of") or "") or {}
+        if rec.get("building") == name:
+            return f"the {s.get('layer_of')}'s reasoning layer, reasoning"
+        if rec.get("name") == name and s.get("layer_of") in v2.role_layers() \
+                and time.time() - (rec.get("wanted") or 0) <= v2.ROLE_LAYER_IDLE:
+            return f"the {s.get('layer_of')}'s reasoning layer"  # every session of the role forks it
+        return None
     if s["role"] == "planner" and s["state"] == "idle":
         return "the planner, between events"  # one planner lives across them; the next event wakes it
     tasks = st["tasks"]
@@ -368,6 +376,16 @@ def held(st, name, s):
         return "the task it accepted has not landed"
     if time.time() - ended > v2.HOLD_MAX:
         return None
+    # a task that continues its task's work forks it when it starts (v2.continued_session, the owner's switch C13): a
+    # fork of a cold session would write its whole context anew, so it is held until that task has started
+    if s["role"] in v2.PRODUCING and s.get("task") and v2.continue_by_fork() and continuing(st, str(s["task"])):
+        return f"task {continuing(st, str(s['task']))} continues its work and has not started"
+    # and before the planner has made those tasks: a producer is released within a minute of its task's landing, and
+    # the planner makes the review's follow-ups into tasks when it handles the landing — held while its review asked
+    # for some, for CONTINUE_GRACE after its own work ended
+    if s["role"] in v2.PRODUCING and v2.continue_by_fork() and t.get("stage") == "done" and t.get("followups") \
+            and t.get("session") == name and time.time() - ended <= v2.CONTINUE_GRACE:
+        return "its review asked for follow-ups, which may continue its work"
     # a proposal is not final until the planner places it, and the one moment a correction is likely is before: held
     # only while tasks it briefed were open, a task designer was released three seconds after its result, and the
     # planner's `v2.py tell` found no session — brief 13 was re-planned and briefed again whole (2026-09-21)
@@ -377,6 +395,17 @@ def held(st, name, s):
     # design were, was pinged for questions none ever came — none in the whole run of 2026-09-21/22, against 26 pings
     # and 16.4M tokens read (design-66 still pinged an hour after it had landed), and a question to an author gone
     # cold is answered by the knowledge base (the owner: stop keeping alive what is never asked, 2026-09-22)
+    return None
+
+
+def continuing(st, source):
+    """The first queued task, not yet started, whose metadata says it continues task `source`'s work, or None."""
+    for tid in st.get("queue") or []:
+        if (st["tasks"].get(tid) or {}).get("stage") not in (None, "ready", "unformed"):
+            continue
+        meta = (v2.read_task(tid) or {}).get("metadata") or {}
+        if isinstance(meta, dict) and str(meta.get("continues") or "") == source:
+            return tid
     return None
 
 
@@ -713,8 +742,11 @@ def carried(who):
     if since is None:
         return 0.0
     owed = 0.0
-    for s in v2.peek()["sessions"].values():
-        if s.get("origin") == who and (s.get("started") or 0) >= since and s.get("delta_tokens"):
+    sessions = v2.peek()["sessions"]
+    for s in sessions.values():
+        # a fork of a role's reasoning layer carries the delta under the layer as surely as a fork of the delta itself
+        through = (sessions.get(s.get("origin") or "") or {}).get("origin") if s.get("origin") not in v2.BASES else None
+        if who in (s.get("origin"), through) and (s.get("started") or 0) >= since and s.get("delta_tokens"):
             owed += 0.1 * s["delta_tokens"] * own_requests(s)
     try:
         for line in open(os.path.join(STATE, "warm.log"), errors="ignore"):
@@ -919,6 +951,7 @@ def main():
     if os.path.exists(os.path.join(STATE, "stopped")) or not v2.peek()["active"]:
         return
     v2.dispatch(pre=watch, wait=True)  # the care and the dispatch under one lock
+    v2.softly("the minute's occupancy", v2.sample_occupancy)  # read back by the planner's status (occupancy_text)
     if v2.control():  # it sees every run: a queued probe is started when the machine has room, and ended when its run is
         if v2.run_queued_probes():
             v2.dispatch(wait=True)  # a probe that ended resumes its session at once

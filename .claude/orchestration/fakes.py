@@ -144,6 +144,21 @@ class World:
                         CODEX_SESSIONS=str(self.home / "codex"), ORCH_LEDGER=str(self.root / "owner-ledger.md"))
 
     def close(self):
+        """The world's processes ended before its directory goes: a background ping or check a test started outlived it
+        and wrote its log into a directory it made again under /tmp (26 of them after one night's runs, 2026-09-23)."""
+        mark = f"FAKE_ROOT={self.root}".encode()
+        for pid in os.listdir("/proc"):
+            if not pid.isdigit() or int(pid) == os.getpid():
+                continue
+            try:
+                environ = open(f"/proc/{pid}/environ", "rb").read().split(b"\0")
+            except OSError:
+                continue
+            if mark in environ:
+                try:
+                    os.kill(int(pid), 9)
+                except OSError:
+                    pass
         self.temp.cleanup()
 
     # ------------------------------------------------------------ running

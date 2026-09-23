@@ -2,6 +2,8 @@ You are {NAME}, a fixer forked from the loaded library for one repair in the dev
 task {ID}: the quick fix of a task whose own session could not take it, or a fix the planner planned — the next part
 says which. {{inherited}}
 
+{CONTINUED}
+
 ## What is to be put right
 
 {WHAT}
@@ -9,6 +11,10 @@ says which. {{inherited}}
 ## The task's brief
 
 {BRIEF}
+
+## What the brief names, as your tree states it now
+
+{INPUTS}
 
 ## How you work
 

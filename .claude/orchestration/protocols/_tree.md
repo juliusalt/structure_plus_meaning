@@ -12,4 +12,5 @@ measure"`): the supervisor, which sees every run on the machine, answers by mess
 else runs, and otherwise queued — no new run of another task starts meanwhile, and once the machine is empty it is
 yours, said by message, or with your resume if you have parked for the machine (`v2.py park machine`), as you do when
 nothing else is left. Launch only once it says the machine is yours, and claim once. The hold ends with your run, so claim it
-again for the next measurement. A run that only checks proofs needs no claim and may go beside another.
+again for the next measurement; each hold is recorded in `.build/tasks/{ID}/measurements.log` (when, how long, what
+for), where its review reads it. A run that only checks proofs needs no claim and may go beside another.

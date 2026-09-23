@@ -323,7 +323,9 @@ class DeltaCostTests(unittest.TestCase):
         sessions = {"fix-1": dict(origin="high", started=after, delta_tokens=5000, sid="a"),
                     "fix-2": dict(origin="high", started=before, delta_tokens=5000, sid="b"),   # forked the old layer
                     "review-3": dict(origin="xhigh", started=after, delta_tokens=5000, sid="c"),  # another base's
-                    "fix-4": dict(origin="high", started=after, sid="d")}                        # forked no delta
+                    "fix-4": dict(origin="high", started=after, sid="d"),                        # forked no delta
+                    "layer-fixer": dict(origin="high", role="role-layer", started=after, sid="e"),   # a role layer
+                    "fix-5": dict(origin="layer-fixer", started=after, delta_tokens=5000, sid="f")}  # its fork: carries it
         (self.state / "v2.json").write_text(json.dumps({"sessions": sessions, "tasks": {}, "queue": [], "events": []}))
         (self.state / "warm.log").write_text(
             "2026-09-22T22:36:26 delta high: OK   session fork 00bbf073 of base bf471854: first own request "
@@ -333,7 +335,7 @@ class DeltaCostTests(unittest.TestCase):
             "2026-09-22T22:40:00 delta xhigh: OK   session fork 11111111 of base 22222222: first own request "
             "cache_read=500000 cache_write=9000 uncached=2 (99% read)\n")
         with patch.object(watchdog, "own_requests", lambda s: 20):
-            self.assertAlmostEqual(watchdog.carried("high"), 0.1 * 5000 * 20 + 2 * 6451)
+            self.assertAlmostEqual(watchdog.carried("high"), 2 * 0.1 * 5000 * 20 + 2 * 6451)
 
     def test_a_session_s_own_requests_are_its_turns_from_its_launch(self):
         launched = self.sealed + 60
@@ -701,6 +703,21 @@ class DeltaTriggerTests(unittest.TestCase):
         with patch.dict(os.environ, {"ORCH_DELTAS": ""}):                   # not forked: the daemon pings the layer
             watchdog.deltas()
         self.assertEqual(pings(), [])
+
+    def test_a_fork_s_miss_is_marked_on_the_base_it_forked(self):
+        # cache_check is what marks it: the test below writes the mark itself, and a mutation of the marking passed
+        # the whole mutation check (2026-09-23)
+        said = lambda v: subprocess.CompletedProcess([], 0, v, "")
+        sessions = {"sessions": {"implement-9": {"origin": "high"}, "ask-q1": {"origin": "kb-1"}}}
+        with patch.object(v2, "peek", lambda: sessions):
+            with patch.object(v2.subprocess, "run", lambda *a, **k: said("OK first own request read 500000 (written 300)")):
+                v2.cache_check("sid", "base-sid", "implement-9")
+            self.assertFalse((self.state / f"high-{v2.FORK_MISSED}").exists())         # a read: nothing to mark
+            with patch.object(v2.subprocess, "run", lambda *a, **k: said("MISS first own request read 0 (written 500000)")):
+                v2.cache_check("sid", "base-sid", "implement-9")
+                v2.cache_check("sid", "kb-sid", "ask-q1")                               # a session's fork: no base's
+        self.assertTrue((self.state / f"high-{v2.FORK_MISSED}").exists())
+        self.assertFalse((self.state / f"kb-1-{v2.FORK_MISSED}").exists())
 
     def test_a_fork_that_missed_its_entry_has_it_made_anew(self):
         # three entries were evicted within four minutes on 2026-09-22 (21:04 the high delta, 21:05 the xhigh layer):

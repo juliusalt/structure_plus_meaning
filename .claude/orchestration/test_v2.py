@@ -93,13 +93,22 @@ class FormTests(unittest.TestCase):
             self.assertEqual(v2.placed("DECISIONS.md", "9"), "DECISIONS.md")        # the root's own stays
             self.assertEqual(v2.deliverables(brief)[0], "report.md")                   # no task: as written
 
+    def test_a_batched_question_names_its_target_once(self):
+        # implement-192's `ask --to planner "…" -- planner "…"` asked the first and refused the second (09-22 22:08)
+        self.assertEqual(v2.asked_groups([["--to", "planner", "Q1"], ["planner", "Q2"], ["Q3"], ["--to", "kb", "Q4"],
+                                          ["Q5"]]),
+                         [["--to", "planner", "Q1"], ["--to", "planner", "Q2"], ["--to", "planner", "Q3"],
+                          ["--to", "kb", "Q4"], ["--to", "kb", "Q5"]])
+        self.assertEqual(v2.asked_groups([["Q"]]), [["Q"]])        # no target anywhere: refused as before
+
     def test_a_brief_out_of_form_is_told_what_is_missing(self):
         problems = v2.brief_problems("Kind: refactor\nServes: x\nDeliverable: a theory\nPlan:\n1. one step\n")
         self.assertIn("the brief has no `Acceptance:` line", problems)
         self.assertTrue(any(p.startswith("Kind must be one of") for p in problems))
         self.assertTrue(any("at least two numbered steps" in p for p in problems))
         self.assertIn("the Deliverable names no file in backticks", problems)
-        with patch.object(v2, "PROJECT", str(HERE.parent.parent)):
+        with tempfile.TemporaryDirectory() as project, patch.object(v2, "PROJECT", project):
+            os.makedirs(os.path.join(project, "theories"))     # a project with the directory, wherever the copy stands
             problems = v2.brief_problems(BRIEF.replace("`theories/Ready.thy`", "`theories/`"))
         self.assertTrue(any("names the directory `theories/`" in p for p in problems), problems)
 
@@ -126,6 +135,18 @@ class FormTests(unittest.TestCase):
         self.assertEqual(v2.verdict_problems("## Summary\nfine\n", "reject"),
                          ["a rejection lists its blocking findings under `## Findings`"])
         self.assertEqual(v2.part(VERDICT.format(v="reject", f="- the lemma is unused"), "Findings"), "- the lemma is unused")
+        # C7: what a reviewer corrected is named, with an accept, and is a commit message, a result or a row
+        fixed = VERDICT.format(v="accept", f="") + "## Corrected\n`commit.md`: its Validation named no probe. " \
+            "The row of `Ready` in `THEORY_MAP.md`: it offered a lemma taken out.\n"
+        self.assertEqual(v2.verdict_problems(fixed, "accept"), [])
+        self.assertIn("`## Corrected` comes with an accept: what you corrected no longer blocks, and what blocks is a "
+                      "finding", v2.verdict_problems(fixed.replace("Findings\n", "Findings\n- x"), "reject"))
+        self.assertIn("`## Corrected` names theories/Ready.thy: a reviewer corrects only a commit message, a result or "
+                      "a THEORY_MAP.md row; anything else it found is a finding, and a rejection",
+                      v2.verdict_problems(fixed + "And `theories/Ready.thy`, a typo.\n", "accept"))
+        self.assertIn("`## Corrected` names each file it corrected in backticks (`commit.md`, `result.md`, "
+                      "`THEORY_MAP.md`), with why",
+                      v2.verdict_problems(VERDICT.format(v="accept", f="") + "## Corrected\nthe message\n", "accept"))
         self.assertEqual(v2.planner_state_problems(PLANNER_STATE), [])
         self.assertIn("HANDOFF.md has no `## Open` section", v2.planner_state_problems("## Graph\n## Now\n"))
 
@@ -144,6 +165,19 @@ class FormTests(unittest.TestCase):
                                  ("reviewer", False), ("designer", False)):  # the designer forks the middle base
             self.assertEqual(v2.statements_only({"role": role}), statements, role)
 
+    def test_the_size_rule_is_in_the_planner_s_and_task_designer_s_protocols_only_when_the_owner_sets_it(self):
+        # notes/plan-orchestrator-concepts.md C8, off unless state/grouped-repairs exists
+        values = dict(NAME="x-1", ID="7", SUBJECT="S", BRIEF="B", STALE="st", WHY="y", GRAPH="g", LIST="l", EVENTS="e",
+                      QUEUE="7", STATUS="s", OWNER="", HANDOFF="h", FIRST="", INPUTS="i")
+        with tempfile.TemporaryDirectory() as temp, patch.object(v2, "STATE", temp):
+            for role in ("planner", "task-designer"):
+                self.assertNotIn("A task's size against its fixed cost", v2.render(role, **values))
+            open(os.path.join(temp, "grouped-repairs"), "w").close()
+            for role in ("planner", "task-designer"):
+                self.assertIn("A task's size against its fixed cost", v2.render(role, **values))
+            self.assertNotIn("A task's size against its fixed cost", v2.render("implementer", **values, KIND="build",
+                                                                                 WHAT="w", TREE="t"))
+
     def test_iso_compares_with_the_transcripts_timestamps(self):
         t = 1_789_000_000.25
         self.assertEqual(v2.iso(t), fakes.iso(t))
@@ -153,7 +187,8 @@ class FormTests(unittest.TestCase):
         values = dict(NAME="x-1", ID="7", KIND="build", SUBJECT="S", BRIEF="B", STALE="st", WHAT="w", SESSION="s",
                       BEFORE="", NODE="n", WHY="y", GRAPH="g", LIST="l", QID="q1", ASKER="a", TARGET="kb-1",
                       QUESTION="q", NOTE="", EVENTS="e", QUEUE="7", STATUS="s", OWNER="", HANDOFF="h", ORIGIN_NOTE="",
-                      TASK="6", REVIEW="r", FIRST="", TREE="t", WHERE="", READING="")
+                      TASK="6", REVIEW="r", FIRST="", TREE="t", WHERE="", READING="", INPUTS="i", HANDOFF_DELTA="d",
+                      ROLE="implementer", PROTOCOL="p", EVIDENCE="e", PRACTICES="12", DONE="D")
         import re
         with tempfile.TemporaryDirectory() as temp, patch.object(v2, "STATE", temp):
             # in its own state: render logs what it could not fill, and this test wrote that into the live log
@@ -162,7 +197,8 @@ class FormTests(unittest.TestCase):
                 self.assertTrue(text.startswith("You are x-1, "), role)
                 self.assertEqual(re.findall(r"\{[A-Z_]+\}|\{\{[\w-]+\}\}", text), [], role)
             log = Path(temp) / "v2.log"
-            self.assertEqual(log.read_text() if log.exists() else "", "")  # nothing was left out
+            self.assertNotIn("has no value for", log.read_text() if log.exists() else "")  # nothing was left out
+            # (what else a render logs — a git status outside a repository, in a copy of the harness — is not this)
 
 
 class AbsolutePathTests(unittest.TestCase):
@@ -368,6 +404,8 @@ class StartTests(Flow):
         self.assertTrue(fork[fork.index("--settings") + 1].endswith("worker-settings.json"))
         self.assertIn("You are kb-1, the knowledge base", fork[-1])
         self.assertTrue((self.w.state / "owner-directions-new.md").exists())
+        # the copy of HANDOFF.md it loads is kept, and every planner forking it is told what has changed since
+        self.assertEqual((self.w.state / "kb-1-handoff.md").read_text(), "# Handoff\n\n## Work order\nT3\n")
         self.w.v2("dispatch")
         self.assertEqual(self.forks("plan-"), [])  # the knowledge base is still loading
         self.w.reply(self.s("kb-1")["sid"], "INTEGRATED")
@@ -558,18 +596,22 @@ def v2_first(world):
 # The values each role's first message is rendered with (v2.render's own defaults, and the call for that role).
 PASSED = {
     "kb": {"NAME", "STALE"},
-    "planner": {"NAME", "ID", "EVENTS", "HANDOFF", "GRAPH", "QUEUE", "STATUS", "LIST", "OWNER", "FIRST", "STALE"},
-    "designer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
-    "implementer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
-    "investigator": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
-    "fixer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE"},
-    "task-designer": {"NAME", "ID", "SUBJECT", "BRIEF", "WHY", "GRAPH", "LIST", "STALE"},
-    "reviewer": {"NAME", "ID", "TASK", "SUBJECT", "REVIEW", "BRIEF", "SESSION", "STALE", "BEFORE", "WHERE", "FIRST"},
+    "planner": {"NAME", "ID", "EVENTS", "HANDOFF", "GRAPH", "QUEUE", "STATUS", "LIST", "OWNER", "FIRST", "STALE",
+                "HANDOFF_DELTA"},
+    "designer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS"},
+    "implementer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS"},
+    "investigator": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS"},
+    "fixer": {"NAME", "ID", "KIND", "SUBJECT", "BRIEF", "STALE", "WHAT", "TREE", "INPUTS"},
+    "task-designer": {"NAME", "ID", "SUBJECT", "BRIEF", "WHY", "GRAPH", "LIST", "STALE", "INPUTS"},
+    "reviewer": {"NAME", "ID", "TASK", "SUBJECT", "REVIEW", "BRIEF", "SESSION", "STALE", "BEFORE", "WHERE", "FIRST",
+                 "INPUTS"},
     "consultant": {"NAME", "ID", "QID", "ASKER", "TARGET", "QUESTION", "NOTE", "STALE", "READING"},
+    "role-layer": {"NAME", "STALE", "ROLE", "PROTOCOL", "EVIDENCE", "PRACTICES", "DONE"},
 }
 PASSED = {role: names | {"ROUNDS", "READ", "RESERVE", "BATCH", "READ_BYTES", "CIRCLING", "FIX_MINUTES", "FIX_ROUNDS", "HOLD_HOURS", "ROOM_DESIGN",
                          "ROOM_TASK", "BRIEF_BACKLOG", "GRAPH_DEPTH", "DEPTH", "WIDTH", "SLOTS", "CONSULT_HOURS",
-                         "ISABELLE_MAX", "PARK_URGENT", "PROBE_MAX", "PROBE_SECONDS", "MEM_MARGIN"}
+                         "ISABELLE_MAX", "PARK_URGENT", "PROBE_MAX", "PROBE_SECONDS", "MEM_MARGIN", "GROUPING",
+                         "CONTINUES", "CONTINUED", "CHECKED", "LAYERED"}
           for role, names in PASSED.items()}  # render's own defaults
 
 
@@ -577,6 +619,28 @@ class PlanningTests(Flow):
     def event(self, text, sender="the harness"):
         st = self.w.st()
         self.w.set_st(events=st["events"] + [{"at": time.strftime("%Y-%m-%dT%H:%M:%S"), "from": sender, "text": text}])
+
+    def test_a_new_planner_is_told_what_its_knowledge_base_s_copy_of_the_handoff_lacks(self):
+        # a planner holds HANDOFF.md's graph, decisions and deliveries as its knowledge base loaded them, hours before;
+        # plan-40 read the file again in six ranges (2026-09-22): it is told what was rewritten since, and no more
+        (self.w.state / "kb-1-handoff.md").write_text(PLANNER_STATE)
+        self.w.write("HANDOFF.md", PLANNER_STATE.replace("## Delivered\n-\n", "## Delivered\n- **#9** the index, landed.\n")
+                     .replace("## Decisions\nd\n", "## Decisions\nd2\n"))
+        self.event("Task 9 is committed.")
+        self.w.v2("dispatch")
+        (plan,) = self.forks("plan-")
+        told = plan[-1][plan[-1].index("what a planner before you has rewritten in them since is this"):]
+        self.assertIn("### Delivered\n- **#9** the index, landed.\n(taken out: -)", told)
+        self.assertIn("### Decisions\nd2\n(taken out: d)", told)
+        self.assertNotIn("### Graph", told[:told.index("Read the file itself")])        # unchanged: not repeated
+        self.assertNotIn("{HANDOFF_DELTA}", plan[-1])
+        # a copy is kept while its knowledge base is the one planners fork: an older one's goes with the sweep
+        (self.w.state / "kb-0-handoff.md").write_text("old")
+        (self.w.state / "tidied").unlink(missing_ok=True)                      # the sweep's hourly mark
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.tidied()"], env=self.w.env, check=True)
+        self.assertFalse((self.w.state / "kb-0-handoff.md").exists())
+        self.assertTrue((self.w.state / "kb-1-handoff.md").exists())
 
     def test_the_status_the_messages_and_the_rule_read_the_same_figures(self):
         # the status showed the build-and-fix depth while start_brief records and cmd_propose compares the whole
@@ -1147,6 +1211,36 @@ class PlanningTests(Flow):
         self.assertEqual(self.forks("implement-"), [])
         self.assertEqual(len(self.forks("review-")), 1)
 
+    def test_with_the_supporting_slot_apart_two_producers_and_a_review_work_at_once(self):
+        # the owner's to set (notes/plan-orchestrator-concepts.md C6), off unless ORCH_SUPPORT_APART=1
+        self.w.task("1")
+        self.w.task("2", subject="Another build")
+        self.w.task("3", subject="Finished")
+        self.w.env.update(ORCH_WORKERS="2", ORCH_SUPPORT_APART="1")
+        self.w.session("implement-1", "implementer", "i1", task="1")
+        self.w.set_st(queue=["1", "2"], tasks={"1": {"stage": "running", "kind": "build", "session": "implement-1"},
+                                               "2": {"stage": "ready", "kind": "build"},
+                                               "3": {"stage": "reviewing", "kind": "build", "session": "implement-3"}})
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("implement-")), 1)                # the second producer
+        self.assertEqual(len(self.forks("review-")), 1)                   # and the review beside both
+        self.assertEqual(len([n for n, x in self.w.st()["sessions"].items() if x["state"] in v2.LIVE
+                              and x["role"] in ("implementer", "reviewer")]), 3)
+
+    def test_with_the_supporting_slot_apart_a_running_review_holds_no_producer_back(self):
+        self.w.task("1")
+        self.w.task("2", subject="Another build")
+        self.w.task("4", subject="Reviewing")
+        self.w.env["ORCH_WORKERS"] = "2"
+        (self.w.state / "support-apart").write_text("")                  # the owner's switch, read by every command
+        self.w.session("implement-1", "implementer", "i1", task="1")
+        self.w.session("review-4", "reviewer", "r4", task="4")
+        self.w.set_st(queue=["1", "2"], tasks={"1": {"stage": "running", "kind": "build", "session": "implement-1"},
+                                               "2": {"stage": "ready", "kind": "build"},
+                                               "4": {"stage": "reviewing", "kind": "build", "reviewing": "review-4"}})
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("implement-")), 1)                # a review running counts against no producer
+
     def test_an_episode_queues_ends_with_notes_and_the_knowledge_base_integrates_them(self):
         self.w.task("1")
         self.w.task("2", description=BRIEF_TASK, subject="Reach")
@@ -1158,6 +1252,8 @@ class PlanningTests(Flow):
         self.assertIn("Deliverable: `theories/Ready.thy`", impl[-1])
         (brief,) = self.forks("brief-")
         self.assertIn("Reach", brief[-1])
+        self.assertIn("## What your brief task names, as the library states it now", brief[-1])  # its named facts
+        self.assertIn("(the brief names no fact or definition by name)", brief[-1])  # it names `DECISIONS.md` alone
         self.assertEqual((self.t("1")["stage"], self.t("2")["stage"]), ("running", "running"))
         self.assertEqual(self.w.read_task("1")["status"], "in_progress")
         self.assertIn("refused: v2.py planned --notes FILE", self.as_("plan-1", "planned"))
@@ -1198,6 +1294,81 @@ class PlanningTests(Flow):
         self.assertIn("Nothing failed: this task is a fix the planner planned", fixer[-1])
         self.assertNotIn("{WHAT}", fixer[-1])
         self.assertNotRegex(fixer[-1], r"\{[A-Z][A-Z_]{2,}\}")
+
+    def test_a_continuation_forks_the_session_that_did_the_work_it_continues(self):
+        # C13, the owner's switch: 27 of 52 fixes continued one reviewed task's work, its producer warm for 18
+        fix = BRIEF.replace("Kind: build", "Kind: fix")
+        self.w.task("5", status="completed", subject="The work")
+        self.w.session("implement-5", "implementer", "impl5sid", state="done", live=False, task="5", context=600_000)
+        self.w.task("6", description=fix, subject="Its follow-up", metadata={"kind": "fix", "why": "-", "continues": "5"})
+        self.w.set_st(queue=["6"], tasks={"6": {"stage": "ready", "kind": "fix", "queued_at": time.time()}})
+        (self.w.state / "continue-by-fork").write_text("")
+        self.w.v2("dispatch")
+        (fixer,) = self.forks("fix-")
+        self.assertEqual(fixer[2], "impl5sid")                 # it reads the producer's context from cache
+        self.assertIn("**You continue task 5's work.** You are forked from implement-5", fixer[-1])
+        self.assertNotRegex(fixer[-1], r"\{[A-Z][A-Z_]{2,}\}")
+        rec = self.s("fix-6")
+        self.assertEqual((rec["origin"], rec["continues"]), ("implement-5", "5"))
+        # what changed since its load is measured against the load its origin holds, not against a session's own id
+        st = self.w.st()
+        st["sessions"]["implement-5"]["origin_sid"] = "the-layer-it-forked"
+        self.w.set_st(sessions=st["sessions"])
+        since = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                                "v2.stale = lambda who, tree=None, since=None: since; print(v2.stale_of('fix-6', 'max'))"],
+                               env=self.w.env, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(since, "the-layer-it-forked")
+        planner = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                                  "print(v2.continues_text())"], env=self.w.env, capture_output=True, text=True).stdout
+        self.assertIn('say so in its metadata, `"continues": "N"`', planner)
+        self.assertIn("{CONTINUES}", (fakes.HERE / "protocols" / "planner.md").read_text())
+
+    def test_a_continuation_forks_the_base_when_its_source_cannot_be_forked(self):
+        fix = BRIEF.replace("Kind: build", "Kind: fix")
+        cases = {"11": dict(warm=False), "12": dict(context=800_000), "13": dict(effort="high"),
+                 "14": dict(state="working", live=True), "15": {}}
+        for n, (src, how) in enumerate(cases.items()):
+            self.w.task(src, status="completed")
+            self.w.session(f"implement-{src}", "implementer", f"s{src}", **dict(dict(state="done", live=False,
+                                                                                   task=src, context=600_000), **how))
+            self.w.task(str(20 + n), description=fix, metadata={"kind": "fix", "continues": src})
+        self.w.task("30", description=fix, metadata={"kind": "fix"})  # continues nothing
+        ask = lambda tid: subprocess.run(
+            [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+             f"print(v2.continued_session(v2.peek(), {tid!r}, 'fixer'))"],
+            env=self.w.env, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(ask("24"), "(None, None)")            # the switch is off
+        (self.w.state / "continue-by-fork").write_text("")
+        self.assertEqual([ask(str(20 + n)) for n in range(4)], ["(None, None)"] * 4)  # cold, too big, another
+        self.assertEqual(ask("24"), "('implement-15', '15')")                          # effort, still working
+        self.assertEqual(ask("30"), "(None, None)")
+        said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               "print(v2.continued_session(v2.peek(), '24', 'reviewer'))"],
+                              env=self.w.env, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(said, "(None, None)")                  # only a producing session continues work
+
+    def test_a_producer_is_held_while_a_task_continuing_its_work_waits(self):
+        self.w.task("5", status="completed")
+        self.w.session("implement-5", "implementer", "impl5sid", state="done", live=False, task="5",
+                       ended=time.time() - 60)
+        self.w.task("6", description=BRIEF.replace("Kind: build", "Kind: fix"), metadata={"kind": "fix", "continues": "5"})
+        self.w.set_st(queue=["6"], tasks={"5": {"stage": "done"}, "6": {"stage": "ready"}})
+        held = lambda: subprocess.run(
+            [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2, watchdog; "
+             "st = v2.peek(); print(watchdog.held(st, 'implement-5', st['sessions']['implement-5']))"],
+            env=self.w.env, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(held(), "None")                        # the switch is off: released as before
+        (self.w.state / "continue-by-fork").write_text("")
+        self.assertEqual(held(), "task 6 continues its work and has not started")
+        self.w.set_st(tasks={"5": {"stage": "done"}, "6": {"stage": "running"}})
+        self.assertEqual(held(), "None")                        # started: its fork has read the entry
+        # before the planner has made the follow-ups into tasks: held while its review asked for some, for a while
+        self.w.set_st(queue=[], tasks={"5": {"stage": "done", "session": "implement-5", "followups": "1. State X once."}})
+        self.assertEqual(held(), "its review asked for follow-ups, which may continue its work")
+        st = self.w.st()
+        st["sessions"]["implement-5"]["ended"] = time.time() - v2.CONTINUE_GRACE - 60
+        self.w.set_st(sessions=st["sessions"])
+        self.assertEqual(held(), "None")                        # past the grace
 
     def test_a_session_is_told_where_it_works_and_only_when_it_works_there(self):
         # every role was told "your working tree is your task's own (.build/trees/{ID})": the planner, the task
@@ -1695,8 +1866,9 @@ class TaskTests(Flow):
                                            "--message", ".build/tasks/1/commit.md"))
         return self.as_(self.impl, "result", "1")
 
-    def verdict(self, name, v, findings=""):
-        self.w.write(".build/tasks/1/review.md", VERDICT.format(v=v, f=findings))
+    def verdict(self, name, v, findings="", corrected=""):
+        self.w.write(".build/tasks/1/review.md", VERDICT.format(v=v, f=findings)
+                     + (f"## Corrected\n{corrected}\n" if corrected else ""))
         return self.as_(name, "verdict", "1", v, "--file", ".build/tasks/1/review.md")
 
     def test_what_a_brief_delivers_in_the_task_s_own_folder_needs_no_final_job(self):
@@ -1707,6 +1879,11 @@ class TaskTests(Flow):
         self.w.write(".build/tasks/1/result.md", RESULT.format(status="done"))
         said = self.as_(self.impl, "result", "1")
         self.assertTrue(said.startswith("refused: your brief delivers tools/test_ready.py into the repository"), said)
+        self.assertIn("Not written yet: tools/test_ready.py", said)        # which of them, and the hand-over's form
+        self.assertIn("`v2.py finalize 1`", said)
+        refused = self.as_(self.impl, "finalize", "1", "--check", "true", "--files", ".build/tasks/1/report.md",
+                           "--message", ".build/tasks/1/commit.md")
+        self.assertIn("the task's record, read where it stands and never committed", refused)
         self.w.write(".build/tasks/1/brief.json", json.dumps({"task": "1", "deliverables": ["report.md"]}))
         self.assertIn("recorded", self.as_(self.impl, "result", "1"))
         self.assertEqual(self.t("1")["stage"], "reviewing")                    # judged as it is
@@ -1932,6 +2109,163 @@ class TaskTests(Flow):
         diff = self.as_(self.impl, "read", "diff")
         self.assertIn("== diff\n", diff)
         self.assertIn("theories/Ready.thy", diff)        # the new file's own text, which no diff of HEAD shows
+
+    def test_a_producing_session_is_given_the_statements_its_brief_names(self):
+        # the task-specific reading no role-level layer can give: implementers spent 26% of what they cost before their
+        # first change, and 7 of 31 rejections were a named contract proved again instead of consumed
+        first = self.forks(self.impl)[0][-1]
+        self.assertIn("## What your brief names, as your tree states it now", first)
+        self.assertIn('definition base where "base = True"', first)       # `Base.base_def`: its definition, stated
+        self.assertNotIn("{INPUTS}", first)
+        for role in ("implementer", "fixer", "designer", "investigator"):  # every producing role has the section
+            self.assertIn("{INPUTS}", (fakes.HERE / "protocols" / f"{role}.md").read_text(), role)
+        self.w.write("theories/Base_Rows.thy", "theory Base_Rows imports Base begin end\n")
+        brief = fakes.BRIEF.replace("`Base.base_def`", "`Base.base_def`, `no_such_notion`, `Base_Rows`, "
+                                    "`.build/tasks/1/result.md`, `commit.md`")
+        said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               f"print(v2.inputs_read({brief!r}, {str(self.w.project)!r}))"], env=self.w.env,
+                              capture_output=True, text=True).stdout
+        self.assertIn("Not stated in the theories as your tree holds them", said)
+        # the decision entries it names by their headings, with their lines (design-258 grepped for them, 09-22)
+        self.w.write("DECISIONS.md", "# Decisions\n\n## The carrier's bound is proved once\n\nIt rests on it.\n\n"
+                                     "### Its instances\n\nTwo.\n\n## Another entry, not named\n\nNo.\n\n### Affordability\n\nA.\n\n"
+                                     "## A third\n\n### Affordability\n\nB.\n")
+        cited = fakes.BRIEF.replace("Decided:", "Decided: DECISIONS.md's \"The carrier's bound is proved once\" and "
+                                    "\u201cIts instances\u201d, its \"Affordability\" (a heading two entries have); ")
+        placed = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                                 f"print(v2.inputs_read({cited!r}, {str(self.w.project)!r}))"], env=self.w.env,
+                                capture_output=True, text=True).stdout
+        self.assertIn("- DECISIONS.md:3-10 — The carrier's bound is proved once", placed)
+        self.assertIn("- DECISIONS.md:7-10 — Its instances", placed)      # a heading named whole, however short
+        self.assertNotIn("Another entry", placed)
+        self.assertNotIn("Affordability", placed)                          # which entry's, it does not say
+        self.assertIn("`no_such_notion`", said)
+        self.assertNotIn("result.md", said)                               # files and theories are the session's reading
+        self.assertNotIn("Base_Rows", said)
+        self.assertNotIn("commit", said)
+        # a locale's name brings its bare `context` lines, which say nothing of it: left out
+        self.w.write("theories/Loc.thy", "theory Loc imports Main begin\nlocale loc_named = fixes x :: nat\n"
+                                         "context loc_named\nbegin\nlemma l: True by simp\nend\nend\n")
+        loc = fakes.BRIEF.replace("`Base.base_def`", "`loc_named`")
+        located = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                  f"import v2; print(v2.inputs_read({loc!r}, {str(self.w.project)!r}))"],
+                                 env=self.w.env, capture_output=True, text=True).stdout
+        self.assertIn("locale loc_named", located)
+        self.assertNotIn("\ncontext loc_named", located)
+        self.assertEqual(said.count("theories/Base.thy"), 1)
+        self.w.write("theories/Big.thy", "theory Big imports Main begin\n" + "".join(
+            f'definition big_{i} where "big_{i} = ({"True & " * 60}True)"\n' for i in range(60)) + "end\n")
+        many = fakes.BRIEF.replace("`Base.base_def`", ", ".join(f"`big_{i}`" for i in range(60)))
+        said = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               f"print(v2.inputs_read({many!r}, {str(self.w.project)!r}))"], env=self.w.env,
+                              capture_output=True, text=True).stdout
+        self.assertLess(len(said.encode()), 20_000 + 1_000)               # bounded, and what is left out is named
+        self.assertIn("more, left out for room — `v2.py read NAME` reads each", said)
+
+    def test_the_hand_over_records_the_result_written_before_it(self):
+        # the protocol's one call — the change that writes the commit message and the result, then the hand-over — is
+        # what the commands do: 1 of the 69 producing sessions of 2026-09-21/22 that recorded a result made it, 41
+        # handed over, then wrote the result, then recorded it
+        said = self.finish()                               # finalize, then the protocol's `v2.py result` after it
+        self.assertEqual(said, "recorded already, with the hand-over. End your turn now.")
+        self.assertIn(self.t("1")["stage"], ("checking", "reviewing"))   # its check started: `true` passes at once
+        self.assertEqual(self.s(self.impl)["state"], "done")
+        # a text given after it replaces the recorded text, and records nothing again
+        code, out, _ = self.w.run("v2.py", "result", "1", stdin="Status: done\n\n## Produced\nmore\n",
+                                  env=self.w.as_session(self.s(self.impl)["sid"]))
+        self.assertIn("its text is now the one given", out)
+        self.assertIn("more", (self.w.project / ".build/tasks/1/result.md").read_text())
+        self.assertEqual(sum("result of task 1" in l for l in (self.w.state / "v2.log").read_text().splitlines()), 1)
+
+    def test_a_result_is_written_and_recorded_in_one_command(self):
+        self.w.write("theories/Ready.thy", "theory Ready imports Main begin end\n")
+        self.w.write(".build/tasks/1/commit.md", "Add readiness\n\nValidation: checked.\n")
+        said = self.as_(self.impl, "finalize", "1", "--check", "true", "--files", "theories/Ready.thy",
+                        "--message", ".build/tasks/1/commit.md")
+        self.assertIn("write it and record it in one command: `.claude/orchestration/v2.py result 1 <<'EOF'`", said)
+        self.assertNotEqual(self.t("1").get("stage"), "checking")
+        code, out, _ = self.w.run("v2.py", "result", "1", stdin=RESULT.format(status="done"),
+                                  env=self.w.as_session(self.s(self.impl)["sid"]))
+        self.assertEqual(out.strip(), "recorded. End your turn now.")
+        self.assertEqual((self.w.project / ".build/tasks/1/result.md").read_text(), RESULT.format(status="done"))
+        self.assertIn(self.t("1")["stage"], ("checking", "reviewing"))
+
+    def test_a_result_written_before_the_session_was_resumed_is_not_the_hand_over_s(self):
+        # a quick fix is the same session resumed: the result of its first round is not recorded by its second
+        # hand-over unless written again
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="done"))
+        sessions = self.w.st()["sessions"]
+        sessions[self.impl]["resumed"] = time.time() + 5
+        self.w.set_st(sessions=sessions)
+        self.w.write("theories/Ready.thy", "theory Ready imports Main begin end\n")
+        self.w.write(".build/tasks/1/commit.md", "Add readiness\n\nValidation: checked.\n")
+        said = self.as_(self.impl, "finalize", "1", "--check", "true", "--files", "theories/Ready.thy",
+                        "--message", ".build/tasks/1/commit.md")
+        self.assertIn("its check runs when you record your result", said)
+        self.assertNotEqual(self.s(self.impl)["state"], "done")
+
+    def test_in_its_own_tree_the_commit_takes_what_the_tree_has_changed(self):
+        self.w.git("add", "theories/Base.thy")
+        self.w.git("commit", "-q", "-m", "the base theory")
+        env = dict(self.w.env, ORCH_TREES="1")
+        path = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               "print(v2.worktree('1'))"], env=env, capture_output=True, text=True).stdout.strip()
+        Path(path, "theories", "Ready.thy").write_text("theory Ready imports Main begin end\n")
+        Path(path, "theories", "Base.thy").write_text("theory Base imports Main begin\nend\n")
+        for mount in (".bashrc", ".mcp.json"):                  # what the sandbox mounts over a working directory
+            Path(path, mount).write_text("")
+        self.w.write(".build/tasks/1/commit.md", "Add readiness\n\nValidation: checked.\n")
+        said = self.w.v2("finalize", "1", "--check", "true", "--message", ".build/tasks/1/commit.md",
+                         env=dict(self.w.as_session(self.s(self.impl)["sid"]), ORCH_TREES="1"))
+        self.assertIn("the final job is prepared (2 files your tree has changed: theories/Base.thy, "
+                      "theories/Ready.thy)", said)
+        self.assertEqual(json.loads((self.w.project / ".build/tasks/1/finalize.json").read_text())["files"],
+                         ["theories/Base.thy", "theories/Ready.thy"])
+        # in the one tree, which other tasks share, the files are still named
+        self.assertTrue(self.as_(self.impl, "finalize", "1", "--check", "true", "--message",
+                                 ".build/tasks/1/commit.md").startswith("refused: v2.py finalize ID"))
+
+    def test_a_hand_over_in_its_own_tree_needs_no_arguments(self):
+        # 109 of 126 hand-overs named the repository's check, nine named one not runnable as written: it is written
+        # for them, and the message is the task's commit.md
+        self.w.git("add", "theories/Base.thy")
+        self.w.git("commit", "-q", "-m", "the base theory")
+        env = dict(self.w.env, ORCH_TREES="1")
+        path = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                               "print(v2.worktree('1'))"], env=env, capture_output=True, text=True).stdout.strip()
+        Path(path, "theories", "Ready.thy").write_text("theory Ready imports Main begin end\n")
+        as_it = dict(self.w.as_session(self.s(self.impl)["sid"]), ORCH_TREES="1")
+        refused = self.w.v2("finalize", "1", env=as_it)  # no commit.md yet: nothing to take as its message
+        self.assertTrue(refused.startswith("refused: v2.py finalize ID"), refused)
+        self.assertIn("--message when the message is .build/tasks/1/commit.md", refused)
+        self.w.write(".build/tasks/1/commit.md", "Add readiness\n\nValidation: checked.\n")
+        said = self.w.v2("finalize", "1", env=as_it)
+        self.assertIn("its check the repository's (`python3 -B tools/incremental_check.py check --output "
+                      ".build/tasks/1/check`); its message .build/tasks/1/commit.md", said)
+        rec = json.loads((self.w.project / ".build/tasks/1/finalize.json").read_text())
+        self.assertEqual((rec["check"], rec["files"], rec["message"]),
+                         ("python3 -B tools/incremental_check.py check --output .build/tasks/1/check",
+                          ["theories/Ready.thy"], ".build/tasks/1/commit.md"))
+        import finalize
+        self.assertTrue(finalize.BATCHABLE.match(rec["check"]))  # it joins the check batches as the named one did
+        # documents alone still take the finalizer's own check, and a check named is kept as named
+        Path(path, "theories", "Ready.thy").unlink()
+        Path(path, "NOTES.md").write_text("A note.\n")
+        self.w.v2("finalize", "1", env=as_it)
+        self.assertEqual(json.loads((self.w.project / ".build/tasks/1/finalize.json").read_text())["check"], "documents")
+        self.w.v2("finalize", "1", "--check", "true", env=as_it)
+        self.assertEqual(json.loads((self.w.project / ".build/tasks/1/finalize.json").read_text())["check"], "true")
+
+    def test_the_tree_read_in_the_one_tree_names_only_the_task_s_own_work(self):
+        self.w.write("theories/Mine.thy", "theory Mine imports Main begin end\n")
+        self.w.write("theories/Theirs.thy", "theory Theirs imports Main begin end\n")
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.own('1', ['theories/Mine.thy']); v2.own('2', ['theories/Theirs.thy'])"], env=self.w.env,
+                       check=True)
+        said = self.as_(self.impl, "read", "tree")
+        self.assertIn("tree: the one tree", said)
+        self.assertIn("theories/Mine.thy", said)
+        self.assertNotIn("Theirs", said)                                   # another task's, which the one tree holds too
 
     def test_a_result_is_refused_while_the_sessions_own_jobs_run(self):
         self.w.transcript(self.s(self.impl)["sid"], [{"type": "user", "message": {"content": [{"type": "tool_result",
@@ -2314,7 +2648,8 @@ class TaskTests(Flow):
         # the re-review: the same reviewer, resumed
         self.assertEqual(self.t("1")["stage"], "reviewing")
         self.assertIn("Judge those findings and whatever the fix itself broke", self.resumes(self.s("review-1")["sid"])[-1][3])
-        self.assertIn("accepted task 1", self.verdict("review-1", "accept"))
+        self.assertIn("accepted task 1", self.verdict("review-1", "accept",
+                                                      corrected="`commit.md`: its subject named the wrong theory."))
         t = self.t("1")
         self.assertEqual(t["stage"], "done")
         self.assertEqual(self.w.git("log", "-1", "--format=%s"), "Add readiness\n")
@@ -2323,13 +2658,48 @@ class TaskTests(Flow):
         self.assertEqual(self.w.read_task("1")["status"], "completed")
         ev = self.heard()
         self.assertIn("is committed as", ev)
-        self.assertIn("The readiness theory is in place. (review: .build/tasks/1/review.md) Follow-ups proposed: Measure the "
-                      "reach.", ev)  # the summary's first sentence, where the review is, and the follow-ups whole
+        self.assertIn("The readiness theory is in place. (review: .build/tasks/1/review.md) Corrected by its review: "
+                      "`commit.md`: its subject named the wrong theory. Follow-ups proposed: Measure the reach.", ev)
+        # the summary's first sentence, where the review is, what the review corrected (C7), the follow-ups whole
         self.assertNotIn("Its proof reads the base's rows", ev)  # the rest of what the review says, in its file
         self.assertTrue(self.s(self.impl)["released"] and self.s("review-1")["released"])
         # every event of the whole cycle reached one planner (heard() above), and only one was ever forked for them:
         # 28 of the 59 sessions of 2026-09-20 were planning episodes, one per batch of events
         self.assertEqual(len(self.forks("plan-")), 1)
+
+    def test_the_close_in_one_call_with_the_index_by_name_reaches_the_commit(self):
+        # tonight's pieces together (notes/plan-orchestrator-concepts.md C1, C2, C4): the theory, its declaration and
+        # its row by name, the commit message and the result in one change, the hand-over in the same call recording
+        # the result; the reviewer's first message with the brief's statements and the restatement reading; the
+        # commit taking the row and the declaration
+        self.w.write("ROOT", "session S = HOL +\n  theories\n    Base\n")
+        self.w.write("THEORY_MAP.md", "| Theory | Direct imports | Content |\n|---|---|---|\n| Base | Main | The base. |\n")
+        self.w.git("add", "ROOT", "THEORY_MAP.md", "theories/Base.thy")
+        self.w.git("commit", "-qm", "the index files")
+        call = (f"{sys.executable} {fakes.HERE / 'v2.py'} change <<'EOF'\n"
+                "=== write theories/Ready.thy\ntheory Ready imports Base begin\nend\n"
+                "=== root Ready\n=== row Ready\nReadiness over paths.\n"
+                "=== write .build/tasks/1/commit.md\nAdd readiness\n\nValidation: the argument in the result.\n"
+                "=== write .build/tasks/1/result.md\n" + RESULT.format(status="done") + "EOF\n"
+                f"{sys.executable} {fakes.HERE / 'v2.py'} finalize 1 --check true --files theories/Ready.thy ROOT "
+                "THEORY_MAP.md --message .build/tasks/1/commit.md\n")
+        out = subprocess.run(["bash", "-c", call], cwd=self.w.project, capture_output=True, text=True, timeout=60,
+                             env=dict(self.w.env, **self.w.as_session(self.s(self.impl)["sid"])))
+        self.assertIn("ROOT (Ready declared at line 4)", out.stdout)
+        self.assertIn("the row of Ready written anew", out.stdout)
+        self.assertNotIn("the sources", out.stdout)                         # declared, with its row: nothing to say
+        self.assertIn("and your result (.build/tasks/1/result.md) recorded with it", out.stdout)
+        self.assertIn(self.t("1")["stage"], ("checking", "reviewing"))
+        (review,) = self.forks("review-")
+        self.assertIn("## What the brief names, as the tree states it now", review[-1])
+        self.assertIn('definition base where "base = True"', review[-1])  # `Base.base_def`, the brief's input
+        self.assertIn("== restated", review[-1])
+        self.assertIn("accepted task 1", self.verdict("review-1", "accept"))
+        self.assertEqual(self.t("1")["stage"], "done")
+        committed = self.w.git("show", "--stat", "--format=%s", "HEAD")
+        for f in ("theories/Ready.thy", "ROOT", "THEORY_MAP.md"):
+            self.assertIn(f, committed)
+        self.assertIn("| Ready | Base | Readiness over paths. |", self.w.git("show", "HEAD:THEORY_MAP.md"))
 
     def test_a_second_rejection_and_a_second_failed_check_go_to_the_planner(self):
         self.finish()
@@ -2352,11 +2722,11 @@ class TaskTests(Flow):
         self.assertIn("failed its check again", self.heard())
 
     def test_a_cold_session_is_not_resumed_for_its_fix_but_a_fixer_starts(self):
-        self.w.write(".build/tasks/1/result.md", RESULT.format(status="done"))
         self.w.write("theories/Ready.thy", "x")
         self.w.write(".build/tasks/1/commit.md", "m")
         self.as_(self.impl, "finalize", "1", "--check", "exit 1", "--files", "theories/Ready.thy", "--message",
                  ".build/tasks/1/commit.md")
+        self.w.write(".build/tasks/1/result.md", RESULT.format(status="done"))  # after: its record is its own
         self.w.hit(self.impl, age=v2.WARM_MAX + 60)  # its cache has expired
         with open(self.w.state / "hits" / self.impl) as _:
             pass
@@ -2540,6 +2910,17 @@ class SupportTests(Flow):
                               "print(len(v2.base_lineage()), len(v2.base_at_risk()))"],
                              env=self.w.env, capture_output=True, text=True).stdout
         self.assertEqual(out.strip(), "1 1")
+        # the lasting store is the harness's own place for the base, under .build/tasks/ by the owner's choice
+        # (2026-09-22): a base there stands in no task's directory, and health said it did every time it ran
+        lasting = self.w.project / ".build/tasks/base-lasting/complete-x/proof"
+        lasting.mkdir(parents=True)
+        (lasting / "accepted-context.json").write_text(json.dumps({"parent": None}))
+        (self.w.state / "active-context.json").write_text(json.dumps({"directory": str(lasting)}))
+        out = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                              "print(len(v2.base_lineage()), len(v2.base_at_risk()))"],
+                             env=dict(self.w.env, ORCH_LASTING=str(self.w.project / ".build/tasks/base-lasting")),
+                             capture_output=True, text=True).stdout
+        self.assertEqual(out.strip(), "1 0")
 
     def test_a_cli_call_that_never_returns_does_not_hold_the_harness(self):
         # the watchdog runs the dispatch and the pings; a claude call that never returned would hold all of it,
@@ -2572,6 +2953,69 @@ class SupportTests(Flow):
         self.assertEqual(self.s("kb-1")["state"], "lost")
         self.assertIn("did not finish integrating", self.heard())
         self.assertTrue(self.forks("kb-"))  # and a new one is built
+
+    def test_the_status_says_how_many_tasks_wait_behind_each_that_could_start(self):
+        # the planner orders dependency before size: what starting a task first releases is said beside it
+        self.w.task("7", subject="Ready")
+        self.w.task("8", subject="Waits on 7", blockedBy=["7"])
+        self.w.task("9", subject="Waits on 8", blockedBy=["8"])
+        self.w.task("10", subject="Ready too")
+        self.w.set_st(queue=["7", "10"], tasks={t: {"stage": "ready"} for t in ("7", "8", "9", "10")})
+        said = self.w.v2("status")
+        self.assertIn("startable now: 7 (2 wait on it) 10", said)
+
+    def test_a_task_s_passing_state_is_rendered_so_that_no_planner_writes_it(self):
+        # 405 of the 908 blocks by which the planners of 09-21/22 edited HANDOFF.md changed a task's passing state
+        since = time.time() - 600
+        self.w.task("7", subject="Parked", status="in_progress")
+        self.w.task("8", subject="Rejected twice", status="in_progress")
+        self.w.set_st(tasks={"7": {"stage": "parked", "parked": {"for": "machine", "since": since}},
+                             "8": {"stage": "fixing", "rejections": 2}})
+        graph = self.w.v2("graph")
+        self.assertIn(f"- 7 [in_progress, parked for the machine since {time.strftime('%H:%M', time.localtime(since))}]",
+                      graph)
+        self.assertIn("- 8 [in_progress, fixing, rejected 2×]", graph)
+        self.assertEqual(set(v2.PARKED_FOR), {"run", "fix", "tree", "answer", "machine", "check", "probe"})  # every
+        # kind a park is recorded with (cmd_park, the check a session asks for, a queued probe, the tree's wait)
+        for tid, commit, ok in (("5", "90991eacdeadbeef", True), ("6", "12345678", False)):
+            d = self.w.project / ".build" / "tasks" / tid
+            d.mkdir(parents=True, exist_ok=True)
+            (d / "finalized.json").write_text(json.dumps({"ok": ok, "commit": commit}))
+        old = self.w.project / ".build" / "tasks" / "4"
+        old.mkdir(parents=True, exist_ok=True)
+        (old / "finalized.json").write_text(json.dumps({"ok": True, "commit": "0ldc0mm1t"}))
+        os.utime(old / "finalized.json", (time.time() - 5 * 3600,) * 2)
+        said = self.w.v2("status")
+        self.assertIn("landed in the last 3 hours: 5 as 90991eac (", said)
+        self.assertNotIn("6 as", said)      # its landing did not stand
+        self.assertNotIn("0ldc0mm1", said)  # before the window
+        protocol = (fakes.HERE / "protocols" / "planner.md").read_text()
+        self.assertIn("passing state", protocol)
+
+    def test_the_status_says_how_the_last_hour_used_the_slots(self):
+        # finding 11: fewer than two sessions worked in 349 of 638 minutes while a task waited on work in its check or
+        # review — the status showed the moment, never the hour
+        self.w.task("7", subject="In its check", status="in_progress")
+        self.w.task("8", subject="Waits on it", blockedBy=["7"])
+        self.w.task("9", subject="Waits on nothing open")
+        self.w.task("11", subject="Still being produced", status="in_progress")
+        self.w.task("10", subject="Waits on work still being produced", blockedBy=["11"])
+        self.w.set_st(queue=["8", "9", "10"], tasks={"7": {"stage": "checking"}, "8": {"stage": "ready"},
+                                                     "9": {"stage": "ready"}, "10": {"stage": "ready"},
+                                                     "11": {"stage": "running"}})
+        run = lambda code: subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                           f"import v2; {code}"], env=self.w.env, capture_output=True, text=True)
+        run("v2.sample_occupancy()")
+        (line,) = (self.w.state / "occupancy.log").read_text().splitlines()
+        busy = run("print(len(v2.working(v2.peek())))").stdout.strip()
+        self.assertEqual(line.split()[1:], [busy, "1"])       # who works, and one task held by work in its check
+        self.assertNotIn("the last hour", self.w.v2("status"))  # under half an hour of samples: nothing said
+        now = int(time.time())
+        (self.w.state / "occupancy.log").write_text("".join(f"{now - 60 * i} {1 if i % 2 else 2} {1 if i < 20 else 0}\n"
+                                                            for i in range(59, -1, -1)) + f"{now - 7200} 0 5\n")
+        said = self.w.v2("status", env={"ORCH_WORKERS": "2"})
+        self.assertIn("the last hour: 1.5 of 2 sessions working on average; in 10 of its 60 minutes a slot stood free "
+                      "while a task waited only on work in its check, its review or its landing", said)
 
     def test_the_status_says_which_tasks_could_start_now(self):
         # the width of the graph as the planner drew it: with one, nothing can take the producing slot while the task
@@ -3331,6 +3775,161 @@ class SupportTests(Flow):
         self.assertIn("2 build and fix tasks can start and there are 2 slots", log)  # said in shape, not in a count
 
 
+class RoleLayerTests(Flow):
+    """The per-role reasoning layer (the owner, 2026-09-23: built behind a switch, which the owner turns on to test):
+    a fork of the role's base that reasons once over what the run has shown of the role, which the role's sessions
+    then fork."""
+
+    def setUp(self):
+        super().setUp()
+        self.w.repository()
+        self.w.task("1")
+        self.w.set_st(queue=["1"])
+
+    def test_with_the_switch_off_nothing_is_built_and_the_role_forks_its_base(self):
+        self.w.v2("dispatch")
+        self.assertEqual(self.forks("layer-"), [])
+        (impl,) = self.forks("implement-")
+        self.assertEqual(impl[impl.index("--resume") + 1], "base-sid")
+        self.assertNotIn("reasoning layer", impl[-1])
+
+    def test_a_layer_is_built_when_its_role_is_wanted_sealed_when_it_has_reasoned_and_forked_by_the_role(self):
+        (self.w.state / "role-layers").write_text("implementer\n")
+        self.w.v2("dispatch")
+        (layer,) = self.forks("layer-")                                 # built on demand, from the role's base
+        self.assertEqual(layer[layer.index("--resume") + 1], "base-sid")
+        self.assertIn("You are layer-implementer, the reasoning layer of the implementer", layer[-1])
+        self.assertIn("## The implementer's protocol, as each of its sessions receives it", layer[-1])
+        self.assertIn("No session of the implementer has ended yet", layer[-1])  # the evidence, read in the background
+        self.assertIn("End your reply with the line `ROLE-LAYER READY`", layer[-1])
+        self.assertNotIn("{", re.sub(r"\{[^A-Z]", "", layer[-1].split("## What the run")[0]))  # its protocol filled
+        (impl,) = self.forks("implement-")                              # meanwhile the role forks its base
+        self.assertEqual(impl[impl.index("--resume") + 1], "base-sid")
+        self.w.v2("dispatch")
+        self.assertEqual(len(self.forks("layer-")), 1)                  # one build at a time
+        self.w.reply(self.s("layer-implementer")["sid"], "## Practices\n1. Read once.")
+        self.w.v2("dispatch")
+        self.assertNotEqual(self.s("layer-implementer").get("layer_state"), "sealed")  # not until it ends its reasoning
+        self.w.reply(self.s("layer-implementer")["sid"], "## Practices\n1. Read once.\nROLE-LAYER READY")
+        self.w.v2("dispatch")
+        st = self.w.st()
+        self.assertEqual(st["role_layers"]["implementer"]["name"], "layer-implementer")
+        self.assertEqual(self.s("layer-implementer")["layer_state"], "sealed")
+        self.w.task("2")
+        self.w.set_st(queue=["2"])
+        st = self.w.st()
+        st["sessions"]["implement-1"]["state"] = "done"                 # its slot free for the next
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        forked = [f for f in self.forks("implement-") if f[f.index("-n") + 1] != "implement-1"]
+        self.assertTrue(forked, self.forks())
+        self.assertEqual(forked[0][forked[0].index("--resume") + 1], self.s("layer-implementer")["sid"])
+        self.assertIn("the reasoning of layer-implementer, your role's reasoning layer", forked[0][-1])
+        self.assertEqual(self.s(forked[0][forked[0].index("-n") + 1])["origin"], "layer-implementer")
+        # the base rebuilt: the layer holds a load its forks would be told nothing of, and is built again
+        self.w.base(sid="base-sid-2")
+        self.w.v2("dispatch")
+        self.assertEqual([f[f.index("-n") + 1] for f in self.forks("layer-")], ["layer-implementer", "layer-implementer.2"])
+        self.w.task("3")
+        self.w.set_st(queue=["3"])
+        st = self.w.st()
+        for n in st["sessions"]:
+            if n.startswith("implement-"):
+                st["sessions"][n]["state"] = "done"
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.w.v2("dispatch")
+        last = [f for f in self.forks("implement-")][-1]
+        self.assertEqual(last[last.index("--resume") + 1], "base-sid-2")        # not the layer over the old base
+
+    def test_a_layer_uses_no_tool_is_held_while_its_role_is_wanted_and_let_go_when_its_switch_is_off(self):
+        (self.w.state / "role-layers").write_text("implementer")
+        self.w.v2("dispatch")
+        said = self.w.hook("work_meter.py", "guard", {"session_id": self.s("layer-implementer")["sid"], "tool_name": "Bash",
+                                                      "tool_input": {"command": "cat HANDOFF.md"}, "cwd": str(self.w.project),
+                                                      "hook_event_name": "PreToolUse"})[1]
+        self.assertIn("A reasoning layer uses no tool", json.dumps(said))
+        self.assertIsNone(self.w.hook("ctx_gauge.py", "stop", {"session_id": self.s("layer-implementer")["sid"],
+                                                               "hook_event_name": "Stop"})[1])  # its reply ends its turn
+        self.assertEqual(self.held("layer-implementer"), "the implementer's reasoning layer, reasoning")
+        self.w.reply(self.s("layer-implementer")["sid"], "ROLE-LAYER READY")
+        self.w.v2("dispatch")
+        self.assertEqual(self.held("layer-implementer"), "the implementer's reasoning layer")  # pinged while wanted
+        st = self.w.st()
+        st["role_layers"]["implementer"]["wanted"] = time.time() - v2.ROLE_LAYER_IDLE - 60
+        (self.w.state / "v2.json").write_text(json.dumps(st))
+        self.assertEqual(self.held("layer-implementer"), "None")          # not wanted for long: its pings stop
+        (self.w.state / "role-layers").unlink()
+        self.w.v2("dispatch")
+        self.assertTrue(self.s("layer-implementer").get("released"))
+        self.assertIn("is let go: its switch is off", (self.w.state / "v2.log").read_text())
+
+    def held(self, name):
+        code = (f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2, watchdog; st = v2.peek(); "
+                f"print(watchdog.held(st, {name!r}, st['sessions'][{name!r}]))")
+        return subprocess.run([sys.executable, "-c", code], env=self.w.env, capture_output=True, text=True).stdout.strip()
+
+    def test_the_evidence_is_read_from_the_role_s_sessions_and_the_reviews_of_its_work(self):
+        t0 = time.time() - 600
+        self.w.session("implement-5", "implementer", "i5", state="done", live=False, task="5", started=t0, ended=t0 + 300)
+        self.w.session("review-5", "reviewer", "r5", state="done", live=False, task="5", reviews="5", started=t0 + 310,
+                       ended=t0 + 400)
+        self.w.set_st(tasks={"5": {"kind": "build", "rejections": 1, "stage": "done"}})
+        base = {"type": "assistant", "timestamp": fakes.iso(t0 - 3600), "message": {"id": "old", "content": [
+            {"type": "tool_use", "id": "x0", "name": "Bash", "input": {"command": "cat copied-from-the-base"}}]}}
+        self.w.transcript("i5", [
+            base,                                                             # its origin's, copied: not its own
+            fakes.assistant("m1", fakes.iso(t0 + 10), [{"type": "tool_use", "id": "a", "name": "Bash",
+                                                         "input": {"command": "v2.py result 5"}}]),
+            {"type": "user", "timestamp": fakes.iso(t0 + 11), "message": {"content": [
+                {"type": "tool_result", "tool_use_id": "a", "content": "refused: the result has no `Acceptance` part"}]}},
+            {"type": "attachment", "timestamp": fakes.iso(t0 + 11), "attachment": {
+                "type": "hook_additional_context", "content": ["Since your last production: 1 of 3 reads.",
+                                                               "One change in this call: batch them. Next."]}},
+            {"type": "attachment", "timestamp": fakes.iso(t0 + 12), "attachment": {"type": "hook_success", "stdout": json.dumps(
+                {"hookSpecificOutput": {"permissionDecision": "deny", "permissionDecisionReason":
+                                        "Write is not a session's tool (the owner, 2026-09-21). Files are changed…"}})}},
+            fakes.assistant("m2", fakes.iso(t0 + 20), [{"type": "tool_use", "id": "b", "name": "Bash",
+                                                         "input": {"command": ".claude/orchestration/v2.py change <<'EOF'\n"
+                                                                              "=== write theories/A.thy\nx\nEOF"}}])])
+        self.w.transcript("r5", [fakes.assistant("m1", fakes.iso(t0 + 320), [{"type": "tool_use", "id": "c", "name": "Bash",
+            "input": {"command": ".claude/orchestration/v2.py change <<'EOF'\n=== write .build/tasks/5/review.md\n"
+                                 "Verdict: reject\n## Summary\ns\n## Findings\n- `ready` duplicates `base_def`\nEOF\n"
+                                 ".claude/orchestration/v2.py verdict 5 reject --file .build/tasks/5/review.md"}}])])
+        code, out, err = self.w.run("role_evidence.py", "implementer")
+        self.assertEqual((code, err), (0, ""), out)
+        text = (self.w.state / "role-evidence/implementer.md").read_text()
+        self.assertIn("the last 1 sessions of the implementer", text)
+        self.assertIn("requests: median 2 (from 2 to 2); before the first change: median 1", text)
+        self.assertIn("their tasks: 1 of 1 rejected at least once", text)
+        self.assertIn("One change in this call: batch them.", text)            # what it was told
+        self.assertNotIn("Since your last production", text)                   # not its counters
+        self.assertIn("the result has no `…` part", text)                     # what it was refused, as a kind
+        self.assertIn("Write is not a session's tool (the owner, N-N-N).", text)
+        self.assertNotIn("copied-from-the-base", text)
+        self.assertIn("- task 5 (implementer), by review-5", text)
+        self.assertIn("- `ready` duplicates `base_def`", text)                  # the findings as given
+        code, out, err = self.w.run("role_evidence.py", "reviewer")
+        self.assertIn("now done, rejected 1 time(s)", (self.w.state / "role-evidence/reviewer.md").read_text())
+        self.w.write(".build/tasks/5/review.md", "Verdict: accept\n## Summary\nfixed\n## Findings\n- fixed\n")
+        self.w.transcript("r5", [fakes.assistant("m1", fakes.iso(t0 + 320), [{"type": "tool_use", "id": "c", "name": "Bash",
+            "input": {"command": ".claude/orchestration/v2.py verdict 5 reject --file .build/tasks/5/review.md"}}])])
+        self.w.run("role_evidence.py", "implementer")
+        self.assertIn("(none among the last reviews)", (self.w.state / "role-evidence/implementer.md").read_text())
+        # the file holds its re-review's accept now, not the findings of the rejection
+
+    def test_the_switch_names_roles_or_all(self):
+        with tempfile.TemporaryDirectory() as temp, patch.object(v2, "STATE", temp), \
+                patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("ORCH_ROLE_LAYERS", None)
+            self.assertEqual(v2.role_layers(), set())
+            open(os.path.join(temp, "role-layers"), "w").close()
+            self.assertEqual(v2.role_layers(), v2.LAYERABLE)
+            open(os.path.join(temp, "role-layers"), "w").write("reviewer, fixer planner")
+            self.assertEqual(v2.role_layers(), {"reviewer", "fixer"})  # the planner forks the knowledge base
+            with patch.dict(os.environ, {"ORCH_ROLE_LAYERS": "0"}):
+                self.assertEqual(v2.role_layers(), set())
+
+
 class ReviewTaskTests(Flow):
     """A build with two review tasks: committed only when both accept; one rejection sends every finding to its fix."""
 
@@ -3386,6 +3985,8 @@ class ReviewTaskTests(Flow):
         self.assertEqual(self.t("5")["stage"], "reviewing")
         again = [c["args"] for c in self.w.calls("--bg") if c["args"][:3] == ["--bg", "--resume", self.s("review-6")["sid"]]]
         self.assertIn("The findings you listed on task 5 are fixed", again[-1][3])
+        self.assertIn("== result\n", again[-1][3])                        # its first read with it (review-251, 09-22)
+        self.assertIn("== restated\n", again[-1][3])
         self.assertEqual(len(self.forks("review-")), 2)  # review 7 accepted: it does not judge again
         self.verdict("6", "accept")
         self.assertEqual(self.t("5")["stage"], "done")
@@ -3667,6 +4268,11 @@ class TreeTests(Flow):
         s = self.start("5")
         tree = self.w.project / ".build/trees/5"
         (tree / "theories/Ready.thy").write_text("theory Ready imports Base begin (* the change under review *) end\n")
+        long = "base \\<and> base \\<and> base \\<and> base \\<and> base"
+        (tree / "theories/Ready_Twice.thy").write_text(f'theory Ready_Twice imports Base begin\nlemma ready_bases: "{long}"\n'
+                                                       '  by simp\nend\n')
+        (tree / "theories/Ready_Again.thy").write_text(f'theory Ready_Again imports Base begin\nlemma bases_ready: "{long}"\n'
+                                                       '  by simp\nend\n')
         self.w.write(".build/tasks/5/result.md", "Status: done\n\nThe result of task five.\n")
         self.w.write(".build/tasks/5/finalize.json", json.dumps(
             {"check": "true", "files": ["theories/Ready.thy"], "message": ".build/tasks/5/commit.md"}))
@@ -3676,11 +4282,17 @@ class TreeTests(Flow):
         first = call["args"][-1]
         self.assertIn("## The work under review, as read at your start", first)
         for part, said in (("== result", "The result of task five."), ("== log", "check passed in 3 s"),
-                           ("== probes", ""), ("== diff", "the change under review")):
+                           ("== probes", ""), ("== restated", "`ready_bases` states what Ready_Again.bases_ready states"),
+                           ("== tree", "tree: .build/trees/5, branch task/5, left main at"),
+                           ("== tree", "uncommitted or new: "), ("== diff", "the change under review")):
             self.assertIn(part, first)
             self.assertIn(said, first[first.index(part):])
         self.assertLess(first.index("== result"), first.index("== diff"))  # the diff last
         self.assertNotIn("{FIRST}", first)
+        # and the statements its brief names, what the work is to consume, read in the task's tree (`Base.base_def`,
+        # which this fixture's tree does not hold, is said so)
+        named = first[first.index("## What the brief names"):first.index("## How you judge")]
+        self.assertIn("`Base.base_def`", named)
 
     def test_a_read_and_the_reviewer_see_the_tree_the_work_stands_in(self):
         s = self.start("5")
@@ -3747,6 +4359,83 @@ class ReviewBeforeCommitTests(Flow):
         self.assertEqual(self.t("22")["stage"], "planner")
         self.assertEqual(self.w.read_task("22")["status"], "in_progress")
         self.assertIn("it has no final job, so it is yours to have finished", self.heard())
+
+
+class ReviewBesideCheckTests(Flow):
+    """C9, the owner's switch: a build's review beside its check — from result to commit took a median 18.4 minutes
+    on 09-22's afternoon, and a review started at the result would have ended a median 8.2 minutes sooner."""
+
+    def setUp(self):
+        super().setUp()
+        self.w.task("22", subject="the locus", status="in_progress")
+        self.w.task("23", description=REVIEW_TASK.format(task="22"), subject="its review", blockedBy=["22"])
+        self.w.set_st(tasks={"22": {"stage": "checking", "kind": "build", "review_tasks": ["23"]},
+                             "23": {"stage": "ready", "reviews": "22"}})
+        self.run_v2 = lambda code: subprocess.run(
+            [sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; {code}"],
+            env=self.w.env, capture_output=True, text=True)
+
+    def verdict(self, v, findings=""):
+        if "review-23" not in self.w.st()["sessions"]:
+            self.w.session("review-23", "reviewer", "r23", task="23", reviews="22")
+        self.w.write(".build/tasks/23/review.md", VERDICT.format(v=v, f=findings))
+        return self.as_("review-23", "verdict", "23", v, "--file", ".build/tasks/23/review.md")
+
+    def test_with_the_switch_off_a_task_in_its_check_awaits_no_verdict(self):
+        self.assertEqual(self.run_v2("print(v2.pending_reviews(v2.peek()))").stdout.strip(), "[]")
+        self.assertIn("is not awaiting a verdict (it is checking)", self.verdict("accept"))
+        tasks = self.w.st()["tasks"]                                  # its check passed: reviewed as always
+        tasks["22"]["stage"] = "reviewing"
+        sessions = {k: v for k, v in self.w.st()["sessions"].items() if k != "review-23"}
+        self.w.set_st(tasks=tasks, sessions=sessions)
+        self.w.v2("dispatch")
+        self.assertIn("Its check has passed", self.forks("review-23")[-1][-1])
+
+    def test_an_accept_beside_the_check_is_committed_when_the_check_passes(self):
+        (self.w.state / "review-beside-check").write_text("")
+        self.assertEqual(self.run_v2("print(v2.pending_reviews(v2.peek()))").stdout.strip(), "[('23', '22')]")
+        self.w.v2("dispatch")                                        # the review starts while the check runs
+        self.assertEqual(self.t("22")["stage"], "checking")
+        self.assertTrue(self.forks("review-23"), (self.w.state / "v2.log").read_text()[-1500:])
+        self.assertIn("Its check runs beside your review", self.forks("review-23")[0][-1])
+        self.assertNotIn("Its check has passed", self.forks("review-23")[0][-1])
+        st = self.w.st()
+        st["sessions"]["review-23"].update(task="23", reviews="22")
+        self.w.set_st(sessions=st["sessions"])
+        self.assertIn("accepted task 22", self.verdict("accept"))
+        self.assertEqual((self.t("22")["stage"], self.t("22").get("accepted_early")), ("checking", True))
+        self.run_v2("v2.checked('22', True)")
+        self.assertEqual(self.t("22")["stage"], "committing")
+        self.assertNotIn("accepted_early", self.t("22"))
+
+    def test_a_rejection_beside_a_failing_check_is_one_fix_round_with_both(self):
+        (self.w.state / "review-beside-check").write_text("")
+        self.assertIn("rejected task 22", self.verdict("reject", "1. The locus is stated twice."))
+        self.assertEqual((self.t("22")["stage"], self.t("22").get("rejections", 0)), ("checking", 0))
+        self.run_v2("v2.checked('22', False, '*** a proof failed')")
+        t = self.t("22")
+        self.assertEqual((t["stage"], t["rejections"], t["checks_failed"]), ("fixing", 1, 1))
+        self.assertIn("*** a proof failed", t["fix_text"])
+        self.assertIn("The locus is stated twice.", t["fix_text"])
+
+    def test_a_rejection_beside_a_passing_check_is_its_fix_round(self):
+        (self.w.state / "review-beside-check").write_text("")
+        self.verdict("reject", "1. The locus is stated twice.")
+        self.run_v2("v2.checked('22', True)")
+        t = self.t("22")
+        self.assertEqual((t["stage"], t["rejections"]), ("fixing", 1))
+        self.assertIn("The locus is stated twice.", t["fix_text"])
+
+    def test_an_accept_of_work_that_fails_its_check_is_void_and_its_fix_reviewed_again(self):
+        (self.w.state / "review-beside-check").write_text("")
+        self.verdict("accept")
+        self.run_v2("v2.checked('22', False, '*** a proof failed')")
+        t, r = self.t("22"), self.t("23")
+        self.assertEqual((t["stage"], r.get("verdict"), r.get("voided")), ("fixing", None, "its check failed after the accept"))
+        tasks = self.w.st()["tasks"]
+        tasks["22"]["stage"] = "checking"                           # the fix handed over: in its check again
+        self.w.set_st(tasks=tasks)
+        self.assertEqual(self.run_v2("print(v2.pending_reviews(v2.peek()))").stdout.strip(), "[('23', '22')]")
 
 
 class PlannerDepthTests(Flow):
@@ -3929,6 +4618,55 @@ class GraphEditTests(Flow):
         (drafts / "k.md").write_text("no\n")                                    # a draft is judged as a brief is
         self.assertIn("task k: the brief has no", self.edit([{"create": "k", "subject": "x",
                                                                  "descriptionFile": ".build/plans/plan-1/k.md"}]))
+
+    def test_a_follow_up_s_brief_is_drafted_from_its_review_verbatim_and_completed_by_the_planner(self):
+        # C15 (the owner's yes of 2026-09-23, if information quality stays or rises): what the harness writes is copied
+        self.w.write("theories/Native_Table_Reach.thy", "theory Native_Table_Reach imports Main begin end\n")
+        self.w.write(".build/tasks/20/review.md", "Verdict: accept\n## Summary\nFine.\n## Follow-ups\n\n"
+                     "1. **The contract at any support relation.** `native_rearranging_program` states `exact` only at\n"
+                     "   the positive meaning; the reach's case (Native_Table_Reach, lines 36–37) re-derives it.\n"
+                     "   Plan: one lemma.\n2. Efficiency: none found.\n")
+        said = self.as_("plan-1", "follow-up", "20:1")
+        self.assertIn("drafted .build/plans/plan-1/follow-20-1.md", said)
+        draft = (self.w.project / ".build/plans/plan-1/follow-20-1.md").read_text()
+        self.assertIn("Kind: fix\nServes: #20's review (`.build/tasks/20/review.md`, follow-up 1). <<PLANNER", draft)
+        self.assertIn("Inputs: `.build/tasks/20/review.md` (follow-up 1); what the follow-ups name: "
+                      "`native_rearranging_program`, `Native_Table_Reach`.", draft)  # as named, in order; `exact` a word
+        self.assertIn("the follow-ups name `Native_Table_Reach`", draft)
+        self.assertIn("From the review:\nFrom `.build/tasks/20/review.md`, follow-up 1:\n> 1. **The contract at any "
+                      "support relation.** `native_rearranging_program` states `exact` only at\n>    the positive "
+                      "meaning; the reach's case (Native_Table_Reach, lines 36–37) re-derives it.\n>    Plan: one lemma.",
+                      draft)                                                   # verbatim, a field-like line quoted
+        self.assertNotIn("Efficiency: none found", draft)                      # only the items named
+        refused = self.edit([{"create": "f", "subject": "x", "descriptionFile": ".build/plans/plan-1/follow-20-1.md"}])
+        self.assertIn("the brief still holds parts marked for you (Serves, Deliverable, Acceptance, Inputs, Plan, "
+                      "Size, Decided)", refused)                               # nothing placed with a mark left
+        filled = re.sub(r"<<PLANNER: [^>]*>>", "the planner's words", draft)
+        filled = filled.replace("Deliverable: the planner's words", "Deliverable: `theories/Native_Table_Reach.thy`")
+        filled = filled.replace("Plan: the planner's words", "Plan:\n1. State it.\n2. Cite it.")
+        filled = filled.replace("Size: the planner's words", "Size: about 80K")
+        (self.w.project / ".build/plans/plan-1/follow-20-1.md").write_text(filled)
+        said = self.edit([{"create": "f", "subject": "The contract once",
+                           "descriptionFile": ".build/plans/plan-1/follow-20-1.md", "continues": "20"}])
+        self.assertIn("f is task 21", said)
+        self.assertEqual(self.w.read_task("21")["metadata"]["continues"], "20")  # C13's mark, placed by an edit
+        self.assertIn("> 1. **The contract at any support relation.**", self.w.read_task("21")["description"])
+        # several reviews' follow-ups in one, bare or grouped; and what refuses
+        self.w.write(".build/tasks/11/review.md", "Verdict: accept\n## Summary\nFine.\n## Follow-ups\n- one\n- two\n")
+        said = self.as_("plan-1", "follow-up", "20", "1", "11:2")
+        self.assertIn("follow-20-1-11-2.md", said)
+        both = (self.w.project / ".build/plans/plan-1/follow-20-1-11-2.md").read_text()
+        self.assertIn("#20's review (`.build/tasks/20/review.md`, follow-up 1); #11's review (`.build/tasks/11/review.md`, "
+                      "follow-up 2)", both)
+        self.assertIn("follow-up 2:\n> - two", both)
+        self.assertIn("refused: .build/tasks/11/review.md has no follow-up 3 (its follow-ups: 1, 2)",
+                      self.as_("plan-1", "follow-up", "11:3"))
+        self.assertIn("refused: task 5 has no review with a verdict file", self.as_("plan-1", "follow-up", "5:1"))
+        self.assertIn("refused: a follow-up's task is one of", self.as_("plan-1", "follow-up", "11:1", "--kind", "review"))
+        self.assertIn("task g continues '99', which is not a task of the list",
+                      self.edit([{"create": "g", "subject": "x", "description": BRIEF, "continues": "99"}]))
+        self.w.session("implement-9", "implementer", "s9", task="9")
+        self.assertIn("refused: drafting a brief is the planner's", self.as_("implement-9", "follow-up", "11:1"))
 
     def test_an_edit_refuses_a_cycle_a_brief_out_of_form_and_a_role_without_the_graph(self):
         self.assertIn("a cycle nothing could ever start", self.edit([{"blockers": "1", "set": ["11"]}]))
@@ -4372,15 +5110,16 @@ class DocumentsAndBasesTests(unittest.TestCase):
         self.assertNotIn("refused", said)
         spec = json.loads((self.w.project / ".build/tasks/3/finalize.json").read_text())
         self.assertEqual(spec["check"], "documents")
-        # anything but Markdown outside the theories, the tools and the recorded validation needs its check
+        # anything but Markdown outside the theories, the tools and the recorded validation takes the repository's
+        # check, named or not
         self.w.write("ROOT", "session S = HOL +\n")
-        said = self.w.v2("finalize", "3", "--files", "DECISIONS.md", "ROOT", "--message", ".build/tasks/3/commit.md",
-                         env=self.w.as_session("k3"))
-        self.assertIn("--check may be left out when every file is a Markdown document", said)
         self.w.write("tools/notes.md", "# tools\n")
-        said = self.w.v2("finalize", "3", "--files", "tools/notes.md", "--message", ".build/tasks/3/commit.md",
-                         env=self.w.as_session("k3"))
-        self.assertIn("refused", said)
+        for files in (["DECISIONS.md", "ROOT"], ["tools/notes.md"]):
+            said = self.w.v2("finalize", "3", "--files", *files, "--message", ".build/tasks/3/commit.md",
+                             env=self.w.as_session("k3"))
+            self.assertIn("its check the repository's", said)
+            self.assertEqual(json.loads((self.w.project / ".build/tasks/3/finalize.json").read_text())["check"],
+                             v2.REPOSITORY_CHECK.format(tid="3"))
 
     def test_the_old_heap_store_is_a_link_again_and_the_pointers_are_never_crossed(self):
         # task 144 moved the heap store to .build/tasks/base-lasting/ and left links at the /tmp paths; a base records
@@ -4528,6 +5267,33 @@ class DocumentsAndBasesTests(unittest.TestCase):
         self.assertIn("Edit as the tree holds it now", said)
         self.assertIn("NOT complete: no completion marker; 1 error line(s)", said)
         self.assertIn("Edit DIFFERS from the tree now", said)
+        # a renamed copy the probe tool names in its summary is read as the theory it stands for (#229's review) — an
+        # intermediate theory the task did not change, which no reading of the task's own changes would find
+        self.w.write("theories/Stable.thy", "theory Stable imports Main\nbegin\nlemma s: True by simp\nend\n")
+        self.w.git("add", "theories/Stable.thy")
+        self.w.git("commit", "-qm", "a stable theory")
+        ren = self.w.project / ".build/tasks/3/probe-renamed"
+        (ren / "theories").mkdir(parents=True)
+        (ren / "theories/Stable_Probe.thy").write_text("theory Stable_Probe imports Main\nbegin\nlemma s: True by simp\nend\n")
+        (ren / "probe.ML").write_text(f'val _ = Thy_Info.use_thy_legacy "{ren}/theories/Stable_Probe";\n')
+        (ren / "probe.log").write_text("PROBE THEORIES LOADED\n")
+        (ren / "probe.summary.json").write_text(json.dumps({"from_tree": {"Stable": "Stable_Probe"}}))
+        self.assertIn("Stable_Probe: the tree's Stable as it stands", self.w.v2("read", "probes", env=self.w.as_session("k3")))
+        shutil.rmtree(ren)
+        # what the harness states in the commit: the theories a complete, clean probe loaded as the tree holds them —
+        # not one of another text however clean, nor one of this text cut before its marker
+        for name, text, log in (("probe-stale", "theory Edit imports Main\nbegin\nlemma f: True by simp\nend\n",
+                                 "PROBE THEORIES LOADED\n"),
+                                ("probe-cut", "theory Edit imports Main\nbegin\nlemma e: True by simp\nend\n", "### theory\n")):
+            d = self.w.project / ".build/tasks/3" / name
+            (d / "theories").mkdir(parents=True)
+            (d / "theories/Edit.thy").write_text(text)
+            (d / "probe.ML").write_text(f'val _ = Thy_Info.use_thy_legacy "{d}/theories/Edit";\n')
+            (d / "probe.log").write_text(log)
+        whole = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                                f"print(v2.probed_whole('3', {str(self.w.project)!r}))"], env=self.w.env,
+                               capture_output=True, text=True).stdout.strip()
+        self.assertEqual(whole, "(['Edit'], 1)")
         # its session removes its probes before handing over: the harness's copy stands (fix-245, 2026-09-22)
         subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
                         "v2.keep_probes('3')"], env=self.w.env, check=True)
@@ -4535,6 +5301,40 @@ class DocumentsAndBasesTests(unittest.TestCase):
         said = self.w.v2("read", "probes", env=self.w.as_session("k3"))
         self.assertIn(".build/tasks/3/probe (removed by its session; the harness's copy) at", said)
         self.assertIn("complete: PROBE THEORIES LOADED; 0 error line(s); its theories loaded in 3.1 s", said)
+
+    def test_a_probe_run_outside_the_task_s_folder_is_found_and_kept(self):
+        # tasks 233 and 245 probed under a folder of their own naming, and their reviews could not read back the
+        # completion marker their results claimed (2026-09-22): the guard records where each probe runs
+        self.w.write("theories/Edit.thy", "theory Edit imports Main\nbegin\nlemma e: True by simp\nend\n")
+        work = self.w.project / ".build/tasks/edit-named/probe"
+        cmd = "python3 -B tools/probe_theories.py --work .build/tasks/edit-named/probe --theory Edit --timeout 60"
+        noted = subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); "
+                                "import work_meter, v2; "
+                                f"v2.note_probe_dirs('3', work_meter.probe_work({cmd!r}, {str(self.w.project)!r}))"],
+                               env=self.w.env, capture_output=True, text=True)
+        self.assertEqual(noted.stderr, "")
+        (work / "theories").mkdir(parents=True)
+        (work / "theories/Edit.thy").write_text("theory Edit imports Main\nbegin\nlemma e: True by simp\nend\n")
+        (work / "probe.ML").write_text(f'val _ = Thy_Info.use_thy_legacy "{work}/theories/Edit";\n')
+        (work / "probe.log").write_text("### theory \"Draft.Edit\"\nPROBE THEORIES LOADED\n")
+        said = self.w.v2("read", "probes", env=self.w.as_session("k3"))
+        self.assertIn(".build/tasks/edit-named/probe at", said)
+        self.assertIn("Edit as the tree holds it now", said)
+        # kept by the harness, and still found once its session has removed it
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import v2; "
+                        "v2.keep_probes('3')"], env=self.w.env, check=True)
+        shutil.rmtree(work)
+        said = self.w.v2("read", "probes", env=self.w.as_session("k3"))
+        self.assertIn(".build/tasks/edit-named/probe (removed by its session; the harness's copy) at", said)
+        self.assertEqual(said.count("PROBE THEORIES LOADED"), 1)
+        # a probe in the task's own folder, named through a tree's `.build` link, is the folder's: not recorded again
+        tree = self.w.project / ".build/trees/3"
+        tree.mkdir(parents=True)
+        (tree / ".build").symlink_to(self.w.project / ".build")
+        own = "python3 -B tools/probe_theories.py --work .build/tasks/3/probe-own --theory Edit --timeout 60"
+        subprocess.run([sys.executable, "-c", f"import sys; sys.path.insert(0, {str(fakes.HERE)!r}); import work_meter, v2; "
+                        f"v2.note_probe_dirs('3', work_meter.probe_work({own!r}, {str(tree)!r}))"], env=self.w.env, check=True)
+        self.assertNotIn("probe-own", (self.w.state / "probes/3/dirs.json").read_text())
 
     def test_integration_trees_are_not_tasks_trees(self):
         # a landing train's integration tree (train.py) holds nothing of its own between trains: the sweep of empty
@@ -4595,6 +5395,7 @@ class DocumentsAndBasesTests(unittest.TestCase):
             context = bases / name / "proof/accepted-context.json"
             context.write_text(json.dumps(dict(json.loads(context.read_text()), stored={"heap": str(heaps / heap)})))
         (self.w.state / "active-context.json").write_text(json.dumps({"directory": str(bases / "c/proof")}))
+        (bases / "stray/incremental.json").write_text("{}")                          # a report: a batch's check's
         old = time.time() - 7200
         os.utime(bases / "stray", (old, old))
         os.utime(bases / "twin", (old, old))
@@ -4603,8 +5404,10 @@ class DocumentsAndBasesTests(unittest.TestCase):
                                  env=dict(self.w.env, ORCH_BASE_KEEP="3600", ORCH_ISABELLE_HOME=str(self.w.root / "isabelle")),
                                  capture_output=True, text=True)
         self.assertEqual(removed.returncode, 0, removed.stderr)
-        self.assertFalse((bases / "stray").exists())                                  # nothing stands on it
-        self.assertFalse((bases / "twin").exists())
+        self.assertFalse((bases / "stray/proof").exists())                            # nothing stands on it: its
+        self.assertFalse((bases / "stray/recipes").exists())                          # bulk goes, and its report
+        self.assertTrue((bases / "stray/incremental.json").exists())                  # stays (C10: batches' here)
+        self.assertFalse((bases / "twin/proof").exists())
         for level in ("a", "b"):
             self.assertTrue((bases / level / "proof").exists())                       # every level keeps its proof
             self.assertFalse((bases / level / "recipes").exists())                    # and loses its check's bulk
@@ -4826,6 +5629,44 @@ class WalkTests(Flow):
         self.assertEqual(len([p for p in trains.glob("*-train1") if p.is_dir()]), 1)
         self.assertFalse(tree.exists())
         self.assertIn("Take up the work of task 1", self.w.git("log", "-3", "main", cwd=self.remote))  # pushed
+        self.assertEqual(self.attention(), [])
+
+    def test_a_continuation_walks_from_its_producer_s_fork_to_its_landing(self):
+        # C13 (the owner's switch) and the argument-free hand-over together: task 2 continues task 1's work, forked from
+        # the session that did it, in a tree of its own; handed over with `v2.py finalize 2` alone — its files, the
+        # repository's check and its commit.md taken — checked, reviewed and landed, and nothing said ATTENTION
+        self.w.write("tools/incremental_check.py", "import os, sys\nos.makedirs(sys.argv[sys.argv.index('--output') + 1], "
+                                                 "exist_ok=True)\n")
+        self.w.git("add", "theories/Base.thy", "tools/incremental_check.py")
+        self.w.git("commit", "-q", "-m", "the base theory and a check")
+        self.w.git("push", "-q", "origin", "main")
+        self.w.kb()
+        self.w.set_st(active=True)
+        (self.w.state / "continue-by-fork").write_text("")
+        self.w.env.update(ORCH_TREES="1", ORCH_LANDING_CHECK="sh -c 'test -f theories/Ready.thy && mkdir -p {output}'")
+        self.w.task("1", status="completed", subject="The work")
+        self.w.session("implement-1", "implementer", "impl1sid", state="done", live=False, task="1", context=600_000)
+        self.w.task("2", description=BRIEF.replace("Kind: build", "Kind: fix"), subject="Its follow-up",
+                    metadata={"kind": "fix", "why": "Task 1's review", "continues": "1"})
+        self.w.session("plan-1", "planner", "p1", settings="planner-settings.json")
+        self.assertEqual(self.as_("plan-1", "queue", "2"), "queued")
+        (fork,) = self.forks("fix-")
+        self.assertEqual(fork[2], "impl1sid")                   # the producer's context, read from its cache
+        self.assertIn("You continue task 1's work", fork[-1])
+        tree = self.w.project / ".build/trees/2"
+        self.assertEqual(self.s("fix-2")["tree"], ".build/trees/2")
+        (tree / "theories/Ready.thy").write_text("theory Ready imports Base begin end\n")
+        self.w.write(".build/tasks/2/commit.md", "Add readiness\n\nValidation: checked.\n")
+        self.w.write(".build/tasks/2/result.md", RESULT.format(status="done"))
+        said = self.as_("fix-2", "finalize", "2")
+        self.assertIn("prepared (1 file your tree has changed: theories/Ready.thy) (its check the repository's", said)
+        self.assertIn("recorded", self.as_("fix-2", "result", "2"))
+        self.assertEqual(self.t("2")["stage"], "reviewing")    # its check, the repository's, ran and passed
+        self.w.write(".build/tasks/2/review.md", VERDICT.format(v="accept", f=""))
+        self.assertIn("accepted", self.as_("review-2", "verdict", "2", "accept", "--file", ".build/tasks/2/review.md"))
+        self.assertEqual(self.t("2")["stage"], "done")
+        self.assertTrue((self.w.project / "theories/Ready.thy").exists())  # landed in main
+        self.assertIn("Take up the work of task 2", self.w.git("log", "-3", "main", cwd=self.remote))
         self.assertEqual(self.attention(), [])
 
     def test_a_build_completed_without_landing_walks_back_through_its_review_to_its_commit(self):

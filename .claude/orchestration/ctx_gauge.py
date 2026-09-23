@@ -213,7 +213,7 @@ def may_end(role, rec):
     session never waits otherwise (the owner, 2026-09-19: with nothing productive left it parks, and another worker
     produces); another session may also end its turn while a question of its own is open or a background job of its
     own runs (the answer, or the job's completion, runs its turn)."""
-    if role in ("kb", "planner") or rec.get("owner") or rec.get("state") in ("done", "parked", "lost"):
+    if role in ("kb", "planner", "role-layer") or rec.get("owner") or rec.get("state") in ("done", "parked", "lost"):
         return True  # the planner's turn ends when it has handled what it was given: the next event wakes it, and its
         # mail is taken above, so there is nothing left when this is reached. An episode the owner opened waits for
         # the owner's words between turns.
@@ -304,8 +304,10 @@ def main():
         return 0
 
     # gauge
+    watch = v2.Stopwatch(f"the gauge of a {hook.get('tool_name')} call of {rec['name']}")
     used = next_request_tokens(hook.get("transcript_path", ""), hook.get("tool_name"), hook.get("tool_response"))
     v2.hit(rec["name"])  # its requests keep its own cache entry alive, and not its origins' (v2.hit)
+    watch.lap("its context read")
     parts = []
     # The call ended the turn (its result, verdict, plan or answer recorded, or its park): it ends here, before the
     # request that would only say so. A session parked or finished cannot act on mail now: it stays in its box, and
@@ -315,6 +317,7 @@ def main():
     # nothing it would say is lost.
     ended = turn_ended(session)
     mail = None if ended and rec.get("state") in ("parked", "done") else v2.take_mail(rec["name"])
+    watch.lap("its mail")
     if mail:
         parts.append(mail)
     ended = ended and not mail
@@ -336,6 +339,7 @@ def main():
             note = None
         if note:
             parts.append(note)
+    watch.done()
     if ended:
         with contextlib.suppress(OSError):
             os.remove(mark(session, "blocks"))  # the Stop hook, which clears it at an ending turn, does not run

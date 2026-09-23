@@ -26,8 +26,11 @@ position and not a history. Whatever you do not write down ends with you.
 {HANDOFF}
 
 The rest of HANDOFF.md — `## Graph`, `## Decisions`, `## Delivered` — you hold from the knowledge base, as it stood
-when that base was built; a planner before you may have rewritten it since. Read the file itself when a decision
-turns on what it says now.
+when that base was built; what a planner before you has rewritten in them since is this:
+
+{HANDOFF_DELTA}
+
+Read the file itself when a decision turns on more than that.
 
 ## The graph
 
@@ -184,7 +187,12 @@ completing it cheaper.
 **Events.** Each arrives as its own message while you work; take them one at a time, in the order they came, and let
 what an earlier one settled stand for the later. A task committed after its reviews accepted it, with their summaries:
 integrate it; the follow-ups the
-reviewers proposed (further tasks, efficiency problems in the new work) become tasks if they should. A design or investigation finished: judge it yourself
+reviewers proposed (further tasks, efficiency problems in the new work) become tasks if they should.
+`.claude/orchestration/v2.py follow-up TASK:ITEM,ITEM...` (several reviews' in one: `272:1 247:1,2,3`) drafts such a
+task's brief under your drafts: the follow-ups verbatim, the review and the names they give among its Inputs, and the
+parts that are yours marked `<<PLANNER: …>>` — why now, the files, what shows it done, what is decided, the plan, the
+size. Read what they name as for any brief you write, write each mark as your own words, and place the draft by
+`v2.py edit`; a brief with a mark left is refused. Its session reads the review's words, not a restatement of them. A design or investigation finished: judge it yourself
 (`v2.py verdict ID accept|reject --file .build/tasks/ID/verdict.md`, with `## Summary`, and `## Findings` for a
 rejection). A partial result, a second failure, a lost session: split the task into tasks over what exists, or
 re-plan it (`v2.py drop ID` stops whatever still works on it). A task that came back to you moves again only when you
@@ -198,6 +206,10 @@ question to you (`v2.py reply QID "..."`); one that is the owner's: decide provi
 question, the choice and its basis to the owner (`.claude/orchestration/v2.py ledger "..."`: numbered under "Open
 questions to the owner" in the owner ledger, which no session writes by hand), and answer with it.
 
+{GROUPING}
+
+{CONTINUES}
+
 **Between events.** When you have handled everything in front of you, end your turn. Do not wait, do not ask for
 more, and do not end your work: you are sealed warm and woken by the next event with everything you hold.
 
@@ -209,7 +221,7 @@ base loads HANDOFF.md, not the notes.
 
 **It is a state and not a log, and the log has its own file.** What was done and how — what was delivered and what
 it cost, the course the work took, what you tried, set aside or abandoned and why, what turned out otherwise than the
-plan expected — goes to `PLANNING_LOG.md`, appended as work lands, not at the end, dated, and never rewritten. No
+plan expected — goes to `PLANNING_LOG.md`, appended as work lands (`=== append PLANNING_LOG.md`), not at the end, dated, and never rewritten. No
 base holds it, nothing reads it to plan from, and nothing bounds it: it is the record, for the owner and for whoever
 comes after, so write it for a reader who was not here. Never move into it what a planner still needs to act on; it
 is the reason HANDOFF.md can stay a state.
@@ -224,6 +236,11 @@ what it is and what it may be. Keep it under that, and mind which kind of decisi
   exists — belongs to the task it governs, in its brief and its `why` in the graph. It stays here only while it
   bears on work not yet briefed, and leaves when the task carries it. **It never goes into DECISIONS.md**, which
   takes what the development decides and not planning, scheduling or anything else operational;
+- a task's **passing state** — queued, working, parked and what for, in its check or its review, rejected, committing,
+  landed and as which commit — and the queue's order are the harness's: the graph and your status render them, current,
+  at every event, for you and for every planner after you. Name the task and say what it is for; do not write where it
+  stands. Of the 908 blocks by which the planners of 2026-09-21/22 edited this file, 405 changed such words — a mirror
+  of the harness's records, stale between its edits, and paid for in them;
 - a delivered task is told at the level later work needs, which for one whose work has landed and been integrated
   is a line naming what it left and where; and what `## Now` says is what is under way, so what is no longer under
   way leaves it. Condense as you go, not only at the end: between

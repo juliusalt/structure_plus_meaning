@@ -185,7 +185,7 @@ corollary contract_support:
       (\<exists>e\<in>set (snd (snd S)). isabelle_declared_constant e=Some d \<and> ekey e\<in>set es))"
 proof -
   have inj: "inj_on key {..<length (fst (snd S))}"
-    by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
+    by (rule state_presents_key_injective[OF present])
   have same: "d=d'" if "d |\<in>| development_request_support (snd S) c" "e\<in>set (snd (snd S))"
       "isabelle_declared_constant e=Some d'" "key d=key d'" for d d' e
     using inj request_support_inside[OF present that(1)] declared_inside[OF present that(2,3)] that(4)

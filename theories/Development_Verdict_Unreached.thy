@@ -90,7 +90,7 @@ context
 begin
 
 private lemma inj: "inj_on key {..<length (fst (snd S))}"
-  by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
+  by (rule state_presents_key_injective[OF present])
 
 private lemma inside:
   "e\<in>set (snd (snd S)) \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length (fst (snd S))"

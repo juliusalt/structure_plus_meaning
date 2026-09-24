@@ -39,13 +39,18 @@ def program(engine, inputs, word):
 
     The value is the report applied to its constant arguments, then to a subject name and to the bits of a
     supplied file of octets, each when given; the octets are unpacked most significant bit first, padding
-    included, so the value's own reader decides what they present."""
-    arguments = ['N.' + inputs[name] for name in ['report', 'scope', 'selections'] if inputs.get(name) is not None]
+    included, so the value's own reader decides what they present. With a word constant `c`, proved in its
+    theory to satisfy `c f x z = finite_term_shared_word_fold f (report x) z`, the word is `c` applied to the
+    sink and the same arguments: the same bits, computed as that constant's code equation computes them."""
+    arguments = ['N.' + inputs[name] for name in ['scope', 'selections'] if inputs.get(name) is not None]
     if inputs.get('subject') is not None:
         arguments.append(investigate.ml_string(inputs['subject']))
     if inputs.get('bits') is not None:
         arguments.append('(file_bits ' + investigate.ml_string(inputs['bits']) + ')')
-    report = ' '.join(arguments)
+    if inputs.get('word') is not None:
+        word_value = 'N.' + inputs['word'] + ' sink ' + ' '.join('(' + a + ')' for a in arguments) + ' (0, 0)'
+    else:
+        word_value = 'N.finite_term_shared_word_fold sink (' + ' '.join(['N.' + inputs['report'], *arguments]) + ') (0, 0)'
     return ('use ' + investigate.ml_string(str(engine)) + ';\n'
             'structure N = ' + inputs['module'] + ';\n' + (BITS if inputs.get('bits') is not None else '') +
             'val stream = BinIO.openOut ' + investigate.ml_string(str(word)) + ';\n'
@@ -53,7 +58,7 @@ def program(engine, inputs, word):
             '  let val acc = acc * 2 + (if b then 1 else 0)\n'
             '  in if n = 7 then (BinIO.output1 (stream, Word8.fromInt acc); (0, 0)) else (acc, n + 1) end;\n'
             'fun pad (acc, n) = if n = 0 then () else pad (sink (acc, n) false);\n'
-            'val () = pad (sink (N.finite_term_shared_word_fold sink (' + report + ') (0, 0)) true);\n'
+            'val () = pad (sink (' + word_value + ') true);\n'
             'val () = BinIO.closeOut stream;\n')
 
 
@@ -79,6 +84,8 @@ def main():
     parser.add_argument('--selections', help='Second argument of the report value; omitted for a report of its scope alone.')
     parser.add_argument('--subject', help='A name argument of the report value, after its constant arguments.')
     parser.add_argument('--bits', type=Path, help='A file of octets whose bits are the last argument of the report value.')
+    parser.add_argument('--word', help='An exported constant c, proved to satisfy '
+                        'c f x z = finite_term_shared_word_fold f (report x) z, that computes the word instead.')
     parser.add_argument('--theory', help='Exporting Isabelle theory; defaults to the ML module name.')
     parser.add_argument('--workers', type=int, default=16)
     parser.add_argument('--timeout', type=int, default=2400)
@@ -93,6 +100,7 @@ def main():
     assert args.scope is not None or args.subject is not None, 'A report value takes a scope or a subject.'
     assert all(getattr(args, name) is None or CONSTANT.fullmatch(getattr(args, name)) for name in ['scope', 'selections'])
     assert args.subject is None or SUBJECT.fullmatch(args.subject)
+    assert args.word is None or CONSTANT.fullmatch(args.word)
     bits = None if args.bits is None else args.bits.resolve()
     assert bits is None or bits.is_file()
     output, poly = args.output.resolve(), args.poly.resolve()
@@ -104,6 +112,8 @@ def main():
     inputs = {'theory': theory, 'module': args.module, 'report': args.report,
               'scope': args.scope, 'selections': args.selections, 'subject': args.subject,
               'bits': None if bits is None else str(bits)}
+    if args.word is not None:
+        inputs['word'] = args.word
     receipt = {'status': 'failed', 'invocation': str(uuid.uuid4()), 'inputs': inputs,
                'workers': args.workers, 'boundary': BOUNDARY}
     word = output / 'report.word'

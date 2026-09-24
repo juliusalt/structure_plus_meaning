@@ -1,5 +1,5 @@
 theory Development_Seed
-  imports Native_Control_Seed_Subject Development_Refinement_Contracts
+  imports Native_Control_Seed_Subject Development_Refinement_Contracts Development_Row_Data
 begin
 
 section \<open>The problems the seeded state carries\<close>
@@ -31,6 +31,18 @@ definition development_seed_problem :: "nat \<Rightarrow> development_problem op
 definition development_seed_problems :: "development_problem list" where
   "development_seed_problems=development_refinement_problems development_seed_context
     Development_Residual Development_Generated development_seed_root_constants"
+
+text \<open>The seed is a residual record: its constructor poses residual problems of generated authority.\<close>
+
+lemma development_seed_problem_residual_record:
+  "development_seed_problem c=Some p \<Longrightarrow> development_row_premise (\<lambda>_. None) (\<lambda>_. None) p"
+  unfolding development_seed_problem_def development_refinement_problem_def
+  by (rule development_constant_problem_residual_record)
+
+lemma development_seed_problems_residual_record:
+  "p\<in>set development_seed_problems \<Longrightarrow> development_row_premise (\<lambda>_. None) (\<lambda>_. None) p"
+  unfolding development_seed_problems_def development_refinement_problems_def
+  by (rule development_constant_problems_residual_record)
 
 definition development_seed_unstated :: "nat fset" where
   "development_seed_unstated=development_refinement_unstated development_seed_context

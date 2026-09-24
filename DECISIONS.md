@@ -13073,3 +13073,28 @@ theory this build does not edit, so it goes to the planner. `isabelle_local_root
 `Isabelle_Local_Names`, which this build does not edit.
 
 Recorded 2026-09-24 (task 161; build 1 of design 135).
+
+## Each context's citations are stated, and the premise is discharged by the constructors
+
+Task 165 builds the contexts of "A row outside the store is presented in its context" and leaves every report as
+it was (the switch is the rest of build 2). A residual record cites nothing
+(`development_row_premise_residual_record`); the premise holds of every problem and request the constant
+constructors pose as residuals of generated authority (`Development_Row_Data`), so of the seed's, the machinery's
+and a demanded state's. A repair's definition problems cite the repaired request's problem at its locus
+(`development_repair_origin`, `Development_Refinement_Repair`); the repair context cites nothing else, so the
+request it issues again is presented by it only when its problem is a residual, and within a loop by the loop's
+context. The repaired problem is itself in the extension (`development_repair_state_keeps`), so its citation is
+one locus in both states. The loop cites, for a problem, the head of the first accepted repair row of its history
+whose sockets hold it (`development_loop_origin`, over task 58's rows); rows of `D` are not read.
+
+Decided (the brief left it to the build): the loop's premise is an invariant of the loop's constructors —
+initial loops of residual problems, the successor, selection, issue and the repaired successor
+(`development_loop_cited_*`) — rather than a fact about particular reported states, so it covers every loop the
+process reaches, the machinery's included (`development_machinery_loop_cited`). It rests on one observation: a
+repair row holds only demanded problems, so a residual stays uncited and a cited problem stays cited as the
+history grows (`development_loop_cited_step`). The premise reads citations only through their absence, which
+makes it independent of the key. The store's formedness premise is discharged on the finite side: every row a
+cited loop presents, problem or request, is formed and decodes to a formed value
+(`development_loop_cited_rows`), which `decode_development_problem_body_data` carries to the store's bodies.
+
+Recorded 2026-09-24 (task 165).

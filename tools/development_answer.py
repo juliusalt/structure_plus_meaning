@@ -32,6 +32,14 @@ answers' theories in one session (`read_parts`, `--parts`), each theory writing 
 answer's reading sees another's parts. An answer whose parts hold anything but definitional commands,
 theorem statements and their proofs, document text, one proposition and one proof is refused with
 Isabelle's reason, and its theory is never processed.
+
+An answer whose parts are accepted is proved in a session of its own, or beside other answers in one
+session (`prove_answers`, `--proof`): each answer's theory imports exactly its frame, and its verification
+theory, named by the answer's content, imports the request state and that theory alone, so no answer's
+theories import another's. A shared session's outcome is one, so a shared proof is given to an answer only
+when the whole session was accepted; the export, the verdict, the publication and the summary are each
+answer's own, read from its own verification theory. A parts reading that leaves neither an acceptance nor
+a refusal is no judgment: the harness says so (`judgment: false`).
 """
 from __future__ import annotations
 
@@ -79,6 +87,9 @@ UNVERIFIED = ('The published state is the answer state this answer\'s judgment p
               'and refinements. Its native record, the answer\'s generation selected at the problem\'s locus in a '
               'persistent native published state, does not exist for the refinement layer.')
 FIELDS = {'request', 'definitions', 'equation', 'proof'}
+# The ML structure every verification theory exports; each answer's theory of it has a name of its own.
+VERIFICATION_MODULE = 'Development_Answer_Verification'
+UNREAD = "The answer's parts could not be read."
 QUALIFIED = re.compile(r'[A-Za-z][A-Za-z_0-9]*(\.[A-Za-z][A-Za-z_0-9]*)+')
 
 
@@ -262,7 +273,61 @@ on, so that a harness judging one of these answers takes its own reading and no 
     return readings
 
 
-def verification_theory(name, state, subject, theory):
+def verification_name(answer):
+    """The theory that judges one answer: one of its own per answer, named by its content, so that several
+answers' verification theories can be proved in one session, none importing another."""
+    return VERIFICATION_MODULE + '_' + answer_digest(answer)[:16]
+
+
+def generated_theories(answer, project=ROOT):
+    """The theories the harness frames for an answer: a layer state's request theory, the answer's theory and
+its verification theory."""
+    state = STATES[answer['request']['state']]
+    subject = answer['request']['subject']
+    name = 'development_demanded' if 'layer' in state else answer['request']['state']
+    generated = {}
+    if 'layer' in state:
+        generated['Development_Request'] = request_theory(state, subject)
+    theory = answer_name(answer)
+    generated[theory] = answer_theory(state, answer, project)
+    generated[verification_name(answer)] = verification_theory(name, state, subject, theory, verification_name(answer))
+    return generated
+
+
+def prove_answers(answers, base, output, timeout):
+    """Prove the theories of several answers in one Isabelle session, each answer's verification theory its own.
+
+No answer's theories import another's: they share the session and nothing else. Answers whose frames generate
+different request theories cannot share one (a layer's request theory is `Development_Request` and holds its
+subject), and are refused here. The session's outcome is one, accepted only when every theory was; each
+reading carries it, and a caller gives a reading to an answer only when it is accepted. The session's logs
+are kept for the exports read from it until `remove_session_logs(reading['session'])`, and removed at once
+when it is not accepted."""
+    distinct = {answer_digest(answer): answer for answer in answers}
+    generated = {}
+    for answer in distinct.values():
+        for theory, text in generated_theories(answer).items():
+            assert generated.setdefault(theory, text) == text, \
+                'Answers whose frames generate different request theories cannot share a session.'
+    project = overlay(output, generated)
+    session = 'Development_Proofs_' + hashlib.sha256(''.join(sorted(distinct)).encode()).hexdigest()[:12]
+    try:
+        step = run('proof', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
+                             '--project', project, '--output', output / 'proof', '--session', session,
+                             '--without-heap', '--threads', '16', '--timeout', timeout,
+                             *sorted(verification_name(answer) for answer in distinct.values())],
+                   output / 'proof.log', timeout + 60)
+    except BaseException:
+        remove_session_logs(session)
+        raise
+    if step['exit_code'] != 0:
+        remove_session_logs(session)
+    return {digest: {'answer_digest': digest, 'base': str(base), 'exit_code': step['exit_code'],
+                     'seconds': step['seconds'], 'answers_read': len(distinct), 'log': step['log'], 'session': session,
+                     'project': str(project), 'proof': str(output / 'proof' / 'result.json')} for digest in distinct}
+
+
+def verification_theory(name, state, subject, theory, verification=VERIFICATION_MODULE):
     """The verdict of the answer framed in theory, against the request state."""
     literal = "STR ''" + subject + "''"
     answer_state = ('local_setup \\<open>Isabelle_Entity_Export.define_again \\<^binding>\\<open>development_answer\\<close>\n'
@@ -275,7 +340,7 @@ def verification_theory(name, state, subject, theory):
                         '  "development_answer_introduced_positions=List.map_filter isabelle_head_constant development_answer_introduced"\n\n')
     imports = [state['context'], theory, state['verdicts'], 'Development_Refinement_Repair',
                'Development_Admitted_Publication', 'Development_Loop_Presentations', 'Development_State_Presenter']
-    return ('theory Development_Answer_Verification\n  imports ' + ' '.join(imports) + '\n'
+    return ('theory ' + verification + '\n  imports ' + ' '.join(imports) + '\n'
             'begin\n\n' + answer_state +
             'abbreviation development_answer_inert :: "isabelle_term \\<Rightarrow> finite_factor_term" where\n'
             '  "development_answer_inert \\<equiv> development_local_term_data (fst (snd ' + name + '_state))"\n\n'
@@ -330,7 +395,7 @@ def verification_theory(name, state, subject, theory):
             'export_code development_answer_verdict_value development_answer_publication_value development_answer_summary\n'
             '  ' + name + '_unanswered\n'
             '  finite_term_shared_word_fold integer_of_nat\n'
-            '  in Eval module_name Development_Answer_Verification file_prefix "development_answer_verification"\n\n'
+            '  in Eval module_name ' + VERIFICATION_MODULE + ' file_prefix "development_answer_verification"\n\n'
             'end\n')
 
 
@@ -471,6 +536,8 @@ def main():
     judged.add_argument('--retain', type=Path, help='Write the retained record of a judged answer here.')
     judged.add_argument('--parts', type=Path, help='The reading of this answer\'s parts made by `read_parts` in a '
                         'session shared with other answers; without it the harness reads them in a session of its own.')
+    judged.add_argument('--proof', type=Path, help='The accepted proof of this answer\'s theories made by `prove_answers` '
+                        'in a session shared with other answers; without it the harness proves them in a session of its own.')
     presented = commands.add_parser('packet', help='Present the packet of a request.')
     presented.add_argument('--state', required=True, choices=sorted(STATES))
     presented.add_argument('--subject', required=True)
@@ -489,25 +556,20 @@ def main():
     output = args.output.resolve()
     assert not output.exists(), 'Use a fresh answer directory.'
     name = 'development_demanded' if 'layer' in state else answer['request']['state']
+    output.mkdir(parents=True)
     evidence = adoption_evidence(answer)
     if evidence['present']:
-        output.mkdir(parents=True)
         record = adoption_report(answer, evidence, base)
         write_json(output / 'answer.json', record)
         print(json.dumps({k: record[k] for k in ('status', 'obstruction') if k in record}))
         return 0 if record['status'] == 'adopted' else 1
-    generated = {}
-    if 'layer' in state:
-        generated['Development_Request'] = request_theory(state, answer['request']['subject'])
-    theory = answer_name(answer)
-    generated[theory] = answer_theory(state, answer)
-    generated['Development_Answer_Verification'] = verification_theory(name, state, answer['request']['subject'], theory)
-    project = overlay(output, generated)
+    generated = generated_theories(answer)
+    theory, verification = answer_name(answer), verification_name(answer)
     session = 'Development_Judgment_' + digest[:12]
     steps = []
     record = {'status': 'failed', 'answer': str(args.answer.resolve()), 'answer_sha256': digest,
               'request': answer['request'], 'base': str(base), 'session': session, 'steps': steps,
-              'theory': theory}
+              'theory': theory, 'verification': verification}
     try:
         if args.parts is not None:
             reading = json.loads(args.parts.read_text())
@@ -518,37 +580,50 @@ def main():
         steps.append({'name': 'parts', **{k: reading[k] for k in ('exit_code', 'seconds', 'answers_read', 'log')}})
         if steps[-1]['exit_code'] != 0:
             reason = reading['refusal']
-            assert reason is not None, "The answer's parts could not be read."
+            if reason is None:
+                record['judgment'] = False
+            assert reason is not None, UNREAD
             record.update(status='refused', refusal=reason, accepted=False)
         if record['status'] != 'refused':
-            steps.append(run('proof', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
-                                       '--project', project, '--output', output / 'proof', '--session', session,
-                                       '--without-heap', '--threads', '16', '--timeout', args.timeout,
-                                       'Development_Answer_Verification'], output / 'proof.log', args.timeout + 60))
+            if args.proof is not None:
+                shared = json.loads(args.proof.read_text())
+                assert shared['answer_digest'] == answer_digest(answer) and shared['base'] == str(base) \
+                    and shared['exit_code'] == 0, 'The supplied proof is not an accepted proof of this answer on this base.'
+                project, proof_result = Path(shared['project']), Path(shared['proof'])
+                assert all((project / 'theories' / (generated_name + '.thy')).read_text() == text
+                           for generated_name, text in generated.items()), \
+                    "The supplied proof's project does not hold this answer's theories."
+                steps.append({'name': 'proof', **{k: shared[k] for k in ('exit_code', 'seconds', 'answers_read', 'log')}})
+            else:
+                project, proof_result = overlay(output, generated), output / 'proof' / 'result.json'
+                steps.append(run('proof', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
+                                           '--project', project, '--output', output / 'proof', '--session', session,
+                                           '--without-heap', '--threads', '16', '--timeout', args.timeout,
+                                           verification], output / 'proof.log', args.timeout + 60))
             assert steps[-1]['exit_code'] == 0, 'The answer or its verification theory was not accepted.'
             record['frame_sha256'] = hashlib.sha256(generated[theory].encode()).hexdigest()
             steps.append(run('export', [sys.executable, '-B', TOOLS / 'export_proved_code.py', '--proof',
-                                        output / 'proof' / 'result.json', '--project', project, '--output', output / 'export',
-                                        '--module', 'Development_Answer_Verification:development_answer_verification.ML'],
+                                        proof_result, '--project', project, '--output', output / 'export',
+                                        '--module', verification + ':development_answer_verification.ML'],
                              output / 'export.log', 300))
             assert steps[-1]['exit_code'] == 0, 'Export failed.'
             proof = output / 'export' / 'development_answer_verification.proof.json'
             steps.append(run('verdict', [sys.executable, '-B', TOOLS / 'check_presented_report.py', '--proof', proof,
-                                         '--poly', POLY, '--project', project, '--theory', 'Development_Answer_Verification',
-                                         '--module', 'Development_Answer_Verification', '--report',
+                                         '--poly', POLY, '--project', project, '--theory', verification,
+                                         '--module', VERIFICATION_MODULE, '--report',
                                          'development_answer_verdict_value', '--scope', name + '_unanswered',
                                          '--workers', '4', '--timeout', args.timeout, '--output', output / 'verdict'],
                              output / 'verdict.log', args.timeout + 60))
             assert steps[-1]['exit_code'] == 0, 'The verdict presentation failed.'
             steps.append(run('publication', [sys.executable, '-B', TOOLS / 'check_presented_report.py', '--proof', proof,
-                                             '--poly', POLY, '--project', project, '--theory', 'Development_Answer_Verification',
-                                             '--module', 'Development_Answer_Verification', '--report',
+                                             '--poly', POLY, '--project', project, '--theory', verification,
+                                             '--module', VERIFICATION_MODULE, '--report',
                                              'development_answer_publication_value', '--scope', name + '_unanswered',
                                              '--workers', '4', '--timeout', args.timeout, '--output', output / 'publication'],
                              output / 'publication.log', args.timeout + 60))
             assert steps[-1]['exit_code'] == 0, 'The publication presentation failed.'
             receipt = proved_code.checked_execution(
-                proof, POLY, output / 'summary', required_theories=['Development_Answer_Verification'], inputs={},
+                proof, POLY, output / 'summary', required_theories=[verification], inputs={},
                 input_paths=[], program=summary_program(name), assess=lambda _i, text: text,
                 question='Which reasons does the native verdict of this answer retain?',
                 boundary='A diagnostic reading of the exported verdict; the presented word is the evidence.',

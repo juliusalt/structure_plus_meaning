@@ -51,6 +51,26 @@ class FrameTest(unittest.TestCase):
         self.assertIn('\\<^theory>\\<open>' + name + '\\<close>', text)
         self.assertIn("STR ''Theory_Name.constant_name''", text)
         self.assertIn('module_name Development_Answer_Verification', text)
+        self.assertTrue(text.startswith('theory Development_Answer_Verification\n'))
+        own = development_answer.verification_name(ANSWER)
+        self.assertRegex(own, r'^Development_Answer_Verification_[0-9a-f]{16}$')
+        self.assertTrue(development_answer.verification_theory('development_seed', state, 'Theory_Name.constant_name',
+                                                               name, own).startswith('theory ' + own + '\n'))
+
+    def test_each_answer_is_proved_in_theories_of_its_own(self):
+        layer = {**ANSWER, 'request': {'state': 'refinement_layer', 'subject': 'Theory_Name.constant_name'}}
+        generated = development_answer.generated_theories(layer)
+        self.assertEqual(sorted(generated), sorted(['Development_Request', development_answer.answer_name(layer),
+                                                    development_answer.verification_name(layer)]))
+        self.assertIn('imports Development_Request ' + development_answer.answer_name(layer) + ' ',
+                      generated[development_answer.verification_name(layer)])
+        self.assertEqual(sorted(development_answer.generated_theories(ANSWER)),
+                         sorted([development_answer.answer_name(ANSWER), development_answer.verification_name(ANSWER)]))
+        other = {**layer, 'request': {'state': 'refinement_layer', 'subject': 'Theory_Name.other_name'}}
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(AssertionError):
+                development_answer.prove_answers([layer, other], Path(directory), Path(directory) / 'out', 10)
+            self.assertFalse((Path(directory) / 'out').exists())
 
     def test_the_published_state_is_never_judged_against_itself(self):
         state = development_answer.STATES['refinement_layer']
@@ -115,17 +135,38 @@ class FrameTest(unittest.TestCase):
                              (1, "The answer's proof part is refused: the command ML is not a proof command"))
             self.assertEqual(development_answer.parts_outcome(silent), (1, None))
 
-    def harness(self, directory, reading):
+    def harness(self, directory, reading, proof=None):
         answer, parts, base = (directory / name for name in ('answer.json', 'parts.json', 'base'))
         answer.write_text(json.dumps(ANSWER))
         base.mkdir()
         parts.write_text(json.dumps({'answer_digest': development_answer.answer_digest(ANSWER),
                                      'base': str(base.resolve()), 'exit_code': 1, 'seconds': 1.0,
                                      'answers_read': 6, 'log': 'shared.log', **reading}))
+        supplied = []
+        if proof is not None:
+            (directory / 'proof.json').write_text(json.dumps({'base': str(base.resolve()), 'exit_code': 0, **proof}))
+            supplied = ['--proof', str(directory / 'proof.json')]
         subprocess.run([sys.executable, '-B', development_answer.__file__, 'answer', '--answer', str(answer),
                         '--output', str(directory / 'run'), '--base', str(base), '--parts', str(parts),
-                        '--retain', str(directory / 'retained.json')], capture_output=True, timeout=60)
+                        '--retain', str(directory / 'retained.json'), *supplied], capture_output=True, timeout=60)
         return json.loads((directory / 'run' / 'answer.json').read_text())
+
+    def test_a_parts_reading_that_could_not_be_read_is_no_judgment(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            record = self.harness(Path(temporary), {'refusal': None})
+            self.assertEqual((record['status'], record['judgment']), ('failed', False))
+            self.assertEqual(record['error'], development_answer.UNREAD)
+            self.assertFalse((Path(temporary) / 'retained.json').exists())
+
+    def test_a_supplied_proof_of_another_answer_is_not_taken(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            record = self.harness(Path(temporary), {'exit_code': 0, 'refusal': None},
+                                  proof={'answer_digest': '0' * 64, 'project': temporary, 'proof': temporary,
+                                         'seconds': 1.0, 'answers_read': 2, 'log': 'l'})
+            self.assertEqual(record['status'], 'failed')
+            self.assertNotIn('judgment', record)
+            self.assertIn('not an accepted proof of this answer', record['error'])
+            self.assertEqual([step['name'] for step in record['steps']], ['parts'])
 
     def test_a_supplied_refusal_is_the_harness_refusal_without_a_session(self):
         reason = "The answer's definitions part is refused: the command ML is not a declared part of an answer"

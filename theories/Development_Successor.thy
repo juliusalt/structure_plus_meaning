@@ -552,12 +552,6 @@ text \<open>
   name or uses a position outside its table, nor for a request outside those premises.
 \<close>
 
-lemma state_positions_exported:
-  assumes entities: "\<forall>e\<in>set (snd C). set (isabelle_entity_positions e)\<subseteq>{..<length (fst C)}"
-    and roots: "\<forall>t\<in>set rs. set (isabelle_term_positions t)\<subseteq>{..<length (fst C)}"
-  shows "state_positions (rs,C)\<subseteq>{..<length (fst C)}"
-  using assms by (auto simp: state_positions_def)
-
 theorem development_successor_admits:
   assumes request: "r=(p,s,support,E)"
     and distinct: "distinct (fst (snd S))" "distinct (fst (snd S'))"
@@ -583,6 +577,48 @@ proof -
   show ?thesis
     by (subst exists, subst generation, unfold request,
       rule development_refinement_verdict_read[OF distinct inside subject support])
+qed
+
+text \<open>
+  A request the refinement request constructs from the request state carries its own subject and
+  support inside that state's table whenever the state's positions are: its subject is a constant the
+  state declares, and its support the constants of statements the state holds. So for a constructed
+  request only the two states' conditions remain, which the exporter proves of every state it defines.
+\<close>
+
+theorem development_successor_admits_requested:
+  assumes request: "development_refinement_request (snd S) g a c=Some r"
+    and distinct: "distinct (fst (snd S))" "distinct (fst (snd S'))"
+    and inside: "state_positions S\<subseteq>{..<length (fst (snd S))}" "state_positions S'\<subseteq>{..<length (fst (snd S'))}"
+  shows "development_successor (S,ps,D,answered,history) r S'\<noteq>None \<longleftrightarrow>
+    development_verdict_accepted (development_refinement_verdict S r S')"
+proof -
+  obtain p s support E where r: "r=(p,s,support,E)" using prod_cases4 by blast
+  have entity: "set (isabelle_entity_positions e)\<subseteq>{..<length (fst (snd S))}" if "e\<in>set (snd (snd S))" for e
+    using inside(1) that by (auto simp: state_positions_def)
+  have stated: "development_stated_constant isabelle_code_equation_proposition (snd S) c=Some s"
+    using request unfolding r development_refinement_request_def development_constant_request_def by auto
+  obtain e where declares: "e\<in>set (snd (snd S))" "isabelle_declared_constant e=Some c"
+    using development_stated_constant_declared[OF stated] by blast
+  have "c\<in>set (isabelle_entity_positions e)"
+    using declares(2) by (cases e) (auto simp: isabelle_entity_positions_def split: isabelle_term_with.splits)
+  then have c: "c<length (fst (snd S))" using entity[OF declares(1)] by auto
+  note fields=development_refinement_request_fields[OF request[unfolded r]]
+  have subject: "fset (problem_subject p)\<subseteq>{..<length (fst (snd S))}" using fields(3) c by simp
+  have support: "fset support\<subseteq>{..<length (fst (snd S))}"
+  proof
+    fix d assume "d\<in>fset support"
+    then have "d |\<in>| development_request_support (snd S) c" using fields(4) by simp
+    then obtain x q where scope: "x\<in>set (development_constant_scope (snd S) c)"
+      and statement: "isabelle_specified_proposition x=Some q" and mentioned: "d\<in>set (isabelle_term_constants q)"
+      by (auto simp: development_request_support_member)
+    have x: "x\<in>set (snd (snd S))" using scope by (simp add: development_constant_scope_member)
+    have "d\<in>set (isabelle_term_positions q)" using mentioned isabelle_term_constants_positions by blast
+    moreover have "set (isabelle_term_positions q)\<subseteq>set (isabelle_entity_positions x)"
+      using statement by (cases x) (simp_all add: isabelle_entity_positions_def)
+    ultimately show "d\<in>{..<length (fst (snd S))}" using entity[OF x] by blast
+  qed
+  show ?thesis unfolding r by (rule development_successor_admits[OF refl distinct inside subject support])
 qed
 
 text \<open>

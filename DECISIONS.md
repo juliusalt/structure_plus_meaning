@@ -13637,3 +13637,327 @@ What it does not claim: anything about cost, which B4 and B6 observe; the prepar
 evaluation and per presentation, as the table is.
 
 Recorded 2026-09-24.
+
+## Problems about native definitions are posed, answered and judged at the development package's rows
+
+The Q7 order's step after request construction (#112, #286). The loop's notions are native definitions — readiness,
+the reach, the verdict of a kind with its witnesses, request construction, the decomposition's schema — and the loop
+still poses its problems about HOL constants. This entry settles, for problems whose subjects are native definitions,
+the state they are judged against, the problem, its request, its native answer, its native judgment and its
+installation, so that their builds can be placed. It is the first of the owner's two steps (the ledger, 2026-09-19,
+to impl-19): a packet produces native content, which the native machinery evaluates; translating admitted native
+content into Isabelle, which verifies it, is the design after this one and is decided here only as far as the native
+step must leave it something. It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The loop's native definitions are held by native programs and packages. | None is. Each is a HOL constant of type `local_address option finite_native_system` — `finite_native_readiness`, `finite_native_reach`, `finite_native_verdict`, `finite_verdict_witnesses`, `finite_native_request`, `finite_native_decomposition` — written in a theory as a `finite_rule_program` at hand-chosen sites and compiled afresh beside the guard source whenever a question evaluates it (`finite_program_condition`, through `finite_install_source_entry`), the compiled environment then discarded. Their normative text is therefore Isabelle source. The state these problems are judged against is built first: **one package**, the development's native package, holding every notion's program with one root per notion's entry, published as a generation. |
+| A native state needs a row notion of its own beside `Development_State_Rows`. | The carriers are generic already: a key is a path, `'i state_row` and `'i state_family` are parameterized by the identity they carry, and `keyed_agree`, `family_row_store`, `state_reach_table`, `native_unreached_rows` and every field program read any identity and any atom payload. Only the record `state_rows`, with `state_edit` over it, fixes Isabelle's types — atoms carrying a `String.literal`, families indexed by `entity_kind`, identities `isabelle_context`. That record is generalized over its atom payload, its kind index and its identities; the Isabelle state is its first instance, a type abbreviation under which every statement stands, and the package is its second. A second row record, or native sites and clauses mapped onto Isabelle's entity kinds, is refused. |
+| The request's support and least context follow the program's callee closure (`system_definition_closure`, `rooted_system_least`) — the brief's hypothesis. | Request construction's native check applies at the package's rows unchanged, and it decides one step: the support is the subject and the sites its clauses call, the least context the subject's clause rows and the support's interface rows. That is exactly what the answer's structural judgment reads. The callee closure is the scope of the answer's *contract* — the incumbent's meaning at the subject is the meaning of its rooted restriction (`rooted_system_meaning`) — and belongs to the verification the admission waits for, not to the request. A wider support is a context problem, as the plan makes an excess refusal. |
+| A problem about a native definition is a `development_problem` with a further contract constructor. | It is a row at a locus and nothing else. Its subject is a site of the package, not a position in an Isabelle name table, so its locus stands under a family prefix of its own, and `development_contract`, whose constructors carry Isabelle terms and name the HOL loop's kinds, is not extended. Readiness reads it through its row-level contracts (`native_settled_exact`, `native_ready_exact`), which know nothing of what a row is about. |
+| An admitted native answer is installed by extending the package at its subject's site (`finite_extend_native`). | Extension requires agreement on every old definition, and a refinement changes one. The answered program is installed by placing the subject and every definition that calls it, transitively (`system_affected_definitions`, the least such boundary by `system_affected_least`), at fresh sites of the same environment and selecting the notions' entries anew: every old artifact and binding stands, and the unaffected definitions are shared. At the rows nothing but the subject's clauses changes, because a relocated site keeps its original's key. |
+| Native judgment establishes that an answer keeps its contract. | It establishes admissibility — formation, closure, support and the permitted difference, the verdict's fields at the package's rows. That the answer keeps the incumbent's meaning at its subject is truth, which Isabelle verifies through the translation until native mathematical-proof admission (O-85); the admission records that it waits, and publication follows the verification. Once one site's meaning is verified, the whole package's meaning is kept — a lemma no theory states yet — so every notion's contract carries to the successor with no re-proof. |
+
+### The native state: one package, presented as rows
+
+**What there is.** Readiness has 7 sites, the reach 4, the verdict with its fields about 45, the witnesses 11, request
+construction 27 (every consumed rule family at a site of its own) and the decomposition's schema 4 of its own beside
+the verdict's row and mention programs it shares: about a hundred definitions and a few hundred clauses, the order of
+the machinery state's 337 entities. The sites are hand-chosen numbers and they collide: readiness, the reach and the
+decomposition each hold a different family at `(Some [],[1])` (HANDOFF Open 38).
+
+**The package.** The six programs become one program. Where two notions hold the same rule family at the same site it
+is held once — the join law (`finite_rule_program_join`), as the verdict's program already joins its fields and the
+decomposition's joins the verdict's row programs — and a notion whose site holds another family is relocated to fresh
+sites first (`Factor_Fresh_Program_Coordinates`, its contract carried by `renamed_system_positive_meaning`). That closes
+Open 38 at the moment its condition names, when the programs are first joined. The program is compiled once into a
+closed package whose root family selects every notion's entry (`program_compilation_total_with_roots` and its
+executable compiler), and every existing contract — `native_development_ready`, `native_reached_exact`,
+`native_verdict_exact`, the witnesses', `native_request_exact`, the decomposition's — holds at its notion's entry of
+the package by one transport through the join and the compilation, never proved again. The package is published as
+the first generation of the native state: its payload the package's program scope (`program_scope_quoted_at`: the
+whole environment and site, minimal by `program_scope_is_minimal`), its cause certified under the first loop's
+policy, at the native state's locus (below). Installing it is a choice made outside the process and a residual, as the
+seed is.
+
+**One package, not one per notion.** A building block two notions read — a member program, a store search — can be one
+definition, and a refinement of it then reaches every notion that reads it, through its callers, which is what
+refining a shared building block is for; one package per notion would hold it once per package and make one
+refinement a change to each. One package is one state: one reach from one root family, so `unreached` means something,
+and one successor per admitted answer at one locus. Nothing is lost in cost: an admitted answer is installed by
+relocating the definitions its subject's callers form, which is the same whether the package holds one notion or six,
+and a notion that does not call the subject is shared untouched.
+
+**Its rows.** The package's program, read back by the native package reader (`finite_native_source`, exact), is
+presented as rows of the generalized record:
+
+- **atoms**, one per site: the key is the site's first-occurrence key in the package's site listing
+  (`first_occurrence_key`, as a constant's key is the path of its position), and the payload is the site's coordinate,
+  carried inert — a site is an occurrence in an environment, not a name, and only installation and presentation read
+  its octets;
+- **two families**: *interfaces*, a row per site declaring its key, its identity the interface pattern carried inert;
+  *clauses*, a row per clause, a statement of its site's key, mentioning the key of its own site and of every site its
+  premises call, its identity the clause — its key and its schema — carried inert;
+- **roots**, one per notion's entry, mentioning its key.
+
+A clause mentions its own site as an Isabelle statement mentions its head, so that a clause whose site has no interface
+is `undeclared`. At these rows each field of the verdict reads a property the library already states of the program:
+
+| Field | At the package's rows | The program's statement |
+|---|---|---|
+| `statements` | the subject has a clause | `system_clause_family P d≠{}` |
+| `excess` | every site the subject's clauses call is in the support | `schema_dependencies` of its family within the support |
+| `undeclared` | every called site and every root has an interface | package completeness (`native_package_rejects_missing_callee`) |
+| `unreached` | every site is reached from the roots | `system_definition_closure P roots=system_definitions P` (`native_program_definition_closure`) |
+| `malformed` | vacuous: an interface declares its site, a clause has its site as subject | — |
+| permitted removed and added | only the subject's clauses differ | `system_changed_definitions P P'⊆{d}`, the subject's interface kept (`Factor_Program_Changes`) |
+| `roots` | the entries are unchanged | the root family |
+| `tables` | a site keys one atom | a condition of the presentation |
+
+The reach table read from these rows (`state_reach_table`: the predecessors of a site are the sites whose clauses
+call it) is the program's dependency edges reversed, so the native reach at these rows is the definition closure — one
+lemma, after which `unreached` is consumed and not rebuilt. The verdict reads nothing inside a clause. A clause's
+formation — its patterns formed, its variables scoped, a native rule's conclusion binding every premise variable — is
+inside its identity, where no field looks: it is the answer reader's (below), as an Isabelle answer's positions within
+its names are that reader's (`development_native_answer_formed`). The package states the empty payload alone, each
+notion's program having been proved to (`finite_native_verdict_payloads`, `finite_native_request_payloads`), the join
+once by `finite_system_payloads_exact`.
+
+### The problem
+
+**Subject and locus.** The subject is one site of the package. Its locus is the role prefix, a **native family**
+prefix, a native kind prefix, and the site's key. The family prefix is needed because the key spaces differ: a
+constant's key is the path of its position in a name table and a site's the path of its position in the package's site
+listing, so one key path names a constant in one state and a site in the other, and under an Isabelle kind prefix the
+two would meet at one locus. The HOL loop's five kinds use the 3-bit paths `000`, `100`, `010`, `110` and `001`; the
+native family takes `111`, leaving `101` and `011` to the HOL loop, and the native kinds are three more bits under it.
+No HOL kind path is `111`, so the kind paths stay prefix-free and a locus's parts stay recoverable. The locus's
+composition is stated once over a kind path — the role's path, then the kind's, then the key — with
+`development_locus` its HOL instance and the native locus its second, and injectivity proved over both families; HANDOFF
+Open 33's named projection of a locus's key part belongs in that statement.
+
+**The native kinds.**
+
+- *Native refinement*, the loop's first. The subject is a defined site; the contract is that the package's positive
+  meaning at the subject is kept, for every term. The body is the two citations and nothing else: the contract is the
+  kind and the subject, and the incumbent is the subject's clauses in the request's context, as "A refinement's
+  contract is its constant" settled it for constants. Its significant content is fully determined by the state, which
+  is what the plan asks of the first loop.
+- *Native definition*, second. The subject is a declared site; the contract is its original requirements, a family of
+  citations of requirement rows — goals encoded and authorized under stage 4 (`required_admission_installed`'s goal
+  family) — which the body carries. Its first form takes the requirement guard as the incumbent, so it is a native
+  refinement of the guard; a requirement read one way only is a later form. It waits for stage 4's requirement
+  encoding, as a selected Isabelle residual does.
+- *Native verification*: posed by an admission (below); its request and its answer are the translation design's.
+- *Native state*: the locus of the package's generation, under the incumbent role, with the empty key.
+
+**Origin and authority** are optional citations, as "The development notions are structure" states them: a residual
+cites nothing, a generated problem cites no owner record. The first native problems are a residual record of sites
+chosen outside the process, of generated authority, as the seed's are; a verification problem cites the admitted
+answer's locus as its origin. Readiness and selection read the native rows through their row-level contracts, and
+selection stays readiness alone (Q2).
+
+### The request
+
+Request construction's native program, as the package holds it, is evaluated at the package's rows, and its contract
+(`native_request_exact`) holds at this second instance of the rows. What it decides there: *support complete* reads the
+subject's clause rows, whose mentions are the subject and its callees; *scope cited* cites those rows; *declarations
+cited* cites the support's interface rows; *context sound* and *support sound* hold as they do of constants, the reach
+table's predecessors of a callee being the sites that call it. The body stays two families of citations, and nothing
+is added.
+
+The callee closure is weighed and left where it belongs. The answer's structural judgment reads the support and
+nothing beyond it; request currentness reads the cited rows; and the meaning the contract compares is that of the
+subject's rooted restriction, whose definitions the verification — not the executor's structural answer — must
+account for. An answer whose clauses call a site outside the support is refused for `excess`, and that refusal is a
+context problem, not a wider request constructed in advance. The packet is the request row with the rows its
+citations reach and the atoms they cite, as the notions entry fixes a packet; its transport is the octet direction's
+task 6, whose reader contract this instance shares.
+
+### The answer
+
+A native answer is an **edit of the package's rows**: the rows it removes, the keys of the subject's clause rows; the
+rows it adds, clauses of the subject, each citing the sites it calls by their keys; and the atoms it appends, sites it
+introduces — representable, refused by the permitted-added field and by `excess` in the first kinds, and a repair's or
+a decomposition's matter later. It follows `Development_Native_Answers`: a pair and sequence presentation, transported
+as the padded word of that presentation (`finite_term_shared_word` and the terminating bit, read by
+`finite_padded_term_read`), and an exact reader that reads a term as an answer exactly when it presents a formed
+answer and refuses it whole otherwise — every added clause a formed schema whose premises call cited keys, a native
+rule, the added clauses' keys distinct. A refusal is no answer, never an answer repaired.
+
+The answer state is the request state's rows with the edit applied (`edited_state`, at the generalized record), made
+by the native instance of `state_edit_of`: removed rows are the request state's at their keys, added rows are keyed
+continuing the listing, and the constructor refuses exactly an answer that would leave the subject's clause family not
+single-valued — a kept clause and an added one at one clause key — which is no verdict. Its contract has the shape of
+`state_edit_contract`: the edited presentation presents the answered program, shares the request state's keys, is
+reduced by the edit and keeps the roots.
+
+The deterministic executor's answer is the restating answer, which removes the subject's clauses and adds them again.
+Before real answers exist, the verdict is exercised on answers derived from the request, in the pattern of
+`development_control_answers`: the unchanged answer (accepted), the clause family dropped (`statements`), a clause
+calling a site outside the support (`excess`), another site's clause changed (the permitted difference), the subject's
+interface changed (permitted added), and a site introduced (permitted added and `excess`).
+
+### The judgment
+
+The one verdict — `finite_native_verdict` as the package holds it — judges at the package's rows, both native kinds at
+the selections of clauses as replaceable and clauses as demanded: one definition at its selections, as the refinement
+and definition verdicts are one. Its contract at this instance is stated once against a specification at programs: the
+verdict accepts exactly when the answered program `P'` is formed (the reader supplies each clause's formation and the
+fields the rest), `system_changed_definitions P P'⊆{d}` with the subject's interface kept, the subject has a clause,
+the dependencies of its clause family lie within the support, every site of `P'` is reached from its roots, and the
+roots are kept.
+
+**What it cannot decide.** That `P'` keeps the incumbent's meaning at the subject — `(d,t)∈positive_meaning P ⟷
+(d,t)∈positive_meaning P'` for every term — is truth. Isabelle verifies it through the translation until native
+mathematical-proof admission (O-85) can.
+
+**The replacement lemma.** Two formed programs that differ only in one definition's clause family, with the same
+interfaces, and that have the same positive meaning at that definition, have the same positive meaning everywhere.
+Its proof is Bekić's: in both, the meaning at every other site is the least fixed point of their unchanged
+consequences with the subject's meaning held fixed, and those are equal. No theory states it. The judgment's build
+proves it, so that a verified refinement carries every notion's contract to the successor package with no re-proof, and
+the verification stays local to the subject.
+
+**The admission and its wait.** An accepted native answer is admitted as a generation at the answer role of its native
+locus: its payload the subject's added clause rows presented, its predecessors the request's cited rows, its cause the
+accepted verdict certified under the first loop's policy (`development_payload_generation_with`,
+`development_payload_generation_certified`, `certified_policy_cause_sound`). With it a native verification problem is
+posed at the same key, citing the answer's locus as its origin, of generated authority. The native state's locus keeps
+the incumbent package until that problem's answer is admitted — the translation design's, and Q1's.
+
+**Native criticism before verification.** The incumbent and the installed candidate evaluated at the subject on a
+finite scope of terms (`Factor_Finite_Program_Evaluation`, `Factor_Finite_Goal_Term_Comparison`) decide natively and
+exactly whether they differ there: a difference on one term refutes the contract and refuses the answer; agreement is
+evidence, never verification. Its scope — the calls the loop's judgments demanded of the subject, retained — is a
+choice, and the build that adds it is later.
+
+**The payload condition** (provisional, the owner's criterion). An answer whose added clauses state a payload literal
+the incumbent package does not state is refused, computed exactly by `finite_system_payloads`: a refinement does not
+begin reading an octet as structure. The basis is the owner's direction that structure is explicit and octets inert,
+and "A program's payload literals are the octets it reads", whose admission condition this is, now that the decisions
+are programs over the structural state.
+
+### Installation and publication
+
+The answered program is installed into the package's environment. The subject's affected closure in `P'`
+(`system_affected_definitions P' {d}`: the subject and every definition calling it, transitively) is placed at fresh
+sites by the mapped extension (`finite_extend_mapped_native`; `finite_mapped_native_extension.correct` gives the
+target's meaning with every old artifact and outgoing binding unchanged); the unaffected definitions are shared at
+their sites (`system_unaffected_meaning`); and a fresh root selector chooses each notion's entry
+(`Factor_Finite_Root_Environments`, `native_definition_family_selection`). The old package stays whole in the
+environment and readable, as a predecessor's meanings must.
+
+The successor's presentation keeps the keys: each relocated site takes its original's key and a new site continues the
+listing — "The successor keeps the positions of the state it succeeds" at the native instance — so every problem,
+request and answer row about the package stands where it stood, and at the rows the successor differs from the
+request state by the answer's edit alone.
+
+The successor package is a generation: its payload its program scope, its predecessors the incumbent package's
+generation and the answer's, its cause certified under the policy. Its publication is `replacement_transaction` at the
+native state's locus (`selected_generation_replacement`: exactly that locus changes, and a different selection there
+conflicts), issued when the verification is admitted. Installation may run before verification, so that native
+criticism reads an installed candidate; publication may not. A verified refinement, once published, is consumed at
+every entry through the replacement lemma.
+
+### Beside the bootstrap loop
+
+The two loops share one development store, their loci told apart by the native family prefix; readiness and selection
+run over both, by readiness alone (Q2). The HOL loop keeps posing its problems — the seed's refinements and the
+machinery's residuals — against its checked states, as Q7's provisional choice has it.
+
+A notion's HOL program stands in both until the native step can publish. Until native answers can be published (the
+translation design built), a landing that changes a notion's HOL program — a consolidation, a refinement of the
+engine line — derives the package again from the HOL programs, a bootstrap re-installation recorded as a residual.
+Afterwards the HOL programs are the bootstrap record the package was first compiled from, and a change to a notion goes
+through the native loop. If the machinery's residual record reaches a notion's HOL program, its residual is
+superseded by the native problems about the package. Both are provisional choices, the first the owner's by Q7 and the
+second by Q5.
+
+What an owner's answer would change:
+
+- **Q7**, "only native definitions": the HOL loop stops posing problems, its records stay history, and nothing here
+  changes; the generalized record's Isabelle instance keeps that history readable. Q7 ordering the translation first:
+  its design precedes N7 and N8, and N1–N6 are unchanged.
+- **Q1**: if the predecessor package's verdict is to be the admission rule for native answers before genesis,
+  publication follows admission and the verification is truth's record without gating it; if Isabelle's acceptance is
+  required, the gate stands as designed. In either case an answer is judged by the predecessor package's verdict,
+  never by the program it answers — OD-2 — an answer refining the verdict's own sites included.
+- **Q2**: a selection criterion beyond readiness, and the authority of the first native problems.
+
+### The builds, in order
+
+- **N1, the rows record generalized** (one window). `state_rows` and `state_edit` parameterized over their atom
+  payload, kind index and identities, with the kinds' listing a parameter of `kinds_outside` and of the verdict's,
+  the witnesses' and request construction's argument constructors; the Isabelle state a type abbreviation under which
+  every statement stands; a field contract stated only through `state_presents` gets its row-level form, extracted at
+  this second use. No word changes. Waits on #195, #308, #318 and #321, which write these theories.
+- **N2, the development's native package** (one window). The six programs joined and relocated as above, compiled
+  once, the root family, one transport lemma per notion's contract, the payload statement, the first generation of the
+  native state. Independent of N1; waits on the consolidations that rewrite the notions' programs (#321, #295, #288).
+- **N3, the package's rows** (one window). The native presentation relation and its presenter; the field table's
+  lemmas (`undeclared` as package completeness, `unreached` as the closure, `malformed` vacuous); the reach at these
+  rows as the closure; the successor's keys through a relocation. Waits on N1 and N2.
+- **N4, native loci and problems** (one window). The locus stated once over a kind path, the native family and its
+  kinds; the native problem rows; the first native problems as a residual record of chosen sites; readiness over them.
+  Waits on #308 and #167, which write the loci and the rows.
+- **N5, the native request** (one window). Request construction at the package's rows with its contract at this
+  instance; the packet, presented as the request row with its cited rows, and its word. Waits on N3 and N4.
+- **N6, the native answer** (one window). Its presentation, reader and word; the edit's constructor and contract; the
+  restating answer and the derived controls. Waits on N3.
+- **N7, the native judgment and admission** (one window). The verdict at the native instance and its contract against
+  the specification at programs; the replacement lemma; the payload condition; the admission's generation and the
+  verification problem. Waits on N5 and N6.
+- **N8, installation** (one window). The affected closure relocated by the mapped extension, the root selector, the
+  successor's keys, the successor package's generation, and the replacement transaction formed and held. Waits on N7.
+- **N9, the loop's first run and its cost** (one window). The restating answer and the controls through N5–N8 at the
+  package, every judgment recorded, and one native judgment at the package's rows measured held, condition 5a's first
+  figure for this loop. Waits on N8 and on the engine line's measurement (B6, #307), which it reads as its baseline.
+
+### Weighed and rejected
+
+- *One package per notion*: holds every shared building block once per package, and one refinement of it is a change
+  to each.
+- *Native sites and clauses as Isabelle's entity kinds* (`Development_Kind`, `Definition_Kind`), so that `state_rows`
+  serves as it is: a clause is no kernel definition, the families would name the wrong kinds, and an atom would carry a
+  coordinate as a name.
+- *A second row record for programs*: a second row notion.
+- *The site's own digit word as its key* (the use's digit path followed by `digit_address_word`): determined by the
+  site alone and shared across states with no listing, but three to four times the first-occurrence key's length over
+  about a hundred sites, and a table costs its key's length (#9's entry); and relocation changes it, so a refinement
+  would move its own subject's locus.
+- *The callee closure as the request's context*: broad, against depth, and read by no field of the structural
+  judgment; it is the verification's scope.
+- *Equality of the consequence operators at the subject, for every support relation, as the refinement's contract*:
+  local, but it refuses every refinement whose recursion through the subject differs; it stays a sufficient strategy
+  for the verification.
+- *The native state as published rows, one incumbent generation per site*: the state would be the union of about a
+  hundred generations, where the package's program scope is one generation at one locus with its contracts
+  (`program_scope_quoted_at`, `generation_program_scope`) already proved.
+- *Publishing an admitted answer before its verification*: the owner's order keeps Isabelle's verification before
+  native content is consumed as normative (Q1).
+- *A `development_contract` constructor per native kind*: its constructors carry Isabelle terms and name the HOL loop's
+  contracts; a native problem is a row.
+
+### What the builds must respect
+
+One verdict, one request construction, one row notion, one edit notion: the package is their second instance and
+nothing is restated; a field contract stated only for Isabelle states gets its row-level form, never a copy. Keys are
+paths; a site's coordinate is inert, read by installation and presentation alone; a kind is a family and a role a
+prefix, and the native family is one prefix. The verdict reads nothing inside a clause, and a clause's formation is the
+reader's. An answer is judged by the predecessor package's verdict, never by the program it answers. Installation
+keeps every old artifact and binding and the old package whole, and a relocated site keeps its key. An admission
+records its wait, and no transaction selects an answered package before its verification is admitted, unless the
+owner's answer to Q1 says otherwise. The package states the empty payload alone, and an answer adding a payload
+literal is refused (provisional).
+
+### Open
+
+The translation design: the verification problem's request — the translated statement and its support — its answer
+and its admission, where Q1 bites. The native definition kind's requirements wait for stage 4's encoding. The package's
+irredundancy: building blocks two notions hold at different sites stand twice after N2, and identifying them changes
+their callers, a kind not designed here. The scope of native criticism by tested terms. A wider support, as a context
+problem. Native production of an answer: producers are executors. A native repair of introduced sites, the
+decomposition line's. A subject of several sites has no locus. This design was made outside the loop and is a residual.
+
+Recorded 2026-09-24 (task 320's decision; a design, no theory changes).

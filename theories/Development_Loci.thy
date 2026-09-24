@@ -159,7 +159,6 @@ theorem development_locus_shared_tail:
   "drop 3 (development_locus key r k c)=drop 3 (development_locus key s k c)"
   by (cases r; cases s; simp_all add: development_locus_def)
 
-
 section \<open>The locus of a problem, where its subject is exactly one constant\<close>
 
 text \<open>

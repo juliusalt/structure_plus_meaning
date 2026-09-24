@@ -354,6 +354,65 @@ proof -
   finally show ?thesis .
 qed
 
+text \<open>
+  The embedding of a table free of repeated names into itself fixes every position it holds, and so
+  every entity and every term whose positions it holds.
+\<close>
+
+lemma state_self_embedding:
+  assumes distinct: "distinct names" and bound: "i<length names"
+  shows "isabelle_state_embedding names names i=i"
+proof -
+  have "isabelle_table_correspondence id names names"
+    by (simp add: isabelle_table_correspondence_def)
+  then show ?thesis using isabelle_state_embedding_agrees[OF distinct _ bound] by simp
+qed
+
+lemma state_self_embedding_entity:
+  assumes distinct: "distinct names" and inside: "\<forall>i\<in>set (isabelle_entity_positions e). i<length names"
+  shows "isabelle_entity_rename (isabelle_state_embedding names names) e=e"
+proof -
+  have "isabelle_entity_rename (isabelle_state_embedding names names) e=isabelle_entity_rename id e"
+    by (rule isabelle_entity_rename_cong) (simp add: state_self_embedding[OF distinct] inside)
+  then show ?thesis by (simp only: isabelle_entity_rename_id)
+qed
+
+lemma state_self_embedding_term:
+  assumes distinct: "distinct names" and inside: "\<forall>i\<in>set (isabelle_term_positions t). i<length names"
+  shows "isabelle_term_rename (isabelle_state_embedding names names) t=t"
+proof -
+  have "isabelle_term_rename (isabelle_state_embedding names names) t=isabelle_term_rename id t"
+    by (rule isabelle_term_rename_cong) (simp add: state_self_embedding[OF distinct] inside)
+  then show ?thesis by (simp only: isabelle_term_rename_id)
+qed
+
+text \<open>
+  Within one table free of repeated names a root's local presentation determines the root, since the
+  embedding of the table into itself fixes it. So distinct roots inside the table have distinct local
+  presentations, whatever their form.
+\<close>
+
+theorem isabelle_local_roots_distinct:
+  assumes names: "distinct names"
+    and inside: "\<forall>t\<in>set ts. set (isabelle_term_positions t)\<subseteq>{..<length names}"
+    and roots: "distinct ts"
+  shows "distinct (map (isabelle_local_root names) ts)"
+proof -
+  have "inj_on (isabelle_local_root names) (set ts)"
+  proof (rule inj_onI)
+    fix t u assume t: "t\<in>set ts" and u: "u\<in>set ts"
+      and same: "isabelle_local_root names t=isabelle_local_root names u"
+    have compared: "isabelle_local_root names t=isabelle_local_root names u \<longleftrightarrow>
+        isabelle_term_rename (isabelle_state_embedding names names) t=u"
+      by (rule isabelle_local_root_compared[OF names]) (use inside t u in auto)
+    have moved: "isabelle_term_rename (isabelle_state_embedding names names) t=u" by (rule iffD1[OF compared same])
+    have fixed: "isabelle_term_rename (isabelle_state_embedding names names) t=t"
+      by (rule state_self_embedding_term[OF names]) (use inside t in auto)
+    show "t=u" using moved fixed by simp
+  qed
+  then show ?thesis using roots by (simp add: distinct_map)
+qed
+
 subsection \<open>Two tables that agree on the names a value uses give it one local presentation\<close>
 
 text \<open>

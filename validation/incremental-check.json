@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "17205fa97b7921a2d44f1acf9e3cd8b64a9599f4bcfc592ed3ed657d8fc1987e",
- "checked_content_sha256": "680ccd6b1fac20f7115e134eecf3d4b10d091d30d97248dbee401e450ca13813",
+ "base_receipt_sha256": "8d79d64b114fd76a56a0bc7ad64cfc79c0270e77740e725270c2c807f91990e6",
+ "checked_content_sha256": "9dd55fb83d2f1e3e586bc0dffa890dad7ec750e355a9ce457d0a1c9675402f8f",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,32 +22,77 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.39,
-  "execution_impact": 0.03,
-  "export": 16.99,
-  "proof": 134.78,
-  "recipe_impact": 0.44,
-  "recipes_and_host_tests": 11.16
+  "base_and_impact": 0.3,
+  "execution_impact": 0.17,
+  "export": 17.19,
+  "proof": 243.94,
+  "recipe_impact": 0.4,
+  "recipes_and_host_tests": 67.62
  },
  "rebuilt_theories": [
-  "Development_Edited_Local",
-  "Development_Edited_Reach",
-  "Development_Edited_Undeclared",
-  "Development_Exported_Edit",
-  "Development_Library_Issue",
+  "Admitted_Conditional_Applications",
+  "Cached_Faceted_Questions",
+  "Certificate_Construction_Review",
+  "Conditional_Application_Review",
   "Development_Machinery",
-  "Development_Native_Decomposition",
-  "Development_Native_Request",
-  "Development_Native_Verdict",
-  "Development_Request_Citations",
-  "Development_Request_Scope",
+  "Development_Presentation",
   "Development_Row_Contexts",
-  "Development_State_Edit",
-  "Development_Verdict_Difference",
-  "Development_Verdict_Mentions",
-  "Development_Verdict_Unreached",
-  "Development_Verdict_Witnesses",
-  "Native_Development_Machinery"
+  "Development_Seed_Loop",
+  "Development_Seed_Publication",
+  "Development_Seed_Verification",
+  "Faceted_Native_Questions",
+  "Factor_Source_Execution_Sharing",
+  "Material_Application_Observations",
+  "Native_Control_Acceptance_Profile",
+  "Native_Control_Admitted_Selection",
+  "Native_Control_Artifact_Comparison",
+  "Native_Control_Artifact_Reused_Execution",
+  "Native_Control_Artifact_Source",
+  "Native_Control_Cause_Continuation",
+  "Native_Control_Cause_Review",
+  "Native_Control_Child_Review",
+  "Native_Control_Closed_Installation",
+  "Native_Control_Compile_Profile",
+  "Native_Control_Constructed_Source_View",
+  "Native_Control_Context_Execution",
+  "Native_Control_Filtered_Judgment",
+  "Native_Control_Finite_Guard",
+  "Native_Control_Guard_Construction",
+  "Native_Control_Guard_Execution",
+  "Native_Control_Guard_Source",
+  "Native_Control_Guard_Transport",
+  "Native_Control_Installed_Guard",
+  "Native_Control_Judgment_Graph",
+  "Native_Control_Judgment_Review",
+  "Native_Control_Judgment_Scope",
+  "Native_Control_Judgment_Source",
+  "Native_Control_Literal_Boundary",
+  "Native_Control_Prepared_Cause_Review",
+  "Native_Control_Quotation_Construction",
+  "Native_Control_Quoted_Judgment",
+  "Native_Control_Receiving_Controls",
+  "Native_Control_Receiving_Review",
+  "Native_Control_Refinement_Composition",
+  "Native_Control_Reviewed_Receiving",
+  "Native_Control_Selected_Root",
+  "Native_Control_Source_Execution",
+  "Native_Control_Source_Profile",
+  "Native_Control_Sourced_Children",
+  "Native_Control_Syntax_Candidate",
+  "Native_Control_Syntax_Execution",
+  "Native_Control_Syntax_Statements",
+  "Native_Control_Union_Observation_Execution",
+  "Native_Development_Execution",
+  "Native_Development_Execution_Base",
+  "Native_Development_Machinery",
+  "Native_Development_Seed",
+  "Native_Development_Steering",
+  "Native_Source_Development",
+  "Native_Workflow_Execution",
+  "Native_Workflow_Execution_Base",
+  "Positioned_Native_Evaluation",
+  "Shared_Call_Closures",
+  "Workflow_Presentation"
  ],
  "recipes": {
   "allocated-environments": {
@@ -144,15 +189,19 @@
    "status": "unchanged"
   },
   "native-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 14.46,
+   "status": "accepted"
   },
   "native-development-machinery": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 35.06,
+   "status": "accepted"
   },
   "native-development-seed": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 67.61,
+   "status": "accepted"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -176,10 +225,14 @@
    "status": "unchanged"
   },
   "native-steering": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 14.72,
+   "status": "accepted"
   },
   "native-workflow": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 15.32,
+   "status": "accepted"
   },
   "quoted-history": {
    "status": "unchanged"
@@ -200,7 +253,9 @@
    "status": "unchanged"
   },
   "source-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 16.69,
+   "status": "accepted"
   },
   "use-allocation": {
    "status": "unchanged"
@@ -209,19 +264,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1829,
- "seconds": 195.04,
+ "reused_theories": 1785,
+ "seconds": 364.95,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1847,
+  "theory_count": 1848,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1847,
+ "theories": 1848,
  "validation_inputs": {
-  "ROOT": "509efb832b6d6773fbc900886226b8014ed8434e606526a46f77364b7dc775be",
+  "ROOT": "5081758bc8f3c1d59a11d98a462e2a68d610da3f37756471f93c32fe71e9ed6a",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

@@ -455,8 +455,10 @@ val declared_entity =
         | _ => raise THM ("declared_rules: an element without a constructor", 0, [rule]))
     | _ => NONE)) declared_rules;
 
-(*The instance of an equation at a cterm its left side takes, read by the structure of the left side
-  alone: a variable is bound to the part of the cterm at its place, a constant is compared by name.*)
+(*The instance of a rule at a cterm that a pattern of the rule takes, read by the structure of the
+  pattern alone: a variable is bound to the part of the cterm at its place, a constant is compared by
+  name. The declarations' conversion takes an equation at its left side, the increasing chain its step
+  at the list.*)
 fun declared_bind (Var v) ct = [(v, ct)]
   | declared_bind (Const (a, _)) ct =
       (case Thm.term_of ct of
@@ -469,8 +471,10 @@ fun declared_bind (Var v) ct = [(v, ct)]
       | _ => raise CTERM ("declared_conv: not an instance of the equation", [ct]))
   | declared_bind _ ct = raise CTERM ("declared_conv: not an instance of the equation", [ct]);
 
-fun declared_instance rule ct =
-  Thm.instantiate (TVars.empty, Vars.make (declared_bind (Thm.term_of (Thm.lhs_of rule)) ct)) rule;
+fun instance_at pattern rule ct =
+  Thm.instantiate (TVars.empty, Vars.make (declared_bind pattern ct)) rule;
+
+fun declared_instance rule = instance_at (Thm.term_of (Thm.lhs_of rule)) rule;
 
 fun declared_conv ct =
   (case Thm.term_of ct of
@@ -498,34 +502,41 @@ fun numeral_less_ctxt ctxt = put_simpset HOL_basic_ss ctxt addsimps
   @{thms zero_less_one zero_less_numeral one_less_numeral_iff numeral_less_iff less_num_simps le_num_simps};
 
 (*A strictly increasing list, proved from its last element back to its first: each adjacent pair
-  by the supplied comparison of its two elements, each step instantiated at the rest of the list
-  without reading it. The order's constant is supplied for the ends. The declared positions and the
-  names of a table are its two uses.*)
-fun increasing_var (Var (xi, _)) = xi
-  | increasing_var t = raise TERM ("increasing: not a variable", [t]);
+  by the supplied comparison of its two elements. The rules are taken once at the element type,
+  read from the order's type, and the ends at the order; each step is then instantiated at the list
+  it proves by its structure alone, without reading the rest. The declared positions and the names
+  of a table are its two uses.*)
+fun sorted_list (_ $ (_ $ _ $ list)) = list
+  | sorted_list t = raise TERM ("increasing: not a sorted list", [t]);
 
-val (step_x, step_y, step_zs) =
-  (case Thm.concl_of increasing_step of
-    _ $ (_ $ _ $ (_ $ x $ (_ $ y $ zs))) => (increasing_var x, increasing_var y, increasing_var zs)
-  | t => raise TERM ("increasing_step: not a step", [t]));
+fun sorted_order (_ $ (_ $ (Var v) $ _)) = v
+  | sorted_order t = raise TERM ("increasing: not an end with a variable order", [t]);
 
-val (nil_order, one_order, one_x) =
-  (case (Thm.concl_of (nth increasing_ends 0), Thm.concl_of (nth increasing_ends 1)) of
-    (_ $ (_ $ p $ _), _ $ (_ $ q $ (_ $ x $ _))) => (increasing_var p, increasing_var q, increasing_var x)
-  | (t, _) => raise TERM ("increasing_ends: not the ends", [t]));
-
-fun increasing ctxt order pair ct =
-  (case Thm.term_of ct of
-    Const (\<^const_name>\<open>List.list.Cons\<close>, _) $ _ $ (Const (\<^const_name>\<open>List.list.Cons\<close>, _) $ _ $ _) =>
-      let
-        val x = Thm.dest_arg1 ct;
-        val rest = Thm.dest_arg ct;
-        val y = Thm.dest_arg1 rest;
-        val step = infer_instantiate ctxt [(step_x, x), (step_y, y), (step_zs, Thm.dest_arg rest)] increasing_step;
-      in Thm.implies_elim (Thm.implies_elim step (pair x y)) (increasing ctxt order pair rest) end
-  | Const (\<^const_name>\<open>List.list.Cons\<close>, _) $ _ $ _ =>
-      infer_instantiate ctxt [(one_order, order), (one_x, Thm.dest_arg1 ct)] (nth increasing_ends 1)
-  | _ => infer_instantiate ctxt [(nil_order, order)] (nth increasing_ends 0));
+fun increasing _ order pair =
+  let
+    val T = Thm.dest_ctyp0 (Thm.ctyp_of_cterm order);
+    fun at_type rule =
+      Thm.instantiate (TVars.make (map (fn v => (v, T)) (Term.add_tvars (Thm.prop_of rule) [])), Vars.empty)
+        rule;
+    fun at_order rule =
+      Thm.instantiate (TVars.empty, Vars.make [(sorted_order (Thm.concl_of rule), order)]) rule;
+    val step = at_type increasing_step;
+    val one = at_order (at_type (nth increasing_ends 1));
+    val none = at_order (at_type (nth increasing_ends 0));
+    val (step_list, one_list, none_list) =
+      (sorted_list (Thm.concl_of step), sorted_list (Thm.concl_of one), sorted_list (Thm.concl_of none));
+    fun chain ct =
+      (case Thm.term_of ct of
+        Const (\<^const_name>\<open>List.list.Cons\<close>, _) $ _ $ (Const (\<^const_name>\<open>List.list.Cons\<close>, _) $ _ $ _) =>
+          let val rest = Thm.dest_arg ct
+          in
+            Thm.implies_elim
+              (Thm.implies_elim (instance_at step_list step ct) (pair (Thm.dest_arg1 ct) (Thm.dest_arg1 rest)))
+              (chain rest)
+          end
+      | Const (\<^const_name>\<open>List.list.Cons\<close>, _) $ _ $ _ => instance_at one_list one ct
+      | _ => instance_at none_list none ct);
+  in chain end;
 
 (*Two positions compared as numerals.*)
 fun numeral_less ctxt x y =

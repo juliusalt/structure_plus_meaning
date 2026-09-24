@@ -13995,3 +13995,71 @@ per answer; two lists of the request state are still read whole per answer (the 
 
 Limits: the reach keys `K` are still searched as a list per visited key (`walk_admitted`, `incremental_reach_table`),
 and the stage applies `state_edit_of` per answer without sharing its per-request-state indexes.
+## A problem outside the store is presented as its row, in its report's context
+
+Build 2 of "A row outside the store is presented in its context, and an answer designates its request by its
+locus" (task 167). Every report now presents its problems as their rows in the context that holds them, and the
+problem datum's tags retire: `development_origin_data`, `development_authority_data`, `development_contract_data`
+and `development_problem_data`, with their eight facts. No theory reads them.
+
+**Partial presentations compose as total ones do.** A row in context is partial (`None` outside the premise), so
+its compositions are too. `Development_Row_Data` states once what a partial presentation presents exactly
+(`finite_presented_on f A`: every value of `A` presented, distinct values distinctly) and the generic
+compositions: a pair presents the product of its parts' domains (`finite_partial_pair_presented`), a sequence the
+lists over its element's domain, an optional value the options over it, a collection the finite sets inside it,
+a total presentation any domain (`finite_presented_total`), and a presentation composed with an injective map
+the preimage (`finite_presented_on_comp`). The four presenters the brief names stand there, restated over the
+row: `development_problems_data`, `development_problem_assessment_data`, `development_request_data` (the request
+in context of task 163, renamed from `development_request_row_data`) and `development_requests_data`, each
+exact on a context's domain: a set of problems inside the premise with distinct problem loci
+(`development_row_domain`), and for requests the store's conditions (`development_request_domain`). A report is
+exact on the product of those domains; its word presents the report where it is a presentation, and the store's
+absence otherwise (`finite_store_option id`), never a problem with an origin mapped onto a shape.
+
+**Tables and sequences.** A report whose order is a notion's keeps its sequence: a loop's and the seed's problem
+lists, the assessment's filtered lists, the selected, issued, unissued and refused problems and requests, and a
+history. A set of problems is a table: the store of its rows at their problem loci
+(`development_problems_table`), whose word is the store of every single-valued listing of those rows
+(`development_problems_table_listing`, through `finite_rows_table_listing` and `path_store_rows`) and identifies
+them (`development_problems_table_presented`, through `finite_listing_store_identifies`). The answered set of a
+loop, of a successor in the succession and of a framed answer's successor are tables. A loop's dependencies and
+an issue's reading are collections of rules, not rows at loci, and stay collections, their problems as rows.
+
+**The contexts.** The seed and the machinery are residual records (origin and grant absent), keyed by
+`state_constant_key`, their contract terms carried in their names (`development_local_term_data`, the local
+presentation of `isabelle_local_root`). A repair's definition problems cite the repaired request's problem at its
+locus (`development_repair_citation`, which `development_repair_origin` equals on them:
+`development_repair_origin_citation`); the request it issues again is presented in the context that carries the
+repair. The loop's presenters (`development_dependencies_data`, `development_generation_data`,
+`development_record_data`, `development_loop_data`) take the context's four parameters, and a loop is presented in
+its own (`development_loop_presentation`: its origins read from its history). The seed's succession presents its
+loops in the residual record: they pose no demanded problem and record no repair, and on a residual problem a
+loop's context cites nothing (`development_loop_cited_residual`). A native judgment's request is presented in its
+state's residual record.
+
+**Words.** Changed once, for this reason: a problem is presented as its row. The seed's presentation-problems,
+-problems-answered, -loop and -succession; the machinery's presentation-problems, -loop and -verification (and its
+presentation if its checked state's constituents change). The answer records are not replayed here; the task
+after this re-records them on the base this landing advances. Their words expected to change: the framed
+records' verdict words (the verdict presents the repair and the successor's problems as rows) and the judgment
+words of `native-dropped` and `native-restating`, whose judgment presents its request.
+
+**What the build respects, and what it leaves.** No context invents a citation: a problem outside the premise
+has no row, and its report is not a presentation. A state's key and inert presentation stand beside the state
+presenter (`state_constant_key`, `development_local_term_data` in `Development_State_Presenter`), not in
+`Development_Row_Data`, which stays below the loop line and imports nothing new. No context lemma moved out of
+`Development_Row_Contexts`: the repair's presenter cites through its own `development_repair_citation`, which the
+context's `development_repair_origin` equals on the definitions, and the seed's succession needs only
+`development_loop_cited_residual`, stated there. Each report presenter is exact on its domain
+(`finite_presented_on`); that the seed's and the machinery's actual reports lie inside their domains is not
+proved here (their words are real presentations, of 15 KB to 10 MB, not the store's absence), and is a
+follow-up. The located request (build 3), the answer records' re-recording and task 9's table estimate follow.
+
+**A proof must not search over a finite set's quantifier.** The first check of this build timed out: the
+presentation of a partial collection proved its presence with `simp` over a lemma equating `fBall` with a
+quantifier over `fset`, which FSet's own simplification turns back, so the simplifier did not return (674 s in
+batch 309-167, killed by the session's bound). The lemma is gone: presence is shown through `fBallI` and `bspec`
+with the subset instantiated, and every other step of the new sections names the facts it composes. After it,
+`Development_Row_Data` processes in half a second and the changed theories load in 50 s in one probe.
+
+Recorded 2026-09-24 (task 167).

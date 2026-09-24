@@ -325,22 +325,6 @@ proof -
   qed
 qed
 
-definition development_request_data :: "development_request \<Rightarrow> finite_factor_term" where
-  "development_request_data=finite_pair_presentation development_problem_data
-    (finite_pair_presentation isabelle_term_data
-      (finite_pair_presentation isabelle_positions_data isabelle_entities_data))"
-
-lemma development_request_data_injective [intro]: "inj development_request_data"
-  unfolding development_request_data_def
-  by (intro finite_pair_presentation_injective development_problem_data_injective
-    isabelle_term_data_injective isabelle_collections_injective)
-
-definition development_requests_data :: "development_request list \<Rightarrow> finite_factor_term" where
-  "development_requests_data=finite_sequence_presentation development_request_data"
-
-lemma development_requests_data_injective [intro]: "inj development_requests_data"
-  unfolding development_requests_data_def
-  by (intro finite_sequence_presentation_injective development_request_data_injective)
 
 text \<open>
   A request is constructed, not yet issued. Issuing it as a leaf needs an admitted account

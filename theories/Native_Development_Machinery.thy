@@ -1,5 +1,5 @@
 theory Native_Development_Machinery
-  imports Development_Machinery Native_Execution_Refinements
+  imports Development_Machinery_Reports Native_Execution_Refinements
 begin
 
 export_code development_seed_report_value development_machinery_state

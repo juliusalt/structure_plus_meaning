@@ -1,6 +1,6 @@
 theory Development_Native_Answers
   imports Development_Definition_Verification Isabelle_Local_Names Isabelle_Readers Finite_Term_Word_Readers
-    Development_State_Rows
+    Development_State_Rows Development_Row_Data
     "HOL-Library.Parallel"
 begin
 
@@ -445,15 +445,21 @@ definition development_named_native_judgment ::
   "development_named_native_judgment verdict S rs n bits=map_option (\<lambda>r. (r,development_native_judgment verdict S r bits))
     (development_named_request (snd S) rs n)"
 
-definition development_named_native_judgment_data ::
-    "(development_request\<times>development_native_judgment) option \<Rightarrow> finite_factor_term" where
-  "development_named_native_judgment_data=finite_option_presentation
-    (finite_pair_presentation development_request_data development_native_judgment_data)"
+text \<open>The request of a judgment is presented in the context of the state that carries it.\<close>
 
-lemma development_named_native_judgment_data_injective [intro]: "inj development_named_native_judgment_data"
+definition development_named_native_judgment_data ::
+    "(nat \<Rightarrow> bool list) \<Rightarrow> (isabelle_term \<Rightarrow> finite_factor_term) \<Rightarrow>
+      (development_problem \<Rightarrow> bool list option) \<Rightarrow> (development_problem \<Rightarrow> bool list option) \<Rightarrow>
+      (development_request\<times>development_native_judgment) option \<Rightarrow> finite_factor_term option" where
+  "development_named_native_judgment_data key inert origin grant=finite_partial_option
+    (finite_partial_pair (development_request_data key inert origin grant) (Some \<circ> development_native_judgment_data))"
+
+lemma development_named_native_judgment_data_presented [intro]:
+  assumes requests: "development_request_domain key origin grant R"
+  shows "finite_presented_on (development_named_native_judgment_data key inert origin grant) {x. set_option x\<subseteq>R\<times>UNIV}"
   unfolding development_named_native_judgment_data_def
-  by (intro finite_option_presentation_injective finite_pair_presentation_injective
-    development_request_data_injective development_native_judgment_data_injective)
+  by (intro finite_partial_option_presented finite_partial_pair_presented development_request_data_presented
+    finite_presented_total development_native_judgment_data_injective requests)
 
 definition development_native_summary ::
     "(isabelle_rooted_context \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow> development_constant_verdict) \<Rightarrow>

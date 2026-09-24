@@ -66,9 +66,9 @@ the bootstrap loop's maintenance and the reviews run beside them.
 **Word changes are serialized.** A word change re-records reports under `validation/reconstruction/` or answer records
 under `validation/development-answers/`, and two landing together would each record words the other changes. Their
 order (plan-48, plan-51): #161, #155, #157, #64, #167 and #314 have landed, and none is queued: #169 and #92 retired on
-#376's entry, and #319, re-scoped, re-records no word (#314's review's follow-ups 1 and 2: the re-record writing each
-record in its harness's form, the native records one line again, and the shared run's failure of `demanded-identity`
-and `demanded-reformulated` attributed from kept logs). A task whose theories change the state's closure cannot replay
+#376's entry, and #319, re-scoped, landed re-recording no word (`9d84c95f`: the re-record writes each record in the harnesses'
+one form; the shared run's failure of `demanded-identity` and `demanded-reformulated` left unattributed, the tool now
+proving them in one shared session; Open 122). A task whose theories change the state's closure cannot replay
 the native records in its own tree
 (Open 100), so a word change's records are re-recorded after its landing, by a task of their own. The replay's judged
 answers share one proof session since #323 (`ec46e355`); the harness's remaining per-answer runs, a failing member
@@ -236,7 +236,7 @@ from the notion (#420 → #422 → #416 or #418 → #393).
 
 **Order** (the queue holds it; this is why it is as it is; it is the planner's choice, a residual until the native
 answer to the selection problem exists, Q2). The owner's directions first: #383's notion and its use instance
-(#420, #422); the tasks already in their checks (#340, #379, #319, #367, #354), so that they land and
+(#420, #422); the tasks already in their checks (#340, #379, #367, #354), so that they land and
 free the machine; then the first problem's builds from #380's and #382's proposals (#385–#408, #410–#419) in their
 chains' order, N2b (#342) among them after N2a, since the given (#414) waits on it; then #356's #368 and #384, #375, and #369 after #319; each review after its build.
 
@@ -635,6 +635,9 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#409** (brief, continuing #383): the notion (#420, `Presentation_Equivariance`, with the marking of #381's entry as
   corrected by #383's) and the use instance (#422, `Factor_Use_Renaming`, its imports below the reader theories #416
   and #418 edit), each with its review; #393, #405, #410, #416 and #418 moved from the stand-in onto #422.
+- **#319** (`9d84c95f`): the replay's re-record through `evidence_io.write_json`, the harnesses' one form; its review's
+  follow-up 1 (the per-answer seconds, #314's follow-up 3) told to #369, 2 and 3 Open 122, 4 done (its kept runs
+  retired, 1.1 GB; `replay.json` kept).
 
 ## Open
 
@@ -1017,6 +1020,12 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     clause); and the leaf argument for programs with material premises (a proof in
     `Factor_Positive_Parametricity`: a readdressing of targets consistent with the payload map), at the first answer
     whose added definitions hold a material premise, or with that theory's next edit.
+122. **What #319's landing leaves** (its review, `.build/tasks/319/review.md`, follow-ups 2 and 3): the seven framed
+    records (demanded-identity, demanded-reformulated, deterministic, identity, introduced-helper, outside-support,
+    failed-proof) stand in the indented form the old re-record wrote and take the harnesses' one-line form at their next
+    re-record — a whole-file diff with no content change, which that task's reviewer should expect; whether the worker
+    count bore on #314's failure of the two demanded answers stays unestablished: if a shared proof session is not
+    accepted and they fail again in runs of their own, attributed from the kept logs then.
 
 ## Now
 

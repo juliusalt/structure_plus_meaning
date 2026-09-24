@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "6f0958066cbfb2c6146fe887e75ae02d6d06917f2f2a00422d529831ad0c7021",
- "checked_content_sha256": "3bccadecaf8427a51dc3e457992b37b4077aba31dfc0d498bbbf62dfafc43f9a",
+ "base_receipt_sha256": "0faff1a9c154b4917c524b66b0b6377d5012fd4ad932044f55316750c69cfbb6",
+ "checked_content_sha256": "311fc92a766415971cf48c285fca18ff08d996fceaadd8e3b9a1eb371ae3bdfb",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,25 +22,24 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.3,
-  "execution_impact": 0.13,
-  "export": 19.59,
-  "proof": 291.86,
-  "recipe_impact": 0.36,
-  "recipes_and_host_tests": 11.12
+  "base_and_impact": 0.61,
+  "execution_impact": 0.14,
+  "export": 20.8,
+  "proof": 260.59,
+  "recipe_impact": 0.43,
+  "recipes_and_host_tests": 11.31
  },
  "rebuilt_theories": [
   "Admitted_Conditional_Applications",
   "Cached_Faceted_Questions",
   "Certificate_Construction_Review",
+  "Concurrent_History_Execution",
+  "Concurrent_History_Presentation",
+  "Concurrent_Replay_Presentation",
   "Conditional_Application_Review",
   "Development_Admitted_Publication",
   "Development_Certified_Generations",
-  "Development_Constant_Problems",
-  "Development_Constant_Verification",
   "Development_Decision_Generations",
-  "Development_Decomposition_Soundness",
-  "Development_Definition_Verification",
   "Development_Edited_Local",
   "Development_Edited_Reach",
   "Development_Edited_Undeclared",
@@ -49,29 +48,19 @@
   "Development_Incremental_Witnesses",
   "Development_Library_Issue",
   "Development_Located_Rows",
-  "Development_Loci",
   "Development_Loop_Presentations",
   "Development_Machinery",
   "Development_Machinery_Reports",
   "Development_Native_Answers",
   "Development_Native_Decomposition",
-  "Development_Native_Readiness",
   "Development_Native_Request",
-  "Development_Native_Selection",
   "Development_Native_Verdict",
-  "Development_Presentation",
   "Development_Publication",
-  "Development_Refinement_Contracts",
-  "Development_Refinement_Repair",
-  "Development_Refinement_Verification",
   "Development_Repair_Rows",
   "Development_Request_Citations",
   "Development_Request_Keys",
-  "Development_Request_Packets",
   "Development_Request_Scope",
-  "Development_Requests",
   "Development_Row_Contexts",
-  "Development_Row_Data",
   "Development_Row_Presentations",
   "Development_Rows",
   "Development_Seed",
@@ -88,22 +77,21 @@
   "Development_Verdict_Statements",
   "Development_Verdict_Unreached",
   "Development_Verdict_Witnesses",
+  "Digit_Replay_Execution",
   "Faceted_Native_Questions",
-  "Factor_Constructed_Development_Execution",
-  "Factor_Development_Steering",
-  "Factor_Finite_Development_Questions",
-  "Factor_Source_Development_Admission",
-  "Factor_Source_Development_Cases",
-  "Factor_Source_Development_Cycle",
-  "Factor_Source_Development_Input",
-  "Factor_Source_Development_Subjects",
-  "Factor_Source_Execution_Sharing",
-  "Factor_Steered_Development",
-  "Factor_Steered_Execution_Sharing",
-  "Filtered_Native_Questions",
-  "Isabelle_Native_Reach",
+  "Factor_Computed_Replay_Causes",
+  "Factor_Known_History_Control_Construction",
+  "Factor_Nested_History_Identity",
+  "Factor_Nested_Replay_Identity",
+  "Factor_Packet_Stages",
+  "Factor_Parallel_Packet_Cycles",
+  "Factor_Prepared_Replay_Assessments",
+  "Factor_Primary_Computed_Cause_Execution",
+  "Factor_Shared_History_Construction",
+  "Factor_Shared_Replay_Construction",
+  "Factor_Success_Shared_History",
+  "Generation_Identity_Maps",
   "Material_Application_Observations",
-  "Native_Collection_Programs",
   "Native_Control_Acceptance_Profile",
   "Native_Control_Admitted_Selection",
   "Native_Control_Artifact_Comparison",
@@ -115,7 +103,6 @@
   "Native_Control_Closed_Installation",
   "Native_Control_Compile_Profile",
   "Native_Control_Constructed_Source_View",
-  "Native_Control_Context_Contract",
   "Native_Control_Context_Execution",
   "Native_Control_Filtered_Judgment",
   "Native_Control_Finite_Guard",
@@ -136,6 +123,7 @@
   "Native_Control_Receiving_Review",
   "Native_Control_Refinement_Composition",
   "Native_Control_Reviewed_Receiving",
+  "Native_Control_Seed_Subject",
   "Native_Control_Selected_Root",
   "Native_Control_Source_Execution",
   "Native_Control_Source_Profile",
@@ -144,16 +132,13 @@
   "Native_Control_Syntax_Execution",
   "Native_Control_Syntax_Statements",
   "Native_Control_Union_Observation_Execution",
-  "Native_Development_Execution",
-  "Native_Development_Execution_Base",
   "Native_Development_Machinery",
   "Native_Development_Seed",
-  "Native_Development_Steering",
-  "Native_Path_Store_Indexes",
-  "Native_Path_Stores",
-  "Native_Source_Development",
-  "Native_Table_Reach",
-  "Presented_Publication_Values"
+  "Nested_Artifact_Value_Identity",
+  "Prepared_Digit_Cause_Assessments",
+  "Prepared_Digit_Replay_Packets",
+  "Presented_Publication_Values",
+  "Represented_Snapshot_Transactions"
  ],
  "recipes": {
   "allocated-environments": {
@@ -184,7 +169,9 @@
    "status": "unchanged"
   },
   "concurrent-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "constructed-history": {
    "status": "unchanged"
@@ -205,7 +192,9 @@
    "status": "unchanged"
   },
   "digit-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "encoded-environments": {
    "status": "unchanged"
@@ -250,9 +239,7 @@
    "status": "unchanged"
   },
   "native-development": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-development-machinery": {
    "exit_code": 0,
@@ -286,9 +273,7 @@
    "status": "unchanged"
   },
   "native-steering": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-workflow": {
    "status": "unchanged"
@@ -312,9 +297,7 @@
    "status": "unchanged"
   },
   "source-development": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "use-allocation": {
    "status": "unchanged"
@@ -323,19 +306,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1731,
- "seconds": 360.24,
+ "reused_theories": 1747,
+ "seconds": 330.71,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1855,
+  "theory_count": 1856,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1855,
+ "theories": 1856,
  "validation_inputs": {
-  "ROOT": "b9f884980c76920934324849f749a2174b78ffde5e781cb5496e0f379b2b3e3a",
+  "ROOT": "73b05aff4c70d5e80408f406971ca75712bfc89ce45992de11e5c51851217f20",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

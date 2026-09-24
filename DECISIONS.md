@@ -10,7 +10,8 @@ The standing owner rule of 2026-09-12 prohibits outside semantics, reasoning,
 or anything else anywhere. The owner explicitly preserves Isabelle/HOL's
 normative bootstrap role through genesis. Earlier ad hoc outside-reasoning
 permissions provide no current exception; the complete instruction and
-bootstrap boundary are in DEVELOPMENT_WORKFLOW.md.
+bootstrap boundary are the owner's words
+(`.claude/orchestration/codex-owner-directions.md` §10).
 
 Each choice below records its reason and its limits. Proof references are added
 only after the corresponding theory is accepted.

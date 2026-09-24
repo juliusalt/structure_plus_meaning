@@ -1,5 +1,5 @@
 {
- "base_receipt_sha256": "1b0bb2e1b517b33e36c55d6f67b86f87363958cab529551979aa04c2a894d6dc",
+ "base_receipt_sha256": "79c17967a7e52d289774bee810ca7cc28842a063d607d684cc8993122d90cbb4",
  "checked_content_sha256": "b46e80aea4bdbb1758fa4dceefe34afe75f0bab521cf277a257109d79edde273",
  "host_tests": {
   "kernel": {
@@ -14,7 +14,7 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 290,
+   "ran": 291,
    "skipped": 0,
    "tail": [
     "OK"
@@ -22,18 +22,13 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.32,
+  "base_and_impact": 0.41,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 218.76,
-  "recipe_impact": 0.85,
-  "recipes_and_host_tests": 11.87
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.41
  },
- "rebuilt_theories": [
-  "Development_Seed_Referenced_Publication",
-  "Presented_Publication_Values",
-  "Represented_Snapshot_Transactions"
- ],
+ "rebuilt_theories": [],
  "recipes": {
   "allocated-environments": {
    "status": "unchanged"
@@ -192,8 +187,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1854,
- "seconds": 277.86,
+ "reused_theories": 1857,
+ "seconds": 19.94,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

@@ -36,13 +36,14 @@ DECISIONS.md "Non-nominality of uses is equivariance under use permutations, a c
 checks") decided non-nominality of uses — equivariance under use permutations, one notion over any presented relation,
 checked by Isabelle in the verification request (part (d): the clause stated by the frame at the action the entry's
 classes derive, proved by the answer), a native sample at a use-renamed copy refuting in criticism, no fifth socket,
-uses staying structure (Q26) — and #409 (continuing #383) briefs its notion and use instance
-(`Presentation_Equivariance`, `Factor_Use_Renaming`), on which #393's clause, #405's part (d) and #382's (g) and (h)
-wait. #382 briefs beside #380 the native request at a
-package (the first leaves' request, in N3a's place) and the given's Factor readers (#376's follow-ups 1 and 2, with
-those the sockets G3 and G4 call and the given's payloads stated by the audit, #381), which q86 found without an
-executable package: the guard's build waits on the readers' installation, and that on #380's audit reader, wired when
-both proposals are placed. #380's proposal is placed (#385–#408, each build with its review): the owner records
+uses staying structure (Q26) — its notion (#420, `Presentation_Equivariance`, with the marking of #381's entry) and
+use instance (#422, `Factor_Use_Renaming`, its imports below the reader theories #416 and #418 edit), placed from
+#409, on which #393's clause, #405's part (d), #410, #416 and #418 wait. #382's proposal is placed (#410–#419, each build with its
+review): the native request at a package (#410, in N3a's place; the first request's installation is briefed later),
+the given's Factor readers as one numbered program (#412, after #387 and #389) installed beside the development package
+as the given (#414, after N2b #342), and the readers' use-equivariance clauses (#416, the package and scope readers;
+#418, the definition, clause, pattern and data readers and the audit, after #387); #393 waits on #414, #416 and #418,
+#395 on #414. #380's proposal is placed (#385–#408, each build with its review): the owner records
 (#385), the audit's native reader (#387), the members a package adds with the callee boundary (#389) and the
 verification frame (#405, after #383) first; the guard (#391, after #387, #389 and #383), its installation over the
 given's readers (#393), the given and the native state's first generation (#395), the posing (#397), the answer
@@ -229,14 +230,15 @@ folds N4 and N9 into #380's builds; N7's verdict at a package and N8's installat
 them and on the first answer. The translation design follows (Open 3).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
-creates has no review task (the harness reviews it in its own folder). The deepest chain is 8: #387 → #391 → #393 → #397 → #399 → #401 →
-#407 → #408, the first problem's route; the native package is #340 → #342 → #343.
+creates has no review task (the harness reviews it in its own folder). The deepest chains are 9, the first problem's route through the given: #387 →
+#412 → #414 → #393 → #397 → #399 → #401 → #407 → #408, and the same from the native package (#340 → #342 → #414) and
+from the notion (#420 → #422 → #416 or #418 → #393).
 
 **Order** (the queue holds it; this is why it is as it is; it is the planner's choice, a residual until the native
-answer to the selection problem exists, Q2). The owner's directions first: #382's brief and #409, the brief of #383's
-notion and its use instance; the tasks already in their checks (#340, #379, #319, #367, #354), so that they land and
-free the machine; then the first problem's builds from #380's proposal (#385–#408) in their chain's order, and N2b
-(#342) after N2a; then #356's #368 and #384, #375, and #369 after #319; each review after its build.
+answer to the selection problem exists, Q2). The owner's directions first: #383's notion and its use instance
+(#420, #422); the tasks already in their checks (#340, #379, #319, #367, #354), so that they land and
+free the machine; then the first problem's builds from #380's and #382's proposals (#385–#408, #410–#419) in their
+chains' order, N2b (#342) among them after N2a, since the given (#414) waits on it; then #356's #368 and #384, #375, and #369 after #319; each review after its build.
 
 ## Decisions
 
@@ -622,11 +624,17 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   boundary, the guard, its installation, the given and the native state's generation, the posing, the answer judgment
   and transport, the verification's native half, frame and harness — each with its review; #391 and #405 also wait on
   #383, whose route may add to the guard or the frame.
-- **#383** (design): DECISIONS.md "Non-nominality of uses is equivariance under use permutations, a contract the
+- **#383** (design, `7b23938c`): DECISIONS.md "Non-nominality of uses is equivariance under use permutations, a contract the
   verification request checks" — one notion over any presented relation, its use instance through the RRA use-renaming
   facts, checked by Isabelle in the verification request (part (d)), a native sample refuting in criticism, no fifth
   socket, uses staying structure; its owner choices Q26; follow-ups 1 and 5 #409 (a brief continuing it), 2 carried
   into #393's and #405's briefs, 3 told to #382, 4 Open 121.
+- **#382** (brief): the native request at a package and the given's readers placed as #410–#419 — the request (#410),
+  the readers' numbered program (#412), the given installed (#414, after #342), the readers' use-equivariance clauses
+  (#416, #418), each with its review; #393 and #395 moved from the stand-in onto #414.
+- **#409** (brief, continuing #383): the notion (#420, `Presentation_Equivariance`, with the marking of #381's entry as
+  corrected by #383's) and the use instance (#422, `Factor_Use_Renaming`, its imports below the reader theories #416
+  and #418 edit), each with its review; #393, #405, #410, #416 and #418 moved from the stand-in onto #422.
 
 ## Open
 
@@ -1014,10 +1022,7 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 
 
 
-- **Stand-ins**: #393 and #395 wait on #382 for the build of its proposal that installs the given's Factor readers,
-  and #393 and #405 wait on #409 for the build of its proposal that states `Factor_Use_Renaming`: each re-pointed
-  (`v2.py blockers`) onto that build when its proposal is placed. #382 was told that the audit's reader, which its
-  installation waits on, is #387, and (plan-61) that its (g) and (h) builds wait on #409 as the same stand-in.
+
 - **Mailed**: #365's review's follow-ups 1–3 to #367 (running); #313's re-review's first follow-up — the replay's host
   test `…reads_its_own_parts` reads the machine's active context, and failed #169's check at 18:52 — to #369, not yet
   started, read by its first session. #380's first session was released at 20:02 before reading the answer to its q86

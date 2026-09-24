@@ -326,6 +326,57 @@ lemma state_presents_root_keys:
   "state_presents key S R \<Longrightarrow> keyed_agree row_identity (set (state_roots R)) (set (state_roots R))"
   by (simp add: state_presents_def)
 
+subsection \<open>Every constant an entity cites is a position of the state's table\<close>
+
+text \<open>
+  A constant an entity of a presented state declares, is a statement of, or mentions, and a constant a
+  root heads, is a position of the state's table: the citation inclusions above
+  (@{thm [source] entity_declared_positions}, @{thm [source] isabelle_entity_subjects_positions},
+  @{thm [source] entity_mentions_positions}, @{thm [source] root_mentions_positions}) read through the
+  boundary the presentation carries (@{thm [source] state_presents_inside}). The general forms, every
+  position of an entity and of a root, stand beside them. The request's keys, scope and citations, the
+  verdict's statements, mentions, unreached and difference fields, the native verdict and the decomposition
+  consume these, and none derives them again.
+\<close>
+
+lemma state_presents_declared_inside:
+  assumes present: "state_presents key S R" and e: "e\<in>set (snd (snd S))"
+    and d: "d\<in>set (entity_declared e)"
+  shows "d<length (fst (snd S))"
+  using e d entity_declared_positions state_presents_inside[OF present]
+  by (force simp: state_positions_def)
+
+lemma state_presents_subject_inside:
+  assumes present: "state_presents key S R" and e: "e\<in>set (snd (snd S))"
+    and d: "d\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
+  shows "d<length (fst (snd S))"
+  using e d isabelle_entity_subjects_positions state_presents_inside[OF present]
+  by (force simp: state_positions_def)
+
+lemma state_presents_mentions_inside:
+  assumes present: "state_presents key S R" and e: "e\<in>set (snd (snd S))"
+    and d: "d\<in>set (entity_mentions e)"
+  shows "d<length (fst (snd S))"
+  using e d entity_mentions_positions state_presents_inside[OF present]
+  by (force simp: state_positions_def)
+
+lemma state_presents_root_mentions_inside:
+  assumes present: "state_presents key S R" and t: "t\<in>set (fst S)"
+    and d: "d\<in>set (root_mentions t)"
+  shows "d<length (fst (snd S))"
+  using t d root_mentions_positions state_presents_inside[OF present]
+  by (force simp: state_positions_def)
+
+lemma state_presents_entity_inside:
+  assumes present: "state_presents key S R" and member: "e\<in>set (snd (snd S))"
+  shows "\<forall>i\<in>set (isabelle_entity_positions e). i<length (fst (snd S))"
+  using state_presents_inside[OF present] member by (force simp: state_positions_def)
+
+lemma state_presents_root_inside:
+  assumes present: "state_presents key S R" and member: "t\<in>set (fst S)"
+  shows "\<forall>i\<in>set (isabelle_term_positions t). i<length (fst (snd S))"
+  using state_presents_inside[OF present] member by (force simp: state_positions_def)
+
 subsection \<open>A row is recovered in the family of its kind, with its citations\<close>
 
 lemma state_presents_row:
@@ -401,6 +452,46 @@ definition entity_rows_keyed ::
     "(nat \<Rightarrow> state_key) \<Rightarrow> (isabelle_entity \<Rightarrow> state_key) \<Rightarrow> isabelle_rooted_context \<Rightarrow> state_rows \<Rightarrow> bool" where
   "entity_rows_keyed key ekey S R \<longleftrightarrow> (\<forall>e\<in>set (snd (snd S)). (ekey e,entity_row key (snd S) e)\<in>presented_rows R)"
 
+text \<open>
+  Under that condition a presented row is the row of an entity of the state at that entity's key. The two
+  keyed readings of a presentation's rows stand here, with the condition, and every field that reads rows
+  through an entity key consumes one of them: a property of some presented row is the property of some
+  entity's keyed row (@{text keyed_rows_exist}), and a property of every presented row of one entity is
+  that property at its key (@{text keyed_rows_all}).
+\<close>
+
+lemma keyed_rows_exist:
+  assumes present: "state_presents key S R" and keyed: "entity_rows_keyed key ekey S R"
+  shows "(\<exists>z\<in>presented_rows R. Q (fst z) (snd z)) \<longleftrightarrow>
+    (\<exists>e\<in>set (snd (snd S)). Q (ekey e) (entity_row key (snd S) e))"
+proof
+  assume "\<exists>z\<in>presented_rows R. Q (fst z) (snd z)"
+  then obtain a p where z: "(a,p)\<in>presented_rows R" and q: "Q a p" by auto
+  obtain j where zj: "(a,p)\<in>set (state_entities R j)" using presented_rows_family[OF z] by blast
+  obtain e where e: "e\<in>set (snd (snd S))" and p: "p=entity_row key (snd S) e"
+    using state_presents_row_origin[OF present zj] by metis
+  have own: "(ekey e,entity_row key (snd S) e)\<in>presented_rows R" using keyed e by (simp add: entity_rows_keyed_def)
+  have "a=ekey e" using keyed_agreeD[OF state_presents_row_keys[OF present] z own] p by simp
+  then show "\<exists>e\<in>set (snd (snd S)). Q (ekey e) (entity_row key (snd S) e)" using e p q by blast
+next
+  assume "\<exists>e\<in>set (snd (snd S)). Q (ekey e) (entity_row key (snd S) e)"
+  then obtain e where e: "e\<in>set (snd (snd S))" and q: "Q (ekey e) (entity_row key (snd S) e)" by blast
+  have "(ekey e,entity_row key (snd S) e)\<in>presented_rows R" using keyed e by (simp add: entity_rows_keyed_def)
+  then show "\<exists>z\<in>presented_rows R. Q (fst z) (snd z)" using q by force
+qed
+
+lemma keyed_rows_all:
+  assumes present: "state_presents key S R" and keyed: "entity_rows_keyed key ekey S R"
+    and e: "e\<in>set (snd (snd S))"
+  shows "(\<forall>a. (a,entity_row key (snd S) e)\<in>presented_rows R \<longrightarrow> Q a) \<longleftrightarrow> Q (ekey e)"
+proof -
+  have own: "(ekey e,entity_row key (snd S) e)\<in>presented_rows R"
+    using keyed e by (simp add: entity_rows_keyed_def)
+  have "a=ekey e" if "(a,entity_row key (snd S) e)\<in>presented_rows R" for a
+    using keyed_agreeD[OF state_presents_row_keys[OF present] that own] by simp
+  then show ?thesis using own by blast
+qed
+
 subsection \<open>The keys of the atoms, and the two conditions the presentation carries\<close>
 
 lemma atoms_present_atom:
@@ -443,6 +534,19 @@ proof (rule inj_onI)
   then show "i=j"
     by (rule inj_onD[OF atoms_present_injective[OF atoms] _ member(1) member(2)])
 qed
+
+text \<open>
+  Two keyed positions of a presented state's table are equal exactly when the positions are: the fact the
+  verdict's statements and unreached fields and the request's citations read, stated once for the
+  presentation.
+\<close>
+
+lemma state_presents_key_member:
+  assumes present: "state_presents key S R"
+    and "c<length (fst (snd S))" "set ds\<subseteq>{..<length (fst (snd S))}"
+  shows "key c\<in>key ` set ds \<longleftrightarrow> c\<in>set ds"
+  using inj_on_image_mem_iff[OF atoms_present_key_injective[OF state_presents_atoms[OF present]], of c "set ds"]
+    assms(2,3) by simp
 
 text \<open>
   The verdict's ninth field, that the names of the state are distinct, is carried as a premise of

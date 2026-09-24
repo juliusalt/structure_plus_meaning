@@ -2,23 +2,23 @@
  "boundary": "The actual quoted judgment and generation-backend contracts establish the complete original scope and certification used by the constructed policy check. Every original history subject, method, full result, inspection, source and revision is retained. The additional raw omitted-replay control remains separate from the closed operation. Full physical cost, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "quoted-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 26.04,
+  "seconds": 36.45,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/quoted-history-reports.json": "05afe90ac9546ca79351ab1ae8bfb818d158c076603a712932e4018ca930180d"
+   "validation/reconstruction/quoted-history-reports.json": "a8040e406060e78246da74cd7141d175bc5f2abdba68afa90282cca98e8d5aef"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "b58af757795a541f74ac8d310495a01179cc2235d02e3ae6da5f75bb1a68616b",
+   "module_sha256": "69ddb551f148125a706c4796c1767a799f29c4417cae5cac3dedd492c84d546d",
    "subject_contracts": {
-    "quoted_history_investigation.yxml": "d09d3e5eb58ab50057bf2fc9bd7a186cdc55deb9bba3d5a568307cde722c06ef"
+    "quoted_history_investigation.yxml": "9bf20b34b0ac6fdb09bdee8e3219290220ea02ac6fb1e2c118b5f8ab8484e16f"
    },
    "theory": "Quoted_History_Execution"
   },
@@ -60,12 +60,17 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
+ "execution_reuse": {
+  "base_receipt_sha256": "a1b373fe001240d6c5e3a5da67cac75839d1eec1762b6602a91c32e4a7f9831d",
+  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
+  "export_module_sha256": "69ddb551f148125a706c4796c1767a799f29c4417cae5cac3dedd492c84d546d"
+ },
  "recipe": "quoted-history",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "dc71685d5f1c1a3f91b8da09f294b071ded74cb0cfadf83aa07a7ba827d661c2",
+   "sha256": "68268f5cc41c8e67b4bca4200db79f444c01000a4dbbeb3d7bf3e870a1561491",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -73,14 +78,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "3e0205728078965cde98f17e7384d2e1b021badc5b175fad0ba39c3087be38da",
+ "source_manifest_sha256": "d88c462276a4c58a5d71c6d946ab838ec7dae3387ec9ce5dd51ab711f30fa705",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 25.983497421999346
+   "seconds": 36.37775688999682
   }
  ]
 }

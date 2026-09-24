@@ -1,5 +1,5 @@
 theory Ordered_Finite_Terms
-  imports Ordered_Complete_Artifacts
+  imports Ordered_Complete_Artifacts Prefix_Key_Comparisons
     Factor_Executable_Terms "HOL-Library.Option_ord"
 begin
 
@@ -13,36 +13,39 @@ fun finite_term_key :: "finite_factor_term \<Rightarrow> finite_term_atom list" 
 | "finite_term_key (Finite_Target (Finite_Anchor a r))=[(2,Some (Ordered_Complete_Artifact a),r)]"
 | "finite_term_key (Finite_Pair t u)=(3,None,[])#finite_term_key t@finite_term_key u"
 
+text \<open>
+  The plain view of a term: its head is the first atom of its key, and a pair's children are its two
+  components, left first; a payload or a target has none. The key is a prefix key of this view
+  (\<open>Prefix_Key_Comparisons\<close>), so it is prefix-free and injective.
+\<close>
+
+fun finite_term_children :: "finite_factor_term \<Rightarrow> finite_factor_term list" where
+  "finite_term_children (Finite_Pair t u)=[t,u]"
+| "finite_term_children (Finite_Payload v)=[]"
+| "finite_term_children (Finite_Target a)=[]"
+
+interpretation finite_term_keys: prefix_key "\<lambda>t. hd (finite_term_key t)" finite_term_children finite_term_key
+proof unfold_locales
+  fix t u :: finite_factor_term
+  show "finite_term_key t=hd (finite_term_key t)#concat (map finite_term_key (finite_term_children t))"
+    by (cases t rule: finite_term_key.cases) simp_all
+  show "hd (finite_term_key t)=hd (finite_term_key u) \<Longrightarrow>
+      length (finite_term_children t)=length (finite_term_children u)"
+    by (cases t rule: finite_term_key.cases; cases u rule: finite_term_key.cases) simp_all
+  show "hd (finite_term_key t)=hd (finite_term_key u) \<Longrightarrow>
+      finite_term_children t=finite_term_children u \<Longrightarrow> t=u"
+    by (cases t rule: finite_term_key.cases; cases u rule: finite_term_key.cases) simp_all
+qed
+
 lemma finite_term_key_nonempty: "finite_term_key t\<noteq>[]"
-  by (cases t rule: finite_term_key.cases) simp_all
+  by (rule finite_term_keys.key_nonempty)
 
 lemma finite_term_key_prefix:
   "finite_term_key t@xs=finite_term_key u@ys \<Longrightarrow> t=u \<and> xs=ys"
-proof (induction t arbitrary: u xs ys rule: finite_term_key.induct)
-  case (1 v)
-  then show ?case by (cases u rule: finite_term_key.cases) auto
-next
-  case (2 a)
-  then show ?case by (cases u rule: finite_term_key.cases) auto
-next
-  case (3 a r)
-  then show ?case by (cases u rule: finite_term_key.cases) auto
-next
-  case (4 t1 t2)
-  show ?case
-  proof (cases u rule: finite_term_key.cases)
-    case (4 u1 u2)
-    have tail: "finite_term_key t1@(finite_term_key t2@xs)=finite_term_key u1@(finite_term_key u2@ys)"
-      using "4.prems" by (simp add: 4)
-    have first: "t1=u1" and rest: "finite_term_key t2@xs=finite_term_key u2@ys"
-      using "4.IH"(1)[OF tail] by simp_all
-    have second: "t2=u2" and final: "xs=ys" using "4.IH"(2)[OF rest] by simp_all
-    show ?thesis using first second final by (simp add: 4)
-  qed (use "4.prems" in auto)
-qed
+  by (rule finite_term_keys.key_prefix)
 
 lemma finite_term_key_injective: "finite_term_key t=finite_term_key u \<longleftrightarrow> t=u"
-  using finite_term_key_prefix[of t "[]" u "[]"] by auto
+  by (rule finite_term_keys.key_injective)
 
 datatype ordered_factor_term = Ordered_Factor_Term finite_factor_term
 

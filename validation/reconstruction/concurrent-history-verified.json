@@ -2,24 +2,24 @@
  "boundary": "Every original subject, candidate, complete result, observation, comparison and revision is reconstructed from source under the original subject contract. Native exact sharing, source projection and Isabelle parallel-map equations preserve the complete packet. The compact report boundary includes its complete native artifact dictionary. The runtime uses the declared Isabelle2025-2 and Poly/ML 5.9.2 bootstrap and records its complete inputs. All six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "concurrent-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 14.89,
+  "seconds": 13.72,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
    "tools/compressed_reconstruction_suite.py": "2003d90e93849547e89d030a4a12b075ac1af8f7e7dfbe5515ffe3aa09db8079",
-   "validation/reconstruction/concurrent-history-reports.json": "dab5a0f8e073ddaea6e12ba652b6a016003add5a0c6947dbfcb21ba0389016fc"
+   "validation/reconstruction/concurrent-history-reports.json": "cc8259196b4bf0ca02dc51ad5ad223a65a455c6470f8cce70b70eb680eee20f9"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "af9f6bf7b63431d399000a81e70e43168d3fd3db109771ea59e2d449c6d662ae",
+   "module_sha256": "60abd6496d9608460662839e480f94a81b04096d5727a70778c25b945b7cd139",
    "subject_contracts": {
-    "constructed_history_investigation.yxml": "d4a7d7bbe4099350cd046d5fa44e6c6bd88a34370ebf446b77cd7f1576aeb63c"
+    "constructed_history_investigation.yxml": "69c3fa6ee9f3d498cf285b9730df6d592ca1c2153b0d1589afc1a2bd87bd79a2"
    },
    "theory": "Concurrent_History_Execution"
   },
@@ -61,12 +61,17 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
+ "execution_reuse": {
+  "base_receipt_sha256": "a1b373fe001240d6c5e3a5da67cac75839d1eec1762b6602a91c32e4a7f9831d",
+  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
+  "export_module_sha256": "60abd6496d9608460662839e480f94a81b04096d5727a70778c25b945b7cd139"
+ },
  "recipe": "concurrent-history",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "7323917c96fdbbff9dd4530bebbcf6977bca45de1e288b1afe0b51eca7b547de",
+   "sha256": "4aad113756656b78d8dc1485b751d413ee34316b38c6bfa38ad71ed3ad12f272",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -74,14 +79,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "cf5070faeb8c3ea0d603b148861856c66e8535dc758256f4777366c2ee1bc689",
+ "source_manifest_sha256": "1a3b60df246366e4d14eb0630fd7a68969439373824bb6987ba0f77c7b5c60fe",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 14.790881259999878
+   "seconds": 13.586274964007316
   }
  ]
 }

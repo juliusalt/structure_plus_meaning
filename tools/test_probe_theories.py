@@ -1,5 +1,6 @@
 """The probe: its summary file, renamed copies of changed and intermediate base theories, the refusal of a
-load its bound cannot hold, and stale heap imports reported as the cause of a run's messages."""
+load its bound cannot hold, stale heap imports reported as the cause of a run's messages, code checks skipped
+and named, and a base's own sources."""
 
 import json
 from pathlib import Path
@@ -22,7 +23,8 @@ class ProbeSummaryFile(unittest.TestCase):
                 mock.patch.object(probe_theories, 'workspace_theories',
                                   return_value={'New': work / 'New.thy', 'Pre': work / 'Pre.thy'}), \
                 mock.patch.object(probe_theories, 'changed', return_value={'New': None}), \
-                mock.patch.object(probe_theories, 'prepare', return_value=(work / 'thy', {'New': []}, {'New': []})), \
+                mock.patch.object(probe_theories, 'prepare',
+                                  return_value=(work / 'thy', {'New': []}, {'New': []}, {})), \
                 mock.patch.object(probe_theories, 'load_estimate', return_value=(9.0, 100)), \
                 mock.patch.object(probe_theories, 'ordered', return_value=['New']), \
                 mock.patch.object(probe_theories, 'run_logged', return_value=run):
@@ -90,8 +92,9 @@ class ChangedBaseTheories(unittest.TestCase):
             root = Path(directory)
             present = self.present(root)
             renamed = {'A': 'A_Probe', 'B': 'B_Probe'}
-            out, imports, complete = probe_theories.prepare(root / 'work', self.CONTEXT, present, {'A', 'B', 'N'},
-                                                             {}, {}, renamed)
+            out, imports, complete, skipped = probe_theories.prepare(root / 'work', self.CONTEXT, present,
+                                                                      {'A', 'B', 'N'}, {}, {}, renamed)
+            self.assertEqual(skipped, {})
             self.assertEqual(sorted(p.name for p in out.glob('*.thy')), ['A_Probe.thy', 'B_Probe.thy', 'N.thy'])
             b = (out / 'B_Probe.thy').read_text()
             self.assertTrue(b.startswith('theory B_Probe imports "A_Probe" "S.C"'))
@@ -135,7 +138,9 @@ class ChangedBaseTheories(unittest.TestCase):
         self.assertEqual(probe_theories.intermediate_theories(graph, {'B': ['X']}, {'A', 'B'}, {'A', 'B'}),
                          ['C', 'X'])
         self.assertEqual(probe_theories.intermediate_theories(graph, {'B': ['X']}, {'A', 'B'}, {'A', 'B'}, {'X'}),
-                         ['C'])
+                         [])
+        self.assertEqual(probe_theories.intermediate_theories(graph, {'B': ['X', 'C']}, {'A', 'B'}, {'A', 'B'},
+                                                              {'X'}), ['C'])
         self.assertEqual(probe_theories.intermediate_theories(graph, {'N': ['Y']}, {'A'}, {'A', 'N'}), [])
 
     def test_theory_closure_certified(self):
@@ -184,6 +189,80 @@ class ChangedBaseTheories(unittest.TestCase):
             self.assertEqual(summary['from_tree'], {})
             self.assertEqual(summary['from_heap_despite_change'], ['A'])
             self.assertEqual(summary['not_rechecked'], [])
+
+
+class SkippedCodeChecks(unittest.TestCase):
+    """`export_code … checking` needs Isabelle's Scala side: it is blanked in the probe's copy and named."""
+
+    TEXT = ('theory T imports Main\nbegin\n'
+            'export_code a b\n  checking SML\n'
+            'export_code c in Eval module_name M file_prefix m\n'
+            'export_code "(\\<le>) :: t \\<Rightarrow> _" (* c *) checking SML OCaml\n'
+            'text \\<open>checking SML\\<close>\nlemma "x = x" by simp\nend\n')
+
+    def test_scan(self):
+        written, skipped = probe_theories.skip_code_checks(self.TEXT)
+        self.assertEqual(skipped, [{'line': 3, 'command': 'export_code a b checking SML'},
+                                   {'line': 6, 'command':
+                                    'export_code "(\\<le>) :: t \\<Rightarrow> _" (* c *) checking SML OCaml'}])
+        self.assertEqual(written.count('\n'), self.TEXT.count('\n'))
+        self.assertNotIn('checking SML\n', written)
+        self.assertIn('export_code c in Eval module_name M file_prefix m\n', written)
+        self.assertIn('text \\<open>checking SML\\<close>\nlemma "x = x" by simp\nend\n', written)
+        self.assertEqual(probe_theories.skip_code_checks('export_code a\ntext \\<open>checking\\<close>\n'),
+                         ('export_code a\ntext \\<open>checking\\<close>\n', []))
+
+    def test_summary_names_skipped(self):
+        sources = dict(ChangedBaseTheories.SOURCES, A=ChangedBaseTheories.SOURCES['A'].replace(
+            '\nend\n', '\nexport_code foo checking SML\nend\n'))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            summary, _ = ChangedBaseTheories().run_probe(root, {'A': 'a', 'B': 'b', 'N': None}, sources=sources)
+            expected = {'A': [{'line': 4, 'command': 'export_code foo checking SML'}]}
+            self.assertEqual(summary['skipped_code_checks'], expected)
+            self.assertEqual(summary['certified'], ['A', 'C', 'B', 'N'])
+            self.assertEqual(summary['errors'], [])
+            self.assertNotIn('export_code', (root / 'work' / 'theories' / 'A_Probe.thy').read_text())
+            self.assertIn('PROBE SKIPPED: A line 4: export_code foo checking SML',
+                          (root / 'work' / 'probe.log').read_text())
+
+
+class AdvancedBase(unittest.TestCase):
+    """A theory the tree left as main had it, whose base text is main's newer text, refuses the probe."""
+
+    def test_advanced_theories(self):
+        theories = probe_theories.ROOT / 'theories'
+        present = {n: theories / (n + '.thy') for n in ('A', 'B', 'C', 'D')}
+        batch = b'x blob 2\nb1\ny blob 2\nc1\n'
+        outputs = {'merge-base': b'p\n', 'diff': b'theories/A.thy\n', 'ls-files': b'', 'cat-file': batch}
+        digests = {b'b1': 'hb', b'c1': 'other'}
+        with mock.patch.object(probe_theories, 'git_output', side_effect=lambda *a, text=None: outputs[a[0]]), \
+                mock.patch.object(probe_theories.investigate, 'digest', side_effect=digests.get):
+            self.assertEqual(probe_theories.advanced_theories({'A': 'ha', 'B': 'hb', 'C': 'hc', 'D': None}, present),
+                             ['B'])
+        self.assertEqual(probe_theories.advanced_theories({'A': 'ha'}, {'A': Path('/elsewhere/A.thy')}), [])
+
+    def test_refused(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'work').mkdir()
+            with mock.patch.object(probe_theories, 'advanced_theories', return_value=['C', 'D']):
+                summary, runner = ChangedBaseTheories().run_probe(root, {'A': 'a', 'C': 'c', 'D': 'd'})
+            runner.assert_not_called()
+            self.assertEqual(summary['advanced'], ['C', 'D'])
+            self.assertFalse(summary['loaded'])
+            self.assertIn('bring-main', summary['refused'])
+            self.assertEqual(summary['errors'], [summary['refused']])
+            self.assertFalse((root / 'work' / 'theories').exists())
+
+
+class BaseSources(unittest.TestCase):
+    def test_reads_base_sources(self):
+        with tempfile.TemporaryDirectory() as directory:
+            sources = Path(directory) / 'original-sources'
+            sources.mkdir()
+            (sources / 'A.thy').write_text('theory A imports Main\nbegin\nend\n')
+            self.assertEqual(probe_theories.workspace_theories((), sources), {'A': sources / 'A.thy'})
 
 
 class BaseContext(unittest.TestCase):

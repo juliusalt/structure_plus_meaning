@@ -6,6 +6,7 @@ measured on 2026-09-20: a fork of the sealed knowledge base, a layer over `max` 
 538,044 tokens and wrote 62 — so the layer is what every role forks and what is pinged.
 """
 import json
+import re
 import os
 from pathlib import Path
 import subprocess
@@ -20,7 +21,7 @@ import manifest  # noqa: E402
 import select_base_load  # noqa: E402
 import v2  # noqa: E402
 
-PROJECT = HERE.parent.parent
+PROJECT = Path(os.environ.get("ORCH_PROJECT") or HERE.parent.parent)
 
 
 def parts(who):
@@ -35,65 +36,50 @@ def parts(who):
 
 
 class SplitListTests(unittest.TestCase):
-    def test_the_split_lists_divide_in_two_and_nothing_is_lost(self):
-        for who in ("max", "xhigh", "high"):
-            p = parts(who)
-            self.assertTrue(p["stable"], f"{who} has no stable reference")
-            self.assertTrue(p["layer"], f"{who} has no layer")
-            self.assertEqual(sorted(p["stable"] + p["layer"]), sorted(p[""]), who)
-            self.assertEqual(set(p["stable"]) & set(p["layer"]), set(), f"{who} holds a file in both parts")
+    def test_named_parts_retain_the_owner_reference_and_explicit_deepening(self):
+        for who in ('max','xhigh','high'):
+            path=HERE/manifest.LISTS[who]
+            es=manifest.list_entries(path.read_text(),str(PROJECT))
+            # ordered by how rarely their cause acts: the direction's text changed in 2 of the run's 472 commits, the
+            # reasoning inventory's in 6 (with landings that publish a pattern), the catalogue's in 187 (2026-09-23)
+            self.assertEqual(manifest.layer_names(path),['direction','inventory','catalogue'] if who!='high' else ['direction','catalogue'])
+            self.assertTrue(any(e['part']=='stable' and e['path'].endswith('RRA_Core.thy') for e in es))
+            # the owner's words first: everything held rests on the owner's intent, and none of it changed in the run
+            self.assertTrue(any(e['part']=='stable' and e['path'].endswith('owner-directions.md') for e in es))
+            self.assertTrue(any(e['part']=='direction' and e['path'].endswith('decisions-index.md') for e in es))
+            seen={}
+            for e in es:
+                if e['path'] in seen:
+                    self.assertGreater(select_base_load.DEPTH_ORDER[e['level']],select_base_load.DEPTH_ORDER[seen[e['path']]])
+                    self.assertIsNotNone(e['deepens'])
+                seen[e['path']]=e['level']
 
-    def test_the_planner_s_layer_holds_what_changes_and_no_frontier(self):
-        # its reference moved by nothing in twelve hours while the generated indexes, the reasoning inventory, the
-        # plan and the owner's words moved by 66,526 tokens: those are the layer (2026-09-20)
-        self.assertTrue(manifest.has_layer(HERE / manifest.LISTS["max"]))
-        layer = parts("max")["layer"]
-        for name in ("state/held/theory-names.md", "state/held/decisions-index.md", "REASONING_REUSE.md",
-                     "native_control_plan.md"):
-            self.assertTrue(any(p.endswith(name) for p in layer), f"{name} is not in the planner's layer")
-        stable = parts("max")["stable"]
-        self.assertTrue(any(p.endswith("theories/RRA_Core.thy") for p in stable))   # the reference stays put
-        self.assertNotIn(select_base_load.FRONTIER_HEAD, (HERE / manifest.LISTS["max"]).read_text())
+    def test_every_base_has_the_whole_vocabulary_and_original_conditions(self):
+        for who in ('max','xhigh','high'):
+            text=(HERE/manifest.LISTS[who]).read_text()
+            for name in (f'theory-map-index-{who}.md',f'tool-index-{who}.md','decisions-index.md','problems.txt'):
+                self.assertIn(name,text)
+            # the plan's map where the plan itself is not held (high); max and xhigh hold the plan whole
+            self.assertEqual('plan-index.md' in text, who=='high')
+            self.assertIn('purpose=steering',text)
+            self.assertIn('purpose=both',text)
 
-    def test_the_layer_begins_at_the_working_frontier(self):
-        # the frontier is measured again at every refresh from what the roles' sessions read, so which theories it
-        # holds moves (Development_Machinery.thy, named here, left it with the refreshes of 2026-09-22): what holds is
-        # that the layer begins with the frontier's tier and holds theories
-        for who in ("xhigh", "high"):
-            layer = parts(who)["layer"]
-            text = (HERE / manifest.LISTS[who]).read_text()
-            self.assertLess(text.index(manifest.LAYER_MARK), text.index(select_base_load.FRONTIER_HEAD), who)
-            self.assertTrue(any(p.endswith(".thy") for p in layer), who)
-            # the founding theories and the central ideas stay in the stable reference
-            self.assertIn(str(PROJECT / "theories/RRA_Core.thy"), parts(who)["stable"], who)
+    def test_generated_relations_stand_in_the_inventory_and_nothing_depends_on_the_queue(self):
+        # a base holds no task's relations: their union grew with the queue and every change of it rebuilt the base
+        # (2026-09-23); the one generated tier is the whole plan's notions, which the plan names and the inventory's
+        # reasoning is about: under it, and over the plan (high holds none, its tier empty in the catalogue)
+        for who in ('max','xhigh','high'):
+            text=(HERE/manifest.LISTS[who]).read_text()
+            if who=='high':
+                self.assertLess(text.index('# === layer catalogue ==='),text.index('# === relations ==='))
+            else:
+                self.assertLess(text.index('# === layer inventory ==='),text.index('# === relations ==='))
+                self.assertLess(text.index('# === end relations ==='),text.index('\nREASONING_REUSE.md\n'))
+                self.assertLess(text.index('\nREASONING_REUSE.md\n'),text.index('# === layer catalogue ==='))
+            self.assertNotIn('# === layer working ===',text)
+            block=text[text.index('# === relations ==='):text.index('# === end relations ===')]
+            self.assertEqual(re.findall(r'^# relation: ([^;]+);',block,re.M),['whole-plan notions'])
 
-    def test_the_frontier_tier_holds_the_theories_it_says_it_does(self):
-        for who in ("xhigh", "high"):
-            text = (HERE / manifest.LISTS[who]).read_text()
-            at = text.index(select_base_load.FRONTIER_HEAD)
-            after = text[at:].splitlines()
-            entries = []
-            for line in after[1:]:
-                if line.startswith("# "):
-                    break
-                name = line.split("  #")[0].strip()
-                if name:
-                    entries.append(name)
-            self.assertEqual(len(entries), select_base_load.FRONTIER_N, f"{who}'s frontier is not {select_base_load.FRONTIER_N} theories")
-            for name in entries:
-                self.assertTrue((PROJECT / name).is_file(), f"{who}'s frontier names {name}, which is not there")
-
-    def test_a_layer_pays_for_no_fresh_session(self):
-        # it is loaded by a fork of the sealed stable base, which carries the lean session already
-        code = "import sys; sys.path.insert(0, %r); import base_pack; print(base_pack.SESSION_TOKENS)" % str(HERE)
-        for part, expected in (("layer", "0"), ("stable", "15000"), ("", "15000")):
-            out = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True,
-                                 env=dict(os.environ, ORCH_BASE_PART=part))
-            self.assertEqual(out.stdout.strip(), expected, part)
-
-
-if __name__ == "__main__":
-    unittest.main()
 
 
 class TransitionTests(unittest.TestCase):
@@ -185,42 +171,6 @@ class StalenessTests(unittest.TestCase):
         self.assertIn("held-b", self.manifest("changed", "xhigh", "--since-layer", "old"))
         # a session whose layer's snapshot is gone falls back to the one standing rather than saying nothing
         self.assertIn("none", self.manifest("changed", "xhigh", "--since-layer", "a-layer-swept-long-ago"))
-
-
-class FrontierMeasureTests(unittest.TestCase):
-    """What counts as consulting a theory, when the reading the protocols prescribe names facts and not files."""
-
-    def transcript(self, command, result="x" * 5000):
-        import tempfile
-        self.temp = tempfile.TemporaryDirectory()
-        path = Path(self.temp.name) / "s.jsonl"
-        lines = [
-            {"type": "assistant", "message": {"content": [
-                {"type": "tool_use", "id": "t1", "name": "Bash", "input": {"command": command}}]}},
-            {"type": "user", "message": {"content": [
-                {"type": "tool_result", "tool_use_id": "t1", "content": result}]}},
-        ]
-        path.write_text("".join(json.dumps(l) + "\n" for l in lines))
-        return str(path)
-
-    def tearDown(self):
-        if hasattr(self, "temp"):
-            self.temp.cleanup()
-
-    def test_a_gather_that_names_a_fact_counts_for_its_theory(self):
-        # the planner, the task designer and the reviewer read statements by name, and counting only file paths made
-        # that reading invisible: the xhigh roles measured one theory on 2026-09-20 and the implementers six
-        use = select_base_load.measure([self.transcript(
-            ".claude/orchestration/v2.py step 7 1 Development_Machinery.development_machinery_def")])
-        self.assertIn("theories/Development_Machinery.thy", use)
-
-    def test_a_gather_that_names_a_file_still_counts(self):
-        use = select_base_load.measure([self.transcript("cat theories/Development_Machinery.thy")])
-        self.assertIn("theories/Development_Machinery.thy", use)
-
-    def test_prose_that_merely_mentions_a_word_does_not_count(self):
-        use = select_base_load.measure([self.transcript("echo 'the machinery is ready. and so on.'")])
-        self.assertEqual(use, {})
 
 
 class BaseScriptTests(unittest.TestCase):

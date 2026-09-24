@@ -278,5 +278,38 @@ class ExecutionBoundaryTests(unittest.TestCase):
         self.assertFalse(checker.reusable_execution(new, stale))
 
 
+
+class KeptHeapTests(unittest.TestCase):
+    """A batch's check keeps its heap without selecting it, so that a landing of the same content adopts it rather than
+    proving the same theories again (the landing trains' proofs took a median 216 s on 2026-09-22's afternoon)."""
+
+    def test_a_kept_or_advancing_check_stores_its_heap_and_no_other_does(self):
+        self.assertEqual(checker.heap_flags(False, False), ['--without-heap'])
+        self.assertEqual(checker.heap_flags(True, False), [])
+        self.assertEqual(checker.heap_flags(False, True), [])
+
+    def test_only_an_accepted_kept_check_offers_its_context(self):
+        proof, base = Path('/checks/c/proof'), Path('/bases/b/proof')
+        self.assertEqual(checker.kept_context(True, True, proof, base), str(proof))
+        self.assertEqual(checker.kept_context(True, True, None, base), str(base))  # nothing rebuilt: the base itself
+        self.assertIsNone(checker.kept_context(True, False, proof, base))
+        self.assertIsNone(checker.kept_context(False, True, proof, base))
+
+    def test_a_proof_is_rooted_at_every_theory_and_given_time_by_its_size(self):
+        # a context rooted at the rebuilt theories held their import closure (627 of 1,840), and the next check on it
+        # proved 1,663 theories again, past its 1,200 s (2026-09-24)
+        self.assertEqual(checker.proof_roots(['A', 'B', 'C'], {'B'}), ['A', 'B', 'C'])
+        self.assertEqual(checker.proof_roots(['A'], {'A', 'N'}), ['A', 'N'])
+        self.assertEqual(checker.proof_timeout(1200, 118), 1200)
+        self.assertEqual(checker.proof_timeout(1200, 1663), 2078)
+
+    def test_the_command_line_passes_it_on(self):
+        with patch.object(checker, 'validate', return_value=0) as validate, \
+                patch.object(checker, 'selected_base', return_value=Path('/b')), \
+                patch('sys.argv', ['incremental_check.py', 'check', '--output', '/o', '--keep-heap']):
+            checker.main()
+        self.assertTrue(validate.call_args.kwargs['keep_heap'])
+        self.assertFalse(validate.call_args.kwargs['advance_base'])
+
 if __name__ == '__main__':
     unittest.main()

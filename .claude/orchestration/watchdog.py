@@ -21,6 +21,7 @@
              consultation, a planning episode.
 Nothing is done while state/stopped exists or the orchestration is inactive. Every action is one line in state/v2.log.
 """
+import calendar
 import contextlib
 import datetime
 import json
@@ -190,6 +191,7 @@ def lost(name, why):
     with v2.state() as st:
         s = st["sessions"][name]
         s["state"], tid = "lost", s.get("task")
+        s["lost_why"], s["lost_at"] = why, time.time()  # read by whoever watches the run (console_report.lost_sessions)
         t = st["tasks"].get(tid or "") or {}
         role = s["role"]
         if role in v2.PRODUCING:
@@ -200,6 +202,7 @@ def lost(name, why):
         elif role == "reviewer":  # its review task is taken up again by a new reviewer
             x = st["tasks"].get(s.get("reviews") or "") or {}
             t["reviewing"], x["reviewing"] = None, None
+            x["reviews_going"] = [r for r in (x.get("reviews_going") or []) if r != tid] or None  # no verdict comes
             if t.get("reviewed_by") == name:
                 t["reviewed_by"] = None
                 t.pop("round", None)
@@ -254,8 +257,8 @@ def care(name, s):
     seen(name)
     if r["activity"] != "idle":
         return
-    if s["role"] == "kb":
-        return  # v2.kb_care seals it when it has replied INTEGRATED
+    if s["role"] in ("kb",) + v2.LAYER_ROLES:
+        return  # v2.kb_care seals it when it has replied INTEGRATED, v2.role_layer_care when it has reasoned or held
     model, said, at = last_reply(s["sid"])
     # the limit first: a session stopped by it is not idle by choice, and resuming it to hand over mail spends the
     # resume on a turn that hits the limit again while unread() has already emptied its box — the mail would be
@@ -332,6 +335,20 @@ def held(st, name, s):
         return None
     if name == st["kb"]:
         return "the knowledge base"
+    if s["role"] == "role-layer":
+        rec = (st.get("role_layers") or {}).get(s.get("layer_of") or "") or {}
+        if rec.get("building") == name:
+            return f"the {s.get('layer_of')}'s reasoning layer, reasoning"
+        if rec.get("name") == name and s.get("layer_of") in v2.role_layers() and worth_holding(s):
+            return f"the {s.get('layer_of')}'s reasoning layer"  # every session of the role forks it, or its churn
+        return None
+    if s["role"] == "role-churn":
+        rec = (st.get("role_layers") or {}).get(s.get("churn_of") or "") or {}
+        if rec.get("churn_building") == name:
+            return f"the {s.get('churn_of')}'s churn, loading"
+        if rec.get("churn") == name and s.get("churn_of") in v2.role_layers() and worth_holding(s):
+            return f"the {s.get('churn_of')}'s churn"  # every session of the role forks it
+        return None
     if s["role"] == "planner" and s["state"] == "idle":
         return "the planner, between events"  # one planner lives across them; the next event wakes it
     tasks = st["tasks"]
@@ -350,6 +367,9 @@ def held(st, name, s):
     if s["role"] in v2.PRODUCING and v2.may_come_back(st, name, s):
         return "its task may come back to it"  # resumed when the planner queues it again (v2.reusable)
     x = tasks.get(s.get("reviews") or "") or {}
+    if s["role"] == "reviewer" and t.get("reviewed_by") == name and t.get("voided") \
+            and x.get("stage") not in (None, "done", "deleted") and time.time() - ended <= v2.HOLD_MAX:
+        return "its accept was voided by a failed check: the fixed work comes back to it"  # C9 (start_review)
     if s["role"] == "reviewer" and t.get("reviewed_by") == name and t.get("verdict") == "reject":
         if x.get("stage") in ("fixing", "checking", "reviewing"):
             return "a re-review may come"
@@ -367,6 +387,16 @@ def held(st, name, s):
         return "the task it accepted has not landed"
     if time.time() - ended > v2.HOLD_MAX:
         return None
+    # a task that continues its task's work forks it when it starts (v2.continued_session, the owner's switch C13): a
+    # fork of a cold session would write its whole context anew, so it is held until that task has started
+    if s["role"] in v2.PRODUCING and s.get("task") and v2.continue_by_fork() and continuing(st, str(s["task"])):
+        return f"task {continuing(st, str(s['task']))} continues its work and has not started"
+    # and before the planner has made those tasks: a producer is released within a minute of its task's landing, and
+    # the planner makes the review's follow-ups into tasks when it handles the landing — held while its review asked
+    # for some, for CONTINUE_GRACE after its own work ended
+    if s["role"] in v2.PRODUCING and v2.continue_by_fork() and t.get("stage") == "done" and t.get("followups") \
+            and t.get("session") == name and time.time() - ended <= v2.CONTINUE_GRACE:
+        return "its review asked for follow-ups, which may continue its work"
     # a proposal is not final until the planner places it, and the one moment a correction is likely is before: held
     # only while tasks it briefed were open, a task designer was released three seconds after its result, and the
     # planner's `v2.py tell` found no session — brief 13 was re-planned and briefed again whole (2026-09-21)
@@ -377,6 +407,27 @@ def held(st, name, s):
     # and 16.4M tokens read (design-66 still pinged an hour after it had landed), and a question to an author gone
     # cold is answered by the knowledge base (the owner: stop keeping alive what is never asked, 2026-09-22)
     return None
+
+
+def continuing(st, source):
+    """The first queued task, not yet started, whose metadata says it continues task `source`'s work, or None."""
+    for tid in st.get("queue") or []:
+        if (st["tasks"].get(tid) or {}).get("stage") not in (None, "ready", "unformed"):
+            continue
+        meta = (v2.read_task(tid) or {}).get("metadata") or {}
+        if isinstance(meta, dict) and str(meta.get("continues") or "") == source:
+            return tid
+    return None
+
+
+def worth_holding(s):
+    """Whether a role's layer or churn is still worth its keep-warm pings: while the pings since its last use (a fork
+    of it, or its seal) cost less than building it again would. A ping reads its whole prefix (0.1 a token); a layer's
+    build is its evidence, its message and its thinking (about 200K), a churn's its prefix read and the delta written
+    (about 70K) — so a churn nobody forks is let go after a ping, a layer after three or four (about three hours)."""
+    idle = time.time() - (s.get("used") or s.get("ended") or s.get("started") or time.time())
+    build = s.get("build_cost") or (v2.LAYER_BUILD_GUESS if s.get("role") == "role-layer" else v2.CHURN_BUILD_GUESS)
+    return int(idle // v2.PING_AGE) * (s.get("ping_cost") or v2.PING_GUESS) < build
 
 
 def pinging(name):
@@ -437,7 +488,7 @@ def holds():
                                    f"(`v2.py result {s.get('task')}`): what exists, and what remains."):
                 lost(name, "went cold while it waited")
             continue
-        if v2.hit_age(name) > v2.PING_AGE and not pinging(name):
+        if v2.hit_age(name) > v2.PING_AGE and not pinging(name) and not v2.ping_missed(name):
             open(os.path.join(STATE, f"ping-{name}"), "w").write(str(time.time()))
             subprocess.Popen([sys.executable, os.path.join(HERE, "v2.py"), "ping", name], stdout=subprocess.DEVNULL,
                              stderr=subprocess.DEVNULL, start_new_session=True)
@@ -469,11 +520,31 @@ def end_finalizer(tid):
         time.sleep(2)
 
 
+def accepted_unmoved(st, tid, t):
+    """Whether a task in review is one its reviews have accepted already, with a final job and no review running: a
+    verdict is what moves an accepted task to its commit (v2.cmd_verdict), and such a task has no verdict to come —
+    pending_reviews offers no review whose verdict is given, and the planner's stalled line leaves accepted tasks out.
+    It comes of a task accepted in an earlier round and checked again: tasks 128 and 147 (2026-09-22) were accepted,
+    their landings interrupted by the reboot of 13:04, sent to the planner, queued again, their checks passed at 14:10
+    and 14:26 — and they stood in review eight hours, their sessions pinged warm (23 pings, about 2.5M), 147 heading
+    the planner's order. A review running on it judges it afresh, and while the graph is held the commit waits for the
+    planner's order, as reopen_unlanded's do."""
+    return (not t.get("reviewing") and not v2.graph_held()
+            and os.path.exists(os.path.join(v2.BUILD, tid, "finalize.json")) and v2.review_accepted(st, tid))
+
+
 def finishing():
     st = v2.peek()
     landers = checkers = False
     for tid, t in st["tasks"].items():
         stage = t.get("stage")
+        if stage == "reviewing" and accepted_unmoved(st, tid, t):
+            with v2.state() as w:
+                w["tasks"][tid]["stage"] = "committing"
+                w["tasks"][tid].pop("finishing_since", None)
+            v2.log(f"task {tid} was accepted and stood in review with no review due: its commit is made")
+            v2.background("finalize.py", "commit", tid)
+            continue
         if stage in ("checking", "committing"):
             if t.get("held_finalizer"):
                 continue  # held with the graph (v2.reopen_unlanded): no finalizer is meant to run until it is released
@@ -545,6 +616,16 @@ def finishing():
 
 LAYER_STALE = float(os.environ.get("ORCH_LAYER_STALE", 0.20))
 LAYER_EVERY = int(os.environ.get("ORCH_LAYER_EVERY", 900))  # how often the share is looked at
+# The delta layer (notes/plan-delta-layer.md, decided 2026-09-22 19:45): for a base named in state/deltas a delta is
+# built as what the base holds moves, and the frontier layer is refreshed by what the delta holds of it. The first
+# thresholds are the owner's estimates, to be set from a day's measurement.
+DELTA_EVERY = int(os.environ.get("ORCH_DELTA_EVERY", 300))     # how often what is pending is measured (pending_paid)
+# tokens moved since the standing delta: a build costs the layer's read (~60K) and its write; what it buys is the files
+# forks would otherwise read again, and forks named 17% (high) and 8% (xhigh) of the files their stale line listed on
+# 2026-09-22 — which puts a build at every ~3.7K tokens moved on high and ~5.2K on xhigh (notes/plan-bases-upgrade.md D11)
+STABLE_DELTA_MAX = int(os.environ.get("ORCH_STABLE_DELTA_MAX", 15000))  # tokens of the stable reference's changes
+LAYER_LOCK = int(os.environ.get("LAYER_LOCK", 2400))           # base.sh's: a build's lock older than this is stale
+WARM_EVERY = int(os.environ.get("ORCH_WARM_EVERY", 2400))      # warm_daemon.sh's: an entry is pinged this long after its read
 
 
 def layers():
@@ -558,20 +639,526 @@ def layers():
         if not os.path.exists(os.path.join(STATE, f"{who}-layer.json")):
             continue
         asked = os.path.exists(os.path.join(STATE, f"{who}-layer.refresh"))
+        why = ""
+        if (v2.layer_record(who) or {}).get("parts"):
+            # a chain of named parts is built again at once only for a change of its structure (base_stack's
+            # refresh_reason); a change of what it holds is carried by the delta and refreshed by the rule below
+            import base_stack
+            required = base_stack.refresh_reason(who)
+            if required:
+                open(os.path.join(STATE, f"{who}-layer.refresh"), "w").write("why: " + required)
+                asked, why = True, required
+        if not v2.deltas_on(who) and missed_fork(who, (v2.layer_record(who) or {}).get("sealed")):
+            # what the roles fork is the layer: it is the entry a fork missed (deltas() answers it where a delta stands)
+            open(os.path.join(STATE, f"{who}-layer.refresh"), "w").write(
+                "why: a fork missed its entry, and every fork after it would write the whole prefix anew")
+            asked, why = True, "a fork missed its entry, and every fork after it would write the whole prefix anew"
         if not asked and (age(f"{who}-layer.looked") or LAYER_EVERY + 1) < LAYER_EVERY:
             continue
         if os.path.exists(os.path.join(STATE, f"{who}-layer.building")):
             continue  # one refresh of a layer at a time; base.sh holds this while it builds and gives it up at the end
         open(os.path.join(STATE, f"{who}-layer.looked"), "w").write(str(time.time()))
-        share = 1.0 if asked else stale_share(who)
-        if share < LAYER_STALE:
-            continue
+        if asked:
+            with contextlib.suppress(OSError):  # a reason the watchdog wrote (deltas): `why: …`; by hand, anything
+                said = open(os.path.join(STATE, f"{who}-layer.refresh")).read().strip()
+                why = said[len("why: "):] if said.startswith("why: ") else ""
+            said = f"the {who} layer is refreshed: {why}" if why else f"the {who} layer is refreshed, asked for by hand"
+        elif v2.deltas_on(who):
+            # refreshed when what its delta has cost the forks that carried it reaches what a refresh costs: the delta
+            # is rent every fork request pays, the refresh a purchase that ends it (notes/plan-bases-upgrade.md D7).
+            # It was a share of the layer (8%) and a count of theories the frontier would take in (5), which asked a
+            # refresh 1h24m after the last on 2026-09-22 — the old whole-file pace — where the costs of that day put
+            # the refresh every 3.5 to 5 hours. The stable reference's drift a refresh does not take back: it is said.
+            if (v2.layer_record(who) or {}).get("parts"):
+                # a chain of named parts: each part on its own schedule (refresh_plan) — refreshed from the part where
+                # what the accounts from it up hold most exceeds what loading them again costs, the stable part by the
+                # same rule (the owner, 2026-09-23: its reload follows the rule automatically)
+                plan = refresh_plan(who)
+                if not plan:
+                    continue
+                start, owed, cost = plan
+                with contextlib.suppress(OSError):
+                    os.remove(os.path.join(STATE, f"{who}-layer.refresh"))
+                said = (f"the {who} parts from {start} up are refreshed: what they loaded that the chain holds anew has "
+                        f"cost the forks {owed / 1000:,.0f}K since each loaded, more than loading them again costs "
+                        f"({cost / 1000:,.0f}K)")
+                v2.log(said)
+                base_run(who, "layer", "--from", start)
+                continue
+            measured = delta_measure(who)
+            if measured and measured[1] >= STABLE_DELTA_MAX:
+                v2.say_once(f"stable-delta-{who}", f"ATTENTION the {who} delta holds {measured[1]:,} tokens of the stable "
+                            f"reference's changes: loading it again (base.sh {who} restable) is the owner's", every=86400)
+            owed, cost = carried(who), refresh_cost(who)
+            if cost is None or owed < cost:
+                continue
+            said = (f"the {who} layer is refreshed: its delta has cost the forks that carried it {owed / 1000:,.0f}K since "
+                    f"the layer sealed, what a refresh costs ({cost / 1000:,.0f}K)")
+        else:
+            share = stale_share(who)
+            if share < LAYER_STALE:
+                continue
+            said = f"the {who} layer is refreshed: {share:.0%} of what it holds has changed since it loaded"
         with contextlib.suppress(OSError):
             os.remove(os.path.join(STATE, f"{who}-layer.refresh"))
-        v2.log(f"the {who} layer is refreshed: {share:.0%} of what it holds has changed since it loaded"
-               if not asked else f"the {who} layer is refreshed, asked for by hand")
-        subprocess.Popen(["sh", os.path.join(HERE, "base.sh"), who, "layer"], cwd=v2.PROJECT,
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+        v2.log(said)
+        base_run(who, "layer")
+
+
+def base_run(who, *args):
+    """base.sh in the background, with what it says kept: a build started from here is read by nobody, and its
+    stderr went to /dev/null until the high layer refresh of 2026-09-22 21:36 left a pack, no layer and no
+    reason. warm.log is where the run is read, and base.sh timestamps what it means to say (fail)."""
+    return subprocess.Popen(["sh", os.path.join(HERE, "base.sh"), who, *args], cwd=v2.PROJECT,
+                            stdout=subprocess.DEVNULL, stderr=open(os.path.join(STATE, "warm.log"), "a"),
+                            start_new_session=True)
+
+
+def manifest_says(*args):
+    """What manifest.py prints, for the base it names (its own list, never an inherited one)."""
+    return subprocess.run([sys.executable, os.path.join(HERE, "manifest.py"), *args], capture_output=True, text=True,
+                          timeout=120, env={k: v for k, v in os.environ.items() if k != "ORCH_LOAD_LIST"}).stdout
+
+
+def delta_measure(who):
+    """(the share of the layer's tokens a delta built now would hold of it, its stable tokens, its tokens), or None."""
+    try:
+        share, stable, total = manifest_says("delta-share", who).split()
+        return float(share), int(stable), int(total)
+    except (ValueError, OSError, subprocess.SubprocessError) as e:
+        v2.say_once(f"delta-measure-{who}", f"ATTENTION the {who} delta could not be measured ({e!r})", every=3600)
+        return None
+
+
+def sealed_at(rec):
+    try:
+        return time.mktime(time.strptime(rec["sealed"], "%Y-%m-%dT%H:%M:%S"))
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
+def own_requests(s):
+    """The requests a session made itself: its transcript's assistant turns from its launch on, each counted once (a
+    fork's transcript begins with a copy of its origin's)."""
+    path, since, seen = v2.transcript(s.get("sid") or ""), (s.get("started") or 0) - 5, set()
+    try:
+        lines = open(path, errors="ignore")
+    except OSError:
+        return 0
+    for line in lines:
+        if '"assistant"' not in line or '"usage"' not in line:
+            continue
+        try:
+            d = json.loads(line)
+            t = calendar.timegm(time.strptime(d["timestamp"][:19], "%Y-%m-%dT%H:%M:%S"))
+        except (ValueError, KeyError):
+            continue
+        if t >= since:
+            seen.add((d.get("message") or {}).get("id"))
+    return len(seen)
+
+
+DELTA_BUILT = re.compile(r"^(\S+) delta (\w+): \w+ +session fork \w+ of base \w+: first own request cache_read=\d+ "
+                         r"cache_write=(\d+)")
+
+
+def carried(who):
+    """What a base's delta has cost since its layer sealed — what a refresh of the layer would have spared: every fork
+    of the delta carried its tokens in each of its requests (0.1 a token a request), and every build of the delta
+    wrote it (2 a token)."""
+    since = sealed_at(v2.layer_record(who) or {})
+    if since is None:
+        return 0.0
+    owed = 0.0
+    sessions = v2.peek()["sessions"]
+    for s in sessions.values():
+        if (s.get("started") or 0) < since or not s.get("delta_tokens") or base_of(s, sessions) != who:
+            continue
+        if s.get("role") == "role-churn":  # a role's churn wrote the delta once, over its layer (2 a token)
+            owed += 2 * (s.get("written_tokens") or s["delta_tokens"])
+        else:  # a fork of the delta, or of a role's churn, carried it in each of its requests
+            owed += 0.1 * s["delta_tokens"] * own_requests(s)
+    try:
+        for line in open(os.path.join(STATE, "warm.log"), errors="ignore"):
+            m = DELTA_BUILT.match(line)
+            if m and m.group(2) == who:
+                with contextlib.suppress(ValueError):
+                    if time.mktime(time.strptime(m.group(1), "%Y-%m-%dT%H:%M:%S")) >= since:
+                        owed += 2 * int(m.group(3))
+    except OSError:
+        pass
+    return owed
+
+
+def carried_parts(who):
+    """{part: what the part's standing load has cost the forks since it loaded that loading it again would spare}. A
+    refresh does not end the carrying of a part's changes: their current forms move from the delta into the part and
+    are carried just the same. What it ends is (a) the part's own old forms — the units it loaded that the chain holds
+    anew, modified or removed — which every request of every fork carries for nothing (0.1 a token a request: the
+    fork's `old_forms`, from the chain it holds), and (b) the writing of the part's changes again whenever the whole
+    chain is taken in — a session of it made over the layer (state/WHO-delta-builds.jsonl, 2 a token of the part's
+    changes it held), a role's churn built whole, a judging layer or the knowledge base holding the chain in its own
+    message (their `whole_parts`). Increments are not counted: each change is written once either way.
+    Counted for a part only after that part's own load — a refresh from a higher part keeps it, and its account (the
+    arithmetic review of 2026-09-23: counting the delta's tokens about a part, an append-only part such as the decisions
+    paid for refreshes that relieved nothing)."""
+    chain = (v2.layer_record(who) or {}).get("parts") or []
+    since = {}
+    for i, node in enumerate(chain):
+        name = "stable" if i == 0 else node.get("part")
+        if name and name != "reasoning":
+            since[name] = sealed_at(node) or sealed_at(_record(who, "base") or {}) if i == 0 else sealed_at(node)
+    if not since:
+        return {}
+    owed = {name: 0.0 for name in since}
+
+    def spend(at, costs):
+        for name, cost in (costs or {}).items():
+            if name in owed and since[name] is not None and at >= since[name]:
+                owed[name] += cost
+    sessions = v2.peek()["sessions"]
+    for s in sessions.values():
+        if base_of(s, sessions) != who:
+            continue
+        at = s.get("started") or 0
+        if s.get("old_forms"):
+            requests = own_requests(s)
+            spend(at, {part: 0.1 * n * requests for part, n in s["old_forms"].items()})
+        if s.get("whole_parts"):  # a churn built whole, or a judging layer or the knowledge base taking the chain whole
+            spend(at, {part: 2 * n for part, n in s["whole_parts"].items()})
+    for build in delta_builds(who):
+        # a session made over the layer holds every text anew (a cut writes nothing; a session over the chain's
+        # session writes only its new texts), and a message of the delta before the texts was written whole
+        if build.get("kind") in ("delta", "session-whole"):
+            with contextlib.suppress(ValueError, TypeError):
+                spend(time.mktime(time.strptime(build["at"], "%Y-%m-%dT%H:%M:%S")),
+                      {part: 2 * n for part, n in (build.get("parts") or {}).items()})
+    return owed
+
+
+def delta_builds(who):
+    """Every text cut and every session made of the base's delta, as base_stack records them: [{at, kind (text-delta,
+    text-increment: a cut, written by nobody; session-whole: a session over the layer, every text written again;
+    session: over the chain's session, its new texts alone; before the texts, delta and increment), tokens, parts}]."""
+    out = []
+    with contextlib.suppress(OSError):
+        for line in open(os.path.join(STATE, f"{who}-delta-builds.jsonl"), errors="ignore"):
+            with contextlib.suppress(ValueError):
+                out.append(json.loads(line))
+    return out
+
+
+def refresh_plan(who):
+    """(the part a refresh starts from, what the accounts of it and every part over it hold, what loading them again
+    costs) for the part where that difference is largest and not below nothing — rent against purchase, per part (D7) —
+    or None. The stable part is one candidate among the others (the owner, 2026-09-23: its reload follows the rule). The
+    lowest part that had paid, counted with the parts over it, let a large account higher up pay for loading again a
+    lower part with nothing to relieve: on max the catalogue's account alone paid for a refresh from the direction
+    (580K) as well as for the catalogue alone (390K), and the rule chose the direction, 190K for nothing (the arithmetic
+    review of 2026-09-23). A lower part is now included only where its own account covers what it adds to the cost."""
+    import base_stack
+    costs = base_stack.suffix_costs(who)
+    if not costs:
+        return None
+    owed, layers = carried_parts(who), role_layers_cost(who) + kb_cost(who)
+    names = [c[0] for c in costs]
+    best = None
+    for i, (part, written, read) in enumerate(costs):
+        paid, cost = sum(owed.get(n, 0.0) for n in names[i:]), 2 * written + 0.1 * read + layers
+        if paid > 0 and paid >= cost and (best is None or paid - cost > best[1] - best[2]):
+            best = (part, paid, cost)
+    return best
+
+def role_layers_cost(who):
+    """What building again the role layers standing on a base's chain costs: a refresh builds them again
+    (role_layer_due)."""
+    layers = 0
+    sessions = v2.peek()["sessions"]
+    for role in v2.role_layers():
+        name = v2.role_layer_of(role)
+        if name and base_of({"origin": name}, sessions) == who:
+            layers += (sessions.get(name) or {}).get("build_cost") or 0
+    return layers
+
+
+def base_of(s, sessions):
+    """The base a session's load stands on, followed through the sessions it forked (a role's churn, its layer)."""
+    for _ in range(5):
+        part = v2.base_part(s.get("origin"))
+        if part or s.get("origin") not in sessions:
+            return part
+        s = sessions[s["origin"]]
+    return None
+
+
+def refresh_cost(who, part=None):
+    """What refreshing a layer costs: the layer written anew (2 a token) over one read of the stable base under it
+    (0.1 a token), from the records' measured contexts, and the role layers standing on it; None when either is not
+    recorded. A chain of named parts: from `part`, or from its top part (the least a refresh loads), everything under
+    it read, not written (base_stack.suffix_costs)."""
+    base, layer = _record(who, "base"), v2.layer_record(who)
+    try:
+        stable, whole = int(base["context"]), int(layer["context"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    if layer.get("parts"):
+        import base_stack
+        costs = base_stack.suffix_costs(who)
+        if not costs:
+            return None
+        chosen = next((c for c in costs if c[0] == part), costs[-1])
+        whole, stable = chosen[1] + chosen[2], chosen[2]
+    return 2 * max(0, whole - stable) + 0.1 * stable + role_layers_cost(who) + kb_cost(who)
+
+
+def _record(who, part):
+    try:
+        return json.load(open(os.path.join(STATE, f"{who}-{part}.json")))
+    except (OSError, ValueError):
+        return None
+
+
+def entry_missed(who, part, sealed):
+    """Whether this part's own cache entry is gone: a ping or a fork of it missed and no load has made it since. The
+    mark stands until the load that writes the entry clears it (base.sh), and a part sealed since the miss is that
+    load. It is read, not taken: what answers it is the load, not the reading."""
+    try:
+        when = os.path.getmtime(os.path.join(STATE, f"{who}-{part}.miss"))
+    except OSError:
+        return False
+    return not (sealed and time.mktime(time.strptime(sealed, "%Y-%m-%dT%H:%M:%S")) > when)
+
+
+def layer_entry_age(who):
+    """How long ago the layer's own cache entry was read: through its forks and pings while the roles fork it, through
+    the delta's builds and its own pings once they fork the delta (base.sh). An entry that was missed is gone, however
+    lately it was read: a delta built over it would fork a session nothing holds and write the whole prefix again (the
+    high layer's ping missed at 2026-09-22 21:56, 593K, with its last read 41 minutes old)."""
+    rec = v2.layer_record(who) or {}
+    part = "base" if v2.base_file(who).endswith("-layer.json") else "layer"
+    if entry_missed(who, part, rec.get("sealed")):
+        return None
+    ages = [age(f"{who}-{part}.hit")]
+    top = (rec.get("parts") or [{}])[-1]
+    if top.get("part") and top.get("sessionId"):
+        # a chain's top part is read and pinged under its own marks (v2.hit, base_stack.ping): with every role of the
+        # base on a layer of its own nothing forks the base, and its mark alone aged while the part's pings answered —
+        # the high layer was refreshed at 00:47 as cold, with its stable base and two role layers (the simulation of
+        # the run of 09-21/22, 2026-09-23)
+        ages.append(age(os.path.join("entry-hits", top["sessionId"])))
+        with contextlib.suppress(OSError):
+            if open(os.path.join(STATE, f"{who}-{top['part']}.hit")).read().strip() in ("", top["sessionId"]):
+                ages.append(age(f"{who}-{top['part']}.hit"))
+    ages = [a for a in ages if a is not None]
+    return min(ages) if ages else None
+
+
+SEALED_FRESH = 600  # a part sealed this recently holds the entry a fork missed: it is not made again for that miss
+
+
+def missed_fork(who, sealed):
+    """Whether the entry this base's roles fork is gone and must be made anew: a fork of it missed (the mark, taken
+    here), or a keep-warm ping of it did (`<who>-base.miss`, which the load that makes the entry clears — base.sh —
+    and which holds the pings off meanwhile). A part sealed since (SEALED_FRESH) is the answer to both."""
+    mark, pinged = (os.path.join(STATE, f"{who}-{x}") for x in (v2.FORK_MISSED, "base.miss"))
+    if not os.path.exists(mark) and not os.path.exists(pinged):
+        return False
+    fresh = sealed and time.time() - time.mktime(time.strptime(sealed, "%Y-%m-%dT%H:%M:%S")) < SEALED_FRESH
+    with contextlib.suppress(OSError):
+        os.remove(mark)  # the ping's mark is the load's to clear: a ping meanwhile would miss and pay again
+    return not fresh
+
+
+def deltas():
+    """Keep each base's delta for a base named in state/deltas, with no build over its chain going. What changed is
+    measured every DELTA_EVERY (the pending file every fork reads, v2.delta_uncut) and cut into a text when something
+    takes it (base_stack.cut: a churn, a judging role's layer, the knowledge base, a session). A session holding the
+    texts is made only for the forks of the base itself (v2.top_rider), once what they lacked has cost them what making
+    it costs (pending_paid) — the owner, 2026-09-24: "build the session only when something is about to start from it"
+    —, over the chain's session when that holds a beginning of the chain and is warm, else over the layer, whose own
+    entry must be warm (a cold one is refreshed instead). The chain is begun anew as one whole text once its superseded
+    forms have cost their holders what that costs (stack_waste): a cut, local, no session. A fork that missed the
+    session's entry has it made over the layer; one that missed the layer's, while no session stands, has the layer
+    refreshed. When the parts are refreshed otherwise is layers()' (carried). By hand: state/WHO-delta.build makes the
+    chain one text and a session of it at the next pass, and state/WHO-delta.ask (a question) asks a fork of the
+    session (the canary)."""
+    for who in v2.BASES:
+        if not v2.layer_record(who):
+            continue
+        if v2.deltas_on(who) and v2.delta_record(who) and WARM_EVERY <= (age(f"{who}-layer.hit") or 0) < v2.WARM_MAX:
+            # under a delta the layer is read by the delta's builds alone: its own entry is pinged here, as the daemon's
+            # `warm WHO layer --if-due` does once the daemon runs a version with that line — its loop is parsed once,
+            # and the high layer's entry stood at 40 minutes, 15 short of cold, with no ping to come (2026-09-22 20:55)
+            base_run(who, "warm", "layer", "--if-due")
+        build, question = (os.path.join(STATE, f"{who}-delta.{x}") for x in ("build", "ask"))
+        asked = os.path.exists(build)
+        if not (v2.deltas_on(who) or asked or os.path.exists(question)):
+            continue
+        if (age(f"{who}-layer.building") or LAYER_LOCK + 1) < LAYER_LOCK:
+            continue  # one build over a layer at a time
+        top = v2.delta_record(who)
+        if os.path.exists(question) and (top or {}).get("sessionId"):
+            text = open(question).read().strip()
+            os.remove(question)
+            v2.log(f"the {who} delta is asked a question, a fork of it answering into state/{who}-delta-answer.txt")
+            base_run(who, "delta", "--ask", text)
+            continue
+        if os.path.exists(question) and not asked:
+            asked = True  # a question needs a session to ask: made first, the question kept for the pass after
+            open(build, "w").close()
+        missed = missed_fork(who, (top or {}).get("sealed") if (top or {}).get("sessionId")
+                             else (v2.layer_record(who) or {}).get("sealed"))
+        if missed and not (top or {}).get("sessionId"):
+            # the roles fork the layer until a session is made: its entry is what the fork missed
+            v2.log(f"the {who} layer is to be refreshed: a fork missed its entry, and every fork after it would write "
+                   "the whole prefix anew")
+            open(os.path.join(STATE, f"{who}-layer.refresh"), "w").write(
+                "why: a fork missed its entry, and every fork after it would write the whole prefix anew")
+            continue
+        if not (asked or missed) and (age(f"{who}-delta.looked") or DELTA_EVERY + 1) < DELTA_EVERY:
+            continue
+        open(os.path.join(STATE, f"{who}-delta.looked"), "w").write(str(time.time()))
+        # what changed and is not cut yet, kept for the forks started meanwhile (v2.delta_uncut): each records it
+        pending = pending_tokens(who)
+        with contextlib.suppress(OSError):
+            json.dump({"top": v2.chain_top(top) if top else (v2.layer_record(who) or {}).get("sessionId"),
+                       "tokens": pending, "at": time.time()},
+                      open(os.path.join(STATE, f"{who}-delta-pending.json"), "w"))
+        flags, why = [], ""
+        if asked:
+            flags, why = ["--whole"], "asked for by hand"
+        elif missed:
+            flags, why = ["--over-layer"], "a fork missed its session's entry, and every fork after it would write it anew"
+        elif top and len(v2.chain_of(top)) >= 2:
+            owed, cost = stack_waste(who, top)
+            if owed and owed >= cost:
+                # its holders take the whole text by their own rules; the cut itself writes nothing
+                v2.log(f"the {who} delta's chain is begun anew as one text: its superseded forms have cost its holders "
+                       f"{owed / 1000:,.0f}K, what taking it anew costs them ({cost / 1000:,.0f}K)")
+                cut_text(who, whole=True)
+                continue
+        if not flags and not why:
+            lacking = v2.delta_pending(who)
+            if not lacking:
+                continue
+            owed, cost = pending_paid(who, top, lacking)
+            if owed < cost:  # rent against purchase: what the forks of the base lacked has not paid for a session
+                continue
+            why = (f"what the forks of the base lacked of {lacking:,} tokens changed has cost them {owed / 1000:,.0f}K, "
+                   f"what a session holding it costs ({cost / 1000:,.0f}K)")
+        if flags or not session_over_chain(who):
+            # a session over the layer reads its entry, which must be warm: a session over a cold one would write it
+            entry = layer_entry_age(who)
+            if entry is None or entry >= v2.WARM_MAX:
+                open(os.path.join(STATE, f"{who}-layer.refresh"), "w").write(
+                    "why: its own cache entry is cold, so a delta over it would write it again")
+                continue
+        with contextlib.suppress(OSError):
+            os.remove(build)
+        v2.log(f"the {who} delta's session is made: {why}")
+        base_run(who, "delta", *flags)
+
+
+def cut_text(who, whole=False):
+    """base_stack.cut in this process: a text of the chain, local and deterministic (about a second)."""
+    import base_stack
+    try:
+        return base_stack.cut(who, whole=whole)
+    except (OSError, ValueError, RuntimeError, KeyError) as e:
+        v2.say_once(f"delta-cut-{who}", f"ATTENTION the {who} delta's text could not be cut ({e!r})", every=3600)
+        return None
+
+
+def session_over_chain(who):
+    """Whether the delta's next session would be made over its session standing (only the texts after it), which holds
+    a beginning of the chain and is warm; else it is made over the layer, the whole chain written again."""
+    return bool(v2.chain_session(who)) and v2.warm(who)
+
+
+def pending_tokens(who):
+    """The tokens a delta message built now would hold: an increment's over the standing chain, or a whole delta's."""
+    try:
+        return int(manifest_says("pending", who).strip() or 0)
+    except ValueError:
+        return 0
+
+
+def chain_held(who, top):
+    """Whether the texts the standing chain gives each file are recorded for it: an increment is measured from them
+    (manifest.stack_held); without them the next text is whole."""
+    try:
+        return json.load(open(os.path.join(STATE, f"{who}-delta-held.json"))).get("top") == v2.chain_top(top)
+    except (OSError, ValueError):
+        return False
+
+
+def pending_paid(who, top, lacking):
+    """(what the changes the forks of the base itself lacked — the chain's texts past what they forked, and what was not
+    cut — have cost those started since the delta's session was made, what a session holding them costs): such a fork
+    is told which files changed and holds a change by reading it — written into its own context (2 a token) — where the
+    session writes it once (2 a token) over one read of what it forks (0.1 a token): the chain's session when it holds
+    a beginning of the chain and is warm, else the layer. Carried after, a change costs 0.1 a token a request in the
+    fork's own context or in the session's prefix alike, so the fork's write is all a session spares it (the arithmetic
+    review of 2026-09-23). Only the forks of the base itself count (v2.top_rider): the knowledge base, the roles'
+    reasoning layers and churns take the texts in by their own rules, and a session relieves none of them. Assumed: a
+    fork reads every change it lacks — an upper bound (the review's B)."""
+    layer = v2.layer_record(who) or {}
+    session = session_over_chain(who)
+    since = sealed_at(top if (top or {}).get("sessionId") else layer) or 0
+    sessions, owed = v2.peek()["sessions"], 0.0
+    for s in sessions.values():
+        if (s.get("started") or 0) >= since and s.get("pending_tokens") and base_of(s, sessions) == who:
+            owed += 2 * s["pending_tokens"]
+    parent = int(((top if session else layer) or {}).get("context") or 0)
+    return owed, 2 * lacking + 0.1 * parent
+
+
+def kb_cost(who):
+    """What building the knowledge base again costs, for max: it is built again when max's parts are refreshed or its
+    stable base rebuilt (v2.kb_stands); the delta's texts it takes in by integration (v2.kb_texts), never a rebuild."""
+    if who != "max":
+        return 0
+    st = v2.peek()
+    return int((st["sessions"].get(st.get("kb") or "") or {}).get("build_cost") or 0)
+
+
+def judging_layers_cost(who):
+    """What building again the reasoning layers of the roles that judge over the delta's top costs (the reviewer's,
+    the designer's, the task designer's: a new top makes them due, role_layer_due), when they stand on this base."""
+    cost, sessions = 0, v2.peek()["sessions"]
+    for role in v2.role_layers():
+        name = v2.role_layer_of(role)
+        if role in v2.HOT_BEFORE_ROLE and name and base_of({"origin": name}, sessions) == who:
+            cost += (sessions.get(name) or {}).get("build_cost") or 0
+    return cost
+
+
+def stack_waste(who, top):
+    """(what the superseded forms the standing chain holds have cost the forks that carried them, what beginning it anew
+    as one whole text costs its holders): a unit changed again stays held in its earlier text, superseded, and every
+    request of every fork of a holder carries it (0.1 a token). The cut writes nothing; each holder that takes the
+    chain whole then writes it (2 a token) over one read of what it forks (0.1 a token) — the churns standing over the
+    base's roles' layers, the knowledge base for max, the chain's session —, and the judging roles' layers are reasoned
+    again over it (layer_stands)."""
+    stack = v2.chain_of(top)
+    if len(stack) < 2 or not top.get("superseded"):
+        return 0.0, 0.0
+    since, sessions, owed = sealed_at(stack[0]) or 0, v2.peek()["sessions"], 0.0
+    for s in sessions.values():
+        if (s.get("started") or 0) >= since and s.get("superseded_tokens") and base_of(s, sessions) == who:
+            owed += 0.1 * s["superseded_tokens"] * own_requests(s)
+    whole = max(0, int(top.get("tokens") or 0) - int(top.get("superseded") or 0))
+    reads = []
+    st = v2.peek()
+    for role in v2.role_layers():
+        churn = sessions.get(v2.role_layer_record(role, st).get("churn") or "") or {}
+        if churn.get("layer_state") == "sealed" and not churn.get("released") and base_of(churn, sessions) == who:
+            reads.append(int((sessions.get(churn.get("origin") or "") or {}).get("context") or 0))
+    if who == "max" and (sessions.get(st.get("kb") or "") or {}).get("stack_len"):
+        reads.append(int(sessions[st["kb"]].get("context") or 0))
+    if top.get("sessionId"):
+        reads.append(int((v2.layer_record(who) or {}).get("context") or 0))
+    return owed, sum(2 * whole + 0.1 * r for r in reads) + judging_layers_cost(who)
 
 
 def stale_share(who):
@@ -587,6 +1174,28 @@ def stale_share(who):
         return 0.0
 
 
+def held_indexes():
+    """The generated indexes the bases hold — the decisions', the theory map's, the tools', the plan's, the theory names,
+    the library's practice (select_base_load.refresh_indexes) — made again whenever main has moved since they were
+    last made. They were made only by a build of a base, so between builds what the parts hold of them never changed on
+    disk: the delta carried none of their changes, no fork was told they were stale, what was pending never counted
+    them and no part's account grew from them — the theory map's rows, the content that changes most, invisible to
+    every rule (found by the simulation of the run of 09-21/22, 2026-09-23). Made here, before the layers' and the
+    deltas' rules read them, at most once for each commit of main (about half a second)."""
+    head = subprocess.run(["git", "-C", v2.PROJECT, "rev-parse", "HEAD"], capture_output=True, text=True,
+                          timeout=60).stdout.strip()
+    mark = os.path.join(STATE, "held-indexes.head")
+    with contextlib.suppress(OSError):
+        if open(mark).read().strip() == head:
+            return
+    if not head:
+        return
+    import select_base_load
+    select_base_load.refresh_indexes()
+    with open(mark, "w") as f:
+        f.write(head)
+
+
 def watch():
     """The care of every live session, the finalizations, what is held warm, the archive: each part on its own, so that
     one that fails (logged) holds up nothing else."""
@@ -594,7 +1203,8 @@ def watch():
         if (s["state"] in v2.LIVE and not (s["state"] == "waiting" and s.get("sealed"))) or (
                 s["role"] == "kb" and not s.get("sealed") and not s.get("released")):
             contained(f"care of {name}", care, name, s)
-    for part in (planner_mail, finishing, holds, layers, v2.lands_when_free, v2.archive, isabelle_snapshot):
+    for part in (planner_mail, finishing, holds, held_indexes, layers, deltas, v2.lands_when_free, v2.archive,
+                 isabelle_snapshot):
         contained(part.__name__, part)
 
 
@@ -618,7 +1228,7 @@ def isabelle_snapshot():
                 if line.startswith("VmRSS:"):
                     return int(line.split()[1]) // 1024
         return None
-    kinds = {root: v2.run_kind(procs.get(root, (0, "", ""))[2]) for root in set(roots.values())}
+    kinds = {root: v2.run_kind(procs.get(root, (0, "", ""))[2]) for root in v2.run_roots(procs)}
     unseen = v2.unseen_finalizer_runs(procs)  # let start, preparing, no Isabelle yet: a sandbox counts them from here
 
     def in_sandbox(pid, depth=40):  # a session's run: under bwrap, the sandbox of a session's command
@@ -660,6 +1270,12 @@ def main():
     if os.path.exists(os.path.join(STATE, "stopped")) or not v2.peek()["active"]:
         return
     v2.dispatch(pre=watch, wait=True)  # the care and the dispatch under one lock
+    v2.softly("the minute's occupancy", v2.sample_occupancy)  # read back by the planner's status (occupancy_text)
+    import window_watch
+    v2.softly("the window's watch", window_watch.check)  # whether the window still holds as the gauge assumes it
+    if v2.control():  # it sees every run: a queued probe is started when the machine has room, and ended when its run is
+        if v2.run_queued_probes():
+            v2.dispatch(wait=True)  # a probe that ended resumes its session at once
 
 
 if __name__ == "__main__":

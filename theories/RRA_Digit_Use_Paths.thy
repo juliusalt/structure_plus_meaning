@@ -1,5 +1,5 @@
 theory RRA_Digit_Use_Paths
-  imports RRA_Digit_Natural_Paths Prefix_Code_Words
+  imports RRA_Exact Prefix_Code_Words
 begin
 
 interpretation digit_words: prefix_word_code digit_natural_path read_digit_natural_path

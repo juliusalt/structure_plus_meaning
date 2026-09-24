@@ -141,8 +141,8 @@ text \<open>
   When the repaired successor succeeds, the history it leaves supplies the row of the repair: its
   head is the problem of the repaired request, and its sockets hold exactly the definition problems
   the successor added to the loop's problems, each at the socket of its own constant. The successor
-  then moves every problem with the correspondence into the answer state, so those problems stand,
-  moved, among the successor's problems and its answered set.
+  keeps the positions of the state it succeeds, so those problems stand unchanged among the
+  successor's problems and its answered set, in the coordinates of the history's rows.
 \<close>
 
 theorem development_repaired_successor_row:
@@ -150,7 +150,6 @@ theorem development_repaired_successor_row:
       Some (S2,ps',D',answered',history')"
   defines "E\<equiv>development_repair_state S r S' I"
   defines "I'\<equiv>map (isabelle_state_embedding (fst (snd S')) (fst (snd E))) I"
-  defines "g\<equiv>development_problem_rename (isabelle_state_embedding (fst (snd E)) (fst (snd S')))"
   obtains extension definitions r' v' where
     "development_refinement_repair S r S' I=(extension,definitions,r',v',True)"
     "development_extension_accepted extension"
@@ -161,8 +160,8 @@ theorem development_repaired_successor_row:
       development_constant_problem isabelle_definition_proposition Development_Definition (snd E)
         Development_Demand Development_Generated c=Some q"
     "finite_premise_functional (development_definition_sockets definitions)"
-    "ps'=map g (ps@definitions)"
-    "\<And>q. q\<in>set definitions \<Longrightarrow> g q\<in>set ps' \<and> g q |\<in>| answered'"
+    "ps'=ps@definitions"
+    "\<And>q. q\<in>set definitions \<Longrightarrow> q\<in>set ps' \<and> q |\<in>| answered'"
 proof -
   obtain extension definitions r' v' where repair: "development_refinement_repair S r S' I=(extension,definitions,r',v',True)"
       and accepted: "development_extension_accepted extension"
@@ -179,11 +178,11 @@ proof -
       answered |\<union>| fset_of_list definitions,history@[Development_Repair_Record r (extension,definitions,r',v',True)])
       r' S'=Some (S2,ps',D',answered',history')"
     using successor accepted unfolding E_def by (simp add: development_repaired_successor_def repair Let_def)
-  then have problems: "ps'=map g (ps@definitions)"
-      and answers: "answered'=fimage g (finsert (fst r') (answered |\<union>| fset_of_list definitions))"
-    unfolding g_def by (auto simp: development_successor_def Let_def split: option.splits)
-  have added: "g q\<in>set ps' \<and> g q |\<in>| answered'" if "q\<in>set definitions" for q
-    using that problems answers by (auto simp: fset_of_list.rep_eq fimage.rep_eq)
+  have problems: "ps'=ps@definitions"
+      and answers: "answered'=finsert (fst r') (answered |\<union>| fset_of_list definitions)"
+    using development_successor_answered(4,6)[OF moved] by simp_all
+  have added: "q\<in>set ps' \<and> q |\<in>| answered'" if "q\<in>set definitions" for q
+    using that problems answers by (auto simp: fset_of_list.rep_eq)
   show thesis
     by (rule that[OF repair accepted definitions row
           development_definition_sockets_problems[of E I', folded definitions]

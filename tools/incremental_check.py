@@ -327,7 +327,37 @@ def verify_manifest_inputs(manifests):
         'Recipe inputs changed after validation.'
 
 
-def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lineage=None, advance_base=False):
+def heap_flags(advance_base, keep_heap):
+    """The proof's heap option: a check that advances the base or keeps its heap stores the rebuilt theories' heap; any
+    other check stores none."""
+    return [] if advance_base or keep_heap else ['--without-heap']
+
+
+def kept_context(keep_heap, accepted, proof, base):
+    """What an accepted check that kept its heap offers to be adopted as the base by `adopt --proof`: its proof, or the
+    base itself when it rebuilt nothing; None for any other check."""
+    if not (keep_heap and accepted):
+        return None
+    return str(proof if proof is not None else base)
+
+
+def proof_roots(names, rebuilt):
+    """The roots of a check's proof: every theory of the project (the rebuilt ones are proved, the rest come from the
+    parent contexts), so that the context the proof leaves holds the whole library."""
+    return sorted(set(names) | set(rebuilt))
+
+
+SECONDS_PER_REBUILT = 1.25  # a whole library rebuilt (1,663 theories) took 16-21 minutes on this machine (2026-09-24)
+
+
+def proof_timeout(timeout, rebuilt):
+    """The proof's time: the one asked for, or longer where that many theories are to be proved again — a rebuild of
+    nearly the whole library ran past 1,200 s, and a check of 118 theories stays within it."""
+    return max(timeout, int(SECONDS_PER_REBUILT * rebuilt))
+
+
+def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lineage=None, advance_base=False,
+             keep_heap=False):
     started = time.monotonic()
     # One verified lineage (contexts and input digests) serves the base, adoption and activation.
     lineage = lineage or proof_contexts.new_lineage()
@@ -352,6 +382,7 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
             declaration_refusal(base, session_declaration(ROOT), parent['project_declaration'])
         assert parent['stored_heap'], stored_heap_refusal(base)
         summary['advance_base'] = advance_base
+        summary['keep_heap'] = keep_heap
         structure = check.source_checks()
         summary['source_checks'] = structure
         if structure['refusals']:
@@ -369,11 +400,16 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
         if rebuilt:
             begin = time.monotonic()
             proof = output / 'proof'
+            # Every theory is a root, so that the context it leaves holds the whole library: its session proves the
+            # rebuilt theories and takes the rest from its parents as before, and a check made on it reuses all it
+            # holds. Rooted at the rebuilt theories alone, a context held their import closure (627 of 1,840 theories
+            # after the landing of 2026-09-24 07:16), and the next check on it proved 1,663 theories again, past its time.
+            summary['proof_timeout'] = proof_timeout(timeout, len(rebuilt))
             code, _ = run_logged([sys.executable, '-B', str(TOOLS / 'prove_context.py'), '--parent-project', str(base),
                                   '--project', str(ROOT), '--output', str(proof),
                                   '--session', 'Incremental_' + uuid.uuid4().hex[:8], '--threads', str(threads),
-                                  '--timeout', str(timeout), *([] if advance_base else ['--without-heap']),
-                                  *sorted(rebuilt)], output / 'proof.log', 7200)
+                                  '--timeout', str(summary['proof_timeout']), *heap_flags(advance_base, keep_heap),
+                                  *proof_roots(names, rebuilt)], output / 'proof.log', 7200)
             phase('proof', begin)
             summary['proof'] = str(proof / 'result.json')
             assert code == 0, 'Incremental proof failed; see ' + str(proof / 'build.log')
@@ -488,6 +524,10 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
         # Failed/partial checks do not advance the complete-workspace checkpoint.
         # Their accepted proof artifacts remain available for explicit reuse/review.
         summary['active_context'] = None
+    kept = kept_context(keep_heap and not selected, summary['status'] == 'accepted', proof, base)
+    if kept:
+        # kept, not selected: a landing that checks this same content adopts it as the base (`adopt --proof`)
+        summary['kept_context'] = kept
     summary['seconds'] = round(time.monotonic() - started, 2)
     write_json(output / 'incremental.json', summary)
     print(json.dumps({k: v for k, v in summary.items() if k not in ('rebuilt_theories', 'recipes', 'source_checks')}))
@@ -613,6 +653,9 @@ def main():
     run.add_argument('--all-recipes', action='store_true')
     run.add_argument('--advance-base', action='store_true',
                      help='Store the heap of the rebuilt theories and select this check as the next base.')
+    run.add_argument('--keep-heap', action='store_true',
+                     help='Store the heap of the rebuilt theories without selecting it: a landing of this same '
+                          'content adopts it as the base (adopt --proof) instead of proving it again.')
     adopt = commands.add_parser('adopt', help='Reuse a successful immutable proof context without rebuilding it.')
     adopt.add_argument('--proof', type=Path, required=True)
     adopt.add_argument('--source-project', type=Path, default=ROOT)
@@ -639,7 +682,7 @@ def main():
     lineage = proof_contexts.new_lineage()
     return validate(selected_base(args.base, lineage), args.output, threads=args.threads, jobs=args.jobs,
                     selected=args.recipe, all_recipes=args.all_recipes, timeout=args.timeout, lineage=lineage,
-                    advance_base=args.advance_base)
+                    advance_base=args.advance_base, keep_heap=args.keep_heap)
 
 
 if __name__ == '__main__':

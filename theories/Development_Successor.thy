@@ -1,16 +1,17 @@
 theory Development_Successor
-  imports Development_Refinement_Repair Development_Policy Development_Decomposition
+  imports Development_Refinement_Repair Development_Policy Development_Decomposition Development_State_Rows
 begin
 
 section \<open>Problems move with the positions of the state\<close>
 
 text \<open>
-  A problem's subject and contract are positions and terms of the state it was posed in. When
-  an admitted answer moves the development to the answer state, every problem moves with the
-  correspondence of the two tables. Dependencies are finite inference rules, so they move as
-  the existing embedding of a rule table, and the existing renaming theorem of the least
-  closure carries settlement and readiness across: a problem whose premises the change did not
-  touch is ready in the successor exactly when it was ready before.
+  A problem's subject and contract are positions and terms of the state it was posed in. A renaming
+  of the state moves every problem with the correspondence of the two tables. Dependencies are
+  finite inference rules, so they move as the existing embedding of a rule table, and the existing
+  renaming theorem of the least closure carries settlement and readiness across. These are the
+  contracts of a genuine renaming, a state moved to another table on purpose. The successor of the
+  development renames nothing: it reads its answer state into the request state's table, so every
+  problem it carries stands where it stood (\<open>development_successor_keeps\<close>).
 \<close>
 
 fun development_contract_rename :: "(nat \<Rightarrow> nat) \<Rightarrow> development_contract \<Rightarrow> development_contract" where
@@ -24,25 +25,33 @@ definition development_problem_rename :: "(nat \<Rightarrow> nat) \<Rightarrow> 
   "development_problem_rename f p=Development_Problem (fimage f (problem_subject p))
     (development_contract_rename f (problem_contract p)) (problem_origin p) (problem_authority p)"
 
-lemma development_contract_rename_injective:
-  assumes injective: "inj f"
-  shows "inj (development_contract_rename f)"
-proof (rule injI)
-  fix x y assume "development_contract_rename f x=development_contract_rename f y"
-  then show "x=y"
-    by (cases x; cases y) (simp_all add: inj_eq[OF isabelle_term_rename_injective[OF injective]])
-qed
+text \<open>
+  A problem uses the positions of its subject and of its contract's term; a renaming that fixes them
+  fixes the problem.
+\<close>
 
-lemma development_problem_rename_injective:
-  assumes injective: "inj f"
-  shows "inj (development_problem_rename f)"
-proof (rule injI)
-  fix p q assume equal: "development_problem_rename f p=development_problem_rename f q"
-  have "problem_subject p=problem_subject q" "problem_contract p=problem_contract q"
-      "problem_origin p=problem_origin q" "problem_authority p=problem_authority q"
-    using equal by (simp_all add: development_problem_rename_def fset_image_equality[OF injective]
-      inj_eq[OF development_contract_rename_injective[OF injective]])
-  then show "p=q" by (cases p; cases q) simp_all
+definition development_problem_positions :: "development_problem \<Rightarrow> nat set" where
+  "development_problem_positions p=fset (problem_subject p)\<union>
+    set (isabelle_term_positions (development_contract_term (problem_contract p)))"
+
+lemma development_problem_rename_fixed:
+  assumes fixed: "\<And>i. i\<in>development_problem_positions p \<Longrightarrow> f i=i"
+  shows "development_problem_rename f p=p"
+proof -
+  have subject: "fimage f (problem_subject p)=problem_subject p"
+  proof -
+    have "fimage f (problem_subject p)=fimage id (problem_subject p)"
+      by (rule fset.map_cong0) (simp add: fixed development_problem_positions_def)
+    then show ?thesis by simp
+  qed
+  have renamed: "isabelle_term_rename f t=t" if used: "\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> f i=i" for t
+  proof -
+    have "isabelle_term_rename f t=isabelle_term_rename id t" by (rule isabelle_term_rename_cong) (simp add: used)
+    then show ?thesis by (simp only: isabelle_term_rename_id)
+  qed
+  have contract: "development_contract_rename f (problem_contract p)=problem_contract p"
+    using fixed by (cases "problem_contract p") (auto simp: development_problem_positions_def intro!: renamed)
+  show ?thesis unfolding development_problem_rename_def subject contract by (cases p) simp
 qed
 
 theorem development_answered_rules_renaming:
@@ -157,6 +166,286 @@ theorem development_answer_generation_policy:
   by (rule development_policy_admits_member[OF policy package])
     (use development_answer_generation_payload(2)[OF generation] payload in blast)
 
+section \<open>The answer state read into the request state's table is judged as exported\<close>
+
+text \<open>
+  The successor judges its answer state read into the request state's table
+  (\<open>isabelle_rooted_read\<close>). The reading is a correspondence of the answer state's table with the
+  extended one, and the verdict of every kind whose statements are invariant under renaming accepts on
+  the read state exactly when it accepts on the state as exported. The premises are the two states'
+  own: distinct tables, every position within its table, and a request whose subject and support are
+  positions of the request state. The read state removes and adds exactly the entities the exported
+  one does, read in the extended table; its statements, their excess, its assessment and its roots
+  correspond through the reading, and a name the answer dropped keeps its position in the extended
+  table, used by no entity. Nothing about a verdict is proved again: the reading's laws and the
+  renaming contracts of the assessment and of the subject reading carry it.
+\<close>
+
+theorem development_constant_verdict_read:
+  assumes kinds: "\<And>g e. replaceable (isabelle_entity_rename g e)=replaceable e"
+      "\<And>g e. demanded (isabelle_entity_rename g e)=demanded e"
+    and distinct: "distinct (fst (snd S))" "distinct (fst (snd S'))"
+    and inside: "state_positions S\<subseteq>{..<length (fst (snd S))}" "state_positions S'\<subseteq>{..<length (fst (snd S'))}"
+    and subject: "fset (problem_subject p)\<subseteq>{..<length (fst (snd S))}"
+    and support: "fset support\<subseteq>{..<length (fst (snd S))}"
+  shows "development_verdict_accepted (development_constant_verdict replaceable demanded S (p,s,support,E)
+      (isabelle_rooted_read (fst (snd S)) S')) \<longleftrightarrow>
+    development_verdict_accepted (development_constant_verdict replaceable demanded S (p,s,support,E) S')"
+proof -
+  let ?n="fst (snd S)" and ?n'="fst (snd S')" and ?C="snd (snd S)" and ?C'="snd (snd S')"
+  let ?N="isabelle_appended_names ?n ?n'" and ?h="isabelle_appended_embedding ?n ?n'"
+  let ?f="isabelle_state_embedding ?n ?n'" and ?g="isabelle_state_embedding ?n ?N"
+  let ?R="isabelle_rooted_read ?n S'" and ?P="problem_subject p"
+  have read: "fst ?R=map (isabelle_term_rename ?h) (fst S')" "snd ?R=(?N,map (isabelle_entity_rename ?h) ?C')"
+    by (simp_all only: isabelle_rooted_read_fields)
+  have corr: "isabelle_table_correspondence ?h ?n' ?N"
+    by (rule isabelle_appended_embedding_correspondence[OF distinct(2)])
+  have tables: "distinct ?N" by (rule isabelle_appended_names_distinct[OF distinct])
+  have entity_S: "i<length ?n" if "e\<in>set ?C" "i\<in>set (isabelle_entity_positions e)" for e i
+    using inside(1) that by (auto simp: state_positions_def)
+  have entity_S': "j<length ?n'" if "e'\<in>set ?C'" "j\<in>set (isabelle_entity_positions e')" for e' j
+    using inside(2) that by (auto simp: state_positions_def)
+  have root_S: "i<length ?n" if "t\<in>set (fst S)" "i\<in>set (isabelle_term_positions t)" for t i
+    using inside(1) that by (auto simp: state_positions_def)
+  have root_S': "j<length ?n'" if "t\<in>set (fst S')" "j\<in>set (isabelle_term_positions t)" for t j
+    using inside(2) that by (auto simp: state_positions_def)
+  have kept: "?g i=i" if "i<length ?n" for i
+    using isabelle_state_embedding_prefix[OF distinct(1) that] by (simp add: isabelle_appended_names_def)
+  have kept_entity: "isabelle_entity_rename ?g e=e" if member: "e\<in>set ?C" for e
+  proof -
+    have "isabelle_entity_rename ?g e=isabelle_entity_rename id e"
+      by (rule isabelle_entity_rename_cong) (simp add: kept entity_S[OF member])
+    then show ?thesis by (simp only: isabelle_entity_rename_id)
+  qed
+  have kept_root: "isabelle_term_rename ?g t=t" if member: "t\<in>set (fst S)" for t
+  proof -
+    have "isabelle_term_rename ?g t=isabelle_term_rename id t"
+      by (rule isabelle_term_rename_cong) (simp add: kept root_S[OF member])
+    then show ?thesis by (simp only: isabelle_term_rename_id)
+  qed
+  have kept_subject: "fimage ?g ?P=?P"
+  proof -
+    have "fimage ?g ?P=fimage id ?P" by (rule fset.map_cong0) (use subject in \<open>auto intro!: kept\<close>)
+    then show ?thesis by simp
+  qed
+  have kept_support: "fimage ?g support=support"
+  proof -
+    have "fimage ?g support=fimage id support" by (rule fset.map_cong0) (use support in \<open>auto intro!: kept\<close>)
+    then show ?thesis by simp
+  qed
+  have returned: "isabelle_entity_rename ?h (isabelle_entity_rename ?f e)=e"
+    if member: "e\<in>set ?C" and moved: "isabelle_entity_rename ?f e\<in>set ?C'" for e
+  proof (rule isabelle_appended_entity_back[OF distinct(1)])
+    fix i assume used: "i\<in>set (isabelle_entity_positions e)"
+    show "i<length ?n" by (rule entity_S[OF member used])
+  next
+    fix i assume used: "i\<in>set (isabelle_entity_positions e)"
+    have "?f i\<in>set (isabelle_entity_positions (isabelle_entity_rename ?f e))"
+      using used by (simp add: isabelle_entity_rename_positions)
+    then show "?f i<length ?n'" by (rule entity_S'[OF moved])
+  qed
+  have carried: "isabelle_entity_rename ?f (isabelle_entity_rename ?h e')=e'"
+    if member: "e'\<in>set ?C'" and moved: "isabelle_entity_rename ?h e'\<in>set ?C" for e'
+  proof (rule isabelle_appended_entity_forth[OF distinct(2)])
+    fix j assume used: "j\<in>set (isabelle_entity_positions e')"
+    show "j<length ?n'" by (rule entity_S'[OF member used])
+  next
+    fix j assume used: "j\<in>set (isabelle_entity_positions e')"
+    have "?h j\<in>set (isabelle_entity_positions (isabelle_entity_rename ?h e'))"
+      using used by (simp add: isabelle_entity_rename_positions)
+    then show "?h j<length ?n" by (rule entity_S[OF moved])
+  qed
+  have back_root: "isabelle_term_rename ?h (isabelle_term_rename ?f t)=t"
+    if member: "t\<in>set (fst S)" and moved: "isabelle_term_rename ?f t\<in>set (fst S')" for t
+  proof (rule isabelle_appended_term_back[OF distinct(1)])
+    fix i assume used: "i\<in>set (isabelle_term_positions t)"
+    show "i<length ?n" by (rule root_S[OF member used])
+  next
+    fix i assume used: "i\<in>set (isabelle_term_positions t)"
+    have "?f i\<in>set (isabelle_term_positions (isabelle_term_rename ?f t))"
+      using used by (simp add: isabelle_term_rename_positions)
+    then show "?f i<length ?n'" by (rule root_S'[OF moved])
+  qed
+  have forth_root: "isabelle_term_rename ?f (isabelle_term_rename ?h t')=t'"
+    if member: "t'\<in>set (fst S')" and moved: "isabelle_term_rename ?h t'\<in>set (fst S)" for t'
+  proof (rule isabelle_appended_term_forth[OF distinct(2)])
+    fix j assume used: "j\<in>set (isabelle_term_positions t')"
+    show "j<length ?n'" by (rule root_S'[OF member used])
+  next
+    fix j assume used: "j\<in>set (isabelle_term_positions t')"
+    have "?h j\<in>set (isabelle_term_positions (isabelle_term_rename ?h t'))"
+      using used by (simp add: isabelle_term_rename_positions)
+    then show "?h j<length ?n" by (rule root_S[OF moved])
+  qed
+  have persists: "isabelle_entity_rename ?f e\<in>set ?C' \<longleftrightarrow> e\<in>set (map (isabelle_entity_rename ?h) ?C')"
+    if member: "e\<in>set ?C" for e
+  proof
+    assume moved: "isabelle_entity_rename ?f e\<in>set ?C'"
+    have "isabelle_entity_rename ?h (isabelle_entity_rename ?f e)\<in>set (map (isabelle_entity_rename ?h) ?C')"
+      using moved by simp
+    then show "e\<in>set (map (isabelle_entity_rename ?h) ?C')" by (simp only: returned[OF member moved])
+  next
+    assume "e\<in>set (map (isabelle_entity_rename ?h) ?C')"
+    then obtain e' where e': "e'\<in>set ?C'" and image: "e=isabelle_entity_rename ?h e'" by auto
+    have "isabelle_entity_rename ?f e=e'" using carried[OF e'] member image by simp
+    then show "isabelle_entity_rename ?f e\<in>set ?C'" using e' by simp
+  qed
+  have imaged: "isabelle_entity_rename ?h e'\<in>set ?C \<longleftrightarrow> e'\<in>set (map (isabelle_entity_rename ?f) ?C)"
+    if member: "e'\<in>set ?C'" for e'
+  proof
+    assume moved: "isabelle_entity_rename ?h e'\<in>set ?C"
+    have "isabelle_entity_rename ?f (isabelle_entity_rename ?h e')\<in>set (map (isabelle_entity_rename ?f) ?C)"
+      using moved by simp
+    then show "e'\<in>set (map (isabelle_entity_rename ?f) ?C)" by (simp only: carried[OF member moved])
+  next
+    assume "e'\<in>set (map (isabelle_entity_rename ?f) ?C)"
+    then obtain e where e: "e\<in>set ?C" and image: "e'=isabelle_entity_rename ?f e" by auto
+    have "isabelle_entity_rename ?h e'=e" using returned[OF e] member image by simp
+    then show "isabelle_entity_rename ?h e'\<in>set ?C" using e by simp
+  qed
+  have removed: "isabelle_state_removed (snd S) (snd ?R)=isabelle_state_removed (snd S) (snd S')"
+    unfolding isabelle_state_removed_def Let_def read(2) fst_conv snd_conv
+    by (rule filter_cong[OF refl]) (simp only: kept_entity persists)
+  have added: "isabelle_state_added (snd S) (?N,map (isabelle_entity_rename ?h) ?C')=
+      map (isabelle_entity_rename ?h) (isabelle_state_added (snd S) (snd S'))"
+  proof -
+    have gone: "map (isabelle_entity_rename ?g) ?C=?C" by (rule map_idI) (rule kept_entity)
+    show ?thesis
+      unfolding isabelle_state_added_def Let_def isabelle_state_image_def fst_conv snd_conv gone filter_map
+      by (rule arg_cong[where f="map (isabelle_entity_rename ?h)"], rule filter_cong[OF refl]) (simp add: imaged)
+  qed
+  have statement: "development_answer_statement K (?N,map (isabelle_entity_rename ?h) ?C') ?P
+        (isabelle_entity_rename ?h e') \<longleftrightarrow> development_answer_statement K (snd S') (fimage ?f ?P) e'"
+    if kind: "\<And>g e. K (isabelle_entity_rename g e)=K e" and member: "e'\<in>set ?C'" for K e'
+  proof -
+    have subjects: "isabelle_entity_subjects ?N (isabelle_development_constants (map (isabelle_entity_rename ?h) ?C'))
+        (isabelle_entity_rename ?h e')=map ?h (isabelle_entity_subjects ?n' (isabelle_development_constants ?C') e')"
+      by (simp only: isabelle_rename_development_constants isabelle_rename_entity_subjects[OF corr])
+    have met: "?h d |\<in>| ?P \<longleftrightarrow> d |\<in>| fimage ?f ?P"
+      if listed: "d\<in>set (isabelle_entity_subjects ?n' (isabelle_development_constants ?C') e')" for d
+    proof -
+      have "d<length ?n'" using listed isabelle_entity_subjects_positions entity_S'[OF member] by blast
+      then show ?thesis by (rule isabelle_appended_embedding_image[OF distinct subject])
+    qed
+    show ?thesis
+      unfolding development_answer_statement_def fst_conv snd_conv subjects kind list_ex_iff
+      by (auto simp: met)
+  qed
+  have statements: "development_answer_statements K (?N,map (isabelle_entity_rename ?h) ?C') ?P=
+      map (isabelle_entity_rename ?h) (development_answer_statements K (snd S') (fimage ?f ?P))"
+    if kind: "\<And>g e. K (isabelle_entity_rename g e)=K e" for K
+    unfolding development_answer_statements_def snd_conv filter_map
+    by (rule arg_cong[where f="map (isabelle_entity_rename ?h)"], rule filter_cong[OF refl])
+      (simp add: statement[OF kind])
+  let ?L="concat (List.map_filter (map_option isabelle_term_constants \<circ> isabelle_specified_proposition)
+    (development_answer_statements replaceable (snd S') (fimage ?f ?P)))"
+  have bounded: "d<length ?n'" if listed: "d\<in>set ?L" for d
+  proof -
+    obtain l e' where e': "e'\<in>set (development_answer_statements replaceable (snd S') (fimage ?f ?P))"
+      and found: "(map_option isabelle_term_constants \<circ> isabelle_specified_proposition) e'=Some l"
+      and within: "d\<in>set l"
+      using listed by (auto simp: map_filter_member)
+    obtain q where q: "isabelle_specified_proposition e'=Some q" "l=isabelle_term_constants q"
+      using found by (auto simp: map_option_eq_Some)
+    have member: "e'\<in>set ?C'" using e' by (simp add: development_answer_statements_def)
+    have "d\<in>set (isabelle_entity_positions e')"
+      using q within isabelle_term_constants_positions[of q]
+      by (cases e') (auto simp: isabelle_entity_positions_def)
+    then show ?thesis by (rule entity_S'[OF member])
+  qed
+  have listed: "List.map_filter (map_option isabelle_term_constants \<circ> isabelle_specified_proposition)
+      (map (isabelle_entity_rename ?h) X)=
+    map (map ?h) (List.map_filter (map_option isabelle_term_constants \<circ> isabelle_specified_proposition) X)" for X
+    by (rule map_filter_rename)
+      (simp add: isabelle_entity_rename_specified isabelle_term_rename_constants option.map_comp comp_def)
+  have excess: "development_answer_statements_excess replaceable (?N,map (isabelle_entity_rename ?h) ?C') ?P support=[] \<longleftrightarrow>
+      development_answer_statements_excess replaceable (snd S') (fimage ?f ?P) (fimage ?f support)=[]"
+  proof -
+    have left: "development_answer_statements_excess replaceable (?N,map (isabelle_entity_rename ?h) ?C') ?P support=[] \<longleftrightarrow>
+        (\<forall>d\<in>set ?L. ?h d |\<in>| support)"
+      unfolding development_answer_statements_excess_def statements[OF kinds(1)] listed map_concat[symmetric]
+      by (simp add: filter_map filter_empty_conv)
+    have right: "development_answer_statements_excess replaceable (snd S') (fimage ?f ?P) (fimage ?f support)=[] \<longleftrightarrow>
+        (\<forall>d\<in>set ?L. d |\<in>| fimage ?f support)"
+      unfolding development_answer_statements_excess_def by (simp add: filter_empty_conv)
+    show ?thesis unfolding left right
+      by (rule ball_cong[OF refl]) (rule isabelle_appended_embedding_image[OF distinct support bounded])
+  qed
+  have unpermitted: "filter (\<lambda>e. \<not>development_answer_statement replaceable (snd ?R)
+        (fimage (isabelle_state_embedding ?n (fst (snd ?R))) ?P) e) (isabelle_state_added (snd S) (snd ?R))=[] \<longleftrightarrow>
+      filter (\<lambda>e. \<not>development_answer_statement replaceable (snd S') (fimage ?f ?P) e)
+        (isabelle_state_added (snd S) (snd S'))=[]"
+  proof -
+    have "filter ((\<lambda>e. \<not>development_answer_statement replaceable (?N,map (isabelle_entity_rename ?h) ?C') ?P e) \<circ>
+          isabelle_entity_rename ?h) (isabelle_state_added (snd S) (snd S'))=
+        filter (\<lambda>e. \<not>development_answer_statement replaceable (snd S') (fimage ?f ?P) e)
+          (isabelle_state_added (snd S) (snd S'))"
+      by (rule filter_cong[OF refl]) (simp add: statement[OF kinds(1)] isabelle_state_added_exact)
+    then show ?thesis by (simp only: read(2) fst_conv kept_subject added filter_map map_is_Nil_conv)
+  qed
+  have demanded: "development_answer_statements demanded (snd ?R) (fimage (isabelle_state_embedding ?n (fst (snd ?R))) ?P)=[] \<longleftrightarrow>
+      development_answer_statements demanded (snd S') (fimage ?f ?P)=[]"
+    by (simp only: read(2) fst_conv kept_subject statements[OF kinds(2)] map_is_Nil_conv)
+  have exceeded: "development_answer_statements_excess replaceable (snd ?R)
+        (fimage (isabelle_state_embedding ?n (fst (snd ?R))) ?P) (fimage (isabelle_state_embedding ?n (fst (snd ?R))) support)=[] \<longleftrightarrow>
+      development_answer_statements_excess replaceable (snd S') (fimage ?f ?P) (fimage ?f support)=[]"
+    by (simp only: read(2) fst_conv kept_subject kept_support excess)
+  have assessment: "isabelle_context_assessment (fst ?R) (snd ?R)=
+      isabelle_assessment_rename ?h (isabelle_context_assessment (fst S') (snd S'))"
+    unfolding isabelle_rooted_read_def by (rule isabelle_renamed_rooted_assessment[OF corr])
+  have closed: "isabelle_assessment_closed (isabelle_context_assessment (fst ?R) (snd ?R)) \<longleftrightarrow>
+      isabelle_assessment_closed (isabelle_context_assessment (fst S') (snd S'))"
+    unfolding assessment
+    by (cases "isabelle_context_assessment (fst S') (snd S')" rule: prod_cases5) (simp add: isabelle_assessment_closed_def)
+  have roots: "map (isabelle_term_rename (isabelle_state_embedding ?n (fst (snd ?R)))) (fst S)=fst ?R \<longleftrightarrow>
+      map (isabelle_term_rename ?f) (fst S)=fst S'"
+  proof -
+    have kept_roots: "map (isabelle_term_rename ?g) (fst S)=fst S" by (rule map_idI) (rule kept_root)
+    have "fst S=map (isabelle_term_rename ?h) (fst S') \<longleftrightarrow> map (isabelle_term_rename ?f) (fst S)=fst S'"
+    proof
+      assume same: "fst S=map (isabelle_term_rename ?h) (fst S')"
+      have "map (isabelle_term_rename ?f) (map (isabelle_term_rename ?h) (fst S'))=fst S'"
+      proof (rule trans[OF map_map], rule map_idI)
+        fix t' assume member: "t'\<in>set (fst S')"
+        have "isabelle_term_rename ?h t'\<in>set (fst S)" using member by (simp add: same)
+        then show "(isabelle_term_rename ?f \<circ> isabelle_term_rename ?h) t'=t'" by (simp add: forth_root[OF member])
+      qed
+      then show "map (isabelle_term_rename ?f) (fst S)=fst S'" by (simp only: same)
+    next
+      assume same: "map (isabelle_term_rename ?f) (fst S)=fst S'"
+      have "map (isabelle_term_rename ?h) (map (isabelle_term_rename ?f) (fst S))=fst S"
+      proof (rule trans[OF map_map], rule map_idI)
+        fix t assume member: "t\<in>set (fst S)"
+        have "isabelle_term_rename ?f t\<in>set (fst S')" using member by (simp add: same[symmetric])
+        then show "(isabelle_term_rename ?h \<circ> isabelle_term_rename ?f) t=t" by (simp add: back_root[OF member])
+      qed
+      then show "fst S=map (isabelle_term_rename ?h) (fst S')" by (simp only: same)
+    qed
+    then show ?thesis by (simp only: read fst_conv kept_roots)
+  qed
+  have named: "distinct (fst (snd ?R))" by (simp only: read(2) fst_conv tables)
+  show ?thesis
+    unfolding development_verdict_accepted_def development_constant_verdict_def Let_def prod.case
+    by (simp only: removed unpermitted demanded exceeded closed roots named distinct simp_thms)
+qed
+
+lemma development_demanded_code_renamed:
+  "development_demanded isabelle_code_equation_proposition (isabelle_entity_rename g e)=
+    development_demanded isabelle_code_equation_proposition e"
+  by (cases e) (simp_all add: development_demanded_def)
+
+corollary development_refinement_verdict_read:
+  assumes distinct: "distinct (fst (snd S))" "distinct (fst (snd S'))"
+    and inside: "state_positions S\<subseteq>{..<length (fst (snd S))}" "state_positions S'\<subseteq>{..<length (fst (snd S'))}"
+    and subject: "fset (problem_subject p)\<subseteq>{..<length (fst (snd S))}"
+    and support: "fset support\<subseteq>{..<length (fst (snd S))}"
+  shows "development_verdict_accepted (development_refinement_verdict S (p,s,support,E)
+      (isabelle_rooted_read (fst (snd S)) S')) \<longleftrightarrow>
+    development_verdict_accepted (development_refinement_verdict S (p,s,support,E) S')"
+  unfolding development_refinement_verdict_def
+  by (rule development_constant_verdict_read[OF development_demanded_code_renamed development_demanded_code_renamed
+    distinct inside subject support])
+
 section \<open>The successor of the development state\<close>
 
 text \<open>
@@ -165,10 +454,11 @@ text \<open>
   decision are recorded: a selection of the next problems, as the executed native packet and the
   problems it admitted; an admitted answer, as its generation; and a repair derived from a
   refused answer, as the refused request and its repair. An admitted answer moves the development
-  to the answer state; every problem, dependency and answered problem moves with the
-  correspondence, the answered problem joins the answered ones and the generation joins the
-  history. Problems are carried, not computed again from the new state: the seeding was one
-  choice, and a later state poses no problem the process did not derive.
+  to its answer state read into the request state's table extended by the names it lacks, so every
+  position of the old state keeps its meaning: every problem, dependency, answered problem and
+  record stands unchanged, the answered problem joins the answered ones and the generation, computed
+  on the read state, joins the history. Problems are carried, not computed again from the new state:
+  the seeding was one choice, and a later state poses no problem the process did not derive.
 \<close>
 
 type_synonym development_packet =
@@ -187,30 +477,112 @@ type_synonym development_loop =
 definition development_successor ::
     "development_loop \<Rightarrow> development_request \<Rightarrow> isabelle_rooted_context \<Rightarrow> development_loop option" where
   "development_successor L r S'=(case L of (S,ps,D,answered,history) \<Rightarrow>
-    case development_answer_generation S r S' of None \<Rightarrow> None
-    | Some G \<Rightarrow> (let g=development_problem_rename (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) in
-        Some (S',map g ps,finite_embedded_inferences g D,fimage g (finsert (fst r) answered),
-          history@[Development_Answer_Record G])))"
+    let S2=isabelle_rooted_read (fst (snd S)) S' in
+    case development_answer_generation S r S2 of None \<Rightarrow> None
+    | Some G \<Rightarrow> Some (S2,ps,D,finsert (fst r) answered,history@[Development_Answer_Record G]))"
 
 theorem development_successor_answered:
   assumes successor: "development_successor (S,ps,D,answered,history) r S'=Some (S2,ps',D',answered',history')"
-  shows "development_problem_rename (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (fst r) |\<in>| answered'"
-    "S2=S'" "\<exists>G. development_answer_generation S r S'=Some G \<and> history'=history@[Development_Answer_Record G]"
-  using successor by (auto simp: development_successor_def Let_def split: option.splits)
+  shows "fst r |\<in>| answered'" "S2=isabelle_rooted_read (fst (snd S)) S'"
+    "\<exists>G. development_answer_generation S r (isabelle_rooted_read (fst (snd S)) S')=Some G \<and>
+      history'=history@[Development_Answer_Record G]"
+    "ps'=ps" "D'=D" "answered'=finsert (fst r) answered"
+proof -
+  obtain G where gen: "development_answer_generation S r (isabelle_rooted_read (fst (snd S)) S')=Some G"
+    and fields: "S2=isabelle_rooted_read (fst (snd S)) S'" "ps'=ps" "D'=D" "answered'=finsert (fst r) answered"
+      "history'=history@[Development_Answer_Record G]"
+  proof (cases "development_answer_generation S r (isabelle_rooted_read (fst (snd S)) S')")
+    case None
+    then show ?thesis using successor by (simp add: development_successor_def Let_def)
+  next
+    case (Some G)
+    have "(S2,ps',D',answered',history')=(isabelle_rooted_read (fst (snd S)) S',ps,D,finsert (fst r) answered,
+        history@[Development_Answer_Record G])"
+      using successor Some by (simp add: development_successor_def Let_def)
+    then show ?thesis using Some by (intro that) auto
+  qed
+  show "fst r |\<in>| answered'" using fields(4) by simp
+  show "S2=isabelle_rooted_read (fst (snd S)) S'" by (rule fields(1))
+  show "\<exists>G. development_answer_generation S r (isabelle_rooted_read (fst (snd S)) S')=Some G \<and>
+      history'=history@[Development_Answer_Record G]" using gen fields(5) by blast
+  show "ps'=ps" by (rule fields(2))
+  show "D'=D" by (rule fields(3))
+  show "answered'=finsert (fst r) answered" by (rule fields(4))
+qed
+
+text \<open>
+  The successor's correspondence is the identity on every position the old state uses, so every
+  problem, locus, row and record of the old state stands unchanged in the successor: renaming a
+  problem of the old state by it gives the problem itself. What a locus means stays local to this
+  contract; no reader of the history applies a transport.
+\<close>
+
+theorem development_successor_keeps:
+  assumes successor: "development_successor (S,ps,D,answered,history) r S'=Some (S2,ps',D',answered',history')"
+    and distinct: "distinct (fst (snd S))"
+  shows "\<And>i. i<length (fst (snd S)) \<Longrightarrow> isabelle_state_embedding (fst (snd S)) (fst (snd S2)) i=i"
+    and "\<And>p. development_problem_positions p\<subseteq>{..<length (fst (snd S))} \<Longrightarrow>
+      development_problem_rename (isabelle_state_embedding (fst (snd S)) (fst (snd S2))) p=p"
+proof -
+  have table: "fst (snd S2)=fst (snd S)@filter (\<lambda>n. n\<notin>set (fst (snd S))) (fst (snd S'))"
+    using development_successor_answered(2)[OF successor] by (simp add: isabelle_rooted_read_fields isabelle_appended_names_def)
+  show kept: "isabelle_state_embedding (fst (snd S)) (fst (snd S2)) i=i" if "i<length (fst (snd S))" for i
+    unfolding table by (rule isabelle_state_embedding_prefix[OF distinct that])
+  show "development_problem_rename (isabelle_state_embedding (fst (snd S)) (fst (snd S2))) p=p"
+    if "development_problem_positions p\<subseteq>{..<length (fst (snd S))}" for p
+    by (rule development_problem_rename_fixed) (use that kept in auto)
+qed
 
 theorem development_successor_ready:
   assumes successor: "development_successor (S,ps,D,answered,history) r S'=Some (S2,ps',D',answered',history')"
-    and tables: "distinct (fst (snd S))"
-    and formed: "finite_inference_formed (development_answered_rules D (finsert (fst r) answered))"
-  shows "development_ready D' answered' (development_problem_rename (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) q) \<longleftrightarrow>
-    development_ready D (finsert (fst r) answered) q"
+  shows "development_ready D' answered' q \<longleftrightarrow> development_ready D (finsert (fst r) answered) q"
+  by (simp only: development_successor_answered(5,6)[OF successor])
+
+text \<open>
+  The successor admits exactly the answers the verdict of the request's kind admits on the answer
+  state as exported, whenever both states are presented within their tables and the request's subject
+  and support are positions of the request state. The two conditions on each state are those
+  @{text state_presentable} spells, and the exporter proves them of every state it defines: its names
+  are distinct (@{text NAME_names_distinct}) and its entities and roots use positions of its table
+  (@{text NAME_positions_closed}, @{text NAME_roots_closed}, which @{text state_positions_exported}
+  joins). So on every pair of states the exporter defines, for a request whose subject and support are
+  positions of the request state, the successor admits exactly what the exported verdict admits. The
+  lemma says nothing on a state the exporter did not define, where, for an answer the native reader
+  reads, @{text development_native_answer_formed} refuses exactly the answers whose state repeats a
+  name or uses a position outside its table, nor for a request outside those premises.
+\<close>
+
+lemma state_positions_exported:
+  assumes entities: "\<forall>e\<in>set (snd C). set (isabelle_entity_positions e)\<subseteq>{..<length (fst C)}"
+    and roots: "\<forall>t\<in>set rs. set (isabelle_term_positions t)\<subseteq>{..<length (fst C)}"
+  shows "state_positions (rs,C)\<subseteq>{..<length (fst C)}"
+  using assms by (auto simp: state_positions_def)
+
+theorem development_successor_admits:
+  assumes request: "r=(p,s,support,E)"
+    and distinct: "distinct (fst (snd S))" "distinct (fst (snd S'))"
+    and inside: "state_positions S\<subseteq>{..<length (fst (snd S))}" "state_positions S'\<subseteq>{..<length (fst (snd S'))}"
+    and subject: "fset (problem_subject p)\<subseteq>{..<length (fst (snd S))}"
+    and support: "fset support\<subseteq>{..<length (fst (snd S))}"
+  shows "development_successor (S,ps,D,answered,history) r S'\<noteq>None \<longleftrightarrow>
+    development_verdict_accepted (development_refinement_verdict S r S')"
 proof -
-  let ?g="development_problem_rename (isabelle_state_embedding (fst (snd S)) (fst (snd S')))"
-  have injective: "inj ?g"
-    by (rule development_problem_rename_injective, rule isabelle_state_embedding_injective[OF tables])
-  have fields: "D'=finite_embedded_inferences ?g D" "answered'=fimage ?g (finsert (fst r) answered)"
-    using successor by (auto simp: development_successor_def Let_def split: option.splits)
-  show ?thesis by (simp only: fields development_ready_renaming[OF injective formed])
+  have exists: "development_successor (S,ps,D,answered,history) r S'\<noteq>None \<longleftrightarrow>
+      development_answer_generation S r (isabelle_rooted_read (fst (snd S)) S')\<noteq>None"
+    by (cases "development_answer_generation S r (isabelle_rooted_read (fst (snd S)) S')")
+      (simp_all add: development_successor_def Let_def)
+  have generation: "development_answer_generation S r R\<noteq>None \<longleftrightarrow>
+      development_verdict_accepted (development_refinement_verdict S r R)" for R
+  proof (cases "development_verdict_accepted (development_refinement_verdict S r R)")
+    case True
+    then show ?thesis by (simp add: development_answer_generation_def request Let_def)
+  next
+    case False
+    then show ?thesis by (simp add: development_answer_generation_def request Let_def)
+  qed
+  show ?thesis
+    by (subst exists, subst generation, unfold request,
+      rule development_refinement_verdict_read[OF distinct inside subject support])
 qed
 
 text \<open>
@@ -436,7 +808,8 @@ text \<open>
   persist because the answer state is closed and every constant the persisting entities mention
   keeps its one declaration. The answers can therefore be admitted in any order, each against a
   request that is still current; the premise is that the request state declares every constant
-  once (@{const isabelle_declared_once}, the exporter's obligation), which the state's own entities decide.
+  once (@{const isabelle_declared_once}, the exporter's obligation), which the state's own entities
+  decide.
 \<close>
 
 theorem development_admitted_keeps_independent_current:

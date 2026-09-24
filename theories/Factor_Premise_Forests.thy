@@ -80,75 +80,42 @@ lemma premise_forest_carrier:
     premise_forest_interior ts \<union> rel_dom (premise_forest_literals ts) \<union>
       rel_dom (premise_forest_callees ts) \<union> f ` template_list_variables ts"
 proof -
-  have child: "rra_carrier (object_structure (template_syntax f (ts!i))) =
-      template_interior (ts!i) \<union> rel_dom (template_literals (ts!i)) \<union> rel_dom (template_callees (ts!i)) \<union>
-        f ` template_variables (ts!i)" if "i < length ts" for i
-    by (rule template_syntax_carrier[OF template_list_addressing[OF addressing nth_mem[OF that]]])
-  have branch: "bound_branch i b = syntax_branch i b"
-    if "b \<in> template_interior t \<union> rel_dom (template_literals t) \<union> rel_dom (template_callees t)" for i b t
-    using that template_interior_outside[of t] template_reference_slots_outside[of t] by (auto intro!: bound_branch_other)
-  have fixed: "bound_branch i (f x) = f x" if "x \<in> template_list_variables ts" for i x
-    using that addressing by (intro bound_branch_binder) (auto simp: binder_addressing_def)
-  have placed: "a \<in> rra_carrier (object_structure (premise_forest_syntax f ts))"
-    if i: "i < length ts" and b: "b \<in> rra_carrier (object_structure (template_syntax f (ts!i)))"
-      and ab: "a = bound_branch i b" for a i b
+  have each: "bound_branch i ` rra_carrier (object_structure (template_syntax f (ts!i))) =
+      syntax_branch i ` template_interior (ts!i) \<union>
+      syntax_branch i ` rel_dom (template_literals (ts!i)) \<union>
+      syntax_branch i ` rel_dom (template_callees (ts!i)) \<union> f ` template_variables (ts!i)"
+    if i: "i < length ts" for i
   proof -
-    have i': "i < length (map (template_syntax f) ts)" using i by simp
-    have b': "b \<in> rra_carrier (object_structure (map (template_syntax f) ts ! i))" using i b by simp
-    show ?thesis unfolding premise_forest_syntax_def bound_forest_carrier_member using i' b' ab by blast
+    have taddr: "binder_addressing (template_variables (ts!i)) f"
+      by (rule template_list_addressing[OF addressing nth_mem[OF i]])
+    have tb: "f ` template_variables (ts!i) \<subseteq> binder_addresses" using taddr by (simp add: binder_addressing_def)
+    have outside: "(template_interior (ts!i) \<union> rel_dom (template_literals (ts!i)) \<union>
+        rel_dom (template_callees (ts!i))) \<inter> binder_addresses = {}"
+      using template_interior_outside[of "ts!i"] template_reference_slots_outside[of "ts!i"] by blast
+    show ?thesis
+      by (simp only: bound_branch_image_split[OF template_syntax_carrier[OF taddr] outside tb] image_Un)
   qed
-  show ?thesis
+  have vars0: "template_list_variables ts = (\<Union>i<length ts. template_variables (ts!i))"
   proof (rule set_eqI, rule iffI)
-    fix a assume "a \<in> rra_carrier (object_structure (premise_forest_syntax f ts))"
-    then obtain i b where i: "i < length ts" and b: "b \<in> rra_carrier (object_structure (template_syntax f (ts!i)))"
-      and a: "a = bound_branch i b"
-      by (auto simp: premise_forest_syntax_def bound_forest_carrier_member)
-    have member: "ts!i \<in> set ts" by (rule nth_mem[OF i])
-    show "a \<in> premise_forest_interior ts \<union> rel_dom (premise_forest_literals ts) \<union>
-      rel_dom (premise_forest_callees ts) \<union> f ` template_list_variables ts"
-    proof (cases "b \<in> f ` template_variables (ts!i)")
-      case True
-      then obtain x where x: "x \<in> template_variables (ts!i)" and bx: "b = f x" by blast
-      have xl: "x \<in> template_list_variables ts" using x member by (auto simp: template_list_variables_def)
-      show ?thesis using fixed[OF xl, of i] a bx xl by blast
-    next
-      case False
-      then have inner: "b \<in> template_interior (ts!i) \<union> rel_dom (template_literals (ts!i)) \<union> rel_dom (template_callees (ts!i))"
-        using b child[OF i] by blast
-      have ab: "a = syntax_branch i b" using a branch[OF inner] by simp
-      have "a \<in> premise_forest_interior ts \<union> rel_dom (premise_forest_literals ts) \<union> rel_dom (premise_forest_callees ts)"
-        unfolding ab premise_forest_interior_def premise_forest_literals_def premise_forest_callees_def placed_table_domain
-        using inner i placed_positions_child[of i "map template_interior ts" b syntax_branch]
-          placed_positions_child[of i "map rel_dom (map template_literals ts)" b syntax_branch]
-          placed_positions_child[of i "map rel_dom (map template_callees ts)" b syntax_branch]
-        by auto
-      then show ?thesis by blast
-    qed
+    fix x assume "x \<in> template_list_variables ts"
+    then obtain t where t: "t \<in> set ts" and x: "x \<in> template_variables t"
+      by (auto simp: template_list_variables_def)
+    then obtain i where i: "i < length ts" and ti: "ts!i = t" by (auto simp: in_set_conv_nth)
+    show "x \<in> (\<Union>i<length ts. template_variables (ts!i))" using i ti x by blast
   next
-    fix a assume a: "a \<in> premise_forest_interior ts \<union> rel_dom (premise_forest_literals ts) \<union>
-      rel_dom (premise_forest_callees ts) \<union> f ` template_list_variables ts"
-    show "a \<in> rra_carrier (object_structure (premise_forest_syntax f ts))"
-    proof (cases "a \<in> f ` template_list_variables ts")
-      case True
-      then obtain x t where t: "t \<in> set ts" and x: "x \<in> template_variables t" and ax: "a = f x"
-        by (auto simp: template_list_variables_def)
-      obtain i where i: "i < length ts" and ti: "ts!i = t" using t by (auto simp: in_set_conv_nth)
-      have xl: "x \<in> template_list_variables ts" using t x by (auto simp: template_list_variables_def)
-      have b: "f x \<in> rra_carrier (object_structure (template_syntax f (ts!i)))" using child[OF i] x ti by simp
-      show ?thesis by (rule placed[OF i b]) (simp add: ax fixed[OF xl])
-    next
-      case False
-      have in3: "a \<in> premise_forest_interior ts \<union> rel_dom (premise_forest_literals ts) \<union> rel_dom (premise_forest_callees ts)"
-        using a False by blast
-      obtain i b where i: "i < length ts"
-        and b: "b \<in> template_interior (ts!i) \<union> rel_dom (template_literals (ts!i)) \<union> rel_dom (template_callees (ts!i))"
-        and ab: "a = syntax_branch i b"
-        using in3[unfolded premise_forest_interior_def premise_forest_literals_def premise_forest_callees_def
-          placed_table_domain map_map comp_def Un_iff placed_positions_map_member] by blast
-      have inside: "b \<in> rra_carrier (object_structure (template_syntax f (ts!i)))" using child[OF i] b by blast
-      show ?thesis by (rule placed[OF i inside]) (simp add: ab branch[OF b])
-    qed
+    fix x assume "x \<in> (\<Union>i<length ts. template_variables (ts!i))"
+    then obtain i where i: "i < length ts" and x: "x \<in> template_variables (ts!i)" by blast
+    show "x \<in> template_list_variables ts" using nth_mem[OF i] x by (auto simp: template_list_variables_def)
   qed
+  have vars: "f ` template_list_variables ts = (\<Union>i<length ts. f ` template_variables (ts!i))"
+    by (simp add: vars0 image_UN)
+  have carrier: "rra_carrier (object_structure (premise_forest_syntax f ts)) =
+      (\<Union>i<length ts. bound_branch i ` rra_carrier (object_structure (template_syntax f (ts!i))))"
+    by (simp add: premise_forest_syntax_def bound_forest_pushed cong: SUP_cong_simp)
+  show ?thesis
+    by (simp add: carrier each vars premise_forest_interior_def premise_forest_literals_def
+        premise_forest_callees_def placed_table_domain placed_positions_eq UN_Un_distrib
+        cong: SUP_cong_simp)
 qed
 
 lemma premise_forest_callee_origin:

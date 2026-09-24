@@ -27,6 +27,175 @@ proof -
   then show ?thesis using bound by (simp add: isabelle_state_embedding_def isabelle_name_at_def)
 qed
 
+subsection \<open>A state read into a table extended by the names it lacks\<close>
+
+text \<open>
+  A state is read into a table by appending the names the state's own table lacks
+  (\<open>isabelle_appended_names\<close>) and moving each position of the state to the position of its name
+  there. Every position of the table is kept, and the reading is a correspondence of the state's table
+  with the appended one, so a decision with a renaming contract decides on the read state as on the
+  state itself. Where a position of the state names a name the table holds, the embedding of the table
+  into the state's table and the reading lead back to each other. The extension of a request and the
+  successor of the development read their answer state so: the reading is stated once, here.
+\<close>
+
+abbreviation isabelle_appended_embedding :: "String.literal list \<Rightarrow> String.literal list \<Rightarrow> nat \<Rightarrow> nat" where
+  "isabelle_appended_embedding names ns\<equiv>isabelle_state_embedding ns (isabelle_appended_names names ns)"
+
+definition isabelle_rooted_read :: "String.literal list \<Rightarrow> isabelle_rooted_context \<Rightarrow> isabelle_rooted_context" where
+  "isabelle_rooted_read names S=isabelle_rooted_rename (isabelle_appended_embedding names (fst (snd S)))
+    (isabelle_appended_names names (fst (snd S))) S"
+
+lemma isabelle_rooted_read_fields:
+  "fst (isabelle_rooted_read names S)=map (isabelle_term_rename (isabelle_appended_embedding names (fst (snd S)))) (fst S)"
+  "snd (isabelle_rooted_read names S)=(isabelle_appended_names names (fst (snd S)),
+    map (isabelle_entity_rename (isabelle_appended_embedding names (fst (snd S)))) (snd (snd S)))"
+  by (simp_all add: isabelle_rooted_read_def isabelle_rooted_rename_def isabelle_context_rename_def)
+
+lemma isabelle_appended_names_distinct:
+  "distinct names \<Longrightarrow> distinct ns \<Longrightarrow> distinct (isabelle_appended_names names ns)"
+  by (auto simp: isabelle_appended_names_def)
+
+lemma isabelle_appended_embedding_correspondence:
+  assumes distinct: "distinct ns"
+  shows "isabelle_table_correspondence (isabelle_appended_embedding names ns) ns (isabelle_appended_names names ns)"
+  by (rule isabelle_state_embedding_correspondence[OF distinct]) (auto simp: isabelle_appended_names_def)
+
+lemma isabelle_state_embedding_inside_shared:
+  assumes bound: "i<length names" and inside: "isabelle_state_embedding names ns i<length ns"
+  shows "names!i\<in>set ns"
+proof (rule ccontr)
+  assume outside: "names!i\<notin>set ns"
+  have "isabelle_state_embedding names ns i=length ns+i"
+    by (rule isabelle_state_embedding_unshared) (use bound outside in \<open>auto simp: isabelle_name_at_def\<close>)
+  then show False using inside by simp
+qed
+
+lemma isabelle_appended_embedding_back:
+  assumes distinct: "distinct names" and bound: "i<length names" and shared: "names!i\<in>set ns"
+  shows "isabelle_appended_embedding names ns (isabelle_state_embedding names ns i)=i"
+proof -
+  let ?j="isabelle_state_embedding names ns i"
+  have named: "isabelle_name_at ns ?j=Some (names!i)"
+    by (rule isabelle_state_embedding_shared) (use bound shared in \<open>simp_all add: isabelle_name_at_def\<close>)
+  have home: "isabelle_name_position names (names!i)=Some i" by (rule isabelle_name_position_at[OF distinct bound])
+  have "isabelle_appended_embedding names ns ?j=isabelle_state_embedding ns names ?j"
+    unfolding isabelle_state_embedding_def[of ns]
+    by (simp add: named home isabelle_appended_names_def isabelle_name_position_append)
+  then show ?thesis by (simp only: isabelle_state_embedding_back[OF distinct bound shared])
+qed
+
+lemma isabelle_appended_embedding_forth:
+  assumes distinct: "distinct ns" and bound: "j<length ns"
+    and kept: "isabelle_appended_embedding names ns j<length names"
+  shows "isabelle_state_embedding names ns (isabelle_appended_embedding names ns j)=j"
+proof -
+  define k where "k=isabelle_appended_embedding names ns j"
+  have corr: "isabelle_table_correspondence (isabelle_appended_embedding names ns) ns (isabelle_appended_names names ns)"
+    by (rule isabelle_appended_embedding_correspondence[OF distinct])
+  have moved: "isabelle_name_at (isabelle_appended_names names ns) k=isabelle_name_at ns j"
+    unfolding k_def by (rule isabelle_table_correspondence_name[OF corr])
+  have prefix: "isabelle_name_at (isabelle_appended_names names ns) k=isabelle_name_at names k"
+    unfolding k_def by (rule isabelle_appended_names_prefix[OF kept])
+  have "isabelle_name_at names k=isabelle_name_at ns j" using moved prefix by simp
+  then have named: "isabelle_name_at names k=Some (ns!j)" using bound by (simp add: isabelle_name_at_def)
+  have "isabelle_state_embedding names ns k=j"
+    by (simp add: isabelle_state_embedding_def named isabelle_name_position_at[OF distinct bound])
+  then show ?thesis by (simp only: k_def)
+qed
+
+lemma isabelle_appended_embedding_meets:
+  assumes distinct: "distinct names" "distinct ns" and bound: "i<length names" and inside: "j<length ns"
+  shows "isabelle_appended_embedding names ns j=i \<longleftrightarrow> isabelle_state_embedding names ns i=j"
+proof
+  assume "isabelle_appended_embedding names ns j=i"
+  then show "isabelle_state_embedding names ns i=j"
+    using isabelle_appended_embedding_forth[OF distinct(2) inside] bound by auto
+next
+  assume moved: "isabelle_state_embedding names ns i=j"
+  have "names!i\<in>set ns" by (rule isabelle_state_embedding_inside_shared[OF bound]) (simp add: moved inside)
+  then show "isabelle_appended_embedding names ns j=i"
+    unfolding moved[symmetric] by (rule isabelle_appended_embedding_back[OF distinct(1) bound])
+qed
+
+lemma isabelle_appended_embedding_image:
+  assumes distinct: "distinct names" "distinct ns" and positions: "fset Q\<subseteq>{..<length names}"
+    and inside: "j<length ns"
+  shows "isabelle_appended_embedding names ns j |\<in>| Q \<longleftrightarrow> j |\<in>| fimage (isabelle_state_embedding names ns) Q"
+proof
+  assume member: "isabelle_appended_embedding names ns j |\<in>| Q"
+  have "isabelle_state_embedding names ns (isabelle_appended_embedding names ns j)=j"
+    using isabelle_appended_embedding_meets[OF distinct _ inside] member positions by auto
+  then show "j |\<in>| fimage (isabelle_state_embedding names ns) Q" using member by (force simp: fimage_iff)
+next
+  assume "j |\<in>| fimage (isabelle_state_embedding names ns) Q"
+  then obtain q where member: "q |\<in>| Q" and image: "j=isabelle_state_embedding names ns q" by (auto simp: fimage_iff)
+  have "isabelle_appended_embedding names ns j=q"
+    using isabelle_appended_embedding_meets[OF distinct _ inside] member positions image by auto
+  then show "isabelle_appended_embedding names ns j |\<in>| Q" using member by simp
+qed
+
+text \<open>
+  The appended embedding and the state's embedding fix every position of the two tables that the
+  other keeps; a renaming through both is the identity on a value whose positions are all such.
+\<close>
+
+lemma isabelle_appended_embedding_fixes:
+  "\<lbrakk>distinct names; i<length names; isabelle_state_embedding names ns i<length ns\<rbrakk> \<Longrightarrow>
+    (isabelle_appended_embedding names ns \<circ> isabelle_state_embedding names ns) i=id i"
+  "\<lbrakk>distinct ns; j<length ns; isabelle_appended_embedding names ns j<length names\<rbrakk> \<Longrightarrow>
+    (isabelle_state_embedding names ns \<circ> isabelle_appended_embedding names ns) j=id j"
+  using isabelle_appended_embedding_back[of names i ns] isabelle_state_embedding_inside_shared[of i names ns]
+    isabelle_appended_embedding_forth[of ns j names] by simp_all
+
+lemma isabelle_appended_term_back:
+  assumes distinct: "distinct names"
+    and inside: "\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> i<length names"
+    and shared: "\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> isabelle_state_embedding names ns i<length ns"
+  shows "isabelle_term_rename (isabelle_appended_embedding names ns) (isabelle_term_rename (isabelle_state_embedding names ns) t)=t"
+proof -
+  have "isabelle_term_rename (isabelle_appended_embedding names ns \<circ> isabelle_state_embedding names ns) t=
+      isabelle_term_rename id t"
+    by (rule isabelle_term_rename_cong) (rule isabelle_appended_embedding_fixes(1)[OF distinct inside shared])
+  then show ?thesis by (simp only: isabelle_term_rename_compose isabelle_term_rename_id)
+qed
+
+lemma isabelle_appended_entity_back:
+  assumes distinct: "distinct names"
+    and inside: "\<And>i. i\<in>set (isabelle_entity_positions e) \<Longrightarrow> i<length names"
+    and shared: "\<And>i. i\<in>set (isabelle_entity_positions e) \<Longrightarrow> isabelle_state_embedding names ns i<length ns"
+  shows "isabelle_entity_rename (isabelle_appended_embedding names ns) (isabelle_entity_rename (isabelle_state_embedding names ns) e)=e"
+proof -
+  have "isabelle_entity_rename (isabelle_appended_embedding names ns \<circ> isabelle_state_embedding names ns) e=
+      isabelle_entity_rename id e"
+    by (rule isabelle_entity_rename_cong) (rule isabelle_appended_embedding_fixes(1)[OF distinct inside shared])
+  then show ?thesis by (simp only: isabelle_entity_rename_compose isabelle_entity_rename_id)
+qed
+
+lemma isabelle_appended_term_forth:
+  assumes distinct: "distinct ns"
+    and inside: "\<And>j. j\<in>set (isabelle_term_positions t) \<Longrightarrow> j<length ns"
+    and kept: "\<And>j. j\<in>set (isabelle_term_positions t) \<Longrightarrow> isabelle_appended_embedding names ns j<length names"
+  shows "isabelle_term_rename (isabelle_state_embedding names ns) (isabelle_term_rename (isabelle_appended_embedding names ns) t)=t"
+proof -
+  have "isabelle_term_rename (isabelle_state_embedding names ns \<circ> isabelle_appended_embedding names ns) t=
+      isabelle_term_rename id t"
+    by (rule isabelle_term_rename_cong) (rule isabelle_appended_embedding_fixes(2)[OF distinct inside kept])
+  then show ?thesis by (simp only: isabelle_term_rename_compose isabelle_term_rename_id)
+qed
+
+lemma isabelle_appended_entity_forth:
+  assumes distinct: "distinct ns"
+    and inside: "\<And>j. j\<in>set (isabelle_entity_positions e) \<Longrightarrow> j<length ns"
+    and kept: "\<And>j. j\<in>set (isabelle_entity_positions e) \<Longrightarrow> isabelle_appended_embedding names ns j<length names"
+  shows "isabelle_entity_rename (isabelle_state_embedding names ns) (isabelle_entity_rename (isabelle_appended_embedding names ns) e)=e"
+proof -
+  have "isabelle_entity_rename (isabelle_state_embedding names ns \<circ> isabelle_appended_embedding names ns) e=
+      isabelle_entity_rename id e"
+    by (rule isabelle_entity_rename_cong) (rule isabelle_appended_embedding_fixes(2)[OF distinct inside kept])
+  then show ?thesis by (simp only: isabelle_entity_rename_compose isabelle_entity_rename_id)
+qed
+
 subsection \<open>The material an answer state holds about given constants\<close>
 
 definition development_introduced_material :: "isabelle_context \<Rightarrow> nat list \<Rightarrow> isabelle_entity list" where
@@ -83,7 +252,7 @@ text \<open>
 definition development_request_extension ::
     "isabelle_rooted_context \<Rightarrow> isabelle_rooted_context \<Rightarrow> nat list \<Rightarrow> nat list \<Rightarrow> isabelle_rooted_context" where
   "development_request_extension S S' X I=(let names=isabelle_appended_names (fst (snd S)) (fst (snd S'));
-     g=isabelle_state_embedding (fst (snd S')) names;
+     g=isabelle_appended_embedding (fst (snd S)) (fst (snd S'));
      added=filter (\<lambda>e. e\<notin>set (snd (snd S))) (map (isabelle_entity_rename g) (development_answer_material (snd S') X I)) in
      (fst S,(names,snd (snd S)@added)))"
 

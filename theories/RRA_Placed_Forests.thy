@@ -30,6 +30,9 @@ lemma placed_positions_member:
   "a \<in> placed_positions g As \<longleftrightarrow> (\<exists>i<length As. \<exists>b\<in>As!i. a = g i b)"
   by (auto simp: placed_positions_def)
 
+lemma placed_positions_eq: "placed_positions g As = (\<Union>i<length As. g i ` (As!i))"
+  by (fact placed_positions_def)
+
 lemma placed_positions_Nil [simp]: "placed_positions g [] = {}"
   by (simp add: placed_positions_def)
 
@@ -168,6 +171,22 @@ next
     using i by blast
   then show "(a,v) \<in> functional_bindings (object_data (placed_forest g Rs))" by (simp add: placed_forest_def)
 qed
+
+text \<open>
+  The forest is its children placed: its carrier, its incidence and its functional bindings are the
+  unions of those of each child pushed by its own placement. The form is stated here once, for any
+  family of placements, so that a forest over such a family reads it instead of the definitions.
+\<close>
+
+lemma placed_forest_pushed:
+  "rra_carrier (object_structure (placed_forest g Rs)) =
+    (\<Union>i<length Rs. rra_carrier (object_structure (push_object (g i) (Rs!i))))"
+  "rra_incidence (object_structure (placed_forest g Rs)) =
+    (\<Union>i<length Rs. rra_incidence (object_structure (push_object (g i) (Rs!i))))"
+  "functional_bindings (object_data (placed_forest g Rs)) =
+    (\<Union>i<length Rs. functional_bindings (object_data (push_object (g i) (Rs!i))))"
+  by (simp_all add: placed_forest_def placed_positions_def push_object_def push_basis_def
+      cong: SUP_cong_simp)
 
 section \<open>Silence at a position\<close>
 
@@ -502,5 +521,34 @@ lemma finite_placed_table_code [code]:
   "finite_placed_table g Ms=ffUnion (fset_of_list
     (map (\<lambda>(i,M). fimage (\<lambda>(k,v). (g i k,v)) M) (zip [0..<length Ms] Ms)))"
   by (simp only: finite_placed_table_def map_indexed_children)
+
+text \<open>
+  A family of placements that each put one prefix before a child's addresses is computed with the
+  prefix of each child built once, before its addresses are placed.
+\<close>
+
+lemma finite_placed_forest_prefix:
+  assumes prefix: "\<And>i a. g i a = h i @ a"
+  shows "finite_placed_forest g Rs=(let rows=map (\<lambda>(i,R). (h i,R)) (zip [0..<length Rs] Rs) in
+    \<lparr>finite_structure=\<lparr>
+    finite_carrier=ffUnion (fset_of_list (map (\<lambda>(p,R).
+      fimage ((@) p) (finite_carrier (finite_structure R))) rows)),
+    finite_incidence=ffUnion (fset_of_list (map (\<lambda>(p,R).
+      fimage (\<lambda>(a,q,x). (p@a,p@q,p@x)) (finite_incidence (finite_structure R))) rows))\<rparr>,
+    finite_data=\<lparr>finite_bag={#},finite_bindings=ffUnion (fset_of_list (map (\<lambda>(p,R).
+      fimage (\<lambda>(a,v). (p@a,v)) (finite_bindings (finite_data R))) rows))\<rparr>\<rparr>)"
+proof -
+  have g: "g=(\<lambda>i. (@) (h i))" using prefix by (intro ext) simp
+  show ?thesis by (simp add: finite_placed_forest_code g Let_def map_map comp_def split_def)
+qed
+
+lemma finite_placed_table_prefix:
+  assumes prefix: "\<And>i a. g i a = h i @ a"
+  shows "finite_placed_table g Ms=ffUnion (fset_of_list (map (\<lambda>(p,M). fimage (\<lambda>(k,v). (p@k,v)) M)
+    (map (\<lambda>(i,M). (h i,M)) (zip [0..<length Ms] Ms))))"
+proof -
+  have g: "g=(\<lambda>i. (@) (h i))" using prefix by (intro ext) simp
+  show ?thesis by (simp add: finite_placed_table_code g map_map comp_def split_def)
+qed
 
 end

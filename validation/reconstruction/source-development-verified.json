@@ -2,23 +2,23 @@
  "boundary": "The original policy questions and complete source-change requests reconstruct all observations, native generation, criticism, comparison, revision, selection, installation and subsequent query evidence. A unique complete target is selected through the existing computed native producer choice. Final admission preserves the original target meaning, old material and ordered query scope. Empty and ambiguous choices, unreadable or incompatible sources, absent entries and missing required query evidence remain explicit. The requested finite target family, wider discovery, global cost, historical authority, native mathematical proof admission and genesis are separate boundaries.",
  "complete_recipe_source_manifest": "source-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "8d79d64b114fd76a56a0bc7ad64cfc79c0270e77740e725270c2c807f91990e6",
   "records": 3,
   "reports_equal": true,
-  "seconds": 15.34,
+  "seconds": 16.69,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/source-development-reports.json": "90df8aa1142f24bef0ec4f5dad03da0de004e57c319315e1173c52a936667f20"
+   "validation/reconstruction/source-development-reports.json": "b57085c7cb6ab1094550267ff9656561af9f729e1d8d91c12a19390ecde17c9d"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "e1e38f984dd785dbb1bd21961f1c06fe01ed374d75e33fc9e62fe4790790f6af",
+   "module_sha256": "a9175427d533cdb1fafb7aff29ab76812e48e48ee647c418257fa07c6a6c4ff5",
    "subject_contracts": {
-    "development_subject_investigation.yxml": "ac6863b7ea289cc96b7d26ec641339e75c223af471b8a2dd447bec43c83886c5"
+    "development_subject_investigation.yxml": "3cf416909cdec1b47f55467db5af3e0ab92d546a331b1dfdac9e6fe39893cefa"
    },
    "theory": "Native_Source_Development"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "e918588fbd0ded8a6f5e7f2d283e268131321318618cafe130a4151912cf6b54",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "e1e38f984dd785dbb1bd21961f1c06fe01ed374d75e33fc9e62fe4790790f6af"
- },
  "recipe": "source-development",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "6762219d128a600dfb3d7ca6ebabcba82b7eec75f4834a86e7c8c285058eb46f",
+   "sha256": "f6140a671b1c638512143793374115e26afa20510acd8ed122de1bfdb3c9e557",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -82,7 +77,7 @@
   },
   "presentation-first": {
    "records": 1,
-   "sha256": "8bce3203bb9061a113294f13b3c5d8ff383265138f3807a8c1b0979227498d11",
+   "sha256": "543ca8400aeb00ab753bc466fe0c30f1c40c1e46dc2900435cd72b2169b64dd1",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -90,24 +85,24 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "dfaf89a132e2040c1c0fae4942a5e1d9b0e171550dffa8aba6218d69db171d26",
+ "source_manifest_sha256": "5ec87ece0701cfa19c13dbdefd3df0543d1c06ce8732cbfa37eec30992ceb12b",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 15.221860001001914
+   "seconds": 16.61879353300901
   },
   {
    "exit_code": 0,
    "name": "presentation-empty",
-   "seconds": 14.067962216999149
+   "seconds": 12.907974577014102
   },
   {
    "exit_code": 0,
    "name": "presentation-first",
-   "seconds": 12.404078977000609
+   "seconds": 13.225412378989859
   }
  ]
 }

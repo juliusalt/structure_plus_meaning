@@ -113,7 +113,7 @@ proof -
     by (rule reference_table_literals[OF term_literal_bindings_finite term_literal_bindings_functional
           term_literal_bindings_formed[OF tf]])
   show ?thesis using reference_table_disjoint_copies[OF left right]
-    by (simp add: map_slot_keys_def)
+    by (simp add: map_slot_keys_empty map_slot_keys_insert)
 qed
 
 lemma binding_row_reference_domain:

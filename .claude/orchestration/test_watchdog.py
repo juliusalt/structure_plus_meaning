@@ -237,6 +237,11 @@ class WatchdogTests(unittest.TestCase):
         self.w.hit("implement-4", age=v2.PING_AGE + 60)
         self.run_watchdog(ORCH_PING_WAIT=0)
         self.assertTrue(self.w.wait_for(self.w.state / "ping-implement-4", 5))  # pinged before its cache expires
+        # the ping runs in the background and marks the session hit when it ends: waited for, or its hit could land
+        # after the age set below and the session read as warm (it failed so under the suite's load, 2026-09-23)
+        end = time.time() + 20
+        while time.time() < end and "ping implement-4:" not in (self.w.state / "v2.log").read_text():
+            time.sleep(0.1)
         self.w.hit("implement-4", age=v2.WARM_MAX + 60)
         self.run_watchdog()
         self.assertEqual(self.s("implement-4")["state"], "lost")
@@ -615,11 +620,95 @@ class WatchdogTests(unittest.TestCase):
         self.assertEqual(self.w.st()["tasks"]["5"]["stage"], "planner")
         self.assertIn("has not reported within", self.heard())
 
+    def test_an_accepted_task_left_in_review_with_no_review_due_has_its_commit_made(self):
+        # tasks 128 and 147 (2026-09-22): accepted, their landings interrupted by the reboot, queued again and checked
+        # again, and put in review with no review due — where nothing moved them for eight hours
+        (self.w.project / ".build/tasks/5").mkdir(parents=True)
+        final = self.w.project / ".build/tasks/5/finalize.json"
+        final.write_text(json.dumps({"check": "true", "files": ["theories/A.thy"], "message": ".build/tasks/5/m.md"}))
+        accepted = {"stage": "done", "kind": "review", "reviews": "5", "verdict": "accept", "round": 0}
+        log = self.w.state / "v2.log"
+        made = "task 5 was accepted and stood in review with no review due: its commit is made"
+
+        def run(task=None, review=None, held=False):
+            log.write_text("")
+            self.w.set_st(tasks={"5": dict({"stage": "reviewing", "kind": "build", "review_tasks": ["6"]}, **(task or {})),
+                                 "6": dict(accepted, **(review or {}))})
+            marker = self.w.state / v2.GRAPH_HELD
+            marker.write_text("x") if held else (marker.unlink() if marker.exists() else None)
+            self.run_watchdog()
+            return self.w.st()["tasks"]["5"].get("stage"), made in log.read_text()
+
+        self.assertEqual(run(review={"verdict": None}), ("reviewing", False))  # its review is still to be given
+        self.assertEqual(run(task={"reviewing": "review-6"}), ("reviewing", False))  # a review of it runs: it judges
+        self.assertEqual(run(held=True), ("reviewing", False))                # the graph held: the planner's order first
+        final.unlink()
+        self.assertEqual(run(), ("reviewing", False))                         # no final job: nothing of it to commit
+        final.write_text(json.dumps({"check": "true", "files": ["theories/A.thy"], "message": ".build/tasks/5/m.md"}))
+        stage, said = run()
+        self.assertTrue(said)                                                 # accepted and handed over: committed,
+        self.assertNotEqual(stage, "reviewing")                               # whatever its commit then finds
+
     def test_the_dispatch_runs_after_the_care(self):
         self.w.task("1", BRIEF)
         self.w.set_st(queue=["1"])
         self.run_watchdog()
         self.assertEqual(self.forked("implement-"), ["implement-1"])
+
+
+class HeldIndexTests(unittest.TestCase):
+    """The generated indexes the bases hold follow main (watchdog.held_indexes): made only by a build of a base, what the
+    parts hold of them never changed between builds, and the delta, the stale lines, what is pending and the parts'
+    accounts were all blind to them (found by the simulation of the run of 09-21/22, 2026-09-23)."""
+
+    def git(self, *args):
+        import subprocess
+        return subprocess.run(["git", "-C", self.repo, *args], capture_output=True, text=True, check=True).stdout
+
+    def setUp(self):
+        import tempfile
+        self.temp = tempfile.TemporaryDirectory()
+        self.repo = self.temp.name
+        self.git("init", "-q", "-b", "main")
+        self.git("config", "user.email", "t@example.org")
+        self.git("config", "user.name", "t")
+        self.commit("DECISIONS.md", "## One\n")
+
+    def tearDown(self):
+        self.temp.cleanup()
+
+    def commit(self, name, text):
+        Path(self.repo, name).write_text(text)
+        self.git("add", name)
+        self.git("commit", "-q", "-m", name)
+
+    def test_the_held_indexes_are_made_again_once_for_each_commit_of_main(self):
+        import select_base_load
+        made = []
+        with patch.object(v2, "PROJECT", self.repo), patch.object(watchdog, "STATE", self.repo), \
+                patch.object(select_base_load, "refresh_indexes", lambda who=None: made.append(who)):
+            watchdog.held_indexes()
+            watchdog.held_indexes()
+            self.assertEqual(made, [None])                                # every base's, once for this commit
+            self.commit("DECISIONS.md", "## One\n\n## Two\n")          # a decision lands
+            watchdog.held_indexes()
+            self.assertEqual(made, [None, None])
+
+    def test_the_indexes_are_made_before_the_layers_and_the_deltas_read_them(self):
+        order = []
+        names = ("planner_mail", "finishing", "holds", "held_indexes", "layers", "deltas", "isabelle_snapshot")
+        patches = [patch.object(watchdog, n, (lambda n: lambda: order.append(n))(n)) for n in names]
+        patches += [patch.object(v2, n, lambda: None) for n in ("lands_when_free", "archive")]
+        patches.append(patch.object(v2, "peek", lambda: {"sessions": {}}))
+        for p in patches:
+            p.start()
+        try:
+            watchdog.watch()
+        finally:
+            for p in reversed(patches):
+                p.stop()
+        self.assertLess(order.index("held_indexes"), order.index("layers"))
+        self.assertLess(order.index("layers"), order.index("deltas"))
 
 
 if __name__ == "__main__":

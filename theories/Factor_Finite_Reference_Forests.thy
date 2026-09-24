@@ -6,7 +6,8 @@ section \<open>One finite traversal combines every complete block reference tabl
 
 text \<open>
   The executable table is the executable placed table at the syntax branches: it reads each child
-  table with its index through the placed table's code equation.
+  table with its index through the placed table's code equation, and a change of its values is the
+  placed table's own (@{thm [source] placed_table_values}).
 \<close>
 
 definition finite_syntax_forest_table :: "(local_address\<times>'a) fset list \<Rightarrow> (local_address\<times>'a) fset" where
@@ -16,19 +17,13 @@ lemma finite_syntax_forest_table_exact [simp]:
   "fset (finite_syntax_forest_table Ms)=syntax_forest_table (map fset Ms)"
   by (simp add: finite_syntax_forest_table_def syntax_forest_table_def)
 
+text \<open>Each child's prefix is built once, before its keys are placed.\<close>
+lemmas finite_syntax_forest_table_code [code] = finite_placed_table_prefix[where g=syntax_branch
+  and h="\<lambda>i. syntax_branch i []", OF syntax_branch_prefix, folded finite_syntax_forest_table_def]
+
 lemma syntax_forest_value_map:
   "map_relation_values f (syntax_forest_table Ms)=syntax_forest_table (map (map_relation_values f) Ms)"
-proof -
-  have commute: "map_relation_values f (map_slot_keys g M)=map_slot_keys g (map_relation_values f M)" for g M
-    by (simp add: map_relation_values_def map_slot_keys_def image_image split_def)
-  have "map_relation_values f (syntax_forest_table Ms)=
-      (\<Union>i<length Ms. map_relation_values f (map_slot_keys (syntax_branch i) (Ms!i)))"
-    by (simp add: syntax_forest_table_eq map_relation_values_def image_UN)
-  also have "\<dots>=syntax_forest_table (map (map_relation_values f) Ms)"
-    by (simp add: syntax_forest_table_eq commute cong: SUP_cong_simp)
-  finally show ?thesis .
-qed
-
+  by (simp add: syntax_forest_table_def placed_table_values)
 
 lemma finite_syntax_forest_table_values:
   "map_relation_values f (fset (finite_syntax_forest_table Ms))=

@@ -144,6 +144,21 @@ class World:
                         CODEX_SESSIONS=str(self.home / "codex"), ORCH_LEDGER=str(self.root / "owner-ledger.md"))
 
     def close(self):
+        """The world's processes ended before its directory goes: a background ping or check a test started outlived it
+        and wrote its log into a directory it made again under /tmp (26 of them after one night's runs, 2026-09-23)."""
+        mark = f"FAKE_ROOT={self.root}".encode()
+        for pid in os.listdir("/proc"):
+            if not pid.isdigit() or int(pid) == os.getpid():
+                continue
+            try:
+                environ = open(f"/proc/{pid}/environ", "rb").read().split(b"\0")
+            except OSError:
+                continue
+            if mark in environ:
+                try:
+                    os.kill(int(pid), 9)
+                except OSError:
+                    pass
         self.temp.cleanup()
 
     # ------------------------------------------------------------ running
@@ -186,7 +201,7 @@ class World:
     def base(self, who="max", sid="base-sid", flags=None):
         """A sealed base, started with the flags session-flags gives (or others: `flags`), as base.sh records one."""
         (self.state / f"{who}-base.json").write_text(json.dumps(
-            {"sessionId": sid, "model": "claude-opus-5[1m]", "effort": "max", "name": f"{who}-base",
+            {"sessionId": sid, "model": "claude-opus-5-5[1m]", "effort": "max", "name": f"{who}-base",
              "flags": LEAN if flags is None else flags}))
 
     def task(self, tid, description=BRIEF, subject="Readiness of calls", **fields):
@@ -219,7 +234,7 @@ class World:
             self.set_rows([r for r in self.rows() if r["name"] != name] + [
                 {"name": name, "id": f"id-{sid}", "sessionId": sid, "kind": "background", "status": status,
                  "state": "working", "cwd": str(self.project)}])
-        rec = dict(dict(name=name, role=role, sid=sid, id=f"id-{sid}", state=state, model="claude-opus-5[1m]",
+        rec = dict(dict(name=name, role=role, sid=sid, id=f"id-{sid}", state=state, model="claude-opus-5-5[1m]",
                         effort="max", settings="worker-settings.json", origin="max", started=time.time(),
                         sealed=not live, flags=LEAN), **fields)
         st = self.st() or {}
@@ -290,7 +305,7 @@ class World:
         return remote
 
 
-def assistant(msg_id, ts, content=None, usage=None, model="claude-opus-5"):
+def assistant(msg_id, ts, content=None, usage=None, model="claude-opus-5-5"):
     m = {"id": msg_id, "model": model, "content": content or [{"type": "text", "text": "ok"}]}
     if usage:
         m["usage"] = usage

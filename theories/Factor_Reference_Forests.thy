@@ -20,7 +20,7 @@ definition syntax_forest_table :: "(local_address \<times> 'a) set list \<Righta
 
 lemma syntax_forest_table_eq:
   "syntax_forest_table Ms = (\<Union>i<length Ms. map_slot_keys (syntax_branch i) (Ms!i))"
-  by (simp add: syntax_forest_table_def placed_table_def map_slot_keys_def)
+  by (simp add: syntax_forest_table_def placed_table_eq)
 
 lemma syntax_forest_table_Nil [simp]: "syntax_forest_table [] = {}"
   by (simp add: syntax_forest_table_def)
@@ -42,7 +42,7 @@ lemma syntax_forest_table_origin:
 lemma syntax_forest_table_child:
   assumes index: "i < length Ms"
   shows "map_slot_keys (syntax_branch i) (Ms!i) \<subseteq> syntax_forest_table Ms"
-  using syntax_forest_table_member[OF index] by (auto simp: map_slot_keys_def)
+  using index by (auto simp: syntax_forest_table_eq)
 
 lemma syntax_forest_table_range:
   "rel_ran (syntax_forest_table Ms) = (\<Union>M\<in>set Ms. rel_ran M)"

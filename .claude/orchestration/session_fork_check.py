@@ -25,7 +25,12 @@ def transcript(session):
 
 def requests(session):
     out = []
-    for line in open(transcript(session), errors="ignore"):
+    path = transcript(session)
+    if not os.path.exists(path):
+        # a session that has written nothing yet, or whose transcript is gone: a ping's throwaway fork is deleted as
+        # soon as its verdict has been read, and a check running beside it wrote a traceback into warm.log
+        return out
+    for line in open(path, errors="ignore"):
         if '"usage"' not in line:
             continue
         try:

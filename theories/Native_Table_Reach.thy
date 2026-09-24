@@ -36,17 +36,16 @@ definition reach_root_rule ::
   "reach_root_rule=finite_native_rule
     (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1))) []"
 
-definition reach_step_rule ::
-    "(local_address,local_address,local_address option definition_site) finite_factor_schema" where
-  "reach_step_rule=finite_native_rule
-    (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
-    [([0],(reach_some,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
+text \<open>
+  The step reads a row's status and its predecessors and passes the predecessors to the some-element site:
+  it is membership's rule that passes the rest of a pair on (@{const native_member_later}), at \<open>reach_some\<close>.
+\<close>
 
 definition reach_definitions :: "(local_address option definition_site\<times>
     (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
   "reach_definitions=[(reach_reached,[([0],reach_reached_rule)]),
     (reach_search,native_store_search_rules reach_search reach_holds),
-    (reach_holds,[([0],reach_root_rule),([1],reach_step_rule)]),
+    (reach_holds,[([0],reach_root_rule),([1],native_member_later reach_some)]),
     (reach_some,native_some_rules reach_some reach_reached)]"
 
 definition finite_native_reach :: "local_address option finite_native_system" where
@@ -83,9 +82,9 @@ interpretation reach_searches: native_store_search_program native_reach_system r
       native_store_left_rule_def native_store_right_rule_def)
 
 interpretation reach_holds_family: native_rule_law native_reach_system reach_holds
-    "[([0],reach_root_rule),([1],reach_step_rule)]"
+    "[([0],reach_root_rule),([1],native_member_later reach_some)]"
   by (rule native_rule_lawI, rule native_reach_family)
-    (auto simp: reach_definitions_def reach_root_rule_def reach_step_rule_def)
+    (auto simp: reach_definitions_def reach_root_rule_def native_member_later_def)
 
 interpretation reach_somes: native_some_program native_reach_system reach_some reach_reached
   unfolding native_some_program_def by (rule native_reach_family)
@@ -276,7 +275,7 @@ proof (rule positive_valuation_induct[OF holds, where property=reach_invariant])
           (reach_search,Pair_Term (reach_table_term T) (Pair_Term k' (store_term reach_row_value l)))\<in>Y) \<or>
         (\<exists>k' v l r. k=Pair_Term (bit_term True) k' \<and> S'=Store_Node v l r \<and>
           (reach_search,Pair_Term (reach_table_term T) (Pair_Term k' (store_term reach_row_value r)))\<in>Y)"
-      by (rule reach_searches.unfold[OF clause' into shape])
+      by (rule reach_searches.law.read_clause[OF clause' into shape]) (rule reach_searches.unfold_rule)
     show "\<exists>bs v. k=path_term bs \<and> store_lookup S' bs=Some v \<and> reach_holds_at T (reach_row_value v)"
       using cases
     proof (elim disjE exE conjE)
@@ -307,7 +306,7 @@ proof (rule positive_valuation_induct[OF holds, where property=reach_invariant])
     fix T v
     assume site: "d=reach_holds"
       and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term (reach_table_term T) v"
-    obtain p ps where rule: "(c,finite_native_rule p ps)\<in>set [([0],reach_root_rule),([1],reach_step_rule)]"
+    obtain p ps where rule: "(c,finite_native_rule p ps)\<in>set [([0],reach_root_rule),([1],native_member_later reach_some)]"
       and concl: "schema_conclusion S=decode_finite_pattern p"
       and sup: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
       by (rule reach_holds_family.supported_clause[OF clause[unfolded site] into]) (rule that; assumption)
@@ -315,7 +314,7 @@ proof (rule positive_valuation_induct[OF holds, where property=reach_invariant])
       (root) "p=Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1))"
       | (step) "p=Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"
         "set ps={([0],(reach_some,Finite_Pattern_Pair (native_var 0) (native_var 2)))}"
-      by (auto simp: reach_root_rule_def reach_step_rule_def finite_native_rule_eq_iff)
+      by (auto simp: reach_root_rule_def native_member_later_def finite_native_rule_eq_iff)
     then show "reach_holds_at T v"
     proof cases
       case root
@@ -411,7 +410,7 @@ next
         (Finite_Pattern_Pair (native_var 1) (native_var 2)))))\<in>positive_meaning native_reach_system"
     by (rule reach_holds_family.step_at[where c="[1]" and
         ps="[([0],(reach_some,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-      (use some cf in \<open>simp_all add: reach_step_rule_def data_list_term_formed insert_Diff_if\<close>)
+      (use some cf in \<open>simp_all add: native_member_later_def data_list_term_formed insert_Diff_if\<close>)
   then have "(reach_holds,Pair_Term ?c (reach_row_value (r,ps)))\<in>positive_meaning native_reach_system"
     by (simp add: reach_row_value_def reach_value_def)
   then show ?case by (rule native_reached_search[OF formed step.hyps(1)])

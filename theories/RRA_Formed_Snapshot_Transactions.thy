@@ -1,5 +1,5 @@
 theory RRA_Formed_Snapshot_Transactions
-  imports RRA_Finite_Transactions
+  imports RRA_Finite_Transactions Established_Premises
 begin
 
 section \<open>A formed snapshot stays formed through its transactions\<close>
@@ -133,15 +133,116 @@ text \<open>
   formation once, however many lists it then publishes.
 \<close>
 
+text \<open>
+  The snapshot's formation is the first notion of @{text Established_Premises} checked at the entry:
+  the premise is the snapshot's formation, its body the publications over a formed snapshot and its
+  refusal the publications' own value outside it.
+\<close>
+
+lemma finite_locus_publications_checked:
+  "checked_premise finite_locus_publications finite_snapshot_formed finite_locus_publications_formed
+    (\<lambda>S. map (\<lambda>q. None))"
+  by unfold_locales
+    (simp_all add: fun_eq_iff finite_locus_publications_formed_exact finite_locus_publications_unformed)
+
 lemma finite_locus_publications_code [code]:
   "finite_locus_publications S=(if finite_snapshot_formed S then finite_locus_publications_formed S
     else map (\<lambda>q. None))"
-proof (rule ext)
+  by (rule checked_premise.checked_at_entry[OF finite_locus_publications_checked])
+
+section \<open>A transaction over formed generations checks only itself\<close>
+
+text \<open>
+  A transaction's formation is the formation of the generations it compares and writes, and the
+  conditions on its loci and absent targets. Where every generation it compares and writes is formed
+  already, as where each was made by a constructor whose contract states it formed, the transaction
+  checks only the rest: the first notion of @{text Established_Premises} at its third place, the
+  premise established by the constructor and nothing checked at the entry. The premise is on the
+  transaction, the argument after the snapshot, so its instance is stated for the transaction on
+  every snapshot; the publications' premise holds of every pair of the list they publish.
+\<close>
+
+definition finite_transaction_generations :: "finite_transaction \<Rightarrow> finite_generation fset" where
+  "finite_transaction_generations T=finite_expected_selected T |\<union>| finite_proposed_selected T"
+
+definition finite_transaction_body_formed :: "finite_transaction \<Rightarrow> bool" where
+  "finite_transaction_body_formed T \<longleftrightarrow>
+    fcard (finite_snapshot_loci (finite_expected_selected T))=fcard (finite_expected_selected T) \<and>
+    fcard (finite_snapshot_loci (finite_proposed_selected T))=fcard (finite_proposed_selected T) \<and>
+    fBall (finite_expected_absent T) finite_target_formed \<and> fBall (finite_proposed_absent T) finite_target_formed \<and>
+    fBall (finite_snapshot_loci (finite_expected_selected T)) (\<lambda>l. l |\<notin>| finite_expected_absent T) \<and>
+    fBall (finite_snapshot_loci (finite_proposed_selected T)) (\<lambda>l. l |\<notin>| finite_proposed_absent T) \<and>
+    fBall (finite_changed_loci T) (\<lambda>l. l |\<in>| finite_comparison_loci T)"
+
+lemma finite_transaction_formed_generations:
+  "finite_transaction_formed T \<longleftrightarrow>
+    fBall (finite_transaction_generations T) finite_generation_formed \<and> finite_transaction_body_formed T"
+  by (auto simp: finite_transaction_formed_def finite_transaction_body_formed_def
+    finite_transaction_generations_def finite_snapshot_formed_def fBall_funion)
+
+lemma finite_locus_transaction_generations:
+  "fBall (finite_transaction_generations (finite_locus_transaction I G)) finite_generation_formed \<longleftrightarrow>
+    pred_option finite_generation_formed I \<and> finite_generation_formed G"
+  by (cases I) (simp_all add: finite_locus_transaction_def finite_admission_transaction_def
+    finite_replacement_transaction_def finite_transaction_generations_def conj_commute)
+
+definition finite_transact_body :: "finite_snapshot \<Rightarrow> finite_transaction \<Rightarrow> finite_transaction_result option" where
+  "finite_transact_body S T=(if finite_transaction_body_formed T then
+    Some (if finite_comparison_passes S T then Finite_Applied (finite_transaction_update S T)
+      else Finite_Conflict (finite_observed_comparison S T)) else None)"
+
+lemma finite_transact_body_established:
+  "established_premise (finite_transact_formed S)
+    (\<lambda>T. fBall (finite_transaction_generations T) finite_generation_formed) (finite_transact_body S)"
+  by unfold_locales
+    (simp add: finite_transact_formed_def finite_transact_body_def finite_transaction_formed_generations)
+
+definition finite_publications_formed_generations ::
+    "(finite_generation option\<times>finite_generation option) list \<Rightarrow> bool" where
+  "finite_publications_formed_generations ps \<longleftrightarrow>
+    (\<forall>(I,A)\<in>set ps. pred_option finite_generation_formed I \<and> pred_option finite_generation_formed A)"
+
+fun finite_locus_publications_body ::
+    "finite_snapshot \<Rightarrow> (finite_generation option\<times>finite_generation option) list \<Rightarrow>
+      finite_transaction_result option list" where
+  "finite_locus_publications_body S []=[]"
+| "finite_locus_publications_body S ((I,A)#ps)=(case A of
+     None \<Rightarrow> None#finite_locus_publications_body S ps
+   | Some G \<Rightarrow> (let result=finite_transact_body S (finite_locus_transaction I G) in
+       result#(case result of Some (Finite_Applied U) \<Rightarrow> finite_locus_publications_body U ps
+         | _ \<Rightarrow> finite_locus_publications_body S ps)))"
+
+lemma finite_locus_publications_body_established:
+  "established_premise (finite_locus_publications_formed S) finite_publications_formed_generations
+    (finite_locus_publications_body S)"
+proof unfold_locales
   fix ps
-  show "finite_locus_publications S ps=(if finite_snapshot_formed S then finite_locus_publications_formed S
-    else map (\<lambda>q. None)) ps"
-    by (cases "finite_snapshot_formed S")
-      (simp_all add: finite_locus_publications_formed_exact finite_locus_publications_unformed)
+  assume "finite_publications_formed_generations ps"
+  then show "finite_locus_publications_formed S ps=finite_locus_publications_body S ps"
+  proof (induction ps arbitrary: S)
+    case Nil
+    then show ?case by simp
+  next
+    case (Cons q ps)
+    obtain I A where q: "q=(I,A)" by (cases q) auto
+    have rest: "finite_publications_formed_generations ps"
+      and here: "pred_option finite_generation_formed I" "pred_option finite_generation_formed A"
+      using Cons.prems by (simp_all add: finite_publications_formed_generations_def q)
+    show ?case
+    proof (cases A)
+      case None
+      then show ?thesis using Cons.IH[OF rest] by (simp add: q)
+    next
+      case (Some G)
+      have premise: "fBall (finite_transaction_generations (finite_locus_transaction I G)) finite_generation_formed"
+        using here Some by (simp add: finite_locus_transaction_generations)
+      have same: "finite_transact_formed S (finite_locus_transaction I G)=
+          finite_transact_body S (finite_locus_transaction I G)"
+        by (rule established_premise.exact[OF finite_transact_body_established premise])
+      show ?thesis using Cons.IH[OF rest] same
+        by (simp add: q Some Let_def split: option.split finite_transaction_result.split)
+    qed
+  qed
 qed
 
 end

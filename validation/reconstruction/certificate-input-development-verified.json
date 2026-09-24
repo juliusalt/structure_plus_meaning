@@ -2,23 +2,23 @@
  "boundary": "The shared development cycle executes the natively selected expanded input scope. It preserves every original input and output, retains supplied proof-check reasons, computes every actual method result and condition, and admits only candidates satisfying all scoped conditions, basis readiness and computed criticism. Complete workflow enforcement, arbitrary development adequacy, cost and genesis remain required.",
  "complete_recipe_source_manifest": "certificate-input-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.58,
+  "seconds": 4.02,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/certificate-input-development-reports.json": "58aee35da3475e5237c1f2ed90a6dd18b29e0e14eed8913c40ddda78728c6ab6"
+   "validation/reconstruction/certificate-input-development-reports.json": "a4b3f96e5f2f406fe8b3bcbced924095a4ba0bd3ba58836e5b78e5ce69182d51"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "b9b4afdda1f046284ffd8f9b5d6354a237a51ad10f00dbba3b08e13f75efdad6",
+   "module_sha256": "6f0ff602b53cb7c53e4c9d388d7a42cc3086078c27b5836fbbe3c72a9d1a03fe",
    "subject_contracts": {
-    "native_certificate_input_investigation.yxml": "6014b59f97ea1c425e51c2358800cfb98ef16f46caed773464d0970bafe35ada"
+    "native_certificate_input_investigation.yxml": "2d76aabb0847a18b682fdd563830e3b12cc235ce12350bcedfcaa15b8dc34119"
    },
    "theory": "Native_Certificate_Input_Execution"
   },
@@ -58,12 +58,17 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
+ "execution_reuse": {
+  "base_receipt_sha256": "a1b373fe001240d6c5e3a5da67cac75839d1eec1762b6602a91c32e4a7f9831d",
+  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
+  "export_module_sha256": "6f0ff602b53cb7c53e4c9d388d7a42cc3086078c27b5836fbbe3c72a9d1a03fe"
+ },
  "recipe": "certificate-input-development",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "818ab6dcf7d255a9f99db89b86538578cc6267a556c512524e433e7d4c09412a",
+   "sha256": "c8b84110b78d683d0a1ce507aef2c0d366cb542d705e201aa53a1b22096591bd",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -71,14 +76,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "9bbc3800ab5c47e326bf8c97e1dc8f2ea7c201bddfdf1afbbac00a587e3a550c",
+ "source_manifest_sha256": "b6dad13478d127e8a3a7fef1916235754e63acd27d44a4b08f73c200840c2a20",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.479247879997274
+   "seconds": 3.9239620869921055
   }
  ]
 }

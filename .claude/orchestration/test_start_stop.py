@@ -83,6 +83,13 @@ class StartStopTests(unittest.TestCase):
         (self.w.state / "warm.pid").write_text(str(2 ** 22 + 1))  # its process out of sight, as it is inside
         try:
             self.assertIn("daemon: alive", self.w.run("health.py", env=inside)[1])
+            self.assertNotIn("switches on", self.w.run("health.py", env=inside)[1])
+            (self.w.state / "support-apart").write_text("")                # an owner's switch is said while it is on
+            self.assertIn("switches on: support-apart", self.w.run("health.py", env=inside)[1])
+            (self.w.state / "support-apart").unlink()
+            now = int(time.time())                                         # and the last hour, as the planner has it
+            (self.w.state / "occupancy.log").write_text("".join(f"{now - 60 * i} 1 1\n" for i in range(40)))
+            self.assertIn("the last hour: 1.0 of", self.w.run("health.py", env=inside)[1])
         finally:
             (self.w.state / "warm.pid").write_text(str(pid))
         os.kill(pid, signal.SIGTERM)  # it dies while the run is active

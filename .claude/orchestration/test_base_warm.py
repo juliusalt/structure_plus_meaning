@@ -42,6 +42,23 @@ def assistant(msg_id, fresh, read, write):
                                   "cache_creation_input_tokens": write}}}
 
 
+class ForkCheckTests(unittest.TestCase):
+    """session_fork_check where a transcript is not there: a ping's throwaway fork is deleted as soon as its verdict
+    has been read, and the check running beside it left a traceback in warm.log (2026-09-22, three of them)."""
+
+    def test_a_transcript_that_is_not_there_is_no_request_and_no_traceback(self):
+        with tempfile.TemporaryDirectory() as temp:
+            env = {k: v for k, v in os.environ.items() if not k.startswith(("CLAUDE", "ORCH_"))}
+            env.update(HOME=temp, ORCH_STATE_DIR=temp)
+            for name, said in ((["no-fork", "no-base"], "no recorded requests"),
+                               (["--is-fork", "no-fork", "no-base"], "is not a fork")):
+                out = subprocess.run([sys.executable, str(HERE / "session_fork_check.py"), *name], env=env,
+                                     capture_output=True, text=True, timeout=60)
+                self.assertEqual(out.returncode, 1, out.stderr)
+                self.assertIn(said, out.stdout)
+                self.assertEqual(out.stderr, "")
+
+
 class WarmVerdictTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -152,6 +169,8 @@ class WarmVerdictTests(unittest.TestCase):
         self.assertIn("warm max stable: OK", self.log())
         hit = self.state / "max-stable.hit"
         self.assertTrue(hit.exists())
+        sid = json.loads((self.state / "max-base.json").read_text())["sessionId"]
+        self.assertTrue((self.state / "entry-hits" / sid).exists())              # and the entry's own mark (warm)
         self.assertFalse((self.state / "max-base.hit").exists())                  # the layer's own time is apart
         self.assertIn("stable base max (under its layer): warm at", self.health())
         for ago, due in ((10 * 60, False), (45 * 60, True), (70 * 60, False)):  # early; due; cold, left alone
@@ -170,6 +189,17 @@ class WarmVerdictTests(unittest.TestCase):
         self.assertIn("warm max: MISS", self.warm())
         self.assertFalse((self.state / "max-base.hit").exists())
         self.assertEqual((self.state / "max-base.miss").read_text().split(), ["x"])
+        # and one miss stops that entry's pings: it is gone, and each further ping writes its whole prefix for nothing
+        # (the stable bases of 2026-09-22 21:16-21:20, pinged twice each after their eviction, 341K and 268K a ping)
+        self.layer()
+        hit = self.state / "max-stable.hit"
+        hit.write_text("")
+        then = time.time() - 45 * 60
+        os.utime(hit, (then, then))
+        (self.state / "max-stable.miss").write_text("x\n")
+        self.calls.write_text("")
+        self.warm(shell=f"sh {HERE / 'base.sh'} max warm stable --if-due")
+        self.assertEqual(self.resumed(), [])
 
     def test_the_daemon_s_redirection_does_not_write_the_verdict_twice(self):
         # the daemon runs `base.sh WHO warm >/dev/null 2>> warm.log`: the verdict comes from base.sh, the stream

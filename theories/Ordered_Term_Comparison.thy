@@ -44,69 +44,47 @@ proof -
     by (simp add: t u compare_linear_prefix compare_linear_pair compare_natural_linear split: linear_comparison.split)
 qed
 
+text \<open>
+  The structural comparison is the prefix-key comparison of the plain view
+  (\<open>Prefix_Key_Comparisons\<close>): its one-level equation holds by cases on both terms, and the
+  notion gives its order, its equality and the code equations.
+\<close>
+
+lemma finite_term_compare_node:
+  "finite_term_compare t u=(case compare_linear (hd (finite_term_key t)) (hd (finite_term_key u)) of
+      Linear_Equal \<Rightarrow> compare_listed finite_term_compare (finite_term_children t) (finite_term_children u)
+    | c \<Rightarrow> c)"
+  by (cases t rule: finite_term_key.cases; cases u rule: finite_term_key.cases)
+    (simp_all add: compare_linear_pair compare_linear_option compare_linear_ordered_artifact
+      compare_address_linear compare_natural_linear compare_linear_cases split: linear_comparison.split)
+
+interpretation finite_term_comparison: prefix_key_comparison "\<lambda>t. hd (finite_term_key t)"
+  finite_term_children finite_term_key finite_term_compare
+  by (intro_locales; ((rule finite_term_keys.prefix_key_axioms prefix_key_comparison_axioms.intro
+    finite_term_compare_node finite_term_keys.key_node finite_term_keys.head_arity
+    finite_term_keys.node_determined) | assumption)+)
+
 theorem finite_term_compare_keys:
   "compare_linear (finite_term_key t@xs) (finite_term_key u@ys)=
     (case finite_term_compare t u of Linear_Equal \<Rightarrow> compare_linear xs ys | c \<Rightarrow> c)"
-proof (induction t arbitrary: u xs ys rule: finite_term_key.induct)
-  case (1 v)
-  show ?case
-  proof (cases u rule: finite_term_key.cases)
-    case (1 w)
-    then show ?thesis
-      by (simp add: compare_linear_prefix compare_linear_pair compare_linear_option compare_address_linear
-        split: linear_comparison.split)
-  qed (simp_all add: finite_term_compare_distinct_tags[simplified] compare_linear_def compare_natural_def)
-next
-  case (2 a)
-  show ?case
-  proof (cases u rule: finite_term_key.cases)
-    case (2 b)
-    then show ?thesis
-      by (simp add: compare_linear_prefix compare_linear_pair compare_linear_option compare_linear_ordered_artifact
-        split: linear_comparison.split)
-  qed (simp_all add: finite_term_compare_distinct_tags[simplified] compare_linear_def compare_natural_def)
-next
-  case (3 a r)
-  show ?case
-  proof (cases u rule: finite_term_key.cases)
-    case (3 b s)
-    then show ?thesis
-      by (simp add: compare_linear_prefix compare_linear_pair compare_linear_option compare_linear_ordered_artifact
-        compare_address_linear split: linear_comparison.split)
-  qed (simp_all add: finite_term_compare_distinct_tags[simplified] compare_linear_def compare_natural_def)
-next
-  case (4 t1 t2)
-  show ?case
-  proof (cases u rule: finite_term_key.cases)
-    case (4 u1 u2)
-    have "compare_linear (finite_term_key (Finite_Pair t1 t2)@xs) (finite_term_key u@ys)=
-        compare_linear (finite_term_key t1@(finite_term_key t2@xs)) (finite_term_key u1@(finite_term_key u2@ys))"
-      by (simp add: 4 compare_linear_prefix)
-    also have "\<dots>=(case finite_term_compare t1 u1 of Linear_Equal \<Rightarrow>
-        compare_linear (finite_term_key t2@xs) (finite_term_key u2@ys) | c \<Rightarrow> c)"
-      by (rule "4.IH"(1))
-    also have "\<dots>=(case finite_term_compare t1 u1 of Linear_Equal \<Rightarrow>
-        (case finite_term_compare t2 u2 of Linear_Equal \<Rightarrow> compare_linear xs ys | c \<Rightarrow> c) | c \<Rightarrow> c)"
-      by (cases "finite_term_compare t1 u1") (simp_all add: "4.IH"(2))
-    finally show ?thesis by (simp add: 4 split: linear_comparison.split)
-  qed (simp_all add: finite_term_compare_distinct_tags[simplified] compare_linear_def compare_natural_def)
-qed
+  by (rule finite_term_comparison.compare_keys)
 
 corollary finite_term_compare_order:
   "finite_term_compare t u=compare_linear (finite_term_key t) (finite_term_key u)"
-  using finite_term_compare_keys[of t "[]" u "[]"] by (simp split: linear_comparison.split)
+  by (rule finite_term_comparison.compare_order)
 
 lemma less_eq_ordered_factor_term_structural_code [code]:
   "Ordered_Factor_Term t\<le>Ordered_Factor_Term u \<longleftrightarrow> finite_term_compare t u\<noteq>Linear_Greater"
-  by (auto simp: finite_term_compare_order compare_linear_def less_eq_ordered_factor_term_def)
+  by (simp only: less_eq_ordered_factor_term_def ordered_factor_term_key.simps
+    finite_term_comparison.key_less_eq)
 
 lemma less_ordered_factor_term_structural_code [code]:
   "Ordered_Factor_Term t<Ordered_Factor_Term u \<longleftrightarrow> finite_term_compare t u=Linear_Less"
-  by (auto simp: finite_term_compare_order compare_linear_def less_ordered_factor_term_def)
+  by (simp only: less_ordered_factor_term_def ordered_factor_term_key.simps finite_term_comparison.key_less)
 
 lemma equal_ordered_factor_term_structural_code [code]:
   "HOL.equal (Ordered_Factor_Term t) (Ordered_Factor_Term u) \<longleftrightarrow> finite_term_compare t u=Linear_Equal"
-  by (auto simp: finite_term_compare_order compare_linear_def equal_eq finite_term_key_injective)
+  by (simp only: equal_eq ordered_factor_term.inject finite_term_comparison.compare_equal)
 
 text \<open>
   The prefix key of a term is prefix-free, so comparing two keys that continue

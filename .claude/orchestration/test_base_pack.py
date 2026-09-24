@@ -54,6 +54,26 @@ class StaleShareTests(unittest.TestCase):
             self.assertEqual(manifest.moved_tokens(str(index), {str(index): manifest.digest(str(index))}, {}), 0)
 
 
+class AcknowledgementTests(unittest.TestCase):
+    """The load's final line: what it shows is that the session read to the end, not that it copies well."""
+
+    ID = "ad30832f993fef053894f978fc63de2caf65ced842e7f438fee7cd62ee8c2744"
+
+    def test_an_id_copied_with_slips_says_the_session_read_to_the_end(self):
+        # every chunk of the high base's reload was complete on 2026-09-22 21:56 and the load was thrown away for
+        # four stuttered characters, as it had been at 21:36: 270K each time, and no layer refresh could finish
+        self.assertTrue(p.acknowledges("LOADED " + self.ID, self.ID))
+        self.assertTrue(p.acknowledges("LOADED ad30832f993f993fef053894f978fc63de2caf65ced842e7f438fee7cd"
+                                       "62ee8c2744", self.ID))                  # stuttered, 68 characters
+        self.assertTrue(p.acknowledges("LOADED " + self.ID[:20] + self.ID[21:], self.ID))   # one dropped, 63
+        self.assertFalse(p.acknowledges("LOADED " + self.ID[:30], self.ID))     # half of it: it did not copy the id
+        self.assertTrue(p.acknowledges("PART 6/6 all complete\n\nLOADED " + self.ID[:-1] + "0", self.ID))
+        self.assertFalse(p.acknowledges("LOADED " + "f" * 64, self.ID))  # another pack's id: it read nothing
+        self.assertFalse(p.acknowledges("LOADED", self.ID))
+        self.assertFalse(p.acknowledges("done", self.ID))
+        self.assertFalse(p.acknowledges("LOADED " + self.ID + "\nstill loading", self.ID))  # not its last line
+
+
 class PackingTests(unittest.TestCase):
     def test_fact_prefixes_preserve_names_duplicates_and_order(self):
         for names in [
@@ -166,7 +186,7 @@ class PackingTests(unittest.TestCase):
         self.assertEqual(p.expand_index(after), second)
         self.assertEqual(p.restore_text(packed, edits), original)
 
-    def test_map_index_leaves_out_what_the_list_holds(self):
+    def test_map_index_keeps_the_whole_vocabulary_independently_of_the_building_base(self):
         import select_base_load as selector
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -184,7 +204,7 @@ class PackingTests(unittest.TestCase):
                 selector.refresh_indexes()
             index = (root / "state/held/theory-map-index.md").read_text()
             self.assertIn("B: What B holds", index)
-            self.assertNotIn("A: ", index)
+            self.assertIn("A: What A holds", index)
             self.assertIn("## One — The first.", (root / "state/held/decisions-index.md").read_text())
 
     def test_catalogue_includes_sources_missing_from_the_map(self):
@@ -200,31 +220,6 @@ class PackingTests(unittest.TestCase):
             text = (root / "state/held/theory-names.md").read_text()
             self.assertEqual(p.index_names(text), ["B", "A", "New"])
             self.assertIn("Additional source files not listed in ROOT", text)
-
-    def test_selector_measures_implementers_not_bases_or_orchestration(self):
-        import select_base_load as selector
-        def session(*texts_and_commands):
-            records = []
-            for kind, value in texts_and_commands:
-                if kind == "user":
-                    records.append({"type": "user", "message": {"role": "user", "content": value}})
-                else:
-                    records.append({"type": "assistant", "message": {"model": "claude-opus-5", "content": [
-                        {"type": "tool_use", "name": "Bash", "input": {"command": value}}]}})
-            return "".join(json.dumps(r, separators=(",", ":")) + "\n" for r in records)
-        load = ("user", p.BOOTSTRAP_PREFIX + " For PART=1 through 2, run the command below.")
-        emit = ("tool", "/usr/bin/python3 .claude/orchestration/base_pack.py emit /pack 1")
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            (root / "base.jsonl").write_text(session(load, emit))
-            (root / "impl.jsonl").write_text(session(load, emit, ("user", "You are impl-3, a working copy."),
-                                                     ("tool", "cat .claude/orchestration/state/v2.json"),
-                                                     ("tool", "sed -n 1,40p theories/RRA_Selection.thy")))
-            (root / "orch.jsonl").write_text(session(("user", "Review the orchestrator."),
-                                                     ("tool", "cat .claude/orchestration/watchdog.py"),
-                                                     ("tool", "sed -n 1,40p theories/RRA_Selection.thy")))
-            with patch.object(selector, "TRANSCRIPTS", str(root)):
-                self.assertEqual([Path(f).name for f in selector.implementer_sessions()], ["impl.jsonl"])
 
     def test_utf8_chunks_handle_long_lines_without_loss(self):
         original = "⇒" * 1000 + "\n" + "x\n" * 400
@@ -363,7 +358,8 @@ class PackingTests(unittest.TestCase):
                     return False
 
             self.assertTrue(complete(loaded + [reply("LOADED " + slipped(meta["id"], 12))]))
-            self.assertFalse(complete(loaded + [reply("LOADED " + slipped(meta["id"], 12, 13))]))  # two: not a slip
+            self.assertTrue(complete(loaded + [reply("LOADED " + slipped(meta["id"], 12, 13))]))   # two: a copy still
+            self.assertFalse(complete(loaded + [reply("LOADED " + slipped(meta["id"], *range(12, 20)))]))  # eight: no
             self.assertFalse(complete([reply("LOADED " + meta["id"])] + loaded))  # said before the chunks arrived
             self.assertFalse(complete(loaded + [reply("LOADED")]))
             # the right line last, after a garbled one: the high layer of 2026-09-22 15:07, all seven chunks loaded
@@ -519,6 +515,11 @@ elif '--bg' in sys.argv and '--resume' not in sys.argv:  # the base loads: its t
                 self.assertEqual(kept["files"], {"/example/A.thy": "old", "L": "l0"})
                 self.assertTrue((state / "xhigh-stable.hit").exists())    # the layer read it: warm, and pinged
                 self.assertIn("its read of the base: OK", done.stdout)
+                self.assertNotIn("over the", (state / "warm.log").read_text())  # a base within the target says nothing
+                env["ORCH_BASE_TARGET"] = "1000"
+                again = base_sh("layer", "--adopt", "xhigh-layer-1", str(directory))
+                self.assertEqual(again.returncode, 0, again.stdout + again.stderr)  # said, not refused
+                self.assertIn("over the 1000 target", (state / "warm.log").read_text())
             finally:
                 for _ in range(30):  # seal_layer starts the keep-warm daemon, which outlives the command
                     if (state / "warm.pid").exists():
@@ -526,6 +527,46 @@ elif '--bg' in sys.argv and '--resume' not in sys.argv:  # the base loads: its t
                             os.kill(int((state / "warm.pid").read_text()), 15)
                         break
                     time.sleep(0.1)
+
+    def test_a_layer_is_not_built_over_a_stable_base_the_list_no_longer_names(self):
+        # the founding tier chosen by use (2026-09-22) changed what the stable part lists; a layer built over the
+        # recorded stable base, its entry still warm, would have held the old reference under a layer chosen for the
+        # new one (about 665K against the 530K target). The base is loaded again from the list, and says why.
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            directory = self.make_pack(root)
+            home, state, binary = root / "home", root / "state", root / "bin"
+            for d in (state, binary, home):
+                d.mkdir(parents=True, exist_ok=True)
+            flags = " ".join((p.HERE / "session-flags").read_text().split())
+            (state / "xhigh-base.json").write_text(json.dumps(
+                {"sessionId": "old-base-sid", "model": "claude-opus-5[1m]", "effort": "xhigh", "name": "xhigh-base",
+                 "flags": flags}))
+            (state / "xhigh-layer.json").write_text(json.dumps(
+                {"sessionId": "old-layer-sid", "base": "old-base-sid", "name": "xhigh-layer-old", "flags": flags}))
+            (state / "xhigh-manifest.json").write_text(json.dumps({"taken": "t0", "files": {"/example/A.thy": "old"}}))
+            (state / "xhigh-stable.hit").write_text("")                  # its entry warm: read a minute ago
+            calls = root / "calls.log"
+            fake = binary / "claude"
+            fake.write_text("#!/bin/sh\necho \"$*\" >> \"$REBUILD_TEST_LOG\"\n"
+                            "[ \"$1 $2\" = \"agents --json\" ] && echo '[]'\nexit 0\n")
+            fake.chmod(0o755)
+            env = {k: v for k, v in os.environ.items() if not k.startswith(("ORCH_", "CLAUDE"))}
+            env.update(HOME=str(home), PATH=str(binary) + os.pathsep + os.environ["PATH"], ORCH_CONTROL="1",
+                       ORCH_STATE_DIR=str(state), REBUILD_TEST_LOG=str(calls), BASE_PACK_DIR=str(directory),
+                       STABLE_WAIT="2", LAYER_WAIT="2")
+            legacy=root/'legacy.list'
+            legacy.write_text(f'# reference\n{root / "new-reference.md"}\n# === layer ===\n# layer\n{root / "new-layer.md"}\n')
+            (root/'new-reference.md').write_text('new reference\n')
+            (root/'new-layer.md').write_text('new layer\n')
+            env['BASE_LOAD_LIST']=str(legacy)
+            out = subprocess.run(["sh", str(p.HERE / "base.sh"), "xhigh", "layer"], env=env, capture_output=True,
+                                 text=True, timeout=120)
+            self.assertNotEqual(out.returncode, 0)                       # the fake base never starts: it stops there
+            said = (state / "warm.log").read_text()
+            self.assertIn("stable xhigh: the list's stable part names", said)
+            started = [l for l in calls.read_text().splitlines() if "--bg" in l]
+            self.assertTrue(started and all("--resume" not in l for l in started), started)  # loaded, not forked
 
     def test_a_layer_that_loaded_but_was_not_recorded_is_adopted_without_a_second_load(self):
         # the max layer of 2026-09-21 was complete and refused for a slip in its reply; loading it again would have

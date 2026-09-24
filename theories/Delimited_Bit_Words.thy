@@ -16,6 +16,12 @@ fun read_delimited_bit_word where
 lemma delimited_bit_word_nonempty [simp]: "delimited_bit_word bs\<noteq>[]"
   by (cases bs) simp_all
 
+text \<open>A word of a nonempty digit list begins with the continuation mark.\<close>
+lemma delimited_bit_word_continued:
+  assumes "bs \<noteq> []"
+  shows "delimited_bit_word bs = True # tl (delimited_bit_word bs)"
+  using assms by (cases bs) simp_all
+
 lemma delimited_bit_word_length:
   "length (delimited_bit_word bs)=2*length bs+1"
   by (induction bs) simp_all

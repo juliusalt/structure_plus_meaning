@@ -29,15 +29,6 @@ next
   show ?case by (rule exI[of _ "?t \<circ> g"], rule conjI[OF ginj]) (use fixed in auto)
 qed
 
-lemma long_address_outside:
-  assumes finite: "finite W" and long: "Max (length ` W)<length a"
-  shows "a\<notin>W"
-proof
-  assume member: "a\<in>W"
-  have "length a\<le>Max (length ` W)"
-    by (rule Max_ge) (use finite member in auto)
-  then show False using long by simp
-qed
 
 theorem finite_addressing_avoiding:
   assumes domain: "finite U" and forbidden: "finite W"
@@ -50,7 +41,7 @@ proof -
   have formed: "\<forall>a\<in>U. octets_formed (?f a)"
     using old fresh_address_formed[of W] by (auto simp: finite_addressing_def octets_formed_def)
   have outside: "?f a\<notin>W" for a
-    by (rule long_address_outside[OF forbidden]) (simp add: fresh_address_def)
+    by (rule fresh_address_extension_outside[OF forbidden])
   show ?thesis by (rule exI[of _ ?f])
     (use injective formed outside in \<open>auto simp: finite_addressing_def\<close>)
 qed

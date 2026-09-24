@@ -23,6 +23,36 @@ lemma map_slot_keys_member:
   shows "(f k,x) \<in> map_slot_keys f M"
   using imageI[OF assms, of "\<lambda>(k,x). (f k,x)"] by (simp add: map_slot_keys_def)
 
+lemma map_slot_keys_empty: "map_slot_keys f {} = {}"
+  by (simp add: map_slot_keys_def)
+
+lemma map_slot_keys_insert: "map_slot_keys f (insert (k,x) M) = insert (f k,x) (map_slot_keys f M)"
+  by (simp add: map_slot_keys_def)
+
+text \<open>
+  A placed table (@{text RRA_Placed_Forests}) is each child's table with its keys placed: its union
+  form in terms of that key map is stated here, the first place holding both notions, so that no
+  consumer of a placed table reads either definition. The notion's own member and child facts prove
+  it; the placed table's definition is read in its own theory alone.
+\<close>
+
+lemma placed_table_eq:
+  "placed_table g Ms = (\<Union>i<length Ms. map_slot_keys (g i) (Ms!i))"
+proof (rule set_eqI, rule iffI)
+  fix x assume member: "x \<in> placed_table g Ms"
+  obtain a v where x: "x = (a,v)" by (cases x)
+  obtain i k where i: "i < length Ms" and kv: "(k,v) \<in> Ms!i" and a: "a = g i k"
+    using member unfolding x placed_table_member by blast
+  have "(g i k,v) \<in> map_slot_keys (g i) (Ms!i)" by (rule map_slot_keys_member[OF kv])
+  then show "x \<in> (\<Union>i<length Ms. map_slot_keys (g i) (Ms!i))" unfolding x a using i by blast
+next
+  fix x assume "x \<in> (\<Union>i<length Ms. map_slot_keys (g i) (Ms!i))"
+  then obtain i where i: "i < length Ms" and m: "x \<in> map_slot_keys (g i) (Ms!i)" by blast
+  obtain k v where kv: "(k,v) \<in> Ms!i" and x: "x = (g i k,v)"
+    using m by (auto simp: map_slot_keys_def)
+  show "x \<in> placed_table g Ms" unfolding x by (rule placed_table_child[OF i kv])
+qed
+
 definition syntax_references ::
   "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> (local_address \<times> exact_artifact) set \<Rightarrow>
     (local_address \<times> 'u definition_site) set \<Rightarrow> bool" where

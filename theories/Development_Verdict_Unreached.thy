@@ -98,15 +98,19 @@ private lemma inside:
     d\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e) \<Longrightarrow>
     d<length (fst (snd S))"
   "t\<in>set (fst S) \<Longrightarrow> d\<in>set (root_mentions t) \<Longrightarrow> d<length (fst (snd S))"
-  using entity_mentions_positions isabelle_entity_subjects_positions root_mentions_positions
-    state_presents_inside[OF present] by (force simp: state_positions_def)+
+  using state_presents_mentions_inside[OF present] state_presents_subject_inside[OF present]
+    state_presents_root_mentions_inside[OF present] by blast+
 
-private lemma key_member:
-  assumes "c<length (fst (snd S))" "set ds\<subseteq>{..<length (fst (snd S))}"
-  shows "key c\<in>key ` set ds \<longleftrightarrow> c\<in>set ds"
-  using inj_on_image_mem_iff[OF inj, of c "set ds"] assms by simp
+text \<open>
+  Two facts of this context are public, because the request's support field reads the same reach table
+  from the same presented rows: a key of an atom is the key of a position (\<open>state_atom_keys\<close>), and the
+  predecessors of a key are the keys of the subjects of the rows mentioning it
+  (\<open>state_reach_predecessor_at\<close>). That two keyed positions are equal exactly when the positions are is a
+  fact of the presentation (@{thm [source] state_presents_key_member}). A consumer cites them and derives
+  the correspondence no second time.
+\<close>
 
-private lemma atom:
+lemma state_atom_keys:
   "k\<in>fst ` set (state_atoms R) \<longleftrightarrow> (\<exists>d<length (fst (snd S)). k=key d)"
   using state_presents_atoms[OF present] unfolding atoms_present_def by (force simp: image_image)
 
@@ -118,11 +122,11 @@ proof -
       (\<exists>t\<in>set (fst S). key c\<in>key ` set (root_mentions t))"
     by (simp add: state_root_keys_member state_presents_root_family[OF present])
   also have "\<dots> \<longleftrightarrow> (\<exists>t\<in>set (fst S). c\<in>set (root_mentions t))"
-    using key_member[OF bound] inside(3) by blast
+    using state_presents_key_member[OF present bound] inside(3) by blast
   finally show ?thesis by (simp add: isabelle_reach_heads_member)
 qed
 
-private lemma predecessor_at:
+lemma state_reach_predecessor_at:
   assumes bound: "c<length (fst (snd S))"
   shows "p\<in>set (state_reach_predecessors Fs (key c)) \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). \<exists>s. p=key s \<and>
     c\<in>set (entity_mentions e) \<and>
@@ -133,10 +137,10 @@ proof -
     by (force simp: state_reach_predecessors_member)
   also have "\<dots> \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). key c\<in>key ` set (entity_mentions e) \<and>
       p\<in>key ` set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e))"
-    by (simp only: state_families_rows[OF present families]) auto
+    by (simp only: covering_families_entity_rows[OF present families]) auto
   also have "\<dots> \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). c\<in>set (entity_mentions e) \<and>
       p\<in>key ` set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e))"
-    using key_member[OF bound] inside(1) by blast
+    using state_presents_key_member[OF present bound] inside(1) by blast
   finally show ?thesis by blast
 qed
 
@@ -166,7 +170,7 @@ proof -
     proof (intro exI conjI)
       show "(?g k,key d\<in>set (state_root_keys (state_roots R)),state_reach_predecessors Fs (key d))
           \<in>set (state_reach_table (state_atoms R) (state_roots R) Fs)"
-        using bound by (auto simp: k inv state_reach_table_row atom)
+        using bound by (auto simp: k inv state_reach_table_row state_atom_keys)
       show "r\<longrightarrow>key d\<in>set (state_root_keys (state_roots R))" using root_at[OF bound] r by simp
       show "?g ` set ps\<subseteq>set (state_reach_predecessors Fs (key d))"
       proof
@@ -174,7 +178,7 @@ proof -
         then obtain s where p: "p=key s" and pred: "s\<in>set (isabelle_reach_predecessors (snd S) d)"
           by (auto simp: ps inv)
         then show "p\<in>set (state_reach_predecessors Fs (key d))"
-          by (auto simp: predecessor_at[OF bound] isabelle_reach_predecessors_member isabelle_reach_pairs_member)
+          by (auto simp: state_reach_predecessor_at[OF bound] isabelle_reach_predecessors_member isabelle_reach_pairs_member)
       qed
     qed
   qed
@@ -197,7 +201,7 @@ proof -
       and live: "r \<or> ps\<noteq>[]"
     obtain d where bd: "d<?n" and k: "k=key d" and r: "r=(key d\<in>set (state_root_keys (state_roots R)))"
       and ps: "ps=state_reach_predecessors Fs (key d)"
-      using row by (auto simp: state_reach_table_row atom)
+      using row by (auto simp: state_reach_table_row state_atom_keys)
     have listed: "d\<in>set (isabelle_reach_constants (fst S) (snd S))"
     proof (cases r)
       case True then show ?thesis using root_at[OF bd] r by (simp add: isabelle_reach_constants_member)
@@ -205,7 +209,7 @@ proof -
       case False
       then obtain p where "p\<in>set ps" using live by (cases ps) auto
       then show ?thesis
-        by (auto simp: ps predecessor_at[OF bd] isabelle_reach_constants_member isabelle_reach_pairs_member)
+        by (auto simp: ps state_reach_predecessor_at[OF bd] isabelle_reach_constants_member isabelle_reach_pairs_member)
     qed
     show "\<exists>r' ps'. (?g k,r',ps')\<in>set (isabelle_reach_table (fst S) (snd S)) \<and> (r\<longrightarrow>r') \<and> ?g ` set ps\<subseteq>set ps'"
     proof (intro exI conjI)
@@ -219,7 +223,7 @@ proof -
         then obtain p where q: "q=?g p" and p: "p\<in>set ps" by blast
         obtain e s where e: "e\<in>set (snd (snd S))" and ps': "p=key s" and m: "d\<in>set (entity_mentions e)"
           and sj: "s\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
-          using p by (auto simp: ps predecessor_at[OF bd])
+          using p by (auto simp: ps state_reach_predecessor_at[OF bd])
         have "?g p=natural_binary_digits s" using ginv[OF inside(2)[OF e sj]] ps' by simp
         moreover have "s\<in>set (isabelle_reach_predecessors (snd S) d)"
           using e m sj by (auto simp: isabelle_reach_predecessors_member isabelle_reach_pairs_member)
@@ -467,14 +471,13 @@ proof -
   let ?T="state_reach_table (state_atoms R) (state_roots R) Fs" and ?n="length (fst (snd S))"
     and ?sj="\<lambda>e. isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e"
   have inside: "\<And>e d. e\<in>set (snd (snd S)) \<Longrightarrow> d\<in>set (entity_declared e)\<union>set (?sj e) \<Longrightarrow> d<?n"
-    using entity_declared_positions isabelle_entity_subjects_positions state_presents_inside[OF present]
-    by (force simp: state_positions_def)
+    using state_presents_declared_inside[OF present] state_presents_subject_inside[OF present] by blast
   have "(verdict_unreached,Pair_Term (reach_table_term ?T) (state_families_term ident Fs))
       \<in>positive_meaning verdict_unreached_system \<longleftrightarrow>
       (\<forall>q\<in>(\<Union>F\<in>set Fs. set (map snd F)). \<exists>h\<in>set (row_declared q)\<union>set (row_subjects q). h\<in>table_reached ?T)"
     by (simp add: native_unreached_rows[OF state_reach_table_formed identity])
   also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set (snd (snd S)). \<exists>d\<in>set (entity_declared e)\<union>set (?sj e). key d\<in>table_reached ?T)"
-    by (simp only: state_families_rows[OF present families]) (simp add: bex_Un)
+    by (simp only: covering_families_entity_rows[OF present families]) (simp add: bex_Un)
   also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set (snd (snd S)). \<exists>d\<in>set (entity_declared e)\<union>set (?sj e).
       d\<in>isabelle_reached_constants (fst S) (snd S))"
     using state_reach_table_exact[OF present families] inside by (metis (no_types, lifting))

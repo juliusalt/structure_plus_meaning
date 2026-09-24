@@ -2,26 +2,26 @@
  "boundary": "The source boundary reconstructs all complete native comparisons, including original requirements, generated rule applications, complete executions, all certificates, admission results, comparisons and revisions. Every observation has a proved subject equation. Compilation binds every workflow position to its original native goals. Adequacy of those goals for real development roles, candidate scope, operative integration, condition-6 coverage, the complete cost account and genesis remain separate requirements.",
  "complete_recipe_source_manifest": "native-workflow-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "8d79d64b114fd76a56a0bc7ad64cfc79c0270e77740e725270c2c807f91990e6",
   "records": 4,
   "reports_equal": true,
-  "seconds": 13.68,
+  "seconds": 15.32,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/native-workflow-reports.json": "8d5656d3d9aadd6d849dc0bf330baa4850482d911f89cae25c79c15cdf1bfa93"
+   "validation/reconstruction/native-workflow-reports.json": "b32a023149f4c660cf843c2a4ebb22956ebcee5b16a016ae25a1b7d4eb68ec04"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "d2ea03427ecd40fbbf8a09946395b8aec294c6d582032d583f2c3ab7fcf5595b",
+   "module_sha256": "51c55e166b31bb311588ce3552f29d05350a524aabc3d444b967c7bda4cb8099",
    "subject_contracts": {
-    "required_workflow_investigation.yxml": "11896723ead2f2ddca5590ab32215393013f831b2e1f7f2f165e0a41fc6178da",
-    "required_workflow_scope_investigation.yxml": "5c0a6798e8f354d92eecbbd1cb21569263b240cb0a72abf7847b1f650056daf8",
-    "workflow_input_scope_investigation.yxml": "fcf51efa93cb6c9497ba256f61c77732a29fb6f543db15f175b07d830f31da61",
-    "workflow_investigation.yxml": "aa65ae0dee53b7d7675eef71b2bb2c990f00dc5469edb32b7a00a7b75b17f100"
+    "required_workflow_investigation.yxml": "a6742216ec2696817cf0bed7d20bdbaba1742cf53fdf0262ba2e8696b4dc1ff2",
+    "required_workflow_scope_investigation.yxml": "e34d9b86ed5072f435993a546396d75e1c99ca8f9ea5ad1321a3c238f34d6fc3",
+    "workflow_input_scope_investigation.yxml": "ee981bd49b5c260904ddbd514bf0d4bcb01b16a29b6175ad5d3a9d9a4a8550b9",
+    "workflow_investigation.yxml": "46098891141fce75f2651ec09ee179fbc9dc276de1bdc8f895fcd903f56af6d3"
    },
    "theory": "Native_Workflow_Execution"
   },
@@ -66,28 +66,28 @@
  "report_boundaries": {
   "presentation-expanded": {
    "records": 1,
-   "sha256": "7fab4db79df969c10a966ef852c51bc817329562835f17bc4d29a4098c007131",
+   "sha256": "47943bffef3ae4cc7325e128b39115f320c62b46248d1923563e6ff802362b63",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
   },
   "presentation-input-scope": {
    "records": 1,
-   "sha256": "589a10198f9a76493be47764628f0a3a8dfb6338eefc12db147155da912828c5",
+   "sha256": "dc601aed4e1c0237f91f8bf62fc5c2fe0f64fdd07a700d5cf6faa6d10a670064",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
   },
   "presentation-requirements": {
    "records": 1,
-   "sha256": "884492958250cc00876320247972413d617ae6e8ad3158ac50f4cedb181ad60a",
+   "sha256": "7f1778dc296b03f6f0801c7aa97db9933726c9af2f9f7d88b845d79b2e2149cf",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
   },
   "presentation-workflow": {
    "records": 1,
-   "sha256": "6a61a0e7b05f297012c8f4a0660e10eb2626568d7b635a9dc73dcf5dbaad0291",
+   "sha256": "d94694302fe1cb43686ed94c97d5a2a634fcf071896806c1b9c57a57992755b6",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -95,29 +95,29 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "da44ff57c6a20aed715238ad703be724e6b5919847e72ad70d728fa71eea2e61",
+ "source_manifest_sha256": "52e960767afb78bc6889e47baf5139b2e01a51d4ee1c3a3ecac5d648a1259ebc",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation-workflow",
-   "seconds": 12.500405290000344
+   "seconds": 13.878542820981238
   },
   {
    "exit_code": 0,
    "name": "presentation-requirements",
-   "seconds": 12.661186419001751
+   "seconds": 14.07706603500992
   },
   {
    "exit_code": 0,
    "name": "presentation-input-scope",
-   "seconds": 13.554310034000082
+   "seconds": 12.004668442008551
   },
   {
    "exit_code": 0,
    "name": "presentation-expanded",
-   "seconds": 12.94718803700016
+   "seconds": 15.212574356002733
   }
  ]
 }

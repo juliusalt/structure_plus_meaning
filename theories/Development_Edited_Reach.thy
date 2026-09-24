@@ -52,40 +52,14 @@ end
 
 text \<open>A row mentions the key given as its context: the mentions list searched by membership.\<close>
 
-locale row_mentioned_program = native_rule_family P r "[([0],row_mentions_rule m)]" +
-    members: native_member_program P m
+locale row_mentioned_program = mentions: row_mentions_program P r m + members: native_member_program P m
   for P :: "'u native_system" and r m :: "'u definition_site"
 begin
 
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(r,Pair_Term (path_term c) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow> c\<in>set (row_mentions (snd z))"
-proof
-  assume holds: "(r,Pair_Term (path_term c) (state_row_term ident z))\<in>positive_meaning P"
-  obtain d F f where rule: "(d,F)\<in>set [([0]::local_address,row_mentions_rule m)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
-      Pair_Term (path_term c) (state_row_term ident z)"
-    and support: "\<forall>s e q. (s,e,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f q)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds]) (rule that; assumption)
-  have F: "F=row_mentions_rule m" using rule by simp
-  have premise: "(m,Pair_Term (f [0]) (f [4]))\<in>positive_meaning P"
-    using native_rule_support[OF support[unfolded F row_mentions_rule_def]] by simp
-  have fields: "f [0]=path_term c" "f [4]=keys_term (row_mentions (snd z))"
-    using shape by (simp_all add: F row_mentions_rule_def row_pattern_def state_row_term_def)
-  show "c\<in>set (row_mentions (snd z))"
-    using premise by (simp add: fields keys_term_def members.exact)
-next
-  assume member: "c\<in>set (row_mentions (snd z))"
-  have "(r,evaluate_pattern (native_values [path_term c,path_term (fst z),keys_term (row_declared (snd z)),
-      keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z))])
-      (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3)
-        (native_var 4) (native_var 5))))\<in>positive_meaning P"
-    by (rule native_step[where c="[0]" and ps="[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 4)))]"])
-      (use member identity in \<open>simp_all add: row_mentions_rule_def row_pattern_def keys_term_def members.exact data_list_term_formed\<close>)
-  then show "(r,Pair_Term (path_term c) (state_row_term ident z))\<in>positive_meaning P"
-    by (simp add: row_pattern_def state_row_term_def)
-qed
+  by (simp add: mentions.exact[OF identity] keys_term_def members.exact)
 
 end
 
@@ -184,8 +158,8 @@ definition target_row_rule :: "'u definition_site \<Rightarrow>
 section \<open>The admission program\<close>
 
 text \<open>
-  The program holds \<open>excess\<close>'s program at its own sites, so \<open>O\<close>'s closure is \<open>excess\<close>'s reading at \<open>O\<close>'s store
-  and \<open>O\<close>'s keys, and the targets reading beside it.
+  The program holds \<open>excess\<close>'s program at its own sites 55–57, at the store checker, so \<open>O\<close>'s closure is
+  \<open>excess\<close>'s reading at \<open>O\<close>'s store and \<open>O\<close>'s keys, and the targets reading beside it.
 \<close>
 
 abbreviation removal_key_call :: "local_address option definition_site" where
@@ -218,11 +192,20 @@ abbreviation removal_target_family :: "local_address option definition_site" whe
   "removal_target_family \<equiv> (Some [],[53])"
 abbreviation removal_targets :: "local_address option definition_site" where
   "removal_targets \<equiv> (Some [],[54])"
+abbreviation removal_excess_search :: "local_address option definition_site" where
+  "removal_excess_search \<equiv> (Some [],[55])"
+abbreviation removal_excess_call :: "local_address option definition_site" where
+  "removal_excess_call \<equiv> (Some [],[56])"
+abbreviation removal_excess :: "local_address option definition_site" where
+  "removal_excess \<equiv> (Some [],[57])"
 
 definition edited_reach_definitions :: "(local_address option definition_site\<times>
     (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
   "edited_reach_definitions=verdict_mentions_definitions@[
-    (removal_key_call,[([0],native_rotate_rule verdict_excess)]),
+    (removal_excess_search,native_store_search_rules removal_excess_search verdict_found_family),
+    (removal_excess_call,[([0],subject_call_rule removal_excess_search)]),
+    (removal_excess,native_every_rules removal_excess removal_excess_call),
+    (removal_key_call,[([0],native_rotate_rule removal_excess)]),
     (removal_closure,native_every_rules removal_closure removal_key_call),
     (removal_member,native_member_rules removal_member),
     (removal_row_mentions,[([0],row_mentions_rule removal_member)]),
@@ -265,14 +248,21 @@ lemmas edited_reach_rule_defs = edited_reach_definitions_def verdict_mentions_ru
 
 lemma removal_excess_program:
   assumes identity: "\<And>y. term_formed (ident y)"
-  shows "excess_program edited_reach_system verdict_excess verdict_subject_family
-    verdict_subject_search verdict_found_family verdict_row_found verdict_keys_found verdict_key_found
-    verdict_found_search verdict_found_any ident"
-  unfolding excess_program_def excess_program_axioms_def row_mentions_program_def
-    store_found_program_def native_store_search_program_def native_every_program_def
-  by (intro conjI allI; (rule edited_reach_family | rule identity)) (simp_all add: edited_reach_rule_defs)
+  shows "excess_program edited_reach_system removal_excess removal_excess_call removal_excess_search
+    verdict_found_family verdict_row_found ident support_term"
+proof -
+  interpret found: store_mentions_program edited_reach_system verdict_row_found verdict_keys_found
+      verdict_key_found verdict_found_search verdict_found_any
+    unfolding store_mentions_program_def row_mentions_program_def store_found_program_def
+      native_store_search_program_def native_every_program_def
+    by (intro conjI; rule edited_reach_family) (simp_all add: edited_reach_rule_defs)
+  show ?thesis
+    unfolding excess_program_def excess_program_axioms_def native_store_search_program_def native_every_program_def
+    by (intro conjI allI; (rule edited_reach_family | rule identity | rule support_term_formed |
+        rule found.support_exact[OF identity])?) (simp_all add: edited_reach_rule_defs)
+qed
 
-interpretation removal_key_calls: native_rotate_program edited_reach_system removal_key_call verdict_excess
+interpretation removal_key_calls: native_rotate_program edited_reach_system removal_key_call removal_excess
   unfolding native_rotate_program_def by (rule edited_reach_family) (simp_all add: edited_reach_rule_defs)
 
 interpretation removal_closures: native_every_program edited_reach_system removal_closure removal_key_call
@@ -303,7 +293,7 @@ theorem native_closure_exact:
 proof -
   have "(removal_closure,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident L Fs)) (keys_term L))
       \<in>positive_meaning edited_reach_system \<longleftrightarrow>
-    (\<forall>a\<in>set L. (verdict_excess,Pair_Term (Pair_Term (path_term a) (support_term L)) (subject_indexes_term ident L Fs))
+    (\<forall>a\<in>set L. (removal_excess,Pair_Term (Pair_Term (path_term a) (support_term L)) (subject_indexes_term ident L Fs))
       \<in>positive_meaning edited_reach_system)"
     by (subst keys_term_def[of L])
       (simp add: removal_closures.exact removal_key_calls.exact key_indexes_term_formed[OF identity])
@@ -439,7 +429,7 @@ lemma removal_targets_program:
     removal_mentions removal_mention verdict_key_found verdict_found_search verdict_found_any removal_subjects
     removal_subject_call removal_families_some removal_index_call removal_search removal_fibre_some
     removal_row_mentions removal_member ident"
-  unfolding edited_targets_program_def edited_targets_program_axioms_def row_mentioned_program_def
+  unfolding edited_targets_program_def edited_targets_program_axioms_def row_mentioned_program_def row_mentions_program_def
     native_member_program_def native_some_program_def native_store_search_program_def
     native_rearranging_program_def native_rearranging_program_axioms_def native_rotate_program_def
     native_every_program_def store_found_program_def mention_kept_program_def

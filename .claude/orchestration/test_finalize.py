@@ -382,12 +382,13 @@ class FinalizeTests(unittest.TestCase):
             self.assertFalse((self.w.state / "isabelle-exclusive").exists())  # and the stale marker is gone
 
     def test_a_check_that_outlives_its_limit_fails_and_leaves_nothing_running(self):
-        self.spec("sleep 5; true")
+        mine = f"5.{os.getpid()}"  # its own: tests run side by side, and another's `sleep 5` is no leak of this one
+        self.spec(f"sleep {mine}; true")
         started = time.time()
         code, _, _ = self.w.run("finalize.py", "check", "3", env={"ORCH_FINAL_MAX": "1"})
         self.assertEqual(code, 1)
         self.assertLess(time.time() - started, 4)
-        self.assertEqual(subprocess.run(["pgrep", "-f", "^sleep 5$"], capture_output=True).stdout, b"")
+        self.assertEqual(subprocess.run(["pgrep", "-f", f"^sleep {mine}$"], capture_output=True).stdout, b"")
         self.assertIn("did not finish within 1 s", (self.w.project / ".build/tasks/3/finalize.log").read_text())
 
 
@@ -1011,6 +1012,7 @@ class LandingTests(unittest.TestCase):
             code, _, _ = self.commit(["ROOT", "theories/Ready.thy"], env={"ORCH_ISABELLE_WAIT": "1"})
         self.assertEqual(code, 1)
         self.assertIn("other landings held main", self.outcome()["commit_error"])
+        self.assertEqual(self.w.st()["tasks"]["3"].get("lands_again_why"), "main")  # the watchdog lands it again by itself
         self.w.set_st(tasks={"3": {"stage": "committing", "role": "implementer", "session": "implement-3", "verdict": "accept"}})
         self.assertEqual(self.commit(["ROOT", "theories/Ready.thy"])[0], 0)  # and once it is free, it lands
 
@@ -1146,6 +1148,7 @@ started = time.time()
 time.sleep(float(os.environ.get('SLOW', 0)))
 os.makedirs(out, exist_ok=True)
 here = lambda name: os.path.exists(os.path.join('theories', name + '.thy'))
+time.sleep(sum(float(x.split(':')[1]) for x in os.environ.get('SLOW_WITH', '').split(',') if x and here(x.split(':')[0])))
 fails = [x for x in os.environ.get('FAIL_WITH', '').split(',') if x]  # a theory that fails the check, told by name
 pairs = [x.split('+') for x in os.environ.get('FAIL_TOGETHER', '').split(',') if x]  # two that fail only together
 open(os.environ['CHECKS'], 'a').write(f"{out} {started} {time.time()}\\n")
@@ -1272,6 +1275,56 @@ class TrainTests(unittest.TestCase):
         self.assertIn("T4 is in.", self.heard())
         for tid in ("3", "4", "5"):
             self.assertFalse((self.w.project / ".build/trees" / tid).exists())  # each tree taken away
+
+    def test_a_train_of_the_content_its_batch_checked_lands_on_the_batch_s_kept_build(self):
+        # C10: the batches' proofs took a median 186 s and the trains' 216 s on 09-22's afternoon, nearly all of it the
+        # same members' theories; a batch keeps its heap, and a train of exactly that content adopts it
+        pointer = self.w.root / "active-context.json"
+        base = self.w.project / ".build/bases/base-a/proof"
+        base.mkdir(parents=True)
+        pointer.write_text(json.dumps({"directory": str(base)}))
+        out = ".build/bases/20260923-batch8-9"
+        (self.w.project / out / "proof").mkdir(parents=True)
+        (self.w.project / out / "incremental.json").write_text(json.dumps(
+            {"status": "accepted", "base": str(base), "kept_context": str(self.w.project / out / "proof")}))
+        self.w.write("HANDOFF.md", "the planner's state\n")
+        self.w.git("add", "HANDOFF.md")
+        self.w.git("commit", "-q", "-m", "the planner's state")
+        code = f"""
+import sys, json; sys.path.insert(0, {str(fakes.HERE)!r})
+import v2, train, finalize as fz
+v2.LANDING_CHECK = "python3 -B tools/no_such_tool/incremental_check.py check --output {{output}}"
+fz.ADVANCE = True
+train.record_build("HEAD", {out!r})
+first = train.content_key("HEAD")
+v2.git_out("commit", "-q", "--allow-empty", "-m", "nothing", quiet=True)
+open({str(self.w.project / 'HANDOFF.md')!r}, "a").write("more of the planner's state\\n")
+import subprocess
+subprocess.run(["git", "-C", {str(self.w.project)!r}, "commit", "-q", "-am", "the planner's state again"])
+same = train.content_key("HEAD") == first                        # the planner's state aside: the same content
+plan = train.Plan(["8", "9"])
+plan.head, plan.tree = v2.git_out("rev-parse", "HEAD").strip(), v2.PROJECT
+train.check(plan, plan.head, {{"8": {{"head": plan.head}}, "9": {{"head": plan.head}}}})
+print(json.dumps({{"same": same, "reused": plan.reused, "ok": plan.ok, "out": plan.out, "log": plan.log}}))
+train.settle_pointer(plan.out, None)                              # the landing adopts the kept build as the base
+open({str(pointer)!r}, "w").write(json.dumps({{"directory": "/another/base"}}))
+print(json.dumps({{"moved": train.kept_build(plan.head)}}))      # on another base: none
+open({str(pointer)!r}, "w").write(json.dumps({{"directory": {str(base)!r}}}))
+open({str(self.w.project / 'theories/Base.thy')!r}, "a").write("(* changed *)\\n")
+subprocess.run(["git", "-C", {str(self.w.project)!r}, "commit", "-q", "-am", "a theory changed"])
+print(json.dumps({{"other": train.kept_build("HEAD"), "keeps": train.keeps_heap()}}))
+"""
+        said = subprocess.run([sys.executable, "-c", code], env=dict(self.w.env, **self.env, ORCH_ACTIVE_CONTEXT=str(pointer)),
+                              capture_output=True, text=True, cwd=self.w.project)
+        first, moved, second = [json.loads(line) for line in said.stdout.strip().splitlines()[-3:]]
+        self.assertIsNone(moved["moved"])
+        self.assertEqual((first["same"], first["reused"], first["ok"], first["out"]), (True, True, True, out), said.stderr)
+        self.assertIsNone(second["other"])                                  # other content: checked as always
+        self.assertTrue(second["keeps"])                                    # a batch of the repository's check keeps it
+        log = (self.w.state / "v2.log").read_text()
+        self.assertIn("lands on the build its check batch made", log)
+        # adopted by the repository's checker (a stand-in's absence says which context it was to be)
+        self.assertIn(f"could not be set to the check that landed ({self.w.project / out / 'proof'})", log)
 
     def test_a_member_whose_lines_conflict_leaves_the_train_and_the_others_land(self):
         self.w.write("NOTES.md", "one line\n")
@@ -1420,7 +1473,7 @@ class BatchTests(unittest.TestCase):
         TrainTests.setUp(self)
         self.env.update(ORCH_BATCHES="1")
 
-    ran, stage = TrainTests.ran, TrainTests.stage
+    ran, stage, side_by_side = TrainTests.ran, TrainTests.stage, TrainTests.side_by_side
 
     def working(self, tid):
         """Task `tid` under way in its own tree: a theory T<tid> and its ROOT line, uncommitted."""
@@ -1492,6 +1545,20 @@ class BatchTests(unittest.TestCase):
         # found by the report, it is told at once, not after the check of what the report cleared
         self.assertLess(queue["4"]["decided"], min(queue["3"]["decided"], queue["5"]["decided"]))
 
+    def test_a_half_found_alone_is_told_when_its_own_check_ends(self):
+        # task 223's half failed at 18:48:44 and was told nothing until task 227's half beside it ended, twenty minutes
+        # on (2026-09-22)
+        for tid in ("3", "4"):
+            self.working(tid)
+        self.asked("3", "4")
+        self.batch(env=dict(FAIL_TOGETHER="T4+T4", SLOW_WITH="T3:4,T4:1"))  # the whole fails naming nobody: halves
+        queue = json.loads((self.w.state / "check-queue.json").read_text())
+        self.assertEqual({t: queue[t]["what"] for t in ("3", "4")}, {"3": "passed", "4": "failed"})
+        spans = [line.split() for line in self.checks.read_text().splitlines()]
+        self.assertTrue(self.side_by_side())                               # the halves, each on a heavy slot
+        three = next(float(end) for out, _, end in spans if out.endswith("-batch3"))
+        self.assertLess(queue["4"]["decided"], three)                      # told before the half beside it ended
+
     def test_a_failure_s_text_lists_every_error_its_check_reported(self):
         # the repository's check logs one JSON line naming the proof's build.log; task 153 was told that line, cut at
         # 300 characters, and not one of its errors (2026-09-22 15:46)
@@ -1521,7 +1588,13 @@ class BatchTests(unittest.TestCase):
     def test_hand_overs_waiting_are_checked_together_and_go_to_their_reviews(self):
         import fcntl
         for tid in ("3", "4"):
-            self.working(tid)
+            tree = self.working(tid)
+        tree3 = tree.parent / "3"
+        probe = self.w.project / ".build/tasks/3/probe"                # its session's probe of T3 as its tree holds it
+        (probe / "theories").mkdir(parents=True)
+        (probe / "theories/T3.thy").write_text((tree3 / "theories/T3.thy").read_text())
+        (probe / "probe.ML").write_text(f'val _ = Thy_Info.use_thy_legacy "{probe}/theories/T3";\n')
+        (probe / "probe.log").write_text("### theory \"Draft.T3\"\nPROBE THEORIES LOADED\n")
         with open(self.w.state / "batcher.pid.lock", "a") as held:
             fcntl.flock(held, fcntl.LOCK_EX)
             for tid in ("3", "4"):
@@ -1543,6 +1616,9 @@ class BatchTests(unittest.TestCase):
         self.assertIn("Validation: the check passes.", message)                   # the session's words, kept
         self.assertIn("Checked by the harness: the repository's check of this work with main and the work of task 4 "
                       "passed", message)
+        # and what its session verified by probing, as the harness keeps the runs, rather than narrated
+        self.assertIn("Probed in its session, as the harness keeps the runs: T3, as the tree holds it, to the "
+                      "completion marker with no error (1 run).", message)
 
 
 if __name__ == "__main__":

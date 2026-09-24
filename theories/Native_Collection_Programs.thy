@@ -50,6 +50,30 @@ next
   then show "finite_native_rule p ps=finite_native_rule p' ps'" using same by (simp add: finite_native_rule_def)
 qed
 
+subsection \<open>A tuple of terms and its pattern\<close>
+
+text \<open>
+  The n-ary tuple of terms nests pairs to the right, a single term being its own tuple and the empty tuple
+  the empty payload; its pattern is the same nesting of patterns, and evaluating the pattern of a tuple is
+  the tuple of the evaluations. A rule whose conclusion binds a list of variables states it as the tuple
+  of those variables.
+\<close>
+
+fun term_tuple :: "factor_term list \<Rightarrow> factor_term" where
+  "term_tuple []=Payload_Term []"
+| "term_tuple [t]=t"
+| "term_tuple (t#u#ts)=Pair_Term t (term_tuple (u#ts))"
+
+fun finite_pattern_tuple :: "'a finite_term_pattern list \<Rightarrow> 'a finite_term_pattern" where
+  "finite_pattern_tuple []=Finite_Pattern_Payload []"
+| "finite_pattern_tuple [p]=p"
+| "finite_pattern_tuple (p#q#ps)=Finite_Pattern_Pair p (finite_pattern_tuple (q#ps))"
+
+lemma evaluate_pattern_tuple:
+  "evaluate_pattern f (decode_finite_pattern (finite_pattern_tuple ps))=
+    term_tuple (map (\<lambda>p. evaluate_pattern f (decode_finite_pattern p)) ps)"
+  by (induction ps rule: finite_pattern_tuple.induct) simp_all
+
 lemma native_rule_variables:
   "schema_variables (decode_finite_schema (finite_native_rule p ps))=
     pattern_variables (decode_finite_pattern p) \<union> (\<Union>(s,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q))"
@@ -1096,6 +1120,81 @@ qed
 
 end
 
+section \<open>One rule, every premise at the conclusion's evaluation\<close>
+
+text \<open>
+  A site whose family is one rule, whose premises call callees on patterns whose variables the conclusion
+  binds, holds of an evaluation of the conclusion exactly where every premise holds at that evaluation and
+  the evaluation is formed at the variables no premise reads. It is the family's law
+  (@{locale native_rule_law}) at one rule with any list of premises: the conclusion determines the
+  evaluation at every variable it binds (@{thm [source] evaluate_pattern_agree}), so its premises are read
+  at the evaluation given. A rule that holds exactly when several fields hold, each passed the part of the
+  argument it reads, is an instance; the rearranging program's @{text at} is its case of one premise.
+\<close>
+
+locale native_conjunction_program = native_rule_family P s "[([0],finite_native_rule p ps)]"
+  for P :: "'u native_system" and s :: "'u definition_site" and p :: "local_address finite_term_pattern"
+    and ps :: "(local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list" +
+  assumes binds: "\<forall>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)\<subseteq>pattern_variables (decode_finite_pattern p)"
+begin
+
+sublocale law: native_rule_law P s "[([0],finite_native_rule p ps)]"
+  by (rule native_rule_lawI[OF native_rule_family_axioms]) auto
+
+theorem at:
+  "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P \<longleftrightarrow>
+    (\<forall>a\<in>pattern_variables (decode_finite_pattern p)-(\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)).
+      term_formed (f a)) \<and>
+    (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
+proof
+  assume holds: "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
+  obtain c p' ps' g where rule: "(c,finite_native_rule p' ps')\<in>set [([0::nat],finite_native_rule p ps)]"
+    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p') \<union>
+      (\<Union>(k,d,q)\<in>set ps'. pattern_variables (decode_finite_pattern q)). term_formed (g a)"
+    and evaluated: "evaluate_pattern g (decode_finite_pattern p')=evaluate_pattern f (decode_finite_pattern p)"
+    and support: "\<forall>(k,d,q)\<in>set ps'. (d,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
+    by (rule law.holds_rule[OF holds])
+  have pattern: "p'=p" and listed: "set ps'=set ps" using rule by (simp_all add: finite_native_rule_eq_iff)
+  have agree: "\<And>a. a\<in>pattern_variables (decode_finite_pattern p) \<Longrightarrow> g a=f a"
+    by (rule evaluate_pattern_agree[OF evaluated[unfolded pattern]])
+  have same: "evaluate_pattern g (decode_finite_pattern q)=evaluate_pattern f (decode_finite_pattern q)"
+    if member: "(k,d,q)\<in>set ps" for k d q
+  proof -
+    have inside: "pattern_variables (decode_finite_pattern q)\<subseteq>pattern_variables (decode_finite_pattern p)"
+      using binds member by fastforce
+    show ?thesis by (rule evaluate_pattern_cong) (use agree inside in blast)
+  qed
+  show "(\<forall>a\<in>pattern_variables (decode_finite_pattern p)-(\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)).
+      term_formed (f a)) \<and>
+    (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
+  proof (intro conjI)
+    show "\<forall>a\<in>pattern_variables (decode_finite_pattern p)-(\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)).
+      term_formed (f a)"
+    proof
+      fix a
+      assume "a\<in>pattern_variables (decode_finite_pattern p)-(\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q))"
+      then have bound: "a\<in>pattern_variables (decode_finite_pattern p)" by blast
+      have "term_formed (g a)" using formed bound unfolding pattern by blast
+      then show "term_formed (f a)" by (simp only: agree[OF bound])
+    qed
+    show "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    proof (intro ballI, clarify)
+      fix k d q assume member: "(k,d,q)\<in>set ps"
+      have "(d,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
+        using support member listed by fastforce
+      then show "(d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P" by (simp only: same[OF member])
+    qed
+  qed
+next
+  assume both: "(\<forall>a\<in>pattern_variables (decode_finite_pattern p)-(\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)).
+      term_formed (f a)) \<and>
+    (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
+  show "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
+    by (rule law.step_at[where c="[0]", OF _ conjunct1[OF both] conjunct2[OF both]]) simp
+qed
+
+end
+
 section \<open>The two components of a pair, exchanged\<close>
 
 text \<open>
@@ -1123,6 +1222,24 @@ begin
 theorem exact:
   "(s,Pair_Term a b)\<in>positive_meaning P \<longleftrightarrow> (r,Pair_Term b a)\<in>positive_meaning P"
   using rearranged.at[of "native_values [a,b]"] by (simp add: insert_commute)
+
+end
+
+section \<open>A member of a list given first\<close>
+
+text \<open>
+  Membership with the list as the first component of the pair: membership's program behind the swap that
+  puts the list first. A family of keys given as the context of a call cites a key when the key is a member
+  of the list the family is.
+\<close>
+
+locale list_cited_program = swap: native_swap_program P w m + members: native_member_program P m
+  for P :: "'u native_system" and w m :: "'u definition_site"
+begin
+
+theorem list_exact:
+  "(w,Pair_Term (data_list_term xs) x)\<in>positive_meaning P \<longleftrightarrow> x\<in>set xs \<and> (\<forall>y\<in>set xs. term_formed y)"
+  by (simp add: swap.exact members.exact)
 
 end
 

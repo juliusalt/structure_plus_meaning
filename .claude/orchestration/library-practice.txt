@@ -1,0 +1,35 @@
+# The library's working practice: the entries of the development's memory that every base holds, by name
+# (select_base_load.practice writes them to state/held/library-practice.md, read-only, before each build).
+#
+# The memory directory is Claude Code's, shared by every session of this repository, and most of it is the
+# orchestrator's own development: its commit holds, its orders, its tools and sandbox, its callbacks. No base holds
+# that directory; a harness session has Claude Code's auto-memory off (the settings files) and neither reads nor
+# writes it. An entry is named here when its subject is the library's content or the practice of writing and proving
+# it: the owner's words on what the library is to be, and what earlier sessions learned the hard way about Isabelle.
+# Not named, and why (the owner, 2026-09-23 evening: "raw memory includes orchestrator session information which
+# should never be shown to any of the content producing bases"):
+#   held already as the owner's curated words (owner-directions.md): adequacy-current-basis, owner-authority-order,
+#     inert-agents-native-decisions
+#   the orchestrator's or a development session's own operation: bases-serve-two-purposes, batched-callbacks,
+#     codex-sessions-share-repo, commit-push-at-milestones, commit-style-no-attribution, no-subagents-do-it-yourself,
+#     orchestrator-concepts-2026-09-23, owner-autonomous-order-2026-09-23, proceed-provisionally-then-ask,
+#     report-check-comparisons, sandbox-no-exclusions, verify-launches-and-clean-temporary
+#   the harness's mechanics, which it carries out itself: heapless-checks-fixed-base, isabelle-heaps-path-bound,
+#     stop-excessive-runs, large-batches-parallel-work, guard-deletions-by-variable
+#   a state of the past: native-speedup-batch-state
+#   held already, or the harness's own mechanics now: fast-development-cycle (the owner's words on it are in
+#     owner-directions.md §12; which check to run is the harness's), probe-theories-against-base-heap (a probe is
+#     `v2.py change --probe`, which leaves --parallel-proofs 0 out on purpose: the entry says the opposite)
+# After an entry's name, the bases whose roles it concerns (none named: every base). The plan-level entries concern
+# the planner's and the middle roles' choices; for an implementer "fix it at its cause in the current batch"
+# contradicts the channel a performance problem has (the base prompt). The Isabelle lessons concern who writes and
+# judges proofs.
+native-definitions-normative
+local-semantic-contracts
+presentation-depth-non-conflation
+reuse-over-rebuild-cost
+solve-inevitable-performance max
+plan-items-not-optimization max xhigh
+plan-detail-relevance max xhigh
+isar-fact-label-keywords xhigh high
+proof-search-over-quantified-facts xhigh high

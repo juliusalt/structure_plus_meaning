@@ -977,9 +977,14 @@ definitions, answered natively, then the translation of native content into Isab
 existing loop keeps posing its problems about HOL constants as the bootstrap loop.
 
 Where that order stands: readiness and the reach of a state are native; the verdict of a kind is native, its reflection
-and its measured cost remaining; request construction is the present step, its fields native and the construction
-itself remaining; the incremental assessment of an edited state, the remedy for a verification stage's cost, is built
-beside it. Problems whose subjects are native definitions, and the translation into Isabelle, are not begun.
+and its measured cost remaining; request construction is native, its construction and corollaries landed; the
+incremental assessment of an edited state, the remedy for a verification stage's cost, is built beside them. The
+order's next step, problems whose subjects are native definitions, is designed in the DECISIONS.md entry "Problems
+about native definitions are posed, answered and judged at the development package's rows": the loop's native
+definitions held in one package whose rows are the state rows' second instance, a problem at a locus of a native
+family, request construction and the verdict reused at those rows, an answer as an edit of them, an admission that
+records its wait for verification, and installation that relocates the refined definition's callers; its builds N1–N9
+come next. The translation of admitted native content into Isabelle, which verifies it, is the design after it.
 
 The six tasks of the first direction, as they stand:
 
@@ -992,7 +997,8 @@ The six tasks of the first direction, as they stand:
    and the problem datum's tags retired, an answer designating its request by its locus, the answer family of the rows,
    and the selection's locus, which still carries a tag.
 4. **Decisions as native programs.** Readiness, the reach, the verdict of a kind and the decomposition's schema are
-   native programs with their contracts proved once; request construction is under way.
+   native programs with their contracts proved once, and so is request construction; they are next held in one
+   package whose definitions are the subjects of native problems.
 5. **Efficiency as structure.** Done at the level of notions: the index of a carrier by a key, a check made where its
    premise is established and a generator of the accepted candidates are checked theories that their uses interpret.
    An argument ordered so that comparison meets what differs first has no statement of its own yet, to be factored at

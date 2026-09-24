@@ -75,7 +75,16 @@ exception, judged whole. The presenter's entity keys keep their scan below about
 at a locus, the presenters, the store's presenters and its search's contract (#22–#28, #83, #84, #97), three of the six
 tagged items retired (#30), and the row presenters in `Development_Row_Data` (#163). Design #135's entry decides the
 other three: a row outside the store is the store's row presented in its context; the successor keeps the positions of
-the state it succeeds (#161, one identity lemma, q48); an answer designates its request by its locus (#169). #165 states
+the state it succeeds (#161, `b8fc4a86`: one identity lemma, the answer state read into the request state's table
+extended by the names it lacks, six framed records and the recipes' words re-recorded once; its framed verdict words
+were unchanged, those answers' exported tables holding the request table as a prefix, so the old embedding was already
+the identity — the design's expected change holds only for a reordered table); an answer designates its request by its
+locus (#169). #161's acceptance obligation holds under both states' presentability and not unconditionally: an exported
+answer table repeating a name the request table holds is refused by the exported verdict while the read table drops the
+repetition, so the successor's admission can exceed it. #289 settles that Open as the planner decided — the owner of
+the condition discharges it: the exporter proves distinct names and closed positions where it defines a state, as it
+proves `isabelle_declared_once`, which settles it for every consumer of a defined state and changes no word, the native
+answer's reader already refusing both for an answer it reads. #165 states
 each context's citations and discharges #84's formedness premise, no word; #167 switches every report to its problems'
 rows in context and retires the problem datum's tags. New native definitions never wait for these retirements
 (Decisions).
@@ -236,7 +245,7 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   4.35 s); `Factor_Finite_Source_Construction_Sharing` and the held attribution of a packet's cost to the native reading
   of its candidates' programs (#88); `Factor_Shared_Package_Readings`, about 4× on the package reader, which is linear
   in its address bits (#124).
-- **The rows line**: `Development_Loci`, `Development_Rows`, `Development_Located_Rows`, `Development_Row_Presentations`
+- **The rows line**: the successor keeping positions (#161, `b8fc4a86`), `Development_Loci`, `Development_Rows`, `Development_Located_Rows`, `Development_Row_Presentations`
   (#22–#28), the store's presenters and search contract with `exact_held` (#83, #84, #97), the loci switched and three
   tags retired (#30), `Development_Row_Data`'s presenters (#163).
 - **The verdict line**: store absence in `Native_Path_Stores` and `Development_Verdict_Witnesses` (#44, `9e8bc00d`),
@@ -423,6 +432,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     are next re-established (#161 or #167).
 88. The next change to `Native_Collection_Programs`: three blank lines near `native_every_program`; `read_clause`'s
     `read` premise rebinding `c`.
+91. **Review 31's unread contract-renaming lemmas stand in `Development_Publication`** (#161's review, follow-up 4),
+    which no build of the rows line edits: removed, or kept with the reason, at that theory's next edit.
 90. **The three unbuilt witnesses** (#44's review, follow-up 1): `unpermitted_removed`, `unpermitted_added` and
     `unreached` have no witness, and the verdict's entry says each "needs a complement this entry's positive discipline
     does not supply", which overstates it — store absence, built by #44, supplies a positive route: a removed row not

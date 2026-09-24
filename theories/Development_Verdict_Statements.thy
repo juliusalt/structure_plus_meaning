@@ -257,6 +257,10 @@ locale row_formed_program = native_rule_family P w row_formed_rules
   for P :: "'u native_system" and w :: "'u definition_site"
 begin
 
+sublocale law: native_rule_law P w row_formed_rules
+  by (rule native_rule_lawI[OF native_rule_family_axioms])
+    (auto simp: row_formed_rules_def row_declares_rule_def row_states_rule_def)
+
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(w,Pair_Term x (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
@@ -264,15 +268,15 @@ theorem exact:
 proof
   assume holds: "(w,Pair_Term x (state_row_term ident z))\<in>positive_meaning P"
   have xf: "term_formed x" using holds_formed[OF holds] by simp
-  obtain c F f where rule: "(c,F)\<in>set row_formed_rules"
-    and "\<forall>a\<in>schema_variables (decode_finite_schema F). term_formed (f a)"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=Pair_Term x (state_row_term ident z)"
-    and "\<forall>s e p. (s,e,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f p)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds])
-  have "F=row_declares_rule \<or> F=row_states_rule" using rule by (auto simp: row_formed_rules_def)
+  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (row_formed_rules::
+      (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list)"
+    and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (state_row_term ident z)"
+    using holds unfolding law.exact by blast
+  have "finite_native_rule p ps=row_declares_rule \<or> finite_native_rule p ps=row_states_rule"
+    using rule by (auto simp: row_formed_rules_def)
   then have "row_declared (snd z)\<noteq>[] \<or> row_subjects (snd z)\<noteq>[]"
-    using shape by (auto simp: row_declares_rule_def row_states_rule_def row_pattern_def state_row_term_def)
+    using shape by (auto simp: row_declares_rule_def row_states_rule_def finite_native_rule_eq_iff row_pattern_def
+      state_row_term_def)
   then show "term_formed x \<and> (row_declared (snd z)\<noteq>[] \<or> row_subjects (snd z)\<noteq>[])" using xf by blast
 next
   assume "term_formed x \<and> (row_declared (snd z)\<noteq>[] \<or> row_subjects (snd z)\<noteq>[])"
@@ -285,7 +289,7 @@ next
         (decode_finite_pattern (row_pattern (native_var 0) (native_var 1)
           (Finite_Pattern_Pair (native_var 2) (native_var 3)) (native_var 4) (native_var 5) (native_var 6))))
         \<in>positive_meaning P"
-      by (rule native_step[where c="[0]" and ps="[]"])
+      by (rule law.step_at[where c="[0]" and ps="[]"])
         (use xf identity in \<open>simp_all add: row_formed_rules_def row_declares_rule_def row_pattern_def\<close>)
     then show ?thesis by (simp add: row_pattern_def state_row_term_def Cons keys_term_Cons)
   next
@@ -296,7 +300,7 @@ next
         (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2)
           (Finite_Pattern_Pair (native_var 3) (native_var 4)) (native_var 5) (native_var 6))))
         \<in>positive_meaning P"
-      by (rule native_step[where c="[1]" and ps="[]"])
+      by (rule law.step_at[where c="[1]" and ps="[]"])
         (use xf identity in \<open>simp_all add: row_formed_rules_def row_states_rule_def row_pattern_def\<close>)
     then show ?thesis by (simp add: row_pattern_def state_row_term_def subjects keys_term_Cons)
   qed
@@ -457,7 +461,6 @@ proof -
     by (rule state_presents_row[OF present member])
   then show ?thesis by (blast intro: presented_rows_member)
 qed
-
 
 text \<open>
   The keyed rows of a \<open>kinds_present\<close> selection having the key of \<open>c\<close> among their subjects are the

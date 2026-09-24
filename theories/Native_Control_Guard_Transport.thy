@@ -12,7 +12,7 @@ sublocale closed: closed_program_installation E F u "finite_quoted_judgment xs"
   by (rule closed_program_installation.intro[OF environment selected finite_guard_formed])
 
 abbreviation placement where
-  "placement \<equiv> finite_program_coordinates F (finite_system_definitions empty_installation_program)
+  "placement \<equiv> finite_program_coordinates F (finite_system_definitions (empty_installation_program::(nat,nat,nat,nat) finite_schema_system))
     (finite_system_definitions (finite_quoted_judgment xs)) (\<lambda>_. (None,[]))"
 
 lemma total:

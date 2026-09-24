@@ -9313,6 +9313,27 @@ reduction of an edit, which enters only the report's removed and added lists (`n
 instances are the one definition at `[Equation_Kind]`/`[Equation_Kind]` and at
 `[Definition_Kind,Equation_Kind]`/`[Definition_Kind]`. The program states the empty payload alone.
 
+Built 2026-09-22 (task 44, store absence and the witnesses; step 10, the last of the build order):
+store absence stands in `Native_Path_Stores` beside the search it completes — six rules of one site
+descending a path by its bits' shapes to the empty store or to a node whose optional value is absent,
+with `native_store_absent_program.exact` for every key term and `exact_at_path` for its consumers.
+An empty result and a failed one stay apart positively: where a store holds a value at a key, even an
+empty one, absence fails (`absent_not_at_value`); a key that is no path has neither a search nor an
+absence (`absent_refuses_unpresented`); and `store_search_absent_exclusive` states that the two never
+hold of one key and store, which is exclusion and not complementation — neither program is the other's
+negation, and no positive field is redefined through its witness. `path_store_present` moved there
+with it. The witnesses are `Development_Verdict_Witnesses`, a program of its own at `(Some [],[90..100])`
+whose only octet is the empty payload: `excess` first, because `development_refinement_repair` reads
+`development_verdict_excess` (`native_excess_witness_exact`, exactly
+`development_answer_statements_excess`), then `undeclared` (exactly `isabelle_undeclared_constants`)
+and `malformed` (exactly `isabelle_malformed_entities`). Each is read over the rows its field reads,
+`excess` over the subject index by a `some` reading of that index (`key_index_some_program`,
+`key_selection_some_program`) — the index notion at the family's `some`-checker, no new notion — and
+each consumes its field's contract by name. The witnesses of `unpermitted_removed`, `unpermitted_added`
+and `unreached` are not built: each needs a complement this entry's positive discipline does not
+supply — that the subject's key is *not* among a row's subjects, and that a key is *not* in the reach's
+closure — so what shape they may take is open and belongs to the order, not to this task.
+
 ### The rows about a subject are read through a subject index — 2026-09-22 (task 138)
 
 Task 36 built `excess` as a guarded traversal: a row of the replaceable families passes when the subject's key
@@ -10923,6 +10944,13 @@ the reach table because the table's predecessors of `x` are exactly the subjects
 predecessors of `x`": one search per support key, where a traversal of the rows per key would cost the
 rows times the support. This is the index notion applied to the mention relation, not a new notion: the
 table is that relation's index by the mentioned constant, and its row lemma is the index's contract.
+*Corrected 2026-09-24 (task 277, on #110's review): the fields read the body's two families as the lists the
+body holds (`keys_term`), a key being cited in a family when it is a member of its list
+(`list_cited_program`: membership's `native_member_program` behind `native_swap_program`); no store is built
+from a list, and none is carried beside the body. `support complete` keeps `excess`'s row rule
+(`row_mentions_rule`) and the selection of every family, and finds a mention in `ks` by membership where the
+verdict's `excess` finds it in the support store: the two are one reading at the HOL level
+(`request_support_excess`), no longer one program.*
 
 What each field consumes is stated in the verdict's briefs in the form this construction needs (the
 planner, answering q36, before those builds start). From #36: the guarded traversal — every row of a
@@ -11327,6 +11355,66 @@ share of the publication's remaining seconds is unmeasured: task 80's attributio
 This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 85's decision; a design, no theory changes).
+## A published generation's formation is established by the constructor that recorded it
+
+The seed publication's transactions checked the formation of every generation they compare and write,
+recursively through every predecessor and target, although each of those generations — the incumbents, the
+selection, the issues and the answers — was just made by `finite_construct_generation_record`, whose contract
+states it formed. Task 85's entry decided that this re-check is the first notion of `Established_Premises`
+at its third place, a constructor's contract; this entry records the instance.
+
+- *Premise*: every generation the transaction compares or writes is formed:
+  `fBall (finite_transaction_generations T) finite_generation_formed`, the generations being its expected and
+  proposed selections. For a locus transaction it is `pred_option finite_generation_formed I ∧
+  finite_generation_formed G` (`finite_locus_transaction_generations`); for a publication list it holds of
+  every pair (`finite_publications_formed_generations`).
+- *Body*: `finite_transaction_formed` is exactly that premise and the conditions that are not the formation of
+  generations — distinct loci in each selection, formed absent targets, the disjointness of selected and absent
+  loci, the changed loci compared (`finite_transaction_body_formed`, `finite_transaction_formed_generations`).
+  No condition of `finite_transaction_formed` escaped the split, so no word could change. The body transaction
+  `finite_transact_body` and the body publications `finite_locus_publications_body` stand beside
+  `finite_transact_formed` and `finite_locus_publications_formed` in `RRA_Formed_Snapshot_Transactions`.
+- *Exactness*: the instances `finite_transact_body_established` and `finite_locus_publications_body_established`
+  of `established_premise`, the second by induction through the publications' recursion, citing the first.
+  The premise is on the transaction, the argument after the snapshot, so the instance is stated for the
+  constant applied to the snapshot. No refusal: nothing is checked at an entry.
+- *Established*: in `Development_Seed_Publication`, by the recording constructor's contract, cited through
+  `development_payload_generation_fields`, `development_answer_with_fields`, `development_recorded_issue_fields`,
+  `development_selection_generation_fields`, `development_seed_incumbent_of_recorded` and
+  `finite_check_generation_formed`. The round is stated over any publisher of a snapshot
+  (`development_seed_publication_over`, which `development_seed_publication_from_published` now names), the
+  premise is discharged for the recording constructor only (`development_seed_publication_over_formed`), and the
+  known constructor's round is shown equal to it over any publisher
+  (`development_seed_publication_over_known`, from the existing `development_seed_publication_row_known`).
+  `development_answer_with_fields` and `development_incumbent_with_fields` moved unchanged from
+  `Development_Admitted_Publication` into `Development_Certified_Generations`, beside the constructors they are
+  about, so that both publications cite one statement. The
+  code equation `development_seed_publication_formed` states the report over the body publications; no
+  statement is made for `development_seed_publication_from` over an arbitrary constructor.
+- *The existing snapshot instance* is re-cited where it stands: `finite_locus_publications_checked` is the
+  instance of `checked_premise` (exactness `finite_locus_publications_formed_exact`, refusal
+  `finite_locus_publications_unformed`), and `finite_locus_publications_code` is its `checked_at_entry`, at the
+  snapshot's arity as before. `finite_transact_formed_exact` is not re-cited: it is the exactness the snapshot's
+  own instance consumes, and stating it through the notion would need the statement it proves.
+- *Not taken*: the incumbents' snapshot check `finite_snapshot_formed S0` keeps its generation half; it is read
+  once per round since task 80, and the same premise would leave only the distinctness of its loci.
+
+### Evidence and limits
+
+The repository check accepts it (`.build/tasks/seed-transactions/check`) with every proof, the 207 tool and
+35 kernel tests and every recipe word equal; the seed recipe reaches both changed theories and the machinery
+recipe `RRA_Formed_Snapshot_Transactions`. Under one machine hold the held pair ran the seed recipe back to
+back (`.build/tasks/seed-transactions/held-pair.sh`, logs `held-before.log` and `held-after.log`), every
+report accepted on both sides: before, the tree at `1af296a2` against its own accepted check
+(`.build/tasks/seed-transactions/check-head`), took 85.02 s wall, 84.97 s of it the publication
+presentation; after, this tree against its check, took 63.50 s wall, 63.45 s of it the publication
+presentation, a difference of 21.52 s (25 %) attributable to this refinement. The eleven other
+presentations took 6.4–7.2 s each on both sides. Against the 93.04 s task 80 recorded after its refinement,
+the scale factor is 0.91 before and 0.68 after; task 80's figure was taken on an older tree. The benefit is
+an observation of this build, not a claim of the notion. This entry was written outside the loop and is a
+residual.
+
+Recorded 2026-09-22 (task 128).
 
 ## The native package reader reads each definition once
 
@@ -11935,6 +12023,25 @@ contracts alone.
   Factor_Premise_Forests `template_list_addressing`, `template_projection_fixed` (of which
   `template_projection_prefix` is an instance); in Factor_Reference_Tables `reference_table_placed`, of which
   `reference_table_forest` is now the instance at `syntax_branch`. No word changed.
+- *Correction (tasks 225 and 251, 2026-09-22; task 179's review, follow-up 1, and task 223's review,
+  follow-ups 1–4):* the syntax forest is the placed forest at `syntax_branch`: `syntax_forest`,
+  `syntax_forest_positions`, `syntax_forest_table` and the executable `finite_syntax_forest`,
+  `finite_syntax_forest_table` are defined through the notion, every statement kept, their own formation, reads and
+  member proofs **retired**, with `syntax_forest_positions_eq` and `syntax_forest_table_eq` stating the union form
+  their consumers read. That form is stated once for any family of placements: **new**
+  `RRA_Placed_Forests.placed_forest_pushed` (a forest's carrier, its incidence and its functional bindings are the
+  unions of those of each child pushed by its own placement), of which `syntax_forest_pushed` and
+  `Factor_Pattern_Forests.bound_forest_pushed` are the instances, the pattern and premise forests' carrier steps
+  reading the latter; **new** `Factor_Premise_Construction.placed_table_eq` (a placed
+  table is the union of each child's table under `map_slot_keys (g i)`), stated in the first theory holding both
+  notions and proved from `placed_table_member` and `placed_table_child`, so that `placed_table_def` is unfolded in
+  its own theory alone, and read by `syntax_forest_table_eq` and `reference_table_placed`; `syntax_forest_value_map`
+  becomes the instance of `placed_table_values`. **New** `Factor_Pattern_Forests.bound_branch_image_split` (a
+  child's carrier splits where the branch does: the part outside the binders is placed at `syntax_branch`, the
+  binder occurrences stay where they are), which the pattern forest's carrier accounting and `premise_forest_carrier`
+  both instantiate. **Retired** `syntax_forest_child_reads`' premise that every child is formed, which its
+  derivation from `placed_forest_reads` does not use, and with it the derivation that only supplied it in
+  `Factor_Schema_Forests.schema_codes_forest_recovers`. No word changed.
 
 Outside the founding theories no proof computes a position: `syntax_branch.simps` leave the simpset after the
 contracts are proved, `family_ports_def`, `syntax_record_ports_def` and `fresh_address_def` are unfolded nowhere
@@ -12098,7 +12205,10 @@ rule's conclusion and premise set back from its value.
   `native_rearranging_program` (its `exact` is the law's at one rule and one premise; `at` from that and the two pattern
   facts), `native_member_program.exact`, `native_every_program.relation_equation` (its step rule has two premises),
   `native_some_program.exact`, `native_keyed_search_program.exact`. What the law does not replace stays: each
-  program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's `supported_clause`], the inversion of one rule application supported in an arbitrary relation, which least-fixed-point
+  program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's
+  `supported_clause`; corrected 2026-09-22, task 275: the four `unfold` corollaries are gone and their composition
+  is stated once as the law's `read_clause`, which a use cites with the program's own `unfold_rule`], the inversion
+  of one rule application supported in an arbitrary relation, which least-fixed-point
   arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
   the law's single step does not carry.
 - The two pattern facts now stand in `Factor_Rule_Instances` beside `evaluate_pattern_cong` and
@@ -12121,7 +12231,11 @@ the analogue of `reader_projection_rule`, formation over the rule's variables, c
 `unfold` is a corollary citing it and `unfold_rule` without re-deriving the conclusion; `holds_rule`, the elimination
 at the positive meaning returning the native rule itself, through which `exact`'s forward direction no longer
 re-encodes and decodes the clause. The four `unfold` lemmas stay, their statements unchanged, as their uses in
-Development_Native_Readiness and Native_Table_Reach cite them.
+Development_Native_Readiness and Native_Table_Reach cite them [corrected 2026-09-22, task 275: they are gone; the
+composition they were is the law's `read_clause` (a reading of every rule of the family at a clause's evaluated
+conclusion is a reading of the clause), which the three uses — readiness's some and every cases and the reach's some
+case — cite with the program's `unfold_rule`, and the clauses of a one-rule, one-premise site are read by
+`native_rearranging_program.supported`].
 
 Re-cited (task 235): the value rule's contract is stated once beside `native_value_rule` in Development_Located_Rows
 (`native_value_program`, its `exact`: the site holds of `Pair_Term x y` exactly when `x` is formed and `x=y`), and

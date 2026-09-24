@@ -135,16 +135,6 @@ qed
 
 end
 
-section \<open>A key is present in a path store whatever the rows\<close>
-
-lemma path_store_fold_present:
-  "store_lookup (fold (\<lambda>(k,v) T. store_update T k (Some v)) rows T) q\<noteq>None \<longleftrightarrow>
-    q\<in>fst ` set rows \<or> store_lookup T q\<noteq>None"
-  by (induction rows arbitrary: T) (auto simp: store_lookup_update split: if_splits)
-
-lemma path_store_present: "store_lookup (path_store rows) q\<noteq>None \<longleftrightarrow> q\<in>fst ` set rows"
-  using path_store_fold_present[of rows Empty_Store q] by (simp add: path_store_def)
-
 section \<open>The support store and the declaration store\<close>
 
 text \<open>
@@ -243,7 +233,7 @@ proof (intro allI impI)
   fix d a b
   assume da: "(d,a)\<in>set (declaration_rows Fs)" and db: "(d,b)\<in>set (declaration_rows Fs)"
   have declared_inside: "\<And>e c. e\<in>set (snd (snd S)) \<Longrightarrow> c\<in>set (entity_declared e) \<Longrightarrow> c<length (fst (snd S))"
-    using entity_declared_positions state_presents_inside[OF present] by (force simp: state_positions_def)
+    by (rule state_presents_declared_inside[OF present])
   have inj: "inj_on key {..<length (fst (snd S))}"
     by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
   obtain F p where F: "F\<in>set Fs" and ap: "(a,p)\<in>set F" and dp: "d\<in>set (row_declared p)"
@@ -449,7 +439,7 @@ proof -
   have atom: "key c\<in>set (map fst (state_atoms R))"
     using atoms_present_atom[OF state_presents_atoms[OF present] bound] by force
   have mentions_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length (fst (snd S))"
-    using entity_mentions_positions state_presents_inside[OF present] by (force simp: state_positions_def)
+    by (rule state_presents_mentions_inside[OF present])
   have "(s,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
     (\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ss)"
@@ -692,7 +682,7 @@ proof -
   have inj: "inj_on key {..<length (fst (snd S))}"
     by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
   have declared_inside: "\<And>e d. e\<in>set (snd (snd S)) \<Longrightarrow> d\<in>set (entity_declared e) \<Longrightarrow> d<length (fst (snd S))"
-    using entity_declared_positions state_presents_inside[OF present] by (force simp: state_positions_def)
+    by (rule state_presents_declared_inside[OF present])
   have "store_lookup (declaration_store Fs) (key h)\<noteq>None \<longleftrightarrow>
       (\<exists>p\<in>(\<Union>F\<in>set Fs. set (map snd F)). key h\<in>set (row_declared p))"
     by (auto simp: declaration_store_declared declaration_store_found)
@@ -724,13 +714,12 @@ proof -
   have root_rows: "snd ` set (state_roots R)=root_row key ?C ` set (fst S)"
     using state_presents_root_family[OF present] by (metis list.set_map)
   have inj: "inj_on key {..<length ?n}" by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
-  have inside: "state_positions S\<subseteq>{..<length ?n}" by (rule state_presents_inside[OF present])
   have declared_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_declared e) \<Longrightarrow> d<length ?n"
-    using entity_declared_positions inside by (force simp: state_positions_def)
+    by (rule state_presents_declared_inside[OF present])
   have mentions_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length ?n"
-    using entity_mentions_positions inside by (force simp: state_positions_def)
+    by (rule state_presents_mentions_inside[OF present])
   have roots_inside: "\<And>t d. t\<in>set (fst S) \<Longrightarrow> d\<in>set (root_mentions t) \<Longrightarrow> d<length ?n"
-    using root_mentions_positions inside by (force simp: state_positions_def)
+    by (rule state_presents_root_mentions_inside[OF present])
   have found: "store_lookup (declaration_store Fs) q\<noteq>None \<longleftrightarrow> (\<exists>e\<in>set ?es. q\<in>key ` set (entity_declared e))" for q
   proof -
     have "store_lookup (declaration_store Fs) q\<noteq>None \<longleftrightarrow>

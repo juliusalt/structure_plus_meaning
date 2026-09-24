@@ -43,34 +43,111 @@ def logs(watched, since):
                 pass
 
 
-def errors_in(text):
-    """Every error message in a text, one line each: `FILE:LINE: its first line`, where the message says where.
+DETAIL_LINES = 10  # of a message's own lines under its first: a proof's goal, a type error's term and type
+
+
+SESSION = re.compile(r"^Running (\S+) \.\.\.", re.M)
+TIMED_OUT = re.compile(r"^\*\*\* Timeout\s*$", re.M)
+NAMED = 6  # the unfinished theories named on a timeout's line; the rest counted
+
+
+def isabelle_homes():
+    """Where the proofs' Isabelle homes are: the harness's places (v2.places), or ORCH_ISABELLE_HOMES."""
+    named = os.environ.get("ORCH_ISABELLE_HOMES")
+    if named:
+        return named.split(os.pathsep)
+    try:
+        import v2
+        return [v2.places()[1], v2.OLD_HOME]
+    except Exception:  # a harness that cannot be read leaves a timeout as Isabelle says it
+        return []
+
+
+def unfinished(text):
+    """The theories a proof's session left unfinished when its time ran out: its sources without the markup Isabelle
+    exports when a theory ends, from the session's log database; None for a text with no timeout or no database. Isabelle
+    says `*** Timeout` and names no theory: the batch of tasks 227 and 223 ran its 1,200 s out (2026-09-22 18:40) on
+    three native-control theories, and its report named nothing a task changed, nor anything its sessions could fix."""
+    m = SESSION.search(text)
+    if not m or not TIMED_OUT.search(text):
+        return None
+    import glob
+    import sqlite3
+    for home in isabelle_homes():
+        for db in glob.glob(os.path.join(home, ".isabelle", "*", "heaps", "*", "log", m.group(1) + ".db")):
+            try:
+                with sqlite3.connect(f"file:{db}?mode=ro", uri=True) as c:
+                    ended = {t.split(".", 1)[-1] for (t,) in c.execute(
+                        "select distinct theory_name from isabelle_exports where name = 'PIDE/markup'")}
+                    names = [os.path.splitext(os.path.basename(n))[0] for (n,) in c.execute(
+                        "select name from isabelle_sources")]
+            except sqlite3.Error:
+                continue
+            if names:  # a session's sources are written when it ends: none, and it has not
+                return sorted(n for n in names if n not in ended)
+    return None
+
+
+def detailed(text):
+    """Every error message in a text: (`FILE:LINE: its first line`, the lines under it), where the message says where.
     Isabelle's message is a run of `***` lines ending, in a theory, with `At command "…" (line N of "…")`, which is
     where it stands (its first line may name an ML file); two messages side by side without it part where a line of
-    its own names a place."""
-    out, message = [], []
+    its own names a place. The lines under the first are what fixing it needs — a failed proof's goal, a type
+    error's term and type — which fix-220 read from the probe's log after each list (requests 8 and 10, 2026-09-22)."""
+    out, message, cut = [], [], set()
 
     def close():
         if message:
-            places = [m for m in map(WHERE.search, message) if m]
-            place = next((m for line, m in zip(message, map(WHERE.search, message)) if m and line.startswith("At command")),
+            if message[0].startswith("  "):  # a message whose beginning the log's own limit cut off ("...")
+                cut.add(len(out))
+            lines = [x.strip() for x in message]
+            places = [m for m in map(WHERE.search, lines) if m]
+            place = next((m for line, m in zip(lines, map(WHERE.search, lines)) if m and line.startswith("At command")),
                          places[0] if places else None)
-            first = WHERE.sub("", message[0]).rstrip(":").strip() or " ".join(message)[:120]
-            out.append((f"{os.path.basename(place.group(2))}:{place.group(1)}: " if place else "") + first[:160])
+            first = WHERE.sub("", lines[0]).rstrip(":").strip() or " ".join(lines)[:120]
+            under = [x.rstrip()[1:] if x.startswith(" ") else x.rstrip() for x in message[1:]
+                     if x.strip() and not x.strip().startswith("At command")]
+            out.append(((f"{os.path.basename(place.group(2))}:{place.group(1)}: " if place else "") + first[:160],
+                        [WHERE.sub("", x)[:200] for x in under[:DETAIL_LINES]]
+                        + ([f"… ({len(under) - DETAIL_LINES} lines more)"] if len(under) > DETAIL_LINES else [])))
             message.clear()
+    trace = False  # after a message's command: the commands it was reported through, an importing theory's ML
     for line in text.splitlines():
         if not line.startswith("***"):
             close()
+            trace = False
             continue
         body = line[3:]
+        if trace and (not body.strip() or body.strip().startswith("At command")):
+            continue  # one failure, not another: task 223's proof came again through two theories' `ML` (2026-09-22)
+        trace = False
         if message and not body.startswith("  ") and WHERE.search(body) and not body.strip().startswith("At command") \
                 and any(WHERE.search(x) for x in message):
             close()
-        message.append(body.strip())
+        message.append(body)
         if body.strip().startswith("At command"):
             close()
+            trace = True
     close()
+    whole = {e.split(": ", 1)[0] for i, (e, _) in enumerate(out) if i not in cut}
+    out = [(e, d) if i not in cut else ("(its beginning cut off in the log) " + e, d)
+           for i, (e, d) in enumerate(out) if i not in cut or e.split(": ", 1)[0] not in whole]
+    late = unfinished(text) if any(e == "Timeout" for e, _ in out) else None
+    if late:
+        said = (f"Timeout: the proof's session ran out of its time with {len(late)} theor{'ies' if len(late) > 1 else 'y'}"
+                f" unfinished: {', '.join(late[:NAMED])}" + (f" and {len(late) - NAMED} more" if len(late) > NAMED else ""))
+    elif late is not None:  # task 227's check, 19:01: all 106 theories ended, their commands in 598 s of 1,200
+        said = ("Timeout: every theory of the proof's session ended, and the session still ran out of its time: a proof "
+                "forked from its theory, which the session joins only at its end, did not finish — a probe with "
+                "IN_PLACE=1 stops at it")
+    if late is not None:
+        out = [(said, (late or [])[NAMED:]) if e == "Timeout" else (e, d) for e, d in out]
     return out
+
+
+def errors_in(text):
+    """Every error message in a text, one line each: `FILE:LINE: its first line` (detailed, without what is under it)."""
+    return [head for head, _ in detailed(text)]
 
 
 # the line a failure ends on that is no Isabelle message: an exception after its traceback, a native panic, a compiler's
@@ -115,8 +192,26 @@ def failures(output, logs_read):
     return out
 
 
-def listed(errors, keep):
-    """The list the check ends with: whole when it fits, else what fits and where the whole is kept."""
+def keep_whole(errors, keep, details):
+    """The whole list, each error with its lines, kept in `keep` (the newest KEEP of them): its path, or None."""
+    if not keep:
+        return None
+    try:
+        os.makedirs(keep, exist_ok=True)
+        n = 1 + max((int(f[7:-4]) for f in os.listdir(keep) if re.fullmatch(r"errors-\d+\.txt", f)), default=0)
+        path = os.path.join(keep, f"errors-{n}.txt")
+        open(path, "w").write("".join(f"- {e}\n" + "".join(f"    {d}\n" for d in details.get(e) or []) for e in errors))
+        for old in sorted(int(f[7:-4]) for f in os.listdir(keep) if re.fullmatch(r"errors-\d+\.txt", f))[:-KEEP]:
+            os.remove(os.path.join(keep, f"errors-{old}.txt"))
+        return path
+    except OSError:
+        return None
+
+
+def listed(errors, keep, details=None):
+    """The list the check ends with: every error's line, and under each what fixing it needs (`details`: its lines by
+    error) while room is left, in order; whole when it fits, else what fits and where the whole is kept."""
+    details = details or {}
     head = (f"[this check reported {len(errors)} error{'s' * (len(errors) > 1)}, listed here with where each stands. "
             "Fix them all — and what the same cause breaks elsewhere — before the next check: a check after each "
             "single fix spends a whole run on each.]\n")
@@ -127,7 +222,20 @@ def listed(errors, keep):
             break
         lines.append(f"- {e}\n")
     if len(lines) == len(errors):
-        return head + "".join(lines)
+        left, shown, dropped = ROOM - size - 200, [], 0  # the goals under the lines, while room is left
+        for e, line in zip(errors, lines):
+            under = "".join(f"    {d}\n" for d in details.get(e) or [])
+            if under and len(under.encode()) <= left:
+                left -= len(under.encode())
+                line += under
+            elif under:
+                dropped += 1
+            shown.append(line)
+        if not dropped:
+            return head + "".join(shown)
+        where = keep_whole(errors, keep, details)
+        return head + "".join(shown) + (f"[the goals of {dropped} more are kept in {where}]\n" if where else
+                                        f"[{dropped} more have lines under them not shown here]\n")
     rest = f"[… and {len(errors) - len(lines)} more"
     if keep:
         try:
@@ -166,7 +274,11 @@ def main():
             logs_read.append((log, open(log, errors="replace").read()))
         except OSError:
             pass
-    errors = errors_in(output) + [e for _, text in logs_read for e in errors_in(text)]
+    found = detailed(output) + [e for _, text in logs_read for e in detailed(text)]
+    details = {}
+    for e, under in found:
+        details.setdefault(e, under)
+    errors = [e for e, _ in found]
     if status:  # a failed check says what else failed; one that passed has nothing to fix
         errors += failures(output, logs_read)
     errors = list(dict.fromkeys(errors))  # one message in the output and in a log is one error
@@ -175,7 +287,7 @@ def main():
         sys.stdout.write(("" if ended else "\n") + note + "\n")
         ended = True
     if errors:
-        sys.stdout.write(("" if ended else "\n") + listed(errors, keep))
+        sys.stdout.write(("" if ended else "\n") + listed(errors, keep, details))
     return status
 
 

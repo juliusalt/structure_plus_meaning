@@ -38,7 +38,7 @@ lemma record_child_reads:
   shows "object_reads_agree (push_object (syntax_branch i) (Rs!i)) record_framed
     (image (syntax_branch i) (rra_carrier (object_structure (Rs!i))))"
   by (rule object_reads_agree_extend[
-    OF syntax_forest_child_reads[OF children_formed children_counts index] record_reads])
+    OF syntax_forest_child_reads[OF children_counts index] record_reads])
 
 lemma record_child_citation:
   assumes index: "i < length Rs" and cite: "citation_at (Rs!i) r c I"

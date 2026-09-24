@@ -43,16 +43,28 @@ while :; do
   for who in max xhigh high; do
     [ -e "$STATE/$who-base.json" ] || continue
     any=1
+    # used: a session standing on the base started (v2.launch), or a build over it — through the knowledge base and the
+    # roles' layers and churns as much as a fork of the base itself
     [ "$(age "$STATE/$who-base.used")" -gt "$idle_max" ] && continue
-    [ "$( [ -e "$STATE/$who-base.miss" ] && wc -l < "$STATE/$who-base.miss" || echo 0)" -ge 2 ] && continue
+    [ "$( [ -e "$STATE/$who-base.miss" ] && wc -l < "$STATE/$who-base.miss" || echo 0)" -ge 1 ] && continue
     # base.sh writes the verdict to warm.log itself, so that a ping run by hand is recorded there too; only what
     # fails before it reaches that line is redirected
-    [ "$(age "$STATE/$who-base.hit")" -ge "$every" ] && "$HERE/base.sh" "$who" warm >/dev/null 2>> "$STATE/warm.log"
+    # what the roles fork, while a role forks it: with every role of the base on its own churn nobody reads the
+    # shared part, and its ping (about 60K) bought nothing — a role that falls back to it cold forks the medium layer
+    [ "$(age "$STATE/$who-base.hit")" -ge "$every" ] && "$HERE/v2.py" base-forked "$who" \
+      && "$HERE/base.sh" "$who" warm >/dev/null 2>> "$STATE/warm.log"
     # the stable base under a layer keeps an entry of its own, which a read of the layer does not refresh (the max
     # layer's refresh of 2026-09-21 wrote 339,381 tokens of it anew): pinged on its own while that entry is still warm,
     # and never once it is cold — a fork that misses writes its own prefix, not the base's, so a ping would buy a cold
     # write and bring nothing back; a rebuild of the base makes the entry again (base.sh seal)
     "$HERE/base.sh" "$who" warm stable --if-due >/dev/null 2>> "$STATE/warm.log"
+    # under a delta (notes/plan-delta-layer.md) the layer's own entry is read only by the delta's builds: pinged the same
+    # way while no build has read it within the interval
+    "$HERE/base.sh" "$who" warm layer --if-due >/dev/null 2>> "$STATE/warm.log"
+    # Each reusable intermediate prefix has its own cache entry; descendant reads do not keep it alive.
+    for part in $(python3 -B "$HERE/base_stack.py" parts "$who" 2>/dev/null); do
+      "$HERE/base.sh" "$who" warm "$part" --if-due >/dev/null 2>> "$STATE/warm.log"
+    done
   done
   [ "$any" = 0 ] && ! active && break
   # A request from inside the sandbox (state/wanted/, v2.want: a session released, a dispatch, a final check) is

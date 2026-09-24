@@ -1,15 +1,22 @@
-# The load list of the planner's and the knowledge base's base (`max`, max; written 2026-09-19, revised after the
-# owner's answers, built from 2026-09-20): design A″ of notes/bases-design.md with the founding theories at
-# definitions (the owner's choice); the owner builds the base. Ordered from reference to direction, since the most recent tokens
-# weigh most: what exists, the founding theories as definitions and the central ideas' statements; then the decisions
-# by name, the reasoning inventory, the plan, and last the owner's words and the operating rules. The knowledge base's
-# own load (HANDOFF.md, the ledger, the owner's new words) follows it. Measured by a real pack: 532K with the plan and
-# REASONING_REUSE.md as they are, about 474K once they are condensed (notes/bases-design.md, section 10).
-# In the layered design (section 8) the tiers up to the central ideas are the stable reference and the rest is the
-# frontier layer, refreshed on its own: the generated indexes, the reasoning inventory, the plan and the owner's
-# words are what change, and they changed by 66,526 tokens on 2026-09-20 while the reference moved by nothing. HANDOFF.md, owner-ledger.md and state/owner-directions-new.md are never held here.
+# Planner/knowledge-base reference (max). Current reasoning: notes/plan-bases-two-purposes.md.
+# The parts, below to above, in the order of their dependencies, which is also the order of how often each
+# modifies what it holds per token held (measured over the run's 472 commits, 2026-09-23): the stable part —
+# the owner's words, problems.txt and the practice, then the reference (founding theories as definitions, the
+# central ideas as statements) — with the reference reasoning over it; direction (the plan, the decisions);
+# inventory (the tool index, the notions the plan names, REASONING_REUSE.md); catalogue (the theory map).
+# Nothing here depends on the task queue: a task's own relations are given to its sessions as they start.
+# The knowledge base adds the current handoff, ledger and planner notes above this shared chain.
 # Comments are curation notes; they never reach the loaded text.
-# every other founding theory, as definitions (generated: commentary, definitions, locales and the names of what is proved; one per notion of the library's vocabulary, in import order)
+
+# pinned: the owner's voice — the owner's words and the problems they set; first, for everything held rests on the owner's intent, and none of it changed in the run's 472 commits of 09-19/23; purpose=steering
+.claude/orchestration/codex-owner-directions.md
+.claude/orchestration/owner-directions.md
+problems.txt
+
+# pinned: the library's working practice — the owner's words and the lessons its development recorded, as library-practice.txt names them (never the orchestrator's own memory); purpose=steering
+.claude/orchestration/state/held/library-practice-max.md
+
+# every other founding theory, as definitions (generated: commentary, definitions, locales and the names of what is proved; one per notion of the library's vocabulary, in import order); purpose=steering
 theories/RRA_Data_Views.thy
 theories/RRA_Environment.thy
 theories/RRA_Finite_Environments.thy
@@ -236,131 +243,143 @@ theories/Factor_Finite_Development_Questions.thy
 theories/Isabelle_Constant_Closure.thy
 theories/Development_Seed.thy
 theories/Certificate_Construction_Review.thy
-# pinned idea: structure without names — the relational substrate
+# pinned idea: structure without names — the relational substrate; purpose=both
 theories/Bootstrap_Relations.thy
 theories/RRA_Core.thy
 theories/RRA_Data.thy
 theories/RRA_Exact.thy
-# pinned idea: presentations, and contracts owned locally by their notion
+# pinned idea: presentations, and contracts owned locally by their notion; purpose=both
 theories/Presentation_Classes.thy
 theories/Presentation_Relations.thy
 theories/Presentation_Closure.thy
 theories/Presentation_Transport.thy
 theories/Presentation_Contracts.thy
-# pinned idea: artifacts
+# pinned idea: artifacts; purpose=both
 theories/RRA_Finite_Artifacts.thy
 theories/Factor_Artifact_Values.thy
-# pinned idea: history — generations and their predecessors
+# pinned idea: history — generations and their predecessors; purpose=both
 theories/Generation_Structures.thy
 theories/RRA_Generation.thy
 theories/RRA_Generation_Frames.thy
-# pinned idea: loci — selection, replacement, transactions
+# pinned idea: loci — selection, replacement, transactions; purpose=both
 theories/RRA_Selection.thy
 theories/RRA_Replacement.thy
 theories/RRA_Transaction.thy
 theories/Factor_Transaction_Values.thy
-# pinned idea: authority and currentness — a judgment relative to an authority, generation, purpose and locus, never ambient
+# pinned idea: authority and currentness — a judgment relative to an authority, generation, purpose and locus, never ambient; purpose=both
 theories/Factor_Authority.thy
 theories/Factor_Current_Values.thy
 theories/Factor_Current_Scopes.thy
 theories/Factor_Current_Programs.thy
 theories/Factor_Current_Entries.thy
-# pinned idea: positive meaning and locality
+# pinned idea: positive meaning and locality; purpose=both
 theories/Factor_Positive_Meaning.thy
 theories/Factor_Positive_Locality.thy
 theories/Factor_Positive_Parametricity.thy
 theories/Factor_Native_Meaning.thy
-# pinned idea: proofs and replay
+# pinned idea: proofs and replay; purpose=both
 theories/Factor_Native_Proofs.thy
 theories/Factor_Replay_Retention.thy
 theories/Factor_Replay.thy
-# pinned idea: admission
+# pinned idea: admission; purpose=both
 theories/Factor_Generation_Admission.thy
 theories/Factor_Generation_Contracts.thy
 theories/Factor_Artifact_Admission.thy
-# pinned idea: the generalization machinery and the closed development workflow
+# pinned idea: the generalization machinery and the closed development workflow; purpose=both
 theories/Candidate_Investigation.thy
 theories/Method_Investigation.thy
 theories/Factor_Development_Cycle.thy
 theories/Factor_Development_Steering.thy
 theories/Factor_Steered_Development.thy
-# pinned idea: index notions that exist (the first run reached for these only after being told)
+# pinned idea: index notions that exist (the first run reached for these only after being told); purpose=both
 theories/Ordered_Member_Trees.thy
 theories/Keyed_Finite_Sets.thy
 theories/Binary_Relation_Stores.thy
 theories/RRA_Indexed_Artifact_Lookup.thy
-# pinned idea: base causes and programs
+# pinned idea: base causes and programs; purpose=both
 theories/Factor_Base_Cause.thy
 theories/Factor_Base_Programs.thy
-# === layer === the frontier layer below: refreshed on its own (base.sh max layer) when what it holds has changed; the reference above is the owner's to rebuild.
-# the reference moved by nothing in twelve hours while these moved by 66,526 tokens.
-# pinned: what exists — every theory source name, in ROOT order (generated from current source files; grep the map or source for content)
-.claude/orchestration/state/held/theory-names.md
-# pinned: the decisions, as an index (generated at pack time: DECISIONS.md's headings and first sentences)
-.claude/orchestration/state/held/decisions-index.md
-# pinned: the accumulated reasoning that further generalization must reuse
-REASONING_REUSE.md
-# pinned: the plan (the basis of nearly every correction the first run's implementers needed)
+# === layer direction ===
+# pinned: the plan (the basis of nearly every correction the first run's implementers needed); purpose=steering
 native_control_plan.md
-# pinned: the owner's voice and the operating rules
-.claude/orchestration/codex-owner-directions.md
-.claude/orchestration/owner-directions.md
-~/.claude/projects/-home-julius-structure-and-semantics/memory/*.md
-AGENTS.md
-DEVELOPMENT_WORKFLOW.md
-problems.txt
-# optional (never loaded; move a line into a pinned tier to hold it)
-theories/Development_Answer_0ccf746fe2cf.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
-theories/Development_Publication.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
-theories/Development_Seed_Publication.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
-theories/Factor_Demanded_Package_Readings.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
-theories/Finite_Demanded_Closures.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
-theories/RRA_Finite_Transactions.thy  # a current addition of 2026-09-18, dropped from A″: stale; the knowledge base's HANDOFF.md and the sessions' own reads carry what is new
-theories/Native_Development_Seed.thy  # the implementers' measured working frontier from here, for the implementation base
-tools/probe_theories.py  # 7 sessions, 116K pulled, ~1K tokens
-theories/Ordered_Finite_Rows.thy  # 2 sessions, 14K pulled, ~1K tokens
-theories/Native_Execution_Refinements.thy  # 3 sessions, 12K pulled, ~1K tokens
-theories/Native_Control_Seed_Subject.thy  # 4 sessions, 18K pulled, ~1K tokens
-theories/Native_Control_Admitted_Selection.thy  # 2 sessions, 13K pulled, ~1K tokens
-theories/Development_Policy.thy  # 4 sessions, 20K pulled, ~1K tokens
-tools/prove_context.py  # 5 sessions, 22K pulled, ~1K tokens
-tools/development_executor.py  # 4 sessions, 5K pulled, ~1K tokens
-theories/Isabelle_Entities.thy  # 7 sessions, 45K pulled, ~7K tokens
-theories/Isabelle_Code_Equations.thy  # 3 sessions, 6K pulled, ~1K tokens
-tools/incremental_check.py  # 6 sessions, 75K pulled, ~2K tokens
-tools/reconstruct_native_development_seed.py  # 5 sessions, 21K pulled, ~1K tokens
-theories/Native_Control_Syntax_Candidate.thy  # 2 sessions, 11K pulled, ~2K tokens
-tools/check_presented_report.py  # 3 sessions, 16K pulled, ~1K tokens
-theories/Native_Control_Context_Execution.thy  # 2 sessions, 7K pulled, ~1K tokens
-tools/reconstruction.py  # 4 sessions, 16K pulled, ~1K tokens
-theories/Finite_Sorted_Set_Execution.thy  # 2 sessions, 9K pulled, ~1K tokens
-theories/Isabelle_Entity_Export.thy  # 5 sessions, 17K pulled, ~1K tokens
-theories/Finite_Set_Composition.thy  # 2 sessions, 5K pulled, ~1K tokens
-theories/Development_Problems.thy  # 4 sessions, 23K pulled, ~5K tokens
-tools/development_answer.py  # 4 sessions, 40K pulled, ~1K tokens
-tools/replay_development_answers.py  # 4 sessions, 6K pulled, ~1K tokens
-tools/check.py  # 2 sessions, 5K pulled, ~1K tokens
-theories/Isabelle_Acceptance.thy  # 3 sessions, 20K pulled, ~2K tokens
-theories/Filtered_Native_Questions.thy  # 3 sessions, 8K pulled, ~2K tokens
-tools/development_adoption.py  # 3 sessions, 13K pulled, ~1K tokens
-tools/proved_code.py  # 2 sessions, 8K pulled, ~1K tokens
-theories/Ordered_Term_Demands.thy  # 2 sessions, 2K pulled, ~1K tokens
-theories/Development_Refinement_Contracts.thy  # 3 sessions, 20K pulled, ~6K tokens
-tools/native_execution_runtime.py  # 2 sessions, 2K pulled, ~1K tokens
-tools/export_proved_code.py  # 3 sessions, 13K pulled, ~1K tokens
-tools/proof_contexts.py  # 4 sessions, 18K pulled, ~1K tokens
-theories/Isabelle_Renaming.thy  # 3 sessions, 21K pulled, ~6K tokens
-theories/Factor_Finite_Program_Applications.thy  # 2 sessions, 7K pulled, ~1K tokens
-theories/Factor_Invariant_Evaluation_Sharing.thy  # 2 sessions, 5K pulled, ~2K tokens
-theories/Development_Seed_Verification.thy  # 4 sessions, 8K pulled, ~4K tokens
-theories/Ordered_Term_Comparison.thy  # 2 sessions, 4K pulled, ~1K tokens
-theories/Development_Request_Packets.thy  # 4 sessions, 4K pulled, ~1K tokens
-tools/test_development_answer.py  # 3 sessions, 3K pulled, ~1K tokens
-tools/reconstruct_native_sources.py  # 1 sessions, 1K pulled, ~1K tokens
-THEORY_MAP.md
-DECISIONS.md
-OBLIGATIONS.md
-ADMISSION.md
-GENERALIZATION_REVIEW.md
-README.md
-plan.md
+
+# the decisions, by heading and first sentence: appended as batches decide and never rewritten (84 added and none changed in the run), so a new one is carried by the delta until a refresh; purpose=steering
+.claude/orchestration/state/held/decisions-index.md
+
+# === layer inventory ===
+# the library's tools, a line each (those held whole stand in the catalogue): appended as tools are made and almost never rewritten (6 added and 1 changed in the run's 472 commits, 234 added and 3 changed before it); purpose=steering
+.claude/orchestration/state/held/tool-index-max.md
+
+# === relations ===
+# relation: whole-plan notions; purpose=steering; as signatures
+theories/Development_Loci.thy
+theories/Development_Machinery.thy
+theories/Factor_Admission_Goal_Construction.thy
+theories/Factor_Admission_Goal_Sequences.thy
+theories/Factor_Application_Candidates.thy
+theories/Factor_Application_Comparison.thy
+theories/Factor_Application_Retention.thy
+theories/Factor_Certified_Policy_Readings.thy
+theories/Factor_Chained_Investigation.thy
+theories/Factor_Current_Acceptance_Certificates.thy
+theories/Factor_Decision_Replay_Investigation.thy
+theories/Factor_Definition_Closure.thy
+theories/Factor_Definition_Encoding.thy
+theories/Factor_Development_Subjects.thy
+theories/Factor_Finite_Certified_Causes.thy
+theories/Factor_Generation_Dependency_Contracts.thy
+theories/Factor_Generation_History_Append.thy
+theories/Factor_Guided_Investigation.thy
+theories/Factor_Inference_Development.thy
+theories/Factor_Learned_Execution_Soundness.thy
+theories/Factor_Learned_Schemas.thy
+theories/Factor_Native_Amendment.thy
+theories/Factor_Native_Definition_Extensions.thy
+theories/Factor_Predecessor_Continuation.thy
+theories/Factor_Requirement_Artifact_Admission.thy
+theories/Factor_Requirement_Plans.thy
+theories/Factor_Result_Comparison.thy
+theories/Factor_Schema_Forests.thy
+theories/Factor_Schema_Generation.thy
+theories/Factor_Source_Development_Admission.thy
+theories/Factor_System_Relocation.thy
+theories/Factor_System_Restriction.thy
+theories/Factor_Transition_Selection.thy
+theories/Factor_Workflow_Admission.thy
+theories/Factor_Workflow_Protocol.thy
+theories/Factor_Workflow_Readiness.thy
+theories/Factor_Workflow_Requirements.thy
+theories/Finite_Candidate_Assembly.thy
+theories/Finite_Demand_Selection.thy
+theories/Finite_Derived_Observations.thy
+theories/Finite_Inference_Development.thy
+theories/Finite_Observation_Contracts.thy
+theories/Finite_Singleton_Selection.thy
+theories/Finite_Subject_Investigation.thy
+theories/Inference_Demands.thy
+theories/Inference_Rounds.thy
+theories/Isabelle_Entity_Export.thy
+theories/Isabelle_Renaming.thy
+theories/Isabelle_Terms.thy
+theories/Method_Development.thy
+theories/Native_Execution_Refinements.thy
+theories/Obligation_Reductions.thy
+theories/Observation_Invariance.thy
+theories/Observation_Repairs.thy
+theories/Observation_Revisions.thy
+theories/Parallel_Assessment_Execution.thy
+theories/Presentation_Contract_Constructions.thy
+theories/Presentation_Development.thy
+theories/Presentation_Function_Witnesses.thy
+theories/RRA_Executable_Retention.thy
+theories/RRA_Generation_Record_Construction.thy
+theories/RRA_Publication_Dependencies.thy
+# === end relations ===
+
+# pinned: the accumulated reasoning that further generalization must reuse, published with the landings that add a pattern of reasoning — the catalogue's cause, acting far less often (its text changed in 6 of the run's 472 commits of 09-19/23, the rest of the direction in 2, the catalogue in 187); purpose=steering
+REASONING_REUSE.md
+
+# === layer catalogue ===
+# complete library vocabulary, a line each theory the base does not hold: rows rewritten far more than added in the run (512 against 126); purpose=steering
+.claude/orchestration/state/held/theory-map-index-max.md
+

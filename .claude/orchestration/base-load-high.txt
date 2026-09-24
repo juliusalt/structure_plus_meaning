@@ -1,13 +1,21 @@
-# The implementation base's load list (`high`, high: implementer, fixer; written 2026-09-19, revised after the
-# owner's answers, built from 2026-09-20): design C″ of notes/bases-design.md; the owner builds the base. No plan and no
-# reasoning inventory: a build or fix brief states what of them it rests on (protocols/_brief.md). Ordered from
-# reference to direction: the founding theories as signatures and the central ideas' statements, then — below the
-# layer mark — what each theory holds (the theory map's index, without the theories held below), the working
-# frontier's statements, the check workflow's tools, and last the owner's words and the operating rules. Measured by a real pack: about 536K (482K with
-# the founding theories at the outline level, which is not built: section 7). In the layered design (section 8) the
-# tiers up to the central ideas are the stable reference and the rest is the frontier layer. Comments are curation
-# notes; they never reach the loaded text.
-# every other founding theory, as signatures (generated: commentary, each definition by its name and type, locales and the names of what is proved; one per notion of the library's vocabulary, in import order)
+# Implementer/fixer reference (high). Current reasoning: notes/plan-bases-two-purposes.md.
+# The parts, below to above, in the order of their dependencies, which is also the order of how often each
+# modifies what it holds per token held (measured over the run's 472 commits, 2026-09-23): the stable part —
+# the owner's words, problems.txt and the practice, then the reference (founding theories as signatures, the
+# central ideas as statements) — with the reference reasoning over it; direction (the plan's map, the
+# decisions, the tool index); catalogue (the theory map, the tools a session runs). Briefs supply the plan's
+# decisions a task implements. Nothing here depends on the task queue.
+# Comments are curation notes; they never reach the loaded text.
+
+# pinned: the owner's voice — the owner's words and the problems they set; first, for everything held rests on the owner's intent, and none of it changed in the run's 472 commits of 09-19/23; purpose=steering
+.claude/orchestration/codex-owner-directions.md
+.claude/orchestration/owner-directions.md
+problems.txt
+
+# pinned: the library's working practice — the owner's words and the lessons its development recorded, as library-practice.txt names them (never the orchestrator's own memory); purpose=steering
+.claude/orchestration/state/held/library-practice-high.md
+
+# every other founding theory, as signatures (generated: commentary, each definition by its name and type, locales and the names of what is proved; one per notion of the library's vocabulary, in import order); purpose=steering
 theories/RRA_Data_Views.thy
 theories/RRA_Environment.thy
 theories/RRA_Finite_Environments.thy
@@ -234,107 +242,77 @@ theories/Factor_Finite_Development_Questions.thy
 theories/Isabelle_Constant_Closure.thy
 theories/Development_Seed.thy
 theories/Certificate_Construction_Review.thy
-# pinned idea: structure without names — the relational substrate
+# pinned idea: structure without names — the relational substrate; purpose=both
 theories/Bootstrap_Relations.thy
 theories/RRA_Core.thy
 theories/RRA_Data.thy
 theories/RRA_Exact.thy
-# pinned idea: presentations, and contracts owned locally by their notion
+# pinned idea: presentations, and contracts owned locally by their notion; purpose=both
 theories/Presentation_Classes.thy
 theories/Presentation_Relations.thy
 theories/Presentation_Closure.thy
 theories/Presentation_Transport.thy
 theories/Presentation_Contracts.thy
-# pinned idea: artifacts
+# pinned idea: artifacts; purpose=both
 theories/RRA_Finite_Artifacts.thy
 theories/Factor_Artifact_Values.thy
-# pinned idea: history — generations and their predecessors
+# pinned idea: history — generations and their predecessors; purpose=both
 theories/Generation_Structures.thy
 theories/RRA_Generation.thy
 theories/RRA_Generation_Frames.thy
-# pinned idea: loci — selection, replacement, transactions
+# pinned idea: loci — selection, replacement, transactions; purpose=both
 theories/RRA_Selection.thy
 theories/RRA_Replacement.thy
 theories/RRA_Transaction.thy
 theories/Factor_Transaction_Values.thy
-# pinned idea: authority and currentness — a judgment relative to an authority, generation, purpose and locus, never ambient
+# pinned idea: authority and currentness — a judgment relative to an authority, generation, purpose and locus, never ambient; purpose=both
 theories/Factor_Authority.thy
 theories/Factor_Current_Values.thy
 theories/Factor_Current_Scopes.thy
 theories/Factor_Current_Programs.thy
 theories/Factor_Current_Entries.thy
-# pinned idea: positive meaning and locality
+# pinned idea: positive meaning and locality; purpose=both
 theories/Factor_Positive_Meaning.thy
 theories/Factor_Positive_Locality.thy
 theories/Factor_Positive_Parametricity.thy
 theories/Factor_Native_Meaning.thy
-# pinned idea: proofs and replay
+# pinned idea: proofs and replay; purpose=both
 theories/Factor_Native_Proofs.thy
 theories/Factor_Replay_Retention.thy
 theories/Factor_Replay.thy
-# pinned idea: admission
+# pinned idea: admission; purpose=both
 theories/Factor_Generation_Admission.thy
 theories/Factor_Generation_Contracts.thy
 theories/Factor_Artifact_Admission.thy
-# pinned idea: the generalization machinery and the closed development workflow
+# pinned idea: the generalization machinery and the closed development workflow; purpose=both
 theories/Candidate_Investigation.thy
 theories/Method_Investigation.thy
 theories/Factor_Development_Cycle.thy
 theories/Factor_Development_Steering.thy
 theories/Factor_Steered_Development.thy
-# pinned idea: index notions that exist (the first run reached for these only after being told)
+# pinned idea: index notions that exist (the first run reached for these only after being told); purpose=both
 theories/Ordered_Member_Trees.thy
 theories/Keyed_Finite_Sets.thy
 theories/Binary_Relation_Stores.thy
 theories/RRA_Indexed_Artifact_Lookup.thy
-# pinned idea: base causes and programs
+# pinned idea: base causes and programs; purpose=both
 theories/Factor_Base_Cause.thy
 theories/Factor_Base_Programs.thy
-# === layer === the frontier layer below: refreshed on its own (base.sh high layer) when what it holds has changed; the reference above is the owner's to rebuild.
-# pinned: what each theory holds (generated at pack time: the first clause of its THEORY_MAP.md row, the theories this list holds left out)
-.claude/orchestration/state/held/theory-map-index.md
-# the working frontier (40 theories for the fixer, implementer sessions, re-measured 2026-09-22 from 7 of them: 27 by what they consulted, 13 carried), as statements
-theories/Factor_Reference_Forests.thy  # 2 sessions, 30K pulled
-theories/RRA_Placed_Forests.thy  # 2 sessions, 44K pulled
-theories/Development_State_Edit.thy  # 2 sessions, 33K pulled
-theories/Native_Collection_Programs.thy  # 2 sessions, 49K pulled
-theories/Factor_Pattern_Forests.thy  # 2 sessions, 13K pulled
-theories/Development_Verdict_Mentions.thy  # 2 sessions, 13K pulled
-theories/Isabelle_Entities.thy  # 2 sessions, 2K pulled
-theories/Development_State_Rows.thy  # 2 sessions, 5K pulled
-theories/Factor_Finite_Reference_Forests.thy  # 1 sessions, 4K pulled
-theories/Factor_Finite_Template_Syntax.thy  # 1 sessions, 19K pulled
-theories/RRA_Bound_Forests.thy  # 1 sessions, 6K pulled
-theories/Factor_Cloned_Transport.thy  # 1 sessions, 3K pulled
-theories/Factor_Schema_Bodies.thy  # 1 sessions, 10K pulled
-theories/Factor_Premise_Forests.thy  # 1 sessions, 11K pulled
-theories/Factor_Record_Syntax.thy  # 1 sessions, 2K pulled
-theories/Development_Native_Readiness.thy  # 1 sessions, 21K pulled
-theories/Isabelle_Local_Names.thy  # 1 sessions, 14K pulled
-theories/Development_Native_Answers.thy  # 1 sessions, 14K pulled
-theories/Factor_Table_Syntax.thy  # 1 sessions, 2K pulled
-theories/Development_Verdict_Statements.thy  # 1 sessions, 12K pulled
-theories/Factor_Rule_Instances.thy  # 1 sessions, 8K pulled
-theories/Native_Table_Reach.thy  # 1 sessions, 10K pulled
-theories/Development_Subject_Index.thy  # 1 sessions, 5K pulled
-theories/Development_Verdict_Unreached.thy  # 1 sessions, 7K pulled
-theories/Development_Edited_Local.thy  # 1 sessions, 4K pulled
-theories/RRA_Finite_Syntax_Construction.thy  # 1 sessions, 1K pulled
-theories/Isabelle_State_Difference.thy  # 1 sessions, 1K pulled
-theories/Development_Entity_Keys.thy  # carried from the frontier before this refresh
-theories/Development_State_Presenter.thy  # carried from the frontier before this refresh
-theories/Factor_Record_Construction.thy  # carried from the frontier before this refresh
-theories/Complete_Value_References.thy  # carried from the frontier before this refresh
-theories/Development_Seed_Verification.thy  # carried from the frontier before this refresh
-theories/Factor_Native_Graph_Cases.thy  # carried from the frontier before this refresh
-theories/Factor_Native_Incidence.thy  # carried from the frontier before this refresh
-theories/RRA_Generation_Record_Construction.thy  # carried from the frontier before this refresh
-theories/Factor_Join_Reading_Conditions.thy  # carried from the frontier before this refresh
-theories/Native_Path_Store_Indexes.thy  # carried from the frontier before this refresh
-theories/Factor_Shared_Package_Readings.thy  # carried from the frontier before this refresh
-theories/Factor_Formation_Once_Definitions.thy  # carried from the frontier before this refresh
-theories/Factor_Recovered_Graph_Sharing.thy  # carried from the frontier before this refresh
-# the check and measurement workflow's tools (docstrings, signatures, arguments)
+# === layer direction ===
+# the plan's map (the plan itself is the middle roles' and the planner's): it changes with the plan; purpose=steering
+.claude/orchestration/state/held/plan-index.md
+
+# the decisions, by heading and first sentence: appended as batches decide and never rewritten (84 added and none changed in the run), so a new one is carried by the delta until a refresh; purpose=steering
+.claude/orchestration/state/held/decisions-index.md
+
+# the library's tools, a line each (those held whole stand in the catalogue): appended as tools are made and almost never rewritten (6 added and 1 changed in the run's 472 commits, 234 added and 3 changed before it); purpose=steering
+.claude/orchestration/state/held/tool-index-high.md
+
+# === layer catalogue ===
+# complete library vocabulary, a line each theory the base does not hold: rows rewritten far more than added in the run (512 against 126); purpose=steering
+.claude/orchestration/state/held/theory-map-index-high.md
+
+# the repository's own tools a session runs (docstrings, signatures, arguments): the check and measurement workflow, and the native development tools that check, replay and reconstruct answers to development requests — never the harness's (v2.py and show.py are taught by each session's protocol); the rest of tools/ is in the tool index; purpose=both
 tools/probe_theories.py
 tools/incremental_check.py
 tools/build.py
@@ -343,10 +321,7 @@ tools/replay_development_answers.py
 tools/development_answer.py
 tools/reconstruct_native_development_seed.py
 tools/reconstruct_native_development_machinery.py
-# pinned: the owner's voice and the operating rules
-.claude/orchestration/codex-owner-directions.md
-.claude/orchestration/owner-directions.md
-~/.claude/projects/-home-julius-structure-and-semantics/memory/*.md
-AGENTS.md
-DEVELOPMENT_WORKFLOW.md
-problems.txt
+
+# === relations ===
+# relation: whole-plan notions; purpose=steering; as signatures
+# === end relations ===

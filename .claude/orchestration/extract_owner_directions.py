@@ -8,8 +8,9 @@ Default: preserve owner-directions-selection.json and render its verbatim excerp
        collected (`reviewed_through` in owner-directions-selection.json), from Claude sessions and interactive
        Codex sessions of this repository, including what the owner typed while a session was working. Sessions
        that work on the orchestration itself are left out: sessions other than implementers whose own tool
-       calls name anything of this directory beyond the working files. v2.py runs this before every planner
-       starts, and the planner reads it.
+       calls name anything of this directory beyond the working files. So is what the owner ledger records
+       already, which the knowledge base reads beside it. v2.py runs this before every planner starts, and the
+       planner reads it.
 """
 import glob
 import json
@@ -48,6 +49,8 @@ LIBRARY_ROLES = (IMPLEMENTER, "You are kb-", "You are plan-", "You are design-",
 # launch prompts written by the harness are not the owner's typed words
 # and neither is what the harness says to a session: its mail, its wakes, its stop hook's reasons
 LAUNCH = BASE_LOADS + LIBRARY_ROLES + ("Load the knowledge base as your instructions describe", "You are the live kb",
+                                       "You are layer-", "You are churn-", "You are reference-",
+                                       "You are max-reasoning,", "You are xhigh-reasoning,", "You are high-reasoning,",
                                        "Keep-warm ping", "You are loading a sealed base", "You were stopped",
                                        "Your turn ended without a result", "Stop hook feedback:", "Message from ",
                                        "[harness]")
@@ -112,8 +115,9 @@ def claude_session(path):
 
     A fork's copy of its base's load is not its own work, and an implementer works on the library whatever it
     looks up in this directory."""
-    messages, touched, implementer, copied = [], False, False, False
+    messages, touched, implementer, copied, background = [], False, False, False, False
     for n, line in enumerate(open(path, errors="ignore"), 1):
+        background = background or '"sessionKind":"bg"' in line
         user, queued, tool = '"type":"user"' in line, '"queued_command"' in line, '"tool_use"' in line
         if not user and not queued and not (tool and not touched and not copied):
             continue
@@ -139,6 +143,12 @@ def claude_session(path):
             elif not any(w in text for w in WRAPPED + PEER):
                 copied = False
                 implementer = implementer or text.lstrip().startswith(LIBRARY_ROLES)
+    if background:
+        # A background session's prompts are its launcher's — the harness's own sessions, its bases and deltas, the
+        # probes a developer starts — never the owner's typing: 30 of the 34 statements collected by 2026-09-23 were
+        # such prompts (probes, and delta hold messages with whole theory diffs in them). What the owner types into
+        # a harness session reaches the ledger through its hook (ctx_gauge owner), which the knowledge base holds.
+        return [], touched and not implementer
     return messages, touched and not implementer
 
 
@@ -171,11 +181,27 @@ def codex_session(path):
     return messages, orchestration
 
 
+def spaced(text):
+    """A statement's words, its quotation marks and line breaks left out: a file quotes it wrapped as its lines fall."""
+    return " ".join(re.sub(r"(?m)^>[ \t]?", "", text).split())
+
+
+def ledger_quotes():
+    """What the owner ledger records of the owner's words, each quotation as spaced: the knowledge base reads the ledger
+    beside this file, so a statement in both stood twice in its context (the two Codex questions of 2026-09-19 did)."""
+    try:
+        text = Path(HERE, "owner-ledger.md").read_text(errors="ignore")
+    except OSError:
+        return []
+    return [spaced(block) for block in re.findall(r"(?m)(?:^>.*\n?)+", text)]
+
+
 def uncurated():
-    """Write the owner's words that neither curated selection covers, oldest first."""
+    """Write the owner's words that neither curated selection covers and the ledger does not record, oldest first."""
     since = json.loads(Path(HERE, "owner-directions-selection.json").read_text())["reviewed_through"]
     since_epoch = calendar.timegm(time.strptime(since[:19], "%Y-%m-%dT%H:%M:%S"))
     rows, seen, goals = [], set(), set()
+    recorded = {q[:300] for q in ledger_quotes()}
     sources = [("Claude", f) for f in claude_transcripts() if os.path.getmtime(f) > since_epoch]
     sources += [("Codex", f) for f in glob.glob(CODEX_SESSIONS + "/*/*/*/rollout-*.jsonl")
                 if os.path.getmtime(f) > since_epoch]
@@ -188,13 +214,16 @@ def uncurated():
             if ts[:19] <= since[:19]:
                 continue
             t = owner_statement(text, goals, sid[:8])
+            if t and spaced(t)[:300] in recorded:
+                continue  # the ledger records it: read there
             if t and (ts[:19], t) not in seen:
                 seen.add((ts[:19], t))
                 rows.append((ts, kind, sid[:8], n, t))
     out = ["# Owner directions given since the curated ones", "",
            "The owner's typed words given after the curated owner directions were collected "
            f"({since[:16].replace('T', ' ')} UTC), verbatim and oldest first, from the Claude and Codex sessions of "
-           "this repository. Where directions conflict, the newer one holds. A statement over "
+           "this repository, less what the owner ledger records (read there). Where directions conflict, the newer "
+           "one holds. A statement over "
            f"{LONG} characters is cut after {KEEP}, because such statements are mostly pasted material; the marker "
            "names the session that holds it in full.", ""]
     for ts, kind, sid, n, t in sorted(rows):

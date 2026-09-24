@@ -144,6 +144,39 @@ def cites(proof):
     return out
 
 
+# What a theory declares by name: its facts, definitions, locales and types (the base's evidence of use,
+# select_base_load.defined_names, and what a change is told of the names it adds, v2.sources_said).
+DECLARED = re.compile(r"^\s*(?:lemma|theorem|corollary|proposition|definition|fun|function|primrec|abbreviation|"
+                      r"inductive|inductive_set|locale|datatype|type_synonym|record|consts|lift_definition|lemmas)\s+"
+                      r"(?:\((?:in\s+\w+|input|output)\)\s+)?\"?([A-Za-z][\w']*)", re.M)  # `abbreviation (input) x`: the
+# form of Development_Native_Readiness's rule patterns, which the name went unseen in (a row offering them was told
+# they were taken out, 2026-09-23)
+# A fact stated in the quoted form, `lemma name [attrs]: "statement"` (or a cartouche): what an exact restatement is
+# read from.
+STATED = re.compile(r"^\s*(?:lemma|theorem|corollary|proposition)\s+(?:\(in\s+\w+\)\s+)?([A-Za-z][\w']*)\s*"
+                    r"(?:\[[^\]\n]*\])?\s*:\s*\n?\s*(\"(?:[^\"\\]|\\.)*\"|\\<open>.*?\\<close>)", re.M | re.S)
+# A definition in its quoted form, `definition name [:: "type"] where "name args = body"`: what a definition written
+# again under another name is read from (definition_bodies).
+DEFINITION = re.compile(r'^\s*definition\s+(?:\(in\s+\w+\)\s+)?([A-Za-z][\w\']*)\s*(?:::\s*(?:"[^"]*"|\\<open>.*?\\<close>))?'
+                        r'\s*(?:where)?\s*"((?:[^"\\]|\\.)*)"', re.M | re.S)
+
+
+def definition_bodies(text, least=25):
+    """[(name, body)] for each quoted definition of `text` whose body, its arguments written by position (#0, #1, …)
+    and its spaces made one, is at least `least` characters: two definitions with one body define one thing."""
+    out = []
+    for name, eq in DEFINITION.findall(text):
+        m = re.match(r"^(.*?)\s*(?:=|\\<equiv>|\u2261)\s*(.*)$", " ".join(eq.split()))
+        if not m or not m.group(1).split() or m.group(1).split()[0] != name:
+            continue
+        body = m.group(2)
+        for i, a in enumerate(a for a in m.group(1).split()[1:] if re.match(r"^[A-Za-z][\w']*$", a)):
+            body = re.sub(rf"(?<![\w']){re.escape(a)}(?![\w'])", f"#{i}", body)
+        if len(body) >= least:
+            out.append((name, body))
+    return out
+
+
 NAMED = re.compile(r"^\s*(?:private\s+|qualified\s+)?\w+\s+(?:\([^)]*\)\s*)?([A-Za-z][A-Za-z0-9_']*)")
 
 

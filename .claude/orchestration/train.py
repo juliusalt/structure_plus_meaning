@@ -9,6 +9,7 @@ heavy slots, never task by task (the owner: "if we allow it to fallback to linea
 what did not fail lands without waiting on what did."""
 import contextlib
 import fcntl
+import hashlib
 import json
 import os
 import re
@@ -20,6 +21,7 @@ from concurrent.futures import ThreadPoolExecutor
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import v2  # noqa: E402
+import check_errors  # noqa: E402
 import finalize as fz  # noqa: E402
 
 ON = os.environ.get("ORCH_TRAINS", "1") == "1"
@@ -187,6 +189,7 @@ class Plan:
         self.members, self.stacked = list(members), stacked
         self.tree = self.head = self.out = self.log = self.tail = None
         self.ok, self.seconds, self.checked, self.kind, self.broken = None, 0, False, None, None
+        self.reused = False  # it lands on its check batch's kept build of the same content (C10)
 
 
 def assemble(plan, name, main, entries):
@@ -234,9 +237,16 @@ def check(plan, main, entries):
         v2.log(f"the train of tasks {listing(plan.members)}: its documents check {'passed' if ok else 'failed'}")
         return
     advancing = fz.ADVANCE and "incremental_check.py check" in v2.LANDING_CHECK
+    depth = len(v2.base_lineage())
+    reused = kept_build(plan.head, plan.tree) if advancing else None
+    if reused:
+        plan.out, plan.ok, plan.kind, plan.seconds, plan.tail, plan.reused = reused, True, "repository", 0, "", True
+        v2.log(f"the train of tasks {listing(plan.members)} lands on the build its check batch made: the same content, "
+               f"checked there ({reused}), adopted as the base, no check again")
+        fz.record_lineage("+".join(plan.members), plan.out, depth, 0, True)
+        return
     plan.out = os.path.join(fz.BASES, stamp) if advancing else os.path.relpath(os.path.join(LOGS, stamp), v2.PROJECT)
     command = v2.LANDING_CHECK.format(output=plan.out) + (" --advance-base" if advancing else "")
-    depth = len(v2.base_lineage())
     if advancing:
         os.makedirs(os.path.join(v2.PROJECT, fz.BASES), exist_ok=True)
     v2.log(f"the train of tasks {listing(plan.members)} is checked together with main ({command})")
@@ -248,6 +258,66 @@ def check(plan, main, entries):
            f"{round(plan.seconds)} s")
     if advancing:
         fz.record_lineage("+".join(plan.members), plan.out, depth, plan.seconds, ok)
+
+
+# A batch's check keeps its heap (incremental_check.py check --keep-heap) and is recorded by the content it checked; a
+# landing of that same content adopts it as the base instead of proving the same theories again (C10: the batches'
+# proofs took a median 186 s and 2.88 hours of 09-22's afternoon, the trains' 216 s and 2.58 hours, nearly all of it the
+# same members' theories). Isabelle cannot join two heaps, so the content must be the same: nothing landed between them.
+KEPT = os.path.join(v2.STATE, "kept-builds.json")
+KEEP_HEAPS = os.environ.get("ORCH_BATCH_KEEPS_HEAP", "1") != "0"
+PLANNING_FILES = ("HANDOFF.md", "PLANNING_LOG.md")  # the planner's state, committed with landings, read by no check
+
+
+def content_key(ref, tree=None):
+    """The content a check reads at a commit: its tree's entries by path and object, the planner's state files aside."""
+    listed = fz.git("ls-tree", "-r", ref, tree=tree).stdout.splitlines()
+    kept = [line for line in listed if line.split("\t", 1)[-1] not in PLANNING_FILES]
+    return hashlib.sha256("\n".join(kept).encode()).hexdigest() if kept else None
+
+
+def keeps_heap():
+    """Whether a batch's check keeps its heap: the repository's check, advancing the base at landings."""
+    return KEEP_HEAPS and fz.ADVANCE and "incremental_check.py check" in v2.LANDING_CHECK
+
+
+def record_build(ref, out, tree=None):
+    """A batch's accepted, kept build, by the content it checked."""
+    key = content_key(ref, tree)
+    try:
+        summary = json.load(open(os.path.join(v2.PROJECT, out, "incremental.json")))
+    except (OSError, ValueError):
+        return
+    if not key or summary.get("status") != "accepted" or not summary.get("kept_context"):
+        return
+    with open(KEPT + ".lock", "a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        try:
+            kept = json.load(open(KEPT))
+        except (OSError, ValueError):
+            kept = {}
+        kept = {k: v for k, v in kept.items() if time.time() - v.get("at", 0) < v2.BASE_KEEP}
+        kept[key] = {"out": out, "at": time.time(), "base": summary.get("base"), "context": summary["kept_context"]}
+        json.dump(kept, open(KEPT + ".tmp", "w"), indent=1)
+        os.replace(KEPT + ".tmp", KEPT)
+
+
+def kept_build(ref, tree=None):
+    """The output of a batch's kept build of exactly this content, on the base in use now, or None."""
+    key = content_key(ref, tree)
+    try:
+        entry = json.load(open(KEPT)).get(key) if key else None
+        current = json.loads(fz.active_pointer() or "{}").get("directory")
+    except (OSError, ValueError):
+        return None
+    if not entry or time.time() - entry.get("at", 0) >= v2.BASE_KEEP:
+        return None
+    if os.path.realpath(entry.get("base") or "") != os.path.realpath(current or "-"):
+        return None  # the base moved since: its build stood on another
+    if not os.path.isdir(entry.get("context") or "") or not os.path.isfile(os.path.join(v2.PROJECT, entry["out"],
+                                                                                        "incremental.json")):
+        return None
+    return entry["out"]
 
 
 def heavy(plan, entries):
@@ -274,9 +344,16 @@ def run_checks(c, plans, main, entries, deadline):
             fz.wait_for_isabelle(p.members[0], False, end=time.time())
             admitted.append(p.members[0])
             run.append(p)
+    def checked(p):
+        c.check(p, main, entries)
+        # a member checked alone with main that fails is found, and a batch tells it when its own check ends, not when
+        # the check beside it does: task 223, found at 18:48:44, waited on the 20 minutes of task 227's half, and the
+        # batch's next checks behind it (2026-09-22)
+        if c.found_at_once and p.ok is False and not p.stacked and len(p.members) == 1:
+            c.fail(p.members[0], main, p)
     try:
         with ThreadPoolExecutor(max_workers=len(run)) as pool:
-            list(pool.map(lambda p: c.check(p, main, entries), run))
+            list(pool.map(checked, run))
     finally:
         for tid in admitted:
             fz.admitted_no_more(tid)
@@ -344,8 +421,8 @@ def attribute(plan, main, entries):
         error = report.get("error") or ""
         theories = set()
         try:
-            theories |= set(FAILING_THEORY.findall(open(os.path.join(v2.PROJECT, plan.out, "proof", "build.log"),
-                                                        errors="ignore").read()))
+            log = open(os.path.join(v2.PROJECT, plan.out, "proof", "build.log"), errors="ignore").read()
+            theories |= set(FAILING_THEORY.findall(log)) | set(check_errors.unfinished(log) or ())  # a timeout's
         except OSError:
             pass
         for missing, importer in re.findall(r"Missing local theory: ([\w.]+), imported by ([\w.]+)", error):
@@ -386,7 +463,8 @@ def settle_pointer(out, before):
     now = fz.active_pointer()
     if out:
         try:
-            wanted = json.load(open(os.path.join(v2.PROJECT, out, "incremental.json"))).get("active_context")
+            summary = json.load(open(os.path.join(v2.PROJECT, out, "incremental.json")))
+            wanted = summary.get("kept_context") or summary.get("active_context")  # a batch's kept build, adopted
         except (OSError, ValueError):
             wanted = None
         try:
@@ -428,7 +506,10 @@ def record(plan, ref):
         message = (f"Retain the recipe receipts of the check {tasks} landed with" + (", and the planner's state"
                    if handoff else "")) if what else f"Retain the planner's state as {tasks} landed"
         said = fz.check_summary(plan.out) if plan.checked and plan.out else None
-        if said:  # the landing's own check, said where the landing is recorded
+        if said and plan.reused:  # its batch's check, of exactly what lands
+            message += (f"\n\nValidation: the harness's check of {tasks} together with main, in their check batch, of "
+                        f"exactly the content that lands (nothing landed between them), {said}; its build is the base.")
+        elif said:  # the landing's own check, said where the landing is recorded
             message += (f"\n\nValidation: the harness's check of {tasks} together with main, exactly as it lands, "
                         f"{said}.")
         c = fz.git("commit", "-q", "-m", message, "--", *paths)
@@ -473,7 +554,8 @@ def land(plan, main, entries, before):
         fz.record_pending_commit(files, ref, v2.PROJECT)
         fields = dict(commit=ref, commit_error=None, pushed=pushed, train=plan.members)
         if plan.checked:
-            fields.update(landing_check=True, landing_seconds=round(plan.seconds))
+            fields.update(landing_check=True, landing_seconds=round(plan.seconds),
+                          **({"landing_reused": plan.out} if plan.reused else {}))
         fz.outcome(tid, **fields)
         v2.tree_checked(f"task {tid}", "its commit")
         v2.worktree_gone(tid)
@@ -483,7 +565,8 @@ def land(plan, main, entries, before):
     if len(plan.members) == 1:
         fz.say(v2.committed, plan.members[0], shown, None)
     else:
-        how = (f"one check of the {len(plan.members)} with main, {round(plan.seconds / 60) or 1} min" if plan.checked
+        how = ("no check of their own: their check batch's build of the same content, adopted" if plan.reused
+               else f"one check of the {len(plan.members)} with main, {round(plan.seconds / 60) or 1} min" if plan.checked
                else "checked together")
         fz.say(v2.landed_together, plan.members, shown, how)
     return None
@@ -851,8 +934,11 @@ class Batch:
         stamp = time.strftime("%Y%m%d-%H%M%S") + "-batch" + "-".join(plan.members[:6])
         os.makedirs(BATCH_LOGS, exist_ok=True)
         plan.log = os.path.join(BATCH_LOGS, stamp + ".log")
-        plan.out = os.path.relpath(os.path.join(BATCH_LOGS, stamp), v2.PROJECT)
-        command = v2.LANDING_CHECK.format(output=plan.out)
+        keep = keeps_heap()  # in the lasting store, as a train's: a heap is bound to its path (C10)
+        plan.out = os.path.join(fz.BASES, stamp) if keep else os.path.relpath(os.path.join(BATCH_LOGS, stamp), v2.PROJECT)
+        if keep:
+            os.makedirs(os.path.join(v2.PROJECT, fz.BASES), exist_ok=True)
+        command = v2.LANDING_CHECK.format(output=plan.out) + (" --keep-heap" if keep else "")
         v2.log(f"the work of task{'s' if len(plan.members) > 1 else ''} {listing(plan.members)} is checked together "
                f"with main ({command})")
         ok, plan.seconds, plan.tail = fz.run_logged(plan.members[0], command, plan.tree, plan.log)
@@ -861,6 +947,8 @@ class Batch:
             plan.ok, plan.broken = None, plan.tail
         v2.log(f"the check of task{'s' if len(plan.members) > 1 else ''} {listing(plan.members)}: "
                f"{'passed' if ok else 'refused by the base' if plan.broken else 'failed'} in {round(plan.seconds)} s")
+        if ok and keep:
+            v2.softly("the batch's kept build", record_build, plan.head, plan.out, plan.tree)
 
     def heavy(self, plan, entries):
         return True

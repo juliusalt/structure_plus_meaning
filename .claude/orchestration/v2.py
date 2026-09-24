@@ -38,6 +38,9 @@ Commands of the sessions (the caller is known from CLAUDE_CODE_SESSION_ID):
   v2.py result ID                record the result written to .build/tasks/ID/result.md
   v2.py end                      end the turn with the call it is in, where it may end, rather than with a message
   v2.py bring-main               a task in its own tree: main (what landed since the tree was made) into its branch
+  v2.py measuring --exclusive|--shared TEXT   a producing session's timing: --exclusive holds the whole machine
+                                 (queued until it is empty); --shared runs as any run of its kind, holding nothing, and
+                                 is told the machine's load while it ran — the one or the other, said each time
   v2.py check                    a task in its own tree: the repository's check of its work, with main and every other
                                  task's waiting, once for all (train.py's batch); parked until its result comes
   v2.py propose ID FILE          the task designer: its tasks and where to place them (JSON); the planner places them
@@ -45,8 +48,11 @@ Commands of the sessions (the caller is known from CLAUDE_CODE_SESSION_ID):
   v2.py proposal ID [KEY...]     what placing a brief's proposal needs, or those of its briefs whole
   v2.py edit FILE                the planner: an edit of the graph in one call — tasks made, rewritten and deleted,
                                  dependencies set or taken out, the order — judged whole, written all or nothing
+  v2.py follow-up TASK:ITEM,...  the planner: a draft brief of reviews' follow-ups under its drafts — copied verbatim,
+                                 the names they give among its Inputs, the rest marked for it (--kind build: not a fix)
   v2.py verdict ID accept|reject --file FILE   the reviewer (or the planner, for design and investigation)
-  v2.py queue ID...              the planner: the order in which tasks are to be done
+  v2.py queue [--drop-unnamed] ID...  the planner: these first, in this order, the other queued tasks after them;
+                                 --drop-unnamed takes every queued task the order does not name out of the queue
   v2.py after ID TASK            the planner: the parked task ID continues when TASK has landed (`none`: now)
   v2.py blockers ID ID...|none   the planner: what task ID waits on, set whole (TaskUpdate only adds)
   v2.py drop ID...               the planner: stop whatever works on those tasks
@@ -59,6 +65,7 @@ Harness:
       --fresh: leave the knowledge base behind (the next is built from HANDOFF.md, the ledger and the owner's words)
       and charge the first planner with taking stock before it queues anything
 """
+import collections
 import contextlib
 import fcntl
 import glob
@@ -66,6 +73,7 @@ import hashlib
 import json
 import os
 import re
+import select
 import shlex
 import shutil
 import subprocess
@@ -148,7 +156,7 @@ PRODUCING_KINDS = ("design", "investigate", "build", "fix")
 KINDS = PRODUCING_KINDS + ("brief", "review")
 BRIEF_FIELDS = ("Kind", "Serves", "Deliverable", "Acceptance", "Inputs", "Plan", "Size")
 # every field of the brief's form (protocols/_brief.md): a field's text runs to the next one
-FORM_FIELDS = BRIEF_FIELDS + ("Reviews", "Decided", "Yours", "Planner's", "While checks run")
+FORM_FIELDS = BRIEF_FIELDS + ("Reviews", "Decided", "Yours", "Planner's", "While checks run", "From the review")
 
 RESULT_SECTIONS = ("Produced", "Decisions", "Plan as followed", "Remains")
 PLANNER_SECTIONS = ("Graph", "Decisions", "Delivered", "Open", "Now")
@@ -174,9 +182,18 @@ ROLES = {
     "implementer": dict(origin="high", settings="worker-settings.json", prefix="implement", statements=False, graph=False),
     "fixer": dict(origin="high", settings="worker-settings.json", prefix="fix", statements=False, graph=False),
     "consultant": dict(origin=None, settings=None, prefix="ask", statements=None, graph=False),
+    # a role's reasoning layer (role_layer_care, behind state/role-layers): a fork of the role's base that reasons once
+    # over the run's evidence of the role, which the role's sessions then fork; it uses no tool
+    "role-layer": dict(origin=None, settings="worker-settings.json", prefix="layer", statements=False, graph=False),
+    # a role's churn: a fork of its reasoning layer holding the base's delta — what changed since the medium layer —
+    # so that the role layer outlives every delta rebuild (the four layers' order, role_churn_care)
+    "role-churn": dict(origin=None, settings="worker-settings.json", prefix="churn", statements=False, graph=False),
+    "base-reasoning": dict(origin=None, settings="worker-settings.json", prefix="reference", statements=False, graph=False),
 }
 PRODUCER = {"design": "designer", "investigate": "investigator", "build": "implementer", "fix": "fixer"}
 PRODUCING, SUPPORTING = set(PRODUCER.values()), {"task-designer", "reviewer"}
+LAYERABLE = PRODUCING | SUPPORTING  # the roles that fork a base, each of which may have a reasoning layer
+LAYER_ROLES = ("role-layer", "role-churn", "base-reasoning")  # reasoning/holding sessions use no tool
 GRAPH_SETTINGS = "planner-settings.json"  # the one settings file that joins the shared task list (the graph):
 # every session started with it sees the others' edits to it, injected into its context. Only the roles that edit
 # the graph are given it; every other session's task list is its own, named by its own session.
@@ -271,11 +288,19 @@ HOLD_MAX = int(os.environ.get("ORCH_HOLD_MAX", 3 * 3600))  # an author held for 
 # episodes, each a fork of the knowledge base at about 510K, because an episode was a session; one planner that lives
 # across its events costs one such fork for all of them, and reads each as it stands (the owner, 2026-09-20).
 KB_MARGIN = 50_000  # a fresh knowledge base loading within this of its limit asks for condensing and a base rebuild
-# The window: the largest request the API has accepted (an implementer's, 972,479 tokens); the notice to end the
-# piece of work comes at SOFT, the end mark at HARD (ctx_gauge.py).
-CEILING = int(os.environ.get("ORCH_CEILING", 972_000))
-SOFT = int(os.environ.get("ORCH_SOFT", CEILING - 65_000))
-HARD = int(os.environ.get("ORCH_HARD", CEILING - 30_000))
+# The window, as Claude Code 2.1.280 keeps it for Claude Opus 5.5 (read from its source, 2026-09-23): a 1M context, of
+# which it holds back 20K for each reply (the API refuses a request whose input and max_tokens exceed the window) and
+# sends nothing beyond that less 3K — 977K. Auto-compact is off in every settings file: on, it compacted at 967K, and
+# the runs of 09-19/23 stopped there (their largest requests were 966.5K). The notice to end the piece of work comes
+# WRAP_UP below it (the owner, 2026-09-23: "leave 30k margin for wrap up"); past HARD there is room for one small step
+# only (a result's record), and a session idle there is ended rather than resumed (watchdog). window_watch.py says
+# when any of this stops holding: a refusal, a compaction, a margin a session outgrew, another Claude Code version.
+CLAUDE_CODE_LIMITS = "2.1.280"  # the Claude Code version the ceiling was read from
+CEILING = int(os.environ.get("ORCH_CEILING", 977_000))
+WRAP_UP = int(os.environ.get("ORCH_WRAP_UP", 30_000))
+SOFT = int(os.environ.get("ORCH_SOFT", CEILING - WRAP_UP))
+LAST_STEP = 10_000
+HARD = int(os.environ.get("ORCH_HARD", CEILING - LAST_STEP))
 # The room a fork of the knowledge base needs before its notice: a fork starts with the knowledge base's whole context.
 # Planning episodes and consultations fork it, so it is rebuilt before it leaves them less than their room. Estimates,
 # to be measured. A designer forks the middle base (xhigh), which holds the working frontier a design needs (the owner,
@@ -365,6 +390,52 @@ def log(text):
     os.makedirs(STATE, exist_ok=True)
     with open(os.path.join(STATE, "v2.log"), "a") as f:
         f.write(time.strftime("%Y-%m-%dT%H:%M:%S ") + text + "\n")
+
+
+SLOW = float(os.environ.get("ORCH_SLOW", 2.0))  # seconds past which a hook or a session's command says where its time went
+
+
+def process_age():
+    """Seconds since this process started — the interpreter's start and the harness's compilation included, which no
+    clock inside the module sees; 0.0 where /proc cannot say."""
+    try:
+        ticks = int(open("/proc/self/stat").read().rsplit(")", 1)[1].split()[19])
+        return max(0.0, float(open("/proc/uptime").read().split()[0]) - ticks / os.sysconf("SC_CLK_TCK"))
+    except (OSError, ValueError, IndexError):
+        return 0.0
+
+
+WATCH = []  # the stopwatch of this process, when one runs (lap)
+
+
+class Stopwatch:
+    """Where a hook's or a session's command's time went, said in the log when the whole passes SLOW. A theory change
+    took a median 0.8 s with no heavy run going and 7.7 s with one, 13.1 s with two, while every other change stayed
+    at about half a second (09-21/22, 478 theory changes, 1.4 hours of the sessions' tool time) — and the parts that
+    can be timed apart ran in hundredths of a second on the repository: the next run says which part it is."""
+
+    def __init__(self, what):
+        self.what, self.parts, self.last = what, [("start", process_age())], time.time()
+        WATCH[:] = [self]
+
+    def lap(self, name):
+        now = time.time()
+        self.parts.append((name, now - self.last))
+        self.last = now
+
+    def done(self, what=None):
+        whole = sum(t for _, t in self.parts) + (time.time() - self.last)
+        if whole >= SLOW:
+            parts = [f"{n} {t:.1f}" for n, t in self.parts + [("the rest", time.time() - self.last)] if t >= 0.05]
+            what = what() if callable(what) else what  # named only when it is said: a guard runs on every call
+            log(f"slow: {what or self.what} took {whole:.1f} s" + (" — " + ", ".join(parts) if parts else ""))
+        WATCH[:] = []
+
+
+def lap(name):
+    """A lap of this process's stopwatch, if one runs."""
+    if WATCH:
+        WATCH[0].lap(name)
 
 
 def iso(epoch=None):
@@ -675,14 +746,182 @@ def layer_record(who):
         base = json.load(open(os.path.join(STATE, f"{who}-base.json")))
     except (OSError, ValueError):
         return None
+    if layer.get("parts"):
+        chain = layer["parts"]
+        # A published chain owns its complete root until its replacement is ready. A candidate stable reload does
+        # not invalidate the old prefix while its suffix is still being built.
+        if chain[0].get("sessionId") != layer.get("base") or chain[-1].get("sessionId") != layer.get("sessionId"):
+            return None
+        if any(b.get("parent") != a.get("sessionId") for a, b in zip(chain, chain[1:])):
+            return None
+        return layer
     return layer if layer.get("base") == base.get("sessionId") else None
 
 
+def deltas_on(who):
+    """Whether a base's roles fork its delta (notes/plan-delta-layer.md): the bases named in state/deltas, one a line,
+    or in ORCH_DELTAS — switched there, so that a delta built by hand is asked its canary question before any fork
+    holds it (notes/plan-delta-layer-tasks.md, task 8)."""
+    named = os.environ.get("ORCH_DELTAS")
+    if named is None:
+        try:
+            named = open(os.path.join(STATE, "deltas")).read()
+        except OSError:
+            named = ""
+    return who in named.replace(",", " ").split()
+
+
+def delta_record(who):
+    """The recorded delta of a base, or None: one standing on another layer than the recorded one (refreshed since),
+    or on a stable base rebuilt since, is an orphan, and nothing forks it."""
+    layer = layer_record(who)
+    try:
+        delta = json.load(open(os.path.join(STATE, f"{who}-delta.json")))
+    except (OSError, ValueError):
+        return None
+    return delta if layer and delta.get("layer") == layer.get("sessionId") and delta.get("base") == layer.get("base") \
+        else None
+
+
+def node_id(node):
+    """A text of the delta's chain, by its id; a message of a chain from before the texts, by its session."""
+    return (node or {}).get("id") or (node or {}).get("sessionId")
+
+
+def chain_top(d):
+    """The id of the chain's last text (the record's `top`); a record from before the texts named it by its session."""
+    return (d or {}).get("top") or (d or {}).get("sessionId")
+
+
+def chain_of(d):
+    """The chain's texts in order; a record from before the texts without a stack is its own one message."""
+    return (d or {}).get("stack") or ([d] if (d or {}).get("sessionId") else [])
+
+
+def session_len(d):
+    """How many of the chain's texts its session holds, or 0 without one: recorded when it was made
+    (base_stack.materialize); before the texts every message was a session, and its top held them all."""
+    if not (d or {}).get("sessionId"):
+        return 0
+    if "session_len" in d:
+        return int(d["session_len"] or 0)
+    ids = [n.get("sessionId") for n in chain_of(d)]
+    return ids.index(d["sessionId"]) + 1 if d["sessionId"] in ids else len(ids)
+
+
+def chain_session(who):
+    """The delta's record while its session holds a beginning of the chain standing — what a session over it holds and
+    what it lacks is counted from — or None. A chain begun anew holds no session until one is made for it."""
+    d = delta_record(who)
+    if not d or not session_len(d):
+        return None
+    begun = d.get("session_base")
+    return d if begun is None or begun == node_id(chain_of(d)[0]) else None
+
+
+def delta_uncut(who):
+    """The tokens changed since the chain's last text and not cut into one yet (the watchdog's measure, kept while it is
+    about the chain standing: its top text, or the layer before it has one), or 0."""
+    try:
+        p = json.load(open(os.path.join(STATE, f"{who}-delta-pending.json")))
+    except (OSError, ValueError):
+        return 0
+    d = delta_record(who)  # measured by the watchdog for a base on deltas, or one asked for by hand
+    top = chain_top(d) if d else (layer_record(who) or {}).get("sessionId")
+    return int(p.get("tokens") or 0) if top and p.get("top") == top else 0
+
+
+def chain_lacking(who, stack_base=None, held=0):
+    """(the chain's texts, and their tokens with what is not cut yet) that a holder of its first `held` texts lacks —
+    all of them when what it holds began another chain (`stack_base`, the first text it holds)."""
+    stack = chain_of(delta_record(who) if deltas_on(who) else None)
+    if held and stack and stack_base != node_id(stack[0]):
+        held = 0
+    nodes = stack[held:]
+    return nodes, sum(int(n.get("tokens") or 0) for n in nodes) + delta_uncut(who)
+
+
+def cut_text(who):
+    """Cut what changed since the chain's last text into a text of its own (base_stack.cut): local and deterministic,
+    done when something is about to take the chain in (the owner, 2026-09-24: eager on deterministic computation is
+    fine; a cut when taken leaves fewer superseded forms than one at every change). The new node, or None."""
+    if not deltas_on(who) or not layer_record(who):
+        return None
+    import base_stack
+    return base_stack.cut(who)
+
+
+def chain_carried(who, even_cold=False, room=None):
+    """(the texts a session about to fork base `who` is to hold in its own first message, the fields recording what it
+    holds of the chain) — the chain's texts after those the session it forks holds (base_file: the delta's session, or
+    the layer before one is made), what changed cut first. A judging role's reasoning layer and the knowledge base take
+    the chain in this way: no shared session is made for them (the owner, 2026-09-24: sessions only when something is
+    about to start from them), and each holds the changes it reasons over. Past DELTA_ARG nothing is carried: its forks
+    are told what changed. ("", {}) without a chain."""
+    if not deltas_on(who):
+        return "", {}
+    softly(f"the {who} delta's text", cut_text, who)
+    d = delta_record(who)
+    stack = chain_of(d)
+    if not stack:
+        return "", {}
+    forks_session = base_file(who).endswith("-delta.json") and (even_cold or not entry_cold(who))
+    held = session_len(d) if forks_session and chain_session(who) else 0
+    nodes, text = stack[held:], ""
+    with contextlib.suppress(OSError, KeyError, TypeError):
+        text = "\n".join(open(node["text"], errors="ignore").read() for node in nodes)
+    if nodes and (not text or len(text.encode()) > (DELTA_ARG if room is None else room)):
+        nodes, text = [], ""
+    holds = stack[:held + len(nodes)]
+    parts = {}
+    for node in holds:
+        for part, n in (node.get("parts") or {}).items():
+            parts[part] = parts.get(part, 0) + n
+    total = sum(v for v in parts.values() if v > 0)
+    last = holds[-1] if holds else {}
+    # a text's digest; a chain from before the texts recorded its top's on the record alone
+    digest = last.get("digest") or (d.get("digest") if last and node_id(last) == chain_top(d) else None)
+    fields = dict(stack_base=node_id(stack[0]), stack_len=len(holds), holds_node=node_id(last) if nodes else None,
+                  digest=digest, delta_sid=node_id(last) or None,
+                  delta_size=sum(int(n.get("tokens") or 0) for n in holds),
+                  carried_tokens=sum(int(n.get("tokens") or 0) for n in nodes),
+                  holds_shares={p: v / total for p, v in parts.items() if v > 0} if total else {},
+                  holds_superseded=sum(int(n.get("superseded") or 0) for n in holds),
+                  holds_old_forms=d.get("old_forms") or {},
+                  layer_sid=(layer_record(who) or {}).get("sessionId"))
+    if nodes and not held:
+        # every part's changes written again in its own message (watchdog.carried_parts), as a churn built whole does
+        written = {}
+        for node in nodes:
+            for part, n in (node.get("parts") or {}).items():
+                written[part] = written.get(part, 0) + n
+        fields["whole_parts"] = written
+    if not text:
+        return "", fields
+    # a section of its own in the message ({CHANGES}, before what follows it), ending in the blank line it takes
+    return ("## What the library you hold has changed since it loaded\n\n"
+            f"In {len(nodes)} message(s) below, each giving the current form of every part it names and superseding what "
+            "you hold of those parts (a later message what an earlier one gave); everything else you hold is current. "
+            "Nothing here asks for work.\n\n" + text.rstrip() + "\n\n"), fields
+
+
+def holding_fields(s, whole=None):
+    """What a session that took the chain's texts in its own message carries of it, for its forks and the rules that
+    weigh them (the churn's own, at its seal): its origin's delta and the texts it holds over it."""
+    return dict(delta_tokens=int(s.get("delta_tokens") or 0) + int(s.get("carried_tokens") or 0),
+                delta_shares=s.get("holds_shares") or {}, superseded_tokens=int(s.get("holds_superseded") or 0),
+                old_forms=s.get("holds_old_forms") or {})
+
+
 def base_file(who):
-    """What a role of this base forks: its frontier layer when one is recorded, the stable base otherwise. A fork of
-    the layer reads the whole prefix under it, the stable base included, from cache — measured on 2026-09-20: a fork
-    of the sealed knowledge base (a layer over `max` in all but name) read 538,051 of its 538,044 tokens and wrote 62
-    — so the layer is what everything forks and what is pinged."""
+    """What a role of this base forks: its delta's session when the base is switched to deltas and one has been made on
+    its layer, its frontier layer when one is recorded, the stable base otherwise. A fork reads the whole prefix under
+    it from cache — measured on 2026-09-20: a fork of the sealed knowledge base (a layer over `max` in all but name)
+    read 538,051 of its 538,044 tokens and wrote 62 — so what everything forks is what is pinged. The delta's texts
+    alone are no session (base_stack.cut): until one is made for them (base_stack.materialize) the roles fork the
+    layer and are told what changed."""
+    if deltas_on(who) and (delta_record(who) or {}).get("sessionId"):
+        return os.path.join(STATE, f"{who}-delta.json")
     if layer_record(who):
         return os.path.join(STATE, f"{who}-layer.json")
     return os.path.join(STATE, f"{who}-base.json")
@@ -694,16 +933,115 @@ def base_record(who):
     for name in (who,) + FALLBACK.get(who, ()):
         try:
             b = json.load(open(base_file(name)))
-            return name, {"sid": b["sessionId"], "model": b["model"], "effort": b["effort"], "flags": b.get("flags")}
+            return name, {"sid": b["sessionId"], "model": b["model"], "effort": b["effort"], "flags": b.get("flags"), "context": b.get("context")}
         except (OSError, ValueError, KeyError):
             continue
     return None, None
 
 
+def delta_shares(who, session=False):
+    """{part: share} of the standing chain's texts by the part holding each change (base_stack.cut's counts) — of those
+    its session holds (`session`) —, or {} for a delta recorded before its parts were counted."""
+    d = delta_record(who) or {}
+    parts = (d.get("session_parts") if session and "session_parts" in d else d.get("parts")) or {}
+    total = sum(v for v in parts.values() if v > 0)
+    return {p: v / total for p, v in parts.items() if v > 0} if total else {}
+
+
+def top_rider(origin, sessions=None, role=None):
+    """The base a session forks itself — the base (what base_file gives: the delta's session, or the layer until one is
+    made) or its medium layer — or None: such a fork lacks the chain's texts past what it forks and what is not cut yet,
+    and only the delta's next session relieves it (watchdog.pending_paid). A session that takes the texts in its own
+    message is none: the knowledge base (its planners are relieved by its own integration, kb_texts), a role's
+    reasoning layer and churn (by the churn's rule), and their forks with them — with the chain's sessions made only
+    for the forks that need one (the owner, 2026-09-24)."""
+    if role in LAYER_ROLES or role == "kb":
+        return None
+    if origin in BASES:
+        return origin
+    base = base_part(origin)
+    return base if base and origin == f"{base}:layer" else None
+
+
+def stands_on(origin, sessions):
+    """The base whose chain a session's origin descends from — the base itself, one of its parts, or a session forked
+    from them (the knowledge base, a role's reasoning layer or its churn, a planner, a consulted session) — or None:
+    the base is in use while any of them starts (warm_daemon.sh's idle rule)."""
+    for _ in range(64):
+        if origin in BASES:
+            return origin
+        if base_part(origin):
+            return base_part(origin)
+        s = sessions.get(origin or "")
+        if not s:
+            return None
+        origin = s.get("origin")
+    return None
+
+
+def delta_pending(who):
+    """What a fork of the base itself lacks of what changed (top_rider): the chain's texts past what its session holds —
+    all of them while the roles fork the layer — and what is not cut yet. Each such fork records it, and the watchdog
+    weighs what that has cost them against making the session (watchdog.pending_paid)."""
+    d = chain_session(who) if base_file(who).endswith("-delta.json") else None
+    return chain_lacking(who, node_id(chain_of(d)[0]) if d else None, session_len(d))[1]
+
+
+def delta_size(who):
+    """The tokens a base's standing delta adds to its layer — what every request of a fork of it carries beyond the
+    layer, and what a refresh of the layer takes back — or 0 when its roles fork the layer itself."""
+    d, layer = delta_record(who), layer_record(who)
+    if not d or not layer or not base_file(who).endswith("-delta.json"):
+        return 0
+    return max(0, int(d.get("context") or 0) - int(layer.get("context") or 0))
+
+
+def medium_record(who):
+    """(name, record) of a base's medium layer — its frontier layer, under the churn — named `WHO:layer`, or its stable
+    base when it has none: what a role's reasoning layer forks (the four layers in the order of their change: the stable
+    base, the medium layer, the role layer, the churn)."""
+    for base in (who,) + FALLBACK.get(who, ()):  # as base_record falls back while a base is not built
+        for part, name in (("layer", f"{base}:layer"), ("base", base)):
+            if part == "layer" and not layer_record(base):
+                continue
+            try:
+                b = json.load(open(os.path.join(STATE, f"{base}-{part}.json")))
+                return name, {"sid": b["sessionId"], "model": b["model"], "effort": b["effort"], "flags": b.get("flags"), "context": b.get("context")}
+            except (OSError, ValueError, KeyError):
+                continue
+    return None, None
+
+
+def base_part(name):
+    """The base a part's name is of — the base itself (`high`), its medium layer (`high:layer`), its stable reference
+    (`high:stable`, `high:next-stable`) or a named part of its chain (`high:reasoning`) — or None for a session's name."""
+    base = (name or "").split(":", 1)[0]
+    return base if base in BASES and (name == base or re.fullmatch(re.escape(base) + r":[a-z][a-z0-9_-]*", name)) \
+        else None
+
+
 def origin_of(origin):
-    """(name, record) of what a fork starts from: a base by its name, "kb" for the knowledge base, or a session."""
+    """(name, record) of what a fork starts from: a base by its name, a base's part (`WHO:layer`, `WHO:stable`,
+    `WHO:next-stable`, a named part of its published chain), "kb" for the knowledge base, or a session."""
     if origin in BASES:
         return base_record(origin)
+    if base_part(origin):
+        base, part = origin.split(":", 1)
+        if part == "layer":
+            return medium_record(base)
+        if part in ("stable", "next-stable"):
+            try:
+                b = json.load(open(os.path.join(STATE, f"{base}-base-next.json" if part == "next-stable"
+                                                else f"{base}-base.json")))
+            except (OSError, ValueError):
+                return None, None
+        else:
+            import base_stack
+            b = base_stack.record(base, part)
+        if not b:
+            return None, None
+        return origin, {"sid": b["sessionId"], "model": b["model"], "effort": b["effort"], "flags": b.get("flags"),
+                        "context": b.get("context")}
     st = peek()
     name = st["kb"] if origin == "kb" else origin
     rec = st["sessions"].get(name or "")
@@ -722,19 +1060,34 @@ def hit(name):
     plan-42's 95 requests kept kb-10 looking warm while its entry expired (resumed at 12:54, 527K written anew), and
     design-171's the xhigh layer (review-129.2 and 133.2 forked it at 13:45 and 13:48, 235K each), 2026-09-22 — none
     was pinged, marked warm. A fork's start marks its origin, whose entry its first request reads (start)."""
-    if name in BASES:
+    if name in BASES or base_part(name):
+        part = "base" if name in BASES else name.split(":", 1)[1]  # only the entry actually read
         for mark in ("hit", "used"):
-            path = os.path.join(STATE, f"{name}-base.{mark}")
+            path = os.path.join(STATE, f"{base_part(name)}-{part}.{mark}")
             open(path, "a").close()
             os.utime(path)
+        # Aliases of the very same entry may be marked together; no shorter ancestor is inferred warm.
+        sid = (origin_of(name)[1] or {}).get("sid")
+        for node in (layer_record(base_part(name)) or {}).get("parts", []):
+            if node.get("sessionId") == sid:
+                path = os.path.join(STATE, f"{base_part(name)}-{node['part']}.hit")
+                open(path, "w").write(sid)
+                for marks in ("entry-hits", "entry-used"):  # a fork's read is a use of the entry (worth_keeping)
+                    os.makedirs(os.path.join(STATE, marks), exist_ok=True)
+                    own = os.path.join(STATE, marks, sid)
+                    open(own, "a").close()
+                    os.utime(own)
         return
     os.makedirs(os.path.join(STATE, "hits"), exist_ok=True)
+    with contextlib.suppress(OSError):
+        os.remove(hits(name) + ".miss")  # its request wrote its entry anew: it is pinged again from here
     open(hits(name), "a").close()
     os.utime(hits(name))
 
 
 def hit_age(name):
-    path = os.path.join(STATE, f"{name}-base.hit") if name in BASES else hits(name)
+    path = os.path.join(STATE, f"{name}-base.hit") if name in BASES else \
+        os.path.join(STATE, f"{base_part(name)}-{name.split(':', 1)[1]}.hit") if base_part(name) else hits(name)
     try:
         return time.time() - os.path.getmtime(path)
     except OSError:
@@ -743,6 +1096,13 @@ def hit_age(name):
 
 def warm(name):
     return hit_age(name) < WARM_MAX
+
+
+def entry_cold(name):
+    """Whether an entry is known to be cold: marked read once, and not within WARM_MAX since (never marked: unknown)."""
+    path = os.path.join(STATE, f"{name}-base.hit") if name in BASES else \
+        os.path.join(STATE, f"{base_part(name)}-{name.split(':', 1)[1]}.hit") if base_part(name) else hits(name)
+    return os.path.exists(path) and hit_age(name) >= WARM_MAX
 
 
 def stale(who, tree=None, since=None):
@@ -760,7 +1120,33 @@ def stale(who, tree=None, since=None):
 def stale_of(name, who, tree=None):
     """What has changed since the load this session actually holds — measured against the layer it forked, not the
     one standing now."""
-    return stale(who, tree, (peek()["sessions"].get(name) or {}).get("origin_sid"))
+    sessions = peek()["sessions"]
+    rec = sessions.get(name) or {}
+    if rec.get("holds_node") and os.path.exists(os.path.join(STATE, f"layer-{rec['holds_node']}-manifest.json")):
+        # it takes the chain's texts to this one in its own first message (chain_carried): what changed after them
+        return stale(who, tree, rec["holds_node"])
+    for _ in range(5):
+        # a fork of a session — a planner of the knowledge base, a consultation of an author, a continuation (C13) —
+        # holds that session's load: its origin's sid names no layer, and manifest.py fell back to the layer standing
+        # now, which after a refresh is not what the fork holds
+        if rec.get("origin") not in sessions:
+            break
+        up = sessions[rec["origin"]]
+        if up.get("snapshot"):  # a role's churn holds the files as its delta held them: counted from there
+            return stale(who, tree, up.get("sid"))
+        rec = up
+    return stale(who, tree, rec.get("origin_sid"))
+
+
+def base_model():
+    """The model every base is built on (base-model, read by base.sh as well), with Claude Code's context suffix; every
+    fork takes its origin's model, so a base built on another is loaded again (base_stack.reference)."""
+    return open(os.path.join(HERE, "base-model")).read().strip()
+
+
+def api_model(model):
+    """The model's name as the API reports it in a transcript (`claude-opus-5-5`), without Claude Code's `[1m]`."""
+    return re.sub(r"\[[^\]]*\]$", "", model or "")
 
 
 def session_flags():
@@ -805,6 +1191,18 @@ def fresh_name(st, prefix, key):
 UNSET = object()
 
 
+def first_start(key):
+    """Whether no session has taken task `key` up yet: the moment its size is checked against its room (launch)."""
+    t = peek()["tasks"].get(str(key)) or {}
+    return not (t.get("session") or t.get("reviewed_by") or t.get("reviewing"))
+
+
+def carried_context(rec):
+    """The context a fork of `rec` starts with: its measured context, and for a reasoning layer the thinking of its
+    last request as well, which its own measure (the input of that request) does not include (last_output)."""
+    return int(rec.get("context") or 0) + int(rec.get("thought") or 0)
+
+
 def launch(role, key, prompt_of, tree=UNSET, **fields):
     """Fork a session for a piece of work: claim it in the state, fork its origin (never a cold session), confirm it.
     prompt_of(name) gives its first message; `tree` is where it is started, which the caller wrote that message from
@@ -821,12 +1219,19 @@ def launch(role, key, prompt_of, tree=UNSET, **fields):
     age = age_of(mark)
     if age is not None and age < RETRY:
         return None
-    origin = fields.pop("origin", None) or spec["origin"]
+    origin = fields.pop("origin", None) or role_churn_of(role) or role_layer_of(role) or spec["origin"]
+    even_cold = fields.pop("even_cold", False)  # a judging role's reasoning stands on the delta, warm or not
+    actual = (base_record(origin)[0] or origin) if origin in BASES else None  # the base standing for it (FALLBACK)
+    if actual and base_file(actual).endswith("-delta.json") and entry_cold(actual) and not even_cold:
+        # the shared delta is kept warm only while a role forks it (shared_part_forked): gone cold, a fork of it would
+        # write its whole prefix; the medium layer, which the delta's builds and its pings keep warm, and what changed
+        # since it (stale_of) cost a fork the changed files read again instead
+        origin = f"{actual}:layer"
     who, org = origin_of(origin)
     if not org:
         log(f"no {role} started for {key}: its origin {origin} does not exist")
         return None
-    if who not in BASES and not warm(who):
+    if not base_part(who) and not warm(who):
         log(f"no {role} started for {key}: {who} is cold")
         return None
     if other_tools(org):
@@ -835,12 +1240,101 @@ def launch(role, key, prompt_of, tree=UNSET, **fields):
                  + (f"build it again (base.sh {who} build, then seal)" if who in BASES else
                     "it goes when the base under it is built again"))
         return None
+    given = int(fields.get("relations_tokens") or 0)
+    if role in PRODUCING | SUPPORTING and role != "fixer" and org.get("context") and first_start(key):
+        # The brief's Size was planned against a room; the prefix it actually forks, and what it is given of its own
+        # relations, can leave less. Checked at the task's first start only: a fix works on built work (its size is
+        # the fix's, not the brief's), and a task already begun is continued, never handed back half made.
+        requested = size_of((read_task(str(key)) or {}).get("description", ""))
+        room = max(0, SOFT - carried_context(org) - PROTOCOL_ROOM - given)
+        if requested and requested > room:
+            reason = (f"Task {key} needs about {requested // 1000}K, but the actual prefix {who}"
+                      + (f" and the {given // 1000}K of its own relations it is given" if given else "")
+                      + f" leave {room // 1000}K. Re-plan its size against the built context; no required base "
+                      "material was dropped.")
+            with state() as st:
+                task = st["tasks"].setdefault(str(key), {})
+                if task.get("context_refusal") != reason:
+                    task.update(stage="planner", context_refusal=reason)
+                    event(st, "the harness", reason)
+            log(reason)
+            return None
     settings = fields.pop("settings", None) or spec["settings"] or org.get("settings")
     with state() as st:
         name = fresh_name(st, spec["prefix"], key)
         st["sessions"][name] = dict(name=name, role=role, origin=who, origin_sid=org["sid"], model=org["model"],
-                                    effort=org["effort"], settings=settings, state="starting", starting=time.time(),
+                                    effort=org["effort"], settings=settings, origin_context=carried_context(org),
+                                    state="starting", starting=time.time(),
                                     flags=" ".join(session_flags()), **fields)
+        rides = top_rider(who, st["sessions"], role)
+        standing = stands_on(who, st["sessions"])
+        if standing:
+            # the base is in use while sessions standing on it start — a planner through the knowledge base, a role
+            # through its layer or churn — not only while one forks it itself: the daemon lets a base go cold after
+            # ORCH_WARM_IDLE_MAX without use (warm_daemon.sh), and max, which planners reach through the knowledge base
+            # alone, went cold at 10:00 in the simulation of 09-21/22 with a planner every hour, its whole chain and the
+            # knowledge base built again at 15:52 for the next message
+            with contextlib.suppress(OSError):
+                path = os.path.join(STATE, f"{standing}-base.used")
+                open(path, "a").close()
+                os.utime(path)
+        if rides and not fields.get("holds_node") and delta_pending(rides):
+            # what it lacks of what changed past what it forks, which the delta's next session relieves (pending_paid)
+            st["sessions"][name]["pending_tokens"] = delta_pending(rides)
+        if who in BASES and delta_size(who):
+            # what each of its requests carries of the delta's session: the watchdog weighs it against a refresh
+            d = delta_record(who) or {}
+            st["sessions"][name]["delta_tokens"] = delta_size(who)
+            # whose changes it carries (watchdog.carried_parts)
+            st["sessions"][name]["delta_shares"] = delta_shares(who, session=True)
+            # and of that, forms superseded by a later text (watchdog.stack_waste)
+            st["sessions"][name]["superseded_tokens"] = int(d.get("session_superseded", d.get("superseded")) or 0)
+            # and of each part, what it loaded that the chain holds anew: carried for nothing until that part is
+            # loaded again (watchdog.carried_parts)
+            st["sessions"][name]["old_forms"] = d.get("session_old_forms", d.get("old_forms")) or {}
+        elif (st["sessions"].get(who) or {}).get("delta_tokens"):
+            # a fork of a session carrying the delta carries it too: of a role's churn or layer, of the knowledge base
+            # (a planner), of a consulted session
+            st["sessions"][name]["delta_tokens"] = st["sessions"][who]["delta_tokens"]
+            st["sessions"][name]["delta_shares"] = st["sessions"][who].get("delta_shares") or {}
+            st["sessions"][name]["superseded_tokens"] = st["sessions"][who].get("superseded_tokens") or 0
+            st["sessions"][name]["old_forms"] = st["sessions"][who].get("old_forms") or {}
+        if who == st.get("kb") and (st["sessions"].get(who) or {}).get("kb_state"):
+            # what it lacks of max's chain past what the knowledge base holds, which the knowledge base's next
+            # integration of the texts relieves (kb_texts)
+            st["sessions"][name]["kb_lacking"] = kb_lacking(st["sessions"][who])[1]
+        if role in LAYERABLE or role in KB_HELD_ROLES:
+            # what it holds of its protocol once its first message is read (render): as its role's generic protocol
+            # when what it forks holds that — the current one, or a copy its message gives the changes since —, and
+            # rendered with its own values otherwise, which a fork of it cannot be given changes against
+            held, sha = protocol_of(st["sessions"].get(who) or {}, st["sessions"], role)
+            generic = bool(sha) and (sha == protocol_sha(role) or held is not None)
+            st["sessions"][name].update(protocol_sha=keep_protocol(role), protocol_role=role,
+                                        protocol_rendered=not generic)
+            if generic and sha != protocol_sha(role):
+                # a changed protocol: the old forms of its changed paragraphs carried by each request, and the changes
+                # written in its own first message, unless a churn holds them (protocol_paid, the churn's rule)
+                st["sessions"][name]["protocol_superseded"] = protocol_changes(held, generic_protocol(role))[1]
+                st["sessions"][name]["protocol_written"] = int(len(protocol_block(role, held)) / 2.9)
+                if (st["sessions"].get(who) or {}).get("role") in ("role-layer", "role-churn"):
+                    r = st.setdefault("role_layers", {}).setdefault(role, {})
+                    r["behind_forks"] = int(r.get("behind_forks") or 0) + 1  # its churn would hold the changes
+                    st["sessions"][name]["behind_protocol"] = True
+        if (st["sessions"].get(who) or {}).get("role") in LAYER_ROLES:
+            st["sessions"][who]["used"] = time.time()  # what holds it warm is weighed from its last use (watchdog.held)
+            # a fork of a churn behind the delta's top, or of a judging role's layer that reasoned over an earlier
+            # message of the chain or over the parts it stands on (its churn then holds the messages after it): the
+            # churn's rule weighs it
+            # — or of an executing role's layer before it has a churn, which holds none of the chain
+            under, holds = st["sessions"][who], st["sessions"][who].get("digest")
+            if role in LAYERABLE and under["role"] in ("role-churn", "role-layer"):
+                behind = base_part(medium_record(ROLES[role]["origin"])[0]) or ""
+                d = delta_record(behind) or {}
+                # the chain moved past what it holds, or changes wait to be cut into its next text
+                if ((d.get("digest") and d.get("digest") != holds) or delta_uncut(behind)) \
+                        and not st["sessions"][name].get("behind_protocol"):  # counted once, above
+                    r = st.setdefault("role_layers", {}).setdefault(role, {})
+                    r["behind_forks"] = int(r.get("behind_forks") or 0) + 1  # a fork behind the delta's top
     hit(who)  # its first request reads the entry of what it forks, and only that
     if tree is UNSET:
         tree = task_tree(key)[0] if role in PRODUCING else None
@@ -877,6 +1371,7 @@ def resume(name, text):
         with state() as st:
             if st["sessions"][name]["state"] in ("done", "parked", "waiting", "idle"):
                 st["sessions"][name]["state"] = "working"
+            st["sessions"][name]["resumed"] = time.time()
         log(f"{name} has running jobs: its message waits as mail")
         hand_told(name)
         return True
@@ -908,6 +1403,7 @@ def resume(name, text):
         rec["sealed"] = False
         if rec["state"] in ("done", "parked", "waiting", "idle"):
             rec["state"] = "working"
+        rec["resumed"] = time.time()  # what it writes from now is this round's (cmd_finalize: a result written)
     hit(name)
     log(f"resumed {name}")
     hand_told(name)
@@ -1164,20 +1660,40 @@ def machine_processes():
     return out
 
 
+def claude_process(name, cmd):
+    """Whether a process is Claude Code itself (by its name, or its command: `claude …`, or a versioned binary)."""
+    return name == "claude" or cmd.startswith("claude ") or "/claude/versions/" in cmd
+
+
+def run_tool(procs, pid):
+    """Whether a process runs one of RUN_TOOLS: a shell, a Python tool or the sandbox around a session's command — not
+    a Claude Code session, whose prompt names `tools/incremental_check.py` in its brief and which lives as long as it."""
+    _, name, cmd = procs[pid]
+    return not claude_process(name, cmd) and RUN_TOOLS.search(cmd) is not None
+
+
+def outermost_tool(procs, pid):
+    """The outermost ancestor of a process (itself included) that runs one of RUN_TOOLS, or the process itself."""
+    root, p, seen = pid, procs[pid][0], 0
+    while p in procs and seen < 100:
+        if run_tool(procs, p):
+            root = p
+        p, seen = procs[p][0], seen + 1
+    return root
+
+
 def isabelle_run_roots(procs):
     """{Isabelle process: the run it belongs to} — the outermost ancestor running one of RUN_TOOLS, or the process itself
     when none does, so that work whose tool is not known still counts as a run of its own."""
-    roots = {}
-    for pid, (parent, name, _) in procs.items():
-        if name != "poly":
-            continue
-        root, p, seen = pid, parent, 0
-        while p in procs and seen < 100:
-            if RUN_TOOLS.search(procs[p][2]):
-                root = p
-            p, seen = procs[p][0], seen + 1
-        roots[pid] = root
-    return roots
+    return {pid: outermost_tool(procs, pid) for pid, (_, name, _) in procs.items() if name == "poly"}
+
+
+def run_roots(procs):
+    """Every run going: each Isabelle process's (isabelle_run_roots), and each tool's that runs whether or not an
+    Isabelle shows under it now. A replay runs Isabelle in phases, and a check prepares before its Isabelle starts:
+    between them a session's run was in no count — a mark counts until a snapshot shows its run once (session_marks) —
+    and batch 255 started beside train 223's check and fix-263's replay, three heavy runs at 3 GiB (2026-09-22 19:40)."""
+    return set(isabelle_run_roots(procs).values()) | {outermost_tool(procs, pid) for pid in procs if run_tool(procs, pid)}
 
 
 def isabelle_load():
@@ -1197,7 +1713,7 @@ def isabelle_load():
                         "probe": int(snap.get("probes", 0))}
         return {"heavy": ISABELLE_MAX + isabelle_admitted(), "probe": PROBE_MAX}
     procs = machine_processes()
-    kinds = [run_kind(procs.get(root, (0, "", ""))[2]) for root in set(isabelle_run_roots(procs).values())]
+    kinds = [run_kind(procs.get(root, (0, "", ""))[2]) for root in run_roots(procs)]
     return {"heavy": kinds.count("heavy") + unseen_finalizer_runs(procs) + session_marks(), "probe": kinds.count("probe")}
 
 
@@ -1222,10 +1738,16 @@ SNAPSHOT_FRESH = 180  # the watchdog writes the machine's runs every minute (wat
 def run_blocked(own=(), kind="heavy"):
     """Why a run of a kind ("probe" or "heavy") may not start now for the tasks `own` (a session's task, and the one it
     reviews), or None: another task holds the machine for a measurement, or its kind's limit is reached. The guard
-    refuses a session's check for it, and a session parked for the machine is resumed once it is None."""
+    refuses a session's check for it, and a session parked for the machine is resumed once it is None. A shared
+    measurement (cmd_measuring --shared) is such a run: its slot, the machine's order, the memory floor."""
     claim = exclusive_claim()
     if claim and claim["task"] not in own:
         return f"Task {claim['task']} holds the machine ({claim['why']}): nothing else runs meanwhile."
+    if claim:
+        # the machine is its own: no task waiting ahead of it counts, since none of them can start until it has run —
+        # fix-274 held the claim parked, not resumed, while task 271's finalizer, ahead in the order, waited on that
+        # claim: ten idle minutes, until the unseen claim lapsed (2026-09-22 20:37-20:47)
+        return None
     pending = pending_claim()
     if pending and pending["task"] not in own:
         return (f"Task {pending['task']} waits to measure on this machine ({pending['why']}): no new run starts until "
@@ -1323,9 +1845,9 @@ def unseen_finalizer_runs(procs):
         names = [n for n in os.listdir(ADMITTED) if not n.startswith(SESSION_MARK)]
     except OSError:
         return 0
-    lines = set()
+    lines = set()  # what runs, and everything above it: a runner with a run under it is counted by that run
     for pid, (_, name, _) in procs.items():
-        if name == "poly":
+        if name == "poly" or run_tool(procs, pid):
             p, seen = pid, 0
             while p in procs and seen < 100:
                 lines.add(p)
@@ -1452,6 +1974,46 @@ def claim_exclusive(tid, why, pid=None, session=None, seen=True):
               open(os.path.join(STATE, EXCLUSIVE), "w"))
 
 
+MEASURE_MAX = int(os.environ.get("ORCH_MEASURE_MAX", 180))  # a session's hold on the machine, at most, under the switch
+# (the owner, 2026-09-23: three minutes, "use a variable that we can then change"); the switch's file may say another
+# number of seconds (`echo 240 > state/measure-bound`), read at every use (measure_max)
+
+
+def measure_max():
+    """The seconds a session's measurement may hold the machine: the number state/measure-bound says, else MEASURE_MAX."""
+    try:
+        said = open(os.path.join(STATE, "measure-bound")).read().split()
+        return max(30, int(said[0])) if said and said[0].isdigit() else MEASURE_MAX
+    except OSError:
+        return MEASURE_MAX
+
+
+def measure_minutes():
+    return f"{measure_max() / 60:g}"
+
+
+def measure_bound():
+    """The owner's to set (notes/plan-orchestrator-concepts.md C14), off unless state/measure-bound exists or
+    ORCH_MEASURE_BOUND=1: a session's measurement holds the machine for MEASURE_MAX at most. The 37 holds of 09-20/22
+    took 3.0 hours, and the machine emptied for them 1.5 hours more; four held it past ten minutes, 1.1 hours between
+    them — the longest, 31 minutes, one probe that loaded its theories and then timed one judgment, every check of the
+    run waiting behind it."""
+    return os.environ.get("ORCH_MEASURE_BOUND") == "1" or os.path.exists(os.path.join(STATE, "measure-bound"))
+
+
+def measure_lapsed(claim):
+    """What its session is told when a session's claim has passed MEASURE_MAX under the switch, or ""."""
+    if not measure_bound() or not claim.get("session") or claim.get("pid"):
+        return ""  # a check that advances the base holds it as long as it runs: only a session's timing is bounded
+    since = claim.get("call_at") or claim.get("at") or time.time()
+    if time.time() - since <= measure_max():
+        return ""
+    return (f"Your measurement has held the machine for {measure_minutes()} minutes, the most a measurement holds it: "
+            f"the claim lapsed at {time.strftime('%H:%M')}, and other runs may start beside it from now, so what it "
+            "times after this moment is not a held number. Time the one judgment or part the measurement is for — its "
+            "theories loaded before the timing begins, which needs no hold — and claim the machine again for that.")
+
+
 def claim_seen(name):
     """A session has read that the machine is its own (ctx_gauge, when its mail says so): its grace starts now."""
     path = os.path.join(STATE, EXCLUSIVE)
@@ -1485,14 +2047,197 @@ def exclusive_claim():
         # claim reads as gone: a producing session's `measuring` deleted its claim and took the machine beside the
         # final check (found 2026-09-21, before it ran). What cannot be seen here is judged by the supervisor.
         return claim
+    lapsed = measure_lapsed(claim)
+    if lapsed:
+        try:
+            os.remove(path)
+        except OSError:
+            return None  # another reader lapsed it, and said so
+        log(f"the measurement of task {claim.get('task')} held the machine past {measure_minutes()} min: its claim lapses")
+        with contextlib.suppress(OSError):
+            start = claim.get("call_at") or claim.get("at") or time.time()
+            with open(os.path.join(BUILD, str(claim.get("task")), "measurements.log"), "a") as f:
+                f.write(f"{time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(start))} to {time.strftime('%H:%M:%S')}: "
+                        f"the machine held for {claim.get('why', 'a measurement')} until the bound of "
+                        f"{measure_minutes()} min lapsed it; other runs may have started beside it from then\n")
+        deliver(claim["session"], "the harness", lapsed)
+        return None
     grace = CLAIM_GRACE if claim.get("seen", True) else CLAIM_UNSEEN  # counted from its reading (claim_seen)
     alive = (claim.get("pid") and os.path.exists(f"/proc/{claim['pid']}")) or (
-        claim.get("session") and (running_jobs(claim["session"]) or time.time() - claim.get("at", 0) < grace))
+        claim.get("session") and (running_jobs(claim["session"]) or time.time() - claim.get("at", 0) < grace
+                                  or (claim.get("call") and time.time() - claim.get("call_at", 0) < CALL_MAX)))
     if alive:
         return claim
     with contextlib.suppress(OSError):
         os.remove(path)
         log(f"cleared the machine's claim by task {claim.get('task')}: what held it is gone")
+    return None
+
+
+# A measurement run in the foreground is no job of its session: its hold stood CLAIM_GRACE from the grant and no longer,
+# whatever the run did. It idled the machine after a short run — fix-220's 17 s timing held it until 17:25:07, three
+# minutes, while two checks waited — and let others start beside a long one: task 128's pair of about 200 s lost its
+# hold at 189 s (2026-09-22; seventeen measurements that day, every hold ended so). The call that runs it holds the
+# machine from its start to its end (work_meter: claim_call as the guard lets it through, release_claim after it).
+CALL_MAX = float(os.environ.get("ORCH_CLAIM_CALL_MAX", 1200))  # a call is bounded at 600 s; past this it is gone
+
+
+def claim_call(tid, call):
+    """The measurement of task tid runs in this call of its session: its hold stands until the call ends."""
+    path = os.path.join(STATE, EXCLUSIVE)
+    try:
+        claim = json.load(open(path))
+    except (OSError, ValueError):
+        return
+    if isinstance(claim, dict) and claim.get("task") == tid and call:
+        claim.update(call=call, call_at=time.time(), sample=machine_sample())
+        json.dump(claim, open(path, "w"))
+        load_sampler(call)
+
+
+# ---------------------------------------------------------------- the machine's load while a measurement runs
+# The owner, 2026-09-23: a measurement run beside everything else is told "the average load of both memory and cpu while
+# the measurement was running, for it to know if the results are likely to be impacted by load". The CPU's share busy
+# and the share of the time runnable work waited for a CPU (Linux's pressure stall information: the direct sign that
+# contention slowed a run) are exact over the interval from two readings of the kernel's counters; memory in use is
+# sampled each second by a small process that ends with the call (load_sampler), for its mean and peak.
+LOADS = os.path.join(STATE, "loads")
+LOAD_EVERY = float(os.environ.get("ORCH_LOAD_EVERY", 1.0))
+
+
+def pressure_total(what):
+    """The microseconds some runnable task has waited on `what` (cpu, memory) since boot, or None."""
+    try:
+        for line in open(f"/proc/pressure/{what}"):
+            if line.startswith("some"):
+                return int(re.search(r"total=(\d+)", line).group(1))
+    except (OSError, AttributeError, ValueError):
+        pass
+    return None
+
+
+def memory_now():
+    """(bytes in use, bytes in all) of the machine's memory, or (None, None)."""
+    try:
+        info = {k: int(v.split()[0]) * 1024 for k, v in (line.split(":", 1) for line in open("/proc/meminfo"))}
+        return info["MemTotal"] - info["MemAvailable"], info["MemTotal"]
+    except (OSError, KeyError, ValueError):
+        return None, None
+
+
+def machine_sample():
+    """The kernel's counters now, for a load over an interval (machine_load)."""
+    out = {"at": time.time(), "runs": softly("the machine's runs", isabelle_load, default={})}
+    try:
+        vals = [int(x) for x in open("/proc/stat").readline().split()[1:9]]
+        out["cpu_total"], out["cpu_idle"] = sum(vals), vals[3] + vals[4]
+    except (OSError, ValueError, IndexError):
+        pass
+    out["cpu_stall"], out["memory_stall"] = pressure_total("cpu"), pressure_total("memory")
+    out["memory"], out["memory_total"] = memory_now()
+    return out
+
+
+def load_sampler(call):
+    """Memory in use sampled each second while the call runs, into STATE/loads/CALL.samples, until CALL.stop (the call
+    has ended: load_report) or the longest a call may run."""
+    if not call or os.environ.get("ORCH_LOAD_SAMPLER", "1") == "0":
+        return
+    os.makedirs(LOADS, exist_ok=True)
+    with contextlib.suppress(OSError):
+        subprocess.Popen([sys.executable, os.path.join(HERE, "v2.py"), "sample-load", call], stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL, start_new_session=True)
+
+
+def cmd_sample_load(call):
+    path = os.path.join(LOADS, f"{call}.samples")
+    stop, end = os.path.join(LOADS, f"{call}.stop"), time.time() + CALL_MAX
+    while time.time() < end and not os.path.exists(stop):
+        used, _ = memory_now()
+        if used is not None:
+            with open(path, "a") as f:
+                f.write(f"{time.time():.1f} {used}\n")
+        time.sleep(LOAD_EVERY)
+    with contextlib.suppress(OSError):
+        os.remove(stop)
+    return None
+
+
+def machine_load(start, call=None):
+    """(the load from `start`, a sample, to now, as a line for the session and its log; its figures) — and the sampler of
+    `call` stopped, its samples read and removed."""
+    end = machine_sample()
+    samples = []
+    if call:
+        with contextlib.suppress(OSError):
+            open(os.path.join(LOADS, f"{call}.stop"), "w").close()
+        with contextlib.suppress(OSError):
+            samples = [int(line.split()[1]) for line in open(os.path.join(LOADS, f"{call}.samples")) if line.strip()]
+            os.remove(os.path.join(LOADS, f"{call}.samples"))
+    seconds = max(0.001, end["at"] - (start or {}).get("at", end["at"]))
+    fig = {"seconds": round(seconds)}
+    with contextlib.suppress(KeyError, TypeError, ZeroDivisionError):
+        fig["cpu_busy"] = 1 - (end["cpu_idle"] - start["cpu_idle"]) / (end["cpu_total"] - start["cpu_total"])
+    for what in ("cpu", "memory"):
+        with contextlib.suppress(KeyError, TypeError):
+            fig[f"{what}_pressure"] = (end[f"{what}_stall"] - start[f"{what}_stall"]) / (seconds * 1e6)
+    used = samples or [x for x in ((start or {}).get("memory"), end.get("memory")) if x is not None]
+    if used:
+        fig["memory_mean"], fig["memory_peak"] = sum(used) / len(used), max(used)
+    fig["memory_total"] = end.get("memory_total")
+    gib = lambda b: f"{b / 2**30:.1f}"
+    parts = []
+    if "cpu_busy" in fig:
+        parts.append(f"CPU {fig['cpu_busy']:.0%} busy on average (of {os.cpu_count()} threads)")
+    if "cpu_pressure" in fig:
+        parts.append(f"runnable work waited for a CPU {fig['cpu_pressure']:.0%} of the time")
+    if "memory_mean" in fig and fig.get("memory_total"):
+        parts.append(f"memory in use {gib(fig['memory_mean'])} GiB on average, {gib(fig['memory_peak'])} at its peak, "
+                     f"of {gib(fig['memory_total'])}")
+    if "memory_pressure" in fig:
+        parts.append(f"work stalled on memory {fig['memory_pressure']:.0%} of the time")
+    runs = [(start or {}).get("runs") or {}, end.get("runs") or {}]
+    parts.append("Isabelle runs counted on the machine " + " → ".join(
+        f"{r.get('heavy', 0)} heavy and {r.get('probe', 0)} probes" for r in runs) + " (as it started, a heavy "
+        "measurement among them → as it ended)")
+    return "; ".join(parts), fig
+
+
+def load_verdict(fig):
+    """What the load says of a timing taken under it, in a sentence."""
+    waited, stalled = fig.get("cpu_pressure") or 0, fig.get("memory_pressure") or 0
+    if waited < 0.05 and stalled < 0.01:
+        return "little contention: the number is likely the work's own"
+    if waited < 0.25 and stalled < 0.05:
+        return "some contention: the number may be a little high; compare with a repeat, or measure held"
+    return "heavy contention: the number is likely inflated by the load; measure again held (`v2.py measuring --exclusive`)"
+
+
+def release_claim(call):
+    """The call that ran a measurement has ended: so has the hold on the machine."""
+    path = os.path.join(STATE, EXCLUSIVE)
+    try:
+        claim = json.load(open(path))
+    except (OSError, ValueError):
+        return
+    if isinstance(claim, dict) and call and claim.get("call") == call:
+        with contextlib.suppress(OSError):
+            os.remove(path)
+        log(f"the measurement of task {claim.get('task')} ended with the call that ran it "
+            f"({round(time.time() - claim.get('call_at', time.time()))} s): the machine is free")
+        load = softly("the machine's load", machine_load, claim.get("sample"), call, default=("", {}))[0]
+        with contextlib.suppress(OSError):  # a durable record in the task's folder, which its review reads (#129's
+            # review: "a measuring claim leaves no durable record", 2026-09-22)
+            start = claim.get("call_at", time.time())
+            os.makedirs(os.path.join(BUILD, str(claim.get("task"))), exist_ok=True)
+            with open(os.path.join(BUILD, str(claim.get("task")), "measurements.log"), "a") as f:
+                f.write(f"{time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(start))} to "
+                        f"{time.strftime('%H:%M:%S')} ({round(time.time() - start)} s): the machine held for "
+                        f"{claim.get('why', 'a measurement')}, no other run beside it"
+                        + (f"; {load}" if load else "") + "\n")
+        kick()  # what waited for it — a queued probe, a batch, a parked session — goes at once
+        return (f"[Your measurement held the machine {round(time.time() - claim.get('call_at', time.time()))} s; "
+                f"while it ran: {load}.]" if load else None)
     return None
 
 
@@ -1562,8 +2307,79 @@ def working(st):
             if s.get("state") in LIVE and s.get("role") not in ("kb", "planner") and not s.get("released")]
 
 
-def at_capacity(st):
-    return len(working(st)) >= WORKERS_MAX
+def support_apart():
+    """The owner's to set (notes/plan-orchestrator-concepts.md C6), off unless state/support-apart exists or
+    ORCH_SUPPORT_APART=1 (a file, so that the daemon and every command read the same): the supporting session (a review
+    or a brief) outside the worker cap, in a slot of its own, so that two producers and a review work at once. On
+    2026-09-22 both workers were busy 47% of the minutes and a task waited 8.5% of its way for its review; the
+    machine's two heavy runs were busy 1.2–1.6 of 2 from 15:00, which is what a third session is worth against."""
+    return os.environ.get("ORCH_SUPPORT_APART") == "1" or os.path.exists(os.path.join(STATE, "support-apart"))
+
+
+OCCUPANCY = "occupancy.log"  # a line a minute, written by the watchdog: when, sessions working, tasks held (sample_occupancy)
+
+
+def sample_occupancy(now=None):
+    """One minute of the run, as the planner's status reads it back (occupancy_text): how many sessions work, and how
+    many queued tasks that have not started wait only on blockers past their result — in their check, their review,
+    their quick fix or their landing. In the afternoon of 2026-09-22 fewer than two sessions worked in 349 of 638
+    minutes, and in 246 of them such a task waited (the plan's finding 11): what the status showed was the moment,
+    never the hour."""
+    st = peek()
+    busy, held = len(working(st)), 0
+    for tid in st.get("queue") or []:
+        if (st["tasks"].get(tid) or {}).get("stage") not in (None, "ready"):
+            continue
+        open_ = [b for b in (read_task(tid) or {}).get("blockedBy") or [] if (read_task(b) or {}).get("status") != "completed"]
+        held += bool(open_) and all((st["tasks"].get(b) or {}).get("stage") in FINISHING for b in open_)
+    path = os.path.join(STATE, OCCUPANCY)
+    lines = open(path).read().splitlines()[-2000:] if os.path.exists(path) else []
+    open(path, "w").write("\n".join(lines + [f"{int(now or time.time())} {busy} {held}"]) + "\n")
+
+
+def occupancy_text(now=None):
+    """The last hour of sample_occupancy, for the planner's status: "" with less than half an hour of samples."""
+    now = now or time.time()
+    try:
+        rows = [tuple(map(int, l.split())) for l in open(os.path.join(STATE, OCCUPANCY)) if l.strip()]
+    except (OSError, ValueError):
+        return ""
+    rows = [r for r in rows if len(r) == 3 and now - 3600 <= r[0] <= now]
+    if len(rows) < 30:
+        return ""
+    free = sum(1 for _, busy, held in rows if busy < WORKERS_MAX and held)
+    return (f"the last hour: {sum(r[1] for r in rows) / len(rows):.1f} of {WORKERS_MAX} sessions working on average"
+            + (f"; in {free} of its {len(rows)} minutes a slot stood free while a task waited only on work in its check, "
+               "its review or its landing — what the graph's width decides" if free else ""))
+
+
+CHECK_PASSED = "Its check has passed; the verdicts of its reviews decide whether it is committed."
+CHECK_BESIDE = ("Its check runs beside your review: it is committed only once that check passes and every review "
+                "accepts, an accept of work that then fails its check is void and the fix is reviewed again, and a "
+                "rejection reaches the session with the check's failure, if it fails, in one fix round. The end of its "
+                "finalizer's log, read for you below, may not be there yet, or may be an earlier check's.")
+
+
+def review_beside_check():
+    """The owner's to set (notes/plan-orchestrator-concepts.md C9), off unless state/review-beside-check exists or
+    ORCH_REVIEW_BESIDE_CHECK=1: a build's or a fix's review starts when its result is recorded, beside its check,
+    rather than after it. From result to commit the afternoon of 2026-09-22 took a median 18.4 minutes; started at the
+    result, its review would have ended a median 8.2 minutes sooner. An accept waits for the check to pass and is void
+    if it fails (the fix is reviewed again); a rejection waits for the check's end and joins its failure, if any, in
+    one fix round."""
+    return os.environ.get("ORCH_REVIEW_BESIDE_CHECK") == "1" or os.path.exists(os.path.join(STATE, "review-beside-check"))
+
+
+def at_capacity(st, support=False):
+    """Whether the worker cap is reached for a session of the kind asked: apart (support_apart), the supporting
+    session neither counts against the others nor waits for them (one at a time still: slot)."""
+    apart = support_apart()
+    if apart and support:
+        return False
+    busy = working(st)
+    if apart:
+        busy = [n for n in busy if (st["sessions"].get(n) or {}).get("role") not in SUPPORTING]
+    return len(busy) >= WORKERS_MAX
 
 
 # Both slots may produce (the owner, 2026-09-22): they were one producing and one supporting, and on 2026-09-22 two
@@ -1606,6 +2422,16 @@ def exempt(path):
     return path.startswith(EXEMPT) or "__pycache__/" in path or path.endswith(".pyc")
 
 
+def sandbox_mount(tree, path):
+    """Whether an untracked path (git's `??`) is one of the files the sandbox mounts over a session's working
+    directory — .bashrc, .bash_profile, .gitconfig, .mcp.json and the like, at the tree's top, a device inside the
+    sandbox and an empty file outside it — and so no one's change: taken by `--files`'s default they would have been
+    committed, and listed as the tree's uncommitted work they are noise (not_added reads git's refusal of them the
+    same way)."""
+    full = os.path.join(tree, path)
+    return "/" not in path and path.startswith(".") and (not os.path.isfile(full) or os.path.getsize(full) == 0)
+
+
 def git_out(*args, binary=False, tree=None, quiet=False):
     """Git's output, or None when it failed. A failure is said unless the caller reads it as an answer (`quiet`):
     changed_paths turns None into "no paths", which reads as a clean tree, and from there tree_writer finds no
@@ -1633,6 +2459,8 @@ def changed_paths(tree=None, among=None):
         if code[0] in "RC":  # a rename is followed by its source
             paths.append(fields[i])
             i += 1
+        if code == "??" and not among and sandbox_mount(tree or PROJECT, path):
+            continue  # the sandbox's, over the working directory: no one's change (sandbox_mount)
         paths.append(path)
     return sorted({p for p in paths if among or not exempt(p)})
 
@@ -1919,7 +2747,15 @@ def keep_pointer_links():
 
 
 THEORY_LINE = re.compile(r"^\s{4}(\w+)\s*$", re.M)
-IMPORTS = re.compile(r"\bimports\b(.*?)\bbegin\b", re.S)  # the header, one line or many
+IMPORTS = re.compile(r"\bimports\b(.*?)(?:\bkeywords\b|\babbrevs\b|\bbegin\b)", re.S)  # the header, one line or many
+IMPORT_NAMES = re.compile(r'"[^"]+"|[\w.\-]+')
+
+
+def theory_imports(text):
+    """The theories a theory's header imports, as it names them (quotes taken off), its comments left out: what the
+    tree's trouble, the recipes' reach and a THEORY_MAP.md row's imports column are read from."""
+    m = IMPORTS.search(re.sub(r"\(\*.*?\*\)", " ", text or "", flags=re.S))
+    return [n.strip('"') for n in IMPORT_NAMES.findall(m.group(1))] if m else []
 MARKERS = re.compile(r"^(?:<{7}|>{7}|={7})(?:\s|$)", re.M)
 
 
@@ -1968,9 +2804,7 @@ def tree_trouble(tree=None, changed=None):
             text = open(os.path.join(tree, "theories", name + ".thy"), errors="ignore").read(4000)
         except OSError:
             continue
-        m = IMPORTS.search(text)
-        for imported in (m.group(1).split() if m else []):
-            imported = imported.strip('"')
+        for imported in theory_imports(text):
             if "." in imported or imported in known or imported == "Main":
                 continue
             out.append(f"theories/{name}.thy imports {imported}, which is neither in the tree nor in the history")
@@ -2084,8 +2918,13 @@ def prune_bases():
                 if f.startswith(heaps) and f not in kept and os.path.isfile(f):
                     os.remove(f)
                     removed.append(f)
-            shutil.rmtree(d, ignore_errors=True)
-            removed.append(d)
+            # its bulk goes and its reports stay (incremental.json, manifests, boundaries, logs): a check batch's
+            # output stands here since it keeps its heap (C10), and `v2.py read check:STAMP` reads its report
+            for sub in sorted(os.listdir(d)):
+                path = os.path.join(d, sub)
+                if os.path.isdir(path) and not os.path.islink(path):
+                    shutil.rmtree(path, ignore_errors=True)
+                    removed.append(path)
     if removed:
         log(f"pruned {len(removed)} base part(s) nothing stands on: "
             f"{', '.join(os.path.relpath(p, PROJECT) if p.startswith(PROJECT) else p for p in removed[:6])}")
@@ -2096,24 +2935,35 @@ COMBINED_KEEP = int(os.environ.get("ORCH_COMBINED_KEEP", 3600))
 
 
 def prune_combined_outputs():
-    """The bulk of the checks landing trains and check batches ran without advancing the base (.build/tasks/trains/,
-    .build/tasks/batches/): a batch's check is a whole heapless check, up to ~2 GB with its recipes' runs and exports,
-    and a batch every few minutes would fill the disk in days. Once COMBINED_KEEP old — its attribution long made —
-    each keeps its reports (incremental.json, manifests.json) and its log, and loses the rest."""
+    """The bulk of every repository check once COMBINED_KEEP old: a check is a whole heapless check, ~2.7 GB with its
+    recipes' runs (recipes/) and exports (exports-context/). Each keeps its reports (incremental.json, manifests.json),
+    its logs and its proof's own files (build.log, result.json: `read check:` and attribution read them), and loses its
+    directories. It pruned the combined checks' outputs only (.build/tasks/trains/, .build/tasks/batches/): the checks
+    a task's hand-over names (.build/tasks/NAME/check, check-2, …) and the task-by-task landings' (landing, landing-2,
+    …) were never pruned, and held 115 of the 139 GB under .build on 2026-09-22 ("figure out why disk usage is not
+    cleaning up", the owner). What the base's lineage stands in, or holds, is never touched."""
+    keep = [os.path.realpath(p) for p in base_lineage()]
+    near = lambda d: any(k == d or k.startswith(d + os.sep) or d.startswith(k + os.sep) for k in keep)
     removed = []
-    for kind in ("trains", "batches"):
-        root = os.path.realpath(os.path.join(BUILD, kind))
-        for d in sorted(glob.glob(os.path.join(root, "*"))) if os.path.isdir(root) else []:
-            d = os.path.realpath(d)
-            if not os.path.isdir(d) or os.path.dirname(d) != root or time.time() - os.path.getmtime(d) < COMBINED_KEEP:
+    for report in glob.glob(os.path.join(BUILD, "**", "incremental.json"), recursive=True):
+        d = os.path.realpath(os.path.dirname(report))
+        if near(d) or time.time() - os.path.getmtime(d) < COMBINED_KEEP:
+            continue
+        for part in os.listdir(d):
+            path = os.path.join(d, part)
+            if not os.path.isdir(path) or os.path.islink(path):
                 continue
-            for part in os.listdir(d):
-                path = os.path.join(d, part)
-                if os.path.isdir(path) and not os.path.islink(path):
-                    shutil.rmtree(path, ignore_errors=True)
-                    removed.append(path)
+            if part == "proof":  # its own files stay; what it copied in to run goes
+                for inner in os.listdir(path):
+                    sub = os.path.join(path, inner)
+                    if os.path.isdir(sub) and not os.path.islink(sub):
+                        shutil.rmtree(sub, ignore_errors=True)
+                        removed.append(sub)
+                continue
+            shutil.rmtree(path, ignore_errors=True)
+            removed.append(path)
     if removed:
-        log(f"pruned {len(removed)} part(s) of the combined checks' outputs: their reports and logs kept")
+        log(f"pruned {len(removed)} part(s) of the checks' outputs: their reports, logs and proof logs kept")
     return removed
 
 
@@ -2123,7 +2973,8 @@ def base_at_risk():
     in .build/tasks/7/check2/proof, because an advancing check was run with its output there."""
     lineage = base_lineage()
     at = BUILD.rstrip(os.sep) + os.sep  # BUILD is already .build/tasks
-    return [p for p in lineage if p.startswith(at)]
+    lasting = os.path.realpath(LASTING).rstrip(os.sep) + os.sep  # the harness's own store, no task's (the owner, 09-22)
+    return [p for p in lineage if p.startswith(at) and not os.path.realpath(p).startswith(lasting)]
 
 
 def base_would_stand_in_a_task(check):
@@ -2375,7 +3226,7 @@ def graph_text(full=False):
         meta = t.get("metadata") or {}
         kind = meta.get("kind") or field(t.get("description", ""), "Kind") or "?"
         after = ", ".join(t.get("blockedBy") or []) or "-"
-        stage = (st["tasks"].get(t["id"]) or {}).get("stage")
+        stage = stage_text((st["tasks"].get(t["id"]) or {}))
         d = depths.get(t["id"])
         lines.append(f"- {t['id']} [{t.get('status')}{', ' + stage if stage else ''}] ({kind}) {t.get('subject', '')}; "
                      f"after {after}" + (f"; chain {d}" + (f", past {GRAPH_DEPTH}: nothing is hung after it"
@@ -2385,6 +3236,48 @@ def graph_text(full=False):
     if done:
         lines.append(f"- and {done} completed task{'s' if done > 1 else ''} (`v2.py graph --all` lists them)")
     return "\n".join(lines) or "(the task list is empty)"
+
+
+PARKED_FOR = {"run": "for its run", "fix": "for the fix of its performance problem", "tree": "for the working tree",
+              "answer": "for an answer", "machine": "for the machine", "check": "for the check it asked for",
+              "probe": "for its queued probe"}
+
+
+def stage_text(rec):
+    """A task's passing state as the graph shows it: its stage, and for a parked task what for and since when, for one
+    rejected how many times — what the planners of 2026-09-21/22 kept writing into HANDOFF.md by hand (405 of the 908
+    blocks by which they edited it changed words of a task's passing state: parked, handing over, landed, a commit, the
+    order), a mirror stale between its edits. Rendered at every event instead, for every planner after them."""
+    stage = rec.get("stage")
+    if not stage:
+        return ""
+    parked = rec.get("parked") if stage == "parked" else None
+    if isinstance(parked, dict):
+        stage += (f" {PARKED_FOR.get(parked.get('for'), 'for ' + str(parked.get('for')))}"
+                  + (f" since {time.strftime('%H:%M', time.localtime(parked['since']))}" if parked.get("since") else ""))
+    if int(rec.get("rejections") or 0):
+        stage += f", rejected {rec['rejections']}×"
+    return stage
+
+
+LANDED_SHOWN = int(os.environ.get("ORCH_LANDED_SHOWN", 3 * 3600))  # how far back the planner's status names landings
+
+
+def landed_lately(since=None):
+    """[(task, commit, when)] of the tasks landed in the last LANDED_SHOWN seconds, newest first: their finalized.json,
+    written when the finalizer committed and landed them. What a planner wrote as `(`90991eac`)` beside each delivered
+    task; git holds it, and the status says it."""
+    since = time.time() - LANDED_SHOWN if since is None else since
+    out = []
+    for path in glob.glob(os.path.join(BUILD, "*", "finalized.json")):
+        tid = os.path.basename(os.path.dirname(path))
+        try:
+            when, rec = os.path.getmtime(path), json.load(open(path))
+        except (OSError, ValueError):
+            continue
+        if when >= since and isinstance(rec, dict) and rec.get("ok") and rec.get("commit"):
+            out.append((tid, str(rec["commit"])[:8], when))
+    return sorted(out, key=lambda x: -x[2])
 
 
 def deps_done(tid):
@@ -2462,12 +3355,205 @@ def names_in(text):
     return out
 
 
-def deliverables(text):
-    return [p for p in names_in(section(text, "Deliverable")) if "/" in p or "." in p]
+# A file a Deliverable names bare, with no place, is the task's own folder's: a brief made in an edit cannot know its id,
+# and says "`report.md`, in this task's own folder" — briefs 253 and 254 did (2026-09-22), and `report.md` was read as a
+# file at the repository's root: the result was refused for a final job, and the final job refused a file under .build/
+# (q64). A file already at the root (THEORY_MAP.md, DECISIONS.md) stays the root's; a new one there is `./NAME`.
+FILE_NAME = re.compile(r"[\w-]+(?:\.[\w-]+)*\.(?:md|json|jsonl|txt|log|thy|ML|py|sh)")
+
+
+def placed(p, tid):
+    """Where a deliverable named `p` of task tid stands."""
+    if tid and "/" not in p and FILE_NAME.fullmatch(p) and not os.path.lexists(os.path.join(PROJECT, p)):
+        return f".build/tasks/{tid}/{p}"
+    return p
+
+
+def deliverables(text, tid=None):
+    out = []
+    for p in names_in(section(text, "Deliverable")):
+        p = placed(p, tid)
+        if ("/" in p or "." in p) and p not in out:
+            out.append(p)
+    return out
+
+
+def brief_record(tid, brief):
+    """What the harness reads of the brief a session works to — its deliverables, drafts and inputs — written when the
+    session starts and again when the planner rewrites the brief: task 254's stood as its brief was at its start after
+    plan-46 had added a test module to its Deliverable (2026-09-22 18:44)."""
+    os.makedirs(os.path.join(BUILD, tid), exist_ok=True)
+    json.dump({"task": tid, "deliverables": deliverables(brief, tid), "drafts": f".build/tasks/{tid}/",
+               "inputs": inputs(brief)}, open(os.path.join(BUILD, tid, "brief.json"), "w"))
 
 
 def inputs(text):
     return names_in(section(text, "Inputs"))
+
+
+INPUTS_BYTES = 20_000  # the statements a producing session's first message gives it, at most
+DERIVED = re.compile(r"(?:_def|\.simps|\.induct|\.cases|\.intros|_def_raw)$")
+
+
+def inputs_read(brief, tree, stated=frozenset()):
+    """The facts and definitions a brief's Inputs and Decided name, stated as the task's tree holds them now (show.py
+    --statement: proofs left out), for the producing session's first message — the task-specific reading a role-level
+    layer could not give it (notes/plan-orchestrator-concepts.md C2). Before their first change, implementers spent 26%
+    and fixers 28% of what they cost on 2026-09-21/22 (8 and 7 requests), and 55% of the files they read then were
+    files the brief names; 7 of the 31 rejections whose findings the state held were a contract the brief named proved
+    again instead of consumed. A name the tree does not hold is said: one the task is to make, or one that has moved.
+    Theories and files named are left to the session's reading; the whole is bounded by INPUTS_BYTES."""
+    tree = tree or PROJECT  # None: the task works in the one tree (task_tree)
+    places = softly("the decision entries' places", decision_places, brief, tree, default="")
+    return "\n\n".join(x for x in (named_statements(brief, tree, stated), places) if x)
+
+
+RELATIONS_CHUNK = 120_000  # a file of them is shown whole by one Bash call (bashOutputMaxChars 128,000), like a pack's chunk
+RELATIONS_UNREAD = ("(its relations could not be computed: read what your brief's theories import and what imports "
+                    "them yourself, in your first batch)", 0, frozenset())
+
+
+def relation_base(role):
+    """The base whose depth a role's relations are given at, and the base its sessions actually fork (FALLBACK)."""
+    who = ROLES[role]["origin"]
+    return who, base_record(who)[0] or "max"
+
+
+def relations_read(tid, role, brief, tree):
+    """(the paragraph of a session's first message that gives its task's own relations, the tokens they add, the
+    theories the session holds at statements — given here or held by its base — whose facts inputs_read need not state
+    again): what
+    the theories its brief names stand on, those theories, and what uses them, each at the depth its role uses it
+    (select_base_load.task_relations) and less what its base holds already, written as its tree holds them now to
+    files in the task's folder for its first batch to read; and the other current work on the same theories. A base
+    no longer holds the current tasks' relations: their union grew with the queue (280K tokens for 5 tasks, 620K for
+    20, on 2026-09-23) and every change of the queue rebuilt it; a task's own are its own sessions'."""
+    import select_base_load as selection
+    who, forked = relation_base(role)
+    lib = selection.library(PROJECT)
+    held = selection.held_levels(forked)
+    relations = selection.task_relations(who, brief, held=held, lib=lib)
+    texts = selection.relations_texts(relations, lib, tree)
+    stated = frozenset({n for n, level in held.items() if level == "statements"}
+                       | {name for name, _, level, _ in texts if level == "statements"})
+    if not str(tid).strip() or who not in BASES:
+        raise ValueError(f"no task folder for {tid!r} and {who!r}")
+    folder = os.path.join(BUILD, str(tid), f"relations-{who}")
+    shutil.rmtree(folder, ignore_errors=True)  # a start before this one wrote them as its tree held them then
+    lines = []
+    if texts:
+        import base_pack
+        whole = "".join(f"== {name} ({relation}, as {depth})\n{text.strip()}\n\n" for name, relation, depth, text in texts)
+        chunks = base_pack.split_bytes(whole, RELATIONS_CHUNK)
+        os.makedirs(folder)
+        files = []
+        for i, chunk in enumerate(chunks, 1):
+            open(os.path.join(folder, f"{i}.md"), "w").write(chunk)
+            files.append(os.path.relpath(os.path.join(folder, f"{i}.md"), PROJECT))
+        given = sum(selection.text_tokens(lib["thys"][name], text)[0] for name, _, _, text in texts) \
+            + selection.CALL_TOKENS * len(files)
+        lines.append(f"What your task's theories stand on, those theories, and what uses them, as your tree holds them "
+                     f"now — about {given // 1000}K tokens in {len(files)} file{'s' if len(files) > 1 else ''}. Read "
+                     f"{'them all' if len(files) > 1 else 'it'} in your first batch, in the one message with your other "
+                     "first reads: " + ", ".join(f"`cat {f}`" for f in files) + ".")
+        for tier in relations["tiers"]:
+            if tier["names"]:
+                lines.append(f"- {tier['relation']}, as {tier['level']}: {', '.join(tier['names'])}")
+    else:
+        given = 0
+        lines.append("Your brief names no theory of the library." if not relations["targets"] else
+                     "Your base holds every theory your task's theories stand on or are used by, at the depth your role "
+                     "uses it: nothing more is given.")
+    held = sorted({n for tier in relations["tiers"] for n in tier["held"]})
+    if held:
+        lines.append("Held by your base already, at that depth or deeper: " + ", ".join(held) + ".")
+    siblings = selection.concurrent_work(tid, relations, lib=lib)
+    if siblings:
+        lines.append("Other current work on these theories, from branches you do not see — what it adds is not in your "
+                     "tree until it lands, so do not make it again, and do not build on it before it lands:")
+        lines += [f"- task {t} ({stage}): {how}" for t, stage, _, how in siblings[:12]]
+        if len(siblings) > 12:
+            lines.append(f"- and {len(siblings) - 12} more (`TaskList`)")
+    return "\n".join(lines), given, stated
+
+
+def decision_places(brief, tree):
+    """Each DECISIONS.md entry a brief names by its heading (quoted, whole or by its beginning), with the lines it
+    stands at in the tree now, for the first batch to read: design-258 spent three of its nine reading requests finding
+    the entries its brief named by grepping their headings (2026-09-22). "" when the brief names none."""
+    try:
+        lines = open(os.path.join(tree, "DECISIONS.md"), errors="ignore").read().split("\n")
+    except OSError:
+        return ""
+    heads = [(i + 1, len(m.group(1)), m.group(2).strip()) for i, l in enumerate(lines)
+             for m in [re.match(r"^(#{2,4})\s+(.+?)\s*$", l)] if m]
+    count = collections.Counter(h for _, _, h in heads)  # a heading many entries share ("Affordability") names none of them
+    quoted = re.findall(r'"([^"\n]{12,200})"|\u201c([^\u201d\n]{12,200})\u201d|(?:^|[\s(])\'([^\'\n]{12,200})\'', brief)
+    found = []
+    for q in dict.fromkeys(" ".join((a or b or c).split()).rstrip(".,;:") for a, b, c in quoted):
+        for n, (at, level, h) in enumerate(heads):
+            if count[h] == 1 and (h == q or (len(q) >= 20 and h.startswith(q)) or (len(h) >= 20 and q.startswith(h))):
+                end = next((a - 1 for a, lv, _ in heads[n + 1:] if lv <= level), len(lines))
+                if (at, end, h) not in found:
+                    found.append((at, end, h))
+                break
+    if not found:
+        return ""
+    return ("The decision entries your brief names, where they stand now — read what you need of them by these lines, "
+            "in your first batch:\n" + "\n".join(f"- DECISIONS.md:{a}-{b} — {h}" for a, b, h in found[:20]))
+
+
+def named_statements(brief, tree, stated=frozenset()):
+    """The statements of the facts and definitions a brief names (inputs_read), but for those of a theory the session
+    holds at statements already (`stated`: its task's relations, or its base), which are named with where they stand."""
+    names = list(dict.fromkeys(names_in(section(brief, "Inputs")) + names_in(section(brief, "Decided"))))
+    owners = {}
+    if stated:
+        import select_base_load as selection
+        owners = selection.library(PROJECT)["owners"]
+    held, wanted = [], {}
+    for n in names:
+        base = DERIVED.sub("", n)
+        if not re.fullmatch(r"[A-Za-z][\w']*(?:\.[A-Za-z][\w']*)?", base) or ("_" not in base and "." not in base) \
+                or FILE_NAME.fullmatch(base):
+            continue  # not a fact's name; a file named bare (`commit.md`) is one
+        if os.path.exists(os.path.join(tree, "theories", base + ".thy")):
+            continue  # a theory: read as the session reads theories
+        theories = {base.split(".", 1)[0]} if "." in base else \
+            {os.path.basename(p)[:-4] for p in owners.get(base, ())}
+        if theories and theories <= stated:
+            held.append(n)  # its statement stands in what the session holds: once is enough
+            continue
+        wanted.setdefault(base, n)
+    said = ("Stated already in what you hold (your task's relations, or your base): "
+            + ", ".join(f"`{n}`" for n in held) + "\n") if held else ""
+    if not wanted:
+        return said.rstrip() or "(the brief names no fact or definition by name)"
+    try:
+        out = subprocess.run([sys.executable, os.path.join(HERE, "show.py"), "--statement", *wanted], capture_output=True,
+                             text=True, cwd=tree, env=dict(os.environ, ORCH_PROJECT=tree), timeout=60).stdout
+    except (OSError, subprocess.SubprocessError) as e:
+        return f"(the statements could not be read: {e!r}; `v2.py read NAME` reads each)"
+    blocks, missing = [], []
+    for block in re.split(r"\n(?=== )", out.strip()):
+        m = re.match(r"^== ([\w.']+): no command introduces it", block)
+        if m:
+            missing.append(wanted.get(m.group(1), m.group(1)))
+        elif block.strip() and not re.fullmatch(r"== \S+\n\s*context \S+(?: begin)?\s*", block.strip()):
+            blocks.append(block.strip())  # a bare `context NAME` a locale's name brings says nothing of it
+    text, left = "", []
+    for b in blocks:
+        if len(text.encode()) + len(b.encode()) + 2 > INPUTS_BYTES:
+            left.append(b.split("\n", 1)[0][3:])
+            continue
+        text += b + "\n\n"
+    if left:
+        text += (f"({len(left)} more, left out for room — `v2.py read NAME` reads each: "
+                 + ", ".join(left[:12]) + ("…" if len(left) > 12 else "") + ")\n")
+    if missing:
+        text += ("Not stated in the theories as your tree holds them — HOL's own, a name the task is to make, or one "
+                 "that has moved since the brief was written: " + ", ".join(f"`{n}`" for n in missing) + "\n")
+    return (said + text).rstrip() or "(the brief names no fact or definition the library holds)"
 
 
 def size_of(text):
@@ -2504,22 +3590,49 @@ def brief_problems(text):
                    "a task may work in a tree of its own, where that path is the one tree and not its work. Name "
                    "paths relative to the repository — a check as `python3 -B tools/incremental_check.py …`, which "
                    "the finalizer runs where the task works; `.build/` may be named as it is")
+    marked = [f for f in FORM_FIELDS if FOLLOW_MARK in section(text, f)]
+    if FOLLOW_MARK in text:
+        out.append(f"the brief still holds parts marked for you ({', '.join(marked) or 'its text'}): write each "
+                   f"`{FOLLOW_MARK}: …>>` as the brief's own words")
+        return out  # the rest of the form is judged when they are written
     size, room = size_of(text), room_of(kind if kind in KINDS else "build")
     if re.search(head("Size"), text, re.M | re.I) and size is None:
         out.append("the Size is an estimate in tokens of work (for example `Size: about 150K`)")
     elif size and size > room:
         out.append(f"the Size ({size // 1000}K) is beyond what a {kind or 'build'} session has room for "
                    f"({room // 1000}K): split the task")
+    elif size:
+        given = softly("the brief's relations", relations_size, text, kind, default=0)
+        if size > room - given:
+            out.append(f"the Size ({size // 1000}K), with the {given // 1000}K of the task's own relations its session "
+                       f"is given as it starts, is beyond what a {kind or 'build'} session has room for "
+                       f"({room // 1000}K): split the task")
     return out
+
+
+def relations_size(text, kind):
+    """The tokens of its own relations a task of this brief is given as it starts (relations_read, without writing)."""
+    import select_base_load as selection
+    role = PRODUCER.get(kind) or {"brief": "task-designer", "review": "reviewer"}.get(kind, "implementer")
+    who, forked = relation_base(role)
+    lib = selection.library(PROJECT)
+    relations = selection.task_relations(who, text, held=selection.held_levels(forked), lib=lib)
+    return sum(selection.text_tokens(lib["thys"][name], body)[0]
+               for name, _, _, body in selection.relations_texts(relations, lib))
 
 
 def room_of(kind):
     """The work a session of this kind has room for: what its base leaves before the notice, less its first message and
     first batch of reads."""
-    who = ROLES[PRODUCER.get(kind) or {"brief": "task-designer", "review": "reviewer"}[kind]]["origin"]
+    role = PRODUCER.get(kind) or {"brief": "task-designer", "review": "reviewer"}[kind]
+    who = ROLES[role]["origin"]
     try:
-        who = base_record(who)[0] or "max"
-        context = json.load(open(base_file(who)))["context"]  # a layer's context is the whole of it, its base included
+        own = role_churn_of(role) or role_layer_of(role)
+        if own:
+            context = carried_context(peek()["sessions"][own])
+        else:
+            who = base_record(who)[0] or "max"
+            context = json.load(open(base_file(who)))["context"]
     except (OSError, ValueError, KeyError, TypeError):
         context = 560_000  # the present base, measured 2026-09-19
     return max(0, SOFT - context - PROTOCOL_ROOM)
@@ -2545,10 +3658,27 @@ def part(text, name):
     return m.group(1).strip() if m else ""
 
 
+CORRECTABLE = ("commit.md", "result.md", "THEORY_MAP.md")  # what a reviewer corrects itself (C7)
+FILE_WORD = re.compile(r"^(?:[\w./-]*/)?(?:ROOT|[\w.-]+\.(?:thy|md|py|json|txt|ML|sh|toml|yaml|cfg))$")
+
+
 def verdict_problems(text, verdict):
     out = [] if part(text, "Summary") else ["the verdict has no `## Summary` part (about 150 words, for the planner)"]
     if verdict == "reject" and not part(text, "Findings"):
         out.append("a rejection lists its blocking findings under `## Findings`")
+    corrected = part(text, "Corrected")
+    if corrected:
+        files = [w for w in re.findall(r"`([^`\s]+)`", corrected) if FILE_WORD.match(w)]
+        wrong = [w for w in files if os.path.basename(w) not in CORRECTABLE]
+        if verdict == "reject":
+            out.append("`## Corrected` comes with an accept: what you corrected no longer blocks, and what blocks is "
+                       "a finding")
+        if not any(os.path.basename(w) in CORRECTABLE for w in files):
+            out.append("`## Corrected` names each file it corrected in backticks (`commit.md`, `result.md`, "
+                       "`THEORY_MAP.md`), with why")
+        if wrong:
+            out.append(f"`## Corrected` names {', '.join(wrong)}: a reviewer corrects only a commit message, a result "
+                       "or a THEORY_MAP.md row; anything else it found is a finding, and a rejection")
     return out
 
 
@@ -2600,12 +3730,126 @@ def statements_only(rec):
 
 # ---------------------------------------------------------------- protocols
 
+def grouping_text():
+    """The planner's and the task designer's rule on a task's size against its fixed cost — the owner's to set
+    (notes/plan-orchestrator-concepts.md C8), off unless state/grouped-repairs exists: "" then. Every task pays the
+    same launch, orientation, close, review and landing (a producer's orientation 31–34% of its cost in the afternoon of
+    2026-09-22; a review 0.67M), and sessions ended at a third of their window; 23 of the 51 planned fixes from #100 on
+    consolidated what was stated twice, several on one line of theories in a row."""
+    if not os.path.exists(os.path.join(STATE, "grouped-repairs")):
+        return ""
+    return ("**A task's size against its fixed cost.** Every task pays the same fixed cost whatever it holds — a "
+            "session's launch and first reading, its close, a review, a landing — and a session ends at about a third "
+            "of its window. Small repairs of the same theories, and follow-ups that consolidate what is stated twice, "
+            "go into one task, up to about half of its room, rather than a task each; a repair another task waits on, "
+            "or one of a notion's contract, stays a task of its own.")
+
+
+def continue_by_fork():
+    """The owner's to set (notes/plan-orchestrator-concepts.md C13), off unless state/continue-by-fork exists or
+    ORCH_CONTINUE_BY_FORK=1: a task whose metadata says which task's work it continues (`"continues": "N"`) forks the
+    session that did that work, while it is warm and has the room, instead of its role's base. Of the 52 fix tasks of
+    2026-09-21/22 with a fixer session, 27 named in their brief the task whose review they came from, and that task's
+    producer was still warm at the fix's start for 18; a fixer spent 31% of its cost before its first change, orienting
+    in work that producer held whole, and grew a median 45K from a producer's median of 638K."""
+    return os.environ.get("ORCH_CONTINUE_BY_FORK") == "1" or os.path.exists(os.path.join(STATE, "continue-by-fork"))
+
+
+CONTINUE_MAX = int(os.environ.get("ORCH_CONTINUE_MAX", 700_000))  # the context past which a producer is not forked:
+# a fork starts with it whole and must still have a task's room before the notice (SOFT)
+
+
+CONTINUE_GRACE = int(os.environ.get("ORCH_CONTINUE_GRACE", 5400))  # how long after its work a producer whose review asked
+# for follow-ups is held for the planner to make them into continuations (C13): its work, check, review and landing
+# took a median 22 minutes from its result on 09-22's afternoon, and the planner's turn a median two
+
+
+def continues_text():
+    """The planner's line on marking a continuation (C13), "" while the switch is off."""
+    if not continue_by_fork():
+        return ""
+    return ("**A continuation forks the work it continues.** When a task continues one task's work — a follow-up its "
+            "review asked for, a repair of what it built — say so in its metadata, `\"continues\": \"N\"` (in `v2.py "
+            "edit`, a create's or a rewrite's field): its session "
+            "is then forked from the session that did task N, which holds that work whole, while that session is warm "
+            "and has the room, and from its role's base otherwise. Only one task N, and only when the work is N's: a "
+            "task drawing on several is briefed from the base as always. Such a brief may name the findings it takes "
+            "up by their place (`.build/tasks/N/review.md`, its follow-ups 1 and 3) rather than restate them: the "
+            "session reads them there, and the fork holds the work they are about.")
+
+
+def continued_session(st, tid, role):
+    """(session, task) whose work task tid continues and that a session of `role` may fork now, or (None, None): the
+    switch on; the task's metadata naming the task it continues; that task's last producing session, with its cache
+    warm, run at the effort and on the model of the role's own base (a fork carries its origin's, and a fork at another
+    effort than the entry it reads writes it anew), not working now, and within CONTINUE_MAX."""
+    if not continue_by_fork() or role not in ("implementer", "fixer"):
+        return None, None
+    meta = (read_task(tid) or {}).get("metadata") or {}
+    source = str(meta.get("continues") or "") if isinstance(meta, dict) else ""
+    if not source.isdigit() or source == str(tid):
+        return None, None
+    base = base_record(ROLES[role]["origin"])[1] or {}
+    mine = [(n, x) for n, x in st["sessions"].items() if str(x.get("task")) == source and x.get("role") in PRODUCING
+            and x.get("sid") and x.get("state") != "lost"]
+    if not mine:
+        return None, None
+    name, rec = max(mine, key=lambda nx: nx[1].get("started") or 0)
+    if rec.get("state") in LIVE or not warm(name) or other_tools(rec):
+        return None, None
+    if (rec.get("effort"), rec.get("model")) != (base.get("effort"), base.get("model")):
+        return None, None
+    if (rec.get("context") or context_of(rec["sid"]) or CONTINUE_MAX + 1) > CONTINUE_MAX:
+        return None, None
+    return name, source
+
+
+def continued_text(source_session, source, tid, tree):
+    """What a continuation's first message says before its protocol: whose context it holds, and that the task it
+    holds is over."""
+    where = f"`{os.path.relpath(tree, PROJECT)}`" if tree and tree != PROJECT else "the one tree"
+    return (f"**You continue task {source}'s work.** You are forked from {source_session}, the session that did task "
+            f"{source}: what you hold of that work — its theories, what was read and learned, how it was proved — is "
+            f"yours to use. That task is over: its brief, its tree and the rules of its session no longer bind you. "
+            f"Your task is {tid}, below, and its brief governs; you work in {where}, as it is now, where task "
+            f"{source}'s work stands as it landed — what you remember of files may have changed since.")
+
+
 def render(role, **values):
     """A role's first message: protocols/<role>.md with its shared parts ({{part}} is protocols/_part.md) and values."""
+    if (role in LAYERABLE or role in KB_HELD_ROLES) and values.get("NAME"):
+        # what it forks holds the role's protocol — its reasoning layer, its churn, the session a continuation forks,
+        # the knowledge base —: its own values, and the protocol's changes since that copy, never it again
+        sessions = peek()["sessions"]
+        origin = sessions.get((sessions.get(values["NAME"]) or {}).get("origin") or "") or {}
+        held, sha = protocol_of(origin, sessions, role)
+        holder = "the knowledge base you are forked from" if origin.get("role") == "kb" else "your role's reasoning layer"
+        if sha:
+            if sha == protocol_sha(role):  # it holds this protocol: said once, there
+                return held_protocol_message(role, values, holder=holder)
+            if held is not None:  # the changes since the copy it holds, not the protocol again
+                return held_protocol_message(role, values, protocol_block(role, held), holder=holder)
     text = open(os.path.join(PROTOCOLS, f"{role}.md")).read()
     for _ in range(2):
         text = re.sub(r"\{\{([\w-]+)\}\}", lambda m: open(os.path.join(PROTOCOLS, f"_{m.group(1)}.md")).read().strip(), text)
-    values = dict(ROUNDS=str(ROUNDS), RESERVE=str(READ_RESERVE),
+    values = render_values(**values)
+    values.setdefault("CONTINUED", "")  # a continuation's own paragraph (C13), nothing for every other session
+    values.setdefault("LAYERED", layered_text(values.get("NAME")))  # a fork of its role's reasoning layer is told so
+    values.setdefault("CHECKED", CHECK_PASSED)  # a reviewer's: whether the check it reviews beside has passed (C9)
+    values.setdefault("CHANGES", "")  # the delta's texts a session takes in its own message (chain_carried)
+    values.setdefault("PROTOCOLS", "")  # what the knowledge base holds for the sessions forked from it (kb_protocols)
+    missing = [k for k in dict.fromkeys(re.findall(r"\{([A-Z][A-Z_]{2,})\}", text)) if k not in values]
+    for k, v in values.items():
+        text = text.replace("{" + k + "}", v)
+    for left in missing:
+        log(f"ATTENTION the {role} protocol has no value for {{{left}}}: it is left out of the message")
+        text = text.replace("{" + left + "}", "")
+    return text.strip()
+
+
+def render_values(**values):
+    """The values every protocol may name: numbers the harness can change under a protocol's prose, and its texts."""
+    return dict(ROUNDS=str(ROUNDS), RESERVE=str(READ_RESERVE),
                   BATCH=str(BATCH_BYTES // 1000), READ_BYTES=str(READ_BYTES // 1000), CIRCLING=str(CIRCLING),
                   FIX_MINUTES=str(FIX_MINUTES),
                   BRIEF_BACKLOG=str(BRIEF_BACKLOG), GRAPH_DEPTH=str(GRAPH_DEPTH),
@@ -2615,15 +3859,9 @@ def render(role, **values):
                   # a number a protocol states in prose is one the harness can change under it: these are its own
                   CONSULT_HOURS=str(HOLD_MAX // 3600), ISABELLE_MAX=str(ISABELLE_MAX), PROBE_MAX=str(PROBE_MAX),
                   PROBE_SECONDS=str(PROBE_SECONDS), MEM_MARGIN=f"{MEM_MARGIN_GB:g}",
-                  PARK_URGENT=str(PARK_URGENT // 60),
+                  PARK_URGENT=str(PARK_URGENT // 60), GROUPING=grouping_text(), CONTINUES=continues_text(),
+                  MEASURE_MINUTES=measure_minutes(),
                   ROOM_TASK=str(room_of("build") // 1000), **values)
-    missing = [k for k in dict.fromkeys(re.findall(r"\{([A-Z][A-Z_]{2,})\}", text)) if k not in values]
-    for k, v in values.items():
-        text = text.replace("{" + k + "}", v)
-    for left in missing:
-        log(f"ATTENTION the {role} protocol has no value for {{{left}}}: it is left out of the message")
-        text = text.replace("{" + left + "}", "")
-    return text.strip()
 
 
 def owner_words():
@@ -2655,11 +3893,96 @@ def handoff_size():
     return len(text) // 3, parts[0][1], len(parts[0][0]) // 3
 
 
-def handoff_parts():
-    """HANDOFF.md's `## Now` and `## Open` as they are: what the last episode left unhandled and the open questions."""
+HANDOFF_DELTA_MAX = int(os.environ.get("ORCH_HANDOFF_DELTA_MAX", 15_000))  # characters, beside a planner's first message
+
+
+def kb_handoff(kb):
+    """Where the copy of HANDOFF.md a knowledge base loaded is kept (keep_kb_handoff, at its launch)."""
+    return os.path.join(STATE, f"{kb}-handoff.md")
+
+
+def keep_kb_handoff(kb):
+    with contextlib.suppress(OSError):
+        shutil.copyfile(os.path.join(PROJECT, "HANDOFF.md"), kb_handoff(kb))
+
+
+def handoff_items(text):
+    """{`## Part`: [its items]} of HANDOFF.md: an item begins after a blank line or at a line at the margin opening a
+    bullet, a heading, a bold lead or a table row, and holds the lines under it."""
+    parts, name, cur = {}, None, None
+    for line in text.split("\n"):
+        if line.startswith("## "):
+            name, cur = line[3:].strip(), None
+            parts[name] = []
+            continue
+        if name is None:
+            continue
+        if not line.strip():
+            cur = None
+        elif cur is None or line.startswith(("- ", "### ", "**", "|")):
+            parts[name].append(line)
+            cur = len(parts[name]) - 1
+        else:
+            parts[name][cur] += "\n" + line
+    return parts
+
+
+def handoff_changes(old, new, names):
+    """What HANDOFF.md's parts `names` say in `new` that `old` did not: the items added or rewritten, and the first lines
+    of those taken out, each part under its heading; "" when none moved."""
+    a, b, out = handoff_items(old), handoff_items(new), []
+    for name in [n for n in b if n in names] + [n for n in a if n not in b and n in names]:
+        was, now = a.get(name, []), b.get(name, [])
+        added = [i for i in now if i not in was]
+        gone = [i.split("\n", 1)[0][:120] for i in was if i not in now]
+        if not added and not gone:
+            continue
+        text = "\n".join(added + [f"(taken out: {g})" for g in gone])
+        if len(text) > HANDOFF_DELTA_MAX // 2:
+            text = (f"({len(added)} item(s) added or rewritten and {len(gone)} taken out since the knowledge base "
+                    f"loaded it — more than fits here: read `## {name}` in HANDOFF.md)")
+        out.append(f"### {name}\n{text.strip()}")
+    whole = "\n\n".join(out)
+    if len(whole) > HANDOFF_DELTA_MAX:
+        whole = whole[:HANDOFF_DELTA_MAX].rsplit("\n", 1)[0] + "\n(cut here: read HANDOFF.md for the rest)"
+    return whole
+
+
+def handoff_delta(kb):
+    """What HANDOFF.md's parts other than `## Now` and `## Open` (handoff_parts) say now that the knowledge base a
+    planner forks did not hold: the items added or rewritten since it loaded the file, and the first lines of those
+    taken out — the planner holds the rest. Planners read HANDOFF.md again in their first requests where a decision
+    turned on it (plan-40 read it in six ranges, 2026-09-22 09:33); the knowledge base holds it as it stood at its
+    build, hours before (kb-10: 04:44, forked until 13:30)."""
+    try:
+        old = open(kb_handoff(kb), errors="ignore").read()
+    except OSError:
+        return "(the copy of HANDOFF.md the knowledge base loaded was not kept: read the file where a decision turns on it)"
+    try:
+        new = open(os.path.join(PROJECT, "HANDOFF.md"), errors="ignore").read()
+    except OSError:
+        return "(HANDOFF.md cannot be read)"
+    names = [n for n in list(handoff_items(new)) + list(handoff_items(old)) if n not in ("Now", "Open")]
+    return handoff_changes(old, new, names) or "(nothing: they are as the knowledge base holds them)"
+
+
+def handoff_parts(kb=None):
+    """HANDOFF.md's `## Now` and `## Open` — what the last episode left unhandled and the open questions —: what changed
+    in them since the knowledge base read the file, which the planner holds from it; as they are when its copy was not
+    kept (the owner, 2026-09-24: "the goal is to not duplicate information and use changes when possible")."""
     path = os.path.join(PROJECT, "HANDOFF.md")
     text = open(path, errors="ignore").read() if os.path.exists(path) else ""
-    return "\n\n".join(f"### {p}\n{part(text, p) or '(empty)'}" for p in ("Now", "Open"))
+    try:
+        old = open(kb_handoff(kb), errors="ignore").read() if kb else None
+    except OSError:
+        old = None
+    if old is None:
+        return "\n\n".join(f"### {p}\n{part(text, p) or '(empty)'}" for p in ("Now", "Open"))
+    out = []
+    for p in ("Now", "Open"):
+        moved = handoff_changes(old, text, [p])
+        out.append(moved if moved else f"### {p}\n(as you hold it from the knowledge base: unchanged since it read it)")
+    return "\n\n".join(out)
 
 
 def first_episode():
@@ -2698,11 +4021,28 @@ def kb_build():
         n = count(st, "kb")
     key = str(n)
 
+    base = base_record("max")[0] or "max"
+    # max's chain of texts, held in its own first message over what it forks (chain_carried): no session of max's delta
+    # is made for it, and it takes later texts in by integration (kb_texts) — it was built again at every new message
+    # of max's delta, planner or not (the owner, 2026-09-24: "make this lazy too")
+    # the protocols of the sessions forked from it and the graph, held once here: each planner and consultation is given
+    # its own values and what changed since (the owner, 2026-09-24: "the goal is to not duplicate information and use
+    # changes when possible")
+    protocols, shas = kb_protocols()
+    graph = graph_text()
+    held = (f"{protocols}\n\n## The graph as it stood when you were built\n\n{graph}")
+    changes, holding = chain_carried(base, room=DELTA_ARG - len(held.encode()) - 8000)
+    mark, marks = "\x00the changes\x00", "\x00the protocols\x00"  # put in after the render: no placeholder in them
+
     def prompt(name):
         # HANDOFF.md holds what outlasts a knowledge base; the notes told only its predecessor what changed
-        return render("kb", NAME=name, STALE=stale_of(name, base_record("max")[0] or "max"))
-    name = launch("kb", key, prompt, kb_state="building", previous=previous)
+        keep_graph(name, graph)
+        return render("kb", NAME=name, STALE=stale_of(name, base), CHANGES=mark, PROTOCOLS=marks) \
+            .replace(mark, changes).replace(marks, held)
+    name = launch("kb", key, prompt, kb_state="building", previous=previous, protocol_shas=shas, graph_copy=True,
+                  **holding)
     if name:
+        keep_kb_handoff(name)  # what it loads: a planner forking it is told what has changed since (handoff_delta)
         with state() as st:
             st["kb_building"] = name
     return name
@@ -2734,9 +4074,13 @@ def kb_care():
         if s.get("sid") and integrated(s, s.get("started", 0)):
             seal(building)
             ctx = context_of(s["sid"])
+            holds = kb_holds(s)
             with state() as w:
                 w["sessions"][building].update(state="done", kb_state="sealed", context=ctx, built_context=ctx,
-                                               base_sid=(base_record("max")[1] or {}).get("sid"))
+                                               texts_at=time.time(), **holds,
+                                               base_sid=(base_record("max")[1] or {}).get("sid"),
+                                               build_cost=round(softly("what the knowledge base's build cost",
+                                                                       session_cost, s, default=0) or 0))
                 w["kb"], w["kb_building"] = building, None
                 if ctx > KB_MAX - KB_MARGIN:
                     event(w, "the harness", f"The knowledge base {building} loads at {ctx // 1000}K, near its limit of "
@@ -2754,7 +4098,7 @@ def kb_care():
     # a successor is built while the present one still serves: once it has grown within KB_MARGIN of its limit (a fresh
     # one that loads that large is not rebuilt again), or when the owner has rebuilt the base it was forked from
     grown = ctx > KB_MAX - KB_MARGIN and ctx > built + KB_MARGIN
-    rebased = rec.get("base_sid") and rec["base_sid"] != (base_record("max")[1] or {}).get("sid")
+    rebased = not kb_stands(rec)
     if not kb or rec.get("state") == "lost" or (rec.get("kb_state") == "sealed" and not warm(kb)) or grown or rebased:
         kb_build()
         return
@@ -2776,23 +4120,155 @@ def kb_care():
         if integrated(rec, rec.get("integrating_since", 0)):
             seal(kb)
             ctx = context_of(rec["sid"])
+            took = rec.get("integrating") or {}
+            with contextlib.suppress(OSError):  # the graph it took in with them: what its planners' changes start from
+                os.replace(graph_copy_path(kb) + ".next", graph_copy_path(kb))
             with state() as w:
-                w["sessions"][kb].update(kb_state="sealed", context=ctx, state="done")
-            log(f"{kb} integrated ({ctx} tokens)")
+                w["sessions"][kb].update(kb_state="sealed", context=ctx, state="done", integrating=None)
+                if rec.get("integrating_protocols"):
+                    w["sessions"][kb]["protocol_shas"] = rec["integrating_protocols"]
+                w["sessions"][kb].pop("integrating_protocols", None)
+                if took:
+                    # the texts it took in: what it holds of max's chain now, and what its forks carry of it
+                    s = w["sessions"][kb]
+                    s.update(took, delta_tokens=int(s.get("delta_tokens") or 0) + int(took.get("carried_tokens") or 0),
+                             texts_at=time.time())
+                    s.update(kb_holds(s))
+            log(f"{kb} integrated ({ctx} tokens)" + (f", holding max's chain to {took.get('holds_node')}" if took else ""))
         return
-    if st["notes"] and rec.get("kb_state") == "sealed":
-        with state() as w:
-            notes, w["notes"] = w["notes"], []
+    if rec.get("kb_state") != "sealed":
+        return
+    nodes, lacking = kb_lacking(rec)
+    # max's texts it lacks: taken in with the planners' notes, which resume it anyway, or once what the planners
+    # forked from it lacked has cost them what taking them in costs (kb_texts_paid) — never a rebuild for them
+    take = bool(lacking) and (bool(st["notes"]) or kb_texts_paid(kb, rec, lacking))
+    if not st["notes"] and not take:
+        return
+    changes, took = ("", {})
+    if take:
+        softly("max's delta text", cut_text, "max")
+        changes, took = kb_texts(rec)
+    with state() as w:
+        notes, w["notes"] = w["notes"], []
+    if notes:
         with open(notes_path(kb), "a") as f:
             f.write("\n\n".join(notes) + "\n\n")
-        text = ("Integrate these notes into what you hold, then reply INTEGRATED and end your turn; do nothing else.\n\n"
-                + "\n\n".join(notes))
+    if not notes and not changes:
+        return
+    # with the notes, what changed since it took them in of what its forks are given as changes: the graph, and the
+    # protocols of the sessions forked from it — so that each planner is given the changes since its last episode
+    kept, shas = {}, dict(rec.get("protocol_shas") or {})
+    if notes:
+        with contextlib.suppress(OSError):
+            graph = graph_text()
+            copy = open(graph_copy_path(kb)).read()
+            moved = graph_changes(copy, graph, holder="you")
+            if not moved.startswith("(as you hold it: nothing"):
+                changes += ("\n\n" if changes else "") + "## The graph, as changed since you last held it\n\n" + moved
+            with open(graph_copy_path(kb) + ".next", "w") as f:
+                f.write(graph)
+        for role in KB_HELD_ROLES:
+            old, sha = protocol_of(rec, peek()["sessions"], role)
+            if old is not None and sha != protocol_sha(role):
+                changes += ("\n\n" if changes else "") + protocol_block(role, old)
+                shas[role] = keep_protocol(role)
+    text = ("Integrate " + ("these notes" if notes else "the changes below") + (" and the changes below" if notes and
+            changes else "") + " into what you hold, then reply INTEGRATED and end your turn; do nothing else.\n\n"
+            + "\n\n".join(notes) + ("\n\n" if notes and changes else "") + changes)
+    with state() as w:
+        w["sessions"][kb].update(kb_state="integrating", integrating_since=time.time(), integrating=took or None,
+                                 integrating_protocols=shas if shas != (rec.get("protocol_shas") or {}) else None)
+    if not resume(kb, text):
         with state() as w:
-            w["sessions"][kb].update(kb_state="integrating", integrating_since=time.time())
-        if not resume(kb, text):
-            with state() as w:
-                w["sessions"][kb]["kb_state"] = "sealed"
-                w["notes"] = notes + w["notes"]
+            w["sessions"][kb].update(kb_state="sealed", integrating=None)
+            w["notes"] = notes + w["notes"]
+
+
+def kb_held(rec):
+    """(the first text of max's chain the knowledge base holds, how many it holds): recorded since it takes the texts
+    in; one built before, by the session it forked — a session of the chain holding its first texts, or the layer."""
+    if "stack_len" in rec:
+        return rec.get("stack_base"), int(rec.get("stack_len") or 0)
+    stack = chain_of(delta_record("max"))
+    ids = [n.get("sessionId") for n in stack]
+    if rec.get("origin_sid") and rec["origin_sid"] in ids:
+        return node_id(stack[0]), ids.index(rec["origin_sid"]) + 1
+    return None, 0
+
+
+def kb_lacking(rec):
+    """(max's chain's texts, their tokens with what is not cut yet) the knowledge base `rec` does not hold."""
+    return chain_lacking("max", *kb_held(rec))
+
+
+def kb_stands(rec):
+    """Whether the knowledge base stands on max's load as it is: on the parts standing — whatever texts of max's chain
+    came since, which it takes in (kb_texts) — or, built before it recorded them, on a session of the chain standing
+    or on the parts. A refresh of max's parts, or its stable base rebuilt, is a load it does not hold: it is built
+    again then, and when it has grown, gone cold or been lost (kb_care)."""
+    layer = layer_record("max")
+    if rec.get("layer_sid"):
+        return bool(layer) and rec["layer_sid"] == layer.get("sessionId")
+    if not rec.get("base_sid"):
+        return True
+    d = delta_record("max")
+    standing = {(layer or {}).get("sessionId"), (base_record("max")[1] or {}).get("sid"), (d or {}).get("sessionId")}
+    standing |= {n.get("sessionId") for n in chain_of(d)}
+    return rec["base_sid"] in standing - {None}
+
+
+def kb_texts(rec):
+    """(the message giving the knowledge base max's texts it lacks, the fields of what it then holds), or ("", {})
+    past what one message carries."""
+    nodes, _ = kb_lacking(rec)
+    d = delta_record("max") or {}
+    stack = chain_of(d)
+    if not nodes or not stack:
+        return "", {}
+    try:
+        text = "\n".join(open(node["text"], errors="ignore").read() for node in nodes)
+    except (OSError, KeyError, TypeError):
+        return "", {}
+    if len(text.encode()) > DELTA_ARG:
+        say_once("kb-texts-too-long", f"ATTENTION max's texts the knowledge base lacks ({len(text.encode()):,} bytes) "
+                 "are past what one message carries: its planners are told what changed", every=3600)
+        return "", {}
+    parts = {}
+    for node in stack:
+        for part, n in (node.get("parts") or {}).items():
+            parts[part] = parts.get(part, 0) + n
+    total = sum(v for v in parts.values() if v > 0)
+    took = dict(stack_base=node_id(stack[0]), stack_len=len(stack), holds_node=node_id(stack[-1]),
+                carried_tokens=sum(int(n.get("tokens") or 0) for n in nodes),
+                holds_shares={p: v / total for p, v in parts.items() if v > 0} if total else {},
+                holds_superseded=sum(int(n.get("superseded") or 0) for n in stack), holds_old_forms=d.get("old_forms") or {})
+    return ("## What the library you hold has changed since you took it in\n\nEach message below gives the current form "
+            "of every part it names and supersedes what you hold of those parts (a later message what an earlier one "
+            "gave); everything else you hold is current.\n\n" + text), took
+
+
+def kb_holds(s):
+    """What the knowledge base carries of max's chain and what its planners are told changed after: its snapshot is
+    the texts' last (stale_of reads it), and its forks carry the texts' parts and superseded forms."""
+    if not s.get("holds_node") or not s.get("sid"):
+        return {}
+    with contextlib.suppress(OSError):
+        shutil.copyfile(os.path.join(STATE, f"layer-{s['holds_node']}-manifest.json"),
+                        os.path.join(STATE, f"layer-{s['sid']}-manifest.json"))
+    return dict(snapshot=True, delta_shares=s.get("holds_shares") or {},
+                superseded_tokens=int(s.get("holds_superseded") or 0), old_forms=s.get("holds_old_forms") or {},
+                delta_tokens=int(s.get("delta_tokens") or 0) + (int(s.get("carried_tokens") or 0)
+                                                                 if s.get("kb_state") == "building" else 0))
+
+
+def kb_texts_paid(kb, rec, lacking):
+    """Whether what the planners forked from the knowledge base since it last took max's texts in lacked has cost them
+    what taking the texts in costs: each read the changes it was told of (STALE_READ a token), where the knowledge base
+    writes them once (2 a token) over one read of itself (0.1 a token) — the churn's rule (role_churn_care)."""
+    since = rec.get("texts_at") or rec.get("started") or 0
+    owed = sum(STALE_READ * int(s.get("kb_lacking") or 0) for s in peek()["sessions"].values()
+               if s.get("origin") == kb and (s.get("started") or 0) >= since)
+    return owed >= 2 * lacking + 0.1 * int(rec.get("context") or 0)
 
 
 def integrated(rec, since):
@@ -2809,6 +4285,809 @@ def kb_ready():
     rec = st["sessions"].get(st["kb"] or "") or {}
     past = (rec.get("context") or 0) > KB_MAX and st.get("kb_building")
     return rec.get("kb_state") == "sealed" and warm(st["kb"]) and not past
+
+
+# ---------------------------------------------------------------- the roles' reasoning layers
+
+ROLE_LAYER_DONE = "ROLE-LAYER READY"  # the line that ends a layer's reasoning
+ROLE_LAYER_AGE = int(os.environ.get("ORCH_ROLE_LAYER_AGE", 4 * 3600))  # past this, rebuilt once the run has shown more
+ROLE_LAYER_IDLE = int(os.environ.get("ORCH_ROLE_LAYER_IDLE", 2 * 3600))  # a layer no session of its role wanted this
+# long is let go (its keep-warm pings are a cost of their own) and built again when the role is wanted
+ROLE_LAYER_BUILD_MAX = int(os.environ.get("ORCH_ROLE_LAYER_BUILD_MAX", 1200))  # a build that never replies
+ROLE_LAYER_NEW = int(os.environ.get("ORCH_ROLE_LAYER_NEW", 6))  # sessions of the role ended since a build that make
+# its evidence new enough to build again (with a rejection of the role's work since, one is enough)
+
+
+
+def role_layers():
+    """The roles whose sessions fork a reasoning layer made for the role — the owner's to set, to test (the owner,
+    2026-09-23: "design and build the per-role reasoning layer which I will then either activate or not"). Off unless
+    state/role-layers exists (its words name the roles, none or `all` every role that forks a base) or
+    ORCH_ROLE_LAYERS says so (`0` or empty: off)."""
+    named = os.environ.get("ORCH_ROLE_LAYERS")
+    if named is None:
+        try:
+            named = open(os.path.join(STATE, "role-layers")).read() or "all"
+        except OSError:
+            return set()
+    words = set(named.replace(",", " ").split()) - {"0"}
+    if not words:
+        return set()
+    return set(LAYERABLE) if words & {"all", "1"} else words & LAYERABLE
+
+
+# The roles that judge the current area (review, design, decomposition) reason over its changes: their layer stands on
+# the shared delta. The roles that execute (implementation, fixing, investigation) reason about their practice: their
+# layer stands on the medium layer, and the changes come above it, in their churn, or in their current reads.
+HOT_BEFORE_ROLE = frozenset(("reviewer", "designer", "task-designer"))
+
+
+def role_layer_origin(role):
+    """(name, record) of what a role's reasoning layer stands on: the shared delta for the judging roles whenever one
+    stands, warm or not — a parent chosen by warmth made a layer over the delta invalid whenever the delta cooled, and
+    the layer then built over the medium layer invalid again when it warmed — and the medium layer for the rest."""
+    who = ROLES[role]["origin"]
+    base = base_part(medium_record(who)[0]) or who  # the base standing for it (FALLBACK), whose delta its churn holds
+    if role in HOT_BEFORE_ROLE and deltas_on(base) and delta_record(base):
+        return base_record(who)
+    return medium_record(who)
+
+
+def role_layer_record(role, st=None):
+    return ((st or peek()).get("role_layers") or {}).get(role) or {}
+
+
+def role_layer_of(role):
+    """The name of the reasoning layer the role's sessions fork now, or None — its base's roles fork their base then:
+    the switch on for the role; the layer sealed, warm and forked from what the role's base is now (a layer over a
+    base rebuilt or refreshed since holds a load its forks would be told nothing about, and is built again)."""
+    if role not in role_layers():
+        return None
+    st = peek()
+    name = role_layer_record(role, st).get("name")
+    rec = st["sessions"].get(name or "") or {}
+    if rec.get("layer_state") != "sealed" or rec.get("released") or not warm(name):
+        return None
+    # it serves until its successor is sealed, after a refresh of the medium layer under it too: it and its churn hold
+    # that layer's content and the delta over it, which is what the refreshed layer took in, and a fork is told what
+    # changed after the churn (its snapshot) — where falling back to the shared delta meant a fork of an entry no role
+    # keeps warm, whose cold write is its whole prefix (about 1.2M). A judging role's reasoning is over the chain it
+    # forked: it serves while that chain stands, grown by increments since (its churn holds them), and not once the
+    # chain is written anew or orphaned by a refresh
+    if role in HOT_BEFORE_ROLE and not layer_stands(role, rec):
+        return None
+    return name if not other_tools(rec) else None
+
+
+def layer_stands(role, rec):
+    """Whether a role's reasoning layer stands on what the role's layer is to stand on now: an executing role's on the
+    medium layer standing; a judging role's on the base's delta chain as it stands — the owner, 2026-09-23, said yes to
+    the judging roles taking the chain's increments as a churn over their layer, reasoned again only when the chain is
+    written anew or the parts are refreshed: a layer over the chain's top made due by every new message cost about
+    600K a message on xhigh (three layers), so messages would almost never have paid. A judging layer takes the chain's
+    texts in its own message (chain_carried) over what it forks — a session of the chain, or the layer before one is
+    made — and stands while the texts it holds began the chain standing."""
+    org = role_layer_origin(role)[1] or {}
+    if role not in HOT_BEFORE_ROLE:
+        return bool(rec.get("origin_sid")) and rec.get("origin_sid") == org.get("sid")
+    who = base_part(medium_record(ROLES[role]["origin"])[0]) or ROLES[role]["origin"]
+    d = delta_record(who) if deltas_on(who) else None
+    stack = chain_of(d)
+    # the texts it holds are of another chain — written anew, or begun again over refreshed parts: it reasoned over
+    # what no longer stands (the first text it holds is none of the chain's)
+    if int(rec.get("stack_len") or 0) and (not stack or rec.get("stack_base") != node_id(stack[0])):
+        return False
+    if rec.get("origin_sid") and rec.get("origin_sid") == org.get("sid"):
+        return True
+    if not d:
+        return False
+    # a session of the chain as it stands, or the layer the chain stands on (a layer that reasoned over the parts before
+    # the chain had a text holds none of it: the chain's first text is an increment to it as much as any later one —
+    # found by the simulation of the run of 09-21/22)
+    return rec.get("origin_sid") in ({n.get("sessionId") for n in stack} | {d.get("sessionId"), d.get("layer")}) - {None}
+
+
+def role_layer_current(role):
+    """The role's layer, if it stands on the medium layer as it is now: a churn is built only over such a layer, since
+    the delta's text is what changed since the medium layer now standing."""
+    name = role_layer_of(role)
+    rec = peek()["sessions"].get(name or "") or {}
+    return name if name and layer_stands(role, rec) else None
+
+
+def role_churn_of(role):
+    """The churn the role's sessions fork now over its reasoning layer, or None (they fork the layer itself then): sealed,
+    warm, over the layer they would fork. An older churn than the base's delta still serves — its forks are told what
+    changed after it — until the newer one is built. A judging role's churn holds the chain's messages after the one
+    its layer reasoned over."""
+    layer = role_layer_of(role)
+    if not layer:
+        return None
+    st = peek()
+    name = role_layer_record(role, st).get("churn")
+    s = st["sessions"].get(name or "") or {}
+    if (s.get("over") or s.get("origin")) != layer or s.get("layer_state") != "sealed" or s.get("released") \
+            or not warm(name):
+        return None
+    return name
+
+
+def layer_of_session(name):
+    """The reasoning layer a session holds — forked from it, or from its churn — or {}."""
+    st = peek()
+    rec = st["sessions"].get(name or "") or {}
+    layer = st["sessions"].get(rec.get("origin") or "") or {}
+    for _ in range(64):  # the churn over it, and its increments: the reasoning is the layer's under them
+        if layer.get("role") != "role-churn":
+            break
+        layer = st["sessions"].get(layer.get("over") or layer.get("origin") or "") or {}
+    return layer if layer.get("role") == "role-layer" else {}
+
+
+def layered_text(name):
+    """What a session forked from its role's reasoning layer is told of it, or ""."""
+    rec = peek()["sessions"].get(name or "") or {}
+    layer = layer_of_session(name)
+    if not layer:
+        return ""
+    return (f"Before this message stands the reasoning of {layer['name']}, your role's reasoning layer — the thinking it "
+            f"did once, for every session of the {rec.get('role')}, over the library for the work ahead and over what "
+            "the run has shown of the role's work, which you hold as your own. Use it where it fits your task; your "
+            "brief, this protocol and the harness govern where they differ.")
+
+
+def role_wanted(st, role):
+    """Whether the role has work now or has had it lately: a session of it started within ROLE_LAYER_IDLE, or a task
+    that one of its sessions would take."""
+    if any(s.get("role") == role and time.time() - (s.get("started") or 0) < ROLE_LAYER_IDLE
+           for s in st["sessions"].values()):
+        return True
+    kinds = {r: k for k, r in PRODUCER.items()}
+    for tid in dict.fromkeys(list(st["tasks"]) + list(st.get("queue") or [])):
+        t = dict(st["tasks"].get(tid) or {})
+        if tid in (st.get("queue") or []) and t.get("stage") is None:  # queued, not yet taken up: its brief says
+            task = read_task(tid) or {}
+            if task.get("status") == "completed":
+                continue
+            t.setdefault("kind", brief_kind(task.get("description", "")))
+        stage = t.get("stage")
+        if role == "reviewer" and stage in ("checking", "reviewing"):
+            return True
+        if role == "fixer" and stage == "fixing":
+            return True
+        if role == "task-designer" and t.get("kind") == "brief" and stage in (None, "ready"):
+            return True
+        if role in kinds and t.get("kind", "build") == kinds[role] and stage in (None, "ready"):
+            return True
+    return False
+
+
+def protocol_template(role):
+    """A role's protocol with its shared parts in place and every value still a placeholder."""
+    text = open(os.path.join(PROTOCOLS, f"{role}.md")).read().replace("{{inherited}}", "")
+    for _ in range(2):
+        text = re.sub(r"\{\{([\w-]+)\}\}", lambda m: open(os.path.join(PROTOCOLS, f"_{m.group(1)}.md")).read().strip(), text)
+    return text
+
+
+def generic_protocol(role):
+    """A role's protocol as its reasoning layer holds it, for every session of the role: each value named by the
+    placeholder it is (`<BRIEF>`, `.build/tasks/<ID>/`, `<ROOM_TASK>K`), since the values are each session's, or move
+    with the run (a room, a switch), and each session's first message gives them (held_protocol_message)."""
+    text = protocol_template(role)
+    for k in dict.fromkeys(re.findall(r"\{([A-Z][A-Z_]+)\}", text)):
+        text = text.replace("{" + k + "}", f"<{k}>")
+    return text.strip()
+
+
+def protocol_sha(role):
+    """What a reasoning layer's (or churn's) copy of its role's protocol is. A copy that is not the protocol now reaches
+    the layer's forks as the protocol's changes since (protocol_changes), held by the role's churn once it takes them
+    (role_churn_care); the layer is reasoned again over the new protocol by the rule of what carrying the old one has
+    cost (protocol_paid)."""
+    return hashlib.sha256(protocol_template(role).encode()).hexdigest()[:16]
+
+
+def keep_protocol(role):
+    """The role's protocol as it is now, kept under its digest (state/role-protocols/<sha>.md) — what a session given
+    it holds, and what the changes its forks are given later are measured from (the owner, 2026-09-24: "why not just
+    the changes … wasn't everything supposed to be delivered in changes and use the delta layers?"; "the goal is to not
+    duplicate information and use changes when possible"). Its digest."""
+    sha = protocol_sha(role)
+    path = os.path.join(STATE, "role-protocols", f"{sha}.md")
+    if not os.path.exists(path):
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path + ".tmp", "w") as f:
+            f.write(generic_protocol(role))
+        os.replace(path + ".tmp", path)
+    return sha
+
+
+def protocol_of(s, sessions, role):
+    """(the text, the digest) of `role`'s generic protocol that session `s` holds — a reasoning layer's, a churn's that
+    took the changes since (one that took none holds its layer's), a session's whose first message gave it as that
+    (the session a continuation forks), the knowledge base's (the planner's and the consultant's, KB_HELD_ROLES) —;
+    (None, the digest) when that copy was not kept (a layer built before they were); (None, None) when it holds none as
+    such: rendered with a session's own values, or not at all."""
+    for _ in range(64):
+        if s.get("role") == "role-churn" and not s.get("protocol_sha"):
+            s = sessions.get(s.get("over") or s.get("origin") or "") or {}
+            continue
+        break
+    if s.get("protocol_shas"):
+        sha = s["protocol_shas"].get(role)
+    elif s.get("protocol_sha") and not s.get("protocol_rendered") \
+            and (s.get("protocol_role") or s.get("layer_of") or s.get("churn_of") or s.get("role")) == role:
+        sha = s["protocol_sha"]
+    else:
+        return None, None
+    if not sha:
+        return None, None
+    try:
+        return open(os.path.join(STATE, "role-protocols", f"{sha}.md")).read(), sha
+    except OSError:
+        return None, sha
+
+
+KB_HELD_ROLES = ("planner", "consultant")  # the roles whose sessions fork the knowledge base: it holds their protocols
+
+
+def kb_protocols():
+    """(the planner's and the consultant's protocols, generic, as the knowledge base holds them for the sessions forked
+    from it, {role: digest}): each such session is given its own values and the changes since, never the protocol."""
+    parts, shas = [], {}
+    for role in KB_HELD_ROLES:
+        shas[role] = keep_protocol(role)
+        parts.append(f"## The {role}'s protocol, as each of its sessions receives it with its own task\n\n"
+                     f"{generic_protocol(role)}")
+    return "\n\n".join(parts), shas
+
+
+def graph_copy_path(name):
+    return os.path.join(STATE, "graphs", f"{name}.md")
+
+
+def keep_graph(name, text):
+    """The graph a session holds in its message (the knowledge base, the task designer's reasoning layer), kept: what the
+    sessions forked from it are given the changes since (graph_for)."""
+    os.makedirs(os.path.join(STATE, "graphs"), exist_ok=True)
+    with open(graph_copy_path(name) + ".tmp", "w") as f:
+        f.write(text)
+    os.replace(graph_copy_path(name) + ".tmp", graph_copy_path(name))
+
+
+def graph_changes(copy, now=None, holder="the knowledge base you are forked from"):
+    """The graph now against a copy the session holds: each open task's line that is new or changed, in its current
+    form, and the tasks no longer open named; the graph whole when no copy is held."""
+    now = graph_text() if now is None else now
+    if copy is None:
+        return now
+    key = lambda line: (re.match(r"- (\S+) \[", line) or re.match(r"(- and \d+ completed)", line) or [None, line])[1]
+    was = {key(line): line for line in copy.splitlines() if line.strip()}
+    lines = [line for line in now.splitlines() if line.strip()]
+    changed = [line for line in lines if was.get(key(line)) != line]
+    gone = [k for k in was if k not in {key(line) for line in lines} and not k.startswith("- and ")]
+    if not changed and not gone:
+        return f"(as {holder} holds it: nothing in it has changed since)"
+    return (f"(as {holder} holds it, with what changed since: each line below is a task's line as it stands now, new or "
+            "changed; " + (f"no longer open: {', '.join(gone)}" if gone else "none has left it") + ")\n"
+            + "\n".join(changed))
+
+
+def graph_for(name):
+    """The graph as a session is to be given it: the changes since the copy what it forks holds — the knowledge base for
+    a planner, the task designer's reasoning layer (through its churn) —, or whole."""
+    sessions = peek()["sessions"]
+    s = sessions.get((sessions.get(name) or {}).get("origin") or "") or {}
+    for _ in range(64):
+        if s.get("graph_copy"):
+            try:
+                copy = open(graph_copy_path(s["name"])).read()
+            except OSError:
+                break
+            return graph_changes(copy, holder="the knowledge base you are forked from" if s.get("role") == "kb"
+                                 else "your role's reasoning layer")
+        if s.get("role") != "role-churn":
+            break
+        s = sessions.get(s.get("over") or s.get("origin") or "") or {}
+    return graph_text()
+
+
+def protocol_paragraphs(text):
+    """{key: (the heading it stands under, its text)} of a protocol's paragraphs, in order: blocks between blank lines, a
+    heading its own, each keyed by its first line."""
+    out, heading = {}, ""
+    for block in re.split(r"\n\s*\n", text.strip()):
+        block = block.strip("\n")
+        if not block.strip():
+            continue
+        first = block.splitlines()[0].strip()
+        if first.startswith("#"):
+            heading = first
+        key, n = first, 1
+        while key in out:
+            n += 1
+            key = f"{first} #{n}"
+        out[key] = (heading, block)
+    return out
+
+
+def protocol_changes(old, new):
+    """(the protocol `new`'s paragraphs changed or added since `old`, in their current form, each under the heading it
+    stands under, and the opening lines of those taken out; the tokens of the old forms they supersede) — ("", 0)
+    when nothing changed."""
+    was, now = protocol_paragraphs(old), protocol_paragraphs(new)
+    shown, heading = [], None
+    for key, (under, body) in now.items():
+        if was.get(key, (None, None))[1] == body:
+            continue
+        if under != heading and not body.startswith("#"):
+            shown.append(f"(under {under})" if under else "(before the first heading)")
+        heading = under
+        shown.append(body)
+    gone = [key for key in was if key not in now]
+    superseded = int(sum(len(body) for key, (_, body) in was.items() if now.get(key, (None, None))[1] != body) / 2.9)
+    if not shown and not gone:
+        return "", 0
+    text = "\n\n".join(shown)
+    if gone:
+        text += ("\n\n" if text else "") + "Taken out: " + "; ".join(
+            (k if len(k) <= 80 else k[:77] + "…") for k in gone)
+    return text, superseded
+
+
+def protocol_block(role, held):
+    """The message part giving a role's protocol changes since the copy `held`, or ""."""
+    text, _ = protocol_changes(held, generic_protocol(role))
+    if not text:
+        return ""
+    return (f"## The {role}'s protocol, as changed since the copy you hold\n\n"
+            "Each paragraph below is its current form and replaces the paragraph of the same opening in the copy of the "
+            "protocol you hold above; one under a heading or with an opening you do not hold is new, and the paragraphs "
+            "named as taken out no longer apply. Where it names a value as `<NAME>`, the session's own is given in its "
+            "first message.\n\n" + text)
+
+
+def protocol_paid(st, role, name, rec):
+    """Why the role's reasoning layer is to be reasoned again over its protocol as it is now, or None: once what its
+    forks have carried of the old forms of changed paragraphs (0.1 a token a request) and written of the changes in
+    their own first messages (2 a token) since it was built reaches what building it costs — the rent-or-buy the chain
+    of texts keeps (the owner, 2026-09-24). A layer whose copy was not kept gives its forks the protocol whole, and is
+    due at once."""
+    layer = st["sessions"].get(name or "") or {}
+    if protocol_of(layer, st["sessions"], role)[0] is None:
+        return "its role's protocol has changed since it was built, and the copy it holds was not kept"
+    # (its forks hold the changes too, each continuation and churn: counted from the layer's build on)
+    import watchdog
+    since, owed = rec.get("built") or 0, 0.0
+    for s in st["sessions"].values():
+        if s.get("role") != role or (s.get("started") or 0) < since:
+            continue
+        if not (s.get("protocol_superseded") or s.get("protocol_written")):
+            continue
+        owed += 0.1 * int(s.get("protocol_superseded") or 0) * watchdog.own_requests(s) \
+            + 2 * int(s.get("protocol_written") or 0)
+    cost = int(layer.get("build_cost") or LAYER_BUILD_GUESS)
+    if owed >= cost:
+        return (f"its role's protocol has changed, and what its forks have carried and written of the changes "
+                f"({owed / 1000:,.0f}K) has paid for reasoning over it anew ({cost / 1000:,.0f}K)")
+    return None
+
+
+def held_protocol_message(role, values, changed="", holder="your role's reasoning layer"):
+    """The first message of a session whose reasoning layer holds its protocol: that protocol stands in the layer's
+    message whole, each value as its `<NAME>`, so this gives only what is the session's own and what moves with the
+    run — each `<NAME>` and its value now. The protocol twice, in the layer and again here, was about 8K tokens in every
+    request of every session of the role (2026-09-23)."""
+    text = protocol_template(role)
+    values = render_values(**values)
+    values.setdefault("CONTINUED", "")
+    values.setdefault("CHECKED", CHECK_PASSED)
+    inherited = open(os.path.join(PROTOCOLS, "_inherited.md")).read().strip()
+    inherited = inherited.replace("{STALE}", values.get("STALE", "")).replace("{LAYERED}", layered_text(values.get("NAME")))
+    short, long = [], []
+    for k in dict.fromkeys(re.findall(r"\{([A-Z][A-Z_]+)\}", text)):
+        v = str(values.get(k, "")).strip()
+        if not v or k in ("STALE", "LAYERED"):
+            continue
+        (long if "\n" in v or len(v) > 160 else short).append((k, v))
+    held = ("whole and as it stands now" if not changed else
+            "with the changes given at the end of this message, which are its current form")
+    out = [f"You are {values.get('NAME')}, a session of the {role}. Your protocol is the one {holder} "
+           f"holds above (\"The {role}'s protocol, as each of its sessions receives it with its own task\"), {held}; "
+           "where it names a value as `<NAME>`, yours is given here.", inherited, ""]
+    out += [f"- <{k}>: {v}" for k, v in short]
+    for k, v in long:
+        out += ["", f"## <{k}>", "", v]
+    if changed:
+        out += ["", changed]
+    return "\n".join(out).strip()
+
+
+def role_layer_moved(st, rec):
+    """Whether the work ahead its layer reasoned over has moved on: half or more of the tasks it named are no longer
+    open (done, deleted, completed in the graph)."""
+    ahead = rec.get("ahead") or []
+    gone = [x for x in ahead if (st["tasks"].get(x) or {}).get("stage") in ("done", "deleted")
+            or (read_task(x) or {}).get("status") in ("completed", None)]
+    return bool(ahead) and 2 * len(gone) >= len(ahead)
+
+
+def role_layer_new(st, role, rec):
+    """Whether the run has shown the role more since its layer was built: ROLE_LAYER_NEW of its sessions ended since,
+    or a task of its rejected since."""
+    since = rec.get("built") or 0
+    ended = [s for s in st["sessions"].values() if s.get("role") == role and (s.get("ended") or 0) > since]
+    rejected = any(t.get("rejections") and (t.get("rejected_at") or 0) > since for t in st["tasks"].values()
+                   if PRODUCER.get(t.get("kind", "build")) == role or role == "reviewer")
+    return len(ended) >= ROLE_LAYER_NEW or (rejected and ended)
+
+
+def role_layer_due(st, role):
+    """Why the role's layer is to be built now, or None."""
+    rec = role_layer_record(role, st)
+    name = rec.get("name")
+    layer = st["sessions"].get(name or "") or {}
+    if not name or layer.get("state") == "lost" or layer.get("released"):
+        return "it has none"
+    if not layer_stands(role, layer):  # its churn's rebuilds leave it standing: only what is under it, replaced
+        return "the material its reasoning depends on has been replaced"
+    if other_tools(layer):
+        return "it was started with other tools than session-flags gives now"
+    if layer.get("protocol_sha") != protocol_sha(role):  # its forks are given the changes meanwhile, or its churn holds them
+        paid = protocol_paid(st, role, name, rec)
+        if paid:
+            return paid
+    if not warm(name):
+        return "it went cold"
+    if time.time() - (rec.get("built") or 0) > ROLE_LAYER_AGE and (role_layer_new(st, role, rec)
+                                                                     or role_layer_moved(st, rec)):
+        # one rule: a build is its evidence read, its message written and its reasoning thought (about 200K), so it
+        # is not bought hourly for a work ahead that turns over hourly (a reviewer's does)
+        return (f"it is older than {ROLE_LAYER_AGE // 3600} hours and the run has shown the role more since, or half "
+                "the work ahead it reasoned over is done")
+    return None
+
+
+def role_layer_care():
+    """Build each switched-on role's reasoning layer when it is wanted and due, in the background: its evidence is read
+    by role_evidence.py (transcripts, seconds to a minute, never in the dispatch), then the layer is forked from the
+    role's base with it, and sealed when it has replied ROLE_LAYER_DONE. Until then the role forks its base."""
+    roles = role_layers()
+    st = peek()
+    for role in sorted(roles):
+        rec = role_layer_record(role, st)
+        building = rec.get("building")
+        if building:
+            s = st["sessions"].get(building) or {}
+            if s.get("state") == "lost" or (s.get("sid") and time.time() - (s.get("started") or 0) > ROLE_LAYER_BUILD_MAX
+                                            and not role_layer_replied(s)):
+                log(f"ATTENTION the {role}'s reasoning layer {building} did not finish; its role forks its base")
+                with state() as w:
+                    if building in w["sessions"]:
+                        w["sessions"][building]["state"] = "lost"
+                    w.setdefault("role_layers", {}).setdefault(role, {})["building"] = None
+                open(os.path.join(STATE, f"start-failed-role-layer-{role}"), "w").write(str(time.time()))
+                continue
+            if s.get("sid") and role_layer_replied(s):
+                seal(building)
+                ctx = context_of(s["sid"])
+                previous = rec.get("name")
+                build = softly("what the layer's build cost", session_cost, s, default=0) or 0
+                thought = last_output(s) or 0  # its thinking: carried by every fork, outside its own measured context
+                holds = {}
+                if s.get("holds_node"):
+                    # it took the chain's texts in its own message: its forks are told what changed after them, and
+                    # carry what it holds
+                    with contextlib.suppress(OSError):
+                        shutil.copyfile(os.path.join(STATE, f"layer-{s['holds_node']}-manifest.json"),
+                                        os.path.join(STATE, f"layer-{s['sid']}-manifest.json"))
+                    holds = dict(holding_fields(s), snapshot=True)
+                with state() as w:
+                    w["sessions"][building].update(state="done", layer_state="sealed", context=ctx, ended=time.time(),
+                                                   used=time.time(), ping_cost=round(0.1 * ctx), thought=thought, **holds,
+                                                   # its thinking is written once more, by the first request that reads it
+                                                   build_cost=round(build + 2 * thought))
+                    w.setdefault("role_layers", {})[role] = dict(name=building, building=None, built=time.time(),
+                                                                 wanted=time.time(), context=ctx,
+                                                                 builds=rec.get("builds", 0) + 1,
+                                                                 ahead=rec.get("building_ahead") or [])
+                for gone in (previous, rec.get("churn")):  # the churn over the old layer goes with it
+                    if gone and gone != building:
+                        release(gone)
+                log(f"{building} holds the {role}'s reasoning ({ctx} tokens); the {role}'s sessions fork it")
+                # its churn by the churn's rule: until then its forks fork it bare and are told what changed
+                softly(f"the {role}'s churn", role_churn_care, role)
+            continue
+        if role_wanted(st, role):
+            with state() as w:
+                w.setdefault("role_layers", {}).setdefault(role, {})["wanted"] = time.time()
+        elif rec.get("name") and time.time() - (rec.get("wanted") or 0) > ROLE_LAYER_IDLE:
+            continue  # not held (watchdog.held) and not built again until the role is wanted
+        why = role_layer_due(st, role) if role_wanted(st, role) else None
+        if why:
+            role_layer_build(role, why)
+        else:
+            softly(f"the {role}'s churn", role_churn_care, role)
+    for role, rec in (st.get("role_layers") or {}).items():  # switched off: what stands is let go
+        if role not in roles and rec.get("name") and not (st["sessions"].get(rec["name"]) or {}).get("released"):
+            release(rec["name"])
+            if rec.get("churn") and not (st["sessions"].get(rec["churn"]) or {}).get("released"):
+                release(rec["churn"])
+            log(f"the {role}'s reasoning layer {rec['name']} is let go: its switch is off")
+
+
+LAYER_BUILD_GUESS, CHURN_BUILD_GUESS, PING_GUESS = 200_000, 70_000, 60_000  # where a build or a ping was not measured:
+# a ping reads a prefix of about 600K at 0.1; a layer's build writes its message and thinks (output at 5); a churn's
+# reads its layer and writes the delta
+DELTA_MIN_TOKENS = int(os.environ.get("ORCH_DELTA_MIN", 4000))  # the least a delta moves before it is built again
+STALE_READ = float(os.environ.get("ORCH_STALE_READ", 2.0))  # what a token a fork holds stale costs it that a churn
+# holding it spares: read again and written once (2). Carried after (0.1 a request) it costs the same either way — in
+# the fork's own context or in the churn's prefix — so it is no saving (the arithmetic review of 2026-09-23: at 4 the
+# rule counted the carrying as saved, and rebuilt churns about twice as often as they paid)
+DELTA_ARG = int(os.environ.get("ORCH_DELTA_ARG", 120_000))  # the most one message carries (base.sh's DELTA_ARG): a
+# longer delta is packed and loaded by chunks there; a role's churn is not built from one, and its role forks the layer
+
+
+def role_churn_care(role, force=False):
+    """The churn over a role's reasoning layer: a fork of what stands under it whose one message is the base's delta
+    chain's messages it does not hold yet — so that the role layer is never rebuilt for a delta message and its forks
+    still hold the frontier as it stands. An executing role's layer stands on the medium layer, and its churn holds the
+    whole chain; a judging role's layer reasoned over the chain as it stood (the owner, 2026-09-23: yes), and its churn
+    holds the messages after that one. What holds a beginning of the chain — the churn standing, or a judging role's
+    layer before it has a churn — is grown by an increment of its own, forking itself; a churn over another chain is
+    built whole. Built when the chain has moved past what stands and the role is wanted, by the rule below; sealed when
+    it has replied HELD with the text's digest, the shared delta's snapshot copied as its own (stale_of: a fork is told
+    only what changed after it). `force` is the owner's hand (the console): built though the role has no work now and
+    though what its staleness has cost does not yet reach a build — never one that holds the delta standing."""
+    st = peek()
+    rec, who = role_layer_record(role, st), ROLES[role]["origin"]
+    building = rec.get("churn_building")
+    if building:
+        s = st["sessions"].get(building) or {}
+        held = bool(s.get("sid")) and churn_held(s)
+        if s.get("state") == "lost" or (s.get("sid") and not held
+                                        and time.time() - (s.get("started") or 0) > ROLE_LAYER_BUILD_MAX):
+            log(f"ATTENTION the {role}'s churn {building} did not hold its delta; its role forks its layer")
+            with state() as w:
+                if building in w["sessions"]:
+                    w["sessions"][building]["state"] = "lost"
+                w.setdefault("role_layers", {}).setdefault(role, {})["churn_building"] = None
+            return
+        if held:
+            seal(building)
+            ctx = context_of(s["sid"])
+            with contextlib.suppress(OSError):
+                shutil.copyfile(os.path.join(STATE, f"layer-{s.get('delta_sid')}-manifest.json"),
+                                os.path.join(STATE, f"layer-{s['sid']}-manifest.json"))
+            # what it holds of the chain, which its forks carry — what its layer holds of it (a judging role's) and what
+            # it holds over its layer — and what it wrote itself: an increment's alone
+            over = st["sessions"].get(s.get("over") or s.get("origin") or "") or {}
+            under = over.get("context") or 0
+            parent = (st["sessions"].get(s.get("origin") or "") or {}).get("context") or 0
+            previous = rec.get("churn")
+            with state() as w:
+                w.setdefault("role_layers", {}).setdefault(role, {})["behind_forks"] = 0
+                w["sessions"][building].update(state="done", layer_state="sealed", context=ctx, ended=time.time(),
+                                               snapshot=True,
+                                               delta_tokens=int(over.get("delta_tokens") or 0) + max(0, ctx - under)
+                                               if under else None,
+                                               written_tokens=max(0, ctx - parent) if parent else None,
+                                               # what its forks carry of the chain as it held it (watchdog.carried_parts,
+                                               # stack_waste), and a whole build's writing of every part's changes again
+                                               delta_shares=s.get("holds_shares") or {},
+                                               superseded_tokens=int(s.get("holds_superseded") or 0),
+                                               old_forms=s.get("holds_old_forms") or {},
+                                               whole_parts=s.get("holds_parts") or None,
+                                               used=time.time(), ping_cost=round(0.1 * ctx),
+                                               build_cost=round(softly("what the churn's build cost", session_cost, s,
+                                                                       default=0) or 0),
+                                               delta_size=s.get("delta_size"))
+                w.setdefault("role_layers", {}).setdefault(role, {}).update(
+                    churn=building, churn_building=None, churn_digest=s.get("digest"))
+            if previous and previous != building:
+                release(previous)
+            log(f"{building} holds the {who} delta over {s.get('origin')} ({ctx} tokens); the {role}'s sessions fork it")
+        return
+    layer = role_layer_current(role)
+    who = base_part(medium_record(who)[0]) or who  # the base that stands for it (FALLBACK), whose delta it holds
+    delta = delta_record(who) if deltas_on(who) else None
+    uncut = delta_uncut(who) if deltas_on(who) else 0  # changed and not cut into a text yet: cut when it is taken
+    # (what holds the chain to its top needs no churn, below: a churn let go meanwhile — idle past its pings' worth —
+    # is built again when the role is wanted, where a digest recorded for it kept its role on the bare layer until the
+    # delta moved)
+    if not layer or not (force or role_wanted(st, role)):
+        return
+    stack = chain_of(delta)
+    churn = st["sessions"].get(rec.get("churn") or "") or {}
+    # what holds a beginning of the chain under the next churn: the churn standing over the layer, or a judging role's
+    # layer itself, which reasoned over the chain's messages up to one of them
+    holder, holder_name = (churn, rec.get("churn")) if (churn.get("over") or churn.get("origin")) == layer \
+        and churn.get("layer_state") == "sealed" and not churn.get("released") else ({}, None)
+    if not holder_name and role in HOT_BEFORE_ROLE:
+        holder, holder_name = st["sessions"].get(layer) or {}, layer
+    held = int(holder.get("stack_len") or 0)
+    same = bool(stack) and holder.get("stack_base") == node_id(stack[0])
+    # the role's protocol as what it would grow from holds it: its changes since are taken with the chain's texts
+    protocol_now = protocol_sha(role)
+    held_protocol, held_sha = protocol_of(holder if holder_name else st["sessions"].get(layer) or {}, st["sessions"], role)
+    protocol_moved = held_sha is not None and held_sha != protocol_now and held_protocol is not None
+    if not (delta or uncut or protocol_moved):
+        return
+    # a churn holding a beginning of the delta's chain — or none of it yet — takes the texts after it and the protocol's
+    # changes as an increment of its own, forking itself (the owner, 2026-09-23: the delta layered, each message
+    # written once); otherwise it is built whole
+    grows = bool(holder_name) and (same or held == 0) and held <= len(stack)
+    if grows:
+        pblock = protocol_block(role, held_protocol) if protocol_moved else ""
+    else:
+        base_protocol, base_sha = protocol_of(st["sessions"].get(layer) or {}, st["sessions"], role)
+        pblock = protocol_block(role, base_protocol) if base_protocol is not None and base_sha != protocol_now else ""
+    if not force:
+        # a churn behind the delta still serves: its forks are told what changed after it and read that again. It is
+        # built anew when what that has cost them reaches what a build costs — the rule the medium layer's refresh
+        # keeps against its delta — not at every move for every role: a churn per role multiplies the shared
+        # delta's build by the roles, and a role whose sessions are rare would pay for churns no fork reads. The first
+        # churn over an executing role's layer too: built at once, the investigator's was built twice in the night
+        # of 09-21/22 and forked by nobody (the simulation of that run), 71K each
+        moved = abs(int((delta or {}).get("tokens") or 0) + uncut - int(holder.get("delta_size") or 0)) \
+            + int(len(pblock) / 2.9) or DELTA_MIN_TOKENS
+        owed = int(rec.get("behind_forks") or 0) * moved * STALE_READ
+        over = int((st["sessions"].get(layer) or {}).get("context") or 0)
+        cost = 2 * moved + 0.1 * int(holder.get("context") or 0) if grows \
+            else (churn.get("build_cost") or 2 * moved + 0.1 * over)  # a churn over the layer, whole
+        if owed < cost:
+            return
+    if uncut:  # what changed since the chain's last text, cut now that it is taken (a cut's text is written once)
+        softly(f"the {who} delta's text", cut_text, who)
+        delta = delta_record(who)
+        stack = chain_of(delta)
+        same = bool(stack) and holder.get("stack_base") == node_id(stack[0])
+        grows = bool(holder_name) and (same or held == 0) and held <= len(stack)
+    nodes = (stack[held:] if grows else stack) if delta else []
+    if not nodes and not pblock:
+        return  # it holds the chain to its top and the protocol as it is: nothing was cut that it does not hold
+    try:
+        text = "\n".join(open(node["text"], errors="ignore").read() for node in nodes)
+    except (OSError, KeyError, TypeError):
+        return
+    if pblock:
+        text = (text + "\n\n" if text else "") + pblock
+    if len(text.encode()) > DELTA_ARG:
+        say_once(f"churn-too-long-{role}", f"the {who} delta ({len(text.encode()):,} bytes) is past what one message "
+                 f"carries: the {role}'s sessions fork its layer and are told what changed", every=3600)
+        return
+    delta = delta or {}
+    # the chain's top text's digest, or the message's own when it holds the protocol's changes alone
+    digest = delta.get("digest") or hashlib.sha256(text.encode()).hexdigest()[:12]
+    # its forks are told what changed after the snapshot it holds: the chain's top text's, or what it grew from's
+    snapshot_of = chain_top(delta) or (holder.get("sid") if grows and holder.get("snapshot") else
+                                       (st["sessions"].get(layer) or {}).get("origin_sid"))
+    mark = "\x00the delta\x00"  # put in after the render, so that nothing in a theory's text is read as a placeholder
+
+    keep_protocol(role)  # the protocol it brings its forks to
+
+    def churn_prompt(name):
+        return render("role-churn", NAME=name, ROLE=role, DIGEST=digest, DELTA=mark).replace(mark, text)
+    name = launch("role-churn", role, churn_prompt,
+                  tree=None, origin=holder_name if grows else layer, over=layer, churn_of=role, digest=digest,
+                  delta_sid=snapshot_of, delta_size=int(delta.get("tokens") or 0),
+                  stack_base=node_id(stack[0]) if stack else None, stack_len=len(stack),
+                  protocol_sha=protocol_now,
+                  # what it will hold of the chain, recorded when it is sealed (a fork's own fields are its origin's)
+                  holds_shares=delta_shares(who), holds_superseded=int(delta.get("superseded") or 0),
+                  holds_old_forms=delta.get("old_forms") or {}, holds_parts=None if grows else delta.get("parts"))
+    if name:
+        with state() as w:
+            w.setdefault("role_layers", {}).setdefault(role, {})["churn_building"] = name
+        log(f"the {role}'s churn {name} is being {'grown' if grows else 'built'} over {holder_name if grows else layer}: "
+            + ("asked for by hand" if force else f"what its forks lacking the {who} delta's messages have cost them "
+               f"({int(rec.get('behind_forks') or 0)} forks) has paid for it"))
+
+def churn_held(s):
+    import watchdog
+    _, text, at = watchdog.last_reply(s["sid"])
+    return at > (s.get("started") or 0) and f"HELD {s.get('digest')}" in text
+
+
+def shared_part_forked(who):
+    """Whether a role forks base who's shared part now (its delta, or its layer): a role that has no reasoning layer
+    serving it, or the knowledge base, which forks max. The daemon pings that part only then (warm_daemon.sh): with
+    every role of the base on its own churn nobody reads it, and a ping of it was about 60K for nothing."""
+    if who not in BASES:
+        return False
+    if who == "max":
+        return True
+    for role in LAYERABLE:
+        if (base_part(medium_record(ROLES[role]["origin"])[0]) or ROLES[role]["origin"]) != who:
+            continue
+        if role in HOT_BEFORE_ROLE and role in role_layers() and role_wanted(peek(), role):
+            return True  # its next reasoning build reads the current shared delta
+        if role not in role_layers() or not (role_churn_of(role) or role_layer_of(role)):
+            return True
+    return False
+
+
+def session_cost(s):
+    """What a session's own requests cost, in input-equivalent tokens (cache read 0.1, write 2, input 1, output 5)."""
+    import role_evidence
+    path = transcript(s.get("sid") or "")
+    return role_evidence.session_facts(s, path)[2] if path and os.path.exists(path) else 0
+
+
+def last_output(s):
+    """The output tokens of a session's last request (a layer's thinking and reply), or 0."""
+    import watchdog
+    path, out = transcript(s.get("sid") or ""), 0
+    with contextlib.suppress(OSError):
+        for line in open(path, errors="ignore"):
+            if '"assistant"' in line and '"output_tokens"' in line:
+                with contextlib.suppress(ValueError, KeyError):
+                    out = json.loads(line)["message"]["usage"]["output_tokens"]
+    return out
+
+
+def role_layer_replied(s):
+    import watchdog
+    _, text, at = watchdog.last_reply(s["sid"])
+    return at > (s.get("started") or 0) and ROLE_LAYER_DONE in text
+
+
+def role_layer_build(role, why):
+    """Ask for the role's evidence, and fork its layer once it is read (the next dispatch, or this one when the read
+    runs at once)."""
+    rec = role_layer_record(role)
+    evidence = os.path.join(STATE, "role-evidence", f"{role}.md")
+    asked = rec.get("evidence_asked") or 0
+    try:
+        fresh = asked and os.path.getmtime(evidence) >= asked
+    except OSError:
+        fresh = False
+    if not fresh:
+        if asked and time.time() - asked < ROLE_LAYER_BUILD_MAX:
+            return  # being read
+        with state() as w:
+            w.setdefault("role_layers", {}).setdefault(role, {})["evidence_asked"] = time.time()
+        background("role_evidence.py", role)
+        try:
+            if os.path.getmtime(evidence) < role_layer_record(role)["evidence_asked"]:
+                return
+        except OSError:
+            return
+    text = open(evidence, errors="ignore").read().strip()
+    try:
+        ahead = json.load(open(evidence[:-3] + ".json")).get("ahead") or []
+    except (OSError, ValueError, AttributeError):
+        ahead = []
+    who = ROLES[role]["origin"]
+
+    changes, chain = "", {}
+    base = base_part(medium_record(who)[0]) or who
+    if role in HOT_BEFORE_ROLE and deltas_on(base):
+        # the chain it reasons over, to its top, in its own message over what it forks: it stands while that chain
+        # stands (layer_stands), and its churn holds the texts after it (role_churn_care)
+        changes, chain = chain_carried(base, even_cold=True)
+    graph = graph_text() if role == "task-designer" else None
+    if graph is not None:
+        # the graph its sessions are given, held once here: each is given what changed in it since (graph_for)
+        changes += f"## The graph as it stood when this layer was built\n\n{graph}\n\n"
+        chain["graph_copy"] = True
+    mark = "\x00the changes\x00"
+
+    keep_protocol(role)  # what its forks' protocol changes are measured from
+
+    def prompt(name):
+        if graph is not None:
+            keep_graph(name, graph)
+        return render("role-layer", NAME=name, ROLE=role, STALE=stale_of(name, who), PROTOCOL=generic_protocol(role),
+                      EVIDENCE=text, DONE=ROLE_LAYER_DONE, CHANGES=mark).replace(mark, changes)
+    name = launch("role-layer", role, prompt, tree=None, origin=role_layer_origin(role)[0] or who, layer_of=role,
+                  even_cold=role in HOT_BEFORE_ROLE, protocol_sha=protocol_sha(role), **chain)
+    if name:
+        with state() as w:
+            r = w.setdefault("role_layers", {}).setdefault(role, {})
+            r.update(building=name, evidence_asked=None, building_ahead=ahead)
+        log(f"the {role}'s reasoning layer {name} is being built: {why}")
 
 
 def context_of(sid):
@@ -2889,9 +5168,7 @@ def start_producer(tid):
     brief = task["description"]
     kind = brief_kind(brief)
     role = PRODUCER[kind]
-    os.makedirs(os.path.join(BUILD, tid), exist_ok=True)
-    json.dump({"task": tid, "deliverables": deliverables(brief), "drafts": f".build/tasks/{tid}/", "inputs": inputs(brief)},
-              open(os.path.join(BUILD, tid, "brief.json"), "w"))
+    brief_record(tid, brief)
     again = reusable(tid, role)
     sha = hashlib.sha1(brief.strip().encode()).hexdigest()
     if again:
@@ -2899,14 +5176,17 @@ def start_producer(tid):
         same = (peek()["tasks"].get(tid) or {}).get("brief_sha") == sha  # it holds the brief it was started with
         with state() as st:  # its record first, as a resume reads it: a producing session, working again
             st["sessions"][again].pop("fix", None)
+        held = kept_text("briefs", (peek()["tasks"].get(tid) or {}).get("brief_sha"))
+        changed = line_changes(held, brief.strip()) if held is not None and not same else None
         if resume(again, f"Task {tid} is yours again: the planner has queued it once more"
                          + (f", after it went back to the planner:\n{back}" if back else ".")
                          + ("\n\nIts brief is as you have it." if same else
+                            f"\n\nIts brief changed since you had it — {changed}" if changed else
                             f"\n\nIts brief as it stands now, changed since you had it:\n\n{brief.strip()}")
                          + "\n\nContinue from where you stand; what the planner told the task meanwhile is in your mail."):
             with state() as st:
                 t = task_state(st, tid)
-                t.update(stage="running", session=again, role=role, brief_sha=sha)
+                t.update(stage="running", session=again, role=role, brief_sha=keep_text("briefs", brief.strip(), sha))
                 t.pop("previous_session", None)  # why it came back stays for the re-review (start_review)
                 st.pop("start_failed", None)
             update_task(tid, status="in_progress", owner=again)
@@ -2914,13 +5194,26 @@ def start_producer(tid):
             return again
     base = base_record(ROLES[role]["origin"])[0] or "max"
     tree, why = task_tree(tid)  # once: the message says where the session is started because it is started there
+    source_session, source = softly("the session a continuation forks", continued_session, peek(), tid, role,
+                                    default=(None, None))
+    more = dict(origin=source_session, continues=source) if source_session else {}
+    # a continuation forks the session it continues, which was given them
+    relations, given, stated = ("(the session you continue was given them: they are in your context)", 0,
+                                frozenset((peek()["sessions"].get(source_session) or {}).get("stated_theories") or ())) \
+        if source_session else softly("the task's relations", relations_read, tid, role, brief, tree,
+                                      default=RELATIONS_UNREAD)
     name = launch(role, tid, lambda name: render(role, NAME=name, ID=tid, KIND=kind, SUBJECT=task.get("subject", ""),
                                                  BRIEF=brief.strip(), STALE=stale_of(name, base, tree), WHAT=PLANNED_FIX,
-                                                 TREE=tree_text(tid, tree, why)), tree=tree, task=tid)
+                                                 TREE=tree_text(tid, tree, why), INPUTS=softly("the brief's statements", inputs_read, brief, tree, stated),
+                                                 RELATIONS=relations,
+                                                 CONTINUED=continued_text(source_session, source, tid, tree) if source_session else ""),
+                  tree=tree, task=tid, relations_tokens=given, stated_theories=sorted(stated), **more)
+    if not name and source_session:  # the fork was not confirmed: the base, as for any other task, at the next dispatch
+        log(f"task {tid} was not started from {source_session}, whose work it continues")
     with state() as st:
         t = task_state(st, tid)
         if name:
-            t.update(stage="running", session=name, role=role, brief_sha=sha)
+            t.update(stage="running", session=name, role=role, brief_sha=keep_text("briefs", brief.strip(), sha))
             st.pop("start_failed", None)
         else:
             first = (st.get("start_failed") or {}).get("task") != tid
@@ -2951,7 +5244,7 @@ def parked_ready(st, tid, p):
         return not (mine & set(locked_files(st, {"task": tid})))
     if kind == "answer":
         return all((st["asks"].get(q) or {}).get("state") == "answered" for q in p.get("questions", []))
-    if kind == "check":
+    if kind in ("check", "probe"):
         return bool(p.get("result"))
     if kind == "machine":  # the guard's own condition for its kind of run, so that it is not refused again at once
         queued = pending_claim()
@@ -2966,7 +5259,8 @@ PARKED_TEXT = {"fix": "The fix of the performance problem you parked for has lan
                "tree": "The working tree is yours: install what you drafted and continue task {tid}.",
                "answer": "The answer you parked for is in the mail below. Continue task {tid}.",
                "machine": "A run may start on the machine now: run your check and continue task {tid}.",
-               "check": "{result}\n\nContinue task {tid}."}
+               "check": "{result}\n\nContinue task {tid}.",
+               "probe": "{result}\n\nContinue task {tid}."}
 
 
 def parking_care():
@@ -3042,7 +5336,7 @@ def in_main_tree(tid, standing=None):
     if standing.get(str(tid)):
         return "your task's own work stands there, uncommitted: " + ", ".join(sorted(standing[str(tid)])[:4])
     brief = (read_task(tid) or {}).get("description") or ""
-    named = {os.path.normpath(p.split(":")[0]) for p in inputs(brief) + deliverables(brief)}
+    named = {os.path.normpath(p.split(":")[0]) for p in inputs(brief) + deliverables(brief, str(tid))}
     # but not the files every task writes a line of, nor the planner's: nearly every brief names THEORY_MAP.md, and
     # while one task in the one tree held a row of it uncommitted, every task started meanwhile was put there too —
     # tasks 56, 62 and 72 on 2026-09-22, and the one tree never emptied. A task in a tree of its own writes its own
@@ -3363,7 +5657,7 @@ def hold_of(t):
     for the machine — a turn that always comes, only later when others' checks and landings are many — HOLD_PARK for
     anything else, a fix, an answer or a run that may never come. Task 94, parked for a heavy slot at 05:55 on
     2026-09-22, waited behind a stream of landings and a measurement for two hours with an hour of its three left."""
-    return HOLD_TREE if (t.get("parked") or {}).get("for") in ("tree", "machine", "check") else HOLD_PARK
+    return HOLD_TREE if (t.get("parked") or {}).get("for") in ("tree", "machine", "check", "probe") else HOLD_PARK
 
 
 def hold_left(t):
@@ -3400,8 +5694,8 @@ def produce():
         return
     if at_capacity(st):
         return  # at most WORKERS_MAX sessions work at a time (the owner's rate)
-    if live and not slot(st, SUPPORTING) and pending_reviews(st):
-        return  # the free slot is a review's: support() takes it
+    if live and not support_apart() and not slot(st, SUPPORTING) and pending_reviews(st):
+        return  # the free slot is a review's: support() takes it (apart, a review has a slot of its own)
     for tid in resume_order(st):
         t = st["tasks"][tid]
         p = t.get("parked") or {}
@@ -3460,6 +5754,105 @@ def produce():
         return
 
 
+FIRST_READ = ("result", "log", "probes", "restated", "tree", "diff")
+
+
+REREAD = ("since", "result", "log", "probes", "restated")  # a re-review's first read: what changed since the verdict,
+# mechanically (since_text), then the fix's own record; the diff it judged it holds already
+
+
+def task_files(tid):
+    """The files a task hands over (its finalize.json), or []."""
+    try:
+        return list(json.load(open(os.path.join(BUILD, str(tid), "finalize.json")))["files"])
+    except (OSError, ValueError, KeyError, TypeError):
+        return []
+
+
+def snapshot_review(rid, tid):
+    """The files a reviewer judged, kept as they stood when it gave its verdict (.build/tasks/RID/reviewed/, their list
+    and the time in reviewed.json): what a re-review is told has changed since (since_text). The owner, 2026-09-23: the
+    same reviewer, told what has changed since, mechanically — it had been told to find that itself in the whole diff."""
+    rid, tid = str(rid or ""), str(tid or "")
+    if not rid or not tid:
+        return
+    tree, folder = worktree_of(tid), os.path.join(BUILD, rid, "reviewed")
+    if os.path.basename(folder) == "reviewed" and os.path.isdir(folder):
+        shutil.rmtree(folder, ignore_errors=True)
+    kept = {}
+    for f in task_files(tid):
+        src = os.path.join(tree, f)
+        kept[f] = os.path.isfile(src)
+        if kept[f]:
+            os.makedirs(os.path.dirname(os.path.join(folder, f)), exist_ok=True)
+            shutil.copyfile(src, os.path.join(folder, f))
+    os.makedirs(os.path.join(BUILD, rid), exist_ok=True)
+    with open(os.path.join(BUILD, rid, "reviewed.json"), "w") as f:
+        json.dump({"at": time.time(), "task": tid, "files": kept}, f)
+
+
+SINCE_BYTES = int(os.environ.get("ORCH_SINCE_BYTES", 60_000))  # the change since a verdict given whole up to this
+
+
+def since_text(tid):
+    """What changed in task tid's files since the verdict of its last review that kept what it judged: each file of the
+    change then or now whose content differs, as a unified diff from what the reviewer judged to what stands — a file
+    that joined the change since is compared with main's (HEAD's) form, which is what the reviewer judged of it."""
+    rids = [x for x, t in peek()["tasks"].items() if t.get("reviews") == tid and x != tid] + [tid]
+    found = []
+    for rid in rids:
+        with contextlib.suppress(OSError, ValueError):
+            found.append((json.load(open(os.path.join(BUILD, rid, "reviewed.json"))), rid))
+    if not found:
+        return "(no verdict on this task kept the files it judged: read the whole diff, `v2.py read diff`)"
+    rec, rid = max(found, key=lambda x: x[0].get("at", 0))
+    tree, judged = worktree_of(tid), rec.get("files") or {}
+    import difflib
+    out = []
+    for f in dict.fromkeys(list(judged) + task_files(tid)):
+        if f in judged:
+            old = open(os.path.join(BUILD, rid, "reviewed", f), errors="ignore").read() if judged[f] else None
+        else:
+            old = git_out("show", f"HEAD:{f}", tree=tree, quiet=True)
+        path = os.path.join(tree, f)
+        new = open(path, errors="ignore").read() if os.path.isfile(path) else None
+        if old == new:
+            continue
+        diff = "".join(difflib.unified_diff((old or "").splitlines(True), (new or "").splitlines(True),
+                                            f"{f} (as you judged it{'' if f in judged else ': main'})"
+                                            + (" — absent" if old is None else ""),
+                                            f"{f} (now)" + (" — removed" if new is None else "")))
+        out.append(diff if diff.endswith("\n") else diff + "\n")
+    when = time.strftime("%H:%M", time.localtime(rec.get("at", 0)))
+    if not out:
+        return f"(nothing in the files the task hands over has changed since the verdict of {when})"
+    text = f"since the verdict of {when}, {len(out)} file(s) changed:\n" + "".join(out)
+    return text if len(text.encode()) <= SINCE_BYTES else (text.encode()[:SINCE_BYTES].decode(errors="ignore")
+                                                           .rsplit("\n", 1)[0] + "\n(cut here: `v2.py read since:A-B` "
+                                                           "reads the rest by its lines)")
+
+
+def first_read(tid, sources=FIRST_READ):
+    """What a reviewer's first batch reads, read for it and given in its first message: the task's result, the end of
+    its finalizer's log, its probes and its diff — as `v2.py read result log probes diff` shows them, each bounded as a
+    read bounds it and the diff last, whole where it fits and otherwise as much as the batch's room holds, with how to
+    read the rest. Every reviewer of 2026-09-22 opened with that batch (104 of 104), a request each, before it could
+    judge anything; the texts are written once either way."""
+    out, size = [], 0
+    for src in sources:
+        text = read_source(src, tid, False, [], {"reads": {}}).rstrip()
+        head = f"== {src}\n"
+        room = BATCH_BYTES - size - len(head.encode()) - 1
+        if src == "diff":
+            body = one_read(text, max(room, READ_BYTES))
+        else:
+            body = one_read(text, min(source_bound(), max(room, 0)) or 1)
+        part = head + body + "\n"
+        out.append(part)
+        size += len(part.encode())
+    return "".join(out).rstrip("\n")
+
+
 def start_review(rid, tid):
     """The review task rid of the finished task tid (rid is tid itself when no review task was briefed: a review
     planned by the harness from the task's brief). The one who judged it before is resumed while warm for a re-review;
@@ -3468,10 +5861,19 @@ def start_review(rid, tid):
     t, r = st["tasks"][tid], st["tasks"].get(rid) or {}
     task, review = read_task(tid) or {}, read_task(rid) or {}
     before = r.get("reviewed_by")
-    if before and r.get("verdict") == "reject":
-        text = (f"The findings you listed on task {tid} are fixed and its check passes again. Judge those findings and "
-                "whatever the fix itself broke; add nothing else. Write the verdict again and record it "
-                f"(`v2.py verdict {rid} accept|reject --file .build/tasks/{rid}/review.md`).")
+    if before and (r.get("verdict") == "reject" or r.get("voided")):
+        checked = ("its check runs beside your review" if t.get("stage") == "checking" else "its check passes again")
+        what = (f"The findings you listed on task {tid} are fixed and {checked}. Judge those findings and whatever the "
+                "fix itself broke; add nothing else." if r.get("verdict") == "reject" else
+                f"The work of task {tid} you accepted failed its check, and its session has fixed that; {checked}. "
+                "Judge what changed since your verdict and whatever it broke; what you accepted and nothing since "
+                "touched stands.")
+        text = (f"{what} Write the verdict again and record it (`v2.py verdict {rid} accept|reject --file "
+                f".build/tasks/{rid}/review.md`).\n\nWhat your re-review reads first, read for you — what changed since "
+                "your verdict, from the files as you judged them to the files as they stand (`v2.py read since`), and "
+                "the fix's result, log, probes and restatements as `v2.py read result log probes restated` shows them "
+                "now:\n\n" + softly("the re-review's first read", first_read, tid, REREAD,
+                                     default="(it could not be read: read it)"))
         if resume(before, text):
             return before
     before = accepted_by(r) if r.get("verdict") != "reject" else None
@@ -3482,38 +5884,50 @@ def start_review(rid, tid):
         # what changed since — a fresh one read it all again, 11 times on 2026-09-21/22 (119 requests, 9.1M)
         text = (f"Task {tid}, which you accepted, did not land and was worked on again"
                 + (f" ({t['back'][:600]})" if t.get("back") else "") + "; its check passes again. Judge what changed "
-                "since your verdict (`v2.py read diff` is its whole diff now) and whatever that broke; what you accepted "
-                "and nothing since touched stands. Write the verdict again and record it "
-                f"(`v2.py verdict {rid} accept|reject --file .build/tasks/{rid}/review.md`).")
+                "since your verdict, below, and whatever that broke; what you accepted and nothing since touched "
+                "stands. Write the verdict again and record it "
+                f"(`v2.py verdict {rid} accept|reject --file .build/tasks/{rid}/review.md`).\n\n"
+                + softly("the re-review's first read", first_read, tid, REREAD, default="(it could not be read: read it)"))
         if resume(before, text):
             with state() as w:
                 w["tasks"].get(tid, {}).pop("back", None)
             return before
     own = rid != tid
     tree = worktree_of(tid) if apart(tid) else None  # the work it judges stands there until it is committed
+    relations, given, stated = softly("the task's relations", relations_read, tid, "reviewer",
+                                      task.get("description") or "", tree, default=RELATIONS_UNREAD)
     name = launch("reviewer", rid, lambda name: render(
         "reviewer", NAME=name, ID=rid, TASK=tid, SUBJECT=task.get("subject", ""), WHERE=review_text(tid, tree),
         REVIEW=(review.get("description") or "").strip() if own else "(no review task was briefed: judge the task "
         "against its brief, step by step, then against the principles)",
         BRIEF=(task.get("description") or "").strip(), SESSION=t.get("session", "-"),
-        STALE=stale_of(name, base_record("xhigh")[0] or "max", tree),
+        STALE=stale_of(name, base_record("xhigh")[0] or "max", tree), FIRST=first_read(tid),
+        INPUTS=softly("the brief's statements", inputs_read, task.get("description") or "", tree, stated),
+        RELATIONS=relations, CHECKED=CHECK_BESIDE if t.get("stage") == "checking" else CHECK_PASSED,
         BEFORE=f"A previous review rejected it; its findings are in .build/tasks/{rid}/review.md. Judge those findings "
                "and whatever the fix broke; add nothing else." if r.get("verdict") == "reject" else ""),
-        tree=tree, task=rid, reviews=tid)
+        tree=tree, task=rid, reviews=tid, relations_tokens=given)
     if name:
         with state() as w:
             w["tasks"].setdefault(rid, {}).update(reviewed_by=name, reviewing=name)
             w["tasks"][tid]["reviewed_by"] = name
+            going = [x for x in (w["tasks"][tid].get("reviews_going") or []) if x != rid]  # a review begun anew
+            w["tasks"][tid]["reviews_going"] = going or None
     return name
 
 
 def start_brief(tid):
     """A task designer on a brief task: the planner's plan of the detailing is its brief."""
     task = read_task(tid) or {}
+    relations, given, stated = softly("the task's relations", relations_read, tid, "task-designer",
+                                      task.get("description") or "", None, default=RELATIONS_UNREAD)
     name = launch("task-designer", tid, lambda name: render(
         "task-designer", NAME=name, ID=tid, SUBJECT=task.get("subject", ""), BRIEF=(task.get("description") or "").strip(),
-        WHY=(task.get("metadata") or {}).get("why", "-"), GRAPH=graph_text(), LIST=LIST,
-        STALE=stale_of(name, base_record("xhigh")[0] or "max")), task=tid)
+        WHY=(task.get("metadata") or {}).get("why", "-"), GRAPH=graph_for(name), LIST=LIST,
+        STALE=stale_of(name, base_record("xhigh")[0] or "max"),
+        INPUTS=softly("the brief's statements", inputs_read, task.get("description") or "", None, stated),
+        RELATIONS=relations),
+        task=tid, relations_tokens=given)
     with state() as w:
         if name:
             w["tasks"][tid].update(stage="running", session=name, role="task-designer")
@@ -3525,9 +5939,10 @@ def start_brief(tid):
 def pending_reviews(st):
     """(review task, reviewed task) pairs to start: every review task of a finished task in review that has no verdict
     this round (or rejected it last round), and a review planned by the harness for a build or fix nobody briefed one for."""
-    out = []
+    out, beside = [], review_beside_check()
     for tid, t in st["tasks"].items():
-        if t.get("stage") != "reviewing" or t.get("kind", "build") not in ("build", "fix"):
+        if t.get("kind", "build") not in ("build", "fix") or not (
+                t.get("stage") == "reviewing" or (beside and t.get("stage") == "checking")):
             continue
         rids = held_reviews(t)
         if not rids:
@@ -3584,6 +5999,28 @@ def startable(st=None):
         if all((tasks.get(b) or {}).get("status") == "completed" for b in blockers) \
                 and not landing_wait(tid, tasks):  # produce() waits for it too: the report agrees with the dispatch
             out.append(tid)
+    return out
+
+
+def waiting_behind(tids, tasks=None):
+    """{task: how many open tasks wait on it, directly or through others}: what starting it first would release —
+    for the planner's order, which puts dependency before size (planner.md), where a task's wait to start was a third
+    of its way on 2026-09-22, most of it on its blockers."""
+    tasks = tasks if tasks is not None else {t["id"]: t for t in all_tasks()}
+    after = {}
+    for k, v in tasks.items():
+        if v.get("status") != "completed":
+            for b in v.get("blockedBy") or []:
+                after.setdefault(b, set()).add(k)
+    out = {}
+    for tid in tids:
+        seen, todo = set(), list(after.get(tid, ()))
+        while todo:
+            x = todo.pop()
+            if x not in seen:
+                seen.add(x)
+                todo += after.get(x, ())
+        out[tid] = len(seen)
     return out
 
 
@@ -3701,8 +6138,8 @@ def support():
     st = peek()
     if slot(st, SUPPORTING):
         return
-    if at_capacity(st):
-        return  # at most WORKERS_MAX sessions work at a time (the owner's rate)
+    if at_capacity(st, support=True):
+        return  # at most WORKERS_MAX sessions work at a time (the owner's rate), unless the supporting one is apart
     for tid, t in st["tasks"].items():
         if t.get("stage") == "proposed" and t.get("revise"):  # a correction first: its designer holds the brief
             revise_now(tid)
@@ -3763,10 +6200,13 @@ def quick_fix():
                 if own in w["sessions"]:
                     w["sessions"][own].pop("fix", None)
             task, (tree, why) = read_task(tid) or {}, task_tree(tid)  # the task's own tree, where its work is
+            relations, given, stated = softly("the task's relations", relations_read, tid, "fixer",
+                                              task.get("description") or "", tree, default=RELATIONS_UNREAD)
             name = launch("fixer", tid, lambda name: render(
                 "fixer", NAME=name, ID=tid, BRIEF=(task.get("description") or "").strip(), WHAT=text,
-                STALE=stale_of(name, base_record("high")[0] or "max", tree), TREE=tree_text(tid, tree, why)), tree=tree,
-                task=tid, fix={"since": time.time()})
+                STALE=stale_of(name, base_record("high")[0] or "max", tree), TREE=tree_text(tid, tree, why),
+                INPUTS=softly("the brief's statements", inputs_read, task.get("description") or "", tree, stated),
+                RELATIONS=relations), tree=tree, task=tid, fix={"since": time.time()}, relations_tokens=given)
         with state() as w:
             w["tasks"][tid]["fixing"] = name
             if name:
@@ -3857,8 +6297,9 @@ def plan():
         events, w["events"] = w["events"], []
         n = count(w, "plan")
     name = launch("planner", str(n), lambda name: render(
-        "planner", NAME=name, ID="plan", EVENTS=events_text(events), HANDOFF=handoff_parts(), GRAPH=graph_text(), QUEUE=" ".join(peek()["queue"]) or "(empty)",
+        "planner", NAME=name, ID="plan", EVENTS=events_text(events), HANDOFF=handoff_parts(peek()["kb"]), GRAPH=graph_for(name), QUEUE=" ".join(peek()["queue"]) or "(empty)",
         STATUS=status_text(), LIST=LIST, OWNER="", FIRST=first_episode(),
+        HANDOFF_DELTA=softly("the handoff's delta", handoff_delta, peek()["kb"]),
         STALE=stale_of(name, base_record("max")[0] or "max")), events=events)
     if not name:
         with state() as w:
@@ -4368,6 +6809,8 @@ def tidied():
         for part in ("layer", "base-next", "base-building"):
             with contextlib.suppress(OSError, ValueError):
                 packs.add(json.load(open(os.path.join(STATE, f"{who}-{part}.json"))).get("pack"))
+    for who in BASES:  # every part of a published chain keeps its pack: its reuse and its drift read it
+        packs.update(node["pack"] for node in (layer_record(who) or {}).get("parts", []) if node.get("pack"))
     sweep_packs = None not in packs  # a base whose record cannot be read: its pack is not swept on a guess
     gone = trees_tidied()  # written for this sweep and never called from it, so a tree holding nothing stayed
     swept = superseded_checks(peek())
@@ -4399,8 +6842,58 @@ def tidied():
     holding = {s.get("origin_sid") for s in sessions.values()
                if s.get("state") in LIVE + ("parked", "idle") and not s.get("released")}
     holding |= {(layer_record(who) or {}).get("sessionId") for who in BASES}
+    for who in BASES:  # every part of a published chain is an origin some build or fork reads
+        holding |= {node.get("sessionId") for node in (layer_record(who) or {}).get("parts", [])}
+    holding |= {s.get("sid") for s in peek()["sessions"].values() if s.get("snapshot") and not s.get("released")}
+    for who in BASES:  # every text of a standing chain and the sessions made of it: a judging role's layer forked one
+        # and serves across the texts after it, its forks told what changed since that text (stale_of reads its
+        # snapshot); a churn, a judging layer or the knowledge base taking the texts copies the last one's snapshot
+        for node in chain_of(delta_record(who)):
+            holding |= {node.get("sessionId"), node.get("id")}
+    holding |= {s.get("origin_sid") for s in peek()["sessions"].values()
+                if s.get("role") == "role-layer" and s.get("layer_state") == "sealed" and not s.get("released")}
+    standing = {(delta_record(who) or {}).get("text") for who in BASES}
+    for who in BASES:  # and every message of its chain: a churn built whole holds them all, read from these files
+        standing |= {node.get("text") for node in (delta_record(who) or {}).get("stack") or []}
+    for name in os.listdir(STATE):  # a delta's text is read by the next build only: the standing ones stay
+        path = os.path.join(STATE, name)
+        if re.fullmatch(r"(max|xhigh|high)-delta-\d{8}T\d{6}(-\d+)?\.(md|json|list)", name) and path not in standing \
+                and (age_of(name) or 0) > PACK_KEEP:
+            with contextlib.suppress(OSError):
+                os.remove(path)
+            gone.append(name)
+    briefs = os.path.join(STATE, "briefs")
+    recorded = {t.get("brief_sha") for t in peek()["tasks"].values()}
+    for name in os.listdir(briefs) if os.path.isdir(briefs) else []:  # the brief a task's session was started with
+        if name[:-3] not in recorded:
+            with contextlib.suppress(OSError):
+                os.remove(os.path.join(briefs, name))
+            gone.append(f"briefs/{name}")
+    graphs = os.path.join(STATE, "graphs")
+    live = {n for n, s in sessions.items() if not s.get("released") and s.get("state") != "lost"}
+    for name in os.listdir(graphs) if os.path.isdir(graphs) else []:  # the graph a session holding one was built with
+        if name.split(".md")[0] not in live:
+            with contextlib.suppress(OSError):
+                os.remove(os.path.join(graphs, name))
+            gone.append(f"graphs/{name}")
+    protocols = os.path.join(STATE, "role-protocols")
+    kept = {s.get("protocol_sha") for s in sessions.values() if not s.get("released") and s.get("state") != "lost"}
+    kept |= {protocol_sha(r) for r in LAYERABLE}
+    for name in os.listdir(protocols) if os.path.isdir(protocols) else []:  # a copy some session holds, or the current
+        if name.endswith(".md") and name[:-3] not in kept:
+            with contextlib.suppress(OSError):
+                os.remove(os.path.join(protocols, name))
+            gone.append(f"role-protocols/{name}")
+    kbs = {peek().get("kb"), peek().get("kb_building")}
+    for name in os.listdir(STATE):  # the copy of HANDOFF.md a knowledge base loaded: while it is the one planners fork
+        m = re.fullmatch(r"(kb-\d+)-handoff\.md", name)
+        if m and m.group(1) not in kbs:
+            with contextlib.suppress(OSError):
+                os.remove(os.path.join(STATE, name))
+            gone.append(name)
     for name in os.listdir(STATE):
-        if name.startswith("layer-") and name.endswith("-manifest.json") and name[6:-14] not in holding:
+        if name.startswith("layer-") and name.endswith(("-manifest.json", "-held.json")) \
+                and name[6:-(14 if name.endswith("-manifest.json") else 10)] not in holding:
             with contextlib.suppress(OSError):
                 os.remove(os.path.join(STATE, name))
             gone.append(name)
@@ -4427,7 +6920,7 @@ def dispatch_once():
     if not st["active"] or os.path.exists(os.path.join(STATE, "stopped")):
         return
     for part in (reconcile_stages, tree_care, check_isolation, parking_care, fix_deadlock, efficiency_care, kb_care,
-                 grant_pending, produce, support,
+                 role_layer_care, grant_pending, produce, support,
                  quick_fix, tidied,
                  consult, returned_tasks, held_graph, standstill, plan):  # before plan: what they say reaches it now
         began = time.time()
@@ -4512,15 +7005,23 @@ def checked(tid, ok, tail="", ran=True):
     is not a failed check: it costs the task no round, and the session is told to correct the command it handed over
     (2026-09-20: a quick fix reused an output directory the tool refuses, and two one-second failures sent a task
     whose check had passed to the planner)."""
+    commit_now = False
     with state() as st:
         t = st["tasks"].setdefault(tid, {})
         if t.get("stage") != "checking":  # the watchdog gave the task to the planner meanwhile
             event(st, "the finalizer", f"The check of task {tid} ended after the task had left its check "
                   f"({t.get('stage')}): it {'passed' if ok else 'failed'}; .build/tasks/{tid}/finalize.log.")
             ok = None
+        elif ok and t.get("accepted_early"):  # C9: its review accepted it while it was checked — it is committed
+            t.pop("accepted_early", None)
+            t["stage"], commit_now = "committing", True
+        elif ok and t.get("rejected_early") is not None:  # C9: rejected while it was checked — its fix round now
+            t["rejections"] = t.get("rejections", 0) + 1
+            t.update(stage="fixing", fixing=None, fix_text=t.pop("rejected_early"))
         elif ok:
             t["stage"] = "reviewing"
-            t.pop("reviewing", None)
+            if not (review_beside_check() and t.get("reviewing")):  # a review begun beside the check goes on
+                t.pop("reviewing", None)
             if t.get("role") in ("designer", "investigator"):
                 event(st, "the finalizer", f"Task {tid} ({t.get('role')}) is finished and its check passes: judge it "
                       f"(its result: .build/tasks/{tid}/result.md; `v2.py verdict {tid} accept|reject --file ...`).")
@@ -4538,12 +7039,36 @@ def checked(tid, ok, tail="", ran=True):
                            f".build/tasks/{tid}/finalize.log:\n{tail}")
         elif ok is False:
             t["checks_failed"] = t.get("checks_failed", 0) + 1
+            early = t.pop("rejected_early", None)  # C9: what its review found meanwhile goes into the same fix
+            # C9: a review still under way when the check fails goes on, and its verdict counts in the fix round —
+            # a rejection's findings join the fix, an accept of work about to change is void (cmd_verdict); before,
+            # its verdict was refused ("not awaiting a verdict"), its reviewer could not end its turn, and the review
+            # of the fixed work began again from nothing
+            going = [x for x in (deciding(t, tid, st) if review_beside_check() else [])
+                     if (st["tasks"].get(x) or {}).get("reviewing") and (st["tasks"].get(x) or {}).get("verdict") is None]
+            if going and t["checks_failed"] == 1:
+                t["reviews_going"] = going
+                for x in going:
+                    who = (st["tasks"].get(x) or {}).get("reviewing")
+                    post(who, "the finalizer", f"The check of task {tid}, beside which you review, failed; its session "
+                         "is fixing it now. Finish your review of the work as it stands and give your verdict: a "
+                         "rejection's findings go to the same fix round; an accept is void, since the fixed work is "
+                         f"reviewed again. The end of its log is in .build/tasks/{tid}/finalize.log.")
+            if t.pop("accepted_early", None):  # C9: an accept of work that failed its check is void: the fix is reviewed
+                for x in held_reviews(t):
+                    st["tasks"].setdefault(x, {}).update(verdict=None, round=None, voided="its check failed after the accept")
             if t["checks_failed"] == 1:
                 t.update(stage="fixing", fixing=None, fix_text=f"The finalizer's check of task {tid} failed. The end of "
-                         f"its log (.build/tasks/{tid}/finalize.log):\n{tail}")
+                         f"its log (.build/tasks/{tid}/finalize.log):\n{tail}"
+                         + (f"\n\nAnd its review, made beside the check, rejected it:\n{early}" if early else ""))
+                if early:
+                    t["rejections"] = t.get("rejections", 0) + 1
             else:
                 to_planner(st, tid, "the finalizer", f"Task {tid} failed its check again after a quick fix; it is yours "
                            f"to re-plan. The end of .build/tasks/{tid}/finalize.log:\n{tail}")
+    if commit_now:
+        background("finalize.py", "commit", tid)  # its end dispatches
+        return
     kick()
 
 
@@ -4709,7 +7234,7 @@ def cmd_read(sources):
     out, shown, size, unshown = [], [], 0, []
     for src in sources:
         seen = []
-        text = read_source(src, tid, statements, seen, wst, work_meter.own_dirs(c or {})).rstrip()
+        text = read_source(src, tid, statements, seen, wst, work_meter.own_dirs(c or {}), caller_rec=c).rstrip()
         # a file's lines are bounded where they are read (file_read), and cut again they would be recorded unshown
         whole = whole_brief(src) or src == "diff"  # the diff is a review's substance, read whole where it fits
         part = f"== {src}\n{text if seen else one_read(text, BATCH_BYTES if whole else source_bound())}\n"
@@ -4797,7 +7322,31 @@ def lines_of_text(text, a, b):
     return "\n".join(f"{i:6}\t{lines[i - 1]}" for i in range(a, min(b, len(lines)) + 1))
 
 
-def read_source(src, tid, statements, shown, st, own=()):
+ANSWER_BYTES = 4_000  # of each question a result names, and of its answer
+
+
+def beside_the_result(tid, text):
+    """What a result's reader needs beside it and looked for by hand: the commit message its final job hands the
+    finalizer — 55 of the day's 106 reviewers read it themselves (96 calls), from wherever its brief had put it
+    (review-202 looked in .build/tasks/edited-reach/, its brief's key, before .build/tasks/191/) — and each question the
+    result names, with its answer (review-202 dug q63's out of the harness's state in two requests; 2026-09-22)."""
+    out = []
+    try:
+        message = json.load(open(os.path.join(BUILD, tid, "finalize.json"))).get("message")
+    except (OSError, ValueError, AttributeError):
+        message = None
+    if message and os.path.isfile(os.path.join(PROJECT, message)):
+        out.append(f"== its commit message ({message})\n" + open(os.path.join(PROJECT, message), errors="ignore").read().strip())
+    asks = peek().get("asks") or {}
+    for q in dict.fromkeys(re.findall(r"\bq\d+\b", text)):
+        ask = asks.get(q) or {}
+        if ask.get("text"):
+            out.append(f"== {q}, from {ask.get('from')} to {ask.get('to')}: {ask['text'][:ANSWER_BYTES]}\n"
+                       + (f"answered: {str(ask['answer'])[:ANSWER_BYTES]}" if ask.get("answer") else "(not answered)"))
+    return "".join("\n\n" + x for x in out) + ("\n" if out else "")
+
+
+def read_source(src, tid, statements, shown, st, own=(), caller_rec=None):
     """One source of a read: a file or a range of it, the task's diff, result or check log, or a named fact — each
     read in the tree task tid's work stands in, its own while it has one: a reviewer of work in a tree, or its
     producer, would otherwise be shown the one tree, where the work is not until it is committed."""
@@ -4827,6 +7376,8 @@ def read_source(src, tid, statements, shown, st, own=()):
         if what == "result":
             p = os.path.join(d, "result.md")
             text = open(p).read() if os.path.exists(p) else "(no result yet)"
+            if not a:
+                text += beside_the_result(tid, text)
         elif what == "log":
             p = os.path.join(d, "finalize.log")
             text = open(p, errors="ignore").read() if os.path.exists(p) else "(no log)"
@@ -4845,6 +7396,22 @@ def read_source(src, tid, statements, shown, st, own=()):
         return lines_of_text(text, int(a), int(b)) if a else text
     if src.startswith("check:"):
         return check_text(src[len("check:"):])
+    if src == "since" or src.startswith("since:"):
+        if not tid:
+            return "(you review no task, so there is no verdict to read the change since)"
+        text = softly("what changed since the verdict", since_text, tid)
+        a, _, b = src[len("since:"):].partition("-") if ":" in src else ("", "", "")
+        return lines_of_text(text, int(a), int(b)) if a.isdigit() and b.isdigit() else text
+    if src == "changes" or src.startswith("changes:"):
+        return softly("what changed in what you hold", held_changes_text, caller_rec,
+                      [n for n in src[len("changes:"):].split(",") if n] if ":" in src else [],
+                      default="(what changed could not be read: read the file itself)")
+    if src == "restated":
+        return softly("the restatements", restated_text, tid, tree) if tid else \
+            "(you work on no task, so there is no change of yours to read so)"
+    if src == "tree":
+        return softly("the task's tree", tree_state_text, tid, tree) if tid else \
+            "(you work on no task, so there is no tree of yours to read)"
     if src == "probes":
         return probes_text(tid, tree) if tid else "(you work on no task, so there are no probes of yours)"
     if src == "reach" or src.startswith("reach:"):
@@ -4866,6 +7433,74 @@ def read_source(src, tid, statements, shown, st, own=()):
                           text=True, cwd=tree, env=dict(os.environ, ORCH_PROJECT=tree)).stdout
     # a fact longer than a read, read by its lines (`Theory.name:A-B`), as the cut of its first read says
     return lines_of_text(text, int(m.group(2)), int(m.group(3))) if m.group(2) else text
+
+
+def keep_text(kind, text, sha=None):
+    """A text a session is given, kept under its digest (state/<kind>/<sha>.md): what it is later given the changes
+    since (a brief's, when its task comes back to it). Its digest."""
+    sha = sha or hashlib.sha1(text.encode()).hexdigest()
+    with contextlib.suppress(OSError):
+        os.makedirs(os.path.join(STATE, kind), exist_ok=True)
+        path = os.path.join(STATE, kind, f"{sha}.md")
+        if not os.path.exists(path):
+            with open(path, "w") as f:
+                f.write(text)
+    return sha
+
+
+def kept_text(kind, sha):
+    try:
+        return open(os.path.join(STATE, kind, f"{sha}.md")).read() if sha else None
+    except OSError:
+        return None
+
+
+def line_changes(old, new):
+    """A text's lines new or changed since `old`, in their current form, and those taken out named; "" when none."""
+    was, now = old.splitlines(), new.splitlines()
+    added = [line for line in now if line.strip() and line not in was]
+    gone = [line.strip()[:120] for line in was if line.strip() and line not in now]
+    if not added and not gone:
+        return ""
+    return ("these lines are new or changed, in their current form:\n\n" + "\n".join(added)
+            + (("\n\n" if added else "") + "and these were taken out: " + "; ".join(gone) if gone else ""))
+
+
+def held_node(rec, sessions):
+    """The text of its base's delta chain a session holds to — taken in its own message (a judging layer, the knowledge
+    base), held by its churn, or by the chain's session it forks —, or None: it holds the parts' loads alone."""
+    for _ in range(64):
+        if rec.get("holds_node"):
+            return rec["holds_node"]
+        if rec.get("role") == "role-churn" and rec.get("delta_sid") \
+                and os.path.exists(os.path.join(STATE, f"layer-{rec['delta_sid']}-held.json")):
+            return rec["delta_sid"]
+        if rec.get("origin") in sessions:
+            rec = sessions[rec["origin"]]
+            continue
+        who = base_part(rec.get("origin")) or ""
+        for node in chain_of(delta_record(who) if who else None):
+            if node.get("sessionId") and node.get("sessionId") == rec.get("origin_sid"):
+                return node_id(node)
+        return None
+    return None
+
+
+def held_changes_text(c, names):
+    """What changed in the files a session holds from its base since it took them in, in their current form — its
+    changed or new units, those taken out named (manifest.py held-changes) — for the files `names` (by name, as its
+    stale line names them) or all: a fork told a file changed reads this rather than the file again (the owner,
+    2026-09-24: "use changes when possible")."""
+    if not c:
+        return "(you are no session of the harness, so what you hold is not known here: read the file)"
+    sessions = peek()["sessions"]
+    who = stands_on(c.get("origin"), sessions)
+    if not who:
+        return "(you stand on no base, so nothing you hold was loaded from one: read the file)"
+    env = {k: v for k, v in os.environ.items() if k not in ("ORCH_LOAD_LIST", "ORCH_TREE", "ORCH_BASE_PART")}
+    out = subprocess.run([sys.executable, os.path.join(HERE, "manifest.py"), "held-changes", who,
+                          held_node(c, sessions) or "-", *names], capture_output=True, text=True, env=env, timeout=120)
+    return out.stdout.strip() or (out.stderr.strip()[-300:] or "(nothing you hold has changed since you took it in)")
 
 
 def check_place(name):
@@ -4950,17 +7585,91 @@ def timed(elapsed, d):
                     f"; the run {run} s in all (the heap's load included)" if run is not None else ""])
 
 
-def probes_text(tid, tree):
-    """The task's probe runs (tools/probe_theories.py, each in a directory of its own under .build/tasks/ID/, newest
-    first): the theories each loaded, whether its completion marker is there, its errors, its time, and whether each
-    theory it probed is the one the tree holds now. A reviewer dug this out with `ls` and `tail` over the probe
-    directories, about one request a review (47 in the 55 reviews of 2026-09-22)."""
-    logs = sorted(glob.glob(os.path.join(BUILD, tid, "**", "probe.log"), recursive=True), key=os.path.getmtime,
-                  reverse=True)
-    if not logs:
-        return "(no probe of this task: no probe.log under its .build/tasks directory)"
+# A task's probes are its reviewer's evidence (probes_text), and its session removed them before handing over — fix-245
+# at 17:18:56 and implement-221 at 16:12, 2026-09-22, following a rule read as their own ("remove probes promptly"):
+# review-246 found no probe.log under .build/tasks/245, as #234's had. The harness keeps a copy of each: every tool
+# call of a task's session copies what a probe left under its task's directory that is newer than the copy kept.
+PROBES_KEPT = os.path.join(STATE, "probes")
+PROBE_FILES = ("probe.log", "probe.summary.json", "probe.ML")
+
+
+def probe_dirs(tid):
+    """The directories outside the task's own folder that its sessions' probes named (`--work`), as the guard recorded
+    them when each probe was run (work_meter.probe_work): a probe run in a brief's named folder or under $TMPDIR left
+    nothing where `v2.py read probes` looked, and two reviews of 2026-09-22 could not read back the completion marker a
+    result claimed (tasks 233 and 245)."""
+    try:
+        return [d for d in json.load(open(os.path.join(PROBES_KEPT, str(tid), "dirs.json"))) if isinstance(d, str)]
+    except (OSError, ValueError, TypeError):
+        return []
+
+
+def note_probe_dirs(tid, dirs):
+    """Record the probe directories a task's session is about to run in, those outside the task's own folder."""
+    root = os.path.realpath(os.path.join(BUILD, str(tid)))
+    have = probe_dirs(tid)
+    new = [d for d in dict.fromkeys(os.path.realpath(x) for x in dirs)  # a tree's `.build` is a link to the one
+           if not (d + os.sep).startswith(root + os.sep) and d not in have]
+    if not tid or not new:
+        return
+    os.makedirs(os.path.join(PROBES_KEPT, str(tid)), exist_ok=True)
+    path = os.path.join(PROBES_KEPT, str(tid), "dirs.json")
+    with open(path + ".tmp", "w") as f:
+        json.dump(have + new, f)
+    os.replace(path + ".tmp", path)
+
+
+def keep_probes(tid):
+    """Copy every probe the task's directory holds, and every one its probes ran elsewhere (probe_dirs) — its log,
+    summary and script, and the theories it probed — to PROBES_KEPT/ID/, where no session writes, when it is newer
+    than the copy kept there."""
+    if not tid:
+        return
+    root = os.path.join(BUILD, str(tid))
+    logs = glob.glob(os.path.join(root, "**", "probe.log"), recursive=True) + [
+        os.path.join(d, "probe.log") for d in probe_dirs(tid) if os.path.isfile(os.path.join(d, "probe.log"))]
+    for log in logs:
+        d = os.path.dirname(log)
+        name = os.path.relpath(d, root) if (d + os.sep).startswith(root + os.sep) else \
+            "elsewhere" + os.sep + (os.path.relpath(d, PROJECT) if d.startswith(PROJECT + os.sep) else d.strip(os.sep))
+        kept = os.path.join(PROBES_KEPT, str(tid), name.replace(os.sep, "__"))
+        with contextlib.suppress(OSError):
+            if os.path.exists(os.path.join(kept, "probe.log")) and \
+                    os.path.getmtime(os.path.join(kept, "probe.log")) >= os.path.getmtime(log):
+                continue
+            os.makedirs(os.path.join(kept, "theories"), exist_ok=True)
+            for f in PROBE_FILES:
+                if os.path.isfile(os.path.join(d, f)):
+                    shutil.copy2(os.path.join(d, f), os.path.join(kept, f))
+            for thy in glob.glob(os.path.join(d, "theories", "*.thy")):
+                shutil.copy2(thy, os.path.join(kept, "theories", os.path.basename(thy)))
+            json.dump({"from": os.path.relpath(d, PROJECT) if d.startswith(PROJECT + os.sep) else d},
+                      open(os.path.join(kept, "from.json"), "w"))
+
+
+def probe_logs(tid):
+    """The task's probe logs, newest first: those under its directory and those its probes ran elsewhere (probe_dirs),
+    and the kept copy of each its session removed."""
+    here = list(dict.fromkeys(glob.glob(os.path.join(BUILD, str(tid), "**", "probe.log"), recursive=True) + [
+        os.path.join(d, "probe.log") for d in probe_dirs(tid) if os.path.isfile(os.path.join(d, "probe.log"))]))
+    gone = []
+    for log in glob.glob(os.path.join(PROBES_KEPT, str(tid), "*", "probe.log")):
+        try:
+            origin = json.load(open(os.path.join(os.path.dirname(log), "from.json")))["from"]
+        except (OSError, ValueError, KeyError):
+            continue
+        if not os.path.isfile(os.path.join(PROJECT, origin, "probe.log")):
+            gone.append(log)
+    return sorted(here + gone, key=os.path.getmtime, reverse=True)
+
+
+def probe_runs(tid, tree):
+    """The task's probe runs, newest first (at most 12): for each its directory as it is to be named, when it ended,
+    the theories it loaded, whether its completion marker is there, its error lines, its times, and for each theory
+    whether the copy it probed is what the tree holds now — `same` maps a theory to the tree's theory it was (itself,
+    or the one whose body a renamed copy has), or None."""
     body = lambda text: text.split("\nbegin", 1)[-1] if "\nbegin" in text else text  # past the header a probe rewrites
-    memo = {}
+    memo, runs = {}, []
 
     def changed_bodies():  # the theories the task changes, by their body: what a renamed probe copy may be
         if not os.path.isdir(tree):
@@ -4972,40 +7681,85 @@ def probes_text(tid, tree):
             memo["b"] = {os.path.basename(p)[:-4]: body(open(os.path.join(tree, p), errors="ignore").read())
                          for p in paths if p.endswith(".thy") and os.path.isfile(os.path.join(tree, p))}
         return memo["b"]
-    out = []
-    for log in logs[:12]:
+    for log in probe_logs(tid)[:12]:
         d = os.path.dirname(log)
         text = open(log, errors="ignore").read()
         try:
             loaded = re.findall(r'use_thy\w*\s+"([^"]+)"', open(os.path.join(d, "probe.ML"), errors="ignore").read())
         except OSError:
             loaded = []
-        names = [os.path.basename(p) for p in loaded]
-        errors = [line.strip() for line in text.splitlines() if line.startswith("***")]
-        elapsed = re.findall(r"### ([\d.]+)s elapsed time", text)
-        state = ("complete: " + PROBE_MARKER if PROBE_MARKER in text else
-                 "NOT complete: no completion marker" + (" (it may still run)" if time.time() - os.path.getmtime(log) < 120
-                                                          else ""))
-        same = []
-        for n in names:
+        copies = {}  # a renamed copy's name → the tree's theory it stands for, as the probe tool says (from_tree)
+        with contextlib.suppress(OSError, ValueError, AttributeError, TypeError):
+            copies = {c: t for t, c in (json.load(open(os.path.join(d, "probe.summary.json"))).get("from_tree") or {}).items()}
+        run = {"dir": d, "at": os.path.getmtime(log), "names": [os.path.basename(p) for p in loaded],
+               "errors": [line.strip() for line in text.splitlines() if line.startswith("***")],
+               "elapsed": re.findall(r"### ([\d.]+)s elapsed time", text), "complete": PROBE_MARKER in text,
+               "same": {}, "said": []}
+        for n in run["names"]:
             probed, held = os.path.join(d, "theories", n + ".thy"), os.path.join(tree, "theories", n + ".thy")
             if not os.path.isfile(probed):
-                same.append(f"{n} (no copy kept)")
+                run["said"].append(f"{n} (no copy kept)")
+                run["same"][n] = None
                 continue
             mine = body(open(probed, errors="ignore").read())
             if os.path.isfile(held):
-                same.append(f"{n} {'as the tree holds it now' if mine == body(open(held, errors='ignore').read()) else 'DIFFERS from the tree now'}")
+                equal = mine == body(open(held, errors="ignore").read())
+                run["said"].append(f"{n} {'as the tree holds it now' if equal else 'DIFFERS from the tree now'}")
+                run["same"][n] = n if equal else None
+                continue
+            if n in copies:  # the probe tool's own word for which theory the copy stands for (#229's review)
+                of = os.path.join(tree, "theories", copies[n] + ".thy")
+                equal = os.path.isfile(of) and mine == body(open(of, errors="ignore").read())
+                run["said"].append(f"{n}: the tree's {copies[n]} " + ("as it stands" if equal else "as it stood, since changed"))
+                run["same"][n] = copies[n] if equal else None
                 continue
             # a copy under a name of its own (`P130_Readings`): the tree's theory whose body it is, if any
             twin = next((t for t, b in changed_bodies().items() if b == mine), None)
-            same.append(f"{n}: the tree's {twin} as it stands" if twin else f"{n}: no theory the task changed is it now")
-        out.append(f"{os.path.relpath(d, PROJECT)} at {time.strftime('%H:%M', time.localtime(os.path.getmtime(log)))}: "
-                   f"{state}; {len(errors)} error line(s){': ' + '; '.join(errors[:3]) if errors else ''}"
-                   + timed(elapsed, d) + "\n  "
-                   + "; ".join(same or ["it loaded no theory: it proves nothing of the task's"]))
+            run["said"].append(f"{n}: the tree's {twin} as it stands" if twin else f"{n}: no theory the task changed is it now")
+            run["same"][n] = twin
+        run["where"] = os.path.relpath(d, PROJECT)
+        if d.startswith(PROBES_KEPT + os.sep):  # its session removed it: the harness's copy (keep_probes)
+            with contextlib.suppress(OSError, ValueError, KeyError):
+                run["where"] = json.load(open(os.path.join(d, "from.json")))["from"] + " (removed by its session; the harness's copy)"
+        runs.append(run)
+    return runs
+
+
+def probes_text(tid, tree):
+    """The task's probe runs (tools/probe_theories.py, each in a directory of its own under .build/tasks/ID/, newest
+    first): the theories each loaded, whether its completion marker is there, its errors, its time, and whether each
+    theory it probed is the one the tree holds now. A reviewer dug this out with `ls` and `tail` over the probe
+    directories, about one request a review (47 in the 55 reviews of 2026-09-22)."""
+    runs = probe_runs(tid, tree)
+    if not runs:
+        return "(no probe of this task: no probe.log under its .build/tasks directory, and none kept by the harness)"
+    out = []
+    for r in runs:
+        state = ("complete: " + PROBE_MARKER if r["complete"] else
+                 "NOT complete: no completion marker" + (" (it may still run)" if time.time() - r["at"] < 120 else ""))
+        out.append(f"{r['where']} at {time.strftime('%H:%M', time.localtime(r['at']))}: "
+                   f"{state}; {len(r['errors'])} error line(s){': ' + '; '.join(r['errors'][:3]) if r['errors'] else ''}"
+                   + timed(r["elapsed"], r["dir"]) + "\n  "
+                   + "; ".join(r["said"] or ["it loaded no theory: it proves nothing of the task's"]))
     if not os.path.isdir(tree):
         out.append("(the task's tree is gone — its work has landed or been dropped: nothing to compare with)")
     return "\n".join(out)
+
+
+def probed_whole(tid, tree):
+    """(the tree's theories a probe of the task loaded as the tree holds them, to its completion marker with no error
+    line, in order; how many such runs): the harness's record of what its session verified by probing, which the
+    harness states in the task's commit (finalize.harness_validation) rather than the session narrating it — five of
+    the 31 rejections whose findings the state held on 2026-09-23 were a commit message misstating a run."""
+    theories, runs = [], 0
+    for r in probe_runs(tid, tree):
+        if not r["complete"] or r["errors"]:
+            continue
+        held = [t for t in r["same"].values() if t]
+        if held:
+            runs += 1
+            theories += [t for t in held if t not in theories]
+    return theories, runs
 
 
 RECIPE_EXPORT = re.compile(r"export\s*=\s*['\"]([\w.]+):")
@@ -5020,8 +7774,8 @@ def reach_text(tree, names, tid=None):
     introspected, a script written and its output read back."""
     graph = {}
     for path in glob.glob(os.path.join(tree, "theories", "*.thy")):
-        m = IMPORTS.search(open(path, errors="ignore").read())
-        graph[os.path.basename(path)[:-4]] = [n.strip('"').rsplit(".", 1)[-1] for n in (m.group(1).split() if m else [])]
+        graph[os.path.basename(path)[:-4]] = [n.rsplit(".", 1)[-1]
+                                               for n in theory_imports(open(path, errors="ignore").read())]
     recipes = {}
     for path in sorted(glob.glob(os.path.join(tree, "tools", "reconstruct_*.py"))):
         text = open(path, errors="ignore").read()
@@ -5315,7 +8069,60 @@ def cmd_escalate(text):
             "than the run ends): the producing slot is free for another worker meanwhile.")
 
 
-def cmd_measuring(text=""):
+SHARED = os.path.join(STATE, "measure-shared")  # a session's measurement beside everything else, by session
+
+
+def shared_measure(name):
+    """A session's claim to measure beside everything else, while it stands: given within CLAIM_GRACE and not yet run,
+    or running in a call (its record), else None."""
+    try:
+        m = json.load(open(os.path.join(SHARED, f"{name}.json")))
+    except (OSError, ValueError, TypeError):
+        return None
+    if m.get("call"):
+        return m if time.time() - m.get("call_at", 0) < CALL_MAX else None
+    return m if time.time() - m.get("at", 0) < CLAIM_GRACE else None
+
+
+def shared_call(name, call):
+    """The session's shared measurement runs in this call: its load is read from now."""
+    m = shared_measure(name)
+    if m and call and not m.get("call"):
+        m.update(call=call, call_at=time.time(), sample=machine_sample())
+        json.dump(m, open(os.path.join(SHARED, f"{name}.json"), "w"))
+        load_sampler(call)
+
+
+def release_shared(name, call):
+    """The call that ran the session's shared measurement has ended: what the machine's load was while it ran, for the
+    session (its note) and its task's measurements.log; None for any other call."""
+    m = shared_measure(name)
+    if not m or not call or m.get("call") != call:
+        return None
+    with contextlib.suppress(OSError):
+        os.remove(os.path.join(SHARED, f"{name}.json"))
+    load, fig = softly("the machine's load", machine_load, m.get("sample"), call, default=("", {}))
+    verdict = load_verdict(fig) if fig else "its load could not be read"
+    start = m.get("call_at", time.time())
+    with contextlib.suppress(OSError):
+        os.makedirs(os.path.join(BUILD, str(m.get("task"))), exist_ok=True)
+        with open(os.path.join(BUILD, str(m.get("task")), "measurements.log"), "a") as f:
+            f.write(f"{time.strftime('%Y-%m-%dT%H:%M:%S', time.localtime(start))} to {time.strftime('%H:%M:%S')} "
+                    f"({round(time.time() - start)} s): {m.get('why', 'a measurement')}, shared, the machine not "
+                    f"held; {load}; {verdict}\n")
+    log(f"the shared measurement of task {m.get('task')} ended ({round(time.time() - start)} s): {verdict}")
+    return (f"[Your measurement ran {round(time.time() - start)} s, sharing the machine. While it ran: {load}. "
+            f"That is {verdict}.]")
+
+
+MEASURE_CHOICE = ("refused: say which, each time — `v2.py measuring --exclusive \"what you measure\"` holds the whole "
+                  "machine while your run goes (every other check, probe and landing waits: extremely expensive, so "
+                  "quick, fitted to {minutes} minutes); `v2.py measuring --shared \"what you measure\"` holds nothing — "
+                  "your run takes a heavy slot or a probe slot as any run of its kind, in the machine's order — and "
+                  "you are told the machine's load while it ran, to judge the number by.")
+
+
+def cmd_measuring(text="", shared=None):
     """A run whose result is a timing holds the machine alone: another run beside it distorts the number as surely as
     it exceeds the memory, and the harness gave that hold only to a check advancing the base heap (the owner,
     2026-09-20). Claimed before the run is launched; it stands while the run does, and falls of itself after."""
@@ -5324,6 +8131,20 @@ def cmd_measuring(text=""):
         # the roles that run: a task designer has a task too, and reads statements rather than measuring anything,
         # so its claim would hold the machine against every check for the grace it is given (2026-09-21)
         return "refused: a producing session working on a task claims the machine for its measurement"
+    if shared is None:  # the owner, 2026-09-23: "there should be no default … so that the choice is deliberate"
+        return MEASURE_CHOICE.format(minutes=measure_minutes())
+    if shared:  # nothing to decide where every run is seen: it holds nothing
+        os.makedirs(SHARED, exist_ok=True)
+        json.dump(dict(task=c["task"], why=text.strip() or "a measurement of its own work", session=c["name"],
+                       at=time.time()), open(os.path.join(SHARED, f"{c['name']}.json"), "w"))
+        log(f"task {c['task']} measures beside everything else: {text.strip() or '-'}")
+        return (f"measure now, sharing the machine: your next check, within {int(CLAIM_GRACE) // 60} minutes, is the "
+                f"measurement — in the foreground, fitted to {measure_minutes()} minutes (a probe is bounded there). It "
+                "holds nothing and is admitted as any run of its kind: a heavy slot for a heavy run, a probe slot for "
+                "a probe, in the machine's order, the memory floor kept. When it ends you are told the machine's load "
+                "while it ran — CPU busy, the share of the time runnable work waited for a CPU, memory in use on "
+                "average and at its peak, memory stalls — and what that says of the number; its task's "
+                "measurements.log keeps it.")
     if not control():
         # inside Claude Code's sandbox no other run is visible: counted there, the machine is always quiet
         want(measure=c["name"], text=text)
@@ -5353,7 +8174,8 @@ def measure_claim(c, text):
         return (f"queued: {runs} Isabelle run(s) are going, and a timing taken beside them is not the timing of your "
                 "work. No new run of another task starts meanwhile, and once these have ended the machine is yours: "
                 "you are told by message, or resumed with it if you have parked for the machine (`v2.py park "
-                "machine`), which is what to do when nothing else is left. Do not claim it again.")
+                "machine`), which is what to do when nothing else is left — `v2.py end` does not end a producing "
+                "session's turn. Continue meanwhile with what needs no machine. Do not claim it again.")
     with contextlib.suppress(OSError):
         os.remove(os.path.join(STATE, PENDING))
     claim_exclusive(c["task"], why, session=c["name"])
@@ -5411,7 +8233,10 @@ def cmd_end():
 def snapshot(tid, tree):
     """A commit of a task's tree as its check would see it — its tracked and untracked files, what .gitignore leaves out
     left out, the receipts as its HEAD has them (a retain of its own is no work of the task's, and only a retention
-    commits them) — on no branch: (commit, None), or (None, why). What a check batch merges (train.Batch)."""
+    commits them) but for those its brief delivers — on no branch: (commit, None), or (None, why). What a check batch
+    merges (train.Batch). A brief that changes a recipe's words names the report files it re-records, and they are its
+    work: taken as HEAD had them, fix-267's check compared its new words with the old ones and could never pass (q65,
+    2026-09-22 20:04)."""
     index = os.path.join(STATE, f"snapshot-{tid}.index")
     env = dict(os.environ, GIT_INDEX_FILE=index)
     run = lambda *a: subprocess.run(["git", "-C", tree, *a], capture_output=True, text=True, env=env, timeout=300)
@@ -5422,6 +8247,11 @@ def snapshot(tid, tree):
             refused = not_added(r.stderr) if args[0] == "add" else [r.stderr.strip() or "failed"]
             if r.returncode and refused:
                 return None, f"git {args[0]} in its tree: {'; '.join(refused)[-300:]}"
+        own = [p for p in delivered_receipts(tid) if os.path.exists(os.path.join(tree, p))]
+        if own:
+            r = run("add", "-A", "--", *own)
+            if r.returncode:
+                return None, f"git add of the receipts its brief delivers: {r.stderr.strip()[-300:]}"
         work = run("write-tree").stdout.strip()
         c = subprocess.run(["git", "-C", tree, "commit-tree", work, "-p", "HEAD", "-m",
                             f"The work of task {tid} as its check sees it"], capture_output=True, text=True, timeout=60)
@@ -5605,16 +8435,23 @@ def receipts_in(files):
     return [f for f in files if os.path.normpath(f) == RECEIPTS[0] or os.path.normpath(f).startswith(RECEIPTS[1])]
 
 
+def delivered_receipts(tid):
+    """The receipts a task's brief delivers — a retention, or the report words its work changes, named in its
+    Deliverable (the planner's rule) — which are its own work, not a check's by-product."""
+    try:
+        delivered = json.load(open(os.path.join(BUILD, tid, "brief.json"))).get("deliverables") or []
+    except (OSError, ValueError, AttributeError):
+        delivered = []
+    return [os.path.normpath(d).rstrip("/") for d in delivered  # a file among them, or their directory
+            if isinstance(d, str) and receipts_in([d, os.path.join(os.path.normpath(d), "x")])]
+
+
 def receipts_refused(tid, files):
     """Receipts in a task's commit that no retention commits: with other files, and not what its brief delivers."""
     receipts = receipts_in(files)
     if not receipts or len(receipts) == len(files):
         return None
-    try:
-        delivered = json.load(open(os.path.join(BUILD, tid, "brief.json"))).get("deliverables") or []
-    except (OSError, ValueError, AttributeError):
-        delivered = []
-    named = [os.path.normpath(d).rstrip("/") for d in delivered if isinstance(d, str)]
+    named = delivered_receipts(tid)
     left = [f for f in receipts if not any(os.path.normpath(f) == d or os.path.normpath(f).startswith(d + "/")
                                            for d in named)]
     if not left:
@@ -5632,6 +8469,7 @@ def receipts_refused(tid, files):
 # 171: two requests, 2026-09-22) and still took a landing check of five minutes that no document can change the result
 # of (the owner: notes/plan-landing-train.md 3.6).
 DOCUMENTS_CHECK = "documents"
+REPOSITORY_CHECK = "python3 -B tools/incremental_check.py check --output .build/tasks/{tid}/check"  # a hand-over's default
 NOT_DOCUMENTS = ("theories/", "tools/", "validation/")
 
 
@@ -5660,9 +8498,23 @@ def cmd_finalize(tid, args):
         elif a == "--files":
             while args and not args[0].startswith("--"):
                 files.append(args.pop(0))
+    tree = worktree_of(tid)  # the finalizer checks and commits there: the files are the task's tree's
+    taken = not files and tree != PROJECT
+    if taken:
+        # A task's own tree holds its changes alone, so what it has changed is what its commit takes: 78 requests of
+        # the implementers and fixers of 2026-09-21/22 read git status and little else, most of them to name --files
+        files = changed_paths(tree)
+    defaulted = []
     if not check and documents_only(files):
         check = DOCUMENTS_CHECK  # the finalizer's own check of documents (finalize.documents_check)
-    tree = worktree_of(tid)  # the finalizer checks and commits there: the files are the task's tree's
+    elif not check and files:
+        # the repository's check, which 109 of the 126 hand-overs whose record stands named, written for them: nine
+        # hand-overs of 2026-09-21/22 named one that was not runnable as written, and the batch runs its own anyway
+        check = REPOSITORY_CHECK.format(tid=tid)
+        defaulted.append(f"its check the repository's (`{check}`)")
+    if not message and os.path.isfile(os.path.join(BUILD, str(tid), "commit.md")):
+        message = os.path.relpath(os.path.join(BUILD, str(tid), "commit.md"), PROJECT)
+        defaulted.append(f"its message {message}")
     # a path HEAD tracks is the repository's own, changed, deleted or matched by .gitignore alike (finalize.stage): task
     # 48's removal of a tracked compiled object was refused as "ignored" (2026-09-21)
     in_head = {f for f in files if git_out("cat-file", "-e", f"HEAD:{f}", quiet=True, tree=tree) is not None}
@@ -5673,8 +8525,11 @@ def cmd_finalize(tid, args):
                or (f not in in_head and (exempt(os.path.normpath(f))  # a compiled object nobody tracks
                                          or subprocess.run(["git", "-C", tree, "check-ignore", "-q", "--", f]).returncode == 0))]
     if outside:
+        build = [f for f in outside if os.path.normpath(f).startswith(".build")]
         return ("refused: the finalizer commits files of the repository's working tree, not ignored, not under .build/ or "
-                f".claude/, relative to the project: {', '.join(outside)}")
+                f".claude/, relative to the project: {', '.join(outside)}"
+                + (". What stands under .build/ — a report, a result, drafts — is the task's record, read where it "
+                   "stands and never committed: leave it out of --files" if build else ""))
     receipts = receipts_refused(tid, files)
     if receipts:
         return receipts
@@ -5689,12 +8544,120 @@ def cmd_finalize(tid, args):
                 "(`python3 -B tools/incremental_check.py …`); `.build/` is the one `.build` and may be named as it is.")
     if not check or not files or not message or bad or not os.path.exists(os.path.join(PROJECT, message)):
         return ("refused: v2.py finalize ID --check CMD --files PATH... --message FILE, every file existing (or a deletion "
-                "of a tracked one); --check may be left out when every file is a Markdown document (the finalizer then "
-                "checks the documents and the sources itself)"
+                "of a tracked one); --check may be left out (the repository's check, or, when every file is a Markdown "
+                "document, the finalizer's own of the documents and the sources), --message when the message is "
+                f".build/tasks/{tid}/commit.md, --files in a tree of your own (what it has changed)"
                 + (f" (missing: {', '.join(bad)})" if bad else ""))
     os.makedirs(os.path.join(BUILD, tid), exist_ok=True)
     json.dump({"check": check, "files": files, "message": message}, open(os.path.join(BUILD, tid, "finalize.json"), "w"), indent=1)
-    return "the final job is prepared; its check runs when you record your result"
+    what = f" ({len(files)} file{'s' * (len(files) > 1)} your tree has changed: {', '.join(files)})" if taken else ""
+    what += f" ({'; '.join(defaulted)})" if defaulted else ""
+    # The hand-over and the result are one event, and one call makes both (_finishing.md): a result the session wrote
+    # this round is recorded with it. Of the 69 producing sessions of 2026-09-21/22 that recorded one, 41 handed over,
+    # then wrote their result, then recorded it — two requests of several hundred thousand tokens each after the one
+    # that could have held all three — and one made the protocol's single call.
+    c, path = caller(), os.path.join(BUILD, tid, "result.md")
+    if c and os.path.exists(path) and os.path.getmtime(path) >= max(c.get("started") or 0, c.get("resumed") or 0) - 1:
+        text = open(path, errors="ignore").read()
+        status = (field(text, "Status").split() or [""])[0].strip(".,").lower()
+        if status == "done" and not result_problems(text):
+            said = cmd_result(tid)
+            if said.startswith("recorded"):
+                with state() as st:
+                    if c.get("name") in st["sessions"]:
+                        st["sessions"][c["name"]]["handed"] = time.time()
+                return f"the final job is prepared{what}, and your result (.build/tasks/{tid}/result.md) recorded with it. End your turn now."
+            return f"the final job is prepared{what}; your result was not recorded with it: {said}"
+    return (f"the final job is prepared{what}; its check runs when you record your result — write it and record it in "
+            f"one command: `.claude/orchestration/v2.py result {tid} <<'EOF'`, then the result, then `EOF`")
+
+
+# A probe the machine refuses (a measurement holds it or waits for it, or every probe slot is taken) was the session's
+# to try again: it parked for the machine, was resumed, and ran it — or, with a change in the same call, lost the change
+# too (implement-189, implement-182, fix-227, 2026-09-22 17:21–17:30). The owner: "put them in a queue for probes by
+# allowing them to call it with a command signifying that they have nothing to do if probe is not ran" — and "why wait
+# for a slot to be free in order to run the probe if there is space to run?". A probe led by QUEUE=1 is queued when the
+# machine refuses it (work_meter rewrites the call to `v2.py queue-probe`), its session parks, the watchdog runs it as
+# soon as the machine has room (run_queued_probes, whatever the producing slot is doing), and the session is resumed
+# with its output.
+PROBE_QUEUE = os.path.join(STATE, "probe-queue.json")
+
+
+def probe_queue():
+    import train
+    return train.Queue(PROBE_QUEUE)
+
+
+def cmd_queue_probe(encoded):
+    """A producing session's probe, refused for the machine and marked QUEUE=1: queued to run in its working directory as
+    soon as the machine has room, and the session parked until its output has come."""
+    import base64
+    c = caller()
+    if not c or c["role"] not in PRODUCING or not c.get("task"):
+        return "refused: a producing session queues its task's probe"
+    try:
+        command = base64.b64decode(encoded).decode()
+    except ValueError:
+        return "refused: the probe to queue could not be read"
+    tid, key = c["task"], f"{c['task']}-{int(time.time() * 1000)}"
+    probe_queue().put(key, head=None, command=command, cwd=os.getcwd(), session=c["name"], task=tid)
+    with state() as w:
+        w["tasks"].setdefault(tid, {}).update(stage="parked", parked={
+            "since": time.time(), "for": "probe", "why": "", "after": None, "holds_tree": False, "questions": [],
+            "holder": None, "run": "probe", "probe": key})
+        w["sessions"][c["name"]]["state"] = "parked"
+    log(f"task {tid}'s probe waits for room on the machine: it runs as soon as there is, and its session is parked")
+    kick()
+    turn_over(c)
+    return ("queued: your probe runs as soon as the machine has room for it, without you. End your turn now: you are "
+            "parked, the producing slot free meanwhile, and resumed here with its output.")
+
+
+def run_queued_probes():
+    """The watchdog's: start each queued probe the machine has room for (the guard's own condition for a probe), and
+    give each that has ended its output — cut to a read, kept whole — as the result its parked session is resumed with.
+    Whether one ended: its session is then ready to be resumed."""
+    q, st, ended = probe_queue(), peek(), False
+    for key, e in q.peek().items():
+        if e.get("decided") or not e.get("pid"):
+            continue
+        if os.path.exists(f"/proc/{e['pid']}"):
+            continue
+        try:
+            out = open(e["out"], errors="replace").read()
+        except OSError:
+            out = "(the probe left no output)"
+        text = out if len(out.encode()) <= READ_BYTES else (
+            f"[its output's last part; the whole is kept in {os.path.relpath(e['out'], PROJECT)}]\n"
+            + out.encode()[-READ_BYTES:].decode(errors="ignore"))
+        q.decide(key, 0, "ran")
+        with state() as w:
+            t = w["tasks"].get(e["task"]) or {}
+            p = t.get("parked") or {}
+            if t.get("stage") == "parked" and p.get("for") == "probe" and p.get("probe") == key:
+                p.update(result="Your queued probe ran:\n" + text)
+        log(f"task {e['task']}'s queued probe ran: its session is resumed with its output")
+        ended = True
+    for key, e in sorted(q.peek().items(), key=lambda x: x[1].get("queued", 0)):
+        if e.get("decided") or e.get("pid"):
+            continue
+        if (st["sessions"].get(e.get("session")) or {}).get("state") != "parked":
+            q.decide(key, 1, "dropped")  # its session went on, or away: the probe is no longer waited for
+            continue
+        if run_blocked((e["task"],), "probe"):
+            break  # in the order queued: none jumps the one waiting before it
+        import work_meter
+        keep = outputs_of(e["session"])
+        os.makedirs(keep, exist_ok=True)
+        out = os.path.join(keep, f"queued-probe-{key}.txt")
+        run = subprocess.Popen(["bash", "-c", work_meter.gathering(e["command"], e["cwd"], keep)], cwd=e["cwd"],
+                               stdout=open(out, "w"), stderr=subprocess.STDOUT, start_new_session=True,
+                               env=dict(os.environ, ORCH_READ_BYTES=str(READ_BYTES)))
+        with q.open() as w:
+            if key in w:
+                w[key].update(pid=run.pid, out=out, started=time.time())
+        log(f"task {e['task']}'s queued probe started: the machine has room for it")
+    return ended
 
 
 def cmd_bring_main():
@@ -5706,25 +8669,61 @@ def cmd_bring_main():
     return finalize.bring_main(str(c["task"]))
 
 
-def cmd_result(tid):
+RESULT_ECHO = 10  # seconds: a result recorded by the hand-over, and the same call's `v2.py result` after it
+
+
+def stdin_text():
+    """The text a heredoc gave the command, or "" when it was given none: a terminal, /dev/null, or a pipe nobody
+    writes, which is waited for a tenth of a second and no more."""
+    try:
+        if sys.stdin is None or sys.stdin.isatty():
+            return ""
+        ready, _, _ = select.select([sys.stdin], [], [], 0.1)
+        return sys.stdin.read() if ready else ""
+    except (OSError, ValueError):
+        return ""
+
+
+def cmd_result(tid, text=None):
+    """Record a producing session's result; `text` (a heredoc's), when given, is written to result.md first, so that
+    writing and recording are one command."""
     refused = own_task(tid)
     if refused:
         return refused
     path = os.path.join(BUILD, tid, "result.md")
+    c = caller()
+    final = os.path.join(BUILD, tid, "finalize.json")
+    at = (c or {}).get("handed") or 0  # when a hand-over last recorded this session's result (cmd_finalize)
+    if at and (c.get("state") == "done" or time.time() - at < RESULT_ECHO) \
+            and os.path.exists(final) and os.path.getmtime(final) <= at:
+        # recorded already, by the hand-over (cmd_finalize), and nothing handed over since: the protocol's `&& v2.py
+        # result` after it. Read by the time too: a documents check fails in seconds, and its quick fix can resume
+        # the session (working again) before that same call reaches here
+        if text and text.strip():
+            open(path, "w").write(text if text.endswith("\n") else text + "\n")
+            return "your result was recorded with the hand-over; its text is now the one given. End your turn now."
+        return "recorded already, with the hand-over. End your turn now."
+    if text and text.strip():
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        open(path, "w").write(text if text.endswith("\n") else text + "\n")
     text = open(path, errors="ignore").read() if os.path.exists(path) else ""
     problems = result_problems(text) if text else [f"write the result to .build/tasks/{tid}/result.md first"]
     if problems:
         return "refused: the result is not in form:\n- " + "\n- ".join(problems)
     status = field(text, "Status").split()[0].strip(".,").lower()
-    final = os.path.join(BUILD, tid, "finalize.json")
     try:
         committed_files = [p for p in json.load(open(os.path.join(BUILD, tid, "brief.json")))["deliverables"]
-                           if not p.startswith(".build/")]
+                           if not placed(p, tid).startswith(".build/")]
     except (OSError, ValueError, KeyError):
         committed_files = []
     if status == "done" and committed_files and not os.path.exists(final):
-        return ("refused: a done task's deliverables are committed by the finalizer: hand it the final job first "
-                f"(`v2.py finalize {tid} --check ... --files ... --message .build/tasks/{tid}/commit.md`)")
+        tree = worktree_of(tid)
+        unwritten = [p for p in committed_files if not os.path.lexists(os.path.join(tree, p))]
+        return (f"refused: your brief delivers {', '.join(committed_files)} into the repository, and a done task's "
+                "files there are committed by the finalizer: hand it the final job first (`v2.py finalize "
+                f"{tid}` in a tree of your own, `--files` naming them in the one tree)"
+                + (f". Not written yet: {', '.join(unwritten)}" if unwritten else "")
+                + "; what it delivers under .build/ is read where it stands and is never committed")
     c = caller()
     refused = jobs_refusal(c, "record your result")
     if refused:
@@ -6054,7 +9053,8 @@ def apply_graph_edit(ops):
         for op in ops:
             if "create" in op:
                 ids[op["create"]] = create_task(op.get("subject", ""), op.get("description", ""),
-                                                {"kind": brief_kind(op.get("description", "")), "why": op.get("why", "")},
+                                                {"kind": brief_kind(op.get("description", "")), "why": op.get("why", ""),
+                                                 **({"continues": str(op["continues"])} if op.get("continues") else {})},
                                                 [])
                 made.append(ids[op["create"]])
         for op in ops:
@@ -6063,8 +9063,9 @@ def apply_graph_edit(ops):
             elif "rewrite" in op:
                 keep(op["rewrite"])
                 fields = {k: op[k] for k in ("subject", "description") if k in op}
-                if "why" in op:
-                    fields["metadata"] = dict((read_task(op["rewrite"]) or {}).get("metadata") or {}, why=op["why"])
+                if "why" in op or "continues" in op:
+                    fields["metadata"] = dict((read_task(op["rewrite"]) or {}).get("metadata") or {},
+                                              **{k: op[k] for k in ("why", "continues") if k in op})
                 update_task(op["rewrite"], **fields)
             elif "blockers" in op:
                 keep(resolve(op["blockers"]))
@@ -6153,13 +9154,15 @@ def graph_edit_problems(ops):
                     if b not in known]
             out += [f"task {x} feeds {f!r}, which is not an open task of the list" for f in op.get("feeds") or []
                     if f not in tasks or f in deleted or tasks[f].get("status") == "completed"]
+        if k in ("create", "rewrite") and op.get("continues") and str(op["continues"]) not in tasks:
+            out.append(f"task {x} continues {op['continues']!r}, which is not a task of the list")
         elif k == "rewrite":
             if x not in tasks or x in deleted:
                 out.append(f"there is no task {x!r} to rewrite")
             if "description" in op:
                 out += [f"task {x}: {p}" for p in brief_problems(op["description"])]
-            if set(op) - {"rewrite", "subject", "description", "why"}:
-                out.append(f"a rewrite of task {x} changes its subject, description or why, and nothing else")
+            if set(op) - {"rewrite", "subject", "description", "why", "continues"}:
+                out.append(f"a rewrite of task {x} changes its subject, description, why or continues, and nothing else")
         elif k == "blockers":
             if x not in known:
                 out.append(f"there is no task {x!r} to set the dependencies of")
@@ -6173,7 +9176,10 @@ def graph_edit_problems(ops):
         elif k == "queue":
             out += [f"the order names {q!r}, which is not in the list or this edit" for q in x or [] if q not in known]
             if not x:
-                out.append("a queue operation names the order whole, and this one names nothing")
+                out.append("a queue operation names an order, and this one names nothing")
+            if set(op) - {"queue", "dropUnnamed"} or op.get("dropUnnamed") not in (None, True, False):
+                out.append('a queue operation is {"queue": [...]}, with "dropUnnamed": true to take the queued tasks it '
+                           "does not name out of the queue, and nothing else")
     if out:
         return out
     # the graph as the edit would leave it: new tasks by their keys, which never shadow an id
@@ -6232,9 +9238,12 @@ def cmd_edit(path):
     except GraphEditFailed as err:
         return f"refused: the edit could not be written ({err.cause!r}); what it had written is taken back"
     said = [drop(op["delete"], "deleted") for op in ops if "delete" in op]
+    for op in ops:  # a session at work reads its brief as it now stands
+        if "rewrite" in op and "description" in op and os.path.exists(os.path.join(BUILD, str(op["rewrite"]), "brief.json")):
+            brief_record(str(op["rewrite"]), op["description"])
     link_reviews()
-    order = [op["queue"] for op in ops if "queue" in op]
-    queued = cmd_queue([ids.get(q, q) for q in order[-1]]) if order else ""
+    order = [op for op in ops if "queue" in op]
+    queued = cmd_queue([ids.get(q, q) for q in order[-1]["queue"]], bool(order[-1].get("dropUnnamed"))) if order else ""
     log(f"the planner edited the graph: {len(ops)} operation(s)" + (f"; made {', '.join(ids.values())}" if ids else ""))
     kick()
     # a task that came back moves again only when it is queued: plan-33 rewrote task 24's brief at 23:30 and it stood
@@ -6260,11 +9269,20 @@ def cmd_edit(path):
 # nothing, and name their files only as far as the guard can read the shell. This takes any number of changes to any
 # number of files, judges them whole, writes all or none, and names its files exactly: the guard reads the same
 # blocks (work_meter.write_targets).
-CHANGE_HEAD = re.compile(r"^=== (write|replace|replace-all) (\S.*?)\s*$")
+CHANGE_HEAD = re.compile(r"^=== (write|append|replace|replace-all|row|root) (\S.*?)\s*$")
+# The index files are edited by the theory they index, as their merges read them (finalize.ROW_KEYS): a THEORY_MAP.md
+# row was quoted before it could be replaced and its imports copied by hand (161 requests of the implementers and
+# fixers of 2026-09-21/22 did nothing else, 13M; 138 of the map's 1,812 rows named imports their theory no longer
+# has), and a ROOT line was found and edited the same way.
+KEYED_HEAD = re.compile(r"^([A-Za-z][\w']*)(?:\s+after\s+([A-Za-z][\w']*))?$")
+MAP_ROW = re.compile(r"^\|\s*([A-Za-z_][\w.]*)\s*\|")
+ROOT_ENTRY = re.compile(r"^(\s{4})([A-Za-z_][\w.]*)\s*$")
 SEARCH, DIVIDER, REPLACE = "<<<<<<< SEARCH", "=======", ">>>>>>> REPLACE"
-CHANGE_FORM = ("a change begins `=== write PATH` (the whole file follows, to the next `===` line), or `=== replace "
+CHANGE_FORM = ("a change begins `=== write PATH` (the whole file follows, to the next `===` line), `=== append PATH` "
+               "(what follows is added at the file's end: a log's next entry, nothing to match), or `=== replace "
                f"PATH` or `=== replace-all PATH`, each followed by blocks of `{SEARCH}`, the text as it stands, "
-               f"`{DIVIDER}`, the text that replaces it, `{REPLACE}`")
+               f"`{DIVIDER}`, the text that replaces it, `{REPLACE}`; or `=== row THEORY` (its THEORY_MAP.md row's "
+               "content follows) or `=== root THEORY [after OTHER]` (its declaration in ROOT, nothing follows)")
 
 
 def marker_at(body, start, marker, nested):
@@ -6309,10 +9327,24 @@ def change_blocks(text, markers=True):
         while i < len(lines) and not (markers and CHANGE_HEAD.match(lines[i])):
             i += 1
         body = lines[start:i]
-        if verb == "write":
+        if verb in ("row", "root"):
+            keyed = KEYED_HEAD.match(path)
+            text = " ".join(x.strip() for x in body if x.strip())
+            if not keyed:
+                problems.append(f"`=== {verb} {path}` names no theory: `=== row THEORY [after OTHER]`, then the content "
+                                "of its THEORY_MAP.md row; `=== root THEORY [after OTHER]`, alone")
+            elif verb == "root" and text:
+                problems.append(f"`=== root {path}` is followed by text: a declaration is its head line alone")
+            elif verb == "row" and re.search(r"(?<!\\)\|", text):
+                problems.append(f"the row of {keyed.group(1)} holds a `|`, which ends a table cell: write it `\\|`")
+            else:
+                ops.append({"op": verb, "path": "THEORY_MAP.md" if verb == "row" else "ROOT", "n": len(ops) + 1,
+                            "theory": keyed.group(1), "after": keyed.group(2), "text": text})
+            continue
+        if verb in ("write", "append"):
             while body and body[-1] == "":
                 body.pop()
-            ops.append({"op": "write", "path": path, "n": len(ops) + 1, "text": "".join(x + "\n" for x in body)})
+            ops.append({"op": verb, "path": path, "n": len(ops) + 1, "text": "".join(x + "\n" for x in body)})
             continue
         j, blocks = 0, 0
         while j < len(body):
@@ -6337,14 +9369,20 @@ def change_blocks(text, markers=True):
             # means one of its own is missing and it has taken in the next block: without its REPLACE line, the next
             # block's markers and texts were written into the file as its replacement (design-66's entry.md, eight
             # blocks, 2026-09-21: five requests to find and repair it)
-            for part, text, missing in (("search", body[j + 1:k], DIVIDER), ("replacement", body[k + 1:r], REPLACE))[
-                    :2 if markers else 0]:
-                held = next((x for x in text if x in (SEARCH, DIVIDER, REPLACE)), None)  # the first
+            for part, at, text, missing in (("search", j + 1, body[j + 1:k], DIVIDER),
+                                            ("replacement", k + 1, body[k + 1:r], REPLACE))[:2 if markers else 0]:
+                held = next(((x, at + i) for i, x in enumerate(text) if x in (SEARCH, DIVIDER, REPLACE)), None)
                 if held:
+                    # Either reading leaves the file wrong, so it says both and the way out of each: 20 of the day's
+                    # refusals were a `=======` in a replacement (2026-09-22), and being sent to write the file whole
+                    # costs a session the file's whole text where two blocks around the line cost it nothing.
+                    line, where = held
                     problems.append(f"change {ops[-1]['n']} ({verb} {path}), the block at line {start + j + 1}: its "
-                                    f"{part} text holds a `{held}` line, so its own `{missing}` line is missing and "
-                                    "it has taken in the next block. A text that must hold such a line is written "
-                                    "whole (`=== write`)")
+                                    f"{part} text holds a `{line}` line at line {start + where + 1}, so either its "
+                                    f"own `{missing}` line is missing and it has taken in the next block, or that "
+                                    f"line belongs to the {part} text — then make two blocks, one for what stands "
+                                    "before that line and one for what stands after, or write the file whole "
+                                    "(`=== write`)")
                     break
             blocks, j = blocks + 1, r + 1
         if not blocks and not problems:
@@ -6375,15 +9413,112 @@ def replace_one(text, op, what):
             text[:text.find(op["old"])].count("\n") + 1, None)
 
 
-def changed_texts(ops, base):
+def theory_text(base, name, now):
+    """A theory's text as the call leaves it (`now`), else as it stands at `base`; None when it is not there."""
+    path = change_path(base, os.path.join("theories", f"{name}.thy"))
+    if path in now:
+        return now[path]
+    try:
+        return open(path, encoding="utf-8", newline="").read()
+    except (OSError, UnicodeDecodeError):
+        return None
+
+
+def keyed_edit(op, text, base, now):
+    """(the index file's text with one theory's row or declaration written, the line it stands at, what was done; or
+    None, None and what refuses it). A row is `| THEORY | its imports | its content |`, the imports read from the
+    theory as the call leaves it; with no content given the row's own stands and its imports are read again. A new row
+    goes after the row of the nearest theory ROOT declares before it (a map that follows ROOT's order stays so), else
+    after the table's last row. A declaration goes after OTHER's, or after the last line of ROOT declaring one of its
+    imports, else after its last theory line."""
+    name, lines = op["theory"], text.split("\n")
+    source = theory_text(base, name, now)
+    if source is None:
+        return None, None, (f"theories/{name}.thy is not there, where the {'row' if op['op'] == 'row' else 'declaration'}"
+                            "'s imports are read from: write the theory in this call or first")
+    imports = theory_imports(source)
+    if op["op"] == "root":
+        entries = [(i, m.group(2)) for i, m in ((i, ROOT_ENTRY.match(x)) for i, x in enumerate(lines)) if m]
+        names = [n for _, n in entries]
+        if name in names:
+            return text, names.index(name), f"{name} declared already, at line {entries[names.index(name)][0] + 1}"
+        if not entries:
+            return None, None, "ROOT declares no theory to place it among"
+        if op.get("after"):
+            if op["after"] not in names:
+                return None, None, f"ROOT declares no {op['after']} to place {name} after"
+            i = entries[names.index(op["after"])][0]
+        else:
+            i = max((j for j, n in entries if n in imports), default=entries[-1][0])
+        lines.insert(i + 1, f"    {name}")
+        return "\n".join(lines), i + 2, f"{name} declared at line {i + 2}"
+    rows = [(i, m.group(1)) for i, m in ((i, MAP_ROW.match(x)) for i, x in enumerate(lines)) if m and m.group(1) != "Theory"]
+    mine = [i for i, n in rows if n == name]
+    if len(mine) > 1:
+        return None, None, (f"THEORY_MAP.md holds the row of {name} {len(mine)} times, at lines "
+                            f"{', '.join(str(i + 1) for i in mine)}: make it one with a `=== replace` block first")
+    content = op["text"]
+    if not content:
+        if not mine:
+            return None, None, f"{name} has no row yet, so its content is to be given: `=== row {name}`, then it"
+        m = re.match(r"^\|\s*[^|]*\|[^|]*\|(.*)\|\s*$", lines[mine[0]])
+        content = m.group(1).strip() if m else ""
+    row = f"| {name} | {', '.join(imports) or 'Main'} | {content} |"
+    if mine:
+        if op.get("after"):
+            return None, None, f"the row of {name} stands already, at line {mine[0] + 1}: `after` places a new row"
+        lines[mine[0]] = row
+        return "\n".join(lines), mine[0] + 1, f"the row of {name} replaced, at line {mine[0] + 1}"
+    if not rows:
+        return None, None, "THEORY_MAP.md holds no table row to place the new one among"
+    if op.get("after"):  # the map is in sections: beside a row of the writer's choosing
+        there = [i for i, n in rows if n == op["after"]]
+        if not there:
+            return None, None, f"THEORY_MAP.md holds no row of {op['after']} to place the row of {name} after"
+        lines.insert(there[0] + 1, row)
+        return "\n".join(lines), there[0] + 2, f"the row of {name} written anew, at line {there[0] + 2}"
+    root = now.get(change_path(base, "ROOT"))
+    if root is None:
+        try:
+            root = open(change_path(base, "ROOT"), encoding="utf-8", newline="").read()
+        except (OSError, UnicodeDecodeError):
+            root = ""
+    order = [m.group(2) for m in map(ROOT_ENTRY.match, root.split("\n")) if m]
+    where = {n: i for i, n in rows}
+    before = order[:order.index(name)] if name in order else []
+    i = next((where[n] for n in reversed(before) if n in where), rows[-1][0])
+    lines.insert(i + 1, row)
+    return "\n".join(lines), i + 2, f"the row of {name} written anew, at line {i + 2}"
+
+
+def changed_texts(ops, base, keyed=None):
     """({path: its text after the changes, and the lines each replacement landed at}, what refuses them): applied in
-    order, in memory, each replacement to the file as the changes before it left it."""
+    order, in memory, each replacement to the file as the changes before it left it. The index edits come after the
+    others, declarations (`root`) before rows: each reads its theory as the call leaves it, a row's place is read
+    from ROOT as the call leaves it. `keyed` collects what each index edit did, by path."""
     now, at, problems = {}, {}, []
-    for op in ops:
+    keyed = {} if keyed is None else keyed
+    stage = {"root": 1, "row": 2}
+    for op in sorted(ops, key=lambda o: (stage.get(o["op"], 0), o["n"])):
         path = change_path(base, op["path"])
-        what = f"change {op['n']} ({op['op']} {op['path']})"
+        what = f"change {op['n']} ({op['op']} {op['path'] if op['op'] not in stage else op['theory']})"
         if op["op"] == "write":
             now[path] = op["text"]
+            continue
+        if op["op"] == "append":
+            # a log's next entry at its end — PLANNING_LOG.md was appended to by replacing its last lines, and a text
+            # that recurred there refused plan-47's whole change, its mail and HANDOFF.md with it (2026-09-22 21:14)
+            if path not in now:
+                try:
+                    now[path] = open(path, encoding="utf-8", newline="").read() if os.path.exists(path) else ""
+                except (OSError, UnicodeDecodeError) as e:
+                    problems.append(f"{what}: the file cannot be read ({getattr(e, 'strerror', None) or e})")
+                    now[path] = None
+            if now[path] is None:
+                continue
+            gap = "" if not now[path] or now[path].endswith("\n") else "\n"
+            at.setdefault(path, []).append(-(now[path].count("\n") + len(gap) + 1))  # negative: an append's first line
+            now[path] = now[path] + gap + op["text"]
             continue
         if path not in now:
             try:
@@ -6392,6 +9527,17 @@ def changed_texts(ops, base):
                 problems.append(f"{what}: the file cannot be read ({getattr(e, 'strerror', None) or e})")
                 now[path] = None
         if now[path] is None:
+            continue
+        if op["op"] in stage:
+            try:
+                text, line, said = keyed_edit(op, now[path], base, now)
+            except Exception as e:  # noqa: BLE001 — refused whole and said, as any change that cannot be made
+                text, line, said = None, None, f"it could not be applied ({e!r})"
+            if text is None:
+                problems.append(f"{what}: {said}")
+                continue
+            now[path] = text
+            keyed.setdefault(path, []).append(said)
             continue
         text, line, problem = replace_one(now[path], op, "file")
         if problem:
@@ -6402,14 +9548,60 @@ def changed_texts(ops, base):
     return now, at, problems
 
 
-def cmd_change(text, base=None):
+# A session reads the library in glyphs (⇒, ∀, ‹›: the digests show them so), and a theory is written in Isabelle's
+# escapes (\<Rightarrow>): fix-249 wrote its theory in glyphs and then a script of its own to turn them into escapes,
+# a request spent on it (2026-09-22). A change writes the glyphs of what it writes into a theory as their escapes,
+# by Isabelle's own table; what the file already holds is as it was.
+SYMBOLS = os.environ.get("ISABELLE_SYMBOLS", "/opt/isabelle/etc/symbols")
+_ESCAPES = {}
+
+
+def escapes():
+    if not _ESCAPES:
+        with contextlib.suppress(OSError):
+            for line in open(SYMBOLS, errors="ignore"):
+                m = re.match(r"^(\\<[^>\s]+>)\s+code:\s*0x([0-9a-fA-F]+)", line)
+                if m:
+                    _ESCAPES.setdefault(chr(int(m.group(2), 16)), m.group(1))
+    return _ESCAPES
+
+
+def escaped(text):
+    """(the text with each glyph Isabelle's table names written as its escape, how many were)."""
+    table, n, out = escapes(), 0, []
+    for ch in text:
+        e = table.get(ch) if ord(ch) > 127 else None
+        n += e is not None
+        out.append(e or ch)
+    return "".join(out), n
+
+
+def cmd_change(text, base=None, probe=None):
     """Change files: any number of whole-file writes and exact replacements, in one call, judged whole and written all
-    or none. What refuses it is said, change by change; nothing is written then."""
+    or none. What refuses it is said, change by change; nothing is written then. A producing session's change that
+    writes a theory of its tree says whether it is probed as it leaves it (`v2.py change --probe`: change_probe) or
+    not yet (`--no-probe`, more changes to come): there is no default (the owner, 2026-09-23: "No default flag - a
+    deliberate choice again"), and one that says neither is refused."""
     ops, problems = change_blocks(text)
     if problems:
         return "refused, and nothing was changed:\n- " + "\n- ".join(problems)
+    theories = probed_theories([change_path(base or os.getcwd(), op["path"]) for op in ops], base or os.getcwd())
+    if theories and probe is None:
+        return ("refused, and nothing was changed:\n- this change writes a theory of your tree "
+                f"({', '.join(theories)}): say whether it is probed as the change leaves it — `v2.py change --probe "
+                "<<'EOF'`, the probe's finding in this reply — or not yet, more changes being to come — `v2.py change "
+                "--no-probe <<'EOF'`; there is no default. Correct the command with `v2.py again`, adding the one you "
+                "mean.")
+    glyphs = 0
+    for op in ops:
+        if op["path"].endswith(".thy"):
+            for key in ("text", "old", "new"):
+                if isinstance(op.get(key), str):
+                    op[key], n = escaped(op[key])
+                    glyphs += n
     base = base or os.getcwd()
-    now, at, problems = changed_texts(ops, base)
+    keyed = {}
+    now, at, problems = changed_texts(ops, base, keyed)
     if problems:
         return "refused, and nothing was changed:\n- " + "\n- ".join(problems)
     kept = {}
@@ -6439,14 +9631,375 @@ def cmd_change(text, base=None):
     written, said = {change_path(base, op["path"]) for op in ops if op["op"] == "write"}, []
     for path in now:
         parts = ["written anew" if kept.get(path, b"") is None else "written"] if path in written else []
-        if at.get(path):
-            parts.append(f"{len(at[path])} replaced, at line{'s' * (len(at[path]) > 1)} {', '.join(map(str, at[path]))}")
+        replaced, appended = [x for x in at.get(path, []) if x > 0], [-x for x in at.get(path, []) if x < 0]
+        if replaced:
+            parts.append(f"{len(replaced)} replaced, at line{'s' * (len(replaced) > 1)} {', '.join(map(str, replaced))}")
+        if appended:
+            parts.append(f"appended at line{'s' * (len(appended) > 1)} {', '.join(map(str, appended))}")
+        parts += keyed.get(path, [])
         if path not in kept:
             parts.append("as it was")
         said.append(f"{os.path.relpath(path, base)} ({', '.join(parts)})")
+    # said of an edit of the repository's files, not of a session's own record under .build/ — a verdict, a result, a
+    # note, a measurement — which it writes when it is ready and alone: fifteen times in the last session of each role
+    # of 2026-09-22, and never followed by a change it could have joined
     note = ("\n[one change in this call. When several are ready — in this file or in others — make them in one call: "
-            "it takes any number of changes, written all or none.]" if len(ops) == 1 else "")
+            "it takes any number of changes, written all or none.]"
+            if len(ops) == 1 and not os.path.normpath(ops[0]["path"]).startswith(".build") else "")
+    if glyphs:
+        note += (f"\n[{glyphs} glyph{'s' * (glyphs > 1)} written into a theory as {'their' if glyphs > 1 else 'its'} "
+                 "escape (⇒ as \\<Rightarrow>), as Isabelle reads a theory]")
+    lap("the change written")
+    found = softly("what the sources say after the change", sources_said, base, ops, kept, default=[])
+    lap("what the sources say")
+    if found:
+        note += "\n[the sources, as this change leaves them:\n- " + "\n- ".join(found) + "]"
+    probed = change_probe(base, kept, not probe)
+    if probed:
+        note += "\n" + probed
     return f"changed: {'; '.join(said)}" + note
+
+
+def probed_theories(paths, base):
+    """The theories of a producing session's tree among these paths — what its change must say it probes or not —
+    or [] (no producing session with a task, or no theory of its tree)."""
+    c = caller()
+    if not c or c.get("role") not in PRODUCING or not c.get("task"):
+        return []
+    tree = os.path.realpath(tree_of(c) if tree_of(c) != PROJECT else (base or PROJECT))
+    theories = os.path.join(tree, "theories")
+    return [os.path.basename(p)[:-4] for p in paths
+            if p.endswith(".thy") and os.path.dirname(os.path.realpath(p)) == theories]
+
+
+def change_probe(base, kept, no_probe=False):
+    """The probe of the theories a producing session's change wrote, run as the change left them, and what it found —
+    or why none ran, or None where the change wrote no theory of the tree. The probe after a theory change is the step
+    every session takes, and 30 requests of the 09-22 afternoon's implementers and fixers did nothing else, each a
+    context of about 635K read again (the owner, 2026-09-23: "changed theory itself and put the result in the change's
+    reply", with a flag for a change after which more are to come). A probe slot and the machine's admission as any
+    probe, bounded at PROBE_SECONDS, in a directory of its own under the task's folder, recorded as its probes are."""
+    c = caller()
+    names = [n for n in probed_theories([p for p in kept if os.path.exists(p)], base)]
+    if not names:
+        return None
+    tree = os.path.realpath(tree_of(c) if tree_of(c) != PROJECT else (base or PROJECT))
+    if no_probe:
+        return f"[not probed ({', '.join(names)}): --no-probe]"
+    tool = os.path.join(tree, "tools", "probe_theories.py")
+    if not os.path.isfile(tool):
+        return None
+    blocked = softly("the machine's room for a probe", run_blocked, (c["task"], c.get("reviews")), "probe", default="")
+    if blocked:
+        return (f"[not probed ({', '.join(names)}): {blocked} Probe it when the machine has room — a probe led by QUEUE=1 "
+                "waits for it — or go on with what needs none]")
+    work = os.path.join(BUILD, str(c["task"]), f"probe-change-{time.strftime('%H%M%S')}")
+    os.makedirs(work, exist_ok=True)
+    note_probe_dirs(c["task"], [work])
+    began = time.time()
+    args = [sys.executable, "-B", tool, "--work", work, *[x for n in names for x in ("--theory", n)],
+            "--timeout", str(PROBE_SECONDS)]
+    try:
+        subprocess.run(args, cwd=tree, capture_output=True, text=True, timeout=PROBE_SECONDS + 90)
+    except subprocess.TimeoutExpired:
+        return f"[the probe of {', '.join(names)} did not end within {PROBE_SECONDS + 90} s; its log: {os.path.relpath(work, tree)}]"
+    return probe_said(work, names, time.time() - began, tree)
+
+
+def probe_said(work, names, took, tree):
+    """What a probe found, in the change's reply: complete or not, its errors (at most eight lines), its time, its log."""
+    log = ""
+    with contextlib.suppress(OSError):
+        log = open(os.path.join(work, "probe.log"), errors="ignore").read()
+    summary = {}
+    with contextlib.suppress(OSError, ValueError):
+        summary = json.load(open(os.path.join(work, "probe.summary.json")))
+    where = os.path.relpath(os.path.join(work, "probe.log"), tree)
+    if summary.get("refused"):
+        first = re.split(r"(?<=[.;])\s", str(summary["refused"]), maxsplit=1)[0][:400]
+        return f"[not probed ({', '.join(names)}): the probe tool refused it — {first} ({where})]"
+    errors = [line.strip() for line in log.splitlines() if line.startswith("***")]
+    complete = PROBE_MARKER in log
+    head = f"[probed as this change leaves it ({', '.join(names)}), {took:.0f} s: "
+    if complete and not errors:
+        return head + f"complete, no error — {PROBE_MARKER} ({where})]"
+    what = "complete, but with errors" if complete else ("timed out" if summary.get("timed_out") else "NOT complete")
+    shown = errors[:8] + ([f"… {len(errors) - 8} more"] if len(errors) > 8 else [])
+    return head + what + (":\n  " + "\n  ".join(shown) if shown else "") + f"\n  (its log: {where})]"
+
+
+def import_graph(top, roots):
+    """What the repository's own import graph says of the theories `roots` reach, in the tree at `top`: a cycle, or a
+    theory imported that is not there (tools/execution_support.source_graph, the tree's own, in a process of its own;
+    seconds, no Isabelle). The planner's standing last step before every hand-over ran it with the source checks by
+    hand (HANDOFF.md's working rules; 68 requests of implementers and fixers on 2026-09-21/22 did nothing else);
+    told with the change that writes a theory, it needs no request. [] where the tree has no such tool."""
+    if not roots or not os.path.isfile(os.path.join(top, "tools", "execution_support.py")):
+        return []
+    code = ("import sys; sys.path.insert(0, 'tools'); from pathlib import Path; import execution_support as e\n"
+            "try:\n    e.source_graph(Path('.').resolve(), [], sys.argv[1:])\nexcept Exception as x:\n    print(x)")
+    try:
+        said = subprocess.run([sys.executable, "-B", "-c", code, *roots], cwd=top, capture_output=True, text=True,
+                              timeout=60).stdout.strip()
+    except (OSError, subprocess.SubprocessError) as e:
+        return [f"the import graph could not be read ({e!r})"]
+    return [f"the import graph: {line}" for line in said.splitlines()[:3] if line.strip()]
+
+
+def softly(what, fn, *args, default=None):
+    """What an information-giving part returns, or a note saying it could not be had: what the harness tells a session
+    beside its work — the sources after a change, the restatements, a task's tree, a brief's statements, the
+    handoff's delta — never breaks the change, the read or the launch it rides on (a launch failed on one on 2026-09-23
+    before its test: a task in the one tree has no tree of its own)."""
+    try:
+        return fn(*args)
+    except Exception as e:  # noqa: BLE001 — told, and logged, whatever it was
+        log(f"ATTENTION {what} could not be had: {e!r}")
+        return default if default is not None else f"({what} could not be had: {e!r})"
+
+
+ESCAPE = re.compile(r"\b(sorry|oops|axiomatization)\b")
+BACKTICKED = re.compile(r"`([A-Za-z][\w']*)`")
+DUPLICATE_NAME = 8     # a name as specific as this (and with an underscore) declared elsewhere is worth a look
+DUPLICATE_STATED = 30  # a statement as long as this stated elsewhere, word for word
+
+
+def library_index(theories):
+    """({name: the theories declaring it}, {a statement, its spaces made one: (theory, fact)...}) over every theory; a
+    definition's body, its arguments by position, stands among the statements as `definition BODY`."""
+    from digest import DECLARED, STATED, definition_bodies
+    names, stated = {}, {}
+    for path in glob.glob(os.path.join(theories, "*.thy")):
+        theory = os.path.basename(path)[:-4]
+        try:
+            text = open(path, errors="ignore").read()
+        except OSError:
+            continue
+        for n in set(DECLARED.findall(text)):
+            names.setdefault(n, set()).add(theory)
+        for n, statement in STATED.findall(text):
+            stated.setdefault(" ".join(statement.strip('"').split()), set()).add((theory, n))
+        for n, body in definition_bodies(text):
+            stated.setdefault("definition " + body, set()).add((theory, n))
+    return names, stated
+
+
+def tree_state_text(tid, tree):
+    """Where a task's work stands in git, as its reviewer and its session read it by hand (the reviewers and producers
+    of 2026-09-21/22 ran about 700 git status, diff, show, log and merge-base calls): its tree and branch, where the
+    branch left main, its own commits past that, main's commits since then that touch the files it hands over, and
+    what stands uncommitted or new in the tree."""
+    one = tree == PROJECT
+    base = "HEAD" if one else (git_out("merge-base", "HEAD", "main", tree=tree, quiet=True) or "").strip()
+    try:
+        files = json.load(open(os.path.join(BUILD, str(tid), "finalize.json")))["files"]
+    except (OSError, ValueError, KeyError, TypeError):
+        files = []
+    lines = [f"tree: {'the one tree' if one else os.path.relpath(tree, PROJECT)}"
+             + ("" if one else f", branch {(git_out('rev-parse', '--abbrev-ref', 'HEAD', tree=tree, quiet=True) or '?').strip()}"
+                               f", left main at {base[:8] or '?'}")]
+    if not one and base:
+        own = (git_out("log", "--oneline", f"{base}..HEAD", tree=tree, quiet=True) or "").strip()
+        lines.append("its commits past main: " + ("; ".join(own.splitlines()[:8]) or "none"))
+        since = (git_out("log", "--oneline", f"{base}..main", "--", *files, tree=tree, quiet=True) or "").strip() \
+            if files else ""
+        lines.append("main's commits since then touching the files it hands over: "
+                     + ("; ".join(since.splitlines()[:8]) or "none"))
+    status = [p for p in (git_out("status", "--short", "--untracked-files=all", tree=tree, quiet=True) or "").splitlines()
+              if not sandbox_mount(tree, p[3:]) and not exempt(p[3:])]
+    if one:  # the one tree holds other tasks' work too: this task's own, as the guard recorded who wrote each path
+        with owners(write=False) as o:
+            mine = {p for p, t in o.items() if t == str(tid)} | set(files)
+        status = [p for p in status if p[3:] in mine]
+    lines.append("uncommitted or new: " + (", ".join(status[:30]) + (f", and {len(status) - 30} more" if len(status) > 30
+                                                                      else "") if status else "nothing"))
+    return "\n".join(lines)
+
+
+def restated_text(tid, tree):
+    """What the theories a task changed declare anew that the library has, and what their rows offer that the task
+    took out (restated), over the whole change — from where its branch left main (the task's own tree), or from HEAD
+    (the one tree). The session was told each as it wrote it; its reviewer reads them together, as `v2.py read
+    restated` and in its first read: duplication was the commonest blocking finding (14 of the 31 rejections whose
+    findings the state held on 2026-09-23), and 23 of the 51 planned fixes from #100 on consolidated what was
+    stated twice."""
+    base = (git_out("merge-base", "HEAD", "main", tree=tree, quiet=True) or "").strip() if tree != PROJECT else "HEAD"
+    base = base or "HEAD"
+    changed = [p for p in (git_out("diff", "--name-only", base, "--", "theories/", tree=tree, quiet=True) or "").split()
+               + (git_out("ls-files", "--others", "--exclude-standard", "--", "theories/", tree=tree, quiet=True) or "").split()
+               if p.endswith(".thy") and os.path.dirname(p) == "theories"]
+    rows = {}
+    with contextlib.suppress(OSError):
+        for line in open(os.path.join(tree, "THEORY_MAP.md"), errors="ignore"):
+            m = MAP_ROW.match(line)
+            if m and m.group(1) != "Theory":
+                rows.setdefault(m.group(1), []).append(line.rstrip("\n"))
+    out, library = [], {}
+    for p in sorted(dict.fromkeys(changed)):
+        name, full = os.path.basename(p)[:-4], os.path.join(tree, p)
+        if not os.path.isfile(full):
+            continue
+        old = git_out("show", f"{base}:{p}", tree=tree, quiet=True) or ""
+        out += restated(name, old, open(full, errors="ignore").read(), os.path.join(tree, "theories"), library,
+                        rows.get(name, []))
+    return ("\n".join(f"- {x}" for x in out) if out else
+            "(the theories the task changed declare nothing anew that the library has — by a specific name, a "
+            "statement word for word or a definition's body — and their rows offer nothing the task took out)")
+
+
+def decisions_citing(names, path, theory):
+    """The entries of DECISIONS.md that cite, in backticks, a name a change took out of a theory: an entry stating what
+    the work no longer has — task 275's review found its law entry stating the opposite of the delivered work, and
+    task 30's an entry silent on what it retired (2026-09-22). Specific names only (at least 8 characters, with an
+    underscore); the entries by their headings."""
+    names = {n for n in names if len(n) >= DUPLICATE_NAME and "_" in n}
+    if not names or not os.path.isfile(path):
+        return []
+    heading, cited = "", {}
+    for line in open(path, errors="ignore"):
+        if line.startswith("#"):
+            heading = line.strip("# \n")[:80]
+            continue
+        for n in set(BACKTICKED.findall(line)) & names:
+            cited.setdefault(n, []).append(heading)
+    return [f"DECISIONS.md cites `{n}`, which this change took out of {theory}, in "
+            + "; ".join(f'"{h}"' for h in dict.fromkeys(hs)) for n, hs in sorted(cited.items())][:4]
+
+
+REMOVAL = re.compile(r"\b(?:remov|replac|supersed|retir|drop|withdr|mov|no longer|gone|former|instead of|was\b|were\b)",
+                     re.I)
+
+
+def removal_note(text, name):
+    """Whether a row mentions a name in a note of its removal or replacement: the clause it stands in (to the nearest
+    full stop, semicolon or cell border either side) says so."""
+    at = text.find(f"`{name}`")
+    if at < 0:
+        return False
+    start = max(text.rfind(c, 0, at) for c in ".;|") + 1
+    ends = [i for i in (text.find(c, at + len(name) + 2) for c in ".;|") if i >= 0]
+    return bool(REMOVAL.search(text[start:min(ends) if ends else len(text)]))
+
+
+def restated(name, old, new, theories, library, row):
+    """What a change to a theory is told of what it declares anew and of what it takes out: a name, specific enough to
+    mean one thing, that another theory declares too; a statement another theory states word for word; and a name its
+    THEORY_MAP.md row still offers that the change took out. Of the 31 rejections whose findings the state holds on
+    2026-09-23, 14 were a notion or fact the library already had, re-derived or restated (`path_term_inj` stated
+    again under its own name, `syntax_branch_eq_iff` three times, `map_filter_member` twice), and three a row offering
+    what the task had removed. A hint, not a refusal: two theories may rightly use one name in their own locales."""
+    from digest import DECLARED, STATED, definition_bodies
+    before, after = set(DECLARED.findall(old)), set(DECLARED.findall(new))
+    out, taken = [], before - after
+    if taken:
+        # a name gone from its theory and declared in another has moved, and a mention of it is a citation of its new
+        # home ("over Development_State_Rows's `state_all_families`"); nor is a note of its removal an offer ("the
+        # superseded `…` is removed"): of the 15 mentions the rows of 68 landed changes of 09-21/22 kept of names
+        # their change took out, most were the one or the other
+        if not library:
+            library["names"], library["stated"] = library_index(theories)
+        taken = {n for n in taken if not (library["names"].get(n, set()) - {name})}
+    gone = sorted(n for n in set(BACKTICKED.findall(row[0])) & taken if not removal_note(row[0], n)) if len(row) == 1 else []
+    if gone:
+        out.append(f"the row of {name} offers {', '.join('`' + n + '`' for n in gone[:5])}, which this change took "
+                   f"out of {name}")
+    out += decisions_citing(taken, os.path.join(os.path.dirname(theories), "DECISIONS.md"), name)
+    added = [n for n in after - before if len(n) >= DUPLICATE_NAME and "_" in n]
+    old_stated = {" ".join(st.strip('"').split()) for _, st in STATED.findall(old)} | \
+        {"definition " + b for _, b in definition_bodies(old)}
+    fresh = [(n, " ".join(st.strip('"').split())) for n, st in STATED.findall(new)] + \
+        [(n, "definition " + b) for n, b in definition_bodies(new)]
+    fresh = [(n, st) for n, st in fresh if len(st) >= DUPLICATE_STATED and st not in old_stated]
+    if not (added or fresh):
+        return out
+    if not library:
+        library["names"], library["stated"] = library_index(theories)
+    for n in sorted(added):
+        others = sorted(library["names"].get(n, set()) - {name})
+        if 0 < len(others) <= 2:
+            out.append(f"`{n}`, new in {name}, is declared in {' and '.join(others)} too: the same notion or fact, "
+                       "to reuse, or one to name for what differs?")
+    for n, st in fresh:
+        others = sorted((t, f) for t, f in library["stated"].get(st, set()) if t != name)
+        if others:
+            out.append(f"`{n}` defines what {others[0][0]}.{others[0][1]} defines, its arguments aside"
+                       if st.startswith("definition ") else
+                       f"`{n}` states what {others[0][0]}.{others[0][1]} states, word for word")
+    return out[:8]
+
+
+def sources_said(base, ops, kept):
+    """What the structural checks say, once a change is written, of the theories it concerns — those it wrote anew,
+    whose imports or proofs it changed, whose row or declaration it edited, and those ROOT gained or lost by it: a
+    theory present and not declared, a declaration without its file, a proof escaped, a theory without its row, a row
+    whose imports are not its theory's. These are the items the finalizer's documents check and the repository's
+    source checks refuse on (finalize.documents_check, check.source_checks), told when they arise: 68 requests of the
+    implementers and fixers of 2026-09-21/22 ran the source checks by hand, and a missing declaration was found at the
+    hand-over. `kept`: each changed file's bytes before the change (None: it is new). Nothing is said of a change
+    outside a tree's top (ROOT and theories/ there), nor of what it left as it was."""
+    root_path, map_path = change_path(base, "ROOT"), change_path(base, "THEORY_MAP.md")
+    theories = change_path(base, "theories")
+    if not (os.path.isfile(root_path) and os.path.isdir(theories)):
+        return []
+    read = lambda path: open(path, encoding="utf-8", errors="ignore").read() if os.path.isfile(path) else None
+    was = lambda path: kept[path].decode("utf-8", "ignore") if kept.get(path) is not None else None
+    declared = [m.group(2) for m in map(ROOT_ENTRY.match, (read(root_path) or "").split("\n")) if m]
+    concerned, out = {}, []
+    for op in ops:
+        if op["op"] in ("row", "root"):
+            concerned.setdefault(op["theory"], set()).update({"declared", "row"})
+            continue
+        path = change_path(base, op["path"])
+        if os.path.dirname(path) == theories and path.endswith(".thy") and path in kept:
+            name, old, new = os.path.basename(path)[:-4], was(path), read(path)
+            wants = concerned.setdefault(name, set())
+            wants.add("escapes")
+            if old is None:
+                wants.update({"declared", "row"})
+            elif new is not None and theory_imports(old) != theory_imports(new):
+                wants.add("row")
+    if root_path in kept:
+        before = [m.group(2) for m in map(ROOT_ENTRY.match, (was(root_path) or "").split("\n")) if m]
+        for name in set(declared) ^ set(before):
+            concerned.setdefault(name, set()).add("declared")
+    rows = {}
+    for line in (read(map_path) or "").split("\n"):
+        m = MAP_ROW.match(line)
+        if m and m.group(1) != "Theory":
+            rows.setdefault(m.group(1), []).append(line)
+    library = {}  # read once, when a theory written here declares or states something it did not before
+    written = [n for n in sorted(concerned) if "escapes" in concerned[n] and os.path.isfile(os.path.join(theories, f"{n}.thy"))]
+    out += import_graph(os.path.dirname(theories), written)
+    for name in sorted(concerned):
+        path = os.path.join(theories, f"{name}.thy")
+        text, wants = read(path), concerned[name]
+        if "declared" in wants:
+            if text is not None and name not in declared:
+                out.append(f"theories/{name}.thy is not declared in ROOT (`=== root {name}`)")
+            elif text is None and name in declared:
+                out.append(f"ROOT declares {name}, and theories/{name}.thy is not there")
+        if text is None:
+            continue
+        if "escapes" in wants:
+            old = was(path) or ""
+            new = [(n, x.strip()) for n, x in enumerate(text.split("\n"), 1) if ESCAPE.search(x)]
+            if len(new) > len([x for x in old.split("\n") if ESCAPE.search(x)]):
+                out += [f"theories/{name}.thy:{n} escapes its proof: {x[:80]}" for n, x in new[:3]]
+            out += restated(name, old, text, theories, library, rows.get(name, []))
+        if "row" in wants and os.path.isfile(map_path):
+            mine = rows.get(name, [])
+            if not mine:
+                out.append(f"{name} has no row in THEORY_MAP.md (`=== row {name}`, then what it offers for reuse)")
+            elif len(mine) > 1:
+                out.append(f"THEORY_MAP.md holds the row of {name} {len(mine)} times")
+            else:
+                m = re.match(r"^\|\s*[^|]*\|([^|]*)\|", mine[0])
+                named = [x.strip() for x in (m.group(1) if m else "").split(",") if x.strip()]
+                imports = theory_imports(text) or ["Main"]
+                if named != imports:
+                    out.append(f"the row of {name} names the imports {', '.join(named) or '(none)'}, and the theory "
+                               f"imports {', '.join(imports)} (`=== row {name}` alone reads them again)")
+    return out
 
 
 def link_reviews():
@@ -6524,6 +10077,54 @@ def cmd_accept(bid):
     return "placed " + ", ".join(f"{e['key']} as {ids[e['key']]}" for e in entries)
 
 
+def verdict_during_fix(c, rid, verdict, text, path, by):
+    """C9: the verdict of a review begun beside a check that failed while it was under way (checked: reviews_going), or
+    None for any other. A rejection's findings join the fix round — in its message if the fix has not begun, by mail to
+    the session fixing otherwise — and count as the round's rejection; an accept of work about to change is void, and
+    the fixed work is reviewed again. Before, such a verdict was refused ("not awaiting a verdict")."""
+    with state() as st:
+        r = st["tasks"].setdefault(rid, {})
+        tid = r.get("reviews") or rid
+        t = st["tasks"].setdefault(tid, {})
+        if rid not in (t.get("reviews_going") or []):
+            return None
+        said = dict(verdict=verdict, findings=part(text, "Findings"), summary=part(text, "Summary"),
+                    followups=part(text, "Follow-ups"), reviewing=None, verdict_file=path)
+        t["reviews_going"] = [x for x in t["reviews_going"] if x != rid] or None
+        if not t["reviews_going"]:
+            t["reviewing"] = None
+        if c and c["role"] == "reviewer":
+            st["sessions"][c["name"]].update(state="done", ended=time.time())
+        if verdict == "accept":
+            r.update(said, verdict=None, round=None, voided="its check failed before its accept: the fixed work is reviewed")
+            note = "void, since its check had failed: the fixed work is reviewed again"
+        else:
+            r.update(said)
+            t["rejections"] = t.get("rejections", 0) + 1
+            t["rejected_at"] = time.time()
+            found = f"And its review, made beside the check, rejected it. Its blocking findings:\n{said['findings']}"
+            if t.get("stage") == "fixing" and not t.get("fixing"):
+                t["fix_text"] = (t.get("fix_text") or "") + "\n\n" + found  # the fix not begun: in its message
+                note = "its findings go into the fix round with the check's failure"
+            elif t.get("stage") == "fixing":
+                post(t["fixing"], "the harness", f"{found}\nFix them in the same round, before you hand over.")
+                note = f"its findings were sent to {t['fixing']}, which is fixing the check's failure"
+            elif t.get("stage") == "checking":  # the fixed work is being checked: they reach its session with the
+                t["rejections"] -= 1  # check's end, as a rejection beside a check does (checked counts it then)
+                t["rejected_early"] = f"The review of task {tid} rejected it. Its blocking findings, all of them:\n" \
+                    + said["findings"]
+                note = "its findings reach the task's session when the check of the fixed work ends"
+            else:
+                event(st, by, f"The review of task {tid} rejected it after its check had failed; the task is now "
+                      f"{t.get('stage')}. Its findings:\n{said['findings']}")
+                note = "the task has left its fix round, so the planner is told"
+    if c and c["role"] == "reviewer":
+        turn_over(c)
+    kick()
+    return f"{verdict}ed task {tid} for review {rid}: {note}" + (". End your turn now." if c and c["role"] == "reviewer"
+                                                                 else "")
+
+
 def cmd_verdict(rid, verdict, path):
     """A verdict: of a review task on the task it reviews (the task moves once every one of its reviews has given one:
     all accepting, it is committed; any rejecting, it gets its one fix with every finding), or of the planner on a
@@ -6540,15 +10141,21 @@ def cmd_verdict(rid, verdict, path):
     if c and c["role"] == "reviewer" and c.get("task") != rid:
         return f"refused: you review for task {c.get('task')}, not {rid}"
     by = (c or {}).get("name", "the owner")
+    softly("the files the verdict judged", snapshot_review, rid, (peek()["tasks"].get(rid) or {}).get("reviews") or rid)
+    during = verdict_during_fix(c, rid, verdict, text, path, by)
+    if during:
+        return during
     commit = False
     with state() as st:
         r = st["tasks"].setdefault(rid, {})
         tid = r.get("reviews") or rid
         t = st["tasks"].setdefault(tid, {})
-        if t.get("stage") != "reviewing":
+        early = review_beside_check() and t.get("stage") == "checking" and t.get("kind", "build") in ("build", "fix")
+        if t.get("stage") != "reviewing" and not early:
             return f"refused: task {tid} is not awaiting a verdict (it is {t.get('stage')})"
         said = dict(verdict=verdict, findings=part(text, "Findings"), summary=part(text, "Summary"),
-                    followups=part(text, "Follow-ups"), reviewing=None, verdict_file=path)
+                    followups=part(text, "Follow-ups"), reviewing=None, verdict_file=path, voided=None,
+                    **({"corrected": part(text, "Corrected")} if part(text, "Corrected") else {}))
         r.update(said)
         if t is not r and t.get("kind", "build") not in ("build", "fix"):
             t.update(said)  # the planner's verdict on a design, given on a review task of it, is the design's
@@ -6563,22 +10170,33 @@ def cmd_verdict(rid, verdict, path):
         if waiting:
             pass
         elif all(j["verdict"] == "accept" for j in judged):
+            fixed = "; ".join(j["corrected"] for j in judged if j.get("corrected"))
             t["summary"] = " ".join(first_sentence(j.get("summary", "")) + (f" (review: {j['verdict_file']})"
                                                                               if j.get("verdict_file") else "")
-                                    for j in judged) + (f" Follow-ups proposed: {follow}" if follow else "")
+                                    for j in judged) + (f" Corrected by its review: {fixed}" if fixed else "") \
+                + (f" Follow-ups proposed: {follow}" if follow else "")
             for x in dict.fromkeys(rids + linked):
                 if x != tid:
                     st["tasks"].setdefault(x, {})["stage"] = "done"
-            if os.path.exists(os.path.join(BUILD, tid, "finalize.json")):
+            if early:  # C9: the accept stands once the check passes (checked), and is void if it fails
+                t["accepted_early"] = True
+            elif os.path.exists(os.path.join(BUILD, tid, "finalize.json")):
                 t["stage"], commit = "committing", True
             else:
                 t["stage"] = "done"
                 event(st, by, f"Task {tid} is accepted (nothing to commit). {t['summary']}")
         else:
-            t["rejections"] = t.get("rejections", 0) + 1
             findings = "\n".join(f"From {x} ({(st['tasks'].get(x) or {}).get('verdict_file')}):\n{j['findings']}"
                                  for x, j in zip(rids, judged) if j["verdict"] == "reject")
-            if t["rejections"] == 1:
+            if early and t.get("rejections", 0) == 0:  # C9: its fix waits for the check's end, which may add its failure
+                t["rejected_early"] = f"The review of task {tid} rejected it. Its blocking findings, all of them:\n{findings}"
+                findings = None
+            else:
+                t["rejections"] = t.get("rejections", 0) + 1
+                t["rejected_at"] = time.time()  # what a role's reasoning layer is built again for (role_layer_new)
+            if findings is None:
+                pass
+            elif t["rejections"] == 1:
                 t.update(stage="fixing", fixing=None, fix_text=f"The review of task {tid} rejected it. Its blocking "
                          f"findings, all of them:\n{findings}")
             else:
@@ -6601,25 +10219,30 @@ def cmd_verdict(rid, verdict, path):
     return f"{verdict}ed task {tid}" + (". End your turn now." if c and c["role"] == "reviewer" else "")
 
 
-def cmd_queue(ids):
-    """The planner's order. Tasks a task designer queued after this episode began, which the episode could not have
-    seen, keep their place after the brief task that made them (or go last) unless the order names them."""
+def cmd_queue(ids, drop_unnamed=False):
+    """The planner's order: the tasks it names first, in its order, and every other queued task after them as it stood
+    — nothing leaves the queue by being left out (the owner, 2026-09-24: "dropping the queue should happen explicitly
+    not by accident"). With `drop_unnamed` (`--drop-unnamed`) the queue is the named tasks alone, and each one queued
+    that the order leaves out is taken out of it (it stays in the list). Tasks a task designer queued after this
+    episode began, which the episode could not have seen, keep their place after the brief task that made them (or go
+    last) either way. A finished task (done, deleted) leaves the queue when an order is given: it has no place in one."""
     c = caller()
     if c and c["role"] != "planner":
         return "refused: the queue is the planner's"
     missing = [tid for tid in ids if not in_list(tid)]
     if missing:
-        # the order is set whole, so a typo in it took the tasks that are really there out of the queue and said
-        # only "not in the task list: 99" afterwards. `blockers` refuses the same mistake; this does now too.
-        return (f"refused: no task {', '.join(repr(m) for m in missing)} in the list, and the order is set whole — "
-                "queueing it would take the tasks that are there out. Name the order again with what is in the list.")
+        # an order with a typo in it was set anyway, and said only "not in the task list: 99" afterwards — when the
+        # order was set whole, that took the tasks really there out of the queue. `blockers` refuses the same mistake.
+        return (f"refused: no task {', '.join(repr(m) for m in missing)} in the list, and nothing was queued. Name the "
+                "order again with what is in the list.")
     if not ids:
         # `v2.py queue` with nothing after it emptied the queue and answered "queued": the order is what the planner
         # names, and naming nothing is a typo, not an instruction to stop the run (2026-09-21, found by running it)
-        return ("refused: v2.py queue ID ID... — the order is the tasks in the order they are to be done. Naming "
-                "none would empty the queue, which is not an order; `v2.py drop ID` takes one task out.")
+        return ("refused: v2.py queue ID ID... — the order is the tasks in the order they are to be done, first, and "
+                "every other queued task after them. Naming none is no order and would empty the queue under "
+                "--drop-unnamed; `v2.py drop ID` takes one task out.")
     since = (c or {}).get("started") or time.time()
-    recommit = []
+    recommit, held = [], len(peek()["queue"])
     with state() as st:
         for tid in ids:
             t = st["tasks"].get(tid) or {}
@@ -6666,7 +10289,17 @@ def cmd_queue(ids):
             while at < len(order) and order[at] in kept:
                 at += 1
             order.insert(at, tid)
+        unnamed = [tid for tid in st["queue"] if tid not in order
+                   and (st["tasks"].get(tid) or {}).get("stage") not in ("done", "deleted")]
+        gone = unnamed if drop_unnamed else []
+        if not drop_unnamed:
+            order += unnamed
         st["queue"] = order
+    # said, so that an order is traced to who set it: at 20:01 on 2026-09-22 the queue held task 267 alone, 59 tasks
+    # ready, where plan-46's last edit had queued 68 at 19:41, and nothing in the log said how
+    log(f"the order is set by {(c or {}).get('name') or 'the owner'}: {len(order)} task(s), where it held {held}")
+    if gone:
+        log(f"{(c or {}).get('name') or 'the owner'} took task(s) {', '.join(gone)} out of the queue (--drop-unnamed)")
     if graph_held():  # the planner has said what the order is: the graph it inherited is now the graph it chose
         with contextlib.suppress(OSError):
             os.remove(os.path.join(STATE, GRAPH_HELD))
@@ -6677,6 +10310,8 @@ def cmd_queue(ids):
         background("finalize.py", "commit", tid)
     kick()
     return ("queued" + (f"; kept, briefed since this episode began: {', '.join(kept)}" if kept else "")
+            + (f"; after them as they stood, not named: {', '.join(unnamed)}" if unnamed and not drop_unnamed else "")
+            + (f"; taken out of the queue, not named (--drop-unnamed; still in the list): {', '.join(gone)}" if gone else "")
             + (f"; {', '.join(recommit)}: its commit is made again, with no session" if recommit else ""))
 
 
@@ -6707,6 +10342,114 @@ def cmd_ledger(text):
         os.replace(LEDGER + ".tmp", LEDGER)
     log(f"{asker} put Q{n} to the owner in the ledger")
     return f"recorded as Q{n} under \"Open questions to the owner\"; work under the choice until the owner answers"
+
+
+FOLLOW_MARK = "<<PLANNER"  # a part of a follow-up's draft brief that is the planner's to write (C15)
+
+
+def follow_items(text):
+    """{number: text} of a verdict's `## Follow-ups`, each item whole as its review wrote it: the top-level numbered
+    items by their numbers, or else the top-level bullets numbered in order (review-251's were bullets)."""
+    body = part(text, "Follow-ups")
+    for pattern, numbered in ((r"^(\d+)[.)]\s", True), (r"^[-*]\s", False)):
+        starts = list(re.finditer(pattern, body, re.M))
+        if starts:
+            return {(m.group(1) if numbered else str(i + 1)):
+                    body[m.start():starts[i + 1].start() if i + 1 < len(starts) else len(body)].rstrip()
+                    for i, m in enumerate(starts)}
+    return {}
+
+
+def verdict_file_of(st, tid):
+    """The verdict of task tid's last review that has one (its path from the repository), or None."""
+    t = st["tasks"].get(tid) or {}
+    files = [x.get("verdict_file") for k, x in st["tasks"].items() if k != tid and x.get("reviews") == tid]
+    files += [t.get("verdict_file"), f".build/tasks/{tid}/review.md"]
+    return next((f for f in files if f and os.path.isfile(os.path.join(PROJECT, f))), None)
+
+
+def follow_names(text, tree):
+    """The files, theories and facts a follow-up names, as it names them, in order: its backticked names, and the
+    theories it names bare (`Native_Table_Reach`, lines 360–370) that the tree holds."""
+    out = [n for n in names_in(text) if "_" in n or "." in n or "/" in n]  # `exact`, `obtain`: words, not names
+    for w in re.findall(r"\b[A-Z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+\b", text):
+        if w not in out and f"{w}.thy" not in out and os.path.isfile(os.path.join(tree, "theories", w + ".thy")):
+            out.append(w)
+    return out
+
+
+def cmd_follow_up(args, kind="fix"):
+    """C15 (the owner's yes of 2026-09-23, "if it can be done in a way where information quality stays the same or
+    increases"): a draft brief for a task made of reviews' follow-ups, under the planner's drafts. What the harness
+    writes is copied: the follow-ups verbatim, where they are, the names they give exactly as they give them; what is
+    judged — why now, what it delivers and how it is accepted beyond the check, what is decided, the plan, its size —
+    is marked for the planner, and a brief with a mark left is refused. The planner's graph edits took 1.5M output
+    tokens and 3.6 hours of its model time over 09-21/22, most of it such briefs, each restating its follow-ups from
+    the review in its own words — which the task's session then read against the review again.
+    `args`: `TASK:ITEM,ITEM` groups, or a task and its items bare (`272 1 3`)."""
+    refused = planner_only("drafting a brief")
+    if refused:
+        return refused
+    if kind not in PRODUCING_KINDS:
+        return f"refused: a follow-up's task is one of {', '.join(PRODUCING_KINDS)}, not {kind}"
+    wanted, cur = {}, None
+    for a in args:
+        task, _, items = a.partition(":") if ":" in a else ((None, None, a) if cur else (a, None, ""))
+        if task is not None:
+            cur = task.lstrip("#")
+            wanted.setdefault(cur, [])
+        wanted[cur] += [i.strip() for i in items.split(",") if i.strip()]
+    if not wanted or not all(wanted.values()):
+        return "refused: v2.py follow-up TASK:ITEM[,ITEM]... (or TASK ITEM...) — which follow-ups of which review"
+    st = peek()
+    c = caller()
+    tree = tree_of(c) if c else PROJECT
+    serves, inputs, copied, names = [], [], [], []
+    for tid, items in wanted.items():
+        path = verdict_file_of(st, tid)
+        if not path:
+            return f"refused: task {tid} has no review with a verdict file"
+        found = follow_items(open(os.path.join(PROJECT, path), errors="ignore").read())
+        missing = [i for i in items if i not in found]
+        if missing:
+            return (f"refused: {path} has no follow-up {', '.join(missing)} (its follow-ups: "
+                    f"{', '.join(found) or 'none'})")
+        which = f"follow-up{'s' if len(items) > 1 else ''} {', '.join(items)}"
+        serves.append(f"#{tid}'s review (`{path}`, {which})")
+        inputs.append(f"`{path}` ({which})")
+        for i in items:
+            # quoted, so that a line of it that reads like a field of the form (`Plan: …`) is not taken for one
+            copied.append(f"From `{path}`, follow-up {i}:\n" + "\n".join(f"> {line}".rstrip() for line in found[i].split("\n")))
+            names += [n for n in follow_names(found[i], tree) if n not in names]
+    theories = [n for n in names if os.path.isfile(os.path.join(tree, "theories", re.sub(r"\.thy$", "", n.split("/")[-1]) + ".thy"))]
+    draft = "\n".join([
+        f"Kind: {kind}",
+        f"Serves: {'; '.join(serves)}. {FOLLOW_MARK}: why now — what it serves beyond the review, what waits on it>>",
+        f"Deliverable: {FOLLOW_MARK}: the files it changes, in backticks"
+        + (f" (the follow-ups name {', '.join(f'`{n}`' for n in theories)})" if theories else "")
+        + ">>, `.build/tasks/<its id>/commit.md`",
+        f"Acceptance: the repository's check; {FOLLOW_MARK}: what shows each follow-up done>>",
+        "Inputs: " + "; ".join(inputs) + (f"; what the follow-ups name: {', '.join(f'`{n}`' for n in names)}"
+                                         if names else "") + f". {FOLLOW_MARK}: what else it reads, or nothing>>",
+        f"Decided: {FOLLOW_MARK}: what you decide of it, or that nothing is>>",
+        f"Plan: {FOLLOW_MARK}: its logical course, at least two numbered steps>>",
+        f"Size: {FOLLOW_MARK}: about NK tokens of work>>",
+        "From the review:",
+        *copied, ""])
+    key = "-".join(f"{tid}-{'.'.join(items)}" for tid, items in wanted.items())
+    rel = os.path.join(".build", "plans", (c or {}).get("name") or "owner", f"follow-{key}.md")
+    os.makedirs(os.path.dirname(os.path.join(PROJECT, rel)), exist_ok=True)
+    with open(os.path.join(PROJECT, rel), "w") as f:
+        f.write(draft)
+    source = next(iter(wanted)) if len(wanted) == 1 else None
+    op = {"create": f"f{key.split('-')[0]}", "subject": f"{FOLLOW_MARK}: its subject>>", "descriptionFile": rel,
+          "why": f"{FOLLOW_MARK}: why>>", **({"continues": source} if source and continue_by_fork() else {})}
+    marks = draft.count(FOLLOW_MARK)
+    return (f"drafted {rel}: the follow-ups verbatim under `From the review:`, the review and the {len(names)} names "
+            f"they give among its Inputs, and {marks} parts marked `{FOLLOW_MARK}: …>>` for you — read what the "
+            "follow-ups name as for any brief, write each mark as the brief's own words (replace them in one "
+            "`v2.py change`), and place it by `v2.py edit`, for example " + json.dumps(op, ensure_ascii=False)
+            + ". A brief with a mark left is refused.")
 
 
 def planner_only(what):
@@ -6871,16 +10614,21 @@ FRESH_CHARGE = (
     "since changed, and some of it exists only because of faults that are now fixed. Before you queue anything, take "
     "stock, and make that your first piece of work:\n"
     "- **What has been produced.** Read what the finished tasks delivered and what stands uncommitted in the working "
-    "tree, and write it into HANDOFF.md at the level later work needs. Work that is done but not yet integrated is "
-    "the first thing to carry; a task whose deliverable already stands is completed, not repeated. What was done and "
+    "tree and in each task's own tree (`.build/trees/N`), and write it into HANDOFF.md "
+    "at the level later work needs. Work that is done but not yet integrated is the first thing to carry; a task whose "
+    "deliverable already stands is completed, not repeated. A task whose session is gone keeps its tree, and the next "
+    "session of it continues there from what the last one wrote; a tree whose task is done or dropped holds work that "
+    "never landed — carry it or say why it is superseded. What was done and "
     "how — the course it took, what was abandoned, what it cost — goes to PLANNING_LOG.md, appended after what "
     "earlier planners left there, dated: HANDOFF.md is what you need to act now, the log is everything true that you "
     "no longer need to act on.\n"
     "- **What the graph no longer needs.** Drop what is superseded, what a fault made necessary, and what the work "
-    "already answers (`v2.py drop ID`, and take the task out of the list). Say why in your notes: a task dropped "
+    "already answers (drop it, and take it out of the list). Say why in your notes: a task dropped "
     "without a reason comes back.\n"
     "Until you have taken stock the graph is **held**: nothing of it runs — no build, no fix, no review, no brief — "
-    "and your order (`v2.py queue ID …`) is what lifts it. Dropping alone does not, and neither does re-planning. "
+    "and your order is what lifts it. Dropping alone does not, and neither does re-planning. The queue you inherit is "
+    "the last run's: your first order says it is the queue alone, or every task you leave out stays queued after "
+    "yours. "
     "Nothing waits on a timer, so take the time this needs; you are reminded while the hold stands.\n"
     "- **What the structure should now be.** The harness has changed under you and the protocols carry what bears on "
     "planning: you live across your events and see each as it happens; the rate is what the owner set and your "
@@ -6969,7 +10717,9 @@ def cmd_start(fresh=False):
         first = not st["kb"] and not st.get("kb_building")
         if fresh:
             fresh_sweep(st)  # a charge for a run that is over, and a tree that is no longer in trouble
-            event(st, "the owner", FRESH_CHARGE, kind="fresh-charge")
+            # the harness's charge, not the owner's words: the owner's authority is for what the owner said
+            event(st, "the harness", "The owner started this run fresh (`start.sh --fresh`). " + FRESH_CHARGE,
+                  kind="fresh-charge")
         elif first and not st.get("plan_ended"):
             event(st, "the harness", "The orchestration starts, and there is no task graph yet: build it (the first "
                   "episode's part of this message says from what).")
@@ -7059,12 +10809,13 @@ def talk():
         events, w["events"] = w["events"], []
         n = count(w, "plan")
     name = launch("planner", str(n), lambda name: render(
-        "planner", NAME=name, ID="plan", EVENTS=events_text(events), HANDOFF=handoff_parts(), GRAPH=graph_text(), QUEUE=" ".join(peek()["queue"]) or "(empty)",
+        "planner", NAME=name, ID="plan", EVENTS=events_text(events), HANDOFF=handoff_parts(peek()["kb"]), GRAPH=graph_for(name), QUEUE=" ".join(peek()["queue"]) or "(empty)",
         STATUS=status_text(), LIST=LIST, OWNER="The owner started you to speak with you: wait for the owner's "
         "words (the harness records them verbatim in the owner ledger), act on them in the graph, the order and the "
         "decisions, and carry them into HANDOFF.md and your notes. Wait for them between turns; when they have gone "
         "you are told, and go on with your events.",
-        FIRST=first_episode(), STALE=stale_of(name, base_record("max")[0] or "max")), events=events, owner=True)
+        FIRST=first_episode(), HANDOFF_DELTA=softly("the handoff's delta", handoff_delta, peek()["kb"]),
+        STALE=stale_of(name, base_record("max")[0] or "max")), events=events, owner=True)
     if not name:
         with state() as w:
             w["events"] = events + w["events"]
@@ -7114,7 +10865,11 @@ def cmd_status():
                + (f"; NO TREE IS MADE NOW: {open(os.path.join(STATE, 'no-tree')).read()}"
                   if TREES and os.path.exists(os.path.join(STATE, "no-tree")) else ""))
     busy = working(st)
-    out.append(f"working: {len(busy)} of at most {WORKERS_MAX}" + (f" ({', '.join(busy)})" if busy else ""))
+    out.append(f"working: {len(busy)} of at most {WORKERS_MAX}"
+               + (" and a supporting session apart" if support_apart() else "") + (f" ({', '.join(busy)})" if busy else ""))
+    hour = softly("the last hour's occupancy", occupancy_text, default="")
+    if hour:
+        out.append(hour)
     size, biggest, its = handoff_size()
     over = (f" — over it; `## {biggest}` is {its // 1000}K of that. It is your state, not your log: what was done and "
             f"how goes to {PLANNER_LOG}, which no base holds and nothing reads to plan from. A decision about the "
@@ -7125,7 +10880,9 @@ def cmd_status():
     out.append(f"HANDOFF.md: {size // 1000}K tokens of at most {HANDOFF_MAX // 1000}K"
                + (over if size > HANDOFF_MAX else ""))
     ready = startable(st)
-    out.append(f"startable now: {' '.join(ready) if ready else 'none'}"
+    behind = waiting_behind(ready)
+    named = " ".join(f"{t} ({behind[t]} wait on it)" if behind.get(t) else t for t in ready)
+    out.append(f"startable now: {named or 'none'}"
                + ("" if len(ready) > 1 else " — nothing else can start while what runs is parked or checking; only a "
                   "wider graph changes that"))
     backlog = build_backlog(st)
@@ -7158,6 +10915,11 @@ def cmd_status():
     waiting = [tid for tid, t in st["tasks"].items() if t.get("stage") in ("checking", "reviewing", "fixing", "committing")]
     if waiting:
         out.append("finishing: " + ", ".join(f"{tid}:{st['tasks'][tid]['stage']}" for tid in waiting))
+    landed = softly("the landings", landed_lately, default=[])
+    if landed:
+        out.append(f"landed in the last {LANDED_SHOWN // 3600} hours: "
+                   + ", ".join(f"{t} as {c} ({time.strftime('%H:%M', time.localtime(w))})" for t, c, w in landed[:20])
+                   + (f", and {len(landed) - 20} more" if len(landed) > 20 else ""))
     if st["events"]:
         out.append(f"events not yet with the planner: {len(st['events'])}")
     undelivered = [f"{q} ({a['from']} had ended; {a.get('written')})" for q, a in st["asks"].items()
@@ -7201,7 +10963,12 @@ def ping(name):
         for p in (f"{TRANSCRIPTS}/{r['sid']}.jsonl", f"{TRANSCRIPTS}/{r['sid']}"):
             with contextlib.suppress(OSError):
                 shutil.rmtree(p) if os.path.isdir(p) else os.remove(p)
-    if verdict.startswith(("OK", "MISS")) or os.environ.get("ORCH_PING_WAIT") == "0":
+    if verdict.startswith("MISS"):
+        # its entry is gone, and a ping cannot make it again: the fork wrote its own prefix, which nothing reads, and
+        # the session's own entry comes back only with its next request (hit). Marked warm after a miss, kb-12 was
+        # pinged every PING_AGE for 534K a time (2026-09-22 21:28), and every ping after it would have missed too.
+        open(hits(name) + ".miss", "w").write(str(time.time()))
+    elif verdict.startswith("OK") or os.environ.get("ORCH_PING_WAIT") == "0":
         hit(name)  # the ping read the session's own entry, and not the shorter ones under it (hit)
     else:
         # tried again in two minutes, while the entry may still be warm: a ping with no verdict held its mark for the
@@ -7214,13 +10981,28 @@ def ping(name):
     return verdict
 
 
+def ping_missed(name):
+    """Whether a ping of this session missed its entry and none is to be made until the session itself writes one."""
+    return os.path.exists(hits(name) + ".miss")
+
+
+FORK_MISSED = "forked.miss"  # <who>-forked.miss: a fork of this base wrote its prefix anew (cache_check)
+
+
 def cache_check(sid, base_sid, name):
-    """Background: record whether a fork's first request read its origin from cache."""
+    """Background: record whether a fork's first request read its origin from cache. A fork that missed wrote its own
+    prefix, which no later fork reads — every fork after it writes the whole prefix again (600K each) until the entry
+    is made anew: the base is marked, and the watchdog rebuilds what its roles fork once (deltas, layers). Three
+    entries were evicted within four minutes on 2026-09-22 (21:04 the high delta, 21:05 the xhigh layer, 21:07 a held
+    session's), each write about 600K."""
     for _ in range(40):
         v = subprocess.run([os.path.join(HERE, "session_fork_check.py"), sid, base_sid], capture_output=True, text=True).stdout
         if v.startswith(("OK", "MISS")):
             log(f"cache of {name}: {v.split(' first own request ')[-1].split(' (')[0] if 'first own request' in v else v[:80]}"
                 + ("" if v.startswith("OK") else " MISS"))
+            who = (peek()["sessions"].get(name) or {}).get("origin")
+            if v.startswith("MISS") and who in BASES:
+                open(os.path.join(STATE, f"{who}-{FORK_MISSED}"), "w").write(str(time.time()))
             return
         time.sleep(3)
 
@@ -7245,8 +11027,35 @@ def main():
     groups.append(group)
     if c == "read":  # one read, whatever its groups: each source is bounded, and the call as a whole (cmd_read)
         groups = [[x for g in groups for x in g]]
+    if c == "ask":
+        groups = asked_groups(groups)
+    who = caller() if os.environ.get("CLAUDE_CODE_SESSION_ID") else None
+    watch = Stopwatch(f"`v2.py {c}` of {who['name']}") if who else None
     codes = [run_command(c, g) for g in groups]
+    if watch:
+        watch.done()
     return max(codes)
+
+
+ASK_TARGETS = ("kb", "planner", "designer", "task-designer", "reviewer")
+
+
+def asked_groups(groups):
+    """A batched question names its target once: a group that names none asks the previous group's, and one that
+    begins with a bare target word asks that one. implement-192 wrote `ask --to planner "…" -- planner "…"`
+    (2026-09-22 22:08): its first question was asked, its second refused, and the call ended failing."""
+    out, to = [], None
+    for g in groups:
+        g = list(g)
+        if "--to" in g and g.index("--to") + 1 < len(g):
+            to = g[g.index("--to") + 1]
+        elif g and g[0] in ASK_TARGETS:
+            to = g.pop(0)
+            g = ["--to", to] + g
+        elif to and g:
+            g = ["--to", to] + g
+        out.append(g)
+    return out
 
 
 REFUSED = []  # the answers of this process that refused (run_command)
@@ -7283,8 +11092,8 @@ def run_command(c, rest):
         return 3
     if c == "read" and rest:
         say(cmd_read(rest))
-    elif c == "change" and not rest:
-        said = cmd_change(sys.stdin.read())
+    elif c == "change" and rest in ([], ["--probe"], ["--no-probe"]):
+        said = cmd_change(sys.stdin.read(), probe={"--probe": True, "--no-probe": False}.get(rest[0]) if rest else None)
         say(said)
         return 1 if said.startswith("refused") else 0  # a refused change reads as failing, and is told how to fix it
     elif c == "ledger" and rest:
@@ -7295,7 +11104,8 @@ def run_command(c, rest):
         return 1
     elif c == "ask":
         to = opt("--to")
-        say(cmd_ask(to, " ".join(rest)) if to and rest else "refused: ask --to kb|planner|designer|task-designer|reviewer TEXT")
+        say(cmd_ask(to, " ".join(rest)) if to and rest else "refused: ask --to kb|planner|designer|task-designer|reviewer "
+            "TEXT (in a batch, a group after `--` asks the previous group's target unless it names one)")
     elif c == "tell" and len(rest) >= 2:
         # `tell ID... TEXT` or `tell ID... --file FILE`: the leading words that are tasks of the list are whom it
         # tells. `--file` was taken for the text: six of plan-45's messages of 2026-09-22 reached their sessions as
@@ -7329,7 +11139,12 @@ def run_command(c, rest):
     elif c == "carried" and rest:
         say(cmd_carried(rest[0], " ".join(rest[1:])))
     elif c == "measuring":
-        say(cmd_measuring(" ".join(rest)))
+        both = "--shared" in rest and "--exclusive" in rest
+        said = MEASURE_CHOICE.format(minutes=measure_minutes()) if both else cmd_measuring(
+            " ".join(a for a in rest if a not in ("--shared", "--exclusive")),
+            shared=True if "--shared" in rest else False if "--exclusive" in rest else None)
+        say(said)
+        return 1 if said.startswith("refused") else 0
     elif c == "escalate":
         text = opt("--efficiency")
         say(cmd_escalate(" ".join(filter(None, [text, *rest]))) if text else "refused: escalate --efficiency TEXT")
@@ -7342,16 +11157,24 @@ def run_command(c, rest):
     elif c == "finalize" and rest:
         say(cmd_finalize(rest[0], rest[1:]))
     elif c == "result" and len(rest) == 1:
-        say(cmd_result(rest[0]))
+        say(cmd_result(rest[0], stdin_text()))
     elif c == "bring-main" and not rest:
         say(cmd_bring_main())
+    elif c == "queue-probe" and len(rest) == 1:
+        said = cmd_queue_probe(rest[0])
+        say(said)
+        return 1 if said.startswith("refused") else 0
     elif c == "check" and not rest:
         say(cmd_check())
+    elif c == "base-forked" and len(rest) == 1:  # warm_daemon.sh: ping a base's shared part only while a role forks it
+        return 0 if shared_part_forked(rest[0]) else 1
+    elif c == "sample-load" and len(rest) == 1:
+        cmd_sample_load(rest[0])
     elif c == "verdict" and len(rest) >= 2:
         f = opt("--file")
         say(cmd_verdict(rest[0], rest[1], f))
     elif c == "queue":
-        say(cmd_queue(rest))
+        say(cmd_queue([x for x in rest if x != "--drop-unnamed"], drop_unnamed="--drop-unnamed" in rest))
     elif c == "after" and len(rest) == 2:
         say(cmd_after(rest[0], rest[1]))
     elif c == "propose" and len(rest) == 2:
@@ -7363,6 +11186,11 @@ def run_command(c, rest):
         say(cmd_proposal(rest[0], rest[1:]))
     elif c == "edit" and len(rest) == 1:
         say(cmd_edit(rest[0]))
+    elif c == "follow-up" and rest:
+        kind = opt("--kind") or "fix"
+        said = cmd_follow_up(rest, kind=kind)
+        say(said)
+        return 1 if said.startswith("refused") else 0
     elif c == "blockers" and len(rest) >= 2:
         say(cmd_blockers(rest[0], rest[1:]))
     elif c == "drop" and rest:

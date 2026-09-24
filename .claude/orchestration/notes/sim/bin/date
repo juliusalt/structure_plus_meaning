@@ -1,0 +1,6 @@
+#!/bin/sh
+# the simulation's clock for the shell: `date` without a date of its own given reads SIM_CLOCK
+for a in "$@"; do
+  case "$a" in -d|--date|--date=*|-r|--reference|--reference=*|-s|--set|--set=*|-f|--file|--file=*) exec /usr/bin/date "$@" ;; esac
+done
+exec /usr/bin/date -d "@$(cut -d' ' -f1 < "$SIM_CLOCK" | cut -d. -f1)" "$@"

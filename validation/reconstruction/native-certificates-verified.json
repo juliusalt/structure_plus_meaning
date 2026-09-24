@@ -2,10 +2,10 @@
  "boundary": "Complete original native sources and certificates determine every path, actual path coordinate and full graph correspondence. All sixteen candidate outputs, seven conditions, complete comparisons and three revision cycles are reproduced. Native placement, the complete development workflow, cost and genesis remain separate.",
  "complete_recipe_source_manifest": "native-certificates-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
+  "base_receipt_sha256": "c76a6eb7779f81fb8f284689f3aa180704ce627da50718ee3e071503998da018",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.28,
+  "seconds": 5.44,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "f02b4735256cf715e2c9b39eff4c7c88bb3bb2e808018ce3b796ec09e0a4ee7f",
+   "module_sha256": "4e24484a79c064584f357e862cc3a5a0ec5cca39ff172263d477f4f475cb0729",
    "subject_contracts": {
-    "native_certificate_investigation.yxml": "547e5b860ad727fb1f14b295a817f10f4192a8989307961149b37bbd7e8cd3e6"
+    "native_certificate_investigation.yxml": "1e8f1bd828337d6d97e9d721c6426d3d0fbcc9663b12343b5f762063b457970e"
    },
    "theory": "Native_Certificate_Investigation_Execution"
   },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a1b373fe001240d6c5e3a5da67cac75839d1eec1762b6602a91c32e4a7f9831d",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "f02b4735256cf715e2c9b39eff4c7c88bb3bb2e808018ce3b796ec09e0a4ee7f"
- },
  "recipe": "native-certificates",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "ac9263a13ca28271dc3289c6307ab9861cf693284ebe78b298f6a206e22f07e1",
+ "source_manifest_sha256": "9596bc3fdba5d40f0887e2cbec9c562dbd4aa76312fa772b6c448dcd7fe05c2b",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.177847228012979
+   "seconds": 5.331511657015653
   }
  ]
 }

@@ -2,10 +2,10 @@
  "boundary": "The local source and input boundary reconstructs native generation, original condition compilation, all observations and certificates, independent complete evidence inspection and native scope criticism, comparison, revision, admission. The declared finite one-step generation scope remains explicit; adequacy for wider development problems and the eventual genesis handoff are separate conditions.",
  "complete_recipe_source_manifest": "native-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "8d79d64b114fd76a56a0bc7ad64cfc79c0270e77740e725270c2c807f91990e6",
+  "base_receipt_sha256": "c76a6eb7779f81fb8f284689f3aa180704ce627da50718ee3e071503998da018",
   "records": 1,
   "reports_equal": true,
-  "seconds": 14.46,
+  "seconds": 8.2,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "d588ceab7cba2fa3c3f88f65ba5708f5b679495fe27aba55f507e8819ccb862a",
+   "module_sha256": "07f6e983d7454a62e1c2cfd284e2e3471e01397eab322ab1c9fea757e18f0fc9",
    "subject_contracts": {
-    "development_producer_investigation.yxml": "d903c212813532ea3d51d287d28b11acf200954f1a17ed5c4ea1077963d8e37c"
+    "development_producer_investigation.yxml": "e7cd44854b4fef177b7a0f71573b11a8589921e9e4de2107bcb7750598e982da"
    },
    "theory": "Native_Development_Execution"
   },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "cc454e95e9666e196dcad0ce78ea0389950f00b73707940d3ea4a01eaf90c09c",
+ "source_manifest_sha256": "20bf8931dee5baf2f305a4810d992eb481a83b74d0c84ebdd3fbf4edfcd40f1d",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 14.351511713990476
+   "seconds": 8.06928504401003
   }
  ]
 }

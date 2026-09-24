@@ -2,10 +2,10 @@
  "boundary": "Complete original source, requirements and terms determine each full decision and its exact target-certificate replay family. Every native graph, call, extending and retained environment, original-condition assessment, comparison and revision is reproduced. Derived sharing preserves the complete public reports. This scoped composition does not establish whole-workflow enforcement, original-policy and historical permission, complete subject and criticism coverage, physical cost or genesis.",
  "complete_recipe_source_manifest": "decision-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
+  "base_receipt_sha256": "c76a6eb7779f81fb8f284689f3aa180704ce627da50718ee3e071503998da018",
   "records": 1,
   "reports_equal": true,
-  "seconds": 7.69,
+  "seconds": 8.29,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "c31ba3434aba2b0676770ef4994523a2a72b33160d06d885402552c69def0c7b",
+   "module_sha256": "09218c7f6044e81b3bdc5167d0f4d31668eb544a6c89b91ca8394e17c7155938",
    "subject_contracts": {
-    "decision_replay_investigation.yxml": "8ab080caa529e665d3efebd645141d057963e63ae44b05ad3bfe37ab8d4bdf49"
+    "decision_replay_investigation.yxml": "145aa44dfd8203223be34a9be5a428fd7a6f571b565c9c3b4321371a987958b2"
    },
    "theory": "Decision_Replay_Execution"
   },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a1b373fe001240d6c5e3a5da67cac75839d1eec1762b6602a91c32e4a7f9831d",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "c31ba3434aba2b0676770ef4994523a2a72b33160d06d885402552c69def0c7b"
- },
  "recipe": "decision-replay",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "91a282ee2eeca8c687131e0fcb09de1a8b391a2bf9e36db1a7bac07453ccfb65",
+ "source_manifest_sha256": "67a02559137b2d488b4eab5142d80914f742d6747ba8e864aff1bc100abd5ca3",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 7.587007291993359
+   "seconds": 8.202189184987219
   }
  ]
 }

@@ -2,10 +2,10 @@
  "boundary": "Original closed history validity and actual index membership establish each complete predecessor reading. The reconstructed operation preserves the original target, replay, policy, allocation and append behavior. Every original subject, method, source field, complete result, inspection and revision is retained through verified compressed storage. Full physical cost, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "known-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
+  "base_receipt_sha256": "c76a6eb7779f81fb8f284689f3aa180704ce627da50718ee3e071503998da018",
   "records": 1,
   "reports_equal": true,
-  "seconds": 13.57,
+  "seconds": 15.53,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "919ba30aef3ef1f9c6549e820b1ed65215361f9afeaeeba74bafb8bcc5c3e781",
+   "module_sha256": "4c080975f2719cc0c354dc18fd305a6fc6d658ecfc484f12e1f16f4dc1b1ad9d",
    "subject_contracts": {
-    "known_history_investigation.yxml": "bc6ad889704052ebe7cb5318b120402ea46b3a4613ac467a6ff9dc669cec0320"
+    "known_history_investigation.yxml": "d023691a4eef54c8a6a5e0b1548eb283012963bc3674eb63957813204b891df9"
    },
    "theory": "Known_History_Execution"
   },
@@ -60,11 +60,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a1b373fe001240d6c5e3a5da67cac75839d1eec1762b6602a91c32e4a7f9831d",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "919ba30aef3ef1f9c6549e820b1ed65215361f9afeaeeba74bafb8bcc5c3e781"
- },
  "recipe": "known-history",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -78,14 +73,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "e876223c579355685c9476d562481a5cefef2dc35e7bac5cb231d8cfa31e087a",
+ "source_manifest_sha256": "1555cac0f61f34d27d333bb689d0f2e7d76ec6128120db13992bec90f9afb000",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 13.465225327003282
+   "seconds": 15.390357894997578
   }
  ]
 }

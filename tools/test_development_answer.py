@@ -75,9 +75,11 @@ class FrameTest(unittest.TestCase):
     def test_parts_are_read_as_strings_in_the_frame(self):
         state = development_answer.STATES['development_seed']
         injected = {**ANSWER, 'definitions': '  ML \\<open>val _ = ()\\<close>\n', 'proof': '  by simp\n\n'}
-        text = development_answer.parts_theory(state, injected)
-        self.assertTrue(text.startswith('theory Development_Answer_Parts_Check\n  imports Native_Control_Seed_Subject '
-                                        'Development_Answer_Parts\nbegin\n'))
+        text = development_answer.parts_theory(state, injected, Path('/outcomes/injected.txt'))
+        self.assertTrue(text.startswith('theory ' + development_answer.parts_name(injected) + '\n  imports '
+                                        'Native_Control_Seed_Subject Development_Answer_Parts\nbegin\n'))
+        self.assertIn(development_answer.investigate.ml_string('/outcomes/injected.txt'), text)
+        self.assertIn('handle ERROR message => "refused\\n" ^ message', text)
         definitions, equation, proof = development_answer.placed_parts(injected)
         self.assertEqual(definitions, 'ML \\<open>val _ = ()\\<close>')
         self.assertEqual(proof, '  by simp')
@@ -87,6 +89,57 @@ class FrameTest(unittest.TestCase):
         framed = development_answer.answer_theory(state, injected)
         self.assertIn(definitions + '\n\ndeclare [[code drop:', framed)
         self.assertIn('"' + equation + '"\n' + proof + '\n\nend\n', framed)
+
+    def test_each_answer_is_read_in_its_own_theory_and_frame(self):
+        # Shared in one session, every answer's reading keeps its own frame and sees no other answer's parts.
+        layer = {**ANSWER, 'request': {'state': 'refinement_layer', 'subject': 'Theory_Name.constant_name'},
+                 'definitions': 'definition other where "other=False"'}
+        seed_state, layer_state = (development_answer.STATES[k] for k in ('development_seed', 'refinement_layer'))
+        seed = development_answer.parts_theory(seed_state, ANSWER, Path('/o/a.txt'))
+        framed = development_answer.parts_theory(layer_state, layer, Path('/o/b.txt'))
+        self.assertNotEqual(development_answer.parts_name(ANSWER), development_answer.parts_name(layer))
+        self.assertIn('imports ' + ' '.join(development_answer.frame_imports(layer_state))
+                      + ' Development_Answer_Parts\n', framed)
+        self.assertNotIn(development_answer.investigate.ml_string(layer['definitions'].strip()), seed)
+        self.assertNotIn(development_answer.investigate.ml_string(ANSWER['definitions']), framed)
+        self.assertEqual(seed.count('ML \\<open>'), 1)
+
+    def test_an_outcome_gives_the_step_and_the_reason(self):
+        with tempfile.TemporaryDirectory() as directory:
+            accepted, refused, silent = (Path(directory) / name for name in ('a.txt', 'r.txt', 'missing.txt'))
+            accepted.write_text('accepted\n')
+            refused.write_text("refused\nThe answer's proof part is refused: the command ML is not a proof command")
+            self.assertEqual(development_answer.parts_outcome(accepted), (0, None))
+            self.assertEqual(development_answer.parts_outcome(refused),
+                             (1, "The answer's proof part is refused: the command ML is not a proof command"))
+            self.assertEqual(development_answer.parts_outcome(silent), (1, None))
+
+    def harness(self, directory, reading):
+        answer, parts, base = (directory / name for name in ('answer.json', 'parts.json', 'base'))
+        answer.write_text(json.dumps(ANSWER))
+        base.mkdir()
+        parts.write_text(json.dumps({'answer_digest': development_answer.answer_digest(ANSWER),
+                                     'base': str(base.resolve()), 'exit_code': 1, 'seconds': 1.0,
+                                     'answers_read': 6, 'log': 'shared.log', **reading}))
+        subprocess.run([sys.executable, '-B', development_answer.__file__, 'answer', '--answer', str(answer),
+                        '--output', str(directory / 'run'), '--base', str(base), '--parts', str(parts),
+                        '--retain', str(directory / 'retained.json')], capture_output=True, timeout=60)
+        return json.loads((directory / 'run' / 'answer.json').read_text())
+
+    def test_a_supplied_refusal_is_the_harness_refusal_without_a_session(self):
+        reason = "The answer's definitions part is refused: the command ML is not a declared part of an answer"
+        with tempfile.TemporaryDirectory() as temporary:
+            record = self.harness(Path(temporary), {'refusal': reason})
+            self.assertEqual((record['status'], record['refusal']), ('refused', reason))
+            self.assertEqual([step['name'] for step in record['steps']], ['parts'])
+            retained = json.loads((Path(temporary) / 'retained.json').read_text())
+            self.assertEqual((retained['steps'], retained['refusal']), ({'parts': 1}, reason))
+
+    def test_a_supplied_reading_of_another_answer_is_not_taken(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            record = self.harness(Path(temporary), {'answer_digest': '0' * 64, 'refusal': 'anything'})
+            self.assertEqual(record['status'], 'failed')
+            self.assertIn("not of this answer's parts", record['error'])
 
     def test_refusal_is_read_from_isabelle_logs(self):
         with tempfile.TemporaryDirectory() as directory:

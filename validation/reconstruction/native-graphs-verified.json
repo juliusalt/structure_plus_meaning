@@ -2,10 +2,10 @@
  "boundary": "A run without --proof reconstructs the complete contracts from HOL. The graph constructor receives the complete original environment, graph and root. It preserves every original node and indexed discharge through a fresh injective correspondence, installs the whole artifact and reference family, and recovers the graph through the actual native reader. Every original input, candidate environment, complete map, graph, reading, assessment, comparison and revision is reproduced. The independent mapping condition permits alternative placements. These conditions do not validate inference claims, position certificates, provide native mathematical-proof checking, enforce the complete development cycle, establish the full physical cost account or authorize genesis.",
  "complete_recipe_source_manifest": "native-graphs-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
+  "base_receipt_sha256": "c76a6eb7779f81fb8f284689f3aa180704ce627da50718ee3e071503998da018",
   "records": 1,
   "reports_equal": true,
-  "seconds": 6.73,
+  "seconds": 7.14,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "b4b64a67829e4176b5910e36ea2f3969112450315420deebb8321e056a66c1e1",
+   "module_sha256": "cefb8c29d596b9f38cacba311ef9cbd4856435108e78409b15ad8c4bc7db53d2",
    "subject_contracts": {
     "native_graph_investigation.yxml": "437833934ce3b9724a70b8fd020f3cb9bde9f74aa56482d7e2b2a5ba820af969"
    },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a1b373fe001240d6c5e3a5da67cac75839d1eec1762b6602a91c32e4a7f9831d",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "b4b64a67829e4176b5910e36ea2f3969112450315420deebb8321e056a66c1e1"
- },
  "recipe": "native-graphs",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "90dfb9a0959d2a5a1671b1382e41a3737c0d10a33f7bf31fedb62c5f42aa9ecf",
+ "source_manifest_sha256": "dcb612f3ce5035fa40739628742a258457bc283a6f88461a1fa8eb9914bde64f",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 6.631686730979709
+   "seconds": 7.040239687019493
   }
  ]
 }

@@ -39,6 +39,18 @@ judgment as a fault of this run alone. A row's own `status` is a third notion, t
 harness made: the retained `failed-proof` record parts them, being a `failed` status that is
 reconstructed and not unproduced.
 
+Before any answer is judged, the declared parts of every framed answer the harness will judge are read in
+one Isabelle session (`development_answer.read_parts`), each answer in a theory of its own importing its own
+frame, and each harness run is given its own reading: an answer the parts reading refuses then costs no
+Isabelle session of its own, and one it accepts starts only its proof. The reading and its refusals are
+exactly those the harness would make alone, and an answer the shared reading could not supply reads its
+parts itself.
+
+A re-recorded row is reported as reconstructed against the record the run wrote: its words were computed
+by this run from the retained answer alone, and the words it replaced are kept in the row (`replaced`) and
+the re-recorded answers are listed (`rerecorded`), so a word change needs no confirming replay. What such
+a replay would still check is that a second, independent run computes the same words again.
+
 The run's elapsed wall seconds are reported beside the run count on the error stream and in the summary,
 so that the observed cost of a replay is readable where its counts are; each answer's own seconds are in
 its row of the summary.
@@ -103,6 +115,51 @@ def unproduced_observation(left):
     return {'status': None, 'error': left}
 
 
+FRAMED_WORDS = ('verdict_word', 'publication_word', 'refusal', 'error')
+NATIVE_WORDS = ('judgment_word', 'summary')
+
+
+def rerecorded(record_path, record, retained, words):
+    """Retain the answer again as judged now, and return the record as written with the words it replaced."""
+    record_path.write_text(json.dumps({**record, **retained}, indent=1) + '\n')
+    return json.loads(record_path.read_text()), {word: record.get(word) for word in words}
+
+
+def read_shared_parts(records, output, timeout):
+    """Read the parts of every framed answer the harness will judge, in one session; each answer's reading by name.
+
+An answer that is native, adopted, or malformed has no parts reading of the harness. Only an answer whose own
+theory wrote an outcome the harness acts on (`accepted`, or `refused` with the reason Isabelle gave) receives
+the shared reading: an answer whose theory wrote none, and every answer of a shared reading that fails, reads
+its own parts, as the harness does alone, so a fault of the shared session is never an answer's judgment."""
+    answers = {}
+    for path in records:
+        record = json.loads(path.read_text())
+        try:
+            answer = development_answer.validate(record['answer'])
+        except AssertionError:
+            continue
+        if not record.get('native') and not development_answer.adoption_evidence(answer)['present']:
+            answers[path.stem] = answer
+    if not answers:
+        return {}, None
+    directory = output / 'shared-parts'
+    started = time.monotonic()
+    try:
+        readings = development_answer.read_parts(list(answers.values()), development_answer.active_base(None),
+                                                 directory, timeout)
+    except (AssertionError, OSError, ValueError, KeyError, subprocess.SubprocessError) as failure:
+        print(f'the shared parts reading failed ({failure}); each answer reads its own parts', file=sys.stderr)
+        return {}, round(time.monotonic() - started, 1)
+    paths = {}
+    for stem, answer in answers.items():
+        reading = readings[development_answer.answer_digest(answer)]
+        if reading['exit_code'] == 0 or reading['refusal'] is not None:
+            paths[stem] = directory / (stem + '.json')
+            paths[stem].write_text(json.dumps(reading) + '\n')
+    return paths, round(time.monotonic() - started, 1)
+
+
 def replay_native(record_path, record, output, timeout, rerecord=False):
     directory = output / record_path.stem
     directory.mkdir(parents=True)
@@ -115,11 +172,14 @@ def replay_native(record_path, record, output, timeout, rerecord=False):
     observed = json.loads((directory / 'run' / 'answer.json').read_text()) if produced \
         else unproduced_observation(left)
     same = produced and observed['status'] == record['status'] and all(observed.get(k) == record.get(k)
-                                                                      for k in ('judgment_word', 'summary'))
+                                                                      for k in NATIVE_WORDS)
+    replaced = None
     if rerecord and not same and produced and observed['status'] == record['status'] == 'judged':
-        retained = json.loads((directory / 'retained.json').read_text())
-        record_path.write_text(json.dumps({**record, **retained}, indent=1) + '\n')
+        record, replaced = rerecorded(record_path, record, json.loads((directory / 'retained.json').read_text()),
+                                      NATIVE_WORDS)
+        same = all(observed.get(k) == record.get(k) for k in NATIVE_WORDS)
     return record_path.stem, {'status': observed['status'], 'expected_status': record['status'],
+                              **({'replaced': replaced} if replaced else {}),
                               'judgment_word': observed.get('judgment_word'),
                               'expected_judgment_word': record.get('judgment_word'),
                               'summary': observed.get('summary'), 'expected_summary': record.get('summary'),
@@ -127,7 +187,7 @@ def replay_native(record_path, record, output, timeout, rerecord=False):
                               'elapsed_seconds': elapsed, 'reconstructed': same}
 
 
-def replay(record_path, output, timeout, rerecord=False):
+def replay(record_path, output, timeout, rerecord=False, parts=None):
     record = json.loads(record_path.read_text())
     if record.get('native'):
         return replay_native(record_path, record, output, timeout, rerecord)
@@ -138,18 +198,22 @@ def replay(record_path, output, timeout, rerecord=False):
     elapsed, produced, left = run_harness(
         [sys.executable, '-B', str(ROOT / 'tools' / 'development_answer.py'), 'answer',
          '--answer', str(answer), '--output', str(directory / 'run'), '--timeout', str(timeout),
-         '--retain', str(directory / 'retained.json')], directory, timeout + 300)
+         '--retain', str(directory / 'retained.json'), *(['--parts', str(parts)] if parts else [])],
+        directory, timeout + 300)
     observed = json.loads((directory / 'run' / 'answer.json').read_text()) if produced \
         else unproduced_observation(left)
     judged = observed['status'] not in ('adopted', 'obstructed')
     same_status = produced and observed['status'] == record['status']
-    same_word = all(observed.get(word) == record.get(word) for word in ('verdict_word', 'publication_word', 'refusal', 'error'))
+    same_word = all(observed.get(word) == record.get(word) for word in FRAMED_WORDS)
+    replaced = None
     if rerecord and produced and same_status and not same_word and observed['status'] in ('judged', 'refused'):
-        retained = json.loads((directory / 'retained.json').read_text())
-        record_path.write_text(json.dumps({**record, **retained}, indent=1) + '\n')
+        record, replaced = rerecorded(record_path, record, json.loads((directory / 'retained.json').read_text()),
+                                      FRAMED_WORDS)
+        same_word = all(observed.get(word) == record.get(word) for word in FRAMED_WORDS)
     evidence = {} if judged else {'evidence': observed.get('evidence'), 'unverified': observed.get('unverified'),
                                   'obstruction': observed.get('obstruction')}
     return record_path.stem, {'status': observed['status'], 'expected_status': record['status'], **evidence,
+                              **({'replaced': replaced} if replaced else {}),
                               'verdict_word': observed.get('verdict_word'),
                               'expected_verdict_word': record.get('verdict_word'),
                               'publication_word': observed.get('publication_word'),
@@ -237,20 +301,25 @@ def main():
     output.mkdir(parents=True)
     records = replay_order(sorted(RECORDS.glob('*.json')))
     started = time.monotonic()
+    parts, parts_seconds = read_shared_parts(records, output, args.timeout)
     with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        results = dict(pool.map(lambda path: replay(path, output, args.timeout, args.rerecord), records))
+        results = dict(pool.map(lambda path: replay(path, output, args.timeout, args.rerecord, parts.get(path.stem)),
+                                records))
     elapsed = round(time.monotonic() - started, 1)
     groups = answer_groups(results)
     unrecorded = unrecorded_adoptions()
     report = {'replayed': len(results), 'reconstructed': sum(r['reconstructed'] for r in results.values()),
-              **groups, 'unrecorded_adoptions': unrecorded, 'elapsed_seconds': elapsed, 'answers': results}
+              **groups, 'rerecorded': sorted(name for name, row in results.items() if 'replaced' in row),
+              'unrecorded_adoptions': unrecorded, 'elapsed_seconds': elapsed,
+              'shared_parts': {'answers': len(parts), 'elapsed_seconds': parts_seconds}, 'answers': results}
     (output / 'replay.json').write_text(json.dumps(report, indent=1, sort_keys=True) + '\n')
     if not args.keep:
-        for name in results:
+        for name in [*results, 'shared-parts']:
             shutil.rmtree(output / name, ignore_errors=True)
     print(f'replay held {args.workers} Isabelle run(s) at once and took {elapsed}s', file=sys.stderr)
     print(json.dumps({'replayed': report['replayed'], 'reconstructed': report['reconstructed'],
-                      **groups, 'unrecorded_adoptions': unrecorded, 'elapsed_seconds': elapsed}))
+                      **groups, 'rerecorded': report['rerecorded'], 'unrecorded_adoptions': unrecorded,
+                      'elapsed_seconds': elapsed}))
     return replay_exit(groups, unrecorded)
 
 

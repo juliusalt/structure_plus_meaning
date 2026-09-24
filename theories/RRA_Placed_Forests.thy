@@ -1,5 +1,5 @@
 theory RRA_Placed_Forests
-  imports RRA_Syntax_Construction RRA_Finite_Artifacts
+  imports RRA_Syntax_Construction RRA_Finite_Artifacts Listed_Set_Unions
 begin
 
 section \<open>A forest over a family of placements\<close>
@@ -550,5 +550,14 @@ proof -
   have g: "g=(\<lambda>i. (@) (h i))" using prefix by (intro ext) simp
   show ?thesis by (simp add: finite_placed_table_code g map_map comp_def split_def)
 qed
+
+text \<open>
+  The forest's and the table's sets are the union of their children's placed sets, built once and then
+  only read: the code in effect joins them by the listed union, each child's placed set listed once.
+\<close>
+
+declare finite_placed_forest_code [code del] finite_placed_table_code [code del]
+lemmas finite_placed_forest_listed [code] = finite_placed_forest_code[folded finite_listed_union_def]
+lemmas finite_placed_table_listed [code] = finite_placed_table_code[folded finite_listed_union_def]
 
 end

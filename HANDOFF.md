@@ -51,7 +51,13 @@ and #422 landed):
   posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
   frame (#405, `6d84162b`: parts (a)–(d) and (f); its fix #432, `f4fa3d8a`: part (c) by constant so that the given's
-  package program passes, actions from classes; then part (f) per store, which #407 waits on) and harness (#407).
+  package program passes, actions from classes; then part (f) per store, which #407 waits on) and harness (#407); then the first request and the criticism of an admitted answer, after admission and before
+  verification (#434's proposal: the criticism's notions #435 (the sample and part (b)), #437 (uses, part (d)), #439
+  (octets, part (g)) and #441 (the stated leaves, parts (h) and (e)), the first two starting at once; the first request
+  #443 and its delivery #445; the criticism's run at an admitted candidate #447 and its route #449). Before #393 and
+  #395, the given extended by the readers task 378's entry grants a request (#451's brief, #434's support gap), so that
+  neither the guard's installation nor the given's first generation is made twice; #393 and #395 wait on #451 as a
+  stand-in until its proposal is placed.
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -80,12 +86,13 @@ exporter's obligations at every state it defines (#227–#308, #352).
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The deepest chains are 8: #416 → #418 → #393 → #397 → #399 → #401 →
+**Shape.** No build waits on a review task. The deepest chains are 7: #418 → #393 → #397 → #399 → #401 →
 #407 → #408, and through the given one shorter (#414 → #393 → …).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #416 and #414 at its head, then
-#418, #410, the frame's part (f) per store and the rest in their chains' order; then
+exists, Q2): the owner's directions first — the first problem's route, #414 and #418 at its head, then
+#410, #451 (the given's extension), the frame's part (f) per store and the rest in their chains' order, the first
+request's and the criticism's builds after them; then
 #426; each review after its build.
 
 ## Decisions
@@ -285,6 +292,17 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   subdomain and unary forms; (f)'s theorem form; eighteen controls. Its review found (f) existential over indexes, so
   that the package program every answer cites made it vacuous: (f) per store is the fix #407 now waits on, with the
   by-name list's five omissions; the probe's renaming of qualified ML structure paths is Open 78.
+- **#434** (brief, placed as #435–#450): its Planner's findings (`.build/tasks/434/result.md`) — the owner's approval
+  record exists (`Development_Owner_Records.development_owner_approval`), its build after #447 and #407 (Open 142);
+  publication after verification and the translation (Open 3); part (g)'s leaf argument not demanded (Open 121); parts
+  (h) and (e): which native notion decides a found ground clause or read target is the owner's (Q25); the support gap,
+  #451; #441's numbers above 500–505 and 520–526, a collision with #410's relocated where joined; the route's export
+  modules merged to compile once (Open 143).
+- **Landed with `6bff9fd5`**: #416, the use-equivariance clauses of the package and scope readers — package
+  admission, membership, the root family reading, the closure bound, retention admission and environment inclusion —
+  each beside its contract; its re-review's follow-ups (`.build/tasks/417/review.md`): 1 Open 141, 2 mailed to #410
+  (the least package environment's commutation with use permutations) and Open 78 (the probe cost of a change to
+  `Factor_Package_Closure_Admission`).
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
@@ -352,14 +370,19 @@ The owner's questions, a line each (their words and the provisional choices in f
    (stated before it, the test would shape what it tests), with #370's follow-ups (`.build/tasks/370/result.md`:
    interim choices recorded natively, a choosing problem's contract kind, the loop the two problems enter) and #371's
    notes (`.build/tasks/371/notes.md`).
-121. The first problem's criticism build, briefed with the first request (#410's installation) once the route's
+121. The first problem's criticism build, briefed by #434 (placed as #435–#450) with the first request (#410's installation), the route's
    proposals are placed: native samples of invariance (two presentations of one subject) and of use equivariance
    (#383's follow-up 4: one permutation moving every use of the candidate's environment outside it, one permuting its
    uses among themselves), observations of ground clauses and target leaves, each failure recorded against the
    candidate (`Observation_Repairs`); with #381's follow-up 3, the leaf argument for programs with material premises
    (`Factor_Positive_Parametricity`), at the first answer whose added definitions hold one; parts (e), (g) and (h) as
    #428's entry leaves them to criticism; every given reader reaches a material premise (sites 1, 10 or 45,
-   #413's review), so part (g) bites at the given's readers too.
+   #413's review), so part (g) bites at the given's readers too. Part (g)'s leaf argument, when demanded, goes in a
+   theory of its own importing `Factor_Positive_Parametricity`, which edits no base theory (stated in that theory
+   itself it rebuilds nearly the whole library, 16–21 minutes; #434's result).
+142. The owner's approval of the first answer: a build after #447 and #407, an owner record citing the admission, the
+   criticism record and the verification record (`Development_Owner_Records.development_owner_approval`, Q23 (c));
+   publication after verification and the translation (Q18 (a), item 3). Briefed once #447 and #407 are nearer.
 111. The HOL-constant loop's retirement (#357's follow-ups, `.build/tasks/357/result.md`): when the first answer is
    admitted and problems are posed again under it, the machinery's HOL residuals superseded (Q18 (d)), the seed's
    refinement problems no longer selected or issued, the records kept as history; #320's "Beside the bootstrap loop"
@@ -399,7 +422,8 @@ The owner's questions, a line each (their words and the provisional choices in f
    machinery recipe is, at a measured need of the check's cycle; it can gain at most the 4–5 s by which the seed leads
    the machinery recipe (#368's follow-ups 1, 2, 5). #355's formation saving by phase and the fall from #128's 63.45 s
    are unattributed.
-78. The probe tool (#316's, #286's and #353's reviews; #432's: qualified ML structure paths renamed with the theory): the comment's "lower envelope"; skipped code checks extended at
+78. The probe tool (#316's, #286's and #353's reviews; #432's: qualified ML structure paths renamed with the theory;
+   #417's: the probe cost of a change to `Factor_Package_Closure_Admission`): the comment's "lower envelope"; skipped code checks extended at
    first use; the prelude route offered by the tool; a refusal naming `--from-heap`; a probe that loads
    `Native_Collection_Programs`' dependents passes 60 s — a longer bound or an intermediate heap at a measured need, the
    check certifying them meanwhile.
@@ -498,11 +522,17 @@ and `Factor_Finite_View_Installation`, in a theory the tool imports. 140 the giv
 index of their own (#433's q92: the frame reports them as the given's and does not require them of an answer):
 `request_context_search`, `request_scope_search` and `request_complete_search`, interpretations of
 `native_store_search_program` at request construction's sites, and `witness_absent`, an absence search no index notion
-states — at a consolidation of the given's programs, absence a question for the index notion (`Carrier_Indexes`).
+states — at a consolidation of the given's programs, absence a question for the index notion (`Carrier_Indexes`). 141
+`Factor_Program_Scopes.native_package_root_position` retired, its uses (`Factor_Amendment_Comparisons`,
+`Factor_Derivation_Presentations`, `Factor_Interpretation_Construction`) citing
+`Factor_Package_Admission.native_package_site_position`, in a batch that rebuilds those theories anyway (#417's review,
+follow-up 1). 143 the route's export modules (#401's, #407's, #445's, #449's) merged to compile once (#434's result).
 
 ## Now
 
-- **Mailed, read by each task's first session**: to #414 (it installs the rooted readers' program #431 stated; it
+- **Mailed, read by each task's first session**: to #410 (#417's review, follow-up 2: the least package environment's
+  commutation with use permutations), to #414 (plan-65: its read-back measured with the package reader's refinements in
+  effect, `after 414 none`, a fix a task only if the refined read still takes more than seconds; before: it installs the rooted readers' program #431 stated; it
   returns the given's environment as the finite value whose quotation is computed), #395 (the given's site value takes
   that computed quotation, not `program_scope_quoted_total`), #393 (sites 392 and 525's native evaluability; the asked
   relation's program is the guard's program rooted at its entries, derived through the union's piece

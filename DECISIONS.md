@@ -14063,3 +14063,226 @@ with the subset instantiated, and every other step of the new sections names the
 `Development_Row_Data` processes in half a second and the changed theories load in 50 s in one probe.
 
 Recorded 2026-09-24 (task 167).
+
+## The published state holds its targets once, and a report's word is read off them
+
+Task 356, a design; its evidence is #324's measurement (`.build/tasks/324/measurement.md`, held, base
+`20260924-153636-train318`). It decides the repair of the largest phase of the seed publication presentation, the
+word's lookup, and the level at which `Shared_Term_Tables` applies to it: where a report's shared subterms are made,
+where they are presented, and where the word reads them.
+
+### The cost, as measured
+
+All figures are #324's, held. The harness computes the report in 55.14 s against the recipe's 48.50 s; a phase at
+the recipe's scale is its harness seconds × 0.88.
+
+| phase | harness s | what it counts |
+|---|---|---|
+| the word: complete rows of every target occurrence | 8.92 | 3,946 occurrences |
+| the word: first-occurrence references | 19.23 | 3,946 occurrences of 63 distinct artifacts |
+| the word: the table of distinct artifacts | 3.51 | 272,188,929 bits emitted |
+| the word: targets, indexed references | 0.001 | 63,095 bits emitted |
+| the report's value | 18.56 | judgments 8.12, the snapshot's formation 3.71, recordings 1.99, rows 3.51, the round's comparisons 1.16 |
+
+The word's lookup is 28.15 s, 51 % of the harness. Per occurrence it computes its artifact's complete rows (0.127 s at
+350,865 addresses, 0.160 s at 532,665) and ends its search in one complete comparison of two equal keys (0.207 s and
+0.251 s). The occurrences grow with the square of the generations — 852, 1,962 and 3,946 at 20, 29 and 41
+generations (k = 3, 6, 10 issued requests), rows 2.95, 5.25, 8.92 s and references 8.16, 12.48, 19.23 s — because
+every applied transaction presents its whole snapshot and every answer presents its issue, its incumbent and the
+selection; the distinct artifacts grow with the generations (42, 51, 63). The ten incumbents' causes occur 70–82
+times each, the selection's payload and cause 302 times. The transactions compare two equal generations whole, cause
+included: 1.28 s summed within the parallel rows, 1.16 s in the round.
+
+### Why the word's existing refinements leave it
+
+The word's code equation in effect is `Indexed_Term_Words.finite_term_shared_word_segmented_code`, over
+`Finite_Term_Object_Words.finite_term_shared_object_word_code`. `Finite_Term_Object_Words` retains complete artifacts
+in the first-occurrence table and converts each entry to rows once for the emitted table, not at each occurrence.
+`Indexed_Term_Words` replaced the table's linear search by an ordered tree of sized row keys
+(`compared_artifact_rows`), one comparison of three outcomes per node, the keys computed in parallel and the
+references segment by segment (`keyed_segmented_references`). Both lower the constant of a lookup and leave its
+count: every occurrence is identified by its value, and a lookup that finds its value ends in a comparison of two
+equal values, which walks both whatever order it takes — the fact #292's entry rests on. The term the word receives
+is plain: an occurrence carries nothing that says it is an earlier one, so any identification by value walks it,
+and the occurrences are the square of the generations.
+
+Open 101 (a found key costs two equal comparisons) is already applied here: `Keyed_Value_References.rbt_compared_lookup`
+compares once per node, so the one equal walk left per found occurrence is what no comparison removes. This decision
+neither takes Open 101 nor makes it more needed: after it the word compares references, which are numbers, and Open
+101 bears only where whole terms stay keys.
+
+### The decision
+
+| Earlier proposal or state | Correction |
+|---|---|
+| #324's follow-up 1: the report's value over the shared subterms of its generations — each generation and certified cause entered once where it is recorded, snapshots and transaction results referring to them, the word's first-occurrence table read off the shared table. | Taken, with its three roles placed at three levels. The sharing is made in the published state's representation, at its targets: a target is entered once where it is made, and a generation holds references to its targets. It is presented by the publication notions' presenters over a term presentation. It is read by the word over shared terms, stated once for any report. The seed publication is the first use; no level is the seed's alone. |
+| The word of any report's term computed over the shared subterms of that term, the table built from the finished term. | Not taken: the term is plain, and building its table enters every occurrence's target leaf by value, ending each repeated one in the same comparison of equal values. The word over shared terms takes its table from where the values were made. |
+| #292: "the table is fixed at the requests … a table extended as the traversal constructs is the extension for that case, unbuilt, at a measured need." | The need is measured (#324). The round's table is extended where its targets are made — each prepared judgment's payload and cause, each problem's loci — before anything refers to them, and nothing is entered twice where its sameness is known by construction. |
+
+**The notion and where each role belongs.** The notion is `Shared_Term_Tables`: a term over the first-occurrence
+table of its distinct subterms, a reference deciding equality, nothing the table holds walked. Its table here holds
+target leaves: the targets the round makes. Three roles, three levels:
+
+- *Made: the published state's representation.* A generation of the round is a `generation_structure` whose targets
+  are references into the round's table; its decoding is `map_generation_structure` of the table's reading, injective
+  on the table's positions, so it preserves the whole recursive generation (`Generation_Identity_Maps`). Snapshots,
+  transactions and their results are the finite transaction operations at that representation: equal generations
+  compare as numbers and small structure, and a snapshot holds references, not copies. Every target is entered once
+  where it is made: the payload and the cause of each prepared judgment (the judgment is made once per key, and every
+  generation recorded with that key holds the key's references), and each problem's and the selection's loci. This
+  level is general: any round of publications may hold its generations so; the seed round is the first.
+- *Presented: the publication notions' presenters over a term presentation.* The presenters of generations,
+  snapshots, transaction results and observations, and the pair, option, sequence and collection presentations they
+  are composed of, are stated once over `Presented_Term_Matching`'s `term_presentation`, with the target presenter an
+  argument, as `Finite_Presented_Structures.finite_generation_value` already takes it. At the plain presentation with
+  `Finite_Target` each is the existing presenter; at the round's `table_presentation` (`Shared_Call_Closures`) with
+  `Shared_Reference` each gives a canonical shared term, every target leaf a reference. A collection is ordered by the
+  order of the decoded terms, computed through the presented view.
+- *Read: the word over shared terms.* One operation for any report whose value arrives over a table: the targets'
+  references in traversal order, their first-occurrence run over numbers, the rows key of each distinct reference's
+  artifact computed once, the keyed run over those keys, the composed indices consumed as the word consumes them. Its
+  cost is a number comparison per occurrence and the rows of each distinct target once.
+
+**Its obligations at each use.** B1 needs of a shared term only that it decodes; it proves the word of the decoding.
+The round (B4) proves what `Shared_Term_Tables`' contract asks of an instance and nothing more: its table is formed
+(distinct leaf shapes, by the first-occurrence law of `keyed_reference_step`; no pairs, so subterm-closed), its key is
+injective on target leaves, and its presented terms are canonical (every target leaf a reference, the table holding
+nothing else); the four obligations are consumed as the notion states them.
+
+**What it does not claim.** No reference is a subject: none is presented, none enters a word, none is compared across
+two rounds, and the order in which the round enters its targets decides references and nothing else; each round builds
+its own table. The report's value and every word are the decoded ones. Nothing is claimed of cost beyond #324's
+figures; the entries and what they save are observations of a use.
+
+**Why, in the owner's terms.** The published state holds a target many times over and says nothing of it, so the word
+walks every copy to find that it is one. "Even implementation should be structural with the non-structural efficiency
+as a structurally presented idea that can be applied", and "if structure is used then it needs to be explicit" (the
+owner, 2026-09-19): holding each target once where it is made is that structure made explicit, and the saving follows
+from it — not from a summary that decides nothing, and not from the runtime's sharing, which no structure shows.
+
+### How every word stays equal
+
+The retained word is `finite_term_shared_word_fold sink (development_seed_publication_value development_seed_unanswered)
+(0,0)`, as `tools/check_presented_report.py` writes it. After B4 the recipe's publication presentation calls a new
+constant defined as exactly that, `development_seed_publication_word_fold f A z ≡ finite_term_shared_word_fold f
+(development_seed_publication_value A) z`, whose code equation computes the word over the reference round's shared
+presentation, proved from three laws:
+
+1. (B1) for every table `T` and shared term `s` with `shared_decode T s = Some t`, the shared word of `s` is
+   `finite_term_shared_word_fold f t z` — no formation and no canonicity needed: an equal reference reads an equal
+   target, and distinct references with one artifact meet at its rows key;
+2. (B3) every presenter over a presentation decodes to the plain presenter at the decoded value;
+3. (B2, B4) the reference round decodes to `development_seed_publication A`, by the transactions' law under a decoding
+   injective on the targets that occur, and by the recordings' field contracts.
+
+So the shared term decodes to `development_seed_publication_value A`, and the bits are equal by definition and proof.
+The factoring B1 needs — a reference sequence of `map f xs` is the composition of the first-occurrence sequence of `xs`
+with the reference sequence of `f` over its distinct values — is the general form of `Value_Reference_Identity_Maps`,
+which needs `f` injective; here `f` takes a reference to its artifact's key, and two references may share an artifact.
+
+**What keeps its definitions and code equations.** The machinery state expands the loop's notions and the constants
+their definitions mention, the admitted publication (`Development_Admitted_Publication`, which calls
+`finite_locus_publications`, `finite_transact` and `finite_locus_transaction` and presents by
+`finite_target_generation_value`) and the recording of a certified generation (`Development_Certified_Generations`)
+among them; the seed state expands the constants of the three paused refinement candidates. Every existing constant the
+builds touch keeps its definition and its code equations: the transactions of `RRA_Finite_Transactions` and
+`RRA_Formed_Snapshot_Transactions`, the presenters of `Finite_Presented_Collections`, `Finite_Presented_Structures` and
+`Development_Publication`, the recordings, `Complete_Value_References` (B1 adds a lemma there, no code attribute) and
+`finite_term_shared_word_fold`, so every other report's word is computed as it is. Every new operation is a new constant
+related to the existing one by a lemma, and every new code equation is attached to a new constant. The seed round's
+constants (`development_seed_publication`, `development_seed_publication_over`, `development_seed_publication_row_with`)
+are expanded by no recorded state — only `Development_Seed_Publication` and `Native_Development_Seed` mention them, and
+#128 attached its code equation there — so B4 may state them as instances of the round over a representation, their
+values equal. A builder that finds a constant it would change among a recorded state's entities stops and brings it to
+the planner.
+
+### The ways not taken, and what would reopen each
+
+**The seed publication's presentation alone** — the round unchanged, its results recomputed over references when it is
+presented, its other generations converted to references by value. It leaves about 360 target occurrences outside the
+results identified by value (each family's cause occurs six times there: the incumbent, the issue's predecessor, both
+answers and both answers' issues), about 6 s of CPU of the same equal walks by #324's per-cause figures, 1.5–2 s on four
+threads; it keeps the transactions' comparisons (2.4 s summed); and the presentation re-derives what the round knew.
+Reopened only if the round cannot be stated over its representation without changing a constant a recorded state
+expands.
+
+**A digest per artifact, made where the artifact is made** — a digest decides no equality, so every found occurrence
+still ends in an equal walk (#292's reason, unchanged).
+
+**Equality with a physical-identity shortcut in the generated code** — exact where it applies, but it reads the
+runtime's sharing, which the semantics does not state and a copy loses: a shortcut, not a notion, and no structure
+shows it. Not reopened.
+
+**Open 101's three-outcome comparison** — already the word's; it halves nothing further here.
+
+### The builds, in order
+
+None changes a word, and none enters the word chain. Each is a refinement whose acceptance is the check with every word
+equal; a word that moves is a finding for the planner and is not re-recorded.
+
+- **B1, the word over shared terms (one window; waits on nothing).** A new theory above `Shared_Term_Tables`,
+  `Indexed_Term_Words` and `Finite_Term_Words`, named for what it states (for example `Shared_Term_Words`):
+  `shared_term_word_fold` and its word, the exactness law 1, and its code (above); the factoring lemma in
+  `Complete_Value_References` beside `value_reference_sequence_segment`, with no code attribute; its row; the use named
+  in `REASONING_REUSE.md`'s row "A term over the shared subterms of a family of terms".
+- **B2, the transactions over any representation of targets (one window; waits on #355, which changes
+  `RRA_Formed_Snapshot_Transactions`).** A new theory above `RRA_Formed_Snapshot_Transactions` and
+  `Generation_Identity_Maps`: the operations the seed round and the admitted publication use — a snapshot's loci,
+  lookup and formation (the formation of a target a parameter), the locus transaction, comparison, update, observed
+  comparison, the body transaction and the body publications — over `'t generation_structure`, each with its law under
+  a decoding injective on the targets that occur (mapped after, it is the existing operation on the mapped arguments;
+  at exact targets and the identity, the existing constant), and the `Established_Premises` instance of the body
+  publications carried to any representation. `Generation_Identity_Maps` states a globally injective encoding; the form
+  injective on the targets that occur is stated beside it.
+- **B3, the publication notions' presenters over a term presentation (one window; waits on nothing).** A new theory
+  above `Presented_Term_Matching`, `Shared_Call_Closures`, `Development_Publication`, `Finite_Presented_Collections` and
+  `Ordered_Term_Comparison`: the data list, pair, option, sequence and collection presentations over `'p
+  term_presentation`, the collection ordered by the decoded terms' order through the presented view (an instance of
+  `Prefix_Key_Comparisons` whose key is the plain key of the decoded term; two equal presented terms compare equal
+  without their view); the generation, snapshot, transaction-result and observation presenters with a target presenter;
+  law 2 for each, and at `plain_term_presentation` with `Finite_Target` each equal to the existing constant.
+- **B4, the seed publication over references, and its word (one window, the held pair in it; waits on B1, B2, B3 and
+  #355).** `Development_Seed_Publication` and a theory above it as the change needs, `Native_Development_Seed`,
+  `tools/check_presented_report.py`, `tools/reconstruct_native_development_seed.py`. The round's table: the
+  first-occurrence table of target leaves built by `keyed_reference_step` at the target's rows key (its artifact's
+  `compared_artifact_rows` with its occurrence), each target entered once where made — the prepared judgments' payloads
+  and causes and the loci, before the parallel rows; a target made inside a row (an answer judged at its recording, its
+  family not prepared) entered after the rows by value. The round stated once over its representation, the plain round
+  its instance, proved equal; the reference instance decoding to `development_seed_publication A`, carrying #355's
+  established formation unchanged. The shared presentation by B3 at `table_presentation`, the instance's obligations
+  above, `development_seed_publication_word_fold` with its code equation, exported; a `--word` option in the runner (an
+  exported constant `c` with `c f x z = finite_term_shared_word_fold f (report x) z`, proved in its theory) and the
+  recipe's `presentation-publication` switched to it. Its tool change re-executes once every recipe that runs the
+  runner, so it lands best beside a change that re-executes them anyway. Acceptance: the check with every recorded word
+  equal; a held pair of the publication presentation before and after on one base (#324's instruments), with both
+  absolutes and the phases.
+
+### The saving, and what it leaves
+
+From #324's figures: the word's lookup falls from 28.15 s to the rows of the entered targets, computed once per
+distinct artifact (about 0.4 s), and number comparisons per occurrence — about 27.7 s of the harness; the transactions
+compare references — the round's 1.16 s and up to the rows' 1.28 s, whose share of the parallel rows' wall is not
+measured. About 29–30 s of the harness, 25–26 s at the recipe's scale: the publication presentation from 48.50 s to
+about 23 s held, and with #355's estimated 5–7 s to about 16–18 s. The occurrences stay the square of the generations,
+and now cost a number comparison each; the lookup's remaining cost grows with the distinct targets.
+
+What it leaves: the word's table, 3.51 s, which is the word itself (272 million bits of 63 distinct artifacts' rows),
+smaller only by a word change such as the cause's holding its payload twice (Open under "Development causes are
+certified under the first loop's policy"); the payload judgments, 8.12 s, of which certification is 93 %; the module
+load, 4.54 s. The machinery recipe's held seconds are not measured. In the landing checks of 2026-09-24 it took
+28.17–36.03 s unheld against the seed's 63.0–81.95 s; with both repairs the seed falls under it, the landing check saves
+the seed's excess over it, 31–46 s unheld, and the machinery recipe then sets the recipe phase — whether its
+presentations share this cause is its attribution, the next measurement if that phase is to fall. Every other report
+keeps its plain word; a report whose value holds values made once and presented many times takes B1 by presenting over
+the references made where its values are made.
+
+### Evidence and limits
+
+The decision rests on #324's held figures and one fact of comparison: an exact comparison of two equal values walks
+both, so any identification of a plain term's occurrences by value leaves the count of equal walks as it is, and only a
+representation in which a repeated value is one reference removes it. The savings are estimates from the measured costs
+of the operations the builds remove, not measurements of a repair; the entries' comparisons of unequal keys, the
+presented collections' ordering over references and the machinery recipe's held seconds are not measured. No theory
+changes here. This decision was made outside the loop and is a residual.
+
+Recorded 2026-09-24 (task 356).

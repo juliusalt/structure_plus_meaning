@@ -138,7 +138,7 @@ lemma native_decomposition_definitions:
 proof -
   have split: "set verdict_mentions_definitions=
       set (take 1 verdict_mentions_definitions)\<union>set (drop 1 verdict_mentions_definitions)"
-    by (rule finite_rule_program_prefix)
+    by (rule set_take_drop_union)
   have member: "set (take 1 verdict_mentions_definitions)\<subseteq>set verdict_rows_definitions"
     by (simp add: verdict_rows_definitions_def verdict_mentions_definitions_def)
   show ?thesis

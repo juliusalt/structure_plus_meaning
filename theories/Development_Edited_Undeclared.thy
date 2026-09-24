@@ -40,6 +40,67 @@ text \<open>
   Then the checked rows' mentions are declared in the answer state exactly when all its rows' and roots' are.
 \<close>
 
+text \<open>
+  The pointwise form: a key the answer state leaves undeclared is mentioned only by checked rows and roots,
+  since a row or root mentioning it is added, or was declared in the closed request state by a row the edit
+  removed, so the key is in the list. The witness of \<open>undeclared\<close> at the incremental part consumes it, and
+  so does the first direction of the universal form below.
+\<close>
+
+lemma edited_mentions_checked:
+  fixes Fs Fs' As Gs :: "'i state_family list" and Rs Rc :: "'j state_family"
+    and D :: "(state_key\<times>'i state_row) set" and decl decl' :: "state_key \<Rightarrow> bool"
+  assumes closed: "\<forall>F\<in>set Fs. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). decl q"
+    and closed_roots: "\<forall>z\<in>set Rs. \<forall>q\<in>set (row_mentions (snd z)). decl q"
+    and declared: "\<And>q. decl q \<Longrightarrow> \<exists>F\<in>set Fs. \<exists>w\<in>set F. q\<in>set (row_declared (snd w))"
+    and declared': "\<And>q. decl' q \<longleftrightarrow> (\<exists>F\<in>set Fs'. \<exists>w\<in>set F. q\<in>set (row_declared (snd w)))"
+    and rows: "(\<Union>F\<in>set Fs'. set F)=(\<Union>F\<in>set Fs. set F)-D \<union> (\<Union>F\<in>set As. set F)"
+    and keys: "\<And>z d. z\<in>D \<Longrightarrow> d\<in>set (row_declared (snd z)) \<Longrightarrow> d\<in>set ks"
+    and complete_added: "\<And>z. z\<in>(\<Union>F\<in>set As. set F) \<Longrightarrow> z\<in>(\<Union>F\<in>set Gs. set F)"
+    and complete_mentioning: "\<And>z a. z\<in>(\<Union>F\<in>set Fs'. set F) \<Longrightarrow> a\<in>set ks \<Longrightarrow>
+      a\<in>set (row_mentions (snd z)) \<Longrightarrow> z\<in>(\<Union>F\<in>set Gs. set F)"
+    and complete_roots: "\<And>z a. z\<in>set Rs \<Longrightarrow> a\<in>set ks \<Longrightarrow> a\<in>set (row_mentions (snd z)) \<Longrightarrow> z\<in>set Rc"
+    and undeclared: "\<not>decl' q"
+  shows "\<And>z. z\<in>(\<Union>F\<in>set Fs'. set F) \<Longrightarrow> q\<in>set (row_mentions (snd z)) \<Longrightarrow> z\<in>(\<Union>F\<in>set Gs. set F)"
+    and "\<And>z. z\<in>set Rs \<Longrightarrow> q\<in>set (row_mentions (snd z)) \<Longrightarrow> z\<in>set Rc"
+proof -
+  have mem: "z\<in>(\<Union>F\<in>set Fs'. set F) \<longleftrightarrow> (z\<in>(\<Union>F\<in>set Fs. set F) \<and> z\<notin>D) \<or> z\<in>(\<Union>F\<in>set As. set F)" for z
+    by (simp only: rows Un_iff Diff_iff)
+  have removed: "q\<in>set ks" if d: "decl q"
+  proof -
+    obtain F w where F: "F\<in>set Fs" "w\<in>set F" "q\<in>set (row_declared (snd w))" using declared[OF d] by blast
+    show ?thesis
+    proof (cases "w\<in>D")
+      case True
+      then show ?thesis using keys[OF True F(3)] by blast
+    next
+      case False
+      have "w\<in>(\<Union>F\<in>set Fs'. set F)"
+        using mem[of w] UN_I[where B=set, OF F(1) F(2)] False by (simp only: simp_thms)
+      then have "decl' q" unfolding declared' using F(3) by blast
+      then show ?thesis using undeclared by blast
+    qed
+  qed
+  show "z\<in>(\<Union>F\<in>set Gs. set F)" if zR': "z\<in>(\<Union>F\<in>set Fs'. set F)" and q: "q\<in>set (row_mentions (snd z))" for z
+  proof (cases "z\<in>(\<Union>F\<in>set As. set F)")
+    case True
+    then show ?thesis by (rule complete_added)
+  next
+    case False
+    then have "z\<in>(\<Union>F\<in>set Fs. set F)" using zR' mem[of z] by (simp only: simp_thms)
+    then obtain G where "G\<in>set Fs" "z\<in>set G" by (rule UN_E)
+    then have "decl q" using closed q by blast
+    then have ks: "q\<in>set ks" by (rule removed)
+    show ?thesis by (rule complete_mentioning[OF zR' ks q])
+  qed
+  show "z\<in>set Rc" if z: "z\<in>set Rs" and q: "q\<in>set (row_mentions (snd z))" for z
+  proof -
+    have "decl q" using closed_roots z q by blast
+    then have ks: "q\<in>set ks" by (rule removed)
+    show ?thesis by (rule complete_roots[OF z ks q])
+  qed
+qed
+
 lemma edited_mentions_closed:
   fixes Fs Fs' As Gs :: "'i state_family list" and Rs Rc :: "'j state_family"
     and D :: "(state_key\<times>'i state_row) set" and decl decl' dr :: "state_key \<Rightarrow> bool"
@@ -63,8 +124,6 @@ lemma edited_mentions_closed:
     (\<forall>F\<in>set Fs'. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). decl' q) \<and>
       (\<forall>z\<in>set Rs. \<forall>q\<in>set (row_mentions (snd z)). decl' q)"
 proof -
-  have mem: "z\<in>(\<Union>F\<in>set Fs'. set F) \<longleftrightarrow> (z\<in>(\<Union>F\<in>set Fs. set F) \<and> z\<notin>D) \<or> z\<in>(\<Union>F\<in>set As. set F)" for z
-    by (simp only: rows Un_iff Diff_iff)
   show ?thesis
   proof
   assume inc: "(\<forall>F\<in>set Gs. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). dr q) \<and>
@@ -80,56 +139,31 @@ proof -
     have "dr q" using inc z q by blast
     then show ?thesis using restricted_roots[OF z q] by blast
   qed
-  have kept_or_removed: "decl' q \<or> q\<in>set ks" if d: "decl q" for q
-  proof -
-    obtain F w where F: "F\<in>set Fs" "w\<in>set F" "q\<in>set (row_declared (snd w))" using declared[OF d] by blast
-    show ?thesis
-    proof (cases "w\<in>D")
-      case True
-      then show ?thesis using keys[OF True F(3)] by blast
-    next
-      case False
-      have "w\<in>(\<Union>F\<in>set Fs'. set F)"
-        using mem[of w] UN_I[where B=set, OF F(1) F(2)] False by (simp only: simp_thms)
-      then have "decl' q" unfolding declared' using F(3) by blast
-      then show ?thesis by (rule disjI1)
-    qed
-  qed
   have rows_all: "\<forall>F\<in>set Fs'. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). decl' q"
   proof (intro ballI)
     fix F z q
     assume F: "F\<in>set Fs'" and z: "z\<in>set F" and q: "q\<in>set (row_mentions (snd z))"
     have zR': "z\<in>(\<Union>F\<in>set Fs'. set F)" by (rule UN_I[where B=set, OF F z])
     show "decl' q"
-    proof (cases "z\<in>(\<Union>F\<in>set As. set F)")
-      case True
-      then have "z\<in>(\<Union>F\<in>set Gs. set F)" by (rule complete_added)
-      then show ?thesis using rows_checked q by blast
-    next
-      case False
-      then have "z\<in>(\<Union>F\<in>set Fs. set F)" using zR' mem[of z] by (simp only: simp_thms)
-      then obtain G where "G\<in>set Fs" "z\<in>set G" by (rule UN_E)
-      then have "decl q" using closed q by blast
-      then consider "decl' q" | "q\<in>set ks" using kept_or_removed by blast
-      then show ?thesis
-      proof cases
-        case 2
-        have "z\<in>(\<Union>F\<in>set Gs. set F)" by (rule complete_mentioning[OF zR' 2 q])
-        then show ?thesis using rows_checked q by blast
-      qed
+    proof (rule ccontr)
+      assume undeclared: "\<not>decl' q"
+      have "z\<in>(\<Union>F\<in>set Gs. set F)"
+        by (rule edited_mentions_checked(1)[OF closed closed_roots declared declared' rows keys complete_added
+          complete_mentioning complete_roots undeclared zR' q])
+      then show False using rows_checked q undeclared by blast
     qed
   qed
   have roots_all: "\<forall>z\<in>set Rs. \<forall>q\<in>set (row_mentions (snd z)). decl' q"
   proof (intro ballI)
     fix z q
     assume z: "z\<in>set Rs" and q: "q\<in>set (row_mentions (snd z))"
-    have "decl q" using closed_roots z q by blast
-    then consider "decl' q" | "q\<in>set ks" using kept_or_removed by blast
-    then show "decl' q"
-    proof cases
-      case 2
-      have "z\<in>set Rc" by (rule complete_roots[OF z 2 q])
-      then show ?thesis using roots_checked q by blast
+    show "decl' q"
+    proof (rule ccontr)
+      assume undeclared: "\<not>decl' q"
+      have "z\<in>set Rc"
+        by (rule edited_mentions_checked(2)[OF closed closed_roots declared declared' rows keys complete_added
+          complete_mentioning complete_roots undeclared z q])
+      then show False using roots_checked q undeclared by blast
     qed
   qed
   show "(\<forall>F\<in>set Fs'. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). decl' q) \<and>

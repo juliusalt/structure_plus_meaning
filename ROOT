@@ -1853,4 +1853,5 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Edited_Undeclared
     Development_Edited_Reach
     Development_Incremental_Verdict
+    Development_Incremental_Witnesses
     Development_Row_Presentations

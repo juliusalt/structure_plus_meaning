@@ -27,13 +27,25 @@ contract and two instances (#42, `Development_Native_Verdict`). #44 landed store
 `Development_Verdict_Witnesses`), so that no positive field reaches an absence; its review found the same discharge and
 the same two correspondences proved on both sides of the fields and their witnesses, which #288 states once, with the
 witness at the request's presentation — the lemma a native repair consumes — resting on the discharge (after #285 and
-#284). The witnesses of `unpermitted_removed`, `unpermitted_added` and `unreached` are unbuilt (Open 90). #290 attributes and fixes the joined verdict program's demand, which explodes with the state where
-the field program's does not: the machinery state's bare reach demand is 1.05 s in `finite_verdict_unreached` and did
-not end in 150 s in `finite_native_verdict`, while at the seeded state the two agree — so no native judgment of a whole
-state can be measured, and #194's stage measurement and #278's own figure wait on it (#278 continues when it lands; the
-suspects are `finite_interface_fits`' per-premise interface scan and a site of the joined program whose applications
-differ). #278
-reflects `native_verdict_system` and measures one judgment held at the seeded and machinery states beside a bare reach
+#284). The witnesses of `unpermitted_removed`, `unpermitted_added` and `unreached` are unbuilt (Open 90). #290 attributed the cost of a native judgment over a whole
+state and repairs it. Its attribution corrected the premise that sent it: the joined program does compute the
+machinery's bare reach demand (1.0 s), and what never ended in #278's first run was `fcard` of the demand — a quadratic
+`remdups` with left-first structural equality over calls carrying the whole reach table, about 70 s of CPU with no
+allocation, so no engine fault ever blocked that measurement (#278 counts by `keyed_rows` now, 0.10 s). The whole
+machinery judgment's demand is 32.5 s for 13,364 calls against 1.0 s for 2,985 at the seed — thirty times the seconds
+for four and a half times the calls — of which 22 s are call-key comparisons at `verdict_found_search`, where
+`store_found_rule` puts the store on the right and the right-first call key compares it whole before the path (3.3 ms an
+insertion at the machinery, 0.33 ms at the seed), and 5.2 s the per-call formation re-check. #290 repairs both: the
+formation check through `Established_Premises`, and the key — not the programs. The planner refused rearranging
+`native_store_search_rules` to put the store left of the path (q74): that would change the argument arrangement of every
+program using the search for the order in which one key meets its components, which is the implementation dictating the
+structure, and `Right_Ordered_Terms`' own entry records that which component distinguishes two terms is a convention of
+the programs that build them. Instead a composite call key is stated once with its contract — its three-outcome
+comparison the same order as the existing key's, a cheap component (the library's sized shape of
+`Keyed_Value_References` and `Indexed_Term_Words`, or a per-call digest) deciding only where it differs and falling back
+to the full key where it agrees — and interpreted at `native_call_key`; #194's stage measurement and #278's figure
+follow it. #278, re-planned to what it left,
+measures the machinery judgment held after #290, its theory work and the seeded and reach figures landed
 — the baseline for #194 and condition 5a's figure, estimated at about four reaches. #279 landed the exporter's
 obligation `isabelle_declared_once` at every state the exporter defines (#256, #267, #274, `ab37086e`): its measurement
 (`.build/tasks/279/measurement.md`) took the spine conversion from 0.20 s to 0.107 s at the machinery's 340 entities
@@ -295,8 +307,8 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   sections of 2026-09-24, `DECISIONS.md` without the overnight checkpoint, the owner's retirement of `ADMISSION.md` and
   `proposal.txt` committed (#281, `7c0c0422`); every theory its `THEORY_MAP.md` row, the 138 stale imports columns
   re-read, the dated "Reuse (section)" labels retired (39 re-pointed, 78 dropped) and Q9's tracked `.pyc` removed
-  (#282, `f1f3ca02`). #291 takes the statements those two left: three plan sentences the standing contradicts,
-  `DECISIONS.md`'s preamble citing the workflow document, and fifteen rows that restate themselves.
+  (#282, `f1f3ca02`); the statements those two left — three plan sentences the standing contradicts, `DECISIONS.md`'s
+  preamble citing the workflow document, and fifteen rows that restated themselves (#291, `ab0e6800`).
 - **Checking and tools**: the replay's `unproduced` (#48), the check's named refusals (#50), the probe's default,
   summary and tree loads (#79, #175, #229, #271), the host-test record (#122), the heaps at the lasting place
   `.build/tasks/base-lasting/` (#144), receipts as boundaries (#145), the host tests' waits (#217), the seed recipe's
@@ -454,6 +466,15 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     are next re-established (#161 or #167).
 88. The next change to `Native_Collection_Programs`: three blank lines near `native_every_program`; `read_clause`'s
     `read` premise rebinding `c`.
+94. **What the documents' passes left, each at the next edit of its file** (#291's review): in the plan, "Useful cost
+    and evidence" ends with the batch "stopping at a type error in the seeded problems" without naming what settled it
+    (the entry "Seeded contracts and dependencies computed"); "Basis of this revision" says native states represent the
+    repository's development where they represent part of it, the seeded roots and the loop's notions with their
+    constituents; and the acceptance bullet still presents `Finite_Observation_Contracts` as the export of checked
+    theorems read only by host tools, beside `Isabelle_Entity_Export`'s natively read definitions. In the map, three
+    rows still restate themselves (`Factor_Constructed_Program_Applications`, `Factor_Demanded_Program_Calls`,
+    `Keyed_Native_Evaluation`) and `Factor_Demanded_Graph_Readings`' clause is garbled — mailed to #290, which may write
+    those rows; a pass after it lands otherwise.
 93. **The twelve storage report theories prove no word identity** (#282's review): `Artifact_Lookup_Presentation` to
     `Generation_Record_Presentation` and `Data_Reading_Presentation` state no `*_report_value_exact` or
     `*_report_word_exact`, unlike the four cause-family report presentations, so nothing proves that their retained

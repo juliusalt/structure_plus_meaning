@@ -1,7 +1,7 @@
 {
- "base_receipt_sha256": "710bcbc99071e5c66de3766ebd363eb5380e7522cf6c395b7bb98f69efae3467",
+ "base_receipt_sha256": "9332d061238a9574f28c5f23875b7ee2c0a6ae11a884c82cf5eadb82d9ec4605",
  "base_theories": 1838,
- "checked_content_sha256": "5cd2758627b6f15330cc02c3009d325f26e382a0ba1040d531874eb45b599efe",
+ "checked_content_sha256": "73a1c4f054d0f8a6e85c92a5b1bceb4acc12a64286e5319e5ad3bad4b2d5e962",
  "complete_native_reports": 74,
  "executed_recipes": 0,
  "host_tests": {
@@ -14,14 +14,14 @@
    "skipped": 0
   }
  },
- "incremental_proof_theories": 57,
+ "incremental_proof_theories": 98,
  "phase_seconds": {
-  "base_and_impact": 0.3,
-  "execution_impact": 0.06,
-  "export": 11.99,
-  "proof": 287.5,
-  "recipe_impact": 0.57,
-  "recipes_and_host_tests": 11.06
+  "base_and_impact": 0.38,
+  "execution_impact": 0.07,
+  "export": 13.13,
+  "proof": 213.67,
+  "recipe_impact": 0.46,
+  "recipes_and_host_tests": 11.77
  },
  "reused_recipes": 2,
  "source_only_reconstructions": [
@@ -350,20 +350,20 @@
    "recipe": "native-development-machinery",
    "reports": 5,
    "source_files": 995,
-   "source_manifest_sha256": "be1c43991009453b8ed61da915ea693d25f23fa144886a915c9e26e339be2e9e",
+   "source_manifest_sha256": "4e6947a3874e1fe48d50904cea06a495d89ff159e5294fa98ebe9ec9d7dad5d2",
    "theories": 971,
    "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "a7d47d4f0851d2ce86d08d97ea175cd0add99213c5ce12fbb6682eb9cd8d181b"
+   "verification_sha256": "a83919efa6e12e8112f3f002dc8e48ea8d400a0c837df72698e593e9014526dd"
   },
   {
    "python_modules": 23,
    "recipe": "native-development-seed",
    "reports": 12,
    "source_files": 997,
-   "source_manifest_sha256": "7d67a5dce8faa757c932f6818e0f0c1cfae7197cd379f6b0a7efc4f28ad5b12e",
+   "source_manifest_sha256": "097f1e5ef4a3ab1f20c7b3020dfdb3a80e733a6cad945b79701dbb08ca0def58",
    "theories": 973,
    "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "34cdd8afe02d20b718544651c49b0d85e0714653176e85214beb8367ae2e04a0"
+   "verification_sha256": "7c649d996d41f6395a5a8262c4e2f3a94e45b29661f386de77f011a17ff3770e"
   },
   {
    "python_modules": 23,
@@ -547,7 +547,7 @@
   }
  ],
  "status": "accepted",
- "total_seconds": 337.51,
+ "total_seconds": 268.21,
  "unchanged_recipes": 50,
  "workspace_theories": 1838
 }

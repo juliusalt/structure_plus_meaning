@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "c96c663529204f77f3bf5d8096610ef6a0dfe7b6bc174508eaa5ea707808a7cd",
- "checked_content_sha256": "72fc7a4e1923a772b485d1b1a519b112fd086c659eb1205af2222e1921a35a63",
+ "base_receipt_sha256": "2f496e97b61ab6b4fad8614f794c3105d6fedba575edd9b308533ea59d57ee34",
+ "checked_content_sha256": "46c90eb9c42811fd5b0f118d583499fe818d90424b6ad6bb88eff19525dd0da2",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,56 +17,47 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp493b4ulc/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpq59rf3h8/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.44,
-  "execution_impact": 0.06,
-  "export": 27.96,
-  "proof": 213.48,
-  "recipe_impact": 0.66,
-  "recipes_and_host_tests": 11.56
+  "base_and_impact": 0.41,
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "proof": 229.22,
+  "recipe_impact": 0.52,
+  "recipes_and_host_tests": 11.59
  },
  "rebuilt_theories": [
-  "Development_Edited_Local",
-  "Development_Edited_Reach",
-  "Development_Edited_Undeclared",
-  "Development_Exported_Edit",
-  "Development_Incremental_Verdict",
-  "Development_Incremental_Witnesses",
-  "Development_Library_Issue",
-  "Development_Located_Rows",
-  "Development_Loop_Presentations",
-  "Development_Machinery",
-  "Development_Machinery_Reports",
-  "Development_Native_Answers",
-  "Development_Native_Decomposition",
-  "Development_Native_Request",
-  "Development_Native_Verdict",
-  "Development_Package_Program",
-  "Development_Request_Citations",
-  "Development_Request_Keys",
-  "Development_Request_Scope",
-  "Development_Row_Contexts",
-  "Development_Row_Data",
-  "Development_Row_Presentations",
-  "Development_Rows",
-  "Development_Seed",
-  "Development_Seed_Loop",
-  "Development_Seed_Publication",
-  "Development_Seed_Referenced_Publication",
-  "Development_Seed_Verification",
-  "Development_State_Edit",
-  "Development_Subject_Index",
-  "Development_Verdict_Difference",
-  "Development_Verdict_Mentions",
-  "Development_Verdict_Statements",
-  "Development_Verdict_Unreached",
-  "Development_Verdict_Witnesses",
-  "Native_Development_Machinery",
-  "Native_Development_Seed"
+  "Admitted_Conditional_Applications",
+  "Cached_Faceted_Questions",
+  "Certificate_Construction_Review",
+  "Conditional_Application_Review",
+  "Development_Native_Package",
+  "Development_Verification_Frame",
+  "Faceted_Native_Questions",
+  "Factor_Finite_Closed_Installation",
+  "Material_Application_Observations",
+  "Native_Control_Admitted_Selection",
+  "Native_Control_Cause_Continuation",
+  "Native_Control_Cause_Review",
+  "Native_Control_Child_Review",
+  "Native_Control_Closed_Installation",
+  "Native_Control_Constructed_Source_View",
+  "Native_Control_Finite_Guard",
+  "Native_Control_Guard_Construction",
+  "Native_Control_Guard_Execution",
+  "Native_Control_Guard_Source",
+  "Native_Control_Guard_Transport",
+  "Native_Control_Installed_Guard",
+  "Native_Control_Prepared_Cause_Review",
+  "Native_Control_Receiving_Controls",
+  "Native_Control_Receiving_Review",
+  "Native_Control_Reviewed_Receiving",
+  "Native_Control_Selected_Root",
+  "Native_Control_Source_Execution",
+  "Native_Control_Sourced_Children"
  ],
  "recipes": {
   "allocated-environments": {
@@ -166,14 +157,10 @@
    "status": "unchanged"
   },
   "native-development-machinery": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-development-seed": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -230,19 +217,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1826,
- "seconds": 300.18,
+ "reused_theories": 1838,
+ "seconds": 288.8,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1863,
+  "theory_count": 1866,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1863,
+ "theories": 1866,
  "validation_inputs": {
-  "ROOT": "0d7729dcdcf63039e45264226851ca4ad780163d3763b62ce5e0fca9601c681b",
+  "ROOT": "853358582d3d1f606a0eb25f2d09405192d5608359094b18c1e619abaab472ed",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

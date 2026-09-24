@@ -1,7 +1,7 @@
 {
- "base_receipt_sha256": "c96c663529204f77f3bf5d8096610ef6a0dfe7b6bc174508eaa5ea707808a7cd",
+ "base_receipt_sha256": "2f496e97b61ab6b4fad8614f794c3105d6fedba575edd9b308533ea59d57ee34",
  "base_theories": 1863,
- "checked_content_sha256": "72fc7a4e1923a772b485d1b1a519b112fd086c659eb1205af2222e1921a35a63",
+ "checked_content_sha256": "46c90eb9c42811fd5b0f118d583499fe818d90424b6ad6bb88eff19525dd0da2",
  "complete_native_reports": 74,
  "executed_recipes": 0,
  "host_tests": {
@@ -14,16 +14,16 @@
    "skipped": 0
   }
  },
- "incremental_proof_theories": 37,
+ "incremental_proof_theories": 28,
  "phase_seconds": {
-  "base_and_impact": 0.44,
-  "execution_impact": 0.06,
-  "export": 27.96,
-  "proof": 213.48,
-  "recipe_impact": 0.66,
-  "recipes_and_host_tests": 11.56
+  "base_and_impact": 0.41,
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "proof": 229.22,
+  "recipe_impact": 0.52,
+  "recipes_and_host_tests": 11.59
  },
- "reused_recipes": 2,
+ "reused_recipes": 0,
  "source_only_reconstructions": [
   {
    "python_modules": 23,
@@ -352,7 +352,7 @@
    "source_files": 1015,
    "source_manifest_sha256": "258f71ed9df2b80b0fb59f273ea4cd809c74dcb9f60e9f6656cd548d0318339d",
    "theories": 991,
-   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "validation": "unchanged complete manifest; retained verification applies",
    "verification_sha256": "033953048e3003f1bcc951fc983ff3160e672a0e0ae35fa032d66e7162f624f3"
   },
   {
@@ -362,7 +362,7 @@
    "source_files": 1010,
    "source_manifest_sha256": "a7f4508c1cb9cfdcecd79057bdc7935b9519ce075ebf2dd5bc8bac11ae250cba",
    "theories": 986,
-   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "validation": "unchanged complete manifest; retained verification applies",
    "verification_sha256": "ff4a23a7b3dd9ba3032bf7a11e7bbfa219db636b949217d29fcc5945e397a48e"
   },
   {
@@ -547,7 +547,7 @@
   }
  ],
  "status": "accepted",
- "total_seconds": 300.18,
- "unchanged_recipes": 50,
- "workspace_theories": 1863
+ "total_seconds": 288.8,
+ "unchanged_recipes": 52,
+ "workspace_theories": 1866
 }

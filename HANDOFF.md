@@ -52,13 +52,14 @@ and #422 landed):
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
   frame (#405, after #422: parts (a)–(d) and (f)) and harness (#407).
 
-N2a (#340, landed: `package_program`) and N2b (#342) join and compile the development package (#320's entry, as #376
-corrects it), the given the first answers extend; the given's installation waits on N2b. The readers' presentation (#412) derives in about 132 s,
+N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
+corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
+publication needs (#343's review, follow-up 2, mailed to #414 and #395). The readers' presentation (#412) derives in about 132 s,
 reducing the whole complete-data lineage again (implement-412, q89): the fix after #412, continuing it, derives it from
 its parts', and at its landing #393's brief gains that derivation, so that the guard's extension reduces only what it
 adds.
 
-**Beside the route**: the bootstrap loop's maintenance — the replay of the retained answers after #369 (#430); and #426, #341's, #388's and #375's follow-ups
+**Beside the route**: the bootstrap loop's maintenance — #426, #341's, #388's and #375's follow-ups
 over the joined program's, the audit's and the collection programs' generic content (after #342 and #418). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
 N3b, N4a and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93)
 and the machinery's verification stage judged natively (#193, #194).
@@ -76,12 +77,12 @@ exporter's obligations at every state it defines (#227–#308, #352).
 by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The deepest chains are 9: #424 → #416 → #418 → #393 → #397 → #399 → #401 →
-#407 → #408, and through the given #391 → #412 → #414 → #393 → …; from the native package one shorter (#342 → #414).
+#407 → #408, and through the given #391 → #412 → #414 → #393 → ….
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #424 and #391 at its head, then #412 and the fix deriving its presentation from its parts,
-#342, #414, #416, #418, #410, #405 and the rest in their chains' order, #425 before the posing it serves; then
-#426 and #430; each review after its build.
+#414, #416, #418, #410, #405 and the rest in their chains' order, #425 before the posing it serves; then
+#426; each review after its build.
 
 ## Decisions
 
@@ -236,7 +237,7 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   satisfying a callee's predicate, G3 its instance (its review's follow-ups: G3's absence is key absence (20), carried
   into #412, #418 and the marked corrections #412 makes; evaluability, numbers and agreements into #391; the
   clause-family consumption Open 129); #354, the rows line's presenters proved in their domains (its review's
-  follow-ups 1 and 4–6 landed as #429, `263069e0`, its own review's follow-ups Open 135; 2 and 3 are #430 and Open 130); #375, the listed-family law's re-citations (its review's
+  follow-ups 1 and 4–6 landed as #429, `263069e0`, its own review's follow-ups Open 135; 2 confirmed by #430 (every word equal), 3 Open 130); #375, the listed-family law's re-citations (its review's
   follow-up 4 in #426, the rest Open 131).
 - **#425** (investigation, accepted): an indexed generation's 8 s is `value` compiling the term's whole closure; the
   generation executes in 0.385 s plain, 0.011 s with `Native_Execution_Refinements`; the second quotation costs
@@ -247,6 +248,10 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   a renamed use through `native_syntax_copy`; uses compared as data); its review's follow-ups
   (`.build/tasks/423/review.md`) 2, 3 and 5 are in #424 (the use-pair action stated there, beside the data clauses,
   and cited by #418), 4 in #405, 1 Open 132.
+- **Landed with `7d623e15`**: #342, N2b, the joined program compiled once into a closed package — one root per notion's
+  entry, every contract at its entry, the program scope, the finite `development_package_environment`; its reach
+  certified by code_simp at every rebuild (about 12 s sequential); its review's follow-ups (`.build/tasks/343/review.md`)
+  2 mailed to #414 and #395, 1 and 3 Open 136.
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
@@ -422,8 +427,10 @@ rows, the prepared cache's `map_of`). 128 "The in-place refinements apply two no
 `development_seed_publication_from_published` as a present consumer: a marked pointer at its next change (#428's
 follow-up 1). 129 `Factor_Package_Additions`' element and entry meanings consuming `Factor_Clause_Family_Rules` and
 `argument_call_clause` (#390's review). 130 the verification theory computing the refinement verdict and the repair in
-`development_answer_verdict`, and the admitted publication again (#354's review, follow-up 3): counted by #430, shared
-at a measured need (bootstrap). 131 #375's review (`.build/tasks/375/review.md`, follow-ups 1–3, 5): its two new double
+`development_answer_verdict`, and the admitted publication again (#354's review, follow-up 3): counted by #430
+(`.build/tasks/430/replay.md`): the admitted publication is evaluated twice per judged answer, by the publication value
+and by the summary, 8.9 s of identity's 26 s presentation run and 22.6 s of outside-support's 54 s; the repeated
+verdicts and extensions cost under a second together; shared at a measured need (bootstrap). 131 #375's review (`.build/tasks/375/review.md`, follow-ups 1–3, 5): its two new double
 blank lines; each `*_listing` restating its `*_rules` definition's patterns, stated once; task 374's entry's "six
 families" naming seven; `verdict_entry_family` and `malformed_witness_family` as listed instances at a consumer. 132
 `Factor_Use_Renaming.map_citation_positions_id` beside `RRA_Structural_Syntax.map_citation_positions`, at the next
@@ -431,13 +438,18 @@ build that edits `RRA_Structural_Syntax` (#423's review, follow-up 1). 133 #369'
 the replay path's costs at a re-record's measured need (bootstrap): a failed shared session reusing its accepted
 members' proofs (what an accepted proof context is, `proved_code`); `failed-proof` started beside the shared proof
 session; the two shared sessions' load of the frames' theories attributed; `present` through the parallel runtime,
-measured at the machinery's state. 134 #369's review, follow-ups 6 and 7: `prove_answers` resolving its `output`
+measured at the machinery's state; the pool's longest-first order once the records retain their seconds (about 27 s
+of a 346 s replay lost to imbalance, #430). 134 #369's review, follow-ups 6 and 7: `prove_answers` resolving its `output`
 itself; a re-record's `steps` naming `presentation` and `export`. 135 #429's review (`.build/tasks/429/review.md`):
 the framed-verdict domain facts stand in the leaf `Development_Row_Contexts`, read by nothing — moved below both
 families only if a state or the verification theory comes to read them (bootstrap: not planned);
 `development_refinement_requests_member` beside `development_refinement_request`, the seed's family lemma consuming it,
 at that theory's next change; a domain lemma for the definition verdict's word if the harness comes to frame machinery
-answers (bootstrap); the rows-in-context note's full names at the entry's next touch.
+answers (bootstrap); the rows-in-context note's full names at the entry's next touch. 136 #343's review (`.build/tasks/343/review.md`),
+follow-ups 1 and 3: `Factor_Native_Node_Cases.native_node_empty_environment` and
+`Factor_Native_History_Cases.native_history_empty_program` reading the generic `finite_empty_environment` and
+`empty_installation_program`, at the case theories' next edit; the package's reach, evaluated by code_simp at every
+rebuild (about 12 s), certified once for the whole program if the notions grow, measured first.
 
 ## Now
 
@@ -447,15 +459,12 @@ answers (bootstrap); the rows-in-context note's full names at the entry's next t
 - **q90** (implement-412, parked on it until #391 lands, no park kind waiting on a task): left unanswered, so that it
   does not wake with nothing to do; when #391 lands, answer it — "#391 has landed; bring main in and take the boundary
   readers in their new shape" — unless `v2.py after 412 391` has already woken it.
-- **#342's reach certificate** (its review's finding 3; implement-342's report and q91): the demanded traversal's
-  fset steps do not evaluate under code_simp within the probe bound (request construction over 40 s); told to evaluate
-  its keyed refinement (`Keyed_Demanded_Sites.keyed_demanded_sites_exact`) instead of its own walk. If that too misses
-  the bound, a fix task states a list code equation of `finite_demanded_sites` beside its notion and retires the walk.
+
 - **Classifier stops**: a classifier stopped plan-51 to plan-54, plan-56 and plan-58 to plan-62 before their notes, and
   #323's fixer once; each next planner took up what HANDOFF.md held, and nothing was missing. Repeated declines are the
   run's to handle, not ledger questions (the owner, through the monitoring session, 20:23 and 20:28).
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (#168's review,
-  follow-up 7); `measuring --shared` wrote no `measurements.log` (#307's runs, #306's review); bases swept before a
+  follow-up 7); `measuring --shared` wrote no `measurements.log` (#307's runs, #306's review, #430's); bases swept before a
   brief's task ran (#324; #315 exported them again from its proof context); the finalizer's push of `82a065cd` failed;
   the finalizer should commit the handed-over files only (#303's tree held untracked `.bashrc` and others); the
   exclusive hold outlasts its run (#317); a tree behind main cannot probe until it brings main in (#316); a re-review

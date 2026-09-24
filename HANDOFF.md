@@ -37,7 +37,7 @@ on, all accepted:
 and #422 landed):
 
 - first: the use instance's package reading at a renamed root use (#424, continuing #422's `Factor_Use_Renaming`,
-  whose imports stay below the reader theories #416 and #418 edit); the guard (#391),
+  whose imports stay below the reader theories #416 and #418 edit); the guard (#391, landed `bcb17f7a`: `Development_First_Problem_Guard`),
   which generalizes #389's boundary where it lives, its list's context the pair of the given and the candidate, so that
   G4's audit reads the candidate's environment (q88);
 - then: the given's readers as one numbered program (#412, after #391: G3's readers key absence (20) with data
@@ -50,7 +50,8 @@ and #422 landed):
   after #391, #414, #416, #418, #422 and the fix deriving the readers' presentation from its parts'), the given and the native state's first generation (#395, after #385, #414), the
   posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
-  frame (#405, after #422: parts (a)–(d) and (f)) and harness (#407).
+  frame (#405, landed `6d84162b`: parts (a)–(d) and (f); its fix after #406's review — part (c) by constant so that the
+  given's package program passes, actions from classes — which #407 waits on) and harness (#407).
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -76,12 +77,12 @@ exporter's obligations at every state it defines (#227–#308, #352).
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The deepest chains are 9: #424 → #416 → #418 → #393 → #397 → #399 → #401 →
-#407 → #408, and through the given #391 → #412 → #414 → #393 → ….
+**Shape.** No build waits on a review task. The deepest chain is 9: #424 → #416 → #418 → #393 → #397 → #399 → #401 →
+#407 → #408, and through the given one shorter (#412 → #414 → #393 → …).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #424 and #391 at its head, then #412 and the fix deriving its presentation from its parts,
-#414, #416, #418, #410, #405 and the rest in their chains' order, #425 before the posing it serves; then
+exists, Q2): the owner's directions first — the first problem's route, #424 at its head, then #412 and the fix deriving its presentation from its parts,
+#414, #416, #418, #410, the frame's fix and the rest in their chains' order, #425 before the posing it serves; then
 #426; each review after its build.
 
 ## Decisions
@@ -252,6 +253,16 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   entry, every contract at its entry, the program scope, the finite `development_package_environment`; its reach
   certified by code_simp at every rebuild (about 12 s sequential); its review's follow-ups (`.build/tasks/343/review.md`)
   2 mailed to #414 and #395, 1 and 3 Open 136.
+- **Landed with `6d84162b`**: #405, `Development_Verification_Frame`, the frame a verification answer's theory is read
+  in (parts (a)–(d) and (f) as Isabelle checks; its controls in `.build/tasks/405/controls`); its reviews' follow-ups
+  (`.build/tasks/406/review.md`) and its result's question are the frame's fix, which #407 waits on — part (c) by
+  constant, not by theory, the trivial action the notion's, stated in `Presentation_Equivariance`.
+- **Landed with `bcb17f7a`**: #391, `Development_First_Problem_Guard`, the first problem's guard — four sockets on the
+  pair of the given and the candidate (G1 retention, G2 formation and closure, G3 the callee boundary, G4 the octet
+  audit over the added definitions), its contract for any pair, #389's boundary generalized to the pair in
+  `Factor_Package_Additions` (q88); its review's follow-ups (`.build/tasks/392/review.md`): 1, `given_member_use` and
+  task 381's "none implies another" in #426, the native evaluability of sites 392 and 525 mailed to #393, the per-layer
+  agreements Open 137.
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
@@ -449,16 +460,15 @@ answers (bootstrap); the rows-in-context note's full names at the entry's next t
 follow-ups 1 and 3: `Factor_Native_Node_Cases.native_node_empty_environment` and
 `Factor_Native_History_Cases.native_history_empty_program` reading the generic `finite_empty_environment` and
 `empty_installation_program`, at the case theories' next edit; the package's reach, evaluated by code_simp at every
-rebuild (about 12 s), certified once for the whole program if the notions grow, measured first.
+rebuild (about 12 s), certified once for the whole program if the notions grow, measured first. 137 an agreement exported per layer along `complete_data_admission_system` in place
+of whole-chain unfoldings (#392's review), at the lineage's next use — #431's derivation from parts reads the same chain.
 
 ## Now
 
 - **Mailed, read by each task's first session**: #313's re-review's first follow-up and #319's per-answer seconds to
   #369, and #369's review's follow-up 1 (the replay timed within the hold) to #430; #412's rewritten brief to #412, which started before the rewrite and continues after #391 lands (`v2.py after
   412 391`); q88's answer (the boundary generalized to the pair, no relocation, key absence, evaluability) to #391.
-- **q90** (implement-412, parked on it until #391 lands, no park kind waiting on a task): left unanswered, so that it
-  does not wake with nothing to do; when #391 lands, answer it — "#391 has landed; bring main in and take the boundary
-  readers in their new shape" — unless `v2.py after 412 391` has already woken it.
+
 
 - **Classifier stops**: a classifier stopped plan-51 to plan-54, plan-56 and plan-58 to plan-62 before their notes, and
   #323's fixer once; each next planner took up what HANDOFF.md held, and nothing was missing. Repeated declines are the

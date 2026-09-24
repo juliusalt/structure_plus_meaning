@@ -19,6 +19,20 @@ heap's copy of a changed theory taken from the heap or a prelude sees both texts
 A supplied prelude can still stand for a changed base theory (`--substitute`), and `--from-heap` takes
 a changed theory from the heap. A load estimated to exceed the bound is refused before it runs, the
 chain named. The probe is an inner loop and does not replace the repository check.
+
+The probe runs Isabelle's ML process, which has no Scala side: `export_code … checking TARGET` writes the
+generated code into a directory and compiles it through a shell, both functions of the Scala side
+(`Isabelle_System.with_tmp_dir` and `bash_process` in Code_Target), and in the ML process it raises
+`Protocol_Message invoke_scala`. Such a command is therefore blanked in the probe's copy, its lines kept, and
+named in the summary as skipped (`skipped_code_checks`, a `PROBE SKIPPED` line in the log): it is never a
+theory's error and never counted as certifying the exported code, which the repository's check exports and
+checks. A command that exports (`in TARGET …`) stands. With `--base-sources` the probe reads the base's own
+sources (its `original-sources`) instead of the workspace's, so a past base is probed as it was accepted.
+
+A tree's theories can differ from the base without the task having changed them: the base advanced with main
+after the tree left it. Such a theory (`advanced`: the tree holds its text of the branch point, the base main's
+text) is never loaded as the task's change; the probe is refused before it writes anything, naming the theories,
+the cause and the remedy (`v2.py bring-main`, or `--base` at a heap the tree matches).
 """
 from __future__ import annotations
 
@@ -37,12 +51,13 @@ import proof_contexts
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def workspace_theories(candidates=()):
-    """Theories of the workspace, overridden by candidate theories kept in scratch directories.
+def workspace_theories(candidates=(), sources=None):
+    """Theories of the workspace, or of the directory sources, overridden by candidate theories kept in
+scratch directories.
 
 A candidate outside `theories/` is probed without entering the workspace, so a probe never changes
 the inputs of a repository check that runs beside it."""
-    present = {path.stem: path for path in sorted((ROOT / 'theories').glob('*.thy'))}
+    present = {path.stem: path for path in sorted(Path(sources or ROOT / 'theories').glob('*.thy'))}
     for directory in candidates:
         present |= {path.stem: path for path in sorted(Path(directory).glob('*.thy'))}
     return present
@@ -52,6 +67,47 @@ def changed(sources, present):
     """Theory names whose workspace text differs from the accepted source of the base."""
     return {name: sources.get(name) for name, path in present.items()
             if sources.get(name) != investigate.file_hash(path)}
+
+
+def git_output(*arguments, text=None):
+    """The output of a git command in the tree, or None where git or the reference is not there."""
+    try:
+        return subprocess.run(['git', '-C', str(ROOT), *arguments], input=text, capture_output=True,
+                              check=True).stdout
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
+def advanced_theories(differing, present, main='main'):
+    """Differing theories the tree has not changed since it left main and whose accepted base text is main's:
+they differ from the base only because main advanced after the tree's branch point."""
+    theories = ROOT / 'theories'
+    unchanged = [name for name, accepted in differing.items()
+                 if accepted is not None and name in present and present[name].parent == theories]
+    point = git_output('merge-base', 'HEAD', main) if unchanged else None
+    if not point:
+        return []
+    ours = git_output('diff', '--name-only', point.decode().strip(), '--', 'theories')
+    untracked = git_output('ls-files', '--others', '--exclude-standard', 'theories')
+    if ours is None or untracked is None:
+        return []
+    touched = {Path(line).stem for line in (ours + untracked).decode().split()}
+    unchanged = [name for name in unchanged if name not in touched]
+    batch = git_output('cat-file', '--batch', text=''.join('%s:theories/%s.thy\n' % (main, n) for n in unchanged)
+                       .encode()) if unchanged else None
+    advanced, position = [], 0
+    for name in unchanged if batch else []:
+        header_end = batch.index(b'\n', position)
+        header = batch[position:header_end].split()
+        if header[-1] == b'missing':
+            position = header_end + 1
+            continue
+        size = int(header[2])
+        content = batch[header_end + 1:header_end + 1 + size]
+        position = header_end + 2 + size
+        if investigate.digest(content) == differing[name]:
+            advanced.append(name)
+    return sorted(advanced)
 
 
 def ordered(names):
@@ -79,10 +135,46 @@ def renamed_source(text, name, renamed):
     return text
 
 
+CODE_TARGETS = frozenset({'SML', 'OCaml', 'Haskell', 'Scala'})
+COMMANDS = frozenset({'text', 'txt', 'section', 'subsection', 'subsubsection', 'paragraph', 'lemma', 'lemmas',
+                      'theorem', 'corollary', 'proposition', 'definition', 'abbreviation', 'fun', 'function',
+                      'primrec', 'datatype', 'record', 'type_synonym', 'typedef', 'declare', 'context', 'locale',
+                      'interpretation', 'sublocale', 'end', 'ML', 'value', 'notation', 'code_printing',
+                      'export_code', 'lift_definition', 'setup_lifting', 'termination', 'inductive'})
+TOKEN = re.compile(r'"(?:[^"\\]|\\.)*"|\\<open>.*?\\<close>|\(\*.*?\*\)|\S+', re.S)
+EXPORT_CODE = re.compile(r'^[ \t]*export_code(?=\s)', re.M)
+
+
+def skip_code_checks(text):
+    """The source with every `export_code … checking TARGET…` command blanked to its newlines, so every other
+line keeps its number, and the commands skipped, each with the line it starts at and its words."""
+    pieces, skipped, last = [], [], 0
+    for match in EXPORT_CODE.finditer(text):
+        if match.start() < last:
+            continue
+        tokens, end = TOKEN.finditer(text, match.end()), None
+        for token in tokens:
+            if token.group() == 'in' or token.group() in COMMANDS:
+                break
+            if token.group() == 'checking':
+                for target in tokens:
+                    if target.group() not in CODE_TARGETS:
+                        break
+                    end = target.end()
+                break
+        if end is None:
+            continue
+        span = text[match.start():end]
+        pieces += [text[last:match.start()], '\n' * span.count('\n')]
+        skipped.append({'line': text.count('\n', 0, match.start()) + 1, 'command': ' '.join(span.split())})
+        last = end
+    return ''.join(pieces) + text[last:], skipped
+
+
 def prepare(work, context, present, loaded, substitutions, prelude, renamed=None):
     """Write every candidate with its imports resolved to the heap, a prelude, another candidate, or the
-tree's renamed copy of a changed base theory; return the directory, the imports among loaded theories
-and every theory's complete imports."""
+tree's renamed copy of a changed base theory, its code checks skipped; return the directory, the imports
+among loaded theories, every theory's complete imports and the code checks skipped in each theory."""
     renamed = renamed or {}
     providers = dict(context['providers'])
     providers |= {name: {'theory': theory} for name, theory in substitutions.items()}
@@ -93,27 +185,35 @@ and every theory's complete imports."""
     for stale in directory.glob('*.thy'):
         stale.unlink()
     sources = dict(prelude) | {name: present[name] for name in loaded if name in present}
-    imports, complete = {}, {}
+    imports, complete, skipped = {}, {}, {}
     for name, path in sources.items():
         text = path.read_text()
         complete[name] = investigate.theory_imports(text, name)
         imports[name] = [n for n in complete[name] if n in loaded]
         written = renamed_source(proof_contexts.rewritten_source(text, name, reused, providers), name, renamed)
+        written, checks = skip_code_checks(written)
+        if checks:
+            skipped[name] = checks
         (directory / (renamed.get(name, name) + '.thy')).write_text(written)
-    return directory, imports, complete
+    return directory, imports, complete, skipped
 
 
 DEFAULT_TIMEOUT = 60
-STARTUP_SECONDS = 8
-BYTES_PER_SECOND = 12000
+# The lower envelope of the 108 completed probes retained on 2026-09-24: the fastest took 10.9 s, and the
+# largest loads 641,602 bytes in 36.7 s and 526,261 in 33.1 s. Proofs can make a load slower than this, never
+# faster, so the estimate refuses only a load that cannot fit its bound; the timeout stays the backstop.
+STARTUP_SECONDS = 10
+BYTES_PER_SECOND = 25000
 
 
 def base_context(base, verify=False):
     """The claims of the accepted base: read from its context file, verified only when asked.
 
-The lineage's verification digests every level's heap and database (about 3 s) and is the check's
-business, not the inner loop's: the probe then loads that heap, which Isabelle itself refuses when it
-does not match its session. A base without a context file is verified, as it has no other record."""
+The lineage's verification digests every level's heap and database (5.4 s against 0.02 s for reading the
+file, measured by task 271) and is the check's business, not the inner loop's. An unverified read trusts
+the file's claims: a heap or database changed since the file was written is not detected by the probe,
+and `--verify-base` is then its check. A base without a context file is verified, as it has no other
+record."""
     path = Path(base) / proof_contexts.CONTEXT_FILE
     if verify or not path.is_file():
         return proof_contexts.load_parent(base, None, *proof_contexts.new_lineage())
@@ -126,10 +226,13 @@ def intermediate_theories(graph, tree_imports, changed_base, loaded, excluded=()
 
 graph is the base's import graph; tree_imports the workspace imports of the loaded theories, which
 take their place. A theory is on such a path when it imports a changed base theory, directly or
-through others, and a loaded theory imports it, directly or through others."""
+through others, and a loaded theory imports it, directly or through others, never through an excluded
+theory: an excluded theory comes from the heap with the heap's imports, so no copy below it is met."""
     above = {n for n, clean in investigate.contexts_satisfying(graph, lambda n: n not in changed_base).items()
              if not clean}
-    combined = dict(graph) | {name: list(parents) for name, parents in tree_imports.items()}
+    combined = {name: parents for name, parents in
+                (dict(graph) | {name: list(parents) for name, parents in tree_imports.items()}).items()
+                if name not in excluded}
     below = investigate.import_contexts(combined, [p for n in loaded for p in combined.get(n, [])])
     return sorted((above & below) - set(changed_base) - set(loaded) - set(excluded))
 
@@ -169,12 +272,29 @@ run with no error: its errors name the timeout, the command the log last reached
 
 
 def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, timeout, candidates=(),
-          from_heap=(), verify_base=False):
+          from_heap=(), verify_base=False, base_sources=False):
     context = base_context(base, verify_base)
     assert context['sources'], 'The base ' + str(base) + ' carries no accepted sources.'
-    present = workspace_theories(candidates)
+    present = workspace_theories(candidates, Path(base) / 'original-sources' if base_sources else None)
+    if base_sources:
+        absent = sorted(set(context['sources']) - set(present))
+        assert not absent, ('The base %s keeps no original source of %d of its theories: %s'
+                            % (base, len(absent), ', '.join(absent[:10])))
     differing = changed(context['sources'], present)
     new = {name for name, accepted in differing.items() if accepted is None}
+    advanced = [name for name in advanced_theories(differing, present)
+                if name not in from_heap and name not in substitutions]
+    if advanced:
+        refusal = ('The probe is refused before it loads: %d theories differ from the base %s only because main '
+                   'advanced after this tree left it (the tree holds their text of its branch point, the base '
+                   "main's): %s. Bring main into the tree (`.claude/orchestration/v2.py bring-main`), or give "
+                   '--base a heap the tree matches.' % (len(advanced), base, ', '.join(advanced)))
+        summary = {'base': str(base), 'session': context['session'], 'advanced': advanced, 'refused': refusal,
+                   'loaded': False, 'certified': [], 'exit': None, 'seconds': 0, 'timed_out': False,
+                   'marker': None, 'last_command': None, 'cause': refusal, 'errors': [refusal], 'messages': [],
+                   'log': None, 'summary': str(work / 'probe.summary.json')}
+        Path(summary['summary']).write_text(json.dumps(summary) + '\n')
+        return summary
     loaded = set(loaded) | (set(differing) - set(from_heap) - set(substitutions)) | set(prelude)
     missing = loaded - set(present) - set(prelude)
     assert not missing, 'Not a workspace theory: ' + ', '.join(sorted(missing))
@@ -189,7 +309,8 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
     renamed = {name: probe_name(name) for name in sorted(from_tree)}
     clash = sorted(set(renamed.values()) & (set(present) | set(context['sources'])))
     assert not clash, 'A renamed copy would take the name of an existing theory: ' + ', '.join(clash)
-    directory, imports, complete = prepare(work, context, present, loaded, substitutions, prelude, renamed)
+    directory, imports, complete, skipped = prepare(work, context, present, loaded, substitutions, prelude,
+                                                    renamed)
     unchanged = investigate.contexts_satisfying(graph, lambda n: n not in from_tree)
     not_rechecked = sorted(n for n, clean in unchanged.items()
                            if not clean and n not in loaded and n not in substitutions)
@@ -201,10 +322,11 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
             stale[name] = reached
     closure = investigate.import_contexts(imports, targets) if targets else set(loaded)
     order = ordered({n: i for n, i in imports.items() if n in closure})
+    skipped = {name: skipped[name] for name in order if name in skipped}
     estimate, size = load_estimate([directory / (renamed.get(name, name) + '.thy') for name in order])
-    common = {'base': str(base), 'session': context['session'], 'order': order,
+    common = {'base': str(base), 'session': context['session'], 'order': order, 'advanced': [],
               'from_tree': renamed, 'intermediate': intermediate, 'new': sorted(new & loaded),
-              'not_rechecked': not_rechecked, 'stale_heap_imports': stale,
+              'not_rechecked': not_rechecked, 'stale_heap_imports': stale, 'skipped_code_checks': skipped,
               'estimate_seconds': estimate, 'estimate_bytes': size,
               'parallel_proofs': parallel_proofs, 'timeout': timeout,
               'substituted': substitutions, 'prelude': {name: str(path) for name, path in sorted(prelude.items())},
@@ -232,6 +354,11 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
     command = ['isabelle', 'ML_process', *directories, '-l', context['session'], *options, '-f', str(script)]
     started = time.monotonic()
     run = run_logged(command, log, timeout, env=incremental_check.ENV)
+    if skipped:
+        with log.open('a') as stream:
+            stream.write(''.join('PROBE SKIPPED: %s line %d: %s (no Scala side in the probe; the repository '
+                                 'check runs it)\n' % (name, check['line'], check['command'])
+                                 for name, checks in skipped.items() for check in checks))
     text = run['text']
     marker_line = next((line for line in text.splitlines() if marker in line), None)
     completed = marker_line is not None and not run['timed_out']
@@ -279,6 +406,8 @@ def main():
     parser.add_argument('--candidates', type=Path, action='append', default=[],
                         help='Directory of candidate theories kept outside theories/; a candidate overrides '
                              'the workspace theory of its name.')
+    parser.add_argument('--base-sources', action='store_true',
+                        help="Read the base's own accepted sources instead of the workspace's.")
     args = parser.parse_args()
     if not __debug__:
         raise ValueError('Probing requires Python assertions.')
@@ -290,7 +419,8 @@ def main():
                         + '; the supplied preludes are ' + (', '.join(sorted(prelude)) or 'none') + '.')
     summary = probe(incremental_check.selected_base(args.base).resolve(), args.work.resolve(), args.theory,
                     args.load, substitutions, prelude, args.parallel_proofs, args.timeout,
-                    [directory.resolve() for directory in args.candidates], args.from_heap, args.verify_base)
+                    [directory.resolve() for directory in args.candidates], args.from_heap, args.verify_base,
+                    args.base_sources)
     print(json.dumps(summary))
     return 0 if summary['loaded'] and not summary['exit'] and not summary['cause'] else 1
 

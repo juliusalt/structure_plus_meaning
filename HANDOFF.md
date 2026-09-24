@@ -445,6 +445,11 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#313** (`e9bbe02b`): the replay reads every framed answer's parts in one session, the refused controls without a
   session each, a re-recorded row reported against the word it wrote; the sixteen records replayed in 560.8 s wall from
   701–759 s (`.build/tasks/313/measurement.md`); its re-review's follow-ups to #323.
+- **#309** (`8c84b6ec`): the three template tables through `finite_syntax_forest_table`; `Listed_Set_Unions`
+  (`finite_listed_union`, a union computed once and only read, executed as its listings concatenated), the placed
+  forest's, table's and syntax forest's code folded through it — the unions 64.1 of 67.3 ms at 64 children, their growth
+  ×4.0–4.3 per doubling to ×2.6 (`.build/tasks/309/measurement.md`); its review's follow-ups to Open 99 and 109, its
+  note on #167's proof told to #167.
 
 ## Open
 
@@ -671,7 +676,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     the listed-union repair a question's construction grows ×2.4–2.5 per doubling (11.2 ms keyed at 64 candidates), all
     of the growth in the two installations of an n-clause program into an existing native source
     (`finite_install_source_entry` for the scope program, the ground source of the facet's rows), their inner stages —
-    compile, fresh coordinates, reference installation — not yet separated. The reader's cost per key bit rises from 0.31 to
+    compile, fresh coordinates, reference installation — not yet separated, with #309's runner when it is attributed
+    (`.build/tasks/309/runner`, stage functions in `Measure_Forest_After.thy`). The reader's cost per key bit rises from 0.31 to
     0.43 µs across #159's sizes (the index's depth, most likely): recorded.
 100. **A native record replayed in a task tree** whose theories change the state's closure is unproduced by
     construction (`export_proved_code` refuses; #157's review): replays run after landing (#143); a proof context
@@ -703,6 +709,14 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     presentation of the applied state, where `keys_shared R R'` is not established (entity keys shift when rows are
     removed), so it has no contract. Unreachable while no loop state holds a specification (design 171's Open):
     decided when one does.
+109. **What #309's landing leaves** (its review): `REASONING_REUSE.md`'s row "A union computed once and only read is its
+    listings concatenated" names the fset form `finite_listed_union` / `finite_listed_union_code` and its uses
+    (`RRA_Placed_Forests.finite_placed_forest_listed`, `RRA_Placed_Forests.finite_placed_table_listed`,
+    `RRA_Finite_Syntax_Construction.finite_syntax_forest_listed`,
+    `Factor_Finite_Reference_Forests.finite_syntax_forest_table_listed`), with the next landing that publishes the
+    document; and one fold per shape — the listed forms of `finite_placed_forest_prefix` and
+    `finite_placed_table_prefix` stated once, the instances derived from them, so that no future placed form keeps the
+    quadratic union silently — with `RRA_Placed_Forests`' next edit.
 108. **`V`'s admission** (review 203, follow-up 5): after #192 the walk's coverage reads the assessment's predecessors, a
     HOL check beside O's two native readings; design 171 designs O's admission and leaves V's open. Admitted natively
     by the closure reading at V's presentation, or produced by construction, when #194's measurement or a design next
@@ -714,8 +728,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   takes what the exporter still owes (`state_presentable`'s third condition, the successor's request premises, the new
   facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s). Its
   review's held timing of roots distinctness, which its tree could not take, is #317 after its landing (q82).
-- **Under way**: #167 (re-planned to its room), #308 and #309 in their rounds; #192 re-planned by plan-52 to what
-  remains after #285; B5 (#305) running; the design #320, the brief #322 and the fix #323 take the slots as they free.
+- **Under way**: #167 (re-planned to its room; its batch with #309 failed on its own proof, `Development_Row_Data.thy:546`
+  674 s by itself, told to repair it at its cause) and #308 in their rounds; #192 re-planned by plan-52 to what remains
+  after #285; B5 (#305) and the brief #322 running; the design #320 and the fix #323 take the slots as they free.
   Mailed to tasks not yet started, read by their first session: #113's review to #295; #278's to #307, #305 and #193;
   #284's 1, 2 and 4 to #288 (4 to #308 if its check sends it back); #303's to #305 and #307; #285's to #288 and #307.
 - **Plan-51 and plan-52 were each stopped by a classifier before their notes** (13:37; about 14:03): this file carried

@@ -20,7 +20,8 @@ order (plan-48, plan-51): #161, #155, #157 and #64 have landed; then #167, #314 
 base its landing advances, as #157 was over the layout), #169, #319 (its records' packet words likewise, plan-52) and
 #92. A task whose theories change the state's
 closure cannot replay the native records in its own tree (Open 100), so a word change's records are re-recorded after
-its landing, by a task of their own.
+its landing, by a task of their own. The replay every records task runs is #323's (tools, #313's review): the judged
+answers' proofs shared as #313 shared their parts readings; no task waits on it.
 
 **The verdict line (#44, #278, #279, #195).** Task 3's design. Landed: the state rows (#46), the request's keys (#32,
 #106), statements and malformed (#34), the presenter (#101), excess and undeclared through the subject index (#36,
@@ -146,9 +147,11 @@ retirements (Decisions).
 
 **The decomposition (#64).** Landed: the repair rows (#58), the soundness (#60), #66's entry (a decomposition that
 applied is a row at its problem's locus, under a sixth role), the native schema with its state reading native and its
-join law stated once (#62, #94, #173). #64 generates the library at the loop's problems and passes it to the issue, so a
-decomposed problem is refused issue; it takes #161's identity lemma in place of a transport. The build that applies a
-decomposition is Open 26.
+join law stated once (#62, #94, #173). #64 landed the library generated at the loop's problems and passed to the issue,
+so a decomposed problem is refused issue (`Development_Library_Issue`). The build that applies a decomposition — its
+record at the parent's locus under a sixth role, the posing step once, the issue less the recorded choice, the
+decomposition generation, and the per-candidate native evaluation plan-51 decided — is briefed by #322; the split
+source waits on the owner (Q14, its evidence Q16).
 
 **The layout (#241, #155–#160).** Design #136's entry: the library's digit code at every position of compiled syntax,
 `unary_address` retired. Its contracts with every word equal have landed (#147, #149, #151, #153, #179), with the
@@ -188,12 +191,15 @@ on nothing and runs beside the builds.
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
 creates has no review task (the harness reviews it in its own folder). The deepest chains are 6: #167 → #314 → #169 →
 #319 → #92 → #93, and #192 → #318 → #193 → #194 → #205 beside it; the consolidations #192 → #321 → #295 → #288 are 4.
+#320, #322, #323 and #324 wait on nothing: they are the graph's width while #167, #192 and B5 finish (in the hour
+before plan-53 a slot stood free 41 of 58 minutes, only #320 able to start).
 
-**Order** (the queue holds it; this is why it is as it is). The tasks in their checks or parked first (#313, #309,
-#308, #167), so that their landing checks do not wait behind heavy runs; then #192 and B5 (#305), which take the slots
-as they free, and the design #320 beside them; the word chain (#314, then #169, #319, #92), the longest chain; B6
-(#307) and #317; the incremental stage's #318, #193 and #195; the consolidations #321, #295, #288; the measurements
-#194 and #315; each review after its build.
+**Order** (the queue holds it; this is why it is as it is). The tasks in their checks, parked or running first (#309,
+#308, #167, #192, B5 #305), so that their landing checks do not wait behind heavy runs; then the three that wait on
+nothing and take the slots as they free — the design #320, the decomposition's brief #322, the replay's fix #323; the
+word chain (#314, then #169, #319, #92), the longest chain; B6 (#307) and #317; the incremental stage's #318, #193 and
+#195; the consolidations #321, #295, #288; the measurements #194 and #315, then the investigation #324, whose held runs
+yield to the checks ahead of it; each review after its build.
 
 ## Decisions
 
@@ -436,6 +442,9 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   at `keys_term`; its review's follow-ups 1–3 to #321, the witness's list reading to #288, 4 to B6. **#303** (B4,
   `fad2198a`): `Shared_Call_Closures`, the demand over shared calls; its review's follow-ups 1, 3 and 5 to B5, 4 to B6,
   2 to Open 47, 6 the harness's (Now).
+- **#313** (`e9bbe02b`): the replay reads every framed answer's parts in one session, the refused controls without a
+  session each, a re-recorded row reported against the word it wrote; the sixteen records replayed in 560.8 s wall from
+  701–759 s (`.build/tasks/313/measurement.md`); its re-review's follow-ups to #323.
 
 ## Open
 
@@ -484,23 +493,12 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     needs it to depend on the carrier, when such a carrier appears.
 25. The index entry's two slips (`native_store_search_program.exact` listed among host member equations; the map row
     repeating the entry's list), with that entry's or row's next edit.
-26. The build that applies a decomposition to the loop (#66's entry): the sixth role, the fifth body,
-    `Development_Decomposition_Record`, the posing step once, the issue reading the library less recorded choices, the
-    decomposition generation, the prerequisite rows of D; #58's repair row is not an application of #60's relation.
-    #64 has landed (`Development_Library_Issue`), and the planner decided its two questions (plan-51): the
-    decomposition program is evaluated natively per candidate, over finite presenters of the state's families and the
-    development's rows, before the split source is enabled — not only through its proved executable reading; and a
-    decomposition keeps one row, the history's record (#66's entry), C's native application not generated beside it.
-    With them #64's remains: the repair rows' coordinates moved with a successor's correspondence, and the split source
-    under the owner's criterion (Q14, its evidence Q16).
-27. The seed recipe's remaining cost (#128's review, superseding the earlier regression question): the recipe is
-    63.50 s and its publication presentation 63.45 s of it, the other eleven 6.4–7.2 s each, mostly the runner's load
-    and check; what remains of the 63 s — payload judgments, cause certification, the transactions' comparisons — is
-    unattributed, and the recipe bounds every landing check touching the development line. An investigation with a
-    held measurement (bounded at 3 minutes) when a slot would stand idle; with it, the incumbents' snapshot check's
-    generation half, which #128's entry left not taken and the same premise would discharge, measured before it is
-    decided. #128's entry names its first check in its Evidence paragraph rather than the landing check that accepted
-    the final tree, with that entry's next edit.
+26. The build that applies a decomposition to the loop (#66's entry) is briefed by #322, which carries plan-51's two
+    decisions on #64's questions and #64's remains; the split source waits on the owner's criterion (Q14, its evidence
+    Q16).
+27. The seed recipe's remaining cost is #324's to attribute, with the incumbents' snapshot check's generation half.
+    #128's entry names its first check in its Evidence paragraph rather than the landing check that accepted the final
+    tree, with that entry's next edit.
 28. Every recipe's execution boundary holds `tools/build.py` and `tools/execution_support.py`: narrowing them is a task
     if a tools change is again seen to re-execute everything.
 29. The map's "Reuse (...)" labels: 92 rows name dated sections of `REASONING_REUSE.md` that #280's revision removed,
@@ -512,8 +510,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     condition 3 turns on); the known-predecessor refinements (`RRA_Known_Generation_Rows` and the equations on it)
     against `Established_Premises` under the index notion's criterion; and whether any ordinary clause profile over
     numbered coordinates re-makes `native_rule_law` or the two levels stay apart.
-30. What a present citation of a development row cites (an owner record, or the parent's locus for a demand), with
-    item 26.
+30. What a present citation of a development row cites (an owner record, or the parent's locus for a demand): #322,
+    whose posing is the first construction that assigns an origin.
 31. `readiness_presents_rekey` into `Development_Native_Selection`, with that theory's next edit.
 33. A named projection of a locus's key part in `Development_Loci` (consumers write `drop 6`, `drop 3`), with its next
     edit.
@@ -716,12 +714,14 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   takes what the exporter still owes (`state_presentable`'s third condition, the successor's request premises, the new
   facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s). Its
   review's held timing of roots distinctness, which its tree could not take, is #317 after its landing (q82).
-- **Under way**: #167 (re-planned to its room), #308, #309 and #313 in their rounds; #192 re-planned by plan-52 to what
-  remains after #285; B5 (#305) and the design #320 take the slots beside it. Mailed to tasks not yet started, read by
-  their first session: #113's review to #295; #278's to #307, #305 and #193; #284's 1, 2 and 4 to #288 (4 to #308 if
-  its check sends it back); #303's to #305 and #307; #285's to #288 and #307.
-- **Plan-51 was stopped by a classifier before its notes** (13:37): this file carried its state, and what it had not
-  handled was #192's partial end, re-planned by plan-52; nothing else was found missing.
+- **Under way**: #167 (re-planned to its room), #308 and #309 in their rounds; #192 re-planned by plan-52 to what
+  remains after #285; B5 (#305) running; the design #320, the brief #322 and the fix #323 take the slots as they free.
+  Mailed to tasks not yet started, read by their first session: #113's review to #295; #278's to #307, #305 and #193;
+  #284's 1, 2 and 4 to #288 (4 to #308 if its check sends it back); #303's to #305 and #307; #285's to #288 and #307.
+- **Plan-51 and plan-52 were each stopped by a classifier before their notes** (13:37; about 14:03): this file carried
+  their state. What plan-52 had not handled was #313's landing (`e9bbe02b`), integrated by plan-53, its re-review's
+  follow-ups to #323. The cost: #313's first review, overwritten by its re-review, survives only as the re-review's
+  one-line summary, so #323 continues #313's session where it is still warm.
 - **#303's tree held untracked files the task did not make** at its root (`.bashrc`, `.bash_profile`, `.gitconfig`,
   `.claude/agents`, `.idea`): the finalizer should commit the handed-over files only (#303's review) — the harness's.
 - **A tree behind main cannot probe until it brings main in** (#316, `514be373`; met by #276, #112 and #308, whose

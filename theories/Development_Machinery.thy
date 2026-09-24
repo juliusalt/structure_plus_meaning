@@ -52,19 +52,19 @@ definition development_machinery_state :: isabelle_rooted_context where
   "development_machinery_state=(development_machinery_roots,development_machinery_context)"
 
 text \<open>
-  The two states the exporter defines here and below meet the two conditions of
-  @{const state_presentable} the exporter owns, as its own theorems.
+  The two states the exporter defines here and below are presentable by the exporter's own theorems:
+  their names are distinct, their entities and roots use positions of their tables, and their roots
+  are distinct, so their roots' local presentations are distinct
+  (@{thm [source] isabelle_local_roots_distinct}).
 \<close>
 
-lemma development_states_exported:
-  "distinct (fst (snd development_seed_state))"
-  "state_positions development_seed_state\<subseteq>{..<length (fst (snd development_seed_state))}"
-  "distinct (fst (snd development_machinery_state))"
-  "state_positions development_machinery_state\<subseteq>{..<length (fst (snd development_machinery_state))}"
-  unfolding development_seed_state_def development_machinery_state_def snd_conv
-  by (rule development_seed_names_distinct development_machinery_names_distinct
-    state_positions_exported[OF development_seed_positions_closed development_seed_roots_closed]
-    state_positions_exported[OF development_machinery_positions_closed development_machinery_roots_closed])+
+lemma development_states_presentable:
+  "state_presentable development_seed_state" "state_presentable development_machinery_state"
+  unfolding development_seed_state_def development_machinery_state_def
+  by (rule state_presentable_exported[OF development_seed_names_distinct development_seed_positions_closed
+      development_seed_roots_closed development_seed_roots_distinct],
+    rule state_presentable_exported[OF development_machinery_names_distinct development_machinery_positions_closed
+      development_machinery_roots_closed development_machinery_roots_distinct])
 
 section \<open>Every root is a residual problem of its definition\<close>
 

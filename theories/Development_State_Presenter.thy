@@ -59,6 +59,27 @@ lemma state_presentable_code [code]:
     distinct (map (isabelle_local_root (fst (snd S))) (fst S))"
   unfolding state_presentable_def state_positions_listed list_all_iff distinct_ordered_remdups by auto
 
+lemma state_presentable_entity_set:
+  assumes "fst S'=fst S" "fst (snd S')=fst (snd S)" "set (snd (snd S'))=set (snd (snd S))"
+  shows "state_presentable S'\<longleftrightarrow>state_presentable S"
+  using assms by (simp add: state_presentable_def state_positions_def)
+
+text \<open>
+  Every state the exporter defines is presentable by one instantiation: its names are distinct, its
+  entities and roots use positions of its table, and its roots are distinct, which are the exporter's own
+  theorems at the state (\<open>NAME_names_distinct\<close>, \<open>NAME_positions_closed\<close>, \<open>NAME_roots_closed\<close>,
+  \<open>NAME_roots_distinct\<close>).
+\<close>
+
+lemma state_presentable_exported:
+  assumes names: "distinct (fst C)"
+    and entities: "\<forall>e\<in>set (snd C). set (isabelle_entity_positions e)\<subseteq>{..<length (fst C)}"
+    and roots: "\<forall>t\<in>set rs. set (isabelle_term_positions t)\<subseteq>{..<length (fst C)}"
+    and distinct: "distinct rs"
+  shows "state_presentable (rs,C)"
+  using names state_positions_exported[OF entities roots] isabelle_local_roots_distinct[OF names roots distinct]
+  by (simp add: state_presentable_def)
+
 subsection \<open>The rows\<close>
 
 definition state_rows_of :: "isabelle_rooted_context \<Rightarrow> state_rows" where
@@ -151,23 +172,6 @@ lemma state_rows_of_presented:
 
 subsection \<open>One state's embedding into itself fixes its values\<close>
 
-lemma state_self_embedding:
-  assumes distinct: "distinct names" and bound: "i<length names"
-  shows "isabelle_state_embedding names names i=i"
-proof -
-  have "isabelle_table_correspondence id names names"
-    by (simp add: isabelle_table_correspondence_def)
-  then show ?thesis using isabelle_state_embedding_agrees[OF distinct _ bound] by simp
-qed
-
-lemma state_self_embedding_entity:
-  assumes distinct: "distinct names" and inside: "\<forall>i\<in>set (isabelle_entity_positions e). i<length names"
-  shows "isabelle_entity_rename (isabelle_state_embedding names names) e=e"
-proof -
-  have "isabelle_entity_rename (isabelle_state_embedding names names) e=isabelle_entity_rename id e"
-    by (rule isabelle_entity_rename_cong) (simp add: state_self_embedding[OF distinct] inside)
-  then show ?thesis by (simp only: isabelle_entity_rename_id)
-qed
 
 text \<open>
   Within one state, two entities have one local presentation exactly when they are one entity: the

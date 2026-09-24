@@ -401,4 +401,56 @@ text \<open>
   empty family retains the actual artifact and family-root checks.
 \<close>
 
+section \<open>The root family reading is equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument pairs the environment beside the root use with the root address beside the destination
+  sequence, each through its existing class; a permutation acts on the environment, the use and every
+  destination site, and trivially on the address. The reading is kept: the source artifact through
+  @{thm [source] artifact_at_renamed_use}, every located destination through
+  @{thm [source] located_at_use_renaming}; the family is read inside the artifact, which carries no use.
+\<close>
+
+abbreviation root_family_presents where
+  "root_family_presents \<equiv>
+    factor_pair_presents (factor_pair_presents environment_value_presents (\<lambda>u t. t=use_data_term u))
+      (factor_pair_presents (\<lambda>r t. t=Payload_Term r) (data_sequence_presents site_coordinate_presents))"
+
+abbreviation root_family_renaming where
+  "root_family_renaming \<equiv> product_action (product_action rename_environment (\<lambda>h. h))
+    (product_action (\<lambda>h a. a) (\<lambda>h. map (map_prod h id)))"
+
+theorem root_family_reading_equivariant:
+  "renaming_equivariant bij root_family_renaming
+    (\<lambda>z. (environment_formed (fst (fst z)) \<and> True) \<and> (True \<and> (\<forall>a\<in>set (snd (snd z)). True)))
+    (\<lambda>z. \<exists>R xs. artifact_at (fst (fst z)) (snd (fst z)) R \<and> distinct xs \<and>
+      family_at R (fst (snd z)) (set xs) \<and>
+      list_all2 (\<lambda>a d. located_at (fst (fst z)) (snd (fst z)) a (fst d) (snd d)) (map snd xs) (snd (snd z)))"
+  by (auto simp: renaming_equivariant_def product_action_def artifact_at_renamed_use[OF bij_is_inj]
+    located_at_use_renaming[OF bij_is_inj] list.rel_map)
+
+corollary root_family_reading_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence root_family_presents root_family_renaming h) (=)
+    (\<lambda>z. (79,z)\<in>positive_meaning root_family_reading_system)
+    (\<lambda>z. (79,z)\<in>positive_meaning root_family_reading_system)"
+proof -
+  have action: "renaming_action bij root_family_renaming
+      (\<lambda>z. (environment_formed (fst (fst z)) \<and> True) \<and> (True \<and> (\<forall>a\<in>set (snd (snd z)). True)))"
+    by (rule renaming_action_product[OF renaming_action_product[OF environment_renaming_action use_renaming_action]
+      renaming_action_product[OF permutation_renaming_action[where D="\<lambda>_. True"]
+        renaming_action_lists[OF site_renaming_action]]])
+  have exact: "\<And>p. (79,p)\<in>positive_meaning root_family_reading_system \<longleftrightarrow>
+      presented_predicate root_family_presents (\<lambda>z. \<exists>R xs. artifact_at (fst (fst z)) (snd (fst z)) R \<and>
+        distinct xs \<and> family_at R (fst (snd z)) (set xs) \<and>
+        list_all2 (\<lambda>a d. located_at (fst (fst z)) (snd (fst z)) a (fst d) (snd d)) (map snd xs) (snd (snd z))) p"
+    by (simp add: root_family_reading_exact presented_predicate_def factor_pair_presents_def
+      data_sequence_presents_def list_all2_function split_paired_Ex; blast)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF factor_pair_class[OF
+      factor_pair_class[OF environment_presentations.presentation_class_axioms use_coordinate_presentation]
+      factor_pair_class[OF address_coordinate_presentation
+        data_sequence_presentation_class[OF site_coordinate_presentation]]] action exact]
+      root_family_reading_equivariant])
+qed
+
 end

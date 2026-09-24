@@ -270,6 +270,102 @@ corollary package_retention_admission_presentation_invariance:
     (122,package_context_term f pu pr)\<in>positive_meaning package_retention_admission_system"
   by (simp only: package_retention_admission_at_source[OF assms(1)] package_retention_admission_at_source[OF assms(2)])
 
+section \<open>Package retention admission is equivariant under permutations of uses\<close>
+
+text \<open>
+  A closed package stays closed under a permutation of uses. The least retained environment is the
+  least subenvironment that reads the package (@{thm [source] native_package_dependency_material_required}),
+  so the renamed environment's least material, renamed back, is a subenvironment of a closed one reading
+  the same package, hence the whole of it. This is the reader's own closure under a renaming; the package
+  reading at the renamed root use is the use instance's.
+\<close>
+
+lemma native_package_closed_renamed:
+  fixes h :: "'u \<Rightarrow> 'u"
+  assumes formed: "environment_formed E" and h: "bij h" and package: "native_package_at E u r P"
+    and fixed: "native_package_environment E u r=E"
+  shows "native_package_environment (rename_environment h E) (h u) r=rename_environment h E"
+proof -
+  let ?F="rename_environment h E"
+  let ?M="native_package_environment ?F (h u) r"
+  let ?N="rename_environment (inv h) ?M"
+  have inverse: "bij (inv h)" by (rule bij_imp_bij_inv[OF h])
+  have renamed: "native_package_at ?F (h u) r (rename_system (map_prod h id) P)"
+    by (rule native_package_renamed_use[OF formed h package])
+  have retained: "native_package_at ?M (h u) r (rename_system (map_prod h id) P)"
+    by (rule native_package_environment_recovers[OF renamed])
+  have retained_formed: "environment_formed ?M" by (rule native_package_environment_formed[OF renamed])
+  have undone: "inv h (h u)=u" by (rule inv_f_f[OF bij_is_inj[OF h]])
+  have restored: "rename_environment (inv h) ?F=E"
+    by (rule renaming_action.act_inverse[OF environment_renaming_action h formed])
+  have smaller: "native_package_at ?N u r
+      (rename_system (map_prod (inv h) id) (rename_system (map_prod h id) P))"
+    using native_package_renamed_use[OF retained_formed inverse retained] unfolding undone .
+  have inside: "environment_included ?N E"
+    using native_package_environment_included[of ?F "h u" r]
+      environment_included_renamed[OF bij_is_inj[OF inverse], of ?M ?F] restored by simp
+  have "environment_included (native_package_environment E u r) ?N"
+    by (rule native_package_dependency_material_required[OF package smaller inside])
+  then have whole: "E=?N" using fixed inside by (simp add: environment_included_antisym)
+  have "?M=rename_environment h ?N"
+    by (rule renaming_action.act_inverse_right[OF environment_renaming_action h retained_formed, symmetric])
+  then show ?thesis using whole by simp
+qed
+
+lemma closed_native_package_renamed:
+  fixes h :: "'u \<Rightarrow> 'u"
+  assumes formed: "environment_formed E" and h: "bij h" and closed: "closed_native_package_at E u r P"
+  shows "closed_native_package_at (rename_environment h E) (h u) r (rename_system (map_prod h id) P)"
+proof -
+  have package: "native_package_at E u r P" using closed by (simp add: closed_native_package_at_def)
+  have fixed: "native_package_environment E u r=E"
+    using closed native_package_closed_fixed_iff[OF package] by (simp add: closed_native_package_at_def)
+  have renamed: "native_package_at (rename_environment h E) (h u) r (rename_system (map_prod h id) P)"
+    by (rule native_package_renamed_use[OF formed h package])
+  show ?thesis
+    using native_package_closed_renamed[OF formed h package fixed] native_package_closed_fixed_iff[OF renamed] renamed
+    by (simp add: closed_native_package_at_def)
+qed
+
+lemma closed_native_package_exists_renamed:
+  fixes h :: "'u \<Rightarrow> 'u"
+  assumes formed: "environment_formed E" and h: "bij h"
+  shows "(\<exists>Q. closed_native_package_at (rename_environment h E) (h u) r Q) \<longleftrightarrow>
+    (\<exists>P. closed_native_package_at E u r P)"
+proof
+  assume "\<exists>Q. closed_native_package_at (rename_environment h E) (h u) r Q"
+  then obtain Q where closed: "closed_native_package_at (rename_environment h E) (h u) r Q" by blast
+  have undone: "rename_environment (inv h) (rename_environment h E)=E" "inv h (h u)=u"
+    by (rule renaming_action.act_inverse[OF environment_renaming_action h formed]) (rule inv_f_f[OF bij_is_inj[OF h]])
+  show "\<exists>P. closed_native_package_at E u r P"
+    using closed_native_package_renamed[OF environment_renaming_formed[OF formed bij_is_inj[OF h]]
+      bij_imp_bij_inv[OF h] closed] unfolding undone by blast
+next
+  assume "\<exists>P. closed_native_package_at E u r P"
+  then show "\<exists>Q. closed_native_package_at (rename_environment h E) (h u) r Q"
+    using closed_native_package_renamed[OF formed h] by blast
+qed
+
+theorem package_retention_admission_equivariant:
+  "renaming_equivariant bij site_context_renaming site_context_formed
+    (\<lambda>z. \<exists>P. closed_native_package_at (fst z) (fst (snd z)) (snd (snd z)) P)"
+  by (auto simp: renaming_equivariant_def product_action_def closed_native_package_exists_renamed)
+
+corollary package_retention_admission_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence
+      (\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t) site_context_renaming h) (=)
+    (\<lambda>z. (122,z)\<in>positive_meaning package_retention_admission_system)
+    (\<lambda>z. (122,z)\<in>positive_meaning package_retention_admission_system)"
+proof -
+  have exact: "\<And>p. (122,p)\<in>positive_meaning package_retention_admission_system \<longleftrightarrow>
+      presented_predicate (\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t)
+        (\<lambda>z. \<exists>P. closed_native_package_at (fst z) (fst (snd z)) (snd (snd z)) P) p"
+    by (simp add: package_retention_admission_exact presented_predicate_def split_paired_Ex; blast)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF site_presentations.presentation_class_axioms
+      site_context_renaming_action exact] package_retention_admission_equivariant])
+qed
+
 section \<open>Unused material cannot acquire a retention role\<close>
 
 theorem package_retention_rejects_unused_binding:

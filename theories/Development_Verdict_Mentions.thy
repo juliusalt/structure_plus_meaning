@@ -44,20 +44,12 @@ begin
 sublocale call: native_context_call_program P m k
   unfolding native_context_call_program_def using native_rule_family_axioms by (simp only: store_found_rule_def)
 
-sublocale any_law: native_rule_law P ch "[([0],native_any_rule)]"
-  by (rule native_rule_lawI[OF any.native_rule_family_axioms]) (auto simp: native_any_rule_def)
+sublocale any_rule: native_conjunction_program P ch "Finite_Pattern_Pair (native_var 0) (native_var 1)" "[]"
+  unfolding native_conjunction_program_def native_conjunction_program_axioms_def
+  using any.native_rule_family_axioms[unfolded native_any_rule_def] by simp
 
 lemma any_exact: "(ch,Pair_Term x y)\<in>positive_meaning P \<longleftrightarrow> term_formed x \<and> term_formed y"
-proof
-  assume "(ch,Pair_Term x y)\<in>positive_meaning P"
-  then show "term_formed x \<and> term_formed y" using any.holds_formed by fastforce
-next
-  assume formed: "term_formed x \<and> term_formed y"
-  show "(ch,Pair_Term x y)\<in>positive_meaning P"
-    unfolding any_law.exact
-    by (rule exI[of _ "[0]"], rule exI[of _ "Finite_Pattern_Pair (native_var 0) (native_var 1)"],
-      rule exI[of _ "[]"], rule exI[of _ "native_values [x,y]"]) (use formed in \<open>auto simp: native_any_rule_def\<close>)
-qed
+  using any_rule.at[of "native_values [x,y]"] by auto
 
 theorem exact:
   assumes valued: "\<And>y. term_formed (val y)"
@@ -93,8 +85,8 @@ begin
 sublocale rearranged: native_rearranging_program P r
     "row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)" e
     "Finite_Pattern_Pair (native_var 0) (native_var 4)"
-  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
-  using native_rule_family_axioms[unfolded row_mentions_rule_def] by (auto simp: row_pattern_def)
+  unfolding native_rearranging_program_def native_rearranging_program_axioms_def row_pattern_variables
+  using native_rule_family_axioms[unfolded row_mentions_rule_def] by simp
 
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
@@ -327,33 +319,15 @@ begin
 sublocale law: native_rule_law P s "[([0],undeclared_rule u f)]"
   by (rule native_rule_lawI[OF native_rule_family_axioms]) (auto simp: undeclared_rule_def)
 
+sublocale conjunction: native_conjunction_program P s
+    "Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"
+    "[([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
+  unfolding native_conjunction_program_def native_conjunction_program_axioms_def
+  using native_rule_family_axioms[unfolded undeclared_rule_def] by auto
+
 theorem exact: "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P \<longleftrightarrow>
     (u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
-proof
-  assume "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P"
-  then obtain c p ps g where rule: "(c,finite_native_rule p ps)\<in>set [([0]::local_address,undeclared_rule u f)]"
-    and shape: "evaluate_pattern g (decode_finite_pattern p)=Pair_Term x (Pair_Term a b)"
-    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
-    unfolding law.exact by blast
-  from rule have p: "p=Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"
-    and ps: "set ps={([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),
-      ([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))}"
-    by (simp_all add: undeclared_rule_def finite_native_rule_eq_iff)
-  have fields: "g [0]=x" "g [1]=a" "g [2]=b" using shape by (simp_all add: p)
-  show "(u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
-    using support fields by (auto simp: ps)
-next
-  assume both: "(u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
-  have formed: "term_formed x" "term_formed a" "term_formed b"
-    using both by (auto dest: positive_meaning_term_formed)
-  show "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P"
-    unfolding law.exact
-    by (rule exI[of _ "[0]"],
-      rule exI[of _ "Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"],
-      rule exI[of _ "[([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),
-        ([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"],
-      rule exI[of _ "native_values [x,a,b]"]) (use both formed in \<open>auto simp: undeclared_rule_def\<close>)
-qed
+  using conjunction.at[of "native_values [x,a,b]"] by auto
 
 end
 

@@ -271,7 +271,7 @@ next
   show "native_rearranging_program_axioms
       (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5))
       (Finite_Pattern_Pair (native_var 0) (native_var 4))"
-    unfolding native_rearranging_program_axioms_def by (simp add: row_pattern_def)
+    unfolding native_rearranging_program_axioms_def row_pattern_variables by simp
 qed
 
 interpretation witness_index_calls: native_rearranging_program verdict_witness_system witness_index_call
@@ -780,24 +780,27 @@ next
   then show "\<exists>p ps. F=finite_native_rule p ps" by (auto simp: malformed_witness_rule_def)
 qed
 
+interpretation malformed_witness_conjunction: native_conjunction_program verdict_witness_system witness_malformed
+    "row_pattern (native_var 0) (native_var 1) (Finite_Pattern_Payload []) (Finite_Pattern_Payload [])
+      (native_var 2) (native_var 3)" "[]"
+  unfolding native_conjunction_program_def native_conjunction_program_axioms_def
+  using malformed_witness_family.native_rule_family_axioms[unfolded malformed_witness_rule_def] by simp
+
 theorem native_malformed_witness_row:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(witness_malformed,Pair_Term x (state_row_term ident z))\<in>positive_meaning verdict_witness_system \<longleftrightarrow>
     term_formed x \<and> row_declared (snd z)=[] \<and> row_subjects (snd z)=[]"
 proof
   assume holds: "(witness_malformed,Pair_Term x (state_row_term ident z))\<in>positive_meaning verdict_witness_system"
-  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set [([0]::local_address,malformed_witness_rule)]"
-    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p)\<union>
-        (\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)). term_formed (f a)"
-    and concl: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (state_row_term ident z)"
-    by (rule malformed_witness_family.holds_rule[OF holds]) blast
-  have p: "p=row_pattern (native_var 0) (native_var 1) (Finite_Pattern_Payload []) (Finite_Pattern_Payload [])
+  let ?p="row_pattern (native_var 0) (native_var 1) (Finite_Pattern_Payload []) (Finite_Pattern_Payload [])
       (native_var 2) (native_var 3)"
-    using rule by (simp add: malformed_witness_rule_def finite_native_rule_eq_iff)
+  obtain f where formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern ?p). term_formed (f a)"
+    and concl: "evaluate_pattern f (decode_finite_pattern ?p)=Pair_Term x (state_row_term ident z)"
+    using holds[unfolded malformed_witness_conjunction.exact] by blast
   have vals: "f [0]=x" "keys_term (row_declared (snd z))=Payload_Term []"
       "keys_term (row_subjects (snd z))=Payload_Term []"
-    using concl by (simp_all add: p row_pattern_def state_row_term_def eq_commute[of "Payload_Term []"])
-  have "term_formed x" using formed vals by (simp add: p row_pattern_def)
+    using concl by (simp_all add: row_pattern_def state_row_term_def eq_commute[of "Payload_Term []"])
+  have "term_formed x" using formed vals by (simp add: row_pattern_def)
   then show "term_formed x \<and> row_declared (snd z)=[] \<and> row_subjects (snd z)=[]"
     using vals by (cases "row_declared (snd z)"; cases "row_subjects (snd z)") (simp_all add: keys_term_def)
 next
@@ -806,8 +809,8 @@ next
       keys_term (row_mentions (snd z)),ident (row_identity (snd z))]) (decode_finite_pattern
       (row_pattern (native_var 0) (native_var 1) (Finite_Pattern_Payload []) (Finite_Pattern_Payload [])
         (native_var 2) (native_var 3))))\<in>positive_meaning verdict_witness_system"
-    by (rule malformed_witness_family.step_at[where c="[0]" and ps="[]"])
-      (use empty identity in \<open>auto simp: malformed_witness_rule_def row_pattern_def\<close>)
+    by (rule malformed_witness_conjunction.at[THEN iffD2])
+      (use empty identity in \<open>auto simp: row_pattern_def\<close>)
   then show "(witness_malformed,Pair_Term x (state_row_term ident z))\<in>positive_meaning verdict_witness_system"
     using empty by (simp add: row_pattern_def state_row_term_def keys_term_def)
 qed

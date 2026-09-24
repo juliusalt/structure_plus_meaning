@@ -12,7 +12,9 @@ witnesses (#44), its reflection and held measurement (#278) and its witnesses at
 Request construction has landed (#112, #114, #286); the order's next step, problems whose subjects are native
 definitions, is decided (#320) and its builds N1–N4 are under way; its first problem is the owner's (Q2, answered
 2026-09-24 17:18): how to choose the next problem to solve, with the authority question a native problem the owner
-approves — #370 records it in the plan and #371 poses both natively, before N4a and N4b. The incremental assessment of
+approves — #370 recorded it in the plan (`82a065cd`) and #371 poses both natively, before N4a and N4b. Beneath both, the
+owner found no native definition of the notion of a problem (2026-09-24): design #373 decides it first, and #371, N4a,
+N4b and the decomposition's application to the loop's problems (#327, #329, #331) wait on it. The incremental assessment of
 an edited state
 (#192, #187 → #193 → #194) is the remedy for a verification stage's cost. The serialized word changes make the chain
 that decides the run's length; the re-citations of the rule programs, the documents and the reviews run beside them.
@@ -181,8 +183,8 @@ word chain #169 → #319 → #92 → #93 is 4, and #295 → #288 → #353 → #1
 and B3 (#363) wait on nothing.
 
 **Order** (the queue holds it; this is why it is as it is; it is the planner's choice, a residual until the native
-answer to the selection problem exists, Q2). The owner's answer to Q2 first (#370, #371); then #295, the root of the
-longest chain; then #288 and
+answer to the selection problem exists, Q2). The owner's direction first: the native notion of a problem (#373), then
+the two problems of Q2 over it (#371); then #295, the root of the longest chain; then #288 and
 #353 (after #288, both editing `Development_Verdict_Mentions`), N1a after #353; the decomposition's #325, the package's
 N2a (#340) and N1a (#336); #324's repair #355 and #356's builds (#359–#368, B1 and B3 taking the slots the chain
 cannot); the incremental stage's #193; the word chain's #169, #319, #354, #92, and #369 after #319; #327 and N4a
@@ -239,6 +241,14 @@ construction (Open 100).
   the planner's choice are the working basis, each interim choice carrying a residual — the queue's order among them
   (Graph, Order), and the provisional choices of Q2's extension and of Q14 and Q16. #370 records the answer in the
   plan; #371 poses the two problems natively, and N4a (#348) and N4b (#350) wait on it.
+- **The native notion of a problem comes first** (the owner, 2026-09-24, to the planner: "Clearly to even be able to
+  do anything in the loop the most fundamental thing that needs to be done is the development of a native notion of a
+  problem"). A problem is a HOL datatype (`Development_Problems`) presented as rows, and every native definition of the
+  loop computes over presented rows whose meaning stays in HOL. Design #373 decides the native notion — what a problem
+  is, its contract and presentation, the relations that depend on it re-stated over it — first in the queue; #371
+  waits on it, and through #371 N4a and N4b; the decomposition's application to the loop's problems (#327, #329, #331)
+  waits on it too, since posing derived subproblems rests on what a problem and its authority are. Work that reads no
+  problem goes on: N1–N3, the rule programs, the verdict's line, the B-line, the rows line's presentation, #325, #333.
 - **A question's candidate is keyed by the key of what it is** (q21): an entity by its first-occurrence path in the
   state's entity list (`development_entity_key`).
 - **The development rows' definitions take the state's constant-key assignment as a parameter** with an `inj_on`
@@ -500,7 +510,11 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   earlier plans" row to a small follow-up continuing it, its follow-ups mailed to #371.
 - **#355** (`2c69e833`): the certified cause's formation discharged where the judgment constructs it, words equal; its
   review's follow-ups mailed to #361, #365 and #367, the rest under Open 27.
-- **#372** (design): the plan's Corrections row on the first problem states the owner's answer to Q2.
+- **#372** (design, `b4170651`): the plan's Corrections row on the first problem states the owner's answer to Q2.
+- **#359** (B1, `d212cb53`): `Shared_Term_Words`, the word read off a report's shared terms, exact to the decoded term's
+  word; its review's follow-up 1 Open 115, 2 mailed to #367.
+- **#363** (B3, `254b5999`): `Presented_Publication_Values`, the publication notions' presenters over a term
+  presentation, each decoding to the plain presenter; its review's follow-ups 1 and 2 mailed to #367, 3–5 Open 116.
 
 ## Open
 
@@ -822,6 +836,20 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     again. Milliseconds in recipe steps of 15–40 s, and the HOL-constant loop is kept, not extended (Q7): not planned.
     The native loop's rows (N3a) present native definitions and meet the question of names carried as text afresh.
     Task 9's entry gains the realized ratio beside its estimate, marked, with its next edit.
+115. **A shared-term table read by position** (#359's review, `.build/tasks/360/review.md`, follow-up 1):
+    `Shared_Term_Words`' `shared_term_word_fold_code` reads the table through `value_reference_read` (`length T`,
+    `T!i`), linear per read at every reference node of the decode and the occurrence walk: negligible at the seed
+    round's table of target leaves, O(nodes × table) over a table holding pair shapes (`Shared_Call_Closures`'). A
+    constant reading it through an `IArray` built once, related to `shared_decode` by a lemma, when such a use comes.
+116. **What #363's landing leaves** (its review, `.build/tasks/364/review.md`, follow-ups 3–5): `REASONING_REUSE.md`'s
+    row "A structural comparison computes a prefix key's order" names `presented_compare_pending_keys`, the worklist
+    form over a domain, and why it is no instance, at the document's next change, a domain-relative statement factored
+    into `Prefix_Key_Comparisons` at a second worklist use; generic facts stated away from their constants
+    (`compare_linear_none_some`, `compare_linear_append_same` to `Linear_Comparisons`,
+    `finite_collection_presentation_cong` and `_image` to `Finite_Presented_Collections`,
+    `finite_generation_value_mapped` to `Finite_Presented_Structures`), moved with the next landing changing those
+    theories; and one of the two `term_view` types (`Shared_Term_Tables`, `Presented_Term_Matching`) renamed at its
+    theory's next change, which a consumer now qualifies.
 
 ## Now
 
@@ -835,7 +863,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   #169 (the native records in their harness's form if it writes them); #370's follow-ups to #371 (interim choices
   recorded natively, a choosing problem's contract kind, the loop the two problems enter); #355's review's to #361
   (`those_map_result`), #365 (`development_incumbent_using`, the row's "the equation") and #367 (the phase
-  attribution); and to #194 q85's rule for a
+  attribution), #359's review's follow-up 2 to #367 (B4's three new phases attributed), #363's review's 1 and 2 to #367
+(`presented_listing` and the target leaves' comparison attributed); and to #194 q85's rule for a
   measurement's reference with, as shares its by-field figures show where they can, #321's 4, #294's 1 and 3 (Open 96)
   and #307's remains (Open 110).
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's

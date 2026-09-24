@@ -13,8 +13,6 @@ text \<open>
   passed, never a datum a program compares.
 \<close>
 
-definition keys_term :: "state_key list \<Rightarrow> factor_term" where
-  "keys_term ks=data_list_term (map path_term ks)"
 
 definition state_row_term :: "('i \<Rightarrow> factor_term) \<Rightarrow> state_key\<times>'i state_row \<Rightarrow> factor_term" where
   "state_row_term ident z=Pair_Term (path_term (fst z)) (Pair_Term (keys_term (row_declared (snd z)))
@@ -27,19 +25,8 @@ definition state_family_term :: "('i \<Rightarrow> factor_term) \<Rightarrow> 'i
 definition state_families_term :: "('i \<Rightarrow> factor_term) \<Rightarrow> 'i state_family list \<Rightarrow> factor_term" where
   "state_families_term ident Fs=data_list_term (map (state_family_term ident) Fs)"
 
-lemma keys_term_formed [simp]: "term_formed (keys_term ks)"
-  by (simp add: keys_term_def data_list_term_formed)
-
 lemma path_term_image_member [simp]: "path_term k\<in>path_term ` A \<longleftrightarrow> k\<in>A"
   by (auto simp: path_term_injective)
-
-lemma keys_term_pair [simp]:
-  "keys_term ks=Pair_Term a b \<longleftrightarrow> (\<exists>k ks'. ks=k#ks' \<and> a=path_term k \<and> b=keys_term ks')"
-  "Pair_Term a b=keys_term ks \<longleftrightarrow> (\<exists>k ks'. ks=k#ks' \<and> a=path_term k \<and> b=keys_term ks')"
-  by (cases ks; auto simp: keys_term_def)+
-
-lemma keys_term_Cons: "keys_term (k#ks)=Pair_Term (path_term k) (keys_term ks)"
-  by (simp add: keys_term_def)
 
 lemma state_row_term_formed:
   assumes "\<And>y. term_formed (ident y)"
@@ -63,6 +50,13 @@ definition row_pattern ::
       local_address finite_term_pattern" where
   "row_pattern x a d s m i=Finite_Pattern_Pair x (Finite_Pattern_Pair a (Finite_Pattern_Pair d
     (Finite_Pattern_Pair s (Finite_Pattern_Pair m i))))"
+
+text \<open>The row pattern at six variables binds exactly those six: every rule of a row reads its premises' variables here.\<close>
+
+lemma row_pattern_variables:
+  "pattern_variables (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2)
+    (native_var 3) (native_var 4) (native_var 5)))={[0],[1],[2],[3],[4],[5]}"
+  by (auto simp: row_pattern_def)
 
 text \<open>
   The row pattern at six variables is read at the valuation of a context and a row: its evaluation is the
@@ -187,8 +181,8 @@ begin
 sublocale rearranged: native_rearranging_program P r
     "row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)" m
     "Finite_Pattern_Pair (native_var 0) (native_var 3)"
-  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
-  using native_rule_family_axioms[unfolded row_subject_rules_def row_subject_rule_def] by (auto simp: row_pattern_def)
+  unfolding native_rearranging_program_def native_rearranging_program_axioms_def row_pattern_variables
+  using native_rule_family_axioms[unfolded row_subject_rules_def row_subject_rule_def] by simp
 
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"

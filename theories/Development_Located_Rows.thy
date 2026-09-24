@@ -36,23 +36,17 @@ begin
 sublocale law: native_rule_law P d "[([0],native_value_rule)]"
   by (rule native_rule_lawI[OF native_rule_family_axioms]) (auto simp: native_value_rule_def)
 
+sublocale conjunction: native_conjunction_program P d "Finite_Pattern_Pair (native_var 0) (native_var 0)" "[]"
+  unfolding native_conjunction_program_def native_conjunction_program_axioms_def
+  using native_rule_family_axioms[unfolded native_value_rule_def] by simp
+
 theorem exact: "(d,Pair_Term x y)\<in>positive_meaning P \<longleftrightarrow> term_formed x \<and> x=y"
 proof
   assume "(d,Pair_Term x y)\<in>positive_meaning P"
-  then obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set [([0]::local_address,
-      native_value_rule::(local_address,local_address,'u definition_site) finite_factor_schema)]"
-    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
-    and evaluated: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x y"
-    unfolding law.exact by (elim exE conjE) (rule that; assumption)
-  from rule have p: "p=Finite_Pattern_Pair (native_var 0) (native_var 0)"
-    by (simp add: native_value_rule_def finite_native_rule_eq_iff)
-  show "term_formed x \<and> x=y" using formed evaluated by (auto simp: p)
+  then show "term_formed x \<and> x=y" by (auto simp: conjunction.exact)
 next
-  assume formed: "term_formed x \<and> x=y"
-  show "(d,Pair_Term x y)\<in>positive_meaning P"
-    unfolding law.exact
-    by (rule exI[of _ "[0]"], rule exI[of _ "Finite_Pattern_Pair (native_var 0) (native_var 0)"],
-      rule exI[of _ "[]"], rule exI[of _ "\<lambda>_. x"]) (use formed in \<open>auto simp: native_value_rule_def\<close>)
+  assume "term_formed x \<and> x=y"
+  then show "(d,Pair_Term x y)\<in>positive_meaning P" using conjunction.at[of "\<lambda>_. x"] by auto
 qed
 
 end
@@ -134,30 +128,17 @@ theorem development_row_lookup_at:
 proof -
   have stored: "term_formed (id w)" if "store_lookup (path_store rows) bs=Some w" for bs w
     using path_store_found[OF that] formed by (simp only: id_apply) blast
-  have "(development_row_search,Pair_Term v (Pair_Term (path_term l) (development_rows_term rows)))
-      \<in>positive_meaning development_rows_program \<longleftrightarrow>
-    term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
-      (development_row_check,Pair_Term v (id w))\<in>positive_meaning development_rows_program)"
-    unfolding development_rows_term_def by (rule development_row_searches.exact_held) (rule stored)
-  also have "\<dots> \<longleftrightarrow> store_lookup (path_store rows) l=Some v"
-  proof
-    assume "term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
-      (development_row_check,Pair_Term v (id w))\<in>positive_meaning development_rows_program)"
-    then obtain bs w where key: "path_term l=path_term bs" and found: "store_lookup (path_store rows) bs=Some w"
-      and checked: "(development_row_check,Pair_Term v (id w))\<in>positive_meaning development_rows_program" by blast
-    have "l=bs" using key by (simp only: path_term_injective)
-    moreover have "v=id w" using checked by (simp only: development_row_check_exact)
-    ultimately show "store_lookup (path_store rows) l=Some v" using found by simp
+  show ?thesis
+  proof (cases "store_lookup (path_store rows) l")
+    case None
+    then show ?thesis unfolding development_rows_term_def
+      by (auto simp: development_row_searches.exact_held[OF stored] path_term_injective)
   next
-    assume found: "store_lookup (path_store rows) l=Some v"
-    have formed_v: "term_formed v" using stored[OF found] by (simp only: id_apply)
-    then have "(development_row_check,Pair_Term v (id v))\<in>positive_meaning development_rows_program"
-      by (simp add: development_row_check_exact)
-    then show "term_formed v \<and> (\<exists>bs w. path_term l=path_term bs \<and> store_lookup (path_store rows) bs=Some w \<and>
-      (development_row_check,Pair_Term v (id w))\<in>positive_meaning development_rows_program)"
-      using found formed_v by blast
+    case (Some w)
+    have "term_formed w" using stored[OF Some] by (simp only: id_apply)
+    then show ?thesis unfolding development_rows_term_def
+      by (auto simp: development_row_searches.held_at[OF stored Some] development_row_check_exact Some)
   qed
-  finally show ?thesis .
 qed
 
 theorem development_row_at:
@@ -169,11 +150,8 @@ theorem development_row_at:
 
 section \<open>The request at a locus\<close>
 
-lemma development_row_family_formed: "term_formed (development_row_family ls)"
-  by (induct ls) (simp_all add: development_row_family_def octets_formed_def)
-
 lemma development_request_body_formed: "term_formed (development_request_body S E)"
-  by (simp add: development_request_body_def development_row_family_formed)
+  by (simp add: development_request_body_def)
 
 text \<open>
   The request of a problem is the value the store holds at the problem's locus under the request's role

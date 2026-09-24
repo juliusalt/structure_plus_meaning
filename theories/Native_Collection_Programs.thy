@@ -1021,16 +1021,23 @@ proof -
       (use finite_rule_program_agrees[OF _ within] shared defs inside site in auto)
 qed
 
+text \<open>
+  A program whose definitions begin with definitions another program holds, the two sharing a leading
+  prefix, holds its definitions as that prefix and its own rest: the split every join of such programs reads.
+\<close>
+
+lemma finite_rule_program_prefix: "set ds=set (take n ds)\<union>set (drop n ds)"
+  by (metis append_take_drop_id set_append)
+
 section \<open>A single premise that calls a callee on a rearrangement of the conclusion's variables\<close>
 
 text \<open>
   A site whose family is one rule, whose single premise calls a callee on a pattern whose variables the
   conclusion binds, holds exactly where the callee holds of the premise's evaluation. It is the family's
-  law (@{locale native_rule_law}) at one rule with one premise: @{text exact} is the law's, and @{text at},
-  the same contract at every evaluation, follows from it and the two pattern facts
-  @{thm [source] evaluate_pattern_agree} and @{thm [source] evaluate_pattern_variables_formed}; only
-  @{text at} needs the premise's variables to be the conclusion's. A rearrangement of the conclusion's
-  variables is an instance, and so is a conclusion with literal leaves.
+  law (@{locale native_rule_law}) at one rule with one premise, and the one-rule program of the next section
+  (\<open>native_conjunction_program\<close>) at one premise: @{text exact} and @{text at}, the same contract at
+  every evaluation, are that program's, stated after it. A rearrangement of the conclusion's variables is an
+  instance, and so is a conclusion with literal leaves.
 \<close>
 
 locale native_rearranging_program = native_rule_family P s "[([0],finite_native_rule p [([0],(r,q))])]"
@@ -1063,61 +1070,6 @@ proof -
   show "(r,evaluate_pattern f (decode_finite_pattern q))\<in>Y" using supported listed by auto
 qed
 
-theorem exact:
-  "(s,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
-    evaluate_pattern f (decode_finite_pattern p)=t \<and> (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
-proof
-  assume "(s,t)\<in>positive_meaning P"
-  then obtain c p' ps f where rule: "(c,finite_native_rule p' ps)\<in>set [([0::nat],finite_native_rule p [([0],(r,q))])]"
-    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p'). term_formed (f a)"
-    and evaluated: "evaluate_pattern f (decode_finite_pattern p')=t"
-    and support: "\<forall>(k,d,u)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern u))\<in>positive_meaning P"
-    unfolding law.exact by blast
-  have pattern: "p'=p" and listed: "set ps={([0],(r,q))}"
-    using rule by (simp_all add: finite_native_rule_eq_iff)
-  show "\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
-      evaluate_pattern f (decode_finite_pattern p)=t \<and> (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-    using formed evaluated support unfolding pattern listed by auto
-next
-  assume "\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
-    evaluate_pattern f (decode_finite_pattern p)=t \<and> (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-  then obtain f where formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
-    and evaluated: "evaluate_pattern f (decode_finite_pattern p)=t"
-    and premise: "(r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P" by blast
-  show "(s,t)\<in>positive_meaning P"
-    unfolding law.exact
-    by (intro exI[of _ "[0]"] exI[of _ p] exI[of _ "[([0],(r,q))]"] exI[of _ f] conjI)
-      (use formed evaluated premise in simp_all)
-qed
-
-theorem at:
-  "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P \<longleftrightarrow>
-    (\<forall>a\<in>pattern_variables (decode_finite_pattern p)-pattern_variables (decode_finite_pattern q). term_formed (f a)) \<and>
-    (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-proof
-  assume holds: "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
-  obtain g where formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (g a)"
-    and evaluated: "evaluate_pattern g (decode_finite_pattern p)=evaluate_pattern f (decode_finite_pattern p)"
-    and premise: "(r,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
-    using holds[unfolded exact] by blast
-  have agree: "\<And>a. a\<in>pattern_variables (decode_finite_pattern p) \<Longrightarrow> g a=f a"
-    by (rule evaluate_pattern_agree[OF evaluated])
-  have "evaluate_pattern g (decode_finite_pattern q)=evaluate_pattern f (decode_finite_pattern q)"
-    by (rule evaluate_pattern_cong) (use agree binds in blast)
-  then show "(\<forall>a\<in>pattern_variables (decode_finite_pattern p)-pattern_variables (decode_finite_pattern q). term_formed (f a)) \<and>
-      (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-    using formed agree premise by auto
-next
-  assume "(\<forall>a\<in>pattern_variables (decode_finite_pattern p)-pattern_variables (decode_finite_pattern q). term_formed (f a)) \<and>
-    (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-  then have rest: "\<forall>a\<in>pattern_variables (decode_finite_pattern p)-pattern_variables (decode_finite_pattern q). term_formed (f a)"
-    and premise: "(r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P" by blast+
-  have read: "\<forall>a\<in>pattern_variables (decode_finite_pattern q). term_formed (f a)"
-    using evaluate_pattern_variables_formed[OF positive_meaning_term_formed[OF premise]] by blast
-  show "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
-    unfolding exact by (intro exI[of _ f] conjI) (use rest read premise in auto)
-qed
-
 end
 
 section \<open>One rule, every premise at the conclusion's evaluation\<close>
@@ -1140,6 +1092,43 @@ begin
 
 sublocale law: native_rule_law P s "[([0],finite_native_rule p ps)]"
   by (rule native_rule_lawI[OF native_rule_family_axioms]) auto
+
+text \<open>
+  The site holds of a term exactly when some evaluation formed on the conclusion's variables evaluates the
+  conclusion to it and every premise holds at that evaluation: the law at its one rule, whose own case
+  split is made here once. A rule without premise is the case of the empty list: its site holds of every
+  formed evaluation of its conclusion and of nothing else.
+\<close>
+
+theorem exact:
+  "(s,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+    evaluate_pattern f (decode_finite_pattern p)=t \<and>
+    (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P))"
+proof
+  assume holds: "(s,t)\<in>positive_meaning P"
+  obtain c p' ps' g where rule: "(c,finite_native_rule p' ps')\<in>set [([0::nat],finite_native_rule p ps)]"
+    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p') \<union>
+      (\<Union>(k,d,q)\<in>set ps'. pattern_variables (decode_finite_pattern q)). term_formed (g a)"
+    and evaluated: "evaluate_pattern g (decode_finite_pattern p')=t"
+    and support: "\<forall>(k,d,q)\<in>set ps'. (d,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
+    by (rule law.holds_rule[OF holds])
+  have pattern: "p'=p" and listed: "set ps'=set ps" using rule by (simp_all add: finite_native_rule_eq_iff)
+  show "\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+      evaluate_pattern f (decode_finite_pattern p)=t \<and>
+      (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
+    using formed[unfolded pattern] evaluated[unfolded pattern] support[unfolded listed] by blast
+next
+  assume "\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+    evaluate_pattern f (decode_finite_pattern p)=t \<and>
+    (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
+  then obtain f where formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
+    and evaluated: "evaluate_pattern f (decode_finite_pattern p)=t"
+    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    by blast
+  have "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
+    by (rule law.step_at[where c="[0]", OF _ _ support]) (use formed in auto)
+  then show "(s,t)\<in>positive_meaning P" by (simp only: evaluated)
+qed
 
 theorem at:
   "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P \<longleftrightarrow>
@@ -1192,6 +1181,31 @@ next
   show "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
     by (rule law.step_at[where c="[0]", OF _ conjunct1[OF both] conjunct2[OF both]]) simp
 qed
+
+end
+
+text \<open>
+  The rearranging program is the conjunction program at one premise, and its two contracts are that
+  program's read at the one premise.
+\<close>
+
+sublocale native_rearranging_program \<subseteq> conjunction: native_conjunction_program P s p "[([0],(r,q))]"
+  unfolding native_conjunction_program_def native_conjunction_program_axioms_def
+  using native_rule_family_axioms binds by simp
+
+context native_rearranging_program
+begin
+
+theorem exact:
+  "(s,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+    evaluate_pattern f (decode_finite_pattern p)=t \<and> (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
+  using conjunction.exact[of t] by simp
+
+theorem at:
+  "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P \<longleftrightarrow>
+    (\<forall>a\<in>pattern_variables (decode_finite_pattern p)-pattern_variables (decode_finite_pattern q). term_formed (f a)) \<and>
+    (r,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+  using conjunction.at[of f] by simp
 
 end
 

@@ -6,7 +6,7 @@ development itself is an entry of `DECISIONS.md` and here a reference; what a ta
 
 ## Graph
 
-The Q7 order in the ledger sets the lines, under the owner's two directions of 2026-09-19 — structure is explicit and
+The Q7 order, the owner's since 2026-09-24 (Q7 answered), sets the lines, under the owner's two directions of 2026-09-19 — structure is explicit and
 octets are inert; native definitions are normative. The loop's central judgment is native (#42): its store absence and
 witnesses (#44), its reflection and held measurement (#278) and its witnesses at the edit's parts (#195) remain.
 Request construction has landed (#112, #114, #286); the order's next step, problems whose subjects are native
@@ -23,59 +23,26 @@ closure cannot replay the native records in its own tree (Open 100), so a word c
 its landing, by a task of their own. The replay every records task runs is #323's (tools, #313's review): the judged
 answers' proofs shared as #313 shared their parts readings; no task waits on it.
 
-**The verdict line (#44, #278, #279, #195).** Task 3's design. Landed: the state rows (#46), the request's keys (#32,
-#106), statements and malformed (#34), the presenter (#101), excess and undeclared through the subject index (#36,
-#139, #182), roots and the permitted difference (#38), unreached over the native reach (#40), the entry rule with its
-contract and two instances (#42, `Development_Native_Verdict`). #44 landed store absence and the witnesses last (`9e8bc00d`,
-`Development_Verdict_Witnesses`), so that no positive field reaches an absence; its review found the same discharge and
-the same two correspondences proved on both sides of the fields and their witnesses, which #288 states once, with the
-witness at the request's presentation — the lemma a native repair consumes — resting on the discharge (after #285 and
-#284). The witnesses of `unpermitted_removed`, `unpermitted_added` and `unreached` are unbuilt (Open 90). #290 attributed the cost of a native judgment over a whole
-state and repairs it. Its attribution corrected the premise that sent it: the joined program does compute the
-machinery's bare reach demand (1.0 s), and what never ended in #278's first run was `fcard` of the demand — a quadratic
-`remdups` with left-first structural equality over calls carrying the whole reach table, about 70 s of CPU with no
-allocation, so no engine fault ever blocked that measurement (#278 counts by `keyed_rows` now, 0.10 s). The whole
-machinery judgment's demand is 32.5 s for 13,364 calls against 1.0 s for 2,985 at the seed — thirty times the seconds
-for four and a half times the calls — of which 22 s are call-key comparisons at `verdict_found_search`, where
-`store_found_rule` puts the store on the right and the right-first call key compares it whole before the path (3.3 ms an
-insertion at the machinery, 0.33 ms at the seed), and 5.2 s the per-call formation re-check. #290 repairs both: the
-formation check through `Established_Premises`, and the key — not the programs. The planner refused rearranging
-`native_store_search_rules` to put the store left of the path (q74): that would change the argument arrangement of every
-program using the search for the order in which one key meets its components, which is the implementation dictating the
-structure, and `Right_Ordered_Terms`' own entry records that which component distinguishes two terms is a convention of
-the programs that build them. The composite call key that answer prescribed was
-prototyped and measured *slower* (29.5 s against 1.5 s at the seeded judgment), because computing its cheap component
-costs a walk of each argument at every comparison. #290 lands what a fix could reach: the attribution, and the formation
-re-check hoisted by an exact code equation applying `Established_Premises` (25.2 s from 32.5 at the machinery), in
-`Formed_Call_Closures` with the entry "A demand's formation is checked at its requests". #292 decided the rest
-(`b1960eee`, DECISIONS.md "An evaluation's calls are built over the shared subterms of its requests"): neither a digest
-nor the store search's arrangement, but the evaluator's terms carrying their reference into the first-occurrence table
-of the distinct subterms of its requests, equality decided exactly by canonicity — every large component of every call
-is a subterm of the presented argument, and a comparison that ends equal walks both trees whatever its order, so only
-explicit sharing removes it. Its builds change no word: the notion `Shared_Term_Tables` (B1, #297) and the matching over
-a presentation (B2, #299, landed `54f659eb`, `Presented_Term_Matching`; its review's follow-ups to B3, B4 and B6) at once; the applications over a presentation (B3, #301); the demand over shared calls (B4,
-#303, landed `fad2198a`, `Shared_Call_Closures`; its review's follow-ups 1, 3 and 5 mailed to B5, 4 to B6, 2 to Open
-47); the positioned evaluation over shared calls (B5, #305, landed `5b33cd8a`, `Shared_Native_Evaluation`; its review's follow-ups 2 and 3 to B6, 1 to Open 47 and 102); the measurement (B6, #307, after #278, its before).
-M0 (#296) counted what B4's test reads (`.build/tasks/296/comparisons.md`): the found site's cost is unequal
-comparisons walking the store both calls carry (7.51×10⁹ node pairs, about 32 s at the machinery), which either choice
-removes; the comparisons ending equal walk 23.61×10⁹ node pairs (about 99.8 s) at the machinery, the renaming's found
-lookups nearly all of it. #194 waits on B5, so the stage is measured over shared calls. #278 measured the machinery judgment held
-(`932c8e69`, `.build/tasks/278/measurement.md`): 13,364 demanded calls, demand 23.2–26.2 s, answered 121.1 s, an
-argument of 3,353,825 nodes — 31 bare reaches by seconds and 3.6 by calls (35 and 3.7 at the seed), its seconds per
-demanded call growing from 1.63 to 10.9 ms, all in the call-key passes B4 and B5 remove; the baseline for #194 and
-condition 5a's figure. #279 landed the exporter's
-obligation `isabelle_declared_once` at every state the exporter defines (#256, #267, #274, `ab37086e`): its measurement
-(`.build/tasks/279/measurement.md`) took the spine conversion from 0.20 s to 0.107 s at the machinery's 340 entities
-by reading each entity's constructor; a fold equation does not carry (`.build/tasks/279/equation.md`). What remained
-grew about quadratically, and its review found the cause: `Conv.rewr_conv` ends in a full beta normalization of the
-rewritten right side, which holds the whole remaining entity list, so each step walks what remains. #283 landed the
-repair (`f1b6098a`): the chosen equation is instantiated directly at the destructured cterms, with no beta conversion,
-and the dispatch reads the notion's equations; the conversion is 0.0008 s at the machinery's 340 entities, from 0.107 s,
-and linear. What is left of the obligation is `increasing_tac`'s numeral comparisons, 0.017 s at 210 declarations —
-linear, twenty times the conversion (Open 92). After #308, #317 timed every obligation held
-(`.build/tasks/317/measurement.md`: 0.134 s per state definition at the seed, 0.704 s at the machinery, 0.0069 s at a
-frame): the chain proving a list increasing is quadratic in the names, 56% of the machinery's, and #352 instantiates
-its steps as #283 did; roots distinctness is linear in root pairs. Roots stay a store with distinct keys.
+**The verdict line (#44, #288, #195).** Task 3's design. Landed: the state rows (#46), the request's keys (#32, #106),
+statements and malformed (#34), the presenter (#101), excess and undeclared through the subject index (#36, #139,
+#182), roots and the permitted difference (#38), unreached over the native reach (#40), the entry rule with its
+contract and two instances (#42, `Development_Native_Verdict`), store absence and the witnesses (#44,
+`Development_Verdict_Witnesses`), and the witnesses at the edit's parts (#195, `04c20f87`,
+`Development_Incremental_Witnesses`). #44's review found the same discharge and the same two correspondences proved on
+both sides of the fields and their witnesses, which #288 states once, with the witness at the request's presentation —
+the lemma a native repair consumes — resting on the discharge. The witnesses of `unpermitted_removed`,
+`unpermitted_added` and `unreached` are unbuilt (Open 90). A judgment over a whole state is affordable since the
+shared-subterm line (#292's entry "An evaluation's calls are built over the shared subterms of its requests"; B1–B5
+#297, #299, #301, #303, #305, after #290 attributed the demand's cost and hoisted its formation check through
+`Established_Premises`): B6 (#307, `8fe2eeba`, `.build/tasks/307/measurement.md`, shared) measured the machinery
+judgment at 3.76–4.22 s for 13,365 demanded calls (demand 0.26–0.29 s) against #278's 121.1 s answered and #290's
+25.2 s demand, and the seeded at 0.28–0.31 s against 4.92 s, with the same calls and answers. What remains of it is
+Open 110. The planner refused rearranging `native_store_search_rules` to put the store left of the path (q74): the
+implementation would dictate the programs' argument arrangement. The exporter proves `isabelle_declared_once`,
+distinct names, closed positions and distinct roots at every state it defines (#279, #283, #289, #308); #317 timed the
+obligations held (`.build/tasks/317/measurement.md`: 0.704 s per state definition at the machinery), the chain proving
+a list increasing quadratic in the names and 56% of it, which #352 instantiates as #283 did the declarations
+(`increasing_tac`'s rest is Open 92). Roots stay a store with distinct keys.
 
 **Request construction (#276, #277, #112–#114).** Task 95's entry: a native check over the request state's rows — a
 proposed body is admitted exactly when it lists the least context and the support, production being an executor's
@@ -113,18 +80,17 @@ contract `native_edited_fields`. Landed: the index by a key reading (#185), the 
 #220, #249, #269), the reach tables (#190), the local fields (#188), `undeclared` (#189) and `unreached` (#191; its reach
 roots include every key some request row is about, q63) on the edited state, and the incremental judgment with the
 stage's equation (#192, `9845122c`, `Development_Incremental_Verdict`: the verdict's entry at the edit's parts,
-`native_edited_fields`). #318, continuing it, takes the per-answer function's last whole-state reads — the declaration
-readings through the declaration store under the single-declaration fact and presentability from the edit (the first
-review 203's follow-ups 2 and 4, plan-52's decisions), the closure's fibres from the assessment's subject index and the
-guard's atom membership through a member tree (the re-review's 2 and 3) — with the stale text and unused parameters
-(its 1 and 4), before #193, which carries the first review's follow-up 1 (the finite argument exported,
-`checked_premise` interpreted globally); its follow-ups 3 and 5 are Open 107 and 108. #187 landed the exported answer's edit
+`native_edited_fields`), the per-answer function's last whole-state reads (#318, `5cb7902e`) and the witnesses at the
+edit's parts (#195, `04c20f87`, `Development_Incremental_Witnesses`). #353 takes #318's review's five follow-ups and
+#195's re-review's first (the discharges both undeclared forms make, stated once in the locale `incremental_verdict`),
+after #321 and before #193, which carries review 203's follow-up 1 (the finite argument exported, `checked_premise`
+interpreted globally); review 203's follow-ups 3 and 5 are Open 107 and 108, #195's re-review's second Open 90. #187 landed the exported answer's edit
 (`b1960eee`, `Development_Exported_Edit`); its review's follow-ups 1–3 are #294 (the keyed merge stated once in
 `Finite_Ordered_Set_Difference`, keys paired once, names read through the name index), before #193, the machinery's
 verification stage judged natively, which carries follow-up 4 (the renamed control read back as the request state,
 roots included; premise (iii) checked per answer; mailed); follow-up 5's three facts go to #284 (mailed). #194, the
-stage's held measurement by field and condition 5a's evidence, waits on #193 and B5 (#305); #195, the witnesses at the
-edit's parts, after #44 and #192. Specifications keep their
+stage's held measurement by field and condition 5a's evidence, waits on #193, the judgment it measures now over shared
+calls (B6). Specifications keep their
 exception, judged whole. The presenter's entity keys keep their scan below about 10^4 entities (Open 84).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: landed are the locus, the relation, the request
@@ -143,11 +109,12 @@ proves `isabelle_declared_once`, which settles it for every consumer of a define
 answer's reader already refusing both for an answer it reads. #165 landed
 (`b84e9885`) each context's citations and #84's formedness premise discharged, no word: after two merge rounds its
 lemmas that read the seed's, the machinery's and the repair's constructions stand in `Development_Row_Contexts`, and
-its additions to `Development_Row_Data`'s row are left in `.build/tasks/165/rows.md` for #167. #167 switches every
-report to its problems' rows in context and retires the problem datum's tags, moving a context lemma into a
-construction theory where its switch needs it; re-planned to its room (plan-51), its answer records are #314's and
-task 9's table estimate is measured by #315, both over its landing. New native definitions never wait for these
-retirements (Decisions).
+its additions to `Development_Row_Data`'s row are left in `.build/tasks/165/rows.md` for #167. #167 landed
+(`04c20f87`) every report switched to its problems' rows in context and the problem datum's tags retired; its answer
+records are #314's, which folds its five rows (and its review's follow-up 6, told with follow-up 1's check that no
+re-recorded word is the absence's), task 9's table estimate #315's, and its review's follow-ups 1–5 (the reports
+proved in their domains, generic notions beside their kin, one verdict less per judged answer) #354's, after #169. New
+native definitions never wait for these retirements (Decisions).
 
 **The decomposition (#64).** Landed: the repair rows (#58), the soundness (#60), #66's entry (a decomposition that
 applied is a row at its problem's locus, under a sixth role), the native schema with its state reading native and its
@@ -208,14 +175,12 @@ creates has no review task (the harness reviews it in its own folder). The deepe
 or of the decomposition's builds starts before #321 lands. The word chain #167 → #314 → #169 → #319 → #92 → #93 is 6,
 and #321 → #353 → #193 → #194 → #205 is 5. #352, #323 and #324 wait on nothing.
 
-**Order** (the queue holds it; this is why it is as it is). The tasks in their checks first (#167, #195), so that
-their landing checks do not wait behind heavy runs; then #321's merge round, the root of the longest chain; B6 (#307)
-and #323 in their runs; as #321 lands, #295 and #353, then #288 and the word chain's #314; the decomposition's #325,
-the package's N2a (#340) and N1a (#336); the exporter's chain #352, which waits on nothing but whose check rebuilds
-about 1,666 theories, after them so that its heavy check yields to theirs; the incremental stage's #193; the word
-chain's #169, #319, #92; #327 and N4a (#348); N2b, N1b, N3a, N4b, N3b; the decomposition's #331, #333, #329; the
-measurements #194 and #315, then the investigation #324, whose held runs yield to the checks ahead of it; each review
-after its build.
+**Order** (the queue holds it; this is why it is as it is). The owner's answer recorded first (#357); then #321's
+merge round, the root of the longest chain, and #323 in its run; as #321 lands, #295 and #353, then #288 and the word
+chain's #314; the decomposition's #325, the package's N2a (#340) and N1a (#336); the exporter's chain #352, which waits
+on nothing but whose check rebuilds about 1,666 theories, after them so that its heavy check yields to theirs; #324's
+repair #355 and #356's builds (briefed by #358); the incremental stage's #193; the word chain's #169, #319, #354, #92; #327 and N4a (#348); N2b,
+N1b, N3a, N4b, N3b; the decomposition's #331, #333, #329; the measurements #194 and #315; each review after its build.
 
 ## Decisions
 
@@ -228,15 +193,11 @@ acceptance forbids naming a retired item; a theory that names one is a finding.
 **Word changes are serialized, and their order is the planner's** (plan-48, under Graph): an edge orders two tasks
 whose landings re-record the same report or record files; tasks whose files are disjoint run side by side.
 
-**The engine's numbers, and what they leave.** A reach is affordable; one judgment of the verdict was estimated at
-about four reaches (about 17 s; #278 measures it); a stage of 224 answer states judged whole is of the order of
-2,000 s against 22.4 s for the HOL stage (the incremental entry's measured figure, superseding the earlier estimate of
-3,900 s at four reaches), which is why the incremental assessment is the remedy. At #278's machinery judgment (121.1 s)
-the stage judged whole would be about 27,000 s before B4 and B5. #278 measured one seeded judgment at
-4.92 s, 2,985 demanded calls, with the bare reach beside it at 0.14 s and 801 calls, and the machinery state's bare
-reach at 4.61 s: a judgment is four reaches by calls and about thirty-five by seconds, its calls carrying whole-state
-arguments, and the ratio by seconds is what design 171's stage is compared against. The bound of five
-seconds is met at the scale that decides anything, and the honest record is both numbers. A measurement states which
+**The engine's numbers, and what they leave.** A reach is affordable, and since the shared-subterm line so is a
+judgment over a whole state: B6 (#307) measured the machinery judgment at 3.76–4.22 s and the seeded at 0.28–0.31 s,
+against #278's 121.1 s and 4.92 s; the machinery state's bare reach was 4.61 s and the seed's 0.14 s. A stage of 224
+answer states judged whole would now be of the order of 900 s against 22.4 s for the HOL stage (about 27,000 s before
+B4 and B5), which is why the incremental assessment stays the remedy, #194 measuring it. A measurement states which
 quantity it counts (reached constants, answered calls of a demand); a stage and a judgment are compared by demanded
 calls and by seconds, both stated, the ratio to a bare reach beside them (plan-51, answering #278).
 
@@ -259,7 +220,11 @@ construction (Open 100).
 
 **Still bearing on work not yet briefed:**
 
-- **The Q7 order stands provisionally** (ledger, Q7). An owner answer reorders the whole graph.
+- **The Q7 order is the owner's** (Q7 answered 2026-09-24 16:34: "The order is right. HOL-constant problems stay only
+  until native definitions exist."). The loop's problems about HOL constants are the bootstrap loop: kept standing,
+  with the word changes and records that keep its checks green, and retired once the native loop poses its first
+  problems (N4b, #350; the planner's reading, as Q18 (d) provisionally chooses); work that would only extend the
+  HOL-constant loop is not planned. #357 records the answer in the plan.
 - **A question's candidate is keyed by the key of what it is** (q21): an entity by its first-occurrence path in the
   state's entity list (`development_entity_key`).
 - **The development rows' definitions take the state's constant-key assignment as a parameter** with an `inj_on`
@@ -488,6 +453,20 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   declaration store, presentability from the edit, the closure's fibres from the assessment's subject index, the
   guard's atom membership through a member tree — with the stale text and unused parameters; its review's follow-ups
   1–5 to #353.
+- **#167, #195** (`04c20f87`, one train): every report switched to its problems' rows in context and the problem
+  datum's tags retired, its proof repaired at its cause (`Development_Row_Data` 0.5 s from 674 s; its review's
+  follow-ups 1–5 to #354, 6 and follow-up 1's check told to #314, 7 the harness's); `Development_Incremental_Witnesses`,
+  the verdict's witnesses at the edit's parts (its re-review's follow-up 1 to #353, 2 to Open 90).
+- **#307** (B6, investigation, `8fe2eeba`): the verdict judgment over shared calls measured shared
+  (`.build/tasks/307/measurement.md`), read under the verdict line; its follow-ups Open 110.
+- **#324** (investigation): the seed publication's 48.50 s attributed held (`.build/tasks/324/measurement.md`), read
+  under Open 27; its repairs #355 and #356.
+- **#356** (design): DECISIONS.md "The published state holds its targets once, and a report's word is read off them" —
+  the published state's targets entered once where they are made, its presenters over a term presentation, one word
+  over shared terms for any report, every word equal; its four builds briefed by #358.
+- **#357** (design): the plan records the owner's two answers to Q7 (16:19 and 16:34, verbatim) under "Owner
+  directions" and states the order as the owner's in "The direction of the work", the HOL-constant loop bounded, the
+  plan's reading of the moment (N4b) marked as generated; its follow-ups Open 111.
 
 ## Open
 
@@ -500,7 +479,8 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q3** what Isabelle establishes about adequacy: #281 keeps the plan's sentence on it; unplanned otherwise.
 - **Q4** an agent executor confined to its packet: at the plan's stage 3 gate; unplanned.
 - **Q5** how far the native residual record reaches: a notion is presented structurally when a decision reads it.
-- **Q7** the order of work under the direction that native definitions are normative: it orders this graph.
+- **Q7** answered 2026-09-24: the order is the owner's, and HOL-constant problems stay only until native definitions
+  exist (Decisions; #357 records it in the plan).
 - **Q8** answered by the harness: parked tasks resume in the planner's queue order.
 - **Q9** the tracked `.pyc`: #282 removes it (the finalizer now stages the removal of a tracked ignored path).
 - **Q10, Q11, Q12** answered: the harness advances the base and retains the receipts at every landing; a brief's named
@@ -540,9 +520,13 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 26. The build that applies a decomposition to the loop (#66's entry) is #325–#334 (#322's briefs), which carry
     plan-51's two decisions on #64's questions and #64's remains; the split source waits on the owner's criterion (Q14,
     its evidence Q16).
-27. The seed recipe's remaining cost is #324's to attribute, with the incumbents' snapshot check's generation half.
-    #128's entry names its first check in its Evidence paragraph rather than the landing check that accepted the final
-    tree, with that entry's next edit.
+27. The seed recipe's cost, attributed by #324 (`.build/tasks/324/measurement.md`): the publication presentation is
+    48.50 s held, the word's lookup 28.15 s of it (design #356) and the causes' formation checked again 5.7 s (#355);
+    the cause holding the payload twice (certification 7.6 s of the value) stays with its entry ("Development causes
+    are certified under the first loop's policy"). Unattributed: the fall from #128's 63.45 s; unmeasured: the
+    machinery recipe's held seconds, which set a landing check's recipe phase once both repairs land. #128's entry
+    names its first check in its Evidence paragraph rather than the landing check that accepted the final tree, with
+    that entry's next edit (#355 corrects it).
 28. Every recipe's execution boundary holds `tools/build.py` and `tools/execution_support.py`: narrowing them is a task
     if a tools change is again seen to re-execute everything.
 29. The map's "Reuse (...)" labels: 92 rows name dated sections of `REASONING_REUSE.md` that #280's revision removed,
@@ -694,7 +678,10 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     44 …)" paragraph, the second of which should read "the lemmas its field's contract is built from". With them:
     `native_malformed_witness_exact` is per row under a kind premise, where a family-level form over the families the
     field visits would state the list over the whole state; and store absence has no `exact_held`, which a consumer
-    whose values are formed only where held will need.
+    whose values are formed only where held will need. With the same consumer (#195's re-review,
+    `.build/tasks/206/review.md`, follow-up 2): the composition of `incremental_excess_witness_exact` with
+    `development_verdict_excess_field` at the request's presentation, and the witnesses in
+    `incremental_answer_judgment`'s output.
 89. The adopted answer theory `Development_Answer_0ccf746fe2cf`'s `indexed_heads_exact` restates
     `Factor_Indexed_Readings.reading_heads_indexed` (with its values and counted siblings): one notion, but an answer
     theory is named by its content's digest and is not edited; the copy goes when the walk's next refinement answer
@@ -728,7 +715,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     `k<x` then `x<k`, so a lookup that finds its key walks both terms whole twice; a three-outcome comparison
     (`Linear_Comparisons`, as `Keyed_Value_References` uses) halves every equal walk for any key. After B4 and B5 the
     loop's call keys are shared and compare in one step, so it bears only where whole terms stay keys: at a measured
-    need.
+    need, which #324 met at the seed publication's word (19.23 s of first-occurrence references over whole artifacts):
+    design #356 decides it with the sharing.
 102. `fimage_ffUnion_member` (#301's review) to `Finite_Set_Composition` under a name for what it states, and B5's
     `fBall_member`, `fBall_image` and `ffilter_fimage` (#305's review, follow-up 1) beside it, with that
     theory's next edit.
@@ -764,23 +752,35 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     by the closure reading at V's presentation, or produced by construction, when #194's measurement or a design next
     touches it; a non-closed V only loses reach, so the present form is conservative.
 
+110. **What the shared-subterm line leaves in a judgment** (#307's follow-ups, `.build/tasks/307/result.md`): the
+    settled rounds over positions (`keyed_inference_settled`, 1.8–2.5 s of the machinery judgment's 3.8–4.2 s, no call
+    key compared) and the 0.7–1.1 s its phases do not account for, attributed if #194's stage needs the judgment
+    lower; the rule table's union (0.63–0.68 s against 0.034 s to read the applications) a candidate for
+    `Listed_Set_Unions` where the table is only read. At #194's figures.
+111. **The HOL-constant loop's retirement** (#357's follow-ups, `.build/tasks/357/result.md`): when N4b (#350) lands,
+    a task retiring the HOL loop on the plan's reading — the machinery's HOL residuals marked superseded by the native
+    problems (Q18 (d)), the seed's refinement problems no longer selected or issued, the records kept as history; and
+    #320's entry's "Beside the bootstrap loop" gains a marked correction read against the owner's answer (nothing in
+    N1–N9 changes), with that entry's next edit.
+
 ## Now
 
 
-- **#167's merge round** (plan-54): its work accepted and whole — its proof repaired at its cause (`Development_Row_Data`
-  0.5 s from 674 s) — but its commit failed at the merge (15:12): five rows of `THEORY_MAP.md` changed on both sides
-  (`Development_Machinery`, `Development_Problems`, `Development_Refinement_Repair`, `Development_State_Presenter`,
-  `Development_Successor`; #308's fold of #289's rows among main's). The round sets them to main's verbatim and leaves
-  its changes in `.build/tasks/167/rows.md`, which #314 folds; #327 waits on #314 for `Development_Successor`'s row.
-  Where #167 changed one of those theories' imports, the round follows #165's pattern or comes back to the planner.
+
 - **#321's merge round** (plan-55): its work accepted — its check passed — but its commit failed at the merge (15:45):
   `Development_Incremental_Verdict.thy` changed on both sides, #318 having landed its per-answer reads there
   (`5cb7902e`). Its brief gained the round (main's text with its changes applied again, nothing of #318's reverted; a
   doubled row set to main's, its change left in `.build/tasks/321/rows.md` for #353). It roots the longest chain, and
   #353 (#318's review's follow-ups, before #193) waits on it.
-- **Under way besides**: #167 and #195 in their checks; B6 (#307) and #324 running, #323 parked for the machine; the
-  decomposition's builds (#325–#334, #322's) wait on #167 and #295, #325 folding #308's change to
-  `Development_State_Rows`' row (`.build/tasks/308/rows.md`, mailed).
+- **Under way besides**: #314 (told #168's follow-up 1's check and its follow-up 6) and #323 in their runs; #352, #315
+  and #324's two follow-ups — #355, the cause's formation discharged where it is constructed, and design #356, the
+  report's word and value over shared subterms — ready for the slots; the decomposition's builds (#325–#334) wait on
+  #295, #325 folding #308's change to `Development_State_Rows`' row (`.build/tasks/308/rows.md`, mailed).
+- **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's
+  `failing` list holds dicts; #168's review, follow-up 7); `measuring --shared` wrote no `measurements.log` for any of
+  #307's ten runs, as #306's review found for B5; #324's brief named a base the harness had swept before it ran.
+- **Q7's ledger entries** (the question and the owner's answers of 16:19 and 16:34) leave once #357 lands: the
+  harness's (`v2.py ledger`, whose `--help` records its text as a question).
 - **The ledger's Q17 and Q19 are the harness's** (Q19: #323's session fix-323.2 declined twice, before fix-323.3, the
   fresh fixer session this bullet's test is about): plan-52 was declined twice on the same work, and the harness held its events
   for the owner — #313's landing, which plan-53 handled (#323). #323's first session, forked from #313's (`continues`),

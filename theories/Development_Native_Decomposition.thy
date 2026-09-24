@@ -138,7 +138,7 @@ lemma native_decomposition_definitions:
 proof -
   have split: "set verdict_mentions_definitions=
       set (take 1 verdict_mentions_definitions)\<union>set (drop 1 verdict_mentions_definitions)"
-    by (metis append_take_drop_id set_append)
+    by (rule finite_rule_program_prefix)
   have member: "set (take 1 verdict_mentions_definitions)\<subseteq>set verdict_rows_definitions"
     by (simp add: verdict_rows_definitions_def verdict_mentions_definitions_def)
   show ?thesis
@@ -226,7 +226,7 @@ definition development_decomposition_families ::
 definition development_decomposition_argument :: "factor_term \<Rightarrow> development_store_rows \<Rightarrow> factor_term \<Rightarrow>
     (nat \<Rightarrow> bool list) \<Rightarrow> nat list \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term" where
   "development_decomposition_argument x rows row key I D P Q=Pair_Term x (Pair_Term (development_rows_term rows)
-    (Pair_Term row (Pair_Term (development_row_family (map key I)) (Pair_Term D (Pair_Term P Q)))))"
+    (Pair_Term row (Pair_Term (keys_term (map key I)) (Pair_Term D (Pair_Term P Q)))))"
 
 text \<open>
   The families of a contract's kind are the families whose rows are the statements its reading demands:
@@ -262,8 +262,6 @@ lemma definition_families_present:
   "kinds_present (development_demanded isabelle_definition_proposition) (set [Definition_Kind])"
   unfolding kinds_present_def by (simp add: definition_kind)
 
-lemma development_row_family_nonempty: "development_row_family ls=Pair_Term a b \<Longrightarrow> ls\<noteq>[]"
-  by (cases ls) (simp_all add: development_row_family_def)
 
 lemma development_locus_term:
   "path_term (development_locus key r k c)=Pair_Term (bit_term (development_role_path r!0))
@@ -450,17 +448,15 @@ text \<open>
 
 theorem native_decomposition_progress:
   assumes holds: "(decomposition_applies,Pair_Term x (Pair_Term S (Pair_Term row
-      (Pair_Term (development_row_family ls) Q))))\<in>positive_meaning native_decomposition_system"
+      (Pair_Term (keys_term ls) Q))))\<in>positive_meaning native_decomposition_system"
   shows "ls\<noteq>[]"
 proof -
   obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set [([0::nat],decomposition_rule)]"
     and conclusion: "evaluate_pattern f (decode_finite_pattern p)=
-      Pair_Term x (Pair_Term S (Pair_Term row (Pair_Term (development_row_family ls) Q)))"
+      Pair_Term x (Pair_Term S (Pair_Term row (Pair_Term (keys_term ls) Q)))"
     by (rule decomposition_applies_family.holds_rule[OF holds]) (rule that; assumption)
   from rule have "p=decomposition_conclusion" by (simp add: decomposition_rule_def finite_native_rule_eq_iff)
-  with conclusion have "development_row_family ls=Pair_Term (f [4]) (f [5])"
-    by (simp add: decomposition_conclusion_def)
-  then show ?thesis by (rule development_row_family_nonempty)
+  with conclusion show ?thesis by (auto simp: decomposition_conclusion_def)
 qed
 
 section \<open>What the program reads at a presented parent\<close>
@@ -522,17 +518,17 @@ proof -
         \<in>positive_meaning native_decomposition_system"
       "(verdict_key_found,Pair_Term (f [15]) (f [14]))\<in>positive_meaning native_decomposition_system"
       using support[unfolded F(2)] by (simp_all add: decomposition_premises_def)
-    have fields: "f [14]=path_term (key c)" "Pair_Term (f [4]) (f [5])=development_row_family (map key I)"
+    have fields: "f [14]=path_term (key c)" "Pair_Term (f [4]) (f [5])=keys_term (map key I)"
       "f [6]=D" "f [7]=P" "f [15]=Q"
       using shape by (simp_all add: F(1) decomposition_conclusion_def
         decomposition_locus_pattern_def development_decomposition_argument_def development_parent_row_def locus)
-    have nonempty: "I\<noteq>[]" using development_row_family_nonempty[OF fields(2)[symmetric]] by simp
+    have nonempty: "I\<noteq>[]" using fields(2) by auto
     have every: "(decomposition_every,Pair_Term D (data_list_term (map path_term (map key I))))
         \<in>positive_meaning native_decomposition_system"
-      using supports(1) fields(2,3) by (simp add: development_row_family_def)
+      using supports(1) fields(2,3) by (simp add: keys_term_def)
     have declared: "(decomposition_declared,Pair_Term Q (data_list_term (map path_term (map key I))))
         \<in>positive_meaning native_decomposition_system"
-      using supports(3) fields(2,5) by (simp add: development_row_family_def)
+      using supports(3) fields(2,5) by (simp add: keys_term_def)
     have "\<forall>h\<in>set I. (verdict_statements,Pair_Term (path_term (key h)) D)\<in>positive_meaning native_decomposition_system"
       using every by (simp add: decomposition_everys.exact native_decomposition_defined)
     moreover have "\<forall>h\<in>set I. (verdict_key_found,Pair_Term Q (path_term (key h)))
@@ -578,7 +574,7 @@ proof -
       show "([0],finite_native_rule decomposition_conclusion decomposition_premises)\<in>set [([0],decomposition_rule)]"
         by (simp add: decomposition_rule_def)
       have hs: "term_formed (data_list_term (map path_term (map key hs0)))"
-        using development_row_family_formed[of "map key hs0"] by (simp add: development_row_family_def)
+        using keys_term_formed[of "map key hs0"] by (simp add: keys_term_def)
       show "\<forall>a\<in>pattern_variables (decode_finite_pattern decomposition_conclusion) -
           (\<Union>(s,d,q)\<in>set decomposition_premises. pattern_variables (decode_finite_pattern q)). term_formed (f a)"
         using xf bf sf hs Df Pf Qf
@@ -592,7 +588,7 @@ proof -
     then show "(decomposition_applies,development_decomposition_argument x rows
         (development_parent_row key inert origin grant p) key I D P Q)\<in>positive_meaning native_decomposition_system"
       using I locus by (simp add: f_def decomposition_conclusion_def decomposition_locus_pattern_def
-        development_decomposition_argument_def development_parent_row_def development_row_family_def b_def)
+        development_decomposition_argument_def development_parent_row_def keys_term_def b_def)
   qed
 qed
 

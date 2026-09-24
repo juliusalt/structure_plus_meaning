@@ -10972,7 +10972,9 @@ the partiality is a premise of the contract, never a map that sends the omitted 
 ### The contract
 
 One presentation relation and one theorem, in the shape of `native_development_ready` and of the
-verdict's contract. Under `state_presents key S R` with the constant key a parameter under `inj_on`,
+verdict's contract. Under `state_presents key S R` with the constant key a parameter under `inj_on` (*corrected 2026-09-24, task 295,
+as task 286 corrected "What the builds must respect": the contract takes no injectivity, the constant key's
+following from `state_presents`*),
 `c<length (fst (snd S))`, and the conditions below, the construction holds of
 `(key c, the presented request state, development_request_body ks es)` exactly when
 
@@ -14293,3 +14295,35 @@ presented collections' ordering over references and the machinery recipe's held 
 changes here. This decision was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 356).
+
+## One rule's contract owns its cases; a list of paths is one term
+
+Task 295, the re-citations #214's, #237's, #286's and #321's reviews left.
+
+**The one-rule program owns its cases.** `native_conjunction_program` (a site whose family is one native rule, any
+number of premises, every premise's variables bound by the conclusion) now states `exact` beside `at`: the site holds
+of a term exactly when some evaluation formed on the conclusion's variables evaluates the conclusion to it and every
+premise holds there. The law's case split at the one rule is made there once. The rearranging program is its case of
+one premise (sublocale `conjunction`), so its `exact` and `at` are read from it and no longer argue from the pattern
+facts; `conjoined_calls_program.exact` (two premises) and `native_verdict_entry` (eight) are its instances.
+
+**A rule without premise is no notion of its own.** The survey of premise-free rules found two single-rule sites, the
+accepting checker `native_any_rule` (`store_found_program`) and the value rule (`native_value_program`), and the
+premise-free rules inside larger families (`row_formed_rules`, the member, every, some and absence families). The two
+single-rule sites are the conjunction program at the empty list, which already states what they need, so nothing new
+is stated and both cite it (`any_rule`, `conjunction`). A family of several rules keeps the law's elimination and its
+`finite_native_rule_eq_iff` reading of which rule applied: that is the constructor's injectivity, not a step the law
+states. Their introduction directions already take `law.step_at`.
+
+**A list of paths is one term.** `keys_term` (a row's citation lists) and `development_row_family` (a request body's
+families) had one body, `data_list_term (map path_term ·)`. It is stated once, as `keys_term` over `bool list list`,
+in `Native_Path_Stores` beside `path_term`, with its formation, pair, Cons and injectivity facts;
+`development_row_family` and its bridge `development_row_family_keys` are retired and their users re-cited. The
+name kept is the one with nearly all the uses. No recorded state reads either constant: every recipe word is equal.
+
+**Smaller single statements.** `row_pattern_variables` gives the row pattern's variables once, and the row rules'
+rearranging instances cite it. `native_store_search_program.held_at` states the search at a key where the store holds
+a value; `development_row_lookup_at` and `native_request_admitted` cite it. `finite_rule_program_prefix` states the
+split of a program sharing a leading prefix with another, which the joins of the verdict and the decomposition read.
+
+Recorded 2026-09-24 (task 295).

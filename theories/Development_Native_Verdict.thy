@@ -90,6 +90,12 @@ interpretation verdict_entry_family: native_rule_law native_verdict_system verdi
   by (rule native_rule_lawI, rule native_verdict_family)
     (auto simp: native_verdict_definitions_def verdict_entry_rule_def)
 
+interpretation verdict_entry_conjunction: native_conjunction_program native_verdict_system verdict_entry
+    verdict_entry_conclusion verdict_entry_premises
+  unfolding native_conjunction_program_def native_conjunction_program_axioms_def
+  using verdict_entry_family.native_rule_family_axioms[unfolded verdict_entry_rule_def]
+  by (auto simp: verdict_entry_conclusion_def verdict_entry_premises_def)
+
 subsection \<open>The fields keep their meanings in the verdict's program\<close>
 
 text \<open>The join law of rule programs (@{thm finite_rule_program_join}), consumed once per field program.\<close>
@@ -105,14 +111,14 @@ proof -
     by (auto simp: native_verdict_definitions_def)
   have split_mentions: "set verdict_mentions_definitions=
       set (take 1 verdict_mentions_definitions)\<union>set (drop 1 verdict_mentions_definitions)"
-    by (metis append_take_drop_id set_append)
+    by (rule finite_rule_program_prefix)
   have "set (take 1 verdict_mentions_definitions)\<subseteq>set verdict_rows_definitions"
     by (simp add: verdict_rows_definitions_def verdict_mentions_definitions_def)
   then show mentions: "set verdict_mentions_definitions\<subseteq>set native_verdict_definitions"
     unfolding split_mentions by (auto simp: native_verdict_definitions_def)
   have split: "set verdict_difference_definitions=
       set (take 4 verdict_difference_definitions)\<union>set (drop 4 verdict_difference_definitions)"
-    by (metis append_take_drop_id set_append)
+    by (rule finite_rule_program_prefix)
   have "set (take 4 verdict_difference_definitions)\<subseteq>set verdict_rows_definitions\<union>set verdict_mentions_definitions"
     by (simp add: verdict_difference_definitions_def verdict_rows_definitions_def verdict_mentions_definitions_def)
   then show "set verdict_difference_definitions\<subseteq>set native_verdict_definitions"
@@ -179,28 +185,21 @@ theorem native_verdict_entry:
     (verdict_roots,Pair_Term a15 a16)\<in>positive_meaning native_verdict_system"
   (is "?entry \<longleftrightarrow> ?fields")
 proof
-  assume holds: ?entry
-  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set [([0::nat],verdict_entry_rule)]"
-    and eval: "evaluate_pattern f (decode_finite_pattern p)=
-      term_tuple [a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16]"
-    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning native_verdict_system"
-    by (rule verdict_entry_family.holds_rule[OF holds]) blast
-  have "finite_native_rule p ps=verdict_entry_rule" using rule by simp
-  then have p: "p=verdict_entry_conclusion" and ps: "set ps=set verdict_entry_premises"
-    unfolding verdict_entry_rule_def by (simp_all add: finite_native_rule_eq_iff)
-  have vals: "f [0]=a0 \<and> f [1]=a1 \<and> f [2]=a2 \<and> f [3]=a3 \<and> f [4]=a4 \<and> f [5]=a5 \<and> f [6]=a6 \<and> f [7]=a7 \<and>
-      f [8]=a8 \<and> f [9]=a9 \<and> f [10]=a10 \<and> f [11]=a11 \<and> f [12]=a12 \<and> f [13]=a13 \<and> f [14]=a14 \<and>
-      f [15]=a15 \<and> f [16]=a16"
-    using eval by (simp add: p verdict_entry_conclusion_def evaluate_pattern_tuple)
-  show ?fields using support by (simp add: ps verdict_entry_premises_def vals vals[simplified One_nat_def])
-next
-  assume fields: ?fields
   let ?f="native_values [a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16]"
-  have rule: "([0],finite_native_rule verdict_entry_conclusion verdict_entry_premises)\<in>set [([0],verdict_entry_rule)]"
-    by (simp add: verdict_entry_rule_def)
+  assume holds: ?entry
   have "(verdict_entry,evaluate_pattern ?f (decode_finite_pattern verdict_entry_conclusion))
       \<in>positive_meaning native_verdict_system"
-    by (rule verdict_entry_family.step_at[OF rule])
+    using holds by (simp add: verdict_entry_conclusion_def evaluate_pattern_tuple)
+  then have "\<forall>(k,d,q)\<in>set verdict_entry_premises.
+      (d,evaluate_pattern ?f (decode_finite_pattern q))\<in>positive_meaning native_verdict_system"
+    by (rule conjunct2[OF verdict_entry_conjunction.at[THEN iffD1]])
+  then show ?fields by (simp add: verdict_entry_premises_def)
+next
+  let ?f="native_values [a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14,a15,a16]"
+  assume fields: ?fields
+  have "(verdict_entry,evaluate_pattern ?f (decode_finite_pattern verdict_entry_conclusion))
+      \<in>positive_meaning native_verdict_system"
+    by (rule verdict_entry_conjunction.at[THEN iffD2], rule conjI)
       (use fields in \<open>simp_all add: verdict_entry_conclusion_def verdict_entry_premises_def\<close>)
   then show ?entry by (simp add: verdict_entry_conclusion_def evaluate_pattern_tuple)
 qed

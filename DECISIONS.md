@@ -14314,3 +14314,291 @@ presented collections' ordering over references and the machinery recipe's held 
 changes here. This decision was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 356).
+
+## The native notion of a problem: what its kind asks of its subject, at a locus of the store
+
+The owner, 2026-09-24 17:50 (ledger, to the planner): "Upon further review of the current state of the repository, I
+found that theere is no native definition of the notion of a problem - yet there are questions like the one that I
+just answered and notions like readiness that depend on what a problem is - how is this possible? Clearly to even be
+able to do anything in the loop the most fundamental thing that needs to be done is the development of a native notion
+of a problem is it not? This seems like a fundamental flaw to everything that was done and is being done so far that
+needs to be adressed."
+
+The diagnosis is this entry's premise. A problem is the HOL datatype `development_problem` (`Development_Problems`: a
+set of positions in an Isabelle name table, a contract of five HOL constructors over Isabelle terms, an origin and an
+authority). Task 9's rows present it at loci (`development_problems_present`, `development_problem_row_data`), and
+native readiness receives it through `readiness_presents`, a relation proved in HOL, whose rows carry a status and
+lists of premise keys that HOL functions compute (`development_readiness_candidates`, `development_row_cone`). Every
+native definition of the loop — readiness, the reach, the verdict, request construction, the decomposition schema —
+reads such presented rows, so what a problem asks, what answers it, what it depends on, where it comes from and whose
+it is are known to the native machinery only through HOL, the opaque dependency the owner's direction of 2026-09-19
+excludes ("Native definitions are normative; Isabelle verifies them"). The plan defines a problem in prose — "a subject
+in the native state: a goal with its contract, the state it is judged against, its dependencies and its origin" — and
+nothing native states it. This entry decides the notion, its contract and presentation, the relations stated over it,
+and what becomes of the HOL notion and of the tasks resting on it. It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A problem is `development_problem`; the loop's native definitions read problems as rows a HOL relation presents (`development_problems_present`, `readiness_presents`), and whether a problem is formed, answered or ready, and what it depends on, are HOL computations. | A problem is a native notion: a row of the problem role at a locus of the development's store, whose formation, standing and relations are native programs over the store's rows and the state's rows, each with its contract proved once at the level of rows. No Isabelle term, no tag and no HOL problem enters that contract. `development_problem` is the bootstrap loop's source of problems, presented as rows of the notion's shape by task 9's relation and retired with that loop (the owner's answer to Q7). |
+| A problem carries its status and its prerequisites: native readiness reads a row of a key, a status and lists of premise keys, which the presenter supplies. | Neither is a constituent. A problem's status is what the store holds at its locus under the other roles — an answer, an issue, a decomposition — and its prerequisites are its kind's reading of the state together with the definition problems of its chosen decomposition. Carried, both go stale when an answer is adopted or the state changes; read, they change exactly when their readings do, which is what re-evaluation compares (the plan's "Readings include absences"). |
+| A kind is a family, a prefix of the locus (task 9), and what a kind demands and how its answers are judged are HOL functions chosen by constructor (`development_contract_reading`, the refinement and definition verdicts). | A kind is a family together with its clauses: one clause in each of the notion's definitions — formation, the contract predicate, the answer relation, the prerequisite reading — whose conclusion states the kind's prefix as bit shapes. The clause families are the kind table; no data row names a kind's condition, and a new kind or a changed condition is an amendment of those definitions, a machinery-improvement problem. |
+| `Development_Truth` is an authority a problem may carry, with no counterpart among citations (task 9 left it to be given one or retired). | Retired as a problem's authority. Truth is what positive meaning determines, and it is the standing of a verified answer, not of what is asked: a problem is owner-level, citing the owner record that posed or granted it, or generated, citing none. |
+| A native question is the loop's form of a problem; its record even names its subject term `development_problem` (`native_development_question`). | A question is a problem asked over a declared scope of candidates: its subject and conditions are what a problem asks, its generator and scope critic what the question adds. A problem has no scope — its answers are whatever an executor submits — and the loop's questions (the contract question, the selection question) are problems asked over scopes. |
+| The selection of the next problems stands at a selection locus of its own, a tagged term beside the problems' loci (`development_selection_locus`, `Finite_Payload [2]`). | Which problems to take next is a standing problem about the development itself, and each selection is its answer, at its answer locus. The owner's first problem, how to choose the next problem, is the definition problem of that problem's asked relation. The native loop's selections stand there from its first; the bootstrap loop's tagged locus retires with that loop, not by a word change. |
+| #348's native problem is a tuple — a kind, a site, two optional citations, a requirement family — presented by a relation beside task 9's. | The tuple is the contract's row-level vocabulary, not a notion. The problem row is stated once over the body's kind part — a locus, two citations and the kind part — and task 9's rows and the native rows are its two instances, as #348 states the locus once over a kind path. |
+
+### What a problem is
+
+**The general notion.** A store holds rows at loci; a locus is a role prefix, a kind prefix and a key
+(`Development_Loci`); a problem is a row of the problem role. The notion is stated over any store, any family of
+kinds and any states, independently of what the development requires now:
+
+- **What it is about** — its *subject*: the key of its locus, a key of the state its kind reads (a constant's key in an
+  Isabelle checked state, a site's key in the development package, the empty key for the development itself). A
+  problem is about one subject; a problem about several has no locus and is a decomposition's matter (instance A of "A
+  problem is decomposed through the constants its answer needs").
+- **What it asks** — its kind's *contract predicate* at its subject, a native reading of a state: for a kind of
+  statements, that the state states the statements the kind demands of the subject and declares every key they mention
+  (`development_problem_stated`; natively the verdict's `statements` and `undeclared` fields at the subject), and for a
+  native definition also that its requirement family holds. An answer answers the problem when its kind's *answer
+  relation* accepts it against the request's state — the verdict of the kind, which establishes the contract predicate
+  in the answer state (`development_constant_verdict_states`) — and its truth is verified where the contract states one:
+  Isabelle's acceptance of the answer's checked context in the bootstrap loop, the verification problem an admission
+  poses for a native answer (#320's entry). Admissible, verified, admitted and answered stay four judgments.
+- **The state it is judged against** — not part of its identity. A problem stands in the store across successive
+  states, its locus kept by each successor ("The successor keeps the positions of the state it succeeds"), and is judged
+  against the state its request reads, the least context the request cites; its kind names which state's keys its
+  subject is a key of — for the native family, the package selected at the native state's locus.
+- **Its dependencies** — its *prerequisites*, the problems its kind's reading of the state relates it to (for
+  statement kinds the problems about the keys its subject's demanded statements mention, as
+  `development_constant_premises` computes; for the native kinds the problems about the sites its subject's clauses
+  call, #350's), together with the definition problems of its chosen decomposition's intermediates; and its
+  *decompositions*, the rows at its decomposition role ("A decomposition that applied is a row at its problem's locus").
+  The two relations stay apart as `Development_Decomposition` keeps them.
+- **Its origin** — an optional citation of the row it came from, told apart by the family cited: a parent problem (a
+  demand), a refused request's problem (a repair), an owner record (a direction), an obligation record, the row whose
+  reading was incomplete; absent for a residual (task 9's).
+- **Its authority** — an optional citation of the owner record that posed or granted it; absent for a generated
+  problem.
+- **Its status** — read, never carried: *answered* (the store, the published state, holds an answer at its answer
+  role), *issued*, *decomposed*, *open*; *settled* and *ready* are derived from these and the prerequisites.
+
+**Formation.** A problem row is formed in a store and a state when its locus has the problem role and a kind prefix
+the formation definition has a clause for; its body has that kind's shape — the two citations and the kind part:
+nothing for a refinement, the requirement family for a native definition, the inert contract term for the bootstrap
+loop's families until they retire; its key names a subject of the kind's state, a row of the kind's subject family at
+the key (a declaration, a site's interface or clauses; the development itself for the empty key); and each citation
+resolves to a row of a family admissible for it. At most one row stands at a locus: the store's single-valuedness, a
+premise of every presentation and never a check in a decision. A kind without a clause — the bootstrap loop's proof,
+presentation and amendment kinds, which state nothing (`development_contract_reading`) — has no formed problem; the
+native state's family holds the package's generation and no problem.
+
+**The development's problems are its specialization.** The store is the development's published rows (task 9). The
+kinds the development builds clauses for are the native family's (native refinement, native definition, native
+verification, #320's) and one standing decision kind, the selection, whose one problem is about the development
+itself at the empty key. The bootstrap loop's statement kinds keep task 9's presentation and receive no clauses: by the
+owner's answer to Q7 they stay only until native problems exist. The origin families are the problem rows, the repair
+records, the owner records and, when represented, obligation records; the authority family is the owner records.
+
+### Which notions it specializes and composes, and what it adds
+
+It restates none of them:
+
+- **Native questions and their conditions.** A question (`native_development_question`, `finite_subject_question`,
+  the keyed questions) judges candidates by native conditions at a subject; the problem is the question's scope-free
+  part, what is asked of a subject, and the question is the problem asked over a scope with a critic of that scope.
+  The contract question (`development_constant_question`) is the incumbent reading of a problem of a constant, asked
+  over its scope; the selection question is the selection problem's incumbent answer, asked over the store's problem
+  rows. A condition is what a kind's clause calls.
+- **Obligation reductions and their occurrences.** A problem's contract predicate is the condition of obligations; a
+  decomposition is an obligation reduction of the parent's contract to its children's (task 60,
+  `development_decomposition_sound`); a problem's occurrence in a decomposition is an obligation occurrence qualified
+  by its socket, so equal children at different sockets stay distinct (`substitution_keeps_equal_conditions_separate`);
+  a derivation's residual is `remaining_obligations`, its nesting `obligation_reduction_compose`.
+- **Inference goals and demands.** Prerequisites are inference rules over problems that fire once their head is
+  answered; settlement is their least closure (`native_settled_exact`, `finite_inference_result_exact`); a
+  decomposed problem's subproblems are the demand of its goal, and demand discharges nothing
+  (`demand_reachability_does_not_discharge_a_goal`); an unsupported cycle settles nothing
+  (`unsupported_inference_cycle`).
+- **The development rows and their citations.** The locus and its role and kind prefixes, the optional citation, the
+  family of citations, the store and its search (`Development_Loci`, `Development_Rows`, `Development_Row_Data`,
+  `Native_Path_Stores`): the notion's presentation, reused whole.
+- **The rule family law.** Each of the notion's definitions is a family of native rules at a site, one per kind, and
+  its contract is the law's instance (`native_rule_family`, `native_rule_law`), a status reading the store search's
+  (`native_store_search_program`), a single-premise clause the rearranging program's (`native_rearranging_program`).
+
+What it adds: the problem as the unit those notions meet in — the row whose locus identifies it across states and whose
+kind's clauses say what it asks; formation; status as a reading of the store at its locus's roles; prerequisites as
+its kind's reading of the state, never supplied; the kind table as clause families; the authority reading, whose
+extension beyond the direct citation is the authority problem's answer; the owner record family, so that origin,
+authority and approval are citations the native machinery follows; the standing selection problem. The pattern is the
+generation notion's: `Factor_Generation_Contracts` gives a data notion its native admission, identity and collection
+programs with contracts over its presentation class (`generation_native_presentation_class`); the problem notion's
+subject is a row rather than a HOL datatype, since a row is native structure already.
+
+### Its local contract and its presentation class
+
+The contract's subject is the row — a locus, an optional origin citation, an optional authority citation and a kind
+part — in a store beside a state, specified in paths and citations; it names no Isabelle term, tag or HOL problem. Its
+statements, proved once in the notion's founding theory:
+
+- **Formation**: the formation definition holds of a store, a state and a locus exactly when the store holds there a
+  row formed as above; one clause per kind under the rule family law, the kinds' prefixes prefix-free
+  (`development_kind_path` and #348's native family), so at most one clause applies to a locus.
+- **The contract predicate**: per kind, a reading of a state at the subject whose contract is its constituents'; for
+  kinds of statements, the verdict's `statements` and `undeclared` field programs at the subject, consumed.
+- **Status**: *answered*, *issued* and *decomposed* hold exactly when the store holds a row at the answer, issue or
+  decomposition role of the locus's tail — the store search's contract (`native_store_search_program.exact_held`) at
+  `development_locus_shared_tail`'s form.
+- **Prerequisites**: per kind, exactly the problems standing at the loci of the keys its reading relates the subject
+  to, and the definition problems at the chosen decomposition's intermediates.
+- **Readiness through the notion**: the table the notion's readiness reading presents from a store is a readiness table
+  — keys the problems' loci, the status read at the answer role, the groups the prerequisites — so readiness's own
+  contracts (`native_settled_exact`, `native_ready_exact`) hold of the store through it and are not proved again.
+- **Authority**: the direct reading holds exactly when the authority citation cites a row of the owner record family;
+  generated is task 9's shape test (`development_rows_generated_shape`), a residual its origin twin
+  (`development_rows_residual_shape`).
+- **Octets**: the notion's programs state the empty payload alone, computed by the payload audit
+  (`finite_system_payloads_exact`).
+
+**The presentation class.** The rows at loci are one member: the locus a path of bit shapes, the citations paths
+under the store's optional value, a family the data list of its paths (`development_row_citation`,
+`development_row_family`, `development_problem_body_data`); injectivity alone is asked, and any presentation with an
+exact reader may replace it. The octets it carries are inert: the empty payload, which is every shape the incidence is
+made of; the bootstrap families' contract term, which no decision reads, which the kind, the subject and the state
+already determine, and which retires with those families; and the owner's words in an owner record, truly inert text.
+Every distinction a decision draws is drawn by descending a path.
+
+### Its relations, each stated over it
+
+| Relation | What is native today | Over the notion |
+|---|---|---|
+| An answer, and when it answers | The verdict of a kind (`finite_native_verdict`, `native_verdict_exact`), the native answer readers (`Development_Native_Answers`), the certified admission (`development_payload_generation_certified`), each taking a subject its caller supplies. | **New**: the answer relation, one clause per kind whose premise calls the kind's condition on the request state, the subject key read from the locus, the kind part and the answer; its contract is the rule family law's instance and consumes each condition's contract. It keeps apart what the library already separates: admissible (the answer relation), verified (truth), admitted (a generation at the answer role, its cause certified), answered (that answer published). At most one answer to a problem is current, its answer locus's. |
+| Decomposition, and a derivation's standing | The schema (`native_decomposition_system`), its soundness as an obligation reduction (task 60), its row at the sixth role (#66, #325), its native evaluation (#333). | **Re-stated**: the schema's parent and children are problems of the notion; a posed child is formed, cites its parent's problem locus as its origin (#66) and no owner record; the chosen member's intermediates' problems are the parent's prerequisites, read from the row rather than recorded beside it. At a parent with a locus the part child is the parent (#66), so an application acts through prerequisites and the issue's leaf reading, never through composed settlement. **New**: a derivation's standing — the tree of decomposition rows below a problem, its children settled by the notion's settlement, its residual the unsettled children at their sockets (`obligation_reduction_residual`), its approval the authority problem's matter. |
+| Readiness | Native (`finite_native_readiness`), over a table the HOL presenter computes (`readiness_presents`, `development_row_cone`). | **Re-stated**: its rules unchanged, the table it judges is the notion's readiness reading of the store and the state, so readiness reads problems natively; `readiness_presents` serves the bootstrap loop alone until it retires. |
+| Request construction | Native (`native_request_system`, `native_request_exact`), over a subject key and selections its caller supplies. | **Re-stated**: its subject is the problem's key read from the locus, its selections the kind's clause, its request the row at the request role of the problem's locus (#169's designation); its program is unchanged. |
+| The verdict | Native (`finite_native_verdict`), one definition at two selections, the refinement's and the definition's. | **Re-stated**: the answer relation's clause of each kind of statements, at that kind's selections; at the package's rows (#320's N7) the native refinement's and the native definition's. |
+| Selection | The selection question (`development_selection_question`), native readiness its condition, over HOL problems presented with their cones. | **Re-stated**: its candidates are the store's problem rows, their readiness read by the notion. **New**: the standing selection problem, of the selection kind, about the development at the empty key; each selection is its answer at its answer locus; its asked relation's incumbent is readiness — every selected problem is ready — with the planner's choice among the ready a residual beside it; the owner's first problem is the definition problem of that asked relation's site, which #371 poses. |
+| Authority | None: authority is only a citation's presence (`development_rows_generated_shape`). | **New**: a reading over the notion — owner-level where the problem cites an owner record, generated where it cites none — and approvals, owner records citing the loci they approve: a problem, a decomposition row, an answer. How the approval of a derivation carries to its derived subproblems is the authority problem's answer, a native definition of this reading that the owner approves (#371 poses it); meanwhile a posed child cites no owner record (Q2's third criterion, an interim choice with its residual). |
+
+### The HOL notion, its presentations and the native rows
+
+- **`development_problem`** is the bootstrap loop's representation of its problems. Its presentation as rows (task 9's
+  `development_problems_present`, `development_problem_row_data` in context) is the bootstrap families' instance of the
+  notion's presentation class: each HOL problem inside the premise is a problem row of a bootstrap kind, so the loop's
+  history stays readable as problems of the notion. No native clause is built for those families; the datatype,
+  `development_contract` with its Isabelle terms and the constructors of origin and authority retire with the loop,
+  which by the owner's answer to Q7 poses no problem about a HOL constant once native problems are posed (N4b).
+- **`readiness_presents`**, with `native_development_ready`, `development_rows_readiness_presents` and the cones, is
+  the bootstrap loop's bridge to native readiness. It is not the route for native problems, whose readiness table is
+  the notion's reading of the store, and it retires with the loop; readiness's row-level contracts stay readiness's.
+- **The HOL computations** — `development_settled`, `development_ready`, `development_premises`,
+  `development_constant_premises`, `development_composed_settled`, `development_issuable` — are specifications that the
+  bootstrap loop's contracts state, retired use by use, as "Native definitions are normative" retires every HOL
+  function a native definition supersedes.
+- **#348's native problem rows** are the native family's instance of the one problem row: the row stated once over the
+  kind part, task 9's rows re-cited to it where they state the same condition; its tuple is the contract's vocabulary.
+- **Nothing is a verified translation of the notion.** The direction runs from the bootstrap into the notion, a
+  presentation of HOL problems as rows; the notion's programs are verified by their own contracts, and the translation
+  into Isabelle (its design follows #320's) concerns admitted answers, not the notion.
+
+### What rests on the HOL notion, and the order of re-statement
+
+Every native definition of the loop reads its problem through an argument its caller builds from the HOL notion; what
+changes is the caller, never the definition's program or contract. Readiness and selection are re-stated first, with
+the development's kinds; request construction with the native request (N5); the verdict with the answer relation after
+the native judgment (N7); the decomposition schema with the decomposition line. The builds, placed by the planner:
+
+1. **N4a (#348)**: the locus over a kind path and the native family stand as briefed. The problem row is stated once
+   over the kind part; the prefixes of the selection kind — a native kind whose key is empty — and of the owner record
+   family are fixed with the native kinds, keeping every kind path prefix-free; the native state's family holds no
+   problem row; a native problem row's body holds no status and no prerequisites.
+2. **The notion** (new, after #348 and #325): its founding theory states the rule templates — formation, the status
+   readings, the prerequisite groups from a kind's reading, the readiness reading and its composition with readiness's
+   contracts, the authority's direct reading — generic over kinds, each with its row-level contract and its payload
+   audit.
+3. **The owner records** (new, after #348): the family and its row — the owner's words inert, the citations of the
+   loci the record concerns, its key the path of its position in the ledger, stable as the ledger grows
+   (`first_occurrence_key_append`) — and the ledger transcribed verbatim, a residual record.
+4. **#371** poses the owner's two problems over this entry; it needs the entry, not the builds.
+5. **The development's kinds** (new, after the notion, the owner records and N3): the clauses of the native kinds and
+   the selection kind at the package's rows — formation, subject families, prerequisites as callee edges — joined into
+   the development package by the join law (#320's N2); readiness over the development's store through the notion; the
+   selection question's candidates the store's problem rows.
+6. **N4b (#350)**: the native state's first generation as briefed; its first native problems are those #371 poses,
+   with owner records as their origin and authority, and the notion's own problem (below), formed by the notion, their
+   readiness the notion's.
+7. **The answer relation** (new, after N7): the clauses calling the verdict at the package's rows for the native
+   refinement, the verdict with the requirement guard for the native definition, and the selection's asked relation for
+   the selection kind.
+8. **The decomposition line**: #325 (the sixth role and the row), #331 (the generation) and #333 (the native
+   evaluation) stand, their parent a problem row. #327 (the posing) and #329 (the issue) extend the bootstrap loop's
+   prerequisite table and HOL issue, which retire with it; over the notion the posing admits formed problem rows citing
+   the parent's problem locus and the issue reads a leaf from the decomposition rows natively. Whether they are
+   re-briefed over the notion or kept for the repair the bootstrap loop computes is the planner's.
+9. **Authority's extension**: through the loop, once #371 has posed the authority problem and the owner has approved
+   its answer.
+
+### Weighed and rejected
+
+- **A HOL datatype of native problems as the normative notion** — #348's tuple read as the problem: a HOL notion
+  presented as rows is the defect the owner names, moved from one datatype to another.
+- **Status and prerequisites carried in the problem's row**, as readiness's rows carry them: a row stating whether its
+  problem is answered is stale once an answer is adopted, and a supplied prerequisite list is a table nobody computed
+  (`problems.txt` condition 1).
+- **A table of kinds as data rows, each citing its condition's site**: a positive program calls fixed sites, so
+  dispatch through a cited site needs a reflective interpreter (`Factor_Program_Reflection`, `Factor_Program_Tests`),
+  heavy where a clause per kind states the same thing and is itself a definition the process can amend.
+- **The problem as a native question**: a question fixes a scope of candidates and a critic of it; an executor's
+  answer lies in no enumerated scope, and a problem persists while its questions are asked again.
+- **The problem as an obligation**: an obligation is a condition to be established at an occurrence; a problem asks
+  for an answer and stands in a store. The obligation is a problem's occurrence in a decomposition.
+- **A general layer that is the fibre of a relation at a subject**: it renames the condition, a layer the owner
+  excludes ("Do not add layers that merely rename the same detail"); the notion's content is identity, standing,
+  dependency, origin and authority tied to what is asked.
+- **Truth as a problem's authority**: truth answers; it does not ask.
+- **The contract term in native rows**: the kind, the subject and the state determine it, and no decision reads it.
+- **Prerequisites recorded at posing**, as the bootstrap loop records `D`: the state's mentions change with an adopted
+  answer, and a recorded row would need re-evaluation where a reading changes by itself.
+- **Clauses for the bootstrap loop's families**: they would be built for a loop the owner's answer to Q7 retires once
+  native problems are posed.
+- **A word change moving the bootstrap loop's selection locus**: the native loop's selections stand at the selection
+  problem's answer locus from its first; the tagged locus is history.
+
+### What the builds must respect
+
+One notion of a problem, one row shape, one locus: the bootstrap rows and the native rows are its instances, and
+nothing is presented twice. A kind is a family and its clauses; no program compares a kind, a role or an octet, and no
+data row names a condition. Status and prerequisites are read, never carried or supplied; a reading that rests on an
+absence is recorded as one. A problem is about one key; formation is checked where a problem row is posed, under the
+store's single-valuedness, never inside a decision. Authority is a citation of an owner record or none, and an approval
+an owner record citing a locus; no generated choice gains authority, and a derived problem inherits none until the
+owner approves the authority problem's answer. Every native definition re-stated over the notion keeps its program and
+its contract; what changes is the argument its caller builds. New native definitions of development notions are built
+over the notion's rows, never over the HOL notion or a tagged presentation. The notion's programs state the empty
+payload alone.
+
+### The notion's development as a problem of its own
+
+While the loop cannot pose problems natively, this notion cannot be developed through it: posing needs the notion. Its
+origin is the owner's direction of 2026-09-24 17:50, and the demand for a native notion of a problem is owner-level.
+Everything this entry decides — the constituents, status and prerequisites as readings, the kind table as clauses,
+truth as an answer's standing, the owner record family, the selection problem, the order — is generated. The entry is a
+residual of the bootstrap: established under Isabelle's bootstrap role, recorded here and in its result, and justifying
+nothing by being recorded. Once N4b can pose, the notion's development is posed natively: a problem of the native
+definition kind whose subject is the notion's formation site in the package, its origin and its authority the owner
+record of that direction, its current answer the notion as built — generated until the owner approves it by an owner
+record citing the answer's locus, and criticized through the loop like any other answer. The owner is asked to approve
+the notion's shape, truth's place, the owner records and the order of the first native problems (the questions of this
+task's result, which the planner puts in the ledger).
+
+### Open
+
+The native definition kind's requirement family waits for stage 4's encoding, as #320 has it, and the selection and
+authority problems' requirements are #371's. Obligation records have no family yet. A problem about several subjects
+has no locus. A prerequisite the owner imposes beyond a kind's reading of the state would be a row of a role of its
+own; none exists. The authority reading beyond the direct citation is the authority problem's answer. The notion's
+programs join the development package after N2; until then they stand at sites of their own, as readiness's do. This
+design was made outside the loop and is a residual.
+
+Recorded 2026-09-24 (task 373's decision; a design, no theory changes).

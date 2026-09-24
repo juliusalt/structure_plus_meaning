@@ -137,6 +137,23 @@ Answering whether the material built for this plan uses octets rather than incid
 > opaque understanding of Isabelle semantics on the part of the implementer to
 > make sure that what we are doing is sensible.
 
+On the order of the work, the owner answered owner question Q7 of the ledger on
+2026-09-24. Q7, asked on 2026-09-19 under the direction above, proposed an order —
+the loop's notions as native definitions, beginning with readiness, then the verdict
+of a kind and request construction, then problems whose subjects are native
+definitions with native answers, then the translation of native content into
+Isabelle for verification, the existing loop meanwhile posing its problems about HOL
+constants as the bootstrap loop — and asked: "is this the order you intend, and
+should the loop keep posing problems about HOL constants (refinements of HOL
+functions) at all, or only about native definitions?" The answer, the latest first
+(2026-09-24 16:34, from the console):
+
+> The order is right. HOL-constant problems stay only until native definitions exist.
+
+and earlier the same day (2026-09-24 16:19, to the planner):
+
+> The answer to Q7: the order is right. HOL-constant problems stay only until native problem definitions exist.
+
 ## The development process
 
 There is one process, and every problem goes through it:
@@ -971,10 +988,12 @@ adoption, which the answer harness, the replay and the adoption tool decide by t
 Two directions of the owner of 2026-09-19, quoted under [Owner directions](#owner-directions), set the work since the
 seed: structure is explicit and octets are inert, and native definitions are normative, Isabelle verifying them. The
 first gave six tasks, recorded with their analysis in the DECISIONS.md entry "Structure is explicit; octets are
-inert". The second ordered the work, provisionally (owner question Q7): the loop's notions as native definitions,
-beginning with readiness, then the verdict of a kind and request construction, then problems whose subjects are native
-definitions, answered natively, then the translation of native content into Isabelle for verification. Until then the
-existing loop keeps posing its problems about HOL constants as the bootstrap loop.
+inert". The second gave the order of the work, proposed as owner question Q7 and confirmed by the owner on 2026-09-24
+("The order is right"), so the order is the owner's: the loop's notions as native definitions, beginning with
+readiness, then the verdict of a kind and request construction, then problems whose subjects are native definitions,
+answered natively, then the translation of native content into Isabelle for verification. The loop's problems about
+HOL constants — the seed's refinement problems and the machinery's residuals — are the bootstrap loop, and by the same
+answer they stay only until native definitions exist, then are retired.
 
 Where that order stands: readiness and the reach of a state are native; the verdict of a kind is native, its reflection
 and its measured cost remaining; request construction is native, its construction and corollaries landed; the
@@ -983,8 +1002,23 @@ order's next step, problems whose subjects are native definitions, is designed i
 about native definitions are posed, answered and judged at the development package's rows": the loop's native
 definitions held in one package whose rows are the state rows' second instance, a problem at a locus of a native
 family, request construction and the verdict reused at those rows, an answer as an edit of them, an admission that
-records its wait for verification, and installation that relocates the refined definition's callers; its builds N1–N9
-come next. The translation of admitted native content into Isabelle, which verifies it, is the design after it.
+records its wait for verification, and installation that relocates the refined definition's callers; its builds are
+under way, N1–N4 first and N5–N9 briefed over what they leave. The translation of admitted native content into
+Isabelle, which verifies it, is the design after it.
+
+When native definitions exist is the plan's reading of the owner's answer, generated and without owner authority. The
+loop's notions are native programs already, but each is written as a HOL constant compiled afresh by the question that
+evaluates it, its normative text Isabelle source (that entry's first correction); the plan reads native definitions as
+existing once the development's native package holds them and the native loop poses its first problems about them,
+which build N4 of that entry does in its second part, N4b (the native state's first generation and the first native
+problems with their readiness). The owner's earlier wording of the same answer, "until native problem definitions
+exist", is read the same way. From then on the loop poses no new problem about a HOL constant: the machinery's HOL
+residuals are superseded by the native problems about the package, as Q18 (d) provisionally chooses; the seeded
+refinement problems are retired with the loop that poses them, neither selected nor issued again; and every record of
+the HOL loop stays history, which the generalized rows record's Isabelle instance keeps readable. Until native answers
+can be published, a landing that changes a notion's HOL program derives the package from it again, a bootstrap
+re-installation recorded as a residual, as Q18 (c) provisionally chooses. Q18 stays open; on this reading its (c) and
+(d) agree with the owner's answer.
 
 The six tasks of the first direction, as they stand:
 
@@ -1007,5 +1041,5 @@ The six tasks of the first direction, as they stand:
    reading the inverse of the presentation.
 
 Each tagged presentation still in use stays exact and replaceable and is recorded as a use of octets as structure
-until it is retired. The order is provisional: an answer from the owner to Q7 reorders the work, including whether the
-loop keeps posing problems about HOL constants at all. This revision was made outside the loop and is a residual.
+until it is retired. The order and the bound on the HOL loop are the owner's (Q7, 2026-09-24); the rest of this
+section, its reading of when native definitions exist included, was written outside the loop and is a residual.

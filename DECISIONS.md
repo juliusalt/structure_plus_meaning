@@ -12182,6 +12182,16 @@ patterns' shape, so a conclusion with literal leaves is an instance too.
   family's law below, of which this notion is itself an instance.]
 - `native_decomposition_shares` (Development_Native_Decomposition) no longer takes `distinct (map fst ds)`: its proof
   never read it; the join law needs distinctness of the whole program's sites only, which it computes itself.
+- Re-citations made by task 214: `store_found_rule k` is defined as `native_context_call_rule k`, and
+  `store_found_program.exact` cites `native_context_call_program.exact` (its sublocale `call`); the row readings
+  `row_subject_program`, `row_mentions_program`, `key_cited_program` and `mentions_cited_program` (the same shape as
+  `row_mentions_program`, in Development_Request_Scope) are each a sublocale `rearranged` of the notion and cite
+  one obligation of the row pattern stated once in Development_Verdict_Statements,
+  `native_rearranging_program.row_at` (the row pattern's six variables at `row_valuation x ident z`: the conclusion
+  evaluates to the pair of the context and the row's term, and every field is formed when the identity is). A use
+  cites the most specific contract that states what it needs: the instance's (`native_context_call_program.exact`,
+  `row_at`), never the raw law. Every `exact` statement is kept; no `holds_cases`/`native_step` argument is left in
+  them. `Development_Edited_Reach`'s reading of `row_mentions_rule` still proves in place.
 
 No rule value and no other statement changed, so no recorded word changes.
 

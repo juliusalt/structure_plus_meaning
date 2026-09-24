@@ -55,7 +55,7 @@ is a subterm of the presented argument, and a comparison that ends equal walks b
 explicit sharing removes it. Its builds change no word: the notion `Shared_Term_Tables` (B1, #297) and the matching over
 a presentation (B2, #299, landed `54f659eb`, `Presented_Term_Matching`; its review's follow-ups to B3, B4 and B6) at once; the applications over a presentation (B3, #301); the demand over shared calls (B4,
 #303, landed `fad2198a`, `Shared_Call_Closures`; its review's follow-ups 1, 3 and 5 mailed to B5, 4 to B6, 2 to Open
-47); the positioned evaluation over shared calls (B5, #305); the measurement (B6, #307, after #278, its before).
+47); the positioned evaluation over shared calls (B5, #305, landed `5b33cd8a`, `Shared_Native_Evaluation`; its review's follow-ups 2 and 3 to B6, 1 to Open 47 and 102); the measurement (B6, #307, after #278, its before).
 M0 (#296) counted what B4's test reads (`.build/tasks/296/comparisons.md`): the found site's cost is unequal
 comparisons walking the store both calls carry (7.51×10⁹ node pairs, about 32 s at the machinery), which either choice
 removes; the comparisons ending equal walk 23.61×10⁹ node pairs (about 99.8 s) at the machinery, the renaming's found
@@ -72,7 +72,10 @@ rewritten right side, which holds the whole remaining entity list, so each step 
 repair (`f1b6098a`): the chosen equation is instantiated directly at the destructured cterms, with no beta conversion,
 and the dispatch reads the notion's equations; the conversion is 0.0008 s at the machinery's 340 entities, from 0.107 s,
 and linear. What is left of the obligation is `increasing_tac`'s numeral comparisons, 0.017 s at 210 declarations —
-linear, twenty times the conversion, and closable the same way if it is ever worth it (Open 92). Roots stay a store with distinct keys.
+linear, twenty times the conversion (Open 92). After #308, #317 timed every obligation held
+(`.build/tasks/317/measurement.md`: 0.134 s per state definition at the seed, 0.704 s at the machinery, 0.0069 s at a
+frame): the chain proving a list increasing is quadratic in the names, 56% of the machinery's, and #352 instantiates
+its steps as #283 did; roots distinctness is linear in root pairs. Roots stay a store with distinct keys.
 
 **Request construction (#276, #277, #112–#114).** Task 95's entry: a native check over the request state's rows — a
 proposed body is admitted exactly when it lists the least context and the support, production being an executor's
@@ -152,7 +155,7 @@ join law stated once (#62, #94, #173). #64 landed the library generated at the l
 so a decomposed problem is refused issue (`Development_Library_Issue`). The build that applies a decomposition is
 #322's briefs, none changing a recorded word: the sixth role and the decomposition row (#325, after #295, #308 and
 #167, so that its body is stated over the one notion #295 makes of `keys_term` and `development_row_family`), the
-record and the posing step once (#327, after #167 and #308), the generation (#331) and the per-candidate native
+record and the posing step once (#327, after #167, #308 and #314, which folds #167's change to `Development_Successor`'s row), the generation (#331) and the per-candidate native
 evaluation plan-51 decided (#333) after the row, and the issue less the recorded choices with re-evaluation over both
 record kinds (#329, after the posing, the row and #169, whose theories it edits); the split source waits on the owner
 (Q14, its evidence Q16).
@@ -200,18 +203,19 @@ N1–N9: #335 briefs N1–N4 (the record generalized, the package, its rows, nat
 over what they leave, and the translation design follows (Open 3).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
-creates has no review task (the harness reviews it in its own folder). The deepest chains are 6: #167 → #314 → #169 →
-#319 → #92 → #93, and #192 → #318 → #193 → #194 → #205 beside it; the consolidations #192 → #321 → #295 → #288 are 4.
-#320, #322, #323 and #324 wait on nothing: they are the graph's width while #167, #192 and B5 finish (in the hour
-before plan-53 a slot stood free 41 of 58 minutes, only #320 able to start).
+creates has no review task (the harness reviews it in its own folder). The deepest chain is 8: #321 → #295 → #288 →
+#340 → #342 → #344 → #346 → #347, the consolidations into the native package (N2a, N2b, N3a, N3b), so nothing of N1–N4
+or of the decomposition's builds starts before #321 lands. The word chain #167 → #314 → #169 → #319 → #92 → #93 is 6,
+and #321 → #353 → #193 → #194 → #205 is 5. #352, #323 and #324 wait on nothing.
 
-**Order** (the queue holds it; this is why it is as it is). The tasks in their checks, parked or running first (#308,
-#167, B5 #305), so that their landing checks do not wait behind heavy runs; then what waits on nothing unlanded and
-takes the slots as they free — #318 (the per-answer reads, before #193), the replay's fix #323, #321, #195 and the
-native loop's brief #335; the word chain (#314, then #169, #319, #92), the longest chain; B6 (#307) and #317; the incremental stage's
-#193; the consolidation #295; the decomposition's builds (#325, #327, then #331, #333, #329) as #167, #308 and #295
-land; the measurements #194 and #315, #288, then the investigation #324, whose held runs yield to the checks ahead of
-it; each review after its build.
+**Order** (the queue holds it; this is why it is as it is). The tasks in their checks first (#167, #195), so that
+their landing checks do not wait behind heavy runs; then #321's merge round, the root of the longest chain; B6 (#307)
+and #323 in their runs; as #321 lands, #295 and #353, then #288 and the word chain's #314; the decomposition's #325,
+the package's N2a (#340) and N1a (#336); the exporter's chain #352, which waits on nothing but whose check rebuilds
+about 1,666 theories, after them so that its heavy check yields to theirs; the incremental stage's #193; the word
+chain's #169, #319, #92; #327 and N4a (#348); N2b, N1b, N3a, N4b, N3b; the decomposition's #331, #333, #329; the
+measurements #194 and #315, then the investigation #324, whose held runs yield to the checks ahead of it; each review
+after its build.
 
 ## Decisions
 
@@ -320,7 +324,9 @@ a task):
   main's row would carry a wrong imports column, so the round moves what needs the new import out of the theory (into
   one above it) and sets the theory and its row back to the branch point's text (#165, q76; Q13 asks the owner for a
   harness merge). The row additions then follow in a fix made from main after the landing, where each is a one-sided
-  edit (#289). A task working in the one tree installs its theories only at hand-over and keeps nothing of its own
+  edit (#289), or in the first task made from main after it; a task that changes one of those rows waits on it, so that
+  no row is changed on both sides again (#314 folds #167's, #327 waits on it). A task working in the one tree installs
+  its theories only at hand-over and keeps nothing of its own
   uncommitted there when it parks or comes back (q30).
 - **Text with backticks goes through a file.** `v2.py reply`, `tell` and `ledger` given their text as an argument pass
   it through a shell, which reads a backticked name as a command and strips it: q73's answer reached its asker with
@@ -467,6 +473,21 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the development
   package's rows" — the native state one development package presented as rows of the generalized record, its
   problems, request, answer, judgment, installation and builds N1–N9; its owner's choices as Q18; N1–N4 to #335.
+- **#308** (`22b49aba`, after a merge round): the exporter proves its states' roots distinct, so every state it defines
+  is presentable (`state_presentable_exported`, `development_states_presentable`; `development_states_exported`
+  retired); the successor's request premises derived (`development_successor_admits_requested`); the literal order by
+  one rule per first differing bit (the context facts 0.30 → 0.14 s at the seed, 1.09 → 0.60 s at the machinery, held);
+  the position conditions through `list_all`; #289's seven rows folded. Its row change of `Development_State_Rows` to
+  #325; the held timing of `roots_distinct` to #317, whose probe must not hang as #308's did before #316 (Open 78). A
+  change to `Isabelle_Entity_Export` rebuilds about 1,666 of 1,843 theories (#289's batch, 1,060 s).
+- **#305** (B5, `5b33cd8a`): `Shared_Native_Evaluation`, the positioned evaluation over shared calls, the three
+  positioned code equations restated through it; its review's follow-ups 2 and 3 to B6 (#307), 1 to Open 47 and 102.
+- **#317** (investigation): the exporter's obligations timed held on the base with #308 and on its parent
+  (`.build/tasks/317/measurement.md`), read under the verdict line; the names' chain to #352.
+- **#318** (`5cb7902e`): the per-answer function's last whole-state reads — the declaration readings through the
+  declaration store, presentability from the edit, the closure's fibres from the assessment's subject index, the
+  guard's atom membership through a member tree — with the stale text and unused parameters; its review's follow-ups
+  1–5 to #353.
 
 ## Open
 
@@ -560,7 +581,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 46. Observation's read-back of the installed program: a recovery theorem for finite programs (the installer knows its
     program only up to an alpha variant), after the layout's measurement (#159).
 47. `finite_demanded_step_shared_code`, and B4's `finite_demanded_sites_image` and `finite_row_successors_union`
-    (#303's review, follow-up 2), into `Finite_Demanded_Closures` with its next edit; with `Inference_Embeddings`'
+    (#303's review, follow-up 2), and B5's `finite_demanded_sites_within` with `finite_demanded_sites_cong` consuming
+    it (#305's review, follow-up 1), into `Finite_Demanded_Closures` with its next edit, B5's
+    `finite_embedded_inferences_comp` into `Inference_Embeddings` with its; with `Inference_Embeddings`'
     `finite_inference_result_renaming` they are one argument, a closure carried by an injective map, a candidate row of
     `REASONING_REUSE.md`.
 48. Formation checks that grow with their input (`finite_object_formed` quadratic, 8.3 ms at 1,114 atoms): at a measured
@@ -650,9 +673,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     words identify their reports — stated once over `finite_scoped_report_value` or per theory, when that line is next
     touched. With it, from the same review: the documents check could refuse a tracked path `.gitignore` matches
     (`git ls-files -ci --exclude-standard`), so Q9's case cannot recur.
-92. **What is left of the exporter's obligation** (#283's review): `increasing_tac` runs one `simp_tac` per adjacent
-    pair, 0.017 s at the machinery's 210 declarations against the conversion's 0.0008 s — linear and small; the numeral
-    order equations could be instantiated directly as #283 did for the declarations, measured before acting. With it:
+92. **What is left of the exporter's obligation** (#283's review, #317's measurement): the chain proving a list
+    increasing, quadratic in the names, is #352's; roots distinctness is linear in root pairs (0.036 s at the
+    machinery's 62 roots, one second near 320 roots), repaired at that scale. With it:
     any other conversion that rewrites the head of a long term with `Conv.rewr_conv` beta-normalizes its whole right
     side at each step, so a second such conversion (exporter-side or in a quotation proof procedure) is repaired by the
     same structural instantiation, the binder factored at that second use rather than copied. And the exporter's
@@ -706,7 +729,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     (`Linear_Comparisons`, as `Keyed_Value_References` uses) halves every equal walk for any key. After B4 and B5 the
     loop's call keys are shared and compare in one step, so it bears only where whole terms stay keys: at a measured
     need.
-102. `fimage_ffUnion_member` (#301's review) to `Finite_Set_Composition` under a name for what it states, with that
+102. `fimage_ffUnion_member` (#301's review) to `Finite_Set_Composition` under a name for what it states, and B5's
+    `fBall_member`, `fBall_image` and `ffilter_fimage` (#305's review, follow-up 1) beside it, with that
     theory's next edit.
 103. #284 corrected its entry's list in place (`DECISIONS.md`, at line 12223 when reviewed) without the bracketed
     "[corrected by task N: …]" the entries use elsewhere: noted with that entry's next edit (#284's review).
@@ -742,27 +766,40 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 
 ## Now
 
-- **#308** follows #289's landing: it folds #289's row changes (`.build/tasks/289/rows.md`) into main's seven rows and
-  takes what the exporter still owes (`state_presentable`'s third condition, the successor's request premises, the new
-  facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s). Its
-  review's held timing of roots distinctness, which its tree could not take, is #317 after its landing (q82).
-- **Under way**: #167 (re-planned to its room; its batch with #309 failed on its own proof, `Development_Row_Data.thy:546`
-  674 s by itself, told to repair it at its cause) in its round; #308 in a merge round (accepted, its commit refused:
-  `Development_State_Rows`' row twice; main's row handed over, its own change left in `.build/tasks/308/rows.md` for
-  #325, mailed); B5 (#305) and #318 running (q84 answered: the declaring rows as one kind-free argument family of the two
-  checks); #323, #321, #195 and the brief #335 take the slots as they free; the decomposition's builds (#325–#334,
-  #322's) wait on #167, #308 and #295.
-- **The ledger's Q17 is the harness's**: plan-52 was declined twice on the same work, and the harness held its events
-  for the owner — #313's landing, which plan-53 handled (#323). **Q18** is #320's five provisional choices; its text
+
+- **#167's merge round** (plan-54): its work accepted and whole — its proof repaired at its cause (`Development_Row_Data`
+  0.5 s from 674 s) — but its commit failed at the merge (15:12): five rows of `THEORY_MAP.md` changed on both sides
+  (`Development_Machinery`, `Development_Problems`, `Development_Refinement_Repair`, `Development_State_Presenter`,
+  `Development_Successor`; #308's fold of #289's rows among main's). The round sets them to main's verbatim and leaves
+  its changes in `.build/tasks/167/rows.md`, which #314 folds; #327 waits on #314 for `Development_Successor`'s row.
+  Where #167 changed one of those theories' imports, the round follows #165's pattern or comes back to the planner.
+- **#321's merge round** (plan-55): its work accepted — its check passed — but its commit failed at the merge (15:45):
+  `Development_Incremental_Verdict.thy` changed on both sides, #318 having landed its per-answer reads there
+  (`5cb7902e`). Its brief gained the round (main's text with its changes applied again, nothing of #318's reverted; a
+  doubled row set to main's, its change left in `.build/tasks/321/rows.md` for #353). It roots the longest chain, and
+  #353 (#318's review's follow-ups, before #193) waits on it.
+- **Under way besides**: #167 and #195 in their checks; B6 (#307) and #324 running, #323 parked for the machine; the
+  decomposition's builds (#325–#334, #322's) wait on #167 and #295, #325 folding #308's change to
+  `Development_State_Rows`' row (`.build/tasks/308/rows.md`, mailed).
+- **The ledger's Q17 and Q19 are the harness's** (Q19: #323's session fix-323.2 declined twice, before fix-323.3, the
+  fresh fixer session this bullet's test is about): plan-52 was declined twice on the same work, and the harness held its events
+  for the owner — #313's landing, which plan-53 handled (#323). #323's first session, forked from #313's (`continues`),
+  was declined by a classifier at its first turn with nothing written; plan-53 re-planned it from the fixer's base, its
+  brief whole without that session. If a fresh session is declined too, the content is the cause: drop #323 and say so. **Q18** is #320's five provisional choices; its text
   opens with "Q17", a slip of plan-53's (the harness numbered it Q18).
   Mailed to tasks not yet started, read by their first session: #113's review to #295; #278's to #307, #305 and #193;
   #284's 1, 2 and 4 to #288 (4 to #308 if its check sends it back); #303's to #305 and #307; #285's to #288 and #307.
-- **Plan-51 and plan-52 were each stopped by a classifier before their notes** (13:37; about 14:03): this file carried
-  their state. What plan-52 had not handled was #313's landing (`e9bbe02b`), integrated by plan-53, its re-review's
-  follow-ups to #323. The cost: #313's first review, overwritten by its re-review, survives only as the re-review's
-  one-line summary, so #323 continues #313's session where it is still warm.
+- **Plan-51, plan-52, plan-53 and plan-54 were each stopped by a classifier before their notes** (13:37; about 14:03;
+  15:13; 15:47): this file carried their state. Plan-54 left #321's commit failure unhandled, #353 unqueued and #318
+  out of Delivered, all three taken by plan-55; its graph edits stand (#336–#351 placed from #335's proposal, #352 from
+  #317, #353 from #318's review, #314 folding #167's rows). Plan-53's one unhandled event was #167's commit failure,
+  handled by plan-54. What plan-52 had not handled was #313's landing (`e9bbe02b`), integrated by plan-53, its
+  re-review's follow-ups to #323. The cost: #313's first review, overwritten by its re-review, survives only as the
+  re-review's one-line summary; #323 now runs from the fixer's base (Q19).
 - **#303's tree held untracked files the task did not make** at its root (`.bashrc`, `.bash_profile`, `.gitconfig`,
   `.claude/agents`, `.idea`): the finalizer should commit the handed-over files only (#303's review) — the harness's.
+- **The exclusive hold outlasts its run** (#317): `measuring --exclusive` held the machine to its 3-minute bound
+  (15:30:35–15:33:35) although the measured run ended at 15:31:42 — the harness's.
 - **A tree behind main cannot probe until it brings main in** (#316, `514be373`; met by #276, #112 and #308, whose
   after-repair timing waited on it): the harness's `change --probe` could bring main in or surface the refusal
   distinctly (#316's review), the owner's; every producing task under way was told the remedy.

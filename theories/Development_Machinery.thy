@@ -143,22 +143,6 @@ definition development_machinery_problem_report ::
     development_problem_assessment development_machinery_context development_machinery_dependencies
       answered development_machinery_problems)"
 
-definition development_machinery_problem_data ::
-    "development_machinery_problem_report \<Rightarrow> finite_factor_term" where
-  "development_machinery_problem_data=finite_pair_presentation development_problems_data
-    (finite_pair_presentation isabelle_positions_data
-      (finite_pair_presentation development_dependencies_data development_problem_assessment_data))"
-
-lemma development_machinery_problem_data_injective [intro]: "inj development_machinery_problem_data"
-  unfolding development_machinery_problem_data_def
-  by (intro finite_pair_presentation_injective development_problems_data_injective
-    isabelle_collections_injective development_dependencies_data_injective
-    development_problem_assessment_data_injective)
-
-definition development_machinery_problem_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
-  "development_machinery_problem_value answered=
-    development_machinery_problem_data (development_machinery_problem_report answered)"
-
 type_synonym development_machinery_packet =
   "native_development_question\<times>native_development_report\<times>finite_factor_term list option"
 
@@ -183,22 +167,6 @@ lemma development_machinery_loop_report_selected:
   "snd (snd (development_machinery_loop_report answered))=development_packet_selected
     development_machinery_dependencies answered development_machinery_problems"
   by (simp add: development_machinery_loop_report_def development_packet_selected_def Let_def)
-
-definition development_machinery_loop_data :: "development_machinery_loop_report \<Rightarrow> finite_factor_term" where
-  "development_machinery_loop_data=finite_pair_presentation
-    (finite_sequence_presentation (finite_option_presentation finite_development_context_value))
-    (finite_pair_presentation (finite_option_presentation finite_development_context_value)
-      (finite_option_presentation development_problems_data))"
-
-lemma development_machinery_loop_data_injective [intro]: "inj development_machinery_loop_data"
-  unfolding development_machinery_loop_data_def
-  by (intro finite_pair_presentation_injective finite_sequence_presentation_injective
-    finite_option_presentation_injective finite_development_values_injective
-    development_problems_data_injective)
-
-definition development_machinery_loop_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
-  "development_machinery_loop_value answered=
-    development_machinery_loop_data (development_machinery_loop_report answered)"
 
 text \<open>
   The state report is the seed's assessment and acceptance of a rooted state, applied to this
@@ -321,24 +289,6 @@ definition development_machinery_verification ::
            development_machinery_renamed (fset_of_list development_machinery_root_constants) r)) issued))
      (development_machinery_issue answered)"
 
-definition development_machinery_verification_data ::
-    "development_machinery_verification \<Rightarrow> finite_factor_term" where
-  "development_machinery_verification_data=finite_option_presentation
-    (finite_pair_presentation development_requests_data (finite_pair_presentation development_problems_data
-      (finite_sequence_presentation (finite_sequence_presentation
-        (finite_pair_presentation development_verdict_data finite_boolean_data)))))"
-
-lemma development_machinery_verification_data_injective [intro]: "inj development_machinery_verification_data"
-  unfolding development_machinery_verification_data_def
-  by (intro finite_option_presentation_injective finite_pair_presentation_injective development_requests_data_injective
-    development_problems_data_injective finite_sequence_presentation_injective development_verdict_data_injective
-    finite_boolean_data_injective)
-
-definition development_machinery_verification_value ::
-    "development_problem fset \<Rightarrow> finite_factor_term" where
-  "development_machinery_verification_value answered=
-    development_machinery_verification_data (development_machinery_verification answered)"
-
 text \<open>
   The expected verdicts are fixed by the kinds of answer, not by the residuals: both unchanged
   answers are accepted; the axiom is an added entity that is no definition or code equation of the
@@ -367,11 +317,6 @@ definition development_machinery_native_answers ::
 definition development_machinery_native_answers_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
   "development_machinery_native_answers_value answered=
     development_native_answers_data (development_machinery_native_answers answered)"
-
-definition development_machinery_native_judgment_value :: "String.literal \<Rightarrow> bool list \<Rightarrow> finite_factor_term" where
-  "development_machinery_native_judgment_value n bits=development_named_native_judgment_data
-    (development_named_native_judgment development_definition_verdict development_machinery_state
-      (development_machinery_requests development_machinery_unanswered) n bits)"
 
 definition development_machinery_native_summary ::
     "String.literal \<Rightarrow> bool list \<Rightarrow> (bool\<times>bool\<times>nat list\<times>String.literal list\<times>nat list) option" where

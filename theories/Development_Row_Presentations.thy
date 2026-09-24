@@ -86,13 +86,13 @@ proof -
       decode_development_problem_body_data development_problems_present_def\<close>)
 qed
 
-theorem development_request_row_data_present_injective:
+theorem development_request_data_present_injective:
   assumes present: "development_rows_present key ekey (decode_finite_term \<circ> inert) origin grant
       supported scope decs ps rs iss rows"
-  shows "inj_on (development_request_row_data key inert origin grant) (set rs)"
+  shows "inj_on (development_request_data key inert origin grant) (set rs)"
 proof (rule inj_onI)
   fix r r' assume r: "r\<in>set rs" and r': "r'\<in>set rs"
-    and same: "development_request_row_data key inert origin grant r=development_request_row_data key inert origin grant r'"
+    and same: "development_request_data key inert origin grant r=development_request_data key inert origin grant r'"
   have problems: "development_problems_present key (decode_finite_term \<circ> inert) origin grant ps rows"
     and requests: "development_requests_present key ekey supported scope ps rs rows"
     using development_rows_parts[OF present] by simp_all
@@ -108,10 +108,10 @@ proof (rule inj_onI)
   have "fst r\<in>set ps" using inside r by auto
   then have "development_row_premise origin grant p"
     using development_problems_present_premise[OF problems] by (simp add: R)
-  then obtain x where "development_request_row_data key inert origin grant r=Some x"
-    by (simp add: R development_request_row_data_def development_problem_row_data_inside)
+  then obtain x where "development_request_data key inert origin grant r=Some x"
+    by (simp add: R development_request_data_def development_problem_row_data_inside)
   then show "r=r'"
-    using development_request_row_data_injective[OF loci keys terms r r'] same by simp
+    using development_request_data_injective[OF loci keys terms r r'] same by simp
 qed
 
 section \<open>A row is its locus with its body, and a table is the store of its rows\<close>

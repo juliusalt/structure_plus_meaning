@@ -23,6 +23,12 @@ lemma map_slot_keys_member:
   shows "(f k,x) \<in> map_slot_keys f M"
   using imageI[OF assms, of "\<lambda>(k,x). (f k,x)"] by (simp add: map_slot_keys_def)
 
+lemma map_slot_keys_empty: "map_slot_keys f {} = {}"
+  by (simp add: map_slot_keys_def)
+
+lemma map_slot_keys_insert: "map_slot_keys f (insert (k,x) M) = insert (f k,x) (map_slot_keys f M)"
+  by (simp add: map_slot_keys_def)
+
 text \<open>
   A placed table (@{text RRA_Placed_Forests}) is each child's table with its keys placed: its union
   form in terms of that key map is stated here, the first place holding both notions, so that no

@@ -114,7 +114,7 @@ proof -
     by (simp add: premise_forest_syntax_def bound_forest_pushed cong: SUP_cong_simp)
   show ?thesis
     by (simp add: carrier each vars premise_forest_interior_def premise_forest_literals_def
-        premise_forest_callees_def placed_table_domain placed_positions_def UN_Un_distrib
+        premise_forest_callees_def placed_table_domain placed_positions_eq UN_Un_distrib
         cong: SUP_cong_simp)
 qed
 

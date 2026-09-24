@@ -15,6 +15,53 @@ fun read_prefix_word_fuel where
 definition read_prefix_word where
   "read_prefix_word parser source=read_prefix_word_fuel parser (length source) source"
 
+text \<open>
+  A code whose words cancel under arbitrary suffixes keeps that cancellation through any injective
+  map of its symbols: a mapped word that extends another mapped word extends it by the image of a
+  suffix of the unmapped word.
+\<close>
+
+lemma mapped_prefix_extended:
+  assumes cancel: "\<And>m n xs ys. code m @ xs = code n @ ys \<longleftrightarrow> m = n \<and> xs = ys"
+    and injective: "inj f"
+    and longer: "map f (code m) = map f (code n) @ us" and rest: "us @ xs = ys"
+  shows "m = n \<and> xs = ys"
+proof -
+  let ?k = "length (code n)"
+  let ?v = "drop ?k (code m)"
+  have "take ?k (map f (code m)) = map f (code n)"
+    by (simp only: longer take_append length_map diff_self_eq_0 take_0 append_Nil2 take_all_iff order_refl)
+  then have "map f (take ?k (code m)) = map f (code n)" by (simp only: take_map)
+  then have head: "take ?k (code m) = code n" by (simp only: inj_map_eq_map[OF injective])
+  have "drop ?k (map f (code m)) = us"
+    by (simp only: longer drop_append length_map diff_self_eq_0 drop_0 drop_all order_refl append_Nil)
+  then have tail: "map f ?v = us" by (simp only: drop_map)
+  have "code m @ [] = code n @ ?v"
+    using append_take_drop_id[of ?k "code m"] head by simp
+  then have "m = n \<and> [] = ?v" by (rule iffD1[OF cancel])
+  then show ?thesis using tail rest by auto
+qed
+
+theorem mapped_prefix_cancel:
+  assumes cancel: "\<And>m n xs ys. code m @ xs = code n @ ys \<longleftrightarrow> m = n \<and> xs = ys"
+    and injective: "inj f"
+  shows "map f (code m) @ xs = map f (code n) @ ys \<longleftrightarrow> m = n \<and> xs = ys"
+proof
+  assume eq: "map f (code m) @ xs = map f (code n) @ ys"
+  obtain us where "map f (code m) = map f (code n) @ us \<and> us @ xs = ys \<or>
+      map f (code m) @ us = map f (code n) \<and> xs = us @ ys"
+    using eq by (auto simp: append_eq_append_conv2)
+  then show "m = n \<and> xs = ys"
+  proof (elim disjE conjE)
+    assume "map f (code m) = map f (code n) @ us" "us @ xs = ys"
+    then show ?thesis by (rule mapped_prefix_extended[OF cancel injective])
+  next
+    assume "map f (code m) @ us = map f (code n)" "xs = us @ ys"
+    then have "n = m \<and> ys = xs" by (intro mapped_prefix_extended[OF cancel injective, of n m us]) simp_all
+    then show ?thesis by simp
+  qed
+qed simp
+
 locale prefix_word_code =
   fixes code :: "'a\<Rightarrow>'b list" and parser :: "'b list\<Rightarrow>('a\<times>'b list) option"
   assumes code_nonempty: "\<And>x. code x\<noteq>[]"

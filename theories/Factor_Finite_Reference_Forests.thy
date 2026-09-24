@@ -17,6 +17,10 @@ lemma finite_syntax_forest_table_exact [simp]:
   "fset (finite_syntax_forest_table Ms)=syntax_forest_table (map fset Ms)"
   by (simp add: finite_syntax_forest_table_def syntax_forest_table_def)
 
+text \<open>Each child's prefix is built once, before its keys are placed.\<close>
+lemmas finite_syntax_forest_table_code [code] = finite_placed_table_prefix[where g=syntax_branch
+  and h="\<lambda>i. syntax_branch i []", OF syntax_branch_prefix, folded finite_syntax_forest_table_def]
+
 lemma syntax_forest_value_map:
   "map_relation_values f (syntax_forest_table Ms)=syntax_forest_table (map (map_relation_values f) Ms)"
   by (simp add: syntax_forest_table_def placed_table_values)

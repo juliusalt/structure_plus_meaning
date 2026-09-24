@@ -61,7 +61,7 @@ proof -
   have source: "artifact_at ?F ?z R" by (simp add: clone_artifact_iff)
   have bound: "rel_dom L \<union> rel_dom {} \<subseteq> rra_carrier (object_structure R)" using bounds by simp
   have actual: "syntax_references E u (map_slot_keys f L) (map_slot_keys f {})"
-    using refs by (simp add: map_slot_keys_def)
+    using refs by (simp add: map_slot_keys_empty)
   have clone_refs: "syntax_references ?F ?z L {}"
     by (rule cloned_syntax_references[OF ef fresh bound actual])
   obtain I K where original: "scoped_pattern_at ?F ?z r p I K"

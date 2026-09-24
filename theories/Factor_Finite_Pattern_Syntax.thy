@@ -53,13 +53,13 @@ qed
 
 definition finite_binder_coordinates :: "'a::linorder fset \<Rightarrow> 'a \<Rightarrow> local_address" where
   "finite_binder_coordinates V=(let xs=sorted_list_of_fset V;
-    ys=map (\<lambda>n. 6#unary_address n) [0..<length xs] in listed_rekey xs ys [])"
+    ys=map (\<lambda>n. 6#index_address n) [0..<length xs] in listed_rekey xs ys [])"
 
 lemma finite_binder_coordinates_properties:
   "binder_addressing (fset V) (finite_binder_coordinates V)"
 proof -
   let ?xs="sorted_list_of_fset V"
-  let ?ys="map (\<lambda>n. 6#unary_address n) [0..<length ?xs]"
+  let ?ys="map (\<lambda>n. 6#index_address n) [0..<length ?xs]"
   have keys: "distinct ?xs" and distinct_values: "distinct ?ys" by (simp_all add: distinct_map inj_on_def)
   have lengths: "length ?xs=length ?ys" by simp
   have injective: "inj_on (finite_binder_coordinates V) (fset V)"
@@ -73,8 +73,8 @@ proof -
   have addresses: "octets_formed (finite_binder_coordinates V a)" if "a\<in>fset V" for a
   proof -
     have position: "finite_binder_coordinates V a\<in>set ?ys" using image that by blast
-    then obtain n where shape: "finite_binder_coordinates V a=6#unary_address n" by auto
-    show ?thesis using unary_address_formed[of n] by (simp add: shape octets_formed_def)
+    then obtain n where shape: "finite_binder_coordinates V a=6#index_address n" by auto
+    show ?thesis using index_address_formed[of n] by (simp add: shape octets_formed_def)
   qed
   have boundary: "finite_binder_coordinates V ` fset V\<subseteq>binder_addresses" using image by auto
   show ?thesis using injective addresses boundary by (auto simp: binder_addressing_def finite_addressing_def)

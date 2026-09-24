@@ -59,7 +59,8 @@ proof -
   have right_addr: "finite_addressing (rra_carrier (object_structure S)) (Cons 3)"
     using clauses(1) by (auto simp: finite_addressing_def inj_on_def exact_formed_def octets_formed_def)
   have profile: "reference_table_formed ?L ?C"
-    using reference_table_disjoint_copies[OF interface(3) clauses(5)] by (simp add: map_slot_keys_def)
+    using reference_table_disjoint_copies[OF interface(3) clauses(5)]
+    by (simp add: map_slot_keys_empty map_slot_keys_insert)
   have lbound: "Cons 2 ` rel_dom L \<subseteq> Cons 2 ` rra_carrier (object_structure R)"
     by (rule image_mono[OF interface(4)])
   have rbound: "Cons 3 ` (rel_dom A \<union> rel_dom B) \<subseteq> Cons 3 ` rra_carrier (object_structure S)"

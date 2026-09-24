@@ -9313,6 +9313,27 @@ reduction of an edit, which enters only the report's removed and added lists (`n
 instances are the one definition at `[Equation_Kind]`/`[Equation_Kind]` and at
 `[Definition_Kind,Equation_Kind]`/`[Definition_Kind]`. The program states the empty payload alone.
 
+Built 2026-09-22 (task 44, store absence and the witnesses; step 10, the last of the build order):
+store absence stands in `Native_Path_Stores` beside the search it completes — six rules of one site
+descending a path by its bits' shapes to the empty store or to a node whose optional value is absent,
+with `native_store_absent_program.exact` for every key term and `exact_at_path` for its consumers.
+An empty result and a failed one stay apart positively: where a store holds a value at a key, even an
+empty one, absence fails (`absent_not_at_value`); a key that is no path has neither a search nor an
+absence (`absent_refuses_unpresented`); and `store_search_absent_exclusive` states that the two never
+hold of one key and store, which is exclusion and not complementation — neither program is the other's
+negation, and no positive field is redefined through its witness. `path_store_present` moved there
+with it. The witnesses are `Development_Verdict_Witnesses`, a program of its own at `(Some [],[90..100])`
+whose only octet is the empty payload: `excess` first, because `development_refinement_repair` reads
+`development_verdict_excess` (`native_excess_witness_exact`, exactly
+`development_answer_statements_excess`), then `undeclared` (exactly `isabelle_undeclared_constants`)
+and `malformed` (exactly `isabelle_malformed_entities`). Each is read over the rows its field reads,
+`excess` over the subject index by a `some` reading of that index (`key_index_some_program`,
+`key_selection_some_program`) — the index notion at the family's `some`-checker, no new notion — and
+each consumes its field's contract by name. The witnesses of `unpermitted_removed`, `unpermitted_added`
+and `unreached` are not built: each needs a complement this entry's positive discipline does not
+supply — that the subject's key is *not* among a row's subjects, and that a key is *not* in the reach's
+closure — so what shape they may take is open and belongs to the order, not to this task.
+
 ### The rows about a subject are read through a subject index — 2026-09-22 (task 138)
 
 Task 36 built `excess` as a guarded traversal: a row of the replaceable families passes when the subject's key

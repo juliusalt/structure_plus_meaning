@@ -135,16 +135,6 @@ qed
 
 end
 
-section \<open>A key is present in a path store whatever the rows\<close>
-
-lemma path_store_fold_present:
-  "store_lookup (fold (\<lambda>(k,v) T. store_update T k (Some v)) rows T) q\<noteq>None \<longleftrightarrow>
-    q\<in>fst ` set rows \<or> store_lookup T q\<noteq>None"
-  by (induction rows arbitrary: T) (auto simp: store_lookup_update split: if_splits)
-
-lemma path_store_present: "store_lookup (path_store rows) q\<noteq>None \<longleftrightarrow> q\<in>fst ` set rows"
-  using path_store_fold_present[of rows Empty_Store q] by (simp add: path_store_def)
-
 section \<open>The support store and the declaration store\<close>
 
 text \<open>

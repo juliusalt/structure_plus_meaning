@@ -23,10 +23,11 @@ abbreviation package_additions_result :: "(factor_term \<Rightarrow> bool) \<Rig
     z=Pair_Term t w \<and> site_value_presents E u r t \<and> site_value_presents F v s w \<and>
     native_package_at F v s R \<and>
     (\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      holds (Pair_Term t (definition_site_value d)))"
+      holds (Pair_Term (Pair_Term t w) (definition_site_value d)))"
 
 definition addition_member_schema :: "(nat,nat,nat) factor_schema" where
-  "addition_member_schema=data_rule (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y data_z)) data_w)
+  "addition_member_schema=data_rule
+    (Pattern_Pair (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y data_z)) (Pattern_Variable 4)) data_w)
     {(0,83,package_subject_pattern data_x data_y data_z data_w)}"
 
 definition addition_callee_schema :: "nat \<Rightarrow> (nat,nat,nat) factor_schema" where
@@ -42,7 +43,8 @@ definition package_additions_schema :: "nat \<Rightarrow> (nat,nat,nat) factor_s
      (2,79,Pattern_Pair (Pattern_Pair data_y data_z) (Pattern_Pair data_w (Pattern_Variable 4))),
      (3,47,Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5)),
      (4,76,Pattern_Pair (Pattern_Pair data_y (Pattern_Variable 5)) (Pattern_Variable 5)),
-     (5,list_site,Pattern_Pair data_x (Pattern_Variable 5))}"
+     (5,list_site,Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z data_w)))
+       (Pattern_Variable 5))}"
 
 locale package_additions_profile =
   fixes P :: "(nat,nat,nat,nat) schema_system" and element_site list_site entry_site callee_site :: nat
@@ -68,15 +70,15 @@ sublocale listing: context_list_profile P element_site list_site
   by (rule context_list_profile.intro[OF system_formed list_family list_call])
 
 lemma element_member:
-  assumes holds: "(83,package_subject_argument e u r m)\<in>positive_meaning P"
-  shows "(element_site,Pair_Term (Pair_Term e (Pair_Term u r)) m)\<in>positive_meaning P"
+  assumes holds: "(83,package_subject_argument e u r m)\<in>positive_meaning P" and other: "term_formed c"
+  shows "(element_site,Pair_Term (Pair_Term (Pair_Term e (Pair_Term u r)) c) m)\<in>positive_meaning P"
 proof -
   have formed: "term_formed e" "term_formed u" "term_formed r" "term_formed m"
     using schema_call_formed_target[OF positive_meaning_formed[OF holds]] by auto
-  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then r else m"
+  let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then u else if n=2 then r else if n=3 then m else c"
   have result: "(element_site,evaluate_pattern ?h (schema_conclusion addition_member_schema))\<in>positive_meaning P"
     by (rule ordinary_positive_valuation_step[where c=0])
-      (use formed holds in \<open>auto simp: element_family addition_element_clauses_def addition_member_schema_def
+      (use formed other holds in \<open>auto simp: element_family addition_element_clauses_def addition_member_schema_def
         schema_variables_def element_call\<close>)
   show ?thesis using result by (simp add: addition_member_schema_def)
 qed
@@ -98,7 +100,7 @@ qed
 
 lemma element_sound:
   assumes holds: "(element_site,t)\<in>positive_meaning P"
-  shows "\<exists>a m. t=Pair_Term a m \<and> ((\<exists>e u r. a=Pair_Term e (Pair_Term u r) \<and>
+  shows "\<exists>a m. t=Pair_Term a m \<and> ((\<exists>e u r c. a=Pair_Term (Pair_Term e (Pair_Term u r)) c \<and>
     (83,package_subject_argument e u r m)\<in>positive_meaning P) \<or> (callee_site,Pair_Term a m)\<in>positive_meaning P)"
 proof -
   have consequence: "(element_site,t)\<in>schema_consequences P (positive_meaning P)"
@@ -124,10 +126,10 @@ proof -
 qed
 
 lemma element_at_site:
-  assumes first: "site_value_presents E u r t"
-  shows "(element_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P \<longleftrightarrow>
+  assumes first: "site_value_presents E u r t" and other: "term_formed c"
+  shows "(element_site,Pair_Term (Pair_Term t c) (definition_site_value d))\<in>positive_meaning P \<longleftrightarrow>
     (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-    (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P"
+    (callee_site,Pair_Term (Pair_Term t c) (definition_site_value d))\<in>positive_meaning P"
 proof -
   obtain e where source: "environment_value_presents E e"
     "t=Pair_Term e (Pair_Term (use_data_term u) (Payload_Term r))"
@@ -138,16 +140,16 @@ proof -
     by (simp only: membership_meaning package_membership_exact)
   show ?thesis
   proof
-    assume "(element_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P"
+    assume "(element_site,Pair_Term (Pair_Term t c) (definition_site_value d))\<in>positive_meaning P"
     then show "(\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P"
+      (callee_site,Pair_Term (Pair_Term t c) (definition_site_value d))\<in>positive_meaning P"
       using element_sound member by (auto simp: source(2))
   next
     assume "(\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P"
-    then show "(element_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P"
-      using element_member[of e "use_data_term u" "Payload_Term r" "definition_site_value d"]
-        element_callee member by (auto simp: source(2))
+      (callee_site,Pair_Term (Pair_Term t c) (definition_site_value d))\<in>positive_meaning P"
+    then show "(element_site,Pair_Term (Pair_Term t c) (definition_site_value d))\<in>positive_meaning P"
+      using element_member[of e "use_data_term u" "Payload_Term r" "definition_site_value d" c]
+        element_callee member other by (auto simp: source(2))
   qed
 qed
 
@@ -167,12 +169,14 @@ proof -
     "(79,citation_observation_argument (h 1) (h 2) (h 3) (h 4))\<in>positive_meaning root_family_reading_system"
     "(47,Pair_Term (h 4) (h 5))\<in>positive_meaning data_subset_system"
     "(76,Pair_Term (Pair_Term (h 1) (h 5)) (h 5))\<in>positive_meaning definition_callee_list_system"
-    "(list_site,Pair_Term (h 0) (h 5))\<in>positive_meaning P"
+    "(list_site,Pair_Term (Pair_Term (h 0) (Pair_Term (h 1) (Pair_Term (h 2) (h 3)))) (h 5))\<in>positive_meaning P"
     using support by (auto simp: schema package_additions_schema_def site_meaning roots_meaning
       subset_meaning bound_meaning)
   obtain E u r where first: "site_value_presents E u r (h 0)" using calls(1) by blast
   obtain F v s where second: "site_value_presents F v s (Pair_Term (h 1) (Pair_Term (h 2) (h 3)))"
     using calls(2) by blast
+  have second_formed: "term_formed (Pair_Term (h 1) (Pair_Term (h 2) (h 3)))"
+    using site_value_presents_formed[OF second] by blast
   have source: "environment_value_presents F (h 1)" "h 2=use_data_term v" "h 3=Payload_Term s"
     using second by (auto simp: site_value_presents_def site_data_term_def)
   obtain rs where roots_value: "h 4=data_list_term (map (\<lambda>d. definition_site_value d) rs)"
@@ -217,19 +221,23 @@ proof -
     using native_closed_bound_contains_sites[OF _ closed] roots_inside raw(2) by simp
   have members: "system_definitions (native_program F (rel_ran Q))\<subseteq>set ds"
     using reached native_package_complete_roots[OF package raw(1)] by simp
-  have elements: "\<forall>x\<in>set ys. (element_site,Pair_Term (h 0) x)\<in>positive_meaning P"
+  have elements: "\<forall>x\<in>set ys.
+      (element_site,Pair_Term (Pair_Term (h 0) (Pair_Term (h 1) (Pair_Term (h 2) (h 3)))) x)\<in>positive_meaning P"
     using listing.sound[OF calls(6)] by (auto simp: bounds(2) data_list_term_injective)
   have covered: "\<forall>d\<in>system_definitions (native_program F (rel_ran Q)).
       (\<exists>Q'. native_package_at E u r Q' \<and> d\<in>system_definitions Q') \<or>
-      (callee_site,Pair_Term (h 0) (definition_site_value d))\<in>positive_meaning P"
+      (callee_site,Pair_Term (Pair_Term (h 0) (Pair_Term (h 1) (Pair_Term (h 2) (h 3))))
+        (definition_site_value d))\<in>positive_meaning P"
   proof
     fix d assume inside: "d\<in>system_definitions (native_program F (rel_ran Q))"
     have "definition_site_value d\<in>set ys" using members inside definitions(1) by auto
-    then have "(element_site,Pair_Term (h 0) (definition_site_value d))\<in>positive_meaning P"
+    then have "(element_site,Pair_Term (Pair_Term (h 0) (Pair_Term (h 1) (Pair_Term (h 2) (h 3))))
+        (definition_site_value d))\<in>positive_meaning P"
       using elements by blast
     then show "(\<exists>Q'. native_package_at E u r Q' \<and> d\<in>system_definitions Q') \<or>
-      (callee_site,Pair_Term (h 0) (definition_site_value d))\<in>positive_meaning P"
-      by (simp only: element_at_site[OF first])
+      (callee_site,Pair_Term (Pair_Term (h 0) (Pair_Term (h 1) (Pair_Term (h 2) (h 3))))
+        (definition_site_value d))\<in>positive_meaning P"
+      by (simp only: element_at_site[OF first second_formed])
   qed
   show ?thesis
     by (rule exI[of _ E], rule exI[of _ u], rule exI[of _ r], rule exI[of _ "h 0"],
@@ -242,7 +250,7 @@ theorem complete:
   assumes first: "site_value_presents E u r t" and second: "site_value_presents F v s w"
     and package: "native_package_at F v s R"
     and covered: "\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P"
+      (callee_site,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning P"
   shows "(entry_site,Pair_Term t w)\<in>positive_meaning P"
 proof -
   obtain f where target: "environment_value_presents F f"
@@ -283,13 +291,14 @@ proof -
       (\<forall>c S. (c,S)\<in>C \<longrightarrow> (\<lambda>d. definition_site_value d) ` schema_dependencies S\<subseteq>set ?ys)"
       using d(1) own(1) image by blast
   qed
-  have first_formed: "term_formed t" using site_value_presents_formed[OF first] by blast
-  have elements: "(list_site,Pair_Term t (data_list_term ?ys))\<in>positive_meaning P"
-  proof (rule listing.complete[OF first_formed], intro ballI)
+  have pair_formed: "term_formed (Pair_Term t w)" "term_formed w"
+    using site_value_presents_formed[OF first] site_value_presents_formed[OF second] by simp_all
+  have elements: "(list_site,Pair_Term (Pair_Term t w) (data_list_term ?ys))\<in>positive_meaning P"
+  proof (rule listing.complete[OF pair_formed(1)], intro ballI)
     fix x assume "x\<in>set ?ys"
     then obtain d where d: "x=definition_site_value d" "d\<in>system_definitions R" using rows by auto
-    show "(element_site,Pair_Term t x)\<in>positive_meaning P"
-      using covered d(2) by (simp only: d(1) element_at_site[OF first])
+    show "(element_site,Pair_Term (Pair_Term t w) x)\<in>positive_meaning P"
+      using covered d(2) by (simp only: d(1) element_at_site[OF first pair_formed(2)])
   qed
   have calls: "(156,t)\<in>positive_meaning P"
     "(156,Pair_Term f (Pair_Term (use_data_term v) (Payload_Term s)))\<in>positive_meaning P"
@@ -308,7 +317,7 @@ proof -
   have result: "(entry_site,evaluate_pattern ?h (schema_conclusion (package_additions_schema list_site)))
       \<in>positive_meaning P"
     by (rule ordinary_positive_valuation_step[where c=0])
-      (use formed calls elements in \<open>auto simp: entry_family package_additions_schema_def
+      (use formed calls elements target(2) in \<open>auto simp: entry_family package_additions_schema_def
         schema_variables_def entry_call\<close>)
   show ?thesis using result target(2) by (simp add: package_additions_schema_def)
 qed
@@ -323,7 +332,7 @@ next
   then obtain E u r t F v s w R where parts: "z=Pair_Term t w" "site_value_presents E u r t"
     "site_value_presents F v s w" "native_package_at F v s R"
     "\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P" by blast
+      (callee_site,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning P" by blast
   show "(entry_site,z)\<in>positive_meaning P" using complete[OF parts(2-5)] parts(1) by simp
 qed
 
@@ -331,35 +340,35 @@ corollary on_values:
   assumes first: "site_value_presents E u r t" and second: "site_value_presents F v s w"
   shows "(entry_site,Pair_Term t w)\<in>positive_meaning P \<longleftrightarrow> (\<exists>R. native_package_at F v s R \<and>
     (\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P))"
+      (callee_site,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning P))"
 proof
   assume "(entry_site,Pair_Term t w)\<in>positive_meaning P"
   then have "package_additions_result (\<lambda>t. (callee_site,t)\<in>positive_meaning P) (Pair_Term t w)" by (rule sound)
   then obtain E' u' r' F' v' s' R where parts: "site_value_presents E' u' r' t" "site_value_presents F' v' s' w"
     "native_package_at F' v' s' R"
     "\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at E' u' r' Q \<and> d\<in>system_definitions Q) \<or>
-      (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P"
+      (callee_site,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning P"
     by (simp only: factor_term.inject) blast
   have "E'=E \<and> u'=u \<and> r'=r" by (rule site_value_presents_unique[OF parts(1) first])
   moreover have "F'=F \<and> v'=v \<and> s'=s" by (rule site_value_presents_unique[OF parts(2) second])
   ultimately show "\<exists>R. native_package_at F v s R \<and>
     (\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P)" using parts(3,4) by blast
+      (callee_site,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning P)" using parts(3,4) by blast
 next
   assume "\<exists>R. native_package_at F v s R \<and>
     (\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P)"
+      (callee_site,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning P)"
   then obtain R where "native_package_at F v s R" "\<forall>d\<in>system_definitions R.
     (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      (callee_site,Pair_Term t (definition_site_value d))\<in>positive_meaning P" by blast
+      (callee_site,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning P" by blast
   then show "(entry_site,Pair_Term t w)\<in>positive_meaning P" by (rule complete[OF first second])
 qed
 
 corollary presentation_invariance:
   assumes "site_value_presents E u r t" "site_value_presents E u r t'"
     "site_value_presents F v s w" "site_value_presents F v s w'"
-    and callee_invariance: "\<And>m. (callee_site,Pair_Term t m)\<in>positive_meaning P \<longleftrightarrow>
-      (callee_site,Pair_Term t' m)\<in>positive_meaning P"
+    and callee_invariance: "\<And>m. (callee_site,Pair_Term (Pair_Term t w) m)\<in>positive_meaning P \<longleftrightarrow>
+      (callee_site,Pair_Term (Pair_Term t' w') m)\<in>positive_meaning P"
   shows "(entry_site,Pair_Term t w)\<in>positive_meaning P \<longleftrightarrow> (entry_site,Pair_Term t' w')\<in>positive_meaning P"
   by (simp only: on_values[OF assms(1,3)] on_values[OF assms(2,4)] callee_invariance)
 
@@ -494,7 +503,8 @@ lemma context_base_fresh:
 
 definition use_absence_schema :: "(nat,nat,nat) factor_schema" where
   "use_absence_schema=data_rule
-    (Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_y) data_z) (Pattern_Pair data_w (Pattern_Variable 4)))
+    (Pattern_Pair (Pattern_Pair (Pattern_Pair (Pattern_Pair data_x data_y) data_z) (Pattern_Variable 5))
+      (Pattern_Pair data_w (Pattern_Variable 4)))
     {(0,20,Pattern_Pair data_w data_x)}"
 
 definition use_absence_system :: "(nat,nat,nat,nat) schema_system" where
@@ -671,9 +681,9 @@ interpretation use_additions: package_additions_profile use_additions_system 390
 section \<open>The callee reads the absence of the member's use from the given environment's artifact table\<close>
 
 theorem use_absence_exact:
-  "(393,t)\<in>positive_meaning use_additions_system \<longleftrightarrow> (\<exists>xs b c k q.
-    t=Pair_Term (Pair_Term (Pair_Term (pair_list_term xs) b) c) (Pair_Term k q) \<and>
-    term_formed b \<and> term_formed c \<and> term_formed q \<and> term_formed k \<and> self_contained_term k \<and>
+  "(393,t)\<in>positive_meaning use_additions_system \<longleftrightarrow> (\<exists>xs b c y k q.
+    t=Pair_Term (Pair_Term (Pair_Term (Pair_Term (pair_list_term xs) b) c) y) (Pair_Term k q) \<and>
+    term_formed b \<and> term_formed c \<and> term_formed y \<and> term_formed q \<and> term_formed k \<and> self_contained_term k \<and>
     formed_key_rows xs \<and> k\<notin>set (map fst xs))"
 proof
   assume holds: "(393,t)\<in>positive_meaning use_additions_system"
@@ -687,25 +697,27 @@ proof
   have schema: "S=use_absence_schema" using clause by (simp add: use_additions_families)
   have absent: "(20,Pair_Term (h 3) (h 0))\<in>positive_meaning keyed_list_system"
     using support by (auto simp: schema use_absence_schema_def use_additions_components)
-  have formed: "term_formed (h 1)" "term_formed (h 2)" "term_formed (h 4)"
+  have formed: "term_formed (h 1)" "term_formed (h 2)" "term_formed (h 4)" "term_formed (h 5)"
     using schema_call_formed_target[OF positive_meaning_formed[OF holds]] conclusion
     by (simp_all add: schema use_absence_schema_def)
-  show "\<exists>xs b c k q. t=Pair_Term (Pair_Term (Pair_Term (pair_list_term xs) b) c) (Pair_Term k q) \<and>
-    term_formed b \<and> term_formed c \<and> term_formed q \<and> term_formed k \<and> self_contained_term k \<and>
+  show "\<exists>xs b c y k q. t=Pair_Term (Pair_Term (Pair_Term (Pair_Term (pair_list_term xs) b) c) y) (Pair_Term k q) \<and>
+    term_formed b \<and> term_formed c \<and> term_formed y \<and> term_formed q \<and> term_formed k \<and> self_contained_term k \<and>
     formed_key_rows xs \<and> k\<notin>set (map fst xs)"
     using absent formed conclusion by (auto simp: keyed_list_absence schema use_absence_schema_def)
 next
-  assume "\<exists>xs b c k q. t=Pair_Term (Pair_Term (Pair_Term (pair_list_term xs) b) c) (Pair_Term k q) \<and>
-    term_formed b \<and> term_formed c \<and> term_formed q \<and> term_formed k \<and> self_contained_term k \<and>
+  assume "\<exists>xs b c y k q. t=Pair_Term (Pair_Term (Pair_Term (Pair_Term (pair_list_term xs) b) c) y) (Pair_Term k q) \<and>
+    term_formed b \<and> term_formed c \<and> term_formed y \<and> term_formed q \<and> term_formed k \<and> self_contained_term k \<and>
     formed_key_rows xs \<and> k\<notin>set (map fst xs)"
-  then obtain xs b c k q where parts: "t=Pair_Term (Pair_Term (Pair_Term (pair_list_term xs) b) c) (Pair_Term k q)"
+  then obtain xs b c y k q where parts:
+    "t=Pair_Term (Pair_Term (Pair_Term (Pair_Term (pair_list_term xs) b) c) y) (Pair_Term k q)"
     "term_formed b" "term_formed c" "term_formed q" "term_formed k" "self_contained_term k"
-    "formed_key_rows xs" "k\<notin>set (map fst xs)" by blast
+    "formed_key_rows xs" "k\<notin>set (map fst xs)" "term_formed y" by blast
   have absent: "(20,Pair_Term k (pair_list_term xs))\<in>positive_meaning use_additions_system"
     using parts by (auto simp: use_additions_components keyed_list_absence)
   have rows: "term_formed (pair_list_term xs)"
     using schema_call_formed_target[OF positive_meaning_formed[OF absent]] by simp
-  let ?h="\<lambda>n::nat. if n=0 then pair_list_term xs else if n=1 then b else if n=2 then c else if n=3 then k else q"
+  let ?h="\<lambda>n::nat. if n=0 then pair_list_term xs else if n=1 then b else if n=2 then c else if n=3 then k
+    else if n=4 then q else y"
   have result: "(393,evaluate_pattern ?h (schema_conclusion use_absence_schema))\<in>positive_meaning use_additions_system"
     by (rule ordinary_positive_valuation_step[where c=0])
       (use parts rows absent in \<open>auto simp: use_additions_families use_absence_schema_def schema_variables_def
@@ -740,8 +752,8 @@ proof -
 qed
 
 lemma use_absence_at_site:
-  assumes first: "site_value_presents E u r t" and address: "octets_formed (snd d)"
-  shows "(393,Pair_Term t (definition_site_value d))\<in>positive_meaning use_additions_system \<longleftrightarrow>
+  assumes first: "site_value_presents E u r t" and other: "term_formed w" and address: "octets_formed (snd d)"
+  shows "(393,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning use_additions_system \<longleftrightarrow>
     fst d\<notin>environment_uses E"
 proof -
   obtain e where source: "environment_value_presents E e"
@@ -753,7 +765,7 @@ proof -
   have site: "term_formed (Payload_Term r)" using site_value_presents_formed[OF first] source(2) by simp
   show ?thesis
     by (simp only: use_absence_exact source(2) table(1) site_data_term_def factor_term.inject
-      pair_list_term_injective) (use table site address in \<open>auto simp: octets_formed_def\<close>)
+      pair_list_term_injective) (use table site address other in \<open>auto simp: octets_formed_def\<close>)
 qed
 
 theorem use_additions_on_values:
@@ -771,11 +783,12 @@ proof -
     then obtain p C where "native_definition_at F (fst d) (snd d) p C" using raw(2) by (auto simp: native_package_formed_def)
     then show ?thesis using native_definition_site_data_formed by (fastforce simp: site_data_term_def)
   qed
+  have other: "term_formed w" using site_value_presents_formed[OF second] by blast
   have same: "(\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
-      (393,Pair_Term t (definition_site_value d))\<in>positive_meaning use_additions_system) \<longleftrightarrow>
+      (393,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning use_additions_system) \<longleftrightarrow>
     (\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at E u r Q \<and> d\<in>system_definitions Q) \<or>
       fst d\<notin>environment_uses E)" if package: "native_package_at F v s R" for R
-    using use_absence_at_site[OF first address[OF package]] by simp
+    using use_absence_at_site[OF first other address[OF package]] by simp
   show ?thesis by (simp only: use_additions.on_values[OF first second]) (use same in blast)
 qed
 
@@ -800,7 +813,8 @@ lemma package_additions_leaves:
 
 text \<open>
   The notion is stated once over any system holding its three sites and a callee, and its contract is
-  proved for every callee meaning. The callee boundary is its instance at the absence of the member's
+  proved for every callee meaning. The list carries the whole pair as its context, so the callee receives
+  both site values with the member's site and may read either environment. The callee boundary is its instance at the absence of the member's
   use from the given environment's artifact table: every definition of the candidate's package is a
   definition of the given's package or stands at a use of no artifact of the given environment. Both
   contracts are invariant over the presentations of the two site values. The four new definitions, and

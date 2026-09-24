@@ -83,6 +83,24 @@ class ReplayOrder(unittest.TestCase):
             self.assertEqual([path.stem for path in ordered],
                              ['d-long', 'b-short', 'a-unknown', 'c-unknown'])
 
+    def test_records_that_kept_no_seconds_keep_their_order(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            for name in ('c', 'a', 'b'):
+                (directory / (name + '.json')).write_text(json.dumps({'status': 'judged'}))
+            records = [directory / (name + '.json') for name in ('c', 'a', 'b')]
+            self.assertEqual(replay.replay_order(records), records)
+
+    def test_the_seconds_a_harness_retains_are_the_ones_the_order_reads(self):
+        # The harness retains `elapsed_seconds` in a judgment's record, the field `retained_seconds` reads.
+        record = replay.development_answer.retained_record(
+            {'request': {}}, 'd', Path('/no-base'), {'status': 'refused', 'steps': [], 'refusal': 'r',
+                                                     'elapsed_seconds': 12.5})
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'answer.json'
+            path.write_text(json.dumps(record))
+            self.assertEqual(replay.retained_seconds(path), 12.5)
+
 
 class UnproducedRuns(unittest.TestCase):
     """A harness run that leaves no judgment is returned, never raised at the pool that replays."""
@@ -210,8 +228,11 @@ class UnproducedRuns(unittest.TestCase):
             self.assertEqual(sorted(paths), ['accepted', 'refused'])
             self.assertEqual(json.loads(paths['refused'].read_text())['refusal'], outcomes['refused'][1])
 
-    def shared_proofs(self, accepted):
-        """Records of seeded and layer answers, their parts readings, and a session that is accepted or not."""
+    def shared_proofs(self, accepted, failing=(), silent=False):
+        """Records of seeded and layer answers, their parts readings, and a session that is accepted or not.
+
+A session holding a `failing` answer is not accepted, and only that answer's outcome is missing; a `silent`
+session that is not accepted wrote no outcome for any answer."""
         def answer(stem, state, subject):
             return {'request': {'state': state, 'subject': subject}, 'definitions': '',
                     'equation': 'c_' + stem.replace('-', '_') + ' = True', 'proof': 'by simp'}
@@ -233,31 +254,43 @@ class UnproducedRuns(unittest.TestCase):
             def prove_answers(answers, base, output, timeout):
                 calls.append(sorted(a['equation'] for a in answers))
                 output.mkdir(parents=True)
-                return {replay.development_answer.answer_digest(a): {'exit_code': 0 if accepted else 1, 'session': 's'}
-                        for a in answers}
+                failed = [a for a in answers if a['equation'] in failing]
+                session = accepted and not failed
+                return {replay.development_answer.answer_digest(a): {
+                    'exit_code': 0 if session else 1, 'session': 's',
+                    'accepted': session or not (silent or a in failed)} for a in answers}
             original = replay.development_answer.prove_answers
             replay.development_answer.prove_answers = prove_answers
             try:
-                paths, report, kept = replay.read_shared_proofs(records, parts, directory, directory / 'out', 10)
+                paths, report = replay.read_shared_proofs(records, parts, directory, directory / 'out', 10)
             finally:
                 replay.development_answer.prove_answers = original
-            return calls, sorted(paths), report, kept
+            return calls, sorted(paths), report
 
-    def test_answers_of_one_request_theory_share_a_proof_session(self):
-        calls, paths, report, kept = self.shared_proofs(True)
-        # The seeded answers join the first layer subject's session; the other subject has one answer, so no
-        # session; the answers retained failed or refused at their parts are proved alone.
-        self.assertEqual(calls, [['c_layer_x1 = True', 'c_layer_x2 = True', 'c_seed_a = True', 'c_seed_b = True']])
-        self.assertEqual(paths, ['layer-x1', 'layer-x2', 'seed-a', 'seed-b'])
+    JUDGED = ['c_layer_x1 = True', 'c_layer_x2 = True', 'c_layer_y = True', 'c_seed_a = True', 'c_seed_b = True']
+
+    def test_answers_to_every_subject_share_one_proof_session(self):
+        calls, paths, report = self.shared_proofs(True)
+        # Both layer subjects and the seeded answers share one session, each layer subject's request theory its
+        # own; the answers retained failed or refused at their parts are proved alone.
+        self.assertEqual(calls, [self.JUDGED])
+        self.assertEqual(paths, ['layer-x1', 'layer-x2', 'layer-y', 'seed-a', 'seed-b'])
         self.assertEqual([(session['answers'], session['accepted']) for session in report],
-                         [(['layer-x1', 'layer-x2', 'seed-a', 'seed-b'], True)])
-        self.assertEqual(kept, ['s'])
+                         [(['layer-x1', 'layer-x2', 'layer-y', 'seed-a', 'seed-b'], True)])
 
-    def test_a_proof_session_not_accepted_leaves_every_answer_to_prove_itself(self):
-        calls, paths, report, kept = self.shared_proofs(False)
-        self.assertEqual(len(calls), 1)
-        self.assertEqual((paths, kept), ([], []))
-        self.assertEqual([session['accepted'] for session in report], [False])
+    def test_a_failing_member_alone_is_proved_alone_and_the_rest_again_together(self):
+        calls, paths, report = self.shared_proofs(True, failing=('c_layer_y = True',))
+        self.assertEqual(calls, [self.JUDGED, [e for e in self.JUDGED if e != 'c_layer_y = True']])
+        self.assertEqual(paths, ['layer-x1', 'layer-x2', 'seed-a', 'seed-b'])
+        self.assertEqual([(session['accepted'], session['failed']) for session in report],
+                         [(False, ['layer-y']), (True, [])])
+
+    def test_a_proof_session_not_accepted_with_no_failing_member_named_leaves_every_answer_to_prove_itself(self):
+        for silent in (False, True):
+            calls, paths, report = self.shared_proofs(False, silent=silent)
+            self.assertEqual(len(calls), 1)
+            self.assertEqual(paths, [])
+            self.assertEqual([session['accepted'] for session in report], [False])
 
     def test_a_harness_that_cannot_be_started_leaves_its_answer_unproduced(self):
         with tempfile.TemporaryDirectory() as temporary:

@@ -5,7 +5,7 @@ begin
 definition guard_installation_coordinates where
   "guard_installation_coordinates E xs =
     finite_program_coordinates (fst (finite_select_roots E []))
-      (finite_system_definitions empty_installation_program)
+      (finite_system_definitions (empty_installation_program::(nat,nat,nat,nat) finite_schema_system))
       (finite_system_definitions (finite_guard_constructor xs)) (\<lambda>_. (None,[]))"
 
 theorem finite_install_quoted_guard_transport:

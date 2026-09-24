@@ -996,6 +996,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Program_Coordinates
     Factor_Mapped_Extension_Coordinates
     Factor_Finite_Mapped_Extensions
+    Factor_Finite_Closed_Installation
     Factor_Finite_Guard_Source_Extensions
     Factor_Finite_Native_Observations
     Factor_Finite_System_Unions
@@ -1855,6 +1856,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Native_Request
     Development_Native_Verdict
     Development_Package_Program
+    Development_Native_Package
     Development_Row_Data
     Development_Loop_Presentations
     Development_Machinery_Reports

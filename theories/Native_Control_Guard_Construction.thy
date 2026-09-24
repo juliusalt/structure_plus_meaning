@@ -69,7 +69,7 @@ section \<open>Placement and installation execute on the complete constructed ta
 definition finite_install_quoted_guard where
   "finite_install_quoted_guard E xs=(if finite_environment_formed E \<and> list_all finite_term_formed xs then
     (let Q=finite_guard_constructor xs; (F,u)=finite_select_roots E [];
-      g=finite_program_coordinates F (finite_system_definitions empty_installation_program)
+      g=finite_program_coordinates F (finite_system_definitions (empty_installation_program::(nat,nat,nat,nat) finite_schema_system))
         (finite_system_definitions Q) (\<lambda>_. (None,[])) in
       map_option (\<lambda>(K,v). (g 369,K,v))
         (finite_extend_mapped_native F empty_installation_program Q (\<lambda>_. (None,[]))))
@@ -99,7 +99,7 @@ theorem finite_install_quoted_guard_correct:
         t\<in>decode_finite_term ` set xs)"
 proof -
   obtain F u where selected: "finite_select_roots E []=(F,u)" by (cases "finite_select_roots E []") auto
-  let ?g="finite_program_coordinates F (finite_system_definitions empty_installation_program)
+  let ?g="finite_program_coordinates F (finite_system_definitions (empty_installation_program::(nat,nat,nat,nat) finite_schema_system))
     (finite_system_definitions (finite_guard_constructor xs)) (\<lambda>_. (None,[]))"
   have environment: "finite_environment_formed E" and rows: "list_all finite_term_formed xs"
     and entry: "d=?g 369"

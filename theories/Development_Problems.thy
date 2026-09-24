@@ -27,6 +27,18 @@ datatype development_contract =
   | Development_Definition isabelle_term
   | Development_Amendment isabelle_term
 
+text \<open>
+  A contract is its kind and its term: the kind is the constructor (a locus's kind prefix reads it), and
+  the term is what every kind carries.
+\<close>
+
+fun development_contract_term :: "development_contract \<Rightarrow> isabelle_term" where
+  "development_contract_term (Development_Refinement t)=t"
+| "development_contract_term (Development_Proof t)=t"
+| "development_contract_term (Development_Presentation t)=t"
+| "development_contract_term (Development_Definition t)=t"
+| "development_contract_term (Development_Amendment t)=t"
+
 datatype development_problem = Development_Problem
   (problem_subject: "nat fset")
   (problem_contract: development_contract)

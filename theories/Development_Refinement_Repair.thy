@@ -75,16 +75,14 @@ lemma isabelle_appended_embedding_back:
   assumes distinct: "distinct names" and bound: "i<length names" and shared: "names!i\<in>set ns"
   shows "isabelle_appended_embedding names ns (isabelle_state_embedding names ns i)=i"
 proof -
-  obtain j where found: "isabelle_name_position ns (names!i)=Some j"
-    using shared isabelle_name_position_none[of ns "names!i"] by (cases "isabelle_name_position ns (names!i)") auto
-  have at: "j<length ns \<and> ns!j=names!i" by (rule isabelle_name_position_some[OF found])
-  have there: "isabelle_state_embedding names ns i=j"
-    using bound found by (simp add: isabelle_state_embedding_def isabelle_name_at_def)
-  have home: "isabelle_name_position (isabelle_appended_names names ns) (names!i)=Some i"
-    by (simp add: isabelle_appended_names_def isabelle_name_position_append isabelle_name_position_at[OF distinct bound])
-  have "isabelle_state_embedding ns (isabelle_appended_names names ns) j=i"
-    using at home by (simp add: isabelle_state_embedding_def isabelle_name_at_def)
-  then show ?thesis by (simp only: there)
+  let ?j="isabelle_state_embedding names ns i"
+  have named: "isabelle_name_at ns ?j=Some (names!i)"
+    by (rule isabelle_state_embedding_shared) (use bound shared in \<open>simp_all add: isabelle_name_at_def\<close>)
+  have home: "isabelle_name_position names (names!i)=Some i" by (rule isabelle_name_position_at[OF distinct bound])
+  have "isabelle_appended_embedding names ns ?j=isabelle_state_embedding ns names ?j"
+    unfolding isabelle_state_embedding_def[of ns]
+    by (simp add: named home isabelle_appended_names_def isabelle_name_position_append)
+  then show ?thesis by (simp only: isabelle_state_embedding_back[OF distinct bound shared])
 qed
 
 lemma isabelle_appended_embedding_forth:
@@ -137,6 +135,19 @@ next
   then show "isabelle_appended_embedding names ns j |\<in>| Q" using member by simp
 qed
 
+text \<open>
+  The appended embedding and the state's embedding fix every position of the two tables that the
+  other keeps; a renaming through both is the identity on a value whose positions are all such.
+\<close>
+
+lemma isabelle_appended_embedding_fixes:
+  "\<lbrakk>distinct names; i<length names; isabelle_state_embedding names ns i<length ns\<rbrakk> \<Longrightarrow>
+    (isabelle_appended_embedding names ns \<circ> isabelle_state_embedding names ns) i=id i"
+  "\<lbrakk>distinct ns; j<length ns; isabelle_appended_embedding names ns j<length names\<rbrakk> \<Longrightarrow>
+    (isabelle_state_embedding names ns \<circ> isabelle_appended_embedding names ns) j=id j"
+  using isabelle_appended_embedding_back[of names i ns] isabelle_state_embedding_inside_shared[of i names ns]
+    isabelle_appended_embedding_forth[of ns j names] by simp_all
+
 lemma isabelle_appended_term_back:
   assumes distinct: "distinct names"
     and inside: "\<And>i. i\<in>set (isabelle_term_positions t) \<Longrightarrow> i<length names"
@@ -145,13 +156,7 @@ lemma isabelle_appended_term_back:
 proof -
   have "isabelle_term_rename (isabelle_appended_embedding names ns \<circ> isabelle_state_embedding names ns) t=
       isabelle_term_rename id t"
-  proof (rule isabelle_term_rename_cong)
-    fix i assume used: "i\<in>set (isabelle_term_positions t)"
-    have bound: "i<length names" by (rule inside[OF used])
-    show "(isabelle_appended_embedding names ns \<circ> isabelle_state_embedding names ns) i=id i"
-      using isabelle_appended_embedding_back[OF distinct bound
-        isabelle_state_embedding_inside_shared[OF bound shared[OF used]]] by simp
-  qed
+    by (rule isabelle_term_rename_cong) (rule isabelle_appended_embedding_fixes(1)[OF distinct inside shared])
   then show ?thesis by (simp only: isabelle_term_rename_compose isabelle_term_rename_id)
 qed
 
@@ -163,13 +168,7 @@ lemma isabelle_appended_entity_back:
 proof -
   have "isabelle_entity_rename (isabelle_appended_embedding names ns \<circ> isabelle_state_embedding names ns) e=
       isabelle_entity_rename id e"
-  proof (rule isabelle_entity_rename_cong)
-    fix i assume used: "i\<in>set (isabelle_entity_positions e)"
-    have bound: "i<length names" by (rule inside[OF used])
-    show "(isabelle_appended_embedding names ns \<circ> isabelle_state_embedding names ns) i=id i"
-      using isabelle_appended_embedding_back[OF distinct bound
-        isabelle_state_embedding_inside_shared[OF bound shared[OF used]]] by simp
-  qed
+    by (rule isabelle_entity_rename_cong) (rule isabelle_appended_embedding_fixes(1)[OF distinct inside shared])
   then show ?thesis by (simp only: isabelle_entity_rename_compose isabelle_entity_rename_id)
 qed
 
@@ -181,11 +180,7 @@ lemma isabelle_appended_term_forth:
 proof -
   have "isabelle_term_rename (isabelle_state_embedding names ns \<circ> isabelle_appended_embedding names ns) t=
       isabelle_term_rename id t"
-  proof (rule isabelle_term_rename_cong)
-    fix j assume used: "j\<in>set (isabelle_term_positions t)"
-    show "(isabelle_state_embedding names ns \<circ> isabelle_appended_embedding names ns) j=id j"
-      using isabelle_appended_embedding_forth[OF distinct inside[OF used] kept[OF used]] by simp
-  qed
+    by (rule isabelle_term_rename_cong) (rule isabelle_appended_embedding_fixes(2)[OF distinct inside kept])
   then show ?thesis by (simp only: isabelle_term_rename_compose isabelle_term_rename_id)
 qed
 
@@ -197,11 +192,7 @@ lemma isabelle_appended_entity_forth:
 proof -
   have "isabelle_entity_rename (isabelle_state_embedding names ns \<circ> isabelle_appended_embedding names ns) e=
       isabelle_entity_rename id e"
-  proof (rule isabelle_entity_rename_cong)
-    fix j assume used: "j\<in>set (isabelle_entity_positions e)"
-    show "(isabelle_state_embedding names ns \<circ> isabelle_appended_embedding names ns) j=id j"
-      using isabelle_appended_embedding_forth[OF distinct inside[OF used] kept[OF used]] by simp
-  qed
+    by (rule isabelle_entity_rename_cong) (rule isabelle_appended_embedding_fixes(2)[OF distinct inside kept])
   then show ?thesis by (simp only: isabelle_entity_rename_compose isabelle_entity_rename_id)
 qed
 

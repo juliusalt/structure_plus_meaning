@@ -78,9 +78,10 @@ definition development_seed_native_answers_value :: "development_problem fset \<
     development_native_answers_data (development_seed_native_answers answered)"
 
 definition development_seed_native_judgment_value :: "String.literal \<Rightarrow> bool list \<Rightarrow> finite_factor_term" where
-  "development_seed_native_judgment_value n bits=development_named_native_judgment_data
-    (development_named_native_judgment development_refinement_verdict development_seed_state
-      (development_seed_requests development_seed_unanswered) n bits)"
+  "development_seed_native_judgment_value n bits=finite_store_option id
+    (development_named_native_judgment_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None)
+      (development_named_native_judgment development_refinement_verdict development_seed_state
+        (development_seed_requests development_seed_unanswered) n bits))"
 
 definition development_seed_native_summary ::
     "String.literal \<Rightarrow> bool list \<Rightarrow> (bool\<times>bool\<times>nat list\<times>String.literal list\<times>nat list) option" where
@@ -158,29 +159,44 @@ definition development_seed_succession :: "development_problem fset \<Rightarrow
              (development_successor L2 r S'))
              [development_seed_state,development_seed_renamed]) issued)))))"
 
-definition development_seed_succession_data :: "development_seed_succession \<Rightarrow> finite_factor_term" where
-  "development_seed_succession_data=finite_pair_presentation finite_boolean_data (finite_option_presentation (finite_pair_presentation development_problems_data
-    (finite_pair_presentation development_requests_data
-      (finite_pair_presentation development_problems_data (finite_pair_presentation development_problems_data
-        (finite_pair_presentation development_requests_data (finite_pair_presentation development_requests_data
-        (finite_sequence_presentation (finite_sequence_presentation
-          (finite_option_presentation (finite_pair_presentation (finite_collection_presentation development_problem_data)
-            (finite_pair_presentation (finite_sequence_presentation (development_record_data finite_development_context_value))
-              (finite_pair_presentation development_problems_data (finite_sequence_presentation finite_boolean_data))))))))))))))"
+text \<open>
+  The succession is presented in the context of its loops. The seeded loops pose no demanded problem and
+  record no repair, so every problem they hold is residual, and a loop's context cites nothing on a residual
+  problem (@{text Development_Row_Contexts}): their context is the seed's residual record, with the seed's
+  names, which every successor keeps. The answered problems of a successor are a table of their rows.
+\<close>
 
-lemma development_seed_succession_data_injective [intro]: "inj development_seed_succession_data"
-proof -
-  have presented: "inj (development_record_data finite_development_context_value)"
-    by (rule development_record_data_injective) (rule finite_development_values_injective(3))
-  show ?thesis
-    unfolding development_seed_succession_data_def
-    by (intro finite_option_presentation_injective finite_pair_presentation_injective presented finite_boolean_data_injective
-      finite_sequence_presentation_injective finite_collection_presentation_injective development_requests_data_injective
-      development_problem_data_injective development_problems_data_injective finite_boolean_data_injective)
-qed
+definition development_seed_succession_data :: "development_seed_succession \<Rightarrow> finite_factor_term option" where
+  "development_seed_succession_data=finite_partial_pair (Some \<circ> finite_boolean_data) (finite_partial_option (finite_partial_pair
+    (development_problems_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))
+    (finite_partial_pair (development_requests_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))
+      (finite_partial_pair (development_problems_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))
+        (finite_partial_pair (development_problems_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))
+          (finite_partial_pair (development_requests_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))
+            (finite_partial_pair (development_requests_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))
+              (finite_partial_sequence (finite_partial_sequence (finite_partial_option (finite_partial_pair
+                (development_problems_table state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))
+                (finite_partial_pair (finite_partial_sequence (development_record_data finite_development_context_value
+                    state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None)))
+                  (finite_partial_pair (development_problems_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))
+                    (Some \<circ> finite_sequence_presentation finite_boolean_data))))))))))))))"
+
+lemma development_seed_succession_data_presented:
+  assumes domain: "development_row_domain state_constant_key (\<lambda>_. None) (\<lambda>_. None) P"
+    and requests: "development_request_domain state_constant_key (\<lambda>_. None) (\<lambda>_. None) R"
+    and repairs: "\<And>r. r\<in>R \<Longrightarrow> finite_presented_on
+      (development_refinement_repair_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None) r) (RR r)"
+  shows "finite_presented_on development_seed_succession_data (UNIV\<times>{x. set_option x\<subseteq>
+    lists P\<times>lists R\<times>lists P\<times>lists P\<times>lists R\<times>lists R\<times>
+    lists (lists {y. set_option y\<subseteq>{A. fset A\<subseteq>P}\<times>lists (development_record_domain P R RR)\<times>lists P\<times>UNIV})})"
+  unfolding development_seed_succession_data_def
+  by (intro finite_partial_pair_presented finite_partial_option_presented finite_partial_sequence_presented
+    finite_presented_total finite_boolean_data_injective development_problems_data_presented
+    development_requests_data_presented development_problems_table_presented development_record_data_presented
+    finite_development_values_injective(3) finite_sequence_presentation_injective domain requests repairs)
 
 definition development_seed_succession_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
-  "development_seed_succession_value answered=
-    development_seed_succession_data (development_seed_succession answered)"
+  "development_seed_succession_value answered=finite_store_option id
+    (development_seed_succession_data (development_seed_succession answered))"
 
 end

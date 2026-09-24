@@ -1,5 +1,6 @@
 theory Development_Seed
-  imports Native_Control_Seed_Subject Development_Refinement_Contracts
+  imports Native_Control_Seed_Subject Development_Refinement_Contracts Development_Row_Data
+    Development_State_Presenter
 begin
 
 section \<open>The problems the seeded state carries\<close>
@@ -109,23 +110,35 @@ definition development_seed_problem_report_value ::
     development_problem_assessment development_seed_context development_seed_dependencies answered
       development_seed_problems)"
 
-definition development_seed_problem_report_data ::
-    "development_seed_problem_report \<Rightarrow> finite_factor_term" where
-  "development_seed_problem_report_data=finite_pair_presentation development_problems_data
-    (finite_pair_presentation isabelle_positions_data
-      (finite_pair_presentation (finite_sequence_presentation
-        (finite_sequence_presentation isabelle_term_data)) development_problem_assessment_data))"
+text \<open>
+  The seed is a residual record: every problem its constructor poses is residual and generated, so it
+  cites nothing, and its problems are presented as their rows keyed by the state's constant keys, their
+  contract terms carried in the seed's names. A report that is not a presentation is the store's absence.
+\<close>
 
-lemma development_seed_problem_report_data_injective [intro]:
-  "inj development_seed_problem_report_data"
+abbreviation development_seed_inert :: "isabelle_term \<Rightarrow> finite_factor_term" where
+  "development_seed_inert \<equiv> development_local_term_data (fst development_seed_context)"
+
+definition development_seed_problem_report_data ::
+    "development_seed_problem_report \<Rightarrow> finite_factor_term option" where
+  "development_seed_problem_report_data=finite_partial_pair
+    (development_problems_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))
+    (finite_partial_pair (Some \<circ> isabelle_positions_data)
+      (finite_partial_pair (Some \<circ> finite_sequence_presentation (finite_sequence_presentation isabelle_term_data))
+        (development_problem_assessment_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None))))"
+
+lemma development_seed_problem_report_data_presented:
+  assumes domain: "development_row_domain state_constant_key (\<lambda>_. None) (\<lambda>_. None) P"
+  shows "finite_presented_on development_seed_problem_report_data
+    (lists P\<times>UNIV\<times>UNIV\<times>(lists P\<times>lists P\<times>lists P\<times>lists P\<times>UNIV))"
   unfolding development_seed_problem_report_data_def
-  by (intro finite_pair_presentation_injective development_problems_data_injective
-    isabelle_collections_injective(2) finite_sequence_presentation_injective
-    isabelle_term_data_injective development_problem_assessment_data_injective)
+  by (intro finite_partial_pair_presented development_problems_data_presented finite_presented_total
+    isabelle_collections_injective(2) finite_sequence_presentation_injective isabelle_term_data_injective
+    development_problem_assessment_data_presented domain)
 
 definition development_seed_problem_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
-  "development_seed_problem_value answered=
-    development_seed_problem_report_data (development_seed_problem_report_value answered)"
+  "development_seed_problem_value answered=finite_store_option id
+    (development_seed_problem_report_data (development_seed_problem_report_value answered))"
 
 section \<open>Controls remove every root declaration or add unreached and malformed entities\<close>
 

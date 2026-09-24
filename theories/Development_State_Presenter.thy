@@ -26,6 +26,19 @@ definition state_constant_key :: "nat \<Rightarrow> state_key" where
 lemma state_constant_key_injective: "inj state_constant_key"
   by (rule injI) (simp add: state_constant_key_def)
 
+text \<open>
+  A term of a state is carried inert outside the state as its local presentation in the state's names:
+  the names it uses beside the term with its positions in them (@{const isabelle_local_root}). This is the
+  inert presentation a report of the state's problems takes.
+\<close>
+
+definition development_local_term_data :: "String.literal list \<Rightarrow> isabelle_term \<Rightarrow> finite_factor_term" where
+  "development_local_term_data names t=
+    finite_pair_presentation isabelle_names_data isabelle_term_data (isabelle_local_root names t)"
+
+lemma development_local_term_data_formed [simp]: "finite_term_formed (development_local_term_data names t)"
+  by (simp add: development_local_term_data_def finite_pair_presentation_def)
+
 subsection \<open>The three conditions a presentation carries, and their owners\<close>
 
 text \<open>

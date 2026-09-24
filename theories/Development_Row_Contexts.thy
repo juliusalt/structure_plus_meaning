@@ -42,6 +42,12 @@ definition development_repair_origin ::
   "development_repair_origin key r definitions q=(if q\<in>set definitions
     then Some (development_located_at key Development_Problem_Role (fst r)) else None)"
 
+text \<open>On its definition problems the repair's origin is the citation the repair's presenter gives them.\<close>
+
+lemma development_repair_origin_citation:
+  "q\<in>set definitions \<Longrightarrow> development_repair_origin key r definitions q=development_repair_citation key r q"
+  by (simp add: development_repair_origin_def development_repair_citation_def)
+
 lemma development_repair_origin_outside:
   "q\<notin>set definitions \<Longrightarrow> development_repair_origin key r definitions q=None"
   by (simp add: development_repair_origin_def)
@@ -235,6 +241,28 @@ definition development_loop_cited :: "(nat \<Rightarrow> bool list) \<Rightarrow
   "development_loop_cited key L\<longleftrightarrow>(case L of (S,ps,D,answered,history) \<Rightarrow>
     \<forall>p\<in>set ps. development_row_premise (development_loop_origin key history) (\<lambda>_. None) p)"
 
+text \<open>
+  On a residual problem a loop cites nothing: where a loop poses no demanded problem, its context is the
+  residual record, as the seed's and the machinery's loops are.
+\<close>
+
+lemma development_loop_cited_residual:
+  assumes "development_loop_cited key (S,ps,D,answered,history)" "p\<in>set ps"
+    "problem_origin p=Development_Residual"
+  shows "development_loop_origin key history p=None"
+  using assms by (simp add: development_loop_cited_def development_row_premise_def)
+
+text \<open>
+  A loop is presented in its own context: its constants keyed by the state's constant keys, its contract
+  terms carried in its state's names, its origins read from its history and no grant.
+\<close>
+
+definition development_loop_presentation ::
+    "(development_packet \<Rightarrow> finite_factor_term) \<Rightarrow> development_loop \<Rightarrow> finite_factor_term option" where
+  "development_loop_presentation packet L=(case L of (S,ps,D,answered,history) \<Rightarrow>
+    development_loop_data packet state_constant_key (development_local_term_data (fst (snd S)))
+      (development_loop_origin state_constant_key history) (\<lambda>_. None) L)"
+
 theorem development_loop_cited_initial:
   assumes "\<And>p. p\<in>set ps \<Longrightarrow> development_row_premise (\<lambda>_. None) (\<lambda>_. None) p"
   shows "development_loop_cited key (S,ps,D,answered,[])"
@@ -327,7 +355,7 @@ theorem development_loop_cited_rows:
     and inert: "\<And>t. finite_term_formed (inert t)"
   shows "\<And>p. p\<in>set ps \<Longrightarrow> \<exists>x. development_problem_row_data key inert (development_loop_origin key history)
       (\<lambda>_. None) p=Some x \<and> finite_term_formed x \<and> term_formed (decode_finite_term x)"
-    and "\<And>r. fst r\<in>set ps \<Longrightarrow> \<exists>x. development_request_row_data key inert (development_loop_origin key history)
+    and "\<And>r. fst r\<in>set ps \<Longrightarrow> \<exists>x. development_request_data key inert (development_loop_origin key history)
       (\<lambda>_. None) r=Some x \<and> finite_term_formed x \<and> term_formed (decode_finite_term x)"
 proof -
   have premise: "development_row_premise (development_loop_origin key history) (\<lambda>_. None) p" if "p\<in>set ps" for p
@@ -340,13 +368,13 @@ proof -
     show ?thesis using row development_problem_row_data_formed[OF row inert]
       development_problem_row_data_term_formed[OF row inert] by blast
   qed
-  show "\<exists>x. development_request_row_data key inert (development_loop_origin key history)
+  show "\<exists>x. development_request_data key inert (development_loop_origin key history)
       (\<lambda>_. None) r=Some x \<and> finite_term_formed x \<and> term_formed (decode_finite_term x)" if r: "fst r\<in>set ps" for r
   proof -
-    obtain x where row: "development_request_row_data key inert (development_loop_origin key history) (\<lambda>_. None) r=Some x"
-      using development_request_row_data_premise[of key inert _ _ r] premise[OF r] by auto
-    show ?thesis using row development_request_row_data_formed[OF row inert]
-      development_request_row_data_term_formed[OF row inert] by blast
+    obtain x where row: "development_request_data key inert (development_loop_origin key history) (\<lambda>_. None) r=Some x"
+      using development_request_data_premise[of key inert _ _ r] premise[OF r] by auto
+    show ?thesis using row development_request_data_formed[OF row inert]
+      development_request_data_term_formed[OF row inert] by blast
   qed
 qed
 

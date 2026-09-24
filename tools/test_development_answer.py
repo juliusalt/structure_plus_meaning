@@ -66,7 +66,8 @@ class FrameTest(unittest.TestCase):
         state = development_answer.STATES['refinement_layer']
         text = development_answer.verification_theory('development_demanded', state, 'Theory_Name.constant_name',
                                                       development_answer.answer_name(ANSWER))
-        self.assertIn('Development_Refinement_Repair Development_Admitted_Publication\nbegin', text)
+        self.assertIn('Development_Refinement_Repair Development_Admitted_Publication Development_Row_Data '
+                      'Development_State_Presenter\nbegin', text)
         self.assertIn('development_admitted_publication\n    development_demanded_state r development_answer_state '
                       'development_answer_introduced_positions', text)
         self.assertIn('export_code development_answer_verdict_value development_answer_publication_value', text)

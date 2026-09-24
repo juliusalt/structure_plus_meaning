@@ -1,5 +1,5 @@
 theory Development_Refinement_Repair
-  imports Development_Refinement_Verification Isabelle_Local_Names
+  imports Development_Refinement_Verification Isabelle_Local_Names Development_Row_Data
 begin
 
 section \<open>A refused answer derives the extension of its request\<close>
@@ -386,16 +386,34 @@ lemma development_extension_verdict_data_injective [intro]: "inj development_ext
   by (intro finite_pair_presentation_injective finite_sequence_presentation_injective
     isabelle_entity_data_injective isabelle_position_data_injective finite_boolean_data_injective)
 
-definition development_refinement_repair_data :: "development_refinement_repair \<Rightarrow> finite_factor_term" where
-  "development_refinement_repair_data=finite_pair_presentation development_extension_verdict_data
-    (finite_pair_presentation development_problems_data
-      (finite_pair_presentation development_request_data
-        (finite_pair_presentation development_verdict_data finite_boolean_data)))"
+text \<open>
+  A repair is a context. Its definition problems cite what posed them: the problem of the repaired
+  request, at that problem's locus, which the extension keeps. Their grant is absent, every definition
+  problem being generated. The request it issues again is presented in the context that carries the
+  repair, as every request is.
+\<close>
 
-lemma development_refinement_repair_data_injective [intro]: "inj development_refinement_repair_data"
+definition development_repair_citation ::
+    "(nat \<Rightarrow> bool list) \<Rightarrow> development_request \<Rightarrow> development_problem \<Rightarrow> bool list option" where
+  "development_repair_citation key r p=Some (development_located_at key Development_Problem_Role (fst r))"
+
+definition development_refinement_repair_data ::
+    "(nat \<Rightarrow> bool list) \<Rightarrow> (isabelle_term \<Rightarrow> finite_factor_term) \<Rightarrow>
+      (development_problem \<Rightarrow> bool list option) \<Rightarrow> (development_problem \<Rightarrow> bool list option) \<Rightarrow>
+      development_request \<Rightarrow> development_refinement_repair \<Rightarrow> finite_factor_term option" where
+  "development_refinement_repair_data key inert origin grant r=
+    finite_partial_pair (Some \<circ> development_extension_verdict_data)
+      (finite_partial_pair (development_problems_data key inert (development_repair_citation key r) (\<lambda>_. None))
+        (finite_partial_pair (development_request_data key inert origin grant)
+          (Some \<circ> finite_pair_presentation development_verdict_data finite_boolean_data)))"
+
+corollary development_refinement_repair_data_presented [intro]:
+  assumes definitions: "development_row_domain key (development_repair_citation key r) (\<lambda>_. None) P"
+    and requests: "development_request_domain key origin grant R"
+  shows "finite_presented_on (development_refinement_repair_data key inert origin grant r) (UNIV\<times>lists P\<times>R\<times>UNIV)"
   unfolding development_refinement_repair_data_def
-  by (intro finite_pair_presentation_injective development_extension_verdict_data_injective
-    development_problems_data_injective development_request_data_injective
-    development_verdict_data_injective finite_boolean_data_injective)
+  by (intro finite_partial_pair_presented finite_presented_total development_extension_verdict_data_injective
+    development_problems_data_presented development_request_data_presented finite_pair_presentation_injective
+    development_verdict_data_injective finite_boolean_data_injective definitions requests)
 
 end

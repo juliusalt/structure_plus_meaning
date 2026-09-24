@@ -187,10 +187,17 @@ decision — removed, and the owner's retirement of `ADMISSION.md` and `proposal
 one tree); every theory given its `THEORY_MAP.md` row, every row's imports re-read, and Q9's tracked `.pyc` removed
 (#282).
 
-**The loop over native definitions (#320).** The Q7 order's next step: design #320 decides what a problem whose
-subject is a native definition is, what it is judged against, its request, its native answer, its native judgment and
-its installation; the translation of admitted native content into Isabelle is the design after it (Open 3). It waits
-on nothing and runs beside the builds.
+**The loop over native definitions (#320, #335).** The Q7 order's next step, decided by #320 (DECISIONS.md "Problems
+about native definitions are posed, answered and judged at the development package's rows"): no package holds the
+loop's native definitions today — each is a HOL `finite_native_system` constant compiled afresh per question — so the
+native state is one development package joining the six notions' programs, presented as rows of the state rows'
+record generalized (the package its second instance); a problem is a row under the native family prefix `111`; request
+construction (one step: the subject and its direct callees), the verdict and the edit are reused at the package's rows;
+the verdict cannot decide that an answer keeps its contract, which the translation's verification supplies, so an
+admission records a verification problem and publication waits (Q18, provisional); installation relocates the
+affected closure, and a replacement lemma (Bekić) carries every notion's contract to the successor. Its builds are
+N1–N9: #335 briefs N1–N4 (the record generalized, the package, its rows, native loci and problems), N5–N9 are briefed
+over what they leave, and the translation design follows (Open 3).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
 creates has no review task (the harness reviews it in its own folder). The deepest chains are 6: #167 → #314 → #169 →
@@ -200,8 +207,8 @@ before plan-53 a slot stood free 41 of 58 minutes, only #320 able to start).
 
 **Order** (the queue holds it; this is why it is as it is). The tasks in their checks, parked or running first (#308,
 #167, B5 #305), so that their landing checks do not wait behind heavy runs; then what waits on nothing unlanded and
-takes the slots as they free — the design #320, #318 (the per-answer reads, before #193), the replay's fix #323, #321
-and #195; the word chain (#314, then #169, #319, #92), the longest chain; B6 (#307) and #317; the incremental stage's
+takes the slots as they free — #318 (the per-answer reads, before #193), the replay's fix #323, #321, #195 and the
+native loop's brief #335; the word chain (#314, then #169, #319, #92), the longest chain; B6 (#307) and #317; the incremental stage's
 #193; the consolidation #295; the decomposition's builds (#325, #327, then #331, #333, #329) as #167, #308 and #295
 land; the measurements #194 and #315, #288, then the investigation #324, whose held runs yield to the checks ahead of
 it; each review after its build.
@@ -457,6 +464,9 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   note on #167's proof told to #167.
 - **#192** (`9845122c`): `Development_Incremental_Verdict`, the incremental judgment — the verdict's entry at the
   edit's parts, `native_edited_fields`, the stage's equation; its reviews' follow-ups to #318, #193 and Open 107, 108.
+- **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the development
+  package's rows" — the native state one development package presented as rows of the generalized record, its
+  problems, request, answer, judgment, installation and builds N1–N9; its owner's choices as Q18; N1–N4 to #335.
 
 ## Open
 
@@ -477,8 +487,9 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 
 Not yet planned, in the order they are expected to be planned (numbers kept from earlier states):
 
-3. Problems whose subjects are native definitions, answered natively, and the translation of admitted native content
-   into Isabelle material — the last step of the Q7 order.
+3. The translation of admitted native content into Isabelle material — the verification problem's request, answer and
+   admission, where Q1 and Q18 bite — the design after #320's builds; and N5–N9 of #320's entry, briefed once N1–N4
+   (#335) leave their theories.
 4. A proof request class and the decomposition of a proof problem; needs request construction for its support and least
    context; its first question, the native content of a proof answer, is where Q1 bites.
 5. The refusal that an absent certified generation cannot tell from an unavailable input — the rule that an empty
@@ -525,14 +536,14 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 30. What a present citation of a development row cites (an owner record, or the parent's locus for a demand): #327,
     the posing, the first construction that assigns an origin.
 31. `readiness_presents_rekey` into `Development_Native_Selection`, with that theory's next edit.
-33. A named projection of a locus's key part in `Development_Loci` (consumers write `drop 6`, `drop 3`), with its next
-    edit.
+33. A named projection of a locus's key part in `Development_Loci` (consumers write `drop 6`, `drop 3`): N4 of #320's
+    entry, the locus stated once over a kind path (#335).
 35. #80's entry marks its check-recorded figures as recorded beside other recipes, with its next edit.
 36. The equality contract stands three times (`generic_equality_exact`, `native_equality_exact`,
     `native_value_program.exact`): the native forms derived from the generic one through relocation and an alpha
     variant, when a change at that level is next made.
-38. The rows program's and readiness's sites are hand-chosen numbers: a stated join, or sites allocated through
-    `Factor_Fresh_Program_Coordinates`, when the programs are first joined.
+38. The rows program's and readiness's sites are hand-chosen numbers and collide: N2 of #320's entry joins the programs
+    into one package, relocating through `Factor_Fresh_Program_Coordinates` where sites collide (#335).
 39. Native production of a request body: forward (moded) evaluation of a functional native relation, an engine notion
     the library lacks; until then producers are executors and the construction admits. #114 found the member scans not
     dominating (14% with the predecessor scans; `context sound` 79%, its calls carrying the whole row store), so the
@@ -736,9 +747,14 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s). Its
   review's held timing of roots distinctness, which its tree could not take, is #317 after its landing (q82).
 - **Under way**: #167 (re-planned to its room; its batch with #309 failed on its own proof, `Development_Row_Data.thy:546`
-  674 s by itself, told to repair it at its cause) and #308 in their rounds; B5 (#305) running; the design #320, #318
-  (the per-answer reads, continuing #192), the fix #323, #321 and #195 take the slots as they free; the decomposition's
-  builds (#325–#334, #322's) wait on #167, #308 and #295.
+  674 s by itself, told to repair it at its cause) in its round; #308 in a merge round (accepted, its commit refused:
+  `Development_State_Rows`' row twice; main's row handed over, its own change left in `.build/tasks/308/rows.md` for
+  #325, mailed); B5 (#305) and #318 running (q84 answered: the declaring rows as one kind-free argument family of the two
+  checks); #323, #321, #195 and the brief #335 take the slots as they free; the decomposition's builds (#325–#334,
+  #322's) wait on #167, #308 and #295.
+- **The ledger's Q17 is the harness's**: plan-52 was declined twice on the same work, and the harness held its events
+  for the owner — #313's landing, which plan-53 handled (#323). **Q18** is #320's five provisional choices; its text
+  opens with "Q17", a slip of plan-53's (the harness numbered it Q18).
   Mailed to tasks not yet started, read by their first session: #113's review to #295; #278's to #307, #305 and #193;
   #284's 1, 2 and 4 to #288 (4 to #308 if its check sends it back); #303's to #305 and #307; #285's to #288 and #307.
 - **Plan-51 and plan-52 were each stopped by a classifier before their notes** (13:37; about 14:03): this file carried

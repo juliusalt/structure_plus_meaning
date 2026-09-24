@@ -203,18 +203,19 @@ N1–N9: #335 briefs N1–N4 (the record generalized, the package, its rows, nat
 over what they leave, and the translation design follows (Open 3).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
-creates has no review task (the harness reviews it in its own folder). The deepest chains are 6: #167 → #314 → #169 →
-#319 → #92 → #93, and #192 → #318 → #193 → #194 → #205 beside it; the consolidations #192 → #321 → #295 → #288 are 4.
-#320, #322, #323 and #324 wait on nothing: they are the graph's width while #167, #192 and B5 finish (in the hour
-before plan-53 a slot stood free 41 of 58 minutes, only #320 able to start).
+creates has no review task (the harness reviews it in its own folder). The deepest chain is 8: #321 → #295 → #288 →
+#340 → #342 → #344 → #346 → #347, the consolidations into the native package (N2a, N2b, N3a, N3b), so nothing of N1–N4
+or of the decomposition's builds starts before #321 lands. The word chain #167 → #314 → #169 → #319 → #92 → #93 is 6,
+and #321 → #353 → #193 → #194 → #205 is 5. #352, #323 and #324 wait on nothing.
 
-**Order** (the queue holds it; this is why it is as it is). The tasks in their checks, parked or running first (#308,
-#167, B5 #305), so that their landing checks do not wait behind heavy runs; then what waits on nothing unlanded and
-takes the slots as they free — #318 (the per-answer reads, before #193), the replay's fix #323, #321, #195 and the
-native loop's brief #335; the word chain (#314, then #169, #319, #92), the longest chain; B6 (#307) and #317; the incremental stage's
-#193; the consolidation #295; the decomposition's builds (#325, #327, then #331, #333, #329) as #167, #308 and #295
-land; the measurements #194 and #315, #288, then the investigation #324, whose held runs yield to the checks ahead of
-it; each review after its build.
+**Order** (the queue holds it; this is why it is as it is). The tasks in their checks first (#167, #195), so that
+their landing checks do not wait behind heavy runs; then #321's merge round, the root of the longest chain; B6 (#307)
+and #323 in their runs; as #321 lands, #295 and #353, then #288 and the word chain's #314; the decomposition's #325,
+the package's N2a (#340) and N1a (#336); the exporter's chain #352, which waits on nothing but whose check rebuilds
+about 1,666 theories, after them so that its heavy check yields to theirs; the incremental stage's #193; the word
+chain's #169, #319, #92; #327 and N4a (#348); N2b, N1b, N3a, N4b, N3b; the decomposition's #331, #333, #329; the
+measurements #194 and #315, then the investigation #324, whose held runs yield to the checks ahead of it; each review
+after its build.
 
 ## Decisions
 
@@ -483,6 +484,10 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   positioned code equations restated through it; its review's follow-ups 2 and 3 to B6 (#307), 1 to Open 47 and 102.
 - **#317** (investigation): the exporter's obligations timed held on the base with #308 and on its parent
   (`.build/tasks/317/measurement.md`), read under the verdict line; the names' chain to #352.
+- **#318** (`5cb7902e`): the per-answer function's last whole-state reads — the declaration readings through the
+  declaration store, presentability from the edit, the closure's fibres from the assessment's subject index, the
+  guard's atom membership through a member tree — with the stale text and unused parameters; its review's follow-ups
+  1–5 to #353.
 
 ## Open
 
@@ -768,9 +773,14 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   `Development_Successor`; #308's fold of #289's rows among main's). The round sets them to main's verbatim and leaves
   its changes in `.build/tasks/167/rows.md`, which #314 folds; #327 waits on #314 for `Development_Successor`'s row.
   Where #167 changed one of those theories' imports, the round follows #165's pattern or comes back to the planner.
-- **Under way besides**: B5 (#305), #318, #321, #323, #195, #317 and the brief #335 (q84 answered: the declaring rows
-  as one kind-free argument family of the two checks); the decomposition's builds (#325–#334, #322's) wait on #167 and
-  #295, #325 folding #308's change to `Development_State_Rows`' row (`.build/tasks/308/rows.md`, mailed).
+- **#321's merge round** (plan-55): its work accepted — its check passed — but its commit failed at the merge (15:45):
+  `Development_Incremental_Verdict.thy` changed on both sides, #318 having landed its per-answer reads there
+  (`5cb7902e`). Its brief gained the round (main's text with its changes applied again, nothing of #318's reverted; a
+  doubled row set to main's, its change left in `.build/tasks/321/rows.md` for #353). It roots the longest chain, and
+  #353 (#318's review's follow-ups, before #193) waits on it.
+- **Under way besides**: #167 and #195 in their checks; B6 (#307) and #324 running, #323 parked for the machine; the
+  decomposition's builds (#325–#334, #322's) wait on #167 and #295, #325 folding #308's change to
+  `Development_State_Rows`' row (`.build/tasks/308/rows.md`, mailed).
 - **The ledger's Q17 and Q19 are the harness's** (Q19: #323's session fix-323.2 declined twice, before fix-323.3, the
   fresh fixer session this bullet's test is about): plan-52 was declined twice on the same work, and the harness held its events
   for the owner — #313's landing, which plan-53 handled (#323). #323's first session, forked from #313's (`continues`),
@@ -779,9 +789,11 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   opens with "Q17", a slip of plan-53's (the harness numbered it Q18).
   Mailed to tasks not yet started, read by their first session: #113's review to #295; #278's to #307, #305 and #193;
   #284's 1, 2 and 4 to #288 (4 to #308 if its check sends it back); #303's to #305 and #307; #285's to #288 and #307.
-- **Plan-51, plan-52 and plan-53 were each stopped by a classifier before their notes** (13:37; about 14:03; 15:13):
-  this file carried their state. Plan-53's one unhandled event was #167's commit failure, handled by plan-54; nothing it
-  had settled is missing here. What plan-52 had not handled was #313's landing (`e9bbe02b`), integrated by plan-53, its
+- **Plan-51, plan-52, plan-53 and plan-54 were each stopped by a classifier before their notes** (13:37; about 14:03;
+  15:13; 15:47): this file carried their state. Plan-54 left #321's commit failure unhandled, #353 unqueued and #318
+  out of Delivered, all three taken by plan-55; its graph edits stand (#336–#351 placed from #335's proposal, #352 from
+  #317, #353 from #318's review, #314 folding #167's rows). Plan-53's one unhandled event was #167's commit failure,
+  handled by plan-54. What plan-52 had not handled was #313's landing (`e9bbe02b`), integrated by plan-53, its
   re-review's follow-ups to #323. The cost: #313's first review, overwritten by its re-review, survives only as the
   re-review's one-line summary; #323 now runs from the fixer's base (Q19).
 - **#303's tree held untracked files the task did not make** at its root (`.bashrc`, `.bash_profile`, `.gitconfig`,

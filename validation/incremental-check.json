@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "a50b26b42d2409ee8d0f615ff5780e3dd12d39f5c88e8ee04d7e2ce54f575042",
- "checked_content_sha256": "269a968aeecf349b5c4472687ccb8e6dcde07d1c6558803f97ba16a7d17cab4c",
+ "base_receipt_sha256": "eaba6b8e2cd01a128a4a43f81c73d82d15bf56ba70dccdbbfcd32895d1db34d6",
+ "checked_content_sha256": "f9912cec0fcfdd3ad38ccdfddcec3ac3796e680e7b5539c5cf4c445b5dc4c5e2",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,12 +22,12 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.39,
-  "execution_impact": 0.2,
-  "export": 31.02,
-  "proof": 323.86,
-  "recipe_impact": 0.43,
-  "recipes_and_host_tests": 84.17
+  "base_and_impact": 0.4,
+  "execution_impact": 0.74,
+  "export": 19.4,
+  "proof": 307.56,
+  "recipe_impact": 0.49,
+  "recipes_and_host_tests": 84.98
  },
  "rebuilt_theories": [
   "Admitted_Conditional_Applications",
@@ -39,6 +39,7 @@
   "Development_Constant_Problems",
   "Development_Constant_Verification",
   "Development_Decision_Generations",
+  "Development_Decomposition",
   "Development_Decomposition_Soundness",
   "Development_Definition_Verification",
   "Development_Edited_Local",
@@ -46,17 +47,19 @@
   "Development_Edited_Undeclared",
   "Development_Exported_Edit",
   "Development_Incremental_Verdict",
+  "Development_Incremental_Witnesses",
   "Development_Library_Issue",
   "Development_Located_Rows",
   "Development_Loci",
+  "Development_Loop_Presentations",
   "Development_Machinery",
+  "Development_Machinery_Reports",
   "Development_Native_Answers",
   "Development_Native_Decomposition",
-  "Development_Native_Readiness",
   "Development_Native_Request",
   "Development_Native_Selection",
   "Development_Native_Verdict",
-  "Development_Presentation",
+  "Development_Problems",
   "Development_Publication",
   "Development_Refinement_Contracts",
   "Development_Refinement_Repair",
@@ -86,51 +89,7 @@
   "Development_Verdict_Unreached",
   "Development_Verdict_Witnesses",
   "Faceted_Native_Questions",
-  "Factor_Constructed_Development_Execution",
-  "Factor_Demanded_Program_Calls",
-  "Factor_Development_Admission",
-  "Factor_Development_Cases",
-  "Factor_Development_Comparison",
-  "Factor_Development_Conditions",
-  "Factor_Development_Criterion_Sources",
-  "Factor_Development_Cycle",
-  "Factor_Development_Execution_Sharing",
-  "Factor_Development_Report_Identity",
-  "Factor_Development_Steering",
-  "Factor_Development_Subjects",
-  "Factor_Finite_Development_Questions",
-  "Factor_Required_Workflow_Cases",
-  "Factor_Required_Workflow_Comparison",
-  "Factor_Source_Development_Admission",
-  "Factor_Source_Development_Cases",
-  "Factor_Source_Development_Cycle",
-  "Factor_Source_Development_Input",
-  "Factor_Source_Development_Subjects",
-  "Factor_Source_Execution_Sharing",
-  "Factor_Steered_Development",
-  "Factor_Steered_Execution_Sharing",
-  "Factor_Workflow_Admission",
-  "Factor_Workflow_Cases",
-  "Factor_Workflow_Comparison",
-  "Factor_Workflow_Evidence_Meaning",
-  "Factor_Workflow_Execution",
-  "Factor_Workflow_Execution_Sharing",
-  "Factor_Workflow_Expanded_Comparison",
-  "Factor_Workflow_Input_Scope",
-  "Factor_Workflow_Protocol",
-  "Factor_Workflow_Readiness",
-  "Factor_Workflow_Reference",
-  "Factor_Workflow_Request_Batch",
-  "Factor_Workflow_Request_Input",
-  "Factor_Workflow_Requirements",
-  "Factor_Workflow_Stage",
-  "Filtered_Native_Questions",
-  "Finite_Presented_Workflows",
-  "Formed_Call_Closures",
-  "Isabelle_Native_Reach",
-  "Keyed_Native_Evaluation",
   "Material_Application_Observations",
-  "Native_Collection_Programs",
   "Native_Control_Acceptance_Profile",
   "Native_Control_Admitted_Selection",
   "Native_Control_Artifact_Comparison",
@@ -142,7 +101,6 @@
   "Native_Control_Closed_Installation",
   "Native_Control_Compile_Profile",
   "Native_Control_Constructed_Source_View",
-  "Native_Control_Context_Contract",
   "Native_Control_Context_Execution",
   "Native_Control_Filtered_Judgment",
   "Native_Control_Finite_Guard",
@@ -163,6 +121,7 @@
   "Native_Control_Receiving_Review",
   "Native_Control_Refinement_Composition",
   "Native_Control_Reviewed_Receiving",
+  "Native_Control_Seed_Subject",
   "Native_Control_Selected_Root",
   "Native_Control_Source_Execution",
   "Native_Control_Source_Profile",
@@ -171,23 +130,8 @@
   "Native_Control_Syntax_Execution",
   "Native_Control_Syntax_Statements",
   "Native_Control_Union_Observation_Execution",
-  "Native_Development_Execution",
-  "Native_Development_Execution_Base",
   "Native_Development_Machinery",
-  "Native_Development_Seed",
-  "Native_Development_Steering",
-  "Native_Path_Store_Indexes",
-  "Native_Path_Stores",
-  "Native_Source_Development",
-  "Native_Table_Reach",
-  "Native_Workflow_Execution",
-  "Native_Workflow_Execution_Base",
-  "Positioned_Native_Evaluation",
-  "Presented_Program_Applications",
-  "Shared_Call_Closures",
-  "Shared_Native_Evaluation",
-  "Shared_Term_Tables",
-  "Workflow_Presentation"
+  "Native_Development_Seed"
  ],
  "recipes": {
   "allocated-environments": {
@@ -284,18 +228,16 @@
    "status": "unchanged"
   },
   "native-development": {
-   "exit_code": 0,
-   "seconds": 13.1,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development-machinery": {
    "exit_code": 0,
-   "seconds": 35.64,
+   "seconds": 40.34,
    "status": "accepted"
   },
   "native-development-seed": {
    "exit_code": 0,
-   "seconds": 84.16,
+   "seconds": 84.98,
    "status": "accepted"
   },
   "native-evaluation": {
@@ -320,14 +262,10 @@
    "status": "unchanged"
   },
   "native-steering": {
-   "exit_code": 0,
-   "seconds": 15.86,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-workflow": {
-   "exit_code": 0,
-   "seconds": 16.27,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "quoted-history": {
    "status": "unchanged"
@@ -348,9 +286,7 @@
    "status": "unchanged"
   },
   "source-development": {
-   "exit_code": 0,
-   "seconds": 16.82,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "use-allocation": {
    "status": "unchanged"
@@ -359,19 +295,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1692,
- "seconds": 474.76,
+ "reused_theories": 1751,
+ "seconds": 450.97,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1850,
+  "theory_count": 1853,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1850,
+ "theories": 1853,
  "validation_inputs": {
-  "ROOT": "760fe4b8d2d19b807365ae8b6db53c23752817b19cee5c753ff84701c56cd7a8",
+  "ROOT": "64956fd7d10b4abf38855d4828f01522d5babb9f0f734684d1324faca0fb74e3",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

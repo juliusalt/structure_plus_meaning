@@ -10923,6 +10923,13 @@ the reach table because the table's predecessors of `x` are exactly the subjects
 predecessors of `x`": one search per support key, where a traversal of the rows per key would cost the
 rows times the support. This is the index notion applied to the mention relation, not a new notion: the
 table is that relation's index by the mentioned constant, and its row lemma is the index's contract.
+*Corrected 2026-09-24 (task 277, on #110's review): the fields read the body's two families as the lists the
+body holds (`keys_term`), a key being cited in a family when it is a member of its list
+(`list_cited_program`: membership's `native_member_program` behind `native_swap_program`); no store is built
+from a list, and none is carried beside the body. `support complete` keeps `excess`'s row rule
+(`row_mentions_rule`) and the selection of every family, and finds a mention in `ks` by membership where the
+verdict's `excess` finds it in the support store: the two are one reading at the HOL level
+(`request_support_excess`), no longer one program.*
 
 What each field consumes is stated in the verdict's briefs in the form this construction needs (the
 planner, answering q36, before those builds start). From #36: the guarded traversal — every row of a

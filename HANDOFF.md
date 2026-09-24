@@ -508,12 +508,14 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 82. Inherited-ignored signals: the adoption tool leaves one ignored; the other tools stay as they are.
 83. The documented replay's cost (1,037 s for sixteen records at two runs): a measured split per step first, with item 10.
 84. The presenter's entity keys through an index: at a state near 10^4 entities.
-85. The n-ary tuple below the verdict (`term_tuple` and its siblings): #112 moves it beside the rule constructors.
+
 86. Order facts named for their user: a bounded pass over the repository's `sorted_wrt`, `sorted` and `distinct` lemmas.
 87. One definition per reading of a name table (the `_by` readings of `Isabelle_Name_Trees`): when those theories' words
     are next re-established (#161 or #167).
-88. The next change to `Native_Collection_Programs`: three blank lines near `native_every_program`; `read_clause`'s
-    `read` premise rebinding `c`.
+88. The next change to `Native_Collection_Programs` and its row: three blank lines near `native_every_program`;
+    `read_clause`'s `read` premise rebinding `c`; in the row, `native_store_search_program` and
+    `native_store_absent_program` listed among the programs taking the family's law, and its dated "Reuse (section)"
+    label dropped or re-pointed (#287's review: its merge round left the row as its work wrote it).
 94. **What the documents' passes left, each at the next edit of its file** (#291's review): in the plan, "Useful cost
     and evidence" ends with the batch "stopping at a type error in the seeded problems" without naming what settled it
     (the entry "Seeded contracts and dependencies computed"); "Basis of this revision" says native states represent the
@@ -529,7 +531,7 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     adds `insert_Diff_if` to its simp set — a form of `step_at` over a listed rule would spare that if more instances
     appear. The eight dated "Reuse (section)" labels #282 left in the rows of `Native_Collection_Programs`,
     `Native_Path_Stores`, `Development_Native_Readiness` and `Native_Table_Reach` go with each theory's next edit (two
-    mailed to #287).
+    mailed to #287, which did not take them: item 88).
 93. **The twelve storage report theories prove no word identity** (#282's review): `Artifact_Lookup_Presentation` to
     `Generation_Record_Presentation` and `Data_Reading_Presentation` state no `*_report_value_exact` or
     `*_report_word_exact`, unlike the four cause-family report presentations, so nothing proves that their retained
@@ -577,11 +579,12 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 - **plan-48 wrote no notes** (its window ended at 05:58 first): this file carried its state, and plan-49 found nothing
   missing that the work needed — #292's verdict was already given, #290's review reads its brief as rewritten (the
   harness reads a rewritten brief from then on), and #292's builds are placed.
-- **#289 and #287** were accepted and failed at the train of `2906d9c9` on `THEORY_MAP.md` rows main rewrote meanwhile
-  (Q13; #289's seven rows for the second time, #287's `Development_Request_Scope`). Re-planned (plan-50): each round runs
-  `bring-main` and, refused, sets those rows to main's lines verbatim at once; the row changes wait in `rows.md` —
-  #289's for #308 (review 289's follow-ups 1–4 and 7 with them; 5 is mailed to #284, 6 to #157, 8 is Q13's), #287's for
-  #285. Both queued first, so that they land before another landing rewrites those rows.
+- **#289** was accepted and failed at the train of `2906d9c9` on seven `THEORY_MAP.md` rows main rewrote meanwhile,
+  the second time (Q13); #287 failed so on `Development_Request_Scope`'s row and landed in its merge round
+  (`e40ffd91`), its row addition in `.build/tasks/287/rows.md` for #285 (mailed). #289's round (plan-50) runs
+  `bring-main` and, refused, sets the seven rows to main's lines verbatim at once; its row changes wait in `rows.md` for
+  #308 (review 289's follow-ups 1–4 and 7 with them; 5 is mailed to #284, 6 to #157, 8 is Q13's). It is queued first,
+  so that it lands before another landing rewrites those rows.
 - **Under way**: #157 re-records the answer records over the layout (landed with #290 and #294 as `2906d9c9`); #64
   (its library from the refusal records only, the split source counted: q77, Q14) and #296; #112 and #192 parked for
   their checks; #297 and #301 finishing; #159 next, while the lineage holds the base without the layout, then the

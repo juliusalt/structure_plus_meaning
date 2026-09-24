@@ -1,7 +1,7 @@
 {
- "base_receipt_sha256": "7546b87f7c03baea34f3eea036c3d65a39029f5e0bc7dcfc9c2f53d7e9874d4f",
+ "base_receipt_sha256": "fdf90bb24dd675cd5d6c0ff564f894b29a6734b60971b1944819e37fcd1fde7f",
  "base_theories": 1837,
- "checked_content_sha256": "cad400dff6adfc31909ad8a1a4543dee0c8fcddda7d755f1c73aa6c5afd7c2a3",
+ "checked_content_sha256": "e032267c0cb976580398c7b31abee11816087d7075c12be3a859d0908640bf1f",
  "complete_native_reports": 74,
  "executed_recipes": 0,
  "host_tests": {
@@ -14,14 +14,14 @@
    "skipped": 0
   }
  },
- "incremental_proof_theories": 83,
+ "incremental_proof_theories": 98,
  "phase_seconds": {
   "base_and_impact": 0.3,
   "execution_impact": 0.05,
-  "export": 11.43,
-  "proof": 232.52,
+  "export": 12.23,
+  "proof": 221.65,
   "recipe_impact": 0.41,
-  "recipes_and_host_tests": 11.16
+  "recipes_and_host_tests": 11.13
  },
  "reused_recipes": 2,
  "source_only_reconstructions": [
@@ -350,20 +350,20 @@
    "recipe": "native-development-machinery",
    "reports": 5,
    "source_files": 995,
-   "source_manifest_sha256": "bf24b5004d05497a8c10e2273be687a842bbb6c491bf8f9bde757c717a4393bd",
+   "source_manifest_sha256": "e8ac95144701db94109424e59001e5dc5159be5efec9799cea90993b42a11131",
    "theories": 971,
    "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "41dbf8441375f5b714ba74c3850129d8c82ce98e7f3c9206fdc9e8ca385a2ff3"
+   "verification_sha256": "8c432d7cf0bbad4936a0322caeb2483348245f49dc52d838889972231cb25172"
   },
   {
    "python_modules": 23,
    "recipe": "native-development-seed",
    "reports": 12,
    "source_files": 997,
-   "source_manifest_sha256": "b0076781fa2608ec8b0d44bca5b5491baf04da63b2bc106f9fa7b19b350b1cea",
+   "source_manifest_sha256": "16a35c1b312901621b03c92c2cb620335b2249479e4fc69b4066c0d75d0e6cf2",
    "theories": 973,
    "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "2a984ec70764668c4788fb6a73493ba0c2c0ade3144e17e2fcd914539c34a2f7"
+   "verification_sha256": "0dbe372e86a313784f31da1abe7af7d160d1c1f0d6c1f3410106cce6db9340a4"
   },
   {
    "python_modules": 23,
@@ -547,7 +547,7 @@
   }
  ],
  "status": "accepted",
- "total_seconds": 280.06,
+ "total_seconds": 269.57,
  "unchanged_recipes": 50,
- "workspace_theories": 1837
+ "workspace_theories": 1838
 }

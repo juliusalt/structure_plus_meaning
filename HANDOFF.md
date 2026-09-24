@@ -42,13 +42,17 @@ declarations cited, context sound, support sound). #276 landed (`ab37086e`) the 
 table's `predecessor_at` and one reach step rule, each stated once; #284 takes its review's three derivations left
 standing, the two facts of `state_presents` that belong under it in `Development_State_Rows`, and the three globally
 exported names that carry no subject (`predecessor_at` already a locale fact of `RRA_Fresh_Generation_Frames`), after
-#237. #277 has the five fields read
-the body's two lists, since no native rule makes a store of a list (the planner's decision, superseding the note that
-#112's call carries stores the executor built; request construction's entry gains a marked sentence), and judges the
-harness's finding that `predecessor_check_rule` and `native_some_rest` restate `Native_Collection_Programs`'
-`native_member_later`. #112 is the construction, admitting a request at its locus through the store search with #97's
-contract for held values, and moving the n-ary tuple beside the rule constructors (Open 85); #114 its held measurement,
-with #110's review's support-sound scan measured apart.
+#237. #277 landed (`552d976c`) the five fields
+reading the body's two lists, since no native rule makes a store of a list (the planner's decision, superseding the
+note that #112's call carries stores the executor built). #112 is the construction — its rule, program, contract and two conditions — at the list shapes #277 left; its three
+corollaries (the two kinds, admission at a locus, the payload audit) are #286, and the two moves into
+`Native_Collection_Programs` (Open 85's n-ary tuple, `list_cited_program` beside `native_member_program`) are #287,
+both over what it leaves: #112's brief asked 290K where its room with its own relations was 265K, and the planner
+trimmed it to the piece of reasoning that belongs together. #114 is its held measurement, which #277's review turns on
+the four member scans the lists cost, beside `support sound`'s predecessor scans. #285 then makes the verdict's `excess` and
+`support complete` one program at one stated row reading over any mention checker: after #277 `excess` was the only
+reader of the request support as a store, so the verdict's admission at a locus met the same obstruction, and the
+unification removes a thirty-line copy and a re-derived contract (after #237 and #112).
 
 **The incremental assessment (#187, #192–#206).** Design #171's entry (DECISIONS.md "An answer state is judged from its
 request state's assessment and the edit"): the assessment as presentations only, the request state's closedness
@@ -97,7 +101,9 @@ two-premise call (#237, the same theories); the store search (#239). A change to
 about 112 theories (206–215 s of check).
 
 **The documents (#280–#282).** From the owner's words of 2026-09-23 and the harness's review of what the bases hold:
-`REASONING_REUSE.md` heavily revised (#280, a design); the plan's citations of `DEVELOPMENT_WORKFLOW.md` re-pointed to
+`REASONING_REUSE.md` heavily revised (#280, accepted: 43.7K from 137.8K, one table of 39 arguments in the four columns
+`problems.txt` cites, every execution account and superseded claim gone, the checked notions cited where they stand,
+and the plan's role rows named rather than restated; its `THEORY_MAP.md` labels go with #282, mailed); the plan's citations of `DEVELOPMENT_WORKFLOW.md` re-pointed to
 the owner's words, its two dated sections brought to the present, `DECISIONS.md`'s overnight checkpoint — a state, not a
 decision — removed, and the owner's retirement of `ADMISSION.md` and `proposal.txt` committed (#281, a design, in the
 one tree); every theory given its `THEORY_MAP.md` row, every row's imports re-read, and Q9's tracked `.pyc` removed
@@ -159,6 +165,12 @@ read by mail reaches the new one only through its brief, its tree or a mail sent
   the export theories of the recipes it refines reach it, and those recipes' seconds moved.
 - **A use of an index cites `Carrier_Indexes` and its carrier's instance** and proves only its key's obligations; an
   argument made twice across uses is stated once in `Carrier_Indexes`.
+- **A notion whose contract names something downstream moves as its general form** (q72, #287): the locale and its
+  general contract go where its kin are, and the instance stays where its terms live, with its name and statement
+  unchanged and derived from the general one — one statement added, none changed. A note left beside the kin would be
+  the copy the first-use rule refuses, and leaving the locale downstream would state the general notion at a special
+  case (`list_cited_program` with `list_exact` in `Native_Collection_Programs`, its `keys_term` instance's `exact` in
+  `Development_Request_Scope`).
 - **A use cites the most specific contract that states what it needs** (recorded in the rule family law's entry): an
   instance's contract where one states it, the raw law only where none does.
 - **Transport stays a task of its own and is not a design**: a packet is the presentation of a request row, so the
@@ -195,6 +207,10 @@ a task):
   hand; where both sides changed one row, the round hands over main's row verbatim and a later task carries its change
   (#227). A task working in the one tree installs its theories only at hand-over and keeps nothing of its own
   uncommitted there when it parks or comes back (q30).
+- **Size.** A brief's Size is judged against its room with its own relations — the theories it names can be the greater
+  part of it (#112's were 258K of its 265K) — and a task beyond its room is handed back at its first start. Such a brief
+  is trimmed to the piece of reasoning that belongs together, its corollaries and its moves becoming tasks over what it
+  leaves, never by dropping what the kept work must respect.
 - **Scope.** Small repairs of the same theories, and follow-ups consolidating what is stated twice, go into one task up
   to about half its room; a repair another task waits on, or one of a notion's contract, stays its own task. A task that
   continues one task's work says `continues` and forks that task's session while it is warm. A partial task whose
@@ -226,7 +242,8 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   (#38), `unreached` over the native reach (#40: one seeded judgment 0.30 s, the machinery's unreached 3.90 s
   positioned, `.build/tasks/40/measurement.txt`), `Development_Native_Verdict` (#42); the exporter proves
   `isabelle_declared_once` at every state it defines (#243, #227, #256, #267, #274, #279; `Map_Filter_Lists`).
-- **Request construction**: #276's consolidations of the position facts and the keyed rows-about forms (`ab37086e`).
+- **Request construction**: #276's consolidations of the position facts and the keyed rows-about forms (`ab37086e`);
+  the five fields reading the body's lists, `list_cited_program` (#277, `552d976c`).
 - **Request construction**: `request_presents_constructed` (#106), `Development_Request_Scope` (#108),
   `Development_Request_Citations` (#110).
 - **The incremental assessment**: `Development_Subject_Index` over a key reading (#185), `Development_State_Edit`
@@ -311,8 +328,15 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     the final tree, with that entry's next edit.
 28. Every recipe's execution boundary holds `tools/build.py` and `tools/execution_support.py`: narrowing them is a task
     if a tools change is again seen to re-execute everything.
-29. The map's "Reuse (...)" citations of a `DECISIONS.md` heading (#60's row), corrected with the row's next edit if they
-    are meant to resolve in `REASONING_REUSE.md`.
+29. The map's "Reuse (...)" labels: 92 rows name dated sections of `REASONING_REUSE.md` that #280's revision removed,
+    and #60's row names a `DECISIONS.md` heading — re-pointed to the argument rows or dropped by #282 (mailed).
+    Four further follow-ups of #280, each at its trigger: the ordered comparison (its row "An argument ordered so that
+    comparison meets what differs first") has no statement of its own, to be factored when a use next needs it;
+    whether the six grammars' recovery, idempotence and leastness theorems instantiate one statement over
+    `RRA_Read_Environment` is uncompared (the row "Retain the boundary a grammar derives", which `problems.txt`
+    condition 3 turns on); the known-predecessor refinements (`RRA_Known_Generation_Rows` and the equations on it)
+    against `Established_Premises` under the index notion's criterion; and whether any ordinary clause profile over
+    numbered coordinates re-makes `native_rule_law` or the two levels stay apart.
 30. What a present citation of a development row cites (an owner record, or the parent's locus for a demand), with
     item 26.
 31. `readiness_presents_rekey` into `Development_Native_Selection`, with that theory's next edit.
@@ -325,7 +349,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 38. The rows program's and readiness's sites are hand-chosen numbers: a stated join, or sites allocated through
     `Factor_Fresh_Program_Coordinates`, when the programs are first joined.
 39. Native production of a request body: forward (moded) evaluation of a functional native relation, an engine notion
-    the library lacks; until then producers are executors and the construction admits.
+    the library lacks; until then producers are executors and the construction admits. And, if #114 finds the member
+    scans of a body list dominating, an index of a body family admitted against its list is the refinement (#277's
+    review, follow-up 3).
 40. Currentness of a request after an admitted answer (`development_request_current` natively): not designed.
 41. A named fact that a constructed request's constant is stated, in `Development_Requests`, with its next edit.
 42. `ffilter_empty_set` and `ffilter_true` into `Candidate_Generators`, with the next landing changing `RRA_Selection`.

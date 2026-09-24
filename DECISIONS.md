@@ -14683,6 +14683,14 @@ is kept, since a recorded state may expand it.
 Recorded 2026-09-24 (task 374).
 ## The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer
 
+[Corrected by "The first problem's requirements use the test of a native distinction; the octet audit is one of its
+parts" below (task 381), after the owner's words of 2026-09-24 19:57 answering Q23 (a): the first problem's
+requirements use task 376's test of a native distinction, not only the octet audit. The rows of the requirements table
+for the rule of 18:12 and for the directions of 2026-09-19 on octets and structure, and the asked relation, are
+superseded: the guard has four sockets — retention, formation and closure, the callee boundary, the octet audit over
+the added definitions — the verification request checks the test's contract parts, and the rest is criticism and the
+owner's approval, each part named with the native notion it would need.]
+
 The owner, to the planner, 2026-09-24 (the ledger), at 17:50: "Upon further review of the current state of the
 repository, I found that theere is no native definition of the notion of a problem - yet there are questions like the
 one that I just answered and notions like readiness that depend on what a problem is - how is this possible? Clearly to
@@ -14949,6 +14957,11 @@ words beyond the direction the first problem cites. This design was made outside
 Recorded 2026-09-24 (task 378's decision; a design, no theory changes).
 ## Every distinction a native program relies on comes from a native notion: the state the native loop judges and the presentations that retire
 
+[Corrected in part by "The first problem's requirements use the test of a native distinction; the octet audit is one
+of its parts" below (task 381): an occurrence's use is not a payload — `use_data_term` presents it as unary natural
+words, pairs of empty payloads (`natural_data_term`) — so the consequence "Octets" holds for addresses, which the octet
+audit covers, and "sites compared for equality" holds for uses only by a contract or as criticism.]
+
 The owner, to the planner, 2026-09-24 (the ledger), at 18:12: "Task 9 made problems structural, but as a way to present
 them without octets, not as a native definition - how is this have anything to do with what I wanted? Using structure
 rather than octets was meant to remove opaqueness instead it seems that all it did is move it from octets to structure.
@@ -15175,3 +15188,150 @@ them; a slow path goes through the performance channel. The payload audit's nati
 sites. This design was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 376's decision; a design, no theory changes).
+
+## The first problem's requirements use the test of a native distinction; the octet audit is one of its parts
+
+The owner, 2026-09-24 19:57 (the ledger, recorded by the monitoring session for the planner), answering Q23 (a):
+"Q23(a), to use this test and not only the octet audit. If you want that, say so on Q23 - ok tells that I endorce this
+to the planner." The sentence the owner endorses is the monitoring session's: "The next step is for the first problem's
+requirements, Q23(a), to use this test and not only the octet audit." "This test" is task 376's (the entry "Every
+distinction a native program relies on comes from a native notion: the state the native loop judges and the
+presentations that retire", its section "What a distinction is, and when a native notion draws it"), the test of the
+owner's rule of 18:12: "Every distinction a native program relies on must come from a native notion, not from a HOL
+presentation relation."
+
+These words are the premise; Q23 (b)–(f) stay provisional. Task 378's entry made the first problem's checked
+requirements the answer's extension formed, closed and retaining the given, and its programs stating no payload literal
+but the empty one — the octet proxy of 18:12 — the rest criticism and the owner's approval. This entry makes task 376's
+test a requirement of the first problem's answer: what a distinction of an answer's program is; which parts of the test
+a native program checks over the answer's native content, by which goals over which existing native notions, and why
+each goal is sound for the part it checks, for any answer; what of the test no native program can check today, with the
+native notion it would need and how it enters the judgment meanwhile; and what #380's builds change. It decides no
+notion of a problem — that is the first problem's answer — and changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The rule of 18:12 is checked, for the first problem's answer, by two proxies: its programs state no payload literal but the empty one, and every definition they call is a definition of the extended package; whether each distinction has native meaning is criticism (task 378's requirements table; Q23 (a)). | The rule is checked by task 376's test, a requirement of the answer (the owner, 19:57). A native program checks four of its parts (retention, formation and closure, the callee boundary, the octet audit), the verification request checks the contract parts Isabelle can check, and the rest is criticism and the owner's approval, each part named with the native notion it would need. The octet audit is one part: payloads inert. |
+| The payload audit reads a package's clause patterns (#380's plan, (b)). | It reads each added definition — a member of the answer's package at a use the given environment does not hold — through the pattern readers. The octets the given's notions read are the given's, judged when they were admitted. |
+| "an occurrence's address and use are payloads compared only for equality" (task 376's entry, "Octets"). | An address is a payload; a use is not: `use_data_term` presents it as unary natural words, pairs of empty payloads (`natural_data_term`), structure the octet audit cannot see. "Sites compared for equality" is checked by the audit for addresses only; for uses it is a contract or criticism (part (d) below). |
+| The asked relation is the requirement guard over environment inclusion, package admission and the payload audit (task 378). | The guard has four sockets on the pair of the given and the candidate: retention, formation and closure, the callee boundary, the octet audit over the added definitions. |
+| Verification is Isabelle's acceptance of the answer's programs with their contract lemmas and the identity of the submitted package with their compilation (task 378; Q23 (d)). | Its judgment also checks the test's contract parts: each added entry's contract stated as an exported presented contract over the presentation classes of native notions, and no contract statement reaching a bootstrap-loop presentation relation or datatype. |
+
+### A distinction of an answer's program
+
+An answer is native content extending the given (task 378): a program entry — an environment including the given's
+and the site of the answer's package in it — whose added definitions are its notion of a problem. A distinction an
+added definition relies on comes from one of three places, and task 376's test reads each:
+
+- **Its own literal leaves.** By the leaf argument (`positive_meaning_unlisted_leaves`), a program without material
+  premises tells two leaves apart only where it states one of them: the payloads it states are the octets it reads as
+  structure (`positive_meaning_unlisted_payloads`), the targets it states the exact values it reads. The test: payloads
+  inert; a stated target is identity with explicit native content.
+- **Its callees.** A call draws the distinctions the callee's meaning draws. The test: the callee is a native notion —
+  a native definition whose contract is proved once over native structure.
+- **The structure of its arguments**, read by its patterns and its material premises. The test: an argument presents
+  native content as a member of a native notion's presentation class, admitted natively, and the meaning is invariant
+  over the members; sites are compared for equality; a key only as an index's implementation of a native carrier.
+
+Where an added definition constructs data and reads it back, the distinction is the answer's own; the test asks that it
+have a counterpart in the native content the answer reads.
+
+### What a native program checks: four goals
+
+| Goal | Native notions | Why sound for the part it checks |
+|---|---|---|
+| **G1 Retention**: the candidate's environment includes the given's | environment inclusion (`environment_inclusion_exact`) | every artifact and binding of the given stands in the candidate at its use; by the locality contracts (`environment_inclusion_package_agreement`, `environment_inclusion_definition_agreement`) the given's package and each of its definitions read in the candidate as in the given, so a call to a given notion means what its contract, proved once, says. G1 is the premise that gives the callee part its meaning. |
+| **G2 Formation and closure**: the candidate's package is admitted | package admission (`package_admission_exact`) over the root family (`root_family_reading_exact`) and the callee edges (`definition_edge_reading_exact`) | acceptance is exactly existence of the native package: every site reached from its roots through the edges of its actual clauses is a readable definition (`package_admission_rejects_unreadable_site`), cycles allowed. No call of the answer reaches a site where no definition is, a distinction drawn by nothing. |
+| **G3 The callee boundary**: every member of the candidate's package is a member of the given's package or stands at a use the given's environment does not hold | package membership at both packages (`package_membership_exact`); a bound of the candidate's members (`Factor_Package_Closure_Admission`: a successful bound contains the least closure of the roots); the given environment's complete artifact table, read through its presentation, and data absence of the member's use (`data_absence_exact`, uses being self-contained data compared by `native_data_inequality`) | with G2 every callee of a member is a member; with G1 a definition at a given use is read in the given's own artifact, so a member there that is not a given member is refused, and the members at new uses are exactly the answer's added definitions. Every definition an added definition calls, transitively, is therefore a native notion of the given — admitted with the given, its contract proved — or an added definition, whose contract the verification request proves. This is the part "drawn by calling a native notion": no answer relies on a definition its given environment holds outside the given's package, such as a program whose inputs the bootstrap loop presents or a ground policy table. |
+| **G4 The octet audit**: every added definition states no payload literal but the empty one | G3's classification (every bound member is a given member or passes the audit); the definition and clause readers (`Factor_Definition_Call_Admission`, `definition_clause_reading_exact`) and the pattern readers, which tell a payload leaf from a citation leaf carrying an address; the audit's native reader (#380 (b)), its contract against `finite_pattern_payloads_exact`, `finite_schema_payloads_exact` and `finite_system_payloads_exact` | the audit computes exactly the payloads the added definitions state. A system's payloads are the union of its definitions', so the candidate's are at most the given's and the empty one: the answer reads no octet as structure beyond what the given's notions read under their contracts. For a system without material premises (`system_observation_free`) the leaf argument makes every octet it does not state indistinguishable to it, compared at most for equality — addresses included, which are payloads. Its limit is part (g) below. |
+
+The asked relation of the first problem is the requirement guard (`requirement_guard_schema`,
+`required_admission_installed`) with one socket for each goal, every socket receiving the whole pair of the given and
+the candidate. Four sockets and not one: each goal is a separate requirement with a separate reason, none implies
+another, and a refusal names the socket that failed (task 378). G3 and G4 read the same bound of the candidate's
+members, each in its own rule.
+
+### What no native program checks today
+
+| Part of the test | The native notion it would need | How it enters the judgment meanwhile |
+|---|---|---|
+| (a) The added definitions' contracts are proved: a distinction is native only if the notion drawing it has its contract | native admission of mathematical proofs (O-85), or the translation of native content into Isabelle run in the owner's direction | the verification request (Q23 (d)): Isabelle accepts the contract theory, and the submitted package is identical to the compilation of its terms; publication waits for it |
+| (b) An added entry's meaning is invariant over every presentation of the native content it reads (task 376's carrier condition) | the same: invariance quantifies over every member of a class | the verification request: each added entry's contract is stated as an exported contract (`presented_relation_contract`, `presented_function_contract`), whose `invariance` is a theorem of the locale, over the presentation classes of native notions — the environment, program entry, site, target, generation, snapshot and publication values — and their products, lists, collections and compositions (`Presentation_Classes`); criticism evaluates an entry natively at two presentations of one subject, a difference refuting |
+| (c) What an entry's meaning is about is native content, not a HOL value presented into structure (18:36: "a row is native structure already" justifies nothing) | a native reading of contract statements (O-85) | the verification request: no contract statement reaches, through the shared constant closure (`Isabelle_Constant_Closure`), a bootstrap-loop presentation relation or datatype — `development_problem`, the Isabelle state datatypes, task 9's rows, loci, prefixes and keys, `readiness_presents`, `state_presents`, `request_presents`, `development_rows_present` (task 376's inventory). A given notion whose contract is conditional on one of them brings it into its caller's contract, and is refused there. Both checks of (b) and (c) are proxies read on Isabelle text; the owner's approval judges native content in the owner's sense |
+| (d) Uses compared for equality | either uses presented as inert leaves in the Factor grammar's coordinates, so that the octet audit covers them; or non-nominality as a contract: a presented relation's equivariance under injective renaming of occurrence coordinates (`rename_environment`; the readers' use-renaming facts `located_at_use_renaming`, `anchored_at_use_renaming`, `citation_location_use_renaming`), a general notion stated once when first demanded | criticism: an entry evaluated natively at the given and at a copy of it with its uses renamed injectively, a difference refuting; the owner's approval. Here #373's pattern — a kind read as a prefix of a coordinate — would pass the octet audit |
+| (e) Structure as tags in the answer's own data, the move from octets to structure named at 18:12 | none syntactic. An octet is a leaf a pattern either states or does not, which is why its audit is exact; a shape is read by pair patterns that state nothing, and a finite set of shapes is produced by rules over the empty payload, so no syntactic mark separates a tag from a structural reading. Only semantically, by (b)–(d) | criticism: each distinction an added definition draws on data it constructs itself is to have a counterpart in the native content it reads (non-nominality); the owner's approval |
+| (f) Keys only as an index's implementation of a native carrier | a store an added definition searches, as an interpretation of `native_carrier_index` over a carrier a native notion draws | the verification request where a contract relies on a store's content; otherwise part (e) |
+| (g) The octet audit's own limit | the leaf argument extended to programs with material premises — the given's readers read artifacts by material observation, and an added definition's material premise can compare the octets of a target literal with the argument's — by a readdressing of targets consistent with the payload map, stated once in `Factor_Positive_Parametricity` | criticism; the audit stays a necessary check |
+| (h) Ground assertions: an added ground clause, or a target literal whose content an added definition reads, asserts a table whose truth its writer supplies ("A finite value family as a ground program, which asserts nothing else") | a native computation of the ground clauses and target leaves a definition states, beside the audit | criticism asks, for each, which native notion decides it |
+
+No part is dropped: (a)–(c) and (f) are checked mechanically before publication, by Isabelle as the bootstrap
+verifier (the owner, 2026-09-19); (d), (e), (g) and (h) are criticism, whose failures are comparison failures against
+the candidate (`Observation_Repairs`) and, once the owner has approved the answer, problems for the owner; all of it is
+before the owner's approval.
+
+### The first problem's requirement family, corrected
+
+The rows of task 378's requirements table that this entry changes; the others stand as there.
+
+| Requirement (the owner's words) | Natively, by the guard | In the verification request | Criticism and the owner's approval |
+|---|---|---|---|
+| "the development of a native notion of a problem" (17:50) | G1, G2 | (a) | that its meaning is the notion |
+| "Every distinction a native program relies on must come from a native notion, not from a HOL presentation relation" (18:12), with 18:36, as task 376's test (19:57) | G2, G3, G4, with G1 | (a), (b), (c), (f) | (d), (e), (g), (h) |
+| "encoding structure as opaque data to define meaning is cardinally oposed to what I am trying to achieve" and "if structure is used then it needs to be explicit" (2026-09-19) | G4 | (b), (c) | explicitness beyond octets: (d), (e) |
+
+### What the builds change
+
+- **#380 (b), the payload audit's native reader**: a program over one definition — its interface pattern and its
+  clauses' conclusions, prospective calls and material patterns — read through the definition, clause and pattern
+  readers, holding exactly when every payload leaf it states is the empty payload; its contract against the
+  definition's pattern payloads through `finite_system_payloads_exact`. Not a program over a package's patterns.
+- **#380 (c), the guard**: the four sockets G1–G4 on the pair; G3 is new and G4 reads the added definitions; each
+  socket's contract through its readers'; the refusal names the socket. The given's Factor readers (task 376, "New")
+  include what G3 and G4 call: package membership, the closure bound, data absence and inequality, the definition,
+  clause and pattern readers, and the audit.
+- **#380 (d), the posing**: the asked relation the posing generation presents is this guard.
+- **#380 (e), the answer route**: the candidate is a program entry whose environment includes the given's, its package
+  site the answer's.
+- **#380 (f), the verification request**: its judgment includes (a), (b), (c) and, where a contract relies on a store,
+  (f). The required contract forms for each added entry are stated by the harness, their proofs supplied by the answer
+  and checked by Isabelle, and the constant closure reads every contract statement.
+- **The given's Factor readers' installation** states the given's payloads by the same audit (the development package's
+  are the empty payload alone, #340's statement), so the octets an answer may rely on through its callees are known.
+- **A criticism build for the first problem**, not in #380's plan: the samples of (b) and (d) and the observations of
+  (h), each failure recorded against the candidate.
+
+### Weighed and rejected
+
+- **A structural audit beside the octet one** (no closed pair subpattern, no ground clause): tags are read and produced
+  without either, and legitimate base cases state both; it would refuse sound answers and admit tags.
+- **The audit over the whole candidate package**: it would refuse an answer for octets the given's notions read under
+  their own contracts; the answer is judged by what it adds.
+- **Refusing target literals or material premises in added definitions**: the test admits identity with explicit
+  native content, and material observation is the most native reading there is; the gaps they open are parts (g) and
+  (h), criticism, not closed by a rule the owner did not state.
+- **Formation and closure without the callee boundary**: an answer could call a definition its given environment holds
+  outside the given's package, whose distinctions no granted notion draws.
+- **Use equivariance required of the verification request now**: its statement form does not exist, and defining it
+  around this problem is what the first-use rule forbids; it is a general notion, non-nominality as a contract, to be
+  stated once when first demanded.
+- **Isabelle's checks of the contract form counted as native**: they are the bootstrap verifier's, until native proof
+  admission (O-85).
+- **One socket for the whole test**: a refusal would not say which part failed.
+
+### What the builds must respect
+
+The first problem's answer is judged by task 376's test: natively by the four goals, in the verification request by
+its contract parts, and otherwise by criticism and the owner's approval; no part is dropped, and a proxy is named as
+one. The octet audit reads the added definitions and is one part of the test. The guard's goals consume the existing
+readers through their contracts, proved once, and no build defines a notion around this requirement. The notion of a
+problem is the first problem's answer: nothing here restricts what it is beyond the test. An address is a payload and a
+use is structure; a program that reads a use as structure passes the octet audit, and is caught only by part (d).
+
+### Open
+
+Non-nominality as a contract (part (d)) and the choice between it and uses presented as inert leaves. The leaf argument
+for programs with material premises (part (g)). The native computation of ground assertions (part (h)). Native proof
+admission (O-85), which would move (a)–(c) and (f) into the native judgment. The owner's authorization of this
+encoding. This design was made outside the loop and is a residual.
+
+Recorded 2026-09-24 (task 381's decision; a design, no theory changes).

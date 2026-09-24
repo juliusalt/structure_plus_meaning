@@ -17,24 +17,12 @@ text \<open>
   \<open>every\<close> or a \<open>some\<close>, and no premise reads an absence.
 \<close>
 
-subsection \<open>A tuple of terms and its pattern\<close>
-
-fun term_tuple :: "factor_term list \<Rightarrow> factor_term" where
-  "term_tuple []=Payload_Term []"
-| "term_tuple [t]=t"
-| "term_tuple (t#u#ts)=Pair_Term t (term_tuple (u#ts))"
-
-fun finite_pattern_tuple :: "'a finite_term_pattern list \<Rightarrow> 'a finite_term_pattern" where
-  "finite_pattern_tuple []=Finite_Pattern_Payload []"
-| "finite_pattern_tuple [p]=p"
-| "finite_pattern_tuple (p#q#ps)=Finite_Pattern_Pair p (finite_pattern_tuple (q#ps))"
-
-lemma evaluate_pattern_tuple:
-  "evaluate_pattern f (decode_finite_pattern (finite_pattern_tuple ps))=
-    term_tuple (map (\<lambda>p. evaluate_pattern f (decode_finite_pattern p)) ps)"
-  by (induction ps rule: finite_pattern_tuple.induct) simp_all
-
 subsection \<open>The entry rule\<close>
+
+text \<open>
+  The entry's argument is the tuple of the parts (@{const term_tuple}, with its pattern
+  @{const finite_pattern_tuple}, of theory \<open>Native_Collection_Programs\<close>).
+\<close>
 
 abbreviation verdict_entry :: "local_address option definition_site" where
   "verdict_entry \<equiv> (Some [],[80])"

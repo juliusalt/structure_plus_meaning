@@ -311,7 +311,13 @@ proof -
     by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
   have ctx: "e\<in>?ctx \<longleftrightarrow> e\<in>?E \<and> (e\<in>?scope \<or> (\<exists>d. isabelle_declared_constant e=Some d \<and> d\<in>?sup))" for e
     using development_request_context_exact[of e "snd S" c] by simp
-  have scope_ctx: "?scope\<subseteq>?ctx" using ctx by (auto simp: development_constant_scope_member)
+  have scope_ctx: "?scope\<subseteq>?ctx"
+  proof
+    fix e
+    assume e: "e\<in>?scope"
+    have eE: "e\<in>?E" using e unfolding development_constant_scope_member by (rule conjunct1)
+    show "e\<in>?ctx" unfolding ctx using eE e by (rule conjI[OF _ disjI1])
+  qed
   have entry: "(request_entry,Pair_Term (Pair_Term (path_term (key c)) (request_state_term ident R))
       (development_request_body ks es))\<in>positive_meaning native_request_system \<longleftrightarrow>
     key ` ?sup\<subseteq>set ks \<and> ekey ` ?scope\<subseteq>set es \<and>

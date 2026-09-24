@@ -1,6 +1,6 @@
 {
  "boundary": "Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized.",
- "recipe_files": 876,
+ "recipe_files": 878,
  "recipe_source_manifest": "certified-causes-sources.json",
- "recipe_source_manifest_sha256": "b3a7fee4a8ad0e8c8c312e5311000dd11f2f5e15f96abc6f69cd479ce5b1cba1"
+ "recipe_source_manifest_sha256": "23fae627052bd3c6403fb09ee5a05d465fabc66694947015d30b9b7e41454cea"
 }

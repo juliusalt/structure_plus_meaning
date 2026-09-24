@@ -13961,3 +13961,37 @@ problem. Native production of an answer: producers are executors. A native repai
 decomposition line's. A subject of several sites has no locus. This design was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 320's decision; a design, no theory changes).
+
+## An answer's checked families hold one family of declaring rows; the stage decides single declaration once
+
+Task 318, the follow-ups of #192's reviews (design 171, "Affordability"). Every per-answer part of the incremental
+judgment is now read from the request state's assessment and the edit, and no family of either state is filtered
+per answer; two lists of the request state are still read whole per answer (the limits below).
+
+- **The declaring rows.** The checked families list read by `undeclared` and `unreached` held, for each key of `O`,
+  the answer state's rows declaring it once per kind: a filter of every family per answer. The declaration store
+  gives the key of a constant's one declaring row and the row store the row, but neither gives its family, and a
+  kind is never read from a row (`Development_State_Rows`). The list now holds one family of those rows
+  (`declaring_family`: the store's row at each key of `O`, less the removed rows, with the edit's added
+  declarers; the planner's answer to q84). It is an argument of those two checks only, never a family of a
+  presented state, and no program reads its position as a kind; both checks read rows. Their lemmas are restated
+  at the new list through one characterization (`assessment_families_checked_rows`), since each takes any list
+  between the rows it must check and the state's rows. Nothing is exported before #193, so no recorded word
+  changes.
+- **The restricted declaration store** is the request state's store looked up at each key read, less the keys a
+  removed row declares, with the edit's added declarations (`assessment_declaration_term`). Under the request
+  state's single declarations and an edit that declares no key a kept row declares and no key twice
+  (`edit_declarations_fresh`), the two listings hold the same single-valued rows, so their path stores are equal
+  (`path_store_rows`); any other edit is judged whole.
+- **Single declaration is a premise decided once.** `stage_closed` checks `declarations_single_valued` of the
+  request state beside its closedness, by the linear test that every declaration row finds its own value in the
+  declaration store, built once (`declarations_single_valued_store`, its code equation). At a state the exporter defines it
+  holds by `isabelle_declared_once` (`stage_closed_declared_once`).
+- **Presentability** of the answer state is the request state's, decided once by the stage's presenter, and the
+  edit's two facts: its appended names distinct (they are the atoms the constructor appends, `state_edit_of_atoms`)
+  and its added entities' positions inside the extended table (`edit_presentable_applied`).
+- **Atoms and the closure.** An atom is a key the subject index holds (`assessment_atom_exact`), and the closure's
+  fibres at `O` are the subject index looked up at each key (`assessment_closure_term_request`).
+
+Limits: the reach keys `K` are still searched as a list per visited key (`walk_admitted`, `incremental_reach_table`),
+and the stage applies `state_edit_of` per answer without sharing its per-request-state indexes.

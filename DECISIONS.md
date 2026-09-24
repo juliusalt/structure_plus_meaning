@@ -11074,7 +11074,12 @@ guarded traversal, `excess`, `undeclared`, the declaration store, the family sea
 row lemma — is consumed by name and never re-proved; a consumed contract too weak to serve is a finding
 for its task. No field reads a row's identity. The constant key and the entity key are parameters under
 `inj_on`, and the entity key's agreement with `development_entity_key` is a named condition, never an
-assumption. The program states no payload but the empty one.
+assumption. *Corrected 2026-09-24 (task 286, on #113's review): the contract (`native_request_exact`) takes
+neither injectivity — the constant key's follows from `state_presents` (`atoms_present_key_injective`), and the
+entity key needs none beyond the entity-key condition `entity_rows_keyed`; the admission corollary
+(`native_request_admitted`) recovers equality of the stored families from their keys through the first-occurrence
+key itself (`development_entity_key_injective`, `first_occurrence_key_member`).* The program states no payload but
+the empty one (*task 286: `finite_native_request_payloads`, proved once over the composed program*).
 
 ### Open
 

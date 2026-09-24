@@ -1,5 +1,6 @@
 theory Development_Native_Request
-imports Development_Request_Citations Development_State_Presenter
+imports Development_Request_Citations Development_State_Presenter Development_Request_Keys
+  Factor_Finite_Payload_Literals
 begin
 
 section \<open>Request construction is one native definition over the request state's rows\<close>
@@ -88,6 +89,8 @@ abbreviation request_sound_search :: "local_address option definition_site" wher
   "request_sound_search \<equiv> (Some [],[24])"
 abbreviation request_sound_check :: "local_address option definition_site" where
   "request_sound_check \<equiv> (Some [],[25])"
+abbreviation request_admission :: "local_address option definition_site" where
+  "request_admission \<equiv> (Some [],[26])"
 
 subsection \<open>The entry rule: one rule, five premise sockets, one per field\<close>
 
@@ -148,6 +151,7 @@ definition native_request_definitions :: "(local_address option definition_site\
     (request_sound_call,[([0],keyed_search_call_rule request_sound_search)]),
     (request_sound_search,native_store_search_rules request_sound_search request_sound_check),
     (request_sound_check,[([0],native_member_later request_member)]),
+    (request_admission,native_store_search_rules request_admission request_entry),
     (request_entry,[([0],request_entry_rule)])]"
 
 definition finite_native_request :: "local_address option finite_native_system" where
@@ -226,11 +230,25 @@ interpretation request_supported: support_sound_program native_request_system re
     native_store_search_program_def keyed_search_call_program_def native_every_program_def
   by (intro conjI; rule native_request_family) (simp_all add: native_request_definitions_def)
 
-interpretation request_entry_family: native_rule_law native_request_system request_entry "[([0],request_entry_rule)]"
-  by (rule native_rule_lawI, rule native_request_family)
-    (auto simp: native_request_definitions_def request_entry_rule_def)
-
 subsection \<open>The entry holds exactly when its five fields do\<close>
+
+text \<open>
+  The entry's family is one rule whose premises read only variables its conclusion binds, so its meaning is
+  the conjunction program's (@{locale native_conjunction_program}): the theorem below is its @{text at} at the
+  conclusion's evaluation, and no argument about the rule is made here.
+\<close>
+
+interpretation request_entry_family: native_conjunction_program native_request_system request_entry
+    request_entry_conclusion request_entry_premises
+  unfolding native_conjunction_program_def native_conjunction_program_axioms_def
+proof (intro conjI)
+  show "native_rule_family native_request_system request_entry
+      [([0],finite_native_rule request_entry_conclusion request_entry_premises)]"
+    by (rule native_request_family) (simp add: native_request_definitions_def request_entry_rule_def)
+  show "\<forall>(k,d,q)\<in>set request_entry_premises.
+      pattern_variables (decode_finite_pattern q)\<subseteq>pattern_variables (decode_finite_pattern request_entry_conclusion)"
+    by (simp add: request_entry_premises_def request_entry_conclusion_def)
+qed
 
 theorem native_request_entry:
   "(request_entry,Pair_Term (Pair_Term a0 (Pair_Term a1 (Pair_Term a2 (Pair_Term a3 a4)))) (Pair_Term a5 a6))
@@ -240,31 +258,8 @@ theorem native_request_entry:
     (request_declarations,Pair_Term (Pair_Term a6 a2) a5)\<in>positive_meaning native_request_system \<and>
     (request_context,Pair_Term (Pair_Term (Pair_Term a5 a0) a3) a6)\<in>positive_meaning native_request_system \<and>
     (request_sound,Pair_Term (Pair_Term a0 a4) a5)\<in>positive_meaning native_request_system"
-  (is "?entry \<longleftrightarrow> ?fields")
-proof
-  assume holds: ?entry
-  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set [([0::nat],request_entry_rule)]"
-    and eval: "evaluate_pattern f (decode_finite_pattern p)=
-      Pair_Term (Pair_Term a0 (Pair_Term a1 (Pair_Term a2 (Pair_Term a3 a4)))) (Pair_Term a5 a6)"
-    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning native_request_system"
-    by (rule request_entry_family.holds_rule[OF holds]) blast
-  have "finite_native_rule p ps=request_entry_rule" using rule by simp
-  then have p: "p=request_entry_conclusion" and ps: "set ps=set request_entry_premises"
-    unfolding request_entry_rule_def by (simp_all add: finite_native_rule_eq_iff)
-  have vals: "f [0]=a0 \<and> f [1]=a1 \<and> f [2]=a2 \<and> f [3]=a3 \<and> f [4]=a4 \<and> f [5]=a5 \<and> f [6]=a6"
-    using eval by (simp add: p request_entry_conclusion_def)
-  show ?fields using support by (simp add: ps request_entry_premises_def vals vals[simplified One_nat_def])
-next
-  assume fields: ?fields
-  let ?f="native_values [a0,a1,a2,a3,a4,a5,a6]"
-  have rule: "([0],finite_native_rule request_entry_conclusion request_entry_premises)\<in>set [([0],request_entry_rule)]"
-    by (simp add: request_entry_rule_def)
-  have "(request_entry,evaluate_pattern ?f (decode_finite_pattern request_entry_conclusion))
-      \<in>positive_meaning native_request_system"
-    by (rule request_entry_family.step_at[OF rule])
-      (use fields in \<open>simp_all add: request_entry_conclusion_def request_entry_premises_def\<close>)
-  then show ?entry by (simp add: request_entry_conclusion_def)
-qed
+  using request_entry_family.at[of "native_values [a0,a1,a2,a3,a4,a5,a6]"]
+  by (simp add: request_entry_conclusion_def request_entry_premises_def)
 
 subsection \<open>The declarations condition\<close>
 
@@ -466,5 +461,174 @@ corollary native_request_presented:
     set es=development_entity_key (snd S) ` fset (development_request_context (snd S) c)"
   by (rule native_request_exact[OF state_presenter_presents[OF presented] bound
     state_presenter_entity_rows_keyed[OF presented] once closed identity])
+
+subsection \<open>The payload audit\<close>
+
+text \<open>
+  The payloads a program states literally are the octets it reads as structure
+  (@{thm [source] finite_system_payloads_exact}). The composed program — the entry, every consumed field's
+  families and the admission search — states none but the empty payload, the leaf the collection notions and
+  the path store read, so every octet of a row the construction reads is inert to it. It is proved once, over
+  the program.
+\<close>
+
+theorem finite_native_request_payloads: "finite_system_payloads finite_native_request |\<subseteq>| {|[]|}"
+  by code_simp
+
+corollary native_request_payloads: "system_payloads native_request_system\<subseteq>{[]}"
+  using finite_native_request_payloads
+  by (simp add: native_request_system_def finite_system_payloads_exact[symmetric] less_eq_fset.rep_eq)
+
+subsection \<open>Admission at a locus\<close>
+
+text \<open>
+  The request row the loop records is admitted where it stands: the development store's search
+  (@{locale native_store_search_program}) at a site of the program's own, whose check is the construction. It
+  is the search @{thm [source] development_request_at} makes with the value rule as its check, the construction
+  in the check's place; the search's contract for values held formed where the store holds them
+  (@{thm [source] native_store_search_program.exact_held}) and the construction's
+  (@{thm [source] native_request_exact}) compose, neither restated.
+\<close>
+
+interpretation request_admitted: native_store_search_program native_request_system request_admission request_entry
+  unfolding native_store_search_program_def
+  by (rule native_request_family) (simp add: native_request_definitions_def)
+
+theorem native_request_admitted:
+  assumes presents: "request_presents key S R rows r k ks"
+    and keyed: "entity_rows_keyed key (development_entity_key (snd S)) S R"
+    and once: "isabelle_declared_once (snd S)" and closed: "isabelle_undeclared_constants (fst S) (snd S)=[]"
+    and identity: "\<And>y. term_formed (ident y)"
+    and subject: "problem_subject (fst r)={|c|}"
+  shows "(request_admission,Pair_Term (Pair_Term (path_term k) (request_state_term ident R))
+      (Pair_Term (path_term (development_located_at key Development_Request_Role (fst r))) (development_rows_term rows)))
+      \<in>positive_meaning native_request_system \<longleftrightarrow>
+    fst (snd (snd r))=development_request_support (snd S) c \<and> snd (snd (snd r))=development_request_context (snd S) c"
+proof -
+  let ?x="Pair_Term (path_term k) (request_state_term ident R)"
+  let ?l="development_located_at key Development_Request_Role (fst r)"
+  let ?ekey="development_entity_key (snd S)"
+  obtain inert origin grant supported scope decs ps rs iss where
+      present: "development_rows_present key ?ekey inert origin grant supported scope decs ps rs iss rows"
+      and r: "r\<in>set rs"
+    using presents unfolding request_presents_def by blast
+  have state: "state_presents key S R"
+    and inside: "fset (problem_subject (fst r)) \<union> fset (fst (snd (snd r)))\<subseteq>{..<length (fst (snd S))}"
+    using presents unfolding request_presents_def by blast+
+  obtain c' where c': "problem_subject (fst r)={|c'|}" "k=key c'" "c'<length (fst (snd S))"
+      "(k,fst (snd S)!c')\<in>set (state_atoms R)" "set ks=key ` fset (fst (snd (snd r)))"
+      "\<forall>d\<in>fset (fst (snd (snd r))). (key d,fst (snd S)!d)\<in>set (state_atoms R)"
+    by (rule request_presents_recovery[OF presents])
+  have cc: "c'=c" using c'(1) subject by simp
+  have kc: "k=key c" and bound: "c<length (fst (snd S))" using c'(2,3) cc by simp_all
+  have formed_rows: "\<forall>(l,w)\<in>set rows. term_formed w" by (rule development_rows_formed[OF present])
+  let ?body="development_request_body (supported r) (scope r)"
+  have stored: "store_lookup (path_store rows) ?l=Some ?body"
+    using development_row_lookup_at[OF formed_rows, where v="?body" and l="?l"]
+      development_request_at[OF present r, of ?body] by simp
+  have held: "term_formed (id y)" if "store_lookup (path_store rows) bs=Some y" for bs y
+    using path_store_found[OF that] formed_rows by (simp only: id_apply) blast
+  have "(request_admission,Pair_Term ?x (Pair_Term (path_term ?l) (development_rows_term rows)))
+      \<in>positive_meaning native_request_system \<longleftrightarrow>
+    term_formed ?x \<and> (\<exists>bs v. path_term ?l=path_term bs \<and> store_lookup (path_store rows) bs=Some v \<and>
+      (request_entry,Pair_Term ?x (id v))\<in>positive_meaning native_request_system)"
+    unfolding development_rows_term_def by (rule request_admitted.exact_held) (rule held)
+  also have "\<dots> \<longleftrightarrow> (request_entry,Pair_Term ?x ?body)\<in>positive_meaning native_request_system"
+  proof
+    assume "term_formed ?x \<and> (\<exists>bs v. path_term ?l=path_term bs \<and> store_lookup (path_store rows) bs=Some v \<and>
+      (request_entry,Pair_Term ?x (id v))\<in>positive_meaning native_request_system)"
+    then obtain bs v where key: "path_term ?l=path_term bs" and found: "store_lookup (path_store rows) bs=Some v"
+      and checked: "(request_entry,Pair_Term ?x (id v))\<in>positive_meaning native_request_system" by blast
+    have "?l=bs" using key by (simp only: path_term_injective)
+    then have "v=?body" using found stored by simp
+    then show "(request_entry,Pair_Term ?x ?body)\<in>positive_meaning native_request_system" using checked by simp
+  next
+    assume holds: "(request_entry,Pair_Term ?x ?body)\<in>positive_meaning native_request_system"
+    have "term_formed ?x" using positive_meaning_term_formed[OF holds] by simp
+    then show "term_formed ?x \<and> (\<exists>bs v. path_term ?l=path_term bs \<and> store_lookup (path_store rows) bs=Some v \<and>
+      (request_entry,Pair_Term ?x (id v))\<in>positive_meaning native_request_system)"
+      using stored holds by auto
+  qed
+  also have "\<dots> \<longleftrightarrow> set (supported r)=key ` fset (development_request_support (snd S) c) \<and>
+      set (scope r)=?ekey ` fset (development_request_context (snd S) c)"
+    by (simp only: kc native_request_exact[OF state bound keyed once closed identity])
+  also have "\<dots> \<longleftrightarrow> fst (snd (snd r))=development_request_support (snd S) c \<and>
+      snd (snd (snd r))=development_request_context (snd S) c"
+  proof -
+    have requested: "development_requests_present key ?ekey supported scope ps rs rows"
+      using present unfolding development_rows_present_def by blast
+    have rows_sup: "set (supported r)=key ` fset (fst (snd (snd r)))"
+      and rows_scope: "set (scope r)=?ekey ` fset (snd (snd (snd r)))"
+      using requested r unfolding development_requests_present_def by blast+
+    have inj: "inj_on key {..<length (fst (snd S))}"
+      by (rule atoms_present_key_injective[OF state_presents_atoms[OF state]])
+    have sup_in: "fset (fst (snd (snd r)))\<subseteq>{..<length (fst (snd S))}" using inside by blast
+    have req_in: "fset (development_request_support (snd S) c)\<subseteq>{..<length (fst (snd S))}"
+    proof
+      fix d assume d: "d\<in>fset (development_request_support (snd S) c)"
+      show "d\<in>{..<length (fst (snd S))}" using request_support_inside[OF state d] by simp
+    qed
+    have sup_eq: "key ` fset (fst (snd (snd r)))=key ` fset (development_request_support (snd S) c) \<longleftrightarrow>
+        fst (snd (snd r))=development_request_support (snd S) c"
+      using inj_on_image_eq_iff[OF inj sup_in req_in] by (simp add: fset_inject)
+    have ctx_in: "fset (development_request_context (snd S) c)\<subseteq>set (snd (snd S))"
+      by (auto simp: development_request_context_exact)
+    have ent_eq: "?ekey ` fset (snd (snd (snd r)))=?ekey ` fset (development_request_context (snd S) c) \<longleftrightarrow>
+        snd (snd (snd r))=development_request_context (snd S) c"
+    proof
+      assume same: "?ekey ` fset (snd (snd (snd r)))=?ekey ` fset (development_request_context (snd S) c)"
+      have E_in: "fset (snd (snd (snd r)))\<subseteq>set (snd (snd S))"
+      proof
+        fix e assume "e\<in>fset (snd (snd (snd r)))"
+        then have "?ekey e\<in>?ekey ` fset (development_request_context (snd S) c)" using same by blast
+        then obtain e' where e': "e'\<in>fset (development_request_context (snd S) c)" "?ekey e=?ekey e'" by blast
+        show "e\<in>set (snd (snd S))"
+          by (rule first_occurrence_key_member[where xs="snd (snd S)" and x=e and y=e'])
+            (use e' ctx_in in \<open>auto simp: development_entity_key_def\<close>)
+      qed
+      show "snd (snd (snd r))=development_request_context (snd S) c"
+        using inj_on_image_eq_iff[OF development_entity_key_injective E_in ctx_in] same by (simp add: fset_inject)
+    next
+      assume "snd (snd (snd r))=development_request_context (snd S) c"
+      then show "?ekey ` fset (snd (snd (snd r)))=?ekey ` fset (development_request_context (snd S) c)" by simp
+    qed
+    show ?thesis by (simp only: rows_sup rows_scope sup_eq ent_eq)
+  qed
+  finally show ?thesis .
+qed
+
+subsection \<open>The two kinds are one construction\<close>
+
+text \<open>
+  For every reading and every kind, a request the HOL constructor builds from the state and a rows presentation
+  holds is admitted at its locus: the construction holds of the body the store holds there. The refinement
+  request (@{const development_refinement_request}) and the definition request
+  (@{text development_definition_request}) are this corollary at their readings; neither is a lemma of its
+  own, since no field reads the reading or the kind. The introduction of @{const request_presents}
+  (@{thm [source] request_presents_intro}) and the admission contract compose.
+\<close>
+
+corollary native_request_kinds:
+  assumes state: "state_presents key S R" and keyed: "entity_rows_keyed key (development_entity_key (snd S)) S R"
+    and once: "isabelle_declared_once (snd S)" and closed: "isabelle_undeclared_constants (fst S) (snd S)=[]"
+    and identity: "\<And>y. term_formed (ident y)"
+    and present: "development_rows_present key (development_entity_key (snd S)) inert origin grant supported scope decs ps rs iss rows"
+    and r: "r\<in>set rs"
+    and built: "development_constant_request reading kind (snd S) ra a c=Some r"
+  shows "(request_admission,Pair_Term (Pair_Term (path_term (key c)) (request_state_term ident R))
+      (Pair_Term (path_term (development_located_at key Development_Request_Role (fst r))) (development_rows_term rows)))
+      \<in>positive_meaning native_request_system"
+proof -
+  obtain p s Sup E where shape: "r=(p,s,Sup,E)" by (cases r)
+  have fields: "problem_subject p={|c|}" "Sup=development_request_support (snd S) c"
+      "E=development_request_context (snd S) c"
+    using development_constant_request_fields[OF built[unfolded shape]] by blast+
+  have subject: "problem_subject (fst r)={|c|}" using fields shape by simp
+  have presents: "request_presents key S R rows r (key c) (supported r)"
+    by (rule request_presents_intro[OF state present r built])
+  show ?thesis
+    by (rule iffD2[OF native_request_admitted[OF presents keyed once closed identity subject]])
+      (simp add: shape fields)
+qed
 
 end

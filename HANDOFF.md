@@ -123,7 +123,7 @@ interpreted globally); review 203's follow-ups 3 and 5 are Open 107 and 108, #19
 verification stage judged natively, which carried follow-up 4; follow-up 5's three facts went to #284. #193 and #194,
 the stage judged natively and its held measurement, are retired on #376's entry — a new native judgment over the
 bootstrap loop's residuals; condition 5a's path is now the first problem's — and the incremental assessment stays as
-landed, #353 landing whole. Specifications keep their exception, judged whole. The presenter's entity keys keep their
+landed, #353's last shared and edit-sized reads with it (`09cea44c`; its review's follow-ups Open 120). Specifications keep their exception, judged whole. The presenter's entity keys keep their
 scan below about 10^4 entities (Open 84).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: landed are the locus, the relation, the request
@@ -589,6 +589,9 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   the state the native loop judges and the presentations that retire", with marked corrections of #320's "Its rows"
   and "The builds, in order" and the plan's direction section; its graph changes carried (Graph), its owner choices
   Q24.
+- **#353** (`09cea44c`): the per-answer function's request-state edit shared, the reach keys as a path store (design
+  171's rule, not a member tree), edit-sized values bound once, `declarations_single_valued_store` beside its notion,
+  the tidy; its review's follow-ups 1–2 Open 120, 3 moot with #193, 4 Open 78.
 
 ## Open
 
@@ -758,7 +761,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     for one theory. A change to `Native_Collection_Programs` probes alone in 1.4 s (#374's probe, 35.9 s the whole
     run), but a probe that loads its dependents too passes 60 s even with the renamed intermediate copies #271 added
     (#295's probe-all4 stopped without its marker): a longer bound for such a probe, or a heap of the intermediate
-    theories, at a measured need; until then the check certifies the dependents.
+    theories, at a measured need; until then the check certifies the dependents. A probe whose tree changes
+    `Development_Verdict_Mentions` reloads twelve theories, about 8 s of theory time, and passes the 60 s bound at about
+    70 s wall (#353's review, follow-up 4): the probe's own cost, not the theories', at a measured need.
 80. #191's first review's follow-ups (titles only, `.build/tasks/202/review.md`), with that theory's next edit.
 81. An adopted answer's precondition reconstructed at its receipt's `revision`, at the first adoption after #265; the
     published state as the judged answer state waits on item 7.
@@ -943,6 +948,12 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     plan-55 (the excess witness reading its support as `keys_term ks`, `witness_member` joined with the rows program),
     left as a design with Open 90's consumer: the verdict's witnesses are the bootstrap loop's, kept and not extended
     (#376).
+120. **What #353's landing leaves in the incremental assessment** (its review, `.build/tasks/353/review.md`, follow-ups
+    1 and 2): removed-row membership still a list scan per fibre row in `index_fibres`, `assessment_fibres` and
+    `declaring_family` (a path store of the removed rows by row key makes each test a lookup), `edit_presentable`'s
+    distinctness of appended atoms quadratic, and `incremental_reach_table` scanning the root keys and `L` at every
+    visited key (the root keys as a path store beside `assessment_reach_keys`). The assessment is the bootstrap loop's,
+    landed and kept; with #193 and #194 retired no running path reads its per-answer cost: at a measured need.
 119. **The second and the authority problems' requirement families** (#378's recommendation for #371, retired): what
     each asks as the owner's words state it (the answer to Q2), posed over the first problem's admitted answer; placed
     once that answer is admitted, since stated before it the test would shape what it tests (the owner, 18:53: the
@@ -955,9 +966,7 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 
 
 - **Mailed to tasks not yet started, read by their first session** (sent again to a task whose session is lost before
-  it reads them): #321's review's follow-up 3 (its `request_member` part, at the join) to #340; #321's 5
-  (`Development_Incremental_Verdict`'s probe past 60 s, attributed at its cause) to #353;
-  #355's review's to #367 (the phase
+  it reads them): #355's review's to #367 (the phase
   attribution), #359's review's follow-up 2 to #367 (B4's three new phases attributed), #363's review's 1 and 2 to #367
 (`presented_listing` and the target leaves' comparison attributed); #361's review's follow-up 7 to #367; and #169's
   retirement to #354 and #369. #380's first session was released at 20:02 before reading the answer to its q86 and

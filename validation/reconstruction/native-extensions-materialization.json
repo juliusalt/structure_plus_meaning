@@ -2,5 +2,5 @@
  "boundary": "Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized.",
  "recipe_files": 857,
  "recipe_source_manifest": "native-extensions-sources.json",
- "recipe_source_manifest_sha256": "948d60454062466b1f87fa02e0a32c7a282c2bfab72b06c21041e373e24d29f8"
+ "recipe_source_manifest_sha256": "a1cec4fce38bc8131c3332129988da653b92bcf3de3bf89c7ef9cf74a0cd8a37"
 }

@@ -50,7 +50,7 @@ proof -
   have formed: "\<forall>a\<in>U. octets_formed (?f a)"
     using old fresh_address_formed[of W] by (auto simp: finite_addressing_def octets_formed_def)
   have outside: "?f a\<notin>W" for a
-    by (rule long_address_outside[OF forbidden]) (simp add: fresh_address_def)
+    by (rule fresh_address_extension_outside[OF forbidden])
   show ?thesis by (rule exI[of _ ?f])
     (use injective formed outside in \<open>auto simp: finite_addressing_def\<close>)
 qed

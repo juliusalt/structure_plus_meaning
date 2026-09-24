@@ -1,5 +1,5 @@
 theory RRA_Digit_Natural_Paths
-  imports Natural_Binary_Digits Delimited_Bit_Words RRA_Binary_Use_Paths
+  imports Natural_Binary_Digits Delimited_Bit_Words
 begin
 
 definition digit_natural_path where

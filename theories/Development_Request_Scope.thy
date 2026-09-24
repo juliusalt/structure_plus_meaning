@@ -48,6 +48,30 @@ proof -
   finally show ?thesis .
 qed
 
+subsection \<open>The support of a request, read through the mentions of its scope\<close>
+
+text \<open>
+  The support of a request is the constants the statements of its subject's scope mention, and each of
+  them is a position of the state (@{thm [source] state_presents_mentions_inside}). Both stand here, with
+  the support; the field below and the fields of \<open>Development_Request_Citations\<close> consume them.
+\<close>
+
+lemma request_support_mentions:
+  "d |\<in>| development_request_support C c \<longleftrightarrow>
+    (\<exists>e\<in>set (development_constant_scope C c). d\<in>set (entity_mentions e))"
+proof -
+  have "d\<in>set (entity_mentions e) \<longleftrightarrow>
+      (\<exists>p. isabelle_specified_proposition e=Some p \<and> d\<in>set (isabelle_term_constants p))" for e
+    by (cases "isabelle_specified_proposition e") (simp_all add: entity_mentions_def)
+  then show ?thesis by (simp add: development_request_support_member)
+qed
+
+lemma request_support_inside:
+  assumes present: "state_presents key S R" and d: "d |\<in>| development_request_support (snd S) c"
+  shows "d<length (fst (snd S))"
+  using d state_presents_mentions_inside[OF present]
+  by (force simp: request_support_mentions development_constant_scope_member)
+
 subsection \<open>The field \<open>support complete\<close> is \<open>excess\<close> at every family\<close>
 
 text \<open>
@@ -76,15 +100,9 @@ proof -
   have X: "d |\<in>| ?X \<longleftrightarrow> d<length (fst (snd S)) \<and> key d\<in>set ks" for d by (auto simp: fset_of_list_elem)
   have support: "key d\<in>set ks \<longleftrightarrow> d |\<in>| ?X" if "d<length (fst (snd S))" for d using that X by blast
   have Y: "d |\<in>| ?Y \<longleftrightarrow> (\<exists>e\<in>?scope. d\<in>set (entity_mentions e))" for d
-  proof -
-    have "d\<in>set (entity_mentions e) \<longleftrightarrow>
-        (\<exists>p. isabelle_specified_proposition e=Some p \<and> d\<in>set (isabelle_term_constants p))" for e
-      by (cases "isabelle_specified_proposition e") (simp_all add: entity_mentions_def)
-    then show ?thesis by (simp add: development_request_support_member)
-  qed
+    by (rule request_support_mentions)
   have inside: "d<length (fst (snd S))" if "d |\<in>| ?Y" for d
-    using that entity_mentions_positions state_presents_inside[OF present]
-    by (force simp: Y development_constant_scope_member state_positions_def)
+    by (rule request_support_inside[OF present that])
   have statements: "set (development_answer_statements (\<lambda>_. True) (snd S) {|c|})=?scope"
     by (auto simp: development_answer_statements_def development_answer_statement_def list_ex_iff
       development_constant_scope_member)
@@ -241,10 +259,6 @@ proof -
   let ?scope="set (development_constant_scope (snd S) c)"
   have atom: "key c\<in>set (map fst (state_atoms R))"
     using atoms_present_atom[OF state_presents_atoms[OF present] bound] by force
-  have own: "(ekey e,entity_row key (snd S) e)\<in>presented_rows R" if "e\<in>?scope" for e
-    using keyed that by (simp add: entity_rows_keyed_def development_constant_scope_member)
-  have same: "a=ekey e" if "e\<in>?scope" "(a,entity_row key (snd S) e)\<in>presented_rows R" for e a
-    using keyed_agreeD[OF state_presents_row_keys[OF present] that(2) own[OF that(1)]] by simp
   have "(s,Pair_Term (Pair_Term (path_term (key c)) (support_term es))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
     (\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> fst z\<in>set es)"
@@ -252,7 +266,15 @@ proof -
   also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>?scope. \<forall>a. (a,entity_row key (snd S) e)\<in>presented_rows R \<longrightarrow> a\<in>set es)"
     using request_rows_about[OF present bound selection, where Q="\<lambda>z. fst z\<in>set es"] by simp
   also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>?scope. ekey e\<in>set es)"
-    using own same by blast
+  proof -
+    have point: "(\<forall>a. (a,entity_row key (snd S) e)\<in>presented_rows R \<longrightarrow> a\<in>set es) \<longleftrightarrow> ekey e\<in>set es"
+      if e: "e\<in>?scope" for e
+    proof -
+      have "e\<in>set (snd (snd S))" using e by (simp add: development_constant_scope_member)
+      then show ?thesis by (rule keyed_rows_all[OF present keyed])
+    qed
+    show ?thesis using point by blast
+  qed
   also have "\<dots> \<longleftrightarrow> ekey ` ?scope\<subseteq>set es" by blast
   finally show ?thesis .
 qed

@@ -57,29 +57,10 @@ end
 subsection \<open>The rows of a keyed presentation\<close>
 
 text \<open>
-  Under the entity-key condition (@{const entity_rows_keyed}), a presented row is the row of an entity of the
-  state at that entity's key: a property of some presented row is the property of some entity's keyed row.
+  The two keyed readings of a presentation's rows stand with the entity-key condition in
+  \<open>Development_State_Rows\<close> (@{thm [source] keyed_rows_exist}, @{thm [source] keyed_rows_all}); the fields
+  below consume them.
 \<close>
-
-lemma keyed_rows_exist:
-  assumes present: "state_presents key S R" and keyed: "entity_rows_keyed key ekey S R"
-  shows "(\<exists>z\<in>presented_rows R. Q (fst z) (snd z)) \<longleftrightarrow>
-    (\<exists>e\<in>set (snd (snd S)). Q (ekey e) (entity_row key (snd S) e))"
-proof
-  assume "\<exists>z\<in>presented_rows R. Q (fst z) (snd z)"
-  then obtain a p where z: "(a,p)\<in>presented_rows R" and q: "Q a p" by auto
-  obtain j where zj: "(a,p)\<in>set (state_entities R j)" using presented_rows_family[OF z] by blast
-  obtain e where e: "e\<in>set (snd (snd S))" and p: "p=entity_row key (snd S) e"
-    using state_presents_row_origin[OF present zj] by metis
-  have own: "(ekey e,entity_row key (snd S) e)\<in>presented_rows R" using keyed e by (simp add: entity_rows_keyed_def)
-  have "a=ekey e" using keyed_agreeD[OF state_presents_row_keys[OF present] z own] p by simp
-  then show "\<exists>e\<in>set (snd (snd S)). Q (ekey e) (entity_row key (snd S) e)" using e p q by blast
-next
-  assume "\<exists>e\<in>set (snd (snd S)). Q (ekey e) (entity_row key (snd S) e)"
-  then obtain e where e: "e\<in>set (snd (snd S))" and q: "Q (ekey e) (entity_row key (snd S) e)" by blast
-  have "(ekey e,entity_row key (snd S) e)\<in>presented_rows R" using keyed e by (simp add: entity_rows_keyed_def)
-  then show "\<exists>z\<in>presented_rows R. Q (fst z) (snd z)" using q by force
-qed
 
 lemma row_declared_key:
   "q\<in>set (row_declared (entity_row key C e)) \<longleftrightarrow> (\<exists>d. q=key d \<and> isabelle_declared_constant e=Some d)"
@@ -91,27 +72,16 @@ lemma declared_inside:
   shows "d<length (fst (snd S))"
 proof -
   have "d\<in>set (entity_declared e)" by (simp add: entity_declared_def declared)
-  then show ?thesis using entity_declared_positions state_presents_inside[OF present] e
-    by (force simp: state_positions_def)
+  then show ?thesis by (rule state_presents_declared_inside[OF present e])
 qed
 
 subsection \<open>The support of a request, read through the mentions of its scope\<close>
 
-lemma request_support_mentions:
-  "d |\<in>| development_request_support C c \<longleftrightarrow>
-    (\<exists>e\<in>set (development_constant_scope C c). d\<in>set (entity_mentions e))"
-proof -
-  have "d\<in>set (entity_mentions e) \<longleftrightarrow>
-      (\<exists>p. isabelle_specified_proposition e=Some p \<and> d\<in>set (isabelle_term_constants p))" for e
-    by (cases "isabelle_specified_proposition e") (simp_all add: entity_mentions_def)
-  then show ?thesis by (simp add: development_request_support_member)
-qed
-
-lemma request_support_inside:
-  assumes present: "state_presents key S R" and d: "d |\<in>| development_request_support (snd S) c"
-  shows "d<length (fst (snd S))"
-  using d entity_mentions_positions state_presents_inside[OF present]
-  by (force simp: request_support_mentions development_constant_scope_member state_positions_def)
+text \<open>
+  The support is the mentions of the scope and every support constant is a position of the state; both
+  stand with the support in \<open>Development_Request_Scope\<close> (@{thm [source] request_support_mentions},
+  @{thm [source] request_support_inside}) and are consumed here.
+\<close>
 
 text \<open>
   In a state whose \<open>undeclared\<close> field holds, every support constant is declared: the half of the
@@ -254,16 +224,12 @@ subsection \<open>The field \<open>support sound\<close>\<close>
 text \<open>
   At every key of \<open>ks\<close> the reach table is searched with the store's own search; the row found holds a status
   and the list of the key's predecessors, and its checker asks, by membership, that the subject's key be
-  among them. The checker passes the predecessors to membership by one rearranging rule.
+  among them. The checker is membership's rule that passes the rest of a pair on
+  (@{const native_member_later}) at the membership site: a row's status read and its predecessors passed
+  on, which is what the reach's step does at its some-element site.
 \<close>
 
-definition predecessor_check_rule :: "'u definition_site \<Rightarrow>
-    (local_address,local_address,'u definition_site) finite_factor_schema" where
-  "predecessor_check_rule m=finite_native_rule
-    (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
-    [([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
-
-locale predecessor_check_program = native_rule_family P ch "[([0],predecessor_check_rule m)]" +
+locale predecessor_check_program = native_rule_family P ch "[([0],native_member_later m)]" +
     members: native_member_program P m
   for P :: "'u native_system" and ch m :: "'u definition_site"
 
@@ -271,7 +237,7 @@ sublocale predecessor_check_program \<subseteq> rearranged: native_rearranging_p
   "Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))" m
   "Finite_Pattern_Pair (native_var 0) (native_var 2)"
   unfolding native_rearranging_program_def native_rearranging_program_axioms_def
-  using native_rule_family_axioms[unfolded predecessor_check_rule_def] by auto
+  using native_rule_family_axioms[unfolded native_member_later_def] by auto
 
 context predecessor_check_program
 begin
@@ -325,48 +291,37 @@ proof -
   let ?T="state_reach_table (state_atoms R) (state_roots R) Fs"
   have sv: "single_valued (set ?T)" using state_reach_table_formed by (simp add: reach_table_formed_def)
   have at: "(\<exists>v. store_lookup (path_store ?T) q=Some v \<and> key c\<in>set (snd v)) \<longleftrightarrow>
-      q\<in>fst ` set (state_atoms R) \<and>
-      (\<exists>z\<in>presented_rows R. q\<in>set (row_mentions (snd z)) \<and> key c\<in>set (row_subjects (snd z)))" for q
-    by (auto simp: path_store_lookup[OF sv] state_reach_table_row state_reach_predecessors_member
-      split_paired_Ex families presented_rows_def)
-  have each: "q\<in>fst ` set (state_atoms R) \<and>
-      (\<exists>z\<in>presented_rows R. q\<in>set (row_mentions (snd z)) \<and> key c\<in>set (row_subjects (snd z))) \<longleftrightarrow>
+      q\<in>fst ` set (state_atoms R) \<and> key c\<in>set (state_reach_predecessors Fs q)" for q
+    by (auto simp: path_store_lookup[OF sv] state_reach_table_row split_paired_Ex)
+  have each: "q\<in>fst ` set (state_atoms R) \<and> key c\<in>set (state_reach_predecessors Fs q) \<longleftrightarrow>
     q\<in>key ` fset (development_request_support (snd S) c)" for q
   proof
-    assume "q\<in>fst ` set (state_atoms R) \<and>
-      (\<exists>z\<in>presented_rows R. q\<in>set (row_mentions (snd z)) \<and> key c\<in>set (row_subjects (snd z)))"
-    then obtain a p where z: "(a,p)\<in>presented_rows R" and qm: "q\<in>set (row_mentions p)"
-      and cs: "key c\<in>set (row_subjects p)" by auto
-    obtain j where zj: "(a,p)\<in>set (state_entities R j)" using presented_rows_family[OF z] by blast
-    obtain e where e: "e\<in>set (snd (snd S))" and p: "p=entity_row key (snd S) e"
-      using state_presents_row_origin[OF present zj] by metis
-    have "c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
-      using cs entity_row_subject_key[OF present bound e] p by simp
-    then have scope: "e\<in>set (development_constant_scope (snd S) c)"
-      using e by (simp add: development_constant_scope_member)
-    obtain d where d: "d\<in>set (entity_mentions e)" "q=key d" using qm p by auto
-    have "d |\<in>| development_request_support (snd S) c"
-      using scope d(1) by (auto simp: request_support_mentions)
+    assume "q\<in>fst ` set (state_atoms R) \<and> key c\<in>set (state_reach_predecessors Fs q)"
+    then obtain d where d: "d<length (fst (snd S))" "q=key d"
+      and pred: "key c\<in>set (state_reach_predecessors Fs (key d))"
+      using state_atom_keys[OF present families] by auto
+    obtain e s where e: "e\<in>set (snd (snd S))" and ks: "key c=key s" and m: "d\<in>set (entity_mentions e)"
+      and sj: "s\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
+      using pred predecessor_at[OF present families d(1)] by blast
+    have sb: "set [s]\<subseteq>{..<length (fst (snd S))}"
+      using state_presents_subject_inside[OF present e sj] by simp
+    have "c=s" using key_member[OF present families bound sb] ks by simp
+    then have "e\<in>set (development_constant_scope (snd S) c)"
+      using e sj by (simp add: development_constant_scope_member)
+    then have "d |\<in>| development_request_support (snd S) c"
+      using m by (auto simp: request_support_mentions)
     then show "q\<in>key ` fset (development_request_support (snd S) c)" by (simp add: d(2))
   next
     assume "q\<in>key ` fset (development_request_support (snd S) c)"
     then obtain d where d: "d |\<in>| development_request_support (snd S) c" "q=key d" by auto
     obtain e where scope: "e\<in>set (development_constant_scope (snd S) c)" and m: "d\<in>set (entity_mentions e)"
       using d(1) by (auto simp: request_support_mentions)
-    have e: "e\<in>set (snd (snd S))"
-      and subj: "c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
-      using scope by (simp_all add: development_constant_scope_member)
-    obtain a where row: "(a,entity_row key (snd S) e)\<in>presented_rows R"
-      using entity_row_presented[OF present e] by blast
-    have cs: "key c\<in>set (row_subjects (entity_row key (snd S) e))"
-      using entity_row_subject_key[OF present bound e] subj by simp
-    have qm: "q\<in>set (row_mentions (entity_row key (snd S) e))" using m d(2) by simp
-    have atom: "q\<in>fst ` set (state_atoms R)"
-      using atoms_present_atom[OF state_presents_atoms[OF present] request_support_inside[OF present d(1)]] d(2)
-      by force
-    show "q\<in>fst ` set (state_atoms R) \<and>
-      (\<exists>z\<in>presented_rows R. q\<in>set (row_mentions (snd z)) \<and> key c\<in>set (row_subjects (snd z)))"
-      using atom row cs qm by force
+    have bd: "d<length (fst (snd S))" by (rule request_support_inside[OF present d(1)])
+    have "key c\<in>set (state_reach_predecessors Fs (key d))"
+      using scope m predecessor_at[OF present families bd]
+      by (auto simp: development_constant_scope_member)
+    then show "q\<in>fst ` set (state_atoms R) \<and> key c\<in>set (state_reach_predecessors Fs q)"
+      using atoms_present_atom[OF state_presents_atoms[OF present] bd] d(2) by force
   qed
   have "(u,Pair_Term (Pair_Term (path_term (key c)) (reach_table_term ?T)) (keys_term ks))\<in>positive_meaning P \<longleftrightarrow>
       (\<forall>q\<in>set ks. \<exists>v. store_lookup (path_store ?T) q=Some v \<and> key c\<in>set (snd v))"

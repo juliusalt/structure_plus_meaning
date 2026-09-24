@@ -90,42 +90,6 @@ text \<open>
   not proved again.
 \<close>
 
-lemma development_incumbent_with_fields:
-  assumes built: "development_incumbent_with judge S p=Some (B,u,I)"
-  shows "development_locus_target Development_Problem_Role p=Some (generation_locus I)"
-    "finite_generation_formed I"
-proof -
-  obtain l t where key: "development_incumbent_key S p=Some (l,t)"
-    and generated: "development_payload_generation_with judge t (finite_enumerated_environment [] []) l []=Some (B,u,I)"
-    using built by (auto simp: development_incumbent_with_def bind_eq_Some_conv split: prod.splits)
-  have locus: "development_locus_target Development_Problem_Role p=Some l"
-    using key by (auto simp: development_incumbent_key_def bind_eq_Some_conv)
-  note fields=development_payload_generation_fields[OF generated]
-  show "development_locus_target Development_Problem_Role p=Some (generation_locus I)"
-    using locus fields(1) by simp
-  show "finite_generation_formed I" by (rule fields(2))
-qed
-
-lemma development_answer_with_fields:
-  assumes built: "development_answer_with judge S r S' H rows=Some (B,u,G)"
-  shows "development_locus_target Development_Problem_Role (fst r)=Some (generation_locus G)"
-    "finite_generation_formed G"
-proof -
-  obtain l t where key: "development_answer_key S r S'=Some (l,t)"
-    and generated: "development_payload_generation_with judge t H l
-      (development_answer_citations (fst (snd S)) (fst r) l rows)=Some (B,u,G)"
-    using built by (auto simp: development_answer_with_unfold bind_eq_Some_conv split: prod.splits)
-  obtain p E payload v where generation: "development_answer_generation S r S'=Some (p,E,payload,v)"
-    and locus: "development_locus_target Development_Problem_Role p=Some l"
-    using key by (auto simp: development_answer_key_def bind_eq_Some_conv split: option.splits)
-  have problem: "p=fst r"
-    using generation by (auto simp: development_answer_generation_def Let_def split: prod.splits if_splits)
-  note fields=development_payload_generation_fields[OF generated]
-  show "development_locus_target Development_Problem_Role (fst r)=Some (generation_locus G)"
-    using locus fields(1) problem by simp
-  show "finite_generation_formed G" by (rule fields(2))
-qed
-
 theorem development_answer_publication_applied:
   assumes published: "development_answer_publication_with judge S r S'=(Some I,Some Q,Some G,results)"
   obtains U V where "results=[Some (Finite_Applied U),Some (Finite_Applied V)]" "finite_snapshot_formed V"

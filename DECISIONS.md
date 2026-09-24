@@ -9663,6 +9663,12 @@ Recorded 2026-09-20, commit `524a3ab3`.
 
 ## The development notions are structure; a kind is a family and an identity is a path
 
+[Corrected by "The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer"
+below (task 378), after the owner's words of 2026-09-24 18:12: a kind realized as a locus prefix and an identity as a
+path supply meaning only through the HOL functions and presenters that assign them. The rows and loci this entry
+assigns present the bootstrap loop's HOL problems and retire with that loop; the native notion of a problem is the
+answer of the native loop's first problem, and a locus or key that finds a native problem is an index.]
+
 The decomposition's schema matches on problems and the verdict, request construction and native
 answers read problems, requests, answers and packets. Both build lines ahead therefore range over
 these notions, and neither defines their presentation. Today they are HOL datatypes presented as
@@ -13756,6 +13762,11 @@ once by `finite_system_payloads_exact`.
 
 ### The problem
 
+[Corrected by "The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer"
+below (task 378): no native family, kind prefix or native problem row is built. The native notion of a problem is the
+answer of the native loop's first problem, and the first native problem is that problem, posed in the least form that
+entry decides, not a residual record of chosen sites.]
+
 **Subject and locus.** The subject is one site of the package. Its locus is the role prefix, a **native family**
 prefix, a native kind prefix, and the site's key. The family prefix is needed because the key spaces differ: a
 constant's key is the path of its position in a name table and a site's the path of its position in the package's site
@@ -14351,6 +14362,12 @@ split of a program sharing a leading prefix with another, which the joins of the
 Recorded 2026-09-24 (task 295).
 ## The native notion of a problem: what its kind asks of its subject, at a locus of the store
 
+[Corrected by "The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer"
+below (task 378): withdrawn after the owner's question of 2026-09-24 18:36. A problem made a row at a locus, its role
+and kind bit prefixes that HOL functions assign and its subject a key a presenter assigns, meant nothing natively; and
+by the owner's direction of 18:53 the native notion of a problem is the answer of the native loop's first problem, not
+a design's decision. Nothing in this entry is a premise.]
+
 The owner, 2026-09-24 17:50 (ledger, to the planner): "Upon further review of the current state of the repository, I
 found that theere is no native definition of the notion of a problem - yet there are questions like the one that I
 just answered and notions like readiness that depend on what a problem is - how is this possible? Clearly to even be
@@ -14654,3 +14671,269 @@ membership's later rule (`native_some_rest_member_later`), cited so where the so
 is kept, since a recorded state may expand it.
 
 Recorded 2026-09-24 (task 374).
+## The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer
+
+The owner, to the planner, 2026-09-24 (the ledger), at 17:50: "Upon further review of the current state of the
+repository, I found that theere is no native definition of the notion of a problem - yet there are questions like the
+one that I just answered and notions like readiness that depend on what a problem is - how is this possible? Clearly to
+even be able to do anything in the loop the most fundamental thing that needs to be done is the development of a native
+notion of a problem is it not? This seems like a fundamental flaw to everything that was done and is being done so far
+that needs to be adressed." At 18:12: "Task 9 made problems structural, but as a way to present them without octets,
+not as a native definition - how is this have anything to do with what I wanted? Using structure rather than octets was
+meant to remove opaqueness instead it seems that all it did is move it from octets to structure. Every distinction a
+native program relies on must come from a native notion, not from a HOL presentation relation." At 18:36, of the first
+design of the notion (#373, "The native notion of a problem: what its kind asks of its subject, at a locus of the
+store"): "Does design #373 not contradict what I just said at its core: "a problem is a row … at a locus", its subject
+"the key", justified by "a row is native structure already"". At 18:53: "Now that I think about it the problem of "what
+is a problem" should be the first problem tackled the native loop and then the problem I gave for Q2 which would then
+excercise the quality of the produced solution."
+
+These words are the premise. #373 made a problem task 9's row at a locus: role and kind bit prefixes that HOL functions
+assign (`development_role_path`, `development_kind_path`), a subject that is a key — the binary digits of a position a
+presenter assigns (`state_constant_key`, the first-occurrence keys) — and readings that drew every distinction by
+descending a path. A path means what the function that built it says, and being made of RRA structure gives nothing a
+meaning, so what a problem was, what it was about and whether it was answered meant nothing natively: the opacity task
+9 moved from octets into structure stayed. #373 is withdrawn and is no premise. By the owner's direction of 18:53 the
+native notion of a problem is decided by no design: it is the answer of the native loop's first problem — produced by
+an executor, judged and admitted through the loop, approved by the owner — and the problem of Q2, how to choose the
+next problem to solve, is the second, posed over that answer and exercising its quality. This entry decides the first
+problem's native statement, the least that is established outside the loop to pose it, how the loop works it, the
+second problem and the authority problem, and the graph's changes; the plan records it. The candidate notion sketched
+below is one possible answer, generated, to be judged through the loop. It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The native notion of a problem is decided by a design (#373): a row of the problem role at a locus (role, kind, key) of the development's store, its subject the key, its kind a family whose prefix a HOL function assigns, its status read by searching the store at the locus's roles. | The notion is the answer of the native loop's first problem, what a problem is (the owner, 18:53). A row, locus, prefix or key supplies no meaning; where one finds a problem it is an index of whatever carrier the admitted notion defines (`carrier_index`), the implementation's choice. #373's entry is withdrawn. |
+| The loop's first problem is how to choose the next problem to solve (the owner's answer to Q2), posed over a notion a design supplies (#371 over #373). | That problem is the second, posed over the admitted answer of the first and exercising it; a failure to pose, decompose, request, judge or admit it within that notion is criticism of the first problem's answer. |
+| A problem about a native definition is a row at a locus under a native family and kind prefix (#320, "The problem"; N4a, #348), and the first native problems are a residual record of chosen sites (N4b, #350; Q18 (e)). | No native family, kind prefix or problem row is built. The first native problem is what a problem is, posed in the least form below; no refinement site is a first problem (the owner's answer to Q2). |
+| A problem's kind, identity, status, origin and authority are HOL tags, prefixes, paths or citations of rows. | Each is whatever native definition the admitted notion gives it. This entry fixes only what posing the first problem needs, and it needs none of them. |
+
+### The first problem's native statement
+
+**What it asks of an answer.** A native definition of the notion of a problem: native content — definitions over
+native structure whose meaning is their positive meaning — extending the development's native state, the notions the
+answer must serve (readiness, the reach, the verdict, request construction, the decomposition's schema; one package
+once #320's N2 has built it), together with its contract, the statements of what its entries hold of over Factor's
+semantics, for Isabelle to verify (the owner, 2026-09-19: "The role of Isabelle is to verify that the native reasoning
+and definitions are internally consistent before the native machinery can itself verify this").
+
+**Its requirements, as the owner's directions state them**, and what of each a native program checks:
+
+| Requirement (the owner's words) | What a native program checks | What stays criticism and the owner's approval |
+|---|---|---|
+| "the development of a native notion of a problem" (17:50) | the answer's package is formed and closed, and it retains every artifact, binding and definition of the state it extends: package admission and membership (`Factor_Package_Admission`, `Factor_Package_Membership`), environment inclusion (`Factor_Environment_Inclusion`), each a native program with its contract proved once | that its meaning is the notion of a problem |
+| "questions like the one that I just answered and notions like readiness that depend on what a problem is" (17:50) | nothing of the answer alone | exercised by use: readiness and the loop's questions re-stated over the admitted notion, and the second problem posed over it; a failure is criticism of the answer |
+| "Every distinction a native program relies on must come from a native notion, not from a HOL presentation relation" (18:12), and the pattern rejected at 18:36 | two proxies: the answer's programs state no payload literal but the empty payload (the criterion of "A program's payload literals are the octets it reads", computed exactly by `finite_system_payloads_exact`), and every definition they call is a definition of the extended package | whether each distinction a program of the answer draws has native meaning |
+| "encoding structure as opaque data to define meaning is cardinally oposed to what I am trying to achieve" and "if structure is used then it needs to be explicit" (2026-09-19) | the payload audit, as above | explicitness beyond octets |
+| "everything we develop should be native content with native semantics and native structures only translated when required" (2026-09-19) | the answer is read as native content (below) | — |
+| its consistency verified (2026-09-19, above) | nothing natively before genesis: Isabelle's acceptance is the bootstrap verifier (below) | — |
+| "Notions are supposed to be inherently seperate from the requirements" and "Do not add layers that merely rename the same detail, or define general notions solely around the current requirement" (2026-09-08) | reuse shows as calls of the answer's definitions into the native notions the state holds, and nothing more | generality, non-conflation, irredundancy, and non-nominality beyond the octet proxy |
+| "Depth is the way I want this to be solved" (2026-09-17) | — | how the problem is decomposed (below) |
+| the second problem "would then excercise the quality of the produced solution" (18:53) | — | the answer's quality, exercised by the second problem and approved by the owner |
+
+The relation the first problem asks is the conjunction of the checkable requirements on one pair, the given state and
+a candidate answer: the requirement guard (`requirement_guard_schema`, `required_admission_installed`: every
+requirement socket receives the whole subject) over environment inclusion, package admission and the payload audit,
+with verification a further premise once its native form exists. The owner's approval is no premise of that relation:
+the owner's approval is not native truth, and truth is not the owner's to decide; it is the adoption of the admitted
+answer (below). The encoding of these requirements as native goals is generated until the owner authorizes it, as the
+plan's requirement-encoding request class has it.
+
+### The least established outside the loop to pose it
+
+Posing a problem needs a form of problem, and every form is an answer to the first problem. The least form is
+therefore established outside the loop, a residual that the admitted answer supersedes: once that answer is admitted,
+every problem posed in the least form — the first included — is posed again as a problem of the admitted notion, a
+re-evaluation, and the least form retires. The least form is the library's condition, which exists natively and
+presupposes no notion of a problem: **an asked relation — a native program's entry, read at the pair of a given and a
+candidate (`finite_program_condition`, `finite_program_condition_exact`; over a package supplied as data, the positive
+query, `positive_query_sound`, `positive_query_complete`, `program_meaning_reflection`) — and a given.** Nothing else:
+no kind, locus, key, status, origin tag or row.
+
+The first problem in that form, and every distinction it relies on:
+
+| What it distinguishes | Whence |
+|---|---|
+| an answer from a non-answer | the guard's positive meaning at the given and the candidate, by native evaluation (`finite_program_evaluation_exact`, through the stage demand); its premises environment inclusion and package admission, native programs with contracts proved once; the payload audit a HOL computation (`finite_system_payloads`, exact) until its native reader is built — a recorded reliance |
+| which requirements | the guard's premise sockets, native program structure; which requirements, and their encoding of the owner's words, are generated, a residual the owner authorizes |
+| the state the answer extends | the given: the development's native state as a program entry (`program_entry_value_presents`: an environment and its package site), occurrence coordinates of actual structure read by environment and package admission — before N2 the notions' installed programs, after it the one package |
+| the candidate | native content: a package extending the given, presented as environment data (`environment_value_presents`, read by the native environment admission, `Factor_Environment_Admission`), transported as the padded shared word of its term and read back exactly (`finite_padded_term_read_exact`); an unreadable candidate is refused whole |
+| that this is the first problem | the owner's direction of 18:53, transcribed as an owner record — a generation whose payload is the owner's words, inert text, its cause certified under a policy listing it (`development_payload_generation_with`, `development_payload_generation_certified`), a residual transcription — the direct predecessor of the problem's posing generation |
+| the problem posed | a generation whose payload presents the pair of asked relation and given, its cause certified under the first loop's policy (a ground program listing the payload, `Development_Policy`); the locus it stands at is an index, the whole-artifact target of its own payload's quotation, which no program reads but the snapshot's lookup |
+| an admitted answer | a generation whose payload presents the admitted candidate, its predecessor the posing generation, its cause certified under the policy — and, before publication, the verification below (Q18 (a)) |
+| the owner's approval | an owner record citing the admitted answer's generation, transcribed like the direction; until it exists the answer is generated |
+
+The least form does not use `development_problem`, task 9's rows and loci, role and kind prefixes, first-occurrence
+keys, `readiness_presents`, the selection question over rows, request construction or the verdict over rows, or the
+development cycle's numbered comparison and revision (`development_selected_facets`, the positions of candidates and
+facets, codes by position). Its reliances on HOL presentation relations are exactly these, each a member of its
+notion's presentation class with an exact native admission, supplying no meaning: the environment and program-entry
+presentations, the policy's listing of presentations and the answer word's reader; and one HOL computation, the payload
+audit. Its choice of the condition form, of the requirements and of their encoding is generated, and the order is the
+owner's; each is recorded as a residual of the bootstrap.
+
+**Verification before the translation exists.** Native definitions are written today as finite rule programs, HOL
+terms compiled into native packages. The candidate's verification is that Isabelle accepts a theory stating its
+programs as such terms with their contract lemmas, in a frame importing the native notions they consume, and that the
+submitted package is identical, by native environment identity (`Factor_Environment_Comparison`), to the compilation of
+those terms (`program_compilation_total_with_roots` and its executable compiler). Both are mechanical. The
+correspondence runs from the Isabelle text to the native content, the reverse of the translation the owner describes;
+it is the bootstrap's until the translation of native content into Isabelle exists (#320's Open; Q1, Q18 (a)), and
+publication of the answer as the development's notion waits for it.
+
+### How the loop works it
+
+- **Posing**, in the least form above: its origin the owner record of 18:53, owner-level; its native statement
+  generated until the owner authorizes it.
+- **Decomposition.** No native method decomposes a definition problem: a method must say how the parent's answer
+  composes from its children's, and none is stated for definitions. Provisional choice, a residual: one generated
+  method — first the carrier (what a problem is: its formation and its identity), then each reading the plan's prose
+  names of a problem over that carrier (what it asks, what it is about, the state it is judged against, its
+  dependencies, its origin, its authority, whether it is answered), each a definition subproblem posed once the carrier
+  is answered, the children's definitions joined into the parent's answer by the join law (`finite_rule_program_join`)
+  and the parent's guard judging the join. The prose list is the plan's, generated from the owner's comments; the
+  method is criticized like any answer, and an executor may answer the whole where the children prove inseparable.
+- **Requests.** A leaf's request is its question with its least context: the entries its answer may call — the
+  state's notions and the Factor library's native readers it reuses (package, definition and call admission, the
+  positive query and program reflection, derivation and replay admission, generation, adoption, environment identity) —
+  read by package membership over the given; its packet the question's presentation with that context. Request
+  construction's native program reads Isabelle state rows or the package's rows; how the rule of 18:12 applies to it is
+  #376's, and until #376 reports, the first requests are constructed by the harness from the given's scope, a residual.
+- **Answers.** An executor returns a candidate: native content as above, and its contract theory for verification.
+  Whether an agent confined to its packet may answer is Q4.
+- **Judgment.** The guard's native evaluation admits or refuses the candidate; a refusal names the failed requirement
+  sockets and is never an answer repaired. Native criticism before verification evaluates the candidate's readings on
+  finite scopes of actual subjects — the seeded and machinery states' problems — and its failures are comparison
+  failures against the candidate.
+- **Admission, verification and approval.** An admitted candidate is a generation (above), verified by the bootstrap
+  route above and approved by an owner record citing it. Approved, it is owner-level: later criticism of it is a
+  problem for the owner, and only the owner revises it (the plan's "Adequacy as a current basis").
+- **Supersession.** The admitted, verified and approved notion is published as the development's notion of a problem:
+  the first problem is posed again under it, readiness and the loop's questions are re-stated over it, and the second
+  problem is posed over it. From then the HOL-constant loop poses nothing (the owner's answer to Q7, as read below).
+
+What of the existing machinery serves: native evaluation and the stage demand; requirement guards and their
+construction (`Factor_Requirement_Plans`, `Factor_Finite_Native_Requirements`); environment inclusion and admission;
+package admission and membership; the positive query and program reflection; certified generations, the first loop's
+policy and the transactions of a publication (`Development_Certified_Generations`, `Development_Policy`,
+`Represented_Snapshot_Transactions`); term transport (`Finite_Term_Word_Readers`); the development package (N2). What
+must change first is #376's: request construction, the verdict and the reach over rows, the presentation of the
+package's rows (N1, N3), and the answer as an edit of rows (#320's N6). What is to be built: the owner records and
+their policy; the payload audit's native reader; the native-definition answer's transport and its judgment by the
+guard; the verification route above.
+
+The owner's answer to Q7 ("HOL-constant problems stay only until native definitions exist") is read, generated and
+without owner authority: the HOL-constant loop poses no new problem once the first problem is posed in the least form,
+and it retires, its records history, once the first problem's answer is admitted and the loop's problems are posed
+again under it.
+
+### The second problem, and the authority problem
+
+The problem of Q2 — how to choose the next problem to solve — is posed over the first problem's admitted answer, as a
+problem of that notion, its native statement and answer developed through the loop, readiness and the planner's choice
+the working basis meanwhile, each choice a residual (the owner's answer to Q2).
+
+- **What it exercises.** A problem whose subjects are the development's problems — their dependencies, status,
+  readiness and authority — so the notion must represent problems as the given of another problem; decomposition in
+  depth (the owner's test: "will it be robust enough to expose and work on the structure that determines the answer to
+  this problem"); derived subproblems and their authority.
+- **How a failure returns.** A failure to pose, decompose, request, judge or admit the second problem or its
+  subproblems within the notion — a facet with no native reading, a subproblem the notion cannot represent, readiness
+  that cannot be re-stated over it — is recorded as criticism of the first problem's admitted answer, a comparison
+  failure or repair witness against it (`Observation_Repairs`, `Observation_Revisions`). The first problem becomes a
+  re-evaluation problem whose requirement family gains the exposed requirement, and since the owner approved its
+  answer, the problem goes to the owner with its evidence.
+- **The authority problem** is posed with the second, over the same notion. Its native answer, approved by the owner,
+  decides whether a derivation of subproblems and the derived subproblems are owner-approved, and the second problem's
+  derivations are its first subjects; until the owner approves that answer, each authority decision is a choice
+  carrying its residual. The first problem's own answer is approved by the owner directly: the authority problem's
+  answer does not exist before it.
+
+### One possible answer (generated)
+
+What an executor might submit, sketched from the library's native notions — to be judged through the loop, and not
+adopted by this entry. A problem is a question posed to a native program: an entry whose positive meaning is the
+relation asked (read by the positive query over any package supplied as data), the native identity programs of the
+notions its given and its answer are subjects of, and a given; its answers are the terms the entry holds of beside the
+given. Formation is call formation for some answer (`program_formation_reflection`): well posed, not necessarily
+answerable (`program_reflection_formed_false`). Identity is the same entries in identical environments and the same
+given subject, as the given notion's identity program decides (the generation notion's pattern,
+`generation_identity_exact`). The state it is judged against is the least closed scope of those entries
+(`program_scope_is_minimal`, `rooted_system_meaning`, `positive_meaning_dependency_locality`), so a change reaches
+exactly the problems whose scopes it alters. Its kinds are the relations asked — verification, native refinement
+(admissibility with a verification premise), native definition (a requirement guard) — the selection and authority
+problems being definition problems told apart by their givens. Its decompositions are instances of methods sound for
+the relation asked; its status, readings of a publication through generation selection and identity; its origin, its
+posing generation's predecessors and certified cause; its authority, the adoption of that generation (`factor_adopts`,
+`native_adoption_judgment_at`), the owner's being a ground adoption policy of the approvals the owner records. Its
+generality, its fit to the owner's intent, and whether readiness and the second problem can be stated over it, are for
+the loop and the owner.
+
+### The graph
+
+The planner's to decide; recommended:
+
+- **#371** (the owner's two problems): re-scoped to the second and the authority problems' requirement families, what
+  each asks as the owner's words state it, to be posed over the first problem's admitted answer. It poses nothing now
+  and needs no kind or family.
+- **#376** (the rule of 18:12 applied to the loop's other native programs): stands. The plan record it held is this
+  task's; its (3) on N4a and N4b follows this entry; it decides what request construction, the verdict and the reach
+  become before the first problem's leaves are requested at the package.
+- **N1 (#336, #338) and N3 (#344, #346)** are #376's. **N2 (#340, #342)**, the development's native package, stands:
+  it is the state the first answer extends.
+- **N4a (#348)** is not built: its locus over a kind path, native family and kinds and native problem rows are the
+  rejected pattern. Its projection of a locus's key part (HANDOFF Open 33) is bootstrap maintenance, the planner's to
+  keep or drop.
+- **N4b (#350)** is re-briefed: the native state's first generation stands, its locus an index; its first native
+  problem is the first problem, posed in the least form by the posing build.
+- **The decomposition line** — #325 (in progress), #327, #329, #331, #333 — extends the bootstrap loop's rows, loci
+  and tables. That loop applies no decomposition (its split source is empty and its histories hold no repair), so the
+  line serves nothing the loop runs, and by the owner's answer to Q7 it is not built: #325 stopped unlanded, the others
+  retired. #377 (the decomposition at the package's rows) waits on the first problem's answer, since what a
+  decomposition is follows what a problem is.
+- **New**: the owner records and their policy (the direction of 18:53 first, transcribed, a residual); the first
+  problem's guard (environment inclusion, package admission, the payload audit with its native reader new) and its
+  posing generation; the native-definition answer route (transport, judgment by the guard, the admission generation,
+  the bootstrap verification); the first request and its issue.
+
+### Weighed and rejected
+
+- **A design deciding the notion** (#373, and this task's first brief): the owner's direction of 18:53 makes it the
+  loop's first problem. A design supplies its statement and the least form to pose it, and at most a candidate answer.
+- **Posing the first problem as a row at a locus, or as a `development_problem`**: the pattern the owner rejected, or
+  HOL's meaning.
+- **Posing it as a native question of the development cycle** (`native_development_question`: a generator, a scope
+  critic, numbered facets): a question judges a scope of generated candidates, an executor's answer lies in none, and
+  its comparison and revision read candidates and facets by position. The condition the question is built on is the
+  least form.
+- **Posing it with no form, the owner alone judging answers**: nothing native would judge an answer, and the loop would
+  admit nothing.
+- **The owner's approval as a premise of the asked relation**: it is not native truth but the adoption of an admitted
+  answer.
+- **The HOL payload audit as the lasting proxy for the rule of 18:12**: a recorded reliance of the least form, not the
+  check the loop keeps; its native reader is to be built.
+- **Decomposing by constituents chosen here as the notion's**: that would decide the answer. The method is offered as a
+  residual, criticized, with answering whole its alternative.
+- **Posing the second problem first, over an interim notion**: the owner's order is the first, then the second
+  exercising it.
+
+### What the builds must respect
+
+The notion of a problem is the first problem's admitted answer: no build defines it, and nothing of the native loop is
+built over `development_problem`, task 9's rows, loci, prefixes or keys. The least form is an asked relation and a
+given, nothing more; every distinction it relies on is recorded above, and a build that adds one records it. A key,
+locus or store that finds a problem is an index, the choice of its key the implementation's. The first problem's
+requirements are the owner's words; their encoding as native goals is generated until the owner authorizes it; the
+owner's approval is an owner record, never a premise of a native relation. The answer is native content, judged by the
+predecessor's guard and never by the program it answers (OD-2), and published only once verified (Q18 (a)). A failure
+of the second problem is criticism of the first problem's answer, and once the owner has approved that answer only the
+owner revises it. Every notion reused is consumed through its local contract, proved once.
+
+### Open
+
+The owner's authorization of the requirements' encoding. The payload audit's native reader. The translation of native
+content into Isabelle, after which verification runs in the owner's direction. A decomposition method for definition
+problems. Request construction for native problems (#376). The agent executor (Q4). The transcription of the owner's
+words beyond the direction the first problem cites. This design was made outside the loop and is a residual.
+
+Recorded 2026-09-24 (task 378's decision; a design, no theory changes).

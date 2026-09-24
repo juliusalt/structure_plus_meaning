@@ -24,17 +24,18 @@ text \<open>
 subsection \<open>A key is cited in a list\<close>
 
 text \<open>
-  A key is cited in a family of keys when it is a member of the list the family is: membership's program,
-  behind the swap that puts the list, which is the context of every call below, first. This is stated once,
-  and every field of request construction that asks whether a key is cited in a body family reads it.
+  A key is cited in a family of keys when it is a member of the list the family is: the collection notion
+  @{locale list_cited_program} (theory \<open>Native_Collection_Programs\<close>), membership's program behind the swap
+  that puts the list, which is the context of every call below, first. Its reading at a family of keys is
+  stated once here, and every field of request construction that asks whether a key is cited in a body
+  family reads it.
 \<close>
 
-locale list_cited_program = swap: native_swap_program P w m + members: native_member_program P m
-  for P :: "'u native_system" and w m :: "'u definition_site"
+context list_cited_program
 begin
 
 theorem exact: "(w,Pair_Term (keys_term ks) (path_term q))\<in>positive_meaning P \<longleftrightarrow> q\<in>set ks"
-  by (simp add: swap.exact keys_term_def members.exact)
+  by (simp add: keys_term_def list_exact)
 
 end
 

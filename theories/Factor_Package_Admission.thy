@@ -192,6 +192,46 @@ corollary package_admission_rejects_unreadable_site:
   by (simp only: package_admission_at_roots[OF source roots])
     (use reached missing in \<open>auto simp: native_package_formed_def\<close>)
 
+section \<open>Package admission is equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument is the source root, presented by the site context class @{thm [source]
+  source_root_presentation_class}, on which @{text Factor_Use_Renaming}'s site context action acts. A
+  permutation keeps the package reading at the root, from the package reading at a renamed root use
+  (@{thm [source] native_package_use_renaming}). The reader's root is an actual position of its
+  environment, which the class requires.
+\<close>
+
+lemma native_package_site_position:
+  assumes "native_package_at E u r P"
+  shows "(u,r)\<in>environment_positions E"
+  using assms by (auto simp: native_package_at_def native_root_family_at_def dest!: family_interior_in_carrier)
+
+lemma native_package_exists_renamed:
+  assumes formed: "environment_formed E" and h: "bij h"
+  shows "(\<exists>Q. native_package_at (rename_environment h E) (h u) r Q) \<longleftrightarrow> (\<exists>P. native_package_at E u r P)"
+  using native_package_use_renaming[OF formed h] native_package_renamed_use[OF formed h] by blast
+
+theorem package_admission_equivariant:
+  "renaming_equivariant bij site_context_renaming site_context_formed
+    (\<lambda>z. \<exists>P. native_package_at (fst z) (fst (snd z)) (snd (snd z)) P)"
+  by (auto simp: renaming_equivariant_def product_action_def native_package_exists_renamed)
+
+corollary package_admission_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence source_root_presents site_context_renaming h) (=)
+    (\<lambda>z. (80,z)\<in>positive_meaning package_admission_system)
+    (\<lambda>z. (80,z)\<in>positive_meaning package_admission_system)"
+proof -
+  have exact: "\<And>p. (80,p)\<in>positive_meaning package_admission_system \<longleftrightarrow>
+      presented_predicate source_root_presents
+        (\<lambda>z. \<exists>P. native_package_at (fst z) (fst (snd z)) (snd (snd z)) P) p"
+    by (simp add: package_admission_exact presented_predicate_def source_root_presents_def split_paired_Ex
+      del: environment_positions_member; blast dest: native_package_site_position)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF source_root_presentation_class site_context_renaming_action
+      exact] package_admission_equivariant])
+qed
+
 section \<open>Three fixed native entries precede all future operands\<close>
 
 lemma package_admission_operation_components:

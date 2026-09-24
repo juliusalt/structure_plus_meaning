@@ -293,4 +293,55 @@ text \<open>
   tables. It adds no choice of a smaller source and no new stored field.
 \<close>
 
+section \<open>Environment inclusion is equivariant under permutations of uses\<close>
+
+text \<open>
+  Inclusion compares the two complete tables, and a renaming acts on both by an injective image, so an
+  injective renaming of both environments keeps inclusion: this is the reader's own relation under the
+  environment action, read from @{thm [source] rename_environment_def}.
+\<close>
+
+lemma environment_included_renamed:
+  assumes injective: "inj h"
+  shows "environment_included (rename_environment h E) (rename_environment h F) \<longleftrightarrow> environment_included E F"
+proof -
+  have artifacts: "inj (\<lambda>(u,R). (h u,R))"
+    using injective by (auto intro!: injI split: prod.splits simp: inj_eq)
+  have bindings: "inj (\<lambda>((u,k),v). ((h u,k),h v))"
+    using injective by (auto intro!: injI split: prod.splits simp: inj_eq)
+  show ?thesis
+    by (simp add: environment_included_def rename_environment_def inj_image_subset_iff[OF artifacts]
+      inj_image_subset_iff[OF bindings])
+qed
+
+theorem environment_inclusion_equivariant:
+  "renaming_equivariant bij (product_action rename_environment rename_environment)
+    (\<lambda>z. environment_formed (fst z) \<and> environment_formed (snd z)) (\<lambda>z. environment_included (fst z) (snd z))"
+  by (auto simp: renaming_equivariant_def product_action_def environment_included_renamed[OF bij_is_inj])
+
+corollary environment_inclusion_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence
+      (factor_pair_presents environment_value_presents environment_value_presents)
+      (product_action rename_environment rename_environment) h) (=)
+    (\<lambda>z. (113,z)\<in>positive_meaning environment_inclusion_system)
+    (\<lambda>z. (113,z)\<in>positive_meaning environment_inclusion_system)"
+proof -
+  have presented: "presentation_class (factor_pair_presents environment_value_presents environment_value_presents)
+      (\<lambda>z. environment_formed (fst z) \<and> environment_formed (snd z))
+      (\<lambda>p. \<exists>z. factor_pair_presents environment_value_presents environment_value_presents z p)"
+    using presentation_class.recovered_admission[OF factor_pair_class[OF
+      environment_presentations.presentation_class_axioms environment_presentations.presentation_class_axioms]]
+    by simp
+  have action: "renaming_action bij (product_action rename_environment rename_environment)
+      (\<lambda>z. environment_formed (fst z) \<and> environment_formed (snd z))"
+    by (rule renaming_action_product[OF environment_renaming_action environment_renaming_action])
+  have exact: "\<And>p. (113,p)\<in>positive_meaning environment_inclusion_system \<longleftrightarrow>
+      presented_predicate (factor_pair_presents environment_value_presents environment_value_presents)
+        (\<lambda>z. environment_included (fst z) (snd z)) p"
+    by (simp add: environment_inclusion_exact presented_predicate_def factor_pair_presents_def
+      split_paired_Ex; blast)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF presented action exact] environment_inclusion_equivariant])
+qed
+
 end

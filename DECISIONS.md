@@ -13327,3 +13327,23 @@ above them, `Development_Row_Contexts`, so that those construction theories keep
 contexts and the residual record stand in `Development_Row_Data`.
 
 Recorded 2026-09-24 (task 165).
+## A demand's formation is checked at its requests
+
+Task 290 (`.build/tasks/290/attribution.md`). The closure of a demand at the call key read every demanded call's
+applications through `finite_program_applications`, which checks the call's argument formed, so the verdict's
+machinery judgment walked 2.7 × 10⁹ argument nodes in 13,364 formation checks (5.2 s). A premise call of an
+application of a formed program is formed, so the check is established by the requests: `Formed_Call_Closures`
+states the closure at the call key as one constant (`native_call_closure`, a code unfolding of the keyed closure)
+whose code equation checks the program and the requests at its entry and reads the constructed applications
+otherwise: the closure is an instance of `checked_premise` (`native_call_closure_checked_premise`, exact by
+`keyed_call_closure_formed`) and its code equation is `checked_at_entry` there (`native_call_closure_code`). The
+equation is stated of this
+constant and not of `keyed_call_closure` itself: that constant takes its key and unkey as arguments, and its
+traversal returns the reached calls only when unkey is a left inverse of key (`keyed_demanded_sites_exact`), so
+for an arbitrary key the two readings need not reach the same calls and no code equation of it holds. This
+applies "The in-place refinements apply two notions"; no new notion. The same attribution found that #278's unfinished bare-reach
+measurement was the quadratic `fcard` of its count, not the demand (1.0 s in the joined program), and that the
+growth of the judgment's demand with the state is the right-first call key walking the whole store of atoms at
+every comparison of `verdict_found_search`'s calls, `(k, Pair S (Pair key S))`; a digest-first composite key
+was measured slower than the comparisons it saves (29.5 s against 1.5 s at the seeded judgment), so that part
+stays open.

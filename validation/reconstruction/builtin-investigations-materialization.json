@@ -2,5 +2,5 @@
  "boundary": "Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized.",
  "recipe_files": 734,
  "recipe_source_manifest": "builtin-investigations-sources.json",
- "recipe_source_manifest_sha256": "b2a000f736491023b0378ece32327a6e207b6ad4b4c488c83b23ee6546c262eb"
+ "recipe_source_manifest_sha256": "d60c961c9310e3066ec0931de11748d48bd5d8b548ea948e2c4ba1188ad5e056"
 }

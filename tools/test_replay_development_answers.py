@@ -142,6 +142,21 @@ class UnproducedRuns(unittest.TestCase):
         self.assertEqual(command[-4:], ['--parts', command[-3], '--proof', command[-1]])
         self.assertEqual(replay.answer_groups({'answer': row}), NONE)
 
+    def test_a_rerecord_writes_the_form_its_harness_writes(self):
+        # Both harnesses retain a record with evidence_io.write_json: one line, no depth padding.
+        record = {'answer': {'request': {'state': 's', 'subject': 'c'}, 'names': ['a', 'b']}, 'native': True,
+                  'status': 'judged', 'judgment_word': {'size': 1, 'sha256': 'old'}, 'executor_sha256': 'kept'}
+        retained = {**record, 'judgment_word': {'size': 2, 'sha256': 'new'}, 'harness_sha256': 'now'}
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'native.json'
+            path.write_text(json.dumps(record, indent=1) + '\n')
+            written, replaced = replay.rerecorded(path, record, retained, replay.NATIVE_WORDS)
+            text = path.read_text()
+        self.assertEqual(text, json.dumps({**record, **retained}, separators=(',', ':')) + '\n')
+        self.assertEqual(text.count('\n'), 1)
+        self.assertEqual(written, {**record, **retained})
+        self.assertEqual(replaced['judgment_word'], record['judgment_word'])
+
     def test_a_parts_reading_that_could_not_be_read_is_unproduced_and_not_failed(self):
         record = {'answer': {'request': {}}, 'status': 'refused', 'refusal': 'r'}
         row, written, command = self.replayed(record, {'status': 'failed', 'judgment': False,

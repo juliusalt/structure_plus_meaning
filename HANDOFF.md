@@ -31,12 +31,23 @@ problem's requirements use the test of a native distinction; the octet audit is 
 native form: the guard's four sockets on the pair of the given and the candidate (G1 retention, G2 formation and
 closure, G3 the callee boundary, G4 the octet audit over the added definitions), the contract parts (a), (b), (c) and
 (f) checked in the verification request, the rest criticism and the owner's approval; its split is put to the owner
-(Q25). A use is structure, not a payload, so #373's pattern passes the octet audit and the guard: #383 (continuing
-#381) designs non-nominality of uses before the first answer is judged. #382 briefs beside #380 the native request at a
-package (the first leaves' request, in N3a's place) and the given's Factor readers (#376's follow-ups 1 and 2, with
-those the sockets G3 and G4 call and the given's payloads stated by the audit, #381), which q86 found without an
-executable package: the guard's build waits on the readers' installation, and that on #380's audit reader, wired when
-both proposals are placed. #376 (accepted; DECISIONS.md "Every distinction a native
+(Q25). A use is structure, not a payload, so #373's pattern passes the octet audit and the guard: #383 (accepted;
+DECISIONS.md "Non-nominality of uses is equivariance under use permutations, a contract the verification request
+checks") decided non-nominality of uses — equivariance under use permutations, one notion over any presented relation,
+checked by Isabelle in the verification request (part (d): the clause stated by the frame at the action the entry's
+classes derive, proved by the answer), a native sample at a use-renamed copy refuting in criticism, no fifth socket,
+uses staying structure (Q26) — its notion (#420, `Presentation_Equivariance`, with the marking of #381's entry) and
+use instance (#422, `Factor_Use_Renaming`, its imports below the reader theories #416 and #418 edit), placed from
+#409, on which #393's clause, #405's part (d), #410, #416 and #418 wait. #382's proposal is placed (#410–#419, each build with its
+review): the native request at a package (#410, in N3a's place; the first request's installation is briefed later),
+the given's Factor readers as one numbered program (#412, after #387 and #389) installed beside the development package
+as the given (#414, after N2b #342), and the readers' use-equivariance clauses (#416, the package and scope readers;
+#418, the definition, clause, pattern and data readers and the audit, after #387); #393 waits on #414, #416 and #418,
+#395 on #414. #380's proposal is placed (#385–#408, each build with its review): the owner records
+(#385), the audit's native reader (#387), the members a package adds with the callee boundary (#389) and the
+verification frame (#405, after #383) first; the guard (#391, after #387, #389 and #383), its installation over the
+given's readers (#393), the given and the native state's first generation (#395), the posing (#397), the answer
+judgment (#399), its transport (#401), the verification's native half (#403) and harness (#407). #376 (accepted; DECISIONS.md "Every distinction a native
 program relies on comes from a native notion: the state the native loop judges and the presentations that retire")
 took the rule of 18:12 to the loop's other programs: a distinction is native when a native notion draws it on native
 content, and supplied by a HOL presentation relation when the relation places it in the argument; the native loop's
@@ -55,9 +66,9 @@ the bootstrap loop's maintenance and the reviews run beside them.
 **Word changes are serialized.** A word change re-records reports under `validation/reconstruction/` or answer records
 under `validation/development-answers/`, and two landing together would each record words the other changes. Their
 order (plan-48, plan-51): #161, #155, #157, #64, #167 and #314 have landed, and none is queued: #169 and #92 retired on
-#376's entry, and #319, re-scoped, re-records no word (#314's review's follow-ups 1 and 2: the re-record writing each
-record in its harness's form, the native records one line again, and the shared run's failure of `demanded-identity`
-and `demanded-reformulated` attributed from kept logs). A task whose theories change the state's closure cannot replay
+#376's entry, and #319, re-scoped, landed re-recording no word (`9d84c95f`: the re-record writes each record in the harnesses'
+one form; the shared run's failure of `demanded-identity` and `demanded-reformulated` left unattributed, the tool now
+proving them in one shared session; Open 122). A task whose theories change the state's closure cannot replay
 the native records in its own tree
 (Open 100), so a word change's records are re-recorded after its landing, by a task of their own. The replay's judged
 answers share one proof session since #323 (`ec46e355`); the harness's remaining per-answer runs, a failing member
@@ -219,14 +230,15 @@ folds N4 and N9 into #380's builds; N7's verdict at a package and N8's installat
 them and on the first answer. The translation design follows (Open 3).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
-creates has no review task (the harness reviews it in its own folder). The deepest chain is 3: #340 → #342 → #343, the
-native package; the first problem's builds hang from #380's and #382's proposals.
+creates has no review task (the harness reviews it in its own folder). The deepest chains are 9, the first problem's route through the given: #387 →
+#412 → #414 → #393 → #397 → #399 → #401 → #407 → #408, and the same from the native package (#340 → #342 → #414) and
+from the notion (#420 → #422 → #416 or #418 → #393).
 
 **Order** (the queue holds it; this is why it is as it is; it is the planner's choice, a residual until the native
-answer to the selection problem exists, Q2). The owner's directions first: the first problem's builds, briefed by #380
-and #382, the design of non-nominality of uses (#383), and the package that is their given, N2a (#340) then N2b (#342);
-then #379, #375 after it; #356's builds (#367, #368) and #384 after #367; the bootstrap loop's maintenance, #319, #354,
-and #369 after #319; each review after its build.
+answer to the selection problem exists, Q2). The owner's directions first: #383's notion and its use instance
+(#420, #422); the tasks already in their checks (#340, #379, #367, #354), so that they land and
+free the machine; then the first problem's builds from #380's and #382's proposals (#385–#408, #410–#419) in their
+chains' order, N2b (#342) among them after N2a, since the given (#414) waits on it; then #356's #368 and #384, #375, and #369 after #319; each review after its build.
 
 ## Decisions
 
@@ -600,7 +612,7 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#353** (`09cea44c`): the per-answer function's request-state edit shared, the reach keys as a path store (design
   171's rule, not a member tree), edit-sized values bound once, `declarations_single_valued_store` beside its notion,
   the tidy; its review's follow-ups 1–2 Open 120, 3 moot with #193, 4 Open 78.
-- **#381** (design): DECISIONS.md "The first problem's requirements use the test of a native distinction; the octet
+- **#381** (design, `2d97747c`): DECISIONS.md "The first problem's requirements use the test of a native distinction; the octet
   audit is one of its parts", with marked corrections of #378's and #376's entries: the guard's four sockets (G1–G4),
   the contract parts (a), (b), (c), (f) in the verification request, (d), (e), (g), (h) criticism and the owner's
   approval; its changes to #380's (b)–(f) and to the given's readers carried in #380's and #382's briefs, its
@@ -608,6 +620,24 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#365** (B4a, `1a8677a4`): `Development_Seed_Referenced_Publication`, the seed round over references, its table and
   shared presentation, and the word constant read off them (words equal); its review's follow-ups 1–3 told to #367,
   4–8 #384.
+- **#380** (brief): the first problem's builds placed as #385–#408 — the owner records, the audit's reader, the callee
+  boundary, the guard, its installation, the given and the native state's generation, the posing, the answer judgment
+  and transport, the verification's native half, frame and harness — each with its review; #391 and #405 also wait on
+  #383, whose route may add to the guard or the frame.
+- **#383** (design, `7b23938c`): DECISIONS.md "Non-nominality of uses is equivariance under use permutations, a contract the
+  verification request checks" — one notion over any presented relation, its use instance through the RRA use-renaming
+  facts, checked by Isabelle in the verification request (part (d)), a native sample refuting in criticism, no fifth
+  socket, uses staying structure; its owner choices Q26; follow-ups 1 and 5 #409 (a brief continuing it), 2 carried
+  into #393's and #405's briefs, 3 told to #382, 4 Open 121.
+- **#382** (brief): the native request at a package and the given's readers placed as #410–#419 — the request (#410),
+  the readers' numbered program (#412), the given installed (#414, after #342), the readers' use-equivariance clauses
+  (#416, #418), each with its review; #393 and #395 moved from the stand-in onto #414.
+- **#409** (brief, continuing #383): the notion (#420, `Presentation_Equivariance`, with the marking of #381's entry as
+  corrected by #383's) and the use instance (#422, `Factor_Use_Renaming`, its imports below the reader theories #416
+  and #418 edit), each with its review; #393, #405, #410, #416 and #418 moved from the stand-in onto #422.
+- **#319** (`9d84c95f`): the replay's re-record through `evidence_io.write_json`, the harnesses' one form; its review's
+  follow-up 1 (the per-answer seconds, #314's follow-up 3) told to #369, 2 and 3 Open 122, 4 done (its kept runs
+  retired, 1.1 GB; `replay.json` kept).
 
 ## Open
 
@@ -637,6 +667,9 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
   executable counterpart of a native reader as its implementation — each provisional, the work proceeding on them.
   **Q25** #381's split of the test — four native sockets, the contract parts in the verification request, the rest
   criticism and the owner's approval, uses meanwhile criticism and non-nominality designed now (#383) — provisional.
+  **Q26** #383's three choices — non-nominality of a use as equivariance under use permutations, checked by Isabelle
+  in the verification request with a native sample in criticism and no fifth socket, uses staying structure (a use
+  leaf in the term language the owner's to choose) — each provisional, #409's builds proceeding on them.
 
 Not yet planned, in the order they are expected to be planned (numbers kept from earlier states):
 
@@ -981,12 +1014,21 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 121. **#381's follow-ups 1 and 3** (`.build/tasks/381/result.md`): the first problem's criticism build — native samples
     of invariance (two presentations of one subject) and of use equivariance (a use-renamed copy of the given),
     observations of ground clauses and target leaves, failures recorded against the candidate (`Observation_Repairs`)
-    — briefed with the first request and its issue once #380's and #382's proposals are placed, #383's entry deciding
-    what it samples of uses; and the leaf argument for programs with material premises (a proof in
+    — briefed with the first request and its issue once #380's and #382's proposals are placed, the use sample as #383's
+    entry decides it (its follow-up 4: one permutation moving every use of the candidate's environment outside it, one
+    permuting its uses among themselves, each difference recorded against the candidate as a refutation of the entry's
+    clause); and the leaf argument for programs with material premises (a proof in
     `Factor_Positive_Parametricity`: a readdressing of targets consistent with the payload map), at the first answer
     whose added definitions hold a material premise, or with that theory's next edit.
+122. **What #319's landing leaves** (its review, `.build/tasks/319/review.md`, follow-ups 2 and 3): the seven framed
+    records (demanded-identity, demanded-reformulated, deterministic, identity, introduced-helper, outside-support,
+    failed-proof) stand in the indented form the old re-record wrote and take the harnesses' one-line form at their next
+    re-record — a whole-file diff with no content change, which that task's reviewer should expect; whether the worker
+    count bore on #314's failure of the two demanded answers stays unestablished: if a shared proof session is not
+    accepted and they fail again in runs of their own, attributed from the kept logs then.
 
 ## Now
+
 
 
 
@@ -1008,7 +1050,7 @@ commit (`82a065cd`) failed.
 - **Repeated declines are the run's to handle, not ledger questions** (the owner, through the monitoring session,
   2026-09-24 20:23 and 20:28): Q17, Q19, Q20 and the harness's Q25 left the ledger, their held events given back; of
   them only #313's re-review's first follow-up was pending (told to #369). A classifier stopped plan-51 to plan-54,
-  plan-56, plan-58 and plan-59 before their notes, and #323's fixer once; each next planner took up what HANDOFF.md held,
+  plan-56 and plan-58 to plan-60 before their notes, and #323's fixer once; each next planner took up what HANDOFF.md held,
   and nothing was missing (plan-59's draft notes, `.build/plans/plan-59/notes.md`, hold nothing HANDOFF.md lacks).
   Plan-60 judged #381, the event held from plan-59. The planner's question on #381's split took the number Q25 again.
   **Q18** is #320's five provisional choices; its text opens with "Q17", a slip of plan-53's (the harness numbered it

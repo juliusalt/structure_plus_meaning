@@ -50,33 +50,93 @@ class FrameTest(unittest.TestCase):
         self.assertIn('@{thm development_seed_roots_def}, @{thm development_seed_context_def}', text)
         self.assertIn('\\<^theory>\\<open>' + name + '\\<close>', text)
         self.assertIn("STR ''Theory_Name.constant_name''", text)
-        self.assertIn('module_name Development_Answer_Verification', text)
+        self.assertIn('module_name Development_Answer_Verification file_prefix "development_answer_verification"', text)
         self.assertTrue(text.startswith('theory Development_Answer_Verification\n'))
+        self.assertNotIn('File.write', text)
         own = development_answer.verification_name(ANSWER)
         self.assertRegex(own, r'^Development_Answer_Verification_[0-9a-f]{16}$')
-        self.assertTrue(development_answer.verification_theory('development_seed', state, 'Theory_Name.constant_name',
-                                                               name, own).startswith('theory ' + own + '\n'))
+        mine = development_answer.verification_theory('development_seed', state, 'Theory_Name.constant_name',
+                                                      name, own, Path('/outcomes/a.txt'))
+        self.assertTrue(mine.startswith('theory ' + own + '\n'))
+        self.assertIn('module_name Development_Answer_Verification file_prefix "' + own.lower() + '"', mine)
+        # The outcome is the theory's last command, after its theory and its parents are consolidated.
+        self.assertTrue(mine.endswith(
+            'ML \\<open>List.app Thm.consolidate_theory (\\<^theory> :: Theory.parents_of \\<^theory>);\n  File.write '
+            '(Path.explode ' + development_answer.investigate.ml_string('/outcomes/a.txt') + ') "accepted\\n"\\<close>'
+            '\n\nend\n'))
 
     def test_each_answer_is_proved_in_theories_of_its_own(self):
         layer = {**ANSWER, 'request': {'state': 'refinement_layer', 'subject': 'Theory_Name.constant_name'}}
+        request = development_answer.request_name('Theory_Name.constant_name')
+        self.assertRegex(request, r'^Development_Request_[0-9a-f]{12}$')
         generated = development_answer.generated_theories(layer)
-        self.assertEqual(sorted(generated), sorted(['Development_Request', development_answer.answer_name(layer),
+        self.assertEqual(sorted(generated), sorted([request, development_answer.answer_name(layer),
                                                     development_answer.verification_name(layer)]))
-        self.assertIn('imports Development_Request ' + development_answer.answer_name(layer) + ' ',
+        self.assertIn('imports ' + request + ' ' + development_answer.answer_name(layer) + ' ',
                       generated[development_answer.verification_name(layer)])
         self.assertEqual(sorted(development_answer.generated_theories(ANSWER)),
                          sorted([development_answer.answer_name(ANSWER), development_answer.verification_name(ANSWER)]))
+
+    def test_two_layer_subjects_are_proved_and_exported_in_one_session(self):
+        layer = {**ANSWER, 'request': {'state': 'refinement_layer', 'subject': 'Theory_Name.constant_name'}}
         other = {**layer, 'request': {'state': 'refinement_layer', 'subject': 'Theory_Name.other_name'}}
-        with tempfile.TemporaryDirectory() as directory:
-            with self.assertRaises(AssertionError):
-                development_answer.prove_answers([layer, other], Path(directory), Path(directory) / 'out', 10)
-            self.assertFalse((Path(directory) / 'out').exists())
+        answers = [layer, other]
+        commands = []
+
+        def run(name, command, log, timeout):
+            commands.append((name, [str(c) for c in command]))
+            if name == 'proof':
+                for answer in answers:
+                    Path(generated[answer_digest(answer)]).write_text('accepted\n')
+            return {'name': name, 'exit_code': 0, 'seconds': 1.0, 'log': str(log)}
+        answer_digest = development_answer.answer_digest
+        original = development_answer.run, development_answer.remove_session_logs
+        removed = []
+        development_answer.run, development_answer.remove_session_logs = run, removed.append
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                output = Path(directory) / 'out'
+                generated = {answer_digest(a): output / 'outcomes' / (answer_digest(a) + '.txt') for a in answers}
+                readings = development_answer.prove_answers(answers, Path(directory), output, 10)
+                project = output / 'project' / 'theories'
+                for subject in ('Theory_Name.constant_name', 'Theory_Name.other_name'):
+                    self.assertTrue((project / (development_answer.request_name(subject) + '.thy')).is_file())
+        finally:
+            development_answer.run, development_answer.remove_session_logs = original
+        self.assertEqual([name for name, _ in commands], ['proof', 'export'])
+        verifications = sorted(development_answer.verification_name(a) for a in answers)
+        self.assertEqual(commands[0][1][-2:], verifications)
+        self.assertEqual([c for c in commands[1][1] if c.startswith('Development_Answer_Verification_')],
+                         [v + ':' + v.lower() + '.ML' for v in [development_answer.verification_name(a) for a in answers]])
+        self.assertTrue(all(r['exit_code'] == 0 and r['accepted'] for r in readings.values()))
+        self.assertEqual(len({r['session'] for r in readings.values()}), 1)
+        self.assertEqual(removed, [next(iter(readings.values()))['session']])
+        self.assertEqual(readings[answer_digest(other)]['export'],
+                         str(output / 'export' / (development_answer.verification_name(other).lower() + '.proof.json')))
+
+    def test_one_program_presents_both_words_and_the_summary_after_one_use(self):
+        words = {word: Path('/w/' + word + '.word') for word in development_answer.WORDS}
+        text = development_answer.presentation_program(Path('/engine.ML'), 'development_seed', words)
+        self.assertEqual(text.count('use '), 1)
+        self.assertTrue(text.startswith('use ' + development_answer.investigate.ml_string('/engine.ML')
+                                        + ';\nstructure N = Development_Answer_Verification;\n'))
+        for word in development_answer.WORDS:
+            alone = development_answer.check_presented_report.program(
+                Path('/engine.ML'), {'module': 'Development_Answer_Verification',
+                                     'report': 'development_answer_' + word + '_value',
+                                     'scope': 'development_seed_unanswered'}, words[word])
+            self.assertIn(alone.split('structure N = Development_Answer_Verification;\n', 1)[1], text)
+        verdict, publication = (text.index(development_answer.investigate.ml_string(str(words[word])))
+                                for word in development_answer.WORDS)
+        self.assertLess(verdict, publication)
+        self.assertLess(publication, text.index('SUMMARY'))
 
     def test_the_published_state_is_never_judged_against_itself(self):
         state = development_answer.STATES['refinement_layer']
         name = development_answer.answer_name(ANSWER)
         text = development_answer.verification_theory('development_demanded', state, 'Theory_Name.constant_name', name)
-        self.assertIn('imports Development_Request ' + name + ' Development_Successor Development_Refinement_Repair', text)
+        self.assertIn('imports ' + development_answer.request_name('Theory_Name.constant_name') + ' ' + name
+                      + ' Development_Successor Development_Refinement_Repair', text)
         self.assertIn('define_again', text)
         self.assertNotIn('"development_answer_state=development_demanded_state"', text)
         with self.assertRaises(TypeError):
@@ -157,6 +217,50 @@ class FrameTest(unittest.TestCase):
             self.assertEqual((record['status'], record['judgment']), ('failed', False))
             self.assertEqual(record['error'], development_answer.UNREAD)
             self.assertFalse((Path(temporary) / 'retained.json').exists())
+
+    def judged_in_process(self, directory, reading, proof=None):
+        """Run the harness's main in this process, recording the sessions whose logs it removes."""
+        answer, parts, base = (directory / name for name in ('answer.json', 'parts.json', 'base'))
+        answer.write_text(json.dumps(ANSWER))
+        base.mkdir()
+        parts.write_text(json.dumps({'answer_digest': development_answer.answer_digest(ANSWER),
+                                     'base': str(base.resolve()), 'exit_code': 0, 'refusal': None, 'seconds': 1.0,
+                                     'answers_read': 2, 'log': 'shared.log', **reading}))
+        argv = ['development_answer.py', 'answer', '--answer', str(answer), '--output', str(directory / 'run'),
+                '--base', str(base), '--parts', str(parts), '--retain', str(directory / 'retained.json')]
+        if proof is not None:
+            (directory / 'proof.json').write_text(json.dumps({
+                'answer_digest': development_answer.answer_digest(ANSWER), 'base': str(base.resolve()),
+                'exit_code': 0, 'accepted': True, 'seconds': 1.0, 'answers_read': 2, 'log': 'l',
+                'project': str(directory / 'no-project'), 'outcome': str(directory / 'outcome.txt'), **proof}))
+            argv += ['--proof', str(directory / 'proof.json')]
+        removed = []
+        original = sys.argv, development_answer.remove_session_logs
+        sys.argv, development_answer.remove_session_logs = argv, removed.append
+        try:
+            development_answer.main()
+        finally:
+            sys.argv, development_answer.remove_session_logs = original
+        return json.loads((directory / 'run' / 'answer.json').read_text()), removed
+
+    def test_a_supplied_proof_names_its_shared_session_and_no_logs_are_removed(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            record, removed = self.judged_in_process(Path(temporary), {},
+                                                     proof={'session': 'Development_Proofs_shared'})
+            self.assertEqual(record['session'], 'Development_Proofs_shared')
+            self.assertEqual(record['status'], 'failed')
+            self.assertEqual(removed, [])
+            self.assertIsInstance(record['elapsed_seconds'], float)
+
+    def test_a_refused_reading_runs_no_session_and_removes_no_logs(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            record, removed = self.judged_in_process(
+                Path(temporary), {'exit_code': 1, 'refusal': "The answer's proof part is refused: r"})
+            self.assertEqual(record['status'], 'refused')
+            self.assertNotIn('session', record)
+            self.assertEqual(removed, [])
+            retained = json.loads((Path(temporary) / 'retained.json').read_text())
+            self.assertEqual(retained['elapsed_seconds'], record['elapsed_seconds'])
 
     def test_a_supplied_proof_of_another_answer_is_not_taken(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -339,7 +443,8 @@ class PacketFrameTest(unittest.TestCase):
     def test_demanded_request_theory_exports_one_subject_from_the_layer(self):
         state = development_answer.STATES['refinement_layer']
         text = development_answer.request_theory(state, 'Theory_Name.constant_name')
-        self.assertTrue(text.startswith('theory Development_Request\n  imports Native_Execution_Refinements'))
+        self.assertTrue(text.startswith('theory ' + development_answer.request_name('Theory_Name.constant_name')
+                                        + '\n  imports Native_Execution_Refinements'))
         self.assertIn('[("_subject", [\\<^term>\\<open>Theory_Name.constant_name\\<close>])]', text)
         self.assertIn('development_demanded_loop_state', text)
 

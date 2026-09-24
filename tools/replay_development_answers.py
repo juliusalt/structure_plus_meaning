@@ -47,13 +47,15 @@ frame, and each harness run is given its own reading: an answer the parts readin
 Isabelle session of its own. The reading and its refusals are exactly those the harness would make alone,
 and an answer the shared reading could not supply reads its parts itself. Then the theories of every answer
 the parts reading accepted and its record retains judged are proved in one session
-(`development_answer.prove_answers`), each answer's theory importing exactly its frame and its verification
-theory its own, and each harness run exports, presents and summarizes from its own verification theory.
-Answers whose frames generate different request theories (two layer subjects) are proved in separate
-sessions, since the layer's request theory is one name holding its subject; an answer retained as failed
-is proved alone, since its failure would fail the session it shares. A shared proof session that is not
-accepted is no answer's judgment: each of its answers is then proved in its own session. The seconds of
-every shared session are reported once, in `shared_parts` and `shared_proofs`, and not in the rows.
+(`development_answer.prove_answers`), whatever subjects they answer: each answer's theory imports exactly its
+frame, its verification theory its own theories and no other answer's, and a layer subject's request theory is
+named by the subject. An accepted session exports every member's module in one run, and each harness run
+presents the words and the summary from its own module in one run. An answer retained as failed is proved
+alone, since its failure would fail the session it shares. A shared proof session that is not accepted is no
+answer's judgment: each verification theory writes its own outcome, so the answers whose outcome is missing
+are proved alone and the rest are proved together again; where no answer can be named, each is proved in its
+own session. The seconds of every shared session are reported once, in `shared_parts` and `shared_proofs`,
+and not in the rows.
 
 A replay reads the active base: every harness step rebuilds the theories the tree changes against that
 base, so a replay is run on a tree current with the active base. On a tree behind it (task 313, one refused
@@ -69,7 +71,9 @@ so that the observed cost of a replay is readable where its counts are; each ans
 its row of the summary.
 
 The records are replayed longest-first by the seconds their own record kept, so that a long answer is
-not left to start last; a record that kept none is replayed last, and none keeps its seconds today.
+not left to start last; a record that kept none is replayed last. A framed answer's record keeps the
+seconds of the harness run that judged it (`elapsed_seconds`) from the harness of task 369 on, shared
+sessions excluded; a record retained before keeps none until it is retained again.
 
 Every replayed answer runs the answer harness, and each of those runs an Isabelle build, so the worker
 count is the number of Isabelle runs the replay holds at once. This machine takes at most two at once,
@@ -190,34 +194,27 @@ its own parts, as the harness does alone, so a fault of the shared session is ne
 
 
 def read_shared_proofs(records, parts, base, output, timeout):
-    """Prove the theories of every answer the harness will prove, in as few sessions as their frames allow.
+    """Prove the theories of every answer the harness will prove in one session; each answer's reading by name.
 
 An answer enters when its shared parts reading accepted it and its record retains it judged; an answer
-retained otherwise is proved alone, since a failure fails the session it shares. Answers whose frames
-generate the same request theory share a session, and a seeded answer, which generates none, joins the
-first; a session of one answer saves nothing and is not made. Only an accepted session gives readings: the
-answers of one that is not accepted, or raises, are each proved in their own session by their harness, so a
-fault of a shared session is never an answer's judgment. Returns the readings by record, the report of every
-session and the sessions whose logs the exports still read."""
-    groups = {}
+retained otherwise is proved alone, since a failure fails the session it shares. Answers to different layer
+subjects share the session, each importing its subject's own request theory; a session of one answer saves
+nothing and is not made. Only an accepted session gives readings. When a session is not accepted, the answers
+whose verification theory wrote no outcome failed: they are proved alone by their harness and the others are
+proved together again. Where no answer can be named (every outcome was written, or none was, or the session
+raised), each is proved in its own session, so a fault of a shared session is never an answer's judgment.
+The session removes its own logs once its export has read them. Returns the readings by record and the report
+of every session."""
+    answers = {}
     for path in records:
         if path.stem not in parts or json.loads(parts[path.stem].read_text())['exit_code'] != 0:
             continue
         record = json.loads(path.read_text())
-        if record.get('status') != 'judged':
-            continue
-        answer = record['answer']
-        layer = 'layer' in development_answer.STATES[answer['request']['state']]
-        groups.setdefault(answer['request']['subject'] if layer else None, {})[path.stem] = answer
-    seeded = groups.pop(None, {})
-    sessions = [groups[key] for key in sorted(groups)]
-    if seeded:
-        sessions[:1] = [{**(sessions[0] if sessions else {}), **seeded}]
-    paths, report, kept = {}, [], []
-    for index, answers in enumerate(sessions):
-        if len(answers) < 2:
-            continue
-        directory = output / 'shared-proofs' / str(index)
+        if record.get('status') == 'judged':
+            answers[path.stem] = record['answer']
+    paths, report = {}, []
+    while len(answers) >= 2:
+        directory = output / 'shared-proofs' / str(len(report))
         started = time.monotonic()
         try:
             readings = development_answer.prove_answers(list(answers.values()), base, directory, timeout)
@@ -225,16 +222,23 @@ session and the sessions whose logs the exports still read."""
             print(f'a shared proof session failed ({failure}); its answers are each proved alone', file=sys.stderr)
             readings = None
         accepted = readings is not None and all(reading['exit_code'] == 0 for reading in readings.values())
-        report.append({'answers': sorted(answers), 'accepted': accepted,
+        failed = [] if readings is None or accepted else sorted(
+            stem for stem, answer in answers.items()
+            if not readings[development_answer.answer_digest(answer)].get('accepted'))
+        report.append({'answers': sorted(answers), 'accepted': accepted, 'failed': failed,
                        'elapsed_seconds': round(time.monotonic() - started, 1)})
-        if not accepted:
+        if accepted:
+            for stem, answer in answers.items():
+                paths[stem] = directory / (stem + '.json')
+                paths[stem].write_text(json.dumps(readings[development_answer.answer_digest(answer)]) + '\n')
+            break
+        if not failed or len(failed) == len(answers):
             print('a shared proof session was not accepted; its answers are each proved alone', file=sys.stderr)
-            continue
-        kept.append(next(iter(readings.values()))['session'])
-        for stem, answer in answers.items():
-            paths[stem] = directory / (stem + '.json')
-            paths[stem].write_text(json.dumps(readings[development_answer.answer_digest(answer)]) + '\n')
-    return paths, report, kept
+            break
+        print(f'{", ".join(failed)} failed in a shared proof session and are proved alone; '
+              'the others are proved together again', file=sys.stderr)
+        answers = {stem: answer for stem, answer in answers.items() if stem not in failed}
+    return paths, report
 
 
 def replay_native(record_path, record, output, timeout, rerecord=False):
@@ -384,15 +388,10 @@ def main():
         print(f'no active base ({failure}); each answer reads and proves itself', file=sys.stderr)
         base = None
     parts, parts_seconds = read_shared_parts(records, base, output, args.timeout) if base else ({}, None)
-    proofs, proof_sessions, kept = read_shared_proofs(records, parts, base, output, args.timeout) if base \
-        else ({}, [], [])
-    try:
-        with ThreadPoolExecutor(max_workers=args.workers) as pool:
-            results = dict(pool.map(lambda path: replay(path, output, args.timeout, args.rerecord,
-                                                        parts.get(path.stem), proofs.get(path.stem)), records))
-    finally:
-        for session in kept:
-            development_answer.remove_session_logs(session)
+    proofs, proof_sessions = read_shared_proofs(records, parts, base, output, args.timeout) if base else ({}, [])
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        results = dict(pool.map(lambda path: replay(path, output, args.timeout, args.rerecord,
+                                                    parts.get(path.stem), proofs.get(path.stem)), records))
     elapsed = round(time.monotonic() - started, 1)
     shared = round((parts_seconds or 0) + sum(session['elapsed_seconds'] for session in proof_sessions), 1)
     groups = answer_groups(results)

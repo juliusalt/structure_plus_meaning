@@ -33,8 +33,6 @@ locale native_value_program = native_rule_family P d "[([0],native_value_rule)]"
   for P :: "'u native_system" and d :: "'u definition_site"
 begin
 
-sublocale law: native_rule_law P d "[([0],native_value_rule)]"
-  by (rule native_rule_lawI[OF native_rule_family_axioms]) (auto simp: native_value_rule_def)
 
 sublocale conjunction: native_conjunction_program P d "Finite_Pattern_Pair (native_var 0) (native_var 0)" "[]"
   unfolding native_conjunction_program_def native_conjunction_program_axioms_def

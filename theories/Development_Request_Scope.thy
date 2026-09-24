@@ -98,7 +98,7 @@ text \<open>
 
 locale support_complete_program = mentions: mentions_cited_program P r e w m +
     search: native_store_search_program P k v + family: native_every_program P v r +
-    call: native_rule_family P g "[([0],subject_call_rule k)]" + every: native_every_program P s g
+    call: subject_call_program P g k + every: native_every_program P s g
   for P :: "'u native_system" and s g k v r e w m :: "'u definition_site" +
   fixes ident :: "isabelle_context \<Rightarrow> factor_term"
   assumes identity: "\<And>y. term_formed (ident y)"
@@ -205,7 +205,7 @@ subsection \<open>The field \<open>scope cited\<close> is the selection reading 
 
 locale scope_cited_program = cited: key_cited_program P r w m +
     search: native_store_search_program P k v + family: native_every_program P v r +
-    call: native_rule_family P g "[([0],subject_call_rule k)]" + every: native_every_program P s g
+    call: subject_call_program P g k + every: native_every_program P s g
   for P :: "'u native_system" and s g k v r w m :: "'u definition_site" +
   fixes ident :: "isabelle_context \<Rightarrow> factor_term"
   assumes identity: "\<And>y. term_formed (ident y)"

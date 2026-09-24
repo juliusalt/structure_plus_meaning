@@ -266,13 +266,24 @@ definition row_reached_rules :: "'u definition_site \<Rightarrow>
     (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
   "row_reached_rules s=[([0],row_declared_reached_rule s),([1],row_subject_reached_rule s)]"
 
+definition row_reached_listing :: "'u definition_site \<Rightarrow> (local_address\<times>local_address finite_term_pattern\<times>
+    (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "row_reached_listing s=
+    [([0],row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5),
+      [([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]),
+     ([1],row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5),
+      [([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))])]"
+
+lemma row_reached_rules_listing: "row_reached_rules s=native_rule_listing (row_reached_listing s)"
+  by (simp add: row_reached_rules_def row_reached_listing_def native_rule_listing_def row_declared_reached_rule_def
+    row_subject_reached_rule_def)
+
 locale row_reached_program = native_rule_family P r "row_reached_rules s" + somes: native_some_program P s el
   for P :: "'u native_system" and r s el :: "'u definition_site"
 begin
 
-sublocale law: native_rule_law P r "row_reached_rules s"
-  by (rule native_rule_lawI[OF native_rule_family_axioms])
-    (auto simp: row_reached_rules_def row_declared_reached_rule_def row_subject_reached_rule_def)
+sublocale triples: native_listed_law P r "row_reached_listing s"
+  unfolding native_listed_law_def row_reached_rules_listing[symmetric] by (rule native_rule_family_axioms)
 
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
@@ -281,19 +292,17 @@ theorem exact:
      (\<exists>h\<in>set (row_subjects (snd z)). (el,Pair_Term x (path_term h))\<in>positive_meaning P))"
 proof
   assume "(r,Pair_Term x (state_row_term ident z))\<in>positive_meaning P"
-  then obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (row_reached_rules s)"
+  then obtain c p ps f where rule: "(c,p,ps)\<in>set (row_reached_listing s)"
     and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (state_row_term ident z)"
     and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-    unfolding law.exact by (elim exE conjE) (rule that; assumption)
+    by (rule triples.holds_triple) (rule that; assumption)
   have p: "p=row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)"
-    using rule by (auto simp: row_reached_rules_def row_declared_reached_rule_def row_subject_reached_rule_def
-      finite_native_rule_eq_iff)
+    using rule by (auto simp: row_reached_listing_def)
   have fields: "f [0]=x" "f [2]=keys_term (row_declared (snd z))" "f [3]=keys_term (row_subjects (snd z))"
     using shape by (simp_all add: p row_pattern_def state_row_term_def)
-  from rule consider "set ps={([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))}"
-      | "set ps={([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))}"
-    by (auto simp: row_reached_rules_def row_declared_reached_rule_def row_subject_reached_rule_def
-      finite_native_rule_eq_iff)
+  from rule consider "ps=[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
+      | "ps=[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"
+    by (auto simp: row_reached_listing_def)
   then show "term_formed x \<and>
     ((\<exists>h\<in>set (row_declared (snd z)). (el,Pair_Term x (path_term h))\<in>positive_meaning P) \<or>
      (\<exists>h\<in>set (row_subjects (snd z)). (el,Pair_Term x (path_term h))\<in>positive_meaning P))"
@@ -320,9 +329,9 @@ next
         keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z))])
         (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3)
           (native_var 4) (native_var 5))))\<in>positive_meaning P"
-      by (rule law.step_at[where c="[0]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-        (use declared formed identity in \<open>simp_all add: row_reached_rules_def row_declared_reached_rule_def
-          row_pattern_def keys_term_def somes.exact data_list_term_formed insert_Diff_if\<close>)
+      by (rule triples.step_triple[where c="[0]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
+        (use declared formed identity in \<open>simp_all add: row_reached_listing_def row_pattern_def keys_term_def
+          somes.exact data_list_term_formed\<close>)
     then show ?thesis by (simp add: row_pattern_def state_row_term_def)
   next
     case subject
@@ -330,9 +339,9 @@ next
         keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z))])
         (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3)
           (native_var 4) (native_var 5))))\<in>positive_meaning P"
-      by (rule law.step_at[where c="[1]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"])
-        (use subject formed identity in \<open>simp_all add: row_reached_rules_def row_subject_reached_rule_def
-          row_pattern_def keys_term_def somes.exact data_list_term_formed insert_Diff_if\<close>)
+      by (rule triples.step_triple[where c="[1]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"])
+        (use subject formed identity in \<open>simp_all add: row_reached_listing_def row_pattern_def keys_term_def
+          somes.exact data_list_term_formed\<close>)
     then show ?thesis by (simp add: row_pattern_def state_row_term_def)
   qed
 qed

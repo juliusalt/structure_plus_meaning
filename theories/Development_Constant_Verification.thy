@@ -174,6 +174,17 @@ definition development_named_request ::
   "development_named_request C rs n=(case isabelle_name_position (fst C) n of None \<Rightarrow> None
     | Some c \<Rightarrow> list_singleton_option (filter (\<lambda>r. problem_subject (fst r)={|c|}) rs))"
 
+text \<open>A request read by its name is one of the requests it is read among.\<close>
+
+lemma development_named_request_member:
+  assumes "development_named_request C rs n=Some r"
+  shows "r\<in>set rs"
+proof -
+  obtain d where "set (filter (\<lambda>q. problem_subject (fst q)={|d|}) rs)={r}"
+    using assms by (auto simp: development_named_request_def list_singleton_option_some split: option.splits)
+  then show ?thesis by (metis filter_is_subset insertI1 subsetD)
+qed
+
 definition development_verdict_counts :: "development_constant_verdict \<Rightarrow> nat list" where
   "development_verdict_counts v=(case v of
     (removed,added,unpermitted_removed,unpermitted_added,statements,excess,assessment,roots,tables) \<Rightarrow>

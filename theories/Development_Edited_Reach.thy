@@ -85,9 +85,25 @@ definition mention_kept_rules :: "'u definition_site \<Rightarrow> 'u definition
     (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
   "mention_kept_rules m u=[([0],mention_found_rule m),([1],mention_kept_rule u)]"
 
+definition mention_kept_listing :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
+    (local_address\<times>local_address finite_term_pattern\<times>
+      (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "mention_kept_listing m u=
+    [([0],Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2),
+      [([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]),
+     ([1],Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 3)))
+      (native_var 2),[([0],(u,Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 2) (native_var 1)) (native_var 3)))])]"
+
+lemma mention_kept_rules_listing: "mention_kept_rules m u=native_rule_listing (mention_kept_listing m u)"
+  by (simp add: mention_kept_rules_def mention_kept_listing_def native_rule_listing_def mention_found_rule_def
+    mention_kept_rule_def)
+
 locale mention_kept_program = native_rule_family P w "mention_kept_rules m u"
   for P :: "'u native_system" and w m u :: "'u definition_site"
 begin
+
+sublocale triples: native_listed_law P w "mention_kept_listing m u"
+  unfolding native_listed_law_def mention_kept_rules_listing[symmetric] by (rule native_rule_family_axioms)
 
 theorem exact:
   assumes xf: "term_formed x" and yf: "term_formed y" and sf: "term_formed ss"
@@ -95,25 +111,26 @@ theorem exact:
     (m,Pair_Term x c)\<in>positive_meaning P \<or> (u,Pair_Term (Pair_Term c y) ss)\<in>positive_meaning P"
 proof
   assume holds: "(w,Pair_Term (Pair_Term x (Pair_Term y ss)) c)\<in>positive_meaning P"
-  obtain d F f where rule: "(d,F)\<in>set (mention_kept_rules m u)"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
-      Pair_Term (Pair_Term x (Pair_Term y ss)) c"
-    and support: "\<forall>s e q. (s,e,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f q)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds]) (rule that; assumption)
-  from rule have "F=mention_found_rule m \<or> F=mention_kept_rule u" by (auto simp: mention_kept_rules_def)
+  obtain d p ps f where rule: "(d,p,ps)\<in>set (mention_kept_listing m u)"
+    and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term (Pair_Term x (Pair_Term y ss)) c"
+    and support: "\<forall>(k,e,q)\<in>set ps. (e,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    by (rule triples.holds_triple[OF holds]) (rule that; assumption)
+  from rule consider (found) "p=Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)"
+      "ps=[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
+    | (kept) "p=Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
+        (Finite_Pattern_Pair (native_var 1) (native_var 3))) (native_var 2)"
+      "ps=[([0],(u,Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 2) (native_var 1)) (native_var 3)))]"
+    by (auto simp: mention_kept_listing_def)
   then show "(m,Pair_Term x c)\<in>positive_meaning P \<or> (u,Pair_Term (Pair_Term c y) ss)\<in>positive_meaning P"
-  proof
-    assume F: "F=mention_found_rule m"
-    have premise: "(m,Pair_Term (f [0]) (f [2]))\<in>positive_meaning P"
-      using native_rule_support[OF support[unfolded F mention_found_rule_def]] by simp
-    have "f [0]=x" "f [2]=c" using shape by (simp_all add: F mention_found_rule_def)
+  proof cases
+    case found
+    have premise: "(m,Pair_Term (f [0]) (f [2]))\<in>positive_meaning P" using support found(2) by simp
+    have "f [0]=x" "f [2]=c" using shape by (simp_all add: found(1))
     then show ?thesis using premise by simp
   next
-    assume F: "F=mention_kept_rule u"
-    have premise: "(u,Pair_Term (Pair_Term (f [2]) (f [1])) (f [3]))\<in>positive_meaning P"
-      using native_rule_support[OF support[unfolded F mention_kept_rule_def]] by simp
-    have "f [1]=y" "f [2]=c" "f [3]=ss" using shape by (simp_all add: F mention_kept_rule_def)
+    case kept
+    have premise: "(u,Pair_Term (Pair_Term (f [2]) (f [1])) (f [3]))\<in>positive_meaning P" using support kept(2) by simp
+    have "f [1]=y" "f [2]=c" "f [3]=ss" using shape by (simp_all add: kept(1))
     then show ?thesis using premise by simp
   qed
 next
@@ -124,8 +141,8 @@ next
     have cf: "term_formed c" using positive_meaning_term_formed[OF found] by simp
     have "(w,evaluate_pattern (native_values [x,Pair_Term y ss,c]) (decode_finite_pattern
         (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2))))\<in>positive_meaning P"
-      by (rule native_step[where c="[0]" and ps="[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-        (use found cf xf yf sf in \<open>simp_all add: mention_kept_rules_def mention_found_rule_def\<close>)
+      by (rule triples.step_triple[where c="[0]" and ps="[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
+        (use found cf xf yf sf in \<open>simp_all add: mention_kept_listing_def\<close>)
     then show ?thesis by simp
   next
     assume kept: "(u,Pair_Term (Pair_Term c y) ss)\<in>positive_meaning P"
@@ -133,9 +150,9 @@ next
     have "(w,evaluate_pattern (native_values [x,y,c,ss]) (decode_finite_pattern
         (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 3)))
           (native_var 2))))\<in>positive_meaning P"
-      by (rule native_step[where c="[1]" and
+      by (rule triples.step_triple[where c="[1]" and
           ps="[([0],(u,Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 2) (native_var 1)) (native_var 3)))]"])
-        (use kept cf xf yf sf in \<open>simp_all add: mention_kept_rules_def mention_kept_rule_def\<close>)
+        (use kept cf xf yf sf in \<open>simp_all add: mention_kept_listing_def\<close>)
     then show ?thesis by simp
   qed
 qed
@@ -320,9 +337,7 @@ text \<open>
 locale edited_targets_program =
     rows: row_mentioned_program P rw m + fibres: native_some_program P fs rw +
     searches: native_store_search_program P sr fs +
-    index_calls: native_rearranging_program P ic
-      "Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)" sr
-      "Finite_Pattern_Pair (native_var 1) (Finite_Pattern_Pair (native_var 0) (native_var 2))" +
+    index_calls: subject_call_program P ic sr +
     families: native_some_program P fa ic + subject_calls: native_rotate_program P sc fa +
     subject_lists: native_every_program P su sc + founds: list_cited_program P kf m +
     kept: mention_kept_program P mo kf su + mention_lists: native_every_program P ml mo +
@@ -343,32 +358,16 @@ lemma fibre_exact:
   by (simp add: state_family_term_def fibres.exact rows.exact[OF identity]
       state_row_term_formed[OF identity])
 
-lemma search_exact:
-  "(sr,Pair_Term (path_term c) (Pair_Term (path_term s) (key_index_term row_subjects ident A F)))
-      \<in>positive_meaning P \<longleftrightarrow>
-    s\<in>set A \<and> (\<exists>z\<in>set F. s\<in>set (row_subjects (snd z)) \<and> c\<in>set (row_mentions (snd z)))"
-proof -
-  have "(sr,Pair_Term (path_term c) (Pair_Term (path_term s)
-      (store_term (state_family_term ident) (key_index row_subjects A F))))\<in>positive_meaning P \<longleftrightarrow>
-    term_formed (path_term c) \<and> (\<exists>bs w. path_term s=path_term bs \<and> store_lookup (key_index row_subjects A F) bs=Some w \<and>
-      (fs,Pair_Term (path_term c) (state_family_term ident w))\<in>positive_meaning P)"
-    by (rule searches.exact) (rule state_family_term_formed[OF identity])
-  also have "\<dots> \<longleftrightarrow> s\<in>set A \<and> (\<exists>z\<in>set F. s\<in>set (row_subjects (snd z)) \<and> c\<in>set (row_mentions (snd z)))"
-    by (auto simp: path_term_injective key_index_lookup fibre_exact key_fibre_member; force)
-  finally show ?thesis by (simp only: key_index_term_def)
-qed
-
-lemma index_call_exact:
-  "(ic,Pair_Term (Pair_Term a b) c)\<in>positive_meaning P \<longleftrightarrow>
-    (sr,Pair_Term b (Pair_Term a c))\<in>positive_meaning P"
-  using index_calls.at[of "native_values [a,b,c]"] by simp
+sublocale reading: key_index_reading P sr fs path_term ident "\<lambda>c F. \<exists>z\<in>set F. c\<in>set (row_mentions (snd z))"
+    row_subjects
+  by unfold_locales (simp_all add: identity fibre_exact)
 
 lemma families_exact:
   "(fa,Pair_Term (Pair_Term (path_term s) (path_term c)) (key_indexes_term row_subjects ident A Fs))
       \<in>positive_meaning P \<longleftrightarrow>
     s\<in>set A \<and> (\<exists>F\<in>set Fs. \<exists>z\<in>set F. s\<in>set (row_subjects (snd z)) \<and> c\<in>set (row_mentions (snd z)))"
-  by (auto simp: key_indexes_term_def families.exact index_call_exact search_exact
-      key_index_term_formed[OF identity])
+  by (auto simp: key_indexes_term_def families.exact index_calls.call_exact reading.fibre_exact Bex_def
+      key_fibre_member key_index_term_formed[OF identity]; force)
 
 lemma subjects_exact:
   "(su,Pair_Term (Pair_Term (path_term c) (key_indexes_term row_subjects ident A Fs)) (keys_term ss))
@@ -425,8 +424,9 @@ lemma removal_targets_program:
     native_member_program_def native_some_program_def native_store_search_program_def
     native_rearranging_program_def native_rearranging_program_axioms_def native_rotate_program_def
     native_every_program_def list_cited_program_def native_swap_program_def mention_kept_program_def
+    subject_call_program_def
   by (intro conjI allI; (rule edited_reach_family | rule identity)?)
-    (simp_all add: edited_reach_rule_defs row_pattern_def)
+    (simp_all add: edited_reach_rule_defs row_pattern_def subject_call_rule_def)
 
 theorem native_targets_exact:
   assumes identity: "\<And>y. term_formed (ident y)"

@@ -118,6 +118,48 @@ definition development_seed_loop_value :: "development_problem fset \<Rightarrow
     (development_seed_loop_data (development_seed_loop_report answered))"
 
 text \<open>
+  The seed's requests are requests of one constant construction, a request domain of its residual record,
+  and its loop report holds only its problems and those requests: the report lies in its presentation's
+  domain, so its value is the presentation itself.
+\<close>
+
+lemma development_seed_request_family_domain:
+  "development_request_domain state_constant_key (\<lambda>_. None) (\<lambda>_. None) {q. \<exists>c. development_constant_request
+    isabelle_code_equation_proposition Development_Refinement development_seed_context
+      Development_Residual Development_Generated c=Some q}"
+  by (rule development_constant_requests_domain[OF state_constant_key_injective,
+    where reading=isabelle_code_equation_proposition and kind=Development_Refinement and C=development_seed_context
+      and r=Development_Residual and a=Development_Generated]) simp_all
+
+lemma development_seed_requests_family:
+  "set (development_seed_requests answered)\<subseteq>{q. \<exists>c. development_constant_request isabelle_code_equation_proposition
+    Development_Refinement development_seed_context Development_Residual Development_Generated c=Some q}"
+proof
+  fix q assume q: "q\<in>set (development_seed_requests answered)"
+  show "q\<in>{q. \<exists>c. development_constant_request isabelle_code_equation_proposition
+      Development_Refinement development_seed_context Development_Residual Development_Generated c=Some q}"
+    by (rule development_seed_request_selected[OF q]) (auto simp: development_refinement_request_def)
+qed
+
+theorem development_seed_loop_report_domain:
+  defines P_def: "P\<equiv>set development_seed_problems"
+    and R_def: "R\<equiv>{q. \<exists>c. development_constant_request isabelle_code_equation_proposition Development_Refinement
+      development_seed_context Development_Residual Development_Generated c=Some q}"
+  shows "development_seed_loop_report answered\<in>UNIV\<times>UNIV\<times>{x. set_option x\<subseteq>lists P}\<times>lists R"
+proof -
+  have "set_option (development_seed_selected answered)\<subseteq>lists P"
+    using development_seed_selected_ready by (fastforce simp: P_def in_lists_conv_set)
+  moreover have "set (development_seed_requests answered)\<subseteq>R"
+    unfolding R_def by (rule development_seed_requests_family)
+  ultimately show ?thesis by (simp add: development_seed_loop_report_def lists_eq_set)
+qed
+
+corollary development_seed_loop_report_presentation:
+  "development_seed_loop_data (development_seed_loop_report answered)\<noteq>None"
+  by (rule finite_presented_on_some[OF development_seed_loop_data_presented[OF development_seed_problems_domain
+    development_seed_request_family_domain] development_seed_loop_report_domain[of answered]]) simp
+
+text \<open>
   With nothing answered every seeded problem is ready, so the selection admits all ten, they
   form one independent group, and each is requested with its demanded code equation, the
   constants its definition and code equation mention, and the declarations of those constants.

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "c0d23bb77b2aba4186e7d6e1645703082dec288e3934805fd852e9e36b41736b",
- "checked_content_sha256": "db1ea217027f2ad7f2556393b50219e1dcd0feb332d716608402cd69639fc298",
+ "base_receipt_sha256": "08109e31a3cb7308559ae0e10c87258295bd8a1b6e7f6f442d57fecd2a58e1b6",
+ "checked_content_sha256": "5134da74409734d283faaff51eeb4befacaba7e661eeb197bdf4c6024304fdbe",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,17 +22,42 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.48,
-  "execution_impact": 0.0,
-  "export": 0.0,
-  "proof": 190.94,
-  "recipe_impact": 0.41,
-  "recipes_and_host_tests": 11.25
+  "base_and_impact": 0.35,
+  "execution_impact": 0.02,
+  "export": 23.8,
+  "proof": 172.49,
+  "recipe_impact": 0.46,
+  "recipes_and_host_tests": 11.17
  },
  "rebuilt_theories": [
-  "Development_Owner_Records",
+  "Development_Edited_Local",
+  "Development_Edited_Reach",
+  "Development_Edited_Undeclared",
+  "Development_Exported_Edit",
+  "Development_Incremental_Verdict",
+  "Development_Incremental_Witnesses",
+  "Development_Library_Issue",
+  "Development_Located_Rows",
+  "Development_Machinery",
+  "Development_Machinery_Reports",
+  "Development_Native_Decomposition",
+  "Development_Native_Request",
+  "Development_Native_Verdict",
   "Development_Package_Program",
-  "Presentation_Equivariance"
+  "Development_Request_Citations",
+  "Development_Request_Keys",
+  "Development_Request_Scope",
+  "Development_Row_Contexts",
+  "Development_State_Edit",
+  "Development_Subject_Index",
+  "Development_Verdict_Difference",
+  "Development_Verdict_Mentions",
+  "Development_Verdict_Statements",
+  "Development_Verdict_Unreached",
+  "Development_Verdict_Witnesses",
+  "Isabelle_Native_Reach",
+  "Native_Development_Machinery",
+  "Native_Table_Reach"
  ],
  "recipes": {
   "allocated-environments": {
@@ -132,7 +157,9 @@
    "status": "unchanged"
   },
   "native-development-machinery": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development-seed": {
    "status": "unchanged"
@@ -192,19 +219,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1857,
- "seconds": 243.85,
+ "reused_theories": 1834,
+ "seconds": 249.34,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1860,
+  "theory_count": 1862,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1860,
+ "theories": 1862,
  "validation_inputs": {
-  "ROOT": "527d92c31635da5a3ce1239424cc4eea850242cc30f0b2eed6e4daa8999794aa",
+  "ROOT": "38c95adae1338c4ce781299b07a2c1b50619376644d0b61ffdf6e2d328436ffa",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

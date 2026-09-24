@@ -33,28 +33,30 @@ on, all accepted:
   part (d) in the verification request, a native sample at a use-renamed copy in criticism, no fifth socket, uses
   staying structure (Q26).
 
-**The first problem's route** (#380's, #382's and #409's proposals, each build with its review):
+**The first problem's route** (#380's, #382's and #409's proposals, each build with its review; #385, #387 and #420
+landed):
 
-- first: the owner records (#385), the payload audit's native reader (#387), the members a package adds with the
-  callee boundary G3 (#389), the equivariance notion (#420, `Presentation_Equivariance`, with the marking of #381's
-  entry) and its use instance (#422, `Factor_Use_Renaming`, its imports below the reader theories #416 and #418 edit);
+- first: the members a package adds with the callee boundary G3 (#389), the use instance (#422, `Factor_Use_Renaming`,
+  its imports below the reader theories #416 and #418 edit), split to fit a build's room: #424 adds the package reading
+  at a renamed root use, continuing it;
 - then: the guard (#391, after #387, #389), the given's readers as one numbered program (#412, after #387, #389), the
-  readers' use-equivariance clauses (#416 the package and scope readers; #418 the definition, clause, pattern and data
-  readers and the audit, after #387; both after #422), the given installed beside the development package (#414, after
-  #412 and N2b), the native request at a package (#410, after #422 and #416; the first request, its installation, is
-  briefed later with the criticism build, Open 121);
+  readers' use-equivariance clauses (#416 the package and scope readers, after #424; #418 the definition, clause,
+  pattern and data readers and the audit, after #422 and #387), the given installed beside the development package
+  (#414, after #412 and N2b), the native request at a package (#410, after #422 and #416; the first request, its
+  installation, is briefed later with the criticism build, Open 121);
 - then: the guard installed over the given's readers, the asked relation's entry with its equivariance clause (#393,
   after #391, #414, #416, #418, #422), the given and the native state's first generation (#395, after #385, #414), the
-  posing (#397), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
+  posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
+  executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
   frame (#405, after #422: parts (a)–(d) and (f)) and harness (#407).
 
-N2a (#340) and N2b (#342) join and compile the development package (#320's entry, as #376 corrects it), the given the
-first answers extend; the given's installation waits on N2b.
+N2a (#340, landed: `package_program`) and N2b (#342) join and compile the development package (#320's entry, as #376
+corrects it), the given the first answers extend; the given's installation waits on N2b.
 
-**Beside the route**: the bootstrap loop's maintenance — the rows line's presenters proved in their domains (#354), the
-answer harness's shared runs (#369), the listed-family law's re-citations in the development theories and the reach
-(#375; #379 landed) — and #384, #365's follow-ups over #356's seed round, which has landed (B4a #365, B4b
-#367). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
+**Beside the route**: the bootstrap loop's maintenance — the rows line's presenters proved in their domains (#354,
+landing again after its merge left a row twice), the answer harness's shared runs (#369), the listed-family law's
+re-citations in the development theories and the reach (#375; #379 landed); #426, #341's and #388's follow-ups over the
+joined program's and the audit's generic lemmas (after #342, #375 and #418). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
 N3b, N4a and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93)
 and the machinery's verification stage judged natively (#193, #194).
 
@@ -71,13 +73,13 @@ exporter's obligations at every state it defines (#227–#308, #352).
 by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The deepest chains are 9, the first problem's route through the given:
-#387 → #412 → #414 → #393 → #397 → #399 → #401 → #407 → #408, the same from the native package (#340 → #342 → #414) and
-from the notion (#420 → #422 → #416 or #418 → #393).
+#387 → #412 → #414 → #393 → #397 → #399 → #401 → #407 → #408, the same from the use instance (#422 → #424 → #416 →
+#393), one shorter from the native package (#342 → #414).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #420 and #422 at its head, then #412, #342,
-#391, #414, #416, #418, #410, #405 and the rest in their chains' order; the tasks in their checks (#340, #354), so
-that they land; then #384, #375 and #369; each review after its build.
+exists, Q2): the owner's directions first — the first problem's route, #422 and #424 at its head, then #412, #342,
+#391, #414, #416, #418, #410, #405 and the rest in their chains' order, #425 before the posing it serves; then #354,
+#426, #375 and #369; each review after its build.
 
 ## Decisions
 
@@ -205,7 +207,23 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   order", task 9's, #378's, #376's; #381's part (d) is marked by #420); #378 recorded the owner's words of 17:50, 18:12,
   18:36 and 18:53 in the plan, with stage 2 and its gate; their owner choices are Q23–Q26.
 - **The route's briefs**: #380 (#385–#408), #382 (#410–#419; #393 and #395 on #414), #409 (#420–#423; #393, #405,
-  #410, #416 and #418 on #422).
+  #410, #416 and #418 on #422); #422 split by plan-63 to fit its room, #424 (the package reading at a renamed root use,
+  continuing it) and its review #427 added, #416 on #424.
+- **Landed with `045b5b33`**: #420, `Presentation_Equivariance` (its review's follow-ups 1 and 4 in #422, 2, 3 and 5
+  Open 126); #340, N2a, `Development_Package_Program`'s `package_program`, the six programs joined by relocation under
+  address prefixes (its review's follow-ups 1–3 and 5 are #426; its follow-up 4: a landing that changes one of the six
+  programs derives the joined program again, the residual of Q18 (c), since `decomposition_relocated` and
+  `package_distinct` read the lists' literal shapes); #385, `Development_Owner_Records`, the owner records and the
+  indexed generation (its review's follow-up 1 in #397, 2 and 3 are #425, 4 under Now).
+- **Landed with `1fd67709`**: #387, `Factor_Payload_Audit`, the octet audit of one definition as an ordinary native
+  program at sites 500–505 (its review's follow-ups 1–3 are in #426, 4 in #393's cost, 5 and 6 in #412's Decided, 7 is
+  #428); #384, the seed round's generic content beside its notions (its review's follow-up 6 is in #428, 7 under Open
+  27, the rest Open 127).
+- **#428** (design, accepted): DECISIONS.md "The payload audit decides a definition's stated payloads through its
+  instances at a blank table; each distinction it relies on is a native notion's" — every reliance drawn by a native
+  notion, the target reliance forced (no observation-free audit exists), inertness only for definitions without
+  material premises and part (g) left to criticism, sites 500–505 not relocated (a collision is the planner's), the
+  cost measured at #393; marked pointers in the two seed entries and task 383's Open.
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
@@ -276,13 +294,15 @@ The owner's questions, a line each (their words and the provisional choices in f
    (#383's follow-up 4: one permutation moving every use of the candidate's environment outside it, one permuting its
    uses among themselves), observations of ground clauses and target leaves, each failure recorded against the
    candidate (`Observation_Repairs`); with #381's follow-up 3, the leaf argument for programs with material premises
-   (`Factor_Positive_Parametricity`), at the first answer whose added definitions hold one.
+   (`Factor_Positive_Parametricity`), at the first answer whose added definitions hold one; parts (e), (g) and (h) as
+   #428's entry leaves them to criticism.
 111. The HOL-constant loop's retirement (#357's follow-ups, `.build/tasks/357/result.md`): when the first answer is
    admitted and problems are posed again under it, the machinery's HOL residuals superseded (Q18 (d)), the seed's
    refinement problems no longer selected or issued, the records kept as history; #320's "Beside the bootstrap loop"
    gains a marked correction.
 116. `edited_reach_system` stated as the rooted restriction (`Factor_System_Restriction.rooted_system`) of the package's
-   joined program at O's admission roots (#321's review, follow-up 2): a task once N2a (#340) lands.
+   joined program at O's admission roots (#321's review, follow-up 2): N2a has landed; planned after #426, which
+   settles the joined program's generic lemmas.
 4. A proof request class and a proof problem's decomposition; its first question, the native content of a proof
    answer, is where Q1 bites.
 5. The refusal an absent certified generation cannot tell from an unavailable input: an empty result and a failed one
@@ -306,7 +326,8 @@ The owner's questions, a line each (their words and the provisional choices in f
 27. The seed recipe's cost (#324's attribution, then #367's held pair, `.build/tasks/367/measurement.md`): the word's
    lookup is read off the word constant, 33.14 s saved against the pair's own before, which drifted from #324's
    absolutes (lookup 34.90 against 28.15 s, recipe 50.82 against 48.50 s: characterized before any claim against
-   #324's figures). What remains: the payload judgments (8.03 s, most of it certifying a cause that presents its
+   #324's figures). #384 records the seed publication's plain rows in one parallel pass and publishes them in a second,
+   where one pass did both (its review's follow-up 7): its effect is read at the recipe's next attribution. What remains: the payload judgments (8.03 s, most of it certifying a cause that presents its
    payload twice; that entry's Open), the word's table (3.87 s) and the check's load — in #367's landing checks the
    publication presentation took 45–48 s unheld against 17.68 s held, and the seed recipe still set the recipe phase
    (47.7 and 45.27 s; the machinery's 43.0 and 42.86 s). The presentation under load is attributed before the
@@ -364,13 +385,22 @@ renamed). 117 #361's review (`finite_singleton_option_image`, the identity map's
 remaining scans; bootstrap). 122 #319's review (the framed records' one-line form at their next re-record; the two
 demanded answers' failure unattributed). 124 the word constant's equation exported as a checked contract,
 read by the runner, once a second report takes a word constant (#368's follow-up 4). 125
-`Native_Path_Stores.native_store_search_program.sound`'s inner induction re-indented (#379's review, follow-up 5).
+`Native_Path_Stores.native_store_search_program.sound`'s inner induction re-indented (#379's review, follow-up 5). 126
+`Presentation_Equivariance` (#421's review, follow-ups 3, 5): the Instances text's leaf admissibility (formed leaf
+permutations fixing the stated leaves); `finite_injection_permutation`'s swap as `Transposition.transpose`. 127 #384's
+review (`.build/tasks/384/review.md`, follow-ups 1–5, 8): `seed_read_bound` stated once in `Complete_Value_References`
+at its next use; `seed_list_targets` and `seed_snapshot_targets` beside `table_represented_generation_option`; the two
+presentation maps into `Finite_Presented_Collections` (after #354) and the `those`/`find` facts beside HOL's; the seed
+round's redundant import and blank lines; #366's follow-ups 1–3 (the `checking SML` cost, the locus lookup after the
+rows, the prepared cache's `map_of`). 128 "The in-place refinements apply two notions" states
+`development_seed_publication_from_published` as a present consumer: a marked pointer at its next change (#428's
+follow-up 1).
 
 ## Now
 
 - **Mailed, read by each task's first session**: #313's re-review's first follow-up and #319's per-answer seconds to
   #369.
-- **Classifier stops**: a classifier stopped plan-51 to plan-54, plan-56 and plan-58 to plan-61 before their notes, and
+- **Classifier stops**: a classifier stopped plan-51 to plan-54, plan-56 and plan-58 to plan-62 before their notes, and
   #323's fixer once; each next planner took up what HANDOFF.md held, and nothing was missing. Repeated declines are the
   run's to handle, not ledger questions (the owner, through the monitoring session, 20:23 and 20:28).
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (#168's review,
@@ -378,7 +408,9 @@ read by the runner, once a second report takes a word constant (#368's follow-up
   brief's task ran (#324; #315 exported them again from its proof context); the finalizer's push of `82a065cd` failed;
   the finalizer should commit the handed-over files only (#303's tree held untracked `.bashrc` and others); the
   exclusive hold outlasts its run (#317); a tree behind main cannot probe until it brings main in (#316); a re-review
-  writes over its first verdict (#65's, #302's); `v2.py ledger` records a text beginning with `--` (Q15). Owed to the
+  writes over its first verdict (#65's, #302's); `v2.py ledger` records a text beginning with `--` (Q15); a task tree's `.claude/orchestration/owner-ledger.md` holds
+none of the owner records' entries, only main's does, so a tool reading the ledger in a task tree reads a stale copy
+(#386's review, follow-up 4). Owed to the
   owner: each landing check's phases and per-recipe comparison; earlier gaps are in `PLANNING_LOG.md` (2026-09-24).
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the
   plan (`4434635d`, `82a065cd`); the owner's words of 17:50, 18:12, 18:36 and 18:53, recorded by #378 (`cbf0c7e9`).

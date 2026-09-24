@@ -1,5 +1,5 @@
 theory Native_Development_Seed
-  imports Development_Seed_Publication Development_Seed_Referenced_Publication Native_Execution_Refinements
+  imports Development_Seed_Referenced_Publication Native_Execution_Refinements
 begin
 
 export_code development_seed_report_value development_seed_state development_seed_missing_declaration

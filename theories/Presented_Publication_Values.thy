@@ -674,6 +674,274 @@ lemma table_presentation_terms:
   "table_formed T \<Longrightarrow> presented_terms (table_presentation T) {s. shared_canonical T s}"
   unfolding table_presentation_def by (rule shared_presentation_terms)
 
+section \<open>A represented transaction result held, and the targets it holds\<close>
+
+text \<open>
+  A represented result is held as the applied snapshot or the conflict's observation, and its decoding is
+  held as the held result mapped. A snapshot's observed comparison holds only targets of the snapshot and
+  the transaction, and every result published over a snapshot and publications whose targets lie in a set
+  holds targets of that set.
+\<close>
+
+fun represented_result_held :: "'t represented_transaction_result \<Rightarrow> 't held_transaction_result" where
+  "represented_result_held (Represented_Applied S)=Inl S"
+| "represented_result_held (Represented_Conflict C)=Inr C"
+
+lemma represented_result_held_decoded:
+  "finite_transaction_result_held (decode_represented_result t r)=
+    map_sum (fimage (map_generation_structure t)) (fimage (map_prod t (map_option (map_generation_structure t))))
+      (represented_result_held r)"
+  by (cases r) (simp_all add: decode_represented_snapshot_def decode_represented_observation_def map_prod_def)
+
+lemma represented_observed_comparison_targets:
+  "observation_targets (represented_observed_comparison S T)\<subseteq>represented_snapshot_targets S\<union>represented_transaction_targets T"
+proof
+  fix x
+  assume "x\<in>observation_targets (represented_observed_comparison S T)"
+  then obtain l where l: "l|\<in>|represented_comparison_loci T"
+    and x: "x=l \<or> (\<exists>H. represented_snapshot_lookup S l=Some H \<and> x\<in>set_generation_structure H)"
+    by (auto simp: observation_targets_def represented_observed_comparison_def)
+  show "x\<in>represented_snapshot_targets S\<union>represented_transaction_targets T"
+  proof (cases "x=l")
+    case True
+    then show ?thesis using l represented_comparison_loci_targets[of T] by auto
+  next
+    case False
+    then obtain H where H: "represented_snapshot_lookup S l=Some H" "x\<in>set_generation_structure H" using x by blast
+    have "H\<in>fset S" using represented_snapshot_lookup_member[OF H(1)] by simp
+    then show ?thesis using H(2) by (auto simp: represented_snapshot_targets_def)
+  qed
+qed
+
+lemma represented_publications_within:
+  "represented_snapshot_targets S\<subseteq>K \<Longrightarrow> represented_publications_targets ps\<subseteq>K \<Longrightarrow>
+    \<forall>r\<in>set (represented_publications_with (represented_transact_body tf) S ps). \<forall>x\<in>set_option r.
+      held_result_targets (represented_result_held x)\<subseteq>K"
+proof (induction ps arbitrary: S)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons p ps)
+  obtain I A where p: "p=(I,A)" by (cases p)
+  have rest: "represented_publications_targets ps\<subseteq>K"
+    using Cons.prems(2) by (auto simp: p represented_publications_targets_def)
+  show ?case
+  proof (cases A)
+    case None
+    then show ?thesis using Cons.IH[OF Cons.prems(1) rest] by (simp add: p)
+  next
+    case (Some G)
+    note AG=this
+    let ?T="represented_locus_transaction I G"
+    have T: "represented_transaction_targets ?T\<subseteq>K"
+      using represented_locus_transaction_targets[of I G] Cons.prems(2) by (auto simp: p Some represented_publications_targets_def)
+    have step: "held_result_targets (represented_result_held (represented_transaction_step S ?T))\<subseteq>K"
+    proof (cases "represented_comparison_passes S ?T")
+      case True
+      then show ?thesis using represented_transaction_update_targets[of S ?T] Cons.prems(1) T
+        by (auto simp: represented_transaction_step_def)
+    next
+      case False
+      then show ?thesis using represented_observed_comparison_targets[of S ?T] Cons.prems(1) T
+        by (auto simp: represented_transaction_step_def)
+    qed
+    have later: "\<forall>r\<in>set (represented_publications_with (represented_transact_body tf) U ps). \<forall>x\<in>set_option r.
+        held_result_targets (represented_result_held x)\<subseteq>K"
+      if "represented_transact_body tf S ?T=Some (Represented_Applied U)" for U
+    proof -
+      have "represented_snapshot_targets U\<subseteq>K"
+        using represented_transact_applied(3)[OF that] Cons.prems(1) T by blast
+      then show ?thesis by (rule Cons.IH[OF _ rest])
+    qed
+    show ?thesis
+    proof (cases "represented_transact_body tf S ?T")
+      case None
+      then show ?thesis using Cons.IH[OF Cons.prems(1) rest] by (simp add: p AG)
+    next
+      case (Some r)
+      note result=this
+      have r: "r=represented_transaction_step S ?T" using result by (simp add: represented_transact_body_def split: if_splits)
+      show ?thesis
+      proof (cases r)
+        case (Represented_Applied U)
+        then show ?thesis using later[of U] result step r by (simp add: p AG)
+      next
+        case (Represented_Conflict C)
+        then show ?thesis using Cons.IH[OF Cons.prems(1) rest] result step r by (simp add: p AG)
+      qed
+    qed
+  qed
+qed
+
+section \<open>A table of target leaves as a shared presentation\<close>
+
+text \<open>
+  A table holding target leaves only, each once, is a formed table of distinct leaf shapes with no pairs.
+  At its presentation every target of the table is the reference to its position, and a shape that is not
+  a target leaf is found nowhere, so its search asks the table's index of target leaves alone.
+\<close>
+
+definition target_leaf_shapes :: "finite_exact_target list \<Rightarrow> shape list" where
+  "target_leaf_shapes T=map (\<lambda>x. Leaf_Shape (Target_Leaf x)) T"
+
+lemma target_leaf_shapes_read:
+  "value_reference_read (target_leaf_shapes T) i=map_option (\<lambda>x. Leaf_Shape (Target_Leaf x)) (value_reference_read T i)"
+  by (simp add: target_leaf_shapes_def value_reference_read_def)
+
+theorem target_leaf_shapes_formed: "distinct T \<Longrightarrow> table_formed (target_leaf_shapes T)"
+  by (auto simp: table_formed_def target_leaf_shapes_read distinct_map inj_on_def target_leaf_shapes_def
+    value_reference_read_def)
+
+lemma target_leaf_reference_term: "i<length T \<Longrightarrow> reference_term (target_leaf_shapes T) i=Some (Finite_Target (T!i))"
+  using reference_factor_leaf[of "target_leaf_shapes T" i "Target_Leaf (T!i)"]
+  by (simp add: target_leaf_shapes_def value_reference_read_def)
+
+theorem target_leaf_presented_targets:
+  "presented_targets (table_presentation (target_leaf_shapes T)) {s. shared_canonical (target_leaf_shapes T) s}
+    Shared_Reference (\<lambda>i. T!i) {..<length T}"
+  by (simp add: presented_targets_def table_presentation_def target_leaf_reference_term) (simp add: target_leaf_shapes_def)
+
+definition target_leaf_find :: "shape list \<Rightarrow> shape \<Rightarrow> nat option" where
+  "target_leaf_find T s=(case s of Leaf_Shape (Target_Leaf x) \<Rightarrow> table_find T s | _ \<Rightarrow> None)"
+
+lemma target_leaf_find_exact: "target_leaf_find (target_leaf_shapes T)=table_find (target_leaf_shapes T)"
+proof
+  fix s
+  show "target_leaf_find (target_leaf_shapes T) s=table_find (target_leaf_shapes T) s"
+  proof (cases "\<exists>x. s=Leaf_Shape (Target_Leaf x)")
+    case True
+    then show ?thesis by (auto simp: target_leaf_find_def)
+  next
+    case False
+    then have "s\<notin>set (target_leaf_shapes T)" by (auto simp: target_leaf_shapes_def)
+    then have "table_find (target_leaf_shapes T) s=None" by (simp add: table_find_def value_reference_index_absent)
+    moreover have "target_leaf_find (target_leaf_shapes T) s=None" using False
+      by (auto simp: target_leaf_find_def split: shape.split factor_leaf.split)
+    ultimately show ?thesis by simp
+  qed
+qed
+
+definition target_leaf_presentation :: "finite_exact_target list \<Rightarrow> shared_term term_presentation" where
+  "target_leaf_presentation T=shared_presentation (value_reference_read (target_leaf_shapes T))
+     (target_leaf_find (target_leaf_shapes T)) (reference_term (target_leaf_shapes T))"
+
+lemma target_leaf_presentation_exact: "target_leaf_presentation T=table_presentation (target_leaf_shapes T)"
+  by (simp add: target_leaf_presentation_def table_presentation_def target_leaf_find_exact)
+
+section \<open>Law 2 composed through the presenters\<close>
+
+text \<open>
+  A presenter decodes a presentation on a domain of values when each value it presents lies in the
+  presentation's domain and decodes to that presentation. Pairs, options, sequences, truth values,
+  generations, snapshots and held results compose so, each from its components'.
+\<close>
+
+definition presenter_decodes :: "'p term_presentation \<Rightarrow> 'p set \<Rightarrow> ('a \<Rightarrow> 'p) \<Rightarrow> ('a \<Rightarrow> finite_factor_term) \<Rightarrow> ('a \<Rightarrow> bool) \<Rightarrow> bool" where
+  "presenter_decodes P D f g A \<longleftrightarrow> (\<forall>x. A x \<longrightarrow> f x\<in>D \<and> presented_decode P (f x)=g x)"
+
+lemma presenter_decodes_pair:
+  assumes terms: "presented_terms P D" and f: "presenter_decodes P D f g A" and h: "presenter_decodes P D f' g' B"
+  shows "presenter_decodes P D (presented_pair_value P f f') (finite_pair_presentation g g') (\<lambda>z. A (fst z) \<and> B (snd z))"
+  unfolding presenter_decodes_def
+proof (intro allI impI)
+  fix z
+  assume z: "A (fst z) \<and> B (snd z)"
+  have fz: "f (fst z)\<in>D" "presented_decode P (f (fst z))=g (fst z)"
+    and hz: "f' (snd z)\<in>D" "presented_decode P (f' (snd z))=g' (snd z)"
+    using f h z by (simp_all add: presenter_decodes_def)
+  show "presented_pair_value P f f' z\<in>D \<and> presented_decode P (presented_pair_value P f f' z)=finite_pair_presentation g g' z"
+    using presented_terms.presented_pair_value_decode[OF terms, where f=f and g=f' and z=z, OF fz(1) hz(1)] fz(2) hz(2)
+    by (simp add: finite_pair_presentation_def)
+qed
+
+lemma presenter_decodes_option:
+  assumes terms: "presented_terms P D" and f: "presenter_decodes P D f g A"
+  shows "presenter_decodes P D (presented_option P f) (finite_option_presentation g) (\<lambda>x. \<forall>a\<in>set_option x. A a)"
+  unfolding presenter_decodes_def
+proof (intro allI impI)
+  fix x
+  assume x: "\<forall>a\<in>set_option x. A a"
+  have each: "\<And>a. x=Some a \<Longrightarrow> f a\<in>D" using f x by (auto simp: presenter_decodes_def)
+  show "presented_option P f x\<in>D \<and> presented_decode P (presented_option P f x)=finite_option_presentation g x"
+    using presented_terms.presented_option_decode[OF terms, where f=f and x=x, OF each] f x
+    by (cases x) (auto simp: presenter_decodes_def)
+qed
+
+lemma presenter_decodes_sequence:
+  assumes terms: "presented_terms P D" and f: "presenter_decodes P D f g A"
+  shows "presenter_decodes P D (presented_sequence P f) (finite_sequence_presentation g) (\<lambda>xs. \<forall>a\<in>set xs. A a)"
+  unfolding presenter_decodes_def
+proof (intro allI impI)
+  fix xs
+  assume xs: "\<forall>a\<in>set xs. A a"
+  have each: "\<forall>a\<in>set xs. f a\<in>D" using f xs by (auto simp: presenter_decodes_def)
+  show "presented_sequence P f xs\<in>D \<and> presented_decode P (presented_sequence P f xs)=finite_sequence_presentation g xs"
+  proof -
+    have m: "map (presented_decode P \<circ> f) xs=map g xs" using f xs by (auto simp: presenter_decodes_def map_eq_conv)
+    have eq: "finite_sequence_presentation (presented_decode P \<circ> f) xs=finite_sequence_presentation g xs"
+      by (simp only: finite_sequence_presentation_def m)
+    have dec: "presented_sequence P f xs\<in>D \<and>
+        presented_decode P (presented_sequence P f xs)=finite_sequence_presentation (presented_decode P \<circ> f) xs"
+      by (rule presented_terms.presented_sequence_decode[OF terms, where f=f and xs=xs, OF each])
+    show ?thesis using dec eq by auto
+  qed
+qed
+
+lemma presenter_decodes_boolean:
+  "presented_terms P D \<Longrightarrow> presenter_decodes P D (presented_boolean P) finite_boolean_data (\<lambda>b. True)"
+  by (simp add: presenter_decodes_def presented_terms.presented_boolean_decode)
+
+lemma presenter_decodes_generation:
+  assumes terms: "presented_terms P D" and targets: "presented_targets P D f t K"
+  shows "presenter_decodes P D (presented_generation_value P f) (\<lambda>G. finite_target_generation_value (map_generation_structure t G))
+    (\<lambda>G. set_generation_structure G\<subseteq>K)"
+  unfolding presenter_decodes_def
+proof (intro allI impI)
+  fix G
+  assume "set_generation_structure G\<subseteq>K"
+  then have "presented_targets P D f t (set_generation_structure G)" using targets by (auto simp: presented_targets_def)
+  then show "presented_generation_value P f G\<in>D \<and>
+      presented_decode P (presented_generation_value P f G)=finite_target_generation_value (map_generation_structure t G)"
+    by (rule presented_terms.presented_generation_value_targets[OF terms])
+qed
+
+lemma presenter_decodes_snapshot:
+  assumes terms: "presented_terms P D" and targets: "presented_targets P D f t K"
+  shows "presenter_decodes P D (presented_snapshot_value P f) (\<lambda>S. finite_snapshot_value (decode_represented_snapshot t S))
+    (\<lambda>S. represented_snapshot_targets S\<subseteq>K)"
+  unfolding presenter_decodes_def
+proof (intro allI impI)
+  fix S
+  assume "represented_snapshot_targets S\<subseteq>K"
+  then have "presented_targets P D f t (represented_snapshot_targets S)" using targets by (auto simp: presented_targets_def)
+  then show "presented_snapshot_value P f S\<in>D \<and>
+      presented_decode P (presented_snapshot_value P f S)=finite_snapshot_value (decode_represented_snapshot t S)"
+    using presented_terms.presented_snapshot_value_decode[OF terms] by (simp add: decode_represented_snapshot_def)
+qed
+
+lemma presenter_decodes_result:
+  assumes terms: "presented_terms P D" and targets: "presented_targets P D f t K"
+  shows "presenter_decodes P D (\<lambda>r. presented_result_value P f (represented_result_held r))
+    (\<lambda>r. finite_transaction_result_value (decode_represented_result t r)) (\<lambda>r. held_result_targets (represented_result_held r)\<subseteq>K)"
+  unfolding presenter_decodes_def
+proof (intro allI impI)
+  fix r
+  assume "held_result_targets (represented_result_held r)\<subseteq>K"
+  then have held: "presented_targets P D f t (held_result_targets (represented_result_held r))"
+    using targets by (auto simp: presented_targets_def)
+  show "presented_result_value P f (represented_result_held r)\<in>D \<and>
+      presented_decode P (presented_result_value P f (represented_result_held r))=
+        finite_transaction_result_value (decode_represented_result t r)"
+    using presented_terms.presented_result_value_decode[OF terms held]
+    by (simp add: presented_result_value_plain[symmetric] represented_result_held_decoded)
+qed
+
+lemma finite_option_presentation_map: "finite_option_presentation f (map_option d x)=finite_option_presentation (\<lambda>a. f (d a)) x"
+  by (cases x) simp_all
+
+lemma finite_sequence_presentation_map: "finite_sequence_presentation f (map d xs)=finite_sequence_presentation (\<lambda>a. f (d a)) xs"
+  by (simp add: finite_sequence_presentation_def o_def)
+
 export_code presented_compare presented_listing presented_data_list presented_pair_value presented_sequence
   presented_option presented_collection presented_natural presented_boolean presented_generation_value
   presented_snapshot_value presented_observation_value presented_result_value finite_transaction_result_held

@@ -376,6 +376,19 @@ definition development_repair_state ::
   "development_repair_state S r S' I=development_request_extension S S'
      (development_verdict_excess (development_refinement_verdict S r S')) I"
 
+text \<open>
+  The names of an extension are the request state's names followed by those of the answer state it lacks,
+  whatever the extension adds: the repair's names are read without its verdict or its material.
+\<close>
+
+lemma development_request_extension_names:
+  "fst (snd (development_request_extension S S' X I))=isabelle_appended_names (fst (snd S)) (fst (snd S'))"
+  by (simp add: development_request_extension_def Let_def)
+
+corollary development_repair_state_names:
+  "fst (snd (development_repair_state S r S' I))=isabelle_appended_names (fst (snd S)) (fst (snd S'))"
+  by (simp only: development_repair_state_def development_request_extension_names)
+
 definition development_extension_verdict_data :: "development_extension_verdict \<Rightarrow> finite_factor_term" where
   "development_extension_verdict_data=finite_pair_presentation (finite_sequence_presentation isabelle_entity_data)
     (finite_pair_presentation (finite_sequence_presentation isabelle_entity_data)

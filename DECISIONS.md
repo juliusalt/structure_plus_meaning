@@ -12077,6 +12077,12 @@ words are the accepted ones: requirement_plans and requirement_sources (predicte
 compiled position after all), and every recipe predicted unchanged, native_child included. overnight is not a
 recipe of the landing check and was not re-recorded here.
 
+*Correction (task 159, 2026-09-24; task 156's review of task 155, follow-up 7):* the check that found these 38 words
+was the check of the work, `20260924-065346-batch155`, which the landing check repeated, not the landing check itself.
+The stages whose words did not change hold no compiled position: of native_development_machinery the problems, the
+verification and the native answers (only presentation-loop changed), and of native_development_seed the problems, the
+verification, the succession and the native answers (only presentation-loop and presentation-publication changed).
+
 ### The builds, in order
 
 1. **The contracts first (words equal).** The index code and its facts in RRA_Exact with the import change; the flat
@@ -12095,6 +12101,19 @@ recipe of the landing check and was not re-recorded here.
    bits, source ms, µs per key bit. The growth is removed when mean key bits grow by a bounded amount per doubling of
    n (about 3 bits, the next digit of the child's code) where they grew by about 2n before, and source ms per clause
    grows as log n.
+
+   *Addition (task 159, 2026-09-24): measured*, in `.build/tasks/address-layout-measure/measurement.md` (the runner
+   beside it), on `.build/bases/20260924-075148-train299` (the last base without build 2, commit `54f659eb`) and
+   `.build/bases/20260924-075451-train290-155-294` (the first with it, commit `2906d9c9`), in two exclusive holds, the
+   first having bounded the old base's run inside far keyed 64. The criterion is met: mean key bits grow +2.6 to +3.2
+   per doubling of n after (far keyed 24.4 → 41.9 bits for n = 1 → 64) against about 2n before (25.5 → 156.7, +65.4 at
+   the last doubling); source ms per clause 0.54 → 1.31 after (about +0.1 per doubling up to n = 32, log n) against
+   0.55 → 3.94 before; at n = 64 the source is 252 → 84 ms (far keyed) and 44 → 14 ms (far index). The root family's
+   own artifact is constant; its reading grows with the definitions it cites and with the environment's formation,
+   and the layout removes its superlinearity with theirs (49.3 → 19.0 ms at far keyed 64). Left after the layout, for
+   the planner: the question's construction stays about quadratic (×3.4–4.2 per doubling, 116 ms at far keyed 64),
+   the executable placed forest is quadratic and slower than the right-nested union it replaced (66 against 39 ms at
+   64 bodies), the environment's formation is superlinear, and the reader's cost per key bit rises 0.31 → 0.43 µs.
 
 The builds follow task 30's landing; build 1 changes no word and can land whenever it is ready after it. Build 2
 lands after build 1 and before #90 and #92, as the planner's order already places #136, so that their reviews judge

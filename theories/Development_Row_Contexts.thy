@@ -1,6 +1,5 @@
 theory Development_Row_Contexts
-  imports Development_Row_Data Development_Seed Development_Repair_Rows Development_Machinery
-    Development_Loop_Presentations
+  imports Development_Row_Data Development_Seed_Loop Development_Repair_Rows Development_Machinery_Reports
 begin
 
 section \<open>The contexts meet the row premise on the problems their constructions pose\<close>
@@ -42,7 +41,6 @@ definition development_repair_origin ::
       bool list option" where
   "development_repair_origin key r definitions q=(if q\<in>set definitions
     then Some (development_located_at key Development_Problem_Role (fst r)) else None)"
-
 
 lemma development_repair_origin_outside:
   "q\<notin>set definitions \<Longrightarrow> development_repair_origin key r definitions q=None"
@@ -236,7 +234,6 @@ subsection \<open>Every problem of a loop its constructors reach meets the premi
 definition development_loop_cited :: "(nat \<Rightarrow> bool list) \<Rightarrow> development_loop \<Rightarrow> bool" where
   "development_loop_cited key L\<longleftrightarrow>(case L of (S,ps,D,answered,history) \<Rightarrow>
     \<forall>p\<in>set ps. development_row_premise (development_loop_origin key history) (\<lambda>_. None) p)"
-
 
 theorem development_loop_cited_initial:
   assumes "\<And>p. p\<in>set ps \<Longrightarrow> development_row_premise (\<lambda>_. None) (\<lambda>_. None) p"
@@ -489,6 +486,23 @@ next
     by (auto simp: Some finite_partial_option_def finite_partial_sequence_def finite_partial_pair_def
       split: option.splits)
 qed
+
+text \<open>
+  At each state that frames answers the verdict part lies in its presentation's domain as a fact of the
+  state: over the seed's requests and over the machinery's, at every answered set, and over the refinement
+  layer's demanded requests, which are the refinement requests of its context at its constants.
+\<close>
+
+lemma development_refinement_requests_member:
+  assumes "q\<in>set (List.map_filter (development_refinement_request C r a) cs)"
+  shows "\<exists>c. development_constant_request isabelle_code_equation_proposition Development_Refinement C r a c=Some q"
+  using assms by (auto simp: map_filter_member development_refinement_request_def)
+
+lemmas development_seed_framed_verdict_present = development_framed_verdict_present[OF state_constant_key_injective development_seed_requests_family[THEN subsetD, unfolded mem_Collect_eq] development_contract_term.simps(1)]
+
+lemmas development_machinery_framed_verdict_present = development_framed_verdict_present[OF state_constant_key_injective development_machinery_requests_family[THEN subsetD, unfolded mem_Collect_eq] development_contract_term.simps(4)]
+
+lemmas development_layer_framed_verdict_present = development_framed_verdict_present[OF state_constant_key_injective development_refinement_requests_member development_contract_term.simps(1)]
 
 theorem development_framed_successor_present:
   assumes domain: "development_row_domain key (\<lambda>_. None) (\<lambda>_. None) P"

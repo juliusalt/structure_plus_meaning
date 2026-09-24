@@ -25,8 +25,11 @@ admission and membership, environment inclusion, the payload audit), its origin 
 native content judged by the guard, admitted as a generation, verified by Isabelle before publication and approved by
 the owner; the second problem (Q2's) and the authority problem are posed over the admitted answer. #380 briefs its
 builds (owner records, the payload audit's native reader, the guard, the native state's generation and the posing, the
-answer route, the verification as a request after admission), told of #376's result: the first leaves' request is the
-native request at a package, with the given's Factor readers. #376 (accepted; DECISIONS.md "Every distinction a native
+answer route, the verification as a request after admission), its brief rewritten on the owner's answer to Q23 (a) at
+19:57 — the first problem's requirements use #376's test, not only the octet audit — whose native form design #381
+(continuing #376) decides before the guard build; #382 briefs beside it the native request at a package (the first
+leaves' request, in N3a's place) and the given's Factor readers (#376's follow-ups 1 and 2), which q86 found without an
+executable package. #376 (accepted; DECISIONS.md "Every distinction a native
 program relies on comes from a native notion: the state the native loop judges and the presentations that retire")
 took the rule of 18:12 to the loop's other programs: a distinction is native when a native notion draws it on native
 content, and supplied by a HOL presentation relation when the relation places it in the argument; the native loop's
@@ -210,11 +213,11 @@ them and on the first answer. The translation design follows (Open 3).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
 creates has no review task (the harness reviews it in its own folder). The deepest chain is 3: #340 → #342 → #343, the
-native package; the first problem's builds hang from #380's proposal.
+native package; the first problem's builds hang from #380's and #382's proposals.
 
 **Order** (the queue holds it; this is why it is as it is; it is the planner's choice, a residual until the native
-answer to the selection problem exists, Q2). The owner's directions first: the first problem's builds, briefed by
-#380, and the package that is their given, N2a (#340) then N2b (#342); then #353 and #379, #375 after both; #356's
+answer to the selection problem exists, Q2). The owner's directions first: #381 (the native form of Q23 (a)), the first
+problem's builds, briefed by #380 and #382, and the package that is their given, N2a (#340) then N2b (#342); then #353 and #379, #375 after both; #356's
 builds (#365–#368); the bootstrap loop's maintenance, #319, #354, and #369 after #319; each review after its build.
 
 ## Decisions
@@ -297,7 +300,8 @@ construction (Open 100).
   `request_presents`), which the bootstrap loop keeps exact until it retires, its growth retired and its maintenance
   kept. A row, a locus path, a prefix, a key or a family index is structure, not a native notion, and a code a
   HOL function assigns supplies meaning only through HOL (the owner's rejection of #373). Consolidations of existing
-  native programs that extend no relation (#353, #374, #375, the B-line) go on.
+  native programs that extend no relation (#353, #374, #375, the B-line) go on. The owner answered Q23 (a) at 19:57:
+  the first problem's requirements use #376's test, not only the octet audit; design #381 decides its native form.
 - **A question's candidate is keyed by the key of what it is** (q21): an entity by its first-occurrence path in the
   state's entity list (`development_entity_key`).
 - **The development rows' definitions take the state's constant-key assignment as a parameter** with an `inj_on`
@@ -581,7 +585,7 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   second, exercises its answer", with marked corrections of #373's entry, #320's "The problem" and task 9's entry; the
   plan's owner directions (17:50, 18:12, 18:36, 18:53), stage 2 and its gate, the standing and direction sections;
   its builds briefed by #380, its owner choices Q23.
-- **#376** (design, accepted): DECISIONS.md "Every distinction a native program relies on comes from a native notion:
+- **#376** (design, `47a67cfe`): DECISIONS.md "Every distinction a native program relies on comes from a native notion:
   the state the native loop judges and the presentations that retire", with marked corrections of #320's "Its rows"
   and "The builds, in order" and the plan's direction section; its graph changes carried (Graph), its owner choices
   Q24.
@@ -605,9 +609,10 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q9** the tracked `.pyc`: #282 removes it (the finalizer now stages the removal of a tracked ignored path).
 - **Q10, Q11, Q12** answered: the harness advances the base and retains the receipts at every landing; a brief's named
   report files enter the landing check's snapshot.
-- **Q21** withdrawn with #373's notion (**Q22** says so). **Q23** #378's six choices — the first problem's
+- **Q21** withdrawn with #373's notion (**Q22** says so). **Q23** #378's six choices, (a) answered by the owner at 19:57 (the first problem's requirements use #376's test, not
+  only the octet audit; its native form design #381's) — the first problem's
   requirements, the least form, the owner's approval as a record, verification before the translation as a request
-  after admission, the first problem's decomposition, the end of HOL-constant problems — each provisional, the builds
+  after admission, the first problem's decomposition, the end of HOL-constant problems — (b)–(f) provisional, the builds
   proceeding on them. **Q24** #376's four choices — the test for a native distinction, the native loop's state read by
   the Factor readers, the bootstrap loop kept exact and unextended (its growth retired, its maintenance kept), an
   executable counterpart of a native reader as its implementation — each provisional, the work proceeding on them.
@@ -954,9 +959,10 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   (`Development_Incremental_Verdict`'s probe past 60 s, attributed at its cause) to #353;
   #355's review's to #367 (the phase
   attribution), #359's review's follow-up 2 to #367 (B4's three new phases attributed), #363's review's 1 and 2 to #367
-(`presented_listing` and the target leaves' comparison attributed); #361's review's follow-up 7 to #367; #376's
-  result to #380 (the native request at a package and the given's Factor readers), and #169's retirement to #354 and
-  #369. #370's follow-ups (interim choices recorded
+(`presented_listing` and the target leaves' comparison attributed); #361's review's follow-up 7 to #367; and #169's
+  retirement to #354 and #369. #380's first session was released at 20:02 before reading the answer to its q86 and
+  the planner's two messages: its brief now carries them, and #382 takes the native request at a package and the
+  given's Factor readers. #370's follow-ups (interim choices recorded
   natively, a choosing problem's contract kind, the loop the two problems enter) go with Open 119.
 
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's

@@ -200,6 +200,31 @@ lemma declaration_store_found:
   using declaration_store_declared[of Fs d] by auto
 
 text \<open>
+  A state declares each constant once exactly when every declaration row finds its own value in the
+  declaration store: one lookup per row, so the test is linear in the declarations.
+\<close>
+
+lemma declarations_single_valued_store [code]:
+  "declarations_single_valued Fs \<longleftrightarrow>
+    (let D=declaration_store Fs in list_all (\<lambda>r. store_lookup D (fst r)=Some (snd r)) (declaration_rows Fs))"
+  unfolding Let_def
+proof
+  assume sv: "declarations_single_valued Fs"
+  show "list_all (\<lambda>r. store_lookup (declaration_store Fs) (fst r)=Some (snd r)) (declaration_rows Fs)"
+    by (simp add: list_all_iff declaration_store_def path_store_lookup[OF sv[unfolded declarations_single_valued_def]])
+next
+  assume all: "list_all (\<lambda>r. store_lookup (declaration_store Fs) (fst r)=Some (snd r)) (declaration_rows Fs)"
+  show "declarations_single_valued Fs"
+    unfolding declarations_single_valued_def single_valued_def
+  proof (intro allI impI)
+    fix d a b assume "(d,a)\<in>set (declaration_rows Fs)" "(d,b)\<in>set (declaration_rows Fs)"
+    then have "store_lookup (declaration_store Fs) d=Some a" "store_lookup (declaration_store Fs) d=Some b"
+      using all by (auto simp: list_all_iff)
+    then show "a=b" by simp
+  qed
+qed
+
+text \<open>
   A search of the declaration store, with any checker, finds at a constant's key the key of its one
   declaring row: the store search's own contract read through the carried single-valuedness.
 \<close>

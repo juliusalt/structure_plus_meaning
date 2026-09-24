@@ -1,5 +1,5 @@
 theory Presented_Publication_Values
-  imports Shared_Call_Closures Development_Publication Ordered_Term_Comparison
+  imports Shared_Call_Closures Development_Publication Ordered_Term_Comparison Represented_Snapshot_Transactions
 begin
 
 section \<open>The publication notions' presenters over a term presentation\<close>
@@ -446,14 +446,12 @@ fun finite_transaction_result_held :: "finite_transaction_result \<Rightarrow> f
   "finite_transaction_result_held (Finite_Applied U)=Inl U"
 | "finite_transaction_result_held (Finite_Conflict C)=Inr C"
 
-definition snapshot_targets :: "'t generation_structure fset \<Rightarrow> 't set" where
-  "snapshot_targets S=(\<Union>G\<in>fset S. set_generation_structure G)"
 
 definition observation_targets :: "('t\<times>'t generation_structure option) fset \<Rightarrow> 't set" where
   "observation_targets C=(\<Union>z\<in>fset C. insert (fst z) (\<Union>H\<in>set_option (snd z). set_generation_structure H))"
 
 fun held_result_targets :: "'t held_transaction_result \<Rightarrow> 't set" where
-  "held_result_targets (Inl S)=snapshot_targets S"
+  "held_result_targets (Inl S)=represented_snapshot_targets S"
 | "held_result_targets (Inr C)=observation_targets C"
 
 definition presented_targets ::
@@ -524,14 +522,15 @@ proof -
 qed
 
 theorem presented_snapshot_value_decode:
-  assumes targets: "presented_targets P D f t (snapshot_targets S)"
+  assumes targets: "presented_targets P D f t (represented_snapshot_targets S)"
   shows "presented_snapshot_value P f S\<in>D \<and>
     presented_decode P (presented_snapshot_value P f S)=finite_snapshot_value (fimage (map_generation_structure t) S)"
 proof -
   have each: "presented_generation_value P f G\<in>D \<and>
       presented_decode P (presented_generation_value P f G)=finite_target_generation_value (map_generation_structure t G)"
     if G: "G\<in>fset S" for G
-    using targets G by (intro presented_generation_value_targets) (auto simp: presented_targets_def snapshot_targets_def)
+    using targets G by (intro presented_generation_value_targets)
+      (auto simp: presented_targets_def represented_snapshot_targets_def)
   have members: "\<forall>G\<in>fset S. presented_generation_value P f G\<in>D" using each by blast
   note coll=presented_collection_decode[OF members]
   have "finite_collection_presentation (presented_decode P \<circ> presented_generation_value P f) S=

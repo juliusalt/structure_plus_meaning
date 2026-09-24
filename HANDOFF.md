@@ -264,7 +264,8 @@ a task):
   their state closures as HEAD has them (#143).
 - **Merges.** A task whose commit fails at the merge is queued again as it is; `bring-main` merges main, never a row by
   hand; where both sides changed one row, `bring-main` is refused (it merges the committed rows), so the round hands over
-  main's row verbatim and leaves its change in `rows.md` for a later task; where the work changed that theory's imports,
+  main's row verbatim — its line as main holds it at hand-over, set by `=== replace`, not `=== row`, at once — and
+  leaves its change in `rows.md` for a named later task made from main; where the work changed that theory's imports,
   main's row would carry a wrong imports column, so the round moves what needs the new import out of the theory (into
   one above it) and sets the theory and its row back to the branch point's text (#165, q76; Q13 asks the owner for a
   harness merge). The row additions then follow in a fix made from main after the landing, where each is a one-sided
@@ -379,6 +380,10 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   appended embedding's argument once; its rows main's, its row changes in its `rows.md` for #308.
 - **#157** (`adf0dbc9`): the sixteen answer records replayed on the layout's base, six re-recorded; its review's replay
   costs to the replay tool's fix, its note on the words' two causes to #309.
+- **`f6e5a0b9`** (10:20): #64 (`Development_Library_Issue`: the loop's library from the refusal records, B left empty
+  and counted, the machinery's issue passing it), #311 (P1: `Prefix_Key_Comparisons` and the shared view's instance),
+  #301 (B3: `Presented_Program_Applications`, the applications over a presentation) and #284 (the state's inside facts
+  under `state_presents`, the unreached facts named for their subject).
 
 ## Open
 
@@ -616,14 +621,28 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 - **#308** follows #289's landing: it folds #289's row changes (`.build/tasks/289/rows.md`) into main's seven rows and
   takes what the exporter still owes (`state_presentable`'s third condition, the successor's request premises, the new
   facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s).
-- **Under way**: #64
-  (its library from the refusal records only, the split source counted: q77, Q14), #296 (M0; q78: the reopen test reads
-  the equal walks of the closure and the renaming together) and #278 (the machinery judgment held as a bound, more than
-  106.6 s: every phase that grows is a call-key sort or lookup, which B4 and B5 remove, B5 with the evaluation's rule
-  table formation re-check); #309 after #159 takes the placed forests' construction and the question's; #112 and #192
-  parked for their checks; #301 finishing
-  after B1 (#297, `97a9677d`); the prefix-key comparison notion decided (#310, accepted): its build P1 placed early,
-  P2 low, neither before B4 or B5.
+- **Under way**: #296 (M0; q78: the reopen test sets B1's build against the equal walks of the closure and the
+  renaming together) and #278 (the machinery judgment held as a bound, more than 106.6 s: every growing phase a
+  call-key sort or lookup, which B4 and B5 remove, B5 with the evaluation's rule-table formation re-check); #308 after
+  #289; #309 (the placed forests' construction and the question's, on #159's figures) and #313 (the replay's costs)
+  ready; #112 and #192 parked for their checks; B4 (#303) waits on M0; P2 (#312) low.
+- **Not handled (plan-50's window ended): the landing of `f6e5a0b9`** (10:20: #64, #311, #301, #284), with proposed
+  dispositions. #64: B's evidence for Q14 (seed 8–9 split candidates per problem, all admitted, all 10 decomposed;
+  machinery 53–61, all admitted, all 62 decomposed) to put to the owner; its question on finite presenters for
+  per-candidate native evaluation before B is enabled (its result, line 34), a prerequisite of Open 26; its first
+  verdict's follow-ups "stand" but the re-review wrote over them (`.build/tasks/65/`). #311 (P1), for #312 (P2): name
+  both shared interpretations (`shared_term_prefix_key`, `shared_term_comparison`) in REASONING_REUSE's row; rename
+  `shared_term_view` (the prefix-key view) to `shared_term_prefix_view` and name P2's `*_prefix_view`, since
+  `shared_view`/`term_view` are B1's view through a table; say which interpretation each re-cited fact comes from.
+  #301 (B3): the eager `Let` of instantiated premises before the guard and the per-clause, per-call interface checks
+  to #303/#305 for their measurements; material decoding over shared terms to #305; `fimage_ffUnion_member` to
+  `Finite_Set_Composition` under an accurate name, an Open item. #284: follow-ups 1 and 2 (the two copies of the
+  position argument in `Development_Verdict_Witnesses`; `state_presents_key_injective` stated once for six sites) to
+  #288, whose deliverables hold those theories; follow-up 4 (the three `Development_Exported_Edit` facts to
+  `Development_State_Rows`, `state_presentable_entity_set` beside `state_presentable`, `state_positions_exported`
+  beside `state_positions`) to #308; follow-up 3 (`native_some_rest` as `native_member_later`) to Open 88; 5 and 6 (the
+  entry's list corrected in place without its bracket convention; a doubled blank line in
+  `Development_Verdict_Difference`) with the next edits.
 - **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's
   review): most likely a base that moved under the tree, a matter of the probe tool, for the owner with Open 78.
 - **`read_index_address` reads to the end of a run of 0 and 1 octets** (#147's review, follow-up 5): after #155 an

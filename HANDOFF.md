@@ -359,6 +359,21 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   terms the identity, each operation commuting with decoding (instances and premises under bindings in the domain); its
   review's follow-ups — the identity equalities as instances, the map fact generalized in `Bootstrap_Relations`, the
   bindings' domain, the literal leaves once per evaluation — to B3 (#301), the last also to B4 and B6.
+- **#290** (`2906d9c9`): the joined verdict program's demand attributed (`.build/tasks/290/attribution.md`: `fcard` of
+  the demand, no engine fault) and the per-call formation re-check made once (`Established_Premises`), 30.9 → 25.2 s at
+  the machinery judgment's demand; the key's cause to design #292. **#155** (`2906d9c9`): the address layout — the
+  library's digit code at every compiled position, `unary_address` retired, 38 words re-recorded once; its review's
+  follow-ups to #309, #159 and Open 55, 97. **#294** (`2906d9c9`): the exported edit's keyed merge stated once in
+  `Finite_Ordered_Set_Difference`, its keys paired once, names through the index; its review's follow-ups Open 96.
+- **#287** (`e40ffd91`): the n-ary tuple and `list_cited_program` beside their kin in `Native_Collection_Programs`;
+  `Development_Request_Scope`'s row addition in its `rows.md`, for #285.
+- **#297** (B1, `97a9677d`): `Shared_Term_Tables`, a term over the shared subterms of a family of terms, its
+  four-obligation contract and its order, the table build measured; its review's follow-ups to #303, Open 98 and #310.
+- **#310** (design, `4e8ab4ed`): DECISIONS.md "A structural comparison computes a prefix key's order; which component
+  it meets first is its view's"; its builds P1 (#311) and P2 (#312).
+- **#159** (investigation): the layout's criterion met (`.build/tasks/address-layout-measure/measurement.md`: key bits
+  per doubling +2.6–3.2 against about 2n before, source ms per clause about log n against linear); the growth it
+  leaves to #309 and Open 99.
 
 ## Open
 
@@ -572,10 +587,17 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     part of the per-answer `first_index_tree` built once per request state, if #194 shows its share.
 97. **A probe cannot load a renamed `RRA_Finite_Artifacts`** (#155's review, follow-up 5): its `export_code … checking
     SML` raises `Protocol_Message invoke_scala make_directory`, so a change at or below `RRA_Exact` is probed only
-    through scratch copies of its dependents. The probe tool's, with item 78; #297's review met it too.
+    through scratch copies of its dependents. The probe tool's, with item 78; #297's review met it too. And a probe
+    could read a past base's own sources: #159 needed a `git archive` tree to measure the base before the layout.
 98. **`keyed_reference_insert`** (#297's review, follow-up 1): the argument of `Keyed_Value_References`'
     `keyed_reference_run_table` (its `index` sub-proof), made again in `Shared_Term_Tables`; moved into
     `Keyed_Value_References` and cited from both with the next landing that changes that theory (#303 if it does).
+99. **What the layout leaves beyond compiled syntax** (#159, q79): environment formation grows superlinearly, and the
+    root family's reading costs 2.6–3.6 times it though the family's own artifact is constant — most likely a check
+    re-made at every reading (the established-premise notion) or a pairwise check (item 48): attributed when a native
+    question over hundreds of candidates is on the loop's path, `finite_citation_locations_formed` (environment
+    formation at each member of the family, #159's candidate) timed alone first. The reader's cost per key bit rises from 0.31 to
+    0.43 µs across #159's sizes (the index's depth, most likely): recorded.
 
 ## Now
 
@@ -590,8 +612,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   so that it lands before another landing rewrites those rows.
 - **Under way**: #157 re-records the answer records over the layout (landed with #290 and #294 as `2906d9c9`); #64
   (its library from the refusal records only, the split source counted: q77, Q14), #296 (M0; q78: the reopen test reads
-  the equal walks of the closure and the renaming together) and #159 (while the lineage holds the base without the
-  layout; #309 after it, #155's review's follow-ups 4 and 6); #112 and #192 parked for their checks; #301 finishing
+  the equal walks of the closure and the renaming together) and #159 (the layout's criterion met, q79; #309 after it
+  takes the placed forests' construction and the question's); #112 and #192 parked for their checks; #301 finishing
   after B1 (#297, `97a9677d`); the prefix-key comparison notion decided (#310, accepted): its build P1 placed early,
   P2 low, neither before B4 or B5.
 - **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's

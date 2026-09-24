@@ -468,15 +468,15 @@ proof requests is itself a request-construction problem.
   Logical entity dependencies and the complete physical checking boundary are
   distinct: preserve the existing source, helper, option and runtime checks while
   proving which boundary each development operation needs.
-- **Acceptance.** Isabelle's acceptance is normative before genesis, but nothing yet
-  carries it into native admission. The only existing export of checked theorems,
+- **Acceptance.** Isabelle's acceptance is normative before genesis, and its local
+  contract carries it into native admission: [Isabelle_Acceptance](theories/Isabelle_Acceptance.thy)
+  proves once that the presented entities of a checked context are the ground clauses of
+  one native program whose known calls are exactly the accepted entities, and its decision
+  is the notion's code equation (`isabelle_demand_acceptance_members`). The export of checked theorems,
   [Finite_Observation_Contracts](theories/Finite_Observation_Contracts.thy), presents
   them as full typed propositions with their reachable definitions and
   records the remaining constants as dependencies on the accepted Isabelle context;
-  only host tools read that export. Which existing notion carries an acceptance into
-  admission (known calls for `schema_graph_development_complete`, a certified cause's
-  witness, or complete-artifact admission) is the first problem of stage 1, and every
-  development instance in the trace depends on it. Acceptance is a notion with a
+  only host tools read that export. Acceptance is a notion with a
   local contract, proved once: it determines the checked Isabelle subject, its exact
   context and the native judgment an accepted entity supports. Receiving notions
   consume that contract through their own local contracts; for known calls it
@@ -766,7 +766,7 @@ presentation of the name table, and the checked context defines them in about 1.
 measurement was made by a probe theory which is not part of the state and was removed
 after it was recorded.
 
-**The proof cost of this batch is not bounded yet, and that is the open obstacle.** Seeding
+**The proof cost of this batch was attributed, and the batch loads.** Seeding
 this state changed four theories that 517 of the 1,686 listed theories import; the
 incremental check reused 1,169 accepted contexts in 0.23 s, rebuilt the rest, and was
 refused with `*** Timeout` after 1,209 s against the 1,200 s session timeout
@@ -836,7 +836,10 @@ selections; steering refuses an empty original scope, retaining the unexecuted
 requests, and a single-question scope exercises actual choice ambiguity. These
 recipes exercise the reusable operations on their established subjects. They do not
 encode or admit this document, establish any development instance, or satisfy
-condition 5a. No native state yet represents the repository's development. This
+condition 5a. Native states now represent the repository's development: the seeded
+state and the machinery's own state are read from the checked Isabelle context
+([Native_Control_Seed_Subject](theories/Native_Control_Seed_Subject.thy),
+[Development_Machinery](theories/Development_Machinery.thy)). This
 revision is a candidate contract trace and implementation plan; its unrepresented
 requirements remain explicit. O-73 is open, O-85 remains partial, and genesis has
 not occurred.

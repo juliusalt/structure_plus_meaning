@@ -1,5 +1,5 @@
 theory RRA_Exact
-  imports RRA_Footprint RRA_Digit_Natural_Paths
+  imports RRA_Footprint RRA_Digit_Natural_Paths Prefix_Code_Words
 begin
 
 section \<open>Exact addressed artifacts\<close>
@@ -106,32 +106,6 @@ text \<open>
 
 section \<open>Concrete local-address realizations\<close>
 
-fun unary_address :: "nat \<Rightarrow> local_address" where
-  "unary_address n = replicate n 0 @ [1]"
-
-lemma unary_address_formed:
-  "octets_formed (unary_address n)"
-  by (auto simp: octets_formed_def)
-
-lemma unary_address_length:
-  "length (unary_address n) = Suc n"
-  by simp
-
-lemma unary_address_inj:
-  "inj unary_address"
-proof (rule injI)
-  fix m n
-  assume "unary_address m = unary_address n"
-  then have "length (unary_address m) = length (unary_address n)"
-    by simp
-  then show "m = n"
-    by simp
-qed
-
-lemma unary_address_eq_iff [simp]:
-  "unary_address m = unary_address n \<longleftrightarrow> m = n"
-  using unary_address_inj by (auto simp: inj_def)
-
 text \<open>
   The index code is the library's digit code of a natural, written in octets: the digit path's
   True is the octet 0 and its False the octet 1. Its facts are those of the digit path, instantiated
@@ -156,47 +130,10 @@ proof (rule injI)
   then show "x = y" by (cases x; cases y) simp_all
 qed
 
-lemma index_address_extended:
-  assumes longer: "index_address m = index_address n @ us" and rest: "us @ xs = ys"
-  shows "m = n \<and> xs = ys"
-proof -
-  let ?f = "\<lambda>b::bool. if b then (0::nat) else 1"
-  let ?k = "length (digit_natural_path n)"
-  let ?v = "drop ?k (digit_natural_path m)"
-  have eq: "map ?f (digit_natural_path m) = map ?f (digit_natural_path n) @ us"
-    using longer by (simp only: index_address_def)
-  have "take ?k (map ?f (digit_natural_path m)) = map ?f (digit_natural_path n)"
-    by (simp only: eq take_append length_map diff_self_eq_0 take_0 append_Nil2 take_all_iff order_refl)
-  then have "map ?f (take ?k (digit_natural_path m)) = map ?f (digit_natural_path n)"
-    by (simp only: take_map)
-  then have head: "take ?k (digit_natural_path m) = digit_natural_path n"
-    by (simp only: inj_map_eq_map[OF index_symbol_inj])
-  have "drop ?k (map ?f (digit_natural_path m)) = us"
-    by (simp only: eq drop_append length_map diff_self_eq_0 drop_0 drop_all order_refl append_Nil)
-  then have tail: "map ?f ?v = us" by (simp only: drop_map)
-  have "digit_natural_path m @ [] = digit_natural_path n @ ?v"
-    using append_take_drop_id[of ?k "digit_natural_path m"] head by simp
-  then have "m = n \<and> [] = ?v" by (rule iffD1[OF digit_natural_path_cancel])
-  then show ?thesis using tail rest by auto
-qed
-
 theorem index_address_cancel:
   "index_address m @ xs = index_address n @ ys \<longleftrightarrow> m = n \<and> xs = ys"
-proof
-  assume eq: "index_address m @ xs = index_address n @ ys"
-  obtain us where "index_address m = index_address n @ us \<and> us @ xs = ys \<or>
-      index_address m @ us = index_address n \<and> xs = us @ ys"
-    using eq by (auto simp: append_eq_append_conv2)
-  then show "m = n \<and> xs = ys"
-  proof (elim disjE conjE)
-    assume "index_address m = index_address n @ us" "us @ xs = ys"
-    then show ?thesis by (rule index_address_extended)
-  next
-    assume "index_address m @ us = index_address n" "xs = us @ ys"
-    then have "n = m \<and> ys = xs" by (intro index_address_extended[of n m us]) simp_all
-    then show ?thesis by simp
-  qed
-qed simp
+  unfolding index_address_def
+  by (rule mapped_prefix_cancel[where code=digit_natural_path, OF digit_natural_path_cancel index_symbol_inj])
 
 lemma index_address_inj: "inj index_address"
   by (rule injI) (use index_address_cancel[of _ "[]" _ "[]"] in simp)
@@ -222,8 +159,8 @@ lemma index_address_nonzero:
   assumes "i \<noteq> 0"
   shows "index_address i = 0 # tl (index_address i)"
 proof -
-  obtain n where "i = Suc n" using assms by (cases i) simp_all
-  then show ?thesis by (simp add: index_address_def digit_natural_path_def)
+  obtain w where "digit_natural_path i = True # w" using digit_natural_path_nonzero[OF assms] by blast
+  then show ?thesis by (simp add: index_address_def)
 qed
 
 theorem index_address_tail_cancel:
@@ -286,27 +223,55 @@ next
     by (simp add: read_index_address_def source)
 qed
 
+text \<open>
+  The positions of the first indices, the checks the layout's tests read.
+\<close>
+
+lemma index_address_first:
+  "map index_address [0,1,2,3,4] = [[1],[0,0,1],[0,1,0,0,1],[0,0,0,0,1],[0,1,0,1,0,0,1]]"
+  using digit_natural_path_first by (simp add: index_address_def)
+
+text \<open>
+  An index is blocked in a set of addresses when some address starts with its code. Each address
+  starts with at most one code, the one the reader returns, so a finite set blocks finitely many
+  indices, and the empty address blocks none. The fresh address of a set is the code of the least
+  index it does not block.
+\<close>
+
+definition index_blocked :: "local_address set \<Rightarrow> nat set" where
+  "index_blocked A = {j. \<exists>a\<in>A. \<exists>b. a = index_address j @ b}"
+
+lemma index_blocked_read:
+  "j \<in> index_blocked A \<longleftrightarrow> (\<exists>a\<in>A. \<exists>b. read_index_address a = Some (j,b))"
+  by (simp add: index_blocked_def read_index_address_exact)
+
+lemma index_blocked_finite:
+  assumes "finite A"
+  shows "finite (index_blocked A)"
+proof (rule finite_subset)
+  show "index_blocked A \<subseteq> (\<lambda>a. fst (the (read_index_address a))) ` A"
+  proof
+    fix j assume "j \<in> index_blocked A"
+    then obtain a b where a: "a \<in> A" "read_index_address a = Some (j,b)" by (auto simp: index_blocked_read)
+    show "j \<in> (\<lambda>a. fst (the (read_index_address a))) ` A"
+      by (rule rev_image_eqI[OF a(1)]) (simp add: a(2))
+  qed
+  show "finite ((\<lambda>a. fst (the (read_index_address a))) ` A)" using assms by simp
+qed
+
+lemma index_blocked_insert_empty [simp]: "index_blocked (insert [] A) = index_blocked A"
+  by (auto simp: index_blocked_def)
+
 definition fresh_address :: "local_address set \<Rightarrow> local_address" where
-  "fresh_address A = unary_address (Max (length ` A))"
+  "fresh_address A = index_address (LEAST j. j \<notin> index_blocked A)"
 
 lemma fresh_address_formed [simp]:
   "octets_formed (fresh_address A)"
-  unfolding fresh_address_def by (rule unary_address_formed)
-
-lemma fresh_address_not_in:
-  assumes "finite A"
-  shows "fresh_address A \<notin> A"
-proof
-  assume member: "fresh_address A \<in> A"
-  have fin: "finite (length ` A)" using assms by simp
-  have bound: "length (fresh_address A) \<le> Max (length ` A)"
-    by (rule Max_ge[OF fin]) (use member in auto)
-  show False using bound by (simp add: fresh_address_def)
-qed
+  unfolding fresh_address_def by (rule index_address_formed)
 
 text \<open>
   No extension of the fresh address of a finite set belongs to it: a proof that places material after
-  a fresh address takes this fact, not the length of the fresh address.
+  a fresh address takes this fact, and the address's own freshness is its instance.
 \<close>
 
 lemma fresh_address_extension_outside:
@@ -314,11 +279,19 @@ lemma fresh_address_extension_outside:
   shows "fresh_address A @ xs \<notin> A"
 proof
   assume member: "fresh_address A @ xs \<in> A"
-  have fin: "finite (length ` A)" using assms by simp
-  have bound: "length (fresh_address A @ xs) \<le> Max (length ` A)"
-    by (rule Max_ge[OF fin]) (rule imageI[OF member])
-  show False using bound by (simp add: fresh_address_def)
+  obtain k where "k \<notin> index_blocked A"
+    using ex_new_if_finite[OF infinite_UNIV_nat index_blocked_finite[OF assms]] by blast
+  then have least: "(LEAST j. j \<notin> index_blocked A) \<notin> index_blocked A"
+    using LeastI[of "\<lambda>j. j \<notin> index_blocked A" k] by blast
+  have "(LEAST j. j \<notin> index_blocked A) \<in> index_blocked A"
+    using member unfolding fresh_address_def index_blocked_def by blast
+  then show False using least by blast
 qed
+
+lemma fresh_address_not_in:
+  assumes "finite A"
+  shows "fresh_address A \<notin> A"
+  using fresh_address_extension_outside[OF assms, of "[]"] by simp
 
 fun fresh_addresses :: "local_address set \<Rightarrow> nat \<Rightarrow> local_address list" where
   "fresh_addresses A 0 = []"

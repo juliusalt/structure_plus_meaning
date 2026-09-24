@@ -108,6 +108,10 @@ lemma decode_finite_syntax_forest [simp]:
   "decode_finite_object (finite_syntax_forest Rs)=syntax_forest (map decode_finite_object Rs)"
   by (simp add: finite_syntax_forest_def syntax_forest_def)
 
+text \<open>Each child's prefix is built once, before its addresses are placed.\<close>
+lemmas finite_syntax_forest_code [code] = finite_placed_forest_prefix[where g=syntax_branch
+  and h="\<lambda>i. syntax_branch i []", OF syntax_branch_prefix, folded finite_syntax_forest_def]
+
 definition finite_attach_structure :: "finite_exact_artifact \<Rightarrow> local_address finite_rra_structure \<Rightarrow> finite_exact_artifact" where
   "finite_attach_structure R H=\<lparr>finite_structure=\<lparr>
     finite_carrier=finite_carrier (finite_structure R) |\<union>| finite_carrier H,

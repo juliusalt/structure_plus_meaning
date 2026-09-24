@@ -53,23 +53,36 @@ section \<open>The branch of a forest child and its contracts\<close>
 
 fun syntax_branch :: "nat \<Rightarrow> local_address \<Rightarrow> local_address" where
   "syntax_branch 0 a = 2#a"
-| "syntax_branch (Suc n) a = 3#syntax_branch n a"
+| "syntax_branch (Suc n) a = 3 # tl (index_address (Suc n)) @ a"
+
+text \<open>
+  Child 0 stands under the union's left head 2, every other child under its right head 3 followed by
+  its index code without the code's first octet, which only says that the index is not 0.
+\<close>
 
 lemma syntax_branch_zero: "syntax_branch 0 = Cons 2" by (rule ext) simp
 
 lemma syntax_branch_prefix: "syntax_branch i a = syntax_branch i [] @ a"
-  by (induction i) simp_all
+  by (cases i) simp_all
 
 lemma syntax_branch_top_prefix: "\<exists>b. syntax_branch i a = 2#b \<or> syntax_branch i a = 3#b"
   by (cases i) simp_all
 
 lemma syntax_branch_injective: "inj (syntax_branch n)"
-  by (induction n) (auto simp: inj_def)
+  by (cases n) (auto simp: inj_def)
 
 lemma syntax_branch_formed:
   assumes "octets_formed a"
   shows "octets_formed (syntax_branch n a)"
-  using assms by (induction n) (simp_all add: octets_formed_def)
+proof (cases n)
+  case 0
+  then show ?thesis using assms by (simp add: octets_formed_def)
+next
+  case (Suc m)
+  have "\<forall>x\<in>set (tl (index_address (Suc m))). x < 256"
+    using index_address_formed[of "Suc m"] by (cases "index_address (Suc m)") (auto simp: octets_formed_def)
+  then show ?thesis using assms Suc by (auto simp: octets_formed_def)
+qed
 
 lemma syntax_branch_addressing:
   assumes formed: "exact_formed R"
@@ -85,21 +98,27 @@ qed
 lemma syntax_branch_disjoint:
   assumes "i \<noteq> j"
   shows "range (syntax_branch i) \<inter> range (syntax_branch j) = {}"
-  using assms
-proof (induction i arbitrary: j)
-  case 0
-  then show ?case by (cases j) auto
-next
-  case (Suc i)
-  show ?case
-  proof (cases j)
+proof (rule equals0I)
+  fix x assume "x \<in> range (syntax_branch i) \<inter> range (syntax_branch j)"
+  then obtain a b where same: "syntax_branch i a = syntax_branch j b" by auto
+  show False
+  proof (cases i)
     case 0
-    then show ?thesis by auto
+    then show False using assms same by (cases j) simp_all
   next
-    case (Suc n)
-    have disjoint: "range (syntax_branch i) \<inter> range (syntax_branch n) = {}"
-      by (rule Suc.IH) (use Suc.prems Suc in simp)
-    show ?thesis using disjoint by (auto simp: Suc)
+    case (Suc m)
+    show False
+    proof (cases j)
+      case 0
+      then show False using same \<open>i = Suc m\<close> by simp
+    next
+      case (Suc n)
+      have tails: "tl (index_address (Suc m)) @ a = tl (index_address (Suc n)) @ b"
+        using same \<open>i = Suc m\<close> Suc by simp
+      have "Suc m = Suc n \<and> a = b"
+        by (rule iffD1[OF index_address_tail_cancel tails]) simp_all
+      then show False using assms \<open>i = Suc m\<close> Suc by simp
+    qed
   qed
 qed
 
@@ -123,6 +142,14 @@ text \<open>
   The contracts above are all that is read of the branch: its equations leave the simpset here, so no
   proof after them computes a position, and a change of the layout changes this theory alone.
 \<close>
+text \<open>
+  The positions of the first children, the checks the layout's tests read.
+\<close>
+lemma syntax_branch_first:
+  "map (\<lambda>i. syntax_branch i []) [0,1,2,3,4] = [[2],[3,0,1],[3,1,0,0,1],[3,0,0,0,1],[3,1,0,1,0,0,1]]"
+  using index_address_first syntax_branch.simps(2)[of 0 "[]"] syntax_branch.simps(2)[of 1 "[]", unfolded Suc_1]
+    syntax_branch.simps(2)[of 2 "[]"] syntax_branch.simps(2)[of 3 "[]"] by simp
+
 declare syntax_branch.simps [simp del]
 
 section \<open>The forest is its children placed at their branches\<close>
@@ -140,7 +167,7 @@ definition syntax_forest_positions :: "local_address set list \<Rightarrow> loca
 
 lemma syntax_forest_positions_eq:
   "syntax_forest_positions As = (\<Union>i<length As. syntax_branch i ` (As!i))"
-  by (simp add: syntax_forest_positions_def placed_positions_def)
+  by (simp only: syntax_forest_positions_def placed_positions_eq)
 
 lemma syntax_forest_position_member:
   "a \<in> syntax_forest_positions As \<longleftrightarrow>

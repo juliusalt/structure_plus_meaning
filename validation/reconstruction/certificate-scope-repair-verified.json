@@ -2,23 +2,23 @@
  "boundary": "The actual scope correction retains every full original input and appends compiled native sources and independently checked supplied certificates. Every complete input, source/proof check, original family, conflict witness, comparison and revision is reproduced. The correction is assessed against the original retention and coverage conditions.",
  "complete_recipe_source_manifest": "certificate-scope-repair-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.88,
+  "seconds": 3.57,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/certificate-scope-repair-reports.json": "515668d15564d4cf2a7767dc45b86c227da3fb041515cedcf5d73c26df5ce8c0"
+   "validation/reconstruction/certificate-scope-repair-reports.json": "fbfa0c45e509de808dc5433a1dc94ec3620fe6b4d038850c939950dc7ee82159"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "caf273a457c1d34dfd1f0b9ff94d23ed6757866fd97d969e41699fb50ae873aa",
+   "module_sha256": "0aa68a15f5eef1b77f02af157f3bacfe7d0d30ea29919837b1019dcf0aa5dfff",
    "subject_contracts": {
-    "certificate_scope_repair_investigation.yxml": "1aa6b620eae01a31c412a4e2397cf20da3232cb2770c7a74e63ef8302ce5da2d"
+    "certificate_scope_repair_investigation.yxml": "f4c83833ba8ea690871539d85a2745c570560195817c7bcd90fa9c726e227e61"
    },
    "theory": "Native_Certificate_Scope_Repair_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a350a1a09ea98f1523a6cfa02af59fee8abf334e1b0d30c4aeee98c143aecc8e",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "caf273a457c1d34dfd1f0b9ff94d23ed6757866fd97d969e41699fb50ae873aa"
- },
  "recipe": "certificate-scope-repair",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "e4d633d9a794d43c37143abcbe18671a65ac21b0f3b1aa97388eea560f41ac4f",
+   "sha256": "2fb63488ae7b0014b93eec2bb54522a3f94d1419a405154c1987fca2baf7d772",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "79c965bf3028f3c9e1a95bda1f264848da1f55527172675345060603a2ee9759",
+ "source_manifest_sha256": "1bb04065260017a78babbc35a4bbaf9426ae6e07db34bbb45971b5827d1a2199",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 3.7775412980008696
+   "seconds": 3.477549467992503
   }
  ]
 }

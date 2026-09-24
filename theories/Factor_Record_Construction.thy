@@ -5,7 +5,7 @@ begin
 section \<open>Uniform record coordinates for an arbitrary finite field list\<close>
 
 definition syntax_record_ports :: "nat \<Rightarrow> local_address list" where
-  "syntax_record_ports n = map (\<lambda>i. 0#unary_address i) [0..<n]"
+  "syntax_record_ports n = map (\<lambda>i. 0#index_address i) [0..<n]"
 
 lemma syntax_record_ports_length [simp]: "length (syntax_record_ports n) = n"
   by (simp add: syntax_record_ports_def)
@@ -27,7 +27,7 @@ lemma syntax_record_headers_outside:
 
 lemma syntax_record_ports_formed:
   "\<forall>a\<in>set (syntax_record_ports n). octets_formed a"
-  using unary_address_formed by (auto simp: syntax_record_ports_def octets_formed_def)
+  using index_address_formed by (auto simp: syntax_record_ports_def octets_formed_def)
 
 lemma pattern_forest_roots_length [simp]: "length (pattern_forest_roots ps) = length ps"
   by (simp add: pattern_forest_roots_def)
@@ -225,8 +225,8 @@ proof -
 qed
 
 text \<open>
-  Port coordinates are generated from unbounded unary addresses, so there is no
-  maximum record arity. No structural reader inspects those byte choices.
+  Port coordinates are the library's digit code of their index, unbounded, so there
+  is no maximum record arity. No structural reader inspects those byte choices.
   The resulting material body can use any larger declared binder boundary;
   every syntax position remains disjoint from that boundary. This permits
   several call and material bodies to share one complete schema scope.

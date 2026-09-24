@@ -1,12 +1,1 @@
-{
-  "version": 1,
-  "reports": {
-    "presentation": {
-      "records": 1,
-      "tags": {
-        "PRESENTED_REPORT_WORD": 1
-      },
-      "sha256": "818ab6dcf7d255a9f99db89b86538578cc6267a556c512524e433e7d4c09412a"
-    }
-  }
-}
+{"version":1,"reports":{"presentation":{"records":1,"tags":{"PRESENTED_REPORT_WORD":1},"sha256":"c8b84110b78d683d0a1ce507aef2c0d366cb542d705e201aa53a1b22096591bd"}}}

@@ -2,23 +2,23 @@
  "boundary": "Complete native generation subjects, arbitrary recorded judgment scopes, literal applications and retained closed replays determine each original certified-base-cause condition. Every method result, derived observation and revision reason is reproduced. The test policy and history remain explicitly empty; full workflow policy, historical permission, coverage, cost and genesis remain open.",
  "complete_recipe_source_manifest": "certified-causes-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.29,
+  "seconds": 4.88,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/certified-causes-reports.json": "8cf9a06883d225e72de8b1d5a2a91d95b95bb92012364b18c794b9b99b7fe9c2"
+   "validation/reconstruction/certified-causes-reports.json": "039b6a72a171c8a61af7b4b0a01a9f9f8f4743a73885d5a671274b7572d3cbc4"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "2efc65748df78f9379ece1de8a8bfd44380ef0265b3099bf47a49da4b119044c",
+   "module_sha256": "d6753b27d80638a541eb52c3a1fed1372fbda2eab2cc18e8bce6e7cb114fab8e",
    "subject_contracts": {
-    "certified_cause_investigation.yxml": "543e6f33a4af1e3b3b10036d1160b3c8a36cdd5b6a54df2af3fe75d4dd06733f"
+    "certified_cause_investigation.yxml": "4fec725d8f598ffb69fe36df312ab23d7b2b0e509b08ac565122b63c65dabeba"
    },
    "theory": "Certified_Cause_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a350a1a09ea98f1523a6cfa02af59fee8abf334e1b0d30c4aeee98c143aecc8e",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "2efc65748df78f9379ece1de8a8bfd44380ef0265b3099bf47a49da4b119044c"
- },
  "recipe": "certified-causes",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "9c27a9c6022919975676f6186aa880f948d5586f09436558d0faace741bf4c8e",
+   "sha256": "06ef1237bcfb32a442d6760562538ff2f97e42aa618ceaa129b874aa5fda0d63",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "634c1b18ae73d95be6615ad866aca6b94984533ec889f531730da65ab1862b3d",
+ "source_manifest_sha256": "d08ab1519acced3c21bcd797326253f6d3e0d209c98e145fff90a4293696fb14",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.181523791998188
+   "seconds": 4.776248645997839
   }
  ]
 }

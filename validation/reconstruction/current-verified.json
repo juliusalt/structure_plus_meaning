@@ -1,9 +1,9 @@
 {
- "base_receipt_sha256": "710bcbc99071e5c66de3766ebd363eb5380e7522cf6c395b7bb98f69efae3467",
- "base_theories": 1838,
- "checked_content_sha256": "5cd2758627b6f15330cc02c3009d325f26e382a0ba1040d531874eb45b599efe",
+ "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
+ "base_theories": 1841,
+ "checked_content_sha256": "45afe22d4c605f474699ef5f0f7fc1bf530e87b31735d31b3d79e9496edd329f",
  "complete_native_reports": 74,
- "executed_recipes": 0,
+ "executed_recipes": 38,
  "host_tests": {
   "kernel": {
    "ran": 35,
@@ -14,540 +14,540 @@
    "skipped": 0
   }
  },
- "incremental_proof_theories": 57,
+ "incremental_proof_theories": 1665,
  "phase_seconds": {
-  "base_and_impact": 0.3,
-  "execution_impact": 0.06,
-  "export": 11.99,
-  "proof": 287.5,
-  "recipe_impact": 0.57,
-  "recipes_and_host_tests": 11.06
+  "base_and_impact": 0.34,
+  "execution_impact": 1.3,
+  "export": 14.94,
+  "proof": 999.16,
+  "recipe_impact": 0.45,
+  "recipes_and_host_tests": 93.08
  },
- "reused_recipes": 2,
+ "reused_recipes": 14,
  "source_only_reconstructions": [
   {
    "python_modules": 23,
    "recipe": "allocated-environments",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "c1d075e7e2f347d75f532ffe659626bf724434cd8a182f2fa5ebc105b2ee82bd",
+   "source_manifest_sha256": "02ddcdeb30a35fbc7742ec76f1a198b249401659b07a580276b4004581d95892",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "cafd2ded02246095c777be7df5e1e67699240a3e71170fb7ffc5d3f4c84aeb9c"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "dd7920b90f41f70715ad1668a4a55d577660364bdaca10b4d07843aec0b01b3f"
   },
   {
    "python_modules": 23,
    "recipe": "artifact-lookup",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "158990a56a464a8e3dec251a5b357b2de31678a114d799bdd0cdad60eb07351b",
+   "source_manifest_sha256": "9b5cec56c72c364ddaceebea8a43cf16e979c1111ae58a175df6fd3942340e38",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "7c1b6f1259a79248ab4683f6b52bfbb7b6a6dfd8200dce21e6a9340b1d024d92"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "583fa5681c22af96a4371d02f4f06daca797e33b166706293de30125dafcf31e"
   },
   {
    "python_modules": 23,
    "recipe": "builtin-investigations",
    "reports": 1,
    "source_files": 733,
-   "source_manifest_sha256": "dc902bcde054f5bd363aaf2e2baaf0ae33abf5c721b0b655576a57a819d9f62f",
+   "source_manifest_sha256": "ad445f11501f7625823cd6ed8b0d8ad91b2c75402a4889dcdda2edeea1a6ee79",
    "theories": 709,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "ae534e2e3ec097c70108ca04fa09f29e1fdeb42fa096654e12a99add714f152b"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "94d64dc49c2cecf59d6841c79bec5c5eed5bb67fa200a87d6814fc7e317a05d7"
   },
   {
    "python_modules": 23,
    "recipe": "cached-grafts",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "31307055ea8c83b3e6d3c61b686797e02171d8f3b2691ac9807871c2c91b70b5",
+   "source_manifest_sha256": "6dbb786e05ae0c4c31b48011db54c0095d28c249a05be6887fefa8e209cf48ba",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "6effd10d3fbe491012b0af723fddf1faa566acc0cbb2e7c6e1f1419de7eb95f4"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "c5859bc66c6a90c6e5347949cafe4f9d071b1cbc68c0edc7a22f377e68fded6d"
   },
   {
    "python_modules": 23,
    "recipe": "certificate-coverage",
    "reports": 1,
    "source_files": 884,
-   "source_manifest_sha256": "dc3de5bbe3f67391fe66775defd4ebb3aaec9913dacc365033c051f5e096a467",
+   "source_manifest_sha256": "d117302a6081f9251c2385ee028626a4138807162e6e1064bacf71141979481d",
    "theories": 860,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "997698475a7f328120a2707bc3414a4f3e169a090f035747e030731fa550d27b"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "8eee653c2309f4737465adb6a4282df87216c0716dd5bc07ed89c61e18777581"
   },
   {
    "python_modules": 23,
    "recipe": "certificate-development",
    "reports": 1,
    "source_files": 884,
-   "source_manifest_sha256": "3995c7622903b8976196b59c45fb72fe1912bedcebc6f14956c2bf3e9da29841",
+   "source_manifest_sha256": "1f0fb939719112d9bfacdefb354a59f6384c6b3cb0c529c311eb71f8836af1dc",
    "theories": 860,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "f6cd5a1f7f1dce71f00dbf7401e27c0f5c594804341e65d10e9489acc1a849bb"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "944b8e885e235923f103485edb909351ba414ccf179858ab7f2760d5e99bc07a"
   },
   {
    "python_modules": 23,
    "recipe": "certificate-input-development",
    "reports": 1,
    "source_files": 884,
-   "source_manifest_sha256": "a512dd90315bae8b6c22f1ece08c7dc670f88d3a944dab71aaf1f71c86785d3f",
+   "source_manifest_sha256": "a956097c4def15cca06ec39070be9033474e88714e17250e40b30d3258b9ff15",
    "theories": 860,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "69064970ef43fe467ed20da4f8d681b0bd4cf1178342ade89c00c93056cd67f7"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "5ce8ce70fcb7d9fd3dff4f10a5e270a8cd65489a52e15b76f2f0094cdc3e13ad"
   },
   {
    "python_modules": 23,
    "recipe": "certificate-scope-repair",
    "reports": 1,
    "source_files": 884,
-   "source_manifest_sha256": "79c965bf3028f3c9e1a95bda1f264848da1f55527172675345060603a2ee9759",
+   "source_manifest_sha256": "1bb04065260017a78babbc35a4bbaf9426ae6e07db34bbb45971b5827d1a2199",
    "theories": 860,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "ed7267af4ab78733ae22b7f7a6f162af4dfe1938dd960ae1b8964d900576016f"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "f85d8cc2c731477977c1dca58df9c812800f0d7cdbe9442c1ad103d8e290932e"
   },
   {
    "python_modules": 23,
    "recipe": "certified-causes",
    "reports": 1,
    "source_files": 875,
-   "source_manifest_sha256": "634c1b18ae73d95be6615ad866aca6b94984533ec889f531730da65ab1862b3d",
+   "source_manifest_sha256": "d08ab1519acced3c21bcd797326253f6d3e0d209c98e145fff90a4293696fb14",
    "theories": 851,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "8df72c61b7253541420e9f5d3dbe1c3a21f500336daf61112888e97ad376bef3"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "e397942487637b4eb45c51271c273cc6d49884242d069c98e52df2ccb421da06"
   },
   {
    "python_modules": 26,
    "recipe": "concurrent-history",
    "reports": 1,
    "source_files": 877,
-   "source_manifest_sha256": "3bc1f9d281c44fca2c94adeca93138e98d479c459be718650a73785d8b757cb3",
+   "source_manifest_sha256": "37e6e376ab68fafc42fb7574951eeddd9ccbf85003201efc21a02ecbc52d2a2e",
    "theories": 850,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "403f9c4d9db2518827b69eea8cc841827170ddb981c73cdd29e9faa05bfc8c0f"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "323877a497a4907cb98906397d242d5fdd527c154983dc2095d2eb8241e6fab0"
   },
   {
    "python_modules": 25,
    "recipe": "constructed-history",
    "reports": 1,
    "source_files": 833,
-   "source_manifest_sha256": "83801261cc65fd1fd48ea67b04eb3ce5cbdeaa0de1e6137246e5d7d596a4675c",
+   "source_manifest_sha256": "0c729f6b58f5aae49c3e5a82434ebd9f7f3379279fec6f16540937c7ffcf4944",
    "theories": 807,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "2c2d802d5259c61ffb447eb2b5a2b302dfab599509066dc8e576ebf631be2cf7"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "70941a2b8aa549cd797614b035c9a724e02c96e41f653c72a33190eb2604d175"
   },
   {
    "python_modules": 23,
    "recipe": "data-reading",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "ec9650f2e071b7a9d5b275e8849a9da3eaeb27161a4e194d91e62e6133269582",
+   "source_manifest_sha256": "75303c30de3a16779b28dac90b3a95448a9750db4026b0549ecaed6e2401b25c",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "c526e1d1ffbb2d8115b952b8fc728876a1f85f88182be305dd88f95b4435d901"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "31d09b120e579ee35244a2e1d8b6f1d3bf06c8d68a2ffa4c31d12feedeb12fd5"
   },
   {
    "python_modules": 23,
    "recipe": "decision-replay",
    "reports": 1,
    "source_files": 869,
-   "source_manifest_sha256": "404bf3a28f9b39ff4e47304949b24d76811a1a5579766c113fbc9309db607f8c",
+   "source_manifest_sha256": "77cedf3f92507bf4a52674021a27ef22f961eaa65b9377261ec8ea1e8c9d953d",
    "theories": 845,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "3bb274193e28baca813fea70fd92d9eb44f71564bd81afd773bfdba5ec6f2a63"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "414a0939d269aad3a006fe3c2294eff3cdfc240b564c4de74fe81eb8a453a96a"
   },
   {
    "python_modules": 23,
    "recipe": "digit-allocation",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "0c18bec9b4518f5c02c4fa2ca4e59588e6a46006e0930effc73a0d050d8373da",
+   "source_manifest_sha256": "3e21ea7a6939e080d43edb47a61111b64957d70fb74dd70a51e6b01d8b416d5a",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "861bee5ce7ea758b679a17f0822295a905f8a8f14d0e1ca9aea1d6cb3970fad1"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "9bfc28537c9724f1cb96725b6e90bcc6e21203521b53062de38de8fc67de7796"
   },
   {
    "python_modules": 23,
    "recipe": "digit-generation",
    "reports": 1,
    "source_files": 870,
-   "source_manifest_sha256": "669b57f09c0c7522408f06af06f9651ebdac5b4ebe24ab70a6e8c69f5eaec214",
+   "source_manifest_sha256": "a46721c58f608df1a8a0f4558d6b547b6e3fc99f76f977988800a4e8b20e91ec",
    "theories": 846,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "04c82a8657bc86cd55131621884a7071c184b1aac89220f9061713ae06905e41"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "356e20aa0bac5556007bb4f0e28493e855a3a1b5565ace2eadb0903066a714ed"
   },
   {
    "python_modules": 23,
    "recipe": "digit-history",
    "reports": 1,
    "source_files": 809,
-   "source_manifest_sha256": "730ec62f5e765f62b6242045b1c7065983d717a0b7910dd102c1ddaaf79eb392",
+   "source_manifest_sha256": "d66fb86063e3151b517302a93f53b58195413907c7030716b93f4f8794ec8d5d",
    "theories": 785,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "c112dc5dbf7bd30ef5da01cd3b45fc185f1d2935eb4cc20ba5f128e13ffec490"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "5a0ca1b62865737de1736fb4d3f64441b7cee29491b8e5756ab2886f0cef3695"
   },
   {
    "python_modules": 25,
    "recipe": "digit-replay",
    "reports": 1,
    "source_files": 889,
-   "source_manifest_sha256": "42ba35b11b44311094fc2f6f77c8e129238b713152f00899e8957fd1b724f663",
+   "source_manifest_sha256": "2007720a888f37a002d47543c3063b1b6eb4ece163e3ef950a57824acdd011a5",
    "theories": 863,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "d7ba5ba7075edc91a8017bb916e11fa76ac073707519115485e5b08e38486c77"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "e8279dc057b8ee3ec0bd01d4f0c34d896157cab99b3038ed0260c7b5764c1331"
   },
   {
    "python_modules": 23,
    "recipe": "encoded-environments",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "7e8c72579c57e34ce2a3fea87cc0d81468bec52e968846bfa1cb17b73d00e989",
+   "source_manifest_sha256": "d5127cbfcb751a807c63bf99a59cf3d0758b181bc7209759315d8100f0b905a9",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "5cf664ce577e34f6ac227b61b3539970cc5a44fe72ae399f964fcf74cdfbb8a2"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "edd7c95c769086514befb321bcc0fed1cca987c2edadd87351ad9accc954180a"
   },
   {
    "python_modules": 23,
    "recipe": "environment-grafts",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "2dd17ddf0f552b4cfc74aa131c35b5741f0cb02ad5c4a5624bfd98190a05f9b7",
+   "source_manifest_sha256": "9c4fb4a35ad8c5f549e3ede3e05a259de60d54882f56a501e3bfca864d0c7adf",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "ba681662925db07e50773b317f1c12dcb75294586ccac62de1f4764f4be09271"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "f85e5809bb783de33538edb6d61cc4618bd10bc7f593c00548bcd95adf5d6766"
   },
   {
    "python_modules": 23,
    "recipe": "environment-updates",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "43103cb6a1b69d7591669510aad490c0d5799574a2b00d0f78b7cc98b0571b3b",
+   "source_manifest_sha256": "7d3e402b4bc1313f64e4c487d0394f5c67ff8940b375071a734009e486ea4731",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "09e942f59a5fc8fd2ae707c13fdd387ab6d7a4e32712458ab9dd57d80ab450c1"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "4b0bbd25d67c67064be424a2f56e9fa148ac852ae44bf7a37a5bfff751e37b3b"
   },
   {
    "python_modules": 23,
    "recipe": "generation-records",
    "reports": 1,
    "source_files": 914,
-   "source_manifest_sha256": "16d9e0445dab20c5cbbe8b3d860f7059ee23ef0b7d972215e37a38b32e6e17e1",
+   "source_manifest_sha256": "561ac8dc40ff57331364688b9fc1b8b77112f3b4244c0659ca6e209fd1e0be91",
    "theories": 890,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "0cacf0e309e6abc08ce141aa2f89ed136c29beac83d916ac2a0d035db780d684"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "da5161d7c2f930d52c5b91d63526ff2efba98db9d20fc8e84e716c33d3fcc5ce"
   },
   {
    "python_modules": 23,
    "recipe": "graft-admission",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "05aaf9b0183ac3fa3851a75553fa1e8534aeb866d613b70e8dabcca71395b335",
+   "source_manifest_sha256": "ea871f60c7535e7ba38d3ea876673e4f6ae337c46aa97f631ca58e510a012e9f",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "92003e96c32c22288d6db6e471ee6f3c9d40fb8d08ee29a666604acb50271af1"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "2f9895efa90ce1df6d98c3118c9d911546e0502be37b5b758c7ecea45d22c7ec"
   },
   {
    "python_modules": 23,
    "recipe": "history-index",
    "reports": 1,
    "source_files": 869,
-   "source_manifest_sha256": "67433da8605f5a2059ab8f3d24918fe395a195ba4ed108ead88926b5bdbe0afb",
+   "source_manifest_sha256": "f6c3e8b89ab30ca87cd4228c7b4e32c2b94c333a5291bc516ee48945cd755bf9",
    "theories": 845,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "ef767d5595b4a5352ce56981ba08b51bc20aef2b8f2e289b66ba443c713a1036"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "8257906bf305ae7d1d307b741ae681184c23fdb2205e91158337cb726e172245"
   },
   {
    "python_modules": 23,
    "recipe": "indexed-generation",
    "reports": 1,
    "source_files": 870,
-   "source_manifest_sha256": "3b7dd8f0a68542e0eed78d783c27fb8b0e524434cf328e9fed1e3f4f12110cd2",
+   "source_manifest_sha256": "6e10a9f5f6a0fceba6f36b6e637e605d8bd98067e99b6a233ba2e0e4f1c7e4f6",
    "theories": 846,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "a020cdfd39e2a385a30dbeb5b8f81f6d9cb0620debb16417cf3c4bd47326f3d9"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "0f0595e0eb1b11054271805a18a8331ce4ec0be519d1ca67a9ab87f322339363"
   },
   {
    "python_modules": 25,
    "recipe": "known-history",
    "reports": 1,
    "source_files": 818,
-   "source_manifest_sha256": "81da294cb3379e2c8b5de69be99ca698d5308b8773c1338c931106f4803089b2",
+   "source_manifest_sha256": "0126815c925297b2244e2e314d3f4c6a4f1bd5651133a377c5bea5c971166e6a",
    "theories": 792,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "98f1b60a048f5733dc7d411eb19b1262b69c648360b06f12690f45e132e1657e"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "d979d7bbfb12d4ba5626581dbb8d1c6660bd6b86bd098ec3e55bff3f72dcb054"
   },
   {
    "python_modules": 23,
    "recipe": "literal-replay",
    "reports": 1,
    "source_files": 859,
-   "source_manifest_sha256": "fc413c8cb4fe99c3926c4b09b7c43e0e4c9e5bdbbfa979ad460775363322a21e",
+   "source_manifest_sha256": "c0b9bb6ef9b29462a06e7b06d6279eaa5f486a87e90b20b66df72d02da48afda",
    "theories": 835,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "666546d9a96a09e449d448fd579396209aca2d93b4bf9aae74d5b7445c6acc00"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "b4cf1d11222e539eff7ed70a3eb25d8131f293e6cbcd316b0252d38d2449e324"
   },
   {
    "python_modules": 23,
    "recipe": "native-admission",
    "reports": 1,
    "source_files": 888,
-   "source_manifest_sha256": "fabd69a8552d0ea45cb34c0866863def3de2711d687c5af5033a0f292aa8acf8",
+   "source_manifest_sha256": "8e63be3ae5b7f41d1922151ef5896096493e8ee688116c7c9cbf2f96d24a25ab",
    "theories": 864,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "d20e46d4776a3034b050bbf0232950acff46c3919f2b21333149e20e22ba3b81"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "dc018bb9f8826e9904ab57438d61e490f92f1115a6efe634a3353b5122472deb"
   },
   {
    "python_modules": 23,
    "recipe": "native-certificate-replay",
    "reports": 1,
    "source_files": 879,
-   "source_manifest_sha256": "9fe5dd8396ef3cb0f9bc9be48e242cda2e451aae85b755fbe76ed424fa15e3fd",
+   "source_manifest_sha256": "9877b8cb82fe457a4c55e046e108e738c28f10b43f256a93ac69dc0c42aefaa2",
    "theories": 855,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "c14dfe810513ad3a65561a87668c52d1425760287977a218fd0564a65237f66c"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "43ce52b7f04dbb5abcce1982aa72175d21f9ca0f23c156e2632752c2681c03e6"
   },
   {
    "python_modules": 23,
    "recipe": "native-certificates",
    "reports": 1,
    "source_files": 876,
-   "source_manifest_sha256": "117deaa125f158ec58cbf80896549d8798b75c2cd8b4e3a5aa3b75b988c4a430",
+   "source_manifest_sha256": "88e2249b34e07f795d017c05d3c6a91026ed9593ef8f4ea7efe51b1f65242d22",
    "theories": 852,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "a99b84014d7ec71640e8b1dd9859935782b4a7d87e3d740e0c908220b7b4168e"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "5aa0891c5a74eb1c67e85888cb92744d614c34280dde4b17d2920b0a527dbecd"
   },
   {
    "python_modules": 23,
    "recipe": "native-child",
    "reports": 1,
    "source_files": 1064,
-   "source_manifest_sha256": "22af1c5917ffe682938787ec862fbf82390026dc99136b22af780df4170f34f9",
+   "source_manifest_sha256": "ea916f0137b4ae57aab9a79f80edfb3f97fadb9b5333406d9c4221d82b3e6ce6",
    "theories": 1040,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "5ab6b255138c5dfb09649e92beb5860ca081aabab174ec59163f4f9620328b37"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "1c1fc44d0cfa01349f68e6e6600eda403045727c49c512e39ba2cf0612d4268f"
   },
   {
    "python_modules": 23,
    "recipe": "native-derivations",
    "reports": 1,
    "source_files": 876,
-   "source_manifest_sha256": "9e3ce576067caa479f93b2bb372e05317da589fb57bddfc402ad6b2d550545da",
+   "source_manifest_sha256": "d4097269f9c190840ac92eb75b5554b495e4aae7d721ca908a100f3216ea584c",
    "theories": 852,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "172029f07f84de277ed4bb43d058a6c31e09d9ea1c8e532133a5324552f72ffd"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "32730396dc0eb8f48fa0e2538d1af91c649d0c6175a37f1c5c42821a90dde800"
   },
   {
    "python_modules": 23,
    "recipe": "native-development",
    "reports": 1,
-   "source_files": 930,
-   "source_manifest_sha256": "5576543f5d235d1f827a8622c7d5534aa89723bce90ae4313db2b45fcddbac82",
-   "theories": 906,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "d24ce62f8149c9c4153c4155b6b001d348d875bdf8d8d4779f3f6b32a55849cf"
+   "source_files": 931,
+   "source_manifest_sha256": "8a47f7ee9546a8d4c992c6d10fce6219cdcf48726f700187e5eb8c650a21ee5b",
+   "theories": 907,
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "d9a1f617cdca9926635e771b96b438c818a449d282f44e049a064e46e0fa93e1"
   },
   {
    "python_modules": 23,
    "recipe": "native-development-machinery",
    "reports": 5,
-   "source_files": 995,
-   "source_manifest_sha256": "be1c43991009453b8ed61da915ea693d25f23fa144886a915c9e26e339be2e9e",
-   "theories": 971,
-   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "a7d47d4f0851d2ce86d08d97ea175cd0add99213c5ce12fbb6682eb9cd8d181b"
+   "source_files": 996,
+   "source_manifest_sha256": "7518d425d477970238db7018b52a9c7862345a2e3172cbe27d8217f523d6e874",
+   "theories": 972,
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "ede33e5fb0ccdeb47614bb0c261e073c3c35c36c1b140dc976195b3f0b246e48"
   },
   {
    "python_modules": 23,
    "recipe": "native-development-seed",
    "reports": 12,
-   "source_files": 997,
-   "source_manifest_sha256": "7d67a5dce8faa757c932f6818e0f0c1cfae7197cd379f6b0a7efc4f28ad5b12e",
-   "theories": 973,
-   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "34cdd8afe02d20b718544651c49b0d85e0714653176e85214beb8367ae2e04a0"
+   "source_files": 998,
+   "source_manifest_sha256": "313ad92cce55d71f1c10361fbdaaf7580be78d7de9931838494509fb9c40bd5a",
+   "theories": 974,
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "2131b1a53f620e2036d64c12be752f9e7f463d04a5a54e29d1e32b2af89222b3"
   },
   {
    "python_modules": 23,
    "recipe": "native-evaluation",
    "reports": 1,
    "source_files": 855,
-   "source_manifest_sha256": "b12605d6cab00e96cf4286309eaca30bff09dd3d3f6b0bbf3e08259098de0d5d",
+   "source_manifest_sha256": "3c2eea351cc385e588c91dbc498b3fdd0f4e46e0fd9106294d2161c0e519a28b",
    "theories": 831,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "791499d257d17f3e68742ea8a92373d3d0fa25d7876a9693f16506518a96ec6b"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "204b41e92c7ffe23a2a6b492369bffbd48e81cf2dd15cd159aed9dfddad69b6d"
   },
   {
    "python_modules": 23,
    "recipe": "native-extensions",
    "reports": 1,
    "source_files": 857,
-   "source_manifest_sha256": "a1cec4fce38bc8131c3332129988da653b92bcf3de3bf89c7ef9cf74a0cd8a37",
+   "source_manifest_sha256": "280c463d5fbab49c58c36d729432a3942cafb13e321fc274944e64b0b81e3470",
    "theories": 833,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "daab2f591dd8eb2fb9ee24d95425b127f069ae9007f25bbb10a0a60a7ca25290"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "5cd2642acfa26158d16af99ec34bab39ffb695f9719a20390f6c61a8e0eb4af5"
   },
   {
    "python_modules": 23,
    "recipe": "native-graphs",
    "reports": 1,
    "source_files": 852,
-   "source_manifest_sha256": "677121ccd55303a7e0e338453bfa63ab44ad6a29f15084c186735f965fa29544",
+   "source_manifest_sha256": "d352962d0852f080e2bbe37aa9ae89b5894e23db7f29bab1b071575ce9290694",
    "theories": 828,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "43e5f011732fbeedd3f393c9b77907eea4136366f4818f576f40e0d89ac3b047"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "84aa7385c2734ede57cdee89a6989c7beac966fbaa6f0844efd5bb847ce82aea"
   },
   {
    "python_modules": 23,
    "recipe": "native-histories",
    "reports": 1,
    "source_files": 878,
-   "source_manifest_sha256": "ad2f6c16d775f2c3a464d32eb74d819620b970279548cbda2154a60d47dbe1e1",
+   "source_manifest_sha256": "fc18ba6681d07171b186bfdd8c73bff2284d3e952d0fc268c91871fa02f8d64e",
    "theories": 854,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "cd207dd3877239bdf170f81136c8908bfcc97cc4816d445751a673b384e9b0fe"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "50f10b85eb36b504956882c84f8a04449a5ee9ad20b03b06a1d99c982243e0ce"
   },
   {
    "python_modules": 23,
    "recipe": "native-nodes",
    "reports": 1,
    "source_files": 852,
-   "source_manifest_sha256": "906aa3007859cab0682022b301c067b3cd5006f5bcd0812530f7cf341c040573",
+   "source_manifest_sha256": "8727c99c6a311abacc933780a378878ab07392048799a6246eb86423320aad8a",
    "theories": 828,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "679eb60ed989162a2c1bc3920374135d437afef9a612e10b430a698d546cc642"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "0acc1db0e0bd9a17fcb1c7223740480444fb979843a3cef05d58166f3aef29d0"
   },
   {
    "python_modules": 23,
    "recipe": "native-requirements",
    "reports": 1,
    "source_files": 887,
-   "source_manifest_sha256": "6089b327122fcfb76a6afe6c88c96c021e66273f8bc16dfc956c46fc5a4a9a55",
+   "source_manifest_sha256": "534f0070afd4728f7ceece08bb1a81d2e80377f395bb2d93d2b16cad1f42926f",
    "theories": 863,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "4641c6db487c2bbc796b97e73bdc169b8572967dc460a4611e4dfe6156cc60a1"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "a128bbc0d69366d614b2962fa97171b185e3a5e6e409d872f28f318a385725a2"
   },
   {
    "python_modules": 23,
    "recipe": "native-sources",
    "reports": 1,
    "source_files": 858,
-   "source_manifest_sha256": "8f8d752eb963560b51165e88c09acc3a35ab6d74c4df49e970e9ccf2c6fb2589",
+   "source_manifest_sha256": "7038889933d2dd8be063e1a8d8b657ab6339e0168ae4ccb1b2a7d68a682e2b44",
    "theories": 834,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "9cc8191543df28f443b3bc0ab72b002994d5433bb17d6bc4ccfb425c4c17b707"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "88573f179b0ff3d73244b67370d2e9bcc9edcde829eb98516a24a05d8642d4f9"
   },
   {
    "python_modules": 23,
    "recipe": "native-steering",
    "reports": 3,
-   "source_files": 931,
-   "source_manifest_sha256": "2fb93f68b7bf2f39a5bf6d90c2ff0fac408bdf2a0fd3cda41829355450576787",
-   "theories": 907,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "f8d572f9b2e1cae78d64404fb88659fb637ff55e1ae58594ac08b02a4b3a775d"
+   "source_files": 932,
+   "source_manifest_sha256": "7d4232b630af06b8d79a5d3126a70810b38039a8403691917301ba77f1bbd78b",
+   "theories": 908,
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "b8fe57932bf10f2b106c930142ce59df76e5707fe719db3f868f73dea14d64e6"
   },
   {
    "python_modules": 23,
    "recipe": "native-workflow",
    "reports": 4,
-   "source_files": 906,
-   "source_manifest_sha256": "62e3a231762aefd6ebdd0cc8a6ce5a332cf73a746daeb5c754b1f3c164495e85",
-   "theories": 882,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "a862d5d837dfc0135e16daf40ec184a7ebd08e2c5f142cbf10ee0a8c216fd13e"
+   "source_files": 907,
+   "source_manifest_sha256": "f962c731af7a457c91b086aff66bfbb50ef82e4a68d9833f4557f9ff1f39ed7e",
+   "theories": 883,
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "f9cbdfc4175f29606823dc12d243f1f1edb25bf231fc9ba0dbe1aa798a88217b"
   },
   {
    "python_modules": 25,
    "recipe": "quoted-history",
    "reports": 1,
    "source_files": 828,
-   "source_manifest_sha256": "c4598bc919da8ec1983f4cc69393e2b8f5cc074c0b818618f6d9292987851b61",
+   "source_manifest_sha256": "6675c36cb9be2961cccf4eae1ebfdfff5d6f77dc2b5de90f4765df656fee0f16",
    "theories": 802,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "e838c403c7b4754f7470b9eba711254c06f12752941d0963b153dfd89cc60929"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "47a7ef8edba481bdcc5bbe98fe44b14e65dfc3e0f71d8d4d4386ea2cd167d66c"
   },
   {
    "python_modules": 23,
    "recipe": "required-causes",
    "reports": 1,
    "source_files": 875,
-   "source_manifest_sha256": "c37954ab41da17150237aa25b672b00886958cf5634cbe42c842ba02ba4a2f16",
+   "source_manifest_sha256": "dabdae0e339982a5b563b977c6d7b2cd7e3d8e0a70ca91d33989c3680d947186",
    "theories": 851,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "a8e5eb974ef407320f7db0200caae0abb30a109d0750248d075fbd41dcab92a5"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "2a14e73e88e1e279825130cd97c879a5dd949071daea9123a35b5fac28590bd6"
   },
   {
    "python_modules": 23,
    "recipe": "required-history",
    "reports": 1,
    "source_files": 728,
-   "source_manifest_sha256": "e7c4db7fdd02d395e00dc7784952bf4003feb3cc37d17b04f73d9a65ec12a3d5",
+   "source_manifest_sha256": "2fda858377fe25e82268caa065e8fe6f1f7dbddc570f1a89449a34bad857de7f",
    "theories": 704,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "9a9324e42b72b912f6e59cd19c7e0fcbdf9f0c5b3b039868dca6a606edb25772"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "e027404aec579da65934a8c9fb921bb263141a57f412268e4fbadc8d74179df1"
   },
   {
    "python_modules": 23,
    "recipe": "requirement-decisions",
    "reports": 1,
    "source_files": 874,
-   "source_manifest_sha256": "0776fad36bd3e6faadbd85e4bc88f5e1a91717c0840930c78ec77d5dbcf62897",
+   "source_manifest_sha256": "013a02067b71f06e83c0789aaeb549ce86fc384df8dba28a27c020103c39caea",
    "theories": 850,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "b4668af1dcadf4e736e3f47d4d896a35bd3f58dad1bd4e137d3f6258c790c8fa"
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "8fe9569a217158bc34eb8655430e6b351838193e664427cfa8514f13ac717f86"
   },
   {
    "python_modules": 23,
    "recipe": "requirement-plans",
    "reports": 1,
    "source_files": 1001,
-   "source_manifest_sha256": "d3a413cd5530960f49d6fb8b8fe65b278cafb8eaa2531c8ab6aa39cff88e48a7",
+   "source_manifest_sha256": "0aae832364c91e8a4d1eea6ad963215761859789b6ee8dc3f8768319a07f4883",
    "theories": 977,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "422f97be18500a2a4c6597038a8c6e37a20a582ad08b99787a29aff915c7c96e"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "f945da91a17c0faf23aa7ce12e94f5fdb23b51907c0f08bff569529bc60b0702"
   },
   {
    "python_modules": 23,
    "recipe": "requirement-sources",
    "reports": 1,
    "source_files": 1001,
-   "source_manifest_sha256": "db938199cba2febccd7736413e497f32070cbce62fd85527ba8513535232881f",
+   "source_manifest_sha256": "e85e029bf7685d59b26e7bd9f0d9a7de5add5d239bc6859a07707c68e2213663",
    "theories": 977,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "61fc267dc2799f954640e65f59051d4b18235cda599c0e7fa73c2a54e1d87db4"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "e7d2625e0230a535f7f9449de6d50bd338f9e6f29c5c07206bd666e688f615ee"
   },
   {
    "python_modules": 23,
    "recipe": "source-development",
    "reports": 3,
-   "source_files": 933,
-   "source_manifest_sha256": "15706855586da6102f5f92e47d977fa0c62e0a6ed3bf4008cf42f525d75f038a",
-   "theories": 909,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "880c4acd0f8a9cdcb3b98a01396e0781a54ac6aa690bb5d0f63b4fe7415fc8b7"
+   "source_files": 934,
+   "source_manifest_sha256": "acc1a2dd71b9491dd10a2b160f7260598074a5e9db3aa9925779dbcbe2a5c3d4",
+   "theories": 910,
+   "validation": "executed against the accepted base and incremental proof",
+   "verification_sha256": "321e8331cbbb4f7ae8864f72d0e54c2e9e601421a8edcdef1fe8cb1fe69654d1"
   },
   {
    "python_modules": 23,
    "recipe": "use-allocation",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "51bb0d9b953ecc829fd73f749b52ad5e160849f615700a82b7f81f281e49a794",
+   "source_manifest_sha256": "e41fb7a680db42f36d69577e9991c28f4d68c2dd2ce83b6383626d366476eb2c",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "690e8f300ba3be3caae3e42bd85f99d493d13d88013b1012763745968535933b"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "4f8c95d9afa4cc431e2f9c9d827bc5a9b9a482f4039357a6a6f0f47f438b56b9"
   },
   {
    "python_modules": 23,
    "recipe": "use-codecs",
    "reports": 1,
    "source_files": 913,
-   "source_manifest_sha256": "4fc4fefda51885ae04d81939f18f0363efb55ae29de4b2c975d5bb1ff3e59887",
+   "source_manifest_sha256": "74d44dc943c1058ab34f0fb320db6b381b2e67de4c070bcb4ca5319e0c4a0149",
    "theories": 889,
-   "validation": "unchanged complete manifest; retained verification applies",
-   "verification_sha256": "cdf32973566be08e6af495e21cdc4cd92b33f201a32031f4105c61065181c77c"
+   "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
+   "verification_sha256": "f790c53cb0ee618590c3f44259b129e0e293d386c2a3e03784bc977dfac3d3a2"
   }
  ],
  "status": "accepted",
- "total_seconds": 337.51,
- "unchanged_recipes": 50,
- "workspace_theories": 1838
+ "total_seconds": 1139.81,
+ "unchanged_recipes": 0,
+ "workspace_theories": 1842
 }

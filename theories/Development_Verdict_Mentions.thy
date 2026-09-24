@@ -31,8 +31,7 @@ definition native_any_rule :: "(local_address,local_address,'u definition_site) 
 
 definition store_found_rule :: "'u definition_site \<Rightarrow>
     (local_address,local_address,'u definition_site) finite_factor_schema" where
-  "store_found_rule k=finite_native_rule (Finite_Pattern_Pair (native_var 0) (native_var 1))
-    [([0],(k,Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))))]"
+  "store_found_rule k=native_context_call_rule k"
 
 declare native_any_rule_def [code_unfold]
 
@@ -41,49 +40,33 @@ locale store_found_program = native_rule_family P m "[([0],store_found_rule k)]"
   for P :: "'u native_system" and m k ch :: "'u definition_site"
 begin
 
+sublocale call: native_context_call_program P m k
+  unfolding native_context_call_program_def using native_rule_family_axioms by (simp only: store_found_rule_def)
+
+sublocale any_law: native_rule_law P ch "[([0],native_any_rule)]"
+  by (rule native_rule_lawI[OF any.native_rule_family_axioms]) (auto simp: native_any_rule_def)
+
 lemma any_exact: "(ch,Pair_Term x y)\<in>positive_meaning P \<longleftrightarrow> term_formed x \<and> term_formed y"
 proof
   assume "(ch,Pair_Term x y)\<in>positive_meaning P"
   then show "term_formed x \<and> term_formed y" using any.holds_formed by fastforce
 next
   assume formed: "term_formed x \<and> term_formed y"
-  have "(ch,evaluate_pattern (native_values [x,y]) (decode_finite_pattern
-      (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning P"
-    by (rule any.native_step[where c="[0]" and ps="[]"]) (use formed in \<open>simp_all add: native_any_rule_def\<close>)
-  then show "(ch,Pair_Term x y)\<in>positive_meaning P" by simp
+  show "(ch,Pair_Term x y)\<in>positive_meaning P"
+    unfolding any_law.exact
+    by (rule exI[of _ "[0]"], rule exI[of _ "Finite_Pattern_Pair (native_var 0) (native_var 1)"],
+      rule exI[of _ "[]"], rule exI[of _ "native_values [x,y]"]) (use formed in \<open>auto simp: native_any_rule_def\<close>)
 qed
 
 theorem exact:
   assumes valued: "\<And>y. term_formed (val y)"
   shows "(m,Pair_Term (store_term val T) (path_term q))\<in>positive_meaning P \<longleftrightarrow> store_lookup T q\<noteq>None"
-proof
-  assume holds: "(m,Pair_Term (store_term val T) (path_term q))\<in>positive_meaning P"
-  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,store_found_rule k)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
-      Pair_Term (store_term val T) (path_term q)"
-    and support: "\<forall>s e r. (s,e,r)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f r)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds]) (rule that; assumption)
-  have F: "F=store_found_rule k" using rule by simp
-  have premise: "(k,Pair_Term (f [0]) (Pair_Term (f [1]) (f [0])))\<in>positive_meaning P"
-    using native_rule_support[OF support[unfolded F store_found_rule_def]] by simp
-  have fields: "f [0]=store_term val T" "f [Suc 0]=path_term q" using shape by (simp_all add: F store_found_rule_def)
-  show "store_lookup T q\<noteq>None"
-    using premise by (auto simp: fields search.exact[OF valued] path_term_injective)
-next
-  assume "store_lookup T q\<noteq>None"
-  then obtain v where v: "store_lookup T q=Some v" by auto
+proof -
   have sf: "term_formed (store_term val T)" by (rule store_term_formed[OF valued])
-  have "(ch,Pair_Term (store_term val T) (val v))\<in>positive_meaning P" by (simp add: any_exact sf valued)
-  then have searched: "(k,Pair_Term (store_term val T) (Pair_Term (path_term q) (store_term val T)))
-      \<in>positive_meaning P"
-    using v sf by (auto simp: search.exact[OF valued])
-  have "(m,evaluate_pattern (native_values [store_term val T,path_term q])
-      (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning P"
-    by (rule native_step[where c="[0]" and
-        ps="[([0],(k,Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 0))))]"])
-      (use searched sf in \<open>simp_all add: store_found_rule_def\<close>)
-  then show "(m,Pair_Term (store_term val T) (path_term q))\<in>positive_meaning P" by simp
+  have "(k,Pair_Term (store_term val T) (Pair_Term (path_term q) (store_term val T)))\<in>positive_meaning P
+      \<longleftrightarrow> store_lookup T q\<noteq>None"
+    using sf by (auto simp: search.exact[OF valued] any_exact valued path_term_injective)
+  then show ?thesis by (simp only: call.exact)
 qed
 
 end
@@ -99,39 +82,19 @@ locale row_mentions_program = native_rule_family P r "[([0],row_mentions_rule e)
   for P :: "'u native_system" and r e m k ch :: "'u definition_site"
 begin
 
+sublocale rearranged: native_rearranging_program P r
+    "row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)" e
+    "Finite_Pattern_Pair (native_var 0) (native_var 4)"
+  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
+  using native_rule_family_axioms[unfolded row_mentions_rule_def] by (auto simp: row_pattern_def)
+
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)" and valued: "\<And>y. term_formed (val y)"
   shows "(r,Pair_Term (store_term val T) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
     (\<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None)"
-proof
-  assume holds: "(r,Pair_Term (store_term val T) (state_row_term ident z))\<in>positive_meaning P"
-  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,row_mentions_rule e)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
-      Pair_Term (store_term val T) (state_row_term ident z)"
-    and support: "\<forall>s d q. (s,d,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (d,evaluate_pattern f q)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds]) (rule that; assumption)
-  have F: "F=row_mentions_rule e" using rule by simp
-  have premise: "(e,Pair_Term (f [0]) (f [4]))\<in>positive_meaning P"
-    using native_rule_support[OF support[unfolded F row_mentions_rule_def]] by simp
-  have fields: "f [0]=store_term val T" "f [4]=keys_term (row_mentions (snd z))"
-    using shape by (simp_all add: F row_mentions_rule_def row_pattern_def state_row_term_def)
-  show "\<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None"
-    using premise by (simp add: fields keys_term_def every.exact found.exact[OF valued])
-next
-  assume found: "\<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None"
-  have sf: "term_formed (store_term val T)" by (rule store_term_formed[OF valued])
-  have mentions: "(e,Pair_Term (store_term val T) (keys_term (row_mentions (snd z))))\<in>positive_meaning P"
-    using found sf by (simp add: keys_term_def every.exact found.exact[OF valued])
-  have "(r,evaluate_pattern (native_values [store_term val T,path_term (fst z),keys_term (row_declared (snd z)),
-      keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z))])
-      (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3)
-        (native_var 4) (native_var 5))))\<in>positive_meaning P"
-    by (rule native_step[where c="[0]" and ps="[([0],(e,Finite_Pattern_Pair (native_var 0) (native_var 4)))]"])
-      (use mentions sf identity in \<open>simp_all add: row_mentions_rule_def row_pattern_def\<close>)
-  then show "(r,Pair_Term (store_term val T) (state_row_term ident z))\<in>positive_meaning P"
-    by (simp add: row_pattern_def state_row_term_def)
-qed
+  using store_term_formed[OF valued, where T=T]
+  by (simp add: rearranged.row_at[OF refl _ identity] row_valuation_def keys_term_def every.exact
+      found.exact[OF valued])
 
 end
 
@@ -292,6 +255,50 @@ definition undeclared_rule :: "'u definition_site \<Rightarrow> 'u definition_si
     (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
     [([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
 
+text \<open>
+  A field reading two selections calls both on one context: @{const undeclared_rule}, whose conclusion pairs
+  the context with the two arguments and whose two premises call the two sites, is that conjunction for any
+  two sites. Its program is the family's law (@{locale native_rule_law}) at the one rule with two premises,
+  and its contract is stated once here: every site of the rule is an instance of this program.
+\<close>
+
+locale conjoined_calls_program = native_rule_family P s "[([0],undeclared_rule u f)]"
+  for P :: "'u native_system" and s u f :: "'u definition_site"
+begin
+
+sublocale law: native_rule_law P s "[([0],undeclared_rule u f)]"
+  by (rule native_rule_lawI[OF native_rule_family_axioms]) (auto simp: undeclared_rule_def)
+
+theorem exact: "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P \<longleftrightarrow>
+    (u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
+proof
+  assume "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P"
+  then obtain c p ps g where rule: "(c,finite_native_rule p ps)\<in>set [([0]::local_address,undeclared_rule u f)]"
+    and shape: "evaluate_pattern g (decode_finite_pattern p)=Pair_Term x (Pair_Term a b)"
+    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
+    unfolding law.exact by blast
+  from rule have p: "p=Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"
+    and ps: "set ps={([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),
+      ([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))}"
+    by (simp_all add: undeclared_rule_def finite_native_rule_eq_iff)
+  have fields: "g [0]=x" "g [1]=a" "g [2]=b" using shape by (simp_all add: p)
+  show "(u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
+    using support fields by (auto simp: ps)
+next
+  assume both: "(u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
+  have formed: "term_formed x" "term_formed a" "term_formed b"
+    using both by (auto dest: positive_meaning_term_formed)
+  show "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P"
+    unfolding law.exact
+    by (rule exI[of _ "[0]"],
+      rule exI[of _ "Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"],
+      rule exI[of _ "[([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),
+        ([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"],
+      rule exI[of _ "native_values [x,a,b]"]) (use both formed in \<open>auto simp: undeclared_rule_def\<close>)
+qed
+
+end
+
 definition verdict_mentions_definitions :: "(local_address option definition_site\<times>
     (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
   "verdict_mentions_definitions=[(verdict_found_any,[([0],native_any_rule)]),
@@ -329,7 +336,7 @@ lemma verdict_mentions_family:
 lemmas verdict_mentions_rule_defs = verdict_mentions_definitions_def native_every_rules_def native_every_nil_def
   native_every_step_def native_store_search_rules_def
   native_store_found_rule_def native_store_left_rule_def native_store_right_rule_def native_any_rule_def
-  store_found_rule_def row_mentions_rule_def subject_call_rule_def undeclared_rule_def
+  store_found_rule_def native_context_call_rule_def row_mentions_rule_def subject_call_rule_def undeclared_rule_def
 
 interpretation mention_found: row_mentions_program verdict_mentions_system verdict_row_found verdict_keys_found
     verdict_key_found verdict_found_search verdict_found_any
@@ -357,8 +364,9 @@ interpretation found_selections: native_every_program verdict_mentions_system ve
     verdict_found_family
   unfolding native_every_program_def by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
 
-interpretation undeclared_entry: native_rule_family verdict_mentions_system verdict_undeclared
-    "[([0],undeclared_rule verdict_found_selection verdict_found_family)]"
+interpretation undeclared_entry: conjoined_calls_program verdict_mentions_system verdict_undeclared
+    verdict_found_selection verdict_found_family
+  unfolding conjoined_calls_program_def
   by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
 
 section \<open>The field \<open>excess\<close>, over any program, any selection and any support\<close>
@@ -579,32 +587,7 @@ lemma undeclared_entry_exact:
   "(verdict_undeclared,Pair_Term x (Pair_Term y w))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
     (verdict_found_selection,Pair_Term x y)\<in>positive_meaning verdict_mentions_system \<and>
     (verdict_found_family,Pair_Term x w)\<in>positive_meaning verdict_mentions_system"
-proof
-  assume holds: "(verdict_undeclared,Pair_Term x (Pair_Term y w))\<in>positive_meaning verdict_mentions_system"
-  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,undeclared_rule verdict_found_selection verdict_found_family)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=Pair_Term x (Pair_Term y w)"
-    and support: "\<forall>s e q. (s,e,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f q)\<in>positive_meaning verdict_mentions_system"
-    by (rule undeclared_entry.holds_cases[OF holds]) blast
-  have F: "F=undeclared_rule verdict_found_selection verdict_found_family" using rule by simp
-  have fields: "f [0]=x" "f [Suc 0]=y" "f [2]=w" using shape by (simp_all add: F undeclared_rule_def)
-  show "(verdict_found_selection,Pair_Term x y)\<in>positive_meaning verdict_mentions_system \<and>
-      (verdict_found_family,Pair_Term x w)\<in>positive_meaning verdict_mentions_system"
-    using native_rule_support[OF support[unfolded F undeclared_rule_def]] by (simp add: fields)
-next
-  assume both: "(verdict_found_selection,Pair_Term x y)\<in>positive_meaning verdict_mentions_system \<and>
-      (verdict_found_family,Pair_Term x w)\<in>positive_meaning verdict_mentions_system"
-  have formed: "term_formed x" "term_formed y" "term_formed w"
-    using both positive_meaning_term_formed by fastforce+
-  have "(verdict_undeclared,evaluate_pattern (native_values [x,y,w]) (decode_finite_pattern
-      (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))))
-      \<in>positive_meaning verdict_mentions_system"
-    by (rule undeclared_entry.native_step[where c="[0]" and
-        ps="[([0],(verdict_found_selection,Finite_Pattern_Pair (native_var 0) (native_var 1))),
-          ([1],(verdict_found_family,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-      (use both formed in \<open>simp_all add: undeclared_rule_def\<close>)
-  then show "(verdict_undeclared,Pair_Term x (Pair_Term y w))\<in>positive_meaning verdict_mentions_system" by simp
-qed
+  by (rule undeclared_entry.exact)
 
 theorem native_mentions_found:
   assumes identity: "\<And>y. term_formed (ident y)" and roots: "\<And>y. term_formed (identr y)"
@@ -669,7 +652,7 @@ text \<open>
   declaration (@{thm [source] declaration_store_at}).
 \<close>
 
-lemma state_families_rows:
+lemma covering_families_entity_rows:
   assumes present: "state_presents key S R" and families: "set Fs=range (state_entities R)"
   shows "(\<Union>F\<in>set Fs. set (map snd F))=entity_row key (snd S) ` set (snd (snd S))"
   using kinds_present_rows[OF present, of "\<lambda>_. True" UNIV] families by (simp add: kinds_present_def)
@@ -687,7 +670,7 @@ proof -
       (\<exists>p\<in>(\<Union>F\<in>set Fs. set (map snd F)). key h\<in>set (row_declared p))"
     by (auto simp: declaration_store_declared declaration_store_found)
   also have "\<dots> \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). key h\<in>key ` set (entity_declared e))"
-    by (simp only: state_families_rows[OF present families]) auto
+    by (simp only: covering_families_entity_rows[OF present families]) auto
   also have "\<dots> \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). h\<in>set (entity_declared e))"
     using declared_inside inj bound by (auto simp: inj_on_eq_iff)
   finally show ?thesis .
@@ -710,7 +693,7 @@ theorem native_undeclared_exact:
 proof -
   let ?C="snd S" and ?es="snd (snd S)" and ?n="fst (snd S)"
   have rows: "(\<Union>F\<in>set Fs. set (map snd F))=entity_row key ?C ` set ?es"
-    by (rule state_families_rows[OF present families])
+    by (rule covering_families_entity_rows[OF present families])
   have root_rows: "snd ` set (state_roots R)=root_row key ?C ` set (fst S)"
     using state_presents_root_family[OF present] by (metis list.set_map)
   have inj: "inj_on key {..<length ?n}" by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])

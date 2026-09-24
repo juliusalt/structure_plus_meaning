@@ -591,7 +591,15 @@ abbreviation answer_table :: reach_table where
   "answer_table \<equiv> state_reach_table (state_atoms (edited_state R e)) (state_roots (edited_state R e))
     (state_all_families (edited_state R e))"
 
-theorem edited_unreached:
+text \<open>
+  The honest statement of the field: any checked families serve that are sound (every checked row a row of
+  the answer state) and complete (the added rows, and every row of the answer state at a key of \<open>O\<close>, among
+  them), and whose rows' keys the table can visit. Inclusions, never an equation, so a larger list, shared
+  with another field's argument, costs work and never truth.
+\<close>
+
+theorem edited_unreached_rows:
+  fixes C :: "isabelle_context state_family list"
   assumes closed: "isabelle_unreached_entities (fst S) (snd S)=[]"
     and closure: "\<forall>a\<in>set L. \<forall>F\<in>set (state_all_families R). \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow>
       set (row_mentions (snd z))\<subseteq>set L"
@@ -601,19 +609,20 @@ theorem edited_unreached:
     and formed: "reach_table_formed U"
     and table: "set U=set (reach_restricted (set V) (edited_reach_table K L answer_table))"
     and visit_closed: "\<And>p k. (p,k)\<in>reach_edges answer_table \<Longrightarrow> k\<in>set V \<Longrightarrow> k\<notin>set K-set L \<Longrightarrow> p\<in>set V"
-    and visit_rows: "\<forall>G\<in>set (edited_reach_families e (state_all_families (edited_state R e)) L). \<forall>z\<in>set G.
-      set (row_declared (snd z))\<union>set (row_subjects (snd z))\<subseteq>set V"
-  shows "(verdict_unreached,Pair_Term (reach_table_term U)
-      (state_families_term ident (edited_reach_families e (state_all_families (edited_state R e)) L)))
+    and sound: "\<And>G z. G\<in>set C \<Longrightarrow> z\<in>set G \<Longrightarrow> \<exists>F\<in>set (state_all_families (edited_state R e)). z\<in>set F"
+    and added: "\<And>j z. z\<in>set (edit_added e j) \<Longrightarrow> \<exists>G\<in>set C. z\<in>set G"
+    and fibred: "\<And>F z a. F\<in>set (state_all_families (edited_state R e)) \<Longrightarrow> z\<in>set F \<Longrightarrow> a\<in>set L \<Longrightarrow>
+      a\<in>set (row_subjects (snd z)) \<or> a\<in>set (row_declared (snd z)) \<Longrightarrow> \<exists>G\<in>set C. z\<in>set G"
+    and visit_rows: "\<forall>G\<in>set C. \<forall>z\<in>set G. set (row_declared (snd z))\<union>set (row_subjects (snd z))\<subseteq>set V"
+  shows "(verdict_unreached,Pair_Term (reach_table_term U) (state_families_term ident C))
       \<in>positive_meaning verdict_unreached_system \<longleftrightarrow>
     (verdict_unreached,Pair_Term (reach_table_term answer_table) (state_families_term ident (state_all_families (edited_state R e))))
       \<in>positive_meaning verdict_unreached_system"
-    and "(verdict_unreached,Pair_Term (reach_table_term U)
-      (state_families_term ident (edited_reach_families e (state_all_families (edited_state R e)) L)))
+    and "(verdict_unreached,Pair_Term (reach_table_term U) (state_families_term ident C))
       \<in>positive_meaning verdict_unreached_system \<longleftrightarrow> isabelle_unreached_entities (fst S') (snd S')=[]"
 proof -
   let ?R'="edited_state R e"
-  let ?C="edited_reach_families e (state_all_families ?R') L"
+  let ?C="C"
   let ?T''="edited_reach_table K L answer_table"
   have closed_call: "(verdict_unreached,Pair_Term (reach_table_term request_table) (state_families_term ident
       (state_all_families R)))\<in>positive_meaning verdict_unreached_system"
@@ -669,8 +678,8 @@ proof -
       show "\<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)). h\<in>table_reached answer_table"
       proof (cases "z\<in>set (edit_added e j)")
         case True
-        have "edit_added e j\<in>set ?C" by (auto simp: edited_reach_families_member)
-        then show ?thesis using inc True below by blast
+        have "\<exists>G\<in>set ?C. z\<in>set G" by (rule added[OF True])
+        then show ?thesis using inc below by blast
       next
         case False
         then have zR: "z\<in>set (state_entities R j)" using z Fj edited_state_member by auto
@@ -678,11 +687,7 @@ proof -
         proof (cases "\<exists>a\<in>set L. a\<in>set (row_subjects (snd z)) \<or> a\<in>set (row_declared (snd z))")
           case True
           then obtain a where a: "a\<in>set L" "a\<in>set (row_subjects (snd z)) \<or> a\<in>set (row_declared (snd z))" by blast
-          have "z\<in>set (key_fibre row_subjects a F) \<or> z\<in>set (key_fibre row_declared a F)"
-            using a(2) z by (auto simp: key_fibre_member)
-          moreover have "key_fibre row_subjects a F\<in>set ?C" "key_fibre row_declared a F\<in>set ?C"
-            using a(1) F by (auto simp: edited_reach_families_member)
-          ultimately have "\<exists>G\<in>set ?C. z\<in>set G" by blast
+          have "\<exists>G\<in>set ?C. z\<in>set G" by (rule fibred[OF F z a(1) a(2)])
           then show ?thesis using inc below by blast
         next
           case False
@@ -701,19 +706,7 @@ proof -
     show "\<forall>G\<in>set ?C. \<forall>z\<in>set G. \<exists>h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z)). h\<in>table_reached U"
     proof (intro ballI)
       fix G z assume G: "G\<in>set ?C" and z: "z\<in>set G"
-      from G consider (added) j where "G=edit_added e j"
-        | (fibre) a F where "F\<in>set (state_all_families ?R')"
-          "G=key_fibre row_subjects a F \<or> G=key_fibre row_declared a F"
-        by (auto simp: edited_reach_families_member)
-      then have "\<exists>F\<in>set (state_all_families ?R'). z\<in>set F"
-      proof cases
-        case added
-        then have "z\<in>set (state_entities ?R' j)" using z edited_state_member by blast
-        then show ?thesis by (auto simp: state_all_families_range)
-      next
-        case fibre
-        then show ?thesis using z by (auto simp: key_fibre_member)
-      qed
+      have "\<exists>F\<in>set (state_all_families ?R'). z\<in>set F" by (rule sound[OF G z])
       then obtain h where h: "h\<in>set (row_declared (snd z))\<union>set (row_subjects (snd z))" "h\<in>table_reached answer_table"
         using wh by blast
       have "h\<in>set V" using visit_rows G z h(1) by blast
@@ -728,6 +721,68 @@ proof -
   show "(verdict_unreached,Pair_Term (reach_table_term U) (state_families_term ident ?C))
       \<in>positive_meaning verdict_unreached_system \<longleftrightarrow> isabelle_unreached_entities (fst S') (snd S')=[]"
     by (rule trans[OF first native_unreached_exact[where ident=ident, OF answer state_all_families_range identity]])
+qed
+
+text \<open>The field's own families: the added families and the fibres at the keys of \<open>O\<close>.\<close>
+
+corollary edited_unreached:
+  assumes closed: "isabelle_unreached_entities (fst S) (snd S)=[]"
+    and closure: "\<forall>a\<in>set L. \<forall>F\<in>set (state_all_families R). \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow>
+      set (row_mentions (snd z))\<subseteq>set L"
+    and targets: "\<forall>D\<in>set (map (edit_removed e) entity_kinds). \<forall>z\<in>set D.
+      edited_target L A (state_all_families (edited_state R e)) z"
+    and seeds: "set K\<subseteq>set (state_reach_seeds R)"
+    and formed: "reach_table_formed U"
+    and table: "set U=set (reach_restricted (set V) (edited_reach_table K L answer_table))"
+    and visit_closed: "\<And>p k. (p,k)\<in>reach_edges answer_table \<Longrightarrow> k\<in>set V \<Longrightarrow> k\<notin>set K-set L \<Longrightarrow> p\<in>set V"
+    and visit_rows: "\<forall>G\<in>set (edited_reach_families e (state_all_families (edited_state R e)) L). \<forall>z\<in>set G.
+      set (row_declared (snd z))\<union>set (row_subjects (snd z))\<subseteq>set V"
+  shows "(verdict_unreached,Pair_Term (reach_table_term U)
+      (state_families_term ident (edited_reach_families e (state_all_families (edited_state R e)) L)))
+      \<in>positive_meaning verdict_unreached_system \<longleftrightarrow>
+    (verdict_unreached,Pair_Term (reach_table_term answer_table) (state_families_term ident (state_all_families (edited_state R e))))
+      \<in>positive_meaning verdict_unreached_system" (is ?whole)
+    and "(verdict_unreached,Pair_Term (reach_table_term U)
+      (state_families_term ident (edited_reach_families e (state_all_families (edited_state R e)) L)))
+      \<in>positive_meaning verdict_unreached_system \<longleftrightarrow> isabelle_unreached_entities (fst S') (snd S')=[]" (is ?answer)
+proof -
+  let ?R'="edited_state R e"
+  let ?C="edited_reach_families e (state_all_families ?R') L"
+  have sound: "\<exists>F\<in>set (state_all_families ?R'). z\<in>set F" if G: "G\<in>set ?C" and z: "z\<in>set G" for G z
+  proof -
+    from G consider (add) j where "G=edit_added e j"
+      | (fibre) a F where "F\<in>set (state_all_families ?R')"
+        "G=key_fibre row_subjects a F \<or> G=key_fibre row_declared a F"
+      by (auto simp: edited_reach_families_member)
+    then show ?thesis
+    proof cases
+      case add
+      then have "z\<in>set (state_entities ?R' j)" using z edited_state_member by blast
+      then show ?thesis by (auto simp: state_all_families_range)
+    next
+      case fibre
+      then show ?thesis using z by (auto simp: key_fibre_member)
+    qed
+  qed
+  have added: "\<exists>G\<in>set ?C. z\<in>set G" if "z\<in>set (edit_added e j)" for j z
+  proof -
+    have "edit_added e j\<in>set ?C" by (auto simp: edited_reach_families_member)
+    then show ?thesis using that by blast
+  qed
+  have fibred: "\<exists>G\<in>set ?C. z\<in>set G"
+    if F: "F\<in>set (state_all_families ?R')" and z: "z\<in>set F" and a: "a\<in>set L"
+      and k: "a\<in>set (row_subjects (snd z)) \<or> a\<in>set (row_declared (snd z))" for F z a
+  proof -
+    have "z\<in>set (key_fibre row_subjects a F) \<or> z\<in>set (key_fibre row_declared a F)"
+      using k z by (auto simp: key_fibre_member)
+    moreover have "key_fibre row_subjects a F\<in>set ?C" "key_fibre row_declared a F\<in>set ?C"
+      using a F by (auto simp: edited_reach_families_member)
+    ultimately show ?thesis by blast
+  qed
+  note general = edited_unreached_rows[OF closed closure targets seeds formed table visit_closed sound added
+    fibred visit_rows]
+  show ?whole by (rule general(1))
+  show ?answer by (rule general(2))
 qed
 
 text \<open>The same judgment with \<open>O\<close> admitted natively: both readings are calls of the admission program.\<close>
@@ -756,6 +811,38 @@ proof -
       edited_target L A (state_all_families (edited_state R e)) z"
     using targets native_targets_exact[where ident=ident, OF identity] by simp
   show ?thesis by (rule edited_unreached(2)[OF closed c t seeds formed table visit_closed visit_rows])
+qed
+
+text \<open>The same over any sound and complete checked families.\<close>
+
+corollary edited_unreached_rows_admitted:
+  fixes C :: "isabelle_context state_family list"
+  assumes closed: "isabelle_unreached_entities (fst S) (snd S)=[]"
+    and closure: "(removal_closure,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident L (state_all_families R)))
+      (keys_term L))\<in>positive_meaning edited_reach_system"
+    and targets: "(removal_targets,Pair_Term (Pair_Term (support_term L)
+      (subject_indexes_term ident A (state_all_families (edited_state R e))))
+      (state_families_term ident (map (edit_removed e) entity_kinds)))\<in>positive_meaning edited_reach_system"
+    and seeds: "set K\<subseteq>set (state_reach_seeds R)"
+    and formed: "reach_table_formed U"
+    and table: "set U=set (reach_restricted (set V) (edited_reach_table K L answer_table))"
+    and visit_closed: "\<And>p k. (p,k)\<in>reach_edges answer_table \<Longrightarrow> k\<in>set V \<Longrightarrow> k\<notin>set K-set L \<Longrightarrow> p\<in>set V"
+    and sound: "\<And>G z. G\<in>set C \<Longrightarrow> z\<in>set G \<Longrightarrow> \<exists>F\<in>set (state_all_families (edited_state R e)). z\<in>set F"
+    and added: "\<And>j z. z\<in>set (edit_added e j) \<Longrightarrow> \<exists>G\<in>set C. z\<in>set G"
+    and fibred: "\<And>F z a. F\<in>set (state_all_families (edited_state R e)) \<Longrightarrow> z\<in>set F \<Longrightarrow> a\<in>set L \<Longrightarrow>
+      a\<in>set (row_subjects (snd z)) \<or> a\<in>set (row_declared (snd z)) \<Longrightarrow> \<exists>G\<in>set C. z\<in>set G"
+    and visit_rows: "\<forall>G\<in>set C. \<forall>z\<in>set G. set (row_declared (snd z))\<union>set (row_subjects (snd z))\<subseteq>set V"
+  shows "(verdict_unreached,Pair_Term (reach_table_term U) (state_families_term ident C))
+      \<in>positive_meaning verdict_unreached_system \<longleftrightarrow> isabelle_unreached_entities (fst S') (snd S')=[]"
+proof -
+  have c: "\<forall>a\<in>set L. \<forall>F\<in>set (state_all_families R). \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow>
+      set (row_mentions (snd z))\<subseteq>set L"
+    using closure native_closure_exact[where ident=ident, OF identity] by simp
+  have t: "\<forall>D\<in>set (map (edit_removed e) entity_kinds). \<forall>z\<in>set D.
+      edited_target L A (state_all_families (edited_state R e)) z"
+    using targets native_targets_exact[where ident=ident, OF identity] by simp
+  show ?thesis
+    by (rule edited_unreached_rows(2)[OF closed c t seeds formed table visit_closed sound added fibred visit_rows])
 qed
 
 end

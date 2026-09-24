@@ -13725,6 +13725,12 @@ and one successor per admitted answer at one locus. Nothing is lost in cost: an 
 relocating the definitions its subject's callers form, which is the same whether the package holds one notion or six,
 and a notion that does not call the subject is shared untouched.
 
+[Corrected by "Every distinction a native program relies on comes from a native notion: the state the native loop
+judges and the presentations that retire" below (task 376): the package is not presented as rows. Its sites,
+interfaces, clauses, callee edges, membership, formation and scopes are read by the Factor grammar's native readers,
+each with its contract proved once, and the sections below on its rows, the request, the answer and the judgment, and
+the builds N1, N3 and N5–N7, are superseded as that entry states; N2 stands without the site listing's keys.]
+
 **Its rows.** The package's program, read back by the native package reader (`finite_native_source`, exact), is
 presented as rows of the generalized record:
 
@@ -13928,6 +13934,10 @@ What an owner's answer would change:
 - **Q2**: a selection criterion beyond readiness, and the authority of the first native problems.
 
 ### The builds, in order
+
+[Corrected by task 376's entry below: N1 (#336, #338) and N3's second part (#346) are retired, N3's first part (#344)
+is replaced by the native request at a package, N2 (#340, #342) stands without the site keys, N4 was retired on task
+378's entry, and N5–N9 are superseded as that entry states.]
 
 - **N1, the rows record generalized** (one window). `state_rows` and `state_edit` parameterized over their atom
   payload, kind index and identities, with the kinds' listing a parameter of `kinds_outside` and of the verdict's,
@@ -14937,3 +14947,231 @@ problems. Request construction for native problems (#376). The agent executor (Q
 words beyond the direction the first problem cites. This design was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 378's decision; a design, no theory changes).
+## Every distinction a native program relies on comes from a native notion: the state the native loop judges and the presentations that retire
+
+The owner, to the planner, 2026-09-24 (the ledger), at 18:12: "Task 9 made problems structural, but as a way to present
+them without octets, not as a native definition - how is this have anything to do with what I wanted? Using structure
+rather than octets was meant to remove opaqueness instead it seems that all it did is move it from octets to structure.
+Every distinction a native program relies on must come from a native notion, not from a HOL presentation relation." At
+18:36, of the first design of the notion of a problem (#373): "Does design #373 not contradict what I just said at its
+core: "a problem is a row … at a locus", its subject "the key", justified by "a row is native structure already"". At
+18:53 the owner made what a problem is the native loop's first problem and the problem of Q2 the second, which the
+entry "The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer" (task 378)
+records. On 2026-09-19: "the semantics of Isabelle are not the subject of the native machinery and thus everything
+defined in Isabelle is opaque to the native machinery". Answering Q7: "The order is right. HOL-constant problems stay
+only until native definitions exist."
+
+These words are the premise. Task 378 took the rule of 18:12 to problems. This entry takes it to every other native
+program of the loop — readiness, the reach, the verdict of a kind and its fields, request construction, the
+decomposition's schema, the selection question, the incremental assessment and its edit — and to the builds of task
+320's entry that carry the rows pattern into the native loop (N1–N3, N5–N9): for each program it names the distinctions
+it relies on, whether a native notion or only a HOL presentation relation supplies each today, and the native notion
+each is to come from; it decides the state the native loop judges and the bound on the bootstrap loop's presentations;
+and it changes the graph. The notion of a problem is task 378's first problem and is not decided here: every program
+that reads problems stands on that entry. It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Readiness, the reach, the verdict and request construction are native definitions, so the loop's decisions are native (the plan's "Decisions as native programs"). | Their programs are native; the distinctions their inputs carry are not. Each contract is conditional on a HOL presentation relation (`readiness_presents`, `state_presents`, `development_rows_present`, `request_presents`) that itself assigns every distinction the program reads — a status leaf, a family index, a position key — so natively a leaf means nothing. A program is native in its meaning only where the distinctions it reads are drawn by native notions. |
+| The development's native package is presented as rows of the generalized rows record, its second instance: sites keyed by their first-occurrence position in a site listing, two families (interfaces, clauses) by a kind index, clauses mentioning callee keys (task 320, "Its rows"; N1a #336, N1b #338, N3a #344, N3b #346). | The package is native content and the Factor grammar draws its distinctions natively: its entries by the root family reading, its definitions' interfaces and clause families by the definition readers, its callee edges by the edge reading, its membership, formation and least scopes by the package readers. A HOL presenter of the package's rows would assign those distinctions again, the pattern of 18:12. No rows, keys or families are built for the package; N1a, N1b and N3b are retired and N3a is replaced (below). |
+| The verdict, request construction and the reach apply at the package's rows unchanged, and a lemma per field relates the rows to the program (task 320's field table). | Each is the composition of native readers of the package (the table below). The verdict at a package waits for a problem kind that asks it; request construction at a package is built now, for the first problem's leaves. |
+| A native answer is an edit of the package's rows, judged incrementally from the request state's assessment (task 320's N6; design 171's edit). | A native answer is native content extending the given (task 378): its retention is environment inclusion and its added material is read by the same native readers; what is read once of the given carries to the extension by the readers' locality contracts. No row edit and no assessment of rows is built for the native loop. |
+| The bootstrap loop grows: the answer designates its request by its locus (#169), the index form is retired for first-occurrence keys (#92), the machinery's verification stage is judged natively over rows (#193). | By the owner's answer to Q7 the bootstrap loop stays only until native definitions exist and gets no new work: its presentations are maintained exact and running, and the growth retires (below). |
+
+### What a distinction is, and when a native notion draws it
+
+A native program holds of terms by its rules; its meaning is its positive meaning. A distinction it relies on is a
+difference in its argument that changes whether it holds: a leaf against a pair, one family against another, one key
+against another, a term's presence in a list. The distinction is **native** when the subject it is about is native
+content — an RRA environment, the Factor definitions it holds, the generations and publications over it — and the
+program draws it by calling a native notion that draws it on that content: a native definition whose contract,
+proved once in Isabelle, states over native structure what its program holds of. Such notions exist: the Factor
+grammar's readers (a definition at a site, its interface and clause family, its callee edges, a package's root family,
+membership, formation and least scope, environment inclusion and identity), the generation and publication notions
+(generation reading, identity, predecessors, snapshot lookup, transactions), the collection notions and the rule
+family law (`Native_Collection_Programs`), the path store's search, and positive meaning itself, which is least
+closure.
+
+The distinction is **supplied by a HOL presentation relation** when the relation places it into the argument: its
+truth is a HOL function of a HOL value — a constructor of `entity_kind`, a position in a name table, a Boolean
+`answered` computed from a history, the constants `isabelle_term_constants` finds in a statement — and no native
+program over native content decides it. The program then reads structure whose meaning only the relation gives, which
+is what 18:12 rejects and what task 9's rows, loci, prefixes and keys are.
+
+A presentation relation may still carry native content into a program's argument without supplying a distinction:
+`environment_value_presents` presents an environment as a data term, every complete enumeration a member of the
+environment notion's presentation class, admitted natively (`Factor_Environment_Admission`), and each reader's contract
+is invariant over the members (`package_membership_presentation_invariance`, `package_admission_presentation_invariance`
+and their kin). There the distinctions live in the environment, which is the native substrate, and the relation is a
+carrier — task 378 recorded it so for the first problem. The test is where the distinction is decided: by a native
+notion reading native content, or by the relation.
+
+Two consequences bind every build below. **Keys and stores:** an index finding a native carrier's content by a key is
+an implementation of the index notion (`carrier_index`), its key the implementation's choice; a key whose equality
+stands for the identity of the thing keyed, assigned by a HOL function, supplies a distinction. **Octets:** an
+occurrence's address and use are payloads compared only for equality, which leaves them inert ("A program's payload
+literals are the octets it reads"); a program that decomposed an address into bits to key a store would read a payload
+as structure.
+
+### The inventory
+
+For each native program of the loop: the distinctions it relies on, where each comes from today, and the native notion
+each is to come from.
+
+| Program | Distinction | Today | Is to come from |
+|---|---|---|---|
+| Readiness (`Development_Native_Readiness`) | a problem's identity (key paths compared, the store descended) | HOL: `readiness_presents`' key, injective on the problems; in the loop `development_located_at` over `state_constant_key` | the notion of a problem, task 378's first problem's admitted answer; before it, in the least form, a problem is its posing generation, whose identity the generation notion decides (`generation_identity_exact`) |
+|  | answered or open (a leaf or a pair of leaves) | HOL: the answered set computed from the history | the admitted notion's reading of status; in the least form an answer is an admission generation whose predecessor is the posing generation (task 378), read by the generation notions |
+|  | a problem's decompositions and premises | HOL: `development_decompositions` of HOL dependencies | the admitted notion; task 378 found no native decomposition method for definition problems |
+|  | the rows its table holds | HOL: the closure of `readiness_edges` | the same |
+|  | settlement, a least closure of conjunctive rules | native: positive meaning (`native_settled_exact`) with the collection notions and the store search | kept: readiness's closure is native and survives its re-statement |
+| The selection question (`Development_Requests`) | which candidates exist | HOL: the problems' rows reflected as ground scope clauses, a family that asserts nothing | the second problem's answer, how to choose the next problem, posed over the first answer (the owner, 18:53 and Q2) |
+|  | a candidate's identity | HOL: first-occurrence keys of the candidate list | the same |
+|  | its condition | native readiness, whose inputs are as above | the same |
+| The reach (`Native_Table_Reach`, `Isabelle_Native_Reach`) | a key, root or not, a key's predecessors | HOL: the reach table from `state_rows`, whose mentions `entity_row` computes from the exporter's datatype | Isabelle states: HOL alone, bounded (below). At a package: `Factor_Package_Membership` from the root family (`root_family_reading_exact`) over callee edges (`definition_edge_reading_exact`); `package_membership_exact` states exactly the package's definitions, so no reach table and no closure lemma is needed |
+|  | reached, a least closure | native: positive meaning (`native_reached_exact`) | kept at the Isabelle states; membership's own closure at a package |
+| The verdict of a kind and its fields (`Development_Native_Verdict`, `Development_Verdict_*`) | an entity's kind (its family) | HOL: `entity_kind_of` over the exporter's datatype | Isabelle states: HOL alone. At a package there are no kinds: a definition is what the grammar reads at a site |
+|  | what a row declares, is a statement of, mentions | HOL: `entity_declared`, `isabelle_entity_subjects`, `entity_mentions` | at a package: the definition readers (`Factor_Definition_Call_Admission`, `definition_clause_reading_exact`) and the edge reading |
+|  | constant keys, names distinct, tables formed | HOL: name positions, `atoms_present`, `keyed_agree` | at a package: vacuous — sites are occurrences compared for equality, no key and no name |
+|  | which kinds an answer may replace and must state | HOL: kind selections fixed per request kind | the problem kind that asks the verdict, from the admitted notion |
+|  | statements (the subject has one) | HOL rows | at a package: the clause reading at the subject (`definition_clause_reading_exact`) |
+|  | excess (callees within the support) | HOL rows and the issued support | at a package: `definition_callee_inclusion_exact` against the support's site list |
+|  | undeclared | HOL rows | at a package: formation and closure (`package_admission_exact`, `package_closure_admission_exact`); an unreadable site is refused (`package_admission_rejects_unreadable_site`) |
+|  | unreached | HOL reach table (`native_unreached_rows`) | at a package: membership of every definition the answer adds (an every-program over `Factor_Package_Membership`) |
+|  | malformed | HOL rows | at a package: none — what the grammar cannot read is no definition, refused by package admission |
+|  | roots | HOL: the exporter's roots | at a package: `root_family_reading_exact` |
+|  | removed (what an answer may drop) | HOL rows by family | at a package: the given retained, `Factor_Environment_Inclusion` |
+|  | added (only the subject changed) | HOL rows by family | **to build**, when a kind asks it: the difference of two packages, the sites whose definition readings differ, stated for any two programs over one environment and read through definition identity (`environment_comparison_exact` at the definitions' artifacts); `system_changed_definitions` is its HOL counterpart |
+| Request construction (`Development_Native_Request`) | the subject, its support, the rows about it, the support's declarations, the reach's predecessors | HOL: `request_presents` over `state_presents` and `development_rows_present` | at a package: **the native request at a package** (below): the support a family of the given's sites, each a member (`package_membership_exact`), and its least context the closed package scope of a root selector citing exactly the support (`root_family_reading_exact`, `package_retention_admission_exact`, `package_retention_admission_minimal`, `package_stored_coverage`) — "Retain the boundary a grammar derives" at the package's own grammar |
+| The decomposition's schema (`Development_Native_Decomposition`) | a problem's subject key, the intermediates' statements and declarations, the repair rows | HOL: rows | what a decomposition is follows what a problem is; the line is retired on task 378's entry |
+| The incremental assessment and its edit (`Development_State_Edit`, `Development_Incremental_Verdict`) | removed and added rows by family, appended atoms, the request state's field values | HOL: `state_edit_of` over `state_presents` | at a package: no edit and no assessment. An answer extends the given; its retention is `Factor_Environment_Inclusion`; each reading of the given carries to the extension by the readers' locality contracts, proved once (`Factor_Package_Locality`, `environment_inclusion_package_agreement`, `environment_inclusion_definition_agreement`), so only the added material is read |
+| The first problem's guard (task 378) | an answer retains the given, is a formed closed package, states no payload literal but the empty one | native: environment inclusion and package admission; HOL: the payload audit (`finite_system_payloads_exact`) | the payload audit's native reader, task 378's |
+
+Readiness, the selection question and the decomposition's schema read problems, so they stand on task 378's entry: they
+are re-stated over the first problem's admitted answer, readiness as its closure called with the notion's readings of
+identity, status and premises, and the selection question by the second problem. Nothing is built for them now.
+
+### The state a native program judges
+
+**In the native loop**, the state is the given of task 378's least form: a program entry — an environment and the site
+of the development's native package in it (`program_entry_value_presents`), before N2 the notions' installed programs
+and after it the one package. Its distinctions are the Factor grammar's:
+
+| Of the package | The native notion |
+|---|---|
+| its entries | the root family at its site (`Factor_Root_Family_Reading`, `root_family_reading_exact`) |
+| its sites | occurrence coordinates, a use and an address, read where a root or a premise cites them and compared for equality only |
+| a site's interface and clause family | the definition reader (`native_definition_at`, natively `Factor_Definition_Call_Admission` and `definition_clause_reading_exact`) |
+| its callee edges | `definition_edge_reading_exact` (`native_definition_edges`); callee containment `definition_callee_inclusion_exact` |
+| its membership, the reach | `package_membership_exact` |
+| its formation and closure | `package_admission_exact`, `package_closure_admission_exact` |
+| a least scope | `package_retention_admission_exact`, `package_retention_admission_minimal`, `package_stored_coverage` |
+| retention by a successor | `Factor_Environment_Inclusion` (`environment_inclusion_presented`), with the locality contracts above |
+| identity of two contents | `environment_comparison_exact` |
+
+The verdict, request construction, the reach and the edit read the package through these and nothing else, as the
+inventory states. The environment reaches a program as data by its presentation, a carrier as above. The given holds,
+beside the development package, the closed packages of the Factor readers the loop's programs and answers call:
+the first problem's guard calls environment inclusion and package admission, and the first request grants the readers
+an answer may reuse (task 378). Their installation in the given, each carried by its compilation's contract, is a build
+(below). Where a reader runs through an executable counterpart proved exact to its native definition
+(`finite_native_source`, the finite package readings), that is an implementation of the notion and supplies no
+distinction; the native form is what the contract names.
+
+**In the bootstrap loop**, the states are the checked Isabelle contexts. Their content — entities, kinds, statements,
+positions — only the exporter's HOL datatype presents (`isabelle_rooted_context`), and Isabelle's semantics is opaque to
+the native machinery (the owner, 2026-09-19), so every distinction a native program draws over them comes from HOL
+presentation relations: `state_presents` and the relations over it (`request_presents`), `development_rows_present`,
+`readiness_presents`. The owner's answer to Q7 bounds them: they stay only until native definitions exist, which task
+378's entry reads as the admission of the first problem's answer and the posing again of the loop's problems under it.
+Until then they are the working basis of selection (the owner's answer to Q2), kept exact and running — every recorded
+word equal, the records replayable — and extended by no new work; with the bootstrap loop they retire, its records
+history, readable through its theories as they stand. The rows record is not generalized to keep them readable.
+
+The native loop reuses none of their rows, keys, families, loci or presenters, and no native-loop program imports
+them. It reuses Isabelle's acceptance only as the bootstrap verifier of native content, by task 378's route: Isabelle
+accepts the theory stating the answer's programs with their contracts, and the submitted content is identical to their
+compilation by native environment identity.
+
+### The native request at a package
+
+Request construction keeps its notion — a request carries a support and the least context its answer needs — and
+takes, at a package, the package's own grammar for both. A request at a given program entry carries a support, a list
+of the given's sites its answer may call, each a member of the given's package, and a context, a site value whose root
+family cites exactly the support and whose environment is the closed package scope at that root (a root selector over a
+finite target set, `Factor_Finite_Root_Environments`). One native rule joins the readers — an every-program of package
+membership over the support, the root family reading at the context, package retention admission at the context — so
+that a proposed request is admitted exactly when its context is the least closed scope of its support in the given. It
+is stated for any given and any support, not for the first problem; its packet is the question's presentation with the
+context value (task 378). Which sites a request grants is its problem's: for task 378's first problem, the notions of
+the state and the Factor readers an answer may reuse.
+
+### #320's builds
+
+| Build | Decision |
+|---|---|
+| N1a (#336): the rows record generalized | Retired: its only purpose was the package as the record's second instance. |
+| N1b (#338): row-level field contracts | Retired with it. |
+| N2a (#340): the six programs joined, relocated where sites collide (Open 38), one transport per notion, the payload statement | Stands, without its (4): no site listing and no first-occurrence keys. |
+| N2b (#342): the joined program compiled into a closed package, one root per notion's entry, each contract at its entry, the program scope | Stands. Every site reached from the roots is package membership at the package; one root family gives one membership. |
+| N3a (#344): the package's rows, their presenter, the reach as the closure | Replaced by the native request at a package (above), after N2b and the given's Factor readers. |
+| N3b (#346), and its review #347 | Retired: no rows, no field lemmas at rows, and no successor keys — a site is an occurrence, and a problem's identity across successors is the notion's. |
+| N4a (#348), N4b (#350) | Deleted and folded into task 378's posing (#380), as the planner has decided. |
+| N5 (the native request) | The native request at a package. |
+| N6 (the answer as an edit of rows) | Superseded by task 378's native-definition answer route (#380). |
+| N7 (the native judgment) | The first problem's answer is judged by its guard (#380). The verdict at a package waits for a problem kind that asks it, composing the readers of the inventory with the difference of two packages built then; the replacement lemma (Bekić) stays owed to the first refinement of a native definition. |
+| N8 (installation) | Waits on the first answer: the mapped extension, the root selector, the successor's generation and the replacement transaction stand as its method; no successor keys. |
+| N9 (the first run) | The first problem's run (#380). |
+| New | The given's Factor readers: the closed packages of the readers the guard and the first request call, installed beside the development package in one environment at fresh uses (`disjoint_environment_extension`), each contract carried by its compilation; the posing build's or its own, the planner's. |
+
+### The bootstrap loop's open work
+
+Maintenance keeps the bootstrap loop's landed notions exact, its records reconstructible and its costs bounded; it
+adds no capability and extends no presentation. Work that extends the rows, loci or presentations, or adds a native
+judgment over Isabelle states, retires.
+
+| Work | Decision |
+|---|---|
+| #169, the answer designating its request by its locus | Retired: it carries loci into the tools and thirteen records; the name designation stays the bootstrap's recorded reliance. |
+| #319, re-recording #169's packet words | Re-scoped: no packet word changes; it keeps #314's review follow-ups 1 and 2 (the re-record written in each record's harness's form; the two shared-run failures attributed), maintenance of the replay tool, no longer after #169. |
+| #354, the rows line's presenters after #169 | Stands as maintenance, words equal: domain membership of the landed reports, the generic partial presentations beside their kin, one verdict less per judged answer; no longer after #169. |
+| #92, the index form retired for first-occurrence keys | Retired: it replaces one HOL-assigned code (payloads of binary digits) by another (first-occurrence paths), the move from octets to structure named at 18:12, at the cost of every word. The index form stays a recorded use of octets as structure until the bootstrap loop retires. |
+| #369, the answer harness after #323 | Stands as maintenance, after #319: tools only, a wrong session record corrected, the harness's cost bounded. |
+| #193 and #194, the machinery's verification stage judged natively, and its measurement | Retired: a new native judgment over the bootstrap loop's residuals, whose controls are derived answers; condition 5a's path is now the first problem's. The incremental assessment stays as landed. |
+
+The decomposition line is task 378's. #353 (running) serves #193's stage in part; the planner decides it.
+
+### Weighed and rejected
+
+- **The package as the rows record's second instance** (task 320): its presenter would assign the package's
+  distinctions — keys from a listing, families by an index, mentions by a HOL function — which the grammar already
+  draws natively.
+- **Rows computed by the exact native package reader** (`finite_native_source`): the reader is exact, but the rows'
+  families and keys would still be assigned by the presenter, and a program over rows would rely on it.
+- **The verdict and request at rows with a lemma per field relating rows to the program**: every native judgment would
+  stay conditional on a HOL presentation relation.
+- **The environment's own presentation as suspect**: it is a member of a native notion's class, admitted natively and
+  invariant, and without it no native content reaches a program.
+- **Site indexes keyed by the site's digit word**: reading an address as bits reads a payload as structure; sites are
+  compared for equality, and an index over them waits for a key read without reading payloads, if its cost demands it.
+- **Retiring the bootstrap loop now**: it is the working basis of selection until the first answer is admitted.
+- **#92 as progress**: it moves the index form's opacity from octets into structure.
+
+### What the builds must respect
+
+A native-loop program draws each distinction by calling the native notion that draws it on native content; no build
+adds a presenter that assigns a distinction — a family index, a position key, a status leaf, a prefix — for such a
+program to read. The native loop's state is its given program entry, read by the Factor readers through their
+contracts, none restated at rows. Sites are compared for equality and payloads stay inert. The bootstrap loop's
+presentation relations are kept exact and are not extended, generalized or imported by the native loop. Nothing native
+is built over `development_problem`, task 9's rows, loci, prefixes or keys; programs that read problems wait on task
+378's first answer. Every notion reused is consumed through its local contract, proved once.
+
+### Open
+
+The difference of two packages, for the verdict at a package. The given's Factor readers and their executable
+compilation. The cost of evaluating the Factor readers natively at the package, measured by the first build that runs
+them; a slow path goes through the performance channel. The payload audit's native reader (task 378). An index over
+sites. This design was made outside the loop and is a residual.
+
+Recorded 2026-09-24 (task 376's decision; a design, no theory changes).

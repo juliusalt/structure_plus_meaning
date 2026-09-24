@@ -937,32 +937,6 @@ qed
 
 section \<open>The development state is presented injectively\<close>
 
-definition development_dependencies_data :: "development_dependencies \<Rightarrow> finite_factor_term" where
-  "development_dependencies_data=finite_collection_presentation (finite_pair_presentation development_problem_data
-    (finite_collection_presentation (finite_pair_presentation isabelle_position_data development_problem_data)))"
-
-lemma development_dependencies_data_injective [intro]: "inj development_dependencies_data"
-  unfolding development_dependencies_data_def
-  by (intro finite_collection_presentation_injective finite_pair_presentation_injective
-    development_problem_data_injective isabelle_position_data_injective)
-
-definition development_generation_data :: "development_generation \<Rightarrow> finite_factor_term" where
-  "development_generation_data=finite_pair_presentation development_problem_data
-    (finite_pair_presentation isabelle_entities_data
-      (finite_pair_presentation (finite_sequence_presentation isabelle_entity_data) development_verdict_data))"
-
-lemma development_generation_data_injective [intro]: "inj development_generation_data"
-  unfolding development_generation_data_def
-  by (intro finite_pair_presentation_injective development_problem_data_injective
-    isabelle_collections_injective finite_sequence_presentation_injective isabelle_entity_data_injective
-    development_verdict_data_injective)
-
-text \<open>
-  A record is presented through a presentation of the executed packet it may carry, supplied by
-  the use: it is read as the one of its three parts it has, and presented by the existing option
-  and pair presentations, so it is injective whenever the packet's presentation is.
-\<close>
-
 definition development_record_parts :: "development_record \<Rightarrow>
     (development_packet\<times>development_problem list) option\<times>
       (development_request\<times>(nat\<times>development_problem) fset fset) option\<times>development_generation option\<times>
@@ -978,40 +952,5 @@ proof (rule injI)
   fix x y assume "development_record_parts x=development_record_parts y"
   then show "x=y" by (cases x; cases y) (simp_all add: development_record_parts_def)
 qed
-
-definition development_record_data :: "(development_packet \<Rightarrow> finite_factor_term) \<Rightarrow> development_record \<Rightarrow> finite_factor_term" where
-  "development_record_data packet=finite_pair_presentation
-    (finite_option_presentation (finite_pair_presentation packet development_problems_data))
-    (finite_pair_presentation (finite_option_presentation (finite_pair_presentation development_request_data
-        (finite_collection_presentation (finite_collection_presentation
-          (finite_pair_presentation isabelle_position_data development_problem_data)))))
-      (finite_pair_presentation (finite_option_presentation development_generation_data)
-        (finite_option_presentation (finite_pair_presentation development_request_data development_refinement_repair_data))))
-    \<circ> development_record_parts"
-
-lemma development_record_data_injective:
-  assumes packet: "inj packet"
-  shows "inj (development_record_data packet)"
-  unfolding development_record_data_def
-  by (intro inj_compose[OF _ development_record_parts_injective] finite_pair_presentation_injective
-    finite_option_presentation_injective packet development_problems_data_injective finite_collection_presentation_injective
-    isabelle_position_data_injective development_problem_data_injective
-    development_generation_data_injective development_request_data_injective development_refinement_repair_data_injective)
-
-definition development_loop_data :: "(development_packet \<Rightarrow> finite_factor_term) \<Rightarrow> development_loop \<Rightarrow> finite_factor_term" where
-  "development_loop_data packet=finite_pair_presentation isabelle_rooted_context_data
-    (finite_pair_presentation development_problems_data
-      (finite_pair_presentation development_dependencies_data
-        (finite_pair_presentation (finite_collection_presentation development_problem_data)
-          (finite_sequence_presentation (development_record_data packet)))))"
-
-lemma development_loop_data_injective:
-  assumes packet: "inj packet"
-  shows "inj (development_loop_data packet)"
-  unfolding development_loop_data_def
-  by (intro finite_pair_presentation_injective finite_sequence_presentation_injective isabelle_rooted_context_data_injective
-    development_problems_data_injective development_dependencies_data_injective
-    finite_collection_presentation_injective development_problem_data_injective
-    development_record_data_injective[OF packet])
 
 end

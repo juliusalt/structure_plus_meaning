@@ -45,83 +45,10 @@ datatype development_problem = Development_Problem
   (problem_origin: development_origin)
   (problem_authority: development_authority)
 
-section \<open>Problems are presented injectively, so the state can carry them\<close>
-
-fun development_origin_data :: "development_origin \<Rightarrow> finite_factor_term" where
-  "development_origin_data Development_Obligation=Finite_Payload [0]"
-| "development_origin_data Development_Residual=Finite_Payload [1]"
-| "development_origin_data Development_Demand=Finite_Payload [2]"
-| "development_origin_data Development_Repair=Finite_Payload [3]"
-| "development_origin_data Development_Direction=Finite_Payload [4]"
-| "development_origin_data Development_Incompleteness=Finite_Payload [5]"
-
-fun development_authority_data :: "development_authority \<Rightarrow> finite_factor_term" where
-  "development_authority_data Development_Truth=Finite_Payload [0]"
-| "development_authority_data Development_Owner=Finite_Payload [1]"
-| "development_authority_data Development_Generated=Finite_Payload [2]"
-
-fun development_contract_data :: "development_contract \<Rightarrow> finite_factor_term" where
-  "development_contract_data (Development_Refinement t)=Finite_Pair (Finite_Payload [0]) (isabelle_term_data t)"
-| "development_contract_data (Development_Proof t)=Finite_Pair (Finite_Payload [1]) (isabelle_term_data t)"
-| "development_contract_data (Development_Presentation t)=Finite_Pair (Finite_Payload [2]) (isabelle_term_data t)"
-| "development_contract_data (Development_Definition t)=Finite_Pair (Finite_Payload [3]) (isabelle_term_data t)"
-| "development_contract_data (Development_Amendment t)=Finite_Pair (Finite_Payload [4]) (isabelle_term_data t)"
-
-definition development_problem_data :: "development_problem \<Rightarrow> finite_factor_term" where
-  "development_problem_data p=Finite_Pair (isabelle_positions_data (problem_subject p))
-    (Finite_Pair (development_contract_data (problem_contract p))
-      (Finite_Pair (development_origin_data (problem_origin p))
-        (development_authority_data (problem_authority p))))"
-
-lemma development_origin_data_injective [intro]: "inj development_origin_data"
-proof (rule injI)
-  fix x y show "development_origin_data x=development_origin_data y \<Longrightarrow> x=y"
-    by (cases x; cases y) simp_all
-qed
-
-lemma development_authority_data_injective [intro]: "inj development_authority_data"
-proof (rule injI)
-  fix x y show "development_authority_data x=development_authority_data y \<Longrightarrow> x=y"
-    by (cases x; cases y) simp_all
-qed
-
-lemma development_contract_data_injective [intro]: "inj development_contract_data"
-proof (rule injI)
-  fix x y show "development_contract_data x=development_contract_data y \<Longrightarrow> x=y"
-    by (cases x; cases y) (simp_all add: inj_eq[OF isabelle_term_data_injective])
-qed
-
-lemma development_problem_data_injective [intro]: "inj development_problem_data"
-proof (rule injI)
-  fix p q assume "development_problem_data p=development_problem_data q"
-  then have "problem_subject p=problem_subject q" "problem_contract p=problem_contract q"
-      "problem_origin p=problem_origin q" "problem_authority p=problem_authority q"
-    by (simp_all add: development_problem_data_def inj_eq[OF isabelle_collections_injective(2)]
-      inj_eq[OF development_contract_data_injective] inj_eq[OF development_origin_data_injective]
-      inj_eq[OF development_authority_data_injective])
-  then show "p=q" by (cases p; cases q) simp_all
-qed
-
-lemma development_origin_data_formed [simp]: "finite_term_formed (development_origin_data r)"
-  by (cases r) (simp_all add: octets_formed_def)
-
-lemma development_authority_data_formed [simp]: "finite_term_formed (development_authority_data a)"
-  by (cases a) (simp_all add: octets_formed_def)
-
-lemma development_contract_data_formed [simp]: "finite_term_formed (development_contract_data c)"
-  by (cases c) (simp_all add: octets_formed_def)
-
-lemma development_problem_data_formed [simp]: "finite_term_formed (development_problem_data p)"
-  by (simp add: development_problem_data_def isabelle_positions_data_def
-    finite_collection_presentation_def finite_data_list_formed list_all_iff
-    ordered_finite_terms_set fimage.rep_eq)
-
-definition development_problems_data :: "development_problem list \<Rightarrow> finite_factor_term" where
-  "development_problems_data=finite_sequence_presentation development_problem_data"
-
-lemma development_problems_data_injective [intro]: "inj development_problems_data"
-  unfolding development_problems_data_def
-  by (intro finite_sequence_presentation_injective development_problem_data_injective)
+text \<open>
+  A problem is presented outside the state as its row in the context that holds it
+  (@{text Development_Row_Data}); nothing here presents it.
+\<close>
 
 section \<open>Dependencies are ordinary finite inference rules\<close>
 
@@ -267,17 +194,5 @@ definition development_problem_assessment ::
   "development_problem_assessment C D answered ps=(development_ready_problems D answered ps,
     development_without_subject ps, development_residual_problems ps, development_ambiguous D ps,
     development_undeclared_subjects C ps)"
-
-definition development_problem_assessment_data ::
-    "development_problem_assessment \<Rightarrow> finite_factor_term" where
-  "development_problem_assessment_data=finite_pair_presentation development_problems_data
-    (finite_pair_presentation development_problems_data
-      (finite_pair_presentation development_problems_data
-        (finite_pair_presentation development_problems_data isabelle_positions_data)))"
-
-lemma development_problem_assessment_data_injective [intro]: "inj development_problem_assessment_data"
-  unfolding development_problem_assessment_data_def
-  by (intro finite_pair_presentation_injective development_problems_data_injective
-    isabelle_collections_injective(2))
 
 end

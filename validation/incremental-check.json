@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "afa26e3ae26cf4c983f92b3c389062b5e09b388ef2a93be3eac54b8179cf2f49",
- "checked_content_sha256": "14d13a4cc1cb45455d64f24e95e60daccc4a6558c3bf510b0d162dcc90c82812",
+ "base_receipt_sha256": "eaba6b8e2cd01a128a4a43f81c73d82d15bf56ba70dccdbbfcd32895d1db34d6",
+ "checked_content_sha256": "f9912cec0fcfdd3ad38ccdfddcec3ac3796e680e7b5539c5cf4c445b5dc4c5e2",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,12 +22,12 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.3,
-  "execution_impact": 0.06,
-  "export": 18.05,
-  "proof": 305.6,
-  "recipe_impact": 0.37,
-  "recipes_and_host_tests": 12.65
+  "base_and_impact": 0.4,
+  "execution_impact": 0.74,
+  "export": 19.4,
+  "proof": 307.56,
+  "recipe_impact": 0.49,
+  "recipes_and_host_tests": 84.98
  },
  "rebuilt_theories": [
   "Admitted_Conditional_Applications",
@@ -36,28 +36,40 @@
   "Conditional_Application_Review",
   "Development_Admitted_Publication",
   "Development_Certified_Generations",
+  "Development_Constant_Problems",
+  "Development_Constant_Verification",
   "Development_Decision_Generations",
+  "Development_Decomposition",
   "Development_Decomposition_Soundness",
+  "Development_Definition_Verification",
   "Development_Edited_Local",
   "Development_Edited_Reach",
   "Development_Edited_Undeclared",
   "Development_Exported_Edit",
   "Development_Incremental_Verdict",
+  "Development_Incremental_Witnesses",
   "Development_Library_Issue",
   "Development_Located_Rows",
   "Development_Loci",
+  "Development_Loop_Presentations",
   "Development_Machinery",
+  "Development_Machinery_Reports",
   "Development_Native_Answers",
   "Development_Native_Decomposition",
   "Development_Native_Request",
+  "Development_Native_Selection",
   "Development_Native_Verdict",
+  "Development_Problems",
   "Development_Publication",
+  "Development_Refinement_Contracts",
   "Development_Refinement_Repair",
+  "Development_Refinement_Verification",
   "Development_Repair_Rows",
   "Development_Request_Citations",
   "Development_Request_Keys",
   "Development_Request_Packets",
   "Development_Request_Scope",
+  "Development_Requests",
   "Development_Row_Contexts",
   "Development_Row_Data",
   "Development_Row_Presentations",
@@ -77,9 +89,6 @@
   "Development_Verdict_Unreached",
   "Development_Verdict_Witnesses",
   "Faceted_Native_Questions",
-  "Isabelle_Entity_Export",
-  "Isabelle_Local_Names",
-  "Isabelle_Name_Trees",
   "Material_Application_Observations",
   "Native_Control_Acceptance_Profile",
   "Native_Control_Admitted_Selection",
@@ -106,9 +115,7 @@
   "Native_Control_Judgment_Source",
   "Native_Control_Literal_Boundary",
   "Native_Control_Prepared_Cause_Review",
-  "Native_Control_Quotation_Code",
   "Native_Control_Quotation_Construction",
-  "Native_Control_Quotation_Representation",
   "Native_Control_Quoted_Judgment",
   "Native_Control_Receiving_Controls",
   "Native_Control_Receiving_Review",
@@ -225,13 +232,13 @@
   },
   "native-development-machinery": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 40.34,
+   "status": "accepted"
   },
   "native-development-seed": {
    "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "seconds": 84.98,
+   "status": "accepted"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -288,19 +295,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1754,
- "seconds": 373.66,
+ "reused_theories": 1751,
+ "seconds": 450.97,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1849,
+  "theory_count": 1853,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1849,
+ "theories": 1853,
  "validation_inputs": {
-  "ROOT": "d8d0cfdd9871862dc66d27d8ed91aabd9a1cd035020075a9ec2f91c2cca209de",
+  "ROOT": "64956fd7d10b4abf38855d4828f01522d5babb9f0f734684d1324faca0fb74e3",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

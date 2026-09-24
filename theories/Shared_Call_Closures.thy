@@ -287,13 +287,11 @@ qed
 
 subsection \<open>The demand over shared calls\<close>
 
-definition presented_premise_calls :: "('d\<times>'c\<times>'p\<times>'v\<times>('s\<times>('d\<times>'p)) fset) \<Rightarrow> ('d\<times>'p) fset" where
-  "presented_premise_calls a=(case a of (d,c,t,V,H) \<Rightarrow> fimage snd H)"
-
-lemma presented_premise_calls_decode:
+lemma finite_application_premise_calls_decode:
   "finite_application_premise_calls (presented_application_decode P a)=
-    fimage (map_prod id (presented_decode P)) (presented_premise_calls a)"
-  by (cases a rule: prod_cases5) (simp add: presented_application_premise_calls_decode presented_premise_calls_def)
+    fimage (map_prod id (presented_decode P)) (finite_application_premise_calls a)"
+  by (cases a rule: prod_cases5)
+    (simp only: presented_application_premise_calls_decode, simp add: finite_application_premise_calls_def)
 
 text \<open>
   The requests are listed once through their keys, their terms shared into one table with its index of
@@ -311,28 +309,49 @@ definition shared_call_closure ::
         (RBT.lookup (decoded_positions T));
       Q=prepare_program S P in
     case keyed_demanded_sites id id (\<lambda>q. presented_constructed_applications S Q (fst q) (snd q))
-      presented_premise_calls (fset_of_list (zip (map fst rs) (map Shared_Reference ns))) of None \<Rightarrow> R
+      finite_application_premise_calls (fset_of_list (zip (map fst rs) (map Shared_Reference ns))) of None \<Rightarrow> R
     | Some C \<Rightarrow> fimage (map_prod id (presented_decode S)) C)"
 
-theorem shared_call_closure_formed: "shared_call_closure P R=formed_call_closure P R"
+text \<open>
+  The table of a family of requests is read through its positions, its index of shapes and its decoded
+  entries, each built once as a tree; so read it is the presentation of that table, and the requests
+  become canonical shared calls that decode to them (@{text shared_request_table_exact}). Every
+  evaluation over the table of its requests starts from here.
+\<close>
+
+definition table_presentation :: "shape list \<Rightarrow> shared_term term_presentation" where
+  "table_presentation T=shared_presentation (value_reference_read T) (table_find T) (reference_term T)"
+
+definition shared_request_table ::
+    "(local_address option definition_site\<times>finite_factor_term) fset \<Rightarrow>
+      (local_address option definition_site\<times>shared_term) fset\<times>shape list\<times>shared_term term_presentation" where
+  "shared_request_table R=(let rs=keyed_rows native_call_key native_call_unkey R in
+    case keyed_shared_family (map snd rs) of (ns,T,M) \<Rightarrow>
+    (fset_of_list (zip (map fst rs) (map Shared_Reference ns)),T,
+      shared_presentation (RBT.lookup (table_positions T)) (\<lambda>s. RBT.lookup M (shape_key s))
+        (RBT.lookup (decoded_positions T))))"
+
+theorem shared_request_table_exact:
+  assumes table: "shared_request_table R=(C,T,S)"
+  shows "table_formed T" "S=table_presentation T" "fset C\<subseteq>{q. shared_canonical T (snd q)}"
+    "fimage (map_prod id (presented_decode S)) C=R"
 proof -
   define rs where "rs=keyed_rows native_call_key native_call_unkey R"
-  obtain ns T M where family: "keyed_shared_family (map snd rs)=(ns,T,M)" using prod_cases3 by blast
+  obtain ns T' M where family': "keyed_shared_family (map snd rs)=(ns,T',M)" using prod_cases3 by blast
+  have T': "T'=T" using table by (simp add: shared_request_table_def Let_def rs_def[symmetric] family')
+  have family: "keyed_shared_family (map snd rs)=(ns,T,M)" using family' by (simp only: T')
+  have fields: "C=fset_of_list (zip (map fst rs) (map Shared_Reference ns))"
+      "S=shared_presentation (RBT.lookup (table_positions T)) (\<lambda>s. RBT.lookup M (shape_key s))
+        (RBT.lookup (decoded_positions T))"
+    using table by (simp_all add: shared_request_table_def Let_def rs_def[symmetric] family)
   have shared: "share_terms (map snd rs) []=(ns,T)" using keyed_shared_family_exact[OF family] by simp
   have formed: "table_formed T" and decoded: "map (reference_term T) ns=map Some (map snd rs)"
     using share_terms_exact[OF table_formed_empty, of "map snd rs"] by (simp_all add: shared)
-  define S where "S=shared_presentation (value_reference_read T) (table_find T) (reference_term T)"
-  have code: "shared_presentation (RBT.lookup (table_positions T)) (\<lambda>s. RBT.lookup M (shape_key s))
-      (RBT.lookup (decoded_positions T))=S"
-    unfolding S_def by (simp only: table_positions_lookup decoded_positions_lookup[OF formed]
-      keyed_shared_family_find[OF family])
-  interpret shared: presented_terms S "{s. shared_canonical T s}"
-    unfolding S_def by (rule shared_presentation_terms[OF formed])
-  define h where "h=map_prod (id::local_address option definition_site \<Rightarrow> _) (presented_decode S)"
-  define Q where "Q={q::local_address option definition_site\<times>shared_term. shared_canonical T (snd q)}"
-  define roots where "roots=fset_of_list (zip (map fst rs) (map Shared_Reference ns))"
-  define readS where "readS=(\<lambda>q::local_address option definition_site\<times>shared_term.
-    presented_constructed_applications S (prepare_program S P) (fst q) (snd q))"
+  show "table_formed T" by (rule formed)
+  have presentation: "S=table_presentation T"
+    unfolding fields(2) table_presentation_def
+    by (simp only: table_positions_lookup decoded_positions_lookup[OF formed] keyed_shared_family_find[OF family])
+  show "S=table_presentation T" by (rule presentation)
   have length: "length ns=length rs" using arg_cong[OF decoded, of length] by simp
   have reference: "reference_term T (ns!n)=Some (snd (rs!n))" if "n<length rs" for n
   proof -
@@ -346,29 +365,48 @@ proof -
     then obtain u where "reference_term T i=Some u" by auto
     then show ?thesis by (rule reference_term_bound)
   qed
-  have roots_in: "fset roots\<subseteq>Q"
+  show "fset C\<subseteq>{q. shared_canonical T (snd q)}"
   proof
-    fix q assume "q\<in>fset roots"
-    then have "q\<in>set (zip (map fst rs) (map Shared_Reference ns))" by (simp add: roots_def fset_of_list.rep_eq)
+    fix q assume "q\<in>fset C"
+    then have "q\<in>set (zip (map fst rs) (map Shared_Reference ns))" by (simp add: fields(1) fset_of_list.rep_eq)
     then have "snd q\<in>set (map Shared_Reference ns)" by (metis set_zip_rightD prod.collapse)
-    then show "q\<in>Q" using bound by (auto simp: Q_def)
+    then show "q\<in>{q. shared_canonical T (snd q)}" using bound by auto
   qed
-  have listed: "map h (zip (map fst rs) (map Shared_Reference ns))=rs"
+  have listed: "map (map_prod id (presented_decode S)) (zip (map fst rs) (map Shared_Reference ns))=rs"
   proof (rule nth_equalityI)
-    show "length (map h (zip (map fst rs) (map Shared_Reference ns)))=length rs" using length by simp
+    show "length (map (map_prod id (presented_decode S)) (zip (map fst rs) (map Shared_Reference ns)))=length rs"
+      using length by simp
   next
-    fix n assume "n<length (map h (zip (map fst rs) (map Shared_Reference ns)))"
+    fix n assume "n<length (map (map_prod id (presented_decode S)) (zip (map fst rs) (map Shared_Reference ns)))"
     then have n: "n<length rs" using length by simp
-    show "map h (zip (map fst rs) (map Shared_Reference ns))!n=rs!n"
-      using n length reference[OF n] by (simp add: h_def S_def)
+    show "map (map_prod id (presented_decode S)) (zip (map fst rs) (map Shared_Reference ns))!n=rs!n"
+      using n length reference[OF n] by (simp add: presentation table_presentation_def)
   qed
-  have roots_image: "fimage h roots=R"
-  proof -
-    have "fset_of_list (map h (zip (map fst rs) (map Shared_Reference ns)))=fset_of_list rs" by (simp only: listed)
-    then have "fimage h roots=fset_of_list rs" by (simp add: roots_def)
-    also have "fset_of_list rs=R" unfolding rs_def by (rule keyed_rows_fset) (rule native_call_inverse)
-    finally show ?thesis .
-  qed
+  have "fimage (map_prod id (presented_decode S)) C=fset_of_list rs"
+    using arg_cong[OF listed, of fset_of_list] by (simp add: fields(1))
+  also have "fset_of_list rs=R" unfolding rs_def by (rule keyed_rows_fset) (rule native_call_inverse)
+  finally show "fimage (map_prod id (presented_decode S)) C=R" .
+qed
+
+lemma shared_call_closure_table:
+  "shared_call_closure P R=(case shared_request_table R of (C,T,S) \<Rightarrow>
+    case keyed_demanded_sites id id (\<lambda>q. presented_constructed_applications S (prepare_program S P) (fst q) (snd q))
+      finite_application_premise_calls C of None \<Rightarrow> R | Some D \<Rightarrow> fimage (map_prod id (presented_decode S)) D)"
+  by (cases "keyed_shared_family (map snd (keyed_rows native_call_key native_call_unkey R))" rule: prod_cases3)
+    (simp add: shared_call_closure_def shared_request_table_def Let_def)
+
+theorem shared_call_closure_formed: "shared_call_closure P R=formed_call_closure P R"
+proof -
+  obtain roots T S where table: "shared_request_table R=(roots,T,S)" using prod_cases3 by blast
+  note fields=shared_request_table_exact[OF table]
+  interpret shared: presented_terms S "{s. shared_canonical T s}"
+    unfolding fields(2) table_presentation_def by (rule shared_presentation_terms[OF fields(1)])
+  define h where "h=map_prod (id::local_address option definition_site \<Rightarrow> _) (presented_decode S)"
+  define Q where "Q={q::local_address option definition_site\<times>shared_term. shared_canonical T (snd q)}"
+  define readS where "readS=(\<lambda>q::local_address option definition_site\<times>shared_term.
+    presented_constructed_applications S (prepare_program S P) (fst q) (snd q))"
+  have roots_in: "fset roots\<subseteq>Q" using fields(3) by (simp add: Q_def)
+  have roots_image: "fimage h roots=R" using fields(4) by (simp add: h_def)
   have injective: "inj_on h Q"
   proof (rule inj_onI)
     fix p q assume p: "p\<in>Q" and q: "q\<in>Q" and same: "h p=h q"
@@ -378,7 +416,7 @@ proof -
     have "s=u" by (rule shared.decides) (use p q decoded_same in \<open>simp_all add: Q_def ps qs\<close>)
     then show "p=q" by (simp add: ps qs ab)
   qed
-  have closed: "e\<in>Q" if "q\<in>Q" "x |\<in>| readS q" "e |\<in>| presented_premise_calls x" for q x e
+  have closed: "e\<in>Q" if "q\<in>Q" "x |\<in>| readS q" "e |\<in>| finite_application_premise_calls x" for q x e
   proof -
     obtain d t where q: "q=(d,t)" by (cases q)
     obtain e' c y V H where x: "x=(e',c,y,V,H)" using prod_cases5 by blast
@@ -387,10 +425,10 @@ proof -
       using that(2) by (simp add: readS_def q x)
     have "\<forall>s e'' z. (s,e'',z) |\<in>| H \<longrightarrow> z\<in>{s. shared_canonical T s}"
       using shared.presented_constructed_application_domain[OF t member] by blast
-    then show ?thesis using that(3) by (auto simp: x presented_premise_calls_def Q_def fimage.rep_eq)
+    then show ?thesis using that(3) by (auto simp: x finite_application_premise_calls_def Q_def fimage.rep_eq)
   qed
   have rows: "ffUnion (fimage finite_application_premise_calls (finite_constructed_applications P (fst (h q)) (snd (h q))))=
-      fimage h (ffUnion (fimage presented_premise_calls (readS q)))" if "q\<in>Q" for q
+      fimage h (ffUnion (fimage finite_application_premise_calls (readS q)))" if "q\<in>Q" for q
   proof -
     obtain d t where q: "q=(d,t)" by (cases q)
     have t: "t\<in>{s. shared_canonical T s}" using that by (simp add: Q_def q)
@@ -398,25 +436,24 @@ proof -
         fimage (presented_application_decode S) (readS (d,t))"
       unfolding readS_def fst_conv snd_conv by (rule shared.presented_constructed_applications_decode[OF t, symmetric])
     then show ?thesis
-      by (simp add: q h_def fimage_ffUnion_member fset.map_comp comp_def presented_premise_calls_decode)
+      by (simp add: q h_def fimage_ffUnion_member fset.map_comp comp_def finite_application_premise_calls_decode)
   qed
-  have unfolded: "shared_call_closure P R=(case keyed_demanded_sites id id readS presented_premise_calls roots of
+  have unfolded: "shared_call_closure P R=(case keyed_demanded_sites id id readS finite_application_premise_calls roots of
       None \<Rightarrow> R | Some C \<Rightarrow> fimage h C)"
-    unfolding shared_call_closure_def Let_def rs_def[symmetric] family prod.case code h_def
-    by (simp add: readS_def roots_def)
-  have sites: "keyed_demanded_sites id id readS presented_premise_calls roots=
-      finite_demanded_sites readS presented_premise_calls roots"
+    unfolding h_def by (simp add: shared_call_closure_table table readS_def)
+  have sites: "keyed_demanded_sites id id readS finite_application_premise_calls roots=
+      finite_demanded_sites readS finite_application_premise_calls roots"
     by (rule shared_call_demanded_sites)
   have plain: "keyed_demanded_sites native_call_key native_call_unkey
       (\<lambda>q. finite_constructed_applications P (fst q) (snd q)) finite_application_premise_calls R=
     finite_demanded_sites (\<lambda>q. finite_constructed_applications P (fst q) (snd q)) finite_application_premise_calls R"
     by (rule keyed_demanded_sites_exact) (rule native_call_inverse)
   have image: "finite_demanded_sites (\<lambda>q. finite_constructed_applications P (fst q) (snd q))
-      finite_application_premise_calls R=map_option (fimage h) (finite_demanded_sites readS presented_premise_calls roots)"
+      finite_application_premise_calls R=map_option (fimage h) (finite_demanded_sites readS finite_application_premise_calls roots)"
     using finite_demanded_sites_image[where read'="\<lambda>q. finite_constructed_applications P (fst q) (snd q)"
       and succ'=finite_application_premise_calls, OF injective roots_in closed rows] roots_image by simp
   show ?thesis
-  proof (cases "finite_demanded_sites readS presented_premise_calls roots")
+  proof (cases "finite_demanded_sites readS finite_application_premise_calls roots")
     case None
     then show ?thesis using image by (simp add: unfolded sites formed_call_closure_def plain)
   next
@@ -436,7 +473,6 @@ text \<open>
   closure is computed over shared calls; every result is the original closure's.
 \<close>
 
-declare native_call_closure_code [code del]
 
 lemma native_call_closure_shared_code [code]:
   "native_call_closure P R=(if finite_system_formed P \<and> fBall R (\<lambda>q. finite_term_formed (snd q))

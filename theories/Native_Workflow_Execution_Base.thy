@@ -1,5 +1,5 @@
 theory Native_Workflow_Execution_Base
-  imports Positioned_Native_Evaluation Factor_Workflow_Expanded_Comparison Factor_Workflow_Request_Batch Parallel_Assessment_Execution
+  imports Shared_Native_Evaluation Factor_Workflow_Expanded_Comparison Factor_Workflow_Request_Batch Parallel_Assessment_Execution
 begin
 
 definition workflow_input_scope_indices :: "nat list" where

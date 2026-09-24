@@ -1615,6 +1615,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Keyed_Finite_Sets
     Keyed_Native_Evaluation
     Positioned_Native_Evaluation
+    Shared_Native_Evaluation
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
     Complete_Term_References
@@ -1845,6 +1846,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Native_Request
     Development_Native_Verdict
     Development_Row_Data
+    Development_Loop_Presentations
+    Development_Machinery_Reports
     Development_Row_Contexts
     Development_State_Edit
     Development_Exported_Edit
@@ -1852,4 +1855,5 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Edited_Undeclared
     Development_Edited_Reach
     Development_Incremental_Verdict
+    Development_Incremental_Witnesses
     Development_Row_Presentations

@@ -386,16 +386,4 @@ lemma development_extension_verdict_data_injective [intro]: "inj development_ext
   by (intro finite_pair_presentation_injective finite_sequence_presentation_injective
     isabelle_entity_data_injective isabelle_position_data_injective finite_boolean_data_injective)
 
-definition development_refinement_repair_data :: "development_refinement_repair \<Rightarrow> finite_factor_term" where
-  "development_refinement_repair_data=finite_pair_presentation development_extension_verdict_data
-    (finite_pair_presentation development_problems_data
-      (finite_pair_presentation development_request_data
-        (finite_pair_presentation development_verdict_data finite_boolean_data)))"
-
-lemma development_refinement_repair_data_injective [intro]: "inj development_refinement_repair_data"
-  unfolding development_refinement_repair_data_def
-  by (intro finite_pair_presentation_injective development_extension_verdict_data_injective
-    development_problems_data_injective development_request_data_injective
-    development_verdict_data_injective finite_boolean_data_injective)
-
 end

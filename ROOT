@@ -1730,6 +1730,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Encoded_Environment_Presentation
     Data_Reading_Presentation
     Isabelle_Constant_Closure
+    Development_Verification_Frame
     Map_Filter_Lists
     Isabelle_Terms
     Isabelle_Entities

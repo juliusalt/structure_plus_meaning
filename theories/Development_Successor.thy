@@ -31,9 +31,8 @@ text \<open>
 \<close>
 
 definition development_problem_positions :: "development_problem \<Rightarrow> nat set" where
-  "development_problem_positions p=fset (problem_subject p)\<union>set (isabelle_term_positions (case problem_contract p of
-    Development_Refinement t \<Rightarrow> t | Development_Proof t \<Rightarrow> t | Development_Presentation t \<Rightarrow> t
-  | Development_Definition t \<Rightarrow> t | Development_Amendment t \<Rightarrow> t))"
+  "development_problem_positions p=fset (problem_subject p)\<union>
+    set (isabelle_term_positions (development_contract_term (problem_contract p)))"
 
 lemma development_problem_rename_fixed:
   assumes fixed: "\<And>i. i\<in>development_problem_positions p \<Longrightarrow> f i=i"
@@ -542,8 +541,22 @@ theorem development_successor_ready:
 text \<open>
   The successor admits exactly the answers the verdict of the request's kind admits on the answer
   state as exported, whenever both states are presented within their tables and the request's subject
-  and support are positions of the request state.
+  and support are positions of the request state. The two conditions on each state are those
+  @{text state_presentable} spells, and the exporter proves them of every state it defines: its names
+  are distinct (@{text NAME_names_distinct}) and its entities and roots use positions of its table
+  (@{text NAME_positions_closed}, @{text NAME_roots_closed}, which @{text state_positions_exported}
+  joins). So on every pair of states the exporter defines, for a request whose subject and support are
+  positions of the request state, the successor admits exactly what the exported verdict admits. The
+  lemma says nothing on a state the exporter did not define, where, for an answer the native reader
+  reads, @{text development_native_answer_formed} refuses exactly the answers whose state repeats a
+  name or uses a position outside its table, nor for a request outside those premises.
 \<close>
+
+lemma state_positions_exported:
+  assumes entities: "\<forall>e\<in>set (snd C). set (isabelle_entity_positions e)\<subseteq>{..<length (fst C)}"
+    and roots: "\<forall>t\<in>set rs. set (isabelle_term_positions t)\<subseteq>{..<length (fst C)}"
+  shows "state_positions (rs,C)\<subseteq>{..<length (fst C)}"
+  using assms by (auto simp: state_positions_def)
 
 theorem development_successor_admits:
   assumes request: "r=(p,s,support,E)"

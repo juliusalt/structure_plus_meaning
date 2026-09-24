@@ -612,8 +612,10 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   so that it lands before another landing rewrites those rows.
 - **Under way**: #157 re-records the answer records over the layout (landed with #290 and #294 as `2906d9c9`); #64
   (its library from the refusal records only, the split source counted: q77, Q14), #296 (M0; q78: the reopen test reads
-  the equal walks of the closure and the renaming together) and #159 (the layout's criterion met, q79; #309 after it
-  takes the placed forests' construction and the question's); #112 and #192 parked for their checks; #301 finishing
+  the equal walks of the closure and the renaming together) and #278 (the machinery judgment held as a bound, more than
+  106.6 s: every phase that grows is a call-key sort or lookup, which B4 and B5 remove, B5 with the evaluation's rule
+  table formation re-check); #309 after #159 takes the placed forests' construction and the question's; #112 and #192
+  parked for their checks; #301 finishing
   after B1 (#297, `97a9677d`); the prefix-key comparison notion decided (#310, accepted): its build P1 placed early,
   P2 low, neither before B4 or B5.
 - **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's

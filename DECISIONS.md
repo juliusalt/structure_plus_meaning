@@ -10,7 +10,8 @@ The standing owner rule of 2026-09-12 prohibits outside semantics, reasoning,
 or anything else anywhere. The owner explicitly preserves Isabelle/HOL's
 normative bootstrap role through genesis. Earlier ad hoc outside-reasoning
 permissions provide no current exception; the complete instruction and
-bootstrap boundary are in DEVELOPMENT_WORKFLOW.md.
+bootstrap boundary are the owner's words
+(`.claude/orchestration/codex-owner-directions.md` §10).
 
 Each choice below records its reason and its limits. Proof references are added
 only after the corresponding theory is accepted.
@@ -7705,34 +7706,6 @@ and those observations; the native package witnesses are supplied by the
 bootstrap construction theorem. Runtime construction and native admission of
 the complete source, correspondence, request and installed-program record are
 still required by the full development protocol.
-
-## Consolidated overnight checkpoint
-
-The owner requested preservation, reconciliation and a commit before further
-development. [HANDOFF.md](HANDOFF.md) is the current continuation point; the
-[retained evidence](validation/overnight-20260918/README.md) supersedes the stale
-segment-9 operational handoff. All 53 integrated theory texts are unchanged from
-their accepted providers. A fresh 1,080-theory partial proof from HOL and complete
-certificate/material replay establish the recorded bounded results without any
-overnight temporary provider. They do not complete a stage or the whole plan.
-
-The actual union judgment, installed-guard construction contracts, computed
-original root application and natural body-leaf certificate are available.
-Projection material preparation, projection/quotation/full-child certificates,
-actual installed source execution, proof-coordinate transport and the root
-replay/cause remain open. Application-result selection was proposed, not
-implemented. The existing Development_Seed contract-argument defect also remains.
-No original requirement, owner authority, stage gate or cost gate was weakened.
-The next batch and all broader governance obligations are explicit in HANDOFF.md.
-
-Repository-only rebuild uses the retained source closure, executable native
-requests and compact expected report boundaries. The owner-requested cleanup
-removed generated historical bulk from the current tree and preserved unique
-unfinished source. This storage cleanup does not settle the broader native
-retention/workflow account. Practical 5a and conditions 1–4 and 6 remain open;
-only theoretical 5b stays deferred.
-
-Recorded 2026-09-18, commit `d85a02ee`.
 
 ## Seeded contracts and dependencies computed
 

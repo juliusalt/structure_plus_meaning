@@ -132,45 +132,51 @@ locale native_store_search_program = native_rule_family P k "native_store_search
   for P :: "'u native_system" and k ch :: "'u definition_site"
 begin
 
+sublocale law: native_rule_law P k "native_store_search_rules k ch"
+  by (rule native_rule_lawI[OF native_rule_family_axioms])
+    (simp add: native_store_search_rules_def native_store_found_rule_def native_store_left_rule_def
+      native_store_right_rule_def; blast)
+
 text \<open>
   The search is read for every key, not only for a path: a key the rules do not descend by, a target or a
   payload other than the empty one, has no search that holds. A key that holds is therefore a path, and the
-  value found is the value the store holds at it.
+  value found is the value the store holds at it. What the search's rules say is stated once, at a rule of
+  the family and any support relation (@{text unfold_rule}); the family's law reads a clause or a call as
+  such a rule, and the induction over the key and over the path stays the search's own.
 \<close>
 
-lemma unfold:
-  assumes clause: "((k,c),S)\<in>system_clauses P"
-    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern f p)\<in>Y"
-    and shape: "evaluate_pattern f (schema_conclusion S)=Pair_Term x (Pair_Term key (store_term val T))"
+lemma unfold_rule:
+  assumes rule: "(c,finite_native_rule p ps)\<in>set (native_store_search_rules k ch)"
+    and support: "\<forall>(s,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
+    and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (Pair_Term key (store_term val T))"
   shows "(\<exists>v l r. key=Payload_Term [] \<and> T=Store_Node (Some v) l r \<and> (ch,Pair_Term x (val v))\<in>Y) \<or>
     (\<exists>key' v l r. key=Pair_Term (bit_term False) key' \<and> T=Store_Node v l r \<and>
       (k,Pair_Term x (Pair_Term key' (store_term val l)))\<in>Y) \<or>
     (\<exists>key' v l r. key=Pair_Term (bit_term True) key' \<and> T=Store_Node v l r \<and>
       (k,Pair_Term x (Pair_Term key' (store_term val r)))\<in>Y)"
 proof -
-  obtain F where rule: "(c,F)\<in>set (native_store_search_rules k ch)" and S: "S=decode_finite_schema F"
-    using clause family by blast
-  have cases: "F=native_store_found_rule ch \<or> F=native_store_left_rule k \<or> F=native_store_right_rule k"
+  have "finite_native_rule p ps=native_store_found_rule ch \<or> finite_native_rule p ps=native_store_left_rule k \<or>
+      finite_native_rule p ps=native_store_right_rule k"
     using rule by (auto simp: native_store_search_rules_def)
   then show ?thesis
   proof (elim disjE)
-    assume F: "F=native_store_found_rule ch"
-    have premise: "(ch,Pair_Term (f [0]) (f [1]))\<in>Y"
-      using native_rule_support[OF support[unfolded S F native_store_found_rule_def]] by simp
+    assume "finite_native_rule p ps=native_store_found_rule ch"
+    note F=this[unfolded native_store_found_rule_def finite_native_rule_eq_iff]
+    have premise: "(ch,Pair_Term (f [0]) (f [1]))\<in>Y" using support by (simp add: F)
     show ?thesis using shape premise
-      by (auto simp: S F native_store_found_rule_def store_term_shapes store_option_term_found)
+      by (auto simp: F store_term_shapes store_option_term_found)
   next
-    assume F: "F=native_store_left_rule k"
-    have premise: "(k,Pair_Term (f [0]) (Pair_Term (f [1]) (f [3])))\<in>Y"
-      using native_rule_support[OF support[unfolded S F native_store_left_rule_def]] by simp
+    assume "finite_native_rule p ps=native_store_left_rule k"
+    note F=this[unfolded native_store_left_rule_def finite_native_rule_eq_iff]
+    have premise: "(k,Pair_Term (f [0]) (Pair_Term (f [1]) (f [3])))\<in>Y" using support by (simp add: F)
     show ?thesis using shape premise
-      by (auto simp: S F native_store_left_rule_def bit_term_def store_term_shapes)
+      by (auto simp: F bit_term_def store_term_shapes)
   next
-    assume F: "F=native_store_right_rule k"
-    have premise: "(k,Pair_Term (f [0]) (Pair_Term (f [1]) (f [4])))\<in>Y"
-      using native_rule_support[OF support[unfolded S F native_store_right_rule_def]] by simp
+    assume "finite_native_rule p ps=native_store_right_rule k"
+    note F=this[unfolded native_store_right_rule_def finite_native_rule_eq_iff]
+    have premise: "(k,Pair_Term (f [0]) (Pair_Term (f [1]) (f [4])))\<in>Y" using support by (simp add: F)
     show ?thesis using shape premise
-      by (auto simp: S F native_store_right_rule_def bit_term_def store_term_shapes)
+      by (auto simp: F bit_term_def store_term_shapes)
   qed
 qed
 
@@ -180,24 +186,20 @@ lemma sound:
   using holds
 proof (induction key arbitrary: T)
   case (Target_Term t)
-  obtain c F f where rule: "(c,F)\<in>set (native_store_search_rules k ch)"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
-      Pair_Term x (Pair_Term (Target_Term t) (store_term val T))"
-    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (d,evaluate_pattern f p)\<in>positive_meaning P"
-    by (rule holds_cases[OF Target_Term.prems]) blast
-  show ?case using unfold[OF rule_clause[OF rule] support shape] by auto
+  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (native_store_search_rules k ch)"
+    and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (Pair_Term (Target_Term t) (store_term val T))"
+    and support: "\<forall>(s,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    by (rule law.holds_rule[OF Target_Term.prems]) blast
+  show ?case using unfold_rule[OF rule support shape] by auto
 next
   case (Payload_Term w)
-  obtain c F f where rule: "(c,F)\<in>set (native_store_search_rules k ch)"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
-      Pair_Term x (Pair_Term (Payload_Term w) (store_term val T))"
-    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (d,evaluate_pattern f p)\<in>positive_meaning P"
-    by (rule holds_cases[OF Payload_Term.prems]) blast
+  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (native_store_search_rules k ch)"
+    and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (Pair_Term (Payload_Term w) (store_term val T))"
+    and support: "\<forall>(s,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    by (rule law.holds_rule[OF Payload_Term.prems]) blast
   obtain v l r where w: "w=[]" and T: "T=Store_Node (Some v) l r"
     and found: "(ch,Pair_Term x (val v))\<in>positive_meaning P"
-    using unfold[OF rule_clause[OF rule] support shape] by auto
+    using unfold_rule[OF rule support shape] by auto
   show ?case
   proof (intro exI conjI)
     show "Payload_Term w=path_term []" using w by simp
@@ -206,17 +208,15 @@ next
   qed
 next
   case (Pair_Term a b)
-  obtain c F f where rule: "(c,F)\<in>set (native_store_search_rules k ch)"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
-      Pair_Term x (Pair_Term (Pair_Term a b) (store_term val T))"
-    and support: "\<forall>s d p. (s,d,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (d,evaluate_pattern f p)\<in>positive_meaning P"
-    by (rule holds_cases[OF Pair_Term.prems]) blast
+  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (native_store_search_rules k ch)"
+    and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (Pair_Term (Pair_Term a b) (store_term val T))"
+    and support: "\<forall>(s,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    by (rule law.holds_rule[OF Pair_Term.prems]) blast
   have "(\<exists>key' v l r. Pair_Term a b=Pair_Term (bit_term False) key' \<and> T=Store_Node v l r \<and>
         (k,Pair_Term x (Pair_Term key' (store_term val l)))\<in>positive_meaning P) \<or>
       (\<exists>key' v l r. Pair_Term a b=Pair_Term (bit_term True) key' \<and> T=Store_Node v l r \<and>
         (k,Pair_Term x (Pair_Term key' (store_term val r)))\<in>positive_meaning P)"
-    using unfold[OF rule_clause[OF rule] support shape] by auto
+    using unfold_rule[OF rule support shape] by auto
   then show ?case
   proof (elim disjE exE conjE)
     fix key' v l r
@@ -275,8 +275,9 @@ next
         (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (Finite_Pattern_Payload [])
           (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1)) (native_var 2))))))
         \<in>positive_meaning P"
-      by (rule native_step[where c="[0]" and ps="[([0],(ch,Finite_Pattern_Pair (native_var 0) (native_var 1)))]"])
-        (use checked xf vf lf rf in \<open>simp_all add: native_store_search_rules_def native_store_found_rule_def\<close>)
+      by (rule law.step_at[where c="[0]" and ps="[([0],(ch,Finite_Pattern_Pair (native_var 0) (native_var 1)))]"])
+        (use checked xf vf lf rf in \<open>simp_all add: insert_Diff_if native_store_search_rules_def
+          native_store_found_rule_def\<close>)
     then show ?case by (simp add: T store_option_term_def octets_formed_def)
   next
     case (Cons b bs)
@@ -298,9 +299,10 @@ next
             (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1))
             (Finite_Pattern_Pair (native_var 2) (Finite_Pattern_Pair (native_var 3) (native_var 4)))))))
           \<in>positive_meaning P"
-        by (rule native_step[where c="[1]" and
+        by (rule law.step_at[where c="[1]" and
             ps="[([0],(k,Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 3))))]"])
-          (use inner xf wf lf rf pf in \<open>simp_all add: native_store_search_rules_def native_store_left_rule_def\<close>)
+          (use inner xf wf lf rf pf in \<open>simp_all add: insert_Diff_if native_store_search_rules_def
+            native_store_left_rule_def\<close>)
       then show ?thesis using T False by (simp add: bit_term_def)
     next
       case True
@@ -311,10 +313,10 @@ next
             (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload [])) (native_var 1))
             (Finite_Pattern_Pair (native_var 2) (Finite_Pattern_Pair (native_var 3) (native_var 4)))))))
           \<in>positive_meaning P"
-        by (rule native_step[where c="[2]" and
+        by (rule law.step_at[where c="[2]" and
             ps="[([0],(k,Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 4))))]"])
-          (use inner xf wf lf rf pf in \<open>simp_all add: native_store_search_rules_def native_store_right_rule_def
-            octets_formed_def\<close>)
+          (use inner xf wf lf rf pf in \<open>simp_all add: insert_Diff_if native_store_search_rules_def
+            native_store_right_rule_def octets_formed_def\<close>)
       then show ?thesis using T True by (simp add: bit_term_def)
     qed
   qed
@@ -591,8 +593,8 @@ next
       have "(a,evaluate_pattern (native_values [x]) (decode_finite_pattern
           (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (Finite_Pattern_Payload [])
             (Finite_Pattern_Payload [])))))\<in>positive_meaning P"
-        by (rule native_step[where c="[0]" and ps="[]"])
-          (simp_all add: native_store_absent_rules_def native_absent_empty_rule_def xf)
+        by (rule law.step_at[where c="[0]" and ps="[]"])
+          (simp_all add: insert_Diff_if native_store_absent_rules_def native_absent_empty_rule_def xf)
       then show ?thesis by (simp add: Empty_Store)
     next
       case (Store_Node v l r)
@@ -604,8 +606,8 @@ next
           (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair
             (Finite_Pattern_Payload []) (Finite_Pattern_Pair (Finite_Pattern_Payload [])
               (native_var 1))))))\<in>positive_meaning P"
-        by (rule native_step[where c="[1]" and ps="[]"])
-          (simp_all add: native_store_absent_rules_def native_absent_none_rule_def xf formed lf rf)
+        by (rule law.step_at[where c="[1]" and ps="[]"])
+          (simp_all add: insert_Diff_if native_store_absent_rules_def native_absent_none_rule_def xf formed lf rf)
       then show ?thesis by (simp add: Store_Node none store_option_term_def)
     qed
   next
@@ -624,9 +626,9 @@ next
             (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair
               (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1))
               (Finite_Pattern_Payload [])))))\<in>positive_meaning P"
-          by (rule native_step[where c="[2]" and ps="[([0],(a,Finite_Pattern_Pair (native_var 0)
+          by (rule law.step_at[where c="[2]" and ps="[([0],(a,Finite_Pattern_Pair (native_var 0)
               (Finite_Pattern_Pair (native_var 1) (Finite_Pattern_Payload []))))]"])
-            (simp_all add: native_store_absent_rules_def native_absent_left_leaf_rule_def xf premise)
+            (simp_all add: insert_Diff_if native_store_absent_rules_def native_absent_left_leaf_rule_def xf premise)
         then show ?thesis by (simp add: Empty_Store False bit_term_def)
       next
         case True
@@ -634,9 +636,9 @@ next
             (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair
               (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload []))
                 (native_var 1)) (Finite_Pattern_Payload [])))))\<in>positive_meaning P"
-          by (rule native_step[where c="[4]" and ps="[([0],(a,Finite_Pattern_Pair (native_var 0)
+          by (rule law.step_at[where c="[4]" and ps="[([0],(a,Finite_Pattern_Pair (native_var 0)
               (Finite_Pattern_Pair (native_var 1) (Finite_Pattern_Payload []))))]"])
-            (simp_all add: native_store_absent_rules_def native_absent_right_leaf_rule_def xf premise)
+            (simp_all add: insert_Diff_if native_store_absent_rules_def native_absent_right_leaf_rule_def xf premise)
         then show ?thesis by (simp add: Empty_Store True bit_term_def)
       qed
     next
@@ -655,9 +657,9 @@ next
               (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1))
               (Finite_Pattern_Pair (native_var 2) (Finite_Pattern_Pair (native_var 3)
                 (native_var 4)))))))\<in>positive_meaning P"
-          by (rule native_step[where c="[3]" and ps="[([0],(a,Finite_Pattern_Pair (native_var 0)
+          by (rule law.step_at[where c="[3]" and ps="[([0],(a,Finite_Pattern_Pair (native_var 0)
               (Finite_Pattern_Pair (native_var 1) (native_var 3))))]"])
-            (simp_all add: native_store_absent_rules_def native_absent_left_rule_def xf formed premise)
+            (simp_all add: insert_Diff_if native_store_absent_rules_def native_absent_left_rule_def xf formed premise)
         then show ?thesis by (simp add: Store_Node False bit_term_def)
       next
         case True
@@ -670,9 +672,9 @@ next
                 (native_var 1))
               (Finite_Pattern_Pair (native_var 2) (Finite_Pattern_Pair (native_var 3)
                 (native_var 4)))))))\<in>positive_meaning P"
-          by (rule native_step[where c="[5]" and ps="[([0],(a,Finite_Pattern_Pair (native_var 0)
+          by (rule law.step_at[where c="[5]" and ps="[([0],(a,Finite_Pattern_Pair (native_var 0)
               (Finite_Pattern_Pair (native_var 1) (native_var 4))))]"])
-            (simp_all add: native_store_absent_rules_def native_absent_right_rule_def xf formed premise)
+            (simp_all add: insert_Diff_if native_store_absent_rules_def native_absent_right_rule_def xf formed premise)
         then show ?thesis by (simp add: Store_Node True bit_term_def)
       qed
     qed

@@ -10,7 +10,10 @@ The Q7 order, the owner's since 2026-09-24 (Q7 answered), sets the lines, under 
 octets are inert; native definitions are normative. The loop's central judgment is native (#42): its store absence and
 witnesses (#44), its reflection and held measurement (#278) and its witnesses at the edit's parts (#195) remain.
 Request construction has landed (#112, #114, #286); the order's next step, problems whose subjects are native
-definitions, is design #320. The incremental assessment of an edited state
+definitions, is decided (#320) and its builds N1–N4 are under way; its first problem is the owner's (Q2, answered
+2026-09-24 17:18): how to choose the next problem to solve, with the authority question a native problem the owner
+approves — #370 records it in the plan and #371 poses both natively, before N4a and N4b. The incremental assessment of
+an edited state
 (#192, #187 → #193 → #194) is the remedy for a verification stage's cost. The serialized word changes make the chain
 that decides the run's length; the re-citations of the rule programs, the documents and the reviews run beside them.
 
@@ -42,7 +45,7 @@ Open 110. The planner refused rearranging `native_store_search_rules` to put the
 implementation would dictate the programs' argument arrangement. The exporter proves `isabelle_declared_once`,
 distinct names, closed positions and distinct roots at every state it defines (#279, #283, #289, #308); #317 timed the
 obligations held (`.build/tasks/317/measurement.md`: 0.704 s per state definition at the machinery), the chain proving
-a list increasing quadratic in the names and 56% of it, which #352 instantiates as #283 did the declarations
+a list increasing quadratic in the names and 56% of it, which #352 instantiated as #283 did the declarations (`7c307ec4`)
 (`increasing_tac`'s rest is Open 92). Roots stay a store with distinct keys.
 
 **Request construction (#276, #277, #112–#114).** Task 95's entry: a native check over the request state's rows — a
@@ -174,16 +177,17 @@ over what they leave, and the translation design follows (Open 3).
 creates has no review task (the harness reviews it in its own folder). The deepest chain is 7: #295 → #288 →
 #340 → #342 → #344 → #346 → #347, the consolidations into the native package (N2a, N2b, N3a, N3b), and #295 → #288 →
 #353 → #336 → #344 → #346 → #347, so nothing of N1–N4 or of the decomposition's builds starts before #295 lands. The
-word chain #169 → #319 → #92 → #93 is 4, and #295 → #288 → #353 → #193 → #194 → #205 is 6. #352 and #355
-wait on nothing, and neither will #358's B1 and B3.
+word chain #169 → #319 → #92 → #93 is 4, and #295 → #288 → #353 → #193 → #194 → #205 is 6. #355, B1 (#359)
+and B3 (#363) wait on nothing.
 
-**Order** (the queue holds it; this is why it is as it is). #295 first, the root of the longest chain; then #288 and
-#353 (after #288, both editing `Development_Verdict_Mentions`), N1a after #353, and the word chain's #314; the
-decomposition's #325, the package's N2a (#340) and N1a (#336); the exporter's chain #352, which waits on nothing but
-whose check rebuilds about 1,666 theories, after them so that its heavy check yields to theirs; #324's repair #355 and
-#356's builds (briefed by #358); the incremental stage's #193; the word chain's #169, #319, #354, #92; #327 and N4a
-(#348); N2b, N1b, N3a, N4b, N3b; the decomposition's #331, #333, #329; the measurements #194 and #315; each review
-after its build.
+**Order** (the queue holds it; this is why it is as it is; it is the planner's choice, a residual until the native
+answer to the selection problem exists, Q2). The owner's answer to Q2 first (#370, #371); then #295, the root of the
+longest chain; then #288 and
+#353 (after #288, both editing `Development_Verdict_Mentions`), N1a after #353; the decomposition's #325, the package's
+N2a (#340) and N1a (#336); #324's repair #355 and #356's builds (#359–#368, B1 and B3 taking the slots the chain
+cannot); the incremental stage's #193; the word chain's #169, #319, #354, #92, and #369 after #319; #327 and N4a
+(#348); N2b, N1b, N3a, N4b, N3b; the decomposition's #331, #333, #329; the measurement #194; each review after its
+build.
 
 ## Decisions
 
@@ -228,6 +232,13 @@ construction (Open 100).
   with the word changes and records that keep its checks green, and retired once the native loop poses its first
   problems (N4b, #350; the planner's reading, as Q18 (d) provisionally chooses); work that would only extend the
   HOL-constant loop is not planned. #357 recorded the answer in the plan (`4434635d`); its follow-ups are Open 111.
+- **Q2 is the owner's** (answered 2026-09-24 17:18): none of the three paused refinement candidates is the first
+  problem; the first problem through the loop is "how to choose the next problem to solve", its native statement and
+  answer developed through the loop; the authority question becomes a native problem whose native answer the owner
+  approves, and that answer decides the approval of derivations and of derived subproblems. Meanwhile readiness and
+  the planner's choice are the working basis, each interim choice carrying a residual — the queue's order among them
+  (Graph, Order), and the provisional choices of Q2's extension and of Q14 and Q16. #370 records the answer in the
+  plan; #371 poses the two problems natively, and N4a (#348) and N4b (#350) wait on it.
 - **A question's candidate is keyed by the key of what it is** (q21): an entity by its first-occurrence path in the
   state's entity list (`development_entity_key`).
 - **The development rows' definitions take the state's constant-key assignment as a parameter** with an `inj_on`
@@ -482,6 +493,11 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   B4a).
 - **#315** (investigation): task 9's 1.75 measured held with #167's switch (`.build/tasks/315/measurement.md`), read
   under Open 114.
+- **#352** (`7c307ec4`): the exporter's increasing chain by `Thm.instantiate` at the element type fixed once, the
+  names' distinctness and the declared positions linear; its review's follow-ups under Open 92.
+- **#370** (design): the owner's answer to Q2 recorded in the plan — "Owner directions" verbatim, stage 2 amended in
+  place, the standing and direction sections, its readings marked generated; its question on the "Corrections to
+  earlier plans" row to a small follow-up continuing it, its follow-ups mailed to #371.
 
 ## Open
 
@@ -489,8 +505,9 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 
 - **Q1** the admission rule of a bootstrap adoption and OD-2: bites when an admitted native answer is installed as
   Isabelle material, the request class the Q7 order names last.
-- **Q2** authority of the first loop's problems and its selection criterion, with the decomposition's three policy
-  criteria: bites in any selection beyond readiness, and in #64 if instance B would decompose every problem.
+- **Q2** answered 2026-09-24 17:18 (Decisions): the first problem is how to choose the next problem to solve, the
+  authority question a native problem the owner approves; readiness and the planner's choice meanwhile, a residual.
+  #370 records it in the plan; #371 poses the two problems natively, before N4a and N4b.
 - **Q3** what Isabelle establishes about adequacy: #281 keeps the plan's sentence on it; unplanned otherwise.
 - **Q4** an agent executor confined to its packet: at the plan's stage 3 gate; unplanned.
 - **Q5** how far the native residual record reaches: a notion is presented structurally when a decision reads it.
@@ -675,8 +692,13 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     touched. With it, from the same review: the documents check could refuse a tracked path `.gitignore` matches
     (`git ls-files -ci --exclude-standard`), so Q9's case cannot recur.
 92. **What is left of the exporter's obligation** (#283's review, #317's measurement): the chain proving a list
-    increasing, quadratic in the names, is #352's; roots distinctness is linear in root pairs (0.036 s at the
-    machinery's 62 roots, one second near 320 roots), repaired at that scale. With it:
+    increasing is linear since #352 (`7c307ec4`). Its review's follow-ups (`.build/tasks/352/review.md`), with the
+    exporter's next change, whose check rebuilds about 1,666 theories, or when a state it defines grows past the
+    machinery's: positions closed, now the largest obligation (0.139 s per definition at the machinery), attributed and,
+    if quadratic, fixed at its cause as #352 fixed the chain; the names' distinctness and `declared_once` bound by
+    structure through `instance_at` once the instantiation's share is measured; `increasing`'s unused context argument
+    removed; `declared_bind`'s refusals worded for the shared `instance_at`. Roots distinctness is linear in root pairs
+    (0.036 s at the machinery's 62 roots, one second near 320 roots), repaired at that scale. With it:
     any other conversion that rewrites the head of a long term with `Conv.rewr_conv` beta-normalizes its whole right
     side at each step, so a second such conversion (exporter-side or in a quotation proof procedure) is repaired by the
     same structural instantiation, the binder factored at that second use rather than copied. And the exporter's
@@ -803,7 +825,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   and #321's 3 to #288; #321's 3 (its `request_member` part, at the join) to #340; #321's 5
   (`Development_Incremental_Verdict`'s probe past 60 s, attributed at its cause) to #353; #278's review to #193;
   #308's change of `Development_State_Rows`' row (`.build/tasks/308/rows.md`) to #325; #314's review's follow-up 1 to
-  #169 (the native records in their harness's form if it writes them); and to #194 q85's rule for a
+  #169 (the native records in their harness's form if it writes them); #370's follow-ups to #371 (interim choices
+  recorded natively, a choosing problem's contract kind, the loop the two problems enter); and to #194 q85's rule for a
   measurement's reference with, as shares its by-field figures show where they can, #321's 4, #294's 1 and 3 (Open 96)
   and #307's remains (Open 110).
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's

@@ -57,23 +57,21 @@ subsection \<open>The assessment of a request state\<close>
 text \<open>
   The assessment holds, for a presented request state, the presentations its fields read: the subject
   index and the mention index of each family (build 1's index by a key reading), the mention index of
-  the root family, the declaration store, the row store, the reach roots, and the root family. Each is
-  read by the parts of an answer: an atom is a key the subject index holds, the answer state's restricted
-  declaration store is the declaration store updated by the edit, and a key's declaring row is the row
-  store's at the key the declaration store gives. Two lists of the state are still read whole for each
-  answer: the reach roots' keys, searched at every visited key, and the request state's entities, which
-  the edit's constructor indexes again at each answer. It holds no decision's answer: the premises that the request state is
-  closed and declares each constant once are decided where the stage's equation checks them, not here.
+  the root family, the declaration store, the row store, the path store of the reach roots' keys, and the
+  root family. Each is read by the parts of an answer: an atom is a key the subject index holds, a seed of
+  the reach a key the reach keys' store holds, the answer state's restricted declaration store is the
+  declaration store updated by the edit, and a key's declaring row is the row store's at the key the
+  declaration store gives. It holds no decision's answer: the premises that the request state is closed
+  and declares each constant once are decided where the stage's equation checks them, not here.
 \<close>
 
 record state_assessment_parts =
-
   assessment_subject :: "isabelle_context state_family binary_path_store list"
   assessment_mention :: "isabelle_context state_family binary_path_store list"
   assessment_root_mention :: "(String.literal list\<times>isabelle_term) state_family binary_path_store"
   assessment_declarations :: "state_key binary_path_store"
   assessment_rows :: "(state_key\<times>isabelle_context state_row) binary_path_store"
-  assessment_reach :: reach_table
+  assessment_reach_keys :: "unit binary_path_store"
   assessment_roots :: "(String.literal list\<times>isabelle_term) state_family"
 
 definition state_assessment :: "state_rows \<Rightarrow> state_assessment_parts" where
@@ -83,17 +81,16 @@ definition state_assessment :: "state_rows \<Rightarrow> state_assessment_parts"
      assessment_root_mention=mention_index A (state_roots R),
      assessment_declarations=declaration_store Fs,
      assessment_rows=family_row_store Fs,
-     assessment_reach=state_reach_roots R,
+     assessment_reach_keys=path_store (map (\<lambda>a. (a,())) (state_reach_seeds R)),
      assessment_roots=state_roots R\<rparr>)"
 
 lemma state_assessment_parts [simp]:
-
   "assessment_subject (state_assessment R)=map (subject_index (map fst (state_atoms R))) (state_all_families R)"
   "assessment_mention (state_assessment R)=map (mention_index (map fst (state_atoms R))) (state_all_families R)"
   "assessment_root_mention (state_assessment R)=mention_index (map fst (state_atoms R)) (state_roots R)"
   "assessment_declarations (state_assessment R)=declaration_store (state_all_families R)"
   "assessment_rows (state_assessment R)=family_row_store (state_all_families R)"
-  "assessment_reach (state_assessment R)=state_reach_roots R"
+  "assessment_reach_keys (state_assessment R)=path_store (map (\<lambda>a. (a,())) (state_reach_seeds R))"
   "assessment_roots (state_assessment R)=state_roots R"
   by (simp_all add: state_assessment_def Let_def)
 
@@ -116,7 +113,7 @@ text \<open>
 
 definition assessment_fibres :: "state_assessment_parts \<Rightarrow> state_edit \<Rightarrow> state_key \<Rightarrow> entity_kind list \<Rightarrow>
     isabelle_context state_family list" where
-  "assessment_fibres A e k ks=map (\<lambda>j. filter (\<lambda>z. z\<notin>set (edit_removed e j))
+  "assessment_fibres A e k ks=map (\<lambda>j. let D=edit_removed e j in filter (\<lambda>z. z\<notin>set D)
     (case store_lookup (kind_item (assessment_subject A) j) k of None \<Rightarrow> [] | Some F \<Rightarrow> F)
     @ subject_fibre k (edit_added e j)) ks"
 
@@ -128,7 +125,7 @@ proof -
       =Some (subject_fibre k (state_entities R j))" for j
     using atom by (simp add: subject_index_lookup)
   then show ?thesis
-    by (simp add: assessment_fibres_def edited_fibres_def assessment_subject_at)
+    by (simp add: assessment_fibres_def Let_def edited_fibres_def assessment_subject_at)
 qed
 
 text \<open>The keys the edit's removed rows declare: the keys \<open>undeclared\<close>'s incremental part reads about.\<close>
@@ -150,20 +147,22 @@ subsection \<open>The seeded restricted table and the walk's admission\<close>
 
 text \<open>
   The seeded table \<open>T''\<close> restricted to the keys \<open>V\<close> the walk visits: the reach roots at the seeds outside
-  \<open>O\<close> and the answer state's row at every other visited atom. Only the visited keys are read.
+  \<open>O\<close> and the answer state's row at every other visited atom. Only the visited keys are read, and the
+  seeds, like the atoms, are a predicate, which the caller reads from the assessment's store of the reach keys.
 \<close>
 
-definition incremental_reach_table :: "state_key list \<Rightarrow> state_key list \<Rightarrow> state_key list \<Rightarrow> (state_key \<Rightarrow> bool) \<Rightarrow>
-    'j state_family \<Rightarrow> (state_key \<Rightarrow> state_key list) \<Rightarrow> reach_table" where
-  "incremental_reach_table K L V atom Rs P=map (\<lambda>a. if a\<in>set K \<and> a\<notin>set L then (a,True,[])
+definition incremental_reach_table :: "(state_key \<Rightarrow> bool) \<Rightarrow> state_key list \<Rightarrow> state_key list \<Rightarrow>
+    (state_key \<Rightarrow> bool) \<Rightarrow> 'j state_family \<Rightarrow> (state_key \<Rightarrow> state_key list) \<Rightarrow> reach_table" where
+  "incremental_reach_table seed L V atom Rs P=map (\<lambda>a. if seed a \<and> a\<notin>set L then (a,True,[])
       else (a,a\<in>set (state_root_keys Rs),P a)) (filter atom (remdups V))"
 
 lemma incremental_reach_table_set:
-  "set (incremental_reach_table K L V (\<lambda>a. a\<in>set (map fst As)) Rs (state_reach_predecessors Fs))=
+  "set (incremental_reach_table (\<lambda>a. a\<in>set K) L V (\<lambda>a. a\<in>set (map fst As)) Rs (state_reach_predecessors Fs))=
     set (reach_restricted (set V) (edited_reach_table K L (state_reach_table As Rs Fs)))"
 proof (rule set_eqI)
   fix w
-  show "w\<in>set (incremental_reach_table K L V (\<lambda>a. a\<in>set (map fst As)) Rs (state_reach_predecessors Fs)) \<longleftrightarrow>
+  show "w\<in>set (incremental_reach_table (\<lambda>a. a\<in>set K) L V (\<lambda>a. a\<in>set (map fst As)) Rs
+      (state_reach_predecessors Fs)) \<longleftrightarrow>
       w\<in>set (reach_restricted (set V) (edited_reach_table K L (state_reach_table As Rs Fs)))"
     by (cases w) (auto simp: incremental_reach_table_def reach_restricted_def edited_reach_table_member
       state_reach_table_row split: if_splits)
@@ -175,19 +174,19 @@ lemma incremental_reach_table_formed: "reach_table_formed (incremental_reach_tab
 text \<open>
   The walk's product admitted: \<open>O\<close>'s closure and targets by build 5's two native readings, each at the
   indexes it is passed, and its visit set covering the predecessors of every visited atom not seeded and
-  the keys of every checked row. The atoms are a predicate, so that the caller reads them from an index
-  rather than searching a list. A walk that is refused is judged whole.
+  the keys of every checked row. The seeds and the atoms are predicates, so that the caller reads them from
+  indexes rather than searching a list. A walk that is refused is judged whole.
 \<close>
 
 definition walk_admitted :: "(isabelle_context \<Rightarrow> factor_term) \<Rightarrow> factor_term \<Rightarrow> state_edit \<Rightarrow>
-    factor_term \<Rightarrow> (state_key \<Rightarrow> state_key list) \<Rightarrow> state_key list \<Rightarrow> (state_key \<Rightarrow> bool) \<Rightarrow>
-    state_key list \<Rightarrow> state_key list \<Rightarrow> state_key list \<Rightarrow> isabelle_context state_family list \<Rightarrow> bool" where
-  "walk_admitted ident C e I P K atom L V Tg X \<longleftrightarrow>
+    factor_term \<Rightarrow> (state_key \<Rightarrow> state_key list) \<Rightarrow> (state_key \<Rightarrow> bool) \<Rightarrow> (state_key \<Rightarrow> bool) \<Rightarrow>
+    state_key list \<Rightarrow> state_key list \<Rightarrow> isabelle_context state_family list \<Rightarrow> bool" where
+  "walk_admitted ident C e I P seed atom L V X \<longleftrightarrow>
     (removal_closure,Pair_Term (Pair_Term (keys_term L) C) (keys_term L))
       \<in>positive_meaning edited_reach_system \<and>
     (removal_targets,Pair_Term (Pair_Term (keys_term L) I)
       (state_families_term ident (map (edit_removed e) entity_kinds)))\<in>positive_meaning edited_reach_system \<and>
-    (\<forall>k\<in>set V. atom k \<longrightarrow> \<not>(k\<in>set K \<and> k\<notin>set L) \<longrightarrow> set (P k)\<subseteq>set V) \<and>
+    (\<forall>k\<in>set V. atom k \<longrightarrow> \<not>(seed k \<and> k\<notin>set L) \<longrightarrow> set (P k)\<subseteq>set V) \<and>
     (\<forall>G\<in>set X. \<forall>z\<in>set G. set (row_declared (snd z))\<union>set (row_subjects (snd z))\<subseteq>set V)"
 
 subsection \<open>The parts read from the assessment's indexes\<close>
@@ -201,7 +200,7 @@ text \<open>
 
 definition index_fibres :: "(isabelle_context state_row \<Rightarrow> state_key list) \<Rightarrow>
     isabelle_context state_family binary_path_store list \<Rightarrow> state_edit \<Rightarrow> state_key \<Rightarrow> isabelle_context state_family list" where
-  "index_fibres rd idx e a=map (\<lambda>j. filter (\<lambda>z. z\<notin>set (edit_removed e j))
+  "index_fibres rd idx e a=map (\<lambda>j. let D=edit_removed e j in filter (\<lambda>z. z\<notin>set D)
     (case store_lookup (kind_item idx j) a of None \<Rightarrow> [] | Some F \<Rightarrow> F) @ key_fibre rd a (edit_added e j)) entity_kinds"
 
 lemma key_index_found: "a\<in>set A \<Longrightarrow> store_lookup (key_index rd A F) a=Some (key_fibre rd a F)"
@@ -229,6 +228,12 @@ next
   case False
   then show ?thesis by (simp add: assessment_atom_def key_index_outside)
 qed
+
+definition assessment_seed :: "state_assessment_parts \<Rightarrow> state_key \<Rightarrow> bool" where
+  "assessment_seed A a \<longleftrightarrow> store_lookup (assessment_reach_keys A) a\<noteq>None"
+
+lemma assessment_seed_exact: "assessment_seed (state_assessment R)=(\<lambda>a. a\<in>set (state_reach_seeds R))"
+  unfolding fun_eq_iff assessment_seed_def state_assessment_parts path_store_present by (simp add: image_image)
 
 text \<open>
   The fibres \<open>O\<close>'s closure reads are the request state's, since the closure reads \<open>R\<close>: the subject index
@@ -258,7 +263,7 @@ lemma index_fibres_edited:
   assumes atom: "a\<in>set (map fst (state_atoms R))"
   shows "index_fibres rd (map (key_index rd (map fst (state_atoms R))) (state_all_families R)) e a=
     map (key_fibre rd a) (state_all_families (edited_state R e))"
-  using atom by (simp add: index_fibres_def state_all_families_def key_index_found edited_state_entities
+  using atom by (simp add: index_fibres_def Let_def state_all_families_def key_index_found edited_state_entities
     key_fibre_edited comp_def)
 
 text \<open>
@@ -326,9 +331,10 @@ qed
 
 definition declaring_family :: "state_assessment_parts \<Rightarrow> state_edit \<Rightarrow> state_key list \<Rightarrow>
     isabelle_context state_family" where
-  "declaring_family A e L=filter (\<lambda>z. z\<notin>set (concat (map (edit_removed e) entity_kinds)))
-      (concat (map (declared_row (assessment_declarations A) (assessment_rows A)) L)) @
-    concat (map (\<lambda>a. key_fibre row_declared a (concat (map (edit_added e) entity_kinds))) L)"
+  "declaring_family A e L=(let D=concat (map (edit_removed e) entity_kinds);
+      N=concat (map (edit_added e) entity_kinds) in
+    filter (\<lambda>z. z\<notin>set D) (concat (map (declared_row (assessment_declarations A) (assessment_rows A)) L)) @
+    concat (map (\<lambda>a. key_fibre row_declared a N) L))"
 
 definition assessment_families_checked :: "state_assessment_parts \<Rightarrow> state_edit \<Rightarrow>
     state_key list \<Rightarrow> state_key list \<Rightarrow> isabelle_context state_family list" where
@@ -395,7 +401,7 @@ proof -
         (z\<in>set (concat (map (declared_row (assessment_declarations ?A) (assessment_rows ?A)) L)) \<and>
           z\<notin>set (concat (map (edit_removed e) entity_kinds))) \<or>
         (\<exists>a\<in>set L. z\<in>set (key_fibre row_declared a (concat (map (edit_added e) entity_kinds))))"
-      by (simp add: declaring_family_def)
+      by (simp add: declaring_family_def Let_def)
     then show ?thesis unfolding kept removed added rows' by auto
   qed
   have parts: "(\<exists>G\<in>set (assessment_families_checked ?A e L ms). z\<in>set G) \<longleftrightarrow>
@@ -598,7 +604,7 @@ proof (rule ext)
     have none: "key_fibre row_mentions a (state_entities R j)=[]" for j
       using False presented_mentions_atoms[OF present] by (force simp: key_fibre_def filter_empty_conv)
     show ?thesis
-      by (simp add: index_fibres_def state_all_families_def key_index_outside[OF False] edited_state_entities
+      by (simp add: index_fibres_def Let_def state_all_families_def key_index_outside[OF False] edited_state_entities
         key_fibre_edited none comp_def)
   qed
   then show "assessment_predecessors (state_assessment R) e a=state_reach_predecessors (state_all_families (edited_state R e)) a"
@@ -657,7 +663,7 @@ definition incremental_verdict_argument ::
       assessment_declaration_term A e (edited_undeclared_keys X Rc),
       state_families_term ident X,
       state_family_term identr Rc,
-      reach_table_term (incremental_reach_table (map fst (assessment_reach A)) L V
+      reach_table_term (incremental_reach_table (assessment_seed A) L V
         (assessment_edited_atom A e) (assessment_roots A) (assessment_predecessors A e)),
       store_term (state_row_term ident) empty_row_store,
       state_families_term ident (map (edit_removed e) kr),
@@ -854,6 +860,75 @@ proof -
   then show ?thesis by (auto simp: state_all_families_range)
 qed
 
+text \<open>
+  The discharges both forms of \<open>undeclared\<close> make, the field (@{text incremental_undeclared}) and its
+  witness (@{text Development_Incremental_Witnesses}), stated once: the request state closed at the
+  field's whole part, the answer state's rows as the request state's less the removed rows with the added
+  ones, and the checked families between the rows the checks must read and the answer state's rows.
+\<close>
+
+lemma undeclared_request_closed:
+  "(verdict_undeclared,Pair_Term (declaration_term (state_all_families R))
+      (Pair_Term (state_families_term ident (state_all_families R)) (state_family_term identr (state_roots R))))
+      \<in>positive_meaning verdict_mentions_system"
+  using native_undeclared_exact[OF request state_all_families_range identity roots_identity]
+    closed_undeclared by simp
+
+lemma undeclared_edited_rows:
+  "(\<Union>F\<in>set (state_all_families (edited_state R e)). set F)=
+    (\<Union>F\<in>set (state_all_families R). set F)-edit_rows (edit_removed e) \<union>
+    (\<Union>F\<in>set (map (edit_added e) entity_kinds). set F)"
+  unfolding edit_rows_kinds using reduced by (simp add: state_all_families_rows edit_reduced_def)
+
+lemma undeclared_checked_families:
+  fixes L :: "state_key list"
+  assumes L_atoms: "set L\<subseteq>set (map fst (state_atoms R))"
+    and ms_atoms: "set (edit_removed_declarations e)\<subseteq>set (map fst (state_atoms R))"
+    and single: "declarations_single_valued (state_all_families R)"
+  shows undeclared_checked_sound: "z\<in>(\<Union>G\<in>set (assessment_families_checked (state_assessment R) e L
+        (edit_removed_declarations e)). set G) \<Longrightarrow> z\<in>(\<Union>F\<in>set (state_all_families (edited_state R e)). set F)"
+    and undeclared_checked_added: "z\<in>(\<Union>F\<in>set (map (edit_added e) entity_kinds). set F) \<Longrightarrow>
+      z\<in>(\<Union>G\<in>set (assessment_families_checked (state_assessment R) e L (edit_removed_declarations e)). set G)"
+    and undeclared_checked_mentioning: "z\<in>(\<Union>F\<in>set (state_all_families (edited_state R e)). set F) \<Longrightarrow>
+      a\<in>set (edit_removed_declarations e) \<Longrightarrow> a\<in>set (row_mentions (snd z)) \<Longrightarrow>
+      z\<in>(\<Union>G\<in>set (assessment_families_checked (state_assessment R) e L (edit_removed_declarations e)). set G)"
+proof -
+  note found = assessment_families_checked_rows[OF request single reduced L_atoms ms_atoms]
+  show "z\<in>(\<Union>F\<in>set (state_all_families (edited_state R e)). set F)"
+    if "z\<in>(\<Union>G\<in>set (assessment_families_checked (state_assessment R) e L (edit_removed_declarations e)). set G)"
+  proof -
+    have "(\<exists>j. z\<in>set (edit_added e j)) \<or> z\<in>presented_rows (edited_state R e)"
+      using that found[of z] by blast
+    then show ?thesis
+    proof
+      assume "\<exists>j. z\<in>set (edit_added e j)"
+      then obtain j where "z\<in>set (edit_added e j)" by blast
+      then show ?thesis by (rule in_answer)
+    next
+      assume "z\<in>presented_rows (edited_state R e)"
+      then show ?thesis by (simp add: state_all_families_rows)
+    qed
+  qed
+  show "z\<in>(\<Union>G\<in>set (assessment_families_checked (state_assessment R) e L (edit_removed_declarations e)). set G)"
+    if "z\<in>(\<Union>F\<in>set (map (edit_added e) entity_kinds). set F)"
+  proof -
+    have "\<exists>j. z\<in>set (edit_added e j)" using that by auto
+    then show ?thesis using found[of z] by blast
+  qed
+  show "z\<in>(\<Union>G\<in>set (assessment_families_checked (state_assessment R) e L (edit_removed_declarations e)). set G)"
+    if zin: "z\<in>(\<Union>F\<in>set (state_all_families (edited_state R e)). set F)"
+      and am: "a\<in>set (edit_removed_declarations e)" "a\<in>set (row_mentions (snd z))"
+  proof -
+    have "z\<in>presented_rows (edited_state R e)" using zin by (simp add: state_all_families_rows)
+    then show ?thesis using am found[of z] by blast
+  qed
+qed
+
+lemma undeclared_checked_roots:
+  "z\<in>set (state_roots R) \<Longrightarrow> a\<in>set (edit_removed_declarations e) \<Longrightarrow> a\<in>set (row_mentions (snd z)) \<Longrightarrow>
+    z\<in>set (edited_undeclared_roots (state_roots R) (edit_removed_declarations e))"
+  unfolding edited_undeclared_roots_member by blast
+
 lemma incremental_undeclared:
   fixes L :: "state_key list"
   defines "X\<equiv>assessment_families_checked (state_assessment R) e L (edit_removed_declarations e)"
@@ -871,50 +946,12 @@ lemma incremental_undeclared:
 proof -
   let ?Fs'="state_all_families (edited_state R e)"
   let ?ms="edit_removed_declarations e"
-  have closed: "(verdict_undeclared,Pair_Term (declaration_term (state_all_families R))
-      (Pair_Term (state_families_term ident (state_all_families R)) (state_family_term identr (state_roots R))))
-      \<in>positive_meaning verdict_mentions_system"
-    using native_undeclared_exact[OF request state_all_families_range identity roots_identity]
-      closed_undeclared by simp
-  have rows: "(\<Union>F\<in>set (state_all_families (edited_state R e)). set F)=
-      (\<Union>F\<in>set (state_all_families R). set F)-edit_rows (edit_removed e) \<union>
-      (\<Union>F\<in>set (map (edit_added e) entity_kinds). set F)"
-    unfolding edit_rows_kinds using reduced by (simp add: state_all_families_rows edit_reduced_def)
-  have keys: "d\<in>set (edit_removed_declarations e)"
-    if "z\<in>edit_rows (edit_removed e)" "d\<in>set (row_declared (snd z))" for z d
-    using that by (rule edit_removed_declared)
-  have rows': "(\<Union>F\<in>set ?Fs'. set F)=(\<Union>F\<in>set (state_all_families R). set F)-edit_rows (edit_removed e) \<union>
-      (\<Union>F\<in>set (map (edit_added e) entity_kinds). set F)"
-    by (rule rows)
-  note found = assessment_families_checked_rows[OF request single reduced L_atoms ms_atoms]
-  have sound: "z\<in>(\<Union>F\<in>set ?Fs'. set F)" if "z\<in>(\<Union>G\<in>set X. set G)" for z
-  proof -
-    have "(\<exists>j. z\<in>set (edit_added e j)) \<or> z\<in>presented_rows (edited_state R e)"
-      using that found[of z] unfolding X_def by blast
-    then show ?thesis
-    proof
-      assume "\<exists>j. z\<in>set (edit_added e j)"
-      then obtain j where "z\<in>set (edit_added e j)" by blast
-      then show ?thesis by (rule in_answer)
-    next
-      assume "z\<in>presented_rows (edited_state R e)"
-      then show ?thesis by (simp add: state_all_families_rows)
-    qed
-  qed
-  have added: "z\<in>(\<Union>G\<in>set X. set G)" if "z\<in>(\<Union>F\<in>set (map (edit_added e) entity_kinds). set F)" for z
-  proof -
-    have "\<exists>j. z\<in>set (edit_added e j)" using that by auto
-    then show ?thesis using found[of z] unfolding X_def by blast
-  qed
-  have mentioning: "z\<in>(\<Union>G\<in>set X. set G)"
-    if zin: "z\<in>(\<Union>F\<in>set ?Fs'. set F)" and am: "a\<in>set ?ms" "a\<in>set (row_mentions (snd z))" for z a
-  proof -
-    have "z\<in>presented_rows (edited_state R e)" using zin by (simp add: state_all_families_rows)
-    then show ?thesis using am found[of z] unfolding X_def by blast
-  qed
+  note closed = undeclared_request_closed and rows' = undeclared_edited_rows and keys = edit_removed_declared
+  note sound = undeclared_checked_sound[OF L_atoms ms_atoms single, folded X_def]
+    and added = undeclared_checked_added[OF L_atoms ms_atoms single, folded X_def]
+    and mentioning = undeclared_checked_mentioning[OF L_atoms ms_atoms single, folded X_def]
+    and croots = undeclared_checked_roots[folded Rc_def]
   have sroots: "z\<in>set (state_roots R)" if "z\<in>set Rc" for z
-    using that unfolding Rc_def edited_undeclared_roots_member by blast
-  have croots: "z\<in>set Rc" if "z\<in>set (state_roots R)" "a\<in>set ?ms" "a\<in>set (row_mentions (snd z))" for z a
     using that unfolding Rc_def edited_undeclared_roots_member by blast
   have store: "store_lookup (path_store (filter (\<lambda>r. fst r\<in>set (edited_undeclared_keys X Rc))
         (declaration_rows ?Fs'))) q\<noteq>None \<longleftrightarrow> store_lookup (declaration_store ?Fs') q\<noteq>None"
@@ -937,15 +974,15 @@ qed
 lemma incremental_unreached:
   fixes L V Tg :: "state_key list"
   defines "X\<equiv>assessment_families_checked (state_assessment R) e L (edit_removed_declarations e)"
-    and "U\<equiv>incremental_reach_table (state_reach_seeds R) L V (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e))))
+    and "U\<equiv>incremental_reach_table (\<lambda>a. a\<in>set (state_reach_seeds R)) L V (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e))))
       (state_roots (edited_state R e)) (state_reach_predecessors (state_all_families (edited_state R e)))"
   assumes L_atoms: "set L\<subseteq>set (map fst (state_atoms R))"
     and ms_atoms: "set (edit_removed_declarations e)\<subseteq>set (map fst (state_atoms R))"
     and single: "declarations_single_valued (state_all_families R)"
     and admitted: "walk_admitted ident (subject_indexes_term ident L (state_all_families R)) e
       (subject_indexes_term ident Tg (state_all_families (edited_state R e)))
-      (state_reach_predecessors (state_all_families (edited_state R e))) (state_reach_seeds R)
-      (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e)))) L V Tg X"
+      (state_reach_predecessors (state_all_families (edited_state R e))) (\<lambda>a. a\<in>set (state_reach_seeds R))
+      (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e)))) L V X"
   shows "(verdict_unreached,Pair_Term (reach_table_term U) (state_families_term ident X))
       \<in>positive_meaning native_verdict_system \<longleftrightarrow>
     (verdict_unreached,Pair_Term (reach_table_term answer_table)
@@ -1022,8 +1059,8 @@ theorem incremental_entry:
     and ms_atoms: "set (edit_removed_declarations e)\<subseteq>set (map fst (state_atoms R))"
     and admitted: "walk_admitted ident (subject_indexes_term ident L (state_all_families R)) e
       (subject_indexes_term ident Tg (state_all_families (edited_state R e)))
-      (state_reach_predecessors (state_all_families (edited_state R e))) (state_reach_seeds R)
-      (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e)))) L V Tg
+      (state_reach_predecessors (state_all_families (edited_state R e))) (\<lambda>a. a\<in>set (state_reach_seeds R))
+      (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e)))) L V
       (assessment_families_checked (state_assessment R) e L (edit_removed_declarations e))"
     and single: "declarations_single_valued (state_all_families R)"
     and fresh: "edit_declarations_fresh (state_assessment R) e"
@@ -1045,7 +1082,7 @@ proof -
     and rm = incremental_removed and ad = incremental_added and ro = incremental_roots
   show ?thesis
     unfolding incremental_verdict_argument_def Let_def rts decl assessment_predecessors_edited[OF request]
-      assessment_edited_atom_exact native_verdict_argument_def native_verdict_entry
+      assessment_edited_atom_exact assessment_seed_exact native_verdict_argument_def native_verdict_entry
     using st ex fo un ur rm ad ro by (simp add: reach_roots_keys edited_atoms_keys edited_state_roots)
 qed
 
@@ -1056,8 +1093,8 @@ corollary incremental_accepted:
     and ms_atoms: "set (edit_removed_declarations e)\<subseteq>set (map fst (state_atoms R))"
     and admitted: "walk_admitted ident (subject_indexes_term ident L (state_all_families R)) e
       (subject_indexes_term ident Tg (state_all_families (edited_state R e)))
-      (state_reach_predecessors (state_all_families (edited_state R e))) (state_reach_seeds R)
-      (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e)))) L V Tg
+      (state_reach_predecessors (state_all_families (edited_state R e))) (\<lambda>a. a\<in>set (state_reach_seeds R))
+      (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e)))) L V
       (assessment_families_checked (state_assessment R) e L (edit_removed_declarations e))"
     and single: "declarations_single_valued (state_all_families R)"
     and fresh: "edit_declarations_fresh (state_assessment R) e"
@@ -1182,8 +1219,8 @@ proof -
 qed
 
 definition edit_presentable :: "nat \<Rightarrow> state_edit \<Rightarrow> isabelle_entity list \<Rightarrow> bool" where
-  "edit_presentable m e added \<longleftrightarrow> distinct (map snd (edit_atoms e)) \<and>
-    list_all (\<lambda>i. i<m+length (edit_atoms e)) (concat (map isabelle_entity_positions added))"
+  "edit_presentable m e added \<longleftrightarrow> (let n=m+length (edit_atoms e) in distinct (map snd (edit_atoms e)) \<and>
+    list_all (\<lambda>i. i<n) (concat (map isabelle_entity_positions added)))"
 
 lemma edit_presentable_applied:
   assumes presentable: "state_presentable S" and edit: "state_edit_of S ns removed added=Some e"
@@ -1195,10 +1232,10 @@ proof -
     using arg_cong[OF atoms, of length] appended_new_names(2)[of "fst (snd S)" ns] by simp
   show ?thesis
   proof (rule edit_applied_presentable[OF presentable])
-    show "distinct (filter (\<lambda>n. n\<notin>set (fst (snd S))) ns)" using atoms guard by (simp add: edit_presentable_def)
+    show "distinct (filter (\<lambda>n. n\<notin>set (fst (snd S))) ns)" using atoms guard by (simp add: edit_presentable_def Let_def)
     show "i<length (isabelle_appended_names (fst (snd S)) ns)"
       if "a\<in>set added" "i\<in>set (isabelle_entity_positions a)" for a i
-      using len guard that by (auto simp: edit_presentable_def list_all_iff)
+      using len guard that by (auto simp: edit_presentable_def Let_def list_all_iff)
   qed
 qed
 
@@ -1214,58 +1251,43 @@ text \<open>
   incremental form is never a verdict. Each guard reads the edit and the assessment's indexes only.
 \<close>
 
-definition whole_answer_judgment where
-  "whole_answer_judgment ident identr kr kd S R k ks ns removed added=
-    (case state_edit_of S ns removed added of
+definition whole_edit_judgment where
+  "whole_edit_judgment ident identr kr kd S R k ks ns removed added E=
+    (case E of
       Some e \<Rightarrow> (verdict_entry,native_verdict_argument ident identr R (edited_state R e) k ks kr kd)
         \<in>positive_meaning native_verdict_system
     | None \<Rightarrow> (case state_presenter (edit_applied S ns removed added) of None \<Rightarrow> False
       | Some R' \<Rightarrow> (verdict_entry,native_verdict_argument ident identr R R' k ks kr kd)
         \<in>positive_meaning native_verdict_system))"
 
-definition incremental_answer_judgment where
-  "incremental_answer_judgment ident identr walk kr kd m S R A k ks ns removed added=
-    (case state_edit_of S ns removed added of
-      None \<Rightarrow> whole_answer_judgment ident identr kr kd S R k ks ns removed added
+definition whole_answer_judgment where
+  "whole_answer_judgment ident identr kr kd S R k ks ns removed added=
+    whole_edit_judgment ident identr kr kd S R k ks ns removed added (state_edit_of S ns removed added)"
+
+definition incremental_edit_judgment where
+  "incremental_edit_judgment ident identr walk kr kd m S R A k ks ns removed added E=
+    (case E of
+      None \<Rightarrow> whole_edit_judgment ident identr kr kd S R k ks ns removed added None
     | Some e \<Rightarrow> (let W=walk A e; L=fst W; V=fst (snd W); Tg=snd (snd W); ms=edit_removed_declarations e in
         if edit_presentable m e added \<and> edit_declarations_fresh A e \<and> assessment_atom A k \<and>
           list_all (assessment_atom A) L \<and> list_all (assessment_atom A) ms \<and> list_all (assessment_atom A) Tg \<and>
           walk_admitted ident (assessment_closure_term ident A L) e (assessment_indexes_term ident A e Tg)
-            (assessment_predecessors A e) (map fst (assessment_reach A)) (assessment_edited_atom A e) L V Tg
+            (assessment_predecessors A e) (assessment_seed A) (assessment_edited_atom A e) L V
             (assessment_families_checked A e L ms)
         then (verdict_entry,incremental_verdict_argument ident identr A e L V k ks kr kd)
           \<in>positive_meaning native_verdict_system
-        else whole_answer_judgment ident identr kr kd S R k ks ns removed added))"
+        else whole_edit_judgment ident identr kr kd S R k ks ns removed added (Some e)))"
 
-text \<open>
-  A state declares each constant once exactly when every declaration row finds its own value in the
-  declaration store: one lookup per row, so the test is linear in the declarations.
-\<close>
-
-lemma declarations_single_valued_store [code]:
-  "declarations_single_valued Fs \<longleftrightarrow>
-    (let D=declaration_store Fs in list_all (\<lambda>r. store_lookup D (fst r)=Some (snd r)) (declaration_rows Fs))"
-  unfolding Let_def
-proof
-  assume sv: "declarations_single_valued Fs"
-  show "list_all (\<lambda>r. store_lookup (declaration_store Fs) (fst r)=Some (snd r)) (declaration_rows Fs)"
-    by (simp add: list_all_iff declaration_store_def path_store_lookup[OF sv[unfolded declarations_single_valued_def]])
-next
-  assume all: "list_all (\<lambda>r. store_lookup (declaration_store Fs) (fst r)=Some (snd r)) (declaration_rows Fs)"
-  show "declarations_single_valued Fs"
-    unfolding declarations_single_valued_def single_valued_def
-  proof (intro allI impI)
-    fix d a b assume "(d,a)\<in>set (declaration_rows Fs)" "(d,b)\<in>set (declaration_rows Fs)"
-    then have "store_lookup (declaration_store Fs) d=Some a" "store_lookup (declaration_store Fs) d=Some b"
-      using all by (auto simp: list_all_iff)
-    then show "a=b" by simp
-  qed
-qed
+definition incremental_answer_judgment where
+  "incremental_answer_judgment ident identr walk kr kd m S R A k ks ns removed added=
+    incremental_edit_judgment ident identr walk kr kd m S R A k ks ns removed added
+      (state_edit_of S ns removed added)"
 
 text \<open>
   The stage is a function of the request state: its premises, the request state closed and declaring each
   constant once, are decided once, by the native evaluation of the three whole-state fields and by the
-  declaration store's own test (\<open>declarations_single_valued_store\<close>), and the assessment is built once;
+  declaration store's own test (\<open>declarations_single_valued_store\<close> of \<open>Development_Verdict_Mentions\<close>),
+  and the assessment is built once;
   each answer is then judged by the incremental judgment. The refusal is the whole judgment of every
   answer, computed by its own constant.
 \<close>
@@ -1301,6 +1323,18 @@ definition stage_answers where
   "stage_answers ident identr walk kr kd S R A=(let m=length (fst (snd S)) in (\<lambda>(k,ks,ns,removed,added).
     incremental_answer_judgment ident identr walk kr kd m S R A k ks ns removed added))"
 
+text \<open>
+  The edit's constructor is applied to the request state once for every answer the stage judges on it, as
+  the native answer's edit is (@{thm [source] development_native_answer_edit_shared}): its indexes of the
+  request state are built once, and each answer reads only its own edit.
+\<close>
+
+lemma stage_answers_shared [code]:
+  "stage_answers ident identr walk kr kd S R A=(let m=length (fst (snd S)); edit=state_edit_of S in
+    (\<lambda>(k,ks,ns,removed,added).
+      incremental_edit_judgment ident identr walk kr kd m S R A k ks ns removed added (edit ns removed added)))"
+  by (simp add: stage_answers_def incremental_answer_judgment_def Let_def)
+
 definition stage_incremental where
   "stage_incremental ident identr walk kr kd S=(case state_presenter S of None \<Rightarrow> (\<lambda>_. False)
     | Some R \<Rightarrow> stage_answers ident identr walk kr kd S R (state_assessment R))"
@@ -1320,7 +1354,8 @@ theorem answer_exact:
       k ks ns removed added=whole_answer_judgment ident identr kr kd S R k ks ns removed added"
 proof (cases "state_edit_of S ns removed added")
   case None
-  then show ?thesis by (simp add: incremental_answer_judgment_def)
+  then show ?thesis
+    by (simp add: incremental_answer_judgment_def incremental_edit_judgment_def whole_answer_judgment_def)
 next
   case (Some e)
   obtain L V Tg where W: "walk (state_assessment R) e=(L,V,Tg)"
@@ -1329,7 +1364,7 @@ next
   let ?G="edit_presentable (length (fst (snd S))) e added \<and> edit_declarations_fresh ?A e \<and> assessment_atom ?A k \<and>
     list_all (assessment_atom ?A) L \<and> list_all (assessment_atom ?A) ?ms \<and> list_all (assessment_atom ?A) Tg \<and>
     walk_admitted ident (assessment_closure_term ident ?A L) e (assessment_indexes_term ident ?A e Tg)
-      (assessment_predecessors ?A e) (map fst (assessment_reach ?A)) (assessment_edited_atom ?A e) L V Tg
+      (assessment_predecessors ?A e) (assessment_seed ?A) (assessment_edited_atom ?A e) L V
       (assessment_families_checked ?A e L ?ms)"
   show ?thesis
   proof (cases ?G)
@@ -1338,7 +1373,7 @@ next
       and katomA: "assessment_atom ?A k" and LA: "list_all (assessment_atom ?A) L"
       and msA: "list_all (assessment_atom ?A) ?ms" and TgA: "list_all (assessment_atom ?A) Tg"
       and admittedA: "walk_admitted ident (assessment_closure_term ident ?A L) e (assessment_indexes_term ident ?A e Tg)
-        (assessment_predecessors ?A e) (map fst (assessment_reach ?A)) (assessment_edited_atom ?A e) L V Tg
+        (assessment_predecessors ?A e) (assessment_seed ?A) (assessment_edited_atom ?A e) L V
         (assessment_families_checked ?A e L ?ms)"
       by blast+
     have present: "state_presents state_constant_key S R" by (rule state_presenter_presents[OF presented])
@@ -1354,10 +1389,10 @@ next
       using TgA by (auto simp: list_all_iff assessment_atom_exact)
     have admitted: "walk_admitted ident (subject_indexes_term ident L (state_all_families R)) e
         (subject_indexes_term ident Tg (state_all_families (edited_state R e)))
-        (state_reach_predecessors (state_all_families (edited_state R e))) (state_reach_seeds R)
-        (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e)))) L V Tg (assessment_families_checked ?A e L ?ms)"
+        (state_reach_predecessors (state_all_families (edited_state R e))) (\<lambda>a. a\<in>set (state_reach_seeds R))
+        (\<lambda>a. a\<in>set (map fst (state_atoms (edited_state R e)))) L V (assessment_families_checked ?A e L ?ms)"
       using admittedA unfolding assessment_predecessors_edited[OF present] assessment_indexes_term_edited[OF Tg_atoms]
-        assessment_closure_term_request[OF L_atoms] assessment_edited_atom_exact
+        assessment_closure_term_request[OF L_atoms] assessment_edited_atom_exact assessment_seed_exact
       by (simp add: reach_roots_keys)
     have m: "isabelle_malformed_entities (snd S)=[]" and u: "isabelle_undeclared_constants (fst S) (snd S)=[]"
       and n: "isabelle_unreached_entities (fst S) (snd S)=[]"
@@ -1377,12 +1412,14 @@ next
       by (rule incremental_verdict.incremental_entry[OF iv L_atoms ms_atoms admitted single fresh contract(8)])
     show ?thesis
       using entry True Some W
-      by (simp add: incremental_answer_judgment_def whole_answer_judgment_def Let_def reach_roots_keys edited_atoms_keys)
+      by (simp add: incremental_answer_judgment_def incremental_edit_judgment_def whole_answer_judgment_def
+        whole_edit_judgment_def Let_def reach_roots_keys edited_atoms_keys)
   next
     case False
     then show ?thesis
       using Some W
-      by (auto simp: incremental_answer_judgment_def Let_def reach_roots_keys edited_atoms_keys)
+      by (auto simp: incremental_answer_judgment_def incremental_edit_judgment_def whole_answer_judgment_def
+        Let_def reach_roots_keys edited_atoms_keys)
   qed
 qed
 
@@ -1397,7 +1434,7 @@ proof -
   show ?thesis
     using native_verdict_exact[where ident=ident and identr=identr, OF request contract(1) contract(2)
       replaceable_kinds demanded_kinds identity roots_identity]
-      edit by (simp add: whole_answer_judgment_def)
+      edit by (simp add: whole_answer_judgment_def whole_edit_judgment_def)
 qed
 
 theorem stage_exact:

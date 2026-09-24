@@ -145,8 +145,9 @@ text \<open>
   mention the restricted store has the whole store's presence (@{thm [source] edited_undeclared_keys_store}),
   so absence there is absence in the answer state. Conversely a key undeclared in the answer state and
   mentioned by one of its rows or roots is mentioned by a checked one: build 4's pointwise host argument
-  (@{thm [source] edited_mentions_checked}), whose premises are those @{thm [source] incremental_undeclared}
-  discharges.
+  (@{thm [source] edited_mentions_checked}), whose premises are the discharges both judgments consume, stated
+  once in the locale (\<open>undeclared_request_closed\<close>, \<open>undeclared_edited_rows\<close>,
+  \<open>undeclared_checked_families\<close>, \<open>undeclared_checked_roots\<close>).
 
   The closedness is read through the field's contracts (@{thm [source] native_undeclared_exact},
   @{thm [source] native_mentions_found}); the witness's through its own
@@ -207,55 +208,24 @@ proof -
       (\<exists>z\<in>set (state_roots R). d\<in>set (row_mentions (snd z))))"
     by (simp only: undeclared_witness_at[OF ffs frs] abs_whole families.exact rootrows.exact path_term_formed
       simp_thms edited_state_roots)
-  have closed: "(verdict_undeclared,Pair_Term (declaration_term ?Fs)
-      (Pair_Term (state_families_term ident ?Fs) (state_family_term identr (state_roots R))))
-      \<in>positive_meaning verdict_mentions_system"
-    using native_undeclared_exact[OF request state_all_families_range identity roots_identity]
-      closed_undeclared by simp
+  note closed = undeclared_request_closed
   have closed_mentions: "(\<forall>F\<in>set ?Fs. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)).
       store_lookup (declaration_store ?Fs) q\<noteq>None) \<and>
     (\<forall>z\<in>set (state_roots R). \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store ?Fs) q\<noteq>None)"
     by (rule iffD1[OF native_mentions_found[where val=path_term and T="declaration_store ?Fs" and Fs="?Fs"
       and Rs="state_roots R",OF identity roots_identity path_term_formed] closed[unfolded declaration_term_def]])
-  have rows: "(\<Union>F\<in>set ?Fs'. set F)=(\<Union>F\<in>set ?Fs. set F)-edit_rows (edit_removed e) \<union>
-      (\<Union>F\<in>set (map (edit_added e) entity_kinds). set F)"
-    unfolding edit_rows_kinds using reduced by (simp add: state_all_families_rows edit_reduced_def)
-  note found = assessment_families_checked_rows[OF request single reduced L_atoms ms_atoms]
-  have sound: "z\<in>(\<Union>F\<in>set ?Fs'. set F)" if "z\<in>(\<Union>G\<in>set X. set G)" for z
-  proof -
-    have "(\<exists>j. z\<in>set (edit_added e j)) \<or> z\<in>presented_rows (edited_state R e)"
-      using that found[of z] unfolding X_def by blast
-    then show ?thesis
-    proof
-      assume "\<exists>j. z\<in>set (edit_added e j)"
-      then obtain j where "z\<in>set (edit_added e j)" by blast
-      then show ?thesis by (rule in_answer)
-    next
-      assume "z\<in>presented_rows (edited_state R e)"
-      then show ?thesis by (simp add: state_all_families_rows)
-    qed
-  qed
-  have added: "z\<in>(\<Union>G\<in>set X. set G)" if "z\<in>(\<Union>F\<in>set (map (edit_added e) entity_kinds). set F)" for z
-  proof -
-    have "\<exists>j. z\<in>set (edit_added e j)" using that by auto
-    then show ?thesis using found[of z] unfolding X_def by blast
-  qed
-  have mentioning: "z\<in>(\<Union>G\<in>set X. set G)"
-    if zin: "z\<in>(\<Union>F\<in>set ?Fs'. set F)" and am: "a\<in>set ?ms" "a\<in>set (row_mentions (snd z))" for z a
-  proof -
-    have "z\<in>presented_rows (edited_state R e)" using zin by (simp add: state_all_families_rows)
-    then show ?thesis using am found[of z] unfolding X_def by blast
-  qed
-  have croots: "z\<in>set Rc" if "z\<in>set (state_roots R)" "a\<in>set ?ms" "a\<in>set (row_mentions (snd z))" for z a
-    using that unfolding Rc_def edited_undeclared_roots_member by blast
+  note rows = undeclared_edited_rows
+  note sound = undeclared_checked_sound[OF L_atoms ms_atoms single, folded X_def]
+    and added = undeclared_checked_added[OF L_atoms ms_atoms single, folded X_def]
+    and mentioning = undeclared_checked_mentioning[OF L_atoms ms_atoms single, folded X_def]
+    and croots = undeclared_checked_roots[folded Rc_def]
   have declared: "\<exists>F\<in>set ?Fs. \<exists>w\<in>set F. q\<in>set (row_declared (snd w))"
     if "store_lookup (declaration_store ?Fs) q\<noteq>None" for q
     using that declaration_store_declared[of ?Fs q] by blast
   have declared': "store_lookup (declaration_store ?Fs') q\<noteq>None \<longleftrightarrow>
       (\<exists>F\<in>set ?Fs'. \<exists>w\<in>set F. q\<in>set (row_declared (snd w)))" for q
     using declaration_store_declared[of ?Fs' q] by blast
-  have keys: "x\<in>set ?ms" if "z\<in>edit_rows (edit_removed e)" "x\<in>set (row_declared (snd z))" for z x
-    using that by (rule edit_removed_declared)
+  note keys = edit_removed_declared
   note checked = edited_mentions_checked[where decl="\<lambda>q. store_lookup (declaration_store ?Fs) q\<noteq>None"
     and decl'="\<lambda>q. store_lookup (declaration_store ?Fs') q\<noteq>None",
     OF closed_mentions[THEN conjunct1] closed_mentions[THEN conjunct2] declared declared' rows keys added

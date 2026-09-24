@@ -14025,7 +14025,9 @@ per answer; two lists of the request state are still read whole per answer (the 
   fibres at `O` are the subject index looked up at each key (`assessment_closure_term_request`).
 
 Limits: the reach keys `K` are still searched as a list per visited key (`walk_admitted`, `incremental_reach_table`),
-and the stage applies `state_edit_of` per answer without sharing its per-request-state indexes.
+and the stage applies `state_edit_of` per answer without sharing its per-request-state indexes. Corrected by task
+353: the assessment holds the reach keys as a path store (`assessment_seed`), and the stage applies `state_edit_of`
+to the request state once (`stage_answers_shared`).
 ## A problem outside the store is presented as its row, in its report's context
 
 Build 2 of "A row outside the store is presented in its context, and an answer designates its request by its

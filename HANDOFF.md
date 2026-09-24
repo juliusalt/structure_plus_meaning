@@ -153,7 +153,11 @@ whose landings re-record the same report or record files; tasks whose files are 
 
 **The engine's numbers, and what they leave.** A reach is affordable; one judgment of the verdict was estimated at
 about four reaches (about 17 s; #278 measures it); a stage of 224 answer states judged whole is of the order of
-3,900 s against 22.4 s for the HOL stage, which is why the incremental assessment is the remedy. The bound of five
+2,000 s against 22.4 s for the HOL stage (the incremental entry's measured figure, superseding the earlier estimate of
+3,900 s at four reaches), which is why the incremental assessment is the remedy. #278 measured one seeded judgment at
+4.92 s, 2,985 demanded calls, with the bare reach beside it at 0.14 s and 801 calls, and the machinery state's bare
+reach at 4.61 s: a judgment is four reaches by calls and about thirty-five by seconds, its calls carrying whole-state
+arguments, and the ratio by seconds is what design 171's stage is compared against. The bound of five
 seconds is met at the scale that decides anything, and the honest record is both numbers. A measurement states which
 quantity it counts (reached constants, answered calls of a demand).
 
@@ -287,6 +291,12 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   `RRA_Placed_Forests` (#221, #223, #225, #251).
 - **The answer tools** (the owner's ask of 2026-09-22 18:32, closed): P1 and P2 verified (#253, #254), P2 fixed (#255),
   adoption by its evidence in the harness and replay (#263) and in the adoption tool (#265, #273).
+- **The documents**: `REASONING_REUSE.md` revised whole (#280, `b8fc4a86`); the plan's owner citations and its two dated
+  sections of 2026-09-24, `DECISIONS.md` without the overnight checkpoint, the owner's retirement of `ADMISSION.md` and
+  `proposal.txt` committed (#281, `7c0c0422`); every theory its `THEORY_MAP.md` row, the 138 stale imports columns
+  re-read, the dated "Reuse (section)" labels retired (39 re-pointed, 78 dropped) and Q9's tracked `.pyc` removed
+  (#282, `f1f3ca02`). #291 takes the statements those two left: three plan sentences the standing contradicts,
+  `DECISIONS.md`'s preamble citing the workflow document, and fifteen rows that restate themselves.
 - **Checking and tools**: the replay's `unproduced` (#48), the check's named refusals (#50), the probe's default,
   summary and tree loads (#79, #175, #229, #271), the host-test record (#122), the heaps at the lasting place
   `.build/tasks/base-lasting/` (#144), receipts as boundaries (#145), the host tests' waits (#217), the seed recipe's
@@ -444,6 +454,12 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     are next re-established (#161 or #167).
 88. The next change to `Native_Collection_Programs`: three blank lines near `native_every_program`; `read_clause`'s
     `read` premise rebinding `c`.
+93. **The twelve storage report theories prove no word identity** (#282's review): `Artifact_Lookup_Presentation` to
+    `Generation_Record_Presentation` and `Data_Reading_Presentation` state no `*_report_value_exact` or
+    `*_report_word_exact`, unlike the four cause-family report presentations, so nothing proves that their retained
+    words identify their reports — stated once over `finite_scoped_report_value` or per theory, when that line is next
+    touched. With it, from the same review: the documents check could refuse a tracked path `.gitignore` matches
+    (`git ls-files -ci --exclude-standard`), so Q9's case cannot recur.
 92. **What is left of the exporter's obligation** (#283's review): `increasing_tac` runs one `simp_tac` per adjacent
     pair, 0.017 s at the machinery's 210 declarations against the conversion's 0.0008 s — linear and small; the numeral
     order equations could be instantiated directly as #283 did for the declarations, measured before acting. With it:
@@ -493,9 +509,10 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   written before the stop and before its fix round, and its reviewer, its accept recorded, could then neither give the
   verdict again nor park nor end its turn (q69, q70, q71) — before the owner above.
 - **Trees without a running task**: `.build/trees/143` holds task 143's uncommitted six-line note in
-  `validation/development-answers/README.md`, which #157 carries if it still holds. `.build/trees/176` is superseded:
-  #243 landed #176's accepted work from HEAD, its rows were since rewritten by #227, #256, #267 and #274, and #282
-  re-reads every stale row.
+  `validation/development-answers/README.md`, which #157 carries if it still holds. `.build/trees/176` is superseded —
+  #243 landed #176's accepted work from HEAD, its rows were since rewritten by #227, #256, #267, #274 and #282 — and it
+  still stands with uncommitted changes, which makes the harness's open-tree overlap checks inexact until it is removed
+  (#282's review; the harness's or the owner's).
 - **The owner's words of 2026-09-23**, carried by the harness: `REASONING_REUSE.md` "should be heavily modified as it
   should be mostly redundant due to faulty previous reasoning and generalization" (#280); `ADMISSION.md` and
   `proposal.txt` retired, their deletions and `README.md`'s link standing uncommitted in the one tree (#281 commits

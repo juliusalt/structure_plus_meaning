@@ -1640,11 +1640,14 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Demanded_Closures
     Factor_Demanded_Program_Calls
     Keyed_Demanded_Sites
+    Shared_Term_Tables
     Factor_Demanded_Package_Readings
     Factor_Shared_Package_Readings
     Factor_Demanded_Graph_Readings
     Listed_Set_Unions
     Factor_Constructed_Program_Applications
+    Presented_Term_Matching
+    Formed_Call_Closures
     Factor_Finite_Source_Construction_Sharing
     RRA_Listed_Environment_Positions
     RRA_Inserted_Attachments
@@ -1832,12 +1835,15 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Verdict_Mentions
     Development_Request_Scope
     Development_Verdict_Unreached
+    Development_Verdict_Witnesses
     Development_Verdict_Difference
     Development_Request_Citations
     Development_Native_Request
     Development_Native_Verdict
     Development_Row_Data
+    Development_Row_Contexts
     Development_State_Edit
+    Development_Exported_Edit
     Development_Edited_Local
     Development_Edited_Undeclared
     Development_Edited_Reach

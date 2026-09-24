@@ -2,23 +2,23 @@
  "boundary": "Complete original bounded generation construction is implemented by actual point readers, stored-head allocation, predecessor binding updates and cached literal grafts. Every original source, optional result, counter, complete environment, generation assessment, actual source projection, comparison and revision is retained. Alternative fresh embeddings retain their separate generation validity. Full physical cost, whole development adoption, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "digit-generation-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.08,
+  "seconds": 3.17,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/digit-generation-reports.json": "cbb1b6b7c9ec8b525a50979f3b5c613002419474d619d4363989e71411d12bbc"
+   "validation/reconstruction/digit-generation-reports.json": "0f541f1dc8219424de461870ed7668d04b63da59ea32f8b210f4a003a15c9c34"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "0881303aeb63685e91d71a8a4ed042f51f4c5e76486eca383f3071a6e83d6fcc",
+   "module_sha256": "38cfcbefeac03148020a85c9bb21b82ea21d27d124af4cd8428ff978eed62ba6",
    "subject_contracts": {
-    "digit_generation_investigation.yxml": "5cfde9e5e0729da426faf5f4b7a45a9696ba9575e6138d794a92a2641f6af88b"
+    "digit_generation_investigation.yxml": "57da33708ce288576ba5969e35e7867b16d0e2830917299c06bddc50d0115e6b"
    },
    "theory": "Digit_Generation_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a350a1a09ea98f1523a6cfa02af59fee8abf334e1b0d30c4aeee98c143aecc8e",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "0881303aeb63685e91d71a8a4ed042f51f4c5e76486eca383f3071a6e83d6fcc"
- },
  "recipe": "digit-generation",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "b401a02caa2157044fdc4dd1d7184b3d37ca06b1b1671e2c424a49133e2f18d1",
+   "sha256": "1765d8d1ecfd6c18341f8c3d940b4828150883f5fa694b88297bd6bb3b797652",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "669b57f09c0c7522408f06af06f9651ebdac5b4ebe24ab70a6e8c69f5eaec214",
+ "source_manifest_sha256": "a46721c58f608df1a8a0f4558d6b547b6e3fc99f76f977988800a4e8b20e91ec",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 3.983046823999757
+   "seconds": 3.070186074997764
   }
  ]
 }

@@ -2,23 +2,23 @@
  "boundary": "Complete original native sources and certificates determine every path, actual path coordinate and full graph correspondence. All sixteen candidate outputs, seven conditions, complete comparisons and three revision cycles are reproduced. Native placement, the complete development workflow, cost and genesis remain separate.",
  "complete_recipe_source_manifest": "native-certificates-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 6.03,
+  "seconds": 5.28,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/native-certificates-reports.json": "5e3cbfba9b213f4b8a2d16fda91e161009d5bde4176190d77e874da3bec202d2"
+   "validation/reconstruction/native-certificates-reports.json": "f91f9df7591d0a7b5929426b697a1ef5f297c1cb1d7dc1b6bdeca4e6b47ca9dd"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "da89e9fc663a3a13d8aee74600727f73a5da642496194e187abd16b1656a47b5",
+   "module_sha256": "f02b4735256cf715e2c9b39eff4c7c88bb3bb2e808018ce3b796ec09e0a4ee7f",
    "subject_contracts": {
-    "native_certificate_investigation.yxml": "9fbc2ef5b83e313913c350605ff1f381e69137ad6f14d7eaaf218f711810e328"
+    "native_certificate_investigation.yxml": "547e5b860ad727fb1f14b295a817f10f4192a8989307961149b37bbd7e8cd3e6"
    },
    "theory": "Native_Certificate_Investigation_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a350a1a09ea98f1523a6cfa02af59fee8abf334e1b0d30c4aeee98c143aecc8e",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "da89e9fc663a3a13d8aee74600727f73a5da642496194e187abd16b1656a47b5"
- },
  "recipe": "native-certificates",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "015ee2500788f5f4b9ee6213f25ec8915e75228b75df5b6f192822961dd44f05",
+   "sha256": "28f712d16254524da241dc6e0fd0f04ba43089d40de287a473a8a90d049066ca",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "117deaa125f158ec58cbf80896549d8798b75c2cd8b4e3a5aa3b75b988c4a430",
+ "source_manifest_sha256": "88e2249b34e07f795d017c05d3c6a91026ed9593ef8f4ea7efe51b1f65242d22",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.9374611460007145
+   "seconds": 5.177847228012979
   }
  ]
 }

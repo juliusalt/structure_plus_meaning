@@ -2,21 +2,21 @@
  "boundary": "A run without --proof rebuilds the complete contracts from HOL. Actual program clauses supply complete requested applications; checked head scope and closed demand give the original positive meaning with no true seeds supplied. Computed method comparisons and revisions retain their actual subjects, including the corrected material operands. The selected operation reads and evaluates actual native packages under the existing positive-query contract. All complete reports are compared. Unrestricted program decision, native proof construction, complete development-cycle enforcement, its cost account and genesis remain open.",
  "complete_recipe_source_manifest": "native-evaluation-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.88,
+  "seconds": 3.47,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/native-evaluation-reports.json": "7865363e0950620d454ad548defce8347f8ea9ff0161182fd004360f2244e84e"
+   "validation/reconstruction/native-evaluation-reports.json": "3597908ee306b1c7919e529f79f4219e803647c14f18846139ba057ecfff3169"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "4ec405ba6d4174573b0023ef1289f2bab52b2e04db6195e0977022096d7a8f4f",
+   "module_sha256": "11171c5b559cf3349fb6958bf873383cea00573a4be9e4e8f8de2145cc8eac98",
    "subject_contracts": {
     "program_evaluation_investigation.yxml": "c839fd70368d230cd553de4eb85a47e44d8533a09cd17032330d6687a179e4b5"
    },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a350a1a09ea98f1523a6cfa02af59fee8abf334e1b0d30c4aeee98c143aecc8e",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "4ec405ba6d4174573b0023ef1289f2bab52b2e04db6195e0977022096d7a8f4f"
- },
  "recipe": "native-evaluation",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "47dc8b6cb41f4dc930c7f40e73e070d077f9ce4ac986cf86b5efcd248e2a5c9e",
+   "sha256": "71957fc8d1b1f681d27dc84e4a85ece7f3394c64f24fa97f67ba1e0d86758477",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "b12605d6cab00e96cf4286309eaca30bff09dd3d3f6b0bbf3e08259098de0d5d",
+ "source_manifest_sha256": "3c2eea351cc385e588c91dbc498b3fdd0f4e46e0fd9106294d2161c0e519a28b",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 3.8248621960010496
+   "seconds": 3.3751797740114853
   }
  ]
 }

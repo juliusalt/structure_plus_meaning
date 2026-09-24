@@ -275,7 +275,7 @@ proof (rule positive_valuation_induct[OF holds, where property=reach_invariant])
           (reach_search,Pair_Term (reach_table_term T) (Pair_Term k' (store_term reach_row_value l)))\<in>Y) \<or>
         (\<exists>k' v l r. k=Pair_Term (bit_term True) k' \<and> S'=Store_Node v l r \<and>
           (reach_search,Pair_Term (reach_table_term T) (Pair_Term k' (store_term reach_row_value r)))\<in>Y)"
-      by (rule reach_searches.unfold[OF clause' into shape])
+      by (rule reach_searches.law.read_clause[OF clause' into shape]) (rule reach_searches.unfold_rule)
     show "\<exists>bs v. k=path_term bs \<and> store_lookup S' bs=Some v \<and> reach_holds_at T (reach_row_value v)"
       using cases
     proof (elim disjE exE conjE)

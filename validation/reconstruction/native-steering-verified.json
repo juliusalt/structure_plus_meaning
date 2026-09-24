@@ -2,23 +2,23 @@
  "boundary": "The complete original development questions reconstruct every actual producer result and independent original-goal reference. Computed observations construct ordinary native criteria with a proved original-subject equation. The closed native cycle derives producer selection through generation, original-condition compilation, certified observations, independent criticism, comparison, revision and admission. The unique native choice executes subsequent original requests; every resulting claim is checked against the original request again. Empty original scope refuses, retaining the unexecuted requests. A single-question scope exercises actual choice ambiguity. The finite producer and subject scope, broader development coverage and genesis remain explicit.",
  "complete_recipe_source_manifest": "native-steering-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 3,
   "reports_equal": true,
-  "seconds": 14.94,
+  "seconds": 24.1,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/native-steering-reports.json": "b73dd72fc0d1d43bb6cc6a6f474180fdd253473bc0ba84e57bedb8320395bef0"
+   "validation/reconstruction/native-steering-reports.json": "0fb8727e89c3ce1b5704048b2d51ed95cbbcb2dc460920ac2468015824c0c073"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "6eb274644be3323eda546e39fbfa7fff374706999bc323fde1b67d4a1b828337",
+   "module_sha256": "65f1cc1e1875e6dd47ca89a836cf0272f71d2b32b01f57f46fda7cee0a311332",
    "subject_contracts": {
-    "development_subject_investigation.yxml": "ac6863b7ea289cc96b7d26ec641339e75c223af471b8a2dd447bec43c83886c5"
+    "development_subject_investigation.yxml": "8b673345dd2b3c47abc72fc0773c87e3563a80feebb362eb32c9f598bdf61e1d"
    },
    "theory": "Native_Development_Steering"
   },
@@ -59,30 +59,30 @@
   }
  },
  "execution_reuse": {
-  "base_receipt_sha256": "a350a1a09ea98f1523a6cfa02af59fee8abf334e1b0d30c4aeee98c143aecc8e",
+  "base_receipt_sha256": "f72a3eb9363c98b32ab23c09e6e27ca784fd5bd90558e89dff625a2901538302",
   "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "6eb274644be3323eda546e39fbfa7fff374706999bc323fde1b67d4a1b828337"
+  "export_module_sha256": "65f1cc1e1875e6dd47ca89a836cf0272f71d2b32b01f57f46fda7cee0a311332"
  },
  "recipe": "native-steering",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "7192295060ac6dda294ed2753ff0b2fd1d7e6e613a4edf062b6aa6be3ec98800",
+   "sha256": "86b11b126d6c583e6ed36d0ef0ac2d239a937552167d9fe0ac8c9086d5680df0",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
   },
   "presentation-empty": {
    "records": 1,
-   "sha256": "cf7ade1ef290994894d96d41ddd7fcfffda76b6056bbf90e4dc68cfa14389b64",
+   "sha256": "05f8cc919cc978cd736942d192a6f71703931c215bd1f3f398846c916d136ff1",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
   },
   "presentation-first": {
    "records": 1,
-   "sha256": "8c1924b2e875236734c8fa6138aacbeab7ecb4927ebbdc6ef3bed896612db027",
+   "sha256": "181eca6648262ff7dd43963d00ec61c258c6a33648b7bd7a15f649f114b90c3a",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -90,24 +90,24 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "2fb93f68b7bf2f39a5bf6d90c2ff0fac408bdf2a0fd3cda41829355450576787",
+ "source_manifest_sha256": "e72352dbce6d4a58b4fc5a7d7b83de353b185a29482149d4140a76fa7065117c",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 14.317652548001206
+   "seconds": 22.570347125001717
   },
   {
    "exit_code": 0,
    "name": "presentation-empty",
-   "seconds": 14.872471251001116
+   "seconds": 23.96753495899611
   },
   {
    "exit_code": 0,
    "name": "presentation-first",
-   "seconds": 11.648732546000247
+   "seconds": 22.64842266900814
   }
  ]
 }

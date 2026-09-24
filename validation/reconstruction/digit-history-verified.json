@@ -2,23 +2,23 @@
  "boundary": "The closed history stores its header, actual digit material, ordered ledger and exact cache. Actual membership, generation, cause and policy operations preserve every original bounded transition. All original and subsequent source inputs, whole results, counter and cache relations, actual coverage, comparisons and revisions are reconstructed. Full physical cost, whole workflow adequacy, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "digit-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 11.83,
+  "seconds": 11.05,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/digit-history-reports.json": "7705f1cee18a7edcef0b16561a93d9112c372072e42fd754292df9123b252862"
+   "validation/reconstruction/digit-history-reports.json": "fd52601f8f3c382c2cc898a6978b3352570813a68188a5a4ac13de43a6cb5b35"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "d2540e5c6d7b2508701c7a4b3acc7ef3f6c6921bbb39d205be851f8b5c250403",
+   "module_sha256": "d9b4786a895e63085dfadfdaf483bc0076c2995f54bb4890121a8cce45c91580",
    "subject_contracts": {
-    "digit_history_investigation.yxml": "8771c5b32fdca5cd1772619e9d291d561f8136494c33c94673c6fc6ce23b1cc2"
+    "digit_history_investigation.yxml": "c1db6e0e769ec2751374a37d57eceb1df6dc78a1aa72350f8cd06b2c1d49b57c"
    },
    "theory": "Digit_History_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a350a1a09ea98f1523a6cfa02af59fee8abf334e1b0d30c4aeee98c143aecc8e",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "d2540e5c6d7b2508701c7a4b3acc7ef3f6c6921bbb39d205be851f8b5c250403"
- },
  "recipe": "digit-history",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "081bcce48939585121f524347f339022baf09f6a5d6103f53fb815eef82007b1",
+   "sha256": "fdc3f4a962de3c7a6932673909ad36fd0cb39b48805d959de789457a2425f848",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "730ec62f5e765f62b6242045b1c7065983d717a0b7910dd102c1ddaaf79eb392",
+ "source_manifest_sha256": "d66fb86063e3151b517302a93f53b58195413907c7030716b93f4f8794ec8d5d",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 11.714709351999772
+   "seconds": 10.948947600001702
   }
  ]
 }

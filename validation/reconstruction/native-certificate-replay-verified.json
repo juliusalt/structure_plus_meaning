@@ -2,23 +2,23 @@
  "boundary": "Complete original source and certificate families determine actual source-positioned graphs, newly installed graph and application artifacts, the least retained environment and closed native replay. Every candidate result, original-source correspondence, application and graph reading, individual and family condition, complete comparison and revision is reproduced. Shared readers have complete-input equality contracts. The full workflow, cost, mathematical-proof admission and genesis remain open.",
  "complete_recipe_source_manifest": "native-certificate-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.44,
+  "seconds": 4.78,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/native-certificate-replay-reports.json": "6370dfc55301ebda6577c730a117c97931fcb0ada78e63ffaae5837858937b58"
+   "validation/reconstruction/native-certificate-replay-reports.json": "6a36eab827b5750fffde05bae974b4c898ac13d4b15adee772b9721da0b5d6bc"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "92c9dc83a1be4a4acc6a992c041b1ac82ce3791dfd2d09e2fd407336c951ad6e",
+   "module_sha256": "177cd68a1f2a86d6035a743b7497a5cb64963cb99962a6a3f580caeda5e92748",
    "subject_contracts": {
-    "native_replay_investigation.yxml": "853f830b59a8134dc4f16fe311285532a2041ec45165c689afc3d342ecf6b719"
+    "native_replay_investigation.yxml": "f800e8eb8b29481cd0ef607a32aba37eca81786e1db9635367d602b3c306d838"
    },
    "theory": "Native_Certificate_Replay_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "a350a1a09ea98f1523a6cfa02af59fee8abf334e1b0d30c4aeee98c143aecc8e",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "92c9dc83a1be4a4acc6a992c041b1ac82ce3791dfd2d09e2fd407336c951ad6e"
- },
  "recipe": "native-certificate-replay",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "d1b669fe916e0470e73b4dd894aa78cdfbce7b4ca6db0515a8f9c16bf33ae436",
+   "sha256": "50c02752d28af8fa8c8edfd67d01b09da237f7d312d60671db81d937c3ddcbb0",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "9fe5dd8396ef3cb0f9bc9be48e242cda2e451aae85b755fbe76ed424fa15e3fd",
+ "source_manifest_sha256": "9877b8cb82fe457a4c55e046e108e738c28f10b43f256a93ac69dc0c42aefaa2",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.332200230001035
+   "seconds": 4.677416210004594
   }
  ]
 }

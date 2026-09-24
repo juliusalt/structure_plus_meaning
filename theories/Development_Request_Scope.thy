@@ -24,17 +24,18 @@ text \<open>
 subsection \<open>A key is cited in a list\<close>
 
 text \<open>
-  A key is cited in a family of keys when it is a member of the list the family is: membership's program,
-  behind the swap that puts the list, which is the context of every call below, first. This is stated once,
-  and every field of request construction that asks whether a key is cited in a body family reads it.
+  A key is cited in a family of keys when it is a member of the list the family is: the collection notion
+  @{locale list_cited_program} (theory \<open>Native_Collection_Programs\<close>), membership's program behind the swap
+  that puts the list, which is the context of every call below, first. Its reading at a family of keys is
+  stated once here, and every field of request construction that asks whether a key is cited in a body
+  family reads it.
 \<close>
 
-locale list_cited_program = swap: native_swap_program P w m + members: native_member_program P m
-  for P :: "'u native_system" and w m :: "'u definition_site"
+context list_cited_program
 begin
 
 theorem exact: "(w,Pair_Term (keys_term ks) (path_term q))\<in>positive_meaning P \<longleftrightarrow> q\<in>set ks"
-  by (simp add: swap.exact keys_term_def members.exact)
+  by (simp add: keys_term_def list_exact)
 
 end
 
@@ -103,38 +104,18 @@ locale mentions_cited_program = native_rule_family P r "[([0],row_mentions_rule 
   for P :: "'u native_system" and r e w m :: "'u definition_site"
 begin
 
+sublocale rearranged: native_rearranging_program P r
+    "row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)" e
+    "Finite_Pattern_Pair (native_var 0) (native_var 4)"
+  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
+  using native_rule_family_axioms[unfolded row_mentions_rule_def] by (auto simp: row_pattern_def)
+
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(r,Pair_Term (keys_term ks) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
     set (row_mentions (snd z))\<subseteq>set ks"
-proof
-  assume holds: "(r,Pair_Term (keys_term ks) (state_row_term ident z))\<in>positive_meaning P"
-  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,row_mentions_rule e)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
-      Pair_Term (keys_term ks) (state_row_term ident z)"
-    and support: "\<forall>s d q. (s,d,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (d,evaluate_pattern f q)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds]) (rule that; assumption)
-  have F: "F=row_mentions_rule e" using rule by simp
-  have premise: "(e,Pair_Term (f [0]) (f [4]))\<in>positive_meaning P"
-    using native_rule_support[OF support[unfolded F row_mentions_rule_def]] by simp
-  have fields: "f [0]=keys_term ks" "f [4]=keys_term (row_mentions (snd z))"
-    using shape by (simp_all add: F row_mentions_rule_def row_pattern_def state_row_term_def)
-  show "set (row_mentions (snd z))\<subseteq>set ks"
-    using premise by (auto simp: fields keys_term_def[of "row_mentions (snd z)"] every.exact cited.exact)
-next
-  assume all_cited: "set (row_mentions (snd z))\<subseteq>set ks"
-  have mentions: "(e,Pair_Term (keys_term ks) (keys_term (row_mentions (snd z))))\<in>positive_meaning P"
-    using all_cited by (auto simp: keys_term_def[of "row_mentions (snd z)"] every.exact cited.exact)
-  have "(r,evaluate_pattern (native_values [keys_term ks,path_term (fst z),keys_term (row_declared (snd z)),
-      keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z))])
-      (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3)
-        (native_var 4) (native_var 5))))\<in>positive_meaning P"
-    by (rule native_step[where c="[0]" and ps="[([0],(e,Finite_Pattern_Pair (native_var 0) (native_var 4)))]"])
-      (use mentions identity in \<open>simp_all add: row_mentions_rule_def row_pattern_def\<close>)
-  then show "(r,Pair_Term (keys_term ks) (state_row_term ident z))\<in>positive_meaning P"
-    by (simp add: row_pattern_def state_row_term_def)
-qed
+  by (auto simp: rearranged.row_at[OF refl _ identity] row_valuation_def
+      keys_term_def[of "row_mentions (snd z)"] every.exact cited.exact)
 
 end
 
@@ -244,37 +225,16 @@ locale key_cited_program = native_rule_family P r "[([0],key_cited_rule w)]" + c
   for P :: "'u native_system" and r w m :: "'u definition_site"
 begin
 
+sublocale rearranged: native_rearranging_program P r
+    "row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)" w
+    "Finite_Pattern_Pair (native_var 0) (native_var 1)"
+  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
+  using native_rule_family_axioms[unfolded key_cited_rule_def] by (auto simp: row_pattern_def)
+
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(r,Pair_Term (keys_term es) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow> fst z\<in>set es"
-proof
-  assume holds: "(r,Pair_Term (keys_term es) (state_row_term ident z))\<in>positive_meaning P"
-  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,key_cited_rule w)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=
-      Pair_Term (keys_term es) (state_row_term ident z)"
-    and support: "\<forall>s d q. (s,d,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (d,evaluate_pattern f q)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds]) (rule that; assumption)
-  have F: "F=key_cited_rule w" using rule by simp
-  have premise: "(w,Pair_Term (f [0]) (f [1]))\<in>positive_meaning P"
-    using native_rule_support[OF support[unfolded F key_cited_rule_def]] by simp
-  have fields: "f [0]=keys_term es" "f [1]=path_term (fst z)"
-    using shape by (simp_all add: F key_cited_rule_def row_pattern_def state_row_term_def)
-  show "fst z\<in>set es"
-    using premise fields by (simp add: cited.exact)
-next
-  assume member: "fst z\<in>set es"
-  have found: "(w,Pair_Term (keys_term es) (path_term (fst z)))\<in>positive_meaning P"
-    using member by (simp add: cited.exact)
-  have "(r,evaluate_pattern (native_values [keys_term es,path_term (fst z),keys_term (row_declared (snd z)),
-      keys_term (row_subjects (snd z)),keys_term (row_mentions (snd z)),ident (row_identity (snd z))])
-      (decode_finite_pattern (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3)
-        (native_var 4) (native_var 5))))\<in>positive_meaning P"
-    by (rule native_step[where c="[0]" and ps="[([0],(w,Finite_Pattern_Pair (native_var 0) (native_var 1)))]"])
-      (use found identity in \<open>simp_all add: key_cited_rule_def row_pattern_def\<close>)
-  then show "(r,Pair_Term (keys_term es) (state_row_term ident z))\<in>positive_meaning P"
-    by (simp add: row_pattern_def state_row_term_def)
-qed
+  by (simp add: rearranged.row_at[OF refl _ identity] row_valuation_def cited.exact)
 
 end
 

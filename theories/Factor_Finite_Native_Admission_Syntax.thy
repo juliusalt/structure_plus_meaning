@@ -6,24 +6,24 @@ section \<open>The original admission clauses use native private coordinates\<cl
 
 definition finite_native_admission_schema :: "(nat,nat,'d) finite_factor_schema \<Rightarrow>
     (local_address,local_address,'d) finite_factor_schema" where
-  "finite_native_admission_schema S=finite_rename_schema unary_address unary_address id S"
+  "finite_native_admission_schema S=finite_rename_schema index_address index_address id S"
 
 lemma finite_native_admission_schema_correct:
   "decode_finite_schema (finite_native_admission_schema S)=
-    rename_schema unary_address unary_address id (decode_finite_schema S)"
+    rename_schema index_address index_address id (decode_finite_schema S)"
   by (simp only: finite_native_admission_schema_def finite_rename_schema_correct)
 
 lemma finite_native_admission_rule:
   "schema_rule_instance (decode_finite_schema (finite_native_admission_schema S)) M t \<longleftrightarrow>
     schema_rule_instance (decode_finite_schema S) M t"
   by (simp only: finite_native_admission_schema_correct;
-    rule schema_rule_instance_alpha; rule inj_on_subset[OF unary_address_inj]) simp_all
+    rule schema_rule_instance_alpha; rule inj_on_subset[OF index_address_inj]) simp_all
 
 lemma finite_native_admission_schema_formed:
   assumes "schema_formed (decode_finite_schema S)"
   shows "schema_formed (decode_finite_schema (finite_native_admission_schema S))"
   by (simp only: finite_native_admission_schema_correct;
-    rule renamed_schema_formed[OF assms]; rule inj_on_subset[OF unary_address_inj]) simp
+    rule renamed_schema_formed[OF assms]; rule inj_on_subset[OF index_address_inj]) simp
 
 lemma finite_native_admission_schema_dependencies:
   "schema_dependencies (decode_finite_schema (finite_native_admission_schema S))=
@@ -35,8 +35,8 @@ definition finite_native_pair_clauses where
 
 definition finite_native_list_clauses where
   "finite_native_list_clauses a d={|
-    (unary_address 0,finite_native_admission_schema finite_data_list_nil_schema),
-    (unary_address 1,finite_native_admission_schema (finite_admitted_pair_schema a d))|}"
+    (index_address 0,finite_native_admission_schema finite_data_list_nil_schema),
+    (index_address 1,finite_native_admission_schema (finite_admitted_pair_schema a d))|}"
 
 lemma finite_native_pair_clauses_rules:
   "(\<exists>c S. (c,S)\<in>map_relation_values decode_finite_schema (fset (finite_native_pair_clauses a b)) \<and>
@@ -49,8 +49,8 @@ lemma finite_native_list_clauses_rules:
     (\<exists>c S. (c,S)\<in>list_profile_clauses a d \<and> schema_rule_instance S M t)"
 proof -
   have family: "map_relation_values decode_finite_schema (fset (finite_native_list_clauses a d))=
-      {(unary_address 0,decode_finite_schema (finite_native_admission_schema finite_data_list_nil_schema)),
-       (unary_address 1,decode_finite_schema (finite_native_admission_schema (finite_admitted_pair_schema a d)))}"
+      {(index_address 0,decode_finite_schema (finite_native_admission_schema finite_data_list_nil_schema)),
+       (index_address 1,decode_finite_schema (finite_native_admission_schema (finite_admitted_pair_schema a d)))}"
     by (simp add: finite_native_list_clauses_def map_relation_values_def)
   show ?thesis by (simp only: family list_profile_clauses_def schema_two_clause_rules
     finite_native_admission_rule finite_data_list_nil_schema_correct finite_admitted_pair_schema_correct

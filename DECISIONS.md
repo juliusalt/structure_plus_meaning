@@ -12058,6 +12058,25 @@ through a compiler. These lists are this design's prediction from the recipes' s
 evidence, and a word outside the prediction is a finding for the review — a report holding compiled positions that
 was missed, or a computation that reads the layout.
 
+*Addition (task 155, 2026-09-24): the words that changed, against the prediction.* The landing check of build 2
+executed 38 recipes and every one re-recorded differed in its presented words alone (same record counts and tags,
+every step exiting 0, recipe inputs unchanged): certificate_coverage, certificate_development,
+certificate_input_development, certificate_scope_repair, certified_causes, concurrent_history,
+constructed_history, decision_replay, digit_generation, digit_history, generation_records, history_index,
+indexed_generation, known_history, literal_replay, native_admission, native_certificate_replay,
+native_certificates, native_derivations, native_development, native_development_machinery (presentation-loop),
+native_development_seed (presentation-loop, presentation-publication), native_evaluation, native_extensions,
+native_graphs, native_histories, native_nodes, native_requirements, native_sources, native_steering (all three
+stages), native_workflow (all four stages), quoted_history, required_causes, required_history,
+requirement_decisions, source_development, and digit_replay (the recipe the prediction names
+streamed_digit_replay), each re-recorded once. One is outside the prediction: **data_reading** changed, for the
+stated reason — its source cause is built by the native literal replay and the joined generation constructor, so
+its fixture holds a compiled program and a generation record at the new positions; no computation reads the
+layout. Not executed, their exported code and every other boundary equal to an accepted execution's, so their
+words are the accepted ones: requirement_plans and requirement_sources (predicted to change: their reports hold no
+compiled position after all), and every recipe predicted unchanged, native_child included. overnight is not a
+recipe of the landing check and was not re-recorded here.
+
 ### The builds, in order
 
 1. **The contracts first (words equal).** The index code and its facts in RRA_Exact with the import change; the flat

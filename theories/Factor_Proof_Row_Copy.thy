@@ -56,7 +56,7 @@ proof -
     rel_dom {([2,4],d),([3,4],e)} \<subseteq> rra_carrier (object_structure ?R)"
     by (simp only: discharge_row_reference_domain discharge_row_carrier rel_dom_empty) blast
   have actual: "syntax_references E u (map_slot_keys f {}) (map_slot_keys f {([2,4],d),([3,4],e)})"
-    using refs by (simp add: map_slot_keys_def)
+    using refs by (simp add: map_slot_keys_empty)
   have clone_refs: "syntax_references ?F ?z {} {([2,4],d),([3,4],e)}"
     by (rule cloned_syntax_references[OF ef fresh bounds actual])
   have original: "native_site_link_at ?F ?z [] d e discharge_row_interior discharge_row_slots"

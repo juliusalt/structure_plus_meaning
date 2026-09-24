@@ -60,7 +60,7 @@ proof -
 qed
 
 definition family_ports :: "nat \<Rightarrow> local_address list" where
-  "family_ports n = map (\<lambda>i. [1,2] @ unary_address i) [0..<n]"
+  "family_ports n = map (\<lambda>i. [1,2] @ index_address i) [0..<n]"
 
 lemma family_ports_length [simp]: "length (family_ports n) = n"
   by (simp add: family_ports_def)
@@ -78,7 +78,11 @@ lemma family_ports_empty: "family_ports 0 = []"
 
 lemma family_ports_formed:
   "\<forall>a\<in>set (family_ports n). octets_formed a"
-  using unary_address_formed by (auto simp: family_ports_def octets_formed_def)
+  using index_address_formed by (auto simp: family_ports_def octets_formed_def)
+
+text \<open>The positions of the first ports, the checks the layout's tests read.\<close>
+lemma family_ports_first: "family_ports 3 = [[1,2,1],[1,2,0,0,1],[1,2,0,1,0,0,1]]"
+  using index_address_first[unfolded numeral_2_eq_2] by (simp add: family_ports_def upt_rec)
 
 section \<open>Records of arbitrary finite length\<close>
 

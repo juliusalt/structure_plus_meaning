@@ -10,7 +10,7 @@ definition finite_native_requirement_schema where
 
 lemma finite_native_requirement_schema_occurrences:
   "finite_schema_premises (finite_native_requirement_schema ds)=
-    fimage (\<lambda>(i,d). (unary_address i,d,Finite_Variable (unary_address 0)))
+    fimage (\<lambda>(i,d). (index_address i,d,Finite_Variable (index_address 0)))
       (fset_of_list (zip [0..<length ds] ds))"
   by (simp add: finite_native_requirement_schema_def finite_native_admission_schema_def
     finite_rename_schema_def finite_requirement_guard_schema_def fset_eq_iff fimage.rep_eq image_image split_def)

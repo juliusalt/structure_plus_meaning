@@ -12084,6 +12084,21 @@ The stages whose words did not change hold no compiled position: of native_devel
 verification and the native answers (only presentation-loop changed), and of native_development_seed the problems, the
 verification, the succession and the native answers (only presentation-loop and presentation-publication changed).
 
+*Addition (task 309, 2026-09-24; from #157's review, `.build/tasks/158/review.md`):* the six development-answer
+publication words changed too, for build 2 and for #161's kept positions together, and were re-recorded by #157; no
+one of the two changes is their cause alone.
+
+*Addition (task 309, 2026-09-24; task 156's review, follow-up 4; task 159's measurement):* the three template tables
+(`finite_pattern_forest_bindings`, `finite_premise_forest_literals`, `finite_premise_forest_callees`) are
+`finite_syntax_forest_table` of their mapped lists, so its prefix code equation is theirs. The executable placed forest
+stayed quadratic after build 2 because its children's placed sets were joined by the library's union, each insertion
+tested against the whole accumulated set: held on #159's samples (k copies of the 71-atom scope definition), the union
+was 0.87 of 0.96 ms at k = 8 and 64.1 of 67.3 at k = 64, the pushing 0.08 and 1.36. The code in effect for the placed
+forest, the placed table and their instances at `syntax_branch` now joins them by the listed union
+(`Listed_Set_Unions.finite_listed_union`): the forest at k = 64 is 1.39 ms (67.3 before), and the question's
+construction at 64 candidates 10.8 ms keyed (120.3) and 2.3 index (8.8). No statement and no word changes; the prefix
+forms of the review's follow-ups 4 and 6 are not built (the branch code is 0.4% of the forest).
+
 ### The builds, in order
 
 1. **The contracts first (words equal).** The index code and its facts in RRA_Exact with the import change; the flat

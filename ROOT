@@ -942,6 +942,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Requirement_Generations
     Factor_Requirement_Guards
     Factor_Requirement_Installation
+    Development_First_Problem_Guard
     Factor_Requirement_Plan_Realization
     Factor_Requirement_Plans
     Factor_Requirement_Result_Values
@@ -996,6 +997,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Program_Coordinates
     Factor_Mapped_Extension_Coordinates
     Factor_Finite_Mapped_Extensions
+    Factor_Finite_Closed_Installation
     Factor_Finite_Guard_Source_Extensions
     Factor_Finite_Native_Observations
     Factor_Finite_System_Unions
@@ -1730,6 +1732,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Encoded_Environment_Presentation
     Data_Reading_Presentation
     Isabelle_Constant_Closure
+    Development_Verification_Frame
     Map_Filter_Lists
     Isabelle_Terms
     Isabelle_Entities
@@ -1855,6 +1858,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Native_Request
     Development_Native_Verdict
     Development_Package_Program
+    Development_Native_Package
     Development_Row_Data
     Development_Loop_Presentations
     Development_Machinery_Reports

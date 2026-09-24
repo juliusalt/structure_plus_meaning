@@ -26,9 +26,12 @@ never judged against itself, and the connection no workspace content establishes
 answer state the judgment produced) is reported as `unverified`.
 
 Before an answer is framed, Isabelle reads its declared parts with the outer syntax of the frame
-(Development_Answer_Parts), in a session of its own that holds the parts only as ML strings. An answer
-whose parts hold anything but definitional commands, theorem statements and their proofs, document text,
-one proposition and one proof is refused with Isabelle's reason, and its theory is never processed.
+(Development_Answer_Parts), in a theory of the answer's own that imports exactly the frame's imports and
+Development_Answer_Parts and holds the parts only as ML strings. That theory is read alone, or beside other
+answers' theories in one session (`read_parts`, `--parts`), each theory writing its own outcome, so no
+answer's reading sees another's parts. An answer whose parts hold anything but definitional commands,
+theorem statements and their proofs, document text, one proposition and one proof is refused with
+Isabelle's reason, and its theory is never processed.
 """
 from __future__ import annotations
 
@@ -189,16 +192,74 @@ def placed_parts(answer):
     return answer['definitions'].strip(), answer['equation'], answer['proof'].rstrip()
 
 
-def parts_theory(state, answer, project=ROOT):
+def parts_name(answer):
+    """The theory that reads one answer's parts: one of its own per answer, named by its content."""
+    return 'Development_Answer_Parts_Check_' + answer_digest(answer)[:16]
+
+
+def parts_theory(state, answer, outcome, project=ROOT):
     """The theory that reads the answer's parts with the outer syntax of the answer's frame.
 
 It imports exactly the frame's imports, so it reads with the keywords the answer's theory would be
-read with, and it holds the parts only as ML strings: nothing in them is processed as theory text."""
+read with, and it holds the parts only as ML strings: nothing in them is processed as theory text.
+The reading writes its outcome to `outcome` (`accepted`, or `refused` and the reason Isabelle gave),
+so that several answers' theories can be read in one session, each in its own theory, and a refusal
+of one leaves every other's reading as it would be alone."""
     definitions, equation, proof = placed_parts(answer)
-    return ('theory Development_Answer_Parts_Check\n  imports ' + ' '.join([*frame_imports(state, project), PARTS])
-            + '\nbegin\n\nML \\<open>Development_Answer_Parts.check \\<^theory>\n  ('
+    return ('theory ' + parts_name(answer) + '\n  imports ' + ' '.join([*frame_imports(state, project), PARTS])
+            + '\nbegin\n\nML \\<open>File.write (Path.explode ' + investigate.ml_string(str(outcome)) + ')\n'
+            '  ((Development_Answer_Parts.check \\<^theory>\n  ('
             + investigate.ml_string(definitions) + ',\n   ' + investigate.ml_string(equation) + ',\n   '
-            + investigate.ml_string(proof) + ')\\<close>\n\nend\n')
+            + investigate.ml_string(proof) + '); "accepted\\n")\n'
+            '    handle ERROR message => "refused\\n" ^ message)\\<close>\n\nend\n')
+
+
+def parts_outcome(outcome):
+    """One answer's reading from the outcome its theory wrote: the step's exit code and the refusal.
+
+An answer is accepted only when its theory wrote `accepted`. A theory that wrote nothing (its session
+never ran it, or it failed otherwise than by a refusal) leaves no reason, as a failed reading did."""
+    text = outcome.read_text() if outcome.is_file() else ''
+    return (0, None) if text == 'accepted\n' else (1, parts_refusal(outcome) if text.startswith('refused\n') else None)
+
+
+def remove_session_logs(session):
+    for suffix in ('.db', '.gz'):
+        (HEAPS / 'log' / (session + suffix)).unlink(missing_ok=True)
+    leftover = HEAPS / 'log' / session
+    if leftover.is_dir():
+        shutil.rmtree(leftover)
+    else:
+        leftover.unlink(missing_ok=True)
+
+
+def read_parts(answers, base, output, timeout):
+    """Read the declared parts of every answer in one Isabelle session, each in a theory of its own.
+
+Each answer's theory imports exactly its own frame and holds only its own parts, so its reading uses its
+frame's keyword table and nothing another answer's parts hold is visible to it; the theories share the
+session and nothing else. The readings are keyed by the answers' digests, each with the base it was read
+on, so that a harness judging one of these answers takes its own reading and no other."""
+    distinct = {answer_digest(answer): answer for answer in answers}
+    outcomes = output / 'outcomes'
+    outcomes.mkdir(parents=True)
+    generated = {parts_name(answer): parts_theory(STATES[answer['request']['state']], answer, outcomes / (digest + '.txt'))
+                 for digest, answer in distinct.items()}
+    project = overlay(output, generated)
+    session = 'Development_Parts_' + hashlib.sha256(''.join(sorted(distinct)).encode()).hexdigest()[:12]
+    try:
+        step = run('parts', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
+                             '--project', project, '--output', output / 'proof', '--session', session,
+                             '--without-heap', '--threads', '4', '--timeout', timeout, *sorted(generated)],
+                   output / 'parts.log', timeout + 60)
+    finally:
+        remove_session_logs(session)
+    readings = {}
+    for digest in distinct:
+        code, refusal = parts_outcome(outcomes / (digest + '.txt'))
+        readings[digest] = {'answer_digest': digest, 'base': str(base), 'exit_code': code, 'refusal': refusal,
+                            'seconds': step['seconds'], 'answers_read': len(distinct), 'log': step['log']}
+    return readings
 
 
 def verification_theory(name, state, subject, theory):
@@ -385,13 +446,7 @@ def packet_main(args):
     except (AssertionError, OSError, ValueError, KeyError) as error:
         record['error'] = str(error)
     finally:
-        for suffix in ('.db', '.gz'):
-            (HEAPS / 'log' / (session + suffix)).unlink(missing_ok=True)
-        leftover = HEAPS / 'log' / session
-        if leftover.is_dir():
-            shutil.rmtree(leftover)
-        else:
-            leftover.unlink(missing_ok=True)
+        remove_session_logs(session)
     write_json(output / 'packet-record.json', record)
     print(json.dumps({k: record[k] for k in ('status', 'packet', 'error') if k in record}))
     return 0 if record['status'] == 'presented' else 1
@@ -405,6 +460,8 @@ def main():
     judged = commands.add_parser('answer', help='Judge an answer.')
     judged.add_argument('--answer', type=Path, required=True)
     judged.add_argument('--retain', type=Path, help='Write the retained record of a judged answer here.')
+    judged.add_argument('--parts', type=Path, help='The reading of this answer\'s parts made by `read_parts` in a '
+                        'session shared with other answers; without it the harness reads them in a session of its own.')
     presented = commands.add_parser('packet', help='Present the packet of a request.')
     presented.add_argument('--state', required=True, choices=sorted(STATES))
     presented.add_argument('--subject', required=True)
@@ -438,19 +495,20 @@ def main():
     generated['Development_Answer_Verification'] = verification_theory(name, state, answer['request']['subject'], theory)
     project = overlay(output, generated)
     session = 'Development_Judgment_' + digest[:12]
-    parts_session = 'Development_Parts_' + digest[:12]
     steps = []
     record = {'status': 'failed', 'answer': str(args.answer.resolve()), 'answer_sha256': digest,
               'request': answer['request'], 'base': str(base), 'session': session, 'steps': steps,
               'theory': theory}
     try:
-        parts = overlay(output / 'parts', {'Development_Answer_Parts_Check': parts_theory(state, answer)})
-        steps.append(run('parts', [sys.executable, '-B', TOOLS / 'prove_context.py', '--parent-project', base,
-                                   '--project', parts, '--output', output / 'parts' / 'proof', '--session',
-                                   parts_session, '--without-heap', '--threads', '4', '--timeout', args.timeout,
-                                   'Development_Answer_Parts_Check'], output / 'parts.log', args.timeout + 60))
+        if args.parts is not None:
+            reading = json.loads(args.parts.read_text())
+            assert reading['answer_digest'] == answer_digest(answer) and reading['base'] == str(base), \
+                "The supplied reading is not of this answer's parts on this base."
+        else:
+            reading = read_parts([answer], base, output / 'parts', args.timeout)[answer_digest(answer)]
+        steps.append({'name': 'parts', **{k: reading[k] for k in ('exit_code', 'seconds', 'answers_read', 'log')}})
         if steps[-1]['exit_code'] != 0:
-            reason = parts_refusal(output / 'parts.log', output / 'parts')
+            reason = reading['refusal']
             assert reason is not None, "The answer's parts could not be read."
             record.update(status='refused', refusal=reason, accepted=False)
         if record['status'] != 'refused':
@@ -497,14 +555,7 @@ def main():
     except (AssertionError, OSError, ValueError, KeyError) as error:
         record['error'] = str(error)
     finally:
-        for name_of_session in (session, parts_session):
-            for suffix in ('.db', '.gz'):
-                (HEAPS / 'log' / (name_of_session + suffix)).unlink(missing_ok=True)
-            leftover = HEAPS / 'log' / name_of_session
-            if leftover.is_dir():
-                shutil.rmtree(leftover)
-            else:
-                leftover.unlink(missing_ok=True)
+        remove_session_logs(session)
     write_json(output / 'answer.json', record)
     if args.retain is not None and record['status'] in ('judged', 'refused'):
         write_json(args.retain, retained_record(answer, digest, base, record))

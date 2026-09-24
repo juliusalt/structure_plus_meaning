@@ -2,10 +2,10 @@
  "boundary": "Original readiness includes both formed environments, the identical shared artifact, an exact boundary embedding and compatible shared bindings. Exact finite checks govern the complete optional graft result; native comparisons retain every field and refusal. Complete merge formation is proved equivalent to boundary compatibility under the actual premises. Closed indexed graft and generation adoption, full physical cost, whole workflow enforcement and genesis remain open.",
  "complete_recipe_source_manifest": "graft-admission-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "79c17967a7e52d289774bee810ca7cc28842a063d607d684cc8993122d90cbb4",
   "records": 1,
   "reports_equal": true,
-  "seconds": 2.87,
+  "seconds": 2.47,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -42,7 +42,7 @@
   },
   "tools": {
    "tools/build.py": "c330c1410f6e996bd5075371add7b4088db58ed982057f832e22dbcaa6ed617a",
-   "tools/check_presented_report.py": "ad2111bffe1a2bdb05e90c95ac68209cdce47be1c82aa7e0e3a3fdd040bf1077",
+   "tools/check_presented_report.py": "a67a604376049a2b2928ecf9b9adca4bfd50d9cbd058a1366bf8e4df5f6f9e42",
    "tools/evidence_io.py": "3fa63f8fe266eacdfe8f2f4ea88b7ac171af353d69bbae1b08ff35b645c73d93",
    "tools/execution_support.py": "64d1c28b69ec776ff8888a3c7db24a9679e37c6bc3bd40a0b48cb63c884490f4",
    "tools/isabelle_places.py": "9d8b3dc3cb7a744ab229df9f1b776e390af63ee857d98fca5570fb4e0ece50ec",
@@ -59,7 +59,7 @@
   }
  },
  "execution_reuse": {
-  "base_receipt_sha256": "692845d6bd35d7610db1babea26c3550fdf2a5c62d6c4043d6bd4736c08a567b",
+  "base_receipt_sha256": "5bca52357db7172e031d82a28300a3b01728311d037e03ec34b941d490bd7ad9",
   "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
   "export_module_sha256": "34fc8362a65f237fe7fe3248ca7bbc45bd3ad780238e78f2ba6e251539e4cd11"
  },
@@ -76,14 +76,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "02f2e0479b5624880c1a20c60e8fb0f79585789269d72f913fd6038631e0b515",
+ "source_manifest_sha256": "496e6a66807169a0ea4816f53bc73ce037aecfcb467063b143b8a0506a746803",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 2.7714165180004784
+   "seconds": 2.3692323690047488
   }
  ]
 }

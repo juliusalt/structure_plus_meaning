@@ -227,6 +227,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Schema_Admission
     Factor_Schema_Family_Admission
     Factor_Definition_Call_Admission
+    Factor_Payload_Audit
     Factor_Schema_Callee_Inclusion
     Factor_Definition_Callee_Inclusion
     Factor_Package_Closure_Admission
@@ -625,6 +626,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Presentation_Development
     Factor_Inference_Development
     Observation_Invariance
+    Presentation_Equivariance
     Presentation_Completion
     Presentation_Generators
     Factor_Construction_Invariance
@@ -1774,6 +1776,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Presented_Publication_Values
     Factor_Certificate_Policy_Readiness
     Development_Certified_Generations
+    Development_Owner_Records
     Development_Decision_Generations
     Development_Seed_Publication
     Development_Seed_Referenced_Publication
@@ -1849,6 +1852,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Request_Citations
     Development_Native_Request
     Development_Native_Verdict
+    Development_Package_Program
     Development_Row_Data
     Development_Loop_Presentations
     Development_Machinery_Reports

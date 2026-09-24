@@ -235,7 +235,7 @@ lemma edited_reach_family:
 
 lemmas edited_reach_rule_defs = edited_reach_definitions_def verdict_mentions_rule_defs
   native_member_rules_def native_member_here_def native_member_later_def native_some_rules_def
-  native_some_first_def native_some_rest_def native_rotate_rule_def mention_kept_rules_def
+  native_some_first_def native_rotate_rule_def mention_kept_rules_def
   mention_found_rule_def mention_kept_rule_def target_row_rule_def
 
 lemma edited_reach_distinct: "distinct (map fst edited_reach_definitions)"

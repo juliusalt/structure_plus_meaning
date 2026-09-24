@@ -387,7 +387,7 @@ lemma verdict_unreached_family:
     (simp add: verdict_unreached_definitions_def reach_definitions_def)
 
 lemmas verdict_unreached_rule_defs = verdict_unreached_definitions_def reach_definitions_def
-  native_some_rules_def native_some_first_def native_some_rest_def native_every_rules_def
+  native_some_rules_def native_some_first_def native_member_later_def native_every_rules_def
   native_every_nil_def native_every_step_def row_reached_rules_def row_declared_reached_rule_def
   row_subject_reached_rule_def
 

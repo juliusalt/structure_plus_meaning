@@ -439,7 +439,12 @@ text \<open>
   (@{text native_rule_listing}). Over such a listing the law returns, for a call that holds, the triple of the
   rule it applied (@{text holds_triple}): which rule applied is read here once, by the rule constructor's
   injectivity (@{thm [source] finite_native_rule_eq_iff}), and no use decodes a rule again. A step at a listed
-  triple needs formation on the conclusion's variables alone (@{text step_triple}).
+  triple needs formation on the conclusion's variables alone (@{text step_triple}). At any support relation
+  the elimination at a clause returns the listed triple too (@{text supported_triple}), and a reading of every
+  listed triple at a clause's evaluated conclusion is a reading of the clause (@{text read_triple}): the law's
+  @{text supported_clause} and @{text read_clause} over the listing, which a least-fixed-point argument over a
+  program cites with each program's own @{text unfold_rule}, stated at a listed triple. The rule a clause or a
+  call applied is read back once (@{text rule_triple}).
 \<close>
 
 definition native_rule_listing :: "(local_address\<times>local_address finite_term_pattern\<times>
@@ -469,6 +474,16 @@ begin
 sublocale law: native_rule_law P site "native_rule_listing ts"
   by (rule native_rule_lawI[OF native_rule_family_axioms]) (auto simp: native_rule_listing_member)
 
+lemma rule_triple:
+  assumes rule: "(c,finite_native_rule p ps)\<in>set (native_rule_listing ts)"
+  obtains p' ps' where "(c,p',ps')\<in>set ts" "p=p'" "set ps=set ps'"
+proof -
+  obtain p' ps' where triple: "(c,p',ps')\<in>set ts" and same: "finite_native_rule p ps=finite_native_rule p' ps'"
+    using rule by (auto simp: native_rule_listing_member)
+  have "p=p'" "set ps=set ps'" using same by (simp_all add: finite_native_rule_eq_iff)
+  then show thesis by (rule that[OF triple])
+qed
+
 lemma holds_triple:
   assumes holds: "(site,t)\<in>positive_meaning P"
   obtains c p ps f where "(c,p,ps)\<in>set ts"
@@ -483,11 +498,41 @@ proof -
     and evaluated: "evaluate_pattern f (decode_finite_pattern p)=t"
     and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
     by (rule law.holds_rule[OF holds])
-  obtain p' ps' where triple: "(c,p',ps')\<in>set ts" and same: "finite_native_rule p ps=finite_native_rule p' ps'"
-    using rule by (auto simp: native_rule_listing_member)
-  have pattern: "p=p'" and premises_same: "set ps=set ps'" using same by (simp_all add: finite_native_rule_eq_iff)
+  obtain p' ps' where triple: "(c,p',ps')\<in>set ts" and pattern: "p=p'" and premises_same: "set ps=set ps'"
+    by (rule rule_triple[OF rule])
   show thesis
     by (rule that[OF triple]) (use formed evaluated support in \<open>simp_all only: pattern premises_same\<close>)
+qed
+
+lemma supported_triple:
+  assumes member: "((site,c),S)\<in>system_clauses P"
+    and support: "\<forall>s e r. (s,e,r)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f r)\<in>Y"
+  obtains p ps where "(c,p,ps)\<in>set ts" "schema_conclusion S=decode_finite_pattern p"
+    "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
+proof -
+  obtain p ps where rule: "(c,finite_native_rule p ps)\<in>set (native_rule_listing ts)"
+    and conclusion: "schema_conclusion S=decode_finite_pattern p"
+    and supported: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
+    by (rule law.supported_clause[OF member support]) blast
+  obtain p' ps' where triple: "(c,p',ps')\<in>set ts" and pattern: "p=p'" and premises_same: "set ps=set ps'"
+    by (rule rule_triple[OF rule])
+  show thesis
+    by (rule that[OF triple]) (use conclusion supported in \<open>simp_all only: pattern premises_same\<close>)
+qed
+
+lemma read_triple:
+  assumes member: "((site,c),S)\<in>system_clauses P"
+    and support: "\<forall>s e r. (s,e,r)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f r)\<in>Y"
+    and shape: "evaluate_pattern f (schema_conclusion S)=t"
+    and read: "\<And>b p ps. (b,p,ps)\<in>set ts \<Longrightarrow>
+      \<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y \<Longrightarrow>
+      evaluate_pattern f (decode_finite_pattern p)=t \<Longrightarrow> Q"
+  shows Q
+proof (rule supported_triple[OF member support])
+  fix p ps assume triple: "(c,p,ps)\<in>set ts"
+    and conclusion: "schema_conclusion S=decode_finite_pattern p"
+    and supported: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
+  show Q by (rule read[OF triple supported shape[unfolded conclusion]])
 qed
 
 theorem step_triple:
@@ -553,6 +598,17 @@ definition native_member_rules :: "'u definition_site \<Rightarrow>
     (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
   "native_member_rules m=[([0],native_member_here),([1],native_member_later m)]"
 
+definition native_member_listing :: "'u definition_site \<Rightarrow> (local_address\<times>local_address finite_term_pattern\<times>
+    (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "native_member_listing m=
+    [([0],Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 0) (native_var 1)),[]),
+     ([1],Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)),
+      [([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))])]"
+
+lemma native_member_rules_listing: "native_member_rules m=native_rule_listing (native_member_listing m)"
+  by (simp add: native_member_rules_def native_member_listing_def native_rule_listing_def native_member_here_def
+    native_member_later_def)
+
 locale native_member_program = native_rule_family P m "native_member_rules m"
   for P :: "'u native_system" and m :: "'u definition_site"
 begin
@@ -561,26 +617,15 @@ sublocale law: native_rule_law P m "native_member_rules m"
   by (rule native_rule_lawI[OF native_rule_family_axioms])
     (simp add: native_member_rules_def native_member_here_def native_member_later_def; blast)
 
+sublocale triples: native_listed_law P m "native_member_listing m"
+  unfolding native_listed_law_def native_member_rules_listing[symmetric] by (rule native_rule_family_axioms)
+
 lemma unfold_rule:
-  assumes rule: "(c,finite_native_rule p ps)\<in>set (native_member_rules m)"
+  assumes triple: "(c,p,ps)\<in>set (native_member_listing m)"
     and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
     and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (data_list_term xs)"
   shows "\<exists>y ys. xs=y#ys \<and> (x=y \<or> (m,Pair_Term x (data_list_term ys))\<in>Y)"
-proof -
-  have "finite_native_rule p ps=native_member_here \<or> finite_native_rule p ps=native_member_later m"
-    using rule by (auto simp: native_member_rules_def)
-  then show ?thesis
-  proof
-    assume "finite_native_rule p ps=native_member_here"
-    note F=this[unfolded native_member_here_def finite_native_rule_eq_iff]
-    show ?thesis using shape by (auto simp: F data_list_term_pair)
-  next
-    assume "finite_native_rule p ps=native_member_later m"
-    note F=this[unfolded native_member_later_def finite_native_rule_eq_iff]
-    have premise: "(m,Pair_Term (f [0]) (f [2]))\<in>Y" using support by (simp add: F)
-    show ?thesis using shape premise by (auto simp: F data_list_term_pair)
-  qed
-qed
+  using triple support shape by (auto simp: native_member_listing_def data_list_term_pair)
 
 
 theorem exact:
@@ -589,23 +634,16 @@ proof
   assume holds: "(m,Pair_Term x (data_list_term xs))\<in>positive_meaning P"
   have formed: "\<forall>y\<in>set xs. term_formed y"
     using holds_formed[OF holds] by (simp add: data_list_term_formed)
+  have unfolded: "\<exists>y ys. zs=y#ys \<and> (x=y \<or> (m,Pair_Term x (data_list_term ys))\<in>positive_meaning P)"
+    if call: "(m,Pair_Term x (data_list_term zs))\<in>positive_meaning P" for zs
+    by (rule triples.holds_triple[OF call]) (rule unfold_rule; assumption)
   have "x\<in>set xs" using holds
   proof (induction xs)
     case Nil
-    obtain c p ps f where "(c,finite_native_rule p ps)\<in>set (native_member_rules m)"
-      and "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (data_list_term [])"
-      using Nil.prems[unfolded law.exact] by blast
-    then show ?case
-      by (auto simp: native_member_rules_def native_member_here_def native_member_later_def finite_native_rule_eq_iff)
+    show ?case using unfolded[OF Nil.prems] by simp
   next
     case (Cons y ys)
-    obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (native_member_rules m)"
-      and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (data_list_term (y#ys))"
-      and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-      using Cons.prems[unfolded law.exact] by blast
-    have "\<exists>y' ys'. y#ys=y'#ys' \<and> (x=y' \<or> (m,Pair_Term x (data_list_term ys'))\<in>positive_meaning P)"
-      by (rule unfold_rule[OF rule support shape])
-    then show ?case using Cons.IH by auto
+    show ?case using unfolded[OF Cons.prems] Cons.IH by auto
   qed
   then show "x\<in>set xs \<and> (\<forall>y\<in>set xs. term_formed y)" using formed by blast
 next
@@ -624,8 +662,7 @@ next
       have "(m,evaluate_pattern (native_values [x,data_list_term ys])
           (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 0) (native_var 1)))))
           \<in>positive_meaning P"
-        by (rule law.step_at[where c="[0]" and ps="[]"])
-          (use formed True in \<open>simp_all add: insert_Diff_if native_member_rules_def native_member_here_def\<close>)
+        by (rule triples.step_triple[where c="[0]" and ps="[]"]) (use formed True in \<open>simp_all add: native_member_listing_def\<close>)
       then show ?thesis using True by simp
     next
       case False
@@ -635,8 +672,8 @@ next
       have "(m,evaluate_pattern (native_values [x,y,data_list_term ys])
           (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))))
           \<in>positive_meaning P"
-        by (rule law.step_at[where c="[1]" and ps="[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-          (use formed xf inner in \<open>simp_all add: insert_Diff_if native_member_rules_def native_member_later_def\<close>)
+        by (rule triples.step_triple[where c="[1]" and ps="[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
+          (use formed xf inner in \<open>simp_all add: native_member_listing_def\<close>)
       then show ?thesis by simp
     qed
   qed
@@ -662,6 +699,19 @@ definition native_every_rules :: "'u definition_site \<Rightarrow> 'u definition
     (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
   "native_every_rules e el=[([0],native_every_nil),([1],native_every_step e el)]"
 
+definition native_every_listing :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
+    (local_address\<times>local_address finite_term_pattern\<times>
+      (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "native_every_listing e el=
+    [([0],Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Payload []),[]),
+     ([1],Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)),
+      [([0],(el,Finite_Pattern_Pair (native_var 0) (native_var 1))),
+       ([1],(e,Finite_Pattern_Pair (native_var 0) (native_var 2)))])]"
+
+lemma native_every_rules_listing: "native_every_rules e el=native_rule_listing (native_every_listing e el)"
+  by (simp add: native_every_rules_def native_every_listing_def native_rule_listing_def native_every_nil_def
+    native_every_step_def)
+
 locale native_every_program = native_rule_family P e "native_every_rules e el"
   for P :: "'u native_system" and e el :: "'u definition_site"
 begin
@@ -670,27 +720,15 @@ sublocale law: native_rule_law P e "native_every_rules e el"
   by (rule native_rule_lawI[OF native_rule_family_axioms])
     (simp add: native_every_rules_def native_every_nil_def native_every_step_def; blast)
 
+sublocale triples: native_listed_law P e "native_every_listing e el"
+  unfolding native_listed_law_def native_every_rules_listing[symmetric] by (rule native_rule_family_axioms)
+
 lemma unfold_rule:
-  assumes rule: "(c,finite_native_rule p ps)\<in>set (native_every_rules e el)"
+  assumes triple: "(c,p,ps)\<in>set (native_every_listing e el)"
     and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
     and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (data_list_term zs)"
   shows "zs=[] \<or> (\<exists>z zs'. zs=z#zs' \<and> (el,Pair_Term x z)\<in>Y \<and> (e,Pair_Term x (data_list_term zs'))\<in>Y)"
-proof -
-  have "finite_native_rule p ps=native_every_nil \<or> finite_native_rule p ps=native_every_step e el"
-    using rule by (auto simp: native_every_rules_def)
-  then show ?thesis
-  proof
-    assume "finite_native_rule p ps=native_every_nil"
-    note F=this[unfolded native_every_nil_def finite_native_rule_eq_iff]
-    show ?thesis using shape by (auto simp: F data_list_term_payload)
-  next
-    assume "finite_native_rule p ps=native_every_step e el"
-    note F=this[unfolded native_every_step_def finite_native_rule_eq_iff]
-    have premises_hold: "(el,Pair_Term (f [0]) (f [1]))\<in>Y" "(e,Pair_Term (f [0]) (f [2]))\<in>Y"
-      using support by (simp_all add: F)
-    show ?thesis using shape premises_hold by (auto simp: F data_list_term_pair)
-  qed
-qed
+  using triple support shape by (auto simp: native_every_listing_def data_list_term_payload data_list_term_pair)
 
 lemma relation_equation:
   "(e,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>a. t=Pair_Term a (Payload_Term []) \<and> term_formed a) \<or>
@@ -698,28 +736,28 @@ lemma relation_equation:
       (e,Pair_Term a y)\<in>positive_meaning P)"
 proof
   assume holds: "(e,t)\<in>positive_meaning P"
-  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (native_every_rules e el)"
-    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
+  obtain c p ps f where triple: "(c,p,ps)\<in>set (native_every_listing e el)"
+    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p) \<union>
+      (\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)). term_formed (f a)"
     and shape: "evaluate_pattern f (decode_finite_pattern p)=t"
     and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-    using holds[unfolded law.exact] by blast
-  have cases: "finite_native_rule p ps=native_every_nil \<or> finite_native_rule p ps=native_every_step e el"
-    using rule by (auto simp: native_every_rules_def)
+    by (rule triples.holds_triple[OF holds])
+  have "c\<in>{[0],[1]}" using triple by (auto simp: native_every_listing_def)
   then show "(\<exists>a. t=Pair_Term a (Payload_Term []) \<and> term_formed a) \<or>
     (\<exists>a x y. t=Pair_Term a (Pair_Term x y) \<and> (el,Pair_Term a x)\<in>positive_meaning P \<and>
       (e,Pair_Term a y)\<in>positive_meaning P)"
-  proof
-    assume F: "finite_native_rule p ps=native_every_nil"
-    have pattern: "p=Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Payload [])"
-      using F by (simp add: native_every_nil_def finite_native_rule_eq_iff)
-    have "term_formed (f [0])" using formed by (simp add: pattern)
+  proof (elim insertE emptyE)
+    assume c: "c=[0]"
+    have pattern: "p=Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Payload [])" and listed: "ps=[]"
+      using triple by (simp_all add: c native_every_listing_def)
+    have "term_formed (f [0])" using formed by (simp add: pattern listed)
     then show ?thesis using shape by (auto simp: pattern)
   next
-    assume F: "finite_native_rule p ps=native_every_step e el"
+    assume c: "c=[1]"
     have pattern: "p=Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"
-      and listed: "set ps={([0],(el,Finite_Pattern_Pair (native_var 0) (native_var 1))),
-        ([1],(e,Finite_Pattern_Pair (native_var 0) (native_var 2)))}"
-      using F by (simp_all add: native_every_step_def finite_native_rule_eq_iff)
+      and listed: "ps=[([0],(el,Finite_Pattern_Pair (native_var 0) (native_var 1))),
+        ([1],(e,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
+      using triple by (simp_all add: c native_every_listing_def)
     have premises_hold: "(el,Pair_Term (f [0]) (f [1]))\<in>positive_meaning P"
         "(e,Pair_Term (f [0]) (f [2]))\<in>positive_meaning P"
       using support by (simp_all add: listed)
@@ -735,8 +773,7 @@ next
     then obtain a where t: "t=Pair_Term a (Payload_Term [])" and af: "term_formed a" by blast
     have "(e,evaluate_pattern (native_values [a])
         (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Payload []))))\<in>positive_meaning P"
-      by (rule law.step_at[where c="[0]" and ps="[]"])
-        (use af in \<open>simp_all add: native_every_rules_def native_every_nil_def octets_formed_def\<close>)
+      by (rule triples.step_triple[where c="[0]" and ps="[]"]) (use af in \<open>simp_all add: native_every_listing_def octets_formed_def\<close>)
     then show ?thesis using t by simp
   next
     assume "\<exists>a x y. t=Pair_Term a (Pair_Term x y) \<and> (el,Pair_Term a x)\<in>positive_meaning P \<and>
@@ -749,9 +786,9 @@ next
     have "(e,evaluate_pattern (native_values [a,x,y])
         (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))))
         \<in>positive_meaning P"
-      by (rule law.step_at[where c="[1]" and ps="[([0],(el,Finite_Pattern_Pair (native_var 0) (native_var 1))),
+      by (rule triples.step_triple[where c="[1]" and ps="[([0],(el,Finite_Pattern_Pair (native_var 0) (native_var 1))),
           ([1],(e,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-        (use element inner formed in \<open>simp_all add: native_every_rules_def native_every_step_def\<close>)
+        (use element inner formed in \<open>simp_all add: native_every_listing_def\<close>)
     then show ?thesis using t by simp
   qed
 qed
@@ -771,20 +808,27 @@ definition native_some_first :: "'u definition_site \<Rightarrow>
     (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
     [([0],(el,Finite_Pattern_Pair (native_var 0) (native_var 1)))]"
 
-definition native_some_rest :: "'u definition_site \<Rightarrow>
-    (local_address,local_address,'u definition_site) finite_factor_schema" where
-  "native_some_rest s=finite_native_rule
-    (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
-    [([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
-
-text \<open>The rest rule is membership's later rule at the traversal's own site: one rule value.\<close>
-
-lemma native_some_rest_member_later: "native_some_rest s=native_member_later s"
-  by (simp add: native_some_rest_def native_member_later_def)
+text \<open>
+  The rest rule is membership's later rule at the traversal's own site (@{const native_member_later}): one
+  rule value.
+\<close>
 
 definition native_some_rules :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
     (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
-  "native_some_rules s el=[([0],native_some_first el),([1],native_some_rest s)]"
+  "native_some_rules s el=[([0],native_some_first el),([1],native_member_later s)]"
+
+definition native_some_listing :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
+    (local_address\<times>local_address finite_term_pattern\<times>
+      (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "native_some_listing s el=
+    [([0],Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)),
+      [([0],(el,Finite_Pattern_Pair (native_var 0) (native_var 1)))]),
+     ([1],Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)),
+      [([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))])]"
+
+lemma native_some_rules_listing: "native_some_rules s el=native_rule_listing (native_some_listing s el)"
+  by (simp add: native_some_rules_def native_some_listing_def native_rule_listing_def native_some_first_def
+    native_member_later_def)
 
 locale native_some_program = native_rule_family P s "native_some_rules s el"
   for P :: "'u native_system" and s el :: "'u definition_site"
@@ -792,29 +836,17 @@ begin
 
 sublocale law: native_rule_law P s "native_some_rules s el"
   by (rule native_rule_lawI[OF native_rule_family_axioms])
-    (simp add: native_some_rules_def native_some_first_def native_some_rest_member_later native_member_later_def; blast)
+    (simp add: native_some_rules_def native_some_first_def native_member_later_def; blast)
+
+sublocale triples: native_listed_law P s "native_some_listing s el"
+  unfolding native_listed_law_def native_some_rules_listing[symmetric] by (rule native_rule_family_axioms)
 
 lemma unfold_rule:
-  assumes rule: "(c,finite_native_rule p ps)\<in>set (native_some_rules s el)"
+  assumes triple: "(c,p,ps)\<in>set (native_some_listing s el)"
     and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
     and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (data_list_term hs)"
   shows "\<exists>h hs'. hs=h#hs' \<and> ((el,Pair_Term x h)\<in>Y \<or> (s,Pair_Term x (data_list_term hs'))\<in>Y)"
-proof -
-  have "finite_native_rule p ps=native_some_first el \<or> finite_native_rule p ps=native_some_rest s"
-    using rule by (auto simp: native_some_rules_def)
-  then show ?thesis
-  proof
-    assume "finite_native_rule p ps=native_some_first el"
-    note F=this[unfolded native_some_first_def finite_native_rule_eq_iff]
-    have premise: "(el,Pair_Term (f [0]) (f [1]))\<in>Y" using support by (simp add: F)
-    show ?thesis using shape premise by (auto simp: F data_list_term_pair)
-  next
-    assume "finite_native_rule p ps=native_some_rest s"
-    note F=this[unfolded native_some_rest_member_later native_member_later_def finite_native_rule_eq_iff]
-    have premise: "(s,Pair_Term (f [0]) (f [2]))\<in>Y" using support by (simp add: F)
-    show ?thesis using shape premise by (auto simp: F data_list_term_pair)
-  qed
-qed
+  using triple support shape by (auto simp: native_some_listing_def data_list_term_pair)
 
 
 theorem exact:
@@ -824,24 +856,17 @@ proof
   assume holds: "(s,Pair_Term x (data_list_term hs))\<in>positive_meaning P"
   have formed: "term_formed x" "\<forall>h\<in>set hs. term_formed h"
     using holds_formed[OF holds] by (simp_all add: data_list_term_formed)
+  have unfolded: "\<exists>h hs'. zs=h#hs' \<and> ((el,Pair_Term x h)\<in>positive_meaning P \<or>
+      (s,Pair_Term x (data_list_term hs'))\<in>positive_meaning P)"
+    if call: "(s,Pair_Term x (data_list_term zs))\<in>positive_meaning P" for zs
+    by (rule triples.holds_triple[OF call]) (rule unfold_rule; assumption)
   have "\<exists>h\<in>set hs. (el,Pair_Term x h)\<in>positive_meaning P" using holds
   proof (induction hs)
     case Nil
-    obtain c p ps f where "(c,finite_native_rule p ps)\<in>set (native_some_rules s el)"
-      and "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (data_list_term [])"
-      using Nil.prems[unfolded law.exact] by blast
-    then show ?case
-      by (auto simp: native_some_rules_def native_some_first_def native_some_rest_member_later native_member_later_def finite_native_rule_eq_iff)
+    show ?case using unfolded[OF Nil.prems] by simp
   next
     case (Cons h hs)
-    obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (native_some_rules s el)"
-      and shape: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (data_list_term (h#hs))"
-      and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-      using Cons.prems[unfolded law.exact] by blast
-    have "\<exists>h' hs'. h#hs=h'#hs' \<and> ((el,Pair_Term x h')\<in>positive_meaning P \<or>
-        (s,Pair_Term x (data_list_term hs'))\<in>positive_meaning P)"
-      by (rule unfold_rule[OF rule support shape])
-    then show ?case using Cons.IH by auto
+    show ?case using unfolded[OF Cons.prems] Cons.IH by auto
   qed
   then show "term_formed x \<and> (\<forall>h\<in>set hs. term_formed h) \<and> (\<exists>h\<in>set hs. (el,Pair_Term x h)\<in>positive_meaning P)"
     using formed by blast
@@ -862,8 +887,8 @@ next
       have "(s,evaluate_pattern (native_values [x,h,data_list_term hs])
           (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))))
           \<in>positive_meaning P"
-        by (rule law.step_at[where c="[0]" and ps="[([0],(el,Finite_Pattern_Pair (native_var 0) (native_var 1)))]"])
-          (use True xf hf wf in \<open>simp_all add: insert_Diff_if native_some_rules_def native_some_first_def\<close>)
+        by (rule triples.step_triple[where c="[0]" and ps="[([0],(el,Finite_Pattern_Pair (native_var 0) (native_var 1)))]"])
+          (use True xf hf wf in \<open>simp_all add: native_some_listing_def\<close>)
       then show ?thesis by simp
     next
       case False
@@ -872,8 +897,8 @@ next
       have "(s,evaluate_pattern (native_values [x,h,data_list_term hs])
           (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))))
           \<in>positive_meaning P"
-        by (rule law.step_at[where c="[1]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-          (use inner xf hf wf in \<open>simp_all add: insert_Diff_if native_some_rules_def native_some_rest_member_later native_member_later_def\<close>)
+        by (rule triples.step_triple[where c="[1]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
+          (use inner xf hf wf in \<open>simp_all add: native_some_listing_def\<close>)
       then show ?thesis by simp
     qed
   qed
@@ -901,6 +926,22 @@ definition native_keyed_search_rules :: "'u definition_site \<Rightarrow> 'u def
     (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
   "native_keyed_search_rules k ch=[([0],native_found_rule ch),([1],native_skip_rule k)]"
 
+definition native_keyed_search_listing :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
+    (local_address\<times>local_address finite_term_pattern\<times>
+      (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "native_keyed_search_listing k ch=
+    [([0],Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1)
+        (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 1) (native_var 2)) (native_var 3))),
+      [([0],(ch,Finite_Pattern_Pair (native_var 0) (native_var 2)))]),
+     ([1],Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1)
+        (Finite_Pattern_Pair (native_var 2) (native_var 3))),
+      [([0],(k,Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 3))))])]"
+
+lemma native_keyed_search_rules_listing:
+  "native_keyed_search_rules k ch=native_rule_listing (native_keyed_search_listing k ch)"
+  by (simp add: native_keyed_search_rules_def native_keyed_search_listing_def native_rule_listing_def
+    native_found_rule_def native_skip_rule_def)
+
 locale native_keyed_search_program = native_rule_family P k "native_keyed_search_rules k ch"
   for P :: "'u native_system" and k ch :: "'u definition_site"
 begin
@@ -909,29 +950,17 @@ sublocale law: native_rule_law P k "native_keyed_search_rules k ch"
   by (rule native_rule_lawI[OF native_rule_family_axioms])
     (simp add: native_keyed_search_rules_def native_found_rule_def native_skip_rule_def; blast)
 
+sublocale triples: native_listed_law P k "native_keyed_search_listing k ch"
+  unfolding native_listed_law_def native_keyed_search_rules_listing[symmetric] by (rule native_rule_family_axioms)
+
 lemma unfold_rule:
-  assumes rule: "(c,finite_native_rule p ps)\<in>set (native_keyed_search_rules k ch)"
+  assumes triple: "(c,p,ps)\<in>set (native_keyed_search_listing k ch)"
     and support: "\<forall>(s,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
     and shape: "evaluate_pattern f (decode_finite_pattern p)=
       Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) rows)))"
   shows "\<exists>a v rows'. rows=(a,v)#rows' \<and> ((a=key \<and> (ch,Pair_Term x v)\<in>Y) \<or>
     (k,Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) rows'))))\<in>Y)"
-proof -
-  have "finite_native_rule p ps=native_found_rule ch \<or> finite_native_rule p ps=native_skip_rule k"
-    using rule by (auto simp: native_keyed_search_rules_def)
-  then show ?thesis
-  proof
-    assume "finite_native_rule p ps=native_found_rule ch"
-    note F=this[unfolded native_found_rule_def finite_native_rule_eq_iff]
-    have premise: "(ch,Pair_Term (f [0]) (f [2]))\<in>Y" using support by (simp add: F)
-    show ?thesis using shape premise by (auto simp: F data_rows_pair)
-  next
-    assume "finite_native_rule p ps=native_skip_rule k"
-    note F=this[unfolded native_skip_rule_def finite_native_rule_eq_iff]
-    have premise: "(k,Pair_Term (f [0]) (Pair_Term (f [1]) (f [3])))\<in>Y" using support by (simp add: F)
-    show ?thesis using shape premise by (auto simp: F data_rows_pair)
-  qed
-qed
+  using triple support shape by (auto simp: native_keyed_search_listing_def data_rows_pair)
 
 
 theorem exact:
@@ -942,26 +971,18 @@ proof
   assume holds: "(k,Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) rows))))\<in>positive_meaning P"
   have formed: "term_formed x" "term_formed key" "\<forall>(a,v)\<in>set rows. term_formed a \<and> term_formed v"
     using holds_formed[OF holds] by (simp_all add: data_rows_formed)
+  have unfolded: "\<exists>a v rows'. zs=(a,v)#rows' \<and> ((a=key \<and> (ch,Pair_Term x v)\<in>positive_meaning P) \<or>
+      (k,Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) rows'))))\<in>positive_meaning P)"
+    if call: "(k,Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) zs))))\<in>positive_meaning P"
+    for zs
+    by (rule triples.holds_triple[OF call]) (rule unfold_rule; assumption)
   have "\<exists>v. (key,v)\<in>set rows \<and> (ch,Pair_Term x v)\<in>positive_meaning P" using holds
   proof (induction rows)
     case Nil
-    obtain c p ps f where "(c,finite_native_rule p ps)\<in>set (native_keyed_search_rules k ch)"
-      and "evaluate_pattern f (decode_finite_pattern p)=
-        Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) [])))"
-      using Nil.prems[unfolded law.exact] by blast
-    then show ?case
-      by (auto simp: native_keyed_search_rules_def native_found_rule_def native_skip_rule_def finite_native_rule_eq_iff)
+    show ?case using unfolded[OF Nil.prems] by simp
   next
     case (Cons r rows)
-    obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (native_keyed_search_rules k ch)"
-      and shape: "evaluate_pattern f (decode_finite_pattern p)=
-        Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) (r#rows))))"
-      and support: "\<forall>(s,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-      using Cons.prems[unfolded law.exact] by blast
-    have "\<exists>a v rows'. r#rows=(a,v)#rows' \<and> ((a=key \<and> (ch,Pair_Term x v)\<in>positive_meaning P) \<or>
-        (k,Pair_Term x (Pair_Term key (data_list_term (map (case_prod Pair_Term) rows'))))\<in>positive_meaning P)"
-      by (rule unfold_rule[OF rule support shape])
-    then show ?case using Cons.IH by auto
+    show ?case using unfolded[OF Cons.prems] Cons.IH by auto
   qed
   then show "term_formed x \<and> term_formed key \<and> (\<forall>(a,v)\<in>set rows. term_formed a \<and> term_formed v) \<and>
       (\<exists>v. (key,v)\<in>set rows \<and> (ch,Pair_Term x v)\<in>positive_meaning P)"
@@ -990,8 +1011,8 @@ next
           (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1)
             (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 1) (native_var 2)) (native_var 3))))))
           \<in>positive_meaning P"
-        by (rule law.step_at[where c="[0]" and ps="[([0],(ch,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-          (use True checked xf kf wf tf in \<open>simp_all add: insert_Diff_if native_keyed_search_rules_def native_found_rule_def\<close>)
+        by (rule triples.step_triple[where c="[0]" and ps="[([0],(ch,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
+          (use True checked xf kf wf tf in \<open>simp_all add: native_keyed_search_listing_def\<close>)
       then show ?thesis using True r by simp
     next
       case False
@@ -1001,9 +1022,9 @@ next
           (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1)
             (Finite_Pattern_Pair (native_var 2) (native_var 3))))))
           \<in>positive_meaning P"
-        by (rule law.step_at[where c="[1]" and
+        by (rule triples.step_triple[where c="[1]" and
             ps="[([0],(k,Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 3))))]"])
-          (use inner xf kf af wf tf in \<open>simp_all add: insert_Diff_if native_keyed_search_rules_def native_skip_rule_def\<close>)
+          (use inner xf kf af wf tf in \<open>simp_all add: native_keyed_search_listing_def\<close>)
       then show ?thesis using r by simp
     qed
   qed
@@ -1134,15 +1155,6 @@ proof -
       (use finite_rule_program_agrees[OF _ within] shared defs inside site in auto)
 qed
 
-text \<open>
-  A list's members are those of its first @{term n} elements and of the rest: the split a join of two programs
-  sharing a leading prefix of definitions reads (@{text finite_rule_program_prefix}, its name at those joins).
-\<close>
-
-lemma set_take_drop_union: "set xs=set (take n xs)\<union>set (drop n xs)"
-  by (metis append_take_drop_id set_append)
-
-lemmas finite_rule_program_prefix = set_take_drop_union
 
 section \<open>A single premise that calls a callee on a rearrangement of the conclusion's variables\<close>
 
@@ -1164,6 +1176,9 @@ begin
 sublocale law: native_rule_law P s "[([0],finite_native_rule p [([0],(r,q))])]"
   by (rule native_rule_lawI[OF native_rule_family_axioms]) auto
 
+sublocale triples: native_listed_law P s "[([0],p,[([0],(r,q))])]"
+  using native_rule_family_axioms by (simp add: native_listed_law_def native_rule_listing_def)
+
 text \<open>
   A clause of the site whose premise holds in any support relation @{term Y} has the rule's conclusion, and
   its premise's callee holds in @{term Y} of the premise's evaluation: the law's @{text supported_clause} read
@@ -1175,12 +1190,12 @@ lemma supported:
     and support: "\<forall>k e u. (k,e,u)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f u)\<in>Y"
   shows "schema_conclusion S=decode_finite_pattern p" "(r,evaluate_pattern f (decode_finite_pattern q))\<in>Y"
 proof -
-  obtain p' ps where rule: "(c,finite_native_rule p' ps)\<in>set [([0::nat],finite_native_rule p [([0],(r,q))])]"
+  obtain p' ps where triple: "(c,p',ps)\<in>set [([0::nat],p,[([0::nat],(r,q))])]"
     and conclusion: "schema_conclusion S=decode_finite_pattern p'"
     and supported: "\<forall>(k,d,u)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern u))\<in>Y"
-    by (rule law.supported_clause[OF member support])
-  have pattern: "p'=p" and listed: "set ps={([0],(r,q))}"
-    using rule by (simp_all add: finite_native_rule_eq_iff)
+    by (rule triples.supported_triple[OF member support])
+  have pattern: "p'=p" and listed: "ps=[([0],(r,q))]"
+    using triple by simp_all
   show "schema_conclusion S=decode_finite_pattern p" using conclusion pattern by simp
   show "(r,evaluate_pattern f (decode_finite_pattern q))\<in>Y" using supported listed by auto
 qed

@@ -136,4 +136,27 @@ text \<open>
   every compared value are unchanged.
 \<close>
 
+section \<open>A target's key\<close>
+
+text \<open>
+  A target's key is its artifact's compared rows with its occurrence. It is injective, so a table of
+  targets is keyed by it (\<open>Shared_Term_Tables.keyed_reference_step\<close>).
+\<close>
+
+fun finite_target_occurrence :: "finite_exact_target \<Rightarrow> local_address option" where
+  "finite_target_occurrence (Finite_Whole a)=None"
+| "finite_target_occurrence (Finite_Anchor a r)=Some r"
+
+definition finite_target_key :: "finite_exact_target \<Rightarrow> compared_artifact_rows\<times>local_address option" where
+  "finite_target_key x=(compared_artifact_rows (finite_artifact_rows (finite_target_artifact x)),finite_target_occurrence x)"
+
+lemma finite_target_key_injective: "inj finite_target_key"
+proof (rule injI)
+  fix x y
+  assume same: "finite_target_key x=finite_target_key y"
+  show "x=y"
+    using same by (cases x; cases y) (simp_all add: finite_target_key_def compared_artifact_rows_def
+      finite_artifact_rows_injective)
+qed
+
 end

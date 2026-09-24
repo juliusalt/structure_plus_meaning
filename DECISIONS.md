@@ -12278,7 +12278,8 @@ rule's conclusion and premise set back from its value.
   `native_some_program.exact`, `native_keyed_search_program.exact`. What the law does not replace stays: each
   program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's
   `supported_clause`; corrected 2026-09-22, task 275: the four `unfold` corollaries are gone and their composition
-  is stated once as the law's `read_clause`, which a use cites with the program's own `unfold_rule`], the inversion
+  is stated once as the law's `read_clause`, which a use cites with the program's own `unfold_rule`] [corrected 2026-09-24, task 379: those uses stand in
+`Development_Native_Readiness` and `Native_Table_Reach`, and cite the listed form `triples.read_triple`], the inversion
   of one rule application supported in an arbitrary relation, which least-fixed-point
   arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
   the law's single step does not carry.
@@ -12329,7 +12330,10 @@ composition they were is the law's `read_clause` (a reading of every rule of the
 conclusion is a reading of the clause), which the three uses — readiness's some and every cases and the reach's some
 case — cite with the program's `unfold_rule`, and the clauses of a one-rule, one-premise site are read by
 `native_rearranging_program.supported`] [corrected 2026-09-24, task 374: the uses of `read_clause` stand in
-`Development_Native_Readiness` (its some and every cases) and `Native_Table_Reach` (its some case)].
+`Development_Native_Readiness` (its some and every cases) and `Native_Table_Reach` (its some case)] [corrected
+2026-09-24, task 379: with readiness's settled search and the reach's search they cite the listed law's
+`read_triple` (`native_listed_law`), each program's `unfold_rule` stated at a listed triple; see "A listed family
+returns the rule it applied"].
 
 Re-cited (task 235): the value rule's contract is stated once beside `native_value_rule` in Development_Located_Rows
 (`native_value_program`, its `exact`: the site holds of `Pair_Term x y` exactly when `x` is formed and `x=y`), and
@@ -14682,6 +14686,24 @@ Unreached, Request_Citations, Witnesses) are re-cited by the task after this one
 membership's later rule (`native_some_rest_member_later`), cited so where the some program reads it; its definition
 is kept, since a recorded state may expand it.
 
+[corrected 2026-09-24, task 379: the listed law now also states the elimination at any support relation
+(`supported_triple`, `read_triple`: the law's `supported_clause` and `read_clause` over the listing), and the rule a
+clause or a call applied is read back to its triple once (`rule_triple`), through which `holds_triple` and
+`supported_triple` read it. The families of membership, every element, some element and keyed search
+(`Native_Collection_Programs`), the store search and store absence (`Native_Path_Stores`) and the rearranging program
+are `native_listed_law` instances (sublocale `triples`, beside `law`), each at its family's listing stated once
+(`native_member_listing`, `native_every_listing`, `native_some_listing`, `native_keyed_search_listing`,
+`native_store_search_listing`, `native_store_absent_listing`) and proved to present the family's rules
+(`native_member_rules_listing` and its like); each program's `unfold_rule` is stated at membership in that listing, their Nil and elimination cases read through `holds_triple`, their steps take `step_triple`, and no
+constructor-injectivity decoding of an applied rule remains in those two theories outside `rule_triple`. Readiness's
+and the reach's invariants read their collection and search clauses through `triples.read_triple`; the reach's two
+steps take `step_rule`, its own two-rule family not being listed. `finite_rule_program_prefix` is gone and its three
+uses cite `set_take_drop_union`, which now stands in `Listed_Set_Unions`. `native_some_rest` and
+`native_some_rest_member_later` are gone: `native_some_rules` is defined over `native_member_later s`, the same rule
+value, so no recorded word changed (the repository's check passed with every word equal). What stays: the reach's
+own family (`reach_holds_family` in `Native_Table_Reach`) still decodes its clause by `finite_native_rule_eq_iff` in
+`native_reached_search`'s invariant, and the six decodings outside these theories are the next task's (#375).]
+
 Recorded 2026-09-24 (task 374).
 ## The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer
 
@@ -15260,7 +15282,7 @@ members, each in its own rule.
 | (a) The added definitions' contracts are proved: a distinction is native only if the notion drawing it has its contract | native admission of mathematical proofs (O-85), or the translation of native content into Isabelle run in the owner's direction | the verification request (Q23 (d)): Isabelle accepts the contract theory, and the submitted package is identical to the compilation of its terms; publication waits for it |
 | (b) An added entry's meaning is invariant over every presentation of the native content it reads (task 376's carrier condition) | the same: invariance quantifies over every member of a class | the verification request: each added entry's contract is stated as an exported contract (`presented_relation_contract`, `presented_function_contract`), whose `invariance` is a theorem of the locale, over the presentation classes of native notions — the environment, program entry, site, target, generation, snapshot and publication values — and their products, lists, collections and compositions (`Presentation_Classes`); criticism evaluates an entry natively at two presentations of one subject, a difference refuting |
 | (c) What an entry's meaning is about is native content, not a HOL value presented into structure (18:36: "a row is native structure already" justifies nothing) | a native reading of contract statements (O-85) | the verification request: no contract statement reaches, through the shared constant closure (`Isabelle_Constant_Closure`), a bootstrap-loop presentation relation or datatype — `development_problem`, the Isabelle state datatypes, task 9's rows, loci, prefixes and keys, `readiness_presents`, `state_presents`, `request_presents`, `development_rows_present` (task 376's inventory). A given notion whose contract is conditional on one of them brings it into its caller's contract, and is refused there. Both checks of (b) and (c) are proxies read on Isabelle text; the owner's approval judges native content in the owner's sense |
-| (d) Uses compared for equality | either uses presented as inert leaves in the Factor grammar's coordinates, so that the octet audit covers them; or non-nominality as a contract: a presented relation's equivariance under injective renaming of occurrence coordinates (`rename_environment`; the readers' use-renaming facts `located_at_use_renaming`, `anchored_at_use_renaming`, `citation_location_use_renaming`), a general notion stated once when first demanded | criticism: an entry evaluated natively at the given and at a copy of it with its uses renamed injectively, a difference refuting; the owner's approval. Here #373's pattern — a kind read as a prefix of a coordinate — would pass the octet audit |
+| (d) Uses compared for equality | either uses presented as inert leaves in the Factor grammar's coordinates, so that the octet audit covers them; or non-nominality as a contract: a presented relation's equivariance under injective renaming of occurrence coordinates (`rename_environment`; the readers' use-renaming facts `located_at_use_renaming`, `anchored_at_use_renaming`, `citation_location_use_renaming`), a general notion stated once when first demanded | criticism: an entry evaluated natively at the given and at a copy of it with its uses renamed injectively, a difference refuting; the owner's approval. Here #373's pattern — a kind read as a prefix of a coordinate — would pass the octet audit. [Corrected by "Non-nominality of uses is equivariance under use permutations, a contract the verification request checks" below (task 383): non-nominality of uses is equivariance under use permutations, one general notion (`Presentation_Equivariance`), checked by Isabelle in the verification request, the native sample at a use-renamed copy being criticism, uses staying structure.] |
 | (e) Structure as tags in the answer's own data, the move from octets to structure named at 18:12 | none syntactic. An octet is a leaf a pattern either states or does not, which is why its audit is exact; a shape is read by pair patterns that state nothing, and a finite set of shapes is produced by rules over the empty payload, so no syntactic mark separates a tag from a structural reading. Only semantically, by (b)–(d) | criticism: each distinction an added definition draws on data it constructs itself is to have a counterpart in the native content it reads (non-nominality); the owner's approval |
 | (f) Keys only as an index's implementation of a native carrier | a store an added definition searches, as an interpretation of `native_carrier_index` over a carrier a native notion draws | the verification request where a contract relies on a store's content; otherwise part (e) |
 | (g) The octet audit's own limit | the leaf argument extended to programs with material premises — the given's readers read artifacts by material observation, and an added definition's material premise can compare the octets of a target literal with the argument's — by a readdressing of targets consistent with the payload map, stated once in `Factor_Positive_Parametricity` | criticism; the audit stays a necessary check |
@@ -15315,7 +15337,10 @@ The rows of task 378's requirements table that this entry changes; the others st
   outside the given's package, whose distinctions no granted notion draws.
 - **Use equivariance required of the verification request now**: its statement form does not exist, and defining it
   around this problem is what the first-use rule forbids; it is a general notion, non-nominality as a contract, to be
-  stated once when first demanded.
+  stated once when first demanded. [Corrected by "Non-nominality of uses is equivariance under use permutations, a
+  contract the verification request checks" below (task 383): non-nominality of uses is equivariance under use
+  permutations, one general notion (`Presentation_Equivariance`), checked by Isabelle in the verification request, the
+  native sample at a use-renamed copy being criticism, uses staying structure.]
 - **Isabelle's checks of the contract form counted as native**: they are the bootstrap verifier's, until native proof
   admission (O-85).
 - **One socket for the whole test**: a refusal would not say which part failed.
@@ -15331,7 +15356,11 @@ use is structure; a program that reads a use as structure passes the octet audit
 
 ### Open
 
-Non-nominality as a contract (part (d)) and the choice between it and uses presented as inert leaves. The leaf argument
+Non-nominality as a contract (part (d)) and the choice between it and uses presented as inert leaves. [Corrected by
+"Non-nominality of uses is equivariance under use permutations, a contract the verification request checks" below
+(task 383): non-nominality of uses is equivariance under use permutations, one general notion
+(`Presentation_Equivariance`), checked by Isabelle in the verification request, the native sample at a use-renamed
+copy being criticism, uses staying structure; the choice of a use leaf in the term language is the owner's.] The leaf argument
 for programs with material premises (part (g)). The native computation of ground assertions (part (h)). Native proof
 admission (O-85), which would move (a)–(c) and (f) into the native judgment. The owner's authorization of this
 encoding. This design was made outside the loop and is a residual.
@@ -15606,3 +15635,21 @@ marking of task 381's entry, its part (d) and its rejected item on use equivaria
 entries have landed. This design was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 383's decision; a design, no theory changes).
+
+## The seed round is stated once, the incumbents' constructor a parameter of its own
+
+Task 384, the follow-up 7 of #365's review (`.build/tasks/366/review.md`) as plan-62 decided it on the question of
+`.build/tasks/384/result.md`. B4's first part stated the seed round a second time over its representation
+(`development_seed_round`, one constructor for the incumbents and the rows), beside the older statement
+(`development_seed_publication_from`, `_over`, `_among`, `_row_with`), which records the incumbents with the recording
+constructor whatever the rows' constructor is; `development_seed_publication_from_known` and
+`development_seed_publication_among_formed_causes` use it at the known and formed-cause constructors.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The round records the incumbents and the rows with one constructor (`seed_made_round_of L construct d`); its plain instance `development_seed_plain_round` is proved equal to `development_seed_publication` (`development_seed_plain_round_exact`). | The round takes the incumbents' constructor as a parameter of its own beside the rows' (`development_seed_round L incumbent construct represent pub d`) and stands in `Development_Seed_Publication`, which imports `Represented_Snapshot_Transactions` for the represented snapshot. The older statement is its plain instance: `_row_with` the round's row (`seed_round_row`) at the plain row, `_among` the assembly of given incumbents' plain representation (`seed_plain_among`), `_over` the round with `finite_construct_generation_record` for the incumbents, `_from` `_over` at `finite_locus_publications`; each keeps the equation it was defined by as a lemma (`_row_with_eq`, `_among_eq`, `_over_eq`, `_from_eq`), so every statement that stays keeps its meaning, `_from_known` and `_among_formed_causes` among them. Retired as covered by the definitions: `development_seed_publication_from_published` (now `_from`'s definition), `development_seed_plain_round` and `development_seed_plain_round_exact` (`_over` at the recording constructors is the plain round). The reference instance passes the formed-cause constructor for both. |
+
+The other way, changing what `_from` and `_over` mean at the known and formed-cause constructors, is not taken: it
+changes what proved equations state. The constants a recipe executes compute the same values: the older statement's
+code is now the round's assembly, its plain rows recorded in parallel as before and the publications of the rows in a
+second parallel pass.

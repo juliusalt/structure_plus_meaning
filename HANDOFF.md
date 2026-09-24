@@ -27,16 +27,23 @@ contract and two instances (#42, `Development_Native_Verdict`). #44 landed store
 `Development_Verdict_Witnesses`), so that no positive field reaches an absence; its review found the same discharge and
 the same two correspondences proved on both sides of the fields and their witnesses, which #288 states once, with the
 witness at the request's presentation — the lemma a native repair consumes — resting on the discharge (after #285 and
-#284). The witnesses of `unpermitted_removed`, `unpermitted_added` and `unreached` are unbuilt (Open 90). #278
+#284). The witnesses of `unpermitted_removed`, `unpermitted_added` and `unreached` are unbuilt (Open 90). #290 attributes and fixes the joined verdict program's demand, which explodes with the state where
+the field program's does not: the machinery state's bare reach demand is 1.05 s in `finite_verdict_unreached` and did
+not end in 150 s in `finite_native_verdict`, while at the seeded state the two agree — so no native judgment of a whole
+state can be measured, and #194's stage measurement and #278's own figure wait on it (#278 continues when it lands; the
+suspects are `finite_interface_fits`' per-premise interface scan and a site of the joined program whose applications
+differ). #278
 reflects `native_verdict_system` and measures one judgment held at the seeded and machinery states beside a bare reach
 — the baseline for #194 and condition 5a's figure, estimated at about four reaches. #279 landed the exporter's
 obligation `isabelle_declared_once` at every state the exporter defines (#256, #267, #274, `ab37086e`): its measurement
 (`.build/tasks/279/measurement.md`) took the spine conversion from 0.20 s to 0.107 s at the machinery's 340 entities
 by reading each entity's constructor; a fold equation does not carry (`.build/tasks/279/equation.md`). What remained
 grew about quadratically, and its review found the cause: `Conv.rewr_conv` ends in a full beta normalization of the
-rewritten right side, which holds the whole remaining entity list, so each step walks what remains. #283 instantiates
-the chosen equation directly and reads the dispatch from the notion's equations, measured at the machinery and at an
-answer frame, which pays the obligation too. Roots stay a store with distinct keys.
+rewritten right side, which holds the whole remaining entity list, so each step walks what remains. #283 landed the
+repair (`f1b6098a`): the chosen equation is instantiated directly at the destructured cterms, with no beta conversion,
+and the dispatch reads the notion's equations; the conversion is 0.0008 s at the machinery's 340 entities, from 0.107 s,
+and linear. What is left of the obligation is `increasing_tac`'s numeral comparisons, 0.017 s at 210 declarations —
+linear, twenty times the conversion, and closable the same way if it is ever worth it (Open 92). Roots stay a store with distinct keys.
 
 **Request construction (#276, #277, #112–#114).** Task 95's entry: a native check over the request state's rows — a
 proposed body is admitted exactly when it lists the least context and the support, production being an executor's
@@ -125,11 +132,13 @@ one tree); every theory given its `THEORY_MAP.md` row, every row's imports re-re
 creates has no review task (the harness reviews it in its own folder). The deepest chain is 8: #147 → #241 → #155 →
 #157 or #64 → #167 → #169 → #92 → #93. The incremental line's #194 is 4 deep, through #161 and #187.
 
-**Order** (`128 147 276 44 45 279 161 162 277 280 192 203 278 241 281 282 112 113 155 156 157 158 159 160 64 65 165
-166 187 198 193 204 195 206 214 215 239 240 237 238 114 167 168 169 170 92 93 194 205`). What was done and not yet
-integrated first: #128 and #147 land, #276 is reviewed, #44 and #279 are nearly done; then #161 at the head of the word
-chain, #277 for request construction, the owner's REASONING_REUSE revision, #192 and #278; the chain's next links as
-their inputs land; the documents and the re-citations wherever a slot would stand idle; each review after its build.
+**Order** (the queue holds it; this is why it is as it is). What blocks the most goes first: #290, since no native
+judgment of a whole state can be measured until it lands; then request construction (#112, #113) and the moves #287
+that #285 waits on; the re-citations #214 and #239, which fill a slot without waiting on anything; the incremental
+judgment #192; the layout's #241 and the documents #281, #282; #289 and then #278, which continues after #290; the word
+chain in its serialized order (#155, #157 beside #64, #167, #169, #92) as each landing releases the next; the
+consolidations #284, #285, #288 after #237; each measurement after the build it measures, and each review after its
+build.
 
 ## Decisions
 
@@ -219,6 +228,9 @@ a task):
   hand; where both sides changed one row, the round hands over main's row verbatim and a later task carries its change
   (#227). A task working in the one tree installs its theories only at hand-over and keeps nothing of its own
   uncommitted there when it parks or comes back (q30).
+- **Text with backticks goes through a file.** `v2.py reply`, `tell` and `ledger` given their text as an argument pass
+  it through a shell, which reads a backticked name as a command and strips it: q73's answer reached its asker with
+  every fact name gone. Write such an answer to a file under the planner's drafts and pass `--file` (plan-48).
 - **Size.** A brief's Size is judged against its room with its own relations — the theories it names can be the greater
   part of it (#112's were 258K of its 265K) — and a task beyond its room is handed back at its first start. Such a brief
   is trimmed to the piece of reasoning that belongs together, its corollaries and its moves becoming tasks over what it
@@ -254,7 +266,7 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   `Development_Verdict_Mentions` (#36, #182), `Development_Subject_Index` (#139, #185), `Development_Verdict_Difference`
   (#38), `unreached` over the native reach (#40: one seeded judgment 0.30 s, the machinery's unreached 3.90 s
   positioned, `.build/tasks/40/measurement.txt`), `Development_Native_Verdict` (#42); the exporter proves
-  `isabelle_declared_once` at every state it defines (#243, #227, #256, #267, #274, #279; `Map_Filter_Lists`).
+  `isabelle_declared_once` at every state it defines (#243, #227, #256, #267, #274, #279, #283; `Map_Filter_Lists`).
 - **Request construction**: #276's consolidations of the position facts and the keyed rows-about forms (`ab37086e`);
   the five fields reading the body's lists, `list_cited_program` (#277, `552d976c`).
 - **Request construction**: `request_presents_constructed` (#106), `Development_Request_Scope` (#108),
@@ -432,6 +444,15 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     are next re-established (#161 or #167).
 88. The next change to `Native_Collection_Programs`: three blank lines near `native_every_program`; `read_clause`'s
     `read` premise rebinding `c`.
+92. **What is left of the exporter's obligation** (#283's review): `increasing_tac` runs one `simp_tac` per adjacent
+    pair, 0.017 s at the machinery's 210 declarations against the conversion's 0.0008 s — linear and small; the numeral
+    order equations could be instantiated directly as #283 did for the declarations, measured before acting. With it:
+    any other conversion that rewrites the head of a long term with `Conv.rewr_conv` beta-normalizes its whole right
+    side at each step, so a second such conversion (exporter-side or in a quotation proof procedure) is repaired by the
+    same structural instantiation, the binder factored at that second use rather than copied. And the exporter's
+    linearity was measured at 7, 80 and 340 entities, the 7 as a `define` of one subject: a figure from an actual answer
+    frame, which uses `define_again` over the request's roots and the answer's introduced constants, confirms it when an
+    answer is next judged (#157's replay judges sixteen).
 91. **Review 31's unread contract-renaming lemmas stand in `Development_Publication`** (#161's review, follow-up 4),
     which no build of the rows line edits: removed, or kept with the reason, at that theory's next edit.
 90. **The three unbuilt witnesses** (#44's review, follow-up 1): `unpermitted_removed`, `unpermitted_added` and

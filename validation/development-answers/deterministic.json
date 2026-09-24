@@ -9,10 +9,10 @@
   }
  },
  "answer_sha256": "972de38e0d82ead133633e982995fde4b9e6302faedef5ca95825d7e6e2bd83f",
- "base_receipt_sha256": "f72a3eb9363c98b32ab23c09e6e27ca784fd5bd90558e89dff625a2901538302",
+ "base_receipt_sha256": "ad01b421bfd38fba0766bf3c327c02cfba38c5c9165308102aee5237d5f6e217",
  "executor": "tools/development_executor.py",
  "executor_sha256": "e05581ac754e9ca84f82c0af693cf2b19ab11b3f1336efc316bbe78f534113eb",
- "harness_sha256": "584439f33b8bcd8bffba7e09fad097d47e869a1f488bb1bfe60eb9c1a6deaac0",
+ "harness_sha256": "fddad138be726b923ce53e6760b2fe3434b3a4ab0d6c39a98c538f0b09333475",
  "packet_sha256": "58212d793119fff7b965754f16c3e93fee95a79b600a9fa0f6d9f6de80983467",
  "status": "judged",
  "steps": {
@@ -42,8 +42,8 @@
   "published": true
  },
  "verdict_word": {
-  "bytes": 36834,
-  "sha256": "c57c8bfe3182a60b9298f4f766eee40f84daebd8dab6363d8b97d5be9e775b72"
+  "bytes": 43168,
+  "sha256": "e60900a8f0f24dbd75750c3317f9440768257f57f0b1610a8f9fa93a329e619c"
  },
  "publication_word": {
   "bytes": 7733871,

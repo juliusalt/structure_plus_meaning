@@ -140,6 +140,30 @@ definition development_seed_problem_value :: "development_problem fset \<Rightar
   "development_seed_problem_value answered=finite_store_option id
     (development_seed_problem_report_data (development_seed_problem_report_value answered))"
 
+text \<open>
+  The seed's problems are the problems of one constant construction, a domain of its residual record, and
+  its report holds only them: the report lies in its presentation's domain, so its value is the
+  presentation itself, never the store's absence.
+\<close>
+
+lemma development_seed_problems_domain:
+  "development_row_domain state_constant_key (\<lambda>_. None) (\<lambda>_. None) (set development_seed_problems)"
+  unfolding development_seed_problems_def development_refinement_problems_def
+  by (rule development_constant_problems_list_domain[OF state_constant_key_injective]) simp_all
+
+theorem development_seed_problem_report_domain:
+  defines P_def: "P\<equiv>set development_seed_problems"
+  shows "development_seed_problem_report_value answered\<in>lists P\<times>UNIV\<times>UNIV\<times>
+    (lists P\<times>lists P\<times>lists P\<times>lists P\<times>UNIV)"
+  by (auto simp: P_def development_seed_problem_report_value_def development_problem_assessment_def
+    development_ready_problems_def development_without_subject_def development_residual_problems_def
+    development_ambiguous_def in_lists_conv_set)
+
+corollary development_seed_problem_report_presentation:
+  "development_seed_problem_report_data (development_seed_problem_report_value answered)\<noteq>None"
+  by (rule finite_presented_on_some[OF development_seed_problem_report_data_presented[OF development_seed_problems_domain]
+    development_seed_problem_report_domain[of answered]]) simp
+
 section \<open>Controls remove every root declaration or add unreached and malformed entities\<close>
 
 text \<open>

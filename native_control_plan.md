@@ -1100,10 +1100,12 @@ and its measured cost remaining; request construction is native, its constructio
 incremental assessment of an edited state, the remedy for a verification stage's cost, is built beside them. The
 order's next step, problems whose subjects are native definitions, is designed in the DECISIONS.md entry "Problems
 about native definitions are posed, answered and judged at the development package's rows": the loop's native
-definitions held in one package whose rows are the state rows' second instance, a problem at a locus of a native
-family, request construction and the verdict reused at those rows, an answer as an edit of them, an admission that
-records its wait for verification, and installation that relocates the refined definition's callers; its builds are
-under way, N1–N4 first and N5–N9 briefed over what they leave. The translation of admitted native content into
+definitions held in one package, the state problems about them are judged against. Two later entries correct it: "The
+native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer" makes the native
+notion of a problem the first problem's answer, so no problem row, locus or kind prefix is built, and "Every distinction
+a native program relies on comes from a native notion: the state the native loop judges and the presentations that
+retire" reads the package by the Factor grammar's native readers rather than as rows, so its builds are N2 (the
+package), the native request at a package and the first problem's builds, N1, N3's second part and N4 being retired. The translation of admitted native content into
 Isabelle, which verifies it, is the design after it.
 
 When native definitions exist is the plan's reading of the owner's answer, generated and without owner authority. The
@@ -1117,7 +1119,7 @@ problems are posed again under it). The owner's earlier wording of the same answ
 exist", is read the same way. From then on the loop poses no new problem about a HOL constant: the machinery's HOL
 residuals are superseded by the native problems about the package, as Q18 (d) provisionally chooses; the seeded
 refinement problems are retired with the loop that poses them, neither selected nor issued again; and every record of
-the HOL loop stays history, which the generalized rows record's Isabelle instance keeps readable. Until native answers
+the HOL loop stays history, which the bootstrap loop's theories, kept as they stand, keep readable. Until native answers
 can be published, a landing that changes a notion's HOL program derives the package from it again, a bootstrap
 re-installation recorded as a residual, as Q18 (c) provisionally chooses. Q18 stays open; on this reading its (c) and
 (d) agree with the owner's answer.
@@ -1133,6 +1135,27 @@ and the authority problems, and the graph's changes are DECISIONS.md "The native
 is; the problem of Q2, second, exercises its answer". The first problem thus opens the Q7 order's third step, problems
 whose subjects are native definitions. This reading of where it enters the order, like everything here beyond the
 owner's words, is generated and without owner authority.
+
+The owner's rule of 18:12 — every distinction a native program relies on comes from a native notion, not from a HOL
+presentation relation — reaches the loop's other programs as well as its problems, and DECISIONS.md "Every distinction
+a native program relies on comes from a native notion: the state the native loop judges and the presentations that
+retire" applies it; this paragraph is the plan's reading, generated and without owner authority. A distinction is
+native when a native notion — a native definition whose contract is proved once over native structure — draws it on
+native content; a HOL presentation relation supplies it when the relation itself places it into a program's argument.
+By that test readiness, the reach, the verdict and its fields, request construction, the decomposition's schema, the
+selection question and the incremental assessment are native programs whose inputs' distinctions — a problem's key and
+status, an entity's kind, what a row declares and mentions, a constant's key — only HOL presentation relations supply
+today. Over the Isabelle states they can come from nothing else, the exporter's datatype being Isabelle's, and those
+states' presentations stay, exact and unextended, only as long as the bootstrap loop does. The native loop judges its
+given, the development's package in its environment, and every distinction of it — its entries, definitions, clauses,
+callee edges, membership, formation, least scopes, retention and identity — is drawn by the Factor grammar's native
+readers, each with its contract proved once: the reach there is package membership, a request's least context the least
+closed package scope of its support, an answer's retention environment inclusion, and the verdict, when a problem kind
+asks it, their composition. Readiness and the selection question read problems and are re-stated over the first
+problem's admitted answer. Task 320's rows builds (N1, N3's second part) are retired, N3's first part becomes the native
+request at a package, N2 stands without its site keys, and the bootstrap loop's growth (the answer's designation by its
+locus, the index form's replacement by first-occurrence keys, a native verification stage) retires while its
+maintenance stands.
 
 The owner's answer to owner question Q2 (2026-09-24 17:18), quoted under [Owner directions](#owner-directions), names
 the problem the loop works second: how to choose the next problem to solve, a problem the owner calls very difficult and
@@ -1170,18 +1193,19 @@ The six tasks of the first direction, as they stand:
 2. **Structural Isabelle states.** Folded by demand into the verdict of a kind: the state's entity rows are presented
    structurally, each kind a family of rows and each constant a key; the standalone theory stays uninstalled.
 3. **Structural development notions.** Built as one notion, a row at a locus, with a problem's generations at its
-   locus and a row outside the store presented in its context. Remaining: every report switched to its problems' rows
-   and the problem datum's tags retired, an answer designating its request by its locus, the answer family of the rows,
-   and the selection's locus, which still carries a tag.
+   locus and a row outside the store presented in its context. These are presentations whose distinctions HOL assigns:
+   the bootstrap loop keeps them exact and unextended until it retires, and what remained of this task — an answer
+   designating its request by its locus among it — retires with that loop's growth (task 376's entry).
 4. **Decisions as native programs.** Readiness, the reach, the verdict of a kind and the decomposition's schema are
-   native programs with their contracts proved once, and so is request construction; they are next held in one
-   package whose definitions are the subjects of native problems.
+   native programs with their contracts proved once, and so is request construction; the distinctions their inputs
+   carry come from HOL presentation relations. They are held in one package, the given of the first problem, and are
+   re-stated over native notions: at a package the Factor grammar's readers, for problems the first problem's answer.
 5. **Efficiency as structure.** Done at the level of notions: the index of a carrier by a key, a check made where its
    premise is established and a generator of the accepted candidates are checked theories that their uses interpret.
    An argument ordered so that comparison meets what differs first has no statement of its own yet, to be factored at
    its next use.
-6. **Transport.** Not begun: a packet is the presentation of a request row, so transport needs a reader contract, the
-   reading the inverse of the presentation.
+6. **Transport.** Not begun: a packet is the presentation of a question with its native context, so transport needs a
+   reader contract, the reading the inverse of the presentation.
 
 Each tagged presentation still in use stays exact and replaceable and is recorded as a use of octets as structure
 until it is retired. The order and the bound on the HOL loop are the owner's (Q7, 2026-09-24), and so are the first

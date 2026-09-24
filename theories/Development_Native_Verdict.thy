@@ -52,12 +52,14 @@ subsection \<open>The program: the field programs joined, and the entry\<close>
 
 text \<open>
   The first four definitions of the difference program (the member, the any-checker, the store search and the
-  found search) are those of the rows and mentions programs at the same sites, so they are held once.
+  found search) are those of the rows and mentions programs at the same sites, so they are held once. The
+  first definition of the mentions program, the list checker's membership, is the rows program's member at
+  the same site, and is held once too.
 \<close>
 
 definition native_verdict_definitions :: "(local_address option definition_site\<times>
     (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
-  "native_verdict_definitions=verdict_rows_definitions@verdict_mentions_definitions@verdict_unreached_definitions@
+  "native_verdict_definitions=verdict_rows_definitions@drop 1 verdict_mentions_definitions@verdict_unreached_definitions@
     drop 4 verdict_difference_definitions@[(verdict_entry,[([0],verdict_entry_rule)])]"
 
 definition finite_native_verdict :: "local_address option finite_native_system" where
@@ -99,16 +101,22 @@ lemma native_verdict_whole:
   "set verdict_difference_definitions\<subseteq>set native_verdict_definitions"
 proof -
   show "set verdict_rows_definitions\<subseteq>set native_verdict_definitions"
-    "set verdict_mentions_definitions\<subseteq>set native_verdict_definitions"
     "set verdict_unreached_definitions\<subseteq>set native_verdict_definitions"
     by (auto simp: native_verdict_definitions_def)
+  have split_mentions: "set verdict_mentions_definitions=
+      set (take 1 verdict_mentions_definitions)\<union>set (drop 1 verdict_mentions_definitions)"
+    by (metis append_take_drop_id set_append)
+  have "set (take 1 verdict_mentions_definitions)\<subseteq>set verdict_rows_definitions"
+    by (simp add: verdict_rows_definitions_def verdict_mentions_definitions_def)
+  then show mentions: "set verdict_mentions_definitions\<subseteq>set native_verdict_definitions"
+    unfolding split_mentions by (auto simp: native_verdict_definitions_def)
   have split: "set verdict_difference_definitions=
       set (take 4 verdict_difference_definitions)\<union>set (drop 4 verdict_difference_definitions)"
     by (metis append_take_drop_id set_append)
   have "set (take 4 verdict_difference_definitions)\<subseteq>set verdict_rows_definitions\<union>set verdict_mentions_definitions"
     by (simp add: verdict_difference_definitions_def verdict_rows_definitions_def verdict_mentions_definitions_def)
   then show "set verdict_difference_definitions\<subseteq>set native_verdict_definitions"
-    unfolding split by (auto simp: native_verdict_definitions_def)
+    unfolding split using mentions by (auto simp: native_verdict_definitions_def)
 qed
 
 lemma native_verdict_shares:

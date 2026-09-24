@@ -12663,6 +12663,13 @@ per-row filter, spent 29.5 s a call rebuilding an answer state's reach table.
 - An edit is reduced by its constructor and never checked by a decision; a specification change is refused to the
   whole judgment, not approximated.
 - `O` is produced and admitted; a larger `O` costs work and never truth; a refused `O` is judged whole.
+- *Correction (task 321, 2026-09-24; task 285's review, follow-ups 1–3):* `O` has one presentation in its admission,
+  the list `keys_term L`, in both readings. Closure is the verdict's own `excess` at `O`'s keys, the list checker's
+  row reading, not `undeclared`'s store reading at `O`'s store as "`O` is produced and admitted" above states; a
+  target's mention is in `O` through the list checker's test, not found in `O`'s store. `O` is edit-sized, so the
+  scan of `O` per mention is work linear in the edit. No store of `O` stands; the witnesses of `excess` still read a
+  support store (task 288's). The admission program holds the mentions program once, and the list checker's
+  membership once, the rows program's at `verdict_row_member`.
 - Keys continue: the answer state's constants and kept entities keep `R`'s keys, a removed row's key is retired and
   never reused, and an added row's key is fresh.
 - Acceptance reads no absence: an empty fibre is a shape, found and empty. An unavailable incremental form is the

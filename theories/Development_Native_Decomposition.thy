@@ -73,7 +73,7 @@ definition decomposition_definitions :: "(local_address option definition_site\<
     (decomposition_every,native_every_rules decomposition_every decomposition_defined)#
     (decomposition_defined,[([0],native_swap_rule verdict_statements)])#
     (decomposition_declared,native_every_rules decomposition_declared verdict_key_found)#
-    development_row_definitions@verdict_rows_definitions@verdict_mentions_definitions"
+    development_row_definitions@verdict_rows_definitions@drop 1 verdict_mentions_definitions"
 
 definition finite_native_decomposition :: "local_address option finite_native_system" where
   "finite_native_decomposition=finite_rule_program decomposition_definitions"
@@ -135,8 +135,16 @@ lemma native_decomposition_definitions:
     {decomposition_applies,decomposition_every,decomposition_defined,decomposition_declared}\<union>
     fst ` set development_row_definitions \<union> fst ` set verdict_rows_definitions \<union>
     fst ` set verdict_mentions_definitions"
-  by (simp add: native_decomposition_system_def finite_native_decomposition_def finite_rule_program_definitions
-    decomposition_definitions_def image_Un Un_assoc)
+proof -
+  have split: "set verdict_mentions_definitions=
+      set (take 1 verdict_mentions_definitions)\<union>set (drop 1 verdict_mentions_definitions)"
+    by (metis append_take_drop_id set_append)
+  have member: "set (take 1 verdict_mentions_definitions)\<subseteq>set verdict_rows_definitions"
+    by (simp add: verdict_rows_definitions_def verdict_mentions_definitions_def)
+  show ?thesis
+    using member by (auto simp: native_decomposition_system_def finite_native_decomposition_def
+      finite_rule_program_definitions decomposition_definitions_def split)
+qed
 
 
 lemma native_decomposition_shares:
@@ -173,9 +181,9 @@ lemma native_decomposition_found:
   "(verdict_key_found,t)\<in>positive_meaning native_decomposition_system \<longleftrightarrow>
     (verdict_key_found,t)\<in>positive_meaning verdict_mentions_system"
   unfolding verdict_mentions_system_def finite_verdict_mentions_def
-  by (rule native_decomposition_shares)
-    (use verdict_mentions_formed in \<open>simp_all add: verdict_mentions_system_def finite_verdict_mentions_def
-      decomposition_definitions_def verdict_mentions_definitions_def\<close>)
+  by (rule native_decomposition_shares[OF verdict_mentions_formed[unfolded verdict_mentions_system_def
+      finite_verdict_mentions_def]])
+    (auto simp: decomposition_definitions_def verdict_rows_definitions_def verdict_mentions_definitions_def)
 
 text \<open>
   The transposition passes an element of the intermediates, called beside its context, to the traversal,

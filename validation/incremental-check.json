@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "84faf447191753f991eb3b4c6428cc8e52249dc3ea7ad42d7fa069fce16313f9",
- "checked_content_sha256": "228f44d82b8fce43ecc81679188bf844a7e74c0d2cba182f7bc12f308db4c3af",
+ "base_receipt_sha256": "7c3f59ec42a740bb12e8dc977179810a49a4935b2caa6d4ff007219d4d669cd4",
+ "checked_content_sha256": "d90b0984cc187167ee18b81cdad9e51eed4c1e12642e1f2ad343fa3637164c7b",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,15 +22,35 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.32,
+  "base_and_impact": 0.44,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 80.84,
-  "recipe_impact": 0.43,
-  "recipes_and_host_tests": 11.1
+  "proof": 104.29,
+  "recipe_impact": 0.41,
+  "recipes_and_host_tests": 11.03
  },
  "rebuilt_theories": [
-  "Development_Exported_Edit"
+  "Development_Edited_Local",
+  "Development_Edited_Reach",
+  "Development_Edited_Undeclared",
+  "Development_Exported_Edit",
+  "Development_Located_Rows",
+  "Development_Native_Decomposition",
+  "Development_Native_Verdict",
+  "Development_Request_Citations",
+  "Development_Request_Keys",
+  "Development_Request_Scope",
+  "Development_Row_Contexts",
+  "Development_Row_Data",
+  "Development_Row_Presentations",
+  "Development_Rows",
+  "Development_State_Edit",
+  "Development_Subject_Index",
+  "Development_Verdict_Difference",
+  "Development_Verdict_Mentions",
+  "Development_Verdict_Statements",
+  "Development_Verdict_Unreached",
+  "Development_Verdict_Witnesses"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +210,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1838,
- "seconds": 118.59,
+ "reused_theories": 1819,
+ "seconds": 149.16,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1839,
+  "theory_count": 1840,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1839,
+ "theories": 1840,
  "validation_inputs": {
-  "ROOT": "ee02655d8d8a82ce2854c5f9f0bad9fd20fe69461f1c3c7dcf09d29eb8e9b52a",
+  "ROOT": "6707f7941e83914d6525aec385370a5e9ca72c1c28b8d0d97e90d9fb896dfc88",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "044f6f813ed20f9c883f0190b14bc91e8fb372daaefaf479eb1bf6dc563ff08c"
  }

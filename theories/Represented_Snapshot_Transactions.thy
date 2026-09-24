@@ -912,4 +912,86 @@ export_code represented_snapshot_loci represented_snapshot_formed represented_sn
   represented_locus_publications_body decode_represented_result
   checking SML
 
+section \<open>A generation represented through a table\<close>
+
+text \<open>
+  A generation over positions represents a generation of values through a table when every position it
+  holds is inside the table and the positions read in the table give the generation. A list of optional
+  generations represented so reads its list of values, a snapshot's list among them.
+\<close>
+
+definition table_represented_generation :: "'a list \<Rightarrow> nat generation_structure \<Rightarrow> 'a generation_structure \<Rightarrow> bool" where
+  "table_represented_generation T g G \<longleftrightarrow> set_generation_structure g\<subseteq>{..<length T} \<and>
+    map_generation_structure (\<lambda>i. T!i) g=G"
+
+lemma table_represented_generation_intro:
+  assumes bounds: "k<length T" "a<length T" "b<length T"
+    and inside: "\<And>g. g\<in>set ps \<Longrightarrow> set_generation_structure g\<subseteq>{..<length T}"
+  shows "table_represented_generation T (Generation k (fset_of_list ps) a b)
+    (Generation (T!k) (fimage (map_generation_structure (\<lambda>i. T!i)) (fset_of_list ps)) (T!a) (T!b))"
+  unfolding table_represented_generation_def
+proof
+  show "set_generation_structure (Generation k (fset_of_list ps) a b)\<subseteq>{..<length T}"
+    using bounds by (auto simp: fset_of_list_elem dest!: inside)
+  show "map_generation_structure (\<lambda>i. T!i) (Generation k (fset_of_list ps) a b)=
+    Generation (T!k) (fimage (map_generation_structure (\<lambda>i. T!i)) (fset_of_list ps)) (T!a) (T!b)"
+    by simp
+qed
+
+lemma table_represented_generation_list:
+  assumes preds: "list_all2 (table_represented_generation T) ps Gs"
+  shows "fimage (map_generation_structure (\<lambda>i. T!i)) (fset_of_list ps)=fset_of_list Gs"
+    and "\<And>g. g\<in>set ps \<Longrightarrow> set_generation_structure g\<subseteq>{..<length T}"
+proof -
+  have "map (map_generation_structure (\<lambda>i. T!i)) ps=Gs"
+  proof (rule nth_equalityI)
+    show "length (map (map_generation_structure (\<lambda>i. T!i)) ps)=length Gs" using preds by (simp add: list_all2_lengthD)
+    fix i
+    assume "i<length (map (map_generation_structure (\<lambda>i. T!i)) ps)"
+    then show "map (map_generation_structure (\<lambda>i. T!i)) ps!i=Gs!i"
+      using preds by (auto simp: list_all2_conv_all_nth table_represented_generation_def)
+  qed
+  then show "fimage (map_generation_structure (\<lambda>i. T!i)) (fset_of_list ps)=fset_of_list Gs"
+    by (metis fset_of_list_map)
+  fix g
+  assume "g\<in>set ps"
+  then obtain i where i: "i<length ps" "g=ps!i" by (auto simp: in_set_conv_nth)
+  then show "set_generation_structure g\<subseteq>{..<length T}"
+    using preds by (auto simp: list_all2_conv_all_nth table_represented_generation_def)
+qed
+
+lemma table_represented_generation_option:
+  assumes "rel_option (table_represented_generation T) x y"
+  shows "map_option (map_generation_structure (\<lambda>i. T!i)) x=y"
+    and "\<And>g. g\<in>set_option x \<Longrightarrow> set_generation_structure g\<subseteq>{..<length T}"
+  using assms by (cases x; cases y; auto simp: table_represented_generation_def)+
+
+lemma those_map_option: "those (map (map_option f) xs)=map_option (map f) (those xs)"
+  by (induction xs) (auto split: option.split simp: option.map_comp o_def)
+
+lemma those_member: "those xs=Some gs \<Longrightarrow> g\<in>set gs \<Longrightarrow> Some g\<in>set xs"
+  by (induction xs arbitrary: gs) (auto split: option.splits)
+
+lemma find_zip_rel_option:
+  assumes "list_all2 (rel_option R) ys (map f zs)" and "length ps=length zs"
+  shows "rel_option R (Option.bind (find (\<lambda>(q,g). q=a) (zip ps ys)) snd)
+    (Option.bind (find (\<lambda>(q,z). q=a) (zip ps zs)) (\<lambda>(q,z). f z))"
+  using assms
+proof (induction ps arbitrary: ys zs)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons p ps)
+  obtain z zs' where zs: "zs=z#zs'" using Cons.prems(2) by (cases zs) auto
+  obtain y ys' where ys: "ys=y#ys'" using Cons.prems(1) zs by (cases ys) auto
+  have head: "rel_option R y (f z)" and tail: "list_all2 (rel_option R) ys' (map f zs')"
+    using Cons.prems(1) ys zs by simp_all
+  show ?case using Cons.IH[OF tail] Cons.prems(2) head by (simp add: ys zs)
+qed
+
+lemma represented_publications_targets_bound:
+  "\<forall>(I,A)\<in>set ps. (\<forall>g\<in>set_option I. set_generation_structure g\<subseteq>K) \<and> (\<forall>g\<in>set_option A. set_generation_structure g\<subseteq>K) \<Longrightarrow>
+    represented_publications_targets ps\<subseteq>K"
+  by (fastforce simp: represented_publications_targets_def)
+
 end

@@ -329,4 +329,93 @@ fun value_reference_chunks :: "nat \<Rightarrow> 'a list \<Rightarrow> 'a list l
 lemma value_reference_chunks_concat: "concat (value_reference_chunks n xs)=xs"
   by (induction n xs rule: value_reference_chunks.induct) simp_all
 
+text \<open>
+  A list of references reads a list of values positionally: each value is read at the reference of its
+  position. A reading of a concatenation is the readings of its parts, the second at the references after
+  the first's; the references of a sequence read it in the sequence's table, and a reading holds in every
+  table that keeps the values read.
+\<close>
+
+definition value_reference_reads :: "'a list \<Rightarrow> nat list \<Rightarrow> 'a list \<Rightarrow> bool" where
+  "value_reference_reads T ns xs \<longleftrightarrow> length xs\<le>length ns \<and> (\<forall>i<length xs. value_reference_read T (ns!i)=Some (xs!i))"
+
+lemma value_reference_reads_append:
+  "value_reference_reads T ns (xs@ys) \<longleftrightarrow> value_reference_reads T ns xs \<and> value_reference_reads T (drop (length xs) ns) ys"
+proof
+  assume whole: "value_reference_reads T ns (xs@ys)"
+  show "value_reference_reads T ns xs \<and> value_reference_reads T (drop (length xs) ns) ys"
+  proof
+    show "value_reference_reads T ns xs" unfolding value_reference_reads_def
+    proof (intro conjI allI impI)
+      show "length xs\<le>length ns" using whole by (simp add: value_reference_reads_def)
+      fix i
+      assume i: "i<length xs"
+      have "value_reference_read T (ns!i)=Some ((xs@ys)!i)" using whole i by (simp add: value_reference_reads_def)
+      then show "value_reference_read T (ns!i)=Some (xs!i)" using i by (simp add: nth_append)
+    qed
+    show "value_reference_reads T (drop (length xs) ns) ys" unfolding value_reference_reads_def
+    proof (intro conjI allI impI)
+      show "length ys\<le>length (drop (length xs) ns)" using whole by (auto simp: value_reference_reads_def)
+      fix i
+      assume i: "i<length ys"
+      have bound: "length xs\<le>length ns" using whole by (simp add: value_reference_reads_def)
+      have "value_reference_read T (ns!(length xs+i))=Some ((xs@ys)!(length xs+i))"
+        using whole i by (simp add: value_reference_reads_def)
+      then show "value_reference_read T (drop (length xs) ns!i)=Some (ys!i)" using bound by (simp add: nth_append)
+    qed
+  qed
+next
+  assume parts: "value_reference_reads T ns xs \<and> value_reference_reads T (drop (length xs) ns) ys"
+  show "value_reference_reads T ns (xs@ys)" unfolding value_reference_reads_def
+  proof (intro conjI allI impI)
+    show "length (xs@ys)\<le>length ns" using parts by (auto simp: value_reference_reads_def)
+    fix i
+    assume i: "i<length (xs@ys)"
+    show "value_reference_read T (ns!i)=Some ((xs@ys)!i)"
+    proof (cases "i<length xs")
+      case True
+      then show ?thesis using parts by (simp add: value_reference_reads_def nth_append)
+    next
+      case False
+      then obtain k where k: "i=length xs+k" by (metis le_add_diff_inverse not_less)
+      have "k<length ys" using i k by simp
+      then have "value_reference_read T (drop (length xs) ns!k)=Some (ys!k)" using parts unfolding value_reference_reads_def by blast
+      moreover have "length xs\<le>length ns" using parts by (simp add: value_reference_reads_def)
+      ultimately show ?thesis using k by (simp add: nth_append)
+    qed
+  qed
+qed
+
+lemma value_reference_reads_cons:
+  "value_reference_reads T ns (x#xs) \<longleftrightarrow> ns\<noteq>[] \<and> value_reference_read T (ns!0)=Some x \<and> value_reference_reads T (drop 1 ns) xs"
+proof -
+  have "value_reference_reads T ns ([x]@xs) \<longleftrightarrow> value_reference_reads T ns [x] \<and> value_reference_reads T (drop 1 ns) xs"
+    by (simp only: value_reference_reads_append) simp
+  moreover have "value_reference_reads T ns [x] \<longleftrightarrow> ns\<noteq>[] \<and> value_reference_read T (ns!0)=Some x"
+    by (cases ns) (auto simp: value_reference_reads_def)
+  ultimately show ?thesis by simp
+qed
+
+lemma value_reference_reads_sequence:
+  "value_reference_reads (snd (value_reference_sequence xs T)) (fst (value_reference_sequence xs T)) xs"
+proof -
+  have exact: "map (value_reference_read (snd (value_reference_sequence xs T))) (fst (value_reference_sequence xs T))=map Some xs"
+    by (rule value_reference_sequence_exact)
+  then have length: "length (fst (value_reference_sequence xs T))=length xs" by (metis length_map)
+  show ?thesis unfolding value_reference_reads_def
+  proof (intro conjI allI impI)
+    show "length xs\<le>length (fst (value_reference_sequence xs T))" using length by simp
+    fix i
+    assume "i<length xs"
+    then show "value_reference_read (snd (value_reference_sequence xs T)) (fst (value_reference_sequence xs T)!i)=Some (xs!i)"
+      using arg_cong[OF exact, of "\<lambda>l. l!i"] length by simp
+  qed
+qed
+
+lemma value_reference_reads_preserved:
+  assumes reads: "value_reference_reads T ns xs"
+    and kept: "\<And>i y. value_reference_read T i=Some y \<Longrightarrow> value_reference_read T' i=Some y"
+  shows "value_reference_reads T' ns xs"
+  using reads kept by (simp add: value_reference_reads_def)
+
 end

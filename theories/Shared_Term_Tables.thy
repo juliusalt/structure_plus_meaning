@@ -484,6 +484,42 @@ proof -
   qed
 qed
 
+text \<open>
+  The keyed step folded over a list of values gives every value's reference and the state after the last,
+  which represents the table \<open>value_reference_sequence\<close> extends; the empty table's state, and a state's
+  table read off it.
+\<close>
+
+fun keyed_reference_sequence ::
+  "('a \<Rightarrow> 'k::linorder) \<Rightarrow> 'a list \<Rightarrow> ('k,nat) rbt\<times>nat\<times>'a list \<Rightarrow> nat list\<times>(('k,nat) rbt\<times>nat\<times>'a list)" where
+  "keyed_reference_sequence key [] q=([],q)"
+| "keyed_reference_sequence key (x#xs) q=(case keyed_reference_step key x q of (i,q1) \<Rightarrow>
+     (case keyed_reference_sequence key xs q1 of (is,q2) \<Rightarrow> (i#is,q2)))"
+
+lemma keyed_reference_sequence_exact:
+  assumes key: "inj key"
+  shows "keyed_reference_state key q T \<Longrightarrow>
+    fst (keyed_reference_sequence key xs q)=fst (value_reference_sequence xs T) \<and>
+    keyed_reference_state key (snd (keyed_reference_sequence key xs q)) (snd (value_reference_sequence xs T))"
+proof (induction xs arbitrary: q T)
+  case Nil
+  then show ?case by simp
+next
+  case (Cons x xs)
+  note step=keyed_reference_step_exact[OF key Cons.prems, of x]
+  obtain i q1 where q1: "keyed_reference_step key x q=(i,q1)" by (cases "keyed_reference_step key x q")
+  obtain j T1 where T1: "value_reference_step x T=(j,T1)" by (cases "value_reference_step x T")
+  have ij: "i=j" and rep: "keyed_reference_state key q1 T1" using step by (simp_all add: q1 T1)
+  note rest=Cons.IH[OF rep]
+  show ?case using rest by (simp add: q1 T1 ij case_prod_unfold Let_def)
+qed
+
+lemma keyed_reference_state_table: "keyed_reference_state key q T \<Longrightarrow> T=rev (snd (snd q))"
+  by (cases q) (simp add: keyed_reference_state_def)
+
+lemma keyed_reference_state_empty: "keyed_reference_state key (RBT.empty,0,[]) []"
+  by (simp add: keyed_reference_state_def)
+
 definition keyed_share_shape :: "shape \<Rightarrow> share_state \<Rightarrow> nat \<times> share_state" where
   "keyed_share_shape=keyed_reference_step shape_key"
 

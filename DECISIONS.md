@@ -15635,3 +15635,21 @@ marking of task 381's entry, its part (d) and its rejected item on use equivaria
 entries have landed. This design was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 383's decision; a design, no theory changes).
+
+## The seed round is stated once, the incumbents' constructor a parameter of its own
+
+Task 384, the follow-up 7 of #365's review (`.build/tasks/366/review.md`) as plan-62 decided it on the question of
+`.build/tasks/384/result.md`. B4's first part stated the seed round a second time over its representation
+(`development_seed_round`, one constructor for the incumbents and the rows), beside the older statement
+(`development_seed_publication_from`, `_over`, `_among`, `_row_with`), which records the incumbents with the recording
+constructor whatever the rows' constructor is; `development_seed_publication_from_known` and
+`development_seed_publication_among_formed_causes` use it at the known and formed-cause constructors.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The round records the incumbents and the rows with one constructor (`seed_made_round_of L construct d`); its plain instance `development_seed_plain_round` is proved equal to `development_seed_publication` (`development_seed_plain_round_exact`). | The round takes the incumbents' constructor as a parameter of its own beside the rows' (`development_seed_round L incumbent construct represent pub d`) and stands in `Development_Seed_Publication`, which imports `Represented_Snapshot_Transactions` for the represented snapshot. The older statement is its plain instance: `_row_with` the round's row (`seed_round_row`) at the plain row, `_among` the assembly of given incumbents' plain representation (`seed_plain_among`), `_over` the round with `finite_construct_generation_record` for the incumbents, `_from` `_over` at `finite_locus_publications`; each keeps the equation it was defined by as a lemma (`_row_with_eq`, `_among_eq`, `_over_eq`, `_from_eq`), so every statement that stays keeps its meaning, `_from_known` and `_among_formed_causes` among them. Retired as covered by the definitions: `development_seed_publication_from_published` (now `_from`'s definition), `development_seed_plain_round` and `development_seed_plain_round_exact` (`_over` at the recording constructors is the plain round). The reference instance passes the formed-cause constructor for both. |
+
+The other way, changing what `_from` and `_over` mean at the known and formed-cause constructors, is not taken: it
+changes what proved equations state. The constants a recipe executes compute the same values: the older statement's
+code is now the round's assembly, its plain rows recorded in parallel as before and the publications of the rows in a
+second parallel pass.

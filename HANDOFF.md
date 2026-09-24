@@ -55,7 +55,7 @@ is a subterm of the presented argument, and a comparison that ends equal walks b
 explicit sharing removes it. Its builds change no word: the notion `Shared_Term_Tables` (B1, #297) and the matching over
 a presentation (B2, #299, landed `54f659eb`, `Presented_Term_Matching`; its review's follow-ups to B3, B4 and B6) at once; the applications over a presentation (B3, #301); the demand over shared calls (B4,
 #303, landed `fad2198a`, `Shared_Call_Closures`; its review's follow-ups 1, 3 and 5 mailed to B5, 4 to B6, 2 to Open
-47); the positioned evaluation over shared calls (B5, #305); the measurement (B6, #307, after #278, its before).
+47); the positioned evaluation over shared calls (B5, #305, landed `5b33cd8a`, `Shared_Native_Evaluation`; its review's follow-ups 2 and 3 to B6, 1 to Open 47 and 102); the measurement (B6, #307, after #278, its before).
 M0 (#296) counted what B4's test reads (`.build/tasks/296/comparisons.md`): the found site's cost is unequal
 comparisons walking the store both calls carry (7.51×10⁹ node pairs, about 32 s at the machinery), which either choice
 removes; the comparisons ending equal walk 23.61×10⁹ node pairs (about 99.8 s) at the machinery, the renaming's found
@@ -72,7 +72,10 @@ rewritten right side, which holds the whole remaining entity list, so each step 
 repair (`f1b6098a`): the chosen equation is instantiated directly at the destructured cterms, with no beta conversion,
 and the dispatch reads the notion's equations; the conversion is 0.0008 s at the machinery's 340 entities, from 0.107 s,
 and linear. What is left of the obligation is `increasing_tac`'s numeral comparisons, 0.017 s at 210 declarations —
-linear, twenty times the conversion, and closable the same way if it is ever worth it (Open 92). Roots stay a store with distinct keys.
+linear, twenty times the conversion (Open 92). After #308, #317 timed every obligation held
+(`.build/tasks/317/measurement.md`: 0.134 s per state definition at the seed, 0.704 s at the machinery, 0.0069 s at a
+frame): the chain proving a list increasing is quadratic in the names, 56% of the machinery's, and #352 instantiates
+its steps as #283 did; roots distinctness is linear in root pairs. Roots stay a store with distinct keys.
 
 **Request construction (#276, #277, #112–#114).** Task 95's entry: a native check over the request state's rows — a
 proposed body is admitted exactly when it lists the least context and the support, production being an executor's
@@ -476,6 +479,10 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   the position conditions through `list_all`; #289's seven rows folded. Its row change of `Development_State_Rows` to
   #325; the held timing of `roots_distinct` to #317, whose probe must not hang as #308's did before #316 (Open 78). A
   change to `Isabelle_Entity_Export` rebuilds about 1,666 of 1,843 theories (#289's batch, 1,060 s).
+- **#305** (B5, `5b33cd8a`): `Shared_Native_Evaluation`, the positioned evaluation over shared calls, the three
+  positioned code equations restated through it; its review's follow-ups 2 and 3 to B6 (#307), 1 to Open 47 and 102.
+- **#317** (investigation): the exporter's obligations timed held on the base with #308 and on its parent
+  (`.build/tasks/317/measurement.md`), read under the verdict line; the names' chain to #352.
 
 ## Open
 
@@ -569,7 +576,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 46. Observation's read-back of the installed program: a recovery theorem for finite programs (the installer knows its
     program only up to an alpha variant), after the layout's measurement (#159).
 47. `finite_demanded_step_shared_code`, and B4's `finite_demanded_sites_image` and `finite_row_successors_union`
-    (#303's review, follow-up 2), into `Finite_Demanded_Closures` with its next edit; with `Inference_Embeddings`'
+    (#303's review, follow-up 2), and B5's `finite_demanded_sites_within` with `finite_demanded_sites_cong` consuming
+    it (#305's review, follow-up 1), into `Finite_Demanded_Closures` with its next edit, B5's
+    `finite_embedded_inferences_comp` into `Inference_Embeddings` with its; with `Inference_Embeddings`'
     `finite_inference_result_renaming` they are one argument, a closure carried by an injective map, a candidate row of
     `REASONING_REUSE.md`.
 48. Formation checks that grow with their input (`finite_object_formed` quadratic, 8.3 ms at 1,114 atoms): at a measured
@@ -659,9 +668,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     words identify their reports — stated once over `finite_scoped_report_value` or per theory, when that line is next
     touched. With it, from the same review: the documents check could refuse a tracked path `.gitignore` matches
     (`git ls-files -ci --exclude-standard`), so Q9's case cannot recur.
-92. **What is left of the exporter's obligation** (#283's review): `increasing_tac` runs one `simp_tac` per adjacent
-    pair, 0.017 s at the machinery's 210 declarations against the conversion's 0.0008 s — linear and small; the numeral
-    order equations could be instantiated directly as #283 did for the declarations, measured before acting. With it:
+92. **What is left of the exporter's obligation** (#283's review, #317's measurement): the chain proving a list
+    increasing, quadratic in the names, is #352's; roots distinctness is linear in root pairs (0.036 s at the
+    machinery's 62 roots, one second near 320 roots), repaired at that scale. With it:
     any other conversion that rewrites the head of a long term with `Conv.rewr_conv` beta-normalizes its whole right
     side at each step, so a second such conversion (exporter-side or in a quotation proof procedure) is repaired by the
     same structural instantiation, the binder factored at that second use rather than copied. And the exporter's
@@ -715,7 +724,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     (`Linear_Comparisons`, as `Keyed_Value_References` uses) halves every equal walk for any key. After B4 and B5 the
     loop's call keys are shared and compare in one step, so it bears only where whole terms stay keys: at a measured
     need.
-102. `fimage_ffUnion_member` (#301's review) to `Finite_Set_Composition` under a name for what it states, with that
+102. `fimage_ffUnion_member` (#301's review) to `Finite_Set_Composition` under a name for what it states, and B5's
+    `fBall_member`, `fBall_image` and `ffilter_fimage` (#305's review, follow-up 1) beside it, with that
     theory's next edit.
 103. #284 corrected its entry's list in place (`DECISIONS.md`, at line 12223 when reviewed) without the bracketed
     "[corrected by task N: …]" the entries use elsewhere: noted with that entry's next edit (#284's review).
@@ -776,6 +786,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   re-review's one-line summary; #323 now runs from the fixer's base (Q19).
 - **#303's tree held untracked files the task did not make** at its root (`.bashrc`, `.bash_profile`, `.gitconfig`,
   `.claude/agents`, `.idea`): the finalizer should commit the handed-over files only (#303's review) — the harness's.
+- **The exclusive hold outlasts its run** (#317): `measuring --exclusive` held the machine to its 3-minute bound
+  (15:30:35–15:33:35) although the measured run ended at 15:31:42 — the harness's.
 - **A tree behind main cannot probe until it brings main in** (#316, `514be373`; met by #276, #112 and #308, whose
   after-repair timing waited on it): the harness's `change --probe` could bring main in or surface the refusal
   distinctly (#316's review), the owner's; every producing task under way was told the remedy.

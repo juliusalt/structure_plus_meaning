@@ -2,10 +2,10 @@
  "boundary": "The original policy questions and complete source-change requests reconstruct all observations, native generation, criticism, comparison, revision, selection, installation and subsequent query evidence. A unique complete target is selected through the existing computed native producer choice. Final admission preserves the original target meaning, old material and ordered query scope. Empty and ambiguous choices, unreadable or incompatible sources, absent entries and missing required query evidence remain explicit. The requested finite target family, wider discovery, global cost, historical authority, native mathematical proof admission and genesis are separate boundaries.",
  "complete_recipe_source_manifest": "source-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "c76a6eb7779f81fb8f284689f3aa180704ce627da50718ee3e071503998da018",
+  "base_receipt_sha256": "a50b26b42d2409ee8d0f615ff5780e3dd12d39f5c88e8ee04d7e2ce54f575042",
   "records": 3,
   "reports_equal": true,
-  "seconds": 21.05,
+  "seconds": 16.82,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,9 +16,9 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "7acb62955e706afcc1bbdc332cad679dcaef51342276402ddfc21c8e8d484aa8",
+   "module_sha256": "33f2d8a7eb80ec1e0aa625132beaad76119af358efe73330c13ec4e4d409689d",
    "subject_contracts": {
-    "development_subject_investigation.yxml": "018e3e78f2df00a2af4fbd6eeb84b432dbe4fa538d8f79487580fc0ffa0b60db"
+    "development_subject_investigation.yxml": "568293c5c12873c5d543a362e39755117975f0c23b7088d2da656a4e217febbd"
    },
    "theory": "Native_Source_Development"
   },
@@ -85,24 +85,24 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "1dc6515bfc2c6024fd66c9099fdbbb973a7c76783595ce12c1e506e4a5cadbd6",
+ "source_manifest_sha256": "1338ab49daae663417ad3fb61e9d4ef027d331b63d89f9ebb525e898da903a78",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 17.051106933999108
+   "seconds": 16.75745848400402
   },
   {
    "exit_code": 0,
    "name": "presentation-empty",
-   "seconds": 20.741228846018203
+   "seconds": 15.164161497988971
   },
   {
    "exit_code": 0,
    "name": "presentation-first",
-   "seconds": 20.902733825001633
+   "seconds": 16.509539082006086
   }
  ]
 }

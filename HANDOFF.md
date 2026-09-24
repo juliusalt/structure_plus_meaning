@@ -56,11 +56,12 @@ and #422 landed):
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
 publication needs (#343's review, follow-up 2, mailed to #414 and #395). The readers' presentation (#412) derives in about 132 s,
-reducing the whole complete-data lineage again (implement-412, q89): the fix after #412, continuing it, derives it from
-its parts', and at its landing #393's brief gains that derivation, so that the guard's extension reduces only what it
-adds. #431 also states the rooted readers' program the given carries — the entries' closure, not #412's 137-definition
+reducing the whole complete-data lineage again (implement-412, q89): #431 (`97c0768c`) derived it from
+its parts' (`Native_Control_Quotation_Code.note_composed`), and #393 derives its extension so, reducing only what it
+adds. #431 also stated the rooted readers' program the given carries — the entries' closure, not #412's 137-definition
 union, whose 42 unreached definitions the given does not need (#413's follow-up 4, the planner's decision) — which #414
-installs and waits on; the union stays the guard's program.
+installs; the union stays the guard's program, and the asked relation's program is the guard's program rooted at
+its entries, derived through the union's piece (#431's review, follow-up 4, the planner's call, mailed to #393).
 
 **Beside the route**: the bootstrap loop's maintenance — #426, #341's, #388's and #375's follow-ups
 over the joined program's, the audit's and the collection programs' generic content (after #342 and #418). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
@@ -80,11 +81,11 @@ exporter's obligations at every state it defines (#227–#308, #352).
 by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The deepest chains are 8: #416 → #418 → #393 → #397 → #399 → #401 →
-#407 → #408, and through the given #431 → #414 → #393 → ….
+#407 → #408, and through the given one shorter (#414 → #393 → …).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #416 and the fix deriving the readers' presentation from its parts (#431) at its head, then
-#414, #418, #410, the frame's fix and the rest in their chains' order; then
+exists, Q2): the owner's directions first — the first problem's route, #416 and #414 at its head, then
+#418, #410, the frame's fix and the rest in their chains' order; then
 #426; each review after its build.
 
 ## Decisions
@@ -273,6 +274,12 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   finite presentation with derived code (121 s at load), its payloads (the empty payload alone); its review's
   follow-ups (`.build/tasks/413/review.md`) 1, 3 and 4 mailed to #431 (the given carries the entries' closure, rooted;
   #414 waits on #431), 2 is #431, 5 in Open 121.
+- **Landed with `97c0768c`**: #431, the compositional derivation of a finite presentation stated once in
+  `Native_Control_Quotation_Code` (`note_composed`; a union from its parts', a view from its predecessor's, a rooted
+  restriction), the readers' presentation derived from its parts', the rooted readers' program the given carries
+  (`given_rooted_readers_system`, `finite_rooted_given_readers_def`), the evaluations out of the theory's load; its
+  review's follow-ups (`.build/tasks/431/review.md`) 2 and 4 mailed to #393, 1–3 Open 139, 5 in Open 137, 6 the
+  harness's.
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
@@ -472,11 +479,17 @@ follow-ups 1 and 3: `Factor_Native_Node_Cases.native_node_empty_environment` and
 `Factor_Native_History_Cases.native_history_empty_program` reading the generic `finite_empty_environment` and
 `empty_installation_program`, at the case theories' next edit; the package's reach, evaluated by code_simp at every
 rebuild (about 12 s), certified once for the whole program if the notions grow, measured first. 137 an agreement exported per layer along `complete_data_admission_system` in place
-of whole-chain unfoldings (#392's review), at the lineage's next use — #431's derivation from parts reads the same chain. 138
+of whole-chain unfoldings (#392's review), at the lineage's next use — #431's pieces cut that lineage at definition
+admission and complete data admission, and the agreements can be cut at the same points (#431's review). 138
 `Inference_Embeddings.map_relation_values_range` into `Bootstrap_Relations` beside `map_relation_values_domain`,
 `Factor_Use_Renaming.rel_ran_map_relation_values` retired, and the generic `rtrancl_injective_image` and
 `surjective_image_eq` beside their notions, with the next build that edits `Bootstrap_Relations`, a full rebuild
-(#427's review).
+(#427's review). 139 `Native_Control_Quotation_Code` at its next edit (#431's review, follow-ups 1–3):
+`Native_Finite_Equations.note` retired, or its row saying it is kept unused; `note_composed` naming each part it
+reduces whole and why (formation unproved, neither union nor view), so that a costly fallback shows; the generic laws
+(`decode_finite_system_of_part`, `finite_system_of_union`, `finite_system_of_view`, `finite_system_restriction`,
+`finite_dependency_edges`, `finite_definition_closure`, `finite_system_of_rooted`) beside `Factor_Finite_System_Unions`
+and `Factor_Finite_View_Installation`, in a theory the tool imports.
 
 ## Now
 
@@ -489,7 +502,7 @@ of whole-chain unfoldings (#392's review), at the lineage's next use — #431's 
   #323's fixer once; each next planner took up what HANDOFF.md held, and nothing was missing. Repeated declines are the
   run's to handle, not ledger questions (the owner, through the monitoring session, 20:23 and 20:28).
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (#168's review,
-  follow-up 7); `measuring --shared` wrote no `measurements.log` (#307's runs, #306's review, #430's); bases swept before a
+  follow-up 7); `measuring --shared` wrote no `measurements.log` (#307's runs, #306's review, #430's, #431's); bases swept before a
   brief's task ran (#324; #315 exported them again from its proof context); the finalizer's push of `82a065cd` failed;
   the finalizer should commit the handed-over files only (#303's tree held untracked `.bashrc` and others); the
   exclusive hold outlasts its run (#317); a tree behind main cannot probe until it brings main in (#316); a re-review

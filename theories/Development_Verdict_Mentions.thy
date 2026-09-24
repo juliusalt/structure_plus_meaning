@@ -43,16 +43,19 @@ begin
 sublocale call: native_context_call_program P m k
   unfolding native_context_call_program_def using native_rule_family_axioms by (simp only: store_found_rule_def)
 
+sublocale any_law: native_rule_law P ch "[([0],native_any_rule)]"
+  by (rule native_rule_lawI[OF any.native_rule_family_axioms]) (auto simp: native_any_rule_def)
+
 lemma any_exact: "(ch,Pair_Term x y)\<in>positive_meaning P \<longleftrightarrow> term_formed x \<and> term_formed y"
 proof
   assume "(ch,Pair_Term x y)\<in>positive_meaning P"
   then show "term_formed x \<and> term_formed y" using any.holds_formed by fastforce
 next
   assume formed: "term_formed x \<and> term_formed y"
-  have "(ch,evaluate_pattern (native_values [x,y]) (decode_finite_pattern
-      (Finite_Pattern_Pair (native_var 0) (native_var 1))))\<in>positive_meaning P"
-    by (rule any.native_step[where c="[0]" and ps="[]"]) (use formed in \<open>simp_all add: native_any_rule_def\<close>)
-  then show "(ch,Pair_Term x y)\<in>positive_meaning P" by simp
+  show "(ch,Pair_Term x y)\<in>positive_meaning P"
+    unfolding any_law.exact
+    by (rule exI[of _ "[0]"], rule exI[of _ "Finite_Pattern_Pair (native_var 0) (native_var 1)"],
+      rule exI[of _ "[]"], rule exI[of _ "native_values [x,y]"]) (use formed in \<open>auto simp: native_any_rule_def\<close>)
 qed
 
 theorem exact:
@@ -252,6 +255,50 @@ definition undeclared_rule :: "'u definition_site \<Rightarrow> 'u definition_si
     (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
     [([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
 
+text \<open>
+  A field reading two selections calls both on one context: @{const undeclared_rule}, whose conclusion pairs
+  the context with the two arguments and whose two premises call the two sites, is that conjunction for any
+  two sites. Its program is the family's law (@{locale native_rule_law}) at the one rule with two premises,
+  and its contract is stated once here: every site of the rule is an instance of this program.
+\<close>
+
+locale conjoined_calls_program = native_rule_family P s "[([0],undeclared_rule u f)]"
+  for P :: "'u native_system" and s u f :: "'u definition_site"
+begin
+
+sublocale law: native_rule_law P s "[([0],undeclared_rule u f)]"
+  by (rule native_rule_lawI[OF native_rule_family_axioms]) (auto simp: undeclared_rule_def)
+
+theorem exact: "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P \<longleftrightarrow>
+    (u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
+proof
+  assume "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P"
+  then obtain c p ps g where rule: "(c,finite_native_rule p ps)\<in>set [([0]::local_address,undeclared_rule u f)]"
+    and shape: "evaluate_pattern g (decode_finite_pattern p)=Pair_Term x (Pair_Term a b)"
+    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
+    unfolding law.exact by blast
+  from rule have p: "p=Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"
+    and ps: "set ps={([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),
+      ([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))}"
+    by (simp_all add: undeclared_rule_def finite_native_rule_eq_iff)
+  have fields: "g [0]=x" "g [1]=a" "g [2]=b" using shape by (simp_all add: p)
+  show "(u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
+    using support fields by (auto simp: ps)
+next
+  assume both: "(u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
+  have formed: "term_formed x" "term_formed a" "term_formed b"
+    using both by (auto dest: positive_meaning_term_formed)
+  show "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P"
+    unfolding law.exact
+    by (rule exI[of _ "[0]"],
+      rule exI[of _ "Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"],
+      rule exI[of _ "[([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),
+        ([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"],
+      rule exI[of _ "native_values [x,a,b]"]) (use both formed in \<open>auto simp: undeclared_rule_def\<close>)
+qed
+
+end
+
 definition verdict_mentions_definitions :: "(local_address option definition_site\<times>
     (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
   "verdict_mentions_definitions=[(verdict_found_any,[([0],native_any_rule)]),
@@ -317,8 +364,9 @@ interpretation found_selections: native_every_program verdict_mentions_system ve
     verdict_found_family
   unfolding native_every_program_def by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
 
-interpretation undeclared_entry: native_rule_family verdict_mentions_system verdict_undeclared
-    "[([0],undeclared_rule verdict_found_selection verdict_found_family)]"
+interpretation undeclared_entry: conjoined_calls_program verdict_mentions_system verdict_undeclared
+    verdict_found_selection verdict_found_family
+  unfolding conjoined_calls_program_def
   by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
 
 section \<open>The field \<open>excess\<close>, over any program, any selection and any support\<close>
@@ -539,32 +587,7 @@ lemma undeclared_entry_exact:
   "(verdict_undeclared,Pair_Term x (Pair_Term y w))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
     (verdict_found_selection,Pair_Term x y)\<in>positive_meaning verdict_mentions_system \<and>
     (verdict_found_family,Pair_Term x w)\<in>positive_meaning verdict_mentions_system"
-proof
-  assume holds: "(verdict_undeclared,Pair_Term x (Pair_Term y w))\<in>positive_meaning verdict_mentions_system"
-  obtain c F f where rule: "(c,F)\<in>set [([0]::local_address,undeclared_rule verdict_found_selection verdict_found_family)]"
-    and shape: "evaluate_pattern f (schema_conclusion (decode_finite_schema F))=Pair_Term x (Pair_Term y w)"
-    and support: "\<forall>s e q. (s,e,q)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern f q)\<in>positive_meaning verdict_mentions_system"
-    by (rule undeclared_entry.holds_cases[OF holds]) blast
-  have F: "F=undeclared_rule verdict_found_selection verdict_found_family" using rule by simp
-  have fields: "f [0]=x" "f [Suc 0]=y" "f [2]=w" using shape by (simp_all add: F undeclared_rule_def)
-  show "(verdict_found_selection,Pair_Term x y)\<in>positive_meaning verdict_mentions_system \<and>
-      (verdict_found_family,Pair_Term x w)\<in>positive_meaning verdict_mentions_system"
-    using native_rule_support[OF support[unfolded F undeclared_rule_def]] by (simp add: fields)
-next
-  assume both: "(verdict_found_selection,Pair_Term x y)\<in>positive_meaning verdict_mentions_system \<and>
-      (verdict_found_family,Pair_Term x w)\<in>positive_meaning verdict_mentions_system"
-  have formed: "term_formed x" "term_formed y" "term_formed w"
-    using both positive_meaning_term_formed by fastforce+
-  have "(verdict_undeclared,evaluate_pattern (native_values [x,y,w]) (decode_finite_pattern
-      (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))))
-      \<in>positive_meaning verdict_mentions_system"
-    by (rule undeclared_entry.native_step[where c="[0]" and
-        ps="[([0],(verdict_found_selection,Finite_Pattern_Pair (native_var 0) (native_var 1))),
-          ([1],(verdict_found_family,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-      (use both formed in \<open>simp_all add: undeclared_rule_def\<close>)
-  then show "(verdict_undeclared,Pair_Term x (Pair_Term y w))\<in>positive_meaning verdict_mentions_system" by simp
-qed
+  by (rule undeclared_entry.exact)
 
 theorem native_mentions_found:
   assumes identity: "\<And>y. term_formed (ident y)" and roots: "\<And>y. term_formed (identr y)"

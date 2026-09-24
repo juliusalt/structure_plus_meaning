@@ -12208,6 +12208,16 @@ rule's conclusion and premise set back from its value.
 
 No rule value and no statement changed, so no recorded word changes.
 
+Re-cited (task 237): the two-premise call's contract is stated once beside `undeclared_rule` in
+Development_Verdict_Mentions, as `conjoined_calls_program` (moved there from Development_Verdict_Difference, its name
+and its `exact` kept: the site holds of `Pair_Term x (Pair_Term y w)` exactly when the first callee holds of
+`Pair_Term x y` and the second of `Pair_Term x w`), a sublocale `law` of the family's law; the site
+`undeclared_entry` interprets it and `undeclared_entry_exact` is its instance, as are Development_Verdict_Difference's
+`removed_entry` and `added_entry`. `row_formed_program` (Development_Verdict_Statements) takes the law as a sublocale
+`law` (`exact` and `step_at`), and `store_found_program`'s any-rule family as a sublocale `any_law` (`any_exact`), each
+`exact` statement kept. No `holds_cases`/`native_step` argument is left in these theories; no rule value changed, so
+no recorded word changes.
+
 The law completed (task 247, task 245's review): both halves at any support relation, `rule_instance` (an iff,
 the analogue of `reader_projection_rule`, formation over the rule's variables, conclusion's and premises', because
 `Y` may hold of unformed terms); `supported_clause` also returns the clause's conclusion, so each
@@ -12222,7 +12232,9 @@ case — cite with the program's `unfold_rule`, and the clauses of a one-rule, o
 
 Re-cited (task 235): the value rule's contract is stated once beside `native_value_rule` in Development_Located_Rows
 (`native_value_program`, its `exact`: the site holds of `Pair_Term x y` exactly when `x` is formed and `x=y`), and
-`development_row_check_exact` and `verdict_equal_program.exact` are its instances, their statements kept; the
+`development_row_check_exact` and `verdict_equal_program.exact` are its instances, their statements kept [corrected
+by task 237: `verdict_equal_program` only forwarded that `exact` and is retired; the roots site `roots_entry`
+interprets `native_value_program` directly, `roots_entry.exact` unchanged]; the
 relocation of the equality program to the check's site and its alpha variant are no longer used there.
 `permitted_row_program`, `row_reached_program`, the site `decomposition_applies` (`decomposition_applies_family`,
 `native_decomposition_reads`, `native_decomposition_progress`) and the reach's `reach_holds` family

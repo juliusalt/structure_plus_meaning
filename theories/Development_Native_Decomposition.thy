@@ -339,7 +339,7 @@ next
   have distinct: "distinct (fst (snd S))" by (rule state_presents_distinct_names[OF present])
   have fam: "state_entities R k\<in>set Fs" for k using families by simp
   have inside: "\<forall>i\<in>set (isabelle_entity_positions g). i<length (fst (snd S))" if "g\<in>set (snd (snd S))" for g
-    using state_presents_inside[OF present] that by (force simp: state_positions_def)
+    by (rule state_presents_entity_inside[OF present that])
   have corr: "isabelle_table_correspondence id (fst (snd S)) (fst (snd S))"
     by (simp add: isabelle_table_correspondence_def)
   have same: "e=e0" if e: "e\<in>set (snd (snd S))" "isabelle_declared_constant e=Some h" for e

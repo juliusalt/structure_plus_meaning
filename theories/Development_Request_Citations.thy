@@ -302,10 +302,10 @@ proof -
       using state_atom_keys[OF present families] by auto
     obtain e s where e: "e\<in>set (snd (snd S))" and ks: "key c=key s" and m: "d\<in>set (entity_mentions e)"
       and sj: "s\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
-      using pred predecessor_at[OF present families d(1)] by blast
+      using pred state_reach_predecessor_at[OF present families d(1)] by blast
     have sb: "set [s]\<subseteq>{..<length (fst (snd S))}"
       using state_presents_subject_inside[OF present e sj] by simp
-    have "c=s" using key_member[OF present families bound sb] ks by simp
+    have "c=s" using state_presents_key_member[OF present bound sb] ks by simp
     then have "e\<in>set (development_constant_scope (snd S) c)"
       using e sj by (simp add: development_constant_scope_member)
     then have "d |\<in>| development_request_support (snd S) c"
@@ -318,7 +318,7 @@ proof -
       using d(1) by (auto simp: request_support_mentions)
     have bd: "d<length (fst (snd S))" by (rule request_support_inside[OF present d(1)])
     have "key c\<in>set (state_reach_predecessors Fs (key d))"
-      using scope m predecessor_at[OF present families bd]
+      using scope m state_reach_predecessor_at[OF present families bd]
       by (auto simp: development_constant_scope_member)
     then show "q\<in>fst ` set (state_atoms R) \<and> key c\<in>set (state_reach_predecessors Fs q)"
       using atoms_present_atom[OF state_presents_atoms[OF present] bd] d(2) by force

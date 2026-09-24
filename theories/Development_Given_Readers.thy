@@ -10,10 +10,9 @@ text \<open>
   guard's own @{const guard_readers_system}: the union of the package additions' system, whose lineage
   holds every reader but the audit and ends in the callee boundary (390--393), and the payload audit's
   (500--505, over definition admission), joined where they agree (@{thm [source] readers_agreement}).
-  Every reader stands at the number its theory gives it. The program is the union, not the rooted
-  closure of its entries: the closure is a reflexive-transitive closure, for which the finite
-  presentation below derives no code. The definitions outside the entries' closure are computed at the
-  end of this theory.
+  Every reader stands at the number its theory gives it. The given carries the rooted readers' program,
+  the union restricted to the closure of the entries (@{const rooted_system}); the union stays the
+  guard's program.
 \<close>
 
 subsection \<open>Each reader's system agrees with the additions' system on its whole domain\<close>
@@ -138,11 +137,24 @@ lemmas given_use_absence_exact =
 
 lemma given_key_absence:
   "(20,t)\<in>positive_meaning guard_readers_system \<longleftrightarrow> (20,t)\<in>positive_meaning keyed_list_system"
-  "(3,t)\<in>positive_meaning guard_readers_system \<longleftrightarrow> (3,t)\<in>positive_meaning complete_data_admission_system"
-  using guard_readers_left[of 20 t] guard_readers_left[of 3 t] use_additions_components(6)[of t]
-    whole_system_agreement_meaning[OF complete_data_admission_system_formed use_additions_system_formed
-      complete_data_additions_agreement, of 3 t]
-  by simp_all
+  "(3,t)\<in>positive_meaning guard_readers_system \<longleftrightarrow> (3,t)\<in>positive_meaning data_comparison_system"
+proof -
+  show "(20,t)\<in>positive_meaning guard_readers_system \<longleftrightarrow> (20,t)\<in>positive_meaning keyed_list_system"
+    using guard_readers_left[of 20 t] use_additions_components(6)[of t] by simp
+  have keyed: "(3,t)\<in>positive_meaning complete_data_admission_system \<longleftrightarrow>
+      (3,t)\<in>positive_meaning keyed_list_system"
+    using whole_system_agreement_meaning[OF keyed_list_system_formed complete_data_admission_system_formed
+      whole_agreement_transitive[OF row_values_keyed_agreement row_values_complete_data_agreement], of 3 t]
+    by simp
+  show "(3,t)\<in>positive_meaning guard_readers_system \<longleftrightarrow> (3,t)\<in>positive_meaning data_comparison_system"
+    using guard_readers_left[of 3 t] whole_system_agreement_meaning[OF complete_data_admission_system_formed
+      use_additions_system_formed complete_data_additions_agreement, of 3 t] keyed
+      keyed_list_previous_meaning[of 3 t] key_absence_base_meaning[of 3 t] bag_comparison_old_meaning[of 3 t]
+    by simp
+qed
+
+lemmas given_key_absence_exact = keyed_list_absence[unfolded given_key_absence(1)[symmetric]]
+lemmas given_data_comparison_exact = data_comparison_exact[unfolded given_key_absence(2)[symmetric]]
 
 text \<open>G4: the payload audit, with the readers it calls.\<close>
 
@@ -173,12 +185,73 @@ text \<open>The native request at a package: membership, the root family reading
 lemmas given_package_retention_admission_exact =
   package_retention_admission_exact[unfolded given_retention_meaning[OF given_entry_members(9), symmetric]]
 
-section \<open>The program's finite presentation\<close>
+section \<open>The rooted readers' program the given carries\<close>
+
+definition given_reader_entries :: "nat fset" where
+  "given_reader_entries={|72,77,79,80,81,82,83,113,122,392,393,505|}"
+
+definition given_rooted_readers_system :: "(nat,nat,nat,nat) schema_system" where
+  "given_rooted_readers_system=rooted_system guard_readers_system (fset given_reader_entries)"
+
+lemma given_rooted_readers_formed [simp]: "schema_system_formed given_rooted_readers_system"
+  unfolding given_rooted_readers_system_def by (rule rooted_system_formed[OF guard_readers_formed])
+
+lemma given_rooted_entries:
+  "fset given_reader_entries\<subseteq>system_definitions given_rooted_readers_system"
+proof -
+  have "fset given_reader_entries\<subseteq>system_definitions guard_readers_system"
+    using given_entry_members guard_readers_definitions by (auto simp: given_reader_entries_def)
+  then show ?thesis unfolding given_rooted_readers_system_def by (rule rooted_system_roots[OF guard_readers_formed])
+qed
+
+lemma given_rooted_meaning:
+  assumes "d|\<in>|given_reader_entries"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+  using rooted_system_meaning_at[OF guard_readers_formed, of d "fset given_reader_entries" t]
+    given_rooted_entries assms unfolding given_rooted_readers_system_def by blast
+
+lemma given_rooted_members:
+  "72|\<in>|given_reader_entries" "77|\<in>|given_reader_entries" "79|\<in>|given_reader_entries"
+  "80|\<in>|given_reader_entries" "81|\<in>|given_reader_entries" "82|\<in>|given_reader_entries"
+  "83|\<in>|given_reader_entries" "113|\<in>|given_reader_entries" "122|\<in>|given_reader_entries"
+  "392|\<in>|given_reader_entries" "393|\<in>|given_reader_entries" "505|\<in>|given_reader_entries"
+  by (simp_all add: given_reader_entries_def)
+
+text \<open>Each entry's exact contract at the rooted program, an instance through @{thm [source] given_rooted_meaning}.\<close>
+
+lemmas given_rooted_definition_call_admission_exact =
+  given_definition_call_admission_exact[unfolded given_rooted_meaning[OF given_rooted_members(1), symmetric]]
+lemmas given_rooted_package_closure_admission_exact =
+  given_package_closure_admission_exact[unfolded given_rooted_meaning[OF given_rooted_members(2), symmetric]]
+lemmas given_rooted_root_family_reading_exact =
+  given_root_family_reading_exact[unfolded given_rooted_meaning[OF given_rooted_members(3), symmetric]]
+lemmas given_rooted_package_admission_exact =
+  given_package_admission_exact[unfolded given_rooted_meaning[OF given_rooted_members(4), symmetric]]
+lemmas given_rooted_definition_clause_reading_exact =
+  given_definition_clause_reading_exact[unfolded given_rooted_meaning[OF given_rooted_members(5), symmetric]]
+lemmas given_rooted_definition_edge_reading_exact =
+  given_definition_edge_reading_exact[unfolded given_rooted_meaning[OF given_rooted_members(6), symmetric]]
+lemmas given_rooted_package_membership_exact =
+  given_package_membership_exact[unfolded given_rooted_meaning[OF given_rooted_members(7), symmetric]]
+lemmas given_rooted_environment_inclusion_exact =
+  given_environment_inclusion_exact[unfolded given_rooted_meaning[OF given_rooted_members(8), symmetric]]
+lemmas given_rooted_package_retention_admission_exact =
+  given_package_retention_admission_exact[unfolded given_rooted_meaning[OF given_rooted_members(9), symmetric]]
+lemmas given_rooted_use_additions_on_values =
+  given_use_additions_on_values[unfolded given_rooted_meaning[OF given_rooted_members(10), symmetric]]
+lemmas given_rooted_use_absence_exact =
+  given_use_absence_exact[unfolded given_rooted_meaning[OF given_rooted_members(11), symmetric]]
+lemmas given_rooted_payload_audit_exact =
+  given_payload_audit_exact[unfolded given_rooted_meaning[OF given_rooted_members(12), symmetric]]
+
+section \<open>The programs' finite presentations\<close>
 
 text \<open>
   The site context's base is a rooted restriction of the lineage the complete data admission already
-  holds whole, so the scope reading is that system joined with the site context's own group; the code
-  of the presentation is derived through this form, whose every constant is a finite definition.
+  holds whole, so the scope reading is that system joined with the site context's own group: the
+  structural equation through which the union's presentation is derived from the pieces the tool's
+  theory presents (definition admission, complete data admission). The rooted program's presentation
+  is the union's restricted to the closure the union's presentation computes.
 \<close>
 
 lemma given_scope_components:
@@ -235,15 +308,6 @@ proof -
     by (simp only: schema_system.select_convs interfaces_union clauses_union)
 qed
 
-lemma given_readers_components:
-  "guard_readers_system=system_union (add_view_definition (add_view_definition (add_view_definition
-    (add_view_definition (system_union complete_data_admission_system context_definition_group)
-      393 data_x {(0,use_absence_schema)}) 390 data_x (addition_element_clauses 393))
-      391 data_x (context_list_clauses 390 391)) 392 data_x {(0,package_additions_schema 391)})
-    payload_audit_system"
-  by (simp only: guard_readers_system_def use_additions_system_def addition_list_system_def
-    addition_element_system_def use_absence_system_def given_scope_components)
-
 definition finite_given_readers :: "(nat,nat,nat,nat) finite_schema_system" where
   "finite_given_readers=finite_system_of guard_readers_system"
 
@@ -256,14 +320,31 @@ lemma finite_given_readers_formed:
   "finite_system_formed finite_given_readers"
   by (simp only: finite_system_formed_correct finite_given_readers_exact guard_readers_formed)
 
-local_setup \<open>Native_Finite_Equations.note @{binding finite_given_readers_code}
-  @{thm finite_given_readers_def[unfolded given_readers_components]}\<close>
+local_setup \<open>Native_Finite_Equations.note_composed @{binding finite_given_readers_code}
+  @{thm finite_given_readers_def}
+  [@{thm finite_complete_data_program_def}, @{thm finite_call_admission_program_def}]
+  [@{thm given_scope_components}]\<close>
 
-export_code finite_given_readers finite_system_formed fcard finite_system_definitions finite_system_payloads
-  checking SML
+definition finite_rooted_given_readers :: "(nat,nat,nat,nat) finite_schema_system" where
+  "finite_rooted_given_readers=finite_system_of given_rooted_readers_system"
 
-value "finite_system_formed finite_given_readers"
-value "fcard (finite_system_definitions finite_given_readers)"
+lemma finite_rooted_given_readers_code [code]:
+  "finite_rooted_given_readers=finite_system_restriction finite_given_readers
+    (finite_definition_closure finite_given_readers given_reader_entries)"
+  unfolding finite_rooted_given_readers_def given_rooted_readers_system_def finite_given_readers_def
+  by (rule finite_system_of_rooted[OF guard_readers_formed])
+
+lemma finite_rooted_given_readers_exact:
+  "decode_finite_system finite_rooted_given_readers=given_rooted_readers_system"
+  unfolding finite_rooted_given_readers_def
+  by (rule decode_finite_system_of[OF given_rooted_readers_formed])
+
+lemma finite_rooted_given_readers_formed:
+  "finite_system_formed finite_rooted_given_readers"
+  by (simp only: finite_system_formed_correct finite_rooted_given_readers_exact given_rooted_readers_formed)
+
+export_code finite_given_readers finite_rooted_given_readers finite_system_formed fcard finite_system_definitions
+  finite_system_payloads checking SML
 
 section \<open>The readers' payloads\<close>
 
@@ -274,29 +355,8 @@ lemmas given_readers_payloads_audited =
   finite_system_payloads_audited[of finite_given_readers, unfolded finite_given_readers_exact,
     OF guard_readers_formed]
 
-value "finite_system_payloads finite_given_readers"
-
-value "ffilter (\<lambda>z. snd z\<noteq>{||}) (fimage (\<lambda>(d,p). (d,finite_pattern_payloads p|-|{|[]|}))
-  (finite_system_interfaces finite_given_readers))"
-
-value "ffilter (\<lambda>z. snd z\<noteq>{||}) (fimage (\<lambda>((d,c),S). ((d,c),finite_schema_payloads S|-|{|[]|}))
-  (finite_system_clauses finite_given_readers))"
-
-text \<open>
-  The definitions outside the rooted closure of the entries, the definitions with material premises, and,
-  for each entry, those its closure reaches.
-\<close>
-
-value "let E=ffUnion (fimage (\<lambda>((d,c),S). fimage (Pair d) (finite_schema_dependencies S))
-    (finite_system_clauses finite_given_readers));
-  K=finite_edge_closure E;
-  R={|72,77,79,80,81,82,83,113,122,392,393,505::nat|};
-  C=R|\<union>|fimage snd (ffilter (\<lambda>z. fst z|\<in>|R) K);
-  M=fimage (\<lambda>((d,c),S). d) (ffilter (\<lambda>((d,c),S). finite_schema_materials S\<noteq>{||})
-    (finite_system_clauses finite_given_readers))
-  in (sorted_list_of_fset (finite_system_definitions finite_given_readers|-|C),
-    sorted_list_of_fset M,
-    map (\<lambda>r. (r,sorted_list_of_fset (M|\<inter>|finsert r (fimage snd (ffilter (\<lambda>z. fst z=r) K)))))
-      (sorted_list_of_fset R))"
+value "(finite_system_formed finite_given_readers, fcard (finite_system_definitions finite_given_readers),
+  finite_system_payloads finite_given_readers, finite_system_formed finite_rooted_given_readers,
+  fcard (finite_system_definitions finite_rooted_given_readers))"
 
 end

@@ -1,6 +1,6 @@
 {
  "boundary": "Validated against an accepted proof base and an incremental proof of its changed theories; no separate source-only copy was materialized.",
- "recipe_files": 906,
+ "recipe_files": 907,
  "recipe_source_manifest": "native-workflow-sources.json",
- "recipe_source_manifest_sha256": "62e3a231762aefd6ebdd0cc8a6ce5a332cf73a746daeb5c754b1f3c164495e85"
+ "recipe_source_manifest_sha256": "f962c731af7a457c91b086aff66bfbb50ef82e4a68d9833f4557f9ff1f39ed7e"
 }

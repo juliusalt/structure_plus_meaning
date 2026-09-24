@@ -385,7 +385,8 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
         (\<exists>k' v l r. k=Pair_Term (bit_term True) k' \<and> S'=Store_Node v l r \<and>
           (readiness_settled_search,Pair_Term (readiness_table_term T)
             (Pair_Term k' (store_term readiness_row_value r)))\<in>Y)"
-      by (rule readiness_settled_searches.unfold[OF clause' into shape])
+      by (rule readiness_settled_searches.law.read_clause[OF clause' into shape])
+        (rule readiness_settled_searches.unfold_rule)
     show "\<exists>bs v. k=path_term bs \<and> store_lookup S' bs=Some v \<and> readiness_answered_at T (readiness_row_value v)"
       using cases
     proof (elim disjE exE conjE)

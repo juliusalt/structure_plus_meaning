@@ -709,7 +709,7 @@ including the empty case, and they have native compilation for all future
 formed terms. Adding a finite formed seed family to a positive system preserves
 its interfaces and produces exactly the least closure under its old consequence
 operator. Already-true seeds preserve the old meaning. These reductions and the
-remaining candidate-form audit are recorded in [ADMISSION.md](ADMISSION.md).
+remaining candidate-form audit are recorded in ADMISSION.md (retired 2026-09-23 by the owner's word; `git show 3f8a604e:ADMISSION.md`).
 One finite schema now queries every incidence of any future formed artifact
 through a complete material enumeration. The four source relations follow at
 their actual record heads. Fresh view definitions combine already formed

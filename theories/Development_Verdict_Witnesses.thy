@@ -718,14 +718,14 @@ proof -
       have "snd z\<in>snd ` set F" using z by (rule imageI)
       then have "snd z\<in>(\<Union>F\<in>set Fs. set (map snd F))" using F by auto
       then obtain e where e: "e\<in>set (snd (snd S))" and ze: "snd z=entity_row key (snd S) e"
-        unfolding state_families_rows[OF present families] by (rule imageE)
+        unfolding covering_families_entity_rows[OF present families] by (rule imageE)
       show "\<exists>e\<in>set (snd (snd S)). d\<in>set (entity_mentions e)"
         using e m ze entity_row_mention_key[OF present bound e] by auto
     next
       assume "\<exists>e\<in>set (snd (snd S)). d\<in>set (entity_mentions e)"
       then obtain e where e: "e\<in>set (snd (snd S))" and m: "d\<in>set (entity_mentions e)" by blast
       have "entity_row key (snd S) e\<in>(\<Union>F\<in>set Fs. set (map snd F))"
-        unfolding state_families_rows[OF present families] using e by (rule imageI)
+        unfolding covering_families_entity_rows[OF present families] using e by (rule imageI)
       then obtain F where F: "F\<in>set Fs" and inF: "entity_row key (snd S) e\<in>snd ` set F" by auto
       obtain z where z: "z\<in>set F" and ze: "entity_row key (snd S) e=snd z" using inF by (rule imageE)
       have "key d\<in>set (row_mentions (snd z))"

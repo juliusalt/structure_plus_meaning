@@ -10,7 +10,8 @@ The standing owner rule of 2026-09-12 prohibits outside semantics, reasoning,
 or anything else anywhere. The owner explicitly preserves Isabelle/HOL's
 normative bootstrap role through genesis. Earlier ad hoc outside-reasoning
 permissions provide no current exception; the complete instruction and
-bootstrap boundary are in DEVELOPMENT_WORKFLOW.md.
+bootstrap boundary are the owner's words
+(`.claude/orchestration/codex-owner-directions.md` §10).
 
 Each choice below records its reason and its limits. Proof references are added
 only after the corresponding theory is accepted.
@@ -7706,34 +7707,6 @@ bootstrap construction theorem. Runtime construction and native admission of
 the complete source, correspondence, request and installed-program record are
 still required by the full development protocol.
 
-## Consolidated overnight checkpoint
-
-The owner requested preservation, reconciliation and a commit before further
-development. [HANDOFF.md](HANDOFF.md) is the current continuation point; the
-[retained evidence](validation/overnight-20260918/README.md) supersedes the stale
-segment-9 operational handoff. All 53 integrated theory texts are unchanged from
-their accepted providers. A fresh 1,080-theory partial proof from HOL and complete
-certificate/material replay establish the recorded bounded results without any
-overnight temporary provider. They do not complete a stage or the whole plan.
-
-The actual union judgment, installed-guard construction contracts, computed
-original root application and natural body-leaf certificate are available.
-Projection material preparation, projection/quotation/full-child certificates,
-actual installed source execution, proof-coordinate transport and the root
-replay/cause remain open. Application-result selection was proposed, not
-implemented. The existing Development_Seed contract-argument defect also remains.
-No original requirement, owner authority, stage gate or cost gate was weakened.
-The next batch and all broader governance obligations are explicit in HANDOFF.md.
-
-Repository-only rebuild uses the retained source closure, executable native
-requests and compact expected report boundaries. The owner-requested cleanup
-removed generated historical bulk from the current tree and preserved unique
-unfinished source. This storage cleanup does not settle the broader native
-retention/workflow account. Practical 5a and conditions 1–4 and 6 remain open;
-only theoretical 5b stays deferred.
-
-Recorded 2026-09-18, commit `d85a02ee`.
-
 ## Seeded contracts and dependencies computed
 
 Stage 1's gate requires that every seeded problem have a structural contract and
@@ -12085,6 +12058,25 @@ through a compiler. These lists are this design's prediction from the recipes' s
 evidence, and a word outside the prediction is a finding for the review — a report holding compiled positions that
 was missed, or a computation that reads the layout.
 
+*Addition (task 155, 2026-09-24): the words that changed, against the prediction.* The landing check of build 2
+executed 38 recipes and every one re-recorded differed in its presented words alone (same record counts and tags,
+every step exiting 0, recipe inputs unchanged): certificate_coverage, certificate_development,
+certificate_input_development, certificate_scope_repair, certified_causes, concurrent_history,
+constructed_history, decision_replay, digit_generation, digit_history, generation_records, history_index,
+indexed_generation, known_history, literal_replay, native_admission, native_certificate_replay,
+native_certificates, native_derivations, native_development, native_development_machinery (presentation-loop),
+native_development_seed (presentation-loop, presentation-publication), native_evaluation, native_extensions,
+native_graphs, native_histories, native_nodes, native_requirements, native_sources, native_steering (all three
+stages), native_workflow (all four stages), quoted_history, required_causes, required_history,
+requirement_decisions, source_development, and digit_replay (the recipe the prediction names
+streamed_digit_replay), each re-recorded once. One is outside the prediction: **data_reading** changed, for the
+stated reason — its source cause is built by the native literal replay and the joined generation constructor, so
+its fixture holds a compiled program and a generation record at the new positions; no computation reads the
+layout. Not executed, their exported code and every other boundary equal to an accepted execution's, so their
+words are the accepted ones: requirement_plans and requirement_sources (predicted to change: their reports hold no
+compiled position after all), and every recipe predicted unchanged, native_child included. overnight is not a
+recipe of the landing check and was not re-recorded here.
+
 ### The builds, in order
 
 1. **The contracts first (words equal).** The index code and its facts in RRA_Exact with the import change; the flat
@@ -12182,6 +12174,16 @@ patterns' shape, so a conclusion with literal leaves is an instance too.
   family's law below, of which this notion is itself an instance.]
 - `native_decomposition_shares` (Development_Native_Decomposition) no longer takes `distinct (map fst ds)`: its proof
   never read it; the join law needs distinctness of the whole program's sites only, which it computes itself.
+- Re-citations made by task 214: `store_found_rule k` is defined as `native_context_call_rule k`, and
+  `store_found_program.exact` cites `native_context_call_program.exact` (its sublocale `call`); the row readings
+  `row_subject_program`, `row_mentions_program`, `key_cited_program` and `mentions_cited_program` (the same shape as
+  `row_mentions_program`, in Development_Request_Scope) are each a sublocale `rearranged` of the notion and cite
+  one obligation of the row pattern stated once in Development_Verdict_Statements,
+  `native_rearranging_program.row_at` (the row pattern's six variables at `row_valuation x ident z`: the conclusion
+  evaluates to the pair of the context and the row's term, and every field is formed when the identity is). A use
+  cites the most specific contract that states what it needs: the instance's (`native_context_call_program.exact`,
+  `row_at`), never the raw law. Every `exact` statement is kept; no `holds_cases`/`native_step` argument is left in
+  them. `Development_Edited_Reach`'s reading of `row_mentions_rule` still proves in place.
 
 No rule value and no other statement changed, so no recorded word changes.
 
@@ -12225,6 +12227,16 @@ rule's conclusion and premise set back from its value.
 
 No rule value and no statement changed, so no recorded word changes.
 
+Re-cited (task 237): the two-premise call's contract is stated once beside `undeclared_rule` in
+Development_Verdict_Mentions, as `conjoined_calls_program` (moved there from Development_Verdict_Difference, its name
+and its `exact` kept: the site holds of `Pair_Term x (Pair_Term y w)` exactly when the first callee holds of
+`Pair_Term x y` and the second of `Pair_Term x w`), a sublocale `law` of the family's law; the site
+`undeclared_entry` interprets it and `undeclared_entry_exact` is its instance, as are Development_Verdict_Difference's
+`removed_entry` and `added_entry`. `row_formed_program` (Development_Verdict_Statements) takes the law as a sublocale
+`law` (`exact` and `step_at`), and `store_found_program`'s any-rule family as a sublocale `any_law` (`any_exact`), each
+`exact` statement kept. No `holds_cases`/`native_step` argument is left in these theories; no rule value changed, so
+no recorded word changes.
+
 The law completed (task 247, task 245's review): both halves at any support relation, `rule_instance` (an iff,
 the analogue of `reader_projection_rule`, formation over the rule's variables, conclusion's and premises', because
 `Y` may hold of unformed terms); `supported_clause` also returns the clause's conclusion, so each
@@ -12239,7 +12251,9 @@ case — cite with the program's `unfold_rule`, and the clauses of a one-rule, o
 
 Re-cited (task 235): the value rule's contract is stated once beside `native_value_rule` in Development_Located_Rows
 (`native_value_program`, its `exact`: the site holds of `Pair_Term x y` exactly when `x` is formed and `x=y`), and
-`development_row_check_exact` and `verdict_equal_program.exact` are its instances, their statements kept; the
+`development_row_check_exact` and `verdict_equal_program.exact` are its instances, their statements kept [corrected
+by task 237: `verdict_equal_program` only forwarded that `exact` and is retired; the roots site `roots_entry`
+interprets `native_value_program` directly, `roots_entry.exact` unchanged]; the
 relocation of the equality program to the check's site and its alpha variant are no longer used there.
 `permitted_row_program`, `row_reached_program`, the site `decomposition_applies` (`decomposition_applies_family`,
 `native_decomposition_reads`, `native_decomposition_progress`) and the reach's `reach_holds` family
@@ -13073,3 +13087,282 @@ theory this build does not edit, so it goes to the planner. `isabelle_local_root
 `Isabelle_Local_Names`, which this build does not edit.
 
 Recorded 2026-09-24 (task 161; build 1 of design 135).
+
+## An evaluation's calls are built over the shared subterms of its requests
+
+Task 292, a design; its evidence is #290's attribution (`.build/tasks/290/attribution.md`). It decides the repair of
+the one cost of a native judgment over a whole state that #290 left: the comparisons of call keys at the store search.
+The repair is neither of the two ways #290 named but a third that the attribution's numbers admit, and it is the
+first of them made exact: the evaluator's terms carry, in place of a digest, their reference into the table of the
+distinct subterms of the evaluation's requests.
+
+### The cost, as measured
+
+All figures are #290's (base `20260924-040509-train283`, shared measurements with little contention; reproduction
+`.build/tasks/290/j/Judgment_Timing.thy`, logs `wj7`–`wj15`). *Calls* counts the distinct demanded calls of the
+verdict's judgment, counted through `keyed_rows` at the call key; *demand seconds* times the closure of that demand;
+*argument nodes* counts the nodes of the verdict's presented argument (`native_verdict_argument`).
+
+| state | argument nodes | calls | demand seconds before #290's repair | after it |
+|---|---|---|---|---|
+| seeded | 498,787 | 2,985 | 1.01–1.11 | 0.66 |
+| machinery | 3,353,825 | 13,364 | 32.5–32.8 | 25.2 (25.4) |
+
+Calls grow 4.5×, the argument 6.7×, the seconds 30×. The closure's step, timed phase by phase before the repair —
+reading the frontier's applications and listing the successor keys, joining the successor lists, inserting the
+frontier's keys into the member index, looking the successors up — took 0.37, 0.07, 0.29 and 0.30 s at the seed and
+7.15, 2.74, 11.08 and 11.17 s at the machinery. #290's repair ("A demand's formation is checked at its requests")
+took the formation re-check out of the reading (5.2 s at the machinery). Insertion and lookup are comparisons of call
+keys `(site, Right_Ordered_Term t)`, and it left them as they were.
+
+Inserting each site's calls into an index of its own (`wj10`), one site holds almost all of them:
+`verdict_found_search`, the store search of `native_store_search_rules` in `Development_Verdict_Mentions` — 965 calls
+in 0.32 s at the seed, 4,590 calls in 15.3 s at the machinery, 0.33 ms against 3.3 ms an insertion; the next site
+costs 0.24 s and every other below 1 ms. That site's calls' arguments average 51,194 and 345,408 nodes. About 22 s of
+the machinery's demand are these comparisons.
+
+The cause, read in the programs: `store_found_rule k` calls the search at `(k, Pair S (Pair key S))` — the store of
+atoms S both as the context passed to the checker and as the store searched, the search's argument being
+`Pair ctx (Pair path store)` (`native_store_found_rule`) — and every descent carries the context S and a subtree of
+S. The call key orders a pair right component first ("Calls are keyed where they differ"), so two searches of one
+store compare the store whole before the paths that tell them apart, and every insertion and lookup walks S about
+log₂(calls) times: the cost is (mention lookups) × log(calls) × |S|, the state squared in effect (48× for 4.8× the
+calls and 6.7× the store). S is the declaration store (`declaration_term`), or the support store (`support_term`) for
+`excess`: a component of the presented argument. Every large component of every call is a subterm of the requests.
+
+The two prototypes, measured:
+
+- *A digest-first composite key* `(site, digest t, Right_Ordered_Term t)`, exact, falling back to the full key where
+  the digests agree, the digest computed from the term when a key is made (`closure_with`, `wj12`): the seeded demand
+  took 29.5 s against 1.5 s, for the same 2,985 calls. The digest walked every call's whole argument each time a key
+  was made — at least twice a call — in unbounded-integer arithmetic; the comparisons it saved were fewer than the
+  nodes it read.
+- *The found search's third field changed from the store to the key* in `store_found_rule` (`keyed_verdict_sys`,
+  `wj11`): 0.45 s and 2,223 calls at the seed, 11.7 s and 9,609 calls at the machinery, and the seeded judgment
+  refused. The third field is the store searched, so the prototype changed the program's meaning, and its numbers
+  bound nothing of a correct rearrangement.
+
+What is not measured: how many comparisons end equal. A lookup that finds its key ends in a comparison of two equal
+terms, and an exact comparison of two equal trees walks both whole in whatever order it takes. Every successor the
+closure finds already visited ends so, and so does every lookup of the positioned evaluation's renaming, which finds
+every premise call of a demanded rule in the demand (`demand_positions`, `positioned_call`). #290's insertion and
+lookup times do not separate these comparisons from the others, and the machinery's evaluation was not measured.
+
+### The decision
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The planner's answer to #290 (q74): the key is repaired by a composite whose cheap component decides where it differs and falls back to the full key where it agrees; the programs are not rearranged. | The repair is at the key and not at the programs, and it is not a composite over the existing terms. A component walked from the term costs more than it saves (the first prototype). A component composed where terms are built decides only the unequal comparisons: a digest never decides equality, so every comparison that ends equal still walks both terms. The key compares calls built over the shared subterms of their requests, whose references decide equality exactly. |
+| HANDOFF, "Not taken, with their triggers": the store search taking its store before its key, if a measurement shows key comparisons dominating. | They dominate (22 of 25.2 s), and the arrangement is still not taken: it is a notion's shape chosen for the order of an evaluator's key, and it removes the unequal comparisons of one site only (below). The trigger is retired. |
+| #290's result: the choice is between a term carrying its digest and the search's arrangement. | A third way is better than both: a term carries, in place of a digest, its reference into the table of the distinct subterms of the evaluation's requests. It is composed where a digest would be, and it decides equality where a digest can only refute it. |
+| "Calls are keyed where they differ", Open: "every call of a context-carrying program still carries the whole context …; a presentation in which calls carry keys instead of the table is among the candidates." | This is that presentation, made exact: a call carries its context as a reference into the one table of its requests' subterms, so what two calls share is one reference and is compared in one step. |
+
+**The notion: a term over the shared subterms of a family of terms.** Given a finite family of terms — an
+evaluation's requests:
+
+- the *table* is the first-occurrence table of the family's distinct subterms, each held as its *shape*: a payload
+  leaf, a target leaf, or the pair of the references of its two components. A *reference* is a shape's position in
+  the table. The table is subterm-closed — a held pair's components are held, at smaller positions — and holds each
+  shape once;
+- a *shared term* over the table is a reference, or a pair or a leaf the table does not hold, whose components are
+  shared terms. It is *canonical* when it holds no leaf the table holds and no pair of two references whose shape the
+  table holds: every subterm the table holds is present as its reference (a pair with a component that is not a
+  reference is never held, by subterm-closure);
+- *decoding* reads a shared term as the term it presents: a reference as the subterm at that position, a pair as the
+  pair of its decoded components;
+- the *canonical constructors* build a leaf or a pair and look its shape up in the table's index of shapes: a held
+  shape becomes its reference;
+- the *view* of a shared term is its top constructor, read through the table at a reference, with shared components.
+
+Its contract is four obligations, as the index notion's is:
+
+1. *The table presents its family*: sharing a term returns a reference that decodes to it, and a sharing that adds
+   terms keeps every earlier reference's decoding (the first-occurrence law, `value_reference_step_preserves`).
+2. *Canonicity*: two canonical shared terms over one formed table are equal exactly when they decode to equal terms.
+   A reference therefore decides equality: nothing the table holds is walked, and no summary decides anything.
+3. *The constructors are canonical and decode homomorphically*: a canonical constructor applied to canonical
+   components returns a canonical shared term and commutes with decoding; the components of a canonical shared term
+   are canonical.
+4. *The view commutes with decoding*: the view of a shared term decodes to the top constructor of its decoded term.
+
+What follows: a comparison of canonical shared terms is exact and walks only the structure the table does not hold;
+its order may be any linear order on shared terms with a reference compared as a number — the index notion's key,
+which no subject reads.
+
+The notion instantiates what exists and re-makes none of it. The table is `Complete_Value_References`' first-occurrence
+table over shapes (`value_reference_step`, `value_reference_index`, `value_reference_sequence_exact`), built by
+`Keyed_Value_References`' keyed run (`keyed_reference_run_exact`: one three-outcome comparison of shape keys per tree
+node, a shape of two references compared as two numbers); its index of shapes is a carrier index
+(`Carrier_Indexes.carrier_index`, through the red-black tree's `tree_map_carrier_index`, the shape being the key); the
+comparison of shared terms composes by `Linear_Comparisons`. The shared word's first-occurrence table of artifacts
+(`Finite_Term_Object_Words`, `Indexed_Term_Words`) is the same idea at artifact leaves, used to present a word; it is
+not re-cited.
+
+**The reference, point by point** (what the brief asked of a digest). A reference is *of* a subterm of the
+requests: the position of its shape, the shape naming its components by their references. It *decides* equality,
+exactly, by canonicity — not as the first component of a composite with a fallback, since nothing the table holds
+needs one; structure the table does not hold is compared as structure. It is *composed* in two places: once, when the
+table is built from the requests; and at every premise instance, where the canonical constructors look each new pair
+or leaf up in the table. The existing keys become its uses: `native_call_key`, over plain calls, stays the key of the
+specifications (`keyed_call_closure_exact`, `positioned_program_evaluation_exact`); the evaluation's code keys its calls
+by `(site, shared term)`, and the keyed traversal (`keyed_demanded_sites`) and the demand's positions
+(`demand_positions`) take that key as they take any key with a left inverse. `Right_Ordered_Terms` keeps its uses over
+plain terms and is not re-cited.
+
+**Its obligations at a use.** The evaluation (i) builds the table once from its requests, after the program and the
+requests are checked formed at its entry (#290's `native_call_closure_code`); (ii) builds every call it constructs —
+every premise instance — through the canonical constructors, so that every call it holds is canonical over that one
+table; (iii) keys its calls by `(site, shared term)`, whose left inverse is the identity on canonical shared calls, and
+reads each carrier through the index notion's laws unchanged; (iv) decodes once, where a result leaves the evaluation:
+the demand's calls and the answers.
+
+**What it does not claim.** Which reference a subterm receives: the first occurrence depends on the order of sharing,
+so no reference is a subject, none is presented, and none is compared across two tables — each evaluation builds its
+own. That structure built during an evaluation is shared: the table is fixed at the requests, and a constructed node it
+does not hold stays explicit structure, canonical over the fixed table; a program that builds a large term and carries
+it in many calls pays that term in their comparisons, and a table extended as the traversal constructs is the
+extension for that case, unbuilt, at a measured need. Anything about cost: the table's build and what it saves are
+observations of a use. Anything of the native programs: no program, meaning, statement or word changes. It is the
+evaluator's representation of the terms it holds, not the programs' arrangement of their arguments.
+
+**Why, in the owner's terms.** The owner's direction of 2026-09-19: "even implementation should be structural with the
+non-structural efficiency as a structurally presented idea that can be applied", and "if structure is used then it
+needs to be explicit". The evaluator holds structure it does not show: the store in two calls is one subterm of one
+presented argument, and the representation repeats it, so a comparison cannot know that the two are one. The table
+makes that sharing explicit, and the efficiency — one step for what two calls share — follows from the explicit
+structure: not from an opaque number that decides nothing by itself (a digest), and not from a notion's argument
+arranged for the order in which an evaluator's key meets its components (the search's arrangement). The idea is stated
+once, as a notion with its contract, and applied at the evaluator; any evaluation over presented requests can apply it.
+
+### The ways not taken, and what would reopen each
+
+**The search's arrangement** — the store placed left of the path in `native_store_search_rules`, so that a right-first
+key meets the path first. Its cost: the search's contract re-proved in the new shape for every key term
+(`native_store_search_program.exact`, `.sound`); every program that builds a search call re-stated with its contract —
+the mention reading (`store_found_rule`, `store_found_program`, `row_mentions_program`), the located rows, the request
+citations, readiness (`native_settled_exact`, `native_ready_exact`), the reach (`native_reached_exact`,
+`isabelle_native_reached`), the verdict's difference and the decomposition; every word presenting those programs
+re-recorded once (the seed's and the machinery's readiness, reach and verdict reports), serialized into the word chain
+(#155, then #157 beside #64, #167, #169, #92), which it would delay. Its benefit: the unequal comparisons of this one
+site, at most the 22 s. Every comparison that ends equal still walks both calls, in the demand and in the evaluation;
+and the calls themselves change, so the seeded control could compare counts and not calls. It is not taken because the
+search's own contract prefers no arrangement: the arrangement would write the evaluator's right-first key into the
+notion's shape — "Which component tells two terms apart is a convention of the programs that build them, not a
+property of terms" ("Calls are keyed where they differ") — so that the notion would follow the implementation, which
+the owner's direction forbids and which q74 refused as a fix. It is reopened only for a reason of the search itself,
+never as a remedy for a cost.
+
+**A term carrying its digest** — a summary composed from its parts where terms are built, the first component of an
+exact composite whose equal-digest case falls back to the full comparison. Its cost: the same change of the evaluator
+as the chosen way (builds B2 and B3 below), digest arithmetic at every constructed node kept within the machine's short
+integers, and a rate of collisions, an observation, each walking both terms. Its benefit: the unequal comparisons
+decided in one step at every site. It leaves every comparison that ends equal walking both terms whole — a digest never
+decides equality, so no digest removes it — Θ(comparisons ending equal × argument size), which grows as the state
+squared wherever calls carry the state. It is not taken because the shared table removes both parts for the cost of one
+build of the table. It is reopened with evidence: if the table's build at the machinery's verdict argument (measured in
+B1) exceeds the walks of the comparisons that end equal (measured by M0), a digest is the presentation B4 takes instead,
+over the same B2–B3 core, and nothing built is lost.
+
+### The builds, in order
+
+None changes a word, and none enters the word chain. Each is a refinement whose acceptance is the check with every word
+equal; a word that moves is a finding for the planner — a presentation reading the order of an internal key — and is
+not re-recorded.
+
+- **M0, the planner's measurement (optional; after #290 lands, and it may ride with #278).** On the code as it stands,
+  count at both states the key comparisons that end equal, in the closure's successor lookups and in the positioned
+  evaluation's renaming, and the nodes they walk. It is the residual of both ways not taken, and the number with which
+  B1's measurement would reopen the digest.
+- **B1, `Shared_Term_Tables` (one window).** The notion: shapes; the table as `Complete_Value_References`'
+  first-occurrence table over shapes, built by `Keyed_Value_References`' keyed run; its index of shapes a
+  `Carrier_Indexes` instance; shared terms, decoding, the canonical constructors and the view; the four obligations as
+  theorems; a linear order on shared terms with the key's contract. It re-makes no first-occurrence or index argument;
+  adds no simp or code attribute beyond its own code equations; imports what lets the engine import it (below
+  `Factor_Constructed_Program_Applications`). Measured, shared: the table's build, its count of distinct subterms and its
+  memory at the seeded and the machinery verdict argument.
+- **B2, the evaluator's matching over a presentation (one window, beside B1).** Fitting, matching rows and pattern
+  instantiation (`finite_pattern_fits`, `finite_matching_rows`, and the instance a premise pattern takes under the
+  matched bindings, as `finite_instantiated_premises` builds it) stated once over a presentation of terms passed as an
+  argument — its view, its canonical constructors and its decoding — as the keyed operations take their key; the
+  commutation with decoding proved once for every presentation. The existing constants, their statements and their
+  code equations are untouched: plain terms are the identity presentation, and there each operation is proved equal to
+  the existing constant.
+- **B3, the evaluator's applications over a presentation (one window, after B2).** `finite_constructed_requests`,
+  `finite_constructed_applications` and `finite_interface_fits` over a presentation, exact against the existing ones
+  through decoding, the identity presentation giving them back; the same respects as B2.
+- **B4, the demand over shared calls (one window, after B1, B3 and #290).** B1's shared terms as a presentation, its
+  obligations discharged from B1's contract; `native_call_closure`'s code equation (`Formed_Call_Closures`) through the
+  keyed traversal at the shared call key: the program and requests checked at entry as #290 does, the table built once
+  from the requests, the closure over canonical shared calls, the demand decoded, exactly the demand
+  (`keyed_call_closure_exact` through decoding). The seeded control: the seeded judgment's demand is the same 2,985
+  calls and its answer the same; its time is reported against 0.66 s.
+- **B5, the evaluation over shared calls (one window, after B4).** The positioned evaluation over the shared demand:
+  positions keyed by the shared call key, the rule table's premise calls shared, the answers decoded; the three
+  positioned code equations (`finite_native_generation_positioned_code`, `workflow_stage_reference_positioned_code`,
+  `workflow_stage_evidence_positioned_code`) restated through it. The certificate path's keyed history is untouched.
+- **B6, the measurement (one window, after B5 lands).** Shared, fitted within three minutes on the base heap with B1–B5
+  landed: the seeded and the machinery judgment, demand and evaluation, the table's build, the figures at
+  `verdict_found_search` and the comparisons ending equal, against #290's figures above, #278's and M0's. It supplies
+  #194's stage measurement and condition 5a's figure for the loop's central judgment.
+
+### Evidence and limits
+
+The decision rests on what #290 measured: 22 of the machinery demand's 25.2 s are comparisons at one site whose calls
+average 345,408 nodes, of which the store S, a subterm of the presented argument, is both the context and the store; a
+summary walked from the term costs more than it saves (29.5 s against 1.5 s); the arrangement's prototype bounds
+nothing. Beyond measurement it rests on one fact of comparison: an exact comparison of two equal trees walks both,
+whatever order it takes, so any key over the existing terms — digest-first or rearranged — leaves the comparisons that
+end equal as they are, and only a representation in which a shared part is one reference removes them. How many
+comparisons end equal is not measured (M0), and neither is the table's build (B1): those two numbers, not a
+preference, reopen the choice between the shared table and a digest. No theory changes here. This decision was made
+outside the loop and is a residual.
+
+Recorded 2026-09-24.
+## Each context's citations are stated, and the premise is discharged by the constructors
+
+Task 165 builds the contexts of "A row outside the store is presented in its context" and leaves every report as
+it was (the switch is the rest of build 2). A residual record cites nothing
+(`development_row_premise_residual_record`); the premise holds of every problem and request the constant
+constructors pose as residuals of generated authority (`Development_Row_Data`), so of the seed's, the machinery's
+and a demanded state's. A repair's definition problems cite the repaired request's problem at its locus
+(`development_repair_origin`); the repair context cites nothing else, so the
+request it issues again is presented by it only when its problem is a residual, and within a loop by the loop's
+context. The repaired problem is itself in the extension (`development_repair_state_keeps`), so its citation is
+one locus in both states. The loop cites, for a problem, the head of the first accepted repair row of its history
+whose sockets hold it (`development_loop_origin`, over task 58's rows); rows of `D` are not read.
+
+Decided (the brief left it to the build): the loop's premise is an invariant of the loop's constructors —
+initial loops of residual problems, the successor, selection, issue and the repaired successor
+(`development_loop_cited_*`) — rather than a fact about particular reported states, so it covers every loop the
+process reaches, the machinery's included (`development_machinery_loop_cited`). It rests on one observation: a
+repair row holds only demanded problems, so a residual stays uncited and a cited problem stays cited as the
+history grows (`development_loop_cited_step`). The premise reads citations only through their absence, which
+makes it independent of the key. The store's formedness premise is discharged on the finite side: every row a
+cited loop presents, problem or request, is formed and decodes to a formed value
+(`development_loop_cited_rows`), which `decode_development_problem_body_data` carries to the store's bodies.
+
+The lemmas that read the seed's, the machinery's, the repair's and the loop's constructions stand in one theory
+above them, `Development_Row_Contexts`, so that those construction theories keep their imports; the generic
+contexts and the residual record stand in `Development_Row_Data`.
+
+Recorded 2026-09-24 (task 165).
+## A demand's formation is checked at its requests
+
+Task 290 (`.build/tasks/290/attribution.md`). The closure of a demand at the call key read every demanded call's
+applications through `finite_program_applications`, which checks the call's argument formed, so the verdict's
+machinery judgment walked 2.7 × 10⁹ argument nodes in 13,364 formation checks (5.2 s). A premise call of an
+application of a formed program is formed, so the check is established by the requests: `Formed_Call_Closures`
+states the closure at the call key as one constant (`native_call_closure`, a code unfolding of the keyed closure)
+whose code equation checks the program and the requests at its entry and reads the constructed applications
+otherwise: the closure is an instance of `checked_premise` (`native_call_closure_checked_premise`, exact by
+`keyed_call_closure_formed`) and its code equation is `checked_at_entry` there (`native_call_closure_code`). The
+equation is stated of this
+constant and not of `keyed_call_closure` itself: that constant takes its key and unkey as arguments, and its
+traversal returns the reached calls only when unkey is a left inverse of key (`keyed_demanded_sites_exact`), so
+for an arbitrary key the two readings need not reach the same calls and no code equation of it holds. This
+applies "The in-place refinements apply two notions"; no new notion. The same attribution found that #278's unfinished bare-reach
+measurement was the quadratic `fcard` of its count, not the demand (1.0 s in the joined program), and that the
+growth of the judgment's demand with the state is the right-first call key walking the whole store of atoms at
+every comparison of `verdict_found_search`'s calls, `(k, Pair S (Pair key S))`; a digest-first composite key
+was measured slower than the comparisons it saves (29.5 s against 1.5 s at the seeded judgment), so that part
+stays open.

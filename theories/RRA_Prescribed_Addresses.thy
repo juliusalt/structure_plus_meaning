@@ -29,15 +29,6 @@ next
   show ?case by (rule exI[of _ "?t \<circ> g"], rule conjI[OF ginj]) (use fixed in auto)
 qed
 
-lemma long_address_outside:
-  assumes finite: "finite W" and long: "Max (length ` W)<length a"
-  shows "a\<notin>W"
-proof
-  assume member: "a\<in>W"
-  have "length a\<le>Max (length ` W)"
-    by (rule Max_ge) (use finite member in auto)
-  then show False using long by simp
-qed
 
 theorem finite_addressing_avoiding:
   assumes domain: "finite U" and forbidden: "finite W"

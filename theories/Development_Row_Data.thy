@@ -274,4 +274,104 @@ proof -
   show ?thesis using pp ss SS EE by (simp add: R1 R2)
 qed
 
+text \<open>A request is presented in the context that carries it exactly where its problem is.\<close>
+
+lemma development_request_row_data_premise:
+  "development_request_row_data key inert origin grant r\<noteq>None \<longleftrightarrow> development_row_premise origin grant (fst r)"
+  by (cases r) (simp add: development_request_row_data_def development_problem_row_data_def)
+
+text \<open>
+  A row presented in context decodes to a formed value whenever the inert presentation is formed: the
+  store's formedness premise for the rows a context presents.
+\<close>
+
+lemma development_problem_row_data_term_formed:
+  assumes row: "development_problem_row_data key inert origin grant p=Some x"
+    and inert: "\<And>t. finite_term_formed (inert t)"
+  shows "term_formed (decode_finite_term x)"
+  using development_problem_row_data_formed[OF row inert] by (simp add: finite_term_formed_correct)
+
+lemma development_request_row_data_term_formed:
+  assumes row: "development_request_row_data key inert origin grant r=Some x"
+    and inert: "\<And>t. finite_term_formed (inert t)"
+  shows "term_formed (decode_finite_term x)"
+  using development_request_row_data_formed[OF row inert] by (simp add: finite_term_formed_correct)
+
+section \<open>The contexts that supply a row's citations\<close>
+
+text \<open>
+  A report presents the problems of a context, and the context supplies each row's citations: it cites
+  what posed a problem, or it has no citation to give, and never invents one. The premise reads a
+  citation only through its absence, so two contexts absent at the same problem give the premise there
+  alike. The contexts are a residual record, which cites nothing; a repair, whose definition problems cite
+  the repaired problem (@{text Development_Refinement_Repair}); a loop, whose demanded problems cite the
+  head of the history's first repair row that holds them (@{text Development_Repair_Rows}); and a
+  request, presented in the context that carries it.
+\<close>
+
+lemma development_row_premise_origin_cong:
+  assumes "origin p=None \<longleftrightarrow> origin' p=None"
+  shows "development_row_premise origin grant p \<longleftrightarrow> development_row_premise origin' grant p"
+  using assms by (simp add: development_row_premise_def)
+
+text \<open>
+  A problem of a constant carries the origin and authority its constructor was given and the constant
+  as its one subject, so a context meets the premise on it exactly where it cites according to them.
+\<close>
+
+lemma development_constant_problem_fields:
+  assumes "development_constant_problem reading kind C r a c=Some p"
+  shows "problem_subject p={|c|}" "problem_origin p=r" "problem_authority p=a"
+  using assms by (auto simp: development_constant_problem_def)
+
+lemma development_constant_problem_premise:
+  assumes problem: "development_constant_problem reading kind C r a c=Some p"
+    and authority: "a\<noteq>Development_Truth"
+    and origin: "origin p=None \<longleftrightarrow> r=Development_Residual"
+    and grant: "grant p=None \<longleftrightarrow> a=Development_Generated"
+  shows "development_row_premise origin grant p"
+proof -
+  have subject: "problem_subject p={|c|}" and fields: "problem_origin p=r" "problem_authority p=a"
+    by (rule development_constant_problem_fields[OF problem])+
+  have "development_subject_constant p=Some c" using subject by (simp only: development_subject_constant_exact)
+  then show ?thesis using fields authority origin grant by (simp add: development_row_premise_def)
+qed
+
+subsection \<open>A residual record cites nothing\<close>
+
+text \<open>
+  The seed, the machinery and a demanded state pose residual problems of generated authority, each about
+  one constant; their record cites nothing, and the premise holds of each problem their constructors make.
+\<close>
+
+lemma development_row_premise_residual_record:
+  "development_row_premise (\<lambda>_. None) (\<lambda>_. None) p \<longleftrightarrow> development_subject_constant p\<noteq>None \<and>
+    problem_origin p=Development_Residual \<and> problem_authority p=Development_Generated"
+  by (auto simp: development_row_premise_def)
+
+corollary development_constant_problem_residual_record:
+  assumes "development_constant_problem reading kind C Development_Residual Development_Generated c=Some p"
+  shows "development_row_premise (\<lambda>_. None) (\<lambda>_. None) p"
+  by (rule development_constant_problem_premise[OF assms]) simp_all
+
+corollary development_constant_problems_residual_record:
+  assumes "p\<in>set (development_constant_problems reading kind C Development_Residual Development_Generated cs)"
+  shows "development_row_premise (\<lambda>_. None) (\<lambda>_. None) p"
+  using assms development_constant_problem_residual_record unfolding development_constant_problems_exact by blast
+
+corollary development_constant_request_residual_record:
+  assumes request: "development_constant_request reading kind C Development_Residual Development_Generated c=Some r"
+  shows "development_row_premise (\<lambda>_. None) (\<lambda>_. None) (fst r)"
+proof -
+  obtain p s S E where R: "r=(p,s,S,E)" by (cases r) auto
+  show ?thesis
+    using development_constant_problem_residual_record[OF development_constant_request_fields(1)[OF request[unfolded R]]]
+    by (simp add: R)
+qed
+
+corollary development_refinement_request_residual_record:
+  assumes "development_refinement_request C Development_Residual Development_Generated c=Some r"
+  shows "development_row_premise (\<lambda>_. None) (\<lambda>_. None) (fst r)"
+  by (rule development_constant_request_residual_record[OF assms[unfolded development_refinement_request_def]])
+
 end

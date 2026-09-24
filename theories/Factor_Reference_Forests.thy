@@ -42,7 +42,7 @@ lemma syntax_forest_table_origin:
 lemma syntax_forest_table_child:
   assumes index: "i < length Ms"
   shows "map_slot_keys (syntax_branch i) (Ms!i) \<subseteq> syntax_forest_table Ms"
-  using syntax_forest_table_member[OF index] by (auto simp: map_slot_keys_def)
+  using index by (auto simp: syntax_forest_table_eq)
 
 lemma syntax_forest_table_range:
   "rel_ran (syntax_forest_table Ms) = (\<Union>M\<in>set Ms. rel_ran M)"

@@ -9,8 +9,7 @@ text \<open>
   path store at their keys, each row with its key as the value there, and the store is searched with the
   store's own search: this is stated once, for any presented state and any selection of families, and every
   reading of a state's rows by row key consumes it — the difference of two states below, and request
-  construction when it searches the request state's rows. The selection of every family of a state is
-  @{const state_all_families}, stated with the kinds in \<open>Development_State_Rows\<close>.
+  construction when it searches the request state's rows.
 \<close>
 
 definition family_row_store :: "'i state_family list \<Rightarrow> (state_key\<times>'i state_row) binary_path_store" where
@@ -508,55 +507,12 @@ end
 section \<open>Two calls on one context, and the equality of two terms\<close>
 
 text \<open>
-  A field reading two selections calls both on one context: the rule @{const undeclared_rule}, whose
-  conclusion pairs the context with the two arguments and whose two premises call the two sites, is that
-  conjunction for any two sites, and its contract is stated once here. The roots field compares two lists of
-  keys by a variable occurring twice, the rule @{const native_value_rule}.
+  A field reading two selections calls both on one context: the rule @{const undeclared_rule}, whose program
+  @{locale conjoined_calls_program} states its contract once in \<open>Development_Verdict_Mentions\<close>. The roots
+  field compares two lists of keys by a variable occurring twice, the rule @{const native_value_rule}, whose
+  program is @{locale native_value_program}. The sites below are instances of the two programs.
 \<close>
 
-locale conjoined_calls_program = native_rule_family P s "[([0],undeclared_rule u f)]"
-  for P :: "'u native_system" and s u f :: "'u definition_site"
-begin
-
-theorem exact: "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P \<longleftrightarrow>
-    (u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
-proof
-  assume holds: "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P"
-  obtain c F g where rule: "(c,F)\<in>set [([0]::local_address,undeclared_rule u f)]"
-    and shape: "evaluate_pattern g (schema_conclusion (decode_finite_schema F))=Pair_Term x (Pair_Term a b)"
-    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises (decode_finite_schema F) \<longrightarrow>
-      (e,evaluate_pattern g p)\<in>positive_meaning P"
-    by (rule holds_cases[OF holds]) blast
-  have F: "F=undeclared_rule u f" using rule by simp
-  have calls: "(u,Pair_Term (g [0]) (g [1]))\<in>positive_meaning P" "(f,Pair_Term (g [0]) (g [2]))\<in>positive_meaning P"
-    using native_rule_support[OF support[unfolded F undeclared_rule_def]] by simp_all
-  have fields: "g [0]=x" "g [1]=a" "g [2]=b" using shape by (simp_all add: F undeclared_rule_def)
-  show "(u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
-    using calls fields by simp
-next
-  assume both: "(u,Pair_Term x a)\<in>positive_meaning P \<and> (f,Pair_Term x b)\<in>positive_meaning P"
-  have formed: "term_formed x" "term_formed a" "term_formed b"
-    using both by (auto dest: positive_meaning_term_formed)
-  have "(s,evaluate_pattern (native_values [x,a,b]) (decode_finite_pattern
-      (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))))\<in>positive_meaning P"
-    by (rule native_step[where c="[0]" and
-        ps="[([0],(u,Finite_Pattern_Pair (native_var 0) (native_var 1))),([1],(f,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-      (use both formed in \<open>simp_all add: undeclared_rule_def\<close>)
-  then show "(s,Pair_Term x (Pair_Term a b))\<in>positive_meaning P" by simp
-qed
-
-end
-
-locale verdict_equal_program = native_rule_family P d "[([0],native_value_rule)]"
-  for P :: "'u native_system" and d :: "'u definition_site"
-begin
-
-sublocale equal: native_value_program P d
-  unfolding native_value_program_def by (rule native_rule_family_axioms)
-
-lemmas exact = equal.exact
-
-end
 
 section \<open>The program of the three fields\<close>
 
@@ -643,6 +599,7 @@ lemma verdict_difference_family:
 lemmas verdict_difference_rule_defs = verdict_difference_definitions_def native_every_rules_def
   native_every_nil_def native_every_step_def native_store_search_rules_def native_store_found_rule_def
   native_store_left_rule_def native_store_right_rule_def native_any_rule_def store_found_rule_def
+  native_context_call_rule_def
   native_member_rules_def native_member_here_def native_member_later_def permitted_row_rules_def
   permitted_found_rule_def permitted_subject_rule_def row_declares_rule_def undeclared_rule_def
   native_value_rule_def
@@ -675,7 +632,6 @@ interpretation added_other: permitted_selection_program verdict_difference_syste
     native_store_search_program_def native_every_program_def native_member_program_def
   by (intro conjI; rule verdict_difference_family) (simp_all add: verdict_difference_rule_defs)
 
-
 interpretation removed_entry: conjoined_calls_program verdict_difference_system verdict_removed
     verdict_removed_replaceable_selection verdict_removed_other_selection
   unfolding conjoined_calls_program_def
@@ -686,8 +642,8 @@ interpretation added_entry: conjoined_calls_program verdict_difference_system ve
   unfolding conjoined_calls_program_def
   by (rule verdict_difference_family) (simp_all add: verdict_difference_rule_defs)
 
-interpretation roots_entry: verdict_equal_program verdict_difference_system verdict_roots
-  unfolding verdict_equal_program_def
+interpretation roots_entry: native_value_program verdict_difference_system verdict_roots
+  unfolding native_value_program_def
   by (rule verdict_difference_family) (simp_all add: verdict_difference_rule_defs)
 
 text \<open>

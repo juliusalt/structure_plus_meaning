@@ -408,6 +408,11 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   and two conditions (its review's follow-ups to #286, #285, #295 and #114); the machinery judgment measured held
   (`.build/tasks/278/measurement.md`), with its tokens and phased theory for B6 (its review's follow-ups to #307, #305
   and #193).
+- **#312** (P2, `d6adba1c`): the plain and right-first views as instances of `Prefix_Key_Comparisons`
+  (`finite_term_keys`, `finite_term_comparison`, `finite_term_right_comparison`), three inductions retired, words
+  equal; its review's follow-ups to Open 76, 94 and 97 (#316).
+- **#114** (investigation): one request construction measured held (`.build/tasks/114/measurement.md`), read under
+  request construction.
 
 ## Open
 
@@ -552,10 +557,11 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 76. Cosmetic: blank lines in `RRA_Collection_Frames`, `Factor_Pattern_Forests`, `RRA_Prescribed_Addresses` (#241's
     review) and `Development_Verdict_Difference` (#284's); redundant `simp add:
     syntax_branch_eq_iff`; `binder_silent` as silence at every binder address when `RRA_Bound_Syntax_Construction` next
-    changes.
+    changes; in `Right_Ordered_Terms` the right view's `head_arity` and `node_determined` derived from the plain
+    instance's, and `finite_term_comparison` interpreted through `prefix_key_comparison.intro` directly (#312's review).
 77. `entity_row_kept`'s statement, decided at its next consumer.
 78. The probe tool's follow-ups (the load estimate's calibration, intermediates below an excluded theory,
-    `base_context`'s docstring), with its next edit.
+    `base_context`'s docstring): taken by #316.
 80. #191's first review's follow-ups (titles only, `.build/tasks/202/review.md`), with that theory's next edit.
 81. An adopted answer's precondition reconstructed at its receipt's `revision`, at the first adoption after #265; the
     published state as the judged answer state waits on item 7.
@@ -579,7 +585,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     theorems read only by host tools, beside `Isabelle_Entity_Export`'s natively read definitions. In the map, three
     rows still restate themselves (`Factor_Constructed_Program_Applications`, `Factor_Demanded_Program_Calls`,
     `Keyed_Native_Evaluation`) and `Factor_Demanded_Graph_Readings`' clause is garbled — mailed to #290, which may write
-    those rows; a pass after it lands otherwise.
+    those rows; a pass after it lands otherwise. `Keyed_Native_Evaluation`'s row also cites `REASONING_REUSE.md`'s
+    row by its old title, "An argument ordered so that comparison meets what differs first" (#312's review).
 95. **What #239's landing leaves** (its review): the law's `DECISIONS.md` entry names the uses of `read_clause`, and
     `Development_Native_Readiness` and `Native_Table_Reach` are two more, with that entry's next edit; and
     `native_rule_law.step_at`'s premise is a set difference, so each of the nine concrete calls in `Native_Path_Stores`
@@ -627,8 +634,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     part of the per-answer `first_index_tree` built once per request state, if #194 shows its share.
 97. **A probe cannot load a renamed `RRA_Finite_Artifacts`** (#155's review, follow-up 5): its `export_code … checking
     SML` raises `Protocol_Message invoke_scala make_directory`, so a change at or below `RRA_Exact` is probed only
-    through scratch copies of its dependents. The probe tool's, with item 78; #297's review and #278 (run m9) met it
-    too, and an option to skip `export_code` commands in a probe would let such a theory be probed as it stands. And a probe
+    through scratch copies of its dependents. #297's review, #278 (run m9) and P2 (#312) met it
+    too: taken by #316, which runs the command with the Scala side or skips it and says so. And a probe
     could read a past base's own sources: #159 needed a `git archive` tree to measure the base before the layout.
 98. **`keyed_reference_insert`** (#297's review, follow-up 1): the argument of `Keyed_Value_References`'
     `keyed_reference_run_table` (its `index` sub-proof), made again in `Shared_Term_Tables`; moved into
@@ -637,7 +644,11 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     root family's reading costs 2.6–3.6 times it though the family's own artifact is constant — most likely a check
     re-made at every reading (the established-premise notion) or a pairwise check (item 48): attributed when a native
     question over hundreds of candidates is on the loop's path, `finite_citation_locations_formed` (environment
-    formation at each member of the family, #159's candidate) timed alone first. The reader's cost per key bit rises from 0.31 to
+    formation at each member of the family, #159's candidate) timed alone first. With it, #309's figures (q81): after
+    the listed-union repair a question's construction grows ×2.4–2.5 per doubling (11.2 ms keyed at 64 candidates), all
+    of the growth in the two installations of an n-clause program into an existing native source
+    (`finite_install_source_entry` for the scope program, the ground source of the facet's rows), their inner stages —
+    compile, fresh coordinates, reference installation — not yet separated. The reader's cost per key bit rises from 0.31 to
     0.43 µs across #159's sizes (the index's depth, most likely): recorded.
 100. **A native record replayed in a task tree** whose theories change the state's closure is unproduced by
     construction (`export_proved_code` refuses; #157's review): replays run after landing (#143); a proof context
@@ -652,18 +663,19 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     theory's next edit.
 103. #284 corrected its entry's list in place (`DECISIONS.md`, at line 12223 when reviewed) without the bracketed
     "[corrected by task N: …]" the entries use elsewhere: noted with that entry's next edit (#284's review).
-104. #311's review follow-ups 1–3 (the shared view's two interpretations named in `REASONING_REUSE.md`'s row;
-    `shared_term_view` renamed `shared_term_prefix_view`, P2's instances' views `*_prefix_view`; which interpretation
-    each re-cited fact comes from): mailed to P2's reviewer (plan-51); what P2's landing leaves of them goes with
-    `Shared_Term_Tables`' next edit.
+104. #311's review follow-ups 1 and 2 — the shared view's two interpretations (`shared_term_prefix_key`,
+    `shared_term_comparison`) named in `REASONING_REUSE.md`'s row; `shared_term_view` renamed `shared_term_prefix_view`,
+    two words for two notions beside B1's `shared_view`/`term_view` — P2 landed without them (`d6adba1c`; its mails
+    reached no session, and it named no view lemma of its own): with `Shared_Term_Tables`' next edit (mailed to #303
+    if it edits that theory).
 
 ## Now
 
 - **#308** follows #289's landing: it folds #289's row changes (`.build/tasks/289/rows.md`) into main's seven rows and
   takes what the exporter still owes (`state_presentable`'s third condition, the successor's request premises, the new
   facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s).
-- **Under way**: #192, #308, #309, #313, #285 and P2 (#312) in their rounds; #286 ready over #112's landing; B4 (#303)
-  ready on M0's figures; #167 re-planned to its room and queued first of the word chain. Mailed: with the landing of
+- **Under way**: #167 (re-planned to its room), #192, #286, B4 (#303), #308, #309, #313 and #285 in their rounds; the
+  probe's repair (#316) next, beside the lines. Mailed: with the landing of
   `f6e5a0b9`, #301's review's follow-ups to B4 and B5, #311's to P2's reviewer, #284's 1, 2 and 4 to #288 (4 to #308
   if its check sends it back); with `932c8e69`, #113's to #286, #285, #295 and #114, #278's to #307, #305 and #193,
   and the comparison #194 states.
@@ -672,7 +684,10 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 - **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's
   review): most likely a base that moved under the tree, a matter of the probe tool, for the owner with Open 78. #112
   met it again (#113's review): 30 theories outside the probe base, estimated 74 s against 60 s — the probe base lags
-  main, so a build late in a line cannot probe; escalated by its task.
+  main, so a build late in a line cannot probe; escalated by its task. #308 met it as a hang (11:56, P2's landing having
+  changed `Ordered_Finite_Terms` under its tree): #316 takes the case (a probe of a tree older than its base names the
+  cause and the remedy, `--base` or `bring-main`, at once); `after 308 316`, and the workaround was mailed to 308's
+  session, which was then its reviewer — resend it if a quick fix of 308 needs the timing.
 - **`read_index_address` reads to the end of a run of 0 and 1 octets** (#147's review, follow-up 5): after #155 an
   address's index codes can follow one another in that run. The reader has no use yet; when it gets one, read the code
   over octets and stop at the terminator.

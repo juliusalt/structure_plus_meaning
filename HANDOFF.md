@@ -88,10 +88,12 @@ trimmed it to the piece of reasoning that belongs together. #114 measured it hel
 (`.build/tasks/114/measurement.md`, q80): one construction 1.26–1.31 s at the machinery (745 demanded calls, 0.31–0.33
 bare reaches by seconds, about 1/115 of a judgment), 0.17–0.20 s at the seed; `context sound` is 79%, its per-call cost
 growing with the row store its calls carry (the shared-subterm line's subject), the member and predecessor scans 14%
-together, so the fold of the two traversals (at most 6%) is not taken. #113's review sends #286 the multi-premise rule's law, stated once in
-`Native_Collection_Programs` with `native_request_entry` its instance, and the entry's marked correction; #114 the
-theory's load time; #285 the repair of the locale proofs its restructuring breaks; #295 the bridge
-`development_row_family_keys`. #285 then makes the verdict's `excess` and
+together, so the fold of the two traversals (at most 6%) is not taken. #286 landed (`514be373`) the three corollaries — the two kinds, admission at a locus, the payload audit — over the
+multi-premise rule's law stated once in `Native_Collection_Programs` (`native_conjunction_program`,
+`native_request_entry` its instance), with the entry's marked correction; its review's follow-ups 1, 2 and 4 go to
+#295, and #113's review sent #285 the repair of the locale proofs its restructuring breaks and #295 the bridge
+`development_row_family_keys`. No identity presenter is fixed for the loop's rows, so three of the five fields stay
+lemmas under the presenter's formation (Open 105). #285 then makes the verdict's `excess` and
 `support complete` one program at one stated row reading over any mention checker: after #277 `excess` was the only
 reader of the request support as a store, so the verdict's admission at a locus met the same obstruction, and the
 unification removes a thirty-line copy and a re-derived contract (after #237 and #112).
@@ -161,7 +163,7 @@ the formation rules, the any rule and the two-premise call through the law, `con
 #237's reviews' follow-ups — `Development_Edited_Reach`'s row reading, the row pattern's
 variables once, the premise-free rule if two sites share it, and `keys_term` and `development_row_family` as one notion
 beside `path_term` — after #285, #112, #286 and #192, before #288. A change to `Native_Collection_Programs` rebuilds
-about 112 theories (206–215 s of check).
+about 118 theories (#112's check: 1,169.7 s of proof; #286's review).
 
 **The documents (#280–#282).** From the owner's words of 2026-09-23 and the harness's review of what the bases hold:
 `REASONING_REUSE.md` heavily revised (#280, accepted: 43.7K from 137.8K, one table of 39 arguments in the four columns
@@ -274,7 +276,10 @@ a task):
 - **Probes.** A change that writes a theory says `--probe` to be probed, and its reply carries the finding; a probe is
   an inner loop, not a gate (q26), bounded at 60 s unless a measurement holds the machine; its evidence is
   `probe.summary.json` (#175). An edit to a base theory is probed from the tree, with the unchanged theories between it
-  and its changed dependents as renamed copies (#229, #271).
+  and its changed dependents as renamed copies (#229, #271). A probe from a tree behind main whose base advanced is
+  refused, naming what differs only because main advanced: `v2.py bring-main`, or `--base` at the heap the tree
+  matches, or `--from-heap` for one theory; a changed theory's `export_code … checking` is blanked in the probe's copy
+  and named skipped; a past base's own sources are read with `--base-sources` (#316).
 - **Receipts and records.** The harness advances the base and retains the receipts at every landing; no task advances
   the base or retains. A brief whose work re-records a recipe's reports or answer records names each file in its
   Deliverable, and the landing check compares against those files (Q12). Answer records are replayed on a base holding
@@ -413,6 +418,9 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   equal; its review's follow-ups to Open 76, 94 and 97 (#316).
 - **#114** (investigation): one request construction measured held (`.build/tasks/114/measurement.md`), read under
   request construction.
+- **#316, #286** (`514be373`, one train): the probe blanks a changed theory's `export_code … checking` and names it
+  skipped, refuses a tree behind its base at once, reads a past base's sources (its review's follow-ups to Open 78);
+  request construction's corollaries and `native_conjunction_program` (its review's follow-ups to #295, Open 105, 106).
 
 ## Open
 
@@ -560,8 +568,11 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     changes; in `Right_Ordered_Terms` the right view's `head_arity` and `node_determined` derived from the plain
     instance's, and `finite_term_comparison` interpreted through `prefix_key_comparison.intro` directly (#312's review).
 77. `entity_row_kept`'s statement, decided at its next consumer.
-78. The probe tool's follow-ups (the load estimate's calibration, intermediates below an excluded theory,
-    `base_context`'s docstring): taken by #316.
+78. The probe tool, with its next edit (#316's review): the comment on `STARTUP_SECONDS`/`BYTES_PER_SECOND` says
+    "lower envelope" where the line is fitted under the largest loads (four retained probes loaded faster); the skipped
+    code checks know four targets and no target arguments, extended at first use; the prelude route #286 used when a
+    combined probe passed its bound, offered by the tool (#286's review); a refusal naming `--from-heap` as the escape
+    for one theory.
 80. #191's first review's follow-ups (titles only, `.build/tasks/202/review.md`), with that theory's next edit.
 81. An adopted answer's precondition reconstructed at its receipt's `revision`, at the first adoption after #265; the
     published state as the judged answer state waits on item 7.
@@ -632,11 +643,7 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     #194 reporting the sort's share; (2) the name table's first-position index stated once in `Isabelle_Name_Trees`, the
     exported edit's embedding as `isabelle_state_embedding_by` over it, when that theory next changes; (3) the request
     part of the per-answer `first_index_tree` built once per request state, if #194 shows its share.
-97. **A probe cannot load a renamed `RRA_Finite_Artifacts`** (#155's review, follow-up 5): its `export_code … checking
-    SML` raises `Protocol_Message invoke_scala make_directory`, so a change at or below `RRA_Exact` is probed only
-    through scratch copies of its dependents. #297's review, #278 (run m9) and P2 (#312) met it
-    too: taken by #316, which runs the command with the Scala side or skips it and says so. And a probe
-    could read a past base's own sources: #159 needed a `git archive` tree to measure the base before the layout.
+
 98. **`keyed_reference_insert`** (#297's review, follow-up 1): the argument of `Keyed_Value_References`'
     `keyed_reference_run_table` (its `index` sub-proof), made again in `Shared_Term_Tables`; moved into
     `Keyed_Value_References` and cited from both with the next landing that changes that theory (#303 if it does).
@@ -668,26 +675,31 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     two words for two notions beside B1's `shared_view`/`term_view` — P2 landed without them (`d6adba1c`; its mails
     reached no session, and it named no view lemma of its own): with `Shared_Term_Tables`' next edit (mailed to #303
     if it edits that theory).
+105. **No identity presenter is fixed for the loop's rows** (#286's review, follow-up 3; #113's 4): so
+    `request_complete_program`, `request_scope_program` and `request_context_program` stay lemmas under the
+    presenter's formation rather than interpretations; decided with the verdict's abstract `ident` when a consumer
+    needs them as interpretations (the loop's recorded request row admitted natively at its locus).
+106. The two payload audits in two forms (`finite_native_verdict_payloads` as `= {|[]|}`, request construction's as
+    `|⊆| {|[]|}`): one form, so that a joined program's audit composes its parts', with either theory's next edit
+    (#286's review).
 
 ## Now
 
 - **#308** follows #289's landing: it folds #289's row changes (`.build/tasks/289/rows.md`) into main's seven rows and
   takes what the exporter still owes (`state_presentable`'s third condition, the successor's request premises, the new
-  facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s).
-- **Under way**: #167 (re-planned to its room), #192, #286, B4 (#303), #308, #309, #313 and #285 in their rounds; the
-  probe's repair (#316) next, beside the lines. Mailed: with the landing of
+  facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s). Its
+  review's held timing of roots distinctness, which its tree could not take, is #317 after its landing (q82).
+- **Under way**: #167 (re-planned to its room), #192, B4 (#303), #308, #309, #313 and #285 in their rounds, #285 landing
+  before #192, which then writes `keys_term ks` in its two places (q83, `after 192 285`). Mailed:
+  with the landing of
   `f6e5a0b9`, #301's review's follow-ups to B4 and B5, #311's to P2's reviewer, #284's 1, 2 and 4 to #288 (4 to #308
   if its check sends it back); with `932c8e69`, #113's to #286, #285, #295 and #114, #278's to #307, #305 and #193,
   and the comparison #194 states.
 - **#169's records**: read its brief against the decision that a word change's records are re-recorded after its
   landing (Decisions) before #314 lands, and split its records likewise if it replays them in its own tree.
-- **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's
-  review): most likely a base that moved under the tree, a matter of the probe tool, for the owner with Open 78. #112
-  met it again (#113's review): 30 theories outside the probe base, estimated 74 s against 60 s — the probe base lags
-  main, so a build late in a line cannot probe; escalated by its task. #308 met it as a hang (11:56, P2's landing having
-  changed `Ordered_Finite_Terms` under its tree): #316 takes the case (a probe of a tree older than its base names the
-  cause and the remedy, `--base` or `bring-main`, at once); `after 308 316`, and the workaround was mailed to 308's
-  session, which was then its reviewer — resend it if a quick fix of 308 needs the timing.
+- **A tree behind main cannot probe until it brings main in** (#316, `514be373`; met by #276, #112 and #308, whose
+  after-repair timing waited on it): the harness's `change --probe` could bring main in or surface the refusal
+  distinctly (#316's review), the owner's; every producing task under way was told the remedy.
 - **`read_index_address` reads to the end of a run of 0 and 1 octets** (#147's review, follow-up 5): after #155 an
   address's index codes can follow one another in that run. The reader has no use yet; when it gets one, read the code
   over octets and stop at the terminator.

@@ -66,7 +66,7 @@
   "theories/Development_State_Rows.thy": "5ee860f80cce1b279137ff935c4d365189acb4d73848bc0e5b1ca7158402d0a1",
   "theories/Development_Subject_Index.thy": "46f6225bd3c80b4b521dd0104b2cadb08b3ea9bda98698c53722150ef31a5c78",
   "theories/Development_Successor.thy": "b697c9df0b869c37cdc8556d74ddbec7a4da4eab7ed1457430308c4ae41bfc49",
-  "theories/Development_Verdict_Mentions.thy": "66368570ff3ac4dba7ace4498af8782674d6b75faf2338b669de106186dff08b",
+  "theories/Development_Verdict_Mentions.thy": "2c367ae7726c9d14222fa4a0fb56d0255d13ee119c867c0f512359669f27bdca",
   "theories/Development_Verdict_Statements.thy": "4a0c2ca4dec3cd54e8ad53e8282f201240370fd1d85784fb57bb08e33108f96d",
   "theories/Digit_History_Presentation.thy": "c2b4717e6d53bb956e9c64631758f7ddcb0e651e49acb673cf325b60087db622",
   "theories/Established_Premises.thy": "a9928371b103403770be53f67eef3b10ba0157b6d28e3b7a1b2075d21600bfe4",

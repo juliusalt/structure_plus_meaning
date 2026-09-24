@@ -14,11 +14,11 @@ text \<open>
   families as value. The family is read as the list the body holds (@{const keys_term}), a key being cited
   when it is a member of that list (\<open>list_cited_program\<close> below): no store is built from the list.
 
-  \<open>support complete\<close> reads what \<open>excess\<close> (@{locale excess_program}) reads, the selection of every family
-  with the row rule @{const row_mentions_rule}, and finds each mention in the list \<open>ks\<close> by membership where
-  the verdict's \<open>excess\<close> finds it in the support store. The one new rule here is the row predicate "its key
-  is cited": the row's key is a member of the list given as the context. No field reads a kind, a row's
-  identity or a store's absence.
+  \<open>support complete\<close> is the verdict's \<open>excess\<close> (@{locale excess_program}) at the same reading: the selection
+  of every family with the row rule @{const row_mentions_rule}, each mention found in the list \<open>ks\<close> by
+  membership (@{locale mentions_cited_program}), one program at one reading. The one new rule here is the
+  row predicate "its key is cited": the row's key is a member of the list given as the context. No field
+  reads a kind, a row's identity or a store's absence.
 \<close>
 
 subsection \<open>A key is cited in a list\<close>
@@ -26,18 +26,11 @@ subsection \<open>A key is cited in a list\<close>
 text \<open>
   A key is cited in a family of keys when it is a member of the list the family is: the collection notion
   @{locale list_cited_program} (theory \<open>Native_Collection_Programs\<close>), membership's program behind the swap
-  that puts the list, which is the context of every call below, first. Its reading at a family of keys is
-  stated once here, and every field of request construction that asks whether a key is cited in a body
-  family reads it.
+  that puts the list, which is the context of every call below, first. Its reading at a family of keys,
+  @{text list_cited_program.exact}, is stated once, in theory \<open>Development_Verdict_Mentions\<close> where the
+  verdict's \<open>excess\<close> reads it, and every field of request construction that asks whether a key is cited in
+  a body family reads it.
 \<close>
-
-context list_cited_program
-begin
-
-theorem exact: "(w,Pair_Term (keys_term ks) (path_term q))\<in>positive_meaning P \<longleftrightarrow> q\<in>set ks"
-  by (simp add: keys_term_def list_exact)
-
-end
 
 subsection \<open>The rows about the subject, over every family, are the rows of its scope\<close>
 
@@ -96,32 +89,11 @@ subsection \<open>The field \<open>support complete\<close>\<close>
 
 text \<open>
   A row's mentions are cited in the list given as the context when each of them is a member of it:
-  @{const row_mentions_rule}, the row reading \<open>excess\<close> uses, over the list the body holds.
-\<close>
-
-locale mentions_cited_program = native_rule_family P r "[([0],row_mentions_rule e)]" +
-    every: native_every_program P e w + cited: list_cited_program P w m
-  for P :: "'u native_system" and r e w m :: "'u definition_site"
-begin
-
-sublocale rearranged: native_rearranging_program P r
-    "row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)" e
-    "Finite_Pattern_Pair (native_var 0) (native_var 4)"
-  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
-  using native_rule_family_axioms[unfolded row_mentions_rule_def] by (auto simp: row_pattern_def)
-
-theorem exact:
-  assumes identity: "\<And>y. term_formed (ident y)"
-  shows "(r,Pair_Term (keys_term ks) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
-    set (row_mentions (snd z))\<subseteq>set ks"
-  by (auto simp: rearranged.row_at[OF refl _ identity] row_valuation_def
-      keys_term_def[of "row_mentions (snd z)"] every.exact cited.exact)
-
-end
-
-text \<open>
-  The field is the selection of every kind at that row reading. Its contract reads the scope's rows through
-  @{thm [source] request_rows_about} and the support through @{thm [source] request_support_mentions}.
+  @{locale mentions_cited_program}, the row reading the verdict's \<open>excess\<close> reads. The field is
+  @{locale excess_program} at that reading, the list the body holds as its support, over the selection of
+  every family: the verdict's field and this one are one program. Its contract is
+  @{thm [source] excess_program_contract} at every kind, the support read through the positions its keys
+  key, and @{thm [source] request_support_mentions}.
 \<close>
 
 locale support_complete_program = mentions: mentions_cited_program P r e w m +
@@ -132,20 +104,13 @@ locale support_complete_program = mentions: mentions_cited_program P r e w m +
   assumes identity: "\<And>y. term_formed (ident y)"
 begin
 
-lemma row_exact:
-  "(r,Pair_Term (keys_term ks) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
-    set (row_mentions (snd z))\<subseteq>set ks"
-  by (rule mentions.exact[OF identity])
+lemma excess_instance: "excess_program P s g k v r ident keys_term"
+  by unfold_locales (simp_all add: identity mentions.exact[OF identity])
 
-sublocale selection: subject_selection_program P s g k v r keys_term ident
-    "\<lambda>ks z. set (row_mentions (snd z))\<subseteq>set ks"
-  by unfold_locales (simp_all add: identity row_exact)
+sublocale excess: excess_program P s g k v r ident keys_term
+  by (rule excess_instance)
 
-theorem exact:
-  assumes atom: "a\<in>set A"
-  shows "(s,Pair_Term (Pair_Term (path_term a) (keys_term ks)) (subject_indexes_term ident A Fs))\<in>positive_meaning P \<longleftrightarrow>
-    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
-  by (simp add: selection.exact[OF atom])
+lemmas exact = excess.exact
 
 theorem contract:
   assumes present: "state_presents key S R" and bound: "c<length (fst (snd S))"
@@ -154,25 +119,23 @@ theorem contract:
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
     key ` fset (development_request_support (snd S) c)\<subseteq>set ks"
 proof -
-  let ?scope="set (development_constant_scope (snd S) c)"
-  have atom: "key c\<in>set (map fst (state_atoms R))"
-    using atoms_present_atom[OF state_presents_atoms[OF present] bound] by force
+  let ?scope="set (development_constant_scope (snd S) c)" and ?n="length (fst (snd S))"
+  let ?X="fset_of_list (filter (\<lambda>d. key d\<in>set ks) [0..<?n])"
+  have kinds: "kinds_present (\<lambda>_. True) UNIV" by (simp add: kinds_present_def)
+  have support: "key d\<in>set ks \<longleftrightarrow> d |\<in>| ?X" if "d<?n" for d using that by (simp add: fset_of_list_elem)
+  have inside: "\<And>e d. e\<in>?scope \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<?n"
+    using state_presents_mentions_inside[OF present] by (auto simp: development_constant_scope_member)
+  have statements: "set (development_answer_statements (\<lambda>_. True) (snd S) {|c|})=?scope"
+    by (auto simp: development_answer_statements_def development_answer_statement_def list_ex_iff
+      development_constant_scope_member)
   have "(s,Pair_Term (Pair_Term (path_term (key c)) (keys_term ks))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
-    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
-    by (rule exact[OF atom])
-  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>?scope. \<forall>a. (a,entity_row key (snd S) e)\<in>presented_rows R \<longrightarrow>
-      key ` set (entity_mentions e)\<subseteq>set ks)"
-    using request_rows_about[OF present bound selection, where Q="\<lambda>z. set (row_mentions (snd z))\<subseteq>set ks"]
-    by simp
-  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>?scope. key ` set (entity_mentions e)\<subseteq>set ks)"
-  proof -
-    have "\<exists>a. (a,entity_row key (snd S) e)\<in>presented_rows R" if "e\<in>?scope" for e
-      using that entity_row_presented[OF present] by (auto simp: development_constant_scope_member)
-    then show ?thesis by blast
-  qed
+    development_answer_statements_excess (\<lambda>_. True) (snd S) {|c|} ?X=[]"
+    by (rule excess_program_contract[OF excess_instance present kinds selection bound support])
+  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>?scope. \<forall>d\<in>set (entity_mentions e). d |\<in>| ?X)"
+    by (simp only: answer_statements_excess_empty statements)
   also have "\<dots> \<longleftrightarrow> (\<forall>d. (\<exists>e\<in>?scope. d\<in>set (entity_mentions e)) \<longrightarrow> key d\<in>set ks)"
-    unfolding image_subset_iff by blast
+    using inside by (auto simp: fset_of_list_elem)
   also have "\<dots> \<longleftrightarrow> key ` fset (development_request_support (snd S) c)\<subseteq>set ks"
     unfolding image_subset_iff Ball_def request_support_mentions by blast
   finally show ?thesis .

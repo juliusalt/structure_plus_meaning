@@ -1650,6 +1650,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Presented_Term_Matching
     Formed_Call_Closures
     Presented_Program_Applications
+    Shared_Call_Closures
     Factor_Finite_Source_Construction_Sharing
     RRA_Listed_Environment_Positions
     RRA_Inserted_Attachments
@@ -1841,6 +1842,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Verdict_Witnesses
     Development_Verdict_Difference
     Development_Request_Citations
+    Development_Native_Request
     Development_Native_Verdict
     Development_Row_Data
     Development_Row_Contexts

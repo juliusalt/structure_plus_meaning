@@ -42,6 +42,31 @@ qed
 lemma first_occurrence_key_inj_on: "inj_on (first_occurrence_key xs) (set xs)"
   by (rule inj_onI) (rule first_occurrence_key_injective)
 
+text \<open>
+  A value absent from the list takes the key of the list's length, past every position, so a value whose key
+  is the key of a member is a member.
+\<close>
+
+lemma first_occurrence_key_member:
+  assumes y: "y\<in>set xs" and same: "first_occurrence_key xs x=first_occurrence_key xs y"
+  shows "x\<in>set xs"
+proof -
+  obtain i where i: "value_reference_index y xs=Some i" "i<length xs" "xs!i=y"
+    "first_occurrence_key xs y=natural_binary_digits i"
+    by (rule first_occurrence_key_at[OF y])
+  show ?thesis
+  proof (cases "value_reference_index x xs")
+    case None
+    then have "natural_binary_digits (length xs)=natural_binary_digits i"
+      using same i(4) by (simp add: first_occurrence_key_def)
+    then have "length xs=i" by simp
+    then show ?thesis using i(2) by simp
+  next
+    case (Some j)
+    then show ?thesis using value_reference_index_read[OF Some] nth_mem by metis
+  qed
+qed
+
 text \<open>A first occurrence in a prefix stays where it was, so keys continue when a list is extended.\<close>
 
 lemma first_occurrence_key_append:

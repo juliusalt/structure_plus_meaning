@@ -219,30 +219,19 @@ qed
 text \<open>
   A request constructed from the state, held by a development-rows presentation that takes the state's
   constant key and the rows' entity key @{term "development_entity_key (snd S)"}, is presented with the key
-  of its constant and the support family its row carries. The presentation's conjuncts are taken as they
-  stand, but its entity key's injectivity, which is derived from every request of the family being
-  constructed from the state. The subject's being exactly one constant is the construction's own
+  of its constant and the support family its row carries. The presentation is taken whole, so its family
+  may hold requests not constructed from the state; where every request of it is, the presentation's entity
+  key's injectivity is derived (@{text request_presents_constructed}). The subject's being exactly one constant is the construction's own
   (@{thm development_constant_request_fields}), so no request without a locus enters.
 \<close>
 
-theorem request_presents_constructed:
+theorem request_presents_intro:
   assumes state: "state_presents key S R"
-    and sv: "single_valued (set rows)" and formed: "\<forall>(l,v)\<in>set rows. term_formed v"
-    and keys: "inj_on key (development_row_constants ps rs)"
-    and inerts: "inj_on inert (development_contract_term ` problem_contract ` set ps)"
-    and problems: "development_problems_present key inert origin grant ps rows"
-    and requested: "development_requests_present key (development_entity_key (snd S)) supported scope ps rs rows"
-    and issues: "development_issues_present key decs ps iss rows"
-    and requests: "\<And>q. q\<in>set rs \<Longrightarrow>
-      \<exists>reading kind ra a d. development_constant_request reading kind (snd S) ra a d=Some q"
+    and present: "development_rows_present key (development_entity_key (snd S)) inert origin grant supported scope decs ps rs iss rows"
     and r: "r\<in>set rs"
     and built: "development_constant_request reading kind (snd S) ra a c=Some r"
   shows "request_presents key S R rows r (key c) (supported r)"
 proof -
-  have present: "development_rows_present key (development_entity_key (snd S)) inert origin grant supported scope decs ps rs iss rows"
-    unfolding development_rows_present_def
-    using sv formed keys request_rows_entity_key_injective[of rs S, OF requests] inerts problems requested issues
-    by blast
   obtain p s Sup E where shape: "r=(p,s,Sup,E)" by (cases r)
   have subject: "problem_subject (fst r)={|c|}"
     using development_constant_request_fields(3)[OF built[unfolded shape]] shape by simp
@@ -267,6 +256,33 @@ proof -
       (Pair_Term (path_term (development_located_at key Development_Request_Role (fst r)))
         (development_rows_term rows)))\<in>positive_meaning development_rows_program" using found by blast
   qed
+qed
+
+text \<open>
+  Where every request of the family is constructed from the state, the presentation's conjuncts are taken as
+  they stand, but its entity key's injectivity, which the family's construction gives
+  (@{thm [source] request_rows_entity_key_injective}).
+\<close>
+
+corollary request_presents_constructed:
+  assumes state: "state_presents key S R"
+    and sv: "single_valued (set rows)" and formed: "\<forall>(l,v)\<in>set rows. term_formed v"
+    and keys: "inj_on key (development_row_constants ps rs)"
+    and inerts: "inj_on inert (development_contract_term ` problem_contract ` set ps)"
+    and problems: "development_problems_present key inert origin grant ps rows"
+    and requested: "development_requests_present key (development_entity_key (snd S)) supported scope ps rs rows"
+    and issues: "development_issues_present key decs ps iss rows"
+    and requests: "\<And>q. q\<in>set rs \<Longrightarrow>
+      \<exists>reading kind ra a d. development_constant_request reading kind (snd S) ra a d=Some q"
+    and r: "r\<in>set rs"
+    and built: "development_constant_request reading kind (snd S) ra a c=Some r"
+  shows "request_presents key S R rows r (key c) (supported r)"
+proof -
+  have present: "development_rows_present key (development_entity_key (snd S)) inert origin grant supported scope decs ps rs iss rows"
+    unfolding development_rows_present_def
+    using sv formed keys request_rows_entity_key_injective[of rs S, OF requests] inerts problems requested issues
+    by blast
+  show ?thesis by (rule request_presents_intro[OF state present r built])
 qed
 
 end

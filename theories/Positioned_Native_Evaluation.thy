@@ -1,5 +1,5 @@
 theory Positioned_Native_Evaluation
-  imports Keyed_Native_Evaluation Member_Tree_Indexes Inference_Embeddings Formed_Call_Closures
+  imports Keyed_Native_Evaluation Member_Tree_Indexes Inference_Embeddings Shared_Call_Closures
 begin
 
 section \<open>A demanded call is compared through its key once and settled by its position\<close>

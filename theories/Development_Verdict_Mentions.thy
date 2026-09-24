@@ -7,10 +7,11 @@ section \<open>Two fields of one shape: a row's mentions read against a family o
 text \<open>
   The verdict's field \<open>excess\<close> reads the statements of one subject against the support of a request;
   the assessment's field \<open>undeclared\<close> reads every row, and every root, against the declared atoms of the
-  whole state. Both read a row's mentions as citations of atoms and ask that each be found in a store of
-  atoms given as the context: the support store, built from the request's support family, and the
-  declaration store, built from the state's declaring rows. They are one row reading at two stores, kept
-  apart at what each demands of the state: \<open>excess\<close> the rows about one key, \<open>undeclared\<close> every row.
+  whole state. Both pass a row's mentions, as a list, to a mention checker given the context: the support,
+  the list of keys the request's body holds, of which each mention must be a member, and the declaration
+  store, built from the state's declaring rows, in which each must be found. They are one row reading at
+  two checkers, kept apart at what each demands of the state: \<open>excess\<close> the rows about one key,
+  \<open>undeclared\<close> every row.
 
   Both are stated positively. Acceptance reads that every mention is found; the list of the offending
   constants, which needs a store's absence, is not built here. \<open>excess\<close> reads the rows about the subject
@@ -77,9 +78,16 @@ definition row_mentions_rule :: "'u definition_site \<Rightarrow>
     (row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5))
     [([0],(e,Finite_Pattern_Pair (native_var 0) (native_var 4)))]"
 
-locale row_mentions_program = native_rule_family P r "[([0],row_mentions_rule e)]" +
-    found: store_found_program P m k ch + every: native_every_program P e m
-  for P :: "'u native_system" and r e m k ch :: "'u definition_site"
+text \<open>
+  A row's mentions are read by a mention checker: @{const row_mentions_rule} passes the list of the keys a
+  row mentions, beside the context, to the checker \<open>e\<close>. The reading is stated once, over any checker
+  (@{text row_mentions_program.exact}); the checkers are the store a mention is found in
+  (@{text store_mentions_program}, which \<open>undeclared\<close> reads) and the list a mention is a member of
+  (@{text mentions_cited_program}, which \<open>excess\<close> and request construction's \<open>support complete\<close> read).
+\<close>
+
+locale row_mentions_program = native_rule_family P r "[([0],row_mentions_rule e)]"
+  for P :: "'u native_system" and r e :: "'u definition_site"
 begin
 
 sublocale rearranged: native_rearranging_program P r
@@ -89,20 +97,63 @@ sublocale rearranged: native_rearranging_program P r
   using native_rule_family_axioms[unfolded row_mentions_rule_def] by (auto simp: row_pattern_def)
 
 theorem exact:
+  assumes identity: "\<And>y. term_formed (ident y)"
+  shows "(r,Pair_Term x (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
+    (e,Pair_Term x (keys_term (row_mentions (snd z))))\<in>positive_meaning P"
+  by (simp add: rearranged.row_at[OF refl _ identity] row_valuation_def)
+
+end
+
+text \<open>The first checker: every mention is found in the store given as the context (@{locale store_found_program}).\<close>
+
+locale store_mentions_program = mentions: row_mentions_program P r e + found: store_found_program P m k ch +
+    every: native_every_program P e m
+  for P :: "'u native_system" and r e m k ch :: "'u definition_site"
+begin
+
+theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)" and valued: "\<And>y. term_formed (val y)"
   shows "(r,Pair_Term (store_term val T) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
     (\<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None)"
   using store_term_formed[OF valued, where T=T]
-  by (simp add: rearranged.row_at[OF refl _ identity] row_valuation_def keys_term_def every.exact
-      found.exact[OF valued])
+  by (simp add: mentions.exact[OF identity] keys_term_def every.exact found.exact[OF valued])
+
+end
+
+text \<open>
+  The second checker: every mention is a member of the list given as the context. A key is cited in a list
+  of keys when it is a member of it (@{locale list_cited_program}, theory \<open>Native_Collection_Programs\<close>); its
+  reading at a list of keys is stated once here, and every call that asks whether a key is cited in a family
+  of keys reads it.
+\<close>
+
+context list_cited_program
+begin
+
+theorem exact: "(w,Pair_Term (keys_term ks) (path_term q))\<in>positive_meaning P \<longleftrightarrow> q\<in>set ks"
+  by (simp add: keys_term_def list_exact)
+
+end
+
+locale mentions_cited_program = mentions: row_mentions_program P r e +
+    every: native_every_program P e w + cited: list_cited_program P w m
+  for P :: "'u native_system" and r e w m :: "'u definition_site"
+begin
+
+theorem exact:
+  assumes identity: "\<And>y. term_formed (ident y)"
+  shows "(r,Pair_Term (keys_term ks) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
+    set (row_mentions (snd z))\<subseteq>set ks"
+  by (auto simp: mentions.exact[OF identity] keys_term_def[of "row_mentions (snd z)"] every.exact cited.exact)
 
 end
 
 section \<open>The support store and the declaration store\<close>
 
 text \<open>
-  The support store holds each key of the request's support family at its own path, and is single-valued
-  by construction. The declaration store holds, at the key of each declared constant, the key of the row
+  The support store holds each key of a family of keys at its own path, and is single-valued by
+  construction; \<open>O\<close>'s closure (theory \<open>Development_Edited_Reach\<close>) and the witnesses of \<open>excess\<close> read it.
+  The declaration store holds, at the key of each declared constant, the key of the row
   declaring it: the index of the declaring rows by the constant declared. Its single-valuedness follows,
   under \<^const>\<open>state_presents\<close>, from the exporter's obligation that every constant of the state is declared
   by at most one entity (@{text declarations_single_valued_presented}); \<open>undeclared\<close> needs only that a key
@@ -123,6 +174,20 @@ lemma support_store_lookup: "store_lookup (support_store ks) q\<noteq>None \<lon
 
 lemma support_store_found: "(\<exists>y. store_lookup (support_store ks) q=Some y) \<longleftrightarrow> q\<in>set ks"
   using support_store_lookup[of ks q] by auto
+
+text \<open>At a support store, the store checker reads a row's mentions as keys of the support.\<close>
+
+context store_mentions_program
+begin
+
+lemma support_exact:
+  assumes identity: "\<And>y. term_formed (ident y)"
+  shows "(r,Pair_Term (support_term ks) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
+    set (row_mentions (snd z))\<subseteq>set ks"
+  unfolding support_term_def
+  by (subst exact[OF identity]) (auto simp: support_store_lookup support_store_found)
+
+end
 
 definition declaration_rows :: "'i state_family list \<Rightarrow> (state_key\<times>state_key) list" where
   "declaration_rows Fs=concat (map (\<lambda>F. concat (map (\<lambda>z. map (\<lambda>d. (d,fst z)) (row_declared (snd z))) F)) Fs)"
@@ -248,6 +313,16 @@ abbreviation verdict_found_selection :: "local_address option definition_site" w
   "verdict_found_selection \<equiv> (Some [],[32])"
 abbreviation verdict_undeclared :: "local_address option definition_site" where
   "verdict_undeclared \<equiv> (Some [],[33])"
+abbreviation verdict_cited_member :: "local_address option definition_site" where
+  "verdict_cited_member \<equiv> (Some [],[18])"
+abbreviation verdict_key_cited :: "local_address option definition_site" where
+  "verdict_key_cited \<equiv> (Some [],[19])"
+abbreviation verdict_mentions_cited :: "local_address option definition_site" where
+  "verdict_mentions_cited \<equiv> (Some [],[20])"
+abbreviation verdict_row_cited :: "local_address option definition_site" where
+  "verdict_row_cited \<equiv> (Some [],[21])"
+abbreviation verdict_cited_family :: "local_address option definition_site" where
+  "verdict_cited_family \<equiv> (Some [],[22])"
 
 definition undeclared_rule :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
     (local_address,local_address,'u definition_site) finite_factor_schema" where
@@ -306,7 +381,12 @@ definition verdict_mentions_definitions :: "(local_address option definition_sit
     (verdict_key_found,[([0],store_found_rule verdict_found_search)]),
     (verdict_keys_found,native_every_rules verdict_keys_found verdict_key_found),
     (verdict_row_found,[([0],row_mentions_rule verdict_keys_found)]),
-    (verdict_subject_search,native_store_search_rules verdict_subject_search verdict_found_family),
+    (verdict_cited_member,native_member_rules verdict_cited_member),
+    (verdict_key_cited,[([0],native_swap_rule verdict_cited_member)]),
+    (verdict_mentions_cited,native_every_rules verdict_mentions_cited verdict_key_cited),
+    (verdict_row_cited,[([0],row_mentions_rule verdict_mentions_cited)]),
+    (verdict_cited_family,native_every_rules verdict_cited_family verdict_row_cited),
+    (verdict_subject_search,native_store_search_rules verdict_subject_search verdict_cited_family),
     (verdict_subject_family,[([0],subject_call_rule verdict_subject_search)]),
     (verdict_excess,native_every_rules verdict_excess verdict_subject_family),
     (verdict_found_family,native_every_rules verdict_found_family verdict_row_found),
@@ -337,15 +417,22 @@ lemmas verdict_mentions_rule_defs = verdict_mentions_definitions_def native_ever
   native_every_step_def native_store_search_rules_def
   native_store_found_rule_def native_store_left_rule_def native_store_right_rule_def native_any_rule_def
   store_found_rule_def native_context_call_rule_def row_mentions_rule_def subject_call_rule_def undeclared_rule_def
+  native_member_rules_def native_member_here_def native_member_later_def native_swap_rule_def
 
-interpretation mention_found: row_mentions_program verdict_mentions_system verdict_row_found verdict_keys_found
+interpretation mention_found: store_mentions_program verdict_mentions_system verdict_row_found verdict_keys_found
     verdict_key_found verdict_found_search verdict_found_any
-  unfolding row_mentions_program_def store_found_program_def native_store_search_program_def
-    native_every_program_def
+  unfolding store_mentions_program_def row_mentions_program_def store_found_program_def
+    native_store_search_program_def native_every_program_def
+  by (intro conjI; rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
+
+interpretation cited_mentions: mentions_cited_program verdict_mentions_system verdict_row_cited
+    verdict_mentions_cited verdict_key_cited verdict_cited_member
+  unfolding mentions_cited_program_def row_mentions_program_def list_cited_program_def
+    native_swap_program_def native_member_program_def native_every_program_def
   by (intro conjI; rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
 
 interpretation subject_searches: native_store_search_program verdict_mentions_system verdict_subject_search
-    verdict_found_family
+    verdict_cited_family
   unfolding native_store_search_program_def
   by (rule verdict_mentions_family) (simp_all add: verdict_mentions_rule_defs)
 
@@ -397,49 +484,46 @@ next
 qed
 
 text \<open>
-  The field \<open>excess\<close> is the subject index's selection reading (@{locale subject_selection_program}) at the
-  mentions reading (@{locale row_mentions_program}) over the support store: a row about the key is read in
-  the store of the support family, and passes when every key it mentions is found there. The locale names
-  the sites of the field's program shape; its contract (@{text excess_program_contract}, stated beside it
-  because it reads the rows of a presented state) holds for any program holding it, any
-  \<open>kinds_present\<close> selection and any support family. \<open>excess\<close>'s own program holds it at its sites
-  (@{text verdict_excess_program}); request construction's \<open>support complete\<close> is its interpretation at the
-  selection of every family (theory \<open>Development_Request_Scope\<close>).
+  The field \<open>excess\<close> is the subject index's selection reading (@{locale subject_selection_program}) at a row
+  reading that holds of a presented support and a row exactly when every key the row mentions is a key of
+  the support. The locale is stated over that row reading and the support's presentation, so it holds at any
+  mention checker that reads so: \<open>excess\<close>'s own program holds it at the list the request's body holds,
+  through @{locale mentions_cited_program} (@{text verdict_excess_program}), and \<open>O\<close>'s closure of theory
+  \<open>Development_Edited_Reach\<close> at a support store, through @{locale store_mentions_program}. Its contract
+  (@{text excess_program_contract}, stated beside it because it reads the rows of a presented state) holds
+  for any program holding it, any \<open>kinds_present\<close> selection and any support family. Request construction's
+  \<open>support complete\<close> is the same program at the same list, over the selection of every family (theory
+  \<open>Development_Request_Scope\<close>).
 \<close>
 
-locale excess_program = mentions: row_mentions_program P r e m kf ch +
-    search: native_store_search_program P k v + family: native_every_program P v r +
+locale excess_program = search: native_store_search_program P k v + family: native_every_program P v r +
     call: native_rule_family P g "[([0],subject_call_rule k)]" + every: native_every_program P s g
-  for P :: "'u native_system" and s g k v r e m kf ch :: "'u definition_site" +
-  fixes ident :: "'i \<Rightarrow> factor_term"
-  assumes identity: "\<And>y. term_formed (ident y)"
+  for P :: "'u native_system" and s g k v r :: "'u definition_site" +
+  fixes ident :: "'i \<Rightarrow> factor_term" and present :: "state_key list \<Rightarrow> factor_term"
+  assumes identity: "\<And>y. term_formed (ident y)" and present_formed: "\<And>ks. term_formed (present ks)"
+    and row_exact: "\<And>ks z. (r,Pair_Term (present ks) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
+      set (row_mentions (snd z))\<subseteq>set ks"
 begin
 
-lemma row_exact:
-  "(r,Pair_Term (support_term ks) (state_row_term ident z))\<in>positive_meaning P \<longleftrightarrow>
-    set (row_mentions (snd z))\<subseteq>set ks"
-  unfolding support_term_def
-  by (subst mentions.exact[OF identity]) (auto simp: support_store_lookup support_store_found)
-
-sublocale selection: subject_selection_program P s g k v r support_term ident
+sublocale selection: subject_selection_program P s g k v r present ident
     "\<lambda>ks z. set (row_mentions (snd z))\<subseteq>set ks"
   by unfold_locales (simp_all add: identity row_exact)
 
 theorem exact:
   assumes atom: "a\<in>set A"
-  shows "(s,Pair_Term (Pair_Term (path_term a) (support_term ks)) (subject_indexes_term ident A Fs))\<in>positive_meaning P \<longleftrightarrow>
+  shows "(s,Pair_Term (Pair_Term (path_term a) (present ks)) (subject_indexes_term ident A Fs))\<in>positive_meaning P \<longleftrightarrow>
     (\<forall>F\<in>set Fs. \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
-  by (simp add: selection.exact[OF atom])
+  by (simp add: selection.exact[OF atom] present_formed)
 
 end
 
 theorem excess_program_contract:
   fixes ident :: "isabelle_context \<Rightarrow> factor_term"
-  assumes program: "excess_program P s g k v r e m kf ch ident"
+  assumes program: "excess_program P s g k v r ident present"
     and present: "state_presents key S R" and kinds: "kinds_present replaceable ks"
     and selection: "set Fs=state_entities R ` ks" and bound: "c<length (fst (snd S))"
     and support: "\<And>d. d<length (fst (snd S)) \<Longrightarrow> key d\<in>set ss \<longleftrightarrow> d |\<in>| X"
-  shows "(s,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+  shows "(s,Pair_Term (Pair_Term (path_term (key c)) (present ss))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
     development_answer_statements_excess replaceable (snd S) {|c|} X=[]"
 proof -
@@ -448,7 +532,7 @@ proof -
     using atoms_present_atom[OF state_presents_atoms[OF present] bound] by force
   have mentions_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length (fst (snd S))"
     by (rule state_presents_mentions_inside[OF present])
-  have "(s,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+  have "(s,Pair_Term (Pair_Term (path_term (key c)) (present ss))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
     (\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ss)"
     by (rule excess_program.exact[OF program atom])
@@ -479,26 +563,28 @@ proof -
   finally show ?thesis .
 qed
 
-text \<open>\<open>excess\<close>'s own program holds the field at its sites; the verdict's field is this interpretation.\<close>
+text \<open>
+  \<open>excess\<close>'s own program holds the field at its sites, at the list the request's body holds; the verdict's
+  field is this interpretation.
+\<close>
 
 lemma verdict_excess_program:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "excess_program verdict_mentions_system verdict_excess verdict_subject_family
-    verdict_subject_search verdict_found_family verdict_row_found verdict_keys_found verdict_key_found
-    verdict_found_search verdict_found_any ident"
-  unfolding excess_program_def excess_program_axioms_def row_mentions_program_def
-    store_found_program_def native_store_search_program_def native_every_program_def
-  by (intro conjI allI; (rule verdict_mentions_family | rule identity)) (simp_all add: verdict_mentions_rule_defs)
+    verdict_subject_search verdict_cited_family verdict_row_cited ident keys_term"
+  unfolding excess_program_def excess_program_axioms_def native_store_search_program_def native_every_program_def
+  by (intro conjI allI; (rule verdict_mentions_family | rule identity | rule keys_term_formed |
+      rule cited_mentions.exact[OF identity])?) (simp_all add: verdict_mentions_rule_defs)
 
 lemma support_row_exact:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "(verdict_row_found,Pair_Term (support_term ks) (state_row_term ident z))
       \<in>positive_meaning verdict_mentions_system \<longleftrightarrow> set (row_mentions (snd z))\<subseteq>set ks"
-  by (rule excess_program.row_exact[OF verdict_excess_program[OF identity]])
+  by (rule mention_found.support_exact[OF identity])
 
 theorem native_excess_rows:
   assumes identity: "\<And>y. term_formed (ident y)" and atom: "k\<in>set A"
-  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (support_term ks)) (subject_indexes_term ident A Fs))
+  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (keys_term ks)) (subject_indexes_term ident A Fs))
       \<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
     (\<forall>F\<in>set Fs. \<forall>z\<in>set F. k\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ks)"
   by (rule excess_program.exact[OF verdict_excess_program[OF identity] atom])
@@ -510,7 +596,7 @@ theorem native_excess_exact:
     and selection: "set Fs=state_entities R ` ks" and bound: "c<length (fst (snd S))"
     and support: "\<And>d. d<length (fst (snd S)) \<Longrightarrow> key d\<in>set ss \<longleftrightarrow> d |\<in>| P"
     and identity: "\<And>y. term_formed (ident y)"
-  shows "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+  shows "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (keys_term ss))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
     development_answer_statements_excess replaceable (snd S) {|c|} P=[]"
   by (rule excess_program_contract[OF verdict_excess_program[OF identity] present kinds selection bound support])
@@ -518,8 +604,9 @@ theorem native_excess_exact:
 text \<open>
   The verdict reads the field in the answer state, with the request's subject and support carried there by
   the correspondence of the two tables. Both are consumed from @{const request_presents}: the subject's key
-  unchanged, and the support store built from the request's support keys. A support constant the answer
-  state drops is carried outside the answer's table, and so is never mentioned there; the store holds its
+  unchanged, and the support as the list of the request's support keys, the list the request's body holds,
+  which the store of the development's rows finds at the request's locus. A support constant the answer
+  state drops is carried outside the answer's table, and so is never mentioned there; the list holds its
   key, which no atom of the answer state carries.
 \<close>
 
@@ -529,7 +616,7 @@ corollary native_excess_answer:
     and named: "(!) (fst (snd S)) ` fset (problem_subject (fst r))\<subseteq>set (fst (snd S'))"
     and kinds: "kinds_present replaceable kinds" and selection: "set Fs=state_entities R' ` kinds"
     and identity: "\<And>y. term_formed (ident y)"
-  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (support_term ks))
+  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (keys_term ks))
       (subject_indexes_term ident (map fst (state_atoms R')) Fs))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
     development_answer_statements_excess replaceable (snd S')
       (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (problem_subject (fst r)))

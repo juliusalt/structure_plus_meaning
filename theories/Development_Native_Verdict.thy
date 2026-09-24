@@ -223,7 +223,7 @@ definition native_verdict_argument ::
       factor_term" where
   "native_verdict_argument ident identr R R' k ks kr kd=term_tuple [path_term k,
     state_families_term ident (map (state_entities R') kd),
-    support_term ks,
+    keys_term ks,
     subject_indexes_term ident (map fst (state_atoms R')) (map (state_entities R') kr),
     state_families_term ident (map (state_entities R') (kinds_outside [Specification_Kind])),
     declaration_term (state_all_families R'),
@@ -347,7 +347,7 @@ proof -
         development_answer_statements demanded (snd S') (fimage ?f (problem_subject (fst r)))\<noteq>[]"
       using native_verdict_rows_field[OF sites(1)]
         native_statements_answer[OF request present' shared named demanded sel_d identity] by simp
-    have excess_field: "(verdict_excess,Pair_Term (Pair_Term (path_term k) (support_term ks))
+    have excess_field: "(verdict_excess,Pair_Term (Pair_Term (path_term k) (keys_term ks))
         (subject_indexes_term ident (map fst (state_atoms R')) (map (state_entities R') kr)))
         \<in>positive_meaning native_verdict_system \<longleftrightarrow>
         development_answer_statements_excess replaceable (snd S') (fimage ?f (problem_subject (fst r)))
@@ -483,5 +483,151 @@ lemma finite_native_verdict_payloads: "finite_system_payloads finite_native_verd
 theorem native_verdict_payloads: "system_payloads native_verdict_system={[]}"
   using finite_system_payloads_exact[of finite_native_verdict]
   by (simp add: native_verdict_system_def finite_native_verdict_payloads)
+
+section \<open>The judgment's argument as an executable term\<close>
+
+text \<open>
+  A judgment is the entry's call at the argument the two states' rows give, so running one needs that
+  argument as an executable term. Each part is its own constructor's executable form, and the whole
+  decodes to \<open>native_verdict_argument\<close> (\<open>decode_finite_verdict_argument\<close>): what is executed
+  is the judgment's own call and not a mirror of it, and the contract holds of it
+  (\<open>native_verdict_finite_argument\<close>). The identity presentations stay parameters, as they
+  are in the argument itself; a measurement or an export supplies the ones its states present their
+  entities and roots by.
+\<close>
+
+fun finite_term_tuple :: "finite_factor_term list \<Rightarrow> finite_factor_term" where
+  "finite_term_tuple []=Finite_Payload []"
+| "finite_term_tuple [t]=t"
+| "finite_term_tuple (t#u#ts)=Finite_Pair t (finite_term_tuple (u#ts))"
+
+lemma decode_finite_term_tuple:
+  "decode_finite_term (finite_term_tuple ts)=term_tuple (map decode_finite_term ts)"
+  by (induction ts rule: finite_term_tuple.induct) simp_all
+
+definition finite_keys_term :: "state_key list \<Rightarrow> finite_factor_term" where
+  "finite_keys_term ks=finite_data_list (map finite_path ks)"
+
+lemma decode_finite_keys_term [simp]: "decode_finite_term (finite_keys_term ks)=keys_term ks"
+  by (simp add: finite_keys_term_def keys_term_def comp_def)
+
+definition finite_state_row_term ::
+    "('i \<Rightarrow> finite_factor_term) \<Rightarrow> state_key\<times>'i state_row \<Rightarrow> finite_factor_term" where
+  "finite_state_row_term ident z=Finite_Pair (finite_path (fst z))
+    (Finite_Pair (finite_keys_term (row_declared (snd z)))
+      (Finite_Pair (finite_keys_term (row_subjects (snd z)))
+        (Finite_Pair (finite_keys_term (row_mentions (snd z))) (ident (row_identity (snd z))))))"
+
+lemma decode_finite_state_row_term [simp]:
+  "decode_finite_term (finite_state_row_term ident z)=state_row_term (decode_finite_term \<circ> ident) z"
+  by (simp add: finite_state_row_term_def state_row_term_def comp_def)
+
+definition finite_state_family_term ::
+    "('i \<Rightarrow> finite_factor_term) \<Rightarrow> 'i state_family \<Rightarrow> finite_factor_term" where
+  "finite_state_family_term ident F=finite_data_list (map (finite_state_row_term ident) F)"
+
+lemma decode_finite_state_family_term [simp]:
+  "decode_finite_term (finite_state_family_term ident F)=state_family_term (decode_finite_term \<circ> ident) F"
+  by (simp add: finite_state_family_term_def state_family_term_def comp_def)
+
+definition finite_state_families_term ::
+    "('i \<Rightarrow> finite_factor_term) \<Rightarrow> 'i state_family list \<Rightarrow> finite_factor_term" where
+  "finite_state_families_term ident Fs=finite_data_list (map (finite_state_family_term ident) Fs)"
+
+lemma decode_finite_state_families_term [simp]:
+  "decode_finite_term (finite_state_families_term ident Fs)=state_families_term (decode_finite_term \<circ> ident) Fs"
+  by (simp add: finite_state_families_term_def state_families_term_def comp_def)
+
+
+definition finite_declaration_term :: "'i state_family list \<Rightarrow> finite_factor_term" where
+  "finite_declaration_term Fs=finite_store finite_path (declaration_store Fs)"
+
+lemma decode_finite_declaration_term [simp]:
+  "decode_finite_term (finite_declaration_term Fs)=declaration_term Fs"
+  by (simp add: finite_declaration_term_def declaration_term_def decode_finite_store comp_def)
+
+definition finite_family_row_term ::
+    "('i \<Rightarrow> finite_factor_term) \<Rightarrow> 'i state_family list \<Rightarrow> finite_factor_term" where
+  "finite_family_row_term ident Fs=finite_store (finite_state_row_term ident) (family_row_store Fs)"
+
+lemma decode_finite_family_row_term [simp]:
+  "decode_finite_term (finite_family_row_term ident Fs)=family_row_term (decode_finite_term \<circ> ident) Fs"
+  by (simp add: finite_family_row_term_def family_row_term_def decode_finite_store comp_def)
+
+definition finite_key_index_term :: "('i state_row \<Rightarrow> state_key list) \<Rightarrow> ('i \<Rightarrow> finite_factor_term) \<Rightarrow>
+    state_key list \<Rightarrow> 'i state_family \<Rightarrow> finite_factor_term" where
+  "finite_key_index_term rd ident A F=finite_store (finite_state_family_term ident) (key_index rd A F)"
+
+lemma decode_finite_key_index_term [simp]:
+  "decode_finite_term (finite_key_index_term rd ident A F)=key_index_term rd (decode_finite_term \<circ> ident) A F"
+  by (simp add: finite_key_index_term_def key_index_term_def decode_finite_store comp_def)
+
+definition finite_key_indexes_term :: "('i state_row \<Rightarrow> state_key list) \<Rightarrow> ('i \<Rightarrow> finite_factor_term) \<Rightarrow>
+    state_key list \<Rightarrow> 'i state_family list \<Rightarrow> finite_factor_term" where
+  "finite_key_indexes_term rd ident A Fs=finite_data_list (map (finite_key_index_term rd ident A) Fs)"
+
+lemma decode_finite_key_indexes_term [simp]:
+  "decode_finite_term (finite_key_indexes_term rd ident A Fs)=
+    key_indexes_term rd (decode_finite_term \<circ> ident) A Fs"
+  by (simp add: finite_key_indexes_term_def key_indexes_term_def comp_def)
+
+definition finite_verdict_argument ::
+    "(isabelle_context \<Rightarrow> finite_factor_term) \<Rightarrow> ((String.literal list\<times>isabelle_term) \<Rightarrow> finite_factor_term) \<Rightarrow>
+      state_rows \<Rightarrow> state_rows \<Rightarrow> state_key \<Rightarrow> state_key list \<Rightarrow> entity_kind list \<Rightarrow> entity_kind list \<Rightarrow>
+      finite_factor_term" where
+  "finite_verdict_argument ident identr R R' k ks kr kd=finite_term_tuple [finite_path k,
+    finite_state_families_term ident (map (state_entities R') kd),
+    finite_keys_term ks,
+    finite_key_indexes_term row_subjects ident (map fst (state_atoms R')) (map (state_entities R') kr),
+    finite_state_families_term ident (map (state_entities R') (kinds_outside [Specification_Kind])),
+    finite_declaration_term (state_all_families R'),
+    finite_state_families_term ident (state_all_families R'),
+    finite_state_family_term identr (state_roots R'),
+    finite_reach_table (state_reach_table (state_atoms R') (state_roots R') (state_all_families R')),
+    finite_family_row_term ident (state_all_families R'),
+    finite_state_families_term ident (map (state_entities R) kr),
+    finite_state_families_term ident (map (state_entities R) (kinds_outside kr)),
+    finite_family_row_term ident (state_all_families R),
+    finite_state_families_term ident (map (state_entities R') kr),
+    finite_state_families_term ident (map (state_entities R') (kinds_outside kr)),
+    finite_keys_term (map fst (state_roots R)),
+    finite_keys_term (map fst (state_roots R'))]"
+
+theorem decode_finite_verdict_argument:
+  "decode_finite_term (finite_verdict_argument ident identr R R' k ks kr kd)=
+    native_verdict_argument (decode_finite_term \<circ> ident) (decode_finite_term \<circ> identr) R R' k ks kr kd"
+  by (simp add: finite_verdict_argument_def native_verdict_argument_def decode_finite_term_tuple
+    decode_finite_reach_table)
+
+theorem native_verdict_finite_argument:
+  assumes request: "request_presents key S R rows r k ks" and present': "state_presents key' S' R'"
+    and shared: "keys_shared R R'"
+    and replaceable: "kinds_present replaceable (set kr)" and demanded: "kinds_present demanded (set kd)"
+    and identity: "\<And>y. finite_term_formed (ident y)" and roots_identity: "\<And>y. finite_term_formed (identr y)"
+  shows "(verdict_entry,decode_finite_term (finite_verdict_argument ident identr R R' k ks kr kd))
+      \<in>positive_meaning native_verdict_system \<longleftrightarrow>
+    development_verdict_accepted (development_constant_verdict replaceable demanded S r S')"
+proof -
+  have i: "\<And>y. term_formed ((decode_finite_term \<circ> ident) y)"
+    using identity by (simp add: finite_term_formed_correct)
+  have j: "\<And>y. term_formed ((decode_finite_term \<circ> identr) y)"
+    using roots_identity by (simp add: finite_term_formed_correct)
+  show ?thesis
+    unfolding decode_finite_verdict_argument
+    by (rule native_verdict_exact[OF request present' shared replaceable demanded i j])
+qed
+
+text \<open>
+  The program and this argument are what an execution of one judgment runs: the entry's call at the
+  argument the rows give, evaluated against \<open>finite_native_verdict\<close>. Their code is checked here, so a code
+  equation the program's rules or the argument's presenters lack fails this theory. They are reflected where the execution is,
+  beside the evaluation (\<open>Positioned_Native_Evaluation\<close>) and the states judged, with the execution refinements in
+  scope (\<open>Native_Execution_Refinements\<close>, which this theory does not import), as task 278's measurement of one
+  judgment does: a reflection is one structure holding every constant its execution uses, and a reflection here
+  would fix the ML types of the program and the argument for every later one, so that no execution could reflect
+  them again beside the evaluation.
+\<close>
+
+export_code finite_native_verdict finite_verdict_argument checking SML
 
 end

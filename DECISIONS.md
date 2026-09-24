@@ -15337,3 +15337,272 @@ admission (O-85), which would move (a)–(c) and (f) into the native judgment. T
 encoding. This design was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 381's decision; a design, no theory changes).
+## Non-nominality of uses is equivariance under use permutations, a contract the verification request checks
+
+The owner, to the planner, 2026-09-24 (the ledger), at 18:12: "Every distinction a native program relies on must come
+from a native notion, not from a HOL presentation relation." At 18:36, of the first design of the notion of a problem
+(#373): "Does design #373 not contradict what I just said at its core: "a problem is a row … at a locus", its subject
+"the key", justified by "a row is native structure already"". At 19:57, answering Q23 (a): "Q23(a), to use this test
+and not only the octet audit." Task 381's entry ("The first problem's requirements use the test of a native
+distinction; the octet audit is one of its parts") found that a use is presented as structure, not as a payload, so the
+octet audit cannot see a use read as structure, and #373's pattern — a kind read as a prefix of a coordinate — passes
+the first problem's native guard, caught only by criticism (its part (d)). Q25 puts to the owner, provisionally, a
+design of non-nominality as a general notion now, weighing uses presented as inert leaves against a contract, before
+the first answer is judged.
+
+These words are the premise. This entry decides what non-nominality of a use is, for any presented relation; the route
+and its statement form, with the existing facts it consumes and the theories it would stand in; whether a native
+program can check it over an answer; where it enters the first problem's judgment; and what the briefed builds change.
+It decides no notion of a problem — that is the first problem's answer — and changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Uses compared for equality (task 381's part (d)) enter the first problem's judgment by criticism and the owner's approval; the native notion they would need is "either uses presented as inert leaves ... or non-nominality as a contract"; use equivariance required of the verification request is rejected "now", its statement form not existing, to be stated once when first demanded (task 381, "Weighed and rejected"). | Non-nominality of uses is equivariance under use permutations, one general notion over any presented relation (below). The first answer's verification is its first demand: part (d) is checked in the verification request, beside (a), (b), (c) and (f), each added entry's clause proved by the answer; criticism keeps its native sample at a use-renamed copy as an early refutation. Uses stay presented as structure. |
+| "Sites are compared for equality" (task 376's test), checked by the octet audit for addresses only and, for uses, by a contract or by criticism (task 381). | A relation compares the uses it reads for equality exactly when it is equivariant under use permutations; the equivariance clause is that check. |
+
+### What a use is, and what reading it as structure is
+
+A use is an occurrence coordinate of an artifact environment (`RRA_Environment`): the environment places an artifact at
+a use and binds a slot of one use to another use, and "There is no global token namespace and no rule identifying uses
+because their values agree". Every RRA reader locates a use and none inspects it, which the readers' renaming facts
+state: an injective renaming `h` of the uses (`rename_environment h`) keeps an environment formed
+(`environment_renaming_formed`) and every reading at the renamed uses the same — `artifact_at_renamed_use`,
+`binds_slot_renamed_use`, `citation_use_renaming`, `citation_location_use_renaming`, `anchored_at_use_renaming`,
+`located_at_use_renaming`. What a use carries is its identity with the other uses of the same environment; its spelling
+is a construction's choice (a fresh prefix, a compact head).
+
+A native program meets a use in one way only: as data in an argument. Its own placement is invisible to it: the
+recovered program of a package relocated by a use renaming has the relocated meaning at the same argument terms
+(`renamed_system_positive_meaning`), and its definition readings follow the renaming (below). In an argument a use is
+presented by `use_data_term`, inside the presentations of environments, sites and program entries
+(`environment_value_presents`, `site_value_presents`, `program_entry_value_presents`): None as the empty payload,
+`Some a` as the data list of `a`'s components, each a unary `natural_data_term` of pairs over the empty payload.
+
+A program **reads a use as structure** when its meaning depends on a use beyond that use's identity with the other uses
+of its arguments: a component, a prefix, the length, an order between two uses, the use being None, or a coincidence
+with another notion's presentation — None and the empty address are both the empty payload, so a variable repeated at a
+use and at an address compares them. #373's pattern, in the native loop, is a kind read as a prefix of the use at which
+a definition stands.
+
+### Why the leaf argument does not reach a use
+
+`positive_meaning_unlisted_leaves` and `positive_meaning_leaf_involution` (`Factor_Positive_Parametricity`) make an
+observation-free program's meaning invariant under every formed permutation of leaves that fixes the leaves the program
+states. Their admissibility is syntactic — which leaves a program states — so the octet audit checks it natively, and
+payloads are inert by it. A use is not a leaf. A leaf map that fixes the empty payload fixes every use; one that moves it
+moves every use, every data list's terminator and the empty address at once; so no leaf map is a use renaming, and a
+program that decomposes a use states no leaf to be caught. Nor does any syntactic mark separate a pattern reading a
+use's pairs from one reading other pairs (task 381's part (e)). The invariance uses need is therefore stated where the
+renaming is defined, at the subjects, and proved of meaning.
+
+### Non-nominality, stated once for any presented relation
+
+A group of renamings acts on a presentation class's subjects: the renamings are the permutations `h` of a coordinate
+type that satisfy an admissibility closed under composition and inverse, and the action `act h` maps the class's domain
+into itself, `act id` is the identity on it and `act (g ∘ h) = act g ∘ act h` there. A predicate `P` on the subjects is
+**equivariant** when `P (act h a) ⟷ P a` for every admissible `h` and every `a` of the domain. A relation between
+subjects is a predicate on their product under the product action, so one `h` acts on all its arguments at once. A
+**presented relation** — a native program's entry read at presentations of subjects through their notions' classes,
+exact to `P` by its contract (`presented_relation_contract`, `presented_predicate`) — is **non-nominal** in the renamed
+coordinates when `P` is equivariant. Presented, this is invariance of its observation along the renaming
+correspondence, which joins a presentation of a subject to every presentation of that subject's renaming:
+`rel_fun (renaming correspondence) (=) observe observe`, `Observation_Invariance`'s form. Task 381's part (b),
+invariance over presentations, is the same form along the correspondence of two presentations of one subject
+(`presentation_transport`); non-nominality is it along the renaming correspondence.
+
+**Non-nominality of uses** is the instance at the permutations of uses, every permutation admissible, under the use
+action of the next section.
+
+- **Permutations, not injections.** Permutations form a group, so an equivariant relation composed through an
+  existential intermediate, and the least fixed point of equivariant rules, are equivariant; injections are not closed
+  under inverse. Nothing is lost: formed environments have finitely many uses (`environment_uses_finite`), an injective
+  renaming of finitely many uses is the restriction of a permutation, and the RRA facts, stated for `inj h`, hold at
+  every permutation.
+- **One renaming for all arguments.** The identity of a use across arguments is native — the candidate's environment
+  holds the given's uses (retention), a site's use is a use of the environment beside it — and the readers draw it; only
+  a use's spelling is not. Invariance of each argument separately would refuse retention itself.
+
+Its statement form, in a new theory **`Presentation_Equivariance`**, beside `Presentation_Contracts` (imports
+`Presentation_Contracts`, `Presentation_Closure`, `Observation_Invariance`):
+
+- a locale `renaming_action` — the admissibility, the action and the domain, with the three laws — from which `act h`
+  is a bijection of the domain whose inverse is `act (inv h)`; the trivial action, for subjects with no renamed
+  coordinate; and the extension of an injection of finitely many coordinates to a permutation;
+- `renaming_equivariant` (the definition above, on a domain) and `renaming_correspondence R act h p q ⟷ (∃a. R a p ∧
+  R (act h a) q)`;
+- the notion's contract, in a `presentation_class` with a `renaming_action` on its domain: an observation exact to
+  `presented_predicate R P` is invariant along every admissible renaming correspondence exactly when `P` is equivariant
+  on the domain (its converse by the class's `total`); a `presented_relation_contract`'s observation is non-nominal
+  exactly when its relation is, over the product class (`presentation_class_product`);
+- the constructions, each once: products (one `h`), lists (`map`), finite collections (`fimage`), subdomains closed
+  under the action, composed presentations (`composed_presentation`, at the intermediate class's action), relation
+  composition across an intermediate class (by the action's bijectivity), conjunction and alternatives
+  (`presentation_class.predicate_conjunction`, `presented_predicate_alternatives`), and least fixed points: a monotone
+  operator on subsets of the domain that commutes with every `act h` has an equivariant least fixed point, by
+  `Presentation_Closure.presented_least_fixed_point_on` at the presentation relation `λa b. b = act h a`, as
+  `renamed_system_positive_meaning` uses it. The last makes a recursive native definition's equivariance a local
+  obligation of its rules;
+- its instances: the leaf argument is the notion at leaf maps, admissible when formed and fixing the program's leaves —
+  cited as `Factor_Positive_Parametricity` states it, and restated in this form only where a use consumes it so; uses,
+  below; re-addressing (`push_object` under `finite_addressing`) is a further instance, not demanded now.
+
+### The use instance
+
+A new theory **`Factor_Use_Renaming`** (importing `Presentation_Equivariance`, `RRA_Structural_Syntax`,
+`Factor_Environment_Values`, `Factor_Program_Entry_Values`, `Factor_Native_Transport`, `Factor_System_Relocation` and
+the package readings) states:
+
+- the action on environments, `rename_environment h` at a permutation `h`, with two new laws — `rename_environment id E
+  = E` and the composition law, by image composition — its domain the formed environments
+  (`environment_renaming_formed`);
+- the action on sites (`map_prod h id`), on environment positions (a new lemma: the positions of the renamed environment
+  are the renamed positions), and on site values and program entries — `(E,u,r,d) ↦ (rename_environment h E, h u, r,
+  map_prod h id d)` — each a `renaming_action` on its class (`environment_value_presents`, `site_value_presents`,
+  `program_entry_value_presents`). Exact values — targets, artifacts, generations, snapshots, publications, payload
+  data — carry no use and take the trivial action; a target read through its quotation of a use-bearing subject takes
+  that subject's action, the composed class's;
+- the RRA readers' equivariance: the six facts above, consumed as they stand;
+- the Factor definition readers': `Factor_Native_Transport.native_syntax_copy E u R (rename_environment h E) (h u) R id
+  (map_prod h id)`, the identity address map with the use renaming on sites, its hypotheses discharged by
+  `environment_renaming_formed` and `artifact_at_renamed_use` (target), `push_object_identity` (reads),
+  `binds_slot_renaming` with `artifact_at_renamed_use` (literals: `external_slot_values` at the renamed use), and
+  `citation_location_use_renaming` (locations, `map_citation_positions id` being the identity) — so that
+  `copy_definition`, `copy_schema`, `copy_pattern` and `copy_prospective_call` give every definition reading at the
+  renamed use, its callees relocated by `map_prod h id`, binders and sockets unchanged; the package reading at the
+  renamed root use, its program relocated (`rename_system`), from the root family's located readings and these;
+  `renamed_system_positive_meaning` relocates the recovered program's meaning, argument terms unchanged;
+- uses compared as data: `use_data_term_injective`, so data equality and inequality of use presentations
+  (`native_data_inequality`) are equivariant under every injective renaming — which is what "sites are compared for
+  equality" means natively.
+
+Each reader the given installs states its own clause once, with its exported contract, from these facts (#382 (h),
+below). Nothing here is stated for the first problem.
+
+### No native program checks it over an answer
+
+1. **No socket.** The guard is a positive native program whose sockets hold exactly on their requirements. Equivariance
+   of an answer's entry constrains where the entry fails as much as where it holds, and a positive program's meaning is
+   only what holds. The candidates whose entries are equivariant do not form a recursively enumerable set: a candidate
+   that holds at every argument presenting an environment with a use spelled `Some [0]`, once a given machine halts —
+   its pattern states only the empty payload, so it passes the audit — is equivariant exactly when the machine never
+   halts. So no positive program's meaning over the pair of the given and a candidate is that requirement; a fifth
+   socket would be a sample under a requirement's name.
+2. **No syntactic sufficient condition.** The audit is sufficient for leaves because leaves are term constructors a
+   program states or does not; uses are pairs over the empty payload, and no condition over an answer's patterns
+   separates reading a use's pairs from reading any other pairs.
+3. **A native sample refutes.** The answer's entries are evaluated natively — the finite evaluation of its program's
+   demand (`finite_program_evaluation_exact`) — at the given's content and at a copy of the candidate with its uses
+   permuted, `rename_environment h` of the candidate's environment, its package read at the renamed site by the facts
+   above and the arguments renamed by the classes' actions, and the two evaluations are compared call for call. The
+   comparison is exact on its finite demand; a difference refutes the entry's clause, agreement establishes nothing. It
+   is criticism, recorded against the candidate (`Observation_Repairs`).
+
+Equivariance is therefore a proof obligation: Isabelle's in the verification request now, as the bootstrap verifier (the
+owner, 2026-09-19: "The role of Isabelle is to verify that the native reasoning and definitions are internally
+consistent before the native machinery can itself verify this"), and native proof admission's (O-85) later, which would
+bring it into the native judgment with parts (a)–(c).
+
+### Where it enters the first problem's judgment
+
+- **The guard** (G1–G4) is unchanged and has no fifth socket. Its own relation is equivariant — each socket's reader is
+  — and its contract states it: the asked relation meets the requirement it imposes.
+- **Criticism**, after admission: the use sample, beside the samples of (b) and the observations of (h); a difference
+  refutes before the verification request is run.
+- **The verification request**, after admission and before publication: part (d), beside (a), (b), (c) and (f). For
+  each added entry, with its contract in the required forms over native notions' classes, the clause
+  `renaming_equivariant` of its subject relation at the use action its classes derive — stated by the harness, never
+  supplied by the answer, proved by the answer from the given readers' clauses and the notion's constructions, and
+  checked by Isabelle.
+- **The owner's approval**, last.
+
+The row of the first problem's requirement family for 18:12, as task 381's entry corrected it, becomes:
+
+| Requirement (the owner's words) | Natively, by the guard | In the verification request | Criticism and the owner's approval |
+|---|---|---|---|
+| "Every distinction a native program relies on must come from a native notion, not from a HOL presentation relation" (18:12), with 18:36, as task 376's test (19:57) | G2, G3, G4, with G1 | (a), (b), (c), (d), (f) | the sample of (d); (e), (g), (h) |
+
+### What the builds change
+
+- **A new build, the notion and its use instance** (in neither #380's nor #382's plan; a follow-up for the planner):
+  the theories `Presentation_Equivariance` and `Factor_Use_Renaming` as above, with their THEORY_MAP.md rows. It waits
+  on nothing open: neither theory exists, and it edits none of the theories it imports.
+- **#380 (c), the guard**: its four sockets unchanged; its contract adds the guard's use equivariance, from the clauses
+  of the readers its sockets call (#382 (h)), on which it already waits.
+- **#380 (f), the verification request**: part (d) in its judgment. The harness states, for each added entry, the
+  equivariance clause at the action the entry's classes derive — the classes' `renaming_action` interpretations and
+  their constructions — never at an action the answer supplies; the answer proves it. It waits on the new build and on
+  #382 (h).
+- **#380 (b), (d), (e)**: unchanged. The audit's clause is stated with the other installed readers' in #382 (h); the
+  candidate's renaming is defined because the candidate is a formed environment holding the given's (G1).
+- **#382 (g), the native request at a package**: its contract, for any given and any support, carries its use
+  equivariance — the least closed scope of a support commutes with use permutations, from the root family reading,
+  membership and retention clauses. It waits on the new build.
+- **#382 (h), the given's readers**: every reader it installs — package admission and membership, environment
+  inclusion, the root family reading, retention admission, the closure bound, data absence and inequality, the
+  definition, clause and pattern readers, and the audit — carries its use equivariance clause, stated once as a clause
+  of its exported contract where that contract stands, from the new build's facts. It waits on the new build.
+- **The criticism build** (task 381's follow-up 1, briefed after #380's and #382's proposals are placed): its use sample
+  as above, at a family of permutations — one moving every use of the candidate's environment outside it (spelling,
+  prefixes, length, None), one permuting its uses among themselves (order) — each difference recorded against the
+  candidate as a refutation of the entry's stated clause.
+
+### Weighed and rejected
+
+- **Uses presented as inert leaves in the Factor grammar's coordinates** (`use_data_term` a payload coding the use
+  word): it changes every presentation of an environment, a site and a program entry, every native reader over them
+  (the coordinate admission of natural words, lookups, comparisons) and every recorded word presenting one; a use word's
+  components are unbounded naturals, so the payload is a code (such as `RRA_Exact.index_address`), structure written as
+  octets; and it is not sound without more: a use leaf coincides with an address or data payload of equal octets — a
+  variable repeated at a use and an address still compares them, and the empty payload every program may state still
+  presents a use — so the leaf argument would give invariance only under maps that move coinciding payloads together,
+  not under use renamings.
+- **A use leaf of its own in the term language** (a leaf constructor whose only native operation is equality): the one
+  route to a native syntactic check — the audit and the leaf argument extended to it — but a change of the foundation's
+  term language, of every presentation holding a use and of everything above them. The owner's to choose; not taken
+  provisionally.
+- **Orbit classes**, presenting a subject by every presentation of its renamings, so that non-nominality becomes part
+  (b): equivalent to equivariance, but a relation over several subjects needs the orbit of their tuple, not the product
+  of their orbits (which would refuse retention), and the environment notion's exact class recovers its exact subject;
+  each tuple would need a class of its own, where equivariance composes through the existing constructions.
+- **A canonical renumbering of uses** in the given's presentation: the order of first occurrence is a distinction a HOL
+  function supplies, the key pattern of 18:12, and a program could still read the canonical spelling.
+- **A fifth socket, or the native sample as a verdict**: no positive program states the requirement (above).
+- **Criticism only**, task 381's meantime: a sample refutes and never establishes, and the requirement has a check.
+- **Invariance of each argument separately**: it refuses the native identity of uses across arguments, retention first.
+- **Injections as the renamings**: without inverses, equivariance does not pass through existential composition or least
+  fixed points; permutations lose nothing for finitely many uses.
+- **A clause stated for the guard's pair only**: a notion around the first problem, which the first-use rule forbids.
+- **Sorts of positions**, so that a use is only ever bound to a variable: a type discipline Factor does not have, and a
+  pattern's positions are not sorted.
+
+### The owner's choices
+
+Put to the owner through the planner, as a further part of Q25, each provisional, the builds proceeding on them: (a)
+non-nominality of a use is equivariance under use permutations, one general notion over any presented relation, one
+renaming acting on all arguments; (b) it is checked by Isabelle in the verification request, the answer proving each
+added entry's clause, a native sample refuting earlier in criticism, and no fifth socket; (c) uses stay presented as
+structure: a use leaf in the term language is the one route to a native syntactic check and a change of the foundation,
+the owner's to choose. Basis: the owner's words of 18:12, 18:36 and 19:57; 2026-09-19 (Isabelle verifies the native
+definitions); the first-use rule.
+
+### What the builds must respect
+
+- Non-nominality is stated once, in `Presentation_Equivariance`, over any presented relation, and its use instance once,
+  in `Factor_Use_Renaming`; nothing is stated for the first problem.
+- Every given notion an answer may call exports its use equivariance clause once, with its contract; an answer consumes
+  it and never re-proves it.
+- The action on a class is derived from the class's construction from native classes; an answer supplies none.
+- `rename_environment`, the RRA use-renaming facts, `native_syntax_copy` and `renamed_system_positive_meaning` are
+  consumed as they stand; the new laws are the action's identity and composition, the positions' renaming and the
+  extension of a finite injection to a permutation.
+- No fifth socket; the native sample is criticism.
+- Uses stay structure until the owner chooses otherwise; "sites are compared for equality" means equivariance.
+
+### Open
+
+The owner's choice (c). Re-addressing as a further instance, not demanded. The leaf argument for programs with material
+premises (task 381's part (g)). Native proof admission (O-85), which would bring part (d) into the native judgment. The
+marking of task 381's entry, its part (d) and its rejected item on use equivariance, as corrected here, once both
+entries have landed. This design was made outside the loop and is a residual.
+
+Recorded 2026-09-24 (task 383's decision; a design, no theory changes).

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "1b0bb2e1b517b33e36c55d6f67b86f87363958cab529551979aa04c2a894d6dc",
- "checked_content_sha256": "b46e80aea4bdbb1758fa4dceefe34afe75f0bab521cf277a257109d79edde273",
+ "base_receipt_sha256": "79c17967a7e52d289774bee810ca7cc28842a063d607d684cc8993122d90cbb4",
+ "checked_content_sha256": "eab41cba551c1f5e94cc8a47e66d8b1fb3d903be7b4042c1339c56daa6616e91",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -14,7 +14,7 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 290,
+   "ran": 291,
    "skipped": 0,
    "tail": [
     "OK"
@@ -22,178 +22,281 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.32,
-  "execution_impact": 0.0,
-  "export": 0.0,
-  "proof": 218.76,
-  "recipe_impact": 0.85,
-  "recipes_and_host_tests": 11.87
+  "base_and_impact": 0.34,
+  "execution_impact": 1.28,
+  "export": 25.8,
+  "proof": 158.33,
+  "recipe_impact": 0.43,
+  "recipes_and_host_tests": 54.22
  },
  "rebuilt_theories": [
   "Development_Seed_Referenced_Publication",
-  "Presented_Publication_Values",
-  "Represented_Snapshot_Transactions"
+  "Native_Development_Seed"
  ],
  "recipes": {
   "allocated-environments": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.52,
+   "status": "accepted"
   },
   "artifact-lookup": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.22,
+   "status": "accepted"
   },
   "builtin-investigations": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.32,
+   "status": "accepted"
   },
   "cached-grafts": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.62,
+   "status": "accepted"
   },
   "certificate-coverage": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.37,
+   "status": "accepted"
   },
   "certificate-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.12,
+   "status": "accepted"
   },
   "certificate-input-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.32,
+   "status": "accepted"
   },
   "certificate-scope-repair": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.37,
+   "status": "accepted"
   },
   "certified-causes": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.98,
+   "status": "accepted"
   },
   "concurrent-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 15.04,
+   "status": "accepted"
   },
   "constructed-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 26.97,
+   "status": "accepted"
   },
   "data-reading": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.18,
+   "status": "accepted"
   },
   "decision-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 8.19,
+   "status": "accepted"
   },
   "digit-allocation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.97,
+   "status": "accepted"
   },
   "digit-generation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.37,
+   "status": "accepted"
   },
   "digit-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 11.3,
+   "status": "accepted"
   },
   "digit-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 26.81,
+   "status": "accepted"
   },
   "encoded-environments": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.17,
+   "status": "accepted"
   },
   "environment-grafts": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.42,
+   "status": "accepted"
   },
   "environment-updates": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.47,
+   "status": "accepted"
   },
   "generation-records": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.37,
+   "status": "accepted"
   },
   "graft-admission": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.47,
+   "status": "accepted"
   },
   "history-index": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 10.7,
+   "status": "accepted"
   },
   "indexed-generation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.52,
+   "status": "accepted"
   },
   "known-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 14.48,
+   "status": "accepted"
   },
   "literal-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.12,
+   "status": "accepted"
   },
   "native-admission": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 6.23,
+   "status": "accepted"
   },
   "native-certificate-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.77,
+   "status": "accepted"
   },
   "native-certificates": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 5.23,
+   "status": "accepted"
   },
   "native-child": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 5.33,
+   "status": "accepted"
   },
   "native-derivations": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.88,
+   "status": "accepted"
   },
   "native-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 6.76,
+   "status": "accepted"
   },
   "native-development-machinery": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 42.69,
+   "status": "accepted"
   },
   "native-development-seed": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 45.36,
+   "status": "accepted"
   },
   "native-evaluation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.42,
+   "status": "accepted"
   },
   "native-extensions": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.07,
+   "status": "accepted"
   },
   "native-graphs": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 6.99,
+   "status": "accepted"
   },
   "native-histories": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.07,
+   "status": "accepted"
   },
   "native-nodes": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.57,
+   "status": "accepted"
   },
   "native-requirements": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 7.39,
+   "status": "accepted"
   },
   "native-sources": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.22,
+   "status": "accepted"
   },
   "native-steering": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 15.61,
+   "status": "accepted"
   },
   "native-workflow": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 15.43,
+   "status": "accepted"
   },
   "quoted-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 26.76,
+   "status": "accepted"
   },
   "required-causes": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.57,
+   "status": "accepted"
   },
   "required-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 5.33,
+   "status": "accepted"
   },
   "requirement-decisions": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 3.82,
+   "status": "accepted"
   },
   "requirement-plans": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.47,
+   "status": "accepted"
   },
   "requirement-sources": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.72,
+   "status": "accepted"
   },
   "source-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 17.23,
+   "status": "accepted"
   },
   "use-allocation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.27,
+   "status": "accepted"
   },
   "use-codecs": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 2.37,
+   "status": "accepted"
   }
  },
- "reused_theories": 1854,
- "seconds": 277.86,
+ "reused_theories": 1855,
+ "seconds": 283.15,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

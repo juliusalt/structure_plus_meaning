@@ -1756,6 +1756,4 @@ proof -
       shared_term_word_fold_exact)
 qed
 
-export_code development_seed_publication_word_fold checking SML
-
 end

@@ -1,5 +1,5 @@
 theory RRA_Exact
-  imports RRA_Footprint
+  imports RRA_Footprint RRA_Digit_Natural_Paths
 begin
 
 section \<open>Exact addressed artifacts\<close>
@@ -132,6 +132,160 @@ lemma unary_address_eq_iff [simp]:
   "unary_address m = unary_address n \<longleftrightarrow> m = n"
   using unary_address_inj by (auto simp: inj_def)
 
+text \<open>
+  The index code is the library's digit code of a natural, written in octets: the digit path's
+  True is the octet 0 and its False the octet 1. Its facts are those of the digit path, instantiated
+  through the injective map of the two symbols; none of them is argued again.
+\<close>
+
+definition index_address :: "nat \<Rightarrow> local_address" where
+  "index_address i = map (\<lambda>b. if b then 0 else 1) (digit_natural_path i)"
+
+lemma index_address_formed:
+  "octets_formed (index_address i)"
+  by (auto simp: index_address_def octets_formed_def)
+
+lemma index_address_nonempty [simp]:
+  "index_address i \<noteq> []"
+  by (simp add: index_address_def)
+
+lemma index_symbol_inj: "inj (\<lambda>b::bool. if b then (0::nat) else 1)"
+proof (rule injI)
+  fix x y :: bool
+  assume "(if x then (0::nat) else 1) = (if y then 0 else 1)"
+  then show "x = y" by (cases x; cases y) simp_all
+qed
+
+lemma index_address_extended:
+  assumes longer: "index_address m = index_address n @ us" and rest: "us @ xs = ys"
+  shows "m = n \<and> xs = ys"
+proof -
+  let ?f = "\<lambda>b::bool. if b then (0::nat) else 1"
+  let ?k = "length (digit_natural_path n)"
+  let ?v = "drop ?k (digit_natural_path m)"
+  have eq: "map ?f (digit_natural_path m) = map ?f (digit_natural_path n) @ us"
+    using longer by (simp only: index_address_def)
+  have "take ?k (map ?f (digit_natural_path m)) = map ?f (digit_natural_path n)"
+    by (simp only: eq take_append length_map diff_self_eq_0 take_0 append_Nil2 take_all_iff order_refl)
+  then have "map ?f (take ?k (digit_natural_path m)) = map ?f (digit_natural_path n)"
+    by (simp only: take_map)
+  then have head: "take ?k (digit_natural_path m) = digit_natural_path n"
+    by (simp only: inj_map_eq_map[OF index_symbol_inj])
+  have "drop ?k (map ?f (digit_natural_path m)) = us"
+    by (simp only: eq drop_append length_map diff_self_eq_0 drop_0 drop_all order_refl append_Nil)
+  then have tail: "map ?f ?v = us" by (simp only: drop_map)
+  have "digit_natural_path m @ [] = digit_natural_path n @ ?v"
+    using append_take_drop_id[of ?k "digit_natural_path m"] head by simp
+  then have "m = n \<and> [] = ?v" by (rule iffD1[OF digit_natural_path_cancel])
+  then show ?thesis using tail rest by auto
+qed
+
+theorem index_address_cancel:
+  "index_address m @ xs = index_address n @ ys \<longleftrightarrow> m = n \<and> xs = ys"
+proof
+  assume eq: "index_address m @ xs = index_address n @ ys"
+  obtain us where "index_address m = index_address n @ us \<and> us @ xs = ys \<or>
+      index_address m @ us = index_address n \<and> xs = us @ ys"
+    using eq by (auto simp: append_eq_append_conv2)
+  then show "m = n \<and> xs = ys"
+  proof (elim disjE conjE)
+    assume "index_address m = index_address n @ us" "us @ xs = ys"
+    then show ?thesis by (rule index_address_extended)
+  next
+    assume "index_address m @ us = index_address n" "xs = us @ ys"
+    then have "n = m \<and> ys = xs" by (intro index_address_extended[of n m us]) simp_all
+    then show ?thesis by simp
+  qed
+qed simp
+
+lemma index_address_inj: "inj index_address"
+  by (rule injI) (use index_address_cancel[of _ "[]" _ "[]"] in simp)
+
+lemma index_address_eq_iff [simp]:
+  "index_address m = index_address n \<longleftrightarrow> m = n"
+  using index_address_inj by (auto simp: inj_def)
+
+lemma index_address_length:
+  "length (index_address i) = 2 * length (natural_binary_digits i) + 1"
+  by (simp add: index_address_def digit_natural_path_length)
+
+theorem index_address_bound:
+  "i < 2^k \<Longrightarrow> length (index_address i) \<le> 2 * k + 1"
+  using digit_natural_path_bound[of i k] by (simp add: index_address_def)
+
+text \<open>
+  The code of every nonzero index begins with the same octet, the digit path's continuation mark, so
+  its tail after that octet is a code of its own: the tails of nonzero indices cancel as the codes do.
+\<close>
+
+lemma index_address_nonzero:
+  assumes "i \<noteq> 0"
+  shows "index_address i = 0 # tl (index_address i)"
+proof -
+  obtain n where "i = Suc n" using assms by (cases i) simp_all
+  then show ?thesis by (simp add: index_address_def digit_natural_path_def)
+qed
+
+theorem index_address_tail_cancel:
+  assumes "m \<noteq> 0" "n \<noteq> 0"
+  shows "tl (index_address m) @ xs = tl (index_address n) @ ys \<longleftrightarrow> m = n \<and> xs = ys"
+proof -
+  have "tl (index_address m) @ xs = tl (index_address n) @ ys \<longleftrightarrow>
+      (0 # tl (index_address m)) @ xs = (0 # tl (index_address n)) @ ys" by simp
+  also have "\<dots> \<longleftrightarrow> index_address m @ xs = index_address n @ ys"
+    by (simp only: index_address_nonzero[OF assms(1), symmetric] index_address_nonzero[OF assms(2), symmetric])
+  finally show ?thesis by (simp only: index_address_cancel)
+qed
+
+text \<open>
+  The reader takes the octets 0 and 1 that begin an address as digit-path symbols and reads a digit
+  path from them; the rest of the address after the code is returned whole.
+\<close>
+
+definition read_index_address :: "local_address \<Rightarrow> (nat \<times> local_address) option" where
+  "read_index_address source = (case read_digit_natural_path
+      (map (\<lambda>x. x = 0) (takeWhile (\<lambda>x. x \<le> 1) source)) of None \<Rightarrow> None
+    | Some (i,r) \<Rightarrow> Some (i,drop (length (index_address i)) source))"
+
+theorem read_index_address_exact:
+  "read_index_address source = Some (i,rest) \<longleftrightarrow> source = index_address i @ rest"
+proof
+  assume read: "read_index_address source = Some (i,rest)"
+  let ?T = "takeWhile (\<lambda>x. x \<le> (1::nat)) source"
+  obtain r where bits: "read_digit_natural_path (map (\<lambda>x. x = 0) ?T) = Some (i,r)"
+    and dropped: "rest = drop (length (index_address i)) source"
+    using read by (auto simp: read_index_address_def split: option.splits)
+  have "map (\<lambda>x. x = 0) ?T = digit_natural_path i @ r"
+    using bits by (simp only: read_digit_natural_path_exact)
+  then have "map (\<lambda>b. if b then 0 else 1) (map (\<lambda>x. x = 0) ?T) =
+      map (\<lambda>b. if b then 0 else 1) (digit_natural_path i @ r)" by (simp only:)
+  moreover have "map (\<lambda>b. if b then 0 else 1) (map (\<lambda>x. x = 0) ?T) = ?T"
+    unfolding map_map by (rule map_idI) (auto dest!: set_takeWhileD)
+  ultimately have "?T = map (\<lambda>b. if b then 0 else 1) (digit_natural_path i @ r)"
+    by (rule box_equals[OF _ _ refl])
+  then have "?T = index_address i @ map (\<lambda>b. if b then 0 else 1) r"
+    by (simp only: index_address_def map_append)
+  then have whole: "source = index_address i @ (map (\<lambda>b. if b then 0 else 1) r @
+      dropWhile (\<lambda>x. x \<le> 1) source)"
+    using takeWhile_dropWhile_id[of "\<lambda>x. x \<le> (1::nat)" source] by (metis append.assoc)
+  have "drop (length (index_address i)) source = map (\<lambda>b. if b then 0 else 1) r @
+      dropWhile (\<lambda>x. x \<le> 1) source"
+    by (subst whole) simp
+  then show "source = index_address i @ rest" using whole dropped by simp
+next
+  assume source: "source = index_address i @ rest"
+  have small: "\<forall>x\<in>set (index_address i). x \<le> (1::nat)" by (auto simp: index_address_def)
+  have tw: "takeWhile (\<lambda>x. x \<le> 1) source = index_address i @ takeWhile (\<lambda>x. x \<le> 1) rest"
+    unfolding source by (rule takeWhile_append2) (use small in blast)
+  have restored: "map (\<lambda>x. x = 0) (index_address i) = digit_natural_path i"
+    unfolding index_address_def map_map by (rule map_idI) simp
+  have "map (\<lambda>x. x = 0) (takeWhile (\<lambda>x. x \<le> 1) source) =
+      digit_natural_path i @ map (\<lambda>x. x = 0) (takeWhile (\<lambda>x. x \<le> 1) rest)"
+    by (simp only: tw map_append restored)
+  then show "read_index_address source = Some (i,rest)"
+    by (simp add: read_index_address_def source)
+qed
+
 definition fresh_address :: "local_address set \<Rightarrow> local_address" where
   "fresh_address A = unary_address (Max (length ` A))"
 
@@ -147,6 +301,22 @@ proof
   have fin: "finite (length ` A)" using assms by simp
   have bound: "length (fresh_address A) \<le> Max (length ` A)"
     by (rule Max_ge[OF fin]) (use member in auto)
+  show False using bound by (simp add: fresh_address_def)
+qed
+
+text \<open>
+  No extension of the fresh address of a finite set belongs to it: a proof that places material after
+  a fresh address takes this fact, not the length of the fresh address.
+\<close>
+
+lemma fresh_address_extension_outside:
+  assumes "finite A"
+  shows "fresh_address A @ xs \<notin> A"
+proof
+  assume member: "fresh_address A @ xs \<in> A"
+  have fin: "finite (length ` A)" using assms by simp
+  have bound: "length (fresh_address A @ xs) \<le> Max (length ` A)"
+    by (rule Max_ge[OF fin]) (rule imageI[OF member])
   show False using bound by (simp add: fresh_address_def)
 qed
 
@@ -207,11 +377,11 @@ lemma finite_addressing_exists:
 proof -
   obtain g :: "'a \<Rightarrow> nat" where g: "inj_on g U"
     using finite_imp_inj_to_nat_seg[OF assms] by blast
-  have i: "inj_on (unary_address \<circ> g) U"
-    using g unary_address_inj
+  have i: "inj_on (index_address \<circ> g) U"
+    using g index_address_inj
     by (auto simp: inj_on_def inj_def)
-  have entry: "\<forall>x \<in> U. octets_formed ((unary_address \<circ> g) x)"
-    using unary_address_formed by auto
+  have entry: "\<forall>x \<in> U. octets_formed ((index_address \<circ> g) x)"
+    using index_address_formed by auto
   show ?thesis
     using i entry by (auto simp: finite_addressing_def)
 qed

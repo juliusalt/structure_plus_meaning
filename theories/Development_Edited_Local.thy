@@ -152,27 +152,27 @@ section \<open>The field \<open>excess\<close>\<close>
 theorem edited_excess:
   assumes kinds: "kinds_present replaceable (set ks)" and bound: "c<length (fst (snd S'))"
     and support: "\<And>d. d<length (fst (snd S')) \<Longrightarrow> key d\<in>set ss \<longleftrightarrow> d |\<in>| P"
-  shows "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+  shows "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (keys_term ss))
       (subject_indexes_term ident [key c] (edited_fibres R e (key c) ks)))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
-    (verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+    (verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (keys_term ss))
       (subject_indexes_term ident (map fst (state_atoms (edited_state R e))) (map (state_entities (edited_state R e)) ks)))
       \<in>positive_meaning verdict_mentions_system"
-  and "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+  and "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (keys_term ss))
       (subject_indexes_term ident [key c] (edited_fibres R e (key c) ks)))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
     development_answer_statements_excess replaceable (snd S') {|c|} P=[]"
 proof -
   have atom: "key c\<in>set (map fst (state_atoms (edited_state R e)))"
     using atoms_present_atom[OF state_presents_atoms[OF answer] bound] by force
   have own: "key c\<in>set [key c]" by simp
-  show whole: "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+  show whole: "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (keys_term ss))
       (subject_indexes_term ident [key c] (edited_fibres R e (key c) ks)))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
-    (verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+    (verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (keys_term ss))
       (subject_indexes_term ident (map fst (state_atoms (edited_state R e))) (map (state_entities (edited_state R e)) ks)))
       \<in>positive_meaning verdict_mentions_system"
     by (simp only: native_excess_rows[OF identity own] native_excess_rows[OF identity atom]
       edited_fibres_whole fibres_every)
   have selection: "set (map (state_entities (edited_state R e)) ks)=state_entities (edited_state R e) ` set ks" by simp
-  show "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (support_term ss))
+  show "(verdict_excess,Pair_Term (Pair_Term (path_term (key c)) (keys_term ss))
       (subject_indexes_term ident [key c] (edited_fibres R e (key c) ks)))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
     development_answer_statements_excess replaceable (snd S') {|c|} P=[]"
     by (simp only: whole native_excess_exact[OF answer kinds selection bound support identity])

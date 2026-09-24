@@ -1649,6 +1649,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Constructed_Program_Applications
     Presented_Term_Matching
     Formed_Call_Closures
+    Presented_Program_Applications
     Factor_Finite_Source_Construction_Sharing
     RRA_Listed_Environment_Positions
     RRA_Inserted_Attachments

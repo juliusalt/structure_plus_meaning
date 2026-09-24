@@ -118,8 +118,6 @@ definition presented_instantiated_premises :: "'p term_presentation \<Rightarrow
   "presented_instantiated_premises P S V=ffUnion (fimage (\<lambda>(s,d,p).
     fimage (\<lambda>t. (s,d,t)) (presented_pattern_instances P V p)) (finite_schema_premises S))"
 
-lemma map_value_member: "(a,u)\<in>map_prod id f ` S \<longleftrightarrow> (\<exists>w. (a,w)\<in>S \<and> u=f w)"
-  by force
 
 section \<open>Every operation commutes with decoding, once for every presentation\<close>
 
@@ -188,6 +186,10 @@ proof (induction p arbitrary: t)
   qed
 qed simp_all
 
+lemma presented_matching_bindings_domain:
+  "t\<in>D \<Longrightarrow> snd ` fset (presented_matching_bindings P p t)\<subseteq>D"
+  by (simp add: presented_matching_bindings_def fset_of_list.rep_eq presented_matching_rows_domain)
+
 theorem presented_matching_bindings_decode:
   "t\<in>D \<Longrightarrow> fimage (map_prod id (presented_decode P)) (presented_matching_bindings P p t)=
     finite_matching_bindings p (presented_decode P t)"
@@ -197,23 +199,13 @@ theorem presented_matching_bindings_decode:
 lemma rows_functional_decode:
   assumes bounded: "snd ` set xs\<subseteq>D"
   shows "relation_rows_functional (map (map_prod id (presented_decode P)) xs) \<longleftrightarrow> relation_rows_functional xs"
-  unfolding relation_rows_functional_exact single_valued_def list.set_map
-proof (intro iffI allI impI)
-  fix a u w
-  assume mapped: "\<forall>x y z. (x,y)\<in>map_prod id (presented_decode P) ` set xs \<longrightarrow>
-      (x,z)\<in>map_prod id (presented_decode P) ` set xs \<longrightarrow> y=z"
-    and rows: "(a,u)\<in>set xs" "(a,w)\<in>set xs"
-  have "(a,presented_decode P u)\<in>map_prod id (presented_decode P) ` set xs"
-    "(a,presented_decode P w)\<in>map_prod id (presented_decode P) ` set xs"
-    using rows by (simp_all add: map_value_member) blast+
-  then have "presented_decode P u=presented_decode P w" by (rule mapped[rule_format])
-  moreover have "u\<in>D" "w\<in>D" using rows bounded by force+
-  ultimately show "u=w" using decides by blast
-next
-  fix a u w
-  assume plain: "\<forall>x y z. (x,y)\<in>set xs \<longrightarrow> (x,z)\<in>set xs \<longrightarrow> y=z"
-    and "(a,u)\<in>map_prod id (presented_decode P) ` set xs" "(a,w)\<in>map_prod id (presented_decode P) ` set xs"
-  then show "u=w" by (auto simp: map_value_member)
+proof -
+  have rows: "map_prod id (presented_decode P) ` set xs=map_relation_values (presented_decode P) (set xs)"
+    by (simp add: map_relation_values_def map_prod_def)
+  have "inj_on (presented_decode P) (rel_ran (set xs))"
+    using bounded unfolding inj_on_def rel_ran_image by (blast intro: decides)
+  then show ?thesis
+    unfolding relation_rows_functional_exact list.set_map rows by (rule map_relation_values_functional_on)
 qed
 
 theorem presented_matching_functional_decode:
@@ -298,11 +290,16 @@ lemma plain_term_presentation_fields [simp]:
 interpretation plain_terms: presented_terms plain_term_presentation UNIV
   by unfold_locales (simp_all add: term_view.map_id)
 
+text \<open>
+  Each identity instance is the commutation proved once for every presentation, taken at the plain
+  presentation, whose decoding is the identity: no operation is argued again.
+\<close>
+
 theorem plain_pattern_fits: "presented_pattern_fits plain_term_presentation p t \<longleftrightarrow> finite_pattern_fits p t"
-  by (induction p arbitrary: t) (auto split: finite_factor_term.splits)
+  using plain_terms.presented_pattern_fits_decode[of t p] by simp
 
 theorem plain_matching_rows: "presented_matching_rows plain_term_presentation p t=finite_matching_rows p t"
-  by (induction p arbitrary: t) (auto split: finite_factor_term.splits)
+  using plain_terms.presented_matching_rows_decode[of t p] by (simp add: map_prod.id)
 
 theorem plain_matching_bindings:
   "presented_matching_bindings plain_term_presentation p t=finite_matching_bindings p t"
@@ -314,7 +311,7 @@ theorem plain_matching_functional:
 
 theorem plain_pattern_instances:
   "presented_pattern_instances plain_term_presentation V p=finite_pattern_instances V p"
-  by (induction p) simp_all
+  using plain_terms.presented_pattern_instances_decode[of V p] by (simp add: map_prod.id)
 
 theorem plain_instantiated_premises:
   "presented_instantiated_premises plain_term_presentation S V=finite_instantiated_premises S V"

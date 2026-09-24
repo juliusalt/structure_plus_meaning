@@ -36,7 +36,7 @@ on, all accepted:
 **The first problem's route** (#380's, #382's and #409's proposals, each build with its review; #385, #387, #389, #420
 and #422 landed):
 
-- first: the use instance's package reading at a renamed root use (#424, continuing #422's `Factor_Use_Renaming`,
+- landed: the use instance's package reading at a renamed root use (#424, `bf8e77b2`, over #422's `Factor_Use_Renaming`,
   whose imports stay below the reader theories #416 and #418 edit); the guard (#391, landed `bcb17f7a`: `Development_First_Problem_Guard`),
   which generalizes #389's boundary where it lives, its list's context the pair of the given and the candidate, so that
   G4's audit reads the candidate's environment (q88);
@@ -58,7 +58,9 @@ corrects it), the given the first answers extend; its environment (`development_
 publication needs (#343's review, follow-up 2, mailed to #414 and #395). The readers' presentation (#412) derives in about 132 s,
 reducing the whole complete-data lineage again (implement-412, q89): the fix after #412, continuing it, derives it from
 its parts', and at its landing #393's brief gains that derivation, so that the guard's extension reduces only what it
-adds.
+adds. #431 also states the rooted readers' program the given carries — the entries' closure, not #412's 137-definition
+union, whose 42 unreached definitions the given does not need (#413's follow-up 4, the planner's decision) — which #414
+installs and waits on; the union stays the guard's program.
 
 **Beside the route**: the bootstrap loop's maintenance — #426, #341's, #388's and #375's follow-ups
 over the joined program's, the audit's and the collection programs' generic content (after #342 and #418). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
@@ -77,12 +79,12 @@ exporter's obligations at every state it defines (#227–#308, #352).
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The deepest chain is 9: #424 → #416 → #418 → #393 → #397 → #399 → #401 →
-#407 → #408, and through the given one shorter (#412 → #414 → #393 → …).
+**Shape.** No build waits on a review task. The deepest chains are 8: #416 → #418 → #393 → #397 → #399 → #401 →
+#407 → #408, and through the given #431 → #414 → #393 → ….
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #424 at its head, then #412 and the fix deriving its presentation from its parts,
-#414, #416, #418, #410, the frame's fix and the rest in their chains' order, #425 before the posing it serves; then
+exists, Q2): the owner's directions first — the first problem's route, #416 and the fix deriving the readers' presentation from its parts (#431) at its head, then
+#414, #418, #410, the frame's fix and the rest in their chains' order; then
 #426; each review after its build.
 
 ## Decisions
@@ -263,6 +265,14 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   `Factor_Package_Additions` (q88); its review's follow-ups (`.build/tasks/392/review.md`): 1, `given_member_use` and
   task 381's "none implies another" in #426, the native evaluability of sites 392 and 525 mailed to #393, the per-layer
   agreements Open 137.
+- **Landed with `bf8e77b2`**: #424, the package reading at a renamed root use added to `Factor_Use_Renaming` — the
+  relocated package exactly, its positive meaning transported, the site action from the notion's product, the use-pair
+  action beside the data clauses, which #418 cites; its review's follow-up 1 is Open 138.
+- **Landed with `44ab5a8a`**: #412, `Development_Given_Readers`, the given's Factor readers as one numbered program —
+  the union `guard_readers_system` (137 definitions, 42 no entry reaches), each reader's meaning at the program, its
+  finite presentation with derived code (121 s at load), its payloads (the empty payload alone); its review's
+  follow-ups (`.build/tasks/413/review.md`) 1, 3 and 4 mailed to #431 (the given carries the entries' closure, rooted;
+  #414 waits on #431), 2 is #431, 5 in Open 121.
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
@@ -336,7 +346,8 @@ The owner's questions, a line each (their words and the provisional choices in f
    uses among themselves), observations of ground clauses and target leaves, each failure recorded against the
    candidate (`Observation_Repairs`); with #381's follow-up 3, the leaf argument for programs with material premises
    (`Factor_Positive_Parametricity`), at the first answer whose added definitions hold one; parts (e), (g) and (h) as
-   #428's entry leaves them to criticism.
+   #428's entry leaves them to criticism; every given reader reaches a material premise (sites 1, 10 or 45,
+   #413's review), so part (g) bites at the given's readers too.
 111. The HOL-constant loop's retirement (#357's follow-ups, `.build/tasks/357/result.md`): when the first answer is
    admitted and problems are posed again under it, the machinery's HOL residuals superseded (Q18 (d)), the seed's
    refinement problems no longer selected or issued, the records kept as history; #320's "Beside the bootstrap loop"
@@ -461,7 +472,11 @@ follow-ups 1 and 3: `Factor_Native_Node_Cases.native_node_empty_environment` and
 `Factor_Native_History_Cases.native_history_empty_program` reading the generic `finite_empty_environment` and
 `empty_installation_program`, at the case theories' next edit; the package's reach, evaluated by code_simp at every
 rebuild (about 12 s), certified once for the whole program if the notions grow, measured first. 137 an agreement exported per layer along `complete_data_admission_system` in place
-of whole-chain unfoldings (#392's review), at the lineage's next use — #431's derivation from parts reads the same chain.
+of whole-chain unfoldings (#392's review), at the lineage's next use — #431's derivation from parts reads the same chain. 138
+`Inference_Embeddings.map_relation_values_range` into `Bootstrap_Relations` beside `map_relation_values_domain`,
+`Factor_Use_Renaming.rel_ran_map_relation_values` retired, and the generic `rtrancl_injective_image` and
+`surjective_image_eq` beside their notions, with the next build that edits `Bootstrap_Relations`, a full rebuild
+(#427's review).
 
 ## Now
 

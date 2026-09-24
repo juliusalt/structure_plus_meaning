@@ -326,7 +326,7 @@ lemma read_clause:
   assumes member: "((site,c),S)\<in>system_clauses P"
     and support: "\<forall>s e r. (s,e,r)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern f r)\<in>Y"
     and shape: "evaluate_pattern f (schema_conclusion S)=t"
-    and read: "\<And>c p ps. (c,finite_native_rule p ps)\<in>set rules \<Longrightarrow>
+    and read: "\<And>b p ps. (b,finite_native_rule p ps)\<in>set rules \<Longrightarrow>
       \<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>Y \<Longrightarrow>
       evaluate_pattern f (decode_finite_pattern p)=t \<Longrightarrow> Q"
   shows Q
@@ -380,6 +380,18 @@ proof (rule native_step[OF rule _ support])
     using unread read by blast
 qed
 
+text \<open>
+  The step at a rule of the family, the evaluation formed on the whole conclusion: no set difference of
+  variables is left to the use.
+\<close>
+
+theorem step_rule:
+  assumes rule: "(c,finite_native_rule p ps)\<in>set rules"
+    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
+    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+  shows "(site,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
+  by (rule step_at[OF rule _ support]) (use formed in blast)
+
 theorem exact:
   "(site,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>c p ps f. (c,finite_native_rule p ps)\<in>set rules \<and>
     (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
@@ -419,6 +431,104 @@ lemma native_rule_lawI:
   assumes "native_rule_family P site rules" "\<And>c F. (c,F)\<in>set rules \<Longrightarrow> \<exists>p ps. F=finite_native_rule p ps"
   shows "native_rule_law P site rules"
   unfolding native_rule_law_def native_rule_law_axioms_def using assms by blast
+
+section \<open>A family listed by its rules' parts\<close>
+
+text \<open>
+  A family is written as the rules of a listing of triples, each a clause key, a conclusion and a premise list
+  (@{text native_rule_listing}). Over such a listing the law returns, for a call that holds, the triple of the
+  rule it applied (@{text holds_triple}): which rule applied is read here once, by the rule constructor's
+  injectivity (@{thm [source] finite_native_rule_eq_iff}), and no use decodes a rule again. A step at a listed
+  triple needs formation on the conclusion's variables alone (@{text step_triple}).
+\<close>
+
+definition native_rule_listing :: "(local_address\<times>local_address finite_term_pattern\<times>
+    (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list \<Rightarrow>
+    (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
+  "native_rule_listing ts=map (\<lambda>(c,p,ps). (c,finite_native_rule p ps)) ts"
+
+lemma native_rule_listing_member:
+  "(c,F)\<in>set (native_rule_listing ts) \<longleftrightarrow> (\<exists>p ps. (c,p,ps)\<in>set ts \<and> F=finite_native_rule p ps)"
+proof
+  assume "(c,F)\<in>set (native_rule_listing ts)"
+  then show "\<exists>p ps. (c,p,ps)\<in>set ts \<and> F=finite_native_rule p ps" by (auto simp: native_rule_listing_def)
+next
+  assume "\<exists>p ps. (c,p,ps)\<in>set ts \<and> F=finite_native_rule p ps"
+  then obtain p ps where member: "(c,p,ps)\<in>set ts" and F: "F=finite_native_rule p ps" by blast
+  have "(\<lambda>(c,p,ps). (c,finite_native_rule p ps)) (c,p,ps)\<in>(\<lambda>(c,p,ps). (c,finite_native_rule p ps)) ` set ts"
+    by (rule imageI[OF member])
+  then show "(c,F)\<in>set (native_rule_listing ts)" by (simp add: native_rule_listing_def F)
+qed
+
+locale native_listed_law = native_rule_family P site "native_rule_listing ts"
+  for P :: "'u native_system" and site :: "'u definition_site"
+    and ts :: "(local_address\<times>local_address finite_term_pattern\<times>
+      (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list"
+begin
+
+sublocale law: native_rule_law P site "native_rule_listing ts"
+  by (rule native_rule_lawI[OF native_rule_family_axioms]) (auto simp: native_rule_listing_member)
+
+lemma holds_triple:
+  assumes holds: "(site,t)\<in>positive_meaning P"
+  obtains c p ps f where "(c,p,ps)\<in>set ts"
+    "\<forall>a\<in>pattern_variables (decode_finite_pattern p) \<union>
+      (\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)). term_formed (f a)"
+    "evaluate_pattern f (decode_finite_pattern p)=t"
+    "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+proof -
+  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (native_rule_listing ts)"
+    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p) \<union>
+      (\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)). term_formed (f a)"
+    and evaluated: "evaluate_pattern f (decode_finite_pattern p)=t"
+    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    by (rule law.holds_rule[OF holds])
+  obtain p' ps' where triple: "(c,p',ps')\<in>set ts" and same: "finite_native_rule p ps=finite_native_rule p' ps'"
+    using rule by (auto simp: native_rule_listing_member)
+  have pattern: "p=p'" and premises_same: "set ps=set ps'" using same by (simp_all add: finite_native_rule_eq_iff)
+  show thesis
+    by (rule that[OF triple]) (use formed evaluated support in \<open>simp_all only: pattern premises_same\<close>)
+qed
+
+theorem step_triple:
+  assumes triple: "(c,p,ps)\<in>set ts"
+    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
+    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+  shows "(site,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
+  by (rule law.step_rule[OF _ formed support]) (use triple in \<open>auto simp: native_rule_listing_member\<close>)
+
+theorem exact:
+  "(site,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>(c,p,ps)\<in>set ts. \<exists>f.
+    (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+    evaluate_pattern f (decode_finite_pattern p)=t \<and>
+    (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P))"
+proof
+  assume holds: "(site,t)\<in>positive_meaning P"
+  obtain c p ps f where "(c,p,ps)\<in>set ts"
+    "\<forall>a\<in>pattern_variables (decode_finite_pattern p) \<union>
+      (\<Union>(k,d,q)\<in>set ps. pattern_variables (decode_finite_pattern q)). term_formed (f a)"
+    "evaluate_pattern f (decode_finite_pattern p)=t"
+    "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    by (rule holds_triple[OF holds])
+  then show "\<exists>(c,p,ps)\<in>set ts. \<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+      evaluate_pattern f (decode_finite_pattern p)=t \<and>
+      (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
+    by blast
+next
+  assume "\<exists>(c,p,ps)\<in>set ts. \<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
+    evaluate_pattern f (decode_finite_pattern p)=t \<and>
+    (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
+  then obtain c p ps f where triple: "(c,p,ps)\<in>set ts"
+    and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)"
+    and evaluated: "evaluate_pattern f (decode_finite_pattern p)=t"
+    and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
+    by blast
+  have "(site,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
+    by (rule step_triple[OF triple formed support])
+  then show "(site,t)\<in>positive_meaning P" by (simp only: evaluated)
+qed
+
+end
 
 section \<open>Membership in a list\<close>
 
@@ -582,8 +692,6 @@ proof -
   qed
 qed
 
-
-
 lemma relation_equation:
   "(e,t)\<in>positive_meaning P \<longleftrightarrow> (\<exists>a. t=Pair_Term a (Payload_Term []) \<and> term_formed a) \<or>
     (\<exists>a x y. t=Pair_Term a (Pair_Term x y) \<and> (el,Pair_Term a x)\<in>positive_meaning P \<and>
@@ -669,6 +777,11 @@ definition native_some_rest :: "'u definition_site \<Rightarrow>
     (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
     [([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
 
+text \<open>The rest rule is membership's later rule at the traversal's own site: one rule value.\<close>
+
+lemma native_some_rest_member_later: "native_some_rest s=native_member_later s"
+  by (simp add: native_some_rest_def native_member_later_def)
+
 definition native_some_rules :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
     (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
   "native_some_rules s el=[([0],native_some_first el),([1],native_some_rest s)]"
@@ -679,7 +792,7 @@ begin
 
 sublocale law: native_rule_law P s "native_some_rules s el"
   by (rule native_rule_lawI[OF native_rule_family_axioms])
-    (simp add: native_some_rules_def native_some_first_def native_some_rest_def; blast)
+    (simp add: native_some_rules_def native_some_first_def native_some_rest_member_later native_member_later_def; blast)
 
 lemma unfold_rule:
   assumes rule: "(c,finite_native_rule p ps)\<in>set (native_some_rules s el)"
@@ -697,7 +810,7 @@ proof -
     show ?thesis using shape premise by (auto simp: F data_list_term_pair)
   next
     assume "finite_native_rule p ps=native_some_rest s"
-    note F=this[unfolded native_some_rest_def finite_native_rule_eq_iff]
+    note F=this[unfolded native_some_rest_member_later native_member_later_def finite_native_rule_eq_iff]
     have premise: "(s,Pair_Term (f [0]) (f [2]))\<in>Y" using support by (simp add: F)
     show ?thesis using shape premise by (auto simp: F data_list_term_pair)
   qed
@@ -718,7 +831,7 @@ proof
       and "evaluate_pattern f (decode_finite_pattern p)=Pair_Term x (data_list_term [])"
       using Nil.prems[unfolded law.exact] by blast
     then show ?case
-      by (auto simp: native_some_rules_def native_some_first_def native_some_rest_def finite_native_rule_eq_iff)
+      by (auto simp: native_some_rules_def native_some_first_def native_some_rest_member_later native_member_later_def finite_native_rule_eq_iff)
   next
     case (Cons h hs)
     obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (native_some_rules s el)"
@@ -760,7 +873,7 @@ next
           (decode_finite_pattern (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))))
           \<in>positive_meaning P"
         by (rule law.step_at[where c="[1]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-          (use inner xf hf wf in \<open>simp_all add: insert_Diff_if native_some_rules_def native_some_rest_def\<close>)
+          (use inner xf hf wf in \<open>simp_all add: insert_Diff_if native_some_rules_def native_some_rest_member_later native_member_later_def\<close>)
       then show ?thesis by simp
     qed
   qed
@@ -1022,12 +1135,14 @@ proof -
 qed
 
 text \<open>
-  A program whose definitions begin with definitions another program holds, the two sharing a leading
-  prefix, holds its definitions as that prefix and its own rest: the split every join of such programs reads.
+  A list's members are those of its first @{term n} elements and of the rest: the split a join of two programs
+  sharing a leading prefix of definitions reads (@{text finite_rule_program_prefix}, its name at those joins).
 \<close>
 
-lemma finite_rule_program_prefix: "set ds=set (take n ds)\<union>set (drop n ds)"
+lemma set_take_drop_union: "set xs=set (take n xs)\<union>set (drop n xs)"
   by (metis append_take_drop_id set_append)
+
+lemmas finite_rule_program_prefix = set_take_drop_union
 
 section \<open>A single premise that calls a callee on a rearrangement of the conclusion's variables\<close>
 
@@ -1093,6 +1208,9 @@ begin
 sublocale law: native_rule_law P s "[([0],finite_native_rule p ps)]"
   by (rule native_rule_lawI[OF native_rule_family_axioms]) auto
 
+sublocale triples: native_listed_law P s "[([0],p,ps)]"
+  using native_rule_family_axioms by (simp add: native_listed_law_def native_rule_listing_def)
+
 text \<open>
   The site holds of a term exactly when some evaluation formed on the conclusion's variables evaluates the
   conclusion to it and every premise holds at that evaluation: the law at its one rule, whose own case
@@ -1106,13 +1224,13 @@ theorem exact:
     (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P))"
 proof
   assume holds: "(s,t)\<in>positive_meaning P"
-  obtain c p' ps' g where rule: "(c,finite_native_rule p' ps')\<in>set [([0::nat],finite_native_rule p ps)]"
+  obtain c p' ps' g where rule: "(c,p',ps')\<in>set [([0::nat],p,ps)]"
     and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p') \<union>
       (\<Union>(k,d,q)\<in>set ps'. pattern_variables (decode_finite_pattern q)). term_formed (g a)"
     and evaluated: "evaluate_pattern g (decode_finite_pattern p')=t"
     and support: "\<forall>(k,d,q)\<in>set ps'. (d,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
-    by (rule law.holds_rule[OF holds])
-  have pattern: "p'=p" and listed: "set ps'=set ps" using rule by (simp_all add: finite_native_rule_eq_iff)
+    by (rule triples.holds_triple[OF holds])
+  have pattern: "p'=p" and listed: "set ps'=set ps" using rule by simp_all
   show "\<exists>f. (\<forall>a\<in>pattern_variables (decode_finite_pattern p). term_formed (f a)) \<and>
       evaluate_pattern f (decode_finite_pattern p)=t \<and>
       (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
@@ -1126,7 +1244,7 @@ next
     and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
     by blast
   have "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
-    by (rule law.step_at[where c="[0]", OF _ _ support]) (use formed in auto)
+    by (rule triples.step_triple[where c="[0]", OF _ formed support]) simp
   then show "(s,t)\<in>positive_meaning P" by (simp only: evaluated)
 qed
 
@@ -1137,13 +1255,13 @@ theorem at:
     (\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P)"
 proof
   assume holds: "(s,evaluate_pattern f (decode_finite_pattern p))\<in>positive_meaning P"
-  obtain c p' ps' g where rule: "(c,finite_native_rule p' ps')\<in>set [([0::nat],finite_native_rule p ps)]"
+  obtain c p' ps' g where rule: "(c,p',ps')\<in>set [([0::nat],p,ps)]"
     and formed: "\<forall>a\<in>pattern_variables (decode_finite_pattern p') \<union>
       (\<Union>(k,d,q)\<in>set ps'. pattern_variables (decode_finite_pattern q)). term_formed (g a)"
     and evaluated: "evaluate_pattern g (decode_finite_pattern p')=evaluate_pattern f (decode_finite_pattern p)"
     and support: "\<forall>(k,d,q)\<in>set ps'. (d,evaluate_pattern g (decode_finite_pattern q))\<in>positive_meaning P"
-    by (rule law.holds_rule[OF holds])
-  have pattern: "p'=p" and listed: "set ps'=set ps" using rule by (simp_all add: finite_native_rule_eq_iff)
+    by (rule triples.holds_triple[OF holds])
+  have pattern: "p'=p" and listed: "set ps'=set ps" using rule by simp_all
   have agree: "\<And>a. a\<in>pattern_variables (decode_finite_pattern p) \<Longrightarrow> g a=f a"
     by (rule evaluate_pattern_agree[OF evaluated[unfolded pattern]])
   have same: "evaluate_pattern g (decode_finite_pattern q)=evaluate_pattern f (decode_finite_pattern q)"

@@ -12322,7 +12322,8 @@ Development_Native_Readiness and Native_Table_Reach cite them [corrected 2026-09
 composition they were is the law's `read_clause` (a reading of every rule of the family at a clause's evaluated
 conclusion is a reading of the clause), which the three uses — readiness's some and every cases and the reach's some
 case — cite with the program's `unfold_rule`, and the clauses of a one-rule, one-premise site are read by
-`native_rearranging_program.supported`].
+`native_rearranging_program.supported`] [corrected 2026-09-24, task 374: the uses of `read_clause` stand in
+`Development_Native_Readiness` (its some and every cases) and `Native_Table_Reach` (its some case)].
 
 Re-cited (task 235): the value rule's contract is stated once beside `native_value_rule` in Development_Located_Rows
 (`native_value_program`, its `exact`: the site holds of `Pair_Term x y` exactly when `x` is formed and `x=y`), and
@@ -14635,3 +14636,21 @@ programs join the development package after N2; until then they stand at sites o
 design was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 373's decision; a design, no theory changes).
+
+## A listed family returns the rule it applied
+
+Task 374, #295's question. A multi-rule family's "which rule applied" was read at each use by the constructor's
+injectivity (`finite_native_rule_eq_iff` after `holds_rule`). It is now read once. A family written as the rules of a
+listing of triples `(c,p,ps)` (`native_rule_listing`) has the law as `native_listed_law`, derived from
+`native_rule_law`: `holds_triple` returns the triple a holding call applied, `step_triple` introduces at a listed
+triple with formation on the conclusion alone, and `exact` ranges over the triples. The law itself gains `step_rule`,
+`step_at` without the set difference its concrete calls simplified with `insert_Diff_if`. The one-rule
+`native_conjunction_program` takes the listed form (sublocale `triples`) and no longer decodes its rule. The six
+decodings outside this theory (`permitted_row_program`, `row_formed_program`, `native_decomposition_progress`,
+Unreached, Request_Citations, Witnesses) are re-cited by the task after this one; the collection notions'
+`unfold_rule` proofs in this theory decode at any support relation, which the listed form does not state, and stay.
+`finite_rule_program_prefix` is the list fact `set_take_drop_union` under its old name. `native_some_rest s` is
+membership's later rule (`native_some_rest_member_later`), cited so where the some program reads it; its definition
+is kept, since a recorded state may expand it.
+
+Recorded 2026-09-24 (task 374).

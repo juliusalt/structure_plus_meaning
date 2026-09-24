@@ -124,7 +124,8 @@ class UnproducedRuns(unittest.TestCase):
             original = replay.run_harness
             replay.run_harness = harness
             try:
-                name, row = replay.replay(path, directory / 'out', 10, rerecord, directory / 'parts.json')
+                name, row = replay.replay(path, directory / 'out', 10, rerecord, directory / 'parts.json',
+                                          directory / 'proof.json')
             finally:
                 replay.run_harness = original
             return row, json.loads(path.read_text()), commands[0]
@@ -138,8 +139,18 @@ class UnproducedRuns(unittest.TestCase):
         self.assertEqual((row['verdict_word'], row['expected_verdict_word']), ('new', 'new'))
         self.assertEqual(row['replaced']['verdict_word'], 'old')
         self.assertEqual((written['verdict_word'], written['executor_sha256']), ('new', 'kept'))
-        self.assertEqual(command[-2:], ['--parts', command[-1]])
+        self.assertEqual(command[-4:], ['--parts', command[-3], '--proof', command[-1]])
         self.assertEqual(replay.answer_groups({'answer': row}), NONE)
+
+    def test_a_parts_reading_that_could_not_be_read_is_unproduced_and_not_failed(self):
+        record = {'answer': {'request': {}}, 'status': 'refused', 'refusal': 'r'}
+        row, written, command = self.replayed(record, {'status': 'failed', 'judgment': False,
+                                                       'error': "The answer's parts could not be read."}, True)
+        self.assertFalse(row['produced'])
+        self.assertIsNone(row['status'])
+        self.assertEqual(row['error'], "The answer's parts could not be read.")
+        self.assertEqual(written, record)
+        self.assertEqual(replay.answer_groups({'answer': row}), {**NONE, 'unproduced': ['answer']})
 
     def test_without_rerecording_a_changed_word_still_differs(self):
         record = {'answer': {'request': {}}, 'status': 'judged', 'verdict_word': 'old', 'publication_word': 'p'}
@@ -178,11 +189,60 @@ class UnproducedRuns(unittest.TestCase):
             original = replay.development_answer.read_parts
             replay.development_answer.read_parts = read_parts
             try:
-                paths, seconds = replay.read_shared_parts(records, directory / 'out', 10)
+                paths, seconds = replay.read_shared_parts(records, directory, directory / 'out', 10)
             finally:
                 replay.development_answer.read_parts = original
             self.assertEqual(sorted(paths), ['accepted', 'refused'])
             self.assertEqual(json.loads(paths['refused'].read_text())['refusal'], outcomes['refused'][1])
+
+    def shared_proofs(self, accepted):
+        """Records of seeded and layer answers, their parts readings, and a session that is accepted or not."""
+        def answer(stem, state, subject):
+            return {'request': {'state': state, 'subject': subject}, 'definitions': '',
+                    'equation': 'c_' + stem.replace('-', '_') + ' = True', 'proof': 'by simp'}
+        cases = {'seed-a': ('development_seed', 'T.s', 'judged', 0), 'seed-b': ('development_seed', 'T.s', 'judged', 0),
+                 'seed-failed': ('development_seed', 'T.s', 'failed', 0),
+                 'seed-refused': ('development_seed', 'T.s', 'refused', 1),
+                 'layer-x1': ('refinement_layer', 'T.x', 'judged', 0), 'layer-x2': ('refinement_layer', 'T.x', 'judged', 0),
+                 'layer-y': ('refinement_layer', 'T.y', 'judged', 0)}
+        calls = []
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            records, parts = [], {}
+            for stem, (state, subject, status, code) in cases.items():
+                records.append(directory / (stem + '.json'))
+                records[-1].write_text(json.dumps({'answer': answer(stem, state, subject), 'status': status}))
+                parts[stem] = directory / (stem + '-parts.json')
+                parts[stem].write_text(json.dumps({'exit_code': code}))
+
+            def prove_answers(answers, base, output, timeout):
+                calls.append(sorted(a['equation'] for a in answers))
+                output.mkdir(parents=True)
+                return {replay.development_answer.answer_digest(a): {'exit_code': 0 if accepted else 1, 'session': 's'}
+                        for a in answers}
+            original = replay.development_answer.prove_answers
+            replay.development_answer.prove_answers = prove_answers
+            try:
+                paths, report, kept = replay.read_shared_proofs(records, parts, directory, directory / 'out', 10)
+            finally:
+                replay.development_answer.prove_answers = original
+            return calls, sorted(paths), report, kept
+
+    def test_answers_of_one_request_theory_share_a_proof_session(self):
+        calls, paths, report, kept = self.shared_proofs(True)
+        # The seeded answers join the first layer subject's session; the other subject has one answer, so no
+        # session; the answers retained failed or refused at their parts are proved alone.
+        self.assertEqual(calls, [['c_layer_x1 = True', 'c_layer_x2 = True', 'c_seed_a = True', 'c_seed_b = True']])
+        self.assertEqual(paths, ['layer-x1', 'layer-x2', 'seed-a', 'seed-b'])
+        self.assertEqual([(session['answers'], session['accepted']) for session in report],
+                         [(['layer-x1', 'layer-x2', 'seed-a', 'seed-b'], True)])
+        self.assertEqual(kept, ['s'])
+
+    def test_a_proof_session_not_accepted_leaves_every_answer_to_prove_itself(self):
+        calls, paths, report, kept = self.shared_proofs(False)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual((paths, kept), ([], []))
+        self.assertEqual([session['accepted'] for session in report], [False])
 
     def test_a_harness_that_cannot_be_started_leaves_its_answer_unproduced(self):
         with tempfile.TemporaryDirectory() as temporary:

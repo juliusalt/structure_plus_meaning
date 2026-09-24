@@ -66,6 +66,15 @@ holds that module's whole import closure as the replayed sources have it. On a b
 imports) `export_proved_code.py` refuses the export and the native records come out unproduced by
 construction, which is neither a differing word nor a failed build.
 
+A replay reads the active base, and every harness step rebuilds the theories the tree changes against
+that base: a replay is run on a tree current with the active base. On a tree behind it the parts reading
+of one refused control took 328 s, against 49 s on a current tree (task 313). The replay reads the parts
+of every framed answer in one session, then proves the theories of every answer it accepted and whose
+record is judged in one session more (answers of two layer subjects in two, an answer retained as failed
+alone), each answer's verification theory its own; an answer of a session that is not accepted is proved
+in its own session, and a parts reading that left neither an acceptance nor a refusal is unproduced. The
+report gives the seconds of the shared sessions once (`shared_parts`, `shared_proofs`, `shared_seconds`).
+
 `demanded-identity.json` answers a request derived on demand in the refinement layer (state
 `refinement_layer`): the harness exports the state of `Ordered_Member_Trees.ordered_member_tree`
 alone from `Native_Execution_Refinements`, and the answer restates its code equation. It is accepted,

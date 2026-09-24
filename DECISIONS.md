@@ -12587,7 +12587,8 @@ Each is one window; each instantiates existing notions and adds no second one.
    `Native_Path_Store_Indexes`: the store of a listing filtered to a key set has the full store's lookup at every kept
    key. Instances: `Carrier_Indexes`, `Native_Path_Store_Indexes`, `Binary_Store_Indexes`, `Native_Path_Stores`.
 2. **The edit and the answer state's presentation from it.** `state_edit` (`N`, and `D`, `A` by kind), `edited_state`,
-   `state_assessment`, and the constructor's contract — `state_presents`, `keys_shared`, `edit_reduced`, equal root
+   `state_assessment` [correction, task 192: `state_assessment` is defined with build 6, in
+   `Development_Incremental_Verdict`, so that build 2 could start at once], and the constructor's contract — `state_presents`, `keys_shared`, `edit_reduced`, equal root
    families — for the native answer state (`development_native_answer_state`) with the edit read from the answer, under
    the condition that no specification of `R` mentions a constant whose development declaration the edit adds or
    removes. Instances: `Development_State_Rows`, `Development_State_Presenter`, `Development_Verdict_Difference`,

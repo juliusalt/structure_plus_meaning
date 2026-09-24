@@ -12279,7 +12279,7 @@ rule's conclusion and premise set back from its value.
   program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's
   `supported_clause`; corrected 2026-09-22, task 275: the four `unfold` corollaries are gone and their composition
   is stated once as the law's `read_clause`, which a use cites with the program's own `unfold_rule`] [corrected 2026-09-24, task 379: those uses stand in
-`Development_Native_Readiness` and `Native_Table_Reach`, and cite the listed form `triples.read_triple`], the inversion
+  `Development_Native_Readiness` and `Native_Table_Reach`, and cite the listed form `triples.read_triple`], the inversion
   of one rule application supported in an arbitrary relation, which least-fixed-point
   arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
   the law's single step does not carry.
@@ -14374,6 +14374,8 @@ name kept is the one with nearly all the uses. No recorded state reads either co
 rearranging instances cite it. `native_store_search_program.held_at` states the search at a key where the store holds
 a value; `development_row_lookup_at` and `native_request_admitted` cite it. `finite_rule_program_prefix` states the
 split of a program sharing a leading prefix with another, which the joins of the verdict and the decomposition read.
+[corrected 2026-09-24, task 375: `finite_rule_program_prefix` is retired (task 379); the split is the list fact
+`set_take_drop_union` of `Listed_Set_Unions`, which those joins cite.]
 
 Recorded 2026-09-24 (task 295).
 ## The native notion of a problem: what its kind asks of its subject, at a locus of the store
@@ -14703,6 +14705,14 @@ uses cite `set_take_drop_union`, which now stands in `Listed_Set_Unions`. `nativ
 value, so no recorded word changed (the repository's check passed with every word equal). What stays: the reach's
 own family (`reach_holds_family` in `Native_Table_Reach`) still decodes its clause by `finite_native_rule_eq_iff` in
 `native_reached_search`'s invariant, and the six decodings outside these theories are the next task's (#375).]
+
+[corrected 2026-09-24, task 375: the reach's family (`reach_holds_family` at `reach_holds_listing`) and the six
+families (`permitted_row_program`, `row_formed_program`, `decomposition_applies_family`, `row_reached_program`,
+`context_sound_row_program`, and the witnesses' `excess_witness_family` and `undeclared_witness_family`) are listed
+instances, each at its family's listing stated once, and so is `Development_Edited_Reach`'s `mention_kept_program`,
+whose `exact` read `holds_cases` and `native_step`; no `finite_native_rule_eq_iff` decoding of an applied rule remains
+outside `rule_triple`, and no step of these families adds `insert_Diff_if`. `native_value_program` and
+`conjoined_calls_program` bring the law through their sublocale `conjunction` alone.]
 
 Recorded 2026-09-24 (task 374).
 ## The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer

@@ -755,6 +755,38 @@ next
   then show ?thesis using a b False by auto
 qed
 
+text \<open>
+  The canonical form of a term folds the canonical constructors over it: it is canonical and decodes to
+  the term, so by canonicity it is the only canonical shared term that does (@{text shared_form_canonical}).
+\<close>
+
+fun shared_form :: "(shape \<Rightarrow> nat option) \<Rightarrow> finite_factor_term \<Rightarrow> shared_term" where
+  "shared_form look (Finite_Pair t u)=shared_pair look (shared_form look t) (shared_form look u)"
+| "shared_form look (Finite_Payload v)=shared_leaf look (Payload_Leaf v)"
+| "shared_form look (Finite_Target a)=shared_leaf look (Target_Leaf a)"
+
+theorem shared_form_exact:
+  assumes formed: "table_formed T"
+  shows "shared_canonical T (shared_form (table_find T) t) \<and> shared_decode T (shared_form (table_find T) t)=Some t"
+proof (induction t)
+  case (Finite_Target a)
+  show ?case using shared_leaf_exact[OF formed, of "Target_Leaf a"] by simp
+next
+  case (Finite_Payload v)
+  show ?case using shared_leaf_exact[OF formed, of "Payload_Leaf v"] by simp
+next
+  case (Finite_Pair t u)
+  then show ?case
+    using shared_pair_exact[OF formed, of "shared_form (table_find T) t" "shared_form (table_find T) u"]
+    by (simp add: pair_decoded_def)
+qed
+
+corollary shared_form_canonical:
+  assumes formed: "table_formed T" and canonical: "shared_canonical T s" and decoded: "shared_decode T s=Some t"
+  shows "shared_form (table_find T) t=s"
+  using shared_canonical_equality[OF formed shared_form_exact[OF formed, THEN conjunct1] canonical]
+    shared_form_exact[OF formed, of t] decoded by simp
+
 subsection \<open>The view\<close>
 
 datatype term_view = Leaf_View factor_leaf | Pair_View shared_term shared_term

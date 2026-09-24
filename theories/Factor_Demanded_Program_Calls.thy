@@ -21,8 +21,7 @@ text \<open>
 \<close>
 
 definition finite_application_premise_calls ::
-    "('d\<times>'c\<times>finite_factor_term\<times>('a\<times>finite_factor_term) fset\<times>('s\<times>('d\<times>finite_factor_term)) fset) \<Rightarrow>
-      ('d\<times>finite_factor_term) fset" where
+    "('d\<times>'c\<times>'p\<times>'v\<times>('s\<times>('d\<times>'p)) fset) \<Rightarrow> ('d\<times>'p) fset" where
   "finite_application_premise_calls a=(case a of (d,c,t,V,H) \<Rightarrow> fimage snd H)"
 
 definition finite_call_applications_within where

@@ -295,6 +295,14 @@ class KeptHeapTests(unittest.TestCase):
         self.assertIsNone(checker.kept_context(True, False, proof, base))
         self.assertIsNone(checker.kept_context(False, True, proof, base))
 
+    def test_a_proof_is_rooted_at_every_theory_and_given_time_by_its_size(self):
+        # a context rooted at the rebuilt theories held their import closure (627 of 1,840), and the next check on it
+        # proved 1,663 theories again, past its 1,200 s (2026-09-24)
+        self.assertEqual(checker.proof_roots(['A', 'B', 'C'], {'B'}), ['A', 'B', 'C'])
+        self.assertEqual(checker.proof_roots(['A'], {'A', 'N'}), ['A', 'N'])
+        self.assertEqual(checker.proof_timeout(1200, 118), 1200)
+        self.assertEqual(checker.proof_timeout(1200, 1663), 2078)
+
     def test_the_command_line_passes_it_on(self):
         with patch.object(checker, 'validate', return_value=0) as validate, \
                 patch.object(checker, 'selected_base', return_value=Path('/b')), \

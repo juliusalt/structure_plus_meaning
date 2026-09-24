@@ -36,7 +36,7 @@ on, all accepted:
 **The first problem's route** (#380's, #382's and #409's proposals, each build with its review; #385, #387, #389, #420
 and #422 landed):
 
-- first: the use instance's package reading at a renamed root use (#424, continuing #422's `Factor_Use_Renaming`,
+- landed: the use instance's package reading at a renamed root use (#424, `bf8e77b2`, over #422's `Factor_Use_Renaming`,
   whose imports stay below the reader theories #416 and #418 edit); the guard (#391, landed `bcb17f7a`: `Development_First_Problem_Guard`),
   which generalizes #389's boundary where it lives, its list's context the pair of the given and the candidate, so that
   G4's audit reads the candidate's environment (q88);
@@ -77,12 +77,12 @@ exporter's obligations at every state it defines (#227–#308, #352).
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The deepest chain is 9: #424 → #416 → #418 → #393 → #397 → #399 → #401 →
-#407 → #408, and through the given one shorter (#412 → #414 → #393 → …).
+**Shape.** No build waits on a review task. The deepest chains are 8: #416 → #418 → #393 → #397 → #399 → #401 →
+#407 → #408, and through the given #412 → #414 or #431 → #393 → ….
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #424 at its head, then #412 and the fix deriving its presentation from its parts,
-#414, #416, #418, #410, the frame's fix and the rest in their chains' order, #425 before the posing it serves; then
+exists, Q2): the owner's directions first — the first problem's route, #416 and #412 at its head, then the fix deriving the readers' presentation from its parts,
+#414, #418, #410, the frame's fix and the rest in their chains' order; then
 #426; each review after its build.
 
 ## Decisions
@@ -263,6 +263,9 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   `Factor_Package_Additions` (q88); its review's follow-ups (`.build/tasks/392/review.md`): 1, `given_member_use` and
   task 381's "none implies another" in #426, the native evaluability of sites 392 and 525 mailed to #393, the per-layer
   agreements Open 137.
+- **Landed with `bf8e77b2`**: #424, the package reading at a renamed root use added to `Factor_Use_Renaming` — the
+  relocated package exactly, its positive meaning transported, the site action from the notion's product, the use-pair
+  action beside the data clauses, which #418 cites; its review's follow-up 1 is Open 138.
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
@@ -461,7 +464,11 @@ follow-ups 1 and 3: `Factor_Native_Node_Cases.native_node_empty_environment` and
 `Factor_Native_History_Cases.native_history_empty_program` reading the generic `finite_empty_environment` and
 `empty_installation_program`, at the case theories' next edit; the package's reach, evaluated by code_simp at every
 rebuild (about 12 s), certified once for the whole program if the notions grow, measured first. 137 an agreement exported per layer along `complete_data_admission_system` in place
-of whole-chain unfoldings (#392's review), at the lineage's next use — #431's derivation from parts reads the same chain.
+of whole-chain unfoldings (#392's review), at the lineage's next use — #431's derivation from parts reads the same chain. 138
+`Inference_Embeddings.map_relation_values_range` into `Bootstrap_Relations` beside `map_relation_values_domain`,
+`Factor_Use_Renaming.rel_ran_map_relation_values` retired, and the generic `rtrancl_injective_image` and
+`surjective_image_eq` beside their notions, with the next build that edits `Bootstrap_Relations`, a full rebuild
+(#427's review).
 
 ## Now
 

@@ -438,13 +438,10 @@ lemma entity_row_subject_key:
   shows "key c\<in>set (row_subjects (entity_row key (snd S) e)) \<longleftrightarrow>
     c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)"
 proof -
-  have inj: "inj_on key {..<length (fst (snd S))}"
-    by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
   have "set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e)\<subseteq>
       {..<length (fst (snd S))}"
-    using isabelle_entity_subjects_positions state_presents_inside[OF present] member
-    by (force simp: state_positions_def)
-  then show ?thesis using inj bound by (simp add: inj_on_image_mem_iff)
+    using state_presents_subject_inside[OF present member] by blast
+  then show ?thesis by (simp add: state_presents_key_member[OF present bound])
 qed
 
 text \<open>

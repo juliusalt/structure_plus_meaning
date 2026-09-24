@@ -54,15 +54,6 @@ qed
 
 subsection \<open>A presented state's rows are single-valued at their keys\<close>
 
-lemma state_presents_entity_inside:
-  assumes present: "state_presents key S R" and member: "e\<in>set (snd (snd S))"
-  shows "\<forall>i\<in>set (isabelle_entity_positions e). i<length (fst (snd S))"
-  using state_presents_inside[OF present] member by (force simp: state_positions_def)
-
-lemma state_presents_root_inside:
-  assumes present: "state_presents key S R" and member: "t\<in>set (fst S)"
-  shows "\<forall>i\<in>set (isabelle_term_positions t). i<length (fst (snd S))"
-  using state_presents_inside[OF present] member by (force simp: state_positions_def)
 
 lemma isabelle_entity_rename_embedding_self:
   assumes distinct: "distinct names" and inside: "\<forall>i\<in>set (isabelle_entity_positions e). i<length names"

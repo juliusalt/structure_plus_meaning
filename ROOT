@@ -1300,6 +1300,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Required_History_Investigation
     Ordered_Finite_Terms
     Linear_Comparisons
+    Prefix_Key_Comparisons
     Ordered_Artifact_Comparison
     Ordered_Term_Comparison
     Right_Ordered_Terms
@@ -1648,6 +1649,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Constructed_Program_Applications
     Presented_Term_Matching
     Formed_Call_Closures
+    Presented_Program_Applications
     Factor_Finite_Source_Construction_Sharing
     RRA_Listed_Environment_Positions
     RRA_Inserted_Attachments
@@ -1761,6 +1763,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Native_Decomposition
     Development_Successor
     Development_Repair_Rows
+    Development_Library_Issue
     RRA_Finite_Transactions
     RRA_Formed_Snapshot_Transactions
     Development_Publication
@@ -1838,6 +1841,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Verdict_Witnesses
     Development_Verdict_Difference
     Development_Request_Citations
+    Development_Native_Request
     Development_Native_Verdict
     Development_Row_Data
     Development_Row_Contexts

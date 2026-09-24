@@ -341,6 +341,21 @@ def kept_context(keep_heap, accepted, proof, base):
     return str(proof if proof is not None else base)
 
 
+def proof_roots(names, rebuilt):
+    """The roots of a check's proof: every theory of the project (the rebuilt ones are proved, the rest come from the
+    parent contexts), so that the context the proof leaves holds the whole library."""
+    return sorted(set(names) | set(rebuilt))
+
+
+SECONDS_PER_REBUILT = 1.25  # a whole library rebuilt (1,663 theories) took 16-21 minutes on this machine (2026-09-24)
+
+
+def proof_timeout(timeout, rebuilt):
+    """The proof's time: the one asked for, or longer where that many theories are to be proved again — a rebuild of
+    nearly the whole library ran past 1,200 s, and a check of 118 theories stays within it."""
+    return max(timeout, int(SECONDS_PER_REBUILT * rebuilt))
+
+
 def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lineage=None, advance_base=False,
              keep_heap=False):
     started = time.monotonic()
@@ -385,11 +400,16 @@ def validate(base, output, *, threads, jobs, selected, all_recipes, timeout, lin
         if rebuilt:
             begin = time.monotonic()
             proof = output / 'proof'
+            # Every theory is a root, so that the context it leaves holds the whole library: its session proves the
+            # rebuilt theories and takes the rest from its parents as before, and a check made on it reuses all it
+            # holds. Rooted at the rebuilt theories alone, a context held their import closure (627 of 1,840 theories
+            # after the landing of 2026-09-24 07:16), and the next check on it proved 1,663 theories again, past its time.
+            summary['proof_timeout'] = proof_timeout(timeout, len(rebuilt))
             code, _ = run_logged([sys.executable, '-B', str(TOOLS / 'prove_context.py'), '--parent-project', str(base),
                                   '--project', str(ROOT), '--output', str(proof),
                                   '--session', 'Incremental_' + uuid.uuid4().hex[:8], '--threads', str(threads),
-                                  '--timeout', str(timeout), *heap_flags(advance_base, keep_heap),
-                                  *sorted(rebuilt)], output / 'proof.log', 7200)
+                                  '--timeout', str(summary['proof_timeout']), *heap_flags(advance_base, keep_heap),
+                                  *proof_roots(names, rebuilt)], output / 'proof.log', 7200)
             phase('proof', begin)
             summary['proof'] = str(proof / 'result.json')
             assert code == 0, 'Incremental proof failed; see ' + str(proof / 'build.log')

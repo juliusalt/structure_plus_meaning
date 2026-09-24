@@ -1,6 +1,6 @@
 theory Development_Machinery
   imports Native_Control_Seed_Subject Development_Admitted_Publication Development_Presentation
-    Development_Definition_Verification Development_Native_Answers
+    Development_Definition_Verification Development_Native_Answers Development_Library_Issue
 begin
 
 section \<open>The loop's own notions and their constituents as a checked state\<close>
@@ -214,9 +214,13 @@ section \<open>The selected residuals are issued as definition requests\<close>
 text \<open>
   A residual is a definition problem, so the loop issues its selected residuals as definition
   requests: the request of the problem's one subject constant under the definition reading, with the
-  support and the least context of the constant's scope. The machinery's library holds no
-  decomposition rule, so every selected residual is a leaf and is issued with the reading of that
-  absence. No answer to a definition request exists yet, so the definition verdict is exercised on
+  support and the least context of the constant's scope. The issue reads the library generated at the
+  selected loop (@{const development_loop_library}): the native schema's applications at the intermediates
+  its history's repair records name, and the repair rows of that history. The split source (instance B) is
+  left empty, waiting for the owner's criterion of when an applicable split is demanded (ledger Q2), and the
+  machinery's history holds no repair, so the library is empty, every selected residual is a leaf and is
+  issued with the reading of that absence. No answer to a definition request exists yet, so the definition
+  verdict is exercised on
   the answer states derived from each request under the definition reading
   (`development_answer_controls`): the unchanged state and its renaming must be accepted; the
   subject's definitions stated as axioms, dropped, or stated through a constant the state does not
@@ -230,6 +234,9 @@ definition development_machinery_renamed :: isabelle_rooted_context where
     (isabelle_reversal (length (fst development_machinery_context)))
     (rev (fst development_machinery_context)) development_machinery_state"
 
+definition development_machinery_sources :: "development_problem \<Rightarrow> nat list list" where
+  "development_machinery_sources p=[]"
+
 definition development_machinery_request_of :: "development_problem \<Rightarrow> development_request option" where
   "development_machinery_request_of p=(case development_subject_constant p of
      Some c \<Rightarrow> development_definition_request development_machinery_context Development_Residual Development_Generated c
@@ -238,7 +245,8 @@ definition development_machinery_request_of :: "development_problem \<Rightarrow
 theorem development_machinery_issued:
   assumes selection: "development_loop_selection (development_machinery_state,development_machinery_problems,
       development_machinery_dependencies,answered,[])=Some (L,xs)"
-    and issue: "development_loop_issue {||} development_machinery_request_of L xs=(L',issued,unissued)"
+    and issue: "development_loop_issue (development_loop_library development_machinery_sources L)
+      development_machinery_request_of L xs=(L',issued,unissued)"
     and member: "r\<in>set issued"
   shows "fst r\<in>set development_machinery_problems \<and> development_ready development_machinery_dependencies answered (fst r)"
     "\<exists>c. problem_subject (fst r)={|c|} \<and>
@@ -268,9 +276,34 @@ text \<open>
 
 definition development_machinery_issue ::
     "development_problem fset \<Rightarrow> (development_loop\<times>development_request list\<times>development_problem list) option" where
-  "development_machinery_issue answered=map_option (\<lambda>(L,xs). development_loop_issue {||} development_machinery_request_of L xs)
+  "development_machinery_issue answered=map_option (\<lambda>(L,xs). development_loop_issue
+       (development_loop_library development_machinery_sources L) development_machinery_request_of L xs)
      (development_loop_selection (development_machinery_state,development_machinery_problems,
        development_machinery_dependencies,answered,[]))"
+
+text \<open>Every issued residual is a leaf of the library generated at the selected loop.\<close>
+
+theorem development_machinery_issue_leaf:
+  assumes issue: "development_machinery_issue answered=Some (L',issued,unissued)" and member: "r\<in>set issued"
+  obtains L xs where "development_loop_selection (development_machinery_state,development_machinery_problems,
+      development_machinery_dependencies,answered,[])=Some (L,xs)"
+    "development_issuable development_machinery_dependencies (development_loop_library development_machinery_sources L)
+      answered (fst r)"
+    "development_library_reading (development_loop_library development_machinery_sources L) (fst r)={||}"
+proof -
+  obtain L xs where selection: "development_loop_selection (development_machinery_state,development_machinery_problems,
+      development_machinery_dependencies,answered,[])=Some (L,xs)"
+    and issued: "development_loop_issue (development_loop_library development_machinery_sources L)
+      development_machinery_request_of L xs=(L',issued,unissued)"
+    using issue unfolding development_machinery_issue_def
+    by (cases "development_loop_selection (development_machinery_state,development_machinery_problems,
+      development_machinery_dependencies,answered,[])") auto
+  obtain Q where state: "L=(development_machinery_state,development_machinery_problems,
+      development_machinery_dependencies,answered,[Development_Selection_Record (native_development_packet Q) xs])"
+    using selection by (auto simp: development_loop_selection_def Let_def split: option.splits)
+  note leaf=development_loop_issue_leaf[OF issued[unfolded state] member]
+  show ?thesis using that[OF selection] leaf(2,3) state by simp
+qed
 
 definition development_machinery_requests :: "development_problem fset \<Rightarrow> development_request list" where
   "development_machinery_requests answered=(case development_machinery_issue answered of None \<Rightarrow> []

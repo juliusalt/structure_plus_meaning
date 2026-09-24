@@ -12240,7 +12240,7 @@ rule's conclusion and premise set back from its value.
   `any_exact`, `undeclared_entry_exact`), `permitted_row_rules`, `conjoined_calls_program`, `verdict_equal_program`
   (Development_Verdict_Difference), `native_value_rule` (Development_Located_Rows), `decomposition_rule`
   (Development_Native_Decomposition, `native_decomposition_reads`, `native_decomposition_progress`), `row_reached_rules`
-  (Development_Verdict_Unreached), `reach_root_rule`, `reach_step_rule` (Native_Table_Reach,
+  (Development_Verdict_Unreached), `reach_root_rule`, `native_member_later reach_some` (Native_Table_Reach,
   `native_reached_search`, `native_reached_complete`), `native_store_search_rules` (Native_Path_Stores, `sound`,
   `exact`), and beyond them `native_ready_exact`, `native_settled_complete` (Development_Native_Readiness) and
   `key_cited_program.exact` (Development_Request_Scope).
@@ -12256,6 +12256,18 @@ and its `exact` kept: the site holds of `Pair_Term x (Pair_Term y w)` exactly wh
 `law` (`exact` and `step_at`), and `store_found_program`'s any-rule family as a sublocale `any_law` (`any_exact`), each
 `exact` statement kept. No `holds_cases`/`native_step` argument is left in these theories; no rule value changed, so
 no recorded word changes.
+
+Re-cited (task 284, task 276's review): the position facts of a presented state stand once, under
+`state_presents` in Development_State_Rows. The general `state_presents_entity_inside` and
+`state_presents_root_inside` moved there from Development_Verdict_Difference, and Development_Verdict_Unreached's
+`key_member` moved there as `state_presents_key_member`, its premise the presentation alone (the families it never
+read are dropped; its proposition is unchanged). Development_Verdict_Statements' `entity_row_subject_key` and
+Development_Native_Decomposition's entity positions cite them rather than deriving them from `state_presents_inside`.
+Development_Verdict_Unreached's `predecessor_at`, a name `RRA_Fresh_Generation_Frames` also states, is
+`state_reach_predecessor_at`. Of the rules of this shape the review named, `undeclared_rule`
+(Development_Verdict_Mentions) and `native_every_step` (Native_Collection_Programs) have two premises and are no
+instance; `native_some_rest s` (Native_Collection_Programs) is `native_member_later s` and is re-cited when task 112's
+edit of that theory lands. No rule value changed, so no recorded word changes.
 
 The law completed (task 247, task 245's review): both halves at any support relation, `rule_instance` (an iff,
 the analogue of `reader_projection_rule`, formation over the rule's variables, conclusion's and premises', because
@@ -13580,3 +13592,27 @@ premise that fails at an instance is P1's finding for this entry, never a reason
 is claimed or measured. This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 310).
+
+## A presented evaluation prepares its program's literal leaves once
+
+Task 301, build B3 of "An evaluation's calls are built over the shared subterms of its requests"
+(`Presented_Program_Applications`).
+
+- The applications of a presented call are stated over a *prepared program* (`prepare_program`): every
+  interface and clause pattern with its literal leaves presented once by the canonical constructors, a literal
+  that is not formed held as no leaf. A prepared pattern fits, matches and is instantiated exactly as
+  `Presented_Term_Matching` states it for the unprepared pattern, for every presentation, so an evaluation that
+  prepares its program once builds every call as B2 does, without looking a literal leaf up again at every fit of
+  every clause at every call (the review of #300, its item 4). The interface's fitting, a clause's requests and a
+  call's applications are exact through decoding at every call of a presentation's domain, and are the existing
+  constants at the identity presentation.
+- A material premise is read through decoding: the complete material equation reads the whole structure of plain
+  artifacts, which no presentation's view reaches. Only a clause that has material premises decodes its bindings,
+  after its head has fitted, and the decoded bindings are read by that check alone: no call is built from them. This
+  is the one decoding inside the construction of an application; every call it constructs is built by the
+  canonical constructors.
+
+What it does not claim: anything about cost, which B4 and B6 observe; the prepared program is fixed per
+evaluation and per presentation, as the table is.
+
+Recorded 2026-09-24.

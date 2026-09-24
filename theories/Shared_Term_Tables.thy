@@ -1,5 +1,6 @@
 theory Shared_Term_Tables
   imports Keyed_Value_References Tree_Map_Indexes Ordered_Finite_Terms Keyed_Demanded_Sites
+    Prefix_Key_Comparisons
 begin
 
 section \<open>A term over the shared subterms of a family of terms\<close>
@@ -825,30 +826,38 @@ fun shared_term_key :: "shared_term \<Rightarrow> shared_atom list" where
 | "shared_term_key (Shared_Reference i)=[shared_head (Shared_Reference i)]"
 | "shared_term_key (Shared_Leaf l)=[shared_head (Shared_Leaf l)]"
 
-lemma shared_term_key_prefix:
-  "shared_term_key s@xs=shared_term_key u@ys \<Longrightarrow> s=u \<and> xs=ys"
-proof (induction s arbitrary: u xs ys)
-  case (Shared_Reference i)
-  then show ?case by (cases u) auto
-next
-  case (Shared_Leaf l)
-  then show ?case by (cases u) (auto simp: leaf_term_injective)
-next
-  case (Shared_Pair a b)
-  note pair_prems=Shared_Pair.prems and pair_IH=Shared_Pair.IH
-  show ?case
-  proof (cases u)
-    case (Shared_Pair c d)
-    have tail: "shared_term_key a@(shared_term_key b@xs)=shared_term_key c@(shared_term_key d@ys)"
-      using pair_prems Shared_Pair by simp
-    have first: "a=c" and rest: "shared_term_key b@xs=shared_term_key d@ys" using pair_IH(1)[OF tail] by simp_all
-    have "b=d" and "xs=ys" using pair_IH(2)[OF rest] by simp_all
-    then show ?thesis using first Shared_Pair by simp
-  qed (use pair_prems in auto)
+text \<open>
+  The key is the prefix key of the view that meets a pair's left component first
+  (\<open>Prefix_Key_Comparisons\<close>): a node's head, then the keys of its children, a pair's two components and
+  no child of a reference or a leaf. Its one-level equations are proved here by cases; that the key is
+  prefix-free, and that the comparison below computes its order, are the notion's.
+\<close>
+
+fun shared_children :: "shared_term \<Rightarrow> shared_term list" where
+  "shared_children (Shared_Pair a b)=[a,b]"
+| "shared_children (Shared_Reference i)=[]"
+| "shared_children (Shared_Leaf l)=[]"
+
+lemma shared_term_view: "prefix_key shared_head shared_children shared_term_key"
+proof (rule prefix_key.intro)
+  fix t u
+  show "shared_term_key t=shared_head t#concat (map shared_term_key (shared_children t))"
+    by (cases t) simp_all
+  show "length (shared_children t)=length (shared_children u)" if "shared_head t=shared_head u"
+    using that by (cases t; cases u) simp_all
+  show "t=u" if "shared_head t=shared_head u" and "shared_children t=shared_children u"
+    using that by (cases t; cases u) (simp_all add: leaf_term_injective)
 qed
 
+interpretation shared_term_prefix_key: prefix_key shared_head shared_children shared_term_key
+  by (rule shared_term_view)
+
+lemma shared_term_key_prefix:
+  "shared_term_key s@xs=shared_term_key u@ys \<Longrightarrow> s=u \<and> xs=ys"
+  by (rule shared_term_prefix_key.key_prefix)
+
 lemma shared_term_key_injective: "shared_term_key s=shared_term_key u \<longleftrightarrow> s=u"
-  using shared_term_key_prefix[of s "[]" u "[]"] by auto
+  by (rule shared_term_prefix_key.key_injective)
 
 instantiation shared_term :: linorder
 begin
@@ -871,42 +880,28 @@ fun compare_shared_terms :: "shared_term \<Rightarrow> shared_term \<Rightarrow>
     Linear_Equal \<Rightarrow> compare_shared_terms b d | r \<Rightarrow> r)"
 | "compare_shared_terms s u=compare_linear (shared_head s) (shared_head u)"
 
+text \<open>The comparison is the notion's structural comparison at the same view.\<close>
+
+lemma compare_shared_node:
+  "compare_shared_terms t u=(case compare_linear (shared_head t) (shared_head u) of
+    Linear_Equal \<Rightarrow> compare_listed compare_shared_terms (shared_children t) (shared_children u) | c \<Rightarrow> c)"
+  by (cases t; cases u) (auto simp: compare_linear_cases(2) split: linear_comparison.split)
+
+interpretation shared_term_comparison:
+  prefix_key_comparison shared_head shared_children shared_term_key compare_shared_terms
+  by (rule prefix_key_comparison.intro[OF shared_term_view], rule prefix_key_comparison_axioms.intro,
+    rule compare_shared_node)
+
 lemma compare_shared_terms_keys:
   "compare_linear (shared_term_key s@xs) (shared_term_key u@ys)=
     (case compare_shared_terms s u of Linear_Equal \<Rightarrow> compare_linear xs ys | r \<Rightarrow> r)"
-proof (induction s arbitrary: u xs ys)
-  case (Shared_Reference i)
-  then show ?case
-    by (cases u) (auto simp: compare_linear_prefix compare_linear_cases(2) split: linear_comparison.split)
-next
-  case (Shared_Leaf l)
-  then show ?case
-    by (cases u) (auto simp: compare_linear_prefix compare_linear_cases(2) split: linear_comparison.split)
-next
-  case (Shared_Pair a b)
-  note pair_IH=Shared_Pair.IH
-  show ?case
-  proof (cases u)
-    case (Shared_Pair c d)
-    have first: "compare_linear (shared_term_key a@(shared_term_key b@xs)) (shared_term_key c@(shared_term_key d@ys))=
-        (case compare_shared_terms a c of Linear_Equal \<Rightarrow> compare_linear (shared_term_key b@xs) (shared_term_key d@ys)
-          | r \<Rightarrow> r)"
-      by (rule pair_IH(1))
-    have second: "compare_linear (shared_term_key b@xs) (shared_term_key d@ys)=
-        (case compare_shared_terms b d of Linear_Equal \<Rightarrow> compare_linear xs ys | r \<Rightarrow> r)"
-      by (rule pair_IH(2))
-    show ?thesis
-      using first second by (cases "compare_shared_terms a c") (simp_all add: Shared_Pair compare_linear_prefix)
-  qed (auto simp: compare_linear_prefix compare_linear_cases(2) split: linear_comparison.split)
-qed
+  by (rule shared_term_comparison.compare_keys)
 
 theorem compare_shared_terms_linear: "compare_shared_terms s u=compare_linear s u"
 proof -
   have keys: "compare_linear s u=compare_linear (shared_term_key s) (shared_term_key u)"
     by (simp add: compare_linear_def less_shared_term_def shared_term_key_injective)
-  have "compare_linear (shared_term_key s@[]) (shared_term_key u@[])=compare_shared_terms s u"
-    by (simp only: compare_shared_terms_keys compare_linear_ends(1)) (cases "compare_shared_terms s u"; simp)
-  then show ?thesis using keys by simp
+  show ?thesis by (simp only: keys shared_term_comparison.compare_order)
 qed
 
 lemma less_shared_term_code [code]: "s<u \<longleftrightarrow> compare_shared_terms s u=Linear_Less"

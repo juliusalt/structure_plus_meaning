@@ -148,11 +148,12 @@ and carries task 143's note if it still holds; #159 measures its effect held.
 the row and found readings (#214, `3ed04fee`; `state_families_rows` renamed `covering_families_entity_rows`, told to
 #112, #192 and #287) and the store search (#239, `443fe6c8`). #237 landed (`1557deda`)
 the formation rules, the any rule and the two-premise call through the law, `conjoined_calls_program` moved to
-`Development_Verdict_Mentions` and `verdict_equal_program` retired (told to #290, #112 and #192). #295 takes #214's and
-#237's reviews' follow-ups — `Development_Edited_Reach`'s row reading, the row pattern's
-variables once, the premise-free rule if two sites share it, and `keys_term` and `development_row_family` as one notion
-beside `path_term` — after #285, #112, #286 and #192, before #288. A change to `Native_Collection_Programs` rebuilds
-about 118 theories (#112's check: 1,169.7 s of proof; #286's review).
+`Development_Verdict_Mentions` and `verdict_equal_program` retired (told to #290, #112 and #192). #295 landed
+(`27908d9b`) #214's and #237's reviews' follow-ups; its review's follow-ups are #374 (the family's law over a listed
+family of triples, the applied rule returned as its triple, with the next change to `Native_Collection_Programs` that
+Open 88 and 95 wait for; N2a waits on it) and #375 (the six applied-rule decodings re-cited to it, after #288, #353 and
+#325; N1b waits on it). A change to `Native_Collection_Programs` rebuilds about 118 theories (#112's check: 1,169.7 s
+of proof; #286's review), and its probe cannot certify it within 60 s (#295's review): the check certifies it.
 
 **The documents (#280–#282).** From the owner's words of 2026-09-23 and the harness's review of what the bases hold:
 `REASONING_REUSE.md` heavily revised (#280, accepted: 43.7K from 137.8K, one table of 39 arguments in the four columns
@@ -513,6 +514,9 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#372** (design, `b4170651`): the plan's Corrections row on the first problem states the owner's answer to Q2.
 - **#359** (B1, `d212cb53`): `Shared_Term_Words`, the word read off a report's shared terms, exact to the decoded term's
   word; its review's follow-up 1 Open 115, 2 mailed to #367.
+- **#295** (`27908d9b`): `Development_Edited_Reach`'s row reading, the row pattern's variables once, the premise-free
+  rule, `keys_term` and `development_row_family` one notion (words equal); its review's follow-ups are #374 and #375,
+  its result's own proposal Open 116, the probe's bound Open 78.
 - **#363** (B3, `254b5999`): `Presented_Publication_Values`, the publication notions' presenters over a term
   presentation, each decoding to the plain presenter; its review's follow-ups 1 and 2 mailed to #367, 3–5 Open 116.
 
@@ -672,7 +676,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     "lower envelope" where the line is fitted under the largest loads (four retained probes loaded faster); the skipped
     code checks know four targets and no target arguments, extended at first use; the prelude route #286 used when a
     combined probe passed its bound, offered by the tool (#286's review); a refusal naming `--from-heap` as the escape
-    for one theory.
+    for one theory. And a change to `Native_Collection_Programs` cannot be probed within 60 s even with the renamed
+    intermediate copies #271 added (#295's probe-all4 stopped without its marker): a longer bound for such a probe, or
+    a heap of the intermediate theories, at a measured need; until then the check certifies it.
 80. #191's first review's follow-ups (titles only, `.build/tasks/202/review.md`), with that theory's next edit.
 81. An adopted answer's precondition reconstructed at its receipt's `revision`, at the first adoption after #265; the
     published state as the judged answer state waits on item 7.
@@ -684,7 +690,7 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 86. Order facts named for their user: a bounded pass over the repository's `sorted_wrt`, `sorted` and `distinct` lemmas.
 87. One definition per reading of a name table (the `_by` readings of `Isabelle_Name_Trees`): when those theories' words
     are next re-established (#161 or #167).
-88. The next change to `Native_Collection_Programs` and its row: three blank lines near `native_every_program`;
+88. Taken by #374, the next change to `Native_Collection_Programs` and its row: three blank lines near `native_every_program`;
     `read_clause`'s `read` premise rebinding `c`; in the row, `native_store_search_program` and
     `native_store_absent_program` listed among the programs taking the family's law, and its dated "Reuse (section)"
     label dropped or re-pointed (#287's review: its merge round left the row as its work wrote it); `native_some_rest s`
@@ -699,7 +705,7 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     `Keyed_Native_Evaluation`) and `Factor_Demanded_Graph_Readings`' clause is garbled — mailed to #290, which may write
     those rows; a pass after it lands otherwise. `Keyed_Native_Evaluation`'s row also cites `REASONING_REUSE.md`'s
     row by its old title, "An argument ordered so that comparison meets what differs first" (#312's review).
-95. **What #239's landing leaves** (its review): the law's `DECISIONS.md` entry names the uses of `read_clause`, and
+95. **What #239's landing leaves** (its review; its law items taken by #374): the law's `DECISIONS.md` entry names the uses of `read_clause`, and
     `Development_Native_Readiness` and `Native_Table_Reach` are two more, with that entry's next edit; and
     `native_rule_law.step_at`'s premise is a set difference, so each of the nine concrete calls in `Native_Path_Stores`
     adds `insert_Diff_if` to its simp set — a form of `step_at` over a listed rule would spare that if more instances
@@ -841,6 +847,10 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     `T!i`), linear per read at every reference node of the decode and the occurrence walk: negligible at the seed
     round's table of target leaves, O(nodes × table) over a table holding pair shapes (`Shared_Call_Closures`'). A
     constant reading it through an `IArray` built once, related to `shared_decode` by a lemma, when such a use comes.
+116. **`edited_reach_system` holding only the rooted closure O's admission reads** (#321's review, follow-up 2;
+    #295's result proposes it as a task of its own): the join is N2a's (plan-55), so it is stated as the rooted
+    restriction (`Factor_System_Restriction.rooted_system`) of the package's joined program at O's admission roots
+    once N2a (#340) lands: a task then.
 116. **What #363's landing leaves** (its review, `.build/tasks/364/review.md`, follow-ups 3–5): `REASONING_REUSE.md`'s
     row "A structural comparison computes a prefix key's order" names `presented_compare_pending_keys`, the worklist
     form over a domain, and why it is no instance, at the document's next change, a domain-relative statement factored

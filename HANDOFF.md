@@ -170,17 +170,19 @@ N1–N9: #335 briefs N1–N4 (the record generalized, the package, its rows, nat
 over what they leave, and the translation design follows (Open 3).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
-creates has no review task (the harness reviews it in its own folder). The deepest chain is 8: #321 → #295 → #288 →
-#340 → #342 → #344 → #346 → #347, the consolidations into the native package (N2a, N2b, N3a, N3b), so nothing of N1–N4
-or of the decomposition's builds starts before #321 lands. The word chain #167 → #314 → #169 → #319 → #92 → #93 is 6,
-and #321 → #353 → #193 → #194 → #205 is 5. #352, #323 and #324 wait on nothing.
+creates has no review task (the harness reviews it in its own folder). The deepest chain is 7: #295 → #288 →
+#340 → #342 → #344 → #346 → #347, the consolidations into the native package (N2a, N2b, N3a, N3b), and #295 → #288 →
+#353 → #336 → #344 → #346 → #347, so nothing of N1–N4 or of the decomposition's builds starts before #295 lands. The
+word chain #314 → #169 → #319 → #92 → #93 is 5, and #295 → #288 → #353 → #193 → #194 → #205 is 6. #352 and #355
+wait on nothing, and neither will #358's B1 and B3.
 
-**Order** (the queue holds it; this is why it is as it is). The owner's answer recorded first (#357); then #321's
-merge round, the root of the longest chain, and #323 in its run; #295, then #288 and #353 (after #288, both editing `Development_Verdict_Mentions`), N1a after #353, and the word
-chain's #314; the decomposition's #325, the package's N2a (#340) and N1a (#336); the exporter's chain #352, which waits
-on nothing but whose check rebuilds about 1,666 theories, after them so that its heavy check yields to theirs; #324's
-repair #355 and #356's builds (briefed by #358); the incremental stage's #193; the word chain's #169, #319, #354, #92; #327 and N4a (#348); N2b,
-N1b, N3a, N4b, N3b; the decomposition's #331, #333, #329; the measurements #194 and #315; each review after its build.
+**Order** (the queue holds it; this is why it is as it is). #295 first, the root of the longest chain; then #288 and
+#353 (after #288, both editing `Development_Verdict_Mentions`), N1a after #353, and the word chain's #314; the
+decomposition's #325, the package's N2a (#340) and N1a (#336); the exporter's chain #352, which waits on nothing but
+whose check rebuilds about 1,666 theories, after them so that its heavy check yields to theirs; #324's repair #355 and
+#356's builds (briefed by #358); the incremental stage's #193; the word chain's #169, #319, #354, #92; #327 and N4a
+(#348); N2b, N1b, N3a, N4b, N3b; the decomposition's #331, #333, #329; the measurements #194 and #315; each review
+after its build.
 
 ## Decisions
 
@@ -224,7 +226,7 @@ construction (Open 100).
   until native definitions exist."). The loop's problems about HOL constants are the bootstrap loop: kept standing,
   with the word changes and records that keep its checks green, and retired once the native loop poses its first
   problems (N4b, #350; the planner's reading, as Q18 (d) provisionally chooses); work that would only extend the
-  HOL-constant loop is not planned. #357 records the answer in the plan.
+  HOL-constant loop is not planned. #357 recorded the answer in the plan (`4434635d`); its follow-ups are Open 111.
 - **A question's candidate is keyed by the key of what it is** (q21): an entity by its first-occurrence path in the
   state's entity list (`development_entity_key`).
 - **The development rows' definitions take the state's constant-key assignment as a parameter** with an `inj_on`
@@ -269,8 +271,10 @@ a task):
 - **Timings.** A timing is held (`v2.py measuring --exclusive`: every other run stops, bounded at 3 minutes,
   `.claude/orchestration/state/measure-bound`) or shared (`--shared`, told the machine's load); a brief that asks for
   one says which and sizes a held run to fit. A run re-measuring a quantity recorded elsewhere states the scale factor it
-  measured and its absolutes in both forms. A numeric expectation written before the work chose its cases is an
-  estimate, not a target.
+  measured and its absolutes in both forms. A before/after pair timed in the same holds is its own reference: its scale
+  factor is a control timed with it whose code no commit between the two bases changes; a factor from an unrelated
+  computation is not a scale; and an estimate is compared first in the quantity it counts (q85). A numeric expectation
+  written before the work chose its cases is an estimate, not a target.
 - **Probes.** A change that writes a theory says `--probe` to be probed, and its reply carries the finding; a probe is
   an inner loop, not a gate (q26), bounded at 60 s unless a measurement holds the machine; its evidence is
   `probe.summary.json` (#175). An edit to a base theory is probed from the tree, with the unchanged theories between it
@@ -764,41 +768,31 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     problems (Q18 (d)), the seed's refinement problems no longer selected or issued, the records kept as history; and
     #320's entry's "Beside the bootstrap loop" gains a marked correction read against the owner's answer (nothing in
     N1–N9 changes), with that entry's next edit.
+112. **`read_index_address` reads to the end of a run of 0 and 1 octets** (#147's review, follow-up 5): after #155 an
+    address's index codes can follow one another in that run. Where it has a use (`RRA_Finite_Fresh_Addresses`'
+    reading of indices, if it reads through it), the code read over octets and stopped at its terminator, with
+    `RRA_Exact`'s next edit; the cost is linear in an address either way.
 
 ## Now
 
 
 
-- **#321's review's follow-ups** (landed `06197652`, 16:51): 1 (the shared-prefix join stated once beside
-  `finite_rule_program_join`) and 2 (`edited_reach_system` holding only the rooted closure O's admission reads — the
-  planner's choice, the join being N2a's) mailed to #295; 3 (the leading-membership pattern at the next join) mailed
-  to #288. Not yet placed: 3's `request_member` to #340, 4 (the list scan's share in excess, O's closure and targets)
-  to #194, 5 (`Development_Incremental_Verdict`'s probe not completing in 60 s, attributed at its cause) to #353; and
-  #295's brief rewritten to carry its mailed items if its session has not started.
-- **Under way besides**: #314 (told #168's follow-up 1's check and its follow-up 6) and #323 in their runs; #352, #315
-  and #324's two follow-ups — #355, the cause's formation discharged where it is constructed, and design #356, the
-  report's word and value over shared subterms — ready for the slots; the decomposition's builds (#325–#334) wait on
-  #295, #325 folding #308's change to `Development_State_Rows`' row (`.build/tasks/308/rows.md`, mailed).
+- **Mailed to tasks not yet started, read by their first session** (sent again to a task whose session is lost before
+  it reads them): #113's review, and #321's review's follow-ups 1 and 2, to #295; #284's review's 1, 2 and 4, #285's
+  and #321's 3 to #288; #321's 3 (its `request_member` part, at the join) to #340; #321's 5
+  (`Development_Incremental_Verdict`'s probe past 60 s, attributed at its cause) to #353; #278's review to #193;
+  #308's change of `Development_State_Rows`' row (`.build/tasks/308/rows.md`) to #325; and to #194 q85's rule for a
+  measurement's reference with, as shares its by-field figures show where they can, #321's 4, #294's 1 and 3 (Open 96)
+  and #307's remains (Open 110).
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's
   `failing` list holds dicts; #168's review, follow-up 7); `measuring --shared` wrote no `measurements.log` for any of
   #307's ten runs, as #306's review found for B5; #324's brief named a base the harness had swept before it ran.
-- **Q7's ledger entries** (the question and the owner's answers of 16:19 and 16:34) leave once #357 lands: the
-  harness's (`v2.py ledger`, whose `--help` records its text as a question).
-- **The ledger's Q17 and Q19 are the harness's** (Q19: #323's session fix-323.2 declined twice, before fix-323.3, the
-  fresh fixer session this bullet's test is about): plan-52 was declined twice on the same work, and the harness held its events
-  for the owner — #313's landing, which plan-53 handled (#323). #323's first session, forked from #313's (`continues`),
-  was declined by a classifier at its first turn with nothing written; plan-53 re-planned it from the fixer's base, its
-  brief whole without that session. If a fresh session is declined too, the content is the cause: drop #323 and say so. **Q18** is #320's five provisional choices; its text
-  opens with "Q17", a slip of plan-53's (the harness numbered it Q18).
-  Mailed to tasks not yet started, read by their first session: #113's review to #295; #278's to #307, #305 and #193;
-  #284's 1, 2 and 4 to #288 (4 to #308 if its check sends it back); #303's to #305 and #307; #285's to #288 and #307.
-- **Plan-51, plan-52, plan-53 and plan-54 were each stopped by a classifier before their notes** (13:37; about 14:03;
-  15:13; 15:47): this file carried their state. Plan-54 left #321's commit failure unhandled, #353 unqueued and #318
-  out of Delivered, all three taken by plan-55; its graph edits stand (#336–#351 placed from #335's proposal, #352 from
-  #317, #353 from #318's review, #314 folding #167's rows). Plan-53's one unhandled event was #167's commit failure,
-  handled by plan-54. What plan-52 had not handled was #313's landing (`e9bbe02b`), integrated by plan-53, its
-  re-review's follow-ups to #323. The cost: #313's first review, overwritten by its re-review, survives only as the
-  re-review's one-line summary; #323 now runs from the fixer's base (Q19).
+- **Q7's ledger entries** (the question and the owner's answers of 16:19 and 16:34) can leave, #357 having recorded
+  the answer in the plan (`4434635d`): the harness's (`v2.py ledger`, whose `--help` records its text as a question).
+- **Q17, Q19 and Q20 of the ledger are the harness's**: a classifier stopped plan-51 to plan-54 before their notes and
+  #323's fixer session fix-323.2 (Q17 plan-52, Q20 plan-54, Q19 fix-323.2, each declined twice on the same work); each
+  next planner took up what the stopped one left, and #323 ran from the fixer's base. **Q18** is #320's five
+  provisional choices; its text opens with "Q17", a slip of plan-53's (the harness numbered it Q18).
 - **#303's tree held untracked files the task did not make** at its root (`.bashrc`, `.bash_profile`, `.gitconfig`,
   `.claude/agents`, `.idea`): the finalizer should commit the handed-over files only (#303's review) — the harness's.
 - **The exclusive hold outlasts its run** (#317): `measuring --exclusive` held the machine to its 3-minute bound
@@ -806,10 +800,6 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 - **A tree behind main cannot probe until it brings main in** (#316, `514be373`; met by #276, #112 and #308, whose
   after-repair timing waited on it): the harness's `change --probe` could bring main in or surface the refusal
   distinctly (#316's review), the owner's; every producing task under way was told the remedy.
-- **`read_index_address` reads to the end of a run of 0 and 1 octets** (#147's review, follow-up 5): after #155 an
-  address's index codes can follow one another in that run. The reader has no use yet; when it gets one, read the code
-  over octets and stop at the terminator.
-
 - **Trees without a running task**: `.build/trees/143` holds task 143's uncommitted six-line note in
   `validation/development-answers/README.md`, which #157 carries if it still holds. `.build/trees/176` is superseded —
   #243 landed #176's accepted work from HEAD, its rows were since rewritten by #227, #256, #267, #274 and #282 — and it

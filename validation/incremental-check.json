@@ -22,11 +22,11 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.32,
+  "base_and_impact": 0.31,
   "execution_impact": 0.0,
   "export": 0.0,
-  "recipe_impact": 0.39,
-  "recipes_and_host_tests": 11.26
+  "recipe_impact": 0.38,
+  "recipes_and_host_tests": 11.09
  },
  "rebuilt_theories": [],
  "recipes": {
@@ -188,7 +188,7 @@
   }
  },
  "reused_theories": 1853,
- "seconds": 18.65,
+ "seconds": 18.21,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

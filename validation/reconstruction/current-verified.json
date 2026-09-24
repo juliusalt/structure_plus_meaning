@@ -16,11 +16,11 @@
  },
  "incremental_proof_theories": 0,
  "phase_seconds": {
-  "base_and_impact": 0.32,
+  "base_and_impact": 0.31,
   "execution_impact": 0.0,
   "export": 0.0,
-  "recipe_impact": 0.39,
-  "recipes_and_host_tests": 11.26
+  "recipe_impact": 0.38,
+  "recipes_and_host_tests": 11.09
  },
  "reused_recipes": 0,
  "source_only_reconstructions": [
@@ -546,7 +546,7 @@
   }
  ],
  "status": "accepted",
- "total_seconds": 18.65,
+ "total_seconds": 18.21,
  "unchanged_recipes": 52,
  "workspace_theories": 1853
 }

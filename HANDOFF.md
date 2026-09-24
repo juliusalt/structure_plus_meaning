@@ -152,7 +152,7 @@ join law stated once (#62, #94, #173). #64 landed the library generated at the l
 so a decomposed problem is refused issue (`Development_Library_Issue`). The build that applies a decomposition is
 #322's briefs, none changing a recorded word: the sixth role and the decomposition row (#325, after #295, #308 and
 #167, so that its body is stated over the one notion #295 makes of `keys_term` and `development_row_family`), the
-record and the posing step once (#327, after #167 and #308), the generation (#331) and the per-candidate native
+record and the posing step once (#327, after #167, #308 and #314, which folds #167's change to `Development_Successor`'s row), the generation (#331) and the per-candidate native
 evaluation plan-51 decided (#333) after the row, and the issue less the recorded choices with re-evaluation over both
 record kinds (#329, after the posing, the row and #169, whose theories it edits); the split source waits on the owner
 (Q14, its evidence Q16).
@@ -320,7 +320,9 @@ a task):
   main's row would carry a wrong imports column, so the round moves what needs the new import out of the theory (into
   one above it) and sets the theory and its row back to the branch point's text (#165, q76; Q13 asks the owner for a
   harness merge). The row additions then follow in a fix made from main after the landing, where each is a one-sided
-  edit (#289). A task working in the one tree installs its theories only at hand-over and keeps nothing of its own
+  edit (#289), or in the first task made from main after it; a task that changes one of those rows waits on it, so that
+  no row is changed on both sides again (#314 folds #167's, #327 waits on it). A task working in the one tree installs
+  its theories only at hand-over and keeps nothing of its own
   uncommitted there when it parks or comes back (q30).
 - **Text with backticks goes through a file.** `v2.py reply`, `tell` and `ledger` given their text as an argument pass
   it through a shell, which reads a backticked name as a command and strips it: q73's answer reached its asker with
@@ -467,6 +469,13 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the development
   package's rows" — the native state one development package presented as rows of the generalized record, its
   problems, request, answer, judgment, installation and builds N1–N9; its owner's choices as Q18; N1–N4 to #335.
+- **#308** (`22b49aba`, after a merge round): the exporter proves its states' roots distinct, so every state it defines
+  is presentable (`state_presentable_exported`, `development_states_presentable`; `development_states_exported`
+  retired); the successor's request premises derived (`development_successor_admits_requested`); the literal order by
+  one rule per first differing bit (the context facts 0.30 → 0.14 s at the seed, 1.09 → 0.60 s at the machinery, held);
+  the position conditions through `list_all`; #289's seven rows folded. Its row change of `Development_State_Rows` to
+  #325; the held timing of `roots_distinct` to #317, whose probe must not hang as #308's did before #316 (Open 78). A
+  change to `Isabelle_Entity_Export` rebuilds about 1,666 of 1,843 theories (#289's batch, 1,060 s).
 
 ## Open
 
@@ -742,25 +751,29 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 
 ## Now
 
-- **#308** follows #289's landing: it folds #289's row changes (`.build/tasks/289/rows.md`) into main's seven rows and
-  takes what the exporter still owes (`state_presentable`'s third condition, the successor's request premises, the new
-  facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s). Its
-  review's held timing of roots distinctness, which its tree could not take, is #317 after its landing (q82).
-- **Under way**: #167 (re-planned to its room; its batch with #309 failed on its own proof, `Development_Row_Data.thy:546`
-  674 s by itself, told to repair it at its cause) in its round; #308 in a merge round (accepted, its commit refused:
-  `Development_State_Rows`' row twice; main's row handed over, its own change left in `.build/tasks/308/rows.md` for
-  #325, mailed); B5 (#305) and #318 running (q84 answered: the declaring rows as one kind-free argument family of the two
-  checks); #323, #321, #195 and the brief #335 take the slots as they free; the decomposition's builds (#325–#334,
-  #322's) wait on #167, #308 and #295.
-- **The ledger's Q17 is the harness's**: plan-52 was declined twice on the same work, and the harness held its events
-  for the owner — #313's landing, which plan-53 handled (#323). **Q18** is #320's five provisional choices; its text
+
+- **#167's merge round** (plan-54): its work accepted and whole — its proof repaired at its cause (`Development_Row_Data`
+  0.5 s from 674 s) — but its commit failed at the merge (15:12): five rows of `THEORY_MAP.md` changed on both sides
+  (`Development_Machinery`, `Development_Problems`, `Development_Refinement_Repair`, `Development_State_Presenter`,
+  `Development_Successor`; #308's fold of #289's rows among main's). The round sets them to main's verbatim and leaves
+  its changes in `.build/tasks/167/rows.md`, which #314 folds; #327 waits on #314 for `Development_Successor`'s row.
+  Where #167 changed one of those theories' imports, the round follows #165's pattern or comes back to the planner.
+- **Under way besides**: B5 (#305), #318, #321, #323, #195, #317 and the brief #335 (q84 answered: the declaring rows
+  as one kind-free argument family of the two checks); the decomposition's builds (#325–#334, #322's) wait on #167 and
+  #295, #325 folding #308's change to `Development_State_Rows`' row (`.build/tasks/308/rows.md`, mailed).
+- **The ledger's Q17 and Q19 are the harness's** (Q19: #323's session fix-323.2 declined twice, before fix-323.3, the
+  fresh fixer session this bullet's test is about): plan-52 was declined twice on the same work, and the harness held its events
+  for the owner — #313's landing, which plan-53 handled (#323). #323's first session, forked from #313's (`continues`),
+  was declined by a classifier at its first turn with nothing written; plan-53 re-planned it from the fixer's base, its
+  brief whole without that session. If a fresh session is declined too, the content is the cause: drop #323 and say so. **Q18** is #320's five provisional choices; its text
   opens with "Q17", a slip of plan-53's (the harness numbered it Q18).
   Mailed to tasks not yet started, read by their first session: #113's review to #295; #278's to #307, #305 and #193;
   #284's 1, 2 and 4 to #288 (4 to #308 if its check sends it back); #303's to #305 and #307; #285's to #288 and #307.
-- **Plan-51 and plan-52 were each stopped by a classifier before their notes** (13:37; about 14:03): this file carried
-  their state. What plan-52 had not handled was #313's landing (`e9bbe02b`), integrated by plan-53, its re-review's
-  follow-ups to #323. The cost: #313's first review, overwritten by its re-review, survives only as the re-review's
-  one-line summary, so #323 continues #313's session where it is still warm.
+- **Plan-51, plan-52 and plan-53 were each stopped by a classifier before their notes** (13:37; about 14:03; 15:13):
+  this file carried their state. Plan-53's one unhandled event was #167's commit failure, handled by plan-54; nothing it
+  had settled is missing here. What plan-52 had not handled was #313's landing (`e9bbe02b`), integrated by plan-53, its
+  re-review's follow-ups to #323. The cost: #313's first review, overwritten by its re-review, survives only as the
+  re-review's one-line summary; #323 now runs from the fixer's base (Q19).
 - **#303's tree held untracked files the task did not make** at its root (`.bashrc`, `.bash_profile`, `.gitconfig`,
   `.claude/agents`, `.idea`): the finalizer should commit the handed-over files only (#303's review) — the harness's.
 - **A tree behind main cannot probe until it brings main in** (#316, `514be373`; met by #276, #112 and #308, whose

@@ -14062,6 +14062,17 @@ and the stage applies `state_edit_of` per answer without sharing its per-request
 to the request state once (`stage_answers_shared`).
 ## A problem outside the store is presented as its row, in its report's context
 
+[Note (task 429), after task 354 landed (`9028ecc5`): what this entry describes as present has since changed.
+`development_loop_presentation`, `development_repair_origin_citation` and `development_loop_cited_residual` are
+retired, nothing having consumed them; the partial presentations it places in `Development_Row_Data` stand in
+`Finite_Presented_Collections`, and `finite_rows_table` with its laws in `Native_Path_Stores`. The follow-up it
+leaves is done: the seed's and the machinery's reports are proved to lie in their presentations' domains (the
+`_domain` theorems of `Development_Seed`, `Development_Seed_Loop`, `Development_Seed_Verification` and
+`Development_Machinery_Reports`, the succession's on the seed's answered problems), and the framed verdict's parts
+over any request state of residual constant requests (`development_framed_verdict_present`,
+`development_framed_successor_present`), the verdict part instantiated at the seed, the machinery and the
+refinement layer (`development_seed_framed_verdict_present`, `_machinery_`, `_layer_`).]
+
 Build 2 of "A row outside the store is presented in its context, and an answer designates its request by its
 locus" (task 167). Every report now presents its problems as their rows in the context that holds them, and the
 problem datum's tags retire: `development_origin_data`, `development_authority_data`, `development_contract_data`

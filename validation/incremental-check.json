@@ -1,5 +1,5 @@
 {
- "base_receipt_sha256": "ad01b421bfd38fba0766bf3c327c02cfba38c5c9165308102aee5237d5f6e217",
+ "base_receipt_sha256": "4beca5c0e38c445dcdc9945e9b98716c31bc336982a8fcf364e94b25787d75c6",
  "checked_content_sha256": "0e918479615984a0428d80e4f4a954fc54a44c42a9d12286bc76e29b9e4ecf4c",
  "host_tests": {
   "kernel": {
@@ -14,7 +14,7 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 284,
+   "ran": 290,
    "skipped": 0,
    "tail": [
     "OK"
@@ -22,36 +22,13 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.37,
-  "execution_impact": 0.05,
-  "export": 19.45,
-  "proof": 140.57,
-  "recipe_impact": 0.44,
-  "recipes_and_host_tests": 11.28
+  "base_and_impact": 0.32,
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "recipe_impact": 0.39,
+  "recipes_and_host_tests": 11.26
  },
- "rebuilt_theories": [
-  "Development_Edited_Local",
-  "Development_Edited_Reach",
-  "Development_Edited_Undeclared",
-  "Development_Exported_Edit",
-  "Development_Incremental_Verdict",
-  "Development_Incremental_Witnesses",
-  "Development_Library_Issue",
-  "Development_Machinery",
-  "Development_Machinery_Reports",
-  "Development_Native_Decomposition",
-  "Development_Native_Request",
-  "Development_Native_Verdict",
-  "Development_Request_Citations",
-  "Development_Request_Scope",
-  "Development_Row_Contexts",
-  "Development_State_Edit",
-  "Development_Verdict_Difference",
-  "Development_Verdict_Mentions",
-  "Development_Verdict_Unreached",
-  "Development_Verdict_Witnesses",
-  "Native_Development_Machinery"
- ],
+ "rebuilt_theories": [],
  "recipes": {
   "allocated-environments": {
    "status": "unchanged"
@@ -150,9 +127,7 @@
    "status": "unchanged"
   },
   "native-development-machinery": {
-   "exit_code": 0,
-   "seconds": 0.0,
-   "status": "reused"
+   "status": "unchanged"
   },
   "native-development-seed": {
    "status": "unchanged"
@@ -212,8 +187,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1832,
- "seconds": 206.41,
+ "reused_theories": 1853,
+ "seconds": 18.65,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

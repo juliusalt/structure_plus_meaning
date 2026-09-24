@@ -83,7 +83,7 @@ stage's equation (#192, `9845122c`, `Development_Incremental_Verdict`: the verdi
 `native_edited_fields`), the per-answer function's last whole-state reads (#318, `5cb7902e`) and the witnesses at the
 edit's parts (#195, `04c20f87`, `Development_Incremental_Witnesses`). #353 takes #318's review's five follow-ups and
 #195's re-review's first (the discharges both undeclared forms make, stated once in the locale `incremental_verdict`),
-after #321 and before #193, which carries review 203's follow-up 1 (the finite argument exported, `checked_premise`
+after #288 and before #193, which carries review 203's follow-up 1 (the finite argument exported, `checked_premise`
 interpreted globally); review 203's follow-ups 3 and 5 are Open 107 and 108, #195's re-review's second Open 90. #187 landed the exported answer's edit
 (`b1960eee`, `Development_Exported_Edit`); its review's follow-ups 1–3 are #294 (the keyed merge stated once in
 `Finite_Ordered_Set_Difference`, keys paired once, names read through the name index), before #193, the machinery's
@@ -176,7 +176,7 @@ or of the decomposition's builds starts before #321 lands. The word chain #167 �
 and #321 → #353 → #193 → #194 → #205 is 5. #352, #323 and #324 wait on nothing.
 
 **Order** (the queue holds it; this is why it is as it is). The owner's answer recorded first (#357); then #321's
-merge round, the root of the longest chain, and #323 in its run; as #321 lands, #295 and #353, then #288 and the word
+merge round, the root of the longest chain, and #323 in its run; #295, then #288 and #353 (after #288, both editing `Development_Verdict_Mentions`), N1a after #353, and the word
 chain's #314; the decomposition's #325, the package's N2a (#340) and N1a (#336); the exporter's chain #352, which waits
 on nothing but whose check rebuilds about 1,666 theories, after them so that its heavy check yields to theirs; #324's
 repair #355 and #356's builds (briefed by #358); the incremental stage's #193; the word chain's #169, #319, #354, #92; #327 and N4a (#348); N2b,
@@ -467,6 +467,8 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#357** (design): the plan records the owner's two answers to Q7 (16:19 and 16:34, verbatim) under "Owner
   directions" and states the order as the owner's in "The direction of the work", the HOL-constant loop bounded, the
   plan's reading of the moment (N4b) marked as generated; its follow-ups Open 111.
+- **#321** (`06197652`, after a merge round): membership held once in the joined verdict program, one excess program in
+  the edited reach, `support_row_exact` as what it is; its review's follow-ups under Now.
 
 ## Open
 
@@ -767,11 +769,12 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 
 
 
-- **#321's merge round** (plan-55): its work accepted — its check passed — but its commit failed at the merge (15:45):
-  `Development_Incremental_Verdict.thy` changed on both sides, #318 having landed its per-answer reads there
-  (`5cb7902e`). Its brief gained the round (main's text with its changes applied again, nothing of #318's reverted; a
-  doubled row set to main's, its change left in `.build/tasks/321/rows.md` for #353). It roots the longest chain, and
-  #353 (#318's review's follow-ups, before #193) waits on it.
+- **#321's review's follow-ups** (landed `06197652`, 16:51): 1 (the shared-prefix join stated once beside
+  `finite_rule_program_join`) and 2 (`edited_reach_system` holding only the rooted closure O's admission reads — the
+  planner's choice, the join being N2a's) mailed to #295; 3 (the leading-membership pattern at the next join) mailed
+  to #288. Not yet placed: 3's `request_member` to #340, 4 (the list scan's share in excess, O's closure and targets)
+  to #194, 5 (`Development_Incremental_Verdict`'s probe not completing in 60 s, attributed at its cause) to #353; and
+  #295's brief rewritten to carry its mailed items if its session has not started.
 - **Under way besides**: #314 (told #168's follow-up 1's check and its follow-up 6) and #323 in their runs; #352, #315
   and #324's two follow-ups — #355, the cause's formation discharged where it is constructed, and design #356, the
   report's word and value over shared subterms — ready for the slots; the decomposition's builds (#325–#334) wait on

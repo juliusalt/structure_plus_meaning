@@ -374,9 +374,6 @@ corollary development_refinement_request_residual_record:
   shows "development_row_premise (\<lambda>_. None) (\<lambda>_. None) (fst r)"
   by (rule development_constant_request_residual_record[OF assms[unfolded development_refinement_request_def]])
 
-
-
-
 section \<open>The problems, the assessment and the requests of a report, in its context\<close>
 
 text \<open>
@@ -590,7 +587,6 @@ lemma development_problem_row_read:
     (development_located_at key Development_Problem_Role p,
       development_problem_body_data inert (origin p,grant p,development_contract_term (problem_contract p)))"
   using assms by (simp add: development_problem_row_data_inside)
-
 
 lemma development_row_domain_inside:
   assumes domain: "development_row_domain key origin grant P" and inside: "fset A\<subseteq>P"

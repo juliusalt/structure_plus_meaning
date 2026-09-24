@@ -50,7 +50,8 @@ and #422 landed):
   after #391, #414, #416, #418, #422 and the fix deriving the readers' presentation from its parts'), the given and the native state's first generation (#395, after #385, #414), the
   posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
-  frame (#405, after #422: parts (a)–(d) and (f)) and harness (#407).
+  frame (#405, landed `6d84162b`: parts (a)–(d) and (f); its fix after #406's review — part (c) by constant so that the
+  given's package program passes, actions from classes — which #407 waits on) and harness (#407).
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -81,7 +82,7 @@ by a task of their own (Open 100).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #424 and #391 at its head, then #412 and the fix deriving its presentation from its parts,
-#414, #416, #418, #410, #405 and the rest in their chains' order, #425 before the posing it serves; then
+#414, #416, #418, #410, the frame's fix and the rest in their chains' order, #425 before the posing it serves; then
 #426; each review after its build.
 
 ## Decisions
@@ -252,6 +253,10 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   entry, every contract at its entry, the program scope, the finite `development_package_environment`; its reach
   certified by code_simp at every rebuild (about 12 s sequential); its review's follow-ups (`.build/tasks/343/review.md`)
   2 mailed to #414 and #395, 1 and 3 Open 136.
+- **Landed with `6d84162b`**: #405, `Development_Verification_Frame`, the frame a verification answer's theory is read
+  in (parts (a)–(d) and (f) as Isabelle checks; its controls in `.build/tasks/405/controls`); its reviews' follow-ups
+  (`.build/tasks/406/review.md`) and its result's question are the frame's fix, which #407 waits on — part (c) by
+  constant, not by theory, the trivial action the notion's, stated in `Presentation_Equivariance`.
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.

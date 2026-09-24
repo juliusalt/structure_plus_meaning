@@ -14,52 +14,13 @@ text \<open>
   instance, and its contract is consumed, not stated again.
 \<close>
 
-subsection \<open>A difference of two listings ordered by a key is one merge pass\<close>
+subsection \<open>The difference of two entity listings\<close>
 
 text \<open>
-  The merge is the difference of canonical listings (@{const ascending_difference}) read through a key:
-  it compares the keys of the two heads and keeps a member of the first listing whose key the second
-  lacks. Its keys are exactly the ascending difference of the keys, so its meaning is that difference's,
-  carried back through a key injective on the two listings.
-\<close>
-
-fun keyed_difference :: "('a \<Rightarrow> 'k::linorder) \<Rightarrow> 'a list \<Rightarrow> 'a list \<Rightarrow> 'a list" where
-  "keyed_difference f [] ys=[]"
-| "keyed_difference f xs []=xs"
-| "keyed_difference f (x#xs) (y#ys)=(if f x<f y then x#keyed_difference f xs (y#ys)
-    else if f y<f x then keyed_difference f (x#xs) ys else keyed_difference f xs (y#ys))"
-
-lemma keyed_difference_map:
-  "map f (keyed_difference f xs ys)=ascending_difference (map f xs) (map f ys)"
-  by (induction f xs ys rule: keyed_difference.induct) simp_all
-
-lemma keyed_difference_subset: "set (keyed_difference f xs ys)\<subseteq>set xs"
-  by (induction f xs ys rule: keyed_difference.induct) auto
-
-theorem keyed_difference_filter:
-  assumes sorted: "sorted (map f xs)" "sorted (map f ys)" and inj: "inj_on f (set xs\<union>set ys)"
-  shows "keyed_difference f xs ys=filter (\<lambda>z. z\<notin>set ys) xs"
-proof -
-  have same: "filter (\<lambda>z. f z\<notin>f ` set ys) xs=filter (\<lambda>z. z\<notin>set ys) xs"
-    by (rule filter_cong[OF refl]) (simp add: inj_on_image_mem_iff[OF inj])
-  have "map f (keyed_difference f xs ys)=ascending_difference (map f xs) (map f ys)"
-    by (rule keyed_difference_map)
-  also have "\<dots>=filter (\<lambda>z. z\<notin>set (map f ys)) (map f xs)"
-    by (rule ascending_difference_filter[OF sorted])
-  also have "\<dots>=map f (filter (\<lambda>z. f z\<notin>f ` set ys) xs)"
-    by (simp add: filter_map comp_def)
-  also have "\<dots>=map f (filter (\<lambda>z. z\<notin>set ys) xs)"
-    by (simp only: same)
-  finally have mapped: "map f (keyed_difference f xs ys)=map f (filter (\<lambda>z. z\<notin>set ys) xs)" .
-  have inj': "inj_on f (set (keyed_difference f xs ys)\<union>set (filter (\<lambda>z. z\<notin>set ys) xs))"
-    by (rule inj_on_subset[OF inj]) (use keyed_difference_subset[of f xs ys] in auto)
-  show ?thesis by (rule iffD1[OF inj_on_map_eq_map[OF inj'] mapped])
-qed
-
-text \<open>
-  Entities are listed by their keys once, with the library's merge sort
-  (@{thm [source] sort_key_by_mergesort}), and subtracted by one merge: the difference costs the two sorts
-  and a pass linear in the two lists.
+  Entities are listed by their keys (@{const keyed_difference}, @{text Finite_Ordered_Set_Difference}) with
+  the library's merge sort (@{thm [source] sort_key_by_mergesort}) and subtracted by one merge: the
+  difference costs the two sorts and a pass linear in the two lists. Its code pairs each entity with its
+  key once (@{thm [source] keyed_difference_paired}), so no key is computed again at a comparison.
 \<close>
 
 definition entity_difference :: "isabelle_entity list \<Rightarrow> isabelle_entity list \<Rightarrow> isabelle_entity list" where
@@ -74,6 +35,11 @@ proof -
     by (auto simp: entity_difference_def keyed_difference_filter[OF sorted_sort_key sorted_sort_key inj])
 qed
 
+lemma entity_difference_paired [code]:
+  "entity_difference E E'=map snd (keyed_difference fst (sort_key fst (map (\<lambda>e. (entity_order_key e,e)) E))
+    (sort_key fst (map (\<lambda>e. (entity_order_key e,e)) E')))"
+  unfolding entity_difference_def by (rule keyed_difference_paired)
+
 subsection \<open>The exported answer's edit\<close>
 
 definition exported_answer_edit :: "isabelle_rooted_context \<Rightarrow> isabelle_rooted_context \<Rightarrow> state_edit option" where
@@ -81,17 +47,46 @@ definition exported_answer_edit :: "isabelle_rooted_context \<Rightarrow> isabel
     state_edit_of S (fst (snd S')) (entity_difference (snd (snd S)) F) (entity_difference F (snd (snd S))))"
 
 text \<open>
-  A stage judging several exported answers against one request state lists the request state's entities
-  once and applies the constructor's partial application to that state once, as the native answer's edit
-  does (@{thm [source] development_native_answer_edit_shared}).
+  The answer state is read into the request state's table through indexes, not by walking the tables: the
+  name at a position of the answer's table through its name index (@{thm [source] isabelle_name_tree_lookup}),
+  the position of a name in the extended table through that table's index of first positions
+  (@{thm [source] first_index_tree_lookup}). The reading's embedding is so computed at every position; the
+  reading itself (@{const isabelle_rooted_read}) keeps its own equations.
+\<close>
+
+lemma appended_embedding_indexed:
+  "isabelle_state_embedding ns (isabelle_appended_names names ns)=(let A=isabelle_appended_names names ns;
+     P=first_index_tree id A; N=isabelle_name_tree ns in
+     (\<lambda>i. case Option.bind (RBT.lookup N i) (RBT.lookup P) of Some j \<Rightarrow> j | None \<Rightarrow> length A+i))"
+proof -
+  have position: "RBT.lookup (first_index_tree id A)=isabelle_name_position A" for A
+  proof
+    fix n
+    have "RBT.lookup (first_index_tree id A) (id n)=value_reference_index n A"
+      by (rule first_index_tree_lookup) (rule inj_on_id)
+    moreover have "value_reference_index n A=isabelle_name_position A n" by (induction A) auto
+    ultimately show "RBT.lookup (first_index_tree id A) n=isabelle_name_position A n" by simp
+  qed
+  show ?thesis
+    by (simp add: fun_eq_iff Let_def isabelle_state_embedding_def isabelle_name_tree_lookup_fun position)
+qed
+
+text \<open>
+  A stage judging several exported answers against one request state lists the request state's entities with
+  their keys once, reads its table's member index once, and applies the constructor's partial application to
+  that state once, as the native answer's edit does (@{thm [source] development_native_answer_edit_shared});
+  per answer it reads the answer's names through the indexes above and pairs each entity with its key once.
 \<close>
 
 lemma exported_answer_edit_shared [code]:
-  "exported_answer_edit S=(let edit=state_edit_of S; names=fst (snd S);
-     L=sort_key entity_order_key (snd (snd S)) in
-     (\<lambda>S'. let L'=sort_key entity_order_key (snd (snd (isabelle_rooted_read names S'))) in
-       edit (fst (snd S')) (keyed_difference entity_order_key L L') (keyed_difference entity_order_key L' L)))"
-  by (simp add: fun_eq_iff exported_answer_edit_def entity_difference_def Let_def)
+  "exported_answer_edit S=(let edit=state_edit_of S; append=isabelle_appended_names (fst (snd S));
+     L=sort_key fst (map (\<lambda>e. (entity_order_key e,e)) (snd (snd S))) in
+     (\<lambda>S'. let ns=fst (snd S'); A=append ns; P=first_index_tree id A; N=isabelle_name_tree ns;
+        g=(\<lambda>i. case Option.bind (RBT.lookup N i) (RBT.lookup P) of Some j \<Rightarrow> j | None \<Rightarrow> length A+i);
+        L'=sort_key fst (map (\<lambda>e. (entity_order_key e,e)) (map (isabelle_entity_rename g) (snd (snd S')))) in
+       edit ns (map snd (keyed_difference fst L L')) (map snd (keyed_difference fst L' L))))"
+  by (rule ext) (simp only: exported_answer_edit_def entity_difference_paired Let_def isabelle_rooted_read_fields
+      snd_conv appended_embedding_indexed)
 
 section \<open>The read answer state is the edit applied\<close>
 

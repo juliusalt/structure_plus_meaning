@@ -498,6 +498,9 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#370** (design): the owner's answer to Q2 recorded in the plan — "Owner directions" verbatim, stage 2 amended in
   place, the standing and direction sections, its readings marked generated; its question on the "Corrections to
   earlier plans" row to a small follow-up continuing it, its follow-ups mailed to #371.
+- **#355** (`2c69e833`): the certified cause's formation discharged where the judgment constructs it, words equal; its
+  review's follow-ups mailed to #361, #365 and #367, the rest under Open 27.
+- **#372** (design): the plan's Corrections row on the first problem states the owner's answer to Q2.
 
 ## Open
 
@@ -554,9 +557,13 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     plan-51's two decisions on #64's questions and #64's remains; the split source waits on the owner's criterion (Q14,
     its evidence Q16).
 27. The seed recipe's cost, attributed by #324 (`.build/tasks/324/measurement.md`): the publication presentation is
-    48.50 s held, the word's lookup 28.15 s of it (design #356) and the causes' formation checked again 5.7 s (#355);
+    48.50 s held, the word's lookup 28.15 s of it (design #356) and the causes' formation checked again 5.7 s (#355,
+    `2c69e833`, its saving attributed by phase in #367's held pair);
     the cause holding the payload twice (certification 7.6 s of the value) stays with its entry ("Development causes
-    are certified under the first loop's policy"). Unattributed: the fall from #128's 63.45 s; unmeasured: the
+    are certified under the first loop's policy"). The same refinement at the harness's answer publication (#355's
+    review, the planner's for its words): its acceptance replays the answer records, so it follows #319, at #369's
+    figures. Unattributed: the fall from #128's 63.45 s, and the 6.6 s between #324's held run on train318 and
+    batch167 (#355's review); unmeasured: the
     machinery recipe's held seconds, which set a landing check's recipe phase once both repairs land. #128's entry
     names its first check in its Evidence paragraph rather than the landing check that accepted the final tree, with
     that entry's next edit (#355 corrects it).
@@ -826,13 +833,16 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   (`Development_Incremental_Verdict`'s probe past 60 s, attributed at its cause) to #353; #278's review to #193;
   #308's change of `Development_State_Rows`' row (`.build/tasks/308/rows.md`) to #325; #314's review's follow-up 1 to
   #169 (the native records in their harness's form if it writes them); #370's follow-ups to #371 (interim choices
-  recorded natively, a choosing problem's contract kind, the loop the two problems enter); and to #194 q85's rule for a
+  recorded natively, a choosing problem's contract kind, the loop the two problems enter); #355's review's to #361
+  (`those_map_result`), #365 (`development_incumbent_using`, the row's "the equation") and #367 (the phase
+  attribution); and to #194 q85's rule for a
   measurement's reference with, as shares its by-field figures show where they can, #321's 4, #294's 1 and 3 (Open 96)
   and #307's remains (Open 110).
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's
   `failing` list holds dicts; #168's review, follow-up 7); `measuring --shared` wrote no `measurements.log` for any of
   #307's ten runs, as #306's review found for B5; #324's brief named a base the harness had swept before it ran, and #315 found the before base's exports swept within
-an hour of the landing, exporting them again from its proof context (`tools/export_proved_code.py --context`).
+an hour of the landing, exporting them again from its proof context (`tools/export_proved_code.py --context`); the finalizer's push of #370's
+commit (`82a065cd`) failed.
 - **Q7's ledger entries** (the question and the owner's answers of 16:19 and 16:34) can leave, #357 having recorded
   the answer in the plan (`4434635d`): the harness's (`v2.py ledger`, whose `--help` records its text as a question).
 - **Q17, Q19 and Q20 of the ledger are the harness's**: a classifier stopped plan-51 to plan-54 before their notes and

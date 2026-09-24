@@ -230,6 +230,67 @@ proof -
   show ?thesis using I_indices whole indices by (simp add: prod_eq_iff)
 qed
 
+text \<open>
+  A sequence of mapped values factors in the same way through the map, which need not be injective:
+  the first-occurrence sequence of the values, then the sequence of their distinct values mapped, and
+  every index is composed. Two values with one image meet in the second sequence.
+\<close>
+
+lemma value_reference_fold_map_first:
+  "fold value_reference_add (map f (fold value_reference_add xs [])) T=fold value_reference_add (map f xs) T"
+proof (induction xs rule: rev_induct)
+  case Nil
+  then show ?case by simp
+next
+  case (snoc x xs)
+  let ?D="fold value_reference_add xs []"
+  have members: "set ?D=set xs" using value_reference_fold_set[of xs "[]"] by simp
+  show ?case
+  proof (cases "x\<in>set ?D")
+    case True
+    have inside: "f x\<in>set (fold value_reference_add (map f xs) T)"
+      using True members value_reference_fold_set[of "map f xs" T] by auto
+    have local_step: "fold value_reference_add (xs@[x]) []=?D" using True by (simp add: value_reference_add_def)
+    have whole_step: "fold value_reference_add (map f (xs@[x])) T=fold value_reference_add (map f xs) T"
+      using inside by (simp add: value_reference_add_def)
+    show ?thesis by (simp only: local_step whole_step snoc.IH)
+  next
+    case False
+    have local_step: "value_reference_add x ?D=?D@[x]" using False by (simp add: value_reference_add_def)
+    show ?thesis using snoc.IH by (simp add: local_step)
+  qed
+qed
+
+theorem value_reference_sequence_map:
+  assumes distinct: "distinct T"
+  and local_run: "value_reference_sequence xs []=(L,D)" and mapped_run: "value_reference_sequence (map f D) T=(G,U)"
+  shows "value_reference_sequence (map f xs) T=(map (nth G) L,U)"
+proof -
+  have D_table: "D=fold value_reference_add xs []"
+    using value_reference_sequence_table[of xs "[]"] local_run by simp
+  have U_table: "U=fold value_reference_add (map f xs) T"
+    using value_reference_sequence_table[of "map f D" T] mapped_run D_table value_reference_fold_map_first by simp
+  have whole: "snd (value_reference_sequence (map f xs) T)=U"
+    using value_reference_sequence_table[of "map f xs" T] U_table by simp
+  have L_indices: "L=map (\<lambda>y. the (value_reference_index y D)) xs"
+    using value_reference_sequence_indices[of "[]" xs] local_run by simp
+  have G_indices: "G=map (\<lambda>y. the (value_reference_index y U)) (map f D)"
+    using value_reference_sequence_indices[OF distinct, of "map f D"] mapped_run by simp
+  have I_indices: "fst (value_reference_sequence (map f xs) T)=map (\<lambda>y. the (value_reference_index y U)) (map f xs)"
+    using value_reference_sequence_indices[OF distinct, of "map f xs"] whole by simp
+  have members: "set xs=set D" using D_table value_reference_fold_set[of xs "[]"] by simp
+  have at: "G!the (value_reference_index y D)=the (value_reference_index (f y) U)" if y: "y\<in>set xs" for y
+  proof -
+    obtain i where found: "value_reference_index y D=Some i"
+      using y members value_reference_index_member[of y D] by auto
+    have i: "i<length D" "D!i=y" using value_reference_index_read[OF found] by simp_all
+    show ?thesis using found i G_indices by simp
+  qed
+  have indices: "map (nth G) L=map (\<lambda>y. the (value_reference_index y U)) (map f xs)"
+    unfolding L_indices map_map comp_def by (rule map_cong) (simp_all add: at)
+  show ?thesis using I_indices whole indices by (simp add: prod_eq_iff)
+qed
+
 fun value_reference_merged :: "(nat list\<times>'a list) list \<Rightarrow> nat list \<Rightarrow> nat list" where
   "value_reference_merged [] G=[]"
 | "value_reference_merged ((L,D)#ls) G=map (nth (take (length D) G)) L@value_reference_merged ls (drop (length D) G)"

@@ -61,29 +61,50 @@ fun finite_term_compare_right :: "finite_factor_term \<Rightarrow> finite_factor
 lemma finite_term_tag_mirror [simp]: "finite_term_tag (mirror_term t)=finite_term_tag t"
   by (cases t rule: finite_term_tag.cases) simp_all
 
+text \<open>
+  The right-first order is the prefix-key comparison (\<open>Prefix_Key_Comparisons\<close>) at the view that
+  lists a pair's components right first, the reverse of the plain view's children; its prefix key is
+  the key of the mirrored term. Its one-level equations hold by cases on both terms.
+\<close>
+
+interpretation finite_term_right_comparison: prefix_key_comparison "\<lambda>t. hd (finite_term_key t)"
+  "\<lambda>t. rev (finite_term_children t)" "\<lambda>t. finite_term_key (mirror_term t)" finite_term_compare_right
+proof unfold_locales
+  fix t u :: finite_factor_term
+  show "finite_term_key (mirror_term t)=hd (finite_term_key t)#
+      concat (map (\<lambda>t. finite_term_key (mirror_term t)) (rev (finite_term_children t)))"
+    by (cases t rule: finite_term_key.cases) simp_all
+  show "hd (finite_term_key t)=hd (finite_term_key u) \<Longrightarrow>
+      length (rev (finite_term_children t))=length (rev (finite_term_children u))"
+    by (cases t rule: finite_term_key.cases; cases u rule: finite_term_key.cases) simp_all
+  show "hd (finite_term_key t)=hd (finite_term_key u) \<Longrightarrow>
+      rev (finite_term_children t)=rev (finite_term_children u) \<Longrightarrow> t=u"
+    by (cases t rule: finite_term_key.cases; cases u rule: finite_term_key.cases) simp_all
+  show "finite_term_compare_right t u=(case compare_linear (hd (finite_term_key t)) (hd (finite_term_key u)) of
+      Linear_Equal \<Rightarrow> compare_listed finite_term_compare_right (rev (finite_term_children t))
+        (rev (finite_term_children u))
+    | c \<Rightarrow> c)"
+    by (cases t rule: finite_term_key.cases; cases u rule: finite_term_key.cases)
+      (simp_all add: compare_linear_pair compare_linear_option compare_linear_ordered_artifact
+        compare_address_linear compare_natural_linear compare_linear_cases split: linear_comparison.split)
+qed
+
 lemma finite_term_compare_right_mirror:
   "finite_term_compare_right t u=finite_term_compare (mirror_term t) (mirror_term u)"
-  by (induction t u rule: finite_term_compare_right.induct) (auto split: linear_comparison.split)
+  by (simp only: finite_term_right_comparison.compare_order finite_term_compare_order)
 
 lemma less_eq_right_ordered_term_code [code]:
   "Right_Ordered_Term t\<le>Right_Ordered_Term u \<longleftrightarrow> finite_term_compare_right t u\<noteq>Linear_Greater"
-  by (simp add: less_eq_right_ordered_term_def right_order_key_def finite_term_compare_right_mirror
-    less_eq_ordered_factor_term_structural_code)
+  by (simp only: less_eq_right_ordered_term_def right_order_key_def unright_term.simps
+    less_eq_ordered_factor_term_def ordered_factor_term_key.simps finite_term_right_comparison.key_less_eq)
 
 lemma less_right_ordered_term_code [code]:
   "Right_Ordered_Term t<Right_Ordered_Term u \<longleftrightarrow> finite_term_compare_right t u=Linear_Less"
-  by (simp add: less_right_ordered_term_def right_order_key_def finite_term_compare_right_mirror
-    less_ordered_factor_term_structural_code)
+  by (simp only: less_right_ordered_term_def right_order_key_def unright_term.simps
+    less_ordered_factor_term_def ordered_factor_term_key.simps finite_term_right_comparison.key_less)
 
 lemma equal_right_ordered_term_code [code]:
   "HOL.equal (Right_Ordered_Term t) (Right_Ordered_Term u) \<longleftrightarrow> finite_term_compare_right t u=Linear_Equal"
-proof -
-  have "HOL.equal (Right_Ordered_Term t) (Right_Ordered_Term u) \<longleftrightarrow>
-      HOL.equal (Ordered_Factor_Term (mirror_term t)) (Ordered_Factor_Term (mirror_term u))"
-    by (simp add: equal_eq mirror_term_injective)
-  also have "\<dots> \<longleftrightarrow> finite_term_compare (mirror_term t) (mirror_term u)=Linear_Equal"
-    by (rule equal_ordered_factor_term_structural_code)
-  finally show ?thesis by (simp only: finite_term_compare_right_mirror)
-qed
+  by (simp only: equal_eq right_ordered_term.inject finite_term_right_comparison.compare_equal)
 
 end

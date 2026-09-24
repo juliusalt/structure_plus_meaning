@@ -1303,7 +1303,7 @@ record, not the completed graph proposed in `plan.md`.
 | Delimited_Bit_Words | Main | An exact prefix reader preserves every bit and the complete remaining suffix. |
 | RRA_Digit_Natural_Paths | Natural_Binary_Digits, Delimited_Bit_Words | Canonical binary digits and an explicit terminator encode arbitrary natural coordinates exactly. |
 | Prefix_Code_Words | Main | Every exact nonempty prefix reader extends to an exact complete finite-word reader. |
-| RRA_Digit_Use_Paths | RRA_Digit_Natural_Paths, Prefix_Code_Words, RRA_Binary_Use_Paths | Composed digit paths preserve complete natural use words and distinguish absent from present empty uses. |
+| RRA_Digit_Use_Paths | RRA_Exact, Prefix_Code_Words | Composed digit paths preserve complete natural use words and distinguish absent from present empty uses. |
 | Finite_Codec_Observations | Finite_Map_Observations | Complete actual encoding and decoding graphs determine roundtrip, reflection, injection and preservation observations. |
 | RRA_Use_Codec_Observations | RRA_Digit_Use_Paths, RRA_Binary_Path_Decoding, Finite_Codec_Observations | Original use recovery and path reflection remain separate from an independently stated coordinate budget. |
 | RRA_Use_Codec_Methods | RRA_Use_Codec_Observations | Exact unary, digit and reversed-digit methods retain all-input contracts alongside lossy and malformed controls. |

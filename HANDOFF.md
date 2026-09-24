@@ -513,6 +513,8 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#372** (design, `b4170651`): the plan's Corrections row on the first problem states the owner's answer to Q2.
 - **#359** (B1, `d212cb53`): `Shared_Term_Words`, the word read off a report's shared terms, exact to the decoded term's
   word; its review's follow-up 1 Open 115, 2 mailed to #367.
+- **#363** (B3, `254b5999`): `Presented_Publication_Values`, the publication notions' presenters over a term
+  presentation, each decoding to the plain presenter; its review's follow-ups 1 and 2 mailed to #367, 3–5 Open 116.
 
 ## Open
 
@@ -839,6 +841,15 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     `T!i`), linear per read at every reference node of the decode and the occurrence walk: negligible at the seed
     round's table of target leaves, O(nodes × table) over a table holding pair shapes (`Shared_Call_Closures`'). A
     constant reading it through an `IArray` built once, related to `shared_decode` by a lemma, when such a use comes.
+116. **What #363's landing leaves** (its review, `.build/tasks/364/review.md`, follow-ups 3–5): `REASONING_REUSE.md`'s
+    row "A structural comparison computes a prefix key's order" names `presented_compare_pending_keys`, the worklist
+    form over a domain, and why it is no instance, at the document's next change, a domain-relative statement factored
+    into `Prefix_Key_Comparisons` at a second worklist use; generic facts stated away from their constants
+    (`compare_linear_none_some`, `compare_linear_append_same` to `Linear_Comparisons`,
+    `finite_collection_presentation_cong` and `_image` to `Finite_Presented_Collections`,
+    `finite_generation_value_mapped` to `Finite_Presented_Structures`), moved with the next landing changing those
+    theories; and one of the two `term_view` types (`Shared_Term_Tables`, `Presented_Term_Matching`) renamed at its
+    theory's next change, which a consumer now qualifies.
 
 ## Now
 
@@ -852,7 +863,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   #169 (the native records in their harness's form if it writes them); #370's follow-ups to #371 (interim choices
   recorded natively, a choosing problem's contract kind, the loop the two problems enter); #355's review's to #361
   (`those_map_result`), #365 (`development_incumbent_using`, the row's "the equation") and #367 (the phase
-  attribution), #359's review's follow-up 2 to #367 (B4's three new phases attributed); and to #194 q85's rule for a
+  attribution), #359's review's follow-up 2 to #367 (B4's three new phases attributed), #363's review's 1 and 2 to #367
+(`presented_listing` and the target leaves' comparison attributed); and to #194 q85's rule for a
   measurement's reference with, as shares its by-field figures show where they can, #321's 4, #294's 1 and 3 (Open 96)
   and #307's remains (Open 110).
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's

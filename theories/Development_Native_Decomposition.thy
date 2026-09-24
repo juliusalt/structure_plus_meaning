@@ -98,10 +98,10 @@ lemma native_decomposition_family:
     (simp add: decomposition_definitions_def development_row_definitions_def verdict_rows_definitions_def
       verdict_mentions_definitions_def)
 
-interpretation decomposition_applies_family: native_rule_law native_decomposition_system decomposition_applies
-    "[([0],decomposition_rule)]"
-  by (rule native_rule_lawI, rule native_decomposition_family)
-    (auto simp: decomposition_definitions_def decomposition_rule_def)
+interpretation decomposition_applies_family: native_listed_law native_decomposition_system decomposition_applies
+    "[([0],decomposition_conclusion,decomposition_premises)]"
+  unfolding native_listed_law_def by (rule native_decomposition_family)
+    (auto simp: decomposition_definitions_def decomposition_rule_def native_rule_listing_def)
 
 interpretation decomposition_defined_swap: native_swap_program native_decomposition_system decomposition_defined
     verdict_statements
@@ -261,7 +261,6 @@ lemma development_contract_families_present:
 lemma definition_families_present:
   "kinds_present (development_demanded isabelle_definition_proposition) (set [Definition_Kind])"
   unfolding kinds_present_def by (simp add: definition_kind)
-
 
 lemma development_locus_term:
   "path_term (development_locus key r k c)=Pair_Term (bit_term (development_role_path r!0))
@@ -451,11 +450,11 @@ theorem native_decomposition_progress:
       (Pair_Term (keys_term ls) Q))))\<in>positive_meaning native_decomposition_system"
   shows "ls\<noteq>[]"
 proof -
-  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set [([0::nat],decomposition_rule)]"
+  obtain c p ps f where rule: "(c,p,ps)\<in>set [([0::nat],decomposition_conclusion,decomposition_premises)]"
     and conclusion: "evaluate_pattern f (decode_finite_pattern p)=
       Pair_Term x (Pair_Term S (Pair_Term row (Pair_Term (keys_term ls) Q)))"
-    by (rule decomposition_applies_family.holds_rule[OF holds]) (rule that; assumption)
-  from rule have "p=decomposition_conclusion" by (simp add: decomposition_rule_def finite_native_rule_eq_iff)
+    by (rule decomposition_applies_family.holds_triple[OF holds]) (rule that; assumption)
+  from rule have "p=decomposition_conclusion" by simp
   with conclusion show ?thesis by (auto simp: decomposition_conclusion_def)
 qed
 
@@ -503,14 +502,14 @@ proof -
   proof
     assume holds: "(decomposition_applies,development_decomposition_argument x rows
         (development_parent_row key inert origin grant p) key I D P Q)\<in>positive_meaning native_decomposition_system"
-    obtain c' p' ps f where rule: "(c',finite_native_rule p' ps)\<in>set [([0::nat],decomposition_rule)]"
+    obtain c' p' ps f where rule: "(c',p',ps)\<in>set [([0::nat],decomposition_conclusion,decomposition_premises)]"
       and shape: "evaluate_pattern f (decode_finite_pattern p')=
         development_decomposition_argument x rows (development_parent_row key inert origin grant p) key I D P Q"
       and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))
         \<in>positive_meaning native_decomposition_system"
-      by (rule decomposition_applies_family.holds_rule[OF holds]) (rule that; assumption)
+      by (rule decomposition_applies_family.holds_triple[OF holds]) (rule that; assumption)
     have F: "p'=decomposition_conclusion" "set ps=set decomposition_premises"
-      using rule by (simp_all add: decomposition_rule_def finite_native_rule_eq_iff)
+      using rule by simp_all
     have supports: "(decomposition_every,Pair_Term (f [6]) (Pair_Term (f [4]) (f [5])))
         \<in>positive_meaning native_decomposition_system"
       "(verdict_statements,Pair_Term (f [14]) (f [7]))\<in>positive_meaning native_decomposition_system"
@@ -570,16 +569,15 @@ proof -
       bit_term (kp!0),bit_term (kp!1),bit_term (kp!2),path_term (key c),Q]"
     have "(decomposition_applies,evaluate_pattern f (decode_finite_pattern decomposition_conclusion))
         \<in>positive_meaning native_decomposition_system"
-    proof (rule decomposition_applies_family.step_at[where c="[0]" and ps=decomposition_premises])
-      show "([0],finite_native_rule decomposition_conclusion decomposition_premises)\<in>set [([0],decomposition_rule)]"
-        by (simp add: decomposition_rule_def)
+    proof (rule decomposition_applies_family.step_triple[where c="[0]" and ps=decomposition_premises])
+      show "([0],decomposition_conclusion,decomposition_premises)\<in>
+          set [([0],decomposition_conclusion,decomposition_premises)]"
+        by simp
       have hs: "term_formed (data_list_term (map path_term (map key hs0)))"
         using keys_term_formed[of "map key hs0"] by (simp add: keys_term_def)
-      show "\<forall>a\<in>pattern_variables (decode_finite_pattern decomposition_conclusion) -
-          (\<Union>(s,d,q)\<in>set decomposition_premises. pattern_variables (decode_finite_pattern q)). term_formed (f a)"
+      show "\<forall>a\<in>pattern_variables (decode_finite_pattern decomposition_conclusion). term_formed (f a)"
         using xf bf sf hs Df Pf Qf
-        by (simp add: f_def decomposition_conclusion_def decomposition_premises_def decomposition_locus_pattern_def
-          insert_Diff_if)
+        by (simp add: f_def decomposition_conclusion_def decomposition_locus_pattern_def)
       show "\<forall>(s,d,q)\<in>set decomposition_premises.
           (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning native_decomposition_system"
         using found every declared part part_found locus

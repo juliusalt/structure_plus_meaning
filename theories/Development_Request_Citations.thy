@@ -355,15 +355,27 @@ definition context_sound_row_rules :: "'u definition_site \<Rightarrow> 'u defin
     (local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list" where
   "context_sound_row_rules mm s=[([0],permitted_subject_rule mm),([1],declares_cited_rule s)]"
 
+definition context_sound_row_listing :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow>
+    (local_address\<times>local_address finite_term_pattern\<times>
+      (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "context_sound_row_listing mm s=
+    [([0],row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2) (native_var 3)
+      (native_var 4) (native_var 5) (native_var 6),[([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))]),
+     ([1],row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2) (native_var 3)
+      (native_var 4) (native_var 5) (native_var 6),[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))])]"
+
+lemma context_sound_row_rules_listing:
+  "context_sound_row_rules mm s=native_rule_listing (context_sound_row_listing mm s)"
+  by (simp add: context_sound_row_rules_def context_sound_row_listing_def native_rule_listing_def
+    permitted_subject_rule_def declares_cited_rule_def)
+
 locale context_sound_row_program = native_rule_family P r "context_sound_row_rules mm s" +
     somes: native_some_program P s w + cited: list_cited_program P w mm
   for P :: "'u native_system" and r mm s w :: "'u definition_site"
 begin
 
-sublocale law: native_rule_law P r "context_sound_row_rules mm s"
-  by (rule native_rule_lawI[OF native_rule_family_axioms])
-    (auto simp: context_sound_row_rules_def permitted_subject_rule_def declares_cited_rule_def)
-
+sublocale triples: native_listed_law P r "context_sound_row_listing mm s"
+  unfolding native_listed_law_def context_sound_row_rules_listing[symmetric] by (rule native_rule_family_axioms)
 
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"
@@ -371,23 +383,21 @@ theorem exact:
     q0\<in>set (row_subjects (snd z)) \<or> (\<exists>d\<in>set (row_declared (snd z)). d\<in>set ks)"
 proof
   assume "(r,Pair_Term (Pair_Term (keys_term ks) (path_term q0)) (state_row_term ident z))\<in>positive_meaning P"
-  then obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (context_sound_row_rules mm s)"
+  then obtain c p ps f where rule: "(c,p,ps)\<in>set (context_sound_row_listing mm s)"
     and shape: "evaluate_pattern f (decode_finite_pattern p)=
       Pair_Term (Pair_Term (keys_term ks) (path_term q0)) (state_row_term ident z)"
     and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-    unfolding law.exact by (elim exE conjE) (rule that; assumption)
+    by (rule triples.holds_triple) (rule that; assumption)
   have p: "p=row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2) (native_var 3)
       (native_var 4) (native_var 5) (native_var 6)"
-    using rule by (auto simp: context_sound_row_rules_def permitted_subject_rule_def declares_cited_rule_def
-      finite_native_rule_eq_iff)
+    using rule by (auto simp: context_sound_row_listing_def)
   have fields: "f [0]=keys_term ks" "f [1]=path_term q0" "f [3]=keys_term (row_declared (snd z))"
       "f [4]=keys_term (row_subjects (snd z))"
     using shape by (simp_all add: p row_pattern_def state_row_term_def)
   have subject_field: "f [Suc 0]=path_term q0" using fields(2) by simp
-  from rule consider "set ps={([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))}"
-      | "set ps={([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))}"
-    by (auto simp: context_sound_row_rules_def permitted_subject_rule_def declares_cited_rule_def
-      finite_native_rule_eq_iff)
+  from rule consider "ps=[([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))]"
+      | "ps=[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"
+    by (auto simp: context_sound_row_listing_def)
   then show "q0\<in>set (row_subjects (snd z)) \<or> (\<exists>d\<in>set (row_declared (snd z)). d\<in>set ks)"
   proof cases
     case 1
@@ -410,16 +420,15 @@ next
   proof cases
     case subject
     show ?thesis
-      by (rule law.step_at[where c="[0]" and ps="[([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))]"])
-        (use subject identity in \<open>simp_all add: context_sound_row_rules_def permitted_subject_rule_def
-          row_pattern_def keys_term_def cited.members.exact data_list_term_formed insert_Diff_if\<close>)
+      by (rule triples.step_triple[where c="[0]" and ps="[([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))]"])
+        (use subject identity in \<open>simp_all add: context_sound_row_listing_def row_pattern_def keys_term_def
+          cited.members.exact data_list_term_formed\<close>)
   next
     case declared
     show ?thesis
-      by (rule law.step_at[where c="[1]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"])
-        (use declared identity in \<open>simp_all add: context_sound_row_rules_def declares_cited_rule_def
-          row_pattern_def keys_term_def[of "row_declared (snd z)"] somes.exact cited.exact data_list_term_formed
-          insert_Diff_if\<close>)
+      by (rule triples.step_triple[where c="[1]" and ps="[([0],(s,Finite_Pattern_Pair (native_var 0) (native_var 3)))]"])
+        (use declared identity in \<open>simp_all add: context_sound_row_listing_def row_pattern_def
+          keys_term_def[of "row_declared (snd z)"] somes.exact cited.exact data_list_term_formed\<close>)
   qed
   then show "(r,Pair_Term (Pair_Term (keys_term ks) (path_term q0)) (state_row_term ident z))\<in>positive_meaning P"
     by (simp add: row_pattern_def state_row_term_def)

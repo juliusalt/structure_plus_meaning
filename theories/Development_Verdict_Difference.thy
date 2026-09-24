@@ -372,15 +372,30 @@ definition permitted_row_rules :: "'u definition_site \<Rightarrow> 'u definitio
     (if subject then [([1],permitted_subject_rule mm)] else []) @
     (if declares then [([2],row_declares_rule)] else [])"
 
+definition permitted_row_listing :: "'u definition_site \<Rightarrow> 'u definition_site \<Rightarrow> bool \<Rightarrow> bool \<Rightarrow>
+    (local_address\<times>local_address finite_term_pattern\<times>
+      (local_address\<times>('u definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "permitted_row_listing m mm subject declares=
+    [([0],row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2) (native_var 3)
+      (native_var 4) (native_var 5) (native_var 6),[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))])] @
+    (if subject then [([1],row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)
+      (native_var 3) (native_var 4) (native_var 5) (native_var 6),
+      [([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))])] else []) @
+    (if declares then [([2],row_pattern (native_var 0) (native_var 1)
+      (Finite_Pattern_Pair (native_var 2) (native_var 3)) (native_var 4) (native_var 5) (native_var 6),[])] else [])"
+
+lemma permitted_row_rules_listing:
+  "permitted_row_rules m mm subject declares=native_rule_listing (permitted_row_listing m mm subject declares)"
+  by (cases subject; cases declares) (simp_all add: permitted_row_rules_def permitted_row_listing_def
+    native_rule_listing_def permitted_found_rule_def permitted_subject_rule_def row_declares_rule_def)
+
 locale permitted_row_program = native_rule_family P r "permitted_row_rules m mm subject declares" +
     found: store_found_program P m k ch + members: native_member_program P mm
   for P :: "'u native_system" and r m mm k ch :: "'u definition_site" and subject declares :: bool
 begin
 
-sublocale law: native_rule_law P r "permitted_row_rules m mm subject declares"
-  by (rule native_rule_lawI[OF native_rule_family_axioms])
-    (auto simp: permitted_row_rules_def permitted_found_rule_def permitted_subject_rule_def row_declares_rule_def
-      split: if_splits)
+sublocale triples: native_listed_law P r "permitted_row_listing m mm subject declares"
+  unfolding native_listed_law_def permitted_row_rules_listing[symmetric] by (rule native_rule_family_axioms)
 
 theorem exact:
   assumes valued: "\<And>y. term_formed (val y)" and identity: "\<And>y. term_formed (ident y)"
@@ -388,44 +403,38 @@ theorem exact:
     store_lookup T (fst z)\<noteq>None \<or> (subject \<and> q\<in>set (row_subjects (snd z))) \<or> (declares \<and> row_declared (snd z)\<noteq>[])"
 proof
   assume "(r,Pair_Term (Pair_Term (store_term val T) (path_term q)) (state_row_term ident z))\<in>positive_meaning P"
-  then obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set (permitted_row_rules m mm subject declares)"
+  then obtain c p ps f where rule: "(c,p,ps)\<in>set (permitted_row_listing m mm subject declares)"
     and shape: "evaluate_pattern f (decode_finite_pattern p)=
       Pair_Term (Pair_Term (store_term val T) (path_term q)) (state_row_term ident z)"
     and support: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning P"
-    unfolding law.exact by (elim exE conjE) (rule that; assumption)
-  from rule consider (hit) "finite_native_rule p ps=permitted_found_rule m"
-      | (subj) "subject" "finite_native_rule p ps=permitted_subject_rule mm"
-      | (decl) "declares" "finite_native_rule p ps=row_declares_rule"
-    by (auto simp: permitted_row_rules_def split: if_splits)
+    by (rule triples.holds_triple) (rule that; assumption)
+  from rule consider (hit) "p=row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)
+        (native_var 3) (native_var 4) (native_var 5) (native_var 6)"
+        "ps=[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"
+      | (subj) "subject" "p=row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)
+        (native_var 3) (native_var 4) (native_var 5) (native_var 6)"
+        "ps=[([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))]"
+      | (decl) "declares" "p=row_pattern (native_var 0) (native_var 1)
+        (Finite_Pattern_Pair (native_var 2) (native_var 3)) (native_var 4) (native_var 5) (native_var 6)"
+    by (auto simp: permitted_row_listing_def split: if_splits)
   then show "store_lookup T (fst z)\<noteq>None \<or> (subject \<and> q\<in>set (row_subjects (snd z))) \<or>
       (declares \<and> row_declared (snd z)\<noteq>[])"
   proof cases
     case hit
-    then have p: "p=row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2) (native_var 3)
-        (native_var 4) (native_var 5) (native_var 6)"
-      and ps: "set ps={([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))}"
-      by (simp_all add: permitted_found_rule_def finite_native_rule_eq_iff)
-    have call: "(m,Pair_Term (f [0]) (f [2]))\<in>positive_meaning P" using support ps by auto
+    have call: "(m,Pair_Term (f [0]) (f [2]))\<in>positive_meaning P" using support hit(2) by auto
     have fields: "f [0]=store_term val T" "f [2]=path_term (fst z)"
-      using shape by (simp_all add: p row_pattern_def state_row_term_def)
+      using shape by (simp_all add: hit(1) row_pattern_def state_row_term_def)
     show ?thesis using call by (simp add: fields found.exact[OF valued])
   next
     case subj
-    then have p: "p=row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2) (native_var 3)
-        (native_var 4) (native_var 5) (native_var 6)"
-      and ps: "set ps={([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))}"
-      by (simp_all add: permitted_subject_rule_def finite_native_rule_eq_iff)
-    have call: "(mm,Pair_Term (f [1]) (f [4]))\<in>positive_meaning P" using support ps by auto
+    have call: "(mm,Pair_Term (f [1]) (f [4]))\<in>positive_meaning P" using support subj(3) by auto
     have fields: "f [1]=path_term q" "f [4]=keys_term (row_subjects (snd z))"
-      using shape by (simp_all add: p row_pattern_def state_row_term_def)
+      using shape by (simp_all add: subj(2) row_pattern_def state_row_term_def)
     show ?thesis using call subj(1) fields by (simp add: keys_term_def members.exact)
   next
     case decl
-    then have p: "p=row_pattern (native_var 0) (native_var 1) (Finite_Pattern_Pair (native_var 2) (native_var 3))
-        (native_var 4) (native_var 5) (native_var 6)"
-      by (simp_all add: row_declares_rule_def finite_native_rule_eq_iff)
     have "row_declared (snd z)\<noteq>[]"
-      using shape by (auto simp: p row_pattern_def state_row_term_def)
+      using shape by (auto simp: decl(2) row_pattern_def state_row_term_def)
     then show ?thesis using decl(1) by simp
   qed
 next
@@ -442,9 +451,9 @@ next
         ident (row_identity (snd z))])
       (decode_finite_pattern (row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)
         (native_var 3) (native_var 4) (native_var 5) (native_var 6))))\<in>positive_meaning P"
-      by (rule law.step_at[where c="[0]" and ps="[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-        (use hit sf identity in \<open>simp_all add: permitted_row_rules_def permitted_found_rule_def row_pattern_def
-          found.exact[OF valued] insert_Diff_if data_list_term_formed\<close>)
+      by (rule triples.step_triple[where c="[0]" and ps="[([0],(m,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
+        (use hit sf identity in \<open>simp_all add: permitted_row_listing_def row_pattern_def found.exact[OF valued]
+          data_list_term_formed\<close>)
     then show ?thesis by (simp add: row_pattern_def state_row_term_def)
   next
     case subj
@@ -453,9 +462,9 @@ next
         ident (row_identity (snd z))])
       (decode_finite_pattern (row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)
         (native_var 3) (native_var 4) (native_var 5) (native_var 6))))\<in>positive_meaning P"
-      by (rule law.step_at[where c="[1]" and ps="[([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))]"])
-        (use subj sf identity in \<open>simp_all add: permitted_row_rules_def permitted_subject_rule_def row_pattern_def
-          keys_term_def members.exact data_list_term_formed insert_Diff_if\<close>)
+      by (rule triples.step_triple[where c="[1]" and ps="[([0],(mm,Finite_Pattern_Pair (native_var 1) (native_var 4)))]"])
+        (use subj sf identity in \<open>simp_all add: permitted_row_listing_def row_pattern_def keys_term_def
+          members.exact data_list_term_formed\<close>)
     then show ?thesis by (simp add: row_pattern_def state_row_term_def)
   next
     case decl
@@ -466,9 +475,8 @@ next
       (decode_finite_pattern (row_pattern (native_var 0) (native_var 1)
         (Finite_Pattern_Pair (native_var 2) (native_var 3)) (native_var 4) (native_var 5) (native_var 6))))
       \<in>positive_meaning P"
-      by (rule law.step_at[where c="[2]" and ps="[]"])
-        (use decl sf identity in \<open>simp_all add: permitted_row_rules_def row_declares_rule_def row_pattern_def
-          insert_Diff_if data_list_term_formed\<close>)
+      by (rule triples.step_triple[where c="[2]" and ps="[]"])
+        (use decl sf identity in \<open>simp_all add: permitted_row_listing_def row_pattern_def data_list_term_formed\<close>)
     then show ?thesis by (simp add: row_pattern_def state_row_term_def ds keys_term_Cons)
   qed
 qed
@@ -831,7 +839,6 @@ text \<open>
   exactly when the correspondence carries the one root to the other, which is
   @{thm isabelle_local_root_compared} at each position.
 \<close>
-
 
 theorem root_keys_exact:
   assumes present: "state_presents key S R" and present': "state_presents key' S' R'"

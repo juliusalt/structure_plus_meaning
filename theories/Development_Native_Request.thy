@@ -16,7 +16,6 @@ text \<open>
   row, no problem row and no kind, and every premise is positive.
 \<close>
 
-
 subsection \<open>The argument: the subject's key, the presentations the fields read, and the body\<close>
 
 text \<open>
@@ -192,7 +191,7 @@ lemma request_complete_program:
     request_cited request_member ident"
   unfolding support_complete_program_def support_complete_program_axioms_def mentions_cited_program_def
     row_mentions_program_def list_cited_program_def native_swap_program_def native_member_program_def native_store_search_program_def
-    native_every_program_def
+    native_every_program_def subject_call_program_def
   by (intro conjI allI; (rule native_request_family | rule identity)) (simp_all add: native_request_definitions_def)
 
 lemma request_scope_program:
@@ -201,7 +200,7 @@ lemma request_scope_program:
     request_scope_family request_scope_row request_cited request_member ident"
   unfolding scope_cited_program_def scope_cited_program_axioms_def key_cited_program_def
     list_cited_program_def native_swap_program_def native_member_program_def native_store_search_program_def
-    native_every_program_def
+    native_every_program_def subject_call_program_def
   by (intro conjI allI; (rule native_request_family | rule identity)) (simp_all add: native_request_definitions_def)
 
 lemma request_context_program:

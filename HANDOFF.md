@@ -23,8 +23,11 @@ measures the layout on the harness's last base without it and the first with it,
 **The verdict line (#44, #278, #279, #195).** Task 3's design. Landed: the state rows (#46), the request's keys (#32,
 #106), statements and malformed (#34), the presenter (#101), excess and undeclared through the subject index (#36,
 #139, #182), roots and the permitted difference (#38), unreached over the native reach (#40), the entry rule with its
-contract and two instances (#42, `Development_Native_Verdict`). #44 builds store absence and the witnesses last, so that
-no positive field reaches an absence; its tree holds `Development_Verdict_Witnesses` and a written `commit.md`. #278
+contract and two instances (#42, `Development_Native_Verdict`). #44 landed store absence and the witnesses last (`9e8bc00d`,
+`Development_Verdict_Witnesses`), so that no positive field reaches an absence; its review found the same discharge and
+the same two correspondences proved on both sides of the fields and their witnesses, which #288 states once, with the
+witness at the request's presentation — the lemma a native repair consumes — resting on the discharge (after #285 and
+#284). The witnesses of `unpermitted_removed`, `unpermitted_added` and `unreached` are unbuilt (Open 90). #278
 reflects `native_verdict_system` and measures one judgment held at the seeded and machinery states beside a bare reach
 — the baseline for #194 and condition 5a's figure, estimated at about four reaches. #279 landed the exporter's
 obligation `isabelle_declared_once` at every state the exporter defines (#256, #267, #274, `ab37086e`): its measurement
@@ -236,7 +239,8 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **The rows line**: `Development_Loci`, `Development_Rows`, `Development_Located_Rows`, `Development_Row_Presentations`
   (#22–#28), the store's presenters and search contract with `exact_held` (#83, #84, #97), the loci switched and three
   tags retired (#30), `Development_Row_Data`'s presenters (#163).
-- **The verdict line**: `Development_State_Rows` (#46), `Isabelle_Local_Names` (#78; `isabelle_name_reading`, #231),
+- **The verdict line**: store absence in `Native_Path_Stores` and `Development_Verdict_Witnesses` (#44, `9e8bc00d`),
+  `Development_State_Rows` (#46), `Isabelle_Local_Names` (#78; `isabelle_name_reading`, #231),
   `Development_Request_Keys` (#32, #106), `Development_Verdict_Statements` (#34), `Development_State_Presenter` (#101),
   `Development_Verdict_Mentions` (#36, #182), `Development_Subject_Index` (#139, #185), `Development_Verdict_Difference`
   (#38), `unreached` over the native reach (#40: one seeded judgment 0.30 s, the machinery's unreached 3.90 s
@@ -419,6 +423,17 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     are next re-established (#161 or #167).
 88. The next change to `Native_Collection_Programs`: three blank lines near `native_every_program`; `read_clause`'s
     `read` premise rebinding `c`.
+90. **The three unbuilt witnesses** (#44's review, follow-up 1): `unpermitted_removed`, `unpermitted_added` and
+    `unreached` have no witness, and the verdict's entry says each "needs a complement this entry's positive discipline
+    does not supply", which overstates it — store absence, built by #44, supplies a positive route: a removed row not
+    about the subject is a row whose key the store of the subject fibre's row keys does not hold (or a row of a family
+    outside the replaceable kinds, `kinds_outside`), and an unreached key is one the store of an admitted closure does
+    not hold, as `Development_Edited_Reach` admits `O` through `native_closure_exact`. Built when a consumer needs them
+    — a native repair reading a refusal's reasons — and that task corrects both sentences of the entry's "Built (task
+    44 …)" paragraph, the second of which should read "the lemmas its field's contract is built from". With them:
+    `native_malformed_witness_exact` is per row under a kind premise, where a family-level form over the families the
+    field visits would state the list over the whole state; and store absence has no `exact_held`, which a consumer
+    whose values are formed only where held will need.
 89. The adopted answer theory `Development_Answer_0ccf746fe2cf`'s `indexed_heads_exact` restates
     `Factor_Indexed_Readings.reading_heads_indexed` (with its values and counted siblings): one notion, but an answer
     theory is named by its content's digest and is not edited; the copy goes when the walk's next refinement answer

@@ -13327,3 +13327,27 @@ above them, `Development_Row_Contexts`, so that those construction theories keep
 contexts and the residual record stand in `Development_Row_Data`.
 
 Recorded 2026-09-24 (task 165).
+
+## A presented evaluation prepares its program's literal leaves once
+
+Task 301, build B3 of "An evaluation's calls are built over the shared subterms of its requests"
+(`Presented_Program_Applications`).
+
+- The applications of a presented call are stated over a *prepared program* (`prepare_program`): every
+  interface and clause pattern with its literal leaves presented once by the canonical constructors, a literal
+  that is not formed held as no leaf. A prepared pattern fits, matches and is instantiated exactly as
+  `Presented_Term_Matching` states it for the unprepared pattern, for every presentation, so an evaluation that
+  prepares its program once builds every call as B2 does, without looking a literal leaf up again at every fit of
+  every clause at every call (the review of #300, its item 4). The interface's fitting, a clause's requests and a
+  call's applications are exact through decoding at every call of a presentation's domain, and are the existing
+  constants at the identity presentation.
+- A material premise is read through decoding: the complete material equation reads the whole structure of plain
+  artifacts, which no presentation's view reaches. Only a clause that has material premises decodes its bindings,
+  after its head has fitted, and the decoded bindings are read by that check alone: no call is built from them. This
+  is the one decoding inside the construction of an application; every call it constructs is built by the
+  canonical constructors.
+
+What it does not claim: anything about cost, which B4 and B6 observe; the prepared program is fixed per
+evaluation and per presentation, as the table is.
+
+Recorded 2026-09-24.

@@ -105,10 +105,15 @@ lemma map_relation_values_finite [simp]:
   "finite R \<Longrightarrow> finite (map_relation_values f R)"
   by (simp add: map_relation_values_def)
 
+lemma map_relation_values_functional_on:
+  assumes "inj_on f (rel_ran R)"
+  shows "single_valued (map_relation_values f R) \<longleftrightarrow> single_valued R"
+  using assms by (auto simp: single_valued_def inj_on_def rel_ran_def; blast)
+
 lemma map_relation_values_functional:
   assumes "inj f"
   shows "single_valued (map_relation_values f R) \<longleftrightarrow> single_valued R"
-  using assms by (auto simp: single_valued_def inj_def; blast)
+  by (rule map_relation_values_functional_on[OF inj_on_subset[OF assms subset_UNIV]])
 
 lemma map_relation_values_injective:
   assumes "inj f"

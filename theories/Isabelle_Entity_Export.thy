@@ -31,8 +31,9 @@ text \<open>
   follows from one comparison of each adjacent pair (\<open>strict_sorted_iff\<close>, \<open>sorted_wrt2_simps\<close>): the
   proof is linear in the declarations. It is proved of the definition's right-hand side, whose
   arguments it instantiates, and transported to the defined constant through the definition's
-  equation, so the context term is never rewritten or traversed. No name, no type and no statement
-  is evaluated.
+  equation, so the context term is never rewritten into the goal; of the term itself only the spine
+  of the entity list is read, each entity once, by the constructor that names the equation applying
+  to it. No name, no type and no statement is evaluated.
 \<close>
 
 lemma isabelle_shared_declarations:
@@ -210,16 +211,33 @@ fun context_terms thy expand root_names seeds groups further =
   end;
 
 (*The declared constants of a defined state, read from the spine of its entity list: a declaration
-  contributes the position of its constant, a statement nothing, and no term is read further.*)
+  contributes the position of its constant, a statement nothing, and no term is read further. The
+  entity at the head of the list names the one equation of the notion that applies to it, so each
+  entity is rewritten once, by its constructor rather than by trying the equations: a declaration
+  keeps its position and the conversion goes on under it, a statement drops out and the conversion
+  goes on in its place. An entity the notion has no equation for is a defect of the exporter.*)
 val declared_rules = map mk_meta_eq @{thms isabelle_shared_declarations};
 val declared_nil = hd declared_rules;
-val declared_keep = take 3 (tl declared_rules);
-val declared_drop = drop 4 declared_rules;
+val declared_entity =
+  [(\<^const_name>\<open>Isabelle_Base_Constant\<close>, (nth declared_rules 1, true)),
+   (\<^const_name>\<open>Isabelle_Development_Constant\<close>, (nth declared_rules 2, true)),
+   (\<^const_name>\<open>Isabelle_Frontier_Constant\<close>, (nth declared_rules 3, true)),
+   (\<^const_name>\<open>Isabelle_Definition\<close>, (nth declared_rules 4, false)),
+   (\<^const_name>\<open>Isabelle_Specification\<close>, (nth declared_rules 5, false)),
+   (\<^const_name>\<open>Isabelle_Code_Equation\<close>, (nth declared_rules 6, false))];
 
 fun declared_conv ct =
-  (Conv.rewr_conv declared_nil
-    else_conv (Conv.rewrs_conv declared_keep then_conv Conv.arg_conv declared_conv)
-    else_conv (Conv.rewrs_conv declared_drop then_conv declared_conv)) ct;
+  (case Thm.term_of ct of
+    _ $ _ $ (_ $ _ $ (Const (\<^const_name>\<open>List.list.Cons\<close>, _) $ e $ _)) =>
+      (case
+        (case Term.head_of e of
+          Const (c, _) => AList.lookup (op =) declared_entity c
+        | _ => NONE) of
+        SOME (rule, declares) =>
+          (Conv.rewr_conv rule then_conv
+            (if declares then Conv.arg_conv declared_conv else declared_conv)) ct
+      | NONE => raise CTERM ("declared_conv: not an entity of the state", [ct]))
+  | _ => Conv.rewr_conv declared_nil ct);
 
 (*A strictly increasing list is distinct, proved by comparing each adjacent pair as numerals, by the
   order of binary numerals alone: HOL's rules of sorted_wrt (<).*)

@@ -2,23 +2,23 @@
  "boundary": "The initial shared development cycle retains every actual subject, candidate, condition, comparison, revision, original-scope criticism and admission. Missing original identity/sharing witnesses prevent admission despite comparison selection. The scoped gate does not establish the complete workflow.",
  "complete_recipe_source_manifest": "certificate-development-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.53,
+  "seconds": 3.82,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/certificate-development-reports.json": "0bf1d771d06906187f382415e6842bfdf4486ce6292b276e821532f64b3fcfe3"
+   "validation/reconstruction/certificate-development-reports.json": "d25a3dfe5c39774d1964edf39beae54dfceaa4d451a880bb66f49e922ffd5b0d"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "c2ff73fdb065edd3e763955c6220571eb1cd14d309ed1c156909d53a9beaef84",
+   "module_sha256": "a3e5e0e039eb2f38b5c65aee6485e0a6a5d9c8439123d0abfcd492882ab27f43",
    "subject_contracts": {
-    "native_certificate_investigation.yxml": "9fbc2ef5b83e313913c350605ff1f381e69137ad6f14d7eaaf218f711810e328"
+    "native_certificate_investigation.yxml": "547e5b860ad727fb1f14b295a817f10f4192a8989307961149b37bbd7e8cd3e6"
    },
    "theory": "Native_Certificate_Development_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "b1f90ac19443df3651f2727bf475e08389a86c12ca98ed671bd36dc5e07260a7",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "c2ff73fdb065edd3e763955c6220571eb1cd14d309ed1c156909d53a9beaef84"
- },
  "recipe": "certificate-development",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "cb3a1c32e72fe8a1572a3d11a33eba59df8c730acf63fb5b2ca759a6820e1a87",
+   "sha256": "31c1e67d0fdd6bc5d747cb6134abd0b728b52012264208d16f8ae7721faa3c9d",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "d0ae5fc5671cb994ffcb4c59c67185d30982003d82220e5a55b94cbc22c9bdbf",
+ "source_manifest_sha256": "1f0fb939719112d9bfacdefb354a59f6384c6b3cb0c529c311eb71f8836af1dc",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.4316970909967495
+   "seconds": 3.721828673995333
   }
  ]
 }

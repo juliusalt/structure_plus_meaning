@@ -2,23 +2,23 @@
  "boundary": "A run without --proof reconstructs the complete contracts from HOL. The actual source reader supplies the native program, and a shared structural goal constructor installs pair and list requirements before compiling their complete source extension. Computed observations compare original goal meaning, every retained artifact and outgoing binding, and refusal of unsupported requests. All subjects, counterexample terms, condition observations, comparisons, adequacy results and revisions are reproduced. The selected scope does not establish unrestricted coverage, complete development-cycle enforcement, native proof construction, the complete cost account or genesis.",
  "complete_recipe_source_manifest": "native-admission-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 7.09,
+  "seconds": 6.44,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/native-admission-reports.json": "530c13c1d0e54c7c7e93274f97929e084f56f21b4697e7db1259de46bf29c3f3"
+   "validation/reconstruction/native-admission-reports.json": "08183cec9157bb13afdb6218f0b38ce4bf4fd6634a165fbb8763129ede53ce90"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "85bac2b9779aed3deda2928c6f3c95dd059f7df5788ac2d5a70060c0f3662381",
+   "module_sha256": "a9983a4af4286a96698f5d4e3bdc7d74c64bf90274902c797eb91fe54ce34874",
    "subject_contracts": {
-    "native_admission_investigation.yxml": "0eaa5c475b24021246b6c0bb7135979379dad36347f9820e56f44715399eb5b1"
+    "native_admission_investigation.yxml": "9fed3df1dcac12c891e18ff6bef3d251966373d0c724f031f78e904bb1a1eef9"
    },
    "theory": "Native_Admission_Investigation_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "b1f90ac19443df3651f2727bf475e08389a86c12ca98ed671bd36dc5e07260a7",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "85bac2b9779aed3deda2928c6f3c95dd059f7df5788ac2d5a70060c0f3662381"
- },
  "recipe": "native-admission",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "6bae1176e164a8f645cc5f1c77060b8f21db483de6787c959a6c0fdd42b23025",
+   "sha256": "ae43771b27b372ee17405e329c58bf6d7ea825db4ee331dae7e798f9eb6dca9a",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "b63a6c9daa60d022dc4efb01031336cf71aa63efd59ee685b8429e1b3b3bfb48",
+ "source_manifest_sha256": "8e63be3ae5b7f41d1922151ef5896096493e8ee688116c7c9cbf2f96d24a25ab",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 7.005284123999445
+   "seconds": 6.335035728989169
   }
  ]
 }

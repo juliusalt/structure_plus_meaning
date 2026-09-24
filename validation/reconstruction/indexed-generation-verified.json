@@ -2,23 +2,23 @@
  "boundary": "All actual digit-store readings equal the complete original generation fields, recursive predecessor checks, readiness and anchors. Complete original construction requests, successful new-record queries, adverse claims, unavailable input, every candidate result and derived revision reason are retained. Installation, full physical cost, all six development conditions, native mathematical-proof admission, historical permission and reachability, and genesis remain open.",
  "complete_recipe_source_manifest": "indexed-generation-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 3.78,
+  "seconds": 3.57,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/indexed-generation-reports.json": "b674b45916e64512894902577e4e0164a5c3d4188143692e5b783644e26af7fa"
+   "validation/reconstruction/indexed-generation-reports.json": "b3b54ae3d1729a377811d6767d4cd7f8186fc1398d780e768cef8f7b97378050"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "80eed48b395718b55045ab0e713044246cb4b1b3712e27df857f9ee1e73f6cf7",
+   "module_sha256": "5a04b10e2f7071efe377f461860cad4475a0f95d8b7039a977ceb27f25fb7177",
    "subject_contracts": {
-    "indexed_generation_investigation.yxml": "4cf3290330922e3fb90e0827bb5f6420149e6058793caf458e2ea3fe7e7bdd73"
+    "indexed_generation_investigation.yxml": "f0e3d1236db909c7835b44be5e727e0da5637257e07b18dcf0fb5cba6ea05797"
    },
    "theory": "Indexed_Generation_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "b1f90ac19443df3651f2727bf475e08389a86c12ca98ed671bd36dc5e07260a7",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "80eed48b395718b55045ab0e713044246cb4b1b3712e27df857f9ee1e73f6cf7"
- },
  "recipe": "indexed-generation",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "904fa55f6849b4c1824adb7d056aa6f601056faf6e18bab10bc11f437be9d8b5",
+   "sha256": "f78ee1d68d6f045c6f47d755ab1ba189747a6c9a712de1eb0d29f35505f1b4e7",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "13c109f756f05d92ef256cf6eda5f1aa86e6c91115d95a63b460985b70df844b",
+ "source_manifest_sha256": "6e10a9f5f6a0fceba6f36b6e637e605d8bd98067e99b6a233ba2e0e4f1c7e4f6",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 3.68097893400045
+   "seconds": 3.47483942200779
   }
  ]
 }

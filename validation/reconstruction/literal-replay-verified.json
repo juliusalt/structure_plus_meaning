@@ -2,23 +2,23 @@
  "boundary": "Complete source, native application, proof root and requested payload determine the admission condition. The actual requirement decision and full keyed certificate/replay family, all reader outputs, coverage, method decisions and comparison reasons are reconstructed. The explicitly empty test policy does not establish whole-workflow policy adequacy; arbitrary cause reading, history permission, cost and genesis remain open.",
  "complete_recipe_source_manifest": "literal-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.27,
+  "seconds": 3.82,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/literal-replay-reports.json": "365498792acdf632c2fcf171095d75e0be5ef207175d3518e2003efdc19c128c"
+   "validation/reconstruction/literal-replay-reports.json": "4ed8d40cba76660db7779302413c2d06936984a582e92feb0cca4d2c472597d6"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "75b8a5a83ddade7a7b6aaa84b4b1a7402dd5d28845decef17ae2c37d358218b9",
+   "module_sha256": "8afa126dcb30d551215f55fb0e3451145152d9b4e0aef139f2fff24b6b237939",
    "subject_contracts": {
-    "literal_replay_investigation.yxml": "415c312167f359dec4077ea1e8865a8cfc104097d0b7c374d69c723aa7bb0ea6"
+    "literal_replay_investigation.yxml": "9f39919cdb888af257e2ddb1514f52f6f8964228b5bf8f0d1311ad5108def404"
    },
    "theory": "Literal_Replay_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "b1f90ac19443df3651f2727bf475e08389a86c12ca98ed671bd36dc5e07260a7",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "75b8a5a83ddade7a7b6aaa84b4b1a7402dd5d28845decef17ae2c37d358218b9"
- },
  "recipe": "literal-replay",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "f1affd12f9c2f00bafb1c76b5acbfaac37d61fc9ad05881f5bfdceb6100a5d02",
+   "sha256": "c6627a1db7bc1f0b60e30998722c23ab85e3bd4c6a3b1f0cf96e051a33ce3ff0",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "9f3f7791704b9c959944ca1e76a6969d19d39d232b491e90300bf8826c52f2ed",
+ "source_manifest_sha256": "c0b9bb6ef9b29462a06e7b06d6279eaa5f486a87e90b20b66df72d02da48afda",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.1778688929989585
+   "seconds": 3.722997459000908
   }
  ]
 }

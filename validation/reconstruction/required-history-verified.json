@@ -2,23 +2,23 @@
  "boundary": "Actual original requirement evaluation supplies complete certificate and replay families. The invariant-carrying history API preserves the original request and policy, checks every requested predecessor against the admission ledger, joins actual replay and generation construction, and checks the original policy cause. Complete optional state outputs, certificate keys, unavailable positions, condition observations, comparisons, revisions and coverage counts are reproduced. Whole workflow-policy adequacy, complete historical permission and reachability, indexed generation storage and allocation, full physical cost and genesis remain open. The presentation stage retains the proved digit word of the complete presented report on the same export.",
  "complete_recipe_source_manifest": "required-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "92a8b35a6f15ca004e4d5a6dd8269747156702f4967f38dff5f47892b92e398e",
+  "base_receipt_sha256": "3dff8011421656934a936e393ac2483b09587e27139cf019b22b4e1d5aa26cd1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 6.69,
+  "seconds": 6.13,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/required-history-reports.json": "2c117d573526893bfa210620c21a1ab3a4749f54cc96df46a9f40b904b2d450b"
+   "validation/reconstruction/required-history-reports.json": "ea0a9bccedef4bbcb1845651223700548e346e3678d98f21f0d14ab0619a02e5"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "66534fa2a22cb412b80b0f54a1f3b434ae80c9284cd65e0686fd218e888ad414",
+   "module_sha256": "2efefcff2b1572d3b11909ef5a9359c7613f88de954fe8475f63e4f9dc84062c",
    "subject_contracts": {
-    "required_history_investigation.yxml": "9ef61a12353f7024240ac1b7127c2a57158d7786d78ee6d96a60c7d9ad03ddc6"
+    "required_history_investigation.yxml": "c8d4578b5e372ca3f0434f0d674eba00fed82df7266253edf62ad901490454c1"
    },
    "theory": "Required_History_Execution"
   },
@@ -58,17 +58,12 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "b1f90ac19443df3651f2727bf475e08389a86c12ca98ed671bd36dc5e07260a7",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "66534fa2a22cb412b80b0f54a1f3b434ae80c9284cd65e0686fd218e888ad414"
- },
  "recipe": "required-history",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
   "presentation": {
    "records": 1,
-   "sha256": "f08792f1fa622b64a032a8e66ad18546afc13360e9ab7f7c82c007af9ec49dbc",
+   "sha256": "54d698bf60f998e11fddb126c381fd8a04007045305d50b8c69ea9b1615484ba",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "e3f192238021b08f697f82fa7cecb815b6efe51ee79186ec0094d9c4ae4ea1c5",
+ "source_manifest_sha256": "2fda858377fe25e82268caa065e8fe6f1f7dbddc570f1a89449a34bad857de7f",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 6.596760306998476
+   "seconds": 6.028518901992356
   }
  ]
 }

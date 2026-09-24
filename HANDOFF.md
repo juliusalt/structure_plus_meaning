@@ -50,7 +50,7 @@ nor the store search's arrangement, but the evaluator's terms carrying their ref
 of the distinct subterms of its requests, equality decided exactly by canonicity — every large component of every call
 is a subterm of the presented argument, and a comparison that ends equal walks both trees whatever its order, so only
 explicit sharing removes it. Its builds change no word: the notion `Shared_Term_Tables` (B1, #297) and the matching over
-a presentation (B2, #299) at once; the applications over a presentation (B3, #301); the demand over shared calls (B4,
+a presentation (B2, #299, landed `54f659eb`, `Presented_Term_Matching`; its review's follow-ups to B3, B4 and B6) at once; the applications over a presentation (B3, #301); the demand over shared calls (B4,
 #303, after #290 and M0, #296, the count of comparisons ending equal that decides, with B1's table build, table or
 digest); the positioned evaluation over shared calls (B5, #305); the measurement (B6, #307, after #278, its before).
 #194 waits on B5, so the stage is measured over shared calls. #278, re-planned to what it left,
@@ -263,8 +263,12 @@ a task):
   Deliverable, and the landing check compares against those files (Q12). Answer records are replayed on a base holding
   their state closures as HEAD has them (#143).
 - **Merges.** A task whose commit fails at the merge is queued again as it is; `bring-main` merges main, never a row by
-  hand; where both sides changed one row, the round hands over main's row verbatim and a later task carries its change
-  (#227). A task working in the one tree installs its theories only at hand-over and keeps nothing of its own
+  hand; where both sides changed one row, `bring-main` is refused (it merges the committed rows), so the round hands over
+  main's row verbatim and leaves its change in `rows.md` for a later task; where the work changed that theory's imports,
+  main's row would carry a wrong imports column, so the round moves what needs the new import out of the theory (into
+  one above it) and sets the theory and its row back to the branch point's text (#165, q76; Q13 asks the owner for a
+  harness merge). The row additions then follow in a fix made from main after the landing, where each is a one-sided
+  edit (#289). A task working in the one tree installs its theories only at hand-over and keeps nothing of its own
   uncommitted there when it parks or comes back (q30).
 - **Text with backticks goes through a file.** `v2.py reply`, `tell` and `ledger` given their text as an argument pass
   it through a shell, which reads a backticked name as a command and strips it: q73's answer reached its asker with
@@ -351,6 +355,10 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#237** (`1557deda`): the verdict's last three hand-proved rule sites re-cited to `native_rule_law`, the two-premise
   call stated once in `Development_Verdict_Mentions`, `verdict_equal_program` retired; its review's follow-ups 1–4 to
   #295, 5 told to #290, #112 and #192.
+- **#299** (`54f659eb`): B2, `Presented_Term_Matching`, the evaluator's matching over a presentation of terms, plain
+  terms the identity, each operation commuting with decoding (instances and premises under bindings in the domain); its
+  review's follow-ups — the identity equalities as instances, the map fact generalized in `Bootstrap_Relations`, the
+  bindings' domain, the literal leaves once per evaluation — to B3 (#301), the last also to B4 and B6.
 
 ## Open
 
@@ -559,6 +567,11 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 - **plan-48 wrote no notes** (its window ended at 05:58 first): this file carried its state, and plan-49 found nothing
   missing that the work needed — #292's verdict was already given, #290's review reads its brief as rewritten (the
   harness reads a rewritten brief from then on), and #292's builds are placed.
+- **#289** was rejected after its merge round (main's rows verbatim dropped its row words and left `define_context`
+  named). `verdict` refuses a task that is with the planner, so plan-49 re-planned it: a second round brings main in and
+  folds the review's finding 1 as one-sided row edits, or hands over as it stands if `bring-main` still refuses; the fix
+  made after it (`continues` 289) takes the review's follow-ups 1–4 and 7 and folds the rows if the round could not.
+  Follow-up 5 is mailed to #284, 6 to #157, 8 is Q13's. Watch its landing: if the rows double again, Q13 bites.
 - **Under way**: #290's and #287's landings; #112, #192 and #289 parked for their checks;
   #155, the word change (q75); #237; #294 and the shared-subterm builds #297 and #299 startable; #278 after #290.
 - **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "b6d2a57ec243a8740f02a4a3750bafd5a133246332df77785d342c5e6c32dbb9",
- "checked_content_sha256": "3a8b110e3e3d075344d794ed905395d2b8d04fd4775a4b95155785ef95749d7b",
+ "base_receipt_sha256": "e027f3316cf86dda609bc0d97808e265ae506ac9dbeddbddf0bb333c1d3b1ad0",
+ "checked_content_sha256": "e8b2389f3b6953e1791d023bb6834d401f2fb3021d986ca3b48f2248a1faa102",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,7 +17,7 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp74ccdhjc/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpef3of4wo/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
@@ -25,13 +25,13 @@
   "base_and_impact": 0.32,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 159.1,
-  "recipe_impact": 0.46,
-  "recipes_and_host_tests": 11.22
+  "proof": 135.49,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.28
  },
  "rebuilt_theories": [
-  "Development_First_Problem_Guard",
-  "Factor_Package_Additions"
+  "Development_Verification_Frame",
+  "Factor_Use_Renaming"
  ],
  "recipes": {
   "allocated-environments": {
@@ -192,7 +192,7 @@
   }
  },
  "reused_theories": 1865,
- "seconds": 213.34,
+ "seconds": 189.49,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

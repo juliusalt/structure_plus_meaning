@@ -50,8 +50,8 @@ and #422 landed):
   after #391, #414, #416, #418, #422 and the fix deriving the readers' presentation from its parts'), the given and the native state's first generation (#395, after #385, #414), the
   posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
-  frame (#405, landed `6d84162b`: parts (a)–(d) and (f); its fix after #406's review — part (c) by constant so that the
-  given's package program passes, actions from classes — which #407 waits on) and harness (#407).
+  frame (#405, `6d84162b`: parts (a)–(d) and (f); its fix #432, `f4fa3d8a`: part (c) by constant so that the given's
+  package program passes, actions from classes; then part (f) per store, which #407 waits on) and harness (#407).
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -85,7 +85,7 @@ by a task of their own (Open 100).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #416 and #414 at its head, then
-#418, #410, the frame's fix and the rest in their chains' order; then
+#418, #410, the frame's part (f) per store and the rest in their chains' order; then
 #426; each review after its build.
 
 ## Decisions
@@ -280,6 +280,11 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   (`given_rooted_readers_system`, `finite_rooted_given_readers_def`), the evaluations out of the theory's load; its
   review's follow-ups (`.build/tasks/431/review.md`) 2 and 4 mailed to #393, 1–3 Open 139, 5 in Open 137, 6 the
   harness's.
+- **Landed with `f4fa3d8a`**: #432, the frame's fix — part (c) by constant, the given's package program passing; the
+  type walk into type definitions; actions from classes with the notion's trivial action in `Presentation_Equivariance`;
+  subdomain and unary forms; (f)'s theorem form; eighteen controls. Its review found (f) existential over indexes, so
+  that the package program every answer cites made it vacuous: (f) per store is the fix #407 now waits on, with the
+  by-name list's five omissions; the probe's renaming of qualified ML structure paths is Open 78.
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
@@ -394,7 +399,7 @@ The owner's questions, a line each (their words and the provisional choices in f
    machinery recipe is, at a measured need of the check's cycle; it can gain at most the 4–5 s by which the seed leads
    the machinery recipe (#368's follow-ups 1, 2, 5). #355's formation saving by phase and the fall from #128's 63.45 s
    are unattributed.
-78. The probe tool (#316's, #286's and #353's reviews): the comment's "lower envelope"; skipped code checks extended at
+78. The probe tool (#316's, #286's and #353's reviews; #432's: qualified ML structure paths renamed with the theory): the comment's "lower envelope"; skipped code checks extended at
    first use; the prelude route offered by the tool; a refusal naming `--from-heap`; a probe that loads
    `Native_Collection_Programs`' dependents passes 60 s — a longer bound or an intermediate heap at a measured need, the
    check certifying them meanwhile.
@@ -489,11 +494,20 @@ admission and complete data admission, and the agreements can be cut at the same
 reduces whole and why (formation unproved, neither union nor view), so that a costly fallback shows; the generic laws
 (`decode_finite_system_of_part`, `finite_system_of_union`, `finite_system_of_view`, `finite_system_restriction`,
 `finite_dependency_edges`, `finite_definition_closure`, `finite_system_of_rooted`) beside `Factor_Finite_System_Unions`
-and `Factor_Finite_View_Installation`, in a theory the tool imports.
+and `Factor_Finite_View_Installation`, in a theory the tool imports. 140 the given's four store searches without an
+index of their own (#433's q92: the frame reports them as the given's and does not require them of an answer):
+`request_context_search`, `request_scope_search` and `request_complete_search`, interpretations of
+`native_store_search_program` at request construction's sites, and `witness_absent`, an absence search no index notion
+states — at a consolidation of the given's programs, absence a question for the index notion (`Carrier_Indexes`).
 
 ## Now
 
-- **Mailed, read by each task's first session**: #313's re-review's first follow-up and #319's per-answer seconds to
+- **Mailed, read by each task's first session**: to #414 (it installs the rooted readers' program #431 stated; it
+  returns the given's environment as the finite value whose quotation is computed), #395 (the given's site value takes
+  that computed quotation, not `program_scope_quoted_total`), #393 (sites 392 and 525's native evaluability; the asked
+  relation's program is the guard's program rooted at its entries, derived through the union's piece
+  `finite_given_readers_def`; each view's `_formed` lemma in the simpset and `bases=` checked), #407 (the frame as #432
+  and #433 leave it). Earlier, for landed tasks: #313's re-review's first follow-up and #319's per-answer seconds to
   #369, and #369's review's follow-up 1 (the replay timed within the hold) to #430; #412's rewritten brief to #412, which started before the rewrite and continues after #391 lands (`v2.py after
   412 391`); q88's answer (the boundary generalized to the pair, no relocation, key absence, evaluability) to #391.
 

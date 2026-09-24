@@ -271,4 +271,65 @@ text \<open>
   by the following call and list entries and adds no native grammar form.
 \<close>
 
+section \<open>Package membership is equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument pairs the source root with the member site, presented by the source root class and the
+  site coordinate class, on which @{text Factor_Use_Renaming}'s program entry action acts. A permutation
+  keeps membership: the package read at the renamed root use is the relocated program
+  (@{thm [source] native_package_use_renaming}), whose definitions are the renamed ones
+  (@{thm [source] renamed_system_definitions}).
+\<close>
+
+lemma package_member_renamed:
+  assumes formed: "environment_formed E" and h: "bij h"
+  shows "(\<exists>Q. native_package_at (rename_environment h E) (h u) r Q \<and> map_prod h id d\<in>system_definitions Q) \<longleftrightarrow>
+    (\<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P)"
+proof -
+  have members: "map_prod h id d\<in>map_prod h id ` A \<longleftrightarrow> d\<in>A" for A
+    by (rule inj_image_mem_iff[OF renamed_site_injective[OF bij_is_inj[OF h]]])
+  show ?thesis
+  proof
+    assume "\<exists>Q. native_package_at (rename_environment h E) (h u) r Q \<and> map_prod h id d\<in>system_definitions Q"
+    then obtain Q where package: "native_package_at (rename_environment h E) (h u) r Q"
+      and member: "map_prod h id d\<in>system_definitions Q" by blast
+    obtain P where P: "native_package_at E u r P" and Q: "Q=rename_system (map_prod h id) P"
+      using package native_package_use_renaming[OF formed h] by blast
+    have "d\<in>system_definitions P" using member unfolding Q renamed_system_definitions members .
+    then show "\<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P" using P by blast
+  next
+    assume "\<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P"
+    then obtain P where P: "native_package_at E u r P" and member: "d\<in>system_definitions P" by blast
+    have "map_prod h id d\<in>system_definitions (rename_system (map_prod h id) P)"
+      unfolding renamed_system_definitions members by (rule member)
+    then show "\<exists>Q. native_package_at (rename_environment h E) (h u) r Q \<and> map_prod h id d\<in>system_definitions Q"
+      using native_package_renamed_use[OF formed h P] by blast
+  qed
+qed
+
+theorem package_membership_equivariant:
+  "renaming_equivariant bij program_entry_renaming (\<lambda>z. site_context_formed (fst z) \<and> True)
+    (\<lambda>z. \<exists>P. native_package_at (fst (fst z)) (fst (snd (fst z))) (snd (snd (fst z))) P \<and>
+      snd z\<in>system_definitions P)"
+  by (auto simp: renaming_equivariant_def product_action_def package_member_renamed)
+
+corollary package_membership_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence
+      (factor_pair_presents source_root_presents site_coordinate_presents) program_entry_renaming h) (=)
+    (\<lambda>z. (83,z)\<in>positive_meaning package_membership_system)
+    (\<lambda>z. (83,z)\<in>positive_meaning package_membership_system)"
+proof -
+  have exact: "\<And>p. (83,p)\<in>positive_meaning package_membership_system \<longleftrightarrow>
+      presented_predicate (factor_pair_presents source_root_presents site_coordinate_presents)
+        (\<lambda>z. \<exists>P. native_package_at (fst (fst z)) (fst (snd (fst z))) (snd (snd (fst z))) P \<and>
+          snd z\<in>system_definitions P) p"
+    by (simp add: package_membership_exact presented_predicate_def factor_pair_presents_def
+      source_root_presents_def split_paired_Ex del: environment_positions_member;
+      blast dest: native_package_site_position)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF factor_pair_class[OF source_root_presentation_class
+      site_coordinate_presentation] renaming_action_product[OF site_context_renaming_action site_renaming_action]
+      exact] package_membership_equivariant])
+qed
+
 end

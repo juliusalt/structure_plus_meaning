@@ -572,7 +572,10 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     part of the per-answer `first_index_tree` built once per request state, if #194 shows its share.
 97. **A probe cannot load a renamed `RRA_Finite_Artifacts`** (#155's review, follow-up 5): its `export_code … checking
     SML` raises `Protocol_Message invoke_scala make_directory`, so a change at or below `RRA_Exact` is probed only
-    through scratch copies of its dependents. The probe tool's, with item 78.
+    through scratch copies of its dependents. The probe tool's, with item 78; #297's review met it too.
+98. **`keyed_reference_insert`** (#297's review, follow-up 1): the argument of `Keyed_Value_References`'
+    `keyed_reference_run_table` (its `index` sub-proof), made again in `Shared_Term_Tables`; moved into
+    `Keyed_Value_References` and cited from both with the next landing that changes that theory (#303 if it does).
 
 ## Now
 
@@ -586,9 +589,11 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   #308 (review 289's follow-ups 1–4 and 7 with them; 5 is mailed to #284, 6 to #157, 8 is Q13's). It is queued first,
   so that it lands before another landing rewrites those rows.
 - **Under way**: #157 re-records the answer records over the layout (landed with #290 and #294 as `2906d9c9`); #64
-  (its library from the refusal records only, the split source counted: q77, Q14) and #296; #112 and #192 parked for
-  their checks; #297 and #301 finishing; #159 next, while the lineage holds the base without the layout, then the
-  placed tables' fix after it (#155's review, follow-ups 4 and 6).
+  (its library from the refusal records only, the split source counted: q77, Q14), #296 (M0; q78: the reopen test reads
+  the equal walks of the closure and the renaming together) and #159 (while the lineage holds the base without the
+  layout; #309 after it, #155's review's follow-ups 4 and 6); #112 and #192 parked for their checks; #301 finishing
+  after B1 (#297, `97a9677d`); the prefix-key comparison notion decided (#310, accepted): its build P1 placed early,
+  P2 low, neither before B4 or B5.
 - **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's
   review): most likely a base that moved under the tree, a matter of the probe tool, for the owner with Open 78.
 - **`read_index_address` reads to the end of a run of 0 and 1 octets** (#147's review, follow-up 5): after #155 an

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "08109e31a3cb7308559ae0e10c87258295bd8a1b6e7f6f442d57fecd2a58e1b6",
- "checked_content_sha256": "5134da74409734d283faaff51eeb4befacaba7e661eeb197bdf4c6024304fdbe",
+ "base_receipt_sha256": "c96c663529204f77f3bf5d8096610ef6a0dfe7b6bc174508eaa5ea707808a7cd",
+ "checked_content_sha256": "72fc7a4e1923a772b485d1b1a519b112fd086c659eb1205af2222e1921a35a63",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -14,20 +14,20 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 291,
+   "ran": 298,
    "skipped": 0,
    "tail": [
-    "OK"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp493b4ulc/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.35,
-  "execution_impact": 0.02,
-  "export": 23.8,
-  "proof": 172.49,
-  "recipe_impact": 0.46,
-  "recipes_and_host_tests": 11.17
+  "base_and_impact": 0.44,
+  "execution_impact": 0.06,
+  "export": 27.96,
+  "proof": 213.48,
+  "recipe_impact": 0.66,
+  "recipes_and_host_tests": 11.56
  },
  "rebuilt_theories": [
   "Development_Edited_Local",
@@ -38,8 +38,10 @@
   "Development_Incremental_Witnesses",
   "Development_Library_Issue",
   "Development_Located_Rows",
+  "Development_Loop_Presentations",
   "Development_Machinery",
   "Development_Machinery_Reports",
+  "Development_Native_Answers",
   "Development_Native_Decomposition",
   "Development_Native_Request",
   "Development_Native_Verdict",
@@ -48,6 +50,14 @@
   "Development_Request_Keys",
   "Development_Request_Scope",
   "Development_Row_Contexts",
+  "Development_Row_Data",
+  "Development_Row_Presentations",
+  "Development_Rows",
+  "Development_Seed",
+  "Development_Seed_Loop",
+  "Development_Seed_Publication",
+  "Development_Seed_Referenced_Publication",
+  "Development_Seed_Verification",
   "Development_State_Edit",
   "Development_Subject_Index",
   "Development_Verdict_Difference",
@@ -55,9 +65,8 @@
   "Development_Verdict_Statements",
   "Development_Verdict_Unreached",
   "Development_Verdict_Witnesses",
-  "Isabelle_Native_Reach",
   "Native_Development_Machinery",
-  "Native_Table_Reach"
+  "Native_Development_Seed"
  ],
  "recipes": {
   "allocated-environments": {
@@ -162,7 +171,9 @@
    "status": "reused"
   },
   "native-development-seed": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -219,19 +230,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1834,
- "seconds": 249.34,
+ "reused_theories": 1826,
+ "seconds": 300.18,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1862,
+  "theory_count": 1863,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1862,
+ "theories": 1863,
  "validation_inputs": {
-  "ROOT": "38c95adae1338c4ce781299b07a2c1b50619376644d0b61ffdf6e2d328436ffa",
+  "ROOT": "0d7729dcdcf63039e45264226851ca4ad780163d3763b62ce5e0fca9601c681b",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

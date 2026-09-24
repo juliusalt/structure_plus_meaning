@@ -1,6 +1,6 @@
 theory Development_Machinery
   imports Native_Control_Seed_Subject Development_Admitted_Publication Development_Presentation
-    Development_Definition_Verification Development_Native_Answers Development_Repair_Rows
+    Development_Definition_Verification Development_Native_Answers
 begin
 
 section \<open>The loop's own notions and their constituents as a checked state\<close>
@@ -97,20 +97,6 @@ proof -
   then show ?thesis
     by (auto simp: development_constant_problem_def development_constant_contract_def map_option_eq_Some)
 qed
-
-text \<open>
-  The machinery is a residual record: its problems meet the premise with no citation, and a loop that
-  starts from them with an empty history cites as the loop's context does.
-\<close>
-
-lemma development_machinery_problems_residual_record:
-  "p\<in>set development_machinery_problems \<Longrightarrow> development_row_premise (\<lambda>_. None) (\<lambda>_. None) p"
-  unfolding development_machinery_problems_def by (rule development_constant_problems_residual_record)
-
-lemma development_machinery_loop_cited:
-  "development_loop_cited key (development_machinery_state,development_machinery_problems,
-    development_machinery_dependencies,answered,[])"
-  by (rule development_loop_cited_initial[OF development_machinery_problems_residual_record])
 
 definition development_machinery_unanswered :: "development_problem fset" where
   "development_machinery_unanswered={||}"

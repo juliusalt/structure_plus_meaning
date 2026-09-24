@@ -1,5 +1,5 @@
 theory Development_Refinement_Repair
-  imports Development_Refinement_Verification Isabelle_Local_Names Development_Row_Data
+  imports Development_Refinement_Verification Isabelle_Local_Names
 begin
 
 section \<open>A refused answer derives the extension of its request\<close>
@@ -406,61 +406,5 @@ lemma development_refinement_repair_data_injective [intro]: "inj development_ref
   by (intro finite_pair_presentation_injective development_extension_verdict_data_injective
     development_problems_data_injective development_request_data_injective
     development_verdict_data_injective finite_boolean_data_injective)
-
-section \<open>A repair is a context: its definition problems cite the repaired problem\<close>
-
-text \<open>
-  A repair poses the definition problems of the constants its answer introduced, and each cites what
-  posed it: the problem of the repaired request, at that problem's locus. Nothing else is cited; the grant
-  is absent, every definition problem being generated. The extension keeps every position of the request
-  state (@{thm [source] development_request_extension_persists}), so the repaired problem is the same
-  problem, at the same locus, in the request state and in the extension the definitions are keyed in
-  (@{text Development_Repair_Rows}).
-\<close>
-
-definition development_repair_origin ::
-    "(nat \<Rightarrow> bool list) \<Rightarrow> development_request \<Rightarrow> development_problem list \<Rightarrow> development_problem \<Rightarrow>
-      bool list option" where
-  "development_repair_origin key r definitions q=(if q\<in>set definitions
-    then Some (development_located_at key Development_Problem_Role (fst r)) else None)"
-
-lemma development_repair_origin_outside:
-  "q\<notin>set definitions \<Longrightarrow> development_repair_origin key r definitions q=None"
-  by (simp add: development_repair_origin_def)
-
-lemma development_refinement_repair_definition_problem:
-  assumes repair: "development_refinement_repair S r S' I=(extension,definitions,r',v',a)"
-    and q: "q\<in>set definitions"
-  obtains C c where "development_constant_problem isabelle_definition_proposition Development_Definition
-      C Development_Demand Development_Generated c=Some q"
-proof -
-  let ?E="development_request_extension S S' (development_verdict_excess (development_refinement_verdict S r S')) I"
-  have "definitions=development_definition_problems ?E (map (isabelle_state_embedding (fst (snd S')) (fst (snd ?E))) I)"
-    using repair by (simp add: development_refinement_repair_def Let_def)
-  then have "q\<in>set (development_definition_problems ?E (map (isabelle_state_embedding (fst (snd S')) (fst (snd ?E))) I))"
-    using q by simp
-  then obtain c where "development_constant_problem isabelle_definition_proposition Development_Definition
-      (snd ?E) Development_Demand Development_Generated c=Some q"
-    unfolding development_definition_problems_def development_constant_problems_exact by blast
-  then show thesis by (rule that)
-qed
-
-theorem development_repair_origin_premise:
-  assumes repair: "development_refinement_repair S r S' I=(extension,definitions,r',v',a)"
-    and q: "q\<in>set definitions"
-  shows "development_row_premise (development_repair_origin key r definitions) (\<lambda>_. None) q"
-proof -
-  obtain C c where problem: "development_constant_problem isabelle_definition_proposition Development_Definition
-      C Development_Demand Development_Generated c=Some q"
-    by (rule development_refinement_repair_definition_problem[OF repair q])
-  show ?thesis by (rule development_constant_problem_premise[OF problem]) (simp_all add: development_repair_origin_def q)
-qed
-
-text \<open>The request a repair issues again is the repaired request's problem, carried in the same context.\<close>
-
-lemma development_refinement_repair_request:
-  assumes "development_refinement_repair S r S' I=(extension,definitions,r',v',a)"
-  shows "fst r'=fst r"
-  using assms by (cases r) (auto simp: development_refinement_repair_def Let_def development_extended_request_def)
 
 end

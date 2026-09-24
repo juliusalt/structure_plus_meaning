@@ -13081,7 +13081,7 @@ it was (the switch is the rest of build 2). A residual record cites nothing
 (`development_row_premise_residual_record`); the premise holds of every problem and request the constant
 constructors pose as residuals of generated authority (`Development_Row_Data`), so of the seed's, the machinery's
 and a demanded state's. A repair's definition problems cite the repaired request's problem at its locus
-(`development_repair_origin`, `Development_Refinement_Repair`); the repair context cites nothing else, so the
+(`development_repair_origin`); the repair context cites nothing else, so the
 request it issues again is presented by it only when its problem is a residual, and within a loop by the loop's
 context. The repaired problem is itself in the extension (`development_repair_state_keeps`), so its citation is
 one locus in both states. The loop cites, for a problem, the head of the first accepted repair row of its history
@@ -13096,5 +13096,9 @@ history grows (`development_loop_cited_step`). The premise reads citations only 
 makes it independent of the key. The store's formedness premise is discharged on the finite side: every row a
 cited loop presents, problem or request, is formed and decodes to a formed value
 (`development_loop_cited_rows`), which `decode_development_problem_body_data` carries to the store's bodies.
+
+The lemmas that read the seed's, the machinery's, the repair's and the loop's constructions stand in one theory
+above them, `Development_Row_Contexts`, so that those construction theories keep their imports; the generic
+contexts and the residual record stand in `Development_Row_Data`.
 
 Recorded 2026-09-24 (task 165).

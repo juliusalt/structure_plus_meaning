@@ -16,12 +16,13 @@ that decides the run's length; the re-citations of the rule programs, the docume
 
 **Word changes are serialized.** A word change re-records reports under `validation/reconstruction/` or answer records
 under `validation/development-answers/`, and two landing together would each record words the other changes. Their
-order (plan-48, plan-51): #161, #155, #157 and #64 have landed; then #167, #314 (the answer records over it, on the
-base its landing advances, as #157 was over the layout), #169, #319 (its records' packet words likewise, plan-52) and
-#92. A task whose theories change the state's
-closure cannot replay the native records in its own tree (Open 100), so a word change's records are re-recorded after
-its landing, by a task of their own. The replay every records task runs is #323's (tools, #313's review): the judged
-answers' proofs shared as #313 shared their parts readings; no task waits on it.
+order (plan-48, plan-51): #161, #155, #157, #64, #167 and #314 have landed; then #169, #319 (its records' packet words
+over it, and #314's review's follow-ups 1 and 2: the re-record writing each record in its harness's form, the native
+records one line again, and the shared run's failure of `demanded-identity` and `demanded-reformulated` attributed from
+kept logs) and #92. A task whose theories change the state's closure cannot replay the native records in its own tree
+(Open 100), so a word change's records are re-recorded after its landing, by a task of their own. The replay's judged
+answers share one proof session since #323 (`ec46e355`); the harness's remaining per-answer runs, a failing member
+proved alone, and a judgment's seconds kept in its record are #369's, after #319 (#323's review, #314's follow-up 3).
 
 **The verdict line (#44, #288, #195).** Task 3's design. Landed: the state rows (#46), the request's keys (#32, #106),
 statements and malformed (#34), the presenter (#101), excess and undeclared through the subject index (#36, #139,
@@ -173,7 +174,7 @@ over what they leave, and the translation design follows (Open 3).
 creates has no review task (the harness reviews it in its own folder). The deepest chain is 7: #295 → #288 →
 #340 → #342 → #344 → #346 → #347, the consolidations into the native package (N2a, N2b, N3a, N3b), and #295 → #288 →
 #353 → #336 → #344 → #346 → #347, so nothing of N1–N4 or of the decomposition's builds starts before #295 lands. The
-word chain #314 → #169 → #319 → #92 → #93 is 5, and #295 → #288 → #353 → #193 → #194 → #205 is 6. #352 and #355
+word chain #169 → #319 → #92 → #93 is 4, and #295 → #288 → #353 → #193 → #194 → #205 is 6. #352 and #355
 wait on nothing, and neither will #358's B1 and B3.
 
 **Order** (the queue holds it; this is why it is as it is). #295 first, the root of the longest chain; then #288 and
@@ -472,7 +473,15 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   directions" and states the order as the owner's in "The direction of the work", the HOL-constant loop bounded, the
   plan's reading of the moment (N4b) marked as generated; its follow-ups Open 111.
 - **#321** (`06197652`, after a merge round): membership held once in the joined verdict program, one excess program in
-  the edited reach, `support_row_exact` as what it is; its review's follow-ups under Now.
+  the edited reach, `support_row_exact` as what it is; its review's follow-ups mailed (Now).
+- **#323** (`ec46e355`): the replay proves the judged framed answers' theories in one shared session; its review's
+  follow-ups 1–6 are #369, after #319.
+- **#314** (`d47ce451`): the sixteen answer records replayed on #167's base, the eight its entry names re-recorded; its
+  review's follow-ups 1 and 2 are #319's, 3 #369's, 4 Open 113.
+- **#358** (brief): #356's builds placed as #359–#368 (B1 and B3 wait on nothing, B2 and B4a after #355, B4b after
+  B4a).
+- **#315** (investigation): task 9's 1.75 measured held with #167's switch (`.build/tasks/315/measurement.md`), read
+  under Open 114.
 
 ## Open
 
@@ -506,7 +515,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 8. The octet direction's task 6, transport.
 9. The plan's stages 4 and 5: the harness, the adoption tool and the checks have no notion in the state (what moves the
    active base; the run limit, one constant for every tool spawning Isabelle; the commit's evidence paragraph).
-10. The answer harness retaining its run's elapsed seconds, which makes #48's longest-first ordering do anything.
+10. The answer harness retaining its run's elapsed seconds, which makes #48's longest-first ordering do anything: #369,
+    with #314's review's follow-up 3.
 12. The selection locus's tag (`development_selection_locus`, `Finite_Pair (Finite_Payload [2]) (Finite_Payload [])`),
     missed by task 9's list: a decision's locus needs a prefix of its own; a word change of the seed's publication.
 13. A locus for a problem whose subject is several constants, when the first multi-constant problem is posed.
@@ -629,7 +639,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 81. An adopted answer's precondition reconstructed at its receipt's `revision`, at the first adoption after #265; the
     published state as the judged answer state waits on item 7.
 82. Inherited-ignored signals: the adoption tool leaves one ignored; the other tools stay as they are.
-83. The documented replay's cost (1,037 s for sixteen records at two runs): a measured split per step first, with item 10.
+83. The documented replay's cost (1,037 s for sixteen records at two runs): a measured split per step first, with item
+    10 (#369's measurement).
 84. The presenter's entity keys through an index: at a state near 10^4 entities.
 
 86. Order facts named for their user: a bounded pass over the repository's `sorted_wrt`, `sorted` and `distinct` lemmas.
@@ -772,6 +783,16 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     address's index codes can follow one another in that run. Where it has a use (`RRA_Finite_Fresh_Addresses`'
     reading of indices, if it reads through it), the code read over octets and stopped at its terminator, with
     `RRA_Exact`'s next edit; the cost is linear in an address either way.
+113. `Development_State_Presenter`'s row says `entity_row_by` "replaces task 249's row, now retired", which reads as a
+    map row: say what it replaced (the row reading task 249 introduced) when the row is next touched (#314's review,
+    follow-up 4).
+114. **What the rows cost in the HOL-constant loop's reports** (#315, `.build/tasks/315/measurement.md`): against task
+    9's 1.75, key bits realized 1.94 (machinery) and 2.11 (seed), rows 1.2× in constructors and 3.1–3.95× in bits, the
+    bits a row's contract term carrying its local names as text (78% of a machinery row's word bits); the machinery's
+    problem report's presentation 1.2 → 32 ms, every occurrence of a problem computing its contract term's local root
+    again. Milliseconds in recipe steps of 15–40 s, and the HOL-constant loop is kept, not extended (Q7): not planned.
+    The native loop's rows (N3a) present native definitions and meet the question of names carried as text afresh.
+    Task 9's entry gains the realized ratio beside its estimate, marked, with its next edit.
 
 ## Now
 
@@ -781,12 +802,14 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   it reads them): #113's review, and #321's review's follow-ups 1 and 2, to #295; #284's review's 1, 2 and 4, #285's
   and #321's 3 to #288; #321's 3 (its `request_member` part, at the join) to #340; #321's 5
   (`Development_Incremental_Verdict`'s probe past 60 s, attributed at its cause) to #353; #278's review to #193;
-  #308's change of `Development_State_Rows`' row (`.build/tasks/308/rows.md`) to #325; and to #194 q85's rule for a
+  #308's change of `Development_State_Rows`' row (`.build/tasks/308/rows.md`) to #325; #314's review's follow-up 1 to
+  #169 (the native records in their harness's form if it writes them); and to #194 q85's rule for a
   measurement's reference with, as shares its by-field figures show where they can, #321's 4, #294's 1 and 3 (Open 96)
   and #307's remains (Open 110).
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's
   `failing` list holds dicts; #168's review, follow-up 7); `measuring --shared` wrote no `measurements.log` for any of
-  #307's ten runs, as #306's review found for B5; #324's brief named a base the harness had swept before it ran.
+  #307's ten runs, as #306's review found for B5; #324's brief named a base the harness had swept before it ran, and #315 found the before base's exports swept within
+an hour of the landing, exporting them again from its proof context (`tools/export_proved_code.py --context`).
 - **Q7's ledger entries** (the question and the owner's answers of 16:19 and 16:34) can leave, #357 having recorded
   the answer in the plan (`4434635d`): the harness's (`v2.py ledger`, whose `--help` records its text as a question).
 - **Q17, Q19 and Q20 of the ledger are the harness's**: a classifier stopped plan-51 to plan-54 before their notes and

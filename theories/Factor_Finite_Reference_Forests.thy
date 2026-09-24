@@ -21,6 +21,10 @@ text \<open>Each child's prefix is built once, before its keys are placed.\<clos
 lemmas finite_syntax_forest_table_code [code] = finite_placed_table_prefix[where g=syntax_branch
   and h="\<lambda>i. syntax_branch i []", OF syntax_branch_prefix, folded finite_syntax_forest_table_def]
 
+text \<open>The placed child tables are joined by the listed union, as the placed table's are.\<close>
+declare finite_syntax_forest_table_code [code del]
+lemmas finite_syntax_forest_table_listed [code] = finite_syntax_forest_table_code[folded finite_listed_union_def]
+
 lemma syntax_forest_value_map:
   "map_relation_values f (syntax_forest_table Ms)=syntax_forest_table (map (map_relation_values f) Ms)"
   by (simp add: syntax_forest_table_def placed_table_values)

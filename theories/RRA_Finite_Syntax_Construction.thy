@@ -112,6 +112,10 @@ text \<open>Each child's prefix is built once, before its addresses are placed.\
 lemmas finite_syntax_forest_code [code] = finite_placed_forest_prefix[where g=syntax_branch
   and h="\<lambda>i. syntax_branch i []", OF syntax_branch_prefix, folded finite_syntax_forest_def]
 
+text \<open>The placed children are joined by the listed union, as the placed forest's are.\<close>
+declare finite_syntax_forest_code [code del]
+lemmas finite_syntax_forest_listed [code] = finite_syntax_forest_code[folded finite_listed_union_def]
+
 definition finite_attach_structure :: "finite_exact_artifact \<Rightarrow> local_address finite_rra_structure \<Rightarrow> finite_exact_artifact" where
   "finite_attach_structure R H=\<lparr>finite_structure=\<lparr>
     finite_carrier=finite_carrier (finite_structure R) |\<union>| finite_carrier H,

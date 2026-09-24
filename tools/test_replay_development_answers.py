@@ -106,6 +106,84 @@ class UnproducedRuns(unittest.TestCase):
             (replay.RECORDS / 'failed-proof.json').read_text())['status'])
         self.assertEqual(observation['error'], 'the harness run left no judgment')
 
+    def replayed(self, record, observed, rerecord, words=None):
+        """Replay one record through a harness that leaves `observed` and retains it as judged now."""
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            path = directory / 'records' / 'answer.json'
+            path.parent.mkdir()
+            path.write_text(json.dumps(record))
+            commands = []
+
+            def harness(command, run, timeout):
+                commands.append(command)
+                (run / 'run').mkdir()
+                (run / 'run' / 'answer.json').write_text(json.dumps(observed))
+                (run / 'retained.json').write_text(json.dumps({**observed, 'harness_sha256': 'now'}))
+                return 1.0, True, ''
+            original = replay.run_harness
+            replay.run_harness = harness
+            try:
+                name, row = replay.replay(path, directory / 'out', 10, rerecord, directory / 'parts.json')
+            finally:
+                replay.run_harness = original
+            return row, json.loads(path.read_text()), commands[0]
+
+    def test_a_rerecorded_row_is_reconstructed_against_the_word_it_wrote(self):
+        record = {'answer': {'request': {}}, 'status': 'judged', 'verdict_word': 'old', 'publication_word': 'p',
+                  'executor_sha256': 'kept'}
+        row, written, command = self.replayed(record, {'status': 'judged', 'verdict_word': 'new', 'publication_word': 'p'},
+                                              True)
+        self.assertTrue(row['reconstructed'])
+        self.assertEqual((row['verdict_word'], row['expected_verdict_word']), ('new', 'new'))
+        self.assertEqual(row['replaced']['verdict_word'], 'old')
+        self.assertEqual((written['verdict_word'], written['executor_sha256']), ('new', 'kept'))
+        self.assertEqual(command[-2:], ['--parts', command[-1]])
+        self.assertEqual(replay.answer_groups({'answer': row}), NONE)
+
+    def test_without_rerecording_a_changed_word_still_differs(self):
+        record = {'answer': {'request': {}}, 'status': 'judged', 'verdict_word': 'old', 'publication_word': 'p'}
+        row, written, command = self.replayed(record, {'status': 'judged', 'verdict_word': 'new', 'publication_word': 'p'},
+                                              False)
+        self.assertFalse(row['reconstructed'])
+        self.assertNotIn('replaced', row)
+        self.assertEqual(written, record)
+        self.assertEqual(replay.answer_groups({'answer': row})['differing'], ['answer'])
+
+    def test_a_status_change_is_never_rerecorded(self):
+        record = {'answer': {'request': {}}, 'status': 'judged', 'verdict_word': 'old', 'publication_word': 'p'}
+        row, written, command = self.replayed(record, {'status': 'refused', 'refusal': 'r'}, True)
+        self.assertFalse(row['reconstructed'])
+        self.assertEqual(written, record)
+
+    def test_an_answer_whose_shared_reading_wrote_no_outcome_reads_its_own_parts(self):
+        answers = {stem: {'request': {'state': 'development_seed', 'subject': 'Theory_Name.c_' + stem},
+                          'definitions': '', 'equation': 'c_' + stem + ' = True', 'proof': 'by simp'}
+                   for stem in ('accepted', 'refused', 'silent')}
+        outcomes = {'accepted': (0, None), 'refused': (1, "The answer's proof part is refused: r"),
+                    'silent': (1, None)}
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            records = []
+            for stem, answer in answers.items():
+                records.append(directory / (stem + '.json'))
+                records[-1].write_text(json.dumps({'answer': answer, 'status': 'judged'}))
+
+            def read_parts(read, base, output, timeout):
+                output.mkdir(parents=True)
+                digests = {replay.development_answer.answer_digest(a): stem for stem, a in answers.items()}
+                return {digest: {'answer_digest': digest, 'base': str(base), 'exit_code': outcomes[stem][0],
+                                 'refusal': outcomes[stem][1], 'seconds': 1.0, 'answers_read': 3, 'log': 'l'}
+                        for digest, stem in digests.items()}
+            original = replay.development_answer.read_parts
+            replay.development_answer.read_parts = read_parts
+            try:
+                paths, seconds = replay.read_shared_parts(records, directory / 'out', 10)
+            finally:
+                replay.development_answer.read_parts = original
+            self.assertEqual(sorted(paths), ['accepted', 'refused'])
+            self.assertEqual(json.loads(paths['refused'].read_text())['refusal'], outcomes['refused'][1])
+
     def test_a_harness_that_cannot_be_started_leaves_its_answer_unproduced(self):
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary)

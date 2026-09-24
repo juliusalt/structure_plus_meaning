@@ -1,5 +1,5 @@
 theory Listed_Set_Unions
-  imports Main
+  imports Main "HOL-Library.FSet"
 begin
 
 section \<open>A union computed once is the concatenation of the listings it joins\<close>
@@ -41,5 +41,17 @@ text \<open>
   the listed union, so the whole costs the size of the result. The listing of a set that is not
   finite has no such pass, and the listed image union states no code for it.
 \<close>
+
+text \<open>
+  A finite set built once as the union of a list of finite sets, and then only read, is the listed union
+  of their listings: each part is listed once, the parts one after another.
+\<close>
+
+definition finite_listed_union :: "'a fset list \<Rightarrow> 'a fset" where
+  "finite_listed_union Fs=ffUnion (fset_of_list Fs)"
+
+lemma finite_listed_union_code [code abstract]:
+  "fset (finite_listed_union Fs)=listed_image_union fset (set Fs)"
+  by (simp add: finite_listed_union_def listed_image_union_def ffUnion.rep_eq fset_of_list.rep_eq)
 
 end

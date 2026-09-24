@@ -161,8 +161,8 @@ definition development_seed_succession :: "development_problem fset \<Rightarrow
 
 text \<open>
   The succession is presented in the context of its loops. The seeded loops pose no demanded problem and
-  record no repair, so every problem they hold is residual, and a loop's context cites nothing on a residual
-  problem (@{text Development_Row_Contexts}): their context is the seed's residual record, with the seed's
+  record no repair, so every problem they hold is residual, and a context meeting the row premise cites
+  nothing on a residual problem (@{text Development_Row_Data}): their context is the seed's residual record, with the seed's
   names, which every successor keeps. The answered problems of a successor are a table of their rows.
 \<close>
 
@@ -198,5 +198,137 @@ lemma development_seed_succession_data_presented:
 definition development_seed_succession_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
   "development_seed_succession_value answered=finite_store_option id
     (development_seed_succession_data (development_seed_succession answered))"
+
+text \<open>
+  Wherever the answered problems are the seed's, the succession lies in its presentation's domain: its loops
+  hold the seed's problems, issue and record the seed's requests, and record answers to them, no repair
+  among them. So its value is the presentation itself, never the store's absence.
+\<close>
+
+theorem development_seed_succession_domain:
+  assumes answered: "fset answered\<subseteq>set development_seed_problems"
+  defines P_def: "P\<equiv>set development_seed_problems"
+    and R_def: "R\<equiv>{q. \<exists>c. development_constant_request isabelle_code_equation_proposition Development_Refinement
+      development_seed_context Development_Residual Development_Generated c=Some q}"
+  shows "development_seed_succession answered\<in>UNIV\<times>{x. set_option x\<subseteq>
+    lists P\<times>lists R\<times>lists P\<times>lists P\<times>lists R\<times>lists R\<times>
+    lists (lists {y. set_option y\<subseteq>{A. fset A\<subseteq>P}\<times>lists (development_record_domain P R (\<lambda>_. {}))\<times>lists P\<times>UNIV})}"
+proof (cases "development_loop_selection (development_seed_loop_state answered)")
+  case None
+  then show ?thesis by (simp add: development_seed_succession_def)
+next
+  case (Some Lx)
+  obtain L xs where Lx: "Lx=(L,xs)" by (cases Lx) auto
+  have selection: "development_loop_selection (development_seed_state,development_seed_problems,
+      development_seed_dependencies,answered,[])=Some (L,xs)"
+    using Some by (simp add: Lx development_seed_loop_state_def)
+  obtain Q where L: "L=(development_seed_state,development_seed_problems,development_seed_dependencies,answered,
+      [Development_Selection_Record (native_development_packet Q) xs])"
+    using selection by (auto simp: development_loop_selection_def Let_def split: option.splits)
+  have xs: "set xs\<subseteq>P" using development_loop_selection_ready(1)[OF selection] by (auto simp: P_def)
+  obtain L2 issued unissued where issue: "development_loop_issue development_seed_library development_seed_request_of
+      L xs=(L2,issued,unissued)"
+    by (cases "development_loop_issue development_seed_library development_seed_request_of L xs") auto
+  obtain L3 control refused where control: "development_loop_issue development_seed_cyclic_library
+      development_seed_request_of L xs=(L3,control,refused)"
+    by (cases "development_loop_issue development_seed_cyclic_library development_seed_request_of L xs") auto
+  define recorded where "recorded=[Development_Selection_Record (native_development_packet Q) xs]@map (\<lambda>r. Development_Issue_Record r
+      (development_library_reading development_seed_library (fst r))) issued"
+  have L2: "L2=(development_seed_state,development_seed_problems,development_seed_dependencies,answered,recorded)"
+    and unissued: "set unissued\<subseteq>set xs"
+    using issue by (auto simp: L recorded_def development_loop_issue_def Let_def)
+  have refused: "set refused\<subseteq>set xs" using control by (auto simp: L development_loop_issue_def Let_def)
+  have issued: "set issued\<subseteq>R"
+  proof
+    fix r assume r: "r\<in>set issued"
+    have "development_seed_request_of (fst r)=Some r" by (rule development_loop_issue_leaf(4)[OF issue[unfolded L] r])
+    then show "r\<in>R"
+      by (auto simp: R_def development_seed_request_of_def development_refinement_request_def split: list.splits)
+  qed
+  have problem: "fst r\<in>P" if r: "r\<in>set issued" for r
+    using development_loop_issue_leaf(1)[OF issue[unfolded L] r] xs by blast
+  have reevaluated: "set (development_reevaluations Lib recorded)\<subseteq>R" for Lib
+    using issued by (auto simp: development_reevaluations_exact recorded_def)
+  let ?G="\<lambda>r S'. map_option (\<lambda>(S2,ps,D,closed,history). (closed,drop (length recorded) history,
+      development_ready_problems D closed ps,map (development_request_current (snd development_seed_state) (snd S')) issued))
+      (development_successor L2 r S')"
+  let ?Y="{y. set_option y\<subseteq>{A. fset A\<subseteq>P}\<times>lists (development_record_domain P R (\<lambda>_. {}))\<times>lists P\<times>UNIV}"
+  have successor: "?G r S'\<in>?Y" if r: "r\<in>set issued" for r S'
+  proof (cases "development_successor L2 r S'")
+    case None
+    then show ?thesis by simp
+  next
+    case (Some L')
+    obtain S2 ps' D' closed history' where L': "L'=(S2,ps',D',closed,history')" by (cases L') auto
+    note fields=development_successor_answered[OF Some[unfolded L2 L']]
+    obtain G where G: "development_answer_generation development_seed_state r
+        (isabelle_rooted_read (fst (snd development_seed_state)) S')=Some G"
+      and history': "history'=recorded@[Development_Answer_Record G]"
+      using fields(3) by blast
+    obtain p0 s0 su0 E0 where rr: "r=(p0,s0,su0,E0)" by (cases r) auto
+    have "fst G=fst r" using G by (auto simp: rr development_answer_generation_def Let_def split: if_splits)
+    then have answer_record: "Development_Answer_Record G\<in>development_record_domain P R (\<lambda>_. {})"
+      using problem[OF r] by (simp add: development_record_domain_def development_record_parts_def
+        development_record_parts_domain_def mem_Times_iff)
+    have closed: "fset closed\<subseteq>P" using fields(6) answered problem[OF r] by (auto simp: P_def)
+    show ?thesis using answer_record closed
+      by (auto simp: Some L' history' fields(4) P_def development_ready_problems_def in_lists_conv_set)
+  qed
+  have nested: "map (\<lambda>r. map (?G r) [development_seed_state,development_seed_renamed]) issued\<in>lists (lists ?Y)"
+  proof (rule in_listsI, rule ballI)
+    fix x assume x: "x\<in>set (map (\<lambda>r. map (?G r) [development_seed_state,development_seed_renamed]) issued)"
+    obtain r where r: "r\<in>set issued" and xr: "x=map (?G r) [development_seed_state,development_seed_renamed]"
+      using x by auto
+    show "x\<in>lists ?Y" using successor[OF r, of development_seed_state] successor[OF r, of development_seed_renamed]
+      by (simp add: xr)
+  qed
+  have computed: "development_seed_succession answered=(distinct (List.map_filter isabelle_declared_constant
+      (snd development_seed_context)),Some (xs,issued,unissued,refused,
+      development_reevaluations development_seed_library recorded,development_reevaluations development_seed_cyclic_library recorded,
+      map (\<lambda>r. map (?G r) [development_seed_state,development_seed_renamed]) issued))"
+    by (simp add: development_seed_succession_def Some Lx issue control L2)
+  have "set unissued\<subseteq>P" "set refused\<subseteq>P" using unissued refused xs by blast+
+  then show ?thesis unfolding computed using xs issued reevaluated nested by (simp add: lists_eq_set)
+qed
+
+text \<open>
+  The native judgment of a named answer carries its request, one of the seed's requests, so it too lies in
+  its presentation's domain, at every answered set, for every name and answer.
+\<close>
+
+theorem development_seed_native_judgment_domain:
+  "development_named_native_judgment development_refinement_verdict development_seed_state
+    (development_seed_requests answered) n bits\<in>{x. set_option x\<subseteq>{q. \<exists>c. development_constant_request
+      isabelle_code_equation_proposition Development_Refinement development_seed_context
+        Development_Residual Development_Generated c=Some q}\<times>UNIV}"
+proof (cases "development_named_request (snd development_seed_state) (development_seed_requests answered) n")
+  case None
+  then show ?thesis by (simp add: development_named_native_judgment_def)
+next
+  case (Some r)
+  have "r\<in>set (development_seed_requests answered)" by (rule development_named_request_member[OF Some])
+  then show ?thesis using development_seed_requests_family[of answered]
+    by (auto simp: development_named_native_judgment_def Some)
+qed
+
+corollary development_seed_native_judgment_presentation:
+  "development_named_native_judgment_data state_constant_key development_seed_inert (\<lambda>_. None) (\<lambda>_. None)
+    (development_named_native_judgment development_refinement_verdict development_seed_state
+      (development_seed_requests answered) n bits)\<noteq>None"
+  by (rule finite_presented_on_some[OF development_named_native_judgment_data_presented[OF
+    development_seed_request_family_domain, where inert=development_seed_inert]
+    development_seed_native_judgment_domain[of answered n bits]]) simp
+
+corollary development_seed_succession_presentation:
+  assumes "fset answered\<subseteq>set development_seed_problems"
+  shows "development_seed_succession_data (development_seed_succession answered)\<noteq>None"
+proof -
+  have repairs: "finite_presented_on (development_refinement_repair_data state_constant_key development_seed_inert
+      (\<lambda>_. None) (\<lambda>_. None) r) {}" for r
+    by (simp add: finite_presented_on_def)
+  show ?thesis
+    by (rule finite_presented_on_some[OF development_seed_succession_data_presented[OF development_seed_problems_domain
+      development_seed_request_family_domain repairs] development_seed_succession_domain[OF assms]]) simp
+qed
 
 end

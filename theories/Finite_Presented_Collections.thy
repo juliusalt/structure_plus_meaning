@@ -227,4 +227,205 @@ text \<open>
   optional value is presented as the sequence of its present elements.
 \<close>
 
+section \<open>A partial presentation presents its domain exactly\<close>
+
+text \<open>
+  A presentation in context is partial: a value outside its premise has no presentation, and a report
+  carrying one is not a presentation of it. A partial presentation presents a domain exactly when every
+  value of the domain has a presentation and distinct values have distinct presentations. The generic
+  presentations compose as the total ones do: a pair presents the product of its parts' domains, a
+  sequence the lists over its element's domain, an optional value the options over it and a collection
+  the finite sets inside it; a total presentation is partial nowhere.
+\<close>
+
+definition finite_presented_on :: "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a set \<Rightarrow> bool" where
+  "finite_presented_on f A \<longleftrightarrow> (\<forall>x\<in>A. f x\<noteq>None) \<and> inj_on f A"
+
+lemma finite_presented_onI:
+  assumes some: "\<And>x. x\<in>A \<Longrightarrow> f x\<noteq>None"
+    and exact: "\<And>x y t. x\<in>A \<Longrightarrow> y\<in>A \<Longrightarrow> f x=Some t \<Longrightarrow> f y=Some t \<Longrightarrow> x=y"
+  shows "finite_presented_on f A"
+  unfolding finite_presented_on_def
+proof (intro conjI ballI inj_onI)
+  fix x assume "x\<in>A" then show "f x\<noteq>None" by (rule some)
+next
+  fix x y assume x: "x\<in>A" and y: "y\<in>A" and same: "f x=f y"
+  obtain t where t: "f x=Some t" using some[OF x] by blast
+  show "x=y" by (rule exact[OF x y t]) (use same t in simp)
+qed
+
+lemma finite_presented_on_some:
+  assumes "finite_presented_on f A" "x\<in>A"
+  obtains t where "f x=Some t"
+  using assms by (auto simp: finite_presented_on_def)
+
+lemma finite_presented_on_eq:
+  assumes presented: "finite_presented_on f A" and x: "x\<in>A" and y: "y\<in>A" and same: "f x=f y"
+  shows "x=y"
+proof -
+  have "inj_on f A" using presented by (simp add: finite_presented_on_def)
+  then show ?thesis by (rule inj_onD[OF _ same x y])
+qed
+
+lemma finite_presented_on_mono:
+  assumes presented: "finite_presented_on f A" and inside: "B\<subseteq>A"
+  shows "finite_presented_on f B"
+proof -
+  have injective: "inj_on f A" and some: "\<forall>x\<in>A. f x\<noteq>None"
+    using presented by (simp_all add: finite_presented_on_def)
+  have "inj_on f B" by (rule inj_on_subset[OF injective inside])
+  then show ?thesis using some inside by (auto simp: finite_presented_on_def)
+qed
+
+lemma finite_presented_total [intro]:
+  assumes injective: "inj g"
+  shows "finite_presented_on (Some \<circ> g) A"
+proof (rule finite_presented_onI)
+  fix x show "(Some \<circ> g) x\<noteq>None" by simp
+next
+  fix x y t assume "(Some \<circ> g) x=Some t" "(Some \<circ> g) y=Some t"
+  then have "g x=g y" by simp
+  then show "x=y" by (rule injD[OF injective])
+qed
+
+lemma finite_presented_on_comp:
+  assumes presented: "finite_presented_on f A" and injective: "inj_on h B" and inside: "h ` B\<subseteq>A"
+  shows "finite_presented_on (f \<circ> h) B"
+proof (rule finite_presented_onI)
+  fix x assume "x\<in>B"
+  then have "h x\<in>A" using inside by blast
+  then show "(f \<circ> h) x\<noteq>None" using presented by (auto simp: finite_presented_on_def)
+next
+  fix x y t assume x: "x\<in>B" and y: "y\<in>B" and fx: "(f \<circ> h) x=Some t" and fy: "(f \<circ> h) y=Some t"
+  have "h x=h y"
+    by (rule finite_presented_on_eq[OF presented]) (use x y fx fy inside in \<open>auto simp: image_subset_iff\<close>)
+  then show "x=y" by (rule inj_onD[OF injective _ x y])
+qed
+
+definition finite_partial_pair ::
+    "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> ('b \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a\<times>'b \<Rightarrow>
+      finite_factor_term option" where
+  "finite_partial_pair f g z=(case f (fst z) of None \<Rightarrow> None | Some x \<Rightarrow> map_option (Finite_Pair x) (g (snd z)))"
+
+lemma finite_partial_pair_presented [intro]:
+  assumes first: "finite_presented_on f A" and second: "finite_presented_on g B"
+  shows "finite_presented_on (finite_partial_pair f g) (A\<times>B)"
+proof (rule finite_presented_onI)
+  fix z assume "z\<in>A\<times>B"
+  then obtain a b where z: "z=(a,b)" "a\<in>A" "b\<in>B" by blast
+  obtain x where x: "f a=Some x" by (rule finite_presented_on_some[OF first z(2)])
+  obtain y where y: "g b=Some y" by (rule finite_presented_on_some[OF second z(3)])
+  show "finite_partial_pair f g z\<noteq>None" by (simp add: finite_partial_pair_def z(1) x y)
+next
+  fix z w t assume z: "z\<in>A\<times>B" and w: "w\<in>A\<times>B"
+    and fz: "finite_partial_pair f g z=Some t" and fw: "finite_partial_pair f g w=Some t"
+  obtain a b where Z: "z=(a,b)" "a\<in>A" "b\<in>B" using z by blast
+  obtain a' b' where W: "w=(a',b')" "a'\<in>A" "b'\<in>B" using w by blast
+  obtain x y where x: "f a=Some x" and y: "g b=Some y" and t: "t=Finite_Pair x y"
+    using fz by (auto simp: finite_partial_pair_def Z(1) split: option.splits)
+  obtain x' y' where x': "f a'=Some x'" and y': "g b'=Some y'" and t': "t=Finite_Pair x' y'"
+    using fw by (auto simp: finite_partial_pair_def W(1) split: option.splits)
+  have "a=a'" by (rule finite_presented_on_eq[OF first Z(2) W(2)]) (use x x' t t' in simp)
+  moreover have "b=b'" by (rule finite_presented_on_eq[OF second Z(3) W(3)]) (use y y' t t' in simp)
+  ultimately show "z=w" by (simp add: Z(1) W(1))
+qed
+
+definition finite_partial_sequence ::
+    "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a list \<Rightarrow> finite_factor_term option" where
+  "finite_partial_sequence f xs=map_option finite_data_list (those (map f xs))"
+
+lemma those_map_present:
+  assumes "\<And>x. x\<in>set xs \<Longrightarrow> f x\<noteq>None"
+  shows "those (map f xs)=Some (map (the \<circ> f) xs)"
+  using assms by (induction xs) (auto split: option.splits)
+
+lemma finite_partial_sequence_presented [intro]:
+  assumes presented: "finite_presented_on f A"
+  shows "finite_presented_on (finite_partial_sequence f) (lists A)"
+proof (rule finite_presented_onI)
+  fix xs assume "xs\<in>lists A"
+  then have "\<And>x. x\<in>set xs \<Longrightarrow> f x\<noteq>None" using presented by (auto simp: finite_presented_on_def)
+  then show "finite_partial_sequence f xs\<noteq>None" by (simp add: finite_partial_sequence_def those_map_present)
+next
+  fix xs ys t assume xs: "xs\<in>lists A" and ys: "ys\<in>lists A"
+    and first: "finite_partial_sequence f xs=Some t" and second: "finite_partial_sequence f ys=Some t"
+  have some: "\<And>x. x\<in>set xs \<union> set ys \<Longrightarrow> f x\<noteq>None"
+    using presented xs ys by (auto simp: finite_presented_on_def)
+  have sx: "those (map f xs)=Some (map (the \<circ> f) xs)" by (rule those_map_present) (use some in blast)
+  have sy: "those (map f ys)=Some (map (the \<circ> f) ys)" by (rule those_map_present) (use some in blast)
+  have "finite_data_list (map (the \<circ> f) xs)=finite_data_list (map (the \<circ> f) ys)"
+    using first second by (simp add: finite_partial_sequence_def sx sy)
+  then have maps: "map (the \<circ> f) xs=map (the \<circ> f) ys" by (simp add: finite_data_list_injective)
+  have "inj_on (the \<circ> f) (set xs \<union> set ys)"
+  proof (rule inj_onI)
+    fix x y assume x: "x\<in>set xs \<union> set ys" and y: "y\<in>set xs \<union> set ys" and same: "(the \<circ> f) x=(the \<circ> f) y"
+    have fxy: "f x=f y" using same some[OF x] some[OF y] by (cases "f x"; cases "f y") auto
+    show "x=y" by (rule finite_presented_on_eq[OF presented _ _ fxy]) (use x y xs ys in auto)
+  qed
+  then show "xs=ys" using maps by (simp add: inj_on_map_eq_map)
+qed
+
+definition finite_partial_option ::
+    "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a option \<Rightarrow> finite_factor_term option" where
+  "finite_partial_option f x=finite_partial_sequence f (case x of None \<Rightarrow> [] | Some a \<Rightarrow> [a])"
+
+lemma finite_partial_option_presented [intro]:
+  assumes presented: "finite_presented_on f A"
+  shows "finite_presented_on (finite_partial_option f) {x. set_option x\<subseteq>A}"
+proof -
+  have eq: "finite_partial_option f=finite_partial_sequence f \<circ> (\<lambda>x. case x of None \<Rightarrow> [] | Some a \<Rightarrow> [a])"
+    by (simp add: fun_eq_iff finite_partial_option_def)
+  show ?thesis unfolding eq
+    by (rule finite_presented_on_comp[OF finite_partial_sequence_presented[OF presented]])
+      (auto simp: inj_on_def split: option.splits)
+qed
+
+definition finite_partial_collection ::
+    "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a fset \<Rightarrow> finite_factor_term option" where
+  "finite_partial_collection f X=(if fBall X (\<lambda>x. f x\<noteq>None)
+    then Some (finite_collection_presentation (the \<circ> f) X) else None)"
+
+lemma finite_presented_on_the:
+  assumes presented: "finite_presented_on f A"
+  shows "inj_on (the \<circ> f) A"
+proof (rule inj_onI)
+  fix x y assume x: "x\<in>A" and y: "y\<in>A" and same: "(the \<circ> f) x=(the \<circ> f) y"
+  have "f x\<noteq>None" "f y\<noteq>None" using presented x y by (auto simp: finite_presented_on_def)
+  then have "f x=f y" using same by (cases "f x"; cases "f y") auto
+  then show "x=y" by (rule finite_presented_on_eq[OF presented x y])
+qed
+
+lemma finite_partial_collection_presented [intro]:
+  assumes presented: "finite_presented_on f A"
+  shows "finite_presented_on (finite_partial_collection f) {X. fset X\<subseteq>A}"
+proof (rule finite_presented_onI)
+  fix X assume X: "X\<in>{X. fset X\<subseteq>A}"
+  have some: "\<forall>x\<in>A. f x\<noteq>None" using presented by (simp add: finite_presented_on_def)
+  have inside: "fset X\<subseteq>A" using X by simp
+  have "fBall X (\<lambda>x. f x\<noteq>None)"
+  proof (rule fBallI)
+    fix x assume "x\<in>fset X"
+    then have "x\<in>A" using inside by (rule rev_subsetD)
+    then show "f x\<noteq>None" by (rule bspec[OF some])
+  qed
+  then show "finite_partial_collection f X\<noteq>None" by (simp add: finite_partial_collection_def)
+next
+  fix X Y t assume X: "X\<in>{X. fset X\<subseteq>A}" and Y: "Y\<in>{X. fset X\<subseteq>A}"
+    and first: "finite_partial_collection f X=Some t" and second: "finite_partial_collection f Y=Some t"
+  have tX: "finite_collection_presentation (the \<circ> f) X=t"
+    using first by (simp add: finite_partial_collection_def split: if_splits)
+  have tY: "finite_collection_presentation (the \<circ> f) Y=t"
+    using second by (simp add: finite_partial_collection_def split: if_splits)
+  have "finite_data_list (ordered_finite_terms (fimage (the \<circ> f) X))=
+      finite_data_list (ordered_finite_terms (fimage (the \<circ> f) Y))"
+    using tX tY by (simp only: finite_collection_presentation_def)
+  then have terms: "ordered_finite_terms (fimage (the \<circ> f) X)=ordered_finite_terms (fimage (the \<circ> f) Y)"
+    by (simp only: finite_data_list_injective)
+  have images: "(the \<circ> f) ` fset X=(the \<circ> f) ` fset Y"
+    using arg_cong[OF terms, of set] by (simp add: ordered_finite_terms_set fimage.rep_eq)
+  have "fset X=fset Y"
+    by (rule inj_on_image_eq_iff[THEN iffD1, OF finite_presented_on_the[OF presented] _ _ images]) (use X Y in simp_all)
+  then show "X=Y" by (simp add: fset_inject)
+qed
+
 end

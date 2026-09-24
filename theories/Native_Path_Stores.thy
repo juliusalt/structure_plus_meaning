@@ -1199,4 +1199,53 @@ theorem finite_listing_store_exact:
   using finite_listing_store_identifies[OF presented sv sv'] path_store_rows[OF sv sv']
   by (auto simp: finite_listing_store_def)
 
+section \<open>A table of rows is the store of any listing of them\<close>
+
+text \<open>
+  A row presented as a term is the pair of its path and its value, read back by its path's own reader. A
+  finite set of presented rows is presented as the path store of the rows read from it; over rows whose
+  paths are distinct, that store is the store of every listing of those rows
+  (@{thm [source] path_store_rows}), so its word is a function of the rows and of no listing, and equal
+  words identify the rows (@{thm [source] finite_listing_store_identifies}).
+\<close>
+
+definition finite_row_read :: "finite_factor_term \<Rightarrow> bool list\<times>finite_factor_term" where
+  "finite_row_read t=(case t of Finite_Pair l v \<Rightarrow> (finite_path_bits l,v) | _ \<Rightarrow> ([],t))"
+
+lemma finite_row_read_row [simp]: "finite_row_read (finite_store_row val (l,v))=(l,val v)"
+  by (simp add: finite_row_read_def finite_store_row_def finite_pair_presentation_def)
+
+definition finite_rows_table :: "finite_factor_term fset \<Rightarrow> finite_factor_term" where
+  "finite_rows_table T=finite_listing_store id (map finite_row_read (ordered_finite_terms T))"
+
+theorem finite_rows_table_listing:
+  assumes rows: "set rows=finite_row_read ` fset T" and sv: "single_valued (set rows)"
+  shows "finite_rows_table T=finite_listing_store id rows"
+  unfolding finite_rows_table_def finite_listing_store_def
+  by (rule arg_cong[where f="finite_store id"], rule path_store_rows)
+    (use rows sv in \<open>simp_all add: ordered_finite_terms_set\<close>)
+
+theorem finite_rows_table_identifies:
+  assumes shape: "\<And>t. t\<in>fset T \<union> fset T' \<Longrightarrow> \<exists>l v. t=Finite_Pair (finite_path l) v"
+    and sv: "single_valued (finite_row_read ` fset T)" and sv': "single_valued (finite_row_read ` fset T')"
+    and same: "finite_rows_table T=finite_rows_table T'"
+  shows "T=T'"
+proof -
+  have "set (map finite_row_read (ordered_finite_terms T))=set (map finite_row_read (ordered_finite_terms T'))"
+    by (rule finite_listing_store_identifies[OF _ _ _ same[unfolded finite_rows_table_def]])
+      (use sv sv' in \<open>simp_all add: ordered_finite_terms_set\<close>)
+  then have images: "finite_row_read ` fset T=finite_row_read ` fset T'" by (simp add: ordered_finite_terms_set)
+  have "inj_on finite_row_read (fset T \<union> fset T')"
+  proof (rule inj_onI)
+    fix x y assume x: "x\<in>fset T \<union> fset T'" and y: "y\<in>fset T \<union> fset T'"
+      and read: "finite_row_read x=finite_row_read y"
+    obtain l v where "x=Finite_Pair (finite_path l) v" using shape[OF x] by blast
+    moreover obtain l' v' where "y=Finite_Pair (finite_path l') v'" using shape[OF y] by blast
+    ultimately show "x=y" using read by (simp add: finite_row_read_def)
+  qed
+  then have "fset T=fset T'"
+    by (rule inj_on_image_eq_iff[THEN iffD1, OF _ _ _ images]) auto
+  then show ?thesis by (simp add: fset_inject)
+qed
+
 end

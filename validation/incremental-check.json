@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "79c17967a7e52d289774bee810ca7cc28842a063d607d684cc8993122d90cbb4",
- "checked_content_sha256": "eab41cba551c1f5e94cc8a47e66d8b1fb3d903be7b4042c1339c56daa6616e91",
+ "base_receipt_sha256": "c0d23bb77b2aba4186e7d6e1645703082dec288e3934805fd852e9e36b41736b",
+ "checked_content_sha256": "db1ea217027f2ad7f2556393b50219e1dcd0feb332d716608402cd69639fc298",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -22,292 +22,189 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.34,
-  "execution_impact": 1.28,
-  "export": 25.8,
-  "proof": 158.33,
-  "recipe_impact": 0.43,
-  "recipes_and_host_tests": 54.22
+  "base_and_impact": 0.48,
+  "execution_impact": 0.0,
+  "export": 0.0,
+  "proof": 190.94,
+  "recipe_impact": 0.41,
+  "recipes_and_host_tests": 11.25
  },
  "rebuilt_theories": [
-  "Development_Seed_Referenced_Publication",
-  "Native_Development_Seed"
+  "Development_Owner_Records",
+  "Development_Package_Program",
+  "Presentation_Equivariance"
  ],
  "recipes": {
   "allocated-environments": {
-   "exit_code": 0,
-   "seconds": 2.52,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "artifact-lookup": {
-   "exit_code": 0,
-   "seconds": 2.22,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "builtin-investigations": {
-   "exit_code": 0,
-   "seconds": 2.32,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "cached-grafts": {
-   "exit_code": 0,
-   "seconds": 2.62,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certificate-coverage": {
-   "exit_code": 0,
-   "seconds": 3.37,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certificate-development": {
-   "exit_code": 0,
-   "seconds": 4.12,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certificate-input-development": {
-   "exit_code": 0,
-   "seconds": 4.32,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certificate-scope-repair": {
-   "exit_code": 0,
-   "seconds": 3.37,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "certified-causes": {
-   "exit_code": 0,
-   "seconds": 4.98,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "concurrent-history": {
-   "exit_code": 0,
-   "seconds": 15.04,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "constructed-history": {
-   "exit_code": 0,
-   "seconds": 26.97,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "data-reading": {
-   "exit_code": 0,
-   "seconds": 4.18,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "decision-replay": {
-   "exit_code": 0,
-   "seconds": 8.19,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "digit-allocation": {
-   "exit_code": 0,
-   "seconds": 2.97,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "digit-generation": {
-   "exit_code": 0,
-   "seconds": 3.37,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "digit-history": {
-   "exit_code": 0,
-   "seconds": 11.3,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "digit-replay": {
-   "exit_code": 0,
-   "seconds": 26.81,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "encoded-environments": {
-   "exit_code": 0,
-   "seconds": 3.17,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "environment-grafts": {
-   "exit_code": 0,
-   "seconds": 2.42,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "environment-updates": {
-   "exit_code": 0,
-   "seconds": 2.47,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "generation-records": {
-   "exit_code": 0,
-   "seconds": 3.37,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "graft-admission": {
-   "exit_code": 0,
-   "seconds": 2.47,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "history-index": {
-   "exit_code": 0,
-   "seconds": 10.7,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "indexed-generation": {
-   "exit_code": 0,
-   "seconds": 3.52,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "known-history": {
-   "exit_code": 0,
-   "seconds": 14.48,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "literal-replay": {
-   "exit_code": 0,
-   "seconds": 4.12,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-admission": {
-   "exit_code": 0,
-   "seconds": 6.23,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-certificate-replay": {
-   "exit_code": 0,
-   "seconds": 4.77,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-certificates": {
-   "exit_code": 0,
-   "seconds": 5.23,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-child": {
-   "exit_code": 0,
-   "seconds": 5.33,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-derivations": {
-   "exit_code": 0,
-   "seconds": 4.88,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development": {
-   "exit_code": 0,
-   "seconds": 6.76,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development-machinery": {
-   "exit_code": 0,
-   "seconds": 42.69,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-development-seed": {
-   "exit_code": 0,
-   "seconds": 45.36,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-evaluation": {
-   "exit_code": 0,
-   "seconds": 3.42,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-extensions": {
-   "exit_code": 0,
-   "seconds": 3.07,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-graphs": {
-   "exit_code": 0,
-   "seconds": 6.99,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-histories": {
-   "exit_code": 0,
-   "seconds": 4.07,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-nodes": {
-   "exit_code": 0,
-   "seconds": 3.57,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-requirements": {
-   "exit_code": 0,
-   "seconds": 7.39,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-sources": {
-   "exit_code": 0,
-   "seconds": 3.22,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-steering": {
-   "exit_code": 0,
-   "seconds": 15.61,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "native-workflow": {
-   "exit_code": 0,
-   "seconds": 15.43,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "quoted-history": {
-   "exit_code": 0,
-   "seconds": 26.76,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "required-causes": {
-   "exit_code": 0,
-   "seconds": 4.57,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "required-history": {
-   "exit_code": 0,
-   "seconds": 5.33,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "requirement-decisions": {
-   "exit_code": 0,
-   "seconds": 3.82,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "requirement-plans": {
-   "exit_code": 0,
-   "seconds": 2.47,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "requirement-sources": {
-   "exit_code": 0,
-   "seconds": 2.72,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "source-development": {
-   "exit_code": 0,
-   "seconds": 17.23,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "use-allocation": {
-   "exit_code": 0,
-   "seconds": 2.27,
-   "status": "accepted"
+   "status": "unchanged"
   },
   "use-codecs": {
-   "exit_code": 0,
-   "seconds": 2.37,
-   "status": "accepted"
+   "status": "unchanged"
   }
  },
- "reused_theories": 1855,
- "seconds": 283.15,
+ "reused_theories": 1857,
+ "seconds": 243.85,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1857,
+  "theory_count": 1860,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1857,
+ "theories": 1860,
  "validation_inputs": {
-  "ROOT": "b8ae4b49c563cd0a2e6f2aa42ef180cab3144965f8059d6eb3757e15a6b7204f",
+  "ROOT": "527d92c31635da5a3ce1239424cc4eea850242cc30f0b2eed6e4daa8999794aa",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

@@ -111,14 +111,14 @@ proof -
     by (auto simp: native_verdict_definitions_def)
   have split_mentions: "set verdict_mentions_definitions=
       set (take 1 verdict_mentions_definitions)\<union>set (drop 1 verdict_mentions_definitions)"
-    by (rule finite_rule_program_prefix)
+    by (rule set_take_drop_union)
   have "set (take 1 verdict_mentions_definitions)\<subseteq>set verdict_rows_definitions"
     by (simp add: verdict_rows_definitions_def verdict_mentions_definitions_def)
   then show mentions: "set verdict_mentions_definitions\<subseteq>set native_verdict_definitions"
     unfolding split_mentions by (auto simp: native_verdict_definitions_def)
   have split: "set verdict_difference_definitions=
       set (take 4 verdict_difference_definitions)\<union>set (drop 4 verdict_difference_definitions)"
-    by (rule finite_rule_program_prefix)
+    by (rule set_take_drop_union)
   have "set (take 4 verdict_difference_definitions)\<subseteq>set verdict_rows_definitions\<union>set verdict_mentions_definitions"
     by (simp add: verdict_difference_definitions_def verdict_rows_definitions_def verdict_mentions_definitions_def)
   then show "set verdict_difference_definitions\<subseteq>set native_verdict_definitions"

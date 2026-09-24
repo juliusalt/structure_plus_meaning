@@ -138,7 +138,7 @@ interpretation readiness_answered_family: native_rearranging_program native_read
 
 interpretation readiness_somes: native_some_program native_readiness_system readiness_some readiness_all
   unfolding native_some_program_def by (rule native_readiness_family)
-    (simp_all add: readiness_definitions_def native_some_rules_def native_some_first_def native_some_rest_def)
+    (simp_all add: readiness_definitions_def native_some_rules_def native_some_first_def native_member_later_def)
 
 interpretation readiness_alls: native_every_program native_readiness_system readiness_all readiness_settled
   unfolding native_every_program_def by (rule native_readiness_family)
@@ -385,7 +385,7 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
         (\<exists>k' v l r. k=Pair_Term (bit_term True) k' \<and> S'=Store_Node v l r \<and>
           (readiness_settled_search,Pair_Term (readiness_table_term T)
             (Pair_Term k' (store_term readiness_row_value r)))\<in>Y)"
-      by (rule readiness_settled_searches.law.read_clause[OF clause' into shape])
+      by (rule readiness_settled_searches.triples.read_triple[OF clause' into shape])
         (rule readiness_settled_searches.unfold_rule)
     show "\<exists>bs v. k=path_term bs \<and> store_lookup S' bs=Some v \<and> readiness_answered_at T (readiness_row_value v)"
       using cases
@@ -442,7 +442,7 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
       using clause site by simp
     have some_cases: "\<exists>h hs'. vs=h#hs' \<and> ((readiness_all,Pair_Term (readiness_table_term T) h)\<in>Y \<or>
         (readiness_some,Pair_Term (readiness_table_term T) (data_list_term hs'))\<in>Y)"
-      by (rule readiness_somes.law.read_clause[OF clause' into shape]) (rule readiness_somes.unfold_rule)
+      by (rule readiness_somes.triples.read_triple[OF clause' into shape]) (rule readiness_somes.unfold_rule)
     obtain h vs' where vs: "vs=h#vs'"
       and choice: "(readiness_all,Pair_Term (readiness_table_term T) h)\<in>Y \<or>
         (readiness_some,Pair_Term (readiness_table_term T) (data_list_term vs'))\<in>Y"
@@ -472,7 +472,7 @@ proof (rule positive_valuation_induct[OF holds, where property=readiness_invaria
       using clause site by simp
     have cases: "zs=[] \<or> (\<exists>z zs'. zs=z#zs' \<and> (readiness_settled,Pair_Term (readiness_table_term T) z)\<in>Y \<and>
         (readiness_all,Pair_Term (readiness_table_term T) (data_list_term zs'))\<in>Y)"
-      by (rule readiness_alls.law.read_clause[OF clause' into shape]) (rule readiness_alls.unfold_rule)
+      by (rule readiness_alls.triples.read_triple[OF clause' into shape]) (rule readiness_alls.unfold_rule)
     show "\<forall>z\<in>set zs. readiness_settled_key T z"
       using cases
     proof

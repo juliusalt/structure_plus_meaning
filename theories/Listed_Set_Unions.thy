@@ -54,4 +54,12 @@ lemma finite_listed_union_code [code abstract]:
   "fset (finite_listed_union Fs)=listed_image_union fset (set Fs)"
   by (simp add: finite_listed_union_def listed_image_union_def ffUnion.rep_eq fset_of_list.rep_eq)
 
+text \<open>
+  A list's members are those of its first @{term n} elements and of the rest: the split a join of two rule
+  programs sharing a leading prefix of definitions reads.
+\<close>
+
+lemma set_take_drop_union: "set xs=set (take n xs)\<union>set (drop n xs)"
+  by (metis append_take_drop_id set_append)
+
 end

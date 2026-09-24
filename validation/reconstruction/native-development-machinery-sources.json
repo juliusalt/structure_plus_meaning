@@ -51,12 +51,12 @@
   "theories/Development_Problems.thy": "55a9168b2ddb9d2c0e02f719329fd2aa4f67810a57589abc9dd9834f5d07736f",
   "theories/Development_Publication.thy": "f440138385d3471ac6915a3b96e346a531e5a5c9f2d40a90f6bcdaa005b221f0",
   "theories/Development_Refinement_Contracts.thy": "2c5ac7d5fe58ef1e68546eab24dac9a2a4ddef75311bfc78fdeb02735eabb352",
-  "theories/Development_Refinement_Repair.thy": "e0e388acd2c57b1092c6d126c0fe620eb3ef459a1aae7f37bae3ac2e7237dc03",
+  "theories/Development_Refinement_Repair.thy": "085b35da444afc34875ec4a1ebf1eaf75599d64d4907edbe4995bad266f05221",
   "theories/Development_Refinement_Verification.thy": "ae0d5dae7ed19c7d376145b5c98b112f480a89ae4edcf6ff14d67fa158dcf60e",
   "theories/Development_Requests.thy": "d96107030dd4714727a8e916c43acca50951599cb736b17d1efb0a106f700697",
   "theories/Development_State_Presenter.thy": "b50775325d234abed9ffce5e2ebf5bdd1b4b7cb9a105eb696a0374c5f68a6768",
   "theories/Development_State_Rows.thy": "1109c99accf518aa395c4494910aa5354c6257bfaff1a7ca1a5512441e950ec8",
-  "theories/Development_Successor.thy": "7c02a0d1be48f84a2299ca42a37a8c028ef65461e50c0d68f8fe23a7cfe9cf6c",
+  "theories/Development_Successor.thy": "5d15c75b009a34b09ba91ad347b29d72766793e5a048b0f975e9bf3ba2e5ffa4",
   "theories/Digit_History_Presentation.thy": "c2b4717e6d53bb956e9c64631758f7ddcb0e651e49acb673cf325b60087db622",
   "theories/Established_Premises.thy": "a9928371b103403770be53f67eef3b10ba0157b6d28e3b7a1b2075d21600bfe4",
   "theories/Exact_Cache_Readings.thy": "1c87aa3570b55a5a28914b1ce59eac591c6fe09464cafab9672664ad3f548c0d",
@@ -768,7 +768,7 @@
   "theories/Isabelle_Code_Equations.thy": "7f31d198f1e9e08c50d4e15cf88f3215980d7d078b26ca4634a9a58042ee4b0f",
   "theories/Isabelle_Constant_Closure.thy": "b44a1c53d08932bc066137831ca8854d43f11afcebf0169c427a0e5b1f688b3b",
   "theories/Isabelle_Entities.thy": "d1a4eda277c8ee445f7e606b25f564846d1be1459adf04ef325c9bf939a5dd03",
-  "theories/Isabelle_Entity_Export.thy": "387e8f918f3797006b9d63a377a1a619e9a05e87985377c7cb63a71d92233e2d",
+  "theories/Isabelle_Entity_Export.thy": "221e29f170d0f24d134f932a2590faaf8c0ead72132c904397dc05ccd9b06f1a",
   "theories/Isabelle_Local_Names.thy": "6fd001636b282e85cb86a68ee5ecff6c5b80dc1f8b9b28fd533261081970783b",
   "theories/Isabelle_Name_Trees.thy": "de0643ffac49b6604057e72637f58f7ba44a918379b9ec296538dc8f8e10656c",
   "theories/Isabelle_Readers.thy": "7dccede3daedd3dad3ca7ba195aa261d4ced722e350d475da27078bee812c742",
@@ -1006,7 +1006,7 @@
   "tools/reconstruct_native_development_machinery.py": "c440228cc02ad37d75f5d24ed31345842a33540819e64f2d91083931ddb00ce5",
   "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a",
   "tools/reconstruction_sources.py": "aa8e11edbab3dee4f8c67c131a9bd5ab0c3c6107500cdf5dc79e63b3ed492d27",
-  "validation/reconstruction/native-development-machinery-reports.json": "059f31298b6211ef11783e153a77b758153944eb02f631c7d655e71784a06de5"
+  "validation/reconstruction/native-development-machinery-reports.json": "f6dc2a4d2ef693fd927aa9416e563db344c43dd4851c55bdcc034a0cb2d1a7f2"
  },
  "roots": [
   "Native_Development_Machinery"

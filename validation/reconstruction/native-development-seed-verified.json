@@ -2,21 +2,21 @@
  "boundary": "The checked context defines the roots of the three paused refinement candidates, the entities their expansion contributes and the frontier of development constants it does not expand. The report presents that rooted state with its computed observations: unknown name positions, undeclared constants, malformed entities, entities unreached from the roots, the frontier, and the entities accepted by the ground program of the state against a demand, derived from the state, that includes one constant declared outside the name table. Acceptance is exactly membership of the supplied entities, proved once for the notion. Removing the declarations of every root constant exposes them as undeclared and refuses the state, and the control names no position of the entity list; adding a declaration at a position outside the name table and an equation without a head exposes unknown positions, unreached and malformed entities. Reversing the name table moves every position and reports the image of the original observations under that correspondence. Moving a name the equation reader recognizes moves no position; these controls are derived from the reader, one for each equality name it recognizes, and report what the state reads without that name. Every definition and code equation of this state is a Pure equality: without Pure.eq those twenty entities lose their subjects and are malformed, and seventy entities are no longer reached from the roots, while moving HOL.eq changes no observation. Acceptance is unchanged under both, because it decides membership of the supplied entities and reads no name. The exporter's selection inside the checked context, the adequacy of these roots to the candidates and every extension of the frontier remain open. The problem report presents one refinement problem per root constant: its subject is that constant, its contract is the constant as the state declares it, and its incumbent is the family of code equations the state states for it, read exactly as declared and selected by the computed refinement condition on the actual entities rather than supplied. A kernel definition of the same constant has the same subject reading and is refused, because a refinement does not replace a definition; a constant the state declares other than exactly once, or states no code equation for, yields no problem and is retained as unstated. Dependencies are read from those actual statements: a problem depends on the problems of the other root constants its own statement mentions, with the mentioned constant as the premise slot, so no grouping and no list position enters. A grouping of more than one constant is retained as an obstruction, because no entity and no term of the state states the refinement of several constants at once. On this state that reading finds no dependency at all: the demanded statements mention no other root, so every premise set is empty and the ten problems are independent, which the grouping did not report. The remaining variation is the answered set: with nothing answered every problem is ready, and with every problem answered none is. Identifying these root constants from the measured candidates remains a choice generated outside the native process: every seeded problem records that residual origin and generated authority, and no seeded problem carries owner authority. The selection is the admitted answer of the reusable filtered native question on the state's own entities; its execution and admission are separate evidence from this presentation. The verification report judges answer states of every request by the difference they make to the seeded state, read through the names both tables share: a refinement may replace the code equations of its subject and nothing else, its equations must stay within the issued support, and the answer state must be closed and keep the roots. The unchanged state and its reversed table are accepted for every request; an added axiom, dropped equations, an equation stated through a constant the state does not know, changed equations of the other subjects and a removed definition are refused with their reasons, and the unknown constant is named as the one constant outside the support. These answer states are derived from the request and the state; no actual answer has been verified by this report. The succession report admits, for every request, the unchanged answer and the answer with the reversed table as generations of the seeded development: each successor carries the answered problem, its generation and every other problem moved with the correspondence, and computes the readiness of the successor and the currency of every request; neither answer changes what a request reads. The publication report is the published state of the seeded development: one base generation per problem at the problem's locus, which is its contract presented with the names it uses, with the incumbent equations presented with their names as payload, each recorded in an environment of its own; its cause is a certified call of the policy that lists that family's complete data quotation, which is constructed only because every entity of the family is an entity of the checked context. The round's decisions, the loop's own native selection of the ready problems and the requests it issues for the selected leaves of the seeded library, are certified generations too: the selection, whose payload is the loci of the admitted problems, at the development's selection locus, and every issue, whose payload is its problem's locus, the names of its support and the library reading it rested on, at its problem's issue locus, recorded beside the incumbent and citing it and the selection; each is certified under the policy that lists its payload, constructed only for the decision the loop made. For every issued request the issue is admitted where no issue stood, and the unchanged answer, certified in the same way from the answer state and recorded beside the issue, citing the issue, whose predecessor the incumbent is, is published by the transaction that expects the incumbent and replaces exactly its locus; the answer with the reversed table, certified against the same incumbent, conflicts with the complete observed comparison, because the locus now holds the first answer; the two answers present equal payloads; and publishing the selection, every issue and all unchanged answers in turn applies every transaction. Transactions are executed on finite generations and are proved to be the structural transactions on the decoded cores. A recorded cause carries the policy that lists its payload, not the checked context or the loop: that the family was accepted, or the decision made, is the constructor's contract, and the verdict that admitted an answer and the packet that admitted the selection stay in the development's history. The native-answers report answers every issued request natively: the restating answer, the edit that removes the subject's incumbent equations its context holds and adds them again, presented with the names it uses, is transported as the padded word of its presentation, read back by the answer's exact reader and judged by the refinement verdict on the answer state that the answer applied to the request state defines; the same word without its terminating bit presents no answer and is refused. The judgment establishes that an answer is admissible for installation; that its equation holds is Isabelle's acceptance when it is installed, which this report does not judge.",
  "complete_recipe_source_manifest": "native-development-seed-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "a350a1a09ea98f1523a6cfa02af59fee8abf334e1b0d30c4aeee98c143aecc8e",
+  "base_receipt_sha256": "1507dbb0516ff7ea215f353272fa71a40afa4e13d3b27492ff48ecf9f4e8275f",
   "records": 12,
   "reports_equal": true,
-  "seconds": 72.06,
+  "seconds": 70.21,
   "status": "accepted"
  },
  "execution_boundary": {
   "declared_inputs": {
-   "validation/reconstruction/native-development-seed-reports.json": "3154b5b80017d057247aa1fe6bd653bebb83a3cda88be356f82bcade97015c9e"
+   "validation/reconstruction/native-development-seed-reports.json": "8c98c6a9c0f8f9b306e2b88e8bafd04e7f6a694b421990ab3c7f74bedf3971d7"
   },
   "export": {
    "code_target": "Eval",
    "complete_artifact_transport": false,
    "complete_term_transport": false,
-   "module_sha256": "2f9cd2084f24678b66564ef0978d89461411c9bd1f4fd4f78d220f625efa65cf",
+   "module_sha256": "71cf8e95fd03c5bd325698ed74c05881c2713bbea027216f8cc768a6fea633a6",
    "subject_contracts": {},
    "theory": "Native_Development_Seed"
   },
@@ -57,9 +57,9 @@
   }
  },
  "execution_reuse": {
-  "base_receipt_sha256": "fdf90bb24dd675cd5d6c0ff564f894b29a6734b60971b1944819e37fcd1fde7f",
+  "base_receipt_sha256": "710bcbc99071e5c66de3766ebd363eb5380e7522cf6c395b7bb98f69efae3467",
   "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "2f9cd2084f24678b66564ef0978d89461411c9bd1f4fd4f78d220f625efa65cf"
+  "export_module_sha256": "71cf8e95fd03c5bd325698ed74c05881c2713bbea027216f8cc768a6fea633a6"
  },
  "recipe": "native-development-seed",
  "recipe_inputs_unchanged": true,
@@ -136,7 +136,7 @@
   },
   "presentation-succession": {
    "records": 1,
-   "sha256": "e843af1fa61f28d68faa505aad149e78b328e2b210bbf203aaa12d6484d58132",
+   "sha256": "ec96094712160d0e646e129e5de4ecbd280b145097c7190c53a050eae30cfccc",
    "tags": {
     "PRESENTED_REPORT_WORD": 1
    }
@@ -151,69 +151,69 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "16a35c1b312901621b03c92c2cb620335b2249479e4fc69b4066c0d75d0e6cf2",
+ "source_manifest_sha256": "7d67a5dce8faa757c932f6818e0f0c1cfae7197cd379f6b0a7efc4f28ad5b12e",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 9.40975989200524
+   "seconds": 9.167246479017194
   },
   {
    "exit_code": 0,
    "name": "presentation-missing-declaration",
-   "seconds": 9.35969200800173
+   "seconds": 9.256372536998242
   },
   {
    "exit_code": 0,
    "name": "presentation-extra-entities",
-   "seconds": 9.256020564003848
+   "seconds": 8.399544888990931
   },
   {
    "exit_code": 0,
    "name": "presentation-renamed",
-   "seconds": 9.06246080098208
+   "seconds": 9.150878725020448
   },
   {
    "exit_code": 0,
    "name": "presentation-moved-equalities",
-   "seconds": 9.054797370015876
+   "seconds": 9.31516335500055
   },
   {
    "exit_code": 0,
    "name": "presentation-problems",
-   "seconds": 9.269948291999754
+   "seconds": 9.002935638010968
   },
   {
    "exit_code": 0,
    "name": "presentation-problems-answered",
-   "seconds": 9.252969598019263
+   "seconds": 9.007232065981952
   },
   {
    "exit_code": 0,
    "name": "presentation-loop",
-   "seconds": 9.460828475013841
+   "seconds": 9.802676571998745
   },
   {
    "exit_code": 0,
    "name": "presentation-verification",
-   "seconds": 9.515994873014279
+   "seconds": 9.901734340004623
   },
   {
    "exit_code": 0,
    "name": "presentation-succession",
-   "seconds": 9.109606451995205
+   "seconds": 9.262953529978404
   },
   {
    "exit_code": 0,
    "name": "presentation-publication",
-   "seconds": 71.96370914200088
+   "seconds": 70.14250039300532
   },
   {
    "exit_code": 0,
    "name": "presentation-native-answers",
-   "seconds": 9.420814395009074
+   "seconds": 9.55105198599631
   }
  ]
 }

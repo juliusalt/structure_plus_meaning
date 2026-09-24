@@ -13004,3 +13004,72 @@ accepted context's, its record `1c6e164f…` equal to its receipt's `record_sha2
 The fix is a separate build. This entry was written outside the loop and is a residual.
 
 Recorded 2026-09-22 (task 258; a design, no theory changes).
+
+## The successor keeps the positions of the state it succeeds
+
+Build 1 of the entry "A row outside the store is presented in its context, and an answer designates its
+request by its locus" (section "A locus across a successor", the planner's q48). `development_successor` was the
+one construction of the loop that moved positions: it took the answer state as the exporter wrote it and renamed
+the problems, the dependencies and the answered set by the embedding of the two tables, while the history kept the
+request state's coordinates. It now reads its answer state into the request state's table extended by the names it
+lacks, and nothing of the old state moves.
+
+**The reading, stated once.** `isabelle_rooted_read names S` renames a rooted state by
+`isabelle_appended_embedding names (fst (snd S))` — the embedding of its table into `isabelle_appended_names` —
+into that extended table. The extension of a refused answer's request (`development_request_extension`) reads its
+material through the same embedding, so the two share one reading and nothing is defined twice. It stands in
+`Development_Refinement_Repair`, beside `isabelle_state_embedding_prefix` and the extension, its first reader; the
+kept table itself stays `Isabelle_Local_Names`' (`isabelle_appended_names`), and nothing here is a new notion.
+`development_native_answer_state` (task 103's) is not changed; its embedding is the same term.
+
+**The acceptance obligation, proved first.** `development_constant_verdict_read`: for every kind whose statements
+are invariant under renaming, the verdict accepts on the read answer state exactly when it accepts on the answer
+state as exported; `development_refinement_verdict_read` is the code-equation instance. It holds under the two
+states' own presentability: distinct tables, every position (entities and roots, `state_positions`) inside its
+table, and a request whose subject and support are positions of the request state. The proof reads each accepted
+field across the reading — the removed entities are the same list, the added ones and the statements of the subject
+are their images, the excess, the assessment (`isabelle_renamed_rooted_assessment`) and the roots correspond — and
+proves no verdict again. Without the answer premises it fails: an answer table repeating a name the request state
+holds reads into a table without the repetition, which the exported verdict refuses and the read one need not.
+These premises are the exporter's obligations (distinct names, a closed table), as `isabelle_declared_once` is.
+`development_successor_admits` states the consequence: under them the successor admits exactly what the exported
+verdict admits.
+
+**No transport: one identity lemma.** `development_successor_keeps`: the successor's correspondence is the identity
+on every position the old state uses, and every problem whose positions (`development_problem_positions`: its
+subject and its contract's term) lie in the old table is its own renaming (`development_problem_rename_fixed`). The
+successor carries its problems, dependencies and answered set unchanged (`development_successor_answered`), so every
+problem, locus, row and record of the old state stands in the successor, and readiness across it is the readiness
+of the old dependencies with the answer added (`development_successor_ready`, restated without the renaming it
+needed). Task 58's repair rows now stand in the successor's coordinates: `development_repaired_successor_row` states
+its definition problems among the successor's problems and answered set unmoved. The renaming contracts
+(`development_ready_renaming` and the lemmas under it) stay for genuine renamings; `development_contract_rename_injective`
+and `development_problem_rename_injective`, whose one reader was the old successor, are removed. The rekey
+(`readiness_presents_rekey`, `development_row_rekey`) and task 78's comparison stay, as decided.
+
+A dropped constant keeps its name at its position in the extended table, used by no entity. The succession stage's
+second answer state, `development_seed_renamed`, now reads back into the seed's table, and its successor equals the
+first's: a successor no longer depends on the order of the answer state's table.
+
+**Words.** Each changed once, because the successor's state is now the answer state read into the request's table;
+this is not a refinement, so word equality does not accept it. The seed's `presentation-succession`
+(`e843af1f…` → `ec960947…`), its other eleven words equal; the machinery's five words, whose checked state holds
+`development_successor` as an admission root and now reaches `isabelle_rooted_read` and the new contracts
+(`presentation` `2feda4ed…` → `54a703fd…`, `presentation-problems` `b1f094f7…` → `852d1f07…`, `presentation-loop`
+`ac2d53a8…` → `3f2447fc…`, `presentation-verification` `d0669c24…` → `088a4d44…`, `presentation-native-answers`
+`ca1f12d7…` → `47b871e0…`). The six framed records whose successor is computed (`identity`, `deterministic`,
+`introduced-helper`, `outside-support`, `demanded-identity`, `demanded-reformulated`) were replayed with
+`--rerecord` against this build (600 s, 16 records): all six reconstructed their verdict and publication words
+unchanged, so none was re-recorded. The design expected their verdict words to change; they do not because on
+these answers the read is the identity on what the verdict word presents — the answer state's successor has the
+same problems, dependencies and answered set, and the verdict is judged on a state that corresponds to the
+exported one (the acceptance obligation). Where the order of the answer table does matter, the seed's succession
+stage, the word changed. `native-dropped` and `native-restating` were unproduced (the native export failed at
+once, as in task 30's replay), a fault of that run and not a word difference.
+
+Review 31's follow-up of the unread contract-renaming lemmas: they stand in `Development_Publication`
+(`development_contract_term_rename`, `development_contract_rename_compose`, `development_contract_rename_cong`), a
+theory this build does not edit, so it goes to the planner. `isabelle_local_root_agree` already stands in
+`Isabelle_Local_Names`, which this build does not edit.
+
+Recorded 2026-09-24 (task 161; build 1 of design 135).

@@ -1,7 +1,7 @@
 {
- "base_receipt_sha256": "fdf90bb24dd675cd5d6c0ff564f894b29a6734b60971b1944819e37fcd1fde7f",
- "base_theories": 1837,
- "checked_content_sha256": "e032267c0cb976580398c7b31abee11816087d7075c12be3a859d0908640bf1f",
+ "base_receipt_sha256": "710bcbc99071e5c66de3766ebd363eb5380e7522cf6c395b7bb98f69efae3467",
+ "base_theories": 1838,
+ "checked_content_sha256": "5cd2758627b6f15330cc02c3009d325f26e382a0ba1040d531874eb45b599efe",
  "complete_native_reports": 74,
  "executed_recipes": 0,
  "host_tests": {
@@ -14,14 +14,14 @@
    "skipped": 0
   }
  },
- "incremental_proof_theories": 98,
+ "incremental_proof_theories": 57,
  "phase_seconds": {
   "base_and_impact": 0.3,
-  "execution_impact": 0.05,
-  "export": 12.23,
-  "proof": 221.65,
-  "recipe_impact": 0.41,
-  "recipes_and_host_tests": 11.13
+  "execution_impact": 0.06,
+  "export": 11.99,
+  "proof": 287.5,
+  "recipe_impact": 0.57,
+  "recipes_and_host_tests": 11.06
  },
  "reused_recipes": 2,
  "source_only_reconstructions": [
@@ -350,20 +350,20 @@
    "recipe": "native-development-machinery",
    "reports": 5,
    "source_files": 995,
-   "source_manifest_sha256": "e8ac95144701db94109424e59001e5dc5159be5efec9799cea90993b42a11131",
+   "source_manifest_sha256": "be1c43991009453b8ed61da915ea693d25f23fa144886a915c9e26e339be2e9e",
    "theories": 971,
    "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "8c432d7cf0bbad4936a0322caeb2483348245f49dc52d838889972231cb25172"
+   "verification_sha256": "a7d47d4f0851d2ce86d08d97ea175cd0add99213c5ce12fbb6682eb9cd8d181b"
   },
   {
    "python_modules": 23,
    "recipe": "native-development-seed",
    "reports": 12,
    "source_files": 997,
-   "source_manifest_sha256": "16a35c1b312901621b03c92c2cb620335b2249479e4fc69b4066c0d75d0e6cf2",
+   "source_manifest_sha256": "7d67a5dce8faa757c932f6818e0f0c1cfae7197cd379f6b0a7efc4f28ad5b12e",
    "theories": 973,
    "validation": "unchanged complete execution boundary; the accepted execution applies to the current proof",
-   "verification_sha256": "0dbe372e86a313784f31da1abe7af7d160d1c1f0d6c1f3410106cce6db9340a4"
+   "verification_sha256": "34cdd8afe02d20b718544651c49b0d85e0714653176e85214beb8367ae2e04a0"
   },
   {
    "python_modules": 23,
@@ -547,7 +547,7 @@
   }
  ],
  "status": "accepted",
- "total_seconds": 269.57,
+ "total_seconds": 337.51,
  "unchanged_recipes": 50,
  "workspace_theories": 1838
 }

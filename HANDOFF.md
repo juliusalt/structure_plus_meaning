@@ -23,8 +23,11 @@ measures the layout on the harness's last base without it and the first with it,
 **The verdict line (#44, #278, #279, #195).** Task 3's design. Landed: the state rows (#46), the request's keys (#32,
 #106), statements and malformed (#34), the presenter (#101), excess and undeclared through the subject index (#36,
 #139, #182), roots and the permitted difference (#38), unreached over the native reach (#40), the entry rule with its
-contract and two instances (#42, `Development_Native_Verdict`). #44 builds store absence and the witnesses last, so that
-no positive field reaches an absence; its tree holds `Development_Verdict_Witnesses` and a written `commit.md`. #278
+contract and two instances (#42, `Development_Native_Verdict`). #44 landed store absence and the witnesses last (`9e8bc00d`,
+`Development_Verdict_Witnesses`), so that no positive field reaches an absence; its review found the same discharge and
+the same two correspondences proved on both sides of the fields and their witnesses, which #288 states once, with the
+witness at the request's presentation — the lemma a native repair consumes — resting on the discharge (after #285 and
+#284). The witnesses of `unpermitted_removed`, `unpermitted_added` and `unreached` are unbuilt (Open 90). #278
 reflects `native_verdict_system` and measures one judgment held at the seeded and machinery states beside a bare reach
 — the baseline for #194 and condition 5a's figure, estimated at about four reaches. #279 landed the exporter's
 obligation `isabelle_declared_once` at every state the exporter defines (#256, #267, #274, `ab37086e`): its measurement
@@ -72,7 +75,16 @@ exception, judged whole. The presenter's entity keys keep their scan below about
 at a locus, the presenters, the store's presenters and its search's contract (#22–#28, #83, #84, #97), three of the six
 tagged items retired (#30), and the row presenters in `Development_Row_Data` (#163). Design #135's entry decides the
 other three: a row outside the store is the store's row presented in its context; the successor keeps the positions of
-the state it succeeds (#161, one identity lemma, q48); an answer designates its request by its locus (#169). #165 states
+the state it succeeds (#161, `b8fc4a86`: one identity lemma, the answer state read into the request state's table
+extended by the names it lacks, six framed records and the recipes' words re-recorded once; its framed verdict words
+were unchanged, those answers' exported tables holding the request table as a prefix, so the old embedding was already
+the identity — the design's expected change holds only for a reordered table); an answer designates its request by its
+locus (#169). #161's acceptance obligation holds under both states' presentability and not unconditionally: an exported
+answer table repeating a name the request table holds is refused by the exported verdict while the read table drops the
+repetition, so the successor's admission can exceed it. #289 settles that Open as the planner decided — the owner of
+the condition discharges it: the exporter proves distinct names and closed positions where it defines a state, as it
+proves `isabelle_declared_once`, which settles it for every consumer of a defined state and changes no word, the native
+answer's reader already refusing both for an answer it reads. #165 states
 each context's citations and discharges #84's formedness premise, no word; #167 switches every report to its problems'
 rows in context and retires the problem datum's tags. New native definitions never wait for these retirements
 (Decisions).
@@ -233,10 +245,11 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   4.35 s); `Factor_Finite_Source_Construction_Sharing` and the held attribution of a packet's cost to the native reading
   of its candidates' programs (#88); `Factor_Shared_Package_Readings`, about 4× on the package reader, which is linear
   in its address bits (#124).
-- **The rows line**: `Development_Loci`, `Development_Rows`, `Development_Located_Rows`, `Development_Row_Presentations`
+- **The rows line**: the successor keeping positions (#161, `b8fc4a86`), `Development_Loci`, `Development_Rows`, `Development_Located_Rows`, `Development_Row_Presentations`
   (#22–#28), the store's presenters and search contract with `exact_held` (#83, #84, #97), the loci switched and three
   tags retired (#30), `Development_Row_Data`'s presenters (#163).
-- **The verdict line**: `Development_State_Rows` (#46), `Isabelle_Local_Names` (#78; `isabelle_name_reading`, #231),
+- **The verdict line**: store absence in `Native_Path_Stores` and `Development_Verdict_Witnesses` (#44, `9e8bc00d`),
+  `Development_State_Rows` (#46), `Isabelle_Local_Names` (#78; `isabelle_name_reading`, #231),
   `Development_Request_Keys` (#32, #106), `Development_Verdict_Statements` (#34), `Development_State_Presenter` (#101),
   `Development_Verdict_Mentions` (#36, #182), `Development_Subject_Index` (#139, #185), `Development_Verdict_Difference`
   (#38), `unreached` over the native reach (#40: one seeded judgment 0.30 s, the machinery's unreached 3.90 s
@@ -419,6 +432,19 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     are next re-established (#161 or #167).
 88. The next change to `Native_Collection_Programs`: three blank lines near `native_every_program`; `read_clause`'s
     `read` premise rebinding `c`.
+91. **Review 31's unread contract-renaming lemmas stand in `Development_Publication`** (#161's review, follow-up 4),
+    which no build of the rows line edits: removed, or kept with the reason, at that theory's next edit.
+90. **The three unbuilt witnesses** (#44's review, follow-up 1): `unpermitted_removed`, `unpermitted_added` and
+    `unreached` have no witness, and the verdict's entry says each "needs a complement this entry's positive discipline
+    does not supply", which overstates it — store absence, built by #44, supplies a positive route: a removed row not
+    about the subject is a row whose key the store of the subject fibre's row keys does not hold (or a row of a family
+    outside the replaceable kinds, `kinds_outside`), and an unreached key is one the store of an admitted closure does
+    not hold, as `Development_Edited_Reach` admits `O` through `native_closure_exact`. Built when a consumer needs them
+    — a native repair reading a refusal's reasons — and that task corrects both sentences of the entry's "Built (task
+    44 …)" paragraph, the second of which should read "the lemmas its field's contract is built from". With them:
+    `native_malformed_witness_exact` is per row under a kind premise, where a family-level form over the families the
+    field visits would state the list over the whole state; and store absence has no `exact_held`, which a consumer
+    whose values are formed only where held will need.
 89. The adopted answer theory `Development_Answer_0ccf746fe2cf`'s `indexed_heads_exact` restates
     `Factor_Indexed_Readings.reading_heads_indexed` (with its values and counted siblings): one notion, but an answer
     theory is named by its content's digest and is not edited; the copy goes when the walk's next refinement answer

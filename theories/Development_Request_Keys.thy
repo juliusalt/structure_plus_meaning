@@ -185,7 +185,8 @@ qed
 text \<open>
   The subject and the support of a constructed request are positions of the state: the subject is declared
   by an entity of the state and every constant of the support is mentioned by a statement of its scope, and
-  every position an entity of a presented state uses lies in its table (@{thm state_presents_inside}).
+  a constant an entity of a presented state declares or mentions is a position of its table
+  (@{thm [source] state_presents_declared_inside}, @{thm [source] state_presents_mentions_inside}).
 \<close>
 
 lemma request_constructed_positions:
@@ -201,21 +202,18 @@ proof -
   then obtain t where "development_stated_constant reading (snd S) c=Some t" by blast
   then obtain e where e: "e\<in>set (snd (snd S))" "isabelle_declared_constant e=Some c"
     using development_stated_constant_declared by blast
-  have "c\<in>set (isabelle_entity_positions e)"
-    using entity_declared_positions[of e] e(2) by (simp add: entity_declared_def)
-  then have cp: "c\<in>state_positions S" using e(1) unfolding state_positions_def by blast
-  have dp: "d\<in>state_positions S" if d: "d |\<in>| Sup" for d
+  have "c\<in>set (entity_declared e)" by (simp add: entity_declared_def e(2))
+  then have cp: "c<length (fst (snd S))" by (rule state_presents_declared_inside[OF state e(1)])
+  have dp: "d<length (fst (snd S))" if d: "d |\<in>| Sup" for d
   proof -
     obtain e' q where e': "e'\<in>set (development_constant_scope (snd S) c)"
       and q: "isabelle_specified_proposition e'=Some q" "d\<in>set (isabelle_term_constants q)"
       using d support development_request_support_member by blast
-    have "d\<in>set (isabelle_entity_positions e')"
-      using entity_mentions_positions[of e'] q by (auto simp add: entity_mentions_def)
-    moreover have "e'\<in>set (snd (snd S))" using e' by (simp only: development_constant_scope_member)
-    ultimately show ?thesis unfolding state_positions_def by blast
+    have m: "d\<in>set (entity_mentions e')" using q by (simp add: entity_mentions_def)
+    have inside: "e'\<in>set (snd (snd S))" using e' by (simp only: development_constant_scope_member)
+    show ?thesis by (rule state_presents_mentions_inside[OF state inside m])
   qed
-  have "state_positions S\<subseteq>{..<length (fst (snd S))}" by (rule state_presents_inside[OF state])
-  then show ?thesis using cp dp subject shape by auto
+  show ?thesis using cp dp subject shape by auto
 qed
 
 text \<open>

@@ -1775,6 +1775,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Presented_Publication_Values
     Factor_Certificate_Policy_Readiness
     Development_Certified_Generations
+    Development_Owner_Records
     Development_Decision_Generations
     Development_Seed_Publication
     Development_Seed_Referenced_Publication

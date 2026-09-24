@@ -88,7 +88,7 @@ interpretation reach_holds_family: native_rule_law native_reach_system reach_hol
 
 interpretation reach_somes: native_some_program native_reach_system reach_some reach_reached
   unfolding native_some_program_def by (rule native_reach_family)
-    (simp_all add: reach_definitions_def native_some_rules_def native_some_first_def native_some_rest_def)
+    (simp_all add: reach_definitions_def native_some_rules_def native_some_first_def native_member_later_def)
 
 section \<open>The subject: rows and their reach\<close>
 
@@ -275,7 +275,7 @@ proof (rule positive_valuation_induct[OF holds, where property=reach_invariant])
           (reach_search,Pair_Term (reach_table_term T) (Pair_Term k' (store_term reach_row_value l)))\<in>Y) \<or>
         (\<exists>k' v l r. k=Pair_Term (bit_term True) k' \<and> S'=Store_Node v l r \<and>
           (reach_search,Pair_Term (reach_table_term T) (Pair_Term k' (store_term reach_row_value r)))\<in>Y)"
-      by (rule reach_searches.law.read_clause[OF clause' into shape]) (rule reach_searches.unfold_rule)
+      by (rule reach_searches.triples.read_triple[OF clause' into shape]) (rule reach_searches.unfold_rule)
     show "\<exists>bs v. k=path_term bs \<and> store_lookup S' bs=Some v \<and> reach_holds_at T (reach_row_value v)"
       using cases
     proof (elim disjE exE conjE)
@@ -344,7 +344,7 @@ proof (rule positive_valuation_induct[OF holds, where property=reach_invariant])
       using clause site by simp
     have some_cases: "\<exists>h hs'. ps=h#hs' \<and> ((reach_reached,Pair_Term (reach_table_term T) h)\<in>Y \<or>
         (reach_some,Pair_Term (reach_table_term T) (data_list_term hs'))\<in>Y)"
-      by (rule reach_somes.law.read_clause[OF clause' into shape]) (rule reach_somes.unfold_rule)
+      by (rule reach_somes.triples.read_triple[OF clause' into shape]) (rule reach_somes.unfold_rule)
     obtain h ps' where ps: "ps=h#ps'"
       and choice: "(reach_reached,Pair_Term (reach_table_term T) h)\<in>Y \<or>
         (reach_some,Pair_Term (reach_table_term T) (data_list_term ps'))\<in>Y"
@@ -394,8 +394,8 @@ proof (induction rule: table_reached.induct)
   have "(reach_holds,evaluate_pattern (native_values [?c,data_list_term (map path_term ps)])
       (decode_finite_pattern (Finite_Pattern_Pair (native_var 0)
         (Finite_Pattern_Pair (Finite_Pattern_Payload []) (native_var 1)))))\<in>positive_meaning native_reach_system"
-    by (rule reach_holds_family.step_at[where c="[0]" and ps="[]"])
-      (use cf in \<open>simp_all add: reach_root_rule_def data_list_term_formed insert_Diff_if\<close>)
+    by (rule reach_holds_family.step_rule[where c="[0]" and ps="[]"])
+      (use cf in \<open>simp_all add: reach_root_rule_def data_list_term_formed\<close>)
   then have "(reach_holds,Pair_Term ?c (reach_row_value (True,ps)))\<in>positive_meaning native_reach_system"
     by (simp add: reach_row_value_def reach_value_def reach_status_def)
   then show ?case by (rule native_reached_search[OF formed root.hyps])
@@ -408,9 +408,9 @@ next
   have "(reach_holds,evaluate_pattern (native_values [?c,reach_status r,data_list_term (map path_term ps)])
       (decode_finite_pattern (Finite_Pattern_Pair (native_var 0)
         (Finite_Pattern_Pair (native_var 1) (native_var 2)))))\<in>positive_meaning native_reach_system"
-    by (rule reach_holds_family.step_at[where c="[1]" and
+    by (rule reach_holds_family.step_rule[where c="[1]" and
         ps="[([0],(reach_some,Finite_Pattern_Pair (native_var 0) (native_var 2)))]"])
-      (use some cf in \<open>simp_all add: native_member_later_def data_list_term_formed insert_Diff_if\<close>)
+      (use some cf in \<open>simp_all add: native_member_later_def data_list_term_formed\<close>)
   then have "(reach_holds,Pair_Term ?c (reach_row_value (r,ps)))\<in>positive_meaning native_reach_system"
     by (simp add: reach_row_value_def reach_value_def)
   then show ?case by (rule native_reached_search[OF formed step.hyps(1)])

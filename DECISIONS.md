@@ -12278,7 +12278,8 @@ rule's conclusion and premise set back from its value.
   `native_some_program.exact`, `native_keyed_search_program.exact`. What the law does not replace stays: each
   program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's
   `supported_clause`; corrected 2026-09-22, task 275: the four `unfold` corollaries are gone and their composition
-  is stated once as the law's `read_clause`, which a use cites with the program's own `unfold_rule`], the inversion
+  is stated once as the law's `read_clause`, which a use cites with the program's own `unfold_rule`] [corrected 2026-09-24, task 379: those uses stand in
+`Development_Native_Readiness` and `Native_Table_Reach`, and cite the listed form `triples.read_triple`], the inversion
   of one rule application supported in an arbitrary relation, which least-fixed-point
   arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
   the law's single step does not carry.
@@ -12329,7 +12330,10 @@ composition they were is the law's `read_clause` (a reading of every rule of the
 conclusion is a reading of the clause), which the three uses — readiness's some and every cases and the reach's some
 case — cite with the program's `unfold_rule`, and the clauses of a one-rule, one-premise site are read by
 `native_rearranging_program.supported`] [corrected 2026-09-24, task 374: the uses of `read_clause` stand in
-`Development_Native_Readiness` (its some and every cases) and `Native_Table_Reach` (its some case)].
+`Development_Native_Readiness` (its some and every cases) and `Native_Table_Reach` (its some case)] [corrected
+2026-09-24, task 379: with readiness's settled search and the reach's search they cite the listed law's
+`read_triple` (`native_listed_law`), each program's `unfold_rule` stated at a listed triple; see "A listed family
+returns the rule it applied"].
 
 Re-cited (task 235): the value rule's contract is stated once beside `native_value_rule` in Development_Located_Rows
 (`native_value_program`, its `exact`: the site holds of `Pair_Term x y` exactly when `x` is formed and `x=y`), and
@@ -14681,6 +14685,24 @@ Unreached, Request_Citations, Witnesses) are re-cited by the task after this one
 `finite_rule_program_prefix` is the list fact `set_take_drop_union` under its old name. `native_some_rest s` is
 membership's later rule (`native_some_rest_member_later`), cited so where the some program reads it; its definition
 is kept, since a recorded state may expand it.
+
+[corrected 2026-09-24, task 379: the listed law now also states the elimination at any support relation
+(`supported_triple`, `read_triple`: the law's `supported_clause` and `read_clause` over the listing), and the rule a
+clause or a call applied is read back to its triple once (`rule_triple`), through which `holds_triple` and
+`supported_triple` read it. The families of membership, every element, some element and keyed search
+(`Native_Collection_Programs`), the store search and store absence (`Native_Path_Stores`) and the rearranging program
+are `native_listed_law` instances (sublocale `triples`, beside `law`), each at its family's listing stated once
+(`native_member_listing`, `native_every_listing`, `native_some_listing`, `native_keyed_search_listing`,
+`native_store_search_listing`, `native_store_absent_listing`) and proved to present the family's rules
+(`native_member_rules_listing` and its like); each program's `unfold_rule` is stated at membership in that listing, their Nil and elimination cases read through `holds_triple`, their steps take `step_triple`, and no
+constructor-injectivity decoding of an applied rule remains in those two theories outside `rule_triple`. Readiness's
+and the reach's invariants read their collection and search clauses through `triples.read_triple`; the reach's two
+steps take `step_rule`, its own two-rule family not being listed. `finite_rule_program_prefix` is gone and its three
+uses cite `set_take_drop_union`, which now stands in `Listed_Set_Unions`. `native_some_rest` and
+`native_some_rest_member_later` are gone: `native_some_rules` is defined over `native_member_later s`, the same rule
+value, so no recorded word changed (the repository's check passed with every word equal). What stays: the reach's
+own family (`reach_holds_family` in `Native_Table_Reach`) still decodes its clause by `finite_native_rule_eq_iff` in
+`native_reached_search`'s invariant, and the six decodings outside these theories are the next task's (#375).]
 
 Recorded 2026-09-24 (task 374).
 ## The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer

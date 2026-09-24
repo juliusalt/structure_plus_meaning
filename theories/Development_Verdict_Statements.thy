@@ -404,7 +404,7 @@ interpretation verdict_statement_selections:
   unfolding selection_subject_program_def family_subject_program_def row_subject_program_def
     native_some_program_def native_member_program_def
   by (intro conjI; rule verdict_rows_family)
-    (simp_all add: verdict_rows_definitions_def native_some_rules_def native_some_first_def native_some_rest_def
+    (simp_all add: verdict_rows_definitions_def native_some_rules_def native_some_first_def
       native_member_rules_def native_member_here_def native_member_later_def row_subject_rules_def
       row_subject_rule_def)
 

@@ -116,12 +116,12 @@ answer table repeating a name the request table holds is refused by the exported
 repetition, so the successor's admission can exceed it. #289 settles that Open as the planner decided — the owner of
 the condition discharges it: the exporter proves distinct names and closed positions where it defines a state, as it
 proves `isabelle_declared_once`, which settles it for every consumer of a defined state and changes no word, the native
-answer's reader already refusing both for an answer it reads. #165 states
-each context's citations and discharges #84's formedness premise, no word; accepted, its commit failed at the merge
-(five `THEORY_MAP.md` rows changed on both sides, three with new imports), so its round hands over main's rows with
-their imports read again and leaves its additions in `.build/tasks/165/rows.md`, which #167 writes onto the rows (q76,
-mailed); if the merge doubles a row again, that is the harness's, for the owner. #167 switches every report to its
-problems' rows in context and retires the problem datum's tags. New native definitions never wait for these retirements
+answer's reader already refusing both for an answer it reads. #165 landed
+(`b84e9885`) each context's citations and #84's formedness premise discharged, no word: after two merge rounds its
+lemmas that read the seed's, the machinery's and the repair's constructions stand in `Development_Row_Contexts`, and
+its additions to `Development_Row_Data`'s row are left in `.build/tasks/165/rows.md` for #167 (mailed). #167 switches
+every report to its problems' rows in context and retires the problem datum's tags, moving a context lemma into a
+construction theory where its switch needs it. New native definitions never wait for these retirements
 (Decisions).
 
 **The decomposition (#64).** Landed: the repair rows (#58), the soundness (#60), #66's entry (a decomposition that
@@ -342,6 +342,10 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#187, #292** (`b1960eee`, one train): `Development_Exported_Edit`, the exported answer as the edit constructor's
   second instance (its review's follow-ups 1–3 to #294, 4 to #193, 5 to #284); DECISIONS.md "An evaluation's calls are
   built over the shared subterms of its requests" (its builds placed from #293 as #296–#307).
+- **#165** (`b84e9885`): each context's citations (residual record, repair, loop, request) and #84's formedness premise
+  discharged on the loop's states, no word; the lemmas reading the seed's, the machinery's and the repair's
+  constructions in `Development_Row_Contexts`, after two merge rounds (q76); its row additions for
+  `Development_Row_Data` to #167.
 
 ## Open
 
@@ -550,7 +554,7 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 - **plan-48 wrote no notes** (its window ended at 05:58 first): this file carried its state, and plan-49 found nothing
   missing that the work needed — #292's verdict was already given, #290's review reads its brief as rewritten (the
   harness reads a rewritten brief from then on), and #292's builds are placed.
-- **Under way**: #165's merge round (q76); #290's and #287's landings; #112, #192 and #289 parked for their checks;
+- **Under way**: #290's and #287's landings; #112, #192 and #289 parked for their checks;
   #155, the word change (q75); #237; #294 and the shared-subterm builds #297 and #299 startable; #278 after #290.
 - **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's
   review): most likely a base that moved under the tree, a matter of the probe tool, for the owner with Open 78.

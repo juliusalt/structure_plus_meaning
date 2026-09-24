@@ -1,5 +1,5 @@
 theory Factor_Package_Closure_Admission
-  imports Factor_Definition_Callee_Inclusion
+  imports Factor_Definition_Callee_Inclusion Factor_Use_Renaming
 begin
 
 section \<open>A finite checked bound characterizes the existing least closure\<close>
@@ -295,6 +295,45 @@ corollary package_closure_admission_rejects_unreadable_site:
   shows "(77,Pair_Term e (data_list_term (map (\<lambda>d. definition_site_value d) rs)))\<notin>positive_meaning package_closure_admission_system"
   by (simp only: package_closure_admission_on_values[OF source])
     (use reached missing in \<open>auto simp: native_package_formed_def\<close>)
+
+section \<open>The closure bound is equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument is the pair of the environment class and the sequence class of site coordinates, and a
+  permutation acts on it by @{text Factor_Use_Renaming}'s environment action and its site action on
+  every root. The closure bound keeps it, from @{thm [source] native_package_formed_renaming}.
+\<close>
+
+abbreviation package_closure_presents where
+  "package_closure_presents \<equiv>
+    factor_pair_presents environment_value_presents (data_sequence_presents site_coordinate_presents)"
+
+abbreviation package_closure_renaming where
+  "package_closure_renaming \<equiv> product_action rename_environment (\<lambda>h. map (map_prod h id))"
+
+theorem package_closure_admission_equivariant:
+  "renaming_equivariant bij package_closure_renaming
+    (\<lambda>z. environment_formed (fst z) \<and> (\<forall>a\<in>set (snd z). True))
+    (\<lambda>z. native_package_formed (fst z) (set (snd z)))"
+  by (auto simp: renaming_equivariant_def product_action_def native_package_formed_renaming)
+
+corollary package_closure_admission_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence package_closure_presents package_closure_renaming h) (=)
+    (\<lambda>z. (77,z)\<in>positive_meaning package_closure_admission_system)
+    (\<lambda>z. (77,z)\<in>positive_meaning package_closure_admission_system)"
+proof -
+  have action: "renaming_action bij package_closure_renaming
+      (\<lambda>z. environment_formed (fst z) \<and> (\<forall>a\<in>set (snd z). True))"
+    by (rule renaming_action_product[OF environment_renaming_action renaming_action_lists[OF site_renaming_action]])
+  have exact: "\<And>p. (77,p)\<in>positive_meaning package_closure_admission_system \<longleftrightarrow>
+      presented_predicate package_closure_presents (\<lambda>z. native_package_formed (fst z) (set (snd z))) p"
+    by (simp add: package_closure_admission_exact presented_predicate_def factor_pair_presents_def
+      data_sequence_presents_def list_all2_function split_paired_Ex; blast)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF factor_pair_class[OF
+      environment_presentations.presentation_class_axioms data_sequence_presentation_class[OF
+        site_coordinate_presentation]] action exact] package_closure_admission_equivariant])
+qed
 
 section \<open>Five fixed native entries precede all future operands\<close>
 

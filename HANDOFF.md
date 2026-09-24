@@ -15,10 +15,10 @@ that decides the run's length; the re-citations of the rule programs, the docume
 
 **Word changes are serialized.** A word change re-records reports under `validation/reconstruction/` or answer records
 under `validation/development-answers/`, and two landing together would each record words the other changes. Their
-order (plan-48): #161 first — it waited on the layout only for this order, and going first starts #165, #187 and #64
-hours sooner — then the layout #155 (after #241), then #157 (the answer records over the layout, #161's six framed
-records among them) beside #64 (the seed's and machinery's reports, no answer record), then #167, #169 and #92. #159
-measures the layout on the harness's last base without it and the first with it, soon after #155 lands.
+order (plan-48, plan-51): #161, #155, #157 and #64 have landed; then #167, #314 (the answer records over it, on the
+base its landing advances, as #157 was over the layout), #169 and #92. A task whose theories change the state's
+closure cannot replay the native records in its own tree (Open 100), so a word change's records are re-recorded after
+its landing, by a task of their own.
 
 **The verdict line (#44, #278, #279, #195).** Task 3's design. Landed: the state rows (#46), the request's keys (#32,
 #106), statements and malformed (#34), the presenter (#101), excess and undeclared through the subject index (#36,
@@ -53,9 +53,14 @@ explicit sharing removes it. Its builds change no word: the notion `Shared_Term_
 a presentation (B2, #299, landed `54f659eb`, `Presented_Term_Matching`; its review's follow-ups to B3, B4 and B6) at once; the applications over a presentation (B3, #301); the demand over shared calls (B4,
 #303, after #290 and M0, #296, the count of comparisons ending equal that decides, with B1's table build, table or
 digest); the positioned evaluation over shared calls (B5, #305); the measurement (B6, #307, after #278, its before).
-#194 waits on B5, so the stage is measured over shared calls. #278, re-planned to what it left,
-measures the machinery judgment held after #290, its theory work and the seeded and reach figures landed
-— the baseline for #194 and condition 5a's figure, estimated at about four reaches. #279 landed the exporter's
+M0 (#296) counted what B4's test reads (`.build/tasks/296/comparisons.md`): the found site's cost is unequal
+comparisons walking the store both calls carry (7.51×10⁹ node pairs, about 32 s at the machinery), which either choice
+removes; the comparisons ending equal walk 23.61×10⁹ node pairs (about 99.8 s) at the machinery, the renaming's found
+lookups nearly all of it. #194 waits on B5, so the stage is measured over shared calls. #278 measured the machinery judgment held
+(`932c8e69`, `.build/tasks/278/measurement.md`): 13,364 demanded calls, demand 23.2–26.2 s, answered 121.1 s, an
+argument of 3,353,825 nodes — 31 bare reaches by seconds and 3.6 by calls (35 and 3.7 at the seed), its seconds per
+demanded call growing from 1.63 to 10.9 ms, all in the call-key passes B4 and B5 remove; the baseline for #194 and
+condition 5a's figure. #279 landed the exporter's
 obligation `isabelle_declared_once` at every state the exporter defines (#256, #267, #274, `ab37086e`): its measurement
 (`.build/tasks/279/measurement.md`) took the spine conversion from 0.20 s to 0.107 s at the machinery's 340 entities
 by reading each entity's constructor; a fold equation does not carry (`.build/tasks/279/equation.md`). What remained
@@ -75,12 +80,18 @@ standing, the two facts of `state_presents` that belong under it in `Development
 exported names that carry no subject (`predecessor_at` already a locale fact of `RRA_Fresh_Generation_Frames`), after
 #237. #277 landed (`552d976c`) the five fields
 reading the body's two lists, since no native rule makes a store of a list (the planner's decision, superseding the
-note that #112's call carries stores the executor built). #112 is the construction — its rule, program, contract and two conditions — at the list shapes #277 left; its three
+note that #112's call carries stores the executor built). #112 landed the construction (`932c8e69`, `Development_Native_Request`: its rule, program, contract and two conditions) at the list shapes #277 left; its three
 corollaries (the two kinds, admission at a locus, the payload audit) are #286, and the two moves into
 `Native_Collection_Programs` (Open 85's n-ary tuple, `list_cited_program` beside `native_member_program`) are #287,
 both over what it leaves: #112's brief asked 290K where its room with its own relations was 265K, and the planner
-trimmed it to the piece of reasoning that belongs together. #114 is its held measurement, which #277's review turns on
-the four member scans the lists cost, beside `support sound`'s predecessor scans. #285 then makes the verdict's `excess` and
+trimmed it to the piece of reasoning that belongs together. #114 measured it held
+(`.build/tasks/114/measurement.md`, q80): one construction 1.26–1.31 s at the machinery (745 demanded calls, 0.31–0.33
+bare reaches by seconds, about 1/115 of a judgment), 0.17–0.20 s at the seed; `context sound` is 79%, its per-call cost
+growing with the row store its calls carry (the shared-subterm line's subject), the member and predecessor scans 14%
+together, so the fold of the two traversals (at most 6%) is not taken. #113's review sends #286 the multi-premise rule's law, stated once in
+`Native_Collection_Programs` with `native_request_entry` its instance, and the entry's marked correction; #114 the
+theory's load time; #285 the repair of the locale proofs its restructuring breaks; #295 the bridge
+`development_row_family_keys`. #285 then makes the verdict's `excess` and
 `support complete` one program at one stated row reading over any mention checker: after #277 `excess` was the only
 reader of the request support as a store, so the verdict's admission at a locus met the same obstruction, and the
 unification removes a thirty-line copy and a re-derived contract (after #237 and #112).
@@ -119,10 +130,11 @@ proves `isabelle_declared_once`, which settles it for every consumer of a define
 answer's reader already refusing both for an answer it reads. #165 landed
 (`b84e9885`) each context's citations and #84's formedness premise discharged, no word: after two merge rounds its
 lemmas that read the seed's, the machinery's and the repair's constructions stand in `Development_Row_Contexts`, and
-its additions to `Development_Row_Data`'s row are left in `.build/tasks/165/rows.md` for #167 (mailed). #167 switches
-every report to its problems' rows in context and retires the problem datum's tags, moving a context lemma into a
-construction theory where its switch needs it. New native definitions never wait for these retirements
-(Decisions).
+its additions to `Development_Row_Data`'s row are left in `.build/tasks/165/rows.md` for #167. #167 switches every
+report to its problems' rows in context and retires the problem datum's tags, moving a context lemma into a
+construction theory where its switch needs it; re-planned to its room (plan-51), its answer records are #314's and
+task 9's table estimate is measured by #315, both over its landing. New native definitions never wait for these
+retirements (Decisions).
 
 **The decomposition (#64).** Landed: the repair rows (#58), the soundness (#60), #66's entry (a decomposition that
 applied is a row at its problem's locus, under a sixth role), the native schema with its state reading native and its
@@ -161,15 +173,14 @@ one tree); every theory given its `THEORY_MAP.md` row, every row's imports re-re
 (#282).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
-creates has no review task (the harness reviews it in its own folder). The deepest chains are 6: #155 → #157 or #64 →
-#167 → #169 → #92 → #93, and #299 → #301 → #303 → #305 → #194 → #205. The consolidations #285 → #295 → #288 are 3.
+creates has no review task (the harness reviews it in its own folder). The deepest chains are 5: #167 → #314 → #169 →
+#92 → #93, and #303 → #305 → #194 → #205 beside it. The consolidations #285 → #295 → #288 are 3.
 
-**Order** (the queue holds it; this is why it is as it is). The landings under way first (#165's merge round, #290,
-#287, #112, #192, #289, #237); then the word chain in its serialized order (#155, #157 beside #64, #159), the longest
-chain, whose landing checks would otherwise wait behind what stands ahead in the queue; then #294 and the shared-subterm
-builds that start at once (#297, #299), M0 (#296) and #278; request construction's #286; the other builds in their
-dependency order; the consolidations #284, #285, #295, #288; each measurement after what it measures, each review after
-its build.
+**Order** (the queue holds it; this is why it is as it is). The landings under way first (#112, #278, #192), so that
+their landing checks do not wait behind heavy runs; the parked tasks (#308, #313, #309, #285), each resuming when its
+wait ends; then the word chain (#167, #314), the longest chain; the shared-subterm builds B4, B5 and B6 (#303, #305,
+#307); request construction's #286; #169 and #92 in the word order; the incremental stage (#193, #194, #195); the
+consolidations #295, #288; the measurements #114 and #315; P2 (#312) last; each review after its build.
 
 ## Decisions
 
@@ -185,12 +196,14 @@ whose landings re-record the same report or record files; tasks whose files are 
 **The engine's numbers, and what they leave.** A reach is affordable; one judgment of the verdict was estimated at
 about four reaches (about 17 s; #278 measures it); a stage of 224 answer states judged whole is of the order of
 2,000 s against 22.4 s for the HOL stage (the incremental entry's measured figure, superseding the earlier estimate of
-3,900 s at four reaches), which is why the incremental assessment is the remedy. #278 measured one seeded judgment at
+3,900 s at four reaches), which is why the incremental assessment is the remedy. At #278's machinery judgment (121.1 s)
+the stage judged whole would be about 27,000 s before B4 and B5. #278 measured one seeded judgment at
 4.92 s, 2,985 demanded calls, with the bare reach beside it at 0.14 s and 801 calls, and the machinery state's bare
 reach at 4.61 s: a judgment is four reaches by calls and about thirty-five by seconds, its calls carrying whole-state
 arguments, and the ratio by seconds is what design 171's stage is compared against. The bound of five
 seconds is met at the scale that decides anything, and the honest record is both numbers. A measurement states which
-quantity it counts (reached constants, answered calls of a demand).
+quantity it counts (reached constants, answered calls of a demand); a stage and a judgment are compared by demanded
+calls and by seconds, both stated, the ratio to a bare reach beside them (plan-51, answering #278).
 
 **Attribution is by difference, not by the ML profiler** (every profiling entry task 7 obtained has `count=1`); owed
 at a measured need, not as a task.
@@ -204,6 +217,10 @@ hands over; a task that consumes another's landed theories otherwise waits on it
 
 **A mail is read by the session that receives it.** When a task continues in a new session, what its first session
 read by mail reaches the new one only through its brief, its tree or a mail sent again (plan-48 told #192 again).
+
+**A word change's answer records are re-recorded after its landing, by a task of their own** (plan-51: #157 after
+#155, #314 after #167): a native record replayed in a tree whose theories change the state's closure is unproduced by
+construction (Open 100).
 
 **Still bearing on work not yet briefed:**
 
@@ -384,6 +401,13 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   and counted, the machinery's issue passing it), #311 (P1: `Prefix_Key_Comparisons` and the shared view's instance),
   #301 (B3: `Presented_Program_Applications`, the applications over a presentation) and #284 (the state's inside facts
   under `state_presents`, the unreached facts named for their subject).
+- **#296** (M0, investigation): the verdict judgment's call-key comparisons counted at both states, by outcome and in
+  node pairs (`.build/tasks/296/comparisons.md`; its reproduction `.build/tasks/296/eq/`), read under the verdict line
+  for B4.
+- **#112, #278** (`932c8e69`, one train): `Development_Native_Request`, request construction's rule, program, contract
+  and two conditions (its review's follow-ups to #286, #285, #295 and #114); the machinery judgment measured held
+  (`.build/tasks/278/measurement.md`), with its tokens and phased theory for B6 (its review's follow-ups to #307, #305
+  and #193).
 
 ## Open
 
@@ -435,7 +459,12 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 26. The build that applies a decomposition to the loop (#66's entry): the sixth role, the fifth body,
     `Development_Decomposition_Record`, the posing step once, the issue reading the library less recorded choices, the
     decomposition generation, the prerequisite rows of D; #58's repair row is not an application of #60's relation.
-    After #64.
+    #64 has landed (`Development_Library_Issue`), and the planner decided its two questions (plan-51): the
+    decomposition program is evaluated natively per candidate, over finite presenters of the state's families and the
+    development's rows, before the split source is enabled — not only through its proved executable reading; and a
+    decomposition keeps one row, the history's record (#66's entry), C's native application not generated beside it.
+    With them #64's remains: the repair rows' coordinates moved with a successor's correspondence, and the split source
+    under the owner's criterion (Q14, its evidence Q16).
 27. The seed recipe's remaining cost (#128's review, superseding the earlier regression question): the recipe is
     63.50 s and its publication presentation 63.45 s of it, the other eleven 6.4–7.2 s each, mostly the runner's load
     and check; what remains of the 63 s — payload judgments, cause certification, the transactions' comparisons — is
@@ -467,9 +496,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 38. The rows program's and readiness's sites are hand-chosen numbers: a stated join, or sites allocated through
     `Factor_Fresh_Program_Coordinates`, when the programs are first joined.
 39. Native production of a request body: forward (moded) evaluation of a functional native relation, an engine notion
-    the library lacks; until then producers are executors and the construction admits. And, if #114 finds the member
-    scans of a body list dominating, an index of a body family admitted against its list is the refinement (#277's
-    review, follow-up 3).
+    the library lacks; until then producers are executors and the construction admits. #114 found the member scans not
+    dominating (14% with the predecessor scans; `context sound` 79%, its calls carrying the whole row store), so the
+    index of a body family (#277's review, follow-up 3) is not taken; the shared-subterm builds address the rest.
 40. Currentness of a request after an admitted answer (`development_request_current` natively): not designed.
 41. A named fact that a constructed request's constant is stated, in `Development_Requests`, with its next edit.
 42. `ffilter_empty_set` and `ffilter_true` into `Candidate_Generators`, with the next landing changing `RRA_Selection`.
@@ -520,8 +549,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     routed through the loop as answers); the comparison of a recorded state across a refinement the harness cannot
     frame. The second and third wait for a measured need or their theories' next edit.
 74. #185's naming and placement follow-ups (`.build/tasks/196/review.md`), with those theories' next edits.
-76. Cosmetic: blank lines in `RRA_Collection_Frames`, `Factor_Pattern_Forests` and `RRA_Prescribed_Addresses` (#241's
-    review); redundant `simp add:
+76. Cosmetic: blank lines in `RRA_Collection_Frames`, `Factor_Pattern_Forests`, `RRA_Prescribed_Addresses` (#241's
+    review) and `Development_Verdict_Difference` (#284's); redundant `simp add:
     syntax_branch_eq_iff`; `binder_silent` as silence at every binder address when `RRA_Bound_Syntax_Construction` next
     changes.
 77. `entity_row_kept`'s statement, decided at its next consumer.
@@ -540,7 +569,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 88. The next change to `Native_Collection_Programs` and its row: three blank lines near `native_every_program`;
     `read_clause`'s `read` premise rebinding `c`; in the row, `native_store_search_program` and
     `native_store_absent_program` listed among the programs taking the family's law, and its dated "Reuse (section)"
-    label dropped or re-pointed (#287's review: its merge round left the row as its work wrote it).
+    label dropped or re-pointed (#287's review: its merge round left the row as its work wrote it); `native_some_rest s`
+    re-cited as `native_member_later s`, the same rule value, after #112 lands (#284's review).
 94. **What the documents' passes left, each at the next edit of its file** (#291's review): in the plan, "Useful cost
     and evidence" ends with the batch "stopping at a type error in the seeded problems" without naming what settled it
     (the entry "Seeded contracts and dependencies computed"); "Basis of this revision" says native states represent the
@@ -597,7 +627,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     part of the per-answer `first_index_tree` built once per request state, if #194 shows its share.
 97. **A probe cannot load a renamed `RRA_Finite_Artifacts`** (#155's review, follow-up 5): its `export_code … checking
     SML` raises `Protocol_Message invoke_scala make_directory`, so a change at or below `RRA_Exact` is probed only
-    through scratch copies of its dependents. The probe tool's, with item 78; #297's review met it too. And a probe
+    through scratch copies of its dependents. The probe tool's, with item 78; #297's review and #278 (run m9) met it
+    too, and an option to skip `export_code` commands in a probe would let such a theory be probed as it stands. And a probe
     could read a past base's own sources: #159 needed a `git archive` tree to measure the base before the layout.
 98. **`keyed_reference_insert`** (#297's review, follow-up 1): the argument of `Keyed_Value_References`'
     `keyed_reference_run_table` (its `index` sub-proof), made again in `Shared_Term_Tables`; moved into
@@ -611,40 +642,37 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 100. **A native record replayed in a task tree** whose theories change the state's closure is unproduced by
     construction (`export_proved_code` refuses; #157's review): replays run after landing (#143); a proof context
     holding the tree's theories (a `--keep-heap` check's proof as `--base`) would let a word-changing task replay
-    before it lands. A tools task at a measured need.
+    before it lands. A tools task at a measured need; met again by #167, whose records #314 re-records.
+101. **A found key costs two equal comparisons** (#296's follow-up): the red-black tree's lookup and insertion ask
+    `k<x` then `x<k`, so a lookup that finds its key walks both terms whole twice; a three-outcome comparison
+    (`Linear_Comparisons`, as `Keyed_Value_References` uses) halves every equal walk for any key. After B4 and B5 the
+    loop's call keys are shared and compare in one step, so it bears only where whole terms stay keys: at a measured
+    need.
+102. `fimage_ffUnion_member` (#301's review) to `Finite_Set_Composition` under a name for what it states, with that
+    theory's next edit.
+103. #284 corrected its entry's list in place (`DECISIONS.md`, at line 12223 when reviewed) without the bracketed
+    "[corrected by task N: …]" the entries use elsewhere: noted with that entry's next edit (#284's review).
+104. #311's review follow-ups 1–3 (the shared view's two interpretations named in `REASONING_REUSE.md`'s row;
+    `shared_term_view` renamed `shared_term_prefix_view`, P2's instances' views `*_prefix_view`; which interpretation
+    each re-cited fact comes from): mailed to P2's reviewer (plan-51); what P2's landing leaves of them goes with
+    `Shared_Term_Tables`' next edit.
 
 ## Now
 
-- **plan-48 wrote no notes** (its window ended at 05:58 first): this file carried its state, and plan-49 found nothing
-  missing that the work needed — #292's verdict was already given, #290's review reads its brief as rewritten (the
-  harness reads a rewritten brief from then on), and #292's builds are placed.
 - **#308** follows #289's landing: it folds #289's row changes (`.build/tasks/289/rows.md`) into main's seven rows and
   takes what the exporter still owes (`state_presentable`'s third condition, the successor's request premises, the new
   facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s).
-- **Under way**: #296 (M0; q78: the reopen test sets B1's build against the equal walks of the closure and the
-  renaming together) and #278 (the machinery judgment held as a bound, more than 106.6 s: every growing phase a
-  call-key sort or lookup, which B4 and B5 remove, B5 with the evaluation's rule-table formation re-check); #308 after
-  #289; #309 (the placed forests' construction and the question's, on #159's figures) and #313 (the replay's costs)
-  ready; #112 and #192 parked for their checks; B4 (#303) waits on M0; P2 (#312) low.
-- **Not handled (plan-50's window ended): the landing of `f6e5a0b9`** (10:20: #64, #311, #301, #284), with proposed
-  dispositions. #64: B's evidence for Q14 (seed 8–9 split candidates per problem, all admitted, all 10 decomposed;
-  machinery 53–61, all admitted, all 62 decomposed) to put to the owner; its question on finite presenters for
-  per-candidate native evaluation before B is enabled (its result, line 34), a prerequisite of Open 26; its first
-  verdict's follow-ups "stand" but the re-review wrote over them (`.build/tasks/65/`). #311 (P1), for #312 (P2): name
-  both shared interpretations (`shared_term_prefix_key`, `shared_term_comparison`) in REASONING_REUSE's row; rename
-  `shared_term_view` (the prefix-key view) to `shared_term_prefix_view` and name P2's `*_prefix_view`, since
-  `shared_view`/`term_view` are B1's view through a table; say which interpretation each re-cited fact comes from.
-  #301 (B3): the eager `Let` of instantiated premises before the guard and the per-clause, per-call interface checks
-  to #303/#305 for their measurements; material decoding over shared terms to #305; `fimage_ffUnion_member` to
-  `Finite_Set_Composition` under an accurate name, an Open item. #284: follow-ups 1 and 2 (the two copies of the
-  position argument in `Development_Verdict_Witnesses`; `state_presents_key_injective` stated once for six sites) to
-  #288, whose deliverables hold those theories; follow-up 4 (the three `Development_Exported_Edit` facts to
-  `Development_State_Rows`, `state_presentable_entity_set` beside `state_presentable`, `state_positions_exported`
-  beside `state_positions`) to #308; follow-up 3 (`native_some_rest` as `native_member_later`) to Open 88; 5 and 6 (the
-  entry's list corrected in place without its bracket convention; a doubled blank line in
-  `Development_Verdict_Difference`) with the next edits.
+- **Under way**: #192, #308, #309, #313, #285 and P2 (#312) in their rounds; #286 ready over #112's landing; B4 (#303)
+  ready on M0's figures; #167 re-planned to its room and queued first of the word chain. Mailed: with the landing of
+  `f6e5a0b9`, #301's review's follow-ups to B4 and B5, #311's to P2's reviewer, #284's 1, 2 and 4 to #288 (4 to #308
+  if its check sends it back); with `932c8e69`, #113's to #286, #285, #295 and #114, #278's to #307, #305 and #193,
+  and the comparison #194 states.
+- **#169's records**: read its brief against the decision that a word change's records are re-recorded after its
+  landing (Decisions) before #314 lands, and split its records likewise if it replays them in its own tree.
 - **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's
-  review): most likely a base that moved under the tree, a matter of the probe tool, for the owner with Open 78.
+  review): most likely a base that moved under the tree, a matter of the probe tool, for the owner with Open 78. #112
+  met it again (#113's review): 30 theories outside the probe base, estimated 74 s against 60 s — the probe base lags
+  main, so a build late in a line cannot probe; escalated by its task.
 - **`read_index_address` reads to the end of a run of 0 and 1 octets** (#147's review, follow-up 5): after #155 an
   address's index codes can follow one another in that run. The reader has no use yet; when it gets one, read the code
   over octets and stop at the terminator.
@@ -662,6 +690,11 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
   of 2026-09-22 22:34 (`.build/tasks/276/finalized.json`), written before the stop and before its fix round, not a
   check of the fixed tree; that tree's own batch began at 03:05 (q69). Its reviewer, its accept recorded, could then
   neither give the verdict again ("not awaiting a verdict") nor end its turn while the task was committing (q70).
+- **Q15 of the ledger is void**: plan-51 ran `v2.py ledger --help` to learn its options, and the command recorded
+  `--help` as Q15; the ledger has no correction command and no session writes it, so Q16 says that Q15 asks nothing.
+  The owner's or the harness's to remove; the command could refuse a text that begins with `--`. And a re-review
+  saying "the first verdict's follow-ups stand" writes over that verdict (#65's, #302's): the harness could keep a
+  first verdict beside its re-review.
 - **The base lives at the lasting place** `.build/tasks/base-lasting/`; the harness advances it at every landing.
   `.build/complete-20260921a` and `/tmp/structural-accepted` are the owner's or the next reboot's.
 - **The one tree's `.claude/orchestration/` changes are the owner's** harness work, never a task's; the sandbox's

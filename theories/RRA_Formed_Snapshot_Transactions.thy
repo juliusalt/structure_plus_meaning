@@ -245,4 +245,20 @@ proof unfold_locales
   qed
 qed
 
+section \<open>A snapshot of formed generations checks only its loci\<close>
+
+text \<open>
+  A snapshot's formation is the formation of its generations and the distinctness of their loci. Where
+  every generation of the snapshot is formed already, as where each was made by a constructor whose
+  contract states it formed, the snapshot checks only its loci: the first notion of
+  @{text Established_Premises} at its third place, the premise established by the constructor.
+\<close>
+
+definition finite_snapshot_loci_formed :: "finite_snapshot \<Rightarrow> bool" where
+  "finite_snapshot_loci_formed S \<longleftrightarrow> fcard (finite_snapshot_loci S)=fcard S"
+
+lemma finite_snapshot_loci_established:
+  "established_premise finite_snapshot_formed (\<lambda>S. fBall S finite_generation_formed) finite_snapshot_loci_formed"
+  by unfold_locales (simp add: finite_snapshot_formed_def finite_snapshot_loci_formed_def)
+
 end

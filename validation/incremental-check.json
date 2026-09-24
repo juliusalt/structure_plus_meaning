@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "ad01b421bfd38fba0766bf3c327c02cfba38c5c9165308102aee5237d5f6e217",
- "checked_content_sha256": "0e918479615984a0428d80e4f4a954fc54a44c42a9d12286bc76e29b9e4ecf4c",
+ "base_receipt_sha256": "4beca5c0e38c445dcdc9945e9b98716c31bc336982a8fcf364e94b25787d75c6",
+ "checked_content_sha256": "a5262c75517d8b35aa08bed14900cf15a0366caa8e4a6003f60d5e62a4b1a07e",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -14,7 +14,7 @@
   "tools": {
    "exit_code": 0,
    "failing": [],
-   "ran": 284,
+   "ran": 290,
    "skipped": 0,
    "tail": [
     "OK"
@@ -22,35 +22,73 @@
   }
  },
  "phases": {
-  "base_and_impact": 0.37,
+  "base_and_impact": 0.32,
   "execution_impact": 0.05,
-  "export": 19.45,
-  "proof": 140.57,
-  "recipe_impact": 0.44,
-  "recipes_and_host_tests": 11.28
+  "export": 19.25,
+  "proof": 279.13,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.22
  },
  "rebuilt_theories": [
-  "Development_Edited_Local",
-  "Development_Edited_Reach",
-  "Development_Edited_Undeclared",
-  "Development_Exported_Edit",
-  "Development_Incremental_Verdict",
-  "Development_Incremental_Witnesses",
-  "Development_Library_Issue",
+  "Admitted_Conditional_Applications",
+  "Cached_Faceted_Questions",
+  "Certificate_Construction_Review",
+  "Conditional_Application_Review",
   "Development_Machinery",
   "Development_Machinery_Reports",
-  "Development_Native_Decomposition",
-  "Development_Native_Request",
-  "Development_Native_Verdict",
-  "Development_Request_Citations",
-  "Development_Request_Scope",
+  "Development_Request_Packets",
   "Development_Row_Contexts",
-  "Development_State_Edit",
-  "Development_Verdict_Difference",
-  "Development_Verdict_Mentions",
-  "Development_Verdict_Unreached",
-  "Development_Verdict_Witnesses",
-  "Native_Development_Machinery"
+  "Development_Seed",
+  "Development_Seed_Loop",
+  "Development_Seed_Publication",
+  "Development_Seed_Verification",
+  "Faceted_Native_Questions",
+  "Isabelle_Entity_Export",
+  "Material_Application_Observations",
+  "Native_Control_Acceptance_Profile",
+  "Native_Control_Admitted_Selection",
+  "Native_Control_Artifact_Comparison",
+  "Native_Control_Artifact_Reused_Execution",
+  "Native_Control_Artifact_Source",
+  "Native_Control_Cause_Continuation",
+  "Native_Control_Cause_Review",
+  "Native_Control_Child_Review",
+  "Native_Control_Closed_Installation",
+  "Native_Control_Compile_Profile",
+  "Native_Control_Constructed_Source_View",
+  "Native_Control_Context_Execution",
+  "Native_Control_Filtered_Judgment",
+  "Native_Control_Finite_Guard",
+  "Native_Control_Guard_Construction",
+  "Native_Control_Guard_Execution",
+  "Native_Control_Guard_Source",
+  "Native_Control_Guard_Transport",
+  "Native_Control_Installed_Guard",
+  "Native_Control_Judgment_Graph",
+  "Native_Control_Judgment_Review",
+  "Native_Control_Judgment_Scope",
+  "Native_Control_Judgment_Source",
+  "Native_Control_Literal_Boundary",
+  "Native_Control_Prepared_Cause_Review",
+  "Native_Control_Quotation_Code",
+  "Native_Control_Quotation_Construction",
+  "Native_Control_Quotation_Representation",
+  "Native_Control_Quoted_Judgment",
+  "Native_Control_Receiving_Controls",
+  "Native_Control_Receiving_Review",
+  "Native_Control_Refinement_Composition",
+  "Native_Control_Reviewed_Receiving",
+  "Native_Control_Seed_Subject",
+  "Native_Control_Selected_Root",
+  "Native_Control_Source_Execution",
+  "Native_Control_Source_Profile",
+  "Native_Control_Sourced_Children",
+  "Native_Control_Syntax_Candidate",
+  "Native_Control_Syntax_Execution",
+  "Native_Control_Syntax_Statements",
+  "Native_Control_Union_Observation_Execution",
+  "Native_Development_Machinery",
+  "Native_Development_Seed"
  ],
  "recipes": {
   "allocated-environments": {
@@ -155,7 +193,9 @@
    "status": "reused"
   },
   "native-development-seed": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -212,8 +252,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1832,
- "seconds": 206.41,
+ "reused_theories": 1794,
+ "seconds": 346.33,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

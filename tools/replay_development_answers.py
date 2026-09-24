@@ -32,7 +32,9 @@ An answer whose judgment could not be produced is reported apart from one whose 
 produces a judgment when the harness leaves its answer, whatever that answer says: a refusal and a
 failed build are judgments the harness made, and their words are compared like any other. A run that
 left no answer at all, because its Isabelle build never ran, died or outlived its limit, produced
-nothing to compare, so it is neither a reconstruction nor a re-evaluation: it is reported as
+nothing to compare, so it is neither a reconstruction nor a re-evaluation, and neither did a run whose
+answer says it made no judgment (Isabelle could not read the answer's parts: its reading left neither an
+acceptance nor a refusal, `judgment: false`); each is reported as
 `unproduced`, with the error the run left, and `differing` holds only words that were compared and
 differed. A planner reads a differing word as a re-evaluation of that answer and an unproduced
 judgment as a fault of this run alone. A row's own `status` is a third notion, the judgment the
@@ -42,9 +44,20 @@ reconstructed and not unproduced.
 Before any answer is judged, the declared parts of every framed answer the harness will judge are read in
 one Isabelle session (`development_answer.read_parts`), each answer in a theory of its own importing its own
 frame, and each harness run is given its own reading: an answer the parts reading refuses then costs no
-Isabelle session of its own, and one it accepts starts only its proof. The reading and its refusals are
-exactly those the harness would make alone, and an answer the shared reading could not supply reads its
-parts itself.
+Isabelle session of its own. The reading and its refusals are exactly those the harness would make alone,
+and an answer the shared reading could not supply reads its parts itself. Then the theories of every answer
+the parts reading accepted and its record retains judged are proved in one session
+(`development_answer.prove_answers`), each answer's theory importing exactly its frame and its verification
+theory its own, and each harness run exports, presents and summarizes from its own verification theory.
+Answers whose frames generate different request theories (two layer subjects) are proved in separate
+sessions, since the layer's request theory is one name holding its subject; an answer retained as failed
+is proved alone, since its failure would fail the session it shares. A shared proof session that is not
+accepted is no answer's judgment: each of its answers is then proved in its own session. The seconds of
+every shared session are reported once, in `shared_parts` and `shared_proofs`, and not in the rows.
+
+A replay reads the active base: every harness step rebuilds the theories the tree changes against that
+base, so a replay is run on a tree current with the active base. On a tree behind it (task 313, one refused
+control) the parts reading alone took 328 s against 49 s on a current tree.
 
 A re-recorded row is reported as reconstructed against the record the run wrote: its words were computed
 by this run from the retained answer alone, and the words it replaced are kept in the row (`replaced`) and
@@ -115,6 +128,19 @@ def unproduced_observation(left):
     return {'status': None, 'error': left}
 
 
+def harness_observation(directory, produced, left):
+    """Whether a harness run produced a judgment, and what it left: its answer, or the row of an unproduced run.
+
+An answer that says it made no judgment (`judgment: false`: its parts reading left neither an acceptance nor
+a refusal) produced nothing to compare, as a run that left no answer at all did."""
+    if not produced:
+        return False, unproduced_observation(left)
+    observed = json.loads((directory / 'run' / 'answer.json').read_text())
+    if observed.get('judgment') is False:
+        return False, unproduced_observation(observed.get('error'))
+    return True, observed
+
+
 FRAMED_WORDS = ('verdict_word', 'publication_word', 'refusal', 'error')
 NATIVE_WORDS = ('judgment_word', 'summary')
 
@@ -125,7 +151,7 @@ def rerecorded(record_path, record, retained, words):
     return json.loads(record_path.read_text()), {word: record.get(word) for word in words}
 
 
-def read_shared_parts(records, output, timeout):
+def read_shared_parts(records, base, output, timeout):
     """Read the parts of every framed answer the harness will judge, in one session; each answer's reading by name.
 
 An answer that is native, adopted, or malformed has no parts reading of the harness. Only an answer whose own
@@ -146,8 +172,7 @@ its own parts, as the harness does alone, so a fault of the shared session is ne
     directory = output / 'shared-parts'
     started = time.monotonic()
     try:
-        readings = development_answer.read_parts(list(answers.values()), development_answer.active_base(None),
-                                                 directory, timeout)
+        readings = development_answer.read_parts(list(answers.values()), base, directory, timeout)
     except (AssertionError, OSError, ValueError, KeyError, subprocess.SubprocessError) as failure:
         print(f'the shared parts reading failed ({failure}); each answer reads its own parts', file=sys.stderr)
         return {}, round(time.monotonic() - started, 1)
@@ -158,6 +183,54 @@ its own parts, as the harness does alone, so a fault of the shared session is ne
             paths[stem] = directory / (stem + '.json')
             paths[stem].write_text(json.dumps(reading) + '\n')
     return paths, round(time.monotonic() - started, 1)
+
+
+def read_shared_proofs(records, parts, base, output, timeout):
+    """Prove the theories of every answer the harness will prove, in as few sessions as their frames allow.
+
+An answer enters when its shared parts reading accepted it and its record retains it judged; an answer
+retained otherwise is proved alone, since a failure fails the session it shares. Answers whose frames
+generate the same request theory share a session, and a seeded answer, which generates none, joins the
+first; a session of one answer saves nothing and is not made. Only an accepted session gives readings: the
+answers of one that is not accepted, or raises, are each proved in their own session by their harness, so a
+fault of a shared session is never an answer's judgment. Returns the readings by record, the report of every
+session and the sessions whose logs the exports still read."""
+    groups = {}
+    for path in records:
+        if path.stem not in parts or json.loads(parts[path.stem].read_text())['exit_code'] != 0:
+            continue
+        record = json.loads(path.read_text())
+        if record.get('status') != 'judged':
+            continue
+        answer = record['answer']
+        layer = 'layer' in development_answer.STATES[answer['request']['state']]
+        groups.setdefault(answer['request']['subject'] if layer else None, {})[path.stem] = answer
+    seeded = groups.pop(None, {})
+    sessions = [groups[key] for key in sorted(groups)]
+    if seeded:
+        sessions[:1] = [{**(sessions[0] if sessions else {}), **seeded}]
+    paths, report, kept = {}, [], []
+    for index, answers in enumerate(sessions):
+        if len(answers) < 2:
+            continue
+        directory = output / 'shared-proofs' / str(index)
+        started = time.monotonic()
+        try:
+            readings = development_answer.prove_answers(list(answers.values()), base, directory, timeout)
+        except (AssertionError, OSError, ValueError, KeyError, subprocess.SubprocessError) as failure:
+            print(f'a shared proof session failed ({failure}); its answers are each proved alone', file=sys.stderr)
+            readings = None
+        accepted = readings is not None and all(reading['exit_code'] == 0 for reading in readings.values())
+        report.append({'answers': sorted(answers), 'accepted': accepted,
+                       'elapsed_seconds': round(time.monotonic() - started, 1)})
+        if not accepted:
+            print('a shared proof session was not accepted; its answers are each proved alone', file=sys.stderr)
+            continue
+        kept.append(next(iter(readings.values()))['session'])
+        for stem, answer in answers.items():
+            paths[stem] = directory / (stem + '.json')
+            paths[stem].write_text(json.dumps(readings[development_answer.answer_digest(answer)]) + '\n')
+    return paths, report, kept
 
 
 def replay_native(record_path, record, output, timeout, rerecord=False):
@@ -187,7 +260,7 @@ def replay_native(record_path, record, output, timeout, rerecord=False):
                               'elapsed_seconds': elapsed, 'reconstructed': same}
 
 
-def replay(record_path, output, timeout, rerecord=False, parts=None):
+def replay(record_path, output, timeout, rerecord=False, parts=None, proof=None):
     record = json.loads(record_path.read_text())
     if record.get('native'):
         return replay_native(record_path, record, output, timeout, rerecord)
@@ -198,10 +271,10 @@ def replay(record_path, output, timeout, rerecord=False, parts=None):
     elapsed, produced, left = run_harness(
         [sys.executable, '-B', str(ROOT / 'tools' / 'development_answer.py'), 'answer',
          '--answer', str(answer), '--output', str(directory / 'run'), '--timeout', str(timeout),
-         '--retain', str(directory / 'retained.json'), *(['--parts', str(parts)] if parts else [])],
+         '--retain', str(directory / 'retained.json'), *(['--parts', str(parts)] if parts else []),
+         *(['--proof', str(proof)] if proof else [])],
         directory, timeout + 300)
-    observed = json.loads((directory / 'run' / 'answer.json').read_text()) if produced \
-        else unproduced_observation(left)
+    produced, observed = harness_observation(directory, produced, left)
     judged = observed['status'] not in ('adopted', 'obstructed')
     same_status = produced and observed['status'] == record['status']
     same_word = all(observed.get(word) == record.get(word) for word in FRAMED_WORDS)
@@ -301,25 +374,39 @@ def main():
     output.mkdir(parents=True)
     records = replay_order(sorted(RECORDS.glob('*.json')))
     started = time.monotonic()
-    parts, parts_seconds = read_shared_parts(records, output, args.timeout)
-    with ThreadPoolExecutor(max_workers=args.workers) as pool:
-        results = dict(pool.map(lambda path: replay(path, output, args.timeout, args.rerecord, parts.get(path.stem)),
-                                records))
+    try:
+        base = development_answer.active_base(None)
+    except (OSError, ValueError, KeyError) as failure:
+        print(f'no active base ({failure}); each answer reads and proves itself', file=sys.stderr)
+        base = None
+    parts, parts_seconds = read_shared_parts(records, base, output, args.timeout) if base else ({}, None)
+    proofs, proof_sessions, kept = read_shared_proofs(records, parts, base, output, args.timeout) if base \
+        else ({}, [], [])
+    try:
+        with ThreadPoolExecutor(max_workers=args.workers) as pool:
+            results = dict(pool.map(lambda path: replay(path, output, args.timeout, args.rerecord,
+                                                        parts.get(path.stem), proofs.get(path.stem)), records))
+    finally:
+        for session in kept:
+            development_answer.remove_session_logs(session)
     elapsed = round(time.monotonic() - started, 1)
+    shared = round((parts_seconds or 0) + sum(session['elapsed_seconds'] for session in proof_sessions), 1)
     groups = answer_groups(results)
     unrecorded = unrecorded_adoptions()
     report = {'replayed': len(results), 'reconstructed': sum(r['reconstructed'] for r in results.values()),
               **groups, 'rerecorded': sorted(name for name, row in results.items() if 'replaced' in row),
               'unrecorded_adoptions': unrecorded, 'elapsed_seconds': elapsed,
-              'shared_parts': {'answers': len(parts), 'elapsed_seconds': parts_seconds}, 'answers': results}
+              'shared_parts': {'answers': len(parts), 'elapsed_seconds': parts_seconds},
+              'shared_proofs': proof_sessions, 'shared_seconds': shared, 'answers': results}
     (output / 'replay.json').write_text(json.dumps(report, indent=1, sort_keys=True) + '\n')
     if not args.keep:
-        for name in [*results, 'shared-parts']:
+        for name in [*results, 'shared-parts', 'shared-proofs']:
             shutil.rmtree(output / name, ignore_errors=True)
-    print(f'replay held {args.workers} Isabelle run(s) at once and took {elapsed}s', file=sys.stderr)
+    print(f'replay held {args.workers} Isabelle run(s) at once and took {elapsed}s, '
+          f'{shared}s of it in shared sessions', file=sys.stderr)
     print(json.dumps({'replayed': report['replayed'], 'reconstructed': report['reconstructed'],
                       **groups, 'rerecorded': report['rerecorded'], 'unrecorded_adoptions': unrecorded,
-                      'elapsed_seconds': elapsed}))
+                      'elapsed_seconds': elapsed, 'shared_seconds': shared}))
     return replay_exit(groups, unrecorded)
 
 

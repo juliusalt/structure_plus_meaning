@@ -88,6 +88,7 @@ import sys
 import time
 
 import development_answer
+from evidence_io import write_json
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORDS = ROOT / 'validation' / 'development-answers'
@@ -146,8 +147,11 @@ NATIVE_WORDS = ('judgment_word', 'summary')
 
 
 def rerecorded(record_path, record, retained, words):
-    """Retain the answer again as judged now, and return the record as written with the words it replaced."""
-    record_path.write_text(json.dumps({**record, **retained}, indent=1) + '\n')
+    """Retain the answer again as judged now, and return the record as written with the words it replaced.
+
+The record is written in the form its harness writes a new one (`evidence_io.write_json`: one line, without
+depth padding), native or framed, so a re-record changes its words and never the size of its form."""
+    write_json(record_path, {**record, **retained})
     return json.loads(record_path.read_text()), {word: record.get(word) for word in words}
 
 

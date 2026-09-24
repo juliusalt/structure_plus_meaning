@@ -141,7 +141,7 @@ proof -
     by (force simp: state_reach_predecessors_member)
   also have "\<dots> \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). key c\<in>key ` set (entity_mentions e) \<and>
       p\<in>key ` set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e))"
-    by (simp only: state_families_rows[OF present families]) auto
+    by (simp only: covering_families_entity_rows[OF present families]) auto
   also have "\<dots> \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). c\<in>set (entity_mentions e) \<and>
       p\<in>key ` set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e))"
     using key_member[OF bound] inside(1) by blast
@@ -481,7 +481,7 @@ proof -
       (\<forall>q\<in>(\<Union>F\<in>set Fs. set (map snd F)). \<exists>h\<in>set (row_declared q)\<union>set (row_subjects q). h\<in>table_reached ?T)"
     by (simp add: native_unreached_rows[OF state_reach_table_formed identity])
   also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set (snd (snd S)). \<exists>d\<in>set (entity_declared e)\<union>set (?sj e). key d\<in>table_reached ?T)"
-    by (simp only: state_families_rows[OF present families]) (simp add: bex_Un)
+    by (simp only: covering_families_entity_rows[OF present families]) (simp add: bex_Un)
   also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set (snd (snd S)). \<exists>d\<in>set (entity_declared e)\<union>set (?sj e).
       d\<in>isabelle_reached_constants (fst S) (snd S))"
     using state_reach_table_exact[OF present families] inside by (metis (no_types, lifting))

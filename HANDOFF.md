@@ -40,11 +40,15 @@ formation check through `Established_Premises`, and the key — not the programs
 `native_store_search_rules` to put the store left of the path (q74): that would change the argument arrangement of every
 program using the search for the order in which one key meets its components, which is the implementation dictating the
 structure, and `Right_Ordered_Terms`' own entry records that which component distinguishes two terms is a convention of
-the programs that build them. Instead a composite call key is stated once with its contract — its three-outcome
-comparison the same order as the existing key's, a cheap component (the library's sized shape of
-`Keyed_Value_References` and `Indexed_Term_Words`, or a per-call digest) deciding only where it differs and falling back
-to the full key where it agrees — and interpreted at `native_call_key`; #194's stage measurement and #278's figure
-follow it. #278, re-planned to what it left,
+the programs that build them. The composite call key that answer prescribed was
+prototyped and measured *slower* (29.5 s against 1.5 s at the seeded judgment), because computing its cheap component
+costs a walk of each argument at every comparison, so what remains is a decision and not a fix: #292 decides between a
+term that carries its digest, composed from its parts as terms are built (the engine's term representation, from which
+every key benefits), and the store search's argument arrangement after all — q74 stands as the reason the arrangement is
+no *fix*, not as a decision against it as a design. #290 landed what a fix could reach: the attribution, and the
+formation re-check hoisted by an exact code equation applying `Established_Premises` (25.2 s from 32.5 at the
+machinery), in `Formed_Call_Closures` with the entry "A demand's formation is checked at its requests". The machinery
+judgment's evaluation, #194's stage measurement and #278's figure follow #292's builds. #278, re-planned to what it left,
 measures the machinery judgment held after #290, its theory work and the seeded and reach figures landed
 — the baseline for #194 and condition 5a's figure, estimated at about four reaches. #279 landed the exporter's
 obligation `isabelle_declared_once` at every state the exporter defines (#256, #267, #274, `ab37086e`): its measurement
@@ -208,6 +212,10 @@ read by mail reaches the new one only through its brief, its tree or a mail sent
   the copy the first-use rule refuses, and leaving the locale downstream would state the general notion at a special
   case (`list_cited_program` with `list_exact` in `Native_Collection_Programs`, its `keys_term` instance's `exact` in
   `Development_Request_Scope`).
+- **A composition the law states once is not kept as a statement of its own** (plan-48, confirming #239's drop of
+  `native_store_search_program.unfold` after #275's review): `read_clause` states it, and a kept `unfold` would be the
+  copy the first-use rule refuses. A consumer that needs the old shape derives it in two lines (`law.read_clause` then
+  `unfold_rule`); no consumer does.
 - **A use cites the most specific contract that states what it needs** (recorded in the rule family law's entry): an
   instance's contract where one states it, the raw law only where none does.
 - **Transport stays a task of its own and is not a design**: a packet is the presentation of a request row, so the
@@ -298,7 +306,8 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   the seed transactions' formation established by its constructor (#128, `b261d109`: the seed recipe now 63.50 s, of
   which the publication presentation is 63.45 s — Open 27).
 - **The rule programs**: the join law (#173), the rearranging rule and its contract at any support relation (#208,
-  #275), the rule family's law (#233, #245, #247), their re-citations (#210, #212, #235, #259, #272).
+  #275), the rule family's law (#233, #245, #247), their re-citations (#210, #212, #235, #259, #272) and the store
+  search's (#239, `443fe6c8`).
 - **The layout's contracts**: #147, #149, #151, #153, #179 (`b261d109` for #147), the forest over a family of placements
   `RRA_Placed_Forests` (#221, #223, #225, #251).
 - **The answer tools** (the owner's ask of 2026-09-22 18:32, closed): P1 and P2 verified (#253, #254), P2 fixed (#255),
@@ -475,6 +484,13 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     rows still restate themselves (`Factor_Constructed_Program_Applications`, `Factor_Demanded_Program_Calls`,
     `Keyed_Native_Evaluation`) and `Factor_Demanded_Graph_Readings`' clause is garbled — mailed to #290, which may write
     those rows; a pass after it lands otherwise.
+95. **What #239's landing leaves** (its review): the law's `DECISIONS.md` entry names the uses of `read_clause`, and
+    `Development_Native_Readiness` and `Native_Table_Reach` are two more, with that entry's next edit; and
+    `native_rule_law.step_at`'s premise is a set difference, so each of the nine concrete calls in `Native_Path_Stores`
+    adds `insert_Diff_if` to its simp set — a form of `step_at` over a listed rule would spare that if more instances
+    appear. The eight dated "Reuse (section)" labels #282 left in the rows of `Native_Collection_Programs`,
+    `Native_Path_Stores`, `Development_Native_Readiness` and `Native_Table_Reach` go with each theory's next edit (two
+    mailed to #287).
 93. **The twelve storage report theories prove no word identity** (#282's review): `Artifact_Lookup_Presentation` to
     `Generation_Record_Presentation` and `Data_Reading_Presentation` state no `*_report_value_exact` or
     `*_report_word_exact`, unlike the four cause-family report presentations, so nothing proves that their retained
@@ -509,6 +525,18 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     cites the library's instance, or the answer is superseded.
 
 ## Now
+
+- **The run began fresh (2026-09-24 02:36)** and plan-48 took stock before ordering: the graph it inherited was the last
+  run's, under a harness since reworked. What it settled is in its notes and in the sections above; what is under way
+  and unhandled is here.
+- **Under way**: #290's landing (its attribution and formation repair), #292 deciding the call key's remaining cost,
+  request construction's #112 with #287's moves beside it, the re-citations #214 and #237, the incremental judgment
+  #192 and #187, the layout's #241 before #155, the documents' #291 landed, #289 at the exporter, #165 in the rows
+  line. #278 waits on #290 for the machinery judgment's figure.
+- **Not handled by plan-48, for the next planner**: #290's re-planned brief was written as its landing ran, so its
+  review judges the re-planned scope — confirm that its review reads the brief as rewritten. #292's builds will need
+  placing when it is accepted, and if it chooses the store search's arrangement they are word changes to serialize with
+  #155, #157, #64, #167, #169 and #92.
 
 - **The run began fresh (2026-09-24 02:36)** on a knowledge base built from this file, the ledger and the owner's words;
   the harness changed while stopped (2026-09-22 22:37 → 2026-09-24): its bearing on briefs is under Decisions' working

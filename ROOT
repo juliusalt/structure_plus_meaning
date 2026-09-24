@@ -1838,6 +1838,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Native_Verdict
     Development_Row_Data
     Development_State_Edit
+    Development_Exported_Edit
     Development_Edited_Local
     Development_Edited_Undeclared
     Development_Edited_Reach

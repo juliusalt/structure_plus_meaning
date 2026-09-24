@@ -260,12 +260,11 @@ text \<open>
   starts from is the publication over the incumbents' snapshot.
 \<close>
 
-definition development_seed_publication_over ::
+definition development_seed_publication_among ::
     "(finite_snapshot \<Rightarrow> (finite_generation option\<times>finite_generation option) list \<Rightarrow> finite_transaction_result option list) \<Rightarrow>
-      development_constructor \<Rightarrow> development_payload_judge \<Rightarrow> development_seed_decisions option \<Rightarrow>
-      development_seed_publication" where
-  "development_seed_publication_over P construct judge decisions=(let
-     xs=development_seed_incumbents_with judge development_seed_problems;
+      development_constructor \<Rightarrow> development_payload_judge \<Rightarrow> development_seed_incumbent list \<Rightarrow>
+      development_seed_decisions option \<Rightarrow> development_seed_publication" where
+  "development_seed_publication_among P construct judge xs decisions=(let
      S0=development_seed_snapshot xs;
      publish=(case S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> P S) in
      case decisions of None \<Rightarrow> (S0,None,[],[])
@@ -277,6 +276,13 @@ definition development_seed_publication_over ::
        (S0,Sel,rows,publish ((None,Sel)#map (\<lambda>(Q,G,H,results,equal). (None,Q)) rows@
              map (\<lambda>(I,(Q,G,H,results,equal)). (I,G)) (zip incumbents rows)))))"
 
+definition development_seed_publication_over ::
+    "(finite_snapshot \<Rightarrow> (finite_generation option\<times>finite_generation option) list \<Rightarrow> finite_transaction_result option list) \<Rightarrow>
+      development_constructor \<Rightarrow> development_payload_judge \<Rightarrow> development_seed_decisions option \<Rightarrow>
+      development_seed_publication" where
+  "development_seed_publication_over P construct judge decisions=development_seed_publication_among P construct judge
+     (development_seed_incumbents_with judge development_seed_problems) decisions"
+
 lemma development_seed_publication_from_published [code]:
   "development_seed_publication_from construct judge decisions=
     development_seed_publication_over finite_locus_publications construct judge decisions"
@@ -286,7 +292,7 @@ proof -
     by (cases S0) simp_all
   show ?thesis
     by (simp only: development_seed_publication_from_def development_seed_publication_over_def
-      development_seed_publication_row_published publish Let_def)
+      development_seed_publication_among_def development_seed_publication_row_published publish Let_def)
 qed
 
 section \<open>A published generation's formation is established by its recording constructor\<close>
@@ -489,12 +495,13 @@ proof -
   show ?thesis
   proof (cases decisions)
     case None
-    then show ?thesis by (simp add: development_seed_publication_over_def)
+    then show ?thesis by (simp add: development_seed_publication_over_def development_seed_publication_among_def)
   next
     case (Some d)
     obtain selected issues where d: "d=(selected,issues)" by (cases d) auto
     show ?thesis
-      by (simp only: development_seed_publication_over_def Let_def Some d prod.case option.case rows
+      by (simp only: development_seed_publication_over_def development_seed_publication_among_def Let_def Some d
+        prod.case option.case rows
         agree[OF development_seed_publication_round_formed])
   qed
 qed
@@ -530,8 +537,8 @@ qed
 lemma development_seed_publication_over_known:
   "development_seed_publication_over P finite_construct_known_original_generation judge decisions=
     development_seed_publication_over P finite_construct_generation_record judge decisions"
-  by (simp add: development_seed_publication_over_def development_seed_publication_row_with_known Let_def
-    split: option.splits prod.splits)
+  by (simp add: development_seed_publication_over_def development_seed_publication_among_def
+    development_seed_publication_row_with_known Let_def split: option.splits prod.splits)
 
 declare development_seed_publication_prepared [code del]
 
@@ -549,6 +556,130 @@ lemma development_seed_publication_formed [code]:
   by (simp only: development_seed_publication_def development_seed_publication_from_published
     development_seed_publication_over_formed development_seed_publication_over_known
     parallel_computed_function_exact Let_def)
+
+section \<open>The cause's formation is established by the judgment, the snapshot's generations by the constructor\<close>
+
+text \<open>
+  The round records every incumbent, issue and answer with a cause its judgment quoted, so the cause is
+  formed by the judgment's contract (\<open>development_payload_judgment_formed_causes\<close>) and each recording checks
+  only the rest of its readiness (\<open>development_payload_generation_using_formed_causes\<close>). The incumbents'
+  snapshot holds generations the recording constructor made, formed by its contract
+  (\<open>development_incumbent_with_recorded\<close>), so its formation is the distinctness of its loci
+  (\<open>finite_snapshot_loci_established\<close>). Both premises are established here, for the round's own judge and
+  incumbents; the report is unchanged.
+\<close>
+
+definition development_seed_incumbents_using ::
+    "development_constructor \<Rightarrow> development_payload_judge \<Rightarrow> development_problem list \<Rightarrow> development_seed_incumbent list" where
+  "development_seed_incumbents_using construct judge ps=Parallel.map (\<lambda>p. (p,
+     Option.bind (development_incumbent_key development_seed_state p)
+       (\<lambda>(l,t). development_payload_generation_using construct judge t (finite_enumerated_environment [] []) l []))) ps"
+
+lemma development_seed_incumbents_using_formed_causes:
+  assumes judge: "development_judge_formed_causes judge"
+  shows "development_seed_incumbents_using finite_construct_formed_cause_generation judge ps=
+    development_seed_incumbents_with judge ps"
+proof -
+  have formed: "finite_environment_formed (finite_enumerated_environment [] [])"
+    by (simp add: finite_environment_formed_def finite_enumerated_environment_def finite_relation_functional_def)
+  have rows: "list_all (\<lambda>(d,G). finite_check_generation G (finite_enumerated_environment [] []) (fst d) (snd d)) []"
+    by simp
+  show ?thesis
+    by (simp only: development_seed_incumbents_using_def development_seed_incumbents_with_def
+      development_incumbent_with_def development_payload_generation_using_formed_causes[OF judge]
+      development_payload_generation_using_known[OF formed rows])
+qed
+
+lemma development_recorded_issue_using_formed_causes:
+  assumes judge: "development_judge_formed_causes judge"
+  shows "development_recorded_issue_using finite_construct_formed_cause_generation judge=
+    development_recorded_issue_using finite_construct_known_original_generation judge"
+  by (intro ext) (simp only: development_recorded_issue_using_def development_selection_generation_using_def
+    development_issue_generation_using_def development_payload_generation_using_formed_causes[OF judge])
+
+lemma development_seed_publication_row_with_formed_causes:
+  assumes judge: "development_judge_formed_causes judge"
+  shows "development_seed_publication_row_with P finite_construct_formed_cause_generation judge xs selected=
+    development_seed_publication_row_with P finite_construct_known_original_generation judge xs selected"
+  by (intro ext) (simp only: development_seed_publication_row_with_def development_seed_issue_using_def
+    development_seed_answer_using_def development_recorded_issue_using_formed_causes[OF judge]
+    development_answer_using_formed_causes[OF judge])
+
+lemma development_seed_publication_among_formed_causes:
+  assumes judge: "development_judge_formed_causes judge"
+  shows "development_seed_publication_among P finite_construct_formed_cause_generation judge xs decisions=
+    development_seed_publication_among P finite_construct_known_original_generation judge xs decisions"
+  by (simp only: development_seed_publication_among_def development_seed_publication_row_with_formed_causes[OF judge])
+
+lemma development_seed_snapshot_formed:
+  assumes snapshot: "development_seed_snapshot (development_seed_incumbents_with judge ps)=Some S"
+  shows "fBall S finite_generation_formed"
+proof -
+  obtain gs where listed: "those (map (\<lambda>(p,x). map_option (\<lambda>(B,u,G). G) x) (development_seed_incumbents_with judge ps))=
+      Some gs" and whole: "S=fset_of_list gs"
+    using snapshot by (auto simp: development_seed_snapshot_def)
+  have origin: "\<exists>y\<in>set ys. f y=Some g" if "those (map f ys)=Some hs" "g\<in>set hs"
+    for f :: "'x \<Rightarrow> 'y option" and ys hs g
+    using that by (induction ys arbitrary: hs) (auto split: option.splits)
+  show ?thesis
+  proof (rule fBallI)
+    fix g
+    assume "g |\<in>| S"
+    then have "g\<in>set gs" by (simp add: whole fset_of_list_elem)
+    then obtain y where y: "y\<in>set (development_seed_incumbents_with judge ps)"
+      and found: "(\<lambda>(p,x). map_option (\<lambda>(B,u,G). G) x) y=Some g"
+      using origin[OF listed] by blast
+    obtain p where shape: "y=(p,development_incumbent_with judge development_seed_state p)"
+      using y by (auto simp: development_seed_incumbents_with_def Parallel.map_def)
+    obtain B u where built: "development_incumbent_with judge development_seed_state p=Some (B,u,g)"
+      using found shape by (auto simp: map_option_eq_Some split: prod.splits)
+    show "finite_generation_formed g"
+      by (rule finite_check_generation_formed[OF development_incumbent_with_recorded(2)[OF built]])
+  qed
+qed
+
+lemma development_seed_publication_among_loci:
+  "development_seed_publication_among (\<lambda>S. if finite_snapshot_formed S then finite_locus_publications_body S
+      else map (\<lambda>q. None)) construct judge (development_seed_incumbents_with judge ps) decisions=
+    development_seed_publication_among (\<lambda>S. if finite_snapshot_loci_formed S then finite_locus_publications_body S
+      else map (\<lambda>q. None)) construct judge (development_seed_incumbents_with judge ps) decisions"
+proof -
+  let ?S0="development_seed_snapshot (development_seed_incumbents_with judge ps)"
+  have publish: "(case ?S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> (if finite_snapshot_formed S then
+        finite_locus_publications_body S else map (\<lambda>q. None)))=
+      (case ?S0 of None \<Rightarrow> (\<lambda>ps. []) | Some S \<Rightarrow> (if finite_snapshot_loci_formed S then
+        finite_locus_publications_body S else map (\<lambda>q. None)))"
+  proof (cases ?S0)
+    case None
+    then show ?thesis by simp
+  next
+    case (Some S)
+    have "finite_snapshot_formed S=finite_snapshot_loci_formed S"
+      by (rule established_premise.exact[OF finite_snapshot_loci_established development_seed_snapshot_formed[OF Some]])
+    then show ?thesis by (simp add: Some)
+  qed
+  show ?thesis by (simp only: development_seed_publication_among_def Let_def publish)
+qed
+
+declare development_seed_publication_formed [code del]
+
+text \<open>
+  The code equation records the round with the constructor that does not check the quoted cause and publishes
+  it over the incumbents' snapshot checking only its loci.
+\<close>
+
+lemma development_seed_publication_formed_causes [code]:
+  "development_seed_publication answered=(let decisions=development_seed_decisions answered;
+     judge=parallel_computed_function development_payload_judgment
+       (development_seed_family_keys@development_seed_decision_keys decisions) in
+     development_seed_publication_among (\<lambda>S. if finite_snapshot_loci_formed S then finite_locus_publications_body S
+       else map (\<lambda>q. None)) finite_construct_formed_cause_generation judge
+       (development_seed_incumbents_using finite_construct_formed_cause_generation judge development_seed_problems)
+       decisions)"
+  by (simp only: development_seed_publication_formed parallel_computed_function_exact Let_def
+    development_seed_publication_over_def development_seed_publication_among_loci
+    development_seed_incumbents_using_formed_causes[OF development_payload_judgment_formed_causes]
+    development_seed_publication_among_formed_causes[OF development_payload_judgment_formed_causes])
 
 section \<open>The report is presented through the presentations of its notions\<close>
 

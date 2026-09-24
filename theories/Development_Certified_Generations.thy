@@ -1,6 +1,7 @@
 theory Development_Certified_Generations
   imports Development_Publication Development_Policy Factor_Certificate_Policy_Readiness
     Factor_Finite_Native_Proof_Construction RRA_Known_Original_Generation_Rows RRA_Finite_Generation_Monotonicity
+    Established_Premises
 begin
 
 section \<open>A policy's judgment of a payload\<close>
@@ -348,6 +349,115 @@ lemma development_payload_generation_using_known:
   by (simp only: development_payload_generation_using_original[symmetric] development_payload_generation_using_def
     finite_construct_known_original_generation_exact[OF formed rows])
 
+section \<open>A recording whose cause the judgment quoted does not check the cause's formation\<close>
+
+text \<open>
+  The constructor checks that the cause it records is formed. The cause a judgment supplies is the
+  complete data quotation of the judgment's replayed scope, formed by the quotation's contract
+  (\<open>finite_native_judgment_quote_formed\<close>), and checking it again costs its whole artifact. The check is the
+  first notion of @{text Established_Premises} at its third place: the premise, the cause's formation, is on
+  the constructor's fourth argument, so the instance is stated for the constructor applied to the arguments
+  before it, and it is established by the judgment's contract.
+\<close>
+
+definition finite_construct_formed_cause_generation :: development_constructor where
+  "finite_construct_formed_cause_generation E l p c rows=(if finite_target_formed l \<and> finite_target_formed p \<and>
+      distinct (map snd rows) then
+    map_option (finite_generation_record_body E l p c rows) (keyed_option_map (finite_anchor_artifact E) (map fst rows))
+    else None)"
+
+lemma finite_construct_formed_cause_generation_established:
+  "established_premise (finite_construct_known_original_generation E l p) finite_target_formed
+    (finite_construct_formed_cause_generation E l p)"
+  by unfold_locales (simp add: fun_eq_iff finite_construct_known_original_generation_def
+    finite_construct_formed_cause_generation_def generation_record_targets_ready_def)
+
+definition development_judge_formed_causes :: "development_payload_judge \<Rightarrow> bool" where
+  "development_judge_formed_causes judge \<longleftrightarrow>
+    (\<forall>t R d K pu B au root J C. judge t=Some (R,d,K,pu,B,au,root,J,C) \<longrightarrow> finite_exact_formed C)"
+
+lemma development_judge_formed_causesD:
+  assumes "development_judge_formed_causes judge" "judge t=Some (R,d,K,pu,B,au,root,J,C)"
+  shows "finite_exact_formed C"
+  using assms unfolding development_judge_formed_causes_def by blast
+
+lemma development_policy_judgment_formed_cause:
+  assumes judged: "development_policy_judgment xs R=Some (d,K,pu,B,au,root,J,C)"
+  shows "finite_exact_formed C"
+proof (cases "development_policy_source_with xs")
+  case None
+  then show ?thesis using judged by (simp add: development_policy_judgment_def)
+next
+  case (Some policy)
+  note policy_found=this
+  obtain d' K' pu' where policy: "policy=(d',K',pu')" by (cases policy) auto
+  show ?thesis
+  proof (cases "development_policy_certificate K' pu' d' R")
+    case None
+    then show ?thesis using judged by (simp add: development_policy_judgment_def policy_found policy)
+  next
+    case (Some p)
+    note certificate=this
+    show ?thesis
+    proof (cases "finite_native_certificate_replay K' pu' [] p d' (Finite_Target (Finite_Whole R))")
+      case None
+      then show ?thesis using judged by (simp add: development_policy_judgment_def policy_found policy certificate)
+    next
+      case (Some replay)
+      note replayed=this
+      obtain A M root' G au' I W B' where shape: "replay=(A,M,root',G,au',I,W,B')" by (cases replay) auto
+      show ?thesis
+      proof (cases "finite_native_judgment_quote B' pu' [] au' []")
+        case None
+        then show ?thesis
+          using judged by (simp add: development_policy_judgment_def policy_found policy certificate replayed shape)
+      next
+        case (Some quoted)
+        note quotation=this
+        obtain J' C' where pair: "quoted=(J',C')" by (cases quoted) auto
+        have same: "C=C'"
+          using judged by (simp add: development_policy_judgment_def policy_found policy certificate replayed shape
+            quotation pair split: if_splits)
+        show ?thesis
+          using finite_native_judgment_quote_formed[OF quotation[unfolded pair]] by (simp only: same)
+      qed
+    qed
+  qed
+qed
+
+lemma development_payload_judgment_formed_causes: "development_judge_formed_causes development_payload_judgment"
+  unfolding development_judge_formed_causes_def
+proof (intro allI impI)
+  fix t R d K pu B au root J C
+  assume judged: "development_payload_judgment t=Some (R,d,K,pu,B,au,root,J,C)"
+  then have "development_policy_judgment [Finite_Target (Finite_Whole R)] R=Some (d,K,pu,B,au,root,J,C)"
+    by (auto simp: development_payload_judgment_def split: option.splits)
+  then show "finite_exact_formed C" by (rule development_policy_judgment_formed_cause)
+qed
+
+lemma development_payload_generation_using_formed_causes:
+  assumes judge: "development_judge_formed_causes judge"
+  shows "development_payload_generation_using finite_construct_formed_cause_generation judge=
+    development_payload_generation_using finite_construct_known_original_generation judge"
+proof (intro ext)
+  fix t H l rows
+  show "development_payload_generation_using finite_construct_formed_cause_generation judge t H l rows=
+      development_payload_generation_using finite_construct_known_original_generation judge t H l rows"
+  proof (cases "judge t")
+    case None
+    then show ?thesis by (simp add: development_payload_generation_using_def)
+  next
+    case (Some judged)
+    obtain R d K pu B au root J C where shape: "judged=(R,d,K,pu,B,au,root,J,C)" by (cases judged) auto
+    have "finite_target_formed (Finite_Whole C)"
+      using development_judge_formed_causesD[OF judge Some[unfolded shape]] by simp
+    then have "finite_construct_known_original_generation H l (Finite_Whole R) (Finite_Whole C)=
+        finite_construct_formed_cause_generation H l (Finite_Whole R) (Finite_Whole C)"
+      by (rule established_premise.exact[OF finite_construct_formed_cause_generation_established])
+    then show ?thesis by (simp add: development_payload_generation_using_def Some shape)
+  qed
+qed
+
 theorem development_payload_generation_certified:
   assumes built: "development_payload_generation_with development_payload_judgment t H l rows=Some (B,u,G)"
   obtains R d K pu E root where "development_data_target t=Some (generation_payload G)"
@@ -521,6 +631,12 @@ lemma development_answer_with_unfold:
   "development_answer_with judge S r S' H rows=Option.bind (development_answer_key S r S')
      (\<lambda>(l,t). development_payload_generation_with judge t H l (development_answer_citations (fst (snd S)) (fst r) l rows))"
   by (simp only: development_answer_with_def development_answer_using_def development_payload_generation_using_original)
+
+lemma development_answer_using_formed_causes:
+  assumes judge: "development_judge_formed_causes judge"
+  shows "development_answer_using finite_construct_formed_cause_generation judge=
+    development_answer_using finite_construct_known_original_generation judge"
+  by (intro ext) (simp only: development_answer_using_def development_payload_generation_using_formed_causes[OF judge])
 
 lemma development_answer_using_known:
   assumes formed: "finite_environment_formed H"

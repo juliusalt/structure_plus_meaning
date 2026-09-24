@@ -11377,6 +11377,27 @@ at its third place, a constructor's contract; this entry records the instance.
   own instance consumes, and stating it through the notion would need the statement it proves.
 - *Not taken*: the incumbents' snapshot check `finite_snapshot_formed S0` keeps its generation half; it is read
   once per round since task 80, and the same premise would leave only the distinctness of its loci.
+  *Correction (task 355, 2026-09-24):* taken. The snapshot's formation over formed generations is the distinctness
+  of its loci (`finite_snapshot_loci_formed`, instance `finite_snapshot_loci_established`), and the incumbents'
+  generations are formed by the recording constructor's contract (`development_seed_snapshot_formed`, citing
+  `development_incumbent_with_recorded` and `finite_check_generation_formed`); the round is published over that
+  loci check (`development_seed_publication_among_loci`). With it the recording's readiness guard no longer checks
+  the cause a judgment quoted: the cause's formation is the quotation's contract (`finite_native_judgment_quote_formed`,
+  through `development_payload_judgment_formed_causes`), the premise of `finite_construct_formed_cause_generation`
+  at the constructor's fourth argument (`finite_construct_formed_cause_generation_established`), discharged for the
+  incumbents, issues and answers (`development_seed_publication_among_formed_causes`,
+  `development_seed_incumbents_using_formed_causes`). The round is stated over its incumbents
+  (`development_seed_publication_among`), and the code equation `development_seed_publication_formed_causes`
+  replaces `development_seed_publication_formed` where no recorded state expands it; recording elsewhere, in the
+  loop's notions the machinery state expands, keeps its definitions and code equations. Measured on one base: before
+  is `Native_Development_Seed` exported from `20260924-164728-train321`'s accepted proof, after the landing check
+  `20260924-165939-batch314-355`, which stands on train321 and differs from it in this change's three theories alone.
+  Two held pairs of the seed recipe, run in both orders, every report accepted: the publication presentation took
+  51.32 s before and 54.95 s after (before first), and 46.39 s after and 56.73 s before (after first). The run second
+  in each pair was the slower; fitting a common order penalty (7.0 s) leaves a saving of 3.4 s of about 53 s, below
+  task 324's estimate of 5–7 s at the recipe's scale (the incumbents' recording 1.75 s, the snapshot's generation half
+  3.26 s, part of the rows' 3.09 s). The spread between runs (±5 s) is larger than the saving, which is an
+  observation of these runs, not attributed phase by phase.
 
 ### Evidence and limits
 

@@ -374,256 +374,8 @@ corollary development_refinement_request_residual_record:
   shows "development_row_premise (\<lambda>_. None) (\<lambda>_. None) (fst r)"
   by (rule development_constant_request_residual_record[OF assms[unfolded development_refinement_request_def]])
 
-section \<open>A partial presentation presents its domain exactly\<close>
-
-text \<open>
-  A presentation in context is partial: a value outside its premise has no presentation, and a report
-  carrying one is not a presentation of it. A partial presentation presents a domain exactly when every
-  value of the domain has a presentation and distinct values have distinct presentations. The generic
-  presentations compose as the total ones do: a pair presents the product of its parts' domains, a
-  sequence the lists over its element's domain, an optional value the options over it and a collection
-  the finite sets inside it; a total presentation is partial nowhere.
-\<close>
-
-definition finite_presented_on :: "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a set \<Rightarrow> bool" where
-  "finite_presented_on f A \<longleftrightarrow> (\<forall>x\<in>A. f x\<noteq>None) \<and> inj_on f A"
-
-lemma finite_presented_onI:
-  assumes some: "\<And>x. x\<in>A \<Longrightarrow> f x\<noteq>None"
-    and exact: "\<And>x y t. x\<in>A \<Longrightarrow> y\<in>A \<Longrightarrow> f x=Some t \<Longrightarrow> f y=Some t \<Longrightarrow> x=y"
-  shows "finite_presented_on f A"
-  unfolding finite_presented_on_def
-proof (intro conjI ballI inj_onI)
-  fix x assume "x\<in>A" then show "f x\<noteq>None" by (rule some)
-next
-  fix x y assume x: "x\<in>A" and y: "y\<in>A" and same: "f x=f y"
-  obtain t where t: "f x=Some t" using some[OF x] by blast
-  show "x=y" by (rule exact[OF x y t]) (use same t in simp)
-qed
-
-lemma finite_presented_on_some:
-  assumes "finite_presented_on f A" "x\<in>A"
-  obtains t where "f x=Some t"
-  using assms by (auto simp: finite_presented_on_def)
-
-lemma finite_presented_on_eq:
-  assumes presented: "finite_presented_on f A" and x: "x\<in>A" and y: "y\<in>A" and same: "f x=f y"
-  shows "x=y"
-proof -
-  have "inj_on f A" using presented by (simp add: finite_presented_on_def)
-  then show ?thesis by (rule inj_onD[OF _ same x y])
-qed
-
-lemma finite_presented_on_mono:
-  assumes presented: "finite_presented_on f A" and inside: "B\<subseteq>A"
-  shows "finite_presented_on f B"
-proof -
-  have injective: "inj_on f A" and some: "\<forall>x\<in>A. f x\<noteq>None"
-    using presented by (simp_all add: finite_presented_on_def)
-  have "inj_on f B" by (rule inj_on_subset[OF injective inside])
-  then show ?thesis using some inside by (auto simp: finite_presented_on_def)
-qed
-
-lemma finite_presented_total [intro]:
-  assumes injective: "inj g"
-  shows "finite_presented_on (Some \<circ> g) A"
-proof (rule finite_presented_onI)
-  fix x show "(Some \<circ> g) x\<noteq>None" by simp
-next
-  fix x y t assume "(Some \<circ> g) x=Some t" "(Some \<circ> g) y=Some t"
-  then have "g x=g y" by simp
-  then show "x=y" by (rule injD[OF injective])
-qed
-
-lemma finite_presented_on_comp:
-  assumes presented: "finite_presented_on f A" and injective: "inj_on h B" and inside: "h ` B\<subseteq>A"
-  shows "finite_presented_on (f \<circ> h) B"
-proof (rule finite_presented_onI)
-  fix x assume "x\<in>B"
-  then have "h x\<in>A" using inside by blast
-  then show "(f \<circ> h) x\<noteq>None" using presented by (auto simp: finite_presented_on_def)
-next
-  fix x y t assume x: "x\<in>B" and y: "y\<in>B" and fx: "(f \<circ> h) x=Some t" and fy: "(f \<circ> h) y=Some t"
-  have "h x=h y"
-    by (rule finite_presented_on_eq[OF presented]) (use x y fx fy inside in \<open>auto simp: image_subset_iff\<close>)
-  then show "x=y" by (rule inj_onD[OF injective _ x y])
-qed
-
-definition finite_partial_pair ::
-    "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> ('b \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a\<times>'b \<Rightarrow>
-      finite_factor_term option" where
-  "finite_partial_pair f g z=(case f (fst z) of None \<Rightarrow> None | Some x \<Rightarrow> map_option (Finite_Pair x) (g (snd z)))"
-
-lemma finite_partial_pair_presented [intro]:
-  assumes first: "finite_presented_on f A" and second: "finite_presented_on g B"
-  shows "finite_presented_on (finite_partial_pair f g) (A\<times>B)"
-proof (rule finite_presented_onI)
-  fix z assume "z\<in>A\<times>B"
-  then obtain a b where z: "z=(a,b)" "a\<in>A" "b\<in>B" by blast
-  obtain x where x: "f a=Some x" by (rule finite_presented_on_some[OF first z(2)])
-  obtain y where y: "g b=Some y" by (rule finite_presented_on_some[OF second z(3)])
-  show "finite_partial_pair f g z\<noteq>None" by (simp add: finite_partial_pair_def z(1) x y)
-next
-  fix z w t assume z: "z\<in>A\<times>B" and w: "w\<in>A\<times>B"
-    and fz: "finite_partial_pair f g z=Some t" and fw: "finite_partial_pair f g w=Some t"
-  obtain a b where Z: "z=(a,b)" "a\<in>A" "b\<in>B" using z by blast
-  obtain a' b' where W: "w=(a',b')" "a'\<in>A" "b'\<in>B" using w by blast
-  obtain x y where x: "f a=Some x" and y: "g b=Some y" and t: "t=Finite_Pair x y"
-    using fz by (auto simp: finite_partial_pair_def Z(1) split: option.splits)
-  obtain x' y' where x': "f a'=Some x'" and y': "g b'=Some y'" and t': "t=Finite_Pair x' y'"
-    using fw by (auto simp: finite_partial_pair_def W(1) split: option.splits)
-  have "a=a'" by (rule finite_presented_on_eq[OF first Z(2) W(2)]) (use x x' t t' in simp)
-  moreover have "b=b'" by (rule finite_presented_on_eq[OF second Z(3) W(3)]) (use y y' t t' in simp)
-  ultimately show "z=w" by (simp add: Z(1) W(1))
-qed
-
-definition finite_partial_sequence ::
-    "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a list \<Rightarrow> finite_factor_term option" where
-  "finite_partial_sequence f xs=map_option finite_data_list (those (map f xs))"
-
-lemma those_map_present:
-  assumes "\<And>x. x\<in>set xs \<Longrightarrow> f x\<noteq>None"
-  shows "those (map f xs)=Some (map (the \<circ> f) xs)"
-  using assms by (induction xs) (auto split: option.splits)
-
-lemma finite_partial_sequence_presented [intro]:
-  assumes presented: "finite_presented_on f A"
-  shows "finite_presented_on (finite_partial_sequence f) (lists A)"
-proof (rule finite_presented_onI)
-  fix xs assume "xs\<in>lists A"
-  then have "\<And>x. x\<in>set xs \<Longrightarrow> f x\<noteq>None" using presented by (auto simp: finite_presented_on_def)
-  then show "finite_partial_sequence f xs\<noteq>None" by (simp add: finite_partial_sequence_def those_map_present)
-next
-  fix xs ys t assume xs: "xs\<in>lists A" and ys: "ys\<in>lists A"
-    and first: "finite_partial_sequence f xs=Some t" and second: "finite_partial_sequence f ys=Some t"
-  have some: "\<And>x. x\<in>set xs \<union> set ys \<Longrightarrow> f x\<noteq>None"
-    using presented xs ys by (auto simp: finite_presented_on_def)
-  have sx: "those (map f xs)=Some (map (the \<circ> f) xs)" by (rule those_map_present) (use some in blast)
-  have sy: "those (map f ys)=Some (map (the \<circ> f) ys)" by (rule those_map_present) (use some in blast)
-  have "finite_data_list (map (the \<circ> f) xs)=finite_data_list (map (the \<circ> f) ys)"
-    using first second by (simp add: finite_partial_sequence_def sx sy)
-  then have maps: "map (the \<circ> f) xs=map (the \<circ> f) ys" by (simp add: finite_data_list_injective)
-  have "inj_on (the \<circ> f) (set xs \<union> set ys)"
-  proof (rule inj_onI)
-    fix x y assume x: "x\<in>set xs \<union> set ys" and y: "y\<in>set xs \<union> set ys" and same: "(the \<circ> f) x=(the \<circ> f) y"
-    have fxy: "f x=f y" using same some[OF x] some[OF y] by (cases "f x"; cases "f y") auto
-    show "x=y" by (rule finite_presented_on_eq[OF presented _ _ fxy]) (use x y xs ys in auto)
-  qed
-  then show "xs=ys" using maps by (simp add: inj_on_map_eq_map)
-qed
-
-definition finite_partial_option ::
-    "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a option \<Rightarrow> finite_factor_term option" where
-  "finite_partial_option f x=finite_partial_sequence f (case x of None \<Rightarrow> [] | Some a \<Rightarrow> [a])"
-
-lemma finite_partial_option_presented [intro]:
-  assumes presented: "finite_presented_on f A"
-  shows "finite_presented_on (finite_partial_option f) {x. set_option x\<subseteq>A}"
-proof -
-  have eq: "finite_partial_option f=finite_partial_sequence f \<circ> (\<lambda>x. case x of None \<Rightarrow> [] | Some a \<Rightarrow> [a])"
-    by (simp add: fun_eq_iff finite_partial_option_def)
-  show ?thesis unfolding eq
-    by (rule finite_presented_on_comp[OF finite_partial_sequence_presented[OF presented]])
-      (auto simp: inj_on_def split: option.splits)
-qed
 
 
-definition finite_partial_collection ::
-    "('a \<Rightarrow> finite_factor_term option) \<Rightarrow> 'a fset \<Rightarrow> finite_factor_term option" where
-  "finite_partial_collection f X=(if fBall X (\<lambda>x. f x\<noteq>None)
-    then Some (finite_collection_presentation (the \<circ> f) X) else None)"
-
-lemma finite_presented_on_the:
-  assumes presented: "finite_presented_on f A"
-  shows "inj_on (the \<circ> f) A"
-proof (rule inj_onI)
-  fix x y assume x: "x\<in>A" and y: "y\<in>A" and same: "(the \<circ> f) x=(the \<circ> f) y"
-  have "f x\<noteq>None" "f y\<noteq>None" using presented x y by (auto simp: finite_presented_on_def)
-  then have "f x=f y" using same by (cases "f x"; cases "f y") auto
-  then show "x=y" by (rule finite_presented_on_eq[OF presented x y])
-qed
-
-lemma finite_partial_collection_presented [intro]:
-  assumes presented: "finite_presented_on f A"
-  shows "finite_presented_on (finite_partial_collection f) {X. fset X\<subseteq>A}"
-proof (rule finite_presented_onI)
-  fix X assume X: "X\<in>{X. fset X\<subseteq>A}"
-  have some: "\<forall>x\<in>A. f x\<noteq>None" using presented by (simp add: finite_presented_on_def)
-  have inside: "fset X\<subseteq>A" using X by simp
-  have "fBall X (\<lambda>x. f x\<noteq>None)"
-  proof (rule fBallI)
-    fix x assume "x\<in>fset X"
-    then have "x\<in>A" using inside by (rule rev_subsetD)
-    then show "f x\<noteq>None" by (rule bspec[OF some])
-  qed
-  then show "finite_partial_collection f X\<noteq>None" by (simp add: finite_partial_collection_def)
-next
-  fix X Y t assume X: "X\<in>{X. fset X\<subseteq>A}" and Y: "Y\<in>{X. fset X\<subseteq>A}"
-    and first: "finite_partial_collection f X=Some t" and second: "finite_partial_collection f Y=Some t"
-  have tX: "finite_collection_presentation (the \<circ> f) X=t"
-    using first by (simp add: finite_partial_collection_def split: if_splits)
-  have tY: "finite_collection_presentation (the \<circ> f) Y=t"
-    using second by (simp add: finite_partial_collection_def split: if_splits)
-  have "finite_data_list (ordered_finite_terms (fimage (the \<circ> f) X))=
-      finite_data_list (ordered_finite_terms (fimage (the \<circ> f) Y))"
-    using tX tY by (simp only: finite_collection_presentation_def)
-  then have terms: "ordered_finite_terms (fimage (the \<circ> f) X)=ordered_finite_terms (fimage (the \<circ> f) Y)"
-    by (simp only: finite_data_list_injective)
-  have images: "(the \<circ> f) ` fset X=(the \<circ> f) ` fset Y"
-    using arg_cong[OF terms, of set] by (simp add: ordered_finite_terms_set fimage.rep_eq)
-  have "fset X=fset Y"
-    by (rule inj_on_image_eq_iff[THEN iffD1, OF finite_presented_on_the[OF presented] _ _ images]) (use X Y in simp_all)
-  then show "X=Y" by (simp add: fset_inject)
-qed
-
-section \<open>A table of rows is the store of any listing of them\<close>
-
-text \<open>
-  A row presented as a term is the pair of its path and its value, read back by its path's own reader. A
-  finite set of presented rows is presented as the path store of the rows read from it; over rows whose
-  paths are distinct, that store is the store of every listing of those rows
-  (@{thm [source] path_store_rows}), so its word is a function of the rows and of no listing, and equal
-  words identify the rows (@{thm [source] finite_listing_store_identifies}).
-\<close>
-
-definition finite_row_read :: "finite_factor_term \<Rightarrow> bool list\<times>finite_factor_term" where
-  "finite_row_read t=(case t of Finite_Pair l v \<Rightarrow> (finite_path_bits l,v) | _ \<Rightarrow> ([],t))"
-
-lemma finite_row_read_row [simp]: "finite_row_read (finite_store_row val (l,v))=(l,val v)"
-  by (simp add: finite_row_read_def finite_store_row_def finite_pair_presentation_def)
-
-definition finite_rows_table :: "finite_factor_term fset \<Rightarrow> finite_factor_term" where
-  "finite_rows_table T=finite_listing_store id (map finite_row_read (ordered_finite_terms T))"
-
-theorem finite_rows_table_listing:
-  assumes rows: "set rows=finite_row_read ` fset T" and sv: "single_valued (set rows)"
-  shows "finite_rows_table T=finite_listing_store id rows"
-  unfolding finite_rows_table_def finite_listing_store_def
-  by (rule arg_cong[where f="finite_store id"], rule path_store_rows)
-    (use rows sv in \<open>simp_all add: ordered_finite_terms_set\<close>)
-
-theorem finite_rows_table_identifies:
-  assumes shape: "\<And>t. t\<in>fset T \<union> fset T' \<Longrightarrow> \<exists>l v. t=Finite_Pair (finite_path l) v"
-    and sv: "single_valued (finite_row_read ` fset T)" and sv': "single_valued (finite_row_read ` fset T')"
-    and same: "finite_rows_table T=finite_rows_table T'"
-  shows "T=T'"
-proof -
-  have "set (map finite_row_read (ordered_finite_terms T))=set (map finite_row_read (ordered_finite_terms T'))"
-    by (rule finite_listing_store_identifies[OF _ _ _ same[unfolded finite_rows_table_def]])
-      (use sv sv' in \<open>simp_all add: ordered_finite_terms_set\<close>)
-  then have images: "finite_row_read ` fset T=finite_row_read ` fset T'" by (simp add: ordered_finite_terms_set)
-  have "inj_on finite_row_read (fset T \<union> fset T')"
-  proof (rule inj_onI)
-    fix x y assume x: "x\<in>fset T \<union> fset T'" and y: "y\<in>fset T \<union> fset T'"
-      and read: "finite_row_read x=finite_row_read y"
-    obtain l v where "x=Finite_Pair (finite_path l) v" using shape[OF x] by blast
-    moreover obtain l' v' where "y=Finite_Pair (finite_path l') v'" using shape[OF y] by blast
-    ultimately show "x=y" using read by (simp add: finite_row_read_def)
-  qed
-  then have "fset T=fset T'"
-    by (rule inj_on_image_eq_iff[THEN iffD1, OF _ _ _ images]) auto
-  then show ?thesis by (simp add: fset_inject)
-qed
 
 section \<open>The problems, the assessment and the requests of a report, in its context\<close>
 
@@ -745,6 +497,78 @@ corollary development_requests_data_presented [intro]:
   unfolding development_requests_data_def
   by (intro finite_partial_sequence_presented development_request_data_presented)
 
+subsection \<open>The problems and the requests one constant construction poses form a domain\<close>
+
+text \<open>
+  A construction that poses one problem of each constant, in a context meeting the premise on what it poses,
+  poses problems at distinct loci: two of them at one locus concern one constant, the key being injective,
+  and are the one problem it poses of that constant. Every set of its problems is therefore a domain of the
+  context, and every set of its requests a request domain, a request's constant term being its problem's
+  contract term. A report whose problems and requests are such lies in its presentation's domain.
+\<close>
+
+theorem development_constant_problems_domain:
+  assumes injective: "inj key" and authority: "a\<noteq>Development_Truth"
+    and origin: "\<And>p. origin p=None \<longleftrightarrow> r=Development_Residual"
+    and grant: "\<And>p. grant p=None \<longleftrightarrow> a=Development_Generated"
+    and problems: "\<And>p. p\<in>P \<Longrightarrow> \<exists>c. development_constant_problem reading kind C r a c=Some p"
+  shows "development_row_domain key origin grant P"
+proof -
+  have premise: "\<forall>p\<in>P. development_row_premise origin grant p"
+  proof
+    fix p assume "p\<in>P"
+    then obtain c where "development_constant_problem reading kind C r a c=Some p" using problems by blast
+    then show "development_row_premise origin grant p"
+      by (rule development_constant_problem_premise[OF _ authority origin grant])
+  qed
+  have loci: "inj_on (development_located_at key Development_Problem_Role) P"
+  proof (rule inj_onI)
+    fix p q assume p: "p\<in>P" and q: "q\<in>P"
+      and same: "development_located_at key Development_Problem_Role p=development_located_at key Development_Problem_Role q"
+    obtain c where c: "development_constant_problem reading kind C r a c=Some p" using problems[OF p] by blast
+    obtain d where d: "development_constant_problem reading kind C r a d=Some q" using problems[OF q] by blast
+    have "development_locus key Development_Problem_Role (problem_contract p) c=
+        development_locus key Development_Problem_Role (problem_contract q) d"
+      using same development_located_at_subject[OF development_constant_problem_fields(1)[OF c]]
+        development_located_at_subject[OF development_constant_problem_fields(1)[OF d]] by simp
+    then have "key c=key d" by (rule development_locus_key_determines)
+    then have "c=d" by (rule injD[OF injective])
+    then show "p=q" using c d by simp
+  qed
+  show ?thesis using premise loci by (simp add: development_row_domain_def)
+qed
+
+corollary development_constant_problems_list_domain:
+  assumes injective: "inj key" and authority: "a\<noteq>Development_Truth"
+    and origin: "\<And>p. origin p=None \<longleftrightarrow> r=Development_Residual"
+    and grant: "\<And>p. grant p=None \<longleftrightarrow> a=Development_Generated"
+  shows "development_row_domain key origin grant (set (development_constant_problems reading kind C r a cs))"
+  by (rule development_constant_problems_domain[OF injective authority origin grant,
+    where reading=reading and kind=kind and C=C]) (auto simp: development_constant_problems_exact)
+
+theorem development_constant_requests_domain:
+  assumes injective: "inj key" and authority: "a\<noteq>Development_Truth"
+    and origin: "\<And>p. origin p=None \<longleftrightarrow> r=Development_Residual"
+    and grant: "\<And>p. grant p=None \<longleftrightarrow> a=Development_Generated"
+    and terms: "\<And>s. development_contract_term (kind s)=s"
+    and requests: "\<And>q. q\<in>R \<Longrightarrow> \<exists>c. development_constant_request reading kind C r a c=Some q"
+  shows "development_request_domain key origin grant R"
+proof -
+  have fields: "\<exists>c. development_constant_problem reading kind C r a c=Some (fst q) \<and>
+      development_contract_term (problem_contract (fst q))=fst (snd q)" if q: "q\<in>R" for q
+  proof -
+    obtain c where c: "development_constant_request reading kind C r a c=Some q" using requests[OF q] by blast
+    obtain p s S E where Q: "q=(p,s,S,E)" by (cases q) auto
+    show ?thesis using development_constant_request_fields(1,2)[OF c[unfolded Q]] terms by (auto simp: Q)
+  qed
+  have "development_row_domain key origin grant (fst ` R)"
+    by (rule development_constant_problems_domain[OF injective authority origin grant,
+      where reading=reading and kind=kind and C=C]) (use fields in blast)
+  moreover have "inj_on key (\<Union>q\<in>R. fset (fst (snd (snd q))))" by (rule inj_on_subset[OF injective]) simp
+  moreover have "\<forall>q\<in>R. development_contract_term (problem_contract (fst q))=fst (snd q)" using fields by blast
+  ultimately show ?thesis by (simp add: development_request_domain_def)
+qed
+
 section \<open>A set of problems is the table of their rows\<close>
 
 text \<open>
@@ -767,18 +591,6 @@ lemma development_problem_row_read:
       development_problem_body_data inert (origin p,grant p,development_contract_term (problem_contract p)))"
   using assms by (simp add: development_problem_row_data_inside)
 
-lemma single_valued_keyed_image:
-  assumes injective: "inj_on k Q"
-  shows "single_valued ((\<lambda>x. (k x,b x)) ` Q)"
-  unfolding single_valued_def
-proof (intro allI impI)
-  fix l v w assume v: "(l,v)\<in>(\<lambda>x. (k x,b x)) ` Q" and w: "(l,w)\<in>(\<lambda>x. (k x,b x)) ` Q"
-  obtain x where x: "x\<in>Q" "(l,v)=(k x,b x)" using v by (rule imageE) simp
-  obtain y where y: "y\<in>Q" "(l,w)=(k y,b y)" using w by (rule imageE) simp
-  have "k x=k y" using x(2) y(2) by simp
-  then have "x=y" by (rule inj_onD[OF injective _ x(1) y(1)])
-  then show "v=w" using x(2) y(2) by simp
-qed
 
 lemma development_row_domain_inside:
   assumes domain: "development_row_domain key origin grant P" and inside: "fset A\<subseteq>P"
@@ -816,8 +628,13 @@ proof -
     (\<lambda>p. (development_located_at key Development_Problem_Role p,
       development_problem_body_data inert (origin p,grant p,development_contract_term (problem_contract p)))) ` fset A"
     by (rule development_problem_rows_read[OF development_row_domain_inside(1)[OF domain inside]])
-  show ?thesis unfolding rows
-    by (rule single_valued_keyed_image[OF development_row_domain_inside(2)[OF domain inside]])
+  have diagonal: "single_valued ((\<lambda>p. (p,p)) ` fset A)" by (auto simp: single_valued_def)
+  have "single_valued ((\<lambda>(a,b). (development_located_at key Development_Problem_Role a,
+      development_problem_body_data inert (origin b,grant b,development_contract_term (problem_contract b)))) `
+      (\<lambda>p. (p,p)) ` fset A)"
+    by (rule single_valued_pair_image[OF diagonal])
+      (simp add: rel_dom_image image_image development_row_domain_inside(2)[OF domain inside])
+  then show ?thesis unfolding rows by (simp add: image_image)
 qed
 
 theorem development_problems_table_listing:

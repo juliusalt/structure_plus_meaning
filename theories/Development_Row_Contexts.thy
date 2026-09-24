@@ -43,11 +43,6 @@ definition development_repair_origin ::
   "development_repair_origin key r definitions q=(if q\<in>set definitions
     then Some (development_located_at key Development_Problem_Role (fst r)) else None)"
 
-text \<open>On its definition problems the repair's origin is the citation the repair's presenter gives them.\<close>
-
-lemma development_repair_origin_citation:
-  "q\<in>set definitions \<Longrightarrow> development_repair_origin key r definitions q=development_repair_citation key r q"
-  by (simp add: development_repair_origin_def development_repair_citation_def)
 
 lemma development_repair_origin_outside:
   "q\<notin>set definitions \<Longrightarrow> development_repair_origin key r definitions q=None"
@@ -242,27 +237,6 @@ definition development_loop_cited :: "(nat \<Rightarrow> bool list) \<Rightarrow
   "development_loop_cited key L\<longleftrightarrow>(case L of (S,ps,D,answered,history) \<Rightarrow>
     \<forall>p\<in>set ps. development_row_premise (development_loop_origin key history) (\<lambda>_. None) p)"
 
-text \<open>
-  On a residual problem a loop cites nothing: where a loop poses no demanded problem, its context is the
-  residual record, as the seed's and the machinery's loops are.
-\<close>
-
-lemma development_loop_cited_residual:
-  assumes "development_loop_cited key (S,ps,D,answered,history)" "p\<in>set ps"
-    "problem_origin p=Development_Residual"
-  shows "development_loop_origin key history p=None"
-  using assms by (simp add: development_loop_cited_def development_row_premise_def)
-
-text \<open>
-  A loop is presented in its own context: its constants keyed by the state's constant keys, its contract
-  terms carried in its state's names, its origins read from its history and no grant.
-\<close>
-
-definition development_loop_presentation ::
-    "(development_packet \<Rightarrow> finite_factor_term) \<Rightarrow> development_loop \<Rightarrow> finite_factor_term option" where
-  "development_loop_presentation packet L=(case L of (S,ps,D,answered,history) \<Rightarrow>
-    development_loop_data packet state_constant_key (development_local_term_data (fst (snd S)))
-      (development_loop_origin state_constant_key history) (\<lambda>_. None) L)"
 
 theorem development_loop_cited_initial:
   assumes "\<And>p. p\<in>set ps \<Longrightarrow> development_row_premise (\<lambda>_. None) (\<lambda>_. None) p"
@@ -441,6 +415,135 @@ text \<open>
 lemma development_machinery_problems_residual_record:
   "p\<in>set development_machinery_problems \<Longrightarrow> development_row_premise (\<lambda>_. None) (\<lambda>_. None) p"
   unfolding development_machinery_problems_def by (rule development_constant_problems_residual_record)
+
+section \<open>The framed verdict of an answer lies in its presentation's domain\<close>
+
+text \<open>
+  The verdict word of a framed answer presents the named request with its verdict and repair, and the
+  successor the answer makes. Over a request state whose requests are residual requests of one constant
+  construction the repair lies in its presentation's domain, whatever the answer: its definition problems
+  are the problems of one construction, citing the repaired problem, and the request it issues again carries
+  the repaired request's problem and constant term. The successor lies in its domain wherever the loop's
+  problems and answered problems form a domain holding the requests' problems. Neither part of the word is
+  then the store's absence.
+\<close>
+
+theorem development_refinement_repair_data_present:
+  assumes injective: "inj key"
+    and request: "development_constant_request reading kind C Development_Residual Development_Generated c=Some r"
+    and terms: "\<And>s. development_contract_term (kind s)=s"
+  shows "development_refinement_repair_data key inert (\<lambda>_. None) (\<lambda>_. None) r
+    (development_refinement_repair S r S' I)\<noteq>None"
+proof -
+  obtain e ds r' v' a where repair: "development_refinement_repair S r S' I=(e,ds,r',v',a)"
+    by (cases "development_refinement_repair S r S' I") auto
+  let ?E="development_repair_state S r S' I"
+  let ?g="isabelle_state_embedding (fst (snd S')) (fst (snd ?E))"
+  have ds: "ds=development_definition_problems ?E (map ?g I)"
+    and r': "r'=development_extended_request ?E r
+      (map ?g (development_verdict_excess (development_refinement_verdict S r S')))"
+    using repair by (simp_all add: development_refinement_repair_def development_repair_state_def Let_def)
+  have definitions: "development_row_domain key (development_repair_citation key r) (\<lambda>_. None) (set ds)"
+    unfolding ds development_definition_problems_def
+    by (rule development_constant_problems_list_domain[OF injective]) (simp_all add: development_repair_citation_def)
+  obtain p s su E where R: "r=(p,s,su,E)" by (cases r) auto
+  have problem: "development_constant_problem reading kind C Development_Residual Development_Generated c=Some p"
+    and contract: "problem_contract p=kind s"
+    by (rule development_constant_request_fields(1,2)[OF request[unfolded R]])+
+  have kept: "fst r'=p" "fst (snd r')=s" by (simp_all add: r' R development_extended_request_def)
+  have "development_row_domain key (\<lambda>_. None) (\<lambda>_. None) (fst ` {r'})"
+    by (rule development_constant_problems_domain[OF injective, where reading=reading and kind=kind and C=C
+      and r=Development_Residual and a=Development_Generated]) (use problem kept in auto)
+  moreover have "inj_on key (\<Union>q\<in>{r'}. fset (fst (snd (snd q))))" by (rule inj_on_subset[OF injective]) simp
+  moreover have "\<forall>q\<in>{r'}. development_contract_term (problem_contract (fst q))=fst (snd q)"
+    using kept contract terms by simp
+  ultimately have requests: "development_request_domain key (\<lambda>_. None) (\<lambda>_. None) {r'}"
+    by (auto simp: development_request_domain_def)
+  have inside: "(e,ds,r',v',a)\<in>UNIV\<times>lists (set ds)\<times>{r'}\<times>UNIV" by (simp add: in_lists_conv_set)
+  show ?thesis unfolding repair
+    by (rule finite_presented_on_some[OF development_refinement_repair_data_presented[OF definitions requests,
+      where inert=inert] inside]) simp
+qed
+
+corollary development_framed_verdict_present:
+  assumes injective: "inj key"
+    and requests: "\<And>q. q\<in>set rs \<Longrightarrow>
+      \<exists>c. development_constant_request reading kind C Development_Residual Development_Generated c=Some q"
+    and terms: "\<And>s. development_contract_term (kind s)=s"
+  shows "finite_partial_option (\<lambda>(r,v,R). finite_partial_pair (Some \<circ> development_verdict_data)
+      (development_refinement_repair_data key inert (\<lambda>_. None) (\<lambda>_. None) r) (v,R))
+    (map_option (\<lambda>r. (r,development_refinement_verdict S r S',development_refinement_repair S r S' I))
+      (development_named_request C0 rs n))\<noteq>None"
+proof (cases "development_named_request C0 rs n")
+  case None
+  then show ?thesis by (simp add: finite_partial_option_def finite_partial_sequence_def)
+next
+  case (Some r)
+  have "r\<in>set rs" by (rule development_named_request_member[OF Some])
+  then obtain c where "development_constant_request reading kind C Development_Residual Development_Generated c=Some r"
+    using requests by blast
+  then have "development_refinement_repair_data key inert (\<lambda>_. None) (\<lambda>_. None) r
+      (development_refinement_repair S r S' I)\<noteq>None"
+    by (rule development_refinement_repair_data_present[OF injective _ terms])
+  then show ?thesis
+    by (auto simp: Some finite_partial_option_def finite_partial_sequence_def finite_partial_pair_def
+      split: option.splits)
+qed
+
+theorem development_framed_successor_present:
+  assumes domain: "development_row_domain key (\<lambda>_. None) (\<lambda>_. None) P"
+    and problems: "set ps\<subseteq>P" and answered: "fset answered\<subseteq>P"
+    and requests: "\<And>q. q\<in>set rs \<Longrightarrow> fst q\<in>P"
+  shows "finite_partial_option (finite_partial_pair (development_problems_table key inert (\<lambda>_. None) (\<lambda>_. None))
+      (finite_partial_pair (finite_partial_sequence (development_generation_data key inert (\<lambda>_. None) (\<lambda>_. None)))
+        (finite_partial_pair (development_problems_data key inert (\<lambda>_. None) (\<lambda>_. None))
+          (Some \<circ> finite_sequence_presentation finite_boolean_data))))
+    (Option.bind (development_named_request C0 rs n) (\<lambda>r. map_option (\<lambda>(S2,ps',D',closed,history).
+      (closed,List.map_filter (\<lambda>entry. case entry of Development_Answer_Record G \<Rightarrow> Some G | _ \<Rightarrow> None) history,
+       development_ready_problems D' closed ps',bs))
+      (development_successor (S,ps,D,answered,[]) r S')))\<noteq>None"
+proof -
+  let ?F="finite_partial_pair (development_problems_table key inert (\<lambda>_. None) (\<lambda>_. None))
+      (finite_partial_pair (finite_partial_sequence (development_generation_data key inert (\<lambda>_. None) (\<lambda>_. None)))
+        (finite_partial_pair (development_problems_data key inert (\<lambda>_. None) (\<lambda>_. None))
+          (Some \<circ> finite_sequence_presentation finite_boolean_data)))"
+  have present: "finite_presented_on ?F ({A. fset A\<subseteq>P}\<times>lists (P\<times>UNIV)\<times>lists P\<times>UNIV)"
+    by (intro finite_partial_pair_presented development_problems_table_presented finite_partial_sequence_presented
+      development_generation_data_presented development_problems_data_presented finite_presented_total
+      finite_sequence_presentation_injective finite_boolean_data_injective domain)
+  show ?thesis
+  proof (cases "development_named_request C0 rs n")
+    case None
+    then show ?thesis by (simp add: finite_partial_option_def finite_partial_sequence_def)
+  next
+    case (Some r)
+    note named=Some
+    have "r\<in>set rs" by (rule development_named_request_member[OF named])
+    then have inside: "fst r\<in>P" by (rule requests)
+    show ?thesis
+    proof (cases "development_successor (S,ps,D,answered,[]) r S'")
+      case None
+      then show ?thesis by (simp add: named finite_partial_option_def finite_partial_sequence_def)
+    next
+      case (Some L')
+      obtain S2 ps' D' closed history where L': "L'=(S2,ps',D',closed,history)" by (cases L') auto
+      note fields=development_successor_answered[OF Some[unfolded L']]
+      obtain G where G: "development_answer_generation S r (isabelle_rooted_read (fst (snd S)) S')=Some G"
+        and history: "history=[Development_Answer_Record G]" using fields(3) by auto
+      obtain p0 s0 su0 E0 where rr: "r=(p0,s0,su0,E0)" by (cases r) auto
+      have "fst G=fst r" using G by (auto simp: rr development_answer_generation_def Let_def split: if_splits)
+      then have member: "(closed,[G],development_ready_problems D' closed ps',bs)\<in>
+          {A. fset A\<subseteq>P}\<times>lists (P\<times>UNIV)\<times>lists P\<times>UNIV"
+        using inside answered problems fields(4,6)
+        by (auto simp: development_ready_problems_def in_lists_conv_set mem_Times_iff)
+      have "?F (closed,[G],development_ready_problems D' closed ps',bs)\<noteq>None"
+        by (rule finite_presented_on_some[OF present member]) simp
+      then show ?thesis
+        by (simp add: named Some L' history finite_partial_option_def finite_partial_sequence_def
+          List.map_filter_simps split: option.splits)
+    qed
+  qed
+qed
 
 lemma development_machinery_loop_cited:
   "development_loop_cited key (development_machinery_state,development_machinery_problems,

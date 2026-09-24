@@ -341,8 +341,6 @@ locale conjoined_calls_program = native_rule_family P s "[([0],undeclared_rule u
   for P :: "'u native_system" and s u f :: "'u definition_site"
 begin
 
-sublocale law: native_rule_law P s "[([0],undeclared_rule u f)]"
-  by (rule native_rule_lawI[OF native_rule_family_axioms]) (auto simp: undeclared_rule_def)
 
 sublocale conjunction: native_conjunction_program P s
     "Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2))"
@@ -520,7 +518,7 @@ text \<open>
 \<close>
 
 locale excess_program = search: native_store_search_program P k v + family: native_every_program P v r +
-    call: native_rule_family P g "[([0],subject_call_rule k)]" + every: native_every_program P s g
+    call: subject_call_program P g k + every: native_every_program P s g
   for P :: "'u native_system" and s g k v r :: "'u definition_site" +
   fixes ident :: "'i \<Rightarrow> factor_term" and present :: "state_key list \<Rightarrow> factor_term"
   assumes identity: "\<And>y. term_formed (ident y)" and present_formed: "\<And>ks. term_formed (present ks)"
@@ -584,9 +582,9 @@ lemma verdict_excess_program:
   shows "excess_program verdict_mentions_system verdict_excess verdict_subject_family
     verdict_subject_search verdict_cited_family verdict_row_cited ident keys_term"
   unfolding excess_program_def excess_program_axioms_def native_store_search_program_def native_every_program_def
+    subject_call_program_def
   by (intro conjI allI; (rule verdict_mentions_family | rule identity | rule keys_term_formed |
       rule cited_mentions.exact[OF identity])?) (simp_all add: verdict_mentions_rule_defs)
-
 
 theorem native_excess_rows:
   assumes identity: "\<And>y. term_formed (ident y)" and atom: "k\<in>set A"

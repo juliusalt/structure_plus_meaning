@@ -10,19 +10,28 @@ The Q7 order, the owner's since 2026-09-24 (Q7 answered), sets the lines, under 
 octets are inert; native definitions are normative. The loop's central judgment is native (#42): its store absence and
 witnesses (#44), its reflection and held measurement (#278) and its witnesses at the edit's parts (#195) remain.
 Request construction has landed (#112, #114, #286); the order's next step, problems whose subjects are native
-definitions, is decided (#320) and its builds N1–N4 are under way; its first problem is the owner's (Q2, answered
-2026-09-24 17:18): how to choose the next problem to solve, with the authority question a native problem the owner
-approves — #370 recorded it in the plan (`82a065cd`) and #371 poses both natively, before N4a and N4b. Beneath both, the
-owner found no native definition of the notion of a problem (17:50). #373's design of it (landed `93cae3bb`) made a
-problem task 9's row at a locus, its subject a key, "a row is native structure already"; the owner rejected it as
-contradicting at its core his rule of 18:12 — "Every distinction a native program relies on must come from a native
-notion, not from a HOL presentation relation" — and #378 develops the notion again, its entry superseding #373's. Over
-it, #371 poses the two problems of Q2 and #376 applies the rule to the loop's other native programs and to the native
-loop's planned rows and package (N1a's generalized `state_presents`, N3a's presenter, N2a's joined program), recording
-the owner's words in the plan; what would extend the presentation pattern waits on #376 (N1a #336 and through it N1b,
-N3a, N3b; N2a #340 and N2b; N4a #348; #193; the rows line's #169 and its chain), and the decomposition line resting on
-rows at loci (#325, held by the planner after its commit failed, #327, #329, #331, #333) is out of the queue until
-#378 and #376 report. The incremental assessment of
+definitions, is decided (#320) and its builds N1–N4 are under way. Its first problem is the owner's (18:53): "what is
+a problem", the native loop's first problem, and Q2's problem (answered 17:18: how to choose the next problem to solve,
+with the authority question a native problem the owner approves; #370 recorded it in the plan, `82a065cd`) the
+second, exercising the quality of the produced notion. The owner had found no native definition of the notion of a
+problem (17:50); #373's design of it (landed `93cae3bb`) made a problem task 9's row at a locus, its subject a key, "a
+row is native structure already", and he rejected it as contradicting at its core his rule of 18:12 — "Every
+distinction a native program relies on must come from a native notion, not from a HOL presentation relation". So the
+notion is the loop's product, not a design's. #378 (accepted) decided how the loop poses and works the first problem
+(DECISIONS.md "The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer"):
+in a least form established outside the loop — an asked relation, a native program's entry read at a given and a
+candidate, and a given — its asked relation the requirement guard over what a native program can check (package
+admission and membership, environment inclusion, the payload audit), its origin an owner record of 18:53, its answer
+native content judged by the guard, admitted as a generation, verified by Isabelle before publication and approved by
+the owner; the second problem (Q2's) and the authority problem are posed over the admitted answer. #380 briefs its
+builds (owner records, the payload audit's native reader, the guard, the native state's generation and the posing, the
+answer route, the verification as a request after admission); the first request and its issue wait on #376, which
+applies the rule of 18:12 to the loop's other native programs and to the native loop's planned rows and package (N1a's
+generalized `state_presents`, N3a's presenter, N2a's joined program). What would extend the presentation pattern waits
+on #376 (N1a #336 and through it N1b, N3a, N3b; N2a #340 and N2b; #193; the rows line's #169 and its chain). Retired on
+#378's entry: the decomposition line (#325–#334), which extended the bootstrap loop's rows and serves nothing that loop
+runs; N4a (#348), the rejected pattern; N4b (#350), folded into #380's posing; and #371, whose re-scope waits for the
+first answer (Open 119). The incremental assessment of
 an edited state
 (#192, #187 → #193 → #194) is the remedy for a verification stage's cost. The serialized word changes make the chain
 that decides the run's length; the re-citations of the rule programs, the documents and the reviews run beside them.
@@ -139,7 +148,9 @@ so a decomposed problem is refused issue (`Development_Library_Issue`). The buil
 record and the posing step once (#327, after #167, #308 and #314, which folds #167's change to `Development_Successor`'s row), the generation (#331) and the per-candidate native
 evaluation plan-51 decided (#333) after the row, and the issue less the recorded choices with re-evaluation over both
 record kinds (#329, after the posing, the row and #169, whose theories it edits); the split source waits on the owner
-(Q14, its evidence Q16).
+(Q14, its evidence Q16). That build (#325–#334) is retired on #378's entry: the bootstrap loop applies no
+decomposition and is extended by no new work (Q7); what a decomposition is follows the first problem's answer, and
+Q14 and Q16 bear on nothing planned.
 
 **The layout (#241, #155–#160).** Design #136's entry: the library's digit code at every position of compiled syntax,
 `unary_address` retired. Its contracts with every word equal have landed (#147, #149, #151, #153, #179), with the
@@ -157,11 +168,14 @@ the row and found readings (#214, `3ed04fee`; `state_families_rows` renamed `cov
 #112, #192 and #287) and the store search (#239, `443fe6c8`). #237 landed (`1557deda`)
 the formation rules, the any rule and the two-premise call through the law, `conjoined_calls_program` moved to
 `Development_Verdict_Mentions` and `verdict_equal_program` retired (told to #290, #112 and #192). #295 landed
-(`27908d9b`) #214's and #237's reviews' follow-ups; its review's follow-ups are #374 (the family's law over a listed
-family of triples, the applied rule returned as its triple, with the next change to `Native_Collection_Programs` that
-Open 88 and 95 wait for; N2a waits on it) and #375 (the six applied-rule decodings re-cited to it, after #288, #353 and
-#325; N1b waits on it). A change to `Native_Collection_Programs` rebuilds about 118 theories (#112's check: 1,169.7 s
-of proof; #286's review), and its probe cannot certify it within 60 s (#295's review): the check certifies it.
+(`27908d9b`) #214's and #237's reviews' follow-ups, and #374 (`1db8e167`) the family's law over a listed family of
+triples (`native_listed_law`: the applied rule returned as its triple, `step_rule` without a set difference). #374's
+review's follow-ups at the law's own theories are #379 (continuing #374, beside #353: the collection programs' own
+families as listed-law instances, `step_rule` at their calls, a listed `supported_clause`/`read_clause`,
+`native_some_rest` and the prefix alias retired), and the development theories' re-citations #375 (after #353 and
+#379; N1b waits on it). A change to `Native_Collection_Programs` rebuilds about 118 theories (#112's check: 1,169.7 s
+of proof; #286's review); it probes alone in 1.4 s (#374's probe), and only a probe that loads its dependents passes
+the 60 s bound (#295's): the check certifies them.
 
 **The documents (#280–#282).** From the owner's words of 2026-09-23 and the harness's review of what the bases hold:
 `REASONING_REUSE.md` heavily revised (#280, accepted: 43.7K from 137.8K, one table of 39 arguments in the four columns
@@ -185,16 +199,14 @@ N1–N9: #335 briefs N1–N4 (the record generalized, the package, its rows, nat
 over what they leave, and the translation design follows (Open 3).
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
-creates has no review task (the harness reviews it in its own folder). The deepest chain is 7: #378 → #376 → #340 →
-#342 → #344 → #346 → #347, the native package and its rows, all of it held on the two designs; the decomposition line
-is out of the queue.
+creates has no review task (the harness reviews it in its own folder). The deepest chain is 6: #376 → #340 → #342 →
+#344 → #346 → #347, the native package and its rows, held on #376; the first problem's builds hang from #380.
 
 **Order** (the queue holds it; this is why it is as it is; it is the planner's choice, a residual until the native
-answer to the selection problem exists, Q2). The owner's directions first: the native notion of a problem again
-(#378), then over it the two problems of Q2 (#371) and the rule applied to the loop's other programs (#376); then #374,
-#375 and #353; #356's builds (#365–#368); the package's N2a (#340) and N1a (#336) after #376; the incremental stage's
-#193; the word chain's #169, #319, #354, #92, and #369 after #319; N4a (#348);
-N2b, N1b, N3a, N4b, N3b; the measurement #194; each review after its build; the decomposition line out of the queue.
+answer to the selection problem exists, Q2). The owner's directions first: the rule applied to the loop's other
+programs (#376) and the first problem's builds, briefed by #380; then #353 and #379 beside it, #375 after both; #356's builds (#365–#368); the package's N2a (#340) and N1a (#336) after #376; the incremental stage's
+#193; the word chain's #169, #319, #354, #92, and #369 after #319;
+N2b, N1b, N3a, N3b; the measurement #194; each review after its build.
 
 ## Decisions
 
@@ -245,17 +257,24 @@ construction (Open 100).
   approves, and that answer decides the approval of derivations and of derived subproblems. Meanwhile readiness and
   the planner's choice are the working basis, each interim choice carrying a residual — the queue's order among them
   (Graph, Order), and the provisional choices of Q2's extension and of Q14 and Q16. #370 records the answer in the
-  plan; #371 poses the two problems natively, and N4a (#348) and N4b (#350) wait on it.
+  plan. At 18:53 the owner put "what is a problem" first and Q2's problem second, exercising the produced notion
+  (#378's entry): the second and authority problems are posed over the first problem's admitted answer (Open 119).
 - **The native notion of a problem comes first** (the owner, 2026-09-24 17:50, to the planner: "Clearly to even be able
   to do anything in the loop the most fundamental thing that needs to be done is the development of a native notion of
   a problem"). #373's design (DECISIONS.md "The native notion of a problem: what its kind asks of its subject, at a
   locus of the store", landed `93cae3bb`) was accepted by plan-57 and then withdrawn: the owner asked whether it did not
   contradict his rule of 18:12 at its core — "a problem is a row … at a locus", its subject "the key", justified by "a
   row is native structure already" — and it does: its role and kind are bit prefixes HOL functions assign, its subject
-  a presenter's key, its distinctions drawn by descending paths whose meaning only HOL gives. #378 develops the notion
-  again; its entry supersedes #373's, which gains a marked correction; Q21 is withdrawn (Q22). #371 and #376 wait on
-  #378; #348's and #350's briefs and the notion's builds are placed over #378's, #371's and #376's results; the
-  decomposition line (#325, #327, #329, #331, #333) is out of the queue until then, and #377 was deleted.
+  a presenter's key, its distinctions drawn by descending paths whose meaning only HOL gives. A design is judged by
+  what its identity rests on, not by what its contract avoids. Then, at 18:53: "Now that I think about it the problem
+  of "what is a problem" should be the first problem tackled the native loop and then the problem I gave for Q2 which
+  would then excercise the quality of the produced solution." The notion is the native loop's product, not a design's:
+  #378's entry (accepted; DECISIONS.md "The native loop's first problem is what a problem is; the problem of Q2,
+  second, exercises its answer") poses the first problem in a least form and decides no notion; it supersedes #373's,
+  which gains a marked correction. Q21 is withdrawn (Q22); the entry's choices are Q23. Nothing of the native loop is
+  built over `development_problem`, task 9's rows, loci, prefixes or keys, and a build that adds a reliance on a HOL
+  presentation records it. Retired on the entry: the decomposition line (#325–#334), N4a and N4b as briefed
+  (#348–#351), #371 (its re-scope Open 119) and #377.
 - **Every distinction a native program relies on comes from a native notion** (the owner, 2026-09-24 18:12: "Task 9
   made problems structural, but as a way to present them without octets, not as a native definition … Every
   distinction a native program relies on must come from a native notion, not from a HOL presentation relation."). A
@@ -541,6 +560,14 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#361** (B2, `35d48aba`): `Represented_Snapshot_Transactions`, the transactions over any representation of targets,
   each the existing one under a decoding injective on its targets; its review's follow-ups 1–4 told to #365, 7 to
   #367, the rest Open 117.
+- **#374** (`1db8e167`): the rule family's law over a listed family of triples (`native_listed_law`), the applied rule
+  returned as its triple, `step_rule` without a set difference, the conjunction program re-cited; DECISIONS.md "A
+  listed family returns the rule it applied". Its review's follow-ups 1–5 at the law's own theories are #379, 2 and 6
+  in the development theories #375's, 7 (the probe's bound) in Open 78.
+- **#378** (design, accepted): DECISIONS.md "The native loop's first problem is what a problem is; the problem of Q2,
+  second, exercises its answer", with marked corrections of #373's entry, #320's "The problem" and task 9's entry; the
+  plan's owner directions (17:50, 18:12, 18:36, 18:53), stage 2 and its gate, the standing and direction sections;
+  its builds briefed by #380, its owner choices Q23.
 
 ## Open
 
@@ -550,7 +577,8 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
   Isabelle material, the request class the Q7 order names last.
 - **Q2** answered 2026-09-24 17:18 (Decisions): the first problem is how to choose the next problem to solve, the
   authority question a native problem the owner approves; readiness and the planner's choice meanwhile, a residual.
-  #370 records it in the plan; #371 poses the two problems natively, before N4a and N4b.
+  #370 records it in the plan. At 18:53 the owner made "what is a problem" the native loop's first problem and Q2's
+  the second (#378's entry), posed over the first's admitted answer (Open 119).
 - **Q3** what Isabelle establishes about adequacy: #281 keeps the plan's sentence on it; unplanned otherwise.
 - **Q4** an agent executor confined to its packet: at the plan's stage 3 gate; unplanned.
 - **Q5** how far the native residual record reaches: a notion is presented structurally when a decision reads it.
@@ -560,7 +588,10 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q9** the tracked `.pyc`: #282 removes it (the finalizer now stages the removal of a tracked ignored path).
 - **Q10, Q11, Q12** answered: the harness advances the base and retains the receipts at every landing; a brief's named
   report files enter the landing check's snapshot.
-- **Q21** withdrawn with #373's notion (**Q22** says so); #378's owner choices come as a new question.
+- **Q21** withdrawn with #373's notion (**Q22** says so). **Q23** #378's six choices — the first problem's
+  requirements, the least form, the owner's approval as a record, verification before the translation as a request
+  after admission, the first problem's decomposition, the end of HOL-constant problems — each provisional, the builds
+  proceeding on them.
 
 Not yet planned, in the order they are expected to be planned (numbers kept from earlier states):
 
@@ -596,7 +627,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     repeating the entry's list), with that entry's or row's next edit.
 26. The build that applies a decomposition to the loop (#66's entry) is #325–#334 (#322's briefs), which carry
     plan-51's two decisions on #64's questions and #64's remains; the split source waits on the owner's criterion (Q14,
-    its evidence Q16).
+    its evidence Q16). Retired on #378's entry with the bootstrap loop's decomposition (Q7); Q14 and Q16 bear on
+    nothing planned.
 27. The seed recipe's cost, attributed by #324 (`.build/tasks/324/measurement.md`): the publication presentation is
     48.50 s held, the word's lookup 28.15 s of it (design #356) and the causes' formation checked again 5.7 s (#355,
     `2c69e833`, its saving attributed by phase in #367's held pair);
@@ -619,11 +651,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     condition 3 turns on); the known-predecessor refinements (`RRA_Known_Generation_Rows` and the equations on it)
     against `Established_Premises` under the index notion's criterion; and whether any ordinary clause profile over
     numbered coordinates re-makes `native_rule_law` or the two levels stay apart.
-30. What a present citation of a development row cites (an owner record, or the parent's locus for a demand): #327,
-    the posing, the first construction that assigns an origin.
+30. What a present citation of a development row cites (an owner record, or the parent's locus for a demand): the owner
+    records #380 briefs, the first construction that assigns an origin.
 31. `readiness_presents_rekey` into `Development_Native_Selection`, with that theory's next edit.
-33. A named projection of a locus's key part in `Development_Loci` (consumers write `drop 6`, `drop 3`): N4 of #320's
-    entry, the locus stated once over a kind path (#335).
 35. #80's entry marks its check-recorded figures as recorded beside other recipes, with its next edit.
 36. The equality contract stands three times (`generic_equality_exact`, `native_equality_exact`,
     `native_value_program.exact`): the native forms derived from the generic one through relocation and an alpha
@@ -699,9 +729,10 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     "lower envelope" where the line is fitted under the largest loads (four retained probes loaded faster); the skipped
     code checks know four targets and no target arguments, extended at first use; the prelude route #286 used when a
     combined probe passed its bound, offered by the tool (#286's review); a refusal naming `--from-heap` as the escape
-    for one theory. And a change to `Native_Collection_Programs` cannot be probed within 60 s even with the renamed
-    intermediate copies #271 added (#295's probe-all4 stopped without its marker): a longer bound for such a probe, or
-    a heap of the intermediate theories, at a measured need; until then the check certifies it.
+    for one theory. A change to `Native_Collection_Programs` probes alone in 1.4 s (#374's probe, 35.9 s the whole
+    run), but a probe that loads its dependents too passes 60 s even with the renamed intermediate copies #271 added
+    (#295's probe-all4 stopped without its marker): a longer bound for such a probe, or a heap of the intermediate
+    theories, at a measured need; until then the check certifies the dependents.
 80. #191's first review's follow-ups (titles only, `.build/tasks/202/review.md`), with that theory's next edit.
 81. An adopted answer's precondition reconstructed at its receipt's `revision`, at the first adoption after #265; the
     published state as the judged answer state waits on item 7.
@@ -713,11 +744,6 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 86. Order facts named for their user: a bounded pass over the repository's `sorted_wrt`, `sorted` and `distinct` lemmas.
 87. One definition per reading of a name table (the `_by` readings of `Isabelle_Name_Trees`): when those theories' words
     are next re-established (#161 or #167).
-88. Taken by #374, the next change to `Native_Collection_Programs` and its row: three blank lines near `native_every_program`;
-    `read_clause`'s `read` premise rebinding `c`; in the row, `native_store_search_program` and
-    `native_store_absent_program` listed among the programs taking the family's law, and its dated "Reuse (section)"
-    label dropped or re-pointed (#287's review: its merge round left the row as its work wrote it); `native_some_rest s`
-    re-cited as `native_member_later s`, the same rule value, after #112 lands (#284's review).
 94. **What the documents' passes left, each at the next edit of its file** (#291's review): in the plan, "Useful cost
     and evidence" ends with the batch "stopping at a type error in the seeded problems" without naming what settled it
     (the entry "Seeded contracts and dependencies computed"); "Basis of this revision" says native states represent the
@@ -728,13 +754,6 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     `Keyed_Native_Evaluation`) and `Factor_Demanded_Graph_Readings`' clause is garbled — mailed to #290, which may write
     those rows; a pass after it lands otherwise. `Keyed_Native_Evaluation`'s row also cites `REASONING_REUSE.md`'s
     row by its old title, "An argument ordered so that comparison meets what differs first" (#312's review).
-95. **What #239's landing leaves** (its review; its law items taken by #374): the law's `DECISIONS.md` entry names the uses of `read_clause`, and
-    `Development_Native_Readiness` and `Native_Table_Reach` are two more, with that entry's next edit; and
-    `native_rule_law.step_at`'s premise is a set difference, so each of the nine concrete calls in `Native_Path_Stores`
-    adds `insert_Diff_if` to its simp set — a form of `step_at` over a listed rule would spare that if more instances
-    appear. The eight dated "Reuse (section)" labels #282 left in the rows of `Native_Collection_Programs`,
-    `Native_Path_Stores`, `Development_Native_Readiness` and `Native_Table_Reach` go with each theory's next edit (two
-    mailed to #287, which did not take them: item 88).
 93. **The twelve storage report theories prove no word identity** (#282's review): `Artifact_Lookup_Presentation` to
     `Generation_Record_Presentation` and `Data_Reading_Presentation` state no `*_report_value_exact` or
     `*_report_word_exact`, unlike the four cause-family report presentations, so nothing proves that their retained
@@ -896,38 +915,29 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     (`Development_Constant_Verification`) with the next landing touching it; the list-absence design behind plan-52 and
     plan-55 (the excess witness reading its support as `keys_term ks`, `witness_member` joined with the rows program),
     left as a design, with Open 90's consumer, weighed under #376's reading of the verdict's distinctions.
+119. **The second and the authority problems' requirement families** (#378's recommendation for #371, retired): what
+    each asks as the owner's words state it (the answer to Q2), posed over the first problem's admitted answer; placed
+    once that answer is admitted, since stated before it the test would shape what it tests (the owner, 18:53: the
+    second problem exercises the quality of the first's answer). With it #370's follow-ups
+    (`.build/tasks/370/result.md`: interim choices recorded natively, a choosing problem's contract kind, the loop the
+    two problems enter) and #371's notes (`.build/tasks/371/notes.md`).
 
 ## Now
 
 
 
 - **Mailed to tasks not yet started, read by their first session** (sent again to a task whose session is lost before
-  it reads them): #113's review, and #321's review's follow-ups 1 and 2, to #295; #284's review's 1, 2 and 4, #285's
-  and #321's 3 to #288; #321's 3 (its `request_member` part, at the join) to #340; #321's 5
+  it reads them): #321's review's follow-up 3 (its `request_member` part, at the join) to #340; #321's 5
   (`Development_Incremental_Verdict`'s probe past 60 s, attributed at its cause) to #353; #278's review to #193;
-  #308's change of `Development_State_Rows`' row (`.build/tasks/308/rows.md`) to #325; #314's review's follow-up 1 to
-  #169 (the native records in their harness's form if it writes them); #370's follow-ups to #371 (interim choices
-  recorded natively, a choosing problem's contract kind, the loop the two problems enter); #355's review's to #361
-  (`those_map_result`), #365 (`development_incumbent_using`, the row's "the equation") and #367 (the phase
+  #308's change of `Development_State_Rows`' row (`.build/tasks/308/rows.md`), #325's before its retirement, to #336; #314's review's follow-up 1 to
+  #169 (the native records in their harness's form if it writes them); #355's review's to #367 (the phase
   attribution), #359's review's follow-up 2 to #367 (B4's three new phases attributed), #363's review's 1 and 2 to #367
 (`presented_listing` and the target leaves' comparison attributed); and to #194 q85's rule for a
   measurement's reference with, as shares its by-field figures show where they can, #321's 4, #294's 1 and 3 (Open 96)
-  and #307's remains (Open 110); #361's review's follow-ups 1–4 to #365 (running; `snapshot_targets` stated once at the
-  transaction level, the planner's decision) and 7 to #367; the owner's words of 18:12 to #371, and #373's result's changes of
-  its brief, then withdrawn by a second mail (#371 waits on #378); #288's review's follow-ups 1–2 to #375.
-- **Unhandled by plan-57, which ended at its window (about 18:50)** — the owner's direction, verbatim: "Now that I think
-  about it the problem of "what is a problem" should be the first problem tackled the native loop and then the problem I
-  gave for Q2 which would then excercise the quality of the produced solution." Done: #378's running session told the
-  re-scope (`.build/plans/plan-57/tell378.md`: it poses the first problem and the least established outside the loop,
-  does not decide the notion, and takes over the plan record); #169 dropped (it had started before #376 was its
-  blocker). Not done: #378's and #376's briefs rewritten to match (#376's (5), the plan record, goes to #378); #371
-  re-planned from #378's result (its brief poses Q2's problem over a notion a design decides, which no longer holds);
-  the Graph and Decisions sections above still say #378 "develops the notion again".
-- **Plan-56 was stopped by a classifier (18:17) before its notes**: HANDOFF.md held its state; its unhandled events —
-  #373's verdict, #361's landing and the owner's words of 18:12 — were plan-57's, and nothing else is missing.
-- **#325 is with the planner**: its finalizer ended without reporting, then its commit failed (`THEORY_MAP.md` holds
-  `Development_State_Rows`' row twice). Held out of the queue with the decomposition line until #378 and #376 report;
-  re-queued with a merge round only if the sixth role survives them.
+  and #307's remains (Open 110); #361's review's follow-up 7 to #367. #370's follow-ups (interim choices recorded
+  natively, a choosing problem's contract kind, the loop the two problems enter) go with Open 119.
+- **#169 is with the planner**, dropped by plan-57 (it had started before #376 was its blocker); its tree holds its
+  work; it waits on #376, which decides whether the rows line stands.
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's
   `failing` list holds dicts; #168's review, follow-up 7); `measuring --shared` wrote no `measurements.log` for any of
   #307's ten runs, as #306's review found for B5; #324's brief named a base the harness had swept before it ran, and #315 found the before base's exports swept within

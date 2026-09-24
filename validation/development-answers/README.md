@@ -59,7 +59,12 @@ the record. A differing word marks a record whose requested state, verdict or pu
 since it was made; that answer is then a re-evaluation for the process. An adopted answer's record is
 the judgment that admitted it before adoption; the harness now judges the published state instead, so
 the replay reports its present judgment beside the record and never re-records it
-(`indexed-data-walk.json` keeps its admission, without a publication word).
+(`indexed-data-walk.json` keeps its admission, without a publication word). A native record is judged
+from its state module exported from the active base, so its replay needs a base whose proof context
+holds that module's whole import closure as the replayed sources have it. On a base that lags them
+(on 2026-09-22, `Native_Execution_Refinements` once `Factor_Shared_Package_Readings` had joined its
+imports) `export_proved_code.py` refuses the export and the native records come out unproduced by
+construction, which is neither a differing word nor a failed build.
 
 `demanded-identity.json` answers a request derived on demand in the refinement layer (state
 `refinement_layer`): the harness exports the state of `Ordered_Member_Trees.ordered_member_tree`

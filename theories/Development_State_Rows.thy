@@ -333,11 +333,10 @@ text \<open>
   root heads, is a position of the state's table: the citation inclusions above
   (@{thm [source] entity_declared_positions}, @{thm [source] isabelle_entity_subjects_positions},
   @{thm [source] entity_mentions_positions}, @{thm [source] root_mentions_positions}) read through the
-  boundary the presentation carries (@{thm [source] state_presents_inside}). The request's keys, scope and
-  citations and the verdict's mentions and unreached fields consume these. Three derivations of the same
-  facts from @{thm [source] state_presents_inside} are outstanding: an entity's subjects in
-  @{text Development_Verdict_Statements}, an entity's positions in @{text Development_Native_Decomposition},
-  and the general entity and root forms of @{text Development_Verdict_Difference}.
+  boundary the presentation carries (@{thm [source] state_presents_inside}). The general forms, every
+  position of an entity and of a root, stand beside them. The request's keys, scope and citations, the
+  verdict's statements, mentions, unreached and difference fields, the native verdict and the decomposition
+  consume these, and none derives them again.
 \<close>
 
 lemma state_presents_declared_inside:
@@ -367,6 +366,16 @@ lemma state_presents_root_mentions_inside:
   shows "d<length (fst (snd S))"
   using t d root_mentions_positions state_presents_inside[OF present]
   by (force simp: state_positions_def)
+
+lemma state_presents_entity_inside:
+  assumes present: "state_presents key S R" and member: "e\<in>set (snd (snd S))"
+  shows "\<forall>i\<in>set (isabelle_entity_positions e). i<length (fst (snd S))"
+  using state_presents_inside[OF present] member by (force simp: state_positions_def)
+
+lemma state_presents_root_inside:
+  assumes present: "state_presents key S R" and member: "t\<in>set (fst S)"
+  shows "\<forall>i\<in>set (isabelle_term_positions t). i<length (fst (snd S))"
+  using state_presents_inside[OF present] member by (force simp: state_positions_def)
 
 subsection \<open>A row is recovered in the family of its kind, with its citations\<close>
 
@@ -525,6 +534,19 @@ proof (rule inj_onI)
   then show "i=j"
     by (rule inj_onD[OF atoms_present_injective[OF atoms] _ member(1) member(2)])
 qed
+
+text \<open>
+  Two keyed positions of a presented state's table are equal exactly when the positions are: the fact the
+  verdict's statements and unreached fields and the request's citations read, stated once for the
+  presentation.
+\<close>
+
+lemma state_presents_key_member:
+  assumes present: "state_presents key S R"
+    and "c<length (fst (snd S))" "set ds\<subseteq>{..<length (fst (snd S))}"
+  shows "key c\<in>key ` set ds \<longleftrightarrow> c\<in>set ds"
+  using inj_on_image_mem_iff[OF atoms_present_key_injective[OF state_presents_atoms[OF present]], of c "set ds"]
+    assms(2,3) by simp
 
 text \<open>
   The verdict's ninth field, that the names of the state are distinct, is carried as a premise of

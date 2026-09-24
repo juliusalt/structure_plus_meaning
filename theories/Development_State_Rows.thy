@@ -547,12 +547,32 @@ text \<open>
   presentation.
 \<close>
 
+lemma state_presents_key_injective:
+  assumes present: "state_presents key S R"
+  shows "inj_on key {..<length (fst (snd S))}"
+  by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
+
 lemma state_presents_key_member:
   assumes present: "state_presents key S R"
     and "c<length (fst (snd S))" "set ds\<subseteq>{..<length (fst (snd S))}"
   shows "key c\<in>key ` set ds \<longleftrightarrow> c\<in>set ds"
-  using inj_on_image_mem_iff[OF atoms_present_key_injective[OF state_presents_atoms[OF present]], of c "set ds"]
-    assms(2,3) by simp
+  using inj_on_image_mem_iff[OF state_presents_key_injective[OF present], of c "set ds"] assms(2,3) by simp
+
+text \<open>
+  A row's mentions are the keys of its entity's mentions: the key of a position of the table is among the
+  mentions of an entity's row exactly when the position is among the entity's mentions. The verdict's
+  mention fields and their witnesses read it.
+\<close>
+
+lemma entity_row_mention_key:
+  assumes present: "state_presents key S R" and bound: "d<length (fst (snd S))"
+    and member: "e\<in>set (snd (snd S))"
+  shows "key d\<in>set (row_mentions (entity_row key (snd S) e)) \<longleftrightarrow> d\<in>set (entity_mentions e)"
+proof -
+  have "set (entity_mentions e)\<subseteq>{..<length (fst (snd S))}"
+    using state_presents_mentions_inside[OF present member] by blast
+  then show ?thesis by (simp add: entity_row_def state_presents_key_member[OF present bound])
+qed
 
 text \<open>
   The verdict's ninth field, that the names of the state are distinct, is carried as a premise of

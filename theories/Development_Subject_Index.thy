@@ -205,11 +205,37 @@ corollary key_index_restrict:
 section \<open>The native reading of the index\<close>
 
 text \<open>
-  The index's native part is the path store's search whose checker is the family's every-reading, generic
-  over the row reading and the key reading: the search holds at the reading's context, the path of a key
-  and the index exactly when the key is an atom and every row of the family at the key satisfies the row
-  reading. It reads the fibre alone: no row that the key reading does not give the key is visited.
+  The index's native part is the path store's search whose checker reads a family, generic over the
+  family's contract \<open>holds\<close>, the row reading and the key reading: the search holds at the reading's context,
+  the path of a key and the index exactly when the key is an atom and the fibre at the key satisfies the
+  family's contract (@{text key_index_reading.fibre_exact}). It reads the fibre alone: no row that the key
+  reading does not give the key is visited. The two checkers of a family, its \<open>every\<close>-reading here and its
+  \<open>some\<close>-reading (theory \<open>Development_Verdict_Witnesses\<close>), are its two instances.
 \<close>
+
+locale key_index_reading = search: native_store_search_program P k v
+  for P :: "'u native_system" and k v :: "'u definition_site" +
+  fixes present :: "'c \<Rightarrow> factor_term" and ident :: "'i \<Rightarrow> factor_term"
+    and holds :: "'c \<Rightarrow> 'i state_family \<Rightarrow> bool" and rd :: "'i state_row \<Rightarrow> state_key list"
+  assumes identity: "\<And>y. term_formed (ident y)"
+    and family_exact: "\<And>c F. (v,Pair_Term (present c) (state_family_term ident F))\<in>positive_meaning P \<longleftrightarrow>
+      term_formed (present c) \<and> holds c F"
+begin
+
+theorem fibre_exact:
+  "(k,Pair_Term (present c) (Pair_Term (path_term a) (key_index_term rd ident A F)))\<in>positive_meaning P \<longleftrightarrow>
+    term_formed (present c) \<and> a\<in>set A \<and> holds c (key_fibre rd a F)"
+proof -
+  have "(k,Pair_Term (present c) (Pair_Term (path_term a) (store_term (state_family_term ident) (key_index rd A F))))
+      \<in>positive_meaning P \<longleftrightarrow> term_formed (present c) \<and> (\<exists>bs w. path_term a=path_term bs \<and>
+        store_lookup (key_index rd A F) bs=Some w \<and> (v,Pair_Term (present c) (state_family_term ident w))\<in>positive_meaning P)"
+    by (rule search.exact) (rule state_family_term_formed[OF identity])
+  also have "\<dots> \<longleftrightarrow> term_formed (present c) \<and> a\<in>set A \<and> holds c (key_fibre rd a F)"
+    by (auto simp: path_term_injective key_index_lookup family_exact)
+  finally show ?thesis by (simp only: key_index_term_def)
+qed
+
+end
 
 locale key_index_program = search: native_store_search_program P k v +
     family: family_every_reading P v r present ident reads
@@ -217,6 +243,9 @@ locale key_index_program = search: native_store_search_program P k v +
     and ident :: "'i \<Rightarrow> factor_term" and reads +
   fixes rd :: "'i state_row \<Rightarrow> state_key list"
 begin
+
+sublocale reading: key_index_reading P k v present ident "\<lambda>c F. \<forall>z\<in>set F. reads c z" rd
+  by unfold_locales (simp_all add: family.identity family.exact)
 
 corollary native_index:
   "native_carrier_index (\<lambda>rows q w. (q,w)\<in>set rows) (\<lambda>rows. single_valued (set rows)) UNIV id path_store
@@ -228,15 +257,7 @@ corollary native_index:
 theorem exact:
   "(k,Pair_Term (present c) (Pair_Term (path_term a) (key_index_term rd ident A F)))\<in>positive_meaning P \<longleftrightarrow>
     term_formed (present c) \<and> a\<in>set A \<and> (\<forall>z\<in>set F. a\<in>set (rd (snd z)) \<longrightarrow> reads c z)"
-proof -
-  have "(k,Pair_Term (present c) (Pair_Term (path_term a) (store_term (state_family_term ident) (key_index rd A F))))
-      \<in>positive_meaning P \<longleftrightarrow> term_formed (present c) \<and> (\<exists>bs w. path_term a=path_term bs \<and>
-        store_lookup (key_index rd A F) bs=Some w \<and> (v,Pair_Term (present c) (state_family_term ident w))\<in>positive_meaning P)"
-    by (rule search.exact) (rule state_family_term_formed[OF family.identity])
-  also have "\<dots> \<longleftrightarrow> term_formed (present c) \<and> a\<in>set A \<and> (\<forall>z\<in>set F. a\<in>set (rd (snd z)) \<longrightarrow> reads c z)"
-    by (auto simp: path_term_injective key_index_lookup family.exact key_fibre_member)
-  finally show ?thesis by (simp only: key_index_term_def)
-qed
+  by (auto simp: reading.fibre_exact key_fibre_member)
 
 end
 
@@ -254,9 +275,13 @@ definition subject_call_rule :: "'u definition_site \<Rightarrow>
     (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2))
     [([0],(k,Finite_Pattern_Pair (native_var 1) (Finite_Pattern_Pair (native_var 0) (native_var 2))))]"
 
-locale key_selection_program = index: key_index_program P k v r present ident reads rd +
-    call: native_rule_family P g "[([0],subject_call_rule k)]" + every: native_every_program P s g
-  for P :: "'u native_system" and s g k v r :: "'u definition_site" and present ident reads rd
+text \<open>
+  The call of a selection is one rule at one site, the same for every selection reading: the locale below
+  states its law once, and each selection locale, at either checker, extends it.
+\<close>
+
+locale subject_call_program = native_rule_family P g "[([0],subject_call_rule k)]"
+  for P :: "'u native_system" and g k :: "'u definition_site"
 begin
 
 text \<open>The call is an instance of the rearranging rule; it proves only its patterns' obligations.\<close>
@@ -265,11 +290,20 @@ sublocale rearranged: native_rearranging_program P g
   "Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)" k
   "Finite_Pattern_Pair (native_var 1) (Finite_Pattern_Pair (native_var 0) (native_var 2))"
   unfolding native_rearranging_program_def native_rearranging_program_axioms_def
-  using call.native_rule_family_axioms[unfolded subject_call_rule_def] by auto
+  using native_rule_family_axioms[unfolded subject_call_rule_def] by auto
 
 lemma call_exact:
   "(g,Pair_Term (Pair_Term x y) w)\<in>positive_meaning P \<longleftrightarrow> (k,Pair_Term y (Pair_Term x w))\<in>positive_meaning P"
   using rearranged.at[of "native_values [x,y,w]"] by (simp add: insert_commute)
+
+end
+
+locale key_selection_program = index: key_index_program P k v r present ident reads rd +
+    call: subject_call_program P g k + every: native_every_program P s g
+  for P :: "'u native_system" and s g k v r :: "'u definition_site" and present ident reads rd
+begin
+
+lemmas call_exact = call.call_exact
 
 theorem family_exact:
   "(g,Pair_Term (Pair_Term (path_term a) (present c)) (key_index_term rd ident A F))\<in>positive_meaning P \<longleftrightarrow>

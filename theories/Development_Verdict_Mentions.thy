@@ -239,7 +239,7 @@ proof (intro allI impI)
   have declared_inside: "\<And>e c. e\<in>set (snd (snd S)) \<Longrightarrow> c\<in>set (entity_declared e) \<Longrightarrow> c<length (fst (snd S))"
     by (rule state_presents_declared_inside[OF present])
   have inj: "inj_on key {..<length (fst (snd S))}"
-    by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
+    by (rule state_presents_key_injective[OF present])
   obtain F p where F: "F\<in>set Fs" and ap: "(a,p)\<in>set F" and dp: "d\<in>set (row_declared p)"
     using da by (auto simp: declaration_rows_member)
   obtain G q where G: "G\<in>set Fs" and bq: "(b,q)\<in>set G" and dq: "d\<in>set (row_declared q)"
@@ -447,6 +447,41 @@ next
 qed
 
 text \<open>
+  The rows about a subject are the rows of its statements. For a \<open>kinds_present\<close> selection, the rows of
+  the subject fibres of its families at the key of \<open>c\<close> are exactly the rows of the entities
+  \<^const>\<open>development_answer_statements\<close> gives of \<open>c\<close>: the one correspondence the field's contract reads in its
+  universal form and the witness's in its existential form (theory \<open>Development_Verdict_Witnesses\<close>).
+\<close>
+
+lemma answer_statements_entities:
+  "e\<in>set (development_answer_statements kind C P) \<Longrightarrow> e\<in>set (snd C)"
+  by (auto simp: development_answer_statements_def)
+
+lemma subject_fibre_statements:
+  assumes present: "state_presents key S R" and kinds: "kinds_present replaceable ks"
+    and selection: "set Fs=state_entities R ` ks" and bound: "c<length (fst (snd S))"
+  shows "(\<Union>F\<in>set Fs. snd ` set (subject_fibre (key c) F))=
+    entity_row key (snd S) ` set (development_answer_statements replaceable (snd S) {|c|})"
+proof (rule set_eqI)
+  fix p
+  have "p\<in>(\<Union>F\<in>set Fs. snd ` set (subject_fibre (key c) F)) \<longleftrightarrow>
+      (\<exists>a. (\<exists>k\<in>ks. (a,p)\<in>set (state_entities R k)) \<and> key c\<in>set (row_subjects p))"
+    by (force simp: selection subject_fibre_member)
+  also have "\<dots> \<longleftrightarrow> (\<exists>a. (a,p)\<in>presented_rows R \<and> (\<exists>e\<in>set (snd (snd S)). replaceable e \<and>
+      c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e) \<and>
+      p=entity_row key (snd S) e))"
+    by (simp only: selection_rows_about[OF present kinds bound])
+  also have "\<dots> \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). replaceable e \<and>
+      c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants (snd (snd S))) e) \<and>
+      p=entity_row key (snd S) e)"
+    using entity_row_presented[OF present] by blast
+  also have "\<dots> \<longleftrightarrow> p\<in>entity_row key (snd S) ` set (development_answer_statements replaceable (snd S) {|c|})"
+    by (auto simp: development_answer_statements_def development_answer_statement_def list_ex_iff)
+  finally show "p\<in>(\<Union>F\<in>set Fs. snd ` set (subject_fibre (key c) F)) \<longleftrightarrow>
+      p\<in>entity_row key (snd S) ` set (development_answer_statements replaceable (snd S) {|c|})" .
+qed
+
+text \<open>
   The field \<open>excess\<close> is the subject index's selection reading (@{locale subject_selection_program}) at a row
   reading that holds of a presented support and a row exactly when every key the row mentions is a key of
   the support. The locale is stated over that row reading and the support's presentation, so it holds at any
@@ -490,39 +525,27 @@ theorem excess_program_contract:
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
     development_answer_statements_excess replaceable (snd S) {|c|} X=[]"
 proof -
-  let ?es="snd (snd S)"
+  let ?L="development_answer_statements replaceable (snd S) {|c|}"
   have atom: "key c\<in>set (map fst (state_atoms R))"
     using atoms_present_atom[OF state_presents_atoms[OF present] bound] by force
-  have mentions_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length (fst (snd S))"
-    by (rule state_presents_mentions_inside[OF present])
   have "(s,Pair_Term (Pair_Term (path_term (key c)) (present ss))
       (subject_indexes_term ident (map fst (state_atoms R)) Fs))\<in>positive_meaning P \<longleftrightarrow>
     (\<forall>F\<in>set Fs. \<forall>z\<in>set F. key c\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set ss)"
     by (rule excess_program.exact[OF program atom])
-  also have "\<dots> \<longleftrightarrow> (\<forall>a p. (\<exists>k\<in>ks. (a,p)\<in>set (state_entities R k)) \<and> key c\<in>set (row_subjects p) \<longrightarrow>
-      set (row_mentions p)\<subseteq>set ss)"
-    using selection_rows_all[OF selection, where P="\<lambda>z. key c\<in>set (row_subjects (snd z))"
-      and Q="\<lambda>z. set (row_mentions (snd z))\<subseteq>set ss"] by simp
-  also have "\<dots> \<longleftrightarrow> (\<forall>a p. (a,p)\<in>presented_rows R \<and> (\<exists>e\<in>set ?es. replaceable e \<and>
-      c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<and>
-      p=entity_row key (snd S) e) \<longrightarrow> set (row_mentions p)\<subseteq>set ss)"
-    by (intro all_cong1 imp_cong selection_rows_about[OF present kinds bound] refl)
-  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. replaceable e \<longrightarrow>
-      (c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<longrightarrow>
-      set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss))"
-    using entity_row_presented[OF present] by blast
-  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. replaceable e \<longrightarrow>
-      (c\<in>set (isabelle_entity_subjects (fst (snd S)) (isabelle_development_constants ?es) e) \<longrightarrow>
-      (\<forall>d\<in>set (entity_mentions e). d |\<in>| X)))"
+  also have "\<dots> \<longleftrightarrow> (\<forall>F\<in>set Fs. \<forall>z\<in>set (subject_fibre (key c) F). set (row_mentions (snd z))\<subseteq>set ss)"
+    by (simp add: Ball_def subject_fibre_member imp_conjL)
+  also have "\<dots> \<longleftrightarrow> (\<forall>p\<in>(\<Union>F\<in>set Fs. snd ` set (subject_fibre (key c) F)). set (row_mentions p)\<subseteq>set ss)"
+    by blast
+  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?L. \<forall>d\<in>set (entity_mentions e). d |\<in>| X)"
   proof -
     have m: "set (row_mentions (entity_row key (snd S) e))\<subseteq>set ss \<longleftrightarrow> (\<forall>d\<in>set (entity_mentions e). d |\<in>| X)"
-      if e: "e\<in>set ?es" for e
-      using mentions_inside[OF e] support by (auto simp: subset_iff)
-    show ?thesis using m by blast
+      if e: "e\<in>set ?L" for e
+      using state_presents_mentions_inside[OF present answer_statements_entities[OF e]] support
+      by (auto simp: subset_iff)
+    show ?thesis unfolding subject_fibre_statements[OF present kinds selection bound] using m by auto
   qed
   also have "\<dots> \<longleftrightarrow> development_answer_statements_excess replaceable (snd S) {|c|} X=[]"
-    by (auto simp: answer_statements_excess_empty development_answer_statements_def
-      development_answer_statement_def list_ex_iff)
+    by (rule answer_statements_excess_empty[symmetric])
   finally show ?thesis .
 qed
 
@@ -566,19 +589,20 @@ text \<open>
   which the store of the development's rows finds at the request's locus. A support constant the answer
   state drops is carried outside the answer's table, and so is never mentioned there; the list holds its
   key, which no atom of the answer state carries.
+
+  The discharge is stated once (@{text request_answer_subject}): the subject carried to one position of the
+  answer state, its key the request's, and the support list keying exactly the carried support. The field
+  here and its witness at the request's presentation (theory \<open>Development_Verdict_Witnesses\<close>) both read it.
 \<close>
 
-corollary native_excess_answer:
+lemma request_answer_subject:
   assumes request: "request_presents key S R rows r k ks" and present': "state_presents key' S' R'"
     and shared: "keys_shared R R'"
     and named: "(!) (fst (snd S)) ` fset (problem_subject (fst r))\<subseteq>set (fst (snd S'))"
-    and kinds: "kinds_present replaceable kinds" and selection: "set Fs=state_entities R' ` kinds"
-    and identity: "\<And>y. term_formed (ident y)"
-  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (keys_term ks))
-      (subject_indexes_term ident (map fst (state_atoms R')) Fs))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
-    development_answer_statements_excess replaceable (snd S')
-      (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (problem_subject (fst r)))
-      (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (fst (snd (snd r))))=[]"
+  obtains c where "fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (problem_subject (fst r))={|c|}"
+    and "k=key' c" and "c<length (fst (snd S'))"
+    and "\<And>q. q<length (fst (snd S')) \<Longrightarrow> key' q\<in>set ks \<longleftrightarrow>
+      q |\<in>| fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (fst (snd (snd r)))"
 proof -
   have present: "state_presents key S R" using request by (simp add: request_presents_def)
   have range: "fset (fst (snd (snd r)))\<subseteq>{..<length (fst (snd S))}" using request by (simp add: request_presents_def)
@@ -621,9 +645,29 @@ proof -
     then have "key d=key' q" using keys_shared_atom[OF present present' shared dl q] by simp
     then show "key' q\<in>set ks" using keys d(1) by force
   qed
+  have k': "k=key' (?f c)" using k carried by simp
+  show ?thesis by (rule that[OF image k' bound' support])
+qed
+
+corollary native_excess_answer:
+  assumes request: "request_presents key S R rows r k ks" and present': "state_presents key' S' R'"
+    and shared: "keys_shared R R'"
+    and named: "(!) (fst (snd S)) ` fset (problem_subject (fst r))\<subseteq>set (fst (snd S'))"
+    and kinds: "kinds_present replaceable kinds" and selection: "set Fs=state_entities R' ` kinds"
+    and identity: "\<And>y. term_formed (ident y)"
+  shows "(verdict_excess,Pair_Term (Pair_Term (path_term k) (keys_term ks))
+      (subject_indexes_term ident (map fst (state_atoms R')) Fs))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    development_answer_statements_excess replaceable (snd S')
+      (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (problem_subject (fst r)))
+      (fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (fst (snd (snd r))))=[]"
+proof -
+  obtain c where image: "fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (problem_subject (fst r))={|c|}"
+    and k: "k=key' c" and bound: "c<length (fst (snd S'))"
+    and support: "\<And>q. q<length (fst (snd S')) \<Longrightarrow> key' q\<in>set ks \<longleftrightarrow>
+      q |\<in>| fimage (isabelle_state_embedding (fst (snd S)) (fst (snd S'))) (fst (snd (snd r)))"
+    by (rule request_answer_subject[OF request present' shared named]) blast
   show ?thesis
-    unfolding k carried[symmetric] image
-    by (rule native_excess_exact[OF present' kinds selection bound' support identity])
+    unfolding k image by (rule native_excess_exact[OF present' kinds selection bound support identity])
 qed
 
 section \<open>The field \<open>undeclared\<close>\<close>
@@ -702,13 +746,45 @@ lemma covering_families_entity_rows:
   shows "(\<Union>F\<in>set Fs. set (map snd F))=entity_row key (snd S) ` set (snd (snd S))"
   using kinds_present_rows[OF present, of "\<lambda>_. True" UNIV] families by (simp add: kinds_present_def)
 
+text \<open>
+  The mentions of the rows of every family and of the roots are the keys of the state's mentioned constants:
+  the one correspondence the field \<open>undeclared\<close> reads in its universal form and its witness in its
+  existential form (theory \<open>Development_Verdict_Witnesses\<close>). The mentioned constants are positions of the
+  table, so the keys are read back through @{thm [source] state_presents_key_member}.
+\<close>
+
+lemma presented_row_mentions:
+  assumes present: "state_presents key S R" and families: "set Fs=range (state_entities R)"
+  shows "(\<Union>F\<in>set Fs. \<Union>z\<in>set F. set (row_mentions (snd z))) \<union> (\<Union>z\<in>set (state_roots R). set (row_mentions (snd z)))=
+    key ` set (isabelle_mentioned_constants (fst S) (snd S))"
+proof -
+  have rows: "(\<Union>F\<in>set Fs. \<Union>z\<in>set F. set (row_mentions (snd z)))=
+      (\<Union>p\<in>(\<Union>F\<in>set Fs. set (map snd F)). set (row_mentions p))" by auto
+  have roots: "(\<Union>z\<in>set (state_roots R). set (row_mentions (snd z)))=
+      (\<Union>p\<in>snd ` set (state_roots R). set (row_mentions p))" by auto
+  have root_rows: "snd ` set (state_roots R)=root_row key (snd S) ` set (fst S)"
+    using state_presents_root_family[OF present] by (metis list.set_map)
+  have mentioned: "set (isabelle_mentioned_constants (fst S) (snd S))=
+      (\<Union>t\<in>set (fst S). set (root_mentions t)) \<union> (\<Union>e\<in>set (snd (snd S)). set (entity_mentions e))"
+    by (auto simp: mentioned_constants_member)
+  show ?thesis
+    unfolding rows roots covering_families_entity_rows[OF present families] root_rows mentioned
+    by (auto simp: root_row_def image_Un image_UN)
+qed
+
+lemma presented_mentioned_inside:
+  assumes present: "state_presents key S R"
+  shows "set (isabelle_mentioned_constants (fst S) (snd S))\<subseteq>{..<length (fst (snd S))}"
+  using state_presents_mentions_inside[OF present] state_presents_root_mentions_inside[OF present]
+  by (auto simp: mentioned_constants_member)
+
 theorem declaration_store_constant:
   assumes present: "state_presents key S R" and families: "set Fs=range (state_entities R)"
     and bound: "h<length (fst (snd S))"
   shows "store_lookup (declaration_store Fs) (key h)\<noteq>None \<longleftrightarrow> (\<exists>e\<in>set (snd (snd S)). h\<in>set (entity_declared e))"
 proof -
   have inj: "inj_on key {..<length (fst (snd S))}"
-    by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
+    by (rule state_presents_key_injective[OF present])
   have declared_inside: "\<And>e d. e\<in>set (snd (snd S)) \<Longrightarrow> d\<in>set (entity_declared e) \<Longrightarrow> d<length (fst (snd S))"
     by (rule state_presents_declared_inside[OF present])
   have "store_lookup (declaration_store Fs) (key h)\<noteq>None \<longleftrightarrow>
@@ -736,38 +812,19 @@ theorem native_undeclared_exact:
       (state_family_term identr (state_roots R))))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
     isabelle_undeclared_constants (fst S) (snd S)=[]"
 proof -
-  let ?C="snd S" and ?es="snd (snd S)" and ?n="fst (snd S)"
-  have rows: "(\<Union>F\<in>set Fs. set (map snd F))=entity_row key ?C ` set ?es"
-    by (rule covering_families_entity_rows[OF present families])
-  have root_rows: "snd ` set (state_roots R)=root_row key ?C ` set (fst S)"
-    using state_presents_root_family[OF present] by (metis list.set_map)
-  have inj: "inj_on key {..<length ?n}" by (rule atoms_present_key_injective[OF state_presents_atoms[OF present]])
-  have declared_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_declared e) \<Longrightarrow> d<length ?n"
-    by (rule state_presents_declared_inside[OF present])
-  have mentions_inside: "\<And>e d. e\<in>set ?es \<Longrightarrow> d\<in>set (entity_mentions e) \<Longrightarrow> d<length ?n"
-    by (rule state_presents_mentions_inside[OF present])
-  have roots_inside: "\<And>t d. t\<in>set (fst S) \<Longrightarrow> d\<in>set (root_mentions t) \<Longrightarrow> d<length ?n"
-    by (rule state_presents_root_mentions_inside[OF present])
-  have found: "store_lookup (declaration_store Fs) q\<noteq>None \<longleftrightarrow> (\<exists>e\<in>set ?es. q\<in>key ` set (entity_declared e))" for q
-  proof -
-    have "store_lookup (declaration_store Fs) q\<noteq>None \<longleftrightarrow>
-        (\<exists>p\<in>(\<Union>F\<in>set Fs. set (map snd F)). q\<in>set (row_declared p))"
-      by (auto simp: declaration_store_declared declaration_store_found)
-    then show ?thesis unfolding rows by auto
-  qed
-  have key_declared: "key d\<in>key ` set (entity_declared e') \<longleftrightarrow> d\<in>set (entity_declared e')"
-    if "d<length ?n" "e'\<in>set ?es" for d e'
-    using that declared_inside inj by (auto simp: inj_on_eq_iff)
+  let ?M="set (isabelle_mentioned_constants (fst S) (snd S))"
   have "(verdict_undeclared,Pair_Term (declaration_term Fs) (Pair_Term (state_families_term ident Fs)
       (state_family_term identr (state_roots R))))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
-    (\<forall>p\<in>(\<Union>F\<in>set Fs. set (map snd F)). \<forall>q\<in>set (row_mentions p). store_lookup (declaration_store Fs) q\<noteq>None) \<and>
-    (\<forall>p\<in>snd ` set (state_roots R). \<forall>q\<in>set (row_mentions p). store_lookup (declaration_store Fs) q\<noteq>None)"
-    unfolding declaration_term_def by (auto simp: native_mentions_found[OF identity roots])
-  also have "\<dots> \<longleftrightarrow> (\<forall>e\<in>set ?es. \<forall>d\<in>set (entity_mentions e). \<exists>e'\<in>set ?es. d\<in>set (entity_declared e')) \<and>
-      (\<forall>t\<in>set (fst S). \<forall>d\<in>set (root_mentions t). \<exists>e'\<in>set ?es. d\<in>set (entity_declared e'))"
-    unfolding rows root_rows found using key_declared mentions_inside roots_inside by auto
+    (\<forall>F\<in>set Fs. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs) q\<noteq>None) \<and>
+    (\<forall>z\<in>set (state_roots R). \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs) q\<noteq>None)"
+    unfolding declaration_term_def by (rule native_mentions_found[OF identity roots]) simp
+  also have "\<dots> \<longleftrightarrow> (\<forall>q\<in>key ` ?M. store_lookup (declaration_store Fs) q\<noteq>None)"
+    unfolding presented_row_mentions[OF present families, symmetric] by blast
+  also have "\<dots> \<longleftrightarrow> (\<forall>d\<in>?M. \<exists>e\<in>set (snd (snd S)). d\<in>set (entity_declared e))"
+    using declaration_store_constant[OF present families] presented_mentioned_inside[OF present]
+    by (auto simp: subset_iff)
   also have "\<dots> \<longleftrightarrow> isabelle_undeclared_constants (fst S) (snd S)=[]"
-    by (auto simp: undeclared_constants_empty mentioned_constants_member declared_constants_member)
+    by (auto simp: undeclared_constants_empty declared_constants_member)
   finally show ?thesis .
 qed
 

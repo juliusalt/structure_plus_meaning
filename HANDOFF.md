@@ -25,11 +25,18 @@ admission and membership, environment inclusion, the payload audit), its origin 
 native content judged by the guard, admitted as a generation, verified by Isabelle before publication and approved by
 the owner; the second problem (Q2's) and the authority problem are posed over the admitted answer. #380 briefs its
 builds (owner records, the payload audit's native reader, the guard, the native state's generation and the posing, the
-answer route, the verification as a request after admission), its brief rewritten on the owner's answer to Q23 (a) at
-19:57 — the first problem's requirements use #376's test, not only the octet audit — whose native form design #381
-(continuing #376) decides before the guard build; #382 briefs beside it the native request at a package (the first
-leaves' request, in N3a's place) and the given's Factor readers (#376's follow-ups 1 and 2), which q86 found without an
-executable package. #376 (accepted; DECISIONS.md "Every distinction a native
+answer route, the verification as a request after admission). The owner answered Q23 (a) at 19:57 — the first
+problem's requirements use #376's test, not only the octet audit — and #381 (accepted; DECISIONS.md "The first
+problem's requirements use the test of a native distinction; the octet audit is one of its parts") gave the test its
+native form: the guard's four sockets on the pair of the given and the candidate (G1 retention, G2 formation and
+closure, G3 the callee boundary, G4 the octet audit over the added definitions), the contract parts (a), (b), (c) and
+(f) checked in the verification request, the rest criticism and the owner's approval; its split is put to the owner
+(Q25). A use is structure, not a payload, so #373's pattern passes the octet audit and the guard: #383 (continuing
+#381) designs non-nominality of uses before the first answer is judged. #382 briefs beside #380 the native request at a
+package (the first leaves' request, in N3a's place) and the given's Factor readers (#376's follow-ups 1 and 2, with
+those the sockets G3 and G4 call and the given's payloads stated by the audit, #381), which q86 found without an
+executable package: the guard's build waits on the readers' installation, and that on #380's audit reader, wired when
+both proposals are placed. #376 (accepted; DECISIONS.md "Every distinction a native
 program relies on comes from a native notion: the state the native loop judges and the presentations that retire")
 took the rule of 18:12 to the loop's other programs: a distinction is native when a native notion draws it on native
 content, and supplied by a HOL presentation relation when the relation places it in the argument; the native loop's
@@ -123,7 +130,7 @@ interpreted globally); review 203's follow-ups 3 and 5 are Open 107 and 108, #19
 verification stage judged natively, which carried follow-up 4; follow-up 5's three facts went to #284. #193 and #194,
 the stage judged natively and its held measurement, are retired on #376's entry — a new native judgment over the
 bootstrap loop's residuals; condition 5a's path is now the first problem's — and the incremental assessment stays as
-landed, #353 landing whole. Specifications keep their exception, judged whole. The presenter's entity keys keep their
+landed, #353's last shared and edit-sized reads with it (`09cea44c`; its review's follow-ups Open 120). Specifications keep their exception, judged whole. The presenter's entity keys keep their
 scan below about 10^4 entities (Open 84).
 
 **The rows line (#161–#170).** Task 9's one notion, a row at a locus: landed are the locus, the relation, the request
@@ -216,9 +223,10 @@ creates has no review task (the harness reviews it in its own folder). The deepe
 native package; the first problem's builds hang from #380's and #382's proposals.
 
 **Order** (the queue holds it; this is why it is as it is; it is the planner's choice, a residual until the native
-answer to the selection problem exists, Q2). The owner's directions first: #381 (the native form of Q23 (a)), the first
-problem's builds, briefed by #380 and #382, and the package that is their given, N2a (#340) then N2b (#342); then #353 and #379, #375 after both; #356's
-builds (#365–#368); the bootstrap loop's maintenance, #319, #354, and #369 after #319; each review after its build.
+answer to the selection problem exists, Q2). The owner's directions first: the first problem's builds, briefed by #380
+and #382, the design of non-nominality of uses (#383), and the package that is their given, N2a (#340) then N2b (#342);
+then #379, #375 after it; #356's builds (#367, #368) and #384 after #367; the bootstrap loop's maintenance, #319, #354,
+and #369 after #319; each review after its build.
 
 ## Decisions
 
@@ -301,7 +309,7 @@ construction (Open 100).
   kept. A row, a locus path, a prefix, a key or a family index is structure, not a native notion, and a code a
   HOL function assigns supplies meaning only through HOL (the owner's rejection of #373). Consolidations of existing
   native programs that extend no relation (#353, #374, #375, the B-line) go on. The owner answered Q23 (a) at 19:57:
-  the first problem's requirements use #376's test, not only the octet audit; design #381 decides its native form.
+  the first problem's requirements use #376's test, not only the octet audit; #381 gave it its native form (Graph).
 - **A question's candidate is keyed by the key of what it is** (q21): an entity by its first-occurrence path in the
   state's entity list (`development_entity_key`).
 - **The development rows' definitions take the state's constant-key assignment as a parameter** with an `inj_on`
@@ -589,6 +597,17 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   the state the native loop judges and the presentations that retire", with marked corrections of #320's "Its rows"
   and "The builds, in order" and the plan's direction section; its graph changes carried (Graph), its owner choices
   Q24.
+- **#353** (`09cea44c`): the per-answer function's request-state edit shared, the reach keys as a path store (design
+  171's rule, not a member tree), edit-sized values bound once, `declarations_single_valued_store` beside its notion,
+  the tidy; its review's follow-ups 1–2 Open 120, 3 moot with #193, 4 Open 78.
+- **#381** (design): DECISIONS.md "The first problem's requirements use the test of a native distinction; the octet
+  audit is one of its parts", with marked corrections of #378's and #376's entries: the guard's four sockets (G1–G4),
+  the contract parts (a), (b), (c), (f) in the verification request, (d), (e), (g), (h) criticism and the owner's
+  approval; its changes to #380's (b)–(f) and to the given's readers carried in #380's and #382's briefs, its
+  follow-up 2 #383, 1 and 3 Open 121, 4 #382's, its split to the owner Q25.
+- **#365** (B4a, `1a8677a4`): `Development_Seed_Referenced_Publication`, the seed round over references, its table and
+  shared presentation, and the word constant read off them (words equal); its review's follow-ups 1–3 told to #367,
+  4–8 #384.
 
 ## Open
 
@@ -610,12 +629,14 @@ The owner's questions, each with its provisional choice, are in the ledger; wher
 - **Q10, Q11, Q12** answered: the harness advances the base and retains the receipts at every landing; a brief's named
   report files enter the landing check's snapshot.
 - **Q21** withdrawn with #373's notion (**Q22** says so). **Q23** #378's six choices, (a) answered by the owner at 19:57 (the first problem's requirements use #376's test, not
-  only the octet audit; its native form design #381's) — the first problem's
+  only the octet audit; its native form #381's entry) — the first problem's
   requirements, the least form, the owner's approval as a record, verification before the translation as a request
   after admission, the first problem's decomposition, the end of HOL-constant problems — (b)–(f) provisional, the builds
   proceeding on them. **Q24** #376's four choices — the test for a native distinction, the native loop's state read by
   the Factor readers, the bootstrap loop kept exact and unextended (its growth retired, its maintenance kept), an
   executable counterpart of a native reader as its implementation — each provisional, the work proceeding on them.
+  **Q25** #381's split of the test — four native sockets, the contract parts in the verification request, the rest
+  criticism and the owner's approval, uses meanwhile criticism and non-nominality designed now (#383) — provisional.
 
 Not yet planned, in the order they are expected to be planned (numbers kept from earlier states):
 
@@ -758,7 +779,9 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     for one theory. A change to `Native_Collection_Programs` probes alone in 1.4 s (#374's probe, 35.9 s the whole
     run), but a probe that loads its dependents too passes 60 s even with the renamed intermediate copies #271 added
     (#295's probe-all4 stopped without its marker): a longer bound for such a probe, or a heap of the intermediate
-    theories, at a measured need; until then the check certifies the dependents.
+    theories, at a measured need; until then the check certifies the dependents. A probe whose tree changes
+    `Development_Verdict_Mentions` reloads twelve theories, about 8 s of theory time, and passes the 60 s bound at about
+    70 s wall (#353's review, follow-up 4): the probe's own cost, not the theories', at a measured need.
 80. #191's first review's follow-ups (titles only, `.build/tasks/202/review.md`), with that theory's next edit.
 81. An adopted answer's precondition reconstructed at its receipt's `revision`, at the first adoption after #265; the
     published state as the judged answer state waits on item 7.
@@ -943,27 +966,36 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     plan-55 (the excess witness reading its support as `keys_term ks`, `witness_member` joined with the rows program),
     left as a design with Open 90's consumer: the verdict's witnesses are the bootstrap loop's, kept and not extended
     (#376).
+120. **What #353's landing leaves in the incremental assessment** (its review, `.build/tasks/353/review.md`, follow-ups
+    1 and 2): removed-row membership still a list scan per fibre row in `index_fibres`, `assessment_fibres` and
+    `declaring_family` (a path store of the removed rows by row key makes each test a lookup), `edit_presentable`'s
+    distinctness of appended atoms quadratic, and `incremental_reach_table` scanning the root keys and `L` at every
+    visited key (the root keys as a path store beside `assessment_reach_keys`). The assessment is the bootstrap loop's,
+    landed and kept; with #193 and #194 retired no running path reads its per-answer cost: at a measured need.
 119. **The second and the authority problems' requirement families** (#378's recommendation for #371, retired): what
     each asks as the owner's words state it (the answer to Q2), posed over the first problem's admitted answer; placed
     once that answer is admitted, since stated before it the test would shape what it tests (the owner, 18:53: the
     second problem exercises the quality of the first's answer). With it #370's follow-ups
     (`.build/tasks/370/result.md`: interim choices recorded natively, a choosing problem's contract kind, the loop the
     two problems enter) and #371's notes (`.build/tasks/371/notes.md`).
+121. **#381's follow-ups 1 and 3** (`.build/tasks/381/result.md`): the first problem's criticism build — native samples
+    of invariance (two presentations of one subject) and of use equivariance (a use-renamed copy of the given),
+    observations of ground clauses and target leaves, failures recorded against the candidate (`Observation_Repairs`)
+    — briefed with the first request and its issue once #380's and #382's proposals are placed, #383's entry deciding
+    what it samples of uses; and the leaf argument for programs with material premises (a proof in
+    `Factor_Positive_Parametricity`: a readdressing of targets consistent with the payload map), at the first answer
+    whose added definitions hold a material premise, or with that theory's next edit.
 
 ## Now
 
 
 
-- **Mailed to tasks not yet started, read by their first session** (sent again to a task whose session is lost before
-  it reads them): #321's review's follow-up 3 (its `request_member` part, at the join) to #340; #321's 5
-  (`Development_Incremental_Verdict`'s probe past 60 s, attributed at its cause) to #353;
-  #355's review's to #367 (the phase
-  attribution), #359's review's follow-up 2 to #367 (B4's three new phases attributed), #363's review's 1 and 2 to #367
-(`presented_listing` and the target leaves' comparison attributed); #361's review's follow-up 7 to #367; and #169's
-  retirement to #354 and #369. #380's first session was released at 20:02 before reading the answer to its q86 and
-  the planner's two messages: its brief now carries them, and #382 takes the native request at a package and the
-  given's Factor readers. #370's follow-ups (interim choices recorded
-  natively, a choosing problem's contract kind, the loop the two problems enter) go with Open 119.
+- **Mailed**: #365's review's follow-ups 1–3 to #367 (running); #313's re-review's first follow-up — the replay's host
+  test `…reads_its_own_parts` reads the machine's active context, and failed #169's check at 18:52 — to #369, not yet
+  started, read by its first session. #380's first session was released at 20:02 before reading the answer to its q86
+  and the planner's messages: its brief now carries them and #381's changes, and #382 takes the native request at a
+  package and the given's Factor readers. #370's follow-ups (interim choices recorded natively, a choosing problem's
+  contract kind, the loop the two problems enter) go with Open 119.
 
 - **The harness's, met by this run's tasks**: `v2.py read check:167` raises a TypeError in `check_text` (a host entry's
   `failing` list holds dicts; #168's review, follow-up 7); `measuring --shared` wrote no `measurements.log` for any of
@@ -973,10 +1005,14 @@ commit (`82a065cd`) failed.
 - **Q7's and Q2's ledger entries** (the questions and the owner's answers of 16:19, 16:34 and 17:18) can leave, #357
   and #370 having recorded the answers in the plan (`4434635d`, `82a065cd`); the owner's words of 17:50 and 18:12 once
   #376 records them: the harness's (`v2.py ledger`, whose `--help` records its text as a question).
-- **Q17, Q19 and Q20 of the ledger are the harness's**: a classifier stopped plan-51 to plan-54 before their notes and
-  #323's fixer session fix-323.2 (Q17 plan-52, Q20 plan-54, Q19 fix-323.2, each declined twice on the same work); each
-  next planner took up what the stopped one left, and #323 ran from the fixer's base. **Q18** is #320's five
-  provisional choices; its text opens with "Q17", a slip of plan-53's (the harness numbered it Q18).
+- **Repeated declines are the run's to handle, not ledger questions** (the owner, through the monitoring session,
+  2026-09-24 20:23 and 20:28): Q17, Q19, Q20 and the harness's Q25 left the ledger, their held events given back; of
+  them only #313's re-review's first follow-up was pending (told to #369). A classifier stopped plan-51 to plan-54,
+  plan-56, plan-58 and plan-59 before their notes, and #323's fixer once; each next planner took up what HANDOFF.md held,
+  and nothing was missing (plan-59's draft notes, `.build/plans/plan-59/notes.md`, hold nothing HANDOFF.md lacks).
+  Plan-60 judged #381, the event held from plan-59. The planner's question on #381's split took the number Q25 again.
+  **Q18** is #320's five provisional choices; its text opens with "Q17", a slip of plan-53's (the harness numbered it
+  Q18).
 - **#303's tree held untracked files the task did not make** at its root (`.bashrc`, `.bash_profile`, `.gitconfig`,
   `.claude/agents`, `.idea`): the finalizer should commit the handed-over files only (#303's review) — the harness's.
 - **The exclusive hold outlasts its run** (#317): `measuring --exclusive` held the machine to its 3-minute bound

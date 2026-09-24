@@ -58,10 +58,6 @@ lemma represented_locus_decoded [simp]:
 lemma represented_locus_target: "generation_locus G\<in>set_generation_structure G"
   by (cases G) simp
 
-lemma represented_decoded_member:
-  assumes "inj_on dec K" "x\<in>K" "X\<subseteq>K"
-  shows "dec x\<in>dec ` X \<longleftrightarrow> x\<in>X"
-  using assms unfolding inj_on_def by blast
 
 lemma represented_ball_image: "(\<forall>x\<in>f ` A. P x) \<longleftrightarrow> (\<forall>x\<in>A. P (f x))"
   by blast
@@ -132,6 +128,11 @@ qed
 lemma represented_snapshot_formed_exact:
   "represented_snapshot_formed finite_target_formed S \<longleftrightarrow> finite_snapshot_formed S"
   using represented_snapshot_formed_decoded[of id UNIV S] by simp
+
+lemma represented_snapshot_loci_established:
+  "established_premise (represented_snapshot_formed tf) (\<lambda>S. fBall S (represented_generation_formed tf))
+    represented_snapshot_loci_formed"
+  by unfold_locales (simp add: represented_snapshot_formed_def)
 
 definition represented_snapshot_lookup :: "'t represented_snapshot \<Rightarrow> 't \<Rightarrow> 't generation_structure option" where
   "represented_snapshot_lookup S l=finite_singleton_option (ffilter (\<lambda>G. generation_locus G=l) S)"
@@ -315,7 +316,7 @@ proof -
   have formed: "fBall (fimage dec X) finite_target_formed \<longleftrightarrow> fBall X (\<lambda>t. finite_target_formed (dec t))" for X
     by (auto simp: fimage.rep_eq)
   have member: "dec l\<in>dec ` fset X \<longleftrightarrow> l\<in>fset X" if "fset L\<subseteq>K" "fset X\<subseteq>K" "l\<in>fset L" for L X l
-    by (rule represented_decoded_member[OF inj subsetD[OF that(1) that(3)] that(2)])
+    by (rule inj_on_image_mem_iff[OF inj subsetD[OF that(1) that(3)] that(2)])
   have disjoint: "fBall (fimage dec L) (\<lambda>l. l |\<notin>| fimage dec X) \<longleftrightarrow> fBall L (\<lambda>l. l |\<notin>| X)"
     if "fset L\<subseteq>K" "fset X\<subseteq>K" for L X
     using member[OF that] by (auto simp: fimage.rep_eq)
@@ -437,7 +438,7 @@ proof -
   proof -
     have "generation_locus G\<in>K"
       using that S represented_locus_target unfolding represented_snapshot_targets_def by blast
-    then show ?thesis by (rule represented_decoded_member[OF inj _ parts(8)])
+    then show ?thesis by (rule inj_on_image_mem_iff[OF inj _ parts(8)])
   qed
   have filtered: "ffilter (\<lambda>G. generation_locus G |\<notin>| fimage dec (represented_changed_loci T))
       (decode_represented_snapshot dec S)=
@@ -874,6 +875,34 @@ proof -
     by (simp add: represented_publications_formed_generations_def finite_publications_formed_generations_def
       decode_represented_publications_def split_def represented_ball_image each)
 qed
+
+text \<open>At exact targets and the identity each operation is the existing one.\<close>
+
+lemma represented_comparison_passes_exact:
+  "represented_comparison_passes S T \<longleftrightarrow> finite_comparison_passes S (decode_represented_transaction id T)"
+  using represented_comparison_passes_decoded[of id UNIV S T] by simp
+
+lemma represented_transaction_update_exact:
+  "represented_transaction_update S T=finite_transaction_update S (decode_represented_transaction id T)"
+  using represented_transaction_update_decoded[of id UNIV S T] by simp
+
+lemma represented_observed_comparison_exact:
+  "decode_represented_observation id (represented_observed_comparison S T)=
+    finite_observed_comparison S (decode_represented_transaction id T)"
+  using represented_observed_comparison_decoded[of id UNIV S T] by simp
+
+lemma represented_transaction_formed_exact:
+  "represented_transaction_formed finite_target_formed T \<longleftrightarrow> finite_transaction_formed (decode_represented_transaction id T)"
+  using represented_transaction_formed_decoded[of id UNIV T] by simp
+
+lemma represented_transaction_body_formed_exact:
+  "represented_transaction_body_formed finite_target_formed T \<longleftrightarrow>
+    finite_transaction_body_formed (decode_represented_transaction id T)"
+  using represented_transaction_body_formed_decoded[of id UNIV T] by simp
+
+lemma represented_publications_formed_generations_exact:
+  "represented_publications_formed_generations finite_target_formed ps \<longleftrightarrow> finite_publications_formed_generations ps"
+  using represented_publications_formed_generations_decoded[of id ps] by simp
 
 export_code represented_snapshot_loci represented_snapshot_formed represented_snapshot_lookup
   represented_comparison_loci represented_changed_loci represented_transaction_formed

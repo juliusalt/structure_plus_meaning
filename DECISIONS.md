@@ -10478,7 +10478,11 @@ client's partial application checks the formation once, where it is made.
 `development_seed_publication_row_with` is the row over a given publisher,
 `development_seed_publication_row_published` proves the original row is it over the original
 publication, and the code equation `development_seed_publication_from_published` binds the publisher
-to `finite_locus_publications S` once for every row and the round. The report, and so every word, is
+to `finite_locus_publications S` once for every row and the round. [Corrected by "The seed round is stated once, the
+incumbents' constructor a parameter of its own" below (task 384): `development_seed_publication_from_published` is
+retired, and `development_seed_publication_from` is defined as `development_seed_publication_over
+finite_locus_publications`, the round over that publisher, its former equation kept as
+`development_seed_publication_from_eq`.] The report, and so every word, is
 unchanged: the equations are proved, not asserted. No new notion, and no second copy of the case split.
 
 ### Evidence and limits
@@ -11369,7 +11373,10 @@ at its third place, a constructor's contract; this entry records the instance.
   `development_payload_generation_fields`, `development_answer_with_fields`, `development_recorded_issue_fields`,
   `development_selection_generation_fields`, `development_seed_incumbent_of_recorded` and
   `finite_check_generation_formed`. The round is stated over any publisher of a snapshot
-  (`development_seed_publication_over`, which `development_seed_publication_from_published` now names), the
+  (`development_seed_publication_over`, which `development_seed_publication_from_published` now names [corrected by
+  "The seed round is stated once, the incumbents' constructor a parameter of its own" below (task 384):
+  `development_seed_publication_from_published` is retired, and `development_seed_publication_from` is defined as
+  `development_seed_publication_over finite_locus_publications`]), the
   premise is discharged for the recording constructor only (`development_seed_publication_over_formed`), and the
   known constructor's round is shown equal to it over any publisher
   (`development_seed_publication_over_known`, from the existing `development_seed_publication_row_known`).
@@ -12279,7 +12286,7 @@ rule's conclusion and premise set back from its value.
   program's `unfold` [corrected 2026-09-22, task 247's review: each `unfold` is a corollary of the law's
   `supported_clause`; corrected 2026-09-22, task 275: the four `unfold` corollaries are gone and their composition
   is stated once as the law's `read_clause`, which a use cites with the program's own `unfold_rule`] [corrected 2026-09-24, task 379: those uses stand in
-`Development_Native_Readiness` and `Native_Table_Reach`, and cite the listed form `triples.read_triple`], the inversion
+  `Development_Native_Readiness` and `Native_Table_Reach`, and cite the listed form `triples.read_triple`], the inversion
   of one rule application supported in an arbitrary relation, which least-fixed-point
   arguments over composed programs consume, and the structural inductions over lists in the `exact` theorems, which
   the law's single step does not carry.
@@ -14374,6 +14381,8 @@ name kept is the one with nearly all the uses. No recorded state reads either co
 rearranging instances cite it. `native_store_search_program.held_at` states the search at a key where the store holds
 a value; `development_row_lookup_at` and `native_request_admitted` cite it. `finite_rule_program_prefix` states the
 split of a program sharing a leading prefix with another, which the joins of the verdict and the decomposition read.
+[corrected 2026-09-24, task 375: `finite_rule_program_prefix` is retired (task 379); the split is the list fact
+`set_take_drop_union` of `Listed_Set_Unions`, which those joins cite.]
 
 Recorded 2026-09-24 (task 295).
 ## The native notion of a problem: what its kind asks of its subject, at a locus of the store
@@ -14703,6 +14712,14 @@ uses cite `set_take_drop_union`, which now stands in `Listed_Set_Unions`. `nativ
 value, so no recorded word changed (the repository's check passed with every word equal). What stays: the reach's
 own family (`reach_holds_family` in `Native_Table_Reach`) still decodes its clause by `finite_native_rule_eq_iff` in
 `native_reached_search`'s invariant, and the six decodings outside these theories are the next task's (#375).]
+
+[corrected 2026-09-24, task 375: the reach's family (`reach_holds_family` at `reach_holds_listing`) and the six
+families (`permitted_row_program`, `row_formed_program`, `decomposition_applies_family`, `row_reached_program`,
+`context_sound_row_program`, and the witnesses' `excess_witness_family` and `undeclared_witness_family`) are listed
+instances, each at its family's listing stated once, and so is `Development_Edited_Reach`'s `mention_kept_program`,
+whose `exact` read `holds_cases` and `native_step`; no `finite_native_rule_eq_iff` decoding of an applied rule remains
+outside `rule_triple`, and no step of these families adds `insert_Diff_if`. `native_value_program` and
+`conjoined_calls_program` bring the law through their sublocale `conjunction` alone.]
 
 Recorded 2026-09-24 (task 374).
 ## The native loop's first problem is what a problem is; the problem of Q2, second, exercises its answer
@@ -15632,7 +15649,9 @@ definitions); the first-use rule.
 The owner's choice (c). Re-addressing as a further instance, not demanded. The leaf argument for programs with material
 premises (task 381's part (g)). Native proof admission (O-85), which would bring part (d) into the native judgment. The
 marking of task 381's entry, its part (d) and its rejected item on use equivariance, as corrected here, once both
-entries have landed. This design was made outside the loop and is a residual.
+entries have landed. [Discharged by task 420, which built `Presentation_Equivariance`: task 381's entry carries the
+marked corrections at its part (d), its rejected item on use equivariance and its Open.] This design was made outside
+the loop and is a residual.
 
 Recorded 2026-09-24 (task 383's decision; a design, no theory changes).
 
@@ -15653,3 +15672,177 @@ The other way, changing what `_from` and `_over` mean at the known and formed-ca
 changes what proved equations state. The constants a recipe executes compute the same values: the older statement's
 code is now the round's assembly, its plain rows recorded in parallel as before and the publications of the rows in a
 second parallel pass.
+
+## The payload audit decides a definition's stated payloads through its instances at a blank table; each distinction it relies on is a native notion's
+
+Task 428, from #388's review, follow-up 7, and #387's `result.md`, its proposal. The payload audit (#387,
+`Factor_Payload_Audit`) is the first problem's fourth socket, G4 ("The first problem's requirements use the test of a
+native distinction; the octet audit is one of its parts", task 381), and one of the readers the given installs (#412).
+This entry records its design and what it relies on, each reliance under task 376's test ("Every distinction a native
+program relies on comes from a native notion: the state the native loop judges and the presentations that retire",
+its section "What a distinction is, and when a native notion draws it"), before the guard (#391), the given's readers'
+program (#412), the verification frame (#405) and the criticism build judge against it. The audit as built stands; this
+entry changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The audit's native reader reads an added definition "through the definition, clause and pattern readers" (task 381, "What the builds change", (b); its G4 row names `definition_clause_reading_exact` and the pattern readers, "which tell a payload leaf from a citation leaf carrying an address"). | It reads through definition admission (72), the artifact, record, family and row readers (37, 34, 32, 59), which reach every clause root, and schema instantiation (65), each clause at an instance: the readers tell the leaves apart under their contracts, and no reader of pattern syntax is added (below). |
+| Sites 500–505 are relocated where the audit is joined with the given's readers, in the guard's build (#387's result, #388's review, follow-up 6). | Nothing is relocated: the readers' program (#412) and the guard's (#391, installed by #393) take every definition at the number its theory gives it; a collision is brought to the planner. |
+
+### What the audit decides
+
+The subject is one definition at a site of an environment presented as data, the argument
+`source_root_argument e (use_data_term u) (Payload_Term r)` (the form of 71). The entry 505 holds exactly when `e`
+presents an environment `E`, `E` holds a definition at the site, `native_definition_at E u r p C`, and that definition
+states no payload but the empty one, `definition_payloads p C ⊆ {[]}`: every payload leaf of its interface pattern and
+of every clause's schema — conclusion, prospective calls and material patterns, as `schema_leaves` reads them — is
+`Payload_Term []` (`payload_audit_exact`; at a source `payload_audit_at_source`, on values `payload_audit_on_values`,
+over every presentation of the environment `payload_audit_presentation_invariance`). A program passes definition by
+definition (`system_payloads_definitions`, `system_payloads_audited`, `payload_audit_package`); the HOL counterpart is
+`finite_definition_payloads_exact` and, for a program, `finite_system_payloads_audited` through
+`finite_system_payloads_exact`.
+
+Target literals pass: a stated target is identity with explicit native content (task 381's test), and an occurrence
+target's address belongs to the target, not to a payload leaf (`term_payloads (Target_Term x) = {}`). The audit does
+not decide that a definition holds no material premise, that it reads nothing of a target literal's content (task
+381's part (h)), or that an octet it does not state is inert to it: that last is the leaf argument's, and holds only
+for a definition without material premises (below).
+
+### How: every clause at an instance
+
+An instance of a pattern carries every payload the pattern states (`pattern_instance_payloads_included`), and every
+other payload it carries comes from a binding (`pattern_instance_payloads_origin`). So a pattern states no payload but
+the empty one exactly when some instance of it carries no other: soundness at any instance, completeness at the blank
+table, which binds every variable to the empty payload and so adds nothing the audit refuses.
+
+- *The interface*: 72 admits the definition at a hidden operand, which 500 audits; the interface accepts an operand
+  carrying only the empty payload exactly when it states no other. 72 reads the whole definition record and admits
+  every clause, so the audit also requires the definition to be read at the site.
+- *The clauses*: 37 and 34 read the definition's artifact and record for the clause family's root, 32 and 59 the
+  family's rows and every clause root, and 504 traverses them (`context_list_profile`, 503 at every element). 503
+  instantiates the clause's schema by 65 at a hidden binding table, which is not audited, and audits the instance: its
+  conclusion by 500, its prospective calls' arguments by 502, its material rows' whole five-field tuples by 501
+  (`schema_instance_payloads_included` for soundness at any table, `schema_instance_payloads_blank` for completeness
+  at the blank one).
+- *Coordinates*: a row's key and a call's socket and callee site are coordinates of the schema, not what it states;
+  only a row's value and a call's argument are audited.
+- *Its own literals*: the audit's six clauses state the empty payload alone and hold no material premise
+  (`payload_audit_own_payloads`; each is a `data_rule`).
+
+The only new argument is the pair of facts about instances, stated once for any pattern; every reader is consumed
+through its exact contract, none re-proved.
+
+### Why not a reader of pattern syntax
+
+Pattern syntax is a quotation: a payload leaf is a leaf carrying one functional attachment, a citation is a record whose
+leaf carries the cited address as a payload, a variable a local citation, a target an external one. The payloads of a
+definition's syntax artifact are therefore not the payloads its patterns state: an audit of the artifact's attachments
+would refuse every definition that calls a callee. A reader that told these apart would decide again what the pattern
+and instantiation readers decide — a second reading of one grammar, with its own contract to prove over every
+presentation of patterns — which reuse and the first-use rule exclude. Through instances the audit's subject is the
+definition its readers recover, not its syntax; its exactness is the instance facts with 72's and 65's contracts, and
+its invariance over the environment's presentations is theirs. The route works because the audit accepts the empty
+payload: the blank table's bindings are what it accepts.
+
+### What it relies on, by task 376's test
+
+| Reliance | Where the audit relies on it | The test |
+|---|---|---|
+| A target leaf told from a payload leaf and a pair | 500's target clause calls the target projection (45), the projection a hidden variable | drawn by a native notion: the target projection's contract (`target_projection_exact`), over the target's exact artifact; `target_value_presents` carries the target as a member of the target notion's presentation class. It reads the whole artifact by material observation: the artifact projection (10), which its whole-target clause calls, and the material premise of its occurrence clause |
+| The empty payload as the data list's terminator | 500 accepts the empty payload by the data-list nil schema (`data_list_nil_schema`); 501, 502 and 504 end their traversals at it; the readers return their rows as data lists | drawn by the collection notion (`context_list_rule_relation` through `context_list_profile`, and the readers' contracts over the lists they return); the data-list presentation is the sequence notion's class, a carrier. The empty payload carries no octet: reading it as structure reads a shape, a list's end, and no octet content |
+| The site: an environment, a use, an address | the argument's three fields, passed to 72, 37, 34, 32 and 65 | the environment is native content, carried by `environment_value_presents` (task 376: a carrier); the address is a payload and a variable of the audit's pattern, never a literal; the use is structure; both are compared only for equality by the readers, the use under task 383's equivariance (the audit's clause is #418's) |
+| Material premises | none in the audit's own clauses; its program extends `definition_call_admission_system`, which holds the artifact projection (10), reached from the target projection and from artifact lookup (37) through artifact identity and admission (12, 11), and the target projection's occurrence clause | drawn by material observation (`material_observation_exact`, `artifact_projection_exact`), the complete equation of an exact artifact, comparing its addresses and attachment values for equality with an enumeration's. What they leave is part (g), below |
+
+No reliance is supplied by a HOL presentation relation, so none waits on a retirement: the relations the audit's
+argument and its readers' results pass through — `environment_value_presents`, `use_data_term`,
+`target_value_presents`, `data_list_term` — carry native content as members of native notions' presentation classes,
+and the readers' contracts are invariant over the members. The audit reads nothing of the bootstrap loop: no
+development_problem, row, locus, key or `readiness_presents` (#387's brief). For the audit's own clauses this answers
+the question "A program's payload literals are the octets it reads" left open — whether the empty payload as a list
+terminator is an inert delimiter or structure: structure, the data-list notion's. For an added definition the audit
+cannot tell its uses of the empty payload apart — a list's end, a bit, a unary natural, a tag built of empty payloads
+— which is task 381's part (e), criticism.
+
+The target reliance cannot be removed: a program without material premises tells an unstated target leaf from an
+unstated payload leaf nowhere (`positive_meaning_unlisted_leaves`), and the audit accepts every formed target and
+refuses every payload but the empty one, infinitely many leaves it cannot state. An observation-free audit does not
+exist.
+
+### The material premises, and what part (g) leaves to criticism
+
+`payload_audit_exact` is proved directly: the verdict is exact whatever material premises the audit's program or the
+audited definition hold. What the octet criterion adds to it — that an octet a definition does not state is inert to
+it, compared at most for equality — is `positive_meaning_unlisted_payloads`, whose premise `system_observation_free`
+(no clause of the system holds a material premise) neither the audit's program nor any reader reaching an artifact's
+identity meets.
+
+- *The audit's own program*: its clauses state the empty payload alone; every other octet it meets is compared by its
+  callees under their contracts — a target artifact's addresses and attachment values by material observation, which
+  decides the identity of an exact artifact, and the definition's addresses by the artifact, record and family
+  readers over the artifact's data presentation, as equality of payloads. They are the given's readers' octets, judged
+  when the readers were admitted (task 381). #412 lists the stated payloads of the readers' program, the audit's
+  program and its callees included (#388's review, follow-up 5), and records for each reader with material premises
+  that the listing does not establish that an octet it does not state is inert to it.
+- *An audited definition*: without material premises, its pass gives the criterion — the payloads it does not state
+  are inert to it. With a material premise, its pass says nothing of how that premise compares the octets of an
+  artifact it observes, a target literal's with the argument's (task 381's part (g)).
+- *Left to criticism*: for each added definition with a material premise, whether its meaning is invariant under a
+  renaming of the octets it does not state, the target literals it states and the artifacts it observes readdressed
+  consistently; the sample's form is the criticism build's. The notion that would move it into the native judgment is
+  task 381's (g): the leaf argument extended to programs with material premises, by a readdressing of targets
+  consistent with the payload map, stated once in `Factor_Positive_Parametricity`. The audit stays a necessary check.
+
+### Sites 500–505
+
+The audit's definitions stand at 500–505, above every numbered site of the library when #387 was built (the highest
+370). A number is a coordinate of one numbered program, compared for equality and carrying no meaning: relocation
+preserves meaning (`renamed_system_positive_meaning`). The readers' program (#412) takes each definition at the number
+its theory gives it, the audit's included, and relocates nothing, because the guard's program (#391) joins these same
+definitions and its installation over the readers' installed package (#393) needs them at the same numbers (the mapped
+extension's agreement premise). The union is formed only where its systems agree on every shared definition
+(`systems_agree_on`), so a number two systems give to different definitions refuses the join and is never merged; a
+collision is brought to the planner, who decides which side moves before the join. A build that allocates numbers in
+the readers' or the guard's program (#389's boundary reader, #391) chooses them apart from 500–505.
+
+### Cost
+
+Unmeasured: no native evaluation of the audit has run. Two costs stand by construction (#388's review, follow-up 4):
+every clause is read twice, by 72's admission and by 65's instantiation, and 45 projects each literal target's whole
+artifact at every occurrence and discards the projection. They are measured where the audit is first evaluated
+natively, at the guard's installation (#393, its acceptance (5): at one of the given's readers' definitions, the
+seconds and the demanded calls, telling which dominates), and a dominant cost goes through the performance channel;
+the remedies #388 names (a definition reader returning its clause roots, the audit inside 72's family traversal) are
+that channel's to weigh.
+
+### Weighed and rejected
+
+- *A reader of pattern syntax*: above.
+- *An audit of the syntax artifact's attachments*: it counts the addresses citations carry, so it refuses every
+  definition that calls a callee.
+- *Telling a target leaf from a payload leaf without a material reading*: impossible without stating them
+  (`positive_meaning_unlisted_leaves`); refusing target literals instead is excluded by task 381's test, which admits
+  identity with explicit native content.
+- *Relocating the audit's sites in the readers' program*: the guard's installation needs the readers at the numbers
+  the guard's program gives them; a collision is the planner's.
+
+### What the builds must respect
+
+- The guard (#391) and its installation (#393): G4 is this audit, called at each added definition G3 classifies; its
+  contract is consumed, none re-proved; its verdict is exactness of stated payloads, and inertness only for a
+  definition without material premises.
+- The readers' program (#412): the numbers above; the payload listing includes the audit's program and its callees,
+  with the readers holding material premises recorded as the criterion's limit.
+- The verification frame (#405): where a verified contract calls the audit's, the audit's statement reaches
+  `source_root_argument`, `environment_value_presents`, `use_data_term`, `native_definition_at` and
+  `definition_payloads`, over native content, and no bootstrap-loop presentation relation (part (c)); part (g) is not
+  the verification request's.
+- The readers' use-equivariance clauses (#418): the audit's is stated for its relation over its argument, whose use is
+  a coordinate of the environment the argument presents.
+- The criticism build: part (g) as above, part (e) for the empty payload's uses, part (h) for target literals' content.
+
+### Open
+
+The leaf argument for programs with material premises (task 381's part (g)). The audit's cost, measured at #393. This
+design was made outside the loop and is a residual.
+
+Recorded 2026-09-24 (task 428's decision; a design, no theory changes).

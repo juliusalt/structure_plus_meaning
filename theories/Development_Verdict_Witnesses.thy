@@ -289,15 +289,17 @@ text \<open>
   mentions.
 \<close>
 
-interpretation excess_witness_family: native_rule_law verdict_witness_system witness_excess
-    "[([0],excess_witness_rule)]"
-proof (rule native_rule_lawI)
-  show "native_rule_family verdict_witness_system witness_excess [([0],excess_witness_rule)]"
-    by (rule verdict_witness_family) (simp_all add: verdict_witness_rule_defs)
-next
-  fix c F assume "(c,F)\<in>set [([0]::local_address,excess_witness_rule)]"
-  then show "\<exists>p ps. F=finite_native_rule p ps" by (auto simp: excess_witness_rule_def)
-qed
+definition excess_witness_listing :: "(local_address\<times>local_address finite_term_pattern\<times>
+    (local_address\<times>(local_address option definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "excess_witness_listing=[([0],Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
+      (Finite_Pattern_Pair (native_var 1) (native_var 2))) (native_var 3),
+    [([0],(witness_absent,Finite_Pattern_Pair (native_var 3) (Finite_Pattern_Pair (native_var 3) (native_var 1)))),
+     ([1],(witness_index_some,Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 3))
+       (native_var 2)))])]"
+
+interpretation excess_witness_family: native_listed_law verdict_witness_system witness_excess excess_witness_listing
+  unfolding native_listed_law_def by (rule verdict_witness_family)
+    (simp_all add: verdict_witness_rule_defs excess_witness_listing_def native_rule_listing_def excess_witness_rule_def)
 
 lemma excess_witness_at:
   "(witness_excess,Pair_Term (Pair_Term K (Pair_Term SS IX)) D)\<in>positive_meaning verdict_witness_system \<longleftrightarrow>
@@ -305,18 +307,17 @@ lemma excess_witness_at:
     (witness_index_some,Pair_Term (Pair_Term K D) IX)\<in>positive_meaning verdict_witness_system"
 proof
   assume holds: "(witness_excess,Pair_Term (Pair_Term K (Pair_Term SS IX)) D)\<in>positive_meaning verdict_witness_system"
-  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set [([0]::local_address,excess_witness_rule)]"
+  obtain c p ps f where rule: "(c,p,ps)\<in>set excess_witness_listing"
     and concl: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term (Pair_Term K (Pair_Term SS IX)) D"
     and prem: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning verdict_witness_system"
-    by (rule excess_witness_family.holds_rule[OF holds]) blast
-  have F: "finite_native_rule p ps=excess_witness_rule" using rule by simp
-  then have p: "p=Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
+    by (rule excess_witness_family.holds_triple[OF holds]) (rule that; assumption)
+  have p: "p=Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
         (Finite_Pattern_Pair (native_var 1) (native_var 2))) (native_var 3)"
     and ps: "set ps={([0],(witness_absent,Finite_Pattern_Pair (native_var 3)
          (Finite_Pattern_Pair (native_var 3) (native_var 1)))),
        ([1],(witness_index_some,Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 3))
          (native_var 2)))}"
-    by (simp_all add: excess_witness_rule_def finite_native_rule_eq_iff)
+    using rule by (simp_all add: excess_witness_listing_def)
   have vals: "f [0]=K" "f [Suc 0]=SS" "f [2]=IX" "f [3]=D" using concl by (simp_all add: p)
   show "(witness_absent,Pair_Term D (Pair_Term D SS))\<in>positive_meaning verdict_witness_system \<and>
       (witness_index_some,Pair_Term (Pair_Term K D) IX)\<in>positive_meaning verdict_witness_system"
@@ -327,11 +328,11 @@ next
   have "(witness_excess,evaluate_pattern (native_values [K,SS,IX,D]) (decode_finite_pattern
       (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
         (Finite_Pattern_Pair (native_var 1) (native_var 2))) (native_var 3))))\<in>positive_meaning verdict_witness_system"
-    by (rule excess_witness_family.step_at[where c="[0]" and ps="[([0],(witness_absent,
+    by (rule excess_witness_family.law.step_at[where c="[0]" and ps="[([0],(witness_absent,
         Finite_Pattern_Pair (native_var 3) (Finite_Pattern_Pair (native_var 3) (native_var 1)))),
       ([1],(witness_index_some,Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 3))
         (native_var 2)))]"])
-      (use given in \<open>simp_all add: excess_witness_rule_def\<close>)
+      (use given in \<open>simp_all add: excess_witness_listing_def native_rule_listing_def\<close>)
   then show "(witness_excess,Pair_Term (Pair_Term K (Pair_Term SS IX)) D)\<in>positive_meaning verdict_witness_system"
     by simp
 qed
@@ -521,17 +522,23 @@ qed
 
 section \<open>The witness of \<open>undeclared\<close>\<close>
 
-interpretation undeclared_witness_family: native_rule_law verdict_witness_system witness_undeclared
-    "[([0],undeclared_witness_row_rule),([1],undeclared_witness_root_rule)]"
-proof (rule native_rule_lawI)
-  show "native_rule_family verdict_witness_system witness_undeclared
-      [([0],undeclared_witness_row_rule),([1],undeclared_witness_root_rule)]"
-    by (rule verdict_witness_family) (simp_all add: verdict_witness_rule_defs)
-next
-  fix c F assume "(c,F)\<in>set [([0]::local_address,undeclared_witness_row_rule),([1],undeclared_witness_root_rule)]"
-  then show "\<exists>p ps. F=finite_native_rule p ps"
-    by (auto simp: undeclared_witness_row_rule_def undeclared_witness_root_rule_def)
-qed
+definition undeclared_witness_listing :: "(local_address\<times>local_address finite_term_pattern\<times>
+    (local_address\<times>(local_address option definition_site\<times>local_address finite_term_pattern)) list) list" where
+  "undeclared_witness_listing=
+    [([0],Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
+      (native_var 3),
+      [([0],(witness_absent,Finite_Pattern_Pair (native_var 3) (Finite_Pattern_Pair (native_var 3) (native_var 0)))),
+       ([1],(witness_selection_some,Finite_Pattern_Pair (native_var 3) (native_var 1)))]),
+     ([1],Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
+      (native_var 3),
+      [([0],(witness_absent,Finite_Pattern_Pair (native_var 3) (Finite_Pattern_Pair (native_var 3) (native_var 0)))),
+       ([1],(witness_family_some,Finite_Pattern_Pair (native_var 3) (native_var 2)))])]"
+
+interpretation undeclared_witness_family: native_listed_law verdict_witness_system witness_undeclared
+    undeclared_witness_listing
+  unfolding native_listed_law_def by (rule verdict_witness_family)
+    (simp_all add: verdict_witness_rule_defs undeclared_witness_listing_def native_rule_listing_def
+      undeclared_witness_row_rule_def undeclared_witness_root_rule_def)
 
 lemma undeclared_witness_at:
   assumes fs: "term_formed FS" and rs: "term_formed RS"
@@ -541,37 +548,25 @@ lemma undeclared_witness_at:
      (witness_family_some,Pair_Term D RS)\<in>positive_meaning verdict_witness_system)"
 proof
   assume holds: "(witness_undeclared,Pair_Term (Pair_Term DS (Pair_Term FS RS)) D)\<in>positive_meaning verdict_witness_system"
-  obtain c p ps f where rule: "(c,finite_native_rule p ps)\<in>set
-      [([0]::local_address,undeclared_witness_row_rule),([1],undeclared_witness_root_rule)]"
+  obtain c p ps f where rule: "(c,p,ps)\<in>set undeclared_witness_listing"
     and concl: "evaluate_pattern f (decode_finite_pattern p)=Pair_Term (Pair_Term DS (Pair_Term FS RS)) D"
     and prem: "\<forall>(k,d,q)\<in>set ps. (d,evaluate_pattern f (decode_finite_pattern q))\<in>positive_meaning verdict_witness_system"
-    by (rule undeclared_witness_family.holds_rule[OF holds]) blast
-  have cases: "finite_native_rule p ps=undeclared_witness_row_rule \<or>
-      finite_native_rule p ps=undeclared_witness_root_rule" using rule by auto
+    by (rule undeclared_witness_family.holds_triple[OF holds]) (rule that; assumption)
+  have p: "p=Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
+        (Finite_Pattern_Pair (native_var 1) (native_var 2))) (native_var 3)"
+    using rule by (auto simp: undeclared_witness_listing_def)
+  have vals: "f [0]=DS" "f [Suc 0]=FS" "f [2]=RS" "f [3]=D" using concl by (simp_all add: p)
+  from rule consider (row) "ps=[([0],(witness_absent,Finite_Pattern_Pair (native_var 3)
+         (Finite_Pattern_Pair (native_var 3) (native_var 0)))),
+       ([1],(witness_selection_some,Finite_Pattern_Pair (native_var 3) (native_var 1)))]"
+    | (root) "ps=[([0],(witness_absent,Finite_Pattern_Pair (native_var 3)
+         (Finite_Pattern_Pair (native_var 3) (native_var 0)))),
+       ([1],(witness_family_some,Finite_Pattern_Pair (native_var 3) (native_var 2)))]"
+    by (auto simp: undeclared_witness_listing_def)
   then show "(witness_absent,Pair_Term D (Pair_Term D DS))\<in>positive_meaning verdict_witness_system \<and>
       ((witness_selection_some,Pair_Term D FS)\<in>positive_meaning verdict_witness_system \<or>
        (witness_family_some,Pair_Term D RS)\<in>positive_meaning verdict_witness_system)"
-  proof (elim disjE)
-    assume F: "finite_native_rule p ps=undeclared_witness_row_rule"
-    then have p: "p=Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
-          (Finite_Pattern_Pair (native_var 1) (native_var 2))) (native_var 3)"
-      and ps: "set ps={([0],(witness_absent,Finite_Pattern_Pair (native_var 3)
-           (Finite_Pattern_Pair (native_var 3) (native_var 0)))),
-         ([1],(witness_selection_some,Finite_Pattern_Pair (native_var 3) (native_var 1)))}"
-      by (simp_all add: undeclared_witness_row_rule_def finite_native_rule_eq_iff)
-    have vals: "f [0]=DS" "f [Suc 0]=FS" "f [2]=RS" "f [3]=D" using concl by (simp_all add: p)
-    show ?thesis using prem by (simp add: ps vals)
-  next
-    assume F: "finite_native_rule p ps=undeclared_witness_root_rule"
-    then have p: "p=Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
-          (Finite_Pattern_Pair (native_var 1) (native_var 2))) (native_var 3)"
-      and ps: "set ps={([0],(witness_absent,Finite_Pattern_Pair (native_var 3)
-           (Finite_Pattern_Pair (native_var 3) (native_var 0)))),
-         ([1],(witness_family_some,Finite_Pattern_Pair (native_var 3) (native_var 2)))}"
-      by (simp_all add: undeclared_witness_root_rule_def finite_native_rule_eq_iff)
-    have vals: "f [0]=DS" "f [Suc 0]=FS" "f [2]=RS" "f [3]=D" using concl by (simp_all add: p)
-    show ?thesis using prem by (simp add: ps vals)
-  qed
+    by cases (use prem in \<open>simp_all add: vals\<close>)
 next
   assume given: "(witness_absent,Pair_Term D (Pair_Term D DS))\<in>positive_meaning verdict_witness_system \<and>
     ((witness_selection_some,Pair_Term D FS)\<in>positive_meaning verdict_witness_system \<or>
@@ -582,10 +577,10 @@ next
     have "(witness_undeclared,evaluate_pattern (native_values [DS,FS,RS,D]) (decode_finite_pattern
         (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
           (Finite_Pattern_Pair (native_var 1) (native_var 2))) (native_var 3))))\<in>positive_meaning verdict_witness_system"
-      by (rule undeclared_witness_family.step_at[where c="[0]" and ps="[([0],(witness_absent,
+      by (rule undeclared_witness_family.law.step_at[where c="[0]" and ps="[([0],(witness_absent,
           Finite_Pattern_Pair (native_var 3) (Finite_Pattern_Pair (native_var 3) (native_var 0)))),
         ([1],(witness_selection_some,Finite_Pattern_Pair (native_var 3) (native_var 1)))]"])
-        (use given True rs in \<open>auto simp: undeclared_witness_row_rule_def\<close>)
+        (use given True rs in \<open>auto simp: undeclared_witness_listing_def native_rule_listing_def\<close>)
     then show ?thesis by simp
   next
     case False
@@ -594,10 +589,10 @@ next
     have "(witness_undeclared,evaluate_pattern (native_values [DS,FS,RS,D]) (decode_finite_pattern
         (Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0)
           (Finite_Pattern_Pair (native_var 1) (native_var 2))) (native_var 3))))\<in>positive_meaning verdict_witness_system"
-      by (rule undeclared_witness_family.step_at[where c="[1]" and ps="[([0],(witness_absent,
+      by (rule undeclared_witness_family.law.step_at[where c="[1]" and ps="[([0],(witness_absent,
           Finite_Pattern_Pair (native_var 3) (Finite_Pattern_Pair (native_var 3) (native_var 0)))),
         ([1],(witness_family_some,Finite_Pattern_Pair (native_var 3) (native_var 2)))]"])
-        (use given roots fs in \<open>auto simp: undeclared_witness_root_rule_def\<close>)
+        (use given roots fs in \<open>auto simp: undeclared_witness_listing_def native_rule_listing_def\<close>)
     then show ?thesis by simp
   qed
 qed

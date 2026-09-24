@@ -143,8 +143,10 @@ and carries task 143's note if it still holds; #159 measures its effect held.
 **The rule programs (#214, #237, #239).** The rule family's law and the rearranging program are stated once in
 `Native_Collection_Programs` (#208, #233, #245, #247, #275), readiness and reach citing them (#212, #259, #272). Landed:
 the row and found readings (#214, `3ed04fee`; `state_families_rows` renamed `covering_families_entity_rows`, told to
-#112, #192 and #287) and the store search (#239, `443fe6c8`). #237 re-cites the formation rules, the any rule and the
-two-premise call. #295 takes #214's review's follow-ups — `Development_Edited_Reach`'s row reading, the row pattern's
+#112, #192 and #287) and the store search (#239, `443fe6c8`). #237 landed (`1557deda`)
+the formation rules, the any rule and the two-premise call through the law, `conjoined_calls_program` moved to
+`Development_Verdict_Mentions` and `verdict_equal_program` retired (told to #290, #112 and #192). #295 takes #214's and
+#237's reviews' follow-ups — `Development_Edited_Reach`'s row reading, the row pattern's
 variables once, the premise-free rule if two sites share it, and `keys_term` and `development_row_family` as one notion
 beside `path_term` — after #285, #112, #286 and #192, before #288. A change to `Native_Collection_Programs` rebuilds
 about 112 theories (206–215 s of check).
@@ -160,7 +162,7 @@ one tree); every theory given its `THEORY_MAP.md` row, every row's imports re-re
 
 **Shape.** No build waits on a review task: a build waits on the builds whose artifacts it consumes. A fix the planner
 creates has no review task (the harness reviews it in its own folder). The deepest chains are 6: #155 → #157 or #64 →
-#167 → #169 → #92 → #93, and #299 → #301 → #303 → #305 → #194 → #205. The consolidations #237 → #285 → #295 → #288 are 4.
+#167 → #169 → #92 → #93, and #299 → #301 → #303 → #305 → #194 → #205. The consolidations #285 → #295 → #288 are 3.
 
 **Order** (the queue holds it; this is why it is as it is). The landings under way first (#165's merge round, #290,
 #287, #112, #192, #289, #237); then the word chain in its serialized order (#155, #157 beside #64, #159), the longest
@@ -346,6 +348,9 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
   discharged on the loop's states, no word; the lemmas reading the seed's, the machinery's and the repair's
   constructions in `Development_Row_Contexts`, after two merge rounds (q76); its row additions for
   `Development_Row_Data` to #167.
+- **#237** (`1557deda`): the verdict's last three hand-proved rule sites re-cited to `native_rule_law`, the two-premise
+  call stated once in `Development_Verdict_Mentions`, `verdict_equal_program` retired; its review's follow-ups 1–4 to
+  #295, 5 told to #290, #112 and #192.
 
 ## Open
 

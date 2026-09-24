@@ -51,6 +51,21 @@ declare development_machinery_context_def [code] development_machinery_roots_def
 definition development_machinery_state :: isabelle_rooted_context where
   "development_machinery_state=(development_machinery_roots,development_machinery_context)"
 
+text \<open>
+  The two states the exporter defines here and below meet the two conditions of
+  @{const state_presentable} the exporter owns, as its own theorems.
+\<close>
+
+lemma development_states_exported:
+  "distinct (fst (snd development_seed_state))"
+  "state_positions development_seed_state\<subseteq>{..<length (fst (snd development_seed_state))}"
+  "distinct (fst (snd development_machinery_state))"
+  "state_positions development_machinery_state\<subseteq>{..<length (fst (snd development_machinery_state))}"
+  unfolding development_seed_state_def development_machinery_state_def snd_conv
+  by (rule development_seed_names_distinct development_machinery_names_distinct
+    state_positions_exported[OF development_seed_positions_closed development_seed_roots_closed]
+    state_positions_exported[OF development_machinery_positions_closed development_machinery_roots_closed])+
+
 section \<open>Every root is a residual problem of its definition\<close>
 
 text \<open>

@@ -1659,6 +1659,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Parallel_History_Source_Rows
     Parallel_Presented_Investigations
     Indexed_Term_Words
+    Shared_Term_Words
     Factor_Join_Reading_Conditions
     Finite_Presented_Programs
     Finite_Presented_Graphs

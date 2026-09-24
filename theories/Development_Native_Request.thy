@@ -191,7 +191,7 @@ lemma request_complete_program:
     request_complete_search request_complete_family request_complete_row request_complete_mentions
     request_cited request_member ident"
   unfolding support_complete_program_def support_complete_program_axioms_def mentions_cited_program_def
-    list_cited_program_def native_swap_program_def native_member_program_def native_store_search_program_def
+    row_mentions_program_def list_cited_program_def native_swap_program_def native_member_program_def native_store_search_program_def
     native_every_program_def
   by (intro conjI allI; (rule native_request_family | rule identity)) (simp_all add: native_request_definitions_def)
 

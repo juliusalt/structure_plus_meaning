@@ -223,7 +223,7 @@ definition native_verdict_argument ::
       factor_term" where
   "native_verdict_argument ident identr R R' k ks kr kd=term_tuple [path_term k,
     state_families_term ident (map (state_entities R') kd),
-    support_term ks,
+    keys_term ks,
     subject_indexes_term ident (map fst (state_atoms R')) (map (state_entities R') kr),
     state_families_term ident (map (state_entities R') (kinds_outside [Specification_Kind])),
     declaration_term (state_all_families R'),
@@ -347,7 +347,7 @@ proof -
         development_answer_statements demanded (snd S') (fimage ?f (problem_subject (fst r)))\<noteq>[]"
       using native_verdict_rows_field[OF sites(1)]
         native_statements_answer[OF request present' shared named demanded sel_d identity] by simp
-    have excess_field: "(verdict_excess,Pair_Term (Pair_Term (path_term k) (support_term ks))
+    have excess_field: "(verdict_excess,Pair_Term (Pair_Term (path_term k) (keys_term ks))
         (subject_indexes_term ident (map fst (state_atoms R')) (map (state_entities R') kr)))
         \<in>positive_meaning native_verdict_system \<longleftrightarrow>
         development_answer_statements_excess replaceable (snd S') (fimage ?f (problem_subject (fst r)))
@@ -538,11 +538,6 @@ lemma decode_finite_state_families_term [simp]:
   "decode_finite_term (finite_state_families_term ident Fs)=state_families_term (decode_finite_term \<circ> ident) Fs"
   by (simp add: finite_state_families_term_def state_families_term_def comp_def)
 
-definition finite_support_term :: "state_key list \<Rightarrow> finite_factor_term" where
-  "finite_support_term ks=finite_store finite_path (support_store ks)"
-
-lemma decode_finite_support_term [simp]: "decode_finite_term (finite_support_term ks)=support_term ks"
-  by (simp add: finite_support_term_def support_term_def decode_finite_store comp_def)
 
 definition finite_declaration_term :: "'i state_family list \<Rightarrow> finite_factor_term" where
   "finite_declaration_term Fs=finite_store finite_path (declaration_store Fs)"
@@ -582,7 +577,7 @@ definition finite_verdict_argument ::
       finite_factor_term" where
   "finite_verdict_argument ident identr R R' k ks kr kd=finite_term_tuple [finite_path k,
     finite_state_families_term ident (map (state_entities R') kd),
-    finite_support_term ks,
+    finite_keys_term ks,
     finite_key_indexes_term row_subjects ident (map fst (state_atoms R')) (map (state_entities R') kr),
     finite_state_families_term ident (map (state_entities R') (kinds_outside [Specification_Kind])),
     finite_declaration_term (state_all_families R'),

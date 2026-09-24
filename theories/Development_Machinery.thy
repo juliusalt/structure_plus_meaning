@@ -1,7 +1,6 @@
 theory Development_Machinery
   imports Native_Control_Seed_Subject Development_Admitted_Publication Development_Presentation
     Development_Definition_Verification Development_Native_Answers Development_Library_Issue
-    Development_Row_Data Development_State_Presenter
 begin
 
 section \<open>The loop's own notions and their constituents as a checked state\<close>
@@ -144,38 +143,6 @@ definition development_machinery_problem_report ::
     development_problem_assessment development_machinery_context development_machinery_dependencies
       answered development_machinery_problems)"
 
-text \<open>
-  The machinery is a residual record: every problem its constructor poses is residual and generated, so it
-  cites nothing, and its problems are presented as their rows keyed by the state's constant keys, their
-  contract terms carried in the machinery's names. A report that is not a presentation is the store's
-  absence.
-\<close>
-
-abbreviation development_machinery_inert :: "isabelle_term \<Rightarrow> finite_factor_term" where
-  "development_machinery_inert \<equiv> development_local_term_data (fst development_machinery_context)"
-
-definition development_machinery_problem_data ::
-    "development_machinery_problem_report \<Rightarrow> finite_factor_term option" where
-  "development_machinery_problem_data=finite_partial_pair
-    (development_problems_data state_constant_key development_machinery_inert (\<lambda>_. None) (\<lambda>_. None))
-    (finite_partial_pair (Some \<circ> isabelle_positions_data)
-      (finite_partial_pair
-        (development_dependencies_data state_constant_key development_machinery_inert (\<lambda>_. None) (\<lambda>_. None))
-        (development_problem_assessment_data state_constant_key development_machinery_inert (\<lambda>_. None) (\<lambda>_. None))))"
-
-lemma development_machinery_problem_data_presented:
-  assumes domain: "development_row_domain state_constant_key (\<lambda>_. None) (\<lambda>_. None) P"
-  shows "finite_presented_on development_machinery_problem_data
-    (lists P\<times>UNIV\<times>{D. fset D\<subseteq>P\<times>{X. fset X\<subseteq>UNIV\<times>P}}\<times>(lists P\<times>lists P\<times>lists P\<times>lists P\<times>UNIV))"
-  unfolding development_machinery_problem_data_def
-  by (intro finite_partial_pair_presented development_problems_data_presented finite_presented_total
-    isabelle_collections_injective(2) development_dependencies_data_presented
-    development_problem_assessment_data_presented domain)
-
-definition development_machinery_problem_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
-  "development_machinery_problem_value answered=finite_store_option id
-    (development_machinery_problem_data (development_machinery_problem_report answered))"
-
 type_synonym development_machinery_packet =
   "native_development_question\<times>native_development_report\<times>finite_factor_term list option"
 
@@ -200,25 +167,6 @@ lemma development_machinery_loop_report_selected:
   "snd (snd (development_machinery_loop_report answered))=development_packet_selected
     development_machinery_dependencies answered development_machinery_problems"
   by (simp add: development_machinery_loop_report_def development_packet_selected_def Let_def)
-
-definition development_machinery_loop_data :: "development_machinery_loop_report \<Rightarrow> finite_factor_term option" where
-  "development_machinery_loop_data=finite_partial_pair
-    (Some \<circ> finite_sequence_presentation (finite_option_presentation finite_development_context_value))
-    (finite_partial_pair (Some \<circ> finite_option_presentation finite_development_context_value)
-      (finite_partial_option
-        (development_problems_data state_constant_key development_machinery_inert (\<lambda>_. None) (\<lambda>_. None))))"
-
-lemma development_machinery_loop_data_presented:
-  assumes domain: "development_row_domain state_constant_key (\<lambda>_. None) (\<lambda>_. None) P"
-  shows "finite_presented_on development_machinery_loop_data (UNIV\<times>UNIV\<times>{x. set_option x\<subseteq>lists P})"
-  unfolding development_machinery_loop_data_def
-  by (intro finite_partial_pair_presented finite_presented_total finite_sequence_presentation_injective
-    finite_option_presentation_injective finite_development_values_injective finite_partial_option_presented
-    development_problems_data_presented domain)
-
-definition development_machinery_loop_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
-  "development_machinery_loop_value answered=finite_store_option id
-    (development_machinery_loop_data (development_machinery_loop_report answered))"
 
 text \<open>
   The state report is the seed's assessment and acceptance of a rooted state, applied to this
@@ -341,28 +289,6 @@ definition development_machinery_verification ::
            development_machinery_renamed (fset_of_list development_machinery_root_constants) r)) issued))
      (development_machinery_issue answered)"
 
-definition development_machinery_verification_data ::
-    "development_machinery_verification \<Rightarrow> finite_factor_term option" where
-  "development_machinery_verification_data=finite_partial_option (finite_partial_pair
-    (development_requests_data state_constant_key development_machinery_inert (\<lambda>_. None) (\<lambda>_. None))
-    (finite_partial_pair (development_problems_data state_constant_key development_machinery_inert (\<lambda>_. None) (\<lambda>_. None))
-      (Some \<circ> finite_sequence_presentation (finite_sequence_presentation
-        (finite_pair_presentation development_verdict_data finite_boolean_data)))))"
-
-lemma development_machinery_verification_data_presented:
-  assumes domain: "development_row_domain state_constant_key (\<lambda>_. None) (\<lambda>_. None) P"
-    and requests: "development_request_domain state_constant_key (\<lambda>_. None) (\<lambda>_. None) R"
-  shows "finite_presented_on development_machinery_verification_data {x. set_option x\<subseteq>lists R\<times>lists P\<times>UNIV}"
-  unfolding development_machinery_verification_data_def
-  by (intro finite_partial_option_presented finite_partial_pair_presented development_requests_data_presented
-    development_problems_data_presented finite_presented_total finite_sequence_presentation_injective
-    finite_pair_presentation_injective development_verdict_data_injective finite_boolean_data_injective domain requests)
-
-definition development_machinery_verification_value ::
-    "development_problem fset \<Rightarrow> finite_factor_term" where
-  "development_machinery_verification_value answered=finite_store_option id
-    (development_machinery_verification_data (development_machinery_verification answered))"
-
 text \<open>
   The expected verdicts are fixed by the kinds of answer, not by the residuals: both unchanged
   answers are accepted; the axiom is an added entity that is no definition or code equation of the
@@ -391,12 +317,6 @@ definition development_machinery_native_answers ::
 definition development_machinery_native_answers_value :: "development_problem fset \<Rightarrow> finite_factor_term" where
   "development_machinery_native_answers_value answered=
     development_native_answers_data (development_machinery_native_answers answered)"
-
-definition development_machinery_native_judgment_value :: "String.literal \<Rightarrow> bool list \<Rightarrow> finite_factor_term" where
-  "development_machinery_native_judgment_value n bits=finite_store_option id
-    (development_named_native_judgment_data state_constant_key development_machinery_inert (\<lambda>_. None) (\<lambda>_. None)
-      (development_named_native_judgment development_definition_verdict development_machinery_state
-        (development_machinery_requests development_machinery_unanswered) n bits))"
 
 definition development_machinery_native_summary ::
     "String.literal \<Rightarrow> bool list \<Rightarrow> (bool\<times>bool\<times>nat list\<times>String.literal list\<times>nat list) option" where

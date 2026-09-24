@@ -274,7 +274,7 @@ def verification_theory(name, state, subject, theory):
                         'definition development_answer_introduced_positions :: "nat list" where\n'
                         '  "development_answer_introduced_positions=List.map_filter isabelle_head_constant development_answer_introduced"\n\n')
     imports = [state['context'], theory, state['verdicts'], 'Development_Refinement_Repair',
-               'Development_Admitted_Publication', 'Development_Row_Data', 'Development_State_Presenter']
+               'Development_Admitted_Publication', 'Development_Loop_Presentations', 'Development_State_Presenter']
     return ('theory Development_Answer_Verification\n  imports ' + ' '.join(imports) + '\n'
             'begin\n\n' + answer_state +
             'abbreviation development_answer_inert :: "isabelle_term \\<Rightarrow> finite_factor_term" where\n'

@@ -79,17 +79,10 @@ text \<open>
   comparison of a position with its bound is proved once.
 \<close>
 
-fun isabelle_positions_below :: "nat \<Rightarrow> nat list \<Rightarrow> bool" where
-  "isabelle_positions_below N []=True"
-| "isabelle_positions_below N (k#ks)=(k<N \<and> isabelle_positions_below N ks)"
-
-lemma isabelle_positions_below_set: "isabelle_positions_below N ks \<longleftrightarrow> set ks\<subseteq>{..<N}"
-  by (induction ks) auto
-
 fun isabelle_node_below :: "nat \<Rightarrow> nat \<Rightarrow> isabelle_type_node \<Rightarrow> bool" where
-  "isabelle_node_below N k (Isabelle_Node_Application c ks)=(c<N \<and> isabelle_positions_below k ks)"
-| "isabelle_node_below N k (Isabelle_Node_Free a S)=(a<N \<and> isabelle_positions_below N S)"
-| "isabelle_node_below N k (Isabelle_Node_Variable a i S)=(a<N \<and> isabelle_positions_below N S)"
+  "isabelle_node_below N k (Isabelle_Node_Application c ks)=(c<N \<and> list_all (\<lambda>j. j<k) ks)"
+| "isabelle_node_below N k (Isabelle_Node_Free a S)=(a<N \<and> list_all (\<lambda>j. j<N) S)"
+| "isabelle_node_below N k (Isabelle_Node_Variable a i S)=(a<N \<and> list_all (\<lambda>j. j<N) S)"
 
 fun isabelle_nodes_below :: "nat \<Rightarrow> nat \<Rightarrow> isabelle_type_node list \<Rightarrow> bool" where
   "isabelle_nodes_below N k []=True"
@@ -109,7 +102,7 @@ proof -
     unfolding isabelle_nodes_ordered_def
   proof (intro allI impI ballI)
     fix j i assume j: "j<length ns" and i: "i\<in>set (isabelle_node_arguments (ns!j))"
-    show "i<j" using node[OF j] i by (cases "ns!j") (auto simp: isabelle_positions_below_set)
+    show "i<j" using node[OF j] i by (cases "ns!j") (auto simp: list_all_iff)
   qed
   show ?thesis using inside
   proof (induction k rule: less_induct)
@@ -120,18 +113,18 @@ proof -
     show ?case
     proof (cases "ns!k")
       case (Isabelle_Node_Application c ks)
-      have c: "c<N" and args: "set ks\<subseteq>{..<k}"
-        using node[OF less.prems] Isabelle_Node_Application by (simp_all add: isabelle_positions_below_set)
+      have c: "c<N" and args: "\<forall>j\<in>set ks. j<k"
+        using node[OF less.prems] Isabelle_Node_Application by (simp_all add: list_all_iff)
       have earlier: "set (isabelle_type_positions (isabelle_table_type (isabelle_type_table ns) j))\<subseteq>{..<N}"
         if "j\<in>set ks" for j
         using args that less.prems by (intro less.IH) auto
       show ?thesis using exact Isabelle_Node_Application c earlier by auto
     next
       case (Isabelle_Node_Free a S)
-      then show ?thesis using exact node[OF less.prems] by (auto simp: isabelle_positions_below_set)
+      then show ?thesis using exact node[OF less.prems] by (auto simp: list_all_iff)
     next
       case (Isabelle_Node_Variable a i S)
-      then show ?thesis using exact node[OF less.prems] by (auto simp: isabelle_positions_below_set)
+      then show ?thesis using exact node[OF less.prems] by (auto simp: list_all_iff)
     qed
   qed
 qed
@@ -153,13 +146,6 @@ fun isabelle_shared_entity_below :: "nat \<Rightarrow> nat \<Rightarrow> isabell
 | "isabelle_shared_entity_below N M (Isabelle_Specification t)=isabelle_shared_term_below N M t"
 | "isabelle_shared_entity_below N M (Isabelle_Code_Equation t)=isabelle_shared_term_below N M t"
 
-fun isabelle_shared_entities_below :: "nat \<Rightarrow> nat \<Rightarrow> isabelle_shared_entity list \<Rightarrow> bool" where
-  "isabelle_shared_entities_below N M []=True"
-| "isabelle_shared_entities_below N M (e#es)=(isabelle_shared_entity_below N M e \<and> isabelle_shared_entities_below N M es)"
-
-fun isabelle_shared_terms_below :: "nat \<Rightarrow> nat \<Rightarrow> isabelle_shared_term list \<Rightarrow> bool" where
-  "isabelle_shared_terms_below N M []=True"
-| "isabelle_shared_terms_below N M (t#ts)=(isabelle_shared_term_below N M t \<and> isabelle_shared_terms_below N M ts)"
 
 lemma isabelle_shared_term_positions:
   assumes nodes: "isabelle_nodes_below N 0 ns" and M: "M\<le>length ns" and below: "isabelle_shared_term_below N M t"
@@ -176,43 +162,59 @@ lemma isabelle_shared_entity_positions:
     (map_isabelle_term_with (isabelle_table_type (isabelle_type_table ns))) e))\<subseteq>{..<N}"
   using below by (cases e) (use isabelle_shared_term_positions[OF nodes M] in \<open>simp_all add: isabelle_entity_positions_def\<close>)
 
-lemma isabelle_shared_entities_below_all:
-  "isabelle_shared_entities_below N M es \<longleftrightarrow> (\<forall>e\<in>set es. isabelle_shared_entity_below N M e)"
-  by (induction es) simp_all
-
-lemma isabelle_shared_terms_below_all:
-  "isabelle_shared_terms_below N M ts \<longleftrightarrow> (\<forall>t\<in>set ts. isabelle_shared_term_below N M t)"
-  by (induction ts) simp_all
-
 text \<open>
-  The three facts the exporter proves of a state it defines are stated of any context and roots
+  The facts the exporter proves of a state it defines are stated of any context and roots
   equal to a shared presentation, so each is instantiated at the defined constant and discharged by
   its definition's equation, and no step rewrites the presentation.
 \<close>
 
 lemma isabelle_shared_positions_closed:
   assumes presented: "C=isabelle_shared_context names ns es" and names: "length names=N"
-    and nodes: "isabelle_nodes_below N 0 ns" and M: "length ns=M" and entities: "isabelle_shared_entities_below N M es"
+    and nodes: "isabelle_nodes_below N 0 ns" and M: "length ns=M" and entities: "list_all (isabelle_shared_entity_below N M) es"
   shows "\<forall>e\<in>set (snd C). set (isabelle_entity_positions e)\<subseteq>{..<length (fst C)}"
 proof -
   have "set (isabelle_entity_positions (map_isabelle_entity_with
       (map_isabelle_term_with (isabelle_table_type (isabelle_type_table ns))) e))\<subseteq>{..<N}" if "e\<in>set es" for e
     by (rule isabelle_shared_entity_positions[OF nodes, where M=M])
-      (use entities that M in \<open>simp_all add: isabelle_shared_entities_below_all\<close>)
+      (use entities that M in \<open>simp_all add: list_all_iff\<close>)
   then show ?thesis using names by (auto simp: presented isabelle_shared_context_fields)
 qed
 
 lemma isabelle_shared_roots_closed:
   assumes roots: "R=isabelle_shared_terms ms ts" and presented: "C=isabelle_shared_context names ns es"
     and names: "length names=N" and nodes: "isabelle_nodes_below N 0 ms" and M: "length ms=M"
-    and terms: "isabelle_shared_terms_below N M ts"
+    and terms: "list_all (isabelle_shared_term_below N M) ts"
   shows "\<forall>t\<in>set R. set (isabelle_term_positions t)\<subseteq>{..<length (fst C)}"
 proof -
   have "set (isabelle_term_positions (map_isabelle_term_with (isabelle_table_type (isabelle_type_table ms)) t))\<subseteq>{..<N}"
     if "t\<in>set ts" for t
     by (rule isabelle_shared_term_positions[OF nodes, where M=M])
-      (use terms that M in \<open>simp_all add: isabelle_shared_terms_below_all\<close>)
+      (use terms that M in \<open>simp_all add: list_all_iff\<close>)
   then show ?thesis using names by (auto simp: roots presented isabelle_shared_terms_def isabelle_shared_context_fields)
+qed
+
+text \<open>
+  The roots of a defined state are distinct: each is a constant, and the positions of their constants,
+  read from the shared presentation of the roots alone, are distinct.
+\<close>
+
+lemma isabelle_shared_heads:
+  fixes f :: "nat \<Rightarrow> isabelle_type"
+  shows "map (\<lambda>t. hd (isabelle_term_positions (map_isabelle_term_with f t))) []=[]"
+    "map (\<lambda>t. hd (isabelle_term_positions (map_isabelle_term_with f t))) (Isabelle_Constant c T#ts)=
+      c#map (\<lambda>t. hd (isabelle_term_positions (map_isabelle_term_with f t))) ts"
+  by simp_all
+
+lemma isabelle_shared_roots_distinct:
+  assumes roots: "R=isabelle_shared_terms ms ts"
+    and heads: "map (\<lambda>t. hd (isabelle_term_positions
+      (map_isabelle_term_with (isabelle_table_type (isabelle_type_table ms)) t))) ts=cs"
+    and distinct: "distinct cs"
+  shows "distinct R"
+proof -
+  have "distinct (map (\<lambda>t. hd (isabelle_term_positions t)) R)"
+    using heads distinct by (simp add: roots isabelle_shared_terms_def Let_def comp_def)
+  then show ?thesis by (simp add: distinct_map)
 qed
 
 lemma isabelle_shared_names_distinct:
@@ -232,13 +234,46 @@ lemma isabelle_literal_less_empty: "(0::String.literal)<String.Literal b0 b1 b2 
   unfolding String.less_literal.rep_eq String.Literal.rep_eq String.zero_literal.rep_eq
   by (rule ord.lexordp.Nil)
 
-lemma isabelle_literal_less_char:
-  fixes s t :: String.literal
-  assumes "of_char (Char b0 b1 b2 b3 b4 b5 b6 False)<(of_char (Char c0 c1 c2 c3 c4 c5 c6 False)::nat)"
-  shows "String.Literal b0 b1 b2 b3 b4 b5 b6 s<String.Literal c0 c1 c2 c3 c4 c5 c6 t"
-  unfolding String.less_literal.rep_eq String.Literal.rep_eq
-  by (rule ord.lexordp.Cons) (rule assms)
+text \<open>
+  Two characters that first differ, counting from the highest bit, at a bit the first has unset and the
+  second set are in that order, whatever their lower bits: the lower bits of the first stay below the
+  bit, and the higher bits are shared. There is one rule for each bit of the seven, so the order of two
+  concrete characters is one instantiation, with no arithmetic.
+\<close>
 
+lemma isabelle_char_bits_less:
+  assumes "length xs=length ys"
+  shows "horner_sum of_bool (2::nat) (xs@False#zs)<horner_sum of_bool 2 (ys@True#zs)"
+  using horner_sum_of_bool_2_less[of xs, where 'a=nat] assms
+  by (simp add: horner_sum_append distrib_left; linarith)
+
+lemma isabelle_literal_less_bit6: "String.Literal b0 b1 b2 b3 b4 b5 False s<String.Literal c0 c1 c2 c3 c4 c5 True t"
+  unfolding String.less_literal.rep_eq String.Literal.rep_eq
+  by (rule ord.lexordp.Cons) (use isabelle_char_bits_less[of "[b0,b1,b2,b3,b4,b5]" "[c0,c1,c2,c3,c4,c5]" "[False]"] in simp)
+
+lemma isabelle_literal_less_bit5: "String.Literal b0 b1 b2 b3 b4 False h6 s<String.Literal c0 c1 c2 c3 c4 True h6 t"
+  unfolding String.less_literal.rep_eq String.Literal.rep_eq
+  by (rule ord.lexordp.Cons) (use isabelle_char_bits_less[of "[b0,b1,b2,b3,b4]" "[c0,c1,c2,c3,c4]" "[h6,False]"] in simp)
+
+lemma isabelle_literal_less_bit4: "String.Literal b0 b1 b2 b3 False h5 h6 s<String.Literal c0 c1 c2 c3 True h5 h6 t"
+  unfolding String.less_literal.rep_eq String.Literal.rep_eq
+  by (rule ord.lexordp.Cons) (use isabelle_char_bits_less[of "[b0,b1,b2,b3]" "[c0,c1,c2,c3]" "[h5,h6,False]"] in simp)
+
+lemma isabelle_literal_less_bit3: "String.Literal b0 b1 b2 False h4 h5 h6 s<String.Literal c0 c1 c2 True h4 h5 h6 t"
+  unfolding String.less_literal.rep_eq String.Literal.rep_eq
+  by (rule ord.lexordp.Cons) (use isabelle_char_bits_less[of "[b0,b1,b2]" "[c0,c1,c2]" "[h4,h5,h6,False]"] in simp)
+
+lemma isabelle_literal_less_bit2: "String.Literal b0 b1 False h3 h4 h5 h6 s<String.Literal c0 c1 True h3 h4 h5 h6 t"
+  unfolding String.less_literal.rep_eq String.Literal.rep_eq
+  by (rule ord.lexordp.Cons) (use isabelle_char_bits_less[of "[b0,b1]" "[c0,c1]" "[h3,h4,h5,h6,False]"] in simp)
+
+lemma isabelle_literal_less_bit1: "String.Literal b0 False h2 h3 h4 h5 h6 s<String.Literal c0 True h2 h3 h4 h5 h6 t"
+  unfolding String.less_literal.rep_eq String.Literal.rep_eq
+  by (rule ord.lexordp.Cons) (use isabelle_char_bits_less[of "[b0]" "[c0]" "[h2,h3,h4,h5,h6,False]"] in simp)
+
+lemma isabelle_literal_less_bit0: "String.Literal False h1 h2 h3 h4 h5 h6 s<String.Literal True h1 h2 h3 h4 h5 h6 t"
+  unfolding String.less_literal.rep_eq String.Literal.rep_eq
+  by (rule ord.lexordp.Cons) (use isabelle_char_bits_less[of "[]" "[]" "[h1,h2,h3,h4,h5,h6,False]"] in simp)
 
 ML \<open>
 structure Isabelle_Entity_Export =
@@ -552,9 +587,9 @@ fun nodes_length ctxt = length_conv ctxt (nth length_rules 2, nth length_rules 3
   the parts of the term its left side takes, so no step reads the rest of the presentation. A
   comparison of a position with its bound is proved once, and a conjunction of two proved conditions
   is proved by one combination. A position that is not below its bound fails the proof.*)
-val below_rules = map mk_meta_eq @{thms isabelle_positions_below.simps isabelle_node_below.simps
-  isabelle_nodes_below.simps isabelle_shared_term_below.simps isabelle_shared_entity_below.simps
-  isabelle_shared_entities_below.simps isabelle_shared_terms_below.simps};
+val below_rules = map mk_meta_eq @{thms isabelle_node_below.simps isabelle_nodes_below.simps
+  isabelle_shared_term_below.simps isabelle_shared_entity_below.simps
+  list.pred_inject(1)[THEN eqTrueI] list.pred_inject(2)};
 
 fun below_key t =
   (case strip_comb t of
@@ -582,9 +617,18 @@ fun below_conv ctxt =
               Const (\<^const_name>\<open>True\<close>, _) => (proved := Termtab.update (Thm.term_of ct, th) (! proved); th)
             | _ => raise CTERM ("below_conv: a position is not below its bound", [ct]))
           end);
+    fun element_instance rule ct =
+      (case Thm.typ_of_cterm (Thm.dest_arg ct) of
+        Type (_, [T]) =>
+          Thm.instantiate (TVars.make (map (fn v => (v, Thm.ctyp_of ctxt T)) (Term.add_tvars (Thm.prop_of rule) [])),
+            Vars.empty) rule
+      | T => raise TYPE ("below_conv: not a list", [T], []));
     fun conv ct =
       (case Thm.term_of ct of
         Const (\<^const_name>\<open>True\<close>, _) => Thm.reflexive ct
+      | Abs _ $ _ =>
+          let val reduced = Thm.beta_conversion false ct
+          in Thm.transitive reduced (conv (Thm.rhs_of reduced)) end
       | Const (\<^const_name>\<open>HOL.conj\<close>, _) $ _ $ _ =>
           Thm.transitive
             (Thm.combination (Thm.combination (Thm.reflexive (Thm.dest_fun2 ct)) (conv (Thm.dest_arg1 ct)))
@@ -595,8 +639,9 @@ fun below_conv ctxt =
           (case below_key t of
             SOME (key as (p, _)) =>
               (case AList.lookup (op =) below_table key of
-                SOME rule =>
+                SOME rule0 =>
                   let
+                    val rule = if p = \<^const_name>\<open>list_all\<close> then element_instance rule0 ct else rule0;
                     val counted =
                       if p = \<^const_name>\<open>isabelle_nodes_below\<close>
                       then Conv.fun_conv (Conv.arg_conv successor) ct else Thm.reflexive ct;
@@ -624,7 +669,16 @@ fun literal_parts ct =
     Const (\<^const_name>\<open>String.Literal\<close>, _) $ _ $ _ $ _ $ _ $ _ $ _ $ _ $ _ => SOME (snd (Drule.strip_comb ct))
   | _ => NONE);
 
-fun literal_bits prefix bits = map_index (fn (i, b) => ((prefix ^ string_of_int i, 0), b)) bits;
+fun literal_bits prefix bits = map_index (fn (i, b) => (prefix ^ string_of_int i, b)) bits;
+
+(*A literal rule instantiated at its variables by name; every variable is bool or a literal, so no
+  type is inferred.*)
+fun literal_instance rule insts =
+  Thm.instantiate (TVars.empty, Vars.make (map (fn v as ((x, _), _) => (v, the (AList.lookup (op =) insts x)))
+    (Term.add_vars (Thm.prop_of rule) []))) rule;
+
+val literal_bit_rules = @{thms isabelle_literal_less_bit0 isabelle_literal_less_bit1 isabelle_literal_less_bit2
+  isabelle_literal_less_bit3 isabelle_literal_less_bit4 isabelle_literal_less_bit5 isabelle_literal_less_bit6};
 
 fun literal_less ctxt a b =
   (case (literal_parts a, literal_parts b, Thm.term_of a) of
@@ -632,22 +686,23 @@ fun literal_less ctxt a b =
       let
         val (bs, s) = (take 7 xs, nth xs 7);
         val (cs, t) = (take 7 ys, nth ys 7);
-        val ends = [(("s", 0), s), (("t", 0), t)];
+        val ends = [("s", s), ("t", t)];
       in
-        if forall (op aconvc) (bs ~~ cs) then
-          Thm.implies_elim (infer_instantiate ctxt (literal_bits "b" bs @ ends) @{thm isabelle_literal_less_same})
-            (literal_less ctxt s t)
-        else
-          let
-            val rule = infer_instantiate ctxt (literal_bits "b" bs @ literal_bits "c" cs @ ends)
-              @{thm isabelle_literal_less_char};
-            val character = Goal.prove_internal ctxt [] (Thm.cprem_of rule 1) (fn _ => simp_tac ctxt 1);
-          in Thm.implies_elim rule character end
+        (case find_first (fn i => not (aconvc (nth bs i, nth cs i))) [6, 5, 4, 3, 2, 1, 0] of
+          NONE =>
+            Thm.implies_elim (literal_instance @{thm isabelle_literal_less_same} (literal_bits "b" bs @ ends))
+              (literal_less ctxt s t)
+        | SOME k =>
+            (case (Thm.term_of (nth bs k), Thm.term_of (nth cs k)) of
+              (Const (\<^const_name>\<open>False\<close>, _), Const (\<^const_name>\<open>True\<close>, _)) =>
+                literal_instance (nth literal_bit_rules k)
+                  (literal_bits "b" (take k bs) @ literal_bits "c" (take k cs) @
+                    map (fn i => ("h" ^ string_of_int i, nth bs i)) (k + 1 upto 6) @ ends)
+            | _ => raise CTERM ("literal_less: the names are not strictly increasing", [a, b])))
       end
   | (NONE, SOME ys, Const (\<^const_name>\<open>Groups.zero\<close>, _)) =>
-      infer_instantiate ctxt (literal_bits "b" (take 7 ys) @ [(("t", 0), nth ys 7)]) @{thm isabelle_literal_less_empty}
+      literal_instance @{thm isabelle_literal_less_empty} (literal_bits "b" (take 7 ys) @ [("t", nth ys 7)])
   | _ => raise CTERM ("literal_less: the names are not strictly increasing", [a, b]));
-
 
 (*The distinct names and the closed positions of a defined context, and the length of its table.*)
 fun context_closure ctxt def =
@@ -695,8 +750,44 @@ fun roots_closure ctxt (def', counted) roots_def =
     |> (fn th => meta_premise th nodes_counted) |> below_premise ctxt
   end;
 
+(*The roots of a defined context are distinct: the positions of their constants are read from the
+  shared presentation of the roots alone, each root by one instantiation that reads neither its type
+  nor the table of types, and the positions are compared as numerals.*)
+val heads_rules = map mk_meta_eq @{thms isabelle_shared_heads};
+
+fun distinct_numerals_ctxt ctxt = put_simpset HOL_basic_ss ctxt addsimps
+  @{thms distinct.simps list.set insert_iff empty_iff simp_thms numeral_eq_iff num.inject num.distinct
+    zero_neq_numeral numeral_eq_one_iff one_eq_numeral_iff zero_neq_one};
+
+fun roots_distinct ctxt roots_def =
+  let
+    val roots_def' = Local_Defs.meta_rewrite_rule ctxt roots_def;
+    val (ms_app, ts) = Thm.dest_comb (Thm.rhs_of roots_def');
+    val ms = Thm.dest_arg ms_app;
+    val f = Thm.apply \<^cterm>\<open>isabelle_table_type\<close> (Thm.apply \<^cterm>\<open>isabelle_type_table\<close> ms);
+    fun heads ct =
+      (case Thm.term_of (Thm.dest_arg ct) of
+        Const (\<^const_name>\<open>List.list.Cons\<close>, _) $ _ $ _ =>
+          let
+            val xs = Thm.dest_arg ct;
+            val x = Thm.dest_arg1 xs;
+            val step = literal_instance (nth heads_rules 1)
+              [("f", f), ("c", Thm.dest_arg1 x), ("T", Thm.dest_arg x), ("ts", Thm.dest_arg xs)];
+          in Thm.transitive step (Conv.arg_conv heads (Thm.rhs_of step)) end
+      | _ => literal_instance (nth heads_rules 0) [("f", f)]);
+    val rule =
+      meta_premise (infer_instantiate ctxt
+        [(("R", 0), Thm.lhs_of roots_def'), (("ms", 0), ms), (("ts", 0), ts)]
+        @{thm isabelle_shared_roots_distinct}) roots_def';
+    val read = heads (Thm.dest_arg1 (Thm.dest_arg (Thm.cprem_of rule 1)));
+    val rule' = meta_premise (infer_instantiate ctxt [(("cs", 0), Thm.rhs_of read)] rule) read;
+    val distinct = Goal.prove_internal ctxt [] (Thm.cprem_of rule' 1)
+      (fn _ => simp_tac (distinct_numerals_ctxt ctxt) 1);
+  in Thm.implies_elim rule' distinct end;
+
 (*Define NAME_context and NAME_roots and note the exporter's obligations at the defined state:
-  NAME_declared_once, NAME_names_distinct, NAME_positions_closed and NAME_roots_closed.*)
+  NAME_declared_once, NAME_names_distinct, NAME_positions_closed, NAME_roots_closed and
+  NAME_roots_distinct.*)
 fun define_state binding context roots lthy =
   let
     val name = Binding.suffix_name "_context" binding;
@@ -707,10 +798,12 @@ fun define_state binding context roots lthy =
     val ((_, (_, roots_def)), lthy2) =
       Local_Theory.define ((roots_name, NoSyn), ((Thm.def_binding roots_name, []), roots)) lthy1;
     val roots_closed = roots_closure lthy2 (def', counted) roots_def;
+    val distinct_roots = roots_distinct lthy2 roots_def;
     fun note suffix th = Local_Theory.note ((Binding.suffix_name suffix binding, []), [th]) #> snd;
   in
     lthy2 |> note "_declared_once" once |> note "_names_distinct" distinct_names
       |> note "_positions_closed" positions |> note "_roots_closed" roots_closed
+      |> note "_roots_distinct" distinct_roots
   end;
 
 (*Define NAME_context, NAME_roots and the roots of each named group. Every group is read

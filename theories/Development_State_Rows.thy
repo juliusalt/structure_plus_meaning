@@ -208,6 +208,12 @@ definition state_positions :: "isabelle_rooted_context \<Rightarrow> nat set" wh
   "state_positions S=(\<Union>e\<in>set (snd (snd S)). set (isabelle_entity_positions e))
     \<union> (\<Union>t\<in>set (fst S). set (isabelle_term_positions t))"
 
+lemma state_positions_exported:
+  assumes entities: "\<forall>e\<in>set (snd C). set (isabelle_entity_positions e)\<subseteq>{..<length (fst C)}"
+    and roots: "\<forall>t\<in>set rs. set (isabelle_term_positions t)\<subseteq>{..<length (fst C)}"
+  shows "state_positions (rs,C)\<subseteq>{..<length (fst C)}"
+  using assms by (auto simp: state_positions_def)
+
 subsection \<open>Every constant a row cites is a position the value itself uses\<close>
 
 text \<open>
@@ -1095,6 +1101,39 @@ proof -
     using atoms rows roots positions state_presents_row_keys[OF present]
       state_presents_root_keys[OF present]
     by (simp add: state_presents_def)
+qed
+
+text \<open>
+  A presentation reads a state's entities as a set: a row depends on the entity list only through the
+  development constants it holds, and every condition of @{const state_presents} reads the list through
+  its members.
+\<close>
+
+lemma entity_row_entity_set:
+  assumes names: "fst C'=fst C" and entities: "set (snd C')=set (snd C)"
+  shows "entity_row key C'=entity_row key C"
+proof
+  fix e
+  have constants: "set (isabelle_development_constants (snd C'))=set (isabelle_development_constants (snd C))"
+    by (simp add: isabelle_development_constants_def List.map_filter_def entities)
+  have "isabelle_entity_subjects (fst C') (isabelle_development_constants (snd C')) e=
+      isabelle_entity_subjects (fst C) (isabelle_development_constants (snd C)) e"
+    by (cases e) (simp_all add: names constants)
+  then show "entity_row key C' e=entity_row key C e" by (simp add: entity_row_def names)
+qed
+
+lemma state_presents_entity_set:
+  assumes roots: "fst S'=fst S" and names: "fst (snd S')=fst (snd S)"
+    and entities: "set (snd (snd S'))=set (snd (snd S))"
+  shows "state_presents key S' R\<longleftrightarrow>state_presents key S R"
+proof -
+  have row: "entity_row key (snd S')=entity_row key (snd S)"
+    by (rule entity_row_entity_set) (simp_all add: names entities)
+  have root: "root_row key (snd S')=root_row key (snd S)"
+    by (rule ext) (simp add: root_row_def names)
+  show ?thesis
+    by (simp only: state_presents_def rows_present_def roots_present_def state_positions_def
+        row root roots names entities)
 qed
 
 end

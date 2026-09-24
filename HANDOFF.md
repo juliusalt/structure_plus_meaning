@@ -468,7 +468,8 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
 52. Term quotation depth (`pair_syntax` places a list's tail under 3: O(m²) positions): a design if #159 shows it.
 53. `finite_fresh_addresses` in one pass: optional.
 54. Task 124's entry names design 136's entry where it names the task, with that entry's next edit.
-55. The overnight boundary, historical at `aa946a22` (#172): a live recipe waits for a measured need.
+55. The overnight boundary, historical at `aa946a22` (#172): a live recipe waits for a measured need. Since #155 its
+    words are those of the unary layout and are not re-established (#155's review, follow-up 2).
 56. The certificate path's keyed cost on the verdict (240 s for the machinery's unreached, keyed): when the verdict is
     first admitted through certificates; the positioned labelled history is its prerequisite.
 57. Facts placed downstream of their notions: the reach membership facts into `Isabelle_Native_Reach`;
@@ -561,19 +562,30 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     `Factor_Indexed_Readings.reading_heads_indexed` (with its values and counted siblings): one notion, but an answer
     theory is named by its content's digest and is not edited; the copy goes when the walk's next refinement answer
     cites the library's instance, or the answer is superseded.
+96. **#294's review** (`.build/tasks/294/review.md`): (1) `Development_Exported_Edit`'s text names the merge sort where
+    the code of `sort_key` in effect is `HOL-Library.Multiset`'s quicksort: its two code equations stated through
+    `sort_key_by_mergesort`, and `Merge_Sort_Keys`' text corrected, with the next landing that changes those theories,
+    #194 reporting the sort's share; (2) the name table's first-position index stated once in `Isabelle_Name_Trees`, the
+    exported edit's embedding as `isabelle_state_embedding_by` over it, when that theory next changes; (3) the request
+    part of the per-answer `first_index_tree` built once per request state, if #194 shows its share.
+97. **A probe cannot load a renamed `RRA_Finite_Artifacts`** (#155's review, follow-up 5): its `export_code … checking
+    SML` raises `Protocol_Message invoke_scala make_directory`, so a change at or below `RRA_Exact` is probed only
+    through scratch copies of its dependents. The probe tool's, with item 78.
 
 ## Now
 
 - **plan-48 wrote no notes** (its window ended at 05:58 first): this file carried its state, and plan-49 found nothing
   missing that the work needed — #292's verdict was already given, #290's review reads its brief as rewritten (the
   harness reads a rewritten brief from then on), and #292's builds are placed.
-- **#289** was rejected after its merge round (main's rows verbatim dropped its row words and left `define_context`
-  named). `verdict` refuses a task that is with the planner, so plan-49 re-planned it: a second round brings main in and
-  folds the review's finding 1 as one-sided row edits, or hands over as it stands if `bring-main` still refuses; the fix
-  made after it (`continues` 289) takes the review's follow-ups 1–4 and 7 and folds the rows if the round could not.
-  Follow-up 5 is mailed to #284, 6 to #157, 8 is Q13's. Watch its landing: if the rows double again, Q13 bites.
-- **Under way**: #290's and #287's landings; #112, #192 and #289 parked for their checks;
-  #155, the word change (q75); #237; #294 and the shared-subterm builds #297 and #299 startable; #278 after #290.
+- **#289 and #287** were accepted and failed at the train of `2906d9c9` on `THEORY_MAP.md` rows main rewrote meanwhile
+  (Q13; #289's seven rows for the second time, #287's `Development_Request_Scope`). Re-planned (plan-50): each round runs
+  `bring-main` and, refused, sets those rows to main's lines verbatim at once; the row changes wait in `rows.md` —
+  #289's for #308 (review 289's follow-ups 1–4 and 7 with them; 5 is mailed to #284, 6 to #157, 8 is Q13's), #287's for
+  #285. Both queued first, so that they land before another landing rewrites those rows.
+- **Under way**: #157 re-records the answer records over the layout (landed with #290 and #294 as `2906d9c9`); #64
+  (its library from the refusal records only, the split source counted: q77, Q14) and #296; #112 and #192 parked for
+  their checks; #297 and #301 finishing; #159 next, while the lineage holds the base without the layout, then the
+  placed tables' fix after it (#155's review, follow-ups 4 and 6).
 - **A probe was refused at an estimate of 315 theories where the first probe of the same closure loaded 15** (#276's
   review): most likely a base that moved under the tree, a matter of the probe tool, for the owner with Open 78.
 - **`read_index_address` reads to the end of a run of 0 and 1 octets** (#147's review, follow-up 5): after #155 an

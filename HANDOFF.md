@@ -33,11 +33,11 @@ on, all accepted:
   part (d) in the verification request, a native sample at a use-renamed copy in criticism, no fifth socket, uses
   staying structure (Q26).
 
-**The first problem's route** (#380's, #382's and #409's proposals, each build with its review; #385, #387, #389 and
-#420 landed):
+**The first problem's route** (#380's, #382's and #409's proposals, each build with its review; #385, #387, #389, #420
+and #422 landed):
 
-- first: the use instance (#422, `Factor_Use_Renaming`, its imports below the reader theories #416 and #418 edit),
-  split to fit a build's room: #424 adds the package reading at a renamed root use, continuing it; the guard (#391),
+- first: the use instance's package reading at a renamed root use (#424, continuing #422's `Factor_Use_Renaming`,
+  whose imports stay below the reader theories #416 and #418 edit); the guard (#391),
   which generalizes #389's boundary where it lives, its list's context the pair of the given and the candidate, so that
   G4's audit reads the candidate's environment (q88);
 - then: the given's readers as one numbered program (#412, after #391: G3's readers key absence (20) with data
@@ -47,15 +47,18 @@ on, all accepted:
   #412 and N2b), the native request at a package (#410, after #422 and #416; the first request, its installation, is
   briefed later with the criticism build, Open 121);
 - then: the guard installed over the given's readers, the asked relation's entry with its equivariance clause (#393,
-  after #391, #414, #416, #418, #422), the given and the native state's first generation (#395, after #385, #414), the
+  after #391, #414, #416, #418, #422 and the fix deriving the readers' presentation from its parts'), the given and the native state's first generation (#395, after #385, #414), the
   posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
   frame (#405, after #422: parts (a)–(d) and (f)) and harness (#407).
 
 N2a (#340, landed: `package_program`) and N2b (#342) join and compile the development package (#320's entry, as #376
-corrects it), the given the first answers extend; the given's installation waits on N2b.
+corrects it), the given the first answers extend; the given's installation waits on N2b. The readers' presentation (#412) derives in about 132 s,
+reducing the whole complete-data lineage again (implement-412, q89): the fix after #412, continuing it, derives it from
+its parts', and at its landing #393's brief gains that derivation, so that the guard's extension reduces only what it
+adds.
 
-**Beside the route**: the bootstrap loop's maintenance — the answer harness's shared runs (#369), the rows line's tidy
+**Beside the route**: the bootstrap loop's maintenance — the rows line's tidy
 after #354 (#429), the replay of the retained answers after #369 (#430); and #426, #341's, #388's and #375's follow-ups
 over the joined program's, the audit's and the collection programs' generic content (after #342 and #418). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
 N3b, N4a and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93)
@@ -73,14 +76,13 @@ exporter's obligations at every state it defines (#227–#308, #352).
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The deepest chain is 10, at the limit: #422 → #424 → #416 → #418 → #393 →
-#397 → #399 → #401 → #407 → #408, and nothing is appended at its end. Through the given it is 9 (#391 → #412 → #414 →
-#393 → …), from the native package one shorter (#342 → #414).
+**Shape.** No build waits on a review task. The deepest chains are 9: #424 → #416 → #418 → #393 → #397 → #399 → #401 →
+#407 → #408, and through the given #391 → #412 → #414 → #393 → …; from the native package one shorter (#342 → #414).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #422, #424 and #391 at its head, then #412,
+exists, Q2): the owner's directions first — the first problem's route, #424 and #391 at its head, then #412 and the fix deriving its presentation from its parts,
 #342, #414, #416, #418, #410, #405 and the rest in their chains' order, #425 before the posing it serves; then #429,
-#426, #369 and #430; each review after its build.
+#426 and #430; each review after its build.
 
 ## Decisions
 
@@ -240,6 +242,11 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   generation executes in 0.385 s plain, 0.011 s with `Native_Execution_Refinements`; the second quotation costs
   nothing and no part grows with the payload's size (`.build/tasks/425/attribution.md`). Its fix is the working rule
   "Evaluations"; #397 decides the owner records' evaluations with it.
+- **Landed with `1184c090`**: #422, `Factor_Use_Renaming`, the use instance (the actions on environments, uses, sites,
+  site contexts and program entries as `renaming_action` theorems a client interprets with; the definition readers at
+  a renamed use through `native_syntax_copy`; uses compared as data); its review's follow-ups
+  (`.build/tasks/423/review.md`) 2, 3 and 5 are in #424 (the use-pair action stated there, beside the data clauses,
+  and cited by #418), 4 in #405, 1 Open 132.
 - **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
   development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
@@ -260,7 +267,9 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   constructs it.
 - **The answer harness**: #313 (`e9bbe02b`) the framed answers' parts read in one session, #323 (`ec46e355`) the judged
   answers in one shared proof session, #314 (`d47ce451`) the records re-recorded on #167's base, #319 (`9d84c95f`) the
-  re-record in the harnesses' one form; their follow-ups are #369 (with #319's per-answer seconds) and Open 122.
+  re-record in the harnesses' one form; their follow-ups #369 (`e2f2bf4d`: one export and one verdict-and-publication
+  run over the shared proof, a failing member proved alone, the request theory per subject, the shared session
+  recorded; its review's follow-up 1 mailed to #430, 2–5 Open 133, 6 and 7 Open 134) and Open 122.
 - **#167** (`04c20f87`): every report switched to its problems' rows in context and the problem datum's tags retired;
   its review's follow-ups 1–5 are #354.
 
@@ -416,12 +425,27 @@ follow-up 1). 129 `Factor_Package_Additions`' element and entry meanings consumi
 `development_answer_verdict`, and the admitted publication again (#354's review, follow-up 3): counted by #430, shared
 at a measured need (bootstrap). 131 #375's review (`.build/tasks/375/review.md`, follow-ups 1–3, 5): its two new double
 blank lines; each `*_listing` restating its `*_rules` definition's patterns, stated once; task 374's entry's "six
-families" naming seven; `verdict_entry_family` and `malformed_witness_family` as listed instances at a consumer.
+families" naming seven; `verdict_entry_family` and `malformed_witness_family` as listed instances at a consumer. 132
+`Factor_Use_Renaming.map_citation_positions_id` beside `RRA_Structural_Syntax.map_citation_positions`, at the next
+build that edits `RRA_Structural_Syntax` (#423's review, follow-up 1). 133 #369's review (`.build/tasks/369/review.md`, follow-ups 2–5),
+the replay path's costs at a re-record's measured need (bootstrap): a failed shared session reusing its accepted
+members' proofs (what an accepted proof context is, `proved_code`); `failed-proof` started beside the shared proof
+session; the two shared sessions' load of the frames' theories attributed; `present` through the parallel runtime,
+measured at the machinery's state. 134 #369's review, follow-ups 6 and 7: `prove_answers` resolving its `output`
+itself; a re-record's `steps` naming `presentation` and `export`.
 
 ## Now
 
 - **Mailed, read by each task's first session**: #313's re-review's first follow-up and #319's per-answer seconds to
-  #369.
+  #369, and #369's review's follow-up 1 (the replay timed within the hold) to #430; #412's rewritten brief to #412, which started before the rewrite and continues after #391 lands (`v2.py after
+  412 391`); q88's answer (the boundary generalized to the pair, no relocation, key absence, evaluability) to #391.
+- **q90** (implement-412, parked on it until #391 lands, no park kind waiting on a task): left unanswered, so that it
+  does not wake with nothing to do; when #391 lands, answer it — "#391 has landed; bring main in and take the boundary
+  readers in their new shape" — unless `v2.py after 412 391` has already woken it.
+- **#342's reach certificate** (its review's finding 3; implement-342's report and q91): the demanded traversal's
+  fset steps do not evaluate under code_simp within the probe bound (request construction over 40 s); told to evaluate
+  its keyed refinement (`Keyed_Demanded_Sites.keyed_demanded_sites_exact`) instead of its own walk. If that too misses
+  the bound, a fix task states a list code equation of `finite_demanded_sites` beside its notion and retires the walk.
 - **Classifier stops**: a classifier stopped plan-51 to plan-54, plan-56 and plan-58 to plan-62 before their notes, and
   #323's fixer once; each next planner took up what HANDOFF.md held, and nothing was missing. Repeated declines are the
   run's to handle, not ledger questions (the owner, through the monitoring session, 20:23 and 20:28).

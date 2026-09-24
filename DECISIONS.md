@@ -9650,7 +9650,8 @@ proves the four obligations for its key.
 
 **Open.** The second notion, an argument ordered so that comparison meets what differs first, is
 stated here only as far as the store-search question needs; it is at its second use and is the next
-candidate to factor. The four code equations named as neither instances nor notions
+candidate to factor. [Decided by "A structural comparison computes a prefix key's order; which component it meets
+first is its view's" below: it is not a second notion; the component order is a parameter of one.] The four code equations named as neither instances nor notions
 (`Factor_Formation_Once_Readings`, `Factor_Invariant_Evaluation_Sharing`, `RRA_Inserted_Attachments`,
 `RRA_Linked_Record_Candidates`) each restate one argument across their uses and have no statement;
 whether each becomes a notion is a decision of its own. Nothing here is a criterion for *taking* a
@@ -12077,6 +12078,12 @@ words are the accepted ones: requirement_plans and requirement_sources (predicte
 compiled position after all), and every recipe predicted unchanged, native_child included. overnight is not a
 recipe of the landing check and was not re-recorded here.
 
+*Correction (task 159, 2026-09-24; task 156's review of task 155, follow-up 7):* the check that found these 38 words
+was the check of the work, `20260924-065346-batch155`, which the landing check repeated, not the landing check itself.
+The stages whose words did not change hold no compiled position: of native_development_machinery the problems, the
+verification and the native answers (only presentation-loop changed), and of native_development_seed the problems, the
+verification, the succession and the native answers (only presentation-loop and presentation-publication changed).
+
 ### The builds, in order
 
 1. **The contracts first (words equal).** The index code and its facts in RRA_Exact with the import change; the flat
@@ -12095,6 +12102,19 @@ recipe of the landing check and was not re-recorded here.
    bits, source ms, µs per key bit. The growth is removed when mean key bits grow by a bounded amount per doubling of
    n (about 3 bits, the next digit of the child's code) where they grew by about 2n before, and source ms per clause
    grows as log n.
+
+   *Addition (task 159, 2026-09-24): measured*, in `.build/tasks/address-layout-measure/measurement.md` (the runner
+   beside it), on `.build/bases/20260924-075148-train299` (the last base without build 2, commit `54f659eb`) and
+   `.build/bases/20260924-075451-train290-155-294` (the first with it, commit `2906d9c9`), in two exclusive holds, the
+   first having bounded the old base's run inside far keyed 64. The criterion is met: mean key bits grow +2.6 to +3.2
+   per doubling of n after (far keyed 24.4 → 41.9 bits for n = 1 → 64) against about 2n before (25.5 → 156.7, +65.4 at
+   the last doubling); source ms per clause 0.54 → 1.31 after (about +0.1 per doubling up to n = 32, log n) against
+   0.55 → 3.94 before; at n = 64 the source is 252 → 84 ms (far keyed) and 44 → 14 ms (far index). The root family's
+   own artifact is constant; its reading grows with the definitions it cites and with the environment's formation,
+   and the layout removes its superlinearity with theirs (49.3 → 19.0 ms at far keyed 64). Left after the layout, for
+   the planner: the question's construction stays about quadratic (×3.4–4.2 per doubling, 116 ms at far keyed 64),
+   the executable placed forest is quadratic and slower than the right-nested union it replaced (66 against 39 ms at
+   64 bodies), the environment's formation is superlinear, and the reader's cost per key bit rises 0.31 → 0.43 µs.
 
 The builds follow task 30's landing; build 1 changes no word and can land whenever it is ready after it. Build 2
 lands after build 1 and before #90 and #92, as the planner's order already places #136, so that their reviews judge
@@ -13366,3 +13386,197 @@ growth of the judgment's demand with the state is the right-first call key walki
 every comparison of `verdict_found_search`'s calls, `(k, Pair S (Pair key S))`; a digest-first composite key
 was measured slower than the comparisons it saves (29.5 s against 1.5 s at the seeded judgment), so that part
 stays open.
+
+## A structural comparison computes a prefix key's order; which component it meets first is its view's
+
+Task 310, a design. The review of B1 (#297, `.build/tasks/298/review.md`, follow-up 3) found the argument of a
+prefix-key order made a third time: `shared_term_key_prefix` and `compare_shared_terms_keys` in `Shared_Term_Tables`,
+beside `finite_term_key_prefix` (`Ordered_Finite_Terms`) and `finite_term_compare_keys` (`Ordered_Term_Comparison`).
+B1's brief forbade changes to existing theories, so it could not cite what it repeated. REASONING_REUSE.md kept a row,
+"An argument ordered so that comparison meets what differs first", which "A refinement applies a notion; an index is
+one" (its store-search section and its Open) named a second notion beside the index, at its second use and "the next
+candidate to factor". This entry decides what the uses repeat before B4 (#303) and B5 (#305) key their calls by B1's
+order, so that the next order a task needs cites a statement instead of making a fifth copy.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| "An argument ordered so that comparison meets what differs first" is a second notion beside the index, applied twice (`native_call_key`, and the store search's arrangement, not taken), with no statement of its own. | There is one argument, and it is not that one. What the uses repeat is *a structural comparison that computes the order of a prefix key without building the key*. Which component a comparison meets first is a parameter of that notion — the order in which its *view* lists a node's components — so the right-first order is the notion at another view, not a second argument. "Told apart no differently" is the index's own law: its contract holds for every key that distinguishes (`Carrier_Indexes`). "Only sooner" is an observation. Nothing is left for a second notion to state. |
+| Each term type proves by its own structural induction that its key is prefix-free and that its comparison computes the key's order: `finite_term_key_prefix` and `finite_term_compare_keys` for executable terms, `shared_term_key_prefix` and `compare_shared_terms_keys` for shared terms. | Both are stated once, in a theory `Prefix_Key_Comparisons`, over any view with a prefix key. Each term type interprets it and proves only one-level equations of its view, by cases, with no induction. |
+| The right-first order is the order of mirrored terms, reached through an induction showing the mirror commutes with the comparison (`finite_term_compare_right_mirror`) and routed through the left-first code equations. | The right-first order is the notion at the view that lists a pair's components right first (the reverse of the plain view's children), whose prefix key is the mirrored key `finite_term_key (mirror_term t)`. `finite_term_compare_right_mirror` becomes a consequence of the two instances' orders. A right-first order over another term type is the same notion at that type's reversed view, and needs no mirror to be stated. |
+
+### The notion
+
+A **view** of a type presents each value as a *node*: a **head**, an atom, and a list of **children**, in the order
+the view meets them. A **prefix key** of the view lists a node's head followed by the keys of its children in that
+order. Its premises are the view's, one level deep, and its conclusion is that the key is prefix-free:
+
+```
+locale prefix_key =
+  fixes head :: "'a ⇒ 'h" and children :: "'a ⇒ 'a list" and key :: "'a ⇒ 'h list"
+  assumes key_node: "key t = head t # concat (map key (children t))"
+    and head_arity: "head t = head u ⟹ length (children t) = length (children u)"
+    and node_determined: "head t = head u ⟹ children t = children u ⟹ t = u"
+begin
+lemma key_nonempty: "key t ≠ []"
+theorem key_prefix: "key t @ xs = key u @ ys ⟹ t = u ∧ xs = ys"
+corollary key_injective: "key t = key u ⟷ t = u"
+end
+```
+
+A **structural comparison** of the view compares the heads under their linear order and, where they are equal, the
+children in the view's order. Its one premise is that equation, one level deep; its conclusions are that it returns
+the order of the complete keys without building them, and is decided within the first differing child:
+
+```
+locale prefix_key_comparison = prefix_key head children key
+  for head :: "'a ⇒ 'h::linorder" and children :: "'a ⇒ 'a list" and key :: "'a ⇒ 'h list" +
+  fixes compare :: "'a ⇒ 'a ⇒ linear_comparison"
+  assumes compare_node: "compare t u = (case compare_linear (head t) (head u) of
+      Linear_Equal ⇒ compare_listed compare (children t) (children u) | c ⇒ c)"
+begin
+theorem compare_keys: "compare_linear (key t @ xs) (key u @ ys) =
+    (case compare t u of Linear_Equal ⇒ compare_linear xs ys | c ⇒ c)"
+corollary compare_order: "compare t u = compare_linear (key t) (key u)"
+corollary compare_equal: "compare t u = Linear_Equal ⟷ t = u"
+corollary key_less_eq: "key t ≤ key u ⟷ compare t u ≠ Linear_Greater"
+corollary key_less: "key t < key u ⟷ compare t u = Linear_Less"
+end
+```
+
+`compare_keys` is the argument itself: two keys continued by anything compare as their terms do, and only where the
+terms are equal do the continuations matter — so the comparison reads nothing past the first differing child, and a
+pair's comparison composes from its children's. The other conclusions are its corollaries at empty continuations: the
+comparison is the key order, decides equality, and gives the code equations of any order defined through the key.
+
+A leaf is a node with no children, and a view may have any arity: a pair is a node of two children, a listing a node
+of one, the kernel's type application (`Isabelle_Type_Application`) a node of as many as its arguments; binary terms
+are the case of arity two, at no cost to the statement. A head's order may itself be an instance's: a shared leaf's
+head carries an executable term, ordered by the plain instance. The key is a parameter with its one-level equation,
+not a function the locale defines, so the theorems are about each use's own key (`finite_term_key`,
+`shared_term_key`), as `Carrier_Indexes` takes its `build` and `search`. The notion states the order for every view
+and fixes none: which component a comparison meets first is the order of the view's children, chosen by the use —
+"a convention of the programs that build them, not a property of terms" ("Calls are keyed where they differ"). It
+claims nothing of cost: how many steps a comparison takes before the first difference, for the terms a program builds,
+is an observation of that use.
+
+### One argument, not two
+
+The row's sentence has three parts, and none of them is a second argument.
+
+- *Told apart no differently.* Under any key that distinguishes, an index's operations return the original values:
+  `Carrier_Indexes.carrier_index` is parametric in its key, `Member_Tree_Indexes.keyed_set_index` holds for every key
+  with a left inverse, and `keyed_demanded_sites_exact` for every such key. Two orders of one term type therefore give
+  one result. That is stated; nothing is to be added.
+- *Only sooner.* `compare_keys` states where a comparison stops. How much sooner one view stops than another, for the
+  calls an evaluation builds, is what "Calls are keyed where they differ" measured (0.072, 0.82 and 3.85 seconds at 16,
+  32 and 48 problems against 0.19, 2.85 and 14.6): an observation.
+- *Which component — a convention of the programs that build the terms.* That is the order of the view's children, a
+  parameter each use supplies. Stated as an argument of its own it could only restate the view.
+
+So the uses make one argument, the prefix-key comparison, and the right-first order is its instance at the view that
+meets a pair's right component first. The row is corrected to that argument.
+
+### Its home
+
+`Prefix_Key_Comparisons`, a theory of its own importing `Linear_Comparisons` alone and declared in ROOT after it, as
+`Carrier_Indexes` is the index notion's. It stands beside `Linear_Comparisons` and not in it: that theory's subject is
+the three-outcome comparison of linearly ordered values and its composition through listings and pairs, which the
+notion consumes — its premise is stated with `compare_linear` and `compare_listed`, its proofs are made of
+`compare_linear_prefix`, `compare_linear_ends`, `compare_linear_cases` and `compare_linear_order` — while the notion
+has a subject of its own, a view and its prefix key. A theory of its own also lands without changing an existing one.
+It is below every use: `Ordered_Finite_Terms` imports it (build P2 adds the import), `Shared_Term_Tables` imports it
+(build P1), and every other use stands above one of them.
+
+### The uses: what each cites and what it retires
+
+Every statement and every fact name stays; only proofs change. The additions are the theory, one children function per
+view, the instance lemmas and interpretations, and the imports.
+
+| Use | Its view | Cites | Retires | Stays as it is |
+|---|---|---|---|---|
+| `Ordered_Finite_Terms` | head `λt. hd (finite_term_key t)`; children `finite_term_children` (new: `[t,u]` for `Finite_Pair t u`, `[]` for a payload or a target); key `finite_term_key`; interpretation `finite_term_keys: prefix_key` | `finite_term_keys.key_nonempty`, `.key_prefix`, `.key_injective`, as the proofs of `finite_term_key_nonempty`, `finite_term_key_prefix`, `finite_term_key_injective` | the induction of `finite_term_key_prefix` | `finite_term_key`, `ordered_factor_term` and its linear-order instance (whose proof reads `finite_term_key_injective`), the export check |
+| `Ordered_Term_Comparison` | the plain view with `finite_term_compare`; interpretation `finite_term_comparison: prefix_key_comparison`, its `compare_node` proved by cases on both terms through `compare_linear_pair`, `compare_linear_option`, `compare_linear_ordered_artifact`, `compare_address_linear` and `compare_natural_linear` | `.compare_keys` for `finite_term_compare_keys`; `.compare_order` for `finite_term_compare_order`; `.key_less_eq`, `.key_less` and `.compare_equal` for `less_eq_ordered_factor_term_structural_code`, `less_ordered_factor_term_structural_code` and `equal_ordered_factor_term_structural_code` | the induction of `finite_term_compare_keys` | `finite_term_tag`, `finite_term_compare`, `compare_linear_option`, `compare_linear_ordered_artifact`, `finite_term_key_tag`, `finite_term_compare_distinct_tags` (proved as they are; the last two are no longer needed by the re-cited proofs) |
+| `Right_Ordered_Terms` | head as the plain view's; children `λt. rev (finite_term_children t)`; key `λt. finite_term_key (mirror_term t)`; compare `finite_term_compare_right`; interpretation `finite_term_right_comparison` | `.compare_order` with the plain `finite_term_compare_order` at mirrored terms, for `finite_term_compare_right_mirror`; `.key_less_eq`, `.key_less` and `.compare_equal` for the three `*_right_ordered_term_code` equations | the induction of `finite_term_compare_right_mirror`, and the routing of the code equations through the plain ones | `mirror_term` and its laws, `right_order_key` (the order's definition), `right_order_key_injective`, the instance, `finite_term_tag_mirror`, the text that states the convention |
+| `Shared_Term_Tables` (B1) | head `shared_head`; children `shared_children` (new: `[a,b]` for `Shared_Pair a b`, `[]` for a reference or a leaf); key `shared_term_key`; compare `compare_shared_terms`; interpretation `shared_term_comparison` | `.key_prefix`, `.key_injective`, `.compare_keys` for `shared_term_key_prefix`, `shared_term_key_injective`, `compare_shared_terms_keys`; `compare_shared_terms_linear` keeps its statement, its proof through `compare_shared_terms_keys` or `.compare_order` | the inductions of `shared_term_key_prefix` and `compare_shared_terms_keys` | `shared_head`, `shared_term_key`, the instance, `compare_shared_terms` and its code equations, `compare_shared_references`, `shared_reference_less`, `shared_call_demanded_sites` |
+| `Linear_Comparisons` | none: it is the notion's vocabulary | nothing | nothing | all of it |
+| `Keyed_Native_Evaluation` (`native_call_key`) | none: it chooses the right-first view for the calls of an evaluation, an index key built from an instance's order | nothing | nothing | all of it |
+
+### What stays case-specific, and what is not an instance
+
+- *Each view's head and children.* They are the convention, stated by the use that chooses it; `Right_Ordered_Terms`'
+  text ("Every collection notion of the native programs passes its context as the left component") keeps stating why
+  native calls take the right-first view.
+- *Each type's linear-order instance.* HOL's class instantiation takes one proof per type, and each is one standard
+  line reading the key's injectivity, which the notion supplies. A class-level lemma for an order through an injective
+  key would replace one line by another for `ordered_factor_term`, `right_ordered_term`, `shared_term`,
+  `ordered_complete_artifact` and `compared_artifact_rows`; not taken.
+- *The one-level obligations*, by cases on the constructors of each view, and B1's `compare_shared_references` (a
+  reference compared as a number is `compare_node` at two reference heads) and `shared_call_demanded_sites` (an
+  instance of the index notion).
+- *Not instances.* `compare_artifacts`, `compare_artifact_rows` and `compare_compared_rows` (`Ordered_Artifact_Comparison`)
+  compose through `compare_listed` and `compare_paired`, `Linear_Comparisons`' own laws (`compare_listed_linear`,
+  `compare_paired_linear`). `Keyed_Value_References.rbt_compared_lookup_exact` searches a tree by any comparison exact
+  on the key order; an instance's `compare_order` is what supplies its premise. Keys chosen for cost — the sizes-first
+  `compared_rows_key`, the digest-first composite B1's design measured and rejected — are keys that distinguish, the
+  index notion's freedom, not orders of a view.
+
+### What was weighed and not taken
+
+- *A binary view* (a leaf, or a pair of two terms). The three term types are binary, but listings and the kernel's
+  type applications are nodes of other arities, `compare_listed` already composes a listing, and the list of children
+  costs the statement nothing and each use one `[t,u]`.
+- *The notion inside `Linear_Comparisons`*: its home above says why beside it.
+- *A key defined by the locale from head and children*: each use would then prove its existing key equal to the
+  locale's; the key as a parameter makes the theorems speak of the uses' own keys.
+- *A second notion for the component order*, or *a theorem deriving a reversed view from a view through a mirror*:
+  the first has nothing to state; the second needs a key for the reversed view, which is the use's to supply (the
+  mirror is plain terms' own), and costs more than the reversed view's one-level equations.
+- *Retiring `finite_term_key_tag`, `finite_term_compare_distinct_tags` and `finite_term_tag_mirror`*, which the
+  re-cited proofs no longer need: a statement removed is a statement changed. They stay.
+
+### The builds, in order
+
+- **P1, the notion with its first instance (one window, at once).** `Prefix_Key_Comparisons` with the two locales and
+  their theorems, declared in ROOT after `Linear_Comparisons`, with its THEORY_MAP row; the shared view in
+  `Shared_Term_Tables` as the table says, with its row; REASONING_REUSE.md's row then cites the checked facts. The
+  notion lands with the instance that checks its shape, and the shared view is the smallest (three constructors, in a
+  theory few others stand on). Its check rebuilds `Shared_Term_Tables` and what stands on it, every word equal.
+- **P2, the plain and right-first views (one window, after P1).** `Ordered_Finite_Terms` (its import of the notion,
+  `finite_term_children`, the key instance), `Ordered_Term_Comparison` and `Right_Ordered_Terms`, as the table says,
+  with their rows. Its check rebuilds everything above `Ordered_Finite_Terms` and executes the recipes it reaches, every
+  word equal; the planner places it where a large rebuild is batched.
+
+Neither precedes B4 or B5. B4 keys the closure's calls by `(site, shared term)` under B1's order, the identity its left
+inverse (`shared_call_demanded_sites`), and B5 keys positions by the same key; both cite statements P1 keeps, and both
+change only new theories and `Positioned_Native_Evaluation`'s imports, which neither P1 nor P2 touches. P1 may land
+before, between or after them, and a landing between is carried by their checks with every statement kept. The rule
+for them and for every later task: an order over a view of terms that a task needs and the library does not state —
+a right-first order over shared calls, an order over a composite of calls — is an instance of `Prefix_Key_Comparisons`,
+its view and its one-level equations, and the task waits on P1 if P1 has not landed. M0 (#296) changes nothing under
+`theories/`, so P2's change to `Right_Ordered_Terms`, which M0 studies, does not meet it; and since P1 and P2 change no
+executed code, no count M0, #278 or B6 measures moves.
+
+### What the builds must respect
+
+- Every statement and fact name kept; no code equation's statement changes; the children functions and the
+  interpretations enter no export, so every word is equal by construction. A word that moves is a finding for the
+  planner, not a re-recording.
+- The locales fix no component order, and no instance's text claims that its order is a property of terms.
+- The notion's inductions run over the length of the key (`measure_induct_rule` at `λt. length (key t)`): `key_node`
+  makes each child's key shorter than its node's. The induction hypothesis is instantiated at each child explicitly,
+  through a lemma over the lists of children (`concat (map key cs) @ xs`, with `head_arity` supplying equal lengths),
+  and is never handed to the simplifier as a conditional rewrite: an induction closed that way did not return in 413
+  seconds against this heap ("proof-search-over-quantified-facts"). An instance's `compare_node` is proved by cases on
+  both arguments, the leaves through the comparison laws named in the table and the pairs through
+  `linear_comparison.split`.
+
+### Evidence and limits
+
+A reading of the five theories and of how their facts are used: the copies are the inductions named in the table, and
+a search of `theories/` for further prefix-key arguments found none (the other `*_keys` lemmas are key domains of
+tables; `compared_rows_key` is a composite key under `compare_paired`). This entry changes no theory. The locales'
+shape is argued, not checked: P1 proves it at the shared view before P2 re-cites the plain and right-first views, and a
+premise that fails at an instance is P1's finding for this entry, never a reason to change a use's statement. No cost
+is claimed or measured. This entry was written outside the loop and is a residual.
+
+Recorded 2026-09-24 (task 310).

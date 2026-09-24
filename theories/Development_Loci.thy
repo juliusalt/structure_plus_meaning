@@ -159,19 +159,6 @@ theorem development_locus_shared_tail:
   "drop 3 (development_locus key r k c)=drop 3 (development_locus key s k c)"
   by (cases r; cases s; simp_all add: development_locus_def)
 
-section \<open>The term of a contract\<close>
-
-text \<open>
-  A contract is its kind and its term: the kind is the prefix of the locus, and the term is what the row
-  carries inert.
-\<close>
-
-fun development_contract_term :: "development_contract \<Rightarrow> isabelle_term" where
-  "development_contract_term (Development_Refinement t)=t"
-| "development_contract_term (Development_Proof t)=t"
-| "development_contract_term (Development_Presentation t)=t"
-| "development_contract_term (Development_Definition t)=t"
-| "development_contract_term (Development_Amendment t)=t"
 
 section \<open>The locus of a problem, where its subject is exactly one constant\<close>
 

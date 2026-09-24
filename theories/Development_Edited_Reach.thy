@@ -158,16 +158,17 @@ definition target_row_rule :: "'u definition_site \<Rightarrow>
 section \<open>The admission program\<close>
 
 text \<open>
-  The program holds \<open>excess\<close>'s program at its own sites 55–57, at the store checker, so \<open>O\<close>'s closure is
-  \<open>excess\<close>'s reading at \<open>O\<close>'s store and \<open>O\<close>'s keys, and the targets reading beside it.
+  The program holds the mentions program, so \<open>O\<close>'s closure is \<open>excess\<close>'s reading at \<open>O\<close>'s keys, the
+  list, at \<open>excess\<close>'s own sites, and the targets reading beside it, which reads \<open>O\<close> as the same list: a
+  mention is in \<open>O\<close> through the list checker's test, and a row mentions a key through its membership, held
+  once at @{text verdict_row_member}.
 \<close>
 
 abbreviation removal_key_call :: "local_address option definition_site" where
   "removal_key_call \<equiv> (Some [],[40])"
 abbreviation removal_closure :: "local_address option definition_site" where
   "removal_closure \<equiv> (Some [],[41])"
-abbreviation removal_member :: "local_address option definition_site" where
-  "removal_member \<equiv> (Some [],[42])"
+
 abbreviation removal_row_mentions :: "local_address option definition_site" where
   "removal_row_mentions \<equiv> (Some [],[43])"
 abbreviation removal_fibre_some :: "local_address option definition_site" where
@@ -192,30 +193,21 @@ abbreviation removal_target_family :: "local_address option definition_site" whe
   "removal_target_family \<equiv> (Some [],[53])"
 abbreviation removal_targets :: "local_address option definition_site" where
   "removal_targets \<equiv> (Some [],[54])"
-abbreviation removal_excess_search :: "local_address option definition_site" where
-  "removal_excess_search \<equiv> (Some [],[55])"
-abbreviation removal_excess_call :: "local_address option definition_site" where
-  "removal_excess_call \<equiv> (Some [],[56])"
-abbreviation removal_excess :: "local_address option definition_site" where
-  "removal_excess \<equiv> (Some [],[57])"
+
 
 definition edited_reach_definitions :: "(local_address option definition_site\<times>
     (local_address\<times>(local_address,local_address,local_address option definition_site) finite_factor_schema) list) list" where
   "edited_reach_definitions=verdict_mentions_definitions@[
-    (removal_excess_search,native_store_search_rules removal_excess_search verdict_found_family),
-    (removal_excess_call,[([0],subject_call_rule removal_excess_search)]),
-    (removal_excess,native_every_rules removal_excess removal_excess_call),
-    (removal_key_call,[([0],native_rotate_rule removal_excess)]),
+    (removal_key_call,[([0],native_rotate_rule verdict_excess)]),
     (removal_closure,native_every_rules removal_closure removal_key_call),
-    (removal_member,native_member_rules removal_member),
-    (removal_row_mentions,[([0],row_mentions_rule removal_member)]),
+    (removal_row_mentions,[([0],row_mentions_rule verdict_row_member)]),
     (removal_fibre_some,native_some_rules removal_fibre_some removal_row_mentions),
     (removal_search,native_store_search_rules removal_search removal_fibre_some),
     (removal_index_call,[([0],subject_call_rule removal_search)]),
     (removal_families_some,native_some_rules removal_families_some removal_index_call),
     (removal_subject_call,[([0],native_rotate_rule removal_families_some)]),
     (removal_subjects,native_every_rules removal_subjects removal_subject_call),
-    (removal_mention,mention_kept_rules verdict_key_found removal_subjects),
+    (removal_mention,mention_kept_rules verdict_key_cited removal_subjects),
     (removal_mentions,native_every_rules removal_mentions removal_mention),
     (removal_target_row,[([0],target_row_rule removal_mentions)]),
     (removal_target_family,native_every_rules removal_target_family removal_target_row),
@@ -246,23 +238,23 @@ lemmas edited_reach_rule_defs = edited_reach_definitions_def verdict_mentions_ru
   native_some_first_def native_some_rest_def native_rotate_rule_def mention_kept_rules_def
   mention_found_rule_def mention_kept_rule_def target_row_rule_def
 
-lemma removal_excess_program:
-  assumes identity: "\<And>y. term_formed (ident y)"
-  shows "excess_program edited_reach_system removal_excess removal_excess_call removal_excess_search
-    verdict_found_family verdict_row_found ident support_term"
-proof -
-  interpret found: store_mentions_program edited_reach_system verdict_row_found verdict_keys_found
-      verdict_key_found verdict_found_search verdict_found_any
-    unfolding store_mentions_program_def row_mentions_program_def store_found_program_def
-      native_store_search_program_def native_every_program_def
-    by (intro conjI; rule edited_reach_family) (simp_all add: edited_reach_rule_defs)
-  show ?thesis
-    unfolding excess_program_def excess_program_axioms_def native_store_search_program_def native_every_program_def
-    by (intro conjI allI; (rule edited_reach_family | rule identity | rule support_term_formed |
-        rule found.support_exact[OF identity])?) (simp_all add: edited_reach_rule_defs)
-qed
+lemma edited_reach_distinct: "distinct (map fst edited_reach_definitions)"
+  by code_simp
 
-interpretation removal_key_calls: native_rotate_program edited_reach_system removal_key_call removal_excess
+text \<open>
+  The sites of the mentions program keep their meanings in the admission program: the join law of rule
+  programs (@{thm finite_rule_program_join}), consumed once.
+\<close>
+
+lemma edited_reach_mentions_field:
+  assumes site: "d\<in>fst ` set verdict_mentions_definitions"
+  shows "(d,t)\<in>positive_meaning edited_reach_system \<longleftrightarrow> (d,t)\<in>positive_meaning verdict_mentions_system"
+  unfolding edited_reach_system_def finite_edited_reach_def verdict_mentions_system_def finite_verdict_mentions_def
+  by (rule finite_rule_program_join[OF edited_reach_formed[unfolded edited_reach_system_def
+    finite_edited_reach_def] edited_reach_distinct verdict_mentions_formed[unfolded verdict_mentions_system_def
+    finite_verdict_mentions_def]]) (use site in \<open>auto simp: edited_reach_definitions_def\<close>)
+
+interpretation removal_key_calls: native_rotate_program edited_reach_system removal_key_call verdict_excess
   unfolding native_rotate_program_def by (rule edited_reach_family) (simp_all add: edited_reach_rule_defs)
 
 interpretation removal_closures: native_every_program edited_reach_system removal_closure removal_key_call
@@ -287,20 +279,22 @@ text \<open>
 
 theorem native_closure_exact:
   assumes identity: "\<And>y. term_formed (ident y)"
-  shows "(removal_closure,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident L Fs)) (keys_term L))
+  shows "(removal_closure,Pair_Term (Pair_Term (keys_term L) (subject_indexes_term ident L Fs)) (keys_term L))
       \<in>positive_meaning edited_reach_system \<longleftrightarrow>
     (\<forall>a\<in>set L. \<forall>F\<in>set Fs. \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow> set (row_mentions (snd z))\<subseteq>set L)"
 proof -
-  have "(removal_closure,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident L Fs)) (keys_term L))
-      \<in>positive_meaning edited_reach_system \<longleftrightarrow>
-    (\<forall>a\<in>set L. (removal_excess,Pair_Term (Pair_Term (path_term a) (support_term L)) (subject_indexes_term ident L Fs))
-      \<in>positive_meaning edited_reach_system)"
-    by (subst keys_term_def[of L])
-      (simp add: removal_closures.exact removal_key_calls.exact key_indexes_term_formed[OF identity])
+  have site: "verdict_excess\<in>fst ` set verdict_mentions_definitions"
+    by (simp add: verdict_mentions_definitions_def)
+  have "(removal_closure,Pair_Term (Pair_Term (keys_term L) (subject_indexes_term ident L Fs))
+      (data_list_term (map path_term L)))\<in>positive_meaning edited_reach_system \<longleftrightarrow>
+    (\<forall>a\<in>set L. (verdict_excess,Pair_Term (Pair_Term (path_term a) (keys_term L)) (subject_indexes_term ident L Fs))
+      \<in>positive_meaning verdict_mentions_system)"
+    by (simp add: removal_closures.exact removal_key_calls.exact key_indexes_term_formed[OF identity]
+      keys_term_formed edited_reach_mentions_field[OF site])
   also have "\<dots> \<longleftrightarrow> (\<forall>a\<in>set L. \<forall>F\<in>set Fs. \<forall>z\<in>set F. a\<in>set (row_subjects (snd z)) \<longrightarrow>
       set (row_mentions (snd z))\<subseteq>set L)"
-    by (simp add: excess_program.exact[OF removal_excess_program[OF identity]])
-  finally show ?thesis .
+    by (simp add: native_excess_rows[OF identity])
+  finally show ?thesis by (simp only: keys_term_def[of L])
 qed
 
 section \<open>\<open>O\<close>'s targets\<close>
@@ -319,7 +313,8 @@ definition edited_target :: "state_key list \<Rightarrow> state_key list \<Right
 text \<open>
   The targets reading is a notion of its own: a locale whose parameters are its sites, composed of the
   collection notions it reads, so a program holding it at other sites consumes its \<open>exact\<close> and
-  proves nothing of it again. \<open>edited_reach_system\<close> holds it at sites 42\<dash>54 (\<open>removal_targets_program\<close>).
+  proves nothing of it again. \<open>edited_reach_system\<close> holds it at sites 43\<dash>54, with the list checker's
+  test at 19 and its membership at 11 (\<open>removal_targets_program\<close>).
 \<close>
 
 locale edited_targets_program =
@@ -329,7 +324,7 @@ locale edited_targets_program =
       "Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2)" sr
       "Finite_Pattern_Pair (native_var 1) (Finite_Pattern_Pair (native_var 0) (native_var 2))" +
     families: native_some_program P fa ic + subject_calls: native_rotate_program P sc fa +
-    subject_lists: native_every_program P su sc + founds: store_found_program P kf ks ka +
+    subject_lists: native_every_program P su sc + founds: list_cited_program P kf m +
     kept: mention_kept_program P mo kf su + mention_lists: native_every_program P ml mo +
     target_rows: native_rearranging_program P tr
       "row_pattern (Finite_Pattern_Pair (native_var 0) (native_var 1)) (native_var 2) (native_var 3) (native_var 4)
@@ -337,7 +332,7 @@ locale edited_targets_program =
       "Finite_Pattern_Pair (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 4)))
         (native_var 5)" +
     target_families: native_every_program P tf tr + target_selections: native_every_program P ts tf
-  for P :: "'u native_system" and ts tf tr ml mo kf ks ka su sc fa ic sr fs rw m :: "'u definition_site" +
+  for P :: "'u native_system" and ts tf tr ml mo kf su sc fa ic sr fs rw m :: "'u definition_site" +
   fixes ident :: "'i \<Rightarrow> factor_term"
   assumes identity: "\<And>y. term_formed (ident y)"
 begin
@@ -383,23 +378,20 @@ lemma subjects_exact:
       families_exact key_indexes_term_formed[OF identity])
 
 lemma mention_exact:
-  "(mo,Pair_Term (Pair_Term (support_term L) (Pair_Term (key_indexes_term row_subjects ident A Fs)
+  "(mo,Pair_Term (Pair_Term (keys_term L) (Pair_Term (key_indexes_term row_subjects ident A Fs)
       (keys_term ss))) (path_term c))\<in>positive_meaning P \<longleftrightarrow>
     c\<in>set L \<or> (\<forall>s\<in>set ss. s\<in>set A \<and>
       (\<exists>F\<in>set Fs. \<exists>z\<in>set F. s\<in>set (row_subjects (snd z)) \<and> c\<in>set (row_mentions (snd z))))"
 proof -
-  have valued: "\<And>y. term_formed (path_term y)" by simp
-  have found: "(kf,Pair_Term (support_term L) (path_term c))\<in>positive_meaning P \<longleftrightarrow>
-      c\<in>set L"
-    unfolding support_term_def
-    by (simp add: founds.exact[OF valued] support_store_lookup support_store_found)
+  have found: "(kf,Pair_Term (keys_term L) (path_term c))\<in>positive_meaning P \<longleftrightarrow> c\<in>set L"
+    by (rule founds.exact)
   show ?thesis
-    by (simp add: kept.exact[OF support_term_formed key_indexes_term_formed[OF identity]
+    by (simp add: kept.exact[OF keys_term_formed key_indexes_term_formed[OF identity]
         keys_term_formed] found subjects_exact)
 qed
 
 lemma mentions_exact:
-  "(ml,Pair_Term (Pair_Term (support_term L) (Pair_Term (key_indexes_term row_subjects ident A Fs)
+  "(ml,Pair_Term (Pair_Term (keys_term L) (Pair_Term (key_indexes_term row_subjects ident A Fs)
       (keys_term ss))) (keys_term ms))\<in>positive_meaning P \<longleftrightarrow>
     (\<forall>c\<in>set ms. c\<in>set L \<or> (\<forall>s\<in>set ss. s\<in>set A \<and>
       (\<exists>F\<in>set Fs. \<exists>z\<in>set F. s\<in>set (row_subjects (snd z)) \<and> c\<in>set (row_mentions (snd z)))))"
@@ -415,7 +407,7 @@ lemma target_row_exact:
   by (simp add: row_pattern_def state_row_term_def identity insert_Diff_if)
 
 theorem exact:
-  "(ts,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident A Fs)) (state_families_term ident Ds))
+  "(ts,Pair_Term (Pair_Term (keys_term L) (subject_indexes_term ident A Fs)) (state_families_term ident Ds))
       \<in>positive_meaning P \<longleftrightarrow> (\<forall>D\<in>set Ds. \<forall>z\<in>set D. edited_target L A Fs z)"
   by (simp add: state_families_term_def state_family_term_def target_selections.exact
       target_families.exact target_row_exact mentions_exact edited_target_def
@@ -426,19 +418,19 @@ end
 lemma removal_targets_program:
   assumes identity: "\<And>y. term_formed (ident y)"
   shows "edited_targets_program edited_reach_system removal_targets removal_target_family removal_target_row
-    removal_mentions removal_mention verdict_key_found verdict_found_search verdict_found_any removal_subjects
+    removal_mentions removal_mention verdict_key_cited removal_subjects
     removal_subject_call removal_families_some removal_index_call removal_search removal_fibre_some
-    removal_row_mentions removal_member ident"
+    removal_row_mentions verdict_row_member ident"
   unfolding edited_targets_program_def edited_targets_program_axioms_def row_mentioned_program_def row_mentions_program_def
     native_member_program_def native_some_program_def native_store_search_program_def
     native_rearranging_program_def native_rearranging_program_axioms_def native_rotate_program_def
-    native_every_program_def store_found_program_def mention_kept_program_def
+    native_every_program_def list_cited_program_def native_swap_program_def mention_kept_program_def
   by (intro conjI allI; (rule edited_reach_family | rule identity)?)
     (simp_all add: edited_reach_rule_defs row_pattern_def)
 
 theorem native_targets_exact:
   assumes identity: "\<And>y. term_formed (ident y)"
-  shows "(removal_targets,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident A Fs))
+  shows "(removal_targets,Pair_Term (Pair_Term (keys_term L) (subject_indexes_term ident A Fs))
       (state_families_term ident Ds))\<in>positive_meaning edited_reach_system \<longleftrightarrow>
     (\<forall>D\<in>set Ds. \<forall>z\<in>set D. edited_target L A Fs z)"
   by (rule edited_targets_program.exact[OF removal_targets_program[OF identity]])
@@ -789,9 +781,9 @@ text \<open>The same judgment with \<open>O\<close> admitted natively: both read
 
 corollary edited_unreached_admitted:
   assumes closed: "isabelle_unreached_entities (fst S) (snd S)=[]"
-    and closure: "(removal_closure,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident L (state_all_families R)))
+    and closure: "(removal_closure,Pair_Term (Pair_Term (keys_term L) (subject_indexes_term ident L (state_all_families R)))
       (keys_term L))\<in>positive_meaning edited_reach_system"
-    and targets: "(removal_targets,Pair_Term (Pair_Term (support_term L)
+    and targets: "(removal_targets,Pair_Term (Pair_Term (keys_term L)
       (subject_indexes_term ident A (state_all_families (edited_state R e))))
       (state_families_term ident (map (edit_removed e) entity_kinds)))\<in>positive_meaning edited_reach_system"
     and seeds: "set K\<subseteq>set (state_reach_seeds R)"
@@ -818,9 +810,9 @@ text \<open>The same over any sound and complete checked families.\<close>
 corollary edited_unreached_rows_admitted:
   fixes C :: "isabelle_context state_family list"
   assumes closed: "isabelle_unreached_entities (fst S) (snd S)=[]"
-    and closure: "(removal_closure,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident L (state_all_families R)))
+    and closure: "(removal_closure,Pair_Term (Pair_Term (keys_term L) (subject_indexes_term ident L (state_all_families R)))
       (keys_term L))\<in>positive_meaning edited_reach_system"
-    and targets: "(removal_targets,Pair_Term (Pair_Term (support_term L)
+    and targets: "(removal_targets,Pair_Term (Pair_Term (keys_term L)
       (subject_indexes_term ident A (state_all_families (edited_state R e))))
       (state_families_term ident (map (edit_removed e) entity_kinds)))\<in>positive_meaning edited_reach_system"
     and seeds: "set K\<subseteq>set (state_reach_seeds R)"

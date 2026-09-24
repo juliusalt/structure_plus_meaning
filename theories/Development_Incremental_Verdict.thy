@@ -183,9 +183,9 @@ definition walk_admitted :: "(isabelle_context \<Rightarrow> factor_term) \<Righ
     factor_term \<Rightarrow> (state_key \<Rightarrow> state_key list) \<Rightarrow> state_key list \<Rightarrow> (state_key \<Rightarrow> bool) \<Rightarrow>
     state_key list \<Rightarrow> state_key list \<Rightarrow> state_key list \<Rightarrow> isabelle_context state_family list \<Rightarrow> bool" where
   "walk_admitted ident C e I P K atom L V Tg X \<longleftrightarrow>
-    (removal_closure,Pair_Term (Pair_Term (support_term L) C) (keys_term L))
+    (removal_closure,Pair_Term (Pair_Term (keys_term L) C) (keys_term L))
       \<in>positive_meaning edited_reach_system \<and>
-    (removal_targets,Pair_Term (Pair_Term (support_term L) I)
+    (removal_targets,Pair_Term (Pair_Term (keys_term L) I)
       (state_families_term ident (map (edit_removed e) entity_kinds)))\<in>positive_meaning edited_reach_system \<and>
     (\<forall>k\<in>set V. atom k \<longrightarrow> \<not>(k\<in>set K \<and> k\<notin>set L) \<longrightarrow> set (P k)\<subseteq>set V) \<and>
     (\<forall>G\<in>set X. \<forall>z\<in>set G. set (row_declared (snd z))\<union>set (row_subjects (snd z))\<subseteq>set V)"
@@ -953,9 +953,9 @@ lemma incremental_unreached:
       \<in>positive_meaning native_verdict_system"
 proof -
   let ?Fs'="state_all_families (edited_state R e)"
-  have closure: "(removal_closure,Pair_Term (Pair_Term (support_term L)
+  have closure: "(removal_closure,Pair_Term (Pair_Term (keys_term L)
       (subject_indexes_term ident L (state_all_families R))) (keys_term L))\<in>positive_meaning edited_reach_system"
-    and targets: "(removal_targets,Pair_Term (Pair_Term (support_term L) (subject_indexes_term ident Tg ?Fs'))
+    and targets: "(removal_targets,Pair_Term (Pair_Term (keys_term L) (subject_indexes_term ident Tg ?Fs'))
       (state_families_term ident (map (edit_removed e) entity_kinds)))\<in>positive_meaning edited_reach_system"
     and visit: "\<forall>k\<in>set V. k\<in>set (map fst (state_atoms (edited_state R e))) \<longrightarrow>
       \<not>(k\<in>set (state_reach_seeds R) \<and> k\<notin>set L) \<longrightarrow> set (state_reach_predecessors ?Fs' k)\<subseteq>set V"

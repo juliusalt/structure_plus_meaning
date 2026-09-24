@@ -374,6 +374,11 @@ What each line has left, and where (the commits are in `PLANNING_LOG.md` and git
 - **#159** (investigation): the layout's criterion met (`.build/tasks/address-layout-measure/measurement.md`: key bits
   per doubling +2.6–3.2 against about 2n before, source ms per clause about log n against linear); the growth it
   leaves to #309 and Open 99.
+- **#289** (`adf0dbc9`, its third merge round): the exporter proves distinct names and closed positions of every state
+  it defines, the successor's answer-state premises discharged by them, the contract term beside the contract, the
+  appended embedding's argument once; its rows main's, its row changes in its `rows.md` for #308.
+- **#157** (`adf0dbc9`): the sixteen answer records replayed on the layout's base, six re-recorded; its review's replay
+  costs to the replay tool's fix, its note on the words' two causes to #309.
 
 ## Open
 
@@ -598,19 +603,20 @@ Not yet planned, in the order they are expected to be planned (numbers kept from
     question over hundreds of candidates is on the loop's path, `finite_citation_locations_formed` (environment
     formation at each member of the family, #159's candidate) timed alone first. The reader's cost per key bit rises from 0.31 to
     0.43 µs across #159's sizes (the index's depth, most likely): recorded.
+100. **A native record replayed in a task tree** whose theories change the state's closure is unproduced by
+    construction (`export_proved_code` refuses; #157's review): replays run after landing (#143); a proof context
+    holding the tree's theories (a `--keep-heap` check's proof as `--base`) would let a word-changing task replay
+    before it lands. A tools task at a measured need.
 
 ## Now
 
 - **plan-48 wrote no notes** (its window ended at 05:58 first): this file carried its state, and plan-49 found nothing
   missing that the work needed — #292's verdict was already given, #290's review reads its brief as rewritten (the
   harness reads a rewritten brief from then on), and #292's builds are placed.
-- **#289** was accepted and failed at the train of `2906d9c9` on seven `THEORY_MAP.md` rows main rewrote meanwhile,
-  the second time (Q13); #287 failed so on `Development_Request_Scope`'s row and landed in its merge round
-  (`e40ffd91`), its row addition in `.build/tasks/287/rows.md` for #285 (mailed). #289's round (plan-50) runs
-  `bring-main` and, refused, sets the seven rows to main's lines verbatim at once; its row changes wait in `rows.md` for
-  #308 (review 289's follow-ups 1–4 and 7 with them; 5 is mailed to #284, 6 to #157, 8 is Q13's). It is queued first,
-  so that it lands before another landing rewrites those rows.
-- **Under way**: #157 re-records the answer records over the layout (landed with #290 and #294 as `2906d9c9`); #64
+- **#308** follows #289's landing: it folds #289's row changes (`.build/tasks/289/rows.md`) into main's seven rows and
+  takes what the exporter still owes (`state_presentable`'s third condition, the successor's request premises, the new
+  facts' cost). A change to `Isabelle_Entity_Export` rebuilt 1,666 of 1,843 theories (#289's batch, 1,060 s).
+- **Under way**: #64
   (its library from the refusal records only, the split source counted: q77, Q14), #296 (M0; q78: the reopen test reads
   the equal walks of the closure and the renaming together) and #278 (the machinery judgment held as a bound, more than
   106.6 s: every phase that grows is a call-key sort or lookup, which B4 and B5 remove, B5 with the evaluation's rule

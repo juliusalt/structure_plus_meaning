@@ -4,6 +4,50 @@ begin
 
 section \<open>A finite checked bound characterizes the existing least closure\<close>
 
+text \<open>
+  A closed bound over the roots — a set containing them whose members are definitions with every callee
+  in it — contains the least closure of the roots; and the sites of a formed package are such a bound.
+\<close>
+
+lemma native_closed_bound_contains_sites:
+  assumes roots: "roots\<subseteq>U"
+    and defined: "\<forall>d\<in>U. \<exists>p C. native_definition_at E (fst d) (snd d) p C \<and>
+      (\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S\<subseteq>U)"
+  shows "native_definition_sites E roots\<subseteq>U"
+proof -
+  have closed: "e\<in>U" if member: "d\<in>U" and edge: "(d,e)\<in>native_definition_edges E" for d e
+  proof -
+    obtain p C where raw: "native_definition_at E (fst d) (snd d) p C"
+      "\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S\<subseteq>U" using defined member by blast
+    obtain q D c S where dependency: "native_definition_at E (fst d) (snd d) q D"
+      "(c,S)\<in>D" "e\<in>schema_dependencies S"
+      using edge by (auto simp: native_definition_edges_def)
+    have same: "C=D" using native_definition_unique[OF raw(1) dependency(1)] by blast
+    show ?thesis using raw(2) dependency(2,3) same by blast
+  qed
+  show ?thesis by (rule native_definition_sites_least[OF roots closed])
+qed
+
+lemma native_package_sites_closed_bound:
+  assumes package: "native_package_formed E roots"
+  shows "\<forall>d\<in>native_definition_sites E roots. \<exists>p C. native_definition_at E (fst d) (snd d) p C \<and>
+    (\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S\<subseteq>native_definition_sites E roots)"
+proof (intro ballI)
+  let ?U="native_definition_sites E roots"
+  fix d assume member: "d\<in>?U"
+  obtain p C where raw: "native_definition_at E (fst d) (snd d) p C"
+    using package member by (auto simp: native_package_formed_def)
+  have closed: "schema_dependencies S\<subseteq>?U" if clause: "(c,S)\<in>C" for c S
+  proof
+    fix e assume dependency: "e\<in>schema_dependencies S"
+    have edge: "(d,e)\<in>native_definition_edges E"
+      using raw clause dependency by (auto simp: native_definition_edges_def)
+    show "e\<in>?U" by (rule native_definition_step[OF member edge])
+  qed
+  show "\<exists>p C. native_definition_at E (fst d) (snd d) p C \<and>
+    (\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S\<subseteq>?U)" using raw closed by blast
+qed
+
 theorem native_package_finite_closed_bound:
   "native_package_formed E roots \<longleftrightarrow> environment_formed E \<and>
     (\<exists>U. finite U \<and> roots\<subseteq>U \<and>
@@ -16,20 +60,7 @@ proof
   have finite: "finite ?U" by (rule native_package_sites(2)[OF package])
   have defined: "\<forall>d\<in>?U. \<exists>p C. native_definition_at E (fst d) (snd d) p C \<and>
     (\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S\<subseteq>?U)"
-  proof (intro ballI)
-    fix d assume member: "d\<in>?U"
-    obtain p C where raw: "native_definition_at E (fst d) (snd d) p C"
-      using package member by (auto simp: native_package_formed_def)
-    have closed: "schema_dependencies S\<subseteq>?U" if clause: "(c,S)\<in>C" for c S
-    proof
-      fix e assume dependency: "e\<in>schema_dependencies S"
-      have edge: "(d,e)\<in>native_definition_edges E"
-        using raw clause dependency by (auto simp: native_definition_edges_def)
-      show "e\<in>?U" by (rule native_definition_step[OF member edge])
-    qed
-    show "\<exists>p C. native_definition_at E (fst d) (snd d) p C \<and>
-      (\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S\<subseteq>?U)" using raw closed by blast
-  qed
+    by (rule native_package_sites_closed_bound[OF package])
   show "environment_formed E \<and> (\<exists>U. finite U \<and> roots\<subseteq>U \<and>
     (\<forall>d\<in>U. \<exists>p C. native_definition_at E (fst d) (snd d) p C \<and>
       (\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S\<subseteq>U)))"
@@ -41,17 +72,7 @@ next
   then obtain U where ef: "environment_formed E" and roots: "roots\<subseteq>U"
     and defined: "\<forall>d\<in>U. \<exists>p C. native_definition_at E (fst d) (snd d) p C \<and>
       (\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S\<subseteq>U)" by blast
-  have closed: "e\<in>U" if member: "d\<in>U" and edge: "(d,e)\<in>native_definition_edges E" for d e
-  proof -
-    obtain p C where raw: "native_definition_at E (fst d) (snd d) p C"
-      "\<forall>c S. (c,S)\<in>C \<longrightarrow> schema_dependencies S\<subseteq>U" using defined member by blast
-    obtain q D c S where dependency: "native_definition_at E (fst d) (snd d) q D"
-      "(c,S)\<in>D" "e\<in>schema_dependencies S"
-      using edge by (auto simp: native_definition_edges_def)
-    have same: "C=D" using native_definition_unique[OF raw(1) dependency(1)] by blast
-    show ?thesis using raw(2) dependency(2,3) same by blast
-  qed
-  have reached: "native_definition_sites E roots\<subseteq>U" by (rule native_definition_sites_least[OF roots closed])
+  have reached: "native_definition_sites E roots\<subseteq>U" by (rule native_closed_bound_contains_sites[OF roots defined])
   show "native_package_formed E roots" using ef defined reached by (force simp: native_package_formed_def)
 qed
 

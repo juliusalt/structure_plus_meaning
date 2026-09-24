@@ -154,6 +154,31 @@ and earlier the same day (2026-09-24 16:19, to the planner):
 
 > The answer to Q7: the order is right. HOL-constant problems stay only until native problem definitions exist.
 
+On the first problem and on authority, the owner answered owner question Q2 of the
+ledger on 2026-09-24. Q2, asked on 2026-09-18, noted that the ten seeded refinement
+problems come from the measured paused candidates of
+[native_mechanism_speedup.md](native_mechanism_speedup.md#native-computation), a list
+generated outside the process, and that selection among ready problems used readiness
+alone, and asked: "do you authorize those candidates as first-loop problems, and a cost
+criterion for selection?" Extended on 2026-09-20, it added three criteria of the same
+family that decomposition raises: which decomposition applies when several do, when a
+decomposition is demanded rather than merely applicable, and whether a derived
+subproblem inherits its parent's authority. The answer (2026-09-24 17:18, from the
+console):
+
+> None of the three. Instead, the problem to solve intially through the loop should be
+> "how to choose the next problem to solve". This is a very difficult multi-faceted
+> problem that is usually answered by arbitrarily chosen heuristics. I think working
+> on this problem will be a good test for the developed theory - will it be robust
+> enough to expose and work on the structure that determines the answer to this
+> problem. Until the native statement and answer to this problem is developed you can
+> use readiness and your choice as the working basis with the accompanying residual.
+> The authority question needs itself become a native problem with native answer that
+> is approved by me and that answer will determine whether the derivation of
+> subproblems is approved by me and then whether the derived subproblems are approved
+> by me. In the meantime you should make a choice which carries a residual. Every
+> choice you make should be alligned with my intent and be adequate and coherent.
+
 ## The development process
 
 There is one process, and every problem goes through it:
@@ -644,16 +669,25 @@ those the owner stated or authorized.
 
 ### Stage 2 — The first problem through the uniform process, in depth
 
-Select the first problem from the seeded ones under policy, among the measured paused
-refinements in [native_mechanism_speedup.md](native_mechanism_speedup.md#native-computation):
+The first problem through the loop is the owner's, fixed in answering owner question
+Q2 on 2026-09-24 ([Owner directions](#owner-directions)): how to choose the next
+problem to solve. None of the measured paused refinements in
+[native_mechanism_speedup.md](native_mechanism_speedup.md#native-computation) —
 formation carried through history states, an artifact index built once per data walk,
-or replay values compared without nested row keys. That candidate list was
-generated: it has owner authority only if the owner authorizes it, and is otherwise a
-residual in the first loop's basis. Decompose the selected problem through the
-library into narrow leaves (for example one exact equation per constant and one lemma
-per premise), construct each leaf request with its issued support and least closed
-context, derive the schedule of independent leaves, execute, verify, compose and
-admit.
+or replay values compared without nested row keys — is authorized as the first
+problem; that generated list stays a recorded residual of the HOL-constant loop, which
+the owner's answer to Q7 bounds. The first problem's native statement and its answer
+are developed through the loop: it is posed natively, decomposed through the library
+into narrow leaves, each leaf request constructed with its issued support and least
+closed context, the schedule of independent leaves derived, and the leaves executed,
+verified, composed into its answer and admitted. Until that answer is admitted,
+selection rests on readiness and
+the planner's choice, each choice carrying its residual. The authority question is a
+native problem of its own, whose native answer the owner approves: that answer
+determines whether the derivation of subproblems is approved by the owner and then
+whether the derived subproblems are, and until it is approved each authority decision
+is a choice carrying its residual. How the two problems are posed natively is a design
+of its own ([The direction of the work](#the-direction-of-the-work-2026-09-24)).
 
 **Gate:** selection, decomposition, scheduling and request construction are admitted
 generations, and every choice still generated outside the process is a recorded
@@ -670,7 +704,11 @@ support, fail in Isabelle or change report words are refused. The heapless check
 uses the established proof and execution boundaries. The whole problem tree replays
 from retained problems, requests, external answers and verification. Subsequent real
 development consumes the adopted result, with the total observed cost retained for
-condition 5a.
+condition 5a. Until the first problem's native answer is admitted, every selection
+records the readiness and the planner's choice it rests on, with its residual; until
+the owner approves the native answer to the authority problem, whether a derivation of
+subproblems and the derived subproblems are owner-approved is a choice carrying its
+residual.
 
 Additional test cases that the loop's actual problems do not exercise may remain
 open problems with their contracts: exhausted bounds and unsupported cycles,
@@ -881,7 +919,8 @@ theory change; which sessions form the fixed base (a list of the exporter's) and
 a native account; distinct names and closed positions of an exported table, which the exporter is to prove where it
 defines a state as it proves each constant declared once — until then an exported answer table repeating a name the
 request table holds is refused by the exported verdict while the successor's reading drops the repetition, so the
-successor's admission can exceed the verdict; the first loop's policy beyond readiness (owner question Q2).
+successor's admission can exceed the verdict; the first loop's policy beyond readiness, which the owner's answer to Q2
+makes the loop's first problem (stage 2).
 
 **Stage 2.** Selection is the native evaluation of native readiness, a native definition whose keys are paths and
 whose tables are path stores, and a question's candidates are keyed by what they are ("The contract question states
@@ -898,6 +937,14 @@ a judgment its run did not produce ("A replay's unproduced judgment is neither a
 One real answer, the indexed data walk, was adopted through a host tool and is consumed where recorded causes are read
 back; an adoption is established by its evidence, and the published state is never judged against itself ("An
 adoption is established by its evidence; the published state is never judged against itself").
+
+The first problem through the loop is fixed by the owner's answer to Q2: how to choose the next problem to solve, none
+of the three paused refinement candidates being authorized as it. Neither it nor the authority problem is posed
+natively yet; posing them is a design of its own. Until the first problem's native answer is admitted, selection rests
+on readiness and the planner's choice, each choice carrying its residual; until the owner approves the native answer to
+the authority problem, whether a derivation of subproblems and the derived subproblems are owner-approved is a choice
+carrying its residual. The one adopted answer, the indexed data walk, answered one of the three candidates, chosen
+outside the process: it stays a recorded residual of the HOL-constant loop.
 
 The loop's notions are becoming native definitions over structural rows, in the order of owner question Q7:
 
@@ -957,7 +1004,10 @@ its contracts hold with every word equal, and the change of words remains. Open:
   publication still consume the Isabelle-judged verdict; a refinement of many constants sharing new helpers cannot
   pass the answer frame, which states one equation;
 - a selected residual cannot be answered before stage 4 encodes the requirements it must meet; a selection criterion
-  beyond readiness, and which decomposition applies when several do, are policy (owner question Q2);
+  beyond readiness is the first problem's answer, still to be developed (owner question Q2); which decomposition
+  applies when several do, when one is demanded (the split source, owner question Q14) and whether a derived
+  subproblem inherits its parent's authority stay the provisional choices DECISIONS.md records, now interim choices
+  carrying residuals, the last until the owner approves the native answer to the authority problem;
 - real development consumed through the loop at acceptable observed cost (condition 5a). One judgment is affordable
   and a stage is not: five of the verdict's fields cost 7.33 s for one judgment at the machinery's state, so a
   verification stage of 224 answer states is of the order of 2,000 s natively against 22.4 s for the HOL stage. The
@@ -1020,6 +1070,35 @@ can be published, a landing that changes a notion's HOL program derives the pack
 re-installation recorded as a residual, as Q18 (c) provisionally chooses. Q18 stays open; on this reading its (c) and
 (d) agree with the owner's answer.
 
+The owner's answer to owner question Q2 (2026-09-24 17:18), quoted under [Owner directions](#owner-directions), fixes
+the loop's first problem: how to choose the next problem to solve, a problem the owner calls very difficult and
+multi-faceted, usually answered by arbitrarily chosen heuristics, and makes a test of whether the developed theory can
+expose and work on the structure that determines its answer. None of the three measured paused refinements is
+authorized as the first problem; they stay recorded residuals of the HOL-constant loop, which the answer to Q7 bounds.
+The problem's native statement and answer are developed through the loop, and until they are, readiness and the
+planner's choice are the working basis of selection, each choice carrying its residual. The authority question is
+itself a native problem, whose native answer the owner approves; that answer determines whether the derivation of
+subproblems is approved by the owner and then whether the derived subproblems are, and meanwhile each authority
+decision is a choice carrying its residual. Every such choice is to be aligned with the owner's intent, adequate and
+coherent. How the two problems are posed natively — their subjects, contracts and loci, how the two relate, and where
+they enter the order the owner confirmed in answering Q7 — is a design of its own, not decided here.
+
+This paragraph is the plan's reading of that answer, generated and without owner authority. "None of the three" is
+read as the three candidates Q2 asked the owner to authorize, since the answer goes on "Instead, the problem to solve
+intially through the loop should be …"; no cost criterion is authorized either, a selection criterion beyond
+readiness being what the first problem's answer is to supply. The three criteria of Q2's extension and the split
+criterion of owner question Q14 stay the provisional choices DECISIONS.md records — no choice among several applicable
+decompositions, no threshold beyond the schema's material premises, no inherited authority, the split source left
+empty — now interim choices carrying residuals; the third belongs to the authority problem. Whether the first two
+belong to the structure that determines the first problem's answer is for that problem's development to expose, the
+test the owner names, and the plan does not presume it. The first problem is posed by the owner, its origin an owner
+direction; its native statement encodes that direction and is generated until the owner authorizes it, as the plan's
+requirement-encoding request class has it. Until its answer is admitted, the first problem's own subproblems are
+chosen on the interim basis too. Once adopted, the answer is consumed by every later choice of a problem, which is what
+stage 2's gate asks of subsequent real development; a consumed decision that rested on the interim basis then has a
+changed reading and becomes a re-evaluation problem, as [Adequacy](#adequacy-as-a-current-basis) requires, rather than
+being revised at once.
+
 The six tasks of the first direction, as they stand:
 
 1. **Audit and its criterion.** Done: a program's payload literals are exactly the octets it reads as structure ("A
@@ -1041,5 +1120,6 @@ The six tasks of the first direction, as they stand:
    reading the inverse of the presentation.
 
 Each tagged presentation still in use stays exact and replaceable and is recorded as a use of octets as structure
-until it is retired. The order and the bound on the HOL loop are the owner's (Q7, 2026-09-24); the rest of this
-section, its reading of when native definitions exist included, was written outside the loop and is a residual.
+until it is retired. The order and the bound on the HOL loop are the owner's (Q7, 2026-09-24), and so are the first
+problem and the standing of the authority question (Q2, 2026-09-24); the rest of this section, its readings of when
+native definitions exist and of the answer to Q2 included, was written outside the loop and is a residual.

@@ -52,8 +52,8 @@ N2a (#340) and N2b (#342) join and compile the development package (#320's entry
 first answers extend; the given's installation waits on N2b.
 
 **Beside the route**: the bootstrap loop's maintenance — the rows line's presenters proved in their domains (#354), the
-answer harness's shared runs (#369), the listed-family law at the collection programs (#379) and its re-citations in
-the development theories (#375) — and #384, #365's follow-ups over #356's seed round, which has landed (B4a #365, B4b
+answer harness's shared runs (#369), the listed-family law's re-citations in the development theories and the reach
+(#375; #379 landed) — and #384, #365's follow-ups over #356's seed round, which has landed (B4a #365, B4b
 #367). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
 N3b, N4a and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93)
 and the machinery's verification stage judged natively (#193, #194).
@@ -76,8 +76,8 @@ from the notion (#420 → #422 → #416 or #418 → #393).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #420 and #422 at its head, then #412, #342,
-#391, #414, #416, #418, #410, #405 and the rest in their chains' order; the tasks in their checks (#340, #379, #354),
-so that they land; then #384, #375 and #369; each review after its build.
+#391, #414, #416, #418, #410, #405 and the rest in their chains' order; the tasks in their checks (#340, #354), so
+that they land; then #384, #375 and #369; each review after its build.
 
 ## Decisions
 
@@ -211,7 +211,9 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
 - **#374** (`1db8e167`): the rule family's law over a listed family of triples (`native_listed_law`), the applied rule
   returned as its triple, `step_rule` without a set difference; DECISIONS.md "A listed family returns the rule it
-  applied". Its review's follow-ups 1–5 at the law's own theories are #379, 2 and 6 in the development theories #375.
+  applied". Its review's follow-ups 1–5 at the law's own theories are #379 (`66b4f05c`: the collection programs' own
+  families through the listed law, `supported_triple`, `read_triple`, `rule_triple`; its review's follow-ups 1–4 to
+  #375, 5 the next-edit list), 2 and 6 in the development theories #375.
 - **#288** (`93cae3bb`): what the verdict's fields and their witnesses both prove stated once; its review's follow-ups
   1–2 to #375, 3–5 Open 118. **#353** (`09cea44c`): the per-answer function's last shared and edit-sized reads; its
   review's follow-ups Open 120.
@@ -361,7 +363,8 @@ renamed). 117 #361's review (`finite_singleton_option_image`, the identity map's
 (key-injectivity re-cited, `answer_statements_entities` moved). 120 #353's review (the incremental assessment's
 remaining scans; bootstrap). 122 #319's review (the framed records' one-line form at their next re-record; the two
 demanded answers' failure unattributed). 124 the word constant's equation exported as a checked contract,
-read by the runner, once a second report takes a word constant (#368's follow-up 4).
+read by the runner, once a second report takes a word constant (#368's follow-up 4). 125
+`Native_Path_Stores.native_store_search_program.sound`'s inner induction re-indented (#379's review, follow-up 5).
 
 ## Now
 

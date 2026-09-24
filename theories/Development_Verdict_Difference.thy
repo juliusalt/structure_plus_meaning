@@ -832,14 +832,6 @@ text \<open>
   @{thm isabelle_local_root_compared} at each position.
 \<close>
 
-lemma keys_term_eq_iff: "keys_term ks=keys_term ks' \<longleftrightarrow> ks=ks'"
-proof (induction ks arbitrary: ks')
-  case Nil
-  show ?case by (cases ks') (simp_all add: keys_term_def)
-next
-  case (Cons k ks)
-  show ?case by (cases ks') (simp_all add: keys_term_def path_term_injective Cons.IH[unfolded keys_term_def])
-qed
 
 theorem root_keys_exact:
   assumes present: "state_presents key S R" and present': "state_presents key' S' R'"

@@ -1119,6 +1119,39 @@ proof -
   qed
 qed
 
+section \<open>A list of paths\<close>
+
+text \<open>
+  A list of paths is the data list of the paths: one notion, which the keys a row cites, the families a
+  request's body holds and every list of keys a native definition reads present alike.
+\<close>
+
+definition keys_term :: "bool list list \<Rightarrow> factor_term" where
+  "keys_term ks=data_list_term (map path_term ks)"
+
+lemma keys_term_formed [simp]: "term_formed (keys_term ks)"
+  by (simp add: keys_term_def data_list_term_formed)
+
+lemma keys_term_pair [simp]:
+  "keys_term ks=Pair_Term a b \<longleftrightarrow> (\<exists>k ks'. ks=k#ks' \<and> a=path_term k \<and> b=keys_term ks')"
+  "Pair_Term a b=keys_term ks \<longleftrightarrow> (\<exists>k ks'. ks=k#ks' \<and> a=path_term k \<and> b=keys_term ks')"
+  by (cases ks; auto simp: keys_term_def)+
+
+lemma keys_term_Cons: "keys_term (k#ks)=Pair_Term (path_term k) (keys_term ks)"
+  by (simp add: keys_term_def)
+
+lemma keys_term_eq_iff: "keys_term ks=keys_term ks' \<longleftrightarrow> ks=ks'"
+proof (induction ks arbitrary: ks')
+  case Nil
+  show ?case by (cases ks') (simp_all add: keys_term_def)
+next
+  case (Cons k ks)
+  show ?case by (cases ks') (simp_all add: keys_term_def path_term_injective Cons.IH[unfolded keys_term_def])
+qed
+
+lemma keys_term_inj: "inj keys_term"
+  by (rule injI) (simp only: keys_term_eq_iff)
+
 text \<open>
   A store presented through a value map reads only the values it holds, so the search's contract needs
   those values formed and no other: the contract above, through any formed map agreeing with the
@@ -1145,6 +1178,17 @@ proof -
     using agree by fastforce
   finally show ?thesis .
 qed
+
+text \<open>
+  At a key where the store holds a value, the search holds exactly when the check holds of that value.
+\<close>
+
+theorem held_at:
+  assumes held: "\<And>bs y. store_lookup S bs=Some y \<Longrightarrow> term_formed (val y)"
+    and stored: "store_lookup S bs=Some v"
+  shows "(k,Pair_Term x (Pair_Term (path_term bs) (store_term val S)))\<in>positive_meaning P \<longleftrightarrow>
+    (ch,Pair_Term x (val v))\<in>positive_meaning P"
+  using stored by (auto simp: exact_held[OF held] path_term_injective dest: positive_meaning_term_formed)
 
 end
 

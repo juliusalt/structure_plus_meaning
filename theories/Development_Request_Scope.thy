@@ -191,8 +191,8 @@ begin
 sublocale rearranged: native_rearranging_program P r
     "row_pattern (native_var 0) (native_var 1) (native_var 2) (native_var 3) (native_var 4) (native_var 5)" w
     "Finite_Pattern_Pair (native_var 0) (native_var 1)"
-  unfolding native_rearranging_program_def native_rearranging_program_axioms_def
-  using native_rule_family_axioms[unfolded key_cited_rule_def] by (auto simp: row_pattern_def)
+  unfolding native_rearranging_program_def native_rearranging_program_axioms_def row_pattern_variables
+  using native_rule_family_axioms[unfolded key_cited_rule_def] by simp
 
 theorem exact:
   assumes identity: "\<And>y. term_formed (ident y)"

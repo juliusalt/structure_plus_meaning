@@ -16,8 +16,8 @@ lemma decode_development_citation_data [simp]:
   by (cases l) (simp_all add: development_citation_data_def finite_store_option_def)
 
 lemma decode_development_citations_data [simp]:
-  "decode_finite_term (development_citations_data ls)=development_row_family ls"
-  by (simp add: development_citations_data_def finite_sequence_presentation_def development_row_family_def comp_def)
+  "decode_finite_term (development_citations_data ls)=keys_term ls"
+  by (simp add: development_citations_data_def finite_sequence_presentation_def keys_term_def comp_def)
 
 text \<open>
   Each body presents exactly the body of the relation: a problem's with the contract term its locus

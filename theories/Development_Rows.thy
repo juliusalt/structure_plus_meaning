@@ -29,29 +29,18 @@ lemma development_row_citation_absent: "development_row_citation l=Payload_Term 
   by (cases l) simp_all
 
 
-definition development_row_family :: "bool list list \<Rightarrow> factor_term" where
-  "development_row_family ls=data_list_term (map path_term ls)"
-
-lemma development_row_family_injective:
-  "development_row_family ls=development_row_family ms \<longleftrightarrow> ls=ms"
-  by (simp add: development_row_family_def data_list_term_injective
-    inj_map_eq_map[OF injI[OF path_term_injective[THEN iffD1]]])
-
-lemma development_row_family_inj: "inj development_row_family"
-  by (rule injI) (simp add: development_row_family_injective)
-
 lemma readiness_decompositions_family:
-  "readiness_decompositions hs=data_list_term (map development_row_family hs)"
+  "readiness_decompositions hs=data_list_term (map keys_term hs)"
 proof -
-  have "(\<lambda>h. data_list_term (map path_term h))=development_row_family"
-    by (simp add: fun_eq_iff development_row_family_def)
+  have "(\<lambda>h. data_list_term (map path_term h))=keys_term"
+    by (simp add: fun_eq_iff keys_term_def)
   then show ?thesis by (simp add: readiness_decompositions_def)
 qed
 
 lemma readiness_decompositions_injective:
   "readiness_decompositions hs=readiness_decompositions gs \<longleftrightarrow> hs=gs"
   by (simp add: readiness_decompositions_family data_list_term_injective
-    inj_map_eq_map[OF development_row_family_inj])
+    inj_map_eq_map[OF keys_term_inj])
 
 section \<open>The bodies of problems, requests and issues\<close>
 
@@ -78,7 +67,7 @@ definition development_problem_body ::
     (Pair_Term (development_row_citation y) (inert (development_contract_term k)))"
 
 definition development_request_body :: "bool list list \<Rightarrow> bool list list \<Rightarrow> factor_term" where
-  "development_request_body S E=Pair_Term (development_row_family S) (development_row_family E)"
+  "development_request_body S E=Pair_Term (keys_term S) (keys_term E)"
 
 lemma development_problem_body_injective:
   "development_problem_body inert x y k=development_problem_body inert x' y' k' \<longleftrightarrow>
@@ -87,7 +76,7 @@ lemma development_problem_body_injective:
 
 lemma development_request_body_injective:
   "development_request_body S E=development_request_body S' E' \<longleftrightarrow> S=S' \<and> E=E'"
-  by (simp add: development_request_body_def development_row_family_injective)
+  by (simp add: development_request_body_def keys_term_eq_iff)
 
 lemma development_contract_by_kind:
   assumes "development_kind_path k=development_kind_path l"

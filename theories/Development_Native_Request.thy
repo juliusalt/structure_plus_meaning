@@ -16,10 +16,6 @@ text \<open>
   row, no problem row and no kind, and every premise is positive.
 \<close>
 
-subsection \<open>The body's two families are the lists the fields read\<close>
-
-lemma development_row_family_keys: "development_row_family=keys_term"
-  by (rule ext) (simp add: development_row_family_def keys_term_def)
 
 subsection \<open>The argument: the subject's key, the presentations the fields read, and the body\<close>
 
@@ -319,7 +315,7 @@ proof -
     (\<forall>q\<in>set ks. \<exists>d e. q=key d \<and> e\<in>?E \<and> isabelle_declared_constant e=Some d \<and> ekey e\<in>set es) \<and>
     set es\<subseteq>ekey ` (?scope\<union>{e\<in>?E. \<exists>d. isabelle_declared_constant e=Some d \<and> key d\<in>set ks}) \<and>
     set ks\<subseteq>key ` ?sup"
-    unfolding request_state_term_def development_request_body_def development_row_family_keys native_request_entry
+    unfolding request_state_term_def development_request_body_def native_request_entry
       support_complete_program.contract[OF request_complete_program[OF identity] present bound fam]
       scope_cited_program.contract[OF request_scope_program[OF identity] present bound fam keyed]
       request_declared.contract[OF present once fam keyed]
@@ -486,7 +482,7 @@ text \<open>
   (@{locale native_store_search_program}) at a site of the program's own, whose check is the construction. It
   is the search @{thm [source] development_request_at} makes with the value rule as its check, the construction
   in the check's place; the search's contract for values held formed where the store holds them
-  (@{thm [source] native_store_search_program.exact_held}) and the construction's
+  at a key where the store holds a value (@{thm [source] native_store_search_program.held_at}) and the construction's
   (@{thm [source] native_request_exact}) compose, neither restated.
 \<close>
 
@@ -530,25 +526,8 @@ proof -
     using path_store_found[OF that] formed_rows by (simp only: id_apply) blast
   have "(request_admission,Pair_Term ?x (Pair_Term (path_term ?l) (development_rows_term rows)))
       \<in>positive_meaning native_request_system \<longleftrightarrow>
-    term_formed ?x \<and> (\<exists>bs v. path_term ?l=path_term bs \<and> store_lookup (path_store rows) bs=Some v \<and>
-      (request_entry,Pair_Term ?x (id v))\<in>positive_meaning native_request_system)"
-    unfolding development_rows_term_def by (rule request_admitted.exact_held) (rule held)
-  also have "\<dots> \<longleftrightarrow> (request_entry,Pair_Term ?x ?body)\<in>positive_meaning native_request_system"
-  proof
-    assume "term_formed ?x \<and> (\<exists>bs v. path_term ?l=path_term bs \<and> store_lookup (path_store rows) bs=Some v \<and>
-      (request_entry,Pair_Term ?x (id v))\<in>positive_meaning native_request_system)"
-    then obtain bs v where key: "path_term ?l=path_term bs" and found: "store_lookup (path_store rows) bs=Some v"
-      and checked: "(request_entry,Pair_Term ?x (id v))\<in>positive_meaning native_request_system" by blast
-    have "?l=bs" using key by (simp only: path_term_injective)
-    then have "v=?body" using found stored by simp
-    then show "(request_entry,Pair_Term ?x ?body)\<in>positive_meaning native_request_system" using checked by simp
-  next
-    assume holds: "(request_entry,Pair_Term ?x ?body)\<in>positive_meaning native_request_system"
-    have "term_formed ?x" using positive_meaning_term_formed[OF holds] by simp
-    then show "term_formed ?x \<and> (\<exists>bs v. path_term ?l=path_term bs \<and> store_lookup (path_store rows) bs=Some v \<and>
-      (request_entry,Pair_Term ?x (id v))\<in>positive_meaning native_request_system)"
-      using stored holds by auto
-  qed
+    (request_entry,Pair_Term ?x ?body)\<in>positive_meaning native_request_system"
+    unfolding development_rows_term_def using request_admitted.held_at[OF held stored] by (simp only: id_apply)
   also have "\<dots> \<longleftrightarrow> set (supported r)=key ` fset (development_request_support (snd S) c) \<and>
       set (scope r)=?ekey ` fset (development_request_context (snd S) c)"
     by (simp only: kc native_request_exact[OF state bound keyed once closed identity])

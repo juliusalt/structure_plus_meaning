@@ -58,8 +58,7 @@ reducing the whole complete-data lineage again (implement-412, q89): the fix aft
 its parts', and at its landing #393's brief gains that derivation, so that the guard's extension reduces only what it
 adds.
 
-**Beside the route**: the bootstrap loop's maintenance — the rows line's tidy
-after #354 (#429), the replay of the retained answers after #369 (#430); and #426, #341's, #388's and #375's follow-ups
+**Beside the route**: the bootstrap loop's maintenance — the replay of the retained answers after #369 (#430); and #426, #341's, #388's and #375's follow-ups
 over the joined program's, the audit's and the collection programs' generic content (after #342 and #418). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
 N3b, N4a and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93)
 and the machinery's verification stage judged natively (#193, #194).
@@ -81,7 +80,7 @@ by a task of their own (Open 100).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #424 and #391 at its head, then #412 and the fix deriving its presentation from its parts,
-#342, #414, #416, #418, #410, #405 and the rest in their chains' order, #425 before the posing it serves; then #429,
+#342, #414, #416, #418, #410, #405 and the rest in their chains' order, #425 before the posing it serves; then
 #426 and #430; each review after its build.
 
 ## Decisions
@@ -204,7 +203,8 @@ a task):
   continues one task's work says `continues` and forks that task's session while it is warm. A partial task whose
   deliverables are written is re-planned, not split. No task rests on reasoning not yet written. A fix the planner
   creates carries no review task. A design entry is not rewritten when the implementation narrows what it predicted:
-  it gains a marked correction.
+  it gains a marked correction. A tidy (blank lines, wording) rides with a substantive change of the same theory,
+  never a change of its own: a whitespace change rebuilds the theory's dependents and reruns the recipes reaching it.
 
 ## Delivered
 
@@ -236,7 +236,7 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   satisfying a callee's predicate, G3 its instance (its review's follow-ups: G3's absence is key absence (20), carried
   into #412, #418 and the marked corrections #412 makes; evaluability, numbers and agreements into #391; the
   clause-family consumption Open 129); #354, the rows line's presenters proved in their domains (its review's
-  follow-ups 1 and 4–6 are #429, 2 and 3 #430 and Open 130); #375, the listed-family law's re-citations (its review's
+  follow-ups 1 and 4–6 landed as #429, `263069e0`, its own review's follow-ups Open 135; 2 and 3 are #430 and Open 130); #375, the listed-family law's re-citations (its review's
   follow-up 4 in #426, the rest Open 131).
 - **#425** (investigation, accepted): an indexed generation's 8 s is `value` compiling the term's whole closure; the
   generation executes in 0.385 s plain, 0.011 s with `Native_Execution_Refinements`; the second quotation costs
@@ -432,7 +432,12 @@ the replay path's costs at a re-record's measured need (bootstrap): a failed sha
 members' proofs (what an accepted proof context is, `proved_code`); `failed-proof` started beside the shared proof
 session; the two shared sessions' load of the frames' theories attributed; `present` through the parallel runtime,
 measured at the machinery's state. 134 #369's review, follow-ups 6 and 7: `prove_answers` resolving its `output`
-itself; a re-record's `steps` naming `presentation` and `export`.
+itself; a re-record's `steps` naming `presentation` and `export`. 135 #429's review (`.build/tasks/429/review.md`):
+the framed-verdict domain facts stand in the leaf `Development_Row_Contexts`, read by nothing — moved below both
+families only if a state or the verification theory comes to read them (bootstrap: not planned);
+`development_refinement_requests_member` beside `development_refinement_request`, the seed's family lemma consuming it,
+at that theory's next change; a domain lemma for the definition verdict's word if the harness comes to frame machinery
+answers (bootstrap); the rows-in-context note's full names at the entry's next touch.
 
 ## Now
 

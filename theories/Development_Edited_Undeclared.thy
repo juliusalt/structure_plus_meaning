@@ -49,9 +49,12 @@ lemma edited_mentions_closed:
     and declared': "\<And>q. decl' q \<longleftrightarrow> (\<exists>F\<in>set Fs'. \<exists>w\<in>set F. q\<in>set (row_declared (snd w)))"
     and rows: "(\<Union>F\<in>set Fs'. set F)=(\<Union>F\<in>set Fs. set F)-D \<union> (\<Union>F\<in>set As. set F)"
     and keys: "\<And>z d. z\<in>D \<Longrightarrow> d\<in>set (row_declared (snd z)) \<Longrightarrow> d\<in>set ks"
-    and checked: "\<And>z. z\<in>(\<Union>F\<in>set Gs. set F) \<longleftrightarrow>
-      z\<in>(\<Union>F\<in>set As. set F) \<or> (z\<in>(\<Union>F\<in>set Fs'. set F) \<and> (\<exists>a\<in>set ks. a\<in>set (row_mentions (snd z))))"
-    and checked_roots: "\<And>z. z\<in>set Rc \<longleftrightarrow> z\<in>set Rs \<and> (\<exists>a\<in>set ks. a\<in>set (row_mentions (snd z)))"
+    and sound: "\<And>z. z\<in>(\<Union>F\<in>set Gs. set F) \<Longrightarrow> z\<in>(\<Union>F\<in>set Fs'. set F)"
+    and complete_added: "\<And>z. z\<in>(\<Union>F\<in>set As. set F) \<Longrightarrow> z\<in>(\<Union>F\<in>set Gs. set F)"
+    and complete_mentioning: "\<And>z a. z\<in>(\<Union>F\<in>set Fs'. set F) \<Longrightarrow> a\<in>set ks \<Longrightarrow>
+      a\<in>set (row_mentions (snd z)) \<Longrightarrow> z\<in>(\<Union>F\<in>set Gs. set F)"
+    and sound_roots: "\<And>z. z\<in>set Rc \<Longrightarrow> z\<in>set Rs"
+    and complete_roots: "\<And>z a. z\<in>set Rs \<Longrightarrow> a\<in>set ks \<Longrightarrow> a\<in>set (row_mentions (snd z)) \<Longrightarrow> z\<in>set Rc"
     and restricted: "\<And>z q. z\<in>(\<Union>F\<in>set Gs. set F) \<Longrightarrow> q\<in>set (row_mentions (snd z)) \<Longrightarrow>
       dr q \<longleftrightarrow> decl' q"
     and restricted_roots: "\<And>z q. z\<in>set Rc \<Longrightarrow> q\<in>set (row_mentions (snd z)) \<Longrightarrow> dr q \<longleftrightarrow> decl' q"
@@ -100,7 +103,7 @@ proof -
     show "decl' q"
     proof (cases "z\<in>(\<Union>F\<in>set As. set F)")
       case True
-      then have "z\<in>(\<Union>F\<in>set Gs. set F)" using checked[of z] by (simp only: simp_thms)
+      then have "z\<in>(\<Union>F\<in>set Gs. set F)" by (rule complete_added)
       then show ?thesis using rows_checked q by blast
     next
       case False
@@ -111,8 +114,7 @@ proof -
       then show ?thesis
       proof cases
         case 2
-        then have "\<exists>a\<in>set ks. a\<in>set (row_mentions (snd z))" using q by (rule bexI[rotated])
-        then have "z\<in>(\<Union>F\<in>set Gs. set F)" using checked[of z] zR' by (simp only: simp_thms)
+        have "z\<in>(\<Union>F\<in>set Gs. set F)" by (rule complete_mentioning[OF zR' 2 q])
         then show ?thesis using rows_checked q by blast
       qed
     qed
@@ -126,8 +128,7 @@ proof -
     then show "decl' q"
     proof cases
       case 2
-      then have "\<exists>a\<in>set ks. a\<in>set (row_mentions (snd z))" using q by (rule bexI[rotated])
-      then have "z\<in>set Rc" using checked_roots[of z] z by (simp only: simp_thms)
+      have "z\<in>set Rc" by (rule complete_roots[OF z 2 q])
       then show ?thesis using roots_checked q by blast
     qed
   qed
@@ -143,15 +144,14 @@ next
     fix F z q
     assume F: "F\<in>set Gs" and z: "z\<in>set F" and q: "q\<in>set (row_mentions (snd z))"
     have zG: "z\<in>(\<Union>F\<in>set Gs. set F)" by (rule UN_I[where B=set, OF F z])
-    have "z\<in>(\<Union>F\<in>set As. set F) \<or> z\<in>(\<Union>F\<in>set Fs'. set F)" using checked[of z] zG by (simp only: simp_thms) blast
-    then have "z\<in>(\<Union>F\<in>set Fs'. set F)" using mem[of z] by (simp only: simp_thms) blast
+    have "z\<in>(\<Union>F\<in>set Fs'. set F)" by (rule sound[OF zG])
     then obtain G where "G\<in>set Fs'" "z\<in>set G" by (rule UN_E)
     then have "decl' q" using whole q by blast
     then show "dr q" using restricted[OF zG q] by blast
   next
     fix z q
     assume z: "z\<in>set Rc" and q: "q\<in>set (row_mentions (snd z))"
-    have "z\<in>set Rs" using checked_roots[of z] z by blast
+    have "z\<in>set Rs" by (rule sound_roots[OF z])
     then have "decl' q" using whole q by blast
     then show "dr q" using restricted_roots[OF z q] by blast
   qed
@@ -160,7 +160,103 @@ qed
 
 section \<open>The call at its incremental part is the call at its whole part\<close>
 
+text \<open>
+  The honest statement of the field: any checked families and roots serve that are sound (every checked row
+  a row of the answer state, every checked root a root) and complete (the added rows, and every row and root
+  mentioning a key of the list, among them), at any store whose presence at the checked rows' mentions is
+  the answer state's declaration store's. Two inclusions each, never an equation, so a larger list, shared
+  with another field's argument, costs work and never truth; and the store may be produced from the request
+  state's assessment rather than filtered from the answer state's rows.
+\<close>
+
 theorem edited_undeclared:
+  fixes Fs Fs' As Gs :: "'i state_family list" and Rs Rc :: "'j state_family" and D :: "(state_key\<times>'i state_row) set"
+    and ks :: "state_key list" and T :: "state_key binary_path_store"
+  assumes identity: "\<And>y. term_formed (ident y)" and roots: "\<And>y. term_formed (identr y)"
+    and closed: "(verdict_undeclared,Pair_Term (declaration_term Fs) (Pair_Term (state_families_term ident Fs)
+      (state_family_term identr Rs)))\<in>positive_meaning verdict_mentions_system"
+    and rows: "(\<Union>F\<in>set Fs'. set F)=(\<Union>F\<in>set Fs. set F)-D \<union> (\<Union>F\<in>set As. set F)"
+    and keys: "\<And>z d. z\<in>D \<Longrightarrow> d\<in>set (row_declared (snd z)) \<Longrightarrow> d\<in>set ks"
+    and sound: "\<And>z. z\<in>(\<Union>F\<in>set Gs. set F) \<Longrightarrow> z\<in>(\<Union>F\<in>set Fs'. set F)"
+    and complete_added: "\<And>z. z\<in>(\<Union>F\<in>set As. set F) \<Longrightarrow> z\<in>(\<Union>F\<in>set Gs. set F)"
+    and complete_mentioning: "\<And>z a. z\<in>(\<Union>F\<in>set Fs'. set F) \<Longrightarrow> a\<in>set ks \<Longrightarrow>
+      a\<in>set (row_mentions (snd z)) \<Longrightarrow> z\<in>(\<Union>F\<in>set Gs. set F)"
+    and sound_roots: "\<And>z. z\<in>set Rc \<Longrightarrow> z\<in>set Rs"
+    and complete_roots: "\<And>z a. z\<in>set Rs \<Longrightarrow> a\<in>set ks \<Longrightarrow> a\<in>set (row_mentions (snd z)) \<Longrightarrow> z\<in>set Rc"
+    and store: "\<And>z q. z\<in>(\<Union>F\<in>set Gs. set F) \<Longrightarrow> q\<in>set (row_mentions (snd z)) \<Longrightarrow>
+      store_lookup T q\<noteq>None \<longleftrightarrow> store_lookup (declaration_store Fs') q\<noteq>None"
+    and store_roots: "\<And>z q. z\<in>set Rc \<Longrightarrow> q\<in>set (row_mentions (snd z)) \<Longrightarrow>
+      store_lookup T q\<noteq>None \<longleftrightarrow> store_lookup (declaration_store Fs') q\<noteq>None"
+  shows "(verdict_undeclared,Pair_Term (store_term path_term T)
+      (Pair_Term (state_families_term ident Gs) (state_family_term identr Rc)))\<in>positive_meaning verdict_mentions_system \<longleftrightarrow>
+    (verdict_undeclared,Pair_Term (declaration_term Fs') (Pair_Term (state_families_term ident Fs')
+      (state_family_term identr Rs)))\<in>positive_meaning verdict_mentions_system"
+proof -
+  have pv: "\<And>y. term_formed (path_term y)" by simp
+  note found = native_mentions_found[OF identity roots pv]
+  have cl: "(\<forall>F\<in>set Fs. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs) q\<noteq>None) \<and>
+      (\<forall>z\<in>set Rs. \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs) q\<noteq>None)"
+    using closed[unfolded declaration_term_def found] .
+  have declared: "\<exists>F\<in>set Fs. \<exists>w\<in>set F. q\<in>set (row_declared (snd w))"
+    if "store_lookup (declaration_store Fs) q\<noteq>None" for q
+    using that unfolding declaration_store_declared .
+  have declared': "store_lookup (declaration_store Fs') q\<noteq>None \<longleftrightarrow>
+      (\<exists>F\<in>set Fs'. \<exists>w\<in>set F. q\<in>set (row_declared (snd w)))" for q
+    by (rule declaration_store_declared)
+  have restricted: "store_lookup T q\<noteq>None \<longleftrightarrow> store_lookup (declaration_store Fs') q\<noteq>None"
+    if "z\<in>(\<Union>F\<in>set Gs. set F)" and "q\<in>set (row_mentions (snd z))" for z q
+    using store that by blast
+  have restricted_roots: "store_lookup T q\<noteq>None \<longleftrightarrow> store_lookup (declaration_store Fs') q\<noteq>None"
+    if "z\<in>set Rc" and "q\<in>set (row_mentions (snd z))" for z q
+    using store_roots that by blast
+  have "(\<forall>F\<in>set Gs. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None) \<and>
+      (\<forall>z\<in>set Rc. \<forall>q\<in>set (row_mentions (snd z)). store_lookup T q\<noteq>None) \<longleftrightarrow>
+    (\<forall>F\<in>set Fs'. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs') q\<noteq>None) \<and>
+      (\<forall>z\<in>set Rs. \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs') q\<noteq>None)"
+    by (rule edited_mentions_closed[OF cl[THEN conjunct1] cl[THEN conjunct2] declared declared' rows keys
+          sound complete_added complete_mentioning sound_roots complete_roots restricted restricted_roots])
+  then show ?thesis unfolding declaration_term_def found .
+qed
+
+text \<open>The families, roots and restricted store the field's definitions give are sound and complete.\<close>
+
+lemma edited_undeclared_families_member:
+  "z\<in>(\<Union>F\<in>set (edited_undeclared_families As Fs' ks). set F) \<longleftrightarrow> z\<in>(\<Union>F\<in>set As. set F) \<or>
+    (z\<in>(\<Union>F\<in>set Fs'. set F) \<and> (\<exists>a\<in>set ks. a\<in>set (row_mentions (snd z))))"
+  unfolding edited_undeclared_families_def by (auto simp: key_fibre_member)
+
+lemma edited_undeclared_roots_member:
+  "z\<in>set (edited_undeclared_roots Rs ks) \<longleftrightarrow> z\<in>set Rs \<and> (\<exists>a\<in>set ks. a\<in>set (row_mentions (snd z)))"
+  unfolding edited_undeclared_roots_def by (auto simp: key_fibre_member)
+
+lemma restricted_declaration_found:
+  assumes "q\<in>set ms"
+  shows "store_lookup (path_store (filter (\<lambda>r. fst r\<in>set ms) (declaration_rows Fs'))) q\<noteq>None \<longleftrightarrow>
+    store_lookup (declaration_store Fs') q\<noteq>None"
+  using assms by (simp add: path_store_restrict declaration_store_def)
+
+text \<open>At the mentions of the checked rows and roots, the declaration store restricted to the keys they mention
+  has the whole store's presence.\<close>
+
+lemma edited_undeclared_keys_store:
+  assumes "z\<in>(\<Union>F\<in>set Gs. set F)" and "q\<in>set (row_mentions (snd z))"
+  shows "store_lookup (path_store (filter (\<lambda>r. fst r\<in>set (edited_undeclared_keys Gs Rc)) (declaration_rows Fs'))) q\<noteq>None
+    \<longleftrightarrow> store_lookup (declaration_store Fs') q\<noteq>None"
+proof -
+  have "q\<in>set (edited_undeclared_keys Gs Rc)" using assms by (auto simp: edited_undeclared_keys_def)
+  then show ?thesis by (rule restricted_declaration_found)
+qed
+
+lemma edited_undeclared_keys_store_roots:
+  assumes "z\<in>set Rc" and "q\<in>set (row_mentions (snd z))"
+  shows "store_lookup (path_store (filter (\<lambda>r. fst r\<in>set (edited_undeclared_keys Gs Rc)) (declaration_rows Fs'))) q\<noteq>None
+    \<longleftrightarrow> store_lookup (declaration_store Fs') q\<noteq>None"
+proof -
+  have "q\<in>set (edited_undeclared_keys Gs Rc)" using assms by (auto simp: edited_undeclared_keys_def)
+  then show ?thesis by (rule restricted_declaration_found)
+qed
+
+corollary edited_undeclared_restricted:
   fixes Fs Fs' As :: "'i state_family list" and Rs :: "'j state_family" and D :: "(state_key\<times>'i state_row) set"
     and ks :: "state_key list"
   defines "Gs\<equiv>edited_undeclared_families As Fs' ks" and "Rc\<equiv>edited_undeclared_roots Rs ks"
@@ -175,45 +271,28 @@ theorem edited_undeclared:
       (state_family_term identr Rs)))\<in>positive_meaning verdict_mentions_system"
 proof -
   let ?ms="edited_undeclared_keys Gs Rc"
-  have pv: "\<And>y. term_formed (path_term y)" by simp
-  note found = native_mentions_found[OF identity roots pv]
-  have cl: "(\<forall>F\<in>set Fs. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs) q\<noteq>None) \<and>
-      (\<forall>z\<in>set Rs. \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs) q\<noteq>None)"
-    using closed[unfolded declaration_term_def found] .
-  have declared: "\<exists>F\<in>set Fs. \<exists>w\<in>set F. q\<in>set (row_declared (snd w))"
-    if "store_lookup (declaration_store Fs) q\<noteq>None" for q
-    using that unfolding declaration_store_declared .
-  have declared': "store_lookup (declaration_store Fs') q\<noteq>None \<longleftrightarrow>
-      (\<exists>F\<in>set Fs'. \<exists>w\<in>set F. q\<in>set (row_declared (snd w)))" for q
-    by (rule declaration_store_declared)
-  have checked: "z\<in>(\<Union>F\<in>set Gs. set F) \<longleftrightarrow> z\<in>(\<Union>F\<in>set As. set F) \<or>
-      (z\<in>(\<Union>F\<in>set Fs'. set F) \<and> (\<exists>a\<in>set ks. a\<in>set (row_mentions (snd z))))" for z
-    unfolding Gs_def edited_undeclared_families_def by (auto simp: key_fibre_member)
-  have checked_roots: "z\<in>set Rc \<longleftrightarrow> z\<in>set Rs \<and> (\<exists>a\<in>set ks. a\<in>set (row_mentions (snd z)))" for z
-    unfolding Rc_def edited_undeclared_roots_def by (auto simp: key_fibre_member)
-  have restricted: "store_lookup (path_store (filter (\<lambda>r. fst r\<in>set ?ms) (declaration_rows Fs'))) q\<noteq>None \<longleftrightarrow>
+  have sound: "z\<in>(\<Union>F\<in>set Fs'. set F)" if "z\<in>(\<Union>F\<in>set Gs. set F)" for z
+    using that rows unfolding Gs_def edited_undeclared_families_member by blast
+  have added: "z\<in>(\<Union>F\<in>set Gs. set F)" if "z\<in>(\<Union>F\<in>set As. set F)" for z
+    using that unfolding Gs_def edited_undeclared_families_member by blast
+  have mentioning: "z\<in>(\<Union>F\<in>set Gs. set F)"
+    if "z\<in>(\<Union>F\<in>set Fs'. set F)" "a\<in>set ks" "a\<in>set (row_mentions (snd z))" for z a
+    using that unfolding Gs_def edited_undeclared_families_member by blast
+  have sroots: "z\<in>set Rs" if "z\<in>set Rc" for z
+    using that unfolding Rc_def edited_undeclared_roots_member by blast
+  have croots: "z\<in>set Rc" if "z\<in>set Rs" "a\<in>set ks" "a\<in>set (row_mentions (snd z))" for z a
+    using that unfolding Rc_def edited_undeclared_roots_member by blast
+  have store: "store_lookup (path_store (filter (\<lambda>r. fst r\<in>set ?ms) (declaration_rows Fs'))) q\<noteq>None \<longleftrightarrow>
       store_lookup (declaration_store Fs') q\<noteq>None"
-    if z: "z\<in>(\<Union>F\<in>set Gs. set F)" and q: "q\<in>set (row_mentions (snd z))" for z q
-  proof -
-    have "q\<in>set ?ms" using z q by (auto simp: edited_undeclared_keys_def)
-    then show ?thesis by (simp add: path_store_restrict declaration_store_def)
-  qed
-  have restricted_roots: "store_lookup (path_store (filter (\<lambda>r. fst r\<in>set ?ms) (declaration_rows Fs'))) q\<noteq>None \<longleftrightarrow>
+    if "z\<in>(\<Union>F\<in>set Gs. set F)" "q\<in>set (row_mentions (snd z))" for z q
+    using that by (rule edited_undeclared_keys_store)
+  have store_roots: "store_lookup (path_store (filter (\<lambda>r. fst r\<in>set ?ms) (declaration_rows Fs'))) q\<noteq>None \<longleftrightarrow>
       store_lookup (declaration_store Fs') q\<noteq>None"
-    if z: "z\<in>set Rc" and q: "q\<in>set (row_mentions (snd z))" for z q
-  proof -
-    have "q\<in>set ?ms" using z q by (auto simp: edited_undeclared_keys_def)
-    then show ?thesis by (simp add: path_store_restrict declaration_store_def)
-  qed
-  have "(\<forall>F\<in>set Gs. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)).
-        store_lookup (path_store (filter (\<lambda>r. fst r\<in>set ?ms) (declaration_rows Fs'))) q\<noteq>None) \<and>
-      (\<forall>z\<in>set Rc. \<forall>q\<in>set (row_mentions (snd z)).
-        store_lookup (path_store (filter (\<lambda>r. fst r\<in>set ?ms) (declaration_rows Fs'))) q\<noteq>None) \<longleftrightarrow>
-    (\<forall>F\<in>set Fs'. \<forall>z\<in>set F. \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs') q\<noteq>None) \<and>
-      (\<forall>z\<in>set Rs. \<forall>q\<in>set (row_mentions (snd z)). store_lookup (declaration_store Fs') q\<noteq>None)"
-    by (rule edited_mentions_closed[OF cl[THEN conjunct1] cl[THEN conjunct2] declared declared' rows keys
-          checked checked_roots restricted restricted_roots])
-  then show ?thesis unfolding restricted_declaration_term_def declaration_term_def found .
+    if "z\<in>set Rc" "q\<in>set (row_mentions (snd z))" for z q
+    using that by (rule edited_undeclared_keys_store_roots)
+  show ?thesis unfolding restricted_declaration_term_def
+    by (rule edited_undeclared[OF identity roots closed rows keys sound added mentioning sroots croots store
+      store_roots])
 qed
 
 section \<open>On a constructed edit, the incremental call judges the answer state\<close>
@@ -260,7 +339,7 @@ proof -
     isabelle_undeclared_constants (fst (edit_applied S ns removed added)) (snd (edit_applied S ns removed added))=[]"
     unfolding contract(4)[symmetric] by (rule native_undeclared_exact[where ident=ident and identr=identr, OF contract(1) families' identity roots])
   show ?thesis
-    by (rule trans[OF edited_undeclared[where ident=ident and identr=identr, OF identity roots closed_call rows keys] whole])
+    by (rule trans[OF edited_undeclared_restricted[where ident=ident and identr=identr, OF identity roots closed_call rows keys] whole])
 qed
 
 end

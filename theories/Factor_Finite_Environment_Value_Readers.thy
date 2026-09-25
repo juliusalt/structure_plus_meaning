@@ -79,6 +79,14 @@ theorem finite_environment_value_read_exact:
     finite_environment_formed_correct finite_environment_artifact_collection_read_exact
     finite_binding_collection_read_exact environment_value_presents_def)
 
+text \<open>Every presented environment is the decoding of a finite one, which its reader then reads.\<close>
+
+lemma environment_value_presents_finite:
+  assumes "environment_value_presents E e"
+  obtains C where "decode_finite_environment C=E"
+  using finite_environment_representation[OF conjunct1[OF environment_value_presents_formed[OF assms]]]
+  by blast
+
 text \<open>
   Both complete collections are recovered before the original environment
   formation condition is checked. Equal artifacts at different uses remain

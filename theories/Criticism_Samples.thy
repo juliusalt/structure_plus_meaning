@@ -4,16 +4,6 @@ theory Criticism_Samples
     Native_Collection_Programs Factor_Finite_Exact_Patterns Factor_Constructed_Judgment_Sources
 begin
 
-section \<open>A demand contains its requests\<close>
-
-text \<open>
-  The native closure of a set of calls is the program's call closure at the call key, which contains its
-  requests, so the evaluation of the closure answers each of them.
-\<close>
-
-lemma native_call_closure_requests: "R |\<subseteq>| native_call_closure P R"
-  by (simp only: native_call_closure_def keyed_call_closure_exact[OF native_call_inverse]
-    finite_program_call_closure_requests)
 
 section \<open>The sample: every entry evaluated natively at both sides of every pair\<close>
 
@@ -180,51 +170,12 @@ lemma criticism_decision_exact_empty: "criticism_decision_exact {||} decide P ds
 subsection \<open>An unavailable sample is diagnosed, never recorded as a failure\<close>
 
 text \<open>
-  The clauses a demand reaches whose heads leave a premise variable unbound, each with its site, its key
-  and its premise-only variables (@{const finite_schema_head_missing}): a program covers a demand's heads
-  exactly when there is none. The diagnosis of a sample over a base is computed from the program, the
-  base and the sample alone: whether the program is formed, whether the demand is closed over the program
-  above the base, and the uncovered clauses outside the base the demand reaches. It is the whole reason a
-  table is missing.
+  The diagnosis of a sample over a base is computed from the program, the base and the sample alone:
+  whether the program is formed, whether the demand is closed over the program above the base, and the
+  reached clauses whose heads leave a premise variable unbound (@{const finite_uncovered_clauses}, the
+  diagnosis of a demand's head coverage, stated beside the evaluator in
+  @{text Factor_Finite_Program_Evaluation}). It is the whole reason a table is missing.
 \<close>
-
-definition finite_uncovered_clauses where
-  "finite_uncovered_clauses P D=ffilter (\<lambda>(d,c,V). V\<noteq>{||})
-    (fimage (\<lambda>((d,c),S). (d,c,finite_schema_head_missing S))
-      (ffilter (\<lambda>z. fst (fst z) |\<in>| fimage fst D) (finite_system_clauses P)))"
-
-lemma finite_uncovered_clauses_member:
-  "(d,c,V) |\<in>| finite_uncovered_clauses P D \<longleftrightarrow>
-    (\<exists>S. ((d,c),S) |\<in>| finite_system_clauses P \<and> d |\<in>| fimage fst D \<and>
-      V=finite_schema_head_missing S \<and> V\<noteq>{||})"
-  unfolding finite_uncovered_clauses_def by force
-
-theorem finite_uncovered_clauses_covered:
-  "finite_program_head_covered P D \<longleftrightarrow> finite_uncovered_clauses P D={||}"
-proof -
-  have uncovered: "finite_uncovered_clauses P D={||} \<longleftrightarrow> (\<forall>d c S. ((d,c),S) |\<in>| finite_system_clauses P \<longrightarrow>
-      d |\<in>| fimage fst D \<longrightarrow> finite_schema_head_missing S={||})"
-  proof
-    assume empty: "finite_uncovered_clauses P D={||}"
-    show "\<forall>d c S. ((d,c),S) |\<in>| finite_system_clauses P \<longrightarrow>
-        d |\<in>| fimage fst D \<longrightarrow> finite_schema_head_missing S={||}"
-    proof (intro allI impI)
-      fix d c S assume "((d,c),S) |\<in>| finite_system_clauses P" "d |\<in>| fimage fst D"
-      then show "finite_schema_head_missing S={||}"
-        using finite_uncovered_clauses_member[of d c "finite_schema_head_missing S" P D] empty by auto
-    qed
-  next
-    assume all: "\<forall>d c S. ((d,c),S) |\<in>| finite_system_clauses P \<longrightarrow>
-        d |\<in>| fimage fst D \<longrightarrow> finite_schema_head_missing S={||}"
-    have "x |\<notin>| finite_uncovered_clauses P D" for x
-    proof -
-      obtain d c V where x: "x=(d,c,V)" by (rule prod_cases3)
-      show ?thesis using all by (auto simp: x finite_uncovered_clauses_member)
-    qed
-    then show "finite_uncovered_clauses P D={||}" by (simp add: fset_eq_iff)
-  qed
-  show ?thesis unfolding uncovered finite_program_head_covered_def fBall_member by auto
-qed
 
 definition criticism_diagnosis where
   "criticism_diagnosis B P ds ps=(let D=criticism_base_demand B P ds ps; Q=implemented_base_program B P in

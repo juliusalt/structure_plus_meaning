@@ -20,36 +20,10 @@ section \<open>A citation observation argument read back\<close>
 
 text \<open>
   The argument of 72 and 81 is an environment value beside a use, beside an address and an operand
-  (@{const citation_observation_argument}); the operand is read by a reader given as a parameter, exact to
-  its own relation. 79's argument (@{const finite_root_family_argument_read}) has the same shape.
+  (@{const citation_observation_argument}), read by @{const finite_citation_argument_read} of
+  @{text Factor_Package_Reader_Counterparts} at an operand reader exact to its own relation; 79's root
+  family reader there is its instance too.
 \<close>
-
-definition finite_citation_argument_read :: "(finite_factor_term \<Rightarrow> 'y option) \<Rightarrow> finite_factor_term \<Rightarrow>
-    ((local_address option finite_artifact_environment\<times>local_address option)\<times>(local_address\<times>'y)) option" where
-  "finite_citation_argument_read f=finite_pair_read
-    (finite_pair_read finite_environment_value_read finite_use_value_read) (finite_pair_read finite_payload_value_read f)"
-
-theorem finite_citation_argument_read_exact:
-  assumes operand: "\<And>v y. f v=Some y \<longleftrightarrow> Q y (decode_finite_term v)"
-  shows "finite_citation_argument_read f t=Some ((E,u),(r,y)) \<longleftrightarrow> (\<exists>e x.
-    decode_finite_term t=citation_observation_argument e (use_data_term u) (Payload_Term r) x \<and>
-    environment_value_presents (decode_finite_environment E) e \<and> Q y x)"
-proof -
-  have right: "finite_pair_read finite_payload_value_read f v=Some z \<longleftrightarrow>
-      (\<exists>w x. decode_finite_term v=Pair_Term w x \<and> w=Payload_Term (fst z) \<and> Q (snd z) x)" for v z
-  proof -
-    obtain a b where z: "z=(a,b)" by (cases z)
-    show ?thesis
-      by (simp add: z finite_pair_read_present[where P="\<lambda>r w. w=Payload_Term r" and Q=Q,
-        OF finite_payload_value_read_exact operand])
-  qed
-  show ?thesis
-    by (auto simp: finite_citation_argument_read_def finite_pair_read_present[where
-      P="\<lambda>z v. \<exists>e. v=Pair_Term e (use_data_term (snd z)) \<and>
-        environment_value_presents (decode_finite_environment (fst z)) e"
-      and Q="\<lambda>z v. \<exists>w x. v=Pair_Term w x \<and> w=Payload_Term (fst z) \<and> Q (snd z) x",
-      OF finite_environment_use_read_exact right])
-qed
 
 lemma finite_operand_read_exact: "Some v=Some y \<longleftrightarrow> decode_finite_term v=decode_finite_term y"
   by (simp add: decode_finite_term_injective)

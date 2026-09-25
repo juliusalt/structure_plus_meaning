@@ -113,6 +113,15 @@ definition native_call_closure ::
       (local_address option definition_site\<times>finite_factor_term) fset" where
   "native_call_closure P R=keyed_call_closure native_call_key native_call_unkey P R"
 
+text \<open>
+  The native closure of a set of calls is the program's call closure at the call key, which contains its
+  requests, so the evaluation of the closure answers each of them.
+\<close>
+
+lemma native_call_closure_requests: "R |\<subseteq>| native_call_closure P R"
+  by (simp only: native_call_closure_def keyed_call_closure_exact[OF native_call_inverse]
+    finite_program_call_closure_requests)
+
 lemma keyed_call_closure_native [code_unfold]: "keyed_call_closure native_call_key native_call_unkey=native_call_closure"
   by (rule ext)+ (simp only: native_call_closure_def)
 

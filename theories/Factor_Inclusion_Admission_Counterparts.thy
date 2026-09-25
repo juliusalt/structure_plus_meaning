@@ -1,30 +1,8 @@
 theory Factor_Inclusion_Admission_Counterparts
   imports Finite_Presentation_Readers Factor_Finite_Environment_Value_Readers RRA_Finite_Inclusion
     Factor_Finite_Native_Sources Factor_Environment_Inclusion Factor_Package_Admission
-    Factor_Executable_Environment_Values_Base Factor_Finite_Closed_Installation
+    Factor_Executable_Environment_Values_Base
 begin
-
-section \<open>A pair is read exactly when each component is\<close>
-
-text \<open>
-  A reader of a presentation relation reads a term as a value exactly when the term's decoding is
-  related to that value, as the environment value reader does. The pair reader of
-  @{text Finite_Presentation_Readers} is exact in that form whenever its two component readers are:
-  a term is read as a pair exactly when it decodes to a pair whose components the component
-  relations relate to the pair's values, and every other term is read as nothing.
-\<close>
-
-lemma finite_pair_read_present:
-  assumes left: "\<And>v x. left v=Some x \<longleftrightarrow> P x (decode_finite_term v)"
-    and right: "\<And>v y. right v=Some y \<longleftrightarrow> Q y (decode_finite_term v)"
-  shows "finite_pair_read left right t=Some (x,y) \<longleftrightarrow>
-    (\<exists>p q. decode_finite_term t=Pair_Term p q \<and> P x p \<and> Q y q)"
-proof (cases t)
-  case (Finite_Pair a b)
-  have "finite_pair_read left right t=Some (x,y) \<longleftrightarrow> left a=Some x \<and> right b=Some y"
-    by (auto simp: Finite_Pair split: option.splits)
-  then show ?thesis by (simp add: Finite_Pair left right)
-qed simp_all
 
 section \<open>The two argument shapes\<close>
 
@@ -76,13 +54,6 @@ proof -
       and Q="\<lambda>r w. w=Payload_Term r", OF inner finite_payload_value_read_exact])
 qed
 
-text \<open>Every presented environment is the decoding of a finite one, which its reader then reads.\<close>
-
-lemma environment_value_presents_finite:
-  assumes "environment_value_presents E e"
-  obtains C where "decode_finite_environment C=E"
-  using finite_environment_representation[OF conjunct1[OF environment_value_presents_formed[OF assms]]]
-  by blast
 
 section \<open>A site value, read back and presented\<close>
 

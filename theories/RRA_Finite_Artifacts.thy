@@ -8,6 +8,11 @@ lemma finite_sorted_list_distinct [simp]:
   "distinct (sorted_list_of_fset A)"
   by (simp add: sorted_list_of_fset.rep_eq)
 
+text \<open>A list enumerates a finite set exactly when its members are the set's.\<close>
+
+lemma fset_of_list_eq_set: "fset_of_list xs=A \<longleftrightarrow> set xs=fset A"
+  by (metis fset_inject fset_of_list.rep_eq)
+
 record ('a,'v) finite_opaque_basis =
   finite_bag :: "('a \<times> 'v) multiset"
   finite_bindings :: "('a \<times> 'v) fset"

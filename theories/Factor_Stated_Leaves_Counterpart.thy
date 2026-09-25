@@ -209,9 +209,6 @@ qed
 
 section \<open>The presented rows decode to the report's presentation\<close>
 
-lemma decode_finite_sequence_presentation:
-  "decode_finite_term (finite_sequence_presentation f xs)=data_list_term (map (decode_finite_term \<circ> f) xs)"
-  by (induction xs) simp_all
 
 definition decode_stated_tuple :: "finite_stated_tuple \<Rightarrow> factor_term list list" where
   "decode_stated_tuple t=map (map decode_finite_term) (finite_tuple_list t)"
@@ -263,23 +260,6 @@ lemma finite_clause_material_tuple:
   using assms by (auto simp: finite_clause_stated_def finite_material_fields_def finite_tuple_list_def
     finite_tuple_of_def fimage.rep_eq)
 
-lemma stated_fset_of_list_eq: "fset_of_list xs=A \<longleftrightarrow> set xs=fset A"
-  by (metis fset_inject fset_of_list.rep_eq)
-
-lemma stated_image_enumeration:
-  assumes image: "set ys=f ` A" and injective: "inj f"
-  obtains xs where "ys=map f xs" "set xs=A"
-proof -
-  have members: "\<forall>y\<in>set ys. \<exists>x. y=f x \<and> x\<in>A" using image by auto
-  obtain xs where xs: "ys=map f xs" "\<forall>x\<in>set xs. x\<in>A"
-    using list_range_restricted_witnesses[of ys f "\<lambda>x. x\<in>A"] members by blast
-  have "f ` set xs=f ` A" using xs(1) image by simp
-  then have "set xs=A" by (simp only: inj_image_eq_iff[OF injective])
-  then show ?thesis using that xs(1) by blast
-qed
-
-lemma stated_keyed_inj: "inj f \<Longrightarrow> inj (\<lambda>(k,x). (k,f x))"
-  by (auto simp: inj_def)
 
 lemma stated_decode_leaves_inj: "inj (map decode_finite_term)"
   by (rule inj_mapI) (simp add: inj_def)
@@ -332,9 +312,9 @@ proof -
       "clause_materials (decode_finite_schema S)=(\<lambda>(s,xs). (s,map (map decode_finite_term) xs)) ` fset M"
     using finite_clause_stated_fields[of S] by (simp_all add: z)
   obtain qs where qs: "qs0=map (\<lambda>(s,x). (s,map decode_finite_term x)) qs" "set qs=fset Q"
-    by (rule stated_image_enumeration[OF qset[unfolded fields(3)] stated_keyed_inj[OF stated_decode_leaves_inj]])
+    by (rule injective_image_enumeration[OF qset[unfolded fields(3)] keyed_value_injective[OF stated_decode_leaves_inj]])
   obtain ls where ls: "ms0=map (\<lambda>(s,xs). (s,map (map decode_finite_term) xs)) ls" "set ls=fset M"
-    by (rule stated_image_enumeration[OF mset[unfolded fields(4)] stated_keyed_inj[OF stated_decode_lists_inj]])
+    by (rule injective_image_enumeration[OF mset[unfolded fields(4)] keyed_value_injective[OF stated_decode_lists_inj]])
   let ?ms="map (\<lambda>(s,xs). (s,finite_tuple_of xs)) ls"
   have tuple: "finite_tuple_list (finite_tuple_of xs)=xs" if "(s,xs)\<in>set ls" for s xs
     using finite_clause_material_tuple[of s xs S] that ls(2) z by simp
@@ -354,9 +334,9 @@ proof -
   qed
   have qk': "distinct (map fst qs)" using qk by (simp add: qs(1) split_def comp_def)
   have mk': "distinct (map fst ?ms)" using mk by (simp add: ls(1) split_def comp_def)
-  have qf: "fset_of_list qs=Q" using qs(2) by (simp only: stated_fset_of_list_eq)
+  have qf: "fset_of_list qs=Q" using qs(2) by (simp only: fset_of_list_eq_set)
   have mf: "fset_of_list (map (\<lambda>(s,t). (s,finite_tuple_list t)) ?ms)=M"
-    using ls(2) by (simp only: tuples stated_fset_of_list_eq)
+    using ls(2) by (simp only: tuples fset_of_list_eq_set)
   show ?thesis
   proof (rule that[of "(g,l,qs,?ms)"])
     show "finite_clause_rows_keyed (g,l,qs,?ms)" using qk' mk' by (simp add: finite_clause_rows_keyed_def)

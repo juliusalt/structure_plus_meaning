@@ -10,9 +10,10 @@ text \<open>
   addresses at 4,000 and 16,000), each recorded as a base generation by the bounded recording, whose cause targets
   are one, as the entry expects: F0 does not depend on the payload. They are evaluated with the refinement
   collection in effect by @{text Development_Native_State_Execution} (tasks 538, 561), which reports each payload's
-  addresses and each cause's carrier addresses and refuses a cause other than the owner record's: the owner record's
-  at every build, the cuts of the given's value where its caller compiles the given. This theory states them and runs
-  nothing, over the library alone: no refinement is in effect here.
+  addresses and each cause's carrier addresses and refuses a cause other than the owner record's: all three where a
+  caller compiles them with the given, that theory compiling and evaluating nothing at build; the owner records'
+  control at every load is @{text Development_First_Problem_Execution}'s read-back (task 562). This theory states them
+  and runs nothing, over the library alone: no refinement is in effect here.
 \<close>
 
 primrec bounded_recording_cut :: "finite_factor_term \<Rightarrow> nat \<Rightarrow> nat \<times> finite_factor_term" where

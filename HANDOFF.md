@@ -57,7 +57,9 @@ and #422 landed):
   #443 and its delivery #445; the criticism's run at an admitted candidate #447 and its route #449). Before #393 and
   #395, the given extended by the readers task 378's entry grants a request (#451's brief, #434's support gap), so that
   neither the guard's installation nor the given's first generation is made twice; #393 and #395 wait on #451 as a
-  stand-in until its proposal is placed.
+  stand-in until its proposal is placed, and on #452, which takes the `value` and the refinement import out of
+  `Development_Given_Installation` and states the readers' payloads per reader (#415's review); the extension's builds
+  wait on #452 too.
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -91,7 +93,7 @@ by a task of their own (Open 100).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #414 and #418 at its head, then
-#410, #451 (the given's extension), the frame's part (f) per store and the rest in their chains' order, the first
+#410, #452 (the given's installation fix), #451 (the given's extension), the frame's part (f) per store and the rest in their chains' order, the first
 request's and the criticism's builds after them; then
 #426; each review after its build.
 
@@ -292,6 +294,11 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   subdomain and unary forms; (f)'s theorem form; eighteen controls. Its review found (f) existential over indexes, so
   that the package program every answer cites made it vacuous: (f) per store is the fix #407 now waits on, with the
   by-name list's five omissions; the probe's renaming of qualified ML structure paths is Open 78.
+- **Landed with `6abc2f87`**: #414, `Development_Given_Installation` — the given installed: the rooted readers' program
+  beside the development package at fresh uses, one site whose membership holds the package and the readers, each
+  contract carried; freshness is the interpretation's `coordinates(4)`; the installation about 4 s, the selection's and
+  read-back's own costs unmeasured. Its review's follow-ups (`.build/tasks/415/review.md`): 1, 2, 4 and 3's `[simp]`
+  are #452; 3's moves Open 144; 5 Open 99.
 - **#434** (brief, placed as #435–#450): its Planner's findings (`.build/tasks/434/result.md`) — the owner's approval
   record exists (`Development_Owner_Records.development_owner_approval`), its build after #447 and #407 (Open 142);
   publication after verification and the translation (Open 3); part (g)'s leaf argument not demanded (Open 121); parts
@@ -406,7 +413,9 @@ The owner's questions, a line each (their words and the provisional choices in f
    first construction that assigns one — the owner records (#385) are the first.
 99. Installing an n-clause program into an existing native source grows ×2.4–2.5 per doubling (#309's figures, its inner
    stages not separated; `.build/tasks/309/runner`), and environment formation superlinearly (#159): attributed when an
-   installation on the route (#393, #414) or a native question over hundreds of candidates needs it.
+   installation on the route (#393, #414) or a native question over hundreds of candidates needs it. #414 measured
+   the readers' installation at about 4 s; its selection's and read-back's own costs are unmeasured (non-monotonic
+   totals, #415's follow-up 5): a held run with repeated samples if condition 5a needs them.
 100. A native record replayed in a task tree whose theories change the state's closure is unproduced
    (`export_proved_code` refuses): replays run after landing; a proof context holding the tree's theories would lift it
    — a tools task at a measured need.
@@ -526,14 +535,16 @@ states — at a consolidation of the given's programs, absence a question for th
 `Factor_Program_Scopes.native_package_root_position` retired, its uses (`Factor_Amendment_Comparisons`,
 `Factor_Derivation_Presentations`, `Factor_Interpretation_Construction`) citing
 `Factor_Package_Admission.native_package_site_position`, in a batch that rebuilds those theories anyway (#417's review,
-follow-up 1). 143 the route's export modules (#401's, #407's, #445's, #449's) merged to compile once (#434's result).
+follow-up 1). 143 the route's export modules (#401's, #407's, #445's, #449's) merged to compile once (#434's result). 144 #415's
+review, follow-up 3: `rooted_system_reach` beside `Factor_System_Restriction.rooted_system_definitions`,
+`reached_package_sites` and `native_definition_sites_union` beside the package theories, the payload invariance facts
+(`pattern_leaves_rename` … `system_alpha_variant_payloads`) into `Factor_Payload_Audit` — at a batch that edits those
+theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations); #452 takes them out of the simpset.
 
 ## Now
 
 - **Mailed, read by each task's first session**: to #410 (#417's review, follow-up 2: the least package environment's
-  commutation with use permutations), to #414 (plan-65: its read-back measured with the package reader's refinements in
-  effect, `after 414 none`, a fix a task only if the refined read still takes more than seconds; before: it installs the rooted readers' program #431 stated; it
-  returns the given's environment as the finite value whose quotation is computed), #395 (the given's site value takes
+  commutation with use permutations), #395 (the given's site value takes
   that computed quotation, not `program_scope_quoted_total`), #393 (sites 392 and 525's native evaluability; the asked
   relation's program is the guard's program rooted at its entries, derived through the union's piece
   `finite_given_readers_def`; each view's `_formed` lemma in the simpset and `bases=` checked), #407 (the frame as #432

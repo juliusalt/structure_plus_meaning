@@ -24,10 +24,29 @@ proof -
     finite_environment_positions_correct; force)
 qed
 
+text \<open>
+  The least judgment environment of a program and a call, when both are read: the prefix every quotation of a
+  judgment's scope shares, stated once.
+\<close>
+
+definition finite_ready_judgment_environment where
+  "finite_ready_judgment_environment E pu pr au ar=(if finite_native_judgment_ready E pu pr au ar then
+    Some (finite_native_judgment_environment E pu pr au ar) else None)"
+
+lemma finite_ready_judgment_environment_result:
+  "finite_ready_judgment_environment E pu pr au ar=Some J \<longleftrightarrow>
+    finite_native_judgment_ready E pu pr au ar \<and> J=finite_native_judgment_environment E pu pr au ar"
+  by (auto simp: finite_ready_judgment_environment_def)
+
 definition finite_native_judgment_quote where
   "finite_native_judgment_quote E pu pr au ar=(if finite_native_judgment_ready E pu pr au ar then
     let J=finite_native_judgment_environment E pu pr au ar in
       map_option (Pair J) (finite_data_syntax (finite_judgment_term J pu pr au ar)) else None)"
+
+lemma finite_native_judgment_quote_ready:
+  "finite_native_judgment_quote E pu pr au ar=Option.bind (finite_ready_judgment_environment E pu pr au ar)
+    (\<lambda>J. map_option (Pair J) (finite_data_syntax (finite_judgment_term J pu pr au ar)))"
+  by (simp add: finite_native_judgment_quote_def finite_ready_judgment_environment_def Let_def)
 
 lemma finite_native_judgment_quote_result:
   "finite_native_judgment_quote E pu pr au ar=Some (J,C) \<longleftrightarrow>

@@ -1,5 +1,5 @@
 theory Development_Bounded_Recording_Execution
-  imports Development_Bounded_Recording Development_Native_State Native_Execution_Refinements
+  imports Development_Recording_Refinements Development_Native_State Native_Execution_Refinements
 begin
 
 section \<open>The bounded recording at the owner record of 18:53 and two cuts of the given's value\<close>

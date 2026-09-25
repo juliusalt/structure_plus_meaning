@@ -44,7 +44,8 @@ text \<open>
   The native state's first generation is a base generation recorded in the empty environment at the index of
   its own payload, the given's value: the indexed generation (\<open>development_indexed_generation\<close>), read by nothing
   but a snapshot's lookup. It is the base generation (\<open>development_base_generation\<close>) of the given's value, and its
-  contract is the base generation's instance (\<open>development_base_generation_certified\<close>). Choosing
+  contract is the base generation's instance (\<open>development_base_generation_certified\<close>): its cause is the bounded
+  cause of the listing policy, which quotes the judgment's scope with the given's value as its boundary. Choosing
   the given as the state's first payload is made outside the loop, a residual; a later publication supersedes it.
 \<close>
 

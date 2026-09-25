@@ -61,14 +61,15 @@ soundness through the finite proof checker), R4 #505 (completeness, `finite_prog
 `native_call_resolution_exact`), each with its review; R5–R7 (committed choice, the given's declarations, the given at
 the guard's calls, measured) briefed by #507 after R3; R8a #508 (the counterparts retired, their presentation readers moved;
 after #483, #461 and #492, which edit its theories) and R8b #510 (#487's standing items). The least witnesses (77's, 392's and 525's bounds,
-561's private environment): the owner's answer to Q28 (10:44) — checkers do not produce; the given's readers stay
-exactly as installed; each least witness is produced on the producing side (the evaluator's witness construction, a
-least fixpoint by iteration, or the proposer) and handed in with a certificate, checked by the given's clauses and the
-finite proof checker — decided by design #496, re-scoped. #399 and #443 wait on R4, on #507 as a stand-in for R6 and
-on #496 as a stand-in for the least witnesses' builds; #403 and #447 wait through #399.
+561's private environment): the owner's answer to Q28 (10:44) — checkers do not produce — and #496's entry, "A checker
+does not produce: the least witnesses are collected from the given's own readers beside the search, and the given's
+readers check them as installed": a witness construction beside R3's search (W1, taken into #503's brief), the least
+collection of the given's own readers' answers (W2), each registration's completeness (W3, briefed by #512) and the
+given's four registrations (W4); an admission is the given's check, a refusal rests on a complete registration. W2 and
+W4 are briefed with R5–R7 by #507 after R3. #399 and #443 wait on R4 and on #507 as a stand-in for R6 and W4; #403 and
+#447 wait through #399.
 
-**Beside the route**: #461 (the given's derivations without re-reducing what its pieces present, #454's review 1–3 with
-next-edit item 139, #456's 4), then #486 (continuing #457: the given's readers' payload lineage split at the guard's two
+**Beside the route**: #486 (continuing #457: the given's readers' payload lineage split at the guard's two
 lineages, the payload lemmas at the payload notion, #457's review 1–4, item 144's payload part); #483 (running: the
 generic facts at their homes, the low moves in one rebuild; its moves stand under #495's entry, its C4a restatement
 moot).
@@ -94,9 +95,9 @@ before #397 and the evaluator's builds before #399 deepen it: nothing is added a
 (Open 142) ends a chain after #407 only while that chain stays within 10.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the evaluator's R1–R4 (#499–#506) and R5–R7's brief #507, the least
-witnesses' design #496, B2 #492, then I3, the posing and the rest of the route in its chains' order, the first request's and the criticism's
-builds after them; then #461, #486, #483, and R8a #508 and R8b #510 after them; each review after its build.
+exists, Q2): the owner's directions first — the evaluator's R1–R4 (#499–#506, W1 in #503), the W3 brief #512
+and the R5–R7, W2 and W4 brief #507, B2 #492, then I3, the posing and the rest of the route in its chains' order, the first request's and the criticism's
+builds after them; then #486, #483, and R8a #508 and R8b #510 after them; each review after its build.
 
 ## Decisions
 
@@ -119,7 +120,7 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
   Neither course stands: the given's readers stay exactly as installed, no refinement or restatement of a checked
   clause; the least witnesses are produced on the producing side (the evaluator's witness construction, a least
   fixpoint by iteration, or the proposer) and handed in with a certificate, checked by the given's clauses and the
-  finite proof checker (#496, re-scoped).
+  finite proof checker (#496's entry, "A checker does not produce").
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product, not a design's; #373's design (landed
   `93cae3bb`) was accepted and then withdrawn at the owner's question, its identity resting on HOL-assigned prefixes
   and keys. **A design is judged by what its identity rests on, not by what its contract avoids.** Every distinction a
@@ -243,19 +244,20 @@ What landed that open work builds on, a line each; how it went and each review's
 
 - **The entries**: #378 (`cbf0c7e9`), #376 (`47a67cfe`), #381 (`2d97747c`), #383 (`7b23938c`), #428 (`631429e6`, the
   payload audit's reliances), #460 (`584c3a76`, its decision withdrawn by Q27), #482 (`e2b239ac`), #495 (`3e8049be`, the
-  resolving evaluator, with the plan's record of Q27 and the marked corrections of #460's, #376's and #482's entries);
+  resolving evaluator, with the plan's record of Q27 and the marked corrections of #460's, #376's and #482's entries); #496 (`e9c4b54b`, the least witnesses, with
+  the plan's record of Q28 and a marked correction of #495's least-witness section);
   #481's attribution of the recording
   (`.build/tasks/481/result.md`: the cause a quotation of a quotation, 30.4 times the payload's addresses; one generation
   at the given's size 45–65 min, about 9 GB; the cuts and probes I3 and #494 use).
 - **The development package**: N2a `Development_Package_Program.package_program` (#340; a landing that changes one of
   its six programs derives it again, Q18 (c)), N2b the closed package and `development_package_environment` (#342,
   `7d623e15`); the generic content beside its notions (#426, `84e2cd9c`).
-- **The given**: `Development_Given_Readers` (#412), `Development_Given_Program` (#453, `given_program_system`),
+- **The given**: `Development_Given_Readers` (#412), `Development_Given_Program` (#453, `given_program_system`; its derivations over restriction pieces, #461 `014020ba`),
   `Development_Given_Installation` (#414, #452, #455 `24f36cde`: rooted at 47 entries — the guard's twelve
   `given_guard_entries` and 35 granted — installed at fresh uses, 28,729 addresses; a use instantiates
   `given_rooted_meaning`, `given_installed_entry_meaning` and `given_entry_meaning_at`), its payload statement by
   composition (#457, `Factor_System_Payloads`, `Factor_Reader_Payloads`), the compositional derivation
-  `Native_Control_Quotation_Code.note_composed` (#431); `Development_Native_State` (#395 `4d9cf735`, #484 `bd36f20d`:
+  `Native_Control_Quotation_Code.note_composed` (#431; its laws in `Factor_Finite_System_Presentations`, the parts it reduces whole named, #461); `Development_Native_State` (#395 `4d9cf735`, #484 `bd36f20d`:
   the given as one site value `development_given_value`, the first generation's statements, its execution a remainder;
   `development_base_generation` the owner records' and the state's base).
 - **The guard and the asked relation**: `Development_First_Problem_Guard` (#391, `bcb17f7a`: G1–G4 on the pair of the
@@ -327,7 +329,7 @@ The owner's questions, a line each (their words and the provisional choices in f
   choose — provisional.
 - **Q27** answered 2026-09-25 09:48: the native evaluator that constructs the missing witnesses first, not the
   counterparts #460 chose (Decisions; #495's entry).
-- **Q28** answered 2026-09-25 10:44: checkers do not produce; neither course (Decisions; #496 re-scoped).
+- **Q28** answered 2026-09-25 10:44: checkers do not produce; neither course (Decisions; #496's entry decides the production).
 
 **To plan, in the order expected** (numbers kept from earlier states):
 
@@ -405,11 +407,11 @@ searches for a theory before briefing a task that edits it.
   correct #397's, #399's, #403's, #443's and #447's briefs with #482's (3) and B2's (#492) names: each was mailed (3),
   #447 also its correction of (5), and B2 restates `development_indexed_generation` and the recorded instances in place,
   so nothing in them misleads meanwhile.
-- **The evaluator's next steps** (#495 landed): place #507's proposal (R5–R7);
-  judge #496 (re-scoped by the answer to Q28; mailed, its brief rewritten) and place the least witnesses' builds; then re-point
-  #399 and #443 from #507 and #496 to R6 and the least witnesses' builds, and correct #399's, #403's, #443's and
-  #447's briefs from #495's and #496's entries (#495's result names each correction; each was mailed that the
-  counterpart route is withdrawn). Next-edit items 156 and 159 retire with R8a; 154 is mailed to R8b, 158 stays at a measured need; #508 was mailed why it waits on #461 and #492. `v2.py after A B` makes A wait for B's landing: only for a task that is to wait.
+- **The evaluator's next steps** (#495 landed): place #512's proposal (W3) and #507's (R5–R7, W2 and W4, spliced before #399 and #443 in place of #507);
+  then, before they start,
+  correct #399's, #403's, #443's and
+  #447's briefs from #495's and #496's entries (#495's and #496's results name each correction; each was mailed #496's entry and, earlier, that the
+  counterpart route is withdrawn). Next-edit items 156 and 159 retire with R8a; 154 is mailed to R8b, 158 stays at a measured need; #508 was mailed why it waits on #461 and #492, #505 W1's place in R3's search. `v2.py after A B` makes A wait for B's landing: only for a task that is to wait.
 - **Mailed, read by each task's first session** (by task): #397, #399, #403, #443 and #447 (#482's (3); #447 its
   correction of (5)); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's
   payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers cited); #407
@@ -431,7 +433,7 @@ searches for a theory before briefing a task that edits it.
   earlier gaps in `PLANNING_LOG.md`, 2026-09-24): `v2.py read check:167` raises a TypeError in `check_text`;
   `measuring --shared` wrote no `measurements.log`; bases swept before a brief's task ran (#324); the finalizer's push of
   `82a065cd` failed; the finalizer should commit the handed-over files only (#303); the exclusive hold outlasts its run
-  (#317); a re-review writes over its first verdict (#65, #302, #438); `v2.py ledger` records a text beginning with `--`
+  (#317); a re-review writes over its first verdict (#65, #302, #438; #461's accepting review's follow-ups lost with it); `v2.py ledger` records a text beginning with `--`
   (Q15); a task tree's owner ledger is main's stale copy (#386's review, follow-up 4); a queued exclusive claim granted
   after the base advanced refuses the probe launched at the grant (#425: pin `--base` at the claim); the restated check
   misses a restatement differing only by variable names or a fixed type (#411); `probe_runs` locates a skipped

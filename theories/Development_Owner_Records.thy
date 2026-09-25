@@ -1,5 +1,5 @@
 theory Development_Owner_Records
-  imports Development_Certified_Generations
+  imports Development_Bounded_Recording
 begin
 
 section \<open>A generation stands at the index of its own payload\<close>
@@ -7,70 +7,51 @@ section \<open>A generation stands at the index of its own payload\<close>
 text \<open>
   A generation the native loop records stands at a locus that is an index and nothing else: the
   whole-artifact target of its own payload's quotation, which no program reads but a snapshot's
-  lookup. Recording at that index is the library's recording of a presented payload under the policy
-  listing exactly it, with the locus supplied by the payload itself; every generation the first
-  problem's route records (the owner records, the posing, the admitted answer, its verification) is
-  recorded so.
+  lookup. Recording at that index is the bounded recording (@{text Development_Bounded_Recording}): the
+  payload is made once and is the locus, the listing policy judges it, and the cause quotes the judgment's
+  scope with the payload as its boundary, so every generation the first problem's route records (the
+  owner records, the posing, the admitted answer, its verification) costs its payload once and its cause
+  holds nothing of its payload. Its contract is the bounded recording's, where the environment recorded
+  in is formed and every cited row reads back there.
 \<close>
 
 definition development_indexed_generation ::
     "finite_factor_term \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow> development_generation_row list \<Rightarrow>
       (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
-  "development_indexed_generation t H rows=Option.bind (development_data_target t)
-     (\<lambda>l. development_payload_generation_with development_payload_judgment t H l rows)"
-
-lemma development_indexed_generation_built:
-  assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
-  obtains l where "development_data_target t=Some l"
-    "development_payload_generation_with development_payload_judgment t H l rows=Some (B,u,G)"
-  using built by (auto simp: development_indexed_generation_def bind_eq_Some_conv)
+  "development_indexed_generation t H rows=development_bounded_generation t H rows"
 
 theorem development_indexed_generation_certified:
   assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
+    and formed: "finite_environment_formed H"
+    and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
   obtains R d K pu E root where "development_data_target t=Some (generation_payload G)"
     "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
     "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-    "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+    "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
       (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
     "generation_predecessors G=fset_of_list (map snd rows)"
     "finite_check_generation G B u []"
     "environment_included (decode_finite_environment H) (decode_finite_environment B)"
-proof -
-  obtain l where target: "development_data_target t=Some l"
-    and recorded: "development_payload_generation_with development_payload_judgment t H l rows=Some (B,u,G)"
-    by (rule development_indexed_generation_built[OF built])
-  obtain R d K pu E root where payload: "development_data_target t=Some (generation_payload G)"
-      "generation_payload G=Finite_Whole R"
-      "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-      "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
-        (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
-      "generation_locus G=l" "generation_predecessors G=fset_of_list (map snd rows)"
-      "finite_check_generation G B u []"
-      "environment_included (decode_finite_environment H) (decode_finite_environment B)"
-    by (rule development_payload_generation_certified[OF recorded])
-  have locus: "generation_locus G=generation_payload G" using target payload(1,5) by simp
-  show thesis by (rule that[OF payload(1) locus payload(2,3,4,6,7,8)])
-qed
+  by (rule development_bounded_generation_certified[OF built[unfolded development_indexed_generation_def] formed rows])
 
 lemma development_indexed_generation_recorded:
   assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
+    and formed: "finite_environment_formed H"
+    and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
   shows "finite_environment_formed B" "finite_environment_included H B" "finite_check_generation G B u []"
     "finite_generation_formed G"
-proof -
-  obtain l where recorded: "development_payload_generation_with development_payload_judgment t H l rows=Some (B,u,G)"
-    by (rule development_indexed_generation_built[OF built])
-  show "finite_environment_formed B" "finite_environment_included H B" "finite_check_generation G B u []"
-    by (rule development_payload_generation_recorded[OF recorded])+
-  show "finite_generation_formed G" by (rule development_payload_generation_fields(2)[OF recorded])
-qed
+  by (rule development_bounded_generation_recorded[OF built[unfolded development_indexed_generation_def] formed rows])+
 
 section \<open>A base generation stands at the index of its payload in an environment of its own\<close>
 
 text \<open>
   A base generation is the indexed generation recorded in the empty environment with no predecessor: its locus
   is its payload and it has no predecessor. The owner records and the native state's first generation are its
-  instances.
+  instances. The empty environment is formed and cites nothing, so its contract takes no premise.
 \<close>
+
+lemma development_base_environment_formed: "finite_environment_formed (finite_enumerated_environment [] [])"
+  by (simp add: finite_environment_formed_def finite_enumerated_environment_def finite_relation_functional_def)
 
 definition development_base_generation ::
     "finite_factor_term \<Rightarrow> (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
@@ -81,28 +62,40 @@ theorem development_base_generation_certified:
   obtains R d K pu E root where "development_data_target t=Some (generation_payload G)"
     "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R" "generation_predecessors G={||}"
     "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-    "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+    "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
       (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
     "finite_check_generation G B u []"
 proof -
   have indexed: "development_indexed_generation t (finite_enumerated_environment [] []) []=Some (B,u,G)"
     using built by (simp only: development_base_generation_def)
+  have rows: "list_all (\<lambda>(d,G). finite_check_generation G (finite_enumerated_environment [] []) (fst d) (snd d))
+      ([]::development_generation_row list)" by simp
   obtain R d K pu E root where certified: "development_data_target t=Some (generation_payload G)"
       "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
       "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-      "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+      "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
         (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
       "generation_predecessors G=fset_of_list (map snd ([]::development_generation_row list))"
       "finite_check_generation G B u []"
       "environment_included (decode_finite_environment (finite_enumerated_environment [] [])) (decode_finite_environment B)"
-    by (rule development_indexed_generation_certified[OF indexed])
+    by (rule development_indexed_generation_certified[OF indexed development_base_environment_formed rows])
   have base: "generation_predecessors G={||}" using certified(6) by simp
   show thesis by (rule that[OF certified(1,2,3) base certified(4,5,7)])
 qed
 
-lemmas development_base_generation_recorded=
-  development_indexed_generation_recorded[of t "finite_enumerated_environment [] []" "[]",
-    folded development_base_generation_def] for t
+lemma development_base_generation_recorded:
+  assumes built: "development_base_generation t=Some (B,u,G)"
+  shows "finite_environment_formed B" "finite_environment_included (finite_enumerated_environment [] []) B"
+    "finite_check_generation G B u []" "finite_generation_formed G"
+proof -
+  have indexed: "development_indexed_generation t (finite_enumerated_environment [] []) []=Some (B,u,G)"
+    using built by (simp only: development_base_generation_def)
+  have rows: "list_all (\<lambda>(d,G). finite_check_generation G (finite_enumerated_environment [] []) (fst d) (snd d))
+      ([]::development_generation_row list)" by simp
+  show "finite_environment_formed B" "finite_environment_included (finite_enumerated_environment [] []) B"
+    "finite_check_generation G B u []" "finite_generation_formed G"
+    by (rule development_indexed_generation_recorded[OF indexed development_base_environment_formed rows])+
+qed
 
 section \<open>Owner records\<close>
 
@@ -214,25 +207,29 @@ theorem development_owner_approval_certified:
     "development_data_target t=Some (generation_payload G)"
     "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
     "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-    "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+    "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
       (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
     "finite_check_generation G B u []"
 proof -
   have indexed: "development_indexed_generation t H [(s,A)]=Some (B,u,G)"
     using built by (simp only: development_owner_approval_def)
-  note recorded=development_indexed_generation_recorded[OF indexed]
+  have formed: "finite_environment_formed H"
+    using generation_at_environment_formed[OF cited[unfolded finite_check_generation_exact]]
+    by (simp only: finite_environment_formed_correct)
+  have rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) [(s,A)]" using cited by simp
+  note recorded=development_indexed_generation_recorded[OF indexed formed rows]
   have "list_all (\<lambda>(d,G). finite_check_generation G B (fst d) (snd d)) [(s,A)]"
     by (rule development_rows_carried[OF _ recorded(2) recorded(1)]) (simp add: cited)
   then have carried: "finite_check_generation A B (fst s) (snd s)" by simp
   obtain R d K pu E root where certified: "development_data_target t=Some (generation_payload G)"
       "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
       "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-      "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+      "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
         (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
       "generation_predecessors G=fset_of_list (map snd [(s,A)])"
       "finite_check_generation G B u []"
       "environment_included (decode_finite_environment H) (decode_finite_environment B)"
-    by (rule development_indexed_generation_certified[OF indexed])
+    by (rule development_indexed_generation_certified[OF indexed formed rows])
   have cites: "generation_predecessors G={|A|}" using certified(6) by simp
   show thesis by (rule that[OF cites carried certified(1,2,3,4,5,7)])
 qed

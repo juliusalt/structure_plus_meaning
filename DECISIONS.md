@@ -16293,7 +16293,8 @@ with the payload as its boundary:
 - *The fill.* `payload_fill F0 V R` is the environment F0 with the artifact at every use of V replaced by R, every
   binding kept. When F0 is formed and every use of V holds the empty artifact there, no binding of F0 has its source in
   V (a bound slot lies in its source artifact's carrier, and the empty artifact has none), so the fill is formed
-  exactly when R is.
+  exactly when V is empty or R is formed (`payload_fill_formed`; corrected by task 492 from #491's review: "exactly
+  when R is" holds only for a nonempty V).
 - *The bounded value.* The pair of the judgment value of F0 at its program and call sites
   (`Factor_Judgment_Values.judgment_value_presents`) and the data list of V's uses (`use_data_term`), a product of
   existing presentation classes. The cause is its complete data quotation (`complete_data_quoted_at`), a whole
@@ -16661,6 +16662,16 @@ unavailable, never as a failure row; the request (#443) records it. Nothing fall
 
 ### The least witness has no complete construction
 
+[Corrected by "A checker does not produce: the least witnesses are collected from the given's own readers beside the
+search, and the given's readers check them as installed" below (task 496), after the owner's answer to Q28 (2026-09-25
+10:43): "Are these options consistent with the following - checkers do not solve anything they only check if what is
+provided is what is expected - the difficult part of producing is not done by the checker". Neither course stands, and
+no construction inside the checked program is needed: the given's clauses at 77, 392, 525 and 561 check a provided
+witness. The least witness is produced beside the search by the resolver's witness construction — the least collection
+of the answers of the given's own readers, steered by registrations no checker reads — or handed in by a proposer, and
+checked by the given's readers exactly as installed. A refusal at a least witness rests on its registration's
+completeness, proved once; G2–G4, 561 and the samples reaching 77 are decided once those builds land.]
+
 A least witness — 77's bound, a list holding the roots and closed under the definitions' callees; 392's and 525's, the
 same over the candidate's package; 561's private environment, one including both environments — is admitted by the
 least value of a monotone constraint and by every larger one, and no premise produces it: resolution binds the list
@@ -16788,9 +16799,271 @@ same size. These are estimates; a demand past a held run's three minutes goes to
 ### Open
 
 - The least witness (77's, 392's and 525's bounds, 561's private environment): the planner's, the courses above.
+  [Decided by task 496's entry below: produced beside the checker, checked by the given's readers as installed.]
 - Whether the guard's G2–G4 could instead be stated over readers whose witnesses resolution constructs (task 381's
   guard), should the least witness's builds cost too much: the planner's.
 - Native placement of the resolver's certificates as native proof graphs (a replay of an admission), and native
   derivation admission's own coverage: not decided here.
 
 Recorded 2026-09-25 (task 495's decision; a design, no theory changes).
+
+## A checker does not produce: the least witnesses are collected from the given's own readers beside the search, and the given's readers check them as installed
+
+Task 496, a design, from the owner's answer to Q28 (2026-09-25 10:43, to the monitoring session; asked whether to
+record it as the answer, the owner said "ok"): "Are these options consistent with the following - checkers do not solve
+anything they only check if what is provided is what is expected - the difficult part of producing is not done by the
+checker". Q28 had put the provisional course of task 495's entry for the least witness — the given's readers refined at
+77, 392, 525 and 561 to take their witnesses from new closure-list and merge readers, the refined program proved equal
+to the given's in Isabelle — against restating the given's clauses. Neither stands: both build the producing into the
+checked program. The given's clauses at those sites are checkers: they state what a witness must satisfy and check a
+provided one. This entry decides where the least witnesses are produced, the certificate they carry, how the given's own
+clauses are evaluated with them and what stays unresolved, and the builds. It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Task 495's entry, "The least witness has no complete construction": its courses a native refinement proved equal (recommended), the given restated, or declared least witnesses (rejected); until decided, G2–G4, 561 and every sample reaching 77 unresolved. | The least witness is produced on the producing side, outside the checker: the resolver's witness construction collects it from the answers of the given's own readers, or a proposer hands it in; the given's readers check it exactly as installed, the certificate by the existing finite proof checker. No refined program, no equality of two programs, no reader joined to the checked program. |
+| Task 496's first brief: closure-list and environment-merge readers as native definitions, and the evaluated program the given's readers refined to take their witnesses from them. | Withdrawn by the owner's answer. The collections those readers would compute are the least collections of the given's own answers — the edge reader's (82) from the roots, the rows of two environments — produced by one generic construction whose justifications are derivations in the given's readers. |
+| Task 495's entry: "a construction of it inside the evaluator would decide what those definitions mean". | A construction on the producing side decides nothing a checker decides: an admission is the given's clauses' check of the produced value. Only a refusal relies on the production, and then through its completeness, proved once per registration as a fact of the given's readers' meanings. |
+
+### What the given's clauses check of a provided witness
+
+- **77** (`package_closure_admission_schema`, a call at (x, y): an environment value and a root list): 26 at x, 47 at
+  (y, z), 76 at ((x, z), z). A provided bound z passes exactly when it contains the roots and every member is a
+  definition of the environment whose clauses' callees are members: a closed bound. Leastness is neither checked nor
+  needed: the call holds exactly when some closed bound exists (`package_closure_admission_exact`), every closed bound
+  contains the reach of the roots over the definition edges (`native_closed_bound_contains_sites`), and the reach is a
+  closed bound when the package is formed (`native_package_sites_closed_bound`).
+- **392, 525** (`package_additions_schema` at the lists 391 and 524): 79 reads the candidate's root list (variable 4);
+  47 at (4, 5), 76 at ((y, 5), 5) and the list site at ((x, (y, (z, w))), 5), a context list checking each member of
+  the bound 5 (`context_list_profile.exact`). A provided bound passes when it is closed, contains the roots and every
+  member passes. The member check is antimonotone in the bound, so a larger closed bound can fail where the least
+  passes; whenever some bound passes the least passes, and the call holds exactly when the package's members pass
+  (`package_additions_profile.exact`).
+- **561** (`package_request_schema`, variable 7): 113 at (x, 7) and at (4, 7), and nothing else holds 7. A provided
+  environment passes when it is formed and includes both; one exists exactly when the two environments are compatible
+  (`environments_compatible`), and the least is their merge (`environment_merge_formed_iff`,
+  `environment_included_merge_left`, `environment_included_merge_right`).
+- No other clause of the recomputed head table (`.build/tasks/495/head_table.txt`) holds a variable of this kind. 83's
+  predecessor (held by 82 and 83) is an existential over the environment's finitely many definitions, which resolution
+  enumerates; every other premise-only variable is of task 495's constructed kinds.
+
+So an admission relies on the given's check alone: a closed bound suffices by the given's own meaning. Leastness is
+relied on only to refuse — at the least witness a failed check means every witness fails — and there it is established
+on the producing side, below, not added to what the given checks. No clause of the given checks less than the route
+relies on.
+
+### The production: the witness construction and its least collections
+
+1. **The witness construction is beside the search, and the search calls it.** R3's search takes a witness
+   construction as a parameter: a function of the program, a goal's site, the clause resolving it and that clause's
+   bindings so far, returning a ground value for a premise-only variable of the clause, or nothing. A variable the
+   construction is registered for is never extended by the search: a goal holding it while it is free is not selected;
+   once every other variable of the goals holding it is ground, the search calls the construction, binds the variable
+   to the value returned and resolves those goals — the given's checks — at it. The empty construction is task 495's
+   evaluator unchanged. Selection, step, pruning, certificate and soundness stay as R3 proves them; only the call site
+   and its rule are added, which keeps a 79-then-47 chain from being entered at the free bound (the goals holding it
+   wait until 79 has read the roots).
+2. **A registration steers the construction, and nothing else reads it.** A registration names a clause by its site and
+   its schema, compared as a value (no clause key's value is read), and one premise-only variable of it; a base query
+   and a step query — conjunctions of goals at sites of the same program, their patterns over the clause's variables,
+   an element variable and private variables, with equations matching the clause's bound values against patterns; a
+   key, a projection of an element; an identity query, a goal over two elements of one key (or none: elements
+   identified by equality of ground terms); and a presentation, the term the collected elements form (a data list, or
+   a pair of data lists fed by two families of base queries). Registrations are data read by the construction alone:
+   the checker reads none, and no clause is refined, restated or added. A registration is relocated with its program by
+   an installation's placement, so one stated over the numbered program applies to its installed package.
+3. **The least collection of a query's answers, stated for any program.** The construction answers the base query at
+   the clause's bindings, then the step query at each element found, until no new element appears. The answers of a
+   query are the instances of its element variable at the resolved branches of its goals — the resolver's all-answers,
+   complete when no branch is cut, by R4's lifting. An answer whose key is new is added; one whose key is present is
+   dropped when the identity query resolves at the two, and is a conflict when that query is refuted. Each element keeps
+   the certificate of the answer that brought it and the element its step was taken at. The contract, proved once: when
+   every query resolution is complete and no conflict arises, the collection presents the least set of elements that
+   contains the base answers and is closed under the step answers, elements identified by the identity query; a conflict
+   presents two answers of one key whose identity is refuted. It is a least fixpoint by iteration — the least model of
+   two answer relations — computed on the producing side, where the owner's answer places it.
+4. **The given's registrations**, four, over the numbered given's readers:
+   - 77's clause, its bound: base query, the selection 5 of an element from the head's root list y; step query at an
+     element d, the edge reader 82 at (x, (d, e)); elements by equality; presented as the data list in the order found.
+     The collection is the reach of the roots over the definition edges, `native_definition_sites` of the roots
+     (`definition_edge_reading_exact`, `data_selection_exact`). A reached site with no definition has no edges and
+     stays in the collection, where 76 then fails at it.
+   - The additions notion's clause at any list site (392, 525), its bound: base query, 5 over the root list the
+     clause's own 79 read; step query, 82 at (y, (d, e)) in the candidate's environment value y; the same key and
+     presentation. The collection is the reach of the candidate's roots.
+   - 561's clause, its private environment: base queries, 5 over the artifact rows of x and of 4 (each value matched
+     against the pair of its two tables), and 5 over their binding rows; no step; keys the row's use, and the binding
+     row's use and slot; identity, artifact identity 12 at the two artifact values (`artifact_identity_exact`), and
+     equality of the two targets; presented as the pair of the two lists. With no conflict the collection presents the
+     merge of the two environments, rows of x first; a conflict is one use holding two artifacts, or one slot two
+     targets, whose sameness the identity query refutes.
+   These are the collections the readers of this task's first brief would have computed; here they are answers of the
+   given's own readers, and no program is added.
+5. **A proposer may hand one in.** A request or an answer may carry a table of witnesses — a registration, a ground
+   instance of the goal, a value — which the construction consults before its own production: the search binds the value
+   and resolves the given's goals at it. A handed-in witness that fails the check is discarded and the construction
+   produces its own; it is never a refusal. A proposer may also hand in a whole certificate of a call, which the finite
+   proof checker checks as it is (`finite_checks_schema_proof_exact`), with no resolution. Both are production outside
+   the checker; the check is the given's.
+
+### The certificate
+
+- **The call's certificate** is R3's: a ground `finite_schema_proof` in the given's readers, the witness in the binding
+  table of the registered clause's node. The existing finite proof checker (`finite_checks_schema_proof`, exact to
+  `checks_schema_proof`) accepts it, and the call holds by `schema_proof_sound`. What it checks of the witness is exactly
+  what the given's clauses check: the roots included and the bound closed; the members passing; both environments
+  included and the witness formed. An admission needs nothing else.
+- **The witness's justification: why each element is in the closure.** For each element, in the order found, the
+  certificate of the answer that brought it — a root's selection from the root list (5), an edge from an earlier element
+  (82), a row's selection from one environment's table (5) — each a derivation in the same given's readers, each
+  accepted by the same checker; the order is checked by the construction's own certificate check (every step answer
+  taken at an earlier element). With the call's own check (the bound closed, the roots in it) it shows the witness least:
+  every element is reached and the witness is closed, so it is the reach. For 561, every row is a row of one of the two
+  environments and the witness is formed: it is the merge.
+- **What leastness serves.** A refusal. A resolved call needs the call's certificate alone; the justification travels
+  with it and is what a refusal at the same registration rests on.
+
+### Refusal, and what stays unresolved
+
+- **A witnessed failure refutes only where the registration is complete.** A registration is complete at its clause
+  when, for every instance of the goal, the clause holds at some value of the variable exactly when it holds at the
+  collection's value. Proved once per registration, as a fact of the given's readers' meanings: at 77's clause a closed
+  bound contains the reach and the reach is closed when formed, so the clause holds at some bound exactly when it holds
+  at the reach; at the additions notion's clause, for any list site, the member check is antimonotone and the reach is
+  closed; at 561's clause a formed environment including both exists exactly when the two are compatible, and a
+  conflict certifies that they are not. At a complete registration whose queries were complete, a goal refuted at the
+  collection's value refutes the call, and R4's exactness holds for the search with that construction. Elsewhere a
+  failed check at a witness leaves the call unresolved, its diagnosis naming the registration, the witness and the goal
+  refuted at it. A handed-in witness never refutes.
+- **A refused call's record** holds the registration, the witness with its justification, and the goal refuted at it (a
+  refutation of a ground call, exact by R4).
+- **Unresolved** stay: a call whose construction's queries are cut at the bound; a clause whose registration is not
+  proved complete, where a check failed; a least witness of a clause with no registration — a candidate's new clauses,
+  unknown before the answer, whose witnesses a proposer may hand in for an admission and which otherwise stay
+  unresolved.
+
+### The route
+
+- **#399, the judgment**: the resolver with the construction and the four registrations at the installed guard's entry
+  (526) at the pair — the numbered asked program resolved, its meaning carried to the installed package by the
+  installation's contract (`asked_installation`, `asked_entry_contract`), or the installed package read by
+  `native_call_resolution` with the registrations relocated by `asked_placement`. Resolved: an admission whose
+  certificate is a derivation of the guard's call in the given's readers, the witnesses of 77, 392 and 525 in its
+  bindings — a judgment of the given, with nothing to carry across. Refuted: a refusal naming the socket whose call is
+  refuted, at a registered clause through its registration's completeness. Unresolved: an unavailable judgment with its
+  diagnosis.
+- **#443, the first request**: 561 at the given, the support and the context — 80 at the given (77 registered), 122 at
+  the context (through 80, 77), the two inclusions at the collected merge. Resolved: the request stands with its
+  certificate; refuted: a conflict between the two environments, or a package that is not formed; unresolved otherwise.
+- **#447, the criticism**: a sample evaluates entries at both sides of pairs of argument terms; an entry reaching 77
+  resolves through the construction on each side, at the reach of that side's roots. A row needs one side resolved and
+  the other refuted; a refutation at 77 is its registration's. An unresolved side is unavailable, never a row. S1's
+  exact table holds: the resolver with complete registrations is exact.
+- **#401, #403, #445, #449** follow their predecessors, unchanged by this entry.
+
+### What it relies on
+
+Task 376's test:
+- The checked program is the given's readers exactly as installed: the judgment relies on what they rely on, recorded
+  where each was proved.
+- The construction reads a registration (a site, a schema compared as a value, a variable, query patterns), the
+  program's clauses as the search does, and the answers of the given's own readers. It compares elements by equality of
+  ground terms and by the registered identity query, a native definition's meaning (artifact identity, 12). The order of
+  a collection is the order found: a presentation the given's checks do not read (47, 76, the context lists and
+  environment admission are invariant under it), no subject.
+- A refusal relies also on its registration's completeness, a fact of the given's readers' meanings proved once in
+  Isabelle — the verification of their consistency, not a second statement of a meaning.
+- No payload is read but where the given's readers read it; nothing of the bootstrap loop is read.
+
+### The builds
+
+| Build | What it establishes | Consumes | Size |
+|---|---|---|---|
+| W1 | The call site: R3's search takes a witness construction, keeps goals holding a registered variable unselected while it is free, calls the construction once their other variables are ground, binds the value and resolves them; a witnessed failure counts toward no refutation; the empty construction is task 495's evaluator | R3 (#503): a correction of its brief before it starts (a parameter and its rule), or a build after R3 stating the search with the parameter | about 30K in #503, or about 150K alone |
+| W2 | The least collection (`Factor_Least_Collections`): the resolver's all-answers of a query, complete when no branch is cut; the iteration of base and step queries with keys, identity and presentation; the justifications and their check; the contract for any program; a proposer's hand-in table consulted first | W1, R4 (#505) | about 220K |
+| W3 | The completeness facts (`Factor_Least_Witness_Facts`): at 77's clause, at the additions notion's clause for any list site, at 561's clause, the clause holds at some value of its variable exactly when it holds at the least, and the least is the collection its registration's queries give (82's, 5's and 12's exactness); stated over the given's readers' meanings | the named theories; independent of R1–R4 | about 180K |
+| W4 | The given's registrations (`Factor_Least_Witness_Registrations`): the four, over the numbered given's readers, each proved complete by W3; the resolver with a construction whose registrations are complete exact (R4's lifting with the completeness); registrations relocated by an installation's placement; the controls in `Factor_Resolution_Controls` (77 at a two-definition package resolved, at a package with an unreadable callee refuted, 561 at compatible and at incompatible environments), one evaluation; REASONING_REUSE.md's row for producing a least witness beside the checker | W1, W2, W3, R4 | about 180K |
+
+W3 can start now. W1 goes with R3, as a correction of #503 or after it. W2 follows R4 and W1; W4 follows W1–W3 and R4.
+R5 and R6 (#507) are independent of W1–W4 and bound the cost of refusals at the presentation-free readers, 79's root
+lists among them, which a refused G3 or G4 would otherwise enumerate again; R7 measures the guard's calls through the
+construction, after W4. #399 and #443 then wait on R4 and W4, and on R6 for refusal controls at presentation-free
+readers; #447's entries reaching 77 wait on W4.
+
+### What the builds must respect
+
+- The checked program is the given's readers exactly as installed: no clause refined, restated or added, no reader
+  joined to it; registrations and hand-ins are read by the witness construction alone, never by a checker.
+- Every resolved call carries a certificate the existing finite proof checker accepts in the given's readers, the
+  witness in its bindings.
+- A witnessed failure is a refutation only at a registration proved complete whose queries were complete; a handed-in
+  witness never refutes; unresolved is never refuted and never admits.
+- A registration names its clause by site and schema, compared as a value; a result depends on the program's clauses,
+  the call, the registrations and the bound, not on clause keys, variable names or renamings.
+- The construction and the collection are generic: operations on any finite program, their contracts proved once; a
+  registration's completeness is proved once for its clause, for every instance of its goal.
+- Elements are compared by equality of ground terms and by the registered identity query; a collection's order is no
+  subject.
+- Nothing reads the bootstrap loop's datatypes, rows, loci or keys; no recorded word changes.
+
+### Weighed and not taken
+
+- *The given's readers refined, or restated* (Q28's two courses): the owner's answer.
+- *A frozen tail inside the search*, with no registration: the search would commit to the ground elements its goals
+  demand at an open tail of the variable, and close the tail when nothing else is pending. It is generic, but a demand
+  is forced only where the demanding goal's meaning is a membership requirement, which the search cannot read, so a
+  commitment could exclude a witness another alternative allows; a demanded element's justification would be a partial
+  derivation with an open tail, not a derivation the checker accepts; and it would change R3's search in its body. The
+  registered collection keeps the search as R3 and R4 prove it and every justification a closed derivation in the
+  given's readers.
+- *Native producer programs* — the closure-list and merge readers of this task's first brief — evaluated beside the
+  checked program: their outputs would be justified by derivations in programs of their own and by their contracts, not
+  by the given's readers; the registered queries over the given's own readers (5, 82, 12) give the same collections with
+  justifications in the given's readers, and add no program. Their clauses are recorded in
+  `.build/tasks/496/q28-reading.md` should a producer program be wanted.
+- *The machinery's reading of the package* (`finite_native_source`) as the producer: its output is right, but leastness
+  would rest on a HOL function's contract instead of derivations of the given's readers. It stays what task 495 kept it
+  for, the machinery's reading of a program it evaluates; what it computes may still be handed in, checked like any
+  hand-in.
+
+### Open
+
+- W1's place, in #503 before it starts or in a build after R3: the planner's.
+- No registration is provided for a clause a candidate adds: a proposer's hand-in serves an admission there, and a
+  refusal at such a clause stays unresolved.
+- Native placement of certificates and justifications (a replay of an admission), as task 495 left it.
+
+Recorded 2026-09-25 (task 496's decision; a design, no theory changes).
+## The bounded recording records the route's generations; its cause is one target
+
+Task 492, build B2 of "A generation over a state holds its payload once" (task 482). `Development_Bounded_Recording`
+states the finite fill (`finite_payload_fill`, decoding exactly to `payload_fill`), the bounded quotation
+(`finite_bounded_judgment_quote`, contract `finite_bounded_judgment_quote_correct`), the bounded judgment
+(`development_bounded_policy_judgment`, which judges where `development_policy_judgment` does, at the same least
+judgment environment: `development_bounded_policy_judgment_original`) and the recording (`development_bounded_generation`,
+contract `development_bounded_generation_certified`, every field of `development_payload_generation_certified` with the
+cause `bounded_certified_policy_cause_at`). `Development_Owner_Records.development_indexed_generation` is that recording;
+the base generation, the owner records, the approval and the native state's first generation are restated through it.
+
+- *V and F0.* V is an fset of uses, found by comparing every artifact of J with the payload by value (artifact identity);
+  F0 is the fill of J by the empty artifact at V, so the fill states F0 and no second operation does. The quotation is
+  refused unless F0 is formed and holds both sites: F0 holds no copy of the payload, so these checks are constant in it,
+  and F0's formation already excludes a binding with its source in V.
+- *Premises.* The recording records by `finite_construct_formed_cause_generation`, which checks neither the environment
+  recorded in nor the cited rows, so the contract takes H's formation and the rows' readings as premises; the base
+  generation discharges them (`development_base_environment_formed`, no row), and the approval derives H's formation
+  from its cited row's reading. `development_indexed_generation_certified` and `_recorded` take them too; no theory
+  outside the two restated ones consumed those names.
+- *A walk added.* Finding V compares every artifact of J with the payload: J holds it at two uses, so two comparisons
+  of the payload with itself (linear under the refinement collection's artifact equality), where the old scope's
+  quotation presented it twice as data. Recorded as rule (c)'s walk of the recording's own comparison.
+- *Measured* (task 492's `measurement.md`, shared runs): the cause of the owner record of 18:53 and of the given's value
+  cut at 8,013 and 32,009 addresses is the same target, 3,437 carrier addresses (the entry estimated three to four
+  thousand). At 32K the recording took 8.3–11.4 s against the old recording's 21.6 s in the same run; the replay is 62 %
+  of its parts, and it costs 261–356 µs per payload address against the gate's 60: the bounded scope is necessary and not
+  sufficient, as the entry says, and rules (a)–(c) are I3's and R's.
+- *Reliances.* V is decided by artifact identity and the placeholder by the empty artifact, as the entry's (5) states;
+  nothing reads the bootstrap loop's rows, loci or keys. No recorded state's entity changed (no recipe reaches
+  `Development_Owner_Records` or `Development_Native_State`), and no word.
+
+Recorded 2026-09-25 (task 492).

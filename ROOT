@@ -1799,6 +1799,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Presented_Publication_Values
     Factor_Certificate_Policy_Readiness
     Development_Certified_Generations
+    Development_Bounded_Recording
     Development_Owner_Records
     Development_Decision_Generations
     Development_Seed_Publication
@@ -1883,6 +1884,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Counterparts
     Development_First_Problem_Asked
     Development_Native_State
+    Development_Bounded_Recording_Execution
     Development_Given_Execution
     Development_Row_Data
     Development_Loop_Presentations

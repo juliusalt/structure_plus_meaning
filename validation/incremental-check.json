@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "69e26d776393de61b329a47486f4a21a5ca934704c9f89cc823b558f6e290a23",
- "checked_content_sha256": "8696b12ab1f3b81d6664b1c102e5ee0a9c1705e0c1677f6a91cdf69e6cf8467e",
+ "base_receipt_sha256": "f4b62a0dfd30615c4844cc973a1ecd3faa6983592390767b24be803c86f656de",
+ "checked_content_sha256": "422877fc86f5e74edbf51916b2c7953eae36631f2c8dd7f04d0c86b9405404cf",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,30 +17,20 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpi0k6k2ie/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmplfz_zhmk/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.45,
+  "base_and_impact": 0.51,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 234.34,
-  "recipe_impact": 0.42,
-  "recipes_and_host_tests": 11.43
+  "proof": 241.9,
+  "recipe_impact": 0.43,
+  "recipes_and_host_tests": 11.51
  },
  "rebuilt_theories": [
-  "Development_Bounded_Recording_Execution",
-  "Development_First_Problem_Asked",
-  "Development_Given_Counterparts",
-  "Development_Given_Execution",
-  "Development_Given_Installation",
-  "Development_Given_Program",
-  "Development_Given_Readers",
-  "Development_Native_State",
-  "Factor_Generation_Reader_Payloads",
-  "Factor_Reader_Payloads",
-  "Factor_System_Payloads"
+  "Factor_Program_Resolution"
  ],
  "recipes": {
   "allocated-environments": {
@@ -200,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1887,
- "seconds": 303.67,
+ "reused_theories": 1898,
+ "seconds": 317.94,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1898,
+  "theory_count": 1899,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1898,
+ "theories": 1899,
  "validation_inputs": {
-  "ROOT": "691f42ca91fb8b105d2f3b425f510cae13b8b20abeea2befc752802aab0cafdb",
+  "ROOT": "5247120249609ed8b60bc332f3e5cead008dffa30f2d2b29f7f88d825af50ba6",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

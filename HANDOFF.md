@@ -70,7 +70,7 @@ given's four registrations (W4); an admission is the given's check, a refusal re
 W4 are briefed with R5–R7 by #507 after R3. #399 and #443 wait on R4 and on #507 as a stand-in for R6 and W4; #403 and
 #447 wait through #399.
 
-**Beside the route**: #486 (continuing #457: the given's readers' payload lineage split at the guard's two
+**Beside the route**: #486 landed (`7d48c1ae`), its review's follow-ups a fix of their own continuing it; #486 (continuing #457: the given's readers' payload lineage split at the guard's two
 lineages, the payload lemmas at the payload notion, #457's review 1–4, item 144's payload part); #483 (re-planned by plan-70 after its landing check failed twice at the C4a restatement, now optional: the
 generic facts at their homes, the low moves in one rebuild; its moves stand under #495's entry, its C4a restatement
 moot).

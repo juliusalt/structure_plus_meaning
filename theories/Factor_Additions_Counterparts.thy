@@ -20,39 +20,9 @@ lemma decode_finite_pair_iff:
   by (cases t) auto
 
 text \<open>
-  A site value is an environment value beside a site's data term, the site a position of the environment
-  (@{const site_value_presents}). Its reader reads the environment and the site by their own readers, as a pair
-  (@{thm [source] finite_pair_read_present}), and keeps the reading only when the site is a position of the
-  environment read; every other term is read as nothing. A site value has one presentation for every enumeration
-  of its environment's tables, so the reader is exact in the relational form of @{const finite_reads}: a term is
-  read as an environment, a use and an address exactly when it presents them.
+  A site value is read by the site-value reader of @{text Factor_Inclusion_Admission_Counterparts}
+  (@{const finite_site_read}); a pair of them is read componentwise.
 \<close>
-
-definition finite_site_read :: "finite_factor_term \<Rightarrow>
-    (local_address option finite_artifact_environment\<times>local_address option\<times>local_address) option" where
-  "finite_site_read t=(case finite_pair_read finite_environment_value_read finite_site_value_read t of
-    None \<Rightarrow> None
-  | Some (E,u,r) \<Rightarrow> if (u,r) |\<in>| finite_environment_positions E then Some (E,u,r) else None)"
-
-theorem finite_site_read_exact:
-  "finite_site_read t=Some (E,u,r) \<longleftrightarrow>
-    site_value_presents (decode_finite_environment E) u r (decode_finite_term t)"
-proof -
-  have site: "finite_site_value_read v=Some y \<longleftrightarrow> decode_finite_term v=site_data_term (fst y) (snd y)" for v y
-    by (cases y) (simp only: finite_site_value_read_exact fst_conv snd_conv)
-  have pair: "finite_pair_read finite_environment_value_read finite_site_value_read t=Some (E,(u,r)) \<longleftrightarrow>
-      (\<exists>e q. decode_finite_term t=Pair_Term e q \<and> environment_value_presents (decode_finite_environment E) e \<and>
-        q=site_data_term u r)"
-    using finite_pair_read_present[where P="\<lambda>E e. environment_value_presents (decode_finite_environment E) e"
-      and Q="\<lambda>y q. q=site_data_term (fst y) (snd y)", OF finite_environment_value_read_exact site, of t E "(u,r)"]
-    by simp
-  have "finite_site_read t=Some (E,u,r) \<longleftrightarrow>
-      finite_pair_read finite_environment_value_read finite_site_value_read t=Some (E,(u,r)) \<and>
-      (u,r) |\<in>| finite_environment_positions E"
-    by (auto simp: finite_site_read_def split: option.splits prod.splits if_splits)
-  then show ?thesis
-    by (auto simp: pair site_value_presents_def finite_environment_positions_correct[symmetric])
-qed
 
 abbreviation finite_site_pair_read :: "finite_factor_term \<Rightarrow>
     ((local_address option finite_artifact_environment\<times>local_address option\<times>local_address)\<times>
@@ -343,9 +313,6 @@ definition additions_control_environment :: "local_address option \<Rightarrow> 
 definition control_atom_environment :: "local_address option finite_artifact_environment" where
   "control_atom_environment=finite_enumerated_environment [(None,finite_enumerated_artifact [[0]] [] [] [])] []"
 
-definition control_site :: "local_address option finite_artifact_environment \<Rightarrow> local_address option \<Rightarrow>
-    local_address \<Rightarrow> finite_factor_term" where
-  "control_site E u r=Finite_Pair (finite_environment_value E) (finite_site_data (u,r))"
 
 definition control_absence :: "finite_factor_term \<Rightarrow> finite_factor_term" where
   "control_absence k=Finite_Pair (Finite_Pair (Finite_Pair (Finite_Pair
@@ -359,17 +326,17 @@ text \<open>
   environment does not hold, and at one adding a definition at a use it holds.
 \<close>
 
-value "[(''reader: site value read'', finite_site_read (control_site (additions_control_environment None) None [0])\<noteq>None),
+value "[(''reader: site value read'', finite_site_read (finite_site_presented (additions_control_environment None) None [0])\<noteq>None),
   (''reader: site outside the positions read'',
-    finite_site_read (control_site (additions_control_environment None) None [99])\<noteq>None),
+    finite_site_read (finite_site_presented (additions_control_environment None) None [99])\<noteq>None),
   (''393: key among the rows'', finite_use_absence (control_absence (finite_use_data None))),
   (''393: key absent from the rows'', finite_use_absence (control_absence (finite_use_data (Some [0])))),
   (''392: the given definitions only'', finite_use_additions (Finite_Pair
-    (control_site (additions_control_environment None) None [0]) (control_site (additions_control_environment None) None [0]))),
+    (finite_site_presented (additions_control_environment None) None [0]) (finite_site_presented (additions_control_environment None) None [0]))),
   (''392: added at a use the first does not hold'', finite_use_additions (Finite_Pair
-    (control_site (additions_control_environment (Some [0])) (Some [0]) [0])
-    (control_site (additions_control_environment None) None [0]))),
+    (finite_site_presented (additions_control_environment (Some [0])) (Some [0]) [0])
+    (finite_site_presented (additions_control_environment None) None [0]))),
   (''392: added at a use the first holds'', finite_use_additions (Finite_Pair
-    (control_site control_atom_environment None [0]) (control_site (additions_control_environment None) None [0])))]"
+    (finite_site_presented control_atom_environment None [0]) (finite_site_presented (additions_control_environment None) None [0])))]"
 
 end

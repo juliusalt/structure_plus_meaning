@@ -481,8 +481,8 @@ lemma reader_controls:
     \<not>finite_root_family_reading_decision (reader_control_family [99] []) \<and>
     finite_package_membership_decision (reader_control_member (None,[1])) \<and>
     \<not>finite_package_membership_decision (reader_control_member (None,[2])) \<and>
-    finite_package_retention_admission_decision (control_site reader_control_environment None [0]) \<and>
-    \<not>finite_package_retention_admission_decision (control_site reader_control_larger None [0]) \<and>
+    finite_package_retention_admission_decision (finite_site_presented reader_control_environment None [0]) \<and>
+    \<not>finite_package_retention_admission_decision (finite_site_presented reader_control_larger None [0]) \<and>
     \<not>finite_package_closure_admission_decision (Finite_Payload []) \<and>
     \<not>finite_root_family_reading_decision (Finite_Payload []) \<and>
     \<not>finite_package_membership_decision (Finite_Payload []) \<and>
@@ -511,11 +511,11 @@ lemma reader_control_member_out: "\<not>finite_package_membership_decision (read
   using reader_controls by blast
 
 lemma reader_control_least_scope:
-  "finite_package_retention_admission_decision (control_site reader_control_environment None [0])"
+  "finite_package_retention_admission_decision (finite_site_presented reader_control_environment None [0])"
   using reader_controls by blast
 
 lemma reader_control_larger_scope:
-  "\<not>finite_package_retention_admission_decision (control_site reader_control_larger None [0])"
+  "\<not>finite_package_retention_admission_decision (finite_site_presented reader_control_larger None [0])"
   using reader_controls by blast
 
 lemma reader_control_other:

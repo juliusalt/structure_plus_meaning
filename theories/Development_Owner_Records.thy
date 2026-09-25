@@ -64,6 +64,46 @@ proof -
   show "finite_generation_formed G" by (rule development_payload_generation_fields(2)[OF recorded])
 qed
 
+section \<open>A base generation stands at the index of its payload in an environment of its own\<close>
+
+text \<open>
+  A base generation is the indexed generation recorded in the empty environment with no predecessor: its locus
+  is its payload and it has no predecessor. The owner records and the native state's first generation are its
+  instances.
+\<close>
+
+definition development_base_generation ::
+    "finite_factor_term \<Rightarrow> (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
+  "development_base_generation t=development_indexed_generation t (finite_enumerated_environment [] []) []"
+
+theorem development_base_generation_certified:
+  assumes built: "development_base_generation t=Some (B,u,G)"
+  obtains R d K pu E root where "development_data_target t=Some (generation_payload G)"
+    "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R" "generation_predecessors G={||}"
+    "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
+    "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+      (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
+    "finite_check_generation G B u []"
+proof -
+  have indexed: "development_indexed_generation t (finite_enumerated_environment [] []) []=Some (B,u,G)"
+    using built by (simp only: development_base_generation_def)
+  obtain R d K pu E root where certified: "development_data_target t=Some (generation_payload G)"
+      "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
+      "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
+      "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+        (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
+      "generation_predecessors G=fset_of_list (map snd ([]::development_generation_row list))"
+      "finite_check_generation G B u []"
+      "environment_included (decode_finite_environment (finite_enumerated_environment [] [])) (decode_finite_environment B)"
+    by (rule development_indexed_generation_certified[OF indexed])
+  have base: "generation_predecessors G={||}" using certified(6) by simp
+  show thesis by (rule that[OF certified(1,2,3) base certified(4,5,7)])
+qed
+
+lemmas development_base_generation_recorded=
+  development_indexed_generation_recorded[of t "finite_enumerated_environment [] []" "[]",
+    folded development_base_generation_def] for t
+
 section \<open>Owner records\<close>
 
 text \<open>
@@ -80,31 +120,9 @@ definition owner_ledger_octets :: "string \<Rightarrow> octets" where
 
 definition development_owner_record ::
     "finite_factor_term \<Rightarrow> (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
-  "development_owner_record t=development_indexed_generation t (finite_enumerated_environment [] []) []"
+  "development_owner_record=development_base_generation"
 
-theorem development_owner_record_certified:
-  assumes built: "development_owner_record t=Some (B,u,G)"
-  obtains R d K pu E root where "development_data_target t=Some (generation_payload G)"
-    "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R" "generation_predecessors G={||}"
-    "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-    "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
-      (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
-    "finite_check_generation G B u []"
-proof -
-  have indexed: "development_indexed_generation t (finite_enumerated_environment [] []) []=Some (B,u,G)"
-    using built by (simp only: development_owner_record_def)
-  obtain R d K pu E root where certified: "development_data_target t=Some (generation_payload G)"
-      "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
-      "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-      "certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
-        (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
-      "generation_predecessors G=fset_of_list (map snd ([]::development_generation_row list))"
-      "finite_check_generation G B u []"
-      "environment_included (decode_finite_environment (finite_enumerated_environment [] [])) (decode_finite_environment B)"
-    by (rule development_indexed_generation_certified[OF indexed])
-  have base: "generation_predecessors G={||}" using certified(6) by simp
-  show thesis by (rule that[OF certified(1,2,3) base certified(4,5,7)])
-qed
+lemmas development_owner_record_certified=development_base_generation_certified[folded development_owner_record_def]
 
 text \<open>The directions of 2026-09-24 that pose the native loop's first problem, transcribed.\<close>
 

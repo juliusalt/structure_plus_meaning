@@ -1,5 +1,5 @@
 theory Factor_Finite_Payload_Literals
-  imports Factor_Positive_Parametricity Factor_Executable_Systems Factor_Pattern_Programs
+  imports Factor_Positive_Parametricity Factor_Executable_Systems Factor_Pattern_Programs Factor_Finite_System_Fields
 begin
 
 section \<open>The octets a finite program reads as structure\<close>
@@ -89,14 +89,45 @@ text \<open>
   of its rows: every octet of a row a decision is reflected into is read by that decision.
 \<close>
 
+text \<open>
+  The payloads a term carries are the payload leaves of its exact pattern (@{text term_payloads}); a finite
+  term carries exactly the payloads of the term it decodes to (@{text finite_term_payloads_term}), so the
+  finite set and the abstract set are one notion.
+\<close>
+
+fun term_payloads :: "factor_term \<Rightarrow> octets set" where
+  "term_payloads (Target_Term x)={}"
+| "term_payloads (Payload_Term v)={v}"
+| "term_payloads (Pair_Term x y)=term_payloads x \<union> term_payloads y"
+
+lemma term_payloads_exact_pattern:
+  "term_payloads t={v. Payload_Term v\<in>pattern_leaves (exact_term_pattern t)}"
+  by (induction t) auto
+
 fun finite_term_payloads :: "finite_factor_term \<Rightarrow> octets fset" where
   "finite_term_payloads (Finite_Target t) = {||}"
 | "finite_term_payloads (Finite_Payload v) = {|v|}"
 | "finite_term_payloads (Finite_Pair x y) = finite_term_payloads x |\<union>| finite_term_payloads y"
 
+lemma finite_term_payloads_term:
+  "fset (finite_term_payloads t)=term_payloads (decode_finite_term t)"
+  by (induction t) auto
+
 lemma finite_term_payloads_exact_pattern:
   "fset (finite_term_payloads t)={v. Payload_Term v \<in> pattern_leaves (exact_term_pattern (decode_finite_term t))}"
-  by (induction t) auto
+  by (subst finite_term_payloads_term) (rule term_payloads_exact_pattern)
+
+text \<open>A renaming of sites changes no payload a schema or a program states.\<close>
+
+lemma finite_rename_schema_payloads:
+  "finite_schema_payloads (finite_rename_schema id id g S)=finite_schema_payloads S"
+  by (simp add: finite_schema_payloads_def finite_rename_schema_def finite_material_payloads_def
+    finite_rename_material_def finite_term_pattern.map_id fset.map_comp comp_def case_prod_unfold)
+
+lemma finite_rename_system_payloads:
+  "finite_system_payloads (finite_rename_system g P)=finite_system_payloads P"
+  by (simp add: finite_system_payloads_def finite_rename_system_def fset.map_comp comp_def case_prod_unfold
+    finite_rename_schema_payloads map_prod_def)
 
 export_code finite_system_payloads finite_term_payloads checking SML
 

@@ -42,9 +42,7 @@ proof -
   proof (rule ccontr)
     assume "system_definitions P\<inter>?D\<noteq>{}"
     then obtain d where old: "d\<in>system_definitions P" and new: "d\<in>?D" by auto
-    have position: "d\<in>environment_positions E" by (rule source_position[OF old])
-    have used: "fst d\<in>environment_uses E"
-      using position by (auto simp: environment_positions_def environment_uses_def artifact_at_def rel_dom_def)
+    have used: "fst d\<in>environment_uses E" by (rule native_package_member_use[OF source source_site[OF old]])
     show False using fresh new used by blast
   qed
   interpret algebra: positive_definition_group P Q

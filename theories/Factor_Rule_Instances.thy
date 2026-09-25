@@ -277,6 +277,22 @@ lemma ordinary_positive_valuation_step:
   by (rule material_positive_valuation_step[OF clause assignment call _ support])
     (simp add: ordinary)
 
+lemma positive_meaning_valuationE:
+  assumes holds: "(d,t)\<in>positive_meaning P"
+  obtains c S h where "((d,c),S)\<in>system_clauses P" "t=evaluate_pattern h (schema_conclusion S)"
+    "\<forall>a\<in>schema_variables S. term_formed (h a)"
+    "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning P"
+proof -
+  have consequence: "(d,t)\<in>schema_consequences P (positive_meaning P)"
+    using holds positive_meaning_unfold[of P] by blast
+  obtain c S h where parts: "((d,c),S)\<in>system_clauses P" "\<forall>a\<in>schema_variables S. term_formed (h a)"
+    "t=evaluate_pattern h (schema_conclusion S)"
+    "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+      schema_call_formed P e (evaluate_pattern h p) \<and> (e,evaluate_pattern h p)\<in>positive_meaning P"
+    using schema_consequences_valuationD[OF consequence] by blast
+  show ?thesis by (rule that[OF parts(1,3,2)]) (use parts(4) in blast)
+qed
+
 lemma ordinary_positive_entry_valuation:
   assumes ordinary: "\<And>c S. ((d,c),S)\<in>system_clauses P \<Longrightarrow> schema_material_premises S={}"
   shows "(d,t)\<in>positive_meaning P \<longleftrightarrow>
@@ -287,14 +303,12 @@ lemma ordinary_positive_entry_valuation:
         (e,evaluate_pattern f p)\<in>positive_meaning P))"
 proof
   assume holds: "(d,t)\<in>positive_meaning P"
-  have consequence: "(d,t)\<in>schema_consequences P (positive_meaning P)"
-    using holds positive_meaning_unfold[of P] by blast
   show "\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
       (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
       t=evaluate_pattern f (schema_conclusion S) \<and> schema_call_formed P d t \<and>
       (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
         (e,evaluate_pattern f p)\<in>positive_meaning P)"
-    using schema_consequences_valuationD[OF consequence] by blast
+    using positive_meaning_valuationE[OF holds] positive_meaning_formed[OF holds] by blast
 next
   assume "\<exists>c S f. ((d,c),S)\<in>system_clauses P \<and>
       (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
@@ -322,14 +336,12 @@ lemma ordinary_single_clause_valuation:
         (e,evaluate_pattern f p)\<in>positive_meaning P))"
 proof
   assume holds: "(d,t)\<in>positive_meaning P"
-  have consequence: "(d,t)\<in>schema_consequences P (positive_meaning P)"
-    using holds positive_meaning_unfold[of P] by blast
   obtain c T f where parts: "((d,c),T)\<in>system_clauses P"
     "\<forall>a\<in>schema_variables T. term_formed (f a)"
     "t=evaluate_pattern f (schema_conclusion T)"
     "\<forall>s e p. (s,e,p)\<in>schema_premises T \<longrightarrow>
       (e,evaluate_pattern f p)\<in>positive_meaning P"
-    using schema_consequences_valuationD[OF consequence] by blast
+    using positive_meaning_valuationE[OF holds] by blast
   have same: "T=S" using parts(1) family by blast
   show "\<exists>f. (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
     t=evaluate_pattern f (schema_conclusion S) \<and>
@@ -349,6 +361,45 @@ next
   have result: "(d,evaluate_pattern f (schema_conclusion S))\<in>positive_meaning P"
     by (rule ordinary_positive_valuation_step[OF clause ordinary parts(1) call[OF parts(1)] parts(3)])
   show "(d,t)\<in>positive_meaning P" using result parts(2) by simp
+qed
+
+text \<open>
+  An ordinary clause of a formed schema at a site that admits every formed term holds at every formed
+  evaluation whose premises hold: formation of the call follows from the schema's. Every true call is the
+  evaluation of some clause of its site, its premises true (@{text positive_meaning_valuationE}). A site
+  that admits every formed term and holds one ordinary clause holds exactly at that clause's valuations
+  (@{text variable_single_clause_valuation}): the single-clause rule of a formed schema system.
+\<close>
+
+lemma ordinary_positive_formed_step:
+  assumes clause: "((d,c),S)\<in>system_clauses P" and ordinary: "schema_material_premises S={}"
+    and sf: "schema_formed S" and call: "\<And>t. term_formed t \<Longrightarrow> schema_call_formed P d t"
+    and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
+    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning P"
+  shows "(d,evaluate_pattern h (schema_conclusion S))\<in>positive_meaning P"
+proof -
+  have tf: "term_formed (evaluate_pattern h (schema_conclusion S))"
+    by (rule evaluate_pattern_formed) (use sf assignment in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
+  show ?thesis by (rule ordinary_positive_valuation_step[OF clause ordinary assignment call[OF tf] support])
+qed
+
+lemma variable_single_clause_valuation:
+  assumes formed: "schema_system_formed P"
+    and family: "\<And>c T. ((d,c),T)\<in>system_clauses P \<longleftrightarrow> c=c0 \<and> T=S"
+    and ordinary: "schema_material_premises S={}"
+    and call: "\<And>t. term_formed t \<Longrightarrow> d\<in>system_definitions P \<Longrightarrow> schema_call_formed P d t"
+  shows "(d,t)\<in>positive_meaning P \<longleftrightarrow>
+    (\<exists>f. (\<forall>a\<in>schema_variables S. term_formed (f a)) \<and>
+      t=evaluate_pattern f (schema_conclusion S) \<and>
+      (\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
+        (e,evaluate_pattern f p)\<in>positive_meaning P))"
+proof (rule ordinary_single_clause_valuation[OF family ordinary])
+  fix f assume assignment: "\<forall>a\<in>schema_variables S. term_formed (f a)"
+  have sf: "schema_formed S" and member: "d\<in>system_definitions P"
+    using formed family[of c0 S] unfolding schema_system_formed_def by blast+
+  have tf: "term_formed (evaluate_pattern f (schema_conclusion S))"
+    by (rule evaluate_pattern_formed) (use sf assignment in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
+  show "schema_call_formed P d (evaluate_pattern f (schema_conclusion S))" by (rule call[OF tf member])
 qed
 
 theorem positive_valuation_induct:

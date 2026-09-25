@@ -256,117 +256,12 @@ proof -
     using requests answer by auto
 qed
 
-section \<open>A control: a premise-only witness answered above a base\<close>
-
-text \<open>
-  Three sites over the variable interface: the leaf holds of every term, the witness holds of a term when
-  the leaf holds of some term (a premise-only variable), and the root holds of a term when the witness
-  does. The plain evaluator has no answer at the root's demand; above the base holding the witness, whose
-  decision is that its argument is formed, the demand is answered, and the decision is proved exact at the
-  demanded witness call.
-\<close>
-
-definition implemented_base_control :: "local_address option finite_native_system" where
-  "implemented_base_control=\<lparr>finite_system_interfaces=
-      {|((None,[1]),Finite_Variable [0]),((None,[2]),Finite_Variable [0]),((None,[3]),Finite_Variable [0])|},
-    finite_system_clauses={|
-      (((None,[1]),[0]),\<lparr>finite_schema_conclusion=Finite_Variable [0],finite_schema_premises={||},
-        finite_schema_materials={||}\<rparr>),
-      (((None,[2]),[0]),\<lparr>finite_schema_conclusion=Finite_Variable [0],
-        finite_schema_premises={|([0],((None,[1]),Finite_Variable [1]))|},finite_schema_materials={||}\<rparr>),
-      (((None,[3]),[0]),\<lparr>finite_schema_conclusion=Finite_Variable [0],
-        finite_schema_premises={|([0],((None,[2]),Finite_Variable [0]))|},finite_schema_materials={||}\<rparr>)|}\<rparr>"
-
-definition implemented_base_control_decision ::
-    "local_address option definition_site\<times>finite_factor_term \<Rightarrow> bool" where
-  "implemented_base_control_decision q=finite_term_formed (snd q)"
-
-definition implemented_base_control_demand ::
-    "(local_address option definition_site\<times>finite_factor_term) fset" where
-  "implemented_base_control_demand={|((None,[3]),Finite_Payload []),((None,[2]),Finite_Payload [])|}"
-
-text \<open>One evaluation executes the control: the plain evaluator, the evaluation above the base, the
-  leaf's plain evaluation and the witness's admitted instance.\<close>
-
-lemma implemented_base_control_executed:
-  "native_call_closure implemented_base_control {|((None,[3]),Finite_Payload [])|}=
-      implemented_base_control_demand \<and>
-    finite_program_evaluation implemented_base_control implemented_base_control_demand=None \<and>
-    native_base_evaluation {|(None,[2])|} implemented_base_control_decision implemented_base_control
-      {|((None,[3]),Finite_Payload [])|}=
-      (implemented_base_control_demand,Some implemented_base_control_demand) \<and>
-    finite_program_evaluation implemented_base_control {|((None,[1]),Finite_Payload [])|}=
-      Some {|((None,[1]),Finite_Payload [])|} \<and>
-    finite_admitted_schema_instance implemented_base_control (None,[2]) [0]
-      {|([0],Finite_Payload []),([1],Finite_Payload [])|} (Finite_Payload [])
-      {|([0],((None,[1]),Finite_Payload []))|}"
-  by eval
-
-lemma implemented_base_control_plain:
-  "native_call_evaluation implemented_base_control {|((None,[3]),Finite_Payload [])|}=
-    (implemented_base_control_demand,None)"
-  using implemented_base_control_executed by (simp add: native_call_evaluation_def)
-
-lemmas implemented_base_control_answer=
-  implemented_base_control_executed[THEN conjunct2, THEN conjunct2, THEN conjunct1]
-
-lemma implemented_base_control_witness:
-  "((None,[2]),Payload_Term [])\<in>positive_meaning (decode_finite_system implemented_base_control)"
-proof -
-  have leaf_evaluated: "finite_program_evaluation implemented_base_control {|((None,[1]),Finite_Payload [])|}=
-      Some {|((None,[1]),Finite_Payload [])|}"
-    using implemented_base_control_executed by blast
-  have answered: "fset {|((None,[1]),Finite_Payload [])|}=
-      {q\<in>fset {|((None,[1]),Finite_Payload [])|}.
-        decode_finite_call_term q\<in>positive_meaning (decode_finite_system implemented_base_control)}"
-    by (rule finite_program_evaluation_exact(2)[OF leaf_evaluated])
-  have member: "((None,[1]),Finite_Payload [])\<in>fset {|((None,[1]),Finite_Payload [])|}" by simp
-  have "decode_finite_call_term ((None,[1]),Finite_Payload [])\<in>
-      positive_meaning (decode_finite_system implemented_base_control)"
-  proof -
-    have "((None,[1]),Finite_Payload [])\<in>{q\<in>fset {|((None,[1]),Finite_Payload [])|}.
-        decode_finite_call_term q\<in>positive_meaning (decode_finite_system implemented_base_control)}"
-      by (rule subst[where P="\<lambda>S. ((None,[1]),Finite_Payload [])\<in>S", OF answered member])
-    then show ?thesis by blast
-  qed
-  then have leaf: "((None,[1]),Payload_Term [])\<in>positive_meaning (decode_finite_system implemented_base_control)"
-    by (simp add: decode_finite_call_term_def)
-  have admitted: "finite_admitted_schema_instance implemented_base_control (None,[2]) [0]
-      {|([0],Finite_Payload []),([1],Finite_Payload [])|} (Finite_Payload [])
-      {|([0],((None,[1]),Finite_Payload []))|}"
-    using implemented_base_control_executed by blast
-  have "((None,[2]),decode_finite_term (Finite_Payload []))\<in>
-      positive_meaning (decode_finite_system implemented_base_control)"
-    by (rule positive_meaning_step[OF admitted[unfolded finite_admitted_schema_instance_correct]])
-      (use leaf in \<open>auto simp: decode_finite_premises_def decode_finite_call_term_def\<close>)
-  then show ?thesis by simp
-qed
-
-lemma implemented_base_control_decision_exact:
-  assumes "q |\<in>| implemented_base_control_demand" "fst q |\<in>| {|(None,[2])|}"
-  shows "implemented_base_control_decision q \<longleftrightarrow>
-    decode_finite_call_term q\<in>positive_meaning (decode_finite_system implemented_base_control)"
-proof -
-  have witness: "q=((None,[2]),Finite_Payload [])"
-    using assms unfolding implemented_base_control_demand_def by auto
-  show ?thesis using implemented_base_control_witness
-    by (simp add: witness implemented_base_control_decision_def decode_finite_call_term_def octets_formed_def)
-qed
-
-theorem implemented_base_control_meaning:
-  "fset implemented_base_control_demand=
-    {q\<in>fset implemented_base_control_demand.
-      decode_finite_call_term q\<in>positive_meaning (decode_finite_system implemented_base_control)}"
-  by (rule native_base_evaluation_exact(2)[OF implemented_base_control_answer
-    implemented_base_control_decision_exact])
-
 text \<open>
   The general lemma consumes only the closure's finite derivations; the finite evaluation consumes the
   rule table's exactness at the program above the base, whose rules are the program's outside the base,
   and the decision's exactness at the demand's base calls. The answer does not depend on which exact base
   is chosen, and the empty base is the plain evaluator by an equation. An unavailable evaluation is
-  @{const None} and admits no call. The control's decision is proved exact at its one demanded base call
-  from the program's own positive meaning.
+  @{const None} and admits no call.
 \<close>
 
 end

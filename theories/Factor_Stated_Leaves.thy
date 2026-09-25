@@ -2117,7 +2117,7 @@ proof -
   then show ?thesis by (simp add: finite_definition_stated_def definition_stated_def finite_pattern_stated_exact)
 qed
 
-section \<open>Controls, and why the native evaluator does not run the reader\<close>
+section \<open>Why the native evaluator does not run the reader\<close>
 
 text \<open>
   The one native evaluator of a finite program, finite_program_evaluation, is ready only on a
@@ -2128,41 +2128,7 @@ text \<open>
   ground clause is head-covered; 590 leaves the interface's
   instance (3), the artifact's data (4), the record's ports and endpoints (5 to 8), the family's rows (9),
   the table (10) and the quotation's interior and slots (11, 12). The readers they call (72, 65, 56, 37, 34,
-  32, 45 and the distinct-payload program) hold clauses of the same kind. The controls are therefore
-  evaluated through the finite computation, exact against the leaves and so against the native contract,
-  beside the audit's HOL counterpart at the same definitions.
-\<close>
-
-definition stated_control_target :: "nat finite_term_pattern" where
-  "stated_control_target=Finite_Pattern_Target (Finite_Whole finite_empty_artifact)"
-
-definition stated_leaves_controls :: "(nat finite_term_pattern\<times>(nat\<times>(nat,nat,nat) finite_factor_schema) fset) list" where
-  "stated_leaves_controls=[
-    (Finite_Variable 0,{|(0,\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Pattern_Payload [1]) stated_control_target,
-      finite_schema_premises={||},finite_schema_materials={||}\<rparr>)|}),
-    (Finite_Pattern_Pair (Finite_Variable 0) stated_control_target,
-     {|(0,\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) stated_control_target,
-      finite_schema_premises={|(1,(5,Finite_Pattern_Pair stated_control_target (Finite_Variable 0)))|},
-      finite_schema_materials={|(2,\<lparr>finite_material_source=stated_control_target,finite_material_atoms=Finite_Variable 1,
-        finite_material_edges=Finite_Variable 2,finite_material_counts=Finite_Variable 3,
-        finite_material_functions=Finite_Variable 4\<rparr>)|}\<rparr>)|}),
-    (Finite_Variable 0,{|(0,\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Payload []),
-      finite_schema_premises={|(1,(5,Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Variable 0)))|},
-      finite_schema_materials={||}\<rparr>)|}),
-    (Finite_Variable 0,{|(0,\<lparr>finite_schema_conclusion=Finite_Variable 0,
-      finite_schema_premises={|(1,(5,Finite_Variable 0))|},finite_schema_materials={||}\<rparr>)|})]"
-
-definition stated_leaves_control_reports where
-  "stated_leaves_control_reports=map (\<lambda>(p,C). (finite_definition_stated p C,finite_definition_payloads p C))
-    stated_leaves_controls"
-
-ML \<open>
-  val stated_leaves_control_context = @{context};
-  val (stated_leaves_control_time, stated_leaves_control_value) =
-    Timing.timing (Code_Evaluation.dynamic_value_strict stated_leaves_control_context)
-      @{term "stated_leaves_control_reports"};
-  val _ = writeln ("STATED_LEAVES_CONTROLS " ^ Timing.message stated_leaves_control_time);
-  val _ = writeln (Syntax.string_of_term stated_leaves_control_context stated_leaves_control_value);
+  32, 45 and the distinct-payload program) hold clauses of the same kind.
 \<close>
 
 declare One_nat_def [simp]

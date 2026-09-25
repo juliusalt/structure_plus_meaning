@@ -16366,6 +16366,14 @@ reader reads syntax at a use holding it. Three rules follow, each an instance of
   established: a body beside the original, with its exactness, the original kept. Likewise an environment a recording
   returns is formed by its constructor's contract, and a later recording in it checks nothing of its old artifacts (the
   known and formed-cause constructors already skip the environment's formation and the predecessors' read-back).
+  [Corrected (task 536, from #531's review, follow-up 1): the quotation's contract forms R given the term's
+  formation, `term_formed` of the decoded term; the recording establishes that formation, a walk of the term, and
+  derives R's by `finite_data_syntax_quotation_formed` (`Development_Recording_Refinements`, whose code equation of
+  the recording does so for a formed term and keeps the original's checks for any other). The policy package is read
+  once, at K, and every environment the recording builds is read through formed bodies; the judgment's readiness and
+  its condition, the alignment's equality of the package environments included, hold by the replay's and the bounded
+  quotation's contracts (`development_bounded_condition_established`), so the path computes neither. The ground and
+  guard programs' formations of the literal, inside the installation constructors, stay.]
 - *(b) A position is asked at its use.* A position query at a site is answered by the artifact at the site's use and
   its carrier's membership — `Carrier_Indexes`, the use the key — never by enumerating `finite_environment_positions`,
   which lists R's carrier with every other artifact's.
@@ -17058,11 +17066,13 @@ is defined through it, and `finite_native_judgment_quote`, its definition unchan
 states `finite_construct_quoted_generation` (`finite_construct_formed_cause_generation`'s body without the formations of
 locus and payload; the rows' distinctness check stays), its exactness under both formations
 (`finite_construct_quoted_generation_exact`, `_established`, `_whole`) and the code equation
-`development_indexed_generation_quoted`, equal to the definition. Its premise, R formed, holds wherever the recording
-records: the listing policy's source is constructed only over formed presentations (`development_policy_source_with_formed`,
-`development_bounded_policy_judgment_formed`), the one check of R's formation the recording keeps; the quotation forms R
-from the term's formation (`finite_data_syntax_quotation_formed`). A probe evaluation at #481's 32K cut returned the
-original's result (task 530's `result.md`). No recipe reaches the three recording theories, so no word changed.]
+`development_indexed_generation_quoted`, equal to the definition (the code equation until task 536's
+`development_indexed_generation_read`). Its premise, R formed, holds wherever the recording records: the listing
+policy's source is constructed only over formed presentations (`development_policy_source_with_formed`,
+`development_bounded_policy_judgment_formed`), the check this refinement's proof rests on; the quotation forms R from
+the term's formation (`finite_data_syntax_quotation_formed`). The *Measured* item below states its runs' claims
+(#493's review, follow-up 1). A probe evaluation at #481's 32K cut returned the original's result (task 530's
+`result.md`). No recipe reaches the three recording theories, so no word changed.]
 
 Task 492, build B2 of "A generation over a state holds its payload once" (task 482). `Development_Bounded_Recording`
 states the finite fill (`finite_payload_fill`, decoding exactly to `payload_fill`), the bounded quotation
@@ -17085,8 +17095,9 @@ the base generation, the owner records, the approval and the native state's firs
 - *A walk added.* Finding V compares every artifact of J with the payload: J holds it at two uses, so two comparisons
   of the payload with itself (linear under the refinement collection's artifact equality), where the old scope's
   quotation presented it twice as data. Recorded as rule (c)'s walk of the recording's own comparison.
-- *Measured* (task 492's `measurement.md`: run A shared; B and C unclaimed, load unrecorded): the cause of the owner record of 18:53 and of the given's value
-  cut at 8,013 and 32,009 addresses is the same target, 3,437 carrier addresses (the entry estimated three to four
+- *Measured* (task 492's `measurement.md`: run A shared; B and C unclaimed, load unrecorded): the cause of the owner
+  record of 18:53 and of the given's value cut at 8,013 and 32,009 addresses is the same target, 3,437 carrier
+  addresses (the entry estimated three to four
   thousand). At 32K the recording took 8.3–11.4 s against the old recording's 21.6 s in the same run; the replay is 62 %
   of its parts, and it costs 261–356 µs per payload address against the gate's 60: the bounded scope is necessary and not
   sufficient, as the entry says, and rules (a)–(c) are I3's and R's.

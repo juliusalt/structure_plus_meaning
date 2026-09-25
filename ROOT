@@ -1333,7 +1333,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Term_Words
     Finite_Presentation_Readers
     Factor_Finite_Site_Value_Readers
-
     Finite_Term_Word_Readers
     Required_History_Presentation
     Required_History_Execution
@@ -1530,7 +1529,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Digit_History_Constructed_Attempts
     Factor_Digit_History_Constructed_Steps
     Factor_Policy_Constructor_Congruence
-
     Complete_Artifact_References
     Complete_Object_References
     Complete_Value_References
@@ -1592,7 +1590,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Development_Steering
     Factor_Development_Subjects
     Factor_Finite_Ground_Source
-
     Factor_Native_Generation
     Factor_Native_Generation_Semantics
     Factor_Required_Workflow_Cases
@@ -1643,7 +1640,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Criticism_Samples
     Criticism_Use_Samples
     Criticism_Octet_Samples
-    Factor_Finite_Site_Value_Reader_Controls
+    Factor_Executed_Controls
     Factor_Resolution_Controls
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
@@ -1890,7 +1887,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Native_Package
     Development_Given_Installation
     Development_Given_Extensions
-
     Development_First_Problem_Asked
     Development_First_Request_Program
     Development_Native_State

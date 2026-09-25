@@ -63,6 +63,31 @@ proof -
   then show ?thesis by (cases F) (simp add: payload_fill_def)
 qed
 
+text \<open>
+  The fill reads only the uses holding an artifact: two sets of uses that agree there give one fill. It
+  keeps every binding, so the uses a restriction to sources and demanded slots reaches are unchanged, and
+  the fill commutes with that restriction for every V.
+\<close>
+
+lemma payload_fill_cong:
+  assumes same: "\<And>u S. artifact_at F u S \<Longrightarrow> u\<in>V \<longleftrightarrow> u\<in>W"
+  shows "payload_fill F V R=payload_fill F W R"
+proof -
+  have "(\<lambda>(u,S). (u, if u\<in>V then R else S)) ` environment_artifacts F=
+      (\<lambda>(u,S). (u, if u\<in>W then R else S)) ` environment_artifacts F"
+    using same by (intro image_cong) (auto simp: artifact_at_def)
+  then show ?thesis by (simp add: payload_fill_def)
+qed
+
+lemma read_environment_payload_fill:
+  "read_environment (payload_fill F0 V R) U D=payload_fill (read_environment F0 U D) V R"
+proof -
+  have uses: "read_environment_uses (payload_fill F0 V R) U D=read_environment_uses F0 U D"
+    by (simp add: read_environment_uses_def)
+  show ?thesis
+    unfolding read_environment_def uses by (auto simp: payload_fill_def image_iff split_def)
+qed
+
 theorem payload_fill_formed:
   assumes formed: "environment_formed F0"
     and placeholders: "\<forall>u\<in>V. artifact_at F0 u empty_artifact"

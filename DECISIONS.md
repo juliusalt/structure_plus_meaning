@@ -16293,7 +16293,8 @@ with the payload as its boundary:
 - *The fill.* `payload_fill F0 V R` is the environment F0 with the artifact at every use of V replaced by R, every
   binding kept. When F0 is formed and every use of V holds the empty artifact there, no binding of F0 has its source in
   V (a bound slot lies in its source artifact's carrier, and the empty artifact has none), so the fill is formed
-  exactly when R is.
+  exactly when V is empty or R is formed (`payload_fill_formed`; corrected by task 492 from #491's review: "exactly
+  when R is" holds only for a nonempty V).
 - *The bounded value.* The pair of the judgment value of F0 at its program and call sites
   (`Factor_Judgment_Values.judgment_value_presents`) and the data list of V's uses (`use_data_term`), a product of
   existing presentation classes. The cause is its complete data quotation (`complete_data_quoted_at`), a whole
@@ -16794,3 +16795,36 @@ same size. These are estimates; a demand past a held run's three minutes goes to
   derivation admission's own coverage: not decided here.
 
 Recorded 2026-09-25 (task 495's decision; a design, no theory changes).
+## The bounded recording records the route's generations; its cause is one target
+
+Task 492, build B2 of "A generation over a state holds its payload once" (task 482). `Development_Bounded_Recording`
+states the finite fill (`finite_payload_fill`, decoding exactly to `payload_fill`), the bounded quotation
+(`finite_bounded_judgment_quote`, contract `finite_bounded_judgment_quote_correct`), the bounded judgment
+(`development_bounded_policy_judgment`, which judges where `development_policy_judgment` does, at the same least
+judgment environment: `development_bounded_policy_judgment_original`) and the recording (`development_bounded_generation`,
+contract `development_bounded_generation_certified`, every field of `development_payload_generation_certified` with the
+cause `bounded_certified_policy_cause_at`). `Development_Owner_Records.development_indexed_generation` is that recording;
+the base generation, the owner records, the approval and the native state's first generation are restated through it.
+
+- *V and F0.* V is an fset of uses, found by comparing every artifact of J with the payload by value (artifact identity);
+  F0 is the fill of J by the empty artifact at V, so the fill states F0 and no second operation does. The quotation is
+  refused unless F0 is formed and holds both sites: F0 holds no copy of the payload, so these checks are constant in it,
+  and F0's formation already excludes a binding with its source in V.
+- *Premises.* The recording records by `finite_construct_formed_cause_generation`, which checks neither the environment
+  recorded in nor the cited rows, so the contract takes H's formation and the rows' readings as premises; the base
+  generation discharges them (`development_base_environment_formed`, no row), and the approval derives H's formation
+  from its cited row's reading. `development_indexed_generation_certified` and `_recorded` take them too; no theory
+  outside the two restated ones consumed those names.
+- *A walk added.* Finding V compares every artifact of J with the payload: J holds it at two uses, so two comparisons
+  of the payload with itself (linear under the refinement collection's artifact equality), where the old scope's
+  quotation presented it twice as data. Recorded as rule (c)'s walk of the recording's own comparison.
+- *Measured* (task 492's `measurement.md`, shared runs): the cause of the owner record of 18:53 and of the given's value
+  cut at 8,013 and 32,009 addresses is the same target, 3,437 carrier addresses (the entry estimated three to four
+  thousand). At 32K the recording took 8.3–11.4 s against the old recording's 21.6 s in the same run; the replay is 62 %
+  of its parts, and it costs 261–356 µs per payload address against the gate's 60: the bounded scope is necessary and not
+  sufficient, as the entry says, and rules (a)–(c) are I3's and R's.
+- *Reliances.* V is decided by artifact identity and the placeholder by the empty artifact, as the entry's (5) states;
+  nothing reads the bootstrap loop's rows, loci or keys. No recorded state's entity changed (no recipe reaches
+  `Development_Owner_Records` or `Development_Native_State`), and no word.
+
+Recorded 2026-09-25 (task 492).

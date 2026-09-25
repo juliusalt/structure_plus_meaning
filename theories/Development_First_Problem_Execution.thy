@@ -3,17 +3,24 @@ theory Development_First_Problem_Execution
     Native_Execution_Refinements
 begin
 
-section \<open>The posing's construction, compiled once\<close>
+section \<open>The posing's construction, compiled where it is called\<close>
 
 text \<open>
   Task 397: the posing of the native loop's first problem (@{const development_first_problem_posing}) executed with
-  the recording's refinement collection and the export boundary's refinements in effect. One compilation holds the
-  payload, the owner record of 18:53 and the citing recording. The posing is reported with its seconds, its payload's
-  addresses, the carrier addresses of its cause and whether its cause is the owner record of 18:53's (the report of
-  @{text Development_Native_State_Execution}); a posing that returns no generation, or whose cause is another, is
-  refused. The posing runs where @{text First_Problem_Execution.posing} is called, in the held measurement. At every
-  load the five owner records are recorded and read back (moved from @{text Development_Owner_Records}), each timed,
-  and a record that does not read back refuses the theory. No library theory imports this one.
+  the recording's refinement collection and the export boundary's refinements in effect. The posing is reported with
+  its seconds, its payload's addresses, the carrier addresses of its cause and whether its cause is the owner record
+  of 18:53's; a posing that returns no generation, or whose cause is another, is refused. That behaviour is
+  @{text Native_State_Execution.recording} (@{text Development_Native_State_Execution}) at the recording that cites the
+  owner record: @{text First_Problem_Execution.posing} states it over the compiled code its caller supplies. The posing
+  is compiled and evaluated where it is called, in the held measurement: the caller compiles, in one @{text ML} block,
+  @{const development_owner_record_1853}, @{const development_citing_generation}, @{const native_state_report} and
+  @{const development_first_problem_payload}, and passes them to @{text posing}. Making the payload (1,882,537
+  addresses, the asked installation's environment and the given's) was 16.8 s of the 23.5 s this theory's code took
+  at every load (task 562), for a posing no load calls.
+
+  At every load the five owner records are recorded and read back (moved from @{text Development_Owner_Records}), each
+  timed, and a record that does not read back refuses the theory: the one control of the owner records' recording
+  (task 562 moved @{text Development_Native_State_Execution}'s owner record here). No library theory imports this one.
 \<close>
 
 definition first_problem_owner_directions :: "finite_factor_term list" where
@@ -48,29 +55,18 @@ structure First_Problem_Execution =
 struct
   val directions = @{code first_problem_owner_directions}
   val read_back = @{code first_problem_owner_record_read_back}
-  val payload = @{code development_first_problem_payload}
-  val record = @{code development_owner_record_1853}
-  val cite = @{code development_citing_generation}
-  val report = @{code native_state_report}
   fun timed label f x =
     let val (t, r) = Timing.timing f x
     in (writeln ("FIRST PROBLEM " ^ label ^ ": " ^ Timing.message t); r) end
-  fun count NONE = "none" | count (SOME n) = IntInf.toString n
   fun owner_records () =
     ListPair.appEq (fn (stamp, t) =>
       if timed ("owner record " ^ stamp ^ " read back") read_back t = SOME true then ()
       else error ("FIRST PROBLEM owner record " ^ stamp ^ ": not read back"))
       (["1750", "1812", "1836", "1853", "1957"], directions)
-  fun posing () =
+  fun posing record cite report payload =
     (case record of
       NONE => error "FIRST PROBLEM: no owner record of 18:53"
-    | SOME r =>
-        let
-          val g = timed "posing recording" (cite payload) r
-          val (a, (c, same)) = report payload g
-          val _ = writeln ("FIRST PROBLEM posing: payload " ^ IntInf.toString a ^ " addresses, cause " ^ count c ^
-            " carrier addresses, the owner record of 18:53's cause " ^ Bool.toString same)
-        in if same then g else error "FIRST PROBLEM posing: no generation, or a cause other than the owner record's" end)
+    | SOME r => Native_State_Execution.recording (fn t => cite t r) report "first problem posing" payload)
 end
 \<close>
 

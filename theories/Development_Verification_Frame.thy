@@ -29,10 +29,17 @@ text \<open>
     (datatype constructors, type definitions' representations), a bootstrap-loop presentation
     relation or datatype as task 381's entry lists them (@{text bootstrap_constants},
     @{text bootstrap_types}); a native program defined beside them is native content and passes;
-  \<^item> (f) where that closure reaches a store (the binary and path stores, the red-black tree), a carrier
-    index (@{text native_carrier_index}), stated as a registration or as a theorem, possibly under
-    premises as @{text Native_Path_Store_Indexes} states it, has a statement whose closure reaches
-    one of the store constants the contract reaches;
+  \<^item> (f) every store search that closure reaches is a carrier index's own. A store search is an
+    application of a store operation (a constant of the binary and path stores or the red-black tree,
+    a store's constructors excepted) that the contract's statements, or the definitions they reach
+    outside the stores, hold. A carrier index instance (@{text native_carrier_index}) is a
+    registration, an instance theorem, or @{text native_store_search_program.index} at an
+    interpretation of the path store's search program. An application at closed arguments (a native
+    search at its sites) is an index's own when the index's site and checker (a search program's
+    program and sites) reach it with every argument standing in them; an application at open
+    arguments, when the index's build, search or key presentation reaches its operation. An
+    application the given's package program reaches is the given's: reported, not required. Every
+    store an answer adds needs an index of its own; the carrier an index is stated for is not read;
   \<^item> (d) a theorem of this theory states the notion's clause @{text renaming_equivariant} of the
     contract's relation (over the product of its classes' domains) or predicate (over its class's
     domain) at the use action the classes derive from their constructions: the product, list,
@@ -61,7 +68,8 @@ struct
   lists them (the development_problem datatype, the Isabelle state datatypes, task 9's rows, loci,
   prefixes and keys, readiness_presents, state_presents, request_presents, development_rows_present),
   with those of Isabelle_Type_Tables, Isabelle_Local_Names and Isabelle_Code_Equations that its
-  criterion takes. A native program defined in the same theories is not listed.*)
+  criterion takes, the row citation presenters of Development_Row_Data and the key agreement of
+  presented states. A native program defined in the same theories is not listed.*)
 val bootstrap_constants =
   ["Development_Native_Selection.readiness_presents",
    "Development_State_Rows.state_presents", "Development_State_Rows.rows_present",
@@ -78,7 +86,9 @@ val bootstrap_constants =
    "Isabelle_Type_Tables.isabelle_type_table",
    "Isabelle_Local_Names.isabelle_local_names", "Isabelle_Local_Names.isabelle_local_embedding",
    "Isabelle_Code_Equations.isabelle_code_equation_proposition",
-   "Isabelle_Code_Equations.isabelle_definition_proposition"];
+   "Isabelle_Code_Equations.isabelle_definition_proposition",
+   "Development_Row_Data.development_citation_data", "Development_Row_Data.development_citations_data",
+   "Development_State_Rows.keyed_agree", "Development_State_Rows.keys_shared"];
 
 val bootstrap_types =
   ["Development_Problems.development_problem", "Development_Problems.development_contract",
@@ -329,49 +339,119 @@ fun concl_head th =
     t => (case Term.strip_comb t of (Const (c, _), args) => SOME (c, args) | _ => NONE))
   handle TERM _ => NONE;
 
-(*Carrier indexes stated as theorems anywhere in the context, possibly under premises.*)
+(*Part (f). A store operation is a constant of the store theories other than a store's constructor; a
+  store search is an application of one to its arguments, maximal in the term it stands in.*)
+fun store_constant c = member (op =) store_theories (home c);
+
+fun constructor thy c =
+  (case body_type (Sign.the_const_type thy c) of
+    Type (a, _) =>
+      (case Ctr_Sugar.ctr_sugar_of (Proof_Context.init_global thy) a of
+        SOME {ctrs, ...} => exists (fn t => fst (dest_Const t) = c) ctrs
+      | NONE => false)
+  | _ => false)
+  handle TYPE _ => false;
+
+fun store_applications thy =
+  let
+    fun walk u =
+      (case strip_comb u of
+        (Const (c, _), args) =>
+          if not (store_constant c) orelse constructor thy c then fold walk args
+          else insert (op aconv) u
+      | (Abs (_, _, b), args) => walk b #> fold walk args
+      | (_, args) => fold walk args);
+  in walk end;
+
+fun reach definitions seeds =
+  Isabelle_Constant_Closure.closure definitions (fn t => Term.add_const_names t [])
+    (fold Term.add_const_names seeds []);
+
+(*The store searches a closure reaches: in its seeds and in the definitions it selects outside the
+  stores (a store operation defined by another is the stores' own, not a search reached).*)
+fun reached_applications thy seeds selected =
+  fold (store_applications thy)
+    (seeds @ map snd (filter_out (store_constant o fst) (Symtab.dest selected))) [];
+
+fun ground t =
+  not (null (snd (strip_comb t))) andalso not (loose_bvar (t, 0)) andalso
+  null (Term.add_frees t []) andalso null (Term.add_vars t []);
+
+(*The store operations a search applies: its head and every store operation within its arguments.*)
+fun store_operations thy t =
+  filter (fn c => store_constant c andalso not (constructor thy c)) (Term.add_const_names t []);
+
 (*Carrier indexes stated as theorems anywhere in the context, possibly under premises, each an
   instance: its build, search, site and index term hold no schematic variable, so a locale's generic
-  statement (native_store_search_program.index) never counts. Each is named with its operations.*)
+  statement (native_store_search_program.index) never counts. Each is named with its anchors (site and
+  checker) and its stated operations (build, search, key presentation).*)
 fun index_theorems thy =
   Facts.fold_static (fn (name, ths) => fold (fn th =>
     (case concl_head th of
       SOME (c, args) =>
         if c = \<^const_name>\<open>native_carrier_index\<close> andalso length args = 11 then
-          let val ops = map (nth args) [4, 5, 6, 9]
-          in if exists (Term.exists_subterm is_Var) ops then I else cons (name, ops) end
+          if exists (Term.exists_subterm is_Var) (map (nth args) [4, 5, 6, 9]) then I
+          else
+            cons (name, filter_out (Term.exists_subterm is_Var) (map (nth args) [6, 10]),
+              filter_out (Term.exists_subterm is_Var) (map (nth args) [4, 5, 8]), name)
         else I
     | NONE => I)) ths) (Global_Theory.facts_of thy) [];
 
 (*Native_Path_Store_Indexes states the carrier index of every interpretation of the path store's search
   program (native_store_search_program.index, under the formation of its values) in the program's
   context, so an interpretation made where that statement stands is a carrier index instance: its
-  parameters, the program its site reads among them, are its operations.*)
+  anchors are its parameters (the program its site reads and the two sites), its stated operations the
+  build, search and key presentation of that statement.*)
 fun search_program_indexes thy =
-  if can (Global_Theory.get_thms thy) "Native_Path_Store_Indexes.native_store_search_program.index"
-  then
-    map (fn ps => ("native_store_search_program.index at the interpretation of " ^
-        commas (map (Syntax.string_of_term_global thy o snd) ps), map snd ps))
-      (registrations thy "native_store_search_program")
-  else [];
+  (case try (Global_Theory.get_thms thy) "Native_Path_Store_Indexes.native_store_search_program.index" of
+    SOME (th :: _) =>
+      let
+        val args = (case concl_head th of SOME (_, args) => args | NONE => []);
+        val stated =
+          if length args = 11 then filter_out (Term.exists_subterm is_Var) (map (nth args) [4, 5, 8]) else [];
+      in
+        map (fn ps => ("native_store_search_program.index at the interpretation of " ^
+            commas (map (Syntax.string_of_term_global thy o snd) ps), map snd ps, stated,
+            "native_store_search_program.index"))
+          (registrations thy "native_store_search_program")
+      end
+  | _ => []);
 
-(*What every store use shares, never specific to one index.*)
-val shared_constants =
-  [\<^const_name>\<open>positive_meaning\<close>, \<^const_name>\<open>Pair_Term\<close>, \<^const_name>\<open>Payload_Term\<close>,
-   \<^const_name>\<open>Target_Term\<close>, \<^const_name>\<open>term_formed\<close>];
+fun registered_indexes thy =
+  map (fn ps =>
+    let val name = "a registration with the site " ^ Syntax.string_of_term_global thy (param ps "site")
+    in
+      (name, map_filter (AList.lookup (op =) ps) ["site", "checker"],
+        map_filter (AList.lookup (op =) ps) ["build", "search", "present"], name)
+    end) (registrations thy "native_carrier_index");
 
-fun library_constant thy c =
-  let val {theory_long_name, ...} = Name_Space.the_entry (Sign.const_space thy) c
-  in String.isPrefix "HOL" theory_long_name orelse String.isPrefix "Pure" theory_long_name end
-  handle ERROR _ => true;
+(*An index with what it searches: its own searches, the closed store searches its anchors reach whose
+  arguments all stand in its anchors; and its operations, the store operations its stated build,
+  search and key presentation apply. A search at open arguments is matched when every store operation
+  it applies is among one index's operations, so the store it searches, where it stands on the text, is
+  built by the index's build; where the store is a variable, its carrier is not read.*)
+fun index_record thy definitions (name, anchors, stated, stated_name) =
+  let
+    fun inside x = exists (Term.exists_subterm (fn u => u aconv x)) anchors;
+    val own =
+      filter (fn t => ground t andalso forall inside (snd (strip_comb t)))
+        (reached_applications thy anchors (snd (reach definitions anchors)));
+    val operations = fold (union (op =) o store_operations thy) stated [];
+  in (name, own, operations, stated_name) end;
 
-(*The constants specific to an index: those of its build, search, site and index term that are no
-  store's own, no shared presentation constant and no library constant (the program its site reads,
-  its own search or build operation).*)
-fun specific_constants thy ops =
-  fold Term.add_const_names ops []
-  |> filter_out (fn c => member (op =) store_theories (home c) orelse
-      member (op =) shared_constants c orelse library_constant thy c);
+fun carrier_indexes thy definitions =
+  map (index_record thy definitions)
+    (registered_indexes thy @ index_theorems thy @ search_program_indexes thy);
+
+(*The given's package program: the store searches it reaches are the given's, not an answer's.*)
+val given_programs = ["Development_Package_Program.package_program"];
+
+fun given_applications thy definitions =
+  let
+    val seeds =
+      map_filter (fn c => Option.map (fn T => Const (c, T)) (try (Sign.the_const_type thy) c))
+        given_programs;
+  in if null seeds then [] else reached_applications thy seeds (snd (reach definitions seeds)) end;
 
 fun equivariance_clause ctxt act D P =
   Syntax.check_term ctxt (HOLogic.mk_Trueprop
@@ -395,18 +475,21 @@ fun check thy program entries =
       @ class_facts;
     val frame = {thy = thy, ctxt = ctxt, facts = facts, classes = classes};
     val contracts = registrations thy "presented_relation_contract";
-    val stores = registrations thy "native_carrier_index";
     val definitions = Isabelle_Constant_Closure.kernel_definitions thy;
+    (*The context's carrier indexes and the given's searches, computed once for the whole check.*)
+    val indexes = Lazy.lazy (fn () => carrier_indexes thy definitions);
+    val given = Lazy.lazy (fn () => given_applications thy definitions);
     fun reached seeds =
       let
-        val (seen, selected) =
-          Isabelle_Constant_Closure.closure definitions (fn t => Term.add_const_names t [])
-            (fold Term.add_const_names seeds []);
+        val (seen, selected) = reach definitions seeds;
         val types = fold (fold_types add_type_constructors) (seeds @ map snd (Symtab.dest selected)) [];
-      in (sort_strings (Symtab.keys seen), sort_strings (type_closure ctxt types)) end;
+      in
+        (sort_strings (Symtab.keys seen), sort_strings (type_closure ctxt types),
+          reached_applications thy seeds selected)
+      end;
     fun statement_checks entry seeds =
       let
-        val (constants, types) = reached seeds;
+        val (constants, types, applications) = reached seeds;
         val bad_constants = filter (member (op =) bootstrap_constants) constants;
         val bad_types = filter (member (op =) bootstrap_types) types;
         val _ =
@@ -414,32 +497,32 @@ fun check thy program entries =
           else refuse entry ("its contract's statement reaches, through the shared constant " ^
             "closure and the type definitions, the bootstrap loop's presentations: the constants " ^
             commas bad_constants ^ "; the types " ^ commas bad_types);
-        val store_constants = filter (member (op =) store_theories o home) constants;
-        (*An index matches when the contract reaches its program or operations, or a constant of
-          the theory defining them (a finite presentation of the same program, as the given's package
-          program reaches its programs' finite forms).*)
-        val own_constants = filter_out (fn c => member (op =) store_theories (home c) orelse
-          member (op =) shared_constants c orelse library_constant thy c) constants;
-        fun specific (_, ops) =
-          let val homes = map home (specific_constants thy ops)
-          in exists (fn c => member (op =) homes (home c)) own_constants end;
-        val indexes =
-          if null store_constants then []
-          else
-            map (fn ps => ("a registration with the site " ^ Syntax.string_of_term ctxt (param ps "site"),
-              map (param ps) ["build", "search", "site", "index_term"])) stores
-            @ index_theorems thy @ search_program_indexes thy;
+        val show = Syntax.string_of_term ctxt;
+        fun matches t (_, own, operations, _) =
+          if ground t then member (op aconv) own t
+          else subset (op =) (store_operations thy t, operations);
+        fun place t =
+          (case find_first (matches t) (Lazy.force indexes) of
+            SOME (name, _, _, stated_name) =>
+              (NONE, SOME ("the store search " ^ show t ^
+                (if ground t then " is the own search of the carrier index " ^ name
+                 else " applies only operations stated by the carrier index " ^ stated_name)))
+          | NONE =>
+              if member (op aconv) (Lazy.force given) t
+              then (NONE, SOME ("the given's store search " ^ show t ^ " has no carrier index of its own"))
+              else (SOME t, NONE));
+        val placed = map place applications;
+        val unmatched = map_filter fst placed;
       in
-        if null store_constants then ()
-        else
-          (case find_first specific indexes of
-            SOME (name, _) =>
-              writeln ("Part (f) at the entry " ^ entry ^ ": the store its contract reaches is searched by " ^
-                "the carrier index " ^ name)
-          | NONE => refuse entry ("its contract relies on the store constants " ^
-          commas (take 3 store_constants) ^ (if length store_constants > 3 then ", \<dots>" else "") ^
-          ", and no carrier index instance (native_carrier_index), registered or stated as a theorem, " ^
-          "has a search, build or program the contract reaches"))
+        if null unmatched then
+          List.app (fn (_, SOME msg) => writeln ("Part (f) at the entry " ^ entry ^ ": " ^ msg) | _ => ())
+            placed
+        else refuse entry ("its contract relies on the store searches " ^
+          commas (map (fn t => show t ^ (if ground t then "" else
+            " (its store operations " ^ commas (store_operations thy t) ^ ")")) unmatched) ^
+          ", and no carrier index instance (native_carrier_index), registered, stated as a theorem or as " ^
+          "native_store_search_program.index at an interpretation of the search program, has it as its " ^
+          "own search: every store an answer adds needs an index of its own")
       end;
     fun action entry (R, D) =
       derive frame (R, D) handle Underived msg => refuse entry msg;

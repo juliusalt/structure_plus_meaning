@@ -91,7 +91,7 @@ socket commitment without the kept head refuting a true call, the test narrowed 
 output is a variant of its head output), R5b #565 (landed `4cd20215`: the committed lifting and the three
 forms exact under the exchange premise `finite_commitment_exchanges`, the transfer by agreement and relocation), R5c
 #586 (landed `ca56a579`, narrowed by q108: the premise as #565 states it fails at the socket kinds; the counterexample recorded, the
-committed input's groundness as lemmas, the controls), R5c′ #589 (narrowed by q109: R5's socket test commits only
+committed input's groundness as lemmas, the controls), R5c′ #589 (landed `ef4ea13d`, narrowed by q109: R5's socket test commits only
 while its clause's other goals are pending, so #565's premise, lifting and forms stand; the committed sub-search's frame
 invariant and kept states), #591 (landed `d874559d`: the certificates' acceptance in subtree form) and R5c″ #593
 (#565's premise discharged at the direct producer and at the socket kinds), and R6 #520 (landed `2dfbebd1`, narrowed by q107:
@@ -140,8 +140,8 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The evaluator's chain is the route's longest: R5c #586 → R5c′ #589 → R5c″
-#593 (#591 beside) → R5d's views #595 → carriers #597 → R5e #599 → R6c's 48 #609 → the carrying #611 → R7 #542 puts
+**Shape.** No build waits on a review task. The evaluator's chain is the route's longest: R5c″
+#593 and W4a1 #526 → R5d's views #595 → carriers #597 → R5e #599 → R6c's 48 #609 → the carrying #611 → R7 #542 puts
 #399 at 10, #408 at 13 and #450 at 14 — past the limit through splices (q108, #588), so nothing is added after them
 until they shorten; the recording's T2b
 #577 → T3 #579 → P #581 and W2b #567 → W4a1 #526 → rc are shorter; with q110, #526 stands between #589 and #595 beside #593. The low moves #618 (one whole
@@ -152,7 +152,7 @@ waits for that.
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The low moves #618
 head it while they check (working rule Rebuilds); then, by slack on the
-longest chain (plan-78): R5c′ #589, R5c″ #593; W4a1 #526 and W4a2 #615 (they feed R5e and W4b, #526 also R5d's
+longest chain (plan-78): R5c″ #593; W4a1 #526 and W4a2 #615 (they feed R5e and W4b, #526 also R5d's
 views); R5d's views #595 and
 carriers #597; R5e #599 and R6b's parts #601, #603 (no slack); R6c's 48 #609, R6b's carrying #605, rc #540 and R6c's
 instantiation family #607; the carrying #611; W4b #528; R7 #542 and #547; the recording (#581, #617, X′ #583, six
@@ -476,7 +476,10 @@ What landed that open work builds on, a line each; how it went and each review's
 - **T2b** (#577, `ca56a579`): `Factor_Placeholder_Packages`, the package, the application and the least environments
   at the placeholder fill; #578's follow-ups 3 and 4 mailed to T3 #579 (3 also to P #581), 1–3 next-edits 218–220.
 - **T3** (#579, `177fd217`): `Factor_Parametric_Causes`, the placeholder's certified policy call carried to every
-  payload's fill; #580's follow-ups are under Now.
+  payload's fill; #580's follow-ups: 4 in P's brief, 1 and 3 #617's, 2 #618's.
+- **R5c′** (#589, `ef4ea13d`): `Factor_Resolution_Commitments`, R5's socket test narrowed to commit while its clause's
+  other goals are pending (q109), the committed sub-search's frame invariant and kept states; review 590's follow-ups
+  (its summary survives the re-review) mailed: 1 and 3 to #526, 2 to #593, 4 to #605 and #542.
 
 ## Open
 
@@ -605,7 +608,8 @@ searches for a theory before briefing a task that edits it.
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
 - **Mailed, read by each task's first session** (by task): #593, #595, #540, #528, #542 and #547 (q110: #526's change
-  and the forms exact over a construction); #589 (#587's follow-ups 1–3); #581
+  and the forms exact over a construction); #526 (review 590's follow-ups 1 and 3), #593 (its 2), #605 and #542 (its
+  4); #581
   (#578's 3); #528 (W4a's division: the four registrations are #615's);
   #542 (#567's review, follow-up 1: each ready variable's registered value computed several times per node and step,
   to measure; next-edits 217); #542 and #547 (#588's Remains: the carried

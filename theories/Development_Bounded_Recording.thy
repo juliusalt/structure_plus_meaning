@@ -1,5 +1,5 @@
 theory Development_Bounded_Recording
-  imports Development_Certified_Generations Factor_Bounded_Generation_Scopes
+  imports Development_Certified_Generations Factor_Parametric_Causes Factor_Finite_System_Presentations
 begin
 
 section \<open>The finite fill\<close>
@@ -31,6 +31,29 @@ definition finite_payload_uses :: "'u finite_artifact_environment \<Rightarrow> 
 lemma finite_payload_uses_member:
   "u |\<in>| finite_payload_uses J R \<longleftrightarrow> (u,R) |\<in>| finite_environment_artifacts J"
   by (force simp: finite_payload_uses_def fimage_iff ffmember_filter)
+
+lemma finite_payload_uses_decode:
+  "fset (finite_payload_uses J R)={u. artifact_at (decode_finite_environment J) u (decode_finite_object R)}"
+proof -
+  have "u |\<in>| finite_payload_uses J R \<longleftrightarrow> artifact_at (decode_finite_environment J) u (decode_finite_object R)" for u
+    by (simp add: finite_payload_uses_member artifact_at_def decode_finite_environment_def)
+  then show ?thesis by blast
+qed
+
+text \<open>
+  The finite placeholder fill fills every use holding the empty artifact, the placeholder, by an artifact; it
+  decodes exactly to @{const placeholder_fill}.
+\<close>
+
+definition finite_placeholder_fill ::
+    "'u finite_artifact_environment \<Rightarrow> finite_exact_artifact \<Rightarrow> 'u finite_artifact_environment" where
+  "finite_placeholder_fill E R=finite_payload_fill E (finite_payload_uses E finite_empty_artifact) R"
+
+theorem decode_finite_placeholder_fill:
+  "decode_finite_environment (finite_placeholder_fill E R)=
+    placeholder_fill (decode_finite_environment E) (decode_finite_object R)"
+  by (simp only: finite_placeholder_fill_def decode_finite_payload_fill finite_payload_uses_decode
+    decode_finite_empty_artifact placeholder_fill_def)
 
 section \<open>The bounded quotation\<close>
 
@@ -236,14 +259,116 @@ proof -
     by (simp add: development_policy_judgment_def policy certificate replayed quoted)
 qed
 
-section \<open>The bounded recording\<close>
+section \<open>The placeholder judgment\<close>
 
 text \<open>
-  The payload is made once, the complete data syntax of the decoded term, and is the locus and the
-  payload alike; the judgment is the bounded one, and the generation is recorded by the constructor that
-  does not check the cause's formation, which the bounded quotation's contract establishes. This is the
+  The listing policy's judgment is made once, at the placeholder, the empty artifact (DECISIONS.md task 560's
+  entry, (2) "What is certified once"): the policy K0 listing it, its certificate and closed native replay, the
+  least judgment environment J0 and the bounded cause C0, the uses of J0 holding the empty artifact its boundary.
+  Beside it the one fact the family's certification needs of the placeholder's program: the program read at J0,
+  rooted at the entry, holds no material premise (@{thm [source] finite_entry_materials_exact}), evaluated once.
+\<close>
+
+definition development_placeholder_judgment :: "development_policy_judgment option" where
+  "development_placeholder_judgment=development_bounded_policy_judgment
+    [Finite_Target (Finite_Whole finite_empty_artifact)] finite_empty_artifact"
+
+definition development_placeholder_free :: bool where
+  "development_placeholder_free=(case development_placeholder_judgment of
+     None \<Rightarrow> False
+   | Some (d,K,pu,B,au,root,J,C) \<Rightarrow> (case finite_native_source J pu [] of
+       None \<Rightarrow> False
+     | Some P \<Rightarrow> finite_entry_materials P d={||}))"
+
+lemma development_policy_source_with_formed:
+  assumes policy: "development_policy_source_with xs=Some s"
+  shows "list_all finite_term_formed xs"
+proof -
+  obtain d F u where "finite_ground_source xs=Some (d,F,u)"
+    using policy by (cases "finite_ground_source xs") (auto simp: development_policy_source_with_def)
+  then show ?thesis using finite_ground_source_total by blast
+qed
+
+text \<open>
+  The placeholder judgment, with its program observation-free at the entry, establishes the placeholder's facts
+  of @{text Factor_Parametric_Causes}: its package and application at J0, J0 its own least environment, the
+  closed replay at the replay environment including J0, J0's package environment K0's, and the bounded cause
+  C0 of J0 with boundary exactly the uses of J0 holding the empty artifact.
+\<close>
+
+lemma development_placeholder_certificate:
+  assumes judged: "development_placeholder_judgment=Some (d,K0,pu,B0,au,root,J0,C0)"
+    and free: development_placeholder_free
+  obtains P0 Pk I A V0 where "placeholder_policy_certificate (decode_finite_environment K0)
+      (decode_finite_environment J0) (decode_finite_environment B0) pu [] au [] d root P0 Pk I A
+      (decode_finite_object C0) [] V0"
+proof -
+  have bounded_judged: "development_bounded_policy_judgment [Finite_Target (Finite_Whole finite_empty_artifact)]
+      finite_empty_artifact=Some (d,K0,pu,B0,au,root,J0,C0)"
+    using judged by (simp only: development_placeholder_judgment_def)
+  obtain p A' M G I' W F0 V where
+    replayed: "finite_native_certificate_replay K0 pu [] p d (Finite_Target (Finite_Whole finite_empty_artifact))=
+      Some (A',M,root,G,au,I',W,B0)"
+    and bounded: "finite_bounded_judgment_quote B0 pu [] au [] finite_empty_artifact=Some (J0,F0,V,C0)"
+    and condition: "replay_policy_condition K0 pu [] d finite_empty_artifact J0 pu [] au []"
+    by (rule development_bounded_policy_judgment_result[OF bounded_judged])
+  note scope=finite_bounded_judgment_quote_correct[OF bounded]
+  have free_at: "case finite_native_source J0 pu [] of None \<Rightarrow> False | Some P \<Rightarrow> finite_entry_materials P d={||}"
+    using free by (simp add: development_placeholder_free_def judged)
+  obtain P where source: "finite_native_source J0 pu []=Some P" and materials: "finite_entry_materials P d={||}"
+    using free_at by (cases "finite_native_source J0 pu []") auto
+  have package: "native_package_at (decode_finite_environment J0) pu [] (decode_finite_system P)"
+    using source by (simp only: finite_native_source_correct)
+  have observed: "system_observation_free (rooted_system (decode_finite_system P) {d})"
+    using materials by (simp only: finite_entry_materials_exact)
+  have available: "\<exists>P. native_package_at (decode_finite_environment K0) pu [] P"
+    using condition unfolding replay_policy_condition_def finite_policy_package_available by blast
+  then obtain Pk where policy: "native_package_at (decode_finite_environment K0) pu [] Pk" by blast
+  have aligned: "native_package_environment (decode_finite_environment J0) pu []=
+      native_package_environment (decode_finite_environment K0) pu []"
+    "\<exists>I A. native_application_at (decode_finite_environment J0) au [] d
+      (Target_Term (Whole_Artifact (decode_finite_object finite_empty_artifact))) I A"
+    using condition unfolding replay_policy_condition_def finite_policy_cause_alignment_exact by blast+
+  obtain I A where app: "native_application_at (decode_finite_environment J0) au [] d
+      (Target_Term (Whole_Artifact empty_artifact)) I A"
+    using aligned(2) unfolding decode_finite_empty_artifact by blast
+  have least: "native_judgment_environment (decode_finite_environment J0) pu [] au []=decode_finite_environment J0"
+    by (rule sym[OF scope(5)])
+  have ready: "finite_literal_replay_ready B0 pu [] au [] root finite_empty_artifact"
+    by (rule certificate_replay_literal_ready[OF replayed])
+  have replay: "native_replay_at (decode_finite_environment B0) pu [] au [] root {}"
+    using ready by (simp only: finite_literal_replay_ready_at; blast)
+  have formedF0: "environment_formed (decode_finite_environment F0)"
+    using bounded by (simp only: finite_bounded_judgment_quote_result finite_environment_formed_correct; blast)
+  have filled: "payload_fill (decode_finite_environment F0) (fset V) empty_artifact=decode_finite_environment F0"
+  proof (rule payload_fill_same)
+    fix u S assume member: "u\<in>fset V" and at: "artifact_at (decode_finite_environment F0) u S"
+    show "S=empty_artifact" by (rule environment_artifact_unique[OF formedF0 at scope(2)[rule_format, OF member]])
+  qed
+  have same_F0: "decode_finite_environment F0=decode_finite_environment J0"
+    using scope(3) by (simp only: decode_finite_empty_artifact filled)
+  have quoted: "bounded_scope_quoted_at (decode_finite_object C0) [] (decode_finite_environment J0) pu [] au [] (fset V)"
+    using scope(1) by (simp only: same_F0)
+  have V: "V=finite_payload_uses J0 finite_empty_artifact"
+    using bounded by (simp only: finite_bounded_judgment_quote_result; blast)
+  have placeholders: "fset V={u. artifact_at (decode_finite_environment J0) u empty_artifact}"
+    by (simp only: V finite_payload_uses_decode decode_finite_empty_artifact)
+  show thesis
+    by (rule that[OF placeholder_policy_certificate.intro[OF package app least scope(6) replay policy aligned(1)
+      observed quoted placeholders]])
+qed
+
+section \<open>The parametric recording\<close>
+
+text \<open>
+  The payload is made once, the complete data syntax of the decoded term, and is the locus and the payload
+  alike. The placeholder's judgment is made once; at the payload R only R's policy is constructed, and it is
+  checked equal to the placeholder's policy filled by R, at the placeholder's entry and use (DECISIONS.md task
+  560's entry, (2) "What each payload instantiates" and "The cause and its check"). The generation is recorded
+  with the placeholder's cause C0. A payload whose policy is not the fill, or a placeholder whose program is not
+  observation-free at its entry, records nothing: it is refused, and no other path records it. This is the
   recording at the index of the payload that every generation of the first problem's route is recorded by
-  (@{text Development_Owner_Records}), under one name; its refinements' code equations are stated in
+  (@{text Development_Owner_Records}), under one name; its refinements' code equation is stated in
   @{text Development_Recording_Refinements}.
 \<close>
 
@@ -252,16 +377,21 @@ definition development_indexed_generation ::
       (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
   "development_indexed_generation t H rows=(case finite_data_syntax (decode_finite_term t) of
      None \<Rightarrow> None
-   | Some R \<Rightarrow> Option.bind (development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R)
-       (\<lambda>(d,K,pu,B,au,root,J,C). finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R)
-          (Finite_Whole C) rows))"
+   | Some R \<Rightarrow> (case development_placeholder_judgment of
+       None \<Rightarrow> None
+     | Some (d,K0,pu,B0,au,root,J0,C0) \<Rightarrow>
+         if development_placeholder_free \<and>
+           development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,finite_placeholder_fill K0 R,pu)
+         then finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0) rows
+         else None))"
 
 lemma development_indexed_generation_result:
   assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
-  obtains R d K pu B0 au root J C where "finite_data_syntax (decode_finite_term t)=Some R"
-    "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some (d,K,pu,B0,au,root,J,C)"
-    "finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C) rows=Some (B,u,G)"
-  using built by (auto simp: development_indexed_generation_def bind_eq_Some_conv split: option.splits prod.splits)
+  obtains R d K0 pu B0 au root J0 C0 where "finite_data_syntax (decode_finite_term t)=Some R"
+    "development_placeholder_judgment=Some (d,K0,pu,B0,au,root,J0,C0)" development_placeholder_free
+    "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,finite_placeholder_fill K0 R,pu)"
+    "finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0) rows=Some (B,u,G)"
+  using built by (auto simp: development_indexed_generation_def split: option.splits prod.splits if_splits)
 
 text \<open>
   Where the environment recorded in is formed and every cited row reads back at its site, the
@@ -272,29 +402,65 @@ lemma development_indexed_generation_constructed:
   assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
     and formed: "finite_environment_formed H"
     and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
-  obtains R d K pu B0 au root J C where "finite_data_syntax (decode_finite_term t)=Some R"
-    "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some (d,K,pu,B0,au,root,J,C)"
-    "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C) rows=Some (B,u,G)"
+  obtains R d K0 pu B0 au root J0 C0 where "finite_data_syntax (decode_finite_term t)=Some R"
+    "development_placeholder_judgment=Some (d,K0,pu,B0,au,root,J0,C0)" development_placeholder_free
+    "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,finite_placeholder_fill K0 R,pu)"
+    "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0) rows=Some (B,u,G)"
 proof -
-  obtain R d K pu B0 au root J C where quoted: "finite_data_syntax (decode_finite_term t)=Some R"
-    and judged: "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some (d,K,pu,B0,au,root,J,C)"
+  obtain R d K0 pu B0 au root J0 C0 where quoted: "finite_data_syntax (decode_finite_term t)=Some R"
+    and judged: "development_placeholder_judgment=Some (d,K0,pu,B0,au,root,J0,C0)"
+    and free: development_placeholder_free
+    and policy: "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,finite_placeholder_fill K0 R,pu)"
     and generated: "finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R)
-      (Finite_Whole C) rows=Some (B,u,G)"
+      (Finite_Whole C0) rows=Some (B,u,G)"
     by (rule development_indexed_generation_result[OF built])
-  obtain p A M Gr I W F0 V where bounded: "finite_bounded_judgment_quote B0 pu [] au [] R=Some (J,F0,V,C)"
-    by (rule development_bounded_policy_judgment_result[OF judged])
-  have "finite_target_formed (Finite_Whole C)"
+  have bounded_judged: "development_bounded_policy_judgment [Finite_Target (Finite_Whole finite_empty_artifact)]
+      finite_empty_artifact=Some (d,K0,pu,B0,au,root,J0,C0)"
+    using judged by (simp only: development_placeholder_judgment_def)
+  obtain p A M Gr I W F0 V where bounded: "finite_bounded_judgment_quote B0 pu [] au [] finite_empty_artifact=
+      Some (J0,F0,V,C0)"
+    by (rule development_bounded_policy_judgment_result[OF bounded_judged])
+  have "finite_target_formed (Finite_Whole C0)"
     using finite_bounded_judgment_quote_correct(8)[OF bounded] by simp
-  then have "finite_construct_known_original_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C)=
-      finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C)"
+  then have "finite_construct_known_original_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0)=
+      finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0)"
     by (rule established_premise.exact[OF finite_construct_formed_cause_generation_established])
-  then have known: "finite_construct_known_original_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C) rows=
+  then have known: "finite_construct_known_original_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0) rows=
       Some (B,u,G)"
     using generated by simp
-  have "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C) rows=Some (B,u,G)"
+  have "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0) rows=Some (B,u,G)"
     using known by (simp only: finite_construct_known_original_generation_exact[OF formed rows])
-  then show thesis by (rule that[OF quoted judged])
+  then show thesis by (rule that[OF quoted judged free policy])
 qed
+
+text \<open>
+  Every generation the recording returns has the placeholder's cause: one target by construction, whatever
+  the payload, the environment and the cited rows.
+\<close>
+
+theorem development_indexed_generation_cause:
+  assumes placeholder: "development_placeholder_judgment=Some (d,K0,pu,B0,au,root,J0,C0)"
+    and built: "development_indexed_generation t H rows=Some (B,u,G)"
+  shows "generation_cause G=Finite_Whole C0"
+proof -
+  obtain R d' K' pu' B' au' root' J' C where judged: "development_placeholder_judgment=Some (d',K',pu',B',au',root',J',C)"
+    and generated: "finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C) rows=
+      Some (B,u,G)"
+    by (rule development_indexed_generation_result[OF built])
+  have "(d',K',pu',B',au',root',J',C)=(d,K0,pu,B0,au,root,J0,C0)"
+    using judged placeholder by (metis option.inject)
+  then have same: "C=C0" by simp
+  have "G=finite_generation_record_core (Finite_Whole R) (Finite_Whole R) (Finite_Whole C) rows"
+    using generated by (auto simp: finite_construct_formed_cause_generation_def finite_generation_record_body_def
+      split: if_splits)
+  then show ?thesis by (simp add: finite_generation_record_core_def same)
+qed
+
+text \<open>
+  The certified meaning is the placeholder's carried to the payload (@{thm [source]
+  placeholder_policy_certificate.parametric_certified_policy_cause}): the policy at the payload is the fill of
+  the placeholder's, and the replay the certified cause names is one the fill's positive call has.
+\<close>
 
 theorem development_indexed_generation_certified:
   assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
@@ -309,63 +475,52 @@ theorem development_indexed_generation_certified:
     "finite_check_generation G B u []"
     "environment_included (decode_finite_environment H) (decode_finite_environment B)"
 proof -
-  obtain R d K pu B0 au root J C where quoted: "finite_data_syntax (decode_finite_term t)=Some R"
-    and judged: "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some (d,K,pu,B0,au,root,J,C)"
-    and generated: "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C) rows=
+  obtain R d K0 pu B0 au root0 J0 C0 where quoted: "finite_data_syntax (decode_finite_term t)=Some R"
+    and judged: "development_placeholder_judgment=Some (d,K0,pu,B0,au,root0,J0,C0)"
+    and free: development_placeholder_free
+    and policy: "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,finite_placeholder_fill K0 R,pu)"
+    and generated: "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0) rows=
       Some (B,u,G)"
     by (rule development_indexed_generation_constructed[OF built formed rows])
-  obtain p A M Gr I W F0 V where policy: "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-    and replayed: "finite_native_certificate_replay K pu [] p d (Finite_Target (Finite_Whole R))=
-      Some (A,M,root,Gr,au,I,W,B0)"
-    and bounded: "finite_bounded_judgment_quote B0 pu [] au [] R=Some (J,F0,V,C)"
-    and condition: "replay_policy_condition K pu [] d R J pu [] au []"
-    by (rule development_bounded_policy_judgment_result[OF judged])
-  note scope=finite_bounded_judgment_quote_correct[OF bounded]
+  obtain P0 Pk I A V0 where cert: "placeholder_policy_certificate (decode_finite_environment K0)
+      (decode_finite_environment J0) (decode_finite_environment B0) pu [] au [] d root0 P0 Pk I A
+      (decode_finite_object C0) [] V0"
+    by (rule development_placeholder_certificate[OF judged free])
   note constructed=finite_construct_generation_record_correct[OF generated]
-  have core: "G=Generation (Finite_Whole R) (fset_of_list (map snd rows)) (Finite_Whole R) (Finite_Whole C)"
+  have core: "G=Generation (Finite_Whole R) (fset_of_list (map snd rows)) (Finite_Whole R) (Finite_Whole C0)"
     using constructed(2) by (simp only: finite_generation_record_core_def)
-  have ready: "finite_literal_replay_ready B0 pu [] au [] root R"
-    by (rule certificate_replay_literal_ready[OF replayed])
-  have replay: "native_replay_at (decode_finite_environment B0) pu [] au [] root {}"
-    using ready by (simp only: finite_literal_replay_ready_at; blast)
-  obtain Pb d0 t0 I0 K0 where package0: "native_package_at (decode_finite_environment B0) pu [] Pb"
-    and app0: "native_application_at (decode_finite_environment B0) au [] d0 t0 I0 K0"
-    using replay unfolding native_replay_at_def by blast
-  have kept: "native_package_at (decode_finite_environment J) pu [] Pb"
-    using native_judgment_environment_recovers(1)[OF package0 app0] by (simp only: scope(4))
-  have available: "\<exists>P. native_package_at (decode_finite_environment K) pu [] P"
-    using condition unfolding replay_policy_condition_def finite_policy_package_available by blast
-  have aligned: "native_package_environment (decode_finite_environment J) pu []=
-      native_package_environment (decode_finite_environment K) pu []"
-    "\<exists>I A. native_application_at (decode_finite_environment J) au [] d
-      (Target_Term (Whole_Artifact (decode_finite_object R))) I A"
-    using condition unfolding replay_policy_condition_def finite_policy_cause_alignment_exact by blast+
-  obtain Ia Aa where appJ: "native_application_at (decode_finite_environment J) au [] d
-      (Target_Term (Whole_Artifact (decode_finite_object R))) Ia Aa"
-    using aligned(2) by blast
+  have R_formed: "exact_formed (decode_finite_object R)"
+    using development_policy_source_with_formed[OF policy] by (simp add: finite_exact_formed_correct)
   have gen: "generation_at (decode_finite_environment B) u [] (decode_finite_generation G)"
     using constructed(6) by (simp only: finite_check_generation_exact)
   have payload: "generation_payload (decode_finite_generation G)=Whole_Artifact (decode_finite_object R)"
-    and cause: "generation_cause (decode_finite_generation G)=Whole_Artifact (decode_finite_object C)"
+    and cause: "generation_cause (decode_finite_generation G)=Whole_Artifact (decode_finite_object C0)"
     by (simp_all add: core decode_finite_generation_node)
-  have bscope: "generation_bounded_scope_at (decode_finite_environment B) u [] (decode_finite_generation G)
-      (decode_finite_environment J) pu [] au []"
-    using generation_bounded_scope_from_core[OF gen cause scope(1) payload scope(2)] by (simp only: scope(3))
-  have base: "scope_certified_base_cause_at generation_bounded_scope_at (decode_finite_environment B) u []
-      (decode_finite_generation G) (decode_finite_environment B0) root (decode_finite_object R)"
-    unfolding scope_certified_base_cause_at_def
-    using bscope scope(5) payload kept appJ scope(6) replay by blast
-  have certified: "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d
-      (decode_finite_environment B) u [] (decode_finite_generation G) (decode_finite_environment B0) root
+  obtain H0 root where certified: "bounded_certified_policy_cause_at (placeholder_fill (decode_finite_environment K0)
+      (decode_finite_object R)) pu [] d (decode_finite_environment B) u [] (decode_finite_generation G) H0 root
       (decode_finite_object R)"
-    unfolding bounded_certified_policy_cause_at_def scope_certified_policy_cause_at_def
-    using available base bscope aligned(1) appJ by blast
+    using placeholder_policy_certificate.parametric_certified_policy_cause[OF cert gen cause payload R_formed] by blast
+  obtain pu' pr' au' ar' where replayed: "native_replay_at H0 pu' pr' au' ar' root {}"
+    by (insert certified[unfolded bounded_certified_policy_cause_at_def scope_certified_policy_cause_at_def
+      scope_certified_base_cause_at_def], elim conjE exE) (rule that; assumption)
+  obtain Pr where replay_package: "native_package_at H0 pu' pr' Pr"
+    by (insert replayed[unfolded native_replay_at_def], elim conjE exE) (rule that; assumption)
+  obtain Q where family: "native_root_family_at H0 pu' pr' Q"
+    by (insert replay_package[unfolded native_package_at_def], elim conjE exE) (rule that; assumption)
+  have H0_formed: "environment_formed H0"
+    by (insert family[unfolded native_root_family_at_def], elim conjE exE)
+  obtain E where E: "decode_finite_environment E=H0"
+    using finite_environment_representation[OF H0_formed] by blast
+  have certified_K: "bounded_certified_policy_cause_at (decode_finite_environment (finite_placeholder_fill K0 R)) pu [] d
+      (decode_finite_environment B) u [] (decode_finite_generation G) (decode_finite_environment E) root
+      (decode_finite_object R)"
+    using certified by (simp only: decode_finite_placeholder_fill E)
   have target: "development_data_target t=Some (generation_payload G)"
     using quoted by (simp add: development_data_target_def core)
   have fields: "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
     "generation_predecessors G=fset_of_list (map snd rows)"
     by (simp_all add: core)
-  show thesis by (rule that[OF target fields(1,2) policy certified fields(3) constructed(6,4)])
+  show thesis by (rule that[OF target fields(1,2) policy certified_K fields(3) constructed(6,4)])
 qed
 
 lemma development_indexed_generation_recorded:
@@ -375,8 +530,8 @@ lemma development_indexed_generation_recorded:
   shows "finite_environment_formed B" "finite_environment_included H B" "finite_check_generation G B u []"
     "finite_generation_formed G"
 proof -
-  obtain R d K pu B0 au root J C where generated: "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R)
-      (Finite_Whole C) rows=Some (B,u,G)"
+  obtain R d K0 pu B0 au root J0 C0 where generated: "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R)
+      (Finite_Whole C0) rows=Some (B,u,G)"
     by (rule development_indexed_generation_constructed[OF built formed rows])
   note correct=finite_construct_generation_record_correct[OF generated]
   show "finite_environment_formed B" by (rule correct(3))

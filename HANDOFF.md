@@ -70,7 +70,7 @@ W4 are briefed with R5–R7 by #507 after R3. #399 and #443 wait on R4 and on #5
 #447 wait through #399.
 
 **Beside the route**: #486 (continuing #457: the given's readers' payload lineage split at the guard's two
-lineages, the payload lemmas at the payload notion, #457's review 1–4, item 144's payload part); #483 (running: the
+lineages, the payload lemmas at the payload notion, #457's review 1–4, item 144's payload part); #483 (re-planned by plan-70 after its landing check failed twice at the C4a restatement, now optional: the
 generic facts at their homes, the low moves in one rebuild; its moves stand under #495's entry, its C4a restatement
 moot).
 
@@ -296,6 +296,8 @@ What landed that open work builds on, a line each; how it went and each review's
   and the owner records' and native state's recorded instances through it, the controls in
   `Development_Bounded_Recording_Execution` (DECISIONS.md "The bounded recording records the route's generations; its
   cause is one target").
+- **The resolving evaluator** (#495's entry): R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the most general
+  unifier of finite term patterns and renaming apart; its review's follow-ups mailed to R3, R4 and #507).
 - **Briefs whose findings stand**: #434 (`.build/tasks/434/result.md`: the approval record's place, part (g)'s leaf
   argument not demanded, parts (h) and (e) the owner's, Q25), #451 (`.build/tasks/451/result.md`: the readings of
   "generation" and "adoption" generated, the owner's words naming readers).

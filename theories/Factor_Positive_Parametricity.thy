@@ -1,5 +1,5 @@
 theory Factor_Positive_Parametricity
-  imports Factor_Positive_Meaning
+  imports Factor_Pattern_Programs
 begin
 
 section \<open>Literal leaves in a finite positive program\<close>
@@ -146,28 +146,331 @@ proof -
     by (auto simp: term_bindings_formed_def map_binding_leaves_def rel_dom_def)
 qed
 
+section \<open>The leaf map of a program\<close>
+
+text \<open>
+  A leaf map acts on a program as it acts on the program's arguments: each literal leaf of a pattern becomes the
+  exact pattern of the leaf's image (@{const exact_term_pattern}), and every variable, socket, callee, clause key
+  and definition is kept. A positive consequence of an observation-free program then carries to the mapped program
+  at the mapped argument, whatever the map does to the program's own leaves. A map fixing those leaves leaves the
+  program as it is: the fixed-program facts are that case, each proved from the one argument below.
+\<close>
+
+fun map_pattern_leaves :: "(factor_term \<Rightarrow> factor_term) \<Rightarrow> 'a term_pattern \<Rightarrow> 'a term_pattern" where
+  "map_pattern_leaves h (Pattern_Variable a)=Pattern_Variable a"
+| "map_pattern_leaves h (Pattern_Target t)=exact_term_pattern (h (Target_Term t))"
+| "map_pattern_leaves h (Pattern_Payload v)=exact_term_pattern (h (Payload_Term v))"
+| "map_pattern_leaves h (Pattern_Pair p q)=Pattern_Pair (map_pattern_leaves h p) (map_pattern_leaves h q)"
+
+definition map_material_leaves ::
+  "(factor_term \<Rightarrow> factor_term) \<Rightarrow> 'a material_pattern \<Rightarrow> 'a material_pattern" where
+  "map_material_leaves h M=\<lparr>material_source=map_pattern_leaves h (material_source M),
+    material_atoms=map_pattern_leaves h (material_atoms M), material_edges=map_pattern_leaves h (material_edges M),
+    material_counts=map_pattern_leaves h (material_counts M),
+    material_functions=map_pattern_leaves h (material_functions M)\<rparr>"
+
+definition map_schema_leaves ::
+  "(factor_term \<Rightarrow> factor_term) \<Rightarrow> ('a,'s,'d) factor_schema \<Rightarrow> ('a,'s,'d) factor_schema" where
+  "map_schema_leaves h S=\<lparr>schema_conclusion=map_pattern_leaves h (schema_conclusion S),
+    schema_premises=map_relation_values (map_prod id (map_pattern_leaves h)) (schema_premises S),
+    schema_material_premises=map_relation_values (map_material_leaves h) (schema_material_premises S)\<rparr>"
+
+definition map_system_leaves ::
+  "(factor_term \<Rightarrow> factor_term) \<Rightarrow> ('a,'s,'d,'c) schema_system \<Rightarrow> ('a,'s,'d,'c) schema_system" where
+  "map_system_leaves h P=\<lparr>system_interfaces=map_relation_values (map_pattern_leaves h) (system_interfaces P),
+    system_clauses=map_relation_values (map_schema_leaves h) (system_clauses P)\<rparr>"
+
+text \<open>The map of patterns and the map of terms agree on the exact pattern of a term.\<close>
+
+lemma map_pattern_leaves_exact:
+  "map_pattern_leaves h (exact_term_pattern t)=exact_term_pattern (map_term_leaves h t)"
+  by (induction t) simp_all
+
+lemma map_material_leaves_fields [simp]:
+  "material_fields (map_material_leaves h M)=map (map_pattern_leaves h) (material_fields M)"
+  by (simp add: map_material_leaves_def material_fields_def)
+
+lemma map_schema_leaves_fields [simp]:
+  "schema_conclusion (map_schema_leaves h S)=map_pattern_leaves h (schema_conclusion S)"
+  "schema_premises (map_schema_leaves h S)=map_relation_values (map_prod id (map_pattern_leaves h)) (schema_premises S)"
+  "schema_material_premises (map_schema_leaves h S)=map_relation_values (map_material_leaves h) (schema_material_premises S)"
+  by (simp_all add: map_schema_leaves_def)
+
+lemma map_system_leaves_fields [simp]:
+  "system_interfaces (map_system_leaves h P)=map_relation_values (map_pattern_leaves h) (system_interfaces P)"
+  "system_clauses (map_system_leaves h P)=map_relation_values (map_schema_leaves h) (system_clauses P)"
+  by (simp_all add: map_system_leaves_def)
+
+lemma map_schema_premises_member:
+  "(s,d,q)\<in>schema_premises (map_schema_leaves h S) \<longleftrightarrow>
+    (\<exists>p. (s,d,p)\<in>schema_premises S \<and> q=map_pattern_leaves h p)"
+  by (auto simp: split_paired_Ex)
+
+subsection \<open>What the map keeps\<close>
+
+lemma map_pattern_leaves_variables [simp]: "pattern_variables (map_pattern_leaves h p)=pattern_variables p"
+  by (induction p) simp_all
+
+lemma map_material_leaves_variables [simp]: "material_variables (map_material_leaves h M)=material_variables M"
+  by (simp add: material_variables_def)
+
+lemma map_relation_values_UN:
+  assumes "\<And>k v. (k,v)\<in>R \<Longrightarrow> g (k,f v)=g' (k,v)"
+  shows "(\<Union>z\<in>map_relation_values f R. g z)=(\<Union>z\<in>R. g' z)"
+  unfolding map_relation_values_def image_image
+  by (rule SUP_cong[OF refl]) (auto simp: assms split: prod.splits)
+
+lemma map_schema_leaves_variables [simp]: "schema_variables (map_schema_leaves h S)=schema_variables S"
+proof -
+  have calls: "(\<Union>(s,d,p)\<in>map_relation_values (map_prod id (map_pattern_leaves h)) (schema_premises S).
+      pattern_variables p)=(\<Union>(s,d,p)\<in>schema_premises S. pattern_variables p)"
+    by (rule map_relation_values_UN) (auto split: prod.splits)
+  have materials: "(\<Union>(s,M)\<in>map_relation_values (map_material_leaves h) (schema_material_premises S).
+      material_variables M)=(\<Union>(s,M)\<in>schema_material_premises S. material_variables M)"
+    by (rule map_relation_values_UN) simp
+  show ?thesis by (simp add: schema_variables_def calls materials)
+qed
+
+lemma map_schema_leaves_sockets:
+  "rel_dom (schema_premises (map_schema_leaves h S))=rel_dom (schema_premises S)"
+  "rel_dom (schema_material_premises (map_schema_leaves h S))=rel_dom (schema_material_premises S)"
+  by simp_all
+
+lemma map_schema_leaves_dependencies [simp]: "schema_dependencies (map_schema_leaves h S)=schema_dependencies S"
+  by (simp add: schema_dependencies_def map_relation_values_range image_image)
+
+lemma map_relation_values_empty [simp]: "map_relation_values f R={} \<longleftrightarrow> R={}"
+  by (simp add: map_relation_values_def)
+
+lemma map_system_leaves_definitions [simp]: "system_definitions (map_system_leaves h P)=system_definitions P"
+  by (simp add: system_definitions_def)
+
+lemma map_system_clauses_member:
+  "((d,c),T)\<in>system_clauses (map_system_leaves h P) \<longleftrightarrow>
+    (\<exists>S. ((d,c),S)\<in>system_clauses P \<and> T=map_schema_leaves h S)"
+  by simp
+
+lemma map_system_leaves_dependency_edges [simp]:
+  "system_dependency_edges (map_system_leaves h P)=system_dependency_edges P"
+proof -
+  have "(d,e)\<in>system_dependency_edges (map_system_leaves h P) \<longleftrightarrow> (d,e)\<in>system_dependency_edges P" for d e
+  proof
+    assume "(d,e)\<in>system_dependency_edges (map_system_leaves h P)"
+    then have "\<exists>c T. ((d,c),T)\<in>system_clauses (map_system_leaves h P) \<and> e\<in>schema_dependencies T"
+      by (simp only: system_dependency_edges_def mem_Collect_eq case_prod_conv)
+    then obtain c T where clause: "((d,c),T)\<in>system_clauses (map_system_leaves h P)"
+      and dep: "e\<in>schema_dependencies T" by blast
+    obtain S where source: "((d,c),S)\<in>system_clauses P" and T: "T=map_schema_leaves h S"
+      using clause unfolding map_system_clauses_member by blast
+    have "e\<in>schema_dependencies S" using dep T by simp
+    then show "(d,e)\<in>system_dependency_edges P"
+      unfolding system_dependency_edges_def using source by blast
+  next
+    assume "(d,e)\<in>system_dependency_edges P"
+    then have "\<exists>c S. ((d,c),S)\<in>system_clauses P \<and> e\<in>schema_dependencies S"
+      by (simp only: system_dependency_edges_def mem_Collect_eq case_prod_conv)
+    then obtain c S where source: "((d,c),S)\<in>system_clauses P"
+      and dep: "e\<in>schema_dependencies S" by blast
+    have clause: "((d,c),map_schema_leaves h S)\<in>system_clauses (map_system_leaves h P)"
+      unfolding map_system_clauses_member using source by blast
+    have "e\<in>schema_dependencies (map_schema_leaves h S)" using dep by simp
+    then show "(d,e)\<in>system_dependency_edges (map_system_leaves h P)"
+      unfolding system_dependency_edges_def using clause by blast
+  qed
+  then show ?thesis by auto
+qed
+
+lemma map_relation_values_fixed:
+  assumes "\<And>k v. (k,v)\<in>R \<Longrightarrow> f v=v"
+  shows "map_relation_values f R=R"
+proof -
+  have "(\<lambda>(k,v). (k,f v)) ` R=id ` R"
+    by (rule image_cong[OF refl]) (auto simp: assms split: prod.splits)
+  then show ?thesis by (simp add: map_relation_values_def)
+qed
+
+lemma map_pattern_leaves_fixed:
+  assumes "\<forall>x\<in>pattern_leaves p. h x=x"
+  shows "map_pattern_leaves h p=p"
+  using assms by (induction p) simp_all
+
+lemma map_material_leaves_fixed:
+  assumes fixed: "\<forall>x\<in>material_leaves M. h x=x"
+  shows "map_material_leaves h M=M"
+proof -
+  have "map (map_pattern_leaves h) (material_fields M)=material_fields M"
+  proof (rule map_idI)
+    fix p assume "p\<in>set (material_fields M)"
+    then show "map_pattern_leaves h p=p"
+      using fixed by (auto simp: material_leaves_def intro: map_pattern_leaves_fixed)
+  qed
+  then show ?thesis using material_fields_unique[of "map_material_leaves h M" M] by simp
+qed
+
+lemma map_schema_leaves_fixed:
+  assumes fixed: "\<forall>x\<in>schema_leaves S. h x=x"
+  shows "map_schema_leaves h S=S"
+proof (rule factor_schema.equality)
+  show "schema_conclusion (map_schema_leaves h S)=schema_conclusion S"
+    using fixed by (simp add: schema_leaves_def map_pattern_leaves_fixed)
+  have premise: "map_prod id (map_pattern_leaves h) v=v" if member: "(s,v)\<in>schema_premises S" for s v
+  proof (cases v)
+    case (Pair d p)
+    have "\<forall>x\<in>pattern_leaves p. h x=x" using fixed member Pair by (auto simp: schema_leaves_def)
+    then show ?thesis using Pair by (simp add: map_pattern_leaves_fixed)
+  qed
+  show "schema_premises (map_schema_leaves h S)=schema_premises S"
+    by (simp add: map_relation_values_fixed premise)
+  have material: "map_material_leaves h M=M" if member: "(s,M)\<in>schema_material_premises S" for s M
+  proof (rule map_material_leaves_fixed)
+    show "\<forall>x\<in>material_leaves M. h x=x" using fixed member by (auto simp: schema_leaves_def)
+  qed
+  show "schema_material_premises (map_schema_leaves h S)=schema_material_premises S"
+    by (simp add: map_relation_values_fixed material)
+qed simp
+
+lemma map_system_leaves_fixed:
+  assumes fixed: "\<forall>x\<in>system_leaves P. h x=x"
+  shows "map_system_leaves h P=P"
+proof (rule schema_system.equality)
+  have interface: "map_pattern_leaves h p=p" if member: "(d,p)\<in>system_interfaces P" for d p
+  proof (rule map_pattern_leaves_fixed)
+    show "\<forall>x\<in>pattern_leaves p. h x=x" using fixed member by (auto simp: system_leaves_def)
+  qed
+  show "system_interfaces (map_system_leaves h P)=system_interfaces P"
+    by (simp add: map_relation_values_fixed interface)
+  have clause: "map_schema_leaves h S=S" if member: "(k,S)\<in>system_clauses P" for k S
+  proof (rule map_schema_leaves_fixed)
+    show "\<forall>x\<in>schema_leaves S. h x=x" using fixed member by (auto simp: system_leaves_def)
+  qed
+  show "system_clauses (map_system_leaves h P)=system_clauses P"
+    by (simp add: map_relation_values_fixed clause)
+qed simp
+
+subsection \<open>Formation under a formation-preserving map\<close>
+
+lemma pattern_leaves_leaf: "x\<in>pattern_leaves p \<Longrightarrow> term_leaf x"
+  by (induction p) auto
+
+lemma material_leaves_leaf: "x\<in>material_leaves M \<Longrightarrow> term_leaf x"
+  by (auto simp: material_leaves_def intro: pattern_leaves_leaf)
+
+lemma schema_leaves_leaf: "x\<in>schema_leaves S \<Longrightarrow> term_leaf x"
+  by (auto simp: schema_leaves_def split: prod.splits intro: pattern_leaves_leaf material_leaves_leaf)
+
+lemma leaf_map_formed_leaf:
+  assumes "leaf_map_formed h" "term_leaf x" "term_formed x"
+  shows "term_formed (h x)"
+  using assms by (cases x) (auto simp: leaf_map_formed_def)
+
+lemma map_pattern_leaves_formed:
+  assumes "pattern_formed p" "leaf_map_formed h"
+  shows "pattern_formed (map_pattern_leaves h p)"
+  using assms by (induction p) (auto simp: leaf_map_formed_def)
+
+lemma map_material_leaves_formed:
+  assumes "material_pattern_formed M" "leaf_map_formed h"
+  shows "material_pattern_formed (map_material_leaves h M)"
+  using assms by (auto simp: material_pattern_formed_def intro: map_pattern_leaves_formed)
+
+lemma map_relation_values_single_valued:
+  assumes "single_valued R"
+  shows "single_valued (map_relation_values f R)"
+  using assms by (auto simp: single_valued_def)
+
+lemma map_schema_leaves_formed:
+  assumes formed: "schema_formed S" and preserve: "leaf_map_formed h"
+  shows "schema_formed (map_schema_leaves h S)"
+proof -
+  have sv: "single_valued (schema_premises S)" "single_valued (schema_material_premises S)"
+    using formed by (simp_all add: schema_formed_def)
+  show ?thesis
+    using formed map_relation_values_single_valued[OF sv(1)] map_relation_values_single_valued[OF sv(2)]
+    unfolding schema_formed_def
+    by (auto simp: split_paired_Ex intro: map_pattern_leaves_formed[OF _ preserve] map_material_leaves_formed[OF _ preserve])
+qed
+
+lemma map_system_leaves_formed:
+  assumes formed: "schema_system_formed P" and preserve: "leaf_map_formed h"
+  shows "schema_system_formed (map_system_leaves h P)"
+proof -
+  have sv: "single_valued (system_interfaces P)" "single_valued (system_clauses P)"
+    using formed by (simp_all add: schema_system_formed_def)
+  have fin: "finite (system_interfaces (map_system_leaves h P))" "finite (system_clauses (map_system_leaves h P))"
+    using formed by (simp_all add: schema_system_formed_def)
+  have sv': "single_valued (system_interfaces (map_system_leaves h P))"
+    "single_valued (system_clauses (map_system_leaves h P))"
+    using map_relation_values_single_valued[OF sv(1)] map_relation_values_single_valued[OF sv(2)] by simp_all
+  have interfaces: "\<forall>d p. (d,p)\<in>system_interfaces (map_system_leaves h P) \<longrightarrow> pattern_formed p"
+    using formed by (auto simp: schema_system_formed_def intro: map_pattern_leaves_formed[OF _ preserve])
+  have clauses: "\<forall>d c S. ((d,c),S)\<in>system_clauses (map_system_leaves h P) \<longrightarrow>
+      d\<in>system_definitions P \<and> schema_formed S \<and> schema_dependencies S\<subseteq>system_definitions P"
+  proof (intro allI impI)
+    fix d c S assume "((d,c),S)\<in>system_clauses (map_system_leaves h P)"
+    then obtain S0 where clause: "((d,c),S0)\<in>system_clauses P" and S: "S=map_schema_leaves h S0"
+      unfolding map_system_clauses_member by blast
+    have "d\<in>system_definitions P \<and> schema_formed S0 \<and> schema_dependencies S0\<subseteq>system_definitions P"
+      using formed clause unfolding schema_system_formed_def by blast
+    then show "d\<in>system_definitions P \<and> schema_formed S \<and> schema_dependencies S\<subseteq>system_definitions P"
+      using S map_schema_leaves_formed[OF _ preserve] by auto
+  qed
+  show ?thesis unfolding schema_system_formed_def map_system_leaves_definitions
+    using fin sv' interfaces clauses by blast
+qed
+
+subsection \<open>Pattern instances and acceptance carried forward\<close>
+
+text \<open>
+  A pattern instance carries forward wherever the map keeps the program's leaves formed: a formation-preserving
+  map does, and so does a map fixing them.
+\<close>
+
+lemma pattern_instance_mapped:
+  assumes inst: "pattern_instance V p t"
+    and leaves: "\<And>x. x\<in>pattern_leaves p \<Longrightarrow> term_formed x \<Longrightarrow> term_formed (h x)"
+  shows "pattern_instance (map_binding_leaves h V) (map_pattern_leaves h p) (map_term_leaves h t)"
+  using inst leaves
+proof (induction rule: pattern_instance.induct)
+  case (variable a t)
+  then show ?case by (auto simp: map_binding_leaves_def intro: rev_image_eqI pattern_instance.variable)
+next
+  case (target t)
+  then show ?case by simp
+next
+  case (payload v)
+  then show ?case by simp
+next
+  case (pair p x q y)
+  then show ?case by auto
+qed
+
 lemma pattern_instance_leaf_map:
   assumes inst: "pattern_instance V p t" and fixed: "\<forall>x\<in>pattern_leaves p. h x = x"
   shows "pattern_instance (map_binding_leaves h V) p (map_term_leaves h t)"
-  using inst fixed
-  by (induction rule: pattern_instance.induct)
-     (auto simp: map_binding_leaves_def intro: rev_image_eqI pattern_instance.intros)
+proof -
+  have "pattern_instance (map_binding_leaves h V) (map_pattern_leaves h p) (map_term_leaves h t)"
+    by (rule pattern_instance_mapped[OF inst]) (use fixed in auto)
+  then show ?thesis by (simp only: map_pattern_leaves_fixed[OF fixed])
+qed
+
+lemma pattern_accepts_mapped:
+  assumes accepts: "pattern_accepts p t" and preserve: "leaf_map_formed h"
+  shows "pattern_accepts (map_pattern_leaves h p) (map_term_leaves h t)"
+proof -
+  obtain V where bindings: "term_bindings_formed (pattern_variables p) V"
+    and inst: "pattern_instance V p t" and formed: "term_formed t"
+    using accepts by (auto simp: pattern_accepts_def)
+  have mapped: "pattern_instance (map_binding_leaves h V) (map_pattern_leaves h p) (map_term_leaves h t)"
+    by (rule pattern_instance_mapped[OF inst]) (auto intro: leaf_map_formed_leaf[OF preserve] pattern_leaves_leaf)
+  show ?thesis using map_binding_leaves_formed[OF bindings preserve] mapped map_term_leaves_formed[OF preserve formed]
+    unfolding pattern_accepts_def by auto
+qed
 
 lemma pattern_accepts_leaf_map:
   assumes accepts: "pattern_accepts p t" and fixed: "\<forall>x\<in>pattern_leaves p. h x = x"
     and preserve: "leaf_map_formed h"
   shows "pattern_accepts p (map_term_leaves h t)"
-proof -
-  obtain V where bindings: "term_bindings_formed (pattern_variables p) V"
-    and inst: "pattern_instance V p t" and formed: "term_formed t"
-    using accepts by (auto simp: pattern_accepts_def)
-  have mapped_bindings: "term_bindings_formed (pattern_variables p) (map_binding_leaves h V)"
-    by (rule map_binding_leaves_formed[OF bindings preserve])
-  have mapped_inst: "pattern_instance (map_binding_leaves h V) p (map_term_leaves h t)"
-    by (rule pattern_instance_leaf_map[OF inst fixed])
-  show ?thesis using mapped_bindings mapped_inst map_term_leaves_formed[OF preserve formed]
-    unfolding pattern_accepts_def by blast
-qed
+  using pattern_accepts_mapped[OF accepts preserve] by (simp only: map_pattern_leaves_fixed[OF fixed])
 
 lemma map_premise_leaves_domain [simp]:
   "rel_dom (map_premise_leaves h Q) = rel_dom Q"
@@ -180,67 +483,121 @@ lemma map_premise_leaves_single_valued:
   using single_valued_pair_image[OF assms, of id "\<lambda>(d,t). (d,map_term_leaves h t)"]
   by (simp add: map_premise_leaves_def case_prod_unfold)
 
-lemma schema_premise_instance_leaf_map:
+subsection \<open>Schema instances, calls and admitted instances carried forward\<close>
+
+lemma schema_premise_instance_mapped:
   assumes inst: "schema_premise_instance S V Q"
-    and fixed: "\<forall>x\<in>schema_leaves S. h x = x"
-  shows "schema_premise_instance S (map_binding_leaves h V) (map_premise_leaves h Q)"
+    and leaves: "\<And>x. x\<in>schema_leaves S \<Longrightarrow> term_formed x \<Longrightarrow> term_formed (h x)"
+  shows "schema_premise_instance (map_schema_leaves h S) (map_binding_leaves h V) (map_premise_leaves h Q)"
 proof -
   have finite: "finite Q" and sv: "single_valued Q"
     and domain: "rel_dom Q = rel_dom (schema_premises S)"
     using inst by (auto simp: schema_premise_instance_def)
-  have each: "\<And>s d p. (s,d,p) \<in> schema_premises S \<Longrightarrow>
-    \<exists>t. (s,d,t) \<in> map_premise_leaves h Q \<and> pattern_instance (map_binding_leaves h V) p t"
+  have each: "\<exists>t. (s,d,t) \<in> map_premise_leaves h Q \<and> pattern_instance (map_binding_leaves h V) q t"
+    if member: "(s,d,q) \<in> schema_premises (map_schema_leaves h S)" for s d q
   proof -
-    fix s d p assume member: "(s,d,p) \<in> schema_premises S"
+    obtain p where source: "(s,d,p)\<in>schema_premises S" and mapped_pattern: "q=map_pattern_leaves h p"
+      using member by (auto simp: map_schema_premises_member)
     obtain t where premise: "(s,d,t) \<in> Q" and match: "pattern_instance V p t"
-      using inst member unfolding schema_premise_instance_def by blast
-    have literals: "\<forall>x\<in>pattern_leaves p. h x = x"
-      using fixed member by (auto simp: schema_leaves_def)
-    have mapped: "pattern_instance (map_binding_leaves h V) p (map_term_leaves h t)"
-      by (rule pattern_instance_leaf_map[OF match literals])
+      using inst source unfolding schema_premise_instance_def by blast
+    have mapped: "pattern_instance (map_binding_leaves h V) q (map_term_leaves h t)"
+      unfolding mapped_pattern
+      by (rule pattern_instance_mapped[OF match], rule leaves)
+         (use source in \<open>auto simp: schema_leaves_def\<close>)
     have present: "(s,d,map_term_leaves h t) \<in> map_premise_leaves h Q"
       using premise by (auto simp: map_premise_leaves_def intro: rev_image_eqI)
-    show "\<exists>t. (s,d,t) \<in> map_premise_leaves h Q \<and>
-      pattern_instance (map_binding_leaves h V) p t"
-      using mapped present by blast
+    show ?thesis using mapped present by blast
   qed
   have mapped_finite: "finite (map_premise_leaves h Q)"
     using finite by (simp add: map_premise_leaves_def)
   have mapped_sv: "single_valued (map_premise_leaves h Q)"
     by (rule map_premise_leaves_single_valued[OF sv])
-  have mapped_domain: "rel_dom (map_premise_leaves h Q) = rel_dom (schema_premises S)"
+  have mapped_domain: "rel_dom (map_premise_leaves h Q) = rel_dom (schema_premises (map_schema_leaves h S))"
     using domain by simp
   show ?thesis using mapped_finite mapped_sv mapped_domain each
     unfolding schema_premise_instance_def by blast
+qed
+
+lemma schema_premise_instance_leaf_map:
+  assumes inst: "schema_premise_instance S V Q"
+    and fixed: "\<forall>x\<in>schema_leaves S. h x = x"
+  shows "schema_premise_instance S (map_binding_leaves h V) (map_premise_leaves h Q)"
+proof -
+  have "schema_premise_instance (map_schema_leaves h S) (map_binding_leaves h V) (map_premise_leaves h Q)"
+    by (rule schema_premise_instance_mapped[OF inst]) (use fixed in auto)
+  then show ?thesis by (simp only: map_schema_leaves_fixed[OF fixed])
+qed
+
+lemma schema_instance_mapped:
+  assumes inst: "schema_instance S V t Q" and preserve: "leaf_map_formed h"
+  shows "schema_instance (map_schema_leaves h S) (map_binding_leaves h V) (map_term_leaves h t)
+    (map_premise_leaves h Q)"
+proof -
+  have sf: "schema_formed S" and bindings: "term_bindings_formed (schema_variables S) V"
+    and head: "pattern_instance V (schema_conclusion S) t" and body: "schema_premise_instance S V Q"
+    using inst by (auto simp: schema_instance_def)
+  have mapped_head: "pattern_instance (map_binding_leaves h V) (map_pattern_leaves h (schema_conclusion S))
+    (map_term_leaves h t)"
+    by (rule pattern_instance_mapped[OF head]) (auto intro: leaf_map_formed_leaf[OF preserve] pattern_leaves_leaf)
+  have mapped_body: "schema_premise_instance (map_schema_leaves h S) (map_binding_leaves h V) (map_premise_leaves h Q)"
+    by (rule schema_premise_instance_mapped[OF body]) (auto intro: leaf_map_formed_leaf[OF preserve] schema_leaves_leaf)
+  show ?thesis using map_schema_leaves_formed[OF sf preserve] map_binding_leaves_formed[OF bindings preserve]
+    mapped_head mapped_body
+    by (simp add: schema_instance_def)
 qed
 
 lemma schema_instance_leaf_map:
   assumes inst: "schema_instance S V t Q" and fixed: "\<forall>x\<in>schema_leaves S. h x = x"
     and preserve: "leaf_map_formed h"
   shows "schema_instance S (map_binding_leaves h V) (map_term_leaves h t) (map_premise_leaves h Q)"
+  using schema_instance_mapped[OF inst preserve] by (simp only: map_schema_leaves_fixed[OF fixed])
+
+lemma schema_call_mapped:
+  assumes call: "schema_call_formed P d t" and preserve: "leaf_map_formed h"
+  shows "schema_call_formed (map_system_leaves h P) d (map_term_leaves h t)"
 proof -
-  have sf: "schema_formed S" and bindings: "term_bindings_formed (schema_variables S) V"
-    and head: "pattern_instance V (schema_conclusion S) t" and body: "schema_premise_instance S V Q"
-    using inst by (auto simp: schema_instance_def)
-  have literals: "\<forall>x\<in>pattern_leaves (schema_conclusion S). h x = x"
-    using fixed by (auto simp: schema_leaves_def)
-  show ?thesis using sf map_binding_leaves_formed[OF bindings preserve]
-    pattern_instance_leaf_map[OF head literals] schema_premise_instance_leaf_map[OF body fixed]
-    by (simp add: schema_instance_def)
+  obtain p where pf: "schema_system_formed P" and interface: "(d,p) \<in> system_interfaces P"
+    and accepts: "pattern_accepts p t"
+    using call by (auto simp: schema_call_formed_def)
+  have mapped: "(d,map_pattern_leaves h p)\<in>system_interfaces (map_system_leaves h P)"
+    using interface by auto
+  show ?thesis using map_system_leaves_formed[OF pf preserve] mapped pattern_accepts_mapped[OF accepts preserve]
+    unfolding schema_call_formed_def by blast
 qed
 
 lemma schema_call_leaf_map:
   assumes call: "schema_call_formed P d t" and fixed: "\<forall>x\<in>system_leaves P. h x = x"
     and preserve: "leaf_map_formed h"
   shows "schema_call_formed P d (map_term_leaves h t)"
+  using schema_call_mapped[OF call preserve] by (simp only: map_system_leaves_fixed[OF fixed])
+
+lemma admitted_instance_mapped:
+  assumes inst: "admitted_schema_instance P d c V t Q"
+    and preserve: "leaf_map_formed h"
+    and free: "system_observation_free P"
+  shows "admitted_schema_instance (map_system_leaves h P) d c (map_binding_leaves h V)
+    (map_term_leaves h t) (map_premise_leaves h Q)"
 proof -
-  obtain p where pf: "schema_system_formed P" and interface: "(d,p) \<in> system_interfaces P"
-    and accepts: "pattern_accepts p t"
-    using call by (auto simp: schema_call_formed_def)
-  have literals: "\<forall>x\<in>pattern_leaves p. h x = x"
-    using fixed interface by (auto simp: system_leaves_def)
-  show ?thesis using pf interface pattern_accepts_leaf_map[OF accepts literals preserve]
-    unfolding schema_call_formed_def by blast
+  obtain S where head: "schema_call_formed P d t" and clause: "((d,c),S) \<in> system_clauses P"
+    and schema: "schema_instance S V t Q"
+    and calls: "\<forall>s e x. (s,e,x) \<in> Q \<longrightarrow> schema_call_formed P e x"
+    using inst by (auto simp: admitted_schema_instance_def)
+  have mapped_clause: "((d,c),map_schema_leaves h S)\<in>system_clauses (map_system_leaves h P)"
+    using clause by auto
+  have mapped_calls: "\<forall>s e x. (s,e,x) \<in> map_premise_leaves h Q \<longrightarrow>
+    schema_call_formed (map_system_leaves h P) e x"
+  proof (intro allI impI)
+    fix s e x assume "(s,e,x) \<in> map_premise_leaves h Q"
+    then obtain y where premise: "(s,e,y)\<in>Q" and x: "x=map_term_leaves h y"
+      by (auto simp: map_premise_leaves_def)
+    show "schema_call_formed (map_system_leaves h P) e x"
+      unfolding x by (rule schema_call_mapped[OF _ preserve]) (use calls premise in blast)
+  qed
+  have empty: "schema_material_premises (map_schema_leaves h S) = {}"
+    using free clause by (auto simp: system_observation_free_def)
+  show ?thesis using schema_call_mapped[OF head preserve] mapped_clause schema_instance_mapped[OF schema preserve]
+    mapped_calls empty_schema_material_satisfied[OF empty]
+    unfolding admitted_schema_instance_def by blast
 qed
 
 lemma admitted_instance_leaf_map:
@@ -250,26 +607,52 @@ lemma admitted_instance_leaf_map:
     and free: "system_observation_free P"
   shows "admitted_schema_instance P d c (map_binding_leaves h V)
     (map_term_leaves h t) (map_premise_leaves h Q)"
+  using admitted_instance_mapped[OF inst preserve free] by (simp only: map_system_leaves_fixed[OF fixed])
+
+subsection \<open>Positive meaning carried forward\<close>
+
+text \<open>
+  One consequence step carries forward over any support relation: the support is mapped with the argument. The
+  least fixed point of the source program then lies inside the mapped program's, read through the map.
+\<close>
+
+lemma schema_consequences_mapped:
+  assumes step: "(d,t)\<in>schema_consequences P X"
+    and preserve: "leaf_map_formed h" and free: "system_observation_free P"
+  shows "(d,map_term_leaves h t)\<in>schema_consequences (map_system_leaves h P)
+    (map_relation_values (map_term_leaves h) X)"
 proof -
-  obtain S where head: "schema_call_formed P d t" and clause: "((d,c),S) \<in> system_clauses P"
-    and schema: "schema_instance S V t Q"
-    and calls: "\<forall>s e x. (s,e,x) \<in> Q \<longrightarrow> schema_call_formed P e x"
-    using inst by (auto simp: admitted_schema_instance_def)
-  have literals: "\<forall>x\<in>schema_leaves S. h x = x"
-    using fixed clause by (auto simp: system_leaves_def)
-  have mapped_head: "schema_call_formed P d (map_term_leaves h t)"
-    by (rule schema_call_leaf_map[OF head fixed preserve])
-  have mapped_schema: "schema_instance S (map_binding_leaves h V)
-    (map_term_leaves h t) (map_premise_leaves h Q)"
-    by (rule schema_instance_leaf_map[OF schema literals preserve])
-  have mapped_calls: "\<forall>s e x. (s,e,x) \<in> map_premise_leaves h Q \<longrightarrow> schema_call_formed P e x"
-    using calls schema_call_leaf_map[OF _ fixed preserve]
-    by (auto simp: map_premise_leaves_def)
-  have empty: "schema_material_premises S = {}" using free clause by (auto simp: system_observation_free_def)
-  have material: "schema_material_satisfied S (map_binding_leaves h V)"
-    by (rule empty_schema_material_satisfied[OF empty])
-  show ?thesis using mapped_head clause mapped_schema mapped_calls material
-    unfolding admitted_schema_instance_def by blast
+  obtain c V Q where inst: "admitted_schema_instance P d c V t Q"
+    and support: "\<forall>s e x. (s,e,x) \<in> Q \<longrightarrow> (e,x) \<in> X"
+    using step by (auto simp: schema_consequences_def)
+  have children: "\<forall>s e x. (s,e,x) \<in> map_premise_leaves h Q \<longrightarrow> (e,x) \<in> map_relation_values (map_term_leaves h) X"
+    using support by (auto simp: map_premise_leaves_def)
+  show ?thesis unfolding schema_consequences_def
+    using admitted_instance_mapped[OF inst preserve free] children by auto
+qed
+
+theorem positive_meaning_mapped:
+  assumes holds: "(d,t)\<in>positive_meaning P"
+    and preserve: "leaf_map_formed h" and free: "system_observation_free P"
+  shows "(d,map_term_leaves h t)\<in>positive_meaning (map_system_leaves h P)"
+proof -
+  let ?Q = "map_system_leaves h P"
+  let ?X = "{(d,t). (d,map_term_leaves h t) \<in> positive_meaning ?Q}"
+  have closed: "schema_consequences ?Q (positive_meaning ?Q) \<subseteq> positive_meaning ?Q"
+    by (rule equalityD1[OF positive_meaning_unfold[symmetric]])
+  have support: "map_relation_values (map_term_leaves h) ?X \<subseteq> positive_meaning ?Q"
+    by auto
+  have stable: "schema_consequences P ?X \<subseteq> ?X"
+  proof
+    fix call assume step: "call \<in> schema_consequences P ?X"
+    obtain e u where shape: "call = (e,u)" by (cases call)
+    have mapped: "(e,map_term_leaves h u)\<in>schema_consequences ?Q (map_relation_values (map_term_leaves h) ?X)"
+      by (rule schema_consequences_mapped[OF step[unfolded shape] preserve free])
+    have "(e,map_term_leaves h u)\<in>positive_meaning ?Q"
+      using monoD[OF schema_consequences_mono support] mapped closed by blast
+    then show "call \<in> ?X" by (simp add: shape)
+  qed
+  show ?thesis using positive_meaning_least[OF stable] holds by blast
 qed
 
 theorem positive_meaning_leaf_map:
@@ -278,26 +661,7 @@ theorem positive_meaning_leaf_map:
     and free: "system_observation_free P"
     and holds: "(d,t) \<in> positive_meaning P"
   shows "(d,map_term_leaves h t) \<in> positive_meaning P"
-proof -
-  let ?X = "{(d,t). (d,map_term_leaves h t) \<in> positive_meaning P}"
-  have stable: "schema_consequences P ?X \<subseteq> ?X"
-  proof
-    fix call assume step: "call \<in> schema_consequences P ?X"
-    obtain d t where shape: "call = (d,t)" by (cases call)
-    obtain c V Q where inst: "admitted_schema_instance P d c V t Q"
-      and support: "\<forall>s e x. (s,e,x) \<in> Q \<longrightarrow> (e,x) \<in> ?X"
-      using step by (auto simp: shape schema_consequences_def)
-    have mapped: "admitted_schema_instance P d c (map_binding_leaves h V)
-      (map_term_leaves h t) (map_premise_leaves h Q)"
-      by (rule admitted_instance_leaf_map[OF inst fixed preserve free])
-    have children: "\<forall>s e x. (s,e,x) \<in> map_premise_leaves h Q \<longrightarrow> (e,x) \<in> positive_meaning P"
-      using support by (auto simp: map_premise_leaves_def)
-    have result: "(d,map_term_leaves h t) \<in> positive_meaning P"
-      by (rule positive_meaning_step[OF mapped children])
-    show "call \<in> ?X" using result by (simp add: shape)
-  qed
-  show ?thesis using positive_meaning_least[OF stable] holds by blast
-qed
+  using positive_meaning_mapped[OF holds preserve free] by (simp only: map_system_leaves_fixed[OF fixed])
 
 theorem positive_meaning_leaf_involution:
   assumes fixed: "\<forall>x\<in>system_leaves P. h x = x"

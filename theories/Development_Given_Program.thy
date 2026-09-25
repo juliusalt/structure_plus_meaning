@@ -1,5 +1,5 @@
 theory Development_Given_Program
-  imports Development_Given_Readers Factor_Program_Reflection Factor_Application_Admission Factor_Derivation_Admission Factor_Replay_Admission Factor_Environment_Comparison Factor_Generation_Contracts Factor_Generation_Source_Contracts Factor_Generation_Scope_Base Factor_Base_Cause_Base Factor_Adoption_Comparison
+  imports Development_Given_Readers Factor_Program_Reflection Factor_Application_Admission Factor_Derivation_Admission Factor_Replay_Admission Factor_Environment_Comparison Factor_Generation_Contracts Factor_Generation_Source_Contracts Factor_Adoption_Comparison
 begin
 
 section \<open>The readers a leaf's request is granted, joined with the given's readers\<close>
@@ -23,24 +23,6 @@ definition given_granted_entries :: "nat fset" where
   "given_granted_entries={|16,84,85,99,100,101,102,106,107,108,109,110,111,112,114,115,
     139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,269,270|}"
 
-subsection \<open>The right component of a union agrees with it, and an overlap agreement reverses\<close>
-
-lemma system_union_agree_right:
-  assumes left: "schema_system_formed P"
-    and agree: "systems_agree_on P Q (system_definitions P\<inter>system_definitions Q)"
-  shows "systems_agree_on Q (system_union P Q) (system_definitions Q)"
-proof -
-  have swap: "system_union Q P=system_union P Q" by (simp add: system_union_def Un_commute)
-  have "systems_agree_on Q P (system_definitions Q\<inter>system_definitions P)"
-    using systems_agree_on_sym[OF agree] by (simp only: Int_commute)
-  from system_union_agree_left[OF left this] show ?thesis by (simp only: swap)
-qed
-
-lemma overlap_agreement_sym:
-  assumes "systems_agree_on P Q (system_definitions P\<inter>system_definitions Q)"
-  shows "systems_agree_on Q P (system_definitions Q\<inter>system_definitions P)"
-  using systems_agree_on_sym[OF assms] by (simp only: Int_commute)
-
 subsection \<open>Where the granted programs stand\<close>
 
 lemma granted_bounds:
@@ -49,6 +31,7 @@ lemma granted_bounds:
   "system_definitions adoption_comparison_base\<subseteq>system_definitions generation_value_system"
   "system_definitions generation_source_system\<subseteq>{..<156}"
   "system_definitions adoption_value_system\<subseteq>{..<147}\<union>{269,270}"
+  "system_definitions generation_source_components_system\<subseteq>{..<147}"
 proof -
   have difference: "system_definitions target_difference_system\<subseteq>{..<137}" by auto
   show generation: "system_definitions generation_value_system\<subseteq>{..<147}"
@@ -57,7 +40,7 @@ proof -
   show base: "system_definitions adoption_comparison_base\<subseteq>system_definitions generation_value_system"
     unfolding adoption_comparison_base_def by (rule rooted_system_subdomain)
   have below: "{..<45}\<subseteq>{..<(147::nat)}" "{..<147}\<subseteq>{..<(156::nat)}" by auto
-  have components: "system_definitions generation_source_components_system\<subseteq>{..<147}"
+  show components: "system_definitions generation_source_components_system\<subseteq>{..<147}"
     unfolding generation_source_components_definitions
     using generation located below by (auto simp del: generation_value_definitions located_admission_definitions)
   have "system_definitions generation_source_base_system\<subseteq>{..<156}"
@@ -192,7 +175,46 @@ proof (rule common_component_overlap_agreement[where B=generation_value_system])
     unfolding adoption_value_definitions using granted_bounds(3) granted_fresh_complete_data by blast
 qed
 
-lemmas source_complete_data_agreement = systems_agree_on_sym[OF base_cause_source_agreement]
+text \<open>
+  The generation sources meet complete data admission inside the generation source components, the located
+  admission and the generation values joined: the group's own definitions are fresh to complete data.
+\<close>
+
+lemma components_complete_data_agreement:
+  "systems_agree_on generation_source_components_system complete_data_admission_system
+    (system_definitions generation_source_components_system\<inter>system_definitions complete_data_admission_system)"
+proof -
+  have located: "systems_agree_on located_admission_system complete_data_admission_system
+      (system_definitions located_admission_system\<inter>system_definitions complete_data_admission_system)"
+    by (rule systems_agree_on_subdomain[OF complete_data_located_agreement]) blast
+  show ?thesis unfolding generation_source_components_system_def
+    by (rule overlap_agreement_union[OF located_admission_system_formed generation_value_system_formed located
+      values_complete_data_agreement])
+qed
+
+lemma source_complete_data_agreement:
+  "systems_agree_on generation_source_system complete_data_admission_system
+    (system_definitions generation_source_system\<inter>system_definitions complete_data_admission_system)"
+proof (rule common_component_overlap_agreement[where B=generation_source_components_system])
+  let ?U="system_definitions generation_source_components_system\<inter>system_definitions generation_source_system"
+  have group: "system_definitions generation_source_system\<subseteq>{147,148,149,150,151,152,153,154,155}\<union>
+      system_definitions generation_source_base_system"
+    unfolding generation_source_definitions by blast
+  have base: "?U\<subseteq>system_definitions generation_source_base_system"
+    using group granted_bounds(6) by (auto simp del: generation_source_components_definitions)
+  have one: "systems_agree_on generation_source_components_system generation_source_base_system ?U"
+    by (rule systems_agree_on_subdomain[OF generation_source_base_agreement base])
+  have two: "systems_agree_on generation_source_base_system generation_source_system ?U"
+    by (rule systems_agree_on_subdomain[OF generation_source_retained_agreement base])
+  show "systems_agree_on generation_source_components_system generation_source_system ?U"
+    by (rule systems_agree_on_transitive[OF one two])
+  show "systems_agree_on generation_source_components_system complete_data_admission_system
+      (system_definitions generation_source_components_system\<inter>system_definitions complete_data_admission_system)"
+    by (rule components_complete_data_agreement)
+  show "system_definitions generation_source_system\<inter>system_definitions complete_data_admission_system\<subseteq>
+      system_definitions generation_source_components_system"
+    using group generation_source_base_subdomain granted_fresh_complete_data by blast
+qed
 
 subsection \<open>The joined program\<close>
 
@@ -557,11 +579,71 @@ text \<open>
   target difference program's presentation. Nothing presented by a piece is reduced again.
 \<close>
 
+text \<open>
+  Four sub-lineages of the complete-data lineage that the derivations below reach -- bag comparison
+  (definitions 0--6), artifact identity (0--12), target admission (0--35) and the located admission
+  (0--44) -- each agree with complete data admission on their whole domain, so each is presented by the
+  restriction of complete data admission's presentation (@{const finite_complete_data_program}) to its
+  domain (@{thm [source] finite_system_of_whole_agreement}) and is never reduced again.
+\<close>
+
+lemma identity_comparison_agreement:
+  "systems_agree_on artifact_identity_system environment_comparison_system
+    (system_definitions artifact_identity_system)"
+  by (simp add: systems_agree_on_added environment_comparison_system_def environment_bag_system_def
+    environment_selection_system_def environment_entry_system_def)
+
+lemmas target_complete_data_agreement =
+  whole_agreement_transitive[OF located_target_agreement complete_data_located_agreement]
+lemmas identity_complete_data_agreement =
+  whole_agreement_transitive[OF identity_comparison_agreement
+    whole_agreement_transitive[OF comparison_located_agreement complete_data_located_agreement]]
+lemmas bag_complete_data_agreement =
+  whole_agreement_transitive[OF artifact_identity_bag_agreement identity_complete_data_agreement]
+
+definition finite_bag_comparison_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "finite_bag_comparison_program=finite_system_of bag_comparison_system"
+
+lemma finite_bag_comparison_program_code [code]:
+  "finite_bag_comparison_program=finite_system_restriction finite_complete_data_program {|0,1,2,3,4,5,6|}"
+  unfolding finite_bag_comparison_program_def finite_complete_data_program_def
+  by (rule finite_system_of_whole_agreement[OF complete_data_admission_system_formed
+    bag_comparison_system_formed bag_complete_data_agreement]) auto
+
+definition finite_artifact_identity_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "finite_artifact_identity_program=finite_system_of artifact_identity_system"
+
+lemma finite_artifact_identity_program_code [code]:
+  "finite_artifact_identity_program=finite_system_restriction finite_complete_data_program {|0,1,2,3,4,5,6,7,8,9,10,11,12|}"
+  unfolding finite_artifact_identity_program_def finite_complete_data_program_def
+  by (rule finite_system_of_whole_agreement[OF complete_data_admission_system_formed
+    artifact_identity_system_formed identity_complete_data_agreement]) auto
+
+definition finite_target_admission_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "finite_target_admission_program=finite_system_of target_admission_system"
+
+lemma finite_target_admission_program_code [code]:
+  "finite_target_admission_program=finite_system_restriction finite_complete_data_program {|0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35|}"
+  unfolding finite_target_admission_program_def finite_complete_data_program_def
+  by (rule finite_system_of_whole_agreement[OF complete_data_admission_system_formed
+    target_admission_system_formed target_complete_data_agreement]) auto
+
+definition finite_located_admission_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "finite_located_admission_program=finite_system_of located_admission_system"
+
+lemma finite_located_admission_program_code [code]:
+  "finite_located_admission_program=finite_system_restriction finite_complete_data_program {|0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44|}"
+  unfolding finite_located_admission_program_def finite_complete_data_program_def
+  by (rule finite_system_of_whole_agreement[OF complete_data_admission_system_formed
+    located_admission_system_formed complete_data_located_agreement]) auto
+
 definition finite_target_difference_program :: "(nat,nat,nat,nat) finite_schema_system" where
   "finite_target_difference_program=finite_system_of target_difference_system"
 
 local_setup \<open>Native_Finite_Equations.note_composed @{binding finite_target_difference_program_code}
-  @{thm finite_target_difference_program_def} [] []\<close>
+  @{thm finite_target_difference_program_def}
+  [@{thm finite_target_admission_program_def}, @{thm finite_artifact_identity_program_def},
+    @{thm finite_bag_comparison_program_def}] []\<close>
 
 definition finite_generation_target_program :: "(nat,nat,nat,nat) finite_schema_system" where
   "finite_generation_target_program=finite_system_of generation_target_system"
@@ -583,7 +665,8 @@ definition finite_generation_source_components_program :: "(nat,nat,nat,nat) fin
   "finite_generation_source_components_program=finite_system_of generation_source_components_system"
 
 local_setup \<open>Native_Finite_Equations.note_composed @{binding finite_generation_source_components_program_code}
-  @{thm finite_generation_source_components_program_def} [@{thm finite_generation_values_program_def}] []\<close>
+  @{thm finite_generation_source_components_program_def}
+  [@{thm finite_generation_values_program_def}, @{thm finite_located_admission_program_def}] []\<close>
 
 definition finite_generation_source_base_program :: "(nat,nat,nat,nat) finite_schema_system" where
   "finite_generation_source_base_program=finite_system_of generation_source_base_system"
@@ -703,95 +786,14 @@ proof -
   show ?thesis by (simp only: given_rooted_meaning[OF entry] given_program_left[OF guard])
 qed
 
-subsection \<open>Every entry's exact contract at the rooted program\<close>
-
-lemmas given_rooted_definition_call_admission_exact =
-  given_definition_call_admission_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(1), symmetric]]
-lemmas given_rooted_package_closure_admission_exact =
-  given_package_closure_admission_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(2), symmetric]]
-lemmas given_rooted_root_family_reading_exact =
-  given_root_family_reading_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(3), symmetric]]
-lemmas given_rooted_package_admission_exact =
-  given_package_admission_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(4), symmetric]]
-lemmas given_rooted_definition_clause_reading_exact =
-  given_definition_clause_reading_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(5), symmetric]]
-lemmas given_rooted_definition_edge_reading_exact =
-  given_definition_edge_reading_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(6), symmetric]]
-lemmas given_rooted_package_membership_exact =
-  given_package_membership_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(7), symmetric]]
-lemmas given_rooted_environment_inclusion_exact =
-  given_environment_inclusion_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(8), symmetric]]
-lemmas given_rooted_package_retention_admission_exact =
-  given_package_retention_admission_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(9), symmetric]]
-lemmas given_rooted_use_additions_on_values =
-  given_use_additions_on_values[unfolded given_rooted_guard_meaning[OF given_guard_members(10), symmetric]]
-lemmas given_rooted_use_absence_exact =
-  given_use_absence_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(11), symmetric]]
-lemmas given_rooted_payload_audit_exact =
-  given_payload_audit_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(12), symmetric]]
-
-lemmas given_rooted_call_admission_exact =
-  given_program_call_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(2), symmetric]]
-lemmas given_rooted_application_admission_exact =
-  given_program_application_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(3), symmetric]]
-lemmas given_rooted_formation_reflection =
-  given_program_formation_reflection[unfolded given_rooted_meaning[OF given_rooted_granted_members(4), symmetric]]
-lemmas given_rooted_meaning_reflection =
-  given_program_meaning_reflection[unfolded given_rooted_meaning[OF given_rooted_granted_members(5), symmetric]]
-lemmas given_rooted_positive_admission_exact =
-  given_program_positive_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(6), symmetric]]
-lemmas given_rooted_derivation_admission_exact =
-  given_program_derivation_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(7), symmetric]]
-lemmas given_rooted_replay_admission_exact =
-  given_program_replay_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(8), symmetric]]
-lemmas given_rooted_environment_comparison_exact =
-  given_program_environment_comparison_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(1), symmetric]]
-lemmas given_rooted_generation_admission_exact =
-  given_program_generation_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(9), symmetric]]
-lemmas given_rooted_generation_identity_exact =
-  given_program_generation_identity_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(10), symmetric]]
-lemmas given_rooted_generation_source_exact =
-  given_program_generation_source_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(11), symmetric]]
-lemmas given_rooted_adoption_admission_exact =
-  given_program_adoption_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(12), symmetric]]
-lemmas given_rooted_adoption_identity_exact =
-  given_program_adoption_identity_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(13), symmetric]]
-
-lemma given_rooted_positive_operations_exact:
-  assumes "d\<in>{112,113,114,115}"
-  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> positive_operation_result d t"
-  by (simp only: given_rooted_meaning[OF given_operation_entries(1)[OF assms]]
-    given_program_positive_operations_exact[OF assms])
-
-lemma given_rooted_derivation_operations_exact:
-  assumes "d\<in>{99,100,101,102}"
-  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> derivation_operation_result d t"
-  by (simp only: given_rooted_meaning[OF given_operation_entries(2)[OF assms]]
-    given_program_derivation_operations_exact[OF assms])
-
-lemma given_rooted_replay_operations_exact:
-  assumes "d\<in>{106,107,108,109,110,111}"
-  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> replay_operation_result d t"
-  by (simp only: given_rooted_meaning[OF given_operation_entries(3)[OF assms]]
-    given_program_replay_operations_exact[OF assms])
-
-lemma given_rooted_generation_operations_exact:
-  assumes "d\<in>{139,140,141,142,143,144,145,146}"
-  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> generation_operation_result d t"
-  by (simp only: given_rooted_meaning[OF given_operation_entries(4)[OF assms]]
-    given_program_generation_operations_exact[OF assms])
-
-lemma given_rooted_generation_source_operations_exact:
-  assumes "d\<in>{147,148,149,150,151,152,153,154,155}"
-  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> generation_source_operation_result d t"
-  by (simp only: given_rooted_meaning[OF given_operation_entries(5)[OF assms]]
-    given_program_generation_source_operations_exact[OF assms])
-
-lemma given_rooted_adoption_operations_exact:
-  assumes "d\<in>{269,270}"
-  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> adoption_value_operation_result d t"
-  by (simp only: given_rooted_meaning[OF given_operation_entries(6)[OF assms]]
-    given_program_adoption_operations_exact[OF assms])
+text \<open>
+  An entry's exact contract at the rooted program is the transfer instantiated at the entry with the
+  reader's own contract where a use needs it: @{thm [source] given_rooted_meaning} at a granted entry, with
+  its contract at the joined program (@{thm [source] given_program_call_admission_exact} and the others
+  above), and @{thm [source] given_rooted_guard_meaning} at a guard entry, with its contract at the given's
+  readers' program (@{thm [source] given_definition_call_admission_exact} and the others of
+  @{text Development_Given_Readers}). No per-entry copy is kept.
+\<close>
 
 subsection \<open>The rooted program's finite presentation\<close>
 

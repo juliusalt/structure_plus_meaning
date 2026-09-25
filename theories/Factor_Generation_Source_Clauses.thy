@@ -266,6 +266,13 @@ definition generation_source_system :: "(nat,nat,nat,nat) schema_system" where
 lemma generation_source_system_formed [simp]: "schema_system_formed generation_source_system"
   using generation_source_group.formed by (simp only: generation_source_system_def)
 
+text \<open>The source program agrees with its least base on the base's whole domain, as the base with its components.\<close>
+
+lemma generation_source_retained_agreement:
+  "systems_agree_on generation_source_base_system generation_source_system
+    (system_definitions generation_source_base_system)"
+  using generation_source_group.old_agreement by (simp only: generation_source_system_def)
+
 lemma generation_source_definitions [simp]:
   "system_definitions generation_source_system=
     system_definitions generation_source_base_system\<union>{147,148,149,150,151,152,153,154,155}"

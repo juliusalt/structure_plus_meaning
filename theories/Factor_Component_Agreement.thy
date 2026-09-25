@@ -59,6 +59,11 @@ proof -
       systems_agree_on_subdomain[OF second right]])
 qed
 
+lemma overlap_agreement_sym:
+  assumes "systems_agree_on P Q (system_definitions P\<inter>system_definitions Q)"
+  shows "systems_agree_on Q P (system_definitions Q\<inter>system_definitions P)"
+  using systems_agree_on_sym[OF assms] by (simp only: Int_commute)
+
 theorem overlap_agreement_union:
   assumes left: "schema_system_formed P" and right: "schema_system_formed Q"
     and first: "systems_agree_on P T (system_definitions P\<inter>system_definitions T)"

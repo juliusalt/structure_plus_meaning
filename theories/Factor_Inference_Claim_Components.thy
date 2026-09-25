@@ -13,7 +13,7 @@ proof -
       (system_definitions proof_node_reading_system)"
     unfolding inference_specialization_base_system_def
     by (subst system_union_commute, rule system_union_agree_left[OF specialization_binding_formed])
-      (use systems_agree_on_sym[OF inference_specialization_agreement] in \<open>simp only: Int_commute\<close>)
+      (rule overlap_agreement_sym[OF inference_specialization_agreement])
   show ?thesis using base by (simp add: inference_specialization_system_def systems_agree_on_added)
 qed
 
@@ -63,7 +63,7 @@ lemma inference_claim_join_source_agreement:
     (system_definitions keyed_row_join_system)"
   unfolding inference_claim_source_system_def
   by (subst system_union_commute, rule system_union_agree_left[OF inference_specialization_formed])
-    (use systems_agree_on_sym[OF inference_claim_join_agreement] in \<open>simp only: Int_commute\<close>)
+    (rule overlap_agreement_sym[OF inference_claim_join_agreement])
 
 section \<open>The same complete key-fibre component supplies the comparison group\<close>
 

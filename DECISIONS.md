@@ -1201,6 +1201,13 @@ result. This removes an unnecessary dependency from the cause's scope boundary.
 
 ## Recorded causes contain their complete minimal scope
 
+[Corrected by "A generation over a state holds its payload once: its certified cause quotes its scope with the payload
+as the boundary" below (task 482): a generation whose cause's scope cites the generation's own payload records the
+scope with the payload as its boundary — the cause quotes the scope with the empty artifact at the uses that held the
+payload and lists those uses, and the generation's payload fills them — so the cause and the payload together, both
+fields of the core, determine the scope, and its transfer across outer environments stands. Equal cause targets no
+longer determine equal scopes alone. The whole-value profile below stands for every cause recorded before.]
+
 Factor_Complete_Data_Quotation restricts standalone data quotations to complete
 copies of their payload-and-pair syntax, under every formed injective
 readdressing. Its ordinary native reader is derived. This excludes ignored
@@ -7999,6 +8006,14 @@ Recorded 2026-09-18, commit `78ae1536`.
 
 ## A package is read where its roots demand; quotations grow with their depth
 
+[Corrected in part by "A generation over a state holds its payload once: its certified cause quotes its scope with
+the payload as the boundary" below (task 482): the depth measured here is a term's, through its addresses. A quotation
+also grows with its own depth: a quotation of a scope presents its artifacts as data, about fifteen addresses per
+carrier address (#481), so the certified cause, a quotation of a scope holding the payload's quotation twice, is 30.4
+times the payload, and no addressing reaches it; the payload-bounded scope removes it. At a state-sized payload the
+policy's read is not what dominates: the cause's quotation, the replay and the policy's construction over a source
+holding the literal are.]
+
 Certifying an admitted answer's cause under the first loop's policy reads the policy back, and the
 policy holds the payload as a literal target. That read had been measured to grow with roughly the cube
 of the payload (0.001, 0.007, 0.042 and 0.310 seconds at payloads of 101, 201, 401 and 801 addresses).
@@ -8054,6 +8069,11 @@ Recorded 2026-09-19, commit `5ea1fbf8`.
 
 ## Certified causes pay for what they read
 
+[Corrected by "A generation over a state holds its payload once: its certified cause quotes its scope with the payload
+as the boundary" below (task 482): the cause's size left open here — the replayed scope's quotation, the payload twice
+as data, 350,817 addresses at a payload of 11,589 — is constant in the payload for the route's generations, whose cause
+quotes the scope with the payload as its boundary. The seed publication keeps its whole-value causes and its words.]
+
 Certifying an admitted answer's cause replays the policy's judgment on the payload and records the
 replayed scope. With the policy read on demand and the quotation compact, two further costs grew with
 the literal payload although nothing read it. Both were attributed on synthetic payloads before
@@ -8085,6 +8105,11 @@ still reads each cause back; that cost and the cause's size remain open.
 Recorded 2026-09-19, commit `7961fceb`.
 
 ## Development causes are certified under the first loop's policy
+
+[Corrected in part by "A generation over a state holds its payload once: its certified cause quotes its scope with
+the payload as the boundary" below (task 482): the Open item "the cause holds the payload twice and the published state
+presents every cause whole" is closed for the route's generations by the payload-bounded cause, one target for every
+payload recorded under the listing policy; the seed publication keeps its causes.]
 
 Stage 2's gate asks that an admitted answer be recorded as a generation whose cause is certified
 under the first loop's policy. The development's generations had recorded their verdict (answers) and
@@ -14743,6 +14768,15 @@ superseded: the guard has four sockets — retention, formation and closure, the
 the added definitions — the verification request checks the test's contract parts, and the rest is criticism and the
 owner's approval, each part named with the native notion it would need.]
 
+[Corrected by "A generation over a state holds its payload once: its certified cause quotes its scope with the payload
+as the boundary" below (task 482): every generation of the route — the owner records, the native state's first
+generation, the posing, an admitted answer and its criticism and verification records — is recorded through the
+payload-bounded recording (`development_indexed_generation` as that entry's B2 redefines it), not through
+`development_payload_generation_with`: its cause certified under the listing policy with the payload as its scope's
+boundary, recorded in its predecessor's environment by the constructor that establishes its readings, at a cost of its
+payload's size once. A record's payload presents what it adds; the posing's pair presents the given again, as stated
+here.]
+
 The owner, to the planner, 2026-09-24 (the ledger), at 17:50: "Upon further review of the current state of the
 repository, I found that theere is no native definition of the notion of a problem - yet there are questions like the
 one that I just answered and notions like readiness that depend on what a problem is - how is this possible? Clearly to
@@ -16157,3 +16191,326 @@ imports: a whole rebuild, batched with other work where the planner can.
 - Native derivation admission's own head coverage was not computed.
 
 Recorded 2026-09-25 (task 460's decision; a design, no theory changes).
+
+## The criticism's sample over a base: a table exact at the sample's calls, and a diagnosis in place of a table
+
+Task 478, build S1 of "The native evaluator evaluates above an implemented base" (decision 5).
+
+- **One property of a table.** The record and the refutations read a table only through one property: at every
+  call of the sample it holds the call exactly when the decoded program's positive meaning does
+  (`Criticism_Samples.criticism_exact_table`). Their meaning is stated once over it (`exact_table_record_meaning`,
+  `exact_table_row_refutes`, `exact_table_row_refutes_presentation`, `exact_table_reversal_row_refutes`); the plain
+  table has it (`criticism_table_exact_table`) and its lemmas are now instances, their statements unchanged; a table
+  over a base has it where the decision is exact at the demand's base calls (`criticism_decision_exact`,
+  `criticism_base_table_exact_table`, from E1's `native_base_evaluation_exact`). The alternative, deriving each
+  based lemma beside its plain one, would have repeated each argument.
+- **The sample over a base** is `native_base_evaluation` at the sample's calls (`criticism_base_evaluation`,
+  `criticism_base_table`); the empty base is the plain sample by equations (`criticism_base_evaluation_empty`,
+  `criticism_base_table_empty`), where every decision is exact (`criticism_decision_exact_empty`).
+- **An unavailable sample is diagnosed.** `criticism_diagnosis B P ds ps` is computed from the program, the base and
+  the sample alone: the program's formation, the demand's closure over the program above the base, and
+  `finite_uncovered_clauses` — every clause outside the base the demand reaches, with its site, key and premise-only
+  variables (`finite_schema_head_missing`), stated for any finite program and demand
+  (`finite_uncovered_clauses_covered`: heads cover exactly when there is none). No table exactly when the diagnosis is
+  not (True, True, empty) (`criticism_base_table_diagnosed`, `criticism_table_diagnosed`). The diagnosis is a record of
+  an unavailable sample: it is neither a failure row nor an empty table, and establishes nothing.
+- **Control.** E1's control program sampled at the root with the pair (empty payload, the payload [256], no octet
+  list): the plain sample is unavailable, its diagnosis `(True, True, {|((None,[2]),[0],{|[1]|})|})`; over the base
+  {(None,[2])} with the formation decision, proved exact at the one demanded base call, the table is
+  {root at [], witness at []} and the record the one row at the root, both set beside the program's meaning
+  (`criticism_base_control_meaning`). One evaluation executes it (2.65 s, `CRITICISM_CONTROL base`).
+
+Recorded 2026-09-25 (task 478).
+## A generation over a state holds its payload once: its certified cause quotes its scope with the payload as the boundary
+
+Task 482, a design, from investigation #481's attribution (`.build/tasks/481/result.md`) of implement-395's report
+(q96). The native state's first generation (`Development_Native_State.development_native_state_first_generation`,
+#395) did not execute within a held run, and every generation the first problem's route records — the owner records,
+the posing (#397), an admitted answer (#399), the criticism record (#447), the verification record (#403) — carries a
+payload of the given's size or is recorded beside one. The owner, 2026-09-18: "If some tool call is taking a lot of
+time and will be required in the full design or is in a critical development path and you have to wait for it, fix its
+performance issues rather than waiting for it." This entry decides at the cause how such a generation is recorded and
+its cause certified. It changes no theory.
+
+### (1) What dominates, and where its cause is
+
+#481 took the recording `development_indexed_generation t (finite_enumerated_environment [] []) []` apart by
+difference, in shared runs of little contention, at preorder cuts of the given's value (A: the addresses of the
+payload's complete data quotation; 882,621 for the given's value):
+
+| step | seconds at A = 32,009 | growth (#481) | the payload's artifact R in it |
+|---|---|---|---|
+| the scope's quotation (`finite_native_judgment_quote`): readiness, least environment, complete data quotation | 0.582 + 2.097 + 5.471 | syntax n^1.7 | the least judgment environment J holds R twice; the cause C quotes J as data, 30.4 A addresses |
+| the replay (`finite_native_certificate_replay`) | 7.267 | n^1.5 | the replay environment B holds R three times |
+| the recording (`development_judged_generation`) | 5.078 | n^1.1 | the recorded environment holds R twice (locus, payload) and C once |
+| the condition (package readings, `finite_policy_cause_alignment`) | 0.159 + 3.262 | n^1.0 | reads the policy source K and J |
+| the policy source (`finite_ground_source`, `finite_construct_source_requirements`) | 0.255 + 0.782 | requirements n^1.9 | K holds R once, the ground clause's literal |
+| the policy's evaluation (package read, demand, proofs) | 0.277 + 0.000 + 0.511 | n^1.2–1.8 | reads K |
+| the data target, made twice (locus, judgment) | 2 × 0.116 | — | R itself |
+
+The parts sum to 25.98 s and the whole took 30.2 s. At the given's size #481 extrapolates one generation to 45–65
+minutes — the scope's quotation about 1,700 s, the replay about 1,000 s, the requirements about 400 s — and about 8.6
+GB for C alone.
+
+- **The step that dominates is the certified cause, a quotation of a quotation.** `development_policy_judgment` quotes
+  the replayed judgment's least scope: `finite_native_judgment_quote` is `finite_data_syntax` of `finite_judgment_term
+  J pu pr au ar`, the complete data of J's environment value beside its two sites. J holds R at two uses, the listing
+  policy's ground literal and the call's argument, and an artifact presented as data is about fifteen addresses per
+  carrier address (every carrier address a payload, every incidence a triple, every attachment an address beside its
+  octets). The payload is one quotation of the given's value; the cause presents it again, at depth two, twice: 30.4 A
+  addresses (350,817 at the first seed family's 11,589; 26.8 M at the given's). "Certified causes pay for what they
+  read" left that size open.
+- **The rest is the recording's handling of R as an artifact at uses of the environments it builds** — K once, B three
+  times, J twice, the recorded environment twice — each step walking it (formation, positions, comparisons, readings),
+  several faster than R grows. #481 did not attribute inside those steps.
+- **Not the cause.** The payload's own quotation (refined, 6–9 s at the given's value, n^1.36, 0.9 % of the parts at
+  32K) fits every bound; #395's 62.2 s and its "did not finish in 165 s" were a quadratic count of the result's carrier
+  by `fcard` in #395's execution theory (#481, (1)). The given's least scope (q96's option (c)) is 54–90 % of the given
+  and changes no cost above by more than a factor two (#481).
+
+### (2) The decision
+
+**The payload-bounded scope.** A generation whose cause's scope cites the generation's own payload records that scope
+with the payload as its boundary:
+
+- *The fill.* `payload_fill F0 V R` is the environment F0 with the artifact at every use of V replaced by R, every
+  binding kept. When F0 is formed and every use of V holds the empty artifact there, no binding of F0 has its source in
+  V (a bound slot lies in its source artifact's carrier, and the empty artifact has none), so the fill is formed
+  exactly when R is.
+- *The bounded value.* The pair of the judgment value of F0 at its program and call sites
+  (`Factor_Judgment_Values.judgment_value_presents`) and the data list of V's uses (`use_data_term`), a product of
+  existing presentation classes. The cause is its complete data quotation (`complete_data_quoted_at`), a whole
+  artifact.
+- *The scope a cause certifies.* `generation_bounded_scope_at E gu gr G F pu pr au ar` (the builder names it): G is
+  read at its site (`generation_at`), its cause is `Whole_Artifact C` quoting the bounded value of F0, its sites and V,
+  its payload is `Whole_Artifact R`, every use of V holds the empty artifact in F0, and F is `payload_fill F0 V R`.
+- *Its contract, proved once.* The cause and the payload determine F (the quotation's whole recovery,
+  `complete_data_quotation_whole_unique`, the recovery of the judgment value and of the use data, and the fill's
+  determinism); F is formed; since the core alone determines F, the scope and every judgment of it transfer to every
+  environment that reads G, as "Recorded causes contain their complete minimal scope" requires of a recorded cause
+  (`recorded_base_outer_transfer`); and the fill commutes with the use action (`rename_environment h (payload_fill F0 V
+  R) = payload_fill (rename_environment h F0) (h ` V) R`, over `Factor_Use_Actions`), so the profile is equivariant
+  under use permutations, as task 383's entry reads non-nominality of uses.
+
+**The certified cause over a scope reading.** `Factor_Certified_Base_Cause.certified_base_cause_at` and
+`Factor_Policy_Causes.certified_policy_cause_at` are stated over `generation_judgment_scope_at`, and nothing they
+conclude reads how the scope was quoted: they read the scope F — its least environment, the package and the
+application at it, its inclusion in the replay environment, the closed replay. Each is generalized where it lives to a
+scope reading taken as a parameter; the existing constant is its instance at `generation_judgment_scope_at`, proved
+from its definition, and its theorems (`certified_policy_cause_sound`, `certified_policy_cause_refuses_false_call`)
+are restated as instances of the general ones. The bounded instance is `generation_bounded_scope_at`. One argument, two
+instances.
+
+**The recording.** One construction beside `development_policy_judgment`, whose calls it keeps:
+
+1. the payload R made once, `finite_data_syntax (decode_finite_term t)`, which is the locus and the payload alike (the
+   index of `Development_Owner_Records`) and is not quoted a second time for the judgment;
+2. the listing policy over `[Finite_Target (Finite_Whole R)]` (`development_policy_source_with`), its certificate and
+   its replay, unchanged;
+3. the bounded quotation: J the least judgment environment of the replay, as `finite_native_judgment_quote` computes
+   it; V the uses of J holding R, compared by value as artifact identity decides; F0 = J with the empty artifact at V;
+   C = `finite_data_syntax` of the bounded value; no judgment unless no binding of J has its source in V, which the
+   grammar gives — R is complete data syntax, cited only as a whole target, and J keeps only the bindings of demanded
+   slots, all at syntax sources — so `payload_fill F0 V R = J`;
+4. the condition, `replay_policy_condition` at J, unchanged;
+5. recording by `finite_construct_formed_cause_generation` (the cause's formation is the quotation's contract, task
+   355's correction of "A published generation's formation is established by the constructor that recorded it"), and
+   in a chain of recordings by the known constructor where the predecessors' readings are established
+   (`development_payload_generation_using_known`).
+
+Its contract states every field of `development_payload_generation_certified`, with the certified cause at the bounded
+scope. `Development_Owner_Records.development_indexed_generation` is redefined through it, so the owner records, the
+native state's first generation and every later generation of the route receive the bounded recording through that one
+construction and its one contract (#484 names the base instance).
+
+**What the cause now is.** F0 does not depend on the payload: the listing policy's program and the call are allocated
+from the uses of the environments they are installed in, never from R's content, and every place R stood is in V.
+Every generation recorded through the bounded recording under the listing policy therefore has the same cause target —
+the policy form's call, an estimated three to four thousand addresses (the policy program's value, which #481 finds
+about 2,500 addresses, with the call and its bindings; B2 measures it) — and its payload fills it. What the cause
+certifies is unchanged: the policy's entry holds of the payload in a closed native replay, so the payload is the one
+listed, and the rule that admits is the constructor's (owner question Q1, as "Development causes are certified under
+the first loop's policy" left it); the bounded cause shows that rather than hiding it inside two copies of the payload
+as data. Equal cause targets no longer determine equal scopes alone: the cause and the payload do, both fields of the
+core. In a published state that holds its targets once (task 356's entry), one cause entry serves every generation of
+the route.
+
+**The payload is a value in every environment of the recording.** After the bounded scope, what remains is the
+handling of R in K, B, J and the recorded environment. R is complete data syntax, cited only as a whole target: no
+reader reads syntax at a use holding it. Three rules follow, each an instance of a notion the library states:
+
+- *(a) Its formation is established where it is made.* The quotation's contract (`finite_data_syntax_complete_quotation`)
+  forms R. Every later check of R's formation the recording makes — the locus's and the payload's target formation in
+  the record's readiness, the argument's term formation in the application's readiness, the formation of K, B and J at
+  R's uses in their package, application and graph reads — is `Established_Premises`' check made where its premise is
+  established: a body beside the original, with its exactness, the original kept. Likewise an environment a recording
+  returns is formed by its constructor's contract, and a later recording in it checks nothing of its old artifacts (the
+  known and formed-cause constructors already skip the environment's formation and the predecessors' read-back).
+- *(b) A position is asked at its use.* A position query at a site is answered by the artifact at the site's use and
+  its carrier's membership — `Carrier_Indexes`, the use the key — never by enumerating `finite_environment_positions`,
+  which lists R's carrier with every other artifact's.
+- *(c) Its value is compared only where a reader compares what it read with what it expects* — the ground clause's
+  instance in the certificate's check, the call's argument at the condition (`finite_application_value_ready`), the
+  equality of the package environments in the alignment: a constant number of walks, each linear.
+
+Which operations of the replay (n^1.5), of the requirements over a source holding the literal (n^1.9), of the scope's
+environment and of the recording break these rules, and how often, #481 did not attribute; investigation I3 below
+does, at the bounded form, and each refinement it finds is an instance of (a)–(c). A step whose cause is none of them is
+the planner's, with certification parametric in the literal (under "Weighed and not taken") its remedy.
+
+**What it costs, estimated.** At 32K the bounded scope replaces the scope's quotation of 30.4 A (5.47 s) by a constant
+one, and removes C's installation and formation from the recording (most of its 5.08 s); about 15–16 s remain, the
+replay the largest. At the given's size that is still far beyond a held run by #481's exponents (the replay alone about
+1,000 s): the bounded scope is necessary and not sufficient, and rules (a)–(c) carry the rest. The gate the refinements
+answer: the whole recording at most 60 µs per payload address at 32K and at the given's value, the payload's own
+quotation (7–10 µs per address) included — about 53 s for the first generation and about twice that for the posing,
+whose payload presents the given and the asked relation's program, each within a held run.
+
+### (3) The route's generations
+
+| generation | payload, presented self-contained | recorded in, citing | cause |
+|---|---|---|---|
+| an owner record (#385, #386) | the owner's words, one inert payload | an environment of its own, nothing | the bounded cause under the listing policy, the payload filling it: one target for every row |
+| the native state's first generation (#395) | the given's site value (`development_given_value`), 882,621 addresses | the empty environment, nothing | as above |
+| the posing (#397) | the pair of the asked relation's program entry value and the given's site value | the environment of the owner record of 18:53, citing it | as above |
+| an admitted answer (#399) | the candidate's site value, the given's environment extended | the posing's environment, citing the posing | as above |
+| the criticism record (#447) | its rows, each by the boundary that reproduces it | the admission's environment, citing the admission | as above |
+| the verification record (#403) | the stated program's presentation (`Finite_Presented_Programs`), of the size of the answer's additions | the admission's environment, citing the admission | as above |
+| the owner's approval (Open 142) | the owner's words | as its build decides, citing the admission and the two records | as above |
+
+- Every route generation is recorded through the bounded recording (`development_indexed_generation`), at the index of
+  its own payload, in its predecessor's environment, by the constructor that establishes its readings. Its cost is its
+  payload's size once; its cause holds nothing of its payload.
+- A record's payload presents what the record adds, never again a subject its predecessors present (the given, the
+  candidate, the posing). The criticism record's rows present each failure by the boundary that reproduces it — the
+  sampled entry's site and the sample's construction, its part with its second presentation, permutation or octet map
+  as the sample notions state them — and never by the sampled argument terms, which present the given or the candidate
+  as data: "What is retained is the boundary sufficient to reproduce, not the reproduction" (problems.txt, condition
+  3). Where a notion's row holds argument terms, the criticism build states the row's presentation by that boundary and
+  the reconstruction of the notion's row from it.
+- The posing's payload presents the pair, the given with it, as task 378's least form states it ("an asked relation …
+  and a given"): how a problem refers to a given beyond its own payload is part of what a problem is, the first
+  problem's answer. The given is therefore held in two payloads of the route, the first generation's and the posing's,
+  each recorded once — the cost #397's brief already counts.
+- The route's publication, when built (after verification, Q18 (a)), compares loci that are state-sized targets: it
+  uses the transactions over a representation of targets (`Represented_Snapshot_Transactions`) with the round's table
+  of targets, each entered once where it is made (task 356's entry), so a locus is compared as a reference.
+- Every generation's meaning stays: each certifies that the listing policy's entry holds of its payload in a closed
+  native replay, and records its fields and predecessors as before; its cause target is another presentation of the
+  same judgment. No route generation has been published or presented in a report, so no word changes.
+
+### (4) The builds
+
+- **B1 — the bounded scope and the certified cause over a scope reading** (about 200K; waits on nothing). A new theory
+  above `Factor_Generation_Scopes`, `Factor_Judgment_Values` and `Factor_Use_Actions`: the fill, the bounded value and
+  its quotation, `generation_bounded_scope_at` and its contract (determination by cause and payload, formation,
+  transfer to every environment reading G, commutation with the use action). `Factor_Certified_Base_Cause` and
+  `Factor_Policy_Causes` generalized where they live: the forms over a scope reading, the existing constants their
+  instances at `generation_judgment_scope_at`, their theorems restated as instances. Respects: existing definitions
+  unchanged (the instances are proved from them); no code equation; the whole-value profile untouched for every
+  existing use; the dependents' rebuild accepted (reuse over rebuild cost).
+- **B2 — the bounded recording, and the route recorded through it** (about 220K; waits on B1 and #484). A new theory
+  above `Development_Certified_Generations` and B1: the finite fill and its decoding, the bounded quotation with its
+  contract (it quotes F0, the sites and V, and the fill recovers J), the bounded judgment and recording with their
+  certified contract; `development_indexed_generation` redefined through it, `development_indexed_generation_certified`
+  concluding the bounded certified cause, and the instances that fold it (#484's base, the owner records,
+  `Development_Native_State`) restated. Controls in one evaluation, in an execution theory beside the library: the
+  owner record of 18:53 and the given's value cut at 8K and 32K (#481's cuts and instruments) — the cause targets equal
+  across the three, their size, and the recording's seconds whole and by #481's parts beside #481's. Respects:
+  `development_policy_judgment`, `development_payload_judgment`, `development_payload_generation_with` and every
+  constant the seed or machinery state expands keep their definitions and code equations, so the seed publication's
+  causes and every word stand; code equations attach to new constants only; the library theory runs no evaluation.
+- **I3 — the recording attributed at the bounded form** (an investigation, held; about 150K; waits on B2). Each step of
+  B2's recording at the 16K and 32K cuts (64K if a held run fits), by difference with #481's helpers; inside every step
+  whose seconds per payload address grow faster than n log n (a local exponent above 1.2 from 16K to 32K) or that walks
+  R more often than (a)–(c) allow, each operation that walks R (a formation check, a position enumeration, a
+  comparison, a reading) named with its count and seconds, and the rule that removes it, or none.
+- **R — the refinements I3 finds**, placed by the planner (sizes by I3): each a new constant beside the original with its
+  exactness under the premise the recording establishes (`Established_Premises`) or its index (`Carrier_Indexes`),
+  called by B2's recording through code equations of B2's own constants; none attaches a code equation to a constant a
+  recorded state expands.
+- **X — the native state's first generation executed, held** (#395's remainder; about 100K; waits on R). In an
+  execution theory beside the library, importing `Native_Execution_Refinements` and the refinements, compiled before
+  the hold: the whole recording of the given's value, its seconds, the payload's and the cause's sizes. Gate: within a
+  held run, and at most 60 µs per payload address. #397 then executes the posing in its own acceptance (4) — within a
+  held run, its payload about twice the given's — built on B2's recording.
+
+The chain is B1 → B2 (after #484) → I3 → R → X → #397.
+
+### (5) Distinctions, reliances and what stays fixed
+
+The decision relies on these distinctions, each a native notion's: which uses are the boundary — use data quoted in the
+cause, read by complete data admission and compared as data (`Factor_Data_Comparison`: uses compared for equality);
+the placeholder — the empty artifact, decided by artifact identity (`Factor_Artifact_Admission`) and read by
+environment lookup (`Factor_Environment_Lookup`); the payload — the generation's payload field, read by the generation
+readers; the scope — the judgment value, read by its native readers (`Factor_Judgment_Source_Admission`,
+`Factor_Judgment_Scope_Reading`). The fill and `generation_bounded_scope_at` are relations stated in Isabelle, as the
+whole-value profile's `recorded_base_cause_at` is; the whole-value profile has native readers
+(`Factor_Recorded_Base_Admission`, `Factor_Generation_Scope_Admission`), and the bounded profile's native reader — the
+two environments agreeing off V and the filled one holding R at V — is composed from environment lookup and inclusion
+when a native program first reads a route cause; until then it is a recorded reliance. Nothing reads the bootstrap
+loop's rows, loci or keys; sites are compared for equality and payloads stay inert. What owner questions Q23, Q24 and
+Q26 provisionally fix is not changed: task 378's least form, requirements and policy stand, the native loop's state is
+read by the Factor readers, and the bounded scope is equivariant under use permutations. No word changes.
+
+### Corrections
+
+| Earlier proposal or state | Correction |
+|---|---|
+| A recorded cause contains the complete self-contained value of its minimal scope, the literal payload of the call it judges included ("Recorded causes contain their complete minimal scope"). | A generation whose cause's scope cites its own payload records the scope with the payload as its boundary, the payload filling it: the cause and the payload, both fields of the core, determine the scope, and its transfer across outer environments stands. The whole-value profile stands for every cause recorded before this entry (the seed publication's, the base and construction witnesses). |
+| The certified cause's size — about thirty times the payload, the payload twice as data — stays open ("Certified causes pay for what they read"; "Development causes are certified under the first loop's policy", Open). | For the route's generations it is constant in the payload (the policy form's call), one target for every payload recorded under the listing policy. |
+| A quotation grows with its depth through its addresses, and compact addressing is the remedy ("A package is read where its roots demand; quotations grow with their depth", "The executable quotation is compact"). | That depth is a term's. A quotation also grows with its own depth: a quotation of a scope presents its artifacts as data, about fifteen addresses per carrier address, so a quotation of a scope holding a quotation presents it fifteen times larger per copy, and no addressing reaches it; the bounded scope removes it. At a state-sized payload the policy's read does not dominate: its construction over a source holding the literal and the replay do (#481). |
+| Every generation of the route records its cause under the policy listing its payload through `development_payload_generation_with` and `development_payload_generation_certified` (task 378's entry, its table). | Through the bounded recording, `development_indexed_generation` as B2 redefines it, its contract the bounded certified cause; each generation costs its payload's size once. |
+| The criticism record holds every part's rows as the sample notions record them (#447's brief, its (5)). | Its rows present each failure by the boundary that reproduces it, never the sampled argument terms, and the notion's row is reconstructed from that boundary. |
+| The native state's first generation is executed within a held run by its own build (#395's (3), a remainder by q96). | It is executed by X, after the bounded recording and its refinements. |
+
+### Weighed and not taken
+
+- **The given's least scope as the payload** (q96's option (c)): 54–90 % of the given, no cost changed by more than a
+  factor two, and computing it (`finite_native_package_demands` over the given) did not finish in 94 s (#481).
+- **One use per value in every environment the recording builds** — constructor variants binding the policy's literal,
+  the certificate's binding row, the call's argument and the record's locus and payload slots to one use of R. After the
+  bounded scope and rules (a)–(c) a further use costs a reference, and each variant would restate a constructor's
+  recovery contract. Reopened if I3 finds a cost that grows with the uses holding R.
+- **A structural presentation of the scope in the cause** — its artifacts copied as syntax rather than presented as
+  data: depth one, but the payload still in the cause, and a new presentation class of environments with its own
+  recovery.
+- **A universal policy** (every formed term admitted) instead of the listing one: it certifies no more than the listing
+  policy does of a payload the constructor lists, and it changes what task 378 fixed; with the bounded scope the listing
+  policy's remaining cost is its construction, which (a)–(c) make linear.
+- **Certification parametric in the literal** — the policy form certified once at the placeholder and filled per
+  payload. F0 is already the same for every payload, so what would remain is a proof that the readings at the fill are
+  the readings at the placeholder with the literal substituted, a substitution transport of every reader the replay
+  reads (package, application, graph, replay). Its trigger: X's gate failing after R.
+- **Later generations' payloads as increments** — the posing holding only the asked relation and reaching the given
+  through a predecessor: which predecessor is the given is a distinction the least form does not have, part of the
+  first problem's answer.
+- **A digest of the scope as the cause**: a digest decides no equality (#292's reason, as task 356's entry states it).
+- **The guard as the admitted answer's policy**: its base's calls are decided by counterparts (task 460's entry),
+  which the native evaluator does not derive, so no closed native replay certifies the guard's call.
+
+### What the builds must respect
+
+- The given, its value and every generation's certified meaning stay; no recorded word changes; a builder who finds a
+  constant it would change among a recorded state's entities stops and brings it to the planner (task 356's rule).
+- Existing constants keep their definitions and code equations; a new operation is a new constant related to the
+  original by a lemma, and a code equation attaches to a new constant only.
+- The bounded scope is stated once, in the library layer, and consumed through its contract; the certified cause is
+  stated once over a scope reading.
+- The payload is made once and walked only where (a)–(c) allow; a build that adds a walk records it.
+- A record's payload presents what it adds; nothing of the native loop is built over the bootstrap loop's rows, loci,
+  prefixes or keys; a distinction a build adds is recorded as a reliance.
+- Timings that decide a bound are held, the base pinned; evaluations run in execution theories beside the library,
+  compiled once.
+
+### Evidence and limits
+
+The decision rests on #481's shared figures (runs of little contention; no held run was granted) and on the
+definitions read in this tree: `development_policy_judgment`, `finite_native_judgment_quote`, `finite_judgment_term`,
+`certified_base_cause_at`, `certified_policy_cause_at`, `generation_judgment_scope_at`,
+`finite_construct_generation_record` and `finite_construct_formed_cause_generation`. The cause's constant size and the
+recording's seconds after B2 are estimates that B2 and I3 measure; the operations inside the replay and the
+requirements that grow faster than the payload are I3's to attribute. No measurement was made here. This decision was
+made outside the loop and is a residual.
+
+Recorded 2026-09-25 (task 482; a design, no theory changes).

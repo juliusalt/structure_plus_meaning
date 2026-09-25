@@ -84,27 +84,23 @@ union, whose 42 unreached definitions the given does not need (#413's follow-up 
 installs; the union stays the guard's program, and the asked relation's program is the guard's program rooted at
 its entries, derived through the union's piece (#431's review, follow-up 4, the planner's call, mailed to #393).
 
-**The recording of a state as a generation**: the native state's first generation (#395) cannot execute in a held run —
-the given's value is 1.3M nodes, its complete quotation did not finish in 165 s, and the certified cause quotes a scope
-holding the payload twice (implement-395's report) — and every later route generation carries a payload of the given's
-size. #481 attributed it (`.build/tasks/481/result.md`): the certified cause is a quotation of a quotation, 30.4 times
-the payload's addresses, and the replay holds the payload three times, so one generation at the given's size takes
-45–65 minutes and about 9 GB, while the payload's quotation itself takes 6–9 s. #482 decides the recording at its
-cause from it; #395 landed its statements with the execution a remainder (q96), and #397 waits on #482. The issue
-(#443's (6)), the admission (#399) and the criticism record (#447) record state-sized generations too: their briefs are
-corrected from #482's entry when its builds are placed. The given's least package scope, which #443 constructs, did
-not compute in 94–108 s: #485 attributes and refines it before #443.
+**The recording of a state as a generation**: the native state's first generation (#395) could not execute in a held
+run; #481 attributed it (the certified cause a quotation of a quotation, 30.4 times the payload's addresses; one
+generation at the given's size 45–65 minutes, about 9 GB). #482 (accepted) decided it: DECISIONS.md "A generation over
+a state holds its payload once: its certified cause quotes its scope with the payload as the boundary" — the cause
+quotes the policy's call with the payload's uses as its boundary, the payload filling it, so each generation costs its
+payload's size once and every route cause is one target; rules (a)–(c) for the rest. Its chain B1 → B2 → I3 → R → X →
+#397: #488 briefs B1 and B2, #489 is I3, R and X are placed from I3's result. Every route generation (#397, #399, #403,
+#443's issue, #447) is recorded through B2's recording: mailed the entry's (3), their briefs corrected when B2 is
+placed. The given's least package scope, which #443 constructs, did not compute in 94–108 s: #485 before #443.
 
-**Beside the route**: #483, after the counterpart builds and S1 (#478), the counterparts' and E1's generic facts at
-their homes, their `eval` controls in a theory of their own and two whole-rebuild moves in one rebuild (#467's, #469's
-and #465's reviews); #459, the presentation-level duplicates after the use instance's split (#458, `00c4bf47`) and
-#435, with #458's review's follow-ups 1–4 (#419's review; Open 132 and 138 its); #457, after #426, the given's payload statement discharged by a kernel-checked composition down
-the five reader systems' view steps (q93: code_simp over the readers' 130-definition presentation did not finish in 160 s,
-and an `eval` is excluded), with the general payload lemmas at their homes (#452's review, follow-ups 2 and 3; #456's,
-1 and 2); #461, after #441, #426 and #457 (their theories shared), the given's derivations without re-reducing what its
-pieces present, its agreement lemmas at their homes, its imports and its named per-entry meaning copies removed (#454's
-review, follow-ups 1–3, with Open 139; #456's follow-up 4); the bootstrap loop's maintenance — #426, #341's, #388's and #375's follow-ups
-over the joined program's, the audit's and the collection programs' generic content (after #342 and #418). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
+**Beside the route**: #483, after the counterpart builds, S1 (#478) and #484, the counterparts' and E1's generic facts
+at their homes and two whole-rebuild moves in one rebuild (#467's, #469's, #465's and #471's reviews); #487 after it,
+their `eval` controls in a theory of their own (with #473's and #442's consolidations); #461, the given's derivations without re-reducing
+what its pieces present, its agreement lemmas at their homes, its imports and its named per-entry meaning copies removed
+(#454's review, follow-ups 1–3, with Open 139; #456's follow-up 4); then #486, continuing #457, the given's readers'
+payload lineage split so that the guard's readers import only their own lineages, and the payload lemmas at the
+payload notion (#457's review, 1–4, with Open 144's payload part). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
 N3b, N4a and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93)
 and the machinery's verification stage judged natively (#193, #194).
 
@@ -120,13 +116,14 @@ exporter's obligations at every state it defines (#227–#308, #352).
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The deepest chain is 7: #481 → #482 → #397 → #399 → #401 → #407 → #408;
-the recording's builds, placed from #482's entry before #397, and the approval build (Open 142) after #407 lengthen it.
+**Shape.** No build waits on a review task. With #482's chain placed, B1 → B2 → I3 → R → X → #397 → #399 → #401 →
+#407 → #408 is 10 deep: R and X are spliced in before #397; the approval build (Open 142) may end a chain of 10 after
+#407, nothing after #408.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #481 and #482 at its head, the counterparts
-(#472–#477), S1 (#478) and #484, then the rest in their chains' order, the first request's and the
-criticism's builds after them; then #457, #459, #461 and #483; each review after its build.
+exists, Q2): the owner's directions first — the first problem's route, #488 and #489 at its head, the counterparts
+(#474–#477) and #484, then the rest in their chains' order, the first request's and the
+criticism's builds after them; then #461, #483, #487 and #486; each review after its build.
 
 ## Decisions
 
@@ -369,16 +366,16 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   (`.build/tasks/426/review.md`) are Open 153.
 - **Landed with `c6930e95`**: #466 (C1, `Factor_Inclusion_Admission_Counterparts`: the counterparts of 113 and 80 and
   the readers of environment-value pairs and source-root arguments) and #463 (the octet sample's readdressing lifted to
-  whole environment, site and program entry values). #467's follow-ups: 1–3 and 6 in #483, 4 mailed to #470, 5 settled
+  whole environment, site and program entry values). #467's follow-ups: 1–3 in #483, 6 in #487, 4 mailed to #470, 5 settled
   by the landing. #463's review (`.build/tasks/463/review.md`): 1–4 are #480, which #447 waits on; 5 Open 152; 6 is
   Open 150.
 - **Landed with `9c39602a`**: #464, E1, `Factor_Implemented_Base_Evaluation` with the general lemma in
   `Inference_Demands`: the finite and native evaluation over an implemented base, exact under exact decisions, the empty
-  base the plain evaluator. Its review's follow-ups (`.build/tasks/465/review.md`): 1 and 3 in #483, 2 mailed to #399
+  base the plain evaluator. Its review's follow-ups (`.build/tasks/465/review.md`): 1 in #483, 3 in #487, 2 mailed to #399
   and #478, 4 Open 154.
 - **Landed with `9454dadc`**: #468, C2, `Factor_Additions_Counterparts`: the additions counterpart for every callee,
   393's and 392's its instance, the site value reader `finite_site_read`. Its review's follow-ups
-  (`.build/tasks/469/review.md`): 1 mailed to #470 and #399, 2 and 3 in #483, 4 with q96's answer to #395.
+  (`.build/tasks/469/review.md`): 1 mailed to #470 and #399, 2 in #483, 3 in #487, 4 with q96's answer to #395.
 - **Landed with `a0fe6bb1`**: #393, `Development_First_Problem_Asked`: the guard installed over the given's readers,
   the asked relation's program entry, its contract at the installed entry, its use-equivariance clause, its cost
   (shared). Its review's follow-ups (`.build/tasks/394/review.md`): 1 and 2 mailed to #399 (2 also to #447), 3 to
@@ -391,9 +388,23 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   its presentation with recovery and formation) and the native state's first generation, its contract an instance of
   `development_owner_record_certified`, its execution a recorded remainder (q96). Its review's follow-ups
   (`.build/tasks/396/review.md`): 1 and 2 are #484, 3 mailed to #481 and #482.
+- **Landed with `2a34b678`** (a train of five): #480, the octet sample for the criticism run (its readdressing a renaming
+  action on site and program entry contexts, `octet_row_refutes` by `criticism_refutes`); #472, C4a,
+  `Factor_Package_Reader_Counterparts` (77, 79, 83, 122); #457, the given's payload statement discharged by composition
+  (`Factor_System_Payloads`, `Factor_Reader_Payloads`); #459, the presented form of a class-exact observation once
+  (`Presentation_Equivariance.presented_observation_renaming`); #441, `Factor_Stated_Leaves`, the stated-leaves reader
+  (570). Their reviews' follow-ups: #480's to #447, the rest Open 157–158; #472's (`.build/tasks/473/review.md`) 1 and
+  4 in #487, 2 Open 158 and to #447 and #474, 3 to #474; #457's 1–4 are #486, 5 Open 157, 6 Open 78; #459's 1 withdraws
+  #458's follow-up 3, 2 and 4–7 Open 157, 3 Open 151; #441's (`.build/tasks/442/review.md`) 1 and 4 to #476 and #447,
+  2 Open 157, 3 in #487.
+- **Landed with `f68c8649`**: #478, S1, the criticism's sample over a base in `Criticism_Samples`
+  (`criticism_exact_table`, `criticism_base_table_exact`, `criticism_diagnosis`, `finite_uncovered_clauses`). Its
+  review's follow-ups (`.build/tasks/479/review.md`): 1 and 2 in #483, 3 Open 158, 4 and 5 in #487, 6 is #483's.
 - **#481** (investigation, accepted): the recording attributed by difference at 2K–32K payload addresses and the three
   sizes (`.build/tasks/481/result.md`); #395's 62.2 s was a quadratic `fcard` count, not the quotation; the least
   scope is 54–90 % of the given; its follow-ups: the least scope's demands are #485, the rest in #482's reading.
+- **#482** (design, accepted): the entry above; its Questions answered by placement — the chain (#488, #489, then R and
+  X), B1's in-place generalization with its dependents' rebuild, the correction of #447's (5) mailed, X #395's remainder.
 - **Landed with `00c4bf47`**: #458, the use instance split: the low actions in `Factor_Use_Actions` below the keyed
   and data readers, the inverse-permutation argument once (`use_renaming_inverse`), the schema reading's renaming
   beside the definition's, the request's general facts and the scopes' root position at their homes
@@ -538,7 +549,8 @@ The owner's questions, a line each (their words and the provisional choices in f
    the machinery recipe (#368's follow-ups 1, 2, 5). #355's formation saving by phase and the fall from #128's 63.45 s
    are unattributed.
 78. The probe tool (#316's, #286's and #353's reviews; #432's: qualified ML structure paths renamed with the theory;
-   #417's: the probe cost of a change to `Factor_Package_Closure_Admission`): the comment's "lower envelope"; skipped code checks extended at
+   #417's: the probe cost of a change to `Factor_Package_Closure_Admission`; #457's: a probe taking the active base's
+   unlanded theories from the heap, which the tool might offer itself): the comment's "lower envelope"; skipped code checks extended at
    first use; the prelude route offered by the tool; a refusal naming `--from-heap`; a probe that loads
    `Native_Collection_Programs`' dependents passes 60 s — a longer bound or an intermediate heap at a measured need, the
    check certifying them meanwhile.
@@ -636,8 +648,7 @@ index of their own (#433's q92: the frame reports them as the given's and does n
 `native_store_search_program` at request construction's sites, and `witness_absent`, an absence search no index notion
 states — at a consolidation of the given's programs, absence a question for the index notion (`Carrier_Indexes`). 143 the route's export modules (#401's, #407's, #445's, #449's) merged to compile once (#434's result). 144 #415's
 review, follow-up 3: `rooted_system_reach` beside `Factor_System_Restriction.rooted_system_definitions`,
-`reached_package_sites` and `native_definition_sites_union` beside the package theories, the payload invariance facts
-(`pattern_leaves_rename` … `system_alpha_variant_payloads`) into `Factor_Payload_Audit` — at a batch that edits those
+`reached_package_sites` and `native_definition_sites_union` beside the package theories (the payload invariance facts are #486's) — at a batch that edits those
 theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations, joined to #457 300K beside 187K); #452 takes them out of the simpset. 146
 `deep_reversed_environment_term` and `reversed_environment_term` stated in one place at a second use of the deep
 reversal (#435's review, `.build/tasks/436/review.md`). 147 the new whole agreements of existing view chains
@@ -656,8 +667,8 @@ changed under `inj_on f A`, each row's term by a map commuting with `data_list_t
 and `data_collection_presents_image`'s backward direction its instances, with the next landing that changes those
 theories (#463's review, follow-up 5). 151 #458's review
 (`.build/tasks/458/review.md`), at each theory's next edit: follow-up 1's texts crediting `Factor_Use_Renaming` with
-what `Factor_Use_Actions` states (`Factor_Package_Closure_Admission`, `Criticism_Use_Samples`; those of #459's and
-#426's theories are theirs), 5 `native_package_formed_at` cited where six theories derive it inline, 6 the doubled
+what `Factor_Use_Actions` states (`Factor_Package_Closure_Admission`, `Criticism_Use_Samples`,
+`Development_Verification_Frame`: #459's follow-up 3), 5 `native_package_formed_at` cited where six theories derive it inline, 6 the doubled
 blank lines of `Factor_Program_Scopes` and `Factor_Package_Requests`. 150 #439's review
 (`.build/tasks/440/review.md`, follow-up 5): `pattern_leaves_not_pair`, `system_leaves_not_pair` and
 `system_leaves_restriction` into `Factor_Positive_Parametricity`, `finite_system_targets` (with its `_exact`) beside
@@ -672,21 +683,31 @@ concern the guard alone: beside it in `Development_First_Problem_Guard` at a sec
 or the given's whole rows at each member or definition (525 about 0.15 s per member at the given, measured shared); a
 refinement at C2's level — the callee counterpart decided on the pair already read, or the formation check where the
 pair's reading establishes it — through the performance channel once a use (#399, S1, #447) measures it dominating,
-with an exclusive re-run of the 38.3 s if one relies on it.
+with an exclusive re-run of the 38.3 s if one relies on it. 157 the `2a34b678` train's remaining follow-ups, each at its
+theory's next edit: #459's (`.build/tasks/459/review.md`) 2 and 6 with #480's first review's coordinate action — in
+`Presentation_Equivariance` the contract's text in its general form, one coordinate action, and the product
+correspondence `Criticism_Use_Samples` unfolds six times (with Open 126) — 4 `site_coordinate_presentation` beside its
+siblings in `Factor_Presentation_Classes`, 5 the `inj (map_prod f id)` fact into `Bootstrap_Relations`, 7 blank lines,
+and 1's two-type inverse law beside `rename_environment_comp` at a second use; #442's 2, the stated-leaves reader's
+generic helpers to their notions' theories; #457's 5, the payload lineage's generator rule stated once if lineages
+keep growing. 158 costs at a measured need: #480's list-backed unions in `criticism_octet_reserved_code`; #473's
+`finite_listed_values` backtracking (m! orderings at a false outcome); #442's reader costs (each clause read twice,
+the interface twice, 45 at every target occurrence); #479's: the plain evaluator at a demand with an unformed payload
+(`[256]`) not returning in 60 s where the base answered in under 3 s, attributed when a path meets it.
 
 ## Now
 
 
-- **Mailed, read by each task's first session** (by task; landed tasks' dropped): #482 (#396's follow-ups 1 and 3: the base generation made generic by #484,
-  the least scope's size deciding q96's option (c)); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the
+- **Mailed, read by each task's first session** (by task; landed tasks' dropped): #397, #399, #403, #443 and #447 (#482's entry, its (3); #447
+  its correction of (5)); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the
   request program's payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers
   cited); #407 (#433's review's follow-ups 2 and 3; the frame as #432 and #433 leave it; #394's follow-up 3); #403
   (#394's follow-up 3); #447 (#436's first follow-up; the octet rows through `criticism_refutes` and #480; #394's
-  follow-up 2; #471's follow-up 1); #474 (the given's 47 entries, the granted ones without counterparts, by demand);
+  follow-up 2; #471's follow-up 1; #480's first review, #473's follow-up 2, #442's follow-up 1); #474 (the given's 47
+  entries, the granted ones without counterparts, by demand; #473's follow-ups 2 and 3); #476 (#442's follow-ups 1 and 4);
   #399 (#465's follow-up 2, the evaluation over the base timed at the guard's call; #469's follow-up 1 if #470 did
   not; #394's follow-ups 1–3: the asked environment's read-back held apart from the installation, the given computed
-  once if evaluated repeatedly, the binary entry's bridge; #471's follow-ups 3 and 4); #478 (#465's follow-ups 1 and
-  2; #471's follow-up 1).
+  once if evaluated repeatedly, the binary entry's bridge; #471's follow-ups 3 and 4).
 
 
 

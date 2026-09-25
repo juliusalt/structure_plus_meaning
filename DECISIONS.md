@@ -16626,6 +16626,10 @@ Presentation freedom: the outputs of 79 (root lists, every order), 32 (family ro
 10 (enumerations) and 48 (unions, every repetition) are every presentation of one subject; 80's and 392's closures reach
 all six.
 
+[Corrected by task 585 ("The given's remaining producers: views, carriers and narrowed sockets", below): the clauses
+show more — 37, 12, 7, 39 and 40 (artifact and target presentations), 29, 36, 42 and 54, and the instantiation family's
+metadata (50, 52, 55–65, 587) — and 48's class is infinite, not merely large.]
+
 ### The evaluator: resolution with unification
 
 1. **Goals are call patterns.** A goal is a site and a pattern over the variables of the clauses that raised it,
@@ -16777,6 +16781,167 @@ contract — the readers' presentation invariance and their presented relation c
 instantiates the given's (79, 32, 6, 10, 45, 48 and the consumers their outputs reach). Without a declaration the
 evaluator stays exact and pays the enumeration.
 
+[Corrected by task 585, below: R5's form — a call read as a pair of an input and an output, a consumer at one side —
+narrowed what this paragraph predicts ("a site declared functional up to a presentation class at its outputs") and
+reaches 32, 6, 10 and 45 only; R6 declares those. Views restore the prediction (R5d changes R5's record and tests to
+views, R5's declarations their identity and swap instances), carriers discharge what "reach an invariant goal through
+sites declared congruent" meant, and 48 is settled by a narrowed socket produced beside the search. #565's statements
+are not changed; R5c (#586) states its discharge at views and with a class predicate.]
+
+### The given's remaining producers: views, carriers and narrowed sockets
+
+[Added by task 585, a design, from q107 (implement-520, 2026-09-25, R6's first step, `.build/tasks/520/probe1/probe.log`):
+R5's kinds as landed (#518) read a producer's call as a pair of an input and an output and reach 32, 6, 10 and 45 only.
+79's argument is ((e,u),(r,w)) and 48's (xs,(ys,zs)): their right sides hold an input (the root r, the second list ys),
+so answers at one left input do not correspond and no contract discharges a producer there; 59, on 32's rows, carries the
+class on instead of consuming it invariantly; and 48's class — every list with the union's set, every repetition — is
+wider than the 49 and 1 beside it accept, and infinite. This section finds every presentation-free output the guard's
+calls and 561 reach, decides the kinds that reach them — each generalizing R5's, R5's its instance — and the builds.]
+
+**What the clauses show.** A scratch evaluation outside the library (`.build/tasks/585/scratch/Scratch_585.thy`, not
+retained; its rendering `.build/tasks/585/clauses.txt` by `.build/tasks/585/render.py`) printed every clause of
+`Development_First_Problem_Asked.finite_asked_program` — the guard's 520–526 joined with the given's rooted readers, 162
+sites and 271 clauses — and the 102 sites reached from 526 and 505 (the guard's calls) and from 79, 83 and 122 (561's
+callees beside 80 and 113; 560 is the list over 83), each clause with its premise-only variables; 580–590 were read from
+`Factor_Stated_Leaves`' schemas. The guard's calls and 561's are ground, so an output is free where its variable is
+premise-only in a clause, or a head variable its caller leaves free. An output is presentation-free where its producer's
+answers at one input present one subject in several ways. Every such output reached, where it is reached and what holds
+it there (s.c/k: clause c of site s at socket k), its size at the given where a refusal pays it, and what settles it by
+the kinds (a)–(c) below:
+
+| Producer | Output in its argument | Class | Free at (s.c/k → its holders) | At the given | Settled by |
+|---|---|---|---|---|---|
+| 79 root family reading | w in ((e,u),(r,w)) | a bag of definition sites: every order, a destination repeated at distinct sockets kept | 80.0/0 → 77; 392.0/2, 525.0/2 → 47 (under the bound); 83.0/1 → 5 (its remainder private) | 47 roots at the given's package, 47! ≈ 2.6×10⁵⁹ orders; a candidate's package as many | (a) a producer at the view Pair ((e,u),r) w: direct at 80, 392 and 525 (77 and 47 consumers), a kept socket at 83.0/1 (5 a carrier). Inside: 37 direct (32 its consumer); 32 a free socket at 79.0/1, carried (b) by 59, by 51 from keys to rows, consumed by 78, carried by 59 to w |
+| 37 artifact lookup | a in (env,(use,a)) | artifact presentations (`artifact_value_presents`) | 42.0/0 → 36; 50.0/0 → 29; 50.2/0, 55.2/0, 57.0/0, 61.0/0, 72.0/0, 104.0/0, 104.1/0, 105.0/0, 105.1/0, 505.0/2 → 34 (and 32, 54); 56.0/0, 65.0/0 → 34, 54; 64.0/0, 71.0/0, 79.0/0, 119.0/0, 75.0/1, 81.0/1 → 32 (and 34); 156.0/0 → 35; 39.0/0, 39.1/1 → 39's head; 118.0/0 private | a definition's code artifact: ≈114 addresses on average (28,729 over 252 definitions), its carrier's orders alone ≈10¹⁸⁶ | (a) a producer at the view Pair (env,use) a: direct wherever its holders read an artifact presentation-invariantly (29, 32, 34, 35, 36 and 54 at their artifact holes; none at 118), a free socket at 39. Inside: 12 a free socket at 37.0/2, 7 at 12.0/2 (11 a consumer), 6 at 7.0/0–3 (R6's 6) |
+| 12 artifact identity, 7 artifact comparison | y in (x,y) | artifact presentations; 7's a product of four bags | inside 37 only | as 37 | producers at R5's identity view, free sockets at 37.0/2 and 12.0/2 |
+| 39 citation resolution, 40 citation interpretation | 39: the artifact and target it returns; 40: the target in ((e,u),(c,t)) | artifact and target presentations | 40.0/0 (39's artifact private); 41.0/0 (private, no holder); 50.1/1 → 45 | as 37 | (a): 39 a free socket at 40.0/0 and direct at 41; 40 direct at 50.1 (45 a consumer) |
+| 29 headed material | its three field lists (the rows, at 32.0) | bags | 32.0/0 → 21 (its whole argument), 31 and 32's head | a root's socket rows: 47 at the root family, 2–4 at a record | (a) a producer at its field view: a free socket at 32.0/0 (32 committed at R6's view); 6 free at 29.0/5–7; 21 a consumer at the view of its whole argument |
+| 32 family admission (R6's) | the rows, at R6's view | sets of socket rows | 71.0/1, 75.0/3, 505.0/4 → 59 → 70, 74, 504; 81.0/3, 104.1/3, 105.1/2, 119.0/1 → 5 (a row selected, the remainder private); 54.0/1 → 53 → head; 64.0/1 → 63 → head; 79.0/1 (above) | as 29 | kept sockets at 71, 75, 505, 81, 104.1, 105.1 and 119; free sockets at 54, 64 and 79; carried (b) |
+| 36 citation admission, 42 citation reading | the interior (42's citation beside it, one value) | bags of addresses | 42.0/1 → 42's head; 44.0/0 → 41 (the citation), the interior private; 50.1/0, 55.0/1, 57.0/2 → heads (57's by 46 and 6); 119.0/3 → 5 | 1–2 addresses, a citation's root and leaf | (a): 36 a free socket at 42.0/1, 6 free at 36.3/5; 42 direct at 44 (41 a consumer of its citation hole), free sockets at 50, 55 and 57, kept at 119 |
+| 54 binder admission | the binder list, at R5's identity view | bags of binders | 56.0/2 → 55 (its scope), 6; 65.0/2 → 55, 64, 48 (as input); 104.0/2, 104.1/2 → 55, 103 | a schema's variables | (a) direct (55 at its scope, 6 and 48 at their inputs are consumers); 32 a free socket at 54.0/1 carried by 53 |
+| the instantiation family: 50, 52, 55, 56, 57, 60–65 (69 its admission), 587 | their metadata: tables, interiors, slots, used variables, call and material rows | bags; interiors, slots and used variables distinct lists in any order | inside one another's clauses; 72.0/2 → 49; 105.0/2 → 5; 73.0/0 → 59, 51 → 47; 82.0/1 → 59, 51 → 5; 69.0/0 private; 503.0/0 → 500–502; 587's clauses → 580, 584, 586 → head | interiors and slots: tens of addresses; tables and binders: a schema's variables; call rows: a clause's premises | (a) producers at their metadata views (several holes each): direct at 72, 69 and 503; kept sockets at 73, 82 and 105; free sockets inside one another, each parent committed at its view; carriers 46, 63, 55 at its scope, 584 and 586 (b) |
+| 48 data union | zs in (xs,(ys,zs)) | every list with the union's set: every order and every repetition, infinitely many | 50.2/7, 55.2/7, 57.0/8, 60.1/4 → 49; 55.2/8, 60.1/5, 63.1/2, 63.2/2 → 1; each also to its clause's head (at 65.0/5 a check, 54 giving its output) | unbounded at every nonempty union | (c): a registration at 48.0's variable x2, narrowed sockets at its eight uses |
+| 59 row values (and the carriers 51, 53, 46, 63, 584, 586, 5) | its value list, the image of its rows | the image of its input's class | 61.0/3 (34's ports: one presentation); 71, 75, 505 → 70, 74, 504; 73, 82 → 51 → 47, 5; 79 → 51, 78 → head | as its input | (b) a carrier: nothing the search reads; it discharges the sockets its clauses hold |
+
+Not presentation-free: 34's ports and endpoints and 44's located destination (determined by their contracts); 81's and
+83's enumerations (each answer a different clause or member, not another presentation); 5 at a keyed table (one
+occurrence). Invariant consumers named above: 1, 11, 21, 29, 31, 32, 34, 35, 36, 45, 47, 48 at its inputs, 49, 54 at its
+artifact, 55 at its scope, 6 at its input, 70, 74, 76, 77, 78 and 500–504, each by its notion's exact contract or its
+`*_presentation_invariance` or `*_orders` corollary. Beyond the table: 6 (with 5 inside it), 32, 10 and 45 are R6's; 47
+called with its right side free occurs only at the least witnesses (77, 392, 525) and 561's private environment, task
+496's; 505's operand (72's, then 500) is existential, the residual rule's; 29 at 36's clauses meets a two-row skeleton,
+not a free output, and is searched plainly.
+
+**(a) Views: a producer whose output stands anywhere in its argument.** A declaration names its site and a *view*: a
+linear pattern p of the site's argument and a pair Pair pi po over exactly p's variables — a rearrangement, as
+`Native_Collection_Programs.native_rearranging_program`'s conclusion and premise are, here read by the declaration and
+never installed. The view of a term t that p matches (by h) is the evaluation of Pair pi po at h; the view of a meaning
+is the views of its answers at the site; the view of a call or of a schema's pattern is the same substitution on
+patterns. Every obligation and test R5 states of a call Pair x y is stated of the viewed call and the viewed meaning:
+`producer_discharged`, `consumer_discharged`, `socket_discharged` with `head_kept` (the head read at its own view, whose
+po is the head's output χ), `finite_direct_commitment`, `finite_output_consumer`, `finite_socket_kept`,
+`finite_socket_free` and `finite_parent_output`. The identity view (p = Pair pi po = Pair x y) is R5's producer, its
+right-side consumer and its sockets; the swap (p = Pair y x, viewed Pair x y) is R5's left-side consumer, as
+`native_swap_program` is the rearranging rule's swap. R5's and R6's declarations are the views' instances, and no second
+kind stands beside them. A view whose po is a tuple declares several holes (56's table, interior and slots): its
+correspondence is a product, one per hole, and a consumer names the hole it holds, so each hole is exchanged alone.
+- *Obligation*: R5's, at the viewed meaning — two answers whose views agree on pi correspond on po.
+- *Discharge*: the notion's exact contract, read at the view, gives the answers at one input and their correspondence (79:
+  `root_family_reading_exact` with `family_at_unique` and `located_at_unique` — two answers at one ((e,u),r) list the one
+  family's destinations over two distinct enumerations, one bag of definition sites; 37: `artifact_lookup_exact`, every
+  presentation of the stored artifact; the instantiation family: its `*_exact` and `*_orders` contracts) — a lemma where
+  the notion stands, its meaning not proved again.
+- *The search*: matches p against the call pattern and reads Pair pi po. A goal is committed directly when its viewed
+  input is ground and its output holds a variable, and every other pending goal in the focus holding one is a declared
+  consumer holding one hole's pattern at its own view, its other part sharing none; a socket's premise and its parent's
+  head are read at their views, the free socket's variant test at the parent's viewed output. The tests read a pattern's
+  shape, positions and where variables occur, as R5's do.
+- *Sound under R5's barred pruning*: a view is a bijection between the terms p matches and their views, commuting with
+  evaluation and substitution; the program, its derivations and certificates are untouched, and the barred pruning reads
+  ground goals and ancestors' calls, which no view changes. R5's exchange at the viewed call is R5's exchange: answers,
+  consumers and sockets correspond one to one through the view.
+- *#565's exchange premise*: stated of R5's declarations; R5c (#586) states its discharge per kind over a view, the
+  identity and swap its instances, so every view instantiates it (see the builds).
+
+**(b) Carriers: a class carried across a clause and its head.** A carrier is declared at a site with a view Pair pi po
+— pi its carried inputs and fixed parts, po its outputs — and a correspondence on each; its obligation: every answer
+(x,y) and every x' corresponding to x give an answer (x',y') with y' corresponding to y — the output's class is the image
+of the input's. A `presented_function_contract` discharges it (totality on the admitted inputs, output equivalence; the
+output correspondence the presentations of one image): 59 (`row_values_exact`), 46, 53, 63. A relation read against its
+function's direction is discharged by its exact contract's preimage (51 from keys to rows: the rows reordered as the keys
+are). A consumer is a carrier with no output (po the empty payload): R5's `consumer_discharged`, at a symmetric
+correspondence, is its instance. A carrier whose outputs no other goal holds (5's remainder, 42's interior at 44, 65's at
+69) consumes its input as far as its private outputs allow.
+- *The search does not read carriers.* A carrier enters where a socket's clause-level obligation is discharged: at a
+  clause and a socket, when the variables carried from the socket's output — through carriers' outputs — are held only by
+  the socket, by carriers taking them in pi and giving fresh variables in po, each variable given once and in an acyclic
+  order, and by the head only inside χ (nowhere at a kept head), the socket's obligation holds, the new instance rebuilt
+  carrier by carrier from the new answer. Stated once and proved by induction along the order (`socket_discharged_carried`,
+  R5d); every socket of the given instantiates it with its premises' contracts.
+- *How far across heads*: one head at a time. A carried variable reaches the head only inside χ, where the parent — the
+  focus root, committed at the view whose po is χ — takes it into its own class, as R5's free socket requires; at the
+  parent's caller its output is a producer's output like any other, with its own consumers and carriers. 79's clause is
+  the case: 32's rows at 79.0/1, carried by 59, by 51 from keys to rows, consumed by 78 and carried by 59 to w, which
+  79's view declares.
+- *Sound*: R5's socket, kept or free, as R5 and #565 state it; the carrying lemma only discharges its obligation.
+  *#565's premise*: R5's socket obligation, unchanged.
+- Weighed and not taken: a carrier kind read by the search (a direct commitment whose output reaches consumers through
+  carriers) — it would restate, chain by chain, the exchange the socket's clause-level obligation already states over
+  every premise of the clause, and R5's socket test already admits carriers as siblings; a group action carrying one
+  permutation through the clause — 63 splits its rows into call and material rows of other lengths and 48's unions forget
+  order, so no single permutation is carried, while every carrier's image class suffices.
+
+**(c) Narrowed sockets produced beside the search: a producer's class against a consumer that reads what it varies.**
+48's answers at one input are every list with the union's set, every order and repetition: its subtree has no end
+whenever the union is not empty, so no commitment can keep its least answer, and a false call through it is unresolved at
+every bound. At each of its uses with the output free, the same clause holds a consumer that reads what the class varies
+and narrows it: 49 (distinct and disjoint lists) or the distinct payloads of site 1. Within the narrowed class — the
+orders of the distinct union — every holder is invariant.
+- *The declaration*: a socket at the caller's clause with a class predicate N on the socket's output (distinct lists);
+  R5's socket is its instance at N = ⊤. Its obligations: (i) *narrowing* — every true instance of the clause holds its
+  socket's output in N, from the narrowing consumer's exact contract (`payload_disjoint_exact`, site 1's distinct-payload
+  contract); (ii) the socket's obligation over N — every answer in N at the same input extends a true instance, the head
+  changed only inside χ: (b)'s carrying lemma with the bag class on distinct lists (49 and 1 invariant under their
+  orders); (iii) *production* — the kept answer is an answer in N.
+- *The production*: task 496's construction, at a variable its entry did not name. A registration at 48's own clause
+  (48.0, head (x0,(x1,x2)), the variable x2) with base queries the selection 5 of an element from x0 and from x1, no step,
+  the element its own key, identity equality of ground terms, presented as the data list in the order found: the
+  collection is the distinct union, first occurrences in order, and the given's 48 checks it (46, 47 and 47 at it;
+  `data_union_lists`). x2 is a head variable, free after unification exactly when 48 is called with its output free;
+  bound, it is checked as any call is. The registration is complete at a caller clause where 48's goal is such a narrowed
+  socket; at any other use its failed checks leave the call unresolved — task 496's rule for an incomplete registration.
+- *The search*: unchanged. The socket is committed by R5's test at the viewed call, its parent committed at χ (50, 55,
+  57, 60 and 63 are declared at their metadata views); its focused sub-search runs with the construction, so its subtree
+  has one answer and the least of it is the construction's.
+- *Sound under R5's barred pruning*: a commitment as R5's, its nodes barred; the certificate is the given's check at the
+  constructed value, accepted by the finite proof checker; a derivation through any answer y of the socket has y in N by
+  (i), and is exchanged for one through the kept answer by (ii) and (iii). *#565's premise*: the socket's exchange at a
+  kept answer that is any answer in N — R5c states it so.
+- Weighed and not taken: committing 48 at its first answer — the result would depend on the search's order, and its
+  subtree still has no end; committing, by search, the conjunction of 48 and its narrowing consumer — the conjunction's
+  subtree is as endless as 48's; a registration at the callers' variable — at 55.2 and its callers the unions are head
+  variables down to the clauses of 72, 65 and 60, where a registration would have to compute 56's or 55's whole reading,
+  a counterpart's work.
+
+**What stays unresolved, never refuted.** A use of 48 with its output free and no narrowed socket at its clause; an
+output whose producer is called with it partly constrained (not a variant at its view), searched plainly; the least
+witnesses until task 496's builds; existential operands, by the residual rule. Nothing is refuted outside a discharged
+declaration, and nothing admits unresolved.
+
+**The builds** (rows R5d, R5e, R6b and R6c of the table below). R5c's brief (#586) changes so that its discharge takes
+the forms decided here: (1) each kind's discharge of #565's exchange premise is stated over a view — a per-site linear
+pattern and its pair rearrangement, with the laws R5d states (its evaluation commutes with the pattern's, and it is
+injective on the terms the pattern matches) — the identity and swap views R5's instances, so R5d instantiates it at any
+view and states no second copy; (2) the socket's discharge is stated with a class predicate N on the socket's output and
+at a kept answer that is any answer in N, R5's the instance at N = ⊤ with the least answer, so R5e instantiates it.
+
+**What the builds must respect**, beyond the entry's: a view reads a call's shape and where its variables occur, no
+value; carriers are read by the discharge alone, registrations by the construction alone, declarations by the search
+alone; the given's readers stay exactly as installed — no clause refined, restated or added, no rearranging clause
+installed; each declaration, carrier and narrowing comes from its notion's contract, and none is made that no contract
+supplies; unresolved is never refuted and never admits; #519's counterexample — a commitment refuting a true call — is
+the case each kind's control is checked against, and each control refutes a false call beside a resolved true one.
+
 ### What of the counterpart line stays
 
 | Piece | Standing | Role and reason |
@@ -16797,11 +16962,16 @@ evaluator stays exact and pays the enumeration.
 | R3 | Resolution (`Factor_Program_Resolution`): goals, the step (interface, head, premises, material premises through R1), the search (selection, pruning, goals resolved once, the bound), the result per call, the ground certificate, soundness through the finite proof checker | R1, R2, `Factor_Finite_Proof_Checking`, `Factor_Finite_Derivations` | about 220K |
 | R4 | Completeness and exactness (`Factor_Resolution_Completeness`): the lifting of derivations, pruning and goals resolved once kept, material completeness; `finite_program_resolution_exact`; the demand-level form and its equation with `finite_program_evaluation`; `native_call_resolution` and `native_call_resolution_exact`; controls: E1's control program (plain evaluation unavailable, resolved) and site 1, in one evaluation; REASONING_REUSE.md's row | R3, `Factor_Finite_Program_Evaluation`, `Factor_Finite_Native_Evaluation` | about 220K |
 | R5 | Committed choice (`Factor_Resolution_Commitments`): a class declared at a site's outputs and invariance at its consumers, the committed search, exactness kept | R4, `Presentation_Transport`, `Factor_Presentation_Classes` | about 180K |
-| R6 | The given's declarations: 79, 32, 6, 10, 45, 48 and the consumers their outputs reach in the given's readers, each from its notion's contract | R5 | about 150K |
+| R6 | The given's declarations: 79, 32, 6, 10, 45, 48 and the consumers their outputs reach in the given's readers, each from its notion's contract [corrected by task 585: R6 (#520, q107's answer) declares 32, 6 with 5 inside it, 10, 45, their material sockets and the consumers a contract states invariant, discharged at the notions' systems and not carried; the rest is R6b's and R6c's] | R5 | about 150K |
+| R5d | [Added by task 585.] Views and carriers (`Factor_Resolution_Commitments`, or a theory above it): the view of a term and of a pattern (a linear pattern and its pair rearrangement) with its laws; the declarations' record at views, R5's and R6's declarations restated at the identity and swap views; every test and obligation read through views, R5c's per-kind discharge instantiated at any view; `carrier_discharged`, the consumer its instance, a carrier from a presented function contract, `socket_discharged_carried`; in `Factor_Resolution_Controls`, a producer at a view with a free socket carried to its head (79's clause in small), a false call refuted and a true one resolved at five elements; REASONING_REUSE.md's committed-choice row | R5c (#586), R6 (#520) | about 200K |
+| R5e | [Added by task 585.] Narrowed sockets: `socket_discharged` with a class predicate N, R5's the instance at N = ⊤; a registration of a variable free after head unification, complete at a caller clause where its goal is a narrowed socket; the control: a 48-shaped union beside a distinctness consumer, a false call refuted and a true one resolved | R5d, W4a | about 150K |
+| R6b | [Added by task 585.] The given's declarations beyond R6's and the instantiation family's (79, 37, 12, 7, 39, 40, 29, 36, 42, 54; their sockets, consumers and the carriers 59, 51, 53 and 5), each discharged at its notion's system from its contract; all the given's declarations, R6's included, carried through #565's transfer to `given_program_system`, `given_rooted_readers_system`, `given_readers_program` and `given_program`; the control at the given's readers (79 at five roots, a false call refuted) | R5d, R6, #565 | about 200K |
+| R6c | [Added by task 585.] The instantiation family's declarations (50, 52, 55–65, 69, 72, 587; the carriers 46, 63, 55 at its scope, 584 and 586) and 48's (the registration at 48.0, the narrowed sockets at its eight uses), carried by the same transfer; the control (a pattern whose slots are unioned, a false call refuted) | R5e, R6b | about 220K |
 | R7 | The given at the guard's calls: 113, 80, 392 and 525 at the given as its own candidate, 505 and 590 at one of its definitions; the unresolved goals recorded (the least witnesses expected); seconds measured, E1's composition compared; the performance channel for a call past a held run | R4, R6 | about 150K |
 | R8 | The counterparts retired: the readers moved to their home, `Development_Native_State` re-cited, the counterpart theories removed with their rows and ROOT entries, REASONING_REUSE.md's rows re-cited; #487's remainder with it | after #483 | about 150K |
 
-R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6. R8 is independent of
+R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
+R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c]. R8 is independent of
 R1–R7 and follows #483. The least witness's builds follow the planner's decision. The route:
 
 - #397 (the posing) evaluates no reader entry: unaffected.

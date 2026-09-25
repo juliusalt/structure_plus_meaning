@@ -1324,6 +1324,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Audit_Counterparts
     Factor_Additions_Counterparts
     Development_Guard_Counterparts
+    Factor_Package_Reader_Counterparts
     Finite_Term_Word_Readers
     Required_History_Presentation
     Required_History_Execution

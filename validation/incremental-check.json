@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "40745da103536abc0da920b16a7ac3ff18acec193ba597a1b0c3ce89adede279",
- "checked_content_sha256": "0adb1cd45140753840535e317792a91dc8d5f71c5ed92f46af0fba18792ed707",
+ "base_receipt_sha256": "69e26d776393de61b329a47486f4a21a5ca934704c9f89cc823b558f6e290a23",
+ "checked_content_sha256": "8696b12ab1f3b81d6664b1c102e5ee0a9c1705e0c1677f6a91cdf69e6cf8467e",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,21 +17,30 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpm37yy9yg/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpi0k6k2ie/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.5,
+  "base_and_impact": 0.45,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 182.57,
-  "recipe_impact": 0.46,
-  "recipes_and_host_tests": 11.28
+  "proof": 234.34,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.43
  },
  "rebuilt_theories": [
-  "Factor_Material_Resolution",
-  "Factor_Resolution_Controls"
+  "Development_Bounded_Recording_Execution",
+  "Development_First_Problem_Asked",
+  "Development_Given_Counterparts",
+  "Development_Given_Execution",
+  "Development_Given_Installation",
+  "Development_Given_Program",
+  "Development_Given_Readers",
+  "Development_Native_State",
+  "Factor_Generation_Reader_Payloads",
+  "Factor_Reader_Payloads",
+  "Factor_System_Payloads"
  ],
  "recipes": {
   "allocated-environments": {
@@ -191,19 +200,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1895,
- "seconds": 253.22,
+ "reused_theories": 1887,
+ "seconds": 303.67,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1897,
+  "theory_count": 1898,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1897,
+ "theories": 1898,
  "validation_inputs": {
-  "ROOT": "6013b0fc8c06ca403f5943481c27a626dec271b5b87e9385742d1cd6b9ff4420",
+  "ROOT": "691f42ca91fb8b105d2f3b425f510cae13b8b20abeea2befc752802aab0cafdb",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

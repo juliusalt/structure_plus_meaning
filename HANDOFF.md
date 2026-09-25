@@ -55,7 +55,7 @@ on, all accepted:
   again; its premise observed by #569) → its builds, briefed by #570: T1 #571 (landed `fc20d72b`: positive meaning under a leaf map of
   program and argument, `Factor_Positive_Parametricity.positive_meaning_mapped`) ∥ T2a's first half #573 (landed
   `67c2af9b`: `Factor_Placeholder_Fill`, the fill and the readers below patterns at it, a forward transport) → T2a's
-  second half #575 (patterns to definitions through T1's map) → T2b #577
+  second half #575 (landed `885b2480`: `Factor_Placeholder_Schemas`, patterns to definitions through T1's map) → T2b #577
   (packages, the application and the least environments at the fill) → T3 #579 (the parametric cause) → P #581 (the
   parametric recording, before #399 and #443) → X′ #583 (the held recordings the posing's and RR5's reviews owe).
   RR5 #557 landed before it (`aba87519`: the listing policy's source a formed program); the posing #397 landed
@@ -132,7 +132,7 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The recording's #575 → T2b #577 → T3 #579 → P #581, the evaluator's W2b
+**Shape.** No build waits on a review task. The recording's T2b #577 → T3 #579 → P #581, the evaluator's W2b
 #567 → W4a #526 → rc #540 (and W4b #528) → R7 #542, and #565 → R5c #586 → R5d → rc (R6b before R7) each put
 #399 at 6; #399 → #401 → #407
 → #408 is 9, #399 → the record #553 → #447 → #449 → #450 is 10 (the record spliced in as detail, #544), so nothing is
@@ -142,8 +142,7 @@ placed when they are nearer.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The design #585
-first (it changes R5c, rc, R7 and #547); the recording's builds (#575, #577, #579, #581,
-#583); W2b #567; R5b #565 and R5c #586; W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
+first (it changes R5c, rc, R7 and #547); the recording's builds (#577, #579, #581, #583); W2b #567; R5b #565 and R5c #586; W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
 #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
 ## Decisions
@@ -438,6 +437,9 @@ What landed that open work builds on, a line each; how it went and each review's
 - **W2a** (#524, `ca95c190`): `Factor_Least_Collections`, the queries' answers, the least collection and its
   justification check, completeness under the premise `finite_pattern_lifting` (discharged by W2b); #525's follow-ups
   mailed to #567, #526 and #542, next-edits 211 and 212.
+- **T2a**'s second half (#575, `885b2480`): `Factor_Placeholder_Schemas`, patterns, premises, schemas and definitions
+  at the placeholder fill through T1's map, their `_exact` forms holding where E reads; #576's follow-ups mailed to #577
+  and #579, next-edits 213 and 214.
 
 ## Open
 
@@ -563,8 +565,9 @@ searches for a theory before briefing a task that edits it.
   `finite_pattern_lifting` discharged, the conflict re-add fixed, the value's presentation, one export); #526 (#525's 6:
   561's exactness up to identity); #542 (#525's 4: the second search per instance measured); #565 (#519's re-review: the correction (2)'s parenthetical,
   the second shape's conjuncts in the controls' lemma, the exchange's premises as `finite_socket_free` states them);
-  #575 (#574's review: T1's map of patterns over an
-  arbitrary target map, the placeholder's instantiating it directly); #579 and #581 (#574's review: T2b's collected
+  #577 (#576's review of #575, follow-ups 2 to 4: the package reading on E's and the
+  `_exact` forms, never a converse; the read fact moved if it edits the fill; the empty-R identity if needed); #579
+  (#576's 3); #579 and #581 (#574's review: T2b's collected
   sets at the placeholder's roots or under a named premise, discharged at the placeholder by T3 or P's guard; to #579
   the reuse row of the entry's (5)); #577's brief rewritten with #574's follow-ups 1 and 2 (the premise, the fill's
   commutation with `read_environment`, the entry's (2) corrected); #526 and #567 (#564's review: W2's

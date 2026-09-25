@@ -46,6 +46,7 @@ import time
 import build
 import execution_support as investigate
 import incremental_check
+import isabelle_places
 import proof_contexts
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -199,11 +200,26 @@ among loaded theories, every theory's complete imports and the code checks skipp
 
 
 DEFAULT_TIMEOUT = 60
-# The lower envelope of the 108 completed probes retained on 2026-09-24: the fastest took 10.9 s, and the
-# largest loads 641,602 bytes in 36.7 s and 526,261 in 33.1 s. Proofs can make a load slower than this, never
-# faster, so the estimate refuses only a load that cannot fit its bound; the timeout stays the backstop.
-STARTUP_SECONDS = 10
-BYTES_PER_SECOND = 25000
+# A probe's start on the base, by task 623's model (.build/tasks/623/result.md, "The estimate STARTUP_SECONDS should
+# give"; measured on base 20260926-015341-train617-583 at light load): start = START_SECONDS + SECONDS_PER_SESSION
+# x S + SECONDS_PER_GB x G, S the sessions of the base's chain above HOL (its directories), G the GB of the chain's
+# heap files down to Pure. A lower envelope: within about 1 s of every measured prefix of the chain and of a base of
+# one heap; contention only makes the start longer.
+START_SECONDS = 1.6  # the process at HOL: the JVM, Isabelle/Scala, Poly/ML's start (623's IC and IHS runs)
+SECONDS_PER_SESSION = 0.085  # Isabelle/Scala's session dependencies, per session of the chain (IBS - IHDS)
+SECONDS_PER_GB = 1.5  # Poly/ML's load of the chain's heaps, per GB of heap file (PB - PC)
+# The rate of a load past the start, re-derived by task 625 (.build/tasks/625/derive.py) from the 504 completed
+# probes retained under .build/tasks/ on 2026-09-26 (their probe.summary.json, over 92 bases whose chains stand in
+# the store), each probe's start computed by the model above for its own base and subtracted from its seconds. Over
+# the 367 probes whose load past the start exceeds 5 s (five times the model's accuracy), the fastest loaded
+# 394,188 bytes in 11.1 s: 35,512 bytes per second. At 36,000 no such probe is estimated above its measured seconds;
+# 13 small loads (at most 239,484 bytes) are estimated 1-2.6 s above, where the start's accuracy dominates. Proofs
+# make a load slower than this, never faster, so the estimate refuses only a load that cannot fit its bound; the
+# timeout stays the backstop. (The earlier 25,000 was drawn with a constant start of 10 s.)
+BYTES_PER_SECOND = 36000
+ISABELLE_HOME = Path('/opt/isabelle')
+HEAPS = isabelle_places.USER_HOME / '.isabelle/Isabelle2025-2/heaps/polyml-5.9.2_x86_64_32-linux'
+SESSION_ENTRY = re.compile(r'^[ \t]*session[ \t]+"?([^\s"(=]+)"?[^=\n]*=[ \t]*(?:"?([^\s"+]+)"?)?', re.M)
 
 
 def base_context(base, verify=False):
@@ -237,10 +253,50 @@ theory: an excluded theory comes from the heap with the heap's imports, so no co
     return sorted((above & below) - set(changed_base) - set(loaded) - set(excluded))
 
 
-def load_estimate(paths):
-    """Seconds a load of these sources is expected to take: the session's start and a rate of bytes."""
+def session_parents(directories):
+    """Each session the ROOT files of these directories declare, with the parent it names (None for none)."""
+    parents = {}
+    for directory in directories:
+        root = Path(directory) / 'ROOT'
+        if root.is_file():
+            parents.update((name, parent or None) for name, parent in SESSION_ENTRY.findall(root.read_text()))
+    return parents
+
+
+def distribution_directories():
+    """The session directories of the Isabelle distribution, as its ROOTS file lists them."""
+    roots = ISABELLE_HOME / 'ROOTS'
+    lines = roots.read_text().splitlines() if roots.is_file() else []
+    return [ISABELLE_HOME / line.strip() for line in lines if line.strip() and not line.startswith('#')]
+
+
+def session_chain(session, directories):
+    """The session and its ancestors down to Pure: by the base's ROOT files, then the distribution's."""
+    parents, distribution = session_parents(directories), None
+    chain = []
+    while session is not None and session not in chain:
+        chain.append(session)
+        if session not in parents and distribution is None:
+            distribution = session_parents(distribution_directories())
+        session = parents[session] if session in parents else distribution.get(session)
+    return chain
+
+
+def modeled_start(context):
+    """A probe's start on the base by task 623's model: its seconds, the chain's sessions above HOL (the base's
+directories) and the GB of the chain's heap files in the store."""
+    sessions = len(context['directories'])
+    heaps = [HEAPS / name for name in session_chain(context['session'], context['directories'])]
+    gigabytes = sum(heap.stat().st_size for heap in heaps if heap.is_file()) / 1e9
+    return round(START_SECONDS + SECONDS_PER_SESSION * sessions + SECONDS_PER_GB * gigabytes, 1), sessions, gigabytes
+
+
+def load_estimate(paths, context):
+    """Seconds a load of these sources is expected to take on the base: its modeled start and a rate of bytes;
+the start, its sessions and GB returned beside the estimate and the bytes."""
     size = sum(Path(path).stat().st_size for path in paths)
-    return round(STARTUP_SECONDS + size / BYTES_PER_SECOND, 1), size
+    start = modeled_start(context)
+    return round(start[0] + size / BYTES_PER_SECOND, 1), size, start
 
 
 def last_command(text):
@@ -323,20 +379,23 @@ def probe(base, work, targets, loaded, substitutions, prelude, parallel_proofs, 
     closure = investigate.import_contexts(imports, targets) if targets else set(loaded)
     order = ordered({n: i for n, i in imports.items() if n in closure})
     skipped = {name: skipped[name] for name in order if name in skipped}
-    estimate, size = load_estimate([directory / (renamed.get(name, name) + '.thy') for name in order])
+    estimate, size, start = load_estimate([directory / (renamed.get(name, name) + '.thy') for name in order], context)
     common = {'base': str(base), 'session': context['session'], 'order': order, 'advanced': [],
               'from_tree': renamed, 'intermediate': intermediate, 'new': sorted(new & loaded),
               'not_rechecked': not_rechecked, 'stale_heap_imports': stale, 'skipped_code_checks': skipped,
               'estimate_seconds': estimate, 'estimate_bytes': size,
+              'estimate_start': {'seconds': start[0], 'sessions': start[1], 'heap_gb': round(start[2], 3)},
               'parallel_proofs': parallel_proofs, 'timeout': timeout,
               'substituted': substitutions, 'prelude': {name: str(path) for name, path in sorted(prelude.items())},
               'from_heap_despite_change': sorted(set(differing) - loaded - set(substitutions)),
               'from_heap': sorted(from_heap), 'summary': str(work / 'probe.summary.json')}
     if estimate > timeout:
         refusal = ('The probe is refused before it loads: its load of %d theories (%d bytes) is estimated at '
-                   '%s s, past its bound of %s s; the chain it would load is %s%s. Ask for the repository '
-                   'check instead, or give the probe a longer --timeout as a measurement.'
-                   % (len(order), size, estimate, timeout, ' -> '.join(order),
+                   '%s s, past its bound of %s s: the start on the base modeled at %s s (%d sessions above HOL, '
+                   '%.2f GB of heaps) and %d bytes at %d bytes per second; the chain it would load is %s%s. Ask '
+                   'for the repository check instead, or give the probe a longer --timeout as a measurement.'
+                   % (len(order), size, estimate, timeout, start[0], start[1], start[2], size, BYTES_PER_SECOND,
+                      ' -> '.join(order),
                       ('; its intermediates: ' + ', '.join(intermediate)) if intermediate else ''))
         summary = common | {'refused': refusal, 'loaded': False, 'certified': [], 'exit': None, 'seconds': 0,
                             'timed_out': False, 'marker': None, 'last_command': None, 'cause': None,

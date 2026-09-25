@@ -2,10 +2,10 @@
  "boundary": "Complete original source, requirements and terms determine each full decision and its exact target-certificate replay family. Every native graph, call, extending and retained environment, original-condition assessment, comparison and revision is reproduced. Derived sharing preserves the complete public reports. This scoped composition does not establish whole-workflow enforcement, original-policy and historical permission, complete subject and criticism coverage, physical cost or genesis.",
  "complete_recipe_source_manifest": "decision-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "79c17967a7e52d289774bee810ca7cc28842a063d607d684cc8993122d90cbb4",
+  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
   "records": 1,
   "reports_equal": true,
-  "seconds": 8.19,
+  "seconds": 7.09,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "09218c7f6044e81b3bdc5167d0f4d31668eb544a6c89b91ca8394e17c7155938",
+   "module_sha256": "84abadd6b9f3a2d5b2c999a472cf4630e99e10abc6f41deb6376131a63e76aa4",
    "subject_contracts": {
     "decision_replay_investigation.yxml": "145aa44dfd8203223be34a9be5a428fd7a6f571b565c9c3b4321371a987958b2"
    },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "93f2a6cf86fd545aff3f72cbbf8ce4e42b48a0dac563f6d12d9f243d84d56d19",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "09218c7f6044e81b3bdc5167d0f4d31668eb544a6c89b91ca8394e17c7155938"
- },
  "recipe": "decision-replay",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "cf7278a7906d230a20da9ead87ee5473010bf7ea66950d321f2dab432744d13d",
+ "source_manifest_sha256": "661ec3498f8cd07268a3fa0aca9001408386341085dd96991df141b0cc15fe06",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 8.08881715501775
+   "seconds": 6.99221612198744
   }
  ]
 }

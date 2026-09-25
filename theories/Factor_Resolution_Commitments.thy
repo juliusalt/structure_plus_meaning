@@ -754,6 +754,46 @@ proof -
   show ?thesis unfolding finite_declared_commitment_def no_commitment_def c m ..
 qed
 
+text \<open>
+  A committed call's input is ground as the call stands: the direct test and the socket test both demand it. The
+  exchange quantifies over every supported state, and output equivalence relates a producer's answers at one input
+  only; a variable of the input held by another pending goal could be bound otherwise by the sub-search than by the
+  support, but no committed input holds one, so every grounding gives it the one value the call states.
+\<close>
+
+lemma finite_declared_commitment_input_ground:
+  assumes committed: "commit_call (finite_declared_commitment D) F st g"
+  obtains q r d x y where "g = Resolution_Call_Goal q r d (Finite_Pattern_Pair x y)"
+    "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+proof -
+  from committed have c: "finite_direct_commitment D F st g \<or> (resolution_is_call g \<and> finite_socket_commitment D F st g)"
+    by (simp add: finite_declared_commitment_def)
+  show thesis
+  proof (cases g)
+    case (Resolution_Call_Goal q r d p)
+    show thesis
+    proof (cases p)
+      case (Finite_Pattern_Pair x y)
+      show thesis using c that Resolution_Call_Goal Finite_Pattern_Pair
+        by (auto simp: finite_direct_commitment_def finite_socket_commitment_def)
+    qed (use c Resolution_Call_Goal in \<open>simp_all add: finite_direct_commitment_def finite_socket_commitment_def\<close>)
+  next
+    case (Resolution_Material_Goal q r M)
+    then show thesis using c by (simp add: finite_direct_commitment_def)
+  qed
+qed
+
+corollary finite_declared_commitment_input_value:
+  assumes committed: "commit_call (finite_declared_commitment D) F st (Resolution_Call_Goal q r d (Finite_Pattern_Pair x y))"
+  shows "resolution_value \<theta> x = resolution_value \<theta>' x"
+proof -
+  obtain q' r' d' x' y' where g: "Resolution_Call_Goal q r d (Finite_Pattern_Pair x y) =
+      Resolution_Call_Goal q' r' d' (Finite_Pattern_Pair x' y')" and ground: "finite_pattern_variables x' = {||}"
+    by (rule finite_declared_commitment_input_ground[OF committed])
+  from g ground have "finite_pattern_variables x = {||}" by simp
+  then show ?thesis by (auto intro: resolution_value_cong)
+qed
+
 corollary finite_declared_resolution_none:
   "finite_committed_resolution \<kappa> (finite_declared_commitment no_declarations) P d t n = finite_program_resolution \<kappa> P d t n"
   "finite_committed_demand no_witness_construction (finite_declared_commitment no_declarations) P D n =
@@ -1191,7 +1231,7 @@ qed
 
 theorem finite_committed_demand_exact:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
-    and exchanges: "\<And>d t. finite_commitment_exchanges (\<lambda>_. False) \<kappa> K P"
+    and exchanges: "finite_commitment_exchanges (\<lambda>_. False) \<kappa> K P"
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and result: "finite_committed_demand \<kappa> K P D n = Some A"
   shows "schema_system_formed (decode_finite_system P)"

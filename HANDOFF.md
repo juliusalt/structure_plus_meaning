@@ -51,12 +51,15 @@ on, all accepted:
   RR4 #536 (landed `0284b0ae`: the policy package read once, the formed path, R's formation derived from the term's;
   1.07 s at 32K, 33.6 µs per address, 52–80 s estimated at the given's value) → X #538 (landed `e7c53a09`: the first generation executed held at the
   given's value, 111.3 s against the gate's 53 s, every step growing n^1.3–1.5 from 32K) → the growth attributed
-  (an investigation) → the decision the entry's trigger asks (certification parametric in the literal or further
-  refinement; the posing's payload, twice the given's; the design #560 after the attribution #559). RR5 #557 landed
-  before it (`aba87519`: the listing policy's source a formed program, about 75 s estimated at the given, shared);
-  the posing #397 landed (`69c3bfd3`), its recording at the given (about 326 s estimated, 173 µs per address) a
-  remainder the design's builds place; #562, continuing it, states the recording citing one generation once, before
-  #399 and #443. Each build with its review.
+  (#559) → the design #560 (landed `36f54516`: certification parametric in the literal, the posing holding the given
+  again; its premise observed by #569) → its builds, briefed by #570: T1 #571 (positive meaning under a leaf map of
+  program and argument, in `Factor_Positive_Parametricity`, a whole rebuild) ∥ T2a's first half #573 (the placeholder
+  fill and the readers below patterns) → T2a's second half #575 (patterns to definitions through T1's map) → T2b #577
+  (packages, the application and the least environments at the fill) → T3 #579 (the parametric cause) → P #581 (the
+  parametric recording, before #399 and #443) → X′ #583 (the held recordings the posing's and RR5's reviews owe).
+  RR5 #557 landed before it (`aba87519`: the listing policy's source a formed program); the posing #397 landed
+  (`69c3bfd3`), its recording at the given X′'s to measure; #562, continuing it, states the recording citing one
+  generation once, before #399 and #443. Each build with its review.
 - Then the answer's judgment and admission #399, its transport #401, the verification's native half #403 and its
   harness #407 (after the frame and its fixes, landed). The first request (#523's corrected #443, divided by #544,
   `.build/tasks/544/result.md`): the request program #545 (landed `5e6409e4`), the request at the given #547 (support,
@@ -81,7 +84,9 @@ kept, its certificates checked by the finite proof checker, q98, W1's constructi
 are formed, q99), and R4 #505 (`4f5e6307`: completeness, `finite_program_resolution_exact` and
 `native_call_resolution_exact`, the demand-level and native forms, at `no_witness_construction`: their extension over a
 construction is W4a's, #506's follow-up 1), landed; R5 #518 (committed choice under a declared presentation class: the
-committed search with barred pruning, its soundness and forms, q105), R5b #565 (their exactness: the lifting at a
+committed search with barred pruning, its soundness and forms, q105; re-planned after #519's review found a socket
+commitment without the kept head refuting a true call, the test narrowed to a focus root whose parent's call output is
+a variant of its head output), R5b #565 (their exactness: the lifting at a
 barred support over #563's, the exchange, the forms over any construction, the transfer; after R5 and #563) and R6
 #520 (the given's declarations at 79, 32, 6, 10, 45 and 48 from their notions' contracts, after R5, before
 #399 and #443), each with its review; the combined contract rc #540 (`Factor_Committed_Registrations`: the
@@ -93,11 +98,15 @@ answer to Q28 (10:44) — checkers do not produce — and #496's entry, "A check
 are collected from the given's own readers beside the search, and the given's readers check them as installed": a
 witness construction beside R3's search (W1, in R3), the least collection of the given's own readers' answers (W2),
 each registration's completeness (W3 #513, landed) and the given's four registrations (W4); an admission is the given's check,
-a refusal rests on a complete registration: W2 #524 (the least collection, after R4; its completeness from the premise
-`finite_pattern_lifting`, q104), R4's pattern-root forms #563 (continuing R4, beside W2: R3b's invariant at a pattern
-root, the answer-preserving lifting that discharges W2's premise, item 5's generator and its row), W4a #526 (a
-registration's completeness and the resolver with complete registrations exact, the four registrations each returning
-formed values, relocation; after W2, #563, W3 and R4) and W4b #528 (the given's registrations, the controls, the reuse row), each with its
+a refusal rests on a complete registration: W2a #524 (the queries' answers, the least collection and its
+justification check, after R4; its completeness from the premise `finite_pattern_lifting`, q104; re-planned over the
+theory its first session left partial in its tree, `.build/plans/plan-75/r524-first.md`), W2b #567 (the registrations,
+the construction from them with formed values and the resolution with hand-ins, extending W2a's theory after it
+lands), R4's pattern-root forms #563 (continuing R4, beside W2a; re-planned over the work its first session left in its
+tree, `.build/plans/plan-75/r563-first.md`: R3b's invariant at a pattern root, the
+answer-preserving lifting that discharges W2a's premise, item 5's generator and its row), W4a #526 (a registration's
+completeness and the resolver with complete registrations exact, the four registrations each returning formed values,
+relocation; after W2b, #563, W3 and R4) and W4b #528 (the given's registrations, the controls, the reuse row), each with its
 review. #399 waits on R7 and #547 on rc, both on R4, R6 and W4b; #549 and #551 wait on R7, #403 and #553 through
 #399.
 
@@ -117,18 +126,20 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The evaluator's chain W2 #524 → W4a #526 → rc #540 (and W4b #528) → R7
-#542 → #399 → #401 → #407 → #408 is 8 deep; #399 → the record #553 → #447 → #449 → #450 is 9, the record spliced in
-as detail (#544); the attribution #559 → the design #560 → the posing's recording is no deeper. The approval build
-(Open 142) after #407 and #447 (7 each) fits with its review, and is placed when they are nearer.
+**Shape.** No build waits on a review task. The recording's T1 #571 → #575 → T2b #577 → T3 #579 → P #581 and the
+evaluator's W2a #524 → W2b #567 → W4a #526 → rc #540 (and W4b #528) → R7 #542 each put #399 at 6; #399 → #401 → #407
+→ #408 is 9, #399 → the record #553 → #447 → #449 → #450 is 10 (the record spliced in as detail, #544), so nothing is
+added after #450. The approval build (Open 142) after #407 and #447 (8 each) fits with its review at 10, and is
+placed when they are nearer.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
-and a review standing where its review task stands, so every review stands right after its build. The recording's
-attribution #559 and the design #560 first; the evaluator's W2 #524, R5 #518, #563 and R5b #565 (the longest
-chain and the owner's direction, their checks first on the machine); the one-citation recording #562; W4a
-#526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399,
-the samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
+and a review standing where its review task stands, so every review stands right after its build. The recording's T1
+#571 first (a whole rebuild, heading the queue while it checks so that no other heavy run starts beside it) and T2a's
+first half #573, the recording's chain being now the longest; W2a #524 and #563 in flight, W2b #567, R5 #518
+(re-planned, a build's slack), the recording's later builds (#575, #577, #579, #581, #583); R5b #565, W4a #526, R6
+#520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
+#551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
 ## Decisions
 
@@ -395,6 +406,21 @@ What landed that open work builds on, a line each; how it went and each review's
   argument not demanded, parts (h) and (e) the owner's, Q25), #451 (`.build/tasks/451/result.md`: the readings of
   "generation" and "adoption" generated, the owner's words naming readers).
 
+- **The one-citation recording** (#562, `c18f51b7`): `Development_Owner_Records.development_citing_row_generation`
+  (a generation citing one row, its contract `_recorded`, `_certified` taking only the cited row's reading), with
+  `development_owner_approval` and `Development_First_Problem.development_citing_generation` its instances;
+  `Development_First_Problem_Execution` makes no payload at load (7.6 s, the owner records' read-back at every load),
+  the posing compiled by its caller (`First_Problem_Execution.posing record cite report payload`);
+  `Development_Native_State_Execution` evaluates nothing at build. The route's records (#399, #403, #443, #553) cite
+  `development_citing_row_generation_certified`.
+
+- **The recording at scale** (#560, `36f54516`; its entry, "The listing policy is certified once at the empty artifact, and each
+  payload fills it: certification parametric in the literal"): the listing policy certified once at the empty artifact
+  (K0, its certificate and closed replay, J0, C0), each payload's policy constructed and checked equal to the
+  placeholder's fill, the cause `Whole C0` for every payload; the gate 20 µs per payload address held; the posing holds
+  the given again; the builds T1 ∥ T2a → T2b → T3 → P → X′, P redefining `development_indexed_generation` with its
+  contracts' statements unchanged.
+
 ## Open
 
 The owner's questions, a line each (their words and the provisional choices in full are in the ledger):
@@ -491,7 +517,8 @@ The owner's questions, a line each (their words and the provisional choices in f
    with the theory; the probe cost of a change to `Factor_Package_Closure_Admission`; the active base's unlanded
    theories taken from the heap by the tool; the comment's "lower envelope"; skipped code checks extended at first use;
    the prelude route offered by the tool; a refusal naming `--from-heap`; a probe loading `Native_Collection_Programs`'
-   dependents passes 60 s — a longer bound or an intermediate heap at a measured need.
+   dependents passes 60 s, and so does a change of both resolution theories, Acceptance and Completeness (about 120 s,
+   #563, whose check of the combination is its probe) — a longer bound or an intermediate heap at a measured need.
 29. `REASONING_REUSE.md`'s open comparisons (#280's follow-ups): the ordered comparison factored at its next use; the
    six grammars' retention theorems against one statement over `RRA_Read_Environment` (`problems.txt` condition 3); the
    known-predecessor refinements against `Established_Premises`; ordinary clause profiles against `native_rule_law`.
@@ -501,22 +528,25 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **What the next events ask**: the attribution #559 is accepted (a superlinear walk of R above all, its count mostly
-  constant; certification parametric in the literal would remove 69.5 s of the steps' 76.9 s), so the design #560 can
-  start; its result decides the recording at scale and the posing's payload
-  (holding the given again or citing the first generation): then the posing's recording at the given or its re-pose
-  is placed (#397 landed, the held measurement of its `posing ()` owed: #398's follow-up 2), with a held run at
-  the given once the next share lands, which fixes
-  RR5's shared estimate (#558's follow-up 1); #558's follow-ups 5 and 6 are next-edits 193 and 198, 3 is 192. R7
+- **What the next events ask**: the recording's builds from #560's entry are placed (#570's proposal, #571–#584),
+  carrying #569's probe cost (54.5 s shared against the entry's 25 s: P's probe under a shared claim at a longer
+  bound) and its untested case (a payload equal to an artifact J0 holds elsewhere is filled and recorded as any other,
+  its cause C0); #573's edge on #569 is taken out, its result a file input; P #581 is spliced before #399 and #443,
+  X′ #583 holds the measurements #398's (follow-up 2) and #558's (follow-up 1) reviews owe. R5 #518 came back
+  rejected after its fix round (#519's review, findings 1 and 2) and is re-planned over its tree, its first session's
+  window having ended; the review's other follow-ups are mailed (below) and next-edits 205. #558's follow-ups 5 and 6
+  are next-edits 193 and 198, 3 is 192. R7
   (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **Mailed, read by each task's first session** (by task): #560 (#558's review, follow-ups 1-4: RR5's shared
-  figures and the held run that fixes them, S1's superlinearity inside `finite_extend_native_formed`, the remaining
-  shares, the marked correction naming task 557; the posing's landing and its owed held measurement; #561's follow-up 1, a base generation's cause
-  independent of its payload); #399, #403, #443 and #553 (their one-citation generations through #562's
-  recording); #399, #549 and #551 (#398's follow-up 4: `finite_program_entry_presented` moved at its second use);
+- **Mailed, read by each task's first session** (by task): #399 (#569's follow-up, its probe's cost); #520 and #565
+  (#519's review: a socket's discharge at the traversal shape from the reader's totality, whichever states it first;
+  to #520 the recursive reader declared a producer, to #565 the exchange's premises and ranks chosen afresh after each
+  commitment); #542 (#519's review: how often the given's calls end at a barred cut, and the steps where commitments
+  nest); #399, #403, #443 and #553 (their one-citation generations through #562's
+  recording, `development_citing_row_generation_certified`; the first to build adds it to REASONING_REUSE.md's row
+  "Record through existing predecessors"); #399, #549 and #551 (#398's follow-up 4: `finite_program_entry_presented` moved at its second use);
   #526 and #540 (#506's follow-ups 1 and 7: the resolver's forms over a construction, W4a's; the helpers' home); #526
   (q104: W2's premise `finite_pattern_lifting` discharged by #563's lifting); #528 (the generator row is #563's); #519, #520 and #540 (q105: R5's scope divided, its exactness R5b's; the declarations' obligations; the barred lifting over #563's); #542 (#506's follow-up 5: a table of resolved goals across a demand); #551 (#506's follow-up 6:
   resolution at `criticism_calls` an exact S1 table); #526 (#515's review, follow-ups 3 and 6);
@@ -528,7 +558,7 @@ searches for a theory before briefing a task that edits it.
   earlier gaps in `PLANNING_LOG.md`, 2026-09-24): `v2.py read check:167` raises a TypeError in `check_text`;
   `measuring --shared` wrote no `measurements.log`, and a timed claim after a refused one left no line (#536); bases swept before a brief's task ran (#324); the finalizer's push of
   `82a065cd` failed; the finalizer should commit the handed-over files only (#303); the exclusive hold outlasts its run
-  (#317); a re-review writes over its first verdict (#65, #302, #438; #461's accepting review's follow-ups lost with it); `v2.py ledger` records a text beginning with `--`
+  (#317); a re-review writes over its first verdict (#65, #302, #438, #562; #461's accepting review's follow-ups lost with it); `v2.py ledger` records a text beginning with `--`
   (Q15); a task tree's owner ledger is main's stale copy (#386's review, follow-up 4); a queued exclusive claim granted
   after the base advanced refuses the probe launched at the grant (#425: pin `--base` at the claim); the restated check
   misses a restatement differing only by variable names or a fixed type (#411); `probe_runs` locates a skipped
@@ -536,7 +566,8 @@ searches for a theory before briefing a task that edits it.
   beside another heavy run exhausted Poly/ML's store (#483's review): such a check could run alone; a brief task could not
   read a sibling brief's delivered brief under `.build/tasks/522/brief/` (#523's result); a theory removed from ROOT leaves
   a blank line (#509's review); a session parked for the machine is woken every half minute while another task's
-  exclusive claim waits (#559); sessions go cold while parked — #515's twice (14:15, its check never run; 15:04,
+  exclusive claim waits (#559); an investigation accepted with nothing to commit whose tree holds only a merge of main
+  keeps what waits on it from starting (#559, #560: the edge taken out); sessions go cold while parked — #515's twice (14:15, its check never run; 15:04,
   before writing anything) — and a planner between events before its notes (plan-72, 15:16). Classifier stops are the
   run's to handle, not ledger questions (the owner, 20:23 and 20:28).
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

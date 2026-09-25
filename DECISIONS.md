@@ -16374,6 +16374,12 @@ reader reads syntax at a use holding it. Three rules follow, each an instance of
   its condition, the alignment's equality of the package environments included, hold by the replay's and the bounded
   quotation's contracts (`development_bounded_condition_established`), so the path computes neither. The ground and
   guard programs' formations of the literal, inside the installation constructors, stay.]
+  [Corrected (task 557, RR5; recorded by task 560): on the recording's formed path they no longer stay:
+  `finite_extend_native_formed`, `finite_ground_source_formed` and `finite_formed_source_requirements` make neither the
+  programs' formations nor their agreement, the policy's source read once as a formed program
+  (`development_formed_policy_judgment`, code equation `development_indexed_generation_formed`). After "The listing
+  policy is certified once at the empty artifact …" below (task 560), the policy's source at the payload is the only
+  construction the recording makes at R.]
 - *(b) A position is asked at its use.* A position query at a site is answered by the artifact at the site's use and
   its carrier's membership — `Carrier_Indexes`, the use the key — never by enumerating `finite_environment_positions`,
   which lists R's carrier with every other artifact's.
@@ -16392,7 +16398,10 @@ replay the largest. At the given's size that is still far beyond a held run by #
 1,000 s): the bounded scope is necessary and not sufficient, and rules (a)–(c) carry the rest. The gate the refinements
 answer: the whole recording at most 60 µs per payload address at 32K and at the given's value, the payload's own
 quotation (7–10 µs per address) included — about 53 s for the first generation and about twice that for the posing,
-whose payload presents the given and the asked relation's program, each within a held run.
+whose payload presents the given and the asked relation's program, each within a held run. [Corrected by "The listing
+policy is certified once at the empty artifact …" below (task 560): after R and RR5 (task 557) the recording took about
+77 s held at the given (#559) against this gate; the gate is restated there, at most 20 µs per payload address, and met
+by certifying the policy once.]
 
 ### (3) The route's generations
 
@@ -16463,7 +16472,9 @@ whose payload presents the given and the asked relation's program, each within a
   held run, and at most 60 µs per payload address. #397 then executes the posing in its own acceptance (4) — within a
   held run, its payload about twice the given's — built on B2's recording.
 
-The chain is B1 → B2 (after #484) → I3 → R → X → #397.
+The chain is B1 → B2 (after #484) → I3 → R → X → #397. [Corrected by "The listing policy is certified once at the
+empty artifact …" below (task 560): after X and RR5 (task 557), T1 ∥ T2a → T2b → T3 → P → X′, X′ recording the given
+and the posing held.]
 
 ### (5) Distinctions, reliances and what stays fixed
 
@@ -16509,7 +16520,9 @@ read by the Factor readers, and the bounded scope is equivariant under use permu
 - **Certification parametric in the literal** — the policy form certified once at the placeholder and filled per
   payload. F0 is already the same for every payload, so what would remain is a proof that the readings at the fill are
   the readings at the placeholder with the literal substituted, a substitution transport of every reader the replay
-  reads (package, application, graph, replay). Its trigger: X's gate failing after R.
+  reads (package, application, graph, replay). Its trigger: X's gate failing after R. [Corrected by "The listing
+  policy is certified once at the empty artifact …" below (task 560): the trigger held and the remedy is taken; only
+  the package and application readers are transported, the replay supplied by `native_positive_replay_total`.]
 - **Later generations' payloads as increments** — the posing holding only the asked relation and reaching the given
   through a predecessor: which predecessor is the given is a distinction the least form does not have, part of the
   first problem's answer.
@@ -17142,7 +17155,8 @@ value (`native_state_first_generation_recording`).
   quadratically; the shares are those at 32K (#536: 35, 26, 31 %). I3 estimated 400–780 s before R and about 90 s after
   rules (a) and (c); #536 estimated 52–80 s. The entry's trigger for certification parametric in the literal ("Weighed and
   not taken": X's gate failing after R) holds: the choice between it and a further refinement of S1–S2 (RR5) is the
-  planner's.
+  planner's. [Corrected by "The listing policy is certified once at the empty artifact …" below (task 560): RR5 (task
+  557) took S1–S2 to about 3 s; certification parametric in the literal is taken there and the gate restated.]
 - *One cause.* The cause of the owner record of 18:53, of the given's value cut at 8,013 and 32,009 addresses and of the
   given's value itself is one target of 3,437 carrier addresses (runs 1–3); the recording returns a generation.
 - [Corrected in part by task 561, from #539's review, follow-ups 4, 5 and 7: the cuts are cuts of the given's value, so
@@ -17150,6 +17164,9 @@ value (`native_state_first_generation_recording`).
   every build the recording without the given and records the owner record of 18:53, and the 8K and 32K controls run
   where a caller compiles the given, with results unchanged. `Development_Bounded_Recording_Execution` imports
   `Development_Native_State` alone.]
+  [Note (task 560), from #562 (`c18f51b7`) and its review: `Development_Native_State_Execution` compiles and evaluates
+  nothing at build since #562 removed its per-build owner control; the owner records are read back at every load of
+  `Development_First_Problem_Execution` (7.6 s), and the recurring cost stated below for X is superseded.]
   *B2's review follow-up 7, decided.* The 32K control is kept: it controls, with the owner record and the 8K cut, that
   three payloads share one cause target at every build, which X's given does only in a held run. Its evaluation moved
   from `Development_Bounded_Recording_Execution`'s `value` into X's one compilation (`development_bounded_recording_controls`
@@ -17162,3 +17179,238 @@ value (`native_state_first_generation_recording`).
   recipe reaches the changed theories, so no word changed.
 
 Recorded 2026-09-25 (task 538).
+
+## The listing policy is certified once at the empty artifact, and each payload fills it: certification parametric in the literal
+
+Task 560, a design, from X's gate failing after R ("The native state's first generation recorded held: 111 s at the
+given's value, twice the gate", task 538), RR5 (#557, `aba87519`) and the attribution #559 (`.build/tasks/559/result.md`,
+accepted `.build/plans/plan-74/v559.md`). Task 482's entry named this remedy under "Weighed and not taken", its trigger
+X's gate failing after R; the trigger holds. The owner, 2026-09-18: "If some tool call is taking a lot of time and will
+be required in the full design or is in a critical development path and you have to wait for it, fix its performance
+issues rather than waiting for it"; and the first-use rule (`problems.txt`): "A generalizable argument must be factored
+into reusable content at its first use. A later use should instantiate that content, with its actual prerequisites,
+rather than reconstruct the argument." This entry decides how a route generation's cause is certified at scale, the
+posing's payload, the gate, and the builds. It changes no theory and no word.
+
+### (1) What the recording repeats at every payload
+
+Held, at the given's value (882,621 addresses), after RR5 (#559's run C for S1 and S3–S5, X's run 2 for the rest):
+
+| step | seconds | R's walks (#559) | under this decision |
+|---|---|---|---|
+| S0 the payload's quotation | 3.3 | one, its own growth n^1.21 | stays |
+| S1 the listing policy's source at R (RR5's formed path) | 2.7 | the compiler's checks, about one formation | stays: the policy at R, checked |
+| S2 requirements; S3 package read and demand | 0.0 | none | — |
+| S3–S4 the certificate's proofs (`finite_program_proofs`) | 32.0 | about 87 comparisons (or 11 formations) of calls holding R | once, at the placeholder |
+| S5 the graph's placement: premise readings 10.7, representative map 2.5, positioned and mapped graph 5.1, readiness 5.7, compilation and installation 13.5 | 37.5 | formations, node comparisons (n^1.64), a residual growing beyond its unit (12.3 s) | once, at the placeholder |
+| S5 the replay environment; S6 the bounded quotation | 1.0 + 1.0 | — | once, at the placeholder |
+| S8 the recording | 0.0 | — | stays |
+
+The steps sum to 76.9 s (#559) against the gate's 53 s. #559's finding: the count of walks per step is mostly constant
+and each walk costs more per address as the payload grows (R's words per address grow with the compact addresses'
+length, the time per word beyond the caches), so no refinement makes the recording linear; it can cut the count. Of the
+76.9 s, S3–S6 (71.5 s) derive, place and replay a certificate that is at every payload the same derivation with another
+literal: the listing policy's entry holds of its own listed payload. Each recording reconstructs that argument.
+
+### (2) The decision: certification parametric in the literal
+
+**The placeholder and its fill.** The placeholder is the empty artifact, the one F0 already holds at V (task 482's (2)).
+`placeholder_fill E R` is `payload_fill E {u. artifact_at E u empty_artifact} R`: every use holding the empty artifact
+filled by R, every binding kept; `placeholder_target R` maps the target `Whole_Artifact empty_artifact` to
+`Whole_Artifact R` and fixes every other target. The empty artifact has no carrier, so at a use holding it no reader
+reads syntax (every syntax reader reads an address of its artifact's carrier), no binding has its source (a bound slot
+lies in its source artifact's carrier) and no occurrence target stands (an anchor's address lies in the carrier): a
+reader observes it only as the whole target of an external whole citation. Filling every use that holds it — never a
+chosen subset — therefore changes each reading by `placeholder_target R` on its targets and in nothing else.
+
+**What is certified once.** The listing policy's judgment at the placeholder, `development_bounded_policy_judgment
+[Finite_Target (Finite_Whole finite_empty_artifact)] finite_empty_artifact`: the policy K0 listing the empty artifact,
+its certificate, its closed native replay at B0 checked by the native checker (`finite_native_certificate_replay`,
+`certificate_replay_literal_ready`), the least judgment environment J0, V0 the uses of J0 holding the empty artifact (so
+F0 = J0), and the bounded cause C0. It costs what the owner record's recording costs, milliseconds, once where the
+recording's code is compiled.
+
+**What each payload instantiates.** At a payload R, formed (the quotation's contract from the term's formation, rule
+(a) of task 482 as RR1 established it): the policy at R, K_R = `development_policy_source_with [Finite_Target
+(Finite_Whole R)]`, is constructed (RR5's formed path) and checked equal to `placeholder_fill K0 R`; the generation is
+recorded with locus and payload `Whole R` and cause `Whole C0` by `finite_construct_formed_cause_generation`, as now.
+Its scope is `placeholder_fill J0 R`, which is `payload_fill J0 V0 R`, the bounded scope B1 states: the cause and the
+payload determine it, and it is never computed.
+
+**Why the fill is certified.** Three facts, each proved once:
+- (T1) Positive meaning follows a target map applied to program and argument: for an observation-free program P and a
+  formation-preserving σ, (d,t) ∈ `positive_meaning P` implies (d, σ t) ∈ `positive_meaning (σ P)` — the leaf-map
+  argument of `Factor_Positive_Parametricity` with the program mapped too; its existing theorem is the instance whose
+  map fixes the program's leaves.
+- (T2) The native readers the certified cause reads commute with the placeholder fill: at `placeholder_fill E R` the
+  package reading is E's mapped by σ = `placeholder_target R`, the application's argument likewise, and the least
+  judgment environment and the package environment are the placeholder fills of E's.
+- (T3) `Factor_Replay.native_positive_replay_total` supplies, for every positive native call, a closed native replay in
+  an environment including its least judgment environment. So at F = `placeholder_fill J0 R` the package reads σ P0,
+  the call reads (d, Target(Whole R)), and the call holds in σ P0 by T1 from the placeholder's positive meaning (its
+  closed replay is sound, `native_replay_closed_sound`); a closed replay H including F exists; F is its own least
+  environment; F's package environment is K_R's (the placeholder's alignment of J0 with K0, filled, and the check).
+  Every field of `bounded_certified_policy_cause_at` holds: the statement `development_indexed_generation_certified`
+  concludes today, H existential as today. The graph and replay readers need no transport: the replay at the fill is
+  supplied, not transported, so the substitution transport task 482 weighed as this remedy's cost is the package and
+  application readers alone.
+
+**The cause and its check.** The cause of every generation recorded under the listing policy is `Whole C0`, one target
+by construction (`development_indexed_generation_cause`, a theorem of the recording: the payload independence #561's
+review asked for, so the 8K and 32K cuts check a proved fact and run no more as controls). What a payload provides is
+checked, nothing produced: R's formation (established) and the constructed policy against the placeholder's fill (one
+comparison walk of R, as rule (c) allows a reader's comparison of what it read with what it expects). A payload whose
+policy is not the placeholder's fill is refused, visibly, never recorded by the replayed path instead. What the cause
+certifies is unchanged: the listing policy's entry holds of the payload in a closed native replay. The native checker
+checks the placeholder's certificate; Isabelle verifies once that the fill carries it to every payload (the owner's words
+of 2026-09-19 on Isabelle's role); the certificate is produced once, at the placeholder, by the construction that
+produces it now, and no checker produces (the owner's answer to Q28).
+
+**Walks.** Removed at each payload: S3–S6, 71.5 s held at the given — the certificate's proofs, the graph's placement
+with its residual, the replay environment and the bounded quotation. Left: S0 and S1 (6.0 s held), the term's
+formation and the check (about one walk each). Estimate: about 7 s at the given (8 µs per payload address) and about
+18 s at the posing's 1,882,537 addresses (10 µs), by #559's exponents (S0 n^1.21, S1 n^1.18).
+
+**The recording.** `development_indexed_generation` is redefined through the parametric recording, as B2 redefined it
+through the bounded one (task 482's (2)); no recorded state expands it and no recipe reaches it. Its contracts keep
+their statements, so its instances — the base generation, the owner records, the native state's first generation and
+#562's `development_citing_row_generation` with the approval and the posing's citing generation — and their contracts
+stand. The replayed body retires with the refinement collection's code equations of it; every refinement constant and
+its exactness stays (RR5's formed policy source constructs K_R).
+
+### (3) The posing's payload
+
+The posing holds the given again, as #397 landed it: the pair of the asked relation's program entry value and the
+given's site value. Task 482's (3) and its "Weighed and not taken" stand: the least form states a problem as an asked
+relation and a given, and reading the given through the first generation would make "which predecessor is the given" a
+distinction the least form lacks — part of the first problem's answer, and under the owner's rule of 2026-09-24 18:12
+no distinction a native program may rely on before a native notion draws it. The given is held in two payloads, each
+recorded once. Cost no longer argues otherwise: the posing's recording is S0 and S1 at its payload, about 18 s
+estimated, beside the payload's own construction (the asked installation, 16.8 s measured shared by #562), within the
+gate below. No re-pose is placed.
+
+### (4) The gate
+
+Task 482's gate — 60 µs per payload address, 53 s at the given, 113 s at the posing — is restated as the quantity the
+route's builds must meet: a route generation's recording, its code compiled, takes at most 20 µs per payload address
+held, the payload's quotation included and the payload's construction excluded — about 18 s at the given, 38 s at the
+posing. With it one held run of 3 minutes holds the given's and the posing's recordings with every compilation and the
+posing's payload (about 75 s estimated under the decision), and a probe of 60 s holds a recording of a payload of the
+given's order with its compilation (about 25 s with the session), as an answer's admission (#399) records one. No route
+recording runs at every build: each runs where its caller compiles it (#561, #562), so a check's recurring cost is the
+execution theories' loads (`Development_Native_State_Execution` nothing, `Development_First_Problem_Execution` 7.6 s).
+Estimate under the decision: about 8 µs at the given, 10 µs at the posing.
+
+### (5) The builds
+
+- **T1 — positive meaning under a target map of program and argument** (about 100K; waits on nothing). In
+  `Factor_Positive_Parametricity`: the target map of patterns, schemas and systems; formation under a
+  formation-preserving map; admitted instances and positive meaning carried forward for observation-free programs;
+  rooting commutes with the map; the existing fixed-program theorems restated as its instances.
+- **T2a — the placeholder fill and the syntax readers** (about 200K; waits on nothing). A new library theory above
+  `Factor_Bounded_Generation_Scopes` (for `payload_fill`) and the readers: `placeholder_fill`, `placeholder_target`,
+  `finite_placeholder_fill` (`finite_payload_fill E (finite_payload_uses E finite_empty_artifact) R`, decoding to the
+  fill); the primitives at the fill (artifacts, bindings, formation, uses, external slot values, `interpret_citation`,
+  `citation_location`, `anchored_at`, `located_at`); and the readers built on them, each reading at the fill E's
+  reading mapped: term and pattern quotation, scoped and material patterns, prospective calls, premises and their
+  families, schemas and schema families, definitions.
+- **T2b — the package, the application and the least environments at the fill** (about 180K; waits on T2a): root
+  families, `native_package_at` (the program mapped), `native_application_at` (the term mapped), the package's and
+  the application's sources and demands unchanged, `native_judgment_environment` and `native_package_environment` of
+  the fill the fills of E's.
+- **T3 — the parametric certified cause** (about 100K; waits on T1 and T2b). Beside `Factor_Bounded_Generation_Scopes`:
+  from the placeholder's facts — its package and application readings at J0, J0 least, its closed replay, its package
+  environment K0's, the rooted program at the entry observation-free — and a generation read with cause C0, payload R
+  formed and the bounded scope of J0 and V0, `bounded_certified_policy_cause_at (placeholder_fill K0 R) … R` for some H
+  and root, through T1, T2b and `native_positive_replay_total`. With it REASONING_REUSE gains the row it first makes:
+  certify a family once at a placeholder; every reading at its fill is the placeholder's reading mapped.
+- **P — the parametric recording** (about 200K; waits on T3; #562 has landed). In `Development_Bounded_Recording`: the
+  placeholder judgment (a nullary constant), R's formation and the check, `development_indexed_generation` redefined,
+  its facts (`_result`, `_constructed`, `_certified` with its statement unchanged, `_recorded`) re-proved through T3,
+  and `development_indexed_generation_cause`; the observation-free premise discharged at the placeholder — the rooted
+  program's material premises evaluated once (`finite_entry_materials`, exact to it, moved to its notion's theory if P
+  cannot import it) or proved of the listing policy's construction. In the collection: the recording's code equation
+  restated for the parametric body (R's formation from the term's, RR5's formed policy source), the replayed body's
+  equations retired. Its probe records the owner record of 18:53 and compares its cause C0 with the replayed judgment's
+  at the same payload (a control in the probe; nothing evaluated at build).
+- **X′ — the given's and the posing's recordings, held** (about 60K; waits on P). One hold, the base pinned, the code
+  compiled in the probe's own ML block before the timed seconds (`Native_State_Execution.recording`,
+  `First_Problem_Execution.posing record cite report payload`, #562's Remains): the given's recording and the posing's
+  (its payload made before the timing), their seconds, the payloads' and causes' sizes, both causes C0; gate 20 µs per
+  payload address. It is the held measurement #398's review owes (follow-up 2) and the held figure at the given #558's
+  review asks after the next share (follow-up 1). If one hold cannot hold both, the posing's is timed first and the
+  given's in a second hold.
+
+The chain: T1 ∥ T2a → T2b → T3 → P → X′; the route's generations (#399's admission, #403's verification record,
+#443's issue, #553's criticism record) record through P. Not placed: #559's follow-ups (S3–S4 divided into comparisons
+and formations; the graph body's compilation, installation and readiness; the node comparisons), whose steps run once,
+at the placeholder; and rule (a) at S1's compiler walk (about 2.7 s at the given), since the gate is met without it.
+
+### (6) What the builds must respect
+
+- The contracts of `development_indexed_generation` keep their statements; every generation's certified meaning,
+  fields and predecessors stay; no recorded word changes (no recipe reaches the changed theories); a builder who finds
+  a constant it would change among a recorded state's entities stops and brings it to the planner.
+- The placeholder is the empty artifact, decided by artifact identity; the fill fills every use holding it, never a
+  chosen subset, so that it is a map of targets.
+- A payload provides and the recording checks: what fails is refused, visibly; nothing falls back to the replayed path.
+- T1–T3 in the library layer: no evaluation, no refinement collection imported; each law at its notion (the target map
+  in `Factor_Positive_Parametricity`, the fill beside `payload_fill`).
+- The placeholder's certificate is produced by the existing construction and checked by the existing native checker;
+  T3 consumes them through their contracts.
+- Timings that decide the gate are held, the base pinned; evaluations run in execution theories or probes, never at a
+  library theory's build.
+- Nothing is built over the bootstrap loop's rows, loci, prefixes or keys.
+
+### (7) Distinctions and reliances
+
+The decision relies on the distinctions task 482's (5) lists and on none new: the placeholder, decided by artifact
+identity (`Factor_Artifact_Admission`) and read by environment lookup (`Factor_Environment_Lookup`); the uses holding
+it, use data; the payload, the generation's field. The target map of programs and the fill are relations stated in
+Isabelle over the native program's presentation, as `payload_fill` and the leaf maps are; the bounded profile's native
+reader stays the recorded reliance task 482's (5) states. No bootstrap-loop presentation is read (task 376's entry).
+
+### Weighed and not taken
+
+- **Further refinement**, the next shares after RR5: comparisons of calls and nodes by reference over shared terms in
+  the certificate's proofs and the graph's placement (up to about 40 s at the given, #559), rule (a) at the
+  formation-like walks (premise readings, readiness, the compilers' checks, about 20 s) and the graph body's residual
+  (12.3 s, beyond its unit, unattributed), after two further attributions. It would leave about 15–20 s at the given
+  and 45–60 s at the posing, every walk still growing n^1.2–1.5, each refinement an exactness proof over the
+  evaluator's certificate history or the graph's placement; and every payload would still derive, place and replay the
+  same certificate. RR5 stands: it constructs the policy at R.
+- **Commutation of the policy's construction with the fill**, proved once, in place of constructing K_R and checking
+  it: removes S1 and the check (about 3 s at the given, 8 s at the posing) at the cost of a transport of the compiler,
+  the installation and the requirements' construction. Reopened if a use needs those seconds.
+- **The graph and replay readers transported** (task 482's reading of this remedy): not needed,
+  `native_positive_replay_total` supplies the replay.
+- **A symbolic proof scheme with the literal as a variable** (`Factor_Proof_Schemes`): a scheme is over one fixed
+  program, and the listing program states its literal; abstracting it is the universal policy task 482 did not take.
+- **The posing citing the first generation** (`.build/tasks/397/result.md`, Remains): (3).
+- **A fallback to the replayed recording** where the check fails: it would hide the cost the gate is for.
+
+### Corrections
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Certification parametric in the literal is weighed and not taken, its cost a substitution transport of every reader the replay reads (task 482, "Weighed and not taken"). | Taken: its trigger held (X). The package and application readers are transported; the replay is supplied by `native_positive_replay_total`. |
+| The gate: at most 60 µs per payload address, 53 s at the given and about twice that at the posing (task 482, (2) and (4) X). | At most 20 µs per payload address held, the payload's construction excluded; about 8–10 µs estimated under this decision. |
+| Every payload's recording derives, places and replays its own certificate (task 482's (2), "The recording"). | The certificate is derived, placed and replayed once, at the placeholder; each payload fills it. |
+| The chain ends B1 → B2 → I3 → R → X → #397 (task 482's (4)). | After X and RR5: T1 ∥ T2a → T2b → T3 → P → X′, X′ recording the given and the posing held. |
+
+### Evidence and limits
+
+The decision rests on X's held measurement (`.build/tasks/538/measurement.md`), #559's held attribution
+(`.build/tasks/559/measurement.md`, runs B and C), RR5's shared S1 at the given (`.build/tasks/557/result.md`), the
+posing's size (`.build/tasks/397/measurement.md`) and #562's load share (`.build/tasks/562/result.md`), and on the
+definitions read in this tree: `development_indexed_generation`, `development_bounded_policy_judgment`,
+`finite_bounded_judgment_quote`, `development_indexed_generation_certified`, `payload_fill`,
+`generation_bounded_scope_at`, `scope_certified_base_cause_at`, `scope_certified_policy_cause_at` and
+`native_positive_replay_total`. The estimates are sums of the held steps that stay, scaled by #559's exponents; no
+measurement was made here. T2's premise — no reader reads syntax, a binding's source or an occurrence at a use holding
+the empty artifact — is argued from the readers' definitions and proved by T2a. The check K_R = `placeholder_fill K0 R`
+is expected to pass on every route payload (the cause is one target across four payloads, X); it fails, refusing the
+payload, if the placeholder's policy holds the empty artifact at a use other than its literal's, which P's probe and X′
+show. This decision was made outside the loop and is a residual.
+
+Recorded 2026-09-25 (task 560; a design, no theory changes).

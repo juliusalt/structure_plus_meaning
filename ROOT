@@ -1103,6 +1103,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Native_Proof_Construction
     Factor_Finite_Program_Proofs
     Factor_Finite_Proof_Checking
+    Factor_Program_Resolution
     Factor_Finite_Proof_Inspection
     Factor_Finite_Source_Computation
     Factor_Native_Derivation_Assessment

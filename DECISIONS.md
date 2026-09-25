@@ -16518,6 +16518,13 @@ read by the Factor readers, and the bounded scope is equivariant under use permu
   constant it would change among a recorded state's entities stops and brings it to the planner (task 356's rule).
 - Existing constants keep their definitions and code equations; a new operation is a new constant related to the
   original by a lemma, and a code equation attaches to a new constant only.
+  [Corrected (task 534, from #535's review, follow-up 1, decided by the planner): a code equation may also attach to
+  an existing guarded entry where it is proved equal to the entry on every input and no recorded state presents the
+  entry. `Factor_Formed_Inner_Readings` attaches four so: `finite_application_readings`,
+  `finite_proof_node_readings`, `finite_native_graph_demands` and `finite_recovered_graph`, none a seed root or among
+  the machinery's notions and constituents. Each replaces the entry's code equation in effect (`code del` declared
+  there), so they take effect only where a theory importing `Factor_Formed_Inner_Readings` is in scope — X's
+  collection (#538) — and there for every consumer of the four entries.]
 - The bounded scope is stated once, in the library layer, and consumed through its contract; the certified cause is
   stated once over a scope reading.
 - The payload is made once and walked only where (a)–(c) allow; a build that adds a walk records it.

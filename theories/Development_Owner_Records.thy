@@ -7,40 +7,15 @@ section \<open>A generation stands at the index of its own payload\<close>
 text \<open>
   A generation the native loop records stands at a locus that is an index and nothing else: the
   whole-artifact target of its own payload's quotation, which no program reads but a snapshot's
-  lookup. Recording at that index is the bounded recording (@{text Development_Bounded_Recording}): the
+  lookup. Recording at that index is the bounded recording, @{const development_indexed_generation}
+  (@{text Development_Bounded_Recording}, where it is stated with its contract): the
   payload is made once and is the locus, the listing policy judges it, and the cause quotes the judgment's
   scope with the payload as its boundary, so every generation the first problem's route records (the
   owner records, the posing, the admitted answer, its verification) costs its payload once and its cause
-  holds nothing of its payload. Its contract is the bounded recording's, where the environment recorded
-  in is formed and every cited row reads back there.
+  holds nothing of its payload. Its contract (@{thm [source] development_indexed_generation_certified},
+  @{thm [source] development_indexed_generation_recorded}) holds where the environment recorded in is formed
+  and every cited row reads back there.
 \<close>
-
-definition development_indexed_generation ::
-    "finite_factor_term \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow> development_generation_row list \<Rightarrow>
-      (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
-  "development_indexed_generation t H rows=development_bounded_generation t H rows"
-
-theorem development_indexed_generation_certified:
-  assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
-    and formed: "finite_environment_formed H"
-    and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
-  obtains R d K pu E root where "development_data_target t=Some (generation_payload G)"
-    "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
-    "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-    "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
-      (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
-    "generation_predecessors G=fset_of_list (map snd rows)"
-    "finite_check_generation G B u []"
-    "environment_included (decode_finite_environment H) (decode_finite_environment B)"
-  by (rule development_bounded_generation_certified[OF built[unfolded development_indexed_generation_def] formed rows])
-
-lemma development_indexed_generation_recorded:
-  assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
-    and formed: "finite_environment_formed H"
-    and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
-  shows "finite_environment_formed B" "finite_environment_included H B" "finite_check_generation G B u []"
-    "finite_generation_formed G"
-  by (rule development_bounded_generation_recorded[OF built[unfolded development_indexed_generation_def] formed rows])+
 
 section \<open>A base generation stands at the index of its payload in an environment of its own\<close>
 

@@ -97,8 +97,10 @@ text \<open>
   The permutation is declared a producer, its left side a consumer of it, and the selection's socket in the
   permutation's clause an inner commitment inside a focus. At a list of n distinct elements R4 keeps each of the n!
   intermediate permutations, each a certificate; the committed resolution keeps one at every commitment: one
-  certificate at n = 4 and at n = 6, and at n = 6 it refutes a list that is not a permutation. The declarations'
-  discharge and the refutation's exactness are R5b's (task 565).
+  certificate at n = 4 and at n = 6, and at n = 6 it refutes a list that is not a permutation. R4 refutes that list
+  too, and its exactness makes the refutation the program's meaning (@{text commitment_control_refuted}); the
+  committed exactness's premise is discharged by the tasks continuing 586 (DECISIONS.md, task 495's entry, its
+  correction (4)).
 \<close>
 
 definition commitment_selection_here :: "(nat,nat,nat) finite_factor_schema" where
@@ -194,6 +196,75 @@ definition commitment_exchange_declarations :: "(nat,nat,nat) resolution_declara
   "commitment_exchange_declarations = \<lparr>declared_producers={|4|}, declared_consumers={|(4,5,True)|},
     declared_sockets={|(3,commitment_exchange_select,0,False)|}\<rparr>"
 
+text \<open>
+  The variant control (review 519's second shape): q(X) :- perm(X,[V|[a|W]]), c(Pair X [V|[a|W]]), the permutation a
+  producer whose selection socket is declared without the kept head, c its consumer at the right side. The output
+  q's clause gives the permutation is constrained, not a variant of the permutation clause's head output, so the
+  socket is not committed under it: at a=[1] over [[1],[2]] the committed resolution resolves the call as R4 does,
+  and at a=[3] both refute it.
+\<close>
+
+definition commitment_variant_root :: "octets \<Rightarrow> (nat,nat,nat) finite_factor_schema" where
+  "commitment_variant_root a = \<lparr>finite_schema_conclusion=Finite_Variable 0,
+    finite_schema_premises={|(0,(1,Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Pattern_Pair (Finite_Pattern_Payload a) (Finite_Variable 2))))),
+      (1,(5,Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Pattern_Pair (Finite_Pattern_Payload a) (Finite_Variable 2)))))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition commitment_variant_program :: "octets \<Rightarrow> (nat,nat,nat,nat) finite_schema_system" where
+  "commitment_variant_program a = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0),
+      (5,Finite_Variable 0),(7,Finite_Variable 0)|},
+    finite_system_clauses={|((0,0),commitment_selection_here),((0,1),commitment_selection_later),
+      ((1,0),commitment_permutation_nil),((1,1),commitment_permutation_cons),((5,0),commitment_exchange_consumer),
+      ((7,0),commitment_variant_root a)|}\<rparr>"
+
+definition commitment_variant_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "commitment_variant_declarations = \<lparr>declared_producers={|1|}, declared_consumers={|(1,5,True)|},
+    declared_sockets={|(1,commitment_permutation_cons,0,False)|}\<rparr>"
+
+text \<open>
+  The sibling control, the counterexample to #565's exchange premise at a socket (task 586; DECISIONS.md, task 495's
+  entry, correction (4)): site 3, c(X) :- r(Z), prod(Pair X Y), cons(Pair Z Y), over the facts r(z1), r(z2),
+  prod(x,a), prod(x,b), cons(z1,a), cons(z2,b) (x the empty payload, z1 = [1], z2 = [2]), prod's socket declared with
+  the kept head. The declaration is discharged: each answer of prod at x extends a true instance of the clause with
+  the head kept. At the supported state where r was resolved first with z2, the kept answer a = [3] leaves cons(z2,a)
+  false: no kept state is supported, so the premise, quantified over every supported state, fails. The verdict
+  survives here because R3's selection, one goal per state, takes prod first at c's clause (its pattern the one call
+  holding a leaf), where the premise holds, r's goal still pending: the committed resolution resolves c(x); where
+  r(z1) holds only through c(x), its branch reaches the root's call, barred at the commitment, and the call is left
+  unresolved, never refuted.
+\<close>
+
+definition commitment_fact :: "nat finite_term_pattern \<Rightarrow> (nat,nat,nat) finite_factor_schema" where
+  "commitment_fact p = \<lparr>finite_schema_conclusion=p, finite_schema_premises={||}, finite_schema_materials={||}\<rparr>"
+
+definition commitment_sibling_clause :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_sibling_clause = \<lparr>finite_schema_conclusion=Finite_Variable 0,
+    finite_schema_premises={|(0,(0,Finite_Variable 1)),
+      (1,(1,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 2))),
+      (2,(2,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition commitment_sibling_loop :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_sibling_loop = \<lparr>finite_schema_conclusion=Finite_Pattern_Payload [1],
+    finite_schema_premises={|(0,(3,Finite_Pattern_Payload []))|}, finite_schema_materials={||}\<rparr>"
+
+definition commitment_sibling_program :: "octets \<Rightarrow> octets \<Rightarrow> bool \<Rightarrow> (nat,nat,nat,nat) finite_schema_system" where
+  "commitment_sibling_program a b l = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0),
+      (2,Finite_Variable 0),(3,Finite_Variable 0)|},
+    finite_system_clauses={|((0,0),commitment_fact (Finite_Pattern_Payload [2])),
+      ((0,1),if l then commitment_sibling_loop else commitment_fact (Finite_Pattern_Payload [1])),
+      ((1,0),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload a))),
+      ((1,1),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload b))),
+      ((2,0),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload [1]) (Finite_Pattern_Payload a))),
+      ((2,1),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload [2]) (Finite_Pattern_Payload b))),
+      ((3,0),commitment_sibling_clause)|}\<rparr>"
+
+definition commitment_sibling_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "commitment_sibling_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
+    declared_sockets={|(3,commitment_sibling_clause,1,True)|}\<rparr>"
+
 lemma site_one_material_controls:
   "finite_material_resolution (site_one_material [[1],[2]]) = Material_Solutions
       {|{|(2,Finite_Target (Finite_Whole (finite_enumerated_artifact [[1],[2]] [] [] []))),
@@ -232,7 +303,27 @@ lemma site_one_material_controls:
       (control_payload_list [[1],[2]]) 30) = Some True \<and>
     finite_resolution_verdict (finite_committed_resolution no_witness_construction
       (finite_declared_commitment commitment_exchange_declarations) (commitment_exchange_program [1]) 6
-      (control_payload_list [[1],[2]]) 30) = Some True"
+      (control_payload_list [[1],[2]]) 30) = Some True \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction commitment_control_program 2
+      (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[7]]) 60) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction (commitment_variant_program [1]) 7
+      (control_payload_list [[1],[2]]) 30) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_variant_declarations) (commitment_variant_program [1]) 7
+      (control_payload_list [[1],[2]]) 30) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_variant_declarations) (commitment_variant_program [3]) 7
+      (control_payload_list [[1],[2]]) 30) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction (commitment_variant_program [3]) 7
+      (control_payload_list [[1],[2]]) 30) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction
+      (commitment_sibling_program [3] [4] False) 3 (Finite_Payload []) 20) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_sibling_declarations) (commitment_sibling_program [3] [4] False) 3
+      (Finite_Payload []) 20) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_sibling_declarations) (commitment_sibling_program [3] [4] True) 3
+      (Finite_Payload []) 20) = None"
   by eval
 
 text \<open>
@@ -275,6 +366,24 @@ proof -
       (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[1]]) 60 = Finite_Resolved C"
     by (auto simp: finite_resolution_verdict_true)
   then show ?thesis by (rule finite_committed_resolution_sound(2))
+qed
+
+text \<open>
+  The false call is refuted by R4, exact (@{thm [source] finite_resolution_verdict_exact}): the list
+  [[6],[5],[4],[3],[2],[7]] is not a permutation of [[1],[2],[3],[4],[5],[6]] in the control program's meaning, the
+  committed resolution's verdict at the same call.
+\<close>
+
+corollary commitment_control_refuted:
+  "(2,decode_finite_term (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[7]])) \<notin>
+    positive_meaning (decode_finite_system commitment_control_program)"
+proof -
+  have "finite_resolution_verdict (finite_program_resolution no_witness_construction commitment_control_program 2
+      (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[7]]) 60) = Some False"
+    using site_one_material_controls by (elim conjE) assumption
+  then show ?thesis
+    using finite_resolution_verdict_exact[of commitment_control_program 2
+      "commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[7]]" 60 False] by simp
 qed
 
 corollary implemented_base_control_resolved:

@@ -16766,8 +16766,9 @@ declared without the kept head, G(X,[]) :- p(X,[[1]]) a producer, c(Pair x y) it
 root(X) :- G(X,W), c(Pair X W), every declaration discharged, root([[1],[2]]) holds, yet a commitment of sel inside
 G's focus kept ([1],[[2]]) and perm([[2]],[[1]]) failed, a refutation of a true call; and a focus root whose output its
 caller constrains, q(X) :- perm(X,[V|[[1]|W]]), c(...), loses the instance perm([[1],[2]],[[2],[1]]) the same way — the
-variant test refuses it (review 519's evaluation of `.build/tasks/519/scratch2`; the first counterexample is
-`Factor_Resolution_Controls`' exchange control). A direct consumer keeps the form below,
+variant test refuses it (both are conjuncts of `Factor_Resolution_Controls.site_one_material_controls`: the first
+counterexample is its exchange control, the second shape the variant control's evaluation, `Some True` at a=[1] over
+[[1],[2]] and `Some False` at a=[3], as R4's). A direct consumer keeps the form below,
 the search committing only when every
 other pending goal holding the output is such a consumer with the output pattern as its argument; the material
 single solution applies only where the atoms, edges, counts and functions fields are free variables. The kept answer
@@ -16788,6 +16789,28 @@ holding a non-head variable, the obligation's instance may change that variable,
 branch, and exactness rests on another branch of the sibling, whose sub-search keeps the same answer only if pruning at
 unbarred ancestors inside it does not depend on the branch. The premise's discharge from R5's declarations, with the
 condition this needs or its counterexample, and the control's false call are the task continuing 565.]
+
+[Corrected by task 586 (R5c), the planner's answer to q108. (4) #565's exchange premise, quantified over every
+supported state, fails at every socket kind — the kept head, the free socket, the inner commitment, the material
+single solution: c(X) :- r(Z), prod(Pair X Y), cons(Pair Z Y) over r(z1), r(z2), prod(x,a), prod(x,b), cons(z1,a),
+cons(z2,b), prod's socket declared with the kept head and discharged (each answer of prod at x extends a true instance
+with the head kept); at the supported state where r was resolved first with z2, the kept answer a leaves cons(z2,a)
+false, and no kept state is supported. The clause-level obligation speaks of the whole clause instance, which a
+resolved sibling has already fixed. The verdict survives in the evaluated cases (`Factor_Resolution_Controls`, the
+sibling control: resolved; with r(z1) holding only through c(x), unresolved, never refuted) because R3's selection, one
+goal per state, takes prod first at c's clause (the one call whose pattern holds a leaf), where the premise holds, r's
+goal still pending; with the loop, r(z1)'s branch reaches the root's call, barred at the commitment, and ends in a cut. The premise is restated so
+that a committed socket goal is exchanged at the states where its parent clause's other premises are pending, the
+lifting committing it first among the goals R3's selection offers; the lifting and the three forms are re-proved under
+it and the socket kinds discharged under it, over a view and with a class predicate (R5c′, task 589). The direct
+producer's discharge needs a subtree form of `Factor_Resolution_Acceptance.finite_node_proof_pattern_accepted` (task
+591), a frame invariant of the committed sub-search — every binding it makes is of a variable of a goal under its
+focus: unification, material steps, nested commitments, and constructions, which bind only a registered variable a
+focused goal holds (`finite_registration_ready`) — kept states nonempty and placement preserved (R5c″, task 593). A
+committed call's input is ground under the state (`finite_declared_commitment_input_ground`, `_value`): R5's direct and
+socket tests demand it, so the premise's quantification over every supported state meets no input the sub-search binds
+otherwise than the support, and output equivalence at one input suffices there. Until the premise is discharged the
+control's false call is refuted by R4 (`commitment_control_refuted`).]
 
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches

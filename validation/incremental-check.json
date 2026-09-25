@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "19f2850d524b68e7e2c9a4478460bb90bc38a5eebf997e9e48b3745795f58937",
- "checked_content_sha256": "e49659ed08b3a0da8de77f949adc0b133cb1f19720459b1613e6dccb51c340cc",
+ "base_receipt_sha256": "a1bd8a50ce4604aa2c4d2c4db2a60c73dec886b92ed7d4844479615edf67059b",
+ "checked_content_sha256": "055ab31cdd5bacb91adbcf09a2c8c1e6a57e0e25186556e3385b5b8a3de4a708",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,20 +17,20 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpocqn4liq/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpxih9cg2_/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.45,
+  "base_and_impact": 0.68,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 231.84,
-  "recipe_impact": 0.84,
-  "recipes_and_host_tests": 12.12
+  "proof": 228.41,
+  "recipe_impact": 1.04,
+  "recipes_and_host_tests": 12.54
  },
  "rebuilt_theories": [
-  "Factor_Additions_Counterparts"
+  "Development_First_Problem_Asked"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1878,
- "seconds": 300.84,
+ "reused_theories": 1879,
+ "seconds": 306.21,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1879,
+  "theory_count": 1880,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1879,
+ "theories": 1880,
  "validation_inputs": {
-  "ROOT": "b27c60d4371f79d99b122b6fd1b03d5e5d3c7ce879558de25f4fc166ecbe2436",
+  "ROOT": "4aa8d604a725a003e076036c808daf20e8eb789c3e1e83337811f9334c58d44f",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

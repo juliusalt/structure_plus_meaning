@@ -84,11 +84,13 @@ its entries, derived through the union's piece (#431's review, follow-up 4, the 
 
 **The recording of a state as a generation**: the native state's first generation (#395) cannot execute in a held run —
 the given's value is 1.3M nodes, its complete quotation did not finish in 165 s, and the certified cause quotes a scope
-holding the payload twice (implement-395's report, q96) — and every later route generation carries a payload of the
-given's size. A design is to attribute it held and decide the recording at its cause (Now: its draft was refused for
-size); #395 lands its statements with the execution a remainder (q96, answer drafted), and #397 is to wait on it.
+holding the payload twice (implement-395's report) — and every later route generation carries a payload of the given's
+size. #481 attributes it held and #482 decides the recording at its cause from that attribution (split to fit a
+session's room); #395 lands its statements with the execution a remainder (q96), and #397 waits on #482.
 
-**Beside the route**: #459, the presentation-level duplicates after the use instance's split (#458, `00c4bf47`) and
+**Beside the route**: #483, after the counterpart builds and S1 (#478), the counterparts' and E1's generic facts at
+their homes, their `eval` controls in a theory of their own and two whole-rebuild moves in one rebuild (#467's, #469's
+and #465's reviews); #459, the presentation-level duplicates after the use instance's split (#458, `00c4bf47`) and
 #435, with #458's review's follow-ups 1–4 (#419's review; Open 132 and 138 its); #457, after #426, the given's payload statement discharged by a kernel-checked composition down
 the five reader systems' view steps (q93: code_simp over the readers' 130-definition presentation did not finish in 160 s,
 and an `eval` is excluded), with the general payload lemmas at their homes (#452's review, follow-ups 2 and 3; #456's,
@@ -111,14 +113,13 @@ exporter's obligations at every state it defines (#227–#308, #352).
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The deepest chains are 6: #393 → #397 → #399 → #401 → #407 → #408, and
-#466 → #470 → #399 onward; the approval build (Open 142) after #407 would end a chain of 6.
+**Shape.** No build waits on a review task. The deepest chain is 7: #481 → #482 → #397 → #399 → #401 → #407 → #408;
+the recording's builds, placed from #482's entry before #397, and the approval build (Open 142) after #407 lengthen it.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #464, #466 and #468 at its head (#463 beside), then
-#393 and #395, startable since #455 landed, and the rest in their chains' order, the first
-request's and the criticism's builds after them; then
-#457, #459 and #461, with #426 and #458 resuming as their checks return; each review after its build.
+exists, Q2): the owner's directions first — the first problem's route, #481 and #482 at its head, the counterparts
+(#470–#477) and S1 (#478), then #393 and #395 and the rest in their chains' order, the first request's and the
+criticism's builds after them; then #457, #459, #461 and #483; each review after its build.
 
 ## Decisions
 
@@ -361,9 +362,16 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   (`.build/tasks/426/review.md`) are Open 153.
 - **Landed with `c6930e95`**: #466 (C1, `Factor_Inclusion_Admission_Counterparts`: the counterparts of 113 and 80 and
   the readers of environment-value pairs and source-root arguments) and #463 (the octet sample's readdressing lifted to
-  whole environment, site and program entry values). #467's follow-ups: 1–3 and 6 wait for #469's verdict (Now), 4
-  mailed to #470, 5 settled by the landing. #463's review (`.build/tasks/463/review.md`): 1–4 the fix continuing #463,
-  which #447 waits on; 5 Open 152; 6 is Open 150.
+  whole environment, site and program entry values). #467's follow-ups: 1–3 and 6 in #483, 4 mailed to #470, 5 settled
+  by the landing. #463's review (`.build/tasks/463/review.md`): 1–4 are #480, which #447 waits on; 5 Open 152; 6 is
+  Open 150.
+- **Landed with `9c39602a`**: #464, E1, `Factor_Implemented_Base_Evaluation` with the general lemma in
+  `Inference_Demands`: the finite and native evaluation over an implemented base, exact under exact decisions, the empty
+  base the plain evaluator. Its review's follow-ups (`.build/tasks/465/review.md`): 1 and 3 in #483, 2 mailed to #399
+  and #478, 4 Open 154.
+- **Landed with `9454dadc`**: #468, C2, `Factor_Additions_Counterparts`: the additions counterpart for every callee,
+  393's and 392's its instance, the site value reader `finite_site_read`. Its review's follow-ups
+  (`.build/tasks/469/review.md`): 1 mailed to #470 and #399, 2 and 3 in #483, 4 with q96's answer to #395.
 - **Landed with `00c4bf47`**: #458, the use instance split: the low actions in `Factor_Use_Actions` below the keyed
   and data readers, the inverse-permutation argument once (`use_renaming_inverse`), the schema reading's renaming
   beside the definition's, the request's general facts and the scopes' root position at their homes
@@ -396,31 +404,8 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   each beside its contract; its re-review's follow-ups (`.build/tasks/417/review.md`): 1 Open 141, 2 mailed to #410
   (the least package environment's commutation with use permutations) and Open 78 (the probe cost of a change to
   `Factor_Package_Closure_Admission`).
-- **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
-  development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
-  rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
-- **#374** (`1db8e167`): the rule family's law over a listed family of triples (`native_listed_law`), the applied rule
-  returned as its triple, `step_rule` without a set difference; DECISIONS.md "A listed family returns the rule it
-  applied". Its review's follow-ups 1–5 at the law's own theories are #379 (`66b4f05c`: the collection programs' own
-  families through the listed law, `supported_triple`, `read_triple`, `rule_triple`; its review's follow-ups 1–4 to
-  #375, 5 the next-edit list), 2 and 6 in the development theories #375.
-- **#288** (`93cae3bb`): what the verdict's fields and their witnesses both prove stated once; its review's follow-ups
-  1–2 to #375, 3–5 Open 118. **#353** (`09cea44c`): the per-answer function's last shared and edit-sized reads; its
-  review's follow-ups Open 120.
-- **#356** (design): DECISIONS.md "The published state holds its targets once, and a report's word is read off them";
-  B1 #359 (`d212cb53`, `Shared_Term_Words`), B2 #361 (`35d48aba`, `Represented_Snapshot_Transactions`), B3 #363
-  (`254b5999`, `Presented_Publication_Values`), B4a #365 (`1a8677a4`, `Development_Seed_Referenced_Publication`; its
-  review's follow-ups 1–3 taken by #367, 4–8 #384), B4b #367 (`1f60a87f`: the seed recipe reads the publication's word
-  off the word constant, 33.14 s saved in its held pair, `.build/tasks/367/measurement.md`; its review's follow-ups
-  under Open 27 and the next-edit list); #355 (`2c69e833`), the cause's formation discharged where the judgment
-  constructs it.
-- **The answer harness**: #313 (`e9bbe02b`) the framed answers' parts read in one session, #323 (`ec46e355`) the judged
-  answers in one shared proof session, #314 (`d47ce451`) the records re-recorded on #167's base, #319 (`9d84c95f`) the
-  re-record in the harnesses' one form; their follow-ups #369 (`e2f2bf4d`: one export and one verdict-and-publication
-  run over the shared proof, a failing member proved alone, the request theory per subject, the shared session
-  recorded; its review's follow-up 1 mailed to #430, 2–5 Open 133, 6 and 7 Open 134) and Open 122.
-- **#167** (`04c20f87`): every report switched to its problems' rows in context and the problem datum's tags retired;
-  its review's follow-ups 1–5 are #354.
+- **Bootstrap-loop lines no open work builds on** (#320's design, #374, #288, #353, #356's B1–B4b, the answer harness
+  #313–#369, #167): in `PLANNING_LOG.md` (2026-09-25, plan-68); the Open items citing their reviews stand.
 
 ## Open
 
@@ -655,15 +640,11 @@ blank lines of `Factor_Program_Scopes` and `Factor_Package_Requests`. 150 #439's
 `finite_system_payloads` in `Factor_Finite_Payload_Literals`, `readdress_object` stated as `push_object` with
 attachment values mapped — with the next landing that changes those theories. 149 #438's first verdict, overwritten
 by its re-review, of which only the summary stands: h1's zero prefix and the inequality control in
-`Criticism_Use_Samples`, at its next edit.
+`Criticism_Use_Samples`, at its next edit. 154 #465's review, follow-up 4: `implemented_base_program_formed` (equal
+interfaces and fewer clauses stay formed) stated once beside `Factor_System_Restriction`, at a second use.
 
 ## Now
 
-- **Unhandled by plan-67 (its window ended)**: (1) the recording design — draft `.build/plans/plan-67/b-record.md`,
-  edit `.build/plans/plan-67/e5.json` (create, feeding #397, queued first) — was refused: 250K beside 229K of relations
-  exceeds a design's 360K; trim what it names (its theories above all) or split the held attribution (investigate) from
-  the decision, then place it and `v2.py after 395` it; (2) answer q96 with `.build/plans/plan-67/q96.md` (decision (a):
-  #395 lands its statements, the execution a remainder, no park, no payload change) once the design is placed.
 
 - **Mailed, read by each task's first session**: to #393 (#419's review, follow-up 5: the asked relation's clause composed from G3's, G4's and #416's exported
   clauses), to #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's payloads at
@@ -682,12 +663,11 @@ by its re-review, of which only the summary stands: h1's zero prefix and the ine
   cite the transfers, no named copy), to #474 (the given's 47 entries, the granted ones without counterparts, by demand),
   to #466 and #426 (bring main in over #458's changes), to #470 (#467's follow-up 4: 113's and 80's seconds apart), to
   #469 (a restatement of #466's two reader facts in #468 is a finding), to #447 (the octet rows through
-  `criticism_refutes` and the fix continuing #463).
-- **To place when #469 judges #468**: #467's follow-ups 1–3 and 6 (`finite_pair_read_present` into
-  `Finite_Presentation_Readers`, `environment_value_presents_finite` into `Factor_Finite_Environment_Value_Readers`,
-  `finite_empty_environment` down to `RRA_Finite_Environments` so that the counterparts no longer import the
-  installation, the controls' outcomes shown and 80's negative control inside the carrier) with #469's follow-ups, one
-  fix after #468.
+  `criticism_refutes` and the fix continuing #463). By plan-68: to #470 (#469's follow-up 1, 392's counterpart
+  measured at the given), #399 (#465's follow-up 2, the evaluation over the base timed at the guard's call; #469's
+  follow-up 1 if #470 did not), #478 (#465's follow-ups 1 and 2), #395 (q96: the statements land, the execution a
+  remainder; no second reader of site values).
+
 
 
 - **Classifier stops**: a classifier stopped plan-51 to plan-54, plan-56 and plan-58 to plan-62 before their notes, and

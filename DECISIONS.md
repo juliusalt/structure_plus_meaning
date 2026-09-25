@@ -15859,3 +15859,292 @@ The leaf argument for programs with material premises (task 381's part (g)). The
 design was made outside the loop and is a residual.
 
 Recorded 2026-09-24 (task 428's decision; a design, no theory changes).
+
+## The native evaluator evaluates above an implemented base: the given's readers enter through counterparts exact to their native definitions
+
+Task 460, from #441's question q94 (2026-09-25 04:33). The native evaluator
+(`Factor_Finite_Program_Evaluation.finite_program_evaluation`) answers a demand only where every clause of a demanded
+definition binds in its head every variable its premises use (`finite_program_head_covered`), and it refuses the
+audit's program. The route assumed it: #399 judges an answer by native evaluation of the installed guard (its (2)),
+#393 times the audit's native evaluation (its (5)), and the criticism's samples evaluate a program's entries in one
+native demand (`Criticism_Samples.criticism_evaluation`; #437, #439, #447). This entry states what the programs as
+they stand let the evaluator evaluate, and decides how the guard's judgment, the audit's cost and the criticism's
+samples are computed. It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| The guard's judgment "computed by native evaluation of the installed guard's program (`finite_program_evaluation` on the demand of that call)" (#399 (2)); the guard's program "formed and evaluable" (#393 (1)); "the audit's native evaluation (G4) at one of the given's readers' definitions" (#393 (5)); "the calls of all of them one native evaluation" and the stated-leaves reader "evaluated natively" (#447 (3), (4)). | The plain evaluator answers none of the route's demands that reach the given's readers: of the 87 reader sites the guard reaches, 8 are evaluable. They are computed by the evaluation over an implemented base (below): the native evaluator expands every demanded definition outside the base, and the base's sites — the given's reader entries a demand meets — are decided by executable counterparts proved exact to their native definitions, the case task 376's entry admits. |
+| q94: the readers 72, 65, 56, 34 and 32 have premise variables the head does not bind. | 72, 65 and 56 do; 34 (record admission) and 32 (family admission) are head-covered, and unevaluable through their callees (29, headed material, and 1, 6, 10 and 11 below it). |
+
+### What the evaluator evaluates
+
+`finite_program_evaluation P D` answers only when `finite_program_evaluation_ready P D`: P formed, every clause of
+every definition D demands with an empty `finite_schema_head_missing` (the schema's variables less its conclusion's),
+and the rule table's premise calls inside D. Then `finite_program_evaluation_exact`: the answer is exactly D's calls in
+the decoded program's positive meaning. A clause's premise calls are built from the call's head binding alone
+(`finite_program_applications` over `finite_requested_schema_applications`), so a premise-only variable has no value and
+its clause gives no rule: the evaluator is complete only where heads cover, and it checks that before answering. An
+answer of `None` is not a refusal (the theory's own text: "not a negative judgment on the requested calls").
+`native_call_evaluation`, and so `criticism_evaluation`, inherit the condition through the closure they evaluate.
+
+### Head coverage of the programs as they stand
+
+Computed, not read clause by clause: a scratch theory on the accepted base (not retained; `.build/tasks/460/scratch`,
+its output `head_table.txt`) evaluated `finite_schema_head_missing` at every clause of
+`Development_Given_Readers.finite_given_readers` — the finite presentation of `guard_readers_system`, the package
+additions' lineage joined with the audit's 500–505: 137 definitions, 75 of them holding an uncovered clause — over the
+closure (`finite_definition_closure`) of the sites the guard's goals call: 113, 80, 392 and 505, and 156, 79, 47, 76
+and 83, which 525's schema calls. The closure holds 87 sites: 42 covered, 45 with an uncovered clause (49 clauses). A
+covered site is evaluable only when its whole closure is; 8 are: 0 (carrier projection), 8 (atom lookup), 17, 18 and
+19 (natural words and coordinates), 51 (row keys), 53 (diagonal rows) and 59 (row values).
+
+- *The guard's own sites* (`Development_First_Problem_Guard`, read from their schemas): 520, 521, 522, 523 (both
+  clauses), 524 (the context list) and 526 are covered; 525 (`package_additions_schema 524`) is not, holding 4, the
+  candidate package's root list (79, 47), and 5, the bound list (47, 76, 524). The guard's goals call 113 (covered, its
+  closure holding the uncovered 1, 6, 10, 11, 24, 37 and 47), 80, 392 and 525: no call of the guard is evaluable.
+- *The audit's sites*: 501, 502 and 504 are covered, and unevaluable through 500, 503 and their callees; 500's target
+  clause, 503 and 505 are uncovered (below).
+- *The stated-leaves reader* (#441, not landed): it reads through 72 and 65 (q94), both uncovered, and is unevaluable
+  whatever its own clauses.
+
+The uncovered clauses, each premise-only variable with the callee sites whose premises hold it (and the material
+sockets, marked):
+
+| Site | Clause | Premise-only variable: callees [material socket] |
+|---|---|---|
+| 1 distinct payloads | 0 | 1: 0 [1]; 2: [1] |
+| 6 bag comparison | 1 | 3: 5, 6 |
+| 10 artifact projection | 0 | 1: 0, 9 [4]; 2: 9 [4]; 3: 9 [4]; 4: 9 [4] |
+| 11 artifact admission | 0 | 1: 10 |
+| 24 binding entry | 0 | 4–9: 5 |
+| 29 headed material | 0 | 8, 9, 10: 6, 28; 11: 5 |
+| 35 target admission | 1 | 3: 5 |
+| 36 citation admission | 3 | 3: 3, 6, 29 |
+| 37 artifact lookup | 0 | 4: 5, 12; 5: 5 |
+| 38 binding lookup | 0 | 5: 5 |
+| 40 citation interpretation | 0 | 4: 39 |
+| 41 citation location | 0 | 5: 39 |
+| 42 citation reading | 0 | 5: 36, 37 |
+| 44 located admission | 0 | 4: 41, 42; 5: 42 |
+| 45 target projection | 1 | 0: 10 [2]; 1: 8 [2]; 2, 3, 4: [2] |
+| 47 data subset | 1 | 3: 5 |
+| 48 data union | 0 | 3: 46, 47 |
+| 49 payload disjointness | 0 | 2: 1, 46 |
+| 50 quotation admission | 0 | 4: 29, 37 |
+| 50 quotation admission | 1 | 6: 40, 42; 7: 40, 45 |
+| 50 quotation admission | 2 | 7: 34, 37; 8, 9: 34, 46; 10, 11: 34, 50; 12, 14: 46, 50; 13, 15: 48, 50; 16: 46; 17: 6, 46 |
+| 52 binding admission | 0 | 2: 6, 51 |
+| 54 binder admission | 0 | 3: 32, 53 |
+| 55 pattern instantiation | 2 | 10: 34, 37; 11, 12: 34, 46; 13, 14: 34, 55; 15, 16, 19, 20: 48, 55; 17, 18: 46, 55; 21: 46; 22: 6, 46 |
+| 56 scoped instantiation | 0 | 7: 34, 37, 54; 8, 9: 34, 46; 10: 34, 46, 54; 11: 34, 55; 12: 6, 46, 54, 55; 13: 6, 55; 14: 46, 55; 15: 46; 16: 6, 46 |
+| 57 prospective instantiation | 0 | 10: 34, 37; 11, 12: 34, 46; 13: 34, 42; 14: 34, 55; 15: 42, 46; 16: 46, 55; 17: 41, 42, 48; 18: 41, 42; 19: 48, 55; 20: 46; 21: 6, 46 |
+| 60 vector instantiation | 1 | 11, 15: 48, 55; 12, 16: 48, 60; 13: 46, 55; 14: 46, 60; 17: 6, 46 |
+| 61 record instantiation | 0 | 9: 34, 37; 10: 34, 51, 59; 11: 46, 51; 12: 59, 60; 13: 46, 60; 14: 6, 46 |
+| 63 premise rows | 1 | 12: 48, 57; 13: 48, 63; 14, 15: 57 |
+| 63 premise rows | 2 | 15: 48, 62; 16: 48, 63; 17, 18: 62 |
+| 64 premise family instantiation | 0 | 8: 32, 37; 9: 32, 63 |
+| 65 schema instantiation | 0 | 7: 34, 37, 54; 8, 9, 10: 34, 49; 11: 34, 49, 54; 12: 34, 55; 13: 34, 49, 64; 14: 48, 49, 54, 55, 64; 15: 48, 55; 16: 49, 55; 17: 55; 18: 48, 64 |
+| 69 schema admission | 0 | 3–6: 65 |
+| 71 schema family admission | 0 | 3: 32, 37; 4: 32, 59; 5: 59, 70 |
+| 72 definition call admission | 0 | 4: 34, 37; 5, 6: 34, 49; 7: 34, 56; 8: 34, 49, 71; 9, 11: 56; 10: 49, 56 |
+| 73 schema callee inclusion | 0 | 4, 5, 7: 65; 6: 59, 65; 8: 51, 59; 9: 47, 51 |
+| 75 definition callee inclusion | 0 | 4: 72; 5: 32, 34, 37; 6, 7, 8: 34; 9: 32, 34; 10: 32, 59; 11: 59, 74 |
+| 77 package closure admission | 0 | 2: 47, 76 |
+| 79 root family reading | 0 | 4: 32, 37; 5: 32, 59; 6: 51, 59; 7: 51, 59, 78 |
+| 80 package admission | 0 | 3: 77, 79 |
+| 81 definition clause reading | 0 | 5: 72; 6: 32, 34, 37; 7, 8, 9: 34; 10: 32, 34; 11: 5, 32; 12: 5 |
+| 82 definition edge reading | 0 | 4: 81; 5: 65, 81; 6, 7, 9: 65; 8: 59, 65; 10: 51, 59; 11: 5, 51; 12: 5 |
+| 83 package membership | 0 | 4: 5, 79; 5: 5 |
+| 83 package membership | 1 | 4: 82, 83 |
+| 156 site context admission | 0 | 3: 35, 37 |
+| 392 use additions | 0 | 4: 47, 79; 5: 47, 76, 391 |
+| 500 empty payloads | 1 | 1: 45 |
+| 503 clause payloads | 0 | 3: 65; 4: 65, 500; 5: 65, 502; 6: 65, 501 |
+| 505 payload audit | 0 | 3: 72, 500; 4: 32, 34, 37; 5, 6, 7: 34; 8: 32, 34; 9: 32, 59; 10: 59, 504 |
+| 525 audit additions (the guard's) | 0 | 4: 47, 79; 5: 47, 76, 524 |
+
+Covered: 0, 2–5, 7–9, 12,
+17–23, 25, 26, 28, 30–34, 39, 46, 51, 53, 59, 62, 70, 74, 76, 78, 112, 113, 390, 391, 393, 501, 502, 504, and of the
+guard's own 520–524 and 526.
+
+What determines them, by kind:
+
+- *Material witnesses*: an artifact, or its enumeration, that a material premise observes — 1 (distinct payloads: 2 the
+  artifact whose carrier is the payload list, 1 its atoms' occurrence terms, which cite that artifact), 10 (artifact
+  projection: the four enumeration fields of the observed artifact), 11 (the artifact the presented data presents, as a
+  target) and 45's occurrence clause (the occurrence target's enumeration). Each is determined by the data, and
+  canonically, but bound by no head.
+- *A stored row or result read back*: the selection's rows and remainder (5, in 6, 24, 29, 35, 37, 38, 47), 37's
+  artifact row, 32's family rows, 34's ports, 59's values, 79's root list, 39's resolution: determined by the reading up
+  to the presentation the reader admits — every enumeration order, every equal occurrence.
+- *Intermediate collections of the instantiation readers* (50, 52, 54–57, 60, 61, 63–65, 69, 71–75, 81, 82): interiors,
+  slot lists and used-variable lists joined by 46, 48, 49 and 6, and the instances themselves: determined by their
+  sub-readings up to enumeration.
+- *Existential witnesses with a canonical choice*: 505's operand (3: any operand its interface accepts carrying only the
+  empty payload; the blank instance is complete, task 428), 503's binding table (3: the blank table), the bound lists of
+  77, 392 and 525 (any closed list containing the roots; the package's listed closure is complete), the root lists of
+  80, 83, 392 and 525.
+
+Site 1 carries most of it: of the 34 covered sites that are not evaluable, 10 fail through 1 alone (2, 3, 4, 5, 9, 20,
+21, 28, 46 and 393), for inequality of data (3), and so every keyed table and every admission of a functional table,
+reaches payload distinctness.
+
+### No head-covered restatement of the readers exists over the given's arguments
+
+The given's readers take self-contained data — environment values, site values — whose terms carry no target leaf. A
+program without material premises tells no two payloads it does not state apart (`positive_meaning_unlisted_payloads`),
+so inequality of arbitrary payloads needs a material premise; the artifact that premise observes occurs in no argument,
+so no head binds it. Every reader that compares keys or data for inequality has, in its closure, a clause with a
+premise-only witness. A head-covered restatement would take the witnesses in its argument — a certificate carried by
+the call. Evaluating the readers needs either an evaluator that constructs the witnesses or implementations of the
+readers.
+
+### The courses weighed
+
+- **A native evaluator generating premise-only witnesses.** Its contract would generalize
+  `finite_program_evaluation_exact` by a completeness premise on the witnesses: for a clause and a head binding, a
+  finite family of premise-only bindings that contains one under which the premises hold whenever any binding does — an
+  instance of "A generator of the accepted candidates" at the clause's premise-only bindings (REASONING_REUSE.md),
+  complete without being tight; the class it covers is the programs whose every uncovered clause has such a generator.
+  Forward evaluation of a functional native relation (Open 39) supplies none of the four kinds: the readers' results
+  are relations over every presentation (37's artifact rows or 32's family rows in every order are factorially many),
+  the existential witnesses range over infinitely many terms, and site 1's witness is a fixpoint (its atoms cite the
+  artifact their addresses form). What supplies them is a witness constructor per clause — the canonical artifact, the
+  canonical presentation, the blank table, the listed closure — each with the proof that its clause holds at the
+  canonical witness whenever it holds at any: clause by clause, what the readers' finite counterparts already establish
+  notion by notion, for 45 sites in the guard's reach alone. Deferred, as Open 39 widened (below).
+- **Certificates the answer supplies, checked by derivation admission.** A certificate proves a call, and nothing
+  certifies that a positive call fails: a missing or invalid certificate is an unavailable judgment, so the guard could
+  admit and never refuse. #399's "admitted exactly when the four requirements hold" fails, and "an unavailable
+  evaluation is kept apart from a refusal" is left with no refusal. The certificate of G1–G4 is a derivation through
+  every reader clause over the whole given's environment, every witness above in it: constructing it is this task's
+  problem moved to the executor, whom the owner's direction keeps inert. Checking it natively is derivation admission,
+  itself a program of Factor readers, or the finite checker (`Factor_Finite_Proof_Checking`), a counterpart. Rejected
+  for the judgment and the samples; certificates stay the verification request's (the answer's contract theory) and
+  replay's.
+- **Executable counterparts exact to the native definitions.** A counterpart decides a reader's meaning at a finite
+  term: it reads the argument back by the finite readers and decides the reader's result relation on what it read. The
+  pieces exist, each exact to its notion: the environment value reader (`finite_environment_value_read_exact`), finite
+  inclusion (`finite_environment_included_correct`), the package reading (`finite_native_source_correct`,
+  `finite_native_source_absent`), the definition readings (`finite_native_definition_readings`), the site reader
+  (`finite_site_value_read_exact`), the definition payloads (`finite_definition_payloads_exact`). Task 376's entry names
+  this case: "an implementation of the notion [that] supplies no distinction; the native form is what the contract
+  names". Chosen, at the given's reader entries, beneath the native evaluation of every program above them.
+
+The fit with the owner's directions: the native definitions stay normative — a counterpart's exactness is proved
+against its native definition's own contract, so what is computed is that definition's positive meaning, and Isabelle
+does what the owner gives it before genesis: "to verify that the native reasoning and definitions are internally
+consistent" (2026-09-19). The plan's rule that "the verifier of an external leaf request checks the submitted answer
+against its contract without constructing it" holds: a counterpart decides the requirements at the submitted
+candidate's site value and constructs nothing of the answer; a certificate, not a counterpart, would move construction
+to the answerer.
+
+### The decision
+
+1. **The evaluation over an implemented base** (build E1). A base is a finite set of sites B with a decision I at each.
+   The native evaluator runs on Q, the program with the base's clause families removed and its interfaces kept: the
+   demand is closed over Q, so the base's calls are its leaves; the seeds are the demand's base calls I holds of; the
+   answer is D's calls in `finite_inference_result (finite_program_rule_table Q D) K`. Contract: where I is exact at the
+   demand's base calls (it holds of a call exactly when the decoded program's positive meaning does), the answer is
+   exactly D's calls in P's positive meaning; the evaluation is available when P is formed, Q's heads cover the demand
+   and the demand is closed over Q, and an unavailable evaluation is no refusal; the empty base is
+   `finite_program_evaluation` itself, an equation and not a second evaluator. Its argument is one general lemma of
+   inference demands: restricting the rules to a demand's calls outside the base, closed under their premises, and
+   seeding the base calls that hold, keeps every demanded answer — `inference_restriction_on_closed_demand` is its case
+   of the empty base. The seeds are known calls only through their exactness, as "Keep possible premises apart from known
+   ones" requires. The answer does not depend on the base: any base with exact decisions gives the same one, so which
+   sites a base holds is an implementation parameter, not a residual.
+2. **The counterparts at the given's reader entries** (builds C1–C3, C4 by demand): each a function on finite terms,
+   exact at every term to its reader's result relation, the one its native contract states (`environment_inclusion_exact`,
+   `package_admission_exact`, the additions notion's `exact` through `use_additions_on_values`, `payload_audit_exact`,
+   `audit_goal_on_values`), and exact at the given's readers' program, the guard's program and the installed program by
+   the agreement lemmas that carry those contracts there (`given_reader_meaning`, `guard_readers_left`,
+   `first_problem_guard.unchanged_original_meaning`, the installation's placement), consumed and not re-proved. The
+   additions notion's counterpart takes its callee's counterpart as a parameter and is exact for every exact one, as
+   `package_additions_profile` is stated for every callee; 392 and 525 are its instances.
+3. **The guard's judgment** (#399): the evaluation over the base {113, 80, 392, 525} at their installed sites, of the
+   installed guard's finite program at the call of its entry at the pair. Its native part is the requirement guard
+   (526) and the views 520 and 521, all covered, so at a formed installation it is available; the four socket calls are
+   in the demand, and a refusal names the sockets whose calls are not settled (`first_problem_guard_refusals`).
+4. **The audit's cost** (#393's (5)): no evaluator runs the audit's program. Its counterpart is timed at one of the
+   given's readers' definitions (C3). The two costs #388's review names (follow-up 4) — every clause read by 72 and by
+   65, 45's projection at every occurrence — are costs of a native evaluation none runs: not measured, and no
+   performance-channel item until Open 39.
+5. **The criticism's samples** (#435's notion, #437, #439, #447): evaluated over a base holding the installed sites of
+   the given's reader entries a candidate's added definitions call, with their counterparts; the candidate's own
+   clauses are expanded natively. A sample whose demand reaches an uncovered clause outside the base — an added
+   definition with a premise-only variable, a call to a reader site without a counterpart — is unavailable
+   (`criticism_table_unavailable`), recorded with the clause and its premise-only variables, never a failure row. The
+   stated-leaves reader (#441) enters the base through its finite computation, proved exact to its native definition.
+
+### What it relies on
+
+- Sites compared for equality: a base is keyed by sites — the one distinction E1 adds, within the native loop's rule.
+- The counterparts' distinctions are their notions': each is exact to a native contract and draws nothing the contract
+  does not (task 376). G3's counterpart compares uses as values where the native relation compares them as
+  self-contained data (key absence at 20 over 3); the relation's equivariance clause (`use_key_absence_equivariant`)
+  holds of the relation the counterpart computes, as every reader's clause holds of its relation.
+- Exactness is the premise each use discharges: an inexact counterpart is a failed proof, never a changed meaning.
+
+### Corrections of the briefs
+
+- **#393** (1) "formed and evaluable": formed; its evaluability is over the base (E1 with C1–C3), and it records the
+  plain evaluator's readiness at the guard's call (`None`), the uncovered sites being this entry's. (5): the audit's
+  native evaluation at one of the given's readers' definitions, its seconds and demanded calls and which cost
+  dominates, is replaced by the plain evaluator's readiness at the audit's call at that definition (`None`, 505's clause
+  uncovered); the audit's seconds move to C3; the construction's seconds stay.
+- **#399** (2): the judgment is E1's evaluation over the base {113, 80, 392, 525} at their installed sites, with C1–C3's
+  counterparts; its contract from E1's exactness, the counterparts' exactness carried to the installed program (#393's
+  (4)) and the posing's meaning lemma; the refusal's sockets and the unavailable evaluation as above. It waits on E1,
+  C1, C2 and C3.
+- **#447** (3): "one native evaluation" becomes one evaluation over a base (S1, the sample over a base), its unavailable
+  samples recorded as above; (4): the stated-leaves reader is evaluated through its finite computation in the base;
+  Decided, "no HOL computation stands for an entry's meaning": the candidate's entries are evaluated natively, their
+  clauses expanded, and the given's reader entries they call are computed by counterparts exact to their native
+  definitions, which `result.md` names as a reliance. It waits on S1, and on C4 for the entries its controls'
+  candidates call beyond C1–C3.
+- **#437, #439** (in flight): their samples at covered control programs stand on `native_call_evaluation`; a control
+  whose program demands an uncovered reader site has an unavailable sample, not an empty table; at the criticism run
+  they go through S1.
+- **#441** (in flight): its finite computation stated exact, at every term, to the stated-leaves reader's positive
+  meaning — the form a base's decision takes.
+
+### The builds
+
+| Build | What | Size |
+|---|---|---|
+| E1 | The general lemma in `Inference_Demands`; the evaluation over a base (`finite_program_evaluation`'s and `native_call_evaluation`'s), its exactness under exact decisions, its readiness, the empty base's equation; a control: a program with an uncovered site, unavailable plain and answered over a base | about 180K |
+| C1 | The counterparts of 113 (the two environment values read, finite inclusion) and 80 (the source-root argument read, the package reading), exact to their contracts | about 150K |
+| C2 | The additions notion's counterpart, its callee a parameter, exact for every exact callee counterpart; 393's (use absence); 392 as their instance | about 160K |
+| C3 | The audit's counterpart (505, through the definition readings and the payloads), 522's as the callee, 525 as the additions instance; the audit's seconds at one of the given's readers' definitions (from #393's (5)) and the four goals' at the given as its own candidate | about 170K |
+| S1 | The sample over a base in `Criticism_Samples`: its evaluation and table, exact under exact decisions; the record and refutations consumed unchanged | about 70K |
+| C4 | By demand: the counterparts of the given's other entries a candidate calls (72, 77, 79, 81, 82, 83, 122), split by the planner | about 200K |
+
+E1, C1 and C2 are independent of one another; C3 follows C2; #399 follows E1, C1–C3 and #393; S1 follows E1; #447
+follows S1 and #399, and C4 for what its controls call. E1 changes `Inference_Demands`, which most of the library
+imports: a whole rebuild, batched with other work where the planner can.
+
+### What the builds must respect
+
+- E1: never admits on an unavailable evaluation; the empty base is the plain evaluator by an equation; the base's
+  decisions enter only through exactness at the demand's base calls; the general lemma is stated for inference rules
+  and demands beside the lemma it generalizes; REASONING_REUSE.md gains its row with E1.
+- C1–C4: each counterpart exact at every finite term to its reader's result relation, proved from the finite readers'
+  exactness and the reader's own contract, none re-proved, and carried to the guard's, the given's and the installed
+  programs by the existing agreement lemmas; no counterpart decides what its reader's contract does not state; the
+  additions counterpart is stated once for every callee.
+- Nothing reads the bootstrap loop's datatypes, rows, loci or keys (task 378); sites are compared for equality, payloads
+  stay inert; no recorded word changes.
+
+### Open
+
+- Open 39, widened: native evaluation of witness-style definitions — witness constructors for the four kinds above,
+  each with its completeness — beside forward evaluation of a functional native relation. As it lands, sites move from a
+  base to native evaluation and no judgment changes. Its first step is site 1's material witness: ten covered sites of
+  the guard's reach become evaluable with it.
+- Whether counterparts are the implementation the owner intends before genesis (`.build/tasks/460/result.md`).
+- E1's keyed shared code path (`Shared_Native_Evaluation`'s, with seeds), should its cost demand it, through the
+  performance channel.
+- Native derivation admission's own head coverage was not computed.
+
+Recorded 2026-09-25 (task 460's decision; a design, no theory changes).

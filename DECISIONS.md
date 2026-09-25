@@ -15300,7 +15300,9 @@ have a counterpart in the native content the answer reads.
 The asked relation of the first problem is the requirement guard (`requirement_guard_schema`,
 `required_admission_installed`) with one socket for each goal, every socket receiving the whole pair of the given and
 the candidate. Four sockets and not one: each goal is a separate requirement with a separate reason, none implies
-another, and a refusal names the socket that failed (task 378). G3 and G4 read the same bound of the candidate's
+another [corrected (task 426): not so of G3 and G4 — each of their contracts contains the existence of the
+candidate's package (`first_problem_guard_contract`), so a candidate without a package fails both; they remain
+separate requirements, each with its own reason], and a refusal names the socket that failed (task 378). G3 and G4 read the same bound of the candidate's
 members, each in its own rule.
 
 ### What no native program checks today

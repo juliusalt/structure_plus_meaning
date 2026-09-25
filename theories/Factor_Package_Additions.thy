@@ -103,12 +103,10 @@ lemma element_sound:
   shows "\<exists>a m. t=Pair_Term a m \<and> ((\<exists>e u r c. a=Pair_Term (Pair_Term e (Pair_Term u r)) c \<and>
     (83,package_subject_argument e u r m)\<in>positive_meaning P) \<or> (callee_site,Pair_Term a m)\<in>positive_meaning P)"
 proof -
-  have consequence: "(element_site,t)\<in>schema_consequences P (positive_meaning P)"
-    using holds positive_meaning_unfold[of P] by blast
   obtain n S h where clause: "((element_site,n),S)\<in>system_clauses P"
     and conclusion: "t=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning P"
-    using schema_consequences_valuationD[OF consequence] by blast
+    using positive_meaning_valuationE[OF holds] by blast
   have "S=addition_member_schema \<or> S=addition_callee_schema callee_site"
     using clause by (auto simp: element_family addition_element_clauses_def)
   then show ?thesis
@@ -153,17 +151,21 @@ proof -
   qed
 qed
 
+lemma entry_rule:
+  "(entry_site,z)\<in>positive_meaning P \<longleftrightarrow> (\<exists>h. (\<forall>a\<in>schema_variables (package_additions_schema list_site). term_formed (h a)) \<and>
+    z=evaluate_pattern h (schema_conclusion (package_additions_schema list_site)) \<and>
+    (\<forall>s d p. (s,d,p)\<in>schema_premises (package_additions_schema list_site) \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning P))"
+  by (rule variable_single_clause_valuation[OF system_formed entry_family]) (simp_all add: package_additions_schema_def entry_call)
+
 theorem sound:
   assumes holds: "(entry_site,z)\<in>positive_meaning P"
   shows "package_additions_result (\<lambda>t. (callee_site,t)\<in>positive_meaning P) z"
 proof -
-  have consequence: "(entry_site,z)\<in>schema_consequences P (positive_meaning P)"
-    using holds positive_meaning_unfold[of P] by blast
-  obtain n S h where clause: "((entry_site,n),S)\<in>system_clauses P"
-    and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
+  define S where "S=package_additions_schema list_site"
+  have schema: "S=package_additions_schema list_site" by (rule S_def)
+  obtain h where conclusion: "z=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning P"
-    using schema_consequences_valuationD[OF consequence] by blast
-  have schema: "S=package_additions_schema list_site" using clause by (simp add: entry_family)
+    using holds unfolding schema entry_rule by blast
   have calls: "\<exists>E u r. site_value_presents E u r (h 0)"
     "\<exists>E u r. site_value_presents E u r (Pair_Term (h 1) (Pair_Term (h 2) (h 3)))"
     "(79,citation_observation_argument (h 1) (h 2) (h 3) (h 4))\<in>positive_meaning root_family_reading_system"
@@ -316,9 +318,8 @@ proof -
     else if n=3 then Payload_Term s else if n=4 then data_list_term ?rs else data_list_term ?ys"
   have result: "(entry_site,evaluate_pattern ?h (schema_conclusion (package_additions_schema list_site)))
       \<in>positive_meaning P"
-    by (rule ordinary_positive_valuation_step[where c=0])
-      (use formed calls elements target(2) in \<open>auto simp: entry_family package_additions_schema_def
-        schema_variables_def entry_call\<close>)
+    unfolding entry_rule by (rule exI[of _ ?h])
+      (use formed calls elements target(2) in \<open>auto simp: package_additions_schema_def schema_variables_def\<close>)
   show ?thesis using result target(2) by (simp add: package_additions_schema_def)
 qed
 
@@ -680,6 +681,12 @@ interpretation use_additions: package_additions_profile use_additions_system 390
 
 section \<open>The callee reads the absence of the member's use from the given environment's artifact table\<close>
 
+lemma use_absence_rule:
+  "(393,z)\<in>positive_meaning use_additions_system \<longleftrightarrow> (\<exists>h. (\<forall>a\<in>schema_variables use_absence_schema. term_formed (h a)) \<and>
+    z=evaluate_pattern h (schema_conclusion use_absence_schema) \<and>
+    (\<forall>s d p. (s,d,p)\<in>schema_premises use_absence_schema \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning use_additions_system))"
+  by (rule variable_single_clause_valuation[OF use_additions_system_formed use_additions_families(4)]) (simp_all add: use_absence_schema_def use_additions_call)
+
 theorem use_absence_exact:
   "(393,t)\<in>positive_meaning use_additions_system \<longleftrightarrow> (\<exists>xs b c y k q.
     t=Pair_Term (Pair_Term (Pair_Term (Pair_Term (pair_list_term xs) b) c) y) (Pair_Term k q) \<and>
@@ -687,14 +694,12 @@ theorem use_absence_exact:
     formed_key_rows xs \<and> k\<notin>set (map fst xs))"
 proof
   assume holds: "(393,t)\<in>positive_meaning use_additions_system"
-  have consequence: "(393,t)\<in>schema_consequences use_additions_system (positive_meaning use_additions_system)"
-    using holds positive_meaning_unfold[of use_additions_system] by blast
-  obtain n S h where clause: "((393,n),S)\<in>system_clauses use_additions_system"
-    and conclusion: "t=evaluate_pattern h (schema_conclusion S)"
+  define S where "S=use_absence_schema"
+  have schema: "S=use_absence_schema" by (rule S_def)
+  obtain h where conclusion: "t=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow>
       (d,evaluate_pattern h p)\<in>positive_meaning use_additions_system"
-    using schema_consequences_valuationD[OF consequence] by blast
-  have schema: "S=use_absence_schema" using clause by (simp add: use_additions_families)
+    using holds unfolding schema use_absence_rule by blast
   have absent: "(20,Pair_Term (h 3) (h 0))\<in>positive_meaning keyed_list_system"
     using support by (auto simp: schema use_absence_schema_def use_additions_components)
   have formed: "term_formed (h 1)" "term_formed (h 2)" "term_formed (h 4)" "term_formed (h 5)"
@@ -719,9 +724,8 @@ next
   let ?h="\<lambda>n::nat. if n=0 then pair_list_term xs else if n=1 then b else if n=2 then c else if n=3 then k
     else if n=4 then q else y"
   have result: "(393,evaluate_pattern ?h (schema_conclusion use_absence_schema))\<in>positive_meaning use_additions_system"
-    by (rule ordinary_positive_valuation_step[where c=0])
-      (use parts rows absent in \<open>auto simp: use_additions_families use_absence_schema_def schema_variables_def
-        use_additions_call\<close>)
+    unfolding use_absence_rule by (rule exI[of _ ?h])
+      (use parts rows absent in \<open>auto simp: use_absence_schema_def schema_variables_def\<close>)
   show "(393,t)\<in>positive_meaning use_additions_system" using result parts(1) by (simp add: use_absence_schema_def)
 qed
 

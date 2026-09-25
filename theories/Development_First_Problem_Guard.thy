@@ -482,8 +482,7 @@ section \<open>Each goal's contract at the pair\<close>
 
 text \<open>
   Each goal site of the program holds one ordinary clause under a variable interface, so its meaning is a
-  valuation of that clause (@{thm [source] positive_variable_rule_family},
-  @{thm [source] ordinary_schema_rule_valuation}); each view rule below only rearranges that valuation.
+  valuation of that clause (@{thm [source] variable_single_clause_valuation}); each view rule below only rearranges that valuation.
 \<close>
 
 lemma goal_view_rule:
@@ -493,16 +492,8 @@ lemma goal_view_rule:
   shows "(n,z)\<in>positive_meaning first_problem_goals_system \<longleftrightarrow>
     (\<exists>f. (\<forall>a\<in>schema_variables R. term_formed (f a)) \<and> z=evaluate_pattern f (schema_conclusion R) \<and>
       (\<forall>s d p. (s,d,p)\<in>schema_premises R \<longrightarrow> (d,evaluate_pattern f p)\<in>positive_meaning first_problem_goals_system))"
-proof -
-  have call: "\<And>t. schema_call_formed first_problem_goals_system n t \<longleftrightarrow> term_formed t"
-    using member by (simp add: first_problem_goals_call)
-  have formed: "schema_formed R"
-    using first_problem_goals_formed family[of 0 R] unfolding schema_system_formed_def by blast
-  have "(n,z)\<in>positive_meaning first_problem_goals_system \<longleftrightarrow>
-      schema_rule_instance R (positive_meaning first_problem_goals_system) z"
-    by (simp only: positive_variable_rule_family[OF call] system_clause_member family) blast
-  then show ?thesis by (simp only: ordinary_schema_rule_valuation[OF formed ordinary])
-qed
+  by (rule variable_single_clause_valuation[OF first_problem_goals_formed family ordinary])
+    (simp add: first_problem_goals_call)
 
 lemma retention_goal_rule:
   "(520,z)\<in>positive_meaning first_problem_goals_system \<longleftrightarrow> (\<exists>x y a b.
@@ -806,19 +797,6 @@ qed
 
 section \<open>The contract in the words of the requirement\<close>
 
-lemma given_member_use:
-  assumes package: "native_package_at E u r Q" and member: "d\<in>system_definitions Q"
-  shows "fst d\<in>environment_uses E"
-proof -
-  obtain Z where raw: "native_root_family_at E u r Z" "native_package_formed E (rel_ran Z)"
-    using package by (auto simp: native_package_at_def)
-  have "d\<in>native_definition_sites E (rel_ran Z)" using member native_package_complete_roots[OF package raw(1)] by simp
-  then obtain p C where "native_definition_at E (fst d) (snd d) p C"
-    using raw(2) by (auto simp: native_package_formed_def)
-  then have "(fst d,snd d)\<in>environment_positions E" by (rule native_definition_position)
-  then show ?thesis by (auto simp: environment_positions_def environment_uses_def rel_dom_def artifact_at_def)
-qed
-
 theorem first_problem_guard_contract:
   assumes first: "site_value_presents E u r t" and second: "site_value_presents F v s w"
   shows "(526,Pair_Term t w)\<in>positive_meaning first_problem_guard_system \<longleftrightarrow>
@@ -835,7 +813,7 @@ proof -
   have used: "fst d\<in>environment_uses E" if "?given d" for d
   proof -
     from that obtain Q where "native_package_at E u r Q" "d\<in>system_definitions Q" by blast
-    then show ?thesis by (rule given_member_use)
+    then show ?thesis by (rule native_package_member_use)
   qed
   show ?thesis
   proof

@@ -383,6 +383,23 @@ proof -
 qed
 
 text \<open>
+  Every definition of a package stands at a use its environment holds.
+\<close>
+
+lemma native_package_member_use:
+  assumes package: "native_package_at E u r P" and member: "d\<in>system_definitions P"
+  shows "fst d\<in>environment_uses E"
+proof -
+  obtain Z where raw: "native_root_family_at E u r Z" "native_package_formed E (rel_ran Z)"
+    using package by (auto simp: native_package_at_def)
+  have "d\<in>native_definition_sites E (rel_ran Z)" using member native_package_complete_roots[OF package raw(1)] by simp
+  then obtain p C where "native_definition_at E (fst d) (snd d) p C"
+    using raw(2) by (auto simp: native_package_formed_def)
+  then have "(fst d,snd d)\<in>environment_positions E" by (rule native_definition_position)
+  then show ?thesis by (auto simp: environment_positions_def environment_uses_def rel_dom_def artifact_at_def)
+qed
+
+text \<open>
   The roots select definitions. Reading a definition exposes its complete
   clause family and every prospective callee. Reachability follows those
   callees, and package formation requires a definition at every reached site.

@@ -15,7 +15,7 @@ abbreviation package_context_pattern ::
 lemma package_context_presents:
   assumes source: "environment_value_presents E e" and package: "native_package_at E u r P"
   shows "site_value_presents E u r (package_context_term e (use_data_term u) (Payload_Term r))"
-  using source native_package_root_position[OF package]
+  using source native_package_site_position[OF package]
   by (auto simp: site_value_presents_def site_data_term_def)
 
 lemma package_context_formed:

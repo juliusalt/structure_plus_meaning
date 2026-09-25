@@ -182,7 +182,7 @@ proof -
     using current_entry_scope_closed[OF current] by (simp add: closed_native_package_at_def)
   have ef: "environment_formed E" using native_package_projection(1)[OF package]
     by (simp add: native_package_formed_def)
-  have site: "(pu,[])\<in>environment_positions E" by (rule native_package_root_position[OF package])
+  have site: "(pu,[])\<in>environment_positions E" by (rule native_package_site_position[OF package])
   have future: "\<forall>E' qu qr Q e A'.
       closed_native_package_at E' qu qr Q \<longrightarrow> e\<in>system_definitions Q \<longrightarrow>
       target_formed A' \<longrightarrow>
@@ -270,7 +270,7 @@ proof -
   have package: "native_package_at E pu [] P" using program(2) by (simp add: closed_native_package_at_def)
   have ef: "environment_formed E" using native_package_projection(1)[OF package]
     by (simp add: native_package_formed_def)
-  have site: "(pu,[])\<in>environment_positions E" by (rule native_package_root_position[OF package])
+  have site: "(pu,[])\<in>environment_positions E" by (rule native_package_site_position[OF package])
   obtain H X z K F au R where result:
     "generation_predecessors H={|G|}" "G\<noteq>H"
     "current_entry_scope_quoted_at X [] A l H z E' qu [] Q e"

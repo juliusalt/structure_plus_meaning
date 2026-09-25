@@ -13,8 +13,9 @@ text \<open>
   recording that returns no generation, or whose cause is another, is refused.
 
   The ML structure @{text Native_State_Execution} states that behaviour once, over the compiled recording and report
-  its caller supplies. At every build this theory compiles the recording and the report without the given's code and
-  records the owner record of 18:53, a payload of one address that needs no given (task 561). The given's value, and
+  its caller supplies, and this theory compiles and evaluates nothing at build. It recorded the owner record of 18:53
+  at every build (task 561), about 7 s of compilation for a control the owner records' read-back makes at every load of
+  @{text Development_First_Problem_Execution}, which keeps it alone (task 562). The given's value, and
   the controls of task 492 cut from it (8,013 and 32,009 addresses, @{text Development_Bounded_Recording_Execution}),
   are compiled and evaluated where they are called: the caller compiles, in one @{text ML} block,
   @{text native_state_given}, @{const bounded_recording_subjects}, @{const development_base_generation} and
@@ -59,17 +60,6 @@ struct
     (["owner record 18:53", "cut 4000", "cut 16000"], subjects)
   fun first_generation record report given = recording record report "first generation" (given ())
 end
-\<close>
-
-ML \<open>
-structure Native_State_Owner_Code =
-struct
-  val record = @{code development_base_generation}
-  val report = @{code native_state_report}
-  val owner = @{code development_owner_direction_1853}
-end
-val _ = Native_State_Execution.recording Native_State_Owner_Code.record Native_State_Owner_Code.report
-  "owner record 18:53" Native_State_Owner_Code.owner
 \<close>
 
 end

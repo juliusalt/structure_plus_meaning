@@ -72,6 +72,74 @@ proof -
     by (rule development_indexed_generation_recorded[OF indexed development_base_environment_formed rows])+
 qed
 
+section \<open>A generation citing one row stands in the environment the row reads in\<close>
+
+text \<open>
+  A generation citing one row is the indexed generation recorded in the environment in which the cited generation
+  reads back at its site, that row its only predecessor. The owner's approval and every generation of the route that
+  cites one generation (the posing, the admitted answer, its verification, its criticism) are its instances; a
+  generation citing several rows is the indexed generation itself. Its contract takes the cited row's reading alone:
+  the environment's formation follows from it (@{thm [source] generation_at_environment_formed}), and the recorded
+  generation's reading is again such a premise, for a generation that cites it next.
+\<close>
+
+definition development_citing_row_generation ::
+    "finite_factor_term \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow> development_generation_row \<Rightarrow>
+      (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
+  "development_citing_row_generation t H row=development_indexed_generation t H [row]"
+
+lemma development_citing_row_generation_recorded:
+  assumes built: "development_citing_row_generation t H (s,A)=Some (B,u,G)"
+    and cited: "finite_check_generation A H (fst s) (snd s)"
+  shows "finite_environment_formed H" "finite_environment_formed B" "finite_environment_included H B"
+    "finite_check_generation G B u []" "finite_check_generation A B (fst s) (snd s)" "finite_generation_formed G"
+proof -
+  have indexed: "development_indexed_generation t H [(s,A)]=Some (B,u,G)"
+    using built by (simp only: development_citing_row_generation_def)
+  have formed: "finite_environment_formed H"
+    using generation_at_environment_formed[OF cited[unfolded finite_check_generation_exact]]
+    by (simp only: finite_environment_formed_correct)
+  have rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) [(s,A)]" using cited by simp
+  note recorded=development_indexed_generation_recorded[OF indexed formed rows]
+  have carried: "list_all (\<lambda>(d,G). finite_check_generation G B (fst d) (snd d)) [(s,A)]"
+    by (rule development_rows_carried[OF rows recorded(2) recorded(1)])
+  show "finite_environment_formed H" by (rule formed)
+  show "finite_environment_formed B" by (rule recorded(1))
+  show "finite_environment_included H B" by (rule recorded(2))
+  show "finite_check_generation G B u []" by (rule recorded(3))
+  show "finite_check_generation A B (fst s) (snd s)" using carried by simp
+  show "finite_generation_formed G" by (rule recorded(4))
+qed
+
+theorem development_citing_row_generation_certified:
+  assumes built: "development_citing_row_generation t H (s,A)=Some (B,u,G)"
+    and cited: "finite_check_generation A H (fst s) (snd s)"
+  obtains R d K pu E root where "generation_predecessors G={|A|}" "finite_check_generation A B (fst s) (snd s)"
+    "development_data_target t=Some (generation_payload G)"
+    "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
+    "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
+    "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+      (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
+    "finite_check_generation G B u []"
+    "environment_included (decode_finite_environment H) (decode_finite_environment B)"
+proof -
+  note recorded=development_citing_row_generation_recorded[OF built cited]
+  have indexed: "development_indexed_generation t H [(s,A)]=Some (B,u,G)"
+    using built by (simp only: development_citing_row_generation_def)
+  have rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) [(s,A)]" using cited by simp
+  obtain R d K pu E root where certified: "development_data_target t=Some (generation_payload G)"
+      "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
+      "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
+      "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
+        (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
+      "generation_predecessors G=fset_of_list (map snd [(s,A)])"
+      "finite_check_generation G B u []"
+      "environment_included (decode_finite_environment H) (decode_finite_environment B)"
+    by (rule development_indexed_generation_certified[OF indexed recorded(1) rows])
+  have cites: "generation_predecessors G={|A|}" using certified(6) by simp
+  show thesis by (rule that[OF cites recorded(5) certified(1,2,3,4,5,7,8)])
+qed
+
 section \<open>Owner records\<close>
 
 text \<open>
@@ -165,49 +233,18 @@ definition development_owner_record_read_back ::
 section \<open>The form of the owner's approval\<close>
 
 text \<open>
-  The owner's approval of a generation is an owner record citing it: recorded in the environment of the
-  cited generation's row, that row its only predecessor. The approval is no premise of a native
-  relation; it is the adoption of what it cites. No approval is recorded here.
+  The owner's approval of a generation is an owner record citing it: the generation citing one row, recorded in
+  the environment of the cited generation's row, that row its only predecessor. The approval is no premise of a
+  native relation; it is the adoption of what it cites. No approval is recorded here.
 \<close>
 
 definition development_owner_approval ::
     "finite_factor_term \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow> development_generation_row \<Rightarrow>
       (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
-  "development_owner_approval t H row=development_indexed_generation t H [row]"
+  "development_owner_approval=development_citing_row_generation"
 
-theorem development_owner_approval_certified:
-  assumes built: "development_owner_approval t H (s,A)=Some (B,u,G)"
-    and cited: "finite_check_generation A H (fst s) (snd s)"
-  obtains R d K pu E root where "generation_predecessors G={|A|}" "finite_check_generation A B (fst s) (snd s)"
-    "development_data_target t=Some (generation_payload G)"
-    "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
-    "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-    "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
-      (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
-    "finite_check_generation G B u []"
-proof -
-  have indexed: "development_indexed_generation t H [(s,A)]=Some (B,u,G)"
-    using built by (simp only: development_owner_approval_def)
-  have formed: "finite_environment_formed H"
-    using generation_at_environment_formed[OF cited[unfolded finite_check_generation_exact]]
-    by (simp only: finite_environment_formed_correct)
-  have rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) [(s,A)]" using cited by simp
-  note recorded=development_indexed_generation_recorded[OF indexed formed rows]
-  have "list_all (\<lambda>(d,G). finite_check_generation G B (fst d) (snd d)) [(s,A)]"
-    by (rule development_rows_carried[OF _ recorded(2) recorded(1)]) (simp add: cited)
-  then have carried: "finite_check_generation A B (fst s) (snd s)" by simp
-  obtain R d K pu E root where certified: "development_data_target t=Some (generation_payload G)"
-      "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
-      "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-      "bounded_certified_policy_cause_at (decode_finite_environment K) pu [] d (decode_finite_environment B) u []
-        (decode_finite_generation G) (decode_finite_environment E) root (decode_finite_object R)"
-      "generation_predecessors G=fset_of_list (map snd [(s,A)])"
-      "finite_check_generation G B u []"
-      "environment_included (decode_finite_environment H) (decode_finite_environment B)"
-    by (rule development_indexed_generation_certified[OF indexed formed rows])
-  have cites: "generation_predecessors G={|A|}" using certified(6) by simp
-  show thesis by (rule that[OF cites carried certified(1,2,3,4,5,7)])
-qed
+lemmas development_owner_approval_certified=
+  development_citing_row_generation_certified[folded development_owner_approval_def]
 
 text \<open>
   The five records are recorded and read back in @{text Development_First_Problem_Execution}, at every load of that

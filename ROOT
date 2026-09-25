@@ -1328,6 +1328,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Additions_Counterparts
     Development_Guard_Counterparts
     Factor_Package_Reader_Counterparts
+    Factor_Definition_Reader_Counterparts
     Finite_Term_Word_Readers
     Required_History_Presentation
     Required_History_Execution
@@ -1877,6 +1878,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Package_Program
     Development_Native_Package
     Development_Given_Installation
+    Development_Given_Counterparts
     Development_First_Problem_Asked
     Development_Native_State
     Development_Given_Execution

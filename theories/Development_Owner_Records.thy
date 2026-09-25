@@ -209,23 +209,9 @@ proof -
   show thesis by (rule that[OF cites carried certified(1,2,3,4,5,7)])
 qed
 
-section \<open>The five records, executed\<close>
-
-ML \<open>
-  fun development_owner_record_timed ctxt stamp =
-    let
-      val t = Syntax.read_term ctxt ("development_owner_record_read_back development_owner_direction_" ^ stamp ^
-        " development_owner_record_" ^ stamp)
-      val timing = Timing.start ()
-      val r = Value_Command.value ctxt t
-      val elapsed = #elapsed (Timing.result timing)
-    in writeln ("OWNER RECORD " ^ stamp ^ ": " ^ Syntax.string_of_term ctxt r ^ " in " ^ Time.toString elapsed ^ " s") end
+text \<open>
+  The five records are recorded and read back in @{text Development_First_Problem_Execution}, at every load of that
+  execution theory, with the recording's refinements in effect; this library theory runs no evaluation.
 \<close>
-
-ML_val \<open>development_owner_record_timed \<^context> "1750"\<close>
-ML_val \<open>development_owner_record_timed \<^context> "1812"\<close>
-ML_val \<open>development_owner_record_timed \<^context> "1836"\<close>
-ML_val \<open>development_owner_record_timed \<^context> "1853"\<close>
-ML_val \<open>development_owner_record_timed \<^context> "1957"\<close>
 
 end

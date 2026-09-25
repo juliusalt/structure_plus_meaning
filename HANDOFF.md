@@ -49,10 +49,11 @@ on, all accepted:
   checked certificate's premise readings once, the graph at a read program), RR3 #534 (landed `1a97f800`: the
   readers' formed bodies' inner readings), then
   RR4 #536 (landed `0284b0ae`: the policy package read once, the formed path, R's formation derived from the term's;
-  1.07 s at 32K, 33.6 µs per address, 52–80 s estimated at the given's value) → X #538 (the first generation executed
-  held at the given's value against the gate of 60 µs per address, about 53 s) → RR5 (the listing policy's source
-  installed as a formed program, S1-S2's 35 % at 32K; after X, whose change edits the collection) beside the posing
-  #397 (its brief corrected by #522), each build with its review.
+  1.07 s at 32K, 33.6 µs per address, 52–80 s estimated at the given's value) → X #538 (landed `e7c53a09`: the first generation executed held at the
+  given's value, 111.3 s against the gate's 53 s, every step growing n^1.3–1.5 from 32K) → the growth attributed
+  (an investigation) → the decision the entry's trigger asks (certification parametric in the literal or further
+  refinement; the posing's payload, twice the given's) → RR5 #557 and the posing #397, both waiting on that decision,
+  their briefs to be corrected by it; each build with its review.
 - Then the answer's judgment and admission #399, its transport #401, the verification's native half #403 and its
   harness #407 (after the frame and its fixes, landed). The first request (#523's corrected #443, divided by #544,
   `.build/tasks/544/result.md`): the request program #545 (landed `5e6409e4`), the request at the given #547 (support,
@@ -225,7 +226,9 @@ a task):
   it measured and its absolutes in both forms. A before/after pair timed in the same holds is its own reference: its
   scale factor is a control timed with it whose code no commit between the two bases changes; a factor from an
   unrelated computation is not a scale; an estimate is compared first in the quantity it counts (q85). A numeric
-  expectation written before the work chose its cases is an estimate, not a target.
+  expectation written before the work chose its cases is an estimate, not a target. A held run times the operation
+  alone, its compilation outside the timed seconds (a probe loads the execution theory inside the hold); a probe of
+  X's execution theory needs about 90 s (#539's review).
 - **Probes.** A change that writes a theory says `--probe` to be probed, and its reply carries the finding; a probe is
   an inner loop, not a gate (q26), bounded at 60 s unless a measurement holds the machine; its evidence is
   `probe.summary.json`. An edit to a base theory is probed from the tree, the unchanged theories between it and its
@@ -346,7 +349,9 @@ What landed that open work builds on, a line each; how it went and each review's
   bodies, no formation checked inside. RR4 (#536, `0284b0ae`): the policy package read once and passed on, every
   environment but the ground source's F1 read where its constructor formed it, R's formation from the term's by
   `finite_data_syntax_quotation_formed`, the condition and readiness established by contracts; the recording 1.07 s at
-  32K, 33.6 µs per address (`.build/tasks/536/result.md`, (5)).
+  32K, 33.6 µs per address (`.build/tasks/536/result.md`, (5)). X (#538, `e7c53a09`):
+  `Development_Native_State_Execution`, the first generation executed held at the given's value, 111.3 s (126 µs per
+  address) against the gate's 53 s (`.build/tasks/538/measurement.md`).
 - **The resolving evaluator** (#495's entry): R1 `Factor_Material_Resolution` (#499, `1f021cf3`: the material premise
   solved from a ground skeleton or source, site 1's control), R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the
   most general unifier of finite term patterns and renaming apart) and R3 `Factor_Program_Resolution` (#503,
@@ -471,7 +476,12 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **What the next events ask**: R7 (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
+- **What the next events ask**: the posing #397 and RR5 #557 were already running when the design #560 was set in
+  front of them: #397 hands over built, its recording's measurement a remainder (q103, (c)); #557 measures RR5's saving
+  held, before the attribution #559 (q102). The design's result decides the recording at scale and the posing's
+  payload (holding the given again or citing the first generation): then the posing's recording or re-pose and RR5's
+  re-plan or retirement are placed. R4 #505 is re-planned over its partial state (a proof not terminating in
+  `Factor_Resolution_Completeness`); R7 (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
@@ -502,7 +512,8 @@ searches for a theory before briefing a task that edits it.
   `export_code` line by the probe copy's shifted line numbers (#454's review, follow-up 5); a whole-library rebuild
   beside another heavy run exhausted Poly/ML's store (#483's review): such a check could run alone; a brief task could not
   read a sibling brief's delivered brief under `.build/tasks/522/brief/` (#523's result); a theory removed from ROOT leaves
-  a blank line (#509's review); sessions go cold while parked — #515's twice (14:15, its check never run; 15:04,
+  a blank line (#509's review); a session parked for the machine is woken every half minute while another task's
+  exclusive claim waits (#559); sessions go cold while parked — #515's twice (14:15, its check never run; 15:04,
   before writing anything) — and a planner between events before its notes (plan-72, 15:16). Classifier stops are the
   run's to handle, not ledger questions (the owner, 20:23 and 20:28).
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

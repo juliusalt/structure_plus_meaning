@@ -463,9 +463,6 @@ abbreviation rooted_rows_presents ::
 lemma rooted_rows_presentation_class:
   "presentation_class rooted_rows_presents (\<lambda>z. exact_formed (fst (fst z))) (\<lambda>p. \<exists>z. rooted_rows_presents z p)"
 proof -
-  have address: "presentation_class (\<lambda>r t. t=Payload_Term r) (\<lambda>_::local_address. True) (\<lambda>t. \<exists>r. t=Payload_Term r)"
-    using injective_presentation_class[where f=Payload_Term and D="\<lambda>_::local_address. True"]
-    by (simp add: inj_on_def)
   have injective: "inj (\<lambda>xs. data_list_term (map address_pair_data xs))"
     by (rule injI) (simp add: data_list_term_injective inj_map_eq_map[OF address_pair_data_injective])
   have rows: "presentation_class (\<lambda>xs t. t=data_list_term (map address_pair_data xs))
@@ -474,7 +471,7 @@ proof -
       and D="\<lambda>_::(local_address \<times> local_address) list. True"] injective by simp
   show ?thesis
     using presentation_class.recovered_admission[OF factor_pair_class[OF factor_pair_class[OF
-      artifact_presentations.presentation_class_axioms address] rows]] by simp
+      artifact_presentations.presentation_class_axioms address_coordinate_presentation] rows]] by simp
 qed
 
 theorem family_admission_equivariant:

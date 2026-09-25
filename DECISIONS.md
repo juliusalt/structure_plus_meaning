@@ -17269,6 +17269,12 @@ reads syntax (every syntax reader reads an address of its artifact's carrier), n
 lies in its source artifact's carrier) and no occurrence target stands (an anchor's address lies in the carrier): a
 reader observes it only as the whole target of an external whole citation. Filling every use that holds it — never a
 chosen subset — therefore changes each reading by `placeholder_target R` on its targets and in nothing else.
+[Corrected by task 577 (T2b, from #574's review, follow-up 1): exact at the readings E makes, not a biconditional.
+Every reading E makes is the fill's reading with its targets mapped, and the reader's uniqueness at the fill closes it;
+but the fill may read where E does not: an occurrence citation `External k a` whose slot is bound to a use holding the
+empty artifact reads `Occurrence_Anchor (R,a)` at the fill (a in R's carrier), where E reads nothing. So a set
+collected over readings (sources, root requests, demanded slots, the least environments) is E's where E reads, and
+`Factor_Placeholder_Packages` states each so: at a package and an application E reads, no premise on citations.]
 
 **What is certified once.** The listing policy's judgment at the placeholder, `development_bounded_policy_judgment
 [Finite_Target (Finite_Whole finite_empty_artifact)] finite_empty_artifact`: the policy K0 listing the empty artifact,
@@ -17398,6 +17404,10 @@ at the placeholder; and rule (a) at S1's compiler walk (about 2.7 s at the given
 - The contracts of `development_indexed_generation` keep their statements; every generation's certified meaning,
   fields and predecessors stay; no recorded word changes (no recipe reaches the changed theories); a builder who finds
   a constant it would change among a recorded state's entities stops and brings it to the planner.
+  [Corrected by task 577 (from #572's review, follow-up 4): "no recipe reaches the changed theories" holds of the
+  recording's theories (P's), not of every build: nine recipes reach T1's `Factor_Positive_Parametricity`, and T2b's
+  change of `Factor_Bounded_Generation_Scopes` rebuilds what imports it; what holds of every build is that no
+  recorded word changes, which the repository's check compares.]
 - The placeholder is the empty artifact, decided by artifact identity; the fill fills every use holding it, never a
   chosen subset, so that it is a map of targets.
 - A payload provides and the recording checks: what fails is refused, visibly; nothing falls back to the replayed path.
@@ -17444,6 +17454,8 @@ reader stays the recorded reliance task 482's (5) states. No bootstrap-loop pres
 | The gate: at most 60 µs per payload address, 53 s at the given and about twice that at the posing (task 482, (2) and (4) X). | At most 20 µs per payload address held, the payload's construction excluded; about 8–10 µs estimated under this decision. |
 | Every payload's recording derives, places and replays its own certificate (task 482's (2), "The recording"). | The certificate is derived, placed and replayed once, at the placeholder; each payload fills it. |
 | The chain ends B1 → B2 → I3 → R → X → #397 (task 482's (4)). | After X and RR5: T1 ∥ T2a → T2b → T3 → P → X′, X′ recording the given and the posing held. |
+| The fill changes each reading by `placeholder_target R` on its targets and in nothing else ((2), "The placeholder and its fill"). | Exact at the readings E makes, not a biconditional: at the fill an occurrence citation of a slot bound to a placeholder use reads into R where E reads nothing; sets collected over readings are E's where E reads (task 577). |
+| No recipe reaches the changed theories ((6)). | Of the recording's theories; nine recipes reach T1's theory, their words equal by the check (#572's review; task 577). |
 
 ### Evidence and limits
 

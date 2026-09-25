@@ -54,8 +54,9 @@ on, all accepted:
   (an investigation) → the decision the entry's trigger asks (certification parametric in the literal or further
   refinement; the posing's payload, twice the given's; the design #560 after the attribution #559). RR5 #557 landed
   before it (`aba87519`: the listing policy's source a formed program, about 75 s estimated at the given, shared);
-  the posing #397 handed over built, its recording at the given a remainder the design's builds place. Each build with
-  its review.
+  the posing #397 landed (`69c3bfd3`), its recording at the given (about 326 s estimated, 173 µs per address) a
+  remainder the design's builds place; #562, continuing it, states the recording citing one generation once, before
+  #399 and #443. Each build with its review.
 - Then the answer's judgment and admission #399, its transport #401, the verification's native half #403 and its
   harness #407 (after the frame and its fixes, landed). The first request (#523's corrected #443, divided by #544,
   `.build/tasks/544/result.md`): the request program #545 (landed `5e6409e4`), the request at the given #547 (support,
@@ -124,10 +125,10 @@ when they are nearer.
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The evaluator's
 head first, R4 #505 (the longest chain and the owner's direction, its checks first on the machine); the
-recording's attribution #559, X's fix #561 and the design #560; the evaluator's W2 #524, R5 #518, the controls'
-rename #556, W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the posing's review
-and the route in its chains' order (#399, the samples #551, the observations #549, the record #553, #401, #403,
-#443, #447, #407, #445, #449).
+recording's attribution #559, X's fix #561 and the design #560; the evaluator's W2 #524 and R5 #518; the
+one-citation recording #562 (startable at once, so it takes a slot while R4 checks); the controls' rename #556, W4a
+#526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399,
+the samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
 ## Decisions
 
@@ -234,7 +235,9 @@ a task):
 - **Probes.** A change that writes a theory says `--probe` to be probed, and its reply carries the finding; a probe is
   an inner loop, not a gate (q26), bounded at 60 s unless a measurement holds the machine; its evidence is
   `probe.summary.json`. An edit to a base theory is probed from the tree, the unchanged theories between it and its
-  changed dependents loaded as renamed copies. A probe from a tree behind main whose base advanced is refused, naming
+  changed dependents loaded as renamed copies; such a probe loads the copies first and does not finish within 60 s, so
+  a brief asking for one names the theories it loads or accepts the repository's check for the combination (#398's
+  review). A probe from a tree behind main whose base advanced is refused, naming
   what differs only because main advanced: `v2.py bring-main`, or `--base` at the heap the tree matches, or
   `--from-heap` for one theory; a changed theory's `export_code … checking` is blanked in the probe's copy and named
   skipped; a past base's own sources are read with `--base-sources`.
@@ -331,6 +334,14 @@ What landed that open work builds on, a line each; how it went and each review's
   an equation the one evaluation proves.
 - **The owner records**: `Development_Owner_Records` (#385; the approval record `development_owner_approval`, Open 142);
   #425's attribution of an indexed generation (`.build/tasks/425/attribution.md`), the working rule "Evaluations".
+- **The posing** (#397, `69c3bfd3`): `Development_First_Problem` — the payload `development_first_problem_payload`
+  (the asked relation's program entry value and the given's value; `_presents`, `_recovers`), the program entry
+  presenter `finite_program_entry_presented` (generic, to move at its second use, #398's follow-up 4), the citing
+  generation `development_citing_generation` (one recording with the approval's by #562), the posing
+  `development_first_problem_posing` (`_certified`, `_recorded`) citing the owner record of 18:53, its meaning
+  `development_first_problem_meaning`; `Development_First_Problem_Execution`, where the owner records are recorded
+  and read back at every load (their `ML_val`s moved out of `Development_Owner_Records`) and `posing ()` records the
+  posing on call, not yet run (1,882,537 addresses, about 326 s estimated).
 - **The recording's scope** (#482's (4) B1): `Factor_Bounded_Generation_Scopes` (#490, `5304f725`: `payload_fill`, formed
   when V is empty or R formed, `payload_fill_formed`; the bounded value and its quotation; `generation_bounded_scope_at`
   and its contract; the certified base and policy causes over a scope reading with their bounded instances; the bounded
@@ -485,7 +496,8 @@ searches for a theory before briefing a task that edits it.
 
 - **What the next events ask**: the design #560's result decides the recording at scale and the posing's payload
   (holding the given again or citing the first generation): then the posing's recording at the given or its re-pose
-  is placed (#397 handed over built, q103 (c)), with a held run at the given once the next share lands, which fixes
+  is placed (#397 landed, the held measurement of its `posing ()` owed: #398's follow-up 2), with a held run at
+  the given once the next share lands, which fixes
   RR5's shared estimate (#558's follow-up 1); #558's follow-ups 5 and 6 are next-edits 193 and 198, 3 is 192. R7
   (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
@@ -496,7 +508,9 @@ searches for a theory before briefing a task that edits it.
   theory's rename with the use sample's fixtures (item 183) is a fix after R4; 158 stays at a measured need.
 - **Mailed, read by each task's first session** (by task): #560 (#558's review, follow-ups 1-4: RR5's shared
   figures and the held run that fixes them, S1's superlinearity inside `finite_extend_native_formed`, the remaining
-  shares, the marked correction naming task 557); #559 (#558's follow-up 2, S1 on RR5's path);
+  shares, the marked correction naming task 557; the posing's landing and its owed held measurement); #559 (#558's
+  follow-up 2, S1 on RR5's path); #399, #403, #443 and #553 (their one-citation generations through #562's
+  recording); #399, #549 and #551 (#398's follow-up 4: `finite_program_entry_presented` moved at its second use);
   #524 (#515's review, follow-up 6); #526 (its 3 and 6);
   #542 (its 4: the checker's share per certificate measured, the check staying); #407 (#433's review's follow-ups 2 and 3; the frame as #432
   and #433 leave it; #394's follow-up 3); #443 (#546's re-review, follow-up 2: the request program's export cost); #526 and #528 (#514's follow-up 2); #518 and

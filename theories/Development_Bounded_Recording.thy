@@ -21,25 +21,6 @@ theorem decode_finite_payload_fill:
   by (simp add: decode_finite_environment_def finite_payload_fill_def payload_fill_def map_relation_values_def
     fimage.rep_eq image_image split_def if_distrib[of decode_finite_object] cong: if_cong)
 
-lemma payload_fill_twice:
-  "payload_fill (payload_fill F V X) V Y=payload_fill F V Y"
-  by (simp add: payload_fill_def image_image split_def cong: if_cong)
-
-lemma payload_fill_same:
-  assumes same: "\<And>u S. u\<in>V \<Longrightarrow> artifact_at F u S \<Longrightarrow> S=R"
-  shows "payload_fill F V R=F"
-proof -
-  have each: "(\<lambda>(u,S). (u,if u\<in>V then R else S)) x=x" if member: "x\<in>environment_artifacts F" for x
-  proof -
-    obtain u S where x: "x=(u,S)" by (cases x)
-    have "u\<in>V \<Longrightarrow> S=R" using same member unfolding x artifact_at_def by blast
-    then show ?thesis unfolding x by simp
-  qed
-  have "(\<lambda>(u,S). (u,if u\<in>V then R else S)) ` environment_artifacts F=id ` environment_artifacts F"
-    by (rule image_cong) (simp_all add: each)
-  then show ?thesis by (cases F) (simp add: payload_fill_def)
-qed
-
 text \<open>
   The uses of an environment holding an artifact, compared by value as artifact identity decides.
 \<close>
@@ -54,8 +35,9 @@ lemma finite_payload_uses_member:
 section \<open>The bounded quotation\<close>
 
 text \<open>
-  The bounded quotation computes the least judgment environment J of a replay as
-  @{const finite_native_judgment_quote} does, without that quotation's data syntax; V is the uses of J
+  The bounded quotation computes the least judgment environment J of a replay when it is ready
+  (@{const finite_ready_judgment_environment}, the prefix it shares with @{const finite_native_judgment_quote}),
+  without that quotation's data syntax; V is the uses of J
   holding the payload, F0 is J with the empty artifact at V, and the cause is the complete data syntax of
   the bounded value, the judgment value of F0 at its two sites beside the data list of V. There is no
   quotation unless F0 is formed and holds both sites, which the grammar gives: the payload is complete
@@ -91,14 +73,12 @@ definition finite_bounded_judgment_quote ::
       local_address option \<Rightarrow> local_address \<Rightarrow> finite_exact_artifact \<Rightarrow>
       (local_address option finite_artifact_environment\<times>local_address option finite_artifact_environment\<times>
         local_address option fset\<times>finite_exact_artifact) option" where
-  "finite_bounded_judgment_quote E pu pr au ar R=(if finite_native_judgment_ready E pu pr au ar then
-     let J=finite_native_judgment_environment E pu pr au ar; V=finite_payload_uses J R;
-       F0=finite_payload_fill J V finite_empty_artifact in
+  "finite_bounded_judgment_quote E pu pr au ar R=Option.bind (finite_ready_judgment_environment E pu pr au ar) (\<lambda>J.
+     let V=finite_payload_uses J R; F0=finite_payload_fill J V finite_empty_artifact in
      if finite_environment_formed F0 \<and> (pu,pr) |\<in>| finite_environment_positions F0 \<and>
        (au,ar) |\<in>| finite_environment_positions F0
      then map_option (\<lambda>C. (J,F0,V,C)) (finite_data_syntax (finite_bounded_scope_term F0 pu pr au ar V))
-     else None
-   else None)"
+     else None)"
 
 lemma finite_bounded_judgment_quote_result:
   "finite_bounded_judgment_quote E pu pr au ar R=Some (J,F0,V,C) \<longleftrightarrow>
@@ -107,7 +87,7 @@ lemma finite_bounded_judgment_quote_result:
     finite_environment_formed F0 \<and> (pu,pr) |\<in>| finite_environment_positions F0 \<and>
     (au,ar) |\<in>| finite_environment_positions F0 \<and>
     finite_data_syntax (finite_bounded_scope_term F0 pu pr au ar V)=Some C"
-  by (auto simp: finite_bounded_judgment_quote_def Let_def split: if_splits)
+  by (auto simp: finite_bounded_judgment_quote_def finite_ready_judgment_environment_def Let_def split: if_splits)
 
 theorem finite_bounded_judgment_quote_correct:
   assumes result: "finite_bounded_judgment_quote E pu pr au ar R=Some (J,F0,V,C)"
@@ -261,32 +241,35 @@ section \<open>The bounded recording\<close>
 text \<open>
   The payload is made once, the complete data syntax of the decoded term, and is the locus and the
   payload alike; the judgment is the bounded one, and the generation is recorded by the constructor that
-  does not check the cause's formation, which the bounded quotation's contract establishes.
+  does not check the cause's formation, which the bounded quotation's contract establishes. This is the
+  recording at the index of the payload that every generation of the first problem's route is recorded by
+  (@{text Development_Owner_Records}), under one name; its refinements' code equations are stated in
+  @{text Development_Recording_Refinements}.
 \<close>
 
-definition development_bounded_generation ::
+definition development_indexed_generation ::
     "finite_factor_term \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow> development_generation_row list \<Rightarrow>
       (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
-  "development_bounded_generation t H rows=(case finite_data_syntax (decode_finite_term t) of
+  "development_indexed_generation t H rows=(case finite_data_syntax (decode_finite_term t) of
      None \<Rightarrow> None
    | Some R \<Rightarrow> Option.bind (development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R)
        (\<lambda>(d,K,pu,B,au,root,J,C). finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R)
           (Finite_Whole C) rows))"
 
-lemma development_bounded_generation_result:
-  assumes built: "development_bounded_generation t H rows=Some (B,u,G)"
+lemma development_indexed_generation_result:
+  assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
   obtains R d K pu B0 au root J C where "finite_data_syntax (decode_finite_term t)=Some R"
     "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some (d,K,pu,B0,au,root,J,C)"
     "finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C) rows=Some (B,u,G)"
-  using built by (auto simp: development_bounded_generation_def bind_eq_Some_conv split: option.splits prod.splits)
+  using built by (auto simp: development_indexed_generation_def bind_eq_Some_conv split: option.splits prod.splits)
 
 text \<open>
   Where the environment recorded in is formed and every cited row reads back at its site, the
   constructor is the library's record constructor.
 \<close>
 
-lemma development_bounded_generation_constructed:
-  assumes built: "development_bounded_generation t H rows=Some (B,u,G)"
+lemma development_indexed_generation_constructed:
+  assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
     and formed: "finite_environment_formed H"
     and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
   obtains R d K pu B0 au root J C where "finite_data_syntax (decode_finite_term t)=Some R"
@@ -297,7 +280,7 @@ proof -
     and judged: "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some (d,K,pu,B0,au,root,J,C)"
     and generated: "finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R)
       (Finite_Whole C) rows=Some (B,u,G)"
-    by (rule development_bounded_generation_result[OF built])
+    by (rule development_indexed_generation_result[OF built])
   obtain p A M Gr I W F0 V where bounded: "finite_bounded_judgment_quote B0 pu [] au [] R=Some (J,F0,V,C)"
     by (rule development_bounded_policy_judgment_result[OF judged])
   have "finite_target_formed (Finite_Whole C)"
@@ -313,8 +296,8 @@ proof -
   then show thesis by (rule that[OF quoted judged])
 qed
 
-theorem development_bounded_generation_certified:
-  assumes built: "development_bounded_generation t H rows=Some (B,u,G)"
+theorem development_indexed_generation_certified:
+  assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
     and formed: "finite_environment_formed H"
     and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
   obtains R d K pu E root where "development_data_target t=Some (generation_payload G)"
@@ -330,7 +313,7 @@ proof -
     and judged: "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some (d,K,pu,B0,au,root,J,C)"
     and generated: "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C) rows=
       Some (B,u,G)"
-    by (rule development_bounded_generation_constructed[OF built formed rows])
+    by (rule development_indexed_generation_constructed[OF built formed rows])
   obtain p A M Gr I W F0 V where policy: "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
     and replayed: "finite_native_certificate_replay K pu [] p d (Finite_Target (Finite_Whole R))=
       Some (A,M,root,Gr,au,I,W,B0)"
@@ -385,8 +368,8 @@ proof -
   show thesis by (rule that[OF target fields(1,2) policy certified fields(3) constructed(6,4)])
 qed
 
-lemma development_bounded_generation_recorded:
-  assumes built: "development_bounded_generation t H rows=Some (B,u,G)"
+lemma development_indexed_generation_recorded:
+  assumes built: "development_indexed_generation t H rows=Some (B,u,G)"
     and formed: "finite_environment_formed H"
     and rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) rows"
   shows "finite_environment_formed B" "finite_environment_included H B" "finite_check_generation G B u []"
@@ -394,7 +377,7 @@ lemma development_bounded_generation_recorded:
 proof -
   obtain R d K pu B0 au root J C where generated: "finite_construct_generation_record H (Finite_Whole R) (Finite_Whole R)
       (Finite_Whole C) rows=Some (B,u,G)"
-    by (rule development_bounded_generation_constructed[OF built formed rows])
+    by (rule development_indexed_generation_constructed[OF built formed rows])
   note correct=finite_construct_generation_record_correct[OF generated]
   show "finite_environment_formed B" by (rule correct(3))
   show "finite_environment_included H B" using correct(4) by (simp only: finite_environment_included_correct)

@@ -1286,6 +1286,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Policy_Causes
     Factor_Bounded_Generation_Scopes
     Factor_Placeholder_Fill
+    Factor_Placeholder_Schemas
     Factor_Required_Cause_Assessment
     Factor_Required_Cause_Cases
     Factor_Required_Cause_Investigation
@@ -1853,6 +1854,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Native_Control_Quotation_Code
     Development_Given_Readers
     Development_Given_Program
+    Development_Given_Declarations
+    Development_Given_Declarations_Execution
     Native_Control_Quotation_Construction
     Native_Control_Quotation_Representation
     Native_Control_Quoted_Judgment

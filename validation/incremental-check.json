@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "af1316fe7ffad3c2b555f1d97cdfa7d4b23cfd51f0ce4f5b85c07c02933edb8b",
- "checked_content_sha256": "40b99f33dfd7e28cbbbaa69ed3c8f5ee3dc11330380835c111988751100cad91",
+ "base_receipt_sha256": "8f77dcd6c263c67072adcf16398d3a0319114679ff2d126250ed0e9777e56356",
+ "checked_content_sha256": "aa67a37db798dce09cea9072b7631166b3beb17b24df5f43eaf0ad4263afbdf6",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,20 +17,21 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpxt_kd1n7/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpxda7amk6/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.47,
+  "base_and_impact": 0.54,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 236.17,
-  "recipe_impact": 0.5,
-  "recipes_and_host_tests": 11.75
+  "proof": 306.21,
+  "recipe_impact": 0.55,
+  "recipes_and_host_tests": 11.39
  },
  "rebuilt_theories": [
-  "Factor_Least_Collections"
+  "Development_Given_Declarations",
+  "Development_Given_Declarations_Execution"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +191,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1906,
- "seconds": 325.14,
+ "reused_theories": 1908,
+ "seconds": 396.59,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1907,
+  "theory_count": 1910,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1907,
+ "theories": 1910,
  "validation_inputs": {
-  "ROOT": "52901e369e8f13e31b77f637b1ea104175812da6caec9674b96a3c1f25f324a9",
+  "ROOT": "bcd174c2d7ce587d350eac4dd4b93143e362070c7868d3b0967275471b26bfdd",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

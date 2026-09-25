@@ -78,11 +78,14 @@ residual variables the empty payload, certificates checked by the existing check
 refuted. Its builds: R1 #499 and R2 #501 (material resolution, unification) and R3 #503 (resolution, every alternative
 kept, its certificates checked by the finite proof checker, q98, W1's construction a parameter), and R3b #515
 (`b66b1a6a`: every success's certificate accepted, under a formed program and call and a construction whose values
-are formed, q99), landed; R4
-#505 (completeness, `finite_program_resolution_exact` and `native_call_resolution_exact`), R5 #518 (committed choice
-under a declared presentation class, after R4) and R6 #520 (the given's declarations at 79, 32, 6, 10, 45 and 48 from
-their notions' contracts, after R5, before #399 and #443), each with its review; the combined contract rc #540 (`Factor_Committed_Registrations`: the
-committed search with complete registrations exact, q100; after R5 and W4a, before #443) and R7 #542 (the given at the
+are formed, q99), and R4 #505 (`4f5e6307`: completeness, `finite_program_resolution_exact` and
+`native_call_resolution_exact`, the demand-level and native forms, at `no_witness_construction`: their extension over a
+construction is W4a's, #506's follow-up 1), landed; R5 #518 (committed choice under a declared presentation class: the
+committed search with barred pruning, its soundness and forms, q105), R5b #565 (their exactness: the lifting at a
+barred support over #563's, the exchange, the forms over any construction, the transfer; after R5 and #563) and R6
+#520 (the given's declarations at 79, 32, 6, 10, 45 and 48 from their notions' contracts, after R5, before
+#399 and #443), each with its review; the combined contract rc #540 (`Factor_Committed_Registrations`: the
+committed search with complete registrations exact, q100; after R5b and W4a, before #443) and R7 #542 (the given at the
 guard's calls measured, `Development_Given_Resolution_Execution`, with the stated-leaves program's finite presentation;
 after rc, R6 and W4b, before #399); R8a (#508, landed `9b18bd52`: the counterparts retired) and R8b
 #510 (#487's standing items). The least witnesses (77's, 392's and 525's bounds, 561's private environment): the owner's
@@ -90,9 +93,11 @@ answer to Q28 (10:44) — checkers do not produce — and #496's entry, "A check
 are collected from the given's own readers beside the search, and the given's readers check them as installed": a
 witness construction beside R3's search (W1, in R3), the least collection of the given's own readers' answers (W2),
 each registration's completeness (W3 #513, landed) and the given's four registrations (W4); an admission is the given's check,
-a refusal rests on a complete registration: W2 #524 (the least collection, after R4), W4a #526 (a registration's
-completeness and the resolver with complete registrations exact, the four registrations each returning formed values,
-relocation; after W2, W3 and R4) and W4b #528 (the given's registrations, the controls, the reuse row), each with its
+a refusal rests on a complete registration: W2 #524 (the least collection, after R4; its completeness from the premise
+`finite_pattern_lifting`, q104), R4's pattern-root forms #563 (continuing R4, beside W2: R3b's invariant at a pattern
+root, the answer-preserving lifting that discharges W2's premise, item 5's generator and its row), W4a #526 (a
+registration's completeness and the resolver with complete registrations exact, the four registrations each returning
+formed values, relocation; after W2, #563, W3 and R4) and W4b #528 (the given's registrations, the controls, the reuse row), each with its
 review. #399 waits on R7 and #547 on rc, both on R4, R6 and W4b; #549 and #551 wait on R7, #403 and #553 through
 #399.
 
@@ -115,18 +120,16 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The evaluator's chain #505 → W2 #524 → W4a #526 → rc #540 (and W4b #528)
-→ R7 #542 → #399 → #401 → #407 → #408 is 9 deep; #399 → the record #553 → #447 → #449 → #450 is 10, the record
-spliced in as detail (#544); the attribution #559 → the design #560 → the posing's recording is no deeper. Nothing is
-added after #450; the approval build (Open 142) after #407 and #447 (8 each) now fits with its review, and is placed
-when they are nearer.
+**Shape.** No build waits on a review task. The evaluator's chain W2 #524 → W4a #526 → rc #540 (and W4b #528) → R7
+#542 → #399 → #401 → #407 → #408 is 8 deep; #399 → the record #553 → #447 → #449 → #450 is 9, the record spliced in
+as detail (#544); the attribution #559 → the design #560 → the posing's recording is no deeper. The approval build
+(Open 142) after #407 and #447 (7 each) fits with its review, and is placed when they are nearer.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
-and a review standing where its review task stands, so every review stands right after its build. The evaluator's
-head first, R4 #505 (the longest chain and the owner's direction, its checks first on the machine); the
-recording's attribution #559, X's fix #561 and the design #560; the evaluator's W2 #524 and R5 #518; the
-one-citation recording #562 (startable at once, so it takes a slot while R4 checks); the controls' rename #556, W4a
+and a review standing where its review task stands, so every review stands right after its build. The recording's
+attribution #559 and the design #560 first; the evaluator's W2 #524, R5 #518, #563 and R5b #565 (the longest
+chain and the owner's direction, their checks first on the machine); the one-citation recording #562; the controls' rename #556, W4a
 #526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399,
 the samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
@@ -231,7 +234,8 @@ a task):
   unrelated computation is not a scale; an estimate is compared first in the quantity it counts (q85). A numeric
   expectation written before the work chose its cases is an estimate, not a target. A held run times the operation
   alone, its compilation outside the timed seconds (a probe loads the execution theory inside the hold); a probe of
-  X's execution theory needs about 90 s (#539's review).
+  X's execution theory needs about 90 s (#539's review); a held run's caller compiles the given with the recording
+  before the hold (15.2 s, Probe561c's form in `.build/tasks/561/`), the recordings alone timed (#561's review).
 - **Probes.** A change that writes a theory says `--probe` to be probed, and its reply carries the finding; a probe is
   an inner loop, not a gate (q26), bounded at 60 s unless a measurement holds the machine; its evidence is
   `probe.summary.json`. An edit to a base theory is probed from the tree, the unchanged theories between it and its
@@ -369,7 +373,9 @@ What landed that open work builds on, a line each; how it went and each review's
   `finite_install_formed_entry`, `finite_ground_source_formed`, `finite_formed_source_requirements`,
   `development_formed_policy_source`, `development_formed_policy_judgment`, each `_exact` under its premise; the code
   equation `development_indexed_generation_formed`): S1 0.035 s and S2 none at 32K, the whole 0.863 s shared; about
-  75 s estimated at the given (`.build/tasks/557/result.md`, (4)).
+  75 s estimated at the given (`.build/tasks/557/result.md`, (4)). X's load reduced at its cause (#561,
+  `4f5e6307`): the given's value off X's load and the per-build cut controls gone, only the owner record's control
+  running at every build; a held run's caller compiles the given with the recording before the hold.
 - **The resolving evaluator** (#495's entry): R1 `Factor_Material_Resolution` (#499, `1f021cf3`: the material premise
   solved from a ground skeleton or source, site 1's control), R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the
   most general unifier of finite term patterns and renaming apart) and R3 `Factor_Program_Resolution` (#503,
@@ -377,7 +383,11 @@ What landed that open work builds on, a line each; how it went and each review's
   checker accepts, W1's witness construction a parameter); R3b `Factor_Resolution_Acceptance` (#515, `b66b1a6a`: the
   branch invariant, every certificate of a successful branch accepted by the checker at a formed program and call and
   a construction whose values are formed; `Resolution_Unconstructed` naming a registration whose construction returned
-  nothing); their reviews' follow-ups mailed to R3b, R4, #507 and #517,
+  nothing); R4 `Factor_Resolution_Completeness` (#505, `4f5e6307`: the lifting `finite_resolution_lifting`,
+  `finite_program_resolution_exact`, the verdict `finite_resolution_verdict`, `finite_program_resolution_generator`,
+  the demand-level `finite_demand_resolution` and native `native_call_resolution` forms with their exactness, at
+  `no_witness_construction`; the agreement with `finite_program_evaluation` where both answer, q101); their reviews'
+  follow-ups mailed to R3b, R4, #507 and #517,
   R7's carried by #523's brief. W3 `Factor_Least_Witness_Facts` (#513, `485ecf65`): the least witnesses' completeness
   facts over the given's readers' meanings (`package_request_least_witness`, `merge_least_witness`,
   `environment_row_conflict`, `least_closure_bound`), which W4a consumes.
@@ -508,9 +518,15 @@ searches for a theory before briefing a task that edits it.
   theory's rename with the use sample's fixtures (item 183) is a fix after R4; 158 stays at a measured need.
 - **Mailed, read by each task's first session** (by task): #560 (#558's review, follow-ups 1-4: RR5's shared
   figures and the held run that fixes them, S1's superlinearity inside `finite_extend_native_formed`, the remaining
-  shares, the marked correction naming task 557; the posing's landing and its owed held measurement); #559 (#558's
-  follow-up 2, S1 on RR5's path); #399, #403, #443 and #553 (their one-citation generations through #562's
+  shares, the marked correction naming task 557; the posing's landing and its owed held measurement; #561's follow-up 1, a base generation's cause
+  independent of its payload); #559 (#558's follow-up 2, S1 on RR5's path; #561's follow-up 5, the timing theory's
+  form); #399, #403, #443 and #553 (their one-citation generations through #562's
   recording); #399, #549 and #551 (#398's follow-up 4: `finite_program_entry_presented` moved at its second use);
+  #526 and #540 (#506's follow-ups 1 and 7: the resolver's forms over a construction, W4a's; the helpers' home); #526
+  (q104: W2's premise `finite_pattern_lifting` discharged by #563's lifting); #528 (the generator row is #563's); #519, #520, #540 and
+  #563 (q105: R5's scope divided, its exactness R5b's; the declarations' obligations; the barred lifting over #563's); #542 (#506's follow-up 5: a table of resolved goals across a demand); #551 (#506's follow-up 6:
+  resolution at `criticism_calls` an exact S1 table); #562 (#561's follow-up 2: one per-build control of the owner
+  records, X running nothing);
   #524 (#515's review, follow-up 6); #526 (its 3 and 6);
   #542 (its 4: the checker's share per certificate measured, the check staying); #407 (#433's review's follow-ups 2 and 3; the frame as #432
   and #433 leave it; #394's follow-up 3); #443 (#546's re-review, follow-up 2: the request program's export cost); #526 and #528 (#514's follow-up 2); #518 and

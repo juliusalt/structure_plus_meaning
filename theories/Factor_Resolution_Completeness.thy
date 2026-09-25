@@ -435,6 +435,58 @@ definition resolution_supported_by ::
       resolution_placed st z \<or> F z)"
 
 
+text \<open>
+  A support at a focus and a barred set asks truth, ranks and satisfaction of the pending goals inside the focus
+  only, and ranks only against the ancestors whose positions are not barred; placement is asked of every goal and
+  node. The committed search solves the goals of a focus, and bars the nodes present at a commitment
+  (@{text Factor_Resolution_Commitments}). The support of the whole state is its instance at no focus and no
+  barred position (@{text resolution_supported_by_at}).
+\<close>
+
+definition resolution_focused :: "'s list option \<Rightarrow> 's list \<Rightarrow> bool" where
+  "resolution_focused Fo q \<longleftrightarrow> (case Fo of None \<Rightarrow> True | Some f \<Rightarrow> take (length f) q = f)"
+
+lemma resolution_focused_none [simp]: "resolution_focused None q"
+  by (simp add: resolution_focused_def)
+
+definition resolution_supported_at ::
+    "(('s,'a) resolution_variable \<Rightarrow> bool) \<Rightarrow> 's list option \<Rightarrow> 's list fset \<Rightarrow>
+      ('a,'s,'d,'c) finite_schema_system \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      (('s,'a) resolution_variable \<Rightarrow> finite_factor_term) \<Rightarrow> bool" where
+  "resolution_supported_at F Fo B P st \<theta> \<longleftrightarrow>
+    (\<forall>q r e p. Resolution_Call_Goal q r e p |\<in>| resolution_pending st \<longrightarrow> resolution_focused Fo q \<longrightarrow>
+      (e,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P) \<and>
+      (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_node_position nd |\<notin>| B \<longrightarrow>
+        resolution_before (resolution_node_position nd) q \<longrightarrow>
+        resolution_rank (decode_finite_system P) (e,decode_finite_term (resolution_value \<theta> p)) <
+        resolution_rank (decode_finite_system P)
+          (resolution_node_site nd,decode_finite_term (resolution_value \<theta> (resolution_node_call nd))))) \<and>
+    (\<forall>q r M. Resolution_Material_Goal q r M |\<in>| resolution_pending st \<longrightarrow> resolution_focused Fo q \<longrightarrow>
+      finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>) M)) \<and>
+    (\<forall>g z. g |\<in>| resolution_pending st \<longrightarrow> z |\<in>| resolution_goal_variables g \<longrightarrow> resolution_placed st z \<or> F z) \<and>
+    (\<forall>nd z. nd |\<in>| resolution_nodes st \<longrightarrow> z |\<in>| finite_pattern_variables (resolution_node_call nd) \<longrightarrow>
+      resolution_placed st z \<or> F z)"
+
+lemma resolution_supported_by_at:
+  "resolution_supported_by F P st \<theta> \<longleftrightarrow> resolution_supported_at F None {||} P st \<theta>"
+  by (simp add: resolution_supported_by_def resolution_supported_at_def)
+
+lemma resolution_supported_atI:
+  assumes "\<And>q r e p. Resolution_Call_Goal q r e p |\<in>| resolution_pending st \<Longrightarrow> resolution_focused Fo q \<Longrightarrow>
+      (e,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning (decode_finite_system P) \<and>
+      (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_node_position nd |\<notin>| B \<longrightarrow>
+        resolution_before (resolution_node_position nd) q \<longrightarrow>
+        resolution_rank (decode_finite_system P) (e,decode_finite_term (resolution_value \<theta> p)) <
+        resolution_rank (decode_finite_system P)
+          (resolution_node_site nd,decode_finite_term (resolution_value \<theta> (resolution_node_call nd))))"
+    and "\<And>q r M. Resolution_Material_Goal q r M |\<in>| resolution_pending st \<Longrightarrow> resolution_focused Fo q \<Longrightarrow>
+      finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>) M)"
+    and "\<And>g z. g |\<in>| resolution_pending st \<Longrightarrow> z |\<in>| resolution_goal_variables g \<Longrightarrow> resolution_placed st z \<or> F z"
+    and "\<And>nd z. nd |\<in>| resolution_nodes st \<Longrightarrow> z |\<in>| finite_pattern_variables (resolution_node_call nd) \<Longrightarrow>
+      resolution_placed st z \<or> F z"
+  shows "resolution_supported_at F Fo B P st \<theta>"
+  using assms unfolding resolution_supported_at_def by blast
+
 lemma resolution_supported_none:
   "resolution_supported P st \<theta> \<longleftrightarrow> resolution_supported_by (\<lambda>_. False) P st \<theta>"
   by (simp add: resolution_supported_def resolution_supported_by_def)
@@ -570,31 +622,33 @@ lemma resolution_state_substitute_members:
 
 section \<open>A supported goal has a supported successor\<close>
 
-lemma resolution_call_lifted_by:
-  assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_by F P st \<theta>"
+lemma resolution_call_lifted_at:
+  assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_at F Fo B P st \<theta>"
     and foreign: "\<And>z. F z \<Longrightarrow> snd z |\<notin>| finite_program_variables P"
-    and goal: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
-  obtains st' \<theta>' where "st' |\<in>| finite_call_successors P st q r e p" "resolution_supported_by F P st' \<theta>'"
+    and goal: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st" and focus: "resolution_focused Fo q"
+  obtains st' \<theta>' where "st' |\<in>| finite_call_successors P st q r e p" "resolution_supported_at F Fo B P st' \<theta>'"
     "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
 proof -
   let ?P = "decode_finite_system P"
   define x where "x = resolution_value \<theta> p"
   have holds: "(e,decode_finite_term x) \<in> positive_meaning ?P"
-    and ancestors: "\<And>nd. nd |\<in>| resolution_nodes st \<Longrightarrow> resolution_before (resolution_node_position nd) q \<Longrightarrow>
+    and ancestors: "\<And>nd. nd |\<in>| resolution_nodes st \<Longrightarrow> resolution_node_position nd |\<notin>| B \<Longrightarrow>
+      resolution_before (resolution_node_position nd) q \<Longrightarrow>
       resolution_rank ?P (e,decode_finite_term x) < resolution_rank ?P (resolution_node_site nd,
         decode_finite_term (resolution_value \<theta> (resolution_node_call nd)))"
-    using sup goal unfolding x_def resolution_supported_by_def by blast+
+    using sup goal focus unfolding x_def resolution_supported_at_def by blast+
   have goal_placed: "\<And>g z. g |\<in>| resolution_pending st \<Longrightarrow> z |\<in>| resolution_goal_variables g \<Longrightarrow> resolution_placed st z \<or> F z"
     and node_placed: "\<And>nd z. nd |\<in>| resolution_nodes st \<Longrightarrow> z |\<in>| finite_pattern_variables (resolution_node_call nd) \<Longrightarrow>
       resolution_placed st z \<or> F z"
-    and old_material: "\<And>q r M. Resolution_Material_Goal q r M |\<in>| resolution_pending st \<Longrightarrow>
+    and old_material: "\<And>q r M. Resolution_Material_Goal q r M |\<in>| resolution_pending st \<Longrightarrow> resolution_focused Fo q \<Longrightarrow>
       finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>) M)"
-    and old_calls: "\<And>q r e p. Resolution_Call_Goal q r e p |\<in>| resolution_pending st \<Longrightarrow>
+    and old_calls: "\<And>q r e p. Resolution_Call_Goal q r e p |\<in>| resolution_pending st \<Longrightarrow> resolution_focused Fo q \<Longrightarrow>
       (e,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning ?P \<and>
-      (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_before (resolution_node_position nd) q \<longrightarrow>
+      (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_node_position nd |\<notin>| B \<longrightarrow>
+        resolution_before (resolution_node_position nd) q \<longrightarrow>
         resolution_rank ?P (e,decode_finite_term (resolution_value \<theta> p)) <
         resolution_rank ?P (resolution_node_site nd,decode_finite_term (resolution_value \<theta> (resolution_node_call nd))))"
-    using sup unfolding resolution_supported_by_def by blast+
+    using sup unfolding resolution_supported_at_def by blast+
   obtain c V Q where admitted: "admitted_schema_instance ?P e c V (decode_finite_term x) Q"
     and smaller: "\<And>s e' y. (s,e',y) \<in> Q \<Longrightarrow> (e',y) \<in> positive_meaning ?P \<and>
       resolution_rank ?P (e',y) < resolution_rank ?P (e,decode_finite_term x)"
@@ -758,16 +812,18 @@ proof -
       resolution_value \<theta>' (resolution_node_call (resolution_node_substitute (finite_binding_substitution u) m)) =
       resolution_value \<theta> (resolution_node_call m)"
     using keep value_old node_placed by simp
-  have support: "resolution_supported_by F P st' \<theta>'"
-  proof (rule resolution_supported_byI)
+  have support: "resolution_supported_at F Fo B P st' \<theta>'"
+  proof (rule resolution_supported_atI)
     fix q' r' e' p' assume g': "Resolution_Call_Goal q' r' e' p' |\<in>| resolution_pending st'"
+      and f': "resolution_focused Fo q'"
     obtain g0 where g0: "g0 |\<in>| finite_clause_goals q e c S |\<union>| (resolution_pending st |-| {|Resolution_Call_Goal q r e p|})"
       and eq: "Resolution_Call_Goal q' r' e' p' = resolution_goal_substitute (finite_binding_substitution u) g0"
       using st'_goals[OF g'] by blast
     obtain p0 where g0c: "g0 = Resolution_Call_Goal q' r' e' p0" and p': "p' = finite_pattern_substitute (finite_binding_substitution u) p0"
       using eq[symmetric] unfolding resolution_goal_substitute_call by blast
     show "(e',decode_finite_term (resolution_value \<theta>' p')) \<in> positive_meaning ?P \<and>
-      (\<forall>nd. nd |\<in>| resolution_nodes st' \<longrightarrow> resolution_before (resolution_node_position nd) q' \<longrightarrow>
+      (\<forall>nd. nd |\<in>| resolution_nodes st' \<longrightarrow> resolution_node_position nd |\<notin>| B \<longrightarrow>
+        resolution_before (resolution_node_position nd) q' \<longrightarrow>
         resolution_rank ?P (e',decode_finite_term (resolution_value \<theta>' p')) <
         resolution_rank ?P (resolution_node_site nd,decode_finite_term (resolution_value \<theta>' (resolution_node_call nd))))"
     proof (cases "g0 |\<in>| finite_clause_goals q e c S")
@@ -787,7 +843,8 @@ proof -
       show ?thesis
       proof (intro conjI allI impI)
         show "(e',decode_finite_term (resolution_value \<theta>' p')) \<in> positive_meaning ?P" using small v2 by simp
-        fix nd assume nd: "nd |\<in>| resolution_nodes st'" and before: "resolution_before (resolution_node_position nd) q'"
+        fix nd assume nd: "nd |\<in>| resolution_nodes st'" and nb: "resolution_node_position nd |\<notin>| B"
+          and before: "resolution_before (resolution_node_position nd) q'"
         obtain m where m: "m |\<in>| finsert (finite_clause_node q e c S) (resolution_nodes st)"
           and ndm: "nd = resolution_node_substitute (finite_binding_substitution u) m"
           using st'_nodes[OF nd] by blast
@@ -804,7 +861,8 @@ proof -
           have "m \<noteq> finite_clause_node q e c S"
             using mb resolution_before_irrefl[of q] by (auto simp: finite_clause_node_def)
           then have mold: "m |\<in>| resolution_nodes st" using m by simp
-          show ?thesis using ancestors[OF mold mb] small v2 old_node_value[OF mold] ndm by simp
+          have mB: "resolution_node_position m |\<notin>| B" using nb ndm by simp
+          show ?thesis using ancestors[OF mold mB mb] small v2 old_node_value[OF mold] ndm by simp
         qed
       qed
     next
@@ -813,17 +871,20 @@ proof -
       have v0: "resolution_value \<theta>' p' = resolution_value \<theta> p0"
         using keep value_old goal_placed[OF old] p' g0c by simp
       have hold0: "(e',decode_finite_term (resolution_value \<theta> p0)) \<in> positive_meaning ?P \<and>
-        (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_before (resolution_node_position nd) q' \<longrightarrow>
+        (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_node_position nd |\<notin>| B \<longrightarrow>
+          resolution_before (resolution_node_position nd) q' \<longrightarrow>
           resolution_rank ?P (e',decode_finite_term (resolution_value \<theta> p0)) <
           resolution_rank ?P (resolution_node_site nd,decode_finite_term (resolution_value \<theta> (resolution_node_call nd))))"
-        using old_calls old g0c by blast
+        using old_calls old g0c f' by blast
       show ?thesis
       proof (intro conjI allI impI)
         show "(e',decode_finite_term (resolution_value \<theta>' p')) \<in> positive_meaning ?P" using hold0 v0 by simp
-        fix nd assume nd: "nd |\<in>| resolution_nodes st'" and before: "resolution_before (resolution_node_position nd) q'"
+        fix nd assume nd: "nd |\<in>| resolution_nodes st'" and nb: "resolution_node_position nd |\<notin>| B"
+          and before: "resolution_before (resolution_node_position nd) q'"
         obtain m where m: "m |\<in>| finsert (finite_clause_node q e c S) (resolution_nodes st)"
           and ndm: "nd = resolution_node_substitute (finite_binding_substitution u) m"
           using st'_nodes[OF nd] by blast
+        have mB: "resolution_node_position m |\<notin>| B" using nb ndm by simp
         have mb: "resolution_before (resolution_node_position m) q'" using before ndm by simp
         have mold: "m |\<in>| resolution_nodes st"
         proof (rule ccontr)
@@ -835,11 +896,12 @@ proof -
         qed
         show "resolution_rank ?P (e',decode_finite_term (resolution_value \<theta>' p')) <
             resolution_rank ?P (resolution_node_site nd,decode_finite_term (resolution_value \<theta>' (resolution_node_call nd)))"
-          using hold0 mold mb v0 old_node_value[OF mold] ndm by simp
+          using hold0 mold mB mb v0 old_node_value[OF mold] ndm by simp
       qed
     qed
   next
     fix q' r' M' assume g': "Resolution_Material_Goal q' r' M' |\<in>| resolution_pending st'"
+      and f': "resolution_focused Fo q'"
     obtain g0 where g0: "g0 |\<in>| finite_clause_goals q e c S |\<union>| (resolution_pending st |-| {|Resolution_Call_Goal q r e p|})"
       and eq: "Resolution_Material_Goal q' r' M' = resolution_goal_substitute (finite_binding_substitution u) g0"
       using st'_goals[OF g'] by blast
@@ -870,7 +932,7 @@ proof -
       have "finite_material_pattern_substitute ?\<sigma> M0 =
           finite_material_pattern_substitute (resolution_substitution \<theta>) M0"
         by (rule finite_material_pattern_substitute_cong) (use goal_placed[OF old] agree g0m in simp)
-      then show ?thesis using old_material old g0m by simp
+      then show ?thesis using old_material old g0m f' by simp
     qed
     ultimately show "finite_material_ground_satisfied (finite_material_pattern_substitute ?\<sigma> M')" by simp
   next
@@ -949,6 +1011,23 @@ proof -
   show thesis by (rule that[OF member support root_value])
 qed
 
+lemma resolution_call_lifted_by:
+  assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_by F P st \<theta>"
+    and foreign: "\<And>z. F z \<Longrightarrow> snd z |\<notin>| finite_program_variables P"
+    and goal: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
+  obtains st' \<theta>' where "st' |\<in>| finite_call_successors P st q r e p" "resolution_supported_by F P st' \<theta>'"
+    "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
+proof -
+  show thesis
+  proof (rule resolution_call_lifted_at[OF I sup[unfolded resolution_supported_by_at] foreign goal
+      resolution_focused_none])
+    fix st' \<theta>' assume s: "st' |\<in>| finite_call_successors P st q r e p"
+      and u: "resolution_supported_at F None {||} P st' \<theta>'"
+      and w: "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
+    show thesis by (rule that[OF s _ w]) (use u in \<open>simp only: resolution_supported_by_at\<close>)
+  qed
+qed
+
 lemma resolution_call_lifted:
   assumes I: "resolution_invariant P d0 t0 st" and sup: "resolution_supported P st \<theta>"
     and goal: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st"
@@ -963,11 +1042,11 @@ proof -
   qed
 qed
 
-lemma resolution_material_lifted_by:
-  assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_by F P st \<theta>"
-    and goal: "Resolution_Material_Goal q r M |\<in>| resolution_pending st"
+lemma resolution_material_lifted_at:
+  assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_at F Fo B P st \<theta>"
+    and goal: "Resolution_Material_Goal q r M |\<in>| resolution_pending st" and focus: "resolution_focused Fo q"
     and solvable: "finite_material_resolution M \<noteq> Material_Waits"
-  obtains st' where "st' |\<in>| finite_material_successors st q r M" "resolution_supported_by F P st' \<theta>"
+  obtains st' where "st' |\<in>| finite_material_successors st q r M" "resolution_supported_at F Fo B P st' \<theta>"
     "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta> v"
 proof -
   let ?P = "decode_finite_system P"
@@ -976,14 +1055,15 @@ proof -
     and goal_placed: "\<And>g z. g |\<in>| resolution_pending st \<Longrightarrow> z |\<in>| resolution_goal_variables g \<Longrightarrow> resolution_placed st z \<or> F z"
     and node_placed: "\<And>nd z. nd |\<in>| resolution_nodes st \<Longrightarrow> z |\<in>| finite_pattern_variables (resolution_node_call nd) \<Longrightarrow>
       resolution_placed st z \<or> F z"
-    and old_material: "\<And>q r M. Resolution_Material_Goal q r M |\<in>| resolution_pending st \<Longrightarrow>
+    and old_material: "\<And>q r M. Resolution_Material_Goal q r M |\<in>| resolution_pending st \<Longrightarrow> resolution_focused Fo q \<Longrightarrow>
       finite_material_ground_satisfied (finite_material_pattern_substitute ?\<sigma> M)"
-    and old_calls: "\<And>q r e p. Resolution_Call_Goal q r e p |\<in>| resolution_pending st \<Longrightarrow>
+    and old_calls: "\<And>q r e p. Resolution_Call_Goal q r e p |\<in>| resolution_pending st \<Longrightarrow> resolution_focused Fo q \<Longrightarrow>
       (e,decode_finite_term (resolution_value \<theta> p)) \<in> positive_meaning ?P \<and>
-      (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_before (resolution_node_position nd) q \<longrightarrow>
+      (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_node_position nd |\<notin>| B \<longrightarrow>
+        resolution_before (resolution_node_position nd) q \<longrightarrow>
         resolution_rank ?P (e,decode_finite_term (resolution_value \<theta> p)) <
         resolution_rank ?P (resolution_node_site nd,decode_finite_term (resolution_value \<theta> (resolution_node_call nd))))"
-    using sup goal unfolding resolution_supported_by_def by blast+
+    using sup goal focus unfolding resolution_supported_at_def by blast+
   have "resolution_goal_formed (Resolution_Material_Goal q r M)"
     using I goal unfolding resolution_pattern_invariant_def resolution_pattern_goals_placed_def by blast
   then have Mf: "finite_material_formed M" by simp
@@ -1077,9 +1157,10 @@ proof -
     then show "\<exists>g0. g0 |\<in>| resolution_pending st \<and> g' = resolution_goal_substitute (finite_binding_substitution u) g0"
       by auto
   qed
-  have support: "resolution_supported_by F P st' \<theta>"
-  proof (rule resolution_supported_byI)
+  have support: "resolution_supported_at F Fo B P st' \<theta>"
+  proof (rule resolution_supported_atI)
     fix q' r' e' p' assume g': "Resolution_Call_Goal q' r' e' p' |\<in>| resolution_pending st'"
+      and f': "resolution_focused Fo q'"
     obtain g0 where g0: "g0 |\<in>| resolution_pending st"
       and eq: "Resolution_Call_Goal q' r' e' p' = resolution_goal_substitute (finite_binding_substitution u) g0"
       using st'_goals[OF g'] by blast
@@ -1087,29 +1168,33 @@ proof -
       and p': "p' = finite_pattern_substitute (finite_binding_substitution u) p0"
       using eq[symmetric] unfolding resolution_goal_substitute_call by blast
     have hold0: "(e',decode_finite_term (resolution_value \<theta> p0)) \<in> positive_meaning ?P \<and>
-      (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_before (resolution_node_position nd) q' \<longrightarrow>
+      (\<forall>nd. nd |\<in>| resolution_nodes st \<longrightarrow> resolution_node_position nd |\<notin>| B \<longrightarrow>
+        resolution_before (resolution_node_position nd) q' \<longrightarrow>
         resolution_rank ?P (e',decode_finite_term (resolution_value \<theta> p0)) <
         resolution_rank ?P (resolution_node_site nd,decode_finite_term (resolution_value \<theta> (resolution_node_call nd))))"
-      using old_calls g0 g0c by blast
+      using old_calls g0 g0c f' by blast
     show "(e',decode_finite_term (resolution_value \<theta> p')) \<in> positive_meaning ?P \<and>
-      (\<forall>nd. nd |\<in>| resolution_nodes st' \<longrightarrow> resolution_before (resolution_node_position nd) q' \<longrightarrow>
+      (\<forall>nd. nd |\<in>| resolution_nodes st' \<longrightarrow> resolution_node_position nd |\<notin>| B \<longrightarrow>
+        resolution_before (resolution_node_position nd) q' \<longrightarrow>
         resolution_rank ?P (e',decode_finite_term (resolution_value \<theta> p')) <
         resolution_rank ?P (resolution_node_site nd,decode_finite_term (resolution_value \<theta> (resolution_node_call nd))))"
     proof (intro conjI allI impI)
       show "(e',decode_finite_term (resolution_value \<theta> p')) \<in> positive_meaning ?P" using hold0 keep p' by simp
-      fix nd assume nd: "nd |\<in>| resolution_nodes st'" and before: "resolution_before (resolution_node_position nd) q'"
+      fix nd assume nd: "nd |\<in>| resolution_nodes st'" and nb: "resolution_node_position nd |\<notin>| B"
+        and before: "resolution_before (resolution_node_position nd) q'"
       obtain m where m: "m |\<in>| resolution_nodes st" and ndm: "nd = resolution_node_substitute (finite_binding_substitution u) m"
         using st'_nodes[OF nd] by blast
       have mb: "resolution_before (resolution_node_position m) q'" using before ndm by simp
       have "resolution_rank ?P (e',decode_finite_term (resolution_value \<theta> p0)) <
           resolution_rank ?P (resolution_node_site m,decode_finite_term (resolution_value \<theta> (resolution_node_call m)))"
-        using hold0 m mb by blast
+        using hold0 m mb nb ndm by auto
       then show "resolution_rank ?P (e',decode_finite_term (resolution_value \<theta> p')) <
           resolution_rank ?P (resolution_node_site nd,decode_finite_term (resolution_value \<theta> (resolution_node_call nd)))"
         using ndm keep p' by simp
     qed
   next
     fix q' r' M' assume g': "Resolution_Material_Goal q' r' M' |\<in>| resolution_pending st'"
+      and f': "resolution_focused Fo q'"
     obtain g0 where g0: "g0 |\<in>| resolution_pending st"
       and eq: "Resolution_Material_Goal q' r' M' = resolution_goal_substitute (finite_binding_substitution u) g0"
       using st'_goals[OF g'] by blast
@@ -1117,7 +1202,7 @@ proof -
       and M': "M' = finite_material_pattern_substitute (finite_binding_substitution u) M0"
       using eq[symmetric] unfolding resolution_goal_substitute_material by blast
     show "finite_material_ground_satisfied (finite_material_pattern_substitute ?\<sigma> M')"
-      using old_material g0 g0m keep_material M' by simp
+      using old_material g0 g0m keep_material M' f' by simp
   next
     fix g' z assume g': "g' |\<in>| resolution_pending st'" and z: "z |\<in>| resolution_goal_variables g'"
     obtain g0 where g0: "g0 |\<in>| resolution_pending st"
@@ -1160,6 +1245,23 @@ proof -
   show thesis by (rule that[OF member support root_value])
 qed
 
+lemma resolution_material_lifted_by:
+  assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_by F P st \<theta>"
+    and goal: "Resolution_Material_Goal q r M |\<in>| resolution_pending st"
+    and solvable: "finite_material_resolution M \<noteq> Material_Waits"
+  obtains st' where "st' |\<in>| finite_material_successors st q r M" "resolution_supported_by F P st' \<theta>"
+    "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta> v"
+proof -
+  show thesis
+  proof (rule resolution_material_lifted_at[OF I sup[unfolded resolution_supported_by_at] goal
+      resolution_focused_none solvable])
+    fix st' assume s: "st' |\<in>| finite_material_successors st q r M"
+      and u: "resolution_supported_at F None {||} P st' \<theta>"
+      and w: "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta> v"
+    show thesis by (rule that[OF s _ w]) (use u in \<open>simp only: resolution_supported_by_at\<close>)
+  qed
+qed
+
 lemma resolution_material_lifted:
   assumes I: "resolution_invariant P d0 t0 st" and sup: "resolution_supported P st \<theta>"
     and goal: "Resolution_Material_Goal q r M |\<in>| resolution_pending st"
@@ -1175,18 +1277,20 @@ proof -
   qed
 qed
 
-lemma resolution_goal_lifted_by:
-  assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_by F P st \<theta>"
+lemma resolution_goal_lifted_at:
+  assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_at F Fo B P st \<theta>"
     and foreign: "\<And>z. F z \<Longrightarrow> snd z |\<notin>| finite_program_variables P"
-    and g: "g |\<in>| resolution_pending st" and kind: "resolution_is_call g \<or> finite_solvable_material_goal g"
-  obtains st' \<theta>' where "st' |\<in>| finite_goal_successors P st g" "resolution_supported_by F P st' \<theta>'"
+    and g: "g |\<in>| resolution_pending st" and focus: "resolution_focused Fo (resolution_goal_position g)"
+    and kind: "resolution_is_call g \<or> finite_solvable_material_goal g"
+  obtains st' \<theta>' where "st' |\<in>| finite_goal_successors P st g" "resolution_supported_at F Fo B P st' \<theta>'"
     "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
 proof (cases g)
   case (Resolution_Call_Goal q r e p)
   have goal: "Resolution_Call_Goal q r e p |\<in>| resolution_pending st" using g Resolution_Call_Goal by simp
+  have fq: "resolution_focused Fo q" using focus Resolution_Call_Goal by simp
   show thesis
-  proof (rule resolution_call_lifted_by[OF I sup foreign goal])
-    fix st' \<theta>' assume s: "st' |\<in>| finite_call_successors P st q r e p" and u: "resolution_supported_by F P st' \<theta>'"
+  proof (rule resolution_call_lifted_at[OF I sup foreign goal fq])
+    fix st' \<theta>' assume s: "st' |\<in>| finite_call_successors P st q r e p" and u: "resolution_supported_at F Fo B P st' \<theta>'"
       and w: "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
     have s': "st' |\<in>| finite_goal_successors P st g" using s Resolution_Call_Goal by simp
     show thesis by (rule that[OF s' u w])
@@ -1195,12 +1299,30 @@ next
   case (Resolution_Material_Goal q r M)
   with kind have solvable: "finite_material_resolution M \<noteq> Material_Waits" by simp
   have goal: "Resolution_Material_Goal q r M |\<in>| resolution_pending st" using g Resolution_Material_Goal by simp
+  have fq: "resolution_focused Fo q" using focus Resolution_Material_Goal by simp
   show thesis
-  proof (rule resolution_material_lifted_by[OF I sup goal solvable])
-    fix st' assume s: "st' |\<in>| finite_material_successors st q r M" and u: "resolution_supported_by F P st' \<theta>"
+  proof (rule resolution_material_lifted_at[OF I sup goal fq solvable])
+    fix st' assume s: "st' |\<in>| finite_material_successors st q r M" and u: "resolution_supported_at F Fo B P st' \<theta>"
       and w: "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta> v"
     have s': "st' |\<in>| finite_goal_successors P st g" using s Resolution_Material_Goal by simp
     show thesis by (rule that[OF s' u w])
+  qed
+qed
+
+lemma resolution_goal_lifted_by:
+  assumes I: "resolution_pattern_invariant P d0 \<pi>0 st" and sup: "resolution_supported_by F P st \<theta>"
+    and foreign: "\<And>z. F z \<Longrightarrow> snd z |\<notin>| finite_program_variables P"
+    and g: "g |\<in>| resolution_pending st" and kind: "resolution_is_call g \<or> finite_solvable_material_goal g"
+  obtains st' \<theta>' where "st' |\<in>| finite_goal_successors P st g" "resolution_supported_by F P st' \<theta>'"
+    "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
+proof -
+  show thesis
+  proof (rule resolution_goal_lifted_at[OF I sup[unfolded resolution_supported_by_at] foreign g
+      resolution_focused_none kind])
+    fix st' \<theta>' assume s: "st' |\<in>| finite_goal_successors P st g"
+      and u: "resolution_supported_at F None {||} P st' \<theta>'"
+      and w: "\<And>v. resolution_root_value st \<theta> v \<Longrightarrow> resolution_root_value st' \<theta>' v"
+    show thesis by (rule that[OF s _ w]) (use u in \<open>simp only: resolution_supported_by_at\<close>)
   qed
 qed
 

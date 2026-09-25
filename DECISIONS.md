@@ -16688,6 +16688,10 @@ all six.
    follow-up. The route consumes the exactness of the per-call and demand-level forms, not this equation. As built, the
    search keeps every alternative of every goal it selects (the planner's answer to q98): no goal is resolved once, and
    the lifting keeps one successful branch through pruning by the least round at which each true call holds.]
+   [Corrected by task 565, from #564's review (follow-up 2): the goal-level generator as built
+   (`Factor_Resolution_Completeness.finite_pattern_resolution_generator`, task 563) takes the formed instances of the
+   successes' root calls and is tight (`finite_pattern_answer_true`); "not tight" above holds of the call-level
+   generator (`finite_program_resolution_generator`).]
 6. **What is consumed.** `finite_program_resolution` per call, and a demand-level form returning the set of resolved
    calls exactly when every call is resolved or refuted — the shape of `finite_program_evaluation`, so that E1's
    composition and S1's tables take it unchanged; `native_call_resolution` reads the installed package as
@@ -16758,12 +16762,28 @@ declared without the kept head, G(X,[]) :- p(X,[[1]]) a producer, c(Pair x y) it
 root(X) :- G(X,W), c(Pair X W), every declaration discharged, root([[1],[2]]) holds, yet a commitment of sel inside
 G's focus kept ([1],[[2]]) and perm([[2]],[[1]]) failed, a refutation of a true call; and a focus root whose output its
 caller constrains, q(X) :- perm(X,[V|[[1]|W]]), c(...), loses the instance perm([[1],[2]],[[2],[1]]) the same way — the
-variant test refuses it (`Factor_Resolution_Controls`, the exchange control). A direct consumer keeps the form below,
+variant test refuses it (review 519's evaluation of `.build/tasks/519/scratch2`; the first counterexample is
+`Factor_Resolution_Controls`' exchange control). A direct consumer keeps the form below,
 the search committing only when every
 other pending goal holding the output is such a consumer with the output pattern as its argument; the material
 single solution applies only where the atoms, edges, counts and functions fields are free variables. The kept answer
 is the least by the term key among the answers of the committed goal's own subtree, never "the first". Built in
 `Factor_Resolution_Commitments`; its exactness, the exchange and the transfer are task 565's (R5b).]
+
+[Corrected by task 565 (R5b), the planner's answer to q106: exactness is proved relative to the exchange. (3) The
+committed search's lifting needs a support of the focus only, its ranks against unbarred ancestors only
+(`Factor_Resolution_Completeness.resolution_supported_at`): a free socket's exchange changes the focus root's output,
+which goals outside the focus (its consumers) hold, so the support of the whole state cannot be kept below a
+commitment; R4's step lemmas are the instance at no focus and no barred position. The exchange is a premise,
+`finite_commitment_exchanges` (at a committed call some kept state of the sub-search is supported with every node then
+present barred; at a committed material premise some canonical successor is supported), beside
+`finite_construction_lifts` (a selected construction keeps a support); under both, the three forms are exact, a
+refutation including a search with no success whose every diagnosis is a witnessed failure, and both hold at no
+commitment and at the empty construction. The premise is not branch-local at a socket: with an earlier-resolved sibling
+holding a non-head variable, the obligation's instance may change that variable, the kept state is unsupported in that
+branch, and exactness rests on another branch of the sibling, whose sub-search keeps the same answer only if pruning at
+unbarred ancestors inside it does not depend on the branch. The premise's discharge from R5's declarations, with the
+condition this needs or its counterexample, and the control's false call are the task continuing 565.]
 
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches

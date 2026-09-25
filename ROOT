@@ -1286,6 +1286,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Policy_Causes
     Factor_Bounded_Generation_Scopes
     Factor_Placeholder_Fill
+    Factor_Placeholder_Schemas
     Factor_Required_Cause_Assessment
     Factor_Required_Cause_Cases
     Factor_Required_Cause_Investigation
@@ -1327,6 +1328,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Ordered_Term_Comparison
     Right_Ordered_Terms
     Finite_Presented_Collections
+    Factor_Least_Collections
     Finite_Presented_Coordinates
     Finite_Presented_Structures
     Finite_Presented_Investigations

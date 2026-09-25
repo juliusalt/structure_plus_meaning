@@ -103,26 +103,101 @@ definition recorded_base_cause_at ::
       F=native_judgment_environment F pu pr au ar \<and> generation_payload G=Whole_Artifact R \<and>
       base_admission_judgment_at F pu pr au ar R)"
 
-theorem recorded_base_cause_with_scope:
-  assumes scope: "generation_judgment_scope_at E gu gr G F pu pr au ar"
-  shows "recorded_base_cause_at E gu gr G R \<longleftrightarrow>
+subsection \<open>The recorded cause over a scope reading\<close>
+
+text \<open>
+  Nothing the recorded cause concludes reads how its scope was quoted: it reads the scope F, its sites
+  and the base admission at F. It is therefore stated once over a scope reading, a relation of a
+  generation read at a site to a scope and its program and call sites, and
+  @{const recorded_base_cause_at} is its instance at @{const generation_judgment_scope_at}, proved from
+  its unchanged definition. A theorem that identifies the scope a reading gives takes the reading's
+  determination at the generation as a premise, a theorem that moves the cause to another environment its
+  transfer; a theorem that rests on the cause alone determining the scope
+  (@{text recorded_base_payload_unique}) holds of the whole-value reading only and stays there.
+\<close>
+
+type_synonym 'u scope_reading = "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> generation_core \<Rightarrow>
+    local_address option artifact_environment \<Rightarrow> local_address option \<Rightarrow> local_address \<Rightarrow>
+    local_address option \<Rightarrow> local_address \<Rightarrow> bool"
+
+definition scope_reading_determined ::
+  "'u scope_reading \<Rightarrow> 'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> generation_core \<Rightarrow> bool" where
+  "scope_reading_determined S E gu gr G \<longleftrightarrow>
+    (\<forall>F pu pr au ar F' qu qr bu br. S E gu gr G F pu pr au ar \<longrightarrow> S E gu gr G F' qu qr bu br \<longrightarrow>
+      F=F' \<and> pu=qu \<and> pr=qr \<and> au=bu \<and> ar=br)"
+
+definition scope_reading_transfers :: "'u scope_reading \<Rightarrow> 'v scope_reading \<Rightarrow> bool" where
+  "scope_reading_transfers S S' \<longleftrightarrow>
+    (\<forall>E gu gr G F pu pr au ar E' hu hr. S E gu gr G F pu pr au ar \<longrightarrow> generation_at E' hu hr G \<longrightarrow>
+      S' E' hu hr G F pu pr au ar)"
+
+lemma generation_judgment_scope_determined:
+  "scope_reading_determined generation_judgment_scope_at E gu gr G"
+  unfolding scope_reading_determined_def by (blast dest: generation_judgment_scope_unique[OF _ _ refl])
+
+lemma generation_judgment_scope_transfers:
+  "scope_reading_transfers generation_judgment_scope_at generation_judgment_scope_at"
+  unfolding scope_reading_transfers_def using generation_judgment_scope_outer_transfer by blast
+
+definition scope_recorded_base_cause_at ::
+  "'u scope_reading \<Rightarrow> 'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> generation_core \<Rightarrow>
+    exact_artifact \<Rightarrow> bool" where
+  "scope_recorded_base_cause_at S E gu gr G R \<longleftrightarrow>
+    (\<exists>F pu pr au ar. S E gu gr G F pu pr au ar \<and>
+      F=native_judgment_environment F pu pr au ar \<and> generation_payload G=Whole_Artifact R \<and>
+      base_admission_judgment_at F pu pr au ar R)"
+
+lemma recorded_base_cause_scope_instance:
+  "recorded_base_cause_at E gu gr G R =
+    scope_recorded_base_cause_at generation_judgment_scope_at E gu gr G R"
+  by (simp only: recorded_base_cause_at_def scope_recorded_base_cause_at_def)
+
+theorem scope_recorded_base_cause_with_scope:
+  assumes determined: "scope_reading_determined S E gu gr G"
+    and scope: "S E gu gr G F pu pr au ar"
+  shows "scope_recorded_base_cause_at S E gu gr G R \<longleftrightarrow>
     F=native_judgment_environment F pu pr au ar \<and> generation_payload G=Whole_Artifact R \<and>
     base_admission_judgment_at F pu pr au ar R"
 proof
-  assume valid: "recorded_base_cause_at E gu gr G R"
-  obtain F' qu qr bu br where other: "generation_judgment_scope_at E gu gr G F' qu qr bu br"
+  assume "scope_recorded_base_cause_at S E gu gr G R"
+  then obtain F' qu qr bu br where other: "S E gu gr G F' qu qr bu br"
     "F'=native_judgment_environment F' qu qr bu br" "generation_payload G=Whole_Artifact R"
     "base_admission_judgment_at F' qu qr bu br R"
-    using valid unfolding recorded_base_cause_at_def by blast
+    unfolding scope_recorded_base_cause_at_def by blast
   have same: "F'=F \<and> qu=pu \<and> qr=pr \<and> bu=au \<and> br=ar"
-    by (rule generation_judgment_scope_unique[OF other(1) scope refl])
+    using determined other(1) scope unfolding scope_reading_determined_def by blast
   show "F=native_judgment_environment F pu pr au ar \<and> generation_payload G=Whole_Artifact R \<and>
     base_admission_judgment_at F pu pr au ar R" using other(2-4) same by simp
 next
   assume "F=native_judgment_environment F pu pr au ar \<and> generation_payload G=Whole_Artifact R \<and>
     base_admission_judgment_at F pu pr au ar R"
-  then show "recorded_base_cause_at E gu gr G R" using scope unfolding recorded_base_cause_at_def by blast
+  then show "scope_recorded_base_cause_at S E gu gr G R"
+    using scope unfolding scope_recorded_base_cause_at_def by blast
 qed
+
+theorem scope_recorded_base_outer_transfer:
+  assumes transfers: "scope_reading_transfers S S'"
+    and valid: "scope_recorded_base_cause_at S E gu gr G R" and target: "generation_at E' hu hr G"
+  shows "scope_recorded_base_cause_at S' E' hu hr G R"
+proof -
+  obtain F pu pr au ar where scope: "S E gu gr G F pu pr au ar"
+    and parts: "F=native_judgment_environment F pu pr au ar" "generation_payload G=Whole_Artifact R"
+      "base_admission_judgment_at F pu pr au ar R"
+    using valid unfolding scope_recorded_base_cause_at_def by blast
+  have moved: "S' E' hu hr G F pu pr au ar"
+    using transfers scope target unfolding scope_reading_transfers_def by blast
+  show ?thesis using moved parts unfolding scope_recorded_base_cause_at_def by blast
+qed
+
+subsection \<open>The whole-value reading's instances\<close>
+
+theorem recorded_base_cause_with_scope:
+  assumes scope: "generation_judgment_scope_at E gu gr G F pu pr au ar"
+  shows "recorded_base_cause_at E gu gr G R \<longleftrightarrow>
+    F=native_judgment_environment F pu pr au ar \<and> generation_payload G=Whole_Artifact R \<and>
+    base_admission_judgment_at F pu pr au ar R"
+  using scope_recorded_base_cause_with_scope[OF generation_judgment_scope_determined scope]
+  by (simp only: recorded_base_cause_scope_instance)
 
 theorem recorded_base_payload_unique:
   assumes first: "recorded_base_cause_at E gu gr G R"
@@ -145,15 +220,9 @@ qed
 theorem recorded_base_outer_transfer:
   assumes valid: "recorded_base_cause_at E gu gr G R" and target: "generation_at E' hu hr G"
   shows "recorded_base_cause_at E' hu hr G R"
-proof -
-  obtain F pu pr au ar where scope: "generation_judgment_scope_at E gu gr G F pu pr au ar"
-    and parts: "F=native_judgment_environment F pu pr au ar" "generation_payload G=Whole_Artifact R"
-      "base_admission_judgment_at F pu pr au ar R"
-    using valid unfolding recorded_base_cause_at_def by blast
-  have moved: "generation_judgment_scope_at E' hu hr G F pu pr au ar"
-    by (rule generation_judgment_scope_outer_transfer[OF scope target])
-  show ?thesis using moved parts unfolding recorded_base_cause_at_def by blast
-qed
+  using scope_recorded_base_outer_transfer[OF generation_judgment_scope_transfers
+      valid[unfolded recorded_base_cause_scope_instance] target]
+  by (simp only: recorded_base_cause_scope_instance)
 
 theorem recorded_base_scope_closed:
   assumes scope: "generation_judgment_scope_at E gu gr G F pu pr au ar"

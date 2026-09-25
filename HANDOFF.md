@@ -488,6 +488,11 @@ What landed that open work builds on, a line each; how it went and each review's
   contracts' statements kept; `development_policy_source_with_formed` moved into the recording; the equations
   `development_indexed_generation_quoted`, `_read` and `_formed` retired. Review 582's follow-ups: 1 in X′ #583's
   brief (correction notes in two entries), 2 next-edits 221, 3 X′ queued, 4 told #618 and #617.
+- **The low moves** (#618, `58503906`, one whole rebuild, words equal): `map_relation_values`' and `socket_sum`'s laws
+  in `Bootstrap_Relations`, one map of material and schema patterns (`map_schema_patterns`), `requested_slots`'
+  locality, the notions' elimination rules (`native_package_atE`, `native_root_family_atE` among them), the
+  replayed-truth lemma (`native_replay_closed_meaning`). Review 619's follow-ups: 1 mailed to #617 (next-edits 222),
+  2–5 next-edits 223–226.
 
 ## Open
 
@@ -596,6 +601,21 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
+- **Not handled at plan-80's end — #526 ended partial** (01:55, `.build/tasks/526/result.md`): it wrote
+  `Factor_Construction_Holders` (q111's holders invariant, kept by every step; `resolution_registrations_unheld`) and
+  `Factor_Least_Witness_Registrations` (completeness, distinctness, `finite_unconstructed_member`, the core
+  `finite_complete_construction_supported`, relocation), both probed. Its Remains: (1) `Factor_Resolution_Commitments`
+  after bringing main in — the holders import, the construction step barring the nodes present, `finite_construction_lifts`
+  redefined under `resolution_registrations_held` at the larger barred set where the constructed node is in focus, the
+  invariant carried through the lifting and `finite_committed_search_found`, the `_plain` facts at a construction-free
+  search, review 590's follow-up 1 settled; (2) `finite_construction_lifts` discharged by
+  `finite_complete_construction_supported`, the exact per-call, demand and native forms as the committed forms at no
+  commitment; (3) q112's lemma (b) for #593 and #621; (4) the marked corrections of tasks 496's and 495's entries (R5d's
+  row naming R5c), the two rows, `commit.md`, the check. Course (working rule Scope: a partial task whose deliverables
+  are written is re-planned, not split): rewrite #526's brief to its Remains over its own tree (`continues` 526) and
+  queue it; its waiters #527, #615, #621, #595, #599 and #540 stay on it. #621's one barring rule takes #526's
+  construction barring as an instance, as #621's brief says; if the rewrite exceeds a build's room, (1)–(2) stay #526's
+  and (3)–(4) become a small build after it, #621 waiting on both.
 - **The committed search narrowed where it commits** (q109, plan-78, `.build/plans/plan-78/q109.md`; q110, plan-79,
   `.build/plans/plan-79/q110.md`; q112, plan-80, `.build/plans/plan-80/q112.md`): a commitment or construction the
   discharges cannot justify is refused, never a call; #565's premise, lifting and forms stand; no premise restated, no
@@ -629,7 +649,7 @@ searches for a theory before briefing a task that edits it.
   checker's share per certificate, the check staying); #547 — q110, #588's Remains; #593 — q110, review 590's 2, #592's
   (the subtree acceptance's premise includes the node's own position; a strict-descendant form a corollary), q112's
   answer; #595 — q110 (its brief rewritten with q112); #597, #599 — q112; #605 — review 590's 4; #583 — P's review 1
-  (in its rewritten brief); #617, #618 — P's review 4; #399 — #569's follow-up (its probe's cost), R8a's readers'
+  (in its rewritten brief); #617 — P's review 4, #618's landing and #619's 1; #399 — #569's follow-up (its probe's cost), R8a's readers'
   theory; #399, #403, #443, #553 — their one-citation generations through #562's recording,
   `development_citing_row_generation_certified` (the first to build adds it to REASONING_REUSE.md's row "Record through
   existing predecessors"); #399, #549, #551 — #398's 4 (`finite_program_entry_presented` moved at its second use); #551

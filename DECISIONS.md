@@ -16380,6 +16380,9 @@ reader reads syntax at a use holding it. Three rules follow, each an instance of
   (`development_formed_policy_judgment`, code equation `development_indexed_generation_formed`). After "The listing
   policy is certified once at the empty artifact …" below (task 560), the policy's source at the payload is the only
   construction the recording makes at R.]
+  [Note (task 583, from #582's review, follow-up 1): `development_indexed_generation_formed` is no longer the
+  recording's code equation; since P (task 581) it is `development_indexed_generation_parametric`
+  (`Development_Recording_Refinements`), the parametric body of task 560's entry.]
 - *(b) A position is asked at its use.* A position query at a site is answered by the artifact at the site's use and
   its carrier's membership — `Carrier_Indexes`, the use the key — never by enumerating `finite_environment_positions`,
   which lists R's carrier with every other artifact's.
@@ -17356,6 +17359,10 @@ policy's source is constructed only over formed presentations (`development_poli
 the term's formation (`finite_data_syntax_quotation_formed`). The *Measured* item below states its runs' claims
 (#493's review, follow-up 1). A probe evaluation at #481's 32K cut returned the original's result (task 530's
 `result.md`). No recipe reaches the three recording theories, so no word changed.]
+[Note (task 583, from #582's review, follow-up 1): neither `development_indexed_generation_quoted` nor
+`development_indexed_generation_read` is the recording's code equation now; since P (task 581) it is
+`development_indexed_generation_parametric` (`Development_Recording_Refinements`), the parametric body of "The listing
+policy is certified once at the empty artifact …" (task 560).]
 
 Task 492, build B2 of "A generation over a state holds its payload once" (task 482). `Development_Bounded_Recording`
 states the finite fill (`finite_payload_fill`, decoding exactly to `payload_fill`), the bounded quotation
@@ -17683,3 +17690,45 @@ payload, if the placeholder's policy holds the empty artifact at a use other tha
 show. This decision was made outside the loop and is a residual.
 
 Recorded 2026-09-25 (task 560; a design, no theory changes).
+
+## The posing's and the given's recordings after the parametric recording: 14 and 12 µs per payload address, within the gate
+
+Task 583, build X′ of "The listing policy is certified once at the empty artifact, and each payload fills it" (task
+560), after P (task 581). The gate of that entry's (4): a route generation's recording, its code compiled, takes at most
+20 µs per payload address held, the payload's quotation included and its construction excluded. It is the measurement
+#398's review owes of the posing (follow-up 2) and the figure at the given #558's review asks after (follow-up 1).
+
+**Measured.** `.build/tasks/583/held.thy` (imported by nothing) imports `Development_First_Problem_Execution`, compiles in
+one ML block before any timed seconds the given's code with the recording (Probe561c's form, task 561) and the posing's
+four constants (task 562's Remains), the posing's payload made there, and times the recordings alone through
+`First_Problem_Execution.posing` and then `Native_State_Execution.first_generation`. Base `20260926-005341-batch581`
+pinned. The exclusive claim did not come free within 20 minutes and the harness directed the measurement shared; it ran
+twice (`.build/tasks/583/measurement.md`):
+
+| recording | payload addresses | run 1 (heavy contention) | run 2 (little contention) | µs per address (run 2) | cause carrier | the owner record's cause C0 |
+|---|---|---|---|---|---|---|
+| the posing | 1,882,537 | 27.3 s | 26.6 s | 14.1 | 3,437 | yes |
+| the given (first generation) | 882,621 | 16.6 s | 10.9 s | 12.3 | 3,437 | yes |
+
+**The gate is met** at both payloads, in both runs (run 1, under memory stalls: 14.5 and 18.9 µs). Both causes are the
+owner record of 18:53's, the one target `development_indexed_generation_cause` states. At the given the recording fell
+from X's 111.3 s held (126 µs, task 538) to 10.9 s. Garbage collection is a third to a half of each recording's time
+(5.3–20.8 s), which a held run would bear too.
+
+**Load of the probe** (run 2, 105.7 s): the session's start with the base's heap about 48 s, the caller's compilation
+with the posing's payload 20.5 s, the two recordings with the given's value 37.5 s. It fits within 3 minutes.
+
+**Corrections of task 560's estimates** (its (2) "Walks" and (4)):
+
+| Estimate | Measured |
+|---|---|
+| About 7 s at the given (8 µs per payload address). | 10.9 s (12.3 µs), shared, little contention. |
+| About 18 s at the posing's 1,882,537 addresses (10 µs). | 26.6 s (14.1 µs), shared, little contention. |
+| One held run of 3 minutes holds both recordings with every compilation and the posing's payload, about 75 s under the decision. | 58 s of those (20.5 s compilation and payload, 37.5 s recordings), 106 s with the session. |
+| A probe of 60 s holds a recording of a payload of the given's order with its compilation, about 25 s with the session. | The session's start alone took about 48 s here, with the compilation 20.5 s: such a probe needs more than 60 s. |
+
+**Limits.** The figures are shared, not held: run 2's load reported little contention (no wait for a CPU, no memory
+stalls), run 1's heavy (13 % memory stalls), and the two agree at the posing within 3 %. A held repeat would decide the
+gate in its own terms; the planner decides whether it is needed. One run each; no theory changed; no recipe reached.
+
+Recorded 2026-09-26 (task 583).

@@ -81,14 +81,8 @@ proof -
     and app: "native_application_at F au ar d (Target_Term (Whole_Artifact R)) I K"
     and included: "environment_included F H" and replay: "native_replay_at H pu pr au ar root {}"
     using certified unfolding scope_certified_base_cause_at_def by blast
-  have hf: "environment_formed H"
-    using replay unfolding native_replay_at_def native_application_at_def by blast
-  have kept: "native_package_at H pu pr P"
-    "native_application_at H au ar d (Target_Term (Whole_Artifact R)) I K"
-    by (rule native_package_included[OF package included hf], rule native_application_included[OF app included hf])
-  have positive: "native_positive_holds H pu pr au ar" by (rule native_replay_closed_sound[OF replay])
   have truth: "(d,Target_Term (Whole_Artifact R))\<in>positive_meaning P"
-    using native_positive_holds_with_reads[OF kept] positive by blast
+    by (rule native_replay_closed_meaning[OF replay included package app])
   have admitted: "base_admission_judgment_at F pu pr au ar R"
     using base_admission_with_reads[OF package app] truth by simp
   show ?thesis using scope canonical payload admitted unfolding scope_recorded_base_cause_at_def by blast

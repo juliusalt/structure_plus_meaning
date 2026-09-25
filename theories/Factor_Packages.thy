@@ -289,6 +289,13 @@ definition native_root_family_at ::
       (\<forall>s a. (s,a) \<in> M \<longrightarrow>
         (\<exists>d. (s,d) \<in> Q \<and> located_at E u a (fst d) (snd d))))"
 
+lemma native_root_family_atE:
+  assumes "native_root_family_at E u r Q"
+  obtains R M where "environment_formed E" "artifact_at E u R" "family_at R r M"
+    "finite Q" "single_valued Q" "rel_dom Q = rel_dom M"
+    "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>d. (s,d) \<in> Q \<and> located_at E u a (fst d) (snd d))"
+  using assms unfolding native_root_family_at_def by (elim conjE exE) (rule that; assumption)
+
 theorem native_root_family_unique:
   assumes first: "native_root_family_at E u r Q" and second: "native_root_family_at E u r W"
   shows "Q = W"
@@ -353,6 +360,12 @@ definition native_package_at ::
   "'u artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address \<Rightarrow> 'u native_system \<Rightarrow> bool" where
   "native_package_at E u r P \<longleftrightarrow> (\<exists>Q. native_root_family_at E u r Q \<and>
     native_package_formed E (rel_ran Q) \<and> P = native_program E (rel_ran Q))"
+
+lemma native_package_atE:
+  assumes "native_package_at E u r P"
+  obtains Q where "native_root_family_at E u r Q" "native_package_formed E (rel_ran Q)"
+    "P = native_program E (rel_ran Q)"
+  using assms unfolding native_package_at_def by (elim conjE exE) (rule that; assumption)
 
 theorem native_package_unique:
   assumes first: "native_package_at E u r P" and second: "native_package_at E u r T"

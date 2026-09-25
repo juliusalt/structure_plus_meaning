@@ -180,6 +180,17 @@ definition map_system_leaves ::
   "map_system_leaves h P=\<lparr>system_interfaces=map_relation_values (map_pattern_leaves h) (system_interfaces P),
     system_clauses=map_relation_values (map_schema_leaves h) (system_clauses P)\<rparr>"
 
+text \<open>
+  The leaf maps of material patterns and schemas are the maps of their patterns (@{const map_material_patterns},
+  @{const map_schema_patterns}) at the leaf map of patterns; their laws are those maps' laws at it.
+\<close>
+
+lemma map_material_leaves_patterns: "map_material_leaves h=map_material_patterns (map_pattern_leaves h)"
+  by (rule ext) (simp add: map_material_leaves_def map_material_patterns_def)
+
+lemma map_schema_leaves_patterns: "map_schema_leaves h=map_schema_patterns (map_pattern_leaves h)"
+  by (rule ext) (simp add: map_schema_leaves_def map_schema_patterns_def map_material_leaves_patterns)
+
 text \<open>The map of patterns and the map of terms agree on the exact pattern of a term.\<close>
 
 lemma map_pattern_leaves_exact:
@@ -188,13 +199,13 @@ lemma map_pattern_leaves_exact:
 
 lemma map_material_leaves_fields [simp]:
   "material_fields (map_material_leaves h M)=map (map_pattern_leaves h) (material_fields M)"
-  by (simp add: map_material_leaves_def material_fields_def)
+  by (simp only: map_material_leaves_patterns map_material_patterns_fields)
 
 lemma map_schema_leaves_fields [simp]:
   "schema_conclusion (map_schema_leaves h S)=map_pattern_leaves h (schema_conclusion S)"
   "schema_premises (map_schema_leaves h S)=map_relation_values (map_prod id (map_pattern_leaves h)) (schema_premises S)"
   "schema_material_premises (map_schema_leaves h S)=map_relation_values (map_material_leaves h) (schema_material_premises S)"
-  by (simp_all add: map_schema_leaves_def)
+  by (simp_all add: map_schema_leaves_patterns map_material_leaves_patterns)
 
 lemma map_system_leaves_fields [simp]:
   "system_interfaces (map_system_leaves h P)=map_relation_values (map_pattern_leaves h) (system_interfaces P)"
@@ -214,21 +225,11 @@ lemma map_pattern_leaves_variables [simp]: "pattern_variables (map_pattern_leave
 lemma map_material_leaves_variables [simp]: "material_variables (map_material_leaves h M)=material_variables M"
   by (simp add: material_variables_def)
 
-lemma map_relation_values_UN:
-  assumes "\<And>k v. (k,v)\<in>R \<Longrightarrow> g (k,f v)=g' (k,v)"
-  shows "(\<Union>z\<in>map_relation_values f R. g z)=(\<Union>z\<in>R. g' z)"
-  unfolding map_relation_values_def image_image
-  by (rule SUP_cong[OF refl]) (auto simp: assms split: prod.splits)
-
 lemma map_schema_leaves_variables [simp]: "schema_variables (map_schema_leaves h S)=schema_variables S"
 proof -
-  have calls: "(\<Union>(s,d,p)\<in>map_relation_values (map_prod id (map_pattern_leaves h)) (schema_premises S).
-      pattern_variables p)=(\<Union>(s,d,p)\<in>schema_premises S. pattern_variables p)"
-    by (rule map_relation_values_UN) (auto split: prod.splits)
-  have materials: "(\<Union>(s,M)\<in>map_relation_values (map_material_leaves h) (schema_material_premises S).
-      material_variables M)=(\<Union>(s,M)\<in>schema_material_premises S. material_variables M)"
-    by (rule map_relation_values_UN) simp
-  show ?thesis by (simp add: schema_variables_def calls materials)
+  have "schema_variables (map_schema_patterns (map_pattern_leaves h) S)=(\<Union>a\<in>schema_variables S. {a})"
+    by (rule map_schema_patterns_variables) simp
+  then show ?thesis by (simp add: map_schema_leaves_patterns)
 qed
 
 lemma map_schema_leaves_sockets:
@@ -237,10 +238,7 @@ lemma map_schema_leaves_sockets:
   by simp_all
 
 lemma map_schema_leaves_dependencies [simp]: "schema_dependencies (map_schema_leaves h S)=schema_dependencies S"
-  by (simp add: schema_dependencies_def map_relation_values_range image_image)
-
-lemma map_relation_values_empty [simp]: "map_relation_values f R={} \<longleftrightarrow> R={}"
-  by (simp add: map_relation_values_def)
+  by (simp add: map_schema_leaves_patterns)
 
 lemma map_system_leaves_definitions [simp]: "system_definitions (map_system_leaves h P)=system_definitions P"
   by (simp add: system_definitions_def)
@@ -280,14 +278,6 @@ proof -
   then show ?thesis by auto
 qed
 
-lemma map_relation_values_fixed:
-  assumes "\<And>k v. (k,v)\<in>R \<Longrightarrow> f v=v"
-  shows "map_relation_values f R=R"
-proof -
-  have "(\<lambda>(k,v). (k,f v)) ` R=id ` R"
-    by (rule image_cong[OF refl]) (auto simp: assms split: prod.splits)
-  then show ?thesis by (simp add: map_relation_values_def)
-qed
 
 lemma map_pattern_leaves_fixed:
   assumes "\<forall>x\<in>pattern_leaves p. h x=x"
@@ -297,37 +287,23 @@ lemma map_pattern_leaves_fixed:
 lemma map_material_leaves_fixed:
   assumes fixed: "\<forall>x\<in>material_leaves M. h x=x"
   shows "map_material_leaves h M=M"
-proof -
-  have "map (map_pattern_leaves h) (material_fields M)=material_fields M"
-  proof (rule map_idI)
-    fix p assume "p\<in>set (material_fields M)"
-    then show "map_pattern_leaves h p=p"
-      using fixed by (auto simp: material_leaves_def intro: map_pattern_leaves_fixed)
-  qed
-  then show ?thesis using material_fields_unique[of "map_material_leaves h M" M] by simp
-qed
+  unfolding map_material_leaves_patterns
+  by (rule map_material_patterns_ident) (use fixed in \<open>auto simp: material_leaves_def intro: map_pattern_leaves_fixed\<close>)
 
 lemma map_schema_leaves_fixed:
   assumes fixed: "\<forall>x\<in>schema_leaves S. h x=x"
   shows "map_schema_leaves h S=S"
-proof (rule factor_schema.equality)
-  show "schema_conclusion (map_schema_leaves h S)=schema_conclusion S"
+  unfolding map_schema_leaves_patterns
+proof (rule map_schema_patterns_ident)
+  show "map_pattern_leaves h (schema_conclusion S)=schema_conclusion S"
     using fixed by (simp add: schema_leaves_def map_pattern_leaves_fixed)
-  have premise: "map_prod id (map_pattern_leaves h) v=v" if member: "(s,v)\<in>schema_premises S" for s v
-  proof (cases v)
-    case (Pair d p)
-    have "\<forall>x\<in>pattern_leaves p. h x=x" using fixed member Pair by (auto simp: schema_leaves_def)
-    then show ?thesis using Pair by (simp add: map_pattern_leaves_fixed)
-  qed
-  show "schema_premises (map_schema_leaves h S)=schema_premises S"
-    by (simp add: map_relation_values_fixed premise)
-  have material: "map_material_leaves h M=M" if member: "(s,M)\<in>schema_material_premises S" for s M
-  proof (rule map_material_leaves_fixed)
-    show "\<forall>x\<in>material_leaves M. h x=x" using fixed member by (auto simp: schema_leaves_def)
-  qed
-  show "schema_material_premises (map_schema_leaves h S)=schema_material_premises S"
-    by (simp add: map_relation_values_fixed material)
-qed simp
+  show "map_pattern_leaves h p=p" if member: "(s,d,p)\<in>schema_premises S" for s d p
+    by (rule map_pattern_leaves_fixed) (use fixed member in \<open>auto simp: schema_leaves_def\<close>)
+  show "map_pattern_leaves h p=p"
+    if member: "(s,M)\<in>schema_material_premises S" and field: "p\<in>set (material_fields M)" for s M p
+    by (rule map_pattern_leaves_fixed)
+      (use fixed member field in \<open>auto simp: schema_leaves_def material_leaves_def\<close>)
+qed
 
 lemma map_system_leaves_fixed:
   assumes fixed: "\<forall>x\<in>system_leaves P. h x=x"
@@ -373,22 +349,11 @@ lemma map_material_leaves_formed:
   shows "material_pattern_formed (map_material_leaves h M)"
   using assms by (auto simp: material_pattern_formed_def intro: map_pattern_leaves_formed)
 
-lemma map_relation_values_single_valued:
-  assumes "single_valued R"
-  shows "single_valued (map_relation_values f R)"
-  using assms by (auto simp: single_valued_def)
-
 lemma map_schema_leaves_formed:
   assumes formed: "schema_formed S" and preserve: "leaf_map_formed h"
   shows "schema_formed (map_schema_leaves h S)"
-proof -
-  have sv: "single_valued (schema_premises S)" "single_valued (schema_material_premises S)"
-    using formed by (simp_all add: schema_formed_def)
-  show ?thesis
-    using formed map_relation_values_single_valued[OF sv(1)] map_relation_values_single_valued[OF sv(2)]
-    unfolding schema_formed_def
-    by (auto simp: split_paired_Ex intro: map_pattern_leaves_formed[OF _ preserve] map_material_leaves_formed[OF _ preserve])
-qed
+  unfolding map_schema_leaves_patterns
+  by (rule map_schema_patterns_formed[OF formed]) (rule map_pattern_leaves_formed[OF _ preserve])
 
 lemma map_system_leaves_formed:
   assumes formed: "schema_system_formed P" and preserve: "leaf_map_formed h"

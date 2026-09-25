@@ -42,13 +42,7 @@ qed
 lemma requested_slots_placeholder_fill:
   assumes kept: "\<And>u r T. (u,r)\<in>Q \<Longrightarrow> artifact_at (placeholder_fill E R) u T \<longleftrightarrow> artifact_at E u T"
   shows "requested_slots (placeholder_fill E R) Q=requested_slots E Q"
-proof (rule set_eqI)
-  fix z show "z\<in>requested_slots (placeholder_fill E R) Q \<longleftrightarrow> z\<in>requested_slots E Q"
-  proof (cases z)
-    case (Pair v k)
-    show ?thesis unfolding Pair requested_slots_def mem_Collect_eq prod.case using kept by blast
-  qed
-qed
+  using kept by (rule requested_slots_locality)
 
 section \<open>Root families\<close>
 
@@ -58,7 +52,7 @@ theorem native_root_family_placeholder_fill:
 proof -
   obtain S M where S: "environment_formed E" "artifact_at E u S" "family_at S r M" "finite Q" "single_valued Q"
       "rel_dom Q = rel_dom M" "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>d. (s,d) \<in> Q \<and> located_at E u a (fst d) (snd d))"
-    by (insert read[unfolded native_root_family_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_root_family_atE[OF read]) (rule that; assumption)
   have art: "artifact_at (placeholder_fill E R) u S" by (rule artifact_at_placeholder_fill_family[OF S(1-3)])
   have rows: "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>d. (s,d) \<in> Q \<and> located_at (placeholder_fill E R) u a (fst d) (snd d))"
     using S(7) located_at_placeholder_fill[OF S(1)] by blast
@@ -252,7 +246,7 @@ theorem native_package_placeholder_fill:
 proof -
   obtain Q where Q: "native_root_family_at E u r Q" "native_package_formed E (rel_ran Q)"
       "P=native_program E (rel_ran Q)"
-    by (insert read[unfolded native_package_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_package_atE[OF read]) (rule that; assumption)
   show ?thesis unfolding native_package_at_def
   proof (intro exI[of _ Q] conjI)
     show "native_root_family_at (placeholder_fill E R) u r Q"
@@ -280,7 +274,7 @@ proof -
       "citation_at S c cite C" "citation_location E u cite (fst d) (snd d)" "term_quoted_at E u a t J A"
       "insert r (set ps) \<inter> (C \<union> J) = {}" "C \<inter> J = {}" "I = insert r (set ps \<union> C \<union> J)"
       "K = citation_slots cite \<union> A" "I \<inter> K = {}"
-    by (insert read[unfolded native_application_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_application_atE[OF read]) (rule that; assumption)
   have art: "artifact_at (placeholder_fill E R) u S" by (rule artifact_at_placeholder_fill_record[OF S(1-3)])
   note facts=placeholder_fill_formed[OF S(1) R_formed] art S(3,4,7-11)
     citation_location_placeholder_fill[OF S(1,5)] term_quoted_placeholder_fill[OF R_formed S(6)]
@@ -331,7 +325,7 @@ proof -
   obtain S M where S: "environment_formed E" "artifact_at E u S" "family_at S m M"
       "finite (socket_sum Q C)" "single_valued (socket_sum Q C)" "rel_dom (socket_sum Q C)=rel_dom M"
       "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>p I K. (s,p) \<in> socket_sum Q C \<and> native_premise_at E u V a p I K)"
-    by (insert read[unfolded native_premise_family_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_premise_family_atE[OF read]) (rule that; assumption)
   have each: "native_premise_slots (placeholder_fill E R) u V a=native_premise_slots E u V a"
     if "a\<in>family_endpoints E u m" for a
   proof -
@@ -355,7 +349,7 @@ proof -
       "V = schema_variables S"
       "insert a (set ps) \<inter> (insert b V \<union> I \<union> {m}) = {}"
       "insert b V \<inter> I = {}" "b \<noteq> m" "m \<notin> I"
-    by (insert read[unfolded native_schema_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_schema_atE[OF read]) (rule that; assumption)
   have art: "artifact_at (placeholder_fill E R) u T" by (rule artifact_at_placeholder_fill_record[OF T(1-3)])
   show ?thesis
     using native_schema_slots_from_fields[OF placeholder_fill_formed[OF T(1) R_formed] art T(3,4)]
@@ -370,7 +364,7 @@ lemma native_schema_family_slots_placeholder_fill:
 proof -
   obtain S M where S: "environment_formed E" "artifact_at E u S" "family_at S m M" "finite C" "single_valued C"
       "rel_dom C = rel_dom M" "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>T. (s,T) \<in> C \<and> native_schema_at E u a T)"
-    by (insert read[unfolded native_schema_family_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_schema_family_atE[OF read]) (rule that; assumption)
   have each: "native_schema_slots (placeholder_fill E R) u a=native_schema_slots E u a"
     if "a\<in>family_endpoints E u m" for a
   proof -
@@ -391,7 +385,7 @@ proof -
   obtain S ps i m I K where S: "environment_formed E" "artifact_at E u S" "record_at S r ps [i,m]"
       "scoped_pattern_at E u i p I K" "native_schema_family_at E u m C"
       "insert r (set ps) \<inter> (I \<union> {m}) = {}" "m \<notin> I"
-    by (insert read[unfolded native_definition_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_definition_atE[OF read]) (rule that; assumption)
   have art: "artifact_at (placeholder_fill E R) u S" by (rule artifact_at_placeholder_fill_record[OF S(1-3)])
   show ?thesis
     using native_definition_slots_from_fields[OF placeholder_fill_formed[OF S(1) R_formed] art S(3)]
@@ -408,7 +402,7 @@ theorem native_package_sites_placeholder_fill:
     and "native_package_sites (placeholder_fill E R) u r=native_package_sites E u r"
 proof -
   obtain Q where Q: "native_root_family_at E u r Q" "native_package_formed E (rel_ran Q)"
-    by (insert read[unfolded native_package_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_package_atE[OF read]) (rule that; assumption)
   have E_roots: "native_package_roots E u r=rel_ran Q" by (rule native_package_roots_from_family[OF Q(1)])
   have fill_roots: "native_package_roots (placeholder_fill E R) u r=rel_ran Q"
     by (rule native_package_roots_from_family[OF native_root_family_placeholder_fill[OF R_formed Q(1)]])
@@ -428,9 +422,9 @@ theorem native_package_demands_placeholder_fill:
   shows "native_package_demands (placeholder_fill E R) u r=native_package_demands E u r"
 proof -
   obtain Q where Q: "native_root_family_at E u r Q" "native_package_formed E (rel_ran Q)"
-    by (insert read[unfolded native_package_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_package_atE[OF read]) (rule that; assumption)
   obtain S M where S: "environment_formed E" "artifact_at E u S" "family_at S r M"
-    by (insert Q(1)[unfolded native_root_family_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_root_family_atE[OF Q(1)]) (rule that; assumption)
   have address: "r\<in>rra_carrier (object_structure S)" using family_interior_in_carrier[OF S(3)] by auto
   have kept: "artifact_at (placeholder_fill E R) u T \<longleftrightarrow> artifact_at E u T" for T
     by (rule artifact_at_placeholder_fill_address[OF S(1,2) address])

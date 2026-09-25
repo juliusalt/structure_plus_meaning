@@ -9,40 +9,13 @@ text \<open>
   syntax: the empty artifact, whose carrier is empty, so that at a use holding it no syntax, binding source or
   occurrence stands. At the fill of every use holding it (@{const placeholder_fill}) each reading the certified
   cause makes is the placeholder's reading mapped by the placeholder's leaf map (@{text Factor_Placeholder_Packages}),
-  and positive meaning follows that map at an observation-free program
-  (@{thm [source] positive_meaning_mapped}), so the placeholder's certified call carries to every payload. The
+  and positive meaning follows that map at an observation-free rooting of the entry
+  (@{thm [source] positive_meaning_rooted_mapped}, a law of the leaf map at @{text Factor_System_Payloads}), so the
+  placeholder's certified call carries to every payload. The
   replay at the fill is not transported: it is supplied for the positive call by
   @{thm [source] native_positive_replay_total}.
 \<close>
 
-section \<open>A call at an observation-free rooting holds in the mapped program\<close>
-
-text \<open>
-  A call whose entry roots an observation-free program holds in the whole program mapped: the rooted program
-  holds it, the leaf map carries it there, and the mapped rooted program is the rooting of the mapped program
-  (@{thm [source] rooted_system_leaf_map}). The whole program may hold material premises outside the entry's
-  closure.
-\<close>
-
-theorem positive_meaning_rooted_mapped:
-  assumes holds: "(d,t)\<in>positive_meaning P"
-    and preserve: "leaf_map_formed h" and free: "system_observation_free (rooted_system P {d})"
-  shows "(d,map_term_leaves h t)\<in>positive_meaning (map_system_leaves h P)"
-proof -
-  have formed: "schema_system_formed P" by (rule positive_meaning_has_formed_system[OF holds])
-  have member: "d\<in>system_definition_closure P {d}"
-    by (rule subsetD[OF system_definition_closure_roots], simp)
-  have rooted: "(d,t)\<in>positive_meaning (rooted_system P {d})"
-    by (simp only: rooted_system_meaning[OF formed]) (rule conjI[OF member holds])
-  have "(d,map_term_leaves h t)\<in>positive_meaning (map_system_leaves h (rooted_system P {d}))"
-    by (rule positive_meaning_mapped[OF rooted preserve free])
-  then have "(d,map_term_leaves h t)\<in>positive_meaning (rooted_system (map_system_leaves h P) {d})"
-    by (simp only: rooted_system_leaf_map)
-  then have "d\<in>system_definition_closure (map_system_leaves h P) {d} \<and>
-      (d,map_term_leaves h t)\<in>positive_meaning (map_system_leaves h P)"
-    by (simp only: rooted_system_meaning[OF map_system_leaves_formed[OF formed preserve]])
-  then show ?thesis by (rule conjunct2)
-qed
 
 section \<open>The placeholder's facts\<close>
 
@@ -76,19 +49,7 @@ begin
 text \<open>The placeholder's call holds: its closed replay is sound, read at the replay's inclusion of J0.\<close>
 
 lemma placeholder_holds: "(d,Target_Term (Whole_Artifact empty_artifact))\<in>positive_meaning P0"
-proof -
-  obtain P' e t' I' K' G' where replayed: "native_package_at H0 pu pr P'"
-    by (insert replay[unfolded native_replay_at_def], elim conjE exE) (rule that; assumption)
-  obtain Q where family: "native_root_family_at H0 pu pr Q"
-    by (insert replayed[unfolded native_package_at_def], elim conjE exE) (rule that; assumption)
-  have hf: "environment_formed H0"
-    by (insert family[unfolded native_root_family_at_def], elim conjE exE)
-  have kept: "native_package_at H0 pu pr P0"
-    "native_application_at H0 au ar d (Target_Term (Whole_Artifact empty_artifact)) I A"
-    by (rule native_package_included[OF package included hf], rule native_application_included[OF application included hf])
-  have "native_positive_holds H0 pu pr au ar" by (rule native_replay_closed_sound[OF replay])
-  then show ?thesis by (simp only: native_positive_holds_with_reads[OF kept])
-qed
+  by (rule native_replay_closed_meaning[OF replay included package application])
 
 lemma placeholder_term:
   "map_term_leaves (placeholder_leaf R) (Target_Term (Whole_Artifact empty_artifact))=Target_Term (Whole_Artifact R)"

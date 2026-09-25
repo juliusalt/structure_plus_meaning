@@ -12,6 +12,13 @@ definition native_replay_at ::
       native_schema_graph_at E root G \<and> schema_graph_derives (positioned_program P) G root d t H \<and>
       environment_closed E {pu,au,fst root} (native_replay_demands E pu pr au ar G))"
 
+lemma native_replay_atE:
+  assumes "native_replay_at E pu pr au ar root H"
+  obtains P d t I K G where "native_package_at E pu pr P" "native_application_at E au ar d t I K"
+    "native_schema_graph_at E root G" "schema_graph_derives (positioned_program P) G root d t H"
+    "environment_closed E {pu,au,fst root} (native_replay_demands E pu pr au ar G)"
+  using assms unfolding native_replay_at_def by (elim conjE exE) (rule that; assumption)
+
 theorem native_replay_with_reads:
   assumes package: "native_package_at E pu pr P" and app: "native_application_at E au ar d t I K"
     and graph: "native_schema_graph_at E root G"
@@ -97,6 +104,33 @@ proof -
   show ?thesis by (rule native_replay_conditional_sound[OF source replay]) simp
 qed
 
+lemma native_replay_environment_formed:
+  assumes replay: "native_replay_at E pu pr au ar root H"
+  shows "environment_formed E"
+proof -
+  obtain P d t I K G where app: "native_application_at E au ar d t I K"
+    by (rule native_replay_atE[OF replay]) (rule that; assumption)
+  show ?thesis by (rule native_application_atE[OF app])
+qed
+
+text \<open>
+  A closed replay at an environment including a package reading and an application reading makes the call true
+  in the program read: both readings are carried into the replay's formed environment, where the replay is sound.
+\<close>
+
+theorem native_replay_closed_meaning:
+  assumes replay: "native_replay_at H pu pr au ar root {}" and included: "environment_included E H"
+    and package: "native_package_at E pu pr P" and app: "native_application_at E au ar d t I K"
+  shows "(d,t)\<in>positive_meaning P"
+proof -
+  have formed: "environment_formed H" by (rule native_replay_environment_formed[OF replay])
+  have kept: "native_package_at H pu pr P" "native_application_at H au ar d t I K"
+    by (rule native_package_included[OF package included formed],
+      rule native_application_included[OF app included formed])
+  show ?thesis
+    using native_positive_holds_with_reads[OF kept] native_replay_closed_sound[OF replay] by blast
+qed
+
 theorem native_positive_replay_total:
   fixes E :: "local_address option artifact_environment"
   assumes positive: "native_positive_holds E pu pr au ar"
@@ -171,8 +205,8 @@ next
     environment_included (native_judgment_environment E pu pr au ar) H"
   obtain H root where target: "native_package_at H pu pr P" "native_application_at H au ar d t I K"
     and replay: "native_replay_at H pu pr au ar root {}" using witness by blast
-  have positive: "native_positive_holds H pu pr au ar" by (rule native_replay_closed_sound[OF replay])
-  have meaning: "(d,t)\<in>positive_meaning P" using native_positive_holds_with_reads[OF target] positive by blast
+  have meaning: "(d,t)\<in>positive_meaning P"
+    by (rule native_replay_closed_meaning[OF replay environment_included_refl target])
   show "native_positive_holds E pu pr au ar" using native_positive_holds_with_reads[OF package app] meaning by blast
 qed
 

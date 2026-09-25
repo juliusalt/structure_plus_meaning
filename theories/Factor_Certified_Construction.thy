@@ -59,8 +59,8 @@ proof -
     and invariant: "construction_permission_invariant P d"
     and replay: "native_replay_at E pu pr au ar root {}"
     using certified_construction_with_reads[OF package app] certified by blast+
-  have positive: "native_positive_holds E pu pr au ar" by (rule native_replay_closed_sound[OF replay])
-  have meaning: "(d,t)\<in>positive_meaning P" using native_positive_holds_with_reads[OF package app] positive by blast
+  have meaning: "(d,t)\<in>positive_meaning P"
+    by (rule native_replay_closed_meaning[OF replay environment_included_refl package app])
   show ?thesis using factor_construction_at_presentation[OF built coords invariant present] meaning by blast
 qed
 

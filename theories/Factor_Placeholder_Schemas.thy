@@ -31,10 +31,6 @@ lemma artifact_at_placeholder_fill_family:
   shows "artifact_at (placeholder_fill E R) u S"
   using family_interior_in_carrier[OF assms(3)] by (intro artifact_at_placeholder_fill_read[OF assms(1,2), of r]) auto
 
-lemma socket_sum_map_relation_values:
-  "socket_sum (map_relation_values f Q) (map_relation_values g C)=
-    map_relation_values (map_sum f g) (socket_sum Q C)"
-  by (simp add: socket_sum_def map_relation_values_def image_Un image_image split_def)
 
 section \<open>Patterns\<close>
 
@@ -95,7 +91,7 @@ proof -
       "binder_scope_at S b V" "pattern_quoted_at E u V q p J K" "V=pattern_variables p"
       "insert r (set ps) \<inter> (insert b V \<union> J) = {}" "insert b V \<inter> J = {}"
       "I = insert r (set ps \<union> insert b V \<union> J)" "I \<inter> K = {}"
-    by (insert read[unfolded scoped_pattern_at_def], elim conjE exE) (rule that; assumption)
+    by (rule scoped_pattern_atE[OF read]) (rule that; assumption)
   have art: "artifact_at (placeholder_fill E R) u S" by (rule artifact_at_placeholder_fill_record[OF S(1-3)])
   have vars: "V=pattern_variables (map_pattern_leaves (placeholder_leaf R) p)" using S(6) by simp
   note facts=placeholder_fill_formed[OF S(1) R_formed] art S(3,4,7-10) vars
@@ -141,7 +137,7 @@ proof -
   obtain S ports roots J where S: "environment_formed E" "artifact_at E u S" "record_at S r ports roots"
       "pattern_vector_at E u V roots ps J K" "insert r (set ports) \<inter> J = {}"
       "I=insert r (set ports \<union> J)" "I \<inter> (K \<union> V) = {}"
-    by (insert read[unfolded pattern_record_at_def], elim conjE exE) (rule that; assumption)
+    by (rule pattern_record_atE[OF read]) (rule that; assumption)
   have art: "artifact_at (placeholder_fill E R) u S" by (rule artifact_at_placeholder_fill_record[OF S(1-3)])
   note facts=placeholder_fill_formed[OF S(1) R_formed] art S(3,5-7)
     pattern_vector_placeholder_fill[OF R_formed S(4)]
@@ -172,7 +168,7 @@ proof -
       "pattern_quoted_at E u V a p J A"
       "insert r (set ps) \<inter> (C \<union> J) = {}" "C \<inter> J = {}"
       "I = insert r (set ps \<union> C \<union> J)" "K = citation_slots cite \<union> A" "I \<inter> (K \<union> V) = {}"
-    by (insert read[unfolded prospective_call_at_def], elim conjE exE) (rule that; assumption)
+    by (rule prospective_call_atE[OF read]) (rule that; assumption)
   have art: "artifact_at (placeholder_fill E R) u S" by (rule artifact_at_placeholder_fill_record[OF S(1-3)])
   note facts=placeholder_fill_formed[OF S(1) R_formed] art S(3,4,7-11)
     citation_location_placeholder_fill[OF S(1,5)] pattern_quoted_placeholder_fill[OF R_formed S(6)]
@@ -219,7 +215,7 @@ proof -
   obtain S M where S: "environment_formed E" "artifact_at E u S" "family_at S r M"
       "finite (socket_sum Q C)" "single_valued (socket_sum Q C)" "rel_dom (socket_sum Q C)=rel_dom M"
       "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>p I K. (s,p) \<in> socket_sum Q C \<and> native_premise_at E u V a p I K)"
-    by (insert read[unfolded native_premise_family_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_premise_family_atE[OF read]) (rule that; assumption)
   have art: "artifact_at ?F u S" by (rule artifact_at_placeholder_fill_family[OF S(1-3)])
   have fin: "finite (map_relation_values ?h (socket_sum Q C))" using S(4) by simp
   have sv: "single_valued (map_relation_values ?h (socket_sum Q C))"
@@ -260,7 +256,7 @@ proof -
       "V = schema_variables S"
       "insert r (set ps) \<inter> (insert b V \<union> I \<union> {m}) = {}"
       "insert b V \<inter> I = {}" "b \<noteq> m" "m \<notin> I"
-    by (insert read[unfolded native_schema_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_schema_atE[OF read]) (rule that; assumption)
   have art: "artifact_at ?F u T" by (rule artifact_at_placeholder_fill_record[OF T(1-3)])
   have conclusion: "pattern_quoted_at ?F u V c (schema_conclusion ?S) I K"
     using pattern_quoted_placeholder_fill[OF R_formed T(5)] by simp
@@ -285,7 +281,7 @@ proof -
   let ?F="placeholder_fill E R" and ?h="map_schema_leaves (placeholder_leaf R)"
   obtain S M where S: "environment_formed E" "artifact_at E u S" "family_at S r M" "finite C" "single_valued C"
       "rel_dom C = rel_dom M" "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>T. (s,T) \<in> C \<and> native_schema_at E u a T)"
-    by (insert read[unfolded native_schema_family_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_schema_family_atE[OF read]) (rule that; assumption)
   have art: "artifact_at ?F u S" by (rule artifact_at_placeholder_fill_family[OF S(1-3)])
   have fin: "finite (map_relation_values ?h C)" using S(4) by simp
   have sv: "single_valued (map_relation_values ?h C)" by (rule map_relation_values_single_valued[OF S(5)])
@@ -317,7 +313,7 @@ proof -
   obtain S ps i m I K where S: "environment_formed E" "artifact_at E u S" "record_at S r ps [i,m]"
       "scoped_pattern_at E u i p I K" "native_schema_family_at E u m C"
       "insert r (set ps) \<inter> (I \<union> {m}) = {}" "m \<notin> I"
-    by (insert read[unfolded native_definition_at_def], elim conjE exE) (rule that; assumption)
+    by (rule native_definition_atE[OF read]) (rule that; assumption)
   have art: "artifact_at (placeholder_fill E R) u S" by (rule artifact_at_placeholder_fill_record[OF S(1-3)])
   note facts=placeholder_fill_formed[OF S(1) R_formed] art S(3,6,7)
     scoped_pattern_placeholder_fill[OF R_formed S(4)] native_schema_family_placeholder_fill[OF R_formed S(5)]

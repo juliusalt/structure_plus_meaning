@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "ec63a5693f4a86059fd38d67a1045b7075f512e9bbe66c839ff8221c15d0fb9c",
- "checked_content_sha256": "190b16bdc1700bd6305fd2f6720e87449ff3392f85097486cc5559b9c3ff8c8e",
+ "base_receipt_sha256": "9a76b44351349b4ed9c6a801f117fe7a66db3796c3899975ee5d6addb0b06f42",
+ "checked_content_sha256": "94aa193c7a3c2d7505c873b56f426e33c5ea49d652e6720566901b73bd8c7851",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,25 +17,32 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp_ryj7atf/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpaupl215n/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.65,
-  "execution_impact": 0.0,
-  "export": 0.0,
-  "proof": 451.24,
-  "recipe_impact": 0.45,
-  "recipes_and_host_tests": 11.27
+  "base_and_impact": 0.55,
+  "execution_impact": 0.06,
+  "export": 89.58,
+  "proof": 352.84,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.19
  },
  "rebuilt_theories": [
-  "Criticism_Octet_Samples",
+  "Development_Admitted_Publication",
   "Development_Bounded_Recording",
   "Development_Bounded_Recording_Execution",
+  "Development_Certified_Generations",
+  "Development_Decision_Generations",
+  "Development_Edited_Local",
+  "Development_Edited_Reach",
+  "Development_Edited_Undeclared",
+  "Development_Exported_Edit",
   "Development_First_Problem",
   "Development_First_Problem_Asked",
   "Development_First_Problem_Execution",
+  "Development_First_Problem_Guard",
   "Development_First_Request_Program",
   "Development_Given_Declarations",
   "Development_Given_Declarations_Execution",
@@ -44,25 +51,53 @@
   "Development_Given_Installation",
   "Development_Given_Program",
   "Development_Given_Readers",
+  "Development_Incremental_Verdict",
+  "Development_Incremental_Witnesses",
+  "Development_Library_Issue",
+  "Development_Located_Rows",
+  "Development_Loop_Presentations",
+  "Development_Machinery",
+  "Development_Machinery_Reports",
+  "Development_Native_Decomposition",
+  "Development_Native_Package",
+  "Development_Native_Request",
   "Development_Native_State",
   "Development_Native_State_Execution",
+  "Development_Native_Verdict",
   "Development_Owner_Records",
+  "Development_Package_Program",
+  "Development_Policy",
+  "Development_Publication",
   "Development_Recording_Refinements",
+  "Development_Repair_Rows",
+  "Development_Request_Citations",
+  "Development_Request_Keys",
+  "Development_Request_Scope",
+  "Development_Row_Contexts",
+  "Development_Row_Presentations",
+  "Development_Rows",
+  "Development_Seed_Publication",
+  "Development_Seed_Referenced_Publication",
+  "Development_Seed_Verification",
+  "Development_State_Edit",
+  "Development_Subject_Index",
+  "Development_Successor",
+  "Development_Verdict_Difference",
+  "Development_Verdict_Mentions",
+  "Development_Verdict_Statements",
+  "Development_Verdict_Unreached",
+  "Development_Verdict_Witnesses",
   "Factor_Executed_Controls",
-  "Factor_Finite_System_Presentations",
+  "Factor_Generation_Reader_Payloads",
+  "Factor_Parametric_Causes",
+  "Factor_Payload_Audit",
+  "Factor_Reader_Payloads",
   "Factor_Resolution_Controls",
-  "Native_Control_Cause_Continuation",
-  "Native_Control_Cause_Review",
-  "Native_Control_Child_Review",
-  "Native_Control_Constructed_Source_View",
-  "Native_Control_Guard_Execution",
-  "Native_Control_Prepared_Cause_Review",
-  "Native_Control_Quotation_Code",
-  "Native_Control_Receiving_Controls",
-  "Native_Control_Receiving_Review",
-  "Native_Control_Reviewed_Receiving",
-  "Native_Control_Selected_Root",
-  "Native_Control_Source_Execution"
+  "Factor_Stated_Leaves",
+  "Factor_System_Payloads",
+  "Native_Development_Machinery",
+  "Native_Development_Seed",
+  "Presented_Publication_Values"
  ],
  "recipes": {
   "allocated-environments": {
@@ -162,10 +197,14 @@
    "status": "unchanged"
   },
   "native-development-machinery": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development-seed": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-evaluation": {
    "status": "unchanged"
@@ -222,8 +261,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1879,
- "seconds": 542.61,
+ "reused_theories": 1844,
+ "seconds": 540.15,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

@@ -10,9 +10,9 @@ text \<open>
   guard's own @{const guard_readers_system}: the union of the package additions' system, whose lineage
   holds every reader but the audit and ends in the callee boundary (390--393), and the payload audit's
   (500--505, over definition admission), joined where they agree (@{thm [source] readers_agreement}).
-  Every reader stands at the number its theory gives it. The given carries the rooted readers' program,
-  the union restricted to the closure of the entries (@{const rooted_system}); the union stays the
-  guard's program.
+  Every reader stands at the number its theory gives it. The union is the guard's program; the program
+  the given carries is rooted over the union joined with the readers a request is granted
+  (\<open>Development_Given_Program\<close>).
 \<close>
 
 subsection \<open>Each reader's system agrees with the additions' system on its whole domain\<close>
@@ -185,73 +185,13 @@ text \<open>The native request at a package: membership, the root family reading
 lemmas given_package_retention_admission_exact =
   package_retention_admission_exact[unfolded given_retention_meaning[OF given_entry_members(9), symmetric]]
 
-section \<open>The rooted readers' program the given carries\<close>
-
-definition given_reader_entries :: "nat fset" where
-  "given_reader_entries={|72,77,79,80,81,82,83,113,122,392,393,505|}"
-
-definition given_rooted_readers_system :: "(nat,nat,nat,nat) schema_system" where
-  "given_rooted_readers_system=rooted_system guard_readers_system (fset given_reader_entries)"
-
-lemma given_rooted_readers_formed [simp]: "schema_system_formed given_rooted_readers_system"
-  unfolding given_rooted_readers_system_def by (rule rooted_system_formed[OF guard_readers_formed])
-
-lemma given_rooted_entries:
-  "fset given_reader_entries\<subseteq>system_definitions given_rooted_readers_system"
-proof -
-  have "fset given_reader_entries\<subseteq>system_definitions guard_readers_system"
-    using given_entry_members guard_readers_definitions by (auto simp: given_reader_entries_def)
-  then show ?thesis unfolding given_rooted_readers_system_def by (rule rooted_system_roots[OF guard_readers_formed])
-qed
-
-lemma given_rooted_meaning:
-  assumes "d|\<in>|given_reader_entries"
-  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
-  using rooted_system_meaning_at[OF guard_readers_formed, of d "fset given_reader_entries" t]
-    given_rooted_entries assms unfolding given_rooted_readers_system_def by blast
-
-lemma given_rooted_members:
-  "72|\<in>|given_reader_entries" "77|\<in>|given_reader_entries" "79|\<in>|given_reader_entries"
-  "80|\<in>|given_reader_entries" "81|\<in>|given_reader_entries" "82|\<in>|given_reader_entries"
-  "83|\<in>|given_reader_entries" "113|\<in>|given_reader_entries" "122|\<in>|given_reader_entries"
-  "392|\<in>|given_reader_entries" "393|\<in>|given_reader_entries" "505|\<in>|given_reader_entries"
-  by (simp_all add: given_reader_entries_def)
-
-text \<open>Each entry's exact contract at the rooted program, an instance through @{thm [source] given_rooted_meaning}.\<close>
-
-lemmas given_rooted_definition_call_admission_exact =
-  given_definition_call_admission_exact[unfolded given_rooted_meaning[OF given_rooted_members(1), symmetric]]
-lemmas given_rooted_package_closure_admission_exact =
-  given_package_closure_admission_exact[unfolded given_rooted_meaning[OF given_rooted_members(2), symmetric]]
-lemmas given_rooted_root_family_reading_exact =
-  given_root_family_reading_exact[unfolded given_rooted_meaning[OF given_rooted_members(3), symmetric]]
-lemmas given_rooted_package_admission_exact =
-  given_package_admission_exact[unfolded given_rooted_meaning[OF given_rooted_members(4), symmetric]]
-lemmas given_rooted_definition_clause_reading_exact =
-  given_definition_clause_reading_exact[unfolded given_rooted_meaning[OF given_rooted_members(5), symmetric]]
-lemmas given_rooted_definition_edge_reading_exact =
-  given_definition_edge_reading_exact[unfolded given_rooted_meaning[OF given_rooted_members(6), symmetric]]
-lemmas given_rooted_package_membership_exact =
-  given_package_membership_exact[unfolded given_rooted_meaning[OF given_rooted_members(7), symmetric]]
-lemmas given_rooted_environment_inclusion_exact =
-  given_environment_inclusion_exact[unfolded given_rooted_meaning[OF given_rooted_members(8), symmetric]]
-lemmas given_rooted_package_retention_admission_exact =
-  given_package_retention_admission_exact[unfolded given_rooted_meaning[OF given_rooted_members(9), symmetric]]
-lemmas given_rooted_use_additions_on_values =
-  given_use_additions_on_values[unfolded given_rooted_meaning[OF given_rooted_members(10), symmetric]]
-lemmas given_rooted_use_absence_exact =
-  given_use_absence_exact[unfolded given_rooted_meaning[OF given_rooted_members(11), symmetric]]
-lemmas given_rooted_payload_audit_exact =
-  given_payload_audit_exact[unfolded given_rooted_meaning[OF given_rooted_members(12), symmetric]]
-
 section \<open>The programs' finite presentations\<close>
 
 text \<open>
   The site context's base is a rooted restriction of the lineage the complete data admission already
   holds whole, so the scope reading is that system joined with the site context's own group: the
   structural equation through which the union's presentation is derived from the pieces the tool's
-  theory presents (definition admission, complete data admission). The rooted program's presentation
-  is the union's restricted to the closure the union's presentation computes.
+  theory presents (definition admission, complete data admission).
 \<close>
 
 lemma given_scope_components:
@@ -325,26 +265,8 @@ local_setup \<open>Native_Finite_Equations.note_composed @{binding finite_given_
   [@{thm finite_complete_data_program_def}, @{thm finite_call_admission_program_def}]
   [@{thm given_scope_components}]\<close>
 
-definition finite_rooted_given_readers :: "(nat,nat,nat,nat) finite_schema_system" where
-  "finite_rooted_given_readers=finite_system_of given_rooted_readers_system"
-
-lemma finite_rooted_given_readers_code [code]:
-  "finite_rooted_given_readers=finite_system_restriction finite_given_readers
-    (finite_definition_closure finite_given_readers given_reader_entries)"
-  unfolding finite_rooted_given_readers_def given_rooted_readers_system_def finite_given_readers_def
-  by (rule finite_system_of_rooted[OF guard_readers_formed])
-
-lemma finite_rooted_given_readers_exact:
-  "decode_finite_system finite_rooted_given_readers=given_rooted_readers_system"
-  unfolding finite_rooted_given_readers_def
-  by (rule decode_finite_system_of[OF given_rooted_readers_formed])
-
-lemma finite_rooted_given_readers_formed:
-  "finite_system_formed finite_rooted_given_readers"
-  by (simp only: finite_system_formed_correct finite_rooted_given_readers_exact given_rooted_readers_formed)
-
-export_code finite_given_readers finite_rooted_given_readers finite_system_formed fcard finite_system_definitions
-  finite_system_payloads checking SML
+export_code finite_given_readers finite_system_formed fcard finite_system_definitions finite_system_payloads
+  checking SML
 
 section \<open>The readers' payloads\<close>
 
@@ -357,8 +279,8 @@ lemmas given_readers_payloads_audited =
 
 text \<open>
   The readers' payloads composed from the union's two systems, the package additions' (every reader but the audit)
-  and the payload audit's: the union states what its two parts state, and the rooted program no more than the
-  union. What each of the two systems states is not established here; the composition awaits it.
+  and the payload audit's: the union states what its two parts state, and a rooted program no more than its
+  source. What each of the two systems states is not established here; the composition awaits it.
 \<close>
 
 lemma system_union_payloads: "system_payloads (system_union P Q)=system_payloads P\<union>system_payloads Q"
@@ -371,12 +293,6 @@ theorem given_readers_payloads:
   assumes additions: "system_payloads use_additions_system\<subseteq>{[]}"
     and audit: "system_payloads payload_audit_system\<subseteq>{[]}"
   shows "system_payloads guard_readers_system\<subseteq>{[]}"
-    and "system_payloads given_rooted_readers_system\<subseteq>{[]}"
-proof -
-  show union: "system_payloads guard_readers_system\<subseteq>{[]}"
-    unfolding guard_readers_system_def system_union_payloads using additions audit by blast
-  show "system_payloads given_rooted_readers_system\<subseteq>{[]}"
-    unfolding given_rooted_readers_system_def by (rule subset_trans[OF rooted_system_payloads union])
-qed
+  unfolding guard_readers_system_def system_union_payloads using additions audit by blast
 
 end

@@ -1,5 +1,6 @@
 theory Factor_Target_Projection
-  imports Factor_Anchored_Admission
+  imports Factor_Anchored_Admission Presentation_Equivariance Factor_Presentation_Classes
+    Factor_Target_Presentations
 begin
 
 section \<open>Literal targets and their complete data presentations\<close>
@@ -276,5 +277,48 @@ text \<open>
   belong to that exact artifact, and every complete data presentation remains
   permitted. No target decomposition primitive or new term encoding is added.
 \<close>
+
+section \<open>The target projection is equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument is a literal target and a data presentation of a target, exact values in which no use
+  occurs: a permutation of uses acts on them trivially, and the relation the exact contract states, the
+  two targets being one, is kept by every permutation. The class pairs the literal with the target class.
+\<close>
+
+abbreviation target_projection_presents :: "exact_target \<times> exact_target \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "target_projection_presents \<equiv>
+    factor_pair_presents (\<lambda>x t. target_formed x \<and> t=Target_Term x) target_value_presents"
+
+lemma target_projection_presentation_class:
+  "presentation_class target_projection_presents (\<lambda>z. target_formed (fst z) \<and> target_formed (snd z))
+    (\<lambda>p. \<exists>z. target_projection_presents z p)"
+proof -
+  have literal: "presentation_class (\<lambda>x t. target_formed x \<and> t=Target_Term x) target_formed
+      (\<lambda>t. \<exists>x. target_formed x \<and> t=Target_Term x)"
+    by (rule injective_presentation_class) (simp add: inj_on_def)
+  show ?thesis
+    using presentation_class.recovered_admission[OF factor_pair_class[OF literal
+      target_presentations.presentation_class_axioms]] by simp
+qed
+
+theorem target_projection_equivariant:
+  "renaming_equivariant (bij :: (local_address option \<Rightarrow> local_address option) \<Rightarrow> bool) (\<lambda>h z. z)
+    (\<lambda>z. target_formed (fst z) \<and> target_formed (snd z)) (\<lambda>z. fst z=snd z)"
+  by (simp add: renaming_equivariant_def)
+
+corollary target_projection_renaming:
+  "\<forall>h::local_address option \<Rightarrow> local_address option. bij h \<longrightarrow>
+    rel_fun (renaming_correspondence target_projection_presents (\<lambda>h z. z) h) (=)
+      (\<lambda>t. (45,t)\<in>positive_meaning target_projection_system) (\<lambda>t. (45,t)\<in>positive_meaning target_projection_system)"
+proof -
+  have exact: "\<And>p. (45,p)\<in>positive_meaning target_projection_system \<longleftrightarrow>
+      presented_predicate target_projection_presents (\<lambda>z. fst z=snd z) p"
+    by (simp add: target_projection_exact presented_predicate_def factor_pair_presents_def split_paired_Ex;
+      blast dest: target_presentations.subject_boundary)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF target_projection_presentation_class
+      permutation_renaming_action exact] target_projection_equivariant])
+qed
 
 end

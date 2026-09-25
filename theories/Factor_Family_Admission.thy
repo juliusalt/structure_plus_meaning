@@ -1,5 +1,5 @@
 theory Factor_Family_Admission
-  imports Factor_Headed_Material
+  imports Factor_Headed_Material Presentation_Equivariance Factor_Presentation_Classes
 begin
 
 section \<open>Rooted socket rows retain their exact addresses\<close>
@@ -444,5 +444,57 @@ text \<open>
   have four ordinary clauses. The subsequent record extension compiles
   both grammar entries together before arbitrary future input terms.
 \<close>
+
+section \<open>Family admission is equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument is an artifact, a root address and the complete socket rows, all exact values: no use
+  occurs in them, so a permutation of uses acts on the argument trivially (@{thm [source]
+  permutation_renaming_action}), and the relation the exact contract states is kept by every
+  permutation. The class pairs the artifact class and the address with the rows' injective data list;
+  the record reader reads the same argument and states its clause over the same class.
+\<close>
+
+abbreviation rooted_rows_presents ::
+    "(exact_artifact \<times> local_address) \<times> (local_address \<times> local_address) list \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "rooted_rows_presents \<equiv> factor_pair_presents (factor_pair_presents artifact_value_presents
+    (\<lambda>r t. t=Payload_Term r)) (\<lambda>xs t. t=data_list_term (map address_pair_data xs))"
+
+lemma rooted_rows_presentation_class:
+  "presentation_class rooted_rows_presents (\<lambda>z. exact_formed (fst (fst z))) (\<lambda>p. \<exists>z. rooted_rows_presents z p)"
+proof -
+  have address: "presentation_class (\<lambda>r t. t=Payload_Term r) (\<lambda>_::local_address. True) (\<lambda>t. \<exists>r. t=Payload_Term r)"
+    using injective_presentation_class[where f=Payload_Term and D="\<lambda>_::local_address. True"]
+    by (simp add: inj_on_def)
+  have injective: "inj (\<lambda>xs. data_list_term (map address_pair_data xs))"
+    by (rule injI) (simp add: data_list_term_injective inj_map_eq_map[OF address_pair_data_injective])
+  have rows: "presentation_class (\<lambda>xs t. t=data_list_term (map address_pair_data xs))
+      (\<lambda>_::(local_address \<times> local_address) list. True) (\<lambda>t. \<exists>xs. t=data_list_term (map address_pair_data xs))"
+    using injective_presentation_class[where f="\<lambda>xs. data_list_term (map address_pair_data xs)"
+      and D="\<lambda>_::(local_address \<times> local_address) list. True"] injective by simp
+  show ?thesis
+    using presentation_class.recovered_admission[OF factor_pair_class[OF factor_pair_class[OF
+      artifact_presentations.presentation_class_axioms address] rows]] by simp
+qed
+
+theorem family_admission_equivariant:
+  "renaming_equivariant (bij :: (local_address option \<Rightarrow> local_address option) \<Rightarrow> bool) (\<lambda>h z. z)
+    (\<lambda>z. exact_formed (fst (fst z)))
+    (\<lambda>z. distinct (snd z) \<and> family_at (fst (fst z)) (snd (fst z)) (set (snd z)))"
+  by (simp add: renaming_equivariant_def)
+
+corollary family_admission_renaming:
+  "\<forall>h::local_address option \<Rightarrow> local_address option. bij h \<longrightarrow>
+    rel_fun (renaming_correspondence rooted_rows_presents (\<lambda>h z. z) h) (=)
+      (\<lambda>t. (32,t)\<in>positive_meaning family_admission_system) (\<lambda>t. (32,t)\<in>positive_meaning family_admission_system)"
+proof -
+  have exact: "\<And>p. (32,p)\<in>positive_meaning family_admission_system \<longleftrightarrow>
+      presented_predicate rooted_rows_presents
+        (\<lambda>z. distinct (snd z) \<and> family_at (fst (fst z)) (snd (fst z)) (set (snd z))) p"
+    by (simp add: family_admission_exact presented_predicate_def factor_pair_presents_def split_paired_Ex; blast)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF rooted_rows_presentation_class permutation_renaming_action exact]
+      family_admission_equivariant])
+qed
 
 end

@@ -1,5 +1,5 @@
 theory Factor_Definition_Call_Admission
-  imports Factor_Schema_Family_Admission
+  imports Factor_Schema_Family_Admission Factor_Use_Renaming
 begin
 
 section \<open>The actual definition admits the supplied interface operand\<close>
@@ -394,5 +394,78 @@ text \<open>
   complete admitted instances, finite evidence checking, the full transition
   protocol, reflection, and genesis remain required.
 \<close>
+
+section \<open>Definition admission is equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument is a site of an environment and an operand: a permutation renames the environment and the
+  use, and leaves the address and the operand, exact values, alone. The definition read at the renamed
+  use is the definition readers' copy with its callees relocated and its interface unchanged
+  (@{thm [source] native_definition_exists_renamed}, from @{text copy_definition}), so the interface
+  accepts the same operands.
+\<close>
+
+abbreviation definition_call_presents ::
+    "(local_address option artifact_environment \<times> local_address option) \<times> local_address \<times> factor_term \<Rightarrow>
+      factor_term \<Rightarrow> bool" where
+  "definition_call_presents \<equiv> factor_pair_presents
+    (factor_pair_presents environment_value_presents (\<lambda>u t. t=use_data_term u))
+    (factor_pair_presents (\<lambda>r t. t=Payload_Term r) (\<lambda>x t. t=x))"
+
+abbreviation definition_call_argument_renaming ::
+    "(local_address option \<Rightarrow> local_address option) \<Rightarrow>
+      (local_address option artifact_environment \<times> local_address option) \<times> local_address \<times> factor_term \<Rightarrow>
+      (local_address option artifact_environment \<times> local_address option) \<times> local_address \<times> factor_term" where
+  "definition_call_argument_renaming \<equiv>
+    product_action (product_action rename_environment (\<lambda>h. h)) (product_action (\<lambda>h a. a) (\<lambda>h a. a))"
+
+lemma native_definition_accepts_renamed:
+  assumes formed: "environment_formed E" and permutation: "bij h"
+  shows "(\<exists>p C. native_definition_at (rename_environment h E) (h u) r p C \<and> pattern_accepts p t) \<longleftrightarrow>
+    (\<exists>p C. native_definition_at E u r p C \<and> pattern_accepts p t)"
+  using native_definition_exists_renamed[OF formed permutation] by blast
+
+theorem definition_call_admission_equivariant:
+  "renaming_equivariant bij definition_call_argument_renaming (\<lambda>z. environment_formed (fst (fst z)))
+    (\<lambda>z. \<exists>p C. native_definition_at (fst (fst z)) (snd (fst z)) (fst (snd z)) p C \<and> pattern_accepts p (snd (snd z)))"
+  unfolding renaming_equivariant_def
+proof (intro allI impI)
+  fix h :: "local_address option \<Rightarrow> local_address option"
+    and z :: "(local_address option artifact_environment \<times> local_address option) \<times> local_address \<times> factor_term"
+  assume h: "bij h" and formed: "environment_formed (fst (fst z))"
+  obtain E u r t where z: "z=((E,u),(r,t))" by (metis prod.collapse)
+  have "environment_formed E" using formed by (simp add: z)
+  from native_definition_accepts_renamed[OF this h, of u r t]
+  show "(\<exists>p C. native_definition_at (fst (fst (definition_call_argument_renaming h z)))
+      (snd (fst (definition_call_argument_renaming h z))) (fst (snd (definition_call_argument_renaming h z))) p C \<and>
+      pattern_accepts p (snd (snd (definition_call_argument_renaming h z)))) \<longleftrightarrow>
+    (\<exists>p C. native_definition_at (fst (fst z)) (snd (fst z)) (fst (snd z)) p C \<and> pattern_accepts p (snd (snd z)))"
+    by (simp add: z)
+qed
+
+corollary definition_call_admission_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence definition_call_presents definition_call_argument_renaming h) (=)
+    (\<lambda>t. (72,t)\<in>positive_meaning definition_call_admission_system)
+    (\<lambda>t. (72,t)\<in>positive_meaning definition_call_admission_system)"
+proof -
+  have operand: "presentation_class (\<lambda>x t. t=x) (\<lambda>_::factor_term. True) (\<lambda>_. True)"
+    by unfold_locales auto
+  have presented: "presentation_class definition_call_presents (\<lambda>z. environment_formed (fst (fst z)))
+      (\<lambda>p. \<exists>z. definition_call_presents z p)"
+    using presentation_class.recovered_admission[OF factor_pair_class[OF factor_pair_class[OF
+      environment_presentations.presentation_class_axioms use_coordinate_presentation]
+      factor_pair_class[OF address_coordinate_presentation operand]]] by simp
+  have action: "renaming_action bij definition_call_argument_renaming (\<lambda>z. environment_formed (fst (fst z)))"
+    using renaming_action_product[OF renaming_action_product[OF environment_renaming_action use_renaming_action]
+      renaming_action_product[OF permutation_renaming_action[where D="\<lambda>_::local_address. True"]
+        permutation_renaming_action[where D="\<lambda>_::factor_term. True"]]] by simp
+  have exact: "\<And>p. (72,p)\<in>positive_meaning definition_call_admission_system \<longleftrightarrow>
+      presented_predicate definition_call_presents (\<lambda>z. \<exists>p C. native_definition_at (fst (fst z)) (snd (fst z))
+        (fst (snd z)) p C \<and> pattern_accepts p (snd (snd z))) p"
+    by (simp add: definition_call_admission_exact presented_predicate_def factor_pair_presents_def
+      split_paired_Ex; blast)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF presented action exact] definition_call_admission_equivariant])
+qed
 
 end

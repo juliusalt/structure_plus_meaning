@@ -1,5 +1,5 @@
 theory Factor_Environment_Lookup
-  imports Factor_Citation_Admission
+  imports Factor_Citation_Admission Factor_Use_Renaming
 begin
 
 section \<open>Selection in a complete represented environment\<close>
@@ -379,5 +379,47 @@ text \<open>
   use. Equal artifact values at different uses do not identify those uses.
   All earlier definitions retain their meanings.
 \<close>
+
+section \<open>Artifact lookup is equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument is an environment, a use and an artifact: a permutation of uses renames the environment
+  and the use (@{text Factor_Use_Renaming}'s environment and use actions) and leaves the artifact, an
+  exact value, alone. The artifact at a use is the artifact at the renamed use of the renamed environment
+  (@{thm [source] artifact_at_renamed_use}).
+\<close>
+
+abbreviation artifact_lookup_presents where
+  "artifact_lookup_presents \<equiv> factor_pair_presents environment_value_presents
+    (factor_pair_presents (\<lambda>u t. t=use_data_term u) artifact_value_presents)"
+
+abbreviation lookup_argument_renaming where
+  "lookup_argument_renaming \<equiv> product_action rename_environment (product_action (\<lambda>h. h) (\<lambda>h a. a))"
+
+theorem artifact_lookup_equivariant:
+  "renaming_equivariant bij lookup_argument_renaming
+    (\<lambda>z. environment_formed (fst z) \<and> exact_formed (snd (snd z)))
+    (\<lambda>z. artifact_at (fst z) (fst (snd z)) (snd (snd z)))"
+  by (auto simp: renaming_equivariant_def product_action_def artifact_at_renamed_use[OF bij_is_inj])
+
+corollary artifact_lookup_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence artifact_lookup_presents lookup_argument_renaming h) (=)
+    (\<lambda>t. (37,t)\<in>positive_meaning artifact_lookup_system) (\<lambda>t. (37,t)\<in>positive_meaning artifact_lookup_system)"
+proof -
+  have presented: "presentation_class artifact_lookup_presents
+      (\<lambda>z. environment_formed (fst z) \<and> exact_formed (snd (snd z))) (\<lambda>p. \<exists>z. artifact_lookup_presents z p)"
+    using presentation_class.recovered_admission[OF factor_pair_class[OF
+      environment_presentations.presentation_class_axioms factor_pair_class[OF use_coordinate_presentation
+        artifact_presentations.presentation_class_axioms]]] by simp
+  have action: "renaming_action bij lookup_argument_renaming
+      (\<lambda>z. environment_formed (fst z) \<and> exact_formed (snd (snd z)))"
+    using renaming_action_product[OF environment_renaming_action renaming_action_product[OF use_renaming_action
+      permutation_renaming_action[where D=exact_formed]]] by simp
+  have exact: "\<And>p. (37,p)\<in>positive_meaning artifact_lookup_system \<longleftrightarrow>
+      presented_predicate artifact_lookup_presents (\<lambda>z. artifact_at (fst z) (fst (snd z)) (snd (snd z))) p"
+    by (simp add: artifact_lookup_exact presented_predicate_def factor_pair_presents_def split_paired_Ex; blast)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF presented action exact] artifact_lookup_equivariant])
+qed
 
 end

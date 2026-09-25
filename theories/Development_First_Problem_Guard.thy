@@ -674,6 +674,27 @@ theorem audit_goal_on_values:
         (\<exists>p C. native_definition_at F (fst d) (snd d) p C \<and> definition_payloads p C\<subseteq>{[]})))"
   by (simp only: audit_additions.on_values[OF first second] audit_callee_at_site[OF first second])
 
+text \<open>
+  G4 is the callee boundary's instance at the audit's relation: the audit of the member's definition in
+  the candidate's environment is kept by the audit's clause (@{thm [source] payload_audit_renamed}), so the
+  goal is invariant along every renaming correspondence of the pair (@{thm [source]
+  package_additions_profile.renaming}).
+\<close>
+
+lemma audit_callee_equivariant:
+  "renaming_equivariant bij package_additions_callee_renaming
+    (\<lambda>x. (site_context_formed (fst (fst x)) \<and> site_context_formed (snd (fst x))) \<and> True)
+    (package_additions_callee_relation
+      (\<lambda>E u r F v s d. \<exists>p C. native_definition_at F (fst d) (snd d) p C \<and> definition_payloads p C\<subseteq>{[]}))"
+  by (auto simp: renaming_equivariant_def product_action_def payload_audit_renamed)
+
+corollary audit_goal_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence
+      (factor_pair_presents (\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t)
+        (\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t)) package_additions_renaming h) (=)
+    (\<lambda>p. (525,p)\<in>positive_meaning first_problem_goals_system) (\<lambda>p. (525,p)\<in>positive_meaning first_problem_goals_system)"
+  by (rule audit_additions.renaming[OF audit_callee_equivariant]) (rule audit_callee_at_site; assumption)
+
 section \<open>The guard: four sockets, each a separate requirement on the whole pair\<close>
 
 definition first_problem_requirements :: "(nat\<times>nat) set" where

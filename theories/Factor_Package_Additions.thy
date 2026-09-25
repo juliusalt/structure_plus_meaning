@@ -799,6 +799,254 @@ corollary use_additions_presentation_invariance:
     (392,Pair_Term t' w')\<in>positive_meaning use_additions_system"
   by (simp only: use_additions_on_values[OF assms(1,3)] use_additions_on_values[OF assms(2,4)])
 
+section \<open>The callee boundary is equivariant under permutations of uses\<close>
+
+text \<open>
+  The notion's argument is the pair of the given's and the candidate's site contexts, one permutation of
+  uses acting on both (@{thm [source] site_context_renaming_action}); its callee reads that pair with a
+  member's site, the site action acting on the site. For every callee whose relation is equivariant, the
+  notion's relation is: the candidate's package moves with the renaming
+  (@{thm [source] native_package_use_renaming}, the reading the closure bound's clause
+  @{thm [source] package_closure_admission_equivariant} keeps), its members are the renamed ones, a member
+  of the given's package stays one (@{thm [source] package_member_renamed}, package membership's clause),
+  and the callee is kept by its own clause. The clause is stated once for the notion; its instances, G3
+  below and G4 in the first problem's guard, only discharge their callee's.
+\<close>
+
+abbreviation package_additions_relation where
+  "package_additions_relation C z \<equiv>
+    \<exists>R. native_package_at (fst (snd z)) (fst (snd (snd z))) (snd (snd (snd z))) R \<and>
+      (\<forall>d\<in>system_definitions R. (\<exists>Q. native_package_at (fst (fst z)) (fst (snd (fst z))) (snd (snd (fst z))) Q \<and>
+        d\<in>system_definitions Q) \<or>
+      C (fst (fst z)) (fst (snd (fst z))) (snd (snd (fst z))) (fst (snd z)) (fst (snd (snd z))) (snd (snd (snd z))) d)"
+
+abbreviation package_additions_callee_relation where
+  "package_additions_callee_relation C x \<equiv>
+    C (fst (fst (fst x))) (fst (snd (fst (fst x)))) (snd (snd (fst (fst x))))
+      (fst (snd (fst x))) (fst (snd (snd (fst x)))) (snd (snd (snd (fst x)))) (snd x)"
+
+abbreviation package_additions_renaming where
+  "package_additions_renaming \<equiv> product_action site_context_renaming site_context_renaming"
+
+abbreviation package_additions_callee_renaming where
+  "package_additions_callee_renaming \<equiv> product_action package_additions_renaming (\<lambda>h. map_prod h id)"
+
+lemma package_additions_renamed:
+  assumes callee: "renaming_equivariant bij package_additions_callee_renaming
+      (\<lambda>x. (site_context_formed (fst (fst x)) \<and> site_context_formed (snd (fst x))) \<and> True)
+      (package_additions_callee_relation C)"
+    and h: "bij h" and formed: "site_context_formed (E,u,r) \<and> site_context_formed (F,v,s)"
+  shows "package_additions_relation C (package_additions_renaming h ((E,u,r),(F,v,s))) \<longleftrightarrow>
+    package_additions_relation C ((E,u,r),(F,v,s))"
+proof -
+  have fE: "environment_formed E" and fF: "environment_formed F" using formed by simp_all
+  have callee_at: "C (rename_environment h E) (h u) r (rename_environment h F) (h v) s (map_prod h id d) \<longleftrightarrow>
+      C E u r F v s d" for d
+    using spec[OF spec[OF callee[unfolded renaming_equivariant_def], of h], of "(((E,u,r),(F,v,s)),d)"] h formed
+    by simp
+  have moved: "(\<exists>R'. native_package_at (rename_environment h F) (h v) s R' \<and> \<Phi> R') \<longleftrightarrow>
+      (\<exists>R. native_package_at F v s R \<and> \<Phi> (rename_system (map_prod h id) R))" for \<Phi>
+    by (simp add: native_package_use_renaming[OF fF h]; blast)
+  have images: "(\<forall>d\<in>map_prod h id ` A. \<Psi> d) \<longleftrightarrow> (\<forall>d\<in>A. \<Psi> (map_prod h id d))" for A \<Psi>
+    by (auto simp: image_iff)
+  show ?thesis
+    by (simp add: moved renamed_system_definitions images package_member_renamed[OF fE h] callee_at)
+qed
+
+theorem package_additions_equivariant:
+  assumes callee: "renaming_equivariant bij package_additions_callee_renaming
+      (\<lambda>x. (site_context_formed (fst (fst x)) \<and> site_context_formed (snd (fst x))) \<and> True)
+      (package_additions_callee_relation C)"
+  shows "renaming_equivariant bij package_additions_renaming
+    (\<lambda>z. site_context_formed (fst z) \<and> site_context_formed (snd z)) (package_additions_relation C)"
+  unfolding renaming_equivariant_def
+proof (intro allI impI)
+  fix h :: "local_address option \<Rightarrow> local_address option" and z :: "site_context \<times> site_context"
+  assume h: "bij h" and formed: "site_context_formed (fst z) \<and> site_context_formed (snd z)"
+  show "package_additions_relation C (package_additions_renaming h z) \<longleftrightarrow> package_additions_relation C z"
+    using package_additions_renamed[OF callee h, of "fst (fst z)" "fst (snd (fst z))" "snd (snd (fst z))"
+      "fst (snd z)" "fst (snd (snd z))" "snd (snd (snd z))"] formed by simp
+qed
+
+context package_additions_profile
+begin
+
+lemma boundary_at_values:
+  assumes first: "site_value_presents E u r t" and second: "site_value_presents F v s w"
+    and callee_exact: "\<And>R d. native_package_at F v s R \<Longrightarrow> d\<in>system_definitions R \<Longrightarrow>
+      (callee_site,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning P \<longleftrightarrow> C E u r F v s d"
+  shows "(entry_site,Pair_Term t w)\<in>positive_meaning P \<longleftrightarrow> package_additions_relation C ((E,u,r),(F,v,s))"
+  using on_values[OF first second] callee_exact by (simp; blast)
+
+theorem renaming:
+  assumes callee: "renaming_equivariant bij package_additions_callee_renaming
+      (\<lambda>x. (site_context_formed (fst (fst x)) \<and> site_context_formed (snd (fst x))) \<and> True)
+      (package_additions_callee_relation C)"
+    and callee_exact: "\<And>E u r t F v s w R d. site_value_presents E u r t \<Longrightarrow> site_value_presents F v s w \<Longrightarrow>
+      native_package_at F v s R \<Longrightarrow> d\<in>system_definitions R \<Longrightarrow>
+      (callee_site,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning P \<longleftrightarrow> C E u r F v s d"
+  shows "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence
+      (factor_pair_presents (\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t)
+        (\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t)) package_additions_renaming h) (=)
+    (\<lambda>p. (entry_site,p)\<in>positive_meaning P) (\<lambda>p. (entry_site,p)\<in>positive_meaning P)"
+proof -
+  let ?S="\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t"
+  have presented: "presentation_class (factor_pair_presents ?S ?S)
+      (\<lambda>z. site_context_formed (fst z) \<and> site_context_formed (snd z)) (\<lambda>p. \<exists>z. factor_pair_presents ?S ?S z p)"
+    using presentation_class.recovered_admission[OF factor_pair_class[OF site_presentations.presentation_class_axioms
+      site_presentations.presentation_class_axioms]] by simp
+  have action: "renaming_action bij package_additions_renaming
+      (\<lambda>z. site_context_formed (fst z) \<and> site_context_formed (snd z))"
+    by (rule renaming_action_product[OF site_context_renaming_action site_context_renaming_action])
+  have observed: "(entry_site,p)\<in>positive_meaning P \<longleftrightarrow>
+      presented_predicate (factor_pair_presents ?S ?S) (package_additions_relation C) p" for p
+  proof
+    assume holds: "(entry_site,p)\<in>positive_meaning P"
+    have "package_additions_result (\<lambda>t. (callee_site,t)\<in>positive_meaning P) p" using holds unfolding exact .
+    then obtain E u r t F v s w where p: "p=Pair_Term t w" and first: "site_value_presents E u r t"
+      and second: "site_value_presents F v s w"
+      by blast
+    have "package_additions_relation C ((E,u,r),(F,v,s))"
+      using holds p boundary_at_values[where C=C, OF first second callee_exact[OF first second]] by simp
+    moreover have "factor_pair_presents ?S ?S ((E,u,r),(F,v,s)) p"
+      using first second p by (simp add: factor_pair_presents_def)
+    ultimately show "presented_predicate (factor_pair_presents ?S ?S) (package_additions_relation C) p"
+      unfolding presented_predicate_def by blast
+  next
+    assume "presented_predicate (factor_pair_presents ?S ?S) (package_additions_relation C) p"
+    then obtain z t w where first: "?S (fst z) t" and second: "?S (snd z) w" and p: "p=Pair_Term t w"
+      and holds: "package_additions_relation C z"
+      unfolding presented_predicate_def factor_pair_presents_def by blast
+    show "(entry_site,p)\<in>positive_meaning P"
+      using holds p boundary_at_values[where C=C, OF first second callee_exact[OF first second]] by simp
+  qed
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF presented action observed] package_additions_equivariant[OF callee]])
+qed
+
+end
+
+section \<open>Key absence and data inequality at use presentations\<close>
+
+text \<open>
+  G3's callee compares uses as data: key absence (@{thm [source] key_absence_exact}) of a use among the
+  use keys of rows, and data inequality of two uses, whose clause the use instance states
+  (@{thm [source] use_data_comparison_equivariant}, at @{thm [source] use_pair_renaming_action}). Key
+  absence's clause is stated here, the theory importing both the reader and the use instance: a use and a
+  row list, the use action on the use and, by the list construction, on every row's key. Both are
+  invariant along every renaming correspondence of their use presentations; the readers' own contracts
+  range over every self-contained key, so the correspondence, which stays among use presentations, is
+  followed through the clause.
+\<close>
+
+abbreviation use_key_rows_presents ::
+    "local_address option \<times> (local_address option \<times> factor_term) list \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "use_key_rows_presents \<equiv> factor_pair_presents (\<lambda>u t. t=use_data_term u)
+    (\<lambda>ys t. t=pair_list_term (map (map_prod use_data_term id) ys))"
+
+abbreviation use_key_rows_renaming ::
+    "(local_address option \<Rightarrow> local_address option) \<Rightarrow> local_address option \<times> (local_address option \<times> factor_term) list \<Rightarrow>
+      local_address option \<times> (local_address option \<times> factor_term) list" where
+  "use_key_rows_renaming \<equiv> product_action (\<lambda>h. h) (\<lambda>h. map (map_prod h id))"
+
+lemma use_key_rows_renaming_action: "renaming_action bij use_key_rows_renaming (\<lambda>z. True)"
+  using renaming_action_product[OF use_renaming_action renaming_action_lists[OF site_renaming_action]] by simp
+
+lemma use_key_absence_at:
+  "(20,Pair_Term (use_data_term u) (pair_list_term (map (map_prod use_data_term id) ys)))\<in>positive_meaning key_absence_system
+    \<longleftrightarrow> (\<forall>y\<in>set ys. term_formed (snd y)) \<and> u\<notin>fst ` set ys"
+proof -
+  have exact: "(20,Pair_Term (use_data_term u) (pair_list_term (map (map_prod use_data_term id) ys)))
+      \<in>positive_meaning key_absence_system \<longleftrightarrow> formed_key_rows (map (map_prod use_data_term id) ys) \<and>
+      use_data_term u\<notin>set (map fst (map (map_prod use_data_term id) ys))"
+    unfolding key_absence_exact factor_term.inject pair_list_term_injective
+    using use_data_term_formed use_data_term_self_contained by blast
+  have rows: "formed_key_rows (map (map_prod use_data_term id) ys) \<longleftrightarrow> (\<forall>y\<in>set ys. term_formed (snd y))"
+    by (auto simp: case_prod_beta intro: imageI)
+  have keys: "use_data_term u\<notin>set (map fst (map (map_prod use_data_term id) ys)) \<longleftrightarrow> u\<notin>fst ` set ys"
+    by (simp add: image_image image_iff inj_eq[OF use_data_term_injective])
+  show ?thesis unfolding exact rows keys ..
+qed
+
+theorem use_key_absence_equivariant:
+  "renaming_equivariant bij use_key_rows_renaming (\<lambda>z. True)
+    (\<lambda>z. (20,Pair_Term (use_data_term (fst z)) (pair_list_term (map (map_prod use_data_term id) (snd z))))
+      \<in>positive_meaning key_absence_system)"
+  unfolding renaming_equivariant_def use_key_absence_at
+  by (auto simp: product_action_def image_iff inj_eq[OF bij_is_inj])
+
+corollary use_key_absence_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence use_key_rows_presents use_key_rows_renaming h) (=)
+    (\<lambda>t. (20,t)\<in>positive_meaning key_absence_system) (\<lambda>t. (20,t)\<in>positive_meaning key_absence_system)"
+proof (intro allI impI rel_funI)
+  fix h p q assume h: "bij h" and corr: "renaming_correspondence use_key_rows_presents use_key_rows_renaming h p q"
+  obtain z where p: "use_key_rows_presents z p" and q: "use_key_rows_presents (use_key_rows_renaming h z) q"
+    using corr by (auto simp: renaming_correspondence_def)
+  have same: "(20,Pair_Term (use_data_term (fst (use_key_rows_renaming h z)))
+      (pair_list_term (map (map_prod use_data_term id) (snd (use_key_rows_renaming h z)))))\<in>positive_meaning key_absence_system
+    \<longleftrightarrow> (20,Pair_Term (use_data_term (fst z)) (pair_list_term (map (map_prod use_data_term id) (snd z))))
+      \<in>positive_meaning key_absence_system"
+    using use_key_absence_equivariant h unfolding renaming_equivariant_def by blast
+  show "(20,p)\<in>positive_meaning key_absence_system \<longleftrightarrow> (20,q)\<in>positive_meaning key_absence_system"
+    using same p q by (simp add: factor_pair_presents_def)
+qed
+
+abbreviation use_pair_presents :: "local_address option \<times> local_address option \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "use_pair_presents \<equiv> factor_pair_presents (\<lambda>u t. t=use_data_term u) (\<lambda>u t. t=use_data_term u)"
+
+corollary use_data_comparison_presented_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence use_pair_presents (product_action (\<lambda>h. h) (\<lambda>h. h)) h) (=)
+    (\<lambda>t. (3,t)\<in>positive_meaning data_comparison_system) (\<lambda>t. (3,t)\<in>positive_meaning data_comparison_system)"
+proof (intro allI impI rel_funI)
+  fix h p q
+  assume h: "bij h" and corr: "renaming_correspondence use_pair_presents (product_action (\<lambda>h. h) (\<lambda>h. h)) h p q"
+  obtain z where p: "use_pair_presents z p" and q: "use_pair_presents (product_action (\<lambda>h. h) (\<lambda>h. h) h z) q"
+    using corr by (auto simp: renaming_correspondence_def)
+  have same: "(3,Pair_Term (use_data_term (fst (product_action (\<lambda>h. h) (\<lambda>h. h) h z)))
+      (use_data_term (snd (product_action (\<lambda>h. h) (\<lambda>h. h) h z))))\<in>positive_meaning data_comparison_system
+    \<longleftrightarrow> (3,Pair_Term (use_data_term (fst z)) (use_data_term (snd z)))\<in>positive_meaning data_comparison_system"
+    using use_data_comparison_equivariant h unfolding renaming_equivariant_def by blast
+  show "(3,p)\<in>positive_meaning data_comparison_system \<longleftrightarrow> (3,q)\<in>positive_meaning data_comparison_system"
+    using same p q by (simp add: factor_pair_presents_def)
+qed
+
+section \<open>G3: the boundary at the absence of the member's use from the given's environment\<close>
+
+lemma native_package_member_address:
+  assumes package: "native_package_at (F::local_address option artifact_environment) v s R"
+    and member: "d\<in>system_definitions R"
+  shows "octets_formed (snd d)"
+proof -
+  obtain Q where raw: "native_root_family_at F v s Q" "native_package_formed F (rel_ran Q)"
+    using package by (auto simp: native_package_at_def)
+  have "d\<in>native_definition_sites F (rel_ran Q)" using member native_package_complete_roots[OF package raw(1)] by simp
+  then obtain p C where "native_definition_at F (fst d) (snd d) p C" using raw(2)
+    by (auto simp: native_package_formed_def)
+  then show ?thesis using native_definition_site_data_formed by (fastforce simp: site_data_term_def)
+qed
+
+lemma use_absence_callee_equivariant:
+  "renaming_equivariant bij package_additions_callee_renaming
+    (\<lambda>x. (site_context_formed (fst (fst x)) \<and> site_context_formed (snd (fst x))) \<and> True)
+    (package_additions_callee_relation (\<lambda>E u r F v s d. fst d\<notin>environment_uses E))"
+  by (auto simp: renaming_equivariant_def product_action_def environment_renaming_uses image_iff
+    inj_eq[OF bij_is_inj])
+
+corollary use_additions_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence
+      (factor_pair_presents (\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t)
+        (\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t)) package_additions_renaming h) (=)
+    (\<lambda>p. (392,p)\<in>positive_meaning use_additions_system) (\<lambda>p. (392,p)\<in>positive_meaning use_additions_system)"
+proof (rule use_additions.renaming[OF use_absence_callee_equivariant])
+  fix E u r t F v s w R d
+  assume first: "site_value_presents E u r t" and second: "site_value_presents F v s w"
+    and package: "native_package_at F v s R" and member: "d\<in>system_definitions R"
+  have other: "term_formed w" using site_value_presents_formed[OF second] by blast
+  show "(393,Pair_Term (Pair_Term t w) (definition_site_value d))\<in>positive_meaning use_additions_system \<longleftrightarrow>
+      fst d\<notin>environment_uses E"
+    by (rule use_absence_at_site[OF first other native_package_member_address[OF package member]])
+qed
+
 section \<open>The new programs state the empty payload alone\<close>
 
 lemma package_additions_leaves:

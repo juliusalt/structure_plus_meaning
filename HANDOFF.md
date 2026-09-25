@@ -52,8 +52,10 @@ on, all accepted:
   1.07 s at 32K, 33.6 µs per address, 52–80 s estimated at the given's value) → X #538 (landed `e7c53a09`: the first generation executed held at the
   given's value, 111.3 s against the gate's 53 s, every step growing n^1.3–1.5 from 32K) → the growth attributed
   (an investigation) → the decision the entry's trigger asks (certification parametric in the literal or further
-  refinement; the posing's payload, twice the given's) → RR5 #557 and the posing #397, both waiting on that decision,
-  their briefs to be corrected by it; each build with its review.
+  refinement; the posing's payload, twice the given's; the design #560 after the attribution #559). RR5 #557 landed
+  before it (`aba87519`: the listing policy's source a formed program, about 75 s estimated at the given, shared);
+  the posing #397 handed over built, its recording at the given a remainder the design's builds place. Each build with
+  its review.
 - Then the answer's judgment and admission #399, its transport #401, the verification's native half #403 and its
   harness #407 (after the frame and its fixes, landed). The first request (#523's corrected #443, divided by #544,
   `.build/tasks/544/result.md`): the request program #545 (landed `5e6409e4`), the request at the given #547 (support,
@@ -112,20 +114,20 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The evaluator's chain #515 → #505 → W2 #524 → W4a #526 → rc #540 (and W4b
-#528) → R7 #542 → #399 → #401 → #407 → #408 is 10 deep; #399 → the record #553 → #447 → #449 → #450 is 11, the record
-spliced in as detail (#544); RR1 #530 → RR4 #536 → X #538 → #397 → #399 is no deeper. Nothing is added after #408,
-#446, #448 or #450; the approval build (Open 142), after #407 and #447 (9 each), is placed once the chains have
-shortened enough for its review.
+**Shape.** No build waits on a review task. The evaluator's chain #505 → W2 #524 → W4a #526 → rc #540 (and W4b #528)
+→ R7 #542 → #399 → #401 → #407 → #408 is 9 deep; #399 → the record #553 → #447 → #449 → #450 is 10, the record
+spliced in as detail (#544); the attribution #559 → the design #560 → the posing's recording is no deeper. Nothing is
+added after #450; the approval build (Open 142) after #407 and #447 (8 each) now fits with its review, and is placed
+when they are nearer.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The evaluator's
 head first, R4 #505 (the longest chain and the owner's direction, its checks first on the machine); the
-recording's X #538 in flight; the evaluator's
-W2 #524, R5 #518, W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; RR5 after R5, and the controls' rename after it; the request at the
-given #547; the posing and the route in its chains' order (#399, the samples #551, the
-observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
+recording's attribution #559, X's fix #561 and the design #560; the evaluator's W2 #524, R5 #518, the controls'
+rename #556, W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the posing's review
+and the route in its chains' order (#399, the samples #551, the observations #549, the record #553, #401, #403,
+#443, #447, #407, #445, #449).
 
 ## Decisions
 
@@ -351,7 +353,12 @@ What landed that open work builds on, a line each; how it went and each review's
   `finite_data_syntax_quotation_formed`, the condition and readiness established by contracts; the recording 1.07 s at
   32K, 33.6 µs per address (`.build/tasks/536/result.md`, (5)). X (#538, `e7c53a09`):
   `Development_Native_State_Execution`, the first generation executed held at the given's value, 111.3 s (126 µs per
-  address) against the gate's 53 s (`.build/tasks/538/measurement.md`).
+  address) against the gate's 53 s (`.build/tasks/538/measurement.md`). RR5 (#557, `aba87519`): the listing policy's
+  source installed as a formed program on the formed path (`finite_extend_native_formed`,
+  `finite_install_formed_entry`, `finite_ground_source_formed`, `finite_formed_source_requirements`,
+  `development_formed_policy_source`, `development_formed_policy_judgment`, each `_exact` under its premise; the code
+  equation `development_indexed_generation_formed`): S1 0.035 s and S2 none at 32K, the whole 0.863 s shared; about
+  75 s estimated at the given (`.build/tasks/557/result.md`, (4)).
 - **The resolving evaluator** (#495's entry): R1 `Factor_Material_Resolution` (#499, `1f021cf3`: the material premise
   solved from a ground skeleton or source, site 1's control), R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the
   most general unifier of finite term patterns and renaming apart) and R3 `Factor_Program_Resolution` (#503,
@@ -476,29 +483,25 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **What the next events ask**: the posing #397 and RR5 #557 were already running when the design #560 was set in
-  front of them: #397 hands over built, its recording's measurement a remainder (q103, (c)); #557 measures RR5's saving
-  held, before the attribution #559 (q102). The design's result decides the recording at scale and the posing's
-  payload (holding the given again or citing the first generation): then the posing's recording or re-pose and RR5's
-  re-plan or retirement are placed. R4 #505 is re-planned over its partial state (a proof not terminating in
-  `Factor_Resolution_Completeness`); R7 (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
+- **What the next events ask**: the design #560's result decides the recording at scale and the posing's payload
+  (holding the given again or citing the first generation): then the posing's recording at the given or its re-pose
+  is placed (#397 handed over built, q103 (c)), with a held run at the given once the next share lands, which fixes
+  RR5's shared estimate (#558's follow-up 1); #558's follow-ups 5 and 6 are next-edits 193 and 198, 3 is 192. R7
+  (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
 - **The counterparts' retirement**: R8a and R8b landed (`9b18bd52`, `519102d8`; next-edit items 154, 156 and 159 with
   them), and #555 of its review's follow-ups (`8591818b`); the one on R4 is in #505's rewritten brief; the controls
   theory's rename with the use sample's fixtures (item 183) is a fix after R4; 158 stays at a measured need.
-- **Mailed, read by each task's first session** (by task): #538 (RR5 after it; S1-S2's share if above the gate);
+- **Mailed, read by each task's first session** (by task): #560 (#558's review, follow-ups 1-4: RR5's shared
+  figures and the held run that fixes them, S1's superlinearity inside `finite_extend_native_formed`, the remaining
+  shares, the marked correction naming task 557); #559 (#558's follow-up 2, S1 on RR5's path);
   #524 (#515's review, follow-up 6); #526 (its 3 and 6);
   #542 (its 4: the checker's share per certificate measured, the check staying); #407 (#433's review's follow-ups 2 and 3; the frame as #432
-  and #433 leave it; #394's follow-up 3); #505 (R3b's invariant under a formed program and call and a construction
-  whose values are formed, q99; #504's three items; its brief, rewritten by plan-73, names them with R3b's theory,
-  E1's control's place and the row); #443 (#546's re-review, follow-up 2: the request program's export cost); #526 and #528 (#514's follow-up 2); #518 and
+  and #433 leave it; #394's follow-up 3); #443 (#546's re-review, follow-up 2: the request program's export cost); #526 and #528 (#514's follow-up 2); #518 and
   #526 (the combined
-  contract is rc's, q100); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); #538 (#509's
-  review's follow-up 5; #535's follow-ups 1 and 5, their renumbering by the re-review corrected by a later mail); #536
-  (#535's follow-ups 4 and 5, so it waits on #534; its brief, rewritten by plan-73, carries #531's follow-ups 1, 2,
-  4 and 5 and #533's 1, and states #535's re-review's carried 3 and 4). The route's earlier mails to #397,
+  contract is rc's, q100); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); The route's earlier mails to #397,
   #399, #403, #443 and #447 are carried into their corrected briefs or recorded superseded (`.build/tasks/522/result.md`,
   `.build/tasks/523/result.md`).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;

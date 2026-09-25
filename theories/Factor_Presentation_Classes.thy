@@ -401,6 +401,19 @@ text \<open>
   complete quotations; a fixed artifact still determines its own exact body.
 \<close>
 
+lemma use_coordinate_presentation:
+  "presentation_class (\<lambda>u t. t=use_data_term u) (\<lambda>_. True) (\<lambda>t. \<exists>u. t=use_data_term u)"
+  using injective_presentation_class[where f=use_data_term and D="\<lambda>_. True"]
+    use_data_term_injective by simp
+
+lemma address_coordinate_presentation:
+  "presentation_class (\<lambda>r t. t=Payload_Term r) (\<lambda>_. True) (\<lambda>t. \<exists>r. t=Payload_Term r)"
+proof -
+  have injective: "inj Payload_Term" by (rule injI) simp
+  show ?thesis using injective_presentation_class[where f=Payload_Term and D="\<lambda>_. True"]
+    injective by simp
+qed
+
 interpretation site_presentations: presentation_class
   "\<lambda>z t. site_value_presents (fst z) (fst (snd z)) (snd (snd z)) t"
   "\<lambda>z. environment_formed (fst z) \<and> snd z\<in>environment_positions (fst z)"

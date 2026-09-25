@@ -1683,6 +1683,9 @@ fun map_citation_positions :: "(local_address \<Rightarrow> local_address) \<Rig
 | "map_citation_positions f (External k a) = External (f k) a"
 | "map_citation_positions f (External_Whole k) = External_Whole (f k)"
 
+lemma map_citation_positions_id [simp]: "map_citation_positions id c = c"
+  by (cases c) simp_all
+
 lemma citation_at_push:
   assumes cite: "citation_at R r c I"
     and addressing: "finite_addressing (rra_carrier (object_structure R)) f"

@@ -70,8 +70,6 @@ text \<open>
 
 subsection \<open>The Factor definition readers at a renamed use\<close>
 
-lemma map_citation_positions_id [simp]: "map_citation_positions id c = c"
-  by (cases c) simp_all
 
 theorem use_renaming_syntax_copy:
   assumes formed: "environment_formed E" and source: "artifact_at E u R" and injective: "inj h"
@@ -166,54 +164,6 @@ lemma renamed_site_injective:
   assumes injective: "inj h"
   shows "inj (map_prod h id)"
   using map_prod_inj_on[OF injective inj_on_id[of UNIV]] by simp
-
-
-lemma surjective_image_eq:
-  assumes surjective: "surj g" and injective: "inj g" and at: "\<And>d. g d \<in> A' \<longleftrightarrow> d \<in> A"
-  shows "A' = g ` A"
-proof (rule set_eqI)
-  fix x
-  obtain d where x: "x = g d" using surjD[OF surjective] by blast
-  show "x \<in> A' \<longleftrightarrow> x \<in> g ` A" by (simp add: x at inj_image_mem_iff[OF injective])
-qed
-
-lemma rtrancl_injective_image:
-  assumes injective: "inj f"
-  shows "(f x, f y) \<in> (map_prod f f ` R)\<^sup>* \<longleftrightarrow> (x,y) \<in> R\<^sup>*"
-proof
-  assume "(x,y) \<in> R\<^sup>*"
-  then show "(f x, f y) \<in> (map_prod f f ` R)\<^sup>*"
-  proof (induction rule: rtrancl_induct)
-    case base then show ?case by simp
-  next
-    case (step m n)
-    have "(f m, f n) \<in> map_prod f f ` R" by (rule rev_image_eqI[OF step.hyps(2)]) simp
-    then show ?case by (rule rtrancl_into_rtrancl[OF step.IH])
-  qed
-next
-  assume path: "(f x, f y) \<in> (map_prod f f ` R)\<^sup>*"
-  have reached: "\<exists>z. b = f z \<and> (x,z) \<in> R\<^sup>*" if "(f x, b) \<in> (map_prod f f ` R)\<^sup>*" for b
-    using that
-  proof (induction rule: rtrancl_induct)
-    case base then show ?case by blast
-  next
-    case (step m n)
-    obtain z where z: "m = f z" "(x,z) \<in> R\<^sup>*" using step.IH by blast
-    from step.hyps(2) obtain q where q: "q \<in> R" "(m,n) = map_prod f f q" by (rule imageE)
-    obtain v w where vw: "q = (v,w)" by (cases q)
-    have edge: "(v,w) \<in> R" "m = f v" "n = f w" using q vw by simp_all
-    have vz: "v = z" using edge(2) z(1) injD[OF injective] by metis
-    have "(x,v) \<in> R\<^sup>*" using z(2) vz by simp
-    then have "(x,w) \<in> R\<^sup>*" by (rule rtrancl_into_rtrancl[OF _ edge(1)])
-    then show ?case using edge(3) by blast
-  qed
-  obtain z where "f y = f z" "(x,z) \<in> R\<^sup>*" using reached[OF path] by blast
-  then show "(x,y) \<in> R\<^sup>*" using injD[OF injective] by metis
-qed
-
-lemma rel_ran_map_relation_values: "rel_ran (map_relation_values f R) = f ` rel_ran R"
-  by (auto simp: rel_ran_def)
-
 
 lemma native_root_family_renamed_use:
   assumes injective: "inj h" and family: "native_root_family_at E u r Q"
@@ -419,7 +369,7 @@ proof -
   have family: "native_root_family_at (rename_environment h E) (h u) r (map_relation_values (map_prod h id) Q)"
     by (rule native_root_family_renamed_use[OF bij_is_inj[OF permutation] Q(1)])
   have roots: "rel_ran (map_relation_values (map_prod h id) Q) = map_prod h id ` rel_ran Q"
-    by (rule rel_ran_map_relation_values)
+    by (rule map_relation_values_range)
   have packaged: "native_package_formed (rename_environment h E) (rel_ran (map_relation_values (map_prod h id) Q))"
     using Q(2) by (simp only: roots native_package_formed_renaming[OF formed permutation])
   have program: "native_program (rename_environment h E) (rel_ran (map_relation_values (map_prod h id) Q)) =

@@ -97,6 +97,10 @@ lemma map_relation_values_domain [simp]:
   "rel_dom (map_relation_values f R) = rel_dom R"
   by (auto simp: rel_dom_def)
 
+lemma map_relation_values_range:
+  "rel_ran (map_relation_values f H)=f ` rel_ran H"
+  by (auto simp: rel_ran_def)
+
 lemma map_relation_values_keys [simp]:
   "fst ` map_relation_values f R = fst ` R"
   by (simp only: rel_dom_image[symmetric] map_relation_values_domain)
@@ -434,6 +438,15 @@ proof (rule inj_onI)
   show "x = y" using pairs xp yp by simp
 qed
 
+lemma surjective_image_eq:
+  assumes surjective: "surj g" and injective: "inj g" and at: "\<And>d. g d \<in> A' \<longleftrightarrow> d \<in> A"
+  shows "A' = g ` A"
+proof (rule set_eqI)
+  fix x
+  obtain d where x: "x = g d" using surjD[OF surjective] by blast
+  show "x \<in> A' \<longleftrightarrow> x \<in> g ` A" by (simp add: x at inj_image_mem_iff[OF injective])
+qed
+
 section \<open>Two projections of one identified socket graph\<close>
 
 definition socket_sum :: "('s \<times> 'a) set \<Rightarrow> ('s \<times> 'b) set \<Rightarrow> ('s \<times> ('a + 'b)) set" where
@@ -557,6 +570,40 @@ lemma strict_ancestor_trans:
 lemma relation_range_union:
   "(\<Union>(s,t)\<in>M. F t) = (\<Union>t\<in>rel_ran M. F t)"
   by (auto simp: rel_ran_def)
+
+lemma rtrancl_injective_image:
+  assumes injective: "inj f"
+  shows "(f x, f y) \<in> (map_prod f f ` R)\<^sup>* \<longleftrightarrow> (x,y) \<in> R\<^sup>*"
+proof
+  assume "(x,y) \<in> R\<^sup>*"
+  then show "(f x, f y) \<in> (map_prod f f ` R)\<^sup>*"
+  proof (induction rule: rtrancl_induct)
+    case base then show ?case by simp
+  next
+    case (step m n)
+    have "(f m, f n) \<in> map_prod f f ` R" by (rule rev_image_eqI[OF step.hyps(2)]) simp
+    then show ?case by (rule rtrancl_into_rtrancl[OF step.IH])
+  qed
+next
+  assume path: "(f x, f y) \<in> (map_prod f f ` R)\<^sup>*"
+  have reached: "\<exists>z. b = f z \<and> (x,z) \<in> R\<^sup>*" if "(f x, b) \<in> (map_prod f f ` R)\<^sup>*" for b
+    using that
+  proof (induction rule: rtrancl_induct)
+    case base then show ?case by blast
+  next
+    case (step m n)
+    obtain z where z: "m = f z" "(x,z) \<in> R\<^sup>*" using step.IH by blast
+    from step.hyps(2) obtain q where q: "q \<in> R" "(m,n) = map_prod f f q" by (rule imageE)
+    obtain v w where vw: "q = (v,w)" by (cases q)
+    have edge: "(v,w) \<in> R" "m = f v" "n = f w" using q vw by simp_all
+    have vz: "v = z" using edge(2) z(1) injD[OF injective] by metis
+    have "(x,v) \<in> R\<^sup>*" using z(2) vz by simp
+    then have "(x,w) \<in> R\<^sup>*" by (rule rtrancl_into_rtrancl[OF _ edge(1)])
+    then show ?case using edge(3) by blast
+  qed
+  obtain z where "f y = f z" "(x,z) \<in> R\<^sup>*" using reached[OF path] by blast
+  then show "(x,y) \<in> R\<^sup>*" using injD[OF injective] by metis
+qed
 
 section \<open>Finite functional families admit distinct socket enumerations\<close>
 

@@ -1,5 +1,5 @@
 theory Factor_Environment_Lookup
-  imports Factor_Citation_Admission Factor_Judgment_Presentations Factor_Use_Actions
+  imports Factor_Citation_Admission Factor_Presentation_Classes Factor_Use_Actions
 begin
 
 section \<open>Selection in a complete represented environment\<close>
@@ -384,7 +384,7 @@ section \<open>Artifact lookup is equivariant under permutations of uses\<close>
 
 text \<open>
   The argument is an environment, a use and an artifact: a permutation of uses renames the environment
-  and the use (@{text Factor_Use_Renaming}'s environment and use actions) and leaves the artifact, an
+  and the use (the environment and use actions of @{text Factor_Use_Actions}) and leaves the artifact, an
   exact value, alone. The artifact at a use is the artifact at the renamed use of the renamed environment
   (@{thm [source] artifact_at_renamed_use}).
 \<close>

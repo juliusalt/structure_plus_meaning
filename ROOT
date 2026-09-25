@@ -498,6 +498,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Comparison_Programs
     Bag_Difference_Witnesses
     Factor_System_Restriction
+    Factor_System_Payloads
     Factor_Recursive_Groups
     Factor_Related_Difference
     Factor_Generation_Clauses
@@ -596,6 +597,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Term_Sequence_Presentations
     Factor_Term_Sequence_Clauses
     Factor_Term_Sequence_Operations
+    Factor_Stated_Leaves
     Factor_Term_Sequence_Contracts
     Factor_Table_Literal_Lookup
     Factor_Table_Boundaries
@@ -682,6 +684,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Permission_Investigation_Base
     Factor_Permission_Investigation
     Factor_Adoption_Comparison
+    Factor_Reader_Payloads
     Factor_Adoption_Permission_Admission
     Factor_Substitution
     Factor_Substitution_Observations
@@ -1324,6 +1327,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Audit_Counterparts
     Factor_Additions_Counterparts
     Development_Guard_Counterparts
+    Factor_Package_Reader_Counterparts
     Finite_Term_Word_Readers
     Required_History_Presentation
     Required_History_Execution

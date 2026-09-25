@@ -633,7 +633,7 @@ corollary schema_instantiation_renaming:
     (\<lambda>z. (65,z)\<in>positive_meaning schema_instantiation_system)"
 proof -
   have operand: "presentation_class (\<lambda>x t. t=x) (\<lambda>_::factor_term. True) (\<lambda>_. True)"
-    by unfold_locales auto
+    by (rule identity_presentation_class)
   have binding_injective: "inj binding_rows_term"
     by (rule injI) (erule binding_rows_term_injective[THEN iffD1])
   have call_injective: "inj call_instance_rows_term"

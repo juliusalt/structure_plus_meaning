@@ -1,6 +1,5 @@
 theory Factor_System_Payloads
   imports Factor_Positive_Parametricity Factor_System_Composition Factor_System_Restriction Factor_System_Renaming
-    Factor_Payload_Audit
 begin
 
 section \<open>The payloads of composed programs\<close>
@@ -12,6 +11,53 @@ text \<open>
   its payloads composed down its lineage, each step computed on its own patterns alone.
 \<close>
 
+text \<open>
+  The payloads a schema states and the payloads a definition states, its interface's with its clauses';
+  a formed program states exactly those of its definitions, as the payload audit reads it.
+\<close>
+
+definition schema_payloads :: "('a,'s,'d) factor_schema \<Rightarrow> octets set" where
+  "schema_payloads S={v. Payload_Term v\<in>schema_leaves S}"
+
+definition definition_payloads :: "'a term_pattern \<Rightarrow> ('c\<times>('a,'s,'d) factor_schema) set \<Rightarrow> octets set" where
+  "definition_payloads p C={v. Payload_Term v\<in>pattern_leaves p} \<union> (\<Union>(c,S)\<in>C. schema_payloads S)"
+
+theorem system_payloads_definitions:
+  assumes formed: "schema_system_formed P"
+  shows "system_payloads P=
+    (\<Union>d\<in>system_definitions P. definition_payloads (system_interface P d) (system_clause_family P d))"
+proof (rule set_eqI)
+  fix v
+  have owned: "\<And>d c S. ((d,c),S)\<in>system_clauses P \<Longrightarrow> d\<in>system_definitions P"
+    using formed unfolding schema_system_formed_def by blast
+  show "v\<in>system_payloads P \<longleftrightarrow>
+    v\<in>(\<Union>d\<in>system_definitions P. definition_payloads (system_interface P d) (system_clause_family P d))"
+  proof
+    assume "v\<in>system_payloads P"
+    then have "Payload_Term v\<in>system_leaves P" by (simp add: system_payloads_def)
+    then consider (interface) d p where "(d,p)\<in>system_interfaces P" "Payload_Term v\<in>pattern_leaves p"
+      | (clause) d c S where "((d,c),S)\<in>system_clauses P" "Payload_Term v\<in>schema_leaves S"
+      by (auto simp: system_leaves_def)
+    then show "v\<in>(\<Union>d\<in>system_definitions P. definition_payloads (system_interface P d) (system_clause_family P d))"
+    proof cases
+      case interface
+      have "d\<in>system_definitions P" using interface(1) by (auto simp: system_definitions_def rel_dom_def)
+      moreover have "system_interface P d=p" by (rule system_interface_unique[OF formed interface(1)])
+      ultimately show ?thesis using interface(2) by (auto simp: definition_payloads_def)
+    next
+      case clause
+      then show ?thesis using owned[OF clause(1)] by (fastforce simp: definition_payloads_def schema_payloads_def)
+    qed
+  next
+    assume "v\<in>(\<Union>d\<in>system_definitions P. definition_payloads (system_interface P d) (system_clause_family P d))"
+    then obtain d where d: "d\<in>system_definitions P"
+      and v: "v\<in>definition_payloads (system_interface P d) (system_clause_family P d)" by blast
+    have member: "(d,system_interface P d)\<in>system_interfaces P" by (rule system_interface_member[OF formed d])
+    show "v\<in>system_payloads P"
+      using v member by (fastforce simp: definition_payloads_def schema_payloads_def system_payloads_def system_leaves_def)
+  qed
+qed
+
 lemma add_view_definition_payloads:
   "system_payloads (add_view_definition P d p C)=system_payloads P\<union>{v. Payload_Term v\<in>pattern_leaves p}\<union>
     (\<Union>(c,S)\<in>C. {v. Payload_Term v\<in>schema_leaves S})"
@@ -22,6 +68,34 @@ lemma system_union_payloads: "system_payloads (system_union P Q)=system_payloads
 
 lemma rooted_system_payloads: "system_payloads (rooted_system P R)\<subseteq>system_payloads P"
   by (auto simp: system_payloads_def system_leaves_def rooted_system_def system_restriction_def)
+
+text \<open>
+  The three steps bound a lineage: a program built from programs that state the empty payload alone, by
+  steps whose own patterns state none, states none either. Each program's fact is collected in
+  @{text lineage_payloads}, so a step's fact is derived from its own definition by the step rules and the
+  facts of the programs it is built from, whichever they are: a program inserted into a lineage needs its own
+  fact and nothing of the steps above it.
+\<close>
+
+named_theorems lineage_payloads "programs that state the empty payload alone"
+
+lemma view_payloads_bound:
+  assumes "system_payloads P\<subseteq>{[]}" "{v. Payload_Term v\<in>pattern_leaves p}\<subseteq>{[]}"
+    "(\<Union>(c,S)\<in>C. {v. Payload_Term v\<in>schema_leaves S})\<subseteq>{[]}"
+  shows "system_payloads (add_view_definition P d p C)\<subseteq>{[]}"
+  unfolding add_view_definition_payloads using assms by blast
+
+lemma union_payloads_bound:
+  "system_payloads P\<subseteq>{[]} \<Longrightarrow> system_payloads Q\<subseteq>{[]} \<Longrightarrow> system_payloads (system_union P Q)\<subseteq>{[]}"
+  unfolding system_union_payloads by blast
+
+lemma rooted_payloads_bound: "system_payloads P\<subseteq>{[]} \<Longrightarrow> system_payloads (rooted_system P R)\<subseteq>{[]}"
+  using rooted_system_payloads by blast
+
+lemmas lineage_payload_steps = view_payloads_bound union_payloads_bound rooted_payloads_bound
+
+lemmas lineage_payload_simps = system_payloads_def system_leaves_def schema_leaves_def material_leaves_def
+  material_fields_def
 
 text \<open>
   The payloads a program states are the payload leaves of its patterns, which neither a change of its

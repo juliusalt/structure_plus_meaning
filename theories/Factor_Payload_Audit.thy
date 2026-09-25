@@ -1,5 +1,5 @@
 theory Factor_Payload_Audit
-  imports Factor_Definition_Call_Admission Factor_Finite_Payload_Literals Factor_Use_Renaming
+  imports Factor_Definition_Call_Admission Factor_Finite_Payload_Literals Factor_Use_Renaming Factor_System_Payloads
 begin
 
 section \<open>The payloads a term carries and an instance adds\<close>
@@ -18,12 +18,6 @@ lemma pattern_instance_payloads_origin:
   assumes "pattern_instance V p t" "v\<in>term_payloads t"
   shows "Payload_Term v\<in>pattern_leaves p \<or> (\<exists>a x. (a,x)\<in>V \<and> v\<in>term_payloads x)"
   using assms by (induction rule: pattern_instance.induct) auto
-
-definition schema_payloads :: "('a,'s,'d) factor_schema \<Rightarrow> octets set" where
-  "schema_payloads S={v. Payload_Term v\<in>schema_leaves S}"
-
-definition definition_payloads :: "'a term_pattern \<Rightarrow> ('c\<times>('a,'s,'d) factor_schema) set \<Rightarrow> octets set" where
-  "definition_payloads p C={v. Payload_Term v\<in>pattern_leaves p} \<union> (\<Union>(c,S)\<in>C. schema_payloads S)"
 
 lemma schema_instance_payloads_included:
   assumes inst: "schema_instance S V t Q" and member: "v\<in>schema_payloads S"
@@ -1018,41 +1012,10 @@ theorem finite_definition_payloads_exact:
 
 section \<open>A program is audited definition by definition\<close>
 
-theorem system_payloads_definitions:
-  assumes formed: "schema_system_formed P"
-  shows "system_payloads P=
-    (\<Union>d\<in>system_definitions P. definition_payloads (system_interface P d) (system_clause_family P d))"
-proof (rule set_eqI)
-  fix v
-  have owned: "\<And>d c S. ((d,c),S)\<in>system_clauses P \<Longrightarrow> d\<in>system_definitions P"
-    using formed unfolding schema_system_formed_def by blast
-  show "v\<in>system_payloads P \<longleftrightarrow>
-    v\<in>(\<Union>d\<in>system_definitions P. definition_payloads (system_interface P d) (system_clause_family P d))"
-  proof
-    assume "v\<in>system_payloads P"
-    then have "Payload_Term v\<in>system_leaves P" by (simp add: system_payloads_def)
-    then consider (interface) d p where "(d,p)\<in>system_interfaces P" "Payload_Term v\<in>pattern_leaves p"
-      | (clause) d c S where "((d,c),S)\<in>system_clauses P" "Payload_Term v\<in>schema_leaves S"
-      by (auto simp: system_leaves_def)
-    then show "v\<in>(\<Union>d\<in>system_definitions P. definition_payloads (system_interface P d) (system_clause_family P d))"
-    proof cases
-      case interface
-      have "d\<in>system_definitions P" using interface(1) by (auto simp: system_definitions_def rel_dom_def)
-      moreover have "system_interface P d=p" by (rule system_interface_unique[OF formed interface(1)])
-      ultimately show ?thesis using interface(2) by (auto simp: definition_payloads_def)
-    next
-      case clause
-      then show ?thesis using owned[OF clause(1)] by (fastforce simp: definition_payloads_def schema_payloads_def)
-    qed
-  next
-    assume "v\<in>(\<Union>d\<in>system_definitions P. definition_payloads (system_interface P d) (system_clause_family P d))"
-    then obtain d where d: "d\<in>system_definitions P"
-      and v: "v\<in>definition_payloads (system_interface P d) (system_clause_family P d)" by blast
-    have member: "(d,system_interface P d)\<in>system_interfaces P" by (rule system_interface_member[OF formed d])
-    show "v\<in>system_payloads P"
-      using v member by (fastforce simp: definition_payloads_def schema_payloads_def system_payloads_def system_leaves_def)
-  qed
-qed
+text \<open>
+  A formed program states the payloads of its definitions (@{thm [source] system_payloads_definitions}), so it
+  states the empty payload alone exactly when each of its definitions passes the audit.
+\<close>
 
 corollary system_payloads_audited:
   assumes "schema_system_formed P"

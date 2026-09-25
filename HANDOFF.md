@@ -102,9 +102,9 @@ a refusal rests on a complete registration: W2a #524 (the queries' answers, the 
 justification check, after R4; its completeness from the premise `finite_pattern_lifting`, q104; re-planned over the
 theory its first session left partial in its tree, `.build/plans/plan-75/r524-first.md`), W2b #567 (the registrations,
 the construction from them with formed values and the resolution with hand-ins, extending W2a's theory after it
-lands), R4's pattern-root forms #563 (continuing R4, beside W2a; re-planned over the work its first session left in its
-tree, `.build/plans/plan-75/r563-first.md`: R3b's invariant at a pattern root, the
-answer-preserving lifting that discharges W2a's premise, item 5's generator and its row), W4a #526 (a registration's
+lands), R4's pattern-root forms #563 (landed `256ed4f9`: R3b's invariant and acceptance and R4's lifting at a pattern
+root for any formed finite program, the answer-preserving lifting that discharges W2a's premise, item 5's goal-level
+generator, tight), W4a #526 (a registration's
 completeness and the resolver with complete registrations exact, the four registrations each returning formed values,
 relocation; after W2b, #563, W3 and R4) and W4b #528 (the given's registrations, the controls, the reuse row), each with its
 review. #399 waits on R7 and #547 on rc, both on R4, R6 and W4b; #549 and #551 wait on R7, #403 and #553 through
@@ -136,7 +136,7 @@ placed when they are nearer.
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The recording's T1
 #571 first (a whole rebuild, heading the queue while it checks so that no other heavy run starts beside it) and T2a's
-first half #573, the recording's chain being now the longest; W2a #524 and #563 in flight, W2b #567, R5 #518
+first half #573, the recording's chain being now the longest; W2a #524 in flight, W2b #567, R5 #518
 (re-planned, a build's slack), the recording's later builds (#575, #577, #579, #581, #583); R5b #565, W4a #526, R6
 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
 #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
@@ -394,7 +394,11 @@ What landed that open work builds on, a line each; how it went and each review's
   nothing); R4 `Factor_Resolution_Completeness` (#505, `4f5e6307`: the lifting `finite_resolution_lifting`,
   `finite_program_resolution_exact`, the verdict `finite_resolution_verdict`, `finite_program_resolution_generator`,
   the demand-level `finite_demand_resolution` and native `native_call_resolution` forms with their exactness, at
-  `no_witness_construction`; the agreement with `finite_program_evaluation` where both answer, q101); their reviews'
+  `no_witness_construction`; the agreement with `finite_program_evaluation` where both answer, q101); R4's pattern-root
+  forms (#563, `256ed4f9`): `finite_pattern_state`, `resolution_value_ground`, `resolution_supported_by`, the liftings
+  `finite_resolution_lifting_by` and `finite_resolution_pattern_lifting`,
+  `finite_resolution_pattern_certificates_accepted`, `finite_pattern_answer_true` and the tight goal-level generator
+  `finite_pattern_resolution_generator`; their reviews'
   follow-ups mailed to R3b, R4, #507 and #517,
   R7's carried by #523's brief. W3 `Factor_Least_Witness_Facts` (#513, `485ecf65`): the least witnesses' completeness
   facts over the given's readers' meanings (`package_request_least_witness`, `merge_least_witness`,
@@ -540,7 +544,10 @@ searches for a theory before briefing a task that edits it.
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **Mailed, read by each task's first session** (by task): #399 (#569's follow-up, its probe's cost); #520 and #565
+- **Mailed, read by each task's first session** (by task): #525, #526 and #567 (#564's review: W2's
+  `finite_query_state` a copy of `finite_pattern_state`, retired by W2b, compared at W2a's review; W4a's
+  instantiation's needs and the generator's computed form); #565 (#564's review: task 495's item 5 corrected, the two
+  rows' words); #399 (#569's follow-up, its probe's cost); #520 and #565
   (#519's review: a socket's discharge at the traversal shape from the reader's totality, whichever states it first;
   to #520 the recursive reader declared a producer, to #565 the exchange's premises and ranks chosen afresh after each
   commitment); #542 (#519's review: how often the given's calls end at a barred cut, and the steps where commitments

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "5063fb8cb9c3f1ccf53aaa99c10a6ab370a335ed679b2e78aea56687393ca498",
- "checked_content_sha256": "65955bcb58fe9b4ced2d1da119f8f70c681e0bed0cbddbe193c51fea776495b9",
+ "base_receipt_sha256": "2c43e78322a3a5938890d5a1e25b384e2d6810138f76463e84e82f610be3a3d3",
+ "checked_content_sha256": "fb7feb919a8b86b3e71ca5b3ecd9a86896075005288f0b4dac07cb3c96d41be5",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,22 +17,20 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmplncl8taf/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpgukxcggc/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.44,
+  "base_and_impact": 0.51,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 233.17,
-  "recipe_impact": 0.41,
-  "recipes_and_host_tests": 11.18
+  "proof": 282.94,
+  "recipe_impact": 0.49,
+  "recipes_and_host_tests": 11.19
  },
  "rebuilt_theories": [
-  "Factor_Resolution_Acceptance",
-  "Factor_Resolution_Completeness",
-  "Factor_Resolution_Controls"
+  "Factor_Placeholder_Fill"
  ],
  "recipes": {
   "allocated-environments": {
@@ -192,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1901,
- "seconds": 309.41,
+ "reused_theories": 1904,
+ "seconds": 366.5,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1904,
+  "theory_count": 1905,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1904,
+ "theories": 1905,
  "validation_inputs": {
-  "ROOT": "17d0cc296328a07970954f41d304a2a529a11b4699ba3ead0450181245807b3e",
+  "ROOT": "5d4823f27704a67d2a27449eaf519f85a30779b6a4e229158060e1e0a8c805fa",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

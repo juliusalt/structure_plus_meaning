@@ -265,6 +265,43 @@ definition commitment_sibling_declarations :: "(nat,nat,nat) resolution_declarat
   "commitment_sibling_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
     declared_sockets={|(3,commitment_sibling_clause,1,True)|}\<rparr>"
 
+text \<open>
+  The order control (task 589): the sibling control's clause with r's call holding a leaf, c(X) :- r(Pair [] Z),
+  prod(Pair X Y), cons(Pair Z Y), over r([],z2), r([],z1) :- c(x) and prod's and cons' facts, prod's socket declared
+  with the kept head and discharged. R3's selection takes r first, a leaf-bearing call at the lower position; its
+  branch z1 reaches the root's call, pruned under the unbarred root. Had prod been committed in branch z2, its kept
+  answer a would leave cons(z2,a) false and the true call c(x) refuted; the socket is committed only while its
+  siblings are pending (@{const finite_siblings_pending}), so it is searched plainly and resolved as by R4.
+\<close>
+
+definition commitment_order_clause :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_order_clause = \<lparr>finite_schema_conclusion=Finite_Variable 0,
+    finite_schema_premises={|(0,(0,Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Variable 1))),
+      (1,(1,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 2))),
+      (2,(2,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition commitment_order_loop :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_order_loop = \<lparr>finite_schema_conclusion=
+      Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload [1]),
+    finite_schema_premises={|(0,(3,Finite_Pattern_Payload []))|}, finite_schema_materials={||}\<rparr>"
+
+definition commitment_order_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "commitment_order_program = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0),
+      (2,Finite_Variable 0),(3,Finite_Variable 0)|},
+    finite_system_clauses={|
+      ((0,0),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload [2]))),
+      ((0,1),commitment_order_loop),
+      ((1,0),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload [3]))),
+      ((1,1),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload [4]))),
+      ((2,0),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload [1]) (Finite_Pattern_Payload [3]))),
+      ((2,1),commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload [2]) (Finite_Pattern_Payload [4]))),
+      ((3,0),commitment_order_clause)|}\<rparr>"
+
+definition commitment_order_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "commitment_order_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
+    declared_sockets={|(3,commitment_order_clause,1,True)|}\<rparr>"
+
 lemma site_one_material_controls:
   "finite_material_resolution (site_one_material [[1],[2]]) = Material_Solutions
       {|{|(2,Finite_Target (Finite_Whole (finite_enumerated_artifact [[1],[2]] [] [] []))),
@@ -323,7 +360,14 @@ lemma site_one_material_controls:
       (Finite_Payload []) 20) = Some True \<and>
     finite_resolution_verdict (finite_committed_resolution no_witness_construction
       (finite_declared_commitment commitment_sibling_declarations) (commitment_sibling_program [3] [4] True) 3
-      (Finite_Payload []) 20) = None"
+      (Finite_Payload []) 20) = None \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction
+      (commitment_sibling_program [3] [4] True) 3 (Finite_Payload []) 20) = Some True \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction commitment_order_program 3
+      (Finite_Payload []) 20) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_order_declarations) commitment_order_program 3
+      (Finite_Payload []) 20) = Some True"
   by eval
 
 text \<open>

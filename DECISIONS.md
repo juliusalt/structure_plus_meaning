@@ -16799,15 +16799,30 @@ false, and no kept state is supported. The clause-level obligation speaks of the
 resolved sibling has already fixed. The verdict survives in the evaluated cases (`Factor_Resolution_Controls`, the
 sibling control: resolved; with r(z1) holding only through c(x), unresolved, never refuted) because R3's selection, one
 goal per state, takes prod first at c's clause (the one call whose pattern holds a leaf), where the premise holds, r's
-goal still pending; with the loop, r(z1)'s branch reaches the root's call, barred at the commitment, and ends in a cut. The premise is restated so
-that a committed socket goal is exchanged at the states where its parent clause's other premises are pending, the
-lifting committing it first among the goals R3's selection offers; the lifting and the three forms are re-proved under
-it and the socket kinds discharged under it, over a view and with a class predicate (R5c′, task 589). The direct
-producer's discharge needs a subtree form of `Factor_Resolution_Acceptance.finite_node_proof_pattern_accepted` (task
-591), a frame invariant of the committed sub-search — every binding it makes is of a variable of a goal under its
-focus: unification, material steps, nested commitments, and constructions, which bind only a registered variable a
-focused goal holds (`finite_registration_ready`) — kept states nonempty and placement preserved (R5c″, task 593). A
-committed call's input is ground under the state (`finite_declared_commitment_input_ground`, `_value`): R5's direct and
+goal still pending; with the loop, r(z1)'s branch reaches the root's call, barred at the commitment, and ends in a cut.
+[Corrected by task 589 (R5c′), the planner's answer to q109: the restatement q108 authorized is withdrawn. No
+restatement of the premise makes the forms exact while a socket commits after a sibling was resolved: with r's call a
+leaf-bearing r(Pair [] Z) at the lower position, R3's selection resolves r first, its branch z1 is pruned under the
+unbarred root (r(z1) holding only through c(x)), and in branch z2 the committed prod keeps a: the committed resolution
+refuted the true call c(x) (`Factor_Resolution_Controls`, the order control; R4 `Some True`). The pruning rests on the
+ranks of a derivation the commitment then abandons, and barring the nodes at the commitment comes too late. R5's socket
+test is narrowed instead (`finite_siblings_pending`, a conjunct of `finite_socket_kept` and `finite_socket_free`, the
+material socket included): a socket commits only while every other premise and material premise of its parent clause is
+a pending goal — the obligation's new instance then re-grounds pending siblings only, every node barred — and a socket
+reached after a sibling is searched plainly, exact by R4. #565's premise, lifting and three forms stand unchanged; the
+order control resolves (`Some False` before the narrowing), and the commitment control still keeps one certificate.]
+The discharges of #565's premise — at the direct producer and at the socket kinds, over a view and with a class
+predicate — are R5c″'s (task 593), over the subtree form of
+`Factor_Resolution_Acceptance.finite_node_proof_pattern_accepted` (task 591) and the committed sub-search's frame and
+kept states, built by task 589 beside the search (`finite_committed_search_frame`, `finite_committed_search_placed`,
+`finite_committed_search_positions`, `finite_committed_kept_nonempty`, each an instance of
+`finite_committed_search_relation`, from one shape of a step, `finite_substitution_step`): every binding a focused
+sub-search makes is of a variable of a goal under its focus, of a variable no node places yet, or of a construction's
+registered variable bound to a ground value; goals and nodes outside the focus change by those bindings alone, every
+position a node or a pending call holds keeps one, placement is preserved, and the kept states of a sub-search with a
+found state are not empty. A construction step reads every pending goal, the focus's and the rest
+(`finite_registration_ready` over the whole pending set), so the variable it binds may be held outside the focus by
+goals holding it alone: the frame names those bindings rather than excluding them. A committed call's input is ground under the state (`finite_declared_commitment_input_ground`, `_value`): R5's direct and
 socket tests demand it, so the premise's quantification over every supported state meets no input the sub-search binds
 otherwise than the support, and output equivalence at one input suffices there. Until the premise is discharged the
 control's false call is refuted by R4 (`commitment_control_refuted`).]
@@ -16829,7 +16844,9 @@ narrowed what this paragraph predicts ("a site declared functional up to a prese
 reaches 32, 6, 10 and 45 only; R6 declares those. Views restore the prediction (R5d changes R5's record and tests to
 views, R5's declarations their identity and swap instances), carriers discharge what "reach an invariant goal through
 sites declared congruent" meant, and 48 is settled by a narrowed socket produced beside the search. #565's statements
-are not changed; R5c (#586) states its discharge at views and with a class predicate.]
+are not changed; the discharge of its premise at views and with a class predicate is R5c″'s (#593) [corrected by task
+589: R5c (#586) found the premise false at sockets as stated, and R5c′ (#589) narrowed the socket test instead of
+restating it; correction (4) above].]
 
 ### The given's remaining producers: views, carriers and narrowed sockets
 

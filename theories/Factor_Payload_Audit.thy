@@ -9,15 +9,6 @@ text \<open>
   carries every payload the pattern states, and each other payload it carries comes from a binding.
 \<close>
 
-fun term_payloads :: "factor_term \<Rightarrow> octets set" where
-  "term_payloads (Target_Term x)={}"
-| "term_payloads (Payload_Term v)={v}"
-| "term_payloads (Pair_Term x y)=term_payloads x \<union> term_payloads y"
-
-lemma term_payloads_exact_pattern:
-  "term_payloads t={v. Payload_Term v\<in>pattern_leaves (exact_term_pattern t::unit term_pattern)}"
-  by (induction t) auto
-
 lemma pattern_instance_payloads_included:
   assumes "pattern_instance V p t" "Payload_Term v\<in>pattern_leaves p"
   shows "v\<in>term_payloads t"
@@ -111,34 +102,6 @@ qed
 
 section \<open>Ordinary clauses over their valuations\<close>
 
-lemma audit_rule:
-  assumes clause: "((d,c),S)\<in>system_clauses P" and ordinary: "schema_material_premises S={}"
-    and sf: "schema_formed S" and call: "\<And>t. term_formed t \<Longrightarrow> schema_call_formed P d t"
-    and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
-    and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning P"
-  shows "(d,evaluate_pattern h (schema_conclusion S))\<in>positive_meaning P"
-proof -
-  have tf: "term_formed (evaluate_pattern h (schema_conclusion S))"
-    by (rule evaluate_pattern_formed) (use sf assignment in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
-  show ?thesis by (rule ordinary_positive_valuation_step[OF clause ordinary assignment call[OF tf] support])
-qed
-
-lemma audit_valuation:
-  assumes holds: "(d,t)\<in>positive_meaning P"
-  obtains c S h where "((d,c),S)\<in>system_clauses P" "t=evaluate_pattern h (schema_conclusion S)"
-    "\<forall>a\<in>schema_variables S. term_formed (h a)"
-    "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning P"
-proof -
-  have consequence: "(d,t)\<in>schema_consequences P (positive_meaning P)"
-    using holds positive_meaning_unfold[of P] by blast
-  obtain c S h where parts: "((d,c),S)\<in>system_clauses P" "\<forall>a\<in>schema_variables S. term_formed (h a)"
-    "t=evaluate_pattern h (schema_conclusion S)"
-    "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow>
-      schema_call_formed P e (evaluate_pattern h p) \<and> (e,evaluate_pattern h p)\<in>positive_meaning P"
-    using schema_consequences_valuationD[OF consequence] by blast
-  show ?thesis by (rule that[OF parts(1,3,2)]) (use parts(4) in blast)
-qed
-
 lemma audit_layer_clause:
   assumes formed: "schema_system_formed P" and fresh: "d\<notin>system_definitions P"
   shows "((d,c),S)\<in>system_clauses (add_view_definition P d p C) \<longleftrightarrow> (c,S)\<in>C"
@@ -146,12 +109,6 @@ proof -
   have "((d,c),S)\<notin>system_clauses P" using formed fresh unfolding schema_system_formed_def by blast
   then show ?thesis by (auto simp: add_view_definition_def)
 qed
-
-lemma audit_layer_old:
-  assumes formed: "schema_system_formed P" "schema_system_formed (add_view_definition P d p C)"
-    and fresh: "d\<notin>system_definitions P" and old: "e\<in>system_definitions P"
-  shows "(e,t)\<in>positive_meaning (add_view_definition P d p C) \<longleftrightarrow> (e,t)\<in>positive_meaning P"
-  by (rule added_definition_preserves_old(2)[OF formed fresh old])
 
 lemma audit_target_meaning:
   "(45,t)\<in>positive_meaning definition_call_admission_system \<longleftrightarrow> (45,t)\<in>positive_meaning target_projection_system"
@@ -201,7 +158,7 @@ lemma empty_payloads_call:
 lemma empty_payloads_old_meaning:
   assumes "d\<in>system_definitions definition_call_admission_system"
   shows "(d,t)\<in>positive_meaning empty_payloads_system \<longleftrightarrow> (d,t)\<in>positive_meaning definition_call_admission_system"
-  using audit_layer_old[OF definition_call_admission_system_formed
+  using added_definition_preserves_old(2)[OF definition_call_admission_system_formed
     empty_payloads_system_formed[unfolded empty_payloads_system_def] _ assms]
   by (simp add: empty_payloads_system_def)
 
@@ -222,7 +179,7 @@ proof -
   obtain c S h where clause: "((500,c),S)\<in>system_clauses empty_payloads_system"
     and conclusion: "t=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning empty_payloads_system"
-    using audit_valuation[OF holds] by blast
+    using positive_meaning_valuationE[OF holds] by blast
   have "(c,S)\<in>empty_payloads_clauses" using clause by simp
   then consider "S=data_list_nil_schema" | "S=empty_payloads_target_schema" | "S=empty_payloads_pair_schema"
     by (auto simp: empty_payloads_clauses_def)
@@ -271,7 +228,7 @@ proof (induction t)
     by (simp only: empty_payloads_target target_projection_exact) (use presented in blast)
   let ?h="\<lambda>n::nat. if n=0 then Target_Term x else a"
   have "(500,evaluate_pattern ?h (schema_conclusion empty_payloads_target_schema))\<in>positive_meaning empty_payloads_system"
-    by (rule audit_rule[where c=1])
+    by (rule ordinary_positive_formed_step[where c=1])
       (use Target_Term.prems af support in \<open>auto simp: empty_payloads_clauses_def empty_payloads_schema_defs
         schema_formed_def schema_variables_def single_valued_def rel_dom_def empty_payloads_call\<close>)
   then show ?case by (simp add: empty_payloads_target_schema_def)
@@ -280,7 +237,7 @@ next
   have empty: "v=[]" using Payload_Term.prems by simp
   have "(500,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema::(nat,nat,nat) factor_schema)))
       \<in>positive_meaning empty_payloads_system"
-    by (rule audit_rule[where c=0])
+    by (rule ordinary_positive_formed_step[where c=0])
       (auto simp: empty_payloads_clauses_def empty_payloads_schema_defs schema_formed_def schema_variables_def
         single_valued_def rel_dom_def octets_formed_def empty_payloads_call)
   then show ?case using empty by (simp add: data_list_nil_schema_def)
@@ -290,7 +247,7 @@ next
     using Pair_Term.IH Pair_Term.prems by auto
   let ?h="\<lambda>n::nat. if n=0 then x else y"
   have "(500,evaluate_pattern ?h (schema_conclusion empty_payloads_pair_schema))\<in>positive_meaning empty_payloads_system"
-    by (rule audit_rule[where c=2])
+    by (rule ordinary_positive_formed_step[where c=2])
       (use Pair_Term.prems children in \<open>auto simp: empty_payloads_clauses_def empty_payloads_schema_defs
         schema_formed_def schema_variables_def single_valued_def rel_dom_def empty_payloads_call\<close>)
   then show ?case by (simp add: empty_payloads_pair_schema_def)
@@ -344,7 +301,7 @@ lemma empty_payload_rows_call:
 lemma empty_payload_rows_old_meaning:
   assumes "d\<in>system_definitions empty_payloads_system"
   shows "(d,t)\<in>positive_meaning empty_payload_rows_system \<longleftrightarrow> (d,t)\<in>positive_meaning empty_payloads_system"
-  using audit_layer_old[OF empty_payloads_system_formed
+  using added_definition_preserves_old(2)[OF empty_payloads_system_formed
     empty_payload_rows_system_formed[unfolded empty_payload_rows_system_def] _ assms]
   by (simp add: empty_payload_rows_system_def)
 
@@ -364,7 +321,7 @@ proof -
   obtain c S h where clause: "((501,c),S)\<in>system_clauses empty_payload_rows_system"
     and conclusion: "t=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning empty_payload_rows_system"
-    using audit_valuation[OF holds] by blast
+    using positive_meaning_valuationE[OF holds] by blast
   have "(c,S)\<in>empty_payload_rows_clauses" using clause by simp
   then consider "S=data_list_nil_schema" | "S=empty_payload_rows_schema"
     by (auto simp: empty_payload_rows_clauses_def)
@@ -385,7 +342,7 @@ proof (induction cs)
   case Nil
   have "(501,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema::(nat,nat,nat) factor_schema)))
       \<in>positive_meaning empty_payload_rows_system"
-    by (rule audit_rule[where c=0])
+    by (rule ordinary_positive_formed_step[where c=0])
       (auto simp: empty_payload_rows_clauses_def data_list_nil_schema_def schema_formed_def schema_variables_def
         single_valued_def rel_dom_def octets_formed_def empty_payload_rows_call)
   then show ?case by (simp add: data_list_nil_schema_def octets_formed_def)
@@ -407,7 +364,7 @@ next
       "\<forall>(a,x)\<in>set cs. term_payloads x\<subseteq>{[]}" by (auto simp: c)
     let ?h="\<lambda>n::nat. if n=0 then Payload_Term a else if n=1 then x else binding_rows_term cs"
     have "(501,evaluate_pattern ?h (schema_conclusion empty_payload_rows_schema))\<in>positive_meaning empty_payload_rows_system"
-      by (rule audit_rule[where c=1])
+      by (rule ordinary_positive_formed_step[where c=1])
         (use parts Cons.IH in \<open>auto simp: empty_payload_rows_clauses_def empty_payload_rows_schema_def
           schema_formed_def schema_variables_def single_valued_def rel_dom_def empty_payload_rows_call
           empty_payload_rows_empty empty_payloads_exact\<close>)
@@ -445,7 +402,7 @@ lemma empty_payload_calls_call:
 lemma empty_payload_calls_old_meaning:
   assumes "d\<in>system_definitions empty_payload_rows_system"
   shows "(d,t)\<in>positive_meaning empty_payload_calls_system \<longleftrightarrow> (d,t)\<in>positive_meaning empty_payload_rows_system"
-  using audit_layer_old[OF empty_payload_rows_system_formed
+  using added_definition_preserves_old(2)[OF empty_payload_rows_system_formed
     empty_payload_calls_system_formed[unfolded empty_payload_calls_system_def] _ assms]
   by (simp add: empty_payload_calls_system_def)
 
@@ -465,7 +422,7 @@ proof -
   obtain c S h where clause: "((502,c),S)\<in>system_clauses empty_payload_calls_system"
     and conclusion: "t=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning empty_payload_calls_system"
-    using audit_valuation[OF holds] by blast
+    using positive_meaning_valuationE[OF holds] by blast
   have "(c,S)\<in>empty_payload_calls_clauses" using clause by simp
   then consider "S=data_list_nil_schema" | "S=empty_payload_calls_schema"
     by (auto simp: empty_payload_calls_clauses_def)
@@ -486,7 +443,7 @@ proof (induction qs)
   case Nil
   have "(502,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema::(nat,nat,nat) factor_schema)))
       \<in>positive_meaning empty_payload_calls_system"
-    by (rule audit_rule[where c=0])
+    by (rule ordinary_positive_formed_step[where c=0])
       (auto simp: empty_payload_calls_clauses_def data_list_nil_schema_def schema_formed_def schema_variables_def
         single_valued_def rel_dom_def octets_formed_def empty_payload_calls_call)
   then show ?case by (simp add: data_list_nil_schema_def octets_formed_def)
@@ -511,7 +468,7 @@ next
     let ?h="\<lambda>n::nat. if n=0 then Payload_Term s else if n=1 then site_data_term (fst d) (snd d)
       else if n=2 then x else call_instance_rows_term qs"
     have "(502,evaluate_pattern ?h (schema_conclusion empty_payload_calls_schema))\<in>positive_meaning empty_payload_calls_system"
-      by (rule audit_rule[where c=1])
+      by (rule ordinary_positive_formed_step[where c=1])
         (use parts Cons.IH in \<open>auto simp: empty_payload_calls_clauses_def empty_payload_calls_schema_def
           schema_formed_def schema_variables_def single_valued_def rel_dom_def empty_payload_calls_call
           empty_payload_calls_empty empty_payloads_exact\<close>)
@@ -557,7 +514,7 @@ lemma clause_payloads_call:
 lemma clause_payloads_old_meaning:
   assumes "d\<in>system_definitions empty_payload_calls_system"
   shows "(d,t)\<in>positive_meaning clause_payloads_system \<longleftrightarrow> (d,t)\<in>positive_meaning empty_payload_calls_system"
-  using audit_layer_old[OF empty_payload_calls_system_formed
+  using added_definition_preserves_old(2)[OF empty_payload_calls_system_formed
     clause_payloads_system_formed[unfolded clause_payloads_system_def] _ assms]
   by (simp add: clause_payloads_system_def)
 
@@ -577,17 +534,22 @@ lemma clause_payloads_components:
     clause_payloads_old_meaning[of 501 t] empty_payload_calls_old_meaning[of 501 t]
     clause_payloads_old_meaning[of 502 t] by simp_all
 
+lemma clause_payloads_rule:
+  "(503,z)\<in>positive_meaning clause_payloads_system \<longleftrightarrow> (\<exists>h. (\<forall>a\<in>schema_variables clause_payloads_schema. term_formed (h a)) \<and>
+    z=evaluate_pattern h (schema_conclusion clause_payloads_schema) \<and>
+    (\<forall>s d p. (s,d,p)\<in>schema_premises clause_payloads_schema \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning clause_payloads_system))"
+  by (rule variable_single_clause_valuation[OF clause_payloads_system_formed clause_payloads_clause]) (simp_all add: clause_payloads_schema_def clause_payloads_call)
+
 lemma clause_payloads_sound:
   assumes source: "environment_value_presents E e"
     and holds: "(503,Pair_Term (Pair_Term e (use_data_term u)) (Payload_Term a))\<in>positive_meaning clause_payloads_system"
   shows "\<exists>S. native_schema_at E u a S \<and> schema_payloads S\<subseteq>{[]}"
 proof -
-  obtain c S h where clause: "((503,c),S)\<in>system_clauses clause_payloads_system"
-    and conclusion: "Pair_Term (Pair_Term e (use_data_term u)) (Payload_Term a)=evaluate_pattern h (schema_conclusion S)"
-    and "\<forall>a\<in>schema_variables S. term_formed (h a)"
+  define S where "S=clause_payloads_schema"
+  have schema: "S=clause_payloads_schema" by (rule S_def)
+  obtain h where conclusion: "Pair_Term (Pair_Term e (use_data_term u)) (Payload_Term a)=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning clause_payloads_system"
-    by (rule audit_valuation[OF holds])
-  have schema: "S=clause_payloads_schema" using clause by simp
+    using holds unfolding schema clause_payloads_rule by blast
   have fields: "h 0=e" "h 1=use_data_term u" "h 2=Payload_Term a"
     using conclusion by (simp_all add: schema clause_payloads_schema_def)
   have calls: "(65,schema_instantiation_argument e (use_data_term u) (Payload_Term a) (h 3) (h 4) (h 5) (h 6))
@@ -651,7 +613,7 @@ proof -
     else if n=3 then binding_rows_term xs else if n=4 then t else if n=5 then call_instance_rows_term qs
     else binding_rows_term cs"
   have "(503,evaluate_pattern ?h (schema_conclusion clause_payloads_schema))\<in>positive_meaning clause_payloads_system"
-    by (rule audit_rule[where c=0])
+    unfolding clause_payloads_rule by (rule exI[of _ ?h])
       (use formed holds head arguments_empty rows in \<open>auto simp: clause_payloads_schema_def schema_formed_def
         schema_variables_def single_valued_def rel_dom_def clause_payloads_call clause_payloads_components\<close>)
   then show ?thesis by (simp add: clause_payloads_schema_def)
@@ -688,7 +650,7 @@ lemma clause_family_payloads_call:
 lemma clause_family_payloads_old_meaning:
   assumes "d\<in>system_definitions clause_payloads_system"
   shows "(d,t)\<in>positive_meaning clause_family_payloads_system \<longleftrightarrow> (d,t)\<in>positive_meaning clause_payloads_system"
-  using audit_layer_old[OF clause_payloads_system_formed
+  using added_definition_preserves_old(2)[OF clause_payloads_system_formed
     clause_family_payloads_system_formed[unfolded clause_family_payloads_system_def] _ assms]
   by (simp add: clause_family_payloads_system_def)
 
@@ -746,7 +708,7 @@ lemma payload_audit_call:
 lemma payload_audit_old_meaning:
   assumes "d\<in>system_definitions clause_family_payloads_system"
   shows "(d,t)\<in>positive_meaning payload_audit_system \<longleftrightarrow> (d,t)\<in>positive_meaning clause_family_payloads_system"
-  using audit_layer_old[OF clause_family_payloads_system_formed
+  using added_definition_preserves_old(2)[OF clause_family_payloads_system_formed
     payload_audit_system_formed[unfolded payload_audit_system_def] _ assms]
   by (simp add: payload_audit_system_def)
 
@@ -781,15 +743,21 @@ abbreviation payload_audit_result :: "factor_term \<Rightarrow> bool" where
   "payload_audit_result z \<equiv> \<exists>E e u r p C. z=source_root_argument e (use_data_term u) (Payload_Term r) \<and>
     environment_value_presents E e \<and> native_definition_at E u r p C \<and> definition_payloads p C\<subseteq>{[]}"
 
+lemma payload_audit_rule:
+  "(505,z)\<in>positive_meaning payload_audit_system \<longleftrightarrow> (\<exists>h. (\<forall>a\<in>schema_variables payload_audit_schema. term_formed (h a)) \<and>
+    z=evaluate_pattern h (schema_conclusion payload_audit_schema) \<and>
+    (\<forall>s d p. (s,d,p)\<in>schema_premises payload_audit_schema \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning payload_audit_system))"
+  by (rule variable_single_clause_valuation[OF payload_audit_system_formed payload_audit_clause]) (simp_all add: payload_audit_schema_def payload_audit_call)
+
 theorem payload_audit_sound:
   assumes holds: "(505,z)\<in>positive_meaning payload_audit_system"
   shows "payload_audit_result z"
 proof -
-  obtain c S h where clause: "((505,c),S)\<in>system_clauses payload_audit_system"
-    and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
+  define S where "S=payload_audit_schema"
+  have schema: "S=payload_audit_schema" by (rule S_def)
+  obtain h where conclusion: "z=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning payload_audit_system"
-    using audit_valuation[OF holds] by blast
-  have schema: "S=payload_audit_schema" using clause by simp
+    using holds unfolding schema payload_audit_rule by blast
   have calls: "(72,citation_observation_argument (h 0) (h 1) (h 2) (h 3))\<in>positive_meaning definition_call_admission_system"
     "(500,h 3)\<in>positive_meaning empty_payloads_system"
     "(37,artifact_lookup_argument (h 0) (h 1) (h 4))\<in>positive_meaning artifact_lookup_system"
@@ -928,7 +896,7 @@ proof -
     else if n=3 then w else if n=4 then material else if n=5 then Payload_Term a else if n=6 then Payload_Term i
     else if n=7 then Payload_Term b else if n=8 then Payload_Term m else if n=9 then ?rows else ?roots"
   have "(505,evaluate_pattern ?h (schema_conclusion payload_audit_schema))\<in>positive_meaning payload_audit_system"
-    by (rule audit_rule[where c=0])
+    unfolding payload_audit_rule by (rule exI[of _ ?h])
       (use formed operands wf admitted empty lookup rec rows projection children in
         \<open>auto simp: payload_audit_schema_def schema_formed_def schema_variables_def single_valued_def rel_dom_def
           payload_audit_call payload_audit_components octets_formed_def\<close>)

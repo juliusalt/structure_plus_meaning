@@ -288,7 +288,7 @@ lemma stated_leaves_call:
 lemma stated_leaves_old_meaning:
   assumes "d\<in>system_definitions payload_audit_system"
   shows "(d,t)\<in>positive_meaning stated_leaves_system \<longleftrightarrow> (d,t)\<in>positive_meaning payload_audit_system"
-  using audit_layer_old[OF payload_audit_system_formed
+  using added_definition_preserves_old(2)[OF payload_audit_system_formed
     stated_leaves_system_formed[unfolded stated_leaves_system_def] _ assms]
   by (simp add: stated_leaves_system_def)
 
@@ -334,7 +334,7 @@ proof -
   obtain c S h where clause: "((580,c),S)\<in>system_clauses stated_leaves_system"
     and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning stated_leaves_system"
-    using audit_valuation[OF holds] by blast
+    using positive_meaning_valuationE[OF holds] by blast
   have "(c,S)\<in>stated_leaves_clauses" using clause by simp
   then consider "S=stated_leaves_empty_schema" | "S=stated_leaves_target_schema"
     | "S=stated_leaves_payload_schema" | "S=stated_leaves_pair_schema"
@@ -395,7 +395,7 @@ proof (induction t arbitrary: y)
     by (simp only: stated_leaves_components target_projection_exact) (use presented in blast)
   let ?h="\<lambda>n::nat. if n=0 then Target_Term x else if n=1 then y else a"
   have "(580,evaluate_pattern ?h (schema_conclusion stated_leaves_target_schema))\<in>positive_meaning stated_leaves_system"
-    by (rule audit_rule[where c=1])
+    by (rule ordinary_positive_formed_step[where c=1])
       (use Target_Term.prems af support in \<open>auto simp: stated_leaves_clauses_def stated_leaves_schema_defs
         schema_formed_def schema_variables_def single_valued_def rel_dom_def stated_leaves_call\<close>)
   then show ?case by (simp add: stated_leaves_target_schema_def stated_onto_def)
@@ -406,7 +406,7 @@ next
     case True
     let ?h="\<lambda>n::nat. y"
     have "(580,evaluate_pattern ?h (schema_conclusion stated_leaves_empty_schema))\<in>positive_meaning stated_leaves_system"
-      by (rule audit_rule[where c=0])
+      by (rule ordinary_positive_formed_step[where c=0])
         (use Payload_Term.prems in \<open>auto simp: stated_leaves_clauses_def stated_leaves_schema_defs
           schema_formed_def schema_variables_def single_valued_def rel_dom_def octets_formed_def stated_leaves_call\<close>)
     then show ?thesis using True by (simp add: stated_leaves_empty_schema_def stated_onto_def)
@@ -417,7 +417,7 @@ next
       using Payload_Term.prems False by (simp add: stated_leaves_components stated_nonempty_payload)
     let ?h="\<lambda>n::nat. if n=0 then Payload_Term v else y"
     have "(580,evaluate_pattern ?h (schema_conclusion stated_leaves_payload_schema))\<in>positive_meaning stated_leaves_system"
-      by (rule audit_rule[where c=2])
+      by (rule ordinary_positive_formed_step[where c=2])
         (use Payload_Term.prems support in \<open>auto simp: stated_leaves_clauses_def stated_leaves_schema_defs
           schema_formed_def schema_variables_def single_valued_def rel_dom_def octets_formed_def stated_leaves_call\<close>)
     then show ?thesis using False by (simp add: stated_leaves_payload_schema_def stated_onto_def)
@@ -437,7 +437,7 @@ next
   let ?h="\<lambda>n::nat. if n=0 then a else if n=1 then b else if n=2 then y
     else if n=3 then stated_onto a (stated_onto b y) else stated_onto b y"
   have "(580,evaluate_pattern ?h (schema_conclusion stated_leaves_pair_schema))\<in>positive_meaning stated_leaves_system"
-    by (rule audit_rule[where c=3])
+    by (rule ordinary_positive_formed_step[where c=3])
       (use af bf mf of Pair_Term.prems left right in \<open>auto simp: stated_leaves_clauses_def stated_leaves_schema_defs
         schema_formed_def schema_variables_def single_valued_def rel_dom_def stated_leaves_call\<close>)
   then show ?case by (simp add: stated_leaves_pair_schema_def stated_onto_def)
@@ -492,7 +492,7 @@ lemma stated_value_call:
 lemma stated_value_old_meaning:
   assumes "d\<in>system_definitions stated_leaves_system"
   shows "(d,t)\<in>positive_meaning stated_value_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_leaves_system"
-  using audit_layer_old[OF stated_leaves_system_formed
+  using added_definition_preserves_old(2)[OF stated_leaves_system_formed
     stated_value_system_formed[unfolded stated_value_system_def] _ assms]
   by (simp add: stated_value_system_def)
 
@@ -509,7 +509,7 @@ proof
     and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
     and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning stated_value_system"
-    by (rule audit_valuation[OF holds])
+    by (rule positive_meaning_valuationE[OF holds])
   have schema: "S=stated_value_schema" using clause by simp
   have leaves: "(580,Pair_Term (h 1) (Pair_Term (Payload_Term []) (Payload_Term [])))\<in>positive_meaning stated_leaves_system"
     using support by (simp add: schema stated_value_schema_def stated_value_old_meaning)
@@ -523,7 +523,7 @@ next
     using z(3,4) by (simp add: stated_value_old_meaning stated_leaves_list)
   let ?h="\<lambda>n::nat. if n=0 then k else v"
   have "(581,evaluate_pattern ?h (schema_conclusion stated_value_schema))\<in>positive_meaning stated_value_system"
-    by (rule audit_rule[where c=0])
+    by (rule ordinary_positive_formed_step[where c=0])
       (use z leaves in \<open>auto simp: stated_value_schema_def schema_formed_def schema_variables_def
         single_valued_def rel_dom_def octets_formed_def stated_value_call\<close>)
   then show "(581,z)\<in>positive_meaning stated_value_system" by (simp add: stated_value_schema_def z(1))
@@ -551,7 +551,7 @@ lemma stated_values_call:
 lemma stated_values_old_meaning:
   assumes "d\<in>system_definitions stated_value_system"
   shows "(d,t)\<in>positive_meaning stated_values_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_value_system"
-  using audit_layer_old[OF stated_value_system_formed
+  using added_definition_preserves_old(2)[OF stated_value_system_formed
     stated_values_system_formed[unfolded stated_values_system_def] _ assms]
   by (simp add: stated_values_system_def)
 
@@ -606,7 +606,7 @@ lemma stated_call_call:
 lemma stated_call_old_meaning:
   assumes "d\<in>system_definitions stated_values_system"
   shows "(d,t)\<in>positive_meaning stated_call_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_values_system"
-  using audit_layer_old[OF stated_values_system_formed
+  using added_definition_preserves_old(2)[OF stated_values_system_formed
     stated_call_system_formed[unfolded stated_call_system_def] _ assms]
   by (simp add: stated_call_system_def)
 
@@ -641,7 +641,7 @@ proof -
     and conclusion: "context_relation_argument c (Pair_Term k (Pair_Term d t)) y=evaluate_pattern h (schema_conclusion S)"
     and "\<forall>a\<in>schema_variables S. term_formed (h a)"
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning stated_call_system"
-    by (rule audit_valuation[OF holds])
+    by (rule positive_meaning_valuationE[OF holds])
   have schema: "S=stated_call_schema" using clause by simp
   have fields: "h 1=k \<and> h 3=t \<and> y=Pair_Term (h 1) (h 4)" by (rule stated_call_conclusion[OF conclusion[unfolded schema]])
   have "(580,Pair_Term (h 3) (Pair_Term (Payload_Term []) (h 4)))\<in>positive_meaning stated_leaves_system"
@@ -666,7 +666,7 @@ next
   let ?h="\<lambda>n::nat. if n=0 then c else if n=1 then k else if n=2 then d else if n=3 then t
     else data_list_term (term_stated t)"
   have "(583,evaluate_pattern ?h (schema_conclusion stated_call_schema))\<in>positive_meaning stated_call_system"
-    by (rule audit_rule[where c=0])
+    by (rule ordinary_positive_formed_step[where c=0])
       (use formed leaves lf in \<open>auto simp: stated_call_schema_def schema_formed_def schema_variables_def
         single_valued_def rel_dom_def octets_formed_def stated_call_call\<close>)
   then show "(583,context_relation_argument c (Pair_Term k (Pair_Term d t)) y)\<in>positive_meaning stated_call_system"
@@ -695,7 +695,7 @@ lemma stated_calls_call:
 lemma stated_calls_old_meaning:
   assumes "d\<in>system_definitions stated_call_system"
   shows "(d,t)\<in>positive_meaning stated_calls_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_call_system"
-  using audit_layer_old[OF stated_call_system_formed
+  using added_definition_preserves_old(2)[OF stated_call_system_formed
     stated_calls_system_formed[unfolded stated_calls_system_def] _ assms]
   by (simp add: stated_calls_system_def)
 
@@ -811,7 +811,7 @@ lemma stated_material_call:
 lemma stated_material_old_meaning:
   assumes "d\<in>system_definitions stated_calls_system"
   shows "(d,t)\<in>positive_meaning stated_material_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_calls_system"
-  using audit_layer_old[OF stated_calls_system_formed
+  using added_definition_preserves_old(2)[OF stated_calls_system_formed
     stated_material_system_formed[unfolded stated_material_system_def] _ assms]
   by (simp add: stated_material_system_def)
 
@@ -838,7 +838,7 @@ proof
       evaluate_pattern h (schema_conclusion S)"
     and "\<forall>a\<in>schema_variables S. term_formed (h a)"
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning stated_material_system"
-    by (rule audit_valuation[OF holds])
+    by (rule positive_meaning_valuationE[OF holds])
   have schema: "S=stated_material_schema" using clause by simp
   have fields: "h 1=k" "h 2=a1" "h 3=a2" "h 4=a3" "h 5=a4" "h 6=a5"
     "y=Pair_Term k (Pair_Term (h 7) (Pair_Term (h 8) (Pair_Term (h 9) (Pair_Term (h 10) (h 11)))))"
@@ -864,7 +864,7 @@ next
     else if n=9 then data_list_term (term_stated a3) else if n=10 then data_list_term (term_stated a4)
     else data_list_term (term_stated a5)"
   have "(585,evaluate_pattern ?h (schema_conclusion stated_material_schema))\<in>positive_meaning stated_material_system"
-    by (rule audit_rule[where c=0])
+    by (rule ordinary_positive_formed_step[where c=0])
       (use formed leaves lf in \<open>auto simp: stated_material_schema_def schema_formed_def schema_variables_def
         single_valued_def rel_dom_def octets_formed_def stated_material_call\<close>)
   then show "(585,context_relation_argument c (Pair_Term k (material_tuple a1 a2 a3 a4 a5)) y)
@@ -894,7 +894,7 @@ lemma stated_materials_call:
 lemma stated_materials_old_meaning:
   assumes "d\<in>system_definitions stated_material_system"
   shows "(d,t)\<in>positive_meaning stated_materials_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_material_system"
-  using audit_layer_old[OF stated_material_system_formed
+  using added_definition_preserves_old(2)[OF stated_material_system_formed
     stated_materials_system_formed[unfolded stated_materials_system_def] _ assms]
   by (simp add: stated_materials_system_def)
 
@@ -1007,7 +1007,7 @@ lemma stated_clause_call:
 lemma stated_clause_old_meaning:
   assumes "d\<in>system_definitions stated_materials_system"
   shows "(d,t)\<in>positive_meaning stated_clause_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_materials_system"
-  using audit_layer_old[OF stated_materials_system_formed
+  using added_definition_preserves_old(2)[OF stated_materials_system_formed
     stated_clause_system_formed[unfolded stated_clause_system_def] _ assms]
   by (simp add: stated_clause_system_def)
 
@@ -1169,7 +1169,7 @@ proof -
   obtain c S h where clause: "((587,c),S)\<in>system_clauses stated_clause_system"
     and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning stated_clause_system"
-    using audit_valuation[OF holds] by blast
+    using positive_meaning_valuationE[OF holds] by blast
   have "(c,S)\<in>stated_clause_clauses" using clause by simp
   then consider (ground) "S=stated_clause_ground_schema"
     | (vars) "S=stated_clause_open_schema stated_open (Pattern_Variable 5) (Pattern_Variable 6)"
@@ -1428,7 +1428,7 @@ proof -
     let ?h="\<lambda>n::nat. if n=0 then e else if n=1 then use_data_term u else if n=2 then Payload_Term a
       else if n=4 then t else data_list_term (pattern_stated (schema_conclusion S))"
     have "(587,evaluate_pattern ?h (schema_conclusion stated_clause_ground_schema))\<in>positive_meaning stated_clause_system"
-      by (rule audit_rule[where c=0])
+      by (rule ordinary_positive_formed_step[where c=0])
         (use fact head tf lf ef xnil qnil cnil in \<open>auto simp: stated_clause_clauses_def stated_clause_ground_schema_def
           schema_formed_def schema_variables_def single_valued_def rel_dom_def octets_formed_def
           stated_clause_call stated_clause_components\<close>)
@@ -1485,7 +1485,7 @@ proof -
       let ?h="\<lambda>n::nat. if n=10 then Pair_Term (Payload_Term b) y else if n=11 then binding_rows_term xs' else ?base n"
       have "(587,evaluate_pattern ?h (schema_conclusion (stated_clause_open_schema stated_open (Pattern_Variable 5)
           (Pattern_Variable 6))))\<in>positive_meaning stated_clause_system"
-        by (rule audit_rule[where c=1])
+        by (rule ordinary_positive_formed_step[where c=1])
           (use fact table head callrows matrows tf lf qrf mrf ef rf vars in \<open>auto simp: stated_clause_clauses_def
             stated_clause_open_schema_def schema_formed_def schema_variables_def single_valued_def rel_dom_def
             octets_formed_def stated_clause_call stated_clause_components\<close>)
@@ -1496,7 +1496,7 @@ proof -
         else if n=11 then call_instance_rows_term qs'' else ?base n"
       have "(587,evaluate_pattern ?h (schema_conclusion (stated_clause_open_schema data_w stated_open
           (Pattern_Variable 6))))\<in>positive_meaning stated_clause_system"
-        by (rule audit_rule[where c=2])
+        by (rule ordinary_positive_formed_step[where c=2])
           (use fact table head callrows matrows tf lf qrf mrf ef rf calls in \<open>auto simp: stated_clause_clauses_def
             stated_clause_open_schema_def schema_formed_def schema_variables_def single_valued_def rel_dom_def
             octets_formed_def stated_clause_call stated_clause_components\<close>)
@@ -1506,7 +1506,7 @@ proof -
       let ?h="\<lambda>n::nat. if n=10 then Pair_Term (Payload_Term s) x else if n=11 then binding_rows_term cs' else ?base n"
       have "(587,evaluate_pattern ?h (schema_conclusion (stated_clause_open_schema data_w (Pattern_Variable 5)
           stated_open)))\<in>positive_meaning stated_clause_system"
-        by (rule audit_rule[where c=3])
+        by (rule ordinary_positive_formed_step[where c=3])
           (use fact table head callrows matrows tf lf qrf mrf ef rf mats in \<open>auto simp: stated_clause_clauses_def
             stated_clause_open_schema_def schema_formed_def schema_variables_def single_valued_def rel_dom_def
             octets_formed_def stated_clause_call stated_clause_components\<close>)
@@ -1569,7 +1569,7 @@ lemma stated_row_call:
 lemma stated_row_old_meaning:
   assumes "d\<in>system_definitions stated_clause_system"
   shows "(d,t)\<in>positive_meaning stated_row_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_clause_system"
-  using audit_layer_old[OF stated_clause_system_formed
+  using added_definition_preserves_old(2)[OF stated_clause_system_formed
     stated_row_system_formed[unfolded stated_row_system_def] _ assms]
   by (simp add: stated_row_system_def)
 
@@ -1586,7 +1586,7 @@ proof
     and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
     and assignment: "\<forall>a\<in>schema_variables S. term_formed (h a)"
     and support: "\<forall>s e p. (s,e,p)\<in>schema_premises S \<longrightarrow> (e,evaluate_pattern h p)\<in>positive_meaning stated_row_system"
-    by (rule audit_valuation[OF holds])
+    by (rule positive_meaning_valuationE[OF holds])
   have schema: "S=stated_row_schema" using clause by simp
   have "(587,Pair_Term (Pair_Term (h 0) (h 2)) (h 3))\<in>positive_meaning stated_clause_system"
     using support by (simp add: schema stated_row_schema_def stated_row_old_meaning)
@@ -1603,7 +1603,7 @@ next
     using z(4) by (simp add: stated_row_old_meaning)
   let ?h="\<lambda>n::nat. if n=0 then c else if n=1 then k else if n=2 then x else w"
   have "(588,evaluate_pattern ?h (schema_conclusion stated_row_schema))\<in>positive_meaning stated_row_system"
-    by (rule audit_rule[where c=0])
+    by (rule ordinary_positive_formed_step[where c=0])
       (use z fw support in \<open>auto simp: stated_row_schema_def schema_formed_def schema_variables_def
         single_valued_def rel_dom_def stated_row_call\<close>)
   then show "(588,z)\<in>positive_meaning stated_row_system" by (simp add: stated_row_schema_def z(1))
@@ -1631,7 +1631,7 @@ lemma stated_rows_call:
 lemma stated_rows_old_meaning:
   assumes "d\<in>system_definitions stated_row_system"
   shows "(d,t)\<in>positive_meaning stated_rows_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_row_system"
-  using audit_layer_old[OF stated_row_system_formed
+  using added_definition_preserves_old(2)[OF stated_row_system_formed
     stated_rows_system_formed[unfolded stated_rows_system_def] _ assms]
   by (simp add: stated_rows_system_def)
 
@@ -1732,7 +1732,7 @@ lemma stated_report_call:
 lemma stated_report_old_meaning:
   assumes "d\<in>system_definitions stated_rows_system"
   shows "(d,t)\<in>positive_meaning stated_report_system \<longleftrightarrow> (d,t)\<in>positive_meaning stated_rows_system"
-  using audit_layer_old[OF stated_rows_system_formed
+  using added_definition_preserves_old(2)[OF stated_rows_system_formed
     stated_report_system_formed[unfolded stated_report_system_def] _ assms]
   by (simp add: stated_report_system_def)
 
@@ -1769,7 +1769,7 @@ proof -
   obtain c S h where clause: "((590,c),S)\<in>system_clauses stated_report_system"
     and conclusion: "z=evaluate_pattern h (schema_conclusion S)"
     and support: "\<forall>s d p. (s,d,p)\<in>schema_premises S \<longrightarrow> (d,evaluate_pattern h p)\<in>positive_meaning stated_report_system"
-    using audit_valuation[OF holds] by blast
+    using positive_meaning_valuationE[OF holds] by blast
   have schema: "S=stated_report_schema" using clause by simp
   have calls: "(72,citation_observation_argument (h 0) (h 1) (h 2) (h 3))\<in>positive_meaning definition_call_admission_system"
     "(37,artifact_lookup_argument (h 0) (h 1) (h 4))\<in>positive_meaning artifact_lookup_system"
@@ -1970,7 +1970,7 @@ proof -
     else if n=12 then data_list_term (map Payload_Term Ks) else if n=13 then data_list_term (pattern_stated p)
     else data_list_term (map (\<lambda>(c,v). Pair_Term (Payload_Term c) v) ks)"
   have "(590,evaluate_pattern ?h (schema_conclusion stated_report_schema))\<in>positive_meaning stated_report_system"
-    by (rule audit_rule[where c=0, OF _ _ stated_report_schema_formed])
+    by (rule ordinary_positive_formed_step[where c=0, OF _ _ stated_report_schema_formed])
       (use formed operands more wformed lf kf admitted lookup rec rows scopedfact table head family_rows in
         \<open>simp_all add: stated_report_schema_def schema_variables_def stated_report_call stated_report_components\<close>)
   then show ?thesis by (simp add: stated_report_schema_def ks(4))

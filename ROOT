@@ -1623,6 +1623,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Keyed_Native_Evaluation
     Positioned_Native_Evaluation
     Shared_Native_Evaluation
+    Criticism_Samples
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
     Complete_Term_References

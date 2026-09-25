@@ -1,5 +1,5 @@
 theory Factor_Payload_Audit
-  imports Factor_Definition_Call_Admission Factor_Finite_Payload_Literals
+  imports Factor_Definition_Call_Admission Factor_Finite_Payload_Literals Factor_Use_Renaming
 begin
 
 section \<open>The payloads a term carries and an instance adds\<close>
@@ -960,6 +960,80 @@ corollary payload_audit_presentation_invariance:
   shows "(505,source_root_argument e u r)\<in>positive_meaning payload_audit_system \<longleftrightarrow>
     (505,source_root_argument f u r)\<in>positive_meaning payload_audit_system"
   using payload_audit_at_source[OF assms(1)] payload_audit_at_source[OF assms(2)] by simp
+
+section \<open>The audit is equivariant under permutations of uses\<close>
+
+text \<open>
+  The audit's argument is a site context (@{thm [source] source_root_presentation_class}), on which the
+  use instance's site context action acts. Its relation is the definition reading's at the site, as the
+  definition readers' copy at a renamed use gives it (@{thm [source] native_definition_use_renaming}, the
+  fact the definition reader's clause stands on), conjoined with a condition on the reading: the payloads
+  the definition states. A renaming relocates the definition's callees and moves no pattern, so the
+  payloads are kept; the audit compares no use itself, and the readers it calls compare the use only for
+  equality. The first problem's goal G4 is the callee boundary's instance at this relation.
+\<close>
+
+lemma schema_payloads_callee_renaming:
+  "schema_payloads (rename_schema id id g S)=schema_payloads S"
+proof -
+  have "schema_leaves (rename_schema id id g S)=schema_leaves S"
+    by (simp add: schema_leaves_def rename_schema_def map_socket_graph_def image_image split_def)
+  then show ?thesis by (simp add: schema_payloads_def)
+qed
+
+lemma definition_payloads_callee_renaming:
+  "definition_payloads p ((\<lambda>(s,A). (s,rename_schema id id g A)) ` C)=definition_payloads p C"
+  by (simp add: definition_payloads_def image_image split_def schema_payloads_callee_renaming)
+
+lemma native_definition_site_position:
+  assumes "native_definition_at E u r p C"
+  shows "(u,r)\<in>environment_positions E"
+  using assms by (auto simp: native_definition_at_def dest!: record_interior_in_carrier)
+
+theorem payload_audit_renamed:
+  assumes formed: "environment_formed E" and permutation: "bij h"
+  shows "(\<exists>p C. native_definition_at (rename_environment h E) (h u) r p C \<and> definition_payloads p C\<subseteq>{[]}) \<longleftrightarrow>
+    (\<exists>p C. native_definition_at E u r p C \<and> definition_payloads p C\<subseteq>{[]})"
+proof
+  assume "\<exists>p C. native_definition_at (rename_environment h E) (h u) r p C \<and> definition_payloads p C\<subseteq>{[]}"
+  then obtain p D where read: "native_definition_at (rename_environment h E) (h u) r p D"
+    and blank: "definition_payloads p D\<subseteq>{[]}" by blast
+  obtain C where original: "native_definition_at E u r p C"
+    and moved: "D=(\<lambda>(s,A). (s,rename_schema id id (map_prod h id) A)) ` C"
+    using read unfolding native_definition_use_renaming[OF formed permutation] by blast
+  have "definition_payloads p C\<subseteq>{[]}" using blank by (simp add: moved definition_payloads_callee_renaming)
+  then show "\<exists>p C. native_definition_at E u r p C \<and> definition_payloads p C\<subseteq>{[]}" using original by blast
+next
+  assume "\<exists>p C. native_definition_at E u r p C \<and> definition_payloads p C\<subseteq>{[]}"
+  then obtain p C where original: "native_definition_at E u r p C" and blank: "definition_payloads p C\<subseteq>{[]}"
+    by blast
+  have read: "native_definition_at (rename_environment h E) (h u) r p
+      ((\<lambda>(s,A). (s,rename_schema id id (map_prod h id) A)) ` C)"
+    by (rule native_definition_renamed_use[OF formed bij_is_inj[OF permutation] original])
+  have "definition_payloads p ((\<lambda>(s,A). (s,rename_schema id id (map_prod h id) A)) ` C)\<subseteq>{[]}"
+    using blank by (simp add: definition_payloads_callee_renaming)
+  then show "\<exists>p C. native_definition_at (rename_environment h E) (h u) r p C \<and> definition_payloads p C\<subseteq>{[]}"
+    using read by blast
+qed
+
+theorem payload_audit_equivariant:
+  "renaming_equivariant bij site_context_renaming site_context_formed
+    (\<lambda>z. \<exists>p C. native_definition_at (fst z) (fst (snd z)) (snd (snd z)) p C \<and> definition_payloads p C\<subseteq>{[]})"
+  by (auto simp: renaming_equivariant_def product_action_def payload_audit_renamed)
+
+corollary payload_audit_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence source_root_presents site_context_renaming h) (=)
+    (\<lambda>z. (505,z)\<in>positive_meaning payload_audit_system) (\<lambda>z. (505,z)\<in>positive_meaning payload_audit_system)"
+proof -
+  have exact: "\<And>p. (505,p)\<in>positive_meaning payload_audit_system \<longleftrightarrow>
+      presented_predicate source_root_presents
+        (\<lambda>z. \<exists>p C. native_definition_at (fst z) (fst (snd z)) (snd (snd z)) p C \<and> definition_payloads p C\<subseteq>{[]}) p"
+    by (simp add: payload_audit_exact presented_predicate_def source_root_presents_def split_paired_Ex
+      del: environment_positions_member; blast dest: native_definition_site_position)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF source_root_presentation_class site_context_renaming_action
+      exact] payload_audit_equivariant])
+qed
 
 section \<open>The HOL counterpart of one definition's payloads\<close>
 

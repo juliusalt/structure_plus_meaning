@@ -1,5 +1,5 @@
 theory Factor_Schema_Instantiation
-  imports Factor_Premise_Family_Instantiation
+  imports Factor_Premise_Family_Instantiation Factor_Use_Renaming
 begin
 
 section \<open>The actual schema and all of its instantiated operands\<close>
@@ -523,5 +523,218 @@ text \<open>
   with complete formed bindings has an instance. Material satisfaction and
   the formation and truth of prospective calls remain separate judgments.
 \<close>
+
+section \<open>Schema instantiation is equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument holds the environment and the use of the schema's site, which a permutation renames; the
+  address, the binding table, the instance's term and its material rows, exact values it leaves alone; and
+  the prospective call rows, whose callee sites it renames by the site action. The schema read at the
+  renamed use is the definition readers' copy (@{thm [source] use_renaming_syntax_copy},
+  @{text copy_schema}) with its callees relocated and its binders and sockets unchanged, and relocating the
+  callees keeps every instance with its call rows relocated, and every material premise.
+\<close>
+
+lemma native_schema_renamed_use:
+  assumes formed: "environment_formed E" and injective: "inj h" and schema: "native_schema_at E u r S"
+  shows "native_schema_at (rename_environment h E) (h u) r (rename_schema id id (map_prod h id) S)"
+proof -
+  obtain R where source: "artifact_at E u R" using schema by (auto simp: native_schema_at_def)
+  interpret copy: native_syntax_copy E u R "rename_environment h E" "h u" R id "map_prod h id"
+    by (rule use_renaming_syntax_copy[OF formed source injective])
+  show ?thesis using copy.copy_schema[OF schema] by simp
+qed
+
+theorem native_schema_use_renaming:
+  assumes formed: "environment_formed E" and permutation: "bij h"
+  shows "native_schema_at (rename_environment h E) (h u) r T \<longleftrightarrow>
+    (\<exists>S. native_schema_at E u r S \<and> T=rename_schema id id (map_prod h id) S)"
+proof
+  assume renamed: "native_schema_at (rename_environment h E) (h u) r T"
+  have injective: "inj h" by (rule bij_is_inj[OF permutation])
+  have inverse_injective: "inj (inv h)" by (rule bij_is_inj[OF bij_imp_bij_inv[OF permutation]])
+  have renamed_formed: "environment_formed (rename_environment h E)"
+    by (rule environment_renaming_formed[OF formed injective])
+  have inverse_environment: "rename_environment (inv h) (rename_environment h E)=E"
+    by (simp only: rename_environment_comp[symmetric] inv_o_cancel[OF injective] rename_environment_id)
+  have inverse_use: "inv h (h u)=u" by (rule inv_f_f[OF injective])
+  let ?S="rename_schema id id (map_prod (inv h) id) T"
+  have original: "native_schema_at E u r ?S"
+    using native_schema_renamed_use[OF renamed_formed inverse_injective renamed]
+    by (simp only: inverse_environment inverse_use)
+  have renamed_again: "native_schema_at (rename_environment h E) (h u) r (rename_schema id id (map_prod h id) ?S)"
+    by (rule native_schema_renamed_use[OF formed injective original])
+  have "T=rename_schema id id (map_prod h id) ?S" by (rule native_schema_unique[OF renamed renamed_again])
+  then show "\<exists>S. native_schema_at E u r S \<and> T=rename_schema id id (map_prod h id) S" using original by blast
+next
+  assume "\<exists>S. native_schema_at E u r S \<and> T=rename_schema id id (map_prod h id) S"
+  then show "native_schema_at (rename_environment h E) (h u) r T"
+    using native_schema_renamed_use[OF formed bij_is_inj[OF permutation]] by blast
+qed
+
+lemma rename_schema_callee_material:
+  "schema_material_premises (rename_schema id id g S)=schema_material_premises S"
+  by (auto simp: rename_schema_def)
+
+lemma schema_instance_callee_renaming:
+  assumes injective: "inj g"
+  shows "schema_instance (rename_schema id id g S) V t (map_socket_graph id g id Q) \<longleftrightarrow> schema_instance S V t Q"
+proof
+  assume "schema_instance (rename_schema id id g S) V t (map_socket_graph id g id Q)"
+  from schema_instance_renaming[OF this inj_on_id inj_on_id, where g="inv g"]
+  show "schema_instance S V t Q"
+    by (simp add: rename_schema_composition map_socket_graph_composition inv_o_cancel[OF injective]
+      rename_term_bindings_def map_socket_graph_keys prod.map_id0)
+next
+  assume "schema_instance S V t Q"
+  from schema_instance_renaming[OF this inj_on_id inj_on_id, where g=g]
+  show "schema_instance (rename_schema id id g S) V t (map_socket_graph id g id Q)"
+    by (simp add: rename_term_bindings_def)
+qed
+
+abbreviation instantiation_call_row_renaming ::
+    "(local_address option \<Rightarrow> local_address option) \<Rightarrow>
+      local_address \<times> (local_address option definition_site \<times> factor_term) \<Rightarrow>
+      local_address \<times> (local_address option definition_site \<times> factor_term)" where
+  "instantiation_call_row_renaming \<equiv> product_action (\<lambda>h a. a) (product_action (\<lambda>h. map_prod h id) (\<lambda>h a. a))"
+
+lemma call_rows_socket_graph:
+  "instantiation_call_row_renaming h ` A=map_socket_graph id (map_prod h id) id A"
+  unfolding map_socket_graph_def
+  by (rule image_cong) (auto simp: product_action_def map_prod_def split: prod.splits)
+
+lemma schema_instantiation_renamed:
+  assumes formed: "environment_formed E" and permutation: "bij h"
+  shows "(\<exists>S. native_schema_at (rename_environment h E) (h u) r S \<and>
+      schema_instance S B t (set (map (instantiation_call_row_renaming h) qs)) \<and>
+      C=material_instance_relation B (schema_material_premises S)) \<longleftrightarrow>
+    (\<exists>S. native_schema_at E u r S \<and> schema_instance S B t (set qs) \<and>
+      C=material_instance_relation B (schema_material_premises S))"
+  by (auto simp: native_schema_use_renaming[OF formed permutation] call_rows_socket_graph
+    rename_schema_callee_material
+    schema_instance_callee_renaming[OF renamed_site_injective[OF bij_is_inj[OF permutation]]])
+
+type_synonym instantiation_subject = "(local_address option artifact_environment \<times> local_address option) \<times>
+  local_address \<times> (local_address \<times> factor_term) list \<times> factor_term \<times>
+  (local_address \<times> local_address option definition_site \<times> factor_term) list \<times> (local_address \<times> factor_term) list"
+
+abbreviation schema_instantiation_presents :: "instantiation_subject \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "schema_instantiation_presents \<equiv> factor_pair_presents
+    (factor_pair_presents environment_value_presents (\<lambda>u t. t=use_data_term u))
+    (factor_pair_presents (\<lambda>r t. t=Payload_Term r) (factor_pair_presents (\<lambda>xs t. t=binding_rows_term xs)
+      (factor_pair_presents (\<lambda>x t. t=x) (factor_pair_presents (\<lambda>qs t. t=call_instance_rows_term qs)
+        (\<lambda>cs t. t=binding_rows_term cs)))))"
+
+abbreviation instantiation_argument_renaming ::
+    "(local_address option \<Rightarrow> local_address option) \<Rightarrow> instantiation_subject \<Rightarrow> instantiation_subject" where
+  "instantiation_argument_renaming \<equiv> product_action (product_action rename_environment (\<lambda>h. h))
+    (product_action (\<lambda>h a. a) (product_action (\<lambda>h a. a) (product_action (\<lambda>h a. a)
+      (product_action (\<lambda>h. map (instantiation_call_row_renaming h)) (\<lambda>h a. a)))))"
+
+abbreviation schema_instantiation_relation :: "instantiation_subject \<Rightarrow> bool" where
+  "schema_instantiation_relation z \<equiv>
+    distinct (fst (snd (snd z))) \<and> distinct (fst (snd (snd (snd (snd z))))) \<and>
+    distinct (snd (snd (snd (snd (snd z))))) \<and>
+    (\<exists>S. native_schema_at (fst (fst z)) (snd (fst z)) (fst (snd z)) S \<and>
+      schema_instance S (set (fst (snd (snd z)))) (fst (snd (snd (snd z)))) (set (fst (snd (snd (snd (snd z)))))) \<and>
+      set (snd (snd (snd (snd (snd z)))))=material_instance_relation (set (fst (snd (snd z))))
+        (schema_material_premises S))"
+
+theorem schema_instantiation_equivariant:
+  "renaming_equivariant bij instantiation_argument_renaming (\<lambda>z. environment_formed (fst (fst z)))
+    schema_instantiation_relation"
+  unfolding renaming_equivariant_def
+proof (intro allI impI)
+  fix h :: "local_address option \<Rightarrow> local_address option" and z :: instantiation_subject
+  assume h: "bij h" and formed: "environment_formed (fst (fst z))"
+  have site_injective: "inj (map_prod h id)" by (rule renamed_site_injective[OF bij_is_inj[OF h]])
+  have rows: "inj_on (instantiation_call_row_renaming h) A" for A
+  proof (rule inj_onI)
+    fix x y assume same: "instantiation_call_row_renaming h x=instantiation_call_row_renaming h y"
+    then have fields: "fst x=fst y" "map_prod h id (fst (snd x))=map_prod h id (fst (snd y))"
+      "snd (snd x)=snd (snd y)"
+      by (simp_all add: product_action_def)
+    have "fst (snd x)=fst (snd y)" using injD[OF site_injective fields(2)] .
+    then show "x=y" using fields(1,3) by (simp add: prod_eq_iff)
+  qed
+  show "schema_instantiation_relation (instantiation_argument_renaming h z) \<longleftrightarrow> schema_instantiation_relation z"
+    using schema_instantiation_renamed[OF formed h, of "snd (fst z)" "fst (snd z)" "set (fst (snd (snd z)))"
+      "fst (snd (snd (snd z)))" "fst (snd (snd (snd (snd z))))" "set (snd (snd (snd (snd (snd z)))))"]
+    by (simp add: product_action_def distinct_map rows)
+qed
+
+corollary schema_instantiation_renaming:
+  "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence schema_instantiation_presents instantiation_argument_renaming h) (=)
+    (\<lambda>z. (65,z)\<in>positive_meaning schema_instantiation_system)
+    (\<lambda>z. (65,z)\<in>positive_meaning schema_instantiation_system)"
+proof -
+  have operand: "presentation_class (\<lambda>x t. t=x) (\<lambda>_::factor_term. True) (\<lambda>_. True)"
+    by unfold_locales auto
+  have binding_injective: "inj binding_rows_term"
+    by (rule injI) (erule binding_rows_term_injective[THEN iffD1])
+  have call_injective: "inj call_instance_rows_term"
+    by (rule injI) (erule call_instance_rows_term_injective[THEN iffD1])
+  have bindings: "presentation_class (\<lambda>xs t. t=binding_rows_term xs) (\<lambda>_::(local_address \<times> factor_term) list. True)
+      (\<lambda>t. \<exists>xs. t=binding_rows_term xs)"
+    using injective_presentation_class[where f=binding_rows_term
+      and D="\<lambda>_::(local_address \<times> factor_term) list. True", OF inj_on_subset[OF binding_injective subset_UNIV]]
+    by simp
+  have calls: "presentation_class (\<lambda>qs t. t=call_instance_rows_term qs)
+      (\<lambda>_::(local_address \<times> local_address option definition_site \<times> factor_term) list. True)
+      (\<lambda>t. \<exists>qs. t=call_instance_rows_term qs)"
+    using injective_presentation_class[where f=call_instance_rows_term
+      and D="\<lambda>_::(local_address \<times> local_address option definition_site \<times> factor_term) list. True",
+      OF inj_on_subset[OF call_injective subset_UNIV]]
+    by simp
+  have presented: "presentation_class schema_instantiation_presents (\<lambda>z. environment_formed (fst (fst z)))
+      (\<lambda>p. \<exists>z. schema_instantiation_presents z p)"
+    using presentation_class.recovered_admission[OF factor_pair_class[OF factor_pair_class[OF
+      environment_presentations.presentation_class_axioms use_coordinate_presentation]
+      factor_pair_class[OF address_coordinate_presentation factor_pair_class[OF bindings
+        factor_pair_class[OF operand factor_pair_class[OF calls bindings]]]]]] by simp
+  have action: "renaming_action bij instantiation_argument_renaming (\<lambda>z. environment_formed (fst (fst z)))"
+    using renaming_action_product[OF renaming_action_product[OF environment_renaming_action use_renaming_action]
+      renaming_action_product[OF permutation_renaming_action[where D="\<lambda>_::local_address. True"]
+        renaming_action_product[OF permutation_renaming_action[where D="\<lambda>_::(local_address \<times> factor_term) list. True"]
+          renaming_action_product[OF permutation_renaming_action[where D="\<lambda>_::factor_term. True"]
+            renaming_action_product[OF renaming_action_lists[OF renaming_action_product[OF
+              permutation_renaming_action[where D="\<lambda>_::local_address. True"]
+              renaming_action_product[OF site_renaming_action
+                permutation_renaming_action[where D="\<lambda>_::factor_term. True"]]]]
+              permutation_renaming_action[where D="\<lambda>_::(local_address \<times> factor_term) list. True"]]]]]]
+    by simp
+  have exact: "(65,p)\<in>positive_meaning schema_instantiation_system \<longleftrightarrow>
+      presented_predicate schema_instantiation_presents schema_instantiation_relation p" for p
+  proof
+    assume "(65,p)\<in>positive_meaning schema_instantiation_system"
+    then obtain E e u r xs S t qs cs where
+      p: "p=schema_instantiation_argument e (use_data_term u) (Payload_Term r) (binding_rows_term xs) t
+        (call_instance_rows_term qs) (binding_rows_term cs)"
+      and source: "environment_value_presents E e"
+      and rows: "distinct xs" "distinct qs" "distinct cs"
+      and schema: "native_schema_at E u r S" "schema_instance S (set xs) t (set qs)"
+        "set cs=material_instance_relation (set xs) (schema_material_premises S)"
+      unfolding schema_instantiation_exact by blast
+    have "schema_instantiation_presents ((E,u),(r,(xs,(t,(qs,cs))))) p"
+      using p source by (simp add: factor_pair_presents_def)
+    moreover have "schema_instantiation_relation ((E,u),(r,(xs,(t,(qs,cs)))))"
+      using rows schema by auto
+    ultimately show "presented_predicate schema_instantiation_presents schema_instantiation_relation p"
+      unfolding presented_predicate_def by blast
+  next
+    assume "presented_predicate schema_instantiation_presents schema_instantiation_relation p"
+    then obtain z where presents: "schema_instantiation_presents z p" and holds: "schema_instantiation_relation z"
+      unfolding presented_predicate_def by blast
+    obtain e where source: "environment_value_presents (fst (fst z)) e" and p: "p=schema_instantiation_argument e
+        (use_data_term (snd (fst z))) (Payload_Term (fst (snd z))) (binding_rows_term (fst (snd (snd z))))
+        (fst (snd (snd (snd z)))) (call_instance_rows_term (fst (snd (snd (snd (snd z))))))
+        (binding_rows_term (snd (snd (snd (snd (snd z))))))"
+      using presents by (auto simp: factor_pair_presents_def)
+    show "(65,p)\<in>positive_meaning schema_instantiation_system"
+      unfolding schema_instantiation_exact using p source holds by blast
+  qed
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF presented action exact] schema_instantiation_equivariant])
+qed
 
 end

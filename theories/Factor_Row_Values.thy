@@ -1,5 +1,5 @@
 theory Factor_Row_Values
-  imports Factor_Application_Reading
+  imports Factor_Application_Reading Presentation_Equivariance Factor_Presentation_Classes
 begin
 
 section \<open>Complete row values retain their order and multiplicity\<close>
@@ -133,5 +133,50 @@ text \<open>
   term, including a literal target. No data-only recognizer restricts the result.
   All earlier meanings remain unchanged.
 \<close>
+
+section \<open>Row values are equivariant under permutations of uses\<close>
+
+text \<open>
+  The argument is a row list and a value list, formed terms in which no use is read: a permutation of
+  uses acts on them trivially, and the relation the exact contract states, the values being the rows'
+  second components, is kept by every permutation. The class pairs the rows' and the values' injective
+  data lists.
+\<close>
+
+abbreviation row_values_presents :: "(factor_term \<times> factor_term) list \<times> factor_term list \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "row_values_presents \<equiv> factor_pair_presents (\<lambda>xs t. term_formed (pair_list_term xs) \<and> t=pair_list_term xs)
+    (\<lambda>ys t. t=data_list_term ys)"
+
+lemma row_values_presentation_class:
+  "presentation_class row_values_presents (\<lambda>z. term_formed (pair_list_term (fst z)))
+    (\<lambda>p. \<exists>z. row_values_presents z p)"
+proof -
+  have rows: "presentation_class (\<lambda>xs t. term_formed (pair_list_term xs) \<and> t=pair_list_term xs)
+      (\<lambda>xs. term_formed (pair_list_term xs)) (\<lambda>t. \<exists>xs. term_formed (pair_list_term xs) \<and> t=pair_list_term xs)"
+    by (rule injective_presentation_class) (simp add: inj_on_def pair_list_term_injective)
+  have listed: "presentation_class (\<lambda>ys t. t=data_list_term ys) (\<lambda>_::factor_term list. True)
+      (\<lambda>t. \<exists>ys. t=data_list_term ys)"
+    using injective_presentation_class[where f=data_list_term and D="\<lambda>_::factor_term list. True"]
+    by (simp add: inj_on_def data_list_term_injective)
+  show ?thesis using presentation_class.recovered_admission[OF factor_pair_class[OF rows listed]] by simp
+qed
+
+theorem row_values_equivariant:
+  "renaming_equivariant (bij :: (local_address option \<Rightarrow> local_address option) \<Rightarrow> bool) (\<lambda>h z. z)
+    (\<lambda>z. term_formed (pair_list_term (fst z))) (\<lambda>z. snd z=map snd (fst z))"
+  by (simp add: renaming_equivariant_def)
+
+corollary row_values_renaming:
+  "\<forall>h::local_address option \<Rightarrow> local_address option. bij h \<longrightarrow>
+    rel_fun (renaming_correspondence row_values_presents (\<lambda>h z. z) h) (=)
+      (\<lambda>t. (59,t)\<in>positive_meaning row_values_system) (\<lambda>t. (59,t)\<in>positive_meaning row_values_system)"
+proof -
+  have exact: "\<And>p. (59,p)\<in>positive_meaning row_values_system \<longleftrightarrow>
+      presented_predicate row_values_presents (\<lambda>z. snd z=map snd (fst z)) p"
+    by (simp add: row_values_exact presented_predicate_def factor_pair_presents_def split_paired_Ex; blast)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF row_values_presentation_class permutation_renaming_action exact]
+      row_values_equivariant])
+qed
 
 end

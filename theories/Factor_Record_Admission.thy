@@ -590,4 +590,32 @@ text \<open>
   grammar, correctness evidence, and protocol admission remain separate.
 \<close>
 
+section \<open>Record admission is equivariant under permutations of uses\<close>
+
+text \<open>
+  The record reader reads the family reader's argument, exact values in which no use occurs: a
+  permutation of uses acts on it trivially, and the relation the exact contract states is kept by every
+  permutation, over the family reader's class (@{thm [source] rooted_rows_presentation_class}).
+\<close>
+
+theorem record_admission_equivariant:
+  "renaming_equivariant (bij :: (local_address option \<Rightarrow> local_address option) \<Rightarrow> bool) (\<lambda>h z. z)
+    (\<lambda>z. exact_formed (fst (fst z)))
+    (\<lambda>z. record_at (fst (fst z)) (snd (fst z)) (map fst (snd z)) (map snd (snd z)))"
+  by (simp add: renaming_equivariant_def)
+
+corollary record_admission_renaming:
+  "\<forall>h::local_address option \<Rightarrow> local_address option. bij h \<longrightarrow>
+    rel_fun (renaming_correspondence rooted_rows_presents (\<lambda>h z. z) h) (=)
+      (\<lambda>t. (34,t)\<in>positive_meaning record_admission_system) (\<lambda>t. (34,t)\<in>positive_meaning record_admission_system)"
+proof -
+  have exact: "\<And>p. (34,p)\<in>positive_meaning record_admission_system \<longleftrightarrow>
+      presented_predicate rooted_rows_presents
+        (\<lambda>z. record_at (fst (fst z)) (snd (fst z)) (map fst (snd z)) (map snd (snd z))) p"
+    by (simp add: record_admission_exact presented_predicate_def factor_pair_presents_def split_paired_Ex; blast)
+  show ?thesis
+    by (rule iffD2[OF presented_predicate_renaming[OF rooted_rows_presentation_class permutation_renaming_action exact]
+      record_admission_equivariant])
+qed
+
 end

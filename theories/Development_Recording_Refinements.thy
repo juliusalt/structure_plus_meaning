@@ -51,7 +51,8 @@ lemma finite_construct_quoted_generation_whole:
 
 text \<open>
   The payload's quotation forms R from the term's formation. The listing policy's source is constructed only
-  over formed presentations, so a judgment of R under the original is made only of a formed R: the fact the
+  over formed presentations, so a judgment of R under the original is made only of a formed R
+  (@{thm [source] development_bounded_policy_judgment_formed}, a law of the bounded judgment): the fact the
   recording of a term that is not formed rests on, whose check that recording keeps.
 \<close>
 
@@ -62,19 +63,6 @@ lemma finite_data_syntax_quotation_formed:
   by (simp add: finite_exact_formed_correct)
 
 
-lemma development_bounded_policy_judgment_formed:
-  assumes judged: "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some j"
-  shows "finite_exact_formed R"
-proof -
-  obtain d K pu B au root J C where j: "j=(d,K,pu,B,au,root,J,C)" by (metis prod.collapse)
-  obtain p A M G I W F0 V where policy: "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
-    and "development_policy_certificate K pu d R=Some p"
-    and "finite_native_certificate_replay K pu [] p d (Finite_Target (Finite_Whole R))=Some (A,M,root,G,au,I,W,B)"
-    and "finite_bounded_judgment_quote B pu [] au [] R=Some (J,F0,V,C)"
-    and "replay_policy_condition K pu [] d R J pu [] au []"
-    by (rule development_bounded_policy_judgment_result[OF judged[unfolded j]])
-  show ?thesis using development_policy_source_with_formed[OF policy] by simp
-qed
 
 section \<open>The listing policy's source over formed presentations\<close>
 
@@ -91,15 +79,25 @@ lemma finite_ground_source_checked_premise:
   "checked_premise finite_ground_source (list_all finite_term_formed) finite_ground_source_body (\<lambda>xs. None)"
   by unfold_locales (simp_all add: finite_ground_source_def finite_ground_source_body_def)
 
+text \<open>
+  The listing policy's source is stated once over its two installations, the ground installation of the listed
+  presentations and the requirements' installation over the ground source's entry: the read source here and the
+  formed source below (@{text development_formed_policy_source}) are its two instances.
+\<close>
+
+definition development_installed_policy_source where
+  "development_installed_policy_source ground install xs=(case ground xs of None \<Rightarrow> None
+    | Some (d,F,u) \<Rightarrow> install F u [] [Existing_Admission d])"
+
 definition development_read_policy_source where
-  "development_read_policy_source xs=(case finite_ground_source_body xs of None \<Rightarrow> None
-    | Some (d,F,u) \<Rightarrow> finite_construct_source_requirements F u [] [Existing_Admission d])"
+  "development_read_policy_source xs=
+    development_installed_policy_source finite_ground_source_body finite_construct_source_requirements xs"
 
 lemma development_read_policy_source_exact:
   assumes "list_all finite_term_formed xs"
   shows "development_read_policy_source xs=development_policy_source_with xs"
-  using assms by (simp add: development_read_policy_source_def development_policy_source_with_def
-    finite_ground_source_def finite_ground_source_body_def)
+  using assms by (simp add: development_read_policy_source_def development_installed_policy_source_def
+    development_policy_source_with_def finite_ground_source_def finite_ground_source_body_def)
 
 lemma development_policy_source_with_environment:
   assumes policy: "development_policy_source_with xs=Some (d,K,pu)"
@@ -442,9 +440,16 @@ qed
 
 section \<open>The bounded judgment over formed presentations of a formed payload\<close>
 
-definition development_read_policy_judgment ::
-    "finite_factor_term list \<Rightarrow> finite_exact_artifact \<Rightarrow> development_policy_judgment option" where
-  "development_read_policy_judgment xs R=(case development_read_policy_source xs of
+text \<open>
+  The judgment over formed presentations of a formed payload is stated once over the policy source it reads: the
+  read judgment here and the formed judgment below (@{text development_formed_policy_judgment}) are its two
+  instances, at the read source and at the formed source.
+\<close>
+
+definition development_sourced_policy_judgment ::
+    "(local_address option definition_site\<times>local_address option finite_artifact_environment\<times>local_address option) option
+      \<Rightarrow> finite_exact_artifact \<Rightarrow> development_policy_judgment option" where
+  "development_sourced_policy_judgment s R=(case s of
      None \<Rightarrow> None
    | Some (d,K,pu) \<Rightarrow> (case finite_native_source_inner K pu [] of
        None \<Rightarrow> None
@@ -454,21 +459,26 @@ definition development_read_policy_judgment ::
          | Some (A,M,root,G,au,I,W,B) \<Rightarrow>
              map_option (\<lambda>(J,F0,V,C). (d,K,pu,B,au,root,J,C)) (finite_bounded_quote_at P B pu au R))))"
 
+definition development_read_policy_judgment ::
+    "finite_factor_term list \<Rightarrow> finite_exact_artifact \<Rightarrow> development_policy_judgment option" where
+  "development_read_policy_judgment xs R=development_sourced_policy_judgment (development_read_policy_source xs) R"
+
 theorem development_read_policy_judgment_exact:
   assumes listed: "list_all finite_term_formed xs" and payload: "finite_exact_formed R"
   shows "development_read_policy_judgment xs R=development_bounded_policy_judgment xs R"
 proof (cases "development_policy_source_with xs")
   case None
   then show ?thesis
-    by (simp add: development_read_policy_judgment_def development_bounded_policy_judgment_def
-      development_read_policy_source_exact[OF listed])
+    by (simp add: development_read_policy_judgment_def development_sourced_policy_judgment_def
+      development_bounded_policy_judgment_def development_read_policy_source_exact[OF listed])
 next
   case (Some s)
   obtain d K pu where s: "s=(d,K,pu)" by (cases s) blast
   have policy: "development_policy_source_with xs=Some (d,K,pu)" using Some s by simp
   have K: "finite_environment_formed K" by (rule development_policy_source_with_environment[OF policy])
   have called: "finite_term_formed (Finite_Target (Finite_Whole R))" using payload by simp
-  note judgment_defs=development_read_policy_judgment_def development_bounded_policy_judgment_def
+  note judgment_defs=development_read_policy_judgment_def development_sourced_policy_judgment_def
+    development_bounded_policy_judgment_def
     development_read_policy_source_exact[OF listed] policy finite_native_source_inner_exact[OF K, symmetric]
   show ?thesis
   proof (cases "finite_native_source K pu []")
@@ -703,8 +713,8 @@ next
 qed
 
 definition development_formed_policy_source where
-  "development_formed_policy_source xs=(case finite_ground_source_formed xs of None \<Rightarrow> None
-    | Some (d,F,u) \<Rightarrow> finite_formed_source_requirements F u [] [Existing_Admission d])"
+  "development_formed_policy_source xs=
+    development_installed_policy_source finite_ground_source_formed finite_formed_source_requirements xs"
 
 lemma development_formed_policy_source_exact:
   assumes listed: "list_all finite_term_formed xs"
@@ -716,7 +726,8 @@ proof -
   show ?thesis
   proof (cases "finite_ground_source_formed xs")
     case None
-    then show ?thesis by (simp add: development_formed_policy_source_def development_policy_source_with_def ground)
+    then show ?thesis by (simp add: development_formed_policy_source_def development_installed_policy_source_def
+      development_policy_source_with_def ground)
   next
     case (Some g)
     obtain d F u where g: "g=(d,F,u)" by (cases g) blast
@@ -727,22 +738,14 @@ proof -
       using finite_install_source_entry_correct[OF entry finite_ground_source_context[OF listed]] by blast
     show ?thesis
       using Some g ground
-      by (simp add: development_formed_policy_source_def development_policy_source_with_def
-        finite_formed_source_requirements_exact[OF F])
+      by (simp add: development_formed_policy_source_def development_installed_policy_source_def
+        development_policy_source_with_def finite_formed_source_requirements_exact[OF F])
   qed
 qed
 
 definition development_formed_policy_judgment ::
     "finite_factor_term list \<Rightarrow> finite_exact_artifact \<Rightarrow> development_policy_judgment option" where
-  "development_formed_policy_judgment xs R=(case development_formed_policy_source xs of
-     None \<Rightarrow> None
-   | Some (d,K,pu) \<Rightarrow> (case finite_native_source_inner K pu [] of
-       None \<Rightarrow> None
-     | Some P \<Rightarrow> Option.bind (development_policy_certificate_at P d R) (\<lambda>p.
-         case finite_certificate_replay_at K P pu p d (Finite_Target (Finite_Whole R)) of
-           None \<Rightarrow> None
-         | Some (A,M,root,G,au,I,W,B) \<Rightarrow>
-             map_option (\<lambda>(J,F0,V,C). (d,K,pu,B,au,root,J,C)) (finite_bounded_quote_at P B pu au R))))"
+  "development_formed_policy_judgment xs R=development_sourced_policy_judgment (development_formed_policy_source xs) R"
 
 lemma development_formed_policy_judgment_exact:
   assumes listed: "list_all finite_term_formed xs"

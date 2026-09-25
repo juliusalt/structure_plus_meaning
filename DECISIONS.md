@@ -16157,3 +16157,33 @@ imports: a whole rebuild, batched with other work where the planner can.
 - Native derivation admission's own head coverage was not computed.
 
 Recorded 2026-09-25 (task 460's decision; a design, no theory changes).
+
+## The criticism's sample over a base: a table exact at the sample's calls, and a diagnosis in place of a table
+
+Task 478, build S1 of "The native evaluator evaluates above an implemented base" (decision 5).
+
+- **One property of a table.** The record and the refutations read a table only through one property: at every
+  call of the sample it holds the call exactly when the decoded program's positive meaning does
+  (`Criticism_Samples.criticism_exact_table`). Their meaning is stated once over it (`exact_table_record_meaning`,
+  `exact_table_row_refutes`, `exact_table_row_refutes_presentation`, `exact_table_reversal_row_refutes`); the plain
+  table has it (`criticism_table_exact_table`) and its lemmas are now instances, their statements unchanged; a table
+  over a base has it where the decision is exact at the demand's base calls (`criticism_decision_exact`,
+  `criticism_base_table_exact_table`, from E1's `native_base_evaluation_exact`). The alternative, deriving each
+  based lemma beside its plain one, would have repeated each argument.
+- **The sample over a base** is `native_base_evaluation` at the sample's calls (`criticism_base_evaluation`,
+  `criticism_base_table`); the empty base is the plain sample by equations (`criticism_base_evaluation_empty`,
+  `criticism_base_table_empty`), where every decision is exact (`criticism_decision_exact_empty`).
+- **An unavailable sample is diagnosed.** `criticism_diagnosis B P ds ps` is computed from the program, the base and
+  the sample alone: the program's formation, the demand's closure over the program above the base, and
+  `finite_uncovered_clauses` — every clause outside the base the demand reaches, with its site, key and premise-only
+  variables (`finite_schema_head_missing`), stated for any finite program and demand
+  (`finite_uncovered_clauses_covered`: heads cover exactly when there is none). No table exactly when the diagnosis is
+  not (True, True, empty) (`criticism_base_table_diagnosed`, `criticism_table_diagnosed`). The diagnosis is a record of
+  an unavailable sample: it is neither a failure row nor an empty table, and establishes nothing.
+- **Control.** E1's control program sampled at the root with the pair (empty payload, the payload [256], no octet
+  list): the plain sample is unavailable, its diagnosis `(True, True, {|((None,[2]),[0],{|[1]|})|})`; over the base
+  {(None,[2])} with the formation decision, proved exact at the one demanded base call, the table is
+  {root at [], witness at []} and the record the one row at the root, both set beside the program's meaning
+  (`criticism_base_control_meaning`). One evaluation executes it (2.65 s, `CRITICISM_CONTROL base`).
+
+Recorded 2026-09-25 (task 478).

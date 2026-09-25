@@ -63,7 +63,10 @@ and #422 landed):
   first generation is made twice (#453 landed, `303a9afa`). Before #399 and #447, design #460 decides how the
   guard's judgment, the audit's cost and the criticism's samples are evaluated where the native evaluator needs every
   premise variable bound by its clause's head (#441's q94: the audit's clauses and the Factor readers they call fail
-  it); #393 is told to record the evaluator's readiness at its (5) if it gets there first.
+  it); #460 (accepted) decided the evaluation over an implemented base (E1) with counterparts
+  exact to the native definitions at the given's reader entries (C1–C3, C4 by demand) and the sample over a base (S1);
+  #462 briefs them — E1, C1 and C2 first, C3 after C2, S1 after E1 — with #399 after E1 and C1–C3 and #447 after S1
+  and C4 and the stated-leaves reader's counterpart (#441's q95), their briefs corrected by it; #393 is mailed its corrections of (1) and (5).
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -102,7 +105,7 @@ by a task of their own (Open 100).
 #407 → #408; the approval build (Open 142) after #407 would end a chain of 7.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #460 and #455 at its head, then
+exists, Q2): the owner's directions first — the first problem's route, #462 and #455 at its head, then
 #393 and #395 after #455, and the rest in their chains' order, the first
 request's and the criticism's builds after them; then
 #457, #459 and #461, with #426 and #458 resuming as their checks return; each review after its build.
@@ -328,6 +331,16 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   an index's own search, the given's own searches reported as the given's (q92). Its review's follow-ups
   (`.build/tasks/433/review.md`): 1 answered by q92 (Open 140 stands); 2 (a closed search matched by its term, whatever
   program holds it) and 3 (open searches keyed by an unindexed presentation refused) mailed to #407.
+- **#460** (design, accepted): DECISIONS.md "The native evaluator evaluates above an implemented base: the given's
+  readers enter through counterparts exact to their native definitions" — head coverage computed from the programs (87
+  reader sites in the guard's reach, 42 covered, 8 evaluable; no call of the guard or of the audit answerable by the
+  plain evaluator), E1, C1–C4 and S1 with their sizes and order, the corrections of #393, #399, #447, #437, #439 and
+  #441 (mailed to #393, #439 and #441; #399's and #447's drafted by #462); its owner question is Q27.
+- **Landed with `2dc3e701`**: #437, `Criticism_Use_Samples`, the criticism's use sample (part (d)): h1 moving every
+  use outside by the fresh use map, h2 permuting the uses among themselves (`listed_permutation`), the refutation at a
+  row's own pair (`use_row_refutes`) and its site and entry corollaries. Its first verdict's follow-ups, overwritten by
+  the re-review (`.build/tasks/438/review.md`): the pair shapes mailed to #447, the order against #458 mailed to #458,
+  h1's zero prefix and the inequality control Open 149.
 - **Landed with `303a9afa`**: #453, `Development_Given_Program` — the given's readers joined with the readers task
   378's entry grants a request in one numbered program (`given_program_system`), its contracts and its finite
   presentation derived from its parts'; its review's follow-ups (`.build/tasks/454/review.md`): 1–3 are #461 (with
@@ -405,6 +418,9 @@ The owner's questions, a line each (their words and the provisional choices in f
 - **Q26** #383's three choices — non-nominality of a use as equivariance under use permutations; checked by Isabelle,
   a native sample in criticism, no fifth socket; uses staying structure, a use leaf in the term language the owner's to
   choose — provisional.
+- **Q27** #460's choice — the given's readers enter the judgment and the criticism through executable counterparts
+  proved exact to their native definitions, before a native evaluator constructing premise-only witnesses (Open 39) —
+  provisional.
 
 **To plan, in the order expected** (numbers kept from earlier states):
 
@@ -449,7 +465,11 @@ The owner's questions, a line each (their words and the provisional choices in f
 9. The plan's stages 4 and 5: the harness, the adoption tool and the checks have no notion in the state (what moves the
    active base; one run limit for every tool spawning Isabelle; the commit's evidence paragraph).
 39. Native production of a request body — forward evaluation of a functional native relation, an engine notion the
-   library lacks; until then producers are executors and the construction admits.
+   library lacks; until then producers are executors and the construction admits. Widened by #460's entry: native
+   evaluation of witness-style definitions — witness constructors for material witnesses, stored rows read back,
+   intermediate collections and existential witnesses, each with its completeness — its first step site 1's material
+   witness (ten covered sites of the guard's reach evaluable with it); sites move from a base to native evaluation as
+   it lands, no judgment changing (Q27). Native derivation admission's own head coverage is not computed.
 40. Currentness of a request after an admitted answer: not designed.
 49. Origins and authorities no construction assigns yet (item 30 with it): the observation naming one is owed at the
    first construction that assigns one — the owner records (#385) are the first.
@@ -588,7 +608,9 @@ through `renaming_action.act_inverse` and `act_inverse_right`, its local inclusi
 reversal (#435's review, `.build/tasks/436/review.md`). 147 the new whole agreements of existing view chains
 (`positive_complete_data_agreement`, `replay_positive_agreement`, `derivation_replay_agreement`,
 `application_derivation_agreement`, `call_application_agreement`, `comparison_located_agreement`) moved with their
-programs' theories when those are next touched (#454's review, follow-up 2).
+programs' theories when those are next touched (#454's review, follow-up 2). 149 #438's first verdict, overwritten
+by its re-review, of which only the summary stands: h1's zero prefix and the inequality control in
+`Criticism_Use_Samples`, at its next edit.
 
 ## Now
 
@@ -604,7 +626,7 @@ programs' theories when those are next touched (#454's review, follow-up 2).
   `finite_given_readers_def`; each view's `_formed` lemma in the simpset and `bases=` checked), #407 (the frame as #432
   and #433 leave it). By plan-66: to #455 (#452's review, follow-ups 1 and 4: one `value`, `given_readers_fresh(2)`;
   #454's follow-up 4: the evaluation measured where the duplicated terms are evaluated), #393 (`given_readers_fresh(2)`;
-  its (5) under head coverage, #460), #395 (`given_environment_not_closed`, `given_retention_refused`), #447 (#436's
+  its (5) under head coverage, #460, then #460's corrections of (1) and (5)), #439 and #441 (#460's corrections), #395 (`given_environment_not_closed`, `given_retention_refused`), #447 (#436's
   first follow-up).
 
 
@@ -616,7 +638,7 @@ programs' theories when those are next touched (#454's review, follow-up 2).
   brief's task ran (#324; #315 exported them again from its proof context); the finalizer's push of `82a065cd` failed;
   the finalizer should commit the handed-over files only (#303's tree held untracked `.bashrc` and others); the
   exclusive hold outlasts its run (#317); a tree behind main cannot probe until it brings main in (#316); a re-review
-  writes over its first verdict (#65's, #302's); `v2.py ledger` records a text beginning with `--` (Q15); a task tree's `.claude/orchestration/owner-ledger.md` holds
+  writes over its first verdict (#65's, #302's, #438's, whose follow-ups survive only as the re-review's summary); `v2.py ledger` records a text beginning with `--` (Q15); a task tree's `.claude/orchestration/owner-ledger.md` holds
 none of the owner records' entries, only main's does, so a tool reading the ledger in a task tree reads a stale copy
 (#386's review, follow-up 4); a queued exclusive claim can be granted after the base advanced, refusing the probe
 launched at the grant (#425; pinning `--base` at the claim avoids it); the restated check does not name a restatement

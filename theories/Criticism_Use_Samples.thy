@@ -500,16 +500,9 @@ definition use_control_reading :: "unit \<Rightarrow> bool list" where
         (use_control_equality_entry,fst e1) |\<in>| A,(use_control_equality_entry,snd e1) |\<in>| A,
         (use_control_equality_entry,snd e2) |\<in>| A]))"
 
-ML \<open>
-  local
-    val (time, result) = Timing.timing @{code use_control_reading} ()
-    val shown = ML_Syntax.print_list Bool.toString result
-  in
-    val _ =
-      if result = [true, true, true, true, true, true, true, true, true]
-      then writeln ("USE_SAMPLE_CONTROL reading " ^ shown ^ " " ^ Timing.message time)
-      else error ("Use sample control differs: " ^ shown)
-  end
+text \<open>
+  The reading is executed in @{text Factor_Finite_Site_Value_Reader_Controls}, one conjunct of the one
+  evaluation of the native evaluator's controls; a library theory runs no evaluation.
 \<close>
 
 end

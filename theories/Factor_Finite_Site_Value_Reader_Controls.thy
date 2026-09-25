@@ -1,10 +1,10 @@
 theory Factor_Finite_Site_Value_Reader_Controls
-  imports Factor_Finite_Site_Value_Readers Criticism_Octet_Samples Factor_Stated_Leaves
+  imports Factor_Finite_Site_Value_Readers Criticism_Octet_Samples Factor_Stated_Leaves Criticism_Use_Samples
 begin
 
 text \<open>
   The executed controls of the readers over an environment value, of the evaluation above an implemented
-  base (E1), of the criticism's samples (S1 and the octet sample) and of the stated-leaves reader. No
+  base (E1), of the criticism's samples (S1, the octet sample and the use sample) and of the stated-leaves reader. No
   library theory imports them: a library theory on the route runs no evaluation.
 \<close>
 
@@ -281,12 +281,47 @@ definition octet_control_equality_reading :: "unit \<Rightarrow> bool list" wher
         (octet_equality_entry,Finite_Pair (Finite_Payload [5]) (Finite_Payload [5])) |\<in>| A,
         (octet_equality_entry,criticism_octet_sample P ts (Finite_Pair (Finite_Payload [5]) (Finite_Payload [5]))) |\<in>| A])"
 
+section \<open>The stated-leaves reader's controls\<close>
+
+text \<open>
+  The reader holds clauses without head coverage (@{text Factor_Stated_Leaves}), so its controls are
+  evaluated through the finite computation, exact against the leaves and so against the native contract
+  (@{thm [source] finite_definition_stated_exact}), beside the audit's HOL counterpart at the same
+  definitions (@{thm [source] finite_definition_payloads_exact}). Each expected report below is the one
+  those definitions give at its fixture: a ground clause asserting a nonempty payload beside the empty
+  target, the payload stated; a clause whose ordinary and material premises state the target at their
+  sockets, the material premise at its source field alone; a clause stating the empty payload at its
+  conclusion and its premise; and a clause stating nothing.
+\<close>
+
+definition stated_leaves_controls :: "(nat finite_term_pattern\<times>(nat\<times>(nat,nat,nat) finite_factor_schema) fset) list" where
+  "stated_leaves_controls=[
+    (Finite_Variable 0,{|(0,\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Pattern_Payload [1]) control_empty_target,
+      finite_schema_premises={||},finite_schema_materials={||}\<rparr>)|}),
+    (Finite_Pattern_Pair (Finite_Variable 0) control_empty_target,
+     {|(0,\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) control_empty_target,
+      finite_schema_premises={|(1,(5,Finite_Pattern_Pair control_empty_target (Finite_Variable 0)))|},
+      finite_schema_materials={|(2,\<lparr>finite_material_source=control_empty_target,finite_material_atoms=Finite_Variable 1,
+        finite_material_edges=Finite_Variable 2,finite_material_counts=Finite_Variable 3,
+        finite_material_functions=Finite_Variable 4\<rparr>)|}\<rparr>)|}),
+    (Finite_Variable 0,{|(0,\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Payload []),
+      finite_schema_premises={|(1,(5,Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Variable 0)))|},
+      finite_schema_materials={||}\<rparr>)|}),
+    (Finite_Variable 0,{|(0,\<lparr>finite_schema_conclusion=Finite_Variable 0,
+      finite_schema_premises={|(1,(5,Finite_Variable 0))|},finite_schema_materials={||}\<rparr>)|})]"
+
+definition stated_leaves_control_reports where
+  "stated_leaves_control_reports=map (\<lambda>(p,C). (finite_definition_stated p C,finite_definition_payloads p C))
+    stated_leaves_controls"
+
 section \<open>One evaluation executes the native evaluator's controls\<close>
 
 text \<open>
   One evaluation compiles the native evaluator once for all its controls: E1's (the plain evaluator, the
   evaluation above the base, the leaf's plain evaluation and the witness's admitted instance), S1's over
-  the base, S1's plain controls and the octet sample's. Each part is named for the facts that read it.
+  the base, S1's plain controls, the octet sample's and the use sample's (@{text Criticism_Use_Samples});
+  the stated-leaves reader's reports are compared with their expected values in the same evaluation. Each
+  part is named for the facts that read it.
 \<close>
 
 lemma native_evaluator_controls_executed:
@@ -313,7 +348,17 @@ lemma native_evaluator_controls_executed:
    (control_reading ()=[True,True,True,True,True,True] \<and> control_unavailable ()=[True] \<and>
     control_empty ()=[True]) \<and>
    (octet_control_material_reading ()=[True,True,True,True,True,True,True,True] \<and>
-    octet_control_equality_reading ()=[True,True,True,True])"
+    octet_control_equality_reading ()=[True,True,True,True]) \<and>
+   use_control_reading ()=[True,True,True,True,True,True,True,True,True] \<and>
+   stated_leaves_control_reports=[
+     (([],{|(0,([Finite_Pair (Finite_Payload [1]) (Finite_Target (Finite_Whole finite_empty_artifact))],
+         [Finite_Target (Finite_Whole finite_empty_artifact)],{||},{||}))|}),{|[1]|}),
+     (([Finite_Target (Finite_Whole finite_empty_artifact)],
+       {|(0,([],[Finite_Target (Finite_Whole finite_empty_artifact)],
+         {|(1,[Finite_Target (Finite_Whole finite_empty_artifact)])|},
+         {|(2,[[Finite_Target (Finite_Whole finite_empty_artifact)],[],[],[],[]])|}))|}),{||}),
+     (([],{|(0,([],[Finite_Payload []],{|(1,[Finite_Payload []])|},{||}))|}),{|[]|}),
+     (([],{|(0,([],[],{|(1,[])|},{||}))|}),{||})]"
   by eval
 
 lemmas implemented_base_control_executed=native_evaluator_controls_executed[THEN conjunct1]
@@ -324,7 +369,15 @@ lemmas criticism_controls_executed=
   native_evaluator_controls_executed[THEN conjunct2, THEN conjunct2, THEN conjunct1]
 
 lemmas octet_controls_executed=
-  native_evaluator_controls_executed[THEN conjunct2, THEN conjunct2, THEN conjunct2]
+  native_evaluator_controls_executed[THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct1]
+
+lemmas use_sample_control_executed=
+  native_evaluator_controls_executed[THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2,
+    THEN conjunct1]
+
+lemmas stated_leaves_controls_executed=
+  native_evaluator_controls_executed[THEN conjunct2, THEN conjunct2, THEN conjunct2, THEN conjunct2,
+    THEN conjunct2]
 
 subsection \<open>E1's outcome\<close>
 
@@ -442,42 +495,5 @@ proof -
     (d,decode_finite_term c')\<notin>positive_meaning (decode_finite_system implemented_base_control)"
     by (rule exact_table_record_meaning[OF exact])
 qed
-
-section \<open>The stated-leaves reader's controls\<close>
-
-text \<open>
-  The reader holds clauses without head coverage (@{text Factor_Stated_Leaves}), so its controls are
-  evaluated through the finite computation, exact against the leaves and so against the native contract,
-  beside the audit's HOL counterpart at the same definitions: a program family of its own, compiled once.
-\<close>
-
-definition stated_leaves_controls :: "(nat finite_term_pattern\<times>(nat\<times>(nat,nat,nat) finite_factor_schema) fset) list" where
-  "stated_leaves_controls=[
-    (Finite_Variable 0,{|(0,\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Pattern_Payload [1]) control_empty_target,
-      finite_schema_premises={||},finite_schema_materials={||}\<rparr>)|}),
-    (Finite_Pattern_Pair (Finite_Variable 0) control_empty_target,
-     {|(0,\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) control_empty_target,
-      finite_schema_premises={|(1,(5,Finite_Pattern_Pair control_empty_target (Finite_Variable 0)))|},
-      finite_schema_materials={|(2,\<lparr>finite_material_source=control_empty_target,finite_material_atoms=Finite_Variable 1,
-        finite_material_edges=Finite_Variable 2,finite_material_counts=Finite_Variable 3,
-        finite_material_functions=Finite_Variable 4\<rparr>)|}\<rparr>)|}),
-    (Finite_Variable 0,{|(0,\<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Payload []),
-      finite_schema_premises={|(1,(5,Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Variable 0)))|},
-      finite_schema_materials={||}\<rparr>)|}),
-    (Finite_Variable 0,{|(0,\<lparr>finite_schema_conclusion=Finite_Variable 0,
-      finite_schema_premises={|(1,(5,Finite_Variable 0))|},finite_schema_materials={||}\<rparr>)|})]"
-
-definition stated_leaves_control_reports where
-  "stated_leaves_control_reports=map (\<lambda>(p,C). (finite_definition_stated p C,finite_definition_payloads p C))
-    stated_leaves_controls"
-
-ML \<open>
-  val stated_leaves_control_context = @{context};
-  val (stated_leaves_control_time, stated_leaves_control_value) =
-    Timing.timing (Code_Evaluation.dynamic_value_strict stated_leaves_control_context)
-      @{term "stated_leaves_control_reports"};
-  val _ = writeln ("STATED_LEAVES_CONTROLS " ^ Timing.message stated_leaves_control_time);
-  val _ = writeln (Syntax.string_of_term stated_leaves_control_context stated_leaves_control_value);
-\<close>
 
 end

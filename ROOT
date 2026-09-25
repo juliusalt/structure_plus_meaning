@@ -1332,7 +1332,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Term_Words
     Finite_Presentation_Readers
     Factor_Finite_Site_Value_Readers
-    Factor_Finite_Site_Value_Reader_Controls
 
     Finite_Term_Word_Readers
     Required_History_Presentation
@@ -1643,6 +1642,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Criticism_Samples
     Criticism_Use_Samples
     Criticism_Octet_Samples
+    Factor_Finite_Site_Value_Reader_Controls
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
     Complete_Term_References

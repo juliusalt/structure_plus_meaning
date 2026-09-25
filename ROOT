@@ -1319,6 +1319,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Presented_Histories
     Finite_Term_Words
     Finite_Presentation_Readers
+    Factor_Inclusion_Admission_Counterparts
     Finite_Term_Word_Readers
     Required_History_Presentation
     Required_History_Execution

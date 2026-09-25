@@ -1,5 +1,5 @@
 theory Development_Native_State
-  imports Development_Given_Installation Development_Owner_Records Factor_Inclusion_Admission_Counterparts
+  imports Development_Given_Installation Development_Owner_Records Factor_Finite_Site_Value_Readers
 begin
 
 section \<open>The given as one site value\<close>

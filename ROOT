@@ -498,6 +498,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Comparison_Programs
     Bag_Difference_Witnesses
     Factor_System_Restriction
+    Factor_System_Payloads
     Factor_Recursive_Groups
     Factor_Related_Difference
     Factor_Generation_Clauses
@@ -682,6 +683,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Permission_Investigation_Base
     Factor_Permission_Investigation
     Factor_Adoption_Comparison
+    Factor_Reader_Payloads
     Factor_Adoption_Permission_Admission
     Factor_Substitution
     Factor_Substitution_Observations

@@ -745,7 +745,8 @@ lemmas given_rooted_payloads_exact=finite_system_payloads_exact[of finite_rooted
 
 text \<open>
   The payload audit holds at every definition of the given exactly when the readers' rooted program states the
-  empty payload alone, which the composition of @{thm [source] given_program_payloads} gives from its five systems'.
+  empty payload alone, which the composition of @{thm [source] given_program_payloads} gives from its five systems':
+  the given states the empty payload alone, and the audit holds at every definition of it.
 \<close>
 
 corollary given_payload_audit:
@@ -754,6 +755,15 @@ corollary given_payload_audit:
       (505,source_root_argument e (use_data_term (fst d)) (Payload_Term (snd d)))\<in>positive_meaning payload_audit_system)
     \<longleftrightarrow> system_payloads given_rooted_readers_system\<subseteq>{[]}"
   using payload_audit_package[OF source given_package(1)] by (simp add: given_payloads(4))
+
+corollary given_payloads_empty: "system_payloads given_program={[]}"
+  using given_payloads(4) given_program_payloads(2) by blast
+
+corollary given_payload_audit_holds:
+  assumes source: "environment_value_presents (decode_finite_environment given_environment) e"
+  shows "\<forall>d\<in>system_definitions given_program.
+    (505,source_root_argument e (use_data_term (fst d)) (Payload_Term (snd d)))\<in>positive_meaning payload_audit_system"
+  using given_payload_audit[OF source] given_program_payloads(2) by blast
 
 section \<open>The given's site value and its least scope\<close>
 

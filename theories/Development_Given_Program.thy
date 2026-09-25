@@ -825,22 +825,19 @@ subsection \<open>The rooted program's payloads\<close>
 
 text \<open>
   Composed as the given's readers' are (@{thm [source] given_readers_payloads}): the joined program states what
-  its parts state, the granted programs what their three systems state, and the rooted program no more than the
-  joined one. What each system states is not established here; the composition awaits it.
+  its parts state, the granted programs what their three systems state, each the empty payload alone down its
+  lineage (@{thm [source] generation_value_system_payloads}, @{thm [source] generation_source_system_payloads},
+  @{thm [source] adoption_value_system_payloads}), and the rooted program no more than the joined one.
 \<close>
 
 theorem given_program_payloads:
-  assumes additions: "system_payloads use_additions_system\<subseteq>{[]}"
-    and audit: "system_payloads payload_audit_system\<subseteq>{[]}"
-    and generation: "system_payloads generation_value_system\<subseteq>{[]}"
-    and source: "system_payloads generation_source_system\<subseteq>{[]}"
-    and adoption: "system_payloads adoption_value_system\<subseteq>{[]}"
   shows "system_payloads given_program_system\<subseteq>{[]}"
     and "system_payloads given_rooted_readers_system\<subseteq>{[]}"
 proof -
-  have guard: "system_payloads guard_readers_system\<subseteq>{[]}" by (rule given_readers_payloads[OF additions audit])
+  have guard: "system_payloads guard_readers_system\<subseteq>{[]}" by (rule given_readers_payloads)
   have granted: "system_payloads granted_readers_system\<subseteq>{[]}"
-    unfolding granted_readers_system_def system_union_payloads using generation source adoption by blast
+    unfolding granted_readers_system_def system_union_payloads
+    using generation_value_system_payloads generation_source_system_payloads adoption_value_system_payloads by blast
   show program: "system_payloads given_program_system\<subseteq>{[]}"
     unfolding given_program_system_def system_union_payloads using guard granted by blast
   show "system_payloads given_rooted_readers_system\<subseteq>{[]}"

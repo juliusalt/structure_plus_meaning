@@ -2,10 +2,10 @@
  "boundary": "The closed history stores its header, actual digit material, ordered ledger and exact cache. Actual membership, generation, cause and policy operations preserve every original bounded transition. All original and subsequent source inputs, whole results, counter and cache relations, actual coverage, comparisons and revisions are reconstructed. Full physical cost, whole workflow adequacy, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "digit-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 17.78,
+  "seconds": 21.54,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "6c8611687ea6ba73a8c4e4f0a20c6a45a19c5f6d2e514ead8aff20a250e426c4",
+   "module_sha256": "26b8e5a165aa40d12c77ec390bd18bcc3800143e71aeff74c2a8576150013cf1",
    "subject_contracts": {
     "digit_history_investigation.yxml": "5aadc32b7dd09364e018be14b77a75adbaa3798a8e2bacac1125a4d72b21839b"
    },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "4eadf3bb5ac8ec58da4354f7946cc58c64ed5a829bf4c68469a59ae65b854e99",
+ "source_manifest_sha256": "55c633099a80c44211068b496fc4366157fe86b08e39b4e0dcb5c8cbb0f9caa8",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 17.679364347015508
+   "seconds": 21.44391466502566
   }
  ]
 }

@@ -2,10 +2,10 @@
  "boundary": "Original closed history validity and actual indexed membership supply every known predecessor reading. Actual replay and quotation supply the complete policy scope. The composite operation retains both guards and every remaining original check, complete optional result, original subject and original method. Both preceding refinements and the raw omitted-membership control remain explicit. Full physical cost, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "constructed-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 21.33,
+  "seconds": 24.8,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "cdfec25dbd46953144b9d18c48c3c56f71430ddfedfb6cfa61b56e632a713400",
+   "module_sha256": "6e85df268ebe05139f0c2f0439423c75c603b644c779a074f388fb76440ef3db",
    "subject_contracts": {
     "constructed_history_investigation.yxml": "abb2319954767611335115320f4ee777d02f9bdb0cbbc9c89dbbce385ffeb455"
    },
@@ -73,14 +73,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "909ecb9e297bcddacbd68c577dc256f085a29a47ddb20124f8cba4e974698fae",
+ "source_manifest_sha256": "dd8bf6bffd77f57057472209d1abfd68aa47d6debfa6dff8a02d2a7155db74af",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 21.25614466899424
+   "seconds": 24.71519792699837
   }
  ]
 }

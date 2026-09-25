@@ -2,10 +2,10 @@
  "boundary": "Complete original source, requirements and terms determine each full decision and its exact target-certificate replay family. Every native graph, call, extending and retained environment, original-condition assessment, comparison and revision is reproduced. Derived sharing preserves the complete public reports. This scoped composition does not establish whole-workflow enforcement, original-policy and historical permission, complete subject and criticism coverage, physical cost or genesis.",
  "complete_recipe_source_manifest": "decision-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 7.09,
+  "seconds": 8.0,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "84abadd6b9f3a2d5b2c999a472cf4630e99e10abc6f41deb6376131a63e76aa4",
+   "module_sha256": "4a45d004f7dce19274d7ebcba5cde2b4b2feafff6fa45a699bc9efccd0159fc6",
    "subject_contracts": {
     "decision_replay_investigation.yxml": "145aa44dfd8203223be34a9be5a428fd7a6f571b565c9c3b4321371a987958b2"
    },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "661ec3498f8cd07268a3fa0aca9001408386341085dd96991df141b0cc15fe06",
+ "source_manifest_sha256": "304471f43e7c591ecd7d9bffb2fb0041b32c690aaa20abf528cbd21e3cb3cf2c",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 6.99221612198744
+   "seconds": 7.90004451299319
   }
  ]
 }

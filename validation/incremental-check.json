@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "12d98cab9a47c26eab6becaa201cd87ff94aeb50784e584b5e94385ca58c7861",
- "checked_content_sha256": "69cc9a973e893c50823c1c86f02904fcf46466e7a18265663083b3d8721173a7",
+ "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
+ "checked_content_sha256": "77654b427970ed926fd71eafea13bd6a98bc342149a65b2d05a65fc37aae0e53",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,182 +17,456 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp0q6myduh/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpjso69r1y/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.44,
-  "execution_impact": 0.0,
-  "export": 0.0,
-  "proof": 277.59,
-  "recipe_impact": 0.62,
-  "recipes_and_host_tests": 12.16
+  "base_and_impact": 0.35,
+  "execution_impact": 1.44,
+  "export": 54.11,
+  "proof": 415.85,
+  "recipe_impact": 0.46,
+  "recipes_and_host_tests": 36.27
  },
  "rebuilt_theories": [
-  "Development_Given_Counterparts",
-  "Factor_Definition_Reader_Counterparts"
+  "Admitted_Conditional_Applications",
+  "Allocated_Environment_Execution",
+  "Artifact_Lookup_Execution",
+  "Builtin_Investigation_Execution",
+  "Builtin_Investigation_Presentation",
+  "Cached_Faceted_Questions",
+  "Cached_Graft_Execution",
+  "Certificate_Construction_Review",
+  "Certified_Cause_Execution",
+  "Checked_Requirement_Execution",
+  "Concurrent_History_Execution",
+  "Conditional_Application_Review",
+  "Constructed_History_Execution",
+  "Criticism_Octet_Samples",
+  "Criticism_Samples",
+  "Criticism_Use_Samples",
+  "Data_Reading_Execution",
+  "Decision_Replay_Execution",
+  "Development_Answer_0ccf746fe2cf",
+  "Development_Given_Execution",
+  "Development_Machinery",
+  "Development_Machinery_Reports",
+  "Development_Presentation",
+  "Development_Row_Contexts",
+  "Development_Seed",
+  "Development_Seed_Loop",
+  "Development_Seed_Publication",
+  "Development_Seed_Referenced_Publication",
+  "Development_Seed_Verification",
+  "Digit_Allocation_Execution",
+  "Digit_Generation_Execution",
+  "Digit_History_Execution",
+  "Digit_Replay_Execution",
+  "Encoded_Environment_Execution",
+  "Environment_Update_Execution",
+  "Faceted_Native_Questions",
+  "Factor_Admission_Pair_Reasoning",
+  "Factor_Application_Execution",
+  "Factor_Constructed_Development_Execution",
+  "Factor_Data_Product_Execution",
+  "Factor_Demanded_Graph_Readings",
+  "Factor_Demanded_Package_Readings",
+  "Factor_Development_Execution_Sharing",
+  "Factor_Executable_Environment_Values",
+  "Factor_Finite_Inference_Example",
+  "Factor_Finite_Inference_Premises",
+  "Factor_Finite_Inference_Sources",
+  "Factor_Formation_Once_Definitions",
+  "Factor_Implemented_Base_Evaluation",
+  "Factor_Indexed_Readings",
+  "Factor_Investigation_Input_Execution",
+  "Factor_Investigation_Input_Investigation",
+  "Factor_Keyed_Set_Execution",
+  "Factor_Observation_Collection_Investigation",
+  "Factor_Observation_Execution",
+  "Factor_Observation_Investigation",
+  "Factor_Observation_Scope_Execution",
+  "Factor_Observation_Scope_Investigation",
+  "Factor_Observation_Table_Controls",
+  "Factor_Observation_Table_Execution",
+  "Factor_Observation_Table_Investigation",
+  "Factor_Pair_Scope_Investigation",
+  "Factor_Permission_Investigation",
+  "Factor_Proof_Probe_Investigation",
+  "Factor_Reasoning_Execution",
+  "Factor_Recovered_Graph_Sharing",
+  "Factor_Requirement_Source_Boundary",
+  "Factor_Requirement_Source_Examples",
+  "Factor_Schema_Socket_Investigation",
+  "Factor_Shared_Package_Readings",
+  "Factor_Source_Execution_Sharing",
+  "Factor_Steered_Execution_Sharing",
+  "Factor_Substitution_Investigation",
+  "Factor_Workflow_Execution_Sharing",
+  "Finite_Directed_Execution",
+  "Finite_Presented_Reasoning",
+  "Formed_Call_Closures",
+  "Generation_Record_Execution",
+  "Graft_Admission_Execution",
+  "Graft_Execution",
+  "History_Index_Execution",
+  "Indexed_Generation_Execution",
+  "Inference_Claim_Execution",
+  "Inference_Claim_Input_Execution",
+  "Keyed_Native_Evaluation",
+  "Keyed_Table_Execution",
+  "Known_History_Execution",
+  "Literal_Replay_Execution",
+  "Material_Application_Observations",
+  "Native_Admission_Execution",
+  "Native_Admission_Investigation_Execution",
+  "Native_Certificate_Coverage_Execution",
+  "Native_Certificate_Development_Execution",
+  "Native_Certificate_Input_Execution",
+  "Native_Certificate_Investigation_Execution",
+  "Native_Certificate_Replay_Execution",
+  "Native_Certificate_Scope_Repair_Execution",
+  "Native_Child_Presentation",
+  "Native_Control_Acceptance_Profile",
+  "Native_Control_Admitted_Selection",
+  "Native_Control_Artifact_Comparison",
+  "Native_Control_Artifact_Reused_Execution",
+  "Native_Control_Artifact_Source",
+  "Native_Control_Cause_Continuation",
+  "Native_Control_Cause_Review",
+  "Native_Control_Child_Review",
+  "Native_Control_Closed_Installation",
+  "Native_Control_Compile_Profile",
+  "Native_Control_Constructed_Source_View",
+  "Native_Control_Context_Execution",
+  "Native_Control_Filtered_Judgment",
+  "Native_Control_Finite_Guard",
+  "Native_Control_Guard_Construction",
+  "Native_Control_Guard_Execution",
+  "Native_Control_Guard_Source",
+  "Native_Control_Guard_Transport",
+  "Native_Control_Installed_Guard",
+  "Native_Control_Judgment_Graph",
+  "Native_Control_Judgment_Review",
+  "Native_Control_Judgment_Scope",
+  "Native_Control_Judgment_Source",
+  "Native_Control_Literal_Boundary",
+  "Native_Control_Prepared_Cause_Review",
+  "Native_Control_Quotation_Construction",
+  "Native_Control_Quoted_Judgment",
+  "Native_Control_Receiving_Controls",
+  "Native_Control_Receiving_Review",
+  "Native_Control_Refinement_Composition",
+  "Native_Control_Reviewed_Receiving",
+  "Native_Control_Seed_Subject",
+  "Native_Control_Selected_Root",
+  "Native_Control_Source_Execution",
+  "Native_Control_Source_Profile",
+  "Native_Control_Sourced_Children",
+  "Native_Control_Syntax_Candidate",
+  "Native_Control_Syntax_Execution",
+  "Native_Control_Syntax_Statements",
+  "Native_Control_Union_Observation_Execution",
+  "Native_Derivation_Investigation_Execution",
+  "Native_Development_Execution",
+  "Native_Development_Execution_Base",
+  "Native_Development_Machinery",
+  "Native_Development_Seed",
+  "Native_Development_Steering",
+  "Native_Execution_Refinements",
+  "Native_Extension_Execution",
+  "Native_Graph_Investigation_Execution",
+  "Native_History_Investigation_Execution",
+  "Native_Node_Investigation_Execution",
+  "Native_Requirement_Investigation_Execution",
+  "Native_Source_Development",
+  "Native_Source_Execution",
+  "Native_Workflow_Execution",
+  "Native_Workflow_Execution_Base",
+  "Positioned_Native_Evaluation",
+  "Presentation_Completion_Investigation",
+  "Presented_Publication_Values",
+  "Program_Evaluation_Execution",
+  "Quoted_History_Execution",
+  "Required_Cause_Execution",
+  "Required_History_Execution",
+  "Requirement_Artifact_Execution",
+  "Requirement_Decision_Execution",
+  "Requirement_Plan_Execution",
+  "Requirement_Plan_Presentation",
+  "Requirement_Source_Execution",
+  "Retained_Clause_Execution",
+  "Shared_Call_Closures",
+  "Shared_Native_Evaluation",
+  "Use_Allocation_Execution",
+  "Use_Codec_Execution",
+  "Workflow_Presentation"
  ],
  "recipes": {
   "allocated-environments": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "artifact-lookup": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "builtin-investigations": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "cached-grafts": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certificate-coverage": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certificate-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certificate-input-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certificate-scope-repair": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "certified-causes": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 6.35,
+   "status": "accepted"
   },
   "concurrent-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 21.2,
+   "status": "accepted"
   },
   "constructed-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 24.8,
+   "status": "accepted"
   },
   "data-reading": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.59,
+   "status": "accepted"
   },
   "decision-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 8.0,
+   "status": "accepted"
   },
   "digit-allocation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "digit-generation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "digit-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 21.54,
+   "status": "accepted"
   },
   "digit-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 23.67,
+   "status": "accepted"
   },
   "encoded-environments": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "environment-grafts": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "environment-updates": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "generation-records": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "graft-admission": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "history-index": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 20.9,
+   "status": "accepted"
   },
   "indexed-generation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "known-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 22.44,
+   "status": "accepted"
   },
   "literal-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 4.48,
+   "status": "accepted"
   },
   "native-admission": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-certificate-replay": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 6.15,
+   "status": "accepted"
   },
   "native-certificates": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-child": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-derivations": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development-machinery": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-development-seed": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 36.27,
+   "status": "accepted"
   },
   "native-evaluation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-extensions": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-graphs": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-histories": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-nodes": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-requirements": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-sources": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-steering": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "native-workflow": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "quoted-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 25.31,
+   "status": "accepted"
   },
   "required-causes": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 5.34,
+   "status": "accepted"
   },
   "required-history": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 6.89,
+   "status": "accepted"
   },
   "requirement-decisions": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "requirement-plans": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "requirement-sources": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "source-development": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "use-allocation": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   },
   "use-codecs": {
-   "status": "unchanged"
+   "exit_code": 0,
+   "seconds": 0.0,
+   "status": "reused"
   }
  },
- "reused_theories": 1888,
- "seconds": 362.27,
+ "reused_theories": 1718,
+ "seconds": 586.31,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

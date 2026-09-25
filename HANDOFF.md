@@ -33,8 +33,8 @@ on, all accepted:
   part (d) in the verification request, a native sample at a use-renamed copy in criticism, no fifth socket, uses
   staying structure (Q26).
 - #460, "The native evaluator evaluates above an implemented base: the given's readers enter through counterparts exact
-  to their native definitions": the guard's judgment and the criticism's samples evaluate over a base of counterparts
-  (E1, C1–C4, S1; Q27).
+  to their native definitions": withdrawn in its decision by the owner's answer to Q27 (2026-09-25 09:48) — the native
+  evaluator that constructs the missing witnesses comes first; design #495 revises the entry.
 - #482, "A generation over a state holds its payload once: its certified cause quotes its scope with the payload as the
   boundary": every route generation costs its payload's size once; rules (a)–(c) for whatever else walks the payload.
 
@@ -46,19 +46,26 @@ on, all accepted:
   read once, the other demands' per-entry formation checks hoisted, so that I3 measures those paths refined) → R and X,
   placed from I3's result (X executes the native state's first generation held, #395's remainder) → the posing #397,
   which then waits on X instead of #489.
-- Then the answer's judgment and admission #399 (after E1 and C1–C3, landed), its transport #401, the verification's
-  native half #403 and its harness #407 (after the frame and its fixes, landed); the first request #443 and its
-  delivery #445; the criticism run at an admitted candidate #447 (after the criticism's notions, S1 and C4, and #474 and
-  #476, finishing) and its route #449; each build with its review.
+- Then the answer's judgment and admission #399, its transport #401, the verification's native half #403 and its
+  harness #407 (after the frame and its fixes, landed); the first request #443 and its delivery #445; the criticism run
+  at an admitted candidate #447 (after the criticism's notions, landed) and its route #449; each build with its review.
+  #399 and #443 wait on the native evaluator (below), #447 through #399.
 - Every route generation (#397, #399, #403, #443's issue, #447) is recorded through B2's recording. Each was mailed
   #482's (3), #447 also its correction of (5); their briefs are corrected with B2's names when R and X are placed (Now).
 
+**The native evaluator** (the owner's answer to Q27, 2026-09-25 09:48: "native evaluator that constructs the missing
+witnesses first"): design #495 decides the evaluator that constructs the witnesses of premise-only variables — a
+complete construction per kind, generic over programs, the unavailable case kept apart — what of the counterpart line
+(E1, C1–C4b, 570's counterpart, S1, the guard's and the given's bases) stays and in which role, and the builds; no
+route judgment is decided through a counterpart. #399 and #443 wait on it (a stand-in for its builds, re-pointed when
+they are placed), #483 and #487 on its decision of what stays.
+
 **Beside the route**: #461 (the given's derivations without re-reducing what its pieces present, #454's review 1–3 with
 next-edit item 139, #456's 4), then #486 (continuing #457: the given's readers' payload lineage split at the guard's two
-lineages, the payload lemmas at the payload notion, #457's review 1–4, item 144's payload part); #483 (after the
-counterparts, S1 and #484: their and E1's generic facts at their homes, with #477's follow-up 1 and item 157's fifth
-part, the low moves in one rebuild), then #487 (the counterparts', E1's and S1's controls, #476's ML block among them,
-in a theory no library theory imports, with #477's follow-ups 2 and 4).
+lineages, the payload lemmas at the payload notion, #457's review 1–4, item 144's payload part); #483 (the
+counterparts' and E1's generic facts at their homes, with #477's and #475's follow-ups and item 157's fifth part, the
+low moves in one rebuild) and #487 (the counterparts', E1's and S1's controls out of the library theories), both
+waiting on #495's decision of what of the counterpart line stays, and rewritten or deleted by it.
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
@@ -80,9 +87,9 @@ by a task of their own (Open 100).
 X spliced before #397 it is 10: the approval build (Open 142) may end a chain of 10 after #407, nothing after #408.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the finishing counterparts (#474–#477), B1 #490 and #494, then B2 and I3,
-the posing and the rest of the route in its chains' order, the first request's and the criticism's builds after them;
-then #461, #483, #487 and #486; each review after its build.
+exists, Q2): the owner's directions first — the native evaluator's design #495 (Q27), B1 #490 and #494, then B2 and
+I3, the posing and the rest of the route in its chains' order, the first request's and the criticism's builds after
+them; then #461, #486, #483 and #487; each review after its build.
 
 ## Decisions
 
@@ -97,6 +104,9 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
   answer (Open 119); the authority question a native problem whose native answer the owner approves, deciding the
   approval of derivations and derived subproblems. Meanwhile readiness and the planner's choice are the working basis,
   each interim choice carrying a residual — the queue's order among them.
+- **Q27** (answered 2026-09-25 09:48): the native evaluator that constructs the missing witnesses comes first, before
+  the first answer's route; no judgment is decided by an Isabelle-proved counterpart of a native definition, and a
+  missing internal operation remains an unmet requirement, never an interim substitute (#495; Open 39).
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product, not a design's; #373's design (landed
   `93cae3bb`) was accepted and then withdrawn at the owner's question, its identity resting on HOL-assigned prefixes
   and keys. **A design is judged by what its identity rests on, not by what its contract avoids.** Every distinction a
@@ -248,11 +258,15 @@ What landed that open work builds on, a line each; how it went and each review's
   base), `Criticism_Use_Samples` (#437, part (d)), `Criticism_Octet_Samples` (#439, #463, #480: part (g), its
   readdressing a renaming action, `octet_row_refutes` by `criticism_refutes`), `Factor_Stated_Leaves` (#441, 570: parts
   (h) and (e)) and its counterpart `Factor_Stated_Leaves_Counterpart` (#476, `ca0ebb8c`, entry 590).
-- **The evaluation over a base** (#460's entry): E1 `Factor_Implemented_Base_Evaluation` with the general lemma in
+- **The evaluation over a base** (#460's entry; its route withdrawn by the answer to Q27, what stays #495's to decide):
+  E1 `Factor_Implemented_Base_Evaluation` with the general lemma in
   `Inference_Demands` (#464); C1 `Factor_Inclusion_Admission_Counterparts` (#466; `finite_site_read`,
   `finite_site_presented`), C2 `Factor_Additions_Counterparts` (#468), C3 `Factor_Audit_Counterparts` and
   `Development_Guard_Counterparts` (#470, `guard_base_decision`), C4a `Factor_Package_Reader_Counterparts` (#472: 77,
-  79, 83, 122).
+  79, 83, 122), C4b `Factor_Definition_Reader_Counterparts` (#474, `bade4530`: 72, 81, 82) and the given's base
+  `Development_Given_Counterparts` (#474: `given_base_decision`, exact at the twelve guard entries by
+  `given_base_decision_exact` and `given_base_decision_installed`; the 35 granted entries have no counterpart, by
+  demand). 122 at the given's selector gave no answer in about 115 s (#474's result): #494 times it after #485.
 - **The owner records**: `Development_Owner_Records` (#385; the approval record `development_owner_approval`, Open 142);
   #425's attribution of an indexed generation (`.build/tasks/425/attribution.md`), the working rule "Evaluations".
 - **Briefs whose findings stand**: #434 (`.build/tasks/434/result.md`: the approval record's place, part (g)'s leaf
@@ -290,9 +304,8 @@ The owner's questions, a line each (their words and the provisional choices in f
 - **Q26** #383's three choices — non-nominality of a use as equivariance under use permutations; checked by Isabelle,
   a native sample in criticism, no fifth socket; uses staying structure, a use leaf in the term language the owner's to
   choose — provisional.
-- **Q27** #460's choice — the given's readers enter the judgment and the criticism through executable counterparts
-  proved exact to their native definitions, before a native evaluator constructing premise-only witnesses (Open 39) —
-  provisional.
+- **Q27** answered 2026-09-25 09:48: the native evaluator that constructs the missing witnesses first, not the
+  counterparts #460 chose (Decisions; #495, which also reads Q24's choice on executable counterparts).
 
 **To plan, in the order expected** (numbers kept from earlier states):
 
@@ -329,7 +342,7 @@ The owner's questions, a line each (their words and the provisional choices in f
 8. Transport, the octet direction's task 6: a reader contract, the reading the inverse of the presentation.
 9. The plan's stages 4 and 5: the harness, the adoption tool and the checks have no notion in the state (what moves the
    active base; one run limit for every tool spawning Isabelle; the commit's evidence paragraph).
-39. Native production of a request body — forward evaluation of a functional native relation, an engine notion the
+39. Now #495's (the answer to Q27). Native production of a request body — forward evaluation of a functional native relation, an engine notion the
    library lacks; until then producers are executors and the construction admits. Widened by #460's entry: native
    evaluation of witness-style definitions — witness constructors for material witnesses, stored rows read back,
    intermediate collections and existential witnesses, each with its completeness — its first step site 1's material
@@ -370,7 +383,11 @@ searches for a theory before briefing a task that edits it.
   correct #397's, #399's, #403's, #443's and #447's briefs with #482's (3) and B2's (#492) names: each was mailed (3),
   #447 also its correction of (5), and B2 restates `development_indexed_generation` and the recorded instances in place,
   so nothing in them misleads meanwhile. #494 is to land before I3 starts; if it stalls, #489's edge on it is the one to
-  reconsider. `v2.py after A B` makes A wait for B's landing: only for a task that is to wait.
+  reconsider.
+- **When #495 is accepted** (the answer to Q27): place its builds through a brief; set #399 and #443 to wait on the
+  builds they consume instead of #495; correct #399's, #443's and #447's briefs from its entry (each mailed that the
+  counterpart route is withdrawn); rewrite or delete #483 and #487 by its result; next-edit items 154, 156, 158 and 159
+  follow the standing it decides for the counterpart line. `v2.py after A B` makes A wait for B's landing: only for a task that is to wait.
 - **Mailed, read by each task's first session** (by task): #397, #399, #403, #443 and #447 (#482's (3); #447 its
   correction of (5)); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's
   payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers cited); #407
@@ -381,7 +398,10 @@ searches for a theory before briefing a task that edits it.
   environment's read-back held apart from the installation, the given computed once if evaluated repeatedly, the binary
   entry's bridge; #471's follow-ups 3 and 4); #489 (plan-69: B1 #490, B2 #492, #494 before it); #447 also #477's
   follow-up 3 (the counterpart is entry 590; `finite_stated_report_meaning` carried to the program its samples evaluate
-  by the join's agreement lemmas), which its brief's correction takes.
+  by the join's agreement lemmas), which its brief's correction takes; #399, #443 and #447 (plan-69: the counterpart
+  route withdrawn by the answer to Q27, their briefs corrected from #495's entry, the earlier counterpart mails
+  superseded); #494 (plan-69: 122's counterpart to be timed, then withdrawn with the counterpart route; its own work
+  stands).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;
   earlier gaps in `PLANNING_LOG.md`, 2026-09-24): `v2.py read check:167` raises a TypeError in `check_text`;
   `measuring --shared` wrote no `measurements.log`; bases swept before a brief's task ran (#324); the finalizer's push of

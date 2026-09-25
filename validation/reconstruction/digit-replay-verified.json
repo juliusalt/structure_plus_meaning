@@ -2,10 +2,10 @@
  "boundary": "The complete original replay packet is rebuilt and executed from repository sources. Every context, candidate result, original certified-cause report, comparison, revision and source correspondence is retained in the complete native presented word through lossless compression. The original reconstruction stage, complete-report and unchanged-input checks are reused. Full physical cost, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "digit-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 21.27,
+  "seconds": 23.67,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "488acb63b2facbced64c52a5489a1254f39f50629a08cd4b51e8946dd9fd7c3f",
+   "module_sha256": "211d195213032b1765439665f8ab1e437e9a00956a7d2bde3b7449bc7d926568",
    "subject_contracts": {
     "digit_replay_investigation.yxml": "398b2fc420cb5e7f5c9b5d0d2c142117cf8d12be99822e3a6f336afebcd17b4d"
    },
@@ -73,14 +73,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "145017e763015d73d8acdfcf3521980a65173f053311cadec14236b859722178",
+ "source_manifest_sha256": "73654055d921e7632f0157c271215c035ad31a829c3def04d09800a7c507f59b",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 21.20776898699114
+   "seconds": 23.544454124988988
   }
  ]
 }

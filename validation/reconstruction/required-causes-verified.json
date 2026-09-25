@@ -2,10 +2,10 @@
  "boundary": "The complete original source and requirement family determine the constructed policy and entry. Actual native records, scope and application readings, independent original requirement decisions, all method conditions and revision reasons are reconstructed. Exact policy identity is separate from payload permission and from admitting alternative proved policy realizations. Full workflow policy coverage, enforced transitions, history permission, physical cost and genesis remain open.",
  "complete_recipe_source_manifest": "required-causes-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 4.27,
+  "seconds": 5.34,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "6fd1d780794f28f3fb66d87f3db0d26e7a84df0bc7e27634d1f89df72485d09e",
+   "module_sha256": "7083cdeeabc760cbbc517fc44200ac683e5b03e73b936e88c2f7719a70d385bd",
    "subject_contracts": {
     "required_cause_investigation.yxml": "5cf38f59d71293d7389db1a2ecc743bcb12f743478caa926451d330767e3c619"
    },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "f5d1eda8cedda4abb1e0556e7555587f01e657225058960ebb72b9bb2a128e6b",
+ "source_manifest_sha256": "03b7c654f742a5529549570e779db8dc37562f4ce7e92393b30d016c7246e608",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 4.223587214015424
+   "seconds": 5.234801240992965
   }
  ]
 }

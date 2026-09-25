@@ -1,11 +1,12 @@
-theory Factor_Finite_Site_Value_Reader_Controls
+theory Factor_Executed_Controls
   imports Factor_Finite_Site_Value_Readers Criticism_Octet_Samples Factor_Stated_Leaves Criticism_Use_Samples
 begin
 
 text \<open>
-  The executed controls of the readers over an environment value, of the evaluation above an implemented
-  base (E1), of the criticism's samples (S1, the octet sample and the use sample) and of the stated-leaves reader. No
-  library theory imports them: a library theory on the route runs no evaluation.
+  The executed controls of five library notions, each part one lemma proved by one evaluation: the readers over
+  an environment value, the evaluation above an implemented base (E1), the criticism's sample (S1, plain and over
+  a base), the octet and use samples, and the stated-leaves reader. Their fixtures stand here with them. No
+  library theory imports this theory: a library theory on the route runs no evaluation.
 \<close>
 
 section \<open>Controls of the readers over an environment value\<close>
@@ -281,6 +282,68 @@ definition octet_control_equality_reading :: "unit \<Rightarrow> bool list" wher
         (octet_equality_entry,Finite_Pair (Finite_Payload [5]) (Finite_Payload [5])) |\<in>| A,
         (octet_equality_entry,criticism_octet_sample P ts (Finite_Pair (Finite_Payload [5]) (Finite_Payload [5]))) |\<in>| A])"
 
+subsection \<open>The use sample\<close>
+
+text \<open>
+  Two uses, @{term "Some [0]"} and @{term "Some [1]"}, each holding an artifact with one address. One entry
+  compares the use of its argument's site with the use literal of @{term "Some [0]"}, the unary word
+  that states only the empty payload: it records a row at the site's pair at h1, and at h2, which
+  exchanges the two uses. The other compares two uses of a program entry value for equality by a
+  repeated variable: no row at either permutation. A one-use environment at None shows None moved.
+\<close>
+
+definition use_control_artifact :: finite_exact_artifact where
+  "use_control_artifact=finite_enumerated_artifact [[]] [] [] []"
+
+definition use_control_environment :: "local_address option finite_artifact_environment" where
+  "use_control_environment=finite_enumerated_environment
+    [(Some [0],use_control_artifact),(Some [1],use_control_artifact)] []"
+
+definition use_control_none_environment :: "local_address option finite_artifact_environment" where
+  "use_control_none_environment=finite_enumerated_environment [(None,use_control_artifact)] []"
+
+definition use_control_site :: criticism_shape where
+  "use_control_site=Site_Argument (Some [0]) []"
+
+definition use_control_entry :: criticism_shape where
+  "use_control_entry=Entry_Argument (Some [1]) [] (Some [1],[])"
+
+definition use_control_literal_entry :: "local_address option definition_site" where
+  "use_control_literal_entry=(Some [4,3,7],[0])"
+
+definition use_control_equality_entry :: "local_address option definition_site" where
+  "use_control_equality_entry=(Some [4,3,7],[1])"
+
+definition use_control_literal :: finite_factor_term where
+  "use_control_literal=the (finite_self_contained_term (use_data_term (Some [0])))"
+
+definition use_control_program :: "local_address option finite_native_system" where
+  "use_control_program=finite_rule_program
+    [(use_control_literal_entry,[([0],finite_native_rule (Finite_Pattern_Pair (native_var 0)
+        (Finite_Pattern_Pair (finite_exact_term_pattern use_control_literal) (native_var 1))) [])]),
+     (use_control_equality_entry,[([0],finite_native_rule (Finite_Pattern_Pair
+        (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
+        (Finite_Pattern_Pair (native_var 1) (native_var 3))) [])])]"
+
+definition use_control_pairs :: "(finite_factor_term\<times>finite_factor_term) list" where
+  "use_control_pairs=use_sample_pairs use_control_environment [use_control_site,use_control_entry]"
+
+definition use_control_reading :: "unit \<Rightarrow> bool list" where
+  "use_control_reading _=(let C=use_control_environment; xs=environment_use_list C;
+      h1=fresh_use_permutation C; h2=reversal_use_permutation C;
+      ds=[use_control_literal_entry,use_control_equality_entry]; ps=use_control_pairs;
+      s1=use_pair h1 C use_control_site; s2=use_pair h2 C use_control_site;
+      e1=use_pair h1 C use_control_entry; e2=use_pair h2 C use_control_entry in
+    [xs=[Some [0],Some [1]], list_all (\<lambda>u. h1 u\<notin>set xs \<and> h1 (h1 u)=u) xs, map h2 xs=rev xs,
+     fresh_use_permutation use_control_none_environment None\<noteq>None]@
+    (case criticism_table use_control_program ds ps of None \<Rightarrow> [False]
+    | Some A \<Rightarrow> [criticism_record ds ps A=
+          {|(fst s1,snd s1,use_control_literal_entry,()),(fst s2,snd s2,use_control_literal_entry,()),
+            (snd e2,fst e2,use_control_literal_entry,())|},
+        criticism_refuted ds ps A={|use_control_literal_entry|},
+        (use_control_equality_entry,fst e1) |\<in>| A,(use_control_equality_entry,snd e1) |\<in>| A,
+        (use_control_equality_entry,snd e2) |\<in>| A]))"
+
 section \<open>The stated-leaves reader's controls\<close>
 
 text \<open>
@@ -319,7 +382,7 @@ section \<open>One evaluation executes the native evaluator's controls\<close>
 text \<open>
   One evaluation compiles the native evaluator once for all its controls: E1's (the plain evaluator, the
   evaluation above the base, the leaf's plain evaluation and the witness's admitted instance), S1's over
-  the base, S1's plain controls, the octet sample's and the use sample's (@{text Criticism_Use_Samples});
+  the base, S1's plain controls, the octet sample's and the use sample's;
   the stated-leaves reader's reports are compared with their expected values in the same evaluation. Each
   part is named for the facts that read it.
 \<close>

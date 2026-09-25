@@ -53,7 +53,7 @@ on, all accepted:
   gate; after RR3 and RR4) → the posing #397 (its brief corrected by #522), each build with its review.
 - Then the answer's judgment and admission #399, its transport #401, the verification's native half #403 and its
   harness #407 (after the frame and its fixes, landed). The first request (#523's corrected #443, divided by #544,
-  `.build/tasks/544/result.md`): the request program #545 (after #516), the request at the given #547 (support,
+  `.build/tasks/544/result.md`): the request program #545 (landed `5e6409e4`), the request at the given #547 (support,
   context, resolution at 561; after #545, rc #540, W4b #528, R6 #520 and R4 #505), its packet, issue and execution
   #443 (after #547, the posing and R7 #542) and its delivery #445. The criticism at an admitted candidate (#523's
   corrected #447, divided by #544): the observations #549 (parts (e) and (h); after R7 and the posing) and the samples
@@ -120,8 +120,8 @@ exists, Q2): the slots are one pool since 14:06, each free slot going to the fir
 and a review standing where its review task stands, so every review stands right after its build. The evaluator's
 head first, R4 #505 (the longest chain and the owner's direction, its checks first on the machine); the
 recording's last refinement RR4 #536 as soon as it can start; the evaluator's
-W2 #524, R5 #518, W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; RR4 #536 and X #538; the request program #545
-and the request at the given #547; the posing and the route in its chains' order (#399, the samples #551, the
+W2 #524, R5 #518, W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; RR4 #536 and X #538; the request at the
+given #547; the posing and the route in its chains' order (#399, the samples #551, the
 observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
 ## Decisions
@@ -304,7 +304,9 @@ What landed that open work builds on, a line each; how it went and each review's
   1.21 s against more than 108 s (#485, `61c59061`: `finite_native_package_demands` a `checked_premise` instance in
   `Factor_Formation_Once_Definitions`); #494 (`8206b8b7`): the package sites read once where a package or judgment
   environment reads them twice, the application, graph and replay demands' formation checks hoisted
-  (`.build/tasks/494/measurement.md`, with what #485's landing removed from the recipes).
+  (`.build/tasks/494/measurement.md`, with what #485's landing removed from the recipes); the request program installed
+  over the given's readers, its payloads and its contract at the installed entry: `Development_First_Request_Program`
+  (#545, `5e6409e4`).
 - **The verification frame**: `Development_Verification_Frame` (#405, #432, #433 `3d12a9d6`: parts (a)–(d), and (f) per
   store; its controls in `.build/tasks/405/controls`).
 - **The criticism's notions**: `Criticism_Samples` (#435, the sample and part (b); S1 #478 `f68c8649`, the sample over a
@@ -475,7 +477,7 @@ searches for a theory before briefing a task that edits it.
   #542 (its 4: the checker's share per certificate measured, the check staying); #407 (#433's review's follow-ups 2 and 3; the frame as #432
   and #433 leave it; #394's follow-up 3); #505 (R3b's invariant under a formed program and call and a construction
   whose values are formed, q99; #504's three items; its brief, rewritten by plan-73, names them with R3b's theory,
-  E1's control's place and the row); #545 (#516's review, follow-up 1); #526 and #528 (#514's follow-up 2); #518 and
+  E1's control's place and the row); #443 (#546's re-review, follow-up 2: the request program's export cost); #526 and #528 (#514's follow-up 2); #518 and
   #526 (the combined
   contract is rc's, q100); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); #538 (#509's
   review's follow-up 5; #535's follow-ups 1 and 5, their renumbering by the re-review corrected by a later mail); #536

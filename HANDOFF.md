@@ -72,7 +72,9 @@ union, whose 42 unreached definitions the given does not need (#413's follow-up 
 installs; the union stays the guard's program, and the asked relation's program is the guard's program rooted at
 its entries, derived through the union's piece (#431's review, follow-up 4, the planner's call, mailed to #393).
 
-**Beside the route**: #457, after #455, the given's payload statement discharged by a kernel-checked composition down
+**Beside the route**: #458, the use instance split below the keyed and data readers with its uses' general facts at
+their homes, and #459 after it and #435, the presentation-level duplicates (#419's review; Open 132, 138, 141, 145
+now theirs); #457, after #455, the given's payload statement discharged by a kernel-checked composition down
 the reader systems' view steps (q93: code_simp over the readers' 130-definition presentation did not finish in 160 s,
 and an `eval` is excluded); the bootstrap loop's maintenance — #426, #341's, #388's and #375's follow-ups
 over the joined program's, the audit's and the collection programs' generic content (after #342 and #418). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
@@ -304,6 +306,10 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   contract carried; freshness is the interpretation's `coordinates(4)`; the installation about 4 s, the selection's and
   read-back's own costs unmeasured. Its review's follow-ups (`.build/tasks/415/review.md`): 1, 2, 4 and 3's `[simp]`
   are #452; 3's moves Open 144; 5 Open 99.
+- **Landed with `81d00139`**: #418, the use-equivariance clauses of the readers G3 and G4 call (key absence, data
+  inequality, the audit's readers), of the audit and of the callee boundary, each beside its contract, with its
+  presented form. Its review's follow-ups (`.build/tasks/419/review.md`): 2 and 3 are #458 (the use instance split and
+  its uses' facts, with Open 141 and 145); 1 and 4 are #459 (with Open 132 and 138); 5 mailed to #393.
 - **Landed with `97ea7b82`**: #410, `Factor_Package_Requests`, the native request at a package — one rule over package
   admission at the given, membership of the support, the context's root family and closed scope, and its compatibility
   with the given; its contract for any given and support, its least scope, completeness, packet and use equivariance.
@@ -569,7 +575,8 @@ through `renaming_action.act_inverse` and `act_inverse_right`, its local inclusi
 
 ## Now
 
-- **Mailed, read by each task's first session**: to #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's payloads at
+- **Mailed, read by each task's first session**: to #393 (#419's review, follow-up 5: the asked relation's clause composed from G3's, G4's and #416's exported
+  clauses), to #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's payloads at
   installation, the rooted restriction at 561), to #455 (q93: the given's payload statement conditional, its discharge
   #457's), to #407 (plan-65: #433's review's
   follow-ups 2 and 3), to #393 and

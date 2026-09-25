@@ -118,7 +118,7 @@ the recording's builds, placed from #482's entry before #397, and the approval b
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #481 and #482 at its head, the counterparts
-(#470–#477) and S1 (#478), then #395 and the rest in their chains' order, the first request's and the
+(#472–#477) and S1 (#478), then #395 and the rest in their chains' order, the first request's and the
 criticism's builds after them; then #457, #459, #461 and #483; each review after its build.
 
 ## Decisions
@@ -376,6 +376,10 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   the asked relation's program entry, its contract at the installed entry, its use-equivariance clause, its cost
   (shared). Its review's follow-ups (`.build/tasks/394/review.md`): 1 and 2 mailed to #399 (2 also to #447), 3 to
   #399, #403 and #407, 4 Open 155.
+- **Landed with `1ded0e85`**: #470, C3, `Factor_Audit_Counterparts`: the audit's counterpart (505), 522's and 525's,
+  and the guard's base at 113, 80, 392 and 525 exact to the guard's program (`guard_base_decision`, keyed by the
+  guard's sites); 525 about 0.15 s per member at the given (38.3 s for 252, shared). Its review's follow-ups
+  (`.build/tasks/471/review.md`): 1 and 3 Open 156 (1 also mailed to #447 and #478), 2 in #483, 3 and 4 to #399.
 - **Landed with `00c4bf47`**: #458, the use instance split: the low actions in `Factor_Use_Actions` below the keyed
   and data readers, the inverse-permutation argument once (`use_renaming_inverse`), the schema reading's renaming
   beside the definition's, the request's general facts and the scopes' root position at their homes
@@ -650,6 +654,11 @@ by its re-review, of which only the summary stands: h1's zero prefix and the ine
 interfaces and fewer clauses stay formed) stated once beside `Factor_System_Restriction`, at a second use. 155 #394's
 review, follow-up 4: `asked_relation`, `asked_entry_presented`'s shape argument and `asked_relation_equivariant`
 concern the guard alone: beside it in `Development_First_Problem_Guard` at a second use, the installation citing them.
+156 #471's review, follow-ups 1 and 3, with #469's follow-up 1: the counterparts of 525 and 392 re-read the candidate's
+or the given's whole rows at each member or definition (525 about 0.15 s per member at the given, measured shared); a
+refinement at C2's level — the callee counterpart decided on the pair already read, or the formation check where the
+pair's reading establishes it — through the performance channel once a use (#399, S1, #447) measures it dominating,
+with an exclusive re-run of the 38.3 s if one relies on it.
 
 ## Now
 
@@ -662,11 +671,11 @@ concern the guard alone: beside it in `Development_First_Problem_Guard` at a sec
   request program's payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers
   cited); #407 (#433's review's follow-ups 2 and 3; the frame as #432 and #433 leave it; #394's follow-up 3); #403
   (#394's follow-up 3); #447 (#436's first follow-up; the octet rows through `criticism_refutes` and #480; #394's
-  follow-up 2); #474 (the given's 47 entries, the granted ones without counterparts, by demand); #470 (#467's follow-up
-  4, 113's and 80's seconds apart; #469's follow-up 1, 392's counterpart at the given); #399 (#465's follow-up 2, the
-  evaluation over the base timed at the guard's call; #469's follow-up 1 if #470 did not; #394's follow-ups 1–3: the
-  asked environment's read-back held apart from the installation, the given computed once if evaluated repeatedly,
-  the binary entry's bridge); #478 (#465's follow-ups 1 and 2).
+  follow-up 2; #471's follow-up 1); #474 (the given's 47 entries, the granted ones without counterparts, by demand);
+  #399 (#465's follow-up 2, the evaluation over the base timed at the guard's call; #469's follow-up 1 if #470 did
+  not; #394's follow-ups 1–3: the asked environment's read-back held apart from the installation, the given computed
+  once if evaluated repeatedly, the binary entry's bridge; #471's follow-ups 3 and 4); #478 (#465's follow-ups 1 and
+  2; #471's follow-up 1).
 
 
 

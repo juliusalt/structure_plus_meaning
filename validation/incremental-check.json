@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "8ca4adc063901cfb5207ce651df69c34c8c93aa21d9206986d375f8d4ebbe4f2",
- "checked_content_sha256": "2d4ad9a60ac4131f25d3467dc05fe051282734ed65c2fb08e673bff9a161f161",
+ "base_receipt_sha256": "f7c19250e29b30987c0d7dc41cdfed94bef772b63be15584bec6b647d4c1909e",
+ "checked_content_sha256": "6080ec1114748785b023f75dc0fae5ab83bfefd84f22cbc0318de0282402823c",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,21 +17,20 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp4llbhpxs/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpwau3ditc/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 1.0,
+  "base_and_impact": 0.87,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 208.61,
-  "recipe_impact": 0.5,
-  "recipes_and_host_tests": 11.37
+  "proof": 263.45,
+  "recipe_impact": 0.96,
+  "recipes_and_host_tests": 11.91
  },
  "rebuilt_theories": [
-  "Development_Guard_Counterparts",
-  "Factor_Audit_Counterparts"
+  "Development_Native_State"
  ],
  "recipes": {
   "allocated-environments": {
@@ -191,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1880,
- "seconds": 275.78,
+ "reused_theories": 1882,
+ "seconds": 337.8,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1882,
+  "theory_count": 1883,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1882,
+ "theories": 1883,
  "validation_inputs": {
-  "ROOT": "8c29b2c2e894d181d18fde1535807bcf16c7c46321b4b8d32708496a051475f1",
+  "ROOT": "9e6cfe8db748aec0e3ebd94aebfcfe187d5fde4d3e67cff094cec7638e470da2",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

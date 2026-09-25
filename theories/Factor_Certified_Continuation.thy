@@ -44,9 +44,8 @@ proof -
     "continuation_permission_invariant P d" "continuation_value_presents S T U C cu cr t"
     "native_replay_at E pu pr au ar root {}"
     using certified unfolding certified_continuation_at_def by blast
-  have positive: "native_positive_holds E pu pr au ar" by (rule native_replay_closed_sound[OF parts(5)])
   have meaning: "(d,t)\<in>positive_meaning P"
-    using native_positive_holds_with_reads[OF parts(1,2)] positive by blast
+    by (rule native_replay_closed_meaning[OF parts(5) environment_included_refl parts(1,2)])
   show ?thesis using parts(1-4) meaning unfolding native_continuation_at_def by blast
 qed
 

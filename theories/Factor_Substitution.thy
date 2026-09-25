@@ -17,9 +17,13 @@ definition material_pattern_substitute ::
      material_counts=pattern_substitute s (material_counts M),
      material_functions=pattern_substitute s (material_functions M)\<rparr>"
 
+lemma material_pattern_substitute_map:
+  "material_pattern_substitute s=map_material_patterns (pattern_substitute s)"
+  by (rule ext) (simp add: material_pattern_substitute_def map_material_patterns_def)
+
 lemma material_substitute_fields:
   "material_fields (material_pattern_substitute s M) = map (pattern_substitute s) (material_fields M)"
-  by (simp add: material_pattern_substitute_def material_fields_def)
+  by (simp only: material_pattern_substitute_map map_material_patterns_fields)
 
 lemma material_substitute_variables:
   "material_variables (material_pattern_substitute s M) =
@@ -34,16 +38,18 @@ lemma material_substitute_formed:
 
 lemma material_substitute_identity [simp]:
   "material_pattern_substitute Pattern_Variable M=M"
-  by (cases M) (simp add: material_pattern_substitute_def)
+  unfolding material_pattern_substitute_map by (rule map_material_patterns_ident) simp
 
 lemma material_substitute_composes:
   "material_pattern_substitute t (material_pattern_substitute s M) =
     material_pattern_substitute (\<lambda>a. pattern_substitute t (s a)) M"
-  by (simp add: material_pattern_substitute_def pattern_substitute_composes)
+  unfolding material_pattern_substitute_map
+  by (rule map_material_patterns_compose) (rule pattern_substitute_composes)
 
 lemma material_substitute_renaming:
   "material_pattern_substitute (Pattern_Variable \<circ> f) M=rename_material_pattern f M"
-  by (simp add: material_pattern_substitute_def rename_material_pattern_def rename_pattern_def)
+  unfolding material_pattern_substitute_map rename_material_pattern_map
+  by (rule map_material_patterns_cong) (simp add: rename_pattern_def)
 
 lemma material_substitute_satisfaction [simp]:
   "evaluate_material_satisfaction h (material_pattern_substitute s M) =
@@ -59,66 +65,50 @@ definition schema_substitute ::
      schema_premises=map_socket_graph id id (pattern_substitute s) (schema_premises S),
      schema_material_premises=(\<lambda>(q,M). (q,material_pattern_substitute s M)) ` schema_material_premises S\<rparr>"
 
+lemma schema_substitute_map:
+  "schema_substitute s=map_schema_patterns (pattern_substitute s)"
+  by (rule ext) (simp add: schema_substitute_def map_schema_patterns_def map_socket_graph_def
+    map_relation_values_def material_pattern_substitute_map split_def)
+
 lemma schema_substitute_conclusion [simp]:
   "schema_conclusion (schema_substitute s S)=pattern_substitute s (schema_conclusion S)"
-  by (simp add: schema_substitute_def)
+  by (simp add: schema_substitute_map)
 
 lemma schema_substitute_premise [simp]:
   "(q,d,p)\<in>schema_premises (schema_substitute s S) \<longleftrightarrow>
     (\<exists>a. (q,d,a)\<in>schema_premises S \<and> p=pattern_substitute s a)"
-  by (auto simp: schema_substitute_def map_socket_graph_member)
+  by (simp only: schema_substitute_map map_schema_patterns_premise)
 
 lemma schema_substitute_material [simp]:
   "(q,M)\<in>schema_material_premises (schema_substitute s S) \<longleftrightarrow>
     (\<exists>N. (q,N)\<in>schema_material_premises S \<and> M=material_pattern_substitute s N)"
-  by (auto simp: schema_substitute_def)
+  by (simp only: schema_substitute_map map_schema_patterns_material material_pattern_substitute_map)
 
 lemma schema_substitute_variables:
   "schema_variables (schema_substitute s S) = (\<Union>a\<in>schema_variables S. pattern_variables (s a))"
-  by (auto simp: schema_variables_def schema_substitute_def map_socket_graph_def
-    map_prod_def split_def material_substitute_variables pattern_substitute_variables
-    intro: rev_image_eqI; blast)
+  unfolding schema_substitute_map by (rule map_schema_patterns_variables) (rule pattern_substitute_variables)
 
 lemma schema_substitute_sockets [simp]:
   "schema_sockets (schema_substitute s S)=schema_sockets S"
-  by (simp add: schema_sockets_def schema_substitute_def map_socket_graph_domain pair_image_domain)
+  by (simp add: schema_sockets_def schema_substitute_map)
 
 lemma schema_substitute_dependencies [simp]:
   "schema_dependencies (schema_substitute s S)=schema_dependencies S"
-  by (simp add: schema_dependencies_def schema_substitute_def map_socket_graph_def
-    pair_image_range image_image)
+  by (simp add: schema_substitute_map)
 
 lemma schema_substitute_formed:
   assumes formed: "schema_formed S" and replacements: "\<forall>a\<in>schema_variables S. pattern_formed (s a)"
   shows "schema_formed (schema_substitute s S)"
-proof -
-  have calls: "single_valued (map_socket_graph id id (pattern_substitute s) (schema_premises S))"
-    by (rule map_socket_graph_functional) (use formed in \<open>auto simp: schema_formed_def\<close>)
-  have materials: "single_valued ((\<lambda>(q,M). (q,material_pattern_substitute s M)) ` schema_material_premises S)"
-    by (rule single_valued_pair_image[where f=id, simplified])
-      (use formed in \<open>auto simp: schema_formed_def\<close>)
-  have premise_formed: "pattern_formed (pattern_substitute s p)"
-    if member: "(q,d,p)\<in>schema_premises S" for q d p
-    by (rule pattern_substitute_formed)
-      (use formed replacements member in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
-  have material_formed: "material_pattern_formed (material_pattern_substitute s M)"
-    if member: "(q,M)\<in>schema_material_premises S" for q M
-    by (rule material_substitute_formed)
-      (use formed replacements member in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
-  show ?thesis using formed replacements calls materials premise_formed material_formed
-    by (auto simp: schema_formed_def schema_substitute_def map_socket_graph_def
-      map_socket_graph_domain pair_image_domain schema_variables_def
-      intro: pattern_substitute_formed material_substitute_formed)
-qed
+  unfolding schema_substitute_map
+  by (rule map_schema_patterns_formed[OF formed], rule pattern_substitute_formed) (use replacements in auto)
 
 lemma schema_substitute_identity [simp]:
   "schema_substitute Pattern_Variable S=S"
-  by (cases S) (simp add: schema_substitute_def map_socket_graph_def map_prod_def split_def)
+  unfolding schema_substitute_map by (rule map_schema_patterns_ident) simp_all
 
 lemma schema_substitute_composes:
   "schema_substitute t (schema_substitute s S)=schema_substitute (\<lambda>a. pattern_substitute t (s a)) S"
-  by (simp add: schema_substitute_def map_socket_graph_def map_prod_def image_image split_def
-    comp_def pattern_substitute_composes material_substitute_composes)
+  unfolding schema_substitute_map by (rule map_schema_patterns_compose) (rule pattern_substitute_composes)
 
 lemma schema_substitute_renaming:
   "schema_substitute (Pattern_Variable \<circ> f) S=rename_schema f id id S"

@@ -37,6 +37,22 @@ lemma requested_slots_mono:
   shows "requested_slots E Q\<subseteq>requested_slots E C"
   using assms by (auto simp: requested_slots_def)
 
+text \<open>
+  The requested slots read only the artifacts at the requested uses: two environments agreeing there request the
+  same slots.
+\<close>
+
+lemma requested_slots_locality:
+  assumes agree: "\<And>u r R. (u,r)\<in>Q \<Longrightarrow> artifact_at F u R \<longleftrightarrow> artifact_at E u R"
+  shows "requested_slots F Q=requested_slots E Q"
+proof (rule set_eqI)
+  fix z show "z\<in>requested_slots F Q \<longleftrightarrow> z\<in>requested_slots E Q"
+  proof (cases z)
+    case (Pair v k)
+    show ?thesis unfolding Pair requested_slots_def mem_Collect_eq prod.case using agree by blast
+  qed
+qed
+
 lemma requested_slot_source:
   assumes "(u,k) \<in> requested_slots E Q"
   shows "u \<in> fst ` Q"
@@ -497,11 +513,12 @@ lemma requested_slots_extension:
   assumes formed: "environment_formed E" and requests: "citation_requests_formed F Q"
     and included: "environment_included F E"
   shows "requested_slots E Q=requested_slots F Q"
-proof -
+proof (rule requested_slots_locality)
+  fix u r R assume request: "(u,r)\<in>Q"
   have sources: "\<And>u r R. (u,r)\<in>Q \<Longrightarrow> artifact_at E u R \<Longrightarrow> artifact_at F u R"
     by (rule request_source_artifact_required[OF formed requests included])
-  show ?thesis using sources included
-    by (auto simp: requested_slots_def; blast intro: included_artifact[OF included])
+  show "artifact_at E u R \<longleftrightarrow> artifact_at F u R"
+    using sources[OF request] included_artifact[OF included] by blast
 qed
 
 text \<open>

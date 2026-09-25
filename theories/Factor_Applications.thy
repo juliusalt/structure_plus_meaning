@@ -15,6 +15,14 @@ definition native_application_at ::
       I = insert r (set ps \<union> C \<union> J) \<and> K = citation_slots cite \<union> A \<and>
       I \<inter> K = {})"
 
+lemma native_application_atE:
+  assumes "native_application_at E u r d t I K"
+  obtains R ps c a cite C J A where "environment_formed E" "artifact_at E u R" "record_at R r ps [c,a]"
+    "citation_at R c cite C" "citation_location E u cite (fst d) (snd d)" "term_quoted_at E u a t J A"
+    "insert r (set ps) \<inter> (C \<union> J) = {}" "C \<inter> J = {}" "I = insert r (set ps \<union> C \<union> J)"
+    "K = citation_slots cite \<union> A" "I \<inter> K = {}"
+  using assms unfolding native_application_at_def by (elim conjE exE) (rule that; assumption)
+
 theorem native_application_unique:
   assumes first: "native_application_at E u r d t I K"
     and second: "native_application_at E u r e x J W"

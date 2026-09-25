@@ -1024,6 +1024,8 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Program_Evaluation
     Factor_Finite_Exact_Patterns
     Factor_Finite_Material_Arguments
+    Factor_Material_Resolution
+    Factor_Resolution_Controls
     Factor_Program_Evaluation_Investigation
     Factor_Finite_Native_Evaluation
     Factor_Native_Evaluation_Cases

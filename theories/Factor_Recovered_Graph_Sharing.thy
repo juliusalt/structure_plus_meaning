@@ -1,5 +1,5 @@
 theory Factor_Recovered_Graph_Sharing
-  imports Factor_Executable_Replay_Retention Established_Premises
+  imports Factor_Executable_Replay_Retention Established_Premises Factor_Formation_Once_Definitions
 begin
 
 section \<open>Recovered graphs read their proof rows and closures once\<close>
@@ -146,6 +146,22 @@ lemma finite_graph_formed_shared_code [code]:
     fBall N (\<lambda>n. n=root \<or> (n,root) |\<in>| C) \<and>
     fBall C (\<lambda>(x,y). x\<noteq>y))"
   by (simp only: finite_graph_formed_def finite_edge_reaches_def finite_edge_wellfounded_def Let_def)
+
+text \<open>
+  A replay's retained environment reads the package sites once for its sources and its demands, as the
+  judgment environment does (@{thm [source] finite_native_package_demands_over_sites}).
+\<close>
+
+declare finite_native_replay_environment_def[code del]
+
+lemma finite_native_replay_environment_shared_code [code]:
+  "finite_native_replay_environment E pu pr au ar G=(let S=finite_native_package_sites E pu pr in
+    finite_read_environment E ((finsert pu (fimage fst S) |\<union>| {|au|}) |\<union>| finite_native_graph_sources G)
+      ((finite_native_package_demands_over E pu pr S |\<union>| finite_native_application_demands E au ar) |\<union>|
+        finite_native_graph_demands E G))"
+  by (simp only: finite_native_replay_environment_def finite_native_replay_sources_def
+    finite_native_replay_demands_def finite_native_judgment_sources_def finite_native_judgment_demands_def
+    finite_native_package_sources_def finite_native_package_demands_over_sites Let_def)
 
 declare finite_read_environment_def[code del]
 

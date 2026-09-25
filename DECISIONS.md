@@ -16738,6 +16738,33 @@ reaching 77 are unresolved at the given. The courses, for the planner:
 
 ### Committed choice, for refusals
 
+[Corrected by task 518 (R5), the planner's answer to q105. (1) With R3's ancestor pruning, exactness fails under
+discharged declarations: p(v0) :- g(i,y), h(y); g(i,a); g(i,b); h(b); h(a) :- p(v0). g is functional up to the class
+{a~b}, h is invariant (h(a) and h(b) both hold) and p(v0) holds; keeping a, the committed search reaches h(a), then
+p(v0), a ground goal equal to the root's call, pruned: no alternative, no cut, a refutation of a true call. Pruning
+rests on ranks decreasing along a derivation, and a commitment breaks that. So at a commitment every node then
+present is barred: a ground goal equal to an unbarred ancestor's call is pruned as in R3, one equal to a barred
+ancestor's call ends its branch with a diagnosis, never a refutation; at no declaration R4 is unchanged. (2) The inner
+commitment through congruent sites is not exact at a traversal rows(S,[r|rs]) :- select(r,S,S'), rows(S',rs) (79's
+root lists, 32's rows): select's answers correspond as the bags r::S', their remainders S' do not. An inner commitment
+is declared at a clause's socket with the clause-level obligation: for every true instance of the clause and every
+answer of the socket's goal at the same input, the clause has a true instance with that answer (at 32 and 79 the
+traversal's totality discharges it). A socket declared without the kept head commits only where its parent is the
+focus root, the parent's call output as it stands is a variant of its clause's head output (each variable position of
+the head output holds a variable, pairwise distinct), and no pending goal but the socket goal's siblings and no node but
+the parent and its ancestors holds a variable of the goal's output or of the parent's output (review 519, finding 1):
+with sel and perm the control's selection and permutation, p(X,rs) :- sel(X,(r,S')), perm(S',rs) its socket 0
+declared without the kept head, G(X,[]) :- p(X,[[1]]) a producer, c(Pair x y) its consumer and
+root(X) :- G(X,W), c(Pair X W), every declaration discharged, root([[1],[2]]) holds, yet a commitment of sel inside
+G's focus kept ([1],[[2]]) and perm([[2]],[[1]]) failed, a refutation of a true call; and a focus root whose output its
+caller constrains, q(X) :- perm(X,[V|[[1]|W]]), c(...), loses the instance perm([[1],[2]],[[2],[1]]) the same way — the
+variant test refuses it (`Factor_Resolution_Controls`, the exchange control). A direct consumer keeps the form below,
+the search committing only when every
+other pending goal holding the output is such a consumer with the output pattern as its argument; the material
+single solution applies only where the atoms, edges, counts and functions fields are free variables. The kept answer
+is the least by the term key among the answers of the committed goal's own subtree, never "the first". Built in
+`Factor_Resolution_Commitments`; its exactness, the exchange and the transfer are task 565's (R5b).]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its

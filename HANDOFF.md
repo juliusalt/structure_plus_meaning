@@ -47,7 +47,7 @@ and #422 landed):
   #412 and N2b), the native request at a package (#410, after #422 and #416; the first request, its installation, is
   briefed later with the criticism build, Open 121);
 - then: the guard installed over the given's readers, the asked relation's entry with its equivariance clause (#393,
-  after #391, #414, #416, #418, #422 and the fix deriving the readers' presentation from its parts'), the given and the native state's first generation (#395, after #385, #414), the
+  landed `a0fe6bb1`), the given and the native state's first generation (#395, after #385, #414), the
   posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
   frame (#405, `6d84162b`: parts (a)–(d) and (f); its fix #432, `f4fa3d8a`: part (c) by constant so that the given's
@@ -69,7 +69,8 @@ and #422 landed):
   C1, C2 and #455), #472 and #474 (C4a, C4b), #476 (the stated-leaves counterpart) and #478 (S1), each with its review
   — #399 after E1 and C1–C3 and #447 after S1
   and C4 and the stated-leaves reader's counterpart (#441's q95), their briefs corrected as #462 drafted them; #447 also after
-  the octet sample's whole presented values (#439's review, follow-ups 1–4); #393 is mailed its corrections of (1) and (5).
+  the octet sample's whole presented values (#463, landed) and its readdressing as a renaming action (the fix continuing
+  #463, from its review); #393 is mailed its corrections of (1) and (5).
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -81,7 +82,15 @@ union, whose 42 unreached definitions the given does not need (#413's follow-up 
 installs; the union stays the guard's program, and the asked relation's program is the guard's program rooted at
 its entries, derived through the union's piece (#431's review, follow-up 4, the planner's call, mailed to #393).
 
-**Beside the route**: #459, the presentation-level duplicates after the use instance's split (#458, `00c4bf47`) and
+**The recording of a state as a generation**: the native state's first generation (#395) cannot execute in a held run —
+the given's value is 1.3M nodes, its complete quotation did not finish in 165 s, and the certified cause quotes a scope
+holding the payload twice (implement-395's report) — and every later route generation carries a payload of the given's
+size. #481 attributes it held and #482 decides the recording at its cause from that attribution (split to fit a
+session's room); #395 lands its statements with the execution a remainder (q96), and #397 waits on #482.
+
+**Beside the route**: #483, after the counterpart builds and S1 (#478), the counterparts' and E1's generic facts at
+their homes, their `eval` controls in a theory of their own and two whole-rebuild moves in one rebuild (#467's, #469's
+and #465's reviews); #459, the presentation-level duplicates after the use instance's split (#458, `00c4bf47`) and
 #435, with #458's review's follow-ups 1–4 (#419's review; Open 132 and 138 its); #457, after #426, the given's payload statement discharged by a kernel-checked composition down
 the five reader systems' view steps (q93: code_simp over the readers' 130-definition presentation did not finish in 160 s,
 and an `eval` is excluded), with the general payload lemmas at their homes (#452's review, follow-ups 2 and 3; #456's,
@@ -104,14 +113,13 @@ exporter's obligations at every state it defines (#227–#308, #352).
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The deepest chains are 6: #393 → #397 → #399 → #401 → #407 → #408, and
-#466 → #470 → #399 onward; the approval build (Open 142) after #407 would end a chain of 6.
+**Shape.** No build waits on a review task. The deepest chain is 7: #481 → #482 → #397 → #399 → #401 → #407 → #408;
+the recording's builds, placed from #482's entry before #397, and the approval build (Open 142) after #407 lengthen it.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #464, #466 and #468 at its head (#463 beside), then
-#393 and #395, startable since #455 landed, and the rest in their chains' order, the first
-request's and the criticism's builds after them; then
-#457, #459 and #461, with #426 and #458 resuming as their checks return; each review after its build.
+exists, Q2): the owner's directions first — the first problem's route, #481 and #482 at its head, the counterparts
+(#470–#477) and S1 (#478), then #395 and the rest in their chains' order, the first request's and the
+criticism's builds after them; then #457, #459, #461 and #483; each review after its build.
 
 ## Decisions
 
@@ -348,6 +356,26 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   row's own pair (`use_row_refutes`) and its site and entry corollaries. Its first verdict's follow-ups, overwritten by
   the re-review (`.build/tasks/438/review.md`): the pair shapes mailed to #447, the order against #458 mailed to #458,
   h1's zero prefix and the inequality control Open 149.
+- **Landed with `84e2cd9c`**: #426, the joined program's, the audit's, the guard's and the collection programs'
+  generic content beside their notions (the single-clause rule once in `Factor_Rule_Instances`, the payloads' bridge,
+  `given_member_use` at `Factor_Packages`, the law sublocales dropped); its review's follow-ups
+  (`.build/tasks/426/review.md`) are Open 153.
+- **Landed with `c6930e95`**: #466 (C1, `Factor_Inclusion_Admission_Counterparts`: the counterparts of 113 and 80 and
+  the readers of environment-value pairs and source-root arguments) and #463 (the octet sample's readdressing lifted to
+  whole environment, site and program entry values). #467's follow-ups: 1–3 and 6 in #483, 4 mailed to #470, 5 settled
+  by the landing. #463's review (`.build/tasks/463/review.md`): 1–4 are #480, which #447 waits on; 5 Open 152; 6 is
+  Open 150.
+- **Landed with `9c39602a`**: #464, E1, `Factor_Implemented_Base_Evaluation` with the general lemma in
+  `Inference_Demands`: the finite and native evaluation over an implemented base, exact under exact decisions, the empty
+  base the plain evaluator. Its review's follow-ups (`.build/tasks/465/review.md`): 1 and 3 in #483, 2 mailed to #399
+  and #478, 4 Open 154.
+- **Landed with `9454dadc`**: #468, C2, `Factor_Additions_Counterparts`: the additions counterpart for every callee,
+  393's and 392's its instance, the site value reader `finite_site_read`. Its review's follow-ups
+  (`.build/tasks/469/review.md`): 1 mailed to #470 and #399, 2 and 3 in #483, 4 with q96's answer to #395.
+- **Landed with `a0fe6bb1`**: #393, `Development_First_Problem_Asked`: the guard installed over the given's readers,
+  the asked relation's program entry, its contract at the installed entry, its use-equivariance clause, its cost
+  (shared). Its review's follow-ups (`.build/tasks/394/review.md`): 1 and 2 mailed to #399 (2 also to #447), 3 to
+  #399, #403 and #407, 4 Open 155.
 - **Landed with `00c4bf47`**: #458, the use instance split: the low actions in `Factor_Use_Actions` below the keyed
   and data readers, the inverse-permutation argument once (`use_renaming_inverse`), the schema reading's renaming
   beside the definition's, the request's general facts and the scopes' root position at their homes
@@ -380,31 +408,8 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   each beside its contract; its re-review's follow-ups (`.build/tasks/417/review.md`): 1 Open 141, 2 mailed to #410
   (the least package environment's commutation with use permutations) and Open 78 (the probe cost of a change to
   `Factor_Package_Closure_Admission`).
-- **#320** (`b30c3d33`, design): DECISIONS.md "Problems about native definitions are posed, answered and judged at the
-  development package's rows" — the development package joining the six notions' programs (N2a #340, N2b #342), its
-  rows and row-level request, verdict and edit corrected by #376's and #378's entries; its owner choices Q18.
-- **#374** (`1db8e167`): the rule family's law over a listed family of triples (`native_listed_law`), the applied rule
-  returned as its triple, `step_rule` without a set difference; DECISIONS.md "A listed family returns the rule it
-  applied". Its review's follow-ups 1–5 at the law's own theories are #379 (`66b4f05c`: the collection programs' own
-  families through the listed law, `supported_triple`, `read_triple`, `rule_triple`; its review's follow-ups 1–4 to
-  #375, 5 the next-edit list), 2 and 6 in the development theories #375.
-- **#288** (`93cae3bb`): what the verdict's fields and their witnesses both prove stated once; its review's follow-ups
-  1–2 to #375, 3–5 Open 118. **#353** (`09cea44c`): the per-answer function's last shared and edit-sized reads; its
-  review's follow-ups Open 120.
-- **#356** (design): DECISIONS.md "The published state holds its targets once, and a report's word is read off them";
-  B1 #359 (`d212cb53`, `Shared_Term_Words`), B2 #361 (`35d48aba`, `Represented_Snapshot_Transactions`), B3 #363
-  (`254b5999`, `Presented_Publication_Values`), B4a #365 (`1a8677a4`, `Development_Seed_Referenced_Publication`; its
-  review's follow-ups 1–3 taken by #367, 4–8 #384), B4b #367 (`1f60a87f`: the seed recipe reads the publication's word
-  off the word constant, 33.14 s saved in its held pair, `.build/tasks/367/measurement.md`; its review's follow-ups
-  under Open 27 and the next-edit list); #355 (`2c69e833`), the cause's formation discharged where the judgment
-  constructs it.
-- **The answer harness**: #313 (`e9bbe02b`) the framed answers' parts read in one session, #323 (`ec46e355`) the judged
-  answers in one shared proof session, #314 (`d47ce451`) the records re-recorded on #167's base, #319 (`9d84c95f`) the
-  re-record in the harnesses' one form; their follow-ups #369 (`e2f2bf4d`: one export and one verdict-and-publication
-  run over the shared proof, a failing member proved alone, the request theory per subject, the shared session
-  recorded; its review's follow-up 1 mailed to #430, 2–5 Open 133, 6 and 7 Open 134) and Open 122.
-- **#167** (`04c20f87`): every report switched to its problems' rows in context and the problem datum's tags retired;
-  its review's follow-ups 1–5 are #354.
+- **Bootstrap-loop lines no open work builds on** (#320's design, #374, #288, #353, #356's B1–B4b, the answer harness
+  #313–#369, #167): in `PLANNING_LOG.md` (2026-09-25, plan-68); the Open items citing their reviews stand.
 
 ## Open
 
@@ -496,7 +501,9 @@ The owner's questions, a line each (their words and the provisional choices in f
    stages not separated; `.build/tasks/309/runner`), and environment formation superlinearly (#159): attributed when an
    installation on the route (#393, #414) or a native question over hundreds of candidates needs it. #414 measured
    the readers' installation at about 4 s; its selection's and read-back's own costs are unmeasured (non-monotonic
-   totals, #415's follow-up 5): a held run with repeated samples if condition 5a needs them.
+   totals, #415's follow-up 5): a held run with repeated samples if condition 5a needs them. #393's installation
+   26.5 s and read-back 25.6 s, shared, each hold the nullary values they reach (the given's about 19 s; #394's
+   follow-up 1): their held separation is mailed to #399.
 100. A native record replayed in a task tree whose theories change the state's closure is unproduced
    (`export_proved_code` refuses): replays run after landing; a proof context holding the tree's theories would lift it
    — a tools task at a measured need.
@@ -618,7 +625,18 @@ theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations
 reversal (#435's review, `.build/tasks/436/review.md`). 147 the new whole agreements of existing view chains
 (`positive_complete_data_agreement`, `replay_positive_agreement`, `derivation_replay_agreement`,
 `application_derivation_agreement`, `call_application_agreement`, `comparison_located_agreement`) moved with their
-programs' theories when those are next touched (#454's review, follow-up 2). 151 #458's review
+programs' theories when those are next touched (#454's review, follow-up 2). 153 #426's review
+(`.build/tasks/426/review.md`), at each theory's next edit: `Factor_Package_Additions`' row naming `entry_rule` and
+`use_absence_rule`; `goal_view_rule`'s unread membership premise dropped; `finite_native_readiness_payloads`,
+`finite_native_reach_payloads` and `finite_verdict_witnesses_payloads` into their programs' theories; `law` beside
+`triples` dropped in `Native_Path_Stores`' two store programs; the 39 uses of `schema_consequences_valuationD`
+surveyed and re-cited to `positive_meaning_valuationE` or the single-clause rule; REASONING_REUSE's single-premise row
+naming the four site rules; task 381's correction naming that G3 and G4 each imply G2; `Development_Package_Program`'s
+two redundant imports. 152 one collection lifting — subjects
+changed under `inj_on f A`, each row's term by a map commuting with `data_list_term` — stated in
+`Factor_Data_Collection_Transport`, `data_collection_presents_leaf_map`, `Criticism_Samples.data_collection_presents_pointwise`
+and `data_collection_presents_image`'s backward direction its instances, with the next landing that changes those
+theories (#463's review, follow-up 5). 151 #458's review
 (`.build/tasks/458/review.md`), at each theory's next edit: follow-up 1's texts crediting `Factor_Use_Renaming` with
 what `Factor_Use_Actions` states (`Factor_Package_Closure_Admission`, `Criticism_Use_Samples`; those of #459's and
 #426's theories are theirs), 5 `native_package_formed_at` cited where six theories derive it inline, 6 the doubled
@@ -628,26 +646,28 @@ blank lines of `Factor_Program_Scopes` and `Factor_Package_Requests`. 150 #439's
 `finite_system_payloads` in `Factor_Finite_Payload_Literals`, `readdress_object` stated as `push_object` with
 attachment values mapped — with the next landing that changes those theories. 149 #438's first verdict, overwritten
 by its re-review, of which only the summary stands: h1's zero prefix and the inequality control in
-`Criticism_Use_Samples`, at its next edit.
+`Criticism_Use_Samples`, at its next edit. 154 #465's review, follow-up 4: `implemented_base_program_formed` (equal
+interfaces and fewer clauses stay formed) stated once beside `Factor_System_Restriction`, at a second use. 155 #394's
+review, follow-up 4: `asked_relation`, `asked_entry_presented`'s shape argument and `asked_relation_equivariant`
+concern the guard alone: beside it in `Development_First_Problem_Guard` at a second use, the installation citing them.
 
 ## Now
 
 
-- **Mailed, read by each task's first session**: to #393 (#419's review, follow-up 5: the asked relation's clause composed from G3's, G4's and #416's exported
-  clauses), to #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's payloads at
-  installation, the rooted restriction at 561), to #455 (q93: the given's payload statement conditional, its discharge
-  #457's), to #407 (plan-65: #433's review's
-  follow-ups 2 and 3), to #393 and
-  #395 (plan-65: the given as #455 installs it, the names in
-  `Development_Given_Program`, #452's facts and the rule "Evaluations"; to #393 also #451's mapped-extension finding), #395 (the given's site value takes
-  that computed quotation, not `program_scope_quoted_total`), #393 (sites 392 and 525's native evaluability; the asked
-  relation's program is the guard's program rooted at its entries, derived through the union's piece
-  `finite_given_readers_def`; each view's `_formed` lemma in the simpset and `bases=` checked), #407 (the frame as #432
-  and #433 leave it). By plan-66: to #455 (#452's review, follow-ups 1 and 4: one `value`, `given_readers_fresh(2)`;
-  #454's follow-up 4: the evaluation measured where the duplicated terms are evaluated), #393 (`given_readers_fresh(2)`;
-  its (5) under head coverage, #460, then #460's corrections of (1) and (5)), #439 and #441 (#460's corrections), #395 (`given_environment_not_closed`, `given_retention_refused`), #447 (#436's
-  first follow-up). By plan-67: to #393, #395 and #443 (#455's landing: its result's (5) names; #456's follow-up 4,
-  cite the transfers, no named copy), to #474 (the given's 47 entries, the granted ones without counterparts, by demand).
+- **Mailed, read by each task's first session** (by task; landed tasks' dropped): #395 (the given as #455 installs it,
+  the names in `Development_Given_Program`, #452's facts, the rule "Evaluations"; its site value takes the computed
+  quotation, not `program_scope_quoted_total`; `given_environment_not_closed`, `given_retention_refused`; #455's
+  result's (5) names, the transfers cited, no named copy; q96: the statements land, the execution a remainder, no
+  second reader of site values); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the
+  request program's payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers
+  cited); #407 (#433's review's follow-ups 2 and 3; the frame as #432 and #433 leave it; #394's follow-up 3); #403
+  (#394's follow-up 3); #447 (#436's first follow-up; the octet rows through `criticism_refutes` and #480; #394's
+  follow-up 2); #474 (the given's 47 entries, the granted ones without counterparts, by demand); #470 (#467's follow-up
+  4, 113's and 80's seconds apart; #469's follow-up 1, 392's counterpart at the given); #399 (#465's follow-up 2, the
+  evaluation over the base timed at the guard's call; #469's follow-up 1 if #470 did not; #394's follow-ups 1–3: the
+  asked environment's read-back held apart from the installation, the given computed once if evaluated repeatedly,
+  the binary entry's bridge); #478 (#465's follow-ups 1 and 2).
+
 
 
 - **Classifier stops**: a classifier stopped plan-51 to plan-54, plan-56 and plan-58 to plan-62 before their notes, and

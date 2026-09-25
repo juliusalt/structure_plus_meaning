@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "625dee912bc4b7ad34ee60229820f57b2ba1e52331316c516f5d66c223546118",
- "checked_content_sha256": "31527ea93a518c29a11a0772582b5fd15acfa38185dea922b123d7e4ac636990",
+ "base_receipt_sha256": "8ca4adc063901cfb5207ce651df69c34c8c93aa21d9206986d375f8d4ebbe4f2",
+ "checked_content_sha256": "2d4ad9a60ac4131f25d3467dc05fe051282734ed65c2fb08e673bff9a161f161",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,21 +17,21 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpw8yd9jpy/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp4llbhpxs/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.43,
+  "base_and_impact": 1.0,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 214.71,
-  "recipe_impact": 0.49,
-  "recipes_and_host_tests": 11.43
+  "proof": 208.61,
+  "recipe_impact": 0.5,
+  "recipes_and_host_tests": 11.37
  },
  "rebuilt_theories": [
-  "Criticism_Octet_Samples",
-  "Factor_Inclusion_Admission_Counterparts"
+  "Development_Guard_Counterparts",
+  "Factor_Audit_Counterparts"
  ],
  "recipes": {
   "allocated-environments": {
@@ -191,19 +191,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1875,
- "seconds": 283.86,
+ "reused_theories": 1880,
+ "seconds": 275.78,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1877,
+  "theory_count": 1882,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1877,
+ "theories": 1882,
  "validation_inputs": {
-  "ROOT": "66b745ab029fc655d24b584e7c814665fb09e1d8f53df1b767fbc21fc365fabb",
+  "ROOT": "8c29b2c2e894d181d18fde1535807bcf16c7c46321b4b8d32708496a051475f1",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

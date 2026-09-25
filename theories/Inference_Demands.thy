@@ -72,40 +72,77 @@ qed
 definition guided_inferences where
   "guided_inferences R K A a H \<longleftrightarrow> R a H \<and> a\<in>inference_demand R K A"
 
+text \<open>
+  The rules of a demand restricted to its conditions outside a base, seeded with the base's demanded
+  conditions that the whole closure holds: when every rule at a demanded condition outside the base and
+  outside the known conditions has its premises demanded, the restricted closure holds each demanded
+  condition exactly when the whole closure does. The empty base is the restriction to a closed demand.
+\<close>
+
+theorem inference_restriction_above_base:
+  assumes closed: "\<And>a H. a\<in>D \<Longrightarrow> a\<notin>B \<Longrightarrow> a\<notin>K \<Longrightarrow>
+    finite H \<Longrightarrow> single_valued H \<Longrightarrow> R a H \<Longrightarrow> rel_ran H\<subseteq>D"
+    and inside: "a\<in>D"
+  shows "a\<in>inference_closure (\<lambda>a H. R a H \<and> a\<in>D \<and> a\<notin>B)
+      (K\<union>{b\<in>D. b\<in>B \<and> b\<in>inference_closure R K}) \<longleftrightarrow>
+    a\<in>inference_closure R K"
+proof
+  let ?S="\<lambda>a H. R a H \<and> a\<in>D \<and> a\<notin>B"
+  let ?L="K\<union>{b\<in>D. b\<in>B \<and> b\<in>inference_closure R K}"
+  assume restricted: "a\<in>inference_closure ?S ?L"
+  have returned: "finite_inference ?S ?L b \<Longrightarrow> b\<in>inference_closure R K" for b
+  proof (induction rule: finite_inference.induct)
+    case (seed b)
+    then show ?case using inference_closure_seed[of K R] by blast
+  next
+    case (step H b)
+    show ?case by (rule inference_closure_step[where H=H and R=R])
+      (use step.hyps(1-3) step.IH in auto)
+  qed
+  show "a\<in>inference_closure R K"
+    by (rule returned[OF finite_inference_complete[OF restricted]])
+next
+  let ?S="\<lambda>a H. R a H \<and> a\<in>D \<and> a\<notin>B"
+  let ?L="K\<union>{b\<in>D. b\<in>B \<and> b\<in>inference_closure R K}"
+  assume original: "a\<in>inference_closure R K"
+  have transfer: "finite_inference R K b \<Longrightarrow> b\<in>D \<Longrightarrow> finite_inference ?S ?L b" for b
+  proof (induction rule: finite_inference.induct)
+    case (seed b)
+    show ?case by (rule finite_inference.seed) (use seed.hyps in blast)
+  next
+    case (step H b)
+    show ?case
+    proof (cases "b\<in>K \<or> b\<in>B")
+      case True
+      have derived: "finite_inference R K b"
+        by (rule finite_inference.step[where R=R and K=K, OF step.hyps(1-3)]) (use step.IH in blast)
+      have "b\<in>inference_closure R K" by (rule finite_inference_sound[OF derived])
+      then show ?thesis by (intro finite_inference.seed) (use True step.prems in blast)
+    next
+      case False
+      have support: "rel_ran H\<subseteq>D"
+        by (rule closed[OF step.prems _ _ step.hyps(1-3)]) (use False in blast)+
+      show ?thesis by (rule finite_inference.step[OF step.hyps(1,2)])
+        (use step.hyps(3) step.prems step.IH support False in auto)
+    qed
+  qed
+  show "a\<in>inference_closure ?S ?L"
+    by (rule finite_inference_sound[OF transfer[OF finite_inference_complete[OF original] inside]])
+qed
+
 theorem inference_restriction_on_closed_demand:
   assumes closed: "\<And>a H. a\<in>D \<Longrightarrow> a\<notin>K \<Longrightarrow>
     finite H \<Longrightarrow> single_valued H \<Longrightarrow> R a H \<Longrightarrow> rel_ran H\<subseteq>D"
     and inside: "a\<in>D"
   shows "a\<in>inference_closure (\<lambda>a H. R a H \<and> a\<in>D) K \<longleftrightarrow>
     a\<in>inference_closure R K"
-proof
-  assume "a\<in>inference_closure (\<lambda>a H. R a H \<and> a\<in>D) K"
-  then show "a\<in>inference_closure R K"
-    using inference_refines_by_inclusion[where R="\<lambda>a H. R a H \<and> a\<in>D" and S=R]
-    by (auto simp: inference_refines_def)
-next
-  assume original: "a\<in>inference_closure R K"
-  have transfer: "finite_inference R K b \<Longrightarrow> b\<in>D \<Longrightarrow>
-      finite_inference (\<lambda>a H. R a H \<and> a\<in>D) K b" for b
-  proof (induction rule: finite_inference.induct)
-    case (seed b)
-    show ?case by (rule finite_inference.seed[OF seed.hyps])
-  next
-    case (step H b)
-    show ?case
-    proof (cases "b\<in>K")
-      case True
-      show ?thesis by (rule finite_inference.seed[OF True])
-    next
-      case False
-      have support: "rel_ran H\<subseteq>D"
-        by (rule closed[OF step.prems False step.hyps(1-3)])
-      show ?thesis by (rule finite_inference.step[OF step.hyps(1,2)])
-        (use step.hyps(3) step.prems step.IH support in auto)
-    qed
-  qed
-  show "a\<in>inference_closure (\<lambda>a H. R a H \<and> a\<in>D) K"
-    by (rule finite_inference_sound[OF transfer[OF finite_inference_complete[OF original] inside]])
+proof -
+  have rules: "(\<lambda>a H. R a H \<and> a\<in>D \<and> a\<notin>{})=(\<lambda>a H. R a H \<and> a\<in>D)" by simp
+  have seeds: "K\<union>{b\<in>D. b\<in>{} \<and> b\<in>inference_closure R K}=K" by simp
+  have "a\<in>inference_closure (\<lambda>a H. R a H \<and> a\<in>D \<and> a\<notin>{})
+      (K\<union>{b\<in>D. b\<in>{} \<and> b\<in>inference_closure R K}) \<longleftrightarrow> a\<in>inference_closure R K"
+    by (rule inference_restriction_above_base[OF _ inside]) (use closed in blast)
+  then show ?thesis by (simp only: rules seeds)
 qed
 
 theorem guided_inference_exact:

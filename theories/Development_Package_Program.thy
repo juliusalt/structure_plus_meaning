@@ -4,201 +4,10 @@ theory Development_Package_Program
     Factor_Finite_System_Fields Factor_Finite_Payload_Literals
 begin
 
-section \<open>A rule program relocated\<close>
-
 text \<open>
-  A relocation moves every site of a definition list, and every callee its rules name, by a map of
-  sites; binders and premise sockets stay. The relocated list's program is the program renamed by that
-  map (@{text finite_rename_system}), so an injective relocation keeps each site's meaning at the moved
-  site (@{thm renamed_system_positive_meaning}). A site is an occurrence coordinate, compared only for
-  equality: a relocation chooses coordinates and changes no meaning.
+  The relocation of a definition list, its formation and its payloads are the rule programs' own
+  (\<open>Native_Collection_Programs\<close>): this theory relocates the six notions and joins them.
 \<close>
-
-definition relocated_definitions :: "('u definition_site \<Rightarrow> 'u definition_site) \<Rightarrow>
-    ('u definition_site\<times>(local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list) list \<Rightarrow>
-    ('u definition_site\<times>(local_address\<times>(local_address,local_address,'u definition_site) finite_factor_schema) list) list" where
-  "relocated_definitions g ds=map (\<lambda>(d,rs). (g d,map (\<lambda>(c,F). (c,finite_rename_schema id id g F)) rs)) ds"
-
-lemma relocated_rule_program:
-  "finite_rule_program (relocated_definitions g ds)=finite_rename_system g (finite_rule_program ds)"
-proof -
-  have interfaces: "map (\<lambda>(d,rs). (d,native_var 0)) (relocated_definitions g ds)=
-      map (map_prod g id) (map (\<lambda>(d,rs). (d,native_var 0)) ds)"
-    by (induction ds) (auto simp: relocated_definitions_def)
-  have clauses: "concat (map (\<lambda>(d,rs). map (\<lambda>(c,F). ((d,c),F)) rs) (relocated_definitions g ds))=
-      map (map_prod (map_prod g id) (finite_rename_schema id id g))
-        (concat (map (\<lambda>(d,rs). map (\<lambda>(c,F). ((d,c),F)) rs) ds))"
-    by (induction ds) (auto simp: relocated_definitions_def case_prod_beta id_def)
-  show ?thesis
-    unfolding finite_rule_program_def finite_rename_system_def interfaces clauses by simp
-qed
-
-lemma relocated_definitions_sites: "fst ` set (relocated_definitions g ds)=g ` fst ` set ds"
-  by (force simp: relocated_definitions_def)
-
-lemma relocated_sites: "map fst (relocated_definitions g ds)=map g (map fst ds)"
-  by (induction ds) (auto simp: relocated_definitions_def)
-
-lemma relocated_append: "relocated_definitions g (xs@ys)=relocated_definitions g xs@relocated_definitions g ys"
-  by (simp add: relocated_definitions_def)
-
-lemma relocated_drop: "relocated_definitions g (drop n xs)=drop n (relocated_definitions g xs)"
-  by (simp add: relocated_definitions_def drop_map)
-
-lemma relocated_formed:
-  assumes formed: "schema_system_formed (decode_finite_system (finite_rule_program ds))"
-    and injective: "inj_on g (fst ` set ds)"
-  shows "schema_system_formed (decode_finite_system (finite_rule_program (relocated_definitions g ds)))"
-proof -
-  have "inj_on g (system_definitions (decode_finite_system (finite_rule_program ds)))"
-    using injective by (simp only: finite_rule_program_definitions)
-  then show ?thesis
-    by (simp only: relocated_rule_program finite_rename_system_correct renamed_system_formed[OF formed])
-qed
-
-text \<open>A relocation that fixes every site of a formed rule program fixes the program: its callees are its sites.\<close>
-
-
-lemma finite_rename_schema_fixed:
-  assumes fixed: "\<And>e. e\<in>fset (finite_schema_dependencies F) \<Longrightarrow> g e=e"
-  shows "finite_rename_schema id id g F=F"
-proof -
-  have "decode_finite_schema (finite_rename_schema id id g F)=rename_schema id id g (decode_finite_schema F)"
-    by (rule finite_rename_schema_correct)
-  also have "\<dots>=rename_schema id id id (decode_finite_schema F)"
-    by (rule rename_schema_agreement) (simp_all add: fixed finite_schema_dependencies_correct[symmetric])
-  also have "\<dots>=decode_finite_schema F" by (rule rename_schema_identity)
-  finally show ?thesis by (simp only: decode_finite_schema_injective)
-qed
-
-lemma relocated_fixed:
-  assumes formed: "schema_system_formed (decode_finite_system (finite_rule_program ds))"
-    and fixed: "\<And>d. d\<in>fst ` set ds \<Longrightarrow> g d=d"
-  shows "relocated_definitions g ds=ds"
-  unfolding relocated_definitions_def
-proof (rule map_idI)
-  fix x assume x: "x\<in>set ds"
-  obtain d rs where xd: "x=(d,rs)" by (cases x)
-  have "d\<in>fst ` set ds" using x xd by force
-  then have site: "g d=d" by (rule fixed)
-  have "finite_rename_schema id id g F=F" if cF: "(c,F)\<in>set rs" for c F
-  proof (rule finite_rename_schema_fixed)
-    fix e assume e: "e\<in>fset (finite_schema_dependencies F)"
-    have "((d,c),decode_finite_schema F)\<in>system_clauses (decode_finite_system (finite_rule_program ds))"
-      unfolding finite_rule_program_clause using x xd cF by blast
-    then have deps: "schema_dependencies (decode_finite_schema F)\<subseteq>fst ` set ds"
-      using formed unfolding schema_system_formed_def finite_rule_program_definitions by blast
-    have "e\<in>fst ` set ds" using e deps by (simp only: finite_schema_dependencies_correct) blast
-    then show "g e=e" by (rule fixed)
-  qed
-  then have "map (\<lambda>(c,F). (c,finite_rename_schema id id g F)) rs=rs" by (auto intro: map_idI)
-  then show "(\<lambda>(d,rs). (g d,map (\<lambda>(c,F). (c,finite_rename_schema id id g F)) rs)) x=x"
-    using xd site by simp
-qed
-
-section \<open>A rule program whose definitions each belong to a formed part is formed\<close>
-
-text \<open>
-  A list of definitions with distinct sites, each of which lies in a formed rule program whose definitions the list
-  holds, has a formed program: every clause is a clause of such a part, and every callee a site of it.
-\<close>
-
-lemma finite_rule_program_formed_parts:
-  assumes distinct: "distinct (map fst ws)"
-    and parts: "\<And>d rs. (d,rs)\<in>set ws \<Longrightarrow> \<exists>ds. (d,rs)\<in>set ds \<and> set ds\<subseteq>set ws \<and>
-      schema_system_formed (decode_finite_system (finite_rule_program ds))"
-  shows "schema_system_formed (decode_finite_system (finite_rule_program ws))"
-proof -
-  let ?W="decode_finite_system (finite_rule_program ws)"
-  have interfaces: "system_interfaces ?W\<subseteq>fst ` set ws\<times>{Pattern_Variable [0]}"
-    by (rule subrelI) (unfold finite_rule_program_interface, simp)
-  have clauses: "system_clauses ?W=map_relation_values decode_finite_schema
-      (set (concat (map (\<lambda>(d,rs). map (\<lambda>(c,F). ((d,c),F)) rs) ws)))"
-    by (simp only: decode_finite_system_fields finite_rule_program_def finite_schema_system.select_convs
-      fset_of_list.rep_eq)
-  have part: "\<exists>ds. set ds\<subseteq>set ws \<and> schema_system_formed (decode_finite_system (finite_rule_program ds)) \<and>
-      ((d,c),S)\<in>system_clauses (decode_finite_system (finite_rule_program ds))"
-    if s: "((d,c),S)\<in>system_clauses ?W" for d c S
-  proof -
-    obtain rs F where m: "(d,rs)\<in>set ws" "(c,F)\<in>set rs" "S=decode_finite_schema F"
-      using s unfolding finite_rule_program_clause by blast
-    obtain ds where ds: "(d,rs)\<in>set ds" "set ds\<subseteq>set ws"
-        "schema_system_formed (decode_finite_system (finite_rule_program ds))"
-      using parts[OF m(1)] by blast
-    show ?thesis unfolding finite_rule_program_clause using ds m by blast
-  qed
-  show ?thesis unfolding schema_system_formed_def
-  proof (intro conjI allI impI)
-    show "finite (system_interfaces ?W)" by (rule finite_subset[OF interfaces]) simp
-    show "single_valued (system_interfaces ?W)"
-      unfolding single_valued_def finite_rule_program_interface by simp
-    show "pattern_formed p" if "(d,p)\<in>system_interfaces ?W" for d p
-      using that unfolding finite_rule_program_interface by simp
-    show "finite (system_clauses ?W)" unfolding clauses by (rule map_relation_values_finite, rule finite_set)
-    show "single_valued (system_clauses ?W)"
-      unfolding single_valued_def
-    proof (intro allI impI)
-      fix x S S' assume s: "(x,S)\<in>system_clauses ?W" and s': "(x,S')\<in>system_clauses ?W"
-      obtain d c where x: "x=(d,c)" by (cases x)
-      obtain rs F where m: "(d,rs)\<in>set ws" "(c,F)\<in>set rs" "S=decode_finite_schema F"
-        using s[unfolded x] unfolding finite_rule_program_clause by blast
-      obtain rs' F' where m': "(d,rs')\<in>set ws" "(c,F')\<in>set rs'" "S'=decode_finite_schema F'"
-        using s'[unfolded x] unfolding finite_rule_program_clause by blast
-      have same: "rs'=rs" by (rule eq_key_imp_eq_value[OF distinct m'(1) m(1)])
-      obtain ds where ds: "(d,rs)\<in>set ds" "schema_system_formed (decode_finite_system (finite_rule_program ds))"
-        using parts[OF m(1)] by blast
-      have "((d,c),S)\<in>system_clauses (decode_finite_system (finite_rule_program ds))"
-          "((d,c),S')\<in>system_clauses (decode_finite_system (finite_rule_program ds))"
-        unfolding finite_rule_program_clause using ds(1) m m' same by blast+
-      then show "S=S'" using ds(2) x unfolding schema_system_formed_def single_valued_def by blast
-    qed
-    fix d c S assume s: "((d,c),S)\<in>system_clauses ?W"
-    then obtain ds where ds: "set ds\<subseteq>set ws" "schema_system_formed (decode_finite_system (finite_rule_program ds))"
-        "((d,c),S)\<in>system_clauses (decode_finite_system (finite_rule_program ds))"
-      using part by blast
-    have sub: "system_definitions (decode_finite_system (finite_rule_program ds))\<subseteq>system_definitions ?W"
-      using ds(1) by (auto simp: finite_rule_program_definitions)
-    show "d\<in>system_definitions ?W" "schema_formed S" "schema_dependencies S\<subseteq>system_definitions ?W"
-      using ds(2,3) sub unfolding schema_system_formed_def by blast+
-  qed
-qed
-
-text \<open>A rule program depends on the members of its list alone, and a list's two parts state its payloads.\<close>
-
-lemma finite_rule_program_set:
-  assumes same: "set ds=set ds'"
-  shows "finite_rule_program ds=finite_rule_program ds'"
-proof -
-  have lifted: "fset_of_list xs=fset_of_list ys" if "set xs=set ys" for xs ys :: "'b list"
-    using that by (metis fset_of_list.rep_eq fset_inject)
-  have interfaces: "fset_of_list (map (\<lambda>(d,rs). (d,native_var 0)) ds)=
-      fset_of_list (map (\<lambda>(d,rs). (d,native_var 0)) ds')"
-    by (rule lifted) (simp only: set_map same)
-  have clauses: "fset_of_list (concat (map (\<lambda>(d,rs). map (\<lambda>(c,F). ((d,c),F)) rs) ds))=
-      fset_of_list (concat (map (\<lambda>(d,rs). map (\<lambda>(c,F). ((d,c),F)) rs) ds'))"
-    by (rule lifted) (simp only: set_concat set_map same)
-  show ?thesis unfolding finite_rule_program_def interfaces clauses ..
-qed
-
-lemma finite_rule_program_append_payloads:
-  "finite_system_payloads (finite_rule_program (xs@ys))=
-    finite_system_payloads (finite_rule_program xs) |\<union>| finite_system_payloads (finite_rule_program ys)"
-  by (simp add: finite_system_payloads_def finite_rule_program_def fimage_funion sup_aci)
-
-lemma finite_rename_schema_payloads:
-  "finite_schema_payloads (finite_rename_schema id id g S)=finite_schema_payloads S"
-  by (simp add: finite_schema_payloads_def finite_rename_schema_def finite_material_payloads_def
-    finite_rename_material_def finite_term_pattern.map_id fset.map_comp comp_def case_prod_unfold)
-
-lemma finite_rename_system_payloads:
-  "finite_system_payloads (finite_rename_system g P)=finite_system_payloads P"
-  by (simp add: finite_system_payloads_def finite_rename_system_def fset.map_comp comp_def case_prod_unfold
-    finite_rename_schema_payloads map_prod_def)
-
-lemma relocated_payloads:
-  "finite_system_payloads (finite_rule_program (relocated_definitions g ds))=
-    finite_system_payloads (finite_rule_program ds)"
-  unfolding relocated_rule_program by (rule finite_rename_system_payloads)
 
 section \<open>The coordinates of the relocations\<close>
 
@@ -224,13 +33,18 @@ definition decomposition_relocation :: "local_address option definition_site \<R
   "decomposition_relocation d=(if d\<in>{decomposition_applies,decomposition_every,decomposition_defined,decomposition_declared}
     then relocate_site 3 d else d)"
 
-lemma decomposition_relocation_inj: "inj_on decomposition_relocation {d. length (snd d)=1}"
-  by (auto simp: inj_on_def decomposition_relocation_def relocate_site_def split: if_splits)
+text \<open>
+  The relocation is injective on the decomposition's sites: its images of them are distinct, which is computed
+  from the sites themselves. The injectivity rests on no length of an address: a site the relocation fixes is not
+  the image of a site it moves, among the sites the decomposition holds.
+\<close>
 
-lemma decomposition_sites_single: "fst ` set decomposition_definitions\<subseteq>{d. length (snd d)=1}"
+lemma decomposition_relocation_inj_on: "inj_on decomposition_relocation (fst ` set decomposition_definitions)"
 proof -
-  have "list_all (\<lambda>(d,rs). length (snd d)=1) decomposition_definitions" by code_simp
-  then show ?thesis by (auto simp: list_all_iff)
+  have "distinct (map decomposition_relocation (map fst decomposition_definitions))" by code_simp
+  then have "inj_on decomposition_relocation (set (map fst decomposition_definitions))"
+    by (rule conjunct2[OF iffD1[OF distinct_map]])
+  then show ?thesis by (simp only: set_map)
 qed
 
 section \<open>The development package's program\<close>
@@ -318,7 +132,7 @@ lemma package_parts_formed:
       relocated_formed[OF native_request_formed[unfolded native_request_system_def finite_native_request_def]
         inj_on_subset[OF relocate_site_inj subset_UNIV]]
       relocated_formed[OF native_decomposition_formed[unfolded native_decomposition_system_def
-        finite_native_decomposition_def] inj_on_subset[OF decomposition_relocation_inj decomposition_sites_single]])+
+        finite_native_decomposition_def] decomposition_relocation_inj_on])+
 
 lemma package_program_formed: "schema_system_formed package_program"
   unfolding package_program_def finite_package_program_def
@@ -437,7 +251,7 @@ theorem package_decomposition:
     (d,t)\<in>positive_meaning native_decomposition_system"
   unfolding native_decomposition_system_def finite_native_decomposition_def
   by (rule package_relocated[OF native_decomposition_formed[unfolded native_decomposition_system_def
-    finite_native_decomposition_def] inj_on_subset[OF decomposition_relocation_inj decomposition_sites_single]
+    finite_native_decomposition_def] decomposition_relocation_inj_on
     _ assms]) (auto simp: package_members)
 
 section \<open>The package reads no octet as structure\<close>

@@ -1321,6 +1321,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Term_Words
     Finite_Presentation_Readers
     Factor_Inclusion_Admission_Counterparts
+    Factor_Audit_Counterparts
+    Factor_Additions_Counterparts
+    Development_Guard_Counterparts
     Finite_Term_Word_Readers
     Required_History_Presentation
     Required_History_Execution
@@ -1625,6 +1628,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Keyed_Native_Evaluation
     Positioned_Native_Evaluation
     Shared_Native_Evaluation
+    Factor_Implemented_Base_Evaluation
     Criticism_Samples
     Criticism_Use_Samples
     Criticism_Octet_Samples
@@ -1868,6 +1872,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Package_Program
     Development_Native_Package
     Development_Given_Installation
+    Development_First_Problem_Asked
     Development_Given_Execution
     Development_Row_Data
     Development_Loop_Presentations

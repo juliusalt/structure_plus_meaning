@@ -617,7 +617,7 @@ corollary given_payload_audit:
 section \<open>The given's site value and its least scope\<close>
 
 corollary given_site_value: "\<exists>z. site_value_presents (decode_finite_environment given_environment) given_use [] z"
-  by (rule site_value_presents_total[OF given_package(3) native_package_root_position[OF given_package(1)]])
+  by (rule site_value_presents_total[OF given_package(3) native_package_site_position[OF given_package(1)]])
 
 text \<open>
   Beyond its package's least scope the given's environment holds three root selectors, each kept: the
@@ -636,7 +636,7 @@ proof -
   have uses: "(u,a)\<in>environment_positions E \<Longrightarrow> u\<in>environment_uses E" for E :: "local_address option artifact_environment" and u a
     by (force simp: environment_uses_def artifact_at_def)
   have base: "development_package_use\<in>environment_uses (decode_finite_environment development_package_environment)"
-    by (rule uses[OF native_package_root_position[OF development_package_kept]])
+    by (rule uses[OF native_package_site_position[OF development_package_kept]])
   have inK: "development_package_use\<in>fset (finite_environment_uses (fst given_readers_installed))"
     using included_uses[OF given_readers_installation(2)] base unfolding finite_environment_uses_correct by blast
   show "development_package_use\<noteq>given_use" using inK given_package(7) by force

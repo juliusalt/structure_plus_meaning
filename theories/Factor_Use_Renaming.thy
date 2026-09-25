@@ -1,123 +1,18 @@
 theory Factor_Use_Renaming
-  imports Presentation_Equivariance RRA_Structural_Syntax Factor_Native_Transport
-    Factor_Program_Entry_Presentations Factor_Packages Factor_System_Relocation
+  imports Factor_Use_Actions Factor_Native_Transport Factor_Program_Entry_Presentations Factor_Packages
+    Factor_System_Relocation
 begin
 
-section \<open>Uses are renamed by permutations\<close>
+section \<open>The Factor readers at renamed uses\<close>
 
 text \<open>
-  Non-nominality of uses is the notion of @{text Presentation_Equivariance} at the permutations of
-  uses, every permutation admissible and one permutation acting on all of a relation's arguments.
-  The RRA readers locate a use and never inspect it; their renaming facts are consumed as they stand:
-  @{thm [source] environment_renaming_formed}, @{thm [source] artifact_at_renamed_use},
-  @{thm [source] binds_slot_renamed_use}, @{thm [source] citation_use_renaming},
-  @{thm [source] citation_location_use_renaming}, @{thm [source] anchored_at_use_renaming} and
-  @{thm [source] located_at_use_renaming}. This theory adds the laws of the action and the renaming
-  of the Factor definition readers and of uses compared as data.
+  The upper part of the use instance (its low part is @{text Factor_Use_Actions}): the actions on site
+  contexts and program entries, and the definition, schema and package readings at a renamed use. Each
+  reading's renaming at a permutation is its forward renaming made exact by the inverse-permutation
+  argument (@{thm [source] use_renaming_inverse}) and the reading's uniqueness.
 \<close>
 
-subsection \<open>The action on environments\<close>
-
-lemma rename_environment_id [simp]: "rename_environment id E = E"
-  by (cases E) (simp add: rename_environment_def split_def)
-
-lemma rename_environment_comp:
-  "rename_environment (g \<circ> h) E = rename_environment g (rename_environment h E)"
-  by (cases E) (simp add: rename_environment_def image_image split_def)
-
-theorem environment_renaming_action: "renaming_action bij rename_environment environment_formed"
-  by unfold_locales
-    (auto intro: bij_comp bij_imp_bij_inv environment_renaming_formed bij_is_inj simp: rename_environment_comp)
-
-text \<open>A renaming reads only the environment's uses.\<close>
-
-lemma rename_environment_cong:
-  assumes formed: "environment_formed E" and agree: "\<And>u. u \<in> environment_uses E \<Longrightarrow> g u = h u"
-  shows "rename_environment g E = rename_environment h E"
-proof -
-  have artifacts: "(\<lambda>(u,R). (g u,R)) ` environment_artifacts E = (\<lambda>(u,R). (h u,R)) ` environment_artifacts E"
-  proof (rule image_cong[OF refl])
-    fix x assume member: "x \<in> environment_artifacts E"
-
-    have "fst x \<in> environment_uses E"
-      using member rel_domI[of "fst x" "snd x"] by (simp add: environment_uses_def)
-    then show "(\<lambda>(u,R). (g u,R)) x = (\<lambda>(u,R). (h u,R)) x" using agree by (simp add: split_def)
-  qed
-  have bindings: "(\<lambda>((u,k),v). ((g u,k),g v)) ` environment_bindings E =
-      (\<lambda>((u,k),v). ((h u,k),h v)) ` environment_bindings E"
-  proof (rule image_cong[OF refl])
-    fix x assume member: "x \<in> environment_bindings E"
-    have bound: "binds_slot E (fst (fst x)) (snd (fst x)) (snd x)" using member by (simp add: binds_slot_def)
-    show "(\<lambda>((u,k),v). ((g u,k),g v)) x = (\<lambda>((u,k),v). ((h u,k),h v)) x"
-      using agree[OF environment_binding_uses(1)[OF formed bound]]
-        agree[OF environment_binding_uses(2)[OF formed bound]] by (simp add: split_def)
-  qed
-  show ?thesis by (simp add: rename_environment_def artifacts bindings)
-qed
-
-text \<open>
-  An injective renaming of a formed environment's finitely many uses is the renaming by a permutation
-  (@{thm [source] finite_injection_permutation}), so the RRA facts, stated for injections, hold at the
-  group's renamings and nothing is lost by admitting permutations only.
-\<close>
-
-theorem injective_renaming_permutation:
-  fixes f :: "'u \<Rightarrow> 'u"
-  assumes formed: "environment_formed E" and injective: "inj_on f (environment_uses E)"
-  shows "\<exists>h. bij h \<and> (\<forall>u\<in>environment_uses E. h u = f u) \<and> rename_environment f E = rename_environment h E"
-proof -
-  obtain h where h: "bij h" "\<forall>u\<in>environment_uses E. h u = f u"
-    using finite_injection_permutation[OF environment_uses_finite[OF formed] injective] by blast
-  have "rename_environment f E = rename_environment h E"
-    by (rule rename_environment_cong[OF formed]) (simp add: h(2))
-  then show ?thesis using h by blast
-qed
-
-subsection \<open>Positions, uses, sites, site contexts and program entries\<close>
-
-lemma environment_positions_renaming:
-  "environment_positions (rename_environment h E) = map_prod h id ` environment_positions E"
-proof -
-  have renamed: "(v,a) \<in> environment_positions (rename_environment h E) \<longleftrightarrow>
-      (\<exists>u. v = h u \<and> (u,a) \<in> environment_positions E)" for v a
-    by (simp add: artifact_at_renaming) blast
-  have image: "(v,a) \<in> map_prod h id ` environment_positions E \<longleftrightarrow>
-      (\<exists>u. v = h u \<and> (u,a) \<in> environment_positions E)" for v a
-  proof
-    assume "(v,a) \<in> map_prod h id ` environment_positions E"
-    then obtain y where member: "y \<in> environment_positions E" and moved: "(v,a) = map_prod h id y"
-      by (rule imageE)
-    obtain u b where y: "y = (u,b)" by (cases y)
-    have "v = h u" "a = b" using moved unfolding y by simp_all
-    then show "\<exists>u. v = h u \<and> (u,a) \<in> environment_positions E" using member unfolding y by blast
-  next
-    assume "\<exists>u. v = h u \<and> (u,a) \<in> environment_positions E"
-    then obtain u where v: "v = h u" and member: "(u,a) \<in> environment_positions E" by blast
-    show "(v,a) \<in> map_prod h id ` environment_positions E" by (rule rev_image_eqI[OF member]) (simp add: v)
-  qed
-  show ?thesis by (simp only: set_eq_iff split_paired_All renamed image simp_thms)
-qed
-
-lemma product_action_map_prod: "product_action actL actR h = map_prod (actL h) (actR h)"
-  by (simp add: fun_eq_iff product_action_def map_prod_def split_def)
-
-text \<open>The site action is the product of the use action and the trivial action on addresses.\<close>
-
-lemma site_renaming_product: "map_prod h id = product_action (\<lambda>h. h) (\<lambda>h a. a) h"
-  by (simp add: product_action_map_prod id_def)
-
-theorem use_renaming_action: "renaming_action bij (\<lambda>h. h) (\<lambda>_. True)"
-  by unfold_locales (auto intro: bij_comp bij_imp_bij_inv)
-
-theorem site_renaming_action: "renaming_action bij (\<lambda>h. map_prod h id) (\<lambda>_. True)"
-proof -
-  have product: "renaming_action bij (product_action (\<lambda>h. h) (\<lambda>h a. a)) (\<lambda>_. True)"
-    by (rule renaming_action_subdomain[OF renaming_action_product[OF use_renaming_action
-        permutation_renaming_action[where D="\<lambda>_. True"]]]) simp_all
-  have act: "product_action (\<lambda>h. h) (\<lambda>h a. a) = (\<lambda>h. map_prod h id)"
-    by (rule ext) (rule site_renaming_product[symmetric])
-  show ?thesis using product by (simp only: act)
-qed
+subsection \<open>Site contexts and program entries\<close>
 
 abbreviation site_context_renaming ::
     "(local_address option \<Rightarrow> local_address option) \<Rightarrow> site_context \<Rightarrow> site_context" where
@@ -223,31 +118,40 @@ theorem native_definition_use_renaming:
   assumes formed: "environment_formed E" and permutation: "bij h"
   shows "native_definition_at (rename_environment h E) (h u) r p D \<longleftrightarrow>
     (\<exists>C. native_definition_at E u r p C \<and> D = (\<lambda>(s,A). (s,rename_schema id id (map_prod h id) A)) ` C)"
-proof
-  assume renamed: "native_definition_at (rename_environment h E) (h u) r p D"
-  have injective: "inj h" by (rule bij_is_inj[OF permutation])
-  have inverse_injective: "inj (inv h)" by (rule bij_is_inj[OF bij_imp_bij_inv[OF permutation]])
-  have renamed_formed: "environment_formed (rename_environment h E)"
-    by (rule environment_renaming_formed[OF formed injective])
-  have inverse_environment: "rename_environment (inv h) (rename_environment h E) = E"
-    by (simp only: rename_environment_comp[symmetric] inv_o_cancel[OF injective] rename_environment_id)
-  have inverse_use: "inv h (h u) = u" by (rule inv_f_f[OF injective])
-  let ?C = "(\<lambda>(s,A). (s,rename_schema id id (map_prod (inv h) id) A)) ` D"
-  have original: "native_definition_at E u r p ?C"
-    using native_definition_renamed_use[OF renamed_formed inverse_injective renamed]
-    by (simp only: inverse_environment inverse_use)
-  have renamed_again: "native_definition_at (rename_environment h E) (h u) r p
-      ((\<lambda>(s,A). (s,rename_schema id id (map_prod h id) A)) ` ?C)"
-    by (rule native_definition_renamed_use[OF formed injective original])
-  have "D = (\<lambda>(s,A). (s,rename_schema id id (map_prod h id) A)) ` ?C"
-    using native_definition_unique[OF renamed renamed_again] by blast
-  then show "\<exists>C. native_definition_at E u r p C \<and> D = (\<lambda>(s,A). (s,rename_schema id id (map_prod h id) A)) ` C"
-    using original by blast
-next
-  assume "\<exists>C. native_definition_at E u r p C \<and> D = (\<lambda>(s,A). (s,rename_schema id id (map_prod h id) A)) ` C"
-  then show "native_definition_at (rename_environment h E) (h u) r p D"
-    using native_definition_renamed_use[OF formed bij_is_inj[OF permutation]] by blast
+  by (rule use_renaming_inverse[where read="\<lambda>F v C. native_definition_at F v r p C"
+      and read'="\<lambda>F v C. native_definition_at F v r p C"
+      and move="\<lambda>g C. (\<lambda>(s,A). (s,rename_schema id id (map_prod g id) A)) ` C"
+      and move'="\<lambda>g C. (\<lambda>(s,A). (s,rename_schema id id (map_prod g id) A)) ` C",
+      OF native_definition_renamed_use[OF _ bij_is_inj] native_definition_renamed_use[OF _ bij_is_inj]
+        native_definition_unique[THEN conjunct2] formed permutation])
+
+subsection \<open>The schema reading at a renamed use\<close>
+
+text \<open>
+  A schema read at a renamed use is the definition readers' copy (@{thm [source] use_renaming_syntax_copy},
+  @{text copy_schema}) with its callees relocated and its binders and sockets unchanged.
+\<close>
+
+lemma native_schema_renamed_use:
+  assumes formed: "environment_formed E" and injective: "inj h" and schema: "native_schema_at E u r S"
+  shows "native_schema_at (rename_environment h E) (h u) r (rename_schema id id (map_prod h id) S)"
+proof -
+  obtain R where source: "artifact_at E u R" using schema by (auto simp: native_schema_at_def)
+  interpret copy: native_syntax_copy E u R "rename_environment h E" "h u" R id "map_prod h id"
+    by (rule use_renaming_syntax_copy[OF formed source injective])
+  show ?thesis using copy.copy_schema[OF schema] by simp
 qed
+
+theorem native_schema_use_renaming:
+  assumes formed: "environment_formed E" and permutation: "bij h"
+  shows "native_schema_at (rename_environment h E) (h u) r T \<longleftrightarrow>
+    (\<exists>S. native_schema_at E u r S \<and> T=rename_schema id id (map_prod h id) S)"
+  by (rule use_renaming_inverse[where read="\<lambda>F v S. native_schema_at F v r S"
+      and read'="\<lambda>F v S. native_schema_at F v r S"
+      and move="\<lambda>g S. rename_schema id id (map_prod g id) S"
+      and move'="\<lambda>g S. rename_schema id id (map_prod g id) S",
+      OF native_schema_renamed_use[OF _ bij_is_inj] native_schema_renamed_use[OF _ bij_is_inj]
+        native_schema_unique formed permutation])
 
 subsection \<open>The package reading at a renamed root use\<close>
 
@@ -529,28 +433,11 @@ theorem native_package_use_renaming:
   assumes formed: "environment_formed E" and permutation: "bij h"
   shows "native_package_at (rename_environment h E) (h u) r Q \<longleftrightarrow>
     (\<exists>P. native_package_at E u r P \<and> Q = rename_system (map_prod h id) P)"
-proof
-  assume renamed: "native_package_at (rename_environment h E) (h u) r Q"
-  have injective: "inj h" by (rule bij_is_inj[OF permutation])
-  have inverse: "bij (inv h)" by (rule bij_imp_bij_inv[OF permutation])
-  have renamed_formed: "environment_formed (rename_environment h E)"
-    by (rule environment_renaming_formed[OF formed injective])
-  have inverse_environment: "rename_environment (inv h) (rename_environment h E) = E"
-    by (simp only: rename_environment_comp[symmetric] inv_o_cancel[OF injective] rename_environment_id)
-  have inverse_use: "inv h (h u) = u" by (rule inv_f_f[OF injective])
-  let ?P = "rename_system (map_prod (inv h) id) Q"
-  have original: "native_package_at E u r ?P"
-    using native_package_renamed_use[OF renamed_formed inverse renamed]
-    by (simp only: inverse_environment inverse_use)
-  have renamed_again: "native_package_at (rename_environment h E) (h u) r (rename_system (map_prod h id) ?P)"
-    by (rule native_package_renamed_use[OF formed permutation original])
-  have "Q = rename_system (map_prod h id) ?P" by (rule native_package_unique[OF renamed renamed_again])
-  then show "\<exists>P. native_package_at E u r P \<and> Q = rename_system (map_prod h id) P" using original by blast
-next
-  assume "\<exists>P. native_package_at E u r P \<and> Q = rename_system (map_prod h id) P"
-  then show "native_package_at (rename_environment h E) (h u) r Q"
-    using native_package_renamed_use[OF formed permutation] by blast
-qed
+  by (rule use_renaming_inverse[where read="\<lambda>F v P. native_package_at F v r P"
+      and read'="\<lambda>F v P. native_package_at F v r P"
+      and move="\<lambda>g P. rename_system (map_prod g id) P"
+      and move'="\<lambda>g P. rename_system (map_prod g id) P",
+      OF native_package_renamed_use native_package_renamed_use native_package_unique formed permutation])
 
 text \<open>
   The relocated program has the original's meaning at the renamed sites and the same argument terms
@@ -571,49 +458,5 @@ proof -
     using inj_image_mem_iff[OF pair, of "(d,t)"] by simp
   then show ?thesis by (simp only: renamed_system_positive_meaning[OF program sites])
 qed
-
-subsection \<open>Uses compared as data\<close>
-
-lemma use_data_equality_renaming:
-  assumes "inj h"
-  shows "use_data_term (h u) = use_data_term (h v) \<longleftrightarrow> use_data_term u = use_data_term v"
-  by (simp add: inj_eq[OF use_data_term_injective] inj_eq[OF assms])
-
-lemma use_data_inequality_renaming:
-  assumes "inj h"
-  shows "use_data_term (h u) \<noteq> use_data_term (h v) \<longleftrightarrow> use_data_term u \<noteq> use_data_term v"
-  using use_data_equality_renaming[OF assms] by simp
-
-theorem use_data_comparison_renaming:
-  assumes "inj h"
-  shows "(3,Pair_Term (use_data_term (h u)) (use_data_term (h v))) \<in> positive_meaning data_comparison_system
-    \<longleftrightarrow> (3,Pair_Term (use_data_term u) (use_data_term v)) \<in> positive_meaning data_comparison_system"
-  by (simp add: data_comparison_exact inj_eq[OF use_data_term_injective] inj_eq[OF assms])
-
-text \<open>
-  One permutation acts on both uses of a pair: the product of the use action with itself, on the
-  domain of all pairs, which a client feeds with the clauses below to the notion's contract.
-\<close>
-
-theorem use_pair_renaming_action: "renaming_action bij (product_action (\<lambda>h. h) (\<lambda>h. h)) (\<lambda>z. True)"
-  by (rule renaming_action_subdomain[OF renaming_action_product[OF use_renaming_action use_renaming_action]])
-    simp_all
-
-theorem use_data_equality_equivariant:
-  "renaming_equivariant bij (product_action (\<lambda>h. h) (\<lambda>h. h)) (\<lambda>z. True)
-    (\<lambda>z. use_data_term (fst z) = use_data_term (snd z))"
-  by (auto simp: renaming_equivariant_def product_action_def use_data_equality_renaming[OF bij_is_inj])
-
-theorem use_data_comparison_equivariant:
-  "renaming_equivariant bij (product_action (\<lambda>h. h) (\<lambda>h. h)) (\<lambda>z. True)
-    (\<lambda>z. (3,Pair_Term (use_data_term (fst z)) (use_data_term (snd z))) \<in> positive_meaning data_comparison_system)"
-  by (auto simp: renaming_equivariant_def product_action_def use_data_comparison_renaming[OF bij_is_inj])
-
-text \<open>
-  The data comparison entry, as @{thm [source] native_data_inequality} compiles it, relates two use
-  presentations exactly when the uses differ, so a relation that compares the uses it reads for
-  equality is equivariant under every permutation of uses: that is what "sites are compared for
-  equality" means natively.
-\<close>
 
 end

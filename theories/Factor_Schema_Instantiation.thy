@@ -530,47 +530,11 @@ text \<open>
   The argument holds the environment and the use of the schema's site, which a permutation renames; the
   address, the binding table, the instance's term and its material rows, exact values it leaves alone; and
   the prospective call rows, whose callee sites it renames by the site action. The schema read at the
-  renamed use is the definition readers' copy (@{thm [source] use_renaming_syntax_copy},
-  @{text copy_schema}) with its callees relocated and its binders and sockets unchanged, and relocating the
+  renamed use is the use instance's (@{thm [source] native_schema_use_renaming}), the definition readers'
+  copy with its callees relocated and its binders and sockets unchanged, and relocating the
   callees keeps every instance with its call rows relocated, and every material premise.
 \<close>
 
-lemma native_schema_renamed_use:
-  assumes formed: "environment_formed E" and injective: "inj h" and schema: "native_schema_at E u r S"
-  shows "native_schema_at (rename_environment h E) (h u) r (rename_schema id id (map_prod h id) S)"
-proof -
-  obtain R where source: "artifact_at E u R" using schema by (auto simp: native_schema_at_def)
-  interpret copy: native_syntax_copy E u R "rename_environment h E" "h u" R id "map_prod h id"
-    by (rule use_renaming_syntax_copy[OF formed source injective])
-  show ?thesis using copy.copy_schema[OF schema] by simp
-qed
-
-theorem native_schema_use_renaming:
-  assumes formed: "environment_formed E" and permutation: "bij h"
-  shows "native_schema_at (rename_environment h E) (h u) r T \<longleftrightarrow>
-    (\<exists>S. native_schema_at E u r S \<and> T=rename_schema id id (map_prod h id) S)"
-proof
-  assume renamed: "native_schema_at (rename_environment h E) (h u) r T"
-  have injective: "inj h" by (rule bij_is_inj[OF permutation])
-  have inverse_injective: "inj (inv h)" by (rule bij_is_inj[OF bij_imp_bij_inv[OF permutation]])
-  have renamed_formed: "environment_formed (rename_environment h E)"
-    by (rule environment_renaming_formed[OF formed injective])
-  have inverse_environment: "rename_environment (inv h) (rename_environment h E)=E"
-    by (simp only: rename_environment_comp[symmetric] inv_o_cancel[OF injective] rename_environment_id)
-  have inverse_use: "inv h (h u)=u" by (rule inv_f_f[OF injective])
-  let ?S="rename_schema id id (map_prod (inv h) id) T"
-  have original: "native_schema_at E u r ?S"
-    using native_schema_renamed_use[OF renamed_formed inverse_injective renamed]
-    by (simp only: inverse_environment inverse_use)
-  have renamed_again: "native_schema_at (rename_environment h E) (h u) r (rename_schema id id (map_prod h id) ?S)"
-    by (rule native_schema_renamed_use[OF formed injective original])
-  have "T=rename_schema id id (map_prod h id) ?S" by (rule native_schema_unique[OF renamed renamed_again])
-  then show "\<exists>S. native_schema_at E u r S \<and> T=rename_schema id id (map_prod h id) S" using original by blast
-next
-  assume "\<exists>S. native_schema_at E u r S \<and> T=rename_schema id id (map_prod h id) S"
-  then show "native_schema_at (rename_environment h E) (h u) r T"
-    using native_schema_renamed_use[OF formed bij_is_inj[OF permutation]] by blast
-qed
 
 lemma rename_schema_callee_material:
   "schema_material_premises (rename_schema id id g S)=schema_material_premises S"

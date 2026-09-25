@@ -15,15 +15,6 @@ proof -
        (simp add: native_package_sources_def)
 qed
 
-lemma native_package_root_position:
-  assumes package: "native_package_at E u r P"
-  shows "(u,r)\<in>environment_positions E"
-proof -
-  obtain Q R M where source: "artifact_at E u R" "family_at R r M"
-    using package by (auto simp: native_package_at_def native_root_family_at_def)
-  have root: "r\<in>rra_carrier (object_structure R)" using source(2) by (simp add: family_at_def)
-  show ?thesis using source(1) root by auto
-qed
 
 lemma native_package_entry_position:
   assumes package: "native_package_at E u r P" and member: "d\<in>system_definitions P"
@@ -93,7 +84,7 @@ proof -
   have closed: "closed_native_package_at ?F u r P" by (rule native_package_closed_restriction[OF package])
   have kept: "native_package_at ?F u r P" using closed by (simp add: closed_native_package_at_def)
   have formed: "environment_formed ?F" by (rule native_package_environment_formed[OF package])
-  have site: "(u,r)\<in>environment_positions ?F" by (rule native_package_root_position[OF kept])
+  have site: "(u,r)\<in>environment_positions ?F" by (rule native_package_site_position[OF kept])
   obtain C where quote: "exact_formed C" "site_value_quoted_at C [] ?F u r"
     using site_value_quoted_total[OF formed site] by blast
   show ?thesis using quote closed unfolding program_scope_quoted_at_def by blast

@@ -306,6 +306,9 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   contract carried; freshness is the interpretation's `coordinates(4)`; the installation about 4 s, the selection's and
   read-back's own costs unmeasured. Its review's follow-ups (`.build/tasks/415/review.md`): 1, 2, 4 and 3's `[simp]`
   are #452; 3's moves Open 144; 5 Open 99.
+- **Landed with `39027590`**: #435, the criticism's sample (entries evaluated natively at two presentations of one
+  subject, part (b)); #452, the given's installation without evaluation or refinement import, its payload statement's
+  composition proved with its right side conditional (#457 discharges it). Their follow-ups are under Now, unhandled.
 - **Landed with `81d00139`**: #418, the use-equivariance clauses of the readers G3 and G4 call (key absence, data
   inequality, the audit's readers), of the audit and of the callee boundary, each beside its contract, with its
   presented form. Its review's follow-ups (`.build/tasks/419/review.md`): 2 and 3 are #458 (the use instance split and
@@ -575,6 +578,16 @@ through `renaming_action.act_inverse` and `act_inverse_right`, its local inclusi
 
 ## Now
 
+- **Unhandled by plan-65 (its window ended)**: the follow-ups of #435's and #452's reviews
+  (`.build/tasks/436/review.md`, `.build/tasks/452/review.md`). To do: mail #455 #452's follow-up 1 (merge the two
+  `value`s of `Development_Given_Execution` into one while re-installing; a recipe over the refinements if retained)
+  and the name `given_readers_fresh(2)`; mail #393 and #453 `given_readers_fresh(2)`, #395 `given_environment_not_closed`
+  and `given_retention_refused` (follow-up 4); rewrite #457's brief (draft `.build/plans/plan-65/fpay.md`) to take
+  #452's follow-ups 2 and 3 (`system_payloads use_additions_system ⊆ {[]}` and of `payload_audit_system` down their
+  view steps; `system_union_payloads` and `rooted_system_payloads` beside `system_payloads`) and all of Open 144, and
+  re-check its Size against its room; mail #447 #436's follow-ups (`criticism_refutes_presentation` citing
+  `presentation_class.predicate_invariance`; refutation as the refuted invariance or restricted to the class;
+  `criticism_calls` through `criticism_sides`); `deep_reversed_environment_term` to one home at a second use (Open).
 - **Mailed, read by each task's first session**: to #393 (#419's review, follow-up 5: the asked relation's clause composed from G3's, G4's and #416's exported
   clauses), to #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's payloads at
   installation, the rooted restriction at 561), to #455 (q93: the given's payload statement conditional, its discharge

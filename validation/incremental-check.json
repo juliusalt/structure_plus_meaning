@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "296547ba6dd6912f0a2f3885d87da1414a7cf880b0d665eb3307092b267ae628",
- "checked_content_sha256": "644bacf538386eaeb4e675824fd7329f5b4ea49686055ec90f40a889fcbd0dc2",
+ "base_receipt_sha256": "b09378d35c317a269e6c0fbfccdc5b38fba343821e22ee1dc0a3959751a32e55",
+ "checked_content_sha256": "a9fd32549db9f18e41a609e72f1524e35d2d66eb798e717b02c4356cf06d76fa",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,23 +17,20 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp9uq50rb7/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpn_ea10ts/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.33,
+  "base_and_impact": 0.35,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 156.28,
-  "recipe_impact": 0.48,
-  "recipes_and_host_tests": 11.23
+  "proof": 197.97,
+  "recipe_impact": 0.87,
+  "recipes_and_host_tests": 11.97
  },
  "rebuilt_theories": [
-  "Criticism_Samples",
-  "Development_Given_Execution",
-  "Development_Given_Installation",
-  "Development_Given_Readers"
+  "Development_Given_Program"
  ],
  "recipes": {
   "allocated-environments": {
@@ -193,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1868,
- "seconds": 213.63,
+ "reused_theories": 1872,
+ "seconds": 262.55,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1872,
+  "theory_count": 1873,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1872,
+ "theories": 1873,
  "validation_inputs": {
-  "ROOT": "7a73d75c189490996b6f778664cd5e49f224f996d44045524580baffd25cd780",
+  "ROOT": "7950b8f965f12d798c8972b8f4af082ab268020812adad385ea47f4e5ed0b755",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

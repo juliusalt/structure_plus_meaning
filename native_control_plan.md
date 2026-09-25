@@ -220,6 +220,20 @@ session):
 > native evaluator that constructs the missing witnesses first - I thought this would have been the obvious choice
 > given what I said the role of isabelle is no?
 
+On what a checker does, the owner answered owner question Q28 of the ledger on 2026-09-25. Q28, asked that day by
+plan-69 from task 495's design of the native evaluator, set out that the resolving evaluator constructs every missing
+witness from the program's own clauses except the least value of a monotone constraint — the bound closed under callees
+that package closure admission (77), the guard's callee boundary (392) and its audit (525) take, and the environment
+including two others that the request at a package (561) takes — and the provisional choice: native closure-list and
+merge readers, the evaluator running the given's readers refined at those sites to take their witnesses from them, the
+refinement proved equal to the given's readers in Isabelle; and asked: "may the judgment evaluate a native refinement
+proved equal to the judged program, or must it evaluate the given's own clauses, restated where a least witness is
+needed?" The answer (2026-09-25 10:43, to the monitoring session; asked whether to record it as the answer, the owner
+said "ok"):
+
+> Are these options consistent with the following - checkers do not solve anything they only check if what is provided
+> is what is expected - the difficult part of producing is not done by the checker
+
 ## The development process
 
 There is one process, and every problem goes through it:
@@ -1232,12 +1246,27 @@ material premises solved, a residual variable the empty payload, exact where it 
 checker accepts for every resolved call, a refutation only where no derivation exists — and unresolved, never refuted,
 where no construction applies. No judgment of the route is decided by a counterpart, meanwhile or after, and the
 counterparts retire. One kind, the least witness of a monotone constraint (a package's closed bound, a common
-environment), has no complete construction; its calls stay unresolved until the planner decides its course, and with
-them the guard's package sockets and the first request.
+environment), has no complete construction from the checked program's own clauses;
+it is produced outside the checker, as the next paragraph reads the owner's answer to Q28.
+
+The owner's answer to owner question Q28 (2026-09-25 10:43), quoted under [Owner directions](#owner-directions), is that
+a checker does not produce. This paragraph is the plan's reading, generated and without owner authority. The given's
+clauses at package closure admission (77), the guard's callee boundary and audit (392, 525) and the request at a package
+(561) are checkers: they state what a least witness — a closed bound, a common environment — must satisfy and check a
+provided one. Neither of Q28's courses stands, since each builds the producing into the checked program. DECISIONS.md
+"A checker does not produce: the least witnesses are collected from the given's own readers beside the search, and the
+given's readers check them as installed" decides the production: the resolving evaluator's witness construction, beside
+its search, collects each least witness from the answers of the given's own readers — the reach of a package's roots
+over the definition edges, the rows of two environments — as a least fixpoint by iteration, steered by registrations no
+checker reads, or a proposer hands one in; the given's readers check it exactly as installed, and the call's
+certificate, a derivation in the given's readers, is checked by the existing finite proof checker. An admission rests on
+the given's check alone; a refusal at a least witness rests on the production's completeness, proved once per
+registration; elsewhere a failed check leaves the call unresolved. The guard's package sockets and the first request are
+then decided by the given's own clauses.
 
 Each tagged presentation still in use stays exact and replaceable and is recorded as a use of octets as structure
 until it is retired. The order and the bound on the HOL loop are the owner's (Q7, 2026-09-24), and so are the first
 problem (2026-09-24 18:53), the second and the standing of the authority question (Q2, 2026-09-24), and the native
-evaluator that constructs the missing witnesses before the route (Q27, 2026-09-25); the rest of this section, its
-readings of when native definitions exist and of the answers to Q2 and Q27 included, was written outside the loop and is
-a residual.
+evaluator that constructs the missing witnesses before the route (Q27, 2026-09-25), and that a checker does
+not produce what it checks (Q28, 2026-09-25); the rest of this section, its readings of when native definitions exist and
+of the answers to Q2, Q27 and Q28 included, was written outside the loop and is a residual.

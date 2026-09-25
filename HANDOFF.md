@@ -56,13 +56,16 @@ on, all accepted:
 the missing witnesses by resolution: one evaluator for every program, exact where it answers, and the counterparts
 retire from the route": resolution with unification over the program's own clauses, material premises solved,
 residual variables the empty payload, certificates checked by the existing checker, unresolved kept apart from
-refuted. Its builds: R1–R4 (material resolution, unification, resolution, completeness with
-`finite_program_resolution_exact` and `native_call_resolution_exact`), briefed by #497; R5–R7 (committed choice, the
-given's declarations, the given at the guard's calls, measured), briefed once R4 is near; R8 (the counterparts retired,
-their presentation readers moved, #487's standing items; #487 deleted), briefed by #498 after #483. The least witness
-(77's, 392's and 525's bounds, 561's private environment) has no complete construction: course (a), a native
-refinement proved equal, is the provisional choice (Q28), decided by design #496. #399 and #443 wait on #497 and #496
-as stand-ins for R4, R6 and the least witness's builds; #403 and #447 wait through #399.
+refuted. Its builds: R1 #499 and R2 #501 side by side (material resolution, unification), R3 #503 (resolution, its
+soundness through the finite proof checker), R4 #505 (completeness, `finite_program_resolution_exact` and
+`native_call_resolution_exact`), each with its review; R5–R7 (committed choice, the given's declarations, the given at
+the guard's calls, measured) briefed by #507 after R3; R8a #508 (the counterparts retired, their presentation readers moved;
+after #483, #461 and #492, which edit its theories) and R8b #510 (#487's standing items). The least witnesses (77's, 392's and 525's bounds,
+561's private environment): the owner's answer to Q28 (10:44) — checkers do not produce; the given's readers stay
+exactly as installed; each least witness is produced on the producing side (the evaluator's witness construction, a
+least fixpoint by iteration, or the proposer) and handed in with a certificate, checked by the given's clauses and the
+finite proof checker — decided by design #496, re-scoped. #399 and #443 wait on R4, on #507 as a stand-in for R6 and
+on #496 as a stand-in for the least witnesses' builds; #403 and #447 wait through #399.
 
 **Beside the route**: #461 (the given's derivations without re-reducing what its pieces present, #454's review 1–3 with
 next-edit item 139, #456's 4), then #486 (continuing #457: the given's readers' payload lineage split at the guard's two
@@ -91,9 +94,9 @@ before #397 and the evaluator's builds before #399 deepen it: nothing is added a
 (Open 142) ends a chain after #407 only while that chain stays within 10.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the evaluator's brief #497, the least witness's design #496 and #498, B2
-#492, then I3, the posing and the rest of the route in its chains' order, the first request's and the criticism's
-builds after them; then #461, #486 and #483; each review after its build.
+exists, Q2): the owner's directions first — the evaluator's R1–R4 (#499–#506) and R5–R7's brief #507, the least
+witnesses' design #496, B2 #492, then I3, the posing and the rest of the route in its chains' order, the first request's and the criticism's
+builds after them; then #461, #486, #483, and R8a #508 and R8b #510 after them; each review after its build.
 
 ## Decisions
 
@@ -111,6 +114,12 @@ Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
 - **Q27** (answered 2026-09-25 09:48): the native evaluator that constructs the missing witnesses comes first, before
   the first answer's route; no judgment is decided by an Isabelle-proved counterpart of a native definition, and a
   missing internal operation remains an unmet requirement, never an interim substitute (#495; Open 39).
+- **Q28** (answered 2026-09-25 10:44, confirmed through the monitoring session): "checkers do not solve anything they
+  only check if what is provided is what is expected - the difficult part of producing is not done by the checker".
+  Neither course stands: the given's readers stay exactly as installed, no refinement or restatement of a checked
+  clause; the least witnesses are produced on the producing side (the evaluator's witness construction, a least
+  fixpoint by iteration, or the proposer) and handed in with a certificate, checked by the given's clauses and the
+  finite proof checker (#496, re-scoped).
 - **17:50, 18:12, 18:36**: the native notion of a problem is the loop's product, not a design's; #373's design (landed
   `93cae3bb`) was accepted and then withdrawn at the owner's question, its identity resting on HOL-assigned prefixes
   and keys. **A design is judged by what its identity rests on, not by what its contract avoids.** Every distinction a
@@ -233,8 +242,8 @@ What landed that open work builds on, a line each; how it went and each review's
 `PLANNING_LOG.md` and `.build/plans/plan-69/HANDOFF-before-condensation.md`.
 
 - **The entries**: #378 (`cbf0c7e9`), #376 (`47a67cfe`), #381 (`2d97747c`), #383 (`7b23938c`), #428 (`631429e6`, the
-  payload audit's reliances), #460 (`584c3a76`, its decision withdrawn by Q27), #482 (`e2b239ac`), #495 (the resolving
-  evaluator, accepted by plan-69; it lands the entry, the plan's record of Q27 and the marked corrections);
+  payload audit's reliances), #460 (`584c3a76`, its decision withdrawn by Q27), #482 (`e2b239ac`), #495 (`3e8049be`, the
+  resolving evaluator, with the plan's record of Q27 and the marked corrections of #460's, #376's and #482's entries);
   #481's attribution of the recording
   (`.build/tasks/481/result.md`: the cause a quotation of a quotation, 30.4 times the payload's addresses; one generation
   at the given's size 45–65 min, about 9 GB; the cuts and probes I3 and #494 use).
@@ -318,9 +327,7 @@ The owner's questions, a line each (their words and the provisional choices in f
   choose — provisional.
 - **Q27** answered 2026-09-25 09:48: the native evaluator that constructs the missing witnesses first, not the
   counterparts #460 chose (Decisions; #495's entry).
-- **Q28** the least witness (#495's entry) — provisional: native readers produce the least witnesses and the evaluator
-  runs a native refinement of the given's readers proved equal in Isabelle (course (a), design #496); asked whether a
-  judgment may evaluate a refinement proved equal, or must evaluate the given's own clauses, restated where needed.
+- **Q28** answered 2026-09-25 10:44: checkers do not produce; neither course (Decisions; #496 re-scoped).
 
 **To plan, in the order expected** (numbers kept from earlier states):
 
@@ -398,11 +405,11 @@ searches for a theory before briefing a task that edits it.
   correct #397's, #399's, #403's, #443's and #447's briefs with #482's (3) and B2's (#492) names: each was mailed (3),
   #447 also its correction of (5), and B2 restates `development_indexed_generation` and the recorded instances in place,
   so nothing in them misleads meanwhile.
-- **The evaluator's next steps** (#495 accepted by plan-69): place #497's proposal (R1–R4 with reviews) and #498's (R8,
-  after #483); judge #496 and place the least witness's builds; brief R5–R7 once R3 or R4 is under way; then re-point
-  #399 and #443 from #497 and #496 to R4, R6 and the least witness's builds, and correct #399's, #403's, #443's and
+- **The evaluator's next steps** (#495 landed): place #507's proposal (R5–R7);
+  judge #496 (re-scoped by the answer to Q28; mailed, its brief rewritten) and place the least witnesses' builds; then re-point
+  #399 and #443 from #507 and #496 to R6 and the least witnesses' builds, and correct #399's, #403's, #443's and
   #447's briefs from #495's and #496's entries (#495's result names each correction; each was mailed that the
-  counterpart route is withdrawn). Next-edit items 154, 156, 158 and 159 concern the counterparts and go with R8. `v2.py after A B` makes A wait for B's landing: only for a task that is to wait.
+  counterpart route is withdrawn). Next-edit items 156 and 159 retire with R8a; 154 is mailed to R8b, 158 stays at a measured need; #508 was mailed why it waits on #461 and #492. `v2.py after A B` makes A wait for B's landing: only for a task that is to wait.
 - **Mailed, read by each task's first session** (by task): #397, #399, #403, #443 and #447 (#482's (3); #447 its
   correction of (5)); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's
   payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers cited); #407

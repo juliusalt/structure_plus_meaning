@@ -25,6 +25,35 @@ lemma system_restriction_agreement:
   "systems_agree_on P (system_restriction P U) U"
   by (simp add: systems_agree_on_def)
 
+text \<open>
+  A formed system agreeing with another on its whole domain is that system restricted to its domain.
+\<close>
+
+lemma system_restriction_whole_agreement:
+  assumes formed: "schema_system_formed Q"
+    and agreement: "systems_agree_on Q P (system_definitions Q)"
+  shows "system_restriction P (system_definitions Q)=Q"
+proof -
+  have owner: "d\<in>system_definitions Q" if "((d,c),S)\<in>system_clauses Q" for d c S
+    using formed that by (auto simp: schema_system_formed_def)
+  have interfaces: "system_interfaces (system_restriction P (system_definitions Q))=system_interfaces Q"
+    using agreement by (auto simp: systems_agree_on_def system_restriction_def system_definitions_def rel_dom_def)
+  have clauses: "system_clauses (system_restriction P (system_definitions Q))=system_clauses Q"
+  proof
+    show "system_clauses (system_restriction P (system_definitions Q))\<subseteq>system_clauses Q"
+      using agreement by (auto simp: systems_agree_on_def system_restriction_def)
+    show "system_clauses Q\<subseteq>system_clauses (system_restriction P (system_definitions Q))"
+    proof
+      fix z assume z: "z\<in>system_clauses Q"
+      obtain d c S where shape: "z=((d,c),S)" by (metis prod.collapse)
+      have "d\<in>system_definitions Q" using owner z shape by blast
+      then show "z\<in>system_clauses (system_restriction P (system_definitions Q))"
+        using agreement z shape by (auto simp: systems_agree_on_def)
+    qed
+  qed
+  show ?thesis by (rule schema_system.equality) (simp_all add: interfaces clauses)
+qed
+
 lemma system_restriction_intersection:
   "system_restriction (system_restriction P U) V=system_restriction P (U\<inter>V)"
   by (auto simp: system_restriction_def)

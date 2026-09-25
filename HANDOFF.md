@@ -147,10 +147,12 @@ waits for that.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
-and a review standing where its review task stands, so every review stands right after its build. R5c #586,
-the subtree acceptance #591, R5c′ #589, R5c″ #593 and #588's builds (#595–#613) first (the evaluator's chain is the route's
-longest); the recording's builds (#577, #579, #581, #583); W2b #567; W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
-#551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
+and a review standing where its review task stands, so every review stands right after its build. By slack on the
+longest chain (plan-78): R5c #586, R5c′ #589, R5c″ #593; W2b #567 and W4a #526 (they feed R5e); R5d's views #595 and
+carriers #597; R5e #599 and R6b's parts #601, #603 (no slack); R6c's 48 #609, R6b's carrying #605, rc #540 and R6c's
+instantiation family #607; the carrying #611; W4b #528; R7 #542 and #547; the recording (#577, #579, #581, X′ #583, six
+levels of slack); the route in its chains' order (#399, the samples #551, the observations #549, the record #553, #401,
+#403, #443, #447, #407, #445, #449); the consolidation #613 last, off the route.
 
 ## Decisions
 
@@ -457,6 +459,8 @@ What landed that open work builds on, a line each; how it went and each review's
   10, 45, their material sockets, the consumers 49 and 54 a contract states invariant) discharged at the notions'
   systems, the control at 6; no refusal of the given becomes a refutation through them — the route's rest on R5d and
   R6b (#521's review; its follow-ups mailed to #588 and #542).
+- **The subtree acceptance** (#591, `d874559d`): `Factor_Resolution_Acceptance`, a node with no pending goal under it
+  has a checked certificate, `finite_node_proof_pattern_accepted` its closed instance; #592's follow-up mailed to #593.
 
 ## Open
 
@@ -565,20 +569,20 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **q107** (R6 #520, answered, `.build/plans/plan-77/q107.md`): R5's kinds as landed reach the given's 32, 6, 10 and 45
-  only; R6 narrowed to those declarations, discharged at the notions' systems, no transfer lemma (#565's), its brief
-  rewritten; #585 decided the rest (Graph). R5c #586 continues #565; rc #540 and W4b #528 wait on it (both edit
-  `Factor_Resolution_Controls`).
-- **q108** (R5c #586, answered, `.build/plans/plan-77/q108.md`): #565's exchange premise fails at every socket kind as
-  stated; R5c narrowed to what it can land; R5c′ #589 restates the premise (a change of #565's statements, authorized),
-  #591 and R5c″ #593 build the direct producer's discharge; rc #540 waits on #589 and #593, W4b #528 on #589
-  (Controls); the brief #588 told to place R5d after #593.
-- **What the next events ask**: #588's builds are placed (#595–#613); R6's undeclared sites are reconciled in them. X′ #583 holds the measurements #398's (follow-up 2) and #558's (follow-up 1) reviews owe. R7
+- **The graph's width** (plan-78): the route is one chain — R5c′ #589 → R5c″ #593 → R5d #595, #597 → R5e #599 and
+  R6b's parts → R6c → R7 #542 → #399 — so between its landings little else can start; the side chains (W2b → W4a →
+  W4b, T2b → T3 → P → X′) run beside it first, R6b's and R6c's parts after #597. Nothing is invented to fill the gaps:
+  what is open beside the route rests on its results or is machinery that waits behind it (Open 29's comparisons, a
+  read-only investigation, the candidate if the side chains land and slots stand idle).
+- **What the next events ask**: X′ #583 holds the measurements #398's (follow-up 2) and #558's (follow-up 1) reviews owe. R7
   (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **Mailed, read by each task's first session** (by task): #577 and #579 (#572's review of T1, follow-ups 4 and 6: the
+- **Mailed, read by each task's first session** (by task): #542 and #547 (#588's Remains: the carried
+  `given_declarations` and `given_union_registration` in their construction; to #542 the order at 79's clause among its
+  measured calls); #593 (#592's review of #591: the subtree acceptance's premise includes the node's own position; a
+  strict-descendant form gets a corollary excluding the material goal there, never a second proof); #577 and #579 (#572's review of T1, follow-ups 4 and 6: the
   entry's (6) qualified, the placeholder row naming `positive_meaning_mapped`); #542 (#521's:
   the least-answer commitment against R4's first answer); #567 and #568 (#525's review of W2a, follow-ups 1, 2, 3, 5 and 7: the three copies retired,
   `finite_pattern_lifting` discharged, the conflict re-add fixed, the value's presentation, one export); #526 (#525's 6:

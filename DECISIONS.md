@@ -16830,6 +16830,36 @@ socket tests demand it, so the premise's quantification over every supported sta
 otherwise than the support, and output equivalence at one input suffices there. Until the premise is discharged the
 control's false call is refuted by R4 (`commitment_control_refuted`).]
 
+[Corrected by task 593 (R5c″), the planner's answer to q112. (5) #565's premise is discharged at the direct producer at
+one state (`Factor_Resolution_Producer_Discharge.finite_direct_exchange`): every found state of the committed goal's
+focused sub-search, whatever answer it keeps, is supported with every node then present barred — the ranks vacuous, the
+goals left pending the frame's substitutions of those outside the position, the answer node's call true by the subtree
+acceptance — once every true grounding of the goal's pattern extends to one under which every goal outside the position
+holds (`finite_exchange_context`, `finite_committed_found_supported`, `finite_committed_exchange_context`); the producer's
+output equivalence and each direct consumer's invariance give that context over a view (`finite_direct_context`, a view
+reading a term as an input and an output with its pattern parts, R5's producer and consumers its pair and swap
+instances). Two state conditions stand as the discharge's hypotheses, stated by no landed invariant: (a) the committed
+goal is a premise of the node at its parent position (`finite_goal_premise`: the invariant links a node to its premises,
+not a goal to its parent, and the answer node's call is the frame's substitution of the goal's pattern only through the
+parent's linkage in the found state); (b) no registered variable of the state is held by a focus goal outside the
+position (`finite_registrations_confined`, true at a construction registering nothing): R5c′'s frame lets a construction
+inside the sub-search bind one. The socket kinds are not discharged, each by a counterexample to the premise as it
+stands. (i) The material single solution keeps the barred set, so ranks against unbarred ancestors bind its canonical
+successor: p(x) :- mat(C;A,E,B,F), q(Pair A E); q(Pair A_o E) a fact at a non-canonical enumeration A_o of C's atoms;
+q(Pair A_c E) :- p(x) at the canonical A_c; the material socket declared with the kept head and discharged (q holds at
+every enumeration, at A_c through p(x)). After p's clause (support A = A_o, the root unbarred) the one canonical successor
+needs rank q(A_c) < rank p(x), false; when R3's selection takes the material goal first, q(A_c)'s one derivation reaches
+p(x), pruned under the unbarred root: a true call R4 resolves is refuted. (ii) A call socket's exchange rebuilds its
+parent's clause instance from the socket's obligation, which needs the clause's premise-only variables distinct, unbound
+and held only by its pending siblings — no invariant states it — and a construction binding one first breaks the kept
+answer: c(X) :- w(Z), prod(Pair X Y), chk(Pair Z Y), Z registered and constructed to z2 before prod commits, over w(z1),
+w(z2), prod(x,a), prod(x,b), chk(z1,a), chk(z2,b), prod's socket kept and discharged: the kept a leaves chk(z2,a) false
+and no kept state is supported. The course (planner, q112): R5c‴ (task 621), after W4a1 (#526), bars the nodes present at
+every committed step — a goal, a material premise, a construction — #565's material part at the all-barred set, and has
+the commitment test check (a) at every commitment and the premise-only condition at a socket, so the search refuses a
+commitment it cannot justify, never a call; it then discharges the producer without hypotheses ((b) from #526's lemma)
+and the socket kinds, these counterexamples its controls.]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its

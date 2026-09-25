@@ -1827,6 +1827,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Native_Control_Prepared_Cause_Review
     Native_Control_Quotation_Code
     Development_Given_Readers
+    Development_Given_Program
     Native_Control_Quotation_Construction
     Native_Control_Quotation_Representation
     Native_Control_Quoted_Judgment

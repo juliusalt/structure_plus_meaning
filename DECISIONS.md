@@ -17036,7 +17036,26 @@ readers; #447's entries reaching 77 wait on W4.
 - Native placement of certificates and justifications (a replay of an admission), as task 495 left it.
 
 Recorded 2026-09-25 (task 496's decision; a design, no theory changes).
+
 ## The bounded recording records the route's generations; its cause is one target
+
+[Corrected by task 530 (RR1 of task 482's (4) R, from #489's (2) and #493's review, follow-ups 1, 2, 4, 6 and 8): the
+recording has one name, `development_indexed_generation`, defined in `Development_Bounded_Recording` by the body
+below, its facts `development_indexed_generation_result`, `_constructed`, `_certified`, `_recorded`;
+`development_bounded_generation` is retired and `Development_Owner_Records` states no second copy. `payload_fill_twice`
+and `payload_fill_same` are stated with the fill, in `Factor_Bounded_Generation_Scopes`. The least judgment environment
+when ready is one constant, `Factor_Finite_Judgment_Quotation.finite_ready_judgment_environment`: the bounded quotation
+is defined through it, and `finite_native_judgment_quote`, its definition unchanged, is related to it
+(`finite_native_judgment_quote_ready`). The recording's two target formations are made nowhere in it, rule (a) of task
+482's entry: `Development_Recording_Refinements`, the recording's refinement collection (imported by no library theory),
+states `finite_construct_quoted_generation` (`finite_construct_formed_cause_generation`'s body without the formations of
+locus and payload; the rows' distinctness check stays), its exactness under both formations
+(`finite_construct_quoted_generation_exact`, `_established`, `_whole`) and the code equation
+`development_indexed_generation_quoted`, equal to the definition. Its premise, R formed, holds wherever the recording
+records: the listing policy's source is constructed only over formed presentations (`development_policy_source_with_formed`,
+`development_bounded_policy_judgment_formed`), the one check of R's formation the recording keeps; the quotation forms R
+from the term's formation (`finite_data_syntax_quotation_formed`). A probe evaluation at #481's 32K cut returned the
+original's result (task 530's `result.md`). No recipe reaches the three recording theories, so no word changed.]
 
 Task 492, build B2 of "A generation over a state holds its payload once" (task 482). `Development_Bounded_Recording`
 states the finite fill (`finite_payload_fill`, decoding exactly to `payload_fill`), the bounded quotation
@@ -17059,7 +17078,7 @@ the base generation, the owner records, the approval and the native state's firs
 - *A walk added.* Finding V compares every artifact of J with the payload: J holds it at two uses, so two comparisons
   of the payload with itself (linear under the refinement collection's artifact equality), where the old scope's
   quotation presented it twice as data. Recorded as rule (c)'s walk of the recording's own comparison.
-- *Measured* (task 492's `measurement.md`, shared runs): the cause of the owner record of 18:53 and of the given's value
+- *Measured* (task 492's `measurement.md`: run A shared; B and C unclaimed, load unrecorded): the cause of the owner record of 18:53 and of the given's value
   cut at 8,013 and 32,009 addresses is the same target, 3,437 carrier addresses (the entry estimated three to four
   thousand). At 32K the recording took 8.3–11.4 s against the old recording's 21.6 s in the same run; the replay is 62 %
   of its parts, and it costs 261–356 µs per payload address against the gate's 60: the bounded scope is necessary and not

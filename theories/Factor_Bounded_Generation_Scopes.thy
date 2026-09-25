@@ -42,6 +42,27 @@ lemma environment_uses_payload_fill [simp]:
   "environment_uses (payload_fill F0 V R) = environment_uses F0"
   by (simp add: environment_uses_def rel_dom_image payload_fill_def image_image split_def)
 
+text \<open>A second fill at the same uses overrides the first; a fill by the artifact already at every use is none.\<close>
+
+lemma payload_fill_twice:
+  "payload_fill (payload_fill F V X) V Y=payload_fill F V Y"
+  by (simp add: payload_fill_def image_image split_def cong: if_cong)
+
+lemma payload_fill_same:
+  assumes same: "\<And>u S. u\<in>V \<Longrightarrow> artifact_at F u S \<Longrightarrow> S=R"
+  shows "payload_fill F V R=F"
+proof -
+  have each: "(\<lambda>(u,S). (u,if u\<in>V then R else S)) x=x" if member: "x\<in>environment_artifacts F" for x
+  proof -
+    obtain u S where x: "x=(u,S)" by (cases x)
+    have "u\<in>V \<Longrightarrow> S=R" using same member unfolding x artifact_at_def by blast
+    then show ?thesis unfolding x by simp
+  qed
+  have "(\<lambda>(u,S). (u,if u\<in>V then R else S)) ` environment_artifacts F=id ` environment_artifacts F"
+    by (rule image_cong) (simp_all add: each)
+  then show ?thesis by (cases F) (simp add: payload_fill_def)
+qed
+
 theorem payload_fill_formed:
   assumes formed: "environment_formed F0"
     and placeholders: "\<forall>u\<in>V. artifact_at F0 u empty_artifact"

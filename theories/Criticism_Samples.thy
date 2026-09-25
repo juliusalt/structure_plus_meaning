@@ -1,5 +1,5 @@
 theory Criticism_Samples
-  imports Shared_Native_Evaluation Finite_Observation_Repairs Finite_Derived_Observations
+  imports Shared_Native_Evaluation Factor_Implemented_Base_Evaluation Finite_Observation_Repairs Finite_Derived_Observations
     Presentation_Equivariance Factor_Program_Entry_Values Factor_Executable_Environment_Values_Base
     Native_Collection_Programs Factor_Finite_Exact_Patterns Factor_Constructed_Judgment_Sources
 begin
@@ -71,6 +71,174 @@ theorem criticism_table_unavailable:
   by (simp add: criticism_table_def criticism_evaluation_def native_call_evaluation_def
     finite_program_evaluation_def Let_def)
 
+section \<open>A table exact at the sample's calls\<close>
+
+text \<open>
+  What the record and the refutations read of a table is one property: at every call of the sample the
+  table holds the call exactly when the decoded program's positive meaning does. The plain table has it
+  (@{thm [source] criticism_table_exact}); a table over a base has it where the base's decision is exact
+  (below). Each use of a table states its meaning once over this property.
+\<close>
+
+definition criticism_exact_table ::
+    "local_address option finite_native_system \<Rightarrow> local_address option definition_site list \<Rightarrow>
+      (finite_factor_term\<times>finite_factor_term) list \<Rightarrow> criticism_call fset \<Rightarrow> bool" where
+  "criticism_exact_table P ds ps A \<longleftrightarrow> (\<forall>q. q |\<in>| criticism_calls ds ps \<longrightarrow>
+    (q |\<in>| A \<longleftrightarrow> decode_finite_call_term q\<in>positive_meaning (decode_finite_system P)))"
+
+lemma criticism_exact_tableD:
+  assumes "criticism_exact_table P ds ps A" "q |\<in>| criticism_calls ds ps"
+  shows "q |\<in>| A \<longleftrightarrow> decode_finite_call_term q\<in>positive_meaning (decode_finite_system P)"
+  using assms unfolding criticism_exact_table_def by blast
+
+lemma criticism_table_exact_table:
+  assumes "criticism_table P ds ps=Some A"
+  shows "criticism_exact_table P ds ps A"
+  using criticism_table_exact[OF assms] by (simp add: criticism_exact_table_def)
+
+section \<open>The sample over a base\<close>
+
+text \<open>
+  DECISIONS.md, "The native evaluator evaluates above an implemented base", build S1. The sample's calls
+  are closed over the program above a base (@{const implemented_base_program}) and evaluated there, the
+  demand's base calls seeded by a decision (@{const native_base_evaluation}). The base's decision enters
+  only through its exactness at the demand's base calls; the empty base is the plain sample.
+\<close>
+
+definition criticism_base_demand ::
+    "local_address option definition_site fset \<Rightarrow> local_address option finite_native_system \<Rightarrow>
+      local_address option definition_site list \<Rightarrow> (finite_factor_term\<times>finite_factor_term) list \<Rightarrow>
+      criticism_call fset" where
+  "criticism_base_demand B P ds ps=native_call_closure (implemented_base_program B P) (criticism_calls ds ps)"
+
+definition criticism_base_evaluation ::
+    "local_address option definition_site fset \<Rightarrow> (criticism_call \<Rightarrow> bool) \<Rightarrow>
+      local_address option finite_native_system \<Rightarrow> local_address option definition_site list \<Rightarrow>
+      (finite_factor_term\<times>finite_factor_term) list \<Rightarrow> criticism_call fset\<times>criticism_call fset option" where
+  "criticism_base_evaluation B decide P ds ps=native_base_evaluation B decide P (criticism_calls ds ps)"
+
+definition criticism_base_table ::
+    "local_address option definition_site fset \<Rightarrow> (criticism_call \<Rightarrow> bool) \<Rightarrow>
+      local_address option finite_native_system \<Rightarrow> local_address option definition_site list \<Rightarrow>
+      (finite_factor_term\<times>finite_factor_term) list \<Rightarrow> criticism_call fset option" where
+  "criticism_base_table B decide P ds ps=snd (criticism_base_evaluation B decide P ds ps)"
+
+lemma criticism_base_evaluation_demand:
+  "criticism_base_evaluation B decide P ds ps=(criticism_base_demand B P ds ps,
+    implemented_base_evaluation B decide P (criticism_base_demand B P ds ps))"
+  by (simp add: criticism_base_evaluation_def criticism_base_demand_def native_base_evaluation_def Let_def)
+
+definition criticism_decision_exact ::
+    "local_address option definition_site fset \<Rightarrow> (criticism_call \<Rightarrow> bool) \<Rightarrow>
+      local_address option finite_native_system \<Rightarrow> local_address option definition_site list \<Rightarrow>
+      (finite_factor_term\<times>finite_factor_term) list \<Rightarrow> bool" where
+  "criticism_decision_exact B decide P ds ps \<longleftrightarrow> (\<forall>q. q |\<in>| criticism_base_demand B P ds ps \<longrightarrow> fst q |\<in>| B \<longrightarrow>
+    (decide q \<longleftrightarrow> decode_finite_call_term q\<in>positive_meaning (decode_finite_system P)))"
+
+theorem criticism_base_table_exact:
+  assumes table: "criticism_base_table B decide P ds ps=Some A"
+    and decided: "criticism_decision_exact B decide P ds ps" and call: "q |\<in>| criticism_calls ds ps"
+  shows "q |\<in>| A \<longleftrightarrow> decode_finite_call_term q\<in>positive_meaning (decode_finite_system P)"
+proof -
+  have "criticism_base_evaluation B decide P ds ps=(criticism_base_demand B P ds ps,Some A)"
+    using table by (simp add: criticism_base_table_def criticism_base_evaluation_demand)
+  then have result: "native_base_evaluation B decide P (criticism_calls ds ps)=(criticism_base_demand B P ds ps,Some A)"
+    by (simp only: criticism_base_evaluation_def)
+  have exact: "\<And>q. q |\<in>| criticism_base_demand B P ds ps \<Longrightarrow> fst q |\<in>| B \<Longrightarrow>
+      decide q \<longleftrightarrow> decode_finite_call_term q\<in>positive_meaning (decode_finite_system P)"
+    using decided unfolding criticism_decision_exact_def by blast
+  show ?thesis by (rule native_base_evaluation_exact(3)[OF result exact call])
+qed
+
+lemma criticism_base_table_exact_table:
+  assumes "criticism_base_table B decide P ds ps=Some A" "criticism_decision_exact B decide P ds ps"
+  shows "criticism_exact_table P ds ps A"
+  using criticism_base_table_exact[OF assms] by (simp add: criticism_exact_table_def)
+
+theorem criticism_base_table_unavailable:
+  "criticism_base_table B decide P ds ps=None \<longleftrightarrow>
+    \<not>implemented_base_ready B P (criticism_base_demand B P ds ps)"
+  by (simp add: criticism_base_table_def criticism_base_evaluation_demand implemented_base_evaluation_def)
+
+text \<open>The empty base is the plain sample, and every decision is exact there.\<close>
+
+lemma criticism_base_demand_empty:
+  "criticism_base_demand {||} P ds ps=native_call_closure P (criticism_calls ds ps)"
+  by (simp add: criticism_base_demand_def)
+
+theorem criticism_base_evaluation_empty:
+  "criticism_base_evaluation {||} decide P ds ps=criticism_evaluation P ds ps"
+  by (simp add: criticism_base_evaluation_def criticism_evaluation_def native_base_evaluation_empty)
+
+corollary criticism_base_table_empty:
+  "criticism_base_table {||} decide P ds ps=criticism_table P ds ps"
+  by (simp add: criticism_base_table_def criticism_table_def criticism_base_evaluation_empty)
+
+lemma criticism_decision_exact_empty: "criticism_decision_exact {||} decide P ds ps"
+  by (simp add: criticism_decision_exact_def)
+
+subsection \<open>An unavailable sample is diagnosed, never recorded as a failure\<close>
+
+text \<open>
+  The clauses a demand reaches whose heads leave a premise variable unbound, each with its site, its key
+  and its premise-only variables (@{const finite_schema_head_missing}): a program covers a demand's heads
+  exactly when there is none. The diagnosis of a sample over a base is computed from the program, the
+  base and the sample alone: whether the program is formed, whether the demand is closed over the program
+  above the base, and the uncovered clauses outside the base the demand reaches. It is the whole reason a
+  table is missing.
+\<close>
+
+definition finite_uncovered_clauses where
+  "finite_uncovered_clauses P D=ffilter (\<lambda>(d,c,V). V\<noteq>{||})
+    (fimage (\<lambda>((d,c),S). (d,c,finite_schema_head_missing S))
+      (ffilter (\<lambda>z. fst (fst z) |\<in>| fimage fst D) (finite_system_clauses P)))"
+
+lemma finite_uncovered_clauses_member:
+  "(d,c,V) |\<in>| finite_uncovered_clauses P D \<longleftrightarrow>
+    (\<exists>S. ((d,c),S) |\<in>| finite_system_clauses P \<and> d |\<in>| fimage fst D \<and>
+      V=finite_schema_head_missing S \<and> V\<noteq>{||})"
+  unfolding finite_uncovered_clauses_def by force
+
+theorem finite_uncovered_clauses_covered:
+  "finite_program_head_covered P D \<longleftrightarrow> finite_uncovered_clauses P D={||}"
+proof -
+  have uncovered: "finite_uncovered_clauses P D={||} \<longleftrightarrow> (\<forall>d c S. ((d,c),S) |\<in>| finite_system_clauses P \<longrightarrow>
+      d |\<in>| fimage fst D \<longrightarrow> finite_schema_head_missing S={||})"
+  proof
+    assume empty: "finite_uncovered_clauses P D={||}"
+    show "\<forall>d c S. ((d,c),S) |\<in>| finite_system_clauses P \<longrightarrow>
+        d |\<in>| fimage fst D \<longrightarrow> finite_schema_head_missing S={||}"
+    proof (intro allI impI)
+      fix d c S assume "((d,c),S) |\<in>| finite_system_clauses P" "d |\<in>| fimage fst D"
+      then show "finite_schema_head_missing S={||}"
+        using finite_uncovered_clauses_member[of d c "finite_schema_head_missing S" P D] empty by auto
+    qed
+  next
+    assume all: "\<forall>d c S. ((d,c),S) |\<in>| finite_system_clauses P \<longrightarrow>
+        d |\<in>| fimage fst D \<longrightarrow> finite_schema_head_missing S={||}"
+    have "x |\<notin>| finite_uncovered_clauses P D" for x
+    proof -
+      obtain d c V where x: "x=(d,c,V)" by (rule prod_cases3)
+      show ?thesis using all by (auto simp: x finite_uncovered_clauses_member)
+    qed
+    then show "finite_uncovered_clauses P D={||}" by (simp add: fset_eq_iff)
+  qed
+  show ?thesis unfolding uncovered finite_program_head_covered_def fBall_member by auto
+qed
+
+definition criticism_diagnosis where
+  "criticism_diagnosis B P ds ps=(let D=criticism_base_demand B P ds ps; Q=implemented_base_program B P in
+    (finite_system_formed P,finite_program_demand_closed Q D,finite_uncovered_clauses Q D))"
+
+theorem criticism_base_table_diagnosed:
+  "criticism_base_table B decide P ds ps=None \<longleftrightarrow> criticism_diagnosis B P ds ps\<noteq>(True,True,{||})"
+  by (auto simp: criticism_base_table_unavailable criticism_diagnosis_def implemented_base_ready_def
+    finite_uncovered_clauses_covered Let_def)
+
+corollary criticism_table_diagnosed:
+  "criticism_table P ds ps=None \<longleftrightarrow> criticism_diagnosis {||} P ds ps\<noteq>(True,True,{||})"
+  using criticism_base_table_diagnosed[of "{||}" "\<lambda>_. False" P ds ps] by (simp add: criticism_base_table_empty)
+
 section \<open>The record: every difference is a comparison failure against the candidate\<close>
 
 text \<open>
@@ -137,8 +305,8 @@ theorem criticism_record_exact:
     candidate_losses_def candidate_profile_def finite_table_observations_def criticism_observations_member
     fset_of_list_elem)
 
-theorem criticism_record_meaning:
-  assumes table: "criticism_table P ds ps=Some A"
+theorem exact_table_record_meaning:
+  assumes exact: "criticism_exact_table P ds ps A"
   shows "(c,c',d,w) |\<in>| criticism_record ds ps A \<longleftrightarrow> criticism_paired ps c c' \<and> d\<in>set ds \<and>
     (d,decode_finite_term c)\<in>positive_meaning (decode_finite_system P) \<and>
     (d,decode_finite_term c')\<notin>positive_meaning (decode_finite_system P)"
@@ -146,12 +314,19 @@ proof (cases "criticism_paired ps c c' \<and> d\<in>set ds")
   case True
   then have calls: "(d,c) |\<in>| criticism_calls ds ps" "(d,c') |\<in>| criticism_calls ds ps"
     using criticism_paired_sides[of ps c c'] by (simp_all add: criticism_calls_member)
-  show ?thesis using criticism_table_exact[OF table calls(1)] criticism_table_exact[OF table calls(2)] True
+  show ?thesis using criticism_exact_tableD[OF exact calls(1)] criticism_exact_tableD[OF exact calls(2)] True
     by (simp add: criticism_record_exact decode_finite_call_term_def)
 next
   case False
   then show ?thesis by (auto simp: criticism_record_exact)
 qed
+
+theorem criticism_record_meaning:
+  assumes table: "criticism_table P ds ps=Some A"
+  shows "(c,c',d,w) |\<in>| criticism_record ds ps A \<longleftrightarrow> criticism_paired ps c c' \<and> d\<in>set ds \<and>
+    (d,decode_finite_term c)\<in>positive_meaning (decode_finite_system P) \<and>
+    (d,decode_finite_term c')\<notin>positive_meaning (decode_finite_system P)"
+  by (rule exact_table_record_meaning[OF criticism_table_exact_table[OF table]])
 
 definition criticism_refuted ::
     "local_address option definition_site list \<Rightarrow> (finite_factor_term\<times>finite_factor_term) list \<Rightarrow>
@@ -247,19 +422,19 @@ text \<open>
   entry's meaning along the correspondence.
 \<close>
 
-theorem criticism_row_refutes:
+theorem exact_table_row_refutes:
   assumes presented: "presentation_class R D X" and action: "renaming_action admissible act D"
     and renaming: "admissible h"
     and pairs: "\<And>p q. (p,q)\<in>set ps \<Longrightarrow>
       renaming_correspondence R act h (decode_finite_term p) (decode_finite_term q)"
-    and table: "criticism_table P ds ps=Some A" and row: "(c,c',d,w) |\<in>| criticism_record ds ps A"
+    and exact: "criticism_exact_table P ds ps A" and row: "(c,c',d,w) |\<in>| criticism_record ds ps A"
   shows "\<not>(\<exists>Q. (\<forall>t. (d,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> presented_predicate R Q t) \<and>
     renaming_equivariant admissible act D Q)"
 proof -
   have paired: "criticism_paired ps c c'"
     and holds: "(d,decode_finite_term c)\<in>positive_meaning (decode_finite_system P)"
     and fails: "(d,decode_finite_term c')\<notin>positive_meaning (decode_finite_system P)"
-    using row by (simp_all add: criticism_record_meaning[OF table])
+    using row by (simp_all add: exact_table_record_meaning[OF exact])
   have differ: "((d,decode_finite_term c)\<in>positive_meaning (decode_finite_system P)) \<noteq>
       ((d,decode_finite_term c')\<in>positive_meaning (decode_finite_system P))"
     using holds fails by simp
@@ -275,11 +450,21 @@ proof -
   qed
 qed
 
-corollary criticism_row_refutes_presentation:
+theorem criticism_row_refutes:
+  assumes presented: "presentation_class R D X" and action: "renaming_action admissible act D"
+    and renaming: "admissible h"
+    and pairs: "\<And>p q. (p,q)\<in>set ps \<Longrightarrow>
+      renaming_correspondence R act h (decode_finite_term p) (decode_finite_term q)"
+    and table: "criticism_table P ds ps=Some A" and row: "(c,c',d,w) |\<in>| criticism_record ds ps A"
+  shows "\<not>(\<exists>Q. (\<forall>t. (d,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> presented_predicate R Q t) \<and>
+    renaming_equivariant admissible act D Q)"
+  by (rule exact_table_row_refutes[OF presented action renaming pairs criticism_table_exact_table[OF table] row])
+
+corollary exact_table_row_refutes_presentation:
   assumes presented: "presentation_class R D X"
     and pairs: "\<And>p q. (p,q)\<in>set ps \<Longrightarrow>
       presentation_transport R R (decode_finite_term p) (decode_finite_term q)"
-    and table: "criticism_table P ds ps=Some A" and row: "(c,c',d,w) |\<in>| criticism_record ds ps A"
+    and exact: "criticism_exact_table P ds ps A" and row: "(c,c',d,w) |\<in>| criticism_record ds ps A"
   shows "\<not>(\<exists>Q. \<forall>t. (d,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> presented_predicate R Q t)"
 proof -
   have action: "renaming_action (bij::(unit \<Rightarrow> unit) \<Rightarrow> bool) (\<lambda>h a. a) D"
@@ -290,8 +475,16 @@ proof -
   have equivariant: "renaming_equivariant (bij::(unit \<Rightarrow> unit) \<Rightarrow> bool) (\<lambda>h a. a) D Q" for Q
     by (simp add: renaming_equivariant_def)
   show ?thesis
-    using criticism_row_refutes[OF presented action bij_id corresponds table row] equivariant by blast
+    using exact_table_row_refutes[OF presented action bij_id corresponds exact row] equivariant by blast
 qed
+
+corollary criticism_row_refutes_presentation:
+  assumes presented: "presentation_class R D X"
+    and pairs: "\<And>p q. (p,q)\<in>set ps \<Longrightarrow>
+      presentation_transport R R (decode_finite_term p) (decode_finite_term q)"
+    and table: "criticism_table P ds ps=Some A" and row: "(c,c',d,w) |\<in>| criticism_record ds ps A"
+  shows "\<not>(\<exists>Q. \<forall>t. (d,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> presented_predicate R Q t)"
+  by (rule exact_table_row_refutes_presentation[OF presented pairs criticism_table_exact_table[OF table] row])
 
 section \<open>Part (b): every collection enumerated in the reverse of its canonical order\<close>
 
@@ -490,18 +683,25 @@ definition reversal_pairs ::
       (finite_factor_term\<times>finite_factor_term) list" where
   "reversal_pairs s Cs=map (\<lambda>C. (canonical_argument_value C s,reversed_argument_value C s)) Cs"
 
-theorem reversal_row_refutes:
+theorem exact_table_reversal_row_refutes:
   assumes formed: "\<forall>C\<in>set Cs. finite_environment_formed C \<and> argument_positions (decode_finite_environment C) s"
-    and table: "criticism_table P ds (reversal_pairs s Cs)=Some A"
+    and exact: "criticism_exact_table P ds (reversal_pairs s Cs) A"
     and row: "(c,c',d,w) |\<in>| criticism_record ds (reversal_pairs s Cs) A"
   shows "\<not>(\<exists>Q. \<forall>t. (d,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> presented_predicate (argument_presents s) Q t)"
-proof (rule criticism_row_refutes_presentation[OF argument_presentation_class _ table row])
+proof (rule exact_table_row_refutes_presentation[OF argument_presentation_class _ exact row])
   fix p q assume "(p,q)\<in>set (reversal_pairs s Cs)"
   then obtain C where C: "C\<in>set Cs" and p: "p=canonical_argument_value C s" and q: "q=reversed_argument_value C s"
     by (auto simp: reversal_pairs_def)
   show "presentation_transport (argument_presents s) (argument_presents s) (decode_finite_term p) (decode_finite_term q)"
     using argument_values_transport[of C s] formed C by (simp add: p q)
 qed
+
+theorem reversal_row_refutes:
+  assumes formed: "\<forall>C\<in>set Cs. finite_environment_formed C \<and> argument_positions (decode_finite_environment C) s"
+    and table: "criticism_table P ds (reversal_pairs s Cs)=Some A"
+    and row: "(c,c',d,w) |\<in>| criticism_record ds (reversal_pairs s Cs) A"
+  shows "\<not>(\<exists>Q. \<forall>t. (d,t)\<in>positive_meaning (decode_finite_system P) \<longleftrightarrow> presented_predicate (argument_presents s) Q t)"
+  by (rule exact_table_reversal_row_refutes[OF formed criticism_table_exact_table[OF table] row])
 
 section \<open>Controls\<close>
 
@@ -579,5 +779,90 @@ ML \<open>
     val _ = run "empty" @{code control_empty} [true]
   end
 \<close>
+
+subsection \<open>A control over a base\<close>
+
+text \<open>
+  The program of @{text Factor_Implemented_Base_Evaluation}'s control: its root (None,[3]) holds of a term
+  where the witness (None,[2]) does, and the witness's clause has the premise-only variable [1]. The sample
+  calls the root at the empty payload and at a payload that is no octet list, so its two sides differ. The
+  plain sample is unavailable, its diagnosis naming the witness's clause and variable; over the base
+  holding the witness, whose decision is that the argument is formed, proved exact at the demand's base
+  call, the table and its record stand beside the program's meaning. One evaluation executes the control.
+\<close>
+
+definition criticism_base_control_pairs :: "(finite_factor_term\<times>finite_factor_term) list" where
+  "criticism_base_control_pairs=[(Finite_Payload [],Finite_Payload [256])]"
+
+ML \<open>val criticism_base_control_start = Timing.start ()\<close>
+
+lemma criticism_base_control_executed:
+  "criticism_diagnosis {||} implemented_base_control [(None,[3])] criticism_base_control_pairs=
+      (True,True,{|((None,[2]),[0],{|[1]|})|}) \<and>
+    criticism_base_demand {|(None,[2])|} implemented_base_control [(None,[3])] criticism_base_control_pairs=
+      {|((None,[3]),Finite_Payload []),((None,[3]),Finite_Payload [256]),((None,[2]),Finite_Payload [])|} \<and>
+    criticism_base_table {|(None,[2])|} implemented_base_control_decision implemented_base_control [(None,[3])]
+      criticism_base_control_pairs=Some {|((None,[3]),Finite_Payload []),((None,[2]),Finite_Payload [])|} \<and>
+    criticism_record [(None,[3])] criticism_base_control_pairs
+      {|((None,[3]),Finite_Payload []),((None,[2]),Finite_Payload [])|}=
+      {|(Finite_Payload [],Finite_Payload [256],(None,[3]),())|}"
+  by eval
+
+ML \<open>writeln ("CRITICISM_CONTROL base " ^ Timing.message (Timing.result criticism_base_control_start))\<close>
+
+lemma criticism_base_control_plain:
+  "criticism_table implemented_base_control [(None,[3])] criticism_base_control_pairs=None"
+  using criticism_base_control_executed by (simp add: criticism_table_diagnosed)
+
+lemma criticism_base_control_decided:
+  "criticism_decision_exact {|(None,[2])|} implemented_base_control_decision implemented_base_control
+    [(None,[3])] criticism_base_control_pairs"
+  unfolding criticism_decision_exact_def
+proof (intro allI impI)
+  fix q
+  assume demand: "q |\<in>| criticism_base_demand {|(None,[2])|} implemented_base_control [(None,[3])]
+      criticism_base_control_pairs"
+    and base: "fst q |\<in>| {|(None,[2])|}"
+  have demanded: "criticism_base_demand {|(None,[2])|} implemented_base_control [(None,[3])]
+      criticism_base_control_pairs=
+      {|((None,[3]),Finite_Payload []),((None,[3]),Finite_Payload [256]),((None,[2]),Finite_Payload [])|}"
+    using criticism_base_control_executed by blast
+  have witness: "q=((None,[2]),Finite_Payload [])"
+    using demand base unfolding demanded by auto
+  show "implemented_base_control_decision q \<longleftrightarrow>
+      decode_finite_call_term q\<in>positive_meaning (decode_finite_system implemented_base_control)"
+    using implemented_base_control_witness
+    by (simp add: witness implemented_base_control_decision_def decode_finite_call_term_def octets_formed_def)
+qed
+
+theorem criticism_base_control_meaning:
+  "((None,[3]),Payload_Term [])\<in>positive_meaning (decode_finite_system implemented_base_control)"
+  "((None,[3]),Payload_Term [256])\<notin>positive_meaning (decode_finite_system implemented_base_control)"
+  "(c,c',d,w) |\<in>| criticism_record [(None,[3])] criticism_base_control_pairs
+      {|((None,[3]),Finite_Payload []),((None,[2]),Finite_Payload [])|} \<longleftrightarrow>
+    criticism_paired criticism_base_control_pairs c c' \<and> d\<in>set [(None,[3])] \<and>
+    (d,decode_finite_term c)\<in>positive_meaning (decode_finite_system implemented_base_control) \<and>
+    (d,decode_finite_term c')\<notin>positive_meaning (decode_finite_system implemented_base_control)"
+proof -
+  have table: "criticism_base_table {|(None,[2])|} implemented_base_control_decision implemented_base_control
+      [(None,[3])] criticism_base_control_pairs=Some {|((None,[3]),Finite_Payload []),((None,[2]),Finite_Payload [])|}"
+    using criticism_base_control_executed by blast
+  have exact: "criticism_exact_table implemented_base_control [(None,[3])] criticism_base_control_pairs
+      {|((None,[3]),Finite_Payload []),((None,[2]),Finite_Payload [])|}"
+    by (rule criticism_base_table_exact_table[OF table criticism_base_control_decided])
+  have calls: "((None,[3]),Finite_Payload []) |\<in>| criticism_calls [(None,[3])] criticism_base_control_pairs"
+    "((None,[3]),Finite_Payload [256]) |\<in>| criticism_calls [(None,[3])] criticism_base_control_pairs"
+    by (simp_all add: criticism_calls_member criticism_sides_def criticism_base_control_pairs_def)
+  show "((None,[3]),Payload_Term [])\<in>positive_meaning (decode_finite_system implemented_base_control)"
+    using criticism_exact_tableD[OF exact calls(1)] by (simp add: decode_finite_call_term_def)
+  show "((None,[3]),Payload_Term [256])\<notin>positive_meaning (decode_finite_system implemented_base_control)"
+    using criticism_exact_tableD[OF exact calls(2)] by (simp add: decode_finite_call_term_def)
+  show "(c,c',d,w) |\<in>| criticism_record [(None,[3])] criticism_base_control_pairs
+      {|((None,[3]),Finite_Payload []),((None,[2]),Finite_Payload [])|} \<longleftrightarrow>
+    criticism_paired criticism_base_control_pairs c c' \<and> d\<in>set [(None,[3])] \<and>
+    (d,decode_finite_term c)\<in>positive_meaning (decode_finite_system implemented_base_control) \<and>
+    (d,decode_finite_term c')\<notin>positive_meaning (decode_finite_system implemented_base_control)"
+    by (rule exact_table_record_meaning[OF exact])
+qed
 
 end

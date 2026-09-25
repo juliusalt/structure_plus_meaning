@@ -14,10 +14,6 @@ text \<open>
 
 section \<open>A site value, and a pair of them, read back\<close>
 
-lemma decode_finite_pair_iff:
-  "decode_finite_term t=Pair_Term x y \<longleftrightarrow>
-    (\<exists>a b. t=Finite_Pair a b \<and> decode_finite_term a=x \<and> decode_finite_term b=y)"
-  by (cases t) auto
 
 text \<open>
   A site value is read by the site-value reader of @{text Factor_Inclusion_Admission_Counterparts}
@@ -153,13 +149,11 @@ text \<open>
   compares (key absence at 20 over 3).
 \<close>
 
-lemma finite_term_reads: "finite_reads Some id"
-  by (rule finite_readsI) simp
 
 lemma decode_finite_pair_rows:
   "decode_finite_term (finite_sequence_presentation (finite_pair_presentation id id) ys)=
     pair_list_term (decoded_keyed_rows ys)"
-  by (induction ys) (auto simp: finite_pair_presentation_def)
+  by (simp add: decode_finite_sequence_presentation finite_pair_presentation_def comp_def split_def)
 
 lemma finite_pair_rows_complete:
   "map decode_finite_term xs=map (\<lambda>(k,v). Pair_Term k v) zs \<Longrightarrow>

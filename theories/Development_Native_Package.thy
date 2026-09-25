@@ -293,8 +293,8 @@ text \<open>
   selects them. The installation is a choice made outside the process, as the seed's is.
 \<close>
 
-definition development_package_source :: "local_address option finite_artifact_environment\<times>local_address option" where
-  "development_package_source=finite_select_roots finite_empty_environment []"
+abbreviation development_package_source :: "local_address option finite_artifact_environment\<times>local_address option" where
+  "development_package_source\<equiv>empty_package_selection"
 
 interpretation development_installation: closed_program_installation finite_empty_environment
   "fst development_package_source" "snd development_package_source" finite_package_program
@@ -302,7 +302,7 @@ proof (rule closed_program_installation.intro)
   show "finite_environment_formed (finite_empty_environment::local_address option finite_artifact_environment)"
     by (rule finite_empty_environment_formed)
   show "finite_select_roots finite_empty_environment []=(fst development_package_source,snd development_package_source)"
-    by (simp add: development_package_source_def)
+    by (rule empty_package_selected)
   show "finite_system_formed finite_package_program"
     using package_program_formed by (simp only: package_program_def finite_system_formed_correct)
 qed

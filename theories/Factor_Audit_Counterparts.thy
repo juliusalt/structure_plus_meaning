@@ -77,8 +77,8 @@ definition audit_control_program :: "octets \<Rightarrow> (nat,nat,nat,nat) fini
     finite_system_clauses={|((0,0),\<lparr>finite_schema_conclusion=Finite_Pattern_Payload v,
       finite_schema_premises={||},finite_schema_materials={||}\<rparr>)|}\<rparr>"
 
-definition audit_control_selection :: "local_address option finite_artifact_environment\<times>local_address option" where
-  "audit_control_selection=finite_select_roots finite_empty_environment []"
+abbreviation audit_control_selection :: "local_address option finite_artifact_environment\<times>local_address option" where
+  "audit_control_selection\<equiv>empty_package_selection"
 
 definition audit_control_installed :: "octets \<Rightarrow>
     (local_address option finite_artifact_environment\<times>local_address option) option" where

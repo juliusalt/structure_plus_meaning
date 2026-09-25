@@ -953,7 +953,7 @@ corollary use_key_absence_renaming:
     (\<lambda>t. (20,t)\<in>positive_meaning key_absence_system) (\<lambda>t. (20,t)\<in>positive_meaning key_absence_system)"
 proof -
   have pair: "inj (map_prod use_data_term (id::factor_term \<Rightarrow> factor_term))"
-    using map_prod_inj_on[OF use_data_term_injective inj_on_id[of UNIV]] by simp
+    by (rule renamed_site_injective[OF use_data_term_injective])
   have injective: "inj (\<lambda>ys. pair_list_term (map (map_prod use_data_term (id::factor_term \<Rightarrow> factor_term)) ys))"
     by (rule injI) (simp only: pair_list_term_injective inj_map_eq_map[OF pair])
   have rows: "presentation_class (\<lambda>ys t. t=pair_list_term (map (map_prod use_data_term id) ys))

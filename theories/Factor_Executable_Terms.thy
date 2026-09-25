@@ -28,6 +28,11 @@ lemma finite_term_formed_correct:
   "finite_term_formed C \<longleftrightarrow> term_formed (decode_finite_term C)"
   by (induction C) (simp_all add: finite_target_formed_correct)
 
+lemma decode_finite_pair_iff:
+  "decode_finite_term t=Pair_Term x y \<longleftrightarrow>
+    (\<exists>a b. t=Finite_Pair a b \<and> decode_finite_term a=x \<and> decode_finite_term b=y)"
+  by (cases t) auto
+
 lemma finite_term_of_decode [simp]: "finite_term_of (decode_finite_term C) = C"
   by (induction C) auto
 

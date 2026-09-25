@@ -41,7 +41,7 @@ on, all accepted:
 **The first problem's route** (briefed by #380, #382, #409, #434, #451, #462 and #488; what landed is under Delivered):
 
 - The recording (#482's (4)): B1 (#490, landed `5304f725`, the payload-bounded scope and the certified causes over a
-  scope reading) → B2 #492 (the bounded recording, `development_indexed_generation` through it, the recorded instances
+  scope reading) → B2 #492 (landed `bad0c366`: the bounded recording, `development_indexed_generation` through it, the recorded instances
   restated) → I3 #489 (the bounded recording attributed held, over #494's refinements, landed) → R and X,
   placed from I3's result (X executes the native state's first generation held, #395's remainder) → the posing #397,
   which then waits on X instead of #489.
@@ -291,7 +291,11 @@ What landed that open work builds on, a line each; how it went and each review's
 - **The recording's scope** (#482's (4) B1): `Factor_Bounded_Generation_Scopes` (#490, `5304f725`: `payload_fill`, formed
   when V is empty or R formed, `payload_fill_formed`; the bounded value and its quotation; `generation_bounded_scope_at`
   and its contract; the certified base and policy causes over a scope reading with their bounded instances; the bounded
-  profile's native reader a recorded reliance until a native program reads a route cause).
+  profile's native reader a recorded reliance until a native program reads a route cause); B2 (#492, `bad0c366`):
+  `Development_Bounded_Recording`, the bounded recording with its cause one target, `development_indexed_generation`
+  and the owner records' and native state's recorded instances through it, the controls in
+  `Development_Bounded_Recording_Execution` (DECISIONS.md "The bounded recording records the route's generations; its
+  cause is one target").
 - **Briefs whose findings stand**: #434 (`.build/tasks/434/result.md`: the approval record's place, part (g)'s leaf
   argument not demanded, parts (h) and (e) the owner's, Q25), #451 (`.build/tasks/451/result.md`: the readings of
   "generation" and "adoption" generated, the owner's words naming readers).
@@ -406,7 +410,10 @@ searches for a theory before briefing a task that edits it.
   #397, X executing the native state's first generation held (#395's remainder) — and set #397 to wait on X; then
   correct #397's, #399's, #403's, #443's and #447's briefs with #482's (3) and B2's (#492) names: each was mailed (3),
   #447 also its correction of (5), and B2 restates `development_indexed_generation` and the recorded instances in place,
-  so nothing in them misleads meanwhile.
+  so nothing in them misleads meanwhile. R carries #493's review follow-ups 2, 4, 6 and 8
+  (`.build/tasks/493/review.md`: the fill's laws to their notion, one of the two names of the indexed generation
+  retired, R's formation checked once, the least judgment environment's prefix once) and 1's entry correction; X decides
+  7 (the execution theory's 32K control); #489 was mailed 1, 6 and 7.
 - **The evaluator's next steps** (#495 landed): place #512's proposal (W3) and #507's (R5–R7, W2 and W4, spliced before #399 and #443 in place of #507);
   then, before they start,
   correct #399's, #403's, #443's and

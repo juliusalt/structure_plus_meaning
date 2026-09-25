@@ -251,7 +251,9 @@ What landed that open work builds on, a line each; how it went and each review's
   `Factor_Use_Actions` and `Factor_Use_Renaming` (#422, #424, #458 `00c4bf47`).
 - **The request at a package**: `Factor_Package_Requests` (#410, `97ea7b82`); the given's least package environment in
   1.21 s against more than 108 s (#485, `61c59061`: `finite_native_package_demands` a `checked_premise` instance in
-  `Factor_Formation_Once_Definitions`); its review's follow-ups are #494.
+  `Factor_Formation_Once_Definitions`); #494 (`8206b8b7`): the package sites read once where a package or judgment
+  environment reads them twice, the application, graph and replay demands' formation checks hoisted
+  (`.build/tasks/494/measurement.md`, with what #485's landing removed from the recipes).
 - **The verification frame**: `Development_Verification_Frame` (#405, #432, #433 `3d12a9d6`: parts (a)–(d), and (f) per
   store; its controls in `.build/tasks/405/controls`).
 - **The criticism's notions**: `Criticism_Samples` (#435, the sample and part (b); S1 #478 `f68c8649`, the sample over a
@@ -382,8 +384,7 @@ searches for a theory before briefing a task that edits it.
   #397, X executing the native state's first generation held (#395's remainder) — and set #397 to wait on X; then
   correct #397's, #399's, #403's, #443's and #447's briefs with #482's (3) and B2's (#492) names: each was mailed (3),
   #447 also its correction of (5), and B2 restates `development_indexed_generation` and the recorded instances in place,
-  so nothing in them misleads meanwhile. #494 is to land before I3 starts; if it stalls, #489's edge on it is the one to
-  reconsider.
+  so nothing in them misleads meanwhile.
 - **When #495 is accepted** (the answer to Q27): place its builds through a brief; set #399 and #443 to wait on the
   builds they consume instead of #495; correct #399's, #443's and #447's briefs from its entry (each mailed that the
   counterpart route is withdrawn); rewrite or delete #483 and #487 by its result; next-edit items 154, 156, 158 and 159
@@ -396,7 +397,9 @@ searches for a theory before briefing a task that edits it.
   follow-up 1; #480's first review, #473's follow-up 2, #442's follow-up 1); #399 (#465's follow-up 2, the evaluation
   over the base timed at the guard's call; #469's follow-up 1 if #470 did not; #394's follow-ups 1–3: the asked
   environment's read-back held apart from the installation, the given computed once if evaluated repeatedly, the binary
-  entry's bridge; #471's follow-ups 3 and 4); #489 (plan-69: B1 #490, B2 #492, #494 before it); #447 also #477's
+  entry's bridge; #471's follow-ups 3 and 4); #489 (plan-69: B1 #490, B2 #492, #494 before it; #494's review's
+  follow-ups 2–4, the replay environment's known causes at the 32K cut); #483 (plan-69: the answer to Q27, its generic
+  moves standing, `finite_uncovered_clauses` beside `finite_program_head_covered`); #447 also #477's
   follow-up 3 (the counterpart is entry 590; `finite_stated_report_meaning` carried to the program its samples evaluate
   by the join's agreement lemmas), which its brief's correction takes; #399, #443 and #447 (plan-69: the counterpart
   route withdrawn by the answer to Q27, their briefs corrected from #495's entry, the earlier counterpart mails

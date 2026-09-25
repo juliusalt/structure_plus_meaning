@@ -15801,7 +15801,14 @@ identity meets.
   artifact it observes, a target literal's with the argument's (task 381's part (g)).
 - *Left to criticism*: for each added definition with a material premise, whether its meaning is invariant under a
   renaming of the octets it does not state, the target literals it states and the artifacts it observes readdressed
-  consistently; the sample's form is the criticism build's. The notion that would move it into the native judgment is
+  consistently; the sample's form is the criticism build's. [Corrected (task 463), where this states the present: the
+  sample built (`Criticism_Octet_Samples`, task 439) keeps every leaf the program states, its target literals among
+  them — readdressing the program's own literals would change the program evaluated — and moves the unstated octets of
+  those literals where the terms hold them, each artifact of an argument readdressed consistently with the payload
+  map. A recorded row therefore refutes the octet criterion's conclusion, that an octet the program does not state is
+  inert to it: the case of task 381's (g) in which a material premise compares the octets of a target literal with the
+  argument's. Its control exhibits that case, and an entry whose closure holds no material premise records no row
+  (`octet_sample_no_row`).] The notion that would move it into the native judgment is
   task 381's (g): the leaf argument extended to programs with material premises, by a readdressing of targets
   consistent with the payload map, stated once in `Factor_Positive_Parametricity`. The audit stays a necessary check.
 

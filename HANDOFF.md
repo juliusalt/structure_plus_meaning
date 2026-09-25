@@ -56,8 +56,9 @@ on, all accepted:
 the missing witnesses by resolution: one evaluator for every program, exact where it answers, and the counterparts
 retire from the route": resolution with unification over the program's own clauses, material premises solved,
 residual variables the empty payload, certificates checked by the existing checker, unresolved kept apart from
-refuted. Its builds: R1 #499 and R2 #501 side by side (material resolution, unification), R3 #503 (resolution, its
-soundness through the finite proof checker), R4 #505 (completeness, `finite_program_resolution_exact` and
+refuted. Its builds: R1 #499 and R2 #501 side by side (material resolution, unification), R3 #503 (resolution, every
+alternative kept, its certificates checked by the finite proof checker, q98), R3b #515 (every success's certificate
+accepted), R4 #505 (completeness, `finite_program_resolution_exact` and
 `native_call_resolution_exact`), each with its review; R5–R7 (committed choice, the given's declarations, the given at
 the guard's calls, measured) briefed by #507 after R3; R8a #508 (the counterparts retired, their presentation readers moved;
 after #483, #461 and #492, which edit its theories) and R8b #510 (#487's standing items). The least witnesses (77's, 392's and 525's bounds,
@@ -90,7 +91,7 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. #492 → #489 → #397 → #399 → #401 → #407 → #408 is 7 deep; R and X spliced
+**Shape.** No build waits on a review task. The evaluator's chain #503 → #515 → #505 → W2 → W4 → #399 → #401 → #407 → #408 is 9 deep (R1 and R2 landed); R and X spliced
 before #397 and the evaluator's builds before #399 deepen it: nothing is added after #408, and the approval build
 (Open 142) ends a chain after #407 only while that chain stays within 10.
 
@@ -296,8 +297,9 @@ What landed that open work builds on, a line each; how it went and each review's
   and the owner records' and native state's recorded instances through it, the controls in
   `Development_Bounded_Recording_Execution` (DECISIONS.md "The bounded recording records the route's generations; its
   cause is one target").
-- **The resolving evaluator** (#495's entry): R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the most general
-  unifier of finite term patterns and renaming apart; its review's follow-ups mailed to R3, R4 and #507).
+- **The resolving evaluator** (#495's entry): R1 `Factor_Material_Resolution` (#499, `1f021cf3`: the material premise
+  solved from a ground skeleton or source, site 1's control) and R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the most general
+  unifier of finite term patterns and renaming apart; their reviews' follow-ups mailed to R3, R4 and #507).
 - **Briefs whose findings stand**: #434 (`.build/tasks/434/result.md`: the approval record's place, part (g)'s leaf
   argument not demanded, parts (h) and (e) the owner's, Q25), #451 (`.build/tasks/451/result.md`: the readings of
   "generation" and "adoption" generated, the owner's words naming readers).

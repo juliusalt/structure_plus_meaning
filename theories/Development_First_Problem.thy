@@ -88,39 +88,39 @@ section \<open>A generation citing one recorded generation, in its environment\<
 
 text \<open>
   A generation of the route is recorded in the environment of the generation it cites, that generation its only
-  predecessor, by the bounded recording at the index of its own payload (@{const development_indexed_generation}). The
-  premises of the recording's contract, the environment's formation and the cited row's reading, are the cited
-  generation's own recorded facts, and the recorded generation's are again such facts, so a chain of citing
-  generations discharges each premise from the step before.
+  predecessor: the generation citing one row (@{const development_citing_row_generation}) at the cited generation's
+  site. Its contract takes the cited generation's reading alone, and the recorded generation's reading is again such
+  a premise, so a chain of citing generations discharges each premise from the step before.
 \<close>
 
 definition development_citing_generation ::
     "finite_factor_term \<Rightarrow> local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation \<Rightarrow>
       (local_address option finite_artifact_environment\<times>local_address option\<times>finite_generation) option" where
-  "development_citing_generation t r=(case r of (H,v,A) \<Rightarrow> development_indexed_generation t H [((v,[]),A)])"
+  "development_citing_generation t r=(case r of (H,v,A) \<Rightarrow> development_citing_row_generation t H ((v,[]),A))"
+
+lemma development_citing_generation_row:
+  assumes built: "development_citing_generation t (H,v,A)=Some (B,u,G)"
+    and cited: "finite_check_generation A H v []"
+  shows "development_citing_row_generation t H ((v,[]),A)=Some (B,u,G)"
+    "finite_check_generation A H (fst (v,[])) (snd (v,[]))"
+  using built cited by (simp_all only: development_citing_generation_def prod.case fst_conv snd_conv)
 
 lemma development_citing_generation_recorded:
   assumes built: "development_citing_generation t (H,v,A)=Some (B,u,G)"
-    and formed: "finite_environment_formed H" and cited: "finite_check_generation A H v []"
+    and cited: "finite_check_generation A H v []"
   shows "finite_environment_formed B" "finite_environment_included H B" "finite_check_generation G B u []"
     "finite_check_generation A B v []"
 proof -
-  have indexed: "development_indexed_generation t H [((v,[]),A)]=Some (B,u,G)"
-    using built by (simp add: development_citing_generation_def)
-  have rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) [((v,[]),A)]"
-    using cited by simp
-  have recorded: "finite_environment_formed B" "finite_environment_included H B" "finite_check_generation G B u []"
-    using development_indexed_generation_recorded[OF indexed formed rows] by blast+
-  show "finite_environment_formed B" by (rule recorded(1))
-  show "finite_environment_included H B" by (rule recorded(2))
-  show "finite_check_generation G B u []" by (rule recorded(3))
-  show "finite_check_generation A B v []"
-    using development_rows_carried[OF rows recorded(2) recorded(1)] by simp
+  note recorded=development_citing_row_generation_recorded[OF development_citing_generation_row[OF built cited]]
+  show "finite_environment_formed B" by (rule recorded(2))
+  show "finite_environment_included H B" by (rule recorded(3))
+  show "finite_check_generation G B u []" by (rule recorded(4))
+  show "finite_check_generation A B v []" using recorded(5) by (simp only: fst_conv snd_conv)
 qed
 
 theorem development_citing_generation_certified:
   assumes built: "development_citing_generation t (H,v,A)=Some (B,u,G)"
-    and formed: "finite_environment_formed H" and cited: "finite_check_generation A H v []"
+    and cited: "finite_check_generation A H v []"
   obtains R d K pu E root where "generation_predecessors G={|A|}" "finite_check_generation A B v []"
     "development_data_target t=Some (generation_payload G)"
     "generation_locus G=generation_payload G" "generation_payload G=Finite_Whole R"
@@ -130,13 +130,9 @@ theorem development_citing_generation_certified:
     "finite_check_generation G B u []"
     "environment_included (decode_finite_environment H) (decode_finite_environment B)"
 proof -
-  have indexed: "development_indexed_generation t H [((v,[]),A)]=Some (B,u,G)"
-    using built by (simp add: development_citing_generation_def)
-  have rows: "list_all (\<lambda>(d,G). finite_check_generation G H (fst d) (snd d)) [((v,[]),A)]"
-    using cited by simp
-  show ?thesis
-    by (rule development_indexed_generation_certified[OF indexed formed rows],
-      rule that[OF _ development_citing_generation_recorded(4)[OF built formed cited]], simp, assumption+)
+  show thesis
+    by (rule development_citing_row_generation_certified[OF development_citing_generation_row[OF built cited]],
+      rule that, assumption, simp only: fst_conv snd_conv, assumption+)
 qed
 
 section \<open>The posing\<close>
@@ -147,15 +143,15 @@ definition development_first_problem_posing ::
     Option.bind development_owner_record_1853 (development_citing_generation development_first_problem_payload)"
 
 text \<open>
-  The contract is the citing generation's at the owner record of 18:53, whose premises that record's own recording
-  discharges (@{thm [source] development_base_generation_recorded}).
+  The contract is the citing generation's at the owner record of 18:53, whose premise, the record's reading at its
+  site, that record's own recording discharges (@{thm [source] development_base_generation_recorded}).
 \<close>
 
 lemma development_first_problem_posing_cited:
   assumes posed: "development_first_problem_posing=Some (B,u,G)"
   obtains H v A where "development_owner_record_1853=Some (H,v,A)"
     "development_citing_generation development_first_problem_payload (H,v,A)=Some (B,u,G)"
-    "finite_environment_formed H" "finite_check_generation A H v []"
+    "finite_check_generation A H v []"
 proof -
   obtain z where record0: "development_owner_record_1853=Some z"
     and built0: "development_citing_generation development_first_problem_payload z=Some (B,u,G)"
@@ -167,8 +163,7 @@ proof -
   have base: "development_base_generation development_owner_direction_1853=Some (H,v,A)"
     using owner by (simp only: development_owner_record_1853_def development_owner_record_def)
   show ?thesis
-    by (rule that[OF owner built development_base_generation_recorded(1)[OF base]
-      development_base_generation_recorded(3)[OF base]])
+    by (rule that[OF owner built development_base_generation_recorded(3)[OF base]])
 qed
 
 theorem development_first_problem_posing_certified:
@@ -185,10 +180,10 @@ theorem development_first_problem_posing_certified:
 proof -
   obtain H v A where owner: "development_owner_record_1853=Some (H,v,A)"
     and built: "development_citing_generation development_first_problem_payload (H,v,A)=Some (B,u,G)"
-    and formed: "finite_environment_formed H" and cited: "finite_check_generation A H v []"
+    and cited: "finite_check_generation A H v []"
     by (rule development_first_problem_posing_cited[OF posed])
   show ?thesis
-    by (rule development_citing_generation_certified[OF built formed cited]) (rule that[OF owner], assumption+)
+    by (rule development_citing_generation_certified[OF built cited]) (rule that[OF owner], assumption+)
 qed
 
 corollary development_first_problem_posing_recorded:
@@ -196,10 +191,10 @@ corollary development_first_problem_posing_recorded:
   shows "finite_environment_formed B" "finite_check_generation G B u []"
 proof -
   obtain H v A where built: "development_citing_generation development_first_problem_payload (H,v,A)=Some (B,u,G)"
-    and formed: "finite_environment_formed H" and cited: "finite_check_generation A H v []"
+    and cited: "finite_check_generation A H v []"
     by (rule development_first_problem_posing_cited[OF posed])
   show "finite_environment_formed B" "finite_check_generation G B u []"
-    using development_citing_generation_recorded(1,3)[OF built formed cited] by blast+
+    using development_citing_generation_recorded(1,3)[OF built cited] by blast+
 qed
 
 section \<open>The posing's meaning\<close>

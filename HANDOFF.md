@@ -65,8 +65,11 @@ and #422 landed):
   premise variable bound by its clause's head (#441's q94: the audit's clauses and the Factor readers they call fail
   it); #460 (accepted) decided the evaluation over an implemented base (E1) with counterparts
   exact to the native definitions at the given's reader entries (C1–C3, C4 by demand) and the sample over a base (S1);
-  #462 briefs them — E1, C1 and C2 first, C3 after C2, S1 after E1 — with #399 after E1 and C1–C3 and #447 after S1
-  and C4 and the stated-leaves reader's counterpart (#441's q95), their briefs corrected by it; #393 is mailed its corrections of (1) and (5).
+  #462 briefed them, placed as #464 (E1, a whole rebuild landing alone), #466 (C1), #468 (C2), #470 (C3, after
+  C1, C2 and #455), #472 and #474 (C4a, C4b), #476 (the stated-leaves counterpart) and #478 (S1), each with its review
+  — #399 after E1 and C1–C3 and #447 after S1
+  and C4 and the stated-leaves reader's counterpart (#441's q95), their corrected briefs drafted by #462 (not yet applied: Now); #447 also after
+  the octet sample's whole presented values (#439's review, follow-ups 1–4); #393 is mailed its corrections of (1) and (5).
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -105,7 +108,7 @@ by a task of their own (Open 100).
 #407 → #408; the approval build (Open 142) after #407 would end a chain of 7.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the first problem's route, #462 and #455 at its head, then
+exists, Q2): the owner's directions first — the first problem's route, #464, #466, #468 and #455 at its head (#463 beside), then
 #393 and #395 after #455, and the rest in their chains' order, the first
 request's and the criticism's builds after them; then
 #457, #459 and #461, with #426 and #458 resuming as their checks return; each review after its build.
@@ -331,7 +334,11 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   an index's own search, the given's own searches reported as the given's (q92). Its review's follow-ups
   (`.build/tasks/433/review.md`): 1 answered by q92 (Open 140 stands); 2 (a closed search matched by its term, whatever
   program holds it) and 3 (open searches keyed by an unindexed presentation refused) mailed to #407.
-- **#460** (design, accepted): DECISIONS.md "The native evaluator evaluates above an implemented base: the given's
+- **Landed with `44df75ee`**: #439, `Criticism_Octet_Samples`, the octet sample (part (g)): octets the program does
+  not state moved, its stated leaves fixed, a difference exhibiting a material premise reading an unstated octet. Its
+  review's follow-ups (`.build/tasks/440/review.md`): 1–4 a fix continuing it, before #447; 5 Open 150; 6 and 2's note
+  mailed to #447; `finite_system_targets` named to #441.
+- **#460** (design, accepted, `584c3a76`): DECISIONS.md "The native evaluator evaluates above an implemented base: the given's
   readers enter through counterparts exact to their native definitions" — head coverage computed from the programs (87
   reader sites in the guard's reach, 42 covered, 8 evaluable; no call of the guard or of the audit answerable by the
   plain evaluator), E1, C1–C4 and S1 with their sizes and order, the corrections of #393, #399, #447, #437, #439 and
@@ -608,12 +615,20 @@ through `renaming_action.act_inverse` and `act_inverse_right`, its local inclusi
 reversal (#435's review, `.build/tasks/436/review.md`). 147 the new whole agreements of existing view chains
 (`positive_complete_data_agreement`, `replay_positive_agreement`, `derivation_replay_agreement`,
 `application_derivation_agreement`, `call_application_agreement`, `comparison_located_agreement`) moved with their
-programs' theories when those are next touched (#454's review, follow-up 2). 149 #438's first verdict, overwritten
+programs' theories when those are next touched (#454's review, follow-up 2). 150 #439's review
+(`.build/tasks/440/review.md`, follow-up 5): `pattern_leaves_not_pair`, `system_leaves_not_pair` and
+`system_leaves_restriction` into `Factor_Positive_Parametricity`, `finite_system_targets` (with its `_exact`) beside
+`finite_system_payloads` in `Factor_Finite_Payload_Literals`, `readdress_object` stated as `push_object` with
+attachment values mapped — with the next landing that changes those theories. 149 #438's first verdict, overwritten
 by its re-review, of which only the summary stands: h1's zero prefix and the inequality control in
 `Criticism_Use_Samples`, at its next edit.
 
 ## Now
 
+- **Unhandled by plan-66 (its window ended)**: apply #462's corrected briefs of #399 and #447 — read
+  `.build/tasks/462/b399.md` and `.build/tasks/462/b447.md` against the tasks' briefs and task 460's entry ("Corrections
+  of the briefs"), then `rewrite` 399 and 447 by `descriptionFile`, every other item kept; #462's `result.md` is unread.
+  Neither task can start before its builds land, so nothing waits on this yet.
 - **Mailed, read by each task's first session**: to #393 (#419's review, follow-up 5: the asked relation's clause composed from G3's, G4's and #416's exported
   clauses), to #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's payloads at
   installation, the rooted restriction at 561), to #455 (q93: the given's payload statement conditional, its discharge

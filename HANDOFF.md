@@ -67,8 +67,7 @@ least fixpoint by iteration, or the proposer) and handed in with a certificate, 
 finite proof checker — decided by design #496, re-scoped. #399 and #443 wait on R4, on #507 as a stand-in for R6 and
 on #496 as a stand-in for the least witnesses' builds; #403 and #447 wait through #399.
 
-**Beside the route**: #461 (the given's derivations without re-reducing what its pieces present, #454's review 1–3 with
-next-edit item 139, #456's 4), then #486 (continuing #457: the given's readers' payload lineage split at the guard's two
+**Beside the route**: #486 (continuing #457: the given's readers' payload lineage split at the guard's two
 lineages, the payload lemmas at the payload notion, #457's review 1–4, item 144's payload part); #483 (running: the
 generic facts at their homes, the low moves in one rebuild; its moves stand under #495's entry, its C4a restatement
 moot).
@@ -96,7 +95,7 @@ before #397 and the evaluator's builds before #399 deepen it: nothing is added a
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the evaluator's R1–R4 (#499–#506) and R5–R7's brief #507, the least
 witnesses' design #496, B2 #492, then I3, the posing and the rest of the route in its chains' order, the first request's and the criticism's
-builds after them; then #461, #486, #483, and R8a #508 and R8b #510 after them; each review after its build.
+builds after them; then #486, #483, and R8a #508 and R8b #510 after them; each review after its build.
 
 ## Decisions
 
@@ -250,12 +249,12 @@ What landed that open work builds on, a line each; how it went and each review's
 - **The development package**: N2a `Development_Package_Program.package_program` (#340; a landing that changes one of
   its six programs derives it again, Q18 (c)), N2b the closed package and `development_package_environment` (#342,
   `7d623e15`); the generic content beside its notions (#426, `84e2cd9c`).
-- **The given**: `Development_Given_Readers` (#412), `Development_Given_Program` (#453, `given_program_system`),
+- **The given**: `Development_Given_Readers` (#412), `Development_Given_Program` (#453, `given_program_system`; its derivations over restriction pieces, #461 `014020ba`),
   `Development_Given_Installation` (#414, #452, #455 `24f36cde`: rooted at 47 entries — the guard's twelve
   `given_guard_entries` and 35 granted — installed at fresh uses, 28,729 addresses; a use instantiates
   `given_rooted_meaning`, `given_installed_entry_meaning` and `given_entry_meaning_at`), its payload statement by
   composition (#457, `Factor_System_Payloads`, `Factor_Reader_Payloads`), the compositional derivation
-  `Native_Control_Quotation_Code.note_composed` (#431); `Development_Native_State` (#395 `4d9cf735`, #484 `bd36f20d`:
+  `Native_Control_Quotation_Code.note_composed` (#431; its laws in `Factor_Finite_System_Presentations`, the parts it reduces whole named, #461); `Development_Native_State` (#395 `4d9cf735`, #484 `bd36f20d`:
   the given as one site value `development_given_value`, the first generation's statements, its execution a remainder;
   `development_base_generation` the owner records' and the state's base).
 - **The guard and the asked relation**: `Development_First_Problem_Guard` (#391, `bcb17f7a`: G1–G4 on the pair of the
@@ -431,7 +430,7 @@ searches for a theory before briefing a task that edits it.
   earlier gaps in `PLANNING_LOG.md`, 2026-09-24): `v2.py read check:167` raises a TypeError in `check_text`;
   `measuring --shared` wrote no `measurements.log`; bases swept before a brief's task ran (#324); the finalizer's push of
   `82a065cd` failed; the finalizer should commit the handed-over files only (#303); the exclusive hold outlasts its run
-  (#317); a re-review writes over its first verdict (#65, #302, #438); `v2.py ledger` records a text beginning with `--`
+  (#317); a re-review writes over its first verdict (#65, #302, #438; #461's accepting review's follow-ups lost with it); `v2.py ledger` records a text beginning with `--`
   (Q15); a task tree's owner ledger is main's stale copy (#386's review, follow-up 4); a queued exclusive claim granted
   after the base advanced refuses the probe launched at the grant (#425: pin `--base` at the claim); the restated check
   misses a restatement differing only by variable names or a fixed type (#411); `probe_runs` locates a skipped

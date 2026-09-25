@@ -453,4 +453,60 @@ proof -
       root_family_reading_equivariant])
 qed
 
+section \<open>The ordered converse of the list reading\<close>
+
+text \<open>
+  A root family whose sockets are a distinct key list, each key citing the support site at its position,
+  is read at exactly that support: the converse of @{thm [source] native_root_family_from_list}, with
+  the family's rows listed in the order of the keys.
+\<close>
+
+lemma root_family_reading_listed:
+  assumes raw: "native_root_family_at E u r (set (zip ks ds))" and keys: "distinct ks"
+    and len: "length ks=length ds"
+  shows "\<exists>R xs. artifact_at E u R \<and> distinct xs \<and> family_at R r (set xs) \<and>
+    list_all2 (\<lambda>a d. located_at E u a (fst d) (snd d)) (map snd xs) ds"
+proof -
+  obtain R M where source: "artifact_at E u R" and family: "family_at R r M"
+    and domain: "rel_dom (set (zip ks ds))=rel_dom M"
+    and children: "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>d. (s,d)\<in>set (zip ks ds) \<and> located_at E u a (fst d) (snd d))"
+    using raw unfolding native_root_family_at_def by (elim conjE exE) (rule that; assumption)
+  have sv: "single_valued M" using family by (simp add: family_at_def)
+  have zsv: "single_valued (set (zip ks ds))" by (rule single_valued_zip[OF keys])
+  have keys_M: "rel_dom M=set ks" using trans[OF domain[symmetric] zip_domain[OF len]] .
+  define f where "f k=rel_value M k" for k
+  have member: "(k,f k)\<in>M" if in_ks: "k\<in>set ks" for k
+  proof -
+    obtain a where "(k,a)\<in>M" using in_ks keys_M unfolding rel_dom_def by blast
+    then show ?thesis using rel_value_eq[OF sv] by (simp add: f_def)
+  qed
+  let ?xs = "map (\<lambda>k. (k,f k)) ks"
+  have separate: "distinct ?xs" using keys by (simp add: distinct_map inj_on_def)
+  have rows: "set ?xs=M"
+  proof
+    show "set ?xs\<subseteq>M" using member by auto
+    show "M\<subseteq>set ?xs"
+    proof
+      fix z assume z: "z\<in>M"
+      obtain k a where zk: "z=(k,a)" by (cases z)
+      have k: "k\<in>set ks" using z zk keys_M by (auto simp: rel_dom_def)
+      have "a=f k" by (rule single_valued_outputs[OF sv z[unfolded zk] member[OF k]])
+      then show "z\<in>set ?xs" using zk k by auto
+    qed
+  qed
+  have reading: "list_all2 (\<lambda>a d. located_at E u a (fst d) (snd d)) (map snd ?xs) ds"
+  proof (rule list_all2_all_nthI)
+    show "length (map snd ?xs)=length ds" using len by simp
+    fix i assume i: "i<length (map snd ?xs)"
+    then have ik: "i<length ks" by simp
+    obtain d where row: "(ks!i,d)\<in>set (zip ks ds)" and at: "located_at E u (f (ks!i)) (fst d) (snd d)"
+      using children member[OF nth_mem[OF ik]] by blast
+    have "(ks!i,ds!i)\<in>set (zip ks ds)" using nth_mem[of i "zip ks ds"] ik len by simp
+    then have "d=ds!i" by (rule single_valued_outputs[OF zsv row])
+    then show "located_at E u (map snd ?xs!i) (fst (ds!i)) (snd (ds!i))" using at ik by simp
+  qed
+  have family_rows: "family_at R r (set ?xs)" using family rows by simp
+  show ?thesis using source separate family_rows reading by blast
+qed
+
 end

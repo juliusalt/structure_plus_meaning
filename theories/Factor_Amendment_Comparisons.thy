@@ -85,7 +85,7 @@ proof -
   have package: "native_package_at F fu fr T" using reporter(1) by (simp add: closed_native_package_at_def)
   have formed: "environment_formed F"
     using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
-  have root: "(fu,fr)\<in>environment_positions F" by (rule native_package_root_position[OF package])
+  have root: "(fu,fr)\<in>environment_positions F" by (rule native_package_site_position[OF package])
   have entry: "b\<in>environment_positions F" by (rule native_package_entry_position[OF package reporter(2)])
   have finite: "finite W" and rows: "\<And>z. z\<in>W \<Longrightarrow> term_formed (correspondence_row_data z)"
     using amendment_report_rows_formed[OF reports] by blast+

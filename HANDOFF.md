@@ -92,14 +92,15 @@ forms exact under the exchange premise `finite_commitment_exchanges`, the transf
 #586 (narrowed by q108: the premise as #565 states it fails at the socket kinds; the counterexample recorded, the
 committed input's groundness as lemmas, the controls), R5c′ #589 (the premise restated over the states where a committed
 socket's siblings are pending, the lifting and forms re-proved, the socket kinds discharged), #591 (the certificates'
-acceptance in subtree form) and R5c″ #593 (the direct producer's discharge, `Factor_Resolution_Producer_Discharge`), and R6 #520 (narrowed by q107:
+acceptance in subtree form) and R5c″ #593 (the direct producer's discharge, `Factor_Resolution_Producer_Discharge`), and R6 #520 (landed `2dfbebd1`, narrowed by q107:
 the declarations R5's form reaches — 32, 6, 10, 45, their material sockets, the consumers a contract states invariant —
 discharged at the notions' systems), each with its review; the design #585 (accepted: task 495's entry, "The given's
 remaining producers: views, carriers and narrowed sockets": views generalize R5's pair, carriers discharge sockets, 48
-produced at a narrowed socket by a registration at its head variable), whose builds R5d (views, carriers, the transfer
-extended), R5e (narrowed sockets), R6b (79, 37, 12, 7, 39, 40, 29, 36, 42, 54, the carriers, the carrying of all the
-given's declarations) and R6c (the instantiation family and 48), with the committed lifting's consolidation (#566's
-follow-ups 2, 3, 6), the brief #588 details — rc, R7 and #547 wait on it as a stand-in; the combined contract rc #540
+produced at a narrowed socket by a registration at its head variable), whose builds, briefed by #588: R5d's views #595
+(the forms exact under all the discharged declarations at views, the transfer carrying every kind) and carriers #597,
+R5e #599 (narrowed sockets; rc #540 waits on it), R6b's root family #601 and artifacts #603 carried by #605 (with #521's
+follow-ups), R6c's instantiation family #607 and 48 #609, all carried by #611 (R7 #542 and #547 wait on it), and the
+committed lifting's consolidation #613 (#566's follow-ups 2, 3, 6; off the route), each with its review; the combined contract rc #540
 (`Factor_Committed_Registrations`: the committed search with complete registrations exact, q100; after R5c, R5e and
 W4a, before #443) and R7 #542 (the given at the
 guard's calls measured, `Development_Given_Resolution_Execution`, with the stated-leaves program's finite presentation;
@@ -138,15 +139,16 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The evaluator's chain is the route's longest: R5c #586 → R5c′ #589 → R5c″
-#593 (#591 beside) → R5d → R5e → R6c (R6b beside R5e; rc #540 after R5e) → R7 #542 puts #399 at 8, #408 at 11 and #450
-at 12 — past the limit through splices (q108), so nothing is added after them until they shorten; the recording's T2b
+#593 (#591 beside) → R5d's views #595 → carriers #597 → R5e #599 → R6c's 48 #609 → the carrying #611 → R7 #542 puts
+#399 at 10, #408 at 13 and #450 at 14 — past the limit through splices (q108, #588), so nothing is added after them
+until they shorten; the recording's T2b
 #577 → T3 #579 → P #581 and W2b #567 → W4a #526 → rc are shorter. The approval build (Open 142) after #407 and #447
 waits for that.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. R5c #586,
-the subtree acceptance #591, R5c′ #589, R5c″ #593 and the brief #588 first (the evaluator's chain is the route's
+the subtree acceptance #591, R5c′ #589, R5c″ #593 and #588's builds (#595–#613) first (the evaluator's chain is the route's
 longest); the recording's builds (#577, #579, #581, #583); W2b #567; W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
 #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
@@ -451,6 +453,10 @@ What landed that open work builds on, a line each; how it went and each review's
   (`finite_committed_relocation_transfer`); #566's follow-ups 1 and 4 to R5c, 2, 3, 5 and 6 to the brief #588.
 - **#585's addition** to task 495's entry, "The given's remaining producers: views, carriers and narrowed sockets": the
   presentation-free outputs at the guard's calls and 561, the three kinds, the builds R5d, R5e, R6b and R6c.
+- **R6** (#520, `2dfbebd1`): `Development_Given_Declarations`, the given's declarations R5's form reaches (32, 6 with 5,
+  10, 45, their material sockets, the consumers 49 and 54 a contract states invariant) discharged at the notions'
+  systems, the control at 6; no refusal of the given becomes a refutation through them — the route's rest on R5d and
+  R6b (#521's review; its follow-ups mailed to #588 and #542).
 
 ## Open
 
@@ -567,16 +573,14 @@ searches for a theory before briefing a task that edits it.
   stated; R5c narrowed to what it can land; R5c′ #589 restates the premise (a change of #565's statements, authorized),
   #591 and R5c″ #593 build the direct producer's discharge; rc #540 waits on #589 and #593, W4b #528 on #589
   (Controls); the brief #588 told to place R5d after #593.
-- **What the next events ask**: the brief #588 proposes R5d, R5e, R6b, R6c and the lifting's consolidation (rc #540, R7
-  #542 and #547 wait on it as a stand-in until they are placed); R6's result lists the sites it did not declare,
-  reconciled with #585's table by #588. X′ #583 holds the measurements #398's (follow-up 2) and #558's (follow-up 1) reviews owe. R7
+- **What the next events ask**: #588's builds are placed (#595–#613); R6's undeclared sites are reconciled in them. X′ #583 holds the measurements #398's (follow-up 2) and #558's (follow-up 1) reviews owe. R7
   (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
 - **Mailed, read by each task's first session** (by task): #577 and #579 (#572's review of T1, follow-ups 4 and 6: the
-  entry's (6) qualified, the placeholder row naming `positive_meaning_mapped`); #521 (R6's brief narrowed); #520 (#585's finding: no relocation of declarations here); #588 (q108's builds: R5d after
-  #593, the forms exact under all the discharged declarations at R5d); #567 and #568 (#525's review of W2a, follow-ups 1, 2, 3, 5 and 7: the three copies retired,
+  entry's (6) qualified, the placeholder row naming `positive_meaning_mapped`); #542 (#521's:
+  the least-answer commitment against R4's first answer); #567 and #568 (#525's review of W2a, follow-ups 1, 2, 3, 5 and 7: the three copies retired,
   `finite_pattern_lifting` discharged, the conflict re-add fixed, the value's presentation, one export); #526 (#525's 6:
   561's exactness up to identity); #542 (#525's 4: the second search per instance measured);
   #577 (#576's review of #575, follow-ups 2 to 4: the package reading on E's and the

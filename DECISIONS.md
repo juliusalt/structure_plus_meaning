@@ -16766,8 +16766,9 @@ declared without the kept head, G(X,[]) :- p(X,[[1]]) a producer, c(Pair x y) it
 root(X) :- G(X,W), c(Pair X W), every declaration discharged, root([[1],[2]]) holds, yet a commitment of sel inside
 G's focus kept ([1],[[2]]) and perm([[2]],[[1]]) failed, a refutation of a true call; and a focus root whose output its
 caller constrains, q(X) :- perm(X,[V|[[1]|W]]), c(...), loses the instance perm([[1],[2]],[[2],[1]]) the same way — the
-variant test refuses it (review 519's evaluation of `.build/tasks/519/scratch2`; the first counterexample is
-`Factor_Resolution_Controls`' exchange control). A direct consumer keeps the form below,
+variant test refuses it (both are conjuncts of `Factor_Resolution_Controls.site_one_material_controls`: the first
+counterexample is its exchange control, the second shape the variant control's evaluation, `Some True` at a=[1] over
+[[1],[2]] and `Some False` at a=[3], as R4's). A direct consumer keeps the form below,
 the search committing only when every
 other pending goal holding the output is such a consumer with the output pattern as its argument; the material
 single solution applies only where the atoms, edges, counts and functions fields are free variables. The kept answer
@@ -16788,6 +16789,28 @@ holding a non-head variable, the obligation's instance may change that variable,
 branch, and exactness rests on another branch of the sibling, whose sub-search keeps the same answer only if pruning at
 unbarred ancestors inside it does not depend on the branch. The premise's discharge from R5's declarations, with the
 condition this needs or its counterexample, and the control's false call are the task continuing 565.]
+
+[Corrected by task 586 (R5c), the planner's answer to q108. (4) #565's exchange premise, quantified over every
+supported state, fails at every socket kind — the kept head, the free socket, the inner commitment, the material
+single solution: c(X) :- r(Z), prod(Pair X Y), cons(Pair Z Y) over r(z1), r(z2), prod(x,a), prod(x,b), cons(z1,a),
+cons(z2,b), prod's socket declared with the kept head and discharged (each answer of prod at x extends a true instance
+with the head kept); at the supported state where r was resolved first with z2, the kept answer a leaves cons(z2,a)
+false, and no kept state is supported. The clause-level obligation speaks of the whole clause instance, which a
+resolved sibling has already fixed. The verdict survives in the evaluated cases (`Factor_Resolution_Controls`, the
+sibling control: resolved; with r(z1) holding only through c(x), unresolved, never refuted) because R3's selection, one
+goal per state, takes prod first at c's clause (the one call whose pattern holds a leaf), where the premise holds, r's
+goal still pending; with the loop, r(z1)'s branch reaches the root's call, barred at the commitment, and ends in a cut. The premise is restated so
+that a committed socket goal is exchanged at the states where its parent clause's other premises are pending, the
+lifting committing it first among the goals R3's selection offers; the lifting and the three forms are re-proved under
+it and the socket kinds discharged under it, over a view and with a class predicate (R5c′, task 589). The direct
+producer's discharge needs a subtree form of `Factor_Resolution_Acceptance.finite_node_proof_pattern_accepted` (task
+591), a frame invariant of the committed sub-search — every binding it makes is of a variable of a goal under its
+focus: unification, material steps, nested commitments, and constructions, which bind only a registered variable a
+focused goal holds (`finite_registration_ready`) — kept states nonempty and placement preserved (R5c″, task 593). A
+committed call's input is ground under the state (`finite_declared_commitment_input_ground`, `_value`): R5's direct and
+socket tests demand it, so the premise's quantification over every supported state meets no input the sub-search binds
+otherwise than the support, and output equivalence at one input suffices there. Until the premise is discharged the
+control's false call is refuted by R4 (`commitment_control_refuted`).]
 
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
@@ -17439,6 +17462,12 @@ reads syntax (every syntax reader reads an address of its artifact's carrier), n
 lies in its source artifact's carrier) and no occurrence target stands (an anchor's address lies in the carrier): a
 reader observes it only as the whole target of an external whole citation. Filling every use that holds it — never a
 chosen subset — therefore changes each reading by `placeholder_target R` on its targets and in nothing else.
+[Corrected by task 577 (T2b, from #574's review, follow-up 1): exact at the readings E makes, not a biconditional.
+Every reading E makes is the fill's reading with its targets mapped, and the reader's uniqueness at the fill closes it;
+but the fill may read where E does not: an occurrence citation `External k a` whose slot is bound to a use holding the
+empty artifact reads `Occurrence_Anchor (R,a)` at the fill (a in R's carrier), where E reads nothing. So a set
+collected over readings (sources, root requests, demanded slots, the least environments) is E's where E reads, and
+`Factor_Placeholder_Packages` states each so: at a package and an application E reads, no premise on citations.]
 
 **What is certified once.** The listing policy's judgment at the placeholder, `development_bounded_policy_judgment
 [Finite_Target (Finite_Whole finite_empty_artifact)] finite_empty_artifact`: the policy K0 listing the empty artifact,
@@ -17568,6 +17597,10 @@ at the placeholder; and rule (a) at S1's compiler walk (about 2.7 s at the given
 - The contracts of `development_indexed_generation` keep their statements; every generation's certified meaning,
   fields and predecessors stay; no recorded word changes (no recipe reaches the changed theories); a builder who finds
   a constant it would change among a recorded state's entities stops and brings it to the planner.
+  [Corrected by task 577 (from #572's review, follow-up 4): "no recipe reaches the changed theories" holds of the
+  recording's theories (P's), not of every build: nine recipes reach T1's `Factor_Positive_Parametricity`, and T2b's
+  change of `Factor_Bounded_Generation_Scopes` rebuilds what imports it; what holds of every build is that no
+  recorded word changes, which the repository's check compares.]
 - The placeholder is the empty artifact, decided by artifact identity; the fill fills every use holding it, never a
   chosen subset, so that it is a map of targets.
 - A payload provides and the recording checks: what fails is refused, visibly; nothing falls back to the replayed path.
@@ -17614,6 +17647,8 @@ reader stays the recorded reliance task 482's (5) states. No bootstrap-loop pres
 | The gate: at most 60 µs per payload address, 53 s at the given and about twice that at the posing (task 482, (2) and (4) X). | At most 20 µs per payload address held, the payload's construction excluded; about 8–10 µs estimated under this decision. |
 | Every payload's recording derives, places and replays its own certificate (task 482's (2), "The recording"). | The certificate is derived, placed and replayed once, at the placeholder; each payload fills it. |
 | The chain ends B1 → B2 → I3 → R → X → #397 (task 482's (4)). | After X and RR5: T1 ∥ T2a → T2b → T3 → P → X′, X′ recording the given and the posing held. |
+| The fill changes each reading by `placeholder_target R` on its targets and in nothing else ((2), "The placeholder and its fill"). | Exact at the readings E makes, not a biconditional: at the fill an occurrence citation of a slot bound to a placeholder use reads into R where E reads nothing; sets collected over readings are E's where E reads (task 577). |
+| No recipe reaches the changed theories ((6)). | Of the recording's theories; nine recipes reach T1's theory, their words equal by the check (#572's review; task 577). |
 
 ### Evidence and limits
 

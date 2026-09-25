@@ -44,12 +44,12 @@ on, all accepted:
   scope reading) → B2 #492 (landed `bad0c366`: the bounded recording, `development_indexed_generation` through it, the
   recorded instances restated) → I3 #489 (done, `.build/tasks/489/result.md`: 7.0–7.5 s at 32K, every walk of the
   payload by rule, about 90 s at the given's value after them against the gate's 53 s) → the refinements, side by side:
-  RR1 #530 (the recording's one name `development_indexed_generation`, its laws at their notion, the ready judgment
-  environment once, the formed-target recording; the collection `Development_Recording_Refinements`), RR2 #532 (the
-  checked certificate's premise readings once, the graph at a read program), RR3 #534 (the readers' formed bodies'
-  inner readings), then RR4 #536 (the policy package read once, the formed path; after RR1 and RR2) → X #538 (the
-  first generation executed held at the given's value against the gate; after RR3 and RR4) → the posing #397 (its
-  brief corrected by #522), each build with its review.
+  RR1 #530 (landed `67241110`: the recording's one name, its laws, the ready judgment environment once, the
+  formed-target recording; the collection `Development_Recording_Refinements`), RR2 #532 (the checked certificate's
+  premise readings once, the graph at a read program), RR3 #534 (the readers' formed bodies' inner readings), then
+  RR4 #536 (the policy package read once, the formed path, R's formation derived from the term's, #531's review,
+  follow-up 1; after RR1, RR2 and RR3) → X #538 (the first generation executed held at the given's value against the
+  gate; after RR3 and RR4) → the posing #397 (its brief corrected by #522), each build with its review.
 - Then the answer's judgment and admission #399, its transport #401, the verification's native half #403 and its
   harness #407 (after the frame and its fixes, landed). The first request (#523's corrected #443, divided by #544,
   `.build/tasks/544/result.md`): the request program #545 (after #516), the request at the given #547 (support,
@@ -325,6 +325,10 @@ What landed that open work builds on, a line each; how it went and each review's
   `Development_Bounded_Recording_Execution` (DECISIONS.md "The bounded recording records the route's generations; its
   cause is one target"); I3's attribution of it (#489, `.build/tasks/489/result.md`: every walk of the payload with its
   count, seconds and rule, the two repetitions, the estimate at the given's value).
+- **The recording's refinements**: RR1 (#530, `67241110`): `Development_Recording_Refinements`, the collection no
+  library theory imports — the recording's one name `development_indexed_generation`, its laws, the ready judgment
+  environment once, the formed-target recording, whose R rests on the listing policy source's check of the literal
+  (#531's review, follow-up 1).
 - **The resolving evaluator** (#495's entry): R1 `Factor_Material_Resolution` (#499, `1f021cf3`: the material premise
   solved from a ground skeleton or source, site 1's control), R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the
   most general unifier of finite term patterns and renaming apart) and R3 `Factor_Program_Resolution` (#503,
@@ -458,7 +462,8 @@ searches for a theory before briefing a task that edits it.
   whose values are formed, q99; #504's three items); #526 and #528 (#514's follow-up 2); #518 and #526 (the combined
   contract is rc's, q100); #510 (#483's review's aliases); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); #538 (#509's
   review's follow-up 5; #535's follow-ups 1 and 5); #534 (#535's finding and its follow-ups 1 and 6, decided); #536
-  (#535's follow-ups 4 and 5, so it waits on #534). The route's earlier mails to #397,
+  (#535's follow-ups 4 and 5, so it waits on #534; its brief, rewritten by plan-73, carries #531's follow-ups 1, 2,
+  4 and 5 and names #535's 4 and 5). The route's earlier mails to #397,
   #399, #403, #443 and #447 are carried into their corrected briefs or recorded superseded (`.build/tasks/522/result.md`,
   `.build/tasks/523/result.md`).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;
@@ -472,7 +477,8 @@ searches for a theory before briefing a task that edits it.
   `export_code` line by the probe copy's shifted line numbers (#454's review, follow-up 5); a whole-library rebuild
   beside another heavy run exhausted Poly/ML's store (#483's review): such a check could run alone; a brief task could not
   read a sibling brief's delivered brief under `.build/tasks/522/brief/` (#523's result); a theory removed from ROOT leaves
-  a blank line (#509's review). Classifier stops are the
+  a blank line (#509's review); sessions go cold while parked — #515's twice (14:15, its check never run; 15:04,
+  before writing anything) — and a planner between events before its notes (plan-72, 15:16). Classifier stops are the
   run's to handle, not ledger questions (the owner, 20:23 and 20:28).
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the
   plan (`4434635d`, `82a065cd`); the owner's words of 17:50, 18:12, 18:36 and 18:53, recorded by #378 (`cbf0c7e9`).

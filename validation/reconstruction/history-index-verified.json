@@ -2,10 +2,10 @@
  "boundary": "Actual indexed histories preserve every original request, policy, material and ordered ledger field and the complete decoded admission index. The original transition determines reference outputs independently. Shared actual operations feed adverse cache and transition controls; persistent subsequent steps and all original source cases are retained with complete observations, comparisons and revisions. Complete workflow adequacy, physical cost, historical permission and reachability, native mathematical-proof admission, generation-store adoption and genesis remain open.",
  "complete_recipe_source_manifest": "history-index-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "79c17967a7e52d289774bee810ca7cc28842a063d607d684cc8993122d90cbb4",
+  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
   "records": 1,
   "reports_equal": true,
-  "seconds": 10.7,
+  "seconds": 17.08,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "2316eab1baf00fad3abb5cce6f9739a0a4ee7c119b7687dead2a42694dd2e3a4",
+   "module_sha256": "a93601e72c420b4b55a2a95c3ee3e77fd08c8f4c4c2dc6b4d0e39874ee60c4c9",
    "subject_contracts": {
     "history_index_investigation.yxml": "65b38920c2b4ec40da740ece21999afbb765bb4f2b8831ab39576d5f088e93a1"
    },
@@ -58,11 +58,6 @@
    "tools/reconstruction.py": "91156a6f49e9c1fc0dba69a82a18d1553a7a3379465ed54deabf7bbd52bb171a"
   }
  },
- "execution_reuse": {
-  "base_receipt_sha256": "93f2a6cf86fd545aff3f72cbbf8ce4e42b48a0dac563f6d12d9f243d84d56d19",
-  "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
-  "export_module_sha256": "2316eab1baf00fad3abb5cce6f9739a0a4ee7c119b7687dead2a42694dd2e3a4"
- },
  "recipe": "history-index",
  "recipe_inputs_unchanged": true,
  "report_boundaries": {
@@ -76,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "c18d9f9bab722e8df90e5b2a15a412cd7df67c00c604479554bfcea9b6385566",
+ "source_manifest_sha256": "b6f2d75b08192b2d854fbed8a39579d364ab141e857b4f9a2dcf176f945c34de",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 10.601433480012929
+   "seconds": 16.990339454001514
   }
  ]
 }

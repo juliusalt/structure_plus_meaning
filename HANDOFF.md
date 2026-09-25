@@ -53,8 +53,9 @@ on, all accepted:
   given's value, 111.3 s against the gate's 53 s, every step growing n^1.3–1.5 from 32K) → the growth attributed
   (#559) → the design #560 (landed `36f54516`: certification parametric in the literal, the posing holding the given
   again; its premise observed by #569) → its builds, briefed by #570: T1 #571 (positive meaning under a leaf map of
-  program and argument, in `Factor_Positive_Parametricity`, a whole rebuild) ∥ T2a's first half #573 (the placeholder
-  fill and the readers below patterns) → T2a's second half #575 (patterns to definitions through T1's map) → T2b #577
+  program and argument, in `Factor_Positive_Parametricity`, a whole rebuild) ∥ T2a's first half #573 (landed
+  `67c2af9b`: `Factor_Placeholder_Fill`, the fill and the readers below patterns at it, a forward transport) → T2a's
+  second half #575 (patterns to definitions through T1's map) → T2b #577
   (packages, the application and the least environments at the fill) → T3 #579 (the parametric cause) → P #581 (the
   parametric recording, before #399 and #443) → X′ #583 (the held recordings the posing's and RR5's reviews owe).
   RR5 #557 landed before it (`aba87519`: the listing policy's source a formed program); the posing #397 landed
@@ -135,8 +136,8 @@ placed when they are nearer.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The recording's T1
-#571 first (a whole rebuild, heading the queue while it checks so that no other heavy run starts beside it) and T2a's
-first half #573, the recording's chain being now the longest; W2a #524 in flight, W2b #567, R5 #518
+#571 first (a whole rebuild, heading the queue while it checks so that no other heavy run starts beside it), the
+recording's chain being now the longest; W2a #524 in flight, W2b #567, R5 #518
 (re-planned, a build's slack), the recording's later builds (#575, #577, #579, #581, #583); R5b #565, W4a #526, R6
 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
 #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
@@ -544,7 +545,11 @@ searches for a theory before briefing a task that edits it.
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **Mailed, read by each task's first session** (by task): #525, #526 and #567 (#564's review: W2's
+- **Mailed, read by each task's first session** (by task): #571 and #575 (#574's review: T1's map of patterns over an
+  arbitrary target map, the placeholder's instantiating it directly); #579 and #581 (#574's review: T2b's collected
+  sets at the placeholder's roots or under a named premise, discharged at the placeholder by T3 or P's guard; to #579
+  the reuse row of the entry's (5)); #577's brief rewritten with #574's follow-ups 1 and 2 (the premise, the fill's
+  commutation with `read_environment`, the entry's (2) corrected); #525, #526 and #567 (#564's review: W2's
   `finite_query_state` a copy of `finite_pattern_state`, retired by W2b, compared at W2a's review; W4a's
   instantiation's needs and the generator's computed form); #565 (#564's review: task 495's item 5 corrected, the two
   rows' words); #399 (#569's follow-up, its probe's cost); #520 and #565

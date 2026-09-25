@@ -621,7 +621,230 @@ lemma finite_given_program_formed:
   "finite_system_formed finite_given_program"
   by (simp only: finite_system_formed_correct finite_given_program_exact given_program_formed)
 
-export_code finite_given_program finite_system_formed fcard finite_system_definitions finite_system_payloads
-  checking SML
+section \<open>The rooted readers' program the given carries\<close>
+
+text \<open>
+  The given carries the rooted closure of all its entries over the joined program: the twelve entries of the
+  guard's sockets and the native request (\<open>given_guard_entries\<close>) and the granted entries. Its program is
+  the joined program restricted to that closure (@{const rooted_system}); every entry means there what it means
+  in the joined program (\<open>given_rooted_meaning\<close>), and each entry's exact contract at the rooted
+  program is an instance, read through that lemma, none proved again.
+\<close>
+
+definition given_guard_entries :: "nat fset" where
+  "given_guard_entries={|72,77,79,80,81,82,83,113,122,392,393,505|}"
+
+definition given_reader_entries :: "nat fset" where
+  "given_reader_entries=given_guard_entries |\<union>| given_granted_entries"
+
+definition given_rooted_readers_system :: "(nat,nat,nat,nat) schema_system" where
+  "given_rooted_readers_system=rooted_system given_program_system (fset given_reader_entries)"
+
+lemma given_rooted_readers_formed [simp]: "schema_system_formed given_rooted_readers_system"
+  unfolding given_rooted_readers_system_def by (rule rooted_system_formed[OF given_program_formed])
+
+lemma given_guard_entries_members: "fset given_guard_entries\<subseteq>system_definitions guard_readers_system"
+  using given_entry_members guard_readers_definitions by (auto simp: given_guard_entries_def)
+
+lemma given_reader_entries_program: "fset given_reader_entries\<subseteq>system_definitions given_program_system"
+  using given_guard_entries_members given_granted_members
+  unfolding given_program_definitions by (auto simp: given_reader_entries_def)
+
+lemma given_rooted_entries:
+  "fset given_reader_entries\<subseteq>system_definitions given_rooted_readers_system"
+  unfolding given_rooted_readers_system_def
+  by (rule rooted_system_roots[OF given_program_formed given_reader_entries_program])
+
+lemma given_rooted_meaning:
+  assumes "d|\<in>|given_reader_entries"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (d,t)\<in>positive_meaning given_program_system"
+  using rooted_system_meaning_at[OF given_program_formed, of d "fset given_reader_entries" t]
+    given_rooted_entries given_reader_entries_program assms unfolding given_rooted_readers_system_def by blast
+
+lemma given_guard_members:
+  "72|\<in>|given_guard_entries" "77|\<in>|given_guard_entries" "79|\<in>|given_guard_entries"
+  "80|\<in>|given_guard_entries" "81|\<in>|given_guard_entries" "82|\<in>|given_guard_entries"
+  "83|\<in>|given_guard_entries" "113|\<in>|given_guard_entries" "122|\<in>|given_guard_entries"
+  "392|\<in>|given_guard_entries" "393|\<in>|given_guard_entries" "505|\<in>|given_guard_entries"
+  by (simp_all add: given_guard_entries_def)
+
+lemma given_rooted_members:
+  "72|\<in>|given_reader_entries" "77|\<in>|given_reader_entries" "79|\<in>|given_reader_entries"
+  "80|\<in>|given_reader_entries" "81|\<in>|given_reader_entries" "82|\<in>|given_reader_entries"
+  "83|\<in>|given_reader_entries" "113|\<in>|given_reader_entries" "122|\<in>|given_reader_entries"
+  "392|\<in>|given_reader_entries" "393|\<in>|given_reader_entries" "505|\<in>|given_reader_entries"
+  by (simp_all add: given_reader_entries_def given_guard_entries_def)
+
+lemma given_rooted_granted_members:
+  "16|\<in>|given_reader_entries" "84|\<in>|given_reader_entries" "85|\<in>|given_reader_entries"
+  "84|\<in>|given_reader_entries" "114|\<in>|given_reader_entries" "115|\<in>|given_reader_entries"
+  "102|\<in>|given_reader_entries" "111|\<in>|given_reader_entries" "139|\<in>|given_reader_entries"
+  "140|\<in>|given_reader_entries" "152|\<in>|given_reader_entries" "269|\<in>|given_reader_entries"
+  "270|\<in>|given_reader_entries"
+  by (simp_all add: given_reader_entries_def given_granted_entries_def)
+
+lemma given_operation_entries:
+  "d\<in>{112,113,114,115} \<Longrightarrow> d|\<in>|given_reader_entries"
+  "d\<in>{99,100,101,102} \<Longrightarrow> d|\<in>|given_reader_entries"
+  "d\<in>{106,107,108,109,110,111} \<Longrightarrow> d|\<in>|given_reader_entries"
+  "d\<in>{139,140,141,142,143,144,145,146} \<Longrightarrow> d|\<in>|given_reader_entries"
+  "d\<in>{147,148,149,150,151,152,153,154,155} \<Longrightarrow> d|\<in>|given_reader_entries"
+  "d\<in>{269,270} \<Longrightarrow> d|\<in>|given_reader_entries"
+  by (auto simp: given_reader_entries_def given_guard_entries_def given_granted_entries_def)
+
+text \<open>A guard entry means at the rooted program what it means at the given's readers' program.\<close>
+
+lemma given_rooted_guard_meaning:
+  assumes "d|\<in>|given_guard_entries"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> (d,t)\<in>positive_meaning guard_readers_system"
+proof -
+  have entry: "d|\<in>|given_reader_entries" using assms by (simp add: given_reader_entries_def)
+  have guard: "d\<in>system_definitions guard_readers_system" using given_guard_entries_members assms by blast
+  show ?thesis by (simp only: given_rooted_meaning[OF entry] given_program_left[OF guard])
+qed
+
+subsection \<open>Every entry's exact contract at the rooted program\<close>
+
+lemmas given_rooted_definition_call_admission_exact =
+  given_definition_call_admission_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(1), symmetric]]
+lemmas given_rooted_package_closure_admission_exact =
+  given_package_closure_admission_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(2), symmetric]]
+lemmas given_rooted_root_family_reading_exact =
+  given_root_family_reading_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(3), symmetric]]
+lemmas given_rooted_package_admission_exact =
+  given_package_admission_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(4), symmetric]]
+lemmas given_rooted_definition_clause_reading_exact =
+  given_definition_clause_reading_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(5), symmetric]]
+lemmas given_rooted_definition_edge_reading_exact =
+  given_definition_edge_reading_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(6), symmetric]]
+lemmas given_rooted_package_membership_exact =
+  given_package_membership_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(7), symmetric]]
+lemmas given_rooted_environment_inclusion_exact =
+  given_environment_inclusion_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(8), symmetric]]
+lemmas given_rooted_package_retention_admission_exact =
+  given_package_retention_admission_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(9), symmetric]]
+lemmas given_rooted_use_additions_on_values =
+  given_use_additions_on_values[unfolded given_rooted_guard_meaning[OF given_guard_members(10), symmetric]]
+lemmas given_rooted_use_absence_exact =
+  given_use_absence_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(11), symmetric]]
+lemmas given_rooted_payload_audit_exact =
+  given_payload_audit_exact[unfolded given_rooted_guard_meaning[OF given_guard_members(12), symmetric]]
+
+lemmas given_rooted_call_admission_exact =
+  given_program_call_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(2), symmetric]]
+lemmas given_rooted_application_admission_exact =
+  given_program_application_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(3), symmetric]]
+lemmas given_rooted_formation_reflection =
+  given_program_formation_reflection[unfolded given_rooted_meaning[OF given_rooted_granted_members(4), symmetric]]
+lemmas given_rooted_meaning_reflection =
+  given_program_meaning_reflection[unfolded given_rooted_meaning[OF given_rooted_granted_members(5), symmetric]]
+lemmas given_rooted_positive_admission_exact =
+  given_program_positive_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(6), symmetric]]
+lemmas given_rooted_derivation_admission_exact =
+  given_program_derivation_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(7), symmetric]]
+lemmas given_rooted_replay_admission_exact =
+  given_program_replay_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(8), symmetric]]
+lemmas given_rooted_environment_comparison_exact =
+  given_program_environment_comparison_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(1), symmetric]]
+lemmas given_rooted_generation_admission_exact =
+  given_program_generation_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(9), symmetric]]
+lemmas given_rooted_generation_identity_exact =
+  given_program_generation_identity_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(10), symmetric]]
+lemmas given_rooted_generation_source_exact =
+  given_program_generation_source_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(11), symmetric]]
+lemmas given_rooted_adoption_admission_exact =
+  given_program_adoption_admission_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(12), symmetric]]
+lemmas given_rooted_adoption_identity_exact =
+  given_program_adoption_identity_exact[unfolded given_rooted_meaning[OF given_rooted_granted_members(13), symmetric]]
+
+lemma given_rooted_positive_operations_exact:
+  assumes "d\<in>{112,113,114,115}"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> positive_operation_result d t"
+  by (simp only: given_rooted_meaning[OF given_operation_entries(1)[OF assms]]
+    given_program_positive_operations_exact[OF assms])
+
+lemma given_rooted_derivation_operations_exact:
+  assumes "d\<in>{99,100,101,102}"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> derivation_operation_result d t"
+  by (simp only: given_rooted_meaning[OF given_operation_entries(2)[OF assms]]
+    given_program_derivation_operations_exact[OF assms])
+
+lemma given_rooted_replay_operations_exact:
+  assumes "d\<in>{106,107,108,109,110,111}"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> replay_operation_result d t"
+  by (simp only: given_rooted_meaning[OF given_operation_entries(3)[OF assms]]
+    given_program_replay_operations_exact[OF assms])
+
+lemma given_rooted_generation_operations_exact:
+  assumes "d\<in>{139,140,141,142,143,144,145,146}"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> generation_operation_result d t"
+  by (simp only: given_rooted_meaning[OF given_operation_entries(4)[OF assms]]
+    given_program_generation_operations_exact[OF assms])
+
+lemma given_rooted_generation_source_operations_exact:
+  assumes "d\<in>{147,148,149,150,151,152,153,154,155}"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> generation_source_operation_result d t"
+  by (simp only: given_rooted_meaning[OF given_operation_entries(5)[OF assms]]
+    given_program_generation_source_operations_exact[OF assms])
+
+lemma given_rooted_adoption_operations_exact:
+  assumes "d\<in>{269,270}"
+  shows "(d,t)\<in>positive_meaning given_rooted_readers_system \<longleftrightarrow> adoption_value_operation_result d t"
+  by (simp only: given_rooted_meaning[OF given_operation_entries(6)[OF assms]]
+    given_program_adoption_operations_exact[OF assms])
+
+subsection \<open>The rooted program's finite presentation\<close>
+
+text \<open>
+  The joined program's presentation restricted to the closure it computes from the given's entries
+  (@{thm [source] finite_system_of_rooted}).
+\<close>
+
+definition finite_rooted_given_readers :: "(nat,nat,nat,nat) finite_schema_system" where
+  "finite_rooted_given_readers=finite_system_of given_rooted_readers_system"
+
+lemma finite_rooted_given_readers_code [code]:
+  "finite_rooted_given_readers=finite_system_restriction finite_given_program
+    (finite_definition_closure finite_given_program given_reader_entries)"
+  unfolding finite_rooted_given_readers_def given_rooted_readers_system_def finite_given_program_def
+  by (rule finite_system_of_rooted[OF given_program_formed])
+
+lemma finite_rooted_given_readers_exact:
+  "decode_finite_system finite_rooted_given_readers=given_rooted_readers_system"
+  unfolding finite_rooted_given_readers_def
+  by (rule decode_finite_system_of[OF given_rooted_readers_formed])
+
+lemma finite_rooted_given_readers_formed:
+  "finite_system_formed finite_rooted_given_readers"
+  by (simp only: finite_system_formed_correct finite_rooted_given_readers_exact given_rooted_readers_formed)
+
+export_code finite_given_program finite_rooted_given_readers finite_system_formed fcard finite_system_definitions
+  finite_system_payloads checking SML
+
+subsection \<open>The rooted program's payloads\<close>
+
+text \<open>
+  Composed as the given's readers' are (@{thm [source] given_readers_payloads}): the joined program states what
+  its parts state, the granted programs what their three systems state, and the rooted program no more than the
+  joined one. What each system states is not established here; the composition awaits it.
+\<close>
+
+theorem given_program_payloads:
+  assumes additions: "system_payloads use_additions_system\<subseteq>{[]}"
+    and audit: "system_payloads payload_audit_system\<subseteq>{[]}"
+    and generation: "system_payloads generation_value_system\<subseteq>{[]}"
+    and source: "system_payloads generation_source_system\<subseteq>{[]}"
+    and adoption: "system_payloads adoption_value_system\<subseteq>{[]}"
+  shows "system_payloads given_program_system\<subseteq>{[]}"
+    and "system_payloads given_rooted_readers_system\<subseteq>{[]}"
+proof -
+  have guard: "system_payloads guard_readers_system\<subseteq>{[]}" by (rule given_readers_payloads[OF additions audit])
+  have granted: "system_payloads granted_readers_system\<subseteq>{[]}"
+    unfolding granted_readers_system_def system_union_payloads using generation source adoption by blast
+  show program: "system_payloads given_program_system\<subseteq>{[]}"
+    unfolding given_program_system_def system_union_payloads using guard granted by blast
+  show "system_payloads given_rooted_readers_system\<subseteq>{[]}"
+    unfolding given_rooted_readers_system_def by (rule subset_trans[OF rooted_system_payloads program])
+qed
 
 end

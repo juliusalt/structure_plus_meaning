@@ -21,6 +21,17 @@ definition development_policy_source_with :: "finite_factor_term list \<Rightarr
      None \<Rightarrow> None
    | Some (d,F,u) \<Rightarrow> finite_construct_source_requirements F u [] [Existing_Admission d])"
 
+text \<open>A constructed listing policy lists formed presentations: its ground source is constructed only over them.\<close>
+
+lemma development_policy_source_with_formed:
+  assumes policy: "development_policy_source_with xs=Some s"
+  shows "list_all finite_term_formed xs"
+proof -
+  obtain d F u where "finite_ground_source xs=Some (d,F,u)"
+    using policy by (cases "finite_ground_source xs") (auto simp: development_policy_source_with_def)
+  then show ?thesis using finite_ground_source_total by blast
+qed
+
 theorem development_policy_with_exact:
   assumes policy: "development_policy_source_with xs=Some (p,K,pu)"
     and package: "native_package_at (decode_finite_environment K) pu [] T"
@@ -40,8 +51,7 @@ proof -
     by (rule finite_ground_source_meaning[OF source])
   have same: "decode_finite_system P=P'" by (rule native_package_unique[OF ground ground'])
   have entry: "T=T'" by (rule native_package_unique[OF package installed])
-  have formed: "list_all finite_term_formed xs"
-    using source by (auto simp: finite_ground_source_def split: if_splits)
+  have formed: "list_all finite_term_formed xs" by (rule development_policy_source_with_formed[OF policy])
   have listed_formed: "term_formed t" if "t\<in>decode_finite_term ` set xs" for t
     using that formed by (auto simp: list_all_iff finite_term_formed_correct)
   show ?thesis

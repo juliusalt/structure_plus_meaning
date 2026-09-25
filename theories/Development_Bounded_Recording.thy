@@ -259,6 +259,25 @@ proof -
     by (simp add: development_policy_judgment_def policy certificate replayed quoted)
 qed
 
+text \<open>
+  The bounded judgment of a listing policy judges only a formed payload: its policy's source is constructed only
+  over formed presentations (@{thm [source] development_policy_source_with_formed}).
+\<close>
+
+lemma development_bounded_policy_judgment_formed:
+  assumes judged: "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some j"
+  shows "finite_exact_formed R"
+proof -
+  obtain d K pu B au root J C where j: "j=(d,K,pu,B,au,root,J,C)" by (metis prod.collapse)
+  obtain p A M G I W F0 V where policy: "development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,K,pu)"
+    and "development_policy_certificate K pu d R=Some p"
+    and "finite_native_certificate_replay K pu [] p d (Finite_Target (Finite_Whole R))=Some (A,M,root,G,au,I,W,B)"
+    and "finite_bounded_judgment_quote B pu [] au [] R=Some (J,F0,V,C)"
+    and "replay_policy_condition K pu [] d R J pu [] au []"
+    by (rule development_bounded_policy_judgment_result[OF judged[unfolded j]])
+  show ?thesis using development_policy_source_with_formed[OF policy] by simp
+qed
+
 section \<open>The placeholder judgment\<close>
 
 text \<open>
@@ -280,14 +299,6 @@ definition development_placeholder_free :: bool where
        None \<Rightarrow> False
      | Some P \<Rightarrow> finite_entry_materials P d={||}))"
 
-lemma development_policy_source_with_formed:
-  assumes policy: "development_policy_source_with xs=Some s"
-  shows "list_all finite_term_formed xs"
-proof -
-  obtain d F u where "finite_ground_source xs=Some (d,F,u)"
-    using policy by (cases "finite_ground_source xs") (auto simp: development_policy_source_with_def)
-  then show ?thesis using finite_ground_source_total by blast
-qed
 
 text \<open>
   The placeholder judgment, with its program observation-free at the entry, establishes the placeholder's facts

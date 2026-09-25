@@ -576,6 +576,188 @@ next
   qed
 qed
 
+section \<open>The listing policy's source installed as a formed program\<close>
+
+text \<open>
+  The source's two installations, the ground program's over the guard source and the guard program's over the
+  ground source's environment F1, check the formation of the program they install, its agreement with the source
+  program and the formation of the environment they install into, and the second reads F1's package by the
+  original reader; each is a walk of the literal R. Every premise is established where the installation is made:
+  the ground program's formation and agreement by the ground source's context (@{thm [source]
+  finite_ground_source_context}, from the formation of the listed presentations, R's), the guard program's by the
+  requirements constructor's contract (@{thm [source] finite_native_source_constructor.target_ready}), F1's
+  formation by the ground source's installation (@{thm [source] finite_install_source_entry_correct}), and the
+  program read at F1 by the formed reader of the package (@{const finite_native_source_inner}), the literal's
+  target formed with R. The constants below restate the installation over a formed program, each equal to the
+  original where its premise holds; the placement, the compilation, the checks of the added definitions' roots
+  and fresh uses and the selection stay.
+\<close>
+
+definition finite_extend_native_formed :: "local_address option finite_artifact_environment\<Rightarrow>
+    ('a::linorder,'s::linorder,local_address option definition_site,'c::linorder) finite_schema_system\<Rightarrow>
+    ('a,'s,local_address option definition_site,'c) finite_schema_system\<Rightarrow>
+    (local_address option finite_artifact_environment\<times>local_address option) option" where
+  "finite_extend_native_formed E P Q=(if fBall (finite_system_definitions Q |-| finite_system_definitions P) (\<lambda>d. snd d=[]) \<and>
+      fimage fst (finite_system_definitions Q |-| finite_system_definitions P) |\<inter>| finite_environment_uses E={||} then
+    map_option (\<lambda>rows. finite_select_roots (finite_install_code_rows E rows) (sorted_list_of_fset (finite_system_definitions Q)))
+      (finite_compile_definitions Q (sorted_list_of_fset (finite_system_definitions Q |-| finite_system_definitions P)))
+    else None)"
+
+lemma finite_extend_native_formed_exact:
+  assumes "finite_environment_formed E" "finite_system_formed P" "finite_system_formed Q"
+    "finite_system_agrees_on P Q (finite_system_definitions P)"
+  shows "finite_extend_native E P Q=finite_extend_native_formed E P Q"
+  using assms by (simp add: finite_extend_native_def finite_extend_native_formed_def finite_native_extension_ready_def)
+
+definition finite_extend_mapped_formed :: "local_address option finite_artifact_environment\<Rightarrow>
+    ('a::linorder,'s::linorder,'d::linorder,'c::linorder) finite_schema_system\<Rightarrow>
+    ('a,'s,'d,'c) finite_schema_system\<Rightarrow>('d\<Rightarrow>local_address option definition_site)\<Rightarrow>
+    (local_address option finite_artifact_environment\<times>local_address option) option" where
+  "finite_extend_mapped_formed E P Q g=(let h=finite_program_coordinates E (finite_system_definitions P) (finite_system_definitions Q) g in
+    finite_extend_native_formed E (finite_rename_system h P) (finite_rename_system h Q))"
+
+lemma (in finite_mapped_native_extension) extension_formed_body:
+  "finite_extend_mapped_native E P Q g=finite_extend_mapped_formed E P Q g"
+proof -
+  have ready: "finite_environment_formed E" "finite_system_formed old" "finite_system_formed goal"
+    "finite_system_agrees_on old goal (finite_system_definitions old)"
+    using installation.ready unfolding finite_native_extension_ready_def by blast+
+  show ?thesis
+    by (simp only: finite_extend_mapped_native_def finite_extend_mapped_formed_def Let_def
+      finite_extend_native_formed_exact[OF ready])
+qed
+
+definition finite_install_formed_entry where
+  "finite_install_formed_entry E P Q e=(if e |\<in>| finite_system_definitions Q then
+    map_option (\<lambda>(F,u). (finite_program_coordinates E (finite_system_definitions P) (finite_system_definitions Q) id e,F,u))
+      (finite_extend_mapped_formed E P Q id) else None)"
+
+lemma finite_install_formed_entry_exact:
+  assumes ready: "finite_source_extension_context E pu pr Q=Some P"
+  shows "finite_install_source_entry E pu pr Q e=finite_install_formed_entry E P Q e"
+proof -
+  have body: "finite_extend_mapped_native E P Q id=finite_extend_mapped_formed E P Q id"
+    by (rule finite_mapped_native_extension.extension_formed_body[OF finite_source_extension_profile[OF ready]])
+  show ?thesis
+    by (cases "finite_extend_mapped_formed E P Q id")
+      (auto simp: finite_install_source_entry_def finite_extend_source_native_def ready body finite_install_formed_entry_def)
+qed
+
+text \<open>The ground source over formed presentations: its context is the ground source's context.\<close>
+
+definition finite_ground_source_formed where
+  "finite_ground_source_formed xs=finite_install_formed_entry (finite_guard_source True) (finite_guard_source_program True)
+    (finite_ground_program xs) (Some [],[])"
+
+lemma finite_ground_source_formed_exact:
+  assumes "list_all finite_term_formed xs"
+  shows "finite_ground_source_body xs=finite_ground_source_formed xs"
+  by (simp only: finite_ground_source_body_def finite_ground_source_formed_def
+    finite_install_formed_entry_exact[OF finite_ground_source_context[OF assms]])
+
+text \<open>
+  The requirements installation over a formed environment: the source read once by the formed reader, the guard
+  program installed as formed.
+\<close>
+
+definition finite_formed_source_requirements where
+  "finite_formed_source_requirements E pu pr gs=(case finite_native_source_inner E pu pr of None \<Rightarrow> None
+    | Some P \<Rightarrow> if finite_admission_requirements_supported gs P then
+        (case finite_construct_native_requirements gs P of None \<Rightarrow> None
+         | Some (e,Q) \<Rightarrow> finite_install_formed_entry E P Q e)
+      else None)"
+
+lemma finite_formed_source_requirements_exact:
+  assumes formed: "finite_environment_formed E"
+  shows "finite_construct_source_requirements E pu pr gs=finite_formed_source_requirements E pu pr gs"
+proof (cases "finite_native_source E pu pr")
+  case None
+  then show ?thesis
+    by (simp add: finite_construct_source_requirements_def finite_construct_source_def finite_native_source_target_def
+      finite_formed_source_requirements_def finite_native_source_inner_exact[OF formed, symmetric])
+next
+  case (Some P)
+  note source=Some
+  show ?thesis
+  proof (cases "finite_admission_requirements_supported gs P")
+    case False
+    then show ?thesis
+      by (simp add: finite_construct_source_requirements_def finite_construct_source_def finite_native_source_target_def
+        finite_formed_source_requirements_def finite_native_source_inner_exact[OF formed, symmetric] source)
+  next
+    case True
+    note supported=True
+    show ?thesis
+    proof (cases "finite_construct_native_requirements gs P")
+      case None
+      then show ?thesis
+        by (simp add: finite_construct_source_requirements_def finite_construct_source_def finite_native_source_target_def
+          finite_formed_source_requirements_def finite_native_source_inner_exact[OF formed, symmetric] source supported)
+    next
+      case (Some z)
+      obtain e Q where z: "z=(e,Q)" by (cases z) blast
+      have target: "finite_native_source_target (finite_admission_requirements_supported gs)
+          (finite_construct_native_requirements gs) E pu pr=Some (P,e,Q)"
+        using source supported Some z by (simp add: finite_native_source_target_conditions)
+      have extension: "finite_source_extension_context E pu pr Q=Some P"
+        by (rule finite_native_source_constructor.target_ready[OF native_requirement_source_constructor target])
+      show ?thesis
+        using target source supported Some z
+        by (simp add: finite_construct_source_requirements_def finite_construct_source_def
+          finite_formed_source_requirements_def finite_native_source_inner_exact[OF formed, symmetric]
+          finite_install_formed_entry_exact[OF extension])
+    qed
+  qed
+qed
+
+definition development_formed_policy_source where
+  "development_formed_policy_source xs=(case finite_ground_source_formed xs of None \<Rightarrow> None
+    | Some (d,F,u) \<Rightarrow> finite_formed_source_requirements F u [] [Existing_Admission d])"
+
+lemma development_formed_policy_source_exact:
+  assumes listed: "list_all finite_term_formed xs"
+  shows "development_formed_policy_source xs=development_policy_source_with xs"
+proof -
+  have ground: "finite_ground_source xs=finite_ground_source_formed xs"
+    using listed by (simp add: finite_ground_source_def finite_ground_source_formed_exact[OF listed, symmetric]
+      finite_ground_source_body_def)
+  show ?thesis
+  proof (cases "finite_ground_source_formed xs")
+    case None
+    then show ?thesis by (simp add: development_formed_policy_source_def development_policy_source_with_def ground)
+  next
+    case (Some g)
+    obtain d F u where g: "g=(d,F,u)" by (cases g) blast
+    have entry: "finite_install_source_entry (finite_guard_source True) None [0] (finite_ground_program xs) (Some [],[])=
+        Some (d,F,u)"
+      using Some g listed ground by (simp add: finite_ground_source_def)
+    have F: "finite_environment_formed F"
+      using finite_install_source_entry_correct[OF entry finite_ground_source_context[OF listed]] by blast
+    show ?thesis
+      using Some g ground
+      by (simp add: development_formed_policy_source_def development_policy_source_with_def
+        finite_formed_source_requirements_exact[OF F])
+  qed
+qed
+
+definition development_formed_policy_judgment ::
+    "finite_factor_term list \<Rightarrow> finite_exact_artifact \<Rightarrow> development_policy_judgment option" where
+  "development_formed_policy_judgment xs R=(case development_formed_policy_source xs of
+     None \<Rightarrow> None
+   | Some (d,K,pu) \<Rightarrow> (case finite_native_source_inner K pu [] of
+       None \<Rightarrow> None
+     | Some P \<Rightarrow> Option.bind (development_policy_certificate_at P d R) (\<lambda>p.
+         case finite_certificate_replay_at K P pu p d (Finite_Target (Finite_Whole R)) of
+           None \<Rightarrow> None
+         | Some (A,M,root,G,au,I,W,B) \<Rightarrow>
+             map_option (\<lambda>(J,F0,V,C). (d,K,pu,B,au,root,J,C)) (finite_bounded_quote_at P B pu au R))))"
+
+lemma development_formed_policy_judgment_exact:
+  assumes listed: "list_all finite_term_formed xs"
+  shows "development_formed_policy_judgment xs R=development_read_policy_judgment xs R"
+  by (simp only: development_formed_policy_judgment_def development_read_policy_judgment_def
+    development_formed_policy_source_exact[OF listed] development_read_policy_source_exact[OF listed])
+
 section \<open>The ready judgment environment, checked once at its entry\<close>
 
 text \<open>
@@ -713,6 +895,40 @@ next
   next
     case False
     show ?thesis using quoted False by (simp add: development_indexed_generation_quoted)
+  qed
+qed
+
+text \<open>
+  The recording of a formed term calls the judgment whose listing policy's source is installed as a formed
+  program: R's formation, from the term's, forms the listed presentation.
+\<close>
+
+declare development_indexed_generation_read [code del]
+
+lemma development_indexed_generation_formed [code]:
+  "development_indexed_generation t H rows=(case finite_data_syntax (decode_finite_term t) of
+     None \<Rightarrow> None
+   | Some R \<Rightarrow> Option.bind (if finite_term_formed t then development_formed_policy_judgment [Finite_Target (Finite_Whole R)] R
+         else development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R)
+       (\<lambda>(d,K,pu,B,au,root,J,C). finite_construct_quoted_generation H (Finite_Whole R) (Finite_Whole R)
+          (Finite_Whole C) rows))"
+proof (cases "finite_data_syntax (decode_finite_term t)")
+  case None
+  then show ?thesis by (simp add: development_indexed_generation_read)
+next
+  case (Some R)
+  note quoted=Some
+  show ?thesis
+  proof (cases "finite_term_formed t")
+    case True
+    have "term_formed (decode_finite_term t)" using True by (simp only: finite_term_formed_correct)
+    then have formed: "finite_exact_formed R" by (rule finite_data_syntax_quotation_formed[OF _ quoted])
+    have listed: "list_all finite_term_formed [Finite_Target (Finite_Whole R)]" using formed by simp
+    show ?thesis
+      using quoted True by (simp add: development_indexed_generation_read development_formed_policy_judgment_exact[OF listed])
+  next
+    case False
+    show ?thesis using quoted False by (simp add: development_indexed_generation_read)
   qed
 qed
 

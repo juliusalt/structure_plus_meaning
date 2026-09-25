@@ -82,6 +82,12 @@ union, whose 42 unreached definitions the given does not need (#413's follow-up 
 installs; the union stays the guard's program, and the asked relation's program is the guard's program rooted at
 its entries, derived through the union's piece (#431's review, follow-up 4, the planner's call, mailed to #393).
 
+**The recording of a state as a generation**: the native state's first generation (#395) cannot execute in a held run —
+the given's value is 1.3M nodes, its complete quotation did not finish in 165 s, and the certified cause quotes a scope
+holding the payload twice (implement-395's report, q96) — and every later route generation carries a payload of the
+given's size. A design is to attribute it held and decide the recording at its cause (Now: its draft was refused for
+size); #395 lands its statements with the execution a remainder (q96, answer drafted), and #397 is to wait on it.
+
 **Beside the route**: #459, the presentation-level duplicates after the use instance's split (#458, `00c4bf47`) and
 #435, with #458's review's follow-ups 1–4 (#419's review; Open 132 and 138 its); #457, after #426, the given's payload statement discharged by a kernel-checked composition down
 the five reader systems' view steps (q93: code_simp over the readers' 130-definition presentation did not finish in 160 s,
@@ -349,6 +355,10 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   row's own pair (`use_row_refutes`) and its site and entry corollaries. Its first verdict's follow-ups, overwritten by
   the re-review (`.build/tasks/438/review.md`): the pair shapes mailed to #447, the order against #458 mailed to #458,
   h1's zero prefix and the inequality control Open 149.
+- **Landed with `84e2cd9c`**: #426, the joined program's, the audit's, the guard's and the collection programs'
+  generic content beside their notions (the single-clause rule once in `Factor_Rule_Instances`, the payloads' bridge,
+  `given_member_use` at `Factor_Packages`, the law sublocales dropped); its review's follow-ups
+  (`.build/tasks/426/review.md`) are Open 153.
 - **Landed with `c6930e95`**: #466 (C1, `Factor_Inclusion_Admission_Counterparts`: the counterparts of 113 and 80 and
   the readers of environment-value pairs and source-root arguments) and #463 (the octet sample's readdressing lifted to
   whole environment, site and program entry values). #467's follow-ups: 1–3 and 6 wait for #469's verdict (Now), 4
@@ -624,7 +634,14 @@ theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations
 reversal (#435's review, `.build/tasks/436/review.md`). 147 the new whole agreements of existing view chains
 (`positive_complete_data_agreement`, `replay_positive_agreement`, `derivation_replay_agreement`,
 `application_derivation_agreement`, `call_application_agreement`, `comparison_located_agreement`) moved with their
-programs' theories when those are next touched (#454's review, follow-up 2). 152 one collection lifting — subjects
+programs' theories when those are next touched (#454's review, follow-up 2). 153 #426's review
+(`.build/tasks/426/review.md`), at each theory's next edit: `Factor_Package_Additions`' row naming `entry_rule` and
+`use_absence_rule`; `goal_view_rule`'s unread membership premise dropped; `finite_native_readiness_payloads`,
+`finite_native_reach_payloads` and `finite_verdict_witnesses_payloads` into their programs' theories; `law` beside
+`triples` dropped in `Native_Path_Stores`' two store programs; the 39 uses of `schema_consequences_valuationD`
+surveyed and re-cited to `positive_meaning_valuationE` or the single-clause rule; REASONING_REUSE's single-premise row
+naming the four site rules; task 381's correction naming that G3 and G4 each imply G2; `Development_Package_Program`'s
+two redundant imports. 152 one collection lifting — subjects
 changed under `inj_on f A`, each row's term by a map commuting with `data_list_term` — stated in
 `Factor_Data_Collection_Transport`, `data_collection_presents_leaf_map`, `Criticism_Samples.data_collection_presents_pointwise`
 and `data_collection_presents_image`'s backward direction its instances, with the next landing that changes those
@@ -642,6 +659,11 @@ by its re-review, of which only the summary stands: h1's zero prefix and the ine
 
 ## Now
 
+- **Unhandled by plan-67 (its window ended)**: (1) the recording design — draft `.build/plans/plan-67/b-record.md`,
+  edit `.build/plans/plan-67/e5.json` (create, feeding #397, queued first) — was refused: 250K beside 229K of relations
+  exceeds a design's 360K; trim what it names (its theories above all) or split the held attribution (investigate) from
+  the decision, then place it and `v2.py after 395` it; (2) answer q96 with `.build/plans/plan-67/q96.md` (decision (a):
+  #395 lands its statements, the execution a remainder, no park, no payload change) once the design is placed.
 
 - **Mailed, read by each task's first session**: to #393 (#419's review, follow-up 5: the asked relation's clause composed from G3's, G4's and #416's exported
   clauses), to #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's payloads at

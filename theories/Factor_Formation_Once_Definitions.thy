@@ -1,5 +1,5 @@
 theory Factor_Formation_Once_Definitions
-  imports Factor_Formation_Once_Readings
+  imports Factor_Formation_Once_Readings Factor_Executable_Dependencies
 begin
 
 section \<open>Formed environments read definitions, schemas and calls once\<close>
@@ -500,6 +500,150 @@ lemma finite_native_package_formed_once_code [code]:
       (\<lambda>d. finite_native_definition_readings_formed E (fst d) (snd d) \<noteq> {||})"
   by (simp only: checked_premise.checked_through[OF finite_native_package_formed_checked_premise,
       where t="\<lambda>f. f roots"] if_bool_eq_conj simp_thms) blast
+
+section \<open>A package's demanded slots are read from the formed bodies\<close>
+
+text \<open>
+  The slots a package demands are read at every definition site, through its interface, its clause
+  family, each clause's record, binder scope, conclusion and premise family: each of those readings
+  checks the environment's formation at its entry and every artifact's at each record it reads. The
+  demands establish the environment's formation once, at their entry, and read the formation-free
+  bodies of all of them, an instance of the first notion of @{text Established_Premises}. Outside the
+  premise every reading of a definition's slots is empty, so the demands are the root requests' slots.
+\<close>
+
+definition finite_family_endpoints_formed where
+  "finite_family_endpoints_formed E u r=ffUnion (fimage (\<lambda>C.
+    ffUnion (fimage (fimage snd) (finite_family_body_candidates C r))) (finite_artifacts_at E u))"
+
+lemma finite_family_endpoints_formed_exact:
+  assumes formed: "finite_environment_formed E"
+  shows "finite_family_endpoints E u r=finite_family_endpoints_formed E u r"
+  unfolding finite_family_endpoints_def finite_family_endpoints_formed_def
+  by (rule arg_cong[where f=ffUnion], rule fimage_cong[OF refl])
+    (simp only: finite_family_body_candidates_exact[OF formed_environment_object[OF formed]])
+
+lemma finite_native_premise_readings_formed_exact:
+  "finite_environment_formed E \<Longrightarrow> finite_native_premise_readings E u V=finite_native_premise_readings_formed E u V"
+  by (rule ext) (simp only: finite_native_premise_readings_def finite_native_premise_readings_formed_def
+    finite_prospective_call_readings_formed_exact finite_native_material_readings_formed_exact)
+
+definition finite_native_premise_family_slots_formed where
+  "finite_native_premise_family_slots_formed E u V r=ffUnion (fimage (\<lambda>a.
+    finite_reading_slots (finite_native_premise_readings_formed E u V a)) (finite_family_endpoints_formed E u r))"
+
+definition finite_native_schema_slots_formed where
+  "finite_native_schema_slots_formed E u r=ffUnion (fimage (\<lambda>C.
+    finite_three_field_record_formed C r (\<lambda>ps b c m. ffUnion (fimage (\<lambda>V.
+      finite_reading_slots (finite_pattern_readings_carrier_formed E u V c) |\<union>|
+      finite_native_premise_family_slots_formed E u V m) (finite_binder_scope_body_candidates C b))))
+    (finite_artifacts_at E u))"
+
+definition finite_native_definition_slots_formed where
+  "finite_native_definition_slots_formed E u r=ffUnion (fimage (\<lambda>C.
+    finite_two_field_record_formed C r (\<lambda>ps i m.
+      finite_reading_slots (finite_scoped_pattern_readings_formed E u i) |\<union>|
+      ffUnion (fimage (finite_native_schema_slots_formed E u) (finite_family_endpoints_formed E u m))))
+    (finite_artifacts_at E u))"
+
+lemma finite_native_definition_slots_formed_exact:
+  assumes formed: "finite_environment_formed E"
+  shows "finite_native_definition_slots E u r=finite_native_definition_slots_formed E u r"
+proof -
+  have pattern: "finite_pattern_slots E v V c=finite_reading_slots (finite_pattern_readings_carrier_formed E v V c)"
+    for v V c by (simp only: finite_pattern_slots_def finite_pattern_readings_carrier_formed_exact[OF formed])
+  have premise_slots: "finite_native_premise_slots E v V=
+      (\<lambda>a. finite_reading_slots (finite_native_premise_readings_formed E v V a))" for v V
+    by (rule ext) (simp only: finite_native_premise_slots_def finite_native_premise_readings_formed_exact[OF formed])
+  have premise: "finite_native_premise_family_slots E v V m=finite_native_premise_family_slots_formed E v V m"
+    for v V m by (simp only: finite_native_premise_family_slots_def finite_native_premise_family_slots_formed_def
+      premise_slots finite_family_endpoints_formed_exact[OF formed])
+  have schema: "finite_native_schema_slots E v s=finite_native_schema_slots_formed E v s" for v s
+    unfolding finite_native_schema_slots_def finite_native_schema_slots_formed_def
+  proof (rule arg_cong[where f=ffUnion], rule fimage_cong[OF refl])
+    fix C assume member: "C |\<in>| finite_artifacts_at E v"
+    have object: "finite_object_formed C" by (rule formed_environment_object[OF formed member])
+    show "finite_three_field_record C s (\<lambda>ps b c m. ffUnion (fimage (\<lambda>V.
+        finite_pattern_slots E v V c |\<union>| finite_native_premise_family_slots E v V m)
+        (finite_binder_scope_candidates C b)))=
+      finite_three_field_record_formed C s (\<lambda>ps b c m. ffUnion (fimage (\<lambda>V.
+        finite_reading_slots (finite_pattern_readings_carrier_formed E v V c) |\<union>|
+        finite_native_premise_family_slots_formed E v V m) (finite_binder_scope_body_candidates C b)))"
+      by (simp only: finite_three_field_record_formed_exact[OF object]
+        finite_binder_scope_body_candidates_exact[OF object] pattern premise)
+  qed
+  have schema_readings: "finite_native_schema_slots E v=finite_native_schema_slots_formed E v" for v
+    by (rule ext) (rule schema)
+  have family: "finite_native_schema_family_slots E v m=
+      ffUnion (fimage (finite_native_schema_slots_formed E v) (finite_family_endpoints_formed E v m))" for v m
+    by (simp only: finite_native_schema_family_slots_def finite_family_endpoints_formed_exact[OF formed]
+      schema_readings)
+  show ?thesis
+    unfolding finite_native_definition_slots_def finite_native_definition_slots_formed_def
+  proof (rule arg_cong[where f=ffUnion], rule fimage_cong[OF refl])
+    fix C assume member: "C |\<in>| finite_artifacts_at E u"
+    have object: "finite_object_formed C" by (rule formed_environment_object[OF formed member])
+    show "finite_two_field_record C r (\<lambda>ps i m.
+        finite_scoped_pattern_slots E u i |\<union>| finite_native_schema_family_slots E u m)=
+      finite_two_field_record_formed C r (\<lambda>ps i m.
+        finite_reading_slots (finite_scoped_pattern_readings_formed E u i) |\<union>|
+        ffUnion (fimage (finite_native_schema_slots_formed E u) (finite_family_endpoints_formed E u m)))"
+      by (simp only: finite_two_field_record_formed_exact[OF object] finite_scoped_pattern_slots_def
+        finite_scoped_pattern_readings_formed_exact[OF formed] family)
+  qed
+qed
+
+lemma finite_native_definition_slots_unformed:
+  assumes unformed: "\<not> finite_environment_formed E"
+  shows "finite_native_definition_slots E u r={||}"
+proof -
+  have none: "finite_reading_slots {||}={||}"
+    by (simp add: finite_reading_slots_def fset_eq_iff ffUnion.rep_eq)
+  have pattern: "finite_pattern_slots E v V c={||}" for v V c
+    by (simp add: finite_pattern_slots_def finite_pattern_readings_def none
+      checked_premise.refused[OF finite_pattern_readings_bounded_checked_premise unformed]
+      checked_union[where P=False, simplified])
+  have scoped: "finite_scoped_pattern_slots E v i={||}" for v i
+    by (simp add: finite_scoped_pattern_slots_def none
+      checked_premise.refused[OF finite_scoped_pattern_readings_checked_premise unformed])
+  have premise: "finite_native_premise_slots E v V a={||}" for v V a
+    by (simp add: finite_native_premise_slots_def finite_native_premise_readings_def
+      finite_prospective_call_readings_def finite_native_material_readings_def none
+      checked_premise.refused[OF finite_call_readings_checked_premise unformed]
+      checked_premise.refused[OF finite_pattern_record_readings_checked_premise unformed])
+  have premise_family: "finite_native_premise_family_slots E v V m={||}" for v V m
+    by (simp add: finite_native_premise_family_slots_def premise fset_eq_iff ffUnion.rep_eq fimage.rep_eq)
+  have schema: "finite_native_schema_slots E v s={||}" for v s
+    by (auto simp: fset_eq_iff finite_native_schema_slots_step pattern premise_family)
+  have family: "finite_native_schema_family_slots E v m={||}" for v m
+    by (simp add: finite_native_schema_family_slots_def schema fset_eq_iff ffUnion.rep_eq fimage.rep_eq)
+  show ?thesis by (auto simp: fset_eq_iff finite_native_definition_slots_step scoped family)
+qed
+
+definition finite_native_package_demands_formed where
+  "finite_native_package_demands_formed E u r=finite_requested_slots E (finite_native_root_requests E u r) |\<union>|
+    ffUnion (fimage (\<lambda>(v,a). fimage (Pair v) (finite_native_definition_slots_formed E v a))
+      (finite_native_package_sites E u r))"
+
+lemma finite_native_package_demands_checked_premise:
+  "checked_premise finite_native_package_demands finite_environment_formed finite_native_package_demands_formed
+    (\<lambda>E u r. finite_requested_slots E (finite_native_root_requests E u r))"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (simp only: finite_native_package_demands_def finite_native_package_demands_formed_def
+    finite_native_definition_slots_formed_exact[OF 1])
+next
+  case (2 E)
+  show ?case
+    by (intro ext) (auto simp: finite_native_package_demands_def finite_native_definition_slots_unformed[OF 2]
+      fset_eq_iff ffUnion.rep_eq fimage.rep_eq split: prod.splits)
+qed
+
+lemma finite_native_package_demands_formed_once_code [code]:
+  "finite_native_package_demands E u r=(if finite_environment_formed E
+    then finite_native_package_demands_formed E u r
+    else finite_requested_slots E (finite_native_root_requests E u r))"
+  by (rule checked_premise.checked_through[OF finite_native_package_demands_checked_premise, where t="\<lambda>f. f u r"])
 
 text \<open>
   A formed environment has exactly formed artifacts, so their record, family,

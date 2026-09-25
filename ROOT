@@ -1586,6 +1586,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Development_Steering
     Factor_Development_Subjects
     Factor_Finite_Ground_Source
+    Factor_Stated_Leaves_Counterpart
     Factor_Native_Generation
     Factor_Native_Generation_Semantics
     Factor_Required_Workflow_Cases

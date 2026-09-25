@@ -48,8 +48,8 @@ and #422 landed):
   briefed later with the criticism build, Open 121);
 - then: the guard installed over the given's readers, the asked relation's entry with its equivariance clause (#393,
   landed `a0fe6bb1`), the given and the native state's first generation (#395,
-  landed `60539704`, its execution a remainder; then #484, its base generation generic and one presenter of site
-  values, before #397), the
+  landed `60539704`, its execution a remainder; #484, landed `bd36f20d`, its base generation generic and one presenter
+  of site values), the
   posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
   frame (#405, `6d84162b`: parts (a)–(d) and (f); its fix #432, `f4fa3d8a`: part (c) by constant so that the given's
@@ -92,7 +92,9 @@ quotes the policy's call with the payload's uses as its boundary, the payload fi
 payload's size once and every route cause is one target; rules (a)–(c) for the rest. Its chain B1 → B2 → I3 → R → X →
 #397: #488 briefs B1 and B2, #489 is I3, R and X are placed from I3's result. Every route generation (#397, #399, #403,
 #443's issue, #447) is recorded through B2's recording: mailed the entry's (3), their briefs corrected when B2 is
-placed. The given's least package scope, which #443 constructs, did not compute in 94–108 s: #485 before #443.
+placed. The given's least package scope, which #443 constructs, did not compute in 94–108 s, and C4a's counterpart of
+122 over the given's environment did not return in 115 s (#474's report): #485 attributes and refines both, before #443
+and #447; #474 is told when it lands (`after`).
 
 **Beside the route**: #483, after the counterpart builds, S1 (#478) and #484, the counterparts' and E1's generic facts
 at their homes and two whole-rebuild moves in one rebuild (#467's, #469's, #465's and #471's reviews); #487 after it,
@@ -122,7 +124,7 @@ by a task of their own (Open 100).
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #488 and #489 at its head, the counterparts
-(#474–#477) and #484, then the rest in their chains' order, the first request's and the
+(#474–#477), then the rest in their chains' order, the first request's and the
 criticism's builds after them; then #461, #483, #487 and #486; each review after its build.
 
 ## Decisions
@@ -403,7 +405,11 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
 - **#481** (investigation, accepted): the recording attributed by difference at 2K–32K payload addresses and the three
   sizes (`.build/tasks/481/result.md`); #395's 62.2 s was a quadratic `fcard` count, not the quotation; the least
   scope is 54–90 % of the given; its follow-ups: the least scope's demands are #485, the rest in #482's reading.
-- **#482** (design, accepted): the entry above; its Questions answered by placement — the chain (#488, #489, then R and
+- **Landed with `bd36f20d`**: #484, the base indexed generation named once (`development_base_generation`), the owner
+  records and the native state's first generation its instances; the site value reader `finite_site_read` and presenter
+  `finite_site_presented` in C1, `Development_Native_State` importing C1. Its review's follow-ups: `given_site_value` in
+  #486, the base's name mailed to #488, `finite_pair_read_present` for C1's reader in #483.
+- **#482** (design, accepted, `e2b239ac`): the entry above; its Questions answered by placement — the chain (#488, #489, then R and
   X), B1's in-place generalization with its dependents' rebuild, the correction of #447's (5) mailed, X #395's remainder.
 - **Landed with `00c4bf47`**: #458, the use instance split: the low actions in `Factor_Use_Actions` below the keyed
   and data readers, the inverse-permutation argument once (`use_renaming_inverse`), the schema reading's renaming
@@ -698,6 +704,11 @@ the interface twice, 45 at every target occurrence); #479's: the plain evaluator
 ## Now
 
 
+- **Left by plan-68 (its window ended), nothing unhandled; what the next events ask**: when #488's proposal (B1, B2 of
+  #482's entry) is placed, re-point #489 from #488 to B2 (`v2.py blockers`) and correct #397's, #399's, #403's, #443's
+  and #447's briefs from the entry's (3); when #489's result names the refinements, place R and X and set #397 to wait
+  on X. `v2.py after A B` makes A wait for B's landing: use it only for a task that is to wait (it was taken back for
+  #395). A theory named in plain text in a brief counts among its relations as a backticked one does.
 - **Mailed, read by each task's first session** (by task; landed tasks' dropped): #397, #399, #403, #443 and #447 (#482's entry, its (3); #447
   its correction of (5)); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the
   request program's payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers

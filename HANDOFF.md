@@ -52,8 +52,8 @@ on, all accepted:
   1.07 s at 32K, 33.6 µs per address, 52–80 s estimated at the given's value) → X #538 (landed `e7c53a09`: the first generation executed held at the
   given's value, 111.3 s against the gate's 53 s, every step growing n^1.3–1.5 from 32K) → the growth attributed
   (#559) → the design #560 (landed `36f54516`: certification parametric in the literal, the posing holding the given
-  again; its premise observed by #569) → its builds, briefed by #570: T1 #571 (positive meaning under a leaf map of
-  program and argument, in `Factor_Positive_Parametricity`, a whole rebuild) ∥ T2a's first half #573 (landed
+  again; its premise observed by #569) → its builds, briefed by #570: T1 #571 (landed `fc20d72b`: positive meaning under a leaf map of
+  program and argument, `Factor_Positive_Parametricity.positive_meaning_mapped`) ∥ T2a's first half #573 (landed
   `67c2af9b`: `Factor_Placeholder_Fill`, the fill and the readers below patterns at it, a forward transport) → T2a's
   second half #575 (patterns to definitions through T1's map) → T2b #577
   (packages, the application and the least environments at the fill) → T3 #579 (the parametric cause) → P #581 (the
@@ -88,10 +88,15 @@ construction is W4a's, #506's follow-up 1), landed; R5 #518 (committed choice un
 committed search with barred pruning, its soundness and forms, q105; landed `80472ac8` after #519's review found a
 socket commitment without the kept head refuting a true call, the test narrowed to a focus root whose parent's call
 output is a variant of its head output), R5b #565 (their exactness: the lifting at a
-barred support over #563's, the exchange, the forms over any construction, the transfer; after R5 and #563) and R6
-#520 (the given's declarations at 79, 32, 6, 10, 45 and 48 from their notions' contracts, after R5, before
-#399 and #443), each with its review; the combined contract rc #540 (`Factor_Committed_Registrations`: the
-committed search with complete registrations exact, q100; after R5b and W4a, before #443) and R7 #542 (the given at the
+barred support over #563's, the exchange, the forms over any construction, the transfer; after R5 and #563), R5c #586
+(q106's second half: the exchange premise discharged from R5's declarations, the control's false call and #519's second
+shape; continuing #565, after it and #585) and R6 #520 (narrowed by q107: the declarations R5's form reaches — 32, 6,
+10, 45, their material sockets, the consumers a contract states invariant — discharged at the notions' systems), each
+with its review; the design #585 (q107: R5's kinds extended to 79 and 48, whose calls hold an input on their right
+side, to 59, which carries 32's class, and to 48's repetitions against 49's distinctness; it decides R5d, the kinds, and
+R6b, the given's remaining declarations and the carrying of all of them through #565's transfer — rc to wait on R5d, R7
+and #547 on R6b, placed from its result); the combined contract rc #540 (`Factor_Committed_Registrations`: the
+committed search with complete registrations exact, q100; after R5c and W4a, before #443) and R7 #542 (the given at the
 guard's calls measured, `Development_Given_Resolution_Execution`, with the stated-leaves program's finite presentation;
 after rc, R6 and W4b, before #399); R8a (#508, landed `9b18bd52`: the counterparts retired) and R8b
 #510 (#487's standing items). The least witnesses (77's, 392's and 525's bounds, 561's private environment): the owner's
@@ -99,9 +104,9 @@ answer to Q28 (10:44) — checkers do not produce — and #496's entry, "A check
 are collected from the given's own readers beside the search, and the given's readers check them as installed": a
 witness construction beside R3's search (W1, in R3), the least collection of the given's own readers' answers (W2),
 each registration's completeness (W3 #513, landed) and the given's four registrations (W4); an admission is the given's check,
-a refusal rests on a complete registration: W2a #524 (the queries' answers, the least collection and its
-justification check, after R4; its completeness from the premise `finite_pattern_lifting`, q104; re-planned over the
-theory its first session left partial in its tree, `.build/plans/plan-75/r524-first.md`), W2b #567 (the registrations,
+a refusal rests on a complete registration: W2a #524 (landed `ca95c190`: the queries' answers, the least collection
+and its justification check, its completeness from the premise `finite_pattern_lifting`, q104), W2b #567 (the premise
+discharged, W2a's three copies retired and its conflict re-add fixed, #525's review; the registrations,
 the construction from them with formed values and the resolution with hand-ins, extending W2a's theory after it
 lands), R4's pattern-root forms #563 (landed `256ed4f9`: R3b's invariant and acceptance and R4's lifting at a pattern
 root for any formed finite program, the answer-preserving lifting that discharges W2a's premise, item 5's goal-level
@@ -127,19 +132,18 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The recording's T1 #571 → #575 → T2b #577 → T3 #579 → P #581 and the
-evaluator's W2a #524 → W2b #567 → W4a #526 → rc #540 (and W4b #528) → R7 #542 each put #399 at 6; #399 → #401 → #407
+**Shape.** No build waits on a review task. The recording's #575 → T2b #577 → T3 #579 → P #581, the evaluator's W2b
+#567 → W4a #526 → rc #540 (and W4b #528) → R7 #542, and #565 → R5c #586 → R5d → rc (R6b before R7) each put
+#399 at 6; #399 → #401 → #407
 → #408 is 9, #399 → the record #553 → #447 → #449 → #450 is 10 (the record spliced in as detail, #544), so nothing is
 added after #450. The approval build (Open 142) after #407 and #447 (8 each) fits with its review at 10, and is
 placed when they are nearer.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
-and a review standing where its review task stands, so every review stands right after its build. The recording's T1
-#571 first (a whole rebuild, heading the queue while it checks so that no other heavy run starts beside it), the
-recording's chain being now the longest; W2a #524 and R5b #565 in flight, W2b #567, the recording's later builds
-(#575, #577, #579, #581, #583); W4a #526, R6
-#520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
+and a review standing where its review task stands, so every review stands right after its build. The design #585
+first (it changes R5c, rc, R7 and #547); the recording's builds (#575, #577, #579, #581,
+#583); W2b #567; R5b #565 and R5c #586; W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
 #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
 ## Decisions
@@ -428,6 +432,12 @@ What landed that open work builds on, a line each; how it went and each review's
   placeholder's fill, the cause `Whole C0` for every payload; the gate 20 µs per payload address held; the posing holds
   the given again; the builds T1 ∥ T2a → T2b → T3 → P → X′, P redefining `development_indexed_generation` with its
   contracts' statements unchanged.
+- **T1** (#571, `fc20d72b`): `Factor_Positive_Parametricity.positive_meaning_mapped`, positive meaning under a leaf map
+  of program and argument, the fixed-program theorems its instances; nine recipes reach the theory, words equal
+  (#572's review; its follow-ups next-edits 208-210 and mailed to #577 and #579).
+- **W2a** (#524, `ca95c190`): `Factor_Least_Collections`, the queries' answers, the least collection and its
+  justification check, completeness under the premise `finite_pattern_lifting` (discharged by W2b); #525's follow-ups
+  mailed to #567, #526 and #542, next-edits 211 and 212.
 
 ## Open
 
@@ -536,31 +546,28 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **Not yet placed**: q106 (#565, R5b beyond its room) was answered accepting its split: #565 does the focused barred
-  support, the committed lifting under an exchange premise (`commitment_exchanges`), the three forms exact under it,
-  agreement with R4 and the transfer; the second half — the premise discharged from R5's declarations (producer,
-  consumer, the material single solution, kept-head and free sockets with whatever further condition the socket case
-  needs, or its counterexample) and the control's false call refuted, with the second shape's conjuncts — is to be
-  created as a build continuing #565 after it lands, with its review, and rc #540 re-pointed to wait on it.
-- **What the next events ask**: the recording's builds from #560's entry are placed (#570's proposal, #571–#584),
-  carrying #569's probe cost (54.5 s shared against the entry's 25 s: P's probe under a shared claim at a longer
-  bound) and its untested case (a payload equal to an artifact J0 holds elsewhere is filled and recorded as any other,
-  its cause C0); #573's edge on #569 is taken out, its result a file input; P #581 is spliced before #399 and #443,
-  X′ #583 holds the measurements #398's (follow-up 2) and #558's (follow-up 1) reviews owe. R5 #518 came back
-  rejected after its fix round (#519's review, findings 1 and 2) and is re-planned over its tree, its first session's
-  window having ended; the review's other follow-ups are mailed (below) and next-edits 205. #558's follow-ups 5 and 6
-  are next-edits 193 and 198, 3 is 192. R7
+- **q107** (R6 #520, answered, `.build/plans/plan-77/q107.md`): R5's kinds as landed reach the given's 32, 6, 10 and 45
+  only; R6 narrowed to those declarations, discharged at the notions' systems, no transfer lemma (#565's), its brief
+  rewritten; the design #585 decides the rest (Graph). q106's second half is R5c #586, continuing #565; rc #540 waits on
+  it, and W4b #528 too (both edit `Factor_Resolution_Controls`).
+- **What the next events ask**: #585's result places R5d and R6b (R6b spliced before R7 #542 and #547, R5d before rc
+  #540) and may change R5c's brief; R6's result lists the sites it did not declare (one beyond #585's list goes to #585
+  at once). X′ #583 holds the measurements #398's (follow-up 2) and #558's (follow-up 1) reviews owe. R7
   (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **Mailed, read by each task's first session** (by task): #565 (#519's re-review: the correction (2)'s parenthetical,
+- **Mailed, read by each task's first session** (by task): #577 and #579 (#572's review of T1, follow-ups 4 and 6: the
+  entry's (6) qualified, the placeholder row naming `positive_meaning_mapped`); #521 (R6's brief narrowed); #585 (R5c
+  is #586); #567 and #568 (#525's review of W2a, follow-ups 1, 2, 3, 5 and 7: the three copies retired,
+  `finite_pattern_lifting` discharged, the conflict re-add fixed, the value's presentation, one export); #526 (#525's 6:
+  561's exactness up to identity); #542 (#525's 4: the second search per instance measured); #565 (#519's re-review: the correction (2)'s parenthetical,
   the second shape's conjuncts in the controls' lemma, the exchange's premises as `finite_socket_free` states them);
-  #571 and #575 (#574's review: T1's map of patterns over an
+  #575 (#574's review: T1's map of patterns over an
   arbitrary target map, the placeholder's instantiating it directly); #579 and #581 (#574's review: T2b's collected
   sets at the placeholder's roots or under a named premise, discharged at the placeholder by T3 or P's guard; to #579
   the reuse row of the entry's (5)); #577's brief rewritten with #574's follow-ups 1 and 2 (the premise, the fill's
-  commutation with `read_environment`, the entry's (2) corrected); #525, #526 and #567 (#564's review: W2's
+  commutation with `read_environment`, the entry's (2) corrected); #526 and #567 (#564's review: W2's
   `finite_query_state` a copy of `finite_pattern_state`, retired by W2b, compared at W2a's review; W4a's
   instantiation's needs and the generator's computed form); #565 (#564's review: task 495's item 5 corrected, the two
   rows' words); #399 (#569's follow-up, its probe's cost); #520 and #565
@@ -570,8 +577,8 @@ searches for a theory before briefing a task that edits it.
   nest); #399, #403, #443 and #553 (their one-citation generations through #562's
   recording, `development_citing_row_generation_certified`; the first to build adds it to REASONING_REUSE.md's row
   "Record through existing predecessors"); #399, #549 and #551 (#398's follow-up 4: `finite_program_entry_presented` moved at its second use);
-  #526 and #540 (#506's follow-ups 1 and 7: the resolver's forms over a construction, W4a's; the helpers' home); #526
-  (q104: W2's premise `finite_pattern_lifting` discharged by #563's lifting); #528 (the generator row is #563's); #519, #520 and #540 (q105: R5's scope divided, its exactness R5b's; the declarations' obligations; the barred lifting over #563's); #542 (#506's follow-up 5: a table of resolved goals across a demand); #551 (#506's follow-up 6:
+  #526 and #540 (#506's follow-ups 1 and 7: the resolver's forms over a construction, W4a's; the helpers' home); #567
+  (q104 and #525's follow-up 2: W2's premise `finite_pattern_lifting` discharged by #563's lifting, W2b's, not W4a's); #528 (the generator row is #563's); #519, #520 and #540 (q105: R5's scope divided, its exactness R5b's; the declarations' obligations; the barred lifting over #563's); #542 (#506's follow-up 5: a table of resolved goals across a demand); #551 (#506's follow-up 6:
   resolution at `criticism_calls` an exact S1 table); #526 (#515's review, follow-ups 3 and 6);
   #542 (its 4: the checker's share per certificate measured, the check staying); #407 (#433's review's follow-ups 2 and 3; the frame as #432
   and #433 leave it; #394's follow-up 3); #443 (#546's re-review, follow-up 2: the request program's export cost); #526 and #528 (#514's follow-up 2); #526 (the combined contract is rc's, q100); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); The route's earlier mails to #397,

@@ -1495,9 +1495,25 @@ proof (rule pfsubset_fcard_mono)
   ultimately show "resolution_subtree N m |\<subset>| resolution_subtree N nd" using sub by blast
 qed
 
-lemma finite_node_proof_pattern_accepted:
-  assumes I: "resolution_pattern_invariant P d \<pi> st" and closed: "resolution_pending st={||}"
-  shows "nd |\<in>| resolution_nodes st \<Longrightarrow> fcard (resolution_subtree (resolution_nodes st) nd) \<le> k \<Longrightarrow>
+text \<open>
+  The goals pending under a position are those whose position it prefixes. A node with none under it has a
+  checked certificate: its premises are nodes and its material premises done, whatever is pending elsewhere, so
+  the certificate is accepted in subtree form; a branch with no pending goal is its instance at every node.
+\<close>
+
+abbreviation resolution_pending_under ::
+    "('a,'s,'d,'c) resolution_state \<Rightarrow> 's list \<Rightarrow> ('a,'s,'d,'c) resolution_goal fset" where
+  "resolution_pending_under st q \<equiv> ffilter (\<lambda>g. take (length q) (resolution_goal_position g)=q) (resolution_pending st)"
+
+lemma resolution_pending_under_empty:
+  "resolution_pending_under st q={||} \<longleftrightarrow>
+    (\<forall>g. g |\<in>| resolution_pending st \<longrightarrow> take (length q) (resolution_goal_position g)\<noteq>q)"
+  by (auto simp: fset_eq_iff resolution_fset_simps)
+
+lemma finite_node_proof_subtree_accepted:
+  assumes I: "resolution_pattern_invariant P d \<pi> st"
+  shows "nd |\<in>| resolution_nodes st \<Longrightarrow> resolution_pending_under st (resolution_node_position nd)={||} \<Longrightarrow>
+    fcard (resolution_subtree (resolution_nodes st) nd) \<le> k \<Longrightarrow>
     finite_checks_schema_proof P (finite_node_proof k (resolution_nodes st) nd) (resolution_node_site nd)
       (finite_residual_term (resolution_node_call nd))"
 proof (induction k arbitrary: nd)
@@ -1506,12 +1522,14 @@ proof (induction k arbitrary: nd)
   have "0 < card (fset (resolution_subtree (resolution_nodes st) nd))"
     using mem by (metis card_gt_0_iff empty_iff finite_fset)
   then have "0 < fcard (resolution_subtree (resolution_nodes st) nd)" by (simp only: fcard.rep_eq)
-  with 0(2) show ?case by linarith
+  with 0(3) show ?case by linarith
 next
   case (Suc k)
   let ?N = "resolution_nodes st" and ?S = "resolution_node_schema nd" and ?q = "resolution_node_position nd"
   let ?d = "resolution_node_site nd" and ?c = "resolution_node_clause nd"
   let ?t = "finite_residual_term (resolution_node_call nd)"
+  have none: "take (length ?q) (resolution_goal_position g)\<noteq>?q" if "g |\<in>| resolution_pending st" for g
+    using Suc.prems(2) that unfolding resolution_pending_under_empty by blast
   have Pf: "finite_system_formed P" using I by (simp add: resolution_pattern_invariant_def)
   have placed: "\<forall>a x. (a,x) |\<in>| resolution_node_bindings nd \<longrightarrow> finite_pattern_formed x"
     and linked: "resolution_node_linked P st nd"
@@ -1531,9 +1549,11 @@ next
     using linked unfolding resolution_node_linked_def by blast
   have prem: "\<exists>m. m |\<in>| ?N \<and> resolution_node_position m=?q@[s] \<and> resolution_node_site m=e \<and>
       resolution_node_call m=finite_pattern_substitute \<beta> p" if "(s,e,p) |\<in>| finite_schema_premises ?S" for s e p
-    using prem0 that closed by (auto simp: resolution_fset_simps)
+    using prem0 that none[of "Resolution_Call_Goal (?q@[s]) (Some (?d,?c,s)) e (finite_pattern_substitute \<beta> p)"]
+    by auto
   have mat: "resolution_material_done \<beta> M" if "(s,M) |\<in>| finite_schema_materials ?S" for s M
-    using mat0 that closed by (auto simp: resolution_fset_simps)
+    using mat0 that none[of "Resolution_Material_Goal (?q@[s]) (?d,?c,s) (finite_material_pattern_substitute \<beta> M)"]
+    by auto
   let ?V = "finite_ground_bindings (\<lambda>a. finite_residual_term (\<beta> a)) (finite_schema_variables ?S)"
   have Sf: "finite_schema_formed ?S" by (rule finite_system_formed_parts(2)[OF Pf clause])
   have \<beta>f: "finite_pattern_formed (\<beta> a)" if "a |\<in>| finite_schema_variables ?S" for a
@@ -1695,12 +1715,24 @@ next
         "resolution_node_call m'=finite_pattern_substitute \<beta> p"
       using prem[OF p] by blast
     have same: "m'=m" using distinct[OF m'(1) m(1)] m'(2) m(2) by simp
+    have under: "resolution_pending_under st (resolution_node_position m)={||}"
+      unfolding resolution_pending_under_empty m(2)
+    proof (intro allI impI)
+      fix g assume g: "g |\<in>| resolution_pending st"
+      show "take (length (?q@[s])) (resolution_goal_position g)\<noteq>?q@[s]"
+      proof
+        assume at: "take (length (?q@[s])) (resolution_goal_position g)=?q@[s]"
+        have "take (length ?q) (take (length (?q@[s])) (resolution_goal_position g))=?q" unfolding at by simp
+        then have "take (length ?q) (resolution_goal_position g)=?q" by simp
+        with none[OF g] show False by blast
+      qed
+    qed
     have depth: "fcard (resolution_subtree ?N m) \<le> k"
-      using resolution_subtree_child[OF Suc.prems(1) m(2)] Suc.prems(2) by simp
+      using resolution_subtree_child[OF Suc.prems(1) m(2)] Suc.prems(3) by simp
     have sm: "resolution_node_site m=e" using m'(3) same by (simp only:)
     have cm: "resolution_node_call m=finite_pattern_substitute \<beta> p" using m'(4) same by (simp only:)
     have "finite_checks_schema_proof P pf e (finite_residual_term (resolution_node_call m))"
-      using Suc.IH[OF m(1) depth] unfolding m(3) sm .
+      using Suc.IH[OF m(1) under depth] unfolding m(3) sm .
     moreover have "(s,e,finite_residual_term (resolution_node_call m)) |\<in>| ?H"
       unfolding cm by (rule Hin[OF p])
     ultimately show ?thesis by blast
@@ -1710,6 +1742,13 @@ next
     using Bfun reading Bdom children by blast
   then show ?case by (simp add: V)
 qed
+
+lemma finite_node_proof_pattern_accepted:
+  assumes I: "resolution_pattern_invariant P d \<pi> st" and closed: "resolution_pending st={||}"
+  shows "nd |\<in>| resolution_nodes st \<Longrightarrow> fcard (resolution_subtree (resolution_nodes st) nd) \<le> k \<Longrightarrow>
+    finite_checks_schema_proof P (finite_node_proof k (resolution_nodes st) nd) (resolution_node_site nd)
+      (finite_residual_term (resolution_node_call nd))"
+  by (rule finite_node_proof_subtree_accepted[OF I]) (simp_all add: closed fset_eq_iff resolution_fset_simps)
 
 lemma finite_node_proof_accepted:
   assumes I: "resolution_invariant P d t st" and closed: "resolution_pending st={||}"

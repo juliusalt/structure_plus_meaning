@@ -111,15 +111,13 @@ are collected from the given's own readers beside the search, and the given's re
 witness construction beside R3's search (W1, in R3), the least collection of the given's own readers' answers (W2),
 each registration's completeness (W3 #513, landed) and the given's four registrations (W4); an admission is the given's check,
 a refusal rests on a complete registration: W2a #524 (landed `ca95c190`: the queries' answers, the least collection
-and its justification check, its completeness from the premise `finite_pattern_lifting`, q104), W2b #567 (the premise
-discharged, W2a's three copies retired and its conflict re-add fixed, #525's review; the registrations,
-the construction from them with formed values and the resolution with hand-ins, extending W2a's theory after it
-lands), R4's pattern-root forms #563 (landed `256ed4f9`: R3b's invariant and acceptance and R4's lifting at a pattern
-root for any formed finite program, the answer-preserving lifting that discharges W2a's premise, item 5's goal-level
-generator, tight), W4a #526 (a registration's
-completeness and the resolver with complete registrations exact, the four registrations each returning formed values,
-relocation; after W2b, #563, W3 and R4) and W4b #528 (the given's registrations, the controls, the reuse row), each with its
-review. #399 waits on R7 and #547 on rc, both on R4, R6 and W4b; #549 and #551 wait on R7, #403 and #553 through
+and its justification check), W2b #567 (landed `47861c0b`: the registrations, the construction from them with formed
+values, the resolution with hand-ins, W2a's premise discharged for every program), R4's pattern-root forms #563 (landed
+`256ed4f9`: R3b's invariant and acceptance and R4's lifting at a pattern root for any formed finite program, the
+answer-preserving lifting, item 5's goal-level generator, tight), W4a divided by plan-78 when its relations left too
+little room — W4a1 #526 (completeness of a registration, distinctness, the exact resolver in its three forms,
+relocation; R5e and rc wait on it) and W4a2 #615 (the four registrations complete by W3's facts, their values formed;
+W4b waits on it) — and W4b #528 (the given's registrations, the controls, the reuse row), each with its review. #399 waits on R7 and #547 on rc, both on R4, R6 and W4b; #549 and #551 wait on R7, #403 and #553 through
 #399.
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
@@ -461,6 +459,10 @@ What landed that open work builds on, a line each; how it went and each review's
   R6b (#521's review; its follow-ups mailed to #588 and #542).
 - **The subtree acceptance** (#591, `d874559d`): `Factor_Resolution_Acceptance`, a node with no pending goal under it
   has a checked certificate, `finite_node_proof_pattern_accepted` its closed instance; #592's follow-up mailed to #593.
+- **W2b** (#567, `47861c0b`): `Factor_Least_Collections` extended — registrations (single or paired families),
+  `finite_collection_construction` (its values formed), the hand-in construction and `finite_handin_resolution` (a
+  hand-in never refutes), `finite_pattern_lifting` discharged for every program (`finite_query_search_lifting`); its
+  review's follow-ups: distinctness to W4a1, the call site's repetition to #542, next-edits 215–217.
 
 ## Open
 
@@ -579,7 +581,9 @@ searches for a theory before briefing a task that edits it.
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **Mailed, read by each task's first session** (by task): #542 and #547 (#588's Remains: the carried
+- **Mailed, read by each task's first session** (by task): #528 (W4a's division: the four registrations are #615's);
+  #542 (#567's review, follow-up 1: each ready variable's registered value computed several times per node and step,
+  to measure; next-edits 217); #542 and #547 (#588's Remains: the carried
   `given_declarations` and `given_union_registration` in their construction; to #542 the order at 79's clause among its
   measured calls); #593 (#592's review of #591: the subtree acceptance's premise includes the node's own position; a
   strict-descendant form gets a corollary excluding the material goal there, never a second proof); #577 and #579 (#572's review of T1, follow-ups 4 and 6: the

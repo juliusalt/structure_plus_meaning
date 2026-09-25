@@ -46,8 +46,8 @@ on, all accepted:
   payload by rule, about 90 s at the given's value after them against the gate's 53 s) → the refinements, side by side:
   RR1 #530 (landed `67241110`: the recording's one name, its laws, the ready judgment environment once, the
   formed-target recording; the collection `Development_Recording_Refinements`), RR2 #532 (landed `47b360f9`: the
-  checked certificate's premise readings once, the graph at a read program), RR3 #534 (the readers' formed bodies'
-  inner readings), then
+  checked certificate's premise readings once, the graph at a read program), RR3 #534 (landed `1a97f800`: the
+  readers' formed bodies' inner readings), then
   RR4 #536 (the policy package read once, the formed path, R's formation derived from the term's, #531's review,
   follow-up 1; after RR1, RR2 and RR3) → X #538 (the first generation executed held at the given's value against the
   gate; after RR3 and RR4) → the posing #397 (its brief corrected by #522), each build with its review.
@@ -118,7 +118,8 @@ shortened enough for its review.
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The evaluator's
 head first, R3b #515 and R4 #505 (the longest chain and the owner's direction, its checks first on the machine); the
-recording's refinement RR3 #534; the fix continuing #510, taking a slot the chains leave free; the evaluator's
+recording's last refinement RR4 #536 as soon as it can start; the fix continuing #510, taking a slot the chains leave
+free; the evaluator's
 W2 #524, R5 #518, W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; RR4 #536 and X #538; the request program #545
 and the request at the given #547; the posing and the route in its chains' order (#399, the samples #551, the
 observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
@@ -335,7 +336,9 @@ What landed that open work builds on, a line each; how it went and each review's
   (#531's review, follow-up 1). RR2 (#532, `47b360f9`): `Factor_Checked_Certificate_Premises`, the checked
   certificate's premise readings once, its body `finite_certificate_graph_body` exact where the program and the call
   term are established (`finite_certificate_graph_checked`, `finite_certificate_graph_exact`); imported by no theory,
-  so its code equation of `finite_native_certificate_graph` is in effect only where it is imported.
+  so its code equation of `finite_native_certificate_graph` is in effect only where it is imported. RR3 (#534,
+  `1a97f800`): `Factor_Formed_Inner_Readings`, the readers' formed bodies calling their inner readings through formed
+  bodies, no formation checked inside.
 - **The resolving evaluator** (#495's entry): R1 `Factor_Material_Resolution` (#499, `1f021cf3`: the material premise
   solved from a ground skeleton or source, site 1's control), R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the
   most general unifier of finite term patterns and renaming apart) and R3 `Factor_Program_Resolution` (#503,
@@ -470,10 +473,10 @@ searches for a theory before briefing a task that edits it.
   whose values are formed, q99; #504's three items; its brief, rewritten by plan-73, names them with R3b's theory,
   E1's control's place and the row); #545 (#516's review, follow-up 1); #526 and #528 (#514's follow-up 2); #518 and
   #526 (the combined
-  contract is rc's, q100); #510 (#483's review's aliases); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); #538 (#509's
-  review's follow-up 5; #535's follow-ups 1 and 5); #534 (#535's finding and its follow-ups 1 and 6, decided); #536
+  contract is rc's, q100); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); #538 (#509's
+  review's follow-up 5; #535's follow-ups 1 and 5, their renumbering by the re-review corrected by a later mail); #536
   (#535's follow-ups 4 and 5, so it waits on #534; its brief, rewritten by plan-73, carries #531's follow-ups 1, 2,
-  4 and 5 and #533's 1, and names #535's 4 and 5). The route's earlier mails to #397,
+  4 and 5 and #533's 1, and states #535's re-review's carried 3 and 4). The route's earlier mails to #397,
   #399, #403, #443 and #447 are carried into their corrected briefs or recorded superseded (`.build/tasks/522/result.md`,
   `.build/tasks/523/result.md`).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;

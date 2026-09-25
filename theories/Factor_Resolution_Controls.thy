@@ -1,6 +1,6 @@
 theory Factor_Resolution_Controls
   imports Factor_Material_Resolution Factor_Distinct_Payloads Factor_Substitution Factor_Resolution_Completeness
-    Factor_Executed_Controls
+    Factor_Executed_Controls Factor_Resolution_Commitments
 begin
 
 text \<open>
@@ -89,6 +89,111 @@ text \<open>
   resolver once for all of them.
 \<close>
 
+text \<open>
+  The commitment's control (R5, @{text Factor_Resolution_Commitments}): a selection (site 0) of an element from a
+  data list, its call pairing the list with the element and the remainder; a permutation (site 1), presentation-free
+  at its output, whose clause selects the head and permutes the remainder; and a check (site 2) that a list is a
+  permutation of another, through an intermediate permutation that the permutation site consumes at its left side.
+  The permutation is declared a producer, its left side a consumer of it, and the selection's socket in the
+  permutation's clause an inner commitment inside a focus. At a list of n distinct elements R4 keeps each of the n!
+  intermediate permutations, each a certificate; the committed resolution keeps one at every commitment: one
+  certificate at n = 4 and at n = 6, and at n = 6 it refutes a list that is not a permutation. The declarations'
+  discharge and the refutation's exactness are R5b's (task 565).
+\<close>
+
+definition commitment_selection_here :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_selection_here = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair
+      (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)),
+    finite_schema_premises={||}, finite_schema_materials={||}\<rparr>"
+
+definition commitment_selection_later :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_selection_later = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair
+      (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2))
+      (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 3))),
+    finite_schema_premises={|(0,(0,Finite_Pattern_Pair (Finite_Variable 2)
+      (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 3))))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition commitment_permutation_nil :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_permutation_nil = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Pattern_Payload [])
+      (Finite_Pattern_Payload []), finite_schema_premises={||}, finite_schema_materials={||}\<rparr>"
+
+definition commitment_permutation_cons :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_permutation_cons = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0)
+      (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 3)),
+    finite_schema_premises={|(0,(0,Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)))),
+      (1,(1,Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 3)))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition commitment_control_check :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_control_check = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),
+    finite_schema_premises={|(0,(1,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 2))),
+      (1,(1,Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 1)))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition commitment_control_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "commitment_control_program = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0),
+      (2,Finite_Variable 0)|},
+    finite_system_clauses={|((0,0),commitment_selection_here),((0,1),commitment_selection_later),
+      ((1,0),commitment_permutation_nil),((1,1),commitment_permutation_cons),((2,0),commitment_control_check)|}\<rparr>"
+
+definition commitment_control_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "commitment_control_declarations = \<lparr>declared_producers={|1|}, declared_consumers={|(1,1,False)|},
+    declared_sockets={|(1,commitment_permutation_cons,0,False)|}\<rparr>"
+
+abbreviation commitment_control_call :: "octets list \<Rightarrow> octets list \<Rightarrow> finite_factor_term" where
+  "commitment_control_call as bs \<equiv> Finite_Pair (control_payload_list as) (control_payload_list bs)"
+
+definition commitment_certificates :: "(nat,nat,nat,nat) finite_resolution_result \<Rightarrow> nat" where
+  "commitment_certificates r = (case r of Finite_Resolved C \<Rightarrow> fcard C | _ \<Rightarrow> 0)"
+
+text \<open>
+  The exchange control (review 519, finding 1): a socket declared without the kept head below the focus root. Sites 0
+  and 1 are the selection and the permutation above; site 3, p(X,rs) :- sel(X,(r,S')), perm(S',rs), its selection
+  socket declared without the kept head; site 4, G(X,[]) :- p(X,[a]), a producer with one answer at every input;
+  site 5, c(Pair x y), a fact of every formed pair, G's consumer at its right side; site 6,
+  root(X) :- G(X,W), c(Pair X W). Every declaration is discharged, and root([[1],[2]]) holds (r=[2], S'=[[1]]). A
+  commitment of the selection inside G's focus keeps its least answer ([1],[[2]]) and perm([[2]],[[1]]) fails: the
+  socket's parent is not the focus root, so the test does not commit it and the committed resolution resolves the
+  call, as R4 does.
+\<close>
+
+definition commitment_exchange_select :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_exchange_select = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 3),
+    finite_schema_premises={|(0,(0,Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)))),
+      (1,(1,Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 3)))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition commitment_exchange_functional :: "octets \<Rightarrow> (nat,nat,nat) finite_factor_schema" where
+  "commitment_exchange_functional a = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0)
+      (Finite_Pattern_Payload []),
+    finite_schema_premises={|(0,(3,Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Pattern_Payload a) (Finite_Pattern_Payload []))))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition commitment_exchange_consumer :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_exchange_consumer = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),
+    finite_schema_premises={||}, finite_schema_materials={||}\<rparr>"
+
+definition commitment_exchange_root :: "(nat,nat,nat) finite_factor_schema" where
+  "commitment_exchange_root = \<lparr>finite_schema_conclusion=Finite_Variable 0,
+    finite_schema_premises={|(0,(4,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1))),
+      (1,(5,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition commitment_exchange_program :: "octets \<Rightarrow> (nat,nat,nat,nat) finite_schema_system" where
+  "commitment_exchange_program a = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0),
+      (3,Finite_Variable 0),(4,Finite_Variable 0),(5,Finite_Variable 0),(6,Finite_Variable 0)|},
+    finite_system_clauses={|((0,0),commitment_selection_here),((0,1),commitment_selection_later),
+      ((1,0),commitment_permutation_nil),((1,1),commitment_permutation_cons),((3,0),commitment_exchange_select),
+      ((4,0),commitment_exchange_functional a),((5,0),commitment_exchange_consumer),((6,0),commitment_exchange_root)|}\<rparr>"
+
+definition commitment_exchange_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "commitment_exchange_declarations = \<lparr>declared_producers={|4|}, declared_consumers={|(4,5,True)|},
+    declared_sockets={|(3,commitment_exchange_select,0,False)|}\<rparr>"
+
 lemma site_one_material_controls:
   "finite_material_resolution (site_one_material [[1],[2]]) = Material_Solutions
       {|{|(2,Finite_Target (Finite_Whole (finite_enumerated_artifact [[1],[2]] [] [] []))),
@@ -108,7 +213,26 @@ lemma site_one_material_controls:
     finite_resolution_verdict (finite_program_resolution no_witness_construction implemented_base_control (None,[3])
       (Finite_Payload []) 12) = Some True \<and>
     control_witness_bound (finite_program_resolution no_witness_construction implemented_base_control (None,[3])
-      (Finite_Payload []) 12)"
+      (Finite_Payload []) 12) \<and>
+    commitment_certificates (finite_program_resolution no_witness_construction commitment_control_program 2
+      (commitment_control_call [[1],[2],[3],[4]] [[4],[3],[2],[1]]) 60) = 24 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_control_declarations) commitment_control_program 2
+      (commitment_control_call [[1],[2],[3],[4]] [[4],[3],[2],[1]]) 60) = 1 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_control_declarations) commitment_control_program 2
+      (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[1]]) 60) = 1 \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_control_declarations) commitment_control_program 2
+      (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[1]]) 60) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_control_declarations) commitment_control_program 2
+      (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[7]]) 60) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction (commitment_exchange_program [1]) 6
+      (control_payload_list [[1],[2]]) 30) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_exchange_declarations) (commitment_exchange_program [1]) 6
+      (control_payload_list [[1],[2]]) 30) = Some True"
   by eval
 
 text \<open>
@@ -131,6 +255,26 @@ proof -
     "(1,decode_finite_term (control_payload_list [])) \<in> positive_meaning distinct_payloads_system"
     using site_one_material_controls v[of "control_payload_list [[1],[2]]" True]
       v[of "control_payload_list [[1],[1]]" False] v[of "control_payload_list []" True] by blast+
+qed
+
+text \<open>
+  The committed resolution's answer at a true call is sound (@{thm [source] finite_committed_resolution_sound}): the
+  list [[6],[5],[4],[3],[2],[1]] is a permutation of [[1],[2],[3],[4],[5],[6]] in the control program's meaning.
+\<close>
+
+corollary commitment_control_resolved:
+  "(2,decode_finite_term (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[1]])) \<in>
+    positive_meaning (decode_finite_system commitment_control_program)"
+proof -
+  have "finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_control_declarations) commitment_control_program 2
+      (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[1]]) 60) = Some True"
+    using site_one_material_controls by (elim conjE) assumption
+  then obtain C where "finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_control_declarations) commitment_control_program 2
+      (commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[1]]) 60 = Finite_Resolved C"
+    by (auto simp: finite_resolution_verdict_true)
+  then show ?thesis by (rule finite_committed_resolution_sound(2))
 qed
 
 corollary implemented_base_control_resolved:

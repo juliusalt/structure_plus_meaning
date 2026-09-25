@@ -1327,6 +1327,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Ordered_Term_Comparison
     Right_Ordered_Terms
     Finite_Presented_Collections
+    Factor_Least_Collections
     Finite_Presented_Coordinates
     Finite_Presented_Structures
     Finite_Presented_Investigations

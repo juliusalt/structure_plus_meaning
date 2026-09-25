@@ -25,7 +25,7 @@ proof -
   have ef: "environment_formed E" and formed_source: "term_formed e"
     using environment_value_presents_formed[OF source] by blast+
   have positions: "(pu,pr)\<in>environment_positions E" "d\<in>environment_positions E"
-    by (rule native_package_root_position[OF package], rule native_package_entry_position[OF package entry])
+    by (rule native_package_site_position[OF package], rule native_package_entry_position[OF package entry])
   have addresses: "octets_formed pr" "octets_formed (snd d)"
     using environment_position_address[OF ef positions(1)] environment_position_address[OF ef positions(2)] by simp_all
   let ?p="package_subject_pattern (exact_term_pattern e) (exact_term_pattern (use_data_term pu))

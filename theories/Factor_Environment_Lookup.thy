@@ -1,5 +1,5 @@
 theory Factor_Environment_Lookup
-  imports Factor_Citation_Admission Factor_Use_Renaming
+  imports Factor_Citation_Admission Factor_Judgment_Presentations Factor_Use_Actions
 begin
 
 section \<open>Selection in a complete represented environment\<close>

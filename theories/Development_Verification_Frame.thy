@@ -128,15 +128,15 @@ val use_type = \<^typ>\<open>local_address option\<close>;
 (*The use actions the use instance states, each with its notion's subject type and the presenter
   its notion's classes are built from.*)
 val use_actions =
-  [(@{thm Factor_Use_Renaming.environment_renaming_action},
+  [(@{thm Factor_Use_Actions.environment_renaming_action},
      \<^typ>\<open>local_address option artifact_environment\<close>, \<^const_name>\<open>environment_value_presents\<close>),
    (@{thm Factor_Use_Renaming.site_context_renaming_action}, \<^typ>\<open>site_context\<close>,
      \<^const_name>\<open>site_value_presents\<close>),
    (@{thm Factor_Use_Renaming.program_entry_renaming_action}, \<^typ>\<open>program_entry_context\<close>,
      \<^const_name>\<open>program_entry_value_presents\<close>),
-   (@{thm Factor_Use_Renaming.site_renaming_action}, \<^typ>\<open>local_address option \<times> local_address\<close>,
+   (@{thm Factor_Use_Actions.site_renaming_action}, \<^typ>\<open>local_address option \<times> local_address\<close>,
      \<^const_name>\<open>site_data_term\<close>),
-   (@{thm Factor_Use_Renaming.use_renaming_action}, use_type, \<^const_name>\<open>use_data_term\<close>)];
+   (@{thm Factor_Use_Actions.use_renaming_action}, use_type, \<^const_name>\<open>use_data_term\<close>)];
 
 (*The notion's trivial action, stated once in Presentation_Equivariance.*)
 val trivial_action = @{thm Presentation_Equivariance.permutation_renaming_action};

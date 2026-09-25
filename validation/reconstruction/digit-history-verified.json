@@ -59,7 +59,7 @@
   }
  },
  "execution_reuse": {
-  "base_receipt_sha256": "9d75aa5b5c10170c164f83425817407f031703ce183418bb92cc5a0580eef75b",
+  "base_receipt_sha256": "6fa98436410323161a3a8c90ccee4dd626102f9e8ef529179caf2b339adc97a6",
   "boundary": "The current accepted proof context exported an identical module and subject contracts; execution tools, fixtures, expected reports and native runtime are unchanged. The accepted execution determines these complete report boundaries without being repeated.",
   "export_module_sha256": "26b8e5a165aa40d12c77ec390bd18bcc3800143e71aeff74c2a8576150013cf1"
  },
@@ -76,7 +76,7 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "70d5073ef8c6010eac52f0443c28ce22935c2eb5a87c1552cbf96374937122ef",
+ "source_manifest_sha256": "55a7081674da5dfe0b27f28da099df954ce365422c3d250deabf3f7c13b9ba69",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [

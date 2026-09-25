@@ -41,39 +41,45 @@ on, all accepted:
 **The first problem's route** (briefed by #380, #382, #409, #434, #451, #462 and #488; what landed is under Delivered):
 
 - The recording (#482's (4)): B1 (#490, landed `5304f725`, the payload-bounded scope and the certified causes over a
-  scope reading) → B2 #492 (landed `bad0c366`: the bounded recording, `development_indexed_generation` through it, the recorded instances
-  restated) → I3 #489 (the bounded recording attributed held, over #494's refinements, landed) → R and X,
-  placed from I3's result (X executes the native state's first generation held, #395's remainder) → the posing #397,
-  which then waits on X instead of #489.
+  scope reading) → B2 #492 (landed `bad0c366`: the bounded recording, `development_indexed_generation` through it, the
+  recorded instances restated) → I3 #489 (done, `.build/tasks/489/result.md`: 7.0–7.5 s at 32K, every walk of the
+  payload by rule, about 90 s at the given's value after them against the gate's 53 s) → the refinements RR (I3's
+  R1–R4 and the two shares, the policy package read once and the certificate's premise readings computed once) and X
+  (the native state's first generation executed held, #395's remainder), briefed by #522 with #397's corrected brief →
+  the posing #397, waiting on #522 as a stand-in for X.
 - Then the answer's judgment and admission #399, its transport #401, the verification's native half #403 and its
   harness #407 (after the frame and its fixes, landed); the first request #443 and its delivery #445; the criticism run
   at an admitted candidate #447 (after the criticism's notions, landed) and its route #449; each build with its review.
   #399 and #443 wait on the native evaluator (below), #447 through #399.
 - Every route generation (#397, #399, #403, #443's issue, #447) is recorded through B2's recording. Each was mailed
-  #482's (3), #447 also its correction of (5); their briefs are corrected with B2's names when R and X are placed (Now).
+  #482's (3), #447 also its correction of (5); #397's brief is corrected by #522, and #399's, #403's, #443's and #447's
+  by #523 (after #517's proposal) from tasks 495's and 496's entries, B2's names and #482's (3).
 
 **The native evaluator** (the owner's answer to Q27, 2026-09-25 09:48): #495's entry, "The native evaluator constructs
 the missing witnesses by resolution: one evaluator for every program, exact where it answers, and the counterparts
 retire from the route": resolution with unification over the program's own clauses, material premises solved,
 residual variables the empty payload, certificates checked by the existing checker, unresolved kept apart from
-refuted. Its builds: R1 #499 and R2 #501 side by side (material resolution, unification), R3 #503 (resolution, every
-alternative kept, its certificates checked by the finite proof checker, q98), R3b #515 (every success's certificate
-accepted), R4 #505 (completeness, `finite_program_resolution_exact` and
-`native_call_resolution_exact`), each with its review; R5–R7 (committed choice, the given's declarations, the given at
-the guard's calls, measured) briefed by #507 after R3; R8a #508 (the counterparts retired, their presentation readers moved;
-after #483, #461 and #492, which edit its theories) and R8b #510 (#487's standing items). The least witnesses (77's, 392's and 525's bounds,
-561's private environment): the owner's answer to Q28 (10:44) — checkers do not produce — and #496's entry, "A checker
-does not produce: the least witnesses are collected from the given's own readers beside the search, and the given's
-readers check them as installed": a witness construction beside R3's search (W1, taken into #503's brief), the least
-collection of the given's own readers' answers (W2), each registration's completeness (W3, briefed by #512) and the
-given's four registrations (W4); an admission is the given's check, a refusal rests on a complete registration. W2 and
-W4 are briefed with R5–R7 by #507 after R3. #399 and #443 wait on R4 and on #507 as a stand-in for R6 and W4; #403 and
-#447 wait through #399.
+refuted. Its builds: R1 #499 and R2 #501 (material resolution, unification) and R3 #503 (resolution, every alternative
+kept, its certificates checked by the finite proof checker, q98, W1's construction a parameter), landed; R3b #515 (every
+success's certificate accepted, under a formed program and call and a construction whose values are formed, q99), R4
+#505 (completeness, `finite_program_resolution_exact` and `native_call_resolution_exact`), R5 #518 (committed choice
+under a declared presentation class, after R4) and R6 #520 (the given's declarations at 79, 32, 6, 10, 45 and 48 from
+their notions' contracts, after R5, before #399 and #443), each with its review; R7 (the given at the guard's calls,
+measured) briefed by #523; R8a #508 (the counterparts retired, their presentation readers moved; after #483) and R8b
+#510 (#487's standing items). The least witnesses (77's, 392's and 525's bounds, 561's private environment): the owner's
+answer to Q28 (10:44) — checkers do not produce — and #496's entry, "A checker does not produce: the least witnesses
+are collected from the given's own readers beside the search, and the given's readers check them as installed": a
+witness construction beside R3's search (W1, in R3), the least collection of the given's own readers' answers (W2),
+each registration's completeness (W3 #513) and the given's four registrations (W4); an admission is the given's check,
+a refusal rests on a complete registration: W2 #524 (the least collection, after R4), W4a #526 (a registration's
+completeness and the resolver with complete registrations exact, the four registrations each returning formed values,
+relocation; after W2, W3 and R4) and W4b #528 (the given's registrations, the controls, the reuse row), each with its
+review. #399 and #443 wait on R4, R6 and W4b; #403 and #447 wait through #399.
 
-**Beside the route**: #486 landed (`7d48c1ae`), its review's follow-ups a fix of their own continuing it; #486 (continuing #457: the given's readers' payload lineage split at the guard's two
-lineages, the payload lemmas at the payload notion, #457's review 1–4, item 144's payload part); #483 (re-planned by plan-70 after its landing check failed twice at the C4a restatement, now optional: the
-generic facts at their homes, the low moves in one rebuild; its moves stand under #495's entry, its C4a restatement
-moot).
+**Beside the route**: #516 (continuing #486, landed `7d48c1ae`: the payload notion's definitions beside its general
+steps, #486's review 1–4 with #457's 5); #483 (re-planned by plan-70 after its landing check failed twice at the C4a
+restatement, now optional: the generic facts at their homes, the low moves in one rebuild; its moves stand under #495's
+entry).
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
@@ -91,14 +97,17 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The evaluator's chain #503 → #515 → #505 → W2 → W4 → #399 → #401 → #407 → #408 is 9 deep (R1 and R2 landed); R and X spliced
-before #397 and the evaluator's builds before #399 deepen it: nothing is added after #408, and the approval build
-(Open 142) ends a chain after #407 only while that chain stays within 10.
+**Shape.** No build waits on a review task. The evaluator's chain #515 → #505 → W2 #524 → W4a #526 → W4b #528 → #399 →
+#401 → #407 → #408 is 9 deep (R1–R3 landed), 10 with R7 spliced before #399, at the limit; #522 → RR → X → #397 →
+#399 is no deeper: nothing is added after #408, and the approval build (Open 142) may end a chain after #407 only
+while that chain stays within 10.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
-exists, Q2): the owner's directions first — the evaluator's R1–R4 (#499–#506, W1 in #503), the W3 brief #512
-and the R5–R7, W2 and W4 brief #507, B2 #492, then I3, the posing and the rest of the route in its chains' order, the first request's and the criticism's
-builds after them; then #486, #483, and R8a #508 and R8b #510 after them; each review after its build.
+exists, Q2): the R and X brief #522 at the head, so that the recording's refinements and X run beside the evaluator,
+and #523 (R7 and the route's corrections); then the owner's directions — the evaluator's R3b #515, R4 #505, R5 #518,
+R6 #520, W3 #513, W2 #524, W4a #526 and W4b #528 —,
+the posing and the rest of the route in its chains' order, the first request's and the criticism's builds after them;
+then R8a #508 and R8b #510 (after #483), #516 and #483; each review after its build.
 
 ## Decisions
 
@@ -257,7 +266,8 @@ What landed that open work builds on, a line each; how it went and each review's
   `Development_Given_Installation` (#414, #452, #455 `24f36cde`: rooted at 47 entries — the guard's twelve
   `given_guard_entries` and 35 granted — installed at fresh uses, 28,729 addresses; a use instantiates
   `given_rooted_meaning`, `given_installed_entry_meaning` and `given_entry_meaning_at`), its payload statement by
-  composition (#457, `Factor_System_Payloads`, `Factor_Reader_Payloads`), the compositional derivation
+  composition (#457, `Factor_System_Payloads`, `Factor_Reader_Payloads`; split at the guard's two lineages, #486
+  `7d48c1ae`), the compositional derivation
   `Native_Control_Quotation_Code.note_composed` (#431; its laws in `Factor_Finite_System_Presentations`, the parts it reduces whole named, #461); `Development_Native_State` (#395 `4d9cf735`, #484 `bd36f20d`:
   the given as one site value `development_given_value`, the first generation's statements, its execution a remainder;
   `development_base_generation` the owner records' and the state's base).
@@ -296,10 +306,14 @@ What landed that open work builds on, a line each; how it went and each review's
   `Development_Bounded_Recording`, the bounded recording with its cause one target, `development_indexed_generation`
   and the owner records' and native state's recorded instances through it, the controls in
   `Development_Bounded_Recording_Execution` (DECISIONS.md "The bounded recording records the route's generations; its
-  cause is one target").
+  cause is one target"); I3's attribution of it (#489, `.build/tasks/489/result.md`: every walk of the payload with its
+  count, seconds and rule, the two repetitions, the estimate at the given's value).
 - **The resolving evaluator** (#495's entry): R1 `Factor_Material_Resolution` (#499, `1f021cf3`: the material premise
-  solved from a ground skeleton or source, site 1's control) and R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the most general
-  unifier of finite term patterns and renaming apart; their reviews' follow-ups mailed to R3, R4 and #507).
+  solved from a ground skeleton or source, site 1's control), R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the
+  most general unifier of finite term patterns and renaming apart) and R3 `Factor_Program_Resolution` (#503,
+  `d93ad731`: resolution, every alternative of a goal kept, a resolved call carrying the certificates the finite proof
+  checker accepts, W1's witness construction a parameter); their reviews' follow-ups mailed to R3b, R4, #507 and #517,
+  R7's carried by its brief (Now).
 - **Briefs whose findings stand**: #434 (`.build/tasks/434/result.md`: the approval record's place, part (g)'s leaf
   argument not demanded, parts (h) and (e) the owner's, Q25), #451 (`.build/tasks/451/result.md`: the readings of
   "generation" and "adoption" generated, the owner's words naming readers).
@@ -410,19 +424,12 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **What the next events ask** (plan-69): when #489's result names the refinements, place R and X — spliced before
-  #397, X executing the native state's first generation held (#395's remainder) — and set #397 to wait on X; then
-  correct #397's, #399's, #403's, #443's and #447's briefs with #482's (3) and B2's (#492) names: each was mailed (3),
-  #447 also its correction of (5), and B2 restates `development_indexed_generation` and the recorded instances in place,
-  so nothing in them misleads meanwhile. R carries #493's review follow-ups 2, 4, 6 and 8
-  (`.build/tasks/493/review.md`: the fill's laws to their notion, one of the two names of the indexed generation
-  retired, R's formation checked once, the least judgment environment's prefix once) and 1's entry correction; X decides
-  7 (the execution theory's 32K control); #489 was mailed 1, 6 and 7.
-- **The evaluator's next steps** (#495 landed): place #512's proposal (W3) and #507's (R5–R7, W2 and W4, spliced before #399 and #443 in place of #507);
-  then, before they start,
-  correct #399's, #403's, #443's and
-  #447's briefs from #495's and #496's entries (#495's and #496's results name each correction; each was mailed #496's entry and, earlier, that the
-  counterpart route is withdrawn). Next-edit items 156 and 159 retire with R8a; 154 is mailed to R8b, 158 stays at a measured need; #508 was mailed why it waits on #461 and #492, #505 W1's place in R3's search. `v2.py after A B` makes A wait for B's landing: only for a task that is to wait.
+- **What the next events ask**: place #522's proposal (the refinements RR, X after them, #397's corrected brief, #397
+  re-pointed from #522 to X) and #523's (R7 and the route's four corrected briefs), each carrying what its brief names
+  (#493's follow-ups 1, 2, 4, 6 and 8 with RR, 7 with X; the mails by task below).
+- **The evaluator's next steps**: #523's proposal places R7 (the given at the guard's calls measured, spliced before
+  #399, carrying #500's follow-up on the ground-source branch's cost and #502's follow-up 5) and the four route briefs'
+  corrections. Next-edit items 156 and 159 retire with R8a; 154 is mailed to R8b, 158 stays at a measured need.
 - **Mailed, read by each task's first session** (by task): #397, #399, #403, #443 and #447 (#482's (3); #447 its
   correction of (5)); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's
   payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers cited); #407
@@ -431,15 +438,13 @@ searches for a theory before briefing a task that edits it.
   follow-up 1; #480's first review, #473's follow-up 2, #442's follow-up 1); #399 (#465's follow-up 2, the evaluation
   over the base timed at the guard's call; #469's follow-up 1 if #470 did not; #394's follow-ups 1–3: the asked
   environment's read-back held apart from the installation, the given computed once if evaluated repeatedly, the binary
-  entry's bridge; #471's follow-ups 3 and 4); #489 (plan-69: B1 #490, B2 #492, #494 before it; #494's review's
-  follow-ups 2–4, the replay environment's known causes at the 32K cut); #483 (plan-69: the answer to Q27, its generic
-  moves standing, `finite_uncovered_clauses` beside `finite_program_head_covered`); #492 (#491's review, follow-ups
-  1–3: the entry's formation sentence marked, the row's unproved claim, the instances it consumes); #447 also #477's
+  entry's bridge; #471's follow-ups 3 and 4); #483 (plan-69: the answer to Q27, its generic
+  moves standing, `finite_uncovered_clauses` beside `finite_program_head_covered`); #447 also #477's
   follow-up 3 (the counterpart is entry 590; `finite_stated_report_meaning` carried to the program its samples evaluate
   by the join's agreement lemmas), which its brief's correction takes; #399, #443 and #447 (plan-69: the counterpart
   route withdrawn by the answer to Q27, their briefs corrected from #495's entry, the earlier counterpart mails
-  superseded); #494 (plan-69: 122's counterpart to be timed, then withdrawn with the counterpart route; its own work
-  stands).
+  superseded); #505 and #517 (plan-71: R3b's invariant under a formed program and call and a construction whose values
+  are formed, q99; #505 also #504's three items).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;
   earlier gaps in `PLANNING_LOG.md`, 2026-09-24): `v2.py read check:167` raises a TypeError in `check_text`;
   `measuring --shared` wrote no `measurements.log`; bases swept before a brief's task ran (#324); the finalizer's push of

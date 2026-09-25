@@ -25,7 +25,7 @@ class ProbeSummaryFile(unittest.TestCase):
                 mock.patch.object(probe_theories, 'changed', return_value={'New': None}), \
                 mock.patch.object(probe_theories, 'prepare',
                                   return_value=(work / 'thy', {'New': []}, {'New': []}, {})), \
-                mock.patch.object(probe_theories, 'load_estimate', return_value=(9.0, 100)), \
+                mock.patch.object(probe_theories, 'load_estimate', return_value=(9.0, 100, (8.9, 0, 0.0))), \
                 mock.patch.object(probe_theories, 'ordered', return_value=['New']), \
                 mock.patch.object(probe_theories, 'run_logged', return_value=run):
             return probe_theories.probe(Path('/base'), work, [], [], {'Old': 'Pre'}, prelude, 0, 60)
@@ -157,11 +157,13 @@ class ChangedBaseTheories(unittest.TestCase):
 
     def test_refused_before_load(self):
         with tempfile.TemporaryDirectory() as directory:
-            with mock.patch.object(probe_theories, 'STARTUP_SECONDS', 100):
+            with mock.patch.object(probe_theories, 'START_SECONDS', 100):
                 summary, runner = self.run_probe(Path(directory), {'A': 'a', 'B': 'b', 'N': None})
             runner.assert_not_called()
             self.assertFalse(summary['loaded'])
             self.assertEqual(summary['certified'], [])
+            self.assertEqual(summary['estimate_start']['seconds'], 100.0)
+            self.assertIn('the start on the base modeled at 100.0 s', summary['refused'])
             self.assertIn('A -> C -> B -> N', summary['refused'])
             self.assertIn('intermediates: C', summary['refused'])
             self.assertEqual(summary['errors'], [summary['refused']])
@@ -263,6 +265,41 @@ class BaseSources(unittest.TestCase):
             sources.mkdir()
             (sources / 'A.thy').write_text('theory A imports Main\nbegin\nend\n')
             self.assertEqual(probe_theories.workspace_theories((), sources), {'A': sources / 'A.thy'})
+
+
+class ModeledStart(unittest.TestCase):
+    """The start is task 623's model over a fake chain: S the base's directories, G the heap files of the chain its
+    ROOT files and the distribution's name, down to Pure, and nothing else of the store."""
+
+    def test_fake_chain(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            home, heaps = root / 'isabelle', root / 'heaps'
+            for path, text in [('a/ROOT', 'session A = B +\n  options [document = false]\n  theories X\n'),
+                               ('b/ROOT', 'session "B" (timing) in "." = "HOL" +\n  theories Y\n'),
+                               ('isabelle/ROOTS', 'src/Pure\nsrc/HOL\n'),
+                               ('isabelle/src/Pure/ROOT', 'session Pure =\n  description "base"\n'),
+                               ('isabelle/src/HOL/ROOT', 'session HOL (main) = Pure +\n'
+                                                         'session "HOL-Library" = HOL +\n')]:
+                (root / path).parent.mkdir(parents=True, exist_ok=True)
+                (root / path).write_text(text)
+            heaps.mkdir()
+            for name, size in [('A', 2 * 10 ** 9), ('B', 10 ** 9), ('HOL', 5 * 10 ** 8), ('Pure', 5 * 10 ** 8),
+                               ('Other', 7 * 10 ** 9)]:
+                with (heaps / name).open('wb') as heap:
+                    heap.truncate(size)
+            (root / 'New.thy').write_bytes(b'x' * 72000)
+            context = {'session': 'A', 'directories': [str(root / 'a'), str(root / 'b')]}
+            with mock.patch.object(probe_theories, 'ISABELLE_HOME', home), \
+                    mock.patch.object(probe_theories, 'HEAPS', heaps):
+                self.assertEqual(probe_theories.session_chain('A', context['directories']),
+                                 ['A', 'B', 'HOL', 'Pure'])
+                seconds, sessions, gigabytes = probe_theories.modeled_start(context)
+                self.assertEqual((sessions, gigabytes), (2, 4.0))
+                self.assertEqual(seconds, round(1.6 + 0.085 * 2 + 1.5 * 4.0, 1))
+                self.assertEqual(probe_theories.load_estimate([root / 'New.thy'], context),
+                                 (round(seconds + 72000 / probe_theories.BYTES_PER_SECOND, 1), 72000,
+                                  (seconds, 2, 4.0)))
 
 
 class BaseContext(unittest.TestCase):

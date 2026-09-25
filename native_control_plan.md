@@ -209,6 +209,17 @@ and at 18:53:
 > problem tackled the native loop and then the problem I gave for Q2 which would then
 > excercise the quality of the produced solution.
 
+On how the given's readers are evaluated before genesis, the owner answered owner question Q27 of the ledger on
+2026-09-25. Q27, asked that day by task 460 and put by plan-66, set out that the native evaluator answers a call only
+where every clause's head binds every variable its premises use, that the given's Factor readers hold premise-only
+witnesses, and the provisional choice — executable counterparts proved exact in Isabelle to their native definitions,
+a native evaluator that constructs the witnesses left open — and asked: "is this the implementation you intend before
+genesis, or should the witness-constructing evaluator come first?" The answer (2026-09-25 09:48, to the monitoring
+session):
+
+> native evaluator that constructs the missing witnesses first - I thought this would have been the obvious choice
+> given what I said the role of isabelle is no?
+
 ## The development process
 
 There is one process, and every problem goes through it:
@@ -1207,7 +1218,26 @@ The six tasks of the first direction, as they stand:
 6. **Transport.** Not begun: a packet is the presentation of a question with its native context, so transport needs a
    reader contract, the reading the inverse of the presentation.
 
+The owner's answer to owner question Q27 (2026-09-25 09:48), quoted under [Owner directions](#owner-directions), puts
+the native evaluator that constructs the missing witnesses before the first answer's route. This paragraph is the
+plan's reading, generated and without owner authority. The given's Factor readers — and through them the guard, the
+payload audit, the request at a package and the criticism's samples — hold variables their clauses' heads do not bind,
+so the plain evaluator answers none of the route's calls; task 460 had them decided by executable counterparts proved
+exact to their native definitions, and the owner's words of 2026-09-19 on Isabelle's role rule that out: a counterpart
+deciding an entry makes a judgment rest on a HOL function, where a native definition's clauses carry its meaning and
+Isabelle verifies that the native definitions and reasoning are consistent. DECISIONS.md "The native evaluator
+constructs the missing witnesses by resolution: one evaluator for every program, exact where it answers, and the
+counterparts retire from the route" decides the evaluator: resolution with unification over the program's own clauses,
+material premises solved, a residual variable the empty payload, exact where it answers — a certificate the existing
+checker accepts for every resolved call, a refutation only where no derivation exists — and unresolved, never refuted,
+where no construction applies. No judgment of the route is decided by a counterpart, meanwhile or after, and the
+counterparts retire. One kind, the least witness of a monotone constraint (a package's closed bound, a common
+environment), has no complete construction; its calls stay unresolved until the planner decides its course, and with
+them the guard's package sockets and the first request.
+
 Each tagged presentation still in use stays exact and replaceable and is recorded as a use of octets as structure
 until it is retired. The order and the bound on the HOL loop are the owner's (Q7, 2026-09-24), and so are the first
-problem (2026-09-24 18:53), the second and the standing of the authority question (Q2, 2026-09-24); the rest of this section, its readings of when
-native definitions exist and of the answer to Q2 included, was written outside the loop and is a residual.
+problem (2026-09-24 18:53), the second and the standing of the authority question (Q2, 2026-09-24), and the native
+evaluator that constructs the missing witnesses before the route (Q27, 2026-09-25); the rest of this section, its
+readings of when native definitions exist and of the answers to Q2 and Q27 included, was written outside the loop and is
+a residual.

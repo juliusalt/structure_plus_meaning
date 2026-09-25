@@ -15175,7 +15175,12 @@ the first problem's guard calls environment inclusion and package admission, and
 an answer may reuse (task 378). Their installation in the given, each carried by its compilation's contract, is a build
 (below). Where a reader runs through an executable counterpart proved exact to its native definition
 (`finite_native_source`, the finite package readings), that is an implementation of the notion and supplies no
-distinction; the native form is what the contract names.
+distinction; the native form is what the contract names. [Corrected by "The native evaluator constructs the missing
+witnesses by resolution: one evaluator for every program, exact where it answers, and the counterparts retire from the
+route" below (task 495), after the owner's answer to Q27 (2026-09-25 09:48): this holds of the machinery's reading of a
+program it evaluates (`finite_native_source`); no native reader's entry in a judgment of the native loop is decided by
+an executable counterpart — the native evaluator resolves it, constructing its witnesses. Q24's fourth choice is
+superseded so.]
 
 **In the bootstrap loop**, the states are the checked Isabelle contexts. Their content — entities, kinds, statements,
 positions — only the exporter's HOL datatype presents (`isabelle_rooted_context`), and Isabelle's semantics is opaque to
@@ -15905,6 +15910,18 @@ Recorded 2026-09-24 (task 428's decision; a design, no theory changes).
 
 ## The native evaluator evaluates above an implemented base: the given's readers enter through counterparts exact to their native definitions
 
+[Corrected by "The native evaluator constructs the missing witnesses by resolution: one evaluator for every program,
+exact where it answers, and the counterparts retire from the route" below (task 495), after the owner's answer to Q27
+(2026-09-25 09:48): "native evaluator that constructs the missing witnesses first - I thought this would have been the
+obvious choice given what I said the role of isabelle is no?". The course this entry deferred comes first, and no
+judgment of the route is decided by a counterpart: decisions 2 to 5 are withdrawn (the counterparts at the given's
+reader entries, the guard's judgment over a base of counterparts, the audit's cost through its counterpart, the samples
+over a base of counterparts), and "The courses weighed" is corrected on its first course: witness construction is one
+operation on any program — resolution with unification over the program's own clauses — not a constructor per clause,
+and forward evaluation is not a kind of its own. Decision 1 stays, its base's decisions native (the resolver's). The
+head-coverage table is recomputed there over the programs as they stand; one kind, the least witness of a monotone
+constraint, has no complete construction.]
+
 Task 460, from #441's question q94 (2026-09-25 04:33). The native evaluator
 (`Factor_Finite_Program_Evaluation.finite_program_evaluation`) answers a demand only where every clause of a demanded
 definition binds in its head every variable its premises use (`finite_program_head_covered`), and it refuses the
@@ -16487,7 +16504,10 @@ read by the Factor readers, and the bounded scope is equivariant under use permu
   first problem's answer.
 - **A digest of the scope as the cause**: a digest decides no equality (#292's reason, as task 356's entry states it).
 - **The guard as the admitted answer's policy**: its base's calls are decided by counterparts (task 460's entry),
-  which the native evaluator does not derive, so no closed native replay certifies the guard's call.
+  which the native evaluator does not derive, so no closed native replay certifies the guard's call. [Corrected by "The
+  native evaluator constructs the missing witnesses by resolution: …" below (task 495): the counterparts retire from the
+  route, and the resolving evaluator returns a certificate the existing checker accepts for every call it resolves, so
+  this reason no longer stands; whether the guard becomes the policy is not reopened.]
 
 ### What the builds must respect
 
@@ -16514,3 +16534,263 @@ requirements that grow faster than the payload are I3's to attribute. No measure
 made outside the loop and is a residual.
 
 Recorded 2026-09-25 (task 482; a design, no theory changes).
+
+## The native evaluator constructs the missing witnesses by resolution: one evaluator for every program, exact where it answers, and the counterparts retire from the route
+
+Task 495, a design, from the owner's answer to Q27 (2026-09-25 09:48, the owner ledger): "native evaluator that
+constructs the missing witnesses first - I thought this would have been the obvious choice given what I said the role
+of isabelle is no?". Q27 had put task 460's provisional choice — the given's Factor readers entering the first
+problem's judgment and the criticism through executable counterparts proved exact to their native definitions, a
+witness-constructing evaluator deferred as Open 39 — and asked whether that evaluator should come first. It comes
+first. The direction of 2026-09-19 ("Native definitions are normative; Isabelle verifies them") is the reason the owner
+points to: a native definition's clauses carry its meaning, and Isabelle verifies that the native definitions and
+reasoning are consistent; a counterpart that decides an entry makes the judgment rest on a HOL function's semantics,
+and a missing internal operation remains an unmet requirement, never met by an interim substitute (the development
+workflow). This entry decides the evaluator, what it returns where it cannot construct, and what of the counterpart
+line stays. It changes no theory.
+
+| Earlier proposal or state | Correction |
+|---|---|
+| Task 460's entry: the given's reader entries are decided by executable counterparts (C1–C4) beneath an evaluation over an implemented base (E1); the guard's judgment, the audit's cost and the criticism's samples go through them; a witness-constructing evaluator deferred, its constructors "clause by clause". | The native evaluator constructs the witnesses — resolution with unification over the program's own clauses (below) — and comes before the route; no judgment of the route is decided by a counterpart; the counterparts retire (R8). Witness construction is one operation on any program, not a constructor per clause; one kind, the least witness of a monotone constraint, has no complete construction and is the planner's. |
+| Task 376's entry, its fourth choice (Q24): a reader running through an executable counterpart exact to its native definition is "an implementation of the notion". | It stays so for the machinery's reading of a program it evaluates (`finite_native_source`); no native reader's entry in a judgment is decided by one. |
+| Open 39: "forward evaluation of a functional native relation" as the engine notion, witness constructors for four kinds beside it. | Forward evaluation is resolution of a goal whose inputs are bound: the reader-output kind below, not a notion of its own. |
+
+### The premise-only variables, recomputed
+
+Computed as task 460 computed them, not read clause by clause: a scratch theory on the accepted base
+(`.build/tasks/495/scratch/Scratch_Head_Coverage_495.thy`, not retained; its output `.build/tasks/495/head_table.txt`,
+the closures derived by `.build/tasks/495/analyze.py`) evaluated `finite_schema_head_missing` at every clause of
+`Development_First_Problem_Asked.finite_asked_program` — the guard's sites 520–526 joined with the given's rooted
+readers (`Development_Given_Program.finite_rooted_given_readers`, with the readers #453 joined): 162 definitions, 84 with
+an uncovered clause, 102 uncovered clauses — and its dependency edges.
+
+- *The given's 47 entries* (`given_reader_entries`: the guard's twelve, 72, 77, 79, 80, 81, 82, 83, 113, 122, 392, 393
+  and 505, and the 35 a leaf's request grants, 16, 84, 85, 99–102, 106–112, 114, 115, 139–155, 269 and 270) reach 155
+  sites, 83 of them uncovered. Ten reached sites are evaluable by the plain evaluator — 0, 8, 17, 18, 19, 51, 53, 59, 66
+  and 99 — and one entry, 99. Task 460's 46 uncovered sites are all still uncovered; 38 are new: 15, 43, 85, 87–98,
+  101–107, 110, 111, 114, 115, 118, 119, 122, 133, 145–149, 151, 152 and 155. Site 1 alone blocks 13 covered sites (2,
+  3, 4, 5, 9, 20, 21, 28, 46, 67, 100, 132, 393) and lies in the closure of 46 of the 47 entries.
+- *The guard's goals*: 113's closure holds 7 uncovered sites (1, 10, 11 and four reader or collection sites); 80's 37,
+  392's 42 and 525's 45, 77 among them in all three, 392 and 525 themselves, and 503 and 505 in 525's.
+- *The native request at a package* (#410, `Factor_Package_Requests`): 560, the context list over membership, is
+  covered; 561 holds variable 7, the private environment value its two inclusions (113) share.
+- *The stated-leaves reader* (#441, 580–590, read from its schemas): premise-only variables at 580 (its target clause's
+  projection through 45; its pair clause's accumulator between two calls of 580), at its open clause reading (the
+  instance 65 returns) and at 590 (the operand through 72; the rows it reads through 37, 34 and 32; an instantiation
+  through 56).
+- *The criticism's samples*: the candidate's added clauses, unknown before an answer, and the given's entries they call.
+
+By kind (a site may hold several):
+
+| Kind | What determines the witness | Sites |
+|---|---|---|
+| Material, determined source | the observed artifact, determined by the address skeleton of the premise's fields (`artifact_enumeration_determines_source`) | 1 (the artifact whose carrier is the payload list), 10 and 11 (the artifact a presented artifact value presents) |
+| Material, enumeration of a held source | the enumeration fields of an artifact the goal holds: every enumeration is a solution | 45's occurrence clause, 10 where the presented value is not held |
+| Reader output or remainder | the reading of a structure the goal holds: rows, the remainder of a selection, a root list, ports, values | 5's selections and remainders wherever a clause selects (6, 24, 29, 35, 37, 38, 47, 133, 145, 146 among them), 37, 38, 39–44, 79's root lists (in 80, 83, 392, 525), 32's rows, 34's ports, 59's values, 580's accumulator, and the readers #453 joined (15, 43, 85, 87, 88, 94–98, 101, 102, 106, 107, 110, 111, 114, 115, 118, 119, 122, 147–149, 151, 152, 155) |
+| Intermediate collection | interiors, slot and used-variable lists joined by 6, 28, 46, 48 and 49 | 50, 52, 54–57, 60, 61, 63–65, 69, 71–75, 81, 82, 89–93 |
+| Existential, never inspected or inspected by an inhabited predicate | nothing but the premise: any formed value serves where one does | 505's operand (72, then 500), 503's binding table (65), the substitutions of 103–105 (57 and 62, 54 and 55, 56), 590's operand and instantiation, 580's projection (45) |
+| Least witness of a monotone constraint | the least value the constraint admits, which no premise produces | 77's bound (47, 76); 392's and 525's bound (47, 76, the additions list); 561's private environment (113 twice) |
+
+Presentation freedom: the outputs of 79 (root lists, every order), 32 (family rows), 6 in its output direction, 45 and
+10 (enumerations) and 48 (unions, every repetition) are every presentation of one subject; 80's and 392's closures reach
+all six.
+
+### The evaluator: resolution with unification
+
+1. **Goals are call patterns.** A goal is a site and a pattern over the variables of the clauses that raised it,
+   renamed apart; a demanded ground call is a goal without variables. A goal is resolved by a clause of its site: the
+   clause renamed apart, its interface and head unified with the goal by the most general unifier of two finite term
+   patterns (R2), its premises and material premises becoming goals under the unifier. A premise-only variable is bound
+   by the unifiers of the goals that hold it — by the heads of the clauses that answer them — so the program's own
+   clauses construct its witnesses. This one operation constructs the reader outputs and remainders, the intermediate
+   collections and the existential witnesses, on any program; it decides no definition, and a clause's variables are
+   bound in whichever direction its goals are answered, so no mode is declared.
+2. **Material premises are solved** (R1, the first step). A material premise whose fields' skeleton is ground — the
+   addresses of its atoms, the address triples of its incidences, the addresses and values of its attachments, each
+   anchor a variable or ground — has one solution or none: the artifact `finite_enumerated_artifact` of the skeleton
+   when the skeleton is an enumeration of it (`finite_artifact_enumeration_correct`), the source bound to its whole
+   target and every anchor to its occurrence term. The solution is complete: any source and anchors that satisfy the
+   equation are these (`artifact_enumeration_determines_source`, with the injectivity of `enumeration_term`,
+   `atom_term`, `incidence_term` and `attachment_term`). A material premise whose source is ground has as solutions the
+   enumerations of that source, finitely many, every one. A material premise with neither waits; one that never can be
+   solved leaves its call unresolved, named.
+   *Site 1, specified.* `distinct_payloads_schema` concludes its variable 0, the payload list, from the premise of 0 at
+   the pair of variable 1 and variable 0 and the material premise `distinct_payloads_material`: source variable 2,
+   atoms variable 1, and edges, counts and functions the empty enumeration. At a ground list of payloads a₁ … aₙ,
+   resolving the premise of 0 by its two clauses (`carrier_projection_cons_schema`, `carrier_projection_empty_schema`)
+   binds variable 1 to the enumeration of the pairs of Payload aᵢ and a fresh variable Xᵢ; the material premise's
+   skeleton is then ground, and its solution is the artifact with carrier {a₁ … aₙ}, no incidence and no data, the
+   source its whole target and each Xᵢ its occurrence at aᵢ — exactly when the aᵢ are distinct formed addresses;
+   otherwise there is none, and the call is refuted. R1 states the solution and its contract; its control is site 1 at
+   [[1],[2]] (resolved), [[1],[1]] (refuted) and the empty list (resolved, the empty artifact), the fields given as 0's
+   resolution returns them.
+3. **Residual variables take the empty payload.** When every goal is resolved, a variable still free was constrained by
+   nothing; it is instantiated with `Payload_Term []`, formed, and the derivation becomes a ground certificate, a finite
+   schema proof.
+4. **The search.** Selection: a ground goal first; then a goal whose free variables occur in no other pending goal,
+   resolved once (its first success kept: any other would serve the rest as well); then a material premise that can be
+   solved; then a goal with a ground part. Alternatives — the clauses of the goal's site, the solutions of a material
+   premise — are all explored, to a depth bound the caller doubles; clause keys order nothing, and the result is a
+   function of the clause set. A ground goal equal to an ancestor on its branch is pruned. The result for a call:
+   *resolved*, with its certificate; *refuted*, when no branch succeeded and none was cut by the bound; *unresolved*,
+   with its diagnosis.
+5. **Exactness, proved once.** A resolved call's certificate is checked by the existing finite proof checker
+   (`Factor_Finite_Proof_Checking`, exact to `checks_schema_proof`), so the call holds by `schema_proof_sound`:
+   soundness is the checker's, not re-proved. A refuted call has no derivation, by the completeness of resolution:
+   every derivation of a call is an instance of a resolution derivation of no greater depth, for any selection; a
+   pruned ancestor and a goal resolved once each keep one; a material premise's solutions hold every solution (R4).
+   The alternatives of a goal are thereby a generator of its accepted instances in `Candidate_Generators`' sense:
+   sound, every success a derivation; complete, every true instance an instance of a success; not tight, a failing
+   alternative being explored. Where both answer, resolution and `finite_program_evaluation` agree, both exact at the
+   demand; a head-covered, closed demand is resolved or refuted at a bound no smaller than the demand — an equation of
+   results, not a second meaning.
+6. **What is consumed.** `finite_program_resolution` per call, and a demand-level form returning the set of resolved
+   calls exactly when every call is resolved or refuted — the shape of `finite_program_evaluation`, so that E1's
+   composition and S1's tables take it unchanged; `native_call_resolution` reads the installed package as
+   `native_call_evaluation` does. Route builds consume `finite_program_resolution_exact` and
+   `native_call_resolution_exact` and read nothing of the search. Other names are the builds'.
+
+### Where no construction applies
+
+The evaluator returns *unresolved*, kept apart from *refuted*, with its diagnosis: the goals pending when none can be
+selected (a material premise with neither skeleton nor source ground; goals whose free variables only other open goals
+hold), or the goals cut at the bound; each named by its site, the clause and socket that raised it and its free
+variables, as S1's diagnosis names an uncovered clause. No judgment of the route is decided otherwise: #399's judgment
+records an unresolved call as an unavailable judgment, neither admission nor refusal; a criticism sample records it as
+unavailable, never as a failure row; the request (#443) records it. Nothing falls back to a counterpart.
+
+### The least witness has no complete construction
+
+A least witness — 77's bound, a list holding the roots and closed under the definitions' callees; 392's and 525's, the
+same over the candidate's package; 561's private environment, one including both environments — is admitted by the
+least value of a monotone constraint and by every larger one, and no premise produces it: resolution binds the list
+through the premises that hold it, a subset (47) and a closure (76), whose clauses extend a free tail without end. A
+true call is resolved only after the search has explored the list's shapes up to the closure's size, a false one never:
+its goals are cut at the bound, unresolved. Constructing the least value needs the constraint's requirements — which
+sites a closed bound must hold, which rows a common environment must hold — a property of 47's, 76's and 113's meanings
+that no clause shape shows; a construction of it inside the evaluator would decide what those definitions mean. Until
+the planner decides, the guard's G2, G3 and G4 (80, 392, 525), the request's 561 and the 80 in it, and every sample
+reaching 77 are unresolved at the given. The courses, for the planner:
+
+- *A native refinement proved equal*: a closure-list reader (a worklist over the edge reader, the sites visited kept by
+  positive key absence) and an environment-merge reader, native definitions functional in their direction, and the
+  program the evaluator runs is the given's readers with 77, 392, 525 and 561 refined to take their witnesses from
+  them, its meaning at every site proved equal in Isabelle — the given's readers unchanged, the evaluated program a
+  native refinement as a code equation refines a constant. Recommended.
+- *The given's readers restated* in the given with the same readers — the given changes, and with it #393's
+  installation, #395's value and the asked relation.
+- *Declared least witnesses*: a site declaration naming the requirement a least witness meets, read by the evaluator —
+  a definition's meaning decided inside the evaluator. Rejected.
+
+### Committed choice, for refusals
+
+Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
+yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
+the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its
+outputs — every two of its answers at one input correspond — in a clause whose other goals holding those outputs are
+*invariant* under the class, or reach an invariant goal through sites declared congruent; the search keeps the first
+answer of such a goal. Exactness is kept: the clause's truth at one representative is its truth at every one, by the
+transport of least fixed points under presentation classes
+(`Presentation_Transport.presentation_transport_least_fixed_points`). Each declaration is discharged by its notion's
+contract — the readers' presentation invariance and their presented relation contracts — none re-proved; R6
+instantiates the given's (79, 32, 6, 10, 45, 48 and the consumers their outputs reach). Without a declaration the
+evaluator stays exact and pays the enumeration.
+
+### What of the counterpart line stays
+
+| Piece | Standing | Role and reason |
+|---|---|---|
+| E1's general lemma, `Inference_Demands.inference_restriction_above_base` | stays | a fact of inference demands, beside the lemma it generalizes |
+| E1's evaluation over an implemented base (`Factor_Implemented_Base_Evaluation`) | stays, its role changed | the composition of two native evaluations: the bottom-up evaluator above a base whose decisions are the resolving evaluator's, exact by its contract; the answer does not depend on the split (`implemented_base_evaluation_base_independent`). Whether a route build composes is a cost choice R7 measures; a base of counterparts decides nothing |
+| S1: `criticism_exact_table`, the `exact_table_*` meanings, the sample over a base, `criticism_diagnosis` | stays | the sample's meaning over any exact table; the resolving evaluator's is one; `finite_uncovered_clauses` stays the bottom-up evaluator's diagnosis beside the resolver's |
+| C1's site value reader and presenter (`finite_site_read`, `finite_site_presented`), and the readers of the environment pair and the source-root argument (`finite_environment_pair_read`, `finite_source_root_read`, `finite_environment_use_read_exact`) | stay, moved (R8) | presentation readers: the native state's given value (`Development_Native_State.development_given_value`) and transport's reading back, exact to their presentations, deciding no entry; their home is the readers' (beside `finite_environment_value_read_exact`), not a counterpart theory |
+| The counterparts: C1's decisions of 113 and 80; C2 (`Factor_Additions_Counterparts`); C3 (`Factor_Audit_Counterparts`, `Development_Guard_Counterparts`); C4a (`Factor_Package_Reader_Counterparts`); C4b (`Factor_Definition_Reader_Counterparts`, `Development_Given_Counterparts`); 570's (`Factor_Stated_Leaves_Counterpart`); the guard's and the given's bases | retire (R8) | no judgment of the route consumes them, and the evaluator constructs what they decided; kept beside an exact evaluator, each would be a second statement of a reader's meaning. Their measured seconds stay recorded as observations (`.build/tasks/470/result.md`, `.build/tasks/474/result.md`) |
+| The finite operations they composed (`finite_native_source`, `finite_native_definition_readings`, `finite_definition_payloads`, `finite_environment_included`, and the like) | stay | their own roles: the machinery's reading of a program it evaluates, as `finite_native_program_evaluation` reads its package; the audit of a finite program (`finite_system_payloads_audited`). None decides a native definition's entry in a judgment |
+
+### The builds
+
+| Build | What it establishes | Consumes | Size |
+|---|---|---|---|
+| R1 | The first step (`Factor_Material_Resolution`): the material premise solved — the solution from a ground skeleton and its contract (sound; complete: source and anchors determined), the enumerations of a ground source as its solutions; site 1's control at the fields 0's resolution returns | `Factor_Material_Observation`, `Factor_Finite_Artifact_Enumeration`, `Factor_Distinct_Payloads` | about 150K |
+| R2 | Unification (`Factor_Pattern_Unification`): the most general unifier of two finite term patterns — sound, most general, none exactly when no unifier exists — and renaming apart by derivation position, results independent of the renaming | `Factor_Executable_Terms`, `Factor_Executable_Matching` | about 150K |
+| R3 | Resolution (`Factor_Program_Resolution`): goals, the step (interface, head, premises, material premises through R1), the search (selection, pruning, goals resolved once, the bound), the result per call, the ground certificate, soundness through the finite proof checker | R1, R2, `Factor_Finite_Proof_Checking`, `Factor_Finite_Derivations` | about 220K |
+| R4 | Completeness and exactness (`Factor_Resolution_Completeness`): the lifting of derivations, pruning and goals resolved once kept, material completeness; `finite_program_resolution_exact`; the demand-level form and its equation with `finite_program_evaluation`; `native_call_resolution` and `native_call_resolution_exact`; controls: E1's control program (plain evaluation unavailable, resolved) and site 1, in one evaluation; REASONING_REUSE.md's row | R3, `Factor_Finite_Program_Evaluation`, `Factor_Finite_Native_Evaluation` | about 220K |
+| R5 | Committed choice (`Factor_Resolution_Commitments`): a class declared at a site's outputs and invariance at its consumers, the committed search, exactness kept | R4, `Presentation_Transport`, `Factor_Presentation_Classes` | about 180K |
+| R6 | The given's declarations: 79, 32, 6, 10, 45, 48 and the consumers their outputs reach in the given's readers, each from its notion's contract | R5 | about 150K |
+| R7 | The given at the guard's calls: 113, 80, 392 and 525 at the given as its own candidate, 505 and 590 at one of its definitions; the unresolved goals recorded (the least witnesses expected); seconds measured, E1's composition compared; the performance channel for a call past a held run | R4, R6 | about 150K |
+| R8 | The counterparts retired: the readers moved to their home, `Development_Native_State` re-cited, the counterpart theories removed with their rows and ROOT entries, REASONING_REUSE.md's rows re-cited; #487's remainder with it | after #483 | about 150K |
+
+R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6. R8 is independent of
+R1–R7 and follows #483. The least witness's builds follow the planner's decision. The route:
+
+- #397 (the posing) evaluates no reader entry: unaffected.
+- #399 (judgment and admission) evaluates the installed guard's entry: waits on R4 and R6, and on the least witness's
+  builds for G2–G4. Its (2): the judgment is `native_call_resolution` at the guard's entry call at the pair — resolved,
+  an admission with its certificate; refuted, a refusal naming the sockets whose calls are refuted; unresolved, an
+  unavailable judgment with its diagnosis — its contract from `native_call_resolution_exact` and the posing's meaning
+  lemma; not E1 with C1–C3.
+- #401 (transport) runs #399's export: follows #399.
+- #403 (the verification's native half) evaluates an identity program whose readers reach sites 1, 10 and 11: waits on
+  R4, and on R6 where its refusal controls meet an enumeration.
+- #407 (its harness) follows #403.
+- #443 (the first request) evaluates 561, whose 80 and private environment are least witnesses: waits on R4, R6 and the
+  least witness's builds.
+- #445 (the request's delivery) follows #443.
+- #447 (the criticism run) resolves the candidate's entries and the given's entries they call (`native_call_resolution`,
+  or E1 composed with it where R7 finds that cheaper); the stated-leaves reader is resolved natively (material,
+  existential and reader kinds: available after R4); an entry reaching 77 waits on the least witness. Its (3), (4) and
+  its Decided are corrected so: no counterpart. Waits on R4 and R6.
+- #449 (the criticism's route) follows #447.
+
+### What it relies on
+
+Task 376's test, construction by construction:
+
+- Unification reads the term language's constructors and compares leaves for equality — a payload as the octets it is,
+  a target as the exact artifact it is — as matching already does; clause variables are compared for equality within a
+  derivation and renamed by derivation position, coordinates on whose values no result depends (R2 proves it).
+- The material solution reads the payloads of a material premise's atoms as addresses: the material equation's own
+  reading (`material_observation`), the one the octet audit counts for material premises; from them it constructs an
+  exact artifact (`finite_enumerated_artifact`).
+- The search reads a goal's groundness and where its variables occur; it reads no clause key (the result is a function
+  of the clause set) and compares sites only for equality, as the plain evaluator does; the bound is a measure of the
+  search, and changes a result only between unresolved and the other two.
+- A residual variable's value is the empty payload, the payload audit's inert payload; it relies on formation alone.
+- A commitment relies on its declaration's class, a native presentation class, and on its notion's contract.
+
+### Cost at the given's size (estimates; R7 measures)
+
+The given has 252 definitions and 28,729 addresses (`Development_Given_Execution`). A native reading of the package (80,
+392) visits every syntax node through several readers, each looking its artifact up in the environment's artifact list,
+a selection linear in the number of artifacts: of the order of 10⁶ to 10⁷ resolution steps; 113 at two copies of the
+given's environment, of the order of 10⁶. At 10⁵ to 10⁶ steps a second over shared ground terms, unification descending
+no deeper than a clause's head, that is 10 to 100 seconds a goal, the doubled bound adding at most a factor of two. The
+counterparts took 0.26 s (113), 0.69 s (80) and 38.3 s (525 over 252 definitions): the resolving evaluator is expected
+slower by one to two orders of magnitude on the reading goals. A criticism sample at the given's term is a call of the
+same size. These are estimates; a demand past a held run's three minutes goes to the performance channel (R7).
+
+### What the builds must respect
+
+- The evaluator is generic: every construction is an operation on any finite program, its contract proved once; no
+  definition's entry is decided by a function beside its clauses; no judgment of the route consumes a counterpart,
+  meanwhile or after.
+- Unresolved is never refuted and never admits; a refusal is a refutation; every resolved call carries a certificate the
+  existing checker accepts.
+- A result depends on the program's clauses, the call and the bound alone: not on clause keys, variable names or
+  renamings.
+- A commitment is used only with its declaration discharged by its notion's contract; without one the search
+  enumerates.
+- Nothing reads the bootstrap loop's datatypes, rows, loci or keys (task 378); sites and clause variables are compared
+  for equality; payloads stay inert but where the material equation reads addresses; no recorded word changes.
+- R4 gains REASONING_REUSE.md's row for witness construction by resolution and corrects the row "Evaluate above a base of
+  exact decisions" (its decisions the resolver's).
+
+### Open
+
+- The least witness (77's, 392's and 525's bounds, 561's private environment): the planner's, the courses above.
+- Whether the guard's G2–G4 could instead be stated over readers whose witnesses resolution constructs (task 381's
+  guard), should the least witness's builds cost too much: the planner's.
+- Native placement of the resolver's certificates as native proof graphs (a replay of an admission), and native
+  derivation admission's own coverage: not decided here.
+
+Recorded 2026-09-25 (task 495's decision; a design, no theory changes).

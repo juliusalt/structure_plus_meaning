@@ -69,7 +69,8 @@ and #422 landed):
   C1, C2 and #455), #472 and #474 (C4a, C4b), #476 (the stated-leaves counterpart) and #478 (S1), each with its review
   — #399 after E1 and C1–C3 and #447 after S1
   and C4 and the stated-leaves reader's counterpart (#441's q95), their briefs corrected as #462 drafted them; #447 also after
-  the octet sample's whole presented values (#439's review, follow-ups 1–4); #393 is mailed its corrections of (1) and (5).
+  the octet sample's whole presented values (#463, landed) and its readdressing as a renaming action (the fix continuing
+  #463, from its review); #393 is mailed its corrections of (1) and (5).
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -348,6 +349,11 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   row's own pair (`use_row_refutes`) and its site and entry corollaries. Its first verdict's follow-ups, overwritten by
   the re-review (`.build/tasks/438/review.md`): the pair shapes mailed to #447, the order against #458 mailed to #458,
   h1's zero prefix and the inequality control Open 149.
+- **Landed with `c6930e95`**: #466 (C1, `Factor_Inclusion_Admission_Counterparts`: the counterparts of 113 and 80 and
+  the readers of environment-value pairs and source-root arguments) and #463 (the octet sample's readdressing lifted to
+  whole environment, site and program entry values). #467's follow-ups: 1–3 and 6 wait for #469's verdict (Now), 4
+  mailed to #470, 5 settled by the landing. #463's review (`.build/tasks/463/review.md`): 1–4 the fix continuing #463,
+  which #447 waits on; 5 Open 152; 6 is Open 150.
 - **Landed with `00c4bf47`**: #458, the use instance split: the low actions in `Factor_Use_Actions` below the keyed
   and data readers, the inverse-permutation argument once (`use_renaming_inverse`), the schema reading's renaming
   beside the definition's, the request's general facts and the scopes' root position at their homes
@@ -618,7 +624,11 @@ theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations
 reversal (#435's review, `.build/tasks/436/review.md`). 147 the new whole agreements of existing view chains
 (`positive_complete_data_agreement`, `replay_positive_agreement`, `derivation_replay_agreement`,
 `application_derivation_agreement`, `call_application_agreement`, `comparison_located_agreement`) moved with their
-programs' theories when those are next touched (#454's review, follow-up 2). 151 #458's review
+programs' theories when those are next touched (#454's review, follow-up 2). 152 one collection lifting — subjects
+changed under `inj_on f A`, each row's term by a map commuting with `data_list_term` — stated in
+`Factor_Data_Collection_Transport`, `data_collection_presents_leaf_map`, `Criticism_Samples.data_collection_presents_pointwise`
+and `data_collection_presents_image`'s backward direction its instances, with the next landing that changes those
+theories (#463's review, follow-up 5). 151 #458's review
 (`.build/tasks/458/review.md`), at each theory's next edit: follow-up 1's texts crediting `Factor_Use_Renaming` with
 what `Factor_Use_Actions` states (`Factor_Package_Closure_Admission`, `Criticism_Use_Samples`; those of #459's and
 #426's theories are theirs), 5 `native_package_formed_at` cited where six theories derive it inline, 6 the doubled
@@ -647,7 +657,15 @@ by its re-review, of which only the summary stands: h1's zero prefix and the ine
   #454's follow-up 4: the evaluation measured where the duplicated terms are evaluated), #393 (`given_readers_fresh(2)`;
   its (5) under head coverage, #460, then #460's corrections of (1) and (5)), #439 and #441 (#460's corrections), #395 (`given_environment_not_closed`, `given_retention_refused`), #447 (#436's
   first follow-up). By plan-67: to #393, #395 and #443 (#455's landing: its result's (5) names; #456's follow-up 4,
-  cite the transfers, no named copy), to #474 (the given's 47 entries, the granted ones without counterparts, by demand).
+  cite the transfers, no named copy), to #474 (the given's 47 entries, the granted ones without counterparts, by demand),
+  to #466 and #426 (bring main in over #458's changes), to #470 (#467's follow-up 4: 113's and 80's seconds apart), to
+  #469 (a restatement of #466's two reader facts in #468 is a finding), to #447 (the octet rows through
+  `criticism_refutes` and the fix continuing #463).
+- **To place when #469 judges #468**: #467's follow-ups 1–3 and 6 (`finite_pair_read_present` into
+  `Finite_Presentation_Readers`, `environment_value_presents_finite` into `Factor_Finite_Environment_Value_Readers`,
+  `finite_empty_environment` down to `RRA_Finite_Environments` so that the counterparts no longer import the
+  installation, the controls' outcomes shown and 80's negative control inside the carrier) with #469's follow-ups, one
+  fix after #468.
 
 
 - **Classifier stops**: a classifier stopped plan-51 to plan-54, plan-56 and plan-58 to plan-62 before their notes, and

@@ -88,8 +88,8 @@ relocation; after W2, W3 and R4) and W4b #528 (the given's registrations, the co
 review. #399 waits on R7 and #547 on rc, both on R4, R6 and W4b; #549 and #551 wait on R7, #403 and #553 through
 #399.
 
-**Beside the route**: #516 (continuing #486, landed `7d48c1ae`: the payload notion's definitions beside its general
-steps, #486's review 1–4 with #457's 5).
+**Beside the route**: the fix continuing #510, R8b's review's follow-ups (the use sample's executed control out of
+the library, the stated-leaves controls made controls, ROOT's order, the payload audit's row).
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
@@ -117,10 +117,10 @@ shortened enough for its review.
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The evaluator's
 head first, R3b #515 and R4 #505 (the longest chain and the owner's direction, its checks first on the machine); the
-recording's refinements in flight, RR1–RR3; the evaluator's W2 #524, R5 #518, W4a #526, R6 #520, W4b #528, rc #540
-and R7 #542; RR4 #536 and X #538; #516, the request program #545 and the request at the given #547; the posing and
-the route in its chains' order (#399, the samples #551, the observations #549, the record #553, #401, #403, #443,
-#447, #407, #445, #449); R8b #510 last.
+recording's refinements RR2 and RR3; the fix continuing #510, taking a slot the chains leave free; the evaluator's
+W2 #524, R5 #518, W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; RR4 #536 and X #538; the request program #545
+and the request at the given #547; the posing and the route in its chains' order (#399, the samples #551, the
+observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
 ## Decisions
 
@@ -286,7 +286,8 @@ What landed that open work builds on, a line each; how it went and each review's
   `given_guard_entries` and 35 granted — installed at fresh uses, 28,729 addresses; a use instantiates
   `given_rooted_meaning`, `given_installed_entry_meaning` and `given_entry_meaning_at`), its payload statement by
   composition (#457, `Factor_System_Payloads`, `Factor_Reader_Payloads`; split at the guard's two lineages, #486
-  `7d48c1ae`), the compositional derivation
+  `7d48c1ae`; the payload notion's definitions with its general steps, each lineage step by one rule, #516
+  `519102d8`), the compositional derivation
   `Native_Control_Quotation_Code.note_composed` (#431; its laws in `Factor_Finite_System_Presentations`, the parts it reduces whole named, #461); `Development_Native_State` (#395 `4d9cf735`, #484 `bd36f20d`:
   the given as one site value `development_given_value`, the first generation's statements, its execution a remainder;
   `development_base_generation` the owner records' and the state's base).
@@ -313,7 +314,8 @@ What landed that open work builds on, a line each; how it went and each review's
   retired by R8a (#508, `9b18bd52`), their presentation readers (`finite_environment_pair_read`,
   `finite_source_root_read`, `finite_site_read`, `finite_site_presented`, each with its exactness) moved to
   `Factor_Finite_Site_Value_Readers`, their controls to `Factor_Finite_Site_Value_Reader_Controls`, and
-  `Development_Native_State` re-cited.
+  `Development_Native_State` re-cited; R8b (#510, `519102d8`) moved E1's, S1's, the octet and the stated-leaves
+  controls there, the fixture once.
 - **The owner records**: `Development_Owner_Records` (#385; the approval record `development_owner_approval`, Open 142);
   #425's attribution of an indexed generation (`.build/tasks/425/attribution.md`), the working rule "Evaluations".
 - **The recording's scope** (#482's (4) B1): `Factor_Bounded_Generation_Scopes` (#490, `5304f725`: `payload_fill`, formed
@@ -454,12 +456,15 @@ searches for a theory before briefing a task that edits it.
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **The counterparts' retirement**: R8a landed (`9b18bd52`, next-edit items 156 and 159 with it); R8b (#510) carries
-  154 and `development_package_source`'s alias (`audit_control_selection` retired with its theory); 158 stays at a
-  measured need.
+- **The counterparts' retirement**: R8a and R8b landed (`9b18bd52`, `519102d8`; next-edit items 154, 156 and 159 with
+  them). R8b's review (`.build/tasks/511/review.md`): its follow-ups on the controls go to the fix continuing #510,
+  the one on R4 into #505's rewritten brief; the controls theory's rename waits for its next change after R4 (item
+  183); 158 stays at a measured need.
 - **Mailed, read by each task's first session** (by task): #407 (#433's review's follow-ups 2 and 3; the frame as #432
   and #433 leave it; #394's follow-up 3); #505 (R3b's invariant under a formed program and call and a construction
-  whose values are formed, q99; #504's three items); #526 and #528 (#514's follow-up 2); #518 and #526 (the combined
+  whose values are formed, q99; #504's three items; its brief, rewritten by plan-73, names them with R3b's theory,
+  E1's control's place and the row); #545 (#516's review, follow-up 1); #526 and #528 (#514's follow-up 2); #518 and
+  #526 (the combined
   contract is rc's, q100); #510 (#483's review's aliases); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); #538 (#509's
   review's follow-up 5; #535's follow-ups 1 and 5); #534 (#535's finding and its follow-ups 1 and 6, decided); #536
   (#535's follow-ups 4 and 5, so it waits on #534; its brief, rewritten by plan-73, carries #531's follow-ups 1, 2,

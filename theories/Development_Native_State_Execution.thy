@@ -3,18 +3,24 @@ theory Development_Native_State_Execution
     Native_Execution_Refinements
 begin
 
-section \<open>The native state's first generation, compiled once\<close>
+section \<open>The native state's first generation, compiled where it is recorded\<close>
 
 text \<open>
   Task 482's entry, its (4) X (#395's remainder): the recording of the native state's first generation, the base
   generation at the given's value (@{const development_native_state_first_generation}), with the recording's
-  refinement collection and the export boundary's refinements in effect. One compilation holds the recording, the
-  given's value and the controls of task 492 (@{text Development_Bounded_Recording_Execution}). Each recording is
-  reported with its seconds, its payload's addresses, the carrier addresses of its cause, and whether its cause is the
-  owner record of 18:53's; a recording that returns no generation, or whose cause
-  is another, is refused, and the theory with it. The controls (the owner record and the given's value cut at 8,013
-  and 32,009 addresses) run at every build; the given's value itself, 882,621 addresses, runs where
-  @{text Native_State_Execution.first_generation} is called: in the held measurement, a probe importing this theory.
+  refinement collection and the export boundary's refinements in effect. Each recording is reported with its seconds,
+  its payload's addresses, the carrier addresses of its cause, and whether its cause is the owner record of 18:53's; a
+  recording that returns no generation, or whose cause is another, is refused.
+
+  The ML structure @{text Native_State_Execution} states that behaviour once, over the compiled recording and report
+  its caller supplies. At every build this theory compiles the recording and the report without the given's code and
+  records the owner record of 18:53, a payload of one address that needs no given (task 561). The given's value, and
+  the controls of task 492 cut from it (8,013 and 32,009 addresses, @{text Development_Bounded_Recording_Execution}),
+  are compiled and evaluated where they are called: the caller compiles, in one @{text ML} block,
+  @{text native_state_given}, @{const bounded_recording_subjects}, @{const development_base_generation} and
+  @{text native_state_report}, and passes them to @{text controls} or @{text first_generation}. The given's code (the
+  development package's and the readers' programs, their installation and the given's presentation) was about half of
+  this theory's load, compiled and evaluated at every build for two controls that are made where they are asked for.
   No library theory imports this one.
 \<close>
 
@@ -38,28 +44,32 @@ definition native_state_report ::
 ML \<open>
 structure Native_State_Execution =
 struct
-  val given = @{code native_state_given}
-  val subjects = @{code bounded_recording_subjects}
-  val record = @{code development_base_generation}
-  val report = @{code native_state_report}
   fun timed label f x =
     let val (t, r) = Timing.timing f x
     in (writeln ("NATIVE STATE " ^ label ^ ": " ^ Timing.message t); r) end
   fun count NONE = "none" | count (SOME n) = IntInf.toString n
-  fun recording label t =
+  fun recording record report label t =
     let
       val r = timed (label ^ " recording") record t
       val (a, (c, same)) = report t r
       val _ = writeln ("NATIVE STATE " ^ label ^ ": payload " ^ IntInf.toString a ^ " addresses, cause " ^ count c ^
         " carrier addresses, the owner record of 18:53's cause " ^ Bool.toString same)
     in if same then r else error ("NATIVE STATE " ^ label ^ ": no generation, or a cause other than the owner record's") end
-  fun first_generation () = recording "first generation" (given ())
+  fun controls record report subjects = ListPair.appEq (fn (label, t) => ignore (recording record report label t))
+    (["owner record 18:53", "cut 4000", "cut 16000"], subjects)
+  fun first_generation record report given = recording record report "first generation" (given ())
 end
 \<close>
 
 ML \<open>
-  val _ = ListPair.appEq (fn (label, t) => ignore (Native_State_Execution.recording label t))
-    (["owner record 18:53", "cut 4000", "cut 16000"], Native_State_Execution.subjects)
+structure Native_State_Owner_Code =
+struct
+  val record = @{code development_base_generation}
+  val report = @{code native_state_report}
+  val owner = @{code development_owner_direction_1853}
+end
+val _ = Native_State_Execution.recording Native_State_Owner_Code.record Native_State_Owner_Code.report
+  "owner record 18:53" Native_State_Owner_Code.owner
 \<close>
 
 end

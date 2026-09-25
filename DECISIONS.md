@@ -17145,7 +17145,12 @@ value (`native_state_first_generation_recording`).
   planner's.
 - *One cause.* The cause of the owner record of 18:53, of the given's value cut at 8,013 and 32,009 addresses and of the
   given's value itself is one target of 3,437 carrier addresses (runs 1–3); the recording returns a generation.
-- *B2's review follow-up 7, decided.* The 32K control is kept: it controls, with the owner record and the 8K cut, that
+- [Corrected in part by task 561, from #539's review, follow-ups 4, 5 and 7: the cuts are cuts of the given's value, so
+  a cut evaluated at every build compiles and evaluates the given's code, about half of X's load; X now compiles at
+  every build the recording without the given and records the owner record of 18:53, and the 8K and 32K controls run
+  where a caller compiles the given, with results unchanged. `Development_Bounded_Recording_Execution` imports
+  `Development_Native_State` alone.]
+  *B2's review follow-up 7, decided.* The 32K control is kept: it controls, with the owner record and the 8K cut, that
   three payloads share one cause target at every build, which X's given does only in a held run. Its evaluation moved
   from `Development_Bounded_Recording_Execution`'s `value` into X's one compilation (`development_bounded_recording_controls`
   retired; `bounded_recording_generation_cause` added, `bounded_recording_cause` through it). Recurring cost in a check

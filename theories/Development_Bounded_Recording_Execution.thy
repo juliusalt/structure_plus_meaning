@@ -1,5 +1,5 @@
 theory Development_Bounded_Recording_Execution
-  imports Development_Recording_Refinements Development_Native_State Native_Execution_Refinements
+  imports Development_Native_State
 begin
 
 section \<open>The bounded recording at the owner record of 18:53 and two cuts of the given's value\<close>
@@ -9,9 +9,10 @@ text \<open>
   task 481 cuts it (a preorder cut of the first n pairs and leaves, the rest the empty payload: 8,013 and 32,009
   addresses at 4,000 and 16,000), each recorded as a base generation by the bounded recording, whose cause targets
   are one, as the entry expects: F0 does not depend on the payload. They are evaluated with the refinement
-  collection in effect in the one compilation of @{text Development_Native_State_Execution} (task 538), which
-  reports each payload's addresses and each cause's carrier addresses and refuses a cause other than the owner
-  record's; this theory states them and runs nothing.
+  collection in effect by @{text Development_Native_State_Execution} (tasks 538, 561), which reports each payload's
+  addresses and each cause's carrier addresses and refuses a cause other than the owner record's: the owner record's
+  at every build, the cuts of the given's value where its caller compiles the given. This theory states them and runs
+  nothing, over the library alone: no refinement is in effect here.
 \<close>
 
 primrec bounded_recording_cut :: "finite_factor_term \<Rightarrow> nat \<Rightarrow> nat \<times> finite_factor_term" where

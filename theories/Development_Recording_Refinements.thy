@@ -61,14 +61,6 @@ lemma finite_data_syntax_quotation_formed:
   using complete_data_quotation_formed[OF finite_data_syntax_complete_quotation[OF assms]]
   by (simp add: finite_exact_formed_correct)
 
-lemma development_policy_source_with_formed:
-  assumes policy: "development_policy_source_with xs=Some s"
-  shows "list_all finite_term_formed xs"
-proof -
-  obtain d F u where "finite_ground_source xs=Some (d,F,u)"
-    using policy by (cases "finite_ground_source xs") (auto simp: development_policy_source_with_def)
-  then show ?thesis using finite_ground_source_total by blast
-qed
 
 lemma development_bounded_policy_judgment_formed:
   assumes judged: "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R=Some j"
@@ -836,99 +828,75 @@ lemma development_bounded_policy_judgment_read [code]:
   by (rule checked_premise.checked_at_entry[OF development_bounded_policy_judgment_checked_premise])
 
 text \<open>
-  The recording at its payload's index. The recording of a term that is not formed calls the bounded judgment,
-  whose checks stay, and records by the constructor that makes neither target formation, R's formation resting
-  on the judgment's policy source (@{thm [source] development_bounded_policy_judgment_formed}). The recording of a
-  formed term establishes R's formation by the term's, and calls the judgment over formed presentations.
+  The recording at its payload's index, parametric in the literal (task 560's entry): the placeholder's judgment
+  is a nullary constant, made once where the code is compiled, its program's observation-freedom with it. At each
+  payload the recording of a formed term establishes R's formation by the term's
+  (@{thm [source] finite_data_syntax_quotation_formed}) and constructs R's policy by the formed source
+  (@{const development_formed_policy_source}); the recording of a term that is not formed constructs it by the
+  original. Where the check holds R's policy was constructed, so R is formed
+  (@{thm [source] development_policy_source_with_formed}) and the record's constructor makes neither target's
+  formation. The replayed judgment at R is no longer called.
 \<close>
 
 declare development_indexed_generation_def [code del]
 
-lemma development_indexed_generation_quoted:
+lemma development_indexed_generation_parametric [code]:
   "development_indexed_generation t H rows=(case finite_data_syntax (decode_finite_term t) of
      None \<Rightarrow> None
-   | Some R \<Rightarrow> Option.bind (development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R)
-       (\<lambda>(d,K,pu,B,au,root,J,C). finite_construct_quoted_generation H (Finite_Whole R) (Finite_Whole R)
-          (Finite_Whole C) rows))"
+   | Some R \<Rightarrow> (case development_placeholder_judgment of
+       None \<Rightarrow> None
+     | Some (d,K0,pu,B0,au,root,J0,C0) \<Rightarrow>
+         if development_placeholder_free \<and>
+           (if finite_term_formed t then development_formed_policy_source [Finite_Target (Finite_Whole R)]
+            else development_policy_source_with [Finite_Target (Finite_Whole R)])=Some (d,finite_placeholder_fill K0 R,pu)
+         then finite_construct_quoted_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0) rows
+         else None))"
 proof (cases "finite_data_syntax (decode_finite_term t)")
   case None
   then show ?thesis by (simp add: development_indexed_generation_def)
 next
   case (Some R)
-  note quoted=this
+  note quoted=Some
+  have source: "(if finite_term_formed t then development_formed_policy_source [Finite_Target (Finite_Whole R)]
+      else development_policy_source_with [Finite_Target (Finite_Whole R)])=
+      development_policy_source_with [Finite_Target (Finite_Whole R)]"
+  proof (cases "finite_term_formed t")
+    case True
+    have "term_formed (decode_finite_term t)" using True by (simp only: finite_term_formed_correct)
+    then have "finite_exact_formed R" by (rule finite_data_syntax_quotation_formed[OF _ quoted])
+    then have listed: "list_all finite_term_formed [Finite_Target (Finite_Whole R)]" by simp
+    show ?thesis using True by (simp add: development_formed_policy_source_exact[OF listed])
+  next
+    case False
+    then show ?thesis by simp
+  qed
   show ?thesis
-  proof (cases "development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R")
+  proof (cases development_placeholder_judgment)
     case None
-    then show ?thesis using quoted by (simp add: development_indexed_generation_def)
+    then show ?thesis by (simp only: development_indexed_generation_def quoted option.case)
   next
     case (Some j)
-    have formed: "finite_exact_formed R" by (rule development_bounded_policy_judgment_formed[OF Some])
-    show ?thesis using quoted Some
-      by (simp add: development_indexed_generation_def finite_construct_quoted_generation_whole[OF formed]
-        split: prod.splits)
-  qed
-qed
-
-lemma development_indexed_generation_read [code]:
-  "development_indexed_generation t H rows=(case finite_data_syntax (decode_finite_term t) of
-     None \<Rightarrow> None
-   | Some R \<Rightarrow> Option.bind (if finite_term_formed t then development_read_policy_judgment [Finite_Target (Finite_Whole R)] R
-         else development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R)
-       (\<lambda>(d,K,pu,B,au,root,J,C). finite_construct_quoted_generation H (Finite_Whole R) (Finite_Whole R)
-          (Finite_Whole C) rows))"
-proof (cases "finite_data_syntax (decode_finite_term t)")
-  case None
-  then show ?thesis by (simp add: development_indexed_generation_def)
-next
-  case (Some R)
-  note quoted=Some
-  show ?thesis
-  proof (cases "finite_term_formed t")
-    case True
-    have "term_formed (decode_finite_term t)" using True by (simp only: finite_term_formed_correct)
-    then have formed: "finite_exact_formed R" by (rule finite_data_syntax_quotation_formed[OF _ quoted])
-    have same_judgment: "development_read_policy_judgment [Finite_Target (Finite_Whole R)] R=
-        development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R"
-      using formed by (simp add: development_read_policy_judgment_exact)
-    show ?thesis using quoted True
-      by (simp add: development_indexed_generation_def same_judgment finite_construct_quoted_generation_whole[OF formed])
-  next
-    case False
-    show ?thesis using quoted False by (simp add: development_indexed_generation_quoted)
-  qed
-qed
-
-text \<open>
-  The recording of a formed term calls the judgment whose listing policy's source is installed as a formed
-  program: R's formation, from the term's, forms the listed presentation.
-\<close>
-
-declare development_indexed_generation_read [code del]
-
-lemma development_indexed_generation_formed [code]:
-  "development_indexed_generation t H rows=(case finite_data_syntax (decode_finite_term t) of
-     None \<Rightarrow> None
-   | Some R \<Rightarrow> Option.bind (if finite_term_formed t then development_formed_policy_judgment [Finite_Target (Finite_Whole R)] R
-         else development_bounded_policy_judgment [Finite_Target (Finite_Whole R)] R)
-       (\<lambda>(d,K,pu,B,au,root,J,C). finite_construct_quoted_generation H (Finite_Whole R) (Finite_Whole R)
-          (Finite_Whole C) rows))"
-proof (cases "finite_data_syntax (decode_finite_term t)")
-  case None
-  then show ?thesis by (simp add: development_indexed_generation_read)
-next
-  case (Some R)
-  note quoted=Some
-  show ?thesis
-  proof (cases "finite_term_formed t")
-    case True
-    have "term_formed (decode_finite_term t)" using True by (simp only: finite_term_formed_correct)
-    then have formed: "finite_exact_formed R" by (rule finite_data_syntax_quotation_formed[OF _ quoted])
-    have listed: "list_all finite_term_formed [Finite_Target (Finite_Whole R)]" using formed by simp
+    obtain d K0 pu B0 au root J0 C0 where j: "j=(d,K0,pu,B0,au,root,J0,C0)" by (metis prod.collapse)
+    have whole: "(if development_placeholder_free \<and>
+          development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,finite_placeholder_fill K0 R,pu)
+        then finite_construct_formed_cause_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0) rows
+        else None)=
+      (if development_placeholder_free \<and>
+          development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,finite_placeholder_fill K0 R,pu)
+        then finite_construct_quoted_generation H (Finite_Whole R) (Finite_Whole R) (Finite_Whole C0) rows
+        else None)"
+    proof (cases "development_placeholder_free \<and>
+        development_policy_source_with [Finite_Target (Finite_Whole R)]=Some (d,finite_placeholder_fill K0 R,pu)")
+      case True
+      have formed: "finite_exact_formed R"
+        using development_policy_source_with_formed[OF conjunct2[OF True]] by simp
+      show ?thesis by (simp only: if_P[OF True] finite_construct_quoted_generation_whole[OF formed])
+    next
+      case False
+      show ?thesis by (simp only: if_not_P[OF False])
+    qed
     show ?thesis
-      using quoted True by (simp add: development_indexed_generation_read development_formed_policy_judgment_exact[OF listed])
-  next
-    case False
-    show ?thesis using quoted False by (simp add: development_indexed_generation_read)
+      by (simp only: development_indexed_generation_def quoted Some j option.case prod.case source whole)
   qed
 qed
 

@@ -332,6 +332,7 @@ datatype ('a,'s,'d,'c) resolution_diagnosis =
   | Resolution_Stuck "('a,'s,'d,'c) resolution_goal fset"
   | Resolution_Witnessed "(('s,'a) resolution_variable \<times> finite_factor_term) fset" "('a,'s,'d,'c) resolution_goal"
   | Resolution_Refused "('a,'s,'c) finite_schema_proof"
+  | Resolution_Unconstructed 'd "('a,'s,'d) finite_factor_schema" 'a "('a,'s,'d,'c) resolution_goal fset"
 
 datatype ('a,'s,'d,'c) resolution_outcome = Resolution_Outcome
   (resolution_found: "('a,'s,'d,'c) resolution_state fset")
@@ -341,6 +342,22 @@ definition finite_outcome_union ::
     "('a,'s,'d,'c) resolution_outcome fset \<Rightarrow> ('a,'s,'d,'c) resolution_outcome" where
   "finite_outcome_union Os = Resolution_Outcome (ffUnion (fimage resolution_found Os))
     (ffUnion (fimage resolution_diagnoses Os))"
+
+text \<open>
+  A registered variable ready for its construction for which the construction returns nothing keeps the
+  goals holding it back; when no goal can be selected, the diagnosis names each such registration — its
+  site, its clause's schema and its variable — with the goals held at it.
+\<close>
+
+definition finite_unconstructed ::
+    "('a,'s,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_diagnosis fset" where
+  "finite_unconstructed \<kappa> P st = (let G = resolution_pending st in ffUnion (fimage (\<lambda>nd.
+    fimage (\<lambda>a. Resolution_Unconstructed (resolution_node_site nd) (resolution_node_schema nd) a
+        (finite_goal_holders G ((resolution_node_position nd,True),a)))
+      (ffilter (\<lambda>a. finite_registration_ready G nd a \<and> finite_registered_value \<kappa> P nd a=None)
+        (finite_free_registered \<kappa> nd)))
+    (resolution_nodes st)))"
 
 definition finite_pruned :: "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
   "finite_pruned st g = (case g of
@@ -371,7 +388,8 @@ primrec finite_resolution_search_by ::
       Select_Construction N \<Rightarrow> finite_outcome_union
         (fimage (finite_resolution_search_by sel \<kappa> P n) (fimage (finite_construction_step \<kappa> P st) N))
     | Select_Goals G \<Rightarrow> finite_outcome_union (fimage (finite_goal_outcome (finite_resolution_search_by sel \<kappa> P n) P st) G)
-    | Select_None \<Rightarrow> Resolution_Outcome {||} {|Resolution_Stuck (resolution_pending st)|}))"
+    | Select_None \<Rightarrow> Resolution_Outcome {||}
+        (finsert (Resolution_Stuck (resolution_pending st)) (finite_unconstructed \<kappa> P st))))"
 
 definition finite_resolution_search ::
     "('a,'s::linorder,'d,'c) finite_witness_construction \<Rightarrow> ('a,'s,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>

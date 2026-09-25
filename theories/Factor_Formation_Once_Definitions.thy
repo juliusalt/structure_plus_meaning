@@ -1,5 +1,5 @@
 theory Factor_Formation_Once_Definitions
-  imports Factor_Formation_Once_Readings Factor_Executable_Dependencies
+  imports Factor_Formation_Once_Readings Factor_Executable_Judgment_Retention
 begin
 
 section \<open>Formed environments read definitions, schemas and calls once\<close>
@@ -644,6 +644,84 @@ lemma finite_native_package_demands_formed_once_code [code]:
     then finite_native_package_demands_formed E u r
     else finite_requested_slots E (finite_native_root_requests E u r))"
   by (rule checked_premise.checked_through[OF finite_native_package_demands_checked_premise, where t="\<lambda>f. f u r"])
+
+section \<open>An environment reads the package sites once for its sources and its demands\<close>
+
+text \<open>
+  A package's least environment, and a judgment's, read the package sites for their sources and again
+  inside their demands. The demands are stated over a supplied family of sites, equal to the original at
+  the package's own sites by @{thm [source] finite_native_package_demands_formed_once_code}, and each
+  environment reads the sites once and passes them to both (HOL's @{text Let}).
+\<close>
+
+definition finite_native_package_demands_over where
+  "finite_native_package_demands_over E u r S=(if finite_environment_formed E
+    then finite_requested_slots E (finite_native_root_requests E u r) |\<union>|
+      ffUnion (fimage (\<lambda>(v,a). fimage (Pair v) (finite_native_definition_slots_formed E v a)) S)
+    else finite_requested_slots E (finite_native_root_requests E u r))"
+
+lemma finite_native_package_demands_over_sites:
+  "finite_native_package_demands E u r=finite_native_package_demands_over E u r (finite_native_package_sites E u r)"
+  by (simp only: finite_native_package_demands_formed_once_code finite_native_package_demands_over_def
+    finite_native_package_demands_formed_def)
+
+declare finite_native_package_environment_def[code del]
+
+lemma finite_native_package_environment_shared_code [code]:
+  "finite_native_package_environment E u r=(let S=finite_native_package_sites E u r in
+    finite_read_environment E (finsert u (fimage fst S)) (finite_native_package_demands_over E u r S))"
+  by (simp only: finite_native_package_environment_def finite_native_package_sources_def
+    finite_native_package_demands_over_sites Let_def)
+
+section \<open>An application's demanded slots are read from the formed bodies\<close>
+
+text \<open>
+  An application's slots are read through the call readings, which check the environment's formation at
+  their entry, and through the term readings of its argument, which check it again at each artifact of
+  the use. The demands check it once, at their entry (@{text Established_Premises}); outside the premise
+  the call readings are empty, so the demands are.
+\<close>
+
+definition finite_term_readings_carrier_formed where
+  "finite_term_readings_carrier_formed E u r=ffUnion (fimage (\<lambda>C.
+    finite_term_readings_formed (fcard (finite_carrier (finite_structure C))) E u r) (finite_artifacts_at E u))"
+
+lemma finite_term_readings_carrier_formed_exact:
+  "finite_environment_formed E \<Longrightarrow> finite_term_readings E u=finite_term_readings_carrier_formed E u"
+  by (rule ext) (simp only: finite_term_readings_def finite_term_readings_carrier_formed_def
+    finite_term_readings_formed_exact)
+
+definition finite_native_application_demands_formed where
+  "finite_native_application_demands_formed E u r=fimage (Pair u)
+    (finite_reading_slots (finite_call_readings_formed E u {||} r (finite_term_readings_carrier_formed E u)))"
+
+lemma finite_native_application_demands_checked_premise:
+  "checked_premise finite_native_application_demands finite_environment_formed
+    finite_native_application_demands_formed (\<lambda>E u r. {||})"
+proof (unfold_locales, goal_cases)
+  case (1 E)
+  show ?case by (intro ext) (simp only: finite_native_application_demands_def
+    finite_native_application_demands_formed_def finite_application_readings_def
+    finite_call_readings_formed_exact[OF 1] finite_term_readings_carrier_formed_exact[OF 1])
+next
+  case (2 E)
+  show ?case by (intro ext) (simp add: finite_native_application_demands_def finite_application_readings_def
+    finite_call_readings_def 2 finite_reading_slots_def fset_eq_iff ffUnion.rep_eq)
+qed
+
+lemma finite_native_application_demands_formed_once_code [code]:
+  "finite_native_application_demands E u r=(if finite_environment_formed E
+    then finite_native_application_demands_formed E u r else {||})"
+  by (rule checked_premise.checked_through[OF finite_native_application_demands_checked_premise, where t="\<lambda>f. f u r"])
+
+declare finite_native_judgment_environment_def[code del]
+
+lemma finite_native_judgment_environment_shared_code [code]:
+  "finite_native_judgment_environment E pu pr au ar=(let S=finite_native_package_sites E pu pr in
+    finite_read_environment E (finsert pu (fimage fst S) |\<union>| {|au|})
+      (finite_native_package_demands_over E pu pr S |\<union>| finite_native_application_demands E au ar))"
+  by (simp only: finite_native_judgment_environment_def finite_native_judgment_sources_def
+    finite_native_judgment_demands_def finite_native_package_sources_def finite_native_package_demands_over_sites Let_def)
 
 text \<open>
   A formed environment has exactly formed artifacts, so their record, family,

@@ -2,10 +2,10 @@
  "boundary": "Original closed history validity and actual index membership establish each complete predecessor reading. The reconstructed operation preserves the original target, replay, policy, allocation and append behavior. Every original subject, method, source field, complete result, inspection and revision is retained through verified compressed storage. Full physical cost, all six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "known-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 18.55,
+  "seconds": 22.44,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "284f84fba3ebf611a4596527b8b5aaea30c1f4da396221e0428cb11108bc363e",
+   "module_sha256": "c9e3b2c266eeb957142f98953cf13c75776e6c47811dff9d40683622e3fc13e7",
    "subject_contracts": {
     "known_history_investigation.yxml": "d023691a4eef54c8a6a5e0b1548eb283012963bc3674eb63957813204b891df9"
    },
@@ -73,14 +73,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "0a4dad63b449e0e215efe4ce5a55ebb43a73672c0613c6068a76e2c64377787d",
+ "source_manifest_sha256": "e22f7e75b2b2aa6121bcd5983634889cd2c1c3ba9f5b85a04616bd8fe2fb1a87",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 18.452056107023964
+   "seconds": 22.36690364900278
   }
  ]
 }

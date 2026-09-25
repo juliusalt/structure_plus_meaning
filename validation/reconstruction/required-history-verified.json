@@ -2,10 +2,10 @@
  "boundary": "Actual original requirement evaluation supplies complete certificate and replay families. The invariant-carrying history API preserves the original request and policy, checks every requested predecessor against the admission ledger, joins actual replay and generation construction, and checks the original policy cause. Complete optional state outputs, certificate keys, unavailable positions, condition observations, comparisons, revisions and coverage counts are reproduced. Whole workflow-policy adequacy, complete historical permission and reachability, indexed generation storage and allocation, full physical cost and genesis remain open. The presentation stage retains the proved digit word of the complete presented report on the same export.",
  "complete_recipe_source_manifest": "required-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.89,
+  "seconds": 6.89,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "d6253baf18d88f9e7196325083d303892dd1be5670c65621eca00bdc0d74d02d",
+   "module_sha256": "0fc6b33824f43a15cf9c8fa61d444485c483c95cd33add50c8cf2d92301acaaa",
    "subject_contracts": {
     "required_history_investigation.yxml": "ba85fd60275e10006512ac27fd192e5c107193e16571214dba60cffd114faa6e"
    },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "1d0cbc64be807c974d78b67d02e151109c4176f4604984153417b8b69c7e64e3",
+ "source_manifest_sha256": "735c496fbc2be8c026369ac6f56321813d62f7c87ee7d432dab114ba414cc49e",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.787394359998871
+   "seconds": 6.795490832999349
   }
  ]
 }

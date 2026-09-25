@@ -2,10 +2,10 @@
  "boundary": "Complete original source and certificate families determine actual source-positioned graphs, newly installed graph and application artifacts, the least retained environment and closed native replay. Every candidate result, original-source correspondence, application and graph reading, individual and family condition, complete comparison and revision is reproduced. Shared readers have complete-input equality contracts. The full workflow, cost, mathematical-proof admission and genesis remain open.",
  "complete_recipe_source_manifest": "native-certificate-replay-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 5.18,
+  "seconds": 6.15,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "1e4a7849b9ae10e81c6296c77972818df3d572638e1adb5502d436b05c437d58",
+   "module_sha256": "7bded44991c88d29812220fddb4d3119f49089f5053c8a5db0e538701299916d",
    "subject_contracts": {
     "native_replay_investigation.yxml": "e15f66f6095eb539ad342cc0bafc28aaf0c3136306a99c64d88540dc7099ba06"
    },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "f84f7c55082a6f858714abb95e2af4c705ebaf635a94bc82a7daa9e24be6186f",
+ "source_manifest_sha256": "f8d189e93c5cc2711998afc9cc78554314eb78f9008d3e7fb5b8069354c8f8c9",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 5.084581926988903
+   "seconds": 6.042823079013033
   }
  ]
 }

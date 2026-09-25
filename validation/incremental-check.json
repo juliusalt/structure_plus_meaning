@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
- "checked_content_sha256": "8417fa6fb008c50d161026a8b478bbc543df4849d810a19eea4a3d7a395e6d89",
+ "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
+ "checked_content_sha256": "77654b427970ed926fd71eafea13bd6a98bc342149a65b2d05a65fc37aae0e53",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,17 +17,17 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpzggwzkrn/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpjso69r1y/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
   "base_and_impact": 0.35,
-  "execution_impact": 1.37,
-  "export": 43.22,
-  "proof": 644.78,
-  "recipe_impact": 1.2,
-  "recipes_and_host_tests": 31.37
+  "execution_impact": 1.44,
+  "export": 54.11,
+  "proof": 415.85,
+  "recipe_impact": 0.46,
+  "recipes_and_host_tests": 36.27
  },
  "rebuilt_theories": [
   "Admitted_Conditional_Applications",
@@ -70,6 +70,7 @@
   "Factor_Application_Execution",
   "Factor_Constructed_Development_Execution",
   "Factor_Data_Product_Execution",
+  "Factor_Demanded_Graph_Readings",
   "Factor_Demanded_Package_Readings",
   "Factor_Development_Execution_Sharing",
   "Factor_Executable_Environment_Values",
@@ -94,6 +95,7 @@
   "Factor_Permission_Investigation",
   "Factor_Proof_Probe_Investigation",
   "Factor_Reasoning_Execution",
+  "Factor_Recovered_Graph_Sharing",
   "Factor_Requirement_Source_Boundary",
   "Factor_Requirement_Source_Examples",
   "Factor_Schema_Socket_Investigation",
@@ -244,27 +246,27 @@
   },
   "certified-causes": {
    "exit_code": 0,
-   "seconds": 5.33,
+   "seconds": 6.35,
    "status": "accepted"
   },
   "concurrent-history": {
    "exit_code": 0,
-   "seconds": 18.56,
+   "seconds": 21.2,
    "status": "accepted"
   },
   "constructed-history": {
    "exit_code": 0,
-   "seconds": 21.33,
+   "seconds": 24.8,
    "status": "accepted"
   },
   "data-reading": {
    "exit_code": 0,
-   "seconds": 3.82,
+   "seconds": 4.59,
    "status": "accepted"
   },
   "decision-replay": {
    "exit_code": 0,
-   "seconds": 7.09,
+   "seconds": 8.0,
    "status": "accepted"
   },
   "digit-allocation": {
@@ -279,12 +281,12 @@
   },
   "digit-history": {
    "exit_code": 0,
-   "seconds": 17.78,
+   "seconds": 21.54,
    "status": "accepted"
   },
   "digit-replay": {
    "exit_code": 0,
-   "seconds": 21.27,
+   "seconds": 23.67,
    "status": "accepted"
   },
   "encoded-environments": {
@@ -314,7 +316,7 @@
   },
   "history-index": {
    "exit_code": 0,
-   "seconds": 17.08,
+   "seconds": 20.9,
    "status": "accepted"
   },
   "indexed-generation": {
@@ -324,12 +326,12 @@
   },
   "known-history": {
    "exit_code": 0,
-   "seconds": 18.55,
+   "seconds": 22.44,
    "status": "accepted"
   },
   "literal-replay": {
    "exit_code": 0,
-   "seconds": 3.77,
+   "seconds": 4.48,
    "status": "accepted"
   },
   "native-admission": {
@@ -339,7 +341,7 @@
   },
   "native-certificate-replay": {
    "exit_code": 0,
-   "seconds": 5.18,
+   "seconds": 6.15,
    "status": "accepted"
   },
   "native-certificates": {
@@ -369,7 +371,7 @@
   },
   "native-development-seed": {
    "exit_code": 0,
-   "seconds": 31.37,
+   "seconds": 36.27,
    "status": "accepted"
   },
   "native-evaluation": {
@@ -419,17 +421,17 @@
   },
   "quoted-history": {
    "exit_code": 0,
-   "seconds": 20.95,
+   "seconds": 25.31,
    "status": "accepted"
   },
   "required-causes": {
    "exit_code": 0,
-   "seconds": 4.27,
+   "seconds": 5.34,
    "status": "accepted"
   },
   "required-history": {
    "exit_code": 0,
-   "seconds": 5.89,
+   "seconds": 6.89,
    "status": "accepted"
   },
   "requirement-decisions": {
@@ -463,19 +465,19 @@
    "status": "reused"
   }
  },
- "reused_theories": 1717,
- "seconds": 781.27,
+ "reused_theories": 1718,
+ "seconds": 586.31,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1887,
+  "theory_count": 1890,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1887,
+ "theories": 1890,
  "validation_inputs": {
-  "ROOT": "2a66b24f7480d5e4630c13d1180a27fcf5e7cf580a11fcbe4cb5faa303332472",
+  "ROOT": "f4163b149caa2a2ff24e7fb9cebeae558d725e7ab181e044df108bd31fc12f4c",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

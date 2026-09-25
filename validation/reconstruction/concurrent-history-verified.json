@@ -2,10 +2,10 @@
  "boundary": "Every original subject, candidate, complete result, observation, comparison and revision is reconstructed from source under the original subject contract. Native exact sharing, source projection and Isabelle parallel-map equations preserve the complete packet. The compact report boundary includes its complete native artifact dictionary. The runtime uses the declared Isabelle2025-2 and Poly/ML 5.9.2 bootstrap and records its complete inputs. All six workflow conditions, historical permission and reachability, native mathematical-proof admission, genesis and final audit remain open.",
  "complete_recipe_source_manifest": "concurrent-history-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 18.56,
+  "seconds": 21.2,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -17,7 +17,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "51a8181eaac39d42904f6bf33e2048a55f81b990eb19c9f65c48984934c23ea5",
+   "module_sha256": "67b14e9e7894c503f1e2bfa88ef8123de7d999b22cfc8a21865d936910973571",
    "subject_contracts": {
     "constructed_history_investigation.yxml": "abb2319954767611335115320f4ee777d02f9bdb0cbbc9c89dbbce385ffeb455"
    },
@@ -74,14 +74,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "c4c9ef89cc1677497e817a337a6a3f091b30de47e250b6dd03ff9708c89784ff",
+ "source_manifest_sha256": "7e4379a24215c8bcd131e7ddd7c5c5f569751c5a6cb74dcd9ba81995b3652218",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 18.467343035998056
+   "seconds": 21.078733230009675
   }
  ]
 }

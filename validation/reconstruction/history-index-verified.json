@@ -2,10 +2,10 @@
  "boundary": "Actual indexed histories preserve every original request, policy, material and ordered ledger field and the complete decoded admission index. The original transition determines reference outputs independently. Shared actual operations feed adverse cache and transition controls; persistent subsequent steps and all original source cases are retained with complete observations, comparisons and revisions. Complete workflow adequacy, physical cost, historical permission and reachability, native mathematical-proof admission, generation-store adoption and genesis remain open.",
  "complete_recipe_source_manifest": "history-index-sources.json",
  "complete_review": {
-  "base_receipt_sha256": "edb5e437e4647a8cc49c3bba345ba282e8b91a45ad803be4cb96bccf9feb1a5f",
+  "base_receipt_sha256": "058122d583ec64de1a659c7dec4834feb6af70b54a632230196ce22b2fa5d6c1",
   "records": 1,
   "reports_equal": true,
-  "seconds": 17.08,
+  "seconds": 20.9,
   "status": "accepted"
  },
  "execution_boundary": {
@@ -16,7 +16,7 @@
    "code_target": "Eval",
    "complete_artifact_transport": true,
    "complete_term_transport": true,
-   "module_sha256": "a93601e72c420b4b55a2a95c3ee3e77fd08c8f4c4c2dc6b4d0e39874ee60c4c9",
+   "module_sha256": "eb2eedaaeb452b584a1a092bb097f099e4e3fa498358d98f8907fb0b9315f465",
    "subject_contracts": {
     "history_index_investigation.yxml": "65b38920c2b4ec40da740ece21999afbb765bb4f2b8831ab39576d5f088e93a1"
    },
@@ -71,14 +71,14 @@
  },
  "reports_equal": true,
  "retention": "The accepted base proof and the incremental proof of every changed theory and dependent supplied the exported module; every complete report boundary equals its retained original. Generated result bulk is not a repository input.",
- "source_manifest_sha256": "b6f2d75b08192b2d854fbed8a39579d364ab141e857b4f9a2dcf176f945c34de",
+ "source_manifest_sha256": "4d776fdd2f3257f749ce476bc839accce4061cc881571bfb5c30f4f85670ed45",
  "sources_rebuilt": false,
  "status": "accepted",
  "steps": [
   {
    "exit_code": 0,
    "name": "presentation",
-   "seconds": 16.990339454001514
+   "seconds": 20.83122622402152
   }
  ]
 }

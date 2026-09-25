@@ -1,7 +1,7 @@
 theory Development_Given_Installation
   imports Development_Native_Package Development_Given_Readers Factor_Package_Membership
     Factor_Package_Retention_Admission Factor_Site_Values Factor_Finite_Native_Sources
-    RRA_Finite_Environment_Positions Native_Execution_Refinements
+    RRA_Finite_Environment_Positions
 begin
 
 text \<open>
@@ -81,27 +81,27 @@ text \<open>
   definition coordinates nor an alpha variant of its clauses and interfaces moves.
 \<close>
 
-lemma pattern_leaves_rename [simp]: "pattern_leaves (rename_pattern f p)=pattern_leaves p"
+lemma pattern_leaves_rename: "pattern_leaves (rename_pattern f p)=pattern_leaves p"
   by (induction p) simp_all
 
-lemma material_leaves_rename [simp]: "material_leaves (rename_material_pattern f M)=material_leaves M"
-  by (simp add: material_leaves_def material_fields_def rename_material_pattern_def)
+lemma material_leaves_rename: "material_leaves (rename_material_pattern f M)=material_leaves M"
+  by (simp add: material_leaves_def material_fields_def rename_material_pattern_def pattern_leaves_rename)
 
-lemma schema_leaves_rename [simp]: "schema_leaves (rename_schema f h g S)=schema_leaves S"
+lemma schema_leaves_rename: "schema_leaves (rename_schema f h g S)=schema_leaves S"
 proof -
   have calls: "(\<Union>(s,d,p)\<in>map_socket_graph h g (rename_pattern f) (schema_premises S). pattern_leaves p)=
       (\<Union>(s,d,p)\<in>schema_premises S. pattern_leaves p)"
-    by (simp add: map_socket_graph_def case_prod_beta)
+    by (simp add: map_socket_graph_def case_prod_beta pattern_leaves_rename)
   have material: "(\<Union>(s,M)\<in>(\<lambda>(s,M). (h s,rename_material_pattern f M)) ` schema_material_premises S. material_leaves M)=
       (\<Union>(s,M)\<in>schema_material_premises S. material_leaves M)"
-    by (simp add: case_prod_beta)
-  show ?thesis unfolding schema_leaves_def rename_schema_def using calls material by simp
+    by (simp add: case_prod_beta material_leaves_rename)
+  show ?thesis unfolding schema_leaves_def rename_schema_def using calls material by (simp add: pattern_leaves_rename)
 qed
 
 lemma system_payloads_rename: "system_payloads (rename_system g P)=system_payloads P"
 proof -
   have "system_leaves (rename_system g P)=system_leaves P"
-    by (simp add: system_leaves_def rename_system_def case_prod_beta)
+    by (simp add: system_leaves_def rename_system_def case_prod_beta schema_leaves_rename)
   then show ?thesis by (simp add: system_payloads_def)
 qed
 
@@ -110,7 +110,7 @@ lemma schema_alpha_variant_payloads:
   shows "schema_payloads T=schema_payloads S"
 proof -
   obtain f h where "T=rename_schema f h id S" using assms unfolding schema_alpha_variant_def by blast
-  then show ?thesis by (simp add: schema_payloads_def)
+  then show ?thesis by (simp add: schema_payloads_def schema_leaves_rename)
 qed
 
 lemma system_alpha_variant_payloads:
@@ -253,6 +253,38 @@ proof -
     "system_alpha_variant (rename_system given_readers_placement given_rooted_readers_system) given_readers_program"
     "system_definitions given_readers_program=given_readers_placement ` system_definitions given_rooted_readers_system"
     using T by (simp_all add: same)
+qed
+
+text \<open>
+  The readers' definitions stand at uses fresh in the environment they are installed in, and so in the
+  development package's.
+\<close>
+
+lemma given_readers_fresh:
+  "fst ` system_definitions given_readers_program \<inter>
+    environment_uses (decode_finite_environment (fst given_readers_source))={}"
+  "fst ` system_definitions given_readers_program \<inter>
+    environment_uses (decode_finite_environment development_package_environment)={}"
+proof -
+  have coordinates: "fst ` given_readers_placement ` system_definitions given_rooted_readers_system \<inter>
+      environment_uses (decode_finite_environment (fst given_readers_source))={}"
+    using given_installation.install.coordinates(4)
+    by (simp add: given_readers_placement_def finite_system_definitions_correct finite_rooted_given_readers_exact
+      finite_environment_uses_correct)
+  show first: "fst ` system_definitions given_readers_program \<inter>
+      environment_uses (decode_finite_environment (fst given_readers_source))={}"
+    using coordinates by (simp only: given_readers_compilation(3))
+  obtain F v where source: "given_readers_source=(F,v)" by (cases given_readers_source)
+  have none: "set ([]::local_address option definition_site list)\<subseteq>
+      environment_positions (decode_finite_environment development_package_environment)" by simp
+  note selected=finite_select_roots_correct[OF development_package_environment_formed none
+    source[unfolded given_readers_source_def]]
+  have "environment_uses (decode_finite_environment development_package_environment)\<subseteq>
+      environment_uses (decode_finite_environment (fst given_readers_source))"
+    using included_uses[OF selected(2)] by (simp add: source)
+  then show "fst ` system_definitions given_readers_program \<inter>
+      environment_uses (decode_finite_environment development_package_environment)={}"
+    using first by blast
 qed
 
 text \<open>The development package is read in the readers' environment as before.\<close>
@@ -570,6 +602,11 @@ qed
 lemmas given_rooted_payloads_exact=finite_system_payloads_exact[of finite_rooted_given_readers,
   unfolded finite_rooted_given_readers_exact]
 
+text \<open>
+  The payload audit holds at every definition of the given exactly when the readers' rooted program states the
+  empty payload alone, which the composition of @{thm [source] given_readers_payloads} gives from its two systems'.
+\<close>
+
 corollary given_payload_audit:
   assumes source: "environment_value_presents (decode_finite_environment given_environment) e"
   shows "(\<forall>d\<in>system_definitions given_program.
@@ -586,27 +623,111 @@ text \<open>
   Beyond its package's least scope the given's environment holds three root selectors, each kept: the
   development package's (its site stays the development package's), the empty package's of the closed
   installation route (the route's source, which the readers' installation extends), and the readers' (the site
-  over which the guard's definitions are installed). None is reached from the given's site, so the given's
-  environment is not closed at it and package retention is not admitted there; it is admitted at the given's
-  least scope, the package environment the given's site retains.
+  over which the guard's definitions are installed). The development package's selector binds its roots at a use
+  that is neither the given's site nor any definition's, so the given's environment is not closed at its site
+  (\<open>given_environment_not_closed\<close>) and package retention is refused there (\<open>given_retention_refused\<close>); it is
+  admitted at the given's least scope, the package environment the given's site retains.
 \<close>
+
+lemma given_development_use_outside:
+  "development_package_use\<noteq>given_use"
+  "development_package_use\<notin>fst ` system_definitions given_program"
+proof -
+  have uses: "(u,a)\<in>environment_positions E \<Longrightarrow> u\<in>environment_uses E" for E :: "local_address option artifact_environment" and u a
+    by (force simp: environment_uses_def artifact_at_def)
+  have base: "development_package_use\<in>environment_uses (decode_finite_environment development_package_environment)"
+    by (rule uses[OF native_package_root_position[OF development_package_kept]])
+  have inK: "development_package_use\<in>fset (finite_environment_uses (fst given_readers_installed))"
+    using included_uses[OF given_readers_installation(2)] base unfolding finite_environment_uses_correct by blast
+  show "development_package_use\<noteq>given_use" using inK given_package(7) by force
+  have readers: "development_package_use\<notin>fst ` system_definitions given_readers_program"
+    using given_readers_fresh(2) base by blast
+  obtain G w where dsel: "development_package_selection=(G,w)" by (cases development_package_selection)
+  have compiled: "system_definitions development_package_program\<subseteq>
+      environment_positions (decode_finite_environment (fst development_package_compiled))"
+    using native_package_entry_position[OF development_package_compilation(1)] by blast
+  have targets: "set (map development_package_placement development_package_entries)\<subseteq>
+      environment_positions (decode_finite_environment (fst development_package_compiled))"
+    using development_package_roots_in compiled by auto
+  note selected=finite_select_roots_correct[OF development_package_compiled_facts(1) targets
+    dsel[unfolded development_package_selection_def]]
+  have use: "development_package_use=w" by (simp add: development_package_use_def dsel)
+  have fresh: "development_package_use\<notin>environment_uses (decode_finite_environment (fst development_package_compiled))"
+    using selected(3) use by (simp add: finite_environment_uses_correct)
+  have development: "development_package_use\<notin>fst ` system_definitions development_package_program"
+  proof
+    assume "development_package_use\<in>fst ` system_definitions development_package_program"
+    then obtain a where "(development_package_use,a)\<in>system_definitions development_package_program" by force
+    then have "development_package_use\<in>environment_uses (decode_finite_environment (fst development_package_compiled))"
+      using compiled uses by blast
+    then show False using fresh by blast
+  qed
+  show "development_package_use\<notin>fst ` system_definitions given_program"
+    using readers development given_package(2) by blast
+qed
+
+theorem given_environment_not_closed:
+  "\<not>(\<exists>P. closed_native_package_at (decode_finite_environment given_environment) given_use [] P)"
+proof
+  let ?E="decode_finite_environment given_environment"
+  assume "\<exists>P. closed_native_package_at ?E given_use [] P"
+  then obtain P where closed: "closed_native_package_at ?E given_use [] P" by blast
+  have dom: "rel_dom (environment_bindings ?E)=native_package_demands ?E given_use []"
+    using closed by (simp add: closed_native_package_at_def environment_closed_def)
+  have boundary: "fst ` native_package_demands ?E given_use []\<subseteq>native_package_sources ?E given_use []"
+    using native_package_read_boundary[OF given_package(1)] by (simp add: read_boundary_formed_def)
+  obtain Q where family: "native_root_family_at ?E given_use [] Q" and formed: "native_package_formed ?E (rel_ran Q)"
+    and program: "given_program=native_program ?E (rel_ran Q)"
+    using given_package(1) unfolding native_package_at_def by blast
+  have sites: "native_package_sites ?E given_use []=system_definitions given_program"
+    unfolding native_package_sites_def native_package_roots_from_family[OF family] program
+      native_program_definitions[OF formed] ..
+  have sources: "native_package_sources ?E given_use []=insert given_use (fst ` system_definitions given_program)"
+    by (simp add: native_package_sources_def sites)
+  obtain Q' where family': "native_root_family_at ?E development_package_use [] Q'"
+    and formed': "native_package_formed ?E (rel_ran Q')"
+    and program': "development_package_program=native_program ?E (rel_ran Q')"
+    using given_package(4) unfolding native_package_at_def by blast
+  have devdefs: "system_definitions development_package_program=native_definition_sites ?E (rel_ran Q')"
+    unfolding program' native_program_definitions[OF formed'] ..
+  have nonempty: "rel_ran Q'\<noteq>{}"
+  proof
+    assume "rel_ran Q'={}"
+    then have "system_definitions development_package_program={}" unfolding devdefs by (simp add: native_definition_sites_def)
+    then show False using given_development_entries(1) by blast
+  qed
+  then obtain s d where sd: "(s,d)\<in>Q'" by (auto simp: rel_ran_def)
+  obtain R M where artifact: "artifact_at ?E development_package_use R" and fam: "family_at R [] M"
+    and keys: "rel_dom Q'=rel_dom M"
+    and located: "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>d. (s,d)\<in>Q' \<and> located_at ?E development_package_use a (fst d) (snd d))"
+    using family' unfolding native_root_family_at_def by blast
+  have "s\<in>rel_dom Q'" using sd by (rule rel_domI)
+  then have "s\<in>rel_dom M" by (simp only: keys)
+  then obtain a where sa: "(s,a)\<in>M" unfolding rel_dom_def by blast
+  obtain d' where d': "(s,d')\<in>Q'" and loc: "located_at ?E development_package_use a (fst d') (snd d')"
+    using located sa by blast
+  have "d'\<in>native_definition_sites ?E (rel_ran Q')"
+    using d' native_definition_roots[of "rel_ran Q'" ?E] by (auto simp: rel_ran_def)
+  then have "fst d'\<in>fst ` system_definitions given_program" using devdefs given_package(2) by auto
+  then have other: "development_package_use\<noteq>fst d'" using given_development_use_outside(2) by metis
+  obtain k where "binds_slot ?E development_package_use k (fst d')"
+    using located_at_use_edge[OF loc] other by (auto simp: environment_edges_def)
+  then have "(development_package_use,k)\<in>native_package_demands ?E given_use []"
+    unfolding dom[symmetric] by (auto simp: binds_slot_def rel_dom_def)
+  then have "development_package_use\<in>native_package_sources ?E given_use []"
+    using boundary by (metis fst_conv image_eqI subsetD)
+  then show False using sources given_development_use_outside by auto
+qed
+
+corollary given_retention_refused:
+  assumes "site_value_presents (decode_finite_environment given_environment) given_use [] z"
+  shows "(122,z)\<notin>positive_meaning package_retention_admission_system"
+  using package_retention_admission_on_values[OF assms] given_environment_not_closed by blast
 
 corollary given_least_scope_retention:
   assumes "site_value_presents (native_package_environment (decode_finite_environment given_environment) given_use [])
     given_use [] z"
   shows "(122,z)\<in>positive_meaning package_retention_admission_system"
   using package_retention_admission_on_values[OF assms] native_package_closed_restriction[OF given_package(1)] by blast
-
-section \<open>The construction executed\<close>
-
-text \<open>
-  The given's environment is computed over the development package's kept environment, and its package read
-  back by the native package reader, over the reader's refinements (\<open>Native_Execution_Refinements\<close>): its
-  size in addresses and the number of definitions read back, the development package's and the readers'.
-\<close>
-
-value "(fcard (finite_environment_positions development_package_environment),
-  fcard (finite_environment_positions given_environment),
-  map_option (\<lambda>P. fcard (finite_system_definitions P)) (finite_native_source given_environment given_use []))"
 
 end

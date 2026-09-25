@@ -146,7 +146,7 @@ proof -
     by (rule systems_agree_on_closed[OF source_agree source_closed])
   have reverse: "systems_agree_on environment_inclusion_system generation_source_system
       (system_definitions environment_inclusion_system\<inter>system_definitions generation_source_system)"
-    using systems_agree_on_sym[OF generation_retention_program_agreement] by (simp only: Int_commute)
+    by (rule overlap_agreement_sym[OF generation_retention_program_agreement])
   have inclusion_agree: "systems_agree_on environment_inclusion_system generation_retention_components_system
       (system_definitions environment_inclusion_system)"
     using system_union_agree_left[OF generation_source_system_formed reverse]

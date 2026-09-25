@@ -61,10 +61,6 @@ lemma generation_source_located_agreement:
   using system_union_agree_left[OF generation_value_system_formed generation_located_agreement]
   by (simp only: generation_source_components_system_def)
 
-lemma generation_source_retained_agreement:
-  "systems_agree_on generation_source_base_system generation_source_system
-    (system_definitions generation_source_base_system)"
-  using generation_source_group.old_agreement by (simp only: generation_source_system_def)
 
 lemma generation_scope_program_agreement:
   "systems_agree_on generation_source_system scope_programs_system

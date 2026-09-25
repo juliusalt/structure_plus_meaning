@@ -148,7 +148,7 @@ lemma base_cause_complete_agreement:
 proof -
   have reverse: "systems_agree_on complete_data_admission_system generation_scope_system
       (system_definitions complete_data_admission_system\<inter>system_definitions generation_scope_system)"
-    using systems_agree_on_sym[OF base_cause_program_agreement] by (simp only: Int_commute)
+    by (rule overlap_agreement_sym[OF base_cause_program_agreement])
   show ?thesis using system_union_agree_left[OF generation_scope_system_formed reverse]
     by (simp only: base_cause_source_system_def system_union_commute)
 qed

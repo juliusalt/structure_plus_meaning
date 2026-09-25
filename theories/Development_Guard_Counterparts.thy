@@ -99,8 +99,8 @@ text \<open>
 
 definition audit_goal_control :: "octets \<Rightarrow> (bool\<times>octets fset fset option) option" where
   "audit_goal_control v=map_option (\<lambda>(K,w).
-      (finite_audit_additions (Finite_Pair (control_site (fst audit_control_selection) (snd audit_control_selection) [])
-        (control_site K w [])),
+      (finite_audit_additions (Finite_Pair (finite_site_presented (fst audit_control_selection) (snd audit_control_selection) [])
+        (finite_site_presented K w [])),
       map_option (\<lambda>R. ffUnion (fimage (\<lambda>d. fimage (\<lambda>(p,F). finite_definition_payloads p F)
         (finite_native_definition_readings K (fst d) (snd d))) (finite_system_definitions R))) (finite_native_source K w [])))
     (audit_control_installed v)"

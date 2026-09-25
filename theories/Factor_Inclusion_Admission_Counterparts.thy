@@ -84,6 +84,68 @@ lemma environment_value_presents_finite:
   using finite_environment_representation[OF conjunct1[OF environment_value_presents_formed[OF assms]]]
   by blast
 
+section \<open>A site value, read back and presented\<close>
+
+text \<open>
+  A site value is an environment value beside a site's data term, the site a position of the environment
+  (@{const site_value_presents}). Its reader reads the environment and the site by their own readers, as a pair
+  (@{thm [source] finite_pair_read_present}), and keeps the reading only when the site is a position of the
+  environment read; every other term is read as nothing. A site value has one presentation for every enumeration
+  of its environment's tables, so the reader is exact in the relational form of @{const finite_reads}: a term is
+  read as an environment, a use and an address exactly when it presents them.
+\<close>
+
+definition finite_site_read :: "finite_factor_term \<Rightarrow>
+    (local_address option finite_artifact_environment\<times>local_address option\<times>local_address) option" where
+  "finite_site_read t=(case finite_pair_read finite_environment_value_read finite_site_value_read t of
+    None \<Rightarrow> None
+  | Some (E,u,r) \<Rightarrow> if (u,r) |\<in>| finite_environment_positions E then Some (E,u,r) else None)"
+
+theorem finite_site_read_exact:
+  "finite_site_read t=Some (E,u,r) \<longleftrightarrow>
+    site_value_presents (decode_finite_environment E) u r (decode_finite_term t)"
+proof -
+  have site: "finite_site_value_read v=Some y \<longleftrightarrow> decode_finite_term v=site_data_term (fst y) (snd y)" for v y
+    by (cases y) (simp only: finite_site_value_read_exact fst_conv snd_conv)
+  have pair: "finite_pair_read finite_environment_value_read finite_site_value_read t=Some (E,(u,r)) \<longleftrightarrow>
+      (\<exists>e q. decode_finite_term t=Pair_Term e q \<and> environment_value_presents (decode_finite_environment E) e \<and>
+        q=site_data_term u r)"
+    using finite_pair_read_present[where P="\<lambda>E e. environment_value_presents (decode_finite_environment E) e"
+      and Q="\<lambda>y q. q=site_data_term (fst y) (snd y)", OF finite_environment_value_read_exact site, of t E "(u,r)"]
+    by simp
+  have "finite_site_read t=Some (E,u,r) \<longleftrightarrow>
+      finite_pair_read finite_environment_value_read finite_site_value_read t=Some (E,(u,r)) \<and>
+      (u,r) |\<in>| finite_environment_positions E"
+    by (auto simp: finite_site_read_def split: option.splits prod.splits if_splits)
+  then show ?thesis
+    by (auto simp: pair site_value_presents_def finite_environment_positions_correct[symmetric])
+qed
+
+text \<open>
+  The presenter of a site value: the environment's complete value beside the site's data. At a formed
+  environment and one of its positions it presents that site value, and the reader reads it back as exactly the
+  environment and the site it presents.
+\<close>
+
+definition finite_site_presented :: "local_address option finite_artifact_environment \<Rightarrow> local_address option \<Rightarrow>
+    local_address \<Rightarrow> finite_factor_term" where
+  "finite_site_presented E u r=Finite_Pair (finite_environment_value E) (finite_site_data (u,r))"
+
+theorem finite_site_presented_presents:
+  assumes formed: "environment_formed (decode_finite_environment E)"
+    and site: "(u,r)\<in>environment_positions (decode_finite_environment E)"
+  shows "site_value_presents (decode_finite_environment E) u r (decode_finite_term (finite_site_presented E u r))"
+proof -
+  have environment: "environment_value_presents (decode_finite_environment E) (decode_finite_term (finite_environment_value E))"
+    using formed by (simp only: finite_environment_value_exact finite_environment_formed_correct simp_thms)
+  show ?thesis unfolding site_value_presents_def finite_site_presented_def using site environment by simp
+qed
+
+corollary finite_site_presented_read:
+  assumes "environment_formed (decode_finite_environment E)" "(u,r)\<in>environment_positions (decode_finite_environment E)"
+  shows "finite_site_read (finite_site_presented E u r)=Some (E,u,r)"
+  by (simp only: finite_site_read_exact finite_site_presented_presents[OF assms])
+
 section \<open>The counterpart of environment inclusion (113)\<close>
 
 text \<open>

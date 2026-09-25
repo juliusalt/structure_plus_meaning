@@ -1288,6 +1288,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Placeholder_Fill
     Factor_Placeholder_Schemas
     Factor_Placeholder_Packages
+    Factor_Parametric_Causes
     Factor_Required_Cause_Assessment
     Factor_Required_Cause_Cases
     Factor_Required_Cause_Investigation

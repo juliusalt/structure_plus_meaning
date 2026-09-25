@@ -17106,3 +17106,41 @@ the base generation, the owner records, the approval and the native state's firs
   `Development_Owner_Records` or `Development_Native_State`), and no word.
 
 Recorded 2026-09-25 (task 492).
+
+## The native state's first generation recorded held: 111 s at the given's value, twice the gate
+
+Task 538, build X of "A generation over a state holds its payload once" (task 482), after its refinements R (RR1 #530,
+RR2 #532, RR3 #534, RR4 #536). `Development_Native_State_Execution`, an execution theory beside the library (imports
+`Native_Execution_Refinements`, `Development_Recording_Refinements`, `Development_Native_State`,
+`Development_Bounded_Recording_Execution`; no theory imports it), compiles the recording once (the ML structure
+`Native_State_Execution`): `development_native_state_first_generation` is `development_base_generation` at the given's
+value (`native_state_first_generation_recording`).
+
+- *What the refinements removed.* At #481's 32K cut (32,009 addresses) B2's recording took 7.04–7.54 s in I3's runs
+  (#489, 220–258 µs per address); with R in effect it takes 0.99 s held (run 1) and 1.07 s shared (run 3), 31–33 µs per
+  address: about seven times less, every formation of R and of the path's environments made where its premise is
+  established, the policy package read once, the certificate's premise readings computed once.
+- *Measured* (`.build/tasks/538/measurement.md`; base `20260925-172918-batch536` pinned). The given's value, 882,621
+  addresses: the whole recording 111.3 s held (run 1; 115.5 s in run 3, shared, little contention), 126 µs per payload
+  address against the gate's 60 (53 s): above the gate by a factor 2.1. By #489's steps (run 2, held; sum 118.6 s):
+  the listing policy's source S1–S2 39.8 s (34 %: ground source 9.3, requirements 30.5), the certificate's proofs 35.2 s
+  (30 %), the graph's placement 38.4 s (32 %), the quotation 3.3 s, the replay environment and the bounded quotation
+  about 1 s each. Every step grows with the exponent 1.3–1.5 from 32K to the given's value (the whole 1.42), none
+  quadratically; the shares are those at 32K (#536: 35, 26, 31 %). I3 estimated 400–780 s before R and about 90 s after
+  rules (a) and (c); #536 estimated 52–80 s. The entry's trigger for certification parametric in the literal ("Weighed and
+  not taken": X's gate failing after R) holds: the choice between it and a further refinement of S1–S2 (RR5) is the
+  planner's.
+- *One cause.* The cause of the owner record of 18:53, of the given's value cut at 8,013 and 32,009 addresses and of the
+  given's value itself is one target of 3,437 carrier addresses (runs 1–3); the recording returns a generation.
+- *B2's review follow-up 7, decided.* The 32K control is kept: it controls, with the owner record and the 8K cut, that
+  three payloads share one cause target at every build, which X's given does only in a held run. Its evaluation moved
+  from `Development_Bounded_Recording_Execution`'s `value` into X's one compilation (`development_bounded_recording_controls`
+  retired; `bounded_recording_generation_cause` added, `bounded_recording_cause` through it). Recurring cost in a check
+  that rebuilds them: `Development_Bounded_Recording_Execution` 0.5 s (#493 measured about 33 s for its `value`), X
+  15.7–16.4 s (compilation, the given's value and the three controls, 1.3 s of recordings). The given's own recording
+  (about 2 minutes) runs only where `Native_State_Execution.first_generation` is called, a probe importing X, since a
+  probe of X is bounded at 60 s.
+- *Reliances.* Nothing reads the bootstrap loop's datatypes, rows, loci or keys; the given and its value are unchanged; no
+  recipe reaches the changed theories, so no word changed.
+
+Recorded 2026-09-25 (task 538).

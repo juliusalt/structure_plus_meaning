@@ -48,9 +48,11 @@ on, all accepted:
   formed-target recording; the collection `Development_Recording_Refinements`), RR2 #532 (landed `47b360f9`: the
   checked certificate's premise readings once, the graph at a read program), RR3 #534 (landed `1a97f800`: the
   readers' formed bodies' inner readings), then
-  RR4 #536 (the policy package read once, the formed path, R's formation derived from the term's, #531's review,
-  follow-up 1; after RR1, RR2 and RR3) → X #538 (the first generation executed held at the given's value against the
-  gate; after RR3 and RR4) → the posing #397 (its brief corrected by #522), each build with its review.
+  RR4 #536 (landed `0284b0ae`: the policy package read once, the formed path, R's formation derived from the term's;
+  1.07 s at 32K, 33.6 µs per address, 52–80 s estimated at the given's value) → X #538 (the first generation executed
+  held at the given's value against the gate of 60 µs per address, about 53 s) → RR5 (the listing policy's source
+  installed as a formed program, S1-S2's 35 % at 32K; after X, whose change edits the collection) beside the posing
+  #397 (its brief corrected by #522), each build with its review.
 - Then the answer's judgment and admission #399, its transport #401, the verification's native half #403 and its
   harness #407 (after the frame and its fixes, landed). The first request (#523's corrected #443, divided by #544,
   `.build/tasks/544/result.md`): the request program #545 (landed `5e6409e4`), the request at the given #547 (support,
@@ -119,8 +121,8 @@ shortened enough for its review.
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The evaluator's
 head first, R4 #505 (the longest chain and the owner's direction, its checks first on the machine); the
-recording's last refinement RR4 #536 as soon as it can start; the evaluator's
-W2 #524, R5 #518, W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; RR4 #536 and X #538; the request at the
+recording's X #538 in flight; the evaluator's
+W2 #524, R5 #518, W4a #526, R6 #520, W4b #528, rc #540 and R7 #542; RR5 after R5, and the controls' rename after it; the request at the
 given #547; the posing and the route in its chains' order (#399, the samples #551, the
 observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
@@ -341,7 +343,10 @@ What landed that open work builds on, a line each; how it went and each review's
   term are established (`finite_certificate_graph_checked`, `finite_certificate_graph_exact`); imported by no theory,
   so its code equation of `finite_native_certificate_graph` is in effect only where it is imported. RR3 (#534,
   `1a97f800`): `Factor_Formed_Inner_Readings`, the readers' formed bodies calling their inner readings through formed
-  bodies, no formation checked inside.
+  bodies, no formation checked inside. RR4 (#536, `0284b0ae`): the policy package read once and passed on, every
+  environment but the ground source's F1 read where its constructor formed it, R's formation from the term's by
+  `finite_data_syntax_quotation_formed`, the condition and readiness established by contracts; the recording 1.07 s at
+  32K, 33.6 µs per address (`.build/tasks/536/result.md`, (5)).
 - **The resolving evaluator** (#495's entry): R1 `Factor_Material_Resolution` (#499, `1f021cf3`: the material premise
   solved from a ground skeleton or source, site 1's control), R2 `Factor_Pattern_Unification` (#501, `1a319de3`: the
   most general unifier of finite term patterns and renaming apart) and R3 `Factor_Program_Resolution` (#503,
@@ -473,7 +478,8 @@ searches for a theory before briefing a task that edits it.
 - **The counterparts' retirement**: R8a and R8b landed (`9b18bd52`, `519102d8`; next-edit items 154, 156 and 159 with
   them), and #555 of its review's follow-ups (`8591818b`); the one on R4 is in #505's rewritten brief; the controls
   theory's rename with the use sample's fixtures (item 183) is a fix after R4; 158 stays at a measured need.
-- **Mailed, read by each task's first session** (by task): #524 (#515's review, follow-up 6); #526 (its 3 and 6);
+- **Mailed, read by each task's first session** (by task): #538 (RR5 after it; S1-S2's share if above the gate);
+  #524 (#515's review, follow-up 6); #526 (its 3 and 6);
   #542 (its 4: the checker's share per certificate measured, the check staying); #407 (#433's review's follow-ups 2 and 3; the frame as #432
   and #433 leave it; #394's follow-up 3); #505 (R3b's invariant under a formed program and call and a construction
   whose values are formed, q99; #504's three items; its brief, rewritten by plan-73, names them with R3b's theory,
@@ -487,7 +493,7 @@ searches for a theory before briefing a task that edits it.
   `.build/tasks/523/result.md`).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;
   earlier gaps in `PLANNING_LOG.md`, 2026-09-24): `v2.py read check:167` raises a TypeError in `check_text`;
-  `measuring --shared` wrote no `measurements.log`; bases swept before a brief's task ran (#324); the finalizer's push of
+  `measuring --shared` wrote no `measurements.log`, and a timed claim after a refused one left no line (#536); bases swept before a brief's task ran (#324); the finalizer's push of
   `82a065cd` failed; the finalizer should commit the handed-over files only (#303); the exclusive hold outlasts its run
   (#317); a re-review writes over its first verdict (#65, #302, #438; #461's accepting review's follow-ups lost with it); `v2.py ledger` records a text beginning with `--`
   (Q15); a task tree's owner ledger is main's stale copy (#386's review, follow-up 4); a queued exclusive claim granted

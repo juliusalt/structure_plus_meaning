@@ -1624,6 +1624,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Positioned_Native_Evaluation
     Shared_Native_Evaluation
     Criticism_Samples
+    Criticism_Use_Samples
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
     Complete_Term_References
@@ -1827,6 +1828,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Native_Control_Prepared_Cause_Review
     Native_Control_Quotation_Code
     Development_Given_Readers
+    Development_Given_Program
     Native_Control_Quotation_Construction
     Native_Control_Quotation_Representation
     Native_Control_Quoted_Judgment

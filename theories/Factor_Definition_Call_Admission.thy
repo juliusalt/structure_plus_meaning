@@ -449,7 +449,7 @@ corollary definition_call_admission_renaming:
     (\<lambda>t. (72,t)\<in>positive_meaning definition_call_admission_system)"
 proof -
   have operand: "presentation_class (\<lambda>x t. t=x) (\<lambda>_::factor_term. True) (\<lambda>_. True)"
-    by unfold_locales auto
+    by (rule identity_presentation_class)
   have presented: "presentation_class definition_call_presents (\<lambda>z. environment_formed (fst (fst z)))
       (\<lambda>p. \<exists>z. definition_call_presents z p)"
     using presentation_class.recovered_admission[OF factor_pair_class[OF factor_pair_class[OF

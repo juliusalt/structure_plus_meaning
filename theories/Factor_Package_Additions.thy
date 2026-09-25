@@ -938,8 +938,9 @@ text \<open>
   (@{thm [source] use_key_absence_equivariant}, at @{thm [source] use_key_rows_renaming_action};
   @{thm [source] use_data_comparison_equivariant}, at @{thm [source] use_pair_renaming_action}). Their
   presented forms are stated here, over the use presentations: both are invariant along every renaming
-  correspondence of their use presentations; the readers' own contracts range over every self-contained
-  key, so the correspondence, which stays among use presentations, is followed through the clause.
+  correspondence of their use presentations. The readers' own contracts range over every self-contained
+  key, so each is exact only on the presentations of its class, and the notion's form for an observation
+  exact on a class's presentations (@{thm [source] presented_observation_renaming}) carries it.
 \<close>
 
 abbreviation use_key_rows_presents ::
@@ -950,17 +951,25 @@ abbreviation use_key_rows_presents ::
 corollary use_key_absence_renaming:
   "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence use_key_rows_presents use_key_rows_renaming h) (=)
     (\<lambda>t. (20,t)\<in>positive_meaning key_absence_system) (\<lambda>t. (20,t)\<in>positive_meaning key_absence_system)"
-proof (intro allI impI rel_funI)
-  fix h p q assume h: "bij h" and corr: "renaming_correspondence use_key_rows_presents use_key_rows_renaming h p q"
-  obtain z where p: "use_key_rows_presents z p" and q: "use_key_rows_presents (use_key_rows_renaming h z) q"
-    using corr by (auto simp: renaming_correspondence_def)
-  have same: "(20,Pair_Term (use_data_term (fst (use_key_rows_renaming h z)))
-      (pair_list_term (map (map_prod use_data_term id) (snd (use_key_rows_renaming h z)))))\<in>positive_meaning key_absence_system
-    \<longleftrightarrow> (20,Pair_Term (use_data_term (fst z)) (pair_list_term (map (map_prod use_data_term id) (snd z))))
-      \<in>positive_meaning key_absence_system"
-    using use_key_absence_equivariant h unfolding renaming_equivariant_def by blast
-  show "(20,p)\<in>positive_meaning key_absence_system \<longleftrightarrow> (20,q)\<in>positive_meaning key_absence_system"
-    using same p q by (simp add: factor_pair_presents_def)
+proof -
+  have pair: "inj (map_prod use_data_term (id::factor_term \<Rightarrow> factor_term))"
+    using map_prod_inj_on[OF use_data_term_injective inj_on_id[of UNIV]] by simp
+  have injective: "inj (\<lambda>ys. pair_list_term (map (map_prod use_data_term (id::factor_term \<Rightarrow> factor_term)) ys))"
+    by (rule injI) (simp only: pair_list_term_injective inj_map_eq_map[OF pair])
+  have rows: "presentation_class (\<lambda>ys t. t=pair_list_term (map (map_prod use_data_term id) ys))
+      (\<lambda>_::(local_address option \<times> factor_term) list. True)
+      (\<lambda>t. \<exists>ys. t=pair_list_term (map (map_prod use_data_term id) ys))"
+    using injective_presentation_class[where f="\<lambda>ys. pair_list_term (map (map_prod use_data_term id) ys)"
+      and D="\<lambda>_::(local_address option \<times> factor_term) list. True"] injective by simp
+  have presented: "presentation_class use_key_rows_presents (\<lambda>z. True) (\<lambda>p. \<exists>z. use_key_rows_presents z p)"
+    using presentation_class.recovered_admission[OF factor_pair_class[OF use_coordinate_presentation rows]] by simp
+  have exact: "\<And>z p. use_key_rows_presents z p \<Longrightarrow> (20,p)\<in>positive_meaning key_absence_system \<longleftrightarrow>
+      (20,Pair_Term (use_data_term (fst z)) (pair_list_term (map (map_prod use_data_term id) (snd z))))
+        \<in>positive_meaning key_absence_system"
+    by (auto simp: factor_pair_presents_def)
+  show ?thesis
+    by (rule iffD2[OF presented_observation_renaming[OF presented use_key_rows_renaming_action exact]
+      use_key_absence_equivariant])
 qed
 
 abbreviation use_pair_presents :: "local_address option \<times> local_address option \<Rightarrow> factor_term \<Rightarrow> bool" where
@@ -969,17 +978,16 @@ abbreviation use_pair_presents :: "local_address option \<times> local_address o
 corollary use_data_comparison_presented_renaming:
   "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence use_pair_presents (product_action (\<lambda>h. h) (\<lambda>h. h)) h) (=)
     (\<lambda>t. (3,t)\<in>positive_meaning data_comparison_system) (\<lambda>t. (3,t)\<in>positive_meaning data_comparison_system)"
-proof (intro allI impI rel_funI)
-  fix h p q
-  assume h: "bij h" and corr: "renaming_correspondence use_pair_presents (product_action (\<lambda>h. h) (\<lambda>h. h)) h p q"
-  obtain z where p: "use_pair_presents z p" and q: "use_pair_presents (product_action (\<lambda>h. h) (\<lambda>h. h) h z) q"
-    using corr by (auto simp: renaming_correspondence_def)
-  have same: "(3,Pair_Term (use_data_term (fst (product_action (\<lambda>h. h) (\<lambda>h. h) h z)))
-      (use_data_term (snd (product_action (\<lambda>h. h) (\<lambda>h. h) h z))))\<in>positive_meaning data_comparison_system
-    \<longleftrightarrow> (3,Pair_Term (use_data_term (fst z)) (use_data_term (snd z)))\<in>positive_meaning data_comparison_system"
-    using use_data_comparison_equivariant h unfolding renaming_equivariant_def by blast
-  show "(3,p)\<in>positive_meaning data_comparison_system \<longleftrightarrow> (3,q)\<in>positive_meaning data_comparison_system"
-    using same p q by (simp add: factor_pair_presents_def)
+proof -
+  have presented: "presentation_class use_pair_presents (\<lambda>z. True) (\<lambda>p. \<exists>z. use_pair_presents z p)"
+    using presentation_class.recovered_admission[OF factor_pair_class[OF use_coordinate_presentation
+      use_coordinate_presentation]] by simp
+  have exact: "\<And>z p. use_pair_presents z p \<Longrightarrow> (3,p)\<in>positive_meaning data_comparison_system \<longleftrightarrow>
+      (3,Pair_Term (use_data_term (fst z)) (use_data_term (snd z)))\<in>positive_meaning data_comparison_system"
+    by (auto simp: factor_pair_presents_def)
+  show ?thesis
+    by (rule iffD2[OF presented_observation_renaming[OF presented use_pair_renaming_action exact]
+      use_data_comparison_equivariant])
 qed
 
 section \<open>G3: the boundary at the absence of the member's use from the given's environment\<close>

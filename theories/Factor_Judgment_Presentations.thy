@@ -17,18 +17,6 @@ abbreviation site_context_formed :: "site_context \<Rightarrow> bool" where
 abbreviation site_coordinate_presents :: "local_address option definition_site \<Rightarrow> factor_term \<Rightarrow> bool" where
   "site_coordinate_presents d t \<equiv> t=site_data_term (fst d) (snd d)"
 
-lemma use_coordinate_presentation:
-  "presentation_class (\<lambda>u t. t=use_data_term u) (\<lambda>_. True) (\<lambda>t. \<exists>u. t=use_data_term u)"
-  using injective_presentation_class[where f=use_data_term and D="\<lambda>_. True"]
-    use_data_term_injective by simp
-
-lemma address_coordinate_presentation:
-  "presentation_class (\<lambda>r t. t=Payload_Term r) (\<lambda>_. True) (\<lambda>t. \<exists>r. t=Payload_Term r)"
-proof -
-  have injective: "inj Payload_Term" by (rule injI) simp
-  show ?thesis using injective_presentation_class[where f=Payload_Term and D="\<lambda>_. True"]
-    injective by simp
-qed
 
 lemma site_coordinate_presentation:
   "presentation_class site_coordinate_presents (\<lambda>_. True) (\<lambda>t. \<exists>d. site_coordinate_presents d t)"

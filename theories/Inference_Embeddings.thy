@@ -4,9 +4,6 @@ begin
 
 section \<open>An injective value presentation preserves the complete inference account\<close>
 
-lemma map_relation_values_range:
-  "rel_ran (map_relation_values f H)=f ` rel_ran H"
-  by (auto simp: rel_ran_def)
 
 lemma finite_relation_values_support:
   assumes "inj f"

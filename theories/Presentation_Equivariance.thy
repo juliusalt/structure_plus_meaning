@@ -191,9 +191,9 @@ text \<open>
   the class's totality, every subject and every renaming of it being presented.
 \<close>
 
-theorem presented_predicate_renaming:
+theorem presented_observation_renaming:
   assumes presented: "presentation_class R D A" and action: "renaming_action admissible act D"
-    and exact: "\<And>p. observe p \<longleftrightarrow> presented_predicate R P p"
+    and exact: "\<And>z p. R z p \<Longrightarrow> observe p \<longleftrightarrow> P z"
   shows "(\<forall>h. admissible h \<longrightarrow> rel_fun (renaming_correspondence R act h) (=) observe observe) \<longleftrightarrow>
     renaming_equivariant admissible act D P"
 proof
@@ -207,10 +207,8 @@ proof
     obtain q where q: "R (act h a) q" using presentation_class.total[OF presented moved] by blast
     have corr: "renaming_correspondence R act h p q" unfolding renaming_correspondence_def using p q by blast
     have same: "observe p = observe q" using invariant h corr by (auto simp: rel_fun_def)
-    have left: "observe p \<longleftrightarrow> P a"
-      using exact[of p] presentation_class.predicate_at[OF presented p, where property=P] by simp
-    have right: "observe q \<longleftrightarrow> P (act h a)"
-      using exact[of q] presentation_class.predicate_at[OF presented q, where property=P] by simp
+    have left: "observe p \<longleftrightarrow> P a" by (rule exact[OF p])
+    have right: "observe q \<longleftrightarrow> P (act h a)" by (rule exact[OF q])
     show "P (act h a) \<longleftrightarrow> P a" using same left right by simp
   qed
 next
@@ -225,13 +223,22 @@ next
       then obtain a where p: "R a p" and q: "R (act h a) q" unfolding renaming_correspondence_def by blast
       have a: "D a" by (rule presentation_class.subject_boundary[OF presented p])
       have moved: "P (act h a) \<longleftrightarrow> P a" using equivariant h a unfolding renaming_equivariant_def by blast
-      have left: "observe p \<longleftrightarrow> P a"
-        using exact[of p] presentation_class.predicate_at[OF presented p, where property=P] by simp
-      have right: "observe q \<longleftrightarrow> P (act h a)"
-        using exact[of q] presentation_class.predicate_at[OF presented q, where property=P] by simp
+      have left: "observe p \<longleftrightarrow> P a" by (rule exact[OF p])
+      have right: "observe q \<longleftrightarrow> P (act h a)" by (rule exact[OF q])
       show "observe p = observe q" using moved left right by simp
     qed
   qed
+qed
+
+theorem presented_predicate_renaming:
+  assumes presented: "presentation_class R D A" and action: "renaming_action admissible act D"
+    and exact: "\<And>p. observe p \<longleftrightarrow> presented_predicate R P p"
+  shows "(\<forall>h. admissible h \<longrightarrow> rel_fun (renaming_correspondence R act h) (=) observe observe) \<longleftrightarrow>
+    renaming_equivariant admissible act D P"
+proof (rule presented_observation_renaming[OF presented action])
+  fix z p assume z: "R z p"
+  show "observe p \<longleftrightarrow> P z"
+    using exact[of p] presentation_class.predicate_at[OF presented z, where property=P] by simp
 qed
 
 section \<open>Constructions\<close>
@@ -547,7 +554,7 @@ text \<open>
   leaves a program states, is syntactic, which is why the octet audit checks it natively. It is cited as
   that theory states it and restated in this form only where a use consumes it so. Uses are an instance
   of their own, the permutations of the uses of artifact environments acting through
-  @{text rename_environment} (@{text Factor_Use_Renaming}); re-addressing, @{text push_object} under
+  @{text rename_environment} (@{text Factor_Use_Actions}); re-addressing, @{text push_object} under
   @{text finite_addressing}, is a further instance not stated here.
 \<close>
 

@@ -173,6 +173,9 @@ theorem injective_presentation_class:
     (\<lambda>p. \<exists>a. D a \<and> p=f a)"
   by (unfold_locales) (use injective in \<open>auto simp: inj_on_def\<close>)
 
+theorem identity_presentation_class: "presentation_class (\<lambda>x t. t=x) (\<lambda>_. True) (\<lambda>_. True)"
+  by unfold_locales auto
+
 section \<open>Jointly determining observations give a change of subject\<close>
 
 theorem presentation_class_observations:

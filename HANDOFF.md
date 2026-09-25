@@ -47,7 +47,9 @@ and #422 landed):
   #412 and N2b), the native request at a package (#410, after #422 and #416; the first request, its installation, is
   briefed later with the criticism build, Open 121);
 - then: the guard installed over the given's readers, the asked relation's entry with its equivariance clause (#393,
-  landed `a0fe6bb1`), the given and the native state's first generation (#395, after #385, #414), the
+  landed `a0fe6bb1`), the given and the native state's first generation (#395,
+  landed `60539704`, its execution a remainder; then #484, its base generation generic and one presenter of site
+  values, before #397), the
   posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
   frame (#405, `6d84162b`: parts (a)–(d) and (f); its fix #432, `f4fa3d8a`: part (c) by constant so that the given's
@@ -85,8 +87,13 @@ its entries, derived through the union's piece (#431's review, follow-up 4, the 
 **The recording of a state as a generation**: the native state's first generation (#395) cannot execute in a held run —
 the given's value is 1.3M nodes, its complete quotation did not finish in 165 s, and the certified cause quotes a scope
 holding the payload twice (implement-395's report) — and every later route generation carries a payload of the given's
-size. #481 attributes it held and #482 decides the recording at its cause from that attribution (split to fit a
-session's room); #395 lands its statements with the execution a remainder (q96), and #397 waits on #482.
+size. #481 attributed it (`.build/tasks/481/result.md`): the certified cause is a quotation of a quotation, 30.4 times
+the payload's addresses, and the replay holds the payload three times, so one generation at the given's size takes
+45–65 minutes and about 9 GB, while the payload's quotation itself takes 6–9 s. #482 decides the recording at its
+cause from it; #395 landed its statements with the execution a remainder (q96), and #397 waits on #482. The issue
+(#443's (6)), the admission (#399) and the criticism record (#447) record state-sized generations too: their briefs are
+corrected from #482's entry when its builds are placed. The given's least package scope, which #443 constructs, did
+not compute in 94–108 s: #485 attributes and refines it before #443.
 
 **Beside the route**: #483, after the counterpart builds and S1 (#478), the counterparts' and E1's generic facts at
 their homes, their `eval` controls in a theory of their own and two whole-rebuild moves in one rebuild (#467's, #469's
@@ -118,7 +125,7 @@ the recording's builds, placed from #482's entry before #397, and the approval b
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #481 and #482 at its head, the counterparts
-(#472–#477) and S1 (#478), then #395 and the rest in their chains' order, the first request's and the
+(#472–#477), S1 (#478) and #484, then the rest in their chains' order, the first request's and the
 criticism's builds after them; then #457, #459, #461 and #483; each review after its build.
 
 ## Decisions
@@ -380,6 +387,13 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   and the guard's base at 113, 80, 392 and 525 exact to the guard's program (`guard_base_decision`, keyed by the
   guard's sites); 525 about 0.15 s per member at the given (38.3 s for 252, shared). Its review's follow-ups
   (`.build/tasks/471/review.md`): 1 and 3 Open 156 (1 also mailed to #447 and #478), 2 in #483, 3 and 4 to #399.
+- **Landed with `4d9cf735`**: #395, `Development_Native_State`: the given as one site value (`development_given_value`,
+  its presentation with recovery and formation) and the native state's first generation, its contract an instance of
+  `development_owner_record_certified`, its execution a recorded remainder (q96). Its review's follow-ups
+  (`.build/tasks/396/review.md`): 1 and 2 are #484, 3 mailed to #481 and #482.
+- **#481** (investigation, accepted): the recording attributed by difference at 2K–32K payload addresses and the three
+  sizes (`.build/tasks/481/result.md`); #395's 62.2 s was a quadratic `fcard` count, not the quotation; the least
+  scope is 54–90 % of the given; its follow-ups: the least scope's demands are #485, the rest in #482's reading.
 - **Landed with `00c4bf47`**: #458, the use instance split: the low actions in `Factor_Use_Actions` below the keyed
   and data readers, the inverse-permutation argument once (`use_renaming_inverse`), the schema reading's renaming
   beside the definition's, the request's general facts and the scopes' root position at their homes
@@ -663,11 +677,8 @@ with an exclusive re-run of the 38.3 s if one relies on it.
 ## Now
 
 
-- **Mailed, read by each task's first session** (by task; landed tasks' dropped): #395 (the given as #455 installs it,
-  the names in `Development_Given_Program`, #452's facts, the rule "Evaluations"; its site value takes the computed
-  quotation, not `program_scope_quoted_total`; `given_environment_not_closed`, `given_retention_refused`; #455's
-  result's (5) names, the transfers cited, no named copy; q96: the statements land, the execution a remainder, no
-  second reader of site values); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the
+- **Mailed, read by each task's first session** (by task; landed tasks' dropped): #482 (#396's follow-ups 1 and 3: the base generation made generic by #484,
+  the least scope's size deciding q96's option (c)); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the
   request program's payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers
   cited); #407 (#433's review's follow-ups 2 and 3; the frame as #432 and #433 leave it; #394's follow-up 3); #403
   (#394's follow-up 3); #447 (#436's first follow-up; the octet rows through `criticism_refutes` and #480; #394's

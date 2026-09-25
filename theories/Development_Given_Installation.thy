@@ -310,30 +310,11 @@ lemma given_installed_meaning:
   by (rule system_variant_renamed_meaning_at[OF given_rooted_readers_formed given_readers_installation(3)
     given_readers_compilation(2) assms])
 
-lemmas given_installed_definition_call_admission_exact=given_rooted_definition_call_admission_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(1)], symmetric]]
-lemmas given_installed_package_closure_admission_exact=given_rooted_package_closure_admission_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(2)], symmetric]]
-lemmas given_installed_root_family_reading_exact=given_rooted_root_family_reading_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(3)], symmetric]]
-lemmas given_installed_package_admission_exact=given_rooted_package_admission_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(4)], symmetric]]
-lemmas given_installed_definition_clause_reading_exact=given_rooted_definition_clause_reading_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(5)], symmetric]]
-lemmas given_installed_definition_edge_reading_exact=given_rooted_definition_edge_reading_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(6)], symmetric]]
-lemmas given_installed_package_membership_exact=given_rooted_package_membership_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(7)], symmetric]]
-lemmas given_installed_environment_inclusion_exact=given_rooted_environment_inclusion_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(8)], symmetric]]
-lemmas given_installed_package_retention_admission_exact=given_rooted_package_retention_admission_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(9)], symmetric]]
-lemmas given_installed_use_additions_on_values=given_rooted_use_additions_on_values[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(10)], symmetric]]
-lemmas given_installed_use_absence_exact=given_rooted_use_absence_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(11)], symmetric]]
-lemmas given_installed_payload_audit_exact=given_rooted_payload_audit_exact[unfolded
-  given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(12)], symmetric]]
+text \<open>
+  A guard entry's contract at its placed site is @{thm [source] given_installed_meaning} instantiated at the
+  entry (@{thm [source] given_entry_rooted}) with its contract at the rooted program, which
+  @{thm [source] given_rooted_guard_meaning} reads from the reader's own; no per-entry copy is kept.
+\<close>
 
 text \<open>A granted entry means at its placed site what it means in the joined program.\<close>
 
@@ -343,69 +324,11 @@ lemma given_installed_entry_meaning:
     (d,t)\<in>positive_meaning given_program_system"
   by (simp only: given_installed_meaning[OF given_entry_rooted[OF assms]] given_rooted_meaning[OF assms])
 
-lemmas given_installed_call_admission_exact=given_program_call_admission_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(2), symmetric]]
-lemmas given_installed_application_admission_exact=given_program_application_admission_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(3), symmetric]]
-lemmas given_installed_formation_reflection=given_program_formation_reflection[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(4), symmetric]]
-lemmas given_installed_meaning_reflection=given_program_meaning_reflection[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(5), symmetric]]
-lemmas given_installed_positive_admission_exact=given_program_positive_admission_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(6), symmetric]]
-lemmas given_installed_derivation_admission_exact=given_program_derivation_admission_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(7), symmetric]]
-lemmas given_installed_replay_admission_exact=given_program_replay_admission_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(8), symmetric]]
-lemmas given_installed_environment_comparison_exact=given_program_environment_comparison_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(1), symmetric]]
-lemmas given_installed_generation_admission_exact=given_program_generation_admission_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(9), symmetric]]
-lemmas given_installed_generation_identity_exact=given_program_generation_identity_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(10), symmetric]]
-lemmas given_installed_generation_source_exact=given_program_generation_source_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(11), symmetric]]
-lemmas given_installed_adoption_admission_exact=given_program_adoption_admission_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(12), symmetric]]
-lemmas given_installed_adoption_identity_exact=given_program_adoption_identity_exact[unfolded
-  given_installed_entry_meaning[OF given_rooted_granted_members(13), symmetric]]
-
-lemma given_installed_positive_operations_exact:
-  assumes "d\<in>{112,113,114,115}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> positive_operation_result d t"
-  by (simp only: given_installed_entry_meaning[OF given_operation_entries(1)[OF assms]]
-    given_program_positive_operations_exact[OF assms])
-
-lemma given_installed_derivation_operations_exact:
-  assumes "d\<in>{99,100,101,102}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> derivation_operation_result d t"
-  by (simp only: given_installed_entry_meaning[OF given_operation_entries(2)[OF assms]]
-    given_program_derivation_operations_exact[OF assms])
-
-lemma given_installed_replay_operations_exact:
-  assumes "d\<in>{106,107,108,109,110,111}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> replay_operation_result d t"
-  by (simp only: given_installed_entry_meaning[OF given_operation_entries(3)[OF assms]]
-    given_program_replay_operations_exact[OF assms])
-
-lemma given_installed_generation_operations_exact:
-  assumes "d\<in>{139,140,141,142,143,144,145,146}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> generation_operation_result d t"
-  by (simp only: given_installed_entry_meaning[OF given_operation_entries(4)[OF assms]]
-    given_program_generation_operations_exact[OF assms])
-
-lemma given_installed_generation_source_operations_exact:
-  assumes "d\<in>{147,148,149,150,151,152,153,154,155}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow>
-    generation_source_operation_result d t"
-  by (simp only: given_installed_entry_meaning[OF given_operation_entries(5)[OF assms]]
-    given_program_generation_source_operations_exact[OF assms])
-
-lemma given_installed_adoption_operations_exact:
-  assumes "d\<in>{269,270}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> adoption_value_operation_result d t"
-  by (simp only: given_installed_entry_meaning[OF given_operation_entries(6)[OF assms]]
-    given_program_adoption_operations_exact[OF assms])
+text \<open>
+  A granted entry's contract at its placed site is this transfer instantiated at the entry with its contract
+  at the joined program (@{thm [source] given_program_call_admission_exact} and the others); no per-entry
+  copy is kept.
+\<close>
 
 section \<open>The readers' package is reached from their entries\<close>
 
@@ -582,34 +505,13 @@ lemmas given_request_entry=trans[OF given_development_meaning[OF given_developme
 lemmas given_decomposition_applies=
   trans[OF given_development_meaning[OF given_development_entries(10)] development_package_decomposition_applies]
 
-text \<open>Each reader's contract holds at the given at its placed entry, as an instance.\<close>
+text \<open>
+  A guard entry's contract at the given is @{thm [source] given_readers_meaning} instantiated at the entry
+  (@{thm [source] given_entry_rooted}) with its contract at the rooted program
+  (@{thm [source] given_rooted_guard_meaning}); no per-entry copy is kept.
+\<close>
 
-lemmas given_definition_call_admission_exact_at=given_rooted_definition_call_admission_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(1)], symmetric]]
-lemmas given_package_closure_admission_exact_at=given_rooted_package_closure_admission_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(2)], symmetric]]
-lemmas given_root_family_reading_exact_at=given_rooted_root_family_reading_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(3)], symmetric]]
-lemmas given_package_admission_exact_at=given_rooted_package_admission_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(4)], symmetric]]
-lemmas given_definition_clause_reading_exact_at=given_rooted_definition_clause_reading_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(5)], symmetric]]
-lemmas given_definition_edge_reading_exact_at=given_rooted_definition_edge_reading_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(6)], symmetric]]
-lemmas given_package_membership_exact_at=given_rooted_package_membership_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(7)], symmetric]]
-lemmas given_environment_inclusion_exact_at=given_rooted_environment_inclusion_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(8)], symmetric]]
-lemmas given_package_retention_admission_exact_at=given_rooted_package_retention_admission_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(9)], symmetric]]
-lemmas given_use_additions_on_values_at=given_rooted_use_additions_on_values[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(10)], symmetric]]
-lemmas given_use_absence_exact_at=given_rooted_use_absence_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(11)], symmetric]]
-lemmas given_payload_audit_exact_at=given_rooted_payload_audit_exact[unfolded
-  given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(12)], symmetric]]
-
-text \<open>Each granted entry's contract holds at the given at its placed entry, as an instance.\<close>
+text \<open>A granted entry means at the given what it means in the joined program.\<close>
 
 lemma given_entry_meaning_at:
   assumes "d|\<in>|given_reader_entries"
@@ -617,68 +519,10 @@ lemma given_entry_meaning_at:
     (d,t)\<in>positive_meaning given_program_system"
   by (simp only: given_readers_meaning[OF given_entry_rooted[OF assms]] given_rooted_meaning[OF assms])
 
-lemmas given_call_admission_exact_at=given_program_call_admission_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(2), symmetric]]
-lemmas given_application_admission_exact_at=given_program_application_admission_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(3), symmetric]]
-lemmas given_formation_reflection_at=given_program_formation_reflection[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(4), symmetric]]
-lemmas given_meaning_reflection_at=given_program_meaning_reflection[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(5), symmetric]]
-lemmas given_positive_admission_exact_at=given_program_positive_admission_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(6), symmetric]]
-lemmas given_derivation_admission_exact_at=given_program_derivation_admission_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(7), symmetric]]
-lemmas given_replay_admission_exact_at=given_program_replay_admission_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(8), symmetric]]
-lemmas given_environment_comparison_exact_at=given_program_environment_comparison_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(1), symmetric]]
-lemmas given_generation_admission_exact_at=given_program_generation_admission_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(9), symmetric]]
-lemmas given_generation_identity_exact_at=given_program_generation_identity_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(10), symmetric]]
-lemmas given_generation_source_exact_at=given_program_generation_source_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(11), symmetric]]
-lemmas given_adoption_admission_exact_at=given_program_adoption_admission_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(12), symmetric]]
-lemmas given_adoption_identity_exact_at=given_program_adoption_identity_exact[unfolded
-  given_entry_meaning_at[OF given_rooted_granted_members(13), symmetric]]
-
-lemma given_positive_operations_exact_at:
-  assumes "d\<in>{112,113,114,115}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> positive_operation_result d t"
-  by (simp only: given_entry_meaning_at[OF given_operation_entries(1)[OF assms]]
-    given_program_positive_operations_exact[OF assms])
-
-lemma given_derivation_operations_exact_at:
-  assumes "d\<in>{99,100,101,102}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> derivation_operation_result d t"
-  by (simp only: given_entry_meaning_at[OF given_operation_entries(2)[OF assms]]
-    given_program_derivation_operations_exact[OF assms])
-
-lemma given_replay_operations_exact_at:
-  assumes "d\<in>{106,107,108,109,110,111}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> replay_operation_result d t"
-  by (simp only: given_entry_meaning_at[OF given_operation_entries(3)[OF assms]]
-    given_program_replay_operations_exact[OF assms])
-
-lemma given_generation_operations_exact_at:
-  assumes "d\<in>{139,140,141,142,143,144,145,146}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> generation_operation_result d t"
-  by (simp only: given_entry_meaning_at[OF given_operation_entries(4)[OF assms]]
-    given_program_generation_operations_exact[OF assms])
-
-lemma given_generation_source_operations_exact_at:
-  assumes "d\<in>{147,148,149,150,151,152,153,154,155}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> generation_source_operation_result d t"
-  by (simp only: given_entry_meaning_at[OF given_operation_entries(5)[OF assms]]
-    given_program_generation_source_operations_exact[OF assms])
-
-lemma given_adoption_operations_exact_at:
-  assumes "d\<in>{269,270}"
-  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> adoption_value_operation_result d t"
-  by (simp only: given_entry_meaning_at[OF given_operation_entries(6)[OF assms]]
-    given_program_adoption_operations_exact[OF assms])
+text \<open>
+  A granted entry's contract at the given is this transfer instantiated at the entry with its contract at
+  the joined program, as at the placed site. No per-entry copy is kept.
+\<close>
 
 section \<open>The given's membership, read natively\<close>
 

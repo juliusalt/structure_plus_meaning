@@ -1007,6 +1007,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Native_Observations
     Factor_Finite_System_Unions
     Factor_Finite_View_Installation
+    Factor_Finite_System_Presentations
     Factor_Finite_Requirement_Installation
     Factor_Finite_Native_Controls
     Factor_Finite_Native_Extension_Cases

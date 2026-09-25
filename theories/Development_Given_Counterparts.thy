@@ -45,17 +45,27 @@ proof -
       guard_readers_left[OF given_entry_members(10)] guard_readers_left[OF given_entry_members(11)])
   show ?thesis using site
     by (elim disjE) (simp_all add: given_entry_decision_def additions
-      finite_definition_call_admission_decision_exact given_rooted_definition_call_admission_exact
-      finite_package_closure_admission_decision_exact given_rooted_package_closure_admission_exact
-      finite_root_family_reading_decision_exact given_rooted_root_family_reading_exact
-      finite_package_admission_decision_exact given_rooted_package_admission_exact
-      finite_definition_clause_reading_decision_exact given_rooted_definition_clause_reading_exact
-      finite_definition_edge_reading_decision_exact given_rooted_definition_edge_reading_exact
-      finite_package_membership_decision_exact given_rooted_package_membership_exact
-      finite_environment_inclusion_decision_exact given_rooted_environment_inclusion_exact
-      finite_package_retention_admission_decision_exact given_rooted_package_retention_admission_exact
+      finite_definition_call_admission_decision_exact
+      given_rooted_guard_meaning[OF given_guard_members(1)] given_definition_call_admission_exact
+      finite_package_closure_admission_decision_exact
+      given_rooted_guard_meaning[OF given_guard_members(2)] given_package_closure_admission_exact
+      finite_root_family_reading_decision_exact
+      given_rooted_guard_meaning[OF given_guard_members(3)] given_root_family_reading_exact
+      finite_package_admission_decision_exact
+      given_rooted_guard_meaning[OF given_guard_members(4)] given_package_admission_exact
+      finite_definition_clause_reading_decision_exact
+      given_rooted_guard_meaning[OF given_guard_members(5)] given_definition_clause_reading_exact
+      finite_definition_edge_reading_decision_exact
+      given_rooted_guard_meaning[OF given_guard_members(6)] given_definition_edge_reading_exact
+      finite_package_membership_decision_exact
+      given_rooted_guard_meaning[OF given_guard_members(7)] given_package_membership_exact
+      finite_environment_inclusion_decision_exact
+      given_rooted_guard_meaning[OF given_guard_members(8)] given_environment_inclusion_exact
+      finite_package_retention_admission_decision_exact
+      given_rooted_guard_meaning[OF given_guard_members(9)] given_package_retention_admission_exact
       finite_use_additions_exact finite_use_absence_exact
-      finite_payload_audit_exact given_rooted_payload_audit_exact)
+      finite_payload_audit_exact
+      given_rooted_guard_meaning[OF given_guard_members(12)] given_payload_audit_exact)
 qed
 
 lemma given_guard_rooted:

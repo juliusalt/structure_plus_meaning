@@ -104,6 +104,17 @@ proof -
   show ?thesis using interfaces clauses by (auto simp: systems_agree_on_def)
 qed
 
+lemma system_union_agree_right:
+  assumes left: "schema_system_formed P"
+    and agree: "systems_agree_on P Q (system_definitions P\<inter>system_definitions Q)"
+  shows "systems_agree_on Q (system_union P Q) (system_definitions Q)"
+proof -
+  have swap: "system_union Q P=system_union P Q" by (simp add: system_union_def Un_commute)
+  have "systems_agree_on Q P (system_definitions Q\<inter>system_definitions P)"
+    using systems_agree_on_sym[OF agree] by (simp only: Int_commute)
+  from system_union_agree_left[OF left this] show ?thesis by (simp only: swap)
+qed
+
 theorem system_union_agree_left_locality:
   assumes left: "schema_system_formed P" and right: "schema_system_formed Q"
     and agree: "systems_agree_on P Q (system_definitions P \<inter> system_definitions Q)"

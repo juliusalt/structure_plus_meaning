@@ -23,7 +23,7 @@ proof -
   qed
   have bag: "systems_agree_on bag_difference_system base_cause_components_system
       (system_definitions bag_difference_system\<inter>system_definitions base_cause_components_system)"
-    using systems_agree_on_sym[OF base_cause_bag_overlap_agreement] by (simp only: Int_commute)
+    by (rule overlap_agreement_sym[OF base_cause_bag_overlap_agreement])
   have component_base: "systems_agree_on construction_component_base base_cause_components_system
       (system_definitions construction_component_base\<inter>system_definitions base_cause_components_system)"
     unfolding construction_component_base_def
@@ -59,7 +59,7 @@ proof -
     unfolding construction_comparison_system_def
     by (rule construction_comparison_group.extended_overlap_agreement[OF comparison_base])
       (use base_cause_component_domain_bounds(1) in \<open>auto dest: subsetD\<close>)
-  show ?thesis using systems_agree_on_sym[OF comparison] by (simp only: Int_commute)
+  show ?thesis by (rule overlap_agreement_sym[OF comparison])
 qed
 
 definition construction_cause_source_system :: "(nat,nat,nat,nat) schema_system" where
@@ -99,7 +99,7 @@ lemma construction_cause_source_comparison_agreement:
 proof -
   have reverse: "systems_agree_on construction_comparison_system base_cause_components_system
       (system_definitions construction_comparison_system\<inter>system_definitions base_cause_components_system)"
-    using systems_agree_on_sym[OF construction_cause_comparison_agreement] by (simp only: Int_commute)
+    by (rule overlap_agreement_sym[OF construction_cause_comparison_agreement])
   show ?thesis using system_union_agree_left[OF base_cause_components_formed reverse]
     by (simp only: construction_cause_source_system_def system_union_commute)
 qed
@@ -136,7 +136,7 @@ proof -
   have retained: "systems_agree_on related_test_admission_base base_cause_components_system
       (system_definitions related_test_admission_base\<inter>system_definitions base_cause_components_system)"
     unfolding related_test_admission_base_def by (rule rooted_overlap_agreement[OF components])
-  show ?thesis using systems_agree_on_sym[OF retained] by (simp only: Int_commute)
+  show ?thesis by (rule overlap_agreement_sym[OF retained])
 qed
 
 lemma construction_cause_related_comparison_agreement:
@@ -229,7 +229,7 @@ lemma construction_cause_components_profile_agreement:
 proof -
   have reverse: "systems_agree_on (related_test_admission_system c k) construction_cause_source_system
       (system_definitions (related_test_admission_system c k)\<inter>system_definitions construction_cause_source_system)"
-    using systems_agree_on_sym[OF construction_cause_related_agreement] by (simp only: Int_commute)
+    by (rule overlap_agreement_sym[OF construction_cause_related_agreement])
   show ?thesis using system_union_agree_left[OF construction_cause_source_formed reverse]
     by (simp only: construction_cause_components_system_def system_union_commute)
 qed

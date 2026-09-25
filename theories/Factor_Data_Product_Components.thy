@@ -40,10 +40,10 @@ lemma data_flatten_set_agreement:
 proof -
   have first: "systems_agree_on data_subset_system data_flatten_system
       (system_definitions data_subset_system\<inter>system_definitions data_flatten_system)"
-    using systems_agree_on_sym[OF data_flatten_subset_agreement] by (simp only: Int_commute)
+    by (rule overlap_agreement_sym[OF data_flatten_subset_agreement])
   have second: "systems_agree_on data_subset_system data_set_comparison_system
       (system_definitions data_subset_system\<inter>system_definitions data_set_comparison_system)"
-    using systems_agree_on_sym[OF data_set_subset_agreement] by (simp only: Int_commute)
+    by (rule overlap_agreement_sym[OF data_set_subset_agreement])
   show ?thesis by (rule common_component_overlap_agreement[OF first second])
     (use data_flatten_base_subdomain data_set_comparison_base_subdomain in auto)
 qed

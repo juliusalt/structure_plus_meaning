@@ -121,7 +121,7 @@ lemma construction_base_bag_agreement:
   "systems_agree_on bag_difference_system construction_component_base (system_definitions bag_difference_system)"
   unfolding construction_component_base_def
   by (subst system_union_commute, rule system_union_agree_left[OF construction_sequence_components_formed])
-    (use systems_agree_on_sym[OF construction_bag_component_agreement] in \<open>simp only: Int_commute\<close>)
+    (rule overlap_agreement_sym[OF construction_bag_component_agreement])
 
 lemma construction_base_source_agreement:
   "systems_agree_on source_components_system construction_component_base (system_definitions source_components_system)"

@@ -1,5 +1,5 @@
 theory Factor_Inference_Specialization_Base
-  imports Factor_Specialization_Binding_Clauses Factor_Proof_Node_Reading
+  imports Factor_Specialization_Binding_Clauses Factor_Proof_Node_Reading Factor_Component_Agreement
 begin
 
 section \<open>The node and specialization programs agree on the common package readers\<close>
@@ -10,7 +10,7 @@ lemma specialization_report_package_agreement:
 proof -
   have reverse: "systems_agree_on program_call_list_system pattern_call_reading_system
       (system_definitions program_call_list_system\<inter>system_definitions pattern_call_reading_system)"
-    using systems_agree_on_sym[OF schema_pattern_call_list_agreement] by (simp only: Int_commute)
+    by (rule overlap_agreement_sym[OF schema_pattern_call_list_agreement])
   have calls: "systems_agree_on program_call_list_system schema_pattern_call_base_system
       (system_definitions program_call_list_system)"
     using system_union_agree_left[OF pattern_call_reading_system_formed reverse]

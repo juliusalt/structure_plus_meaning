@@ -47,7 +47,7 @@ and #422 landed):
   #412 and N2b), the native request at a package (#410, after #422 and #416; the first request, its installation, is
   briefed later with the criticism build, Open 121);
 - then: the guard installed over the given's readers, the asked relation's entry with its equivariance clause (#393,
-  after #391, #414, #416, #418, #422 and the fix deriving the readers' presentation from its parts'), the given and the native state's first generation (#395, after #385, #414), the
+  landed `a0fe6bb1`), the given and the native state's first generation (#395, after #385, #414), the
   posing (#397, after #425's attribution of an indexed generation's 8 s; it decides the owner records' `ML_val`
   executions), the answer judgment and admission (#399), its transport (#401), the verification's native half (#403),
   frame (#405, `6d84162b`: parts (a)–(d) and (f); its fix #432, `f4fa3d8a`: part (c) by constant so that the given's
@@ -118,7 +118,7 @@ the recording's builds, placed from #482's entry before #397, and the approval b
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #481 and #482 at its head, the counterparts
-(#470–#477) and S1 (#478), then #393 and #395 and the rest in their chains' order, the first request's and the
+(#470–#477) and S1 (#478), then #395 and the rest in their chains' order, the first request's and the
 criticism's builds after them; then #457, #459, #461 and #483; each review after its build.
 
 ## Decisions
@@ -372,6 +372,10 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
 - **Landed with `9454dadc`**: #468, C2, `Factor_Additions_Counterparts`: the additions counterpart for every callee,
   393's and 392's its instance, the site value reader `finite_site_read`. Its review's follow-ups
   (`.build/tasks/469/review.md`): 1 mailed to #470 and #399, 2 and 3 in #483, 4 with q96's answer to #395.
+- **Landed with `a0fe6bb1`**: #393, `Development_First_Problem_Asked`: the guard installed over the given's readers,
+  the asked relation's program entry, its contract at the installed entry, its use-equivariance clause, its cost
+  (shared). Its review's follow-ups (`.build/tasks/394/review.md`): 1 and 2 mailed to #399 (2 also to #447), 3 to
+  #399, #403 and #407, 4 Open 155.
 - **Landed with `00c4bf47`**: #458, the use instance split: the low actions in `Factor_Use_Actions` below the keyed
   and data readers, the inverse-permutation argument once (`use_renaming_inverse`), the schema reading's renaming
   beside the definition's, the request's general facts and the scopes' root position at their homes
@@ -497,7 +501,9 @@ The owner's questions, a line each (their words and the provisional choices in f
    stages not separated; `.build/tasks/309/runner`), and environment formation superlinearly (#159): attributed when an
    installation on the route (#393, #414) or a native question over hundreds of candidates needs it. #414 measured
    the readers' installation at about 4 s; its selection's and read-back's own costs are unmeasured (non-monotonic
-   totals, #415's follow-up 5): a held run with repeated samples if condition 5a needs them.
+   totals, #415's follow-up 5): a held run with repeated samples if condition 5a needs them. #393's installation
+   26.5 s and read-back 25.6 s, shared, each hold the nullary values they reach (the given's about 19 s; #394's
+   follow-up 1): their held separation is mailed to #399.
 100. A native record replayed in a task tree whose theories change the state's closure is unproduced
    (`export_proved_code` refuses): replays run after landing; a proof context holding the tree's theories would lift it
    — a tools task at a measured need.
@@ -641,32 +647,26 @@ blank lines of `Factor_Program_Scopes` and `Factor_Package_Requests`. 150 #439's
 attachment values mapped — with the next landing that changes those theories. 149 #438's first verdict, overwritten
 by its re-review, of which only the summary stands: h1's zero prefix and the inequality control in
 `Criticism_Use_Samples`, at its next edit. 154 #465's review, follow-up 4: `implemented_base_program_formed` (equal
-interfaces and fewer clauses stay formed) stated once beside `Factor_System_Restriction`, at a second use.
+interfaces and fewer clauses stay formed) stated once beside `Factor_System_Restriction`, at a second use. 155 #394's
+review, follow-up 4: `asked_relation`, `asked_entry_presented`'s shape argument and `asked_relation_equivariant`
+concern the guard alone: beside it in `Development_First_Problem_Guard` at a second use, the installation citing them.
 
 ## Now
 
 
-- **Mailed, read by each task's first session**: to #393 (#419's review, follow-up 5: the asked relation's clause composed from G3's, G4's and #416's exported
-  clauses), to #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's payloads at
-  installation, the rooted restriction at 561), to #455 (q93: the given's payload statement conditional, its discharge
-  #457's), to #407 (plan-65: #433's review's
-  follow-ups 2 and 3), to #393 and
-  #395 (plan-65: the given as #455 installs it, the names in
-  `Development_Given_Program`, #452's facts and the rule "Evaluations"; to #393 also #451's mapped-extension finding), #395 (the given's site value takes
-  that computed quotation, not `program_scope_quoted_total`), #393 (sites 392 and 525's native evaluability; the asked
-  relation's program is the guard's program rooted at its entries, derived through the union's piece
-  `finite_given_readers_def`; each view's `_formed` lemma in the simpset and `bases=` checked), #407 (the frame as #432
-  and #433 leave it). By plan-66: to #455 (#452's review, follow-ups 1 and 4: one `value`, `given_readers_fresh(2)`;
-  #454's follow-up 4: the evaluation measured where the duplicated terms are evaluated), #393 (`given_readers_fresh(2)`;
-  its (5) under head coverage, #460, then #460's corrections of (1) and (5)), #439 and #441 (#460's corrections), #395 (`given_environment_not_closed`, `given_retention_refused`), #447 (#436's
-  first follow-up). By plan-67: to #393, #395 and #443 (#455's landing: its result's (5) names; #456's follow-up 4,
-  cite the transfers, no named copy), to #474 (the given's 47 entries, the granted ones without counterparts, by demand),
-  to #466 and #426 (bring main in over #458's changes), to #470 (#467's follow-up 4: 113's and 80's seconds apart), to
-  #469 (a restatement of #466's two reader facts in #468 is a finding), to #447 (the octet rows through
-  `criticism_refutes` and the fix continuing #463). By plan-68: to #470 (#469's follow-up 1, 392's counterpart
-  measured at the given), #399 (#465's follow-up 2, the evaluation over the base timed at the guard's call; #469's
-  follow-up 1 if #470 did not), #478 (#465's follow-ups 1 and 2), #395 (q96: the statements land, the execution a
-  remainder; no second reader of site values).
+- **Mailed, read by each task's first session** (by task; landed tasks' dropped): #395 (the given as #455 installs it,
+  the names in `Development_Given_Program`, #452's facts, the rule "Evaluations"; its site value takes the computed
+  quotation, not `program_scope_quoted_total`; `given_environment_not_closed`, `given_retention_refused`; #455's
+  result's (5) names, the transfers cited, no named copy; q96: the statements land, the execution a remainder, no
+  second reader of site values); #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the
+  request program's payloads at installation, the rooted restriction at 561; #455's result's (5) names, the transfers
+  cited); #407 (#433's review's follow-ups 2 and 3; the frame as #432 and #433 leave it; #394's follow-up 3); #403
+  (#394's follow-up 3); #447 (#436's first follow-up; the octet rows through `criticism_refutes` and #480; #394's
+  follow-up 2); #474 (the given's 47 entries, the granted ones without counterparts, by demand); #470 (#467's follow-up
+  4, 113's and 80's seconds apart; #469's follow-up 1, 392's counterpart at the given); #399 (#465's follow-up 2, the
+  evaluation over the base timed at the guard's call; #469's follow-up 1 if #470 did not; #394's follow-ups 1–3: the
+  asked environment's read-back held apart from the installation, the given computed once if evaluated repeatedly,
+  the binary entry's bridge); #478 (#465's follow-ups 1 and 2).
 
 
 

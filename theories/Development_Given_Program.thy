@@ -1,5 +1,6 @@
 theory Development_Given_Program
   imports Development_Given_Readers Factor_Program_Reflection Factor_Application_Admission Factor_Derivation_Admission Factor_Replay_Admission Factor_Environment_Comparison Factor_Generation_Contracts Factor_Generation_Source_Contracts Factor_Adoption_Comparison
+    Factor_Generation_Reader_Payloads
 begin
 
 section \<open>The readers a leaf's request is granted, joined with the given's readers\<close>

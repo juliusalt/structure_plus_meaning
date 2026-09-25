@@ -1675,6 +1675,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Demanded_Graph_Readings
     Listed_Set_Unions
     Factor_Constructed_Program_Applications
+    Factor_Checked_Certificate_Premises
     Presented_Term_Matching
     Formed_Call_Closures
     Presented_Program_Applications

@@ -355,8 +355,28 @@ lemmas given_readers_payloads_audited =
   finite_system_payloads_audited[of finite_given_readers, unfolded finite_given_readers_exact,
     OF guard_readers_formed]
 
-value "(finite_system_formed finite_given_readers, fcard (finite_system_definitions finite_given_readers),
-  finite_system_payloads finite_given_readers, finite_system_formed finite_rooted_given_readers,
-  fcard (finite_system_definitions finite_rooted_given_readers))"
+text \<open>
+  The readers' payloads composed from the union's two systems, the package additions' (every reader but the audit)
+  and the payload audit's: the union states what its two parts state, and the rooted program no more than the
+  union. What each of the two systems states is not established here; the composition awaits it.
+\<close>
+
+lemma system_union_payloads: "system_payloads (system_union P Q)=system_payloads P\<union>system_payloads Q"
+  by (auto simp: system_payloads_def system_leaves_def system_union_def)
+
+lemma rooted_system_payloads: "system_payloads (rooted_system P R)\<subseteq>system_payloads P"
+  by (auto simp: system_payloads_def system_leaves_def rooted_system_def system_restriction_def)
+
+theorem given_readers_payloads:
+  assumes additions: "system_payloads use_additions_system\<subseteq>{[]}"
+    and audit: "system_payloads payload_audit_system\<subseteq>{[]}"
+  shows "system_payloads guard_readers_system\<subseteq>{[]}"
+    and "system_payloads given_rooted_readers_system\<subseteq>{[]}"
+proof -
+  show union: "system_payloads guard_readers_system\<subseteq>{[]}"
+    unfolding guard_readers_system_def system_union_payloads using additions audit by blast
+  show "system_payloads given_rooted_readers_system\<subseteq>{[]}"
+    unfolding given_rooted_readers_system_def by (rule subset_trans[OF rooted_system_payloads union])
+qed
 
 end

@@ -235,8 +235,7 @@ theorem native_base_evaluation_empty:
   by (simp add: native_base_evaluation_def native_call_evaluation_def implemented_base_empty)
 
 lemma native_base_evaluation_requests: "R |\<subseteq>| fst (native_base_evaluation B decide P R)"
-  by (simp add: native_base_evaluation_def Let_def native_call_closure_def
-    keyed_call_closure_exact[OF native_call_inverse] finite_program_call_closure_requests)
+  by (simp add: native_base_evaluation_def Let_def native_call_closure_requests)
 
 theorem native_base_evaluation_exact:
   assumes result: "native_base_evaluation B decide P R=(D,Some A)"

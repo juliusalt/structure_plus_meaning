@@ -16226,8 +16226,10 @@ Task 478, build S1 of "The native evaluator evaluates above an implemented base"
   `criticism_base_table_empty`), where every decision is exact (`criticism_decision_exact_empty`).
 - **An unavailable sample is diagnosed.** `criticism_diagnosis B P ds ps` is computed from the program, the base and
   the sample alone: the program's formation, the demand's closure over the program above the base, and
-  `finite_uncovered_clauses` — every clause outside the base the demand reaches, with its site, key and premise-only
-  variables (`finite_schema_head_missing`), stated for any finite program and demand
+  `finite_uncovered_clauses` — [Corrected (task 483): not every clause outside the base the demand reaches, but
+  the reached clauses whose premise-only variables (`finite_schema_head_missing`) are nonempty, each with its site
+  and key; it stands in `Factor_Finite_Program_Evaluation`, the evaluator's theory, beside the head coverage
+  (`finite_program_head_covered`) whose failure it diagnoses, since task 483] — stated for any finite program and demand
   (`finite_uncovered_clauses_covered`: heads cover exactly when there is none). No table exactly when the diagnosis is
   not (True, True, empty) (`criticism_base_table_diagnosed`, `criticism_table_diagnosed`). The diagnosis is a record of
   an unavailable sample: it is neither a failure row nor an empty table, and establishes nothing.

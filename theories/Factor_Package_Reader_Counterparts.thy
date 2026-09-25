@@ -30,7 +30,7 @@ proof -
   qed
   have decode: "decode_finite_term (finite_sequence_presentation finite_site_data xs)=
       data_list_term (map (\<lambda>d. definition_site_value d) xs)" for xs
-    by (induction xs) simp_all
+    by (simp add: decode_finite_sequence_presentation comp_def)
   have "finite_sequence_read finite_site_value_read t=Some ds \<longleftrightarrow> t=finite_sequence_presentation finite_site_data ds"
     using finite_sequence_reads[OF site] by (simp add: finite_reads_def)
   also have "\<dots> \<longleftrightarrow> decode_finite_term t=data_list_term (map (\<lambda>d. definition_site_value d) ds)"
@@ -224,12 +224,45 @@ next
     by (rule fBexI[OF _ member])
 qed
 
-definition finite_root_family_argument_read :: "finite_factor_term \<Rightarrow>
+text \<open>
+  A citation observation argument (@{const citation_observation_argument}) is an environment value beside a
+  use, beside an address and an operand; its reader reads the operand by a reader given as a parameter,
+  exact to its own relation, and is exact whenever that reader is. 79's argument, the root family's, is its
+  instance at the reader of a list of definition sites; the definition readers' arguments of 72 and 81
+  (@{text Factor_Definition_Reader_Counterparts}) are its instances too.
+\<close>
+
+definition finite_citation_argument_read :: "(finite_factor_term \<Rightarrow> 'y option) \<Rightarrow> finite_factor_term \<Rightarrow>
+    ((local_address option finite_artifact_environment\<times>local_address option)\<times>(local_address\<times>'y)) option" where
+  "finite_citation_argument_read f=finite_pair_read
+    (finite_pair_read finite_environment_value_read finite_use_value_read) (finite_pair_read finite_payload_value_read f)"
+
+theorem finite_citation_argument_read_exact:
+  assumes operand: "\<And>v y. f v=Some y \<longleftrightarrow> Q y (decode_finite_term v)"
+  shows "finite_citation_argument_read f t=Some ((E,u),(r,y)) \<longleftrightarrow> (\<exists>e x.
+    decode_finite_term t=citation_observation_argument e (use_data_term u) (Payload_Term r) x \<and>
+    environment_value_presents (decode_finite_environment E) e \<and> Q y x)"
+proof -
+  have right: "finite_pair_read finite_payload_value_read f v=Some z \<longleftrightarrow>
+      (\<exists>w x. decode_finite_term v=Pair_Term w x \<and> w=Payload_Term (fst z) \<and> Q (snd z) x)" for v z
+  proof -
+    obtain a b where z: "z=(a,b)" by (cases z)
+    show ?thesis
+      by (simp add: z finite_pair_read_present[where P="\<lambda>r w. w=Payload_Term r" and Q=Q,
+        OF finite_payload_value_read_exact operand])
+  qed
+  show ?thesis
+    by (auto simp: finite_citation_argument_read_def finite_pair_read_present[where
+      P="\<lambda>z v. \<exists>e. v=Pair_Term e (use_data_term (snd z)) \<and>
+        environment_value_presents (decode_finite_environment (fst z)) e"
+      and Q="\<lambda>z v. \<exists>w x. v=Pair_Term w x \<and> w=Payload_Term (fst z) \<and> Q (snd z) x",
+      OF finite_environment_use_read_exact right])
+qed
+
+abbreviation finite_root_family_argument_read :: "finite_factor_term \<Rightarrow>
     ((local_address option finite_artifact_environment\<times>local_address option)\<times>
       (local_address\<times>local_address option definition_site list)) option" where
-  "finite_root_family_argument_read=finite_pair_read
-    (finite_pair_read finite_environment_value_read finite_use_value_read)
-    (finite_pair_read finite_payload_value_read (finite_sequence_read finite_site_value_read))"
+  "finite_root_family_argument_read\<equiv>finite_citation_argument_read (finite_sequence_read finite_site_value_read)"
 
 theorem finite_root_family_argument_read_exact:
   "finite_root_family_argument_read t=Some ((E,u),(r,ds)) \<longleftrightarrow> (\<exists>e.
@@ -237,22 +270,9 @@ theorem finite_root_family_argument_read_exact:
       (data_list_term (map (\<lambda>d. definition_site_value d) ds)) \<and>
     environment_value_presents (decode_finite_environment E) e)"
 proof -
-  have right: "finite_pair_read finite_payload_value_read (finite_sequence_read finite_site_value_read) v=Some y \<longleftrightarrow>
-      decode_finite_term v=Pair_Term (Payload_Term (fst y)) (data_list_term (map (\<lambda>d. definition_site_value d) (snd y)))"
-    for v y
-  proof -
-    obtain a bs where y: "y=(a,bs)" by (cases y)
-    show ?thesis
-      by (auto simp: y finite_pair_read_present[where P="\<lambda>r w. w=Payload_Term r"
-        and Q="\<lambda>ds w. w=data_list_term (map (\<lambda>d. definition_site_value d) ds)",
-        OF finite_payload_value_read_exact finite_site_list_read_exact])
-  qed
   show ?thesis
-    by (auto simp: finite_root_family_argument_read_def finite_pair_read_present[where
-      P="\<lambda>z v. \<exists>e. v=Pair_Term e (use_data_term (snd z)) \<and>
-        environment_value_presents (decode_finite_environment (fst z)) e"
-      and Q="\<lambda>y w. w=Pair_Term (Payload_Term (fst y)) (data_list_term (map (\<lambda>d. definition_site_value d) (snd y)))",
-      OF finite_environment_use_read_exact right])
+    by (simp add: finite_citation_argument_read_exact[where f="finite_sequence_read finite_site_value_read"
+      and Q="\<lambda>ds w. w=data_list_term (map (\<lambda>d. definition_site_value d) ds)", OF finite_site_list_read_exact])
 qed
 
 definition finite_root_family_reading_decision :: "finite_factor_term \<Rightarrow> bool" where

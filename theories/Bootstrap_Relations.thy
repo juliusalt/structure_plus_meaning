@@ -715,4 +715,31 @@ proof -
   show ?thesis by (rule exI[of _ ?h]) (use mapped injective in blast)
 qed
 
+section \<open>Enumerations of images, and injective maps of pairs\<close>
+
+text \<open>
+  A list of the images of a set's members under an injective map is the image of an enumeration of the
+  set. A map of pairs acting by an injective map on one component and leaving the other alone is injective.
+\<close>
+
+lemma injective_image_enumeration:
+  assumes image: "set ys=f ` A" and injective: "inj f"
+  obtains xs where "ys=map f xs" "set xs=A"
+proof -
+  have members: "\<forall>y\<in>set ys. \<exists>x. y=f x \<and> x\<in>A" using image by auto
+  obtain xs where xs: "ys=map f xs" "\<forall>x\<in>set xs. x\<in>A"
+    using list_range_restricted_witnesses[of ys f "\<lambda>x. x\<in>A"] members by blast
+  have "f ` set xs=f ` A" using xs(1) image by simp
+  then have "set xs=A" by (simp only: inj_image_eq_iff[OF injective])
+  then show ?thesis using that xs(1) by blast
+qed
+
+lemma renamed_site_injective:
+  assumes injective: "inj h"
+  shows "inj (map_prod h id)"
+  using map_prod_inj_on[OF injective inj_on_id[of UNIV]] by simp
+
+lemma keyed_value_injective: "inj f \<Longrightarrow> inj (\<lambda>(k,x). (k,f x))"
+  by (auto simp: inj_def)
+
 end

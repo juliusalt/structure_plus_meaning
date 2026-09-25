@@ -187,6 +187,14 @@ proof -
     by (rule ex1I[of _ "finite_environment_of E"]) (use decode formed in auto)
 qed
 
+text \<open>The empty finite environment: no artifact and no binding, and formed.\<close>
+
+definition finite_empty_environment :: "'u finite_artifact_environment" where
+  "finite_empty_environment=\<lparr>finite_environment_artifacts={||},finite_environment_bindings={||}\<rparr>"
+
+lemma finite_empty_environment_formed [simp]: "finite_environment_formed finite_empty_environment"
+  by (simp add: finite_empty_environment_def finite_environment_formed_def finite_relation_functional_def)
+
 text \<open>
   Every artifact and every binding is supplied in the finite input. Formation
   checks both source-slot membership and target-use existence. Equal artifacts

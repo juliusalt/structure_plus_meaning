@@ -149,6 +149,29 @@ proof (rule finite_readsI)
   qed (simp_all add: finite_pair_presentation_def)
 qed
 
+text \<open>
+  A reader of a presentation relation reads a term as a value exactly when the term's decoding is
+  related to that value, as the environment value reader does. The pair reader is exact in that form
+  whenever its two component readers are: a term is read as a pair exactly when it decodes to a pair
+  whose components the component relations relate to the pair's values, and every other term is read
+  as nothing. A term read as itself is the identity's presentation.
+\<close>
+
+lemma finite_pair_read_present:
+  assumes left: "\<And>v x. left v=Some x \<longleftrightarrow> P x (decode_finite_term v)"
+    and right: "\<And>v y. right v=Some y \<longleftrightarrow> Q y (decode_finite_term v)"
+  shows "finite_pair_read left right t=Some (x,y) \<longleftrightarrow>
+    (\<exists>p q. decode_finite_term t=Pair_Term p q \<and> P x p \<and> Q y q)"
+proof (cases t)
+  case (Finite_Pair a b)
+  have "finite_pair_read left right t=Some (x,y) \<longleftrightarrow> left a=Some x \<and> right b=Some y"
+    by (auto simp: Finite_Pair split: option.splits)
+  then show ?thesis by (simp add: Finite_Pair left right)
+qed simp_all
+
+lemma finite_term_reads: "finite_reads Some id"
+  by (rule finite_readsI) simp
+
 definition finite_sequence_read ::
     "(finite_factor_term \<Rightarrow> 'a option) \<Rightarrow> finite_factor_term \<Rightarrow> 'a list option" where
   "finite_sequence_read read t=Option.bind (finite_data_list_read t) (\<lambda>xs. those (map read xs))"

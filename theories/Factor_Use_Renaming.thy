@@ -160,10 +160,6 @@ text \<open>
   original's at the renamed sites and the same argument terms.
 \<close>
 
-lemma renamed_site_injective:
-  assumes injective: "inj h"
-  shows "inj (map_prod h id)"
-  using map_prod_inj_on[OF injective inj_on_id[of UNIV]] by simp
 
 lemma native_root_family_renamed_use:
   assumes injective: "inj h" and family: "native_root_family_at E u r Q"

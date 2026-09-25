@@ -12,11 +12,6 @@ text \<open>
   from \<open>Native_Control_Closed_Installation\<close>, polymorphic in the program's coordinates (task 342).
 \<close>
 
-definition finite_empty_environment :: "'u finite_artifact_environment" where
-  "finite_empty_environment=\<lparr>finite_environment_artifacts={||},finite_environment_bindings={||}\<rparr>"
-
-lemma finite_empty_environment_formed [simp]: "finite_environment_formed finite_empty_environment"
-  by (simp add: finite_empty_environment_def finite_environment_formed_def finite_relation_functional_def)
 
 definition empty_installation_program :: "('a::linorder,'s::linorder,'d::linorder,'c::linorder) finite_schema_system" where
   "empty_installation_program=\<lparr>finite_system_interfaces={||},finite_system_clauses={||}\<rparr>"
@@ -47,6 +42,19 @@ proof -
   show ?thesis unfolding native_package_at_def
     by (rule exI[of _ "{}"]) (use roots package in \<open>simp add: empty_native_program\<close>)
 qed
+
+text \<open>
+  The empty package's selection over the empty environment (@{const finite_empty_environment}, from
+  @{text RRA_Finite_Environments}): stated once, the source every closed installation of a whole program
+  over the empty program starts from.
+\<close>
+
+definition empty_package_selection :: "local_address option finite_artifact_environment\<times>local_address option" where
+  "empty_package_selection=finite_select_roots finite_empty_environment []"
+
+lemma empty_package_selected:
+  "finite_select_roots finite_empty_environment []=(fst empty_package_selection,snd empty_package_selection)"
+  by (simp add: empty_package_selection_def)
 
 locale closed_program_installation =
   fixes E F :: "local_address option finite_artifact_environment" and u :: "local_address option"

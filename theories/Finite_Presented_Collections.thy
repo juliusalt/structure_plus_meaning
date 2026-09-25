@@ -76,6 +76,10 @@ lemma finite_sequence_presentation_simps [simp]:
   "finite_sequence_presentation f (x#xs)=Finite_Pair (f x) (finite_sequence_presentation f xs)"
   by (simp_all add: finite_sequence_presentation_def)
 
+lemma decode_finite_sequence_presentation:
+  "decode_finite_term (finite_sequence_presentation f xs)=data_list_term (map (decode_finite_term \<circ> f) xs)"
+  by (simp add: finite_sequence_presentation_def)
+
 lemma finite_sequence_presentation_member_injective:
   assumes members: "\<And>x y. x\<in>set xs \<Longrightarrow> f x=f y \<Longrightarrow> x=y"
     and same: "finite_sequence_presentation f xs=finite_sequence_presentation f ys"

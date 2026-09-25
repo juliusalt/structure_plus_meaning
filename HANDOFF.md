@@ -304,6 +304,11 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   contract carried; freshness is the interpretation's `coordinates(4)`; the installation about 4 s, the selection's and
   read-back's own costs unmeasured. Its review's follow-ups (`.build/tasks/415/review.md`): 1, 2, 4 and 3's `[simp]`
   are #452; 3's moves Open 144; 5 Open 99.
+- **Landed with `97ea7b82`**: #410, `Factor_Package_Requests`, the native request at a package — one rule over package
+  admission at the given, membership of the support, the context's root family and closed scope, and its compatibility
+  with the given; its contract for any given and support, its least scope, completeness, packet and use equivariance.
+  Its review's follow-ups (`.build/tasks/411/review.md`): 1 Open 145; 2, 3 and 5 mailed to #443; 4 Open 137; 6 the
+  harness's.
 - **Landed with `3d12a9d6`**: #433, the frame's part (f) per store — every store search a contract reaches matched to
   an index's own search, the given's own searches reported as the given's (q92). Its review's follow-ups
   (`.build/tasks/433/review.md`): 1 answered by q92 (Open 140 stands); 2 (a closed search matched by its term, whatever
@@ -532,7 +537,9 @@ follow-ups 1 and 3: `Factor_Native_Node_Cases.native_node_empty_environment` and
 `empty_installation_program`, at the case theories' next edit; the package's reach, evaluated by code_simp at every
 rebuild (about 12 s), certified once for the whole program if the notions grow, measured first. 137 an agreement exported per layer along `complete_data_admission_system` in place
 of whole-chain unfoldings (#392's review), at the lineage's next use — #431's pieces cut that lineage at definition
-admission and complete data admission, and the agreements can be cut at the same points (#431's review). 138
+admission and complete data admission, and the agreements can be cut at the same points (#431's review); #411's follow-up 4: `package_request_components`
+reaches 79 through eight agreement facts, a component equation at `package_retention_admission_system` would shorten
+every use. 138
 `Inference_Embeddings.map_relation_values_range` into `Bootstrap_Relations` beside `map_relation_values_domain`,
 `Factor_Use_Renaming.rel_ran_map_relation_values` retired, and the generic `rtrancl_injective_image` and
 `surjective_image_eq` beside their notions, with the next build that edits `Bootstrap_Relations`, a full rebuild
@@ -554,10 +561,17 @@ review, follow-up 3: `rooted_system_reach` beside `Factor_System_Restriction.roo
 `reached_package_sites` and `native_definition_sites_union` beside the package theories, the payload invariance facts
 (`pattern_leaves_rename` … `system_alpha_variant_payloads`) into `Factor_Payload_Audit` — at a batch that edits those
 theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations); #452 takes them out of the simpset.
+145 #411's review, follow-up 1: `native_package_environment_renamed` beside `Factor_Use_Renaming` (its inverse steps
+through `renaming_action.act_inverse` and `act_inverse_right`, its local inclusion through the inclusion clause),
+`native_package_members_iff`, `native_package_support_formed` and `native_package_formed_at` beside
+`Factor_Package_Locality`, `root_family_reading_listed` in `Factor_Root_Family_Reading` — with items 132, 138, 141 and
+144 one rebuild batch of general facts to their homes, placed when no task in flight cites what it moves.
 
 ## Now
 
-- **Mailed, read by each task's first session**: to #455 (q93: the given's payload statement conditional, its discharge #457's), to #407 (plan-65: #433's review's
+- **Mailed, read by each task's first session**: to #443 (#411's review, follow-ups 2, 3 and 5: the support as the root family, the request program's payloads at
+  installation, the rooted restriction at 561), to #455 (q93: the given's payload statement conditional, its discharge
+  #457's), to #407 (plan-65: #433's review's
   follow-ups 2 and 3), to #393 and
   #395 (plan-65: the given as #455 installs it, the names in
   `Development_Given_Program`, #452's facts and the rule "Evaluations"; to #393 also #451's mapped-extension finding), to
@@ -582,7 +596,8 @@ theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations
   writes over its first verdict (#65's, #302's); `v2.py ledger` records a text beginning with `--` (Q15); a task tree's `.claude/orchestration/owner-ledger.md` holds
 none of the owner records' entries, only main's does, so a tool reading the ledger in a task tree reads a stale copy
 (#386's review, follow-up 4); a queued exclusive claim can be granted after the base advanced, refusing the probe
-launched at the grant (#425; pinning `--base` at the claim avoids it). Owed to the
+launched at the grant (#425; pinning `--base` at the claim avoids it); the restated check does not name a restatement
+differing only by variable names or a fixed type (#411's first verdict). Owed to the
   owner: each landing check's phases and per-recipe comparison; earlier gaps are in `PLANNING_LOG.md` (2026-09-24).
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the
   plan (`4434635d`, `82a065cd`); the owner's words of 17:50, 18:12, 18:36 and 18:53, recorded by #378 (`cbf0c7e9`).

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "ad154d28a4422e9006ca1da1d9cf3a404e1cf7c463c09436350a5a06bc6f60a7",
- "checked_content_sha256": "f46f32f1438250820a062318dceeffe8e952d841907929968fdaeba0d883b11a",
+ "base_receipt_sha256": "03053ca0aba70dc716b6185a7486f93a7bcebe25b116a54cb8d8f1f381d6ad85",
+ "checked_content_sha256": "7b8e98fa9622d6acd15a0850da9de2f173c73721bae919b30f39e2956db918f1",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,20 +17,20 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpl8iw0j9n/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpkc0wh4p2/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.39,
+  "base_and_impact": 0.37,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 242.82,
-  "recipe_impact": 0.39,
-  "recipes_and_host_tests": 11.21
+  "proof": 252.55,
+  "recipe_impact": 0.51,
+  "recipes_and_host_tests": 11.62
  },
  "rebuilt_theories": [
-  "Factor_Checked_Certificate_Premises"
+  "Factor_Formed_Inner_Readings"
  ],
  "recipes": {
   "allocated-environments": {
@@ -190,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1895,
- "seconds": 318.85,
+ "reused_theories": 1896,
+ "seconds": 332.96,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1896,
+  "theory_count": 1897,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1896,
+ "theories": 1897,
  "validation_inputs": {
-  "ROOT": "b65cfd9e18ca6be9f9886722ab62d0b3c23d3626d0896ddf7dab2757ce5ee855",
+  "ROOT": "0a17de5237f9d9baadf16933f851738b5d40b722f26d1a13b3bf4d61f0274d00",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

@@ -54,6 +54,111 @@ lemma schema_dependencies_finite:
   shows "finite (schema_dependencies S)"
   using assms finite_rel_ran by (auto simp: schema_dependencies_def schema_formed_def)
 
+section \<open>One map of a schema's patterns\<close>
+
+text \<open>
+  One pattern function applied to the conclusion, to the pattern of every call premise and to every field of every
+  material premise (@{const map_material_patterns}), every socket and callee kept. Substitution and the leaf map of
+  a schema are its instances, and their laws are derived from the laws stated here once.
+\<close>
+
+definition map_schema_patterns ::
+  "('a term_pattern \<Rightarrow> 'b term_pattern) \<Rightarrow> ('a,'s,'d) factor_schema \<Rightarrow> ('b,'s,'d) factor_schema" where
+  "map_schema_patterns f S=\<lparr>schema_conclusion=f (schema_conclusion S),
+    schema_premises=map_relation_values (map_prod id f) (schema_premises S),
+    schema_material_premises=map_relation_values (map_material_patterns f) (schema_material_premises S)\<rparr>"
+
+lemma map_schema_patterns_fields [simp]:
+  "schema_conclusion (map_schema_patterns f S)=f (schema_conclusion S)"
+  "schema_premises (map_schema_patterns f S)=map_relation_values (map_prod id f) (schema_premises S)"
+  "schema_material_premises (map_schema_patterns f S)=
+    map_relation_values (map_material_patterns f) (schema_material_premises S)"
+  by (simp_all add: map_schema_patterns_def)
+
+lemma map_schema_patterns_premise:
+  "(s,d,q)\<in>schema_premises (map_schema_patterns f S) \<longleftrightarrow> (\<exists>p. (s,d,p)\<in>schema_premises S \<and> q=f p)"
+  by (auto simp: split_paired_Ex)
+
+lemma map_schema_patterns_material:
+  "(s,N)\<in>schema_material_premises (map_schema_patterns f S) \<longleftrightarrow>
+    (\<exists>M. (s,M)\<in>schema_material_premises S \<and> N=map_material_patterns f M)"
+  by simp
+
+lemma map_schema_patterns_sockets [simp]:
+  "rel_dom (schema_premises (map_schema_patterns f S))=rel_dom (schema_premises S)"
+  "rel_dom (schema_material_premises (map_schema_patterns f S))=rel_dom (schema_material_premises S)"
+  by simp_all
+
+lemma map_schema_patterns_dependencies [simp]:
+  "schema_dependencies (map_schema_patterns f S)=schema_dependencies S"
+  by (simp add: schema_dependencies_def map_relation_values_range image_image)
+
+lemma map_schema_patterns_variables:
+  assumes variables: "\<And>p. pattern_variables (f p)=(\<Union>a\<in>pattern_variables p. V a)"
+  shows "schema_variables (map_schema_patterns f S)=(\<Union>a\<in>schema_variables S. V a)"
+proof -
+  have calls: "(\<Union>(s,d,p)\<in>map_relation_values (map_prod id f) (schema_premises S). pattern_variables p)=
+      (\<Union>(s,d,p)\<in>schema_premises S. \<Union>a\<in>pattern_variables p. V a)"
+    by (rule map_relation_values_UN) (auto simp: variables split: prod.splits)
+  have materials: "(\<Union>(s,M)\<in>map_relation_values (map_material_patterns f) (schema_material_premises S).
+      material_variables M)=(\<Union>(s,M)\<in>schema_material_premises S. \<Union>a\<in>material_variables M. V a)"
+    by (rule map_relation_values_UN) (auto simp: map_material_patterns_variables material_variables_def variables)
+  show ?thesis by (auto simp: schema_variables_def calls materials variables)
+qed
+
+lemma map_schema_patterns_formed:
+  assumes formed: "schema_formed S"
+    and patterns: "\<And>p. pattern_formed p \<Longrightarrow> pattern_variables p\<subseteq>schema_variables S \<Longrightarrow> pattern_formed (f p)"
+  shows "schema_formed (map_schema_patterns f S)"
+proof -
+  have sv: "single_valued (schema_premises S)" "single_valued (schema_material_premises S)"
+    using formed by (simp_all add: schema_formed_def)
+  have conclusion: "pattern_formed (f (schema_conclusion S))"
+    by (rule patterns) (use formed in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
+  have calls: "pattern_formed (f p)" if member: "(s,d,p)\<in>schema_premises S" for s d p
+    by (rule patterns) (use formed member in \<open>auto simp: schema_formed_def schema_variables_def\<close>)
+  have materials: "material_pattern_formed (map_material_patterns f M)"
+    if member: "(s,M)\<in>schema_material_premises S" for s M
+    unfolding map_material_patterns_formed
+  proof
+    fix p assume field: "p\<in>set (material_fields M)"
+    show "pattern_formed (f p)"
+      by (rule patterns) (use formed member field in
+        \<open>auto simp: schema_formed_def material_pattern_formed_def schema_variables_def material_variables_def\<close>)
+  qed
+  show ?thesis
+    using formed map_relation_values_single_valued[OF sv(1)] map_relation_values_single_valued[OF sv(2)]
+      conclusion calls materials
+    unfolding schema_formed_def by (auto simp: split_paired_Ex)
+qed
+
+lemma map_schema_patterns_ident:
+  assumes conclusion: "f (schema_conclusion S)=schema_conclusion S"
+    and calls: "\<And>s d p. (s,d,p)\<in>schema_premises S \<Longrightarrow> f p=p"
+    and materials: "\<And>s M p. (s,M)\<in>schema_material_premises S \<Longrightarrow> p\<in>set (material_fields M) \<Longrightarrow> f p=p"
+  shows "map_schema_patterns f S=S"
+proof (rule factor_schema.equality)
+  show "schema_conclusion (map_schema_patterns f S)=schema_conclusion S" using conclusion by simp
+  have premise: "map_prod id f v=v" if member: "(s,v)\<in>schema_premises S" for s v
+    using member calls by (cases v) auto
+  show "schema_premises (map_schema_patterns f S)=schema_premises S"
+    by (simp add: map_relation_values_fixed premise)
+  have material: "map_material_patterns f M=M" if member: "(s,M)\<in>schema_material_premises S" for s M
+    by (rule map_material_patterns_ident) (rule materials[OF member])
+  show "schema_material_premises (map_schema_patterns f S)=schema_material_premises S"
+    by (simp add: map_relation_values_fixed material)
+qed simp
+
+lemma map_schema_patterns_compose:
+  assumes "\<And>p. g (f p)=h p"
+  shows "map_schema_patterns g (map_schema_patterns f S)=map_schema_patterns h S"
+proof -
+  have material: "map_material_patterns g (map_material_patterns f M)=map_material_patterns h M" for M
+    by (rule map_material_patterns_compose) (rule assms)
+  show ?thesis
+    by (simp add: map_schema_patterns_def map_relation_values_def image_image split_def map_prod_def assms material)
+qed
+
 definition schema_premise_instance ::
   "('a,'s,'d) factor_schema \<Rightarrow> ('a \<times> factor_term) set \<Rightarrow>
     ('s \<times> ('d \<times> factor_term)) set \<Rightarrow> bool" where

@@ -76,19 +76,7 @@ begin
 text \<open>The placeholder's call holds: its closed replay is sound, read at the replay's inclusion of J0.\<close>
 
 lemma placeholder_holds: "(d,Target_Term (Whole_Artifact empty_artifact))\<in>positive_meaning P0"
-proof -
-  obtain P' e t' I' K' G' where replayed: "native_package_at H0 pu pr P'"
-    by (insert replay[unfolded native_replay_at_def], elim conjE exE) (rule that; assumption)
-  obtain Q where family: "native_root_family_at H0 pu pr Q"
-    by (insert replayed[unfolded native_package_at_def], elim conjE exE) (rule that; assumption)
-  have hf: "environment_formed H0"
-    by (insert family[unfolded native_root_family_at_def], elim conjE exE)
-  have kept: "native_package_at H0 pu pr P0"
-    "native_application_at H0 au ar d (Target_Term (Whole_Artifact empty_artifact)) I A"
-    by (rule native_package_included[OF package included hf], rule native_application_included[OF application included hf])
-  have "native_positive_holds H0 pu pr au ar" by (rule native_replay_closed_sound[OF replay])
-  then show ?thesis by (simp only: native_positive_holds_with_reads[OF kept])
-qed
+  by (rule native_replay_closed_meaning[OF replay included package application])
 
 lemma placeholder_term:
   "map_term_leaves (placeholder_leaf R) (Target_Term (Whole_Artifact empty_artifact))=Target_Term (Whole_Artifact R)"

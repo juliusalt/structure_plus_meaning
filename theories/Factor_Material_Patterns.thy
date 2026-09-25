@@ -27,6 +27,53 @@ lemma material_fields_unique:
   "material_fields M = material_fields N \<longleftrightarrow> M = N"
   by (cases M; cases N) (simp add: material_fields_def)
 
+section \<open>One map of a material pattern's five patterns\<close>
+
+text \<open>
+  One pattern function applied to each of the five operand patterns. Renaming, substitution and the leaf map of a
+  material pattern are its instances, and their laws are derived from the laws stated here once.
+\<close>
+
+definition map_material_patterns ::
+  "('a term_pattern \<Rightarrow> 'b term_pattern) \<Rightarrow> 'a material_pattern \<Rightarrow> 'b material_pattern" where
+  "map_material_patterns f M =
+    \<lparr>material_source = f (material_source M), material_atoms = f (material_atoms M),
+     material_edges = f (material_edges M), material_counts = f (material_counts M),
+     material_functions = f (material_functions M)\<rparr>"
+
+lemma map_material_patterns_fields [simp]:
+  "material_fields (map_material_patterns f M) = map f (material_fields M)"
+  by (simp add: map_material_patterns_def material_fields_def)
+
+lemma map_material_patterns_variables:
+  "material_variables (map_material_patterns f M) = (\<Union>p\<in>set (material_fields M). pattern_variables (f p))"
+  by (auto simp: material_variables_def)
+
+lemma map_material_patterns_formed:
+  "material_pattern_formed (map_material_patterns f M) \<longleftrightarrow> (\<forall>p\<in>set (material_fields M). pattern_formed (f p))"
+  by (auto simp: material_pattern_formed_def)
+
+lemma map_material_patterns_cong:
+  assumes "\<And>p. p \<in> set (material_fields M) \<Longrightarrow> f p = g p"
+  shows "map_material_patterns f M = map_material_patterns g M"
+proof -
+  have "map f (material_fields M) = map g (material_fields M)" by (rule map_cong[OF refl]) (rule assms)
+  then show ?thesis using material_fields_unique[of "map_material_patterns f M" "map_material_patterns g M"] by simp
+qed
+
+lemma map_material_patterns_ident:
+  assumes "\<And>p. p \<in> set (material_fields M) \<Longrightarrow> f p = p"
+  shows "map_material_patterns f M = M"
+proof -
+  have "map f (material_fields M) = material_fields M" by (rule map_idI) (rule assms)
+  then show ?thesis using material_fields_unique[of "map_material_patterns f M" M] by simp
+qed
+
+lemma map_material_patterns_compose:
+  assumes "\<And>p. g (f p) = h p"
+  shows "map_material_patterns g (map_material_patterns f M) = map_material_patterns h M"
+  using assms by (simp add: map_material_patterns_def)
+
 definition material_pattern_instance ::
   "('a \<times> factor_term) set \<Rightarrow> 'a material_pattern \<Rightarrow>
     factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
@@ -156,6 +203,13 @@ definition pattern_record_at ::
       pattern_vector_at E u V roots ps J K \<and> insert r (set ports) \<inter> J = {} \<and>
       I=insert r (set ports \<union> J) \<and> I \<inter> (K \<union> V) = {})"
 
+lemma pattern_record_atE:
+  assumes "pattern_record_at E u V r ps I K"
+  obtains R ports roots J where "environment_formed E" "artifact_at E u R" "record_at R r ports roots"
+    "pattern_vector_at E u V roots ps J K" "insert r (set ports) \<inter> J = {}"
+    "I=insert r (set ports \<union> J)" "I \<inter> (K \<union> V) = {}"
+  using assms unfolding pattern_record_at_def by (elim conjE exE) (rule that; assumption)
+
 theorem pattern_record_unique:
   assumes first: "pattern_record_at E u V r ps I K" and second: "pattern_record_at E u V r qs J W"
   shows "ps=qs \<and> I=J \<and> K=W"
@@ -284,9 +338,12 @@ definition rename_material_pattern ::
      material_counts = rename_pattern f (material_counts M),
      material_functions = rename_pattern f (material_functions M)\<rparr>"
 
+lemma rename_material_pattern_map: "rename_material_pattern f = map_material_patterns (rename_pattern f)"
+  by (rule ext) (simp add: rename_material_pattern_def map_material_patterns_def)
+
 lemma renamed_material_fields:
   "material_fields (rename_material_pattern f M) = map (rename_pattern f) (material_fields M)"
-  by (simp add: rename_material_pattern_def material_fields_def)
+  by (simp only: rename_material_pattern_map map_material_patterns_fields)
 
 lemma renamed_material_variables:
   "material_variables (rename_material_pattern f M) = f ` material_variables M"
@@ -297,21 +354,20 @@ lemma renamed_material_formed [simp]:
   by (simp add: material_pattern_formed_def renamed_material_fields)
 
 lemma rename_material_identity [simp]: "rename_material_pattern id M = M"
-  by (cases M) (simp add: rename_material_pattern_def)
+  unfolding rename_material_pattern_map by (rule map_material_patterns_ident) simp
 
 lemma rename_material_composition:
   "rename_material_pattern g (rename_material_pattern f M) = rename_material_pattern (g \<circ> f) M"
-  by (simp add: rename_material_pattern_def rename_pattern_composition)
+  unfolding rename_material_pattern_map by (rule map_material_patterns_compose) (rule rename_pattern_composition)
 
 lemma rename_material_agreement:
   assumes agree: "\<forall>a\<in>material_variables M. f a = g a"
   shows "rename_material_pattern f M = rename_material_pattern g M"
-proof -
-  have each: "\<And>p. p \<in> set (material_fields M) \<Longrightarrow> rename_pattern f p = rename_pattern g p"
-    by (rule rename_pattern_agreement) (use agree in \<open>auto simp: material_variables_def\<close>)
-  have fields: "material_fields (rename_material_pattern f M) = material_fields (rename_material_pattern g M)"
-    by (simp only: renamed_material_fields) (rule map_cong[OF refl], rule each; assumption)
-  show ?thesis using fields by (simp add: material_fields_unique)
+  unfolding rename_material_pattern_map
+proof (rule map_material_patterns_cong)
+  fix p assume "p \<in> set (material_fields M)"
+  then show "rename_pattern f p = rename_pattern g p"
+    by (intro rename_pattern_agreement) (use agree in \<open>auto simp: material_variables_def\<close>)
 qed
 
 theorem material_pattern_instance_renaming:

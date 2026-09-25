@@ -18,6 +18,14 @@ definition scoped_pattern_at ::
       insert r (set ps) \<inter> (insert b V \<union> J) = {} \<and> insert b V \<inter> J = {} \<and>
       I = insert r (set ps \<union> insert b V \<union> J) \<and> I \<inter> K = {})"
 
+lemma scoped_pattern_atE:
+  assumes "scoped_pattern_at E u r p I K"
+  obtains R ps b q V J where "environment_formed E" "artifact_at E u R" "record_at R r ps [b,q]"
+    "binder_scope_at R b V" "pattern_quoted_at E u V q p J K" "V = pattern_variables p"
+    "insert r (set ps) \<inter> (insert b V \<union> J) = {}" "insert b V \<inter> J = {}"
+    "I = insert r (set ps \<union> insert b V \<union> J)" "I \<inter> K = {}"
+  using assms unfolding scoped_pattern_at_def by (elim conjE exE) (rule that; assumption)
+
 theorem scoped_pattern_unique:
   assumes first: "scoped_pattern_at E u r p I K" and second: "scoped_pattern_at E u r q J W"
   shows "p = q \<and> I = J \<and> K = W"
@@ -72,6 +80,14 @@ definition prospective_call_at ::
       insert r (set ps) \<inter> (C \<union> J) = {} \<and> C \<inter> J = {} \<and>
       I = insert r (set ps \<union> C \<union> J) \<and> K = citation_slots cite \<union> A \<and>
       I \<inter> (K \<union> V) = {})"
+
+lemma prospective_call_atE:
+  assumes "prospective_call_at E u V r d p I K"
+  obtains R ps c a cite C J A where "environment_formed E" "artifact_at E u R" "record_at R r ps [c,a]"
+    "citation_at R c cite C" "citation_location E u cite (fst d) (snd d)" "pattern_quoted_at E u V a p J A"
+    "insert r (set ps) \<inter> (C \<union> J) = {}" "C \<inter> J = {}" "I = insert r (set ps \<union> C \<union> J)"
+    "K = citation_slots cite \<union> A" "I \<inter> (K \<union> V) = {}"
+  using assms unfolding prospective_call_at_def by (elim conjE exE) (rule that; assumption)
 
 theorem prospective_call_unique:
   assumes first: "prospective_call_at E u V r d p I K"
@@ -259,6 +275,13 @@ definition native_premise_family_at ::
       (\<forall>s a. (s,a) \<in> M \<longrightarrow>
         (\<exists>p I K. (s,p) \<in> socket_sum Q C \<and> native_premise_at E u V a p I K)))"
 
+lemma native_premise_family_atE:
+  assumes "native_premise_family_at E u V r Q C"
+  obtains R M where "environment_formed E" "artifact_at E u R" "family_at R r M"
+    "finite (socket_sum Q C)" "single_valued (socket_sum Q C)" "rel_dom (socket_sum Q C)=rel_dom M"
+    "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>p I K. (s,p) \<in> socket_sum Q C \<and> native_premise_at E u V a p I K)"
+  using assms unfolding native_premise_family_at_def by (elim conjE exE) (rule that; assumption)
+
 lemma native_premise_family_origin:
   assumes family: "native_premise_family_at E u V r Q C" and member: "(s,p) \<in> socket_sum Q C"
   shows "\<exists>R M a I K. artifact_at E u R \<and> family_at R r M \<and> (s,a) \<in> M \<and>
@@ -405,6 +428,15 @@ definition native_schema_at ::
       insert r (set ps) \<inter> (insert b V \<union> I \<union> {m}) = {} \<and>
       insert b V \<inter> I = {} \<and> b \<noteq> m \<and> m \<notin> I)"
 
+lemma native_schema_atE:
+  assumes "native_schema_at E u r S"
+  obtains R ps b c m V I K where "environment_formed E" "artifact_at E u R" "record_at R r ps [b,c,m]"
+    "binder_scope_at R b V" "pattern_quoted_at E u V c (schema_conclusion S) I K"
+    "native_premise_family_at E u V m (schema_premises S) (schema_material_premises S)"
+    "V = schema_variables S" "insert r (set ps) \<inter> (insert b V \<union> I \<union> {m}) = {}"
+    "insert b V \<inter> I = {}" "b \<noteq> m" "m \<notin> I"
+  using assms unfolding native_schema_at_def by (elim conjE exE) (rule that; assumption)
+
 theorem native_schema_unique:
   assumes first: "native_schema_at E u r S" and second: "native_schema_at E u r T"
   shows "S = T"
@@ -455,6 +487,12 @@ definition native_schema_family_at ::
     (\<exists>R M. artifact_at E u R \<and> family_at R r M \<and> finite C \<and> single_valued C \<and>
       rel_dom C = rel_dom M \<and>
       (\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>S. (s,S) \<in> C \<and> native_schema_at E u a S)))"
+
+lemma native_schema_family_atE:
+  assumes "native_schema_family_at E u r C"
+  obtains R M where "environment_formed E" "artifact_at E u R" "family_at R r M" "finite C" "single_valued C"
+    "rel_dom C = rel_dom M" "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>S. (s,S) \<in> C \<and> native_schema_at E u a S)"
+  using assms unfolding native_schema_family_at_def by (elim conjE exE) (rule that; assumption)
 
 theorem native_schema_family_unique:
   assumes first: "native_schema_family_at E u r C" and second: "native_schema_family_at E u r D"
@@ -518,6 +556,13 @@ definition native_definition_at ::
     (\<exists>R ps i m I K. artifact_at E u R \<and> record_at R r ps [i,m] \<and>
       scoped_pattern_at E u i p I K \<and> native_schema_family_at E u m C \<and>
       insert r (set ps) \<inter> (I \<union> {m}) = {} \<and> m \<notin> I)"
+
+lemma native_definition_atE:
+  assumes "native_definition_at E u r p C"
+  obtains R ps i m I K where "environment_formed E" "artifact_at E u R" "record_at R r ps [i,m]"
+    "scoped_pattern_at E u i p I K" "native_schema_family_at E u m C"
+    "insert r (set ps) \<inter> (I \<union> {m}) = {}" "m \<notin> I"
+  using assms unfolding native_definition_at_def by (elim conjE exE) (rule that; assumption)
 
 theorem native_definition_unique:
   assumes first: "native_definition_at E u r p C" and second: "native_definition_at E u r q D"

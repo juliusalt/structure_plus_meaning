@@ -77,7 +77,7 @@ forms exact under the exchange premise `finite_commitment_exchanges`, the transf
 #586 (landed `ca56a579`, narrowed by q108: the premise as #565 states it fails at the socket kinds; the counterexample recorded, the
 committed input's groundness as lemmas, the controls), R5c′ #589 (landed `ef4ea13d`, narrowed by q109: R5's socket test commits only
 while its clause's other goals are pending, so #565's premise, lifting and forms stand; the committed sub-search's frame
-invariant and kept states), #591 (landed `d874559d`: the certificates' acceptance in subtree form), R5c″ #593 (narrowed
+invariant and kept states), #591 (landed `d874559d`: the certificates' acceptance in subtree form), R5c″ #593 (landed `737f9432`, narrowed
 by q112: the direct producer's discharge under two state hypotheses, the two counterexamples recorded) and R5c‴ #621
 (continuing it, after #593 and W4a1 #526: one barring rule for every committed step, the commitment test checking the
 discharges' state conditions, the producer discharged without hypotheses and the socket kinds; R5d's views #595 waits
@@ -128,22 +128,21 @@ programs' law (`Native_Collection_Programs`; #173–#275, #295, #374); the share
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The evaluator's chain is the route's longest: R5c″ #593 and W4a1 #526 →
+**Shape.** No build waits on a review task. The evaluator's chain is the route's longest: W4a1 #526 →
 R5c‴ #621 → R5d's views #595 → carriers #597 → R5e #599 → R6c's 48 #609 → the carrying #611 → R7 #542 → #399 →
 #401, #403 and the record #553 → … — past the limit through splices (q108, #588, q112), so nothing is added after
 #408, #446, #448, #449 or #450 until they shorten (the status line gives the depths). Off the route,
-nothing waiting on them: the investigation of the probe's start #623 (#584's follow-up 3) and the consolidation
-#613. The approval build (Open 142) after #407 and #447 waits for the chain to shorten.
+nothing waiting on them: #623's tools builds, #624 (the base as one heap) and #625 (the probe's estimate), and the
+consolidation #613. The approval build (Open 142) after #407 and #447 waits for the chain to shorten.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. By slack on the
-longest chain (plan-78): R5c″ #593; W4a1
-#526; R5c‴ #621; W4a2 #615 (it feeds W4b); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
+longest chain (plan-78): W4a1
+#526; R5c‴ #621; W4a2 #615 (it feeds W4b); the tools builds #624 and #625 (off the route, #623's courses); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
 (no slack); R6c's 48 #609, R6b's carrying #605, rc #540 and R6c's instantiation family #607; the carrying #611; W4b
 #528; R7 #542 and #547; the route in its chains' order (#399, the
-samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449); then, off the route, the probe's
-start (a slot the route leaves idle, its runs behind the route's) and the consolidation #613 last.
+samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449); the consolidation #613 last, off the route.
 
 ## Decisions
 
@@ -442,6 +441,17 @@ What landed that open work builds on, a line each; how it went and each review's
   locality, the notions' elimination rules (`native_package_atE`, `native_root_family_atE` among them), the
   replayed-truth lemma (`native_replay_closed_meaning`). Review 619's follow-ups: 1 mailed to #617 (next-edits 222),
   2–5 next-edits 223–226.
+- **R5c″** (#593, `737f9432`): `Factor_Resolution_Producer_Discharge` above `Factor_Resolution_Commitments`, consumed
+  through statements only: the view-free core `finite_exchange_context` with the state conditions `finite_goal_premise`
+  (a) and `finite_registrations_confined` (b); `finite_committed_exchange_context`; the views (`finite_view_parts`,
+  `view_producer_discharged`, `view_consumer_discharged`, `pair_view`, `swap_view`) and `finite_direct_context`;
+  `finite_direct_exchange`, R5's direct test under (a) and (b); task 495's entry's correction (5). Review 594's
+  follow-ups: 1 to #595, 2 and 3 to #621 (3 also to #526), 4 to #623.
+- **The probe's start** (#623, `.build/tasks/623/result.md`): 93 % of a probe's 38 s start is the base's chain of 150
+  heaps (13.8 s of Isabelle/Scala session dependencies over 148 sessions, 20.9 s loading 147 incremental heaps of 13.9
+  GB); about 14.4 GiB per probe; a one-heap base starts in about 3 s; start ≈ 1.6 s + 0.085 s × sessions + 1.5 s × GB.
+  Placed: A, the base as one heap at an advance (#624, provisional under Q29); B, the estimate by the chain (#625); F
+  (the cap) and the heaps' retirement the owner's.
 
 ## Open
 
@@ -477,6 +487,8 @@ The owner's questions, a line each (their words and the provisional choices in f
 - **Q27** answered 2026-09-25 09:48: the native evaluator that constructs the missing witnesses first, not the
   counterparts #460 chose (Decisions; #495's entry).
 - **Q28** answered 2026-09-25 10:44: checkers do not produce; neither course (Decisions; #496's entry decides the production).
+- **Q29** the proof base as one heap (#623) — provisional: #624's trigger (half the library rebuilt, or the chain's
+  modeled start past 10 s); the superseded heaps' retirement, `PROBE_GB` and the probe's cap the owner's.
 
 **To plan, in the order expected** (numbers kept from earlier states):
 
@@ -541,8 +553,8 @@ The owner's questions, a line each (their words and the provisional choices in f
    the prelude route offered by the tool; a refusal naming `--from-heap`; a probe loading `Native_Collection_Programs`'
    dependents passes 60 s, and so does a change of both resolution theories, Acceptance and Completeness (about 120 s,
    #563, whose check of the combination is its probe) — a longer bound or an intermediate heap at a measured need; the
-   start on the base heap, about 48 s of a probe against the tool's estimate of 10 (#584's follow-up 3), is #623's to
-   attribute.
+   start on the base heap, about 48 s of a probe against the tool's estimate of 10 (#584's follow-up 3), is the base's
+   chain (#623): #624 makes the base one heap at an advance (Q29), #625 estimates the start by the chain.
 29. `REASONING_REUSE.md`'s open comparisons (#280's follow-ups): the ordered comparison factored at its next use; the
    six grammars' retention theorems against one statement over `RRA_Read_Environment` (`problems.txt` condition 3); the
    known-predecessor refinements against `Established_Premises`; ordinary clause profiles against `native_rule_law`.
@@ -553,38 +565,41 @@ searches for a theory before briefing a task that edits it.
 ## Now
 
 - **The committed search narrowed where it commits** (q109, plan-78, `.build/plans/plan-78/q109.md`; q110, plan-79,
-  `.build/plans/plan-79/q110.md`; q112, plan-80, `.build/plans/plan-80/q112.md`): a commitment or construction the
+  `.build/plans/plan-79/q110.md`; q112, plan-80, `.build/plans/plan-80/q112.md`; q113, plan-81, `.build/plans/plan-81/q113.md`): a
+  commitment or construction the
   discharges cannot justify is refused, never a call; #565's premise, lifting and forms stand; no premise restated, no
   invariant of reachable states added. q109 narrowed the socket test (#589, landed); q110 bars every node present at a
-  construction step (#526); q112 lands #593's producer discharge under hypotheses (a) the committed goal its parent's
-  premise at its position, (b) no registered variable of the committed state held by a focus goal outside it, with two
+  construction step (#526); q112 lands #593's producer discharge (`737f9432`) under hypotheses (a) `finite_goal_premise`, the committed goal its parent's
+  premise at its position, (b) `finite_registrations_confined`, no registered variable of the committed state held by a focus goal outside it, with two
   counterexamples (the material single solution; a construction binding a socket's premise-only variable first), and
   R5c‴ #621 makes one barring rule and the test check (a) and the socket conditions, discharging the producer without
   hypotheses ((b) is #526's lemma, #526 re-planned to its Remains by plan-81) and the socket kinds. #593 and #595 rewritten; #526, #527, #540, #597, #599 told.
-  Whether the given's sockets commit under R3's selection is #605's control's and R7's to report; one that does not
+  q113: (b) as #593 states it fails at reachable commitments (the least-witness pattern) and is not a test condition;
+  #526 states (b′) — a committed sub-search at q constructs only at nodes under q, so it binds no registered variable a
+  goal outside q holds — and #621 restates #593's (b) over the nodes under q, discharging from (b′). Whether the
+  given's sockets commit under R3's selection is #605's control's and R7's to report; one that does not
   moves the selection parameter (#613) onto the route.
-- **The graph's width** (plan-78, plan-81): the route is one chain — R5c″ #593 and W4a1 #526 → R5c‴ #621 → R5d #595,
+- **The graph's width** (plan-78, plan-81): the route is one chain — W4a1 #526 → R5c‴ #621 → R5d #595,
   #597 → R5e #599 and R6b's parts → R6c → R7 #542 → #399 — so between its landings little else can start; the side
   chains have landed (P, #617, X′, the low moves #618), W4a2 → W4b runs beside the route after #526, R6b's and R6c's
   parts after #597. Nothing is invented to fill the gaps: what is open beside the route rests on its results or is
-  machinery that waits behind it (Open 29's comparisons); the investigation of the probe's start takes a slot the route
-  leaves idle.
-- **What the next events ask**: the investigation of the probe's start brings its courses (one in `tools/` a build to
-  place, one in the harness the owner's). R7
+  machinery that waits behind it (Open 29's comparisons); #623's tools builds #624 and #625 take slots the route leaves
+  idle.
+- **What the next events ask**: Q29's answer (#624's trigger, the heaps' retirement, `PROBE_GB`, the cap). R7
   (#542) measures #399's two courses at 526 and #399 chooses by it; the approval
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
 - **Mailed, read by each task's first session** (by task, open tasks only): #526 — carried into its rewritten brief (plan-81),
-  those of the registrations' instances (#525's 6, #564's, #514's 2) #615's and #528's; #527 — q112; #528 — q110, W4a's division (the four registrations #615's), the
+  those of the registrations' instances (#525's 6, #564's, #514's 2) #615's and #528's; #593's landing, #594's 3;
+  #527 — q112; #528 — q110, W4a's division (the four registrations #615's), the
   generator row #563's, #514's 2; #540 — q110, #506's 1 and 7, q105 (the barred lifting over #563's), q112; #542 —
   q110, review 590's 4, #567's 1 (each ready variable's registered value computed several times per node and step,
   next-edits 217), #588's Remains (the carried `given_declarations` and `given_union_registration`; the order at 79's
   clause), #521's (the least-answer commitment against R4's first answer), #525's 4 (the second search per instance),
   #519's (barred cuts, nested commitments), #506's 5 (a table of resolved goals across a demand), #515's 4 (the
-  checker's share per certificate, the check staying); #547 — q110, #588's Remains; #593 — q110, review 590's 2, #592's
-  (the subtree acceptance's premise includes the node's own position; a strict-descendant form a corollary), q112's
-  answer; #595 — q110 (its brief rewritten with q112); #597, #599 — q112; #605 — review 590's 4;
+  checker's share per certificate, the check staying); #547 — q110, #588's Remains; #595 — q110 (its brief rewritten with q112), #594's 1; #597, #599 — q112;
+  #621 — #593's landing, #594's 2 and 3, q113; #605 — review 590's 4;
   #399 — #569's follow-up (its probe's cost), R8a's readers'
   theory; #399, #403, #443, #553 — their one-citation generations through #562's recording,
   `development_citing_row_generation_certified` (the first to build adds it to REASONING_REUSE.md's row "Record through
@@ -607,7 +622,11 @@ searches for a theory before briefing a task that edits it.
   exclusive claim waits (#559); an investigation accepted with nothing to commit whose tree holds only a merge of main
   keeps what waits on it from starting (#559, #560: the edge taken out); sessions go cold while parked — #515's twice (14:15, its check never run; 15:04,
   before writing anything) — and a planner between events before its notes (plan-72, 15:16). Classifier stops are the
-  run's to handle, not ledger questions (the owner, 20:23 and 20:28).
+  run's to handle, not ledger questions (the owner, 20:23 and 20:28). A probe is capped at 60 s (`PROBE_SECONDS`) while
+  its start on the base heap takes 40–48 s under load, so a probe of a theory above Commitments checks only its first
+  lines (#583, #593); #623 attributes the start to the base's chain (Q29). A probe on the chain holds about 14.4 GiB
+  where `PROBE_GB` assumes 6.5, so about three fit where eight are admitted (16 GiB of swap in use at 02:19, #623);
+  `measuring --shared` wrote no `measurements.log` for a driver's children (#623).
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the
   plan (`4434635d`, `82a065cd`); the owner's words of 17:50, 18:12, 18:36 and 18:53, recorded by #378 (`cbf0c7e9`).
 - **Trees without a running task**: the retired #169's (thirty changed files and one commit, not to land), #325's,

@@ -1,6 +1,6 @@
 theory Factor_Resolution_Controls
   imports Factor_Material_Resolution Factor_Distinct_Payloads Factor_Substitution Factor_Resolution_Completeness
-    Factor_Finite_Site_Value_Reader_Controls
+    Factor_Executed_Controls
 begin
 
 text \<open>

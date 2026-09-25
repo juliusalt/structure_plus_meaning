@@ -138,12 +138,18 @@ proof -
   then show ?thesis by (auto simp: fset_inject[symmetric])
 qed
 
+lemma decode_finite_native_premise_map_sum:
+  "decode_finite_native_premise=map_sum decode_finite_call_pattern decode_finite_material"
+proof (rule ext)
+  fix p show "decode_finite_native_premise p=map_sum decode_finite_call_pattern decode_finite_material p"
+    by (cases p) simp_all
+qed
+
 lemma decode_finite_premise_socket_sum:
   "map_relation_values decode_finite_native_premise (fset (finite_socket_sum Q A)) =
     socket_sum (map_relation_values decode_finite_call_pattern (fset Q))
       (map_relation_values decode_finite_material (fset A))"
-  by (auto simp: finite_socket_sum_correct socket_sum_def map_relation_values_def
-      image_Un image_image intro: rev_image_eqI)
+  by (simp only: finite_socket_sum_correct socket_sum_map_relation_values decode_finite_native_premise_map_sum)
 
 definition finite_native_premise_family_readings ::
   "'u finite_artifact_environment \<Rightarrow> 'u \<Rightarrow> local_address fset \<Rightarrow>

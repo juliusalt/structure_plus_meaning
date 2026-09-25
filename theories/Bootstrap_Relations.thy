@@ -139,6 +139,29 @@ lemma map_relation_values_join:
   "map_relation_values f (R O S) = R O map_relation_values f S"
   by (auto simp: relcomp_unfold; blast)
 
+lemma map_relation_values_fixed:
+  assumes "\<And>k v. (k,v)\<in>R \<Longrightarrow> f v=v"
+  shows "map_relation_values f R=R"
+proof -
+  have "(\<lambda>(k,v). (k,f v)) ` R=id ` R"
+    by (rule image_cong[OF refl]) (auto simp: assms split: prod.splits)
+  then show ?thesis by (simp add: map_relation_values_def)
+qed
+
+lemma map_relation_values_UN:
+  assumes "\<And>k v. (k,v)\<in>R \<Longrightarrow> g (k,f v)=g' (k,v)"
+  shows "(\<Union>z\<in>map_relation_values f R. g z)=(\<Union>z\<in>R. g' z)"
+  unfolding map_relation_values_def image_image
+  by (rule SUP_cong[OF refl]) (auto simp: assms split: prod.splits)
+
+text \<open>
+  A map of a relation's values empties it exactly when the relation is empty, as the image of a set does
+  (@{thm [source] image_is_empty}), and it is a simplification rule for the same reason.
+\<close>
+
+lemma map_relation_values_empty [simp]: "map_relation_values f R={} \<longleftrightarrow> R={}"
+  by (simp add: map_relation_values_def)
+
 lemma complete_socket_reading_origin:
   assumes sv: "single_valued Q" and domain: "rel_dom Q = rel_dom M"
     and complete: "\<forall>s a. (s,a) \<in> M \<longrightarrow> (\<exists>x. (s,x) \<in> Q \<and> reads a x)"
@@ -417,6 +440,11 @@ lemma single_valued_pair_image:
   shows "single_valued ((\<lambda>(a,b). (f a,g b)) ` R)"
   using assms by (auto simp: single_valued_def inj_on_def rel_dom_def; blast)
 
+lemma map_relation_values_single_valued:
+  assumes "single_valued R"
+  shows "single_valued (map_relation_values f R)"
+  using single_valued_pair_image[OF assms, of id f] by (simp add: map_relation_values_def)
+
 lemma key_image_member:
   "(y,v) \<in> map_prod f id ` R \<longleftrightarrow> (\<exists>x. (x,v) \<in> R \<and> y=f x)"
   by (auto simp: map_prod_def)
@@ -465,6 +493,11 @@ lemma socket_sum_domain [simp]:
 lemma socket_sum_range:
   "rel_ran (socket_sum Q C) = Inl ` rel_ran Q \<union> Inr ` rel_ran C"
   by (auto simp: socket_sum_def rel_ran_def intro: rev_image_eqI)
+
+lemma socket_sum_map_relation_values:
+  "socket_sum (map_relation_values f Q) (map_relation_values g C)=
+    map_relation_values (map_sum f g) (socket_sum Q C)"
+  by (simp add: socket_sum_def map_relation_values_def image_Un image_image split_def)
 
 lemma socket_sum_finite [simp]:
   fixes Q :: "('s \<times> 'a) set" and W :: "('s \<times> 'b) set"

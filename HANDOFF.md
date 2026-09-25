@@ -101,9 +101,6 @@ formed values, relocation; after W2, #563, W3 and R4) and W4b #528 (the given's 
 review. #399 waits on R7 and #547 on rc, both on R4, R6 and W4b; #549 and #551 wait on R7, #403 and #553 through
 #399.
 
-**Beside the route**: after R4 #505, the controls theory renamed `Factor_Executed_Controls` for what it holds, the use
-sample's control fixtures moved into it from the library (#555's and #511's reviews, next-edits 183).
-
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
 and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93) and the
 machinery's verification stage judged natively (#193, #194).
@@ -129,7 +126,7 @@ as detail (#544); the attribution #559 → the design #560 → the posing's reco
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The recording's
 attribution #559 and the design #560 first; the evaluator's W2 #524, R5 #518, #563 and R5b #565 (the longest
-chain and the owner's direction, their checks first on the machine); the one-citation recording #562; the controls' rename #556, W4a
+chain and the owner's direction, their checks first on the machine); the one-citation recording #562; W4a
 #526, R6 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399,
 the samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
@@ -332,10 +329,10 @@ What landed that open work builds on, a line each; how it went and each review's
   counterpart theories (C1–C4b, the audit's and the guard's, the given's base, the stated-leaves counterpart) are
   retired by R8a (#508, `9b18bd52`), their presentation readers (`finite_environment_pair_read`,
   `finite_source_root_read`, `finite_site_read`, `finite_site_presented`, each with its exactness) moved to
-  `Factor_Finite_Site_Value_Readers`, their controls to `Factor_Finite_Site_Value_Reader_Controls`, and
+  `Factor_Finite_Site_Value_Readers`, their controls to `Factor_Executed_Controls` (so named by #556), and
   `Development_Native_State` re-cited; R8b (#510, `519102d8`) moved E1's, S1's, the octet and the stated-leaves
   controls there, the fixture once; #555 (`8591818b`) the use sample's executed control, the stated-leaves controls
-  an equation the one evaluation proves.
+  an equation the one evaluation proves; #556 (`999acaee`) the theory's name and the use sample's control fixtures.
 - **The owner records**: `Development_Owner_Records` (#385; the approval record `development_owner_approval`, Open 142);
   #425's attribution of an indexed generation (`.build/tasks/425/attribution.md`), the working rule "Evaluations".
 - **The posing** (#397, `69c3bfd3`): `Development_First_Problem` — the payload `development_first_problem_payload`
@@ -504,7 +501,9 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **What the next events ask**: the design #560's result decides the recording at scale and the posing's payload
+- **What the next events ask**: the attribution #559 is accepted (a superlinear walk of R above all, its count mostly
+  constant; certification parametric in the literal would remove 69.5 s of the steps' 76.9 s), so the design #560 can
+  start; its result decides the recording at scale and the posing's payload
   (holding the given again or citing the first generation): then the posing's recording at the given or its re-pose
   is placed (#397 landed, the held measurement of its `posing ()` owed: #398's follow-up 2), with a held run at
   the given once the next share lands, which fixes
@@ -513,25 +512,16 @@ searches for a theory before briefing a task that edits it.
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **The counterparts' retirement**: R8a and R8b landed (`9b18bd52`, `519102d8`; next-edit items 154, 156 and 159 with
-  them), and #555 of its review's follow-ups (`8591818b`); the one on R4 is in #505's rewritten brief; the controls
-  theory's rename with the use sample's fixtures (item 183) is a fix after R4; 158 stays at a measured need.
 - **Mailed, read by each task's first session** (by task): #560 (#558's review, follow-ups 1-4: RR5's shared
   figures and the held run that fixes them, S1's superlinearity inside `finite_extend_native_formed`, the remaining
   shares, the marked correction naming task 557; the posing's landing and its owed held measurement; #561's follow-up 1, a base generation's cause
-  independent of its payload); #559 (#558's follow-up 2, S1 on RR5's path; #561's follow-up 5, the timing theory's
-  form); #399, #403, #443 and #553 (their one-citation generations through #562's
+  independent of its payload); #399, #403, #443 and #553 (their one-citation generations through #562's
   recording); #399, #549 and #551 (#398's follow-up 4: `finite_program_entry_presented` moved at its second use);
   #526 and #540 (#506's follow-ups 1 and 7: the resolver's forms over a construction, W4a's; the helpers' home); #526
-  (q104: W2's premise `finite_pattern_lifting` discharged by #563's lifting); #528 (the generator row is #563's); #519, #520, #540 and
-  #563 (q105: R5's scope divided, its exactness R5b's; the declarations' obligations; the barred lifting over #563's); #542 (#506's follow-up 5: a table of resolved goals across a demand); #551 (#506's follow-up 6:
-  resolution at `criticism_calls` an exact S1 table); #562 (#561's follow-up 2: one per-build control of the owner
-  records, X running nothing);
-  #524 (#515's review, follow-up 6); #526 (its 3 and 6);
+  (q104: W2's premise `finite_pattern_lifting` discharged by #563's lifting); #528 (the generator row is #563's); #519, #520 and #540 (q105: R5's scope divided, its exactness R5b's; the declarations' obligations; the barred lifting over #563's); #542 (#506's follow-up 5: a table of resolved goals across a demand); #551 (#506's follow-up 6:
+  resolution at `criticism_calls` an exact S1 table); #526 (#515's review, follow-ups 3 and 6);
   #542 (its 4: the checker's share per certificate measured, the check staying); #407 (#433's review's follow-ups 2 and 3; the frame as #432
-  and #433 leave it; #394's follow-up 3); #443 (#546's re-review, follow-up 2: the request program's export cost); #526 and #528 (#514's follow-up 2); #518 and
-  #526 (the combined
-  contract is rc's, q100); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); The route's earlier mails to #397,
+  and #433 leave it; #394's follow-up 3); #443 (#546's re-review, follow-up 2: the request program's export cost); #526 and #528 (#514's follow-up 2); #526 (the combined contract is rc's, q100); #399 (R8a's readers' theory, the retired counterparts, read also by #544's session before its division); The route's earlier mails to #397,
   #399, #403, #443 and #447 are carried into their corrected briefs or recorded superseded (`.build/tasks/522/result.md`,
   `.build/tasks/523/result.md`).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;

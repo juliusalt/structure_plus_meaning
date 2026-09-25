@@ -85,9 +85,9 @@ kept, its certificates checked by the finite proof checker, q98, W1's constructi
 are formed, q99), and R4 #505 (`4f5e6307`: completeness, `finite_program_resolution_exact` and
 `native_call_resolution_exact`, the demand-level and native forms, at `no_witness_construction`: their extension over a
 construction is W4a's, #506's follow-up 1), landed; R5 #518 (committed choice under a declared presentation class: the
-committed search with barred pruning, its soundness and forms, q105; re-planned after #519's review found a socket
-commitment without the kept head refuting a true call, the test narrowed to a focus root whose parent's call output is
-a variant of its head output), R5b #565 (their exactness: the lifting at a
+committed search with barred pruning, its soundness and forms, q105; landed `80472ac8` after #519's review found a
+socket commitment without the kept head refuting a true call, the test narrowed to a focus root whose parent's call
+output is a variant of its head output), R5b #565 (their exactness: the lifting at a
 barred support over #563's, the exchange, the forms over any construction, the transfer; after R5 and #563) and R6
 #520 (the given's declarations at 79, 32, 6, 10, 45 and 48 from their notions' contracts, after R5, before
 #399 and #443), each with its review; the combined contract rc #540 (`Factor_Committed_Registrations`: the
@@ -137,8 +137,8 @@ placed when they are nearer.
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. The recording's T1
 #571 first (a whole rebuild, heading the queue while it checks so that no other heavy run starts beside it), the
-recording's chain being now the longest; W2a #524 in flight, W2b #567, R5 #518
-(re-planned, a build's slack), the recording's later builds (#575, #577, #579, #581, #583); R5b #565, W4a #526, R6
+recording's chain being now the longest; W2a #524 and R5b #565 in flight, W2b #567, the recording's later builds
+(#575, #577, #579, #581, #583); W4a #526, R6
 #520, W4b #528, rc #540 and R7 #542; the request at the given #547; the route in its chains' order (#399, the samples
 #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449).
 
@@ -399,7 +399,10 @@ What landed that open work builds on, a line each; how it went and each review's
   forms (#563, `256ed4f9`): `finite_pattern_state`, `resolution_value_ground`, `resolution_supported_by`, the liftings
   `finite_resolution_lifting_by` and `finite_resolution_pattern_lifting`,
   `finite_resolution_pattern_certificates_accepted`, `finite_pattern_answer_true` and the tight goal-level generator
-  `finite_pattern_resolution_generator`; their reviews'
+  `finite_pattern_resolution_generator`; R5 `Factor_Resolution_Commitments` (#518, `80472ac8`: declarations and their
+  discharge from the notions' contracts, the committed search with barred pruning, its soundness and its forms, R4's
+  their instance at no declaration; a declaration without the kept head commits only at a focus root whose parent's
+  call output is a variant of its head output, the holders check extended, `finite_socket_free`); their reviews'
   follow-ups mailed to R3b, R4, #507 and #517,
   R7's carried by #523's brief. W3 `Factor_Least_Witness_Facts` (#513, `485ecf65`): the least witnesses' completeness
   facts over the given's readers' meanings (`package_request_least_witness`, `merge_least_witness`,
@@ -533,6 +536,12 @@ searches for a theory before briefing a task that edits it.
 
 ## Now
 
+- **Not yet placed**: q106 (#565, R5b beyond its room) was answered accepting its split: #565 does the focused barred
+  support, the committed lifting under an exchange premise (`commitment_exchanges`), the three forms exact under it,
+  agreement with R4 and the transfer; the second half — the premise discharged from R5's declarations (producer,
+  consumer, the material single solution, kept-head and free sockets with whatever further condition the socket case
+  needs, or its counterexample) and the control's false call refuted, with the second shape's conjuncts — is to be
+  created as a build continuing #565 after it lands, with its review, and rc #540 re-pointed to wait on it.
 - **What the next events ask**: the recording's builds from #560's entry are placed (#570's proposal, #571–#584),
   carrying #569's probe cost (54.5 s shared against the entry's 25 s: P's probe under a shared claim at a longer
   bound) and its untested case (a payload equal to an artifact J0 holds elsewhere is filled and recorded as any other,
@@ -545,7 +554,9 @@ searches for a theory before briefing a task that edits it.
   build (Open 142) and the first answer (Open 148) are planned when #447, #407, #445 and #401 are nearer. The samples
   build #551 is the part of #544's division nearest its room (384K at proposal, rc's theory added at its start): a
   hand-back there divides corrected item (3), the planner's.
-- **Mailed, read by each task's first session** (by task): #571 and #575 (#574's review: T1's map of patterns over an
+- **Mailed, read by each task's first session** (by task): #565 (#519's re-review: the correction (2)'s parenthetical,
+  the second shape's conjuncts in the controls' lemma, the exchange's premises as `finite_socket_free` states them);
+  #571 and #575 (#574's review: T1's map of patterns over an
   arbitrary target map, the placeholder's instantiating it directly); #579 and #581 (#574's review: T2b's collected
   sets at the placeholder's roots or under a named premise, discharged at the placeholder by T3 or P's guard; to #579
   the reuse row of the entry's (5)); #577's brief rewritten with #574's follow-ups 1 and 2 (the premise, the fill's

@@ -183,4 +183,45 @@ proof -
     by (rule SUP_cong[OF refl each])
 qed
 
+section \<open>The leaf map and rooting\<close>
+
+text \<open>
+  A leaf map of a program (@{const map_system_leaves}) keeps every definition, clause key and callee, so it
+  keeps the dependency edges, and restriction and rooting commute with it, the roots kept; it keeps every socket
+  and changes no material premise into none, so the mapped program is observation-free exactly when the source is.
+\<close>
+
+lemma system_restriction_leaf_map:
+  "system_restriction (map_system_leaves h P) U=map_system_leaves h (system_restriction P U)"
+  by (rule schema_system.equality) (auto simp: system_restriction_def)
+
+lemma rooted_system_leaf_map:
+  "rooted_system (map_system_leaves h P) R=map_system_leaves h (rooted_system P R)"
+  by (simp add: rooted_system_def system_definition_closure_def system_restriction_leaf_map)
+
+lemma system_observation_free_leaf_map:
+  "system_observation_free (map_system_leaves h P) \<longleftrightarrow> system_observation_free P"
+proof
+  assume free: "system_observation_free (map_system_leaves h P)"
+  show "system_observation_free P" unfolding system_observation_free_def
+  proof (intro allI impI)
+    fix d c S assume clause: "((d,c),S)\<in>system_clauses P"
+    have "((d,c),map_schema_leaves h S)\<in>system_clauses (map_system_leaves h P)"
+      unfolding map_system_clauses_member using clause by blast
+    then have "schema_material_premises (map_schema_leaves h S)={}"
+      using free unfolding system_observation_free_def by blast
+    then show "schema_material_premises S={}" by simp
+  qed
+next
+  assume free: "system_observation_free P"
+  show "system_observation_free (map_system_leaves h P)" unfolding system_observation_free_def
+  proof (intro allI impI)
+    fix d c T assume "((d,c),T)\<in>system_clauses (map_system_leaves h P)"
+    then obtain S where clause: "((d,c),S)\<in>system_clauses P" and T: "T=map_schema_leaves h S"
+      unfolding map_system_clauses_member by blast
+    have "schema_material_premises S={}" using free clause unfolding system_observation_free_def by blast
+    then show "schema_material_premises T={}" using T by simp
+  qed
+qed
+
 end

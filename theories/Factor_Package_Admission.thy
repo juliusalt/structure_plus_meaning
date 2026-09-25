@@ -202,10 +202,6 @@ text \<open>
   environment, which the class requires.
 \<close>
 
-lemma native_package_site_position:
-  assumes "native_package_at E u r P"
-  shows "(u,r)\<in>environment_positions E"
-  using assms by (auto simp: native_package_at_def native_root_family_at_def dest!: family_interior_in_carrier)
 
 lemma native_package_exists_renamed:
   assumes formed: "environment_formed E" and h: "bij h"

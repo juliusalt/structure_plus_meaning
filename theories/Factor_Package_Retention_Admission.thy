@@ -547,4 +547,82 @@ text \<open>
   complete transition-material admission, and genesis remain separate.
 \<close>
 
+section \<open>The least package environment commutes with use permutations\<close>
+
+text \<open>
+  The least environment of a package read at a permuted root use of a permuted environment is the
+  permuted least environment: package admission, retention admission and inclusion are each equivariant
+  by their clauses, and the least material of each reading is included in the other's, the inverse steps
+  taken by the environment action (@{thm [source] renaming_action.act_inverse},
+  @{thm [source] renaming_action.act_inverse_right} at @{thm [source] environment_renaming_action}).
+\<close>
+
+lemma native_package_environment_renamed:
+  fixes E :: "local_address option artifact_environment" and h :: "local_address option \<Rightarrow> local_address option"
+  assumes h: "bij h" and package: "native_package_at E u r P"
+  shows "native_package_environment (rename_environment h E) (h u) r=
+    rename_environment h (native_package_environment E u r)"
+proof -
+  have package_ren: "(\<exists>Q. native_package_at (rename_environment g X) (g a) b Q) \<longleftrightarrow> (\<exists>Q. native_package_at X a b Q)"
+    if "bij g" "environment_formed X" "(a,b)\<in>environment_positions X"
+    for g :: "local_address option \<Rightarrow> local_address option" and X :: "local_address option artifact_environment" and a b
+    using package_admission_equivariant[unfolded renaming_equivariant_def, rule_format, OF that(1), of "(X,(a,b))"]
+      that(2,3) by simp
+  have closed_ren: "(\<exists>Q. closed_native_package_at (rename_environment g X) (g a) b Q) \<longleftrightarrow>
+      (\<exists>Q. closed_native_package_at X a b Q)"
+    if "bij g" "environment_formed X" "(a,b)\<in>environment_positions X"
+    for g :: "local_address option \<Rightarrow> local_address option" and X :: "local_address option artifact_environment" and a b
+    using package_retention_admission_equivariant[unfolded renaming_equivariant_def, rule_format, OF that(1),
+      of "(X,(a,b))"] that(2,3) by simp
+  have incl_ren: "environment_included (rename_environment g A) (rename_environment g B) \<longleftrightarrow> environment_included A B"
+    if "bij g" "environment_formed A" "environment_formed B"
+    for g :: "local_address option \<Rightarrow> local_address option" and A B :: "local_address option artifact_environment"
+    using environment_inclusion_equivariant[unfolded renaming_equivariant_def, rule_format, OF that(1), of "(A,B)"]
+      that(2,3) by simp
+  have ren_formed: "environment_formed (rename_environment g X)" if "bij g" "environment_formed X"
+    for g :: "local_address option \<Rightarrow> local_address option" and X :: "local_address option artifact_environment"
+    using environment_renaming_formed[OF that(2) bij_is_inj[OF that(1)]] .
+  let ?M = "native_package_environment E u r"
+  let ?N = "native_package_environment (rename_environment h E) (h u) r"
+  have formed_E: "environment_formed E" by (rule native_package_formed_at[OF package])
+  have closed_M: "closed_native_package_at ?M u r P" by (rule native_package_closed_restriction[OF package])
+  have package_M: "native_package_at ?M u r P" using closed_M by (simp add: closed_native_package_at_def)
+  have formed_M: "environment_formed ?M" by (rule native_package_formed_at[OF package_M])
+  obtain PE where package_RE: "native_package_at (rename_environment h E) (h u) r PE"
+    using package_ren[OF h formed_E native_package_site_position[OF package]] package by blast
+  obtain PM where closed_RM: "closed_native_package_at (rename_environment h ?M) (h u) r PM"
+    using closed_ren[OF h formed_M native_package_site_position[OF package_M]] closed_M by blast
+  have package_RM: "native_package_at (rename_environment h ?M) (h u) r PM"
+    using closed_RM by (simp add: closed_native_package_at_def)
+  have incl_RM: "environment_included (rename_environment h ?M) (rename_environment h E)"
+    using incl_ren[OF h formed_M formed_E] native_package_environment_included[of E u r] by simp
+  have N_M: "environment_included ?N (rename_environment h ?M)"
+    by (rule native_package_dependency_material_required[OF package_RE package_RM incl_RM])
+  have closed_N: "closed_native_package_at ?N (h u) r PE" by (rule native_package_closed_restriction[OF package_RE])
+  have package_N: "native_package_at ?N (h u) r PE" using closed_N by (simp add: closed_native_package_at_def)
+  have formed_N: "environment_formed ?N" by (rule native_package_formed_at[OF package_N])
+  have inverse: "bij (inv h)" by (rule bij_imp_bij_inv[OF h])
+  have back_u: "inv h (h u)=u" by (rule inv_f_f[OF bij_is_inj[OF h]])
+  have "\<exists>Q. closed_native_package_at (rename_environment (inv h) ?N) (inv h (h u)) r Q"
+    using closed_ren[OF inverse formed_N native_package_site_position[OF package_N]] closed_N by blast
+  then obtain PN where closed_IN: "closed_native_package_at (rename_environment (inv h) ?N) u r PN"
+    unfolding back_u by blast
+  have package_IN: "native_package_at (rename_environment (inv h) ?N) u r PN"
+    using closed_IN by (simp add: closed_native_package_at_def)
+  have undo_E: "rename_environment (inv h) (rename_environment h E)=E"
+    by (rule renaming_action.act_inverse[OF environment_renaming_action h formed_E])
+  have "environment_included (rename_environment (inv h) ?N) (rename_environment (inv h) (rename_environment h E))"
+    using incl_ren[OF inverse formed_N ren_formed[OF h formed_E]]
+      native_package_environment_included[of "rename_environment h E" "h u" r] by simp
+  then have incl_IN: "environment_included (rename_environment (inv h) ?N) E" using undo_E by simp
+  have M_IN: "environment_included ?M (rename_environment (inv h) ?N)"
+    by (rule native_package_dependency_material_required[OF package package_IN incl_IN])
+  have redo_N: "rename_environment h (rename_environment (inv h) ?N)=?N"
+    by (rule renaming_action.act_inverse_right[OF environment_renaming_action h formed_N])
+  have "environment_included (rename_environment h ?M) (rename_environment h (rename_environment (inv h) ?N))"
+    using incl_ren[OF h formed_M ren_formed[OF inverse formed_N]] M_IN by simp
+  then have M_N: "environment_included (rename_environment h ?M) ?N" using redo_N by simp
+  show ?thesis by (rule environment_included_antisym[OF N_M M_N])
+qed
+
 end

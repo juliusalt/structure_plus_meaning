@@ -930,50 +930,18 @@ section \<open>Key absence and data inequality at use presentations\<close>
 
 text \<open>
   G3's callee compares uses as data: key absence (@{thm [source] key_absence_exact}) of a use among the
-  use keys of rows, and data inequality of two uses, whose clause the use instance states
-  (@{thm [source] use_data_comparison_equivariant}, at @{thm [source] use_pair_renaming_action}). Key
-  absence's clause is stated here, the theory importing both the reader and the use instance: a use and a
-  row list, the use action on the use and, by the list construction, on every row's key. Both are
-  invariant along every renaming correspondence of their use presentations; the readers' own contracts
-  range over every self-contained key, so the correspondence, which stays among use presentations, is
-  followed through the clause.
+  use keys of rows, and data inequality of two uses, whose clauses stand beside their contracts
+  (@{thm [source] use_key_absence_equivariant}, at @{thm [source] use_key_rows_renaming_action};
+  @{thm [source] use_data_comparison_equivariant}, at @{thm [source] use_pair_renaming_action}). Their
+  presented forms are stated here, over the use presentations: both are invariant along every renaming
+  correspondence of their use presentations; the readers' own contracts range over every self-contained
+  key, so the correspondence, which stays among use presentations, is followed through the clause.
 \<close>
 
 abbreviation use_key_rows_presents ::
     "local_address option \<times> (local_address option \<times> factor_term) list \<Rightarrow> factor_term \<Rightarrow> bool" where
   "use_key_rows_presents \<equiv> factor_pair_presents (\<lambda>u t. t=use_data_term u)
     (\<lambda>ys t. t=pair_list_term (map (map_prod use_data_term id) ys))"
-
-abbreviation use_key_rows_renaming ::
-    "(local_address option \<Rightarrow> local_address option) \<Rightarrow> local_address option \<times> (local_address option \<times> factor_term) list \<Rightarrow>
-      local_address option \<times> (local_address option \<times> factor_term) list" where
-  "use_key_rows_renaming \<equiv> product_action (\<lambda>h. h) (\<lambda>h. map (map_prod h id))"
-
-lemma use_key_rows_renaming_action: "renaming_action bij use_key_rows_renaming (\<lambda>z. True)"
-  using renaming_action_product[OF use_renaming_action renaming_action_lists[OF site_renaming_action]] by simp
-
-lemma use_key_absence_at:
-  "(20,Pair_Term (use_data_term u) (pair_list_term (map (map_prod use_data_term id) ys)))\<in>positive_meaning key_absence_system
-    \<longleftrightarrow> (\<forall>y\<in>set ys. term_formed (snd y)) \<and> u\<notin>fst ` set ys"
-proof -
-  have exact: "(20,Pair_Term (use_data_term u) (pair_list_term (map (map_prod use_data_term id) ys)))
-      \<in>positive_meaning key_absence_system \<longleftrightarrow> formed_key_rows (map (map_prod use_data_term id) ys) \<and>
-      use_data_term u\<notin>set (map fst (map (map_prod use_data_term id) ys))"
-    unfolding key_absence_exact factor_term.inject pair_list_term_injective
-    using use_data_term_formed use_data_term_self_contained by blast
-  have rows: "formed_key_rows (map (map_prod use_data_term id) ys) \<longleftrightarrow> (\<forall>y\<in>set ys. term_formed (snd y))"
-    by (auto simp: case_prod_beta intro: imageI)
-  have keys: "use_data_term u\<notin>set (map fst (map (map_prod use_data_term id) ys)) \<longleftrightarrow> u\<notin>fst ` set ys"
-    by (simp add: image_image image_iff inj_eq[OF use_data_term_injective])
-  show ?thesis unfolding exact rows keys ..
-qed
-
-theorem use_key_absence_equivariant:
-  "renaming_equivariant bij use_key_rows_renaming (\<lambda>z. True)
-    (\<lambda>z. (20,Pair_Term (use_data_term (fst z)) (pair_list_term (map (map_prod use_data_term id) (snd z))))
-      \<in>positive_meaning key_absence_system)"
-  unfolding renaming_equivariant_def use_key_absence_at
-  by (auto simp: product_action_def image_iff inj_eq[OF bij_is_inj])
 
 corollary use_key_absence_renaming:
   "\<forall>h. bij h \<longrightarrow> rel_fun (renaming_correspondence use_key_rows_presents use_key_rows_renaming h) (=)

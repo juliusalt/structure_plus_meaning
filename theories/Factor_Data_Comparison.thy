@@ -1,5 +1,5 @@
 theory Factor_Data_Comparison
-  imports Factor_Distinct_Payloads Factor_View_Definitions Factor_Rule_Instances
+  imports Factor_Distinct_Payloads Factor_View_Definitions Factor_Rule_Instances Factor_Use_Actions
 begin
 
 section \<open>Ordinary recursive definitions over the existing payload program\<close>
@@ -493,5 +493,26 @@ text \<open>
   or semantic equality of their represented subjects is inferred from that
   difference. Extensional collection comparison requires its own definition.
 \<close>
+
+section \<open>Uses compared by data inequality\<close>
+
+text \<open>
+  Data inequality's clause at uses. The comparison entry, as @{thm [source] native_data_inequality}
+  compiles it, relates two use presentations exactly when the uses differ, so a relation that compares
+  the uses it reads for equality is equivariant under every permutation of uses, one permutation acting
+  on both (@{thm [source] use_pair_renaming_action}): that is what "sites are compared for equality"
+  means natively.
+\<close>
+
+theorem use_data_comparison_renaming:
+  assumes "inj h"
+  shows "(3,Pair_Term (use_data_term (h u)) (use_data_term (h v))) \<in> positive_meaning data_comparison_system
+    \<longleftrightarrow> (3,Pair_Term (use_data_term u) (use_data_term v)) \<in> positive_meaning data_comparison_system"
+  by (simp add: data_comparison_exact inj_eq[OF use_data_term_injective] inj_eq[OF assms])
+
+theorem use_data_comparison_equivariant:
+  "renaming_equivariant bij (product_action (\<lambda>h. h) (\<lambda>h. h)) (\<lambda>z. True)
+    (\<lambda>z. (3,Pair_Term (use_data_term (fst z)) (use_data_term (snd z))) \<in> positive_meaning data_comparison_system)"
+  by (auto simp: renaming_equivariant_def product_action_def use_data_comparison_renaming[OF bij_is_inj])
 
 end

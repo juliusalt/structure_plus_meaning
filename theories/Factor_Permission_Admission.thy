@@ -142,7 +142,7 @@ proof -
   have formed: "environment_formed F"
     using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
   have root: "(u,[])\<in>environment_positions F"
-    by (rule native_package_root_position[OF package])
+    by (rule native_package_site_position[OF package])
   have member: "d\<in>system_definitions Q" using built(2) by simp
   have position: "d\<in>environment_positions F" by (rule native_package_entry_position[OF package member])
   obtain p where presented: "program_entry_value_presents F u [] d p"

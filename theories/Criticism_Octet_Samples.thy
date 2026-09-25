@@ -1,7 +1,7 @@
 theory Criticism_Octet_Samples
   imports Criticism_Samples Factor_Finite_Payload_Literals Factor_System_Restriction
     RRA_Finite_Fresh_Addresses Factor_Finite_Artifact_Enumeration Factor_Executable_Artifact_Values
-    Factor_Artifact_Values Bootstrap_Finite_Closure Native_Control_Quotation_Code
+    Factor_Artifact_Values Bootstrap_Finite_Closure Native_Control_Quotation_Code Tree_Map_Indexes
 begin
 
 section \<open>The octets a term carries and the targets a program states\<close>
@@ -99,22 +99,26 @@ lemma system_leaves_restriction: "system_leaves (system_restriction P U) \<subse
 
 text \<open>A leaf of a finite term is stated by a finite program exactly when its decoding is stated by the decoded program.\<close>
 
-fun finite_leaf_stated :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> finite_factor_term \<Rightarrow> bool" where
-  "finite_leaf_stated P (Finite_Target t)=(t |\<in>| finite_system_targets P)"
-| "finite_leaf_stated P (Finite_Payload v)=(v |\<in>| finite_system_payloads P)"
-| "finite_leaf_stated P (Finite_Pair x y)=False"
+fun finite_leaf_stated_in :: "octets fset \<Rightarrow> finite_exact_target fset \<Rightarrow> finite_factor_term \<Rightarrow> bool" where
+  "finite_leaf_stated_in S T (Finite_Target t)=(t |\<in>| T)"
+| "finite_leaf_stated_in S T (Finite_Payload v)=(v |\<in>| S)"
+| "finite_leaf_stated_in S T (Finite_Pair x y)=False"
+
+definition finite_leaf_stated :: "('a,'s,'d,'c) finite_schema_system \<Rightarrow> finite_factor_term \<Rightarrow> bool" where
+  "finite_leaf_stated P=finite_leaf_stated_in (finite_system_payloads P) (finite_system_targets P)"
 
 lemma finite_leaf_stated_exact:
   "finite_leaf_stated P y \<longleftrightarrow> decode_finite_term y \<in> system_leaves (decode_finite_system P)"
 proof (cases y)
   case (Finite_Target t)
-  then show ?thesis by (simp add: finite_system_targets_exact)
+  then show ?thesis by (simp add: finite_leaf_stated_def finite_system_targets_exact)
 next
   case (Finite_Payload v)
-  then show ?thesis using finite_system_payloads_exact[of P] by (auto simp: system_payloads_def)
+  then show ?thesis using finite_system_payloads_exact[of P]
+    by (auto simp: finite_leaf_stated_def system_payloads_def)
 next
   case (Finite_Pair a b)
-  then show ?thesis by (simp add: system_leaves_not_pair)
+  then show ?thesis by (simp add: finite_leaf_stated_def system_leaves_not_pair)
 qed
 
 section \<open>The octet map: a bijection fixing the stated payloads\<close>
@@ -139,50 +143,60 @@ proof -
   then show ?thesis by (simp add: finite_fresh_address_exact)
 qed
 
-lemma fresh_octet_formed:
-  "octets_formed (finite_fresh_address U @ (if octets_formed x then [] else [256])) \<longleftrightarrow> octets_formed x"
-  using finite_fresh_address_formed[of U] by (auto simp: octets_formed_def)
+text \<open>
+  The fresh octets share one base, the fresh address of the reserved octets, followed by the index code
+  of the moved octet's position (@{const index_address}): every extension of the base is outside the
+  reserved octets (@{thm [source] fresh_address_extension_outside}), and two positions' codes cancel.
+  A mark ends the fresh octet of an unformed moved octet with the octet 256.
+\<close>
 
-fun octet_fresh_pairs :: "octets fset \<Rightarrow> octets list \<Rightarrow> (octets\<times>octets) list" where
-  "octet_fresh_pairs U []=[]"
-| "octet_fresh_pairs U (x#xs)=(let f=finite_fresh_address U @ (if octets_formed x then [] else [256]) in
-    (x,f) # octet_fresh_pairs (finsert f U) xs)"
+definition octet_fresh_mark :: "octets \<Rightarrow> octets" where
+  "octet_fresh_mark x=(if octets_formed x then [] else [256])"
+
+lemma fresh_index_formed:
+  "octets_formed (finite_fresh_address U @ index_address i @ octet_fresh_mark x) \<longleftrightarrow> octets_formed x"
+  using finite_fresh_address_formed[of U] index_address_formed[of i]
+  by (auto simp: octets_formed_def octet_fresh_mark_def)
+
+definition octet_fresh_pairs :: "octets fset \<Rightarrow> octets list \<Rightarrow> (octets\<times>octets) list" where
+  "octet_fresh_pairs U xs=(let b=finite_fresh_address U in
+    map (\<lambda>(i,x). (x,b @ index_address i @ octet_fresh_mark x)) (zip [0..<length xs] xs))"
 
 lemma octet_fresh_pairs_fst: "map fst (octet_fresh_pairs U xs)=xs"
-  by (induction xs arbitrary: U) (simp_all add: Let_def)
+proof -
+  have "map fst (octet_fresh_pairs U xs)=map snd (zip [0..<length xs] xs)"
+    by (simp add: octet_fresh_pairs_def Let_def split_def o_def)
+  then show ?thesis by simp
+qed
 
 lemma octet_fresh_pairs_fresh: "y \<in> set (map snd (octet_fresh_pairs U xs)) \<Longrightarrow> y |\<notin>| U"
-  by (induction xs arbitrary: U) (auto simp: Let_def finite_fresh_extension_outside)
-
-lemma unformed_extension: "\<not>octets_formed (a @ [256])"
-  by (simp add: octets_formed_def)
+  by (auto simp: octet_fresh_pairs_def Let_def finite_fresh_extension_outside)
 
 lemma octet_fresh_pairs_formed:
   "(x,f) \<in> set (octet_fresh_pairs U xs) \<Longrightarrow> octets_formed f \<longleftrightarrow> octets_formed x"
-  by (induction xs arbitrary: U)
-    (auto simp: Let_def fresh_octet_formed finite_fresh_address_formed unformed_extension)
+  by (auto simp: octet_fresh_pairs_def Let_def fresh_index_formed)
 
 lemma octet_fresh_pairs_distinct:
-  "set xs \<subseteq> fset U \<Longrightarrow> distinct xs \<Longrightarrow>
-    distinct (map fst (octet_fresh_pairs U xs) @ map snd (octet_fresh_pairs U xs))"
-proof (induction xs arbitrary: U)
-  case Nil
-  then show ?case by simp
-next
-  case (Cons x xs)
-  define f where "f=finite_fresh_address U @ (if octets_formed x then [] else [256])"
-  have f: "f |\<notin>| U" by (simp add: f_def finite_fresh_extension_outside)
-  let ?ps="octet_fresh_pairs (finsert f U) xs"
-  have rest: "distinct (map fst ?ps @ map snd ?ps)" using Cons.prems by (intro Cons.IH) auto
-  have fresh: "y |\<notin>| finsert f U" if "y \<in> set (map snd ?ps)" for y
-    using octet_fresh_pairs_fresh that by blast
-  have eq: "octet_fresh_pairs U (x#xs)=(x,f) # ?ps" by (simp add: f_def Let_def)
-  have fst: "map fst ?ps=xs" by (rule octet_fresh_pairs_fst)
-  have x: "x |\<in>| U" and xs: "set xs \<subseteq> fset U" and new: "x \<notin> set xs"
-    using Cons.prems by auto
-  have "distinct (x # xs @ f # map snd ?ps)"
-    using rest fresh f x xs new by (auto simp: fst)
-  then show ?case unfolding eq by (simp add: fst)
+  assumes inside: "set xs \<subseteq> fset U" and distinct: "distinct xs"
+  shows "distinct (map fst (octet_fresh_pairs U xs) @ map snd (octet_fresh_pairs U xs))"
+proof -
+  define b where "b=finite_fresh_address U"
+  let ?z="zip [0..<length xs] xs"
+  let ?g="\<lambda>z. b @ index_address (fst z) @ octet_fresh_mark (snd z)"
+  have snd: "map snd (octet_fresh_pairs U xs)=map ?g ?z"
+    by (simp add: octet_fresh_pairs_def Let_def b_def split_def o_def)
+  have indices: "inj_on fst (set ?z)" using distinct_map[of fst ?z] by simp
+  have "inj_on ?g (set ?z)"
+  proof (rule inj_onI)
+    fix z z' assume z: "z \<in> set ?z" and z': "z' \<in> set ?z" and same: "?g z=?g z'"
+    have "fst z=fst z'" using same by (simp add: index_address_cancel)
+    then show "z=z'" using inj_onD[OF indices _ z z'] by blast
+  qed
+  moreover have "distinct ?z" by (rule distinct_zipI1) simp
+  ultimately have snds: "distinct (map snd (octet_fresh_pairs U xs))" by (simp add: snd distinct_map)
+  have apart: "set xs \<inter> set (map snd (octet_fresh_pairs U xs))={}"
+    using inside octet_fresh_pairs_fresh[of _ U xs] by blast
+  show ?thesis using distinct snds apart by (simp add: octet_fresh_pairs_fst)
 qed
 
 definition octet_swap :: "(octets\<times>octets) list \<Rightarrow> octets \<Rightarrow> octets" where
@@ -242,6 +256,37 @@ next
   ultimately show ?thesis using formed by auto
 qed
 
+text \<open>
+  The swap is asked of the index notion's red-black tree instance (@{text Tree_Map_Indexes}): the tree
+  of the pairs in both directions, built once, answers the swap of every octet as the pairs do.
+\<close>
+
+definition octet_swap_table :: "(octets\<times>octets) list \<Rightarrow> (octets,octets) rbt" where
+  "octet_swap_table ps=RBT.bulkload (ps @ map prod.swap ps)"
+
+definition octet_table_swap :: "(octets,octets) rbt \<Rightarrow> octets \<Rightarrow> octets" where
+  "octet_table_swap T x=(case RBT.lookup T x of None \<Rightarrow> x | Some y \<Rightarrow> y)"
+
+lemma octet_table_swap_exact:
+  assumes distinct: "distinct (map fst ps @ map snd ps)"
+  shows "octet_table_swap (octet_swap_table ps) x=octet_swap ps x"
+proof -
+  let ?rows="ps @ map prod.swap ps"
+  have keys: "distinct (map fst ?rows)" using distinct by (simp only: octet_swap_keys)
+  have found: "RBT.lookup (RBT.bulkload ?rows) x=Some y \<longleftrightarrow> map_of ?rows x=Some y" for y
+    using tree_map_index.represents[OF keys, of x y] map_of_eq_Some_iff[OF keys, of x y] by simp
+  have lookup: "RBT.lookup (RBT.bulkload ?rows) x=map_of ?rows x"
+  proof (cases "map_of ?rows x")
+    case None
+    then show ?thesis using found by (cases "RBT.lookup (RBT.bulkload ?rows) x") auto
+  next
+    case (Some y)
+    then show ?thesis using found by simp
+  qed
+  show ?thesis
+    unfolding octet_table_swap_def octet_swap_table_def octet_swap_def lookup ..
+qed
+
 definition criticism_octet_reserved ::
     "('a,'s,'d,'c) finite_schema_system \<Rightarrow> finite_factor_term list \<Rightarrow> octets fset" where
   "criticism_octet_reserved P ts=finite_system_payloads P |\<union>|
@@ -255,9 +300,13 @@ definition criticism_octet_pairs ::
     "('a,'s,'d,'c) finite_schema_system \<Rightarrow> finite_factor_term list \<Rightarrow> (octets\<times>octets) list" where
   "criticism_octet_pairs P ts=octet_fresh_pairs (criticism_octet_reserved P ts) (criticism_octet_moved P ts)"
 
+definition criticism_octet_table ::
+    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> finite_factor_term list \<Rightarrow> (octets,octets) rbt" where
+  "criticism_octet_table P ts=octet_swap_table (criticism_octet_pairs P ts)"
+
 definition criticism_octet_map ::
     "('a,'s,'d,'c) finite_schema_system \<Rightarrow> finite_factor_term list \<Rightarrow> octets \<Rightarrow> octets" where
-  "criticism_octet_map P ts=octet_swap (criticism_octet_pairs P ts)"
+  "criticism_octet_map P ts=octet_table_swap (criticism_octet_table P ts)"
 
 lemma criticism_octet_moved_set:
   "set (criticism_octet_moved P ts)=fset (criticism_term_octets ts |-| finite_system_payloads P)"
@@ -269,9 +318,13 @@ lemma criticism_octet_pairs_distinct:
   by (rule octet_fresh_pairs_distinct)
     (auto simp: criticism_octet_moved_def criticism_octet_reserved_def)
 
+lemma criticism_octet_map_swap: "criticism_octet_map P ts=octet_swap (criticism_octet_pairs P ts)"
+  by (rule ext) (simp add: criticism_octet_map_def criticism_octet_table_def
+    octet_table_swap_exact[OF criticism_octet_pairs_distinct])
+
 lemma criticism_octet_map_involution:
   "criticism_octet_map P ts (criticism_octet_map P ts x)=x"
-  unfolding criticism_octet_map_def by (rule octet_swap_involution[OF criticism_octet_pairs_distinct])
+  unfolding criticism_octet_map_swap by (rule octet_swap_involution[OF criticism_octet_pairs_distinct])
 
 lemma criticism_octet_map_comp: "criticism_octet_map P ts \<circ> criticism_octet_map P ts=id"
   by (rule ext) (simp add: criticism_octet_map_involution)
@@ -284,7 +337,7 @@ lemma criticism_octet_map_inj: "inj (criticism_octet_map P ts)"
 
 theorem criticism_octet_map_formed:
   "octets_formed (criticism_octet_map P ts x) \<longleftrightarrow> octets_formed x"
-  unfolding criticism_octet_map_def
+  unfolding criticism_octet_map_swap
   by (rule octet_swap_formed[OF criticism_octet_pairs_distinct])
     (auto simp: criticism_octet_pairs_def dest: octet_fresh_pairs_formed)
 
@@ -301,7 +354,7 @@ proof -
       unfolding criticism_octet_pairs_def by (rule octet_fresh_pairs_fresh)
     then show False using stated by (simp add: criticism_octet_reserved_def)
   qed
-  ultimately show ?thesis unfolding criticism_octet_map_def by (rule octet_swap_outside)
+  ultimately show ?thesis unfolding criticism_octet_map_swap by (rule octet_swap_outside)
 qed
 
 corollary criticism_octet_map_fixes_stated:
@@ -318,7 +371,7 @@ proof -
   have "f |\<notin>| criticism_octet_reserved P ts"
     using pair unfolding criticism_octet_pairs_def by (intro octet_fresh_pairs_fresh) force
   then show ?thesis
-    using octet_swap_pair[OF criticism_octet_pairs_distinct pair] by (simp add: criticism_octet_map_def)
+    using octet_swap_pair[OF criticism_octet_pairs_distinct pair] by (simp add: criticism_octet_map_swap)
 qed
 
 corollary criticism_octet_map_moves_out:
@@ -600,11 +653,17 @@ text \<open>
 
 definition criticism_octet_sample ::
     "('a,'s,'d,'c) finite_schema_system \<Rightarrow> finite_factor_term list \<Rightarrow> finite_factor_term \<Rightarrow> finite_factor_term" where
+  "criticism_octet_sample P ts=(let h=criticism_octet_map P ts;
+    k=finite_leaf_stated_in (finite_system_payloads P) (finite_system_targets P) in
+      finite_map_term_leaves (finite_octet_leaf_map h k))"
+
+lemma criticism_octet_sample_eq:
   "criticism_octet_sample P ts=finite_map_term_leaves (finite_octet_leaf_map (criticism_octet_map P ts) (finite_leaf_stated P))"
+  by (simp add: criticism_octet_sample_def finite_leaf_stated_def Let_def)
 
 definition octet_sample_pairs ::
     "('a,'s,'d,'c) finite_schema_system \<Rightarrow> finite_factor_term list \<Rightarrow> (finite_factor_term\<times>finite_factor_term) list" where
-  "octet_sample_pairs P ts=map (\<lambda>t. (t,criticism_octet_sample P ts t)) ts"
+  "octet_sample_pairs P ts=(let s=criticism_octet_sample P ts in map (\<lambda>t. (t,s t)) ts)"
 
 definition criticism_octet_leaf_map ::
     "('a,'s,'d,'c) finite_schema_system \<Rightarrow> finite_factor_term list \<Rightarrow> factor_term \<Rightarrow> factor_term" where
@@ -612,12 +671,12 @@ definition criticism_octet_leaf_map ::
 
 lemma criticism_octet_sample_involution:
   "criticism_octet_sample P ts (criticism_octet_sample P ts t)=t"
-  unfolding criticism_octet_sample_def by (rule finite_octet_leaf_map_involution[OF criticism_octet_map_comp])
+  unfolding criticism_octet_sample_eq by (rule finite_octet_leaf_map_involution[OF criticism_octet_map_comp])
 
 lemma decode_criticism_octet_sample:
   "decode_finite_term (criticism_octet_sample P ts t)=
     map_term_leaves (criticism_octet_leaf_map P ts) (decode_finite_term t)"
-  unfolding criticism_octet_sample_def criticism_octet_leaf_map_def
+  unfolding criticism_octet_sample_eq criticism_octet_leaf_map_def
   by (rule decode_finite_map_term_leaves, rule decode_finite_octet_leaf_map, rule finite_leaf_stated_exact)
 
 theorem criticism_octet_leaf_map_fixes:
@@ -733,6 +792,234 @@ proof -
     using readdress_artifact_value[OF present criticism_octet_map_inj keep empty] by simp
 qed
 
+section \<open>A readdressed environment and its presented values\<close>
+
+text \<open>
+  An environment is readdressed by readdressing each of its artifacts and mapping each binding's slot,
+  its uses unchanged. It stays formed under an injective octet map keeping formation, and where the map
+  keeps the empty payload every presentation of the environment, of a site of it and of a program entry
+  of it is mapped by the leaf image to a presentation of the readdressed environment at the readdressed
+  site: the collections are lifted row by row, each subject mapped injectively.
+\<close>
+
+definition readdress_environment :: "(octets \<Rightarrow> octets) \<Rightarrow> 'u artifact_environment \<Rightarrow> 'u artifact_environment" where
+  "readdress_environment h E=\<lparr>environment_artifacts=(\<lambda>(u,R). (u,readdress_object h R)) ` environment_artifacts E,
+    environment_bindings=(\<lambda>((u,k),v). ((u,h k),v)) ` environment_bindings E\<rparr>"
+
+lemma readdress_environment_artifact:
+  "artifact_at (readdress_environment h E) u S \<longleftrightarrow> (\<exists>R. artifact_at E u R \<and> S=readdress_object h R)"
+  by (auto simp: readdress_environment_def artifact_at_def)
+
+lemma readdress_environment_binding:
+  "binds_slot (readdress_environment h E) u k' v \<longleftrightarrow> (\<exists>k. binds_slot E u k v \<and> k'=h k)"
+proof
+  assume "binds_slot (readdress_environment h E) u k' v"
+  then show "\<exists>k. binds_slot E u k v \<and> k'=h k" by (auto simp: readdress_environment_def binds_slot_def)
+next
+  assume "\<exists>k. binds_slot E u k v \<and> k'=h k"
+  then obtain k where bound: "((u,k),v) \<in> environment_bindings E" and k': "k'=h k"
+    by (auto simp: binds_slot_def)
+  show "binds_slot (readdress_environment h E) u k' v"
+    unfolding readdress_environment_def binds_slot_def using bound
+    by (auto simp: k' intro!: rev_image_eqI[of "((u,k),v)"])
+qed
+
+lemma readdress_environment_uses: "environment_uses (readdress_environment h E)=environment_uses E"
+  by (force simp: readdress_environment_def environment_uses_def rel_dom_def)
+
+theorem readdress_environment_formed:
+  assumes formed: "environment_formed E" and inj: "inj h"
+    and keep: "\<And>x. octets_formed x \<Longrightarrow> octets_formed (h x)"
+  shows "environment_formed (readdress_environment h E)"
+proof -
+  let ?F="readdress_environment h E"
+  have finite: "finite (environment_artifacts E)" "finite (environment_bindings E)"
+    and sv: "single_valued (environment_artifacts E)" "single_valued (environment_bindings E)"
+    using formed unfolding environment_formed_def by blast+
+  have artifacts: "exact_formed R" if "artifact_at E u R" for u R
+    using formed that unfolding environment_formed_def by blast
+  have slots: "(\<exists>R. artifact_at E u R \<and> k \<in> rra_carrier (object_structure R)) \<and> v \<in> environment_uses E"
+    if "binds_slot E u k v" for u k v
+    using formed that unfolding environment_formed_def by blast
+  have finite': "finite (environment_artifacts ?F)" "finite (environment_bindings ?F)"
+    using finite by (simp_all add: readdress_environment_def)
+  have sv_artifacts: "single_valued (environment_artifacts ?F)"
+    using sv(1) by (auto simp: readdress_environment_def single_valued_def)
+  have sv_bindings: "single_valued (environment_bindings ?F)"
+    using sv(2) inj by (auto simp: readdress_environment_def single_valued_def inj_eq)
+  have formed': "exact_formed S" if "artifact_at ?F u S" for u S
+    using that artifacts readdress_object_formed[OF _ inj keep] by (auto simp: readdress_environment_artifact)
+  have slots': "(\<exists>S. artifact_at ?F u S \<and> k' \<in> rra_carrier (object_structure S)) \<and> v \<in> environment_uses ?F"
+    if "binds_slot ?F u k' v" for u k' v
+  proof -
+    have "\<exists>k. binds_slot E u k v \<and> k'=h k" using that by (simp only: readdress_environment_binding)
+    then obtain k where bound: "binds_slot E u k v" and k': "k'=h k" by blast
+    obtain R where R: "artifact_at E u R" and k: "k \<in> rra_carrier (object_structure R)"
+      and v: "v \<in> environment_uses E"
+      using slots[OF bound] by blast
+    have object: "object_formed R" using artifacts[OF R] by (simp add: exact_formed_def)
+    have "artifact_at ?F u (readdress_object h R)" using R by (auto simp: readdress_environment_artifact)
+    moreover have "k' \<in> rra_carrier (object_structure (readdress_object h R))"
+      using k by (simp add: k' readdress_object_carrier[OF object])
+    ultimately show ?thesis using v by (auto simp: readdress_environment_uses)
+  qed
+  show ?thesis
+    unfolding environment_formed_def using finite' sv_artifacts sv_bindings formed' slots' by blast
+qed
+
+lemma readdress_environment_positions:
+  assumes formed: "environment_formed E" and position: "(u,r) \<in> environment_positions E"
+  shows "(u,h r) \<in> environment_positions (readdress_environment h E)"
+proof -
+  obtain R where R: "artifact_at E u R" and r: "r \<in> rra_carrier (object_structure R)"
+    using position by (auto simp: environment_positions_def artifact_at_def)
+  have object: "object_formed R" using formed R by (auto simp: environment_formed_def exact_formed_def)
+  have "artifact_at (readdress_environment h E) u (readdress_object h R)"
+    using R by (auto simp: readdress_environment_artifact)
+  then show ?thesis unfolding environment_positions_def artifact_at_def
+    using r by (auto simp: readdress_object_carrier[OF object] intro!: bexI[of _ "(u,readdress_object h R)"])
+qed
+
+lemma data_collection_presents_leaf_map:
+  assumes present: "data_collection_presents read A t" and injective: "inj_on f A"
+    and changed: "\<And>x y. x \<in> A \<Longrightarrow> read x y \<Longrightarrow> read' (f x) (map_term_leaves g y)"
+    and empty: "g (Payload_Term [])=Payload_Term []"
+  shows "data_collection_presents read' (f ` A) (map_term_leaves g t)"
+proof -
+  obtain xs ts where distinct: "distinct xs" and members: "set xs=A" and read: "list_all2 read xs ts"
+    and t: "t=data_list_term ts"
+    using present by (auto simp: data_collection_presents_def)
+  have "list_all2 (\<lambda>x y. read' (f x) (map_term_leaves g y)) xs ts"
+    using read unfolding list_all2_conv_all_nth by (auto intro: changed simp: members[symmetric])
+  then have mapped: "list_all2 read' (map f xs) (map (map_term_leaves g) ts)"
+    by (simp add: list_all2_map1 list_all2_map2)
+  have "distinct (map f xs)" using distinct injective members by (simp add: distinct_map)
+  then show ?thesis unfolding data_collection_presents_def
+    using mapped members
+    by (intro exI[of _ "map f xs"] exI[of _ "map (map_term_leaves g) ts"])
+      (simp add: t map_data_list_term[of g, OF empty])
+qed
+
+theorem readdress_environment_value:
+  assumes present: "environment_value_presents E t" and inj: "inj h"
+    and keep: "\<And>x. octets_formed x \<Longrightarrow> octets_formed (h x)" and empty: "h []=[]"
+  shows "environment_value_presents (readdress_environment h E) (map_term_leaves (octet_leaf_image h) t)"
+proof -
+  obtain a b where formed: "environment_formed E"
+    and artifacts: "data_collection_presents environment_artifact_entry_presents (environment_artifacts E) a"
+    and bindings: "data_collection_presents (\<lambda>z v. v=binding_data z) (environment_bindings E) b"
+    and t: "t=Pair_Term a b"
+    using present by (auto simp: environment_value_presents_def)
+  have end_: "octet_leaf_image h (Payload_Term [])=Payload_Term []" using empty by simp
+  have sv: "single_valued (environment_artifacts E)" using formed by (simp add: environment_formed_def)
+  have artifacts_inj: "inj_on (\<lambda>(u,R). (u,readdress_object h R)) (environment_artifacts E)"
+    using sv by (auto simp: inj_on_def single_valued_def)
+  have bindings_inj: "inj_on (\<lambda>((u,k),v). ((u,h k),v)) (environment_bindings E)"
+  proof (rule inj_onI)
+    fix z z' assume same: "(\<lambda>((u,k),v). ((u,h k),v)) z=(\<lambda>((u,k),v). ((u,h k),v)) z'"
+    obtain u k v where z: "z=((u,k),v)" by (metis prod.collapse)
+    obtain u' k' v' where z': "z'=((u',k'),v')" by (metis prod.collapse)
+    have parts: "u=u'" "h k=h k'" "v=v'" using same by (simp_all add: z z')
+    have "k=k'" by (rule injD[OF inj parts(2)])
+    then show "z=z'" using parts by (simp add: z z')
+  qed
+  have entry: "environment_artifact_entry_presents ((\<lambda>(u,R). (u,readdress_object h R)) z)
+      (map_term_leaves (octet_leaf_image h) y)"
+    if "z \<in> environment_artifacts E" "environment_artifact_entry_presents z y" for z y
+  proof -
+    obtain u R where z: "z=(u,R)" by (cases z)
+    show ?thesis using readdress_environment_entry[OF _ inj keep empty, of u R y] that by (simp add: z)
+  qed
+  have binding: "map_term_leaves (octet_leaf_image h) y=binding_data ((\<lambda>((u,k),v). ((u,h k),v)) z)"
+    if "z \<in> environment_bindings E" "y=binding_data z" for z y
+  proof -
+    obtain q v where zq: "z=(q,v)" by (cases z)
+    obtain u k where q: "q=(u,k)" by (cases q)
+    show ?thesis using that empty by (simp add: zq q map_binding_data)
+  qed
+  have artifacts': "data_collection_presents environment_artifact_entry_presents
+      ((\<lambda>(u,R). (u,readdress_object h R)) ` environment_artifacts E) (map_term_leaves (octet_leaf_image h) a)"
+    by (rule data_collection_presents_leaf_map[where read'=environment_artifact_entry_presents
+      and g="octet_leaf_image h", OF artifacts artifacts_inj entry end_])
+  have bindings': "data_collection_presents (\<lambda>z v. v=binding_data z)
+      ((\<lambda>((u,k),v). ((u,h k),v)) ` environment_bindings E) (map_term_leaves (octet_leaf_image h) b)"
+    by (rule data_collection_presents_leaf_map[where read'="\<lambda>z v. v=binding_data z"
+      and g="octet_leaf_image h", OF bindings bindings_inj binding end_])
+  show ?thesis unfolding environment_value_presents_def
+    using readdress_environment_formed[OF formed inj keep] artifacts' bindings'
+    by (simp add: readdress_environment_def t)
+qed
+
+theorem readdress_site_value:
+  assumes present: "site_value_presents E u r t" and inj: "inj h"
+    and keep: "\<And>x. octets_formed x \<Longrightarrow> octets_formed (h x)" and empty: "h []=[]"
+  shows "site_value_presents (readdress_environment h E) u (h r) (map_term_leaves (octet_leaf_image h) t)"
+proof -
+  obtain e where position: "(u,r) \<in> environment_positions E" and e: "environment_value_presents E e"
+    and t: "t=Pair_Term e (site_data_term u r)"
+    using present by (auto simp: site_value_presents_def)
+  have formed: "environment_formed E" using environment_value_presents_formed[OF e] by simp
+  show ?thesis unfolding site_value_presents_def
+    using readdress_environment_positions[OF formed position] readdress_environment_value[OF e inj keep empty]
+    by (simp add: t map_site_data_term[of h, OF empty])
+qed
+
+theorem readdress_program_entry_value:
+  assumes present: "program_entry_value_presents E u r d t" and inj: "inj h"
+    and keep: "\<And>x. octets_formed x \<Longrightarrow> octets_formed (h x)" and empty: "h []=[]"
+  shows "program_entry_value_presents (readdress_environment h E) u (h r) (fst d,h (snd d))
+    (map_term_leaves (octet_leaf_image h) t)"
+proof -
+  obtain s where position: "d \<in> environment_positions E" and s: "site_value_presents E u r s"
+    and t: "t=Pair_Term s (site_data_term (fst d) (snd d))"
+    using present by (auto simp: program_entry_value_presents_def)
+  obtain e where "environment_value_presents E e" using s by (auto simp: site_value_presents_def)
+  then have formed: "environment_formed E" using environment_value_presents_formed by blast
+  have "(fst d,h (snd d)) \<in> environment_positions (readdress_environment h E)"
+    using readdress_environment_positions[OF formed, of "fst d" "snd d" h] position by simp
+  then show ?thesis unfolding program_entry_value_presents_def
+    using readdress_site_value[OF s inj keep empty] by (simp add: t map_site_data_term[of h, OF empty])
+qed
+
+
+text \<open>At the sample: the leaf map of the octet map is the readdressing on site and program entry values.\<close>
+
+corollary criticism_octet_site_value:
+  assumes present: "site_value_presents E u r t" and empty: "criticism_octet_map P ts []=[]"
+  shows "site_value_presents (readdress_environment (criticism_octet_map P ts) E) u (criticism_octet_map P ts r)
+    (map_term_leaves (criticism_octet_leaf_map P ts) t)"
+proof -
+  obtain e where e: "environment_value_presents E e" and t: "t=Pair_Term e (site_data_term u r)"
+    using present by (auto simp: site_value_presents_def)
+  have contained: "self_contained_term t"
+    using environment_value_presents_formed[OF e] site_data_term_self_contained[of u r] by (simp add: t)
+  have keep: "\<And>x. octets_formed x \<Longrightarrow> octets_formed (criticism_octet_map P ts x)"
+    by (simp add: criticism_octet_map_formed)
+  have "map_term_leaves (criticism_octet_leaf_map P ts) t=map_term_leaves (octet_leaf_image (criticism_octet_map P ts)) t"
+    unfolding criticism_octet_leaf_map_def
+    by (rule octet_leaf_map_self_contained[OF contained criticism_octet_map_inj criticism_octet_stated_payloads])
+  then show ?thesis using readdress_site_value[OF present criticism_octet_map_inj keep empty] by simp
+qed
+
+corollary criticism_octet_program_entry_value:
+  assumes present: "program_entry_value_presents E u r d t" and empty: "criticism_octet_map P ts []=[]"
+  shows "program_entry_value_presents (readdress_environment (criticism_octet_map P ts) E) u (criticism_octet_map P ts r)
+    (fst d,criticism_octet_map P ts (snd d)) (map_term_leaves (criticism_octet_leaf_map P ts) t)"
+proof -
+  obtain s where s: "site_value_presents E u r s" and t: "t=Pair_Term s (site_data_term (fst d) (snd d))"
+    using present by (auto simp: program_entry_value_presents_def)
+  obtain e where e: "environment_value_presents E e" and st: "s=Pair_Term e (site_data_term u r)"
+    using s by (auto simp: site_value_presents_def)
+  have contained: "self_contained_term t"
+    using environment_value_presents_formed[OF e] site_data_term_self_contained by (simp add: t st)
+  have keep: "\<And>x. octets_formed x \<Longrightarrow> octets_formed (criticism_octet_map P ts x)"
+    by (simp add: criticism_octet_map_formed)
+  have "map_term_leaves (criticism_octet_leaf_map P ts) t=map_term_leaves (octet_leaf_image (criticism_octet_map P ts)) t"
+    unfolding criticism_octet_leaf_map_def
+    by (rule octet_leaf_map_self_contained[OF contained criticism_octet_map_inj criticism_octet_stated_payloads])
+  then show ?thesis using readdress_program_entry_value[OF present criticism_octet_map_inj keep empty] by simp
+qed
+
 section \<open>The material premises an entry's closure reaches\<close>
 
 text \<open>
@@ -804,10 +1091,10 @@ proof
     then show ?thesis
     proof cases
       case forward
-      then show ?thesis by (auto simp: octet_sample_pairs_def)
+      then show ?thesis by (auto simp: octet_sample_pairs_def Let_def)
     next
       case backward
-      then have "c=?s c'" by (auto simp: octet_sample_pairs_def)
+      then have "c=?s c'" by (auto simp: octet_sample_pairs_def Let_def)
       then show ?thesis by (simp only: criticism_octet_sample_involution)
     qed
   qed

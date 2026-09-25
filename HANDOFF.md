@@ -81,9 +81,8 @@ union, whose 42 unreached definitions the given does not need (#413's follow-up 
 installs; the union stays the guard's program, and the asked relation's program is the guard's program rooted at
 its entries, derived through the union's piece (#431's review, follow-up 4, the planner's call, mailed to #393).
 
-**Beside the route**: #458, the use instance split below the keyed and data readers with its uses' general facts at
-their homes, and #459 after it and #435, the presentation-level duplicates (#419's review; Open 132, 138, 141, 145
-now theirs); #457, after #426, the given's payload statement discharged by a kernel-checked composition down
+**Beside the route**: #459, the presentation-level duplicates after the use instance's split (#458, `00c4bf47`) and
+#435, with #458's review's follow-ups 1–4 (#419's review; Open 132 and 138 its); #457, after #426, the given's payload statement discharged by a kernel-checked composition down
 the five reader systems' view steps (q93: code_simp over the readers' 130-definition presentation did not finish in 160 s,
 and an `eval` is excluded), with the general payload lemmas at their homes (#452's review, follow-ups 2 and 3; #456's,
 1 and 2); #461, after #441, #426 and #457 (their theories shared), the given's derivations without re-reducing what its
@@ -349,6 +348,12 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   row's own pair (`use_row_refutes`) and its site and entry corollaries. Its first verdict's follow-ups, overwritten by
   the re-review (`.build/tasks/438/review.md`): the pair shapes mailed to #447, the order against #458 mailed to #458,
   h1's zero prefix and the inequality control Open 149.
+- **Landed with `00c4bf47`**: #458, the use instance split: the low actions in `Factor_Use_Actions` below the keyed
+  and data readers, the inverse-permutation argument once (`use_renaming_inverse`), the schema reading's renaming
+  beside the definition's, the request's general facts and the scopes' root position at their homes
+  (`native_package_site_position` in `Factor_Package_Locality`; Open 141 and 145 done). Its review's follow-ups
+  (`.build/tasks/458/review.md`): 1–4 in #459 where its theories are, 1's other texts, 5 and 6 Open 151, 7 mailed to
+  #466 and #426; its check rebuilt 1,161 theories, proof 1,240 s against a 1,451 s bound.
 - **Landed with `24f36cde`**: #455, the given rooted at all 47 entries (the guard's twelve, `given_guard_entries`,
   and 35 granted) over `given_program_system` and installed again (28,729 addresses; evaluation 19.2 s, installation
   25.1 s, read-back 17.2 s); `.build/tasks/455/result.md` (5) lists the statements changed under kept names. Its
@@ -604,25 +609,20 @@ every use. 138
 index of their own (#433's q92: the frame reports them as the given's and does not require them of an answer):
 `request_context_search`, `request_scope_search` and `request_complete_search`, interpretations of
 `native_store_search_program` at request construction's sites, and `witness_absent`, an absence search no index notion
-states — at a consolidation of the given's programs, absence a question for the index notion (`Carrier_Indexes`). 141
-`Factor_Program_Scopes.native_package_root_position` retired, its uses (`Factor_Amendment_Comparisons`,
-`Factor_Derivation_Presentations`, `Factor_Interpretation_Construction`) citing
-`Factor_Package_Admission.native_package_site_position`, in a batch that rebuilds those theories anyway (#417's review,
-follow-up 1). 143 the route's export modules (#401's, #407's, #445's, #449's) merged to compile once (#434's result). 144 #415's
+states — at a consolidation of the given's programs, absence a question for the index notion (`Carrier_Indexes`). 143 the route's export modules (#401's, #407's, #445's, #449's) merged to compile once (#434's result). 144 #415's
 review, follow-up 3: `rooted_system_reach` beside `Factor_System_Restriction.rooted_system_definitions`,
 `reached_package_sites` and `native_definition_sites_union` beside the package theories, the payload invariance facts
 (`pattern_leaves_rename` … `system_alpha_variant_payloads`) into `Factor_Payload_Audit` — at a batch that edits those
-theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations, joined to #457 300K beside 187K); #452 takes them out of the simpset.
-145 #411's review, follow-up 1: `native_package_environment_renamed` beside `Factor_Use_Renaming` (its inverse steps
-through `renaming_action.act_inverse` and `act_inverse_right`, its local inclusion through the inclusion clause),
-`native_package_members_iff`, `native_package_support_formed` and `native_package_formed_at` beside
-`Factor_Package_Locality`, `root_family_reading_listed` in `Factor_Root_Family_Reading` — with items 132, 138, 141 and
-144 one rebuild batch of general facts to their homes, placed when no task in flight cites what it moves. 146
+theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations, joined to #457 300K beside 187K); #452 takes them out of the simpset. 146
 `deep_reversed_environment_term` and `reversed_environment_term` stated in one place at a second use of the deep
 reversal (#435's review, `.build/tasks/436/review.md`). 147 the new whole agreements of existing view chains
 (`positive_complete_data_agreement`, `replay_positive_agreement`, `derivation_replay_agreement`,
 `application_derivation_agreement`, `call_application_agreement`, `comparison_located_agreement`) moved with their
-programs' theories when those are next touched (#454's review, follow-up 2). 150 #439's review
+programs' theories when those are next touched (#454's review, follow-up 2). 151 #458's review
+(`.build/tasks/458/review.md`), at each theory's next edit: follow-up 1's texts crediting `Factor_Use_Renaming` with
+what `Factor_Use_Actions` states (`Factor_Package_Closure_Admission`, `Criticism_Use_Samples`; those of #459's and
+#426's theories are theirs), 5 `native_package_formed_at` cited where six theories derive it inline, 6 the doubled
+blank lines of `Factor_Program_Scopes` and `Factor_Package_Requests`. 150 #439's review
 (`.build/tasks/440/review.md`, follow-up 5): `pattern_leaves_not_pair`, `system_leaves_not_pair` and
 `system_leaves_restriction` into `Factor_Positive_Parametricity`, `finite_system_targets` (with its `_exact`) beside
 `finite_system_payloads` in `Factor_Finite_Payload_Literals`, `readdress_object` stated as `push_object` with

@@ -1,6 +1,5 @@
 theory Criticism_Use_Samples
   imports Criticism_Samples Factor_Use_Renaming RRA_Finite_Environment_Construction
-    Factor_Finite_Artifact_Enumeration
 begin
 
 section \<open>A permutation that sends a list onto a rearrangement of it\<close>
@@ -437,72 +436,5 @@ proof -
   show ?thesis
     by (rule use_row_refutes[OF program_entry_presentation_class program_entry_renaming_action pairs pairs table row])
 qed
-
-section \<open>Controls\<close>
-
-text \<open>
-  Two uses, @{term "Some [0]"} and @{term "Some [1]"}, each holding an artifact with one address. One entry
-  compares the use of its argument's site with the use literal of @{term "Some [0]"}, the unary word
-  that states only the empty payload: it records a row at the site's pair at h1, and at h2, which
-  exchanges the two uses. The other compares two uses of a program entry value for equality by a
-  repeated variable: no row at either permutation. A one-use environment at None shows None moved.
-\<close>
-
-definition use_control_artifact :: finite_exact_artifact where
-  "use_control_artifact=finite_enumerated_artifact [[]] [] [] []"
-
-definition use_control_environment :: "local_address option finite_artifact_environment" where
-  "use_control_environment=finite_enumerated_environment
-    [(Some [0],use_control_artifact),(Some [1],use_control_artifact)] []"
-
-definition use_control_none_environment :: "local_address option finite_artifact_environment" where
-  "use_control_none_environment=finite_enumerated_environment [(None,use_control_artifact)] []"
-
-definition use_control_site :: criticism_shape where
-  "use_control_site=Site_Argument (Some [0]) []"
-
-definition use_control_entry :: criticism_shape where
-  "use_control_entry=Entry_Argument (Some [1]) [] (Some [1],[])"
-
-definition use_control_literal_entry :: "local_address option definition_site" where
-  "use_control_literal_entry=(Some [4,3,7],[0])"
-
-definition use_control_equality_entry :: "local_address option definition_site" where
-  "use_control_equality_entry=(Some [4,3,7],[1])"
-
-definition use_control_literal :: finite_factor_term where
-  "use_control_literal=the (finite_self_contained_term (use_data_term (Some [0])))"
-
-definition use_control_program :: "local_address option finite_native_system" where
-  "use_control_program=finite_rule_program
-    [(use_control_literal_entry,[([0],finite_native_rule (Finite_Pattern_Pair (native_var 0)
-        (Finite_Pattern_Pair (finite_exact_term_pattern use_control_literal) (native_var 1))) [])]),
-     (use_control_equality_entry,[([0],finite_native_rule (Finite_Pattern_Pair
-        (Finite_Pattern_Pair (native_var 0) (Finite_Pattern_Pair (native_var 1) (native_var 2)))
-        (Finite_Pattern_Pair (native_var 1) (native_var 3))) [])])]"
-
-definition use_control_pairs :: "(finite_factor_term\<times>finite_factor_term) list" where
-  "use_control_pairs=use_sample_pairs use_control_environment [use_control_site,use_control_entry]"
-
-definition use_control_reading :: "unit \<Rightarrow> bool list" where
-  "use_control_reading _=(let C=use_control_environment; xs=environment_use_list C;
-      h1=fresh_use_permutation C; h2=reversal_use_permutation C;
-      ds=[use_control_literal_entry,use_control_equality_entry]; ps=use_control_pairs;
-      s1=use_pair h1 C use_control_site; s2=use_pair h2 C use_control_site;
-      e1=use_pair h1 C use_control_entry; e2=use_pair h2 C use_control_entry in
-    [xs=[Some [0],Some [1]], list_all (\<lambda>u. h1 u\<notin>set xs \<and> h1 (h1 u)=u) xs, map h2 xs=rev xs,
-     fresh_use_permutation use_control_none_environment None\<noteq>None]@
-    (case criticism_table use_control_program ds ps of None \<Rightarrow> [False]
-    | Some A \<Rightarrow> [criticism_record ds ps A=
-          {|(fst s1,snd s1,use_control_literal_entry,()),(fst s2,snd s2,use_control_literal_entry,()),
-            (snd e2,fst e2,use_control_literal_entry,())|},
-        criticism_refuted ds ps A={|use_control_literal_entry|},
-        (use_control_equality_entry,fst e1) |\<in>| A,(use_control_equality_entry,snd e1) |\<in>| A,
-        (use_control_equality_entry,snd e2) |\<in>| A]))"
-
-text \<open>
-  The reading is executed in @{text Factor_Finite_Site_Value_Reader_Controls}, one conjunct of the one
-  evaluation of the native evaluator's controls; a library theory runs no evaluation.
-\<close>
 
 end

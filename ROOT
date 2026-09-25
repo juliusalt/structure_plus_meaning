@@ -1028,7 +1028,6 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Pattern_Unification
     Factor_Finite_Material_Arguments
     Factor_Material_Resolution
-    Factor_Resolution_Controls
     Factor_Program_Evaluation_Investigation
     Factor_Finite_Native_Evaluation
     Factor_Native_Evaluation_Cases
@@ -1106,6 +1105,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Proof_Checking
     Factor_Program_Resolution
     Factor_Resolution_Acceptance
+    Factor_Resolution_Completeness
     Factor_Finite_Proof_Inspection
     Factor_Finite_Source_Computation
     Factor_Native_Derivation_Assessment
@@ -1644,6 +1644,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Criticism_Use_Samples
     Criticism_Octet_Samples
     Factor_Finite_Site_Value_Reader_Controls
+    Factor_Resolution_Controls
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
     Complete_Term_References

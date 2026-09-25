@@ -1444,46 +1444,6 @@ proof -
       moved stated table row])
 qed
 
-section \<open>The material premises an entry's closure reaches\<close>
-
-text \<open>
-  An entry's closure is the definitions its clauses reach through their calls; the material premises
-  of the clauses at those definitions are listed from the finite program. An empty list is exactly
-  observation-freeness of the program rooted at the entry.
-\<close>
-
-definition finite_entry_materials ::
-    "('a,'s,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> (('d\<times>'c)\<times>('a,'s,'d) finite_factor_schema) fset" where
-  "finite_entry_materials P d=ffilter (\<lambda>((e,c),S). finite_edge_reaches (finite_dependency_edges P) d e \<and>
-    finite_schema_materials S\<noteq>{||}) (finite_system_clauses P)"
-
-theorem finite_entry_materials_exact:
-  "finite_entry_materials P d={||} \<longleftrightarrow> system_observation_free (rooted_system (decode_finite_system P) {d})"
-proof -
-  have reach: "e \<in> system_definition_closure (decode_finite_system P) {d} \<longleftrightarrow>
-      finite_edge_reaches (finite_dependency_edges P) d e" for e
-    by (simp add: system_definition_closure_def finite_edge_reaches_correct finite_dependency_edges_correct)
-  have materials: "schema_material_premises (decode_finite_schema S)={} \<longleftrightarrow> finite_schema_materials S={||}" for S
-    by (auto simp: decode_finite_schema_def map_relation_values_def fset_eq_iff)
-  have empty: "finite_entry_materials P d={||} \<longleftrightarrow>
-      (\<forall>e c S. ((e,c),S) \<in> fset (finite_system_clauses P) \<longrightarrow>
-        finite_edge_reaches (finite_dependency_edges P) d e \<longrightarrow> finite_schema_materials S={||})"
-    by (auto simp: finite_entry_materials_def fset_eq_iff)
-  have decoded: "system_clauses (decode_finite_system P)=
-      map_relation_values decode_finite_schema (fset (finite_system_clauses P))"
-    by (simp add: decode_finite_system_def)
-  have clauses: "((e,c),S) \<in> system_clauses (rooted_system (decode_finite_system P) {d}) \<longleftrightarrow>
-      (\<exists>S'. ((e,c),S') \<in> fset (finite_system_clauses P) \<and> S=decode_finite_schema S' \<and>
-        finite_edge_reaches (finite_dependency_edges P) d e)" for e c S
-    by (auto simp: rooted_system_def decoded reach[symmetric])
-  have "system_observation_free (rooted_system (decode_finite_system P) {d}) \<longleftrightarrow>
-      (\<forall>e c S'. ((e,c),S') \<in> fset (finite_system_clauses P) \<longrightarrow>
-        finite_edge_reaches (finite_dependency_edges P) d e \<longrightarrow>
-        schema_material_premises (decode_finite_schema S')={})"
-    unfolding system_observation_free_def clauses by blast
-  then show ?thesis by (simp only: empty materials)
-qed
-
 section \<open>The leaf argument's instance: an observation-free closure records no row\<close>
 
 text \<open>

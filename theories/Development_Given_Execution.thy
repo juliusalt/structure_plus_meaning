@@ -7,15 +7,14 @@ text \<open>
   so that a refinement's change rebuilds this theory alone: the readers' program (formation, definitions,
   payloads, and the rooted program's formation and definitions), then the development package's kept
   environment and the given's in addresses, and the definitions the native package reader reads back at the
-  given's site.
+  given's site. One value of the pair, so that the closure its terms share is generated and compiled once.
 \<close>
 
-value "(finite_system_formed finite_given_readers, fcard (finite_system_definitions finite_given_readers),
+value "((finite_system_formed finite_given_readers, fcard (finite_system_definitions finite_given_readers),
   finite_system_payloads finite_given_readers, finite_system_formed finite_rooted_given_readers,
-  fcard (finite_system_definitions finite_rooted_given_readers))"
-
-value "(fcard (finite_environment_positions development_package_environment),
+  fcard (finite_system_definitions finite_rooted_given_readers)),
+  (fcard (finite_environment_positions development_package_environment),
   fcard (finite_environment_positions given_environment),
-  map_option (\<lambda>P. fcard (finite_system_definitions P)) (finite_native_source given_environment given_use []))"
+  map_option (\<lambda>P. fcard (finite_system_definitions P)) (finite_native_source given_environment given_use [])))"
 
 end

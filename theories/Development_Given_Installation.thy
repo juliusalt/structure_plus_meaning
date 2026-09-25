@@ -1,5 +1,5 @@
 theory Development_Given_Installation
-  imports Development_Native_Package Development_Given_Readers Factor_Package_Membership
+  imports Development_Native_Package Development_Given_Program Factor_Package_Membership
     Factor_Package_Retention_Admission Factor_Site_Values Factor_Finite_Native_Sources
     RRA_Finite_Environment_Positions
 begin
@@ -7,7 +7,8 @@ begin
 text \<open>
   The given of the native loop's first problem (DECISIONS.md "The native loop's first problem is what a problem
   is; the problem of Q2, second, exercises its answer", and "Every distinction a native program relies on comes
-  from a native notion", its #320's builds): the given's rooted readers (\<open>Development_Given_Readers\<close>) installed
+  from a native notion", its #320's builds): the given's rooted readers (\<open>Development_Given_Program\<close>: the
+  joined program of the given's readers and the readers a request is granted, rooted at every entry) installed
   beside the development package (\<open>Development_Native_Package\<close>) in one environment, and one site whose package
   holds exactly the development package's definitions and the readers'. Installing the given is a choice made
   outside the process, as the development package's installation and the seed's are.
@@ -334,6 +335,78 @@ lemmas given_installed_use_absence_exact=given_rooted_use_absence_exact[unfolded
 lemmas given_installed_payload_audit_exact=given_rooted_payload_audit_exact[unfolded
   given_installed_meaning[OF given_entry_rooted[OF given_rooted_members(12)], symmetric]]
 
+text \<open>A granted entry means at its placed site what it means in the joined program.\<close>
+
+lemma given_installed_entry_meaning:
+  assumes "d|\<in>|given_reader_entries"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow>
+    (d,t)\<in>positive_meaning given_program_system"
+  by (simp only: given_installed_meaning[OF given_entry_rooted[OF assms]] given_rooted_meaning[OF assms])
+
+lemmas given_installed_call_admission_exact=given_program_call_admission_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(2), symmetric]]
+lemmas given_installed_application_admission_exact=given_program_application_admission_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(3), symmetric]]
+lemmas given_installed_formation_reflection=given_program_formation_reflection[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(4), symmetric]]
+lemmas given_installed_meaning_reflection=given_program_meaning_reflection[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(5), symmetric]]
+lemmas given_installed_positive_admission_exact=given_program_positive_admission_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(6), symmetric]]
+lemmas given_installed_derivation_admission_exact=given_program_derivation_admission_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(7), symmetric]]
+lemmas given_installed_replay_admission_exact=given_program_replay_admission_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(8), symmetric]]
+lemmas given_installed_environment_comparison_exact=given_program_environment_comparison_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(1), symmetric]]
+lemmas given_installed_generation_admission_exact=given_program_generation_admission_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(9), symmetric]]
+lemmas given_installed_generation_identity_exact=given_program_generation_identity_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(10), symmetric]]
+lemmas given_installed_generation_source_exact=given_program_generation_source_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(11), symmetric]]
+lemmas given_installed_adoption_admission_exact=given_program_adoption_admission_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(12), symmetric]]
+lemmas given_installed_adoption_identity_exact=given_program_adoption_identity_exact[unfolded
+  given_installed_entry_meaning[OF given_rooted_granted_members(13), symmetric]]
+
+lemma given_installed_positive_operations_exact:
+  assumes "d\<in>{112,113,114,115}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> positive_operation_result d t"
+  by (simp only: given_installed_entry_meaning[OF given_operation_entries(1)[OF assms]]
+    given_program_positive_operations_exact[OF assms])
+
+lemma given_installed_derivation_operations_exact:
+  assumes "d\<in>{99,100,101,102}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> derivation_operation_result d t"
+  by (simp only: given_installed_entry_meaning[OF given_operation_entries(2)[OF assms]]
+    given_program_derivation_operations_exact[OF assms])
+
+lemma given_installed_replay_operations_exact:
+  assumes "d\<in>{106,107,108,109,110,111}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> replay_operation_result d t"
+  by (simp only: given_installed_entry_meaning[OF given_operation_entries(3)[OF assms]]
+    given_program_replay_operations_exact[OF assms])
+
+lemma given_installed_generation_operations_exact:
+  assumes "d\<in>{139,140,141,142,143,144,145,146}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> generation_operation_result d t"
+  by (simp only: given_installed_entry_meaning[OF given_operation_entries(4)[OF assms]]
+    given_program_generation_operations_exact[OF assms])
+
+lemma given_installed_generation_source_operations_exact:
+  assumes "d\<in>{147,148,149,150,151,152,153,154,155}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow>
+    generation_source_operation_result d t"
+  by (simp only: given_installed_entry_meaning[OF given_operation_entries(5)[OF assms]]
+    given_program_generation_source_operations_exact[OF assms])
+
+lemma given_installed_adoption_operations_exact:
+  assumes "d\<in>{269,270}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_readers_program \<longleftrightarrow> adoption_value_operation_result d t"
+  by (simp only: given_installed_entry_meaning[OF given_operation_entries(6)[OF assms]]
+    given_program_adoption_operations_exact[OF assms])
+
 section \<open>The readers' package is reached from their entries\<close>
 
 lemma given_readers_edges:
@@ -341,14 +414,11 @@ lemma given_readers_edges:
   shows "(given_readers_placement d,given_readers_placement e)\<in>system_dependency_edges given_readers_program"
   by (rule variant_dependency_edge[OF given_readers_compilation(2) renamed_dependency_edge[OF assms]])
 
-lemma given_reader_entries_guard: "fset given_reader_entries\<subseteq>system_definitions guard_readers_system"
-  using given_rooted_entries rooted_system_subdomain[of guard_readers_system "fset given_reader_entries"]
-  unfolding given_rooted_readers_system_def by (rule subset_trans)
-
 lemma given_rooted_reach:
   "system_definition_closure given_rooted_readers_system (fset given_reader_entries)=
     system_definitions given_rooted_readers_system"
-  unfolding given_rooted_readers_system_def by (rule rooted_system_reach[OF guard_readers_formed given_reader_entries_guard])
+  unfolding given_rooted_readers_system_def
+  by (rule rooted_system_reach[OF given_program_formed given_reader_entries_program])
 
 lemma given_readers_reach:
   "system_definition_closure given_readers_program (given_readers_placement ` fset given_reader_entries)=
@@ -539,6 +609,77 @@ lemmas given_use_absence_exact_at=given_rooted_use_absence_exact[unfolded
 lemmas given_payload_audit_exact_at=given_rooted_payload_audit_exact[unfolded
   given_readers_meaning[OF given_entry_rooted[OF given_rooted_members(12)], symmetric]]
 
+text \<open>Each granted entry's contract holds at the given at its placed entry, as an instance.\<close>
+
+lemma given_entry_meaning_at:
+  assumes "d|\<in>|given_reader_entries"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow>
+    (d,t)\<in>positive_meaning given_program_system"
+  by (simp only: given_readers_meaning[OF given_entry_rooted[OF assms]] given_rooted_meaning[OF assms])
+
+lemmas given_call_admission_exact_at=given_program_call_admission_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(2), symmetric]]
+lemmas given_application_admission_exact_at=given_program_application_admission_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(3), symmetric]]
+lemmas given_formation_reflection_at=given_program_formation_reflection[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(4), symmetric]]
+lemmas given_meaning_reflection_at=given_program_meaning_reflection[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(5), symmetric]]
+lemmas given_positive_admission_exact_at=given_program_positive_admission_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(6), symmetric]]
+lemmas given_derivation_admission_exact_at=given_program_derivation_admission_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(7), symmetric]]
+lemmas given_replay_admission_exact_at=given_program_replay_admission_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(8), symmetric]]
+lemmas given_environment_comparison_exact_at=given_program_environment_comparison_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(1), symmetric]]
+lemmas given_generation_admission_exact_at=given_program_generation_admission_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(9), symmetric]]
+lemmas given_generation_identity_exact_at=given_program_generation_identity_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(10), symmetric]]
+lemmas given_generation_source_exact_at=given_program_generation_source_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(11), symmetric]]
+lemmas given_adoption_admission_exact_at=given_program_adoption_admission_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(12), symmetric]]
+lemmas given_adoption_identity_exact_at=given_program_adoption_identity_exact[unfolded
+  given_entry_meaning_at[OF given_rooted_granted_members(13), symmetric]]
+
+lemma given_positive_operations_exact_at:
+  assumes "d\<in>{112,113,114,115}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> positive_operation_result d t"
+  by (simp only: given_entry_meaning_at[OF given_operation_entries(1)[OF assms]]
+    given_program_positive_operations_exact[OF assms])
+
+lemma given_derivation_operations_exact_at:
+  assumes "d\<in>{99,100,101,102}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> derivation_operation_result d t"
+  by (simp only: given_entry_meaning_at[OF given_operation_entries(2)[OF assms]]
+    given_program_derivation_operations_exact[OF assms])
+
+lemma given_replay_operations_exact_at:
+  assumes "d\<in>{106,107,108,109,110,111}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> replay_operation_result d t"
+  by (simp only: given_entry_meaning_at[OF given_operation_entries(3)[OF assms]]
+    given_program_replay_operations_exact[OF assms])
+
+lemma given_generation_operations_exact_at:
+  assumes "d\<in>{139,140,141,142,143,144,145,146}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> generation_operation_result d t"
+  by (simp only: given_entry_meaning_at[OF given_operation_entries(4)[OF assms]]
+    given_program_generation_operations_exact[OF assms])
+
+lemma given_generation_source_operations_exact_at:
+  assumes "d\<in>{147,148,149,150,151,152,153,154,155}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> generation_source_operation_result d t"
+  by (simp only: given_entry_meaning_at[OF given_operation_entries(5)[OF assms]]
+    given_program_generation_source_operations_exact[OF assms])
+
+lemma given_adoption_operations_exact_at:
+  assumes "d\<in>{269,270}"
+  shows "(given_readers_placement d,t)\<in>positive_meaning given_program \<longleftrightarrow> adoption_value_operation_result d t"
+  by (simp only: given_entry_meaning_at[OF given_operation_entries(6)[OF assms]]
+    given_program_adoption_operations_exact[OF assms])
+
 section \<open>The given's membership, read natively\<close>
 
 corollary given_membership:
@@ -604,7 +745,7 @@ lemmas given_rooted_payloads_exact=finite_system_payloads_exact[of finite_rooted
 
 text \<open>
   The payload audit holds at every definition of the given exactly when the readers' rooted program states the
-  empty payload alone, which the composition of @{thm [source] given_readers_payloads} gives from its two systems'.
+  empty payload alone, which the composition of @{thm [source] given_program_payloads} gives from its five systems'.
 \<close>
 
 corollary given_payload_audit:

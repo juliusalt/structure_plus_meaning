@@ -148,7 +148,7 @@ proof -
   have report_package: "native_package_at I iu [] R" using reporter(1) by (simp add: closed_native_package_at_def)
   have report_environment: "environment_formed I"
     using native_package_projection(1)[OF report_package] by (simp add: native_package_formed_def)
-  have report_root: "(iu,[])\<in>environment_positions I" by (rule native_package_root_position[OF report_package])
+  have report_root: "(iu,[])\<in>environment_positions I" by (rule native_package_site_position[OF report_package])
   have report_entry: "c\<in>environment_positions I" by (rule native_package_entry_position[OF report_package reporter(3)])
   have bridge_environment: "environment_formed J" and bridge_site: "(None,[])\<in>environment_positions J"
     using interpretation_support_at_formed[OF core(5)] by auto
@@ -254,7 +254,7 @@ proof -
     using current_entry_scope_closed[OF current] by (simp add: closed_native_package_at_def)
   have environment: "environment_formed E"
     using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
-  have site: "(pu,[])\<in>environment_positions E" by (rule native_package_root_position[OF package])
+  have site: "(pu,[])\<in>environment_positions E" by (rule native_package_site_position[OF package])
   have future: "\<forall>Q :: local_address option native_system. \<forall>e A'.
       schema_system_formed Q \<longrightarrow> e\<in>system_definitions Q \<longrightarrow> target_formed A' \<longrightarrow>
       (\<exists>F v T H X z a b g K N au R.

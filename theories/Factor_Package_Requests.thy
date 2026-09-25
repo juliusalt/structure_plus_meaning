@@ -195,31 +195,6 @@ lemma package_request_presents_at:
       site_value_presents E u r a \<and> site_value_presents F v q b)"
   by (auto simp: factor_pair_presents_def data_sequence_presents_def list_all2_function)
 
-lemma native_package_formed_at:
-  assumes "native_package_at E u r P"
-  shows "environment_formed E"
-  using assms by (auto simp: native_package_at_def native_root_family_at_def)
-
-lemma native_package_members_iff:
-  "(\<exists>P. native_package_at E u r P \<and> D\<subseteq>system_definitions P) \<longleftrightarrow>
-    (\<exists>P. native_package_at E u r P) \<and> (\<forall>d\<in>D. \<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P)"
-proof
-  assume "\<exists>P. native_package_at E u r P \<and> D\<subseteq>system_definitions P"
-  then show "(\<exists>P. native_package_at E u r P) \<and> (\<forall>d\<in>D. \<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P)"
-    by blast
-next
-  assume both: "(\<exists>P. native_package_at E u r P) \<and> (\<forall>d\<in>D. \<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P)"
-  have ex: "\<exists>P. native_package_at E u r P" using both by (rule conjunct1)
-  have each: "\<forall>d\<in>D. \<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P" using both by (rule conjunct2)
-  obtain P where package: "native_package_at E u r P" using ex by (rule exE)
-  have "d\<in>system_definitions P" if in_D: "d\<in>D" for d
-  proof -
-    obtain T where other: "native_package_at E u r T" and member: "d\<in>system_definitions T"
-      using bspec[OF each in_D] by (elim exE conjE)
-    show ?thesis using native_package_unique[OF package other] member by simp
-  qed
-  then show "\<exists>P. native_package_at E u r P \<and> D\<subseteq>system_definitions P" using package by blast
-qed
 
 subsection \<open>The contract\<close>
 
@@ -419,19 +394,6 @@ text \<open>
   context's environment is its package's least.
 \<close>
 
-lemma native_package_support_formed:
-  assumes package: "native_package_at E u r P" and support: "D\<subseteq>system_definitions P"
-  shows "native_package_formed E D" and "native_definition_sites E D\<subseteq>system_definitions P"
-proof -
-  obtain Q where "native_root_family_at E u r Q" and formed: "native_package_formed E (rel_ran Q)"
-    and program: "P=native_program E (rel_ran Q)"
-    using package unfolding native_package_at_def by blast
-  have program_defs: "system_definitions P=native_definition_sites E (rel_ran Q)"
-    using native_program_definitions[OF formed] program by simp
-  show sites: "native_definition_sites E D\<subseteq>system_definitions P"
-    unfolding program_defs by (rule native_definition_sites_least) (use support program_defs native_definition_step in auto)
-  show "native_package_formed E D" using formed sites program_defs by (auto simp: native_package_formed_def)
-qed
 
 
 theorem package_request_least_scope:
@@ -484,58 +446,6 @@ qed
 
 subsection \<open>Every support of a package has its context\<close>
 
-text \<open>
-  A root family whose sockets are a distinct key list, each key citing the support site at its position,
-  is read at exactly that support.
-\<close>
-
-lemma root_family_reading_listed:
-  assumes raw: "native_root_family_at E u r (set (zip ks ds))" and keys: "distinct ks"
-    and len: "length ks=length ds"
-  shows "\<exists>R xs. artifact_at E u R \<and> distinct xs \<and> family_at R r (set xs) \<and>
-    list_all2 (\<lambda>a d. located_at E u a (fst d) (snd d)) (map snd xs) ds"
-proof -
-  obtain R M where source: "artifact_at E u R" and family: "family_at R r M"
-    and domain: "rel_dom (set (zip ks ds))=rel_dom M"
-    and children: "\<forall>s a. (s,a)\<in>M \<longrightarrow> (\<exists>d. (s,d)\<in>set (zip ks ds) \<and> located_at E u a (fst d) (snd d))"
-    using raw unfolding native_root_family_at_def by (elim conjE exE) (rule that; assumption)
-  have sv: "single_valued M" using family by (simp add: family_at_def)
-  have zsv: "single_valued (set (zip ks ds))" by (rule single_valued_zip[OF keys])
-  have keys_M: "rel_dom M=set ks" using trans[OF domain[symmetric] zip_domain[OF len]] .
-  define f where "f k=rel_value M k" for k
-  have member: "(k,f k)\<in>M" if in_ks: "k\<in>set ks" for k
-  proof -
-    obtain a where "(k,a)\<in>M" using in_ks keys_M unfolding rel_dom_def by blast
-    then show ?thesis using rel_value_eq[OF sv] by (simp add: f_def)
-  qed
-  let ?xs = "map (\<lambda>k. (k,f k)) ks"
-  have separate: "distinct ?xs" using keys by (simp add: distinct_map inj_on_def)
-  have rows: "set ?xs=M"
-  proof
-    show "set ?xs\<subseteq>M" using member by auto
-    show "M\<subseteq>set ?xs"
-    proof
-      fix z assume z: "z\<in>M"
-      obtain k a where zk: "z=(k,a)" by (cases z)
-      have k: "k\<in>set ks" using z zk keys_M by (auto simp: rel_dom_def)
-      have "a=f k" by (rule single_valued_outputs[OF sv z[unfolded zk] member[OF k]])
-      then show "z\<in>set ?xs" using zk k by auto
-    qed
-  qed
-  have reading: "list_all2 (\<lambda>a d. located_at E u a (fst d) (snd d)) (map snd ?xs) ds"
-  proof (rule list_all2_all_nthI)
-    show "length (map snd ?xs)=length ds" using len by simp
-    fix i assume i: "i<length (map snd ?xs)"
-    then have ik: "i<length ks" by simp
-    obtain d where row: "(ks!i,d)\<in>set (zip ks ds)" and at: "located_at E u (f (ks!i)) (fst d) (snd d)"
-      using children member[OF nth_mem[OF ik]] by blast
-    have "(ks!i,ds!i)\<in>set (zip ks ds)" using nth_mem[of i "zip ks ds"] ik len by simp
-    then have "d=ds!i" by (rule single_valued_outputs[OF zsv row])
-    then show "located_at E u (map snd ?xs!i) (fst (ds!i)) (snd (ds!i))" using at ik by simp
-  qed
-  have family_rows: "family_at R r (set ?xs)" using family rows by simp
-  show ?thesis using source separate family_rows reading by blast
-qed
 
 text \<open>
   The context of a support is constructed by the executable root selector over the support in a finite
@@ -636,75 +546,6 @@ lemma package_request_leaves:
   by (auto simp: schema_leaves_def package_request_schema_def context_list_clauses_def
     context_list_nil_schema_def context_list_step_schema_def)
 
-subsection \<open>The least package environment commutes with use permutations\<close>
-
-lemma native_package_environment_renamed:
-  fixes E :: "local_address option artifact_environment" and h :: "local_address option \<Rightarrow> local_address option"
-  assumes h: "bij h" and package: "native_package_at E u r P"
-  shows "native_package_environment (rename_environment h E) (h u) r=
-    rename_environment h (native_package_environment E u r)"
-proof -
-  have package_ren: "(\<exists>Q. native_package_at (rename_environment g X) (g a) b Q) \<longleftrightarrow> (\<exists>Q. native_package_at X a b Q)"
-    if "bij g" "environment_formed X" "(a,b)\<in>environment_positions X"
-    for g :: "local_address option \<Rightarrow> local_address option" and X :: "local_address option artifact_environment" and a b
-    using package_admission_equivariant[unfolded renaming_equivariant_def, rule_format, OF that(1), of "(X,(a,b))"]
-      that(2,3) by simp
-  have closed_ren: "(\<exists>Q. closed_native_package_at (rename_environment g X) (g a) b Q) \<longleftrightarrow>
-      (\<exists>Q. closed_native_package_at X a b Q)"
-    if "bij g" "environment_formed X" "(a,b)\<in>environment_positions X"
-    for g :: "local_address option \<Rightarrow> local_address option" and X :: "local_address option artifact_environment" and a b
-    using package_retention_admission_equivariant[unfolded renaming_equivariant_def, rule_format, OF that(1),
-      of "(X,(a,b))"] that(2,3) by simp
-  have incl_ren: "environment_included (rename_environment g A) (rename_environment g B) \<longleftrightarrow> environment_included A B"
-    if "bij g" "environment_formed A" "environment_formed B"
-    for g :: "local_address option \<Rightarrow> local_address option" and A B :: "local_address option artifact_environment"
-    using environment_inclusion_equivariant[unfolded renaming_equivariant_def, rule_format, OF that(1), of "(A,B)"]
-      that(2,3) by simp
-  have ren_formed: "environment_formed (rename_environment g X)" if "bij g" "environment_formed X"
-    for g :: "local_address option \<Rightarrow> local_address option" and X :: "local_address option artifact_environment"
-    using environment_renaming_formed[OF that(2) bij_is_inj[OF that(1)]] .
-  let ?M = "native_package_environment E u r"
-  let ?N = "native_package_environment (rename_environment h E) (h u) r"
-  have formed_E: "environment_formed E" by (rule native_package_formed_at[OF package])
-  have closed_M: "closed_native_package_at ?M u r P" by (rule native_package_closed_restriction[OF package])
-  have package_M: "native_package_at ?M u r P" using closed_M by (simp add: closed_native_package_at_def)
-  have formed_M: "environment_formed ?M" by (rule native_package_formed_at[OF package_M])
-  obtain PE where package_RE: "native_package_at (rename_environment h E) (h u) r PE"
-    using package_ren[OF h formed_E native_package_site_position[OF package]] package by blast
-  obtain PM where closed_RM: "closed_native_package_at (rename_environment h ?M) (h u) r PM"
-    using closed_ren[OF h formed_M native_package_site_position[OF package_M]] closed_M by blast
-  have package_RM: "native_package_at (rename_environment h ?M) (h u) r PM"
-    using closed_RM by (simp add: closed_native_package_at_def)
-  have incl_RM: "environment_included (rename_environment h ?M) (rename_environment h E)"
-    using incl_ren[OF h formed_M formed_E] native_package_environment_included[of E u r] by simp
-  have N_M: "environment_included ?N (rename_environment h ?M)"
-    by (rule native_package_dependency_material_required[OF package_RE package_RM incl_RM])
-  have closed_N: "closed_native_package_at ?N (h u) r PE" by (rule native_package_closed_restriction[OF package_RE])
-  have package_N: "native_package_at ?N (h u) r PE" using closed_N by (simp add: closed_native_package_at_def)
-  have formed_N: "environment_formed ?N" by (rule native_package_formed_at[OF package_N])
-  have inverse: "bij (inv h)" by (rule bij_imp_bij_inv[OF h])
-  have back_u: "inv h (h u)=u" by (rule inv_f_f[OF bij_is_inj[OF h]])
-  have "\<exists>Q. closed_native_package_at (rename_environment (inv h) ?N) (inv h (h u)) r Q"
-    using closed_ren[OF inverse formed_N native_package_site_position[OF package_N]] closed_N by blast
-  then obtain PN where closed_IN: "closed_native_package_at (rename_environment (inv h) ?N) u r PN"
-    unfolding back_u by blast
-  have package_IN: "native_package_at (rename_environment (inv h) ?N) u r PN"
-    using closed_IN by (simp add: closed_native_package_at_def)
-  have undo_E: "rename_environment (inv h) (rename_environment h E)=E"
-    using rename_environment_comp[of "inv h" h E] inj_iff[THEN iffD1, OF bij_is_inj[OF h]] by simp
-  have "environment_included (rename_environment (inv h) ?N) (rename_environment (inv h) (rename_environment h E))"
-    using incl_ren[OF inverse formed_N ren_formed[OF h formed_E]]
-      native_package_environment_included[of "rename_environment h E" "h u" r] by simp
-  then have incl_IN: "environment_included (rename_environment (inv h) ?N) E" using undo_E by simp
-  have M_IN: "environment_included ?M (rename_environment (inv h) ?N)"
-    by (rule native_package_dependency_material_required[OF package package_IN incl_IN])
-  have redo_N: "rename_environment h (rename_environment (inv h) ?N)=?N"
-    using rename_environment_comp[of h "inv h" ?N] surj_iff[THEN iffD1, OF bij_is_surj[OF h]] by simp
-  have "environment_included (rename_environment h ?M) (rename_environment h (rename_environment (inv h) ?N))"
-    using incl_ren[OF h formed_M ren_formed[OF inverse formed_N]] M_IN by simp
-  then have M_N: "environment_included (rename_environment h ?M) ?N" using redo_N by simp
-  show ?thesis by (rule environment_included_antisym[OF N_M M_N])
-qed
 
 subsection \<open>The request is equivariant under permutations of uses\<close>
 

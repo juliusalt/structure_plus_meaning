@@ -29,7 +29,7 @@ proof -
     by (rule presentation_class_determined[OF site_presentations.presentation_class_axioms determined])
   have domain: "(\<lambda>z. ?domain (fst z) \<and> ?link (fst z) (snd z)) = program_scope_subject"
     by (rule ext)
-      (auto simp: closed_native_package_at_def environment_closed_def dest: native_package_root_position)
+      (auto simp: closed_native_package_at_def environment_closed_def dest: native_package_site_position)
   have admission: "(\<lambda>t. \<exists>z P. ?site z t \<and> ?link z P) =
     (\<lambda>t. (122,t)\<in>positive_meaning package_retention_admission_system)"
     by (rule ext) (auto simp: package_retention_admission_exact; metis fst_conv snd_conv)

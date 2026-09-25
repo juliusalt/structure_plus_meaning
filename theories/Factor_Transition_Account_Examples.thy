@@ -228,7 +228,7 @@ proof -
   have ef: "environment_formed E"
     using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
   have site: "(pu,[])\<in>environment_positions E"
-    using native_package_root_position[OF package] by blast
+    using native_package_site_position[OF package] by blast
   obtain F au K R where selected: "current_transition_selection_at C [] F au [] G K C"
     "certified_transition_selection C [] R [] G K C"
     using universal_current_selection_total[OF current invariant _ ef site] every by blast

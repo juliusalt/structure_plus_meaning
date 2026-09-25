@@ -381,4 +381,57 @@ text \<open>
   not an ambient resolver or a bound on future arguments.
 \<close>
 
+section \<open>Facts of one package reading\<close>
+
+text \<open>
+  A read package stands in a formed environment at an actual position of it (its root is an interior
+  occurrence of its root family), is determined by its reading, and every family of its definitions is
+  itself a formed package whose sites it holds.
+\<close>
+
+lemma native_package_formed_at:
+  assumes "native_package_at E u r P"
+  shows "environment_formed E"
+  using assms by (auto simp: native_package_at_def native_root_family_at_def)
+
+lemma native_package_site_position:
+  assumes "native_package_at E u r P"
+  shows "(u,r)\<in>environment_positions E"
+  using assms by (auto simp: native_package_at_def native_root_family_at_def dest!: family_interior_in_carrier)
+
+lemma native_package_members_iff:
+  "(\<exists>P. native_package_at E u r P \<and> D\<subseteq>system_definitions P) \<longleftrightarrow>
+    (\<exists>P. native_package_at E u r P) \<and> (\<forall>d\<in>D. \<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P)"
+proof
+  assume "\<exists>P. native_package_at E u r P \<and> D\<subseteq>system_definitions P"
+  then show "(\<exists>P. native_package_at E u r P) \<and> (\<forall>d\<in>D. \<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P)"
+    by blast
+next
+  assume both: "(\<exists>P. native_package_at E u r P) \<and> (\<forall>d\<in>D. \<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P)"
+  have ex: "\<exists>P. native_package_at E u r P" using both by (rule conjunct1)
+  have each: "\<forall>d\<in>D. \<exists>P. native_package_at E u r P \<and> d\<in>system_definitions P" using both by (rule conjunct2)
+  obtain P where package: "native_package_at E u r P" using ex by (rule exE)
+  have "d\<in>system_definitions P" if in_D: "d\<in>D" for d
+  proof -
+    obtain T where other: "native_package_at E u r T" and member: "d\<in>system_definitions T"
+      using bspec[OF each in_D] by (elim exE conjE)
+    show ?thesis using native_package_unique[OF package other] member by simp
+  qed
+  then show "\<exists>P. native_package_at E u r P \<and> D\<subseteq>system_definitions P" using package by blast
+qed
+
+lemma native_package_support_formed:
+  assumes package: "native_package_at E u r P" and support: "D\<subseteq>system_definitions P"
+  shows "native_package_formed E D" and "native_definition_sites E D\<subseteq>system_definitions P"
+proof -
+  obtain Q where "native_root_family_at E u r Q" and formed: "native_package_formed E (rel_ran Q)"
+    and program: "P=native_program E (rel_ran Q)"
+    using package unfolding native_package_at_def by blast
+  have program_defs: "system_definitions P=native_definition_sites E (rel_ran Q)"
+    using native_program_definitions[OF formed] program by simp
+  show sites: "native_definition_sites E D\<subseteq>system_definitions P"
+    unfolding program_defs by (rule native_definition_sites_least) (use support program_defs native_definition_step in auto)
+  show "native_package_formed E D" using formed sites program_defs by (auto simp: native_package_formed_def)
+qed
+
 end

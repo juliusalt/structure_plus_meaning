@@ -1,5 +1,5 @@
 theory Factor_Keyed_Lists
-  imports Factor_Coordinate_Admission
+  imports Factor_Coordinate_Admission Factor_Use_Actions
 begin
 
 section \<open>Keys are checked independently of the values' profiles\<close>
@@ -415,5 +415,44 @@ text \<open>
   Earlier meanings are preserved. The complete program has twenty-two
   definitions and forty-two clauses.
 \<close>
+
+section \<open>Key absence among the use keys of rows\<close>
+
+text \<open>
+  Key absence's clause at uses: a use and a row list, the use action on the use and, by the list
+  construction, on every row's key. Its presented form, over the use presentations, stands where it is
+  read (@{text Factor_Package_Additions}).
+\<close>
+
+abbreviation use_key_rows_renaming ::
+    "(local_address option \<Rightarrow> local_address option) \<Rightarrow> local_address option \<times> (local_address option \<times> factor_term) list \<Rightarrow>
+      local_address option \<times> (local_address option \<times> factor_term) list" where
+  "use_key_rows_renaming \<equiv> product_action (\<lambda>h. h) (\<lambda>h. map (map_prod h id))"
+
+lemma use_key_rows_renaming_action: "renaming_action bij use_key_rows_renaming (\<lambda>z. True)"
+  using renaming_action_product[OF use_renaming_action renaming_action_lists[OF site_renaming_action]] by simp
+
+lemma use_key_absence_at:
+  "(20,Pair_Term (use_data_term u) (pair_list_term (map (map_prod use_data_term id) ys)))\<in>positive_meaning key_absence_system
+    \<longleftrightarrow> (\<forall>y\<in>set ys. term_formed (snd y)) \<and> u\<notin>fst ` set ys"
+proof -
+  have exact: "(20,Pair_Term (use_data_term u) (pair_list_term (map (map_prod use_data_term id) ys)))
+      \<in>positive_meaning key_absence_system \<longleftrightarrow> formed_key_rows (map (map_prod use_data_term id) ys) \<and>
+      use_data_term u\<notin>set (map fst (map (map_prod use_data_term id) ys))"
+    unfolding key_absence_exact factor_term.inject pair_list_term_injective
+    using use_data_term_formed use_data_term_self_contained by blast
+  have rows: "formed_key_rows (map (map_prod use_data_term id) ys) \<longleftrightarrow> (\<forall>y\<in>set ys. term_formed (snd y))"
+    by (auto simp: case_prod_beta intro: imageI)
+  have keys: "use_data_term u\<notin>set (map fst (map (map_prod use_data_term id) ys)) \<longleftrightarrow> u\<notin>fst ` set ys"
+    by (simp add: image_image image_iff inj_eq[OF use_data_term_injective])
+  show ?thesis unfolding exact rows keys ..
+qed
+
+theorem use_key_absence_equivariant:
+  "renaming_equivariant bij use_key_rows_renaming (\<lambda>z. True)
+    (\<lambda>z. (20,Pair_Term (use_data_term (fst z)) (pair_list_term (map (map_prod use_data_term id) (snd z))))
+      \<in>positive_meaning key_absence_system)"
+  unfolding renaming_equivariant_def use_key_absence_at
+  by (auto simp: product_action_def image_iff inj_eq[OF bij_is_inj])
 
 end

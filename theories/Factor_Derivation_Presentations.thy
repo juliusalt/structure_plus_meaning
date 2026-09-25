@@ -133,7 +133,7 @@ proof -
     "schema_graph_derives (positioned_program P) G root (fst q) (snd q) H"
     using valid by (simp only: shape derivation_record_valid_fields) blast
   have environment: "environment_formed E" by (rule native_schema_graph_environment[OF parts(2)])
-  have position: "p\<in>environment_positions E" using native_package_root_position[OF parts(1)] by simp
+  have position: "p\<in>environment_positions E" using native_package_site_position[OF parts(1)] by simp
   have finite: "finite H" by (rule schema_graph_exact_assertions(2)[OF parts(3)])
   show ?thesis using environment position finite by (simp only: shape fst_conv snd_conv)
 qed
@@ -152,7 +152,7 @@ proof
   have valid: "derivation_record_valid ?z"
     by (simp only: derivation_record_valid_fields fst_conv snd_conv)
       (use parts(3,4,6) in blast)
-  have position: "(pu,pr)\<in>environment_positions E" by (rule native_package_root_position[OF parts(3)])
+  have position: "(pu,pr)\<in>environment_positions E" by (rule native_package_site_position[OF parts(3)])
   have read: "derivation_record_presents ?z t"
     apply (simp only: derivation_record_fields fst_conv snd_conv)
     apply (rule conjI[OF position])

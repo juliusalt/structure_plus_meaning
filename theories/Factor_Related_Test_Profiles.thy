@@ -78,7 +78,7 @@ proof -
   have formed: "environment_formed (fst (fst z))"
     using native_package_projection(1)[OF package] by (simp add: native_package_formed_def)
   have root: "snd (fst z)\<in>environment_positions (fst (fst z))"
-    using native_package_root_position[OF package] by simp
+    using native_package_site_position[OF package] by simp
   have entry: "snd z\<in>environment_positions (fst (fst z))"
     by (rule native_package_entry_position[OF package member])
   show ?thesis using formed root entry by (simp add: program_entry_context_formed_def)

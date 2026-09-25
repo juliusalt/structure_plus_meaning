@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "774815fb1354d10fe452d27ff0b8b18679919c55364cdceff56ab0836c759ba3",
- "checked_content_sha256": "e6145237d3135033295243529a1685e3c2eef948ae2589a8a67615f1fe656882",
+ "base_receipt_sha256": "4c2a1324c560020d049c2f59e3789faa8eea6232334a080806b6a47128975929",
+ "checked_content_sha256": "2d34981e5754e5b8cc938e7f74cd5288636fe94db0febf737f2853eae22659d6",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,21 +17,20 @@
    "ran": 298,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmposk99dfn/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp08dqvd6p/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.45,
+  "base_and_impact": 0.38,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 226.4,
-  "recipe_impact": 0.79,
-  "recipes_and_host_tests": 11.46
+  "proof": 160.45,
+  "recipe_impact": 0.46,
+  "recipes_and_host_tests": 11.57
  },
  "rebuilt_theories": [
-  "Development_Given_Installation",
-  "Development_Verification_Frame"
+  "Factor_Package_Requests"
  ],
  "recipes": {
   "allocated-environments": {
@@ -191,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1867,
- "seconds": 287.12,
+ "reused_theories": 1869,
+ "seconds": 221.67,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1869,
+  "theory_count": 1870,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1869,
+ "theories": 1870,
  "validation_inputs": {
-  "ROOT": "998d999cf47b6bc743b263a4b43899d629cb7eec7d75f749ed5b654c23342020",
+  "ROOT": "2cc06c57663611a396d306c4a9cac2a16b37b4ae9f38cf9f462d3630ca8d4bef",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "5b8bf35327f430968d72ae275fdd6f599980b0768e4bc4d3d005d2716f6bf610"
  }

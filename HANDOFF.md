@@ -55,11 +55,12 @@ and #422 landed):
   verification (#434's proposal: the criticism's notions #435 (the sample and part (b)), #437 (uses, part (d)), #439
   (octets, part (g)) and #441 (the stated leaves, parts (h) and (e)), the first two starting at once; the first request
   #443 and its delivery #445; the criticism's run at an admitted candidate #447 and its route #449). Before #393 and
-  #395, the given extended by the readers task 378's entry grants a request (#451's brief, #434's support gap), so that
-  neither the guard's installation nor the given's first generation is made twice; #393 and #395 wait on #451 as a
-  stand-in until its proposal is placed, and on #452, which takes the `value` and the refinement import out of
-  `Development_Given_Installation` and states the readers' payloads per reader (#415's review); the extension's builds
-  wait on #452 too.
+  #395, the given extended by the readers task 378's entry grants a request (#434's support gap, #451's proposal):
+  #452 takes the `value` and the refinement import out of `Development_Given_Installation` and states the readers'
+  payloads per reader (#415's review); #453 joins the given's readers with the granted readers in one numbered program;
+  #455 roots the given at every entry over it and installs it again, moving `finite_rooted_given_readers` and
+  `given_reader_entries` to `Development_Given_Program` — so that neither the guard's installation nor the given's
+  first generation is made twice. #441 waits on #453, both changing `note_composed`.
 
 N2a (#340, `package_program`) and N2b (#342, `7d623e15`) joined and compiled the development package (#320's entry, as #376
 corrects it), the given the first answers extend; its environment (`development_package_environment`) is a finite value, whose computed quotation the given's
@@ -71,7 +72,9 @@ union, whose 42 unreached definitions the given does not need (#413's follow-up 
 installs; the union stays the guard's program, and the asked relation's program is the guard's program rooted at
 its entries, derived through the union's piece (#431's review, follow-up 4, the planner's call, mailed to #393).
 
-**Beside the route**: the bootstrap loop's maintenance — #426, #341's, #388's and #375's follow-ups
+**Beside the route**: #457, after #455, the given's payload statement discharged by a kernel-checked composition down
+the reader systems' view steps (q93: code_simp over the readers' 130-definition presentation did not finish in 160 s,
+and an `eval` is excluded); the bootstrap loop's maintenance — #426, #341's, #388's and #375's follow-ups
 over the joined program's, the audit's and the collection programs' generic content (after #342 and #418). Retired on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a,
 N3b, N4a and N4b as briefed, #371, #377, the designation by locus (#169, #170), the index form's retirement (#92, #93)
 and the machinery's verification stage judged natively (#193, #194).
@@ -88,12 +91,12 @@ exporter's obligations at every state it defines (#227–#308, #352).
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The deepest chains are 7: #418 → #393 → #397 → #399 → #401 →
-#407 → #408, and through the given one shorter (#414 → #393 → …).
+**Shape.** No build waits on a review task. The deepest chain is 9: #452 → #453 → #455 → #393 → #397 → #399 → #401 →
+#407 → #408; the approval build (Open 142) after #407 would end a chain of 10.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the owner's directions first — the first problem's route, #414 and #418 at its head, then
-#410, #452 (the given's installation fix), #451 (the given's extension), the frame's part (f) per store and the rest in their chains' order, the first
+#410, #452 (the given's installation fix), #453 and #455 (the given's extension), the frame's part (f) per store and the rest in their chains' order, the first
 request's and the criticism's builds after them; then
 #426; each review after its build.
 
@@ -192,7 +195,9 @@ a task):
   each `value` or `@{code}` generates and compiles the term's whole closure (about 5.5 s for an indexed generation's,
   #425), while executing it takes 0.4 s, and 0.011 s where `Native_Execution_Refinements` is in effect. Evidence to
   retain is constructed in a recipe whose export includes `Native_Execution_Refinements`. A held run pins `--base` at
-  its claim.
+  its claim. A library theory on the route runs no evaluation (`value`, `eval`) and imports no refinement collection
+  (#415's review); a statement too large for code_simp is discharged by a kernel-checked composition down its parts
+  (q93).
 - **Receipts and records.** The harness advances the base and retains the receipts at every landing; no task advances
   the base or retains. A brief whose work re-records a recipe's reports or answer records names each file in its
   Deliverable, and the landing check compares against those files (Q12). Answer records are replayed on a base holding
@@ -299,6 +304,15 @@ What finished tasks delivered that open work builds on; the rest is in `PLANNING
   contract carried; freshness is the interpretation's `coordinates(4)`; the installation about 4 s, the selection's and
   read-back's own costs unmeasured. Its review's follow-ups (`.build/tasks/415/review.md`): 1, 2, 4 and 3's `[simp]`
   are #452; 3's moves Open 144; 5 Open 99.
+- **Landed with `3d12a9d6`**: #433, the frame's part (f) per store — every store search a contract reaches matched to
+  an index's own search, the given's own searches reported as the given's (q92). Its review's follow-ups
+  (`.build/tasks/433/review.md`): 1 answered by q92 (Open 140 stands); 2 (a closed search matched by its term, whatever
+  program holds it) and 3 (open searches keyed by an unindexed presentation refused) mailed to #407.
+- **#451** (brief, placed as #453–#456): the given's readers joined with the readers task 378's entry grants a request
+  (#453) and the given rooted over them and installed again (#455). Its Planner's findings (`.build/tasks/451/result.md`):
+  #443's brief rewritten (the given holds them; the moved names); #393 mailed that its mapped extension needs the guard's
+  views joined with the joined program; the readings of "generation" and "adoption" are generated, the owner's words
+  naming readers; #414's evidence, and #452's if recorded, change with the larger given.
 - **#434** (brief, placed as #435–#450): its Planner's findings (`.build/tasks/434/result.md`) — the owner's approval
   record exists (`Development_Owner_Records.development_owner_approval`), its build after #447 and #407 (Open 142);
   publication after verification and the translation (Open 3); part (g)'s leaf argument not demanded (Open 121); parts
@@ -543,7 +557,11 @@ theories (joined to #426 it exceeded a fix's room: 310K beside 200K of relations
 
 ## Now
 
-- **Mailed, read by each task's first session**: to #410 (#417's review, follow-up 2: the least package environment's
+- **Mailed, read by each task's first session**: to #455 (q93: the given's payload statement conditional, its discharge #457's), to #407 (plan-65: #433's review's
+  follow-ups 2 and 3), to #393 and
+  #395 (plan-65: the given as #455 installs it, the names in
+  `Development_Given_Program`, #452's facts and the rule "Evaluations"; to #393 also #451's mapped-extension finding), to
+  #410 (#417's review, follow-up 2: the least package environment's
   commutation with use permutations), #395 (the given's site value takes
   that computed quotation, not `program_scope_quoted_total`), #393 (sites 392 and 525's native evaluability; the asked
   relation's program is the guard's program rooted at its entries, derived through the union's piece

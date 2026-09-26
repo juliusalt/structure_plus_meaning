@@ -1326,6 +1326,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Ordered_Finite_Terms
     Factor_Resolution_Commitments
     Factor_Resolution_Producer_Discharge
+    Factor_Resolution_Material_Discharge
     Linear_Comparisons
     Prefix_Key_Comparisons
     Ordered_Artifact_Comparison
@@ -1901,6 +1902,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Installation
     Development_Given_Extensions
     Development_First_Problem_Asked
+    Development_Asked_Registrations
     Development_First_Request_Program
     Development_Native_State
     Development_First_Problem

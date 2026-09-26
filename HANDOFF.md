@@ -55,12 +55,16 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 **The native evaluator's open line**, in chain order (what landed is under Delivered; each build's review follows it):
 - The resolver at the given's size (#683's addition): F2c and F2d landed (F2d: the positional index in one pass and
   every decode through an immutable array, `search_of` at the given 0.29 s against 57.1 s; R7 takes the shared
-  equation); C #703 (a found derivation checked over its graph: 1.0 s against the search's 3.2 s at 10 rows, the tree
-  checker 34.5 s) → R7 #542 and #547. A step of the shared search at the given's size costs 0.21–0.65 s with 1–9
+  equation); C landed (#703: a found derivation checked over its graph, 1.0 s against the search's 3.2 s and the tree
+  checker's 34.5 s at 10 rows, its code equations in effect where imported, mailed to the route's executions); its check
+  is quadratic in the found state's nodes and compares decoded terms (review 704's 1, 2, 5): the fix #833 (continues
+  703) indexes the nodes with bounded key comparisons, before #542 and #547. A step of the shared search at the given's
+  size costs 0.21–0.65 s with 1–9
   pending goals, the table's copies under 1 % (#829: holding the table's array in the state does not pay, not planned),
   and 113 over `sa_env` grows 53× for 3.3× rows (#703: a node's cost 14×): the investigation #830 attributes a step's
   cost and names the fix at its cause, before #542 and #547. q145's (a) with review 702's 1–3 is K1–K3's (correction
-  (14)). Off the route: #792 (F2b1 the access's instance, review 772's 1, q139; review 702's 4), after C.
+  (14)). Off the route: #792 (F2b1 the access's instance, review 772's 1, q139; review 702's 4); next-edits 339 (review
+  704's 4, a low move).
 - The guard's calls at the given (#829's attribution, accepted): #810's 45 s was a fixture mismatch, no landing
   multiplies; R5's own step recomputes 77's registration value, the goal choice and the pruning sets at every state
   (97–99 %, 94 % and 72–75 % of the runs), which the shared committed search keeps or indexes — K2's constants
@@ -118,8 +122,8 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain, 10 deep, runs I3a #815 → K3 #825 → R7 #542 →
-#707 → #399 → #709 → the record #553 → #447 → #449 → #450; the investigation #830, the design #831, I3b, C #703 and
-#798 are spliced before #542, #547 and #707 with slack against it; #831's builds and #830's fixes, spliced before #542
+#707 → #399 → #709 → the record #553 → #447 → #449 → #450; the investigation #830, the design #831, the graph check's
+fix #833, I3b and #798 are spliced before #542, #547 and #707 with slack against it; #831's builds and #830's fixes, spliced before #542
 and #547 when they land, may take that slack.
 Nothing is added after the route's tail until it shortens (the status line gives the depths); the approval build (Open
 142) after #407 and #447 waits for that.
@@ -127,7 +131,8 @@ Nothing is added after the route's tail until it shortens (the status line gives
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start, every review
 right after its build. Uncertainty first (the investigation #830, the design #831), then by slack on the longest chain:
-C #703, #798 and I3a #815 as they run; K3 #825; I3b #817; R7 #542, #707, #399, #709, #547; the route in its chains'
+the graph check's fix #833; #798 and I3a #815 as they run; K3 #825; I3b #817; R7 #542, #707, #399, #709, #547; the
+route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718, c55 #827, #792, #724, the move
 and the consolidation #832 last.
 ## Decisions
@@ -363,8 +368,10 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
   `Factor_Search_Representations` with `Factor_Shared_Search` (#771: the search once over a representation, the shared
   instance's code equation); F2c `Factor_Shared_Commitments` (#701: R5's committed search over that representation, its
   projection R5's at every priority, the code equation admitting every goal); F2d (#810: `position_index_extend_code`,
-  the decodes through an immutable array, `reference_term_array_code`); the measurements #742, #764, #779, #788 and
-  #810 in their `result.md` and `measurement.md`.
+  the decodes through an immutable array, `reference_term_array_code`); C `Factor_Resolution_Graph_Checks` (#703: a
+  found state's derivation checked over its graph, `finite_state_graph_check_found_exact`, the verdicts graph first
+  through `finite_outcome_result_verdicts`); the measurements #742, #764, #779, #788, #810 and #703 in their
+  `result.md` and `measurement.md`.
 - **The given's declarations**: R6 `Development_Given_Declarations` (#520); R6b `Factor_Root_Family_Declarations`
   (#601), `Factor_Artifact_Citation_Declarations` (#603, its frames #749); R6c `Factor_Instantiation_Declarations`
   (#607), `Factor_Schema_Instantiation_Declarations` (#679), `Factor_Definition_Reading_Declarations` (#681),
@@ -498,13 +505,15 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **Under way**: C #703, #798 and I3a #815 build; the investigation #830 (a step's cost at the given's size, with K2's
-  constants against R5's own step) and the design #831 (the guard's calls at the given) start first as slots free.
+- **Under way**: #798 and I3a #815 build and the controls #718 run; the investigation #830 (a step's cost at the
+  given's size, with K2's constants against R5's own step) and the design #831 (the guard's calls at the given) run;
+  the graph check's fix #833 starts next; #792 and #724 can start as slots free (off the route). No event is left
+  unhandled by plan-114.
 - **What the next events ask**: #830's causes, each fix spliced before #542 and #547 (review 824's 1, the guard reading
   a goal's raising socket, is a statement change of F2c's, the planner's, from its figures); #831's entry and builds,
   spliced before #542 and #547, with its question to the owner if a course changes a given reader or the asked
-  relation; the hand-overs of C (at the rows its search returns, told), #798 and I3a; then K3. The briefs of #542 and
-  #547 are rewritten from #831's entry before they start.
+  relation; the hand-overs of #798, I3a, #718 and the fix #833; then K3. The briefs of #542 and #547 are rewritten
+  from #831's entry before they start.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
   each is resized or divided then. Nearest their rooms: #542 (its brief now also takes corrections (12)–(14) and
   RD1) and #399; the samples build #551 (384K at proposal; a hand-back divides its corrected item (3), the planner's).

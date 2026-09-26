@@ -295,7 +295,6 @@ proof -
     using viewed by (auto simp: resolution_view_pattern_def split: option.splits)
   let ?s = "view_substitution l"
   have c: "finite_pattern_substitute ?s p = c" by (rule view_pattern_match_sound[OF lin m])
-
   have vc: "finite_pattern_variables c = finite_pattern_variables ci |\<union>| finite_pattern_variables co"
     unfolding c[symmetric] ci co
   proof (rule fset_eqI)
@@ -404,6 +403,7 @@ definition view_holes :: "'v resolution_view \<Rightarrow> 'v finite_term_patter
 lemma finite_pattern_tuple_variables:
   "fset (finite_pattern_variables (finite_pattern_tuple hs)) = (\<Union>h\<in>set hs. fset (finite_pattern_variables h))"
   by (induction hs rule: finite_pattern_tuple.induct) auto
+
 section \<open>Declarations and their discharge\<close>
 
 text \<open>
@@ -3618,5 +3618,847 @@ proof -
   then have "finite_committed_answers (resolution_goal_position g) s0 \<noteq> {||}" by auto
   then show ?thesis by (rule finite_kept_nonempty[OF s0])
 qed
+
+section \<open>The record at views\<close>
+
+text \<open>
+  The record at views (DECISIONS.md, task 495's entry, its addition "The given's remaining producers: views, carriers
+  and narrowed sockets", (a) and "The builds" (1)). Every entry carries a view in the vocabulary above: a producer its
+  site, its view and the hole list of the view's output (@{const view_holes} does not determine the holes, so the list
+  is data); a consumer its producer's site, its own site, its view and the index of the producer's hole it holds; a
+  socket its site, clause, socket and keep flag with the view of its premise and the view of the clause's head, whose
+  output is the head's output. Every obligation and test R5 states of a call @{text "Pair x y"} is stated here of the
+  viewed call and the viewed meaning, reading a pattern's shape, positions and where variables occur, never a value.
+  The old record is the viewed one's instance (@{text viewed_declarations_of}): producers and sockets at the identity
+  view, a right-side consumer at the identity view, a left-side one at the swap; each old notion equals its viewed form
+  there, and a socket declared at a premise its view does not match is refused, not inert
+  (@{text viewed_socket_discharged_of}). The viewed names are temporary; the record build gives them the kept names.
+\<close>
+
+subsection \<open>The instance views and a view's holes\<close>
+
+definition viewed_identity :: "nat resolution_view" where
+  "viewed_identity = identity_view 0 1"
+
+definition viewed_swap :: "nat resolution_view" where
+  "viewed_swap = swapped_view 0 1"
+
+lemma viewed_identity_term: "resolution_view_term viewed_identity = pair_view"
+  unfolding viewed_identity_def by (rule identity_view_term) simp
+
+lemma viewed_swap_term: "resolution_view_term viewed_swap = swap_view"
+  unfolding viewed_swap_def by (rule swapped_view_term) simp
+
+lemma viewed_identity_pattern:
+  "resolution_view_pattern viewed_identity c = (case c of Finite_Pattern_Pair x y \<Rightarrow> Some (x,y) | _ \<Rightarrow> None)"
+  by (cases c) (simp_all add: viewed_identity_def identity_view_def resolution_view_pattern_def view_lookup_def)
+
+lemma viewed_swap_pattern:
+  "resolution_view_pattern viewed_swap c = (case c of Finite_Pattern_Pair x y \<Rightarrow> Some (y,x) | _ \<Rightarrow> None)"
+  by (cases c) (simp_all add: viewed_swap_def swapped_view_def resolution_view_pattern_def view_lookup_def)
+
+lemma viewed_identity_pattern_none:
+  "resolution_view_pattern viewed_identity c \<noteq> None \<longleftrightarrow> (case c of Finite_Pattern_Pair x y \<Rightarrow> True | _ \<Rightarrow> False)"
+  by (cases c) (simp_all add: viewed_identity_pattern)
+
+text \<open>
+  The holes of a view's output, a list of patterns over the view's variables: their values at a term the view's
+  pattern matches, and their patterns at a call the view's pattern matches.
+\<close>
+
+definition resolution_view_holes ::
+    "'v resolution_view \<Rightarrow> 'v finite_term_pattern list \<Rightarrow> factor_term \<Rightarrow> factor_term list option" where
+  "resolution_view_holes V hs t = map_option (\<lambda>l. map (\<lambda>h. evaluate_pattern (view_valuation l) (decode_finite_pattern h)) hs)
+    (view_match (fst V) t)"
+
+definition resolution_view_hole_patterns ::
+    "'v resolution_view \<Rightarrow> 'v finite_term_pattern list \<Rightarrow> 'w finite_term_pattern \<Rightarrow> 'w finite_term_pattern list" where
+  "resolution_view_hole_patterns V hs c = (case view_pattern_match (fst V) c of None \<Rightarrow> []
+    | Some l \<Rightarrow> map (finite_pattern_substitute (view_substitution l)) hs)"
+
+lemma resolution_view_holes_single:
+  "resolution_view_holes V [snd (snd V)] t = map_option (\<lambda>z. [snd z]) (resolution_view_term V t)"
+  by (cases V rule: prod_cases3) (simp add: resolution_view_holes_def resolution_view_term_def split: option.split)
+
+text \<open>The identity view's one hole, its output variable.\<close>
+
+definition viewed_output :: "nat finite_term_pattern" where
+  "viewed_output = Finite_Variable 1"
+
+lemma viewed_identity_holes: "resolution_view_holes viewed_identity [viewed_output] (Pair_Term x y) = Some [y]"
+  by (simp add: resolution_view_holes_def viewed_identity_def identity_view_def view_lookup_def viewed_output_def)
+
+lemma viewed_identity_hole_patterns:
+  "resolution_view_hole_patterns viewed_identity [viewed_output] (Finite_Pattern_Pair x y) = [y]"
+  by (simp add: resolution_view_hole_patterns_def viewed_identity_def identity_view_def view_lookup_def viewed_output_def)
+
+subsection \<open>The viewed record and its discharge\<close>
+
+record ('a,'s,'d) viewed_declarations =
+  viewed_producers :: "('d \<times> nat resolution_view \<times> nat finite_term_pattern list) fset"
+  viewed_consumers :: "('d \<times> 'd \<times> nat resolution_view \<times> nat) fset"
+  viewed_sockets :: "('d \<times> ('a,'s,'d) finite_factor_schema \<times> 's \<times> bool \<times> nat resolution_view \<times> nat resolution_view) fset"
+
+definition viewed_no_declarations :: "('a,'s,'d) viewed_declarations" where
+  "viewed_no_declarations = \<lparr>viewed_producers={||}, viewed_consumers={||}, viewed_sockets={||}\<rparr>"
+
+text \<open>
+  A producer's obligation: two answers whose views agree on the input correspond on every hole of the output, the
+  correspondence given per hole (a product). A consumer's: its truth is unchanged when the output it holds, the po of
+  its view, is replaced by a corresponding one, at the hole it names.
+\<close>
+
+definition viewed_producer_discharged ::
+    "('d \<times> factor_term) set \<Rightarrow> 'd \<Rightarrow> nat resolution_view \<Rightarrow> nat finite_term_pattern list \<Rightarrow>
+      (nat \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> bool" where
+  "viewed_producer_discharged M d V hs corr \<longleftrightarrow> (\<forall>a b u v v' w w'. (d,a) \<in> M \<longrightarrow> (d,b) \<in> M \<longrightarrow>
+    resolution_view_term V a = Some (u,v) \<longrightarrow> resolution_view_term V b = Some (u,v') \<longrightarrow>
+    resolution_view_holes V hs a = Some w \<longrightarrow> resolution_view_holes V hs b = Some w' \<longrightarrow>
+    (\<forall>i<length hs. corr i (w ! i) (w' ! i)))"
+
+definition viewed_consumer_discharged ::
+    "('d \<times> factor_term) set \<Rightarrow> 'd \<Rightarrow> nat resolution_view \<Rightarrow> (factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> bool" where
+  "viewed_consumer_discharged M e V corr \<longleftrightarrow> (\<forall>a b u v v'. resolution_view_term V a = Some (u,v) \<longrightarrow>
+    resolution_view_term V b = Some (u,v') \<longrightarrow> corr v v' \<longrightarrow> ((e,a) \<in> M \<longleftrightarrow> (e,b) \<in> M))"
+
+text \<open>
+  A socket's obligation reads the premise at the socket through the premise's view and the head through the head's
+  view. A socket declared at a premise its view does not match is refused: the first conjunct is false there.
+\<close>
+
+definition viewed_head_kept ::
+    "bool \<Rightarrow> nat resolution_view \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> ('a \<Rightarrow> factor_term) \<Rightarrow> ('a \<Rightarrow> factor_term) \<Rightarrow> bool" where
+  "viewed_head_kept keep Vh S h h' \<longleftrightarrow> (case resolution_view_pattern Vh (finite_schema_conclusion S) of
+      Some (ci,co) \<Rightarrow> evaluate_pattern h' (decode_finite_pattern ci) = evaluate_pattern h (decode_finite_pattern ci) \<and>
+        (keep \<longrightarrow> evaluate_pattern h' (decode_finite_pattern co) = evaluate_pattern h (decode_finite_pattern co))
+    | None \<Rightarrow> evaluate_pattern h' (decode_finite_pattern (finite_schema_conclusion S)) =
+        evaluate_pattern h (decode_finite_pattern (finite_schema_conclusion S)))"
+
+definition viewed_socket_discharged ::
+    "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> 's \<Rightarrow> bool \<Rightarrow> nat resolution_view \<Rightarrow>
+      nat resolution_view \<Rightarrow> bool" where
+  "viewed_socket_discharged M S s keep Vp Vh \<longleftrightarrow>
+    (\<forall>d p. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p \<noteq> None) \<and>
+    (\<forall>h. clause_true M (decode_finite_schema S) h \<longrightarrow>
+      (\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p = Some (xi,yo) \<longrightarrow>
+        (d,t) \<in> M \<longrightarrow> resolution_view_term Vp t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> viewed_head_kept keep Vh S h h' \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y')) \<and>
+      (\<forall>N g. (s,N) \<in> schema_material_premises (decode_finite_schema S) \<longrightarrow> evaluate_material_satisfaction g N \<longrightarrow>
+        evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> viewed_head_kept keep Vh S h h' \<and>
+          (\<forall>a\<in>material_variables N. h' a = g a))))"
+
+definition viewed_declarations_discharged ::
+    "('d \<times> factor_term) set \<Rightarrow> ('a,'s,'d) viewed_declarations \<Rightarrow>
+      ('d \<Rightarrow> nat \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> bool" where
+  "viewed_declarations_discharged M D corr \<longleftrightarrow>
+    (\<forall>d V hs. (d,V,hs) |\<in>| viewed_producers D \<longrightarrow> viewed_producer_discharged M d V hs (corr d)) \<and>
+    (\<forall>d e V i. (d,e,V,i) |\<in>| viewed_consumers D \<longrightarrow> viewed_consumer_discharged M e V (corr d i)) \<and>
+    (\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| viewed_sockets D \<longrightarrow> viewed_socket_discharged M S s keep Vp Vh)"
+
+lemma viewed_no_declarations_discharged: "viewed_declarations_discharged M viewed_no_declarations corr"
+  by (simp add: viewed_declarations_discharged_def viewed_no_declarations_def)
+
+subsection \<open>The contracts' discharges at views\<close>
+
+theorem viewed_function_contract_producer:
+  assumes contract: "presented_function_contract R D A S E B f operation"
+    and at: "\<And>t p q. resolution_view_term V t = Some (p,q) \<Longrightarrow> operation p q \<longleftrightarrow> (d,t) \<in> M"
+  shows "viewed_producer_discharged M d V [snd (snd V)] (\<lambda>i. presentation_transport S S)"
+  unfolding viewed_producer_discharged_def resolution_view_holes_single
+proof (intro allI impI)
+  fix a b u v v' w w' i
+  assume a: "(d,a) \<in> M" and b: "(d,b) \<in> M" and va: "resolution_view_term V a = Some (u,v)"
+    and vb: "resolution_view_term V b = Some (u,v')"
+    and wa: "map_option (\<lambda>z. [snd z]) (resolution_view_term V a) = Some w"
+    and wb: "map_option (\<lambda>z. [snd z]) (resolution_view_term V b) = Some w'"
+    and i: "i < length [snd (snd V)]"
+  have w: "w = [v]" "w' = [v']" using wa wb va vb by simp_all
+  have t: "presentation_transport S S v v'"
+    using presented_function_contract.output_equivalence[OF contract] at[OF va] at[OF vb] a b by blast
+  have "i = 0" using i by simp
+  then show "presentation_transport S S (w ! i) (w' ! i)" using w t by simp
+qed
+
+theorem viewed_relation_contract_consumer:
+  assumes contract: "presented_relation_contract R D A S E B L observe"
+    and member: "\<And>t p q. resolution_view_term V t = Some (p,q) \<Longrightarrow> observe p q \<longleftrightarrow> (e,t) \<in> M"
+  shows "viewed_consumer_discharged M e V (presentation_transport S S)"
+proof -
+  interpret presented_relation_contract R D A S E B L observe by (rule contract)
+  have step: "observe x y'" if t: "presentation_transport S S y y'" and o: "observe x y" for x y y'
+  proof -
+    from t obtain b where b: "S b y" "S b y'" by (auto simp: presentation_transport_def)
+    from boundaries[OF o] have "A x" by simp
+    then obtain a where a: "R a x" using left.admitted by blast
+    show ?thesis using invariance[OF a b(1) a b(2)] o by simp
+  qed
+  show ?thesis unfolding viewed_consumer_discharged_def
+  proof (intro allI impI)
+    fix a b u v v' assume va: "resolution_view_term V a = Some (u,v)" and vb: "resolution_view_term V b = Some (u,v')"
+      and t: "presentation_transport S S v v'"
+    have t': "presentation_transport S S v' v" using presentation_transport_reverse[of S S v v'] t by blast
+    have "observe u v \<longleftrightarrow> observe u v'" using step[OF t] step[OF t'] by blast
+    then show "(e,a) \<in> M \<longleftrightarrow> (e,b) \<in> M" using member[OF va] member[OF vb] by blast
+  qed
+qed
+
+theorem viewed_relation_contract_consumer_left:
+  assumes contract: "presented_relation_contract R D A S E B L observe"
+    and member: "\<And>t p q. resolution_view_term V t = Some (p,q) \<Longrightarrow> observe q p \<longleftrightarrow> (e,t) \<in> M"
+  shows "viewed_consumer_discharged M e V (presentation_transport R R)"
+proof -
+  interpret presented_relation_contract R D A S E B L observe by (rule contract)
+  have step: "observe x' y" if t: "presentation_transport R R x x'" and o: "observe x y" for x x' y
+  proof -
+    from t obtain a where a: "R a x" "R a x'" by (auto simp: presentation_transport_def)
+    from boundaries[OF o] have "B y" by simp
+    then obtain b where b: "S b y" using right.admitted by blast
+    show ?thesis using invariance[OF a(1) b a(2) b] o by simp
+  qed
+  show ?thesis unfolding viewed_consumer_discharged_def
+  proof (intro allI impI)
+    fix a b u v v' assume va: "resolution_view_term V a = Some (u,v)" and vb: "resolution_view_term V b = Some (u,v')"
+      and t: "presentation_transport R R v v'"
+    have t': "presentation_transport R R v' v" using presentation_transport_reverse[of R R v v'] t by blast
+    have "observe v u \<longleftrightarrow> observe v' u" using step[OF t] step[OF t'] by blast
+    then show "(e,a) \<in> M \<longleftrightarrow> (e,b) \<in> M" using member[OF va] member[OF vb] by blast
+  qed
+qed
+
+subsection \<open>The old record as an instance\<close>
+
+definition viewed_consumer_view :: "bool \<Rightarrow> nat resolution_view" where
+  "viewed_consumer_view right = (if right then viewed_identity else viewed_swap)"
+
+definition viewed_declarations_of :: "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) viewed_declarations" where
+  "viewed_declarations_of D = \<lparr>viewed_producers = (\<lambda>d. (d,viewed_identity,[viewed_output])) |`| declared_producers D,
+    viewed_consumers = (\<lambda>(d,e,b). (d,e,viewed_consumer_view b,0)) |`| declared_consumers D,
+    viewed_sockets = (\<lambda>(e,S,s,keep). (e,S,s,keep,viewed_identity,viewed_identity)) |`| declared_sockets D\<rparr>"
+
+lemma viewed_producers_member:
+  "(d,V,hs) |\<in>| viewed_producers (viewed_declarations_of D) \<longleftrightarrow>
+    d |\<in>| declared_producers D \<and> V = viewed_identity \<and> hs = [viewed_output]"
+  by (auto simp: viewed_declarations_of_def fimage.rep_eq image_iff)
+
+lemma viewed_consumers_member:
+  "(d,e,V,i) |\<in>| viewed_consumers (viewed_declarations_of D) \<longleftrightarrow>
+    (\<exists>b. (d,e,b) |\<in>| declared_consumers D \<and> V = viewed_consumer_view b \<and> i = 0)"
+  by (auto simp: viewed_declarations_of_def fimage.rep_eq image_iff Bex_def)
+
+lemma viewed_sockets_member:
+  "(e,S,s,keep,Vp,Vh) |\<in>| viewed_sockets (viewed_declarations_of D) \<longleftrightarrow>
+    (e,S,s,keep) |\<in>| declared_sockets D \<and> Vp = viewed_identity \<and> Vh = viewed_identity"
+  by (auto simp: viewed_declarations_of_def fimage.rep_eq image_iff Bex_def)
+
+lemma viewed_producers_fBex:
+  "fBex (viewed_producers (viewed_declarations_of D)) P \<longleftrightarrow>
+    fBex (declared_producers D) (\<lambda>d. P (d,viewed_identity,[viewed_output]))"
+  by (auto simp: viewed_declarations_of_def fimage.rep_eq)
+
+lemma viewed_consumers_fBex:
+  "fBex (viewed_consumers (viewed_declarations_of D)) P \<longleftrightarrow>
+    fBex (declared_consumers D) (\<lambda>(d,e,b). P (d,e,viewed_consumer_view b,0))"
+proof
+  assume "fBex (viewed_consumers (viewed_declarations_of D)) P"
+  then obtain z where z: "z |\<in>| viewed_consumers (viewed_declarations_of D)" "P z" by blast
+  obtain d e V i where zz: "z = (d,e,V,i)" by (cases z rule: prod_cases4)
+  have "\<exists>b. (d,e,b) |\<in>| declared_consumers D \<and> V = viewed_consumer_view b \<and> i = 0"
+    using z(1)[unfolded zz viewed_consumers_member] .
+  then obtain b where b: "(d,e,b) |\<in>| declared_consumers D" "V = viewed_consumer_view b" "i = 0" by blast
+  have "(\<lambda>(d,e,b). P (d,e,viewed_consumer_view b,0)) (d,e,b)" using z(2) zz b by simp
+  then show "fBex (declared_consumers D) (\<lambda>(d,e,b). P (d,e,viewed_consumer_view b,0))" using b(1) by blast
+next
+  assume "fBex (declared_consumers D) (\<lambda>(d,e,b). P (d,e,viewed_consumer_view b,0))"
+  then obtain z where z: "z |\<in>| declared_consumers D" "(\<lambda>(d,e,b). P (d,e,viewed_consumer_view b,0)) z" by blast
+  obtain d e b where zz: "z = (d,e,b)" by (cases z rule: prod_cases3)
+  have "(d,e,viewed_consumer_view b,0) |\<in>| viewed_consumers (viewed_declarations_of D)"
+    using z(1) zz by (auto simp: viewed_consumers_member)
+  then show "fBex (viewed_consumers (viewed_declarations_of D)) P" using z(2) zz by auto
+qed
+
+lemma viewed_declarations_of_none: "viewed_declarations_of no_declarations = viewed_no_declarations"
+  by (simp add: viewed_declarations_of_def no_declarations_def viewed_no_declarations_def)
+
+lemma viewed_consumer_view_term:
+  "resolution_view_term (viewed_consumer_view right) (consumer_argument right x y) = Some (x,y)"
+  by (cases right) (simp_all add: viewed_consumer_view_def consumer_argument_def viewed_identity_term viewed_swap_term
+    pair_view_def swap_view_def)
+
+lemma viewed_consumer_view_argument:
+  "resolution_view_term (viewed_consumer_view right) a = Some (u,v) \<Longrightarrow> a = consumer_argument right u v"
+  by (cases right) (simp_all add: viewed_consumer_view_def consumer_argument_def viewed_identity_term viewed_swap_term
+    pair_view_some swap_view_some)
+
+lemma viewed_consumer_view_pattern:
+  "resolution_view_pattern (viewed_consumer_view b) c =
+    (case c of Finite_Pattern_Pair x z \<Rightarrow> Some (if b then (x,z) else (z,x)) | _ \<Rightarrow> None)"
+  by (cases c) (simp_all add: viewed_consumer_view_def viewed_identity_pattern viewed_swap_pattern)
+
+text \<open>The obligations at the instance.\<close>
+
+lemma viewed_producer_discharged_of:
+  "viewed_producer_discharged M d viewed_identity [viewed_output] (\<lambda>i. corr) \<longleftrightarrow> producer_discharged M d corr"
+proof
+  assume l: "viewed_producer_discharged M d viewed_identity [viewed_output] (\<lambda>i. corr)"
+  show "producer_discharged M d corr" unfolding producer_discharged_def
+  proof (intro allI impI)
+    fix x y y' assume a: "(d,Pair_Term x y) \<in> M" and b: "(d,Pair_Term x y') \<in> M"
+    show "corr y y'"
+      using l[unfolded viewed_producer_discharged_def, rule_format, of "Pair_Term x y" "Pair_Term x y'" x y y' "[y]" "[y']" 0]
+        a b by (simp add: viewed_identity_term pair_view_def viewed_identity_holes)
+  qed
+next
+  assume r: "producer_discharged M d corr"
+  show "viewed_producer_discharged M d viewed_identity [viewed_output] (\<lambda>i. corr)"
+    unfolding viewed_producer_discharged_def
+  proof (intro allI impI)
+    fix a b u v v' w w' i
+    assume a: "(d,a) \<in> M" and b: "(d,b) \<in> M" and va: "resolution_view_term viewed_identity a = Some (u,v)"
+      and vb: "resolution_view_term viewed_identity b = Some (u,v')"
+      and wa: "resolution_view_holes viewed_identity [viewed_output] a = Some w"
+      and wb: "resolution_view_holes viewed_identity [viewed_output] b = Some w'"
+      and i: "i < length [viewed_output]"
+    have ab: "a = Pair_Term u v" "b = Pair_Term u v'" using va vb by (simp_all add: viewed_identity_term pair_view_some)
+    have w: "w = [v]" "w' = [v']" using wa wb ab by (simp_all add: viewed_identity_holes)
+    have "i = 0" using i by simp
+    then show "corr (w ! i) (w' ! i)"
+      using r[unfolded producer_discharged_def, rule_format, of u v v'] a b ab w by simp
+  qed
+qed
+
+lemma viewed_consumer_discharged_of:
+  "viewed_consumer_discharged M e (viewed_consumer_view right) corr \<longleftrightarrow> consumer_discharged M e right corr"
+proof
+  assume l: "viewed_consumer_discharged M e (viewed_consumer_view right) corr"
+  show "consumer_discharged M e right corr" unfolding consumer_discharged_def
+  proof (intro allI impI)
+    fix x y y' assume c: "corr y y'"
+    show "(e,consumer_argument right x y) \<in> M \<longleftrightarrow> (e,consumer_argument right x y') \<in> M"
+      using l viewed_consumer_view_term[of right x y] viewed_consumer_view_term[of right x y'] c
+      unfolding viewed_consumer_discharged_def by blast
+  qed
+next
+  assume r: "consumer_discharged M e right corr"
+  show "viewed_consumer_discharged M e (viewed_consumer_view right) corr" unfolding viewed_consumer_discharged_def
+  proof (intro allI impI)
+    fix a b u v v' assume va: "resolution_view_term (viewed_consumer_view right) a = Some (u,v)"
+      and vb: "resolution_view_term (viewed_consumer_view right) b = Some (u,v')" and c: "corr v v'"
+    have ab: "a = consumer_argument right u v" "b = consumer_argument right u v'"
+      using viewed_consumer_view_argument[OF va] viewed_consumer_view_argument[OF vb] by simp_all
+    show "(e,a) \<in> M \<longleftrightarrow> (e,b) \<in> M" using r[unfolded consumer_discharged_def, rule_format, of v v' u] c ab by simp
+  qed
+qed
+
+lemma viewed_head_kept_of:
+  "viewed_head_kept keep viewed_identity S h h' \<longleftrightarrow> head_kept keep (decode_finite_schema S) h h'"
+  by (cases "finite_schema_conclusion S") (simp_all add: viewed_head_kept_def head_kept_def viewed_identity_pattern)
+
+lemma viewed_premise_decoded:
+  "(s,d,p') \<in> schema_premises (decode_finite_schema S) \<longleftrightarrow>
+    (\<exists>p. (s,d,p) |\<in>| finite_schema_premises S \<and> p' = decode_finite_pattern p)"
+  by (auto simp: decode_finite_call_pattern_def)
+
+lemma viewed_socket_discharged_of:
+  "viewed_socket_discharged M S s keep viewed_identity viewed_identity \<longleftrightarrow>
+    socket_discharged M (decode_finite_schema S) s keep \<and> finite_socket_pair [s] S"
+proof -
+  have pair: "(\<forall>d p. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern viewed_identity p \<noteq> None) \<longleftrightarrow>
+      finite_socket_pair [s] S"
+    unfolding finite_socket_pair_def Ball_def viewed_identity_pattern_none by auto
+  have ord: "(\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow>
+        resolution_view_pattern viewed_identity p = Some (xi,yo) \<longrightarrow>
+        (d,t) \<in> M \<longrightarrow> resolution_view_term viewed_identity t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep (decode_finite_schema S) h h' \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y')) \<longleftrightarrow>
+      (\<forall>d xi yo y'. (s,d,Pattern_Pair xi yo) \<in> schema_premises (decode_finite_schema S) \<longrightarrow>
+        (d,Pair_Term (evaluate_pattern h xi) y') \<in> M \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep (decode_finite_schema S) h h' \<and>
+          evaluate_pattern h' xi = evaluate_pattern h xi \<and> evaluate_pattern h' yo = y'))" for h
+  proof
+    assume l: "\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow>
+        resolution_view_pattern viewed_identity p = Some (xi,yo) \<longrightarrow>
+        (d,t) \<in> M \<longrightarrow> resolution_view_term viewed_identity t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep (decode_finite_schema S) h h' \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y')"
+    show "\<forall>d xi yo y'. (s,d,Pattern_Pair xi yo) \<in> schema_premises (decode_finite_schema S) \<longrightarrow>
+        (d,Pair_Term (evaluate_pattern h xi) y') \<in> M \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep (decode_finite_schema S) h h' \<and>
+          evaluate_pattern h' xi = evaluate_pattern h xi \<and> evaluate_pattern h' yo = y')"
+    proof (intro allI impI)
+      fix d xi yo y' assume sp: "(s,d,Pattern_Pair xi yo) \<in> schema_premises (decode_finite_schema S)"
+        and m: "(d,Pair_Term (evaluate_pattern h xi) y') \<in> M"
+      obtain p where p: "(s,d,p) |\<in>| finite_schema_premises S" and pd: "Pattern_Pair xi yo = decode_finite_pattern p"
+        using sp[unfolded viewed_premise_decoded] by blast
+      obtain fx fy where pp: "p = Finite_Pattern_Pair fx fy" and xi: "xi = decode_finite_pattern fx"
+          and yo: "yo = decode_finite_pattern fy"
+        using pd by (cases p) auto
+      have v: "resolution_view_pattern viewed_identity p = Some (fx,fy)" by (simp add: pp viewed_identity_pattern)
+      have vt: "resolution_view_term viewed_identity (Pair_Term (evaluate_pattern h xi) y') =
+          Some (evaluate_pattern h (decode_finite_pattern fx),y')" by (simp add: viewed_identity_term pair_view_def xi)
+      show "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep (decode_finite_schema S) h h' \<and>
+          evaluate_pattern h' xi = evaluate_pattern h xi \<and> evaluate_pattern h' yo = y'"
+        using l[rule_format, OF p v m vt] unfolding xi yo .
+    qed
+  next
+    assume r: "\<forall>d xi yo y'. (s,d,Pattern_Pair xi yo) \<in> schema_premises (decode_finite_schema S) \<longrightarrow>
+        (d,Pair_Term (evaluate_pattern h xi) y') \<in> M \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep (decode_finite_schema S) h h' \<and>
+          evaluate_pattern h' xi = evaluate_pattern h xi \<and> evaluate_pattern h' yo = y')"
+    show "\<forall>d p xi yo t y'. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow>
+        resolution_view_pattern viewed_identity p = Some (xi,yo) \<longrightarrow>
+        (d,t) \<in> M \<longrightarrow> resolution_view_term viewed_identity t = Some (evaluate_pattern h (decode_finite_pattern xi),y') \<longrightarrow>
+        (\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep (decode_finite_schema S) h h' \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y')"
+    proof (intro allI impI)
+      fix d p xi yo t y' assume p: "(s,d,p) |\<in>| finite_schema_premises S"
+        and v: "resolution_view_pattern viewed_identity p = Some (xi,yo)" and m: "(d,t) \<in> M"
+        and vt: "resolution_view_term viewed_identity t = Some (evaluate_pattern h (decode_finite_pattern xi),y')"
+      have pp: "p = Finite_Pattern_Pair xi yo" using v by (cases p) (simp_all add: viewed_identity_pattern)
+      have t: "t = Pair_Term (evaluate_pattern h (decode_finite_pattern xi)) y'"
+        using vt by (simp add: viewed_identity_term pair_view_some)
+      have "(s,d,Pattern_Pair (decode_finite_pattern xi) (decode_finite_pattern yo)) \<in> schema_premises (decode_finite_schema S)"
+        unfolding viewed_premise_decoded using p pp by auto
+      then show "\<exists>h'. clause_true M (decode_finite_schema S) h' \<and> head_kept keep (decode_finite_schema S) h h' \<and>
+          evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern h (decode_finite_pattern xi) \<and>
+          evaluate_pattern h' (decode_finite_pattern yo) = y'"
+        using r m t by blast
+    qed
+  qed
+  show ?thesis unfolding viewed_socket_discharged_def socket_discharged_def viewed_head_kept_of pair ord by blast
+qed
+
+theorem viewed_declarations_discharged_of:
+  "viewed_declarations_discharged M (viewed_declarations_of D) (\<lambda>d i. corr d) \<longleftrightarrow>
+    declarations_discharged M D corr \<and> fBall (declared_sockets D) (\<lambda>(e,S,s,keep). finite_socket_pair [s] S)"
+proof -
+  have p: "(\<forall>d V hs. (d,V,hs) |\<in>| viewed_producers (viewed_declarations_of D) \<longrightarrow>
+      viewed_producer_discharged M d V hs (\<lambda>i. corr d)) \<longleftrightarrow>
+      (\<forall>d. d |\<in>| declared_producers D \<longrightarrow> producer_discharged M d (corr d))"
+    by (auto simp: viewed_producers_member viewed_producer_discharged_of)
+  have c: "(\<forall>d e V i. (d,e,V,i) |\<in>| viewed_consumers (viewed_declarations_of D) \<longrightarrow>
+      viewed_consumer_discharged M e V (corr d)) \<longleftrightarrow>
+      (\<forall>d e b. (d,e,b) |\<in>| declared_consumers D \<longrightarrow> consumer_discharged M e b (corr d))"
+  proof
+    assume l: "\<forall>d e V i. (d,e,V,i) |\<in>| viewed_consumers (viewed_declarations_of D) \<longrightarrow>
+      viewed_consumer_discharged M e V (corr d)"
+    show "\<forall>d e b. (d,e,b) |\<in>| declared_consumers D \<longrightarrow> consumer_discharged M e b (corr d)"
+    proof (intro allI impI)
+      fix d e b assume "(d,e,b) |\<in>| declared_consumers D"
+      then have "(d,e,viewed_consumer_view b,0) |\<in>| viewed_consumers (viewed_declarations_of D)"
+        by (auto simp: viewed_consumers_member)
+      then have "viewed_consumer_discharged M e (viewed_consumer_view b) (corr d)" using l by blast
+      then show "consumer_discharged M e b (corr d)" by (simp add: viewed_consumer_discharged_of)
+    qed
+  next
+    assume r: "\<forall>d e b. (d,e,b) |\<in>| declared_consumers D \<longrightarrow> consumer_discharged M e b (corr d)"
+    show "\<forall>d e V i. (d,e,V,i) |\<in>| viewed_consumers (viewed_declarations_of D) \<longrightarrow>
+      viewed_consumer_discharged M e V (corr d)"
+    proof (intro allI impI)
+      fix d e V i assume "(d,e,V,i) |\<in>| viewed_consumers (viewed_declarations_of D)"
+      then obtain b where b: "(d,e,b) |\<in>| declared_consumers D" "V = viewed_consumer_view b"
+        by (auto simp: viewed_consumers_member)
+      have "consumer_discharged M e b (corr d)" using r b(1) by blast
+      then show "viewed_consumer_discharged M e V (corr d)" by (simp add: b(2) viewed_consumer_discharged_of)
+    qed
+  qed
+  have s: "(\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| viewed_sockets (viewed_declarations_of D) \<longrightarrow>
+      viewed_socket_discharged M S s keep Vp Vh) \<longleftrightarrow>
+      (\<forall>e S s keep. (e,S,s,keep) |\<in>| declared_sockets D \<longrightarrow>
+        socket_discharged M (decode_finite_schema S) s keep \<and> finite_socket_pair [s] S)"
+    by (auto simp: viewed_sockets_member viewed_socket_discharged_of)
+  show ?thesis unfolding viewed_declarations_discharged_def declarations_discharged_def p c s
+    by (simp add: Ball_def) blast
+qed
+
+subsection \<open>The test at views\<close>
+
+text \<open>
+  The tests of R5 read at views. A producer's goal is committed directly when its call, read at its view, has a ground
+  input and an output holding a variable, and every other pending goal in the focus holding one is a declared consumer
+  whose call, read at its own view, holds the pattern of the producer's hole it names, its other part sharing none. A
+  socket's tests take the socket's two views as parameters: the kept and free tests find the declaration at the parent
+  node with those views, the premise is read at the premise's view, and the parent's output and the apart test at the
+  head's. A goal commits at a socket at the views of a declared socket. The tests read a pattern's shape, positions and
+  where variables occur, never a value.
+\<close>
+
+definition viewed_output_consumer ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> 'd \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern list \<Rightarrow>
+      ('s,'a) resolution_variable fset \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "viewed_output_consumer D d hs Y h = (case h of
+      Resolution_Call_Goal q r e p \<Rightarrow> fBex (viewed_consumers D) (\<lambda>(d',e',V,i). d' = d \<and> e' = e \<and> i < length hs \<and>
+        (case resolution_view_pattern V p of
+            Some (x,z) \<Rightarrow> z = hs ! i \<and> finite_pattern_variables x |\<inter>| Y = {||}
+          | None \<Rightarrow> False))
+    | Resolution_Material_Goal q r M \<Rightarrow> False)"
+
+definition viewed_producer_commits ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> 'd \<Rightarrow> nat resolution_view \<Rightarrow> nat finite_term_pattern list \<Rightarrow> bool" where
+  "viewed_producer_commits D F st g d V hs = (case g of
+      Resolution_Call_Goal q r e p \<Rightarrow> e = d \<and>
+        (case resolution_view_pattern V p of
+            Some (x,y) \<Rightarrow> finite_pattern_variables x = {||} \<and> finite_pattern_variables y \<noteq> {||} \<and>
+              fBall (finite_focus_pending F st) (\<lambda>h. h = g \<or>
+                resolution_goal_variables h |\<inter>| finite_pattern_variables y = {||} \<or>
+                viewed_output_consumer D d (resolution_view_hole_patterns V hs p) (finite_pattern_variables y) h)
+          | None \<Rightarrow> False)
+    | Resolution_Material_Goal q r M \<Rightarrow> False)"
+
+definition viewed_direct_commitment ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "viewed_direct_commitment D F st g \<longleftrightarrow>
+    fBex (viewed_producers D) (\<lambda>(d,V,hs). viewed_producer_commits D F st g d V hs)"
+
+definition viewed_parent_output ::
+    "nat resolution_view \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern option" where
+  "viewed_parent_output Vh nd = (case (resolution_view_pattern Vh (finite_schema_conclusion (resolution_node_schema nd)),
+      resolution_view_pattern Vh (resolution_node_call nd)) of
+      (Some (hi,ho),Some (x,out)) \<Rightarrow> if finite_variant ho out then Some out else None
+    | _ \<Rightarrow> None)"
+
+definition viewed_socket_kept ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> 's list option \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> 's list \<Rightarrow> ('s,'a) resolution_variable fset \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "viewed_socket_kept D Vp Vh F st q Y g \<longleftrightarrow> q \<noteq> [] \<and> fBex (resolution_nodes st) (\<lambda>nd.
+    resolution_node_position nd = butlast q \<and>
+    (resolution_node_site nd,resolution_node_schema nd,last q,True,Vp,Vh) |\<in>| viewed_sockets D \<and>
+    finite_siblings_pending st q (resolution_node_schema nd) \<and> finite_premise_only_free st nd) \<and>
+    finite_socket_holders F st q Y g"
+
+definition viewed_socket_free ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> 's list option \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> 's list \<Rightarrow> ('s,'a) resolution_variable fset \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "viewed_socket_free D Vp Vh F st q Y g \<longleftrightarrow> q \<noteq> [] \<and> F = Some (butlast q) \<and> fBex (resolution_nodes st) (\<lambda>nd.
+    resolution_node_position nd = butlast q \<and>
+    (resolution_node_site nd,resolution_node_schema nd,last q,False,Vp,Vh) |\<in>| viewed_sockets D \<and>
+    finite_siblings_pending st q (resolution_node_schema nd) \<and> finite_premise_only_free st nd \<and>
+    (case viewed_parent_output Vh nd of None \<Rightarrow> False
+      | Some out \<Rightarrow> finite_socket_holders F st q (Y |\<union>| finite_pattern_variables out) g))"
+
+definition viewed_socket_declared ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> 's list option \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> 's list \<Rightarrow> ('s,'a) resolution_variable fset \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "viewed_socket_declared D Vp Vh F st q Y g \<longleftrightarrow> viewed_socket_kept D Vp Vh F st q Y g \<or> viewed_socket_free D Vp Vh F st q Y g"
+
+definition viewed_socket_commitment ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> 's list option \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "viewed_socket_commitment D Vp Vh F st g = (case g of
+      Resolution_Call_Goal q r d p \<Rightarrow> (case resolution_view_pattern Vp p of
+          Some (x,y) \<Rightarrow> finite_pattern_variables x = {||} \<and> finite_pattern_variables y \<noteq> {||} \<and>
+            viewed_socket_declared D Vp Vh F st q (finite_pattern_variables y) g
+        | None \<Rightarrow> False)
+    | Resolution_Material_Goal q r M \<Rightarrow> finite_canonical_solutions M \<noteq> None \<and> finite_free_fields M \<and>
+        viewed_socket_declared D Vp Vh F st q (finite_material_variables M) g)"
+
+definition viewed_socket_matched :: "nat resolution_view \<Rightarrow> 's list \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> bool" where
+  "viewed_socket_matched Vp q S \<longleftrightarrow> fBall (finite_schema_premises S) (\<lambda>(s,e,p). s = last q \<longrightarrow>
+    resolution_view_pattern Vp p \<noteq> None)"
+
+definition viewed_input_output_apart :: "nat resolution_view \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "viewed_input_output_apart Vh nd \<longleftrightarrow> (case resolution_view_pattern Vh (resolution_node_call nd) of
+      Some (x,y) \<Rightarrow> finite_pattern_variables x |\<inter>| finite_pattern_variables y = {||}
+    | None \<Rightarrow> True)"
+
+definition viewed_call_narrowed ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> 's list option \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "viewed_call_narrowed D Vp Vh F st g \<longleftrightarrow> (case g of
+      Resolution_Call_Goal q r e p \<Rightarrow> (case resolution_view_pattern Vp p of
+          Some (x,y) \<Rightarrow> fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
+            finite_children_instances st nd \<and> finite_premise_only_unshared nd \<and>
+            viewed_socket_matched Vp q (resolution_node_schema nd) \<and>
+            (viewed_socket_kept D Vp Vh F st q (finite_pattern_variables y) g \<or> viewed_input_output_apart Vh nd))
+        | None \<Rightarrow> True)
+    | Resolution_Material_Goal q r M \<Rightarrow> True)"
+
+definition viewed_material_narrowed ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> nat resolution_view \<Rightarrow> nat resolution_view \<Rightarrow> 's list option \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "viewed_material_narrowed D Vp Vh F st g \<longleftrightarrow> (case g of
+      Resolution_Material_Goal q r M \<Rightarrow> fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
+        finite_children_instances st nd \<and> finite_premise_only_unshared nd \<and>
+        (viewed_socket_kept D Vp Vh F st q (finite_material_variables M) g \<or> viewed_input_output_apart Vh nd))
+    | Resolution_Call_Goal q r e p \<Rightarrow> True)"
+
+definition viewed_socket_views ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> (nat resolution_view \<times> nat resolution_view) fset" where
+  "viewed_socket_views D = (\<lambda>(e,S,s,keep,Vp,Vh). (Vp,Vh)) |`| viewed_sockets D"
+
+definition viewed_declared_commitment ::
+    "('a,'s,'d) viewed_declarations \<Rightarrow> ('a,'s,'d,'c) resolution_commitment" where
+  "viewed_declared_commitment D = \<lparr>commit_call=(\<lambda>F st g. finite_goal_premise st g \<and>
+      (viewed_direct_commitment D F st g \<or>
+        (resolution_is_call g \<and> fBex (viewed_socket_views D) (\<lambda>(Vp,Vh).
+          viewed_socket_commitment D Vp Vh F st g \<and> viewed_call_narrowed D Vp Vh F st g)))),
+    commit_material=(\<lambda>F st g. finite_material_premise st g \<and> \<not> resolution_is_call g \<and>
+      fBex (viewed_socket_views D) (\<lambda>(Vp,Vh).
+        viewed_socket_commitment D Vp Vh F st g \<and> viewed_material_narrowed D Vp Vh F st g))\<rparr>"
+
+export_code viewed_material_narrowed viewed_call_narrowed checking SML
+
+lemma viewed_declared_commitment_premise:
+  assumes "commit_call (viewed_declared_commitment D) F st g"
+  shows "finite_goal_premise st g"
+  using assms by (simp add: viewed_declared_commitment_def)
+
+lemma viewed_producer_commits_view:
+  assumes c: "viewed_producer_commits D F st g d V hs"
+  obtains q r p x y where "g = Resolution_Call_Goal q r d p" "resolution_view_pattern V p = Some (x,y)"
+    "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+proof (cases g)
+  case (Resolution_Call_Goal q r e p)
+  show thesis
+  proof (cases "resolution_view_pattern V p")
+    case None
+    then show thesis using c Resolution_Call_Goal by (simp add: viewed_producer_commits_def)
+  next
+    case (Some z)
+    obtain x y where z: "z = (x,y)" by (cases z)
+    have f: "e = d" "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+      using c Resolution_Call_Goal Some z by (simp_all add: viewed_producer_commits_def)
+    show thesis using Resolution_Call_Goal Some z f by (intro that[of q r p x y]) simp_all
+  qed
+next
+  case (Resolution_Material_Goal q r M)
+  then show thesis using c by (simp add: viewed_producer_commits_def)
+qed
+
+lemma viewed_socket_commitment_view:
+  assumes c: "viewed_socket_commitment D Vp Vh F st g" and call: "resolution_is_call g"
+  obtains q r d p x y where "g = Resolution_Call_Goal q r d p" "resolution_view_pattern Vp p = Some (x,y)"
+    "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+proof (cases g)
+  case (Resolution_Call_Goal q r d p)
+  show thesis
+  proof (cases "resolution_view_pattern Vp p")
+    case None
+    then show thesis using c Resolution_Call_Goal by (simp add: viewed_socket_commitment_def)
+  next
+    case (Some z)
+    obtain x y where z: "z = (x,y)" by (cases z)
+    have f: "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+      using c Resolution_Call_Goal Some z by (simp_all add: viewed_socket_commitment_def)
+    show thesis using Resolution_Call_Goal Some z f by (intro that[of q r d p x y]) simp_all
+  qed
+next
+  case (Resolution_Material_Goal q r M)
+  then show thesis using call by simp
+qed
+
+text \<open>
+  A committed call's input, read at the view it is committed at, is ground: the view is a declared producer's at the
+  call's site, or the premise view of a declared socket.
+\<close>
+
+lemma viewed_declared_commitment_input_ground:
+  assumes committed: "commit_call (viewed_declared_commitment D) F st g"
+  obtains q r d p V x y where "g = Resolution_Call_Goal q r d p"
+    "(\<exists>hs. (d,V,hs) |\<in>| viewed_producers D) \<or> (\<exists>Vh. (V,Vh) |\<in>| viewed_socket_views D)"
+    "resolution_view_pattern (V :: nat resolution_view) p = Some (x,y)"
+    "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+proof -
+  from committed have c: "viewed_direct_commitment D F st g \<or>
+      (resolution_is_call g \<and> fBex (viewed_socket_views D) (\<lambda>(Vp,Vh).
+        viewed_socket_commitment D Vp Vh F st g \<and> viewed_call_narrowed D Vp Vh F st g))"
+    by (simp add: viewed_declared_commitment_def)
+  have "\<exists>q r d p V x y. g = Resolution_Call_Goal q r d p \<and>
+      ((\<exists>hs. (d,V,hs) |\<in>| viewed_producers D) \<or> (\<exists>Vh. (V,Vh) |\<in>| viewed_socket_views D)) \<and>
+      resolution_view_pattern (V :: nat resolution_view) p = Some (x,y) \<and>
+      finite_pattern_variables x = {||} \<and> finite_pattern_variables y \<noteq> {||}"
+    using c
+  proof
+    assume "viewed_direct_commitment D F st g"
+    then obtain z where z: "z |\<in>| viewed_producers D" "(\<lambda>(d,V,hs). viewed_producer_commits D F st g d V hs) z"
+      unfolding viewed_direct_commitment_def by blast
+    obtain d V hs where zz: "z = (d,V,hs)" by (cases z rule: prod_cases3)
+    have cm: "viewed_producer_commits D F st g d V hs" using z(2) zz by simp
+    obtain q r p x y where f: "g = Resolution_Call_Goal q r d p" "resolution_view_pattern V p = Some (x,y)"
+        "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+      by (rule viewed_producer_commits_view[OF cm])
+    have "(d,V,hs) |\<in>| viewed_producers D" using z(1) zz by simp
+    then show ?thesis using f by blast
+  next
+    assume a: "resolution_is_call g \<and> fBex (viewed_socket_views D) (\<lambda>(Vp,Vh).
+        viewed_socket_commitment D Vp Vh F st g \<and> viewed_call_narrowed D Vp Vh F st g)"
+    then obtain w where wm: "w |\<in>| viewed_socket_views D"
+        and w: "(\<lambda>(Vp,Vh). viewed_socket_commitment D Vp Vh F st g \<and> viewed_call_narrowed D Vp Vh F st g) w"
+      by blast
+    obtain Vp Vh where ww: "w = (Vp,Vh)" by (cases w)
+    have cm: "viewed_socket_commitment D Vp Vh F st g" using w ww by simp
+    obtain q r d p x y where f: "g = Resolution_Call_Goal q r d p" "resolution_view_pattern Vp p = Some (x,y)"
+        "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+      by (rule viewed_socket_commitment_view[OF cm conjunct1[OF a]])
+    have "(Vp,Vh) |\<in>| viewed_socket_views D" using wm ww by simp
+    then show ?thesis using f by blast
+  qed
+  then show thesis using that by blast
+qed
+
+subsection \<open>The old tests are the viewed tests at the instance\<close>
+
+lemma viewed_output_consumer_of:
+  "finite_output_consumer D d y h \<longleftrightarrow>
+    viewed_output_consumer (viewed_declarations_of D) d [y] (finite_pattern_variables y) h"
+proof (cases h)
+  case (Resolution_Call_Goal q r e p)
+  show ?thesis
+    unfolding finite_output_consumer_def viewed_output_consumer_def viewed_consumers_fBex Resolution_Call_Goal
+    by (cases p) (auto simp: Bex_def viewed_consumer_view_pattern ex_bool_eq split: if_splits)
+next
+  case (Resolution_Material_Goal q r M)
+  then show ?thesis by (simp add: finite_output_consumer_def viewed_output_consumer_def)
+qed
+
+lemma viewed_direct_commitment_of:
+  "finite_direct_commitment D F st g = viewed_direct_commitment (viewed_declarations_of D) F st g"
+proof (cases g)
+  case (Resolution_Call_Goal q r d p)
+  show ?thesis
+    unfolding finite_direct_commitment_def viewed_direct_commitment_def viewed_producers_fBex Resolution_Call_Goal
+    by (cases p) (simp_all add: Bex_def viewed_producer_commits_def viewed_identity_pattern viewed_identity_hole_patterns
+      viewed_output_consumer_of)
+next
+  case (Resolution_Material_Goal q r M)
+  then show ?thesis by (simp add: finite_direct_commitment_def viewed_direct_commitment_def viewed_producers_fBex
+    viewed_producer_commits_def)
+qed
+
+lemma viewed_parent_output_identity: "viewed_parent_output viewed_identity nd = finite_parent_output nd"
+  by (cases "finite_schema_conclusion (resolution_node_schema nd)"; cases "resolution_node_call nd";
+    simp add: viewed_parent_output_def finite_parent_output_def viewed_identity_pattern)
+
+lemma viewed_socket_kept_of:
+  "finite_socket_kept D F st q Y g = viewed_socket_kept (viewed_declarations_of D) viewed_identity viewed_identity F st q Y g"
+  by (simp add: finite_socket_kept_def viewed_socket_kept_def viewed_sockets_member)
+
+lemma viewed_socket_free_of:
+  "finite_socket_free D F st q Y g = viewed_socket_free (viewed_declarations_of D) viewed_identity viewed_identity F st q Y g"
+  by (simp add: finite_socket_free_def viewed_socket_free_def viewed_sockets_member viewed_parent_output_identity)
+
+lemma viewed_socket_declared_of:
+  "finite_socket_declared D F st q Y g =
+    viewed_socket_declared (viewed_declarations_of D) viewed_identity viewed_identity F st q Y g"
+  by (simp add: finite_socket_declared_def viewed_socket_declared_def viewed_socket_kept_of viewed_socket_free_of)
+
+lemma viewed_socket_commitment_of:
+  "finite_socket_commitment D F st g =
+    viewed_socket_commitment (viewed_declarations_of D) viewed_identity viewed_identity F st g"
+proof (cases g)
+  case (Resolution_Call_Goal q r d p)
+  then show ?thesis
+    by (cases p) (simp_all add: finite_socket_commitment_def viewed_socket_commitment_def viewed_identity_pattern
+      viewed_socket_declared_of)
+next
+  case (Resolution_Material_Goal q r M)
+  then show ?thesis by (simp add: finite_socket_commitment_def viewed_socket_commitment_def viewed_socket_declared_of)
+qed
+
+lemma viewed_socket_matched_identity: "viewed_socket_matched viewed_identity q S \<longleftrightarrow> finite_socket_pair q S"
+  unfolding viewed_socket_matched_def finite_socket_pair_def viewed_identity_pattern_none by (rule refl)
+
+lemma viewed_input_output_apart_identity: "viewed_input_output_apart viewed_identity nd \<longleftrightarrow> finite_input_output_apart nd"
+  by (cases "resolution_node_call nd") (simp_all add: viewed_input_output_apart_def finite_input_output_apart_def
+    viewed_identity_pattern)
+
+lemma viewed_call_narrowed_of:
+  "finite_call_narrowed D F st g =
+    viewed_call_narrowed (viewed_declarations_of D) viewed_identity viewed_identity F st g"
+proof (cases g)
+  case (Resolution_Call_Goal q r e p)
+  then show ?thesis
+    by (cases p) (simp_all add: finite_call_narrowed_def viewed_call_narrowed_def viewed_identity_pattern
+      viewed_socket_matched_identity viewed_input_output_apart_identity viewed_socket_kept_of)
+next
+  case (Resolution_Material_Goal q r M)
+  then show ?thesis by (simp add: finite_call_narrowed_def viewed_call_narrowed_def)
+qed
+
+lemma viewed_material_narrowed_of:
+  "finite_material_narrowed D F st g =
+    viewed_material_narrowed (viewed_declarations_of D) viewed_identity viewed_identity F st g"
+  by (cases g) (simp_all add: finite_material_narrowed_def viewed_material_narrowed_def
+    viewed_input_output_apart_identity viewed_socket_kept_of)
+
+lemma viewed_socket_views_of:
+  "fBex (viewed_socket_views (viewed_declarations_of D)) P \<longleftrightarrow>
+    fBex (declared_sockets D) (\<lambda>z. P (viewed_identity,viewed_identity))"
+proof
+  assume "fBex (viewed_socket_views (viewed_declarations_of D)) P"
+  then obtain w where w: "w |\<in>| viewed_socket_views (viewed_declarations_of D)" "P w" by blast
+  have "w \<in> (\<lambda>(e,S,s,keep,Vp,Vh). (Vp,Vh)) ` fset (viewed_sockets (viewed_declarations_of D))"
+    using w(1) unfolding viewed_socket_views_def fimage.rep_eq .
+  then obtain z where z: "z |\<in>| viewed_sockets (viewed_declarations_of D)"
+      and wz: "w = (\<lambda>(e,S,s,keep,Vp,Vh). (Vp,Vh)) z"
+    by (rule imageE)
+  obtain e S s keep Vp Vh where zz: "z = (e,S,s,keep,Vp,Vh)" by (cases z rule: prod_cases6)
+  have "(e,S,s,keep) |\<in>| declared_sockets D \<and> Vp = viewed_identity \<and> Vh = viewed_identity"
+    using z[unfolded zz viewed_sockets_member] .
+  then have m: "(e,S,s,keep) |\<in>| declared_sockets D" "Vp = viewed_identity" "Vh = viewed_identity" by simp_all
+  have "P (viewed_identity,viewed_identity)" using w(2) wz zz m by simp
+  then show "fBex (declared_sockets D) (\<lambda>z. P (viewed_identity,viewed_identity))" using m(1) by blast
+next
+  assume "fBex (declared_sockets D) (\<lambda>z. P (viewed_identity,viewed_identity))"
+  then obtain z where z: "z |\<in>| declared_sockets D" and pv: "P (viewed_identity,viewed_identity)" by blast
+  obtain e S s keep where zz: "z = (e,S,s,keep)" by (cases z rule: prod_cases4)
+  have m: "(e,S,s,keep,viewed_identity,viewed_identity) |\<in>| viewed_sockets (viewed_declarations_of D)"
+    unfolding viewed_sockets_member using z unfolding zz by simp
+  have "(viewed_identity,viewed_identity) \<in>
+      (\<lambda>(e,S,s,keep,Vp,Vh). (Vp,Vh)) ` fset (viewed_sockets (viewed_declarations_of D))"
+    by (rule image_eqI[OF _ m]) simp
+  then have "(viewed_identity,viewed_identity) |\<in>| viewed_socket_views (viewed_declarations_of D)"
+    unfolding viewed_socket_views_def fimage.rep_eq .
+  then show "fBex (viewed_socket_views (viewed_declarations_of D)) P" using pv by blast
+qed
+
+theorem viewed_declared_commitment_of:
+  "(finite_declared_commitment D :: ('a,'s,'d,'c) resolution_commitment) =
+    viewed_declared_commitment (viewed_declarations_of D)"
+proof -
+  have nd: "fBex (declared_sockets D) (\<lambda>z. True)" if "finite_socket_declared D F st q Y g"
+    for F st q Y and g :: "('a,'s,'d,'c) resolution_goal"
+    using that unfolding finite_socket_declared_def finite_socket_kept_def finite_socket_free_def by blast
+  have ne: "fBex (declared_sockets D) (\<lambda>z. True)" if c: "finite_socket_commitment D F st g"
+    for F st and g :: "('a,'s,'d,'c) resolution_goal"
+  proof (cases g)
+    case (Resolution_Call_Goal q r d p)
+    then show ?thesis using c by (cases p) (auto simp: finite_socket_commitment_def dest: nd)
+  next
+    case (Resolution_Material_Goal q r M)
+    have "finite_socket_declared D F st q (finite_material_variables M) g"
+      using c Resolution_Material_Goal by (simp add: finite_socket_commitment_def)
+    then show ?thesis by (rule nd)
+  qed
+  have sc: "(finite_socket_commitment D F st g \<and> finite_call_narrowed D F st g) \<longleftrightarrow>
+      fBex (viewed_socket_views (viewed_declarations_of D)) (\<lambda>(Vp,Vh).
+        viewed_socket_commitment (viewed_declarations_of D) Vp Vh F st g \<and>
+        viewed_call_narrowed (viewed_declarations_of D) Vp Vh F st g)"
+    for F st and g :: "('a,'s,'d,'c) resolution_goal"
+    using ne[of F st g] unfolding viewed_socket_views_of viewed_socket_commitment_of viewed_call_narrowed_of by auto
+  have sm: "(finite_socket_commitment D F st g \<and> finite_material_narrowed D F st g) \<longleftrightarrow>
+      fBex (viewed_socket_views (viewed_declarations_of D)) (\<lambda>(Vp,Vh).
+        viewed_socket_commitment (viewed_declarations_of D) Vp Vh F st g \<and>
+        viewed_material_narrowed (viewed_declarations_of D) Vp Vh F st g)"
+    for F st and g :: "('a,'s,'d,'c) resolution_goal"
+    using ne[of F st g] unfolding viewed_socket_views_of viewed_socket_commitment_of viewed_material_narrowed_of by auto
+  show ?thesis
+    unfolding finite_declared_commitment_def viewed_declared_commitment_def viewed_direct_commitment_of
+      sc[symmetric] sm[symmetric] by (rule refl)
+qed
+
+theorem viewed_declared_commitment_none: "viewed_declared_commitment viewed_no_declarations = no_commitment"
+  unfolding viewed_declarations_of_none[symmetric] viewed_declared_commitment_of[symmetric]
+  by (rule finite_declared_commitment_none)
 
 end

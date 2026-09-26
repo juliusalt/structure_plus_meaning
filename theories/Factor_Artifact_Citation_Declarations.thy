@@ -947,112 +947,17 @@ lemma given_correspondence_symp: "symp (given_correspondence d)"
 lemma fields_correspondence_symp: "symp fields_correspondence"
   using fields_correspondence_sym by (blast intro: sympI)
 
-subsection \<open>The carrying lemma at its two forms\<close>
+subsection \<open>The views the listed sockets read\<close>
 
-lemma socket_discharged_along:
-  assumes formed: "\<forall>e t. (e,t) \<in> M \<longrightarrow> term_formed t" and Vp: "view_formed Vp"
-    and premise: "finite_relation_option (finite_schema_premises S) s = Some (d,p)"
-    and pv: "resolution_view_pattern Vp p = Some (xi,yo)"
-    and prod: "producer_discharged M d Vp [snd (snd Vp)] (\<lambda>_. c0)" and cov: "output_covered M d Vp yo"
-    and C: "carried_variables S s Vp cs = C"
-    and apart: "fset (finite_pattern_variables xi) \<inter> C = {}"
-    and nomat: "\<forall>N. (s,N) \<notin> schema_material_premises (decode_finite_schema S)"
-    and steps: "\<forall>i<length cs. carrier_step M S s Vp c0 cs i"
-    and others: "\<forall>q e p. (q,e,p) \<in> schema_premises (decode_finite_schema S) \<longrightarrow> q \<noteq> s \<longrightarrow> q \<notin> fst ` set cs \<longrightarrow>
-      pattern_variables p \<inter> C = {}"
-    and mats: "\<forall>q N. (q,N) \<in> schema_material_premises (decode_finite_schema S) \<longrightarrow> material_variables N \<inter> C = {}"
-    and head: "head_apart keep Vh S C"
-  shows "socket_discharged M S s keep Vp Vh"
-  by (rule socket_discharged_carried[of M S s keep Vp Vh c0 cs])
-    (use formed Vp prod cov apart nomat steps others mats head in \<open>simp add: socket_carried_def C premise pv\<close>)
+text \<open>
+  Every socket below is carried by @{text socket_carried_listed}: the views read through their parts, a consumer's
+  input read through @{const consumer_input} at the identity and whole views.
+\<close>
 
-lemma socket_discharged_direct:
-  assumes formed: "\<forall>e t. (e,t) \<in> M \<longrightarrow> term_formed t" and Vp: "view_formed Vp"
-    and premise: "finite_relation_option (finite_schema_premises S) s = Some (d,p)"
-    and pv: "resolution_view_pattern Vp p = Some (xi,yo)"
-    and prod: "producer_discharged M d Vp [snd (snd Vp)] (\<lambda>_. c0)" and cov: "output_covered M d Vp yo"
-    and apart: "fset (finite_pattern_variables xi) \<inter> fset (finite_pattern_variables yo) = {}"
-    and nomat: "\<forall>N. (s,N) \<notin> schema_material_premises (decode_finite_schema S)"
-    and others: "\<forall>q e p. (q,e,p) \<in> schema_premises (decode_finite_schema S) \<longrightarrow> q \<noteq> s \<longrightarrow>
-      pattern_variables p \<inter> fset (finite_pattern_variables yo) = {}"
-    and mats: "\<forall>q N. (q,N) \<in> schema_material_premises (decode_finite_schema S) \<longrightarrow>
-      material_variables N \<inter> fset (finite_pattern_variables yo) = {}"
-    and head: "head_apart keep Vh S (fset (finite_pattern_variables yo))"
-  shows "socket_discharged M S s keep Vp Vh"
-proof -
-  have C: "carried_variables S s Vp [] = fset (finite_pattern_variables yo)"
-    by (simp add: carried_variables_def premise_parts_def premise pv output_variables_def)
-  show ?thesis
-    by (rule socket_discharged_along[OF formed Vp premise pv prod cov C apart nomat _ _ mats head]) (use others in auto)
-qed
-
-lemma consumer_carrier_view_pattern:
-  "resolution_view_pattern (consumer_carrier_view V) c =
-    map_option (\<lambda>z. (Finite_Pattern_Pair (fst z) (snd z),Finite_Pattern_Payload [])) (resolution_view_pattern V c)"
-  by (cases V rule: prod_cases3)
-    (simp add: consumer_carrier_view_def resolution_view_pattern_def split: option.split)
-
-text \<open>A consumer holding the socket's output, with its fixed part apart from the carried variables, is a carrier.\<close>
-
-lemma consumer_carrier_step:
-  assumes at: "cs ! i = (k,consumer_carrier_view V,consumer_input V corr,(=))"
-    and V: "view_formed V" and sym: "symp corr" and cons: "consumer_discharged M e V corr"
-    and premise: "finite_relation_option (finite_schema_premises S) k = Some (e,p)"
-    and pv: "resolution_view_pattern V p = Some (ci,co)"
-    and ci: "fset (finite_pattern_variables ci) \<inter> carried_variables S s Vp cs = {}"
-    and co: "fset (finite_pattern_variables co) \<subseteq> carried_variables S s Vp (take i cs)"
-    and corr: "\<And>g g'. carried_correspond S s Vp c0 (take i cs) g g' \<Longrightarrow>
-      corr (evaluate_pattern g (decode_finite_pattern co)) (evaluate_pattern g' (decode_finite_pattern co))"
-  shows "carrier_step M S s Vp c0 cs i"
-proof -
-  have car: "carrier_discharged M e (consumer_carrier_view V) (consumer_input V corr) (=)"
-    by (rule consumer_discharged_carrier[OF V sym, THEN iffD1, OF cons])
-  have input: "consumer_input V corr (Pair_Term (evaluate_pattern g (decode_finite_pattern ci))
-      (evaluate_pattern g (decode_finite_pattern co))) (Pair_Term (evaluate_pattern g' (decode_finite_pattern ci))
-      (evaluate_pattern g' (decode_finite_pattern co)))"
-    if agree: "\<forall>v. v \<notin> carried_variables S s Vp cs \<longrightarrow> g v = g' v"
-      and c: "carried_correspond S s Vp c0 (take i cs) g g'" for g g'
-  proof -
-    have same: "evaluate_pattern g (decode_finite_pattern ci) = evaluate_pattern g' (decode_finite_pattern ci)"
-    proof (rule finite_evaluate_cong)
-      fix v assume v: "v |\<in>| finite_pattern_variables ci"
-      have "v \<notin> carried_variables S s Vp cs" using ci v by (metis IntI empty_iff)
-      then show "g v = g' v" using agree by blast
-    qed
-    have b: "resolution_view_term V (evaluate_pattern g' (decode_finite_pattern p)) =
-        Some (evaluate_pattern g' (decode_finite_pattern ci),evaluate_pattern g' (decode_finite_pattern co))"
-      by (rule resolution_view_pattern_evaluate[OF V pv])
-    show ?thesis unfolding consumer_input_def
-      by (rule exI[of _ "evaluate_pattern g (decode_finite_pattern ci)"],
-        rule exI[of _ "evaluate_pattern g (decode_finite_pattern co)"],
-        rule exI[of _ "evaluate_pattern g' (decode_finite_pattern co)"],
-        rule exI[of _ "evaluate_pattern g' (decode_finite_pattern p)"])
-        (use same corr[OF c] b in simp)
-  qed
-  have sub: "fset (finite_pattern_variables (Finite_Pattern_Pair ci co)) \<inter> carried_variables S s Vp cs \<subseteq>
-      carried_variables S s Vp (take i cs)"
-    using ci co by (simp add: Int_Un_distrib2 le_infI1)
-  have pv': "resolution_view_pattern (consumer_carrier_view V) p =
-      Some (Finite_Pattern_Pair ci co,Finite_Pattern_Payload [])"
-    using pv by (simp add: consumer_carrier_view_pattern)
-  have corr_all: "\<forall>g g'. (\<forall>v. v \<notin> carried_variables S s Vp cs \<longrightarrow> g v = g' v) \<longrightarrow>
-      carried_correspond S s Vp c0 (take i cs) g g' \<longrightarrow>
-      consumer_input V corr (evaluate_pattern g (decode_finite_pattern (Finite_Pattern_Pair ci co)))
-        (evaluate_pattern g' (decode_finite_pattern (Finite_Pattern_Pair ci co)))"
-  proof (intro allI impI)
-    fix g g' assume "\<forall>v. v \<notin> carried_variables S s Vp cs \<longrightarrow> g v = g' v"
-      and "carried_correspond S s Vp c0 (take i cs) g g'"
-    from input[OF this] show "consumer_input V corr (evaluate_pattern g (decode_finite_pattern (Finite_Pattern_Pair ci co)))
-        (evaluate_pattern g' (decode_finite_pattern (Finite_Pattern_Pair ci co)))" by simp
-  qed
-  have formed': "view_formed (consumer_carrier_view V)" using V by (simp add: consumer_carrier_view_formed)
-  have empty: "fset (finite_pattern_variables (Finite_Pattern_Payload [])) \<inter>
-      carried_variables S s Vp (take i cs) = {}"
-    by simp
-  show ?thesis
-    unfolding carrier_step_def at prod.case premise option.case pv'
-    by (intro conjI formed' car consumer_carrier_covered sub empty corr_all)
-qed
+lemmas artifact_citation_listed_simps = socket_listed_simps view_listed[OF lookup_view_def]
+  view_listed[OF inner_right_view_def] view_listed[OF outer_pair_view_def] view_listed[OF headed_fields_view_def]
+  view_listed[OF whole_view_def] lookup_view_formed outer_pair_view_formed headed_fields_view_formed whole_view_formed
+  consumer_input_def whole_view_term view_identity_term pair_view_some
 
 subsection \<open>12 inside 37: the stored artifact compared with the output\<close>
 
@@ -1081,20 +986,8 @@ qed
 
 theorem lookup_socket_discharged:
   "socket_discharged (positive_meaning artifact_lookup_system) lookup_socket_schema 2 False view_identity lookup_view"
-proof -
-  have premise: "finite_relation_option (finite_schema_premises lookup_socket_schema) 2 =
-      Some (12,Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable 3))"
-    by (simp add: finite_relation_option_def ffilter_finsert lookup_socket_schema_def)
-  have pv: "resolution_view_pattern view_identity (Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable 3)) =
-      Some (Finite_Variable 4,Finite_Variable 3)"
-    by (simp add: view_identity_pattern)
-  have head: "head_apart False lookup_view lookup_socket_schema (fset (finite_pattern_variables (Finite_Variable (3::nat))))"
-    by (simp add: head_apart_def lookup_socket_schema_def lookup_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_discharged_direct[OF meaning_answers_formed view_identity_formed premise pv lookup_identity_producer
-      output_covered_variable _ _ _ _ head])
-      (auto simp: lookup_socket_decoded artifact_lookup_schema_def)
-qed
+  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed lookup_identity_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]])
+    (simp add: artifact_citation_listed_simps lookup_socket_schema_def)
 
 subsection \<open>7 inside 12: the two admitted artifacts compared, 11 carrying the output\<close>
 
@@ -1132,35 +1025,9 @@ abbreviation identity_carriers :: "nat clause_carrier list" where
 
 theorem identity_socket_discharged:
   "socket_discharged (positive_meaning artifact_identity_system) identity_socket_schema 2 False view_identity view_identity"
-proof -
-  have premise: "finite_relation_option (finite_schema_premises identity_socket_schema) 2 =
-      Some (7,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1))"
-    by (simp add: finite_relation_option_def ffilter_finsert identity_socket_schema_def)
-  have premise1: "finite_relation_option (finite_schema_premises identity_socket_schema) 1 = Some (11,Finite_Variable 1)"
-    by (simp add: finite_relation_option_def ffilter_finsert identity_socket_schema_def)
-  have pv: "resolution_view_pattern view_identity (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable (1::nat))) =
-      Some (Finite_Variable 0,Finite_Variable 1)"
-    by (simp add: view_identity_pattern)
-  have pw: "resolution_view_pattern whole_view (Finite_Variable (1::nat)) = Some (Finite_Pattern_Payload [],Finite_Variable 1)"
-    by (simp add: resolution_view_pattern_def whole_view_def view_lookup_def)
-  have C0: "carried_variables identity_socket_schema 2 view_identity [] = {1}"
-    by (simp add: carried_variables_def premise_parts_def premise view_identity_pattern output_variables_def)
-  have C: "carried_variables identity_socket_schema 2 view_identity identity_carriers = {1}"
-    by (simp add: carried_variables_def premise_parts_def premise premise1[simplified] output_variables_def
-      consumer_carrier_view_def resolution_view_pattern_def whole_view_def view_lookup_def view_identity_def
-      identity_view_def)
-  have step: "carrier_step (positive_meaning artifact_identity_system) identity_socket_schema 2 view_identity
-      fields_correspondence identity_carriers 0"
-    by (rule consumer_carrier_step[OF _ whole_view_formed fields_correspondence_symp identity_admission_consumer
-      premise1 pw]) (simp_all add: C C0 carried_correspond_def output_corresponds_def premise_parts_def premise
-        view_identity_pattern)
-  have head: "head_apart False view_identity identity_socket_schema {1}"
-    by (simp add: head_apart_def identity_socket_schema_def view_identity_pattern)
-  show ?thesis
-    by (rule socket_discharged_along[OF meaning_answers_formed view_identity_formed premise pv identity_comparison_producer
-      output_covered_variable C _ _ _ _ _ head])
-      (use step in \<open>auto simp: identity_socket_decoded artifact_identity_schema_def\<close>)
-qed
+  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed identity_comparison_producer, where \<sigma> = "\<lambda>_. 1" and cs = "identity_carriers"]])
+    (simp add: artifact_citation_listed_simps identity_socket_schema_def
+      consumer_discharged_carrier[OF whole_view_formed fields_correspondence_symp, THEN iffD1, OF identity_admission_consumer])
 
 subsection \<open>6 inside 7: each field's bag comparison\<close>
 
@@ -1194,18 +1061,11 @@ theorem comparison_socket_discharged:
   shows "socket_discharged (positive_meaning artifact_comparison_system) comparison_socket_schema i False
     view_identity view_identity"
 proof -
-  have premise: "finite_relation_option (finite_schema_premises comparison_socket_schema) i =
-      Some (6,Finite_Pattern_Pair (Finite_Variable i) (Finite_Variable (i+4)))"
-    using i by (auto simp: finite_relation_option_def ffilter_finsert comparison_socket_schema_def)
-  have pv: "resolution_view_pattern view_identity (Finite_Pattern_Pair (Finite_Variable i) (Finite_Variable (i+4))) =
-      Some (Finite_Variable i,Finite_Variable (i+4))"
-    by (simp add: view_identity_pattern)
-  have head: "head_apart False view_identity comparison_socket_schema (fset (finite_pattern_variables (Finite_Variable (i+4))))"
-    using i by (auto simp: head_apart_def comparison_socket_schema_def view_identity_pattern)
-  show ?thesis
-    by (rule socket_discharged_direct[OF meaning_answers_formed view_identity_formed premise pv comparison_bag_producer
-      output_covered_variable _ _ _ _ head])
-      (use i in \<open>auto simp: comparison_socket_decoded artifact_comparison_schema_def\<close>)
+  have "i = 0 \<or> i = 1 \<or> i = 2 \<or> i = 3" using i by simp
+  then show ?thesis
+    apply (elim disjE)
+    apply (simp only:, rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed comparison_bag_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]], simp add: artifact_citation_listed_simps comparison_socket_schema_def)+
+    done
 qed
 
 subsection \<open>6 inside 29: each collected field's bag comparison\<close>
@@ -1242,19 +1102,11 @@ theorem headed_socket_discharged:
   shows "socket_discharged (positive_meaning headed_material_system) headed_socket_schema i False
     view_identity headed_fields_view"
 proof -
-  have premise: "finite_relation_option (finite_schema_premises headed_socket_schema) i =
-      Some (6,Finite_Pattern_Pair (Finite_Variable (i+3)) (Finite_Variable i))"
-    using i by (auto simp: finite_relation_option_def ffilter_finsert headed_socket_schema_def)
-  have pv: "resolution_view_pattern view_identity (Finite_Pattern_Pair (Finite_Variable (i+3)) (Finite_Variable i)) =
-      Some (Finite_Variable (i+3),Finite_Variable i)"
-    by (simp add: view_identity_pattern)
-  have head: "head_apart False headed_fields_view headed_socket_schema (fset (finite_pattern_variables (Finite_Variable i)))"
-    using i by (auto simp: head_apart_def headed_socket_schema_def headed_fields_view_def resolution_view_pattern_def
-      view_lookup_def)
-  show ?thesis
-    by (rule socket_discharged_direct[OF meaning_answers_formed view_identity_formed premise pv headed_bag_producer
-      output_covered_variable _ _ _ _ head])
-      (use i in \<open>auto simp: headed_socket_decoded headed_material_schema_def\<close>)
+  have "i = 5 \<or> i = 6 \<or> i = 7" using i by simp
+  then show ?thesis
+    apply (elim disjE)
+    apply (simp only:, rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed headed_bag_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]], simp add: artifact_citation_listed_simps headed_socket_schema_def)+
+    done
 qed
 
 subsection \<open>29 inside 32: a root's incidence rows, carried by 21 and 31\<close>
@@ -1328,45 +1180,6 @@ theorem family_rows_socket_discharged:
     headed_incidence_view view_identity"
 proof -
   let ?M = "positive_meaning family_admission_system"
-  let ?p = "Finite_Pattern_Pair (Finite_Variable (0::nat)) (Finite_Pattern_Pair (Finite_Variable 1)
-    (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload []))))"
-  let ?xi = "Finite_Pattern_Pair (Finite_Variable (0::nat)) (Finite_Pattern_Pair (Finite_Variable 1)
-    (Finite_Pattern_Pair (Finite_Pattern_Payload []) (Finite_Pattern_Payload [])))"
-  have premise: "finite_relation_option (finite_schema_premises family_rows_socket_schema) 0 = Some (29,?p)"
-    by (simp add: finite_relation_option_def ffilter_finsert family_rows_socket_schema_def)
-  have premise1: "finite_relation_option (finite_schema_premises family_rows_socket_schema) 1 = Some (21,Finite_Variable 2)"
-    by (simp add: finite_relation_option_def ffilter_finsert family_rows_socket_schema_def)
-  have premise2: "finite_relation_option (finite_schema_premises family_rows_socket_schema) 2 =
-      Some (31,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable 2))"
-    by (simp add: finite_relation_option_def ffilter_finsert family_rows_socket_schema_def)
-  have pv: "resolution_view_pattern headed_incidence_view ?p = Some (?xi,Finite_Variable 2)"
-    by (simp add: resolution_view_pattern_def headed_incidence_view_def view_lookup_def)
-  have pw: "resolution_view_pattern whole_view (Finite_Variable (2::nat)) = Some (Finite_Pattern_Payload [],Finite_Variable 2)"
-    by (simp add: resolution_view_pattern_def whole_view_def view_lookup_def)
-  have pi: "resolution_view_pattern view_identity
-      (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable (2::nat))) =
-      Some (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),Finite_Variable 2)"
-    by (simp add: view_identity_pattern)
-  have C0: "carried_variables family_rows_socket_schema 0 headed_incidence_view [] = {2}"
-    by (simp add: carried_variables_def premise_parts_def premise output_variables_def resolution_view_pattern_def
-      headed_incidence_view_def view_lookup_def)
-  have C1: "carried_variables family_rows_socket_schema 0 headed_incidence_view
-      [(1,consumer_carrier_view whole_view,consumer_input whole_view (given_correspondence 6),(=))] = {2}"
-    by (simp add: carried_variables_def premise_parts_def premise premise1[simplified] output_variables_def
-      consumer_carrier_view_def resolution_view_pattern_def headed_incidence_view_def whole_view_def view_lookup_def)
-  have C: "carried_variables family_rows_socket_schema 0 headed_incidence_view family_carriers = {2}"
-    by (simp add: carried_variables_def premise_parts_def premise premise1[simplified] premise2 output_variables_def
-      consumer_carrier_view_def resolution_view_pattern_def headed_incidence_view_def whole_view_def view_lookup_def
-      view_identity_def identity_view_def)
-  have cc0: "carried_correspond family_rows_socket_schema 0 headed_incidence_view c [] g g' \<longleftrightarrow> c (g 2) (g' 2)"
-    for c g g'
-    by (simp add: carried_correspond_def output_corresponds_def premise_parts_def premise resolution_view_pattern_def
-      headed_incidence_view_def view_lookup_def)
-  have cc1: "carried_correspond family_rows_socket_schema 0 headed_incidence_view c
-      [(1,consumer_carrier_view whole_view,consumer_input whole_view (given_correspondence 6),(=))] g g' \<longleftrightarrow> c (g 2) (g' 2)"
-    for c g g'
-    by (simp add: carried_correspond_def output_corresponds_def premise_parts_def premise premise1[simplified]
-      resolution_view_pattern_def headed_incidence_view_def view_lookup_def consumer_carrier_view_def whole_view_def)
   have producer: "producer_discharged ?M 29 headed_incidence_view [snd (snd headed_incidence_view)]
       (\<lambda>_. given_correspondence 6)"
     unfolding producer_discharged_site[OF family_admission_components(1)] by (rule headed_incidence_producer)
@@ -1374,23 +1187,12 @@ proof -
     using keyed_rows_consumer by (simp add: artifact_citation_correspondence_simps)
   have c31: "consumer_discharged ?M 31 view_identity (given_correspondence 6)"
     using sockets_rows_consumer by (simp add: artifact_citation_correspondence_simps)
-  have step0: "carrier_step ?M family_rows_socket_schema 0 headed_incidence_view (given_correspondence 6)
-      family_carriers 0"
-    by (rule consumer_carrier_step[OF _ whole_view_formed given_correspondence_symp c21 premise1 pw])
-      (simp_all add: C[simplified] C0 cc0)
-  have step1: "carrier_step ?M family_rows_socket_schema 0 headed_incidence_view (given_correspondence 6)
-      family_carriers 1"
-    by (rule consumer_carrier_step[OF _ view_identity_formed given_correspondence_symp c31 premise2 pi])
-      (simp_all add: C[simplified] C1[simplified] cc1[simplified])
-  have steps: "\<forall>i<length family_carriers. carrier_step ?M family_rows_socket_schema 0 headed_incidence_view
-      (given_correspondence 6) family_carriers i"
-    using step0 step1 by (auto simp: less_Suc_eq)
-  have head: "head_apart False view_identity family_rows_socket_schema {2}"
-    by (simp add: head_apart_def family_rows_socket_schema_def view_identity_pattern)
   show ?thesis
-    by (rule socket_discharged_along[OF meaning_answers_formed headed_incidence_view_formed premise pv producer
-      output_covered_variable C _ _ steps _ _ head])
-      (auto simp: family_rows_socket_decoded family_admission_schema_def)
+    by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed headed_incidence_view_formed
+      producer, where \<sigma> = "\<lambda>_. 2" and cs = family_carriers]])
+      (simp add: artifact_citation_listed_simps family_rows_socket_schema_def view_listed[OF headed_incidence_view_def]
+        consumer_discharged_carrier[OF whole_view_formed given_correspondence_symp, THEN iffD1, OF c21]
+        consumer_discharged_carrier[OF view_identity_formed given_correspondence_symp, THEN iffD1, OF c31])
 qed
 
 subsection \<open>39 inside 40: the resolved use and target\<close>
@@ -1412,41 +1214,11 @@ lemma interpretation_resolution_producer:
   unfolding producer_discharged_site[OF citation_interpretation_resolution]
   using resolution_producer_discharged by (simp add: artifact_citation_correspondence_simps)
 
-lemma outer_pair_covered:
-  assumes vw: "v \<noteq> w"
-  shows "output_covered M d outer_pair_view (Finite_Pattern_Pair (Finite_Variable v) (Finite_Variable w))"
-  unfolding output_covered_def outer_pair_view_term
-proof (intro allI impI)
-  fix t u y assume "(d,t) \<in> M" and "\<exists>a b c p q. t = Pair_Term (Pair_Term a b) (Pair_Term c (Pair_Term p q)) \<and>
-      u = Pair_Term (Pair_Term a b) c \<and> y = Pair_Term p q"
-  then obtain p q where y: "y = Pair_Term p q" by blast
-  show "\<exists>g. evaluate_pattern g (decode_finite_pattern (Finite_Pattern_Pair (Finite_Variable v) (Finite_Variable w))) = y"
-    using vw y by (intro exI[of _ "\<lambda>n. if n = v then p else q"]) simp
-qed
-
 theorem interpretation_socket_discharged:
   "socket_discharged (positive_meaning citation_interpretation_system) interpretation_socket_schema 0 False
     outer_pair_view inner_right_view"
-proof -
-  have premise: "finite_relation_option (finite_schema_premises interpretation_socket_schema) 0 =
-      Some (39,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1))
-        (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable 3))))"
-    by (simp add: finite_relation_option_def ffilter_finsert interpretation_socket_schema_def)
-  have pv: "resolution_view_pattern outer_pair_view (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0)
-      (Finite_Variable 1)) (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Pattern_Pair (Finite_Variable 4)
-        (Finite_Variable (3::nat))))) =
-      Some (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable 2),
-        Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable 3))"
-    by (simp add: resolution_view_pattern_def outer_pair_view_def view_lookup_def)
-  have head: "head_apart False inner_right_view interpretation_socket_schema
-      (fset (finite_pattern_variables (Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable (3::nat)))))"
-    by (simp add: head_apart_def interpretation_socket_schema_def inner_right_view_def resolution_view_pattern_def
-      view_lookup_def)
-  show ?thesis
-    by (rule socket_discharged_direct[OF meaning_answers_formed outer_pair_view_formed premise pv
-      interpretation_resolution_producer outer_pair_covered _ _ _ _ head])
-      (auto simp: interpretation_socket_decoded citation_interpretation_schema_def)
-qed
+  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed outer_pair_view_formed interpretation_resolution_producer, where \<sigma> = "\<lambda>v. if v = 4 then 3 else 4" and cs = "[]"]])
+    (simp add: artifact_citation_listed_simps interpretation_socket_schema_def)
 
 subsection \<open>6 inside 36's external clause: the interior's bag of the slot and the target\<close>
 
@@ -1482,30 +1254,8 @@ lemma admission_bag_producer:
 theorem external_socket_discharged:
   "socket_discharged (positive_meaning citation_admission_system) external_socket_schema 5 False
     view_identity inner_right_view"
-proof -
-  let ?xi = "Finite_Pattern_Pair (Finite_Variable (1::nat)) (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Pattern_Payload []))"
-  have premise: "finite_relation_option (finite_schema_premises external_socket_schema) 5 =
-      Some (6,Finite_Pattern_Pair ?xi (Finite_Variable 5))"
-    by (simp add: finite_relation_option_def ffilter_finsert external_socket_schema_def)
-  have pv: "resolution_view_pattern view_identity (Finite_Pattern_Pair ?xi (Finite_Variable 5)) = Some (?xi,Finite_Variable 5)"
-    by (simp add: view_identity_pattern)
-  have head: "head_apart False inner_right_view external_socket_schema (fset (finite_pattern_variables (Finite_Variable (5::nat))))"
-    by (simp add: head_apart_def external_socket_schema_def inner_right_view_def resolution_view_pattern_def view_lookup_def)
-  have apart: "fset (finite_pattern_variables ?xi) \<inter> fset (finite_pattern_variables (Finite_Variable (5::nat))) = {}"
-    by simp
-  have nomat: "\<forall>N. (5,N) \<notin> schema_material_premises (decode_finite_schema external_socket_schema)"
-    by (simp add: external_socket_decoded citation_external_schema_def)
-  have others: "\<forall>q e p. (q,e,p) \<in> schema_premises (decode_finite_schema external_socket_schema) \<longrightarrow> q \<noteq> 5 \<longrightarrow>
-      pattern_variables p \<inter> fset (finite_pattern_variables (Finite_Variable (5::nat))) = {}"
-    by (simp add: external_socket_decoded citation_external_schema_def)
-  have mats: "\<forall>q N. (q,N) \<in> schema_material_premises (decode_finite_schema external_socket_schema) \<longrightarrow>
-      material_variables N \<inter> fset (finite_pattern_variables (Finite_Variable (5::nat))) = {}"
-    by (simp add: external_socket_decoded citation_external_schema_def)
-  have cov: "output_covered (positive_meaning citation_admission_system) 6 view_identity (Finite_Variable (5::nat))"
-    by (rule output_covered_variable)
-  from meaning_answers_formed view_identity_formed premise pv admission_bag_producer cov apart nomat others mats head
-  show ?thesis by (rule socket_discharged_direct)
-qed
+  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed admission_bag_producer, where \<sigma> = "\<lambda>_. 1" and cs = "[]"]])
+    (simp add: artifact_citation_listed_simps external_socket_schema_def)
 
 subsection \<open>32 inside 54: the binder family's rows, carried by 53 to the binders\<close>
 
@@ -1639,35 +1389,8 @@ abbreviation binder_carriers :: "nat clause_carrier list" where
 
 theorem binder_socket_discharged:
   "socket_discharged (positive_meaning binder_admission_system) binder_socket_schema 1 False view_identity view_identity"
-proof -
-  have premise: "finite_relation_option (finite_schema_premises binder_socket_schema) 1 =
-      Some (32,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable 3))"
-    by (simp add: finite_relation_option_def ffilter_finsert binder_socket_schema_def)
-  have premise0: "finite_relation_option (finite_schema_premises binder_socket_schema) 0 =
-      Some (53,Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 3))"
-    by (simp add: finite_relation_option_def ffilter_finsert binder_socket_schema_def)
-  have pv: "resolution_view_pattern view_identity
-      (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable (3::nat))) =
-      Some (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),Finite_Variable 3)"
-    by (simp add: view_identity_pattern)
-  have C0: "carried_variables binder_socket_schema 1 view_identity [] = {3}"
-    by (simp add: carried_variables_def premise_parts_def premise[simplified] view_identity_pattern output_variables_def)
-  have C: "carried_variables binder_socket_schema 1 view_identity binder_carriers = {2,3}"
-    by (auto simp: carried_variables_def premise_parts_def premise[simplified] premise0 view_identity_pattern
-      view_swap_pattern output_variables_def)
-  have step: "carrier_step (positive_meaning binder_admission_system) binder_socket_schema 1 view_identity
-      row_bag_transport binder_carriers 0"
-    unfolding carrier_step_def
-    by (simp add: premise0 view_swap_pattern view_swap_formed diagonal_rows_carrier output_covered_variable
-      C[simplified] C0[simplified] carried_correspond_def output_corresponds_def premise_parts_def premise[simplified]
-      view_identity_pattern)
-  have head: "head_apart False view_identity binder_socket_schema {2,3}"
-    by (simp add: head_apart_def binder_socket_schema_def view_identity_pattern)
-  show ?thesis
-    by (rule socket_discharged_along[OF meaning_answers_formed view_identity_formed premise pv binder_family_producer
-      output_covered_variable C _ _ _ _ _ head])
-      (use step in \<open>auto simp: binder_socket_decoded binder_admission_schema_def\<close>)
-qed
+  by (rule socket_discharged_carried[OF socket_carried_listed[OF meaning_answers_formed view_identity_formed binder_family_producer, where \<sigma> = "\<lambda>_. 1" and cs = "binder_carriers"]])
+    (simp add: artifact_citation_listed_simps binder_socket_schema_def diagonal_rows_carrier)
 
 section \<open>The declarations, each at its notion's system\<close>
 

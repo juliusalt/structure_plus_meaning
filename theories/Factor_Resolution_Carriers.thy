@@ -1125,7 +1125,7 @@ lemma view_listed:
 lemmas socket_listed_simps = socket_listed_def carrier_listed_def carried_variables_def premise_parts_def
   output_variables_def carried_correspond_def output_corresponds_def finite_relation_option_def ffilter_finsert head_apart_def
   resolution_view_pattern_def view_lookup_def view_listed[OF consumer_carrier_view_def] view_listed[OF join_view_def]
-  view_listed[OF view_identity_def[unfolded identity_view_def]] consumer_carrier_view_formed join_view_formed
-  view_identity_formed output_covered_variable consumer_carrier_covered decode_finite_schema_def map_relation_values_def
+  view_listed[OF view_identity_def[unfolded identity_view_def]] view_listed[OF view_swap_def[unfolded swapped_view_def]]
+  consumer_carrier_view_formed join_view_formed view_identity_formed view_swap_formed output_covered_variable consumer_carrier_covered decode_finite_schema_def map_relation_values_def
 
 end

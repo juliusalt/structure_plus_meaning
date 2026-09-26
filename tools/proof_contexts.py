@@ -285,9 +285,9 @@ def accepted_parent(project):
 
 
 def _verify_session_payload(stored, session, stored_heap):
-    import sqlite3
+    from proof_timings import read_only
     if not stored_heap:
-        with sqlite3.connect('file:' + stored['database'] + '?mode=ro', uri=True) as connection:
+        with read_only(Path(stored['database'])) as connection:
             rows = connection.execute('select session_name, return_code, output_heap from isabelle_session_info').fetchall()
         assert rows == [(session, 0, '')], 'Database does not record a successful build without a heap.'
         return
@@ -307,7 +307,7 @@ def _verify_session_payload(stored, session, stored_heap):
             digest.update(block)
             remaining -= len(block)
     assert digest.hexdigest() == expected, 'Stored heap payload is corrupt.'
-    with sqlite3.connect('file:' + stored['database'] + '?mode=ro', uri=True) as connection:
+    with read_only(Path(stored['database'])) as connection:
         rows = connection.execute('select session_name, return_code, output_heap from isabelle_session_info').fetchall()
     assert rows == [(session, 0, expected + ' ' + session + '\n')], 'Heap does not match the successful build.'
 

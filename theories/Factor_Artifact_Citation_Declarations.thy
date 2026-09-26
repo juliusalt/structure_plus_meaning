@@ -18,13 +18,9 @@ section \<open>The views\<close>
 
 text \<open>
   Each view is a linear pattern of its site's argument and a pair over exactly its variables
-  (@{const view_formed}). A view's term function is characterized by the shape it matches.
+  (@{const view_formed}). A view's term function is characterized by the shape it matches, each characterization the
+  instance of @{thm [source] resolution_view_term_values} at the view's variables.
 \<close>
-
-lemma view_match_pair_some:
-  "view_match (Finite_Pattern_Pair p q) t = Some l \<longleftrightarrow>
-    (\<exists>a b l1 l2. t = Pair_Term a b \<and> view_match p a = Some l1 \<and> view_match q b = Some l2 \<and> l = l1 @ l2)"
-  by (cases t) (auto split: option.splits)
 
 text \<open>37's view: the environment and use are its input, the artifact its output.\<close>
 
@@ -32,13 +28,14 @@ definition lookup_view :: "nat resolution_view" where
   "lookup_view = (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)),
     Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),Finite_Variable 2)"
 
+lemma lookup_view_formed: "view_formed lookup_view"
+  by (auto simp: view_formed_def lookup_view_def fset_eq_iff)
+
 lemma lookup_view_term:
   "resolution_view_term lookup_view t = Some (x,y) \<longleftrightarrow>
     (\<exists>e u. t = Pair_Term e (Pair_Term u y) \<and> x = Pair_Term e u)"
-  by (auto simp: resolution_view_term_def lookup_view_def view_match_pair_some view_lookup_def split: option.splits)
-
-lemma lookup_view_formed: "view_formed lookup_view"
-  by (auto simp: view_formed_def lookup_view_def fset_eq_iff)
+  using resolution_view_term_values[OF lookup_view_formed[unfolded lookup_view_def], of 3 t x y]
+  by (auto simp: lookup_view_def view_values_simps)
 
 text \<open>36's and 40's view: the argument's first pair and its second pair's left are the input, its last field the output.\<close>
 
@@ -47,13 +44,14 @@ definition inner_right_view :: "nat resolution_view" where
       (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 3)),
     Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable 2),Finite_Variable 3)"
 
+lemma inner_right_view_formed: "view_formed inner_right_view"
+  by (auto simp: view_formed_def inner_right_view_def fset_eq_iff)
+
 lemma inner_right_view_term:
   "resolution_view_term inner_right_view t = Some (x,y) \<longleftrightarrow>
     (\<exists>a b c. t = Pair_Term (Pair_Term a b) (Pair_Term c y) \<and> x = Pair_Term (Pair_Term a b) c)"
-  by (auto simp: resolution_view_term_def inner_right_view_def view_match_pair_some view_lookup_def split: option.splits)
-
-lemma inner_right_view_formed: "view_formed inner_right_view"
-  by (auto simp: view_formed_def inner_right_view_def fset_eq_iff)
+  using resolution_view_term_values[OF inner_right_view_formed[unfolded inner_right_view_def], of 4 t x y]
+  by (auto simp: inner_right_view_def view_values_simps)
 
 text \<open>39's and 42's view: the last two fields are the output, 42 naming each a hole.\<close>
 
@@ -66,20 +64,21 @@ definition outer_pair_view :: "nat resolution_view" where
 definition outer_pair_holes :: "nat finite_term_pattern list" where
   "outer_pair_holes = [Finite_Variable 3,Finite_Variable 4]"
 
+lemma outer_pair_view_formed: "view_formed outer_pair_view"
+  by (auto simp: view_formed_def outer_pair_view_def fset_eq_iff)
+
 lemma outer_pair_view_term:
   "resolution_view_term outer_pair_view t = Some (x,y) \<longleftrightarrow>
     (\<exists>a b c v w. t = Pair_Term (Pair_Term a b) (Pair_Term c (Pair_Term v w)) \<and> x = Pair_Term (Pair_Term a b) c \<and>
       y = Pair_Term v w)"
-  by (auto simp: resolution_view_term_def outer_pair_view_def view_match_pair_some view_lookup_def split: option.splits)
+  using resolution_view_term_values[OF outer_pair_view_formed[unfolded outer_pair_view_def], of 5 t x y]
+  by (auto simp: outer_pair_view_def view_values_simps)
 
 lemma outer_pair_view_holes:
   "resolution_view_holes outer_pair_view outer_pair_holes t = Some w \<longleftrightarrow>
     (\<exists>a b c v z. t = Pair_Term (Pair_Term a b) (Pair_Term c (Pair_Term v z)) \<and> w = [v,z])"
   by (auto simp: resolution_view_holes_def outer_pair_view_def outer_pair_holes_def view_match_pair_some
     view_lookup_def split: option.splits)
-
-lemma outer_pair_view_formed: "view_formed outer_pair_view"
-  by (auto simp: view_formed_def outer_pair_view_def fset_eq_iff)
 
 text \<open>29's field view: the artifact and root are the input, the three collected fields its holes.\<close>
 
@@ -92,19 +91,20 @@ definition headed_fields_view :: "nat resolution_view" where
 definition headed_fields_holes :: "nat finite_term_pattern list" where
   "headed_fields_holes = [Finite_Variable 2,Finite_Variable 3,Finite_Variable 4]"
 
+lemma headed_fields_view_formed: "view_formed headed_fields_view"
+  by (auto simp: view_formed_def headed_fields_view_def fset_eq_iff)
+
 lemma headed_fields_view_term:
   "resolution_view_term headed_fields_view t = Some (x,y) \<longleftrightarrow>
     (\<exists>a r e b f. t = headed_material_argument a r e b f \<and> x = Pair_Term a r \<and> y = Pair_Term e (Pair_Term b f))"
-  by (auto simp: resolution_view_term_def headed_fields_view_def view_match_pair_some view_lookup_def split: option.splits)
+  using resolution_view_term_values[OF headed_fields_view_formed[unfolded headed_fields_view_def], of 5 t x y]
+  by (auto simp: headed_fields_view_def view_values_simps)
 
 lemma headed_fields_view_holes:
   "resolution_view_holes headed_fields_view headed_fields_holes t = Some w \<longleftrightarrow>
     (\<exists>a r e b f. t = headed_material_argument a r e b f \<and> w = [e,b,f])"
   by (auto simp: resolution_view_holes_def headed_fields_view_def headed_fields_holes_def view_match_pair_some
     view_lookup_def split: option.splits)
-
-lemma headed_fields_view_formed: "view_formed headed_fields_view"
-  by (auto simp: view_formed_def headed_fields_view_def fset_eq_iff)
 
 section \<open>The classes at the producers' outputs\<close>
 
@@ -522,7 +522,7 @@ text \<open>
 lemma given_correspondence_sym:
   assumes "given_correspondence d y y'"
   shows "given_correspondence d y' y"
-  using assms by (auto simp: given_correspondence_def presentation_transport_def split: if_splits)
+  using assms by (auto simp: given_correspondence_def presentation_transport_reverse[of _ _ y' y] split: if_splits)
 
 lemma fields_correspondence_sym:
   assumes "fields_correspondence y y'"
@@ -558,25 +558,26 @@ definition rooted_artifact_view :: "nat resolution_view" where
   "rooted_artifact_view = (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1))
       (Finite_Variable 2),Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2),Finite_Variable 0)"
 
+lemma rooted_artifact_view_formed: "view_formed rooted_artifact_view"
+  by (auto simp: view_formed_def rooted_artifact_view_def fset_eq_iff)
+
 lemma rooted_artifact_view_term:
   "resolution_view_term rooted_artifact_view t = Some (x,y) \<longleftrightarrow>
     (\<exists>k m. t = Pair_Term (Pair_Term y k) m \<and> x = Pair_Term k m)"
-  by (auto simp: resolution_view_term_def rooted_artifact_view_def view_match_pair_some view_lookup_def
-    split: option.splits)
-
-lemma rooted_artifact_view_formed: "view_formed rooted_artifact_view"
-  by (auto simp: view_formed_def rooted_artifact_view_def fset_eq_iff)
+  using resolution_view_term_values[OF rooted_artifact_view_formed[unfolded rooted_artifact_view_def], of 3 t x y]
+  by (auto simp: rooted_artifact_view_def view_values_simps)
 
 text \<open>The whole argument: 11's and 21's argument is the output they hold.\<close>
 
 definition whole_view :: "nat resolution_view" where
   "whole_view = (Finite_Variable 0,Finite_Pattern_Payload [],Finite_Variable 0)"
 
-lemma whole_view_term: "resolution_view_term whole_view t = Some (x,y) \<longleftrightarrow> x = Payload_Term [] \<and> y = t"
-  by (auto simp: resolution_view_term_def whole_view_def view_lookup_def)
-
 lemma whole_view_formed: "view_formed whole_view"
   by (simp add: view_formed_def whole_view_def)
+
+lemma whole_view_term: "resolution_view_term whole_view t = Some (x,y) \<longleftrightarrow> x = Payload_Term [] \<and> y = t"
+  using resolution_view_term_values[OF whole_view_formed[unfolded whole_view_def], of "Suc 0" t x y]
+  by (auto simp: whole_view_def view_values_simps)
 
 text \<open>41's citation, the left of its argument's second pair.\<close>
 
@@ -586,14 +587,14 @@ definition citation_field_view :: "nat resolution_view" where
     Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable 3),
     Finite_Variable 2)"
 
+lemma citation_field_view_formed: "view_formed citation_field_view"
+  by (auto simp: view_formed_def citation_field_view_def fset_eq_iff)
+
 lemma citation_field_view_term:
   "resolution_view_term citation_field_view t = Some (x,y) \<longleftrightarrow>
     (\<exists>a b d. t = Pair_Term (Pair_Term a b) (Pair_Term y d) \<and> x = Pair_Term (Pair_Term a b) d)"
-  by (auto simp: resolution_view_term_def citation_field_view_def view_match_pair_some view_lookup_def
-    split: option.splits)
-
-lemma citation_field_view_formed: "view_formed citation_field_view"
-  by (auto simp: view_formed_def citation_field_view_def fset_eq_iff)
+  using resolution_view_term_values[OF citation_field_view_formed[unfolded citation_field_view_def], of 4 t x y]
+  by (auto simp: citation_field_view_def view_values_simps)
 
 text \<open>48's second input, the middle of its three fields.\<close>
 
@@ -601,12 +602,13 @@ definition middle_view :: "nat resolution_view" where
   "middle_view = (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)),
     Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 2),Finite_Variable 1)"
 
-lemma middle_view_term:
-  "resolution_view_term middle_view t = Some (x,y) \<longleftrightarrow> (\<exists>a z. t = Pair_Term a (Pair_Term y z) \<and> x = Pair_Term a z)"
-  by (auto simp: resolution_view_term_def middle_view_def view_match_pair_some view_lookup_def split: option.splits)
-
 lemma middle_view_formed: "view_formed middle_view"
   by (auto simp: view_formed_def middle_view_def fset_eq_iff)
+
+lemma middle_view_term:
+  "resolution_view_term middle_view t = Some (x,y) \<longleftrightarrow> (\<exists>a z. t = Pair_Term a (Pair_Term y z) \<and> x = Pair_Term a z)"
+  using resolution_view_term_values[OF middle_view_formed[unfolded middle_view_def], of 3 t x y]
+  by (auto simp: middle_view_def view_values_simps)
 
 text \<open>55's scope, the left of the pair beside the root in its argument.\<close>
 
@@ -618,14 +620,15 @@ definition scope_view :: "nat resolution_view" where
       (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable 5))),
     Finite_Variable 3)"
 
+lemma scope_view_formed: "view_formed scope_view"
+  by (auto simp: view_formed_def scope_view_def fset_eq_iff)
+
 lemma scope_view_term:
   "resolution_view_term scope_view t = Some (x,y) \<longleftrightarrow>
     (\<exists>e u r b q. t = Pair_Term (Pair_Term e u) (Pair_Term r (Pair_Term (Pair_Term y b) q)) \<and>
       x = Pair_Term (Pair_Term e u) (Pair_Term r (Pair_Term b q)))"
-  by (auto simp: resolution_view_term_def scope_view_def view_match_pair_some view_lookup_def split: option.splits)
-
-lemma scope_view_formed: "view_formed scope_view"
-  by (auto simp: view_formed_def scope_view_def fset_eq_iff)
+  using resolution_view_term_values[OF scope_view_formed[unfolded scope_view_def], of 6 t x y]
+  by (auto simp: scope_view_def view_values_simps)
 
 subsection \<open>37's artifact held invariantly\<close>
 
@@ -927,7 +930,6 @@ text \<open>
   program's own.
 \<close>
 
-
 lemma artifact_citation_correspondence_simps:
   "artifact_citation_correspondence 37 = (\<lambda>_. given_correspondence 10)"
   "artifact_citation_correspondence 12 = (\<lambda>_. given_correspondence 10)"
@@ -989,7 +991,6 @@ lemma consumer_carrier_view_pattern:
     map_option (\<lambda>z. (Finite_Pattern_Pair (fst z) (snd z),Finite_Pattern_Payload [])) (resolution_view_pattern V c)"
   by (cases V rule: prod_cases3)
     (simp add: consumer_carrier_view_def resolution_view_pattern_def split: option.split)
-
 
 text \<open>A consumer holding the socket's output, with its fixed part apart from the carried variables, is a carrier.\<close>
 
@@ -1274,14 +1275,14 @@ definition headed_incidence_view :: "nat resolution_view" where
     Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1)
       (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Variable 4))),Finite_Variable 2)"
 
+lemma headed_incidence_view_formed: "view_formed headed_incidence_view"
+  by (auto simp: view_formed_def headed_incidence_view_def fset_eq_iff)
+
 lemma headed_incidence_view_term:
   "resolution_view_term headed_incidence_view t = Some (x,y) \<longleftrightarrow>
     (\<exists>a r b f. t = headed_material_argument a r y b f \<and> x = Pair_Term a (Pair_Term r (Pair_Term b f)))"
-  by (auto simp: resolution_view_term_def headed_incidence_view_def view_match_pair_some view_lookup_def
-    split: option.splits)
-
-lemma headed_incidence_view_formed: "view_formed headed_incidence_view"
-  by (auto simp: view_formed_def headed_incidence_view_def fset_eq_iff)
+  using resolution_view_term_values[OF headed_incidence_view_formed[unfolded headed_incidence_view_def], of 5 t x y]
+  by (auto simp: headed_incidence_view_def view_values_simps)
 
 lemma headed_incidence_producer:
   "producer_discharged (positive_meaning headed_material_system) 29 headed_incidence_view
@@ -1395,49 +1396,6 @@ proof -
     by (rule socket_discharged_along[OF meaning_answers_formed headed_incidence_view_formed premise pv producer
       output_covered_variable C _ _ steps _ _ head])
       (auto simp: family_rows_socket_decoded family_admission_schema_def)
-qed
-
-subsection \<open>36 inside 42: the read artifact's citation interior\<close>
-
-definition reading_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
-  "reading_socket_schema = \<lparr>finite_schema_conclusion = Finite_Pattern_Pair
-      (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1))
-      (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Variable 4))),
-    finite_schema_premises = {|(0,37,Finite_Pattern_Pair (Finite_Variable 0)
-        (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 5))),
-      (1,36,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 5) (Finite_Variable 2))
-        (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Variable 4)))|},
-    finite_schema_materials = {||}\<rparr>"
-
-lemma reading_socket_decoded: "decode_finite_schema reading_socket_schema = citation_reading_schema"
-  by (simp add: reading_socket_schema_def decode_finite_schema_def decode_finite_call_pattern_def
-    map_relation_values_def citation_reading_schema_def)
-
-lemma reading_admission_producer:
-  "producer_discharged (positive_meaning citation_reading_system) 36 inner_right_view
-    [snd (snd inner_right_view)] (\<lambda>_. given_correspondence 6)"
-  unfolding producer_discharged_site[OF citation_reading_components(1)]
-  using admission_producer_discharged by (simp add: artifact_citation_correspondence_simps)
-
-theorem reading_socket_discharged:
-  "socket_discharged (positive_meaning citation_reading_system) reading_socket_schema 1 False
-    inner_right_view outer_pair_view"
-proof -
-  have premise: "finite_relation_option (finite_schema_premises reading_socket_schema) 1 =
-      Some (36,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 5) (Finite_Variable 2))
-        (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Variable 4)))"
-    by (simp add: finite_relation_option_def ffilter_finsert reading_socket_schema_def)
-  have pv: "resolution_view_pattern inner_right_view (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 5)
-      (Finite_Variable 2)) (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Variable (4::nat)))) =
-      Some (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 5) (Finite_Variable 2)) (Finite_Variable 3),
-        Finite_Variable 4)"
-    by (simp add: resolution_view_pattern_def inner_right_view_def view_lookup_def)
-  have head: "head_apart False outer_pair_view reading_socket_schema (fset (finite_pattern_variables (Finite_Variable (4::nat))))"
-    by (simp add: head_apart_def reading_socket_schema_def outer_pair_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_discharged_direct[OF meaning_answers_formed inner_right_view_formed premise pv reading_admission_producer
-      output_covered_variable _ _ _ _ head])
-      (auto simp: reading_socket_decoded citation_reading_schema_def)
 qed
 
 subsection \<open>39 inside 40: the resolved use and target\<close>
@@ -1569,7 +1527,7 @@ lemma list_all2_formed_terms:
   by (induction xs arbitrary: ps) (auto simp: list_all2_Cons1)
 
 abbreviation formed_bag_presents :: "factor_term multiset \<Rightarrow> factor_term \<Rightarrow> bool" where
-  "formed_bag_presents \<equiv> data_bag_presents (\<lambda>x p. term_formed x \<and> p = x)"
+  "formed_bag_presents \<equiv> data_bag_presents formed_term_presents"
 
 lemma formed_bag_presents_terms:
   "formed_bag_presents N t \<longleftrightarrow>
@@ -1775,7 +1733,7 @@ definition admission_declarations :: "(nat,nat,nat) resolution_declarations" whe
 
 definition reading_declarations :: "(nat,nat,nat) resolution_declarations" where
   "reading_declarations = \<lparr>declared_producers = {|(42,outer_pair_view,outer_pair_holes)|}, declared_consumers = {||},
-    declared_sockets = {|(42,reading_socket_schema,1,False,inner_right_view,outer_pair_view)|}\<rparr>"
+    declared_sockets = {||}\<rparr>"
 
 definition location_declarations :: "(nat,nat,nat) resolution_declarations" where
   "location_declarations = \<lparr>declared_producers = {||}, declared_consumers = {|(42,41,citation_field_view,0)|},
@@ -1873,7 +1831,7 @@ theorem admission_declarations_discharged:
 theorem reading_declarations_discharged:
   "declarations_discharged (positive_meaning citation_reading_system) reading_declarations
     artifact_citation_correspondence"
-  using reading_producer_discharged reading_socket_discharged
+  using reading_producer_discharged
   by (simp add: discharged_unfold reading_declarations_def)
 
 theorem location_declarations_discharged:

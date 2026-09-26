@@ -17157,6 +17157,15 @@ the kinds (a)–(c) below:
 | 48 data union | zs in (xs,(ys,zs)) | every list with the union's set: every order and every repetition, infinitely many | 50.2/7, 55.2/7, 57.0/8, 60.1/4 → 49; 55.2/8, 60.1/5, 63.1/2, 63.2/2 → 1; each also to its clause's head (at 65.0/5 a check, 54 giving its output) | unbounded at every nonempty union | (c): a registration at 48.0's variable x2, narrowed sockets at its eight uses |
 | 59 row values (and the carriers 51, 53, 46, 63, 584, 586, 5) | its value list, the image of its rows | the image of its input's class | 61.0/3 (34's ports: one presentation); 71, 75, 505 → 70, 74, 504; 73, 82 → 51 → 47, 5; 79 → 51, 78 → head | as its input | (b) a carrier: nothing the search reads; it discharges the sockets its clauses hold |
 
+[Corrected by task 726 (review 604, follow-up 1): 36's free socket at 42.0/1 is dropped with its discharge. At
+`inner_right_view` its input holds 42's citation hole, a variable of 42's head output at `outer_pair_view`; R5's socket
+test commits a socket only with its viewed input ground (`finite_socket_commitment`) and a free socket only where the
+parent's call output is a variant of the head output (`finite_socket_free`, `finite_parent_output`), and each excludes
+the other, so no search commits it. 36 is searched plainly inside a committed 42: at the given at most two answers, its
+interior's one or two addresses. A two-hole view is revisited only if R7's measurement (#542) shows 42's calls
+compounding. Every other free socket of #601's, #603's and #607's records was checked against the same pattern: none
+holds a variable of its parent's head output in its viewed input.]
+
 Not presentation-free: 34's ports and endpoints and 44's located destination (determined by their contracts); 81's and
 83's enumerations (each answer a different clause or member, not another presentation); 5 at a keyed table (one
 occurrence). Invariant consumers named above: 1, 11, 21, 29, 31, 32, 34, 35, 36, 45, 47, 48 at its inputs, 49, 54 at its

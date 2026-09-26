@@ -81,6 +81,8 @@ def main():
         complete.append({**command, "theory": name, "line": line, "source_line": text})
     missing = [name for name in args.theory if name not in texts]
     assert not missing, "The session checked no theory named " + ", ".join(missing) + "."
+    if args.theory:
+        complete = [row for row in complete if row["theory"] in args.theory]
     database = args.database.resolve()
     result = {"database": str(database), "database_sha256": hashlib.sha256(database.read_bytes()).hexdigest(),
               "sources": {name: hashlib.sha256(texts[name].encode()).hexdigest()

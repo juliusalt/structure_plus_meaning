@@ -53,25 +53,53 @@ section \<open>The narrowed commitment\<close>
 
 text \<open>
   The productions a call goal meets: at a declared socket whose site, clause and premise are the goal's parent node's
-  and the goal's own socket, a declared production, with the socket's premise view. The narrowed commitment produces
-  where exactly one is met.
+  and the goal's own socket, and at whose views the framed test of the record's truncation commits the goal at some
+  frame choice (the socket disjunct, never a declared direct producer alone), a declared production, with the socket's
+  premise view. The goal's input at that view is then ground (@{text finite_socket_productions_ground}). The narrowed
+  commitment produces where exactly one is met.
 \<close>
 
 definition finite_socket_productions ::
-    "('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow>
+    "('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> 's list option \<Rightarrow>
+      ('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_goal \<Rightarrow>
       (nat resolution_view \<times> ('a,'s,'d,'v) collection_registration) fset" where
-  "finite_socket_productions D st g = (case g of
+  "finite_socket_productions D \<Phi> F st g = (case g of
       Resolution_Call_Goal q r e p \<Rightarrow>
         (\<lambda>(e',S,s,keep,Vp,Vh). (Vp,the (declared_production D e' S s))) |`|
           ffilter (\<lambda>(e',S,s,keep,Vp,Vh). q \<noteq> [] \<and> s = last q \<and> declared_production D e' S s \<noteq> None \<and>
             fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
-              resolution_node_site nd = e' \<and> resolution_node_schema nd = S)) (declared_sockets D)
+              resolution_node_site nd = e' \<and> resolution_node_schema nd = S) \<and>
+            fBex (finite_frame_choices \<Phi>) (\<lambda>ch.
+              finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g \<and>
+              finite_call_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g)) (declared_sockets D)
     | Resolution_Material_Goal q r M \<Rightarrow> {||})"
+
+text \<open>A production met is one at whose views the goal is committed as at a socket, and so a call goal.\<close>
+
+lemma finite_socket_productions_committed:
+  assumes "VR |\<in>| finite_socket_productions D \<Phi> F st g"
+  shows "resolution_is_call g \<and> (\<exists>Vh ch. ch |\<in>| finite_frame_choices \<Phi> \<and>
+    finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> (fst VR) Vh ch F st g \<and>
+    finite_call_framed (resolution_declarations.truncate D) \<Phi> (fst VR) Vh ch F st g)"
+  using assms by (cases g) ((auto simp: finite_socket_productions_def split: prod.splits)[1], blast, simp add: finite_socket_productions_def)
+
+text \<open>At a production met, the goal's input read at the production's view is ground and its output is not.\<close>
+
+lemma finite_socket_productions_ground:
+  assumes m: "VR |\<in>| finite_socket_productions D \<Phi> F st g"
+  obtains q r e p x y where "g = Resolution_Call_Goal q r e p" "resolution_view_pattern (fst VR) p = Some (x,y)"
+    "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+proof -
+  obtain Vh ch where c: "finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> (fst VR) Vh ch F st g"
+    and call: "resolution_is_call g"
+    using finite_socket_productions_committed[OF m] by blast
+  show thesis by (rule finite_socket_commitment_framed_view[OF c call]) (rule that)
+qed
 
 text \<open>
   The value of a registration at a goal's pattern: the registered clause's head read at the view, its input matched
-  against the goal's input read at the same view (ground where the commitment commits,
-  @{thm [source] finite_framed_commitment_input_ground}), and W2's registration value at those bindings and the bound.
+  against the goal's input read at the same view (ground at every production met,
+  @{thm [source] finite_socket_productions_ground}), and W2's registration value at those bindings and the bound.
 \<close>
 
 definition finite_registration_production ::
@@ -89,7 +117,7 @@ definition finite_narrowed_production ::
   "finite_narrowed_production P n D \<Phi> F st g = (case g of
       Resolution_Call_Goal q r e p \<Rightarrow>
         if commit_call (finite_framed_commitment (resolution_declarations.truncate D) \<Phi>) F st g then
-          (case finite_singleton_option (finite_socket_productions D st g) of None \<Rightarrow> None
+          (case finite_singleton_option (finite_socket_productions D \<Phi> F st g) of None \<Rightarrow> None
           | Some VR \<Rightarrow> map_option (\<lambda>v. (fst VR,v)) (finite_registration_production P n (fst VR) (snd VR) p))
         else None
     | Resolution_Material_Goal q r M \<Rightarrow> None)"
@@ -118,9 +146,9 @@ section \<open>At a record declaring no production\<close>
 
 lemma finite_socket_productions_none:
   assumes none: "\<And>e S s. declared_production D e S s = None"
-  shows "finite_socket_productions D st g = {||}"
+  shows "finite_socket_productions D \<Phi> F st g = {||}"
 proof -
-  have "x |\<notin>| finite_socket_productions D st g" for x
+  have "x |\<notin>| finite_socket_productions D \<Phi> F st g" for x
     by (cases g) (auto simp: finite_socket_productions_def none)
   then show ?thesis by (simp add: fset_eq_iff)
 qed
@@ -129,7 +157,7 @@ lemma finite_narrowed_production_none:
   assumes none: "\<And>e S s. declared_production D e S s = None"
   shows "finite_narrowed_production P n D \<Phi> F st g = None"
 proof -
-  have e: "finite_singleton_option (finite_socket_productions D st g') = None" for g'
+  have e: "finite_singleton_option (finite_socket_productions D \<Phi> F' st' g') = None" for F' st' g'
     unfolding finite_socket_productions_none[OF none] finite_singleton_option_def set_singleton_option_def by simp
   show ?thesis by (simp add: finite_narrowed_production_def e split: resolution_goal.split)
 qed

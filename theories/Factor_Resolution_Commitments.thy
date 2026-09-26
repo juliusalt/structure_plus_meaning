@@ -6244,11 +6244,38 @@ proof
   show False using finite_pattern_substitute_variable_holds[where \<beta>=\<beta>, OF a w] ground by simp
 qed
 
+text \<open>
+  A socket commitment stands at a socket its record declares at the goal's parent node and the goal's own socket, with
+  the views it is read at: the committing socket's own views.
+\<close>
+
+lemma finite_socket_commitment_framed_socket:
+  assumes c: "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g" and g: "g = Resolution_Call_Goal q r e p"
+  obtains nd keep where "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q"
+    "(resolution_node_site nd,resolution_node_schema nd,last q,keep,Vp,Vh) |\<in>| declared_sockets D"
+proof -
+  have call: "resolution_is_call g" using g by simp
+  obtain q' r' d' p' x y where g': "g = Resolution_Call_Goal q' r' d' p'" and v: "resolution_view_pattern Vp p' = Some (x,y)"
+      and "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
+    by (rule finite_socket_commitment_framed_view[OF c call])
+  have qq: "q' = q" using g g' by simp
+  have d: "finite_socket_declared_framed D \<Phi> Vp Vh ch F st q' (finite_pattern_variables y) g"
+    using c v unfolding g' finite_socket_commitment_framed_def by simp
+  show thesis using d that unfolding qq finite_socket_declared_framed_def finite_socket_kept_framed_def
+    finite_socket_free_framed_def by blast
+qed
+
+text \<open>
+  The open input is asked only at the views of the sockets the goal's parent node declares at the goal's socket, as
+  @{thm [source] finite_framed_open_input} reads one socket (review 744's follow-up 2).
+\<close>
+
 theorem finite_framed_commitment_open_input:
   assumes g: "g = Resolution_Call_Goal q r e (finite_pattern_substitute \<beta> p0)"
     and direct: "\<not> finite_direct_commitment D F st g"
-    and viewed: "\<And>Vp Vh. (Vp,Vh) |\<in>| finite_socket_views D \<Longrightarrow> \<exists>xi0 yo0 a.
-      resolution_view_pattern Vp p0 = Some (xi0,yo0) \<and> a |\<in>| finite_pattern_variables xi0 \<and>
+    and viewed: "\<And>nd keep Vp Vh. nd |\<in>| resolution_nodes st \<Longrightarrow> resolution_node_position nd = butlast q \<Longrightarrow>
+      (resolution_node_site nd,resolution_node_schema nd,last q,keep,Vp,Vh) |\<in>| declared_sockets D \<Longrightarrow>
+      \<exists>xi0 yo0 a. resolution_view_pattern Vp p0 = Some (xi0,yo0) \<and> a |\<in>| finite_pattern_variables xi0 \<and>
       finite_pattern_variables (\<beta> a) \<noteq> {||}"
   shows "\<not> commit_call (finite_framed_commitment D \<Phi>) F st g"
 proof
@@ -6262,9 +6289,12 @@ proof
     by blast
   obtain Vp Vh where ww: "w = (Vp,Vh)" by (cases w)
   obtain ch where cm: "finite_socket_commitment_framed D \<Phi> Vp Vh ch F st g" using w ww by auto
-  obtain xi0 yo0 a where "resolution_view_pattern Vp p0 = Some (xi0,yo0)" "a |\<in>| finite_pattern_variables xi0"
+  obtain nd keep where "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q"
+      "(resolution_node_site nd,resolution_node_schema nd,last q,keep,Vp,Vh) |\<in>| declared_sockets D"
+    by (rule finite_socket_commitment_framed_socket[OF cm g])
+  then obtain xi0 yo0 a where "resolution_view_pattern Vp p0 = Some (xi0,yo0)" "a |\<in>| finite_pattern_variables xi0"
       "finite_pattern_variables (\<beta> a) \<noteq> {||}"
-    using viewed[of Vp Vh] wm ww by blast
+    using viewed by blast
   then show False using finite_framed_open_input[OF g] cm by blast
 qed
 

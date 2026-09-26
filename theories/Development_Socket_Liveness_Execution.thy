@@ -1,6 +1,7 @@
 theory Development_Socket_Liveness_Execution
   imports Development_First_Problem_Asked Development_Given_Carried_Declarations
-    Factor_Schema_Instantiation_Declarations Native_Execution_Refinements
+    Factor_Schema_Instantiation_Declarations Factor_Union_Declarations Factor_Definition_Reading_Declarations
+    Factor_Stated_Leaves_Program Native_Execution_Refinements
 begin
 
 text \<open>
@@ -30,11 +31,15 @@ text \<open>
   input is fed in the caller's clause from its head input at the views declared at its site, its whole head where
   none is, and every other premise of the caller's clause holding an output variable is a declared consumer of it
   (@{const finite_output_consumer}'s condition; a material premise never) or at the caller's premise when it is itself
-  a declared socket live there: a least fixpoint over the sockets. Where the output's variables reach the caller's
-  head, goals outside the clause may hold them and the clause does not decide the consumers: such commitments are
-  counted only in the lenient reading, and the sockets live only under it are named apart. A kept socket needs no
-  committed parent. What the evaluation cannot read it does not guess: the order the search takes goals, and a
-  caller variable ground by the caller's own earlier premises beyond what its clause shows.
+  a declared socket live there. Where the output's variables reach the caller's head, goals outside the clause may
+  hold them and the clause does not decide the consumers (the runtime test decides at the goals present, correction
+  (11)). Three readings count such a commitment: strictly never; focused where the caller's site is itself committed
+  (directly at its own caller, or as the goal of a live socket, kept or free), the caller's node then the root of the
+  committed sub-search and its clause deciding; leniently always. Liveness is a joint least fixpoint over committed
+  sites and live sockets. A kept socket needs no committed parent. Only callers in a clause the asked relation's entry
+  526 reaches are read (the route, below); a socket whose parent no such clause calls is named off the route.
+  What the evaluation cannot read it does not guess: the order the search takes goals, and a caller variable ground
+  by the caller's own earlier premises beyond what its clause shows.
 \<close>
 
 text \<open>
@@ -42,19 +47,34 @@ text \<open>
   presentation by a description; no socket clause holds a target, so that case aborts here and is never reached.
 \<close>
 
-declare [[code abort: finite_object_of]]
+text \<open>
+  #609's narrowed sockets are read as their sockets: the record's truncation
+  (@{const resolution_declarations.truncate}, @{thm [source] narrowed_truncate}), without its class, which the evaluation
+  never reads (whether a production applies at them is not read here); the class aborts in code.
+\<close>
+
+declare [[code abort: finite_object_of union_class]]
+
 
 definition liveness_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "liveness_declarations = declarations_list [given_declarations, quotation_declarations, binding_declarations,
+  "liveness_declarations = declarations_list ([given_declarations, quotation_declarations, binding_declarations,
     instantiation_declarations, scoped_declarations, prospective_declarations, application_declarations,
     row_values_declarations, vector_declarations, record_declarations, material_declarations,
-    premise_rows_declarations, premise_family_declarations, schema_declarations]"
+    premise_rows_declarations, premise_family_declarations, schema_declarations] @
+    map (resolution_declarations.truncate \<circ> union_narrowed) [quotation_union_sockets, instantiation_union_sockets,
+      prospective_union_sockets, vector_union_sockets, premise_rows_union_sockets] @
+    [call_admission_declarations, clause_payloads_declarations, interface_slot_declarations,
+      stated_clause_declarations])"
 
 definition liveness_frames :: "(nat,nat,nat) resolution_frames" where
   "liveness_frames = lookup_frames |\<union>| identity_frames |\<union>| comparison_frames |\<union>| headed_frames |\<union>|
     family_rows_frames |\<union>| admission_frames |\<union>| interpretation_frames |\<union>| binder_frames |\<union>| quotation_frames |\<union>|
     instantiation_frames |\<union>| prospective_frames |\<union>| application_frames |\<union>| vector_frames |\<union>| record_frames |\<union>|
-    material_frames |\<union>| premise_rows_frames |\<union>| premise_family_frames |\<union>| schema_frames"
+    material_frames |\<union>| premise_rows_frames |\<union>| premise_family_frames |\<union>| schema_frames |\<union>|
+    schema_family_socket_frames |\<union>| callee_inclusion_socket_frames |\<union>| payload_audit_socket_frames |\<union>|
+    clause_reading_row_frames |\<union>| premise_slot_row_frames |\<union>| schema_slot_row_frames |\<union>| root_slot_row_frames |\<union>|
+    quotation_union_frames |\<union>| instantiation_union_frames |\<union>| prospective_union_frames |\<union>| vector_union_frames |\<union>|
+    premise_rows_union_frames |\<union>| interface_slot_frames |\<union>| stated_clause_frames"
 
 type_synonym liveness_socket =
   "nat \<times> (nat,nat,nat) finite_factor_schema \<times> nat \<times> bool \<times> nat resolution_view \<times> nat resolution_view"
@@ -67,6 +87,15 @@ definition liveness_callers ::
     "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> nat \<Rightarrow> liveness_caller fset" where
   "liveness_callers P e = ffUnion ((\<lambda>((f,c),S'). (\<lambda>(k,d,p). (f,c,S',k,p)) |`|
       ffilter (\<lambda>(k,d,p). d = e) (finite_schema_premises S')) |`| finite_system_clauses P)"
+
+text \<open>The route: the sites the asked relation's entry 526 reaches; a caller counts only in a clause at one of them.\<close>
+
+definition liveness_route :: "nat fset" where
+  "liveness_route = finite_definition_closure finite_asked_program {|526|}"
+
+definition liveness_route_callers ::
+    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> nat fset \<Rightarrow> nat \<Rightarrow> liveness_caller fset" where
+  "liveness_route_callers P R e = ffilter (\<lambda>(f,cc,S',k,p). f |\<in>| R) (liveness_callers P e)"
 
 definition liveness_unifier ::
     "(nat,nat,nat) finite_factor_schema \<Rightarrow> nat finite_term_pattern \<Rightarrow> ((bool \<times> nat) \<times> (bool \<times> nat) finite_term_pattern) list option" where
@@ -218,90 +247,221 @@ definition liveness_direct ::
         fBall (finite_schema_materials S') (\<lambda>(k',N).
           finite_material_variables N |\<inter>| finite_pattern_variables y = {||}))))"
 
-definition liveness_committed ::
-    "(nat,nat,nat) resolution_declarations \<Rightarrow> bool \<Rightarrow> liveness_socket fset \<Rightarrow> nat \<Rightarrow> liveness_caller \<Rightarrow> bool" where
-  "liveness_committed D lenient L e c = (case c of (f,cc,S',k,p) \<Rightarrow>
-    liveness_direct D lenient e c \<or> fBex L (\<lambda>(e',S'',s',keep',Vp',Vh'). e' = f \<and> S'' = S' \<and> s' = k))"
-
-definition liveness_live_at ::
-    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> (nat,nat,nat) resolution_declarations \<Rightarrow>
-      (nat,nat,nat) resolution_frames \<Rightarrow> bool \<Rightarrow> bool \<Rightarrow> liveness_socket fset \<Rightarrow> liveness_socket \<Rightarrow>
-      liveness_caller \<Rightarrow> bool" where
-  "liveness_live_at P D \<Phi> after lenient L \<sigma> c = (case \<sigma> of (e,S,s,keep,Vp,Vh) \<Rightarrow>
-    fBex (finite_system_clauses P) (\<lambda>((d,cc),S'). d = e \<and> S' = S) \<and>
-    (keep \<or> liveness_committed D lenient L e c) \<and>
-    fBex (liveness_choices \<Phi> after \<sigma>) (\<lambda>ch. liveness_holds (liveness_read D \<sigma> after ch c)))"
-
-definition liveness_step ::
-    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> (nat,nat,nat) resolution_declarations \<Rightarrow>
-      (nat,nat,nat) resolution_frames \<Rightarrow> bool \<Rightarrow> bool \<Rightarrow> liveness_socket fset \<Rightarrow> liveness_socket fset" where
-  "liveness_step P D \<Phi> after lenient L = ffilter (\<lambda>\<sigma>. fBex (liveness_callers P (fst \<sigma>))
-    (liveness_live_at P D \<Phi> after lenient L \<sigma>)) (declared_sockets D)"
-
-definition liveness_live ::
-    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> (nat,nat,nat) resolution_declarations \<Rightarrow>
-      (nat,nat,nat) resolution_frames \<Rightarrow> bool \<Rightarrow> bool \<Rightarrow> liveness_socket fset" where
-  "liveness_live P D \<Phi> after lenient = (liveness_step P D \<Phi> after lenient ^^ Suc (fcard (declared_sockets D))) {||}"
-
 section \<open>Names\<close>
 
-text \<open>A socket is named by its site, its clause's key in the asked program and its key; a clause not in it by 999.\<close>
+text \<open>
+  A socket is named by its site, its clause's key in the asked program and its key; a caller premise likewise, so that
+  a caller premise is a live socket exactly when their names agree; a clause not in the program by 999.
+\<close>
 
-definition liveness_name ::
-    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> liveness_socket \<Rightarrow> nat \<times> nat \<times> nat" where
-  "liveness_name P \<sigma> = (case \<sigma> of (e,S,s,keep,Vp,Vh) \<Rightarrow>
-    (e,fMin (finsert 999 ((\<lambda>((d,cc),S'). cc) |`| ffilter (\<lambda>((d,cc),S'). d = e \<and> S' = S) (finite_system_clauses P))),s))"
+type_synonym liveness_label = "nat \<times> nat \<times> nat"
 
-definition liveness_names :: "liveness_socket fset \<Rightarrow> (nat \<times> nat \<times> nat) fset" where
-  "liveness_names L = liveness_name finite_asked_program |`| L"
+definition liveness_clause_key ::
+    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> nat \<Rightarrow> (nat,nat,nat) finite_factor_schema \<Rightarrow> nat" where
+  "liveness_clause_key P e S =
+    fMin (finsert 999 ((\<lambda>((d,cc),S'). cc) |`| ffilter (\<lambda>((d,cc),S'). d = e \<and> S' = S) (finite_system_clauses P)))"
+
+definition liveness_name :: "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> liveness_socket \<Rightarrow> liveness_label" where
+  "liveness_name P \<sigma> = (case \<sigma> of (e,S,s,keep,Vp,Vh) \<Rightarrow> (e,liveness_clause_key P e S,s))"
+
+definition liveness_caller_name :: "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> liveness_caller \<Rightarrow> liveness_label" where
+  "liveness_caller_name P c = (case c of (f,cc,S',k,p) \<Rightarrow> (f,liveness_clause_key P f S',k))"
+
+text \<open>The goals a socket commits when it is live: its premise's callee; none at a material premise.\<close>
+
+definition liveness_goals :: "liveness_socket \<Rightarrow> nat fset" where
+  "liveness_goals \<sigma> = (case \<sigma> of (e,S,s,keep,Vp,Vh) \<Rightarrow>
+    (\<lambda>(k,d,p). d) |`| ffilter (\<lambda>(k,d,p). k = s) (finite_schema_premises S))"
+
+section \<open>The readings of a direct commitment, and the joint least fixpoint\<close>
 
 text \<open>
-  The reading at every caller of every socket, its parent committed or not and each frame choice's reading, for the
-  inspection of a disagreement; this theory states only the names below.
+  The clause-level readings are computed once into tables: the direct commitments of a producer at its route callers,
+  strict and lenient; the route callers at which a socket's test holds at some frame choice; each socket's keep flag
+  and goals. The readings of a lenient direct commitment are named values.
+\<close>
+
+datatype commitment_reading = Strict_Reading | Focused_Reading | Lenient_Reading
+
+type_synonym liveness_tables = "(nat \<times> liveness_label) fset \<times> (nat \<times> liveness_label) fset \<times>
+  (liveness_label \<times> liveness_label) fset \<times> (liveness_label \<times> bool \<times> nat fset) fset"
+
+definition liveness_tables ::
+    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> (nat,nat,nat) resolution_declarations \<Rightarrow>
+      (nat,nat,nat) resolution_frames \<Rightarrow> nat fset \<Rightarrow> bool \<Rightarrow> liveness_tables" where
+  "liveness_tables P D \<Phi> R after = (let
+      callers = liveness_route_callers P R;
+      sites = (\<lambda>(d,V,hs). d) |`| declared_producers D;
+      direct = (\<lambda>lenient. ffUnion ((\<lambda>e. (\<lambda>c. (e,liveness_caller_name P c)) |`|
+        ffilter (liveness_direct D lenient e) (callers e)) |`| sites));
+      tested = ffUnion ((\<lambda>\<sigma>. (\<lambda>c. (liveness_name P \<sigma>,liveness_caller_name P c)) |`| ffilter (\<lambda>c. case \<sigma> of
+          (e,S,s,keep,Vp,Vh) \<Rightarrow> fBex (finite_system_clauses P) (\<lambda>((d,cc),S'). d = e \<and> S' = S) \<and>
+            fBex (liveness_choices \<Phi> after \<sigma>) (\<lambda>ch. liveness_holds (liveness_read D \<sigma> after ch c)))
+        (callers (fst \<sigma>))) |`| declared_sockets D);
+      rows = (\<lambda>\<sigma>. (liveness_name P \<sigma>,case \<sigma> of (e,S,s,keep,Vp,Vh) \<Rightarrow> keep,liveness_goals \<sigma>)) |`| declared_sockets D
+    in (direct False,direct True,tested,rows))"
+
+text \<open>
+  The parent at a caller is committed directly (strictly always; a lenient direct commitment in the focused reading
+  where the caller's site is committed, and always in the lenient one), or at the caller's premise when that premise
+  is a live socket. A site is committed where it is committed at some route caller or is the goal of a live socket.
+\<close>
+
+definition liveness_committed ::
+    "commitment_reading \<Rightarrow> liveness_tables \<Rightarrow> nat fset \<Rightarrow> liveness_label fset \<Rightarrow> nat \<Rightarrow> liveness_label \<Rightarrow> bool" where
+  "liveness_committed r T K L e n = (case T of (DS,DL,RT,KG) \<Rightarrow> (e,n) |\<in>| DS \<or>
+    ((e,n) |\<in>| DL \<and> (r = Lenient_Reading \<or> (r = Focused_Reading \<and> fst n |\<in>| K))) \<or> n |\<in>| L)"
+
+definition liveness_step ::
+    "commitment_reading \<Rightarrow> liveness_tables \<Rightarrow> nat fset \<times> liveness_label fset \<Rightarrow> nat fset \<times> liveness_label fset" where
+  "liveness_step r T KL = (case (T,KL) of ((DS,DL,RT,KG),(K,L)) \<Rightarrow>
+    (fst |`| ffilter (\<lambda>(e,n). liveness_committed r T K L e n) (DS |\<union>| DL) |\<union>|
+       ffUnion ((\<lambda>(m,keep,G). G) |`| ffilter (\<lambda>(m,keep,G). m |\<in>| L) KG),
+     (\<lambda>(m,keep,G). m) |`| ffilter (\<lambda>(m,keep,G). fBex RT (\<lambda>(m',n). m' = m \<and>
+       (keep \<or> liveness_committed r T K L (fst m) n))) KG))"
+
+text \<open>The step is monotone and its values bounded, so the iteration from nothing reaches its least fixpoint.\<close>
+
+definition liveness_fixpoint :: "commitment_reading \<Rightarrow> liveness_tables \<Rightarrow> nat fset \<times> liveness_label fset" where
+  "liveness_fixpoint r T = (case T of (DS,DL,RT,KG) \<Rightarrow>
+    (liveness_step r T ^^ Suc (fcard (DS |\<union>| DL) + 2 * fcard KG)) ({||},{||}))"
+
+section \<open>The three tests\<close>
+
+text \<open>
+  Today correction (9)'s test (the default frame and the variant test); after at no frames the framed test with no
+  frame declared ((iii) at the default frame); after the framed test at the declared frames.
+\<close>
+
+datatype liveness_test = Today_Test | Unframed_Test | Framed_Test
+
+definition liveness_test_tables ::
+    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> nat fset \<Rightarrow> (nat,nat,nat) resolution_declarations \<Rightarrow>
+      (nat,nat,nat) resolution_frames \<Rightarrow> liveness_test \<Rightarrow> liveness_tables" where
+  "liveness_test_tables P R D \<Phi> t = liveness_tables P D (if t = Framed_Test then \<Phi> else {||}) R (t \<noteq> Today_Test)"
+
+text \<open>
+  The evaluation over a program and the sites whose clauses count as callers: the asked program and the route for the
+  guard; the whole of a program to read a socket off the route as it stands.
+\<close>
+
+definition liveness_evaluation ::
+    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> nat fset \<Rightarrow> (nat,nat,nat) resolution_declarations \<Rightarrow>
+      (nat,nat,nat) resolution_frames \<Rightarrow>
+      (liveness_test \<times> (commitment_reading \<times> liveness_label fset) list) list \<times> liveness_label fset \<times>
+      liveness_label fset" where
+  "liveness_evaluation P R D \<Phi> = (let
+      rows = map (\<lambda>t. let T = liveness_test_tables P R D \<Phi> t in
+        (t,map (\<lambda>r. (r,snd (liveness_fixpoint r T))) [Strict_Reading,Focused_Reading,Lenient_Reading]))
+        [Today_Test,Unframed_Test,Framed_Test];
+      names = liveness_name P |`| declared_sockets D;
+      off = liveness_name P |`| ffilter (\<lambda>\<sigma>. liveness_route_callers P R (fst \<sigma>) = {||}) (declared_sockets D);
+      live = ffUnion (fset_of_list (concat (map (\<lambda>(t,xs). map snd xs) rows)))
+    in (rows,off,names |-| off |-| live))"
+
+text \<open>
+  The reading at every route caller of every socket, its parent committed or not and each frame choice's reading, for
+  the inspection of a disagreement; this theory states only the names below.
 \<close>
 
 definition liveness_detail where
-  "liveness_detail after lenient = (let P = finite_asked_program; D = liveness_declarations; \<Phi> = liveness_frames;
-      L = liveness_live P D \<Phi> after lenient in
-    (\<lambda>\<sigma>. (liveness_name P \<sigma>, (\<lambda>c. case c of (f,cc,S',k,p) \<Rightarrow> ((f,cc,k),
-        (case \<sigma> of (e,S,s,keep,Vp,Vh) \<Rightarrow> keep \<or> liveness_committed D lenient L e c),
-        (\<lambda>ch. (ch, liveness_read D \<sigma> after ch c)) |`| liveness_choices \<Phi> after \<sigma>)) |`| liveness_callers P (fst \<sigma>)))
-      |`| declared_sockets D)"
+  "liveness_detail P R D \<Phi> t r = (let after = (t \<noteq> Today_Test);
+      \<Phi>' = (if t = Framed_Test then \<Phi> else {||}); T = liveness_test_tables P R D \<Phi> t; KL = liveness_fixpoint r T in
+    (\<lambda>\<sigma>. (liveness_name P \<sigma>, (\<lambda>c. (liveness_caller_name P c,
+        (case \<sigma> of (e,S,s,keep,Vp,Vh) \<Rightarrow> keep \<or> liveness_committed r T (fst KL) (snd KL) e (liveness_caller_name P c)),
+        (\<lambda>ch. (ch, liveness_read D \<sigma> after ch c)) |`| liveness_choices \<Phi>' after \<sigma>)) |`|
+      liveness_route_callers P R (fst \<sigma>))) |`| declared_sockets D)"
 
-section \<open>The declared sockets live and dead, today and after\<close>
+text \<open>The declarations with only the sockets at one site, and the callers at which a producer is committed directly.\<close>
+
+definition liveness_sockets_at ::
+    "(nat,nat,nat) resolution_declarations \<Rightarrow> nat \<Rightarrow> (nat,nat,nat) resolution_declarations" where
+  "liveness_sockets_at D e = \<lparr>declared_producers = declared_producers D, declared_consumers = declared_consumers D,
+    declared_sockets = ffilter (\<lambda>\<sigma>. fst \<sigma> = e) (declared_sockets D)\<rparr>"
+
+definition liveness_direct_callers ::
+    "(nat,nat,nat,nat) finite_schema_system \<Rightarrow> nat fset \<Rightarrow> (nat,nat,nat) resolution_declarations \<Rightarrow> bool \<Rightarrow>
+      nat \<Rightarrow> liveness_label fset" where
+  "liveness_direct_callers P R D lenient e =
+    liveness_caller_name P |`| ffilter (liveness_direct D lenient e) (liveness_route_callers P R e)"
+
+section \<open>The declared sockets on the guard's route, today and after, in the three readings\<close>
 
 text \<open>
-  One evaluation over the asked program, compiled once: the 44 sockets the records declare (R6's, #601's, #603's,
-  #607's and #679's, and the seven of 32's kept sockets, #758's and #760's), by name. Strictly (every direct commitment decided by its clause) live and dead under today's
-  test and after; then the sockets live only in the lenient reading, where a direct commitment's output reaches the
-  caller's head and goals outside the clause may hold it. Every socket's clause is a clause of the asked program (no
-  name holds 999).
+  One evaluation over the asked program, compiled once, with every landed record and frame: R6's, #601's, #603's,
+  #607's, #679's, #758's and #760's, #609's narrowed sockets read as their sockets, and #681's (its consumers at 72
+  and 503, its kept socket 105.0/2 and its free socket at 587, whose clause is no clause of the asked program and is
+  named by 999). For each test the live sockets strictly, focused and leniently; then the sockets off the route, and
+  those on it live in no reading of any test. #681's records change no name on the route: its two sockets are off
+  it, and its consumers decide no direct commitment at a route caller.
+\<close>
+
+text \<open>
+  Then #681's three points as they stand (plan-105, from review 682's follow-up 2), nothing declared to change them.
+  (a) 65's route callers are 69.0/0, 73.0/0, 82.0/1 and 503.0/0, and 65 is committed directly at none, strictly or
+  leniently: its table is premise-only there, so the consumers 500–502 declared at 503.0/0 are never read on the
+  route. (b) 105.0/2 and 105.1/2, off the route, read over the whole asked program: live after at their declared
+  frames in every reading, dead today and at no frames. (c) 587.0/0 in the stated-leaves program: at its one caller
+  588.0/0 the socket's test holds today and after (the variant test at @{const stated_view} with the literal payloads
+  of 587's head output, and (iii) at the default frame and at {4,7}), but 587 is committed directly at no caller, so
+  the free socket is dead in every reading.
 \<close>
 
 lemma socket_liveness:
-  "liveness_names (liveness_live finite_asked_program liveness_declarations liveness_frames False False) =
-      {|(32,0,0),(40,0,0),(54,0,1),(79,0,1),(83,0,1),(119,0,1)|} \<and>
-   liveness_names (declared_sockets liveness_declarations |-|
-      liveness_live finite_asked_program liveness_declarations liveness_frames False False) =
-      {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(29,0,5),(29,0,6),(29,0,7),(36,3,5),(37,0,2),
-        (45,1,2),(50,2,2),(50,2,3),(55,1,1),(55,2,2),(55,2,3),(57,0,4),(58,0,0),(60,1,0),(60,1,1),(61,0,4),
-        (62,0,0),(63,1,0),(63,1,1),(63,2,0),(63,2,1),(64,0,1),(64,0,2),(65,0,3),(65,0,4),
-        (71,0,1),(75,0,3),(81,0,3),(104,1,3),(105,1,2),(505,0,4)|} \<and>
-   liveness_names (liveness_live finite_asked_program liveness_declarations liveness_frames True False) =
-      {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(12,0,2),(29,0,5),(32,0,0),(37,0,2),(40,0,0),(54,0,1),
-        (79,0,1),(83,0,1),(119,0,1)|} \<and>
-   liveness_names (declared_sockets liveness_declarations |-|
-      liveness_live finite_asked_program liveness_declarations liveness_frames True False) =
-      {|(10,0,4),(29,0,6),(29,0,7),(36,3,5),(45,1,2),(50,2,2),(50,2,3),(55,1,1),(55,2,2),(55,2,3),(57,0,4),
-        (58,0,0),(60,1,0),(60,1,1),(61,0,4),(62,0,0),(63,1,0),(63,1,1),(63,2,0),(63,2,1),(64,0,1),(64,0,2),
-        (65,0,3),(65,0,4),(71,0,1),(75,0,3),(81,0,3),(104,1,3),(105,1,2),(505,0,4)|} \<and>
-   liveness_names (liveness_live finite_asked_program liveness_declarations liveness_frames False True |-|
-      liveness_live finite_asked_program liveness_declarations liveness_frames False False) =
-      {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(58,0,0)|} \<and>
-   liveness_names (liveness_live finite_asked_program liveness_declarations liveness_frames True True |-|
-      liveness_live finite_asked_program liveness_declarations liveness_frames True False) =
-      {|(10,0,4),(29,0,7),(50,2,2),(50,2,3),(55,1,1),(55,2,2),(55,2,3),(57,0,4),(58,0,0),(60,1,0),(60,1,1),
-        (61,0,4),(62,0,0),(63,1,0),(63,1,1),(63,2,0),(63,2,1)|}"
+  "liveness_evaluation finite_asked_program liveness_route liveness_declarations liveness_frames =
+    ([(Today_Test,
+        [(Strict_Reading, {|(32,0,0),(40,0,0),(79,0,1),(83,0,1)|}),
+         (Focused_Reading, {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(32,0,0),(40,0,0),(79,0,1),
+            (83,0,1)|}),
+         (Lenient_Reading, {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(32,0,0),(40,0,0),(79,0,1),
+            (83,0,1)|})]),
+      (Unframed_Test,
+        [(Strict_Reading, {|(32,0,0),(40,0,0),(79,0,1),(83,0,1)|}),
+         (Focused_Reading, {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(32,0,0),(40,0,0),(79,0,1),
+            (83,0,1)|}),
+         (Lenient_Reading, {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(32,0,0),(40,0,0),(62,0,0),
+            (63,1,0),(63,1,1),(63,2,0),(63,2,1),(79,0,1),(83,0,1)|})]),
+      (Framed_Test,
+        [(Strict_Reading, {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(12,0,2),(29,0,5),(32,0,0),(37,0,2),(40,0,0),
+            (75,0,3),(79,0,1),(81,0,3),(83,0,1),(505,0,4)|}),
+         (Focused_Reading, {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(29,0,5),(32,0,0),(37,0,2),
+            (40,0,0),(75,0,3),(79,0,1),(81,0,3),(83,0,1),(505,0,4)|}),
+         (Lenient_Reading, {|(6,1,1),(7,0,0),(7,0,1),(7,0,2),(7,0,3),(10,0,4),(12,0,2),(29,0,5),(29,0,7),(32,0,0),
+            (37,0,2),(40,0,0),(50,2,2),(50,2,3),(50,2,7),(55,1,1),(55,2,2),(55,2,3),(55,2,7),(55,2,8),(57,0,4),
+            (57,0,8),(60,1,0),(60,1,1),(60,1,4),(60,1,5),(61,0,4),(62,0,0),(63,1,0),(63,1,1),(63,1,2),(63,2,0),
+            (63,2,1),(63,2,2),(75,0,3),(79,0,1),(81,0,3),(83,0,1),(505,0,4)|})])],
+     {|(58,0,0),(104,1,3),(105,0,2),(105,1,2),(119,0,1),(587,999,0)|},
+     {|(29,0,6),(36,3,5),(45,1,2),(54,0,1),(64,0,1),(64,0,2),(65,0,3),(65,0,4),(71,0,1)|}) \<and>
+   liveness_caller_name finite_asked_program |`| liveness_route_callers finite_asked_program liveness_route 65 =
+     {|(69,0,0),(73,0,0),(82,0,1),(503,0,0)|} \<and>
+   liveness_direct_callers finite_asked_program liveness_route liveness_declarations False 65 = {||} \<and>
+   liveness_direct_callers finite_asked_program liveness_route liveness_declarations True 65 = {||} \<and>
+   liveness_evaluation finite_asked_program (finite_system_definitions finite_asked_program)
+      (liveness_sockets_at liveness_declarations 105) liveness_frames =
+    ([(Today_Test, [(Strict_Reading, {||}), (Focused_Reading, {||}), (Lenient_Reading, {||})]),
+      (Unframed_Test, [(Strict_Reading, {||}), (Focused_Reading, {||}), (Lenient_Reading, {||})]),
+      (Framed_Test, [(Strict_Reading, {|(105,0,2),(105,1,2)|}), (Focused_Reading, {|(105,0,2),(105,1,2)|}),
+        (Lenient_Reading, {|(105,0,2),(105,1,2)|})])], {||}, {||}) \<and>
+   liveness_evaluation finite_stated_report_program (finite_system_definitions finite_stated_report_program)
+      (liveness_sockets_at liveness_declarations 587) liveness_frames =
+    ([(Today_Test, [(Strict_Reading, {||}), (Focused_Reading, {||}), (Lenient_Reading, {||})]),
+      (Unframed_Test, [(Strict_Reading, {||}), (Focused_Reading, {||}), (Lenient_Reading, {||})]),
+      (Framed_Test, [(Strict_Reading, {||}), (Focused_Reading, {||}), (Lenient_Reading, {||})])],
+     {||}, {|(587,0,0)|}) \<and>
+   liveness_direct_callers finite_stated_report_program (finite_system_definitions finite_stated_report_program)
+      liveness_declarations True 587 = {||} \<and>
+   liveness_detail finite_stated_report_program (finite_system_definitions finite_stated_report_program)
+      (liveness_sockets_at liveness_declarations 587) liveness_frames Framed_Test Focused_Reading =
+    {|((587,0,0), {|((588,0,0), False, {|
+      (None, \<lparr>reading_matched = True, reading_ground = True, reading_closed = {||}, reading_children = True,
+        reading_premise_only = True, reading_outputs = True\<rparr>),
+      (Some {|4,7|}, \<lparr>reading_matched = True, reading_ground = True, reading_closed = {||},
+        reading_children = True, reading_premise_only = True, reading_outputs = True\<rparr>)|})|})|} \<and>
+   liveness_detail finite_stated_report_program (finite_system_definitions finite_stated_report_program)
+      (liveness_sockets_at liveness_declarations 587) liveness_frames Today_Test Focused_Reading =
+    {|((587,0,0), {|((588,0,0), False, {|
+      (None, \<lparr>reading_matched = True, reading_ground = True, reading_closed = {||}, reading_children = True,
+        reading_premise_only = True, reading_outputs = True\<rparr>)|})|})|}"
   by eval
 
 end

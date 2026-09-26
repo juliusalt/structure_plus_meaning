@@ -54,22 +54,22 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 
 **The native evaluator's open line**, in chain order (what landed is under Delivered):
 - The declarations and their carrying (#585's addition; what landed is under Delivered): R6c's third part #681 and 48's #609
-  having landed, → R6c's carrying #611 (also after #774) → rc's numbered forms #540 (its commit after #774)
+  having landed, → R6c's carrying #611 → rc's numbered forms #540 (its commit waited on #774)
   and native form #661 (after V2b's (3) #738) → R7 #542 (the numbered course; #661 feeds its native part #707) and the
   request at the given #547 → #399. #725's correction (q126): 48's union is the narrowed sockets' production, a step of
   R5's committed search, R3 and W4a untouched; R5f1 #734 and its fix #765 landed; R5f2 #736 (briefed by #727) and its
   fix #767 (q134: the production applies only at its registration's site and head input, the producing sub-search
-  barred at the produced state, a static premise #611 discharges at the given) landed; the transfer at productions
+  barred at the produced state, a static premise #611 discharges at the given) landed, and so did the transfer at productions
   #774 (review 737's 1, 2, 4 and 5; q138: the productions' discharge a premise each consuming program discharges by
-  the semantic lemma, the search's own relocation and locality not built) before rc #540, #611 and #661;
+  the semantic lemma, the search's own relocation and locality not built; next-edits 310 and 311);
   #651 (landed) carries the narrowed record with R5f1's production field; review 652's follow-ups 1 and 3 went to
   #736, 1 and 5 to #738, 4 to #611, 2 to #777 (next-edits 308).
 - Correction (10) (#730's design from reviews 680 and 606, landed `746b3321`): the socket test at the socket's frame;
   its builds, placed by plan-97 from #740's proposal — B1 #743, B2a #745, B2b #747, B3a #749 and B3b #751 — landed
   (Delivered). B3b's liveness evaluation disagrees with the table on ten items and finds sockets dead in both
   readings: correction (11) (#766, accepted by plan-104) settles them — the focused reading counts, callers read
-  from 526, the dead sockets and what would commit each; its builds L1, L2 and C1 are one build #775 (briefed
-  by #773) before R7 #542; D, the produced table for 65 and 56, is a design after R7's figures (Open 151, q137). The
+  from 526, the dead sockets and what would commit each; its builds L1, L2 and C1, one build #775, landed
+  (Delivered); D, the produced table for 65 and 56, is a design after R7's figures (Open 151, q137). The
   fixes #731, #741, #732, #753 and
   #754 landed (Delivered); #754's review's follow-ups next-edits 285–287 given to #611, the `declarations_list` facts'
   move to #724. #733's builds (32's kept sockets, declared by no build before): #758 and the selection part #760 landed;
@@ -82,7 +82,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
 - The resolver at the given's size (#683's addition to task 495's entry, from #644's attribution; briefed by #684,
   placed by plan-90): F1, F3, F2a, F2a′, F2b1 and the waiting fix #757 landed (Delivered); F2b2 divided at q135 (#768
   placed it): (c) #769 (the kept fields and the listed union over F2b1's indexed state) landed; (a) the
-  shared state's foundation in #755 (continued from its tree after ending partial), then (b) #771, the shared search
+  shared state's foundation in #755 landed (Delivered); (b) #771, the shared search
   stated once over a representation (its candidates κ-free, review 770's 1)
   → F2c #701 (R5's committed search over the shared state, also after the fix #767, whose corrected search it mirrors)
   → C #703 (a found derivation checked over its
@@ -92,7 +92,8 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   Divided from R7 #542 (the numbered course) its
   native part #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709 (before #401, #403 and
   #553). Off the route: the lifting's consolidation #613, then #724 (review 677's follow-ups, words equal; after F3,
-  R5e, C and #613, each of which changes `Factor_Resolution_Commitments` before it); the low-moves batch #777 (review
+  R5e, C and #613, each of which changes `Factor_Resolution_Commitments` before it; its brief gains next-edits
+  306 and 312 when it is nearer, if they fit its room); the low-moves batch #777 (review
   682's 1, review 770's 2 and next-edits 274–308's low items), heading the queue while it checks.
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
@@ -109,9 +110,9 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 **Word changes are serialized** (Decisions): none is queued. A word change's records are re-recorded after its landing
 by a task of their own (Open 100).
 
-**Shape.** No build waits on a review task. The route's longest chain runs F2b2 (a) #755 → (b) #771 → F2c #701 → C #703 →
+**Shape.** No build waits on a review task. The route's longest chain runs F2b2 (b) #771 → F2c #701 → C #703 →
 R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450;
-#774 → rc #540 → #542, #774 → #611 → #542 and #775 → #542 have slack against it, the
+rc #540 → #542 and #611 → #542 have slack against it, the
 carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
@@ -120,8 +121,8 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-F2b2 (a) #755 and (b) #771, F2c #701 and C #703; the transfer #774 and the investigation #779; correction (11)'s
-build #775; the low-moves batch #777; V2b's (3) #738; rc #540 and #661; #611; R7 #542, its native part
+F2b2 (b) #771, F2c #701 and C #703; the investigation #779;
+the low-moves batch #777; V2b's (3) #738; rc #540 and #661; #611; R7 #542, its native part
 #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
 consolidation #613, then #724 last.
@@ -532,6 +533,24 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   the relocation and agreement transfers (`finite_narrowed_relocation_transfer`, `finite_narrowed_agreement_transfer`;
   the other side's productions and narrowed frames their premises until #774), the search control in
   `Factor_Narrowed_Controls`.
+- **The shared state** (F2b2 (a) #755, `ea4a9049`): `Factor_Shared_Resolution` — goals and nodes over one shared-term
+  table, one per position under `resolution_positions_distinct`, their formation and projection to R3's state, the
+  constructor from an R3 state, the substitution at the holders through the keyed `share_node`; call patterns collapsed
+  (each ground call subterm held once), material and binding patterns kept formed.
+- **The transfer at productions** (#774, `a756898f`; q138): in `Factor_Narrowed_Productions` the narrowed frames
+  carried by relocation and agreement (`narrowed_socket_framed_callees`, `narrowed_socket_framed_relocated`,
+  `narrowed_frames_relocated_at`, `narrowed_frames_relocated_discharged`, `narrowed_frames_agree_discharged`); the
+  transfers `finite_narrowed_relocation_transfer` and `finite_narrowed_agreement_transfer` restated, the frames carried
+  from the source, the other side's `productions_discharged` (in the relocation also its `narrowed_productions_declared`)
+  their premises, discharged per program (#609's `union_registration_answers`, V2b's carried values); R5f2's forms at no
+  narrowing as B2b's framed forms (`finite_unproduced_refutation_exact`, `finite_unproduced_verdict_exact`,
+  `finite_unproduced_demand_exact`, `native_unproduced_resolution_exact`); the search control's class the distinct
+  payload lists.
+- **The sockets' liveness on the route** (#775, `a9ba7cf2`; L1, L2 and C1 of correction (11)):
+  `Development_Socket_Liveness_Execution` evaluates the declared sockets' liveness on the guard's route, focused beside
+  strict and lenient, with #681's records (its table in `.build/tasks/775/result.md`, which R7 #542 compares its
+  commitments against); `Factor_Commitment_Controls` holds the control of a free socket committed at a declared frame
+  strictly smaller than its default.
 - **The shared patterns** (#683's F2): `Factor_Shared_Patterns` (F2a #697, `d19426d3`: patterns over the shared-term
   table, substitution and unification equal to R2's over the projection; ground leaves references, a ground pair a node
   until `share_node` makes it one); F2a′ #713 (`df24c463`: `share_collapse`, ground nodes collapsed into references
@@ -610,6 +629,8 @@ The owner's questions, a line each (their words and the provisional choices in f
 151. D of correction (11): the produced table for 65 and 56 (a widening of W4's construction readiness), a design after
    R7 #542's figures at the goals the dead leave plain (69.0/0, 73.0/0, 82.0/1, 503.0/0, 72.0/2;
    `.build/tasks/766/result.md`); #681's q137 met the same table (`.build/plans/plan-104/q137.md`).
+   D marks correction (11)'s table where the builds narrowed it — 73.0/0 and 82.0/1 not declared (#681 under q136) —
+   and decides from R7's figures at 590 whether 587 is committed as a producer at 588.0/0 (#775's question, review 776).
 142. The owner's approval of the first answer: a build after #447 and #407, an owner record citing the admission, the
    criticism record and the verification record (`development_owner_approval`, Q23 (c)); publication after
    verification and the translation (Q18 (a), item 3). Briefed once #447 and #407 are nearer.
@@ -658,9 +679,9 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: V2b's (3) #738, rc #540 and correction (11)'s build #775 run beside the route's (a) #755; the
-  transfer #774 (re-planned), the investigation #779 and the low-moves batch #777 can start. The route is (#774; (a)
-  #755 → (b) #771 → F2c → C) → rc #540 and #611 → R7 #542 → #707 → #399. #777 goes to the queue's head when it checks
+- **The graph's width**: V2b's (3) #738 runs, and rc #540 is in its review; the route's (b) #771, the investigation
+  #779 and the low-moves batch #777 can start. The route is ((b) #771 → F2c → C) → rc #540
+  and #611 → R7 #542 → #707 → #399. #777 goes to the queue's head when it checks
   (working rule "Rebuilds"); its landing check is the first since the owner's switch (Q29–Q32) to rebuild most of the
   library.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
@@ -668,9 +689,9 @@ planner searches for a theory before briefing a task that edits it.
   into (1) and (3), then (2) and (4)); #542 and #399 (84K and 70K of margin at proposal, before rc's, V3's and the fix's
   theories added to their relations); the samples build #551 (384K at proposal; a hand-back divides its corrected item
   (3), the planner's).
-- **What the next events ask**: #774's hand-over, after which #540 is told (`v2.py after 540 774`); #779's figures —
-  if R5's committed search does not cut 77/1's branching, a design of it before R7 #542; #755's result, then (b)
-  #771; #775's evaluation, which R7 compares; #777 to the queue's head when it checks; the first one-session base's
+- **What the next events ask**: #779's figures — if R5's committed search does not cut 77/1's branching, a design of
+  it before R7 #542; (b) #771's hand-over; #540's review (its commit waited on #774, landed), then rc's native
+  form #661 after #738; #777 to the queue's head when it checks; the first one-session base's
   landing (probes in about 3 s) — not yet: every base since the switch stands on the chain (`PLANNING_LOG.md`,
   plan-92, plan-98, plan-105); if #777's landing does not re-root either, a harness gap for the owner.
 - **Mailed, read by each task's first session**: by task, in `.build/plans/mailed.md` (open tasks only). A task

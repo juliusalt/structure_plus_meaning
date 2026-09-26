@@ -70,6 +70,11 @@ lemmas given_record_defs = given_bag_declarations_def given_artifact_declaration
   bag_binder_declarations_def union_binder_declarations_def instantiation_binder_declarations_def
   schema_family_socket_record_def callee_inclusion_socket_record_def payload_audit_socket_record_def
   clause_reading_row_record_def premise_slot_row_record_def schema_slot_row_record_def root_slot_row_record_def
+  quotation_declarations_def instantiation_declarations_def scoped_declarations_def prospective_declarations_def
+  row_values_declarations_def vector_declarations_def record_declarations_def material_declarations_def
+  premise_rows_declarations_def premise_family_declarations_def schema_declarations_def
+  call_admission_declarations_def interface_slot_declarations_def binding_declarations_def
+  clause_payloads_declarations_def application_declarations_def
 
 abbreviation given_records where
   "given_records \<equiv> [given_bag_declarations, given_artifact_declarations,
@@ -81,7 +86,11 @@ abbreviation given_records where
     interpretation_declarations, projection_target_declarations, binder_declarations, bag_binder_declarations,
     union_binder_declarations, instantiation_binder_declarations, schema_family_socket_record,
     callee_inclusion_socket_record, payload_audit_socket_record, clause_reading_row_record, premise_slot_row_record,
-    schema_slot_row_record, root_slot_row_record]"
+    schema_slot_row_record, root_slot_row_record, quotation_declarations, instantiation_declarations,
+    scoped_declarations, prospective_declarations, row_values_declarations, vector_declarations, record_declarations,
+    material_declarations, premise_rows_declarations, premise_family_declarations, schema_declarations,
+    call_admission_declarations, interface_slot_declarations, binding_declarations, clause_payloads_declarations,
+    application_declarations]"
 
 lemma given_declarations_records: "given_declarations = declarations_list given_records"
   by (simp only: given_declarations_def)
@@ -106,11 +115,14 @@ text \<open>
   79, 82 and 83 are entries of the given's readers, 12 a read site of the registrations. 79's socket schema calls 32
   and 37, 12's 7 and 11, 7's 6, 32's 21, 29 and 31, 42's clause 36. 82's clause calls 65, whose clause calls 34, 48, 49, 54, 55 and
   64; 64's calls 63, one of 63's calls 57, whose clause calls 41 and 42. One of 55's clauses calls 50, one of 50's 40
-  and 45, one of 39's 35; 45's socket schema calls 10 and 40's 39.
+  and 45, one of 39's 35; 45's socket schema calls 10 and 40's 39. 72's clause calls 56; the instantiation family's
+  socket schemas call 62 at 63, 61 at 62, 60 and 59 at 61, and 52 at 55. 505's clause calls 504, whose list step calls
+  503, whose clause calls 500, 501 and 502. The granted entry 85's clause calls 58.
 \<close>
 
 lemma given_rooted_declared_sites:
-  assumes "d \<in> {6,7,10,11,12,21,29,31,32,34,35,36,37,39,40,41,42,45,47,48,49,54,55,77,79,83}"
+  assumes "d \<in> {6,7,10,11,12,21,29,31,32,34,35,36,37,39,40,41,42,45,47,48,49,50,52,54,55,56,57,58,59,60,61,62,63,64,
+    65,77,79,83,500,501,502}"
   shows "d \<in> system_definitions given_rooted_readers_system"
 proof -
   let ?R = "system_definitions given_rooted_readers_system"
@@ -193,11 +205,78 @@ proof -
       (simp_all add: schema_dependencies_def rel_ran_image citation_reading_schema_def)
   have m45: "10 \<in> ?R" using given_socket_reaches[OF sock(5) m50(2)] call(9) by blast
   have m40: "39 \<in> ?R" using given_socket_reaches[OF sock(6) m50(1)] call(10) by blast
+  have e72: "72 \<in> ?R" using given_rooted_entries given_rooted_members(1) by blast
+  have m72: "56 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF definition_call_admission_system_formed guard_definition_call_agreement e72,
+        of definition_call_admission_schema])
+      (simp_all add: schema_dependencies_def rel_ran_image definition_call_admission_schema_def)
+  have sock8: "(63,premise_material_socket_schema,0,False,material_view,premise_rows_view) |\<in>|
+      declared_sockets given_declarations"
+    unfolding given_declarations_records
+    by (rule declarations_list_socket_member[where D=premise_rows_declarations])
+      (simp only: list.set insert_iff simp_thms, simp add: premise_rows_declarations_def)
+  have sock9: "(62,material_socket_schema,0,False,record_material_view,material_view) |\<in>|
+      declared_sockets given_declarations"
+    unfolding given_declarations_records
+    by (rule declarations_list_socket_member[where D=material_declarations])
+      (simp only: list.set insert_iff simp_thms, simp add: material_declarations_def)
+  have sock10: "(61,record_socket_schema,4,False,instantiation_view,instantiation_view) |\<in>|
+      declared_sockets given_declarations"
+    unfolding given_declarations_records
+    by (rule declarations_list_socket_member[where D=record_declarations])
+      (simp only: list.set insert_iff simp_thms, simp add: record_declarations_def)
+  have call': "62 \<in> schema_dependencies (decode_finite_schema premise_material_socket_schema)"
+    "61 \<in> schema_dependencies (decode_finite_schema material_socket_schema)"
+    "60 \<in> schema_dependencies (decode_finite_schema record_socket_schema)"
+    "59 \<in> schema_dependencies (decode_finite_schema record_socket_schema)"
+    by (rule finite_premise_callee; simp add: premise_material_socket_schema_def material_socket_schema_def
+      record_socket_schema_def)+
+  have m63': "62 \<in> ?R" using given_socket_reaches[OF sock8 m64] call'(1) by blast
+  have m62: "61 \<in> ?R" using given_socket_reaches[OF sock9 m63'] call'(2) by blast
+  have m61: "60 \<in> ?R" "59 \<in> ?R" using given_socket_reaches[OF sock10 m62] call'(3,4) by blast+
+  have sock11: "(55,instantiation_constant_socket_schema,1,False,quotation_view,instantiation_view) |\<in>|
+      declared_sockets given_declarations"
+    unfolding given_declarations_records
+    by (rule declarations_list_socket_member[where D=instantiation_declarations])
+      (simp only: list.set insert_iff simp_thms, simp add: instantiation_declarations_def)
+  have m55': "52 \<in> ?R"
+    using given_socket_reaches[OF sock11 m65(5)] finite_premise_callee[of 52 instantiation_constant_socket_schema]
+    by (simp add: instantiation_constant_socket_schema_def)
+  have e505: "505 \<in> ?R" using given_rooted_entries given_rooted_members(12) by blast
+  have e85: "85 \<in> ?R" using given_rooted_entries by (auto simp: given_reader_entries_def given_granted_entries_def)
+  have c85: "((85,0),application_admission_schema) \<in> system_clauses given_program_system"
+  proof -
+    have "((85,0),application_admission_schema) \<in> system_clauses application_admission_system"
+      by (simp add: application_admission_system_def)
+    then show ?thesis using application_program_agreement granted_entry_members(3)
+      unfolding systems_agree_on_def by blast
+  qed
+  have m85: "58 \<in> ?R"
+  proof -
+    have "((85,0),application_admission_schema) \<in> system_clauses given_rooted_readers_system"
+      using rooted_system_agreement[of given_program_system "fset given_reader_entries",
+          folded given_rooted_readers_system_def] given_program_formed c85 e85
+      unfolding systems_agree_on_def by blast
+    moreover have "58 \<in> schema_dependencies application_admission_schema"
+      by (simp add: schema_dependencies_def rel_ran_image application_admission_schema_def)
+    ultimately show ?thesis using given_rooted_readers_formed unfolding schema_system_formed_def by blast
+  qed
+  have m505: "504 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF payload_audit_system_formed guard_audit_agreement e505,
+        of payload_audit_schema])
+      (simp_all add: schema_dependencies_def rel_ran_image payload_audit_schema_def)
+  have m504: "503 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF clause_family_payloads_system_formed guard_clause_family_agreement m505,
+        of "context_list_step_schema 503 504"])
+      (auto simp: context_list_clauses_def schema_dependencies_def rel_ran_image context_list_step_schema_def)
+  have m503: "500 \<in> ?R" "501 \<in> ?R" "502 \<in> ?R"
+    by (rule given_rooted_clause_reaches[OF clause_payloads_system_formed guard_clause_payloads_agreement m504,
+        of clause_payloads_schema]; simp add: schema_dependencies_def rel_ran_image clause_payloads_schema_def)+
   have m39: "35 \<in> ?R"
     by (rule given_rooted_clause_reaches[OF citation_resolution_system_formed guard_resolution_agreement m40,
         of citation_resolve_local_schema])
       (auto simp: citation_resolution_clauses_def schema_dependencies_def rel_ran_image citation_resolve_local_schema_def)
-  show ?thesis using assms e r m79 m12 m7 m32 m65 m57 m50 m42 m45 m40 m39 by auto
+  show ?thesis using assms e r m79 m12 m7 m32 m65 m57 m50 m42 m45 m40 m39 m82 m64 m63 m55 m72 m63' m62 m61 m55' m503 m85 by auto
 qed
 
 text \<open>
@@ -252,7 +331,8 @@ theorem given_declarations_sites:
   "declared_sites given_declarations \<subseteq> system_definitions given_rooted_readers_system"
 proof -
   let ?R = "system_definitions given_rooted_readers_system"
-  let ?A = "{6,7,10,11,12,21,29,31,32,34,35,36,37,39,40,41,42,45,47,48,49,54,55,77,79,83} :: nat set"
+  let ?A = "{6,7,10,11,12,21,29,31,32,34,35,36,37,39,40,41,42,45,47,48,49,50,52,54,55,56,57,58,59,60,61,62,63,64,65,
+    77,79,83,500,501,502} :: nat set"
   let ?B = "{71,75,81,104,105,119,505} :: nat set"
   let ?S = "?A \<union> ?B"
   have site: "d \<in> ?R" if "d \<in> ?S" for d
@@ -584,6 +664,7 @@ theorem extension_installed_lifts:
   by (rule finite_construction_complete_lifts[OF installed_construction_complete[OF assms]])
 
 end
+
 
 text \<open>The given's record at the asked relation's installed guard and at the first request's installed program.\<close>
 

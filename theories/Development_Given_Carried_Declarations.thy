@@ -1,6 +1,7 @@
 theory Development_Given_Carried_Declarations
   imports Factor_Artifact_Citation_Declarations Factor_Row_Selection_Socket_Declarations
-    Development_Given_Declarations Development_Given_Extensions Development_Given_Registrations
+    Factor_Definition_Reading_Declarations Development_Given_Declarations Development_Given_Extensions
+    Development_Given_Registrations
 begin
 
 text \<open>
@@ -17,7 +18,10 @@ text \<open>
   the obligations read. No record is discharged again, and no clause of any program changes. 32's kept sockets
   (@{text Factor_Row_Value_Socket_Declarations} at 71, 75 and 505; @{text Factor_Row_Selection_Socket_Declarations} at
   81, 104, 105 and 119) are carried the same way from the systems where their clauses stand: the payload audit's,
-  a part of the given's readers, and views of the package and replay readers the given's readers extend.
+  a part of the given's readers, and views of the package and replay readers the given's readers extend. The
+  instantiation family's records (R6c: @{text Factor_Instantiation_Declarations},
+  @{text Factor_Schema_Instantiation_Declarations}, @{text Factor_Definition_Reading_Declarations}) are carried by the
+  same union lemma, their correspondences joined to the one record's site by site.
 \<close>
 
 section \<open>Each notion's system agrees with the given's readers on its whole domain\<close>
@@ -26,7 +30,9 @@ text \<open>
   The systems stand on one lineage of views, each adding one fresh definition to the one below it
   (@{thm [source] systems_agree_on_added}): each agrees with the next declared one above it, and the top ones with the
   additions' system (@{thm [source] given_reader_agreements}), which agrees with the given's readers
-  (@{thm [source] additions_guard_agreement}).
+  (@{thm [source] additions_guard_agreement}). The data subset's and the artifact lookup's systems have no segment
+  above them: their agreements are the Readers' short routes (@{thm [source] guard_subset_agreement},
+  @{thm [source] guard_lookup_agreement}).
 \<close>
 
 lemma lineage_segments:
@@ -40,7 +46,6 @@ lemma lineage_segments:
   "systems_agree_on record_admission_system target_admission_system (system_definitions record_admission_system)"
   "systems_agree_on target_admission_system citation_admission_system (system_definitions target_admission_system)"
   "systems_agree_on citation_admission_system artifact_lookup_system (system_definitions citation_admission_system)"
-
   "systems_agree_on citation_resolution_system citation_interpretation_system
     (system_definitions citation_resolution_system)"
   "systems_agree_on citation_interpretation_system citation_location_system
@@ -48,7 +53,6 @@ lemma lineage_segments:
   "systems_agree_on citation_location_system citation_reading_system (system_definitions citation_location_system)"
   "systems_agree_on citation_reading_system target_projection_system (system_definitions citation_reading_system)"
   "systems_agree_on target_projection_system data_subset_system (system_definitions target_projection_system)"
-
   "systems_agree_on data_union_system payload_disjoint_system (system_definitions data_union_system)"
   "systems_agree_on payload_disjoint_system quotation_admission_system (system_definitions payload_disjoint_system)"
   "systems_agree_on quotation_admission_system binder_admission_system (system_definitions quotation_admission_system)"
@@ -338,12 +342,17 @@ qed
 section \<open>The given's record\<close>
 
 text \<open>
-  One correspondence for every record: the root family's at 79, the artifacts' and citations' elsewhere, which is R6's
-  at R6's producers. Each record's own correspondence agrees with it where the record reads it.
+  One correspondence for every record: the root family's at 79, the instantiation family's at its producers 50–58
+  (@{const instantiation_correspondence}) and 59–65 (@{const schema_instantiation_correspondence}), the artifacts' and
+  citations' elsewhere, which is R6's at R6's producers. Each record's own correspondence agrees with it where the
+  record reads it: the two instantiation correspondences disagree off their own sites, so they are joined site by
+  site, never either alone.
 \<close>
 
 definition given_declarations_correspondence :: "nat \<Rightarrow> nat \<Rightarrow> factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
   "given_declarations_correspondence d = (if d = 79 then (\<lambda>i. root_family_correspondence)
+    else if d \<in> {50,52,55,56,57,58} then instantiation_correspondence d
+    else if d \<in> {59,60,61,62,63,64,65} then schema_instantiation_correspondence d
     else artifact_citation_correspondence d)"
 
 lemma given_notion_dischargedI:
@@ -622,6 +631,160 @@ lemma given_notion_root_slot_row:
   apply (auto simp: root_slot_row_record_def root_slot_row_decoded package_slot_reading_clauses_def)
   done
 
+text \<open>
+  The instantiation family's records (R6c), each discharged at the system where its producer's and sockets' clauses
+  stand, with the correspondence the one record joins at their sites. Binding admission (52) lies below the binder
+  admission, and the clause payloads (503) below their family (504) and the payload audit (505), one view step each.
+\<close>
+
+lemma instantiation_family_segments:
+  "systems_agree_on binding_admission_system binder_admission_system (system_definitions binding_admission_system)"
+  "systems_agree_on clause_payloads_system clause_family_payloads_system (system_definitions clause_payloads_system)"
+  "systems_agree_on clause_family_payloads_system payload_audit_system
+    (system_definitions clause_family_payloads_system)"
+  by (simp_all add: systems_agree_on_added binder_admission_system_def diagonal_rows_system_def
+    clause_family_payloads_system_def payload_audit_system_def)
+
+lemmas guard_binding_admission_agreement =
+  whole_agreement_transitive[OF instantiation_family_segments(1) guard_binder_agreement]
+lemmas guard_clause_family_agreement =
+  whole_agreement_transitive[OF instantiation_family_segments(3) guard_audit_agreement]
+lemmas guard_clause_payloads_agreement =
+  whole_agreement_transitive[OF instantiation_family_segments(2) guard_clause_family_agreement]
+
+lemma given_notion_binding: "given_notion_discharged binding_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF binding_admission_system_formed guard_binding_admission_agreement _ _
+    instantiation_notion_declarations_discharged(2)])
+  apply (auto simp: binding_declarations_def)[2]
+  apply (auto simp: binding_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: binding_declarations_def)
+  done
+
+lemma given_notion_application: "given_notion_discharged application_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF application_reading_system_formed guard_application_reading_agreement _ _
+    instantiation_notion_declarations_discharged(6)])
+  apply (auto simp: application_declarations_def)[2]
+  apply (auto simp: application_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: application_declarations_def application_socket_decoded)
+  done
+
+lemma given_notion_clause_payloads:
+  "given_notion_discharged clause_payloads_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF clause_payloads_system_formed guard_clause_payloads_agreement _ _
+    clause_payloads_declarations_discharged])
+  apply (auto simp: clause_payloads_declarations_def)[2]
+  apply (auto simp: clause_payloads_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: clause_payloads_declarations_def)
+  done
+
+lemma given_notion_quotation: "given_notion_discharged quotation_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF quotation_admission_system_formed guard_quotation_agreement _ _
+    instantiation_notion_declarations_discharged(1)])
+  apply (auto simp: quotation_declarations_def)[2]
+  apply (auto simp: quotation_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: quotation_declarations_def quotation_pair_socket_decoded quotation_admission_clauses_def)
+  done
+
+lemma given_notion_instantiation: "given_notion_discharged instantiation_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF pattern_instantiation_system_formed guard_instantiation_agreement _ _
+    instantiation_notion_declarations_discharged(3)])
+  apply (auto simp: instantiation_declarations_def)[2]
+  apply (auto simp: instantiation_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: instantiation_declarations_def instantiation_constant_socket_decoded
+    instantiation_pair_socket_decoded pattern_instantiation_clauses_def)
+  done
+
+lemma given_notion_scoped: "given_notion_discharged scoped_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF scoped_instantiation_system_formed guard_scoped_agreement _ _
+    instantiation_notion_declarations_discharged(4)])
+  apply (auto simp: scoped_declarations_def)[2]
+  apply (auto simp: scoped_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: scoped_declarations_def)
+  done
+
+lemma given_notion_prospective: "given_notion_discharged prospective_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF prospective_instantiation_system_formed guard_prospective_agreement _ _
+    instantiation_notion_declarations_discharged(5)])
+  apply (auto simp: prospective_declarations_def)[2]
+  apply (auto simp: prospective_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: prospective_declarations_def prospective_socket_decoded)
+  done
+
+lemma given_notion_row_values: "given_notion_discharged row_values_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF row_values_system_formed guard_row_values_agreement _ _
+    schema_instantiation_notion_declarations_discharged(1)])
+  apply (auto simp: row_values_declarations_def)[2]
+  apply (auto simp: row_values_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: row_values_declarations_def)
+  done
+
+lemma given_notion_vector: "given_notion_discharged vector_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF vector_instantiation_system_formed guard_vector_instantiation_agreement _ _
+    schema_instantiation_notion_declarations_discharged(2)])
+  apply (auto simp: vector_declarations_def)[2]
+  apply (auto simp: vector_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: vector_declarations_def vector_cons_socket_decoded vector_instantiation_clauses_def)
+  done
+
+lemma given_notion_record: "given_notion_discharged record_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF record_instantiation_system_formed guard_record_instantiation_agreement _ _
+    schema_instantiation_notion_declarations_discharged(3)])
+  apply (auto simp: record_declarations_def)[2]
+  apply (auto simp: record_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: record_declarations_def record_socket_decoded)
+  done
+
+lemma given_notion_material: "given_notion_discharged material_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF material_instantiation_system_formed guard_material_instantiation_agreement _ _
+    schema_instantiation_notion_declarations_discharged(4)])
+  apply (auto simp: material_declarations_def)[2]
+  apply (auto simp: material_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: material_declarations_def material_socket_decoded)
+  done
+
+lemma given_notion_premise_rows: "given_notion_discharged premise_rows_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF premise_rows_system_formed guard_premise_rows_agreement _ _
+    schema_instantiation_notion_declarations_discharged(5)])
+  apply (auto simp: premise_rows_declarations_def)[2]
+  apply (auto simp: premise_rows_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: premise_rows_declarations_def premise_call_socket_decoded premise_material_socket_decoded
+    premise_rows_clauses_def)
+  done
+
+lemma given_notion_premise_family:
+  "given_notion_discharged premise_family_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF premise_family_instantiation_system_formed guard_premise_family_agreement _ _
+    schema_instantiation_notion_declarations_discharged(6)])
+  apply (auto simp: premise_family_declarations_def)[2]
+  apply (auto simp: premise_family_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: premise_family_declarations_def premise_family_socket_decoded)
+  done
+
+lemma given_notion_schema: "given_notion_discharged schema_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF schema_instantiation_system_formed guard_schema_instantiation_agreement _ _
+    schema_instantiation_notion_declarations_discharged(7)])
+  apply (auto simp: schema_declarations_def)[2]
+  apply (auto simp: schema_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: schema_declarations_def schema_socket_decoded)
+  done
+
+lemma given_notion_call_admission:
+  "given_notion_discharged call_admission_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF definition_call_admission_system_formed guard_definition_call_agreement _ _
+    call_admission_declarations_discharged])
+  apply (auto simp: call_admission_declarations_def)[2]
+  apply (auto simp: call_admission_declarations_def given_correspondence_unfold)[2]
+  apply (auto simp: call_admission_declarations_def)
+  done
+
+lemma given_notion_interface_slot:
+  "given_notion_discharged interface_slot_declarations given_declarations_correspondence"
+  apply (rule given_notion_dischargedI[OF definition_slot_reading_system_formed guard_definition_slot_agreement _ _
+    interface_slot_declarations_discharged])
+  apply (auto simp: interface_slot_declarations_def)[4]
+  apply (auto simp: interface_slot_declarations_def interface_slot_socket_decoded definition_slot_reading_clauses_def)
+  done
+
 lemmas given_records_discharged =
   given_notion_given_bag
   given_notion_given_artifact
@@ -658,11 +821,27 @@ lemmas given_records_discharged =
   given_notion_premise_slot_row
   given_notion_schema_slot_row
   given_notion_root_slot_row
+  given_notion_quotation
+  given_notion_instantiation
+  given_notion_scoped
+  given_notion_prospective
+  given_notion_row_values
+  given_notion_vector
+  given_notion_record
+  given_notion_material
+  given_notion_premise_rows
+  given_notion_premise_family
+  given_notion_schema
+  given_notion_call_admission
+  given_notion_interface_slot
+  given_notion_binding
+  given_notion_clause_payloads
+  given_notion_application
 
 text \<open>
-  The given's record: R6's six pieces, R6b's records of the root family and of the artifacts and citations, and 32's
-  kept sockets at 71, 75, 505, 81, 104, 105 and 119, one union read by the committed search over the given's rooted
-  readers.
+  The given's record: R6's six pieces, R6b's records of the root family and of the artifacts and citations, 32's
+  kept sockets at 71, 75, 505, 81, 104, 105 and 119, and R6c's records of the instantiation family, one union read by
+  the committed search over the given's rooted readers.
 \<close>
 
 definition given_declarations :: "(nat,nat,nat) resolution_declarations" where
@@ -675,7 +854,11 @@ definition given_declarations :: "(nat,nat,nat) resolution_declarations" where
     interpretation_declarations, projection_target_declarations, binder_declarations, bag_binder_declarations,
     union_binder_declarations, instantiation_binder_declarations, schema_family_socket_record,
     callee_inclusion_socket_record, payload_audit_socket_record, clause_reading_row_record, premise_slot_row_record,
-    schema_slot_row_record, root_slot_row_record]"
+    schema_slot_row_record, root_slot_row_record, quotation_declarations, instantiation_declarations,
+    scoped_declarations, prospective_declarations, row_values_declarations, vector_declarations, record_declarations,
+    material_declarations, premise_rows_declarations, premise_family_declarations, schema_declarations,
+    call_admission_declarations, interface_slot_declarations, binding_declarations, clause_payloads_declarations,
+    application_declarations]"
 
 theorem given_declarations_discharged:
   "declarations_discharged (positive_meaning given_program_system) given_declarations given_declarations_correspondence"

@@ -969,6 +969,67 @@ definition declarations_discharged ::
 lemma no_declarations_discharged: "declarations_discharged M no_declarations corr"
   by (simp add: declarations_discharged_def declarations_formed_def no_declarations_def)
 
+text \<open>
+  The union of records keeps every producer, consumer and socket of each; a union of records each discharged at one
+  meaning with one correspondence is discharged there. A record discharged with one correspondence is discharged
+  with any other that agrees with it where the record reads it: at its producers and at its consumers' producers.
+\<close>
+
+definition declarations_union ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_declarations" where
+  "declarations_union D E = \<lparr>declared_producers = declared_producers D |\<union>| declared_producers E,
+    declared_consumers = declared_consumers D |\<union>| declared_consumers E,
+    declared_sockets = declared_sockets D |\<union>| declared_sockets E\<rparr>"
+
+fun declarations_list :: "('a,'s,'d) resolution_declarations list \<Rightarrow> ('a,'s,'d) resolution_declarations" where
+  "declarations_list [] = no_declarations"
+| "declarations_list (D#Ds) = declarations_union D (declarations_list Ds)"
+
+lemma declarations_union_discharged:
+  assumes "declarations_discharged M D corr" "declarations_discharged M E corr"
+  shows "declarations_discharged M (declarations_union D E) corr"
+  using assms unfolding declarations_discharged_def declarations_formed_def declarations_union_def by auto
+
+lemma declarations_list_discharged:
+  assumes "\<And>D. D \<in> set Ds \<Longrightarrow> declarations_discharged M D corr"
+  shows "declarations_discharged M (declarations_list Ds) corr"
+  using assms by (induction Ds) (simp_all add: no_declarations_discharged declarations_union_discharged)
+
+lemma declarations_list_sockets:
+  assumes "z |\<in>| declared_sockets (declarations_list Ds)"
+  obtains D where "D \<in> set Ds" "z |\<in>| declared_sockets D"
+  using assms by (induction Ds) (auto simp: declarations_union_def no_declarations_def)
+
+lemma declarations_discharged_correspondence:
+  assumes discharged: "declarations_discharged M D corr"
+    and producers: "\<And>d. d |\<in>| fst |`| declared_producers D \<Longrightarrow> corr' d = corr d"
+    and consumers: "\<And>d. d |\<in>| fst |`| declared_consumers D \<Longrightarrow> corr' d = corr d"
+  shows "declarations_discharged M D corr'"
+proof -
+  have dF: "declarations_formed D"
+    and dP: "\<forall>d V hs. (d,V,hs) |\<in>| declared_producers D \<longrightarrow> producer_discharged M d V hs (corr d)"
+    and dC: "\<forall>d e V i. (d,e,V,i) |\<in>| declared_consumers D \<longrightarrow> consumer_discharged M e V (corr d i)"
+    and dS: "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<longrightarrow> socket_discharged M S s keep Vp Vh"
+    using discharged unfolding declarations_discharged_def by blast+
+  show ?thesis unfolding declarations_discharged_def
+  proof (intro conjI allI impI)
+    show "declarations_formed D" by (rule dF)
+  next
+    fix d V hs assume m: "(d,V,hs) |\<in>| declared_producers D"
+    have "producer_discharged M d V hs (corr d)" using dP m by blast
+    moreover have "d |\<in>| fst |`| declared_producers D" using m by force
+    ultimately show "producer_discharged M d V hs (corr' d)" using producers by simp
+  next
+    fix d e V i assume m: "(d,e,V,i) |\<in>| declared_consumers D"
+    have "consumer_discharged M e V (corr d i)" using dC m by blast
+    moreover have "d |\<in>| fst |`| declared_consumers D" using m by force
+    ultimately show "consumer_discharged M e V (corr' d i)" using consumers by simp
+  next
+    fix e S s keep Vp Vh assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
+    show "socket_discharged M S s keep Vp Vh" using dS m by blast
+  qed
+qed
+
 subsection \<open>The contracts' discharges at views\<close>
 
 theorem function_contract_producer:

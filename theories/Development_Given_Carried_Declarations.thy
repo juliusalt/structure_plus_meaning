@@ -11,10 +11,10 @@ text \<open>
   @{text Factor_Artifact_Citation_Declarations}) each stand discharged at their notion's system. Every such system is a
   view of the one lineage the given's readers extend, so it agrees with the given's readers on its whole domain; a
   record discharged there is carried, once for any record, to the given's joined program and to its rooted readers by
-  the agreement on their common definitions (@{text declarations_shared_discharged}): a consumer record's producer site
-  need not stand in the consumer's own system (37 above 34, 35 and 54 on the lineage, 42 above 41, 54 above 6 and 48),
-  so the transfer reads the sites the obligations read, not every declared site as @{text declarations_agree_discharged}
-  does. No record is discharged again, and no clause of any program changes.
+  the one transfer by agreement (@{text declarations_agree_read_discharged}) at their common definitions (its instance
+  @{text declarations_shared_discharged}): a consumer record's producer site need not stand in the consumer's own
+  system (37 above 34, 35 and 54 on the lineage, 42 above 41, 54 above 6 and 48), and the transfer reads only the sites
+  the obligations read. No record is discharged again, and no clause of any program changes.
 \<close>
 
 section \<open>Each notion's system agrees with the given's readers on its whole domain\<close>
@@ -49,8 +49,6 @@ lemma lineage_segments:
   "systems_agree_on data_union_system payload_disjoint_system (system_definitions data_union_system)"
   "systems_agree_on payload_disjoint_system binder_admission_system (system_definitions payload_disjoint_system)"
   "systems_agree_on binder_admission_system pattern_instantiation_system (system_definitions binder_admission_system)"
-  "systems_agree_on pattern_instantiation_system package_closure_admission_system
-    (system_definitions pattern_instantiation_system)"
   by (simp_all add: systems_agree_on_added artifact_comparison_system_def artifact_projection_system_def
     material_data_system_def atom_lookup_system_def artifact_admission_system_def artifact_identity_system_def
     headed_material_system_def key_fibre_system_def environment_identity_system_def environment_admission_system_def
@@ -64,20 +62,106 @@ lemma lineage_segments:
     citation_location_system_def citation_reading_system_def target_projection_system_def
     located_admission_system_def anchored_admission_system_def data_subset_system_def data_append_system_def
     data_union_system_def payload_disjoint_system_def binder_admission_system_def diagonal_rows_system_def
-    binding_admission_system_def row_keys_system_def quotation_admission_system_def pattern_instantiation_system_def
-    package_closure_admission_system_def definition_callee_list_system_def definition_callee_inclusion_system_def
-    schema_callee_list_system_def schema_callee_inclusion_system_def definition_call_admission_system_def
-    schema_family_admission_system_def schema_root_list_system_def schema_admission_system_def
-    schema_material_checking_system_def material_rows_checking_system_def material_checking_system_def
-    schema_instantiation_system_def premise_family_instantiation_system_def premise_rows_system_def
-    material_instantiation_system_def record_instantiation_system_def vector_instantiation_system_def
-    row_values_system_def application_reading_system_def prospective_instantiation_system_def
-    scoped_instantiation_system_def)
+    binding_admission_system_def row_keys_system_def quotation_admission_system_def pattern_instantiation_system_def)
+
+text \<open>
+  From the pattern instantiation to the package closure's admission the lineage is taken one view step at a time, so
+  that every system between them has its own agreement with the given's readers below, each read where it is needed
+  (the rooted readers' sites, R6c's record) rather than the steps run again.
+\<close>
+
+lemma closure_segments:
+  "systems_agree_on pattern_instantiation_system scoped_instantiation_system
+    (system_definitions pattern_instantiation_system)"
+  "systems_agree_on scoped_instantiation_system prospective_instantiation_system
+    (system_definitions scoped_instantiation_system)"
+  "systems_agree_on prospective_instantiation_system application_reading_system
+    (system_definitions prospective_instantiation_system)"
+  "systems_agree_on application_reading_system row_values_system (system_definitions application_reading_system)"
+  "systems_agree_on row_values_system vector_instantiation_system (system_definitions row_values_system)"
+  "systems_agree_on vector_instantiation_system record_instantiation_system
+    (system_definitions vector_instantiation_system)"
+  "systems_agree_on record_instantiation_system material_instantiation_system
+    (system_definitions record_instantiation_system)"
+  "systems_agree_on material_instantiation_system premise_rows_system (system_definitions material_instantiation_system)"
+  "systems_agree_on premise_rows_system premise_family_instantiation_system (system_definitions premise_rows_system)"
+  "systems_agree_on premise_family_instantiation_system schema_instantiation_system
+    (system_definitions premise_family_instantiation_system)"
+  "systems_agree_on schema_instantiation_system material_checking_system (system_definitions schema_instantiation_system)"
+  "systems_agree_on material_checking_system material_rows_checking_system (system_definitions material_checking_system)"
+  "systems_agree_on material_rows_checking_system schema_material_checking_system
+    (system_definitions material_rows_checking_system)"
+  "systems_agree_on schema_material_checking_system schema_admission_system
+    (system_definitions schema_material_checking_system)"
+  "systems_agree_on schema_admission_system schema_root_list_system (system_definitions schema_admission_system)"
+  "systems_agree_on schema_root_list_system schema_family_admission_system (system_definitions schema_root_list_system)"
+  "systems_agree_on schema_family_admission_system definition_call_admission_system
+    (system_definitions schema_family_admission_system)"
+  "systems_agree_on definition_call_admission_system schema_callee_inclusion_system
+    (system_definitions definition_call_admission_system)"
+  "systems_agree_on schema_callee_inclusion_system schema_callee_list_system
+    (system_definitions schema_callee_inclusion_system)"
+  "systems_agree_on schema_callee_list_system definition_callee_inclusion_system
+    (system_definitions schema_callee_list_system)"
+  "systems_agree_on definition_callee_inclusion_system definition_callee_list_system
+    (system_definitions definition_callee_inclusion_system)"
+  "systems_agree_on definition_callee_list_system package_closure_admission_system
+    (system_definitions definition_callee_list_system)"
+  by (simp_all add: systems_agree_on_added package_closure_admission_system_def definition_callee_list_system_def
+    definition_callee_inclusion_system_def schema_callee_list_system_def schema_callee_inclusion_system_def
+    definition_call_admission_system_def schema_family_admission_system_def schema_root_list_system_def
+    schema_admission_system_def schema_material_checking_system_def material_rows_checking_system_def
+    material_checking_system_def schema_instantiation_system_def premise_family_instantiation_system_def
+    premise_rows_system_def material_instantiation_system_def record_instantiation_system_def
+    vector_instantiation_system_def row_values_system_def application_reading_system_def
+    prospective_instantiation_system_def scoped_instantiation_system_def)
 
 lemmas guard_closure_agreement = whole_agreement_transitive[OF given_reader_agreements(2) additions_guard_agreement]
 lemmas guard_root_family_agreement = whole_agreement_transitive[OF given_reader_agreements(3) additions_guard_agreement]
 lemmas guard_membership_agreement = whole_agreement_transitive[OF given_reader_agreements(7) additions_guard_agreement]
-lemmas guard_instantiation_agreement = whole_agreement_transitive[OF lineage_segments(21) guard_closure_agreement]
+lemmas guard_edge_agreement = whole_agreement_transitive[OF given_reader_agreements(6) additions_guard_agreement]
+lemmas guard_definition_callee_list_agreement =
+  whole_agreement_transitive[OF closure_segments(22) guard_closure_agreement]
+lemmas guard_definition_callee_inclusion_agreement =
+  whole_agreement_transitive[OF closure_segments(21) guard_definition_callee_list_agreement]
+lemmas guard_schema_callee_list_agreement =
+  whole_agreement_transitive[OF closure_segments(20) guard_definition_callee_inclusion_agreement]
+lemmas guard_schema_callee_inclusion_agreement =
+  whole_agreement_transitive[OF closure_segments(19) guard_schema_callee_list_agreement]
+lemmas guard_definition_call_agreement =
+  whole_agreement_transitive[OF closure_segments(18) guard_schema_callee_inclusion_agreement]
+lemmas guard_schema_family_agreement =
+  whole_agreement_transitive[OF closure_segments(17) guard_definition_call_agreement]
+lemmas guard_schema_root_list_agreement =
+  whole_agreement_transitive[OF closure_segments(16) guard_schema_family_agreement]
+lemmas guard_schema_admission_agreement =
+  whole_agreement_transitive[OF closure_segments(15) guard_schema_root_list_agreement]
+lemmas guard_schema_material_checking_agreement =
+  whole_agreement_transitive[OF closure_segments(14) guard_schema_admission_agreement]
+lemmas guard_material_rows_checking_agreement =
+  whole_agreement_transitive[OF closure_segments(13) guard_schema_material_checking_agreement]
+lemmas guard_material_checking_agreement =
+  whole_agreement_transitive[OF closure_segments(12) guard_material_rows_checking_agreement]
+lemmas guard_schema_instantiation_agreement =
+  whole_agreement_transitive[OF closure_segments(11) guard_material_checking_agreement]
+lemmas guard_premise_family_agreement =
+  whole_agreement_transitive[OF closure_segments(10) guard_schema_instantiation_agreement]
+lemmas guard_premise_rows_agreement =
+  whole_agreement_transitive[OF closure_segments(9) guard_premise_family_agreement]
+lemmas guard_material_instantiation_agreement =
+  whole_agreement_transitive[OF closure_segments(8) guard_premise_rows_agreement]
+lemmas guard_record_instantiation_agreement =
+  whole_agreement_transitive[OF closure_segments(7) guard_material_instantiation_agreement]
+lemmas guard_vector_instantiation_agreement =
+  whole_agreement_transitive[OF closure_segments(6) guard_record_instantiation_agreement]
+lemmas guard_row_values_agreement =
+  whole_agreement_transitive[OF closure_segments(5) guard_vector_instantiation_agreement]
+lemmas guard_application_reading_agreement =
+  whole_agreement_transitive[OF closure_segments(4) guard_row_values_agreement]
+lemmas guard_prospective_agreement =
+  whole_agreement_transitive[OF closure_segments(3) guard_application_reading_agreement]
+lemmas guard_scoped_agreement = whole_agreement_transitive[OF closure_segments(2) guard_prospective_agreement]
+lemmas guard_instantiation_agreement = whole_agreement_transitive[OF closure_segments(1) guard_scoped_agreement]
 lemmas guard_binder_agreement = whole_agreement_transitive[OF lineage_segments(20) guard_instantiation_agreement]
 lemmas guard_disjoint_agreement = whole_agreement_transitive[OF lineage_segments(19) guard_binder_agreement]
 lemmas guard_union_agreement = whole_agreement_transitive[OF lineage_segments(18) guard_disjoint_agreement]

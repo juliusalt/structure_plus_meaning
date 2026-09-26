@@ -73,8 +73,9 @@ section \<open>The transfer of declarations\<close>
 text \<open>
   A relocation by a map on sites relocates a record: its producers and consumers by the map, a socket's site by the
   map and its schema with its callees as @{const finite_rename_system} relocates the program's clauses, its socket,
-  the kept head and every view as they were. A record's sites are its producers, both sites of its consumers, its
-  sockets' sites and their schemas' callees: the sites its obligations read. The transfer holds at any views.
+  the kept head and every view as they were. A record's declared sites are its producers, both sites of its
+  consumers, its sockets' sites and their schemas' callees; its obligations read its producers, its consumers' own
+  sites and its sockets' callees alone. The transfer holds at any views.
 \<close>
 
 definition declarations_relocated ::
@@ -87,10 +88,6 @@ definition declarations_relocated ::
 definition declared_sites :: "('a,'s,'d) resolution_declarations \<Rightarrow> 'd set" where
   "declared_sites D = fst ` fset (declared_producers D) \<union> (\<Union>(d,e,V,i)\<in>fset (declared_consumers D). {d,e}) \<union>
     (\<Union>(e,S,s,keep,Vp,Vh)\<in>fset (declared_sockets D). insert e (schema_dependencies (decode_finite_schema S)))"
-
-lemma schema_dependencies_premise: "(q,d,p) \<in> schema_premises S \<Longrightarrow> d \<in> schema_dependencies S"
-  by (force simp: schema_dependencies_def rel_ran_def)
-
 
 lemma declarations_formed_relocated: "declarations_formed D \<Longrightarrow> declarations_formed (declarations_relocated g D)"
   unfolding declarations_formed_def declarations_relocated_def by auto
@@ -314,48 +311,150 @@ proof -
   qed
 qed
 
+text \<open>
+  A socket whose clause calls a site at which the meaning N holds nothing has no true instance at N; at every other
+  callee N means what M means, so the socket's obligation carries from M to N.
+\<close>
+
+lemma socket_discharged_shared:
+  assumes src: "socket_discharged M S s keep Vp Vh"
+    and eq: "\<And>d x. d \<in> schema_dependencies (decode_finite_schema S) \<Longrightarrow> d \<in> U \<Longrightarrow> (d,x) \<in> N \<longleftrightarrow> (d,x) \<in> M"
+    and out: "\<And>d x. (d,x) \<in> N \<Longrightarrow> d \<in> U"
+  shows "socket_discharged N S s keep Vp Vh"
+proof (cases "schema_dependencies (decode_finite_schema S) \<subseteq> U")
+  case True
+  have eqc: "(id d,x) \<in> N \<longleftrightarrow> (d,x) \<in> M" if "d \<in> schema_dependencies (decode_finite_schema S)" for d x
+    using eq[OF that] True that by auto
+  have dep: "d \<in> schema_dependencies (decode_finite_schema S)"
+    if "(q,d,p) \<in> schema_premises (decode_finite_schema S)" for q d p
+    using that unfolding schema_dependencies_def rel_ran_def by force
+  have eqp: "(d,x) \<in> N \<longleftrightarrow> (d,x) \<in> M" if "(q,d,p) \<in> schema_premises (decode_finite_schema S)" for q d p x
+    using eqc[OF dep[OF that]] by simp
+  have ct: "clause_true N (decode_finite_schema S) h \<longleftrightarrow> clause_true M (decode_finite_schema S) h" for h
+    unfolding clause_true_def by (simp add: eqp)
+  show ?thesis
+    by (rule socket_discharged_callees[where R=S and g=id and M'=N, OF src _ refl refl ct eqc]) simp
+next
+  case False
+  then obtain e0 where e0: "e0 \<in> schema_dependencies (decode_finite_schema S)" "e0 \<notin> U" by blast
+  have none: "\<not> clause_true N (decode_finite_schema S) h" for h
+  proof
+    assume ct: "clause_true N (decode_finite_schema S) h"
+    obtain q p where "(q,e0,p) \<in> schema_premises (decode_finite_schema S)"
+      by (rule schema_dependency_premise[OF e0(1)])
+    then have "(e0,evaluate_pattern h p) \<in> N" using ct unfolding clause_true_def by blast
+    then show False using out e0(2) by blast
+  qed
+  have c1: "\<forall>d p. (s,d,p) |\<in>| finite_schema_premises S \<longrightarrow> resolution_view_pattern Vp p \<noteq> None"
+    using src unfolding socket_discharged_def by (rule conjunct1)
+  show ?thesis unfolding socket_discharged_def using c1 by (simp add: none)
+qed
+
+text \<open>
+  The transfer by agreement reads the record's obligations alone: a producer's site, a consumer's own site and a
+  socket's callees; a consumer's producer site names its correspondence and is not read, nor is a socket's own site.
+  A program Q agreeing with P on a set V closed under P's dependencies means what P means at every site of V
+  (@{thm [source] positive_meaning_dependency_locality}), and nothing at a site it does not hold
+  (@{thm [source] positive_meaning_site}): a producer or a consumer there is vacuous, and a socket whose clause calls
+  such a site has no true instance at Q. So the record is discharged at Q wherever each site its obligations read is
+  in V or is not Q's. Agreement on every declared site (@{text declarations_agree_discharged}) and agreement on the
+  common definitions, P holding the sites the obligations read (@{text declarations_shared_discharged}), are its
+  instances.
+\<close>
+
+theorem declarations_agree_read_discharged:
+  assumes Pf: "schema_system_formed P" and Qf: "schema_system_formed Q"
+    and agree: "systems_agree_on P Q V" and closed: "system_dependency_closed P V"
+    and producers: "\<And>d W hs. (d,W,hs) |\<in>| declared_producers D \<Longrightarrow> d \<in> V \<or> d \<notin> system_definitions Q"
+    and consumers: "\<And>d e W i. (d,e,W,i) |\<in>| declared_consumers D \<Longrightarrow> e \<in> V \<or> e \<notin> system_definitions Q"
+    and sockets: "\<And>e S s keep Vp Vh d. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<Longrightarrow>
+      d \<in> schema_dependencies (decode_finite_schema S) \<Longrightarrow> d \<in> V \<or> d \<notin> system_definitions Q"
+    and discharged: "declarations_discharged (positive_meaning P) D corr"
+  shows "declarations_discharged (positive_meaning Q) D corr"
+proof -
+  let ?M = "positive_meaning P" and ?N = "positive_meaning Q"
+  have eq: "(d,x) \<in> ?N \<longleftrightarrow> (d,x) \<in> ?M" if "d \<in> V" for d x
+    using positive_meaning_dependency_locality[OF Pf Qf agree closed that] by simp
+  have read: "(d,x) \<in> ?N \<longleftrightarrow> (d,x) \<in> ?M" if "d \<in> V \<or> d \<notin> system_definitions Q" "d \<in> system_definitions Q"
+    for d x
+    using that eq by blast
+  have sub: "(d,x) \<in> ?M" if "d \<in> V \<or> d \<notin> system_definitions Q" "(d,x) \<in> ?N" for d x
+    using read[OF that(1) positive_meaning_site[OF that(2)]] that(2) by blast
+  have dF: "declarations_formed D"
+    and dP: "\<forall>d W hs. (d,W,hs) |\<in>| declared_producers D \<longrightarrow> producer_discharged ?M d W hs (corr d)"
+    and dC: "\<forall>d e W i. (d,e,W,i) |\<in>| declared_consumers D \<longrightarrow> consumer_discharged ?M e W (corr d i)"
+    and dS: "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<longrightarrow> socket_discharged ?M S s keep Vp Vh"
+    using discharged unfolding declarations_discharged_def by blast+
+  show ?thesis unfolding declarations_discharged_def
+  proof (intro conjI allI impI)
+    show "declarations_formed D" by (rule dF)
+  next
+    fix d W hs assume m: "(d,W,hs) |\<in>| declared_producers D"
+    have src: "producer_discharged ?M d W hs (corr d)" using dP m by blast
+    show "producer_discharged ?N d W hs (corr d)"
+      using src sub[OF producers[OF m]] unfolding producer_discharged_def by blast
+  next
+    fix d e W i assume m: "(d,e,W,i) |\<in>| declared_consumers D"
+    have src: "consumer_discharged ?M e W (corr d i)" using dC m by blast
+    show "consumer_discharged ?N e W (corr d i)"
+    proof (cases "e \<in> system_definitions Q")
+      case True
+      then show ?thesis using src read[OF consumers[OF m] True] unfolding consumer_discharged_def by simp
+    next
+      case False
+      then show ?thesis unfolding consumer_discharged_def by (auto dest: positive_meaning_site)
+    qed
+  next
+    fix e S s keep Vp Vh assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
+    have src: "socket_discharged ?M S s keep Vp Vh" using dS m by blast
+    have eqs: "(d,x) \<in> ?N \<longleftrightarrow> (d,x) \<in> ?M"
+      if "d \<in> schema_dependencies (decode_finite_schema S)" "d \<in> system_definitions Q" for d x
+      using read[OF sockets[OF m that(1)] that(2)] .
+    show "socket_discharged ?N S s keep Vp Vh" by (rule socket_discharged_shared[OF src eqs positive_meaning_site])
+  qed
+qed
+
 theorem declarations_agree_discharged:
   assumes Pf: "schema_system_formed P" and Qf: "schema_system_formed Q"
     and agree: "systems_agree_on P Q V" and closed: "system_dependency_closed P V"
     and sites: "declared_sites D \<subseteq> V"
     and discharged: "declarations_discharged (positive_meaning P) D corr"
   shows "declarations_discharged (positive_meaning Q) D corr"
+proof (rule declarations_agree_read_discharged[OF Pf Qf agree closed _ _ _ discharged])
+  show "d \<in> V \<or> d \<notin> system_definitions Q" if "(d,W,hs) |\<in>| declared_producers D" for d W hs
+    using subsetD[OF sites declared_sites_members(1)[OF that]] by blast
+  show "e \<in> V \<or> e \<notin> system_definitions Q" if "(d,e,W,i) |\<in>| declared_consumers D" for d e W i
+    using subsetD[OF sites declared_sites_members(3)[OF that]] by blast
+  show "d \<in> V \<or> d \<notin> system_definitions Q"
+    if "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D" "d \<in> schema_dependencies (decode_finite_schema S)"
+    for e S s keep Vp Vh d
+    using subsetD[OF sites subsetD[OF declared_sites_members(5)[OF that(1)] that(2)]] by blast
+qed
+
+theorem declarations_shared_discharged:
+  assumes Pf: "schema_system_formed P" and Qf: "schema_system_formed Q"
+    and agree: "systems_agree_on P Q (system_definitions P \<inter> system_definitions Q)"
+    and producers_in: "\<And>d V hs. (d,V,hs) |\<in>| declared_producers D \<Longrightarrow> d \<in> system_definitions P"
+    and consumers_in: "\<And>d e V i. (d,e,V,i) |\<in>| declared_consumers D \<Longrightarrow> e \<in> system_definitions P"
+    and sockets_in: "\<And>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<Longrightarrow>
+      schema_dependencies (decode_finite_schema S) \<subseteq> system_definitions P"
+    and discharged: "declarations_discharged (positive_meaning P) D corr"
+  shows "declarations_discharged (positive_meaning Q) D corr"
 proof -
-  have at: "(d,x) \<in> positive_meaning Q \<longleftrightarrow> (d,x) \<in> positive_meaning P" if "d \<in> declared_sites D" for d x
-    using positive_meaning_dependency_locality[OF Pf Qf agree closed subsetD[OF sites that]] by simp
-  show ?thesis unfolding declarations_discharged_def
-  proof (intro conjI allI impI)
-    show "declarations_formed D" using discharged by (simp add: declarations_discharged_def)
-  next
-    fix d W hs assume d: "(d,W,hs) |\<in>| declared_producers D"
-    have "producer_discharged (positive_meaning P) d W hs (corr d)"
-      using discharged d unfolding declarations_discharged_def by blast
-    then show "producer_discharged (positive_meaning Q) d W hs (corr d)"
-      unfolding producer_discharged_def at[OF declared_sites_members(1)[OF d]] .
-  next
-    fix d e W i assume de: "(d,e,W,i) |\<in>| declared_consumers D"
-    have "consumer_discharged (positive_meaning P) e W (corr d i)"
-      using discharged de unfolding declarations_discharged_def by blast
-    then show "consumer_discharged (positive_meaning Q) e W (corr d i)"
-      unfolding consumer_discharged_def at[OF declared_sites_members(3)[OF de]] .
-  next
-    fix e S s keep Vp Vh assume eS: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
-    have src: "socket_discharged (positive_meaning P) S s keep Vp Vh"
-      using discharged eS unfolding declarations_discharged_def by blast
-    have sub: "schema_dependencies (decode_finite_schema S) \<subseteq> declared_sites D"
-      by (rule declared_sites_members(5)[OF eS])
-    have eqQ: "(id d,x) \<in> positive_meaning Q \<longleftrightarrow> (d,x) \<in> positive_meaning P"
-      if "d \<in> schema_dependencies (decode_finite_schema S)" for d x
-      using sub at that by (simp add: subset_iff)
-    show "socket_discharged (positive_meaning Q) S s keep Vp Vh"
-    proof (rule socket_discharged_callees[OF src _ _ _ _ eqQ])
-      show "(q,e',p) |\<in>| finite_schema_premises S \<longleftrightarrow> (\<exists>d. (q,d,p) |\<in>| finite_schema_premises S \<and> e' = id d)"
-        for q e' p by simp
-      show "clause_true (positive_meaning Q) (decode_finite_schema S) h \<longleftrightarrow>
-          clause_true (positive_meaning P) (decode_finite_schema S) h" for h
-        using clause_true_relocated[of "decode_finite_schema S" id "positive_meaning Q" "positive_meaning P" h, OF eqQ]
-        by simp
-    qed simp_all
+  have closed: "system_dependency_closed P (system_definitions P \<inter> system_definitions Q)"
+    by (rule systems_agree_on_intersection_closed[OF Pf Qf agree])
+  show ?thesis
+  proof (rule declarations_agree_read_discharged[OF Pf Qf agree closed _ _ _ discharged])
+    show "d \<in> system_definitions P \<inter> system_definitions Q \<or> d \<notin> system_definitions Q"
+      if "(d,W,hs) |\<in>| declared_producers D" for d W hs
+      using producers_in[OF that] by blast
+    show "e \<in> system_definitions P \<inter> system_definitions Q \<or> e \<notin> system_definitions Q"
+      if "(d,e,W,i) |\<in>| declared_consumers D" for d e W i
+      using consumers_in[OF that] by blast
+    show "d \<in> system_definitions P \<inter> system_definitions Q \<or> d \<notin> system_definitions Q"
+      if "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D" "d \<in> schema_dependencies (decode_finite_schema S)"
+      for e S s keep Vp Vh d
+      using subsetD[OF sockets_in[OF that(1)] that(2)] by blast
   qed
 qed
 

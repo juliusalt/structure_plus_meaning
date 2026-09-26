@@ -34,6 +34,11 @@ lemma positive_meaning_formed:
   by (subst (asm) positive_meaning_unfold)
      (auto simp: schema_consequences_def admitted_schema_instance_def)
 
+text \<open>A site the positive meaning holds a call at is one of the program's definitions.\<close>
+
+lemma positive_meaning_site: "(d,x) \<in> positive_meaning Q \<Longrightarrow> d \<in> system_definitions Q"
+  using positive_meaning_formed[of d x Q] by (auto simp: schema_call_formed_def system_definitions_def rel_dom_def)
+
 lemma positive_meaning_step:
   assumes "admitted_schema_instance P d c V t Q"
     "\<forall>s e x. (s,e,x) \<in> Q \<longrightarrow> (e,x) \<in> positive_meaning P"

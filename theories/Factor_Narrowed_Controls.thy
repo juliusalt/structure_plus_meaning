@@ -23,7 +23,7 @@ text \<open>
   site 7's clause (its output premise-only, kept) and in a clause with two unions beside their consumers (site 11,
   55.2's and 60.1's shape), each with the union's production: the collection of the members of x (base queries to
   membership, each element its own key, identity equality of ground terms). The class N is read by the discharge
-  alone, never by the search, and stands here as every term. The committed resolution produces the distinct union,
+  alone, never by the search: here the lists of distinct payloads (@{text narrowed_control_class}). The committed resolution produces the distinct union,
   resolves the true call (length 2) and refutes the false one (length 3), at site 7 and at site 11, where the second
   union is committed and produced once the first is. Site 9 declares no socket: its false call (length 1) is searched
   plainly and left unresolved, never refuted. At bound 0 the production's value is none, so the production does not
@@ -158,12 +158,25 @@ definition narrowed_search_program :: "(nat,nat,nat,nat) finite_schema_system" w
   "narrowed_search_program = \<lparr>finite_system_interfaces=fset_of_list (map (\<lambda>d. (d,Finite_Variable 0)) [0..<12]),
     finite_system_clauses=finsert ((11,0),narrowed_search_two) (finite_system_clauses narrowed_control_program)\<rparr>"
 
+text \<open>
+  The narrowed class of the search control's sockets (review 737's follow-up 4): the lists of distinct payloads, read
+  by an executable reading of the term; the search never reads it, the discharge alone does.
+\<close>
+
+fun narrowed_control_payloads :: "factor_term \<Rightarrow> octets list option" where
+  "narrowed_control_payloads (Payload_Term []) = Some []"
+| "narrowed_control_payloads (Pair_Term (Payload_Term v) r) = map_option (Cons v) (narrowed_control_payloads r)"
+| "narrowed_control_payloads _ = None"
+
+definition narrowed_control_class :: "factor_term \<Rightarrow> bool" where
+  "narrowed_control_class t \<longleftrightarrow> (case narrowed_control_payloads t of Some vs \<Rightarrow> distinct vs | None \<Rightarrow> False)"
+
 definition narrowed_search_declarations :: "(nat,nat,nat,nat) produced_declarations" where
   "narrowed_search_declarations = produced (narrowed \<lparr>declared_producers={||},declared_consumers={||},
       declared_sockets={|(7,narrowed_search_clause,0,True,view_identity,view_identity),
         (11,narrowed_search_two,0,True,view_identity,view_identity),
         (11,narrowed_search_two,1,True,view_identity,view_identity)|}\<rparr>
-      (\<lambda>_ _ _ _. True))
+      (\<lambda>_ _ _. narrowed_control_class))
     (\<lambda>e S s. if (e=7 \<and> s=0) \<or> (e=11 \<and> s\<in>{0,1}) then Some narrowed_search_registration else None)"
 
 definition narrowed_search_y :: finite_factor_term where

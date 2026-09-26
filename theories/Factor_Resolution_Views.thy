@@ -7,52 +7,48 @@ section \<open>The committed forms exact under discharged declarations\<close>
 text \<open>
   The discharges of #565's exchange premise (@{text finite_declared_commitment_exchanges}: the direct producer, the
   kept-head and free sockets, the material single solution, each at the states the declared test commits in) make the
-  three committed forms exact under the declarations' discharge alone, at a program whose registrations are
-  premise-only and a construction that lifts, at declarations of the identity and swap views (@{const pair_declarations}),
-  where the discharges are stated. Each form is R5's (@{text finite_committed_verdict_exact} and its
-  siblings) with its exchange premise given by that discharge; nothing is proved again.
+  three committed forms exact under the declarations' discharge alone, at any declared views, at a program whose
+  registrations are premise-only and a construction that lifts. Each form is R5's (@{text finite_committed_verdict_exact}
+  and its siblings) with its exchange premise given by that discharge; nothing is proved again. The identity and swap
+  views (@{const pair_declarations}) are an instance, with no form of their own.
 \<close>
 
 theorem finite_declared_refutation_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
-    and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P"
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and refutes: "finite_resolution_refutes (finite_committed_resolution \<kappa> (finite_declared_commitment D) P d t n)"
   shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
   by (rule finite_committed_resolution_refutation_exact[OF \<kappa>
-    finite_declared_commitment_exchanges[OF \<kappa> pair discharged only] constructions refutes])
+    finite_declared_commitment_exchanges[OF \<kappa> discharged only] constructions refutes])
 
 theorem finite_declared_verdict_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
-    and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P"
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and verdict: "finite_resolution_verdict (finite_committed_resolution \<kappa> (finite_declared_commitment D) P d t n) = Some b"
   shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
   by (rule finite_committed_verdict_exact[OF \<kappa>
-    finite_declared_commitment_exchanges[OF \<kappa> pair discharged only] constructions verdict])
+    finite_declared_commitment_exchanges[OF \<kappa> discharged only] constructions verdict])
 
 theorem finite_declared_demand_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
-    and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P"
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and result: "finite_committed_demand \<kappa> (finite_declared_commitment D) P Q n = Some A"
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using finite_committed_demand_exact[OF \<kappa> finite_declared_commitment_exchanges[OF \<kappa> pair discharged only]
+  using finite_committed_demand_exact[OF \<kappa> finite_declared_commitment_exchanges[OF \<kappa> discharged only]
     constructions result] by blast+
 
 theorem native_declared_resolution_exact:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
-    and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P"
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
@@ -64,7 +60,7 @@ theorem native_declared_resolution_exact:
       decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using native_committed_resolution_exact[OF \<kappa> finite_declared_commitment_exchanges[OF \<kappa> pair discharged only]
+  using native_committed_resolution_exact[OF \<kappa> finite_declared_commitment_exchanges[OF \<kappa> discharged only]
     constructions result] by blast+
 
 text \<open>The four forms as one fact, for the route's consumers.\<close>
@@ -95,8 +91,6 @@ definition declared_sites :: "('a,'s,'d) resolution_declarations \<Rightarrow> '
 lemma schema_dependencies_premise: "(q,d,p) \<in> schema_premises S \<Longrightarrow> d \<in> schema_dependencies S"
   by (force simp: schema_dependencies_def rel_ran_def)
 
-lemma pair_declarations_relocated: "pair_declarations D \<Longrightarrow> pair_declarations (declarations_relocated g D)"
-  unfolding pair_declarations_def declarations_relocated_def by auto
 
 lemma declarations_formed_relocated: "declarations_formed D \<Longrightarrow> declarations_formed (declarations_relocated g D)"
   unfolding declarations_formed_def declarations_relocated_def by auto
@@ -370,8 +364,8 @@ section \<open>The relocated program's premises and the transfers\<close>
 text \<open>
   The relocated program's exchange premise is derived from the source's discharged declarations: they are discharged
   at the relocation (@{text declarations_relocated_discharged}), and the discharge gives the premise at every program
-  whose registrations are premise-only. The two transfers of #565 then take the source's discharged declarations in
-  place of each program's exchange premise.
+  whose registrations are premise-only, at any views. The two transfers of #565 then take the source's discharged
+  declarations in place of each program's exchange premise.
 \<close>
 
 theorem finite_commitment_exchanges_relocated:
@@ -379,18 +373,16 @@ theorem finite_commitment_exchanges_relocated:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
     and Pf: "schema_system_formed (decode_finite_system P)"
     and injective: "inj_on g (system_definitions (decode_finite_system P) \<union> declared_sites D)"
-    and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> (finite_rename_system g P)"
   shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_declared_commitment (declarations_relocated g D))
     (finite_rename_system g P)"
-  by (rule finite_declared_commitment_exchanges[OF \<kappa> pair_declarations_relocated[OF pair]
+  by (rule finite_declared_commitment_exchanges[OF \<kappa>
     declarations_relocated_discharged[OF Pf injective discharged] only])
 
 corollary finite_declared_relocation_transfer:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
-    and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P" and cl: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and \<kappa>': "finite_witness_construction_formed \<kappa>'"
@@ -404,10 +396,10 @@ corollary finite_declared_relocation_transfer:
   shows "b = b'"
 proof -
   have ex: "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_declared_commitment D) P"
-    by (rule finite_declared_commitment_exchanges[OF \<kappa> pair discharged only])
+    by (rule finite_declared_commitment_exchanges[OF \<kappa> discharged only])
   have ex': "finite_commitment_exchanges (\<lambda>_. False) \<kappa>' (finite_declared_commitment (declarations_relocated g D))
       (finite_rename_system g P)"
-    by (rule finite_commitment_exchanges_relocated[OF \<kappa>' Pf inj_on_subset[OF injective] pair discharged only']) blast
+    by (rule finite_commitment_exchanges_relocated[OF \<kappa>' Pf inj_on_subset[OF injective] discharged only']) blast
   have inj: "inj_on g (insert d (system_definitions (decode_finite_system P)))"
     by (rule inj_on_subset[OF injective]) blast
   show ?thesis by (rule finite_committed_relocation_transfer[OF \<kappa> ex cl \<kappa>' ex' cl' Pf inj v v'])
@@ -433,7 +425,6 @@ theorem finite_construction_lifts_relocated:
 corollary finite_complete_relocation_transfer:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and formed: "finite_system_formed P"
-    and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and complete: "finite_construction_complete \<kappa> P"
     and injective: "inj_on g (insert d (system_definitions (decode_finite_system P) \<union> declared_sites D))"
@@ -447,7 +438,7 @@ proof -
   have complete': "finite_construction_complete (finite_relocated_construction g P \<kappa>) (finite_rename_system g P)"
     by (rule finite_relocated_construction_complete[OF formed inj complete])
   show ?thesis
-    by (rule finite_declared_relocation_transfer[OF \<kappa> pair discharged finite_complete_registrations_premise_only[OF complete]
+    by (rule finite_declared_relocation_transfer[OF \<kappa> discharged finite_complete_registrations_premise_only[OF complete]
       finite_construction_complete_lifts[OF complete] finite_relocated_construction_formed[OF \<kappa>]
       finite_complete_registrations_premise_only[OF complete'] finite_construction_complete_lifts[OF complete']
       Pf injective v v'])
@@ -456,7 +447,6 @@ qed
 corollary finite_declared_agreement_transfer:
   fixes P Q :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
-    and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and only: "finite_registrations_premise_only \<kappa> P" and cl: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and \<kappa>': "finite_witness_construction_formed \<kappa>'"
@@ -470,11 +460,11 @@ corollary finite_declared_agreement_transfer:
   shows "b = b'"
 proof -
   have ex: "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_declared_commitment D) P"
-    by (rule finite_declared_commitment_exchanges[OF \<kappa> pair discharged only])
+    by (rule finite_declared_commitment_exchanges[OF \<kappa> discharged only])
   have dQ: "declarations_discharged (positive_meaning (decode_finite_system Q)) D corr"
     by (rule declarations_agree_discharged[OF Pf Qf agree closed sites discharged])
   have ex': "finite_commitment_exchanges (\<lambda>_. False) \<kappa>' (finite_declared_commitment D) Q"
-    by (rule finite_declared_commitment_exchanges[OF \<kappa>' pair dQ only'])
+    by (rule finite_declared_commitment_exchanges[OF \<kappa>' dQ only'])
   show ?thesis by (rule finite_committed_agreement_transfer[OF \<kappa> ex cl \<kappa>' ex' cl' Pf Qf agree closed dV v v'])
 qed
 
@@ -483,7 +473,6 @@ text \<open>At complete constructions the agreement transfer takes discharged de
 corollary finite_complete_agreement_transfer:
   fixes P Q :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and complete: "finite_construction_complete \<kappa> P"
-    and pair: "pair_declarations D"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and \<kappa>': "finite_witness_construction_formed \<kappa>'" and complete': "finite_construction_complete \<kappa>' Q"
     and Pf: "schema_system_formed (decode_finite_system P)" and Qf: "schema_system_formed (decode_finite_system Q)"
@@ -493,7 +482,7 @@ corollary finite_complete_agreement_transfer:
     and v: "finite_resolution_verdict (finite_committed_resolution \<kappa> (finite_declared_commitment D) P d t n) = Some b"
     and v': "finite_resolution_verdict (finite_committed_resolution \<kappa>' (finite_declared_commitment D) Q d t m) = Some b'"
   shows "b = b'"
-  by (rule finite_declared_agreement_transfer[OF \<kappa> pair discharged finite_complete_registrations_premise_only[OF complete]
+  by (rule finite_declared_agreement_transfer[OF \<kappa> discharged finite_complete_registrations_premise_only[OF complete]
     finite_construction_complete_lifts[OF complete] \<kappa>' finite_complete_registrations_premise_only[OF complete']
     finite_construction_complete_lifts[OF complete'] Pf Qf agree closed dV sites v v'])
 

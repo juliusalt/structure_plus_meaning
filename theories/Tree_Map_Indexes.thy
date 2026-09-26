@@ -43,4 +43,19 @@ proof (rule updated_carrier_index.intro[OF tree_map_carrier_index], rule updated
     by (cases "k'=k") (auto simp: RBT.lookup_insert)
 qed
 
+section \<open>Trees compared by the trees they wrap\<close>
+
+text \<open>
+  A set of states holding trees is computed where the trees index, so the trees need an executable equality: HOL's
+  equality on the tree typedef, which compares the trees it wraps (@{thm [source] RBT.impl_of_inject}); its
+  definition is its code equation. It stands with the tree's index, below every theory that indexes by the tree.
+\<close>
+
+instantiation RBT.rbt :: ("{linorder,equal}", equal) equal
+begin
+definition equal_rbt :: "('a,'b) RBT.rbt \<Rightarrow> ('a,'b) RBT.rbt \<Rightarrow> bool" where
+  "equal_rbt t u \<longleftrightarrow> RBT.impl_of t = RBT.impl_of u"
+instance by standard (simp add: equal_rbt_def RBT.impl_of_inject)
+end
+
 end

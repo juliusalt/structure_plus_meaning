@@ -62,107 +62,9 @@ text \<open>
   The clause payload audit (503) gives schema instantiation's term, call rows and material rows (the second part's
   @{const schema_holes}) to 500, 502 and 501, each reading its whole argument (@{const whole_view}). The term's hole
   corresponds by equality; the rows' holes by bags, and each row check holds of a list exactly when every row does
-  (@{text empty_payload_rows_list}, @{text empty_payload_calls_list}, from the checks' clauses and
-  @{thm [source] empty_payloads_exact}), so a bag of rows is answered as the rows are.
+  (@{thm [source] empty_payload_rows_list}, @{thm [source] empty_payload_calls_list}, the checks' own list contracts),
+  so a bag of rows is answered as the rows are.
 \<close>
-
-lemma empty_payload_rows_list:
-  "(501,data_list_term zs) \<in> positive_meaning empty_payload_rows_system \<longleftrightarrow>
-    term_formed (data_list_term zs) \<and>
-      (\<forall>z\<in>set zs. \<exists>k x. z = Pair_Term k x \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
-proof (induction zs)
-  case Nil
-  have "(501,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema::(nat,nat,nat) factor_schema)))
-      \<in>positive_meaning empty_payload_rows_system"
-    by (rule ordinary_positive_formed_step[where c=0])
-      (auto simp: empty_payload_rows_clauses_def data_list_nil_schema_def schema_formed_def schema_variables_def
-        single_valued_def rel_dom_def octets_formed_def empty_payload_rows_call)
-  then show ?case by (simp add: data_list_nil_schema_def octets_formed_def)
-next
-  case (Cons z zs)
-  show ?case
-  proof
-    assume holds: "(501,data_list_term (z#zs)) \<in> positive_meaning empty_payload_rows_system"
-    have formed: "term_formed (data_list_term (z#zs))"
-      using positive_meaning_formed[OF holds] by (simp add: empty_payload_rows_call)
-    obtain k x where z: "z = Pair_Term k x" "(500,x) \<in> positive_meaning empty_payloads_system"
-        "(501,data_list_term zs) \<in> positive_meaning empty_payload_rows_system"
-      using empty_payload_rows_cases[OF holds] by auto
-    then show "term_formed (data_list_term (z#zs)) \<and>
-        (\<forall>z\<in>set (z#zs). \<exists>k x. z = Pair_Term k x \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
-      using formed Cons.IH by auto
-  next
-    assume given: "term_formed (data_list_term (z#zs)) \<and>
-      (\<forall>z\<in>set (z#zs). \<exists>k x. z = Pair_Term k x \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
-    then obtain k x where z: "z = Pair_Term k x" "(500,x) \<in> positive_meaning empty_payloads_system" by auto
-    have parts: "term_formed k" "term_formed x" "term_formed (data_list_term zs)"
-      "(501,data_list_term zs) \<in> positive_meaning empty_payload_rows_system"
-      using given Cons.IH by (auto simp: z)
-    let ?h="\<lambda>n::nat. if n=0 then k else if n=1 then x else data_list_term zs"
-    have "(501,evaluate_pattern ?h (schema_conclusion empty_payload_rows_schema))\<in>positive_meaning empty_payload_rows_system"
-      by (rule ordinary_positive_formed_step[where c=1])
-        (use parts z in \<open>auto simp: empty_payload_rows_clauses_def empty_payload_rows_schema_def
-          schema_formed_def schema_variables_def single_valued_def rel_dom_def empty_payload_rows_call
-          empty_payload_rows_empty\<close>)
-    then show "(501,data_list_term (z#zs)) \<in> positive_meaning empty_payload_rows_system"
-      by (simp add: z empty_payload_rows_schema_def)
-  qed
-qed
-
-lemma empty_payload_calls_list:
-  "(502,data_list_term zs) \<in> positive_meaning empty_payload_calls_system \<longleftrightarrow>
-    term_formed (data_list_term zs) \<and>
-      (\<forall>z\<in>set zs. \<exists>k d x. z = Pair_Term k (Pair_Term d x) \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
-proof (induction zs)
-  case Nil
-  have "(502,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema::(nat,nat,nat) factor_schema)))
-      \<in>positive_meaning empty_payload_calls_system"
-    by (rule ordinary_positive_formed_step[where c=0])
-      (auto simp: empty_payload_calls_clauses_def data_list_nil_schema_def schema_formed_def schema_variables_def
-        single_valued_def rel_dom_def octets_formed_def empty_payload_calls_call)
-  then show ?case by (simp add: data_list_nil_schema_def octets_formed_def)
-next
-  case (Cons z zs)
-  show ?case
-  proof
-    assume holds: "(502,data_list_term (z#zs)) \<in> positive_meaning empty_payload_calls_system"
-    have formed: "term_formed (data_list_term (z#zs))"
-      using positive_meaning_formed[OF holds] by (simp add: empty_payload_calls_call)
-    obtain k d x where z: "z = Pair_Term k (Pair_Term d x)" "(500,x) \<in> positive_meaning empty_payloads_system"
-        "(502,data_list_term zs) \<in> positive_meaning empty_payload_calls_system"
-      using empty_payload_calls_cases[OF holds] by auto
-    then show "term_formed (data_list_term (z#zs)) \<and>
-        (\<forall>z\<in>set (z#zs). \<exists>k d x. z = Pair_Term k (Pair_Term d x) \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
-      using formed Cons.IH by auto
-  next
-    assume given: "term_formed (data_list_term (z#zs)) \<and>
-      (\<forall>z\<in>set (z#zs). \<exists>k d x. z = Pair_Term k (Pair_Term d x) \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
-    then obtain k d x where z: "z = Pair_Term k (Pair_Term d x)" "(500,x) \<in> positive_meaning empty_payloads_system"
-      by auto
-    have parts: "term_formed k" "term_formed d" "term_formed x" "term_formed (data_list_term zs)"
-      "(502,data_list_term zs) \<in> positive_meaning empty_payload_calls_system"
-      using given Cons.IH by (auto simp: z)
-    let ?h="\<lambda>n::nat. if n=0 then k else if n=1 then d else if n=2 then x else data_list_term zs"
-    have "(502,evaluate_pattern ?h (schema_conclusion empty_payload_calls_schema))\<in>positive_meaning empty_payload_calls_system"
-      by (rule ordinary_positive_formed_step[where c=1])
-        (use parts z in \<open>auto simp: empty_payload_calls_clauses_def empty_payload_calls_schema_def
-          schema_formed_def schema_variables_def single_valued_def rel_dom_def empty_payload_calls_call
-          empty_payload_calls_empty\<close>)
-    then show "(502,data_list_term (z#zs)) \<in> positive_meaning empty_payload_calls_system"
-      by (simp add: z empty_payload_calls_schema_def)
-  qed
-qed
-
-lemma whole_bag_consumer:
-  assumes lists: "\<And>xs ys. mset xs = mset ys \<Longrightarrow> (e,data_list_term xs) \<in> M \<Longrightarrow> (e,data_list_term ys) \<in> M"
-  shows "consumer_discharged M e whole_view bag_corresponds"
-proof (rule whole_consumer)
-  fix v v' assume "bag_corresponds v v'" "(e,v) \<in> M"
-  then show "(e,v') \<in> M" unfolding bag_corresponds_def using lists by blast
-next
-  fix v v' assume "bag_corresponds v v'"
-  then show "bag_corresponds v' v" unfolding bag_corresponds_def by (metis (no_types))
-qed
 
 lemma audit_consumers:
   "consumer_discharged (positive_meaning clause_payloads_system) 500 whole_view (=)"
@@ -239,11 +141,6 @@ lemma stated_view_formed: "view_formed stated_view"
 lemma stated_view_holes: "view_holes stated_view stated_holes"
   by (simp add: view_holes_def stated_view_def stated_holes_def)
 
-lemma distinct_keyed_mset:
-  assumes "distinct (map fst xs)" "distinct (map fst ys)" "set xs = set ys"
-  shows "mset xs = mset ys"
-  using assms by (simp add: set_eq_iff_mset_eq_distinct[symmetric] distinct_map)
-
 lemma stated_answers:
   assumes one: "(587,Pair_Term (Pair_Term (Pair_Term e u) a) (Pair_Term g (Pair_Term l (Pair_Term q m))))
       \<in> positive_meaning stated_clause_system"
@@ -272,8 +169,9 @@ proof -
       "l' = data_list_term (pattern_stated (schema_conclusion S))" "q' = data_list_term (map place_term qs')"
       "m' = data_list_term (map material_place_term ms')"
     using p2 by (auto simp: clause_stated_presents_def)
-  have "mset qs = mset qs'" by (rule distinct_keyed_mset) (simp_all add: r1 r2)
-  moreover have "mset ms = mset ms'" by (rule distinct_keyed_mset) (simp_all add: r1 r2)
+  have "mset qs = mset qs'" using r1(1,2) r2(1,2) by (simp add: set_eq_iff_mset_eq_distinct[symmetric] distinct_map)
+  moreover have "mset ms = mset ms'"
+    using r1(3,4) r2(3,4) by (simp add: set_eq_iff_mset_eq_distinct[symmetric] distinct_map)
   ultimately show ?thesis by (simp add: r1(5-8) r2(5-8) bag_corresponds_mapped)
 qed
 

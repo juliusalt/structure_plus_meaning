@@ -205,68 +205,6 @@ text \<open>
   the one material premise at its root, and each has one instance under a functional table.
 \<close>
 
-lemma instantiated_premise_rows_cons:
-  "instantiated_premise_rows E u V B ((s,r)#rs) qs cs U \<longleftrightarrow>
-    (\<exists>d p I K t qs' U'. prospective_call_at E u V r d p I K \<and> pattern_instance B p t \<and>
-      instantiated_premise_rows E u V B rs qs' cs U' \<and> qs = (s,d,t)#qs' \<and> U = pattern_variables p \<union> U') \<or>
-    (\<exists>M I K x a e b f cs' U'. native_material_at E u V r M I K \<and> material_pattern_instance B M x a e b f \<and>
-      instantiated_premise_rows E u V B rs qs cs' U' \<and> cs = (s,material_tuple x a e b f)#cs' \<and>
-      U = material_variables M \<union> U')"
-proof
-  assume "instantiated_premise_rows E u V B ((s,r)#rs) qs cs U"
-  then show "(\<exists>d p I K t qs' U'. prospective_call_at E u V r d p I K \<and> pattern_instance B p t \<and>
-      instantiated_premise_rows E u V B rs qs' cs U' \<and> qs = (s,d,t)#qs' \<and> U = pattern_variables p \<union> U') \<or>
-    (\<exists>M I K x a e b f cs' U'. native_material_at E u V r M I K \<and> material_pattern_instance B M x a e b f \<and>
-      instantiated_premise_rows E u V B rs qs cs' U' \<and> cs = (s,material_tuple x a e b f)#cs' \<and>
-      U = material_variables M \<union> U')"
-    by (cases rule: instantiated_premise_rows.cases) fastforce+
-qed (auto intro: instantiated_premise_rows.intros)
-
-lemma instantiated_premise_rows_unique:
-  assumes single: "single_valued B"
-    and first: "instantiated_premise_rows E u V B rs qs cs U"
-    and second: "instantiated_premise_rows E u V B rs qs' cs' U'"
-  shows "qs = qs' \<and> cs = cs' \<and> U = U'"
-  using first second
-proof (induction arbitrary: qs' cs' U' rule: instantiated_premise_rows.induct)
-  case empty
-  from empty.prems show ?case by (cases rule: instantiated_premise_rows.cases) simp_all
-next
-  case (call r d p I K t rs qs cs U s)
-  from call.prems[unfolded instantiated_premise_rows_cons] show ?case
-  proof (elim disjE exE conjE)
-    fix d' p' I' K' t' qs'' U''
-    assume other: "prospective_call_at E u V r d' p' I' K'" "pattern_instance B p' t'"
-      "instantiated_premise_rows E u V B rs qs'' cs' U''" "qs' = (s,d',t')#qs''" "U' = pattern_variables p' \<union> U''"
-    have same: "d' = d" "p' = p" using prospective_call_unique[OF call.hyps(1) other(1)] by auto
-    have instance_eq: "t' = t" using pattern_instance_unique[OF single call.hyps(2)] other(2) same(2) by simp
-    have tail: "qs = qs'' \<and> cs = cs' \<and> U = U''" by (rule call.IH[OF other(3)])
-    show ?thesis using other same instance_eq tail by auto
-  next
-    fix M I' K' x a e b f cs'' U''
-    assume "native_material_at E u V r M I' K'"
-    then show ?thesis using native_call_material_disjoint[OF call.hyps(1)] by blast
-  qed
-next
-  case (material r M I K x a e b f rs qs cs U s)
-  from material.prems[unfolded instantiated_premise_rows_cons] show ?case
-  proof (elim disjE exE conjE)
-    fix d' p' I' K' t' qs'' U''
-    assume "prospective_call_at E u V r d' p' I' K'"
-    then show ?thesis using native_call_material_disjoint[OF _ material.hyps(1)] by blast
-  next
-    fix M' I' K' x' a' e' b' f' cs'' U''
-    assume other: "native_material_at E u V r M' I' K'" "material_pattern_instance B M' x' a' e' b' f'"
-      "instantiated_premise_rows E u V B rs qs' cs'' U''" "cs' = (s,material_tuple x' a' e' b' f')#cs''"
-      "U' = material_variables M' \<union> U''"
-    have same: "M' = M" using native_material_unique[OF material.hyps(1) other(1)] by auto
-    have tuple: "(x,a,e,b,f) = (x',a',e',b',f')"
-      using material_pattern_instance_unique[OF single material.hyps(2)] other(2) same by simp
-    have tail: "qs = qs' \<and> cs = cs'' \<and> U = U''" by (rule material.IH[OF other(3)])
-    show ?thesis using other same tuple tail by auto
-  qed
-qed
-
 lemma bag_corresponds_rows:
   assumes "mset A = mset B"
   shows "bag_corresponds (data_list_term (map f (map g A))) (data_list_term (map f (map g B)))"
@@ -298,10 +236,16 @@ proof -
     using table apply (simp only: binding_rows_term_injective)
     using rows apply (simp only: data_list_term_injective injective_mapped_lists[OF address_pair_data_injective])
     using environment_value_presents_unique[OF parts'(8) parts(8)] by simp
-  have single: "single_valued (set xs)" using parts(9) by (simp add: term_bindings_formed_def)
-  have "qs = qs' \<and> cs = cs' \<and> set Us = set Us'"
-    by (rule instantiated_premise_rows_unique[OF single parts(11)]) (use parts'(10) same in simp)
-  then show ?thesis using parts parts' by (simp add: bag_corresponds_distinct_payloads)
+  have first: "(63,premise_instantiation_argument e (use_data_term a) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs)
+      (binding_rows_term cs) (data_list_term (map Payload_Term Us))) \<in> positive_meaning premise_rows_system"
+    using one parts by simp
+  have second: "(63,premise_instantiation_argument e (use_data_term a) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs')
+      (binding_rows_term cs') (data_list_term (map Payload_Term Us'))) \<in> positive_meaning premise_rows_system"
+    using two parts' same by simp
+  have "qs = qs' \<and> cs = cs' \<and> mset Us = mset Us'" by (rule premise_rows_result_unique[OF parts(8) first second])
+  then show ?thesis using parts parts' by (simp add: bag_corresponds_mapped)
 qed
 
 lemma premise_family_answers:
@@ -640,80 +584,6 @@ text \<open>
   order.
 \<close>
 
-lemma instantiated_premise_rows_split:
-  assumes "instantiated_premise_rows E u V B (rs @ ts) qs cs U"
-  shows "\<exists>qs1 qs2 cs1 cs2 U1 U2. instantiated_premise_rows E u V B rs qs1 cs1 U1 \<and>
-    instantiated_premise_rows E u V B ts qs2 cs2 U2 \<and> qs = qs1 @ qs2 \<and> cs = cs1 @ cs2 \<and> U = U1 \<union> U2"
-  using assms
-proof (induction rs arbitrary: qs cs U)
-  case Nil
-  then show ?case using instantiated_premise_rows.empty by fastforce
-next
-  case (Cons x rs)
-  obtain s r where x: "x = (s,r)" by (cases x)
-  from Cons.prems[unfolded x append_Cons instantiated_premise_rows_cons] show ?case
-  proof (elim disjE exE conjE)
-    fix d p I K t qs' U'
-    assume c: "prospective_call_at E u V r d p I K" "pattern_instance B p t"
-      "instantiated_premise_rows E u V B (rs @ ts) qs' cs U'" "qs = (s,d,t)#qs'" "U = pattern_variables p \<union> U'"
-    obtain qs1 qs2 cs1 cs2 U1 U2 where split: "instantiated_premise_rows E u V B rs qs1 cs1 U1"
-        "instantiated_premise_rows E u V B ts qs2 cs2 U2" "qs' = qs1 @ qs2" "cs = cs1 @ cs2" "U' = U1 \<union> U2"
-      using Cons.IH[OF c(3)] by blast
-    have head: "instantiated_premise_rows E u V B (x#rs) ((s,d,t)#qs1) cs1 (pattern_variables p \<union> U1)"
-      unfolding x by (rule instantiated_premise_rows.call[OF c(1,2) split(1)])
-    show ?thesis
-      by (rule exI[of _ "(s,d,t)#qs1"], rule exI[of _ qs2], rule exI[of _ cs1], rule exI[of _ cs2],
-        rule exI[of _ "pattern_variables p \<union> U1"], rule exI[of _ U2]) (use head split c in auto)
-  next
-    fix M I K a1 a2 a3 a4 a5 cs' U'
-    assume c: "native_material_at E u V r M I K" "material_pattern_instance B M a1 a2 a3 a4 a5"
-      "instantiated_premise_rows E u V B (rs @ ts) qs cs' U'" "cs = (s,material_tuple a1 a2 a3 a4 a5)#cs'"
-      "U = material_variables M \<union> U'"
-    obtain qs1 qs2 cs1 cs2 U1 U2 where split: "instantiated_premise_rows E u V B rs qs1 cs1 U1"
-        "instantiated_premise_rows E u V B ts qs2 cs2 U2" "qs = qs1 @ qs2" "cs' = cs1 @ cs2" "U' = U1 \<union> U2"
-      using Cons.IH[OF c(3)] by blast
-    have head: "instantiated_premise_rows E u V B (x#rs) qs1 ((s,material_tuple a1 a2 a3 a4 a5)#cs1)
-        (material_variables M \<union> U1)"
-      unfolding x by (rule instantiated_premise_rows.material[OF c(1,2) split(1)])
-    show ?thesis
-      by (rule exI[of _ qs1], rule exI[of _ qs2], rule exI[of _ "(s,material_tuple a1 a2 a3 a4 a5)#cs1"],
-        rule exI[of _ cs2], rule exI[of _ "material_variables M \<union> U1"], rule exI[of _ U2]) (use head split c in auto)
-  qed
-qed
-
-lemma instantiated_premise_rows_perm:
-  assumes read: "instantiated_premise_rows E u V B rs qs cs U" and same: "mset ts = mset rs"
-  shows "\<exists>qs' cs'. instantiated_premise_rows E u V B ts qs' cs' U \<and> mset qs' = mset qs \<and> mset cs' = mset cs"
-  using same read
-proof (induction ts arbitrary: rs qs cs U)
-  case Nil
-  then have "rs = []" by simp
-  then have "qs = [] \<and> cs = [] \<and> U = {}" using Nil.prems(2) by (auto elim: instantiated_premise_rows.cases)
-  then show ?case using instantiated_premise_rows.empty by auto
-next
-  case (Cons x ts)
-  have "x \<in> set rs" using mset_eq_setD[OF Cons.prems(1)] by auto
-  then obtain pre post where rs: "rs = pre @ x # post" by (meson split_list)
-  have whole: "instantiated_premise_rows E u V B (pre @ x # post) qs cs U" using Cons.prems(2) rs by simp
-  obtain qs1 qs2 cs1 cs2 U1 U2 where first: "instantiated_premise_rows E u V B pre qs1 cs1 U1"
-      "instantiated_premise_rows E u V B (x # post) qs2 cs2 U2" "qs = qs1 @ qs2" "cs = cs1 @ cs2" "U = U1 \<union> U2"
-    using instantiated_premise_rows_split[OF whole] by blast
-  have single: "instantiated_premise_rows E u V B ([x] @ post) qs2 cs2 U2" using first(2) by simp
-  obtain qx qp cx cp Ux Up where second: "instantiated_premise_rows E u V B [x] qx cx Ux"
-      "instantiated_premise_rows E u V B post qp cp Up" "qs2 = qx @ qp" "cs2 = cx @ cp" "U2 = Ux \<union> Up"
-    using instantiated_premise_rows_split[OF single] by blast
-  have rest: "instantiated_premise_rows E u V B (pre @ post) (qs1 @ qp) (cs1 @ cp) (U1 \<union> Up)"
-    by (rule instantiated_premise_rows_append[OF first(1) second(2)])
-  have "mset ts = mset (pre @ post)" using Cons.prems(1) rs by simp
-  then obtain qs' cs' where moved: "instantiated_premise_rows E u V B ts qs' cs' (U1 \<union> Up)"
-      "mset qs' = mset (qs1 @ qp)" "mset cs' = mset (cs1 @ cp)"
-    using Cons.IH rest by blast
-  have "instantiated_premise_rows E u V B ([x] @ ts) (qx @ qs') (cx @ cs') (Ux \<union> (U1 \<union> Up))"
-    by (rule instantiated_premise_rows_append[OF second(1) moved(1)])
-  then show ?case using first second moved
-    by (intro exI[of _ "qx @ qs'"] exI[of _ "cx @ cs'"]) (auto simp: Un_ac add_ac)
-qed
-
 theorem premise_rows_carrier_discharged:
   "carrier_discharged (positive_meaning premise_rows_system) 63 premise_rows_view
     (tuple_corresponds [(=),bag_corresponds]) (tuple_corresponds [bag_corresponds,bag_corresponds,bag_corresponds])"
@@ -740,24 +610,21 @@ proof (intro allI impI)
       (binding_rows_term xs) (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs)
       (binding_rows_term cs) (data_list_term (map Payload_Term Us))) \<in> positive_meaning premise_rows_system"
     using holds h(1) parts by simp
-  have conds: "distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
-      distinct Us \<and> (\<forall>s\<in>rel_dom (set rs). octets_formed s) \<and>
-      instantiated_premise_rows E u0 (set Vs) (set xs) rs qs cs (set Us)"
-    using old[unfolded premise_rows_on_values[OF parts(8)]] by blast
+
   obtain zs where zs: "r' = data_list_term zs" "mset zs = mset (map address_pair_data rs)"
     using r' parts(4) bag_corresponds_list by metis
   have "\<exists>rs'. zs = map address_pair_data rs'" unfolding ex_map_conv using mset_eq_setD[OF zs(2)] by auto
   then obtain rs' where rs': "zs = map address_pair_data rs'" by blast
   have perm: "mset rs' = mset rs" using zs(2) rs' injective_mapped_multisets[OF address_pair_data_injective] by simp
-  obtain qs' cs' where moved: "instantiated_premise_rows E u0 (set Vs) (set xs) rs' qs' cs' (set Us)"
-      "mset qs' = mset qs" "mset cs' = mset cs"
-    using instantiated_premise_rows_perm[OF _ perm] conds by (meson conjunct2)
-  have keys: "rel_dom (set rs') = rel_dom (set rs)" using mset_eq_setD[OF perm] by simp
+  obtain qs' cs' where moved: "(63,premise_instantiation_argument (h 0) (use_data_term u0)
+      (data_list_term (map Payload_Term Vs)) (binding_rows_term xs) (data_list_term (map address_pair_data rs'))
+      (call_instance_rows_term qs') (binding_rows_term cs') (data_list_term (map Payload_Term Us)))
+      \<in> positive_meaning premise_rows_system" "mset qs' = mset qs" "mset cs' = mset cs"
+    by (rule premise_rows_orders[OF parts(8) old perm])
   let ?b = "premise_instantiation_argument (h 0) (use_data_term u0) (data_list_term (map Payload_Term Vs))
     (binding_rows_term xs) (data_list_term (map address_pair_data rs')) (call_instance_rows_term qs')
     (binding_rows_term cs') (data_list_term (map Payload_Term Us))"
-  have "(63,?b) \<in> positive_meaning premise_rows_system"
-    unfolding premise_rows_on_values[OF parts(8)] using conds moved(1) keys by simp
+  have "(63,?b) \<in> positive_meaning premise_rows_system" by (rule moved(1))
   moreover have "resolution_view_term premise_rows_view ?b = Some (x',Pair_Term (call_instance_rows_term qs')
       (Pair_Term (binding_rows_term cs') (data_list_term (map Payload_Term Us))))"
     using resolution_view_term_valuation[OF premise_views_formed(1)[unfolded premise_rows_view_def]] x' parts zs rs'

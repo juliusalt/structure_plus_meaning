@@ -18,17 +18,6 @@ text \<open>
 
 section \<open>A clause and its readings along a renaming\<close>
 
-lemma evaluate_rename_pattern: "evaluate_pattern v (rename_pattern f p) = evaluate_pattern (v \<circ> f) p"
-  by (induction p) simp_all
-
-lemma evaluate_rename_material:
-  "evaluate_material_satisfaction v (rename_material_pattern f M) \<longleftrightarrow> evaluate_material_satisfaction (v \<circ> f) M"
-  by (simp add: rename_material_pattern_def evaluate_rename_pattern)
-
-lemma evaluate_map_finite_pattern:
-  "evaluate_pattern v (decode_finite_pattern (map_finite_term_pattern f p)) = evaluate_pattern (v \<circ> f) (decode_finite_pattern p)"
-  by (simp add: decode_finite_pattern_map evaluate_rename_pattern)
-
 text \<open>A clause's truth reads a valuation at the clause's variables alone.\<close>
 
 lemma clause_true_cong:
@@ -123,10 +112,6 @@ proof -
 qed
 
 text \<open>A view reads a pattern renamed by a binder map as the renaming of its reading.\<close>
-
-lemma finite_pattern_substitute_variable_map:
-  "finite_pattern_substitute (\<lambda>a. Finite_Variable (f a)) c = map_finite_term_pattern f c"
-  by (induction c) simp_all
 
 lemma resolution_view_pattern_map:
   assumes "resolution_view_pattern V c = Some (ci,co)"
@@ -238,6 +223,35 @@ proof -
 qed
 
 text \<open>
+  An extension at S is carried to T: a true instance u of S keeping the head's view at the valuation read back is
+  carried through the binder map's inverse on S's scope (@{thm [source] clause_true_back},
+  @{thm [source] head_kept_along}); the carried instance reads every pattern of S's scope, renamed, as u reads the
+  pattern (@{thm [source] evaluate_back}), and every variable of S's scope, renamed, as u reads the variable
+  (@{thm [source] inverse_agrees}). Stated once for the obligations carried along the match.
+\<close>
+
+lemma extension_carried:
+  assumes eq: "\<And>d x. d \<in> schema_dependencies (decode_finite_schema S) \<Longrightarrow> (d,x) \<in> M' \<longleftrightarrow> (d,x) \<in> M"
+    and true: "clause_true M (decode_finite_schema S) u" and kept: "head_kept keep Vh S (v \<circ> f) u"
+    and Vhf: "view_formed Vh"
+  shows "clause_true M' (decode_finite_schema T) (u \<circ> binder_inverse)"
+    and "head_kept keep Vh T v (u \<circ> binder_inverse)"
+    and "\<And>q. fset (finite_pattern_variables q) \<subseteq> schema_variables (decode_finite_schema S) \<Longrightarrow>
+      evaluate_pattern (u \<circ> binder_inverse) (decode_finite_pattern (map_finite_term_pattern f q)) =
+        evaluate_pattern u (decode_finite_pattern q)"
+    and "\<And>a. a \<in> schema_variables (decode_finite_schema S) \<Longrightarrow> u (binder_inverse (f a)) = u a"
+proof -
+  show "clause_true M' (decode_finite_schema T) (u \<circ> binder_inverse)" by (rule clause_true_back[OF eq true])
+  show "head_kept keep Vh T v (u \<circ> binder_inverse)" by (rule head_kept_along[OF kept Vhf])
+  show "evaluate_pattern (u \<circ> binder_inverse) (decode_finite_pattern (map_finite_term_pattern f q)) =
+      evaluate_pattern u (decode_finite_pattern q)"
+    if "fset (finite_pattern_variables q) \<subseteq> schema_variables (decode_finite_schema S)" for q
+    by (simp add: evaluate_map_finite_pattern evaluate_back[OF that])
+  show "u (binder_inverse (f a)) = u a" if "a \<in> schema_variables (decode_finite_schema S)" for a
+    using inverse_agrees[of a u] that by simp
+qed
+
+text \<open>
   A socket's obligation at S carries to T at the image of its socket, its flag and views kept, wherever the two
   meanings agree at S's callees: an instance of T is read back through the binder map, the source's obligation gives
   its new instance, and that instance is carried forward through the binder map's inverse on S's scope, the premise's
@@ -288,12 +302,12 @@ next
       evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi) \<and>
       evaluate_pattern h' (decode_finite_pattern yo) = y'"
   proof (intro exI conjI)
-    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
-    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule extension_carried(1)[OF eq h2(1,2) Vhf])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule extension_carried(2)[OF eq h2(1,2) Vhf])
     show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi)"
-      using h2(3) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF xv])
+      using extension_carried(3)[OF eq h2(1,2) Vhf xv] h2(3) by (simp add: xy evaluate_map_finite_pattern[of v])
     show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern yo) = y'"
-      using h2(4) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF yv])
+      using extension_carried(3)[OF eq h2(1,2) Vhf yv] h2(4) by (simp add: xy)
   qed
 next
   fix v N g
@@ -315,13 +329,13 @@ next
   show "\<exists>h'. clause_true M' (decode_finite_schema T) h' \<and> head_kept keep Vh T v h' \<and>
       (\<forall>a\<in>material_variables N. h' a = g a)"
   proof (intro exI conjI ballI)
-    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
-    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule extension_carried(1)[OF eq h2(1,2) Vhf])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule extension_carried(2)[OF eq h2(1,2) Vhf])
   next
     fix b assume "b \<in> material_variables N"
     then obtain a where a: "a \<in> material_variables N0" "b = f a" using N0(2) by (auto simp: renamed_material_variables)
-    have "(h2 \<circ> binder_inverse) b = ((h2 \<circ> binder_inverse) \<circ> f) a" using a(2) by simp
-    also have "\<dots> = h2 a" using inverse_agrees[of a h2] a(1) mv by blast
+    have "(h2 \<circ> binder_inverse) b = h2 a"
+      using extension_carried(4)[OF eq h2(1,2) Vhf subsetD[OF mv a(1)]] a(2) by simp
     also have "\<dots> = g b" using h2(3) a by simp
     finally show "(h2 \<circ> binder_inverse) b = g b" .
   qed
@@ -391,14 +405,14 @@ next
       evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi) \<and>
       evaluate_pattern h' (decode_finite_pattern yo) = y'"
   proof (intro exI conjI)
-    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
-    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule extension_carried(1)[OF eq h2(1,2) Vhf])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule extension_carried(2)[OF eq h2(1,2) Vhf])
     show "\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. (h2 \<circ> binder_inverse) a = v a"
       by (rule frame_along[OF h2(3)])
     show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi)"
-      using h2(4) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF xv])
+      using extension_carried(3)[OF eq h2(1,2) Vhf xv] h2(4) by (simp add: xy evaluate_map_finite_pattern[of v])
     show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern yo) = y'"
-      using h2(5) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF yv])
+      using extension_carried(3)[OF eq h2(1,2) Vhf yv] h2(5) by (simp add: xy)
   qed
 next
   fix v N g
@@ -422,16 +436,16 @@ next
       (\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. h' a = v a) \<and>
       (\<forall>a\<in>material_variables N. h' a = g a)"
   proof (intro exI conjI)
-    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
-    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule extension_carried(1)[OF eq h2(1,2) Vhf])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule extension_carried(2)[OF eq h2(1,2) Vhf])
     show "\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. (h2 \<circ> binder_inverse) a = v a"
       by (rule frame_along[OF h2(3)])
     show "\<forall>b\<in>material_variables N. (h2 \<circ> binder_inverse) b = g b"
     proof
       fix b assume "b \<in> material_variables N"
       then obtain a where a: "a \<in> material_variables N0" "b = f a" using N0(2) by (auto simp: renamed_material_variables)
-      have "(h2 \<circ> binder_inverse) b = ((h2 \<circ> binder_inverse) \<circ> f) a" using a(2) by simp
-      also have "\<dots> = h2 a" using inverse_agrees[of a h2] a(1) mv by blast
+      have "(h2 \<circ> binder_inverse) b = h2 a"
+        using extension_carried(4)[OF eq h2(1,2) Vhf subsetD[OF mv a(1)]] a(2) by simp
       also have "\<dots> = g b" using h2(4) a by simp
       finally show "(h2 \<circ> binder_inverse) b = g b" .
     qed
@@ -585,12 +599,6 @@ proof -
     qed
   qed
 qed
-
-lemma finite_system_clause_formed:
-  assumes "finite_system_formed P" "((e,c),S) |\<in>| finite_system_clauses P"
-  shows "finite_schema_formed S"
-  using fbspec[OF assms(1)[unfolded finite_system_formed_def, THEN conjunct2, THEN conjunct2, THEN conjunct2] assms(2)]
-  by simp
 
 section \<open>The varied record discharged\<close>
 

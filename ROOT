@@ -1897,6 +1897,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Root_Family_Declarations
     Factor_Artifact_Citation_Declarations
     Factor_Input_Productions
+    Factor_Resolution_Checks
     Factor_Input_Production_Controls
     Factor_Row_Value_Socket_Declarations
     Factor_Row_Selection_Socket_Declarations
@@ -1951,6 +1952,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_First_Request_Registrations
     Development_Given_Modes
     Development_Given_Modes_Execution
+    Factor_Check_Controls
     Development_Native_State
     Development_First_Problem
     Development_Bounded_Recording_Execution

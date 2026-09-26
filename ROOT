@@ -1677,6 +1677,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Filtered_Keyed_Products
     RRA_Linked_Record_Candidates
     Tree_Map_Indexes
+    Factor_Indexed_Resolution
     First_Index_Trees
     Merge_Sort_Keys
     Ordered_Member_Trees
@@ -1881,6 +1882,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Schema_Instantiation_Declarations
     Factor_Root_Family_Declarations
     Factor_Artifact_Citation_Declarations
+    Factor_Row_Value_Socket_Declarations
     Development_Given_Declarations_Execution
     Native_Control_Quotation_Construction
     Native_Control_Quotation_Representation

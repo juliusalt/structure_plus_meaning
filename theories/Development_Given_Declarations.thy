@@ -35,8 +35,9 @@ definition given_correspondence :: "nat \<Rightarrow> factor_term \<Rightarrow> 
 section \<open>Each producer discharged at its notion's system\<close>
 
 theorem bag_producer_discharged:
-  "producer_discharged (positive_meaning bag_comparison_system) 6 (given_correspondence 6)"
-  unfolding producer_discharged_def
+  "producer_discharged (positive_meaning bag_comparison_system) 6 view_identity [view_output]
+    (\<lambda>i. given_correspondence 6)"
+  unfolding producer_discharged_identity
 proof (intro allI impI)
   fix x y y'
   assume a: "(6,Pair_Term x y) \<in> positive_meaning bag_comparison_system"
@@ -52,8 +53,9 @@ proof (intro allI impI)
 qed
 
 theorem artifact_producer_discharged:
-  "producer_discharged (positive_meaning artifact_projection_system) 10 (given_correspondence 10)"
-  unfolding producer_discharged_def
+  "producer_discharged (positive_meaning artifact_projection_system) 10 view_identity [view_output]
+    (\<lambda>i. given_correspondence 10)"
+  unfolding producer_discharged_identity
 proof (intro allI impI)
   fix x y y'
   assume a: "(10,Pair_Term x y) \<in> positive_meaning artifact_projection_system"
@@ -68,8 +70,9 @@ proof (intro allI impI)
 qed
 
 theorem target_producer_discharged:
-  "producer_discharged (positive_meaning target_projection_system) 45 (given_correspondence 45)"
-  unfolding producer_discharged_def
+  "producer_discharged (positive_meaning target_projection_system) 45 view_identity [view_output]
+    (\<lambda>i. given_correspondence 45)"
+  unfolding producer_discharged_identity
 proof (intro allI impI)
   fix x y y'
   assume a: "(45,Pair_Term x y) \<in> positive_meaning target_projection_system"
@@ -84,8 +87,9 @@ proof (intro allI impI)
 qed
 
 theorem family_producer_discharged:
-  "producer_discharged (positive_meaning family_admission_system) 32 (given_correspondence 32)"
-  unfolding producer_discharged_def
+  "producer_discharged (positive_meaning family_admission_system) 32 view_identity [view_output]
+    (\<lambda>i. given_correspondence 32)"
+  unfolding producer_discharged_identity
 proof (intro allI impI)
   fix x y y'
   assume a: "(32,Pair_Term x y) \<in> positive_meaning family_admission_system"
@@ -135,9 +139,12 @@ lemma bag_cons_premises:
   by (simp_all add: bag_cons_schema_def bag_step_schema_def)
 
 theorem bag_socket_discharged:
-  "socket_discharged (positive_meaning bag_comparison_system) bag_cons_schema 1 False"
-  unfolding socket_discharged_def
-proof (rule allI, rule impI, rule conjI)
+  "socket_discharged (positive_meaning bag_comparison_system) given_bag_socket_schema 1 False
+    view_identity view_identity"
+  unfolding socket_discharged_identity given_bag_socket_decoded
+proof (rule conjI, rule allI, rule impI, rule conjI)
+  show "finite_socket_pair view_identity [1] given_bag_socket_schema"
+    by (simp add: finite_socket_pair_identity given_bag_socket_schema_def)
   let ?M = "positive_meaning bag_comparison_system"
   fix h assume t: "clause_true ?M bag_cons_schema h"
   have select: "(5,Pair_Term (h 0) (Pair_Term (h 2) (h 3))) \<in> ?M"
@@ -146,7 +153,7 @@ proof (rule allI, rule impI, rule conjI)
     using data_selection_sound[OF select] by auto
   show "\<forall>d xi yo y'. (1,d,Pattern_Pair xi yo) \<in> schema_premises bag_cons_schema \<longrightarrow>
       (d,Pair_Term (evaluate_pattern h xi) y') \<in> ?M \<longrightarrow> (\<exists>h'. clause_true ?M bag_cons_schema h' \<and>
-        head_kept False bag_cons_schema h h' \<and> evaluate_pattern h' xi = evaluate_pattern h xi \<and> evaluate_pattern h' yo = y')"
+        head_kept False view_identity given_bag_socket_schema h h' \<and> evaluate_pattern h' xi = evaluate_pattern h xi \<and> evaluate_pattern h' yo = y')"
   proof (rule allI, rule allI, rule allI, rule allI, rule impI, rule impI)
     fix d xi yo y' assume p: "(1,d,Pattern_Pair xi yo) \<in> schema_premises bag_cons_schema"
       and answer: "(d,Pair_Term (evaluate_pattern h xi) y') \<in> ?M"
@@ -164,14 +171,14 @@ proof (rule allI, rule impI, rule conjI)
     have old: "\<forall>a\<in>schema_variables bag_cons_schema. term_formed (h a)" using t by (simp add: clause_true_def)
     have true: "clause_true ?M bag_cons_schema ?h"
       using old formed selected answer' y by (auto simp: clause_true_def bag_cons_premises vars)
-    have kept: "head_kept False bag_cons_schema h ?h" by (simp add: head_kept_def bag_cons_premises)
-    show "\<exists>h'. clause_true ?M bag_cons_schema h' \<and> head_kept False bag_cons_schema h h' \<and>
+    have kept: "head_kept False view_identity given_bag_socket_schema h ?h" by (simp add: head_kept_identity given_bag_socket_decoded bag_cons_premises)
+    show "\<exists>h'. clause_true ?M bag_cons_schema h' \<and> head_kept False view_identity given_bag_socket_schema h h' \<and>
         evaluate_pattern h' xi = evaluate_pattern h xi \<and> evaluate_pattern h' yo = y'"
       using true kept fields by (intro exI[of _ ?h]) simp
   qed
   show "\<forall>N g. (1,N) \<in> schema_material_premises bag_cons_schema \<longrightarrow> evaluate_material_satisfaction g N \<longrightarrow>
       evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
-      (\<exists>h'. clause_true ?M bag_cons_schema h' \<and> head_kept False bag_cons_schema h h' \<and> (\<forall>a\<in>material_variables N. h' a = g a))"
+      (\<exists>h'. clause_true ?M bag_cons_schema h' \<and> head_kept False view_identity given_bag_socket_schema h h' \<and> (\<forall>a\<in>material_variables N. h' a = g a))"
     by (simp add: bag_cons_premises)
 qed
 
@@ -201,8 +208,8 @@ proof -
 qed
 
 theorem disjoint_consumer_discharged:
-  "consumer_discharged (positive_meaning payload_disjoint_system) 49 False (given_correspondence 6)"
-  unfolding consumer_discharged_def consumer_argument_def if_False
+  "consumer_discharged (positive_meaning payload_disjoint_system) 49 view_swap (given_correspondence 6)"
+  unfolding consumer_view_simps(2)[symmetric] consumer_discharged_argument consumer_argument_def if_False
 proof (intro allI impI)
   fix x y y' assume "given_correspondence 6 y y'"
   then obtain N where y: "data_bag_value_presents N y" and y': "data_bag_value_presents N y'"
@@ -239,8 +246,8 @@ proof -
 qed
 
 theorem binder_consumer_discharged:
-  "consumer_discharged (positive_meaning binder_admission_system) 54 True (given_correspondence 6)"
-  unfolding consumer_discharged_def consumer_argument_def if_True
+  "consumer_discharged (positive_meaning binder_admission_system) 54 view_identity (given_correspondence 6)"
+  unfolding consumer_view_simps(1)[symmetric] consumer_discharged_argument consumer_argument_def if_True
 proof (intro allI impI)
   fix x y y' assume "given_correspondence 6 y y'"
   then obtain N where y: "data_bag_value_presents N y" and y': "data_bag_value_presents N y'"
@@ -310,19 +317,22 @@ proof -
 qed
 
 theorem artifact_socket_discharged:
-  "socket_discharged (positive_meaning artifact_projection_system) artifact_projection_schema 4 False"
-  unfolding socket_discharged_def
-proof (rule allI, rule impI, rule conjI)
+  "socket_discharged (positive_meaning artifact_projection_system) given_artifact_socket_schema 4 False
+    view_identity view_identity"
+  unfolding socket_discharged_identity given_artifact_socket_decoded
+proof (rule conjI, rule allI, rule impI, rule conjI)
+  show "finite_socket_pair view_identity [4] given_artifact_socket_schema"
+    by (simp add: finite_socket_pair_identity given_artifact_socket_schema_def)
   let ?M = "positive_meaning artifact_projection_system"
   fix h assume t: "clause_true ?M artifact_projection_schema h"
   show "\<forall>d xi yo y'. (4,d,Pattern_Pair xi yo) \<in> schema_premises artifact_projection_schema \<longrightarrow>
       (d,Pair_Term (evaluate_pattern h xi) y') \<in> ?M \<longrightarrow> (\<exists>h'. clause_true ?M artifact_projection_schema h' \<and>
-        head_kept False artifact_projection_schema h h' \<and> evaluate_pattern h' xi = evaluate_pattern h xi \<and>
+        head_kept False view_identity given_artifact_socket_schema h h' \<and> evaluate_pattern h' xi = evaluate_pattern h xi \<and>
         evaluate_pattern h' yo = y')"
     by (simp add: artifact_projection_parts)
   show "\<forall>N g. (4,N) \<in> schema_material_premises artifact_projection_schema \<longrightarrow> evaluate_material_satisfaction g N \<longrightarrow>
       evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
-      (\<exists>h'. clause_true ?M artifact_projection_schema h' \<and> head_kept False artifact_projection_schema h h' \<and>
+      (\<exists>h'. clause_true ?M artifact_projection_schema h' \<and> head_kept False view_identity given_artifact_socket_schema h h' \<and>
         (\<forall>a\<in>material_variables N. h' a = g a))"
   proof (rule allI, rule allI, rule impI, rule impI, rule impI)
     fix N g assume n: "(4,N) \<in> schema_material_premises artifact_projection_schema"
@@ -357,9 +367,9 @@ proof (rule allI, rule impI, rule conjI)
     have true: "clause_true ?M artifact_projection_schema ?h"
       using p0 p1 p2 p3 f fg obs
       by (auto simp: clause_true_def artifact_projection_parts artifact_projection_old_meaning artifact_projection_material_def)
-    have kept: "head_kept False artifact_projection_schema h ?h"
-      using source by (simp add: head_kept_def artifact_projection_parts N artifact_projection_material_def)
-    show "\<exists>h'. clause_true ?M artifact_projection_schema h' \<and> head_kept False artifact_projection_schema h h' \<and>
+    have kept: "head_kept False view_identity given_artifact_socket_schema h ?h"
+      using source by (simp add: head_kept_identity given_artifact_socket_decoded artifact_projection_parts N artifact_projection_material_def)
+    show "\<exists>h'. clause_true ?M artifact_projection_schema h' \<and> head_kept False view_identity given_artifact_socket_schema h h' \<and>
         (\<forall>a\<in>material_variables N. h' a = g a)"
       using true kept by (intro exI[of _ ?h]) (auto simp: N artifact_projection_parts)
   qed
@@ -421,21 +431,24 @@ lemma target_projection_occurrence_parts:
     material_fields_def schema_variables_def)
 
 theorem target_socket_discharged:
-  "socket_discharged (positive_meaning target_projection_system) target_projection_occurrence_schema 2 False"
-  unfolding socket_discharged_def
-proof (rule allI, rule impI, rule conjI)
+  "socket_discharged (positive_meaning target_projection_system) given_target_socket_schema 2 False
+    view_identity view_identity"
+  unfolding socket_discharged_identity given_target_socket_decoded
+proof (rule conjI, rule allI, rule impI, rule conjI)
+  show "finite_socket_pair view_identity [2] given_target_socket_schema"
+    by (simp add: finite_socket_pair_identity given_target_socket_schema_def)
   let ?M = "positive_meaning target_projection_system"
   fix h assume t: "clause_true ?M target_projection_occurrence_schema h"
   show "\<forall>d xi yo y'. (2,d,Pattern_Pair xi yo) \<in> schema_premises target_projection_occurrence_schema \<longrightarrow>
       (d,Pair_Term (evaluate_pattern h xi) y') \<in> ?M \<longrightarrow> (\<exists>h'. clause_true ?M target_projection_occurrence_schema h' \<and>
-        head_kept False target_projection_occurrence_schema h h' \<and> evaluate_pattern h' xi = evaluate_pattern h xi \<and>
+        head_kept False view_identity given_target_socket_schema h h' \<and> evaluate_pattern h' xi = evaluate_pattern h xi \<and>
         evaluate_pattern h' yo = y')"
     by (simp add: target_projection_occurrence_parts)
   show "\<forall>N g. (2,N) \<in> schema_material_premises target_projection_occurrence_schema \<longrightarrow>
       evaluate_material_satisfaction g N \<longrightarrow>
       evaluate_pattern g (material_source N) = evaluate_pattern h (material_source N) \<longrightarrow>
       (\<exists>h'. clause_true ?M target_projection_occurrence_schema h' \<and>
-        head_kept False target_projection_occurrence_schema h h' \<and> (\<forall>a\<in>material_variables N. h' a = g a))"
+        head_kept False view_identity given_target_socket_schema h h' \<and> (\<forall>a\<in>material_variables N. h' a = g a))"
   proof (rule allI, rule allI, rule impI, rule impI, rule impI)
     fix N g assume n: "(2,N) \<in> schema_material_premises target_projection_occurrence_schema"
       and sat: "evaluate_material_satisfaction g N"
@@ -471,10 +484,10 @@ proof (rule allI, rule impI, rule conjI)
     have true: "clause_true ?M target_projection_occurrence_schema ?h"
       using whole lookup hparts(4) fg obs
       by (auto simp: clause_true_def target_projection_occurrence_parts artifact_projection_material_def)
-    have kept: "head_kept False target_projection_occurrence_schema h ?h"
-      by (simp add: head_kept_def target_projection_occurrence_parts)
+    have kept: "head_kept False view_identity given_target_socket_schema h ?h"
+      by (simp add: head_kept_identity given_target_socket_decoded target_projection_occurrence_parts)
     show "\<exists>h'. clause_true ?M target_projection_occurrence_schema h' \<and>
-        head_kept False target_projection_occurrence_schema h h' \<and> (\<forall>a\<in>material_variables N. h' a = g a)"
+        head_kept False view_identity given_target_socket_schema h h' \<and> (\<forall>a\<in>material_variables N. h' a = g a)"
       using true kept by (intro exI[of _ ?h]) (auto simp: N target_projection_occurrence_parts artifact_projection_parts)
   qed
 qed
@@ -488,46 +501,59 @@ text \<open>
 \<close>
 
 definition given_bag_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "given_bag_declarations = \<lparr>declared_producers = {|6|}, declared_consumers = {||},
-    declared_sockets = {|(6,given_bag_socket_schema,1,False)|}\<rparr>"
+  "given_bag_declarations = \<lparr>declared_producers = {|(6,view_identity,[view_output])|}, declared_consumers = {||},
+    declared_sockets = {|(6,given_bag_socket_schema,1,False,view_identity,view_identity)|}\<rparr>"
 
 definition given_artifact_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "given_artifact_declarations = \<lparr>declared_producers = {|10|}, declared_consumers = {||},
-    declared_sockets = {|(10,given_artifact_socket_schema,4,False)|}\<rparr>"
+  "given_artifact_declarations = \<lparr>declared_producers = {|(10,view_identity,[view_output])|},
+    declared_consumers = {||},
+    declared_sockets = {|(10,given_artifact_socket_schema,4,False,view_identity,view_identity)|}\<rparr>"
 
 definition given_family_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "given_family_declarations = \<lparr>declared_producers = {|32|}, declared_consumers = {||}, declared_sockets = {||}\<rparr>"
+  "given_family_declarations = \<lparr>declared_producers = {|(32,view_identity,[view_output])|},
+    declared_consumers = {||}, declared_sockets = {||}\<rparr>"
 
 definition given_target_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "given_target_declarations = \<lparr>declared_producers = {|45|}, declared_consumers = {||},
-    declared_sockets = {|(45,given_target_socket_schema,2,False)|}\<rparr>"
+  "given_target_declarations = \<lparr>declared_producers = {|(45,view_identity,[view_output])|},
+    declared_consumers = {||},
+    declared_sockets = {|(45,given_target_socket_schema,2,False,view_identity,view_identity)|}\<rparr>"
 
 definition given_disjoint_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "given_disjoint_declarations = \<lparr>declared_producers = {||}, declared_consumers = {|(6,49,False)|},
+  "given_disjoint_declarations = \<lparr>declared_producers = {||}, declared_consumers = {|(6,49,view_swap,0)|},
     declared_sockets = {||}\<rparr>"
 
 definition given_binder_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "given_binder_declarations = \<lparr>declared_producers = {||}, declared_consumers = {|(6,54,True)|},
+  "given_binder_declarations = \<lparr>declared_producers = {||}, declared_consumers = {|(6,54,view_identity,0)|},
     declared_sockets = {||}\<rparr>"
 
 theorem given_notion_declarations_discharged:
-  "declarations_discharged (positive_meaning bag_comparison_system) given_bag_declarations given_correspondence"
-  "declarations_discharged (positive_meaning artifact_projection_system) given_artifact_declarations given_correspondence"
-  "declarations_discharged (positive_meaning family_admission_system) given_family_declarations given_correspondence"
-  "declarations_discharged (positive_meaning target_projection_system) given_target_declarations given_correspondence"
-  "declarations_discharged (positive_meaning payload_disjoint_system) given_disjoint_declarations given_correspondence"
-  "declarations_discharged (positive_meaning binder_admission_system) given_binder_declarations given_correspondence"
+  "declarations_discharged (positive_meaning bag_comparison_system) given_bag_declarations
+    (\<lambda>d i. given_correspondence d)"
+  "declarations_discharged (positive_meaning artifact_projection_system) given_artifact_declarations
+    (\<lambda>d i. given_correspondence d)"
+  "declarations_discharged (positive_meaning family_admission_system) given_family_declarations
+    (\<lambda>d i. given_correspondence d)"
+  "declarations_discharged (positive_meaning target_projection_system) given_target_declarations
+    (\<lambda>d i. given_correspondence d)"
+  "declarations_discharged (positive_meaning payload_disjoint_system) given_disjoint_declarations
+    (\<lambda>d i. given_correspondence d)"
+  "declarations_discharged (positive_meaning binder_admission_system) given_binder_declarations
+    (\<lambda>d i. given_correspondence d)"
   using bag_producer_discharged bag_socket_discharged artifact_producer_discharged artifact_socket_discharged
     family_producer_discharged target_producer_discharged target_socket_discharged disjoint_consumer_discharged
     binder_consumer_discharged
-  by (simp_all add: declarations_discharged_def given_bag_declarations_def given_artifact_declarations_def
+  by (simp_all add: declarations_discharged_def declarations_formed_def view_identity_formed view_swap_formed
+    given_bag_declarations_def given_artifact_declarations_def
     given_family_declarations_def given_target_declarations_def given_disjoint_declarations_def
     given_binder_declarations_def
     given_bag_socket_decoded given_artifact_socket_decoded given_target_socket_decoded)
 
 definition given_declarations :: "(nat,nat,nat) resolution_declarations" where
-  "given_declarations = \<lparr>declared_producers = {|6,10,32,45|}, declared_consumers = {|(6,49,False),(6,54,True)|},
-    declared_sockets = {|(6,given_bag_socket_schema,1,False),(10,given_artifact_socket_schema,4,False),
-      (45,given_target_socket_schema,2,False)|}\<rparr>"
+  "given_declarations = \<lparr>declared_producers = {|(6,view_identity,[view_output]),(10,view_identity,[view_output]),
+      (32,view_identity,[view_output]),(45,view_identity,[view_output])|},
+    declared_consumers = {|(6,49,view_swap,0),(6,54,view_identity,0)|},
+    declared_sockets = {|(6,given_bag_socket_schema,1,False,view_identity,view_identity),
+      (10,given_artifact_socket_schema,4,False,view_identity,view_identity),
+      (45,given_target_socket_schema,2,False,view_identity,view_identity)|}\<rparr>"
 
 end

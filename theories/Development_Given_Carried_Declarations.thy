@@ -1,5 +1,6 @@
 theory Development_Given_Carried_Declarations
-  imports Factor_Artifact_Citation_Declarations Development_Given_Extensions Development_Given_Registrations
+  imports Factor_Artifact_Citation_Declarations Development_Given_Declarations Development_Given_Extensions
+    Development_Given_Registrations
 begin
 
 text \<open>

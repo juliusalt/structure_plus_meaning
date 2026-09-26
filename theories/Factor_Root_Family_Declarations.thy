@@ -1,5 +1,5 @@
 theory Factor_Root_Family_Declarations
-  imports Development_Given_Declarations Factor_Resolution_Carriers Factor_Package_Membership Factor_Package_Additions
+  imports Factor_Producer_Correspondences Factor_Resolution_Carriers Factor_Package_Membership Factor_Package_Additions
 begin
 
 text \<open>

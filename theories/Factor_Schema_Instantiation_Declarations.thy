@@ -1,5 +1,5 @@
 theory Factor_Schema_Instantiation_Declarations
-  imports Factor_Instantiation_Declarations Factor_Schema_Instantiation Development_Given_Declarations
+  imports Factor_Instantiation_Declarations Factor_Schema_Instantiation Factor_Producer_Correspondences
 begin
 
 text \<open>
@@ -784,14 +784,10 @@ lemma family_rows_bag_corresponds:
   assumes "given_correspondence 32 x y"
   shows "bag_corresponds x y"
 proof -
-  obtain A where presents: "family_rows_presents A x" "family_rows_presents A y"
-    using assms by (auto simp: given_correspondence_def presentation_transport_def)
-  obtain xs where left: "distinct xs" "set xs = A" "x = data_list_term (map address_pair_data xs)"
-    using presents(1) by (auto simp: data_collection_presents_def list_all2_function)
-  obtain ys where right: "distinct ys" "set ys = A" "y = data_list_term (map address_pair_data ys)"
-    using presents(2) by (auto simp: data_collection_presents_def list_all2_function)
-  have "mset xs = mset ys" using left right set_eq_iff_mset_eq_distinct by metis
-  then show ?thesis using left(3) right(3) by (simp add: bag_corresponds_mapped)
+  obtain xs ys where "distinct xs" "distinct ys" "mset xs = mset ys"
+    "x = data_list_term (map address_pair_data xs)" "y = data_list_term (map address_pair_data ys)"
+    by (rule family_rows_enumerations[OF assms])
+  then show ?thesis by (simp add: bag_corresponds_mapped)
 qed
 
 lemma vector_socket_producer:
@@ -889,6 +885,10 @@ text \<open>
   at the family's rows, the premise rows (63).
 \<close>
 
+lemmas schema_instantiation_listed_simps = instantiation_listed_simps view_listed[OF record_material_view_def]
+  view_listed[OF premise_rows_view_def] view_listed[OF schema_view_def] view_listed[OF material_view_def]
+  five_fields_list_def five_fields_tuple_def premise_views_formed record_material_view_formed material_view_formed
+
 definition vector_cons_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
   "vector_cons_socket_schema = \<lparr>finite_schema_conclusion = finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5)) (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 7)) (Pattern_Variable 8) (Pattern_Variable 9) (Pattern_Variable 10)),
     finite_schema_premises = {|(0,55,finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 6) (Pattern_Variable 11) (Pattern_Variable 13) (Pattern_Variable 15))),
@@ -903,25 +903,6 @@ definition vector_cons_socket_schema :: "(nat,nat,nat) finite_factor_schema" whe
 
 lemma vector_cons_socket_decoded: "decode_finite_schema vector_cons_socket_schema = vector_instantiation_cons_schema"
   by (simp add: vector_cons_socket_schema_def decode_finite_schema_def decode_finite_call_pattern_def map_relation_values_def vector_instantiation_cons_schema_def)
-
-lemma vector_cons_socket_functional: "finite_relation_functional (finite_schema_premises vector_cons_socket_schema)"
-  by (auto simp: finite_relation_functional_correct single_valued_def vector_cons_socket_schema_def)
-
-lemma vector_cons_socket_premise:
-  "finite_relation_option (finite_schema_premises vector_cons_socket_schema) 0 = Some (55,finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 6) (Pattern_Variable 11) (Pattern_Variable 13) (Pattern_Variable 15)))"
-  "finite_relation_option (finite_schema_premises vector_cons_socket_schema) 1 = Some (60,finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5) (Pattern_Variable 7) (Pattern_Variable 12) (Pattern_Variable 14) (Pattern_Variable 16)))"
-  "finite_relation_option (finite_schema_premises vector_cons_socket_schema) 2 = Some (46,finite_pattern_of (collection_join_pattern (Pattern_Variable 13) (Pattern_Variable 14) (Pattern_Variable 17)))"
-  "finite_relation_option (finite_schema_premises vector_cons_socket_schema) 3 = Some (6,finite_pattern_of (Pattern_Pair (Pattern_Variable 17) (Pattern_Variable 9)))"
-  "finite_relation_option (finite_schema_premises vector_cons_socket_schema) 4 = Some (48,finite_pattern_of (collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 10)))"
-  "finite_relation_option (finite_schema_premises vector_cons_socket_schema) 5 = Some (48,finite_pattern_of (collection_join_pattern (Pattern_Variable 11) (Pattern_Variable 12) (Pattern_Variable 8)))"
-  by ((rule finite_relation_option_at[OF vector_cons_socket_functional], simp add: vector_cons_socket_schema_def)+)
-
-lemmas vector_cons_socket_premise_one = vector_cons_socket_premise[unfolded One_nat_def]
-
-lemmas vector_cons_socket_simps = vector_cons_socket_premise vector_cons_socket_premise_one premise_parts_def output_variables_def resolution_view_pattern_def view_lookup_def
-  instantiation_view_def prospective_view_def premise_rows_view_def schema_view_def record_material_view_def
-  material_view_def five_fields_list_def five_fields_tuple_def join_view_def consumer_carrier_view_def view_identity_def
-  identity_view_def carried_correspond_def output_corresponds_def
 
 definition record_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
   "record_socket_schema = \<lparr>finite_schema_conclusion = finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 7) (Pattern_Variable 8)),
@@ -939,23 +920,6 @@ definition record_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
 lemma record_socket_decoded: "decode_finite_schema record_socket_schema = record_instantiation_schema"
   by (simp add: record_socket_schema_def decode_finite_schema_def decode_finite_call_pattern_def map_relation_values_def record_instantiation_schema_def)
 
-lemma record_socket_functional: "finite_relation_functional (finite_schema_premises record_socket_schema)"
-  by (auto simp: finite_relation_functional_correct single_valued_def record_socket_schema_def)
-
-lemma record_socket_premise:
-  "finite_relation_option (finite_schema_premises record_socket_schema) 4 = Some (60,finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 12) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 13) (Pattern_Variable 8)))"
-  "finite_relation_option (finite_schema_premises record_socket_schema) 5 = Some (46,finite_pattern_of (collection_join_pattern (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 11)) (Pattern_Variable 13) (Pattern_Variable 14)))"
-  "finite_relation_option (finite_schema_premises record_socket_schema) 6 = Some (6,finite_pattern_of (Pattern_Pair (Pattern_Variable 14) (Pattern_Variable 7)))"
-  "finite_relation_option (finite_schema_premises record_socket_schema) 7 = Some (49,finite_pattern_of (Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8)))"
-  by ((rule finite_relation_option_at[OF record_socket_functional], simp add: record_socket_schema_def)+)
-
-lemmas record_socket_premise_one = record_socket_premise[unfolded One_nat_def]
-
-lemmas record_socket_simps = record_socket_premise record_socket_premise_one premise_parts_def output_variables_def resolution_view_pattern_def view_lookup_def
-  instantiation_view_def prospective_view_def premise_rows_view_def schema_view_def record_material_view_def
-  material_view_def five_fields_list_def five_fields_tuple_def join_view_def consumer_carrier_view_def view_identity_def
-  identity_view_def carried_correspond_def output_corresponds_def
-
 definition material_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
   "material_socket_schema = \<lparr>finite_schema_conclusion = finite_pattern_of (material_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 7) (Pattern_Variable 8) (Pattern_Variable 9) (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12)),
     finite_schema_premises = {|(0,61,finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (data_list_pattern [(Pattern_Variable 5),(Pattern_Variable 6),(Pattern_Variable 7),(Pattern_Variable 8),(Pattern_Variable 9)]) (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12)))|},
@@ -963,20 +927,6 @@ definition material_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
 
 lemma material_socket_decoded: "decode_finite_schema material_socket_schema = material_instantiation_schema"
   by (simp add: material_socket_schema_def decode_finite_schema_def decode_finite_call_pattern_def map_relation_values_def material_instantiation_schema_def)
-
-lemma material_socket_functional: "finite_relation_functional (finite_schema_premises material_socket_schema)"
-  by (auto simp: finite_relation_functional_correct single_valued_def material_socket_schema_def)
-
-lemma material_socket_premise:
-  "finite_relation_option (finite_schema_premises material_socket_schema) 0 = Some (61,finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (data_list_pattern [(Pattern_Variable 5),(Pattern_Variable 6),(Pattern_Variable 7),(Pattern_Variable 8),(Pattern_Variable 9)]) (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12)))"
-  by ((rule finite_relation_option_at[OF material_socket_functional], simp add: material_socket_schema_def)+)
-
-lemmas material_socket_premise_one = material_socket_premise[unfolded One_nat_def]
-
-lemmas material_socket_simps = material_socket_premise material_socket_premise_one premise_parts_def output_variables_def resolution_view_pattern_def view_lookup_def
-  instantiation_view_def prospective_view_def premise_rows_view_def schema_view_def record_material_view_def
-  material_view_def five_fields_list_def five_fields_tuple_def join_view_def consumer_carrier_view_def view_identity_def
-  identity_view_def carried_correspond_def output_corresponds_def
 
 definition premise_call_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
   "premise_call_socket_schema = \<lparr>finite_schema_conclusion = finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Pair (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5)) (Pattern_Variable 6)) (Pattern_Pair (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8))) (Pattern_Variable 9)) (Pattern_Variable 10) (Pattern_Variable 11)),
@@ -990,22 +940,6 @@ definition premise_call_socket_schema :: "(nat,nat,nat) finite_factor_schema" wh
 lemma premise_call_socket_decoded: "decode_finite_schema premise_call_socket_schema = premise_rows_call_schema"
   by (simp add: premise_call_socket_schema_def decode_finite_schema_def decode_finite_call_pattern_def map_relation_values_def premise_rows_call_schema_def)
 
-lemma premise_call_socket_functional: "finite_relation_functional (finite_schema_premises premise_call_socket_schema)"
-  by (auto simp: finite_relation_functional_correct single_valued_def premise_call_socket_schema_def)
-
-lemma premise_call_socket_premise:
-  "finite_relation_option (finite_schema_premises premise_call_socket_schema) 0 = Some (57,finite_pattern_of (prospective_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5) (Pattern_Variable 7) (Pattern_Variable 8) (Pattern_Variable 12) (Pattern_Variable 14) (Pattern_Variable 15)))"
-  "finite_relation_option (finite_schema_premises premise_call_socket_schema) 1 = Some (63,finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 6) (Pattern_Variable 9) (Pattern_Variable 10) (Pattern_Variable 13)))"
-  "finite_relation_option (finite_schema_premises premise_call_socket_schema) 2 = Some (48,finite_pattern_of (collection_join_pattern (Pattern_Variable 12) (Pattern_Variable 13) (Pattern_Variable 11)))"
-  by ((rule finite_relation_option_at[OF premise_call_socket_functional], simp add: premise_call_socket_schema_def)+)
-
-lemmas premise_call_socket_premise_one = premise_call_socket_premise[unfolded One_nat_def]
-
-lemmas premise_call_socket_simps = premise_call_socket_premise premise_call_socket_premise_one premise_parts_def output_variables_def resolution_view_pattern_def view_lookup_def
-  instantiation_view_def prospective_view_def premise_rows_view_def schema_view_def record_material_view_def
-  material_view_def five_fields_list_def five_fields_tuple_def join_view_def consumer_carrier_view_def view_identity_def
-  identity_view_def carried_correspond_def output_corresponds_def
-
 definition premise_material_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
   "premise_material_socket_schema = \<lparr>finite_schema_conclusion = finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Pair (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 5)) (Pattern_Variable 6)) (Pattern_Variable 7) (Pattern_Pair (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair (Pattern_Variable 10) (Pattern_Pair (Pattern_Variable 11) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 14)))))) (Pattern_Variable 8)) (Pattern_Variable 9)),
     finite_schema_premises = {|(0,62,finite_pattern_of (material_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5) (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12) (Pattern_Variable 13) (Pattern_Variable 14) (Pattern_Variable 15) (Pattern_Variable 17) (Pattern_Variable 18))),
@@ -1018,22 +952,6 @@ definition premise_material_socket_schema :: "(nat,nat,nat) finite_factor_schema
 lemma premise_material_socket_decoded: "decode_finite_schema premise_material_socket_schema = premise_rows_material_schema"
   by (simp add: premise_material_socket_schema_def decode_finite_schema_def decode_finite_call_pattern_def map_relation_values_def premise_rows_material_schema_def)
 
-lemma premise_material_socket_functional: "finite_relation_functional (finite_schema_premises premise_material_socket_schema)"
-  by (auto simp: finite_relation_functional_correct single_valued_def premise_material_socket_schema_def)
-
-lemma premise_material_socket_premise:
-  "finite_relation_option (finite_schema_premises premise_material_socket_schema) 0 = Some (62,finite_pattern_of (material_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5) (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12) (Pattern_Variable 13) (Pattern_Variable 14) (Pattern_Variable 15) (Pattern_Variable 17) (Pattern_Variable 18)))"
-  "finite_relation_option (finite_schema_premises premise_material_socket_schema) 1 = Some (63,finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 6) (Pattern_Variable 7) (Pattern_Variable 8) (Pattern_Variable 16)))"
-  "finite_relation_option (finite_schema_premises premise_material_socket_schema) 2 = Some (48,finite_pattern_of (collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 9)))"
-  by ((rule finite_relation_option_at[OF premise_material_socket_functional], simp add: premise_material_socket_schema_def)+)
-
-lemmas premise_material_socket_premise_one = premise_material_socket_premise[unfolded One_nat_def]
-
-lemmas premise_material_socket_simps = premise_material_socket_premise premise_material_socket_premise_one premise_parts_def output_variables_def resolution_view_pattern_def view_lookup_def
-  instantiation_view_def prospective_view_def premise_rows_view_def schema_view_def record_material_view_def
-  material_view_def five_fields_list_def five_fields_tuple_def join_view_def consumer_carrier_view_def view_identity_def
-  identity_view_def carried_correspond_def output_corresponds_def
-
 definition premise_family_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
   "premise_family_socket_schema = \<lparr>finite_schema_conclusion = finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 7)),
     finite_schema_premises = {|(0,37,finite_pattern_of (artifact_lookup_pattern data_x data_y (Pattern_Variable 8))),
@@ -1043,21 +961,6 @@ definition premise_family_socket_schema :: "(nat,nat,nat) finite_factor_schema" 
 
 lemma premise_family_socket_decoded: "decode_finite_schema premise_family_socket_schema = premise_family_instantiation_schema"
   by (simp add: premise_family_socket_schema_def decode_finite_schema_def decode_finite_call_pattern_def map_relation_values_def premise_family_instantiation_schema_def)
-
-lemma premise_family_socket_functional: "finite_relation_functional (finite_schema_premises premise_family_socket_schema)"
-  by (auto simp: finite_relation_functional_correct single_valued_def premise_family_socket_schema_def)
-
-lemma premise_family_socket_premise:
-  "finite_relation_option (finite_schema_premises premise_family_socket_schema) 1 = Some (32,finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 4)) (Pattern_Variable 9)))"
-  "finite_relation_option (finite_schema_premises premise_family_socket_schema) 2 = Some (63,finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 9) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 7)))"
-  by ((rule finite_relation_option_at[OF premise_family_socket_functional], simp add: premise_family_socket_schema_def)+)
-
-lemmas premise_family_socket_premise_one = premise_family_socket_premise[unfolded One_nat_def]
-
-lemmas premise_family_socket_simps = premise_family_socket_premise premise_family_socket_premise_one premise_parts_def output_variables_def resolution_view_pattern_def view_lookup_def
-  instantiation_view_def prospective_view_def premise_rows_view_def schema_view_def record_material_view_def
-  material_view_def five_fields_list_def five_fields_tuple_def join_view_def consumer_carrier_view_def view_identity_def
-  identity_view_def carried_correspond_def output_corresponds_def
 
 definition schema_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
   "schema_socket_schema = \<lparr>finite_schema_conclusion = finite_pattern_of (schema_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 5) (Pattern_Variable 6)),
@@ -1078,25 +981,6 @@ definition schema_socket_schema :: "(nat,nat,nat) finite_factor_schema" where
 lemma schema_socket_decoded: "decode_finite_schema schema_socket_schema = schema_instantiation_schema"
   by (simp add: schema_socket_schema_def decode_finite_schema_def decode_finite_call_pattern_def map_relation_values_def schema_instantiation_schema_def)
 
-lemma schema_socket_functional: "finite_relation_functional (finite_schema_premises schema_socket_schema)"
-  by (auto simp: finite_relation_functional_correct single_valued_def schema_socket_schema_def)
-
-lemma schema_socket_premise:
-  "finite_relation_option (finite_schema_premises schema_socket_schema) 3 = Some (55,finite_pattern_of (pattern_instantiation_pattern data_x data_y (Pattern_Variable 14) data_w (Pattern_Variable 12) (Pattern_Variable 4) (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 17)))"
-  "finite_relation_option (finite_schema_premises schema_socket_schema) 4 = Some (64,finite_pattern_of (premise_instantiation_pattern data_x data_y (Pattern_Variable 14) data_w (Pattern_Variable 13) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 18)))"
-  "finite_relation_option (finite_schema_premises schema_socket_schema) 5 = Some (48,finite_pattern_of (collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 18) (Pattern_Variable 14)))"
-  "finite_relation_option (finite_schema_premises schema_socket_schema) 7 = Some (49,finite_pattern_of (Pattern_Pair (data_list_pattern [data_z,(Pattern_Variable 8),(Pattern_Variable 9),(Pattern_Variable 10)]) (Pattern_Variable 16)))"
-  "finite_relation_option (finite_schema_premises schema_socket_schema) 9 = Some (49,finite_pattern_of (Pattern_Pair (data_list_pattern [(Pattern_Variable 11)]) (Pattern_Variable 16)))"
-  "finite_relation_option (finite_schema_premises schema_socket_schema) 11 = Some (49,finite_pattern_of (Pattern_Pair (data_list_pattern [(Pattern_Variable 13)]) (Pattern_Variable 16)))"
-  by ((rule finite_relation_option_at[OF schema_socket_functional], simp add: schema_socket_schema_def)+)
-
-lemmas schema_socket_premise_one = schema_socket_premise[unfolded One_nat_def]
-
-lemmas schema_socket_simps = schema_socket_premise schema_socket_premise_one premise_parts_def output_variables_def resolution_view_pattern_def view_lookup_def
-  instantiation_view_def prospective_view_def premise_rows_view_def schema_view_def record_material_view_def
-  material_view_def five_fields_list_def five_fields_tuple_def join_view_def consumer_carrier_view_def view_identity_def
-  identity_view_def carried_correspond_def output_corresponds_def
-
 section \<open>The socket 0 of vector cons (vector head)\<close>
 
 definition vector_head_carriers :: "nat clause_carrier list" where
@@ -1105,109 +989,10 @@ definition vector_head_carriers :: "nat clause_carrier list" where
     (4,consumer_carrier_view join_view,tuple_corresponds [bag_pair,bag_corresponds],(=)),
     (5,consumer_carrier_view join_view,tuple_corresponds [bag_pair,bag_corresponds],(=))]"
 
-lemma vector_head_carried:
-  "carried_variables vector_cons_socket_schema 0 instantiation_view vector_head_carriers = {6,11,13,15,17}"
-  "carried_variables vector_cons_socket_schema 0 instantiation_view [] = {6,11,13,15}"
-  "carried_variables vector_cons_socket_schema 0 instantiation_view (take (Suc (0)) vector_head_carriers) = {6,11,13,15,17}"
-  "carried_variables vector_cons_socket_schema 0 instantiation_view (take (Suc (Suc (0))) vector_head_carriers) = {6,11,13,15,17}"
-  "carried_variables vector_cons_socket_schema 0 instantiation_view (take (Suc (Suc (Suc (0)))) vector_head_carriers) = {6,11,13,15,17}"
-  by (auto simp: vector_head_carriers_def carried_variables_def vector_cons_socket_simps)
-
-lemmas vector_head_carried_one = vector_head_carried[unfolded One_nat_def]
-
-lemma vector_head_keys: "fst ` set vector_head_carriers = {2,3,4,5}"
-  by (simp add: vector_head_carriers_def)
-
-lemma vector_head_steps:
-  assumes "i < length vector_head_carriers"
-  shows "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 0 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_head_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 0 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_head_carriers 0"
-    apply (rule carrier_stepI[where k = 2 and V = "join_view" and cin = "bag_pair" and cout = "bag_corresponds" and d = 46
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 13) (Pattern_Variable 14) (Pattern_Variable 17))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 14))" and op = "Finite_Variable 17"])
-    subgoal premises prems for g g'
-      using prems(1)[of 14, unfolded vector_head_carried(1)] prems(2)
-      by (simp add: vector_head_carried vector_head_carried_one vector_head_carriers_def vector_cons_socket_simps)
-    apply (simp add: vector_head_carriers_def)
-    apply (rule join_view_formed)
-    apply (rule vector_cons_socket_premise(3))
-    apply (simp add: resolution_view_pattern_def view_lookup_def join_view_def)
-    apply (rule vector_carriers(1))
-    apply (rule output_covered_variable)
-    apply (simp_all add: vector_head_carried vector_head_carried_one)
-    done
-  have s1: "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 0 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_head_carriers (Suc (0))"
-    apply (rule carrier_stepI[where k = 3 and V = "consumer_carrier_view view_identity" and cin = "bag_pair" and cout = "(=)" and d = 6
-      and p = "finite_pattern_of (Pattern_Pair (Pattern_Variable 17) (Pattern_Variable 9))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Variable 17) (Pattern_Variable 9))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 9, unfolded vector_head_carried(1)] prems(2)
-      by (simp add: vector_head_carried vector_head_carried_one vector_head_carriers_def vector_cons_socket_simps)
-    apply (simp add: vector_head_carriers_def)
-    apply (simp add: consumer_carrier_view_formed view_identity_formed)
-    apply (rule vector_cons_socket_premise(4))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def view_identity_def identity_view_def)
-    apply (rule vector_carriers(2))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: vector_head_carried vector_head_carried_one)
-    done
-  have s2: "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 0 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_head_carriers (Suc (Suc (0)))"
-    apply (rule carrier_stepI[where k = 4 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 10))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 15) (Pattern_Variable 16)) (Pattern_Variable 10))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 16, unfolded vector_head_carried(1)] prems(1)[of 10, unfolded vector_head_carried(1)] prems(2)
-      by (simp add: vector_head_carried vector_head_carried_one vector_head_carriers_def vector_cons_socket_simps)
-    apply (simp add: vector_head_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule vector_cons_socket_premise(5))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule vector_carriers(3))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: vector_head_carried vector_head_carried_one)
-    done
-  have s3: "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 0 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_head_carriers (Suc (Suc (Suc (0))))"
-    apply (rule carrier_stepI[where k = 5 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 11) (Pattern_Variable 12) (Pattern_Variable 8))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 11) (Pattern_Variable 12)) (Pattern_Variable 8))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 12, unfolded vector_head_carried(1)] prems(1)[of 8, unfolded vector_head_carried(1)] prems(2)
-      by (simp add: vector_head_carried vector_head_carried_one vector_head_carriers_def vector_cons_socket_simps)
-    apply (simp add: vector_head_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule vector_cons_socket_premise(6))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule vector_carriers(3))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: vector_head_carried vector_head_carried_one)
-    done
-  have "i = 0 \<or> i = Suc 0 \<or> i = Suc (Suc 0) \<or> i = Suc (Suc (Suc 0))"
-    using assms by (simp add: vector_head_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 s1 s2 s3 by blast
-qed
-
 theorem vector_head_socket_carried:
   "socket_carried (positive_meaning vector_instantiation_system) vector_cons_socket_schema 0 False instantiation_view instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_head_carriers"
-proof -
-  have parts: "resolution_view_pattern instantiation_view (finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (Pattern_Variable 6) (Pattern_Variable 11) (Pattern_Variable 13) (Pattern_Variable 15)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair data_z data_w))),finite_pattern_of (Pattern_Pair (Pattern_Variable 6) (Pattern_Pair (Pattern_Variable 11) (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 15)))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def instantiation_view_def)
-  have covered: "output_covered (positive_meaning vector_instantiation_system) 55 instantiation_view (finite_pattern_of (Pattern_Pair (Pattern_Variable 6) (Pattern_Pair (Pattern_Variable 11) (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 15)))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF instantiation_views_formed(2), where \<sigma> = "\<lambda>v. if v = 6 then 5 else if v = 11 then 6 else if v = 13 then 7 else if v = 15 then 8 else v"])
-      (simp add: instantiation_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair data_z data_w))) :: nat finite_term_pattern)) \<inter> carried_variables vector_cons_socket_schema 0 instantiation_view vector_head_carriers = {}"
-    unfolding vector_head_carried(1) by simp
-  have material: "\<And>N. (0,N) \<notin> schema_material_premises (decode_finite_schema vector_cons_socket_schema)"
-    by (simp add: vector_cons_socket_decoded vector_instantiation_cons_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema vector_cons_socket_schema) \<Longrightarrow> q \<noteq> 0 \<Longrightarrow>
-      q \<notin> fst ` set vector_head_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables vector_cons_socket_schema 0 instantiation_view vector_head_carriers = {}"
-    unfolding vector_head_carried(1) vector_head_keys by (auto simp: vector_cons_socket_decoded vector_instantiation_cons_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema vector_cons_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables vector_cons_socket_schema 0 instantiation_view vector_head_carriers = {}"
-    by (simp add: vector_cons_socket_decoded vector_instantiation_cons_schema_def)
-  have head: "head_apart False instantiation_view vector_cons_socket_schema (carried_variables vector_cons_socket_schema 0 instantiation_view vector_head_carriers)"
-    unfolding vector_head_carried(1)
-    by (simp add: head_apart_def vector_cons_socket_schema_def instantiation_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed instantiation_views_formed(2) vector_cons_socket_premise(1) parts
-      vector_socket_producer covered input material vector_head_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed instantiation_views_formed(2) vector_socket_producer, where \<sigma> = "\<lambda>v. if v = 6 then 5 else if v = 11 then 6 else if v = 13 then 7 else if v = 15 then 8 else v"])
+    (simp add: schema_instantiation_listed_simps vector_cons_socket_schema_def vector_head_carriers_def join_view_formed vector_carriers(1) vector_carriers(2) vector_carriers(3))
 
 theorem vector_head_socket_discharged: "socket_discharged (positive_meaning vector_instantiation_system) vector_cons_socket_schema 0 False instantiation_view instantiation_view"
   by (rule socket_discharged_carried[OF vector_head_socket_carried])
@@ -1220,109 +1005,10 @@ definition vector_tail_carriers :: "nat clause_carrier list" where
     (4,consumer_carrier_view join_view,tuple_corresponds [bag_pair,bag_corresponds],(=)),
     (5,consumer_carrier_view join_view,tuple_corresponds [bag_pair,bag_corresponds],(=))]"
 
-lemma vector_tail_carried:
-  "carried_variables vector_cons_socket_schema 1 instantiation_view vector_tail_carriers = {7,12,14,16,17}"
-  "carried_variables vector_cons_socket_schema 1 instantiation_view [] = {7,12,14,16}"
-  "carried_variables vector_cons_socket_schema 1 instantiation_view (take (Suc (0)) vector_tail_carriers) = {7,12,14,16,17}"
-  "carried_variables vector_cons_socket_schema 1 instantiation_view (take (Suc (Suc (0))) vector_tail_carriers) = {7,12,14,16,17}"
-  "carried_variables vector_cons_socket_schema 1 instantiation_view (take (Suc (Suc (Suc (0)))) vector_tail_carriers) = {7,12,14,16,17}"
-  by (auto simp: vector_tail_carriers_def carried_variables_def vector_cons_socket_simps)
-
-lemmas vector_tail_carried_one = vector_tail_carried[unfolded One_nat_def]
-
-lemma vector_tail_keys: "fst ` set vector_tail_carriers = {2,3,4,5}"
-  by (simp add: vector_tail_carriers_def)
-
-lemma vector_tail_steps:
-  assumes "i < length vector_tail_carriers"
-  shows "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 1 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_tail_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 1 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_tail_carriers 0"
-    apply (rule carrier_stepI[where k = 2 and V = "join_view" and cin = "bag_pair" and cout = "bag_corresponds" and d = 46
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 13) (Pattern_Variable 14) (Pattern_Variable 17))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 14))" and op = "Finite_Variable 17"])
-    subgoal premises prems for g g'
-      using prems(1)[of 13, unfolded vector_tail_carried(1)] prems(2)
-      by (simp add: vector_tail_carried vector_tail_carried_one vector_tail_carriers_def vector_cons_socket_simps)
-    apply (simp add: vector_tail_carriers_def)
-    apply (rule join_view_formed)
-    apply (rule vector_cons_socket_premise(3))
-    apply (simp add: resolution_view_pattern_def view_lookup_def join_view_def)
-    apply (rule vector_carriers(1))
-    apply (rule output_covered_variable)
-    apply (simp_all add: vector_tail_carried vector_tail_carried_one)
-    done
-  have s1: "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 1 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_tail_carriers (Suc (0))"
-    apply (rule carrier_stepI[where k = 3 and V = "consumer_carrier_view view_identity" and cin = "bag_pair" and cout = "(=)" and d = 6
-      and p = "finite_pattern_of (Pattern_Pair (Pattern_Variable 17) (Pattern_Variable 9))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Variable 17) (Pattern_Variable 9))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 9, unfolded vector_tail_carried(1)] prems(2)
-      by (simp add: vector_tail_carried vector_tail_carried_one vector_tail_carriers_def vector_cons_socket_simps)
-    apply (simp add: vector_tail_carriers_def)
-    apply (simp add: consumer_carrier_view_formed view_identity_formed)
-    apply (rule vector_cons_socket_premise(4))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def view_identity_def identity_view_def)
-    apply (rule vector_carriers(2))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: vector_tail_carried vector_tail_carried_one)
-    done
-  have s2: "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 1 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_tail_carriers (Suc (Suc (0)))"
-    apply (rule carrier_stepI[where k = 4 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 10))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 15) (Pattern_Variable 16)) (Pattern_Variable 10))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 15, unfolded vector_tail_carried(1)] prems(1)[of 10, unfolded vector_tail_carried(1)] prems(2)
-      by (simp add: vector_tail_carried vector_tail_carried_one vector_tail_carriers_def vector_cons_socket_simps)
-    apply (simp add: vector_tail_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule vector_cons_socket_premise(5))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule vector_carriers(3))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: vector_tail_carried vector_tail_carried_one)
-    done
-  have s3: "carrier_step (positive_meaning vector_instantiation_system) vector_cons_socket_schema 1 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_tail_carriers (Suc (Suc (Suc (0))))"
-    apply (rule carrier_stepI[where k = 5 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 11) (Pattern_Variable 12) (Pattern_Variable 8))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 11) (Pattern_Variable 12)) (Pattern_Variable 8))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 11, unfolded vector_tail_carried(1)] prems(1)[of 8, unfolded vector_tail_carried(1)] prems(2)
-      by (simp add: vector_tail_carried vector_tail_carried_one vector_tail_carriers_def vector_cons_socket_simps)
-    apply (simp add: vector_tail_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule vector_cons_socket_premise(6))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule vector_carriers(3))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: vector_tail_carried vector_tail_carried_one)
-    done
-  have "i = 0 \<or> i = Suc 0 \<or> i = Suc (Suc 0) \<or> i = Suc (Suc (Suc 0))"
-    using assms by (simp add: vector_tail_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 s1 s2 s3 by blast
-qed
-
 theorem vector_tail_socket_carried:
   "socket_carried (positive_meaning vector_instantiation_system) vector_cons_socket_schema 1 False instantiation_view instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) vector_tail_carriers"
-proof -
-  have parts: "resolution_view_pattern instantiation_view (finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5) (Pattern_Variable 7) (Pattern_Variable 12) (Pattern_Variable 14) (Pattern_Variable 16)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair data_z data_w))),finite_pattern_of (Pattern_Pair (Pattern_Variable 7) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 14) (Pattern_Variable 16)))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def instantiation_view_def)
-  have covered: "output_covered (positive_meaning vector_instantiation_system) 60 instantiation_view (finite_pattern_of (Pattern_Pair (Pattern_Variable 7) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 14) (Pattern_Variable 16)))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF instantiation_views_formed(2), where \<sigma> = "\<lambda>v. if v = 7 then 5 else if v = 12 then 6 else if v = 14 then 7 else if v = 16 then 8 else v"])
-      (simp add: instantiation_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair data_z data_w))) :: nat finite_term_pattern)) \<inter> carried_variables vector_cons_socket_schema 1 instantiation_view vector_tail_carriers = {}"
-    unfolding vector_tail_carried(1) by simp
-  have material: "\<And>N. (1,N) \<notin> schema_material_premises (decode_finite_schema vector_cons_socket_schema)"
-    by (simp add: vector_cons_socket_decoded vector_instantiation_cons_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema vector_cons_socket_schema) \<Longrightarrow> q \<noteq> 1 \<Longrightarrow>
-      q \<notin> fst ` set vector_tail_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables vector_cons_socket_schema 1 instantiation_view vector_tail_carriers = {}"
-    unfolding vector_tail_carried(1) vector_tail_keys by (auto simp: vector_cons_socket_decoded vector_instantiation_cons_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema vector_cons_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables vector_cons_socket_schema 1 instantiation_view vector_tail_carriers = {}"
-    by (simp add: vector_cons_socket_decoded vector_instantiation_cons_schema_def)
-  have head: "head_apart False instantiation_view vector_cons_socket_schema (carried_variables vector_cons_socket_schema 1 instantiation_view vector_tail_carriers)"
-    unfolding vector_tail_carried(1)
-    by (simp add: head_apart_def vector_cons_socket_schema_def instantiation_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed instantiation_views_formed(2) vector_cons_socket_premise(2) parts
-      schema_instantiation_output_producers(1) covered input material vector_tail_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed instantiation_views_formed(2) schema_instantiation_output_producers(1), where \<sigma> = "\<lambda>v. if v = 7 then 5 else if v = 12 then 6 else if v = 14 then 7 else if v = 16 then 8 else v"])
+    (simp add: schema_instantiation_listed_simps vector_cons_socket_schema_def vector_tail_carriers_def join_view_formed vector_carriers(1) vector_carriers(2) vector_carriers(3))
 
 theorem vector_tail_socket_discharged: "socket_discharged (positive_meaning vector_instantiation_system) vector_cons_socket_schema 1 False instantiation_view instantiation_view"
   by (rule socket_discharged_carried[OF vector_tail_socket_carried])
@@ -1334,94 +1020,10 @@ definition record_fields_carriers :: "nat clause_carrier list" where
     (6,consumer_carrier_view view_identity,bag_pair,(=)),
     (7,consumer_carrier_view view_identity,bag_pair,(=))]"
 
-lemma record_fields_carried:
-  "carried_variables record_socket_schema 4 instantiation_view record_fields_carriers = {5,6,8,13,14}"
-  "carried_variables record_socket_schema 4 instantiation_view [] = {5,6,8,13}"
-  "carried_variables record_socket_schema 4 instantiation_view (take (Suc (0)) record_fields_carriers) = {5,6,8,13,14}"
-  "carried_variables record_socket_schema 4 instantiation_view (take (Suc (Suc (0))) record_fields_carriers) = {5,6,8,13,14}"
-  by (auto simp: record_fields_carriers_def carried_variables_def record_socket_simps)
-
-lemmas record_fields_carried_one = record_fields_carried[unfolded One_nat_def]
-
-lemma record_fields_keys: "fst ` set record_fields_carriers = {5,6,7}"
-  by (simp add: record_fields_carriers_def)
-
-lemma record_fields_steps:
-  assumes "i < length record_fields_carriers"
-  shows "carrier_step (positive_meaning record_instantiation_system) record_socket_schema 4 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) record_fields_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning record_instantiation_system) record_socket_schema 4 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) record_fields_carriers 0"
-    apply (rule carrier_stepI[where k = 5 and V = "join_view" and cin = "bag_pair" and cout = "bag_corresponds" and d = 46
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 11)) (Pattern_Variable 13) (Pattern_Variable 14))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 4) (Pattern_Variable 11)) (Pattern_Variable 13))" and op = "Finite_Variable 14"])
-    subgoal premises prems for g g'
-      using prems(1)[of 4, unfolded record_fields_carried(1)] prems(1)[of 11, unfolded record_fields_carried(1)] prems(2)
-      by (simp add: record_fields_carried record_fields_carried_one record_fields_carriers_def record_socket_simps)
-    apply (simp add: record_fields_carriers_def)
-    apply (rule join_view_formed)
-    apply (rule record_socket_premise(2))
-    apply (simp add: resolution_view_pattern_def view_lookup_def join_view_def)
-    apply (rule record_carriers(1))
-    apply (rule output_covered_variable)
-    apply (simp_all add: record_fields_carried record_fields_carried_one)
-    done
-  have s1: "carrier_step (positive_meaning record_instantiation_system) record_socket_schema 4 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) record_fields_carriers (Suc (0))"
-    apply (rule carrier_stepI[where k = 6 and V = "consumer_carrier_view view_identity" and cin = "bag_pair" and cout = "(=)" and d = 6
-      and p = "finite_pattern_of (Pattern_Pair (Pattern_Variable 14) (Pattern_Variable 7))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Variable 14) (Pattern_Variable 7))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 7, unfolded record_fields_carried(1)] prems(2)
-      by (simp add: record_fields_carried record_fields_carried_one record_fields_carriers_def record_socket_simps)
-    apply (simp add: record_fields_carriers_def)
-    apply (simp add: consumer_carrier_view_formed view_identity_formed)
-    apply (rule record_socket_premise(3))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def view_identity_def identity_view_def)
-    apply (rule record_carriers(2))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: record_fields_carried record_fields_carried_one)
-    done
-  have s2: "carrier_step (positive_meaning record_instantiation_system) record_socket_schema 4 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) record_fields_carriers (Suc (Suc (0)))"
-    apply (rule carrier_stepI[where k = 7 and V = "consumer_carrier_view view_identity" and cin = "bag_pair" and cout = "(=)" and d = 49
-      and p = "finite_pattern_of (Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 7, unfolded record_fields_carried(1)] prems(2)
-      by (simp add: record_fields_carried record_fields_carried_one record_fields_carriers_def record_socket_simps)
-    apply (simp add: record_fields_carriers_def)
-    apply (simp add: consumer_carrier_view_formed view_identity_formed)
-    apply (rule record_socket_premise(4))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def view_identity_def identity_view_def)
-    apply (rule record_carriers(3))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: record_fields_carried record_fields_carried_one)
-    done
-  have "i = 0 \<or> i = Suc 0 \<or> i = Suc (Suc 0)"
-    using assms by (simp add: record_fields_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 s1 s2 by blast
-qed
-
 theorem record_fields_socket_carried:
   "socket_carried (positive_meaning record_instantiation_system) record_socket_schema 4 False instantiation_view instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) record_fields_carriers"
-proof -
-  have parts: "resolution_view_pattern instantiation_view (finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 12) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 13) (Pattern_Variable 8)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair data_z data_w))),finite_pattern_of (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6) (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 8)))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def instantiation_view_def)
-  have covered: "output_covered (positive_meaning record_instantiation_system) 60 instantiation_view (finite_pattern_of (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6) (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 8)))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF instantiation_views_formed(2), where \<sigma> = "\<lambda>v. if v = 13 then 7 else v"])
-      (simp add: instantiation_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair data_z data_w))) :: nat finite_term_pattern)) \<inter> carried_variables record_socket_schema 4 instantiation_view record_fields_carriers = {}"
-    unfolding record_fields_carried(1) by simp
-  have material: "\<And>N. (4,N) \<notin> schema_material_premises (decode_finite_schema record_socket_schema)"
-    by (simp add: record_socket_decoded record_instantiation_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema record_socket_schema) \<Longrightarrow> q \<noteq> 4 \<Longrightarrow>
-      q \<notin> fst ` set record_fields_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables record_socket_schema 4 instantiation_view record_fields_carriers = {}"
-    unfolding record_fields_carried(1) record_fields_keys by (auto simp: record_socket_decoded record_instantiation_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema record_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables record_socket_schema 4 instantiation_view record_fields_carriers = {}"
-    by (simp add: record_socket_decoded record_instantiation_schema_def)
-  have head: "head_apart False instantiation_view record_socket_schema (carried_variables record_socket_schema 4 instantiation_view record_fields_carriers)"
-    unfolding record_fields_carried(1)
-    by (simp add: head_apart_def record_socket_schema_def instantiation_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed instantiation_views_formed(2) record_socket_premise(1) parts
-      record_socket_producer covered input material record_fields_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed instantiation_views_formed(2) record_socket_producer, where \<sigma> = "\<lambda>v. if v = 13 then 7 else v"])
+    (simp add: schema_instantiation_listed_simps record_socket_schema_def record_fields_carriers_def join_view_formed record_carriers(1) record_carriers(2) record_carriers(3))
 
 theorem record_fields_socket_discharged: "socket_discharged (positive_meaning record_instantiation_system) record_socket_schema 4 False instantiation_view instantiation_view"
   by (rule socket_discharged_carried[OF record_fields_socket_carried])
@@ -1430,45 +1032,10 @@ section \<open>The socket 0 of material (material record)\<close>
 
 definition material_record_carriers :: "nat clause_carrier list" where "material_record_carriers = []"
 
-lemma material_record_carried:
-  "carried_variables material_socket_schema 0 record_material_view material_record_carriers = {5,6,7,8,9,10,11,12}"
-  by (auto simp: material_record_carriers_def carried_variables_def material_socket_simps)
-
-lemmas material_record_carried_one = material_record_carried[unfolded One_nat_def]
-
-lemma material_record_keys: "fst ` set material_record_carriers = {}"
-  by (simp add: material_record_carriers_def)
-
-lemma material_record_steps:
-  assumes "i < length material_record_carriers"
-  shows "carrier_step (positive_meaning material_instantiation_system) material_socket_schema 0 record_material_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) material_record_carriers i"
-  using assms by (simp add: material_record_carriers_def)
-
 theorem material_record_socket_carried:
   "socket_carried (positive_meaning material_instantiation_system) material_socket_schema 0 False record_material_view material_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) material_record_carriers"
-proof -
-  have parts: "resolution_view_pattern record_material_view (finite_pattern_of (pattern_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 4) (data_list_pattern [(Pattern_Variable 5),(Pattern_Variable 6),(Pattern_Variable 7),(Pattern_Variable 8),(Pattern_Variable 9)]) (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair data_z data_w))),finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6) (Pattern_Pair (Pattern_Variable 7) (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 9))))) (Pattern_Pair (Pattern_Variable 10) (Pattern_Pair (Pattern_Variable 11) (Pattern_Variable 12)))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def record_material_view_def five_fields_list_def five_fields_tuple_def)
-  have covered: "output_covered (positive_meaning material_instantiation_system) 61 record_material_view (finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6) (Pattern_Pair (Pattern_Variable 7) (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 9))))) (Pattern_Pair (Pattern_Variable 10) (Pattern_Pair (Pattern_Variable 11) (Pattern_Variable 12)))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF record_material_view_formed, where \<sigma> = "id"])
-      (simp add: record_material_view_def five_fields_list_def five_fields_tuple_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair data_z data_w))) :: nat finite_term_pattern)) \<inter> carried_variables material_socket_schema 0 record_material_view material_record_carriers = {}"
-    unfolding material_record_carried(1) by simp
-  have material: "\<And>N. (0,N) \<notin> schema_material_premises (decode_finite_schema material_socket_schema)"
-    by (simp add: material_socket_decoded material_instantiation_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema material_socket_schema) \<Longrightarrow> q \<noteq> 0 \<Longrightarrow>
-      q \<notin> fst ` set material_record_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables material_socket_schema 0 record_material_view material_record_carriers = {}"
-    unfolding material_record_carried(1) material_record_keys by (auto simp: material_socket_decoded material_instantiation_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema material_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables material_socket_schema 0 record_material_view material_record_carriers = {}"
-    by (simp add: material_socket_decoded material_instantiation_schema_def)
-  have head: "head_apart False material_view material_socket_schema (carried_variables material_socket_schema 0 record_material_view material_record_carriers)"
-    unfolding material_record_carried(1)
-    by (simp add: head_apart_def material_socket_schema_def material_view_def five_fields_tuple_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed record_material_view_formed material_socket_premise(1) parts
-      material_socket_producer covered input material material_record_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed record_material_view_formed material_socket_producer, where \<sigma> = "id"])
+    (simp add: schema_instantiation_listed_simps material_socket_schema_def material_record_carriers_def)
 
 theorem material_record_socket_discharged: "socket_discharged (positive_meaning material_instantiation_system) material_socket_schema 0 False record_material_view material_view"
   by (rule socket_discharged_carried[OF material_record_socket_carried])
@@ -1478,64 +1045,10 @@ section \<open>The socket 0 of premise call (premise call head)\<close>
 definition premise_call_head_carriers :: "nat clause_carrier list" where
   "premise_call_head_carriers = [(2,consumer_carrier_view join_view,tuple_corresponds [bag_pair,bag_corresponds],(=))]"
 
-lemma premise_call_head_carried:
-  "carried_variables premise_call_socket_schema 0 prospective_view premise_call_head_carriers = {7,8,12,14,15}"
-  "carried_variables premise_call_socket_schema 0 prospective_view [] = {7,8,12,14,15}"
-  by (auto simp: premise_call_head_carriers_def carried_variables_def premise_call_socket_simps)
-
-lemmas premise_call_head_carried_one = premise_call_head_carried[unfolded One_nat_def]
-
-lemma premise_call_head_keys: "fst ` set premise_call_head_carriers = {2}"
-  by (simp add: premise_call_head_carriers_def)
-
-lemma premise_call_head_steps:
-  assumes "i < length premise_call_head_carriers"
-  shows "carrier_step (positive_meaning premise_rows_system) premise_call_socket_schema 0 prospective_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) premise_call_head_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning premise_rows_system) premise_call_socket_schema 0 prospective_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) premise_call_head_carriers 0"
-    apply (rule carrier_stepI[where k = 2 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 12) (Pattern_Variable 13) (Pattern_Variable 11))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 12) (Pattern_Variable 13)) (Pattern_Variable 11))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 13, unfolded premise_call_head_carried(1)] prems(1)[of 11, unfolded premise_call_head_carried(1)] prems(2)
-      by (simp add: premise_call_head_carried premise_call_head_carried_one premise_call_head_carriers_def premise_call_socket_simps)
-    apply (simp add: premise_call_head_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule premise_call_socket_premise(3))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule premise_rows_carriers)
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: premise_call_head_carried premise_call_head_carried_one)
-    done
-  have "i = 0"
-    using assms by (simp add: premise_call_head_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 by blast
-qed
-
 theorem premise_call_head_socket_carried:
   "socket_carried (positive_meaning premise_rows_system) premise_call_socket_schema 0 False prospective_view premise_rows_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) premise_call_head_carriers"
-proof -
-  have parts: "resolution_view_pattern prospective_view (finite_pattern_of (prospective_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5) (Pattern_Variable 7) (Pattern_Variable 8) (Pattern_Variable 12) (Pattern_Variable 14) (Pattern_Variable 15)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair data_z data_w))),finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8)) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 14) (Pattern_Variable 15)))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def prospective_view_def)
-  have covered: "output_covered (positive_meaning premise_rows_system) 57 prospective_view (finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 7) (Pattern_Variable 8)) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 14) (Pattern_Variable 15)))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF instantiation_views_formed(4), where \<sigma> = "\<lambda>v. if v = 7 then 5 else if v = 8 then 6 else if v = 12 then 7 else if v = 14 then 8 else if v = 15 then 9 else v"])
-      (simp add: prospective_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair data_z data_w))) :: nat finite_term_pattern)) \<inter> carried_variables premise_call_socket_schema 0 prospective_view premise_call_head_carriers = {}"
-    unfolding premise_call_head_carried(1) by simp
-  have material: "\<And>N. (0,N) \<notin> schema_material_premises (decode_finite_schema premise_call_socket_schema)"
-    by (simp add: premise_call_socket_decoded premise_rows_call_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema premise_call_socket_schema) \<Longrightarrow> q \<noteq> 0 \<Longrightarrow>
-      q \<notin> fst ` set premise_call_head_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables premise_call_socket_schema 0 prospective_view premise_call_head_carriers = {}"
-    unfolding premise_call_head_carried(1) premise_call_head_keys by (auto simp: premise_call_socket_decoded premise_rows_call_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema premise_call_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables premise_call_socket_schema 0 prospective_view premise_call_head_carriers = {}"
-    by (simp add: premise_call_socket_decoded premise_rows_call_schema_def)
-  have head: "head_apart False premise_rows_view premise_call_socket_schema (carried_variables premise_call_socket_schema 0 prospective_view premise_call_head_carriers)"
-    unfolding premise_call_head_carried(1)
-    by (simp add: head_apart_def premise_call_socket_schema_def premise_rows_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed instantiation_views_formed(4) premise_call_socket_premise(1) parts
-      premise_rows_socket_producers(1) covered input material premise_call_head_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed instantiation_views_formed(4) premise_rows_socket_producers(1), where \<sigma> = "\<lambda>v. if v = 7 then 5 else if v = 8 then 6 else if v = 12 then 7 else if v = 14 then 8 else if v = 15 then 9 else v"])
+    (simp add: schema_instantiation_listed_simps premise_call_socket_schema_def premise_call_head_carriers_def premise_rows_carriers)
 
 theorem premise_call_head_socket_discharged: "socket_discharged (positive_meaning premise_rows_system) premise_call_socket_schema 0 False prospective_view premise_rows_view"
   by (rule socket_discharged_carried[OF premise_call_head_socket_carried])
@@ -1545,64 +1058,10 @@ section \<open>The socket 1 of premise call (premise call tail)\<close>
 definition premise_call_tail_carriers :: "nat clause_carrier list" where
   "premise_call_tail_carriers = [(2,consumer_carrier_view join_view,tuple_corresponds [bag_pair,bag_corresponds],(=))]"
 
-lemma premise_call_tail_carried:
-  "carried_variables premise_call_socket_schema 1 premise_rows_view premise_call_tail_carriers = {9,10,13}"
-  "carried_variables premise_call_socket_schema 1 premise_rows_view [] = {9,10,13}"
-  by (auto simp: premise_call_tail_carriers_def carried_variables_def premise_call_socket_simps)
-
-lemmas premise_call_tail_carried_one = premise_call_tail_carried[unfolded One_nat_def]
-
-lemma premise_call_tail_keys: "fst ` set premise_call_tail_carriers = {2}"
-  by (simp add: premise_call_tail_carriers_def)
-
-lemma premise_call_tail_steps:
-  assumes "i < length premise_call_tail_carriers"
-  shows "carrier_step (positive_meaning premise_rows_system) premise_call_socket_schema 1 premise_rows_view (tuple_corresponds [(=),(=),bag_corresponds]) premise_call_tail_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning premise_rows_system) premise_call_socket_schema 1 premise_rows_view (tuple_corresponds [(=),(=),bag_corresponds]) premise_call_tail_carriers 0"
-    apply (rule carrier_stepI[where k = 2 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 12) (Pattern_Variable 13) (Pattern_Variable 11))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 12) (Pattern_Variable 13)) (Pattern_Variable 11))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 12, unfolded premise_call_tail_carried(1)] prems(1)[of 11, unfolded premise_call_tail_carried(1)] prems(2)
-      by (simp add: premise_call_tail_carried premise_call_tail_carried_one premise_call_tail_carriers_def premise_call_socket_simps)
-    apply (simp add: premise_call_tail_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule premise_call_socket_premise(3))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule premise_rows_carriers)
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: premise_call_tail_carried premise_call_tail_carried_one)
-    done
-  have "i = 0"
-    using assms by (simp add: premise_call_tail_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 by blast
-qed
-
 theorem premise_call_tail_socket_carried:
   "socket_carried (positive_meaning premise_rows_system) premise_call_socket_schema 1 False premise_rows_view premise_rows_view (tuple_corresponds [(=),(=),bag_corresponds]) premise_call_tail_carriers"
-proof -
-  have parts: "resolution_view_pattern premise_rows_view (finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 6) (Pattern_Variable 9) (Pattern_Variable 10) (Pattern_Variable 13)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z data_w))) (Pattern_Variable 6)),finite_pattern_of (Pattern_Pair (Pattern_Variable 9) (Pattern_Pair (Pattern_Variable 10) (Pattern_Variable 13))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def premise_rows_view_def)
-  have covered: "output_covered (positive_meaning premise_rows_system) 63 premise_rows_view (finite_pattern_of (Pattern_Pair (Pattern_Variable 9) (Pattern_Pair (Pattern_Variable 10) (Pattern_Variable 13))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF premise_views_formed(1), where \<sigma> = "\<lambda>v. if v = 9 then 5 else if v = 10 then 6 else if v = 13 then 7 else v"])
-      (simp add: premise_rows_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z data_w))) (Pattern_Variable 6)) :: nat finite_term_pattern)) \<inter> carried_variables premise_call_socket_schema 1 premise_rows_view premise_call_tail_carriers = {}"
-    unfolding premise_call_tail_carried(1) by simp
-  have material: "\<And>N. (1,N) \<notin> schema_material_premises (decode_finite_schema premise_call_socket_schema)"
-    by (simp add: premise_call_socket_decoded premise_rows_call_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema premise_call_socket_schema) \<Longrightarrow> q \<noteq> 1 \<Longrightarrow>
-      q \<notin> fst ` set premise_call_tail_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables premise_call_socket_schema 1 premise_rows_view premise_call_tail_carriers = {}"
-    unfolding premise_call_tail_carried(1) premise_call_tail_keys by (auto simp: premise_call_socket_decoded premise_rows_call_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema premise_call_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables premise_call_socket_schema 1 premise_rows_view premise_call_tail_carriers = {}"
-    by (simp add: premise_call_socket_decoded premise_rows_call_schema_def)
-  have head: "head_apart False premise_rows_view premise_call_socket_schema (carried_variables premise_call_socket_schema 1 premise_rows_view premise_call_tail_carriers)"
-    unfolding premise_call_tail_carried(1)
-    by (simp add: head_apart_def premise_call_socket_schema_def premise_rows_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed premise_views_formed(1) premise_call_socket_premise(2) parts
-      schema_instantiation_output_producers(5) covered input material premise_call_tail_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed premise_views_formed(1) schema_instantiation_output_producers(5), where \<sigma> = "\<lambda>v. if v = 9 then 5 else if v = 10 then 6 else if v = 13 then 7 else v"])
+    (simp add: schema_instantiation_listed_simps premise_call_socket_schema_def premise_call_tail_carriers_def premise_rows_carriers)
 
 theorem premise_call_tail_socket_discharged: "socket_discharged (positive_meaning premise_rows_system) premise_call_socket_schema 1 False premise_rows_view premise_rows_view"
   by (rule socket_discharged_carried[OF premise_call_tail_socket_carried])
@@ -1612,64 +1071,10 @@ section \<open>The socket 0 of premise material (premise material head)\<close>
 definition premise_material_head_carriers :: "nat clause_carrier list" where
   "premise_material_head_carriers = [(2,consumer_carrier_view join_view,tuple_corresponds [bag_pair,bag_corresponds],(=))]"
 
-lemma premise_material_head_carried:
-  "carried_variables premise_material_socket_schema 0 material_view premise_material_head_carriers = {10,11,12,13,14,15,17,18}"
-  "carried_variables premise_material_socket_schema 0 material_view [] = {10,11,12,13,14,15,17,18}"
-  by (auto simp: premise_material_head_carriers_def carried_variables_def premise_material_socket_simps)
-
-lemmas premise_material_head_carried_one = premise_material_head_carried[unfolded One_nat_def]
-
-lemma premise_material_head_keys: "fst ` set premise_material_head_carriers = {2}"
-  by (simp add: premise_material_head_carriers_def)
-
-lemma premise_material_head_steps:
-  assumes "i < length premise_material_head_carriers"
-  shows "carrier_step (positive_meaning premise_rows_system) premise_material_socket_schema 0 material_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) premise_material_head_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning premise_rows_system) premise_material_socket_schema 0 material_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) premise_material_head_carriers 0"
-    apply (rule carrier_stepI[where k = 2 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 9))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 15) (Pattern_Variable 16)) (Pattern_Variable 9))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 16, unfolded premise_material_head_carried(1)] prems(1)[of 9, unfolded premise_material_head_carried(1)] prems(2)
-      by (simp add: premise_material_head_carried premise_material_head_carried_one premise_material_head_carriers_def premise_material_socket_simps)
-    apply (simp add: premise_material_head_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule premise_material_socket_premise(3))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule premise_rows_carriers)
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: premise_material_head_carried premise_material_head_carried_one)
-    done
-  have "i = 0"
-    using assms by (simp add: premise_material_head_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 by blast
-qed
-
 theorem premise_material_head_socket_carried:
   "socket_carried (positive_meaning premise_rows_system) premise_material_socket_schema 0 False material_view premise_rows_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) premise_material_head_carriers"
-proof -
-  have parts: "resolution_view_pattern material_view (finite_pattern_of (material_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 5) (Pattern_Variable 10) (Pattern_Variable 11) (Pattern_Variable 12) (Pattern_Variable 13) (Pattern_Variable 14) (Pattern_Variable 15) (Pattern_Variable 17) (Pattern_Variable 18)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair data_z data_w))),finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 10) (Pattern_Pair (Pattern_Variable 11) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 14))))) (Pattern_Pair (Pattern_Variable 15) (Pattern_Pair (Pattern_Variable 17) (Pattern_Variable 18)))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def material_view_def five_fields_tuple_def)
-  have covered: "output_covered (positive_meaning premise_rows_system) 62 material_view (finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 10) (Pattern_Pair (Pattern_Variable 11) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 13) (Pattern_Variable 14))))) (Pattern_Pair (Pattern_Variable 15) (Pattern_Pair (Pattern_Variable 17) (Pattern_Variable 18)))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF material_view_formed, where \<sigma> = "\<lambda>v. if v = 10 then 5 else if v = 11 then 6 else if v = 12 then 7 else if v = 13 then 8 else if v = 14 then 9 else if v = 15 then 10 else if v = 17 then 11 else if v = 18 then 12 else v"])
-      (simp add: material_view_def five_fields_tuple_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair data_z data_w))) :: nat finite_term_pattern)) \<inter> carried_variables premise_material_socket_schema 0 material_view premise_material_head_carriers = {}"
-    unfolding premise_material_head_carried(1) by simp
-  have material: "\<And>N. (0,N) \<notin> schema_material_premises (decode_finite_schema premise_material_socket_schema)"
-    by (simp add: premise_material_socket_decoded premise_rows_material_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema premise_material_socket_schema) \<Longrightarrow> q \<noteq> 0 \<Longrightarrow>
-      q \<notin> fst ` set premise_material_head_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables premise_material_socket_schema 0 material_view premise_material_head_carriers = {}"
-    unfolding premise_material_head_carried(1) premise_material_head_keys by (auto simp: premise_material_socket_decoded premise_rows_material_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema premise_material_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables premise_material_socket_schema 0 material_view premise_material_head_carriers = {}"
-    by (simp add: premise_material_socket_decoded premise_rows_material_schema_def)
-  have head: "head_apart False premise_rows_view premise_material_socket_schema (carried_variables premise_material_socket_schema 0 material_view premise_material_head_carriers)"
-    unfolding premise_material_head_carried(1)
-    by (simp add: head_apart_def premise_material_socket_schema_def premise_rows_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed material_view_formed premise_material_socket_premise(1) parts
-      premise_rows_socket_producers(2) covered input material premise_material_head_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed material_view_formed premise_rows_socket_producers(2), where \<sigma> = "\<lambda>v. if v = 10 then 5 else if v = 11 then 6 else if v = 12 then 7 else if v = 13 then 8 else if v = 14 then 9 else if v = 15 then 10 else if v = 17 then 11 else if v = 18 then 12 else v"])
+    (simp add: schema_instantiation_listed_simps premise_material_socket_schema_def premise_material_head_carriers_def premise_rows_carriers)
 
 theorem premise_material_head_socket_discharged: "socket_discharged (positive_meaning premise_rows_system) premise_material_socket_schema 0 False material_view premise_rows_view"
   by (rule socket_discharged_carried[OF premise_material_head_socket_carried])
@@ -1679,64 +1084,10 @@ section \<open>The socket 1 of premise material (premise material tail)\<close>
 definition premise_material_tail_carriers :: "nat clause_carrier list" where
   "premise_material_tail_carriers = [(2,consumer_carrier_view join_view,tuple_corresponds [bag_pair,bag_corresponds],(=))]"
 
-lemma premise_material_tail_carried:
-  "carried_variables premise_material_socket_schema 1 premise_rows_view premise_material_tail_carriers = {7,8,16}"
-  "carried_variables premise_material_socket_schema 1 premise_rows_view [] = {7,8,16}"
-  by (auto simp: premise_material_tail_carriers_def carried_variables_def premise_material_socket_simps)
-
-lemmas premise_material_tail_carried_one = premise_material_tail_carried[unfolded One_nat_def]
-
-lemma premise_material_tail_keys: "fst ` set premise_material_tail_carriers = {2}"
-  by (simp add: premise_material_tail_carriers_def)
-
-lemma premise_material_tail_steps:
-  assumes "i < length premise_material_tail_carriers"
-  shows "carrier_step (positive_meaning premise_rows_system) premise_material_socket_schema 1 premise_rows_view (tuple_corresponds [(=),(=),bag_corresponds]) premise_material_tail_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning premise_rows_system) premise_material_socket_schema 1 premise_rows_view (tuple_corresponds [(=),(=),bag_corresponds]) premise_material_tail_carriers 0"
-    apply (rule carrier_stepI[where k = 2 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 9))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 15) (Pattern_Variable 16)) (Pattern_Variable 9))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 15, unfolded premise_material_tail_carried(1)] prems(1)[of 9, unfolded premise_material_tail_carried(1)] prems(2)
-      by (simp add: premise_material_tail_carried premise_material_tail_carried_one premise_material_tail_carriers_def premise_material_socket_simps)
-    apply (simp add: premise_material_tail_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule premise_material_socket_premise(3))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule premise_rows_carriers)
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: premise_material_tail_carried premise_material_tail_carried_one)
-    done
-  have "i = 0"
-    using assms by (simp add: premise_material_tail_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 by blast
-qed
-
 theorem premise_material_tail_socket_carried:
   "socket_carried (positive_meaning premise_rows_system) premise_material_socket_schema 1 False premise_rows_view premise_rows_view (tuple_corresponds [(=),(=),bag_corresponds]) premise_material_tail_carriers"
-proof -
-  have parts: "resolution_view_pattern premise_rows_view (finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 6) (Pattern_Variable 7) (Pattern_Variable 8) (Pattern_Variable 16)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z data_w))) (Pattern_Variable 6)),finite_pattern_of (Pattern_Pair (Pattern_Variable 7) (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 16))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def premise_rows_view_def)
-  have covered: "output_covered (positive_meaning premise_rows_system) 63 premise_rows_view (finite_pattern_of (Pattern_Pair (Pattern_Variable 7) (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 16))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF premise_views_formed(1), where \<sigma> = "\<lambda>v. if v = 7 then 5 else if v = 8 then 6 else if v = 16 then 7 else v"])
-      (simp add: premise_rows_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z data_w))) (Pattern_Variable 6)) :: nat finite_term_pattern)) \<inter> carried_variables premise_material_socket_schema 1 premise_rows_view premise_material_tail_carriers = {}"
-    unfolding premise_material_tail_carried(1) by simp
-  have material: "\<And>N. (1,N) \<notin> schema_material_premises (decode_finite_schema premise_material_socket_schema)"
-    by (simp add: premise_material_socket_decoded premise_rows_material_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema premise_material_socket_schema) \<Longrightarrow> q \<noteq> 1 \<Longrightarrow>
-      q \<notin> fst ` set premise_material_tail_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables premise_material_socket_schema 1 premise_rows_view premise_material_tail_carriers = {}"
-    unfolding premise_material_tail_carried(1) premise_material_tail_keys by (auto simp: premise_material_socket_decoded premise_rows_material_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema premise_material_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables premise_material_socket_schema 1 premise_rows_view premise_material_tail_carriers = {}"
-    by (simp add: premise_material_socket_decoded premise_rows_material_schema_def)
-  have head: "head_apart False premise_rows_view premise_material_socket_schema (carried_variables premise_material_socket_schema 1 premise_rows_view premise_material_tail_carriers)"
-    unfolding premise_material_tail_carried(1)
-    by (simp add: head_apart_def premise_material_socket_schema_def premise_rows_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed premise_views_formed(1) premise_material_socket_premise(2) parts
-      schema_instantiation_output_producers(5) covered input material premise_material_tail_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed premise_views_formed(1) schema_instantiation_output_producers(5), where \<sigma> = "\<lambda>v. if v = 7 then 5 else if v = 8 then 6 else if v = 16 then 7 else v"])
+    (simp add: schema_instantiation_listed_simps premise_material_socket_schema_def premise_material_tail_carriers_def premise_rows_carriers)
 
 theorem premise_material_tail_socket_discharged: "socket_discharged (positive_meaning premise_rows_system) premise_material_socket_schema 1 False premise_rows_view premise_rows_view"
   by (rule socket_discharged_carried[OF premise_material_tail_socket_carried])
@@ -1746,68 +1097,10 @@ section \<open>The socket 1 of premise family (premise family rows)\<close>
 definition premise_family_rows_carriers :: "nat clause_carrier list" where
   "premise_family_rows_carriers = [(2,premise_rows_view,tuple_corresponds [(=),bag_corresponds],tuple_corresponds [bag_corresponds,bag_corresponds,bag_corresponds])]"
 
-lemma premise_family_rows_carried:
-  "carried_variables premise_family_socket_schema 1 view_identity premise_family_rows_carriers = {5,6,7,9}"
-  "carried_variables premise_family_socket_schema 1 view_identity [] = {9}"
-  by (auto simp: premise_family_rows_carriers_def carried_variables_def premise_family_socket_simps)
-
-lemmas premise_family_rows_carried_one = premise_family_rows_carried[unfolded One_nat_def]
-
-lemma premise_family_rows_keys: "fst ` set premise_family_rows_carriers = {2}"
-  by (simp add: premise_family_rows_carriers_def)
-
-lemma premise_family_rows_steps:
-  assumes "i < length premise_family_rows_carriers"
-  shows "carrier_step (positive_meaning premise_family_instantiation_system) premise_family_socket_schema 1 view_identity (given_correspondence 32) premise_family_rows_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning premise_family_instantiation_system) premise_family_socket_schema 1 view_identity (given_correspondence 32) premise_family_rows_carriers 0"
-    apply (rule carrier_stepI[where k = 2 and V = "premise_rows_view" and cin = "tuple_corresponds [(=),bag_corresponds]" and cout = "tuple_corresponds [bag_corresponds,bag_corresponds,bag_corresponds]" and d = 63
-      and p = "finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 9) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 7))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z data_w))) (Pattern_Variable 9))" and op = "finite_pattern_of (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 7)))"])
-    subgoal premises prems for g g'
-    proof -
-      have "given_correspondence 32 (g 9) (g' 9)" using prems(2) by (simp add: premise_family_socket_simps)
-      then have "bag_corresponds (g 9) (g' 9)" by (rule family_rows_bag_corresponds)
-      then show ?thesis using prems(1)[of 0, unfolded premise_family_rows_carried(1)] prems(1)[of 1, unfolded premise_family_rows_carried(1)] prems(1)[of 2, unfolded premise_family_rows_carried(1)] prems(1)[of 3, unfolded premise_family_rows_carried(1)]
-        by (simp add: premise_family_rows_carried premise_family_rows_carried_one premise_family_rows_carriers_def premise_family_socket_simps)
-    qed
-    apply (simp add: premise_family_rows_carriers_def)
-    apply (rule premise_views_formed(1))
-    apply (rule premise_family_socket_premise(2))
-    apply (simp add: resolution_view_pattern_def view_lookup_def premise_rows_view_def)
-    apply (rule premise_family_carrier)
-    apply (rule output_covered_renamed[OF premise_views_formed(1), where \<sigma> = id], simp add: premise_rows_view_def)
-    apply (simp_all add: premise_family_rows_carried premise_family_rows_carried_one)
-    done
-  have "i = 0"
-    using assms by (simp add: premise_family_rows_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 by blast
-qed
-
 theorem premise_family_rows_socket_carried:
   "socket_carried (positive_meaning premise_family_instantiation_system) premise_family_socket_schema 1 False view_identity premise_rows_view (given_correspondence 32) premise_family_rows_carriers"
-proof -
-  have parts: "resolution_view_pattern view_identity (finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 4)) (Pattern_Variable 9)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 4)),finite_pattern_of (Pattern_Variable 9))"
-    by (simp add: resolution_view_pattern_def view_lookup_def view_identity_def identity_view_def)
-  have covered: "output_covered (positive_meaning premise_family_instantiation_system) 32 view_identity (finite_pattern_of (Pattern_Variable 9) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF view_identity_formed, where \<sigma> = "\<lambda>v. if v = 9 then 1 else v"])
-      (simp add: view_identity_def identity_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Variable 8) (Pattern_Variable 4)) :: nat finite_term_pattern)) \<inter> carried_variables premise_family_socket_schema 1 view_identity premise_family_rows_carriers = {}"
-    unfolding premise_family_rows_carried(1) by simp
-  have material: "\<And>N. (1,N) \<notin> schema_material_premises (decode_finite_schema premise_family_socket_schema)"
-    by (simp add: premise_family_socket_decoded premise_family_instantiation_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema premise_family_socket_schema) \<Longrightarrow> q \<noteq> 1 \<Longrightarrow>
-      q \<notin> fst ` set premise_family_rows_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables premise_family_socket_schema 1 view_identity premise_family_rows_carriers = {}"
-    unfolding premise_family_rows_carried(1) premise_family_rows_keys by (auto simp: premise_family_socket_decoded premise_family_instantiation_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema premise_family_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables premise_family_socket_schema 1 view_identity premise_family_rows_carriers = {}"
-    by (simp add: premise_family_socket_decoded premise_family_instantiation_schema_def)
-  have head: "head_apart False premise_rows_view premise_family_socket_schema (carried_variables premise_family_socket_schema 1 view_identity premise_family_rows_carriers)"
-    unfolding premise_family_rows_carried(1)
-    by (simp add: head_apart_def premise_family_socket_schema_def premise_rows_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed view_identity_formed premise_family_socket_premise(1) parts
-      family_socket_producer covered input material premise_family_rows_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed view_identity_formed family_socket_producer, where \<sigma> = "\<lambda>v. if v = 9 then 1 else v"])
+    (simp add: schema_instantiation_listed_simps premise_family_socket_schema_def premise_family_rows_carriers_def premise_views_formed(1) premise_family_carrier output_covered_renamed[OF premise_views_formed(1), where \<sigma> = id] family_rows_bag_corresponds)
 
 theorem premise_family_rows_socket_discharged: "socket_discharged (positive_meaning premise_family_instantiation_system) premise_family_socket_schema 1 False view_identity premise_rows_view"
   by (rule socket_discharged_carried[OF premise_family_rows_socket_carried])
@@ -1816,45 +1109,10 @@ section \<open>The socket 2 of premise family (premise family body)\<close>
 
 definition premise_family_body_carriers :: "nat clause_carrier list" where "premise_family_body_carriers = []"
 
-lemma premise_family_body_carried:
-  "carried_variables premise_family_socket_schema 2 premise_rows_view premise_family_body_carriers = {5,6,7}"
-  by (auto simp: premise_family_body_carriers_def carried_variables_def premise_family_socket_simps)
-
-lemmas premise_family_body_carried_one = premise_family_body_carried[unfolded One_nat_def]
-
-lemma premise_family_body_keys: "fst ` set premise_family_body_carriers = {}"
-  by (simp add: premise_family_body_carriers_def)
-
-lemma premise_family_body_steps:
-  assumes "i < length premise_family_body_carriers"
-  shows "carrier_step (positive_meaning premise_family_instantiation_system) premise_family_socket_schema 2 premise_rows_view (tuple_corresponds [(=),(=),bag_corresponds]) premise_family_body_carriers i"
-  using assms by (simp add: premise_family_body_carriers_def)
-
 theorem premise_family_body_socket_carried:
   "socket_carried (positive_meaning premise_family_instantiation_system) premise_family_socket_schema 2 False premise_rows_view premise_rows_view (tuple_corresponds [(=),(=),bag_corresponds]) premise_family_body_carriers"
-proof -
-  have parts: "resolution_view_pattern premise_rows_view (finite_pattern_of (premise_instantiation_pattern data_x data_y data_z data_w (Pattern_Variable 9) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 7)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z data_w))) (Pattern_Variable 9)),finite_pattern_of (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 7))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def premise_rows_view_def)
-  have covered: "output_covered (positive_meaning premise_family_instantiation_system) 63 premise_rows_view (finite_pattern_of (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 7))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF premise_views_formed(1), where \<sigma> = "id"])
-      (simp add: premise_rows_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair data_z data_w))) (Pattern_Variable 9)) :: nat finite_term_pattern)) \<inter> carried_variables premise_family_socket_schema 2 premise_rows_view premise_family_body_carriers = {}"
-    unfolding premise_family_body_carried(1) by simp
-  have material: "\<And>N. (2,N) \<notin> schema_material_premises (decode_finite_schema premise_family_socket_schema)"
-    by (simp add: premise_family_socket_decoded premise_family_instantiation_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema premise_family_socket_schema) \<Longrightarrow> q \<noteq> 2 \<Longrightarrow>
-      q \<notin> fst ` set premise_family_body_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables premise_family_socket_schema 2 premise_rows_view premise_family_body_carriers = {}"
-    unfolding premise_family_body_carried(1) premise_family_body_keys by (auto simp: premise_family_socket_decoded premise_family_instantiation_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema premise_family_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables premise_family_socket_schema 2 premise_rows_view premise_family_body_carriers = {}"
-    by (simp add: premise_family_socket_decoded premise_family_instantiation_schema_def)
-  have head: "head_apart False premise_rows_view premise_family_socket_schema (carried_variables premise_family_socket_schema 2 premise_rows_view premise_family_body_carriers)"
-    unfolding premise_family_body_carried(1)
-    by (simp add: head_apart_def premise_family_socket_schema_def premise_rows_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed premise_views_formed(1) premise_family_socket_premise(2) parts
-      family_body_producer covered input material premise_family_body_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed premise_views_formed(1) family_body_producer, where \<sigma> = "id"])
+    (simp add: schema_instantiation_listed_simps premise_family_socket_schema_def premise_family_body_carriers_def)
 
 theorem premise_family_body_socket_discharged: "socket_discharged (positive_meaning premise_family_instantiation_system) premise_family_socket_schema 2 False premise_rows_view premise_rows_view"
   by (rule socket_discharged_carried[OF premise_family_body_socket_carried])
@@ -1867,109 +1125,10 @@ definition schema_head_carriers :: "nat clause_carrier list" where
     (9,consumer_carrier_view view_identity,bag_pair,(=)),
     (11,consumer_carrier_view view_identity,bag_pair,(=))]"
 
-lemma schema_head_carried:
-  "carried_variables schema_socket_schema 3 instantiation_view schema_head_carriers = {4,15,16,17}"
-  "carried_variables schema_socket_schema 3 instantiation_view [] = {4,15,16,17}"
-  "carried_variables schema_socket_schema 3 instantiation_view (take (Suc (0)) schema_head_carriers) = {4,15,16,17}"
-  "carried_variables schema_socket_schema 3 instantiation_view (take (Suc (Suc (0))) schema_head_carriers) = {4,15,16,17}"
-  "carried_variables schema_socket_schema 3 instantiation_view (take (Suc (Suc (Suc (0)))) schema_head_carriers) = {4,15,16,17}"
-  by (auto simp: schema_head_carriers_def carried_variables_def schema_socket_simps)
-
-lemmas schema_head_carried_one = schema_head_carried[unfolded One_nat_def]
-
-lemma schema_head_keys: "fst ` set schema_head_carriers = {5,7,9,11}"
-  by (simp add: schema_head_carriers_def)
-
-lemma schema_head_steps:
-  assumes "i < length schema_head_carriers"
-  shows "carrier_step (positive_meaning schema_instantiation_system) schema_socket_schema 3 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) schema_head_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning schema_instantiation_system) schema_socket_schema 3 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) schema_head_carriers 0"
-    apply (rule carrier_stepI[where k = 5 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 18) (Pattern_Variable 14))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 15) (Pattern_Variable 18)) (Pattern_Variable 14))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 18, unfolded schema_head_carried(1)] prems(1)[of 14, unfolded schema_head_carried(1)] prems(2)
-      by (simp add: schema_head_carried schema_head_carried_one schema_head_carriers_def schema_socket_simps)
-    apply (simp add: schema_head_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule schema_socket_premise(3))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule schema_carriers(1))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: schema_head_carried schema_head_carried_one)
-    done
-  have s1: "carrier_step (positive_meaning schema_instantiation_system) schema_socket_schema 3 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) schema_head_carriers (Suc (0))"
-    apply (rule carrier_stepI[where k = 7 and V = "consumer_carrier_view view_identity" and cin = "bag_pair" and cout = "(=)" and d = 49
-      and p = "finite_pattern_of (Pattern_Pair (data_list_pattern [data_z,(Pattern_Variable 8),(Pattern_Variable 9),(Pattern_Variable 10)]) (Pattern_Variable 16))" and ip = "finite_pattern_of (Pattern_Pair (data_list_pattern [data_z,(Pattern_Variable 8),(Pattern_Variable 9),(Pattern_Variable 10)]) (Pattern_Variable 16))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 2, unfolded schema_head_carried(1)] prems(1)[of 8, unfolded schema_head_carried(1)] prems(1)[of 9, unfolded schema_head_carried(1)] prems(1)[of 10, unfolded schema_head_carried(1)] prems(2)
-      by (simp add: schema_head_carried schema_head_carried_one schema_head_carriers_def schema_socket_simps)
-    apply (simp add: schema_head_carriers_def)
-    apply (simp add: consumer_carrier_view_formed view_identity_formed)
-    apply (rule schema_socket_premise(4))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def view_identity_def identity_view_def)
-    apply (rule schema_carriers(2))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: schema_head_carried schema_head_carried_one)
-    done
-  have s2: "carrier_step (positive_meaning schema_instantiation_system) schema_socket_schema 3 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) schema_head_carriers (Suc (Suc (0)))"
-    apply (rule carrier_stepI[where k = 9 and V = "consumer_carrier_view view_identity" and cin = "bag_pair" and cout = "(=)" and d = 49
-      and p = "finite_pattern_of (Pattern_Pair (data_list_pattern [(Pattern_Variable 11)]) (Pattern_Variable 16))" and ip = "finite_pattern_of (Pattern_Pair (data_list_pattern [(Pattern_Variable 11)]) (Pattern_Variable 16))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 11, unfolded schema_head_carried(1)] prems(2)
-      by (simp add: schema_head_carried schema_head_carried_one schema_head_carriers_def schema_socket_simps)
-    apply (simp add: schema_head_carriers_def)
-    apply (simp add: consumer_carrier_view_formed view_identity_formed)
-    apply (rule schema_socket_premise(5))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def view_identity_def identity_view_def)
-    apply (rule schema_carriers(2))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: schema_head_carried schema_head_carried_one)
-    done
-  have s3: "carrier_step (positive_meaning schema_instantiation_system) schema_socket_schema 3 instantiation_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) schema_head_carriers (Suc (Suc (Suc (0))))"
-    apply (rule carrier_stepI[where k = 11 and V = "consumer_carrier_view view_identity" and cin = "bag_pair" and cout = "(=)" and d = 49
-      and p = "finite_pattern_of (Pattern_Pair (data_list_pattern [(Pattern_Variable 13)]) (Pattern_Variable 16))" and ip = "finite_pattern_of (Pattern_Pair (data_list_pattern [(Pattern_Variable 13)]) (Pattern_Variable 16))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 13, unfolded schema_head_carried(1)] prems(2)
-      by (simp add: schema_head_carried schema_head_carried_one schema_head_carriers_def schema_socket_simps)
-    apply (simp add: schema_head_carriers_def)
-    apply (simp add: consumer_carrier_view_formed view_identity_formed)
-    apply (rule schema_socket_premise(6))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def view_identity_def identity_view_def)
-    apply (rule schema_carriers(2))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: schema_head_carried schema_head_carried_one)
-    done
-  have "i = 0 \<or> i = Suc 0 \<or> i = Suc (Suc 0) \<or> i = Suc (Suc (Suc 0))"
-    using assms by (simp add: schema_head_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 s1 s2 s3 by blast
-qed
-
 theorem schema_head_socket_carried:
   "socket_carried (positive_meaning schema_instantiation_system) schema_socket_schema 3 False instantiation_view schema_view (tuple_corresponds [(=),bag_corresponds,bag_corresponds,bag_corresponds]) schema_head_carriers"
-proof -
-  have parts: "resolution_view_pattern instantiation_view (finite_pattern_of (pattern_instantiation_pattern data_x data_y (Pattern_Variable 14) data_w (Pattern_Variable 12) (Pattern_Variable 4) (Pattern_Variable 15) (Pattern_Variable 16) (Pattern_Variable 17)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 14) data_w))),finite_pattern_of (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair (Pattern_Variable 15) (Pattern_Pair (Pattern_Variable 16) (Pattern_Variable 17)))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def instantiation_view_def)
-  have covered: "output_covered (positive_meaning schema_instantiation_system) 55 instantiation_view (finite_pattern_of (Pattern_Pair (Pattern_Variable 4) (Pattern_Pair (Pattern_Variable 15) (Pattern_Pair (Pattern_Variable 16) (Pattern_Variable 17)))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF instantiation_views_formed(2), where \<sigma> = "\<lambda>v. if v = 4 then 5 else if v = 15 then 6 else if v = 16 then 7 else if v = 17 then 8 else v"])
-      (simp add: instantiation_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x data_y) (Pattern_Pair (Pattern_Variable 12) (Pattern_Pair (Pattern_Variable 14) data_w))) :: nat finite_term_pattern)) \<inter> carried_variables schema_socket_schema 3 instantiation_view schema_head_carriers = {}"
-    unfolding schema_head_carried(1) by simp
-  have material: "\<And>N. (3,N) \<notin> schema_material_premises (decode_finite_schema schema_socket_schema)"
-    by (simp add: schema_socket_decoded schema_instantiation_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema schema_socket_schema) \<Longrightarrow> q \<noteq> 3 \<Longrightarrow>
-      q \<notin> fst ` set schema_head_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables schema_socket_schema 3 instantiation_view schema_head_carriers = {}"
-    unfolding schema_head_carried(1) schema_head_keys by (auto simp: schema_socket_decoded schema_instantiation_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema schema_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables schema_socket_schema 3 instantiation_view schema_head_carriers = {}"
-    by (simp add: schema_socket_decoded schema_instantiation_schema_def)
-  have head: "head_apart False schema_view schema_socket_schema (carried_variables schema_socket_schema 3 instantiation_view schema_head_carriers)"
-    unfolding schema_head_carried(1)
-    by (simp add: head_apart_def schema_socket_schema_def schema_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed instantiation_views_formed(2) schema_socket_premise(1) parts
-      schema_socket_producers(1) covered input material schema_head_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed instantiation_views_formed(2) schema_socket_producers(1), where \<sigma> = "\<lambda>v. if v = 4 then 5 else if v = 15 then 6 else if v = 16 then 7 else if v = 17 then 8 else v"])
+    (simp add: schema_instantiation_listed_simps schema_socket_schema_def schema_head_carriers_def schema_carriers(1) schema_carriers(2))
 
 theorem schema_head_socket_discharged: "socket_discharged (positive_meaning schema_instantiation_system) schema_socket_schema 3 False instantiation_view schema_view"
   by (rule socket_discharged_carried[OF schema_head_socket_carried])
@@ -1979,64 +1138,10 @@ section \<open>The socket 4 of schema (schema body)\<close>
 definition schema_body_carriers :: "nat clause_carrier list" where
   "schema_body_carriers = [(5,consumer_carrier_view join_view,tuple_corresponds [bag_pair,bag_corresponds],(=))]"
 
-lemma schema_body_carried:
-  "carried_variables schema_socket_schema 4 premise_rows_view schema_body_carriers = {5,6,18}"
-  "carried_variables schema_socket_schema 4 premise_rows_view [] = {5,6,18}"
-  by (auto simp: schema_body_carriers_def carried_variables_def schema_socket_simps)
-
-lemmas schema_body_carried_one = schema_body_carried[unfolded One_nat_def]
-
-lemma schema_body_keys: "fst ` set schema_body_carriers = {5}"
-  by (simp add: schema_body_carriers_def)
-
-lemma schema_body_steps:
-  assumes "i < length schema_body_carriers"
-  shows "carrier_step (positive_meaning schema_instantiation_system) schema_socket_schema 4 premise_rows_view (tuple_corresponds [bag_corresponds,bag_corresponds,bag_corresponds]) schema_body_carriers i"
-proof -
-  have s0: "carrier_step (positive_meaning schema_instantiation_system) schema_socket_schema 4 premise_rows_view (tuple_corresponds [bag_corresponds,bag_corresponds,bag_corresponds]) schema_body_carriers 0"
-    apply (rule carrier_stepI[where k = 5 and V = "consumer_carrier_view join_view" and cin = "tuple_corresponds [bag_pair,bag_corresponds]" and cout = "(=)" and d = 48
-      and p = "finite_pattern_of (collection_join_pattern (Pattern_Variable 15) (Pattern_Variable 18) (Pattern_Variable 14))" and ip = "finite_pattern_of (Pattern_Pair (Pattern_Pair (Pattern_Variable 15) (Pattern_Variable 18)) (Pattern_Variable 14))" and op = "Finite_Pattern_Payload []"])
-    subgoal premises prems for g g'
-      using prems(1)[of 15, unfolded schema_body_carried(1)] prems(1)[of 14, unfolded schema_body_carried(1)] prems(2)
-      by (simp add: schema_body_carried schema_body_carried_one schema_body_carriers_def schema_socket_simps)
-    apply (simp add: schema_body_carriers_def)
-    apply (simp add: consumer_carrier_view_formed join_view_formed)
-    apply (rule schema_socket_premise(3))
-    apply (simp add: resolution_view_pattern_def view_lookup_def consumer_carrier_view_def join_view_def)
-    apply (rule schema_carriers(1))
-    apply (rule consumer_carrier_covered)
-    apply (simp_all add: schema_body_carried schema_body_carried_one)
-    done
-  have "i = 0"
-    using assms by (simp add: schema_body_carriers_def less_Suc_eq numeral_eq_Suc)
-  then show ?thesis using s0 by blast
-qed
-
 theorem schema_body_socket_carried:
   "socket_carried (positive_meaning schema_instantiation_system) schema_socket_schema 4 False premise_rows_view schema_view (tuple_corresponds [bag_corresponds,bag_corresponds,bag_corresponds]) schema_body_carriers"
-proof -
-  have parts: "resolution_view_pattern premise_rows_view (finite_pattern_of (premise_instantiation_pattern data_x data_y (Pattern_Variable 14) data_w (Pattern_Variable 13) (Pattern_Variable 5) (Pattern_Variable 6) (Pattern_Variable 18)) :: nat finite_term_pattern) = Some (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair (Pattern_Variable 14) data_w))) (Pattern_Variable 13)),finite_pattern_of (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 18))))"
-    by (simp add: resolution_view_pattern_def view_lookup_def premise_rows_view_def)
-  have covered: "output_covered (positive_meaning schema_instantiation_system) 64 premise_rows_view (finite_pattern_of (Pattern_Pair (Pattern_Variable 5) (Pattern_Pair (Pattern_Variable 6) (Pattern_Variable 18))) :: nat finite_term_pattern)"
-    by (rule output_covered_renamed[OF premise_views_formed(1), where \<sigma> = "\<lambda>v. if v = 18 then 7 else v"])
-      (simp add: premise_rows_view_def)
-  have input: "fset (finite_pattern_variables (finite_pattern_of (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y (Pattern_Pair (Pattern_Variable 14) data_w))) (Pattern_Variable 13)) :: nat finite_term_pattern)) \<inter> carried_variables schema_socket_schema 4 premise_rows_view schema_body_carriers = {}"
-    unfolding schema_body_carried(1) by simp
-  have material: "\<And>N. (4,N) \<notin> schema_material_premises (decode_finite_schema schema_socket_schema)"
-    by (simp add: schema_socket_decoded schema_instantiation_schema_def)
-  have others: "\<And>q e r. (q,e,r) \<in> schema_premises (decode_finite_schema schema_socket_schema) \<Longrightarrow> q \<noteq> 4 \<Longrightarrow>
-      q \<notin> fst ` set schema_body_carriers \<Longrightarrow> pattern_variables r \<inter> carried_variables schema_socket_schema 4 premise_rows_view schema_body_carriers = {}"
-    unfolding schema_body_carried(1) schema_body_keys by (auto simp: schema_socket_decoded schema_instantiation_schema_def)
-  have materials: "\<And>q N. (q,N) \<in> schema_material_premises (decode_finite_schema schema_socket_schema) \<Longrightarrow>
-      material_variables N \<inter> carried_variables schema_socket_schema 4 premise_rows_view schema_body_carriers = {}"
-    by (simp add: schema_socket_decoded schema_instantiation_schema_def)
-  have head: "head_apart False schema_view schema_socket_schema (carried_variables schema_socket_schema 4 premise_rows_view schema_body_carriers)"
-    unfolding schema_body_carried(1)
-    by (simp add: head_apart_def schema_socket_schema_def schema_view_def resolution_view_pattern_def view_lookup_def)
-  show ?thesis
-    by (rule socket_carriedI[OF meaning_answers_formed premise_views_formed(1) schema_socket_premise(2) parts
-      schema_socket_producers(2) covered input material schema_body_steps others materials head])
-qed
+  by (rule socket_carried_listed[OF meaning_answers_formed premise_views_formed(1) schema_socket_producers(2), where \<sigma> = "\<lambda>v. if v = 18 then 7 else v"])
+    (simp add: schema_instantiation_listed_simps schema_socket_schema_def schema_body_carriers_def schema_carriers(1))
 
 theorem schema_body_socket_discharged: "socket_discharged (positive_meaning schema_instantiation_system) schema_socket_schema 4 False premise_rows_view schema_view"
   by (rule socket_discharged_carried[OF schema_body_socket_carried])

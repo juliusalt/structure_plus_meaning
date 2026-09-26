@@ -1107,6 +1107,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Finite_Proof_Checking
     Factor_Program_Resolution
     Factor_Resolution_Acceptance
+    Factor_Search_Representations
     Factor_Resolution_Completeness
     Factor_Construction_Holders
     Factor_Finite_Proof_Inspection
@@ -1701,6 +1702,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Shared_Term_Tables
     Factor_Shared_Patterns
     Factor_Shared_Resolution
+    Factor_Shared_Search
     Factor_Demanded_Package_Readings
     Factor_Shared_Package_Readings
     Factor_Demanded_Graph_Readings

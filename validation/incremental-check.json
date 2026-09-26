@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "891a6a0cf23ecb46435507adc73832905b15be07b5d6c44c426f5e66fc0cb869",
- "checked_content_sha256": "f6a75f9be3c761f061a1859434ecb5c451f50f949be3ee6aec65c6107813d436",
+ "base_receipt_sha256": "bcb7ff594c8471837efd05576b1f68e67850fab03b5afc987b032c1d9b7e0816",
+ "checked_content_sha256": "96955ca8d8b17e687816945cb0a1d965dc0ed42e393b1e515540fafeeb88b49f",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,27 +17,36 @@
    "ran": 306,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpe1pn3_tj/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp92b99hpz/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.34,
+  "base_and_impact": 0.36,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 55.19,
-  "recipe_impact": 0.43,
-  "recipes_and_host_tests": 11.29
+  "proof": 62.8,
+  "recipe_impact": 0.41,
+  "recipes_and_host_tests": 11.19
  },
  "rebuilt_theories": [
   "Development_Asked_Registrations",
-  "Development_First_Problem",
-  "Development_First_Problem_Asked",
-  "Development_First_Problem_Execution",
-  "Development_First_Request_Program",
   "Development_First_Request_Registrations",
+  "Development_Given_Declarations",
+  "Development_Given_Declarations_Execution",
+  "Development_Given_Registrations",
   "Development_Installed_Presentations",
-  "Development_Installed_Presentations_Execution"
+  "Development_Installed_Presentations_Execution",
+  "Development_Rooted_Registrations",
+  "Factor_Least_Witness_Registrations",
+  "Factor_Reader_Witness_Registrations",
+  "Factor_Resolution_Commitments",
+  "Factor_Resolution_Controls",
+  "Factor_Resolution_Material_Discharge",
+  "Factor_Resolution_Producer_Discharge",
+  "Factor_Resolution_Socket_Discharges",
+  "Factor_Resolution_Views",
+  "Factor_Varied_Constructions"
  ],
  "recipes": {
   "allocated-environments": {
@@ -197,8 +206,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1921,
- "seconds": 73.36,
+ "reused_theories": 1912,
+ "seconds": 81.36,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

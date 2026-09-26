@@ -64,12 +64,13 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   #605 → its installed carrying #663 → R6c's carrying
   #611 → rc's numbered forms #540 (after #676) and native form #661 → R7 #542 (the numbered course; #661 feeds its
   native part #707) and the request at the given #547 → #399.
-- The clause match (#642's addition, briefed by #643; M #645, V1 #647 and V3's #653, #687, #655 and #688 landed): V2a #649 (after #597 and the forms
+- The clause match (#642's addition, briefed by #643; M #645, V1 #647, V3's #653, #687, #655, #688 and its control #657 landed): V2a #649 (after #597 and the forms
   #676) and V2b #651 (after #599), divided so that #605 does not wait on #599; V3, divided by plan-89 by the room its
   relations leave, in one theory edited in turn: #653 (the general statement in `given_readers_extension`) beside #687
   (the given's registrations complete at the rooted readers, `Development_Rooted_Registrations`), then #655 (the given's
   installation), then #688 (the instances at the asked relation and the first request, which R7's native part #707,
-  #547 and #399 consume), then the control #657 (off the route).
+  #547 and #399 consume); the control #657's installations take about 20 s of its load, 9.6 s of it the three programs'
+  rooted closures (#715), which #716 reads from their roots before #542, #707, #547 and #399 (Open 99).
 - The resolver at the given's size (#644's attribution and #683's addition to task 495's entry, "The resolver at the
   given's size", both accepted), briefed by #684 (`.build/tasks/684/result.md`) and placed by plan-90: F1 #693 (R3's
   default selection at a priority reading the commitment's tests; after #689 and #670), F3 #695 (a solved ground call
@@ -111,12 +112,12 @@ The approval build (Open 142) after #407 and #447, and the controls task (Open 1
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-#665's builds on the longest chain first (#668, the tuple's move #685, #672, #670, #674, #689), F1 #693, #676,
+the definition closure read from its roots #716 with its review #717 (at once, beside #668), #665's builds on the longest chain first (#668, the tuple's move #685, #672, #670, #674, #689), F1 #693, #676,
 F3 #695, F2b #699, F2c #701, C #703; R5e #599 and R6c's #609; #597, R6c's instantiation family (#607, #679, #681) beside R6b's parts
 #601 and #603; V3's #653 and #687, then #655 and #688; the carryings #605 and #663 with V2a #649 and V2b #651; rc
 #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains' order
 (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the registrations' consolidation #711 (off the route,
-after #668, filling the slots the chain leaves), #657 and the lifting's consolidation #613 last.
+after #668, filling the slots the chain leaves) and the lifting's consolidation #613 last.
 ## Decisions
 
 Taken by the planning episodes, where they are not entries of `DECISIONS.md`.
@@ -287,7 +288,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   with the plan's record of Q27; #585's addition), #496 (`e9c4b54b`, with the plan's record of Q28; #642's addition
   `6bb79246`); #481's attribution of the recording (`.build/tasks/481/result.md`); #683's addition to task 495's entry
   (the resolver at the given's size) from #644's attribution (`.build/tasks/644/result.md`); #686's correction (9) of
-  task 495's entry (R5's socket test read at the socket's inputs, `.build/tasks/686/result.md`).
+  task 495's entry (R5's socket test read at the socket's inputs, `.build/tasks/686/result.md`); #715's attribution of the
+  installations' load (`.build/tasks/715/result.md`).
 - **The development package**: `Development_Package_Program.package_program` (#340; a landing that changes one of its
   six programs derives it again, Q18 (c)), the closed package `development_package_environment` (#342); its generic
   content beside its notions (#426).
@@ -377,7 +379,11 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   the native exact form at the installed entry); V3's given part #655 (`9deb810e`: the given's installation read
   natively, the construction complete at the rooted readers relocated and varied, `given_installed_presentation_exact`); V3's
   instances #688 (`f8e987a6`: `asked_installed_construction` and `asked_installed_exact` at 526,
-  `first_request_installed_construction` and `first_request_installed_exact` at 561).
+  `first_request_installed_construction` and `first_request_installed_exact` at 561); V3's control #657 (`60f4b796`,
+  `Development_Installed_Presentations_Execution`: the three installed presentations read back in 0.51, 0.58 and 0.55 s
+  held, the match found and the registration carried exactly at the eight registered sites; the installations' code
+  equations `asked_installation_code` in `Development_First_Problem_Asked`, `first_request_installation_code` in
+  `Development_First_Request_Program`).
 - **The probe's start and the base** (Q29): a probe's start is the base's chain (#623, `.build/tasks/623/result.md`);
   the one-session base landed inert (#624) and switched on by the owner (Q29–Q32, 2026-09-26); the start estimated by the chain (#625); held at the library's scale, 3.33
   s against 37.68 s (#628); `Factor_Resolution_Commitments`' proof time (#629).
@@ -458,7 +464,10 @@ The owner's questions, a line each (their words and the provisional choices in f
    one — the owner records (#385) are the first.
 99. Installing an n-clause program into an existing native source grows ×2.4–2.5 per doubling (#309's figures),
    environment formation superlinearly (#159); #393's installation 26.5 s and read-back 25.6 s, shared (their held
-   separation mailed to #399): attributed when an installation on the route needs it.
+   separation mailed to #399); #657's control: its installations about 20 s of its 25.4 s load, at compilation; #715 attributed 9.6 s
+   to the three programs' rooted closures (the whole transitive closure kept at the roots' reach), read from the roots
+   by #716, 5.2 s to the combined closure's code generation (paid by every execution theory; a value shared across them
+   needs a common ancestor, at a measured need) and 0.57 s to the doubled installations (next-edits 260).
 100. A native record replayed in a task tree whose theories change the state's closure is unproduced
    (`export_proved_code` refuses): replays run after landing; a proof context holding the tree's theories would lift it
    — a tools task at a measured need.
@@ -514,12 +523,14 @@ planner searches for a theory before briefing a task that edits it.
   `Development_First_Request_Registrations` imported for 561's).
 
 
-- **The graph's width**: the route is one chain — #595 → #666 → #668 → (#672 → #674, #670, #597) → #676 → R5e, R6b's
-  and R6c's parts → the carryings → R7 → #399 — so between its landings little else can start; after #668 three builds
-  run side by side; beside the chain run the clause-match line (#645, #647, #653, #655) and #644. Nothing is invented to
-  fill the gaps.
+- **The graph's width**: the route is one chain — #668 → (#685 → #672 → #674 → #689, #670, #597) → #676 → R5e, R6b's
+  and R6c's parts → the carryings → R7 → #399 — so while #668 runs nothing else of it can start; beside it runs the
+  definition closure's refinement #716, and after #668 four builds run side by side (#685, #670, #597 and the registrations'
+  consolidation #711). Nothing is invented to fill the gaps.
 - **What the next events ask**: #685's check (a changed recorded word would make it a word change, the planner's to
-  order); the first one-session base's landing, after which probes start in about 3 s. V3's parts, #672, #674 (with
+  order); the first one-session base's landing, after which probes start in about 3 s; #668's landing, which brings C
+  #703 to depth 9, so the controls task (Open 150) is placed after C then; #716's landing (its held pair: the three
+  programs' closures before and after). V3's parts, #672, #674 (with
   #689), #601 and #613 grew or were divided against their relations:
   a build refused at its start is divided then. The samples build #551 is the part of #544's division nearest its room
   (384K at proposal): a hand-back there divides corrected item (3), the planner's.
@@ -541,21 +552,12 @@ planner searches for a theory before briefing a task that edits it.
   6 (resolution at `criticism_calls` an exact S1 table); #407 — #433's 2 and 3, the frame as #432 and #433 leave it,
   #394's 3; #443 — #546's 2, review 527's 2; #447 — V3's given instance (`given_installed_exact`, #655); #399, #542,
   #547 — review 660's 2 (the nullary registrations built at module load and the two `export_code … checking SML` lines'
-  cost, measured where each first evaluates the registrations; #644 did not attribute it); #647 — review 646's 1, 2, 3
-  and 5; #649 — 646's 1, 3 and 5; #651 — 646's 1 and 5; #653, #655 — 646's 1. Plan-88: #666 — review 596.3's
-  follow-ups on the pattern matcher's completeness and a declaration's hole list as data; #540, #605 — review 596.3's
+  cost, measured where each first evaluates the registrations; #644 did not attribute it); #649 — 646's 1, 3 and 5; #651 — 646's 1 and 5. Plan-88: #540, #605 — review 596.3's
   agreement transfer from P's completeness; #609 — its narrowed sockets read #607's and #679's views; #611 — its Inputs
-  the parts' results (#607, #679, #681, #609); #681 — #601's discharges of the carriers 59 and 51; #666 — the
-  re-review of #595's fix round, follow-ups 2 and 3 (the matchers' lemmas once, the layout). Plan-89: #657 — review
-  648's follow-ups (the merge over alpha-equal clauses stated at the registered sites; the match's cost at every
-  construction call measured beside the read-backs) and V3's division; #605, #547 — 32 committed at 79.0/1 under #689's
-  test (#686). #684's mails are carried into its proposal's briefs and the four rewrites. Plan-90: #655 — review 654's
-  1 and 2 (`installed_entry_exact` at `(d,decode_finite_term t)`; V1's `installed_variant` and
-  `native_varied_relocated_resolution_exact` consumed, no second route); #688 — 654's 1; #657 — 654's 3 (no alpha-equal
-  clauses with differing values at 77, 392, 525 and 561's installed clauses; the match's cost #707's); #542 — 706's 1
+  the parts' results (#607, #679, #681, #609); #681 — #601's discharges of the carriers 59 and 51. Plan-89: #605, #547 — 32 committed at 79.0/1 under #689's
+  test (#686). #684's mails are carried into its proposal's briefs and the four rewrites. Plan-90: #542 — 706's 1
   (the stated-leaves program's three facts; 590 measured with `finite_call_admission_program_code`'s share apart);
-  #688 — 656's 1 (one lemma over any site at which a package is read, the two presentations' exactness its instances,
-  at the head of `Development_Installed_Presentations`); #663, #447 — 656's 2 (`Factor_Varied_Constructions`' facts at
+  #663, #447 — 656's 2 (`Factor_Varied_Constructions`' facts at
   `finite_mapped_native_extension` consumed through `given_readers_mapped_extension`, not derived again); #699 — 698's 1
   (the table read by an index by position) and 4 (the share cost per search beside the per-step saving); #542 — 698's 4;
   #711 — 692's 2 (`asked_mapped_extension` re-cited as `asked_extension.mapped_extension`); #699 — 714's 1 (the
@@ -563,7 +565,9 @@ planner searches for a theory before briefing a task that edits it.
   collapse's costs): F2b's load grew by these mails, so a refusal at its start divides it; #668 — 667's 1 (the conjunct
   `finite_socket_pair [s] S` per declared socket, confirmed), 2 (`viewed_declarations_formed` a notion of its own,
   conjoined into the discharge at views) and 3 (the merge); #674, #676, #689 — 667's 4 (one matcher, the matcher's
-  completeness, where their test at views needs them).
+  completeness, where their test at views needs them). Plan-91: #707 — review 658's 1 and 2 and the match's cost per
+  witness call (next-edits 254); #542, #547, #399, #707 — #715's attribution and #716 before them; #547 — 658's 1 and 3 (`first_request_installation_code` consumed);
+  #399 — 658's 1 and `asked_installation_code`'s move to `Development_First_Problem_Asked`; #447 — 658's 1.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

@@ -1338,6 +1338,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Presented_Collections
     Factor_Least_Collections
     Factor_Least_Witness_Registrations
+    Factor_Varied_Constructions
     Factor_Reader_Witness_Registrations
     Finite_Presented_Coordinates
     Finite_Presented_Structures

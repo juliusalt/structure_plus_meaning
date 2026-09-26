@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "db3d9682525fa8b894e1e6e061fada744303866aa473ecd7fc6e299d42ab41d8",
- "checked_content_sha256": "352be28895a6e0b39e1e55d5b6214351ff6bc186163eda717664a27963caf0a8",
+ "base_receipt_sha256": "9ca85ad82d45061d00ea2676ff89e7ef8e758a9b90ce879ea57219e76df3aab9",
+ "checked_content_sha256": "811241a9dd91fca7b4ebde15bb27dc1c905e8b0c64380a3dbfa61f1c8bc14e97",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,7 +17,7 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpqlkb3625/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp76aq98zu/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
@@ -25,13 +25,12 @@
   "base_and_impact": 0.38,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 80.03,
-  "recipe_impact": 0.39,
-  "recipes_and_host_tests": 11.35
+  "proof": 29.12,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.58
  },
  "rebuilt_theories": [
-  "Factor_Check_Controls",
-  "Factor_Resolution_Checks"
+  "Factor_Resolution_Graph_Checks"
  ],
  "recipes": {
   "allocated-environments": {
@@ -191,19 +190,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1966,
- "seconds": 102.03,
+ "reused_theories": 1968,
+ "seconds": 52.14,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1968,
+  "theory_count": 1969,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1968,
+ "theories": 1969,
  "validation_inputs": {
-  "ROOT": "26f8d28a2c9e81cc0571c617dfbeaee89e38aa9deb22378f5e4e378a5bdb7e0a",
+  "ROOT": "5710d5d29e79205deef647a649fdec17e3b920d4e75c60304609544749eb5b1f",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

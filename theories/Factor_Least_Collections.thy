@@ -1816,11 +1816,18 @@ text \<open>
   and otherwise the data list of every element found, conflicting ones kept. Every value it returns is formed
   (@{text finite_collection_construction_formed}), from the formedness of an accepted justification's elements.
   Registrations are read by the construction alone; no checker reads them.
+
+  A registration's families are either collections — the least fixpoint of their queries, read at the program's sites
+  at the bound — or a determined value: a pattern of the registered clause's variables, its value at the ground
+  bindings that pattern's term where every variable of the pattern is bound and the term is formed, none otherwise
+  (@{text finite_determined_value}). A determined value reads neither the program nor the bound: no query, no search.
+  The two kinds stay apart as constructors, neither read as the other (task 789's correction (13)).
 \<close>
 
 datatype ('a,'d,'v) registration_families =
   Single_Family "('a,'d,'v) collection_family"
 | Paired_Families "('a,'d,'v) collection_family" "('a,'d,'v) collection_family"
+| Determined_Value "'a finite_term_pattern"
 
 record ('a,'s,'d,'v) collection_registration =
   registration_site :: 'd
@@ -1848,12 +1855,46 @@ proof -
   then show ?thesis unfolding v es finite_family_value_def by (simp add: finite_data_list_formed list_all_iff)
 qed
 
+text \<open>A determined value: the pattern's term at the ground bindings, where they bind all its variables and it is formed.\<close>
+
+definition finite_determined_value ::
+    "'a finite_term_pattern \<Rightarrow> ('a\<times>finite_factor_term) fset \<Rightarrow> finite_factor_term option" where
+  "finite_determined_value p B=(if finite_pattern_variables p |\<subseteq>| fimage fst B \<and>
+      finite_term_formed (resolution_value (finite_binding_valuation B) p)
+    then Some (resolution_value (finite_binding_valuation B) p) else None)"
+
+lemma finite_determined_value_some:
+  "finite_determined_value p B=Some v \<longleftrightarrow> finite_pattern_variables p |\<subseteq>| fimage fst B \<and>
+    finite_term_formed v \<and> v=resolution_value (finite_binding_valuation B) p"
+  by (auto simp: finite_determined_value_def)
+
+lemma finite_determined_value_formed:
+  "finite_determined_value p B=Some v \<Longrightarrow> finite_term_formed v"
+  by (auto simp: finite_determined_value_some)
+
+lemma finite_determined_value_decoded:
+  assumes "finite_determined_value p B=Some v"
+  shows "decode_finite_term v=evaluate_pattern (\<lambda>z. decode_finite_term (finite_binding_valuation B z)) (decode_finite_pattern p)"
+proof -
+  have "decode_finite_term (resolution_value \<theta> p)=evaluate_pattern (\<lambda>z. decode_finite_term (\<theta> z)) (decode_finite_pattern p)"
+    for \<theta> :: "'a \<Rightarrow> finite_factor_term"
+    by (induction p) simp_all
+  then show ?thesis using assms by (simp add: finite_determined_value_some)
+qed
+
 definition finite_registration_value :: "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> nat \<Rightarrow>
     ('a,'s,'d,'v) collection_registration \<Rightarrow> ('a\<times>finite_factor_term) fset \<Rightarrow> finite_factor_term option" where
   "finite_registration_value P n R B=(case registration_families R of
       Single_Family F \<Rightarrow> finite_family_collected P n F B
     | Paired_Families F G \<Rightarrow> (case finite_family_collected P n F B of None \<Rightarrow> None
-        | Some x \<Rightarrow> map_option (Finite_Pair x) (finite_family_collected P n G B)))"
+        | Some x \<Rightarrow> map_option (Finite_Pair x) (finite_family_collected P n G B))
+    | Determined_Value p \<Rightarrow> finite_determined_value p B)"
+
+text \<open>A determined registration's value is its determined value, at every program and bound.\<close>
+
+lemma finite_registration_value_determined:
+  "registration_families R=Determined_Value p \<Longrightarrow> finite_registration_value P n R B=finite_determined_value p B"
+  by (simp add: finite_registration_value_def)
 
 lemma finite_registration_value_formed:
   assumes "finite_registration_value P n R B=Some v"
@@ -1865,6 +1906,9 @@ next
   case (Paired_Families F G)
   then show ?thesis using assms finite_family_collected_formed
     by (auto simp: finite_registration_value_def split: option.splits)
+next
+  case (Determined_Value p)
+  then show ?thesis using assms finite_determined_value_formed by (simp add: finite_registration_value_def)
 qed
 
 definition finite_registration_matches ::

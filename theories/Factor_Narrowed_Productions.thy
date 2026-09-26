@@ -650,7 +650,7 @@ definition finite_production_binds ::
         | None \<Rightarrow> False)
     | Resolution_Material_Goal q r M \<Rightarrow> False)"
 
-theorem finite_narrowed_commitment_exchange:
+theorem finite_narrowed_commitment_exchange_at:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
     and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>" and gF: "g |\<in>| finite_focus_pending F st"
@@ -662,11 +662,10 @@ theorem finite_narrowed_commitment_exchange:
     and producing: "finite_goal_producing (finite_narrowed_commitment P m D \<Phi>) F st g"
     and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
     and unheld: "\<not> finite_held \<kappa> st g"
-    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g))
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search_at pr \<kappa> K P n (Some (resolution_goal_position g))
       (finite_committed_barring B (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))
       (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))"
-  shows "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search \<kappa>
-        K P n (Some (resolution_goal_position g))
+  shows "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search_at pr \<kappa> K P n (Some (resolution_goal_position g))
         (finite_committed_barring B (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))
         (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))) \<and>
       resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
@@ -747,11 +746,33 @@ proof -
     using ctxN eqs nd2eq by simp
   have ctx0: "finite_exchange_context ?M F q ?st0 e (finite_pattern_substitute \<sigma> p)"
     by (rule produced_exchange_context[OF _ yv ctx conjunct2[OF Nv]]) (use ground in blast)
-  have s0': "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some q) (finite_committed_barring B ?st0) ?st0)"
+  have s0': "s0 |\<in>| resolution_found (finite_committed_search_at pr \<kappa> K P n (Some q) (finite_committed_barring B ?st0) ?st0)"
     using s0 st0 gq by simp
   show ?thesis
-    using finite_committed_exchange_placed[OF \<kappa> I0 placed0 g0 parent0 only H0 unheld0 ctx0 s0'] st0 gq by simp
+    using finite_committed_exchange_placed_at[OF \<kappa> I0 placed0 g0 parent0 only H0 unheld0 ctx0 s0'] st0 gq by simp
 qed
+
+theorem finite_narrowed_commitment_exchange:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>" and I: "resolution_invariant P d t st"
+    and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>" and gF: "g |\<in>| finite_focus_pending F st"
+    and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) corr"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) \<Phi>"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m D"
+    and producing: "finite_goal_producing (finite_narrowed_commitment P m D \<Phi>) F st g"
+    and only: "finite_registrations_premise_only \<kappa> P" and H: "resolution_registrations_held \<kappa> st"
+    and unheld: "\<not> finite_held \<kappa> st g"
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> K P n (Some (resolution_goal_position g))
+      (finite_committed_barring B (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))
+      (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))"
+  shows "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search \<kappa>
+        K P n (Some (resolution_goal_position g))
+        (finite_committed_barring B (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))
+        (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))) \<and>
+      resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
+  using assms unfolding finite_committed_search_def by (rule finite_narrowed_commitment_exchange_at)
 
 section \<open>The exchanges at the narrowed commitment\<close>
 
@@ -1029,7 +1050,7 @@ proof -
     unfolding finite_narrowed_productions_supported_def by (simp add: finite_goal_producing_def none)
 qed
 
-theorem finite_narrowed_commitment_exchanges:
+theorem finite_narrowed_commitment_exchanges_at:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
     and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
@@ -1039,20 +1060,20 @@ theorem finite_narrowed_commitment_exchanges:
     and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m D"
     and declared: "narrowed_productions_declared D"
     and only: "finite_registrations_premise_only \<kappa> P"
-  shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P"
+  shows "finite_commitment_exchanges_at pr (\<lambda>_. False) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P"
 proof -
   have applies: "finite_narrowed_committed_apply P m D \<Phi>" by (rule finite_narrowed_committed_applies[OF declared])
   have supported: "finite_narrowed_productions_supported P m D \<Phi>"
     by (rule finite_narrowed_productions_supports[OF productions])
   show ?thesis
-  unfolding finite_commitment_exchanges_def
+  unfolding finite_commitment_exchanges_at_def
 proof (intro allI impI conjI)
   fix n F B st \<theta> g d t s0 B0 \<theta>0
   assume I: "resolution_invariant P d t st" and sup: "resolution_supported_at (\<lambda>_. False) F B P st \<theta>"
     and gF: "g |\<in>| finite_focus_pending F st"
     and committed: "finite_goal_committed (finite_narrowed_commitment P m D \<Phi>) F st g"
     and H: "resolution_registrations_held \<kappa> st" and unheld: "\<not> finite_held \<kappa> st g"
-    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> (finite_narrowed_commitment P m D \<Phi>) P n
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search_at pr \<kappa> (finite_narrowed_commitment P m D \<Phi>) P n
       (Some (resolution_goal_position g)) B st)"
     and "resolution_supported_at (\<lambda>_. False) (Some (resolution_goal_position g)) B0 P s0 \<theta>0"
   let ?T = "resolution_declarations.truncate D"
@@ -1067,13 +1088,12 @@ proof (intro allI impI conjI)
     by (rule unrestricted_frames[OF frames])
   have dU: "finite_direct_commitment ?U F st g = finite_direct_commitment ?T F st g"
     by (rule direct_commitment_sockets) simp_all
-  show "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search \<kappa>
-        (finite_narrowed_commitment P m D \<Phi>) P n (Some (resolution_goal_position g)) B st)) \<and>
+  show "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search_at pr \<kappa> (finite_narrowed_commitment P m D \<Phi>) P n (Some (resolution_goal_position g)) B st)) \<and>
       resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
   proof (cases "finite_direct_commitment ?T F st g")
     case True
     have dirU: "finite_direct_commitment ?U F st g" using True dU by simp
-    show ?thesis by (rule finite_direct_exchange[OF \<kappa> I sup gF disU dirU finite_framed_commitment_premise[OF cc]
+    show ?thesis by (rule finite_direct_exchange_at[OF \<kappa> I sup gF disU dirU finite_framed_commitment_premise[OF cc]
       only H unheld s0])
   next
     case False
@@ -1086,7 +1106,7 @@ proof (intro allI impI conjI)
     have ccU: "commit_call (finite_framed_commitment ?U \<Phi>) F st g"
       by (rule framed_commitment_call_sockets[OF _ _ _ cc]) (use top in auto)
     have notdirU: "\<not> finite_direct_commitment ?U F st g" using False dU by simp
-    show ?thesis by (rule finite_framed_socket_exchange[OF \<kappa> I sup gF disU framesU ccU nf0 notdirU only H unheld s0])
+    show ?thesis by (rule finite_framed_socket_exchange_at[OF \<kappa> I sup gF disU framesU ccU nf0 notdirU only H unheld s0])
   qed
 next
   fix n F B st \<theta> g d t q r M Ws
@@ -1125,7 +1145,7 @@ next
     and gF: "g |\<in>| finite_focus_pending F st"
     and producing: "finite_goal_producing (finite_narrowed_commitment P m D \<Phi>) F st g"
     and H: "resolution_registrations_held \<kappa> st" and unheld: "\<not> finite_held \<kappa> st g"
-    and s0: "s0 |\<in>| resolution_found (finite_committed_search \<kappa> (finite_narrowed_commitment P m D \<Phi>) P n
+    and s0: "s0 |\<in>| resolution_found (finite_committed_search_at pr \<kappa> (finite_narrowed_commitment P m D \<Phi>) P n
       (Some (resolution_goal_position g))
       (finite_committed_barring B (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))
       (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))"
@@ -1133,27 +1153,39 @@ next
   have comm: "finite_goal_committing (finite_narrowed_commitment P m D \<Phi>) F st g"
     and pr: "commit_production (finite_narrowed_commitment P m D \<Phi>) F st g \<noteq> None"
     using producing by (simp_all add: finite_goal_producing_def finite_goal_committing_def)
-  show "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search \<kappa>
-        (finite_narrowed_commitment P m D \<Phi>) P n (Some (resolution_goal_position g))
+  show "\<exists>s \<theta>'. s |\<in>| finite_kept (resolution_goal_position g) (resolution_found (finite_committed_search_at pr \<kappa> (finite_narrowed_commitment P m D \<Phi>) P n (Some (resolution_goal_position g))
         (finite_committed_barring B (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))
         (finite_produced_state (finite_narrowed_commitment P m D \<Phi>) F st g))) \<and>
       resolution_supported_at (\<lambda>_. False) F (fimage resolution_node_position (resolution_nodes s)) P s \<theta>'"
-    by (rule finite_narrowed_commitment_exchange[OF \<kappa> I sup gF discharged frames productions producing
+    by (rule finite_narrowed_commitment_exchange_at[OF \<kappa> I sup gF discharged frames productions producing
       only H unheld s0])
 qed
 qed
 
+theorem finite_narrowed_commitment_exchanges:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) corr"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) \<Phi>"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m D"
+    and declared: "narrowed_productions_declared D"
+    and only: "finite_registrations_premise_only \<kappa> P"
+  shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P"
+  using assms unfolding finite_commitment_exchanges_priority by (rule finite_narrowed_commitment_exchanges_at)
+
 text \<open>At a record declaring no narrowing and no production, the exchanges follow from R5's discharges alone.\<close>
 
-corollary finite_unproduced_commitment_exchanges:
+corollary finite_unproduced_commitment_exchanges_at:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
     and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
     and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
     and only: "finite_registrations_premise_only \<kappa> P"
-  shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa>
+  shows "finite_commitment_exchanges_at pr (\<lambda>_. False) \<kappa>
     (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P"
-proof (rule finite_narrowed_commitment_exchanges[OF \<kappa> _ _ _ narrowed_productions_declared_unnarrowed only])
+proof (rule finite_narrowed_commitment_exchanges_at[OF \<kappa> _ _ _ narrowed_productions_declared_unnarrowed only])
   show "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
       (narrowed_declarations.truncate (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations)) corr"
     using discharged by (simp add: declarations_discharged_unnarrowed)
@@ -1165,7 +1197,33 @@ proof (rule finite_narrowed_commitment_exchanges[OF \<kappa> _ _ _ narrowed_prod
     by (rule productions_discharged_none) simp
 qed
 
+corollary finite_unproduced_commitment_exchanges:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+  shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa>
+    (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P"
+  using assms unfolding finite_commitment_exchanges_priority by (rule finite_unproduced_commitment_exchanges_at)
+
 section \<open>The committed forms exact at narrowed sockets with productions\<close>
+
+theorem finite_narrowed_refutation_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) corr"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) \<Phi>"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m D"
+    and declared: "narrowed_productions_declared D"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and refutes: "finite_resolution_refutes (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P d t n)"
+  shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (rule finite_committed_resolution_by_refutation_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_narrowed_commitment_exchanges_at[OF \<kappa> discharged
+    frames productions declared only] constructions] refutes])
 
 theorem finite_narrowed_refutation_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
@@ -1180,8 +1238,24 @@ theorem finite_narrowed_refutation_exact:
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and refutes: "finite_resolution_refutes (finite_committed_resolution \<kappa> (finite_narrowed_commitment P m D \<Phi>) P d t n)"
   shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
-  by (rule finite_committed_resolution_refutation_exact[OF \<kappa> finite_narrowed_commitment_exchanges[OF \<kappa> discharged
-    frames productions declared only] constructions refutes])
+  using assms unfolding finite_committed_resolution_select by (rule finite_narrowed_refutation_exact_at)
+
+theorem finite_narrowed_verdict_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) corr"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) \<Phi>"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m D"
+    and declared: "narrowed_productions_declared D"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and verdict: "finite_resolution_verdict (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P d t n) =
+      Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_committed_verdict_by_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_narrowed_commitment_exchanges_at[OF \<kappa> discharged
+    frames productions declared only] constructions] verdict])
 
 theorem finite_narrowed_verdict_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
@@ -1197,8 +1271,24 @@ theorem finite_narrowed_verdict_exact:
     and verdict: "finite_resolution_verdict (finite_committed_resolution \<kappa> (finite_narrowed_commitment P m D \<Phi>) P d t n) =
       Some b"
   shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-  by (rule finite_committed_verdict_exact[OF \<kappa> finite_narrowed_commitment_exchanges[OF \<kappa> discharged
-    frames productions declared only] constructions verdict])
+  using assms unfolding finite_committed_resolution_select by (rule finite_narrowed_verdict_exact_at)
+
+theorem finite_narrowed_demand_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) corr"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) \<Phi>"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m D"
+    and declared: "narrowed_productions_declared D"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "finite_committed_demand_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P Q n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using finite_committed_demand_by_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_narrowed_commitment_exchanges_at[OF \<kappa> discharged
+    frames productions declared only] constructions] result] by blast+
 
 theorem finite_narrowed_demand_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and D :: "('a,'s,'d,'v) produced_declarations"
@@ -1214,8 +1304,28 @@ theorem finite_narrowed_demand_exact:
     and result: "finite_committed_demand \<kappa> (finite_narrowed_commitment P m D \<Phi>) P Q n = Some A"
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using finite_committed_demand_exact[OF \<kappa> finite_narrowed_commitment_exchanges[OF \<kappa> discharged
-    frames productions declared only] constructions result] by blast+
+  using finite_narrowed_demand_exact_at[OF assms[unfolded finite_committed_demand_select]] by blast+
+
+theorem native_narrowed_resolution_exact_at:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "narrowed_declarations_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) corr"
+    and frames: "narrowed_frames_discharged (positive_meaning (decode_finite_system P))
+      (narrowed_declarations.truncate D) \<Phi>"
+    and productions: "productions_discharged (positive_meaning (decode_finite_system P)) P m D"
+    and declared: "narrowed_productions_declared D"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "native_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_narrowed_commitment P m D \<Phi>) P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_committed_resolution_by_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_narrowed_commitment_exchanges_at[OF \<kappa> discharged
+    frames productions declared only] constructions] result] by blast+
 
 theorem native_narrowed_resolution_exact:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
@@ -1235,17 +1345,31 @@ theorem native_narrowed_resolution_exact:
       decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using native_committed_resolution_exact[OF \<kappa> finite_narrowed_commitment_exchanges[OF \<kappa> discharged
-    frames productions declared only] constructions result] by blast+
+  using native_narrowed_resolution_exact_at[OF assms[unfolded native_committed_resolution_select]] by blast+
 
 lemmas finite_narrowed_forms_exact = finite_narrowed_refutation_exact finite_narrowed_verdict_exact
   finite_narrowed_demand_exact native_narrowed_resolution_exact
+
+lemmas finite_narrowed_forms_exact_at = finite_narrowed_refutation_exact_at finite_narrowed_verdict_exact_at
+  finite_narrowed_demand_exact_at native_narrowed_resolution_exact_at
 
 text \<open>
   At a record declaring no narrowing and no production the forms are B2b's framed forms (review 737's follow-up 2):
   the narrowed commitment there is the framed commitment (@{thm [source] finite_unproduced_commitment}), and B2b's
   discharges of the declarations and the frames are all it takes.
 \<close>
+
+corollary finite_unproduced_refutation_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and refutes: "finite_resolution_refutes (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P d t n)"
+  shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (rule finite_framed_refutation_exact_at[OF \<kappa> discharged frames only constructions
+    refutes[unfolded finite_unproduced_commitment narrowed_truncate]])
 
 corollary finite_unproduced_refutation_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -1257,8 +1381,19 @@ corollary finite_unproduced_refutation_exact:
     and refutes: "finite_resolution_refutes (finite_committed_resolution \<kappa>
       (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P d t n)"
   shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
-  by (rule finite_framed_refutation_exact[OF \<kappa> discharged frames only constructions
-    refutes[unfolded finite_unproduced_commitment narrowed_truncate]])
+  using assms unfolding finite_committed_resolution_select by (rule finite_unproduced_refutation_exact_at)
+
+corollary finite_unproduced_verdict_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and verdict: "finite_resolution_verdict (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P d t n) = Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_framed_verdict_exact_at[OF \<kappa> discharged frames only constructions
+    verdict[unfolded finite_unproduced_commitment narrowed_truncate]])
 
 corollary finite_unproduced_verdict_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -1270,8 +1405,20 @@ corollary finite_unproduced_verdict_exact:
     and verdict: "finite_resolution_verdict (finite_committed_resolution \<kappa>
       (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P d t n) = Some b"
   shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-  by (rule finite_framed_verdict_exact[OF \<kappa> discharged frames only constructions
-    verdict[unfolded finite_unproduced_commitment narrowed_truncate]])
+  using assms unfolding finite_committed_resolution_select by (rule finite_unproduced_verdict_exact_at)
+
+corollary finite_unproduced_demand_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "finite_committed_demand_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P Q n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using finite_framed_demand_exact_at[OF \<kappa> discharged frames only constructions
+    result[unfolded finite_unproduced_commitment narrowed_truncate]] by blast+
 
 corollary finite_unproduced_demand_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -1284,7 +1431,23 @@ corollary finite_unproduced_demand_exact:
       (finite_narrowed_commitment P m (unproduced (unnarrowed D) :: ('a,'s,'d,'v) produced_declarations) \<Phi>) P Q n = Some A"
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using finite_framed_demand_exact[OF \<kappa> discharged frames only constructions
+  using finite_unproduced_demand_exact_at[OF assms[unfolded finite_committed_demand_select]] by blast+
+
+corollary native_unproduced_resolution_exact_at:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "native_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_narrowed_commitment P m (unproduced (unnarrowed D)) \<Phi>) P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_framed_resolution_exact_at[OF \<kappa> discharged frames only constructions
     result[unfolded finite_unproduced_commitment narrowed_truncate]] by blast+
 
 corollary native_unproduced_resolution_exact:
@@ -1301,8 +1464,7 @@ corollary native_unproduced_resolution_exact:
       decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using native_framed_resolution_exact[OF \<kappa> discharged frames only constructions
-    result[unfolded finite_unproduced_commitment narrowed_truncate]] by blast+
+  using native_unproduced_resolution_exact_at[OF assms[unfolded native_committed_resolution_select]] by blast+
 
 section \<open>The narrowed frames carried by relocation and by agreement\<close>
 

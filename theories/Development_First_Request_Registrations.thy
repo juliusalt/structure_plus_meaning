@@ -219,26 +219,27 @@ abbreviation first_request_placed where
 theorem first_request_relocated_complete:
   "finite_construction_complete (first_request_relocated n) first_request_placed"
   unfolding first_request_placement_def
-  by (rule first_request_extension.relocated_complete[OF first_request_construction_complete])
+  by (rule given_readers_extension.relocated_complete[OF first_request_extension.readers_extension
+    first_request_construction_complete])
 
 lemma first_request_relocated_clause:
   assumes "a |\<in>| witness_registered (first_request_relocated n) e T"
   shows "\<exists>c. ((e,c),T) |\<in>| finite_system_clauses first_request_placed"
-  using assms unfolding first_request_placement_def by (rule first_request_extension.relocated_clause)
+  using assms unfolding first_request_placement_def by (rule given_readers_extension.relocated_clause[OF first_request_extension.readers_extension])
 
 lemma first_request_relocated_formed: "finite_witness_construction_formed (first_request_relocated n)"
   by (rule finite_relocated_construction_formed[OF finite_collection_construction_formed])
 
 lemmas first_request_placed_resolution_refutation_exact =
-  first_request_extension.placed_resolution_refutation_exact[OF finite_collection_construction_formed
+  given_readers_extension.placed_resolution_refutation_exact[OF first_request_extension.readers_extension finite_collection_construction_formed
     first_request_construction_complete, folded first_request_placement_def]
 
 lemmas first_request_placed_verdict_exact =
-  first_request_extension.placed_verdict_exact[OF finite_collection_construction_formed
+  given_readers_extension.placed_verdict_exact[OF first_request_extension.readers_extension finite_collection_construction_formed
     first_request_construction_complete, folded first_request_placement_def]
 
 lemmas first_request_placed_demand_exact =
-  first_request_extension.placed_demand_exact[OF finite_collection_construction_formed
+  given_readers_extension.placed_demand_exact[OF first_request_extension.readers_extension finite_collection_construction_formed
     first_request_construction_complete, folded first_request_placement_def]
 
 text \<open>

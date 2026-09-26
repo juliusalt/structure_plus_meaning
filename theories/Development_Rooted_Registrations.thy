@@ -12,7 +12,11 @@ text \<open>
   mean there what the given's readers mean (@{thm [source] given_readers_meanings}, @{thm [source] given_readers_listing}): 82 and 113, guard
   entries, through @{thm [source] given_rooted_guard_meaning}, the others through the agreement. The clauses at 77
   and 392 are the given's readers' there, matched as @{thm [source] given_readers_registered_clauses} matches them; no
-  clause stands at 525 or 561. No completeness is carried from another program.
+  clause stands at 525 or 561. The registrations' completeness is discharged once, by agreement with the given's
+  readers (@{text readers_agreement_registrations_complete}), of which the rooted readers, the asked program and the
+  first request's program are instances. The placed course of every extension of the given's readers, a construction
+  relocated to its placed program, is stated here, in @{text given_readers_extension}, so that
+  \<open>Development_Given_Extensions\<close> stays below the resolver's line.
 \<close>
 
 section \<open>The rooted readers agree with the given's readers\<close>
@@ -315,5 +319,44 @@ lemmas given_rooted_verdict_exact =
 
 lemmas given_rooted_demand_exact =
   finite_complete_demand_exact[OF finite_collection_construction_formed given_rooted_construction_complete]
+
+section \<open>The placed course of every extension of the given's readers\<close>
+
+text \<open>
+  A construction complete at the program is relocated by the placement (@{const finite_relocated_construction}) and is
+  complete at the placed program, every variable it registers naming a clause there: the mapped extension's relocation
+  (@{thm [source] finite_mapped_native_extension.relocated_construction_complete},
+  @{thm [source] finite_mapped_native_extension.relocated_registered_clause}) at the installation
+  (@{thm [source] given_readers_extension.mapped_extension}), stated once for every extension of the given's readers,
+  and the exact forms at the relocated construction with its formation carried from the construction's
+  (@{thm [source] finite_relocated_construction_formed}). Each installation's placed course is this one's instance.
+\<close>
+
+context given_readers_extension
+begin
+
+lemma relocated_complete:
+  assumes "finite_construction_complete \<kappa> Q"
+  shows "finite_construction_complete (finite_relocated_construction installed_placement Q \<kappa>)
+    (finite_rename_system installed_placement Q)"
+  unfolding installed_placement_def
+  by (rule finite_mapped_native_extension.relocated_construction_complete[OF mapped_extension assms])
+
+lemma relocated_clause:
+  assumes "a |\<in>| witness_registered (finite_relocated_construction installed_placement Q \<kappa>) e T"
+  shows "\<exists>c. ((e,c),T) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+  using assms unfolding installed_placement_def
+  by (rule finite_mapped_native_extension.relocated_registered_clause[OF mapped_extension])
+
+lemmas placed_resolution_refutation_exact =
+  finite_complete_resolution_refutation_exact[OF finite_relocated_construction_formed relocated_complete]
+
+lemmas placed_verdict_exact =
+  finite_complete_verdict_exact[OF finite_relocated_construction_formed relocated_complete]
+
+lemmas placed_demand_exact =
+  finite_complete_demand_exact[OF finite_relocated_construction_formed relocated_complete]
+
+end
 
 end

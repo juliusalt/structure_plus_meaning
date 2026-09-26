@@ -17008,6 +17008,22 @@ restating it; correction (4) above].]
 
 ### The given's remaining producers: views, carriers and narrowed sockets
 
+[Note (task 595, R5d's first part, from q122, plan-86): the discharge line (#593, #621, #630, #631) took R5's pairs, not
+views: only `finite_direct_context` is stated over a view, while `finite_direct_exchange`, the socket contexts and
+exchanges (`Factor_Resolution_Socket_Discharges`) and the material single solution (`Factor_Resolution_Material_Discharge`)
+read the goal's call as `Finite_Pattern_Pair x y` and the premise as `Pattern_Pair xi yo`. So the record does not yet
+carry a view per entry: the brief task `views` restates those discharges over a view, the pair theorems their instances,
+and then the record and tests read at views. Task 595 states, at the record as it stands, the view vocabulary as data in
+`Factor_Resolution_Commitments` (a linear pattern p and Pair pi po over exactly its variables, its term function, the
+parts law and injectivity; the view of a call's pattern, p matched against it and pi and po under the same substitution, its parts the
+term view's at the call; R5's pair and swap its identity and swap instances; holes), the four committed forms exact
+under `declarations_discharged`, and the transfer (`Factor_Resolution_Views`): a relocation by a map on sites carries a
+discharged record to the relocated program, and agreement on a dependency-closed set holding the declared sites carries
+it to the agreeing program, since a clause's and a socket's obligations read the meaning only at the clause's callees.
+A complete construction relocated with the program (W4a's `finite_relocated_construction`) is complete and lifts at the
+relocated program, so the relocation transfer takes the source's formation, discharged declarations and complete
+construction alone.]
+
 [Added by task 585, a design, from q107 (implement-520, 2026-09-25, R6's first step, `.build/tasks/520/probe1/probe.log`):
 R5's kinds as landed (#518) read a producer's call as a pair of an input and an output and reach 32, 6, 10 and 45 only.
 79's argument is ((e,u),(r,w)) and 48's (xs,(ys,zs)): their right sides hold an input (the root r, the second list ys),

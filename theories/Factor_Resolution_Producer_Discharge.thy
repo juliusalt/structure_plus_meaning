@@ -70,10 +70,6 @@ qed
 
 subsection \<open>Values under a substitution\<close>
 
-lemma resolution_value_composes:
-  "resolution_value \<theta> (finite_pattern_substitute \<sigma> p) = resolution_value (\<lambda>z. resolution_value \<theta> (\<sigma> z)) p"
-  by (induction p) (simp_all add: resolution_value_def)
-
 lemma resolution_value_residual:
   "resolution_value (\<lambda>z. finite_residual_term (\<sigma> z)) p = finite_residual_term (finite_pattern_substitute \<sigma> p)"
   by (induction p) (simp_all add: resolution_value_def)
@@ -499,14 +495,6 @@ text \<open>
   @{text consumer_discharged_swap_view}); R5d's views instantiate the same lemma.
 \<close>
 
-definition finite_view_parts ::
-    "(factor_term \<Rightarrow> (factor_term \<times> factor_term) option) \<Rightarrow> 'v finite_term_pattern \<Rightarrow> 'v finite_term_pattern \<Rightarrow>
-      'v finite_term_pattern \<Rightarrow> bool" where
-  "finite_view_parts view p pi po \<longleftrightarrow>
-    finite_pattern_variables p = finite_pattern_variables pi |\<union>| finite_pattern_variables po \<and>
-    (\<forall>\<theta>. view (decode_finite_term (resolution_value \<theta> p)) =
-      Some (decode_finite_term (resolution_value \<theta> pi),decode_finite_term (resolution_value \<theta> po)))"
-
 definition view_producer_discharged ::
     "('d \<times> factor_term) set \<Rightarrow> 'd \<Rightarrow> (factor_term \<Rightarrow> (factor_term \<times> factor_term) option) \<Rightarrow>
       (factor_term \<Rightarrow> factor_term \<Rightarrow> bool) \<Rightarrow> bool" where
@@ -576,24 +564,6 @@ proof -
 qed
 
 subsection \<open>R5's producer and consumers are the pair and swap views\<close>
-
-definition pair_view :: "factor_term \<Rightarrow> (factor_term \<times> factor_term) option" where
-  "pair_view t = (case t of Pair_Term a b \<Rightarrow> Some (a,b) | _ \<Rightarrow> None)"
-
-definition swap_view :: "factor_term \<Rightarrow> (factor_term \<times> factor_term) option" where
-  "swap_view t = (case t of Pair_Term a b \<Rightarrow> Some (b,a) | _ \<Rightarrow> None)"
-
-lemma pair_view_some: "pair_view t = Some (u,v) \<longleftrightarrow> t = Pair_Term u v"
-  by (cases t) (auto simp: pair_view_def)
-
-lemma swap_view_some: "swap_view t = Some (u,v) \<longleftrightarrow> t = Pair_Term v u"
-  by (cases t) (auto simp: swap_view_def)
-
-lemma finite_view_parts_pair: "finite_view_parts pair_view (Finite_Pattern_Pair x y) x y"
-  by (simp add: finite_view_parts_def pair_view_def resolution_value_def)
-
-lemma finite_view_parts_swap: "finite_view_parts swap_view (Finite_Pattern_Pair x y) y x"
-  by (auto simp: finite_view_parts_def swap_view_def resolution_value_def)
 
 lemma producer_discharged_view:
   assumes "producer_discharged M d corr"

@@ -54,6 +54,16 @@ lemma schema_dependencies_finite:
   shows "finite (schema_dependencies S)"
   using assms finite_rel_ran by (auto simp: schema_dependencies_def schema_formed_def)
 
+text \<open>A schema's callees are exactly the callees of its premises.\<close>
+
+lemma schema_dependencies_premise: "(q,d,p) \<in> schema_premises S \<Longrightarrow> d \<in> schema_dependencies S"
+  by (force simp: schema_dependencies_def rel_ran_def)
+
+lemma schema_dependency_premise:
+  assumes "e \<in> schema_dependencies T"
+  obtains q p where "(q,e,p) \<in> schema_premises T"
+  using assms unfolding schema_dependencies_def rel_ran_def by auto
+
 section \<open>One map of a schema's patterns\<close>
 
 text \<open>

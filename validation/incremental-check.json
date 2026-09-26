@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "3b6df23b26f1e1deb942c10ee0eced64a7eac6a87b47ac57637e352b9170ccfa",
- "checked_content_sha256": "1163e591152e9ff5f8c98172ff9c51cf20cc7510ecc958607b405b2d09ae744c",
+ "base_receipt_sha256": "57c1b8fec13270e799fd86069bc30e2d9b3b4cd1d26be7848cb3b5a4d5011c72",
+ "checked_content_sha256": "5b9613d56426e71c523f145c7f3ca236684e78e45c005f54a402dfbd95456ee9",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,57 +17,21 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpf31p53be/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp58h_utgn/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.37,
+  "base_and_impact": 0.38,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 86.73,
+  "proof": 29.77,
   "recipe_impact": 0.39,
-  "recipes_and_host_tests": 11.29
+  "recipes_and_host_tests": 11.25
  },
  "rebuilt_theories": [
-  "Development_Asked_Registrations",
-  "Development_First_Request_Registrations",
-  "Development_Given_Carried_Declarations",
-  "Development_Given_Declarations",
   "Development_Given_Declarations_Execution",
-  "Development_Given_Frames",
-  "Development_Given_Installed_Declarations",
-  "Development_Given_Registrations",
-  "Development_Installed_Presentations",
-  "Development_Installed_Presentations_Execution",
-  "Development_Rooted_Registrations",
-  "Development_Socket_Liveness_Execution",
-  "Factor_Artifact_Citation_Declarations",
-  "Factor_Commitment_Controls",
-  "Factor_Committed_Registrations",
-  "Factor_Definition_Reading_Declarations",
-  "Factor_Instantiation_Declarations",
-  "Factor_Least_Collections",
-  "Factor_Least_Witness_Registrations",
-  "Factor_Mode_Controls",
-  "Factor_Narrowed_Commitments",
-  "Factor_Narrowed_Controls",
-  "Factor_Narrowed_Productions",
-  "Factor_Narrowed_Sockets",
-  "Factor_Native_Committed_Registrations",
-  "Factor_Producer_Correspondences",
-  "Factor_Reader_Witness_Registrations",
-  "Factor_Resolution_Controls",
-  "Factor_Resolution_Views",
-  "Factor_Root_Family_Declarations",
-  "Factor_Row_Selection_Socket_Declarations",
-  "Factor_Row_Value_Socket_Declarations",
-  "Factor_Schema_Instantiation_Declarations",
-  "Factor_Union_Declarations",
-  "Factor_Varied_Constructions",
-  "Factor_Varied_Declarations",
-  "Factor_Varied_Narrowed_Sockets",
-  "Factor_Varied_Narrowed_Transfer"
+  "Development_Socket_Liveness_Execution"
  ],
  "recipes": {
   "allocated-environments": {
@@ -227,19 +191,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1922,
- "seconds": 105.5,
+ "reused_theories": 1959,
+ "seconds": 49.31,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1960,
+  "theory_count": 1961,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1960,
+ "theories": 1961,
  "validation_inputs": {
-  "ROOT": "220f6b653d623d4fb7716b0c42f46852fcdf10e0afb5b779bd4b92c6e7c144f5",
+  "ROOT": "193b66150d31ade50b6504717d0f1ea936f0b3550175ab81c786700c460abe99",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

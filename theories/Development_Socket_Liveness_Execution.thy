@@ -1,6 +1,5 @@
 theory Development_Socket_Liveness_Execution
   imports Development_First_Problem_Asked Development_Given_Carried_Declarations
-    Factor_Schema_Instantiation_Declarations Factor_Union_Declarations Factor_Definition_Reading_Declarations
     Factor_Stated_Leaves_Program Native_Execution_Refinements
 begin
 

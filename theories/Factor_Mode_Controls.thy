@@ -1,5 +1,5 @@
 theory Factor_Mode_Controls
-  imports Factor_Resolution_Modes Factor_Commitment_Controls
+  imports Factor_Committed_Registrations Factor_Commitment_Controls
 begin
 
 text \<open>
@@ -131,5 +131,33 @@ lemma mode_controls:
   "mode_control_row 3 20 = (Some True, 16, Some True, 30, Some True) \<and>
     mode_control_row 9 20 = (Some False, 8, Some False, 9, Some False)"
   by eval
+
+text \<open>
+  The false call is refuted at the moded selection (O3 of correction (12)): the declared commitment exchanges at the
+  moded priority under the control's discharged declarations (@{thm [source] registered_commitment_moded_declared}), so
+  the moded verdict the evaluation above computed is exact, the refutation read from that one evaluation; R4's value
+  stands beside it.
+\<close>
+
+lemma mode_control_registered:
+  "registered_commitment_at (finite_moded_priority mode_control_commitment mode_control_declarations mode_control_modes)
+    no_witness_construction mode_control_program mode_control_commitment"
+  by (rule registered_commitment_moded_declared[OF no_witness_construction_formed no_witness_construction_complete
+    mode_control_discharged])
+
+lemma mode_control_refuted:
+  "(4,decode_finite_term (mode_control_call 9)) \<notin> positive_meaning (decode_finite_system mode_control_program) \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction mode_control_program 4
+      (mode_control_call 9) 20) = Some False"
+proof -
+  have row: "finite_resolution_verdict (finite_moded_resolution no_witness_construction mode_control_commitment
+      mode_control_declarations mode_control_modes mode_control_program 4 (mode_control_call 9) 20) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction mode_control_program 4
+      (mode_control_call 9) 20) = Some False"
+    using mode_controls unfolding mode_control_row_def prod.inject by blast
+  have "False \<longleftrightarrow> (4,decode_finite_term (mode_control_call 9)) \<in> positive_meaning (decode_finite_system mode_control_program)"
+    by (rule registered_commitment_at.committed_registered_verdict_exact[OF mode_control_registered conjunct1[OF row]])
+  with row show ?thesis by blast
+qed
 
 end

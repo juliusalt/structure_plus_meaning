@@ -1,6 +1,7 @@
 theory Factor_Resolution_Controls
   imports Factor_Material_Resolution Factor_Distinct_Payloads Factor_Substitution Factor_Resolution_Completeness
-    Factor_Executed_Controls Factor_Resolution_Commitments
+    Factor_Executed_Controls Factor_Resolution_Commitments Development_Given_Registrations
+    Factor_Finite_Closed_Installation
 begin
 
 text \<open>
@@ -476,6 +477,180 @@ proof -
     using finite_resolution_verdict_exact[of commitment_control_program 2
       "commitment_control_call [[1],[2],[3],[4],[5],[6]] [[6],[5],[4],[3],[2],[7]]" 60 False] by simp
 qed
+
+text \<open>
+  The given's registrations at the given's readers (W4b, task 636; @{text Development_Given_Registrations}): the
+  construction from @{const given_witness_registrations} at @{const finite_given_readers}, where 77's and 561's
+  registrations are complete (@{thm [source] given_readers_registrations_complete}). 561's clause stands in the
+  request's program, not in the given's readers, so its registration is exercised by its collection alone, at the
+  given's readers, whose meanings its completeness asks (@{thm [source] merge_witness_registration_complete}): at
+  two compatible environments, one artifact row each at the uses None and Some [1], the collection at bound 80 finds
+  no conflict and its value reads back as exactly the merge; at two environments holding different artifacts at the
+  use None the artifact rows conflict, and the collected value, which keeps both rows, reads back as no formed
+  environment. The controls the brief asks beyond these — 77 resolved at a two-definition package (the program
+  below, installed over the empty package) and refuted where the reach holds its selector, which is no definition,
+  and both inclusion calls 113 resolved at the collected merge and refuted at the conflicting value — are stated
+  by the predicates below and wait on the resolution's cost: at bound 80 the inclusion calls are unresolved, every
+  diagnosis a cut, and neither they at bound 200 nor 77's collection at bound 120 or 250 returned within about 130 s
+  of shared runs at the probe's bound; no held run was made (task 636's result). Each verdict is taken by the search
+  the exact forms hold for, R5's committed search at no commitment over the construction
+  (@{text given_control_verdict}), which bars every node present at a construction step: there a @{text "Some False"}
+  is a refutation by @{thm [source] given_readers_verdict_exact}, where R3's search with a construction is sound and
+  not exact. The intended verdicts at bound n: @{text "given_control_verdict n 77 (registration_control_call
+  [registration_control_site 1]) = Some True"}, and @{text "Some False"} with @{text registration_control_selector}
+  added to the roots; @{text "merge_control_inclusions n"} at the compatible pair with @{text True}, and at the
+  conflicting pair with @{text False}.
+\<close>
+
+definition given_control_verdict :: "nat \<Rightarrow> nat \<Rightarrow> finite_factor_term \<Rightarrow> bool option" where
+  "given_control_verdict n d t = finite_resolution_verdict (finite_committed_resolution
+    (finite_collection_construction given_witness_registrations n) no_commitment finite_given_readers d t n)"
+
+text \<open>
+  The registrations name their clauses by @{const finite_schema_of} of the HOL schemas, which has no code (its
+  targets' artifacts are chosen by a description). Here, in a theory no other imports, the three schemas are given
+  as the finite schemas they are, each proved to be @{const finite_schema_of} of its HOL schema, and the three
+  registrations receive code equations over them; nothing else of the registrations changes.
+\<close>
+
+lemma finite_schema_of_literal:
+  assumes "schema_formed S" "decode_finite_schema L = S"
+  shows "finite_schema_of S = L"
+  by (metis assms decode_finite_schema_of decode_finite_schema_injective)
+
+definition control_bound_schema :: "(nat,nat,nat) finite_factor_schema" where
+  "control_bound_schema = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1),
+    finite_schema_premises={|(0,(26,Finite_Variable 0)),(1,(47,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2))),
+      (2,(76,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 2)) (Finite_Variable 2)))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition control_additions_schema :: "nat \<Rightarrow> (nat,nat,nat) finite_factor_schema" where
+  "control_additions_schema l = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair (Finite_Variable 0)
+      (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 3))),
+    finite_schema_premises={|(0,(156,Finite_Variable 0)),
+      (1,(156,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 3)))),
+      (2,(79,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2))
+        (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Variable 4)))),
+      (3,(47,Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable 5))),
+      (4,(76,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 5)) (Finite_Variable 5))),
+      (5,(l,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Pattern_Pair (Finite_Variable 2) (Finite_Variable 3))))
+        (Finite_Variable 5)))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition control_request_schema :: "(nat,nat,nat) finite_factor_schema" where
+  "control_request_schema = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair
+      (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2)))
+      (Finite_Pattern_Pair (Finite_Variable 3) (Finite_Pattern_Pair (Finite_Variable 4)
+        (Finite_Pattern_Pair (Finite_Variable 5) (Finite_Variable 6)))),
+    finite_schema_premises={|
+      (0,(80,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable 2))),
+      (1,(560,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1))
+        (Finite_Variable 2)) (Finite_Variable 3))),
+      (2,(79,Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable 5))
+        (Finite_Pattern_Pair (Finite_Variable 6) (Finite_Variable 3)))),
+      (3,(122,Finite_Pattern_Pair (Finite_Variable 4) (Finite_Pattern_Pair (Finite_Variable 5) (Finite_Variable 6)))),
+      (4,(113,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 7))),
+      (5,(113,Finite_Pattern_Pair (Finite_Variable 4) (Finite_Variable 7)))|},
+    finite_schema_materials={||}\<rparr>"
+
+lemma control_registration_schemas:
+  "finite_schema_of package_closure_admission_schema = control_bound_schema"
+  "finite_schema_of (package_additions_schema l) = control_additions_schema l"
+  "finite_schema_of package_request_schema = control_request_schema"
+    apply (rule finite_schema_of_literal)
+     apply (auto simp: package_closure_admission_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)[1]
+    apply (simp add: package_closure_admission_schema_def control_bound_schema_def decode_finite_schema_def
+      decode_finite_call_pattern_def map_relation_values_def)
+   apply (rule finite_schema_of_literal)
+    apply (auto simp: package_additions_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)[1]
+   apply (simp add: package_additions_schema_def control_additions_schema_def decode_finite_schema_def
+      decode_finite_call_pattern_def map_relation_values_def)
+  apply (rule finite_schema_of_literal)
+   apply (auto simp: package_request_schema_def schema_formed_def schema_dependencies_def
+      single_valued_def rel_dom_def rel_ran_def octets_formed_def)[1]
+  apply (simp add: package_request_schema_def control_request_schema_def decode_finite_schema_def
+      decode_finite_call_pattern_def map_relation_values_def)
+  done
+
+lemma control_registrations_code [code]:
+  "bound_witness_registration=\<lparr>registration_site=77,registration_schema=control_bound_schema,registration_variable=2,
+    registration_families=Single_Family (closure_witness_family 0 1)\<rparr>"
+  "additions_witness_registration e l=\<lparr>registration_site=e,registration_schema=control_additions_schema l,
+    registration_variable=5,registration_families=Single_Family (closure_witness_family 1 4)\<rparr>"
+  "merge_witness_registration=\<lparr>registration_site=561,registration_schema=control_request_schema,
+    registration_variable=7,registration_families=Paired_Families
+      (row_witness_family 0 4 0 (Some artifact_row_witness_identity)) (row_witness_family 0 4 1 None)\<rparr>"
+  by (simp_all add: bound_witness_registration_def additions_witness_registration_def
+    closure_witness_registration_def merge_witness_registration_def control_registration_schemas)
+
+definition registration_control_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "registration_control_program = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0)|},
+    finite_system_clauses={|((0,0),commitment_fact (Finite_Pattern_Payload [])),
+      ((1,0),\<lparr>finite_schema_conclusion=Finite_Variable 0,
+        finite_schema_premises={|(0,(0,Finite_Variable 0))|}, finite_schema_materials={||}\<rparr>)|}\<rparr>"
+
+definition registration_control_installation ::
+    "(local_address option finite_artifact_environment\<times>local_address option) option" where
+  "registration_control_installation = finite_extend_mapped_native (fst empty_package_selection)
+    empty_installation_program registration_control_program (\<lambda>_. (None,[]))"
+
+definition registration_control_site :: "nat \<Rightarrow> local_address option definition_site" where
+  "registration_control_site = finite_program_coordinates (fst empty_package_selection) {||}
+    (finite_system_definitions registration_control_program) (\<lambda>_. (None,[]))"
+
+definition registration_control_environment :: "local_address option finite_artifact_environment" where
+  "registration_control_environment = (case registration_control_installation of Some (K,v) \<Rightarrow> K
+    | None \<Rightarrow> finite_empty_environment)"
+
+definition registration_control_selector :: "local_address option definition_site" where
+  "registration_control_selector = (case registration_control_installation of Some (K,v) \<Rightarrow> (v,[])
+    | None \<Rightarrow> (None,[]))"
+
+abbreviation registration_control_call :: "local_address option definition_site list \<Rightarrow> finite_factor_term" where
+  "registration_control_call rs \<equiv> Finite_Pair (finite_environment_value registration_control_environment)
+    (finite_data_list (map finite_site_data rs))"
+
+definition registration_control_other :: "local_address option finite_artifact_environment" where
+  "registration_control_other = \<lparr>finite_environment_artifacts={|(Some [1],finite_empty_artifact)|},
+    finite_environment_bindings={||}\<rparr>"
+
+definition registration_control_conflict :: "local_address option finite_artifact_environment" where
+  "registration_control_conflict = \<lparr>finite_environment_artifacts={|(None,finite_empty_artifact)|},
+    finite_environment_bindings={||}\<rparr>"
+
+abbreviation merge_control_bindings :: "local_address option finite_artifact_environment \<Rightarrow>
+    local_address option finite_artifact_environment \<Rightarrow> (nat\<times>finite_factor_term) fset" where
+  "merge_control_bindings E F \<equiv> {|(0,finite_environment_value E),(4,finite_environment_value F)|}"
+
+definition merge_control_collected :: "local_address option finite_artifact_environment \<Rightarrow>
+    local_address option finite_artifact_environment \<Rightarrow> local_address option finite_artifact_environment option option" where
+  "merge_control_collected E F = map_option finite_environment_value_read
+    (finite_registration_value finite_given_readers 80 merge_witness_registration (merge_control_bindings E F))"
+
+definition merge_control_inclusions :: "nat \<Rightarrow> local_address option finite_artifact_environment \<Rightarrow>
+    local_address option finite_artifact_environment \<Rightarrow> bool \<Rightarrow> bool" where
+  "merge_control_inclusions n E F b = (case finite_registration_value finite_given_readers n merge_witness_registration
+      (merge_control_bindings E F) of None \<Rightarrow> False
+    | Some v \<Rightarrow> given_control_verdict n 113 (Finite_Pair (finite_environment_value E) v) = Some b \<and>
+      given_control_verdict n 113 (Finite_Pair (finite_environment_value F) v) = Some b)"
+
+definition merge_control_conflicts :: "local_address option finite_artifact_environment \<Rightarrow>
+    local_address option finite_artifact_environment \<Rightarrow> bool" where
+  "merge_control_conflicts E F = (case finite_family_collection finite_given_readers 80
+      (row_witness_family 0 4 0 (Some artifact_row_witness_identity)) (merge_control_bindings E F) of
+    None \<Rightarrow> False | Some (es,cs) \<Rightarrow> cs\<noteq>[])"
+
+lemma given_registration_controls:
+  "registration_control_installation \<noteq> None \<and>
+    \<not> merge_control_conflicts environment_reader_control_rooted registration_control_other \<and>
+    merge_control_collected environment_reader_control_rooted registration_control_other =
+      Some (Some (finite_merge_environment environment_reader_control_rooted registration_control_other)) \<and>
+    merge_control_conflicts environment_reader_control_rooted registration_control_conflict \<and>
+    merge_control_collected environment_reader_control_rooted registration_control_conflict = Some None"
+  by eval
 
 corollary implemented_base_control_resolved:
   "native_call_evaluation implemented_base_control {|((None,[3]),Finite_Payload [])|}=(implemented_base_control_demand,None)"

@@ -1333,6 +1333,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Resolution_Carriers
     Factor_Instantiation_Declarations
     Factor_Resolution_Views
+    Factor_Varied_Declarations
     Linear_Comparisons
     Prefix_Key_Comparisons
     Ordered_Artifact_Comparison
@@ -1341,6 +1342,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Finite_Presented_Collections
     Factor_Least_Collections
     Factor_Least_Witness_Registrations
+    Factor_Narrowed_Sockets
     Factor_Varied_Constructions
     Factor_Reader_Witness_Registrations
     Finite_Presented_Coordinates
@@ -1661,6 +1663,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Executed_Controls
     Factor_Resolution_Controls
     Factor_Commitment_Controls
+    Factor_Narrowed_Controls
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
     Complete_Term_References
@@ -1873,6 +1876,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Registrations
     Development_Given_Program
     Development_Given_Declarations
+    Factor_Schema_Instantiation_Declarations
     Factor_Root_Family_Declarations
     Factor_Artifact_Citation_Declarations
     Development_Given_Declarations_Execution
@@ -1914,6 +1918,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Installation
     Development_Rooted_Registrations
     Development_Given_Extensions
+    Development_Given_Carried_Declarations
     Development_Installed_Presentations
     Development_Installed_Presentations_Execution
     Development_First_Problem_Asked

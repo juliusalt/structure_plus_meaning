@@ -59,8 +59,8 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   quadratic index removed at their cause, continuing F2c; its held figures say which equation R7 takes and whether
   F2c's option (a), a guard from the declarations, is needed) → R7 #542 and #547. Off the route after F2d: #792 (F2b1
   the access's instance, review 772's 1, q139).
-- Correction (12) (#787): O1 and O2 landed; O3 #804 (rc's forms at a priority and their moded instances, the entry's
-  rows marked) and O4 #806 (the given's modes; the state count timed against the search) → #542 and #547.
+- Correction (12) (#787): O1–O3 landed; O4 #806 (the given's modes; the state count timed against the search) → #542
+  and #547. rc's relocated premise block once (review 805's 1, a fix continuing O3, after #796) → #798, K2 and #547.
 - Correction (13) (#789, q143): I1 landed; I2 #813 (the input production, 12's instance) → I3a #815 (the given's input
   production at the rooted readers; after O4 and RD1) → #542; I3b #817 (at the installed programs, after #798) → #547,
   #707 and #399.
@@ -95,14 +95,14 @@ line, a row at a locus; the decomposition's schema and library; the digit layout
 by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain runs F2c #701 → K1 → K2 → K3 (correction (14))
-→ R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; the other corrections' builds (O3, O4, I2–I3,
-RD1), F2d #810, C #703 and the carrying #796 → #798 are spliced before #542, #547 and #707 with slack against it.
+→ R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450; the other corrections' builds (O4, I2–I3,
+RD1, rc's premise block), F2d #810, C #703 and the carrying #796 → #798 are spliced before #542, #547 and #707 with slack against it.
 Nothing is added after the route's tail until it shortens (the status line gives the depths); the approval build (Open
 142) after #407 and #447 waits for that.
 
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start, every review
-right after its build. Uncertainty first (the brief of K1–K3), then by slack on the longest chain: I2–I3, RD1, O3, O4;
+right after its build. Uncertainty first (the brief of K1–K3), then by slack on the longest chain: I2–I3, RD1, O4, rc's premise block;
 F2c #701, K1–K3, F2d #810, C #703; #796, #798; #784; R7 #542, #707, #399, #709, #547; the route in its chains' order
 (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718, #792, #724 and the move last.
 ## Decisions
@@ -354,7 +354,8 @@ under `.build/plans/plan-69/`, `plan-81/` and `plan-86/`.
   `finite_moded_select`, `finite_moded_resolution`, the state count `committed_resolution_states`, `modes_relocated`)
   and its control `Factor_Mode_Controls` (#800); O2 the exchange, discharges and forms at any priority
   (`finite_commitment_exchanges_at`, `finite_committed_exact_premises_select_at`, the `_at` forms; #802); I1 the
-  determined value in W2, W4a and V2b (#811).
+  determined value in W2, W4a and V2b (#811); O3 rc's forms at a priority and at the moded selection
+  (`registered_commitment_at_declared`, `registered_at`, the moded names their instances; #804).
 - **The base as one heap** (Q29–Q32): #623–#628; `Factor_Resolution_Commitments`' proof time (#629).
 - **The low moves** (#618, #777).
 - **Briefs whose findings stand**: #434 (`.build/tasks/434/result.md`: the approval record's place, part (g)'s leaf

@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "57c1b8fec13270e799fd86069bc30e2d9b3b4cd1d26be7848cb3b5a4d5011c72",
- "checked_content_sha256": "5b9613d56426e71c523f145c7f3ca236684e78e45c005f54a402dfbd95456ee9",
+ "base_receipt_sha256": "34e4ea8e720d5fbe7e8c09eac2e9f41e3e8b80137981781b1d2402f3930bc9f8",
+ "checked_content_sha256": "7faa336830e9afed93560cb37c76ff0580c8279c59ed61e321cdd372d7833fb0",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,21 +17,21 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp58h_utgn/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpco7qeeir/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
  "phases": {
-  "base_and_impact": 0.38,
+  "base_and_impact": 0.37,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 29.77,
-  "recipe_impact": 0.39,
-  "recipes_and_host_tests": 11.25
+  "proof": 24.86,
+  "recipe_impact": 0.42,
+  "recipes_and_host_tests": 11.23
  },
  "rebuilt_theories": [
-  "Development_Given_Declarations_Execution",
-  "Development_Socket_Liveness_Execution"
+  "Factor_Input_Production_Controls",
+  "Factor_Input_Productions"
  ],
  "recipes": {
   "allocated-environments": {
@@ -191,19 +191,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1959,
- "seconds": 49.31,
+ "reused_theories": 1961,
+ "seconds": 44.58,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1961,
+  "theory_count": 1963,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1961,
+ "theories": 1963,
  "validation_inputs": {
-  "ROOT": "193b66150d31ade50b6504717d0f1ea936f0b3550175ab81c786700c460abe99",
+  "ROOT": "e3071747046c918d36eb3f07da763b8b5a2060ab4c46f74b8e327775f73034bd",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

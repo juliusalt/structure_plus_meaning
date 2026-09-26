@@ -52,6 +52,13 @@ lemmas given_reader_agreements =
   inclusion_additions_agreement
   whole_agreement_transitive[OF given_retention_complete_agreement complete_data_additions_agreement]
 
+text \<open>The additions' system agrees with the program on its whole domain: the program is its union with the audit's.\<close>
+
+lemma additions_guard_agreement:
+  "systems_agree_on use_additions_system guard_readers_system (system_definitions use_additions_system)"
+  unfolding guard_readers_system_def
+  by (rule system_union_agree_left[OF payload_audit_system_formed readers_agreement])
+
 subsection \<open>Each reader means in the program what it means in its own system\<close>
 
 text \<open>

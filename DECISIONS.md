@@ -17353,6 +17353,16 @@ relies on.
   `Factor_Reader_Witness_Registrations`, above the generic contract (`Factor_Least_Witness_Registrations`, which
   imports no package reader and no W3 fact) and W3's facts; `callee_list_unsourced` and `closed_bound_least` stand in
   `Factor_Least_Witness_Facts`, where W3's clause forms follow from `closed_bound_least`.]
+  [Corrected by task 528 (W4b1, q117): the construction reads a registration only at a clause of the program it
+  resolves, so it is complete when every registration naming a clause of the program is
+  (`Factor_Least_Witness_Registrations.finite_collection_construction_complete_at`, of which
+  `finite_collection_construction_complete` is the instance). The given's readers hold 77 and 392 and neither 525
+  (the guard's goals program's, 523–525) nor 561 (the request's); there 77's, 392/391's and 561's registrations are
+  complete by discharge and the four's construction is complete, the exact forms the complete ones at it
+  (`Development_Given_Registrations.given_readers_construction_complete`, `given_readers_*_exact`); at every
+  program presenting `package_request_system` 77's and 561's are complete and so is the construction
+  (`request_registrations_complete`). 525's registration, its listing at 524 over 523, is discharged at the asked
+  program.]
 - **A refused call's record** holds the registration, the witness with its justification, and the goal refuted at it (a
   refutation of a ground call, exact by R4).
 - **Unresolved** stay: a call whose construction's queries are cut at the bound; a clause whose registration is not

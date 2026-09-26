@@ -106,11 +106,12 @@ and its justification check), W2b #567 (landed `47861c0b`: the registrations, th
 values, the resolution with hand-ins, W2a's premise discharged for every program), R4's pattern-root forms #563 (landed
 `256ed4f9`: R3b's invariant and acceptance and R4's lifting at a pattern root for any formed finite program, the
 answer-preserving lifting, item 5's goal-level generator, tight), W4a1 #526 and W4a2 #615 (landed, Delivered), and W4b,
-divided by plan-83 when its relations left too little room: #634 (review 616's follow-ups 1, 3, 4 and 622's 3: the
+divided by plan-83 when its relations left too little room: #634 (landed `78a85a60`; review 616's 1, 3, 4, 622's 3: the
 argument once at W3, the query facts at W2, the four registrations into `Factor_Reader_Witness_Registrations` above a
 generic half free of the package readers) → W4b1 #528 (`Development_Given_Registrations`: complete at the given's
 readers and 561's at `package_request_system`, the finite clauses at 77, 392 and 525 matched, the exact resolver there)
-→ W4b2 #635 (`Development_Asked_Registrations`: #399's two courses, at the asked program and its installation) ∥ the
+→ W4b2 #635 (`Development_Asked_Registrations`: #399's two courses, at the asked program and its installation; 525's
+discharge, since 523–525 stand in the guard's goals program, q117) ∥ the
 controls and the reuse row #636, each with its review. #399 and R7 wait on #635, #547 on #528 and rc; #549 and #551
 wait on R7, #403 and #553 through #399.
 
@@ -466,7 +467,7 @@ What landed that open work builds on, a line each; how it went and each review's
 - **`Factor_Resolution_Commitments`' proof time** (#629, `.build/tasks/629/result.md`): 1,377 commands, 19.9 s, 41 %
   of it one `auto` at line 1733 (a one-line repair: about 8 s less per check, 6–7 s per probe loading the theory,
   made by #621); the theory from a tree costs about 11 s above a probe's 37 s start; no move of its parts.
-- **W4a2** (#615, `ca1caff8`): `Factor_Least_Witness_Registrations` extended with the four registrations of task 496's
+- **W4a2** (#615, `ca1caff8`; in `Factor_Reader_Witness_Registrations` since #634): the four registrations of task 496's
   item 4 over the numbered readers' sites, complete by W3's facts through the premise form, their values formed;
   distinctness out of the forms' premises; task 496's entry marked (review 527's 3–5). Review 616's follow-ups: 1, 3
   and 4 #634's, 2 #528's and #547's.
@@ -475,6 +476,12 @@ What landed that open work builds on, a line each; how it went and each review's
   premise's call part under the holders invariant and the unheld call (q115), the direct producer's discharge without
   state hypotheses, the material control, #629's repair. Review 622's follow-ups: 1, 2 and 3's first half to #630, 3's
   second half #634's, 4 to #599, 6 evidence for Q29.
+- **The least witnesses' facts at their notions** (#634, `78a85a60`): `closed_bound_least` and
+  `callee_list_unsourced` in `Factor_Least_Witness_Facts`, W3's two clause forms proved from the first;
+  `finite_query_holds_equation` and `finite_family_collection_keys` in `Factor_Least_Collections`; #615's section in
+  `Factor_Reader_Witness_Registrations`, the generic half importing no package reader;
+  `finite_complete_construction_supported` over `finite_committed_barring`. Review 637's follow-ups: 1 to #630, 2
+  next-edits 236.
 
 ## Open
 
@@ -643,7 +650,7 @@ searches for a theory before briefing a task that edits it.
   form); #399, #542 — 5 (the exact native form with registrations; #615 marks the entry); q115: #595 (the premise as #621 leaves it, the
   socket kinds' discharges from #630 and #631), #599 (premise-only registrations at its head-variable registration); #599 — #621's Remains, last bullet (a
   head-variable registration fails the premise-only condition by definition: R5e states its own). Plan-83: #630 —
-  review 622's 1, 2 and 3's first half; #599 — 622's 4 and #634's moves; #540, #541, #542, #399 — #634's moves and
+  review 622's 1, 2 and 3's first half, 637's 1 (the lifts' proof in `Factor_Least_Witness_Registrations`); #599 — 622's 4 and #634's moves; #540, #541, #542, #399 — #634's moves and
   W4b's division; #547 — W4b's division, the clause's equality at 561 its own (review 616's 2). The route's earlier mails are carried into
   their corrected briefs or recorded superseded (`.build/tasks/522/result.md`, `.build/tasks/523/result.md`).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;

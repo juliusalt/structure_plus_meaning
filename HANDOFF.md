@@ -114,7 +114,14 @@ at `package_request_system`)
 discharge, since 523–525 stand in the guard's goals program, q117) ∥ the
 controls and the reuse row #636 ∥ W4b3 #640 (`Development_First_Request_Registrations`: the registrations complete at
 the first request's program, which does not present `package_request_system`, and relocated at its installation;
-review 529's 1), each with its review. #399 and R7 wait on #635, #547 on #640 and rc; #549 and #551
+review 529's 1), each with its review; #635 committed `05cfa9b1`. The resolver's inputs at an installed program (q118,
+q121; review 638's 1 and 2): task 496's entry's addition by #642, "Registrations and declarations reach an installed
+package by matching its clauses against the placed ones" — one computed clause match (M) carries the construction (V1,
+after W4a's relocation) and the declarations (V2, after R5d's) to the installed package's finite presentation read
+natively (V3, the native exact forms at the asked, request and given installations); #399's course is the native one;
+R7 measures both courses at 526 (no R7b); rc waits on V1 and V2 unsplit; briefed by #643, on which #605, #540, #542,
+#547 and #399 wait until its proposals are placed. #640 and #635 state the placed course.
+#399 and R7 wait on #635, #547 on #640 and rc; #549 and #551
 wait on R7, #403 and #553 through #399.
 
 **Retired** on #376's and #378's entries (their tables): the decomposition line (#325–#334), N1a, N1b, N3a, N3b, N4a
@@ -142,8 +149,8 @@ nothing waiting on them: the consolidation #613. The approval build (Open 142) a
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool since 14:06, each free slot going to the first task in the queue that can start
 and a review standing where its review task stands, so every review stands right after its build. By slack on the
-longest chain (plan-78): #621's remainder #630, #631 (side by side); W4b2 #635, the controls #636
-and W4b3 #640 in the slots the route leaves (they feed #547, R7 and #399 with slack); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
+longest chain (plan-78): #621's remainder #630, #631 (side by side); the controls #636 and W4b3 #640, the brief #643 and its builds
+(M and V1 at once, V2 after R5e, V3 after V1 and #640) in the slots the route leaves (they feed #547, R7 and #399 with slack); R5d's views #595 and carriers #597; R5e #599 and R6b's parts #601, #603
 (no slack); R6c's 48 #609, R6b's carrying #605, rc #540 and R6c's instantiation family #607; the carrying #611; R7 #542 and #547; the route in its chains' order (#399, the
 samples #551, the observations #549, the record #553, #401, #403, #443, #447, #407, #445, #449); the consolidation #613 last, off the route.
 
@@ -490,6 +497,10 @@ What landed that open work builds on, a line each; how it went and each review's
   and 561's at `package_request_system` (`request_registrations_complete`, which no route program presents);
   `finite_collection_construction_complete_at` in `Factor_Least_Witness_Registrations`. Review 529's follow-ups: 1
   W4b3 #640 and #547 rewritten; 2 to #640, #635 and #540, next-edits 237–238; 3 and 4 next-edits 239–240.
+- **W4b2** (#635, `05cfa9b1`): `Development_Asked_Registrations`, #399's two courses for the least witnesses at the
+  asked program and at the asked placement (`asked_mapped_extension`); the native form at `asked_environment` and
+  `asked_entry` not stated, since it does not type with W4a's relocation (q118). Review 638's follow-ups: 1 and 2 to
+  #642, 3 to #640 and next-edits 241.
 
 ## Open
 
@@ -632,8 +643,9 @@ searches for a theory before briefing a task that edits it.
   given's sockets commit under R3's selection is #605's control's and R7's to report; one that does not
   moves the selection parameter (#613) onto the route. q119, q120 (plan-84): #630's socket discharges stand
   (`Factor_Resolution_Socket_Discharges`: `finite_socket_kept_context`, `finite_socket_free_context`); the rest reads
-  #631's definitions, so #630 parks on q120 until #631 lands: answer q120 then, beside the `after 630 631`. q118,
-  listed to the planner at plan-84's start, reached no mailbox: answered when it arrives.
+  #631's definitions, so #630 parks on q120 until #631 lands: answer q120 then, beside the `after 630 631`. q118 (#635) and
+  q121 (#640), the native form at an installation, answered by plan-84: the placed course at both installations,
+  design #642 for the native forms.
 - **The graph's width** (plan-78, plan-81, plan-83): the route is one chain — #630, #631 → R5d #595, #597 → R5e #599
   and R6b's parts → R6c → R7 #542 → #399 — so between its landings little else can start; beside it run #635, #636 and
   #640, and R6b's and R6c's parts after #597. Nothing is invented to fill the gaps: what is open beside the
@@ -662,7 +674,7 @@ searches for a theory before briefing a task that edits it.
   socket kinds' discharges from #630 and #631), #599 (premise-only registrations at its head-variable registration); #599 — #621's Remains, last bullet (a
   head-variable registration fails the premise-only condition by definition: R5e states its own). Plan-83: #630 —
   review 622's 1, 2 and 3's first half, 637's 1 (the lifts' proof in `Factor_Least_Witness_Registrations`); #599 — 622's 4 and #634's moves; #540, #541, #542, #399 — #634's moves and
-  W4b's division; #547 — rewritten by plan-84 (review 529's 1: its registrations #640's; plan-83's mail on 561's clause superseded). Plan-84: #635 — review 529's 1 and 2; #540 — the committed forms at a construction complete at the program, their formation premise discharged (review 529's 2). The route's earlier mails are carried into
+  W4b's division; #547 — rewritten by plan-84 (review 529's 1: its registrations #640's; plan-83's mail on 561's clause superseded). Plan-84: #640 — q121's answer and review 638's 3; #540 — the committed forms at a construction complete at the program, their formation premise discharged (review 529's 2). The route's earlier mails are carried into
   their corrected briefs or recorded superseded (`.build/tasks/522/result.md`, `.build/tasks/523/result.md`).
 - **The harness's, met by this run's tasks** (owed to the owner: each landing check's phases and per-recipe comparison;
   earlier gaps in `PLANNING_LOG.md`, 2026-09-24): `v2.py read check:167` raises a TypeError in `check_text`;

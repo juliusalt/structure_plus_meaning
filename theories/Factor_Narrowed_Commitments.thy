@@ -74,6 +74,44 @@ definition finite_socket_productions ::
               finite_call_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g)) (declared_sockets D)
     | Resolution_Material_Goal q r M \<Rightarrow> {||})"
 
+text \<open>
+  A production met stands at a call goal and at a declared socket of the goal's parent node: its site, clause and
+  key are the node's and the goal's, its view is the socket's premise view, its registration is the one the record
+  declares there, and at those views the goal is committed as at a socket at some frame choice. A material goal meets
+  none.
+\<close>
+
+lemma finite_socket_productions_member:
+  assumes m: "VR |\<in>| finite_socket_productions D \<Phi> F st g"
+  obtains q r e p nd keep Vh ch R where "g = Resolution_Call_Goal q r e p" "q \<noteq> []"
+    "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q"
+    "(resolution_node_site nd,resolution_node_schema nd,last q,keep,fst VR,Vh) |\<in>| declared_sockets D"
+    "declared_production D (resolution_node_site nd) (resolution_node_schema nd) (last q) = Some R" "snd VR = R"
+    "ch |\<in>| finite_frame_choices \<Phi>"
+    "finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> (fst VR) Vh ch F st g"
+    "finite_call_framed (resolution_declarations.truncate D) \<Phi> (fst VR) Vh ch F st g"
+proof (cases g)
+  case (Resolution_Call_Goal q r e p)
+  \<comment> \<open>The call case: the filter's conditions at the tuple the production was read from.\<close>
+  obtain e' S s keep Vp Vh nd ch where t: "(e',S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
+      and VR: "VR = (Vp,the (declared_production D e' S s))" and q: "q \<noteq> []" and s: "s = last q"
+      and pr: "declared_production D e' S s \<noteq> None"
+      and nd: "nd |\<in>| resolution_nodes st" "resolution_node_position nd = butlast q"
+        "resolution_node_site nd = e'" "resolution_node_schema nd = S"
+      and ch: "ch |\<in>| finite_frame_choices \<Phi>"
+        "finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g"
+        "finite_call_framed (resolution_declarations.truncate D) \<Phi> Vp Vh ch F st g"
+    using m unfolding Resolution_Call_Goal finite_socket_productions_def fBex_member_iff
+    by (auto split: prod.splits; blast)
+  obtain R where R: "declared_production D e' S s = Some R" using pr by blast
+  show thesis
+    by (rule that[of q r e p nd keep Vh R ch]) (use Resolution_Call_Goal q nd t s R VR ch in simp_all)
+next
+  case (Resolution_Material_Goal q r M)
+  \<comment> \<open>The material case: the productions are empty.\<close>
+  then show thesis using m by (simp add: finite_socket_productions_def)
+qed
+
 text \<open>A production met is one at whose views the goal is committed as at a socket, and so a call goal.\<close>
 
 lemma finite_socket_productions_committed:
@@ -81,7 +119,15 @@ lemma finite_socket_productions_committed:
   shows "resolution_is_call g \<and> (\<exists>Vh ch. ch |\<in>| finite_frame_choices \<Phi> \<and>
     finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> (fst VR) Vh ch F st g \<and>
     finite_call_framed (resolution_declarations.truncate D) \<Phi> (fst VR) Vh ch F st g)"
-  using assms by (cases g) ((auto simp: finite_socket_productions_def split: prod.splits)[1], blast, simp add: finite_socket_productions_def)
+proof -
+  obtain q r e p nd keep Vh ch R where g: "g = Resolution_Call_Goal q r e p"
+      and ch: "ch |\<in>| finite_frame_choices \<Phi>"
+      and sc: "finite_socket_commitment_framed (resolution_declarations.truncate D) \<Phi> (fst VR) Vh ch F st g"
+      and cn: "finite_call_framed (resolution_declarations.truncate D) \<Phi> (fst VR) Vh ch F st g"
+    by (rule finite_socket_productions_member[OF assms])
+  have "resolution_is_call g" using g by simp
+  then show ?thesis using ch sc cn by blast
+qed
 
 text \<open>At a production met, the goal's input read at the production's view is ground and its output is not.\<close>
 

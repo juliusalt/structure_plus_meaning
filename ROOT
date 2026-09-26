@@ -1662,6 +1662,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Executed_Controls
     Factor_Resolution_Controls
     Factor_Commitment_Controls
+    Factor_Narrowed_Controls
     Factor_Source_Execution_Sharing
     Factor_Steered_Execution_Sharing
     Complete_Term_References

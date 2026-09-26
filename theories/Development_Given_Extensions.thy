@@ -1,5 +1,5 @@
 theory Development_Given_Extensions
-  imports Development_Given_Installation
+  imports Development_Given_Installation Factor_Least_Witness_Registrations
 begin
 
 text \<open>
@@ -59,6 +59,22 @@ proof -
     by (rule systems_agree_on_subdomain[OF rooted_system_agreement inside])
   show "systems_agree_on (rooted_system P A) (rooted_system J R) (system_definitions (rooted_system P A))"
     by (rule systems_agree_on_transitive[OF rooted_agreement_transfer[OF agreement] right])
+qed
+
+text \<open>
+  A program agreeing with another on its whole domain agrees with every rooting of the other on their common
+  definitions: the rooted program agrees with its source on everything it holds (@{thm [source] rooted_system_agreement}).
+\<close>
+
+lemma rooted_intersection_agreement:
+  assumes agreement: "systems_agree_on P J (system_definitions P)"
+  shows "systems_agree_on P (rooted_system J R) (system_definitions P\<inter>system_definitions (rooted_system J R))"
+proof -
+  have "systems_agree_on P J (system_definitions P\<inter>system_definitions (rooted_system J R))"
+    by (rule systems_agree_on_subdomain[OF agreement]) blast
+  moreover have "systems_agree_on J (rooted_system J R) (system_definitions P\<inter>system_definitions (rooted_system J R))"
+    by (rule systems_agree_on_subdomain[OF rooted_system_agreement]) blast
+  ultimately show ?thesis by (rule systems_agree_on_transitive)
 qed
 
 text \<open>The same view added at a definition fresh in two programs keeps their agreement, and extends it to the view.\<close>
@@ -274,6 +290,52 @@ proof -
       installed_placement d\<in>environment_positions (decode_finite_environment installed_environment)"
     using image by blast
 qed
+
+section \<open>The placed course: a construction relocated to the placed program\<close>
+
+text \<open>
+  The program the installation places is the program renamed by the placement,
+  @{term "finite_rename_system installed_placement Q"}; each definition means there what it means in the program, and
+  so what the installed package means at its placed site (@{thm [source] installed_meaning}). A construction complete
+  at the program is relocated by the placement (@{const finite_relocated_construction}) and is complete at the placed
+  program, every variable it registers naming a clause there: the mapped extension's relocation
+  (@{thm [source] install.relocated_construction_complete}, @{thm [source] install.relocated_registered_clause}),
+  stated once for every extension of the given's readers, and the exact forms at the relocated construction with its
+  formation carried from the construction's (@{thm [source] finite_relocated_construction_formed}). Each installation's
+  placed course is this one's instance.
+\<close>
+
+lemma placed_meaning:
+  assumes "d\<in>system_definitions (decode_finite_system Q)"
+  shows "(installed_placement d,t)\<in>positive_meaning (decode_finite_system (finite_rename_system installed_placement Q))
+    \<longleftrightarrow> (d,t)\<in>positive_meaning (decode_finite_system Q)"
+  unfolding finite_rename_system_correct by (rule renamed_meaning_at[OF target_formed installation(5) assms])
+
+lemma placed_installed_meaning:
+  assumes "d\<in>system_definitions (decode_finite_system Q)"
+  shows "(installed_placement d,t)\<in>positive_meaning (decode_finite_system (finite_rename_system installed_placement Q))
+    \<longleftrightarrow> (installed_placement d,t)\<in>positive_meaning installed_program"
+  using placed_meaning[OF assms] installed_meaning[OF assms] by simp
+
+lemma relocated_complete:
+  assumes "finite_construction_complete \<kappa> Q"
+  shows "finite_construction_complete (finite_relocated_construction installed_placement Q \<kappa>)
+    (finite_rename_system installed_placement Q)"
+  unfolding installed_placement_def by (rule install.relocated_construction_complete[OF assms])
+
+lemma relocated_clause:
+  assumes "a |\<in>| witness_registered (finite_relocated_construction installed_placement Q \<kappa>) e T"
+  shows "\<exists>c. ((e,c),T) |\<in>| finite_system_clauses (finite_rename_system installed_placement Q)"
+  using assms unfolding installed_placement_def by (rule install.relocated_registered_clause)
+
+lemmas placed_resolution_refutation_exact =
+  finite_complete_resolution_refutation_exact[OF finite_relocated_construction_formed relocated_complete]
+
+lemmas placed_verdict_exact =
+  finite_complete_verdict_exact[OF finite_relocated_construction_formed relocated_complete]
+
+lemmas placed_demand_exact =
+  finite_complete_demand_exact[OF finite_relocated_construction_formed relocated_complete]
 
 end
 

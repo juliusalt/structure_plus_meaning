@@ -1216,4 +1216,128 @@ theorem schema_instantiation_notion_declarations_discharged:
     vector_declarations_def record_declarations_def material_declarations_def premise_rows_declarations_def
     premise_family_declarations_def schema_declarations_def)
 
+section \<open>The frames beside the records\<close>
+
+text \<open>
+  Each socket framed at its carried set (correction (10) of DECISIONS.md "Committed choice, for refusals"), from its
+  carrying (@{text socket_carried_listed}, the @{text "*_socket_carried"} facts above) through
+  @{thm [source] socket_framed_at_carried}; the families beside the records, discharged at each record's notion
+  system. Row values declare no socket and have no frame.
+\<close>
+
+lemma vector_head_socket_framed:
+  "socket_framed (positive_meaning vector_instantiation_system) vector_cons_socket_schema 0 False
+    instantiation_view instantiation_view {6,11,13,15,17}"
+  by (rule socket_framed_at_carried[OF vector_head_socket_carried])
+    (auto simp: schema_instantiation_listed_simps vector_cons_socket_schema_def vector_head_carriers_def)
+
+lemma vector_tail_socket_framed:
+  "socket_framed (positive_meaning vector_instantiation_system) vector_cons_socket_schema 1 False
+    instantiation_view instantiation_view {7,12,14,16,17}"
+  by (rule socket_framed_at_carried[OF vector_tail_socket_carried])
+    (auto simp: schema_instantiation_listed_simps vector_cons_socket_schema_def vector_tail_carriers_def)
+
+lemma record_fields_socket_framed:
+  "socket_framed (positive_meaning record_instantiation_system) record_socket_schema 4 False
+    instantiation_view instantiation_view {5,6,8,13,14}"
+  by (rule socket_framed_at_carried[OF record_fields_socket_carried])
+    (auto simp: schema_instantiation_listed_simps record_socket_schema_def record_fields_carriers_def)
+
+lemma material_record_socket_framed:
+  "socket_framed (positive_meaning material_instantiation_system) material_socket_schema 0 False
+    record_material_view material_view {5,6,7,8,9,10,11,12}"
+  by (rule socket_framed_at_carried[OF material_record_socket_carried])
+    (auto simp: schema_instantiation_listed_simps material_socket_schema_def material_record_carriers_def)
+
+lemma premise_call_head_socket_framed:
+  "socket_framed (positive_meaning premise_rows_system) premise_call_socket_schema 0 False
+    prospective_view premise_rows_view {7,8,12,14,15}"
+  by (rule socket_framed_at_carried[OF premise_call_head_socket_carried])
+    (auto simp: schema_instantiation_listed_simps premise_call_socket_schema_def premise_call_head_carriers_def)
+
+lemma premise_call_tail_socket_framed:
+  "socket_framed (positive_meaning premise_rows_system) premise_call_socket_schema 1 False
+    premise_rows_view premise_rows_view {9,10,13}"
+  by (rule socket_framed_at_carried[OF premise_call_tail_socket_carried])
+    (auto simp: schema_instantiation_listed_simps premise_call_socket_schema_def premise_call_tail_carriers_def)
+
+lemma premise_material_head_socket_framed:
+  "socket_framed (positive_meaning premise_rows_system) premise_material_socket_schema 0 False
+    material_view premise_rows_view {10,11,12,13,14,15,17,18}"
+  by (rule socket_framed_at_carried[OF premise_material_head_socket_carried])
+    (auto simp: schema_instantiation_listed_simps premise_material_socket_schema_def premise_material_head_carriers_def)
+
+lemma premise_material_tail_socket_framed:
+  "socket_framed (positive_meaning premise_rows_system) premise_material_socket_schema 1 False
+    premise_rows_view premise_rows_view {7,8,16}"
+  by (rule socket_framed_at_carried[OF premise_material_tail_socket_carried])
+    (auto simp: schema_instantiation_listed_simps premise_material_socket_schema_def premise_material_tail_carriers_def)
+
+lemma premise_family_rows_socket_framed:
+  "socket_framed (positive_meaning premise_family_instantiation_system) premise_family_socket_schema 1 False
+    view_identity premise_rows_view {5,6,7,9}"
+  by (rule socket_framed_at_carried[OF premise_family_rows_socket_carried])
+    (auto simp: schema_instantiation_listed_simps premise_family_socket_schema_def premise_family_rows_carriers_def)
+
+lemma premise_family_body_socket_framed:
+  "socket_framed (positive_meaning premise_family_instantiation_system) premise_family_socket_schema 2 False
+    premise_rows_view premise_rows_view {5,6,7}"
+  by (rule socket_framed_at_carried[OF premise_family_body_socket_carried])
+    (auto simp: schema_instantiation_listed_simps premise_family_socket_schema_def premise_family_body_carriers_def)
+
+lemma schema_head_socket_framed:
+  "socket_framed (positive_meaning schema_instantiation_system) schema_socket_schema 3 False
+    instantiation_view schema_view {4,15,16,17}"
+  by (rule socket_framed_at_carried[OF schema_head_socket_carried])
+    (auto simp: schema_instantiation_listed_simps schema_socket_schema_def schema_head_carriers_def)
+
+lemma schema_body_socket_framed:
+  "socket_framed (positive_meaning schema_instantiation_system) schema_socket_schema 4 False
+    premise_rows_view schema_view {5,6,18}"
+  by (rule socket_framed_at_carried[OF schema_body_socket_carried])
+    (auto simp: schema_instantiation_listed_simps schema_socket_schema_def schema_body_carriers_def)
+
+lemma premise_socket_schemas_distinct: "premise_call_socket_schema \<noteq> premise_material_socket_schema"
+  by (simp add: premise_call_socket_schema_def premise_material_socket_schema_def)
+
+definition vector_frames :: "(nat,nat,nat) resolution_frames" where
+  "vector_frames = {|(60,vector_cons_socket_schema,0,{|6,11,13,15,17|}),
+    (60,vector_cons_socket_schema,1,{|7,12,14,16,17|})|}"
+
+definition record_frames :: "(nat,nat,nat) resolution_frames" where
+  "record_frames = {|(61,record_socket_schema,4,{|5,6,8,13,14|})|}"
+
+definition material_frames :: "(nat,nat,nat) resolution_frames" where
+  "material_frames = {|(62,material_socket_schema,0,{|5,6,7,8,9,10,11,12|})|}"
+
+definition premise_rows_frames :: "(nat,nat,nat) resolution_frames" where
+  "premise_rows_frames = {|(63,premise_call_socket_schema,0,{|7,8,12,14,15|}),
+    (63,premise_call_socket_schema,1,{|9,10,13|}),
+    (63,premise_material_socket_schema,0,{|10,11,12,13,14,15,17,18|}),
+    (63,premise_material_socket_schema,1,{|7,8,16|})|}"
+
+definition premise_family_frames :: "(nat,nat,nat) resolution_frames" where
+  "premise_family_frames = {|(64,premise_family_socket_schema,1,{|5,6,7,9|}),
+    (64,premise_family_socket_schema,2,{|5,6,7|})|}"
+
+definition schema_frames :: "(nat,nat,nat) resolution_frames" where
+  "schema_frames = {|(65,schema_socket_schema,3,{|4,15,16,17|}),(65,schema_socket_schema,4,{|5,6,18|})|}"
+
+theorem schema_instantiation_notion_frames_discharged:
+  "frames_discharged (positive_meaning vector_instantiation_system) vector_declarations vector_frames"
+  "frames_discharged (positive_meaning record_instantiation_system) record_declarations record_frames"
+  "frames_discharged (positive_meaning material_instantiation_system) material_declarations material_frames"
+  "frames_discharged (positive_meaning premise_rows_system) premise_rows_declarations premise_rows_frames"
+  "frames_discharged (positive_meaning premise_family_instantiation_system) premise_family_declarations
+    premise_family_frames"
+  "frames_discharged (positive_meaning schema_instantiation_system) schema_declarations schema_frames"
+  using vector_head_socket_framed vector_tail_socket_framed record_fields_socket_framed material_record_socket_framed
+    premise_call_head_socket_framed premise_call_tail_socket_framed premise_material_head_socket_framed
+    premise_material_tail_socket_framed premise_family_rows_socket_framed premise_family_body_socket_framed
+    schema_head_socket_framed schema_body_socket_framed premise_socket_schemas_distinct
+  by (auto simp: frames_discharged_def vector_declarations_def vector_frames_def record_declarations_def
+    record_frames_def material_declarations_def material_frames_def premise_rows_declarations_def
+    premise_rows_frames_def premise_family_declarations_def premise_family_frames_def schema_declarations_def
+    schema_frames_def)
+
 end

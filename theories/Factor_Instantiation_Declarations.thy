@@ -1,5 +1,5 @@
 theory Factor_Instantiation_Declarations
-  imports Factor_Resolution_Carriers Factor_Application_Reading
+  imports Factor_Resolution_Carriers Factor_Application_Reading Factor_Artifact_Citation_Declarations
 begin
 
 text \<open>
@@ -1257,5 +1257,84 @@ theorem instantiation_notion_declarations_discharged:
   by (simp_all add: declarations_discharged_def declarations_formed_def instantiation_views_formed view_swap_formed
     prospective_used_view_formed quotation_declarations_def binding_declarations_def instantiation_declarations_def
     scoped_declarations_def prospective_declarations_def application_declarations_def)
+
+section \<open>The frames beside the records\<close>
+
+text \<open>
+  Each socket framed at its carried set (correction (10) of DECISIONS.md "Committed choice, for refusals"): its
+  carrying (@{text socket_carried_listed}, the @{text "*_socket_carried"} facts above) frames it at the set the
+  clause, the carrier list and the views compute (@{thm [source] socket_framed_at_carried}), the socket's output and
+  every carrier's output. The families stand beside the records, discharged at each record's notion system; a record
+  that declares no socket (binding admission, scoped instantiation) has no frame.
+\<close>
+
+lemma quotation_left_socket_framed:
+  "socket_framed (positive_meaning quotation_admission_system) quotation_pair_socket_schema 2 False
+    quotation_view quotation_view {3,12,13,16,17}"
+  by (rule socket_framed_at_carried[OF quotation_left_socket_carried])
+    (auto simp: instantiation_listed_simps quotation_pair_socket_schema_def quotation_left_carriers_def)
+
+lemma quotation_right_socket_framed:
+  "socket_framed (positive_meaning quotation_admission_system) quotation_pair_socket_schema 3 False
+    quotation_view quotation_view {4,14,15,17}"
+  by (rule socket_framed_at_carried[OF quotation_right_socket_carried])
+    (auto simp: instantiation_listed_simps quotation_pair_socket_schema_def quotation_right_carriers_def)
+
+lemma instantiation_constant_socket_framed:
+  "socket_framed (positive_meaning pattern_instantiation_system) instantiation_constant_socket_schema 1 False
+    quotation_view instantiation_view {5,6,7}"
+  by (rule socket_framed_at_carried[OF instantiation_constant_socket_carried])
+    (auto simp: instantiation_listed_simps instantiation_constant_socket_schema_def instantiation_constant_carriers_def)
+
+lemma instantiation_left_socket_framed:
+  "socket_framed (positive_meaning pattern_instantiation_system) instantiation_pair_socket_schema 2 False
+    instantiation_view instantiation_view {5,15,17,19,21,22}"
+  by (rule socket_framed_at_carried[OF instantiation_left_socket_carried])
+    (auto simp: instantiation_listed_simps instantiation_pair_socket_schema_def instantiation_left_carriers_def)
+
+lemma instantiation_right_socket_framed:
+  "socket_framed (positive_meaning pattern_instantiation_system) instantiation_pair_socket_schema 3 False
+    instantiation_view instantiation_view {6,16,18,20,22}"
+  by (rule socket_framed_at_carried[OF instantiation_right_socket_carried])
+    (auto simp: instantiation_listed_simps instantiation_pair_socket_schema_def instantiation_right_carriers_def)
+
+lemma prospective_socket_framed:
+  "socket_framed (positive_meaning prospective_instantiation_system) prospective_socket_schema 4 False
+    instantiation_view prospective_view {6,7,16,19,21}"
+  by (rule socket_framed_at_carried[OF prospective_socket_carried])
+    (auto simp: instantiation_listed_simps prospective_socket_schema_def prospective_carriers_def)
+
+lemma application_socket_framed:
+  "socket_framed (positive_meaning application_reading_system) application_socket_schema 0 False
+    prospective_used_view application_view {3,4,5,6}"
+  by (rule socket_framed_at_carried[OF application_socket_carried])
+    (auto simp: instantiation_listed_simps application_socket_schema_def view_listed[OF prospective_used_view_def])
+
+definition quotation_frames :: "(nat,nat,nat) resolution_frames" where
+  "quotation_frames = {|(50,quotation_pair_socket_schema,2,{|3,12,13,16,17|}),
+    (50,quotation_pair_socket_schema,3,{|4,14,15,17|})|}"
+
+definition instantiation_frames :: "(nat,nat,nat) resolution_frames" where
+  "instantiation_frames = {|(55,instantiation_constant_socket_schema,1,{|5,6,7|}),
+    (55,instantiation_pair_socket_schema,2,{|5,15,17,19,21,22|}),
+    (55,instantiation_pair_socket_schema,3,{|6,16,18,20,22|})|}"
+
+definition prospective_frames :: "(nat,nat,nat) resolution_frames" where
+  "prospective_frames = {|(57,prospective_socket_schema,4,{|6,7,16,19,21|})|}"
+
+definition application_frames :: "(nat,nat,nat) resolution_frames" where
+  "application_frames = {|(58,application_socket_schema,0,{|3,4,5,6|})|}"
+
+theorem instantiation_notion_frames_discharged:
+  "frames_discharged (positive_meaning quotation_admission_system) quotation_declarations quotation_frames"
+  "frames_discharged (positive_meaning pattern_instantiation_system) instantiation_declarations instantiation_frames"
+  "frames_discharged (positive_meaning prospective_instantiation_system) prospective_declarations prospective_frames"
+  "frames_discharged (positive_meaning application_reading_system) application_declarations application_frames"
+  using quotation_left_socket_framed quotation_right_socket_framed instantiation_constant_socket_framed
+    instantiation_left_socket_framed instantiation_right_socket_framed prospective_socket_framed
+    application_socket_framed
+  by (auto simp: frames_discharged_def quotation_declarations_def quotation_frames_def instantiation_declarations_def
+    instantiation_frames_def prospective_declarations_def prospective_frames_def application_declarations_def
+    application_frames_def)
 
 end

@@ -893,24 +893,6 @@ proof -
   then show ?thesis by (simp add: finite_system_definitions_correct[symmetric])
 qed
 
-lemma renamed_meaning_at:
-  assumes formed: "schema_system_formed P" and injective: "inj_on g (system_definitions P)"
-    and member: "e \<in> system_definitions P"
-  shows "(g e,x) \<in> positive_meaning (rename_system g P) \<longleftrightarrow> (e,x) \<in> positive_meaning P"
-proof -
-  have PM: "positive_meaning (rename_system g P) = map_prod g id ` positive_meaning P"
-    by (rule renamed_system_positive_meaning[OF formed injective])
-  have "(g e,x) \<in> map_prod g id ` positive_meaning P \<longleftrightarrow> (e,x) \<in> positive_meaning P"
-  proof
-    assume "(g e,x) \<in> map_prod g id ` positive_meaning P"
-    then obtain e0 where e0: "(e0,x) \<in> positive_meaning P" "g e0 = g e" by auto
-    have "e0 \<in> system_definitions P"
-      using positive_meaning_formed[OF e0(1)] by (auto simp: schema_call_formed_def system_definitions_def rel_dom_def)
-    then have "e0 = e" using inj_onD[OF injective e0(2)] member by simp
-    then show "(e,x) \<in> positive_meaning P" using e0(1) by simp
-  qed force
-  then show ?thesis unfolding PM .
-qed
 
 lemma finite_rename_material_id: "finite_rename_material id M = M"
   by (cases M) (simp add: finite_rename_material_def finite_term_pattern.map_id)
@@ -935,7 +917,7 @@ proof -
   have at: "\<And>s e p x. (s,e,p) |\<in>| finite_schema_premises S \<Longrightarrow>
       (g e,x) \<in> positive_meaning (decode_finite_system (finite_rename_system g P)) \<longleftrightarrow>
       (e,x) \<in> positive_meaning (decode_finite_system P)"
-    using renamed_meaning_at[OF Pf injective finite_clause_callee_definition[OF formed clause]] by simp
+    using renamed_system_meaning_at[OF Pf injective finite_clause_callee_definition[OF formed clause]] by simp
   show "finite_variable_premises_hold (finite_rename_system g P) (finite_rename_schema id id g S) a \<theta> \<longleftrightarrow>
       finite_variable_premises_hold P S a \<theta>"
   proof

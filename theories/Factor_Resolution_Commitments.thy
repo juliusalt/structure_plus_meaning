@@ -1,6 +1,7 @@
 theory Factor_Resolution_Commitments
   imports Factor_Resolution_Completeness Presentation_Contracts Ordered_Finite_Terms Factor_Rule_Instances
     Factor_Positive_Locality Factor_System_Relocation Factor_Finite_System_Fields Factor_Construction_Holders
+    Native_Collection_Programs
 begin
 
 text \<open>
@@ -15,6 +16,394 @@ text \<open>
   in the program as given.
 \<close>
 
+section \<open>Views: a producer's output anywhere in its argument\<close>
+
+text \<open>
+  A view reads a term as a pair of an input and an output (@{typ "factor_term \<Rightarrow> (factor_term \<times> factor_term) option"}),
+  and a pattern as its two parts, whose values under every grounding are the view's of the pattern's value
+  (@{text finite_view_parts}). As data (DECISIONS.md, task 495's entry, its addition "The given's remaining producers:
+  views, carriers and narrowed sockets", (a)) a view is a linear pattern p of the site's argument and a pair
+  Pair pi po over exactly p's variables (@{text view_formed}); its term function matches p and evaluates pi and po at
+  the match (@{text resolution_view_term}). It has p's parts at every grounding (@{text resolution_view_parts}) and is
+  injective on the terms p matches (@{text resolution_view_injective}). The identity view is R5's pair and the swap its
+  left side (@{text identity_view_term}, @{text swapped_view_term}); a view whose po is a tuple of patterns names them its
+  holes (@{text view_holes}). A view reads a term's shape and where its variables occur, never a value; a declaration
+  reads it, and nothing installs it.
+\<close>
+
+lemma decode_resolution_value:
+  "decode_finite_term (resolution_value \<theta> p) = evaluate_pattern (\<lambda>z. decode_finite_term (\<theta> z)) (decode_finite_pattern p)"
+  by (induction p) (simp_all add: resolution_value_def)
+
+lemma resolution_value_composes:
+  "resolution_value \<theta> (finite_pattern_substitute \<sigma> p) = resolution_value (\<lambda>z. resolution_value \<theta> (\<sigma> z)) p"
+  by (induction p) (simp_all add: resolution_value_def)
+
+definition finite_view_parts ::
+    "(factor_term \<Rightarrow> (factor_term \<times> factor_term) option) \<Rightarrow> 'v finite_term_pattern \<Rightarrow> 'v finite_term_pattern \<Rightarrow>
+      'v finite_term_pattern \<Rightarrow> bool" where
+  "finite_view_parts view p pi po \<longleftrightarrow>
+    finite_pattern_variables p = finite_pattern_variables pi |\<union>| finite_pattern_variables po \<and>
+    (\<forall>\<theta>. view (decode_finite_term (resolution_value \<theta> p)) =
+      Some (decode_finite_term (resolution_value \<theta> pi),decode_finite_term (resolution_value \<theta> po)))"
+
+definition pair_view :: "factor_term \<Rightarrow> (factor_term \<times> factor_term) option" where
+  "pair_view t = (case t of Pair_Term a b \<Rightarrow> Some (a,b) | _ \<Rightarrow> None)"
+
+definition swap_view :: "factor_term \<Rightarrow> (factor_term \<times> factor_term) option" where
+  "swap_view t = (case t of Pair_Term a b \<Rightarrow> Some (b,a) | _ \<Rightarrow> None)"
+
+lemma pair_view_some: "pair_view t = Some (u,v) \<longleftrightarrow> t = Pair_Term u v"
+  by (cases t) (auto simp: pair_view_def)
+
+lemma swap_view_some: "swap_view t = Some (u,v) \<longleftrightarrow> t = Pair_Term v u"
+  by (cases t) (auto simp: swap_view_def)
+
+lemma finite_view_parts_pair: "finite_view_parts pair_view (Finite_Pattern_Pair x y) x y"
+  by (simp add: finite_view_parts_def pair_view_def resolution_value_def)
+
+lemma finite_view_parts_swap: "finite_view_parts swap_view (Finite_Pattern_Pair x y) y x"
+  by (auto simp: finite_view_parts_def swap_view_def resolution_value_def)
+
+subsection \<open>A view as data\<close>
+
+type_synonym 'v resolution_view = "'v finite_term_pattern \<times> 'v finite_term_pattern \<times> 'v finite_term_pattern"
+
+fun finite_pattern_occurrences :: "'v finite_term_pattern \<Rightarrow> 'v list" where
+  "finite_pattern_occurrences (Finite_Variable v) = [v]"
+| "finite_pattern_occurrences (Finite_Pattern_Target t) = []"
+| "finite_pattern_occurrences (Finite_Pattern_Payload b) = []"
+| "finite_pattern_occurrences (Finite_Pattern_Pair p q) = finite_pattern_occurrences p @ finite_pattern_occurrences q"
+
+lemma finite_pattern_occurrences_set: "set (finite_pattern_occurrences p) = fset (finite_pattern_variables p)"
+  by (induction p) auto
+
+definition view_formed :: "'v resolution_view \<Rightarrow> bool" where
+  "view_formed V \<longleftrightarrow> (case V of (p,pi,po) \<Rightarrow> distinct (finite_pattern_occurrences p) \<and>
+    finite_pattern_variables p = finite_pattern_variables pi |\<union>| finite_pattern_variables po)"
+
+text \<open>
+  A match lists the value of each of p's variable occurrences, in order; a variable is read from the list by one lookup
+  with a default, the same for a term's match and a pattern's.
+\<close>
+
+definition view_lookup :: "'b \<Rightarrow> ('v \<times> 'b) list \<Rightarrow> 'v \<Rightarrow> 'b" where
+  "view_lookup z l v = (case map_of l v of Some x \<Rightarrow> x | None \<Rightarrow> z)"
+
+lemma view_lookup_append_left: "map_of l1 v \<noteq> None \<Longrightarrow> view_lookup z (l1 @ l2) v = view_lookup z l1 v"
+  by (auto simp: view_lookup_def map_of_append map_add_def split: option.splits)
+
+lemma view_lookup_append_right: "map_of l1 v = None \<Longrightarrow> view_lookup z (l1 @ l2) v = view_lookup z l2 v"
+  by (auto simp: view_lookup_def map_of_append map_add_def split: option.splits)
+
+lemma view_lookup_bound:
+  assumes "map fst l = finite_pattern_occurrences p"
+  shows "map_of l v \<noteq> None \<longleftrightarrow> v |\<in>| finite_pattern_variables p"
+proof -
+  have "set (map fst l) = fset (finite_pattern_variables p)" using assms finite_pattern_occurrences_set by metis
+  then show ?thesis by (auto simp: map_of_eq_None_iff)
+qed
+
+lemma view_lookup_split:
+  assumes l1: "map fst l1 = finite_pattern_occurrences p"
+    and dis: "set (finite_pattern_occurrences p) \<inter> set (finite_pattern_occurrences q) = {}"
+  shows "v |\<in>| finite_pattern_variables p \<Longrightarrow> view_lookup z (l1 @ l2) v = view_lookup z l1 v"
+    and "v |\<in>| finite_pattern_variables q \<Longrightarrow> view_lookup z (l1 @ l2) v = view_lookup z l2 v"
+proof -
+  show "v |\<in>| finite_pattern_variables p \<Longrightarrow> view_lookup z (l1 @ l2) v = view_lookup z l1 v"
+    using view_lookup_bound[OF l1] by (auto intro: view_lookup_append_left)
+  assume vq: "v |\<in>| finite_pattern_variables q"
+  have "v |\<notin>| finite_pattern_variables p"
+    using vq dis finite_pattern_occurrences_set[of p] finite_pattern_occurrences_set[of q] by auto
+  then have "map_of l1 v = None" using view_lookup_bound[OF l1] by blast
+  then show "view_lookup z (l1 @ l2) v = view_lookup z l2 v" by (rule view_lookup_append_right)
+qed
+
+fun view_match :: "'v finite_term_pattern \<Rightarrow> factor_term \<Rightarrow> ('v \<times> factor_term) list option" where
+  "view_match (Finite_Variable v) t = Some [(v,t)]"
+| "view_match (Finite_Pattern_Target a) t = (if t = Target_Term (decode_finite_target a) then Some [] else None)"
+| "view_match (Finite_Pattern_Payload b) t = (if t = Payload_Term b then Some [] else None)"
+| "view_match (Finite_Pattern_Pair p q) (Pair_Term t u) =
+    (case (view_match p t,view_match q u) of (Some l,Some m) \<Rightarrow> Some (l @ m) | _ \<Rightarrow> None)"
+| "view_match (Finite_Pattern_Pair p q) t = None"
+
+abbreviation view_valuation :: "('v \<times> factor_term) list \<Rightarrow> 'v \<Rightarrow> factor_term" where
+  "view_valuation \<equiv> view_lookup (Payload_Term [])"
+
+definition resolution_view_term :: "'v resolution_view \<Rightarrow> factor_term \<Rightarrow> (factor_term \<times> factor_term) option" where
+  "resolution_view_term V t = (case V of (p,pi,po) \<Rightarrow> (case view_match p t of None \<Rightarrow> None
+    | Some l \<Rightarrow> Some (evaluate_pattern (view_valuation l) (decode_finite_pattern pi),
+        evaluate_pattern (view_valuation l) (decode_finite_pattern po))))"
+
+lemma view_match_domain: "view_match p t = Some l \<Longrightarrow> map fst l = finite_pattern_occurrences p"
+proof (induction p arbitrary: t l)
+  case (Finite_Pattern_Pair p q)
+  then show ?case by (cases t) (auto split: option.splits)
+qed (auto split: if_splits)
+
+lemma view_match_sound:
+  "distinct (finite_pattern_occurrences p) \<Longrightarrow> view_match p t = Some l \<Longrightarrow>
+    evaluate_pattern (view_valuation l) (decode_finite_pattern p) = t"
+proof (induction p arbitrary: t l)
+  case (Finite_Variable v)
+  then show ?case by (auto simp: view_lookup_def)
+next
+  case (Finite_Pattern_Target a)
+  then show ?case by (simp split: if_splits)
+next
+  case (Finite_Pattern_Payload b)
+  then show ?case by (simp split: if_splits)
+next
+  case (Finite_Pattern_Pair p q)
+  obtain t1 t2 where t: "t = Pair_Term t1 t2" using Finite_Pattern_Pair.prems(2) by (cases t) simp_all
+  from Finite_Pattern_Pair.prems(2) obtain l1 l2 where m1: "view_match p t1 = Some l1"
+      and m2: "view_match q t2 = Some l2" and l: "l = l1 @ l2"
+    unfolding t by (auto split: option.splits)
+  have dp: "distinct (finite_pattern_occurrences p)" and dq: "distinct (finite_pattern_occurrences q)"
+    and dis: "set (finite_pattern_occurrences p) \<inter> set (finite_pattern_occurrences q) = {}"
+    using Finite_Pattern_Pair.prems(1) by simp_all
+  note split = view_lookup_split[OF view_match_domain[OF m1] dis]
+  have a1: "evaluate_pattern (view_valuation l) (decode_finite_pattern p) =
+      evaluate_pattern (view_valuation l1) (decode_finite_pattern p)"
+    by (rule evaluate_pattern_cong) (simp add: l split(1) finite_pattern_variables_correct[symmetric])
+  have a2: "evaluate_pattern (view_valuation l) (decode_finite_pattern q) =
+      evaluate_pattern (view_valuation l2) (decode_finite_pattern q)"
+    by (rule evaluate_pattern_cong) (simp add: l split(2) finite_pattern_variables_correct[symmetric])
+  show ?case using a1 a2 Finite_Pattern_Pair.IH(1)[OF dp m1] Finite_Pattern_Pair.IH(2)[OF dq m2] t by simp
+qed
+
+lemma view_match_complete:
+  "distinct (finite_pattern_occurrences p) \<Longrightarrow>
+    \<exists>l. view_match p (evaluate_pattern h (decode_finite_pattern p)) = Some l \<and>
+      (\<forall>v. v |\<in>| finite_pattern_variables p \<longrightarrow> view_valuation l v = h v)"
+proof (induction p)
+  case (Finite_Variable v)
+  then show ?case by (simp add: view_lookup_def)
+next
+  case (Finite_Pattern_Pair p q)
+  have dp: "distinct (finite_pattern_occurrences p)" and dq: "distinct (finite_pattern_occurrences q)"
+    and dis: "set (finite_pattern_occurrences p) \<inter> set (finite_pattern_occurrences q) = {}"
+    using Finite_Pattern_Pair.prems by simp_all
+  obtain l1 where m1: "view_match p (evaluate_pattern h (decode_finite_pattern p)) = Some l1"
+      and a1: "\<forall>v. v |\<in>| finite_pattern_variables p \<longrightarrow> view_valuation l1 v = h v"
+    using Finite_Pattern_Pair.IH(1)[OF dp] by blast
+  obtain l2 where m2: "view_match q (evaluate_pattern h (decode_finite_pattern q)) = Some l2"
+      and a2: "\<forall>v. v |\<in>| finite_pattern_variables q \<longrightarrow> view_valuation l2 v = h v"
+    using Finite_Pattern_Pair.IH(2)[OF dq] by blast
+  note split = view_lookup_split[OF view_match_domain[OF m1] dis]
+  have val: "view_valuation (l1 @ l2) v = h v" if "v |\<in>| finite_pattern_variables (Finite_Pattern_Pair p q)" for v
+    using that a1 a2 split by auto
+  show ?case using m1 m2 val by (intro exI[of _ "l1 @ l2"]) simp
+qed simp_all
+
+lemma resolution_view_evaluate:
+  assumes formed: "view_formed (p,pi,po)"
+  shows "resolution_view_term (p,pi,po) (evaluate_pattern h (decode_finite_pattern p)) =
+    Some (evaluate_pattern h (decode_finite_pattern pi),evaluate_pattern h (decode_finite_pattern po))"
+proof -
+  have lin: "distinct (finite_pattern_occurrences p)"
+    and vs: "finite_pattern_variables p = finite_pattern_variables pi |\<union>| finite_pattern_variables po"
+    using formed by (simp_all add: view_formed_def)
+  obtain l where m: "view_match p (evaluate_pattern h (decode_finite_pattern p)) = Some l"
+    and a: "\<forall>v. v |\<in>| finite_pattern_variables p \<longrightarrow> view_valuation l v = h v"
+    using view_match_complete[OF lin, of h] by blast
+  have ai: "evaluate_pattern (view_valuation l) (decode_finite_pattern pi) = evaluate_pattern h (decode_finite_pattern pi)"
+    by (rule evaluate_pattern_cong) (simp add: a vs finite_pattern_variables_correct[symmetric])
+  have ao: "evaluate_pattern (view_valuation l) (decode_finite_pattern po) = evaluate_pattern h (decode_finite_pattern po)"
+    by (rule evaluate_pattern_cong) (simp add: a vs finite_pattern_variables_correct[symmetric])
+  show ?thesis by (simp add: resolution_view_term_def m ai ao)
+qed
+
+theorem resolution_view_parts:
+  assumes formed: "view_formed (p,pi,po)"
+  shows "finite_view_parts (resolution_view_term (p,pi,po)) p pi po"
+proof -
+  have vs: "finite_pattern_variables p = finite_pattern_variables pi |\<union>| finite_pattern_variables po"
+    using formed by (simp add: view_formed_def)
+  show ?thesis using vs by (simp add: finite_view_parts_def decode_resolution_value resolution_view_evaluate[OF formed])
+qed
+
+subsection \<open>The view of a pattern\<close>
+
+text \<open>
+  A view reads a call's pattern as it reads a term: p is matched against the pattern, and pi and po are the same
+  substitution's (@{text resolution_view_pattern}). The viewed parts are the parts of the term view at the call
+  (@{text resolution_view_pattern_parts}); at p itself they are pi and po (@{text resolution_view_parts}).
+\<close>
+
+fun view_pattern_match :: "'v finite_term_pattern \<Rightarrow> 'w finite_term_pattern \<Rightarrow> ('v \<times> 'w finite_term_pattern) list option" where
+  "view_pattern_match (Finite_Variable v) c = Some [(v,c)]"
+| "view_pattern_match (Finite_Pattern_Target a) c = (if c = Finite_Pattern_Target a then Some [] else None)"
+| "view_pattern_match (Finite_Pattern_Payload b) c = (if c = Finite_Pattern_Payload b then Some [] else None)"
+| "view_pattern_match (Finite_Pattern_Pair p q) (Finite_Pattern_Pair c e) =
+    (case (view_pattern_match p c,view_pattern_match q e) of (Some l,Some m) \<Rightarrow> Some (l @ m) | _ \<Rightarrow> None)"
+| "view_pattern_match (Finite_Pattern_Pair p q) c = None"
+
+abbreviation view_substitution :: "('v \<times> 'w finite_term_pattern) list \<Rightarrow> 'v \<Rightarrow> 'w finite_term_pattern" where
+  "view_substitution \<equiv> view_lookup (Finite_Pattern_Payload [])"
+
+definition resolution_view_pattern ::
+    "'v resolution_view \<Rightarrow> 'w finite_term_pattern \<Rightarrow> ('w finite_term_pattern \<times> 'w finite_term_pattern) option" where
+  "resolution_view_pattern V c = (case V of (p,pi,po) \<Rightarrow> (case view_pattern_match p c of None \<Rightarrow> None
+    | Some l \<Rightarrow> Some (finite_pattern_substitute (view_substitution l) pi,finite_pattern_substitute (view_substitution l) po)))"
+
+lemma view_pattern_match_domain: "view_pattern_match p c = Some l \<Longrightarrow> map fst l = finite_pattern_occurrences p"
+proof (induction p arbitrary: c l)
+  case (Finite_Pattern_Pair p q)
+  then show ?case by (cases c) (auto split: option.splits)
+qed (auto split: if_splits)
+
+lemma view_pattern_match_sound:
+  "distinct (finite_pattern_occurrences p) \<Longrightarrow> view_pattern_match p c = Some l \<Longrightarrow>
+    finite_pattern_substitute (view_substitution l) p = c"
+proof (induction p arbitrary: c l)
+  case (Finite_Variable v)
+  then show ?case by (auto simp: view_lookup_def)
+next
+  case (Finite_Pattern_Target a)
+  then show ?case by (simp split: if_splits)
+next
+  case (Finite_Pattern_Payload b)
+  then show ?case by (simp split: if_splits)
+next
+  case (Finite_Pattern_Pair p q)
+  obtain c1 c2 where c: "c = Finite_Pattern_Pair c1 c2" using Finite_Pattern_Pair.prems(2) by (cases c) simp_all
+  from Finite_Pattern_Pair.prems(2) obtain l1 l2 where m1: "view_pattern_match p c1 = Some l1"
+      and m2: "view_pattern_match q c2 = Some l2" and l: "l = l1 @ l2"
+    unfolding c by (auto split: option.splits)
+  have dp: "distinct (finite_pattern_occurrences p)" and dq: "distinct (finite_pattern_occurrences q)"
+    and dis: "set (finite_pattern_occurrences p) \<inter> set (finite_pattern_occurrences q) = {}"
+    using Finite_Pattern_Pair.prems(1) by simp_all
+  note split = view_lookup_split[OF view_pattern_match_domain[OF m1] dis]
+  have a1: "finite_pattern_substitute (view_substitution l) p = finite_pattern_substitute (view_substitution l1) p"
+    by (rule finite_pattern_substitute_cong) (simp add: l split(1))
+  have a2: "finite_pattern_substitute (view_substitution l) q = finite_pattern_substitute (view_substitution l2) q"
+    by (rule finite_pattern_substitute_cong) (simp add: l split(2))
+  show ?case using a1 a2 Finite_Pattern_Pair.IH(1)[OF dp m1] Finite_Pattern_Pair.IH(2)[OF dq m2] c by simp
+qed
+
+theorem resolution_view_pattern_parts:
+  assumes formed: "view_formed (p,pi,po)" and viewed: "resolution_view_pattern (p,pi,po) c = Some (ci,co)"
+  shows "finite_view_parts (resolution_view_term (p,pi,po)) c ci co"
+proof -
+  have lin: "distinct (finite_pattern_occurrences p)"
+    and vs: "finite_pattern_variables p = finite_pattern_variables pi |\<union>| finite_pattern_variables po"
+    using formed by (simp_all add: view_formed_def)
+  obtain l where m: "view_pattern_match p c = Some l"
+      and ci: "ci = finite_pattern_substitute (view_substitution l) pi"
+      and co: "co = finite_pattern_substitute (view_substitution l) po"
+    using viewed by (auto simp: resolution_view_pattern_def split: option.splits)
+  let ?s = "view_substitution l"
+  have c: "finite_pattern_substitute ?s p = c" by (rule view_pattern_match_sound[OF lin m])
+
+  have vc: "finite_pattern_variables c = finite_pattern_variables ci |\<union>| finite_pattern_variables co"
+    unfolding c[symmetric] ci co
+  proof (rule fset_eqI)
+    fix x
+    show "x |\<in>| finite_pattern_variables (finite_pattern_substitute ?s p) \<longleftrightarrow>
+        x |\<in>| finite_pattern_variables (finite_pattern_substitute ?s pi) |\<union>| finite_pattern_variables (finite_pattern_substitute ?s po)"
+    proof
+      assume x: "x |\<in>| finite_pattern_variables (finite_pattern_substitute ?s p)"
+      obtain v where v: "v |\<in>| finite_pattern_variables p" "x |\<in>| finite_pattern_variables (?s v)"
+        using finite_substitute_variable_origin[OF x] by blast
+      have "v |\<in>| finite_pattern_variables pi \<or> v |\<in>| finite_pattern_variables po" using v(1) vs by simp
+      then show "x |\<in>| finite_pattern_variables (finite_pattern_substitute ?s pi) |\<union>|
+          finite_pattern_variables (finite_pattern_substitute ?s po)"
+        using v(2) finite_substitute_variables_subset[of v pi ?s] finite_substitute_variables_subset[of v po ?s] by auto
+    next
+      assume "x |\<in>| finite_pattern_variables (finite_pattern_substitute ?s pi) |\<union>|
+          finite_pattern_variables (finite_pattern_substitute ?s po)"
+      then obtain w where w: "w = pi \<or> w = po" and x: "x |\<in>| finite_pattern_variables (finite_pattern_substitute ?s w)"
+        by auto
+      obtain v where v: "v |\<in>| finite_pattern_variables w" "x |\<in>| finite_pattern_variables (?s v)"
+        using finite_substitute_variable_origin[OF x] by blast
+      have "v |\<in>| finite_pattern_variables p" using v(1) w vs by auto
+      then show "x |\<in>| finite_pattern_variables (finite_pattern_substitute ?s p)"
+        using v(2) finite_substitute_variables_subset[of v p ?s] by auto
+    qed
+  qed
+  have "resolution_view_term (p,pi,po) (decode_finite_term (resolution_value \<theta> c)) =
+      Some (decode_finite_term (resolution_value \<theta> ci),decode_finite_term (resolution_value \<theta> co))" for \<theta>
+    unfolding c[symmetric] ci co resolution_value_composes decode_resolution_value
+    by (rule resolution_view_evaluate[OF formed])
+  then show ?thesis using vc by (simp add: finite_view_parts_def)
+qed
+
+theorem resolution_view_injective:
+  assumes formed: "view_formed (p,pi,po)"
+    and a: "resolution_view_term (p,pi,po) t = Some z" and b: "resolution_view_term (p,pi,po) t' = Some z"
+  shows "t = t'"
+proof -
+  have lin: "distinct (finite_pattern_occurrences p)"
+    and vs: "finite_pattern_variables p = finite_pattern_variables pi |\<union>| finite_pattern_variables po"
+    using formed by (simp_all add: view_formed_def)
+  obtain l where m: "view_match p t = Some l"
+      and zl: "z = (evaluate_pattern (view_valuation l) (decode_finite_pattern pi),
+        evaluate_pattern (view_valuation l) (decode_finite_pattern po))"
+    using a by (auto simp: resolution_view_term_def split: option.splits)
+  obtain l' where m': "view_match p t' = Some l'"
+      and zl': "z = (evaluate_pattern (view_valuation l') (decode_finite_pattern pi),
+        evaluate_pattern (view_valuation l') (decode_finite_pattern po))"
+    using b by (auto simp: resolution_view_term_def split: option.splits)
+  have ei: "evaluate_pattern (view_valuation l) (decode_finite_pattern pi) =
+      evaluate_pattern (view_valuation l') (decode_finite_pattern pi)" using zl zl' by simp
+  have eo: "evaluate_pattern (view_valuation l) (decode_finite_pattern po) =
+      evaluate_pattern (view_valuation l') (decode_finite_pattern po)" using zl zl' by simp
+  have ag: "view_valuation l v = view_valuation l' v" if "v |\<in>| finite_pattern_variables p" for v
+  proof -
+    have "v |\<in>| finite_pattern_variables pi \<or> v |\<in>| finite_pattern_variables po" using that vs by simp
+    then show ?thesis using evaluate_pattern_agree[OF ei] evaluate_pattern_agree[OF eo]
+      by (auto simp: finite_pattern_variables_correct[symmetric])
+  qed
+  have "evaluate_pattern (view_valuation l) (decode_finite_pattern p) =
+      evaluate_pattern (view_valuation l') (decode_finite_pattern p)"
+    by (rule evaluate_pattern_cong) (simp add: ag finite_pattern_variables_correct[symmetric])
+  then show ?thesis using view_match_sound[OF lin m] view_match_sound[OF lin m'] by simp
+qed
+
+subsection \<open>R5's pair and its swap are views\<close>
+
+definition identity_view :: "'v \<Rightarrow> 'v \<Rightarrow> 'v resolution_view" where
+  "identity_view a b = (Finite_Pattern_Pair (Finite_Variable a) (Finite_Variable b),Finite_Variable a,Finite_Variable b)"
+
+definition swapped_view :: "'v \<Rightarrow> 'v \<Rightarrow> 'v resolution_view" where
+  "swapped_view a b = (Finite_Pattern_Pair (Finite_Variable a) (Finite_Variable b),Finite_Variable b,Finite_Variable a)"
+
+lemma identity_view_formed: "a \<noteq> b \<Longrightarrow> view_formed (identity_view a b)"
+  by (simp add: view_formed_def identity_view_def finsert_commute)
+
+lemma swapped_view_formed: "a \<noteq> b \<Longrightarrow> view_formed (swapped_view a b)"
+  by (simp add: view_formed_def swapped_view_def finsert_commute)
+
+lemma identity_view_term:
+  assumes "a \<noteq> b"
+  shows "resolution_view_term (identity_view a b) = pair_view"
+proof
+  fix t show "resolution_view_term (identity_view a b) t = pair_view t"
+    using assms by (cases t) (simp_all add: resolution_view_term_def identity_view_def view_lookup_def pair_view_def)
+qed
+
+lemma swapped_view_term:
+  assumes "a \<noteq> b"
+  shows "resolution_view_term (swapped_view a b) = swap_view"
+proof
+  fix t show "resolution_view_term (swapped_view a b) t = swap_view t"
+    using assms by (cases t) (simp_all add: resolution_view_term_def swapped_view_def view_lookup_def swap_view_def)
+qed
+
+subsection \<open>A view's holes\<close>
+
+text \<open>
+  A view whose output is a tuple of patterns (@{const finite_pattern_tuple}) names them its holes: a consumer holds one
+  hole, and the view's correspondence is a product, one factor per hole.
+\<close>
+
+definition view_holes :: "'v resolution_view \<Rightarrow> 'v finite_term_pattern list \<Rightarrow> bool" where
+  "view_holes V hs \<longleftrightarrow> snd (snd V) = finite_pattern_tuple hs"
+
+lemma finite_pattern_tuple_variables:
+  "fset (finite_pattern_variables (finite_pattern_tuple hs)) = (\<Union>h\<in>set hs. fset (finite_pattern_variables h))"
+  by (induction hs rule: finite_pattern_tuple.induct) auto
 section \<open>Declarations and their discharge\<close>
 
 text \<open>

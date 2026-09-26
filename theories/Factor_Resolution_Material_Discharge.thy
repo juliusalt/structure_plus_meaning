@@ -20,10 +20,6 @@ text \<open>
 
 subsection \<open>Values read as evaluations\<close>
 
-lemma decode_resolution_value:
-  "decode_finite_term (resolution_value \<theta> p) = evaluate_pattern (\<lambda>z. decode_finite_term (\<theta> z)) (decode_finite_pattern p)"
-  by (induction p) (simp_all add: resolution_value_def)
-
 lemma finite_material_ground_value:
   "finite_material_ground_satisfied (finite_material_pattern_substitute (resolution_substitution \<theta>) N) \<longleftrightarrow>
     finite_material_observation (resolution_value \<theta> (finite_material_source N)) (resolution_value \<theta> (finite_material_atoms N))

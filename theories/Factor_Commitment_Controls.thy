@@ -128,4 +128,117 @@ lemma carrier_controls:
       (carrier_control_call [3]) 60) = 120"
   by eval
 
+text \<open>
+  The controls of the framed test (B2b of DECISIONS.md, task 495's entry, "Committed choice, for refusals", correction
+  (10)), each beside R4's values and the test at no frames.
+
+  The remainder control is 61.0/4's shape in small: site 3, c(X) :- r(Pair X (Pair Z R)), prod(Pair Z Y), chk(Y), over
+  r(x,(z1,m1)), r(x2,(z2,m2)), prod(z1,a), prod(z1,b), prod(z2,c), prod(z2,d), chk(a), chk(b) (x = [1], x2 = [2],
+  z1 = [3], z2 = [4], a to d = [5] to [8], m1 = [9], m2 = [10]), prod's socket declared with the kept head and framed at
+  its own output {Y}. Once r is closed it holds the private remainder R, premise-only and no input of prod, so the test
+  at the default frame (the clause's variables outside prod's inputs, {R, Y}) keeps prod uncommitted, as correction (9)'s
+  test does: two certificates, R4's. At the frame {Y} r's variables lie outside the frame and R is bound ground, so prod
+  commits: one certificate. c(x2) is refuted, as by R4: the kept answer fails chk.
+
+  The fixed-output control is 62.0/0's term in small: the variant control's program with q(X) :- perm(X,[a|W]),
+  c(Pair X [a|W]), the caller fixing the head's element a, which is the selection's own output at the permutation's
+  clause (its head output (x1, x3), the selection's output (x1, x2)); the selection socket framed at {x1, x2, x3}, the
+  variables its answer changes. The variant test refuses a fixed head output; at the frame the head output x3 outside the
+  selection's output is bound to the fresh W and the fixed x1 is the socket's own, so the selection commits. Over
+  [[1],[2],[1]] at a = [1] the kept answer's certificates are one (one selection), two under the test at no frames (both
+  selections of [1] give the kept permutation), four by R4; a = [9] is refuted by both. Correction (1)'s variant control
+  (the caller fixing an element inside x3) stays refused at the frame: resolved at a = [1] and refuted at a = [3], each
+  R4's verdict.
+\<close>
+
+definition framed_remainder_clause :: "(nat,nat,nat) finite_factor_schema" where
+  "framed_remainder_clause = \<lparr>finite_schema_conclusion=Finite_Variable 0,
+    finite_schema_premises={|(0,(0,Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 3)))),
+      (1,(1,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2))),
+      (2,(2,Finite_Variable 2))|},
+    finite_schema_materials={||}\<rparr>"
+
+abbreviation framed_remainder_fact :: "octets \<Rightarrow> octets \<Rightarrow> octets \<Rightarrow> (nat,nat,nat) finite_factor_schema" where
+  "framed_remainder_fact u v w \<equiv> commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload u)
+    (Finite_Pattern_Pair (Finite_Pattern_Payload v) (Finite_Pattern_Payload w)))"
+
+definition framed_remainder_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "framed_remainder_program = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0),
+      (2,Finite_Variable 0),(3,Finite_Variable 0)|},
+    finite_system_clauses={|((0,0),framed_remainder_fact [1] [3] [9]),((0,1),framed_remainder_fact [2] [4] [10]),
+      ((1,0),closed_sibling_fact [3] [5]),((1,1),closed_sibling_fact [3] [6]),
+      ((1,2),closed_sibling_fact [4] [7]),((1,3),closed_sibling_fact [4] [8]),
+      ((2,0),commitment_fact (Finite_Pattern_Payload [5])),((2,1),commitment_fact (Finite_Pattern_Payload [6])),
+      ((3,0),framed_remainder_clause)|}\<rparr>"
+
+definition framed_remainder_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "framed_remainder_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
+    declared_sockets={|(3,framed_remainder_clause,1,True,view_identity,view_identity)|}\<rparr>"
+
+definition framed_remainder_frames :: "(nat,nat,nat) resolution_frames" where
+  "framed_remainder_frames = {|(3,framed_remainder_clause,1,{|2|})|}"
+
+definition framed_fixed_root :: "octets \<Rightarrow> (nat,nat,nat) finite_factor_schema" where
+  "framed_fixed_root a = \<lparr>finite_schema_conclusion=Finite_Variable 0,
+    finite_schema_premises={|(0,(1,Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Pattern_Payload a) (Finite_Variable 2)))),
+      (1,(5,Finite_Pattern_Pair (Finite_Variable 0)
+        (Finite_Pattern_Pair (Finite_Pattern_Payload a) (Finite_Variable 2))))|},
+    finite_schema_materials={||}\<rparr>"
+
+definition framed_fixed_program :: "octets \<Rightarrow> (nat,nat,nat,nat) finite_schema_system" where
+  "framed_fixed_program a = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0),
+      (5,Finite_Variable 0),(7,Finite_Variable 0)|},
+    finite_system_clauses={|((0,0),commitment_selection_here),((0,1),commitment_selection_later),
+      ((1,0),commitment_permutation_nil),((1,1),commitment_permutation_cons),((5,0),commitment_exchange_consumer),
+      ((7,0),framed_fixed_root a)|}\<rparr>"
+
+definition framed_permutation_frames :: "(nat,nat,nat) resolution_frames" where
+  "framed_permutation_frames = {|(1,commitment_permutation_cons,0,{|1,2,3|})|}"
+
+lemma framed_controls:
+  "commitment_certificates (finite_program_resolution no_witness_construction framed_remainder_program 3
+      (Finite_Payload [1]) 20) = 2 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment framed_remainder_declarations) framed_remainder_program 3 (Finite_Payload [1]) 20) = 2 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment framed_remainder_declarations framed_remainder_frames) framed_remainder_program 3
+      (Finite_Payload [1]) 20) = 1 \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment framed_remainder_declarations framed_remainder_frames) framed_remainder_program 3
+      (Finite_Payload [1]) 20) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment framed_remainder_declarations framed_remainder_frames) framed_remainder_program 3
+      (Finite_Payload [2]) 20) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction framed_remainder_program 3
+      (Finite_Payload [2]) 20) = Some False \<and>
+    commitment_certificates (finite_program_resolution no_witness_construction (framed_fixed_program [1]) 7
+      (control_payload_list [[1],[2],[1]]) 30) = 4 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment commitment_variant_declarations) (framed_fixed_program [1]) 7
+      (control_payload_list [[1],[2],[1]]) 30) = 2 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment commitment_variant_declarations framed_permutation_frames) (framed_fixed_program [1]) 7
+      (control_payload_list [[1],[2],[1]]) 30) = 1 \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment commitment_variant_declarations framed_permutation_frames) (framed_fixed_program [1]) 7
+      (control_payload_list [[1],[2],[1]]) 30) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment commitment_variant_declarations framed_permutation_frames) (framed_fixed_program [9]) 7
+      (control_payload_list [[1],[2],[1]]) 30) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction (framed_fixed_program [9]) 7
+      (control_payload_list [[1],[2],[1]]) 30) = Some False \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment commitment_variant_declarations framed_permutation_frames) (commitment_variant_program [1]) 7
+      (control_payload_list [[1],[2]]) 30) = Some True \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction (commitment_variant_program [1]) 7
+      (control_payload_list [[1],[2]]) 30) = Some True \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_framed_commitment commitment_variant_declarations framed_permutation_frames) (commitment_variant_program [3]) 7
+      (control_payload_list [[1],[2]]) 30) = Some False \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction (commitment_variant_program [3]) 7
+      (control_payload_list [[1],[2]]) 30) = Some False"
+  by eval
+
 end

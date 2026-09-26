@@ -115,8 +115,7 @@ exists, Q2): the slots are one pool, each free slot going to the first task in t
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
 the carriers' fix #722 at the head (review 598's 1, before R6b's and R6c's carriers), then #665's builds on the
 longest chain (#674, #689), F1 #693, #676,
-F3 #695, F2b #699, F2c #701, C #703; R5e #599 and R6c's #609; the rooted reading's reuse row #720 (a fix continuing #716, its merge with main to resolve), R6c's
-instantiation family (#607, #679, #681) beside R6b's parts
+F3 #695, F2b #699, F2c #701, C #703; R5e #599 and R6c's #609; R6c's instantiation family (#607, #679, #681) beside R6b's parts
 #601 and #603; V3's #653 and #687, then #655 and #688; the carryings #605 and #663 with V2a #649 and V2b #651; rc
 #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains' order
 (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
@@ -309,7 +308,8 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   `Development_Native_State` (#395, #484: `development_given_value`, `development_base_generation`).
 - **The definition closure** (#716, `e66ded23`): `finite_definition_closure` an instance of `Finite_Demanded_Closures`'
   rooted reading (`finite_definition_closure_rooted`, `finite_definition_closure_demanded_code`), its code the frontier
-  traversal from the roots; the rooted bases' closures read that way (#715's cause, 9.6 s).
+  traversal from the roots; the rooted bases' closures read that way (#715's cause, 9.6 s); its REASONING_REUSE.md
+  row, the rooted reading with its three instances (#720, `0fe53cfc`).
 - **The guard and the asked relation**: `Development_First_Problem_Guard` (#391: G1–G4 on the pair of the given and the
   candidate), `Factor_Package_Additions` (#389), `Factor_Payload_Audit` (#387, sites 500–505),
   `Development_First_Problem_Asked` (#393: the guard installed over the given's readers, the asked relation's entry,
@@ -541,10 +541,10 @@ planner searches for a theory before briefing a task that edits it.
 
 
 - **The graph's width**: the route is one chain — (#674 → #689, the carriers' fix #722) → #676 → R5e, R6b's and R6c's
-  parts → the carryings → R7 → #399 — so between its landings little else of it can start; #674, #603 and #607 run
-  side by side, #603 and #607 parked for #722 once they reach their carriers (`v2.py after`), and #720 merges its row
-  with main. Nothing is invented to fill the gaps.
-- **What the next events ask**: #722's landing, which #603 and #607 park for at their carriers; the first one-session
+  parts → the carryings → R7 → #399 — so between its landings little else of it can start; #674, #601, #603 and #607
+  run side by side, #601, #603 and #607 parked for #722 once they reach their carriers (`v2.py after`; q125). Nothing
+  is invented to fill the gaps.
+- **What the next events ask**: #722's landing, which #601, #603 and #607 park for at their carriers; the first one-session
   base's landing, after which probes start in about 3 s — not yet:
   #685's and #670's landings stayed on the chain (`PLANNING_LOG.md`, plan-92). #674 (with #689), #601 and #613 grew or
   were divided against their relations: a build refused at its start is divided then. The samples build #551 is the
@@ -585,7 +585,8 @@ planner searches for a theory before briefing a task that edits it.
   (`finite_direct_context` to several holes, #670's); the declaration builds (#597, #599, #601, #603, #605, #607, #609,
   #611, #649, #651, #663, #679, #681) — review 669's 1 and 3; #689 — review 669's 2. Plan-92: #689 — review 685's 1, review 671's 1 (next-edits 262, 264) and review 673's 1, 2 and 4 (next-edits 270);
   #603, #607, #601, #679, #681, #649, #599 — review 598's 1 (the carriers as function witnesses, stated by #722; #603 and
-  #607 told to park for it at their carriers), #601 also review 673's 2, #599 also review 598's 4; #674 — review 673's 3.
+  #607 told to park for it at their carriers), #601 also review 673's 2, #599 also review 598's 4; #674 — review 673's 3; #601 — q125 (park for #722 at the carried socket); #722 — q125 (#601's
+  direct discharges of 59 and 51 from `row_values_exact` and `row_keys_exact`, its forms' instances).
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

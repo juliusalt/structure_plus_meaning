@@ -223,6 +223,7 @@ fun map_registration_families ::
   "map_registration_families f (Single_Family F) = Single_Family (map_collection_family f F)"
 | "map_registration_families f (Paired_Families F G) =
     Paired_Families (map_collection_family f F) (map_collection_family f G)"
+| "map_registration_families f (Determined_Value p) = Determined_Value (map_finite_term_pattern f p)"
 
 definition registration_varied ::
     "('a \<Rightarrow> 'b) \<Rightarrow> ('b,'t,'d) finite_factor_schema \<Rightarrow> ('a,'s,'d,'v) collection_registration \<Rightarrow>
@@ -237,6 +238,13 @@ lemma registration_varied_fields [simp]:
   "registration_variable (registration_varied f T R) = f (registration_variable R)"
   "registration_families (registration_varied f T R) = map_registration_families f (registration_families R)"
   by (simp_all add: registration_varied_def)
+
+text \<open>A determined registration carried reads its pattern at the images of its variables.\<close>
+
+lemma finite_registration_value_varied_determined:
+  assumes "registration_families R = Determined_Value p"
+  shows "finite_registration_value N m (registration_varied f T R) B = finite_determined_value (map_finite_term_pattern f p) B"
+  using assms by (simp add: finite_registration_value_def)
 
 text \<open>
   A registration at a clause of P at its site is carried, as V1 carries a construction's registrations, to every

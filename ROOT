@@ -1346,6 +1346,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Narrowed_Sockets
     Factor_Narrowed_Commitments
     Factor_Narrowed_Productions
+    Factor_Committed_Registrations
     Factor_Varied_Constructions
     Factor_Varied_Narrowed_Sockets
     Factor_Varied_Narrowed_Transfer

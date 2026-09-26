@@ -59,6 +59,16 @@ lemma additions_guard_agreement:
   unfolding guard_readers_system_def
   by (rule system_union_agree_left[OF payload_audit_system_formed readers_agreement])
 
+text \<open>
+  The one-step agreements with the program: a reader's system agreeing with the additions' system on its whole domain
+  agrees with the program there, composed once with @{thm [source] additions_guard_agreement}.
+\<close>
+
+lemmas guard_closure_agreement = whole_agreement_transitive[OF given_reader_agreements(2) additions_guard_agreement]
+lemmas guard_root_family_agreement = whole_agreement_transitive[OF given_reader_agreements(3) additions_guard_agreement]
+lemmas guard_membership_agreement = whole_agreement_transitive[OF given_reader_agreements(7) additions_guard_agreement]
+lemmas guard_edge_agreement = whole_agreement_transitive[OF given_reader_agreements(6) additions_guard_agreement]
+
 subsection \<open>Each reader means in the program what it means in its own system\<close>
 
 text \<open>

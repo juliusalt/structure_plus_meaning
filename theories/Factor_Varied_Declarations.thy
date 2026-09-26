@@ -327,6 +327,117 @@ next
   qed
 qed
 
+text \<open>
+  A frame is carried along the match as the obligation is, its variables mapped by the binder map: the new instance
+  read back agrees with the old outside the frame, so the carried instance agrees outside the frame's image.
+\<close>
+
+lemma frame_along:
+  assumes fr: "\<forall>a\<in>schema_variables (decode_finite_schema S) - C. u a = (v \<circ> f) a"
+  shows "\<forall>b\<in>schema_variables (decode_finite_schema T) - f ` C. (u \<circ> binder_inverse) b = v b"
+proof
+  fix b assume b: "b \<in> schema_variables (decode_finite_schema T) - f ` C"
+  then obtain a where a: "a \<in> schema_variables (decode_finite_schema S)" "b = f a" by (auto simp: target_variables)
+  have aC: "a \<notin> C" using b a(2) by blast
+  have "(u \<circ> binder_inverse) b = ((u \<circ> binder_inverse) \<circ> f) a" using a(2) by simp
+  also have "\<dots> = u a" by (rule inverse_agrees[OF a(1)])
+  also have "\<dots> = (v \<circ> f) a" using fr a(1) aC by blast
+  finally show "(u \<circ> binder_inverse) b = v b" using a(2) by simp
+qed
+
+theorem socket_framed_matched:
+  assumes src: "socket_framed M S s keep Vp Vh C"
+    and sock: "s \<in> schema_sockets (decode_finite_schema S)"
+    and Vpf: "view_formed Vp" and Vhf: "view_formed Vh"
+    and eq: "\<And>d x. d \<in> schema_dependencies (decode_finite_schema S) \<Longrightarrow> (d,x) \<in> M' \<longleftrightarrow> (d,x) \<in> M"
+  shows "socket_framed M' T (h s) keep Vp Vh (f ` C)"
+  unfolding socket_framed_def
+proof (intro conjI allI impI)
+  fix d p assume at: "(h s,d,p) |\<in>| finite_schema_premises T"
+  obtain p0 where p0: "(s,d,p0) |\<in>| finite_schema_premises S" "p = map_finite_term_pattern f p0"
+    using premise_at_image[OF sock at] .
+  obtain xi0 yo0 where v0: "resolution_view_pattern Vp p0 = Some (xi0,yo0)"
+    using src p0(1) unfolding socket_framed_def by fastforce
+  show "resolution_view_pattern Vp p \<noteq> None" using resolution_view_pattern_map[OF v0, of f] p0(2) by simp
+next
+  fix v d p xi yo t y'
+  assume vT: "clause_true M' (decode_finite_schema T) v" and at: "(h s,d,p) |\<in>| finite_schema_premises T"
+    and vp: "resolution_view_pattern Vp p = Some (xi,yo)" and dt: "(d,t) \<in> M'"
+    and vt: "resolution_view_term Vp t = Some (evaluate_pattern v (decode_finite_pattern xi),y')"
+  obtain p0 where p0: "(s,d,p0) |\<in>| finite_schema_premises S" "p = map_finite_term_pattern f p0"
+    using premise_at_image[OF sock at] .
+  obtain xi0 yo0 where v0: "resolution_view_pattern Vp p0 = Some (xi0,yo0)"
+    using src p0(1) unfolding socket_framed_def by fastforce
+  have xy: "xi = map_finite_term_pattern f xi0" "yo = map_finite_term_pattern f yo0"
+    using resolution_view_pattern_map[OF v0, of f] vp p0(2) by simp_all
+  have dep: "d \<in> schema_dependencies (decode_finite_schema S)"
+    by (rule schema_dependencies_premise[of s d "decode_finite_pattern p0"]) (use p0(1) in \<open>auto simp: finite_premise_decoded\<close>)
+  have dt0: "(d,t) \<in> M" using dt eq[OF dep] by simp
+  have vS: "clause_true M (decode_finite_schema S) (v \<circ> f)" using vT clause_true_along[OF eq] by blast
+  have vt0: "resolution_view_term Vp t = Some (evaluate_pattern (v \<circ> f) (decode_finite_pattern xi0),y')"
+    using vt by (simp add: xy evaluate_map_finite_pattern)
+  obtain h2 where h2: "clause_true M (decode_finite_schema S) h2" "head_kept keep Vh S (v \<circ> f) h2"
+      "\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h2 a = (v \<circ> f) a"
+      "evaluate_pattern h2 (decode_finite_pattern xi0) = evaluate_pattern (v \<circ> f) (decode_finite_pattern xi0)"
+      "evaluate_pattern h2 (decode_finite_pattern yo0) = y'"
+    using src vS p0(1) v0 dt0 vt0 unfolding socket_framed_def by blast
+  have pv: "fset (finite_pattern_variables p0) \<subseteq> schema_variables (decode_finite_schema S)" by (rule call_scope[OF p0(1)])
+  have xv: "fset (finite_pattern_variables xi0) \<subseteq> schema_variables (decode_finite_schema S)"
+    using resolution_view_parts_variables(1)[OF Vpf v0] pv by blast
+  have yv: "fset (finite_pattern_variables yo0) \<subseteq> schema_variables (decode_finite_schema S)"
+    using resolution_view_parts_variables(2)[OF Vpf v0] pv by blast
+  show "\<exists>h'. clause_true M' (decode_finite_schema T) h' \<and> head_kept keep Vh T v h' \<and>
+      (\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. h' a = v a) \<and>
+      evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi) \<and>
+      evaluate_pattern h' (decode_finite_pattern yo) = y'"
+  proof (intro exI conjI)
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. (h2 \<circ> binder_inverse) a = v a"
+      by (rule frame_along[OF h2(3)])
+    show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi)"
+      using h2(4) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF xv])
+    show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern yo) = y'"
+      using h2(5) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF yv])
+  qed
+next
+  fix v N g
+  assume vT: "clause_true M' (decode_finite_schema T) v"
+    and at: "(h s,N) \<in> schema_material_premises (decode_finite_schema T)"
+    and sat: "evaluate_material_satisfaction g N"
+    and se: "evaluate_pattern g (material_source N) = evaluate_pattern v (material_source N)"
+  obtain N0 where N0: "(s,N0) \<in> schema_material_premises (decode_finite_schema S)" "N = rename_material_pattern f N0"
+    using material_at_image[OF sock at] .
+  have vS: "clause_true M (decode_finite_schema S) (v \<circ> f)" using vT clause_true_along[OF eq] by blast
+  have sat0: "evaluate_material_satisfaction (g \<circ> f) N0" using sat N0(2) evaluate_rename_material by blast
+  have se0: "evaluate_pattern (g \<circ> f) (material_source N0) = evaluate_pattern (v \<circ> f) (material_source N0)"
+    using se N0(2) by (simp add: rename_material_pattern_def evaluate_rename_pattern)
+  obtain h2 where h2: "clause_true M (decode_finite_schema S) h2" "head_kept keep Vh S (v \<circ> f) h2"
+      "\<forall>a\<in>schema_variables (decode_finite_schema S) - C. h2 a = (v \<circ> f) a"
+      "\<forall>a\<in>material_variables N0. h2 a = (g \<circ> f) a"
+    using src vS N0(1) sat0 se0 unfolding socket_framed_def by blast
+  have mv: "material_variables N0 \<subseteq> schema_variables (decode_finite_schema S)"
+    using N0(1) by (force simp: schema_variables_def)
+  show "\<exists>h'. clause_true M' (decode_finite_schema T) h' \<and> head_kept keep Vh T v h' \<and>
+      (\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. h' a = v a) \<and>
+      (\<forall>a\<in>material_variables N. h' a = g a)"
+  proof (intro exI conjI)
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "\<forall>a\<in>schema_variables (decode_finite_schema T) - f ` C. (h2 \<circ> binder_inverse) a = v a"
+      by (rule frame_along[OF h2(3)])
+    show "\<forall>b\<in>material_variables N. (h2 \<circ> binder_inverse) b = g b"
+    proof
+      fix b assume "b \<in> material_variables N"
+      then obtain a where a: "a \<in> material_variables N0" "b = f a" using N0(2) by (auto simp: renamed_material_variables)
+      have "(h2 \<circ> binder_inverse) b = ((h2 \<circ> binder_inverse) \<circ> f) a" using a(2) by simp
+      also have "\<dots> = h2 a" using inverse_agrees[of a h2] a(1) mv by blast
+      also have "\<dots> = g b" using h2(4) a by simp
+      finally show "(h2 \<circ> binder_inverse) b = g b" .
+    qed
+  qed
+qed
+
 end
 
 section \<open>The varied record\<close>
@@ -635,5 +746,280 @@ theorem declarations_relocated_varied_discharged:
   shows "declarations_discharged (positive_meaning (decode_finite_system N))
     (declarations_varied (finite_rename_system g Q) N (declarations_relocated g D)) (corr \<circ> inv_into (declared_sites D) g)"
   by (rule declarations_varied_discharged_variant[OF alpha declarations_relocated_discharged[OF Qf injective discharged]])
+
+section \<open>The frames along the match\<close>
+
+text \<open>
+  A frame is carried as its socket is, its site kept, its socket at the image and its variables mapped by the match's
+  binder map (@{text socket_framed_matched}), where its clause is the one clause of P at its site that the match
+  reaches from N's clause (@{text varied_unique}): a clause of N reached from two clauses of P would carry the frame of
+  one to a socket declared at the other, whose frame is not declared, so such a frame is not carried and the socket is
+  tested there at its default frame.
+\<close>
+
+definition varied_unique ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> 'd \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow>
+      ('b,'t::linorder,'d) finite_factor_schema \<Rightarrow> bool" where
+  "varied_unique P e S T \<longleftrightarrow>
+    fBall (finite_system_clauses P) (\<lambda>((e',c),S'). e' = e \<longrightarrow> finite_schema_match S' T \<noteq> None \<longrightarrow> S' = S)"
+
+definition varied_frames ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('b,'t::linorder,'d,'e) finite_schema_system \<Rightarrow>
+      'd \<times> ('a,'s,'d) finite_factor_schema \<times> 's \<times> 'a fset \<Rightarrow> ('d \<times> ('b,'t,'d) finite_factor_schema \<times> 't \<times> 'b fset) fset" where
+  "varied_frames P N z = (case z of (e,S,s,C) \<Rightarrow>
+    if (\<exists>c. ((e,c),S) |\<in>| finite_system_clauses P) \<and> s \<in> schema_sockets (decode_finite_schema S) then
+      ffUnion (fimage (\<lambda>((e',c'),T). if e' = e \<and> varied_unique P e S T then (case finite_schema_match S T of None \<Rightarrow> {||}
+        | Some (f,h) \<Rightarrow> {|(e,T,h s,fimage f C)|}) else {||}) (finite_system_clauses N))
+    else {||})"
+
+definition frames_varied ::
+    "('a,'s::linorder,'d,'c) finite_schema_system \<Rightarrow> ('b,'t::linorder,'d,'e) finite_schema_system \<Rightarrow>
+      ('a,'s,'d) resolution_frames \<Rightarrow> ('b,'t,'d) resolution_frames" where
+  "frames_varied P N \<Phi> = ffUnion (fimage (varied_frames P N) \<Phi>)"
+
+lemma varied_frames_origin:
+  assumes y: "y |\<in>| varied_frames P N (e,S,s,C)"
+  obtains c c' T f h where "((e,c),S) |\<in>| finite_system_clauses P" "s \<in> schema_sockets (decode_finite_schema S)"
+    "((e,c'),T) |\<in>| finite_system_clauses N" "varied_unique P e S T" "finite_schema_match S T = Some (f,h)"
+    "y = (e,T,h s,fimage f C)"
+proof -
+  have guard: "(\<exists>c. ((e,c),S) |\<in>| finite_system_clauses P) \<and> s \<in> schema_sockets (decode_finite_schema S)"
+  proof (rule ccontr)
+    assume ng: "\<not> ((\<exists>c. ((e,c),S) |\<in>| finite_system_clauses P) \<and> s \<in> schema_sockets (decode_finite_schema S))"
+    have "varied_frames P N (e,S,s,C) = {||}" by (simp only: varied_frames_def prod.case if_not_P[OF ng])
+    then show False using y by simp
+  qed
+  let ?F = "\<lambda>((e',c'),T). if e' = e \<and> varied_unique P e S T then
+      (case finite_schema_match S T of None \<Rightarrow> {||} | Some (f,h) \<Rightarrow> {|(e,T,h s,fimage f C)|}) else {||}"
+  have yU: "y |\<in>| ffUnion (fimage ?F (finite_system_clauses N))"
+    using y by (simp only: varied_frames_def prod.case if_P[OF guard])
+  obtain w where w: "w |\<in>| finite_system_clauses N" "y |\<in>| ?F w"
+    using iffD1[OF finite_union_image_member yU] by (elim exE conjE)
+  obtain ec T where ws0: "w = (ec,T)" by (cases w)
+  obtain e' c' where ec: "ec = (e',c')" by (cases ec)
+  have ws: "w = ((e',c'),T)" by (simp only: ws0 ec)
+  have ok: "e' = e \<and> varied_unique P e S T"
+  proof (rule ccontr)
+    assume "\<not> (e' = e \<and> varied_unique P e S T)"
+    then show False using w(2) unfolding ws by auto
+  qed
+  obtain f h where fh: "finite_schema_match S T = Some (f,h)" and yv: "y = (e,T,h s,fimage f C)"
+  proof (cases "finite_schema_match S T")
+    case None
+    then show ?thesis using w(2) ok unfolding ws by simp
+  next
+    case (Some fh')
+    obtain f h where fh': "fh' = (f,h)" by (cases fh')
+    show ?thesis by (rule that[of f h]) (use Some fh' w(2) ok in \<open>simp_all add: ws\<close>)
+  qed
+  have wN: "((e,c'),T) |\<in>| finite_system_clauses N" using w(1) ok unfolding ws by simp
+  obtain c where c: "((e,c),S) |\<in>| finite_system_clauses P" using guard by blast
+  show ?thesis by (rule that[OF c conjunct2[OF guard] wN conjunct2[OF ok] fh yv])
+qed
+
+lemma frames_varied_origin:
+  assumes "(e,T,t,C') |\<in>| frames_varied P N \<Phi>"
+  obtains S s C c c' f h where "(e,S,s,C) |\<in>| \<Phi>" "((e,c),S) |\<in>| finite_system_clauses P"
+    "s \<in> schema_sockets (decode_finite_schema S)" "((e,c'),T) |\<in>| finite_system_clauses N" "varied_unique P e S T"
+    "finite_schema_match S T = Some (f,h)" "t = h s" "C' = fimage f C"
+proof -
+  obtain z where z: "z |\<in>| \<Phi>" "(e,T,t,C') |\<in>| varied_frames P N z"
+    using assms unfolding frames_varied_def finite_union_image_member by blast
+  obtain e0 S s C where zs: "z = (e0,S,s,C)" by (metis prod_cases4)
+  obtain c c' T' f h where o: "((e0,c),S) |\<in>| finite_system_clauses P" "s \<in> schema_sockets (decode_finite_schema S)"
+      "((e0,c'),T') |\<in>| finite_system_clauses N" "varied_unique P e0 S T'" "finite_schema_match S T' = Some (f,h)"
+      "(e,T,t,C') = (e0,T',h s,fimage f C)"
+    by (rule varied_frames_origin[OF z(2)[unfolded zs]])
+  have eqs: "e0 = e" "T' = T" "t = h s" "C' = fimage f C" using o(6) by simp_all
+  show ?thesis by (rule that[of S s C c c' f h]) (use z(1) o eqs zs in simp_all)
+qed
+
+text \<open>
+  At any meanings: a family discharged at M with a formed record is, varied, discharged at M' wherever the two mean the
+  same at the record's sites.
+\<close>
+
+theorem frames_varied_discharged:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
+  assumes Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    and at: "\<And>d x. d \<in> declared_sites D \<Longrightarrow> (d,x) \<in> M' \<longleftrightarrow> (d,x) \<in> M"
+    and formed: "declarations_formed D" and frames: "frames_discharged M D \<Phi>"
+  shows "frames_discharged M' (declarations_varied P N D) (frames_varied P N \<Phi>)"
+  unfolding frames_discharged_def
+proof (intro allI impI)
+  fix e T t C' keep Vp Vh
+  assume fr: "(e,T,t,C') |\<in>| frames_varied P N \<Phi>"
+    and so: "(e,T,t,keep,Vp,Vh) |\<in>| declared_sockets (declarations_varied P N D)"
+  obtain S1 s1 C c1 c1' f1 h1 where f1: "(e,S1,s1,C) |\<in>| \<Phi>" "((e,c1),S1) |\<in>| finite_system_clauses P"
+      "s1 \<in> schema_sockets (decode_finite_schema S1)" "((e,c1'),T) |\<in>| finite_system_clauses N"
+      "varied_unique P e S1 T" "finite_schema_match S1 T = Some (f1,h1)" "t = h1 s1" "C' = fimage f1 C"
+    by (rule frames_varied_origin[OF fr])
+  obtain S s c c' f h where m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D" "((e,c),S) |\<in>| finite_system_clauses P"
+      "s \<in> schema_sockets (decode_finite_schema S)" "((e,c'),T) |\<in>| finite_system_clauses N"
+      "finite_schema_match S T = Some (f,h)" "t = h s"
+    using so[unfolded declarations_varied_sockets_member] by blast
+  have S: "S = S1" using fbspec[OF f1(5)[unfolded varied_unique_def] m(2)] m(5) by simp
+  have fh: "f1 = f" "h1 = h" using f1(6) m(5) S by simp_all
+  interpret matched: finite_schema_matched S T f h
+    by unfold_locales (rule finite_system_clause_formed[OF Pf m(2)], rule finite_system_clause_formed[OF Nf m(4)], rule m(5))
+  have s: "s1 = s"
+    by (rule inj_onD[OF matched.sockets]) (use f1(3) f1(7) m(3) m(6) S fh in simp_all)
+  have fS: "(e,S,s,C) |\<in>| \<Phi>" using f1(1) S s by simp
+  have src: "socket_framed M S s keep Vp Vh (fset C)"
+    by (rule frames[unfolded frames_discharged_def, rule_format, OF fS m(1)])
+  have "fBall (declared_sockets D) (\<lambda>(e,S,s,keep,Vp,Vh). view_formed Vp \<and> view_formed Vh)"
+    using formed by (simp add: declarations_formed_def)
+  from fbspec[OF this m(1)] have views: "view_formed Vp" "view_formed Vh" by simp_all
+  have sub: "schema_dependencies (decode_finite_schema S) \<subseteq> declared_sites D" by (rule declared_sites_members(5)[OF m(1)])
+  have C': "fset C' = f ` fset C" using f1(8) fh by simp
+  show "socket_framed M' T t keep Vp Vh (fset C')" unfolding m(6) C'
+    by (rule matched.socket_framed_matched[OF src m(3) views]) (use at sub in blast)
+qed
+
+corollary frames_varied_discharged_variant:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
+  assumes alpha: "system_alpha_variant (decode_finite_system P) (decode_finite_system N)"
+    and formed: "declarations_formed D" and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+  shows "frames_discharged (positive_meaning (decode_finite_system N)) (declarations_varied P N D) (frames_varied P N \<Phi>)"
+proof -
+  have Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    using alpha by (simp_all add: system_alpha_variant_def finite_system_formed_correct)
+  show ?thesis
+    by (rule frames_varied_discharged[OF Pf Nf _ formed frames]) (simp add: system_alpha_positive_meaning[OF alpha])
+qed
+
+text \<open>After relocation, as @{text declarations_relocated_varied_discharged} carries the record.\<close>
+
+theorem frames_relocated_varied_discharged:
+  fixes Q :: "('a,'s::linorder,'d,'c) finite_schema_system" and g :: "'d \<Rightarrow> 'e"
+    and N :: "('b,'t::linorder,'e,'f) finite_schema_system"
+  assumes Qf: "schema_system_formed (decode_finite_system Q)"
+    and injective: "inj_on g (system_definitions (decode_finite_system Q) \<union> declared_sites D \<union> frame_sites \<Phi>)"
+    and formed: "declarations_formed D" and frames: "frames_discharged (positive_meaning (decode_finite_system Q)) D \<Phi>"
+    and alpha: "system_alpha_variant (decode_finite_system (finite_rename_system g Q)) (decode_finite_system N)"
+  shows "frames_discharged (positive_meaning (decode_finite_system N))
+    (declarations_varied (finite_rename_system g Q) N (declarations_relocated g D))
+    (frames_varied (finite_rename_system g Q) N (frames_relocated g \<Phi>))"
+  by (rule frames_varied_discharged_variant[OF alpha declarations_formed_relocated[OF formed]
+    frames_relocated_discharged[OF Qf injective frames]])
+
+section \<open>The committed forms at framed varied declarations\<close>
+
+text \<open>
+  The exchange premise at N from the carried records and frames (@{text finite_framed_commitment_exchanges}), never
+  transferred; the four forms at N follow as V2a's do (@{text finite_varied_forms_exact}).
+\<close>
+
+theorem finite_framed_commitment_exchanges_varied:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    and at: "\<And>d x. d \<in> declared_sites D \<Longrightarrow>
+      (d,x) \<in> positive_meaning (decode_finite_system N) \<longleftrightarrow> (d,x) \<in> positive_meaning (decode_finite_system P)"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> N"
+  shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa>
+    (finite_framed_commitment (declarations_varied P N D) (frames_varied P N \<Phi>)) N"
+proof -
+  have Df: "declarations_formed D" using discharged by (simp add: declarations_discharged_def)
+  show ?thesis
+    by (rule finite_framed_commitment_exchanges[OF \<kappa> declarations_varied_discharged[OF Pf Nf at discharged]
+      frames_varied_discharged[OF Pf Nf at Df frames] only])
+qed
+
+theorem finite_framed_varied_refutation_exact:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    and at: "\<And>d x. d \<in> declared_sites D \<Longrightarrow>
+      (d,x) \<in> positive_meaning (decode_finite_system N) \<longleftrightarrow> (d,x) \<in> positive_meaning (decode_finite_system P)"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> N" and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> N"
+    and refutes: "finite_resolution_refutes (finite_committed_resolution \<kappa>
+      (finite_framed_commitment (declarations_varied P N D) (frames_varied P N \<Phi>)) N d t n)"
+  shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system N)"
+  by (rule finite_committed_resolution_refutation_exact[OF \<kappa>
+    finite_framed_commitment_exchanges_varied[OF \<kappa> Pf Nf at discharged frames only] constructions refutes])
+
+theorem finite_framed_varied_verdict_exact:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    and at: "\<And>d x. d \<in> declared_sites D \<Longrightarrow>
+      (d,x) \<in> positive_meaning (decode_finite_system N) \<longleftrightarrow> (d,x) \<in> positive_meaning (decode_finite_system P)"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> N" and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> N"
+    and verdict: "finite_resolution_verdict (finite_committed_resolution \<kappa>
+      (finite_framed_commitment (declarations_varied P N D) (frames_varied P N \<Phi>)) N d t n) = Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system N)"
+  by (rule finite_committed_verdict_exact[OF \<kappa>
+    finite_framed_commitment_exchanges_varied[OF \<kappa> Pf Nf at discharged frames only] constructions verdict])
+
+theorem finite_framed_varied_demand_exact:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    and at: "\<And>d x. d \<in> declared_sites D \<Longrightarrow>
+      (d,x) \<in> positive_meaning (decode_finite_system N) \<longleftrightarrow> (d,x) \<in> positive_meaning (decode_finite_system P)"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> N" and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> N"
+    and result: "finite_committed_demand \<kappa> (finite_framed_commitment (declarations_varied P N D) (frames_varied P N \<Phi>))
+      N Q n = Some A"
+  shows "schema_system_formed (decode_finite_system N)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system N)}"
+  using finite_committed_demand_exact[OF \<kappa> finite_framed_commitment_exchanges_varied[OF \<kappa> Pf Nf at discharged frames only]
+    constructions result] by blast+
+
+theorem native_framed_varied_resolution_exact:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and Pf: "finite_system_formed P" and Nf: "finite_system_formed N"
+    and at: "\<And>d x. d \<in> declared_sites D \<Longrightarrow>
+      (d,x) \<in> positive_meaning (decode_finite_system N) \<longleftrightarrow> (d,x) \<in> positive_meaning (decode_finite_system P)"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> N" and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> N"
+    and result: "native_committed_resolution \<kappa> (finite_framed_commitment (declarations_varied P N D) (frames_varied P N \<Phi>))
+      N R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof N p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system N)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system N)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system N) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system N)}"
+  using native_committed_resolution_exact[OF \<kappa> finite_framed_commitment_exchanges_varied[OF \<kappa> Pf Nf at discharged frames only]
+    constructions result] by blast+
+
+lemmas finite_framed_varied_forms_exact = finite_framed_varied_refutation_exact finite_framed_varied_verdict_exact
+  finite_framed_varied_demand_exact native_framed_varied_resolution_exact
+
+text \<open>The framed verdicts at a program and its varied presentation agree, beside @{text finite_committed_variant_transfer}.\<close>
+
+corollary finite_framed_variant_transfer:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system" and N :: "('b,'t::linorder,'d,'e) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P" and cl: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and \<kappa>': "finite_witness_construction_formed \<kappa>'"
+    and only': "finite_registrations_premise_only \<kappa>' N" and cl': "finite_construction_lifts (\<lambda>_. False) \<kappa>' N"
+    and alpha: "system_alpha_variant (decode_finite_system P) (decode_finite_system N)"
+    and v: "finite_resolution_verdict (finite_committed_resolution \<kappa> (finite_framed_commitment D \<Phi>) P d t n) = Some b"
+    and v': "finite_resolution_verdict (finite_committed_resolution \<kappa>'
+      (finite_framed_commitment (declarations_varied P N D) (frames_varied P N \<Phi>)) N d t m) = Some b'"
+  shows "b = b'"
+proof -
+  have Df: "declarations_formed D" using discharged by (simp add: declarations_discharged_def)
+  have "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+    by (rule finite_framed_verdict_exact[OF \<kappa> discharged frames only cl v])
+  moreover have "b' \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system N)"
+    by (rule finite_framed_verdict_exact[OF \<kappa>' declarations_varied_discharged_variant[OF alpha discharged]
+      frames_varied_discharged_variant[OF alpha Df frames] only' cl' v'])
+  ultimately show ?thesis using system_alpha_positive_meaning[OF alpha] by simp
+qed
 
 end

@@ -17538,7 +17538,7 @@ priority names 12 only once its input is ground. 12 then runs on a free input, 1
   looked-up artifact, which the nested commitments of 7 and 6 compute by enumerating insertion positions: O(n²) answers
   over a field of n entries, O(n³) states (the carrier holds 38 addresses at 77/1). A production at 37.0/2 whose value is
   12's input — an answer wherever 12 has one, artifact identity being reflexive on the artifacts it admits
-  (`artifact_identity_exact`) — replaces that search by a check (v = 7). (b) Then the check: 7 and 6 compare the artifact
+  (`artifact_identity_exact`) — replaces that search by a check (v = 7) [taken up by correction (13) below, task 789]. (b) Then the check: 7 and 6 compare the artifact
   with itself (5's dead "later" walks, O(n²) states a field), and 11 meets ground data whose target, 11's premise-only
   variable, no goal binds, 10's material premise waiting for it: 9 and 8 invert the data conversion, two or three
   alternatives an entry, the dead failing at 1 and 8 (from depth about 505 at bound 800, v = 7's trace). Its binder is a
@@ -17547,6 +17547,12 @@ priority names 12 only once its input is ground. 12 then runs on a free input, 1
 - *The registration experiment's non-return at 11* (#779: bound 100, 40–47 GiB, its timeout not delivered): the design
   of (b)'s registration takes it up first, diagnosing it at 77/1 under the moded order, where 11 meets ground data; no
   other build does.
+  [Corrected by task 790 (task 496's entry, "11's premise-only target is produced by 10's own material premise"): (b)'s
+  binder is no registration. The target has a producer among the given's clauses, 10's material premise, which binds
+  its source from a read skeleton; what kept it from producing, and made 9's inversion exponential, is R1's skeleton
+  reading, in which an open part outweighs an unreadable one. The registration's non-return is the enumeration of every
+  rearrangement of the artifact's rows once its source is ground (depth 56 at 77/1, 33 at 77/2, under both orders).
+  The remedy is RD1 of task 496's builds, before R7 #542 and #547.]
 - *Weighed and not taken*: #779's naive widening (every goal holding a pending producer's input first: 5 pulled forward
   where its element is free, branching 90–102 times) — a mode's ground input is what makes a binder a lookup; a mode as a
   commitment (5 declared a producer at 37.0/1: a cut whose obligation holds only where 26 has admitted a functional
@@ -17564,6 +17570,145 @@ priority names 12 only once its input is ground. 12 then runs on a free input, 1
   producer's view does; the binder test reads the groundness and the shared variables of pending goals and compares
   sites for equality; no payload is read.
 - *The builds*: rows O1–O4 of the builds table below, their theories named there.]
+
+[Corrected by task 789, a design, from correction (12)'s "Two further costs follow" (a) and its prototype v = 7
+(`.build/tasks/787/draft/theories/Moded_Branching.thy`), and the planner's answer to q143 (the kind's place: (A) below,
+2026-09-26). (13) The production of a producer's input. Under the moded order 5 binds 12's input at 37.0/1 and 12 is
+committed at 37.0/2, but its committed sub-search keeps the least presentation of the looked-up artifact, which the
+nested commitments of 7 and 6 compute by enumerating insertion positions (O(n²) answers a field, O(n³) states). No order
+removes it: the least presentation is what a commitment keeps. What removes it is a value for 12's output that is an
+answer wherever 12 has one: its input.
+- *The value, and why it is no collection.* At a goal 12(x4,x3) at 37.0/2 (37's clause `lookup_socket_schema`: 26(x0,x1),
+  5((x2,x4),(x0,x5)), 12(x4,x3)), x4 — the stored artifact 5 selects — is ground once the moded order has taken 5, and x3
+  — the artifact 37 returns — is free wherever 37 is committed with its output free. The value is x4's term. W2's
+  registrations are collections: their value (`finite_registration_value`) is a data list, or a pair of two, of the
+  elements their queries find at sites of the program at the search's bound, closed under steps, keyed and identified.
+  An artifact presentation nests four lists, its counted attachments keep repetitions an identified collection merges,
+  and collecting it would search the program for what the goal already holds. So the value is a kind of its own, *a
+  determined value*: a pattern p of the registered clause's variables, its value at the ground bindings B the term
+  `resolution_value (finite_binding_valuation B) p` where every variable of p is bound in B and that term is formed, none
+  otherwise. It reads neither the program nor the bound: no query, no search.
+- *Why a registration.* It is a value produced beside the checker — by the committed step, through W2's registration
+  value — and checked by the given's clauses as installed (Q28): a registration's role, whatever computes its value. It
+  reads the registered clause's variables at the ground bindings, and neither the program nor the bound.
+- *Its place* (the planner's answer to q143: (A)). A constructor `Determined_Value p` of W2's `registration_families`,
+  stated beside `Single_Family` and `Paired_Families`, `finite_registration_value`'s case its value beside theirs. A
+  registration whose families are determined
+  is a registration in every other respect — site, clause, variable — so R5f1's production field (a
+  `collection_registration`), `finite_socket_productions`, `finite_registration_applies`, `finite_registration_production`,
+  `finite_narrowed_production`, R5f2's `productions_discharged` and exchange, #609's and #782's records, W4a's
+  statements and the given's witness construction κ stay as they are; W2's datatype and value, V2b's
+  `map_registration_families` (the pattern's variables mapped by the binder map) and every proof by cases over the
+  families gain a case, statements kept. The kinds stay apart as constructors: a collection is the least fixpoint of
+  its queries, a determined value a term of the bindings, and neither is read as the other. Weighed: (B) R5f1's
+  production field typed by a datatype of the two kinds, the kind carried by the production rather than the
+  registration — R5f1, R5f2, #609, V2b, the controls and #782 (running) read it by cases, and a production outside W2
+  needs relocation and match carrying of its own beside the registration's: set aside (q143: it would re-case five
+  landed lines and a running build). (C) A second field beside R5f1's production and a commitment joining the two,
+  R5f2's exchange restated over it: two production notions for one socket's value, set aside (irredundancy). (D)
+  Collecting the input's parts by W2's families: rejected above.
+- *Completeness, proved once for the kind* (q143's condition: in the generic contracts, as the collections' are, never
+  per use). At a premise-only variable (a use in κ): W4a's `finite_value_complete` of a determined value, stated once
+  (`determined_value_complete`): complete wherever the premises holding the variable, at every admissible formed
+  binding, hold at a formed value only at the pattern's term there — so `finite_registration_complete` and
+  `finite_construction_complete` hold of a determined registration exactly under that criterion, whoever declares one.
+  At a head variable (a socket's production): #599's `registration_complete_at_socket`, generic in the construction,
+  discharged once for every input registration by its producer's reflexivity (`input_registration_answers`, below); 12
+  at 37.0/2 is its instance, and a later socket declaring an input registration consumes the same lemma with its
+  producer's reflexivity.
+- *The input registration.* For a producer d with clause S whose head at a view Vc reads (ci, Finite_Variable a), a not a
+  variable of ci (`head_registration Vc S a`): `input_registration d S Vc a`, site d, clause S, variable a, families
+  `Determined_Value ci`. At a goal it applies at (`finite_registration_applies`: the head's input at the matched bindings
+  is the goal's viewed input), its value is that input itself. At 37.0/2: `identity_input_registration`, site 12, clause
+  `identity_socket_schema` (12's clause: head (x0,x1); 11(x0), 11(x1), 7(x0,x1)), variable 1, families
+  `Determined_Value (Finite_Variable 0)` — the input registration of 12 at `view_identity`. It is declared as the
+  production of `lookup_declarations`' one socket (37, `lookup_socket_schema`, 2, False, `view_identity`, `lookup_view`)
+  in the given's produced record (#782's, beside 48's eight), its class every answer: no consumer narrows 37's output,
+  and the socket's obligation over every answer is R5's, discharged by #603 (`lookup_socket_framed`, frame {3}). The
+  static premise `narrowed_productions_declared` is untouched.
+- *The step*: R5f1's as it stands. At 12(x4,x3) committed at 37.0/2 — its parent 37 the focus root committed at
+  `lookup_view`, the socket test at frame {3} — the one production met is (`view_identity`, `identity_input_registration`);
+  it applies (head input x0 matched against x4's term t4: B = {(0,t4)}); its value is t4; x3 is bound to t4 throughout the
+  state (`finite_production_substitution`, which asks the value formed) and the committed sub-search runs from the
+  produced state on 12(t4,t4), ground: 11(t4) twice and 7(t4,t4), a check by the given's clauses. Where no formed value
+  exists the goal is searched plainly, unresolved, never refuted (task 767's rule).
+- *Completeness at the socket* (`registration_complete_at_socket`, #599's, stated for any construction). Its premises at
+  37.0/2: the socket's narrowed discharge at N = ⊤ (R5's through `socket_discharged_narrowed`); `view_identity` formed;
+  the premise (2,12,(x4,x3)) read (x4,x3); production — `head_registration_produces (finite_collection_construction
+  [identity_input_registration] n) P 12 identity_socket_schema 1 (λ_. True)`: every value formed, by the kind's guard, at
+  every P and n; answers — `head_registration_answers M (…) P 12 identity_socket_schema view_identity 1`: at bindings B
+  valued v, the head's input at B is v decoded, and for (12,(x,y')) ∈ M `artifact_identity_exact` gives an artifact R
+  that x and y' present, so (12,(x,x)) ∈ M: artifact identity is reflexive on the artifacts it admits. Its conclusion:
+  every true instance of 37's clause extends to one whose output x3 is the stored presentation x4, the head changed only
+  at x3 (keep False, frame {3}), so a check failed at the produced state refutes every presentation. In general an input
+  registration is discharged at N = ⊤ exactly where its producer is reflexive at the view, `producer_reflexive M d Vc`:
+  every (d,t) ∈ M read (x,y) at Vc has a (d,t') ∈ M read (x,x). 12's instance rests on `artifact_identity_exact` alone;
+  nothing of the given's readers is refined, restated or added.
+- *The exchange*: R5f2's narrowed exchange (`finite_narrowed_commitment_exchange`, `finite_narrowed_commitment_exchanges`)
+  at a class of every answer, unchanged: at the producing goal the kept answer's socket output is the produced value, in
+  ⊤, and the socket's obligation over ⊤ gives the true instance; `productions_discharged` supplies (iii) through
+  `production_value_class` and `finite_narrowed_productions_supports`; κ keeps W4b's premise-only registrations
+  (`finite_registrations_premise_only`), the production being the socket's and not κ's. At any priority of F1's
+  selection (q142): O2 states R5f2's narrowed exchange once at any priority, the default its instance; this
+  correction's new statements are the production's discharge and its transfer, which read no selection. So the forms at
+  the moded selection (O3's rc, O4's modes) are exact with the production, from O2's exchange and I2's discharge; no
+  discharge is stated at the default alone.
+- *The transfer*: the value reads neither the program nor the bound, so the gap q138 names for a collection production
+  (its value W2's search in the program searched) does not arise. By agreement, the production's discharge carries to
+  every program whose meaning agrees at the registration's site (answers read M at 12 alone, production nothing); by
+  relocation, the site mapped as the records' (`finite_relocated_construction`'s value at a relocated clause is the source
+  clause's); along the clause match, `registration_varied` maps the pattern by the binder map, and
+  `registration_values_carried` holds of a determined registration outright (its value at the carried-back bindings is
+  the same term), so V2b's (3) needs no premise at it. I3 discharges it at the rooted readers, the asked and first
+  request's programs and their installations from I2's lemmas and the meaning at 12.
+- *The table*: the given's sockets 77's and 113's searches meet (#779's, #787's tables), each with its view:
+
+| Socket → producer | View | At 77 | At 113 | Production |
+|---|---|---|---|---|
+| 37.0/2 → 12 artifact identity | `view_identity`: input x4, bound by 5 at 37.0/1 under O4's row-view mode; output x3 | 37 committed at 75.0/1 with its output free, and wherever a reader commits 37 with its output free: produced, value x4 | 37 at 112.0/0 with the row's use and artifact ground: no production met (`finite_socket_productions_ground`), 12 a check | `identity_input_registration`, class ⊤ |
+| 12.0/2 → 7 four-field comparison | `view_identity` | 7(t4,t4) under the production: a check | a check | none |
+| 7.0/0–3 → 6 bag comparison | 6's declared views | checks | checks | none |
+| 6.1/1 → 6, its recursion | O4's whole view binds its output in a check | check | check | none |
+| 11.0/0 → 10 artifact projection | — | 11's premise-only target | the same | (b) #790's registration, premise-only in κ |
+
+  7 and 6 in a check take nothing: a production is met only at a free output, and theirs are ground wherever 77's and
+  113's searches meet them once 12 is produced. The input registration would apply to them — each reflexive at its
+  admitted inputs — at a use with a free output after a bound input; none is met at 77 or 113. The table's extent is 12
+  alone. A search elsewhere (the guard's other calls, R7's attribution) that meets a reflexive correspondence producer
+  with a free output after its input is bound declares the same kind at that socket, discharged by the producer's
+  reflexivity.
+- *The prediction, checked* (`.build/tasks/789/draft/theories/Moded_Branching.thy`, #787's draft with its spec path
+  alone changed, v = 7: O4's modes at the row and whole views and the production at 37.0/2 of 12's input; one shared
+  run, CPU 36 % busy, no CPU wait, memory 29.7 GiB average, 37.6 peak; the probe 131 s within its 175 s bound):
+
+| Call, bound | Outcome | States | Where they go |
+|---|---|---|---|
+| 77/1, 1200 (65 s) | not returned | ≥ 7,180 in 69 s (7,081 in committed sub-searches), deepest 1,199: the bound reached | no branching at 12, 7, 6 or 5 (5: 244 single steps, 34 dead ends); 3,954 single steps at 8; branching at 9 (250, parents 9.0 and 9.1) and 8 (50, parent 8.0); dead ends at 1 (195) and 8 (169); 307 cuts in focused sub-searches; 3,664 states at depth 1100–1199 |
+| 77/2, 1200 (45 s) | not returned | ≥ 1,668 in 46 s, deepest 648 | 605 single steps at 5 and 351 at 2, 52 dead ends at 5; no step at 8 or 9 |
+
+  Against #787's v = 7 (77/1: 828 states at 400, cut; ≥ 3,228 in 25 s at 800; 77/2: 429 at 400, cut) and v = 6 (≥ 4,851
+  at 300, 121 answers in 6's sub-searches at 400): 12's search for the least presentation is gone, and no commitment of
+  7 or 6 enumerates. The next cost is two, both beyond this correction. At 77/1 (38 addresses) 11 meets ground data
+  whose target no goal binds: 9 and 8 invert the data conversion, 8's atom lookup walking the carrier rows (3,954
+  steps), 9 and 8 branching, dead at 1 and 8, the derivation past depth 1,199 — (b) #790's registration of 11's target
+  is its binder. At 77/2 (a definition's code artifact, about 114 addresses) the check 12(t4,t4) itself comes first: 7's
+  four bag comparisons of a field with itself, 5 walking to each element and its dead "later" walk past it, O(n²)
+  steps a field, each state carrying the field, 37 states a second — R7's attribution (#787's Remains).
+- *Weighed and not taken*: the order alone (correction (12)'s v = 6: it leaves the least presentation to compute); 12
+  searched plainly at 37.0/2 (every presentation kept to the bound for a true call); a canonical presentation of x4
+  computed by a reader as the value (a HOL function presenting, where the stored presentation is already an answer);
+  the value registered in κ at 12's head variable (not premise-only, and R3 would construct it wherever 12 is called with
+  a bare variable argument: task 725's (e)); a production at 7's or 6's sockets (vacuous: their outputs are ground
+  wherever met).
+- *What the builds must respect*: the given's readers exactly as installed; the determined value read by R5's
+  committed step alone, never by a checker, a test or a discharge's hypothesis; it reads neither program nor bound; κ
+  keeps premise-only registrations; unresolved never refutes and never admits; at a record declaring no determined
+  production, and a registration none of whose families is determined, every value is today's; the certificates are
+  the checker's; nothing reads positions or the bootstrap loop's datatypes; every control keeps R4's value beside its own.
+- *What it relies on* (task 376's test): the production reads the goal's viewed input and matches its viewed output, as
+  R5f1's step reads; the kind is a pattern of clause variables at bindings; no payload is read; sites are compared for
+  equality.
+- *The builds*: rows I1–I3 of the builds table below.]
 
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
@@ -18271,12 +18416,18 @@ execution theories import the refinement theories of F2b, F2c and C.
 | O2 | [Added by task 787, correction (12).] The exchange at any priority (`Factor_Resolution_Commitments`, `Factor_Resolution_Producer_Discharge`, `Factor_Resolution_Socket_Discharges`, `Factor_Resolution_Material_Discharge`, `Factor_Narrowed_Productions`, `Factor_Resolution_Views`): the committed sub-search's frame and placement lemmas and every discharge of the exchange stated at any priority of F1's selection in #613's `finite_exchanges_by`, the default statements their instances by name and statement; the committed forms at the moded selection as instances of #613's forms at a selection; O1's control's false call refuted there | #613 (its changes after #777's and #786's) | about 250K, divided at its brief if its relations exceed the room |
 | O3 | [Added by task 787, correction (12).] rc at a priority (`Factor_Committed_Registrations`, `Factor_Native_Committed_Registrations`): rc's numbered and native forms at a priority of F1's selection, the default their instance | O2 | about 100K |
 | O4 | [Added by task 787, correction (12).] The given's modes (`Development_Given_Modes`, new, beside `Development_Given_Declarations`; `Development_Given_Modes_Execution`, new, imported by no theory): `given_modes` (5 at the row and whole views) and their relocations to the rooted readers, the asked and first request's programs and their installations (sites mapped as the records'); 77/1–2 and 113/7 at the moded selection against R5's default, outcomes and states, the next cost named | O1 (O2 for a refutation) | about 100K |
+| I1 | [Added by task 789, correction (13).] The determined value; the files it changes: `Factor_Least_Collections` (the datatype, the value, the one proof by cases, `finite_registration_value_formed`), `Factor_Least_Witness_Registrations` (the kind's case of the generic completeness contract), `Factor_Varied_Narrowed_Sockets` (`map_registration_families`'s case), `Factor_Varied_Narrowed_Transfer` (the carried values), and any proof the constructor breaks where a theory unfolds `finite_registration_value` at an abstract registration: `Determined_Value p` of `registration_families`, beside `Single_Family` and `Paired_Families`; `finite_determined_value p B` (p's term at B where every variable of p is bound and the term formed, none otherwise), `finite_determined_value_formed`, `finite_determined_value_decoded` (the decoded value is p evaluated at the decoded valuation); `finite_registration_value`'s case and `finite_registration_value_determined` (independent of the program and the bound); every proof by cases over the families gaining its case, statements kept; `map_registration_families`'s case (the pattern renamed by the binder map) with its value lemma; `determined_value_complete` (W4a's `finite_value_complete` at a determined value, once: complete wherever the premises holding the variable hold at a formed value only at the pattern's term); `determined_values_carried` (`registration_values_carried` of a determined registration) and the relocated construction's value at one | q143's answer (A), given; no edge with F2c #701 (whichever lands second extends the other's case analyses over the families) | about 60K |
+| I2 | [Added by task 789, correction (13).] The input production (`Factor_Input_Productions`, new, above `Factor_Narrowed_Productions` and `Factor_Artifact_Admission`; `ROOT`, `THEORY_MAP.md`): `input_registration d S Vc a`, `producer_reflexive M d Vc`; `input_registration_head`, `input_registration_produces` (at N = ⊤), `input_registration_answers` (from `producer_reflexive`), `input_registration_complete_at_socket` (`registration_complete_at_socket` at a socket of class ⊤ declaring it), `input_productions_discharged` (`productions_discharged` of a record whose productions are input registrations of reflexive producers at sockets of class ⊤, beside collection productions discharged as R5f2 states); the transfer by agreement at the registration's site, by relocation and along the match, with no premise of the search's equivariance; 12's instance: `identity_input_registration`, `artifact_identity_reflexive` (from `artifact_identity_exact`), `identity_input_complete_at_lookup` (at `lookup_socket_schema`, 2, `view_identity`, `artifact_lookup_system`); the control in `Factor_Input_Production_Controls` (new, imported by no theory; one evaluation compiled once): a lookup of a small artifact through an environment of two rows, as 37 through 12, R5f2's narrowed commitment with the input registration at the socket — the true call resolved with one certificate where R5's committed search without the production keeps the least presentation (states of both), the false call refuted as by R4, R4's value beside | I1, R5f2 (landed) | about 90K |
+| I3 | [Added by task 789, correction (13).] The given's production (`Development_Given_Productions`, new, beside #782's record; `Development_Given_Productions_Execution`, new, imported by no theory): the given's produced record with `identity_input_registration` at (37, `lookup_socket_schema`, 2), class ⊤, beside #782's productions; relocated to the rooted readers, the asked and first request's programs and their installations (the sites mapped as the records', the clause carried along the match as V2b carries a production); `productions_discharged` there from I2's transfer and the meaning at 12; the static premise kept; the evaluation: 77/1 and 77/2 at the moded selection with O4's modes, with and without the production (and with (b)'s registration once #790's builds have landed), outcomes and states, the next cost named | I2, #782, O4 | about 100K |
 
 R1 and R2 are independent of each other; R3 follows both, R4 R3, R5 R4, R6 R5; R7 follows R4 and R6 [corrected by task 585: R5c follows R5b (#565), R5d R5c and R6, R5e R5d, R6b R5d, R6c
 R5e and R6b; rc (#540) follows R5e; R7 and #547 follow R6c] [corrected by task 725: R5f1 follows R5e and F3, and F2c, #613 and R5f2 follow it; rc (#540) and
 V2b (#651) follow R5f2] [corrected by task 787: O1 and O4 wait on nothing unlanded, O2 follows #613, O3 follows O2, and
 R7 #542 and #547 follow O3 and O4; F2c #701 and C #703 are independent of them, F2c refining at any priority, the moded
-one among them; O2's order against #724 is the planner's]. R8 is independent of
+one among them; O2's order against #724 is the planner's] [corrected by task 789 (q143): I1 has no edge with F2c #701,
+whichever lands second extending the other's case analyses over the families, and #790's build waits on I1 where it
+edits `registration_families` or `Factor_Least_Collections`, its determined value, if it has one, being I1's
+constructor; I2 follows I1; I3 follows I2, #782 and O4; R7 #542 and #547 follow I3 as well]. R8 is independent of
 R1–R7 and follows #483. The least witness's builds follow the planner's decision. The route:
 
 - #397 (the posing) evaluates no reader entry: unaffected.
@@ -18686,6 +18837,129 @@ are in `.build/tasks/642/result.md`.
 
 [Recorded 2026-09-26 (task 642's decision; a design, no theory changes).]
 
+### 11's premise-only target is produced by 10's own material premise: the skeleton reading is corrected, and no registration is built
+
+[Added by task 790, a design, from correction (12) of task 495's entry ("Two further costs follow", (b), and "The
+registration experiment's non-return at 11") and #787's Remains (b): once 12 is committed and produced at 37.0/2, 77/1's
+search meets 11 (artifact admission) with ground data whose target, 11's premise-only variable, no goal binds; (12)
+named its binder a registration at that target, the artifact its ground data present. Evidence:
+`.build/tasks/790/draft/theories/Registration_Diagnosis.thy` (#787's draft with a guard, course (A) and course (B);
+runner `draft/spec.txt`), logs `.build/tasks/790/p1`–`p4`, shared runs with their loads in `measurements.log`.]
+
+**What 11 checks, and what holds its target.** 11's clause (`artifact_admission_schema`) is one premise, 10 at (y, x):
+x the data, y the premise-only target. 10's clause (`artifact_projection_schema`) holds y as its material premise's
+source; its call premises, 0 at (1, 5) and 9 at (1, (2, 6)), (1, (3, 7)), (1, (4, 8)), relate the observation fields 1–4,
+10's own premise-only variables, to the data's four lists 5–8. 10 holds of (w, x) exactly when w is the whole target of
+an artifact x presents (`artifact_projection_exact`), and that artifact is unique (`artifact_value_presents_unique`). So
+the target is determined by the data, and the given has its producer: the material premise, which binds its source
+from a read skeleton (`finite_material_resolution`'s Reading branch: one candidate, the artifact enumerated from it).
+
+**#779's non-return, diagnosed.**
+- The construction (#779's `sa_kappa_x`: 11's variable 1 registered, its value the whole target of the artifact
+  `finite_artifact_value_read` reads from x) fires as soon as x is ground. 10's material premise then has a ground source
+  and a skeleton not yet read, and `finite_material_resolution`'s Open_Reading branch enumerates
+  `finite_artifact_enumerations C` — every rearrangement of the artifact's four row lists — and filters it by the
+  patterns. The selection computes it at the next state, strictly: `finite_candidate_goal` asks
+  `finite_solvable_material_goal` (`finite_material_resolution M ≠ Material_Waits`), and `finite_goal_choice` counts
+  `finite_goal_alternatives` (`finite_material_alternative_set`).
+- Where: 26 (environment admission) calls 11 at each artifact row of the environment, at ground data, before 37 or 12 is
+  reached. 77/1's environment holds artifacts of 1, 5 and 18 addresses (0, 3 and 14 incidence rows, 0, 1 and 1
+  attachments). The guard meets a ground-source material goal first at depth 11 (state 12: the 1-address artifact, one
+  rearrangement) and the first above 10^6 rearrangements at depth 56 (state 57: the 18-address artifact, 18!·14! ≈
+  5.6×10^26); at 77/2 (four artifacts, up to 27 addresses and 23 incidence rows) at depth 33 (state 34: a 9-address
+  artifact, 5.2×10^8). The same depth and state under R5's default and under the moded order (#787's v = 7): 26 comes
+  before anything either order decides.
+- What grows: one successor set, factorial in the artifact's rows. Not the states (57 at the guard), and not with the
+  bound (20, 40, 60 and 100 alike): the bound counts states, and none is counted inside the call; the 10 s timeout was not
+  delivered because the time went to allocating and collecting that one list (40–47 GiB). The runs here were bounded
+  at 10–12 GiB and 300,000 states and stopped by the guard before the call.
+
+**Without the registration the check is exponential.** 10's material premise waits while its source is free and its
+skeleton open. 0 lays the carrier, one alternative a step; each 9 leaf has an address alternative (8 looks the payload
+up in the carrier rows) and a payload one, wrong where an anchor must stand. The wrong one dies only when its field is
+read, because `reading_pair` returns Open_Reading whenever either part is open: an unreadable entry beside an open tail
+reads as open. A field of n leaves carries up to 2^n branches until it is closed. 11 alone at the data of a chain
+artifact (k addresses, k − 1 incidence rows), R5's default, no construction: 45, 474 and 4,366 states at k = 1, 2, 3,
+resolved; more than 164,512 at k = 5 (15 s, bound 1000); at 77/1's 5-address artifact more than 300,000 (the cap, bound
+3000); its 18-address artifact unresolved in 25 s (18,436 states, deepest 550).
+
+**With the registration and R1 as it stands, factorial.** 11 at k = 3 is resolved in 78 states, the material goal
+enumerating 3!·2! = 12 rearrangements at each classification; at k = 8 the first classification meets 8!·7! ≈ 2.0×10^8.
+The registration does kill a wrong leaf at once — a ground source makes the material goal solvable, and one with no
+consistent candidate is taken first and fails — but pays the enumeration at every state.
+
+**The courses weighed.**
+- (A) The skeleton reading corrected: an unreadable part makes a pairing of readings unreadable whatever is still open.
+  Exact: an unreadable entry is a ground term where an anchor, an address or a formed attachment must stand, or a payload
+  or a nonempty target where a list continues; it stays unreadable under every substitution of the open parts, while
+  every solution's instance reads (its fields enumerate the source's rows); so no solution exists, and
+  `finite_material_resolution_exact` keeps its statement. The only change of value is Material_Waits to
+  Material_Solutions {} where an entry is unreadable (a ground source already gave {} there, after the enumeration).
+  With it a wrong leaf is killed when laid, and 10's material premise, its skeleton laid by 0 and the 9s, reads it and
+  binds its source: the target is produced by the given's own clause, by resolution. Prototype (v = 10, no construction):
+  11 at k = 8 resolved in 612 states, its verdict resolved with the certificate checked; at 77/1's 18-address artifact in
+  2,782 states (7.5 s); 113/7 resolved in 412 states at bound 400 (R5 today 638, the moded order 491). Taken.
+- (B) The registration kept, R1's ground-source branch refined into a generator of the rearrangements consistent with
+  what the fields hold so far (`Candidate_Generators`), the choice counting alternatives to two (it reads 0, 1 or more).
+  Prototype (v = 8): k = 8 in 358 states, the 18-address artifact in 1,394 (1.6 s). But the selection takes a solvable
+  material goal before leaf call goals (`finite_goal_selection`, its third class before its fourth), so the material goal
+  was expanded once with a field still open (tails of 7 and 14 rows), where its consistent candidates are factorial
+  again (the prototype tried two orders there, inexactly). (B) needs an order besides — a mode at 0 and 9, or a rule
+  keeping a ground-source material goal unexpanded while its fields are open — and adds a construction whose producer
+  is a HOL reader, a registration form W2 does not have. Not taken.
+- (C) A least collection of the program's own readers: the only reader answering the target from the data is 10 at
+  (e, x), whose resolution with e free is the exponential search above; and W2 presents data lists, not one term. Not
+  taken.
+- The registration beside (A): harmful. Binding the source before the fields are read puts the material goal back in
+  the ground-source branch, the enumeration. No registration or hand-in at a material premise's source is added while
+  R1 enumerates there.
+
+**The registration, as it would stand.** Value: `Finite_Target (Finite_Whole C)` with `finite_artifact_value_read x =
+Some C`, the empty artifact where it returns none. Completeness at 11's clause in W4a's form (`finite_value_complete` at
+variable 1; the premises holding it, the call premise 10 at (1, 0)): at a program where 10 means
+`artifact_projection_system`'s 10, the premise holds at some formed w exactly when w is the whole target of an artifact
+x presents (`artifact_projection_exact`); where one exists the reader returns it (`finite_artifact_value_read_exact`,
+every formed artifact having a finite representation) and it is the only one (`artifact_value_presents_unique`), so the
+premise holds at the value; where none exists it holds at no value, the value's included. The registration would
+determine, never choose. It is recorded, not built: (A) makes it unnecessary, and with R1 as it stands it is harmful.
+#789's determined value (a pattern of the clause's variables at the ground bindings, q143) cannot express it: the target
+is a function of the data, not a pattern of it; no build here edits `registration_families` or `Factor_Least_Collections`.
+
+**The given's clauses where a premise-only target is met.** From the recomputed head table
+(`.build/tasks/495/head_table.txt`): every premise-only variable held by a material premise's source or by 10 at its
+target position, or produced by one; "met" from the runs' counts at 77/1 (to depth 1,544), 77/2 (to 657) and 113/7.
+
+| Clause (variable) | Held by | At 77 | At 113 | Its producer | After this correction |
+|---|---|---|---|---|---|
+| 11/0 (1) | 10 at (1, 0) | met: 26's rows (depth 11 and 56 at 77/1, 33 at 77/2), 12's two calls in 37's clause | met in 12's clause, data ground | 10's material premise, from the skeleton 0 and the 9s lay | RD1; no registration |
+| 1/0 (2) | the material premise's source | met (9's payload leaves, 49) | met | 1's material premise, from the carrier 0 lays (its other fields the empty terminator): read today | unchanged |
+| 45/1 (0) | 10 at (0, …) and material premise 2's source | not met | not met | 10 as at 11; then premise 2 with a ground source and free fields (2, 3, 4 held by it alone): its canonical commitment where committable, else the enumeration | RD1 for 10; premise 2 R7's to attribute where met (RD2) |
+| 50/1 (7) | 40, 45 | not met | not met | 40, from the environment | unchanged |
+| 500/1 (1) | 45 | not met | not met | 45 | unchanged |
+
+**The prediction, checked.** #787's draft with v = 7 and the registration does not run at 77/1 or 77/2: the guard
+stops it at depth 56 and 33. Course (A) with v = 7's order and production (v = 11, 77's least bound handed in, no
+registration): 77/1 unresolved at bound 8,000, stopped by the 12 GiB guard at 7,936 states (deepest 1,544, 85 s; 4,994
+of the states, 63 %, 8's walk steps); 77/2 unresolved at 3,000 in 40 s (1,684 states, deepest 657, 1,507 of them inside
+37's committed sub-search, 5's walks and 2's recognition). Branching at 9 and 8 is gone (four branching 9 goals in 7,936
+states). The next cost is the abstract state's per state — about 10 ms and 1.6 MB a state at 77/1 (12.8 GB at 7,936),
+24 ms at 77/2: the committed search runs over R3's abstract state, with no committed counterpart of F2's indexed or
+shared state yet (#779's follow-up) — and after it the proof's own size, led by 8's linear lookup: 10's check walks the
+carrier rows for every address a field holds, and each artifact is admitted by 26 and again in 37's and 12's clauses.
+
+**The owner's answers to Q27 and Q28.** Kept. The evaluator constructs the target from the given's own clauses (Q27);
+the checker checks, the finite proof checker accepting a certificate whose material candidate is 10's own clause's; no
+clause of the given's readers is refined, restated or added; no registration is read; unresolved is never refuted.
+
+**What the builds must respect.** R1's statements are kept by name and statement, the reading's change proved exact once
+(its monotonicity); no registration or hand-in at a material premise's source while R1 enumerates a ground source; the
+given's readers exactly as installed; nothing reads the bootstrap loop's datatypes, and no recorded word changes.
+
+**The builds**: RD1 of the table below, before R7 #542 and #547 (77 at the given admits the environment's artifacts
+through 11); RD2 named, placed only where R7 attributes a ground-source enumeration.
+
+[Recorded 2026-09-27 (task 790's decision; a design, no theory changes).]
+
 ### What it relies on
 
 Task 376's test:
@@ -18713,6 +18987,8 @@ Task 376's test:
 | V2 | [Added by task 642.] Declarations carried by the match: `declarations_varied` at R5d's views, discharged at N; `finite_committed_variant_transfer` | M, R5d's first part (#599) | about 120K |
 | V3 | [Added by task 642.] The native inputs at the installed packages, stated once in `given_readers_extension` and once for the given's installation: the installed package's finite presentation read natively; a construction complete at the numbered program, relocated and varied, complete there; the native exact form at the installed entry; instances at the asked relation (#635's construction, 526 at `asked_entry`), the first request (#640's, 561 at `first_request_entry`) and the given (#528's, relocated by `given_readers_placement`); one control in an execution theory: the match reaches the installed clauses at 77, 392, 525 and 561, the read-back timed | V1, #635, #640, #528 | about 150K |
 | R7b | [Added by task 642.] The native course measured: 526 at the installed guard read natively, with V3's construction and the declarations #605 carries — the read-back, the match, the resolution, held seconds and demanded calls — against R7's numbered course; a call past a held run to the performance channel | V3, #605, rc (#540), R7 (#542) | about 100K |
+| RD1 | [Added by task 790.] The skeleton reading corrected (`Factor_Material_Resolution`): a pairing of readings with an unreadable part outweighing an open one; its monotonicity (an unreadable reading of a material pattern stays unreadable under every substitution, and a satisfied instance reads); `finite_material_resolution_exact`, `_sound`, `_complete` kept by name and statement, and every proof above that unfolds the skeleton's openness (`finite_canonical_solutions`, #631's discharge in `Factor_Resolution_Material_Discharge`) re-proved with its statement kept; a control in `Factor_Resolution_Controls`, one evaluation: 11 at chain artifacts of 1–8 addresses and at an 18-address artifact resolved, a false 11 call refuted | R1 (landed); O2 where #631's discharge unfolds the skeleton (the planner's order) | about 120K |
+| RD2 | [Added by task 790; not placed.] R1's ground-source branch as a generator of the rearrangements consistent with the fields (`Candidate_Generators`), the choice counting alternatives to two, with an order keeping such a goal unexpanded while its fields are open: where R7 meets a material premise whose source is bound before its fields are read (45/1's premise 2) | RD1 | about 120K |
 
 W3 can start now. W1 goes with R3, as a correction of #503 or after it. W2 follows R4 and W1; W4 follows W1–W3 and R4.
 R5 and R6 (#507) are independent of W1–W4 and bound the cost of refusals at the presentation-free readers, 79's root
@@ -18722,6 +18998,8 @@ readers; #447's entries reaching 77 wait on W4.
 [Added by task 642: M first; V1 after M; V2 after M and R5d's first part; V3 after V1, #635, #640 and #528; #605's
 installed part after V2 and V3; rc's native corollary after V1 and V2; R7b after V3, #605 and rc. #399, #547 and #447
 take the native course through V3, #605 and rc.]
+[Added by task 790: RD1 before R7 (#542) and #547, which rest on 77 at the given; RD2 only where R7 attributes a
+ground-source enumeration.]
 
 ### What the builds must respect
 
@@ -19185,3 +19463,28 @@ Task 613, from #566's review (follow-ups 2, 3, 6), after F1 #693 and F3 #695.
 - R4's `finite_resolution_lifting_by` keeps its induction (the planner, q141): deriving it from the committed lifting
   needs the committed search below Completeness, a move of Commitments' views and committed-search sections that #611,
   #777, #779 and #701 meet; it is the follow-up task 613's result states.
+
+## The given's one record is a keyed join: the plain record overridden at 48's narrowed sockets' keys
+
+Task 782, R6c's carrying second part (q140; scope confirmed by q144). `given_declarations` is one record of the produced
+declarations' type: `produced_join given_plain_declarations (union_produced given_union_sockets)`. A socket is keyed by
+its site, schema and socket (`socket_keyed`); the join holds the produced record's sockets with their class
+(`union_class`) and production (`union_registration`) at every key the produced record holds, and the plain record's
+sockets, of the trivial class and no production, at every other key (`unkeyed_declarations`). The narrowing and the
+production fields are functions of the key, so two sockets at one key cannot carry two classes; the join therefore
+filters by key rather than asserting that no plain socket stands at one of 48's eight keys (true, since 48 is not
+presentation-free and no plain record declares its premise sockets, but proving it is a computation over the 51
+records that no statement needs). Evidence that the filter drops nothing the route reads: the liveness evaluation over
+the joined record and 587's (`Development_Socket_Liveness_Execution.socket_liveness`) and the given's three control
+verdicts, now under `finite_narrowed_commitment`, evaluate unchanged.
+
+Each part is discharged where it was and the join by the two discharges, stated once for any plain and produced record
+(`produced_join_discharged`, `produced_join_frames` over `frames_join`, `produced_join_productions`,
+`produced_join_declared`). 48's sockets are carried from their five notions' systems by R5e's transfer by agreement
+along the chain every carrying reads (`given_agreements`, `given_narrowed_carried`), joined (`union_narrowed_union`,
+`union_frames_union` at site-disjoint families), and the productions discharged at the rooted readers by #609's
+`union_registration_answers`, 48 and 5 agreeing there (5 stands in the rooted readers through 6's cons clause,
+`given_rooted_selection_site`). R5f2's exchange at the rooted readers with the one record and its frames is
+`given_narrowed_commitment_exchanges`. The plain record keeps its facts under `given_plain_declarations*`; the plain
+installed carrying keeps its statements as `given_installed_plain_declarations*`. The carrying of the one record to the
+installed programs and `given_union_registration` are the follow-up task's (q144).

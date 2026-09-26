@@ -17,6 +17,14 @@ text \<open>
   there.
 \<close>
 
+text \<open>
+  The instantiation family's socket schemas are written through @{const finite_pattern_of}, whose target leaves go
+  through @{const finite_object_of}, which has no code; none of those schemas holds a target, so that branch is never
+  reached, and it aborts in code, as in @{text Development_Socket_Liveness_Execution}.
+\<close>
+
+declare [[code abort: finite_object_of]]
+
 definition given_control_artifact :: finite_exact_artifact where
   "given_control_artifact = \<lparr>finite_structure = \<lparr>finite_carrier = {|[1],[2],[3],[4],[5]|}, finite_incidence = {||}\<rparr>,
     finite_data = \<lparr>finite_bag = {#}, finite_bindings = {||}\<rparr>\<rparr>"

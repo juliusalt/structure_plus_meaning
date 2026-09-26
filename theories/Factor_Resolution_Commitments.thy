@@ -959,13 +959,6 @@ definition finite_material_premise :: "('a,'s,'d,'c) resolution_state \<Rightarr
     fBex (resolution_nodes st) (\<lambda>np. resolution_node_position np = butlast (resolution_goal_position g) \<and>
       fBex (finite_schema_materials (resolution_node_schema np)) (\<lambda>z. fst z = last (resolution_goal_position g)))"
 
-definition finite_declared_commitment ::
-    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d,'c) resolution_commitment" where
-  "finite_declared_commitment D = \<lparr>commit_call=(\<lambda>F st g. finite_goal_premise st g \<and>
-      (finite_direct_commitment D F st g \<or> (resolution_is_call g \<and> finite_socket_commitment D F st g))),
-    commit_material=(\<lambda>F st g. finite_material_premise st g \<and> \<not> resolution_is_call g \<and>
-      finite_socket_commitment D F st g)\<rparr>"
-
 text \<open>
   Three state conditions the material single solution's discharge needs beyond those the test checks
   (\<open>Factor_Resolution_Material_Discharge\<close>, task 631; DECISIONS.md, task 495's entry, correction (7)): the pending
@@ -1051,7 +1044,44 @@ definition finite_material_narrowed ::
         (finite_socket_kept D F st q (finite_material_variables M) g \<or> finite_input_output_apart nd))
     | Resolution_Call_Goal q r e p \<Rightarrow> True)"
 
-export_code finite_material_narrowed checking SML
+text \<open>
+  At a socket call the same conditions stand, and one more: the socket's ordinary premise in its clause is a pair, the
+  form the socket's obligation (@{const socket_discharged}) speaks of. At another form the obligation is vacuous and
+  the output's variables are a head variable's binding, whose values no kept head fixes.
+\<close>
+
+definition finite_socket_pair :: "'s list \<Rightarrow> ('a,'s,'d) finite_factor_schema \<Rightarrow> bool" where
+  "finite_socket_pair q S \<longleftrightarrow> fBall (finite_schema_premises S) (\<lambda>(s,e,p). s = last q \<longrightarrow>
+    (case p of Finite_Pattern_Pair x y \<Rightarrow> True | _ \<Rightarrow> False))"
+
+definition finite_call_narrowed ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_call_narrowed D F st g \<longleftrightarrow> (case g of
+      Resolution_Call_Goal q r e p \<Rightarrow> (case p of
+          Finite_Pattern_Pair x y \<Rightarrow> fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
+            finite_children_instances st nd \<and> finite_premise_only_unshared nd \<and>
+            finite_socket_pair q (resolution_node_schema nd) \<and>
+            (finite_socket_kept D F st q (finite_pattern_variables y) g \<or> finite_input_output_apart nd))
+        | _ \<Rightarrow> True)
+    | Resolution_Material_Goal q r M \<Rightarrow> True)"
+
+text \<open>
+  The test: a goal commits at the premise of its parent, by the direct test or by a socket's, and at a socket only where
+  the state conditions its exchange needs hold (@{const finite_call_narrowed}, @{const finite_material_narrowed}; task
+  630). Where one fails the search does not commit and explores as R4 does: it refuses a commitment it cannot justify,
+  never a call.
+\<close>
+
+definition finite_declared_commitment ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d,'c) resolution_commitment" where
+  "finite_declared_commitment D = \<lparr>commit_call=(\<lambda>F st g. finite_goal_premise st g \<and>
+      (finite_direct_commitment D F st g \<or>
+        (resolution_is_call g \<and> finite_socket_commitment D F st g \<and> finite_call_narrowed D F st g))),
+    commit_material=(\<lambda>F st g. finite_material_premise st g \<and> \<not> resolution_is_call g \<and>
+      finite_socket_commitment D F st g \<and> finite_material_narrowed D F st g)\<rparr>"
+
+export_code finite_material_narrowed finite_call_narrowed checking SML
 
 lemma finite_declared_commitment_premise:
   assumes "commit_call (finite_declared_commitment D) F st g"
@@ -1068,10 +1098,12 @@ proof -
       finite_socket_free_def no_declarations_def
       split: resolution_goal.split finite_term_pattern.split)
   have c: "(\<lambda>F st g. finite_goal_premise st g \<and> (finite_direct_commitment no_declarations F st g \<or>
-      (resolution_is_call g \<and> finite_socket_commitment no_declarations F st g))) = (\<lambda>F st g. False)"
+      (resolution_is_call g \<and> finite_socket_commitment no_declarations F st g \<and>
+        finite_call_narrowed no_declarations F st g))) = (\<lambda>F st g. False)"
     by (intro ext) simp
   have m: "(\<lambda>F st g. finite_material_premise st g \<and> \<not> resolution_is_call g \<and>
-      finite_socket_commitment no_declarations F st g) = (\<lambda>F st g. False)"
+      finite_socket_commitment no_declarations F st g \<and> finite_material_narrowed no_declarations F st g) =
+      (\<lambda>F st g. False)"
     by (intro ext) simp
   show ?thesis unfolding finite_declared_commitment_def no_commitment_def c m ..
 qed
@@ -1089,7 +1121,7 @@ lemma finite_declared_commitment_input_ground:
     "finite_pattern_variables x = {||}" "finite_pattern_variables y \<noteq> {||}"
 proof -
   from committed have c: "finite_direct_commitment D F st g \<or> (resolution_is_call g \<and> finite_socket_commitment D F st g)"
-    by (simp add: finite_declared_commitment_def)
+    by (auto simp: finite_declared_commitment_def)
   show thesis
   proof (cases g)
     case (Resolution_Call_Goal q r d p)
@@ -1104,6 +1136,9 @@ proof -
     then show thesis using c by (simp add: finite_direct_commitment_def)
   qed
 qed
+
+lemma resolution_value_variable: "resolution_value \<theta> (Finite_Variable z) = \<theta> z"
+  by (simp add: resolution_value_def)
 
 corollary finite_declared_commitment_input_value:
   assumes committed: "commit_call (finite_declared_commitment D) F st (Resolution_Call_Goal q r d (Finite_Pattern_Pair x y))"
@@ -1274,8 +1309,7 @@ definition finite_construction_lifts ::
       resolution_supported_at U F B P st \<theta> \<longrightarrow>
       finite_resolution_select \<kappa> P (finite_focused F st) = Select_Construction N \<longrightarrow>
       nd |\<in>| N \<longrightarrow> resolution_focused F (resolution_node_position nd) \<longrightarrow>
-      (\<exists>\<theta>'. resolution_supported_at U F (B |\<union>| fimage resolution_node_position (resolution_nodes st)) P
-        (finite_construction_step \<kappa> P st nd) \<theta>'))"
+      (\<exists>\<theta>'. resolution_supported_at U F (finite_committed_barring B st) P (finite_construction_step \<kappa> P st nd) \<theta>'))"
 
 lemma finite_commitment_exchanges_call:
   assumes "finite_commitment_exchanges U \<kappa> K P" "resolution_invariant P d t st" "resolution_supported_at U F B P st \<theta>"

@@ -1327,6 +1327,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Resolution_Commitments
     Factor_Resolution_Producer_Discharge
     Factor_Resolution_Material_Discharge
+    Factor_Resolution_Socket_Discharges
     Linear_Comparisons
     Prefix_Key_Comparisons
     Ordered_Artifact_Comparison

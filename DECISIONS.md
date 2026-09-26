@@ -16947,6 +16947,44 @@ answer replaces the support there; either valuation supports a canonical success
 (`finite_canonical_successor_supported`). The test checking them is #630's, with the corollary that both discharges hold
 without hypotheses where it commits; `finite_siblings_pending` keeps its meaning, the test conjoining (i).]
 
+[Corrected by task 630 (R5c⁗a), the planner's answers to q115, q116, q119 and q120. (8) #565's premise as #621 left it:
+its call part asks for a kept state only at a state keeping the holders invariant (`resolution_registrations_held κ st`)
+and at a call no free registered variable holds (`¬ finite_held κ st g`) — q115's weakening, which the lifting supplies
+where it applies the premise (the invariant its premise since #526, the unheld call `finite_resolution_select_unheld`);
+the forms' statements and the premise's name are unchanged. The socket kinds' discharges
+(`Factor_Resolution_Socket_Discharges`): a socket's exchange rebuilds its parent clause's instance. The parent clause's
+instance under the support is true from its pending premises (`finite_instance_clause_true`, at a state
+`finite_parent_instance_true`); the socket's obligation gives, at every new answer of the committed goal, a true instance
+with that answer (`finite_socket_new_instance`); the goals under the parent are that instance's premises and every other
+goal keeps its values (`finite_parent_exchange_holds`). At a socket declared with the kept head the kept head fixes every
+head variable (`head_kept_variables`), so an output variable a head variable's binding holds takes no new value: the kept
+head's gap is closed by the obligation wherever the socket's premise is a pair (`finite_socket_kept_context`). At a socket
+declared without it, the parent is the focus root, each variable of its call's output takes the new instance's value of
+the head variable it binds (a variant, #631's `finite_variant_substitute_variable`), the head input is kept, and the
+call's input keeps its values (`finite_socket_free_context`). An inner commitment is either at a nested focus: both
+contexts hold at every focus and barred set. What the discharges need of the state, and nothing more: the parent's
+premises pending as its linked instances and every pending goal under it one of them (q116 (i)); no premise-only
+variable of the parent held by its call (q116 (ii)); the socket's ordinary premise a pair (the obligation's form: at
+another form the obligation is vacuous and the output's variables are a head variable's binding, whose values no kept
+head fixes); at a free socket the call's input and output sharing no variable (q116 (iii)). Each is a counterexample to
+the premise at the states the premise quantifies over where it fails, and none is false in a state the search reaches
+from a call: a premise-only variable enters no equation before a goal holding it is resolved, and every such goal is a
+pending child of the parent while a socket commits; a committed goal's input is ground, and ground patterns stay
+ground. The test checks them where it commits: at a socket call `finite_call_narrowed` (#631's conditions and the
+socket's premise a pair, `finite_socket_pair`), at a material premise `finite_material_narrowed`, each conjoined in
+`finite_declared_commitment`, so the search refuses a commitment it cannot justify, never a call; no declaration still
+commits nothing (`finite_declared_commitment_none`). Under them #565's premise holds at the declared commitment with no
+hypothesis on the state (`finite_declared_commitment_exchanges`: the direct producer's `finite_direct_exchange`, the
+sockets' `finite_socket_commitment_exchange` at every focus, so at an inner commitment too, and #631's
+`finite_material_commitment_exchanges`), given the declarations' discharge, a formed construction and premise-only
+registrations. `finite_construction_lifts` is stated over `finite_committed_barring` (review 622's follow-up 3). Every
+existing control keeps its answer under the narrowed test; the premise-only control
+(`Factor_Resolution_Controls.premise_only_control`, review 622's follow-up 1) exercises `finite_premise_only_free`:
+c(X) :- prod(Pair X Y), mat(Z;A,E,B,F) over prod([1],[2]) and prod([1],[3]), prod's socket kept; with a literal
+source the socket commits and keeps one answer (one certificate, R4's two); with Z registered and constructed first Z
+is premise-only and bound, the test refuses the commitment, and both answers stay (two). Correction (7)'s three
+counterexamples are not yet controls: a later controls task takes them.]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its

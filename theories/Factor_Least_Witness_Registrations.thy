@@ -201,9 +201,7 @@ text \<open>
   successor is supported at the larger barred set, which asks truth, satisfaction and placement alone of it.
 \<close>
 
-lemma resolution_value_variable [simp]: "resolution_value \<theta> (Finite_Variable z) = \<theta> z"
-  by (simp add: resolution_value_def)
-
+declare resolution_value_variable [simp]
 
 lemma finite_material_substitute_variables_subset:
   "b |\<in>| finite_material_variables M \<Longrightarrow>
@@ -1084,10 +1082,8 @@ proof (intro allI impI)
     and nd: "nd |\<in>| N" and focus: "resolution_focused F (resolution_node_position nd)"
   have ndst: "nd |\<in>| resolution_nodes st"
     using finite_resolution_select_construction[OF sel] nd by (auto simp: finite_focused_def)
-  show "\<exists>\<theta>'. resolution_supported_at U F (B |\<union>| fimage resolution_node_position (resolution_nodes st)) P
-      (finite_construction_step \<kappa> P st nd) \<theta>'"
-    by (rule finite_complete_construction_supported[OF I H sup focus complete ndst,
-      unfolded finite_committed_barring_def])
+  show "\<exists>\<theta>'. resolution_supported_at U F (finite_committed_barring B st) P (finite_construction_step \<kappa> P st nd) \<theta>'"
+    by (rule finite_complete_construction_supported[OF I H sup focus complete ndst])
 qed
 
 text \<open>The exact forms at a complete construction, each R5's at no commitment.\<close>

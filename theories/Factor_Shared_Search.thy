@@ -1018,6 +1018,17 @@ lemma resolution_positions_distinct_code [code]:
       resolution_is_call g \<longrightarrow> resolution_goal_position g \<noteq> resolution_node_position nd))"
   unfolding resolution_positions_distinct_def by blast
 
+text \<open>
+  A formed program's clauses have distinct sockets, and a call's initial state is placeable: the shared branch of the
+  search's code equation is taken at every call of a formed program (review 772, follow-up 2).
+\<close>
+
+lemma finite_system_formed_sockets_distinct: "finite_system_formed P \<Longrightarrow> clause_sockets_distinct P"
+  unfolding finite_system_formed_def clause_sockets_distinct_def finite_schema_formed_def by (auto split: prod.splits)
+
+lemma finite_initial_state_placeable: "search_placeable (finite_initial_state d t)"
+  by (auto simp: search_placeable_def finite_initial_state_def resolution_positions_distinct_def)
+
 lemma search_placeable_substitute:
   assumes pl: "search_placeable st"
   shows "search_placeable (resolution_state_substitute \<sigma> st)"

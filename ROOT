@@ -1345,7 +1345,9 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Factor_Least_Witness_Registrations
     Factor_Narrowed_Sockets
     Factor_Narrowed_Commitments
+    Factor_Narrowed_Productions
     Factor_Varied_Constructions
+    Factor_Varied_Narrowed_Sockets
     Factor_Reader_Witness_Registrations
     Finite_Presented_Coordinates
     Finite_Presented_Structures
@@ -1880,6 +1882,7 @@ session RRA_Factor_Structural_Bootstrap = HOL +
     Development_Given_Program
     Development_Given_Declarations
     Factor_Schema_Instantiation_Declarations
+    Factor_Union_Declarations
     Factor_Root_Family_Declarations
     Factor_Artifact_Citation_Declarations
     Factor_Row_Value_Socket_Declarations

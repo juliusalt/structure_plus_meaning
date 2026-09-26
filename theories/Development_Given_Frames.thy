@@ -18,14 +18,9 @@ lemma given_frames_carried:
     and frames: "frames_discharged (positive_meaning P) D \<Phi>"
   shows "frames_discharged (positive_meaning given_rooted_readers_system) D \<Phi>"
 proof -
-  have program: "systems_agree_on P given_program_system (system_definitions P)"
-    by (rule whole_agreement_transitive[OF agree guard_program_agreement])
-  have rooted: "systems_agree_on P given_rooted_readers_system
-      (system_definitions P \<inter> system_definitions given_rooted_readers_system)"
-    unfolding given_rooted_readers_system_def by (rule rooted_intersection_agreement[OF program])
+  note chain = given_agreements[OF Pf agree]
   show ?thesis
-  proof (rule frames_agree_read_discharged[OF Pf given_rooted_readers_formed rooted
-      systems_agree_on_intersection_closed[OF Pf given_rooted_readers_formed rooted] _ frames])
+  proof (rule frames_agree_read_discharged[OF Pf given_rooted_readers_formed chain(3) chain(4) _ frames])
     fix e S s keep Vp Vh d assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
       and d: "d \<in> schema_dependencies (decode_finite_schema S)"
     obtain c where "((e,c),decode_finite_schema S) \<in> system_clauses P" using clauses[OF m] by blast
@@ -74,12 +69,12 @@ next
 qed
 
 lemma given_frames_lookup:
-  "frames_discharged given_rooted_meaning_at given_declarations lookup_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations lookup_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at lookup_declarations lookup_frames"
     by (rule given_frames_carried[OF artifact_lookup_system_formed guard_lookup_agreement _
     lookup_frames_discharged]) (auto simp: lookup_declarations_def lookup_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -89,12 +84,12 @@ proof -
 qed
 
 lemma given_frames_identity:
-  "frames_discharged given_rooted_meaning_at given_declarations identity_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations identity_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at identity_declarations identity_frames"
     by (rule given_frames_carried[OF artifact_identity_system_formed guard_identity_agreement _
     identity_frames_discharged]) (auto simp: identity_declarations_def identity_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -104,12 +99,12 @@ proof -
 qed
 
 lemma given_frames_comparison:
-  "frames_discharged given_rooted_meaning_at given_declarations comparison_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations comparison_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at comparison_declarations comparison_frames"
     by (rule given_frames_carried[OF artifact_comparison_system_formed guard_comparison_agreement _
     comparison_frames_discharged]) (auto simp: comparison_declarations_def comparison_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -119,12 +114,12 @@ proof -
 qed
 
 lemma given_frames_headed:
-  "frames_discharged given_rooted_meaning_at given_declarations headed_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations headed_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at headed_declarations headed_frames"
     by (rule given_frames_carried[OF headed_material_system_formed guard_headed_agreement _
     headed_frames_discharged]) (auto simp: headed_declarations_def headed_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -134,12 +129,12 @@ proof -
 qed
 
 lemma given_frames_family_rows:
-  "frames_discharged given_rooted_meaning_at given_declarations family_rows_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations family_rows_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at family_rows_declarations family_rows_frames"
     by (rule given_frames_carried[OF family_admission_system_formed guard_family_agreement _
     family_rows_frames_discharged]) (auto simp: family_rows_declarations_def family_rows_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -149,12 +144,12 @@ proof -
 qed
 
 lemma given_frames_admission:
-  "frames_discharged given_rooted_meaning_at given_declarations admission_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations admission_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at admission_declarations admission_frames"
     by (rule given_frames_carried[OF citation_admission_system_formed guard_citation_agreement _
     admission_frames_discharged]) (auto simp: admission_declarations_def external_socket_decoded citation_admission_clauses_def)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -164,12 +159,12 @@ proof -
 qed
 
 lemma given_frames_interpretation:
-  "frames_discharged given_rooted_meaning_at given_declarations interpretation_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations interpretation_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at interpretation_declarations interpretation_frames"
     by (rule given_frames_carried[OF citation_interpretation_system_formed
     guard_interpretation_agreement _ interpretation_frames_discharged]) (auto simp: interpretation_declarations_def interpretation_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -179,12 +174,12 @@ proof -
 qed
 
 lemma given_frames_binder:
-  "frames_discharged given_rooted_meaning_at given_declarations binder_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations binder_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at binder_declarations binder_frames"
     by (rule given_frames_carried[OF binder_admission_system_formed guard_binder_agreement _
     binder_frames_discharged]) (auto simp: binder_declarations_def binder_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -194,12 +189,12 @@ proof -
 qed
 
 lemma given_frames_quotation:
-  "frames_discharged given_rooted_meaning_at given_declarations quotation_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations quotation_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at quotation_declarations quotation_frames"
     by (rule given_frames_carried[OF quotation_admission_system_formed guard_quotation_agreement _
     instantiation_notion_frames_discharged(1)]) (auto simp: quotation_declarations_def quotation_pair_socket_decoded quotation_admission_clauses_def)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -209,12 +204,12 @@ proof -
 qed
 
 lemma given_frames_instantiation:
-  "frames_discharged given_rooted_meaning_at given_declarations instantiation_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations instantiation_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at instantiation_declarations instantiation_frames"
     by (rule given_frames_carried[OF pattern_instantiation_system_formed
     guard_instantiation_agreement _ instantiation_notion_frames_discharged(2)]) (auto simp: instantiation_declarations_def instantiation_constant_socket_decoded instantiation_pair_socket_decoded pattern_instantiation_clauses_def)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -224,12 +219,12 @@ proof -
 qed
 
 lemma given_frames_prospective:
-  "frames_discharged given_rooted_meaning_at given_declarations prospective_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations prospective_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at prospective_declarations prospective_frames"
     by (rule given_frames_carried[OF prospective_instantiation_system_formed
     guard_prospective_agreement _ instantiation_notion_frames_discharged(3)]) (auto simp: prospective_declarations_def prospective_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -239,12 +234,12 @@ proof -
 qed
 
 lemma given_frames_vector:
-  "frames_discharged given_rooted_meaning_at given_declarations vector_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations vector_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at vector_declarations vector_frames"
     by (rule given_frames_carried[OF vector_instantiation_system_formed
     guard_vector_instantiation_agreement _ schema_instantiation_notion_frames_discharged(1)]) (auto simp: vector_declarations_def vector_cons_socket_decoded vector_instantiation_clauses_def)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -254,12 +249,12 @@ proof -
 qed
 
 lemma given_frames_record:
-  "frames_discharged given_rooted_meaning_at given_declarations record_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations record_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at record_declarations record_frames"
     by (rule given_frames_carried[OF record_instantiation_system_formed
     guard_record_instantiation_agreement _ schema_instantiation_notion_frames_discharged(2)]) (auto simp: record_declarations_def record_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -269,12 +264,12 @@ proof -
 qed
 
 lemma given_frames_material:
-  "frames_discharged given_rooted_meaning_at given_declarations material_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations material_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at material_declarations material_frames"
     by (rule given_frames_carried[OF material_instantiation_system_formed
     guard_material_instantiation_agreement _ schema_instantiation_notion_frames_discharged(3)]) (auto simp: material_declarations_def material_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -284,12 +279,12 @@ proof -
 qed
 
 lemma given_frames_premise_rows:
-  "frames_discharged given_rooted_meaning_at given_declarations premise_rows_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations premise_rows_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at premise_rows_declarations premise_rows_frames"
     by (rule given_frames_carried[OF premise_rows_system_formed guard_premise_rows_agreement _
     schema_instantiation_notion_frames_discharged(4)]) (auto simp: premise_rows_declarations_def premise_call_socket_decoded premise_material_socket_decoded premise_rows_clauses_def)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -299,12 +294,12 @@ proof -
 qed
 
 lemma given_frames_premise_family:
-  "frames_discharged given_rooted_meaning_at given_declarations premise_family_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations premise_family_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at premise_family_declarations premise_family_frames"
     by (rule given_frames_carried[OF premise_family_instantiation_system_formed
     guard_premise_family_agreement _ schema_instantiation_notion_frames_discharged(5)]) (auto simp: premise_family_declarations_def premise_family_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -314,12 +309,12 @@ proof -
 qed
 
 lemma given_frames_schema:
-  "frames_discharged given_rooted_meaning_at given_declarations schema_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations schema_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at schema_declarations schema_frames"
     by (rule given_frames_carried[OF schema_instantiation_system_formed
     guard_schema_instantiation_agreement _ schema_instantiation_notion_frames_discharged(6)]) (auto simp: schema_declarations_def schema_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -329,12 +324,12 @@ proof -
 qed
 
 lemma given_frames_interface_slot:
-  "frames_discharged given_rooted_meaning_at given_declarations interface_slot_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations interface_slot_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at interface_slot_declarations interface_slot_frames"
     by (rule given_frames_carried[OF definition_slot_reading_system_formed
     guard_definition_slot_agreement _ interface_slot_frames_discharged]) (auto simp: interface_slot_declarations_def interface_slot_socket_decoded definition_slot_reading_clauses_def)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -344,12 +339,12 @@ proof -
 qed
 
 lemma given_frames_schema_family_socket:
-  "frames_discharged given_rooted_meaning_at given_declarations schema_family_socket_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations schema_family_socket_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at schema_family_socket_record schema_family_socket_frames"
     by (rule given_frames_carried[OF schema_family_admission_system_formed
     guard_schema_family_agreement _ schema_family_socket_frames_discharged]) (auto simp: schema_family_socket_record_def schema_family_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -359,12 +354,12 @@ proof -
 qed
 
 lemma given_frames_callee_inclusion_socket:
-  "frames_discharged given_rooted_meaning_at given_declarations callee_inclusion_socket_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations callee_inclusion_socket_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at callee_inclusion_socket_record callee_inclusion_socket_frames"
     by (rule given_frames_carried[OF definition_callee_inclusion_system_formed
     guard_definition_callee_inclusion_agreement _ callee_inclusion_socket_frames_discharged]) (auto simp: callee_inclusion_socket_record_def callee_inclusion_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -374,12 +369,12 @@ proof -
 qed
 
 lemma given_frames_payload_audit_socket:
-  "frames_discharged given_rooted_meaning_at given_declarations payload_audit_socket_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations payload_audit_socket_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at payload_audit_socket_record payload_audit_socket_frames"
     by (rule given_frames_carried[OF payload_audit_system_formed guard_audit_agreement _
     payload_audit_socket_frames_discharged]) (auto simp: payload_audit_socket_record_def payload_audit_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -389,12 +384,12 @@ proof -
 qed
 
 lemma given_frames_clause_reading_row:
-  "frames_discharged given_rooted_meaning_at given_declarations clause_reading_row_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations clause_reading_row_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at clause_reading_row_record clause_reading_row_frames"
     by (rule given_frames_carried[OF definition_clause_reading_system_formed
     guard_clause_reading_agreement _ clause_reading_row_frames_discharged]) (auto simp: clause_reading_row_record_def clause_reading_row_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -404,12 +399,12 @@ proof -
 qed
 
 lemma given_frames_premise_slot_row:
-  "frames_discharged given_rooted_meaning_at given_declarations premise_slot_row_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations premise_slot_row_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at premise_slot_row_record premise_slot_row_frames"
     by (rule given_frames_carried[OF schema_slot_reading_system_formed
     guard_schema_slot_agreement _ premise_slot_row_frames_discharged]) (auto simp: premise_slot_row_record_def premise_slot_row_decoded schema_slot_reading_clauses_def)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -419,12 +414,12 @@ proof -
 qed
 
 lemma given_frames_schema_slot_row:
-  "frames_discharged given_rooted_meaning_at given_declarations schema_slot_row_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations schema_slot_row_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at schema_slot_row_record schema_slot_row_frames"
     by (rule given_frames_carried[OF definition_slot_reading_system_formed
     guard_definition_slot_agreement _ schema_slot_row_frames_discharged]) (auto simp: schema_slot_row_record_def schema_slot_row_decoded definition_slot_reading_clauses_def)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -434,12 +429,12 @@ proof -
 qed
 
 lemma given_frames_root_slot_row:
-  "frames_discharged given_rooted_meaning_at given_declarations root_slot_row_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations root_slot_row_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at root_slot_row_record root_slot_row_frames"
     by (rule given_frames_carried[OF package_slot_reading_system_formed
     guard_package_slot_agreement _ root_slot_row_frames_discharged]) (auto simp: root_slot_row_record_def root_slot_row_decoded package_slot_reading_clauses_def)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -449,12 +444,12 @@ proof -
 qed
 
 lemma given_frames_application:
-  "frames_discharged given_rooted_meaning_at given_declarations application_frames"
+  "frames_discharged given_rooted_meaning_at given_plain_declarations application_frames"
 proof -
   have own: "frames_discharged given_rooted_meaning_at application_declarations application_frames"
     by (rule given_frames_carried[OF application_reading_system_formed guard_application_reading_agreement _
     instantiation_notion_frames_discharged(4)]) (auto simp: application_declarations_def application_socket_decoded)
-  show ?thesis unfolding given_declarations_records
+  show ?thesis unfolding given_plain_declarations_records
     apply (rule frames_list_discharged)
     apply (simp only: list.set insert_iff empty_iff)
     apply (elim disjE)
@@ -515,7 +510,7 @@ definition given_frames :: "(nat,nat,nat) resolution_frames" where
   "given_frames = foldr (|\<union>|) (map snd given_frame_families) {||}"
 
 theorem given_frames_discharged:
-  "frames_discharged (positive_meaning given_rooted_readers_system) given_declarations given_frames"
+  "frames_discharged (positive_meaning given_rooted_readers_system) given_plain_declarations given_frames"
   unfolding given_frames_def given_frame_families_def
   by (rule frames_foldr_discharged) (use given_family_frames in auto)
 
@@ -544,15 +539,15 @@ text \<open>
 
 lemma given_frames_at_sockets:
   assumes "(e,S,s,C) |\<in>| given_frames"
-  shows "\<exists>keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
+  shows "\<exists>keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
 proof -
   obtain \<Phi> where \<Phi>: "\<Phi> \<in> set (map snd given_frame_families)" "(e,S,s,C) |\<in>| \<Phi>"
     using assms unfolding given_frames_def frames_foldr_member by blast
   then obtain D where D: "(D,\<Phi>) \<in> set given_frame_families" by auto
   obtain keep Vp Vh where "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
     using given_frame_families_own(2)[OF D \<Phi>(2)] by force
-  then have "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
-    unfolding given_declarations_records by (rule declarations_list_socket_member[OF given_frame_families_own(1)[OF D]])
+  then have "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records by (rule declarations_list_socket_member[OF given_frame_families_own(1)[OF D]])
   then show ?thesis by blast
 qed
 
@@ -561,29 +556,71 @@ proof
   fix x assume "x \<in> frame_sites given_frames"
   then obtain e S s C where f: "(e,S,s,C) |\<in>| given_frames" and x: "x = e \<or> x \<in> schema_dependencies (decode_finite_schema S)"
     unfolding frame_sites_def by auto
-  obtain keep Vp Vh where sock: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
+  obtain keep Vp Vh where sock: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
     using given_frames_at_sockets[OF f] by blast
   have e: "e \<in> system_definitions given_rooted_readers_system"
-    using given_declarations_sites declared_sites_members(4)[OF sock] by blast
+    using given_plain_declarations_sites declared_sites_members(4)[OF sock] by blast
   show "x \<in> system_definitions given_rooted_readers_system"
     using x e given_socket_reaches[OF sock e] by blast
 qed
 
 theorem given_placed_frames_discharged:
   "frames_discharged (positive_meaning (decode_finite_system given_placed_program))
-    (declarations_relocated given_readers_placement given_declarations)
+    (declarations_relocated given_readers_placement given_plain_declarations)
     (frames_relocated given_readers_placement given_frames)"
 proof -
   have Pf: "schema_system_formed (decode_finite_system finite_rooted_given_readers)"
     by (simp add: finite_rooted_given_readers_exact)
-  have "system_definitions (decode_finite_system finite_rooted_given_readers) \<union> declared_sites given_declarations \<union>
+  have "system_definitions (decode_finite_system finite_rooted_given_readers) \<union> declared_sites given_plain_declarations \<union>
       frame_sites given_frames = system_definitions given_rooted_readers_system"
-    using given_declarations_sites given_frame_sites by (auto simp only: finite_rooted_given_readers_exact)
+    using given_plain_declarations_sites given_frame_sites by (auto simp only: finite_rooted_given_readers_exact)
   then have inj: "inj_on given_readers_placement (system_definitions (decode_finite_system finite_rooted_given_readers) \<union>
-      declared_sites given_declarations \<union> frame_sites given_frames)"
+      declared_sites given_plain_declarations \<union> frame_sites given_frames)"
     using given_readers_installation(3) by (simp only:)
   show ?thesis
     by (rule frames_relocated_discharged[OF Pf inj]) (simp add: finite_rooted_given_readers_exact given_frames_discharged)
+qed
+
+section \<open>The given's frames beside 48's narrowed frames\<close>
+
+text \<open>
+  The frames of the given's one record: the families' frames at the plain part and #609's frames at 48's narrowed
+  sockets, joined at the record's keys (@{const frames_join}) and discharged by the join
+  (@{thm [source] produced_join_frames}).
+\<close>
+
+definition given_narrowed_frames :: "(nat,nat,nat) resolution_frames" where
+  "given_narrowed_frames = frames_join (resolution_declarations.truncate (union_produced given_union_sockets))
+    given_frames given_union_frames"
+
+theorem given_narrowed_frames_discharged:
+  "narrowed_frames_discharged (positive_meaning given_rooted_readers_system)
+    (narrowed_declarations.truncate given_declarations) given_narrowed_frames"
+  unfolding given_declarations_def given_narrowed_frames_def
+  by (rule produced_join_frames[OF given_frames_discharged]) (simp only: union_produced_fields given_union_rooted(2))
+
+text \<open>
+  R5f2's exchange at the given's rooted readers with the one record and its frames: the committed search there produces
+  48's unions at the narrowed sockets (@{thm [source] finite_narrowed_commitment_exchanges}); the forms of R5f2 follow
+  at the same premises.
+\<close>
+
+theorem given_narrowed_commitment_exchanges:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and only: "finite_registrations_premise_only \<kappa> finite_rooted_given_readers"
+  shows "finite_commitment_exchanges (\<lambda>_. False) \<kappa>
+    (finite_narrowed_commitment finite_rooted_given_readers m given_declarations given_narrowed_frames)
+    finite_rooted_given_readers"
+proof -
+  have d: "narrowed_declarations_discharged (positive_meaning (decode_finite_system finite_rooted_given_readers))
+      (narrowed_declarations.truncate given_declarations) given_declarations_correspondence"
+    using given_declarations_discharged(1) by (simp add: finite_rooted_given_readers_exact)
+  have f: "narrowed_frames_discharged (positive_meaning (decode_finite_system finite_rooted_given_readers))
+      (narrowed_declarations.truncate given_declarations) given_narrowed_frames"
+    using given_narrowed_frames_discharged by (simp add: finite_rooted_given_readers_exact)
+  show ?thesis
+    by (rule finite_narrowed_commitment_exchanges[OF \<kappa> d f given_declarations_productions
+      given_declarations_discharged(3) only])
 qed
 
 end

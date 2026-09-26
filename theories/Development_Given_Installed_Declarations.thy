@@ -19,7 +19,7 @@ section \<open>The record's sites stand in the rooted readers\<close>
 text \<open>
   A callee of a clause of a system agreeing with the given's readers on its domain, at a rooted site, is rooted; so is
   a callee of a socket's schema of the given's record at a rooted site, the rooted readers' own clause there
-  (@{thm [source] given_declarations_selected}).
+  (@{thm [source] given_plain_declarations_selected}).
 \<close>
 
 lemma given_rooted_clause_reaches:
@@ -47,13 +47,13 @@ proof -
 qed
 
 lemma given_socket_reaches:
-  assumes sock: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
+  assumes sock: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
     and member: "e \<in> system_definitions given_rooted_readers_system"
     and callee: "x \<in> schema_dependencies (decode_finite_schema S)"
   shows "x \<in> system_definitions given_rooted_readers_system"
 proof -
   obtain c where "((e,c),S) |\<in>| finite_system_clauses finite_rooted_given_readers"
-    using given_declarations_selected[OF sock] member by blast
+    using given_plain_declarations_selected[OF sock] member by blast
   then have "((e,c),decode_finite_schema S) \<in> system_clauses given_rooted_readers_system"
     by (simp only: finite_system_clause_decoded finite_rooted_given_readers_exact)
   then show ?thesis using given_rooted_readers_formed callee unfolding schema_system_formed_def by blast
@@ -92,8 +92,8 @@ abbreviation given_records where
     call_admission_declarations, interface_slot_declarations, binding_declarations, clause_payloads_declarations,
     application_declarations]"
 
-lemma given_declarations_records: "given_declarations = declarations_list given_records"
-  by (simp only: given_declarations_def)
+lemma given_plain_declarations_records: "given_plain_declarations = declarations_list given_records"
+  by (simp only: given_plain_declarations_def)
 
 lemma declarations_list_socket_member:
   assumes "D \<in> set Ds" "z |\<in>| declared_sockets D"
@@ -105,11 +105,11 @@ lemma declarations_list_members:
   "(d,e,V,i) |\<in>| declared_consumers (declarations_list Ds) \<Longrightarrow> \<exists>D\<in>set Ds. (d,e,V,i) |\<in>| declared_consumers D"
   by (induction Ds) (auto simp: declarations_union_def no_declarations_def)
 
-lemma given_declarations_socket_of:
+lemma given_plain_declarations_socket_of:
   assumes "\<exists>s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
     and "D \<in> set given_records"
-  shows "\<exists>s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
-  using assms declarations_list_socket_member unfolding given_declarations_def by blast
+  shows "\<exists>s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
+  using assms declarations_list_socket_member unfolding given_plain_declarations_def by blast
 
 text \<open>
   79, 82 and 83 are entries of the given's readers, 12 a read site of the registrations. 79's socket schema calls 32
@@ -129,31 +129,31 @@ proof -
   have e: "77 \<in> ?R" "79 \<in> ?R" "82 \<in> ?R" "83 \<in> ?R"
     using given_rooted_entries given_rooted_members(2,3,6,7) by blast+
   have r: "12 \<in> ?R" "47 \<in> ?R" by (rule given_rooted_read_sites(1); simp)+
-  have socket: "x \<in> ?R" if "\<exists>s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
+  have socket: "x \<in> ?R" if "\<exists>s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
     "e \<in> ?R" "x \<in> schema_dependencies (decode_finite_schema S)" for e S x
     using that given_socket_reaches by blast
-  have sock1: "(79,root_family_socket_schema,1,False,view_identity,root_family_view) |\<in>| declared_sockets given_declarations"
-    unfolding given_declarations_records
+  have sock1: "(79,root_family_socket_schema,1,False,view_identity,root_family_view) |\<in>| declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=root_family_producer_record])
       (simp only: list.set insert_iff simp_thms, simp add: root_family_producer_record_def)
-  have sock2: "(12,identity_socket_schema,2,False,view_identity,view_identity) |\<in>| declared_sockets given_declarations"
-    unfolding given_declarations_records
+  have sock2: "(12,identity_socket_schema,2,False,view_identity,view_identity) |\<in>| declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=identity_declarations])
       (simp only: list.set insert_iff simp_thms, simp add: identity_declarations_def)
-  have sock3: "(7,comparison_socket_schema,0,False,view_identity,view_identity) |\<in>| declared_sockets given_declarations"
-    unfolding given_declarations_records
+  have sock3: "(7,comparison_socket_schema,0,False,view_identity,view_identity) |\<in>| declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=comparison_declarations])
       (simp only: list.set insert_iff simp_thms, simp add: comparison_declarations_def)
-  have sock4: "(32,family_rows_socket_schema,0,False,headed_incidence_view,view_identity) |\<in>| declared_sockets given_declarations"
-    unfolding given_declarations_records
+  have sock4: "(32,family_rows_socket_schema,0,False,headed_incidence_view,view_identity) |\<in>| declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=family_rows_declarations])
       (simp only: list.set insert_iff simp_thms, simp add: family_rows_declarations_def)
-  have sock6: "(45,given_target_socket_schema,2,False,view_identity,view_identity) |\<in>| declared_sockets given_declarations"
-    unfolding given_declarations_records
+  have sock6: "(45,given_target_socket_schema,2,False,view_identity,view_identity) |\<in>| declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=given_target_declarations])
       (simp only: list.set insert_iff simp_thms, simp add: given_target_declarations_def)
-  have sock7: "(40,interpretation_socket_schema,0,False,outer_pair_view,inner_right_view) |\<in>| declared_sockets given_declarations"
-    unfolding given_declarations_records
+  have sock7: "(40,interpretation_socket_schema,0,False,outer_pair_view,inner_right_view) |\<in>| declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=interpretation_declarations])
       (simp only: list.set insert_iff simp_thms, simp add: interpretation_declarations_def)
   note sock = sock1 sock2 sock3 sock4 sock6 sock7
@@ -211,18 +211,18 @@ proof -
         of definition_call_admission_schema])
       (simp_all add: schema_dependencies_def rel_ran_image definition_call_admission_schema_def)
   have sock8: "(63,premise_material_socket_schema,0,False,material_view,premise_rows_view) |\<in>|
-      declared_sockets given_declarations"
-    unfolding given_declarations_records
+      declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=premise_rows_declarations])
       (simp only: list.set insert_iff simp_thms, simp add: premise_rows_declarations_def)
   have sock9: "(62,material_socket_schema,0,False,record_material_view,material_view) |\<in>|
-      declared_sockets given_declarations"
-    unfolding given_declarations_records
+      declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=material_declarations])
       (simp only: list.set insert_iff simp_thms, simp add: material_declarations_def)
   have sock10: "(61,record_socket_schema,4,False,instantiation_view,instantiation_view) |\<in>|
-      declared_sockets given_declarations"
-    unfolding given_declarations_records
+      declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=record_declarations])
       (simp only: list.set insert_iff simp_thms, simp add: record_declarations_def)
   have call': "62 \<in> schema_dependencies (decode_finite_schema premise_material_socket_schema)"
@@ -235,8 +235,8 @@ proof -
   have m62: "61 \<in> ?R" using given_socket_reaches[OF sock9 m63'] call'(2) by blast
   have m61: "60 \<in> ?R" "59 \<in> ?R" using given_socket_reaches[OF sock10 m62] call'(3,4) by blast+
   have sock11: "(55,instantiation_constant_socket_schema,1,False,quotation_view,instantiation_view) |\<in>|
-      declared_sockets given_declarations"
-    unfolding given_declarations_records
+      declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=instantiation_declarations])
       (simp only: list.set insert_iff simp_thms, simp add: instantiation_declarations_def)
   have m55': "52 \<in> ?R"
@@ -317,8 +317,8 @@ proof -
         of package_definition_slot_schema])
       (auto simp: package_slot_reading_clauses_def schema_dependencies_def rel_ran_image
         package_definition_slot_schema_def)
-  have sock: "(105,schema_slot_row_schema,2,True,view_identity,view_identity) |\<in>| declared_sockets given_declarations"
-    unfolding given_declarations_records
+  have sock: "(105,schema_slot_row_schema,2,True,view_identity,view_identity) |\<in>| declared_sockets given_plain_declarations"
+    unfolding given_plain_declarations_records
     by (rule declarations_list_socket_member[where D=schema_slot_row_record])
       (simp only: list.set insert_iff simp_thms, simp add: schema_slot_row_record_def)
   have call: "104 \<in> schema_dependencies (decode_finite_schema schema_slot_row_schema)"
@@ -327,8 +327,8 @@ proof -
   show ?thesis using assms e m72 m76 m121 m119 m105 by auto
 qed
 
-theorem given_declarations_sites:
-  "declared_sites given_declarations \<subseteq> system_definitions given_rooted_readers_system"
+theorem given_plain_declarations_sites:
+  "declared_sites given_plain_declarations \<subseteq> system_definitions given_rooted_readers_system"
 proof -
   let ?R = "system_definitions given_rooted_readers_system"
   let ?A = "{6,7,10,11,12,21,29,31,32,34,35,36,37,39,40,41,42,45,47,48,49,50,52,54,55,56,57,58,59,60,61,62,63,64,65,
@@ -337,28 +337,28 @@ proof -
   let ?S = "?A \<union> ?B"
   have site: "d \<in> ?R" if "d \<in> ?S" for d
     using that given_rooted_declared_sites[of d] given_rooted_socket_sites[of d] by blast
-  have p: "d \<in> ?R" if m: "(d,V,hs) |\<in>| declared_producers given_declarations" for d V hs
+  have p: "d \<in> ?R" if m: "(d,V,hs) |\<in>| declared_producers given_plain_declarations" for d V hs
   proof -
     obtain D where "D \<in> set given_records" "(d,V,hs) |\<in>| declared_producers D"
-      using declarations_list_members(1)[OF m[unfolded given_declarations_records]] by blast
+      using declarations_list_members(1)[OF m[unfolded given_plain_declarations_records]] by blast
     then have "d \<in> ?S" by (auto simp: given_record_defs)
     then show ?thesis by (rule site)
   qed
-  have c: "d \<in> ?R \<and> e \<in> ?R" if m: "(d,e,V,i) |\<in>| declared_consumers given_declarations" for d e V i
+  have c: "d \<in> ?R \<and> e \<in> ?R" if m: "(d,e,V,i) |\<in>| declared_consumers given_plain_declarations" for d e V i
   proof -
     obtain D where "D \<in> set given_records" "(d,e,V,i) |\<in>| declared_consumers D"
-      using declarations_list_members(2)[OF m[unfolded given_declarations_records]] by blast
+      using declarations_list_members(2)[OF m[unfolded given_plain_declarations_records]] by blast
     then have "d \<in> ?S \<and> e \<in> ?S" by (auto simp: given_record_defs)
     then show ?thesis using site by blast
   qed
-  have s: "e \<in> ?R" if m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations" for e S s keep Vp Vh
+  have s: "e \<in> ?R" if m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations" for e S s keep Vp Vh
   proof -
     obtain D where "D \<in> set given_records" "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D"
-      using m[unfolded given_declarations_records] by (rule declarations_list_sockets)
+      using m[unfolded given_plain_declarations_records] by (rule declarations_list_sockets)
     then have "e \<in> ?S" by (auto simp: given_record_defs)
     then show ?thesis by (rule site)
   qed
-  have dep: "x \<in> ?R" if "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
+  have dep: "x \<in> ?R" if "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
     "x \<in> schema_dependencies (decode_finite_schema S)" for e S s keep Vp Vh x
     by (rule given_socket_reaches[OF that(1) s[OF that(1)] that(2)])
   show ?thesis unfolding declared_sites_def using p c s dep by fastforce
@@ -545,55 +545,55 @@ qed
 
 section \<open>The given's record at its installed program\<close>
 
-definition given_installed_declarations where
-  "given_installed_declarations = installed_record given_declarations"
+definition given_installed_plain_declarations where
+  "given_installed_plain_declarations = installed_record given_plain_declarations"
 
 definition given_installed_correspondence where
-  "given_installed_correspondence = placed_correspondence given_readers_placement given_declarations
+  "given_installed_correspondence = placed_correspondence given_readers_placement given_plain_declarations
     given_declarations_correspondence"
 
-theorem given_installed_declarations_discharged:
+theorem given_installed_plain_declarations_discharged:
   "declarations_discharged (positive_meaning (decode_finite_system given_placed_program))
-    (declarations_relocated given_readers_placement given_declarations) given_installed_correspondence"
+    (declarations_relocated given_readers_placement given_plain_declarations) given_installed_correspondence"
   "declarations_discharged (positive_meaning (decode_finite_system given_installed_presentation))
-    given_installed_declarations given_installed_correspondence"
-  "declarations_discharged (positive_meaning given_readers_program) given_installed_declarations
+    given_installed_plain_declarations given_installed_correspondence"
+  "declarations_discharged (positive_meaning given_readers_program) given_installed_plain_declarations
     given_installed_correspondence"
-  unfolding given_installed_declarations_def given_installed_correspondence_def
-  by (rule installed_record_discharged[OF given_declarations_discharged(2) given_declarations_sites])+
+  unfolding given_installed_plain_declarations_def given_installed_correspondence_def
+  by (rule installed_record_discharged[OF given_plain_declarations_discharged(2) given_plain_declarations_sites])+
 
-theorem given_installed_declarations_sockets:
-  assumes "(e',T,t,keep,Vp,Vh) |\<in>| declared_sockets given_installed_declarations"
-  shows "\<exists>e S s c c' f h. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations \<and>
+theorem given_installed_plain_declarations_sockets:
+  assumes "(e',T,t,keep,Vp,Vh) |\<in>| declared_sockets given_installed_plain_declarations"
+  shows "\<exists>e S s c c' f h. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations \<and>
     e' = given_readers_placement e \<and> ((e,c),S) |\<in>| finite_system_clauses finite_rooted_given_readers \<and>
     ((e',c'),T) |\<in>| finite_system_clauses given_installed_presentation \<and>
     finite_schema_match (finite_rename_schema id id given_readers_placement S) T = Some (f,h) \<and> t = h s"
 proof -
-  obtain e S s c c' f h where r: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
+  obtain e S s c c' f h where r: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
     "e' = given_readers_placement e"
     "((e',c'),T) |\<in>| finite_system_clauses given_installed_presentation"
     "finite_schema_match (finite_rename_schema id id given_readers_placement S) T = Some (f,h)" "t = h s"
-    using installed_record_sockets[OF given_declarations_sites assms[unfolded given_installed_declarations_def]]
+    using installed_record_sockets[OF given_plain_declarations_sites assms[unfolded given_installed_plain_declarations_def]]
     by blast
   have "e \<in> system_definitions given_rooted_readers_system"
-    using given_declarations_sites declared_sites_members(4)[OF r(1)] by blast
+    using given_plain_declarations_sites declared_sites_members(4)[OF r(1)] by blast
   then obtain c0 where "((e,c0),S) |\<in>| finite_system_clauses finite_rooted_given_readers"
-    using given_declarations_selected[OF r(1)] by blast
+    using given_plain_declarations_selected[OF r(1)] by blast
   then show ?thesis using r by blast
 qed
 
-theorem given_installed_declarations_carried:
-  assumes sock: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
+theorem given_installed_plain_declarations_carried:
+  assumes sock: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
     and socket: "s \<in> schema_sockets (decode_finite_schema S)"
   shows "\<exists>c' T f h. ((given_readers_placement e,c'),T) |\<in>| finite_system_clauses given_installed_presentation \<and>
     finite_schema_match (finite_rename_schema id id given_readers_placement S) T = Some (f,h) \<and>
-    (given_readers_placement e,T,h s,keep,Vp,Vh) |\<in>| declared_sockets given_installed_declarations"
+    (given_readers_placement e,T,h s,keep,Vp,Vh) |\<in>| declared_sockets given_installed_plain_declarations"
 proof -
   have "e \<in> system_definitions given_rooted_readers_system"
-    using given_declarations_sites declared_sites_members(4)[OF sock] by blast
+    using given_plain_declarations_sites declared_sites_members(4)[OF sock] by blast
   then obtain c where "((e,c),S) |\<in>| finite_system_clauses finite_rooted_given_readers"
-    using given_declarations_selected[OF sock] by blast
-  then show ?thesis unfolding given_installed_declarations_def by (rule installed_record_carries[OF sock _ socket])
+    using given_plain_declarations_selected[OF sock] by blast
+  then show ?thesis unfolding given_installed_plain_declarations_def by (rule installed_record_carries[OF sock _ socket])
 qed
 
 section \<open>Every extension's record at its installed program\<close>
@@ -670,18 +670,239 @@ text \<open>The given's record at the asked relation's installed guard and at th
 
 theorem asked_installed_declarations_discharged:
   "declarations_discharged (positive_meaning asked_program)
-    (asked_extension.extension_installed_record given_declarations)
-    (placed_correspondence asked_extension.installed_placement given_declarations given_declarations_correspondence)"
-  using asked_extension.extension_record_discharged(3)[OF given_declarations_discharged(2) given_declarations_sites]
+    (asked_extension.extension_installed_record given_plain_declarations)
+    (placed_correspondence asked_extension.installed_placement given_plain_declarations given_declarations_correspondence)"
+  using asked_extension.extension_record_discharged(3)[OF given_plain_declarations_discharged(2) given_plain_declarations_sites]
     asked_installed_presentation_exact(3) unfolding asked_installed_presentation_def by simp
 
 theorem first_request_installed_declarations_discharged:
   "declarations_discharged (positive_meaning first_request_program)
-    (first_request_extension.extension_installed_record given_declarations)
-    (placed_correspondence first_request_extension.installed_placement given_declarations
+    (first_request_extension.extension_installed_record given_plain_declarations)
+    (placed_correspondence first_request_extension.installed_placement given_plain_declarations
       given_declarations_correspondence)"
-  using first_request_extension.extension_record_discharged(3)[OF given_declarations_discharged(2)
-    given_declarations_sites] first_request_installed_presentation_exact(3)
+  using first_request_extension.extension_record_discharged(3)[OF given_plain_declarations_discharged(2)
+    given_plain_declarations_sites] first_request_installed_presentation_exact(3)
   unfolding first_request_installed_presentation_def by simp
+
+section \<open>The given's one record, with 48's narrowed sockets, at the rooted readers\<close>
+
+text \<open>
+  48's narrowed sockets stand at 50, 55, 57, 60 and 63, sites of the rooted readers; each notion's record is carried
+  there (@{thm [source] given_narrowed_carried}), the five are joined, and the given's record is discharged by the
+  join (@{thm [source] produced_join_discharged}): its plain part (@{const unrestricted_declarations}) as before, its
+  narrowed part at 48's class, and its productions declared at every narrowed socket.
+\<close>
+
+lemma given_union_member:
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed quotation_union_sockets) \<longrightarrow>
+    e \<in> system_definitions given_rooted_readers_system"
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed instantiation_union_sockets) \<longrightarrow>
+    e \<in> system_definitions given_rooted_readers_system"
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed prospective_union_sockets) \<longrightarrow>
+    e \<in> system_definitions given_rooted_readers_system"
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed vector_union_sockets) \<longrightarrow>
+    e \<in> system_definitions given_rooted_readers_system"
+  "\<forall>e S s keep Vp Vh. (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_narrowed premise_rows_union_sockets) \<longrightarrow>
+    e \<in> system_definitions given_rooted_readers_system"
+  by (auto simp: quotation_union_sockets_def instantiation_union_sockets_def prospective_union_sockets_def
+    vector_union_sockets_def premise_rows_union_sockets_def intro!: given_rooted_declared_sites)
+
+theorem given_union_rooted:
+  "narrowed_declarations_discharged (positive_meaning given_rooted_readers_system) (union_narrowed given_union_sockets)
+    given_declarations_correspondence"
+  "narrowed_frames_discharged (positive_meaning given_rooted_readers_system) (union_narrowed given_union_sockets)
+    given_union_frames"
+proof -
+  let ?M = "positive_meaning given_rooted_readers_system"
+  let ?c = given_declarations_correspondence
+  have dq: "narrowed_declarations_discharged ?M (union_narrowed quotation_union_sockets) ?c"
+    by (rule given_union_quotation(4)[OF given_union_member(1) union_narrowed_corr[OF union_declarations_discharged(1)]])
+  have di: "narrowed_declarations_discharged ?M (union_narrowed instantiation_union_sockets) ?c"
+    by (rule given_union_instantiation(4)[OF given_union_member(2)
+      union_narrowed_corr[OF union_declarations_discharged(2)]])
+  have dp: "narrowed_declarations_discharged ?M (union_narrowed prospective_union_sockets) ?c"
+    by (rule given_union_prospective(4)[OF given_union_member(3)
+      union_narrowed_corr[OF union_declarations_discharged(3)]])
+  have dv: "narrowed_declarations_discharged ?M (union_narrowed vector_union_sockets) ?c"
+    by (rule given_union_vector(4)[OF given_union_member(4) union_narrowed_corr[OF union_declarations_discharged(4)]])
+  have dr: "narrowed_declarations_discharged ?M (union_narrowed premise_rows_union_sockets) ?c"
+    by (rule given_union_premise_rows(4)[OF given_union_member(5)
+      union_narrowed_corr[OF union_declarations_discharged(5)]])
+  have fq: "narrowed_frames_discharged ?M (union_narrowed quotation_union_sockets) quotation_union_frames"
+    by (rule given_union_quotation(5)[OF given_union_member(1) union_frames_discharged(1)])
+  have fi: "narrowed_frames_discharged ?M (union_narrowed instantiation_union_sockets) instantiation_union_frames"
+    by (rule given_union_instantiation(5)[OF given_union_member(2) union_frames_discharged(2)])
+  have fp: "narrowed_frames_discharged ?M (union_narrowed prospective_union_sockets) prospective_union_frames"
+    by (rule given_union_prospective(5)[OF given_union_member(3) union_frames_discharged(3)])
+  have fv: "narrowed_frames_discharged ?M (union_narrowed vector_union_sockets) vector_union_frames"
+    by (rule given_union_vector(5)[OF given_union_member(4) union_frames_discharged(4)])
+  have fr: "narrowed_frames_discharged ?M (union_narrowed premise_rows_union_sockets) premise_rows_union_frames"
+    by (rule given_union_premise_rows(5)[OF given_union_member(5) union_frames_discharged(5)])
+  show "narrowed_declarations_discharged ?M (union_narrowed given_union_sockets) ?c"
+    unfolding given_union_sockets_def
+    by (rule union_narrowed_union[OF union_narrowed_union[OF union_narrowed_union[OF union_narrowed_union[OF dq di]
+      dp] dv] dr])
+  note defs = quotation_union_sockets_def instantiation_union_sockets_def prospective_union_sockets_def
+    vector_union_sockets_def premise_rows_union_sockets_def quotation_union_frames_def instantiation_union_frames_def
+    prospective_union_frames_def vector_union_frames_def premise_rows_union_frames_def
+  have f2: "narrowed_frames_discharged ?M (union_narrowed (quotation_union_sockets |\<union>| instantiation_union_sockets))
+      (quotation_union_frames |\<union>| instantiation_union_frames)"
+    by (rule union_frames_union[OF fq fi]) (simp_all add: defs)
+  have f3: "narrowed_frames_discharged ?M (union_narrowed (quotation_union_sockets |\<union>| instantiation_union_sockets |\<union>|
+      prospective_union_sockets)) (quotation_union_frames |\<union>| instantiation_union_frames |\<union>| prospective_union_frames)"
+    by (rule union_frames_union[OF f2 fp]) (simp_all add: defs)
+  have f4: "narrowed_frames_discharged ?M (union_narrowed (quotation_union_sockets |\<union>| instantiation_union_sockets |\<union>|
+      prospective_union_sockets |\<union>| vector_union_sockets)) (quotation_union_frames |\<union>| instantiation_union_frames |\<union>|
+      prospective_union_frames |\<union>| vector_union_frames)"
+    by (rule union_frames_union[OF f3 fv]) (simp_all add: defs)
+  show "narrowed_frames_discharged ?M (union_narrowed given_union_sockets) given_union_frames"
+    unfolding given_union_sockets_def given_union_frames_def
+    by (rule union_frames_union[OF f4 fr]) (simp_all add: defs)
+qed
+
+theorem given_declarations_discharged:
+  "narrowed_declarations_discharged (positive_meaning given_rooted_readers_system)
+    (narrowed_declarations.truncate given_declarations) given_declarations_correspondence"
+  "declarations_discharged (positive_meaning given_rooted_readers_system) (unrestricted_declarations given_declarations)
+    given_declarations_correspondence"
+  "narrowed_productions_declared given_declarations"
+proof -
+  show d: "narrowed_declarations_discharged (positive_meaning given_rooted_readers_system)
+      (narrowed_declarations.truncate given_declarations) given_declarations_correspondence"
+    unfolding given_declarations_def
+    by (rule produced_join_discharged[OF given_plain_declarations_discharged(2)])
+      (simp only: union_produced_fields given_union_rooted(1))
+  show "declarations_discharged (positive_meaning given_rooted_readers_system)
+      (unrestricted_declarations given_declarations) given_declarations_correspondence"
+    by (rule unrestricted_discharged[OF d])
+  show "narrowed_productions_declared given_declarations"
+    unfolding given_declarations_def by (rule produced_join_declared[OF union_produced_declared])
+qed
+
+subsection \<open>The productions: #609's registration answers at the rooted readers\<close>
+
+text \<open>
+  #609's @{thm [source] union_registration_answers} reads 48 as @{const data_union_system} and selection (5) as
+  @{const bag_comparison_system} at the searched program; both stand in the rooted readers, 5 as a callee of 6's
+  cons clause, and agree there by the chain (@{thm [source] given_agreements}).
+\<close>
+
+lemma given_rooted_selection_site: "5 \<in> system_definitions given_rooted_readers_system"
+proof -
+  note chain = given_agreements[OF bag_comparison_system_formed guard_bag_agreement]
+  have six: "6 \<in> system_definitions bag_comparison_system \<inter> system_definitions given_rooted_readers_system"
+    using given_rooted_declared_sites[of 6] by simp
+  have "((6,1),bag_cons_schema) \<in> system_clauses bag_comparison_system"
+    by (simp add: bag_comparison_clauses_def)
+  moreover have "(5::nat) \<in> schema_dependencies bag_cons_schema"
+    by (simp add: schema_dependencies_def bag_cons_schema_def bag_step_schema_def rel_ran_image image_iff)
+  ultimately have "(6,5) \<in> system_dependency_edges bag_comparison_system"
+    unfolding system_dependency_edges_def by blast
+  then show ?thesis using chain(4) six unfolding system_dependency_closed_def by blast
+qed
+
+lemma given_rooted_union_meanings:
+  "(48,t) \<in> positive_meaning (decode_finite_system finite_rooted_given_readers) \<longleftrightarrow>
+    (48,t) \<in> positive_meaning data_union_system"
+  "(5,t) \<in> positive_meaning (decode_finite_system finite_rooted_given_readers) \<longleftrightarrow>
+    (5,t) \<in> positive_meaning bag_comparison_system"
+proof -
+  note u = given_agreements[OF data_union_system_formed guard_union_agreement]
+  note b = given_agreements[OF bag_comparison_system_formed guard_bag_agreement]
+  have "(48,t) \<in> positive_meaning data_union_system \<longleftrightarrow> (48,t) \<in> positive_meaning given_rooted_readers_system"
+    by (rule positive_meaning_shared_definitions[OF data_union_system_formed given_rooted_readers_formed u(3)])
+      (simp_all add: given_rooted_declared_sites)
+  then show "(48,t) \<in> positive_meaning (decode_finite_system finite_rooted_given_readers) \<longleftrightarrow>
+      (48,t) \<in> positive_meaning data_union_system" by (simp add: finite_rooted_given_readers_exact)
+  have "(5,t) \<in> positive_meaning bag_comparison_system \<longleftrightarrow> (5,t) \<in> positive_meaning given_rooted_readers_system"
+    by (rule positive_meaning_shared_definitions[OF bag_comparison_system_formed given_rooted_readers_formed b(3)])
+      (simp_all add: given_rooted_selection_site)
+  then show "(5,t) \<in> positive_meaning (decode_finite_system finite_rooted_given_readers) \<longleftrightarrow>
+      (5,t) \<in> positive_meaning bag_comparison_system" by (simp add: finite_rooted_given_readers_exact)
+qed
+
+lemma given_union_socket_views:
+  assumes "(e,S,s,keep,Vp,Vh) |\<in>| given_union_sockets"
+  shows "Vp = join_view"
+  using assms by (auto simp: given_union_sockets_def quotation_union_sockets_def instantiation_union_sockets_def
+    prospective_union_sockets_def vector_union_sockets_def premise_rows_union_sockets_def)
+
+theorem given_union_productions:
+  "productions_discharged (positive_meaning (decode_finite_system finite_rooted_given_readers))
+    finite_rooted_given_readers m (union_produced given_union_sockets)"
+  unfolding productions_discharged_def
+proof (intro allI impI)
+  fix e S s keep Vp Vh R
+  assume sock: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (union_produced given_union_sockets)"
+    and p: "declared_production (union_produced given_union_sockets) e S s = Some R"
+  have R: "R = union_registration" using p by simp
+  have V: "Vp = join_view" using sock given_union_socket_views by simp
+  have fields: "registration_site union_registration = 48" "registration_schema union_registration = union_schema"
+    "registration_variable union_registration = 2" by (simp_all add: union_registration_def)
+  have ans: "head_registration_answers (positive_meaning (decode_finite_system finite_rooted_given_readers))
+      (union_construction m) finite_rooted_given_readers 48 union_schema join_view 2"
+    by (rule union_registration_answers[OF given_rooted_union_meanings])
+  show "head_registration Vp (registration_schema R) (registration_variable R) \<and>
+      head_registration_produces (finite_collection_construction [R] m) finite_rooted_given_readers (registration_site R)
+        (registration_schema R) (registration_variable R) (declared_narrowing (union_produced given_union_sockets) e S s) \<and>
+      head_registration_answers (positive_meaning (decode_finite_system finite_rooted_given_readers))
+        (finite_collection_construction [R] m) finite_rooted_given_readers (registration_site R) (registration_schema R) Vp
+        (registration_variable R)"
+    unfolding R V fields union_produced_simps
+    using union_head_registration union_registration_produces ans by blast
+qed
+
+theorem given_declarations_productions:
+  "productions_discharged (positive_meaning (decode_finite_system finite_rooted_given_readers))
+    finite_rooted_given_readers m given_declarations"
+  unfolding given_declarations_def by (rule produced_join_productions[OF given_union_productions])
+
+lemma produced_join_sites:
+  "declared_sites (resolution_declarations.truncate (produced_join D PD)) \<subseteq>
+    declared_sites D \<union> declared_sites (resolution_declarations.truncate PD)"
+  by (auto simp: declared_sites_def produced_join_truncate declarations_union_def unkeyed_declarations_def)
+
+theorem given_declarations_sites:
+  "declared_sites (resolution_declarations.truncate given_declarations) \<subseteq> system_definitions given_rooted_readers_system"
+proof
+  let ?R = "system_definitions given_rooted_readers_system"
+  fix x assume x: "x \<in> declared_sites (resolution_declarations.truncate given_declarations)"
+  have socket: "e \<in> ?R \<and> schema_dependencies (decode_finite_schema S) \<subseteq> ?R"
+    if m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations" for e S s keep Vp Vh
+  proof -
+    have "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations \<or>
+        (e,S,s,keep,Vp,Vh) |\<in>| given_union_sockets" using m unfolding given_declarations_sockets by blast
+    then have e: "e \<in> ?R"
+    proof
+      assume a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_plain_declarations"
+      show ?thesis by (rule subsetD[OF given_plain_declarations_sites declared_sites_members(4)[OF a]])
+    next
+      assume "(e,S,s,keep,Vp,Vh) |\<in>| given_union_sockets"
+      then show ?thesis unfolding given_union_sockets_def funion_iff
+        by (elim disjE) (erule given_union_member(1-5)[unfolded union_narrowed_empty, rule_format])+
+    qed
+    obtain c where "((e,c),S) |\<in>| finite_system_clauses finite_rooted_given_readers"
+      using given_declarations_selected[OF m] e by blast
+    then have "((e,c),decode_finite_schema S) \<in> system_clauses given_rooted_readers_system"
+      by (simp only: finite_system_clause_decoded finite_rooted_given_readers_exact)
+    then show ?thesis using given_rooted_readers_formed e unfolding schema_system_formed_def by blast
+  qed
+  have "x \<in> declared_sites given_plain_declarations \<union>
+      declared_sites (resolution_declarations.truncate (union_produced given_union_sockets))"
+    using subsetD[OF produced_join_sites x[unfolded given_declarations_def]] .
+  then show "x \<in> ?R"
+  proof (rule UnE)
+    assume "x \<in> declared_sites given_plain_declarations"
+    then show ?thesis using given_plain_declarations_sites by blast
+  next
+    assume "x \<in> declared_sites (resolution_declarations.truncate (union_produced given_union_sockets))"
+    then obtain e S s keep Vp Vh where m: "(e,S,s,keep,Vp,Vh) |\<in>| given_union_sockets"
+        and x': "x = e \<or> x \<in> schema_dependencies (decode_finite_schema S)"
+      by (fastforce simp: declared_sites_def)
+    have "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets given_declarations"
+      using m unfolding given_declarations_sockets by blast
+    then show ?thesis using socket x' by blast
+  qed
+qed
 
 end

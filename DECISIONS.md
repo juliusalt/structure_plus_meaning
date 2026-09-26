@@ -19185,3 +19185,28 @@ Task 613, from #566's review (follow-ups 2, 3, 6), after F1 #693 and F3 #695.
 - R4's `finite_resolution_lifting_by` keeps its induction (the planner, q141): deriving it from the committed lifting
   needs the committed search below Completeness, a move of Commitments' views and committed-search sections that #611,
   #777, #779 and #701 meet; it is the follow-up task 613's result states.
+
+## The given's one record is a keyed join: the plain record overridden at 48's narrowed sockets' keys
+
+Task 782, R6c's carrying second part (q140; scope confirmed by q144). `given_declarations` is one record of the produced
+declarations' type: `produced_join given_plain_declarations (union_produced given_union_sockets)`. A socket is keyed by
+its site, schema and socket (`socket_keyed`); the join holds the produced record's sockets with their class
+(`union_class`) and production (`union_registration`) at every key the produced record holds, and the plain record's
+sockets, of the trivial class and no production, at every other key (`unkeyed_declarations`). The narrowing and the
+production fields are functions of the key, so two sockets at one key cannot carry two classes; the join therefore
+filters by key rather than asserting that no plain socket stands at one of 48's eight keys (true, since 48 is not
+presentation-free and no plain record declares its premise sockets, but proving it is a computation over the 51
+records that no statement needs). Evidence that the filter drops nothing the route reads: the liveness evaluation over
+the joined record and 587's (`Development_Socket_Liveness_Execution.socket_liveness`) and the given's three control
+verdicts, now under `finite_narrowed_commitment`, evaluate unchanged.
+
+Each part is discharged where it was and the join by the two discharges, stated once for any plain and produced record
+(`produced_join_discharged`, `produced_join_frames` over `frames_join`, `produced_join_productions`,
+`produced_join_declared`). 48's sockets are carried from their five notions' systems by R5e's transfer by agreement
+along the chain every carrying reads (`given_agreements`, `given_narrowed_carried`), joined (`union_narrowed_union`,
+`union_frames_union` at site-disjoint families), and the productions discharged at the rooted readers by #609's
+`union_registration_answers`, 48 and 5 agreeing there (5 stands in the rooted readers through 6's cons clause,
+`given_rooted_selection_site`). R5f2's exchange at the rooted readers with the one record and its frames is
+`given_narrowed_commitment_exchanges`. The plain record keeps its facts under `given_plain_declarations*`; the plain
+installed carrying keeps its statements as `given_installed_plain_declarations*`. The carrying of the one record to the
+installed programs and `given_union_registration` are the follow-up task's (q144).

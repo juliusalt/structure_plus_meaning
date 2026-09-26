@@ -40,11 +40,79 @@ theorem data_bag_presentation_change:
   by (rule presentation_change.intro)
     (rule data_bag_presentation_class[OF assms(1)], rule data_bag_presentation_class[OF assms(2)])
 
+section \<open>Two presentations of one bag, in list form\<close>
+
+text \<open>
+  A bag presented by a function of its members is a listing of their images. A bag presented by its members
+  themselves, where a domain restricts them, is a listing of the members; two such presentations correspond exactly
+  when they list the same members with the same multiplicities. Stated once here: the bags of terms and of complete
+  data values are its instances, and a use of either reads it in list form.
+\<close>
+
+lemma data_bag_function:
+  "data_bag_presents (\<lambda>a t. t = f a) N t \<longleftrightarrow> (\<exists>xs. mset xs = N \<and> t = data_list_term (map f xs))"
+  by (auto simp: data_bag_presents_def data_sequence_presents_def list_all2_function)
+
+theorem data_bag_restricted_transport:
+  "presentation_transport (data_bag_presents (\<lambda>a t. t = a \<and> D a)) (data_bag_presents (\<lambda>a t. t = a \<and> D a)) t t'
+    \<longleftrightarrow> (\<exists>xs xs'. t = data_list_term xs \<and> t' = data_list_term xs' \<and> (\<forall>a\<in>set xs. D a) \<and> (\<forall>a\<in>set xs'. D a) \<and>
+      mset xs = mset xs')"
+proof
+  assume "presentation_transport (data_bag_presents (\<lambda>a t. t = a \<and> D a)) (data_bag_presents (\<lambda>a t. t = a \<and> D a)) t t'"
+  then obtain N xs ps xs' ps' where l: "list_all2 (\<lambda>a t. t = a \<and> D a) xs ps" and tp: "t = data_list_term ps"
+      and m: "mset xs = N" and l': "list_all2 (\<lambda>a t. t = a \<and> D a) xs' ps'" and tp': "t' = data_list_term ps'"
+      and m': "mset xs' = N"
+    unfolding presentation_transport_def data_bag_presents_def data_sequence_presents_def by blast
+  have "ps = xs \<and> (\<forall>a\<in>set xs. D a)" "ps' = xs' \<and> (\<forall>a\<in>set xs'. D a)"
+    using l l' unfolding list_all2_function_restricted[of id D, simplified] by blast+
+  then show "\<exists>xs xs'. t = data_list_term xs \<and> t' = data_list_term xs' \<and> (\<forall>a\<in>set xs. D a) \<and> (\<forall>a\<in>set xs'. D a) \<and>
+      mset xs = mset xs'"
+    using tp tp' m m' by (intro exI[of _ xs] exI[of _ xs']) auto
+next
+  assume "\<exists>xs xs'. t = data_list_term xs \<and> t' = data_list_term xs' \<and> (\<forall>a\<in>set xs. D a) \<and> (\<forall>a\<in>set xs'. D a) \<and>
+      mset xs = mset xs'"
+  then obtain xs xs' where r: "t = data_list_term xs" "t' = data_list_term xs'" "\<forall>a\<in>set xs. D a" "\<forall>a\<in>set xs'. D a"
+      "mset xs = mset xs'" by blast
+  have "list_all2 (\<lambda>a t. t = a \<and> D a) xs xs" "list_all2 (\<lambda>a t. t = a \<and> D a) xs' xs'"
+    using r(3,4) by (simp_all add: list_all2_function_restricted[of id D, simplified])
+  then show "presentation_transport (data_bag_presents (\<lambda>a t. t = a \<and> D a)) (data_bag_presents (\<lambda>a t. t = a \<and> D a)) t t'"
+    unfolding presentation_transport_def data_bag_presents_def data_sequence_presents_def using r(1,2,5) by blast
+qed
+
+abbreviation term_bag_presents :: "factor_term multiset \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "term_bag_presents \<equiv> data_bag_presents (\<lambda>a t. t = a)"
+
+lemma term_bag_presents_terms: "term_bag_presents N t \<longleftrightarrow> (\<exists>ys. mset ys = N \<and> t = data_list_term ys)"
+  using data_bag_function[of "\<lambda>a. a"] by simp
+
+lemma term_bag_presentation_class:
+  "presentation_class term_bag_presents (\<lambda>_. True) (\<lambda>t. \<exists>N. term_bag_presents N t)"
+  using presentation_class.recovered_admission[OF data_bag_presentation_class[OF identity_presentation_class]] by simp
+
+abbreviation term_bag_transport :: "factor_term \<Rightarrow> factor_term \<Rightarrow> bool" where
+  "term_bag_transport \<equiv> presentation_transport term_bag_presents term_bag_presents"
+
+lemma term_bag_transport_iff:
+  "term_bag_transport t t' \<longleftrightarrow> (\<exists>xs xs'. t = data_list_term xs \<and> t' = data_list_term xs' \<and> mset xs = mset xs')"
+  using data_bag_restricted_transport[of "\<lambda>_. True" t t'] by simp
+
+lemma term_bag_transport_lists:
+  "term_bag_transport (data_list_term xs) (data_list_term ys) \<longleftrightarrow> mset xs = mset ys"
+  by (auto simp: term_bag_transport_iff data_list_term_injective)
+
+lemma term_bag_transport_sym: "symp term_bag_transport"
+  unfolding symp_def term_bag_transport_iff by metis
+
 section \<open>Existing ordinary list admission covers exactly bags of complete data\<close>
 
 definition data_bag_value_presents :: "factor_term multiset \<Rightarrow> factor_term \<Rightarrow> bool" where
   "data_bag_value_presents M t \<longleftrightarrow>
     (\<exists>xs. data_elements xs \<and> mset xs=M \<and> t=data_list_term xs)"
+
+lemma data_bag_value_restricted:
+  "data_bag_value_presents = data_bag_presents (\<lambda>a t. t = a \<and> term_formed a \<and> self_contained_term a)"
+  by (intro ext) (unfold data_bag_value_presents_def data_bag_presents_def data_sequence_presents_def
+    list_all2_function_restricted[of id "\<lambda>a. term_formed a \<and> self_contained_term a", simplified], auto)
 
 theorem data_bag_value_presentation_class:
   "presentation_class data_bag_value_presents
@@ -52,34 +120,14 @@ theorem data_bag_value_presentation_class:
     (\<lambda>t. (4,t)\<in>positive_meaning bag_comparison_system)"
 proof -
   let ?D="\<lambda>a. term_formed a \<and> self_contained_term a"
-  let ?read="\<lambda>a p. ?D a \<and> p=a"
+  let ?read="\<lambda>a p. p=a \<and> ?D a"
   have elements: "presentation_class ?read ?D ?D"
     by (unfold_locales) auto
-  have lists: "list_all2 ?read xs ps \<longleftrightarrow> xs=ps \<and> data_elements xs" for xs ps
-    by (induction xs arbitrary: ps) (auto simp: list_all2_Cons1)
   have bag: "presentation_class (data_bag_presents ?read) (\<lambda>M. \<forall>a\<in>set_mset M. ?D a)
       (\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. ?D p) \<and> t=data_list_term ps)"
     by (rule data_bag_presentation_class[OF elements])
   have reads: "data_bag_presents ?read=data_bag_value_presents"
-  proof (intro ext)
-    fix M t
-    show "data_bag_presents ?read M t \<longleftrightarrow> data_bag_value_presents M t"
-    proof
-      assume "data_bag_presents ?read M t"
-      then obtain xs ps where parts: "list_all2 ?read xs ps" "t=data_list_term ps" "mset xs=M"
-        unfolding data_bag_presents_def data_sequence_presents_def by blast
-      have recovered: "xs=ps" "data_elements xs" using lists[of xs ps] parts(1) by blast+
-      show "data_bag_value_presents M t"
-        using parts recovered unfolding data_bag_value_presents_def by blast
-    next
-      assume "data_bag_value_presents M t"
-      then obtain xs where parts: "data_elements xs" "mset xs=M" "t=data_list_term xs"
-        unfolding data_bag_value_presents_def by blast
-      have reading: "list_all2 ?read xs xs" using lists[of xs xs] parts(1) by blast
-      show "data_bag_presents ?read M t"
-        using parts reading unfolding data_bag_presents_def data_sequence_presents_def by blast
-    qed
-  qed
+    by (rule data_bag_value_restricted[symmetric])
   have admission: "(\<lambda>t. \<exists>ps. (\<forall>p\<in>set ps. ?D p) \<and> t=data_list_term ps)=
       (\<lambda>t. (4,t)\<in>positive_meaning bag_comparison_system)"
     by (rule ext) (auto simp: data_list_exact)
@@ -126,6 +174,22 @@ interpretation data_bag_identity_contract: presented_relation_contract
   by (unfold_locales)
     (use data_bag_presentations.presentation_class_axioms data_bag_identity_presented in
       \<open>auto simp: presentation_class_def\<close>)
+
+text \<open>
+  Two presentations of one bag of complete data values are two listings of complete data with the same members and
+  multiplicities: the list form of the class's transport, the restricted transport at its domain.
+\<close>
+
+theorem data_bag_value_transport:
+  "presentation_transport data_bag_value_presents data_bag_value_presents t t' \<longleftrightarrow>
+    (\<exists>xs xs'. t = data_list_term xs \<and> t' = data_list_term xs' \<and> data_elements xs \<and> data_elements xs' \<and>
+      mset xs = mset xs')"
+  unfolding data_bag_value_restricted by (rule data_bag_restricted_transport)
+
+corollary data_bag_value_transport_lists:
+  "presentation_transport data_bag_value_presents data_bag_value_presents (data_list_term xs) (data_list_term ys)
+    \<longleftrightarrow> data_elements xs \<and> data_elements ys \<and> mset xs = mset ys"
+  by (auto simp: data_bag_value_transport data_list_term_injective)
 
 text \<open>
   A finite multiset is the independent subject. Complete sequences present

@@ -50,6 +50,21 @@ next
     unfolding finite_bindings_carried_back_def finite_union_image_member using xt by auto
 qed
 
+text \<open>Bindings carried back read the same values: the fibre of a key is its rows' values, and a carried variable's value is its image's.\<close>
+
+lemma carried_fibre_member: "t |\<in>| fimage snd (ffilter (\<lambda>r. fst r = k) X) \<longleftrightarrow> (k,t) |\<in>| X"
+  by (force simp: fimage.rep_eq ffilter.rep_eq)
+
+lemma carried_back_valuation:
+  assumes "y |\<in>| X"
+  shows "finite_binding_valuation (finite_bindings_carried_back f X B) y = finite_binding_valuation B (f y)"
+proof -
+  have "fimage snd (ffilter (\<lambda>r. fst r = y) (finite_bindings_carried_back f X B)) =
+      fimage snd (ffilter (\<lambda>r. fst r = f y) B)"
+    unfolding fset_eq_iff carried_fibre_member finite_bindings_carried_back_member using assms by simp
+  then show ?thesis by (simp only: finite_binding_valuation_def finite_relation_option_def)
+qed
+
 section \<open>The varied construction\<close>
 
 definition finite_varied_clause_registered ::

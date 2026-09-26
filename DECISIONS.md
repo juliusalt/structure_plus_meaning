@@ -16922,6 +16922,31 @@ which the premise-only test excludes. The socket kinds' discharges, from the soc
 `finite_committed_found_supported`, are #630's (the kept-head and free sockets, the inner commitment) and #631's (the
 material single solution).]
 
+[Corrected by task 631 (R5c⁗b), the planner's answer to q116. (7) #565's material part, as (6) left it, is false at
+states the test commits in, by three state-level gaps, each a counterexample and each a condition the test can check, true
+where the search commits. (i) The parent node's pending children need not be its clause's instances: `finite_material_premise`
+and `finite_siblings_pending` read positions, and `resolution_node_linked` lets a material premise be done while another
+goal stands at its position, so the committed goal's pattern need not be the instance of the socket's material premise and
+the obligation says nothing of it. (ii) At a kept head a premise-only variable of the parent may stand in the parent's
+call: p(B) :- mat(C0;A,E,K,Fn), r(B), the socket kept and discharged (B and A independent), the call p(z_A), z_A the
+parent's own image of A; at a support with z_A a non-canonical enumeration e1 of C0's atoms, r(e1) true and r(e0) false at
+the canonical e0, the one canonical successor holds r(e0) and none is supported (unreachable: z_A is fresh when the parent
+is made and only its children bind it). (iii) At a free socket the parent call's input may share a variable with its
+output: the focus root p(W,W), p(B,C) :- mat(K;C,A2,A3,A4), s(B), the output a variant, the holders test passed; at W = e1,
+s(e1) true and s(e0) false, the obligation is discharged (the input kept, C free) and the successor needs s(e0)
+(unreachable where the focus root is a committed call, its input ground, correction (5)). The conditions, defined beside the
+test in `Factor_Resolution_Commitments`: `finite_children_instances` (every premise and material premise of the parent
+clause pending as its instance under the parent's bindings, `finite_node_binding`, and every pending child one of them),
+`finite_premise_only_unshared`, `finite_input_output_apart`, joined as `finite_material_narrowed` (the last only where the
+socket is not kept). Under them the material part is discharged for any program, declarations and witness construction
+(`Factor_Resolution_Material_Discharge.finite_material_commitment_exchanges`): where the focus holds the parent's children,
+the parent's instance under the support is true, the canonical answer satisfies the socket's material premise at its
+source, and the obligation's true instance re-grounds the pending siblings, the only holders of the premise-only variables
+and, at a free socket, of the output's; where it does not, no focused goal holds a variable of the socket and the canonical
+answer replaces the support there; either valuation supports a canonical successor with every node barred
+(`finite_canonical_successor_supported`). The test checking them is #630's, with the corollary that both discharges hold
+without hypotheses where it commits; `finite_siblings_pending` keeps its meaning, the test conjoining (i).]
+
 Presentation freedom makes a false call expensive: a true call is resolved at the first presentation its producer
 yields, a false one only after every presentation (n! root lists of n roots), so a refusal past a few elements reaches
 the bound and is unresolved. The commitment (R5): a site declared *functional up to a presentation class* at its

@@ -204,10 +204,6 @@ text \<open>
 lemma resolution_value_variable [simp]: "resolution_value \<theta> (Finite_Variable z) = \<theta> z"
   by (simp add: resolution_value_def)
 
-lemma finite_substitute_variables_subset:
-  "b |\<in>| finite_pattern_variables p \<Longrightarrow>
-    finite_pattern_variables (\<sigma> b) |\<subseteq>| finite_pattern_variables (finite_pattern_substitute \<sigma> p)"
-  by (induction p) auto
 
 lemma finite_material_substitute_variables_subset:
   "b |\<in>| finite_material_variables M \<Longrightarrow>

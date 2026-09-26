@@ -966,6 +966,93 @@ definition finite_declared_commitment ::
     commit_material=(\<lambda>F st g. finite_material_premise st g \<and> \<not> resolution_is_call g \<and>
       finite_socket_commitment D F st g)\<rparr>"
 
+text \<open>
+  Three state conditions the material single solution's discharge needs beyond those the test checks
+  (\<open>Factor_Resolution_Material_Discharge\<close>, task 631; DECISIONS.md, task 495's entry, correction (7)): the pending
+  children of the parent node are its clause's instances under its bindings, no premise-only variable of the parent stands
+  in its call, and, at a socket declared without the kept head, the parent call's input and output share no variable.
+  Each is true where the search commits and a counterexample to the exchange premise where it fails; the test conjoins them
+  where it commits (task 630).
+\<close>
+
+definition finite_node_binding ::
+    "('a,'s,'d,'c) resolution_node \<Rightarrow> 'a \<Rightarrow> ('s,'a) resolution_variable finite_term_pattern" where
+  "finite_node_binding nd a = (case finite_singleton_option
+      (fimage snd (ffilter (\<lambda>z. fst z = a) (resolution_node_bindings nd))) of
+      Some p \<Rightarrow> p | None \<Rightarrow> Finite_Variable ((resolution_node_position nd,True),a))"
+
+text \<open>
+  The node's one row at the key gives the binding; where the rows at the key are not one value, the node's own image of the
+  variable stands in.
+\<close>
+
+lemma finite_node_binding_row:
+  assumes sv: "single_valued (fset (resolution_node_bindings nd))"
+    and row: "(a,p) |\<in>| resolution_node_bindings nd"
+  shows "finite_node_binding nd a = p"
+proof -
+  have "fimage snd (ffilter (\<lambda>z. fst z = a) (resolution_node_bindings nd)) = {|p|}"
+  proof (rule fset_eqI)
+    fix x
+    show "x |\<in>| fimage snd (ffilter (\<lambda>z. fst z = a) (resolution_node_bindings nd)) \<longleftrightarrow> x |\<in>| {|p|}"
+    proof
+      assume "x |\<in>| fimage snd (ffilter (\<lambda>z. fst z = a) (resolution_node_bindings nd))"
+      then obtain z where z: "z |\<in>| ffilter (\<lambda>z. fst z = a) (resolution_node_bindings nd)" "x = snd z" by blast
+      obtain c y where zc: "z = (c,y)" by (cases z)
+      have "(a,x) |\<in>| resolution_node_bindings nd" using z unfolding zc by auto
+      then have "x = p" using sv row unfolding single_valued_def by blast
+      then show "x |\<in>| {|p|}" by simp
+    next
+      assume "x |\<in>| {|p|}"
+      then have xp: "x = p" by simp
+      have "(a,p) |\<in>| ffilter (\<lambda>z. fst z = a) (resolution_node_bindings nd)" using row by simp
+      then have "snd (a,p) |\<in>| fimage snd (ffilter (\<lambda>z. fst z = a) (resolution_node_bindings nd))" by (rule fimageI)
+      then show "x |\<in>| fimage snd (ffilter (\<lambda>z. fst z = a) (resolution_node_bindings nd))" using xp by simp
+    qed
+  qed
+  then show ?thesis by (simp add: finite_node_binding_def)
+qed
+
+definition finite_children_instances ::
+    "('a,'s,'d,'c) resolution_state \<Rightarrow> ('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_children_instances st nd \<longleftrightarrow>
+    fBall (finite_schema_premises (resolution_node_schema nd)) (\<lambda>(s,e,p).
+      Resolution_Call_Goal (resolution_node_position nd@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
+        (finite_pattern_substitute (finite_node_binding nd) p) |\<in>| resolution_pending st) \<and>
+    fBall (finite_schema_materials (resolution_node_schema nd)) (\<lambda>(s,N).
+      Resolution_Material_Goal (resolution_node_position nd@[s]) (resolution_node_site nd,resolution_node_clause nd,s)
+        (finite_material_pattern_substitute (finite_node_binding nd) N) |\<in>| resolution_pending st) \<and>
+    fBall (resolution_pending st) (\<lambda>h. resolution_goal_position h \<noteq> [] \<longrightarrow>
+      butlast (resolution_goal_position h) = resolution_node_position nd \<longrightarrow>
+      fBex (finite_schema_premises (resolution_node_schema nd)) (\<lambda>(s,e,p).
+        h = Resolution_Call_Goal (resolution_node_position nd@[s]) (Some (resolution_node_site nd,resolution_node_clause nd,s)) e
+          (finite_pattern_substitute (finite_node_binding nd) p)) \<or>
+      fBex (finite_schema_materials (resolution_node_schema nd)) (\<lambda>(s,N).
+        h = Resolution_Material_Goal (resolution_node_position nd@[s]) (resolution_node_site nd,resolution_node_clause nd,s)
+          (finite_material_pattern_substitute (finite_node_binding nd) N)))"
+
+definition finite_premise_only_unshared :: "('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_premise_only_unshared nd \<longleftrightarrow>
+    fBall (finite_schema_variables (resolution_node_schema nd) |-|
+        finite_pattern_variables (finite_schema_conclusion (resolution_node_schema nd))) (\<lambda>a.
+      ((resolution_node_position nd,True),a) |\<notin>| finite_pattern_variables (resolution_node_call nd))"
+
+definition finite_input_output_apart :: "('a,'s,'d,'c) resolution_node \<Rightarrow> bool" where
+  "finite_input_output_apart nd \<longleftrightarrow> (case resolution_node_call nd of
+      Finite_Pattern_Pair x y \<Rightarrow> finite_pattern_variables x |\<inter>| finite_pattern_variables y = {||}
+    | _ \<Rightarrow> True)"
+
+definition finite_material_narrowed ::
+    "('a,'s,'d) resolution_declarations \<Rightarrow> 's list option \<Rightarrow> ('a,'s,'d,'c) resolution_state \<Rightarrow>
+      ('a,'s,'d,'c) resolution_goal \<Rightarrow> bool" where
+  "finite_material_narrowed D F st g \<longleftrightarrow> (case g of
+      Resolution_Material_Goal q r M \<Rightarrow> fBex (resolution_nodes st) (\<lambda>nd. resolution_node_position nd = butlast q \<and>
+        finite_children_instances st nd \<and> finite_premise_only_unshared nd \<and>
+        (finite_socket_kept D F st q (finite_material_variables M) g \<or> finite_input_output_apart nd))
+    | Resolution_Call_Goal q r e p \<Rightarrow> True)"
+
+export_code finite_material_narrowed checking SML
+
 lemma finite_declared_commitment_premise:
   assumes "commit_call (finite_declared_commitment D) F st g"
   shows "finite_goal_premise st g"

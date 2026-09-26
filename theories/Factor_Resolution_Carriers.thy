@@ -219,7 +219,6 @@ qed
 
 section \<open>A socket discharged along its carriers\<close>
 
-
 lemma finite_evaluate_cong:
   assumes "\<And>v. v |\<in>| finite_pattern_variables q \<Longrightarrow> g v = g' v"
   shows "evaluate_pattern g (decode_finite_pattern q) = evaluate_pattern g' (decode_finite_pattern q)"
@@ -271,6 +270,66 @@ next
 qed
 
 text \<open>
+  A view's term function characterized by the values of its pattern's variables listed: a formed view whose pattern's
+  variables lie below n reads a term exactly when the term is its pattern's value at a list of n terms, its parts the
+  values of its input and output patterns there. A view of explicit variables is read by this statement's instance at
+  the number of its variables, the list taken apart by @{text view_values_simps}; every view's characterization by the
+  shape it matches is that instance, and none unfolds @{const view_match} again. The match of a pair
+  (@{text view_match_pair_some}) is the one fact of @{const view_match} a view's holes are read by.
+\<close>
+
+lemma view_match_pair_some:
+  "view_match (Finite_Pattern_Pair p q) t = Some l \<longleftrightarrow>
+    (\<exists>a b l1 l2. t = Pair_Term a b \<and> view_match p a = Some l1 \<and> view_match q b = Some l2 \<and> l = l1 @ l2)"
+  by (cases t) (auto split: option.splits)
+
+lemma ex_list_length_Suc: "(\<exists>vs. length vs = Suc n \<and> P vs) \<longleftrightarrow> (\<exists>v vs. length vs = n \<and> P (v # vs))"
+  by (auto simp: length_Suc_conv)
+
+lemma ex_list_length_0: "(\<exists>vs. length vs = 0 \<and> P vs) \<longleftrightarrow> P []"
+  by auto
+
+lemmas view_values_simps = ex_list_length_Suc ex_list_length_0 numeral_eq_Suc
+
+lemma resolution_view_term_values:
+  fixes p pi po :: "nat finite_term_pattern"
+  assumes formed: "view_formed (p,pi,po)" and bound: "list_all (\<lambda>v. v < n) (finite_pattern_occurrences p)"
+  shows "resolution_view_term (p,pi,po) t = Some (x,y) \<longleftrightarrow> (\<exists>vs. length vs = n \<and>
+    t = evaluate_pattern (nth vs) (decode_finite_pattern p) \<and> x = evaluate_pattern (nth vs) (decode_finite_pattern pi) \<and>
+    y = evaluate_pattern (nth vs) (decode_finite_pattern po))"
+proof -
+  have parts: "fset (finite_pattern_variables pi) \<subseteq> fset (finite_pattern_variables p)"
+      "fset (finite_pattern_variables po) \<subseteq> fset (finite_pattern_variables p)"
+    using formed by (auto simp: view_formed_def)
+  have below: "v < n" if "v \<in> pattern_variables (decode_finite_pattern q)"
+      "fset (finite_pattern_variables q) \<subseteq> fset (finite_pattern_variables p)" for v q
+    using that bound finite_pattern_variables_correct[of q] finite_pattern_occurrences_set[of p]
+    by (auto simp: list_all_iff)
+  have agree: "evaluate_pattern (nth (map h [0..<n])) (decode_finite_pattern q) = evaluate_pattern h (decode_finite_pattern q)"
+    if "fset (finite_pattern_variables q) \<subseteq> fset (finite_pattern_variables p)" for h q
+  proof (rule evaluate_pattern_cong)
+    fix a assume "a \<in> pattern_variables (decode_finite_pattern q)"
+    then have "a < n" by (rule below[OF _ that])
+    then show "map h [0..<n] ! a = h a" by simp
+  qed
+  show ?thesis unfolding resolution_view_term_valuation[OF formed]
+  proof
+    assume "\<exists>h. t = evaluate_pattern h (decode_finite_pattern p) \<and> x = evaluate_pattern h (decode_finite_pattern pi) \<and>
+      y = evaluate_pattern h (decode_finite_pattern po)"
+    then obtain h where "t = evaluate_pattern h (decode_finite_pattern p)" "x = evaluate_pattern h (decode_finite_pattern pi)"
+      "y = evaluate_pattern h (decode_finite_pattern po)" by blast
+    then show "\<exists>vs. length vs = n \<and> t = evaluate_pattern (nth vs) (decode_finite_pattern p) \<and>
+        x = evaluate_pattern (nth vs) (decode_finite_pattern pi) \<and> y = evaluate_pattern (nth vs) (decode_finite_pattern po)"
+      using agree[of p h] agree[of pi h] agree[of po h] parts by (intro exI[of _ "map h [0..<n]"]) simp
+  next
+    assume "\<exists>vs. length vs = n \<and> t = evaluate_pattern (nth vs) (decode_finite_pattern p) \<and>
+        x = evaluate_pattern (nth vs) (decode_finite_pattern pi) \<and> y = evaluate_pattern (nth vs) (decode_finite_pattern po)"
+    then show "\<exists>h. t = evaluate_pattern h (decode_finite_pattern p) \<and> x = evaluate_pattern h (decode_finite_pattern pi) \<and>
+      y = evaluate_pattern h (decode_finite_pattern po)" by blast
+  qed
+qed
+
+text \<open>
   The view of a binary operation's result: its argument (a,(b,c)) read with the pair (a,b) in and c out, as a carrier
   reads a concatenation or a key-to-row map.
 \<close>
@@ -284,22 +343,8 @@ lemma join_view_formed: "view_formed join_view"
 
 lemma join_view_term:
   "resolution_view_term join_view t = Some (x,y) \<longleftrightarrow> (\<exists>a b. t = Pair_Term a (Pair_Term b y) \<and> x = Pair_Term a b)"
-proof -
-  have "resolution_view_term join_view t = Some (x,y) \<longleftrightarrow>
-      (\<exists>h::nat \<Rightarrow> factor_term. t = Pair_Term (h 0) (Pair_Term (h 1) (h 2)) \<and> x = Pair_Term (h 0) (h 1) \<and> y = h 2)"
-    using resolution_view_term_valuation[OF join_view_formed[unfolded join_view_def]] by (simp add: join_view_def)
-  also have "\<dots> \<longleftrightarrow> (\<exists>a b. t = Pair_Term a (Pair_Term b y) \<and> x = Pair_Term a b)"
-  proof
-    assume "\<exists>h::nat \<Rightarrow> factor_term. t = Pair_Term (h 0) (Pair_Term (h 1) (h 2)) \<and> x = Pair_Term (h 0) (h 1) \<and> y = h 2"
-    then show "\<exists>a b. t = Pair_Term a (Pair_Term b y) \<and> x = Pair_Term a b" by auto
-  next
-    assume "\<exists>a b. t = Pair_Term a (Pair_Term b y) \<and> x = Pair_Term a b"
-    then obtain a b where "t = Pair_Term a (Pair_Term b y)" "x = Pair_Term a b" by blast
-    then show "\<exists>h::nat \<Rightarrow> factor_term. t = Pair_Term (h 0) (Pair_Term (h 1) (h 2)) \<and> x = Pair_Term (h 0) (h 1) \<and> y = h 2"
-      by (intro exI[of _ "\<lambda>v. if v = 0 then a else if v = 1 then b else y"]) simp
-  qed
-  finally show ?thesis .
-qed
+  using resolution_view_term_values[OF join_view_formed[unfolded join_view_def], of 3 t x y]
+  by (auto simp: join_view_def view_values_simps)
 
 text \<open>
   An obligation read at one site depends on the meaning at that site alone (@{text output_covered_site} beside
@@ -320,7 +365,6 @@ lemma carrier_discharged_site:
   assumes "\<And>t. (d,t) \<in> M \<longleftrightarrow> (d,t) \<in> M'"
   shows "carrier_discharged M d V cin cout \<longleftrightarrow> carrier_discharged M' d V cin cout"
   using assms by (simp add: carrier_discharged_def)
-
 
 lemma meaning_answers_formed: "\<forall>e t. (e,t) \<in> positive_meaning P \<longrightarrow> term_formed t"
 proof (intro allI impI)

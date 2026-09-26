@@ -18,7 +18,6 @@ text \<open>
   commitment control.
 \<close>
 
-
 definition carrier_keys_cons :: "(nat,nat,nat) finite_factor_schema" where
   "carrier_keys_cons = \<lparr>finite_schema_conclusion=Finite_Pattern_Pair
       (Finite_Pattern_Pair (Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1)) (Finite_Variable 2))

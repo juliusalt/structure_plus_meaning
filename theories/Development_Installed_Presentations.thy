@@ -123,8 +123,7 @@ theorem installed_construction_complete:
   assumes complete: "finite_construction_complete \<kappa> Q"
   shows "finite_construction_complete (installed_construction \<kappa>) installed_presentation"
   unfolding installed_construction_def
-  by (rule install.varied_relocated_complete[OF installed_built installed_presentation_read complete,
-    folded installed_placement_def])
+  by (rule varied_construction_complete_variant[OF installed_presentation_variant relocated_complete[OF complete]])
 
 text \<open>
   Every variable a relocated registration names within its placed clause's scope is registered at an installed

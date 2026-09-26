@@ -274,8 +274,10 @@ text \<open>
   prod(Pair X Y), cons(Pair Z Y), over r([],z2), r([],z1) :- c(x) and prod's and cons' facts, prod's socket declared
   with the kept head and discharged. R3's selection takes r first, a leaf-bearing call at the lower position; its
   branch z1 reaches the root's call, pruned under the unbarred root. Had prod been committed in branch z2, its kept
-  answer a would leave cons(z2,a) false and the true call c(x) refuted; the socket is committed only while its
-  siblings are pending (@{const finite_siblings_pending}), so it is searched plainly and resolved as by R4.
+  answer a would leave cons(z2,a) false and the true call c(x) refuted; under the test of correction (9) a socket
+  commits after a resolved sibling only where the sibling is closed with its variables among the socket's inputs
+  (@{const finite_children_closed}), and Z, which r fixes, is not among prod's inputs, so prod is searched plainly and
+  resolved as by R4.
 \<close>
 
 definition commitment_order_clause :: "(nat,nat,nat) finite_factor_schema" where
@@ -358,8 +360,8 @@ text \<open>
   facts prod([1],[2]) and prod([1],[3]), the material premise's fields the canonical rows of an artifact of two atoms,
   prod's socket declared with the kept head. With a literal source the socket commits at c([1]) and keeps one of prod's
   two answers: one certificate against R4's two. With the source a variable Z registered with that artifact's value, Z
-  is constructed first; Z is then premise-only and bound, so the socket's test fails
-  (@{const finite_premise_only_free}) and the search does not commit: both answers stay, two certificates.
+  is constructed first; Z is then premise-only, bound and not among prod's inputs, so the socket's test fails
+  (@{const finite_premise_only_inputs}) and the search does not commit: both answers stay, two certificates.
 \<close>
 
 definition premise_only_material :: "nat finite_term_pattern \<Rightarrow> nat finite_material_pattern" where
@@ -410,6 +412,56 @@ lemma premise_only_control:
     commitment_certificates (finite_committed_resolution premise_only_construction
       (finite_declared_commitment (premise_only_declarations (Finite_Variable 2)))
       (premise_only_program (Finite_Variable 2)) 1 (Finite_Payload [1]) 20) = 2"
+  by eval
+
+text \<open>
+  The closed-sibling control (task 689; DECISIONS.md, task 495's entry, correction (9)): site 3,
+  c(X) :- r(Pair X Z), prod(Pair Z Y), chk(Y), over r(x,z1), r(x2,z2), prod(z1,a), prod(z1,b), prod(z2,c), prod(z2,d),
+  chk(a), chk(b) (x = [1], x2 = [2], z1 = [3], z2 = [4], a to d = [5] to [8]), prod's socket declared with the kept
+  head. The declaration is discharged: every answer of prod at z1 extends a true instance of the clause with the head
+  kept, and at z2 the clause has no true instance. R3's selection takes r first, its call holding a leaf; once r is
+  closed its variables X and Z are among prod's inputs (prod's premise input Z, the head's input, the whole conclusion
+  X, which is no pair), so the socket commits and keeps one of prod's answers at z1: one certificate against R4's two,
+  where the test before correction (9), which asked every sibling pending, searched prod plainly and kept both (two,
+  probed at task 689). c(x2) is refuted, as by R4: the kept answer fails chk.
+\<close>
+
+definition closed_sibling_clause :: "(nat,nat,nat) finite_factor_schema" where
+  "closed_sibling_clause = \<lparr>finite_schema_conclusion=Finite_Variable 0,
+    finite_schema_premises={|(0,(0,Finite_Pattern_Pair (Finite_Variable 0) (Finite_Variable 1))),
+      (1,(1,Finite_Pattern_Pair (Finite_Variable 1) (Finite_Variable 2))),
+      (2,(2,Finite_Variable 2))|},
+    finite_schema_materials={||}\<rparr>"
+
+abbreviation closed_sibling_fact :: "octets \<Rightarrow> octets \<Rightarrow> (nat,nat,nat) finite_factor_schema" where
+  "closed_sibling_fact u v \<equiv> commitment_fact (Finite_Pattern_Pair (Finite_Pattern_Payload u) (Finite_Pattern_Payload v))"
+
+definition closed_sibling_program :: "(nat,nat,nat,nat) finite_schema_system" where
+  "closed_sibling_program = \<lparr>finite_system_interfaces={|(0,Finite_Variable 0),(1,Finite_Variable 0),
+      (2,Finite_Variable 0),(3,Finite_Variable 0)|},
+    finite_system_clauses={|((0,0),closed_sibling_fact [1] [3]),((0,1),closed_sibling_fact [2] [4]),
+      ((1,0),closed_sibling_fact [3] [5]),((1,1),closed_sibling_fact [3] [6]),
+      ((1,2),closed_sibling_fact [4] [7]),((1,3),closed_sibling_fact [4] [8]),
+      ((2,0),commitment_fact (Finite_Pattern_Payload [5])),((2,1),commitment_fact (Finite_Pattern_Payload [6])),
+      ((3,0),closed_sibling_clause)|}\<rparr>"
+
+definition closed_sibling_declarations :: "(nat,nat,nat) resolution_declarations" where
+  "closed_sibling_declarations = \<lparr>declared_producers={||}, declared_consumers={||},
+    declared_sockets={|(3,closed_sibling_clause,1,True,view_identity,view_identity)|}\<rparr>"
+
+lemma closed_sibling_control:
+  "commitment_certificates (finite_program_resolution no_witness_construction closed_sibling_program 3
+      (Finite_Payload [1]) 20) = 2 \<and>
+    commitment_certificates (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment closed_sibling_declarations) closed_sibling_program 3 (Finite_Payload [1]) 20) = 1 \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment closed_sibling_declarations) closed_sibling_program 3 (Finite_Payload [1]) 20) =
+      Some True \<and>
+    finite_resolution_verdict (finite_program_resolution no_witness_construction closed_sibling_program 3
+      (Finite_Payload [2]) 20) = Some False \<and>
+    finite_resolution_verdict (finite_committed_resolution no_witness_construction
+      (finite_declared_commitment closed_sibling_declarations) closed_sibling_program 3 (Finite_Payload [2]) 20) =
+      Some False"
   by eval
 
 lemma site_one_material_controls:

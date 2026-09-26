@@ -1466,15 +1466,17 @@ corollary native_unproduced_resolution_exact:
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
   using native_unproduced_resolution_exact_at[OF assms[unfolded native_committed_resolution_select]] by blast+
 
-section \<open>The keyed join of a plain record and a produced record\<close>
+section \<open>The keyed join of a produced record and a produced record\<close>
 
 text \<open>
-  A plain record and a produced record are joined by key: a socket is keyed by its site, schema and socket, and the
-  join holds, at every key the produced record holds, its socket, class and production, and at every other key the
-  plain record's socket, of the trivial class and no production (task 782, placed beside @{const produced} by task
-  796). The two parts never meet at a key, so each is discharged where it was and the join by the two discharges
-  (@{text produced_join_discharged}), its frames (@{text produced_join_frames}), productions and static premise
-  likewise.
+  A produced record is overridden by another at the other's keys: a socket is keyed by its site, schema and socket,
+  and the override holds, at every key the overriding record holds, its socket, class and production, and at every
+  other key the base record's socket, class and production (task 815, generalizing task 782's join, placed beside
+  @{const produced} by task 796). The two parts never meet at a key, so each is discharged where it was and the
+  override by the two discharges (@{text produced_override_discharged}), its frames
+  (@{text produced_override_frames}), productions and static premise likewise. The keyed join of a plain record and a
+  produced record (@{text produced_join}) is its instance at a base declaring no class and no production, its facts
+  the override's.
 \<close>
 
 definition socket_keyed ::
@@ -1489,13 +1491,46 @@ definition unkeyed_declarations ::
   "unkeyed_declarations E D =
     D\<lparr>declared_sockets := ffilter (\<lambda>(e,S,s,rest). \<not> socket_keyed E e S s) (declared_sockets D)\<rparr>"
 
+lemma produced_join_keyed:
+  "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<Longrightarrow> socket_keyed (resolution_declarations.truncate PD) e S s"
+  unfolding socket_keyed_iff truncate_fields by blast
+
+definition produced_override ::
+    "('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d,'v) produced_declarations" where
+  "produced_override PD PK = produced (narrowed (declarations_union
+      (unkeyed_declarations (resolution_declarations.truncate PK) (resolution_declarations.truncate PD))
+      (resolution_declarations.truncate PK))
+      (\<lambda>e S s. if socket_keyed (resolution_declarations.truncate PK) e S s then declared_narrowing PK e S s
+        else declared_narrowing PD e S s))
+    (\<lambda>e S s. if socket_keyed (resolution_declarations.truncate PK) e S s then declared_production PK e S s
+      else declared_production PD e S s)"
+
+lemma produced_override_fields [simp]:
+  "declared_producers (produced_override PD PK) = declared_producers PD |\<union>| declared_producers PK"
+  "declared_consumers (produced_override PD PK) = declared_consumers PD |\<union>| declared_consumers PK"
+  "declared_narrowing (produced_override PD PK) e S s =
+    (if socket_keyed (resolution_declarations.truncate PK) e S s then declared_narrowing PK e S s
+      else declared_narrowing PD e S s)"
+  "declared_production (produced_override PD PK) e S s =
+    (if socket_keyed (resolution_declarations.truncate PK) e S s then declared_production PK e S s
+      else declared_production PD e S s)"
+  by (simp_all add: produced_override_def declarations_union_def unkeyed_declarations_def)
+
+lemma produced_override_sockets:
+  "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (produced_override PD PK) \<longleftrightarrow>
+    ((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<and> \<not> socket_keyed (resolution_declarations.truncate PK) e S s) \<or>
+    (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PK"
+  by (auto simp: produced_override_def declarations_union_def unkeyed_declarations_def)
+
+lemma produced_override_truncate:
+  "resolution_declarations.truncate (produced_override PD PK) = declarations_union
+    (unkeyed_declarations (resolution_declarations.truncate PK) (resolution_declarations.truncate PD))
+    (resolution_declarations.truncate PK)"
+  by (simp add: produced_override_def)
+
 definition produced_join ::
     "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d,'v) produced_declarations \<Rightarrow> ('a,'s,'d,'v) produced_declarations" where
-  "produced_join D PD = produced (narrowed (declarations_union
-      (unkeyed_declarations (resolution_declarations.truncate PD) D) (resolution_declarations.truncate PD))
-      (\<lambda>e S s. if socket_keyed (resolution_declarations.truncate PD) e S s then declared_narrowing PD e S s
-        else (\<lambda>_. True)))
-    (\<lambda>e S s. if socket_keyed (resolution_declarations.truncate PD) e S s then declared_production PD e S s else None)"
+  "produced_join D PD = produced_override (unproduced (unnarrowed D)) PD"
 
 lemma produced_join_fields [simp]:
   "declared_producers (produced_join D PD) = declared_producers D |\<union>| declared_producers PD"
@@ -1504,71 +1539,78 @@ lemma produced_join_fields [simp]:
     (if socket_keyed (resolution_declarations.truncate PD) e S s then declared_narrowing PD e S s else (\<lambda>_. True))"
   "declared_production (produced_join D PD) e S s =
     (if socket_keyed (resolution_declarations.truncate PD) e S s then declared_production PD e S s else None)"
-  by (simp_all add: produced_join_def declarations_union_def unkeyed_declarations_def)
+  by (simp_all add: produced_join_def)
 
 lemma produced_join_sockets:
   "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (produced_join D PD) \<longleftrightarrow>
     ((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<and> \<not> socket_keyed (resolution_declarations.truncate PD) e S s) \<or>
     (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD"
-  by (auto simp: produced_join_def declarations_union_def unkeyed_declarations_def)
-
-lemma produced_join_keyed:
-  "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<Longrightarrow> socket_keyed (resolution_declarations.truncate PD) e S s"
-  unfolding socket_keyed_iff truncate_fields by blast
+  by (simp add: produced_join_def produced_override_sockets)
 
 lemma produced_join_truncate:
   "resolution_declarations.truncate (produced_join D PD) =
     declarations_union (unkeyed_declarations (resolution_declarations.truncate PD) D) (resolution_declarations.truncate PD)"
-  by (simp add: produced_join_def)
+  by (simp add: produced_join_def produced_override_truncate)
 
 lemma produced_join_sites:
   "declared_sites (resolution_declarations.truncate (produced_join D PD)) \<subseteq>
     declared_sites D \<union> declared_sites (resolution_declarations.truncate PD)"
   by (auto simp: declared_sites_def produced_join_truncate declarations_union_def unkeyed_declarations_def)
 
-theorem produced_join_discharged:
-  assumes plain: "declarations_discharged M D corr"
-    and produced: "narrowed_declarations_discharged M (narrowed_declarations.truncate PD) corr"
-  shows "narrowed_declarations_discharged M (narrowed_declarations.truncate (produced_join D PD)) corr"
+theorem produced_override_discharged:
+  assumes base: "narrowed_declarations_discharged M (narrowed_declarations.truncate PD) corr"
+    and over: "narrowed_declarations_discharged M (narrowed_declarations.truncate PK) corr"
+  shows "narrowed_declarations_discharged M (narrowed_declarations.truncate (produced_override PD PK)) corr"
 proof -
-  have fD: "declarations_formed D" using plain by (simp add: declarations_discharged_def)
-  have fP: "declarations_formed (resolution_declarations.truncate PD)" using narrowed_formed[OF produced] by simp
+  have fD: "declarations_formed (resolution_declarations.truncate PD)" using narrowed_formed[OF base] by simp
+  have fP: "declarations_formed (resolution_declarations.truncate PK)" using narrowed_formed[OF over] by simp
   show ?thesis unfolding narrowed_declarations_discharged_def
   proof (intro conjI allI impI)
-    show "declarations_formed (resolution_declarations.truncate (narrowed_declarations.truncate (produced_join D PD)))"
-      using fD fP by (auto simp: declarations_formed_def produced_join_truncate declarations_union_def
+    show "declarations_formed (resolution_declarations.truncate
+        (narrowed_declarations.truncate (produced_override PD PK)))"
+      using fD fP by (auto simp: declarations_formed_def produced_override_def declarations_union_def
         unkeyed_declarations_def)
   next
-    fix d V hs assume "(d,V,hs) |\<in>| declared_producers (narrowed_declarations.truncate (produced_join D PD))"
-    then have "(d,V,hs) |\<in>| declared_producers D \<or> (d,V,hs) |\<in>| declared_producers (narrowed_declarations.truncate PD)"
-      by simp
+    fix d V hs assume "(d,V,hs) |\<in>| declared_producers (narrowed_declarations.truncate (produced_override PD PK))"
+    then have "(d,V,hs) |\<in>| declared_producers (narrowed_declarations.truncate PD) \<or>
+        (d,V,hs) |\<in>| declared_producers (narrowed_declarations.truncate PK)" by simp
     then show "producer_discharged M d V hs (corr d)"
-      using plain narrowed_producer[OF produced] unfolding declarations_discharged_def by blast
+      using narrowed_producer[OF base] narrowed_producer[OF over] by blast
   next
-    fix d e V i assume "(d,e,V,i) |\<in>| declared_consumers (narrowed_declarations.truncate (produced_join D PD))"
-    then have "(d,e,V,i) |\<in>| declared_consumers D \<or> (d,e,V,i) |\<in>| declared_consumers (narrowed_declarations.truncate PD)"
-      by simp
+    fix d e V i assume "(d,e,V,i) |\<in>| declared_consumers (narrowed_declarations.truncate (produced_override PD PK))"
+    then have "(d,e,V,i) |\<in>| declared_consumers (narrowed_declarations.truncate PD) \<or>
+        (d,e,V,i) |\<in>| declared_consumers (narrowed_declarations.truncate PK)" by simp
     then show "consumer_discharged M e V (corr d i)"
-      using plain narrowed_consumer[OF produced] unfolding declarations_discharged_def by blast
+      using narrowed_consumer[OF base] narrowed_consumer[OF over] by blast
   next
     fix e S s keep Vp Vh
-    assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (narrowed_declarations.truncate (produced_join D PD))"
-    then have "((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<and> \<not> socket_keyed (resolution_declarations.truncate PD) e S s) \<or>
-        (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" by (simp add: produced_join_sockets)
+    assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (narrowed_declarations.truncate (produced_override PD PK))"
+    then have "((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<and>
+        \<not> socket_keyed (resolution_declarations.truncate PK) e S s) \<or> (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PK"
+      by (simp add: produced_override_sockets)
     then show "narrowed_socket_discharged M S s keep Vp Vh
-        (declared_narrowing (narrowed_declarations.truncate (produced_join D PD)) e S s)"
+        (declared_narrowing (narrowed_declarations.truncate (produced_override PD PK)) e S s)"
     proof
-      assume a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<and> \<not> socket_keyed (resolution_declarations.truncate PD) e S s"
-      have "socket_discharged M S s keep Vp Vh" using plain a unfolding declarations_discharged_def by blast
-      then show ?thesis using a by (simp add: socket_discharged_narrowed)
-    next
-      assume b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD"
+      assume a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<and>
+        \<not> socket_keyed (resolution_declarations.truncate PK) e S s"
       have "narrowed_socket_discharged M S s keep Vp Vh (declared_narrowing (narrowed_declarations.truncate PD) e S s)"
-        by (rule narrowed_socket[OF produced]) (use b in simp)
+        by (rule narrowed_socket[OF base]) (use a in simp)
+      then show ?thesis using a by simp
+    next
+      assume b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PK"
+      have "narrowed_socket_discharged M S s keep Vp Vh (declared_narrowing (narrowed_declarations.truncate PK) e S s)"
+        by (rule narrowed_socket[OF over]) (use b in simp)
       then show ?thesis using produced_join_keyed[OF b] by simp
     qed
   qed
 qed
+
+theorem produced_join_discharged:
+  assumes plain: "declarations_discharged M D corr"
+    and produced: "narrowed_declarations_discharged M (narrowed_declarations.truncate PD) corr"
+  shows "narrowed_declarations_discharged M (narrowed_declarations.truncate (produced_join D PD)) corr"
+  unfolding produced_join_def
+  by (rule produced_override_discharged[OF _ produced]) (use plain in \<open>simp add: declarations_discharged_unnarrowed\<close>)
 
 definition frames_join ::
     "('a,'s,'d) resolution_declarations \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow> ('a,'s,'d) resolution_frames \<Rightarrow>
@@ -1576,76 +1618,122 @@ definition frames_join ::
   "frames_join E \<Phi> \<Psi> =
     ffilter (\<lambda>(e,S,s,C). \<not> socket_keyed E e S s) \<Phi> |\<union>| ffilter (\<lambda>(e,S,s,C). socket_keyed E e S s) \<Psi>"
 
+theorem produced_override_frames:
+  assumes base: "narrowed_frames_discharged M (narrowed_declarations.truncate PD) \<Phi>"
+    and over: "narrowed_frames_discharged M (narrowed_declarations.truncate PK) \<Psi>"
+  shows "narrowed_frames_discharged M (narrowed_declarations.truncate (produced_override PD PK))
+    (frames_join (resolution_declarations.truncate PK) \<Phi> \<Psi>)"
+  unfolding narrowed_frames_discharged_def
+proof (intro allI impI)
+  fix e S s C keep Vp Vh
+  assume f: "(e,S,s,C) |\<in>| frames_join (resolution_declarations.truncate PK) \<Phi> \<Psi>"
+    and m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (narrowed_declarations.truncate (produced_override PD PK))"
+  have m': "((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD \<and> \<not> socket_keyed (resolution_declarations.truncate PK) e S s) \<or>
+      (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PK" using m by (simp add: produced_override_sockets)
+  show "narrowed_socket_framed M S s keep Vp Vh
+      (declared_narrowing (narrowed_declarations.truncate (produced_override PD PK)) e S s) (fset C)"
+  proof (cases "socket_keyed (resolution_declarations.truncate PK) e S s")
+    case True
+    have b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PK" using m' True by blast
+    have "(e,S,s,C) |\<in>| \<Psi>" using f True by (auto simp: frames_join_def)
+    then have "narrowed_socket_framed M S s keep Vp Vh (declared_narrowing PK e S s) (fset C)"
+      using over[unfolded narrowed_frames_discharged_def produced_truncations] b by blast
+    then show ?thesis using True by simp
+  next
+    case False
+    have a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m' False produced_join_keyed[of e S s keep Vp Vh PK]
+      by blast
+    have "(e,S,s,C) |\<in>| \<Phi>" using f False by (auto simp: frames_join_def)
+    then have "narrowed_socket_framed M S s keep Vp Vh (declared_narrowing PD e S s) (fset C)"
+      using base[unfolded narrowed_frames_discharged_def produced_truncations] a by blast
+    then show ?thesis using False by simp
+  qed
+qed
+
 theorem produced_join_frames:
   assumes plain: "frames_discharged M D \<Phi>"
     and produced: "narrowed_frames_discharged M (narrowed_declarations.truncate PD) \<Psi>"
   shows "narrowed_frames_discharged M (narrowed_declarations.truncate (produced_join D PD))
     (frames_join (resolution_declarations.truncate PD) \<Phi> \<Psi>)"
-  unfolding narrowed_frames_discharged_def
+  unfolding produced_join_def
+  by (rule produced_override_frames[OF _ produced]) (use plain in \<open>simp add: frames_discharged_unnarrowed\<close>)
+
+theorem produced_override_productions:
+  assumes base: "productions_discharged M P n PD" and over: "productions_discharged M P n PK"
+  shows "productions_discharged M P n (produced_override PD PK)"
+  unfolding productions_discharged_def
 proof (intro allI impI)
-  fix e S s C keep Vp Vh
-  assume f: "(e,S,s,C) |\<in>| frames_join (resolution_declarations.truncate PD) \<Phi> \<Psi>"
-    and m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (narrowed_declarations.truncate (produced_join D PD))"
-  have m': "((e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D \<and> \<not> socket_keyed (resolution_declarations.truncate PD) e S s) \<or>
-      (e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m by (simp add: produced_join_sockets)
-  show "narrowed_socket_framed M S s keep Vp Vh
-      (declared_narrowing (narrowed_declarations.truncate (produced_join D PD)) e S s) (fset C)"
-  proof (cases "socket_keyed (resolution_declarations.truncate PD) e S s")
+  fix e S s keep Vp Vh R
+  assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (produced_override PD PK)"
+    and p: "declared_production (produced_override PD PK) e S s = Some R"
+  show "head_registration Vp (registration_schema R) (registration_variable R) \<and>
+      head_registration_produces (finite_collection_construction [R] n) P (registration_site R) (registration_schema R)
+        (registration_variable R) (declared_narrowing (produced_override PD PK) e S s) \<and>
+      head_registration_answers M (finite_collection_construction [R] n) P (registration_site R)
+        (registration_schema R) Vp (registration_variable R)"
+  proof (cases "socket_keyed (resolution_declarations.truncate PK) e S s")
     case True
-    have b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m' True by blast
-    have "(e,S,s,C) |\<in>| \<Psi>" using f True by (auto simp: frames_join_def)
-    then have "narrowed_socket_framed M S s keep Vp Vh (declared_narrowing PD e S s) (fset C)"
-      using produced[unfolded narrowed_frames_discharged_def produced_truncations] b by blast
+    have b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PK" using m True by (simp add: produced_override_sockets)
+    have p': "declared_production PK e S s = Some R" using p True by simp
+    have "head_registration Vp (registration_schema R) (registration_variable R) \<and>
+        head_registration_produces (finite_collection_construction [R] n) P (registration_site R) (registration_schema R)
+          (registration_variable R) (declared_narrowing PK e S s) \<and>
+        head_registration_answers M (finite_collection_construction [R] n) P (registration_site R)
+          (registration_schema R) Vp (registration_variable R)"
+      using over b p' unfolding productions_discharged_def by blast
     then show ?thesis using True by simp
   next
     case False
-    have a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets D" using m' False produced_join_keyed[of e S s keep Vp Vh PD]
-      by blast
-    have "(e,S,s,C) |\<in>| \<Phi>" using f False by (auto simp: frames_join_def)
-    then have "socket_framed M S s keep Vp Vh (fset C)" using plain a unfolding frames_discharged_def by blast
-    then show ?thesis using False by (simp add: socket_framed_narrowed)
+    have a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD"
+      using m False produced_join_keyed[of e S s keep Vp Vh PK] by (auto simp: produced_override_sockets)
+    have p': "declared_production PD e S s = Some R" using p False by simp
+    have "head_registration Vp (registration_schema R) (registration_variable R) \<and>
+        head_registration_produces (finite_collection_construction [R] n) P (registration_site R) (registration_schema R)
+          (registration_variable R) (declared_narrowing PD e S s) \<and>
+        head_registration_answers M (finite_collection_construction [R] n) P (registration_site R)
+          (registration_schema R) Vp (registration_variable R)"
+      using base a p' unfolding productions_discharged_def by blast
+    then show ?thesis using False by simp
   qed
 qed
 
 theorem produced_join_productions:
   assumes produced: "productions_discharged M P n PD"
   shows "productions_discharged M P n (produced_join D PD)"
-  unfolding productions_discharged_def
+  unfolding produced_join_def
+  by (rule produced_override_productions[OF _ produced]) (simp add: productions_discharged_def)
+
+theorem produced_override_declared:
+  assumes base: "narrowed_productions_declared PD" and over: "narrowed_productions_declared PK"
+  shows "narrowed_productions_declared (produced_override PD PK)"
+  unfolding narrowed_productions_declared_def
 proof (intro allI impI)
-  fix e S s keep Vp Vh R
-  assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (produced_join D PD)"
-    and p: "declared_production (produced_join D PD) e S s = Some R"
-  have k: "socket_keyed (resolution_declarations.truncate PD) e S s" using p by (simp split: if_split_asm)
-  have b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m k by (simp add: produced_join_sockets)
-  have p': "declared_production PD e S s = Some R" using p k by simp
-  have "head_registration Vp (registration_schema R) (registration_variable R) \<and>
-      head_registration_produces (finite_collection_construction [R] n) P (registration_site R) (registration_schema R)
-        (registration_variable R) (declared_narrowing PD e S s) \<and>
-      head_registration_answers M (finite_collection_construction [R] n) P (registration_site R)
-        (registration_schema R) Vp (registration_variable R)"
-    using produced b p' unfolding productions_discharged_def by blast
-  then show "head_registration Vp (registration_schema R) (registration_variable R) \<and>
-      head_registration_produces (finite_collection_construction [R] n) P (registration_site R) (registration_schema R)
-        (registration_variable R) (declared_narrowing (produced_join D PD) e S s) \<and>
-      head_registration_answers M (finite_collection_construction [R] n) P (registration_site R)
-        (registration_schema R) Vp (registration_variable R)"
-    using k by simp
+  fix e S s keep Vp Vh
+  assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (produced_override PD PK)"
+    and n: "declared_narrowing (produced_override PD PK) e S s \<noteq> (\<lambda>_. True)"
+  show "declared_production (produced_override PD PK) e S s \<noteq> None"
+  proof (cases "socket_keyed (resolution_declarations.truncate PK) e S s")
+    case True
+    have b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PK" using m True by (simp add: produced_override_sockets)
+    have n': "declared_narrowing PK e S s \<noteq> (\<lambda>_. True)" using n True by simp
+    have "declared_production PK e S s \<noteq> None"
+      using over b n' unfolding narrowed_productions_declared_def by blast
+    then show ?thesis using True by simp
+  next
+    case False
+    have a: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD"
+      using m False produced_join_keyed[of e S s keep Vp Vh PK] by (auto simp: produced_override_sockets)
+    have n': "declared_narrowing PD e S s \<noteq> (\<lambda>_. True)" using n False by simp
+    have "declared_production PD e S s \<noteq> None"
+      using base a n' unfolding narrowed_productions_declared_def by blast
+    then show ?thesis using False by simp
+  qed
 qed
 
 theorem produced_join_declared:
   assumes declared: "narrowed_productions_declared PD"
   shows "narrowed_productions_declared (produced_join D PD)"
-  unfolding narrowed_productions_declared_def
-proof (intro allI impI)
-  fix e S s keep Vp Vh
-  assume m: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets (produced_join D PD)"
-    and n: "declared_narrowing (produced_join D PD) e S s \<noteq> (\<lambda>_. True)"
-  have k: "socket_keyed (resolution_declarations.truncate PD) e S s" using n by (simp split: if_split_asm)
-  have b: "(e,S,s,keep,Vp,Vh) |\<in>| declared_sockets PD" using m k by (simp add: produced_join_sockets)
-  have n': "declared_narrowing PD e S s \<noteq> (\<lambda>_. True)" using n k by simp
-  have "declared_production PD e S s \<noteq> None" using declared b n' unfolding narrowed_productions_declared_def by blast
-  then show "declared_production (produced_join D PD) e S s \<noteq> None" using k by simp
-qed
+  unfolding produced_join_def by (rule produced_override_declared[OF narrowed_productions_declared_unnarrowed declared])
 
 section \<open>The narrowed frames carried by relocation and by agreement\<close>
 

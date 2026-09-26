@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "59b45259a372f369a4813c79d0e82b61333f0714dbf700d85029af527286dd6b",
- "checked_content_sha256": "953fa379d6b40e0a5d7eccf23e8d3ef6a9e7988acafa0dad5a8d41f01e0c9d1a",
+ "base_receipt_sha256": "ec1ecc214ba9ada258b6e82adce0415c02d0cf200a9d62de35530593545d1fb5",
+ "checked_content_sha256": "1474df418f45353f950268e7a009e76533f001a45f1a368111d46615af6b5e1d",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,7 +17,7 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmphge5c6w_/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmpt3ybsjzv/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
@@ -25,14 +25,13 @@
   "base_and_impact": 0.37,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 26.51,
-  "recipe_impact": 0.47,
-  "recipes_and_host_tests": 11.41
+  "proof": 31.52,
+  "recipe_impact": 0.4,
+  "recipes_and_host_tests": 11.2
  },
  "rebuilt_theories": [
-  "Factor_Committed_Registrations",
-  "Factor_Mode_Controls",
-  "Factor_Native_Committed_Registrations"
+  "Factor_Shared_Commitments",
+  "Factor_Shared_Search"
  ],
  "recipes": {
   "allocated-environments": {
@@ -192,19 +191,19 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1957,
- "seconds": 45.91,
+ "reused_theories": 1959,
+ "seconds": 50.64,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],
   "refusals": [],
-  "theory_count": 1960,
+  "theory_count": 1961,
   "unlisted_theories": []
  },
  "status": "accepted",
- "theories": 1960,
+ "theories": 1961,
  "validation_inputs": {
-  "ROOT": "220f6b653d623d4fb7716b0c42f46852fcdf10e0afb5b779bd4b92c6e7c144f5",
+  "ROOT": "193b66150d31ade50b6504717d0f1ea936f0b3550175ab81c786700c460abe99",
   "tools/check.py": "71c91573138e10d317e5d920f5776af39687d313836a5552bbb0ec1d2d580381",
   "tools/incremental_check.py": "7f57110d9b4e04a7eb01215c21ea098fffcff71410454a248f6eb122909a1d98"
  }

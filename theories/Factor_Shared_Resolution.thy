@@ -1030,6 +1030,19 @@ proof
   qed
 qed
 
+text \<open>
+  The extension reads each appended position's shape at its place in the reversed table, a walk of the list to that
+  place: from the empty index, as the shared state of an R3 state is made (@{text shared_empty}), the walks sum to the
+  table's length squared (#788: 18 s at 58,745 shapes). Its code reads the appended shapes once, from an array of the
+  reversed table's prefix they occupy: the same shapes, inserted at the same positions in the same order.
+\<close>
+
+lemma position_index_extend_code [code]:
+  "position_index_extend x x' t = (let A = IArray (take (fst (snd x') - fst (snd x)) (snd (snd x'))) in
+    fold (\<lambda>i u. RBT.insert i (IArray.sub A (fst (snd x') - Suc i)) u) [fst (snd x)..<fst (snd x')] t)"
+  unfolding position_index_extend_def Let_def
+  by (rule fold_cong) auto
+
 subsection \<open>The state, its projection and its formation\<close>
 
 record (overloaded) ('a,'s::linorder,'d,'c) shared_state =
@@ -1124,6 +1137,57 @@ lemma shared_state_project_fields:
     fimage (\<lambda>hn. shared_derivation_project (shared_state_table s) (shared_entry_node hn)) (tree_values (shared_nodes s))"
   "resolution_witnesses (shared_state_project s) = shared_witnesses s"
   by (simp_all add: shared_state_project_def)
+
+text \<open>
+  A goal, a node and a whole state project with one array of the table, made once for all the patterns they hold
+  (@{thm [source] array_pattern_project}): the same projections, each reference read by one access.
+\<close>
+
+definition array_material_project :: "shape iarray \<Rightarrow> 'a shared_material \<Rightarrow> 'a finite_material_pattern" where
+  "array_material_project A M =
+    \<lparr>finite_material_source = array_pattern_project A (shared_material_source M),
+     finite_material_atoms = array_pattern_project A (shared_material_atoms M),
+     finite_material_edges = array_pattern_project A (shared_material_edges M),
+     finite_material_counts = array_pattern_project A (shared_material_counts M),
+     finite_material_functions = array_pattern_project A (shared_material_functions M)\<rparr>"
+
+fun array_goal_project :: "shape iarray \<Rightarrow> ('a,'s,'d,'c) shared_goal \<Rightarrow> ('a,'s,'d,'c) resolution_goal" where
+  "array_goal_project A (Shared_Call_Goal q r d p) = Resolution_Call_Goal q r d (array_pattern_project A p)"
+| "array_goal_project A (Shared_Material_Goal q r M) = Resolution_Material_Goal q r (array_material_project A M)"
+
+definition array_derivation_project :: "shape iarray \<Rightarrow> ('a,'s,'d,'c) shared_derivation \<Rightarrow> ('a,'s,'d,'c) resolution_node" where
+  "array_derivation_project A nd = Resolution_Node (shared_derivation_position nd) (shared_derivation_site nd)
+    (shared_derivation_clause nd) (shared_derivation_schema nd) (array_pattern_project A (shared_derivation_call nd))
+    (fimage (\<lambda>z. (fst z, array_pattern_project A (snd z))) (shared_derivation_bindings nd))"
+
+lemma array_material_project: "array_material_project (IArray T) M = shared_material_project T M"
+  by (simp add: array_material_project_def shared_material_project_def array_pattern_project)
+
+lemma array_goal_project: "array_goal_project (IArray T) g = shared_goal_project T g"
+  by (cases g) (simp_all add: array_pattern_project array_material_project)
+
+lemma array_derivation_project: "array_derivation_project (IArray T) nd = shared_derivation_project T nd"
+  by (simp add: array_derivation_project_def shared_derivation_project_def array_pattern_project)
+
+declare shared_material_project_def [code del] shared_goal_project.simps [code del]
+  shared_derivation_project_def [code del] shared_state_project_def [code del]
+
+lemma shared_material_project_array_code [code]: "shared_material_project T M = array_material_project (IArray T) M"
+  by (simp add: array_material_project)
+
+lemma shared_goal_project_array_code [code]: "shared_goal_project T g = array_goal_project (IArray T) g"
+  by (simp add: array_goal_project)
+
+lemma shared_derivation_project_array_code [code]:
+  "shared_derivation_project T nd = array_derivation_project (IArray T) nd"
+  by (simp add: array_derivation_project)
+
+lemma shared_state_project_array_code [code]:
+  "shared_state_project s = (let A = IArray (shared_state_table s) in Resolution_State
+    (fimage (\<lambda>h. array_goal_project A (shared_entry_goal h)) (tree_values (shared_goals s)))
+    (fimage (\<lambda>hn. array_derivation_project A (shared_entry_node hn)) (tree_values (shared_nodes s)))
+    (shared_witnesses s))"
+  unfolding shared_state_project_def Let_def by (simp add: array_goal_project array_derivation_project)
 
 lemma shared_state_project_member:
   "g |\<in>| resolution_pending (shared_state_project s) \<longleftrightarrow>

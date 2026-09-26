@@ -60,7 +60,7 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   kinds #674 and the test at the socket's inputs with the exchange at views #689 and the declared exchanges,
   forms and transfer at views #676 (all landed). Carriers #597 (landed; restated from the function witness by the fix #722, review 598's 1) → R6b's parts #601 (the
   root family) and #603 (artifacts and citations), R6c's instantiation family in three parts #607 → #679 → #681
-  (#601, #603, #607 and #679 landed; #681 also after #601, whose carriers 59 and 51 it consumes, and after the fix #726 —
+  (#601, #603, #607 and #679 landed; #681 also after #601, whose carriers 59 and 51 it consumes, and after the fix #726 (landed, `ef01f564`) —
   review 604's: the view term once, the dead free sockets dropped — which runs beside #679); #676 and #597 → R5e #599
   (narrowed sockets) → R6c's #609 (48; also after #607, #679, #726 and R5f1, which states the production field, #727 its stand-in); #725's correction (q126): the union is the
   narrowed sockets' production, a step of R5's committed search, R3 and W4a untouched — R5f1 #734 (after #599, F3 and
@@ -129,7 +129,7 @@ was placed when #668 landed.
 **Order** (the queue holds it; the planner's choice, a residual until the native answer to the selection problem
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. By slack on the longest chain:
-F3 #695; R5f1 #734, R5f2 #736 and V2b's (3) #738; the fix #726, the design #730, the fixes #731
+F3 #695; R5f1 #734, R5f2 #736 and V2b's (3) #738; the design #730, the fixes #731
 and #732 and the brief #733, before #681, #609 and #611; F2b #699, F2c #701, C #703; R6c's #609 and #681; the
 carrying #663 with V2b #651; rc #540 and #661; #611; R7 #542, its native part #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
@@ -417,7 +417,9 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   discharge and transfer; its control in `Factor_Narrowed_Controls`); R6b's numbered carrying (#605, `f78f9044`:
   `given_declarations` one list of R6's six pieces, #601's four records and #603's eighteen under
   `given_declarations_correspondence`, carried in `Development_Given_Carried_Declarations`, `given_declarations_selected`;
-  its second transfer `declarations_shared_discharged` made an instance by #732).
+  its second transfer `declarations_shared_discharged` made an instance by #732); the view term's characterization
+  once in `Factor_Resolution_Carriers` (#726, `ef01f564`: `resolution_view_term_values`, `view_values_simps`,
+  `view_match_pair_some`), the dead free sockets of #601's, #603's and #607's records dropped.
 - **The least witnesses** (#496's entry): W2 `Factor_Least_Collections` (#524, #567, #634), W3
   `Factor_Least_Witness_Facts` (#513, #634), W4a `Factor_Construction_Holders` and `Factor_Least_Witness_Registrations`
   (#526, #615, #634: `finite_construction_complete`, `relocated_construction_complete`, the exact forms with
@@ -599,7 +601,7 @@ planner searches for a theory before briefing a task that edits it.
 - **#599 landed** after its merge round (q128, the #165 pattern: its control in `Factor_Narrowed_Controls`, its
   REASONING_REUSE.md additions in `.build/tasks/599/rows.md` for R5f1 #734). #728's review: 1 and 3 landed by #729
   (`820c4022`; its review's two follow-ups are next-edits 279 and 280), 2 mailed to #542, #547 and #399.
-- **What the next events ask**: #730's decision, its builds to place (then #733 briefs); #726's landing, then #731 and #732; #726's landing before
+- **What the next events ask**: #730's decision, its builds to place (then #733 briefs); #731 and #732; #726's landing before
   #681 and #609 (review 604's follow-ups; #605, #679, #681 and #609 told the dead free socket's pattern); review 604's
   low moves (2's bag class, 4, 6) with #601's bag transports wait for the next low-moves batch (next-edits 274); review
   608's first verdict's follow-ups 1–5 are held by no file (the review file keeps the last verdict only), as review
@@ -657,7 +659,8 @@ planner searches for a theory before briefing a task that edits it.
   part) and 2 (next-edits 276, 277); #542, #547, #399 — #728's review's 2 (review 660's 2 answered); #609 — review
   600's 2 and 3, review 680's 6; #681 — review 680's 2 and 6; #611 — review 680's 1 and 5, review 606's 1 and 5; #730
   — review 606's 5; #731 — review 606's 1 and 3; #663 — review 606's 2; #718 — the five-root control at 79 (q127) and
-  review 606's 4; #734 — review 600's 1, 2 and 4; #736 — review 600's 2, 3 and 5.
+  review 606's 4; #734 — review 600's 1, 2 and 4; #736 — review 600's 2, 3 and 5; #718 — next-edits 269 (review 726's
+  1); #730 — review 726's 2; #731 — review 726's 3 (next-edits 275); #734 — review 726's 5.
 - **The harness's gaps met by this run's tasks** are owed to the owner and listed in `PLANNING_LOG.md` (2026-09-26,
   plan-86); new ones go there.
 - **Ledger entries that can leave** (the harness's `v2.py ledger`): Q7's and Q2's questions and answers, recorded in the

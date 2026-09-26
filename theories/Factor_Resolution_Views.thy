@@ -13,6 +13,16 @@ text \<open>
   views (@{const pair_declarations}) are an instance, with no form of their own.
 \<close>
 
+theorem finite_declared_refutation_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and refutes: "finite_resolution_refutes (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_declared_commitment D) P d t n)"
+  shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (rule finite_committed_resolution_by_refutation_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_declared_commitment_exchanges_at[OF \<kappa> discharged only] constructions] refutes])
+
 theorem finite_declared_refutation_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
@@ -21,8 +31,17 @@ theorem finite_declared_refutation_exact:
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and refutes: "finite_resolution_refutes (finite_committed_resolution \<kappa> (finite_declared_commitment D) P d t n)"
   shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
-  by (rule finite_committed_resolution_refutation_exact[OF \<kappa>
-    finite_declared_commitment_exchanges[OF \<kappa> discharged only] constructions refutes])
+  using assms unfolding finite_committed_resolution_select by (rule finite_declared_refutation_exact_at)
+
+theorem finite_declared_verdict_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and verdict: "finite_resolution_verdict (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_declared_commitment D) P d t n) = Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_committed_verdict_by_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_declared_commitment_exchanges_at[OF \<kappa> discharged only] constructions] verdict])
 
 theorem finite_declared_verdict_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -32,8 +51,18 @@ theorem finite_declared_verdict_exact:
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and verdict: "finite_resolution_verdict (finite_committed_resolution \<kappa> (finite_declared_commitment D) P d t n) = Some b"
   shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-  by (rule finite_committed_verdict_exact[OF \<kappa>
-    finite_declared_commitment_exchanges[OF \<kappa> discharged only] constructions verdict])
+  using assms unfolding finite_committed_resolution_select by (rule finite_declared_verdict_exact_at)
+
+theorem finite_declared_demand_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "finite_committed_demand_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_declared_commitment D) P Q n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using finite_committed_demand_by_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_declared_commitment_exchanges_at[OF \<kappa> discharged only] constructions] result] by blast+
 
 theorem finite_declared_demand_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -44,8 +73,22 @@ theorem finite_declared_demand_exact:
     and result: "finite_committed_demand \<kappa> (finite_declared_commitment D) P Q n = Some A"
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using finite_committed_demand_exact[OF \<kappa> finite_declared_commitment_exchanges[OF \<kappa> discharged only]
-    constructions result] by blast+
+  using finite_declared_demand_exact_at[OF assms[unfolded finite_committed_demand_select]] by blast+
+
+theorem native_declared_resolution_exact_at:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "native_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_declared_commitment D) P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_committed_resolution_by_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_declared_commitment_exchanges_at[OF \<kappa> discharged only] constructions] result] by blast+
 
 theorem native_declared_resolution_exact:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
@@ -60,13 +103,21 @@ theorem native_declared_resolution_exact:
       decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using native_committed_resolution_exact[OF \<kappa> finite_declared_commitment_exchanges[OF \<kappa> discharged only]
-    constructions result] by blast+
+  using native_declared_resolution_exact_at[OF assms[unfolded native_committed_resolution_select]] by blast+
 
 text \<open>The four forms as one fact, for the route's consumers.\<close>
 
 lemmas finite_declared_forms_exact = finite_declared_refutation_exact finite_declared_verdict_exact
   finite_declared_demand_exact native_declared_resolution_exact
+
+text \<open>
+  The four forms at a priority @{text pr} of F1's selection (task 802), each the form at a selection
+  (@{text finite_committed_resolution_by} and its siblings) at @{term "finite_resolution_select_at pr \<kappa> P"}; the
+  declared forms above are their instances at the commitment's own priority.
+\<close>
+
+lemmas finite_declared_forms_exact_at = finite_declared_refutation_exact_at finite_declared_verdict_exact_at
+  finite_declared_demand_exact_at native_declared_resolution_exact_at
 
 section \<open>The committed forms exact under framed declarations\<close>
 
@@ -77,6 +128,17 @@ text \<open>
   forms above state today's test and stand as they are.
 \<close>
 
+theorem finite_framed_refutation_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and refutes: "finite_resolution_refutes (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_framed_commitment D \<Phi>) P d t n)"
+  shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
+  by (rule finite_committed_resolution_by_refutation_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_framed_commitment_exchanges_at[OF \<kappa> discharged frames only] constructions] refutes])
+
 theorem finite_framed_refutation_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
@@ -86,8 +148,18 @@ theorem finite_framed_refutation_exact:
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and refutes: "finite_resolution_refutes (finite_committed_resolution \<kappa> (finite_framed_commitment D \<Phi>) P d t n)"
   shows "(d,decode_finite_term t) \<notin> positive_meaning (decode_finite_system P)"
-  by (rule finite_committed_resolution_refutation_exact[OF \<kappa>
-    finite_framed_commitment_exchanges[OF \<kappa> discharged frames only] constructions refutes])
+  using assms unfolding finite_committed_resolution_select by (rule finite_framed_refutation_exact_at)
+
+theorem finite_framed_verdict_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and verdict: "finite_resolution_verdict (finite_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_framed_commitment D \<Phi>) P d t n) = Some b"
+  shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
+  by (rule finite_committed_verdict_by_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_framed_commitment_exchanges_at[OF \<kappa> discharged frames only] constructions] verdict])
 
 theorem finite_framed_verdict_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -98,8 +170,19 @@ theorem finite_framed_verdict_exact:
     and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
     and verdict: "finite_resolution_verdict (finite_committed_resolution \<kappa> (finite_framed_commitment D \<Phi>) P d t n) = Some b"
   shows "b \<longleftrightarrow> (d,decode_finite_term t) \<in> positive_meaning (decode_finite_system P)"
-  by (rule finite_committed_verdict_exact[OF \<kappa>
-    finite_framed_commitment_exchanges[OF \<kappa> discharged frames only] constructions verdict])
+  using assms unfolding finite_committed_resolution_select by (rule finite_framed_verdict_exact_at)
+
+theorem finite_framed_demand_exact_at:
+  fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "finite_committed_demand_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_framed_commitment D \<Phi>) P Q n = Some A"
+  shows "schema_system_formed (decode_finite_system P)"
+    "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using finite_committed_demand_by_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_framed_commitment_exchanges_at[OF \<kappa> discharged frames only] constructions] result] by blast+
 
 theorem finite_framed_demand_exact:
   fixes P :: "('a,'s::linorder,'d,'c) finite_schema_system"
@@ -111,8 +194,23 @@ theorem finite_framed_demand_exact:
     and result: "finite_committed_demand \<kappa> (finite_framed_commitment D \<Phi>) P Q n = Some A"
   shows "schema_system_formed (decode_finite_system P)"
     "fset A = {q\<in>fset Q. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using finite_committed_demand_exact[OF \<kappa> finite_framed_commitment_exchanges[OF \<kappa> discharged frames only]
-    constructions result] by blast+
+  using finite_framed_demand_exact_at[OF assms[unfolded finite_committed_demand_select]] by blast+
+
+theorem native_framed_resolution_exact_at:
+  assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
+    and discharged: "declarations_discharged (positive_meaning (decode_finite_system P)) D corr"
+    and frames: "frames_discharged (positive_meaning (decode_finite_system P)) D \<Phi>"
+    and only: "finite_registrations_premise_only \<kappa> P"
+    and constructions: "finite_construction_lifts (\<lambda>_. False) \<kappa> P"
+    and result: "native_committed_resolution_by (finite_resolution_select_at pr \<kappa> P) \<kappa> (finite_framed_commitment D \<Phi>) P R n = (T,A)"
+  shows "fimage fst T = R"
+    and "(q,Finite_Resolved C) |\<in>| T \<Longrightarrow> C \<noteq> {||} \<and> fBall C (\<lambda>p. finite_checks_schema_proof P p (fst q) (snd q)) \<and>
+      decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)"
+    and "(q,r) |\<in>| T \<Longrightarrow> finite_resolution_refutes r \<Longrightarrow>
+      decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
+    and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
+      fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
+  using native_committed_resolution_by_exact[OF finite_committed_exact_premises_select_at[OF \<kappa> finite_framed_commitment_exchanges_at[OF \<kappa> discharged frames only] constructions] result] by blast+
 
 theorem native_framed_resolution_exact:
   assumes \<kappa>: "finite_witness_construction_formed \<kappa>"
@@ -128,11 +226,13 @@ theorem native_framed_resolution_exact:
       decode_finite_call_term q \<notin> positive_meaning (decode_finite_system P)"
     and "A = Some B \<Longrightarrow> schema_system_formed (decode_finite_system P) \<and>
       fset B = {q\<in>fset R. decode_finite_call_term q \<in> positive_meaning (decode_finite_system P)}"
-  using native_committed_resolution_exact[OF \<kappa> finite_framed_commitment_exchanges[OF \<kappa> discharged frames only]
-    constructions result] by blast+
+  using native_framed_resolution_exact_at[OF assms[unfolded native_committed_resolution_select]] by blast+
 
 lemmas finite_framed_forms_exact = finite_framed_refutation_exact finite_framed_verdict_exact
   finite_framed_demand_exact native_framed_resolution_exact
+
+lemmas finite_framed_forms_exact_at = finite_framed_refutation_exact_at finite_framed_verdict_exact_at
+  finite_framed_demand_exact_at native_framed_resolution_exact_at
 
 section \<open>The transfer of declarations\<close>
 

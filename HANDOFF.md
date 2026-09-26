@@ -53,11 +53,10 @@ through B2's recording, citing `development_citing_row_generation_certified`; th
 into the briefs #522 and #523 corrected, or recorded superseded there.
 
 **The native evaluator's open line**, in chain order (what landed is under Delivered):
-- The declarations and their carrying (#585's addition; what landed is under Delivered): R6c's third part #681 and 48's #609
-  having landed, → R6c's carrying, divided at q140 (#611 the plain records and frames → #782 48's narrowed record and
-  `given_union_registration`, after V2b's (4) #780 → #784 the control) → rc's numbered forms #540 (landed)
-  and native form #661 (after #780) → R7 #542 (the numbered course; #661 feeds its native part #707) and the
-  request at the given #547 → #399. #725's correction (q126): 48's union is the narrowed sockets' production, a step of
+- The declarations and their carrying (#585's addition; what landed is under Delivered): R6c's parts and the carrying's
+  first part #611 having landed, → #782 (48's narrowed record and `given_union_registration`, after the fix #786) → #784
+  the control; rc's forms #540 and #661 landed, #786 restating #661's corollary through V2b's (4) locale → R7 #542 (the
+  numbered course; #661 feeds its native part #707) and the request at the given #547 → #399. #725's correction (q126): 48's union is the narrowed sockets' production, a step of
   R5's committed search, R3 and W4a untouched; R5f1 #734 and its fix #765 landed; R5f2 #736 (briefed by #727) and its
   fix #767 (q134: the production applies only at its registration's site and head input, the producing sub-search
   barred at the produced state, a static premise #611 discharges at the given) landed, and so did the transfer at productions
@@ -76,10 +75,10 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   move to #724. #733's builds (32's kept sockets, declared by no build before): #758 and the selection part #760 landed;
   their carrying #762 landed.
 - The clause match (#642's addition, briefed by #643): M, V1, V2a and V3 (#653, #687, #655, #688, the control #657)
-  landed (Delivered), and V2b #651 and its (3) #738 (Delivered); its (4) #780 remains — V2b's discharge takes `varied_narrowings_agree` and
-  `production_values_carried` as premises (q133), #738 carrying them and #782 discharging them at the given's installed
-  programs; #688's instances are consumed by R7's native part #707, #547
-  and #399.
+  landed (Delivered), and V2b #651, its (3) #738 and (4) #780 (Delivered); the fix #786 makes (4)'s locale take R5f2's
+  `productions_discharged` at N (the values carried one derivation; q138), which #782 discharges at the given's
+  installed programs with `varied_narrowings_agree`; #688's instances are consumed by R7's native part #707, #547 and
+  #399.
 - The resolver at the given's size (#683's addition to task 495's entry, from #644's attribution; briefed by #684,
   placed by plan-90): F1, F3, F2a, F2a′, F2b1 and the waiting fix #757 landed (Delivered); F2b2 divided at q135 (#768
   placed it): (c) #769 (the kept fields and the listed union over F2b1's indexed state) landed; (a) the
@@ -87,9 +86,9 @@ into the briefs #522 and #523 corrected, or recorded superseded there.
   stated once over a representation (its candidates κ-free, review 770's 1)
   → F2c #701 (R5's committed search over the shared state, also after the fix #767, whose corrected search it mirrors)
   → C #703 (a found derivation checked over its
-  graph; before #542, #547 and #399); the investigation #779 beside them (77 and 113 under R5's committed search with
-  the given's declarations: whether they cut the branching that leaves 77/1 unresolved by 1,000 under R3's plain
-  search, #769), before R7 #542 rests on the resolver at 77.
+  graph; before #542, #547 and #399). #779 found that the given's declarations do not cut the branching that leaves
+  77/1 unresolved (a declared producer, 12, taken before 5 binds its input): the design #787 of the producer-binder
+  order (modes at the binders' views read by the selection) and its builds precede R7 #542 and #547.
   Divided from R7 #542 (the numbered course) its
   native part #707 (after #542, #653, #688 and #661, before #399), from #399 its controls #709 (before #401, #403 and
   #553). Off the route: the lifting's consolidation #613, then #724 (review 677's follow-ups, words equal; after F3,
@@ -113,7 +112,7 @@ by a task of their own (Open 100).
 
 **Shape.** No build waits on a review task. The route's longest chain runs F2b2 (b) #771 → F2c #701 → C #703 →
 R7 #542 → #707 → #399 → #709 → the record #553 → #447 → #449 → #450;
-#611 → #782 → #542, #780 → #782 and #780 → #661 → #707 have slack against it, the
+#786 → #782 → #542, #786 → #707 and the design #787 → #542 have slack against it, the
 carryings more — past the
 limit through splices, so nothing is added after the route's tail until it shortens (the status line gives the depths).
 The approval build (Open 142) after #407 and #447 waits for it to shorten; the controls task #718 after C (depth 10)
@@ -123,8 +122,8 @@ was placed when #668 landed.
 exists, Q2): the slots are one pool, each free slot going to the first task in the queue that can start and a review
 standing where its review task stands, so every review stands right after its build. After the low-moves batch #777,
 at the head while it rebuilds the library, by slack on the longest chain:
-F2b2 (b) #771, F2c #701 and C #703; the investigation #779;
-R6c's carrying #611, V2b's (4) #780, #782 and #784; rc's native form #661; R7 #542, its native part
+F2b2 (b) #771, F2c #701 and C #703; the design #787;
+the fix #786, #782 and #784; R7 #542, its native part
 #707, #399 and its controls #709, #547; the route in its chains'
 order (#551, #549, #553, #401, #403, #443, #447, #407, #445, #449); the controls #718 after C, and the lifting's
 consolidation #613, then #724 last.
@@ -535,15 +534,27 @@ follow-ups are in `PLANNING_LOG.md` and the earlier states (`HANDOFF-before-cond
   the relocation and agreement transfers (`finite_narrowed_relocation_transfer`, `finite_narrowed_agreement_transfer`;
   the other side's productions and narrowed frames their premises until #774), the search control in
   `Factor_Narrowed_Controls`.
-- **rc's numbered forms** (#540, `e7fdc902`): `Factor_Committed_Registrations` — the locale `registered_commitment`
-  (the contract over any commitment that exchanges: `committed_registered_resolution_exact`,
+- **rc's forms** (#540 `e7fdc902`, #661 `cd5d2787`): `Factor_Committed_Registrations` — the locale
+  `registered_commitment` (the contract over any commitment that exchanges: `committed_registered_resolution_exact`,
   `committed_registered_verdict_exact`, `committed_registered_demand_exact`) and `committed_registrations` (R5f2's
-  premises, a sublocale at `finite_narrowed_commitment`), the collection instances, and (4) at no declaration
-  (`committed_registered_empty_construction_exact`, R5's; `committed_registered_no_declaration_exact`, W4a's).
-- **V2b's (3)** (#738, `16b6af0d`): `Factor_Varied_Narrowed_Transfer` — R5f2's forms and transfer at the varied narrowed
-  declarations (`finite_varied_narrowed_forms_exact`, `finite_committed_variant_transfer_narrowed`, the relocated
-  forms), under three premises its (4) #780 derives or names: the narrowed frames at N, the varied record's static
-  premise, the values carried at R5f2's own construction.
+  premises, a sublocale at `finite_narrowed_commitment`), the collection instances, (4) at no declaration
+  (`committed_registered_empty_construction_exact`, R5's; `committed_registered_no_declaration_exact`, W4a's);
+  `Factor_Native_Committed_Registrations` — the native form `native_committed_registered_exact` at an installed
+  package's finite presentation and its corollary along the clause match, `committed_registrations_relocated`.
+- **V2b's (3) and (4)** (#738 `16b6af0d`, #780 `61b80692`): `Factor_Varied_Narrowed_Transfer` — the locale
+  `varied_narrowed_record P N PD corr Φ m m'` (R5f2's forms at the carried record, its N-side frames `frames_varied P N
+  Φ`, `finite_committed_variant_transfer_narrowed`), `narrowed_frames_varied_discharged`,
+  `narrowed_productions_declared_varied` (under `productions_carry_uniquely`), `production_values_carried_collection`
+  from the named predicate `registration_values_carried` (the search's equivariance under the match, unbuilt, q138).
+- **R6c's carrying, first part** (#611, `c02c00f1`): in `Development_Given_Carried_Declarations` the instantiation
+  family's plain records (sixteen of seventeen, 58's among them through the granted entry 85's clause) joined into
+  `given_declarations` under `given_declarations_correspondence`, the `given_notion_*` instances; `Development_Given_Frames`
+  (`given_frames`, `given_frames_carried`, `given_frames_discharged`, `given_frame_sites`,
+  `given_placed_frames_discharged`); 587's record left at the stated report program.
+- **R5 at the given's calls** (#779, `.build/tasks/779/result.md`): with the given's declarations 77/1 and 77/2 stay
+  unresolved at every bound reached (12 taken before 5 binds its input), 113/7 resolves at R3's least bound 230, 113/9 is
+  out of reach on R3's abstract state (5–27× R3's indexed seconds a state); its draft `Committed_Branching.thy` counts
+  and traces the committed search.
 - **The shared state** (F2b2 (a) #755, `ea4a9049`): `Factor_Shared_Resolution` — goals and nodes over one shared-term
   table, one per position under `resolution_positions_distinct`, their formation and projection to R3's state, the
   constructor from an R3 state, the substitution at the holders through the keyed `share_node`; call patterns collapsed
@@ -690,9 +701,9 @@ planner searches for a theory before briefing a task that edits it.
 
 ## Now
 
-- **The graph's width**: (b) #771, R6c's carrying #611, the investigation #779 and the low-moves batch #777 run;
-  V2b's (4) #780 can start. The route is ((b) #771 → F2c → C) and (#611 → #782) → R7 #542 → #707 → #399, with #780
-  before #782 and before rc's native form #661 → #707. #777 stands at the queue's head
+- **The graph's width**: (b) #771, the lifting's consolidation #613, the fix #786 and the low-moves batch #777 run; the
+  design #787 can start. The route is ((b) #771 → F2c → C), (#786 → #782) and #787's builds → R7 #542 → #707 → #399,
+  with #786 also before #707 and #547. #777 stands at the queue's head
   (working rule "Rebuilds"); its landing check is the first since the owner's switch (Q29–Q32) to rebuild most of the
   library.
 - **Briefs written before their theories grew** may be refused at their start (#596 was; #607 was divided by #678):
@@ -700,14 +711,13 @@ planner searches for a theory before briefing a task that edits it.
   into (1) and (3), then (2) and (4)); #542 and #399 (84K and 70K of margin at proposal, before rc's, V3's and the fix's
   theories added to their relations); the samples build #551 (384K at proposal; a hand-back divides its corrected item
   (3), the planner's).
-- **What the next events ask**: #779's figures — if R5's committed search does not cut 77/1's branching, a design of
-  it before R7 #542; (b) #771's hand-over, then the consolidation making F2b1 an instance of its representation (q139, after #777),
-  placed from its result; #611's, #780's and #782's hand-overs; the first one-session base's
+- **What the next events ask**: #787's entry and builds table, its builds placed before R7 #542 and #547; (b) #771's
+  hand-over, then the consolidation making F2b1 an instance of its representation (q139, after #777), placed from its
+  result; #613's hand-over, then the move of R4's and the committed lifting below Completeness (q141), placed from its
+  result after #777 and #701; #786's and #782's hand-overs; the first one-session base's
   landing (probes in about 3 s) — not yet: every base since the switch stands on the chain (`PLANNING_LOG.md`,
   plan-92, plan-98, plan-105); if #777's landing does not re-root either, a harness gap for the owner.
-- **Left by plan-106 at its window's end**: #771's brief to be rewritten to the answer to q139 (Deliverable
-  `theories/Factor_Search_Representations.thy` added and the edit of `Factor_Indexed_Resolution.thy` dropped; F2b1's
-  instance moved to the consolidation after #771 and #777); the ids of #780–#785, predicted in their briefs, checked.
+
 - **Mailed, read by each task's first session**: by task, in `.build/plans/mailed.md` (open tasks only). A task
   continuing in a new session is mailed its line again; a planner who mails a task adds to its line there, and a task
   that lands leaves it.

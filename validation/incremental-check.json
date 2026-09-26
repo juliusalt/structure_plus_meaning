@@ -1,6 +1,6 @@
 {
- "base_receipt_sha256": "aa9a43a05c02af38a05b50a33d6fdfab2122cd790cde16489009391308d809bc",
- "checked_content_sha256": "57bb159b636985d88b7183a575fabe3c0db67fe898e151ac4f11a4c1ea686c48",
+ "base_receipt_sha256": "db9401a86a3a24b7615ab41aa1f1dc82647f47b539976818f1b14252f3e62aa5",
+ "checked_content_sha256": "4b8511bf3597b7996dcd041ddd7c8a3633603dc55f0e27ea7698e468171d1a0f",
  "host_tests": {
   "kernel": {
    "exit_code": 0,
@@ -17,7 +17,7 @@
    "ran": 309,
    "skipped": 0,
    "tail": [
-    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp4fwj9lnn/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
+    "{\"status\": \"failed\", \"error\": \"[Errno 2] No such file or directory: '/tmp/tmp5iimyrb7/no-project/theories/Development_Answer_a2d8d6490cc2.thy'\"}"
    ]
   }
  },
@@ -25,40 +25,15 @@
   "base_and_impact": 0.36,
   "execution_impact": 0.0,
   "export": 0.0,
-  "proof": 71.94,
-  "recipe_impact": 0.41,
-  "recipes_and_host_tests": 11.48
+  "proof": 34.16,
+  "recipe_impact": 0.37,
+  "recipes_and_host_tests": 11.35
  },
  "rebuilt_theories": [
-  "Development_Asked_Registrations",
-  "Development_First_Request_Registrations",
   "Development_Given_Carried_Declarations",
-  "Development_Given_Declarations",
   "Development_Given_Declarations_Execution",
   "Development_Given_Installed_Declarations",
-  "Development_Given_Registrations",
-  "Development_Installed_Presentations",
-  "Development_Installed_Presentations_Execution",
-  "Development_Rooted_Registrations",
-  "Factor_Artifact_Citation_Declarations",
-  "Factor_Commitment_Controls",
-  "Factor_Instantiation_Declarations",
-  "Factor_Least_Witness_Registrations",
-  "Factor_Narrowed_Controls",
-  "Factor_Narrowed_Sockets",
-  "Factor_Producer_Correspondences",
-  "Factor_Reader_Witness_Registrations",
-  "Factor_Resolution_Carriers",
-  "Factor_Resolution_Commitments",
-  "Factor_Resolution_Controls",
-  "Factor_Resolution_Material_Discharge",
-  "Factor_Resolution_Producer_Discharge",
-  "Factor_Resolution_Socket_Discharges",
-  "Factor_Resolution_Views",
-  "Factor_Root_Family_Declarations",
-  "Factor_Schema_Instantiation_Declarations",
-  "Factor_Varied_Constructions",
-  "Factor_Varied_Declarations"
+  "Factor_Artifact_Citation_Declarations"
  ],
  "recipes": {
   "allocated-environments": {
@@ -218,8 +193,8 @@
    "status": "unchanged"
   }
  },
- "reused_theories": 1913,
- "seconds": 90.48,
+ "reused_theories": 1938,
+ "seconds": 52.53,
  "source_checks": {
   "missing_theory_files": [],
   "proof_escape_matches": [],

@@ -1,5 +1,5 @@
 theory Factor_Indexed_Resolution
-  imports Factor_Resolution_Acceptance Tree_Map_Indexes Ordered_Finite_Terms Listed_Set_Unions
+  imports Factor_Resolution_Acceptance Tree_Map_Indexes Ordered_Finite_Terms Listed_Set_Unions Finite_Set_Transformations
 begin
 
 section \<open>A tree of finite sets by key\<close>
@@ -226,9 +226,6 @@ qed
 lemma tree_add_updates: "tree_add q K h = fold (\<lambda>p T. tree_bucket_add T p q) (sorted_list_of_fset K) h"
   by (simp add: tree_add_def fold_map comp_def)
 
-lemma ffUnion_fimage_member: "y |\<in>| G \<Longrightarrow> x |\<in>| f y \<Longrightarrow> x |\<in>| ffUnion (fimage f G)"
-  by (force simp: ffUnion.rep_eq fimage.rep_eq)
-
 text \<open>
   The holder index is keyed by the position part of a variable (@{typ "('s,'a) resolution_variable"}): keyed by
   positions alone, never by the variables' own type, so it stands at the search's general type. It is a superset
@@ -419,21 +416,6 @@ text \<open>
   position (a node is solved when its count is zero), and the positions of the nodes and of the pending goals whose
   call is ground, by the key of that call.
 \<close>
-
-text \<open>
-  A set of indexed states is computed, so its trees need an executable equality: HOL's equality on the tree
-  typedef, which compares the trees it wraps (@{thm [source] RBT.impl_of_inject}). No statement changes with it.
-\<close>
-
-instantiation RBT.rbt :: ("{linorder,equal}", equal) equal
-begin
-definition equal_rbt :: "('a,'b) RBT.rbt \<Rightarrow> ('a,'b) RBT.rbt \<Rightarrow> bool" where
-  "equal_rbt t u \<longleftrightarrow> RBT.impl_of t = RBT.impl_of u"
-instance by standard (simp add: equal_rbt_def RBT.impl_of_inject)
-end
-
-lemma equal_rbt_code [code]: "HOL.equal t u \<longleftrightarrow> RBT.impl_of t = RBT.impl_of u"
-  by (simp add: equal_eq equal_rbt_def RBT.impl_of_inject)
 
 record (overloaded) ('a,'s::linorder,'d,'c) indexed_state =
   indexed_goals :: "('s list, ('a,'s,'d,'c) indexed_goal fset) rbt"
@@ -647,14 +629,6 @@ next
   then show ?thesis by (simp add: Resolution_Material_Goal)
 qed
 
-lemma fimage_fixed:
-  assumes "\<And>z. z |\<in>| B \<Longrightarrow> f z = z"
-  shows "fimage f B = B"
-proof -
-  have "f ` fset B = fset B" using assms by (force intro: rev_image_eqI)
-  then show ?thesis by (metis fimage.rep_eq fset_inject)
-qed
-
 lemma resolution_node_substitute_outside:
   assumes out: "\<And>x. x |\<in>| resolution_node_variables nd \<Longrightarrow> \<sigma> x = Finite_Variable x"
   shows "resolution_node_substitute \<sigma> nd = nd"
@@ -680,9 +654,6 @@ qed
 
 lemmas resolution_substitute_positions [simp] =
   resolution_goal_substitute_fields resolution_node_substitute_fields
-
-lemma fimage_cong_on: "(\<And>x. x |\<in>| A \<Longrightarrow> f x = g x) \<Longrightarrow> fimage f A = fimage g A"
-  by (force simp: fset_eq_iff fimage.rep_eq)
 
 lemma tree_buckets_map:
   assumes "\<And>p. tree_bucket t' p = fimage f (tree_bucket t p)"
@@ -2196,15 +2167,6 @@ text \<open>
   A filter commutes with the image of the goals' values, so the selection projects to R3's.
 \<close>
 
-lemma fimage_ffilter_value: "ffilter Q (fimage f X) = fimage f (ffilter (\<lambda>x. Q (f x)) X)"
-  by (auto simp: fset_eq_iff fimage.rep_eq ffilter.rep_eq)
-
-lemma ffilter_cong_on: "(\<And>x. x |\<in>| X \<Longrightarrow> F x \<longleftrightarrow> G x) \<Longrightarrow> ffilter F X = ffilter G X"
-  by (auto simp: fset_eq_iff ffilter.rep_eq)
-
-lemma fimage_snd_keyed: "fimage snd (ffilter F (fimage (\<lambda>g. (f g,g)) C)) = ffilter (\<lambda>g. F (f g,g)) C"
-  by (force simp: fset_eq_iff fimage.rep_eq ffilter.rep_eq)
-
 definition indexed_first_goals :: "('a,'s::linorder,'d,'c) indexed_goal fset \<Rightarrow> ('a,'s,'d,'c) indexed_goal fset" where
   "indexed_first_goals H = ffilter (\<lambda>h. \<not> fBex H (\<lambda>h'. finite_position_less
     (resolution_goal_position (indexed_goal_value h')) (resolution_goal_position (indexed_goal_value h)))) H"
@@ -2532,13 +2494,6 @@ text \<open>
   the joined outcome is read, never iterated, so no found state or diagnosis is compared with another on the search's
   path.
 \<close>
-
-definition listed_fimage_union :: "('a \<Rightarrow> 'b fset) \<Rightarrow> 'a fset \<Rightarrow> 'b fset" where
-  "listed_fimage_union f A = ffUnion (fimage f A)"
-
-lemma listed_fimage_union_code [code abstract]:
-  "fset (listed_fimage_union f A) = listed_image_union (\<lambda>x. fset (f x)) (fset A)"
-  by (simp add: listed_fimage_union_def listed_image_union_def ffUnion.rep_eq fimage.rep_eq image_image)
 
 lemma finite_outcome_union_code [code]:
   "finite_outcome_union Os = Resolution_Outcome (listed_fimage_union resolution_found Os)

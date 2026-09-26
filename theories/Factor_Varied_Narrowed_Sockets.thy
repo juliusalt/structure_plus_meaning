@@ -18,21 +18,6 @@ text \<open>
   changes; a clause no match reaches keeps no narrowing and no production.
 \<close>
 
-section \<open>Bindings carried back read the same values\<close>
-
-lemma carried_fibre_member: "t |\<in>| fimage snd (ffilter (\<lambda>r. fst r = k) X) \<longleftrightarrow> (k,t) |\<in>| X"
-  by (force simp: fimage.rep_eq ffilter.rep_eq)
-
-lemma carried_back_valuation:
-  assumes "y |\<in>| X"
-  shows "finite_binding_valuation (finite_bindings_carried_back f X B) y = finite_binding_valuation B (f y)"
-proof -
-  have "fimage snd (ffilter (\<lambda>r. fst r = y) (finite_bindings_carried_back f X B)) =
-      fimage snd (ffilter (\<lambda>r. fst r = f y) B)"
-    unfolding fset_eq_iff carried_fibre_member finite_bindings_carried_back_member using assms by simp
-  then show ?thesis by (simp only: finite_binding_valuation_def finite_relation_option_def)
-qed
-
 section \<open>A narrowed socket and a head registration along the match\<close>
 
 context finite_schema_matched
@@ -102,12 +87,12 @@ next
       evaluate_pattern h' (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi) \<and>
       evaluate_pattern h' (decode_finite_pattern yo) = y'"
   proof (intro exI conjI)
-    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
-    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule extension_carried(1)[OF eq h2(1,2) Vhf])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule extension_carried(2)[OF eq h2(1,2) Vhf])
     show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern xi) = evaluate_pattern v (decode_finite_pattern xi)"
-      using h2(3) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF xv])
+      using extension_carried(3)[OF eq h2(1,2) Vhf xv] h2(3) by (simp add: xy evaluate_map_finite_pattern[of v])
     show "evaluate_pattern (h2 \<circ> binder_inverse) (decode_finite_pattern yo) = y'"
-      using h2(4) by (simp add: xy evaluate_map_finite_pattern evaluate_back[OF yv])
+      using extension_carried(3)[OF eq h2(1,2) Vhf yv] h2(4) by (simp add: xy)
   qed
 next
   fix v N g
@@ -129,13 +114,13 @@ next
   show "\<exists>h'. clause_true M' (decode_finite_schema T) h' \<and> head_kept keep Vh T v h' \<and>
       (\<forall>a\<in>material_variables N. h' a = g a)"
   proof (intro exI conjI ballI)
-    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule clause_true_back[OF eq h2(1)])
-    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule head_kept_along[OF h2(2) Vhf])
+    show "clause_true M' (decode_finite_schema T) (h2 \<circ> binder_inverse)" by (rule extension_carried(1)[OF eq h2(1,2) Vhf])
+    show "head_kept keep Vh T v (h2 \<circ> binder_inverse)" by (rule extension_carried(2)[OF eq h2(1,2) Vhf])
   next
     fix b assume "b \<in> material_variables N"
     then obtain a where a: "a \<in> material_variables N0" "b = f a" using N0(2) by (auto simp: renamed_material_variables)
-    have "(h2 \<circ> binder_inverse) b = ((h2 \<circ> binder_inverse) \<circ> f) a" using a(2) by simp
-    also have "\<dots> = h2 a" using inverse_agrees[of a h2] a(1) mv by blast
+    have "(h2 \<circ> binder_inverse) b = h2 a"
+      using extension_carried(4)[OF eq h2(1,2) Vhf subsetD[OF mv a(1)]] a(2) by simp
     also have "\<dots> = g b" using h2(3) a by simp
     finally show "(h2 \<circ> binder_inverse) b = g b" .
   qed
@@ -461,40 +446,6 @@ definition production_carried ::
   "production_carried P N \<rho> = (case \<rho> of None \<Rightarrow> None | Some R \<Rightarrow>
     (let Rs = registrations_varied P N R in if Rs = {|fthe_elem Rs|} then Some (fthe_elem Rs) else None))"
 
-text \<open>A value where one is determined: the singleton's element, and none otherwise.\<close>
-
-lemma singleton_some_iff:
-  "(if X = {|fthe_elem X|} then Some (fthe_elem X) else None) = Some y \<longleftrightarrow> X = {|y|}"
-proof
-  assume a: "(if X = {|fthe_elem X|} then Some (fthe_elem X) else None) = Some y"
-  have single: "X = {|fthe_elem X|}"
-  proof (rule ccontr)
-    assume "X \<noteq> {|fthe_elem X|}"
-    then show False using a by simp
-  qed
-  have "fthe_elem X = y" using a[unfolded if_P[OF single]] by simp
-  then show "X = {|y|}" using single by metis
-next
-  assume "X = {|y|}"
-  then show "(if X = {|fthe_elem X|} then Some (fthe_elem X) else None) = Some y" by (simp add: fthe_felem_eq)
-qed
-
-lemma singleton_option_iff:
-  "(if X = {|fthe_elem X|} then fthe_elem X else None) = Some y \<longleftrightarrow> X = {|Some y|}"
-proof
-  assume a: "(if X = {|fthe_elem X|} then fthe_elem X else None) = Some y"
-  have single: "X = {|fthe_elem X|}"
-  proof (rule ccontr)
-    assume "X \<noteq> {|fthe_elem X|}"
-    then show False using a by simp
-  qed
-  have "fthe_elem X = Some y" using a[unfolded if_P[OF single]] .
-  then show "X = {|Some y|}" using single by metis
-next
-  assume "X = {|Some y|}"
-  then show "(if X = {|fthe_elem X|} then fthe_elem X else None) = Some y" by (simp add: fthe_felem_eq)
-qed
-
 lemma production_carried_some:
   "production_carried P N \<rho> = Some R' \<longleftrightarrow> (\<exists>R. \<rho> = Some R \<and> registrations_varied P N R = {|R'|})"
   by (cases \<rho>) (simp_all add: production_carried_def Let_def singleton_some_iff)
@@ -705,12 +656,13 @@ proof -
     proof (intro conjI exI)
       show "finite_term_formed v" using srcv by blast
       show "K (decode_finite_term v)" using srcv by blast
-      show "clause_true M' (decode_finite_schema T) (h3 \<circ> C.binder_inverse)" by (rule C.clause_true_back[OF eq h3(1)])
-      show "head_kept keep Vh T g (h3 \<circ> C.binder_inverse)" by (rule C.head_kept_along[OF h3(2) Vhf])
+      show "clause_true M' (decode_finite_schema T) (h3 \<circ> C.binder_inverse)"
+        by (rule C.extension_carried(1)[OF eq h3(1,2) Vhf])
+      show "head_kept keep Vh T g (h3 \<circ> C.binder_inverse)" by (rule C.extension_carried(2)[OF eq h3(1,2) Vhf])
       show "evaluate_pattern (h3 \<circ> C.binder_inverse) (decode_finite_pattern xi) = evaluate_pattern g (decode_finite_pattern xi)"
-        using h3(3) by (simp add: xy evaluate_map_finite_pattern C.evaluate_back[OF xv])
+        using C.extension_carried(3)[OF eq h3(1,2) Vhf xv] h3(3) by (simp add: xy evaluate_map_finite_pattern[of g])
       show "evaluate_pattern (h3 \<circ> C.binder_inverse) (decode_finite_pattern yo) = decode_finite_term v"
-        using h3(4) by (simp add: xy evaluate_map_finite_pattern C.evaluate_back[OF yv])
+        using C.extension_carried(3)[OF eq h3(1,2) Vhf yv] h3(4) by (simp add: xy)
     qed
   qed
 qed

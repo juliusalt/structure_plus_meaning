@@ -329,10 +329,17 @@ proof -
   qed
 qed
 
-theorem empty_payload_rows_bindings:
-  "(501,binding_rows_term cs)\<in>positive_meaning empty_payload_rows_system \<longleftrightarrow>
-    term_formed (binding_rows_term cs) \<and> (\<forall>(a,x)\<in>set cs. term_payloads x\<subseteq>{[]})"
-proof (induction cs)
+text \<open>
+  The row check holds of a list exactly when every row is a pair whose value passes the emptiness check (500): the
+  general list contract of 501, read from its two clauses, whatever the rows' keys. Its instance at binding rows
+  follows.
+\<close>
+
+lemma empty_payload_rows_list:
+  "(501,data_list_term zs) \<in> positive_meaning empty_payload_rows_system \<longleftrightarrow>
+    term_formed (data_list_term zs) \<and>
+      (\<forall>z\<in>set zs. \<exists>k x. z = Pair_Term k x \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
+proof (induction zs)
   case Nil
   have "(501,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema::(nat,nat,nat) factor_schema)))
       \<in>positive_meaning empty_payload_rows_system"
@@ -341,31 +348,40 @@ proof (induction cs)
         single_valued_def rel_dom_def octets_formed_def empty_payload_rows_call)
   then show ?case by (simp add: data_list_nil_schema_def octets_formed_def)
 next
-  case (Cons c cs)
-  obtain a x where c: "c=(a,x)" by (cases c)
+  case (Cons z zs)
   show ?case
   proof
-    assume holds: "(501,binding_rows_term (c#cs))\<in>positive_meaning empty_payload_rows_system"
-    have formed: "term_formed (binding_rows_term (c#cs))"
+    assume holds: "(501,data_list_term (z#zs)) \<in> positive_meaning empty_payload_rows_system"
+    have formed: "term_formed (data_list_term (z#zs))"
       using positive_meaning_formed[OF holds] by (simp add: empty_payload_rows_call)
-    have "(500,x)\<in>positive_meaning empty_payloads_system" "(501,binding_rows_term cs)\<in>positive_meaning empty_payload_rows_system"
-      using empty_payload_rows_cases[OF holds] by (auto simp: c)
-    then show "term_formed (binding_rows_term (c#cs)) \<and> (\<forall>(a,x)\<in>set (c#cs). term_payloads x\<subseteq>{[]})"
-      using formed Cons.IH empty_payloads_exact by (auto simp: c)
+    obtain k x where z: "z = Pair_Term k x" "(500,x) \<in> positive_meaning empty_payloads_system"
+        "(501,data_list_term zs) \<in> positive_meaning empty_payload_rows_system"
+      using empty_payload_rows_cases[OF holds] by auto
+    then show "term_formed (data_list_term (z#zs)) \<and>
+        (\<forall>z\<in>set (z#zs). \<exists>k x. z = Pair_Term k x \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
+      using formed Cons.IH by auto
   next
-    assume given: "term_formed (binding_rows_term (c#cs)) \<and> (\<forall>(a,x)\<in>set (c#cs). term_payloads x\<subseteq>{[]})"
-    then have parts: "octets_formed a" "term_formed x" "term_formed (binding_rows_term cs)" "term_payloads x\<subseteq>{[]}"
-      "\<forall>(a,x)\<in>set cs. term_payloads x\<subseteq>{[]}" by (auto simp: c)
-    let ?h="\<lambda>n::nat. if n=0 then Payload_Term a else if n=1 then x else binding_rows_term cs"
+    assume given: "term_formed (data_list_term (z#zs)) \<and>
+      (\<forall>z\<in>set (z#zs). \<exists>k x. z = Pair_Term k x \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
+    then obtain k x where z: "z = Pair_Term k x" "(500,x) \<in> positive_meaning empty_payloads_system" by auto
+    have parts: "term_formed k" "term_formed x" "term_formed (data_list_term zs)"
+      "(501,data_list_term zs) \<in> positive_meaning empty_payload_rows_system"
+      using given Cons.IH by (auto simp: z)
+    let ?h="\<lambda>n::nat. if n=0 then k else if n=1 then x else data_list_term zs"
     have "(501,evaluate_pattern ?h (schema_conclusion empty_payload_rows_schema))\<in>positive_meaning empty_payload_rows_system"
       by (rule ordinary_positive_formed_step[where c=1])
-        (use parts Cons.IH in \<open>auto simp: empty_payload_rows_clauses_def empty_payload_rows_schema_def
+        (use parts z in \<open>auto simp: empty_payload_rows_clauses_def empty_payload_rows_schema_def
           schema_formed_def schema_variables_def single_valued_def rel_dom_def empty_payload_rows_call
-          empty_payload_rows_empty empty_payloads_exact\<close>)
-    then show "(501,binding_rows_term (c#cs))\<in>positive_meaning empty_payload_rows_system"
-      by (simp add: c empty_payload_rows_schema_def)
+          empty_payload_rows_empty\<close>)
+    then show "(501,data_list_term (z#zs)) \<in> positive_meaning empty_payload_rows_system"
+      by (simp add: z empty_payload_rows_schema_def)
   qed
 qed
+
+theorem empty_payload_rows_bindings:
+  "(501,binding_rows_term cs)\<in>positive_meaning empty_payload_rows_system \<longleftrightarrow>
+    term_formed (binding_rows_term cs) \<and> (\<forall>(a,x)\<in>set cs. term_payloads x\<subseteq>{[]})"
+  by (auto simp: empty_payload_rows_list empty_payloads_exact data_list_term_formed split_beta)
 
 definition empty_payload_calls_schema :: "(nat,nat,nat) factor_schema" where
   "empty_payload_calls_schema=data_rule (Pattern_Pair (Pattern_Pair data_x (Pattern_Pair data_y data_z)) data_w)
@@ -430,10 +446,17 @@ proof -
   qed
 qed
 
-theorem empty_payload_calls_rows:
-  "(502,call_instance_rows_term qs)\<in>positive_meaning empty_payload_calls_system \<longleftrightarrow>
-    term_formed (call_instance_rows_term qs) \<and> (\<forall>(s,d,x)\<in>set qs. term_payloads x\<subseteq>{[]})"
-proof (induction qs)
+text \<open>
+  The call check holds of a list exactly when every row is a key paired with a callee and a value that passes the
+  emptiness check (500): the general list contract of 502, read from its two clauses. Its instance at call rows
+  follows.
+\<close>
+
+lemma empty_payload_calls_list:
+  "(502,data_list_term zs) \<in> positive_meaning empty_payload_calls_system \<longleftrightarrow>
+    term_formed (data_list_term zs) \<and>
+      (\<forall>z\<in>set zs. \<exists>k d x. z = Pair_Term k (Pair_Term d x) \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
+proof (induction zs)
   case Nil
   have "(502,evaluate_pattern (\<lambda>_. Payload_Term []) (schema_conclusion (data_list_nil_schema::(nat,nat,nat) factor_schema)))
       \<in>positive_meaning empty_payload_calls_system"
@@ -442,34 +465,41 @@ proof (induction qs)
         single_valued_def rel_dom_def octets_formed_def empty_payload_calls_call)
   then show ?case by (simp add: data_list_nil_schema_def octets_formed_def)
 next
-  case (Cons q qs)
-  obtain s d x where q: "q=(s,d,x)" by (cases q) auto
+  case (Cons z zs)
   show ?case
   proof
-    assume holds: "(502,call_instance_rows_term (q#qs))\<in>positive_meaning empty_payload_calls_system"
-    have formed: "term_formed (call_instance_rows_term (q#qs))"
+    assume holds: "(502,data_list_term (z#zs)) \<in> positive_meaning empty_payload_calls_system"
+    have formed: "term_formed (data_list_term (z#zs))"
       using positive_meaning_formed[OF holds] by (simp add: empty_payload_calls_call)
-    have "(500,x)\<in>positive_meaning empty_payloads_system"
-      "(502,call_instance_rows_term qs)\<in>positive_meaning empty_payload_calls_system"
-      using empty_payload_calls_cases[OF holds] by (auto simp: q call_instance_value_def)
-    then show "term_formed (call_instance_rows_term (q#qs)) \<and> (\<forall>(s,d,x)\<in>set (q#qs). term_payloads x\<subseteq>{[]})"
-      using formed Cons.IH empty_payloads_exact by (auto simp: q)
+    obtain k d x where z: "z = Pair_Term k (Pair_Term d x)" "(500,x) \<in> positive_meaning empty_payloads_system"
+        "(502,data_list_term zs) \<in> positive_meaning empty_payload_calls_system"
+      using empty_payload_calls_cases[OF holds] by auto
+    then show "term_formed (data_list_term (z#zs)) \<and>
+        (\<forall>z\<in>set (z#zs). \<exists>k d x. z = Pair_Term k (Pair_Term d x) \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
+      using formed Cons.IH by auto
   next
-    assume given: "term_formed (call_instance_rows_term (q#qs)) \<and> (\<forall>(s,d,x)\<in>set (q#qs). term_payloads x\<subseteq>{[]})"
-    then have parts: "octets_formed s" "term_formed (site_data_term (fst d) (snd d))" "term_formed x"
-      "term_formed (call_instance_rows_term qs)" "term_payloads x\<subseteq>{[]}"
-      "\<forall>(s,d,x)\<in>set qs. term_payloads x\<subseteq>{[]}" by (auto simp: q call_instance_value_def)
-    let ?h="\<lambda>n::nat. if n=0 then Payload_Term s else if n=1 then site_data_term (fst d) (snd d)
-      else if n=2 then x else call_instance_rows_term qs"
+    assume given: "term_formed (data_list_term (z#zs)) \<and>
+      (\<forall>z\<in>set (z#zs). \<exists>k d x. z = Pair_Term k (Pair_Term d x) \<and> (500,x) \<in> positive_meaning empty_payloads_system)"
+    then obtain k d x where z: "z = Pair_Term k (Pair_Term d x)" "(500,x) \<in> positive_meaning empty_payloads_system"
+      by auto
+    have parts: "term_formed k" "term_formed d" "term_formed x" "term_formed (data_list_term zs)"
+      "(502,data_list_term zs) \<in> positive_meaning empty_payload_calls_system"
+      using given Cons.IH by (auto simp: z)
+    let ?h="\<lambda>n::nat. if n=0 then k else if n=1 then d else if n=2 then x else data_list_term zs"
     have "(502,evaluate_pattern ?h (schema_conclusion empty_payload_calls_schema))\<in>positive_meaning empty_payload_calls_system"
       by (rule ordinary_positive_formed_step[where c=1])
-        (use parts Cons.IH in \<open>auto simp: empty_payload_calls_clauses_def empty_payload_calls_schema_def
+        (use parts z in \<open>auto simp: empty_payload_calls_clauses_def empty_payload_calls_schema_def
           schema_formed_def schema_variables_def single_valued_def rel_dom_def empty_payload_calls_call
-          empty_payload_calls_empty empty_payloads_exact\<close>)
-    then show "(502,call_instance_rows_term (q#qs))\<in>positive_meaning empty_payload_calls_system"
-      by (simp add: q empty_payload_calls_schema_def call_instance_value_def)
+          empty_payload_calls_empty\<close>)
+    then show "(502,data_list_term (z#zs)) \<in> positive_meaning empty_payload_calls_system"
+      by (simp add: z empty_payload_calls_schema_def)
   qed
 qed
+
+theorem empty_payload_calls_rows:
+  "(502,call_instance_rows_term qs)\<in>positive_meaning empty_payload_calls_system \<longleftrightarrow>
+    term_formed (call_instance_rows_term qs) \<and> (\<forall>(s,d,x)\<in>set qs. term_payloads x\<subseteq>{[]})"
+  by (auto simp: empty_payload_calls_list empty_payloads_exact data_list_term_formed call_instance_value_def split_beta)
 
 section \<open>One clause states only the empty payload\<close>
 

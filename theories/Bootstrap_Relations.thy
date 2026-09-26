@@ -775,4 +775,14 @@ lemma renamed_site_injective:
 lemma keyed_value_injective: "inj f \<Longrightarrow> inj (\<lambda>(k,x). (k,f x))"
   by (auto simp: inj_def)
 
+section \<open>A list of a given length, element by element\<close>
+
+text \<open>A list of length @{term "Suc n"} is an element before a list of length @{term n}, and the list of length 0 is empty.\<close>
+
+lemma ex_list_length_Suc: "(\<exists>vs. length vs = Suc n \<and> P vs) \<longleftrightarrow> (\<exists>v vs. length vs = n \<and> P (v # vs))"
+  by (auto simp: length_Suc_conv)
+
+lemma ex_list_length_0: "(\<exists>vs. length vs = 0 \<and> P vs) \<longleftrightarrow> P []"
+  by auto
+
 end

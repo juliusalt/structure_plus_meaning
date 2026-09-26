@@ -16,4 +16,15 @@ lemma finite_differences_empty:
   "A |-| B={||} \<and> B |-| A={||} \<longleftrightarrow> A=B"
   by (auto simp: finite_difference_empty intro: order_antisym)
 
+text \<open>
+  A filter commutes with an image, reading the image's values; the second components of a set keyed by a function
+  and filtered are the set filtered at its keys.
+\<close>
+
+lemma fimage_ffilter_value: "ffilter Q (fimage f X) = fimage f (ffilter (\<lambda>x. Q (f x)) X)"
+  by (auto simp: fset_eq_iff fimage.rep_eq ffilter.rep_eq)
+
+lemma fimage_snd_keyed: "fimage snd (ffilter F (fimage (\<lambda>g. (f g,g)) C)) = ffilter (\<lambda>g. F (f g,g)) C"
+  by (force simp: fset_eq_iff fimage.rep_eq ffilter.rep_eq)
+
 end

@@ -515,6 +515,57 @@ corollary premise_rows_presentation_invariance:
   by (simp only: premise_rows_exact premise_rows_result_at_source[OF assms(1)] premise_rows_result_at_source[OF assms(2)])
 
 text \<open>
+  At one source, scope, table and row list the call rows, material rows and used variables are determined, the used
+  variables up to their order; the rows read in another order are read with their instances in that order.
+\<close>
+
+corollary premise_rows_result_unique:
+  assumes source: "environment_value_presents E e"
+    and first: "(63,premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs)
+      (binding_rows_term cs) (data_list_term (map Payload_Term Us)))\<in>positive_meaning premise_rows_system"
+    and second: "(63,premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs')
+      (binding_rows_term cs') (data_list_term (map Payload_Term Us')))\<in>positive_meaning premise_rows_system"
+  shows "qs=qs' \<and> cs=cs' \<and> mset Us=mset Us'"
+proof -
+  have one: "term_bindings_formed (set Vs) (set xs)" "distinct Us"
+    "instantiated_premise_rows E u (set Vs) (set xs) rs qs cs (set Us)"
+    using first unfolding premise_rows_on_values[OF source] by blast+
+  have two: "distinct Us'" "instantiated_premise_rows E u (set Vs) (set xs) rs qs' cs' (set Us')"
+    using second unfolding premise_rows_on_values[OF source] by blast+
+  have single: "single_valued (set xs)" using one(1) by (simp add: term_bindings_formed_def)
+  have "qs=qs' \<and> cs=cs' \<and> set Us=set Us'" by (rule instantiated_premise_rows_unique[OF single one(3) two(2)])
+  then show ?thesis using one(2) two(1) by (simp add: set_eq_iff_mset_eq_distinct)
+qed
+
+corollary premise_rows_orders:
+  assumes source: "environment_value_presents E e"
+    and holds: "(63,premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map address_pair_data rs)) (call_instance_rows_term qs)
+      (binding_rows_term cs) (data_list_term (map Payload_Term Us)))\<in>positive_meaning premise_rows_system"
+    and perm: "mset rs'=mset rs"
+  obtains qs' cs' where "(63,premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map address_pair_data rs')) (call_instance_rows_term qs')
+      (binding_rows_term cs') (data_list_term (map Payload_Term Us)))\<in>positive_meaning premise_rows_system"
+    "mset qs'=mset qs" "mset cs'=mset cs"
+proof -
+  have conds: "distinct Vs \<and> distinct xs \<and> (\<forall>a\<in>set Vs. octets_formed a) \<and> term_bindings_formed (set Vs) (set xs) \<and>
+      distinct Us \<and> (\<forall>s\<in>rel_dom (set rs). octets_formed s) \<and>
+      instantiated_premise_rows E u (set Vs) (set xs) rs qs cs (set Us)"
+    using holds unfolding premise_rows_on_values[OF source] .
+  obtain qs' cs' where moved: "instantiated_premise_rows E u (set Vs) (set xs) rs' qs' cs' (set Us)"
+      "mset qs'=mset qs" "mset cs'=mset cs"
+    using instantiated_premise_rows_perm[OF _ perm] conds by (meson conjunct2)
+  have keys: "rel_dom (set rs')=rel_dom (set rs)" using mset_eq_setD[OF perm] by simp
+  have "(63,premise_instantiation_argument e (use_data_term u) (data_list_term (map Payload_Term Vs))
+      (binding_rows_term xs) (data_list_term (map address_pair_data rs')) (call_instance_rows_term qs')
+      (binding_rows_term cs') (data_list_term (map Payload_Term Us)))\<in>positive_meaning premise_rows_system"
+    unfolding premise_rows_on_values[OF source] using conds moved(1) keys by simp
+  then show ?thesis using moved(2,3) by (rule that)
+qed
+
+text \<open>
   The three ordinary clauses traverse the entire input list and its final
   boundary. Every source socket is a formed payload and is copied into exactly
   one output part. Calls retain the actual callee use, address, and substituted

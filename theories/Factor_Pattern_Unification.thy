@@ -23,6 +23,12 @@ lemma decode_finite_pattern_substitute:
     pattern_substitute (decode_finite_pattern \<circ> s) (decode_finite_pattern p)"
   by (induction p) simp_all
 
+text \<open>A substitution sending every variable to a variable is the pattern renamed by that binder map.\<close>
+
+lemma finite_pattern_substitute_variable_map:
+  "finite_pattern_substitute (\<lambda>a. Finite_Variable (f a)) c = map_finite_term_pattern f c"
+  by (induction c) simp_all
+
 lemma finite_pattern_substitute_composes:
   "finite_pattern_substitute t (finite_pattern_substitute s p) =
     finite_pattern_substitute (\<lambda>a. finite_pattern_substitute t (s a)) p"
